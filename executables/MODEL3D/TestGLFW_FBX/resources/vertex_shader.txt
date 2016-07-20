@@ -1,0 +1,88 @@
+in vec3  position;
+in vec3  normal;
+in vec2  texcoord;
+
+
+#if 0
+
+#if BONE_COUNT > 0
+  in float boneweight0;
+  in int   boneindex0;
+#endif
+#if BONE_COUNT > 1
+  in float boneweight1;
+  in int   boneindex1;
+#endif
+#if BONE_COUNT > 2
+  in float boneweight2;
+  in int   boneindex2;
+#endif
+#if BONE_COUNT > 3
+  in float boneweight3;
+  in int   boneindex3;
+#endif
+#if BONE_COUNT > 4
+  in float boneweight4;
+  in int   boneindex4;
+#endif
+#if BONE_COUNT > 5
+  in float boneweight5;
+  in int   boneindex5;
+#endif
+#if BONE_COUNT > 6
+  in float boneweight6;
+  in int   boneindex6;
+#endif
+#if BONE_COUNT > 7
+  in float boneweight7;
+  in int   boneindex7;
+#endif
+
+#endif
+
+#if BONE_COUNT > 0
+  in float boneweight[BONE_COUNT];
+  in int   boneindex [BONE_COUNT];
+#endif
+
+
+out vec3  vs_position;
+out vec3  vs_normal;
+out vec2  vs_texcoord;
+out float vs_mesh_color;
+
+uniform mat4  projection;
+uniform mat4  local_to_world;
+uniform mat4  world_to_camera;
+uniform float mesh_color;
+
+uniform mat4  bone_transforms[SKELETAL_BONE_COUNT];
+
+void main() 
+{
+  vs_position   = position;
+  vs_normal     = normal;
+  vs_texcoord   = texcoord;
+
+  vs_mesh_color = 0.0;
+
+#if BONE_COUNT > 0
+  for (int i = 0 ; i < BONE_COUNT ; ++i)
+    vs_mesh_color = max(vs_mesh_color, boneweight[i]);
+#endif
+
+#if BONE_COUNT <= 0
+  vec4 tmp = vec4(position, 1.0);
+#else
+  vec4 tmp = vec4(0.0, 0.0, 0.0, 1.0);
+  for (int i = 0 ; i < BONE_COUNT ; ++i)
+    tmp = tmp + boneweight[i] * bone_transforms[boneindex[i]] * vec4(position, 1.0);  
+  tmp.w = 1.0;
+#endif
+
+  tmp = local_to_world  * tmp;
+  tmp = world_to_camera * tmp;
+  tmp = projection      * tmp;
+
+  gl_Position = tmp;
+}

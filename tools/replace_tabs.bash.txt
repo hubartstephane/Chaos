@@ -1,0 +1,19 @@
+#! /bin/bash
+
+FILES=$(find . -name "*.h")
+for i in $FILES 
+do
+  cat $i | sed -e 's/\t/  /g' > ${i}_tmp  
+  cp ${i}_tmp $i
+  rm ${i}_tmp 
+
+done
+
+FILES=$(find . -name "*.cpp")
+for i in $FILES 
+do
+  cat $i | sed -e 's/\t/  /g' > ${i}_tmp  
+  cp ${i}_tmp $i
+  rm ${i}_tmp 
+
+done

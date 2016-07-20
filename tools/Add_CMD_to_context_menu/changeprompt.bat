@@ -1,0 +1,1 @@
+regedit /s myregfile.reg

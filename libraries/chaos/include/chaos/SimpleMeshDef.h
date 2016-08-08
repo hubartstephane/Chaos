@@ -35,12 +35,17 @@ class CubeMeshDef
 public:
 
   /** generate a mesh for the cube */
-  static SimpleMesh * CreateMesh();
+  static SimpleMesh * CreateMesh(glm::vec3 const & size, bool with_face_normals);
 
   /** the vertices defining a cube */
   static glm::vec3 const vertices[8];
   /** the triangles defining a cube */
   static GLuint const triangles[36];
+
+  /** the vertices defining a cube */
+  static glm::vec3 const vertices_with_normals[24 * 2];
+  /** the triangles defining a cube */
+  static GLuint const triangles_with_normals[36];
 };
 
 }; // namespace chaos

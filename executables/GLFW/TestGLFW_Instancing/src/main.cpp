@@ -32,7 +32,7 @@ protected:
 
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);   // when viewer is inside the cube
+    glEnable(GL_CULL_FACE);   
    
     glUseProgram(program);
 
@@ -44,7 +44,7 @@ protected:
 
     glm::mat4 world_to_camera_matrix = fps_camera.GlobalToLocal();
 
-    int instance_cube_size = 40;
+    int instance_cube_size = 1;
 
     program_data.SetUniform("projection",         projection_matrix);
     program_data.SetUniform("local_to_world",     local_to_world_matrix);
@@ -76,7 +76,7 @@ protected:
 
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
 
-    mesh = chaos::CubeMeshDef::CreateMesh();
+    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(10.0f, 5.0f, 2.5f), true);
     if (mesh == nullptr)
       return false;
 
@@ -90,6 +90,8 @@ protected:
       return false;
 
     program_data = chaos::GLProgramData::GetData(program);
+
+    fps_camera.fps_controller.position.z = 100.0f;
    
     return true;
   }

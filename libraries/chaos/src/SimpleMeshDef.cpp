@@ -64,6 +64,59 @@ GLuint const CubeMeshDef::triangles[36] =
   7, 0, 4
 };
 
+glm::vec3 const CubeMeshDef::vertices_with_normals[24 * 2] =
+{
+  glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+  glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+  glm::vec3( 1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+  glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
+
+  glm::vec3(-1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+  glm::vec3( 1.0f, -1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+  glm::vec3( 1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+  glm::vec3(-1.0f,  1.0f, +1.0f), glm::vec3(0.0f, 0.0f, +1.0f),
+
+  glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+  glm::vec3(-1.0f,  1.0f, -1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+  glm::vec3(-1.0f,  1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+  glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
+
+  glm::vec3(+1.0f, -1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+  glm::vec3(+1.0f,  1.0f, -1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+  glm::vec3(+1.0f,  1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+  glm::vec3(+1.0f, -1.0f,  1.0f), glm::vec3(+1.0f, 0.0f, 0.0f),
+
+  glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+  glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+  glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+  glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(0.0f, -1.0f, 0.0f),
+
+  glm::vec3(-1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+  glm::vec3( 1.0f, +1.0f, -1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+  glm::vec3( 1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+  glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
+};
+
+GLuint const CubeMeshDef::triangles_with_normals[36] =
+{
+  0, 2, 1,  
+  0, 3, 2,
+
+  4, 5, 6,
+  4, 6, 7,
+
+  8, 10,  9,
+  8, 11, 10,
+
+  12, 13, 14,
+  12, 14, 15,
+
+  16, 17, 18,
+  16, 18, 19,
+
+  20, 22, 21,
+  20, 23, 22
+};
 
 SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(bool centered)
 {
@@ -111,7 +164,7 @@ SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(bool centered)
 }
 
 
-SimpleMesh * CubeMeshDef::CreateMesh()
+SimpleMesh * CubeMeshDef::CreateMesh(glm::vec3 const & size, bool with_face_normals)
 {
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)
@@ -123,9 +176,11 @@ SimpleMesh * CubeMeshDef::CreateMesh()
     if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
     {
       result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
+      if (with_face_normals)
+        result->declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
 
       MeshPrimitive primitive;
-      primitive.count             = sizeof(triangles) / sizeof(triangles[0]);
+      primitive.count             = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
       primitive.indexed           = true;
       primitive.primitive_type    = GL_TRIANGLES;
       primitive.start             = 0;
@@ -136,10 +191,37 @@ SimpleMesh * CubeMeshDef::CreateMesh()
       result->vertex_buffer = new VertexBuffer(vb);
       result->index_buffer  = new IndexBuffer(ib);
 
-      // fill the buffers
-      glNamedBufferData(vb, sizeof(vertices), vertices, GL_STATIC_DRAW);
-      glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW); 
+      // resize the mesh 
+      int const count1 = sizeof(vertices)              / sizeof(vertices[0]); 
+      int const count2 = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); // number of vertex * number of component
 
+      glm::vec3 resized_vertices[count2];
+
+      if (with_face_normals)
+      {
+        for (int i = 0 ; i < count2 / 2 ; ++i)
+        {        
+          resized_vertices[i * 2]     = vertices_with_normals[i * 2] * size; // resize position
+          resized_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
+        }
+      }
+      else
+      {
+        for (int i = 0; i < count1; ++i)
+          resized_vertices[i] = vertices[i] * size;
+      }
+       
+      // fill the buffers     
+      if (with_face_normals)
+      {
+        glNamedBufferData(vb, sizeof(glm::vec3) * count2, resized_vertices, GL_STATIC_DRAW);
+        glNamedBufferData(ib, sizeof(triangles_with_normals), triangles_with_normals, GL_STATIC_DRAW);
+      }
+      else
+      {
+        glNamedBufferData(vb, sizeof(glm::vec3) * count1, resized_vertices, GL_STATIC_DRAW);
+        glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW);
+      }       
       // initialize the vertex array
       result->FinalizeBindings(); 
     }

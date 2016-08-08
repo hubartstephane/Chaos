@@ -31,7 +31,7 @@ protected:
 
   virtual bool OnDraw(int width, int height) override
   {
-    glm::vec4 clear_color(1.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
     float far_plane = 1000.0f;
@@ -140,7 +140,7 @@ protected:
 
     program_data = chaos::GLProgramData::GetData(program);
 
-    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), false);
+    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), true);
     if (mesh == nullptr)
       return false;
 

@@ -221,7 +221,6 @@ namespace chaos
   void GLProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GLProgramAttributeProvider const * provider) const
   {
     int vertex_size = declaration.GetVertexSize();
-    int stride      = 0; 
 
     for (auto const & attrib : attributes) // for each attribute of the GPU program, try to find the correct attribute in Vertex Buffer
     {
@@ -260,14 +259,12 @@ namespace chaos
       GLenum type          = entry->GetComponentType();
       GLuint binding_index = 0; 
 
-      GLboolean normalized      = false;
-      GLuint    relative_offset = stride;
+      GLboolean normalized      = false;      
+      GLuint    relative_offset = entry->offset;
 
       glVertexArrayAttribBinding(vertex_array, attrib.location, binding_index);
       glVertexArrayAttribFormat (vertex_array, attrib.location, count, type, normalized, relative_offset);
       glEnableVertexArrayAttrib (vertex_array, attrib.location);
-
-      stride += entry_size;
     }
   }
 

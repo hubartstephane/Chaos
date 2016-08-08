@@ -195,7 +195,7 @@ SimpleMesh * CubeMeshDef::CreateMesh(glm::vec3 const & size, bool with_face_norm
       int const count1 = sizeof(vertices)              / sizeof(vertices[0]); 
       int const count2 = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); // number of vertex * number of component
 
-      glm::vec3 resized_vertices[count2];
+      glm::vec3 resized_vertices[count2]; // the greater possible vertex
 
       if (with_face_normals)
       {

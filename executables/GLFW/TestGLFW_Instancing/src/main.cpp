@@ -76,7 +76,7 @@ protected:
 
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
 
-    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(10.0f, 5.0f, 2.5f), true);
+    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(10.0f, 5.0f, 2.5f), false);
     if (mesh == nullptr)
       return false;
 

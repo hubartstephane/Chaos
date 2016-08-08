@@ -28,7 +28,7 @@ public:
 		_m_make_menus();
 
 		place_.bind(*this);
-		place_.div("vert<menubar weight=28><textbox>");
+		place_.div("vert<menubar weight=280><textbox>");
 		place_.field("menubar") << menubar_;
 		place_.field("textbox") << textbox_;
 		place_.collocate();

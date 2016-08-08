@@ -150,8 +150,9 @@ int _tmain(int argc, char ** argv, char ** env)
 
 	//Use class place to layout the widgets.
 	place place(fm);
-	place.div("vert<procedure weight=10%><result weight=15%>"
+	place.div("vert<procedure weight=10%>|<result weight=15%>"
 		"<weight=2><opkeys margin=2 grid=[4, 5] gap=2 collapse(0,4,2,1)>");
+  //  "<weight=2><opkeys margin=2 grid=[4, 5] gap=2 >");
 	label procedure(fm), result(fm);
 	//Make the label right aligned.
 	procedure.text_align(nana::align::right);

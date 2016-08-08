@@ -16,9 +16,7 @@ void LogTools::VLog(char const * format, va_list va)
 {
   char buffer[4096];
   vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
-  OutputDebugStringA(buffer);
-  OutputDebugStringA("\n");
-  //std::cout << buffer << std::endl;
+  std::cout << buffer << std::endl;
 }
 
 void LogTools::Error(char const * format, ...)
@@ -33,9 +31,7 @@ void LogTools::VError(char const * format,va_list va)
 {
   char buffer[4096];
   vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
-  OutputDebugStringA(buffer);
-  OutputDebugStringA("\n");
-  //std::cout << buffer << std::endl; 
+  std::cerr << buffer << std::endl; 
 }
 
 void LogTools::DisplayTitle(char const * title)

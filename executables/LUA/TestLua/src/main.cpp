@@ -261,8 +261,8 @@ void EnrichLuaState6(chaos::LuaState & L)
   lua_pushvalue(L, -1);        // duplicate it for later
   lua_setglobal(L, "myfuncs"); // make the table available has a global variable
 
-  L.OpenLibs(myfunctions2, -1);      // still one duplication of the newtable ...
-  lua_pop(L, 1);               // ... removed finally here
+  L.OpenLibs(myfunctions2, -1); // still one duplication of the newtable ...
+  lua_pop(L, 1);                // ... removed finally here
 
   assert(old_top == lua_gettop(L));
 }
@@ -326,7 +326,7 @@ int _tmain(int argc, char ** argv, char ** env)
   StartLuaFile(resources_path / "test6.lua", WorkWithLua6, EnrichLuaState6);
 
 
-  chaos::WinTools::PressToContinue();
+//  chaos::WinTools::PressToContinue();
 
   return 0;
 }

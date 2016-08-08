@@ -20,4 +20,6 @@ ProcessSubPremake("TestSkyBoxConversion")
 ProcessSubPremake("TestOVR")
 ProcessSubPremake("TestTristripper")
 ProcessSubPremake("TestCRC32")
+ProcessSubPremake("TestRedirectOutput_Console")
+ProcessSubPremake("TestRedirectOutput_Windowed")
 

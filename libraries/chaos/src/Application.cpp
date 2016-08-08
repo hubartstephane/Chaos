@@ -2,6 +2,7 @@
 #include <chaos/LuaTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/Buffer.h>
+#include <chaos/WinTools.h>
 
 namespace chaos
 {
@@ -87,9 +88,14 @@ namespace chaos
     }
 
     boost::filesystem::path p = argv[0];
+    p.normalize();
+    p.make_preferred();
 
     application_path     = p.parent_path();
     application_filename = p.filename(); 
+
+    application_userlocal_path = chaos::WinTools::GetUserLocalPath() / application_filename;
+    application_userlocal_path.replace_extension();
   }
 
   char const * Application::GetEnvironment(char const * key) const

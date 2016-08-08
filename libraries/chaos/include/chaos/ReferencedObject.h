@@ -14,25 +14,37 @@ class ReferencedObject
 public:
 
   /** default constructor */  
-  ReferencedObject() : reference_count(1){}
+  ReferencedObject() : reference_count(0){}
 
   /** copy constructor */  
-  ReferencedObject(ReferencedObject const & src) : reference_count(1){}
+  ReferencedObject(ReferencedObject const & src) : reference_count(0){}
 
   /** destructor */
   virtual ~ReferencedObject(){ assert(reference_count == 0);}
 
   /** copy operator (do not copy the reference count) */
-  ReferencedObject & operator = (ReferencedObject const & src){ return *this; }
+  inline ReferencedObject & operator = (ReferencedObject const & src){ return *this; }
 
   /** Increment the reference count */
-  void AddReference(){++reference_count;}
+  inline void AddReference(){++reference_count;}
 
   /** Decrement the reference count */
-  void SubReference()
+  inline void SubReference()
   {
     if (--reference_count == 0)
       OnLastReferenceLost();
+  }
+
+  /** utility method for boost::intrusive_ptr */
+  friend inline void intrusive_ptr_add_ref(ReferencedObject * obj)
+  {
+   obj->AddReference();
+  }
+
+  /** utility method for boost::intrusive_ptr */
+  friend inline void intrusive_ptr_release(ReferencedObject * obj)
+  {
+    obj->SubReference();
   }
 
 protected:

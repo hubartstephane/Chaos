@@ -61,10 +61,7 @@ namespace chaos
     }
   }
 
-  SimpleMesh::SimpleMesh() :
-    vertex_array(nullptr),
-    vertex_buffer(nullptr),
-    index_buffer(nullptr)
+  SimpleMesh::SimpleMesh()
   {
   }
 
@@ -75,23 +72,9 @@ namespace chaos
 
   void SimpleMesh::Clear()
   {
-    if (vertex_array != nullptr)
-    {
-      vertex_array->SubReference();
-      vertex_array = nullptr;    
-    }
-
-    if (vertex_buffer != nullptr)
-    {
-      vertex_buffer->SubReference();
-      vertex_buffer = nullptr;    
-    }
-
-    if (index_buffer != nullptr)
-    {
-      index_buffer->SubReference();
-      index_buffer = nullptr;    
-    }
+    vertex_array  = nullptr;    
+    vertex_buffer = nullptr;    
+    index_buffer  = nullptr;    
     
     declaration.Clear();
     primitives.clear();

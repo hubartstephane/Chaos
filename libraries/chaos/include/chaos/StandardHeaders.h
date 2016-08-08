@@ -63,6 +63,7 @@ T max(T a, T b)
 #include <forward_list>
 
 #include <boost/static_assert.hpp>
+#include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
@@ -73,6 +74,10 @@ T max(T a, T b)
 #include <boost/program_options/parsers.hpp>
 #include <boost/call_traits.hpp>
 #include <boost/crc.hpp> 
+
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 #include <boost/log/utility/functional/nop.hpp>
 
@@ -124,6 +129,7 @@ T max(T a, T b)
 #include <nana/gui/msgbox.hpp>
 #include <nana/gui/filebox.hpp>
 #include <nana/gui/widgets/button.hpp>
+#include <nana/gui/widgets/listbox.hpp>
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/frame.hpp>
 #include <nana/gui/wvl.hpp>

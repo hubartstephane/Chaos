@@ -16,11 +16,12 @@ if (len(sys.argv) <= 3): # argument 0 for the EXE name
 else:
   src                  = sys.argv[1]  
   dst                  = sys.argv[2]
-  project_name         = sys.argv[3]  
+  project_name         = sys.argv[3]
+  
+  print ("MYDOXYGEN [%s] = > [%s]" % (src, dst))  
+    
   general_script_path  = os.path.join(os.path.dirname(__file__), "mydoxygen.conf")
   special_script_path  = os.path.join(src, "doxygen", "mydoxygen.conf")
-  
-  print ("MYDOXYGEN [%s] = > [%s]" % (src, dst))
   
   try:
     gen_fp       = open(general_script_path)

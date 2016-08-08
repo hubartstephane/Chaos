@@ -22,7 +22,7 @@ void LuaState::OpenLibs(luaL_Reg const * funcs, int index)
   }
   else // insert in a table given by its index
   {
-    index = lua_absindex(state, index);
+    lua_pushvalue(state, index); // create a duplicate of the table on top of the stack (index becomes invalid, but it is not used anymore)
 
     int i = 0;
     while (funcs[i].func != nullptr && funcs[i].name != nullptr)
@@ -32,6 +32,8 @@ void LuaState::OpenLibs(luaL_Reg const * funcs, int index)
       lua_settable(state, -3);                  // ... we can so use this new index that is always valid
       ++i;
     }
+
+    lua_pop(state, 1); // remove the copy of the table
   }
 }
 

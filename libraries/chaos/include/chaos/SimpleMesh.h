@@ -68,11 +68,11 @@ namespace chaos
     std::vector<MeshPrimitive> primitives;
 
     /** self descriptive */
-    VertexArray * vertex_array;
+    boost::intrusive_ptr<VertexArray> vertex_array;
     /** self descriptive */
-    VertexBuffer * vertex_buffer;
+    boost::intrusive_ptr<VertexBuffer> vertex_buffer;
     /** self descriptive */
-    IndexBuffer * index_buffer;
+    boost::intrusive_ptr<IndexBuffer> index_buffer;
   };
 
 }; // namespace chaos

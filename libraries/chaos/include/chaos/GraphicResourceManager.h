@@ -22,16 +22,16 @@ namespace chaos
   public:
 
     /** the textures */
-    std::vector<Texture *> textures;
+    std::vector<boost::intrusive_ptr<Texture>> textures;
     /** the vertex arrays contained by the manager */
-    std::vector<VertexArray *> vertex_arrays;
+    std::vector<boost::intrusive_ptr<VertexArray>> vertex_arrays;
     /** the vertex buffers contained by the manager */
-    std::vector<VertexBuffer *> vertex_buffers;
+    std::vector<boost::intrusive_ptr<VertexBuffer>> vertex_buffers;
     /** the index buffers contained by the manager */
-    std::vector<IndexBuffer *> index_buffers;   
+    std::vector<boost::intrusive_ptr<IndexBuffer>> index_buffers;
 
     /** the skeleton contained by the manager */
-    std::vector<SkeletonHierarchyDef *> skeleton_defs;   
+    //std::vector<boost::intrusive_ptr<SkeletonHierarchyDef>> skeleton_defs;
   };
 
 

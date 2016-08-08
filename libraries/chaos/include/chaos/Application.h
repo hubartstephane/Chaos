@@ -46,6 +46,8 @@ public:
   inline boost::filesystem::path const & GetApplicationPath() const { return application_path; }
   /** get the application name */
   inline boost::filesystem::path const & GetApplicationFilename() const { return application_filename; }
+  /** get the application local path for execution data */
+  inline boost::filesystem::path const & GetApplicationUserLocalPath() const { return application_userlocal_path; }
 
 protected:
 
@@ -77,6 +79,8 @@ protected:
   boost::filesystem::path application_filename;
   /** the path of the application */
   boost::filesystem::path application_path;
+  /** path of the application to store user data */
+  boost::filesystem::path application_userlocal_path;
 
   /** the path manager */
   FilePathManager * file_path_manager;

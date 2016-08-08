@@ -15,57 +15,98 @@ namespace chaos
   {
     if (AllocConsole())
     {
-      HANDLE hInput  = GetStdHandle(STD_INPUT_HANDLE);
-      HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+#if 1
 
-      /*
-      FILE * tmp1 = NULL;
-      freopen_s(&tmp1, "CONOUT$", "w", stdout);
-      stdout = tmp1;
-      */
+      // XXX : i found on internet several versions that don't work correctly
+      //       this one seems to :
+      //         - works correctly with FILE * objects   stdout, stderr and stdin
+      //         - works correctly with std:: objects    std::cin, std::cout and std::cin
+      //       but
+      //         - not working correctly with file descriptor 0, 1, 2
 
-      long lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+      FILE * my_stdout = stdout;
+      FILE * my_stderr = stderr; // because stdin, stdout and stderr are under the hood
+      FILE * my_stdin  = stdin;  // function calls __acrt_iob_func(0, 1, 2)
 
-      int hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+      freopen_s(&my_stdout, "CON", "w", stdout);
+      freopen_s(&my_stderr, "CON", "w", stderr);
+      freopen_s(&my_stdin,  "CON", "r", stdin);
 
-      FILE * fp = _fdopen( hConHandle, "w" );
+      for (int i = 0 ; i < 3 ; ++i)
+      {
+        DWORD handles[] = {STD_INPUT_HANDLE, STD_OUTPUT_HANDLE, STD_ERROR_HANDLE};
 
-      *stdout = *fp;
-
-      setvbuf( stdout, NULL, _IONBF, 0 );
-
-      //fclose(tmp1);
-
-    //  FILE * tmp2 = NULL;
-    //  freopen_s(&tmp2, "CONOUT$", "w", stderr);
-    //  fclose(tmp2);
-
-    //freopen("CONOUT$", "w", stdout);
-    //freopen("CONOUT$", "w", stderr);
-
-    //DWORD mode = 0;
-    //if (GetConsoleMode(hInput, &mode))
-    //  if (SetConsoleMode(hInput, mode | ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT | ENABLE_ECHO_INPUT | ENABLE_MOUSE_INPUT))
-
+        HANDLE hConsole = GetStdHandle(handles[i]);
+        if (hConsole != INVALID_HANDLE_VALUE)
+        {
+          int iFile = _open_osfhandle((intptr_t)hConsole, _O_TEXT);
+          if (iFile != -1)
+          {
+            if (iFile != 0 && iFile != 1 && iFile != 2) //  the output redirection should now work with file descriptor
+            {
+              _close(i);
+              _dup(iFile);
+            }
+          }
+        }
+      }
 
       COORD bufsize;
       bufsize.X = 1600;
       bufsize.Y = 2000;
       if (!SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), bufsize))
-        DisplayErrorMessage("AllocConsoleAndRedirectStdOutput");
-
-      SMALL_RECT rect;
-      rect.Left   = 0;
-      rect.Right  = 1200;
-      rect.Top    = 0;
-      rect.Bottom = 800;
-      if (!SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &rect))
-        DisplayErrorMessage("AllocConsoleAndRedirectStdOutput");
+        DisplayErrorMessage("AllocConsoleAndRedirectStdOutput : SetConsoleScreenBufferSize(...)");
 
       return true;
+
+#else
+      // XXX : this version below works with   stdout  but not with descriptor methods
+
+      HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+      if (hConsole != INVALID_HANDLE_VALUE)
+      {
+        int iFile = _open_osfhandle((intptr_t)hConsole, _O_TEXT);
+        if (iFile != -1)
+        {
+          FILE * f = _fdopen(iFile, "w");
+          if (f != nullptr)
+          {
+            // change the flags : _IONBF => no buffer
+            // setvbuf(f, NULL, _IONBF, 0); 
+
+            // change the flags : _IOLBF => buffer until eol
+            static char buffer[1024];
+            setvbuf(f, buffer, _IOLBF, sizeof(buffer)); // change the flags : _IOLBF => buffer until eol, _IONBF => no buffer
+
+            std::ofstream * stream = new std::ofstream(f);
+            auto backup = std::cout.rdbuf();
+            std::cout.rdbuf(stream->rdbuf());
+
+            COORD bufsize;
+            bufsize.X = 1600;
+            bufsize.Y = 2000;
+            if (!SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), bufsize))
+              DisplayErrorMessage("AllocConsoleAndRedirectStdOutput : SetConsoleScreenBufferSize(...)");
+
+#if 0
+            SMALL_RECT rect;
+            rect.Left = 0;
+            rect.Right = 1200;
+            rect.Top = 0;
+            rect.Bottom = 800;
+            if (!SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &rect))
+              DisplayErrorMessage("AllocConsoleAndRedirectStdOutput : SetConsoleWindowInfo(...)");
+#endif
+
+            return true;
+          }
+        }
+      }
+#endif
     }
 
-    DisplayErrorMessage("AllocConsoleAndRedirectStdOutput");
+    DisplayErrorMessage("AllocConsoleAndRedirectStdOutput : AllocConsole(...)");
 
     return false;
   }

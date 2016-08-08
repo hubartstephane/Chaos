@@ -804,8 +804,8 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_
             files(path.join(full_filename, "**"))                  
           end
         end                             
-        
-        local build_command_str = (COPY_SCRIPT .. " \"" .. full_filename .. "\" \"" .. dst_name .. "\"")                      
+                             
+        local build_command_str = ("\"" .. COPY_SCRIPT .. "\" \"" .. full_filename .. "\" \"" .. dst_name .. "\"")
         buildcommands (build_command_str)
       end                     
     end
@@ -893,7 +893,7 @@ for i in pairs(MYPROJECTS) do
     project(resources_proj_name)
     kind("Makefile")  
     
-    local build_command_str = DOXYGEN_SCRIPT .. " \"" .. proj.root_path .. "\" \"" .. proj.build_path .. "\"" .. " \"" .. proj.name .. "\""    
+    local build_command_str = "\"" .. DOXYGEN_SCRIPT .. "\" \"" .. proj.root_path .. "\" \"" .. proj.build_path .. "\" \"" .. proj.name .. "\""    
              
     configuration {DEBUG, x32}
     buildcommands (build_command_str)

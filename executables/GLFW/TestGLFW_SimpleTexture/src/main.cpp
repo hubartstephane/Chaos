@@ -10,6 +10,7 @@
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshDef.h>
 #include <chaos/SkyBoxTools.h>
+#include <chaos/GeometryFramework.h>
 
 bool RECTANGLE_TEXTURE = true;
 
@@ -128,6 +129,17 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+  chaos::box3 b1, b2;
+
+//  chaos::ForceStayInside(b1, b2, true);
+
+ // auto x = b1.half_size > b2.half_size;
+
+  glm::vec3 v(1.0f, 2.0f, 3.0f);
+  v[1] = 6.0f;
+  auto vv = v[1];
+
+
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

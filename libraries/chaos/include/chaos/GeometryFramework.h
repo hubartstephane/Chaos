@@ -764,11 +764,65 @@ typedef type_sphere<> sphere;
 
 /** returns intersection of sphere */
 template<typename T>
-type_sphere<T> operator & (type_sphere<T> const & s1,type_sphere<T> const & s2);
+type_sphere<T> operator & (type_sphere<T> const & s1, type_sphere<T> const & s2);
 
 /** returns union of sphere */
 template<typename T>
-type_sphere<T> operator | (type_sphere<T> const & s1,type_sphere<T> const & s2);
+type_sphere<T> operator | (type_sphere<T> const & s1, type_sphere<T> const & s2);
+
+
+/**
+ * Some methods to force an object to keep inside another
+ */
+
+template<typename T>
+void ForceStayInside(type_box2<T> & bigger, type_box2<T> & smaller, bool move_big)
+{
+  assert(bigger.half_size.x >= smaller.half_size.x);
+  assert(bigger.half_size.y >= smaller.half_size.y);
+
+
+
+}
+
+template<typename T>
+void ForceStayInside(type_box3<T> & bigger, type_box3<T> & smaller, bool move_big)
+{
+  int count = 3;
+
+#if _DEBUG
+  for (int i = 0 ; i < count ; ++i)
+  {
+    assert(bigger.half_size[i] >= smaller.half_size[i]);
+  }
+#endif
+
+  auto big_corners   = bigger.GetCorners();
+  auto small_corners = smaller.GetCorners();
+
+  for (int i = 0 ; i < count ; ++i)
+  {
+    float delta = small_corners.first[i] - big_corners.first[i];
+    if (delta < 0)
+    {    
+      if (move_big)
+        bigger.position[i] += delta;
+      else
+        smaller.position[i] -= delta;
+    }
+    else
+    {
+      float delta = small_corners.second[i] - big_corners.second[i];
+      if (delta > 0)
+      {
+        if (move_big)
+          bigger.position[i] += delta;
+        else
+          smaller.position[i] -= delta;    
+      }   
+    }
+  }
+}
 
 }; // namespace chaos
 

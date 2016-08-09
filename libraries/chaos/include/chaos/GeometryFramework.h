@@ -788,7 +788,7 @@ void ForceStayInside(type_box2<T> & bigger, type_box2<T> & smaller, bool move_bi
 template<typename T>
 void ForceStayInside(type_box3<T> & bigger, type_box3<T> & smaller, bool move_big)
 {
-  int count = 3;
+  auto count = bigger.position.length();
 
 #if _DEBUG
   for (int i = 0 ; i < count ; ++i)

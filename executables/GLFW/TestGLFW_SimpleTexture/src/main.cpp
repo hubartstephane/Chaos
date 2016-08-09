@@ -129,9 +129,14 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::box3 b1, b2;
+  chaos::box3 bigger, smaller;
 
-//  chaos::ForceStayInside(b1, b2, true);
+  bigger.half_size  = glm::vec3(5.0f, 6.0f, 7.0f);
+  smaller.half_size = glm::vec3(2.0f, 2.0f, 5.0f);
+
+  chaos::ForceStayInside(bigger, smaller, true);
+
+
 
  // auto x = b1.half_size > b2.half_size;
 
@@ -139,7 +144,7 @@ int _tmain(int argc, char ** argv, char ** env)
   v[1] = 6.0f;
   auto vv = v[1];
 
-
+  return 0;
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

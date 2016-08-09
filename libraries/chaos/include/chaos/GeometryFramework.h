@@ -6,26 +6,6 @@ namespace chaos
 {
 
 // ==============================================================================================
-// Some common typedefs for geometry
-// ==============================================================================================
-
-typedef glm::vec2 float2;
-typedef glm::vec3 float3;
-typedef glm::vec4 float4;
-
-typedef glm::ivec2 int2;
-typedef glm::ivec3 int3;
-typedef glm::ivec4 int4;
-
-template<typename T> class type_ray2;
-template<typename T> class type_ray3;
-template<typename T> class type_box2;
-template<typename T> class type_box3;
-template<typename T> class type_circle;
-template<typename T> class type_sphere;
-
-
-// ==============================================================================================
 // utility function
 // ==============================================================================================
 
@@ -85,11 +65,51 @@ T GetMaxComponent(glm::tvec4<T> const & src)
   return glm::max(glm::max(src.x, src.y), glm::max(src.z, src.w));
 }
 
+// ==============================================================================================
+// Some common typedefs for geometry
+// ==============================================================================================
+
+typedef glm::vec2 float2;
+typedef glm::vec3 float3;
+typedef glm::vec4 float4;
+
+typedef glm::ivec2 int2;
+typedef glm::ivec3 int3;
+typedef glm::ivec4 int4;
+
+template<typename T, int dimension> class type_ray;
+template<typename T, int dimension> class type_box;
+template<typename T, int dimension> class type_spheroid;
+template<typename T, int dimension> class type_triangle;
+
+template<typename T> using type_ray2      = type_ray<T, 2>;
+template<typename T> using type_ray3      = type_ray<T, 3>;
+template<typename T> using type_box2      = type_box<T, 2>;
+template<typename T> using type_box3      = type_box<T, 3>;
+template<typename T> using type_circle    = type_spheroid<T, 2>;
+template<typename T> using type_sphere    = type_spheroid<T, 3>;
+template<typename T> using type_triangle2 = type_triangle<T, 2>;
+template<typename T> using type_triangle3 = type_triangle<T, 3>;
+
+using ray2      = type_ray2<float>;
+using ray3      = type_ray3<float>;
+using box2      = type_box2<float>;
+using box3      = type_box3<float>;
+using circle    = type_circle<float>;
+using sphere    = type_sphere<float>;
+using triangle2 = type_triangle2<float>;
+using triangle3 = type_triangle3<float>;
+
+// ==============================================================================================
+// geometry classes
+// ==============================================================================================
+
 /**
- * a generic class for geometric figure
+ * base class for geometry objects that have some commons definitions
  */
-template<typename T = float>
-class type_geometric
+
+template<typename T> 
+class type_geometric_base
 {
 public:
 
@@ -101,293 +121,64 @@ public:
   typedef glm::tvec3<type> vec3_type;
 };
 
-/**
- * a child class for geometrics objects in 2D space
- */
+template<typename T, int dimension> class type_geometric;
 
-template<typename T = float>
-class type_geometric2 : public type_geometric<T>
+/**
+* geometry class specialisation for 2 dimensions objects
+*/
+
+template<typename T> 
+class type_geometric<T, 2> : public type_geometric_base<T>
 {
 public:
-  /** the type of vectors */
+
+  /** the dimension of the space */
+  static int const dimension = 2;
+  /** the type of vector */
   typedef vec2_type vec_type;
 };
 
 /**
- * a child class for geometrics objects in 3D space
- */
+* geometry class specialisation for 3 dimensions objects
+*/
 
-template<typename T = float>
-class type_geometric3 : public type_geometric<T>
+template<typename T>
+class type_geometric<T, 3> : public type_geometric_base<T>
 {
 public:
-  /** the type of vectors */
+
+  /** the dimension of the space */
+  static int const dimension = 3;
+  /** the type of vector */
   typedef vec3_type vec_type;
 };
 
 
-/**
- * a generic class for triangle in 2D
- */
+// ==============================================================================================
+// boxes classes
+// ==============================================================================================
 
-template<typename T = float>
-class type_triangle2 : public type_geometric2<T>
-{
-public:
-  
-  /** default constructor */
-  type_triangle2(){}
-  /** copy constructor */
-  type_triangle2(type_triangle2 const & src) : a(src.a), b(src.b), c(src.c){}   
-  /** constructor from points */
-  type_triangle2(vec2_type const & in_a, vec2_type const & in_b, vec2_type const & in_c) : a(in_a), b(in_b), c(in_c){}   
-  
-public:
-
-  /** first point of the triangle */
-  vec2_type a;
-  /** second point of the triangle */
-  vec2_type b;
-  /** third point of the triangle */
-  vec2_type c;  
-};
-
-/** equality test function for triangles */
-template<typename T>
-bool operator == (type_triangle2<T> const & t1, type_triangle2<T> const & t2)
-{
-  if (t1.a == t2.a)
-  {
-    if (t1.b == t2.b && t1.c == t2.c)
-      return true;
-    if (t1.c == t2.b && t1.b == t2.c)
-      return true;
-  }
-  if (t1.a == t2.b)
-  {
-    if (t1.b == t2.a && t1.c == t2.c)
-      return true;
-    if (t1.c == t2.a && t1.b == t2.c)
-      return true;
-  }
-  if (t1.a == t2.c)
-  {
-    if (t1.b == t2.a && t1.c == t2.b)
-      return true;
-    if (t1.c == t2.a && t1.b == t2.b)
-      return true;
-  }
-  return false;
-}
-
-/** difference test function for triangle */
-template<typename T>
-bool operator != (type_triangle2<T> const & t1, type_triangle2<T> const & t2)
-{
-  return !(t1 == t2);
-}
-
-/**
- * The usual type_triangle2 with float components
- */
-typedef type_triangle2<> triangle2;
-
-/**
- * a generic class for triangle in 3D
- */
-
-template<typename T = float>
-class type_triangle3 : public type_geometric3<T>
-{
-public:
-  
-  /** default constructor */
-  type_triangle3(){}
-  /** copy constructor */
-  type_triangle3(type_triangle3 const & src) : a(src.a), b(src.b), c(src.c){}   
-  /** constructor from points */
-  type_triangle3(vec3_type const & in_a, vec3_type const & in_b, vec3_type const & in_c) : a(in_a), b(in_b), c(in_c){}   
-  
-public:
-
-  /** first point of the triangle */
-  vec3_type a;
-  /** second point of the triangle */
-  vec3_type b;
-  /** third point of the triangle */
-  vec3_type c;  
-};
-
-/** equality test function for triangles */
-template<typename T>
-bool operator == (type_triangle3<T> const & t1, type_triangle3<T> const & t2)
-{
-  if (t1.a == t2.a)
-  {
-    if (t1.b == t2.b && t1.c == t2.c)
-      return true;
-    if (t1.c == t2.b && t1.b == t2.c)
-      return true;
-  }
-  if (t1.a == t2.b)
-  {
-    if (t1.b == t2.a && t1.c == t2.c)
-      return true;
-    if (t1.c == t2.a && t1.b == t2.c)
-      return true;
-  }
-  if (t1.a == t2.c)
-  {
-    if (t1.b == t2.a && t1.c == t2.b)
-      return true;
-    if (t1.c == t2.a && t1.b == t2.b)
-      return true;
-  }
-  return false;
-}
-
-/** difference test function for triangle */
-template<typename T>
-bool operator != (type_triangle3<T> const & t1, type_triangle3<T> const & t2)
-{
-  return !(t1 == t2);
-}
-
-/**
- * The usual type_triangle3 with float components
- */
-typedef type_triangle3<> triangle3;
-
-/**
- * Generic class for ray in 2D
- */
-
-template<typename T = float> 
-class type_ray2 : public type_geometric2<T>
+template<typename T, int dimension>
+class type_box : public type_geometric<T, dimension>
 {
 public:
 
-  /** default constructor */
-  type_ray2(){}
-  /** copy constructor */
-  type_ray2(type_ray2 const & src) : position(src.position), direction(src.direction){} 
-  /** other constructor */
-  type_ray2(vec2_type const & in_position, vec2_type const & in_direction) : position(in_position), direction(in_direction){}
-  /** construct a ray from 2 points */
-  type_ray2(std::pair<vec2_type, vec2_type> const & pts) : position(pts.first), direction(glm::normalize(pts.second - pts.first)){}
-
-public:
-
-  /** the starting position of the ray in space */
-  vec2_type position;
-  /** the direction of the ray in space */
-  vec2_type direction;
-};
-
-/** equality function for ray */
-template<typename T>
-bool operator == (type_ray2<T> const & r1, type_ray2<T> const & r2)
-{
-  return (r1.position == r2.position) && (r1.direction == r2.direction);
-}
-
-/** difference function for ray */
-template<typename T>
-bool operator != (type_ray2<T> const & r1, type_ray2<T> const & r2)
-{
-  return !(r1 == r2);
-}
-
-/**
- * The usual type_ray2 with float components
- */
-typedef type_ray2<> ray2;
-
-/**
- * Generic class for ray in 3D
- */
-
-template<typename T = float> 
-class type_ray3 : public type_geometric3<T>
-{
-public:
-
-  /** default constructor */
-  type_ray3(){}
-  /** copy constructor */
-  type_ray3(type_ray3 const & src) : position(src.position), direction(src.direction){} 
-  /** other constructor */
-  type_ray3(vec3_type const & in_position, vec3_type const & in_direction) : position(in_position), direction(in_direction){}
-  /** construct a ray from 2 points */
-  type_ray3(std::pair<vec3_type, vec3_type> const & pts) : position(pts.first), direction(glm::normalize(pts.second - pts.first)){}
-
-public:
-
-  /** the starting position of the ray in space */
-  vec3_type position;
-  /** the direction of the ray in space */
-  vec3_type direction;
-};
-
-/** equality function for ray */
-template<typename T>
-bool operator == (type_ray3<T> const & r1, type_ray3<T> const & r2)
-{
-  return (r1.position == r2.position) && (r1.direction == r2.direction);
-}
-
-/** difference function for ray */
-template<typename T>
-bool operator != (type_ray3<T> const & r1, type_ray3<T> const & r2)
-{
-  return !(r1 == r2);
-}
-
-/**
- * The usual type_ray3 with float components
- */
-typedef type_ray3<> ray3;
-
-/**
- * Generic class for box in 2D
- */
-
-template<typename T = float>
-class type_box2 : public type_geometric2<T>
-{
-public:
+  typedef typename type_geometric<T, dimension>::vec_type vec_type;
 
   /** constructor (empty box2) */
-  type_box2() : half_size((T)-1.0f){}
+  type_box() : half_size((T)-1.0f) {}
   /** copy constructor */
-  type_box2(type_box2 const & src) : position(src.position), half_size(src.half_size){}
+  type_box(type_box const & src) : position(src.position), half_size(src.half_size) {}
   /** other constructor */
-  type_box2(vec2_type const & in_position, vec2_type const & in_half_size) : position(in_position), half_size(in_half_size){}
+  type_box(vec_type const & in_position, vec_type const & in_half_size) : position(in_position), half_size(in_half_size) {}
   /** construct a box from 2 points */
-  type_box2(std::pair<vec2_type, vec2_type> const & pts)
+  type_box(std::pair<vec_type, vec_type> const & pts)
   {
-    vec2_type a = glm::min(pts.first, pts.second);
-    vec2_type b = glm::max(pts.first, pts.second);
+    vec_type a = glm::min(pts.first, pts.second);
+    vec_type b = glm::max(pts.first, pts.second);
 
     position  = (b + a) / static_cast<type>(2);
     half_size = (b - a) / static_cast<type>(2);
-  }
-
-  /** increase the box size with a single vertex */
-  void Extend(vec_type const & v)
-  {
-    if (IsEmpty())
-    {
-      position  = v;
-      half_size = vec_type((T)0.0f);
-    }
-    else
-    {
-      std::pair<vec_type, vec_type> corners = GetCorners();
-      corners.first  = glm::min(corners.first, v);
-      corners.second = glm::max(corners.second, v);
-      *this = type_box2(corners);
-    }
   }
 
   /** get the corners of the box */
@@ -400,219 +191,343 @@ public:
   /** returns true whether the box is empty */
   bool IsEmpty() const
   {
-    return (half_size.x < 0) || (half_size.y < 0);
+    return glm::any(glm::lessThan(half_size, vec_type((T)0.0f)));
   }
 
   /** set the box has an empty box */
   void SetEmpty()
   {
-    half_size = vec2_type((T)-1.0f);
+    half_size = vec_type((T)-1.0f);
   }
 
-  /** returns the perimeter of the box */
-  type GetPerimeter() const 
+  /** increase the box size with a single vertex */
+  void Extend(vec_type const & v)
   {
-    return static_cast<type>(4) * (half_size.x + half_size.y);
-  }
-
-  /** returns the surface of the box */
-  type GetSurface() const  
-  {
-    return static_cast<type>(4) * (half_size.x * half_size.y);
+    if (IsEmpty())
+    {
+      position = v;
+      half_size = vec_type((T)0.0f);
+    }
+    else
+    {
+      std::pair<vec_type, vec_type> corners = GetCorners();
+      corners.first  = glm::min(corners.first, v);
+      corners.second = glm::max(corners.second, v);
+      *this = type_box(corners);
+    }
   }
 
   /** returns true whether the point is contained in the box */
-  bool Contains(type const & pt) const
+  bool Contains(vec_type const & pt) const
   {
     return glm::all(glm::lessThanEqual(glm::abs(pt - position), half_size));
   }
 
-  /** returns the bounding circle for the box */
-  type_circle<type> GetBoundingCircle() const;
-  /** returns the inner circle for the box */
-  type_circle<type> GetInnerCircle() const;
+public:
 
   /** the center of the box */
-  vec2_type position;
+  vec_type position;
   /** the half size the box */
-  vec2_type half_size;
+  vec_type half_size;
 };
 
+// ==============================================================================================
+// boxes functions
+// ==============================================================================================
+
 /** equality function for box */
-template<typename T>
-bool operator == (type_box2<T> const & b1, type_box2<T> const & b2)
+template<typename T, int dimension>
+bool operator == (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 {
   return (b1.position == b1.position) && (b1.half_size == b2.half_size);
 }
 
 /** difference function for box */
-template<typename T>
-bool operator != (type_box2<T> const & b1, type_box2<T> const & b2)
+template<typename T, int dimension>
+bool operator != (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 {
   return !(b1 == b2);
 }
 
+/** returns the perimeter of the box */
+template<typename T> 
+T GetPerimeter(type_box2<T> const & b)
+{
+  return static_cast<type>(4) * (b.half_size.x + b.half_size.y);
+}
 
-/**
- * The usual box2 with float components
- */
-typedef type_box2<> box2;
-
-/** returns one of the 4 box2 obtained by splitting the src */
+/** returns the surface of the box */
 template<typename T>
-type_box2<T> GetSplitBox(type_box2<T> const & src, int i, int j);
+T GetSurface(type_box2<T> const & b)
+{
+  return static_cast<type>(4) * (b.half_size.x * b.half_size.y);
+}
+
+/** return the volume of the box */
+template<typename T>
+T GetVolume(type_box3<T> const & b)
+{
+  return static_cast<type>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
+}
+
+/** return the surface of the box */
+template<typename T>
+T GetSurface(type_box3<T> const & b)
+{
+  return static_cast<type>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
+};
+
+/** returns the bounding circle for the box */
+template<typename T>
+type_circle<T> GetBoundingCircle(type_box2<T> const & b)
+{
+  return b.IsEmpty() ? type_circle<T>() : type_circle<T>(b.position, glm::length(b.half_size));
+}
+
+/** returns the inner circle for the box */
+template<typename T>
+type_circle<T> GetInnerCircle(type_box2<T> const & b)
+{
+  return b.IsEmpty() ? type_circle<T>() : type_circle<T>(b.position, GetMinComponent(b.half_size));
+}
+
+/** returns the bounding sphere for the box */
+template<typename T>
+type_sphere<T> GetBoundingSphere(type_box3<T> const & b)
+{
+  return b.IsEmpty() ? type_sphere<T>() : type_sphere<T>(b.position, glm::length(b.half_size));
+}
+
+/** returns the inner sphere for the box */
+template<typename T>
+type_sphere<T> GetInnerSphere(type_box3<T> const & b)
+{
+  return b.IsEmpty() ? type_sphere<T>() : type_sphere<T>(b.position, GetMinComponent(b.half_size));
+}
 
 /** returns the "aspect" of the box (width/height) */
 template<typename T>
-typename type_box2<T>::type GetBoxAspect(type_box2<T> const & b);
+T GetBoxAspect(type_box2<T> const & b)
+{
+  return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
+}
 
-/** returns intersection of box2 */
+/** intersection of 2 boxes */
+template<typename T, int dimension>
+type_box<T, dimension> operator & (const type_box<T, dimension> & b1, const type_box<T, dimension> & b2)
+{
+  typedef typename type_box<T, dimension>::vec_type vec_type;
+
+  if (b1.IsEmpty() || b2.IsEmpty()) // any of the 2 is empty, intersection is empty
+    return type_box<T, dimension>();
+
+  vec_type p1 = b1.position + b1.half_size;
+  vec_type p2 = b2.position - b2.half_size;
+
+  if (glm::any(glm::lessThanEqual(p1, p2)))
+    return type_box<T, dimension>();
+
+  vec_type p3 = b1.position - b1.half_size;
+  vec_type p4 = b2.position + b2.half_size;
+
+  if (glm::any(glm::lessThanEqual(p4, p3)))
+    return type_box<T, dimension>();
+
+  vec_type a = glm::min(p1, p4);
+  vec_type b = glm::max(p3, p2);
+
+  return type_box<T, dimension>((a + b) / static_cast<T>(2), (b - a) / static_cast<T>(2));
+}
+
+/** union of 2 boxes */
+template<typename T, int dimension>
+type_box<T, dimension> operator | (const type_box<T, dimension> & b1, const type_box<T, dimension> & b2)
+{
+  typedef typename type_box<T, dimension>::vec_type vec_type;
+
+  if (b1.IsEmpty()) // if one is empty, returns other
+    return b2;
+  if (b2.IsEmpty())
+    return b1;
+
+  vec_type p1 = b1.position + b1.half_size;
+  vec_type p2 = b2.position + b2.half_size;
+
+  vec_type p3 = b1.position - b1.half_size;
+  vec_type p4 = b2.position - b2.half_size;
+
+  vec_type a = glm::max(p1, p2);
+  vec_type b = glm::min(p3, p4);
+
+  return type_box<T, dimension>((a + b) / static_cast<T>(2), (b - a) / static_cast<T>(2));
+}
+
+/** returns one of the sub-boxes obtained by splitting the src */
 template<typename T>
-box2 operator & (type_box2<T> const & b1,type_box2<T> const & b2);
+type_box2<T> GetSplitBox(type_box2<T> const & b, int i, int j)
+{
+  typedef typename type_box2<T>::vec2_type vec2_type;
 
-/** returns union of box2 */
+  assert((i == 0) || (i == 1));
+  assert((j == 0) || (j == 1));
+  i = (i << 1) - 1;
+  j = (j << 1) - 1;
+  type_box2<T> new_half_size = b.half_size / static_cast<T>(2);
+
+  return type_box2<T>(
+    b.position + new_half_size * vec2_type(static_cast<T>(i), static_cast<T>(j)),
+    new_half_size);
+}
+
+/** returns one of the sub-boxes obtained by splitting the src */
 template<typename T>
-box2 operator | (type_box2<T> const & b1,type_box2<T> const & b2);
+type_box3<T> GetSplitBox(type_box3<T> const & b, int i, int j, int k)
+{
+  typedef typename type_box3<T>::vec3_type vec3_type;
 
-/**
- * Generic class for box in 3D
- */
-template<typename T = float>
-class type_box3 : public type_geometric3<T>
+  assert((i == 0) || (i == 1));
+  assert((j == 0) || (j == 1));
+  assert((k == 0) || (k == 1));
+  i = (i << 1) - 1;
+  j = (j << 1) - 1;
+  k = (k << 1) - 1;
+  vec3_type new_half_size = b.half_size / static_cast<T>(2);
+  return type_box3<T>(
+    b.position + new_half_size * vec3_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
+    new_half_size);
+}
+
+// ==============================================================================================
+// triangle classes
+// ==============================================================================================
+
+template<typename T, int dimension>
+class type_triangle : public type_geometric<T, dimension>
 {
 public:
 
-  /** constructor (empty sphere) */
-  type_box3() : half_size((T)-1.0f){}
+  typedef typename type_geometric<T, dimension>::vec_type vec_type;
+
+  /** default constructor */
+  type_triangle() {}
   /** copy constructor */
-  type_box3(type_box3 const & src) : position(src.position), half_size(src.half_size){}
-  /** other constructor */
-  type_box3(vec3_type const & in_position, vec3_type const & in_half_size) : position(in_position), half_size(in_half_size){}
-  /** construct a box from 2 points */
-  type_box3(std::pair<vec3_type, vec3_type> const & pts)
-  {
-    vec3_type a = glm::min(pts.first, pts.second);
-    vec3_type b = glm::max(pts.first, pts.second);
-
-    position  = (b + a) / static_cast<type>(2);
-    half_size = (b - a) / static_cast<type>(2);
-  }
-
-  /** increase the box size with a single vertex */
-  void Extend(vec_type const & v)
-  {
-    if (IsEmpty())
-    {
-      position  = v;
-      half_size = vec_type((T)0.0f);
-    }
-    else
-    {
-      std::pair<vec_type, vec_type> corners = GetCorners();
-      corners.first  = glm::min(corners.first, v);
-      corners.second = glm::max(corners.second, v);
-      *this = type_box3(corners);
-    }
-  }
-
-  /** get the corners of the box */
-  std::pair<vec_type, vec_type> GetCorners() const
-  {
-    assert(!IsEmpty());
-    return std::make_pair(position - half_size, position + half_size);
-  }
-  
-  /** returns true whether the box is empty */
-  bool IsEmpty() const
-  {
-    return (half_size.x < 0) || (half_size.y < 0) || (half_size.z < 0);
-  }
-
-  /** set the box has an empty box */
-  void SetEmpty()
-  {
-    half_size = float3((T)-1.0f);
-  }
-
-  /** return the volume of the box */
-  type GetVolume() const 
-  {
-    return static_cast<type>(8) * half_size.x * half_size.y * half_size.z;
-  }
-
-  /** return the surface of the box */
-  type GetSurface() const 
-  {
-    return static_cast<type>(8) *((half_size.x * half_size.y) + (half_size.y * half_size.z) + (half_size.z * half_size.x));
-  };
-
-
-  /** returns true whether the point is contained in the box */
-  bool Contains(vec3_type const & pt) const
-  {
-    return glm::all(glm::lessThanEqual(glm::abs(pt - position), half_size));
-  }
-
-  /** returns the bounding sphere for the box */
-  type_sphere<type> GetBoundingSphere() const;
-  /** returns the inner sphere for the box */
-  type_sphere<type> GetInnerSphere() const;
+  type_triangle(type_triangle const & src) : a(src.a), b(src.b), c(src.c) {}
+  /** constructor from points */
+  type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
 
 public:
 
-  /** the center of the box */
-  vec3_type position;
-  /** the half size the box */
-  vec3_type half_size;
+  /** first point of the triangle */
+  vec_type a;
+  /** second point of the triangle */
+  vec_type b;
+  /** third point of the triangle */
+  vec_type c;
 };
 
-/** equality function for box */
-template<typename T>
-bool operator == (type_box3<T> const & b1, type_box3<T> const & b2)
+// ==============================================================================================
+// triangles functions
+// ==============================================================================================
+
+/** equality test function for triangles */
+template<typename T, int dimension>
+bool operator == (type_triangle<T, dimension> const & t1, type_triangle<T, dimension> const & t2)
 {
-  return (b1.position == b1.position) && (b1.half_size == b2.half_size);
+  if (t1.a == t2.a)
+  {
+    if (t1.b == t2.b && t1.c == t2.c)
+      return true;
+    if (t1.c == t2.b && t1.b == t2.c)
+      return true;
+  }
+  if (t1.a == t2.b)
+  {
+    if (t1.b == t2.a && t1.c == t2.c)
+      return true;
+    if (t1.c == t2.a && t1.b == t2.c)
+      return true;
+  }
+  if (t1.a == t2.c)
+  {
+    if (t1.b == t2.a && t1.c == t2.b)
+      return true;
+    if (t1.c == t2.a && t1.b == t2.b)
+      return true;
+  }
+  return false;
 }
 
-/** difference function for box */
-template<typename T>
-bool operator != (type_box3<T> const & b1, type_box3<T> const & b2)
+/** difference test function for triangle */
+template<typename T, int dimension>
+bool operator != (type_triangle<T, dimension> const & t1, type_triangle<T, dimension> const & t2)
 {
-  return !(b1 == b2);
+  return !(t1 == t2);
 }
 
-/**
- * The usual type_box3 with float components
- */
-typedef type_box3<> box3;
+// ==============================================================================================
+// ray classes
+// ==============================================================================================
 
-/** returns one of the 8 box3 obtained by splitting the src */
-template<typename T>
-type_box3<T> GetSplitBox(type_box3<T> const & src, int i, int j, int k);
-
-/** returns intersection of box3 */
-template<typename T>
-type_box3<T> operator & (type_box3<T> const & b1,type_box3<T> const & b2);
-
-/** returns union of box3 */
-template<typename T>
-type_box3<T> operator | (type_box3<T> const & b1,type_box3<T> const & b2);
-
-
-/**
- * Generic class for circle(2D)
- */
-
-template<typename T = float>
-class type_circle : public type_geometric2<T>
+template<typename T, int dimension>
+class type_ray : public type_geometric<T, dimension>
 {
 public:
 
-  /** constructor (empty circle) */
-  type_circle() : radius((T)-1.0f){}
+  typedef typename type_geometric<T, dimension>::vec_type vec_type;
+
+  /** default constructor */
+  type_ray() {}
   /** copy constructor */
-  type_circle(type_circle const & src) : position(src.position), radius(src.radius){}
+  type_ray(type_ray const & src) : position(src.position), direction(src.direction) {}
   /** other constructor */
-  type_circle(vec2_type const & in_position, float in_radius) : position(in_position), radius(in_radius){}
+  type_ray(vec_type const & in_position, vec_type const & in_direction) : position(in_position), direction(in_direction) {}
+  /** construct a ray from 2 points */
+  type_ray(std::pair<vec_type, vec_type> const & pts) : position(pts.first), direction(glm::normalize(pts.second - pts.first)) {}
+
+public:
+
+  /** the starting position of the ray in space */
+  vec_type position;
+  /** the direction of the ray in space */
+  vec_type direction;
+};
+
+// ==============================================================================================
+// ray functions
+// ==============================================================================================
+
+/** equality function for ray */
+template<typename T, int dimension>
+bool operator == (type_ray<T, dimension> const & r1, type_ray<T, dimension> const & r2)
+{
+  return (r1.position == r2.position) && (r1.direction == r2.direction);
+}
+
+/** difference function for ray */
+template<typename T, int dimension>
+bool operator != (type_ray<T, dimension> const & r1, type_ray<T, dimension> const & r2)
+{
+  return !(r1 == r2);
+}
+
+// ==============================================================================================
+// sphere/circle classes
+// ==============================================================================================
+
+template<typename T, int dimension>
+class type_spheroid : public type_geometric<T, dimension>
+{
+public:
+
+  typedef typename type_geometric<T, dimension>::vec_type vec_type;
+  typedef typename type_geometric<T, dimension>::type     type;
+
+  /** constructor (empty circle) */
+  type_spheroid() : radius((T)-1.0f) {}
+  /** copy constructor */
+  type_spheroid(type_spheroid const & src) : position(src.position), radius(src.radius) {}
+  /** other constructor */
+  type_spheroid(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
 
   /** returns true whether the circle is empty */
   bool IsEmpty() const
@@ -626,169 +541,168 @@ public:
     radius = (T)-1.0f;
   }
 
-  /** returns the perimeter of the circle */
-  float GetPerimeter() const 
-  {
-    return static_cast<type>(2.0 * M_PI) * radius;
-  }
-
-  /** returns the surface of the circle */
-  float GetSurface() const 
-  {
-    return static_cast<type>(M_PI) * radius * radius;
-  }
-
   /** returns true whether the point is contained in the circle */
-  bool Contains(vec2_type const & pt) const
+  bool Contains(vec_type const & pt) const
   {
     return glm::length2(pt - position) <= radius * radius;
   }
 
-  /** returns the bounding box of the circle */
-  type_box2<type> GetBoundingBox() const;
-  /** returns the bounding box of the circle (square) */
-  type_box2<type> GetInnerBox() const;
-
 public:
 
   /** the center of the circle */
-  vec2_type position;
+  vec_type position;
   /** the radius of the circle */
   type radius;
 };
 
+
+// ==============================================================================================
+// sphere/circle functions
+// ==============================================================================================
+
 /** equality function for circle */
-template<typename T>
-bool operator == (type_circle<T> const & c1, type_circle<T> const & c2)
+template<typename T, int dimension>
+bool operator == (type_spheroid<T, dimension> const & c1, type_spheroid<T, dimension> const & c2)
 {
   return (b1.position == b1.position) && (b1.radius == b2.radius);
 }
 
 /** difference function for circle */
-template<typename T>
-bool operator != (type_circle<T> const & c1, type_circle<T> const & c2)
+template<typename T, int dimension>
+bool operator != (type_spheroid<T, dimension> const & c1, type_spheroid<T, dimension> const & c2)
 {
   return !(c1 == c2);
 }
 
-/**
- * The usual circle with float components
- */
-typedef type_circle<> circle;
-
-/** returns intersection of circle */
+/** returns the perimeter of the circle */
 template<typename T>
-type_circle<T> operator & (type_circle<T> const & c1,type_circle<T> const & c2);
-
-/** returns union of circle */
-template<typename T>
-type_circle<T> operator | (type_circle<T> const & c1,type_circle<T> const & c2);
-
-/**
- * Generic class for sphere(3D)
- */
-
-template<typename T = float>
-class type_sphere : public type_geometric3<T>
+float GetPerimeter(type_circle<T> const & c)
 {
-public:
-
-  /** constructor (empty sphere) */
-  type_sphere() : radius((T)-1.0f){}
-  /** copy constructor */
-  type_sphere(type_sphere const & src) : position(src.position), radius(src.radius){}
-  /** other constructor */
-  type_sphere(vec3_type const & in_position, float in_radius) : position(in_position), radius(in_radius){}
-
-  /** returns true whether the sphere is empty */
-  bool IsEmpty() const
-  {
-    return (radius < 0);
-  }
-
-  /** set the circle has an empty circle */
-  void SetEmpty()
-  {
-    radius = (T)-1.0f;
-  }
-
-  /** returns the volume of the sphere */
-  float GetVolume() const 
-  {
-    return static_cast<type>((4.0 / 3.0) * M_PI) * radius * radius * radius;
-  }
-
-  /** returns the surface of the sphere */
-  float GetSurface() const 
-  {
-    return static_cast<type>(4.0 * M_PI) * radius * radius;
-  }
-
-  /** returns true whether the point is contained in the circle */
-  bool Contains(vec3_type const & pt) const
-  {
-    return glm::length3(pt - position) <= radius * radius;
-  }
-
-  /** returns the bounding box of the sphere */
-  type_box3<type> GetBoundingBox() const;
-  /** returns the bounding box of the sphere (square) */
-  type_box3<type> GetInnerBox() const;
-
-public:
-
-  /** the center of the sphere */
-  vec3_type position;
-  /** the radius of the sphere */
-  float  radius;
-};
-
-/** equality function for sphere */
-template<typename T>
-bool operator == (type_sphere<T> const & s1, type_sphere<T> const & s2)
-{
-  return (s1.position == s1.position) && (s1.radius == s2.radius);
+  return static_cast<T>(2.0 * M_PI) * c.radius;
 }
 
-/** difference function for sphere */
+/** returns the surface of the circle */
 template<typename T>
-bool operator != (type_sphere<T> const & s1, type_sphere<T> const & s2)
+float GetSurface(type_circle<T> const & c)
 {
-  return !(s1 == s2);
+  return static_cast<T>(M_PI) * c.radius * c.radius;
 }
 
-/**
- * The usual circle with float components
- */
-typedef type_sphere<> sphere;
-
-/** returns intersection of sphere */
+/** returns the volume of the sphere */
 template<typename T>
-type_sphere<T> operator & (type_sphere<T> const & s1, type_sphere<T> const & s2);
-
-/** returns union of sphere */
-template<typename T>
-type_sphere<T> operator | (type_sphere<T> const & s1, type_sphere<T> const & s2);
-
-
-/**
- * Some methods to force an object to keep inside another
- */
-
-template<typename T>
-void ForceStayInside(type_box2<T> & bigger, type_box2<T> & smaller, bool move_big)
+T GetVolume(type_sphere<T> const & s)
 {
-  assert(bigger.half_size.x >= smaller.half_size.x);
-  assert(bigger.half_size.y >= smaller.half_size.y);
+  return static_cast<T>((4.0 / 3.0) * M_PI) * s.radius * s.radius * s.radius;
+}
+
+/** returns the surface of the sphere */
+template<typename T>
+float GetSurface(type_sphere<T> const & s)
+{
+  return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
+}
 
 
+/** returns the bounding box of the circle */
+template<typename T>
+type_box2<T> GetBoundingBox(type_circle<T> const & c)
+{
+  typedef typename type_circle<T>::vec_type vec_type;
 
+  return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
+}
+
+/** returns the bounding box of the circle (square) */
+template<typename T>
+type_box2<T> GetInnerBox(type_circle<T> const & c)
+{
+  typedef typename type_circle<T>::vec_type vec_type;
+
+  static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
+  return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
 }
 
 template<typename T>
-void ForceStayInside(type_box3<T> & bigger, type_box3<T> & smaller, bool move_big)
+type_box3<T> GetBoundingBox(type_sphere<T> const & s)
 {
-  auto count = bigger.position.length();
+  typedef typename type_sphere<T>::vec_type vec_type;
+
+  return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
+}
+
+template<typename T>
+type_box3<T> GetInnerBox(type_sphere<T> const & s)
+{
+  typedef typename type_sphere<T>::vec_type vec_type;
+
+  static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
+  return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
+}
+
+/** returns intersection of 2 spheres */
+template<typename T, int dimension>
+type_spheroid<T, dimension> operator & (const type_spheroid<T, dimension> & s1, const type_spheroid<T, dimension> & s2) // intersection
+{
+  typedef typename type_spheroid<T, dimension>::vec_type vec_type;
+
+  if (s1.IsEmpty() || s2.IsEmpty())
+    return type_sphere<T>();
+  if (s1.position == s2.position)
+    return type_spheroid<T, dimension>(s1.position, glm::min(s1.radius, s2.radius));
+
+  vec_type delta_pos = s2.position - s1.position;   // vector that go from center 1 to center 2  
+  T        distance  = glm::length(delta_pos);      // length of such a vector
+
+  if (distance >= s1.radius + s2.radius) // sphere too far => returns the empty sphere
+    return type_spheroid<T, dimension>();
+
+  T t1 = s1.radius / distance;  // positive     
+  T t2 = s2.radius / distance;  // positive 
+
+  T a = glm::max(-t1, static_cast<T>(1) - t2);
+  T b = glm::min( t1, static_cast<T>(1) + t2);
+
+  return type_spheroid<T, dimension>(
+    s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
+    ((b - a) / static_cast<T>(2)) * distance);
+}
+
+/** returns union of 2 spheres */
+template<typename T, int dimension>
+type_spheroid<T, dimension> operator | (const type_spheroid<T, dimension> & s1, const type_spheroid<T, dimension> & s2) // union
+{
+  typedef typename type_spheroid<T, dimension>::vec_type vec_type;
+
+  if (s1.IsEmpty())
+    return s2;
+  if (s2.IsEmpty())
+    return s1;
+  if (s1.position == s2.position)
+    return type_spheroid<T, dimension>(s1.position, glm::max(s1.radius, s2.radius));
+
+  vec_type delta_pos = s2.position - s1.position;    // vector that go from center 1 to center 2  
+  T        distance  = glm::length(delta_pos);       // length of such a vector
+
+  T t1 = s1.radius / distance;  // positive   
+  T t2 = s2.radius / distance;  // positive   
+
+  T a = glm::min(-t1, static_cast<T>(1) - t2);
+  T b = glm::max( t1, static_cast<T>(1) + t2);
+
+  return type_spheroid<T, dimension>(
+    s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
+    ((b - a) / static_cast<T>(2)) * distance);
+}
+
+
+// ==============================================================================================
+// sphere/circle functions
+// ==============================================================================================
+
+template<typename T, int dimension>
+void ForceToStayInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
+{
+  int const count = dimension;
 
 #if _DEBUG
   for (int i = 0 ; i < count ; ++i)

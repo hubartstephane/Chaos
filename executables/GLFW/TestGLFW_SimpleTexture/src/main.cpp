@@ -127,8 +127,17 @@ protected:
   chaos::GLProgramData        program_data;
 };
 
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
+
+#if 0
+
+  type_ray<float, 2>::type r;
+
+  r = r;
+
   chaos::box3 bigger, smaller;
 
   bigger.half_size  = glm::vec3(5.0f, 6.0f, 7.0f);
@@ -145,6 +154,8 @@ int _tmain(int argc, char ** argv, char ** env)
   auto vv = v[1];
 
   return 0;
+#endif
+
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

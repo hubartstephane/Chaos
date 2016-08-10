@@ -30,10 +30,22 @@ public:
 
 protected:
 
-  void DebugDisplayExampleTitle()
+  char const * GetExampleTitle(int example)
+  {
+    if (example == 0)
+      return "ensure boxes touch each others";
+    if (example == 1)
+      return "test box.GetCorner(...)";
+  
+    return nullptr;
+  }
+
+  void DebugDisplayExampleTitle(bool display_commands)
   {
     debug_display.Clear();
-    debug_display.AddLine(chaos::StringTools::Printf("Example [%d]", display_example).c_str(), 3.0f);
+    if (display_commands)
+      debug_display.AddLine("=> Use +/- to change example");
+    debug_display.AddLine(chaos::StringTools::Printf("=> Example %02d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
   void DrawBox(chaos::box3 const & b, glm::vec4 const & color)
@@ -138,15 +150,13 @@ protected:
     debug_params.texture_path = image_path;
     debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     debug_params.font_characters_per_line = 10;
-    debug_params.character_size = 25;
+    debug_params.character_size = 20;
 
     if (!debug_display.Initialize(debug_params))
       return false;
-
     
-    DebugDisplayExampleTitle();
-    debug_display.AddLine("use +/- to change example", 5.0f);
-
+    DebugDisplayExampleTitle(true);
+   
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
@@ -196,14 +206,14 @@ protected:
       display_example = display_example + 1;
       display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
 
-      DebugDisplayExampleTitle();
+      DebugDisplayExampleTitle(false);
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
     {
       display_example = display_example - 1;
       display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
 
-      DebugDisplayExampleTitle();
+      DebugDisplayExampleTitle(false);
     }
 
   }

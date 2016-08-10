@@ -119,7 +119,7 @@ namespace chaos
     params.font_characters_per_line = mesh_builder_params.font_characters_per_line;
     params.line_limit               = max(width / mesh_builder_params.character_size, 1);
     params.character_size           = glm::vec2(1.0f, 1.0f);
-    params.spacing                  = glm::vec2(0.1f, 0.1f);
+    params.spacing                  = glm::vec2(0.0f, 0.0f);
 
     // generate vertex buffer data
     std::vector<float> vertices;

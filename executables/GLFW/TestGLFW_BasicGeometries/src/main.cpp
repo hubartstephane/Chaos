@@ -2,68 +2,85 @@
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
+#include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
 #include <chaos/GLProgramLoader.h>
 #include <chaos/Application.h>
-#include <chaos/MyGLFWFpsCamera.h>
-#include <chaos/MyFbxImporter.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/SimpleMesh.h>
 #include <chaos/SimpleMeshDef.h>
+#include <chaos/SkyBoxTools.h>
+#include <chaos/GLDebugOnScreenDisplay.h>
+#include <chaos/MyGLFWFpsCamera.h>
+#include <chaos/SimpleMesh.h>
+#include <chaos/GLProgramData.h>
+#include <chaos/VertexDeclaration.h>
+
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : 
+  MyGLFWWindowOpenGLTest1() :
     program(0),
-    realtime(0.0),
-    mesh(nullptr){}
+    mesh(nullptr) {}
 
 protected:
 
-
-  void DisplayBox(chaos::box3 const & b)
+  void DrawBox(chaos::box3 const & b, glm::vec4 & color)
   {
+    glm::mat4 local_to_world_matrix =
+      glm::translate(b.position) *
+      glm::scale(b.half_size);
+      
+    
+    program_data.SetUniform("local_to_world", local_to_world_matrix);
+    program_data.SetUniform("color", color);
+
+    mesh->Render(program_data, nullptr, 0, 0);
+  }
+
+  void DrawGeometryObjects()
+  {
+    glm::vec4 red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    glm::vec4 blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+    chaos::box3 b1(glm::vec3( 0.0f, 0.0f,  0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+    chaos::box3 b2(glm::vec3(10.0f, 0.0f,  0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+    chaos::box3 b3(glm::vec3( 0.0f, 0.0f, 10.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+
+    DrawBox(b1, red);
+    DrawBox(b2, green);
+    DrawBox(b3, blue);
 
 
   }
 
-
   virtual bool OnDraw(int width, int height) override
   {
-    float     far_plane = 1000.0f;
     glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+    float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);   
-   
+    glDisable(GL_CULL_FACE);   // when viewer is inside the cube
+
     glUseProgram(program);
 
     // XXX : the scaling is used to avoid the near plane clipping      
-    static float FOV =  60.0f;
-    glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)width, (float)height, 1.0f, far_plane);
-
-    glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
-
+    static float FOV = 60.0f;
+    glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
     glm::mat4 world_to_camera_matrix = fps_camera.GlobalToLocal();
 
-    int instance_cube_size = 1;
+    program_data.SetUniform("projection", projection_matrix);    
+    program_data.SetUniform("world_to_camera", world_to_camera_matrix);
 
-    program_data.SetUniform("projection",         projection_matrix);
-    program_data.SetUniform("local_to_world",     local_to_world_matrix);
-    program_data.SetUniform("world_to_camera",    world_to_camera_matrix);
-    program_data.SetUniform("instance_cube_size", instance_cube_size);
-    program_data.SetUniform("realtime",           realtime);
+    DrawGeometryObjects();
 
-
-    int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-    int base_instance  = 0;
-    mesh->Render(program_data, nullptr, instance_count, base_instance);
+    debug_display.Display(width, height);
 
     return true;
   }
@@ -74,33 +91,46 @@ protected:
       glDeleteProgram(program);
     if (mesh != nullptr)
       delete(mesh);
+
+    debug_display.Finalize();
   }
 
   virtual bool Initialize() override
-  {   
+  {
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;
 
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+    boost::filesystem::path image_path = resources_path / "font.png";
 
-    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(10.0f, 5.0f, 2.5f), false);
-    if (mesh == nullptr)
+    chaos::GLDebugOnScreenDisplay::Params debug_params;
+    debug_params.texture_path = image_path;
+    debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    debug_params.font_characters_per_line = 10;
+    debug_params.character_size = 30;
+
+    if (!debug_display.Initialize(debug_params))
       return false;
 
-	  // create shader
+    debug_display.AddLine("HelloWorld");
+
+
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
-    
+    loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
+
     program = loader.GenerateProgram();
     if (program == 0)
       return false;
 
     program_data = chaos::GLProgramData::GetData(program);
 
-    fps_camera.fps_controller.position.z = 100.0f;
-   
+    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), true);
+    if (mesh == nullptr)
+      return false;
+
+
     return true;
   }
 
@@ -108,8 +138,8 @@ protected:
   {
     chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel  = 1;
-    hints.decorated = 0;
+    hints.toplevel = 1;
+    hints.decorated = 1;
   }
 
   virtual bool Tick(double delta_time) override
@@ -121,11 +151,16 @@ protected:
 
     fps_camera.Tick(glfw_window, delta_time);
 
+    debug_display.Tick(delta_time);
+
     return true; // refresh
   }
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
+    if (button == 1 && action == GLFW_RELEASE)
+      debug_display.AddLine("HelloWorld");
+
     fps_camera.OnMouseButton(glfw_window, button, action, modifier);
   }
 
@@ -137,14 +172,16 @@ protected:
 protected:
 
   GLuint program;
-  
-  double realtime;
 
   chaos::SimpleMesh * mesh;
 
   chaos::GLProgramData program_data;
 
+  double realtime;
+
   chaos::MyGLFWFpsCamera fps_camera;
+
+  chaos::GLDebugOnScreenDisplay debug_display;
 };
 
 int _tmain(int argc, char ** argv, char ** env)
@@ -152,15 +189,14 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-    
+
   FreeImage_Initialise(); // glew will be initialized 
   glfwInit();
 
   chaos::MyGLFWSingleWindowApplicationParams params;
-  params.monitor       = nullptr;
-  params.monitor_index = -1;
-  params.width         = 800;
-  params.height        = 800;
+  params.monitor = nullptr;
+  params.width = 500;
+  params.height = 500;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

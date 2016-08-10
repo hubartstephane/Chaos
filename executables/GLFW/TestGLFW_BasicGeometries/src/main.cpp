@@ -16,7 +16,7 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/VertexDeclaration.h>
 
-static const int MAX_DISPLAY_EXAMPLE = 5;
+static const int MAX_DISPLAY_EXAMPLE = 2;
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -41,8 +41,7 @@ protected:
     glm::mat4 local_to_world_matrix =
       glm::translate(b.position) *
       glm::scale(b.half_size);
-      
-    
+          
     program_data.SetUniform("local_to_world", local_to_world_matrix);
     program_data.SetUniform("color", color);
 
@@ -61,27 +60,30 @@ protected:
     glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
     glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    /*
-    chaos::box3 b1(glm::vec3( 0.0f, 0.0f,  0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-    chaos::box3 b2(glm::vec3(10.0f, 0.0f,  0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-    chaos::box3 b3(glm::vec3( 0.0f, 0.0f, 10.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-    */
-    
-    chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    
 
-    DrawBox(b1, red);
-    DrawBox(b2, green);
-    DrawBox(b3, blue);
+    // ensure box touch alltogether
+    if (display_example == 0)
+    {
+      chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+      chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+      chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    std::pair<glm::vec3, glm::vec3> b1_corners = b1.GetCorners();
-    DrawPoint(b1_corners.first, red);
-    DrawPoint(b1_corners.second, red);
-    
+      DrawBox(b1, red);
+      DrawBox(b2, green);
+      DrawBox(b3, blue);
+    }
 
+    // display box and corners
+    if (display_example == 1)
+    {
+      chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
+      DrawBox(b1, red);
+
+      std::pair<glm::vec3, glm::vec3> b1_corners = b1.GetCorners();
+      DrawPoint(b1_corners.first, white);
+      DrawPoint(b1_corners.second, white);
+    }
   }
 
   virtual bool OnDraw(int width, int height) override
@@ -136,12 +138,14 @@ protected:
     debug_params.texture_path = image_path;
     debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     debug_params.font_characters_per_line = 10;
-    debug_params.character_size = 30;
+    debug_params.character_size = 25;
 
     if (!debug_display.Initialize(debug_params))
       return false;
 
+    
     DebugDisplayExampleTitle();
+    debug_display.AddLine("use +/- to change example", 5.0f);
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
@@ -185,17 +189,27 @@ protected:
     return true; // refresh
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override
+  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if ((button == 0 || button == 1) && action == GLFW_RELEASE)
+    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
-      display_example = display_example - (button * 2 - 1);
+      display_example = display_example + 1;
+      display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
 
+      DebugDisplayExampleTitle();
+    }
+    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+    {
+      display_example = display_example - 1;
       display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
 
       DebugDisplayExampleTitle();
     }
 
+  }
+
+  virtual void OnMouseButton(int button, int action, int modifier) override
+  {
     fps_camera.OnMouseButton(glfw_window, button, action, modifier);
   }
 
@@ -232,7 +246,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width = 500;
+  params.width  = 800;
   params.height = 500;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);

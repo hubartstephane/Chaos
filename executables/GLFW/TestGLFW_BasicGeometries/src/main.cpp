@@ -16,7 +16,7 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/VertexDeclaration.h>
 
-static const int MAX_DISPLAY_EXAMPLE = 2;
+static const int MAX_DISPLAY_EXAMPLE = 5;
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -33,9 +33,15 @@ protected:
   char const * GetExampleTitle(int example)
   {
     if (example == 0)
-      return "ensure boxes touch each others";
+      return "boxes touch each others";
     if (example == 1)
-      return "test box.GetCorner(...)";
+      return "box.GetCorner(...)";
+    if (example == 2)
+      return "construct box from corners";
+    if (example == 3)
+      return "box intersection";
+    if (example == 4)
+      return "box union";
   
     return nullptr;
   }
@@ -45,11 +51,14 @@ protected:
     debug_display.Clear();
     if (display_commands)
       debug_display.AddLine("=> Use +/- to change example");
-    debug_display.AddLine(chaos::StringTools::Printf("=> Example %02d : %s", display_example, GetExampleTitle(display_example)).c_str());
+    debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
   void DrawBox(chaos::box3 const & b, glm::vec4 const & color)
   {
+    if (b.IsEmpty())
+      return;
+
     glm::mat4 local_to_world_matrix =
       glm::translate(b.position) *
       glm::scale(b.half_size);
@@ -73,6 +82,9 @@ protected:
     glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
     glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+    glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+
     // ensure box touch alltogether
     if (display_example == 0)
     {
@@ -88,14 +100,61 @@ protected:
     // display box and corners
     if (display_example == 1)
     {
-      chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+      chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-      DrawBox(b1, red);
+      DrawBox(b, red);
 
-      std::pair<glm::vec3, glm::vec3> b1_corners = b1.GetCorners();
-      DrawPoint(b1_corners.first, white);
-      DrawPoint(b1_corners.second, white);
+      std::pair<glm::vec3, glm::vec3> corners = b.GetCorners();
+      DrawPoint(corners.first, white);
+      DrawPoint(corners.second, white);
     }
+
+    // box construction from corners
+    if (display_example == 2)
+    {
+      glm::vec3 p1(0.0f, 0.0f, 0.0f);
+      glm::vec3 p2(1.0f, 2.0f, 3.0f);
+
+      chaos::box3 b(std::make_pair(p1, p2));
+
+      DrawBox(b, red);
+      DrawPoint(p1, white);
+      DrawPoint(p2, white);
+    }
+
+    // box union or intersection
+    if (display_example == 3 || display_example == 4)
+    {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glDisable(GL_DEPTH_TEST);
+
+      chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+      chaos::box3 b2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 1.0f, 2.0f));
+     
+      b1.position.x = 5.0f * (float)chaos::MathTools::Cos(3.0 * realtime * M_2_PI);
+      b2.position.y = 5.0f * (float)chaos::MathTools::Cos(4.0 * realtime * M_2_PI);
+
+      glm::vec4 src_alpha = (display_example == 4)? solid : translucent;
+      glm::vec4 res_alpha = (display_example == 3)? solid : translucent;
+
+      DrawBox(b1, red  * src_alpha);
+      DrawBox(b2, blue * src_alpha);
+
+      if (display_example == 3)
+        DrawBox(b1 & b2, white * res_alpha);
+      else
+        DrawBox(b1 | b2, white * res_alpha);
+
+      glEnable(GL_DEPTH_TEST);
+      glDisable(GL_BLEND);
+    }
+
+
+
+
+
+
   }
 
   virtual bool OnDraw(int width, int height) override
@@ -256,8 +315,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 800;
-  params.height = 500;
+  params.width  = 100;
+  params.height = 60;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

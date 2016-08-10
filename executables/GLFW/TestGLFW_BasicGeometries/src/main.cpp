@@ -2,6 +2,7 @@
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
+#include <chaos/StringTools.h> 
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
@@ -15,6 +16,7 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/VertexDeclaration.h>
 
+static const int MAX_DISPLAY_EXAMPLE = 5;
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -23,11 +25,18 @@ public:
   MyGLFWWindowOpenGLTest1() :
     program(0),
     mesh(nullptr),
-    realtime(0.0){}
+    realtime(0.0),
+    display_example(0){}
 
 protected:
 
-  void DrawBox(chaos::box3 const & b, glm::vec4 & color)
+  void DebugDisplayExampleTitle()
+  {
+    debug_display.Clear();
+    debug_display.AddLine(chaos::StringTools::Printf("Example [%d]", display_example).c_str(), 3.0f);
+  }
+
+  void DrawBox(chaos::box3 const & b, glm::vec4 const & color)
   {
     glm::mat4 local_to_world_matrix =
       glm::translate(b.position) *
@@ -40,19 +49,37 @@ protected:
     mesh->Render(program_data, nullptr, 0, 0);
   }
 
+  void DrawPoint(glm::vec3 const & p, glm::vec4 const & color)
+  {
+    glm::vec3 half_point_size(0.25f);
+    DrawBox(chaos::box3(p, half_point_size), color);  
+  }
+
   void DrawGeometryObjects()
   {
-    glm::vec4 red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    glm::vec4 green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    glm::vec4 blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-
+    glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    /*
     chaos::box3 b1(glm::vec3( 0.0f, 0.0f,  0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
     chaos::box3 b2(glm::vec3(10.0f, 0.0f,  0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
     chaos::box3 b3(glm::vec3( 0.0f, 0.0f, 10.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+    */
+    
+    chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    
 
     DrawBox(b1, red);
     DrawBox(b2, green);
     DrawBox(b3, blue);
+
+    std::pair<glm::vec3, glm::vec3> b1_corners = b1.GetCorners();
+    DrawPoint(b1_corners.first, red);
+    DrawPoint(b1_corners.second, red);
+    
 
 
   }
@@ -114,8 +141,7 @@ protected:
     if (!debug_display.Initialize(debug_params))
       return false;
 
-    debug_display.AddLine("HelloWorld");
-
+    DebugDisplayExampleTitle();
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
@@ -131,6 +157,8 @@ protected:
     if (mesh == nullptr)
       return false;
 
+    fps_camera.fps_controller.position.y =  3.0f;
+    fps_camera.fps_controller.position.z = 10.0f;
 
     return true;
   }
@@ -159,8 +187,14 @@ protected:
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
-    if (button == 1 && action == GLFW_RELEASE)
-      debug_display.AddLine("HelloWorld");
+    if ((button == 0 || button == 1) && action == GLFW_RELEASE)
+    {
+      display_example = display_example - (button * 2 - 1);
+
+      display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
+
+      DebugDisplayExampleTitle();
+    }
 
     fps_camera.OnMouseButton(glfw_window, button, action, modifier);
   }
@@ -179,6 +213,8 @@ protected:
   chaos::GLProgramData program_data;
 
   double realtime;
+
+  int    display_example;
 
   chaos::MyGLFWFpsCamera fps_camera;
 

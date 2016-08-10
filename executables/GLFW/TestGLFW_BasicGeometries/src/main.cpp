@@ -23,6 +23,14 @@ public:
 
 protected:
 
+
+  void DisplayBox(chaos::box3 const & b)
+  {
+
+
+  }
+
+
   virtual bool OnDraw(int width, int height) override
   {
     float     far_plane = 1000.0f;
@@ -44,7 +52,7 @@ protected:
 
     glm::mat4 world_to_camera_matrix = fps_camera.GlobalToLocal();
 
-    int instance_cube_size = 20;
+    int instance_cube_size = 1;
 
     program_data.SetUniform("projection",         projection_matrix);
     program_data.SetUniform("local_to_world",     local_to_world_matrix);
@@ -76,7 +84,7 @@ protected:
 
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
 
-    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), false);
+    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(10.0f, 5.0f, 2.5f), false);
     if (mesh == nullptr)
       return false;
 

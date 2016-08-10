@@ -3,6 +3,7 @@
 -- =============================================================================
 
 ProcessSubPremake("TestGLFW_Base")
+ProcessSubPremake("TestGLFW_BasicGeometries")
 ProcessSubPremake("TestGLFW_GamepadDetection")
 ProcessSubPremake("TestGLFW_GamepadManager")
 ProcessSubPremake("TestGLFW_SimpleTexture")

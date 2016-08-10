@@ -22,7 +22,8 @@ public:
 
   MyGLFWWindowOpenGLTest1() :
     program(0),
-    mesh(nullptr) {}
+    mesh(nullptr),
+    realtime(0.0){}
 
 protected:
 

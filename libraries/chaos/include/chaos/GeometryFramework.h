@@ -321,24 +321,22 @@ type_box<T, dimension> operator & (const type_box<T, dimension> & b1, const type
   if (b1.IsEmpty() || b2.IsEmpty()) // any of the 2 is empty, intersection is empty
     return type_box<T, dimension>();
 
-  vec_type p1 = b1.position + b1.half_size;
-  vec_type p2 = b2.position - b2.half_size;
+  vec_type A1 = b1.position + b1.half_size;
+  vec_type B2 = b2.position - b2.half_size;
 
-  if (glm::any(glm::lessThanEqual(p1, p2)))
+  if (glm::any(glm::lessThanEqual(A1, B2)))
     return type_box<T, dimension>();
 
-  vec_type p3 = b1.position - b1.half_size;
-  vec_type p4 = b2.position + b2.half_size;
+  vec_type B1 = b1.position - b1.half_size;
+  vec_type A2 = b2.position + b2.half_size;
 
-  if (glm::any(glm::lessThanEqual(p4, p3)))
+  if (glm::any(glm::lessThanEqual(A2, B1)))
     return type_box<T, dimension>();
 
-  vec_type a = glm::min(p1, p4);
-  vec_type b = glm::max(p3, p2);
+  vec_type A = glm::min(A1, A2);
+  vec_type B = glm::max(B1, B2);
 
-  // shuxxx : std::pair() ... ?
-
-  return type_box<T, dimension>((a + b) / static_cast<T>(2), (b - a) / static_cast<T>(2));
+  return type_box<T, dimension>(std::make_pair(A, B));
 }
 
 /** union of 2 boxes */
@@ -352,18 +350,16 @@ type_box<T, dimension> operator | (const type_box<T, dimension> & b1, const type
   if (b2.IsEmpty())
     return b1;
 
-  vec_type p1 = b1.position + b1.half_size;
-  vec_type p2 = b2.position + b2.half_size;
+  vec_type A1 = b1.position + b1.half_size;
+  vec_type A2 = b2.position + b2.half_size;
 
-  vec_type p3 = b1.position - b1.half_size;
-  vec_type p4 = b2.position - b2.half_size;
+  vec_type B1 = b1.position - b1.half_size;
+  vec_type B2 = b2.position - b2.half_size;
 
-  vec_type a = glm::max(p1, p2);
-  vec_type b = glm::min(p3, p4);
+  vec_type A = glm::max(A1, A2);
+  vec_type B = glm::min(B1, B2);
 
-  // shuxxx : std::pair() ... ?
-
-  return type_box<T, dimension>((a + b) / static_cast<T>(2), (b - a) / static_cast<T>(2));
+  return type_box<T, dimension>(std::make_pair(A, B));
 }
 
 /** returns one of the sub-boxes obtained by splitting the src */
@@ -666,7 +662,7 @@ type_spheroid<T, dimension> operator & (const type_spheroid<T, dimension> & s1, 
   typedef typename type_spheroid<T, dimension>::vec_type vec_type;
 
   if (s1.IsEmpty() || s2.IsEmpty())
-    return type_sphere<T>();
+    return type_spheroid<T, dimension>();
   if (s1.position == s2.position)
     return type_spheroid<T, dimension>(s1.position, glm::min(s1.radius, s2.radius));
 

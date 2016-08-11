@@ -26,6 +26,7 @@ public:
     program(0),
     mesh(nullptr),
     realtime(0.0),
+    time_scale(1.0),
     display_example(0){}
 
 protected:
@@ -50,7 +51,11 @@ protected:
   {
     debug_display.Clear();
     if (display_commands)
+    {
       debug_display.AddLine("=> Use +/- to change example");
+      debug_display.AddLine("=> Use T   to freeze time");
+      //debug_display.AddLine("");
+    }
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
@@ -83,7 +88,7 @@ protected:
     glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+    glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
     // ensure box touch alltogether
     if (display_example == 0)
@@ -125,29 +130,40 @@ protected:
     // box union or intersection
     if (display_example == 3 || display_example == 4)
     {
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glDisable(GL_DEPTH_TEST);
-
       chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
       chaos::box3 b2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 1.0f, 2.0f));
-     
+
       b1.position.x = 5.0f * (float)chaos::MathTools::Cos(3.0 * realtime * M_2_PI);
       b2.position.y = 5.0f * (float)chaos::MathTools::Cos(4.0 * realtime * M_2_PI);
 
-      glm::vec4 src_alpha = (display_example == 4)? solid : translucent;
-      glm::vec4 res_alpha = (display_example == 3)? solid : translucent;
-
-      DrawBox(b1, red  * src_alpha);
-      DrawBox(b2, blue * src_alpha);
-
       if (display_example == 3)
-        DrawBox(b1 & b2, white * res_alpha);
-      else
-        DrawBox(b1 | b2, white * res_alpha);
+      {
+        DrawBox(b1 & b2, white * solid);
 
-      glEnable(GL_DEPTH_TEST);
-      glDisable(GL_BLEND);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST);
+
+        DrawBox(b1, red  * translucent);
+        DrawBox(b2, blue * translucent);
+
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+      }
+      else
+      {
+        DrawBox(b1, red  * solid);
+        DrawBox(b2, blue * solid);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST);
+
+        DrawBox(b1 | b2, white * translucent);
+        
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+      }
     }
 
 
@@ -246,7 +262,7 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    realtime += delta_time;
+    realtime += delta_time * time_scale;
 
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
@@ -260,7 +276,11 @@ protected:
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+    if (key == GLFW_KEY_T && action == GLFW_RELEASE)
+    {
+      time_scale = 1.0 - time_scale;
+    }
+    else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
       display_example = display_example + 1;
       display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
@@ -297,6 +317,8 @@ protected:
 
   double realtime;
 
+  double time_scale;
+
   int    display_example;
 
   chaos::MyGLFWFpsCamera fps_camera;
@@ -315,8 +337,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 100;
-  params.height = 60;
+  params.width  = 1000;
+  params.height = 600;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

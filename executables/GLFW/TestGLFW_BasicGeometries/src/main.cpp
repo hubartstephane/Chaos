@@ -117,6 +117,19 @@ protected:
     DrawBox(ctx, chaos::box3(p, half_point_size), color);  
   }
 
+  void BeginTranslucency()
+  {
+    glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
+
+  void EndTranslucency()
+  {
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+  }
+
   void DrawGeometryObjects(RenderingContext const & ctx)
   {
     glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -177,29 +190,19 @@ protected:
       {
         DrawBox(ctx, SlightIncreaseSize(b1 & b2), white * solid);
 
-        glEnable(GL_BLEND);
-        glDepthMask(GL_FALSE);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+        BeginTranslucency();        
         DrawBox(ctx, b1, red  * translucent);
         DrawBox(ctx, b2, blue * translucent);
-
-        glDepthMask(GL_TRUE);
-        glDisable(GL_BLEND);
+        EndTranslucency();
       }
       else
       {
         DrawBox(ctx, b1, red  * solid);
         DrawBox(ctx, b2, blue * solid);
 
-        glEnable(GL_BLEND);
-        glDepthMask(GL_FALSE);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+        BeginTranslucency();        
         DrawBox(ctx, SlightIncreaseSize(b1 | b2), white * translucent);
-        
-        glDepthMask(GL_TRUE);
-        glDisable(GL_BLEND);
+        EndTranslucency();        
       }
     }
 
@@ -253,15 +256,30 @@ protected:
     debug_display.Finalize();
   }
 
+  GLuint LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename, chaos::GLProgramData & program_data)
+  {
+    chaos::GLProgramLoader loader;
+    loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
+    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
+
+    GLuint result = loader.GenerateProgram();
+    if (result != 0)
+      program_data = chaos::GLProgramData::GetData(result);
+
+    return result;
+  }
+
   virtual bool Initialize() override
   {
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;
 
+    // compute resource path
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
     boost::filesystem::path image_path = resources_path / "font.png";
 
+    // initialize debug font display 
     chaos::GLDebugOnScreenDisplay::Params debug_params;
     debug_params.texture_path = image_path;
     debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
@@ -273,24 +291,22 @@ protected:
     if (!debug_display.Initialize(debug_params))
       return false;
     
-    DebugDisplayExampleTitle(true);
-   
-    chaos::GLProgramLoader loader;
-    loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
-
-    program_box = loader.GenerateProgram();
+    // load programs      
+    program_box = LoadProgram(resources_path, "pixel_shader_cube.txt", "vertex_shader.txt", program_box_data);
     if (program_box == 0)
       return false;
 
-    program_box_data = chaos::GLProgramData::GetData(program_box);
-
+    // create meshes
     mesh_box = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), true);
     if (mesh_box == nullptr)
       return false;
 
+    // place camera
     fps_camera.fps_controller.position.y =  3.0f;
     fps_camera.fps_controller.position.z = 10.0f;
+
+    // initial display
+    DebugDisplayExampleTitle(true);
 
     return true;
   }

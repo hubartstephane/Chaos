@@ -45,12 +45,13 @@ protected:
     boost::filesystem::path image_path     = resources_path / "font.png";
 
     chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path             = image_path;
-    debug_params.font_characters          = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    debug_params.font_characters_per_line = 10;
-    debug_params.character_size           = 30;
-    debug_params.horiz_spacing            = -15;
-    debug_params.vert_spacing             = -10;
+    debug_params.texture_path               = image_path;
+    debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    debug_params.font_characters_per_line   = 10;
+    debug_params.font_characters_line_count = 10;
+    debug_params.character_size             = glm::ivec2(20, 30);
+    debug_params.spacing                    = glm::ivec2( 0,  0);
+    debug_params.crop_texture               = glm::ivec2(15,  7);
 
     if (!debug_display.Initialize(debug_params))
       return false;

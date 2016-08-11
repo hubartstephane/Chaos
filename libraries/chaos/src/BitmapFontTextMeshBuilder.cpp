@@ -21,7 +21,8 @@ chaos::box2 BitmapFontTextMeshBuilder::BuildBuffer(char const * msg, BitmapFontT
    
   int char_in_line = 0;
 
-  float tex_size  = 1.0f / (float)params.font_characters_per_line;
+  float tex_size_x = 1.0f / (float)params.font_characters_per_line;
+  float tex_size_y = 1.0f / (float)params.font_characters_line_count;
 	
 	float x         =  params.position.x;
 	float y         =  params.position.y;
@@ -77,14 +78,19 @@ chaos::box2 BitmapFontTextMeshBuilder::BuildBuffer(char const * msg, BitmapFontT
 		  size_t char_x     = (char_index % params.font_characters_per_line);
 		  size_t char_y     = (char_index / params.font_characters_per_line);
 
-      float a = ((float)char_x) * tex_size;
-      float b = ((float)char_y) * tex_size;
+      float a = ((float)char_x) * tex_size_x;
+      float b = ((float)char_y) * tex_size_y;
 
 		  // compute the 4 texture coordinates
-		  glm::vec2 t1 = glm::vec2(a, b);
-		  glm::vec2 t2 = t1 + glm::vec2(tex_size, 0.0f);
-		  glm::vec2 t3 = t2 + glm::vec2(0.0f, tex_size);
-		  glm::vec2 t4 = t1 + glm::vec2(0.0f, tex_size);
+      glm::vec2 tb = glm::vec2(a, b);
+
+      float cx = params.crop_texture.x;
+      float cy = params.crop_texture.y;
+
+      glm::vec2 t1 = tb + glm::vec2(cx             , cy);
+		  glm::vec2 t2 = tb + glm::vec2(tex_size_x - cx, cy);
+		  glm::vec2 t3 = tb + glm::vec2(tex_size_x - cx, tex_size_y - cy);
+		  glm::vec2 t4 = tb + glm::vec2(cx             , tex_size_y - cy);
 
 		  // compute the 4 vertex coordinates
 		  glm::vec2 v1 = glm::vec2(x, y);

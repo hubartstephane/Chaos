@@ -23,9 +23,10 @@ public:
     /** constructor */
     Params():
       font_characters_per_line(0),
-      character_size(20),
-      horiz_spacing(0),
-      vert_spacing(0){}
+      font_characters_line_count(0),
+      character_size(20, 20),
+      spacing(0, 0),
+      crop_texture(0, 0){}
 
     /** the path of the bitmap texture */
     boost::filesystem::path texture_path;
@@ -33,12 +34,14 @@ public:
     std::string font_characters;
     /** the number of characters on a line of the bitmap */
     int         font_characters_per_line;
+    /** the number of lines of the bitmap */
+    int         font_characters_line_count;
     /** character size in pixel */
-    int         character_size;
+    glm::ivec2  character_size;
     /** some space to add (or remove between each characters) in pixels */
-    int         horiz_spacing;
-    /** some space to add (or remove between each characters) in pixels */
-    int         vert_spacing;
+    glm::ivec2  spacing;
+    /** some texels to remove in texture font grid to have pixels of interest */
+    glm::ivec2  crop_texture;
   };
 
   /** constructor */
@@ -58,6 +61,9 @@ public:
   /** Finalize */
   void Finalize();
 
+  /** get the characters in the font */
+  std::string const & GetFontCharacters() const { return mesh_builder_params.font_characters;}
+
 protected:
 
   /** internal initialization method */
@@ -74,7 +80,6 @@ protected:
   /** size of the screen (useful to know when lines have to change) */
   mutable int screen_width;
 
-
   /** the program to run */
   GLuint program;
   /** the definition of the program */
@@ -82,10 +87,12 @@ protected:
   /** the declaration of the vertex buffer */
   VertexDeclaration declaration;
 
-
-
   /** the bitmap texture */
   GLuint texture_id;
+  /** the bitmap texture size */
+  int    texture_width;
+  /** the bitmap texture size */
+  int    texture_height;
 
   /** the vertex array */
   GLuint vertex_array;

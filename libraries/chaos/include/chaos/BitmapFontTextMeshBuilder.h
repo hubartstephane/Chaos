@@ -49,18 +49,22 @@ public:
 		Params(char const * characters = nullptr):
       font_characters(characters),
 			font_characters_per_line(0),
+      font_characters_line_count(0),
 			tab_size(2),
       alignment_flags(ALIGN_TOPLEFT),
       line_limit(0),
       position(0.0f, 0.0f),
 			character_size(1.0f, 1.0f),
-      spacing(0.1f, 0.1f)
+      spacing(0.0f, 0.0f),
+      crop_texture(0.0f, 0.0f)
     {}
 
 		/** the characters contained inside the font bitmap, in order */
 		char const * font_characters;
 		/** the number of characters on a line of the bitmap */
 		int          font_characters_per_line;
+    /** the number of lines of characters in the bitmap */
+    int          font_characters_line_count;
     /** the size of a tab in 'SPACE' equivalent */
     int          tab_size;
     /** the alignment for the vertices */
@@ -74,6 +78,8 @@ public:
 		glm::vec2 character_size;
 		/** a space between characters or lines */
 		glm::vec2 spacing;
+    /** some texture ratio to crop each character */
+    glm::vec2 crop_texture;
 	};
 
 	/** the main function */

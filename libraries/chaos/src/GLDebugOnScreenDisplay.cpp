@@ -39,6 +39,8 @@ namespace chaos
     screen_width(-1),
     program(0),
     texture_id(0),
+    texture_width(0),
+    texture_height(0),
     vertex_array(0),
     vertex_buffer(0)
   {
@@ -89,10 +91,10 @@ namespace chaos
     
     program_data.BindAttributes(vertex_array, declaration, nullptr);
 
-    float factor_x = ((float)mesh_builder_params.character_size) * 2.0f / ((float)width);   // screen coordinates are [-1, +1]
-    float factor_y = ((float)mesh_builder_params.character_size) * 2.0f / ((float)height);  // for [width, height] pixels
-                                                                                            // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
-                                                                                            // see BitmapFontTextMeshBuilder
+    float factor_x = ((float)mesh_builder_params.character_size.x) * 2.0f / ((float)width);   // screen coordinates are [-1, +1]
+    float factor_y = ((float)mesh_builder_params.character_size.y) * 2.0f / ((float)height);  // for [width, height] pixels
+                                                                                              // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
+                                                                                              // see BitmapFontTextMeshBuilder
     GLUniformInfo const * position_factor = program_data.FindUniform("position_factor");
     if (position_factor != nullptr)
       glUniform2f(position_factor->location, factor_x, factor_y);   
@@ -114,16 +116,26 @@ namespace chaos
 
   bool GLDebugOnScreenDisplay::BuildVertexBuffer(int width, int height) const
   {   
-    int cs = mesh_builder_params.character_size;
-    int hs = mesh_builder_params.horiz_spacing;
-    int vs = mesh_builder_params.vert_spacing;
+    int cpl = mesh_builder_params.font_characters_per_line;
+
+    int csx = mesh_builder_params.character_size.x;
+    int csy = mesh_builder_params.character_size.y;
+    int sx  = mesh_builder_params.spacing.x;
+    int sy  = mesh_builder_params.spacing.y;
+
+    int tw = texture_width;
+    int th = texture_height;
+    int cx = mesh_builder_params.crop_texture.x;
+    int cy = mesh_builder_params.crop_texture.y;
 
     chaos::BitmapFontTextMeshBuilder::Params params;
-    params.font_characters          = mesh_builder_params.font_characters.c_str();
-    params.font_characters_per_line = mesh_builder_params.font_characters_per_line;
-    params.line_limit               = max(width / (cs + hs), 1);
-    params.character_size           = glm::vec2(1.0f, 1.0f);    
-    params.spacing                  = glm::vec2( ((float)hs) / ((float)cs), ((float)vs) / ((float)cs));
+    params.font_characters            = mesh_builder_params.font_characters.c_str();
+    params.font_characters_per_line   = cpl;
+    params.font_characters_line_count = mesh_builder_params.font_characters_line_count;
+    params.line_limit                 = max(width / (csx + sx), 1);
+    params.character_size             = glm::vec2(1.0f, 1.0f);    
+    params.spacing                    = glm::vec2( ((float)sx) / ((float)csx), ((float)sy) / ((float)csy));
+    params.crop_texture               = glm::vec2( ((float)cx) / ((float)tw),  ((float)cy) / ((float)th));
 
     // generate vertex buffer data
     std::vector<float> vertices;
@@ -172,7 +184,11 @@ namespace chaos
       return false;
 
     // create texture
-    texture_id = chaos::GLTools::GenTexture(image).texture_id;
+    TextureDescription texture_description = chaos::GLTools::GenTexture(image);
+
+    texture_id     = texture_description.texture_id;
+    texture_width  = texture_description.width;
+    texture_height = texture_description.height;
     FreeImage_Unload(image);
     if (texture_id == 0)
       return false;

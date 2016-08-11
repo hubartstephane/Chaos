@@ -131,8 +131,11 @@ namespace chaos
     chaos::BitmapFontTextMeshBuilder builder;
     for (auto const & l : lines)
     {
+      if (l.first.size() == 0)
+        continue;
       chaos::box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
-      params.position = bounding.GetCorners().first;
+      if (!bounding.IsEmpty())
+        params.position = bounding.GetCorners().first; // maybe some degenerated case 
     }
 
     // fill GPU buffer

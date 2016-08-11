@@ -83,7 +83,7 @@ protected:
     {
       debug_display.AddLine("=> Use +/- to change example");
       debug_display.AddLine("=> Use T   to freeze time");
-      //debug_display.AddLine("");
+      debug_display.AddLine("");
     }
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
@@ -95,6 +95,20 @@ protected:
     program_data.SetUniform("world_to_camera", ctx.world_to_camera);
     program_data.SetUniform("local_to_world", prim_ctx.local_to_world);
     program_data.SetUniform("color", prim_ctx.color);  
+  }
+
+  void DrawBox(RenderingContext const & ctx, chaos::box2 const & b, glm::vec4 const & color)
+  {
+    if (b.IsEmpty())
+      return;
+
+    PrimitiveRenderingContext prim_ctx;
+    prim_ctx.local_to_world = glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) * glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
+    prim_ctx.color = color;
+
+    PrepareObjectProgram(program_rect, program_rect_data, ctx, prim_ctx);
+
+    mesh_rect->Render(program_rect_data, nullptr, 0, 0);
   }
 
   void DrawBox(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
@@ -294,6 +308,14 @@ protected:
     // load programs      
     program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt", program_box_data);
     if (program_box == 0)
+      return false;
+
+    program_rect = LoadProgram(resources_path, "pixel_shader_rect.txt", "vertex_shader_rect.txt", program_rect_data);
+    if (program_rect == 0)
+      return false;
+
+    program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt", program_sphere_data);
+    if (program_sphere == 0)
       return false;
 
     // create meshes

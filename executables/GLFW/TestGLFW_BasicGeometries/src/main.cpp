@@ -76,7 +76,7 @@ protected:
 
   void DrawPoint(glm::vec3 const & p, glm::vec4 const & color)
   {
-    glm::vec3 half_point_size(0.25f);
+    glm::vec3 half_point_size(0.125f);
     DrawBox(chaos::box3(p, half_point_size), color);  
   }
 
@@ -141,13 +141,13 @@ protected:
         DrawBox(b1 & b2, white * solid);
 
         glEnable(GL_BLEND);
+        glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_DEPTH_TEST);
-
+        
         DrawBox(b1, red  * translucent);
         DrawBox(b2, blue * translucent);
 
-        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
       }
       else
@@ -156,12 +156,12 @@ protected:
         DrawBox(b2, blue * solid);
 
         glEnable(GL_BLEND);
+        glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_DEPTH_TEST);
-
+        
         DrawBox(b1 | b2, white * translucent);
         
-        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
       }
     }

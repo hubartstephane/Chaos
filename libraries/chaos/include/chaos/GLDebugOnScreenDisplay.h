@@ -23,7 +23,9 @@ public:
     /** constructor */
     Params():
       font_characters_per_line(0),
-      character_size(20){}
+      character_size(20),
+      horiz_spacing(0),
+      vert_spacing(0){}
 
     /** the path of the bitmap texture */
     boost::filesystem::path texture_path;
@@ -33,6 +35,10 @@ public:
     int         font_characters_per_line;
     /** character size in pixel */
     int         character_size;
+    /** some space to add (or remove between each characters) in pixels */
+    int         horiz_spacing;
+    /** some space to add (or remove between each characters) in pixels */
+    int         vert_spacing;
   };
 
   /** constructor */

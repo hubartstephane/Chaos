@@ -48,7 +48,9 @@ protected:
     debug_params.texture_path             = image_path;
     debug_params.font_characters          = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     debug_params.font_characters_per_line = 10;
-    debug_params.character_size           = 25;
+    debug_params.character_size           = 30;
+    debug_params.horiz_spacing            = -15;
+    debug_params.vert_spacing             = -10;
 
     if (!debug_display.Initialize(debug_params))
       return false;

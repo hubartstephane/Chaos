@@ -114,12 +114,16 @@ namespace chaos
 
   bool GLDebugOnScreenDisplay::BuildVertexBuffer(int width, int height) const
   {   
+    int cs = mesh_builder_params.character_size;
+    int hs = mesh_builder_params.horiz_spacing;
+    int vs = mesh_builder_params.vert_spacing;
+
     chaos::BitmapFontTextMeshBuilder::Params params;
     params.font_characters          = mesh_builder_params.font_characters.c_str();
     params.font_characters_per_line = mesh_builder_params.font_characters_per_line;
-    params.line_limit               = max(width / mesh_builder_params.character_size, 1);
-    params.character_size           = glm::vec2(1.0f, 1.0f);
-    params.spacing                  = glm::vec2(0.0f, 0.0f);
+    params.line_limit               = max(width / (cs + hs), 1);
+    params.character_size           = glm::vec2(1.0f, 1.0f);    
+    params.spacing                  = glm::vec2( ((float)hs) / ((float)cs), ((float)vs) / ((float)cs));
 
     // generate vertex buffer data
     std::vector<float> vertices;

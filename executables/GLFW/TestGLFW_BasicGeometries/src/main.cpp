@@ -16,14 +16,20 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/VertexDeclaration.h>
 
-static const int MAX_DISPLAY_EXAMPLE = 5;
-
 class RenderingContext
 {
 public:
 
-  glm::mat4 projection_matrix;
-  glm::mat4 world_to_camera_matrix;
+  glm::mat4 projection;
+  glm::mat4 world_to_camera;
+};
+
+class PrimitiveRenderingContext
+{
+public:
+
+  glm::mat4 local_to_world;
+  glm::vec4 color;
 };
 
 
@@ -75,15 +81,13 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(GLuint program, chaos::GLProgramData & program_data, RenderingContext const & ctx, )
+  void PrepareObjectProgram(GLuint program, chaos::GLProgramData & program_data, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
   {
     glUseProgram(program);
-    program_data.SetUniform("projection", ctx.projection_matrix);    
-    program_data.SetUniform("world_to_camera", ctx.world_to_camera_matrix);
-
-    program_data.SetUniform("local_to_world", local_to_world_matrix);
-    program_data.SetUniform("color", color);
-  
+    program_data.SetUniform("projection", ctx.projection);    
+    program_data.SetUniform("world_to_camera", ctx.world_to_camera);
+    program_data.SetUniform("local_to_world", prim_ctx.local_to_world);
+    program_data.SetUniform("color", prim_ctx.color);  
   }
 
   void DrawBox(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
@@ -91,13 +95,12 @@ protected:
     if (b.IsEmpty())
       return;
 
-    PrepareObjectProgram(program_box, program_box_data, ctx, color);
+    PrimitiveRenderingContext prim_ctx;
+    prim_ctx.local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
+    prim_ctx.color           = color;
 
+    PrepareObjectProgram(program_box, program_box_data, ctx, prim_ctx);
 
-    glm::mat4 local_to_world_matrix =
-      glm::translate(b.position) *
-      glm::scale(b.half_size);
-         
     mesh_box->Render(program_box_data, nullptr, 0, 0);
   }
 
@@ -216,8 +219,8 @@ protected:
     RenderingContext ctx;
 
     static float FOV = 60.0f;
-    ctx.projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
-    ctx.world_to_camera_matrix = fps_camera.GlobalToLocal();
+    ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
+    ctx.world_to_camera = fps_camera.GlobalToLocal();
 
     DrawGeometryObjects(ctx);
 
@@ -308,19 +311,20 @@ protected:
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
-      display_example = display_example + 1;
-      display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
-
-      DebugDisplayExampleTitle(false);
+      if (GetExampleTitle(display_example + 1) != nullptr)
+      {
+        ++display_example;
+        DebugDisplayExampleTitle(false);   
+      }
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
     {
-      display_example = display_example - 1;
-      display_example = (display_example + MAX_DISPLAY_EXAMPLE) % MAX_DISPLAY_EXAMPLE;
-
-      DebugDisplayExampleTitle(false);
+      if (display_example > 0)
+      {
+        --display_example;
+        DebugDisplayExampleTitle(false);      
+      }
     }
-
   }
 
   virtual void OnMouseButton(int button, int action, int modifier) override

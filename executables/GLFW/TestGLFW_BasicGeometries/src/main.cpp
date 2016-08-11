@@ -31,6 +31,13 @@ public:
 
 protected:
 
+  template<typename T, int dimension>
+  chaos::type_box<T, dimension> SlightIncreaseSize(chaos::type_box<T, dimension> src) const
+  {
+    src.half_size *= static_cast<T>(1.01);
+    return src;  
+  }
+
   char const * GetExampleTitle(int example)
   {
     if (example == 0)
@@ -138,7 +145,7 @@ protected:
 
       if (display_example == 3)
       {
-        DrawBox(b1 & b2, white * solid);
+        DrawBox(SlightIncreaseSize(b1 & b2), white * solid);
 
         glEnable(GL_BLEND);
         glDepthMask(GL_FALSE);
@@ -159,7 +166,7 @@ protected:
         glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        DrawBox(b1 | b2, white * translucent);
+        DrawBox(SlightIncreaseSize(b1 | b2), white * translucent);
         
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);

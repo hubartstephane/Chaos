@@ -231,6 +231,7 @@ public:
   vec_type half_size;
 };
 
+
 // ==============================================================================================
 // boxes functions
 // ==============================================================================================
@@ -374,9 +375,6 @@ type_box2<T> GetSplitBox(type_box2<T> const & b, int i, int j)
   j = (j << 1) - 1;
   type_box2<T> new_half_size = b.half_size / static_cast<T>(2);
 
-
-  // shuxxx
-
   return type_box2<T>(
     b.position + new_half_size * vec2_type(static_cast<T>(i), static_cast<T>(j)),
     new_half_size);
@@ -395,8 +393,6 @@ type_box3<T> GetSplitBox(type_box3<T> const & b, int i, int j, int k)
   j = (j << 1) - 1;
   k = (k << 1) - 1;
   vec3_type new_half_size = b.half_size / static_cast<T>(2);
-
-  // shuxxx
 
   return type_box3<T>(
     b.position + new_half_size * vec3_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
@@ -615,8 +611,6 @@ type_box2<T> GetBoundingBox(type_circle<T> const & c)
 {
   typedef typename type_circle<T>::vec_type vec_type;
 
-  // shuxxx
-
   return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
 }
 
@@ -628,8 +622,6 @@ type_box2<T> GetInnerBox(type_circle<T> const & c)
 
   static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
-  // shuxxx
-
   return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
 }
 
@@ -637,8 +629,6 @@ template<typename T>
 type_box3<T> GetBoundingBox(type_sphere<T> const & s)
 {
   typedef typename type_sphere<T>::vec_type vec_type;
-
-  // shuxxx
 
   return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
 }
@@ -649,8 +639,6 @@ type_box3<T> GetInnerBox(type_sphere<T> const & s)
   typedef typename type_sphere<T>::vec_type vec_type;
 
   static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
-
-  // shuxxx
 
   return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
 }

@@ -1,7 +1,9 @@
 #pragma once
 
+#include <chaos/GeometryFramework.h>
 #include <chaos/StandardHeaders.h>
 #include <chaos/SimpleMesh.h>
+
 
 namespace chaos
 {
@@ -35,7 +37,7 @@ class CubeMeshDef
 public:
 
   /** generate a mesh for the cube */
-  static SimpleMesh * CreateMesh(glm::vec3 const & size, bool with_face_normals);
+  static SimpleMesh * CreateMesh(box3 const & b, bool with_face_normals);
 
   /** the vertices defining a cube */
   static glm::vec3 const vertices[8];

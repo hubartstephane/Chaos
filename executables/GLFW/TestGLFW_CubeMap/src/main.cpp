@@ -143,7 +143,9 @@ protected:
 
     program_data = chaos::GLProgramData::GetData(program);
 
-    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), true);
+    chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+    mesh = chaos::CubeMeshDef::CreateMesh(b, true);
     if (mesh == nullptr)
       return false;
 

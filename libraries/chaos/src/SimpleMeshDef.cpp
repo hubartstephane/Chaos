@@ -164,7 +164,7 @@ SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(bool centered)
 }
 
 
-SimpleMesh * CubeMeshDef::CreateMesh(glm::vec3 const & scale, bool with_face_normals)
+SimpleMesh * CubeMeshDef::CreateMesh(box3 const & b, bool with_face_normals)
 {
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)
@@ -201,14 +201,14 @@ SimpleMesh * CubeMeshDef::CreateMesh(glm::vec3 const & scale, bool with_face_nor
       {
         for (int i = 0 ; i < count2 / 2 ; ++i)
         {        
-          resized_vertices[i * 2]     = vertices_with_normals[i * 2] * scale; // resize position
+          resized_vertices[i * 2]     = vertices_with_normals[i * 2] * b.half_size + b.position; // resize position
           resized_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
         }
       }
       else
       {
         for (int i = 0; i < count1; ++i)
-          resized_vertices[i] = vertices[i] * scale;
+          resized_vertices[i] = vertices[i] * b.half_size + b.position;
       }
        
       // fill the buffers     

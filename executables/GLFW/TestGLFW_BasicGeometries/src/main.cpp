@@ -292,7 +292,7 @@ protected:
       return false;
     
     // load programs      
-    program_box = LoadProgram(resources_path, "pixel_shader_cube.txt", "vertex_shader.txt", program_box_data);
+    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt", program_box_data);
     if (program_box == 0)
       return false;
 

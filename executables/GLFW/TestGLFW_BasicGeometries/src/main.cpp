@@ -72,6 +72,10 @@ protected:
       return "box intersection";
     if (example == 4)
       return "box union";
+    if (example == 5)
+      return "restrict box displacement : move bigger";
+    if (example == 6)
+      return "restrict box displacement : move smaller";
   
     return nullptr;
   }
@@ -219,6 +223,33 @@ protected:
         EndTranslucency();        
       }
     }
+
+    // restrict displacement
+    if (display_example == 5 || display_example == 6)
+    {
+      chaos::box3 bigger (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 4.0f, 5.0f));
+      chaos::box3 smaller(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+
+      if (display_example == 5) // bigger should follow smaller
+      {
+        smaller.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
+     //   smaller.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+      }
+      else // smaller should follow bigger
+      {
+        bigger.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
+      //  bigger.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+      }
+
+      ForceToStayInside(bigger, smaller, display_example == 5);
+
+      DrawBox(ctx, smaller, blue * translucent);
+
+      BeginTranslucency();
+      DrawBox(ctx, SlightIncreaseSize(bigger), red * translucent);
+      EndTranslucency();
+    }
+
 
 
 

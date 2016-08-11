@@ -35,7 +35,7 @@ protected:
 
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);   
+    glEnable(GL_CULL_FACE);
        
     glValidateProgram(program);
     GLint validation = chaos::GLTools::CheckProgramStatus(program, GL_VALIDATE_STATUS, "Program validation failure : %s");
@@ -104,7 +104,9 @@ protected:
     program_data = chaos::GLProgramData::GetData(program);
 
     // create the mesh
-    mesh = chaos::FaceFacingQuadMeshDef::CreateMesh(true);
+    chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+
+    mesh = chaos::FaceFacingQuadMeshDef::CreateMesh(b);
     if (mesh == nullptr)
       return false;
 
@@ -131,31 +133,6 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-
-#if 0
-
-  type_ray<float, 2>::type r;
-
-  r = r;
-
-  chaos::box3 bigger, smaller;
-
-  bigger.half_size  = glm::vec3(5.0f, 6.0f, 7.0f);
-  smaller.half_size = glm::vec3(2.0f, 2.0f, 5.0f);
-
-  chaos::ForceStayInside(bigger, smaller, true);
-
-
-
- // auto x = b1.half_size > b2.half_size;
-
-  glm::vec3 v(1.0f, 2.0f, 3.0f);
-  v[1] = 6.0f;
-  auto vv = v[1];
-
-  return 0;
-#endif
-
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

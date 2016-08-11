@@ -14,15 +14,7 @@
 namespace chaos
 {
 
-glm::vec3 const FaceFacingQuadMeshDef::positive_vertices[4] =
-{
-  glm::vec3(0.0f, 0.0f, 0.0f),
-  glm::vec3(1.0f, 0.0f, 0.0f),
-  glm::vec3(1.0f, 1.0f, 0.0f),
-  glm::vec3(0.0f, 1.0f, 0.0f)
-};
-
-glm::vec3 const FaceFacingQuadMeshDef::centered_vertices[4] =
+glm::vec3 const FaceFacingQuadMeshDef::vertices[4] =
 {
   glm::vec3(-1.0f, -1.0f, 0.0f),
   glm::vec3( 1.0f, -1.0f, 0.0f),
@@ -118,7 +110,7 @@ GLuint const CubeMeshDef::triangles_with_normals[36] =
   20, 23, 22
 };
 
-SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(bool centered)
+SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(box2 const & b)
 {
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)
@@ -144,12 +136,17 @@ SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(bool centered)
       result->index_buffer  = new IndexBuffer(ib);
 
       // fill the buffers
-      if (centered)
-        glNamedBufferData(vb, sizeof(centered_vertices), centered_vertices, GL_STATIC_DRAW);
-      else
-        glNamedBufferData(vb, sizeof(positive_vertices), positive_vertices, GL_STATIC_DRAW);
+      glm::vec3 hs = glm::vec3(b.half_size.x, b.half_size.y, 1.0f);
+      glm::vec3 p  = glm::vec3(b.position.x,  b.position.y,  0.0f);
 
-      glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW); 
+      int const count = sizeof(vertices) / sizeof(vertices[0]); 
+
+      glm::vec3 final_vertices[count]; 
+      for (int i = 0; i < count; ++i)
+        final_vertices[i] = vertices[i] * hs + p;
+
+      glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
+      glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW);
 
       // initialize the vertex array
       result->FinalizeBindings();
@@ -191,37 +188,33 @@ SimpleMesh * CubeMeshDef::CreateMesh(box3 const & b, bool with_face_normals)
       result->vertex_buffer = new VertexBuffer(vb);
       result->index_buffer  = new IndexBuffer(ib);
 
-      // resize the mesh 
-      int const count1 = sizeof(vertices)              / sizeof(vertices[0]); 
-      int const count2 = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); // number of vertex * number of component
-
-      glm::vec3 resized_vertices[count2]; // the greater possible vertex
-
+      // resize the mesh      
       if (with_face_normals)
       {
-        for (int i = 0 ; i < count2 / 2 ; ++i)
+        int const count = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); // number of vertex * number of component
+
+        glm::vec3 final_vertices[count];
+        for (int i = 0 ; i < count / 2 ; ++i)
         {        
-          resized_vertices[i * 2]     = vertices_with_normals[i * 2] * b.half_size + b.position; // resize position
-          resized_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
+          final_vertices[i * 2]     = vertices_with_normals[i * 2] * b.half_size + b.position; // resize position
+          final_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
         }
-      }
-      else
-      {
-        for (int i = 0; i < count1; ++i)
-          resized_vertices[i] = vertices[i] * b.half_size + b.position;
-      }
-       
-      // fill the buffers     
-      if (with_face_normals)
-      {
-        glNamedBufferData(vb, sizeof(glm::vec3) * count2, resized_vertices, GL_STATIC_DRAW);
+
+        glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
         glNamedBufferData(ib, sizeof(triangles_with_normals), triangles_with_normals, GL_STATIC_DRAW);
       }
       else
       {
-        glNamedBufferData(vb, sizeof(glm::vec3) * count1, resized_vertices, GL_STATIC_DRAW);
+        int const count = sizeof(vertices) / sizeof(vertices[0]);
+
+        glm::vec3 final_vertices[count];
+        for (int i = 0; i < count; ++i)
+          final_vertices[i] = vertices[i] * b.half_size + b.position;
+
+        glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
         glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW);
-      }       
+      }
+         
       // initialize the vertex array
       result->FinalizeBindings(); 
     }

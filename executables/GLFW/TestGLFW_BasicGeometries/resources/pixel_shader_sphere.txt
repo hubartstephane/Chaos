@@ -1,0 +1,17 @@
+out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+in vec3 vs_normal;
+
+uniform vec4 color;
+
+void main()
+{
+  vec3  light = normalize(vec3(1.0, 2.0, 3.0));
+  float modif = dot(light, vs_normal);           
+
+  modif = modif * 0.5 + 0.5; // modif is a value [0..1] different for each face
+
+  output_color =  color * (0.5 + 0.5 * modif);
+
+  output_color.w = color.w; // keep alpha from incomming color
+}

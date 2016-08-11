@@ -1,0 +1,20 @@
+in vec3 position;
+in vec3 normal;
+
+uniform mat4 projection;
+uniform mat4 local_to_world;
+uniform mat4 world_to_camera;
+
+out vec3 vs_normal;
+
+void main() 
+{
+  vs_normal = normal;
+
+  vec4 tmp = vec4(position, 1.0);
+  tmp = local_to_world  * tmp;
+  tmp = world_to_camera * tmp;
+  tmp = projection      * tmp;
+
+  gl_Position = tmp;
+}

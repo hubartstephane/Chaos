@@ -99,13 +99,13 @@ chaos::box2 BitmapFontTextMeshBuilder::BuildBuffer(char const * msg, BitmapFontT
 		  glm::vec2 v4 = v1 + glm::vec2(0.0f, dy);
 
 		  // insert the triangles
-		  InsertVertexComponent(vertices, v1, t1);
-		  InsertVertexComponent(vertices, v2, t2);
-		  InsertVertexComponent(vertices, v3, t3);
+      InsertVertexComponent(vertices, v1, t1);		  
+      InsertVertexComponent(vertices, v3, t3);
+      InsertVertexComponent(vertices, v2, t2);
 
-		  InsertVertexComponent(vertices, v1, t1);
-		  InsertVertexComponent(vertices, v3, t3);		  
-		  InsertVertexComponent(vertices, v4, t4);
+      InsertVertexComponent(vertices, v1, t1);
+      InsertVertexComponent(vertices, v4, t4);
+      InsertVertexComponent(vertices, v3, t3);
 
       result.Extend(v1);
       result.Extend(v3);

@@ -46,15 +46,15 @@ public:
 	public:
 
 		/** constructor */
-		Params(char const * characters = nullptr):
+    Params(char const * characters = nullptr) :
       font_characters(characters),
-			font_characters_per_line(0),
+      font_characters_per_line(0),
       font_characters_line_count(0),
-			tab_size(2),
+      tab_size(2),
       alignment_flags(ALIGN_TOPLEFT),
       line_limit(0),
       position(0.0f, 0.0f),
-			character_size(1.0f, 1.0f),
+      character_size(1.0f, 1.0f),
       spacing(0.0f, 0.0f),
       crop_texture(0.0f, 0.0f)
     {}

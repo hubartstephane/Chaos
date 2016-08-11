@@ -117,6 +117,10 @@ void MyGLFWWindow::DoOnDraw(GLFWwindow * in_glfw_window)
 
     glfwMakeContextCurrent(in_glfw_window);
     glfwGetFramebufferSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+
+    if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
+      return;
+    
     if (my_window->OnDraw(width, height))  
       if (my_window->double_buffer)
         glfwSwapBuffers(in_glfw_window);

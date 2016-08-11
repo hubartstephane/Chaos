@@ -92,9 +92,9 @@ protected:
     debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     debug_params.font_characters_per_line   = 10;
     debug_params.font_characters_line_count = 10;
-    debug_params.character_size             = glm::ivec2(20, 20);
-    debug_params.spacing                    = glm::ivec2( 0,  0);
-    debug_params.crop_texture               = glm::ivec2(10, 10);
+    debug_params.character_width            = 20;
+    debug_params.spacing                    = glm::ivec2( 0, 0);
+    debug_params.crop_texture               = glm::ivec2(15, 7);
 
     if (!debug_display.Initialize(debug_params))
       return false;

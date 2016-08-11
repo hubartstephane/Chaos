@@ -24,7 +24,7 @@ public:
     Params():
       font_characters_per_line(0),
       font_characters_line_count(0),
-      character_size(20, 20),
+      character_width(20),
       spacing(0, 0),
       crop_texture(0, 0){}
 
@@ -37,7 +37,7 @@ public:
     /** the number of lines of the bitmap */
     int         font_characters_line_count;
     /** character size in pixel */
-    glm::ivec2  character_size;
+    int         character_width;
     /** some space to add (or remove between each characters) in pixels */
     glm::ivec2  spacing;
     /** some texels to remove in texture font grid to have pixels of interest */

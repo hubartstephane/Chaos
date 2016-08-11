@@ -91,8 +91,11 @@ namespace chaos
     
     program_data.BindAttributes(vertex_array, declaration, nullptr);
 
-    float factor_x = ((float)mesh_builder_params.character_size.x) * 2.0f / ((float)width);   // screen coordinates are [-1, +1]
-    float factor_y = ((float)mesh_builder_params.character_size.y) * 2.0f / ((float)height);  // for [width, height] pixels
+    float character_width  = (float)mesh_builder_params.character_width;
+    float character_height = (float)mesh_builder_params.character_width;
+
+    float factor_x = (character_width  * 2.0f / ((float)width));   // screen coordinates are [-1, +1]
+    float factor_y = (character_height * 2.0f / ((float)height));  // for [width, height] pixels
                                                                                               // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
                                                                                               // see BitmapFontTextMeshBuilder
     GLUniformInfo const * position_factor = program_data.FindUniform("position_factor");
@@ -118,8 +121,8 @@ namespace chaos
   {   
     int cpl = mesh_builder_params.font_characters_per_line;
 
-    int csx = mesh_builder_params.character_size.x;
-    int csy = mesh_builder_params.character_size.y;
+    int csw = mesh_builder_params.character_width;
+    int csh = mesh_builder_params.character_width;
     int sx  = mesh_builder_params.spacing.x;
     int sy  = mesh_builder_params.spacing.y;
 
@@ -132,9 +135,9 @@ namespace chaos
     params.font_characters            = mesh_builder_params.font_characters.c_str();
     params.font_characters_per_line   = cpl;
     params.font_characters_line_count = mesh_builder_params.font_characters_line_count;
-    params.line_limit                 = max(width / (csx + sx), 1);
+    params.line_limit                 = max(width / (csw + sx), 1);
     params.character_size             = glm::vec2(1.0f, 1.0f);    
-    params.spacing                    = glm::vec2( ((float)sx) / ((float)csx), ((float)sy) / ((float)csy));
+    params.spacing                    = glm::vec2( ((float)sx) / ((float)csw), ((float)sy) / ((float)csh));
     params.crop_texture               = glm::vec2( ((float)cx) / ((float)tw),  ((float)cy) / ((float)th));
 
     // generate vertex buffer data

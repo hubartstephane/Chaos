@@ -40,6 +40,13 @@ public:
   MyGLFWWindowOpenGLTest1() :
     program_box(0),
     mesh_box(nullptr),
+
+    program_rect(0),
+    mesh_rect(nullptr),
+
+    program_sphere(0),
+    mesh_sphere(nullptr),
+
     realtime(0.0),
     time_scale(1.0),
     display_example(0){}
@@ -229,12 +236,19 @@ protected:
     return true;
   }
 
+  void FinalizeMeshAndProgram(chaos::SimpleMesh * mesh, GLuint program)
+  {
+    if (program != 0)
+      glDeleteProgram(program);
+    if (mesh != nullptr)
+      delete(mesh);  
+  }
+
   virtual void Finalize() override
   {
-    if (program_box != 0)
-      glDeleteProgram(program_box);
-    if (mesh_box != nullptr)
-      delete(mesh_box);
+    FinalizeMeshAndProgram(mesh_box,    program_box);
+    FinalizeMeshAndProgram(mesh_rect,   program_rect);
+    FinalizeMeshAndProgram(mesh_sphere, program_sphere);
 
     debug_display.Finalize();
   }
@@ -344,7 +358,15 @@ protected:
   chaos::GLProgramData program_box_data;
   chaos::SimpleMesh  * mesh_box;
 
-  // rendering for the square
+  // rendering for the rect
+  GLuint               program_rect;
+  chaos::GLProgramData program_rect_data;
+  chaos::SimpleMesh  * mesh_rect;
+
+  // rendering for the rect
+  GLuint               program_sphere;
+  chaos::GLProgramData program_sphere_data;
+  chaos::SimpleMesh  * mesh_sphere;
   
 
   double realtime;

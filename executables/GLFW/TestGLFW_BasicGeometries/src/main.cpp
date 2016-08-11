@@ -18,13 +18,22 @@
 
 static const int MAX_DISPLAY_EXAMPLE = 5;
 
+class RenderingContext
+{
+public:
+
+  glm::mat4 projection_matrix;
+  glm::mat4 world_to_camera_matrix;
+};
+
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
   MyGLFWWindowOpenGLTest1() :
-    program(0),
-    mesh(nullptr),
+    program_box(0),
+    mesh_box(nullptr),
     realtime(0.0),
     time_scale(1.0),
     display_example(0){}
@@ -66,28 +75,39 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void DrawBox(chaos::box3 const & b, glm::vec4 const & color)
+  void PrepareObjectProgram(GLuint program, chaos::GLProgramData & program_data, RenderingContext const & ctx, )
+  {
+    glUseProgram(program);
+    program_data.SetUniform("projection", ctx.projection_matrix);    
+    program_data.SetUniform("world_to_camera", ctx.world_to_camera_matrix);
+
+    program_data.SetUniform("local_to_world", local_to_world_matrix);
+    program_data.SetUniform("color", color);
+  
+  }
+
+  void DrawBox(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
   {
     if (b.IsEmpty())
       return;
 
+    PrepareObjectProgram(program_box, program_box_data, ctx, color);
+
+
     glm::mat4 local_to_world_matrix =
       glm::translate(b.position) *
       glm::scale(b.half_size);
-          
-    program_data.SetUniform("local_to_world", local_to_world_matrix);
-    program_data.SetUniform("color", color);
-
-    mesh->Render(program_data, nullptr, 0, 0);
+         
+    mesh_box->Render(program_box_data, nullptr, 0, 0);
   }
 
-  void DrawPoint(glm::vec3 const & p, glm::vec4 const & color)
+  void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color)
   {
     glm::vec3 half_point_size(0.125f);
-    DrawBox(chaos::box3(p, half_point_size), color);  
+    DrawBox(ctx, chaos::box3(p, half_point_size), color);  
   }
 
-  void DrawGeometryObjects()
+  void DrawGeometryObjects(RenderingContext const & ctx)
   {
     glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -104,9 +124,9 @@ protected:
       chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
       chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-      DrawBox(b1, red);
-      DrawBox(b2, green);
-      DrawBox(b3, blue);
+      DrawBox(ctx, b1, red);
+      DrawBox(ctx, b2, green);
+      DrawBox(ctx, b3, blue);
     }
 
     // display box and corners
@@ -114,11 +134,11 @@ protected:
     {
       chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-      DrawBox(b, red);
+      DrawBox(ctx, b, red);
 
       std::pair<glm::vec3, glm::vec3> corners = b.GetCorners();
-      DrawPoint(corners.first, white);
-      DrawPoint(corners.second, white);
+      DrawPoint(ctx, corners.first, white);
+      DrawPoint(ctx, corners.second, white);
     }
 
     // box construction from corners
@@ -129,9 +149,9 @@ protected:
 
       chaos::box3 b(std::make_pair(p1, p2));
 
-      DrawBox(b, red);
-      DrawPoint(p1, white);
-      DrawPoint(p2, white);
+      DrawBox(ctx, b, red);
+      DrawPoint(ctx, p1, white);
+      DrawPoint(ctx, p2, white);
     }
 
     // box union or intersection
@@ -145,28 +165,28 @@ protected:
 
       if (display_example == 3)
       {
-        DrawBox(SlightIncreaseSize(b1 & b2), white * solid);
+        DrawBox(ctx, SlightIncreaseSize(b1 & b2), white * solid);
 
         glEnable(GL_BLEND);
         glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        DrawBox(b1, red  * translucent);
-        DrawBox(b2, blue * translucent);
+        DrawBox(ctx, b1, red  * translucent);
+        DrawBox(ctx, b2, blue * translucent);
 
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
       }
       else
       {
-        DrawBox(b1, red  * solid);
-        DrawBox(b2, blue * solid);
+        DrawBox(ctx, b1, red  * solid);
+        DrawBox(ctx, b2, blue * solid);
 
         glEnable(GL_BLEND);
         glDepthMask(GL_FALSE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        DrawBox(SlightIncreaseSize(b1 | b2), white * translucent);
+        DrawBox(ctx, SlightIncreaseSize(b1 | b2), white * translucent);
         
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
@@ -192,17 +212,14 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
-    glUseProgram(program);
+    // XXX : the scaling is used to avoid the near plane clipping
+    RenderingContext ctx;
 
-    // XXX : the scaling is used to avoid the near plane clipping      
     static float FOV = 60.0f;
-    glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
-    glm::mat4 world_to_camera_matrix = fps_camera.GlobalToLocal();
+    ctx.projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
+    ctx.world_to_camera_matrix = fps_camera.GlobalToLocal();
 
-    program_data.SetUniform("projection", projection_matrix);    
-    program_data.SetUniform("world_to_camera", world_to_camera_matrix);
-
-    DrawGeometryObjects();
+    DrawGeometryObjects(ctx);
 
     debug_display.Display(width, height);
 
@@ -211,10 +228,10 @@ protected:
 
   virtual void Finalize() override
   {
-    if (program != 0)
-      glDeleteProgram(program);
-    if (mesh != nullptr)
-      delete(mesh);
+    if (program_box != 0)
+      glDeleteProgram(program_box);
+    if (mesh_box != nullptr)
+      delete(mesh_box);
 
     debug_display.Finalize();
   }
@@ -245,14 +262,14 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
 
-    program = loader.GenerateProgram();
-    if (program == 0)
+    program_box = loader.GenerateProgram();
+    if (program_box == 0)
       return false;
 
-    program_data = chaos::GLProgramData::GetData(program);
+    program_box_data = chaos::GLProgramData::GetData(program_box);
 
-    mesh = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), true);
-    if (mesh == nullptr)
+    mesh_box = chaos::CubeMeshDef::CreateMesh(glm::vec3(1.0f, 1.0f, 1.0f), true);
+    if (mesh_box == nullptr)
       return false;
 
     fps_camera.fps_controller.position.y =  3.0f;
@@ -318,11 +335,13 @@ protected:
 
 protected:
 
-  GLuint program;
+  // rendering for the box
+  GLuint               program_box;
+  chaos::GLProgramData program_box_data;
+  chaos::SimpleMesh  * mesh_box;
 
-  chaos::SimpleMesh * mesh;
-
-  chaos::GLProgramData program_data;
+  // rendering for the square
+  
 
   double realtime;
 

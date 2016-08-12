@@ -7,7 +7,7 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GLProgramLoader.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshDef.h>
+#include <chaos/SimpleMeshGenerator.h>
 #include <chaos/MyGLFWFpsCamera.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/MyAssimpImporter.h>

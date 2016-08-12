@@ -10,7 +10,7 @@
 #include <chaos/MyFbxImporter.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/SimpleMeshDef.h>
+#include <chaos/SimpleMeshGenerator.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {

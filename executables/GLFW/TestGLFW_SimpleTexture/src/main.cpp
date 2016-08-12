@@ -8,7 +8,7 @@
 #include <chaos/GLProgramLoader.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshDef.h>
+#include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
 

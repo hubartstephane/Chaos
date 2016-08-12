@@ -1,4 +1,4 @@
-#include <chaos/SimpleMeshDef.h>
+#include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLTools.h>
 
 // OpenGL coordinates for a fullscreen representation

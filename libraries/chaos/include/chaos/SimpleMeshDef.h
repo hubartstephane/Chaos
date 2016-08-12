@@ -8,11 +8,26 @@
 namespace chaos
 {
 
+  /**
+   * A base class for mesh generators
+   */
+
+class SimpleMeshGenerator
+{
+public:
+
+  /** destructor */
+  virtual ~SimpleMeshGenerator(){}
+  /** generation function */
+  virtual SimpleMesh * GenerateMesh() const { return nullptr; }
+};
+
+
 /**
  * FaceFacingQuadMeshDef : help defines mesh as simple quad
  */
 
-class FaceFacingQuadMeshDef
+class FaceFacingQuadMeshDef : public SimpleMeshGenerator
 {
 
 public:
@@ -30,7 +45,7 @@ public:
  * CubeMeshDef : help defines cube mesh 
  */
 
-class CubeMeshDef
+class CubeMeshDef : public SimpleMeshGenerator
 {
 public:
 

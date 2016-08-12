@@ -14,7 +14,7 @@
 namespace chaos
 {
 
-glm::vec3 const FaceFacingQuadMeshDef::vertices[4] =
+glm::vec3 const QuadMeshGenerator::vertices[4] =
 {
   glm::vec3(-1.0f, -1.0f, 0.0f),
   glm::vec3( 1.0f, -1.0f, 0.0f),
@@ -22,13 +22,13 @@ glm::vec3 const FaceFacingQuadMeshDef::vertices[4] =
   glm::vec3(-1.0f,  1.0f, 0.0f)
 };
 
-GLuint const FaceFacingQuadMeshDef::triangles[6] =
+GLuint const QuadMeshGenerator::triangles[6] =
 {
   0, 1, 2,  
   0, 2, 3
 };
 
-glm::vec3 const CubeMeshDef::vertices[8] =
+glm::vec3 const CubeMeshGenerator::vertices[8] =
 {
   glm::vec3(-1.0f, -1.0f, -1.0f),
   glm::vec3( 1.0f, -1.0f, -1.0f),
@@ -40,7 +40,7 @@ glm::vec3 const CubeMeshDef::vertices[8] =
   glm::vec3(-1.0f,  1.0f,  1.0f)
 };
 
-GLuint const CubeMeshDef::triangles[36] =
+GLuint const CubeMeshGenerator::triangles[36] =
 {
   0, 1, 5,
   0, 5, 4,
@@ -56,7 +56,7 @@ GLuint const CubeMeshDef::triangles[36] =
   7, 0, 4
 };
 
-glm::vec3 const CubeMeshDef::vertices_with_normals[24 * 2] =
+glm::vec3 const CubeMeshGenerator::vertices_with_normals[24 * 2] =
 {
   glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
   glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
@@ -89,7 +89,7 @@ glm::vec3 const CubeMeshDef::vertices_with_normals[24 * 2] =
   glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
 };
 
-GLuint const CubeMeshDef::triangles_with_normals[36] =
+GLuint const CubeMeshGenerator::triangles_with_normals[36] =
 {
   0, 2, 1,  
   0, 3, 2,
@@ -110,7 +110,12 @@ GLuint const CubeMeshDef::triangles_with_normals[36] =
   20, 23, 22
 };
 
-SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(box2 const & b)
+SimpleMesh * QuadMeshGenerator::GenerateMesh() const
+{
+  return CreateMesh(box);
+}
+
+SimpleMesh * QuadMeshGenerator::CreateMesh(box2 const & b)
 {
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)
@@ -160,8 +165,12 @@ SimpleMesh * FaceFacingQuadMeshDef::CreateMesh(box2 const & b)
   return result;
 }
 
+SimpleMesh * CubeMeshGenerator::GenerateMesh() const
+{
+  return CreateMesh(box, with_normals);
+}
 
-SimpleMesh * CubeMeshDef::CreateMesh(box3 const & b, bool with_face_normals)
+SimpleMesh * CubeMeshGenerator::CreateMesh(box3 const & b, bool with_face_normals)
 {
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)

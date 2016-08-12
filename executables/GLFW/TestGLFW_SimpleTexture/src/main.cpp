@@ -106,7 +106,7 @@ protected:
     // create the mesh
     chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
-    mesh = chaos::FaceFacingQuadMeshDef::CreateMesh(b);
+    mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
     if (mesh == nullptr)
       return false;
 

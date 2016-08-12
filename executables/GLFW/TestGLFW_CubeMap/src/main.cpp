@@ -145,7 +145,7 @@ protected:
 
     chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    mesh = chaos::CubeMeshDef::CreateMesh(b, true);
+    mesh = chaos::CubeMeshGenerator(b, true).GenerateMesh(); 
     if (mesh == nullptr)
       return false;
 

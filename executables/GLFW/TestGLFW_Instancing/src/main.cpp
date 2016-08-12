@@ -18,8 +18,7 @@ public:
 
   MyGLFWWindowOpenGLTest1() : 
     program(0),
-    realtime(0.0),
-    mesh(nullptr){}
+    realtime(0.0){}
 
 protected:
 
@@ -64,8 +63,8 @@ protected:
   {
     if (program != 0)
       glDeleteProgram(program);
-    if (mesh != nullptr)
-      delete(mesh);
+
+    mesh = nullptr;
   }
 
   virtual bool Initialize() override
@@ -134,7 +133,7 @@ protected:
   
   double realtime;
 
-  chaos::SimpleMesh * mesh;
+  boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 
   chaos::GLProgramData program_data;
 

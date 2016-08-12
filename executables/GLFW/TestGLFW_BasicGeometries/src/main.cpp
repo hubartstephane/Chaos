@@ -39,13 +39,8 @@ public:
 
   MyGLFWWindowOpenGLTest1() :
     program_box(0),
-    mesh_box(nullptr),
-
     program_rect(0),
-    mesh_rect(nullptr),
-
     program_sphere(0),
-    mesh_sphere(nullptr),
 
     bigger_box (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f)),
     smaller_box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f)),
@@ -284,19 +279,21 @@ protected:
     return true;
   }
 
-  void FinalizeMeshAndProgram(chaos::SimpleMesh * mesh, GLuint program)
+  void FinalizeMeshAndProgram(GLuint program)
   {
     if (program != 0)
       glDeleteProgram(program);
-    if (mesh != nullptr)
-      delete(mesh);  
   }
 
   virtual void Finalize() override
   {
-    FinalizeMeshAndProgram(mesh_box,    program_box);
-    FinalizeMeshAndProgram(mesh_rect,   program_rect);
-    FinalizeMeshAndProgram(mesh_sphere, program_sphere);
+    mesh_box    = nullptr;
+    mesh_rect   = nullptr;
+    mesh_sphere = nullptr;
+
+    FinalizeMeshAndProgram(program_box);
+    FinalizeMeshAndProgram(program_rect);
+    FinalizeMeshAndProgram(program_sphere);
 
     debug_display.Finalize();
   }
@@ -432,17 +429,17 @@ protected:
   // rendering for the box
   GLuint               program_box;
   chaos::GLProgramData program_box_data;
-  chaos::SimpleMesh  * mesh_box;
+  boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
 
   // rendering for the rect
   GLuint               program_rect;
   chaos::GLProgramData program_rect_data;
-  chaos::SimpleMesh  * mesh_rect;
+  boost::intrusive_ptr<chaos::SimpleMesh> mesh_rect;
 
   // rendering for the rect
   GLuint               program_sphere;
   chaos::GLProgramData program_sphere_data;
-  chaos::SimpleMesh  * mesh_sphere;
+  boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
 
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;

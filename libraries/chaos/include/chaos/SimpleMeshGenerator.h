@@ -19,7 +19,7 @@ public:
   /** destructor */
   virtual ~SimpleMeshGenerator(){}
   /** generation function */
-  virtual SimpleMesh * GenerateMesh() const { return nullptr; }
+  virtual boost::intrusive_ptr<SimpleMesh> GenerateMesh() const { return nullptr; }
 };
 
 
@@ -37,7 +37,7 @@ public:
     box(in_box) {}
 
   /** generation function */
-  virtual SimpleMesh * GenerateMesh() const;
+  virtual boost::intrusive_ptr<SimpleMesh> GenerateMesh() const override;
  
 protected:
 
@@ -64,7 +64,7 @@ public:
     with_normals(in_with_normals){}
 
   /** generation function */
-  virtual SimpleMesh * GenerateMesh() const;
+  virtual boost::intrusive_ptr<SimpleMesh> GenerateMesh() const override;
 
 protected:
 

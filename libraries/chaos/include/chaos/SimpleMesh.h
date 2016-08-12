@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgramAttributeProvider.h>
@@ -43,7 +44,7 @@ namespace chaos
   * SimpleMesh : how it says
   */
 
-  class SimpleMesh
+  class SimpleMesh : public ReferencedObject
   {
 
   public:

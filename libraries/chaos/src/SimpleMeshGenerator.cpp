@@ -110,9 +110,9 @@ GLuint const CubeMeshGenerator::triangles_with_normals[36] =
   20, 23, 22
 };
 
-SimpleMesh * QuadMeshGenerator::GenerateMesh() const
+boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
 {
-  SimpleMesh * result = new SimpleMesh();
+  boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
   if (result != nullptr)
   {
     GLuint va = 0;
@@ -150,19 +150,16 @@ SimpleMesh * QuadMeshGenerator::GenerateMesh() const
 
       // initialize the vertex array
       result->FinalizeBindings();
+
+      return result;
     }
-    else
-    {
-      delete(result); 
-      result = nullptr;    
-    }  
   }
-  return result;
+  return nullptr;
 }
 
-SimpleMesh * CubeMeshGenerator::GenerateMesh() const
+boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
 {
-  SimpleMesh * result = new SimpleMesh();
+  boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
   if (result != nullptr)
   {
     GLuint va = 0;
@@ -216,14 +213,11 @@ SimpleMesh * CubeMeshGenerator::GenerateMesh() const
          
       // initialize the vertex array
       result->FinalizeBindings(); 
+
+      return result;
     }
-    else
-    {
-      delete(result); 
-      result = nullptr;    
-    }  
   }
-  return result;
+  return nullptr;
 }
 
 }; // namespace chaos

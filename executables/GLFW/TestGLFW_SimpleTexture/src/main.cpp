@@ -20,8 +20,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() : 
-    program(0),
-    mesh(nullptr){}
+    program(0){}
 
 protected:
 
@@ -64,8 +63,9 @@ protected:
   {
     if (program != 0)
       glDeleteProgram(program);
-    if (mesh != nullptr)
-      delete(mesh);
+
+    mesh = nullptr;
+
     if (texture.texture_id != 0)
       glDeleteTextures(1, &texture.texture_id);
   }
@@ -124,7 +124,7 @@ protected:
 
   GLuint program;
 
-  chaos::SimpleMesh         * mesh; 
+  boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   chaos::TextureDescription   texture;
   chaos::GLProgramData        program_data;
 };

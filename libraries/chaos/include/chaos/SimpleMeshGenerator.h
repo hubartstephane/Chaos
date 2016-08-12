@@ -33,8 +33,8 @@ class QuadMeshGenerator : public SimpleMeshGenerator
 public:
 
   /** constructor */
-  QuadMeshGenerator(box2 const & in_box): 
-    box(in_box) {}
+  QuadMeshGenerator(box2 const & in_primitive): 
+    primitive(in_primitive) {}
 
   /** generation function */
   virtual boost::intrusive_ptr<SimpleMesh> GenerateMesh() const override;
@@ -42,7 +42,7 @@ public:
 protected:
 
   /** the box to generate */
-  box2 box;
+  box2 primitive;
 
   /** the vertices defining a face facing planes inside [-1, +1] */
   static glm::vec3 const vertices[4];
@@ -59,8 +59,8 @@ class CubeMeshGenerator : public SimpleMeshGenerator
 public:
 
   /** constructor */
-  CubeMeshGenerator(box3 const & in_box, bool in_with_normals): 
-    box(in_box), 
+  CubeMeshGenerator(box3 const & in_primitive, bool in_with_normals):
+    primitive(in_primitive),
     with_normals(in_with_normals){}
 
   /** generation function */
@@ -69,7 +69,7 @@ public:
 protected:
 
   /** the box to generate */
-  box3 box;
+  box3 primitive;
   /** whether normals are to be generated */
   bool with_normals;
 
@@ -83,6 +83,30 @@ protected:
   /** the triangles defining a cube */
   static GLuint const triangles_with_normals[36];
 };
+
+/**
+* SphereMeshGenerator : help defines mesh as simple sphere
+*/
+
+class SphereMeshGenerator : public SimpleMeshGenerator
+{
+
+public:
+
+  /** constructor */
+  SphereMeshGenerator(sphere const & in_primitive) :
+    primitive(in_primitive) {}
+
+  /** generation function */
+  virtual boost::intrusive_ptr<SimpleMesh> GenerateMesh() const override;
+
+protected:
+
+  /** the sphere to generate */
+  sphere primitive;
+};
+
+
 
 }; // namespace chaos
 

@@ -38,9 +38,6 @@ public:
 
   /** generation function */
   virtual SimpleMesh * GenerateMesh() const;
-
-  /** generate a mesh for the rectangle */
-  static SimpleMesh * CreateMesh(box2 const & b);
  
 protected:
 
@@ -68,9 +65,6 @@ public:
 
   /** generation function */
   virtual SimpleMesh * GenerateMesh() const;
-
-  /** generate a mesh for the cube */
-  static SimpleMesh * CreateMesh(box3 const & b, bool with_face_normals);
 
 protected:
 

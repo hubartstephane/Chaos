@@ -112,11 +112,6 @@ GLuint const CubeMeshGenerator::triangles_with_normals[36] =
 
 SimpleMesh * QuadMeshGenerator::GenerateMesh() const
 {
-  return CreateMesh(box);
-}
-
-SimpleMesh * QuadMeshGenerator::CreateMesh(box2 const & b)
-{
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)
   {
@@ -141,8 +136,8 @@ SimpleMesh * QuadMeshGenerator::CreateMesh(box2 const & b)
       result->index_buffer  = new IndexBuffer(ib);
 
       // fill the buffers
-      glm::vec3 hs = glm::vec3(b.half_size.x, b.half_size.y, 1.0f);
-      glm::vec3 p  = glm::vec3(b.position.x,  b.position.y,  0.0f);
+      glm::vec3 hs = glm::vec3(box.half_size.x, box.half_size.y, 1.0f);
+      glm::vec3 p  = glm::vec3(box.position.x, box.position.y,  0.0f);
 
       int const count = sizeof(vertices) / sizeof(vertices[0]); 
 
@@ -167,11 +162,6 @@ SimpleMesh * QuadMeshGenerator::CreateMesh(box2 const & b)
 
 SimpleMesh * CubeMeshGenerator::GenerateMesh() const
 {
-  return CreateMesh(box, with_normals);
-}
-
-SimpleMesh * CubeMeshGenerator::CreateMesh(box3 const & b, bool with_face_normals)
-{
   SimpleMesh * result = new SimpleMesh();
   if (result != nullptr)
   {
@@ -182,7 +172,7 @@ SimpleMesh * CubeMeshGenerator::CreateMesh(box3 const & b, bool with_face_normal
     if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
     {
       result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
-      if (with_face_normals)
+      if (with_normals)
         result->declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
 
       MeshPrimitive primitive;
@@ -198,14 +188,14 @@ SimpleMesh * CubeMeshGenerator::CreateMesh(box3 const & b, bool with_face_normal
       result->index_buffer  = new IndexBuffer(ib);
 
       // resize the mesh      
-      if (with_face_normals)
+      if (with_normals)
       {
         int const count = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); // number of vertex * number of component
 
         glm::vec3 final_vertices[count];
         for (int i = 0 ; i < count / 2 ; ++i)
         {        
-          final_vertices[i * 2]     = vertices_with_normals[i * 2] * b.half_size + b.position; // resize position
+          final_vertices[i * 2]     = vertices_with_normals[i * 2] * box.half_size + box.position; // resize position
           final_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
         }
 
@@ -218,7 +208,7 @@ SimpleMesh * CubeMeshGenerator::CreateMesh(box3 const & b, bool with_face_normal
 
         glm::vec3 final_vertices[count];
         for (int i = 0; i < count; ++i)
-          final_vertices[i] = vertices[i] * b.half_size + b.position;
+          final_vertices[i] = vertices[i] * box.half_size + box.position;
 
         glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
         glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW);

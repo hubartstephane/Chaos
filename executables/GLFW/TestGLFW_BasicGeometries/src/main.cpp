@@ -47,6 +47,9 @@ public:
     program_sphere(0),
     mesh_sphere(nullptr),
 
+    bigger_box (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f)),
+    smaller_box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f)),
+
     realtime(0.0),
     time_scale(1.0),
     display_example(0){}
@@ -227,26 +230,23 @@ protected:
     // restrict displacement
     if (display_example == 5 || display_example == 6)
     {
-      chaos::box3 bigger (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 4.0f, 5.0f));
-      chaos::box3 smaller(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-
       if (display_example == 5) // bigger should follow smaller
       {
-        smaller.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
-     //   smaller.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+        smaller_box.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+        smaller_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
       }
       else // smaller should follow bigger
       {
-        bigger.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
-      //  bigger.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+        bigger_box.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+        bigger_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
       }
 
-      ForceToStayInside(bigger, smaller, display_example == 5);
+      ForceToStayInside(bigger_box, smaller_box, display_example == 5);
 
-      DrawBox(ctx, smaller, blue * translucent);
+      DrawBox(ctx, smaller_box, blue * translucent);
 
       BeginTranslucency();
-      DrawBox(ctx, SlightIncreaseSize(bigger), red * translucent);
+      DrawBox(ctx, SlightIncreaseSize(bigger_box), red * translucent);
       EndTranslucency();
     }
 
@@ -375,7 +375,7 @@ protected:
   {
     chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel = 1;
+    hints.toplevel  = 1;
     hints.decorated = 1;
   }
 
@@ -443,7 +443,9 @@ protected:
   GLuint               program_sphere;
   chaos::GLProgramData program_sphere_data;
   chaos::SimpleMesh  * mesh_sphere;
-  
+
+  chaos::box3 bigger_box;
+  chaos::box3 smaller_box;
 
   double realtime;
 

@@ -706,37 +706,36 @@ type_spheroid<T, dimension> operator | (const type_spheroid<T, dimension> & s1, 
 template<typename T, int dimension>
 void ForceToStayInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
 {
-  int const count = dimension;
+  assert(!bigger.IsEmpty() || smaller.IsEmpty());
 
-#if _DEBUG
-  for (int i = 0 ; i < count ; ++i)
-  {
-    assert(bigger.half_size[i] >= smaller.half_size[i]);
-  }
-#endif
+  if (bigger.IsEmpty() || smaller.IsEmpty())
+    return;
+
+  assert(glm::all(glm::lessThanEqual(smaller.half_size, bigger.half_size)));
 
   auto big_corners   = bigger.GetCorners();
   auto small_corners = smaller.GetCorners();
 
+  int const count = dimension;
   for (int i = 0 ; i < count ; ++i)
   {
-    float delta = small_corners.first[i] - big_corners.first[i];
-    if (delta < 0)
+    T delta1 = small_corners.first[i] - big_corners.first[i];
+    if (delta1 < 0)
     {    
       if (move_big)
-        bigger.position[i] += delta;
+        bigger.position[i] += delta1;
       else
-        smaller.position[i] -= delta;
+        smaller.position[i] -= delta1;
     }
     else
     {
-      float delta = small_corners.second[i] - big_corners.second[i];
-      if (delta > 0)
+      T delta2 = small_corners.second[i] - big_corners.second[i];
+      if (delta2 > 0)
       {
         if (move_big)
-          bigger.position[i] += delta;
+          bigger.position[i] += delta2;
         else
-          smaller.position[i] -= delta;    
+          smaller.position[i] -= delta2;    
       }   
     }
   }

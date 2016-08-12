@@ -14,6 +14,7 @@
 #include <chaos/MyGLFWFpsCamera.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/GLProgramData.h>
+#include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
 
 class RenderingContext
@@ -38,9 +39,6 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() :
-    program_box(0),
-    program_rect(0),
-    program_sphere(0),
 
     bigger_box (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f)),
     smaller_box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f)),
@@ -108,7 +106,7 @@ protected:
     prim_ctx.local_to_world = glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) * glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
     prim_ctx.color = color;
 
-    PrepareObjectProgram(program_rect, program_rect_data, ctx, prim_ctx);
+    PrepareObjectProgram(program_rect->GetResourceID(), program_rect_data, ctx, prim_ctx);
 
     mesh_rect->Render(program_rect_data, nullptr, 0, 0);
   }
@@ -122,7 +120,7 @@ protected:
     prim_ctx.local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
     prim_ctx.color           = color;
 
-    PrepareObjectProgram(program_box, program_box_data, ctx, prim_ctx);
+    PrepareObjectProgram(program_box->GetResourceID(), program_box_data, ctx, prim_ctx);
 
     mesh_box->Render(program_box_data, nullptr, 0, 0);
   }
@@ -279,34 +277,28 @@ protected:
     return true;
   }
 
-  void FinalizeMeshAndProgram(GLuint program)
-  {
-    if (program != 0)
-      glDeleteProgram(program);
-  }
-
   virtual void Finalize() override
   {
     mesh_box    = nullptr;
     mesh_rect   = nullptr;
     mesh_sphere = nullptr;
 
-    FinalizeMeshAndProgram(program_box);
-    FinalizeMeshAndProgram(program_rect);
-    FinalizeMeshAndProgram(program_sphere);
+    program_box    = nullptr;
+    program_rect   = nullptr;
+    program_sphere = nullptr;
 
     debug_display.Finalize();
   }
 
-  GLuint LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename, chaos::GLProgramData & program_data)
+  boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename, chaos::GLProgramData & program_data)
   {
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
 
-    GLuint result = loader.GenerateProgram();
-    if (result != 0)
-      program_data = chaos::GLProgramData::GetData(result);
+    boost::intrusive_ptr<chaos::GLProgram> result = loader.GenerateProgram();
+    if (result != nullptr)
+      program_data = chaos::GLProgramData::GetData(result->GetResourceID());
 
     return result;
   }
@@ -336,15 +328,15 @@ protected:
     
     // load programs      
     program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt", program_box_data);
-    if (program_box == 0)
+    if (program_box == nullptr)
       return false;
 
     program_rect = LoadProgram(resources_path, "pixel_shader_rect.txt", "vertex_shader_rect.txt", program_rect_data);
-    if (program_rect == 0)
+    if (program_rect == nullptr)
       return false;
 
     program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt", program_sphere_data);
-    if (program_sphere == 0)
+    if (program_sphere == nullptr)
       return false;
 
     // create meshes
@@ -426,20 +418,20 @@ protected:
 
 protected:
 
-  // rendering for the box
-  GLuint               program_box;
-  chaos::GLProgramData program_box_data;
+  // rendering for the box  
+  chaos::GLProgramData program_box_data;  
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
+  boost::intrusive_ptr<chaos::GLProgram>  program_box;
 
   // rendering for the rect
-  GLuint               program_rect;
   chaos::GLProgramData program_rect_data;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_rect;
+  boost::intrusive_ptr<chaos::GLProgram>  program_rect;
 
   // rendering for the rect
-  GLuint               program_sphere;
   chaos::GLProgramData program_sphere_data;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
+  boost::intrusive_ptr<chaos::GLProgram>  program_sphere;
 
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;

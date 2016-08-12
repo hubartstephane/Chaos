@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/Buffer.h>
 #include <chaos/GLProgramSourceGenerator.h>
-
+#include <chaos/GLProgram.h>
 
 namespace chaos
 {
@@ -44,7 +44,7 @@ public:
   /** reset the content */
   void Reset();
   /** generate a program from the sources */
-  GLuint GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
+  boost::intrusive_ptr<GLProgram> GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
 
   /** add a generator a given shader */
   bool AddSourceGenerator(GLenum shader_type, GLProgramSourceGenerator * generator);

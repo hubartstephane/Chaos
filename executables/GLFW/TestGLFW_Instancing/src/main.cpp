@@ -5,6 +5,7 @@
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
 #include <chaos/GLProgramLoader.h>
+#include <chaos/GLProgram.h>
 #include <chaos/Application.h>
 #include <chaos/MyGLFWFpsCamera.h>
 #include <chaos/MyFbxImporter.h>
@@ -17,7 +18,6 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() : 
-    program(0),
     realtime(0.0){}
 
 protected:
@@ -33,7 +33,7 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);   
    
-    glUseProgram(program);
+    glUseProgram(program->GetResourceID());
 
     // XXX : the scaling is used to avoid the near plane clipping      
     static float FOV =  60.0f;
@@ -61,10 +61,8 @@ protected:
 
   virtual void Finalize() override
   {
-    if (program != 0)
-      glDeleteProgram(program);
-
-    mesh = nullptr;
+    program = nullptr;
+    mesh    = nullptr;
   }
 
   virtual bool Initialize() override
@@ -87,10 +85,10 @@ protected:
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
     
     program = loader.GenerateProgram();
-    if (program == 0)
+    if (program == nullptr)
       return false;
 
-    program_data = chaos::GLProgramData::GetData(program);
+    program_data = chaos::GLProgramData::GetData(program->GetResourceID());
 
     fps_camera.fps_controller.position.z = 100.0f;
    
@@ -129,10 +127,10 @@ protected:
 
 protected:
 
-  GLuint program;
-  
   double realtime;
 
+  boost::intrusive_ptr<chaos::GLProgram> program;
+  
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 
   chaos::GLProgramData program_data;

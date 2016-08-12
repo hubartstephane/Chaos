@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramData.h>
+#include <chaos/GLProgram.h>
 
 namespace chaos
 {
@@ -81,7 +82,7 @@ protected:
   mutable int screen_width;
 
   /** the program to run */
-  GLuint program;
+  boost::intrusive_ptr<GLProgram> program;
   /** the definition of the program */
   GLProgramData program_data;
   /** the declaration of the vertex buffer */

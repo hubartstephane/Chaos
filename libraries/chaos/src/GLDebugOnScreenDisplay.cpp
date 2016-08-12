@@ -37,7 +37,6 @@ namespace chaos
   GLDebugOnScreenDisplay::GLDebugOnScreenDisplay():
     rebuild_required(true),
     screen_width(-1),
-    program(0),
     texture_id(0),
     texture_width(0),
     texture_height(0),
@@ -84,7 +83,7 @@ namespace chaos
     glDisable(GL_DEPTH_TEST);
 
     // GPU-Program
-    glUseProgram(program);
+    glUseProgram(program->GetResourceID());
 
     // Initialize the vertex arra
     glBindVertexArray(vertex_array); 
@@ -202,10 +201,10 @@ namespace chaos
     loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
     program = loader.GenerateProgram();
-    if (program == 0)
+    if (program == nullptr)
       return false;
 
-    program_data = GLProgramData::GetData(program);
+    program_data = GLProgramData::GetData(program->GetResourceID());
 
     // prepare the vertex declaration
     declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
@@ -223,11 +222,7 @@ namespace chaos
 
   void GLDebugOnScreenDisplay::Finalize()
   {
-    if (program != 0)
-    {
-      glDeleteProgram(program);
-      program = 0;
-    }
+    program = nullptr;
 
     GLTools::FreeVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr);
 

@@ -13,6 +13,7 @@
 #include <chaos/MyGLFWFpsCamera.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/GLProgramData.h>
+#include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
 
 
@@ -24,7 +25,6 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() : 
-    program(0),
     realtime(0.0){}
 
 protected:
@@ -41,7 +41,7 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);   // when viewer is inside the cube
    
-    glUseProgram(program);
+    glUseProgram(program->GetResourceID());
 
     // XXX : the scaling is used to avoid the near plane clipping      
     static float FOV =  60.0f;
@@ -65,10 +65,8 @@ protected:
 
   virtual void Finalize() override
   {
-    if (program != 0)
-      glDeleteProgram(program);
-
-    mesh = nullptr;
+    program = nullptr;
+    mesh    = nullptr;
 
     if (texture.texture_id != 0)
       glDeleteTextures(1, &texture.texture_id);
@@ -138,10 +136,10 @@ protected:
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
     
     program = loader.GenerateProgram();
-    if (program == 0)
+    if (program == nullptr)
       return false;
 
-    program_data = chaos::GLProgramData::GetData(program);
+    program_data = chaos::GLProgramData::GetData(program->GetResourceID());
 
     chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -192,7 +190,7 @@ protected:
 
 protected:
 
-  GLuint program;
+  boost::intrusive_ptr<chaos::GLProgram> program;
   
   chaos::SkyBoxImages skybox;
 

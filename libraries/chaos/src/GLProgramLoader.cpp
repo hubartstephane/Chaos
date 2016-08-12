@@ -150,10 +150,10 @@ std::string GLProgramLoader::DefinitionsToString(DefinitionSet const & definitio
   return result;
 }
 
-GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
+boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
 {
-  GLuint result = glCreateProgram();
-  if (result != 0)
+  GLuint program_id = glCreateProgram();
+  if (program_id != 0)
   {
     bool success = true;
 
@@ -171,7 +171,7 @@ GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLPro
       GLuint shader_id = GenerateShader(shader_type, shader_generators.second, definitions, definitions_string);
       if (shader_id != 0)
       {
-        glAttachShader(result, shader_id);
+        glAttachShader(program_id, shader_id);
         glDeleteShader(shader_id); // mark for delete at program destruction
       }
       else
@@ -185,15 +185,15 @@ GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLPro
     // link program
     if (success)
     {
-      success = PreLinkProgram(result);
+      success = PreLinkProgram(program_id);
       if (success)
       {
-        glLinkProgram(result);
-        success = (GLTools::CheckProgramStatus(result,  GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
+        glLinkProgram(program_id);
+        success = (GLTools::CheckProgramStatus(program_id,  GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
 
 #if _DEBUG
         if (success)
-          GLTools::DisplayProgramDiagnostic(result);
+          GLTools::DisplayProgramDiagnostic(program_id);
 #endif
       }
     }
@@ -201,11 +201,12 @@ GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLPro
     // delete resources in case of error
     if (!success)
     {
-      glDeleteProgram(result);
-      result = 0;
+      glDeleteProgram(program_id);
+      program_id = 0;
     }
   }
-  return result;
+
+  return (program_id != 0) ? new GLProgram(program_id) : nullptr;
 }
 
 void GLProgramLoader::Reset()

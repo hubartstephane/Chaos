@@ -11,7 +11,7 @@ class GLProgram : public GraphicResource
 public:
 
   /** constructor */
-  GLProgram();
+  GLProgram(GLuint in_id = 0);
   /** destructor */
   virtual ~GLProgram();
 

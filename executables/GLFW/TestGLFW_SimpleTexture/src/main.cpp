@@ -11,6 +11,7 @@
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/GLProgram.h>
 
 bool RECTANGLE_TEXTURE = true;
 
@@ -19,8 +20,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : 
-    program(0){}
+  MyGLFWWindowOpenGLTest1(){}
 
 protected:
 
@@ -35,11 +35,13 @@ protected:
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+    GLuint program_id = program->GetResourceID();
        
-    glValidateProgram(program);
-    GLint validation = chaos::GLTools::CheckProgramStatus(program, GL_VALIDATE_STATUS, "Program validation failure : %s");
+    glValidateProgram(program_id);
+    GLint validation = chaos::GLTools::CheckProgramStatus(program_id, GL_VALIDATE_STATUS, "Program validation failure : %s");
     
-    glUseProgram(program);
+    glUseProgram(program_id);
       
     static float FOV =  60.0f;
     static float Z   = -20.0f;
@@ -61,10 +63,8 @@ protected:
 
   virtual void Finalize() override
   {
-    if (program != 0)
-      glDeleteProgram(program);
-
-    mesh = nullptr;
+    program = nullptr;
+    mesh    = nullptr;
 
     if (texture.texture_id != 0)
       glDeleteTextures(1, &texture.texture_id);
@@ -98,10 +98,10 @@ protected:
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
     
     program = loader.GenerateProgram();
-    if (program == 0)
+    if (program == nullptr)
       return false;
 
-    program_data = chaos::GLProgramData::GetData(program);
+    program_data = chaos::GLProgramData::GetData(program->GetResourceID());
 
     // create the mesh
     chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
@@ -122,8 +122,7 @@ protected:
 
 protected:
 
-  GLuint program;
-
+  boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   chaos::TextureDescription   texture;
   chaos::GLProgramData        program_data;

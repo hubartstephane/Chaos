@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-  GLProgram::GLProgram() : program_id(0)
+  GLProgram::GLProgram(GLuint in_id) : program_id(in_id)
   {
   
   }

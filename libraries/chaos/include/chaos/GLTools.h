@@ -5,6 +5,7 @@
 #include <chaos/SkyBoxTools.h>
 #include <chaos/Buffer.h>
 #include <chaos/VertexDeclaration.h>
+#include <chaos/GLProgram.h>
 
 namespace chaos
 {
@@ -116,7 +117,7 @@ public:
   /** transform a program into a binary chunk (the binary_format is encoded in the buffer) */
   static Buffer<char> GetProgramBinary(GLuint program);
   /** create a program from its binary format */
-  static GLuint GetProgramFromBinary(Buffer<char> const & buffer);
+  static boost::intrusive_ptr<GLProgram> GetProgramFromBinary(Buffer<char> const & buffer);
 
   /** an utility function to 'compute' offset in vertex buffer (simple cast in facts) */
   static inline void * GetOffset(size_t s)

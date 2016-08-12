@@ -11,7 +11,7 @@ namespace chaos
   public:
 
     /** constructor */
-    Texture(GLuint in_id);
+    Texture(GLuint in_id = 0);
     /** destructor */
     virtual ~Texture();
 

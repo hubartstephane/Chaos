@@ -117,7 +117,9 @@ public:
   /** transform a program into a binary chunk (the binary_format is encoded in the buffer) */
   static Buffer<char> GetProgramBinary(GLuint program);
   /** create a program from its binary format */
-  static boost::intrusive_ptr<GLProgram> GetProgramFromBinary(Buffer<char> const & buffer);
+  static GLuint GetProgramFromBinary(Buffer<char> const & buffer);
+  /** create a program from its binary format */
+  static boost::intrusive_ptr<GLProgram> GetProgramObjectFromBinary(Buffer<char> const & buffer);
 
   /** an utility function to 'compute' offset in vertex buffer (simple cast in facts) */
   static inline void * GetOffset(size_t s)

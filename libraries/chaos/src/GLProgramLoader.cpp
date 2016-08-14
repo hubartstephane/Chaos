@@ -150,10 +150,10 @@ std::string GLProgramLoader::DefinitionsToString(DefinitionSet const & definitio
   return result;
 }
 
-boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
+GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
 {
-  GLuint program_id = glCreateProgram();
-  if (program_id != 0)
+  GLuint result = glCreateProgram();
+  if (result != 0)
   {
     bool success = true;
 
@@ -171,7 +171,7 @@ boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgram(DefinitionSet c
       GLuint shader_id = GenerateShader(shader_type, shader_generators.second, definitions, definitions_string);
       if (shader_id != 0)
       {
-        glAttachShader(program_id, shader_id);
+        glAttachShader(result, shader_id);
         glDeleteShader(shader_id); // mark for delete at program destruction
       }
       else
@@ -185,15 +185,15 @@ boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgram(DefinitionSet c
     // link program
     if (success)
     {
-      success = PreLinkProgram(program_id);
+      success = PreLinkProgram(result);
       if (success)
       {
-        glLinkProgram(program_id);
-        success = (GLTools::CheckProgramStatus(program_id,  GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
+        glLinkProgram(result);
+        success = (GLTools::CheckProgramStatus(result,  GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
 
 #if _DEBUG
         if (success)
-          GLTools::DisplayProgramDiagnostic(program_id);
+          GLTools::DisplayProgramDiagnostic(result);
 #endif
       }
     }
@@ -201,12 +201,18 @@ boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgram(DefinitionSet c
     // delete resources in case of error
     if (!success)
     {
-      glDeleteProgram(program_id);
-      program_id = 0;
+      glDeleteProgram(result);
+      result = 0;
     }
   }
 
-  return (program_id != 0) ? new GLProgram(program_id) : nullptr;
+  return result;
+}
+
+boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgramObject(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
+{
+  GLuint program_id = GenerateProgram(definitions, cache_options);
+  return (program_id == 0) ? nullptr : new GLProgram(program_id);
 }
 
 void GLProgramLoader::Reset()

@@ -97,7 +97,7 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
     
-    program = loader.GenerateProgram();
+    program = loader.GenerateProgramObject();
     if (program == nullptr)
       return false;
 

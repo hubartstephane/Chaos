@@ -135,7 +135,7 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
     
-    program = loader.GenerateProgram();
+    program = loader.GenerateProgramObject();
     if (program == nullptr)
       return false;
 

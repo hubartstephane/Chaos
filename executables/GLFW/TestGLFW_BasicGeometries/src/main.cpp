@@ -296,7 +296,7 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
 
-    boost::intrusive_ptr<chaos::GLProgram> result = loader.GenerateProgram();
+    boost::intrusive_ptr<chaos::GLProgram> result = loader.GenerateProgramObject();
     if (result != nullptr)
       program_data = chaos::GLProgramData::GetData(result->GetResourceID());
 

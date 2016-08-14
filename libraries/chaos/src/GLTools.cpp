@@ -31,24 +31,28 @@ Buffer<char> GLTools::GetProgramBinary(GLuint program)
   return result;
 }
 
-boost::intrusive_ptr<GLProgram> GLTools::GetProgramFromBinary(Buffer<char> const & buffer)
+GLuint GLTools::GetProgramFromBinary(Buffer<char> const & buffer)
 {
   if (buffer.bufsize < sizeof(GLenum))
     return 0;
 
-  GLuint program_id = glCreateProgram();
-  if (program_id != 0)
+  GLuint result = glCreateProgram();
+  if (result != 0)
   {
     GLenum binary_format = GL_NONE;
     memcpy(&binary_format, buffer.data, sizeof(GLenum));
   
-    glProgramBinary(program_id, binary_format, buffer.data + sizeof(GLenum), (GLsizei)buffer.bufsize - sizeof(GLenum));
-    if (CheckProgramStatus(program_id, GL_LINK_STATUS, "Program from binary failure") != GL_TRUE)
-      glDeleteProgram(program_id);
-    else
-      return new GLProgram(program_id);
+    glProgramBinary(result, binary_format, buffer.data + sizeof(GLenum), (GLsizei)buffer.bufsize - sizeof(GLenum));
+    if (CheckProgramStatus(result, GL_LINK_STATUS, "Program from binary failure") != GL_TRUE)
+      glDeleteProgram(result);
   }
-  return nullptr;
+  return result;
+}
+
+boost::intrusive_ptr<GLProgram> GLTools::GetProgramObjectFromBinary(Buffer<char> const & buffer)
+{
+  GLuint program_id = GetProgramFromBinary(buffer);
+  return (program_id == 0)? nullptr : new GLProgram(program_id);
 }
 
 void GLTools::FreeVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer) 

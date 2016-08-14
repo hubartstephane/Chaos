@@ -44,7 +44,9 @@ public:
   /** reset the content */
   void Reset();
   /** generate a program from the sources */
-  boost::intrusive_ptr<GLProgram> GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
+  GLuint GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
+  /** generate a program from the sources */
+  boost::intrusive_ptr<GLProgram> GenerateProgramObject(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
 
   /** add a generator a given shader */
   bool AddSourceGenerator(GLenum shader_type, GLProgramSourceGenerator * generator);

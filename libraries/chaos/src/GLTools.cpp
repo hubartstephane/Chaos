@@ -283,13 +283,13 @@ void GLTools::SetDebugMessageHandler()
 #endif
 }
 
-TextureDescription GLTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
+GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
 {
   assert(image.width > 0);
   assert(image.height > 0);
   assert(image.bpp == 24 || image.bpp == 32);
 
-  TextureDescription result;
+  GenTextureResult result;
   glGenTextures(1, &result.texture_id); // Generate a texture ID
   if (result.texture_id > 0)
   {
@@ -311,15 +311,15 @@ TextureDescription GLTools::GenTexture(ImageDescription const & image, GenTextur
     // apply parameters
     GenTextureApplyParameters(target, result.texture_id, parameters);
 
-    result.type            = target;
-    result.internal_format = internal_format;
-    result.width           = image.width;
-    result.height          = image.height;
+    result.texture_description.type            = target;
+    result.texture_description.internal_format = internal_format;
+    result.texture_description.width           = image.width;
+    result.texture_description.height          = image.height;
   }
   return result;
 }
 
-TextureDescription GLTools::GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters)
+GenTextureResult GLTools::GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters)
 {
   assert(image != nullptr);
   return GenTexture(ImageTools::GetImageDescription(image), parameters);
@@ -385,12 +385,12 @@ TextureDescription GLTools::GenTexture(FIBITMAP const * image, GenTextureParamet
 //  v
 //
 
-TextureDescription GLTools::GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
+GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
 {
   assert(skybox != nullptr);
   assert(!skybox->IsEmpty());
 
-  TextureDescription result;
+  GenTextureResult result;
   glGenTextures(1, &result.texture_id);
   if (result.texture_id > 0)
   {
@@ -458,13 +458,38 @@ TextureDescription GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePa
     tmp.wrap_t = GL_CLAMP_TO_EDGE;
     GenTextureApplyParameters(target, result.texture_id, tmp);
 
-    result.type            = target;
-    result.internal_format = internal_format;
-    result.width           = size;
-    result.height          = size;
+    result.texture_description.type            = target;
+    result.texture_description.internal_format = internal_format;
+    result.texture_description.width           = size;
+    result.texture_description.height          = size;
   }
   return result;
 }
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(image, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(FIBITMAP const * image, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(image, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(skybox, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
 
 void GLTools::GenTextureApplyParameters(GLenum target, GLint texture_id, GenTextureParameters const & parameters)
 {

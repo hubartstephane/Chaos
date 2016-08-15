@@ -4,6 +4,7 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
+#include <chaos/Texture.h>
 
 namespace chaos
 {
@@ -83,17 +84,11 @@ protected:
 
   /** the program to run */
   boost::intrusive_ptr<GLProgram> program;
-  /** the definition of the program */
-  GLProgramData program_data;
   /** the declaration of the vertex buffer */
   VertexDeclaration declaration;
 
-  /** the bitmap texture */
-  GLuint texture_id;
-  /** the bitmap texture size */
-  int    texture_width;
-  /** the bitmap texture size */
-  int    texture_height;
+  /** the texture */
+  boost::intrusive_ptr<Texture> texture;
 
   /** the vertex array */
   GLuint vertex_array;

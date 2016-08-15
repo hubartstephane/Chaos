@@ -6,37 +6,23 @@
 #include <chaos/Buffer.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgram.h>
+#include <chaos/Texture.h>
 
 namespace chaos
 {
 
+  /**
+  * GenTextureResult : result for gen texture methods
+  **/
 
-/**
- * TextureDescription : used to describe an openGL texture
- */
-
-class TextureDescription
+class GenTextureResult
 {
 public:
 
-  /** constructor */
-  TextureDescription(): 
-    type(GL_NONE),
-    internal_format(GL_NONE),
-    width(0),
-    height(0),
-    texture_id(0){}
-
-  /** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
-  GLenum type;
-  /** the format of the texture (RGB / RGBA) */
-  GLenum internal_format;
-  /** the image width */
-  int    width;
-  /** the image height */
-  int    height;
-  /** the bit per pixels : 24 or 32 */
-  GLuint texture_id;
+  /** the id of the texture */
+  GLuint             texture_id;
+  /** the GL handler for the texture */
+  TextureDescription texture_description;
 };
 
 /**
@@ -100,11 +86,20 @@ public:
   static void SetDebugMessageHandler();
 
   /** Generate a 1D/2D/rectangle texture from an image */
-  static TextureDescription GenTexture(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */
-  static TextureDescription GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a cube texture from a skybox */
-  static TextureDescription GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
+
+  /** Generate a 1D/2D/rectangle texture from an image */
+  static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
+  /** Generate a 1D/2D/rectangle texture from an image */
+  static boost::intrusive_ptr<Texture> GenTextureObject(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
+  /** Generate a cube texture from a skybox */
+  static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
+
+
 
   /** generate multiple arrays/buffer with a single call */
   static bool GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);

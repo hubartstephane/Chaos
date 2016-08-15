@@ -12,6 +12,7 @@
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/GLProgram.h>
+#include <chaos/Texture.h>
 
 bool RECTANGLE_TEXTURE = true;
 
@@ -55,7 +56,7 @@ protected:
     program_data.SetUniform("local_to_world",  local_to_world);
     program_data.SetUniform("world_to_camera", world_to_camera);
 
-    glBindTextureUnit(0, texture.texture_id);
+    glBindTextureUnit(0, texture->GetResourceID());
     program_data.SetUniform("material", 0);
 
     mesh->Render(program_data, nullptr, 0, 0);
@@ -67,9 +68,7 @@ protected:
   {
     program = nullptr;
     mesh    = nullptr;
-
-    if (texture.texture_id != 0)
-      glDeleteTextures(1, &texture.texture_id);
+    texture = nullptr;
   }
 
   virtual bool Initialize() override
@@ -89,8 +88,8 @@ protected:
     if (image == nullptr)
       return false;
 
-    texture = chaos::GLTools::GenTexture(image);
-    if (texture.texture_id == 0)
+    texture = chaos::GLTools::GenTextureObject(image);
+    if (texture == nullptr)
       return false;
 
     FreeImage_Unload(image);
@@ -124,7 +123,7 @@ protected:
 
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-  chaos::TextureDescription   texture;
+  boost::intrusive_ptr<chaos::Texture>    texture;
 };
 
 

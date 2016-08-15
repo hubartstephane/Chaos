@@ -4,7 +4,9 @@
 namespace chaos
 {
 
-  Texture::Texture(GLuint in_id) : texture_id(in_id)
+  Texture::Texture(GLuint in_id, TextureDescription const & in_texture_description): 
+    texture_id(in_id), 
+    texture_description(in_texture_description)
   {
   
   }

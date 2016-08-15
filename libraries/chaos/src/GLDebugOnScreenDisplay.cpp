@@ -37,9 +37,6 @@ namespace chaos
   GLDebugOnScreenDisplay::GLDebugOnScreenDisplay():
     rebuild_required(true),
     screen_width(-1),
-    texture_id(0),
-    texture_width(0),
-    texture_height(0),
     vertex_array(0),
     vertex_buffer(0)
   {
@@ -87,6 +84,8 @@ namespace chaos
 
     // Initialize the vertex arra
     glBindVertexArray(vertex_array); 
+
+    GLProgramData const & program_data = program->GetProgramData();
     
     program_data.BindAttributes(vertex_array, declaration, nullptr);
 
@@ -102,7 +101,7 @@ namespace chaos
       glUniform2f(position_factor->location, factor_x, factor_y);   
 
     // Texture
-    glBindTextureUnit(0, texture_id);
+    glBindTextureUnit(0, texture->GetResourceID());
 
     GLUniformInfo const * material = program_data.FindUniform("material");
     if (material != nullptr)
@@ -125,8 +124,8 @@ namespace chaos
     int sx  = mesh_builder_params.spacing.x;
     int sy  = mesh_builder_params.spacing.y;
 
-    int tw = texture_width;
-    int th = texture_height;
+    int tw = texture->GetTextureDescription().width;
+    int th = texture->GetTextureDescription().height;
     int cx = mesh_builder_params.crop_texture.x;
     int cy = mesh_builder_params.crop_texture.y;
 
@@ -186,13 +185,9 @@ namespace chaos
       return false;
 
     // create texture
-    TextureDescription texture_description = chaos::GLTools::GenTexture(image);
-
-    texture_id     = texture_description.texture_id;
-    texture_width  = texture_description.width;
-    texture_height = texture_description.height;
+    texture = chaos::GLTools::GenTextureObject(image);
     FreeImage_Unload(image);
-    if (texture_id == 0)
+    if (texture == nullptr)
       return false;
 
     // create GPU-Program
@@ -203,8 +198,6 @@ namespace chaos
     program = loader.GenerateProgramObject();
     if (program == nullptr)
       return false;
-
-    program_data = GLProgramData::GetData(program->GetResourceID());
 
     // prepare the vertex declaration
     declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
@@ -223,14 +216,9 @@ namespace chaos
   void GLDebugOnScreenDisplay::Finalize()
   {
     program = nullptr;
+    texture = nullptr;
 
     GLTools::FreeVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr);
-
-    if (texture_id != 0)
-    {
-      glDeleteTextures(1, &texture_id);
-      texture_id = 0;
-    }
 
     declaration.Clear();
   }

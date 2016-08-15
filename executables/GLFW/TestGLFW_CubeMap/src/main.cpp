@@ -14,6 +14,7 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
+#include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
 
 
@@ -55,7 +56,7 @@ protected:
     program_data.SetUniform("local_to_world",  local_to_world_matrix);
     program_data.SetUniform("world_to_camera", world_to_camera_matrix);
 
-    glBindTextureUnit(0, texture.texture_id);
+    glBindTextureUnit(0, texture->GetResourceID());
     program_data.SetUniform("material", 0);
 
     mesh->Render(program_data, nullptr, 0, 0);
@@ -69,9 +70,7 @@ protected:
   {
     program = nullptr;
     mesh    = nullptr;
-
-    if (texture.texture_id != 0)
-      glDeleteTextures(1, &texture.texture_id);
+    texture = nullptr;
 
     skybox.Release(true);
 
@@ -129,8 +128,8 @@ protected:
     if (skybox.IsEmpty())
       return false;
     
-    texture = chaos::GLTools::GenTexture(&skybox);
-    if (texture.texture_id == 0)
+    texture = chaos::GLTools::GenTextureObject(&skybox);
+    if (texture == nullptr)
       return false;
 
     chaos::GLProgramLoader loader;
@@ -192,10 +191,9 @@ protected:
 
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
+  boost::intrusive_ptr<chaos::Texture>    texture;
   
   chaos::SkyBoxImages skybox;
-
-  chaos::TextureDescription texture;
 
   double realtime;
 

@@ -45,12 +45,13 @@ protected:
 
     int instance_cube_size = 20;
 
+    chaos::GLProgramData const & program_data = program->GetProgramData();
+
     program_data.SetUniform("projection",         projection_matrix);
     program_data.SetUniform("local_to_world",     local_to_world_matrix);
     program_data.SetUniform("world_to_camera",    world_to_camera_matrix);
     program_data.SetUniform("instance_cube_size", instance_cube_size);
     program_data.SetUniform("realtime",           realtime);
-
 
     int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
     int base_instance  = 0;
@@ -87,8 +88,6 @@ protected:
     program = loader.GenerateProgramObject();
     if (program == nullptr)
       return false;
-
-    program_data = chaos::GLProgramData::GetData(program->GetResourceID());
 
     fps_camera.fps_controller.position.z = 100.0f;
    
@@ -132,8 +131,6 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram> program;
   
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-
-  chaos::GLProgramData program_data;
 
   chaos::MyGLFWFpsCamera fps_camera;
 };

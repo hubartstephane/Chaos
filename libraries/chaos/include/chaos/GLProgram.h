@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GraphicResource.h>
+#include <chaos/GLProgramData.h>
 
 namespace chaos
 {
@@ -24,10 +25,15 @@ public:
   /** returns true whether the resource is valid */
   bool IsValid() const { return glIsProgram(program_id) == GL_TRUE;}
 
+  /** get the program data */
+  GLProgramData const & GetProgramData() const { return program_data; }
+
 protected:
 
   /** the resource id */
   GLuint program_id;
+  /** the program data */
+  GLProgramData program_data;
 };
 
 }; // namespace chaos

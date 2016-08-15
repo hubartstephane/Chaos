@@ -88,9 +88,11 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(GLuint program, chaos::GLProgramData & program_data, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
+  void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
   {
-    glUseProgram(program);
+    chaos::GLProgramData const & program_data = program->GetProgramData();
+
+    glUseProgram(program->GetResourceID());
     program_data.SetUniform("projection", ctx.projection);    
     program_data.SetUniform("world_to_camera", ctx.world_to_camera);
     program_data.SetUniform("local_to_world", prim_ctx.local_to_world);
@@ -106,9 +108,9 @@ protected:
     prim_ctx.local_to_world = glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) * glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
     prim_ctx.color = color;
 
-    PrepareObjectProgram(program_rect->GetResourceID(), program_rect_data, ctx, prim_ctx);
+    PrepareObjectProgram(get_pointer(program_rect), ctx, prim_ctx);
 
-    mesh_rect->Render(program_rect_data, nullptr, 0, 0);
+    mesh_rect->Render(program_rect->GetProgramData(), nullptr, 0, 0);
   }
 
   void DrawBox(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
@@ -120,9 +122,9 @@ protected:
     prim_ctx.local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
     prim_ctx.color           = color;
 
-    PrepareObjectProgram(program_box->GetResourceID(), program_box_data, ctx, prim_ctx);
+    PrepareObjectProgram(get_pointer(program_box), ctx, prim_ctx);
 
-    mesh_box->Render(program_box_data, nullptr, 0, 0);
+    mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
   }
 
   void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color)
@@ -290,17 +292,13 @@ protected:
     debug_display.Finalize();
   }
 
-  boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename, chaos::GLProgramData & program_data)
+  boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
   {
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
 
-    boost::intrusive_ptr<chaos::GLProgram> result = loader.GenerateProgramObject();
-    if (result != nullptr)
-      program_data = chaos::GLProgramData::GetData(result->GetResourceID());
-
-    return result;
+    return loader.GenerateProgramObject();
   }
 
   virtual bool Initialize() override
@@ -327,15 +325,15 @@ protected:
       return false;
     
     // load programs      
-    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt", program_box_data);
+    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
     if (program_box == nullptr)
       return false;
 
-    program_rect = LoadProgram(resources_path, "pixel_shader_rect.txt", "vertex_shader_rect.txt", program_rect_data);
+    program_rect = LoadProgram(resources_path, "pixel_shader_rect.txt", "vertex_shader_rect.txt");
     if (program_rect == nullptr)
       return false;
 
-    program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt", program_sphere_data);
+    program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt");
     if (program_sphere == nullptr)
       return false;
 
@@ -346,13 +344,9 @@ protected:
     if (mesh_box == nullptr)
       return false;
 
-
-
-
-
     // place camera
-    fps_camera.fps_controller.position.y =  3.0f;
-    fps_camera.fps_controller.position.z = 10.0f;
+    fps_camera.fps_controller.position.y = 10.0f;
+    fps_camera.fps_controller.position.z = 30.0f;
 
     // initial display
     DebugDisplayExampleTitle(true);
@@ -419,17 +413,14 @@ protected:
 protected:
 
   // rendering for the box  
-  chaos::GLProgramData program_box_data;  
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
 
   // rendering for the rect
-  chaos::GLProgramData program_rect_data;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_rect;
   boost::intrusive_ptr<chaos::GLProgram>  program_rect;
 
   // rendering for the rect
-  chaos::GLProgramData program_sphere_data;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
   boost::intrusive_ptr<chaos::GLProgram>  program_sphere;
 

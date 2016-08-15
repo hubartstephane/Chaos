@@ -4,9 +4,10 @@
 namespace chaos
 {
 
-  GLProgram::GLProgram(GLuint in_id) : program_id(in_id)
+  GLProgram::GLProgram(GLuint in_id) : program_id(in_id)  
   {
-  
+    if (in_id != 0)
+      program_data = GLProgramData::GetData(in_id);
   }
 
   GLProgram::~GLProgram()

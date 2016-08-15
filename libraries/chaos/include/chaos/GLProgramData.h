@@ -2,9 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramData.h>
 #include <chaos/GLProgramAttributeProvider.h>
-#include <chaos/GLTools.h>
 
 namespace chaos
 {

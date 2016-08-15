@@ -6,7 +6,6 @@
 #include <chaos/Buffer.h>
 #include <chaos/GLProgramData.h>
 
-
 namespace chaos
 {
 

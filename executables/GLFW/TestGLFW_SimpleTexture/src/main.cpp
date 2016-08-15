@@ -49,6 +49,8 @@ protected:
     glm::mat4 local_to_world  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
     glm::mat4 world_to_camera = glm::translate(glm::vec3(0.0f, 0.0f, Z));
 
+    chaos::GLProgramData const & program_data = program->GetProgramData();
+
     program_data.SetUniform("projection",      projection);
     program_data.SetUniform("local_to_world",  local_to_world);
     program_data.SetUniform("world_to_camera", world_to_camera);
@@ -101,8 +103,6 @@ protected:
     if (program == nullptr)
       return false;
 
-    program_data = chaos::GLProgramData::GetData(program->GetResourceID());
-
     // create the mesh
     chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
@@ -125,7 +125,6 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   chaos::TextureDescription   texture;
-  chaos::GLProgramData        program_data;
 };
 
 

@@ -36,9 +36,7 @@ namespace chaos
 
   GLDebugOnScreenDisplay::GLDebugOnScreenDisplay():
     rebuild_required(true),
-    screen_width(-1),
-    vertex_array(0),
-    vertex_buffer(0)
+    screen_width(-1)
   {
 
   }
@@ -83,11 +81,11 @@ namespace chaos
     glUseProgram(program->GetResourceID());
 
     // Initialize the vertex arra
-    glBindVertexArray(vertex_array); 
+    glBindVertexArray(vertex_array->GetResourceID()); 
 
     GLProgramData const & program_data = program->GetProgramData();
     
-    program_data.BindAttributes(vertex_array, declaration, nullptr);
+    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
     float character_width  = (float)mesh_builder_params.character_width;
     float character_height = (float)mesh_builder_params.character_width;
@@ -153,11 +151,11 @@ namespace chaos
 
     // fill GPU buffer
     size_t count = vertices.size();
-    glNamedBufferData(vertex_buffer, count * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+    glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(float), &vertices[0], GL_STATIC_DRAW);
     draw_count = count / 4; // 4 float per vertex
 
     GLuint binding_index = 0;
-    glVertexArrayVertexBuffer(vertex_array, binding_index, vertex_buffer, 0, declaration.GetVertexSize());
+    glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
     
     return true;
   }
@@ -204,7 +202,7 @@ namespace chaos
     declaration.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT2);
 
     // Generate Vertex Array and Buffer
-    if (!GLTools::GenerateVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr))
+    if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
       return false;
 
     // keep a copy of initialization params
@@ -215,10 +213,10 @@ namespace chaos
 
   void GLDebugOnScreenDisplay::Finalize()
   {
-    program = nullptr;
-    texture = nullptr;
-
-    GLTools::FreeVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr);
+    program       = nullptr;
+    texture       = nullptr;
+    vertex_array  = nullptr;
+    vertex_buffer = nullptr;
 
     declaration.Clear();
   }

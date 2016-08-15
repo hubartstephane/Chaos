@@ -7,6 +7,9 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
+#include <chaos/VertexArray.h>
+#include <chaos/VertexBuffer.h>
+#include <chaos/IndexBuffer.h>
 
 namespace chaos
 {
@@ -103,6 +106,8 @@ public:
 
   /** generate multiple arrays/buffer with a single call */
   static bool GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
+  /** generate multiple arrays/buffer with a single call */
+  static bool GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<VertexArray> * vertex_array, boost::intrusive_ptr<VertexBuffer> * vertex_buffer, boost::intrusive_ptr<IndexBuffer> * index_buffer);
   /** free multiple arrays/buffer with a single call */
   static void FreeVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
 

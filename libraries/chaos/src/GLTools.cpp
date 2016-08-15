@@ -128,6 +128,30 @@ bool GLTools::GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vert
   return true;
 }
 
+bool GLTools::GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<VertexArray> * vertex_array, boost::intrusive_ptr<VertexBuffer> * vertex_buffer, boost::intrusive_ptr<IndexBuffer> * index_buffer)
+{
+  GLuint va = 0;
+  GLuint vb = 0;
+  GLuint ib = 0;
+
+  GLuint * va_ptr = (vertex_array  != nullptr)? &va : nullptr;
+  GLuint * vb_ptr = (vertex_buffer != nullptr)? &vb : nullptr;
+  GLuint * ib_ptr = (index_buffer  != nullptr)? &ib : nullptr;
+
+  if (GenerateVertexAndIndexBuffers(va_ptr, vb_ptr, ib_ptr))
+  {
+    if (vertex_array != nullptr)
+      *vertex_array = new VertexArray(va);
+    if (vertex_buffer != nullptr)
+      *vertex_buffer = new VertexBuffer(vb);
+    if (index_buffer != nullptr)
+      *index_buffer = new IndexBuffer(ib);
+
+    return true;
+  }
+  return false;
+}
+
 void GLTools::DisplayGenericInformation()
 {
   GLubyte const * renderer = glGetString(GL_RENDERER);

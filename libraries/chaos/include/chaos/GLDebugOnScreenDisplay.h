@@ -5,6 +5,8 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
+#include <chaos/VertexArray.h>
+#include <chaos/VertexBuffer.h>
 
 namespace chaos
 {
@@ -91,9 +93,9 @@ protected:
   boost::intrusive_ptr<Texture> texture;
 
   /** the vertex array */
-  GLuint vertex_array;
+  boost::intrusive_ptr<VertexArray> vertex_array;
   /** the vertex buffer */
-  GLuint vertex_buffer;
+  boost::intrusive_ptr<VertexBuffer> vertex_buffer;
 
   /** number of element to draw */
   mutable size_t draw_count;

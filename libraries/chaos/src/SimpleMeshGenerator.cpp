@@ -115,11 +115,7 @@ boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
   boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
   if (result != nullptr)
   {
-    GLuint va = 0;
-    GLuint vb = 0;
-    GLuint ib = 0;
-
-    if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
+    if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
     {
       result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 
@@ -131,10 +127,6 @@ boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
       mesh_primitive.base_vertex_index = 0;
       result->primitives.push_back(mesh_primitive);
 
-      result->vertex_array  = new VertexArray(va);
-      result->vertex_buffer = new VertexBuffer(vb);
-      result->index_buffer  = new IndexBuffer(ib);
-
       // fill the buffers
       glm::vec3 hs = glm::vec3(primitive.half_size.x, primitive.half_size.y, 1.0f);
       glm::vec3 p  = glm::vec3(primitive.position.x, primitive.position.y,  0.0f);
@@ -145,8 +137,8 @@ boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
       for (int i = 0; i < count; ++i)
         final_vertices[i] = vertices[i] * hs + p;
 
-      glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
-      glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW);
+      glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
+      glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(triangles), triangles, GL_STATIC_DRAW);
 
       // initialize the vertex array
       result->FinalizeBindings();
@@ -162,11 +154,7 @@ boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
   boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
   if (result != nullptr)
   {
-    GLuint va = 0;
-    GLuint vb = 0;
-    GLuint ib = 0;
-
-    if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
+    if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
     {
       result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
       if (with_normals)
@@ -180,10 +168,6 @@ boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
       mesh_primitive.base_vertex_index = 0;
       result->primitives.push_back(mesh_primitive);
 
-      result->vertex_array  = new VertexArray(va);
-      result->vertex_buffer = new VertexBuffer(vb);
-      result->index_buffer  = new IndexBuffer(ib);
-
       // resize the mesh      
       if (with_normals)
       {
@@ -196,8 +180,8 @@ boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
           final_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
         }
 
-        glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
-        glNamedBufferData(ib, sizeof(triangles_with_normals), triangles_with_normals, GL_STATIC_DRAW);
+        glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
+        glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(triangles_with_normals), triangles_with_normals, GL_STATIC_DRAW);
       }
       else
       {
@@ -207,8 +191,8 @@ boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
         for (int i = 0; i < count; ++i)
           final_vertices[i] = vertices[i] * primitive.half_size + primitive.position;
 
-        glNamedBufferData(vb, sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
-        glNamedBufferData(ib, sizeof(triangles), triangles, GL_STATIC_DRAW);
+        glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
+        glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(triangles), triangles, GL_STATIC_DRAW);
       }
          
       // initialize the vertex array

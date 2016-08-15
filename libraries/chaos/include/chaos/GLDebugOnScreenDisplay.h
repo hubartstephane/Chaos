@@ -86,16 +86,14 @@ protected:
 
   /** the program to run */
   boost::intrusive_ptr<GLProgram> program;
-  /** the declaration of the vertex buffer */
-  VertexDeclaration declaration;
-
   /** the texture */
   boost::intrusive_ptr<Texture> texture;
-
   /** the vertex array */
   boost::intrusive_ptr<VertexArray> vertex_array;
   /** the vertex buffer */
   boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+  /** the declaration of the vertex buffer */
+  VertexDeclaration declaration;
 
   /** number of element to draw */
   mutable size_t draw_count;

@@ -91,6 +91,14 @@ public:
     return Minimum(x, static_cast<T>(1));
   }
 
+  template<typename T> 
+  static glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
+  {
+    T c = Cos(beta);
+
+    return glm::tvec3<T>(Cos(alpha) * c, Sin(beta), Sin(alpha) * c);
+  }
+
   /** mathematic function wrapper for meta programming for Cos */
   static float Cos(float f){ return cosf(f); }
   /** mathematic function wrapper for meta programming for Cos */

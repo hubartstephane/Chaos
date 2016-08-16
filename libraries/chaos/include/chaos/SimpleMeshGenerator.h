@@ -94,16 +94,24 @@ class SphereMeshGenerator : public SimpleMeshGenerator
 public:
 
   /** constructor */
-  SphereMeshGenerator(sphere const & in_primitive) :
-    primitive(in_primitive) {}
+  SphereMeshGenerator(sphere const & in_primitive, int in_subdivisions) :
+    primitive(in_primitive),
+    subdivisions(in_subdivisions){}
 
   /** generation function */
   virtual boost::intrusive_ptr<SimpleMesh> GenerateMesh() const override;
 
 protected:
 
+  /** get a vertex on the sphere from polar angle */
+  float3 GetSphereVertex(float alpha, float beta) const;
+
+protected:
+
   /** the sphere to generate */
   sphere primitive;
+  /** number of subdivisions */
+  int subdivisions;
 };
 
 

@@ -1,5 +1,6 @@
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLTools.h>
+#include <chaos/MathTools.h>
 
 // OpenGL coordinates for a fullscreen representation
 //   -1          +1
@@ -207,8 +208,91 @@ boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
 
 boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
 {
+  boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
+  if (result != nullptr)
+  {
+    if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
+    {
+      int subdiv = max(subdivisions, 3);
+     
+      // construct the vertex declaration
+      result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 
+      std::vector<float3> vertices;
+      std::vector<GLuint> indices;
+
+      // construct the vertex buffer
+      vertices.push_back(GetSphereVertex(0.0f, (float)M_PI_2));
+
+      float delta_alpha = ((float)M_2_PI) / ((float)subdiv * 2.0f); // there is twice more divisions along ALPHA than BETA
+      float delta_beta  = ((float)M_PI_2) / ((float)subdiv);        // finaly this are the same values
+
+      float beta = (float)M_PI_2 + delta_beta * 0.5f;
+      for (int i = 0 ; i < subdiv ; ++i)
+      {
+        float alpha = 0.0f;
+        for (int j = 0 ; j < subdiv * 2 ; ++j)
+        {
+          vertices.push_back(GetSphereVertex(alpha, beta));
+          alpha += delta_alpha;
+        }
+        beta += delta_beta;
+      }
+
+      vertices.push_back(GetSphereVertex(0.0f, (float)-M_PI_2));
+
+      // construct the index buffer
+      for (int i = 0 ; i < subdiv * 2 ; ++i)
+      {
+        indices.push_back(0);
+        indices.push_back(1 + i);
+        indices.push_back(1 + ((i + 1) % (subdiv * 2)));
+      }
+
+      for (int i = 0 ; i < subdiv ; ++i)
+      {
+        int start_line = 1 + i;
+        int next_line  = 1 + i + (subdiv * 2);
+        for (int j = 0 ; j < subdiv * 2 ; ++j)
+        {
+          GLint next_on_line = ((j + 1) % (subdiv * 2));
+
+          GLint a = start_line + j;
+          GLint b = next_line  + j;
+          GLint c = next_line  + next_on_line;
+          GLint d = start_line + next_on_line;
+
+          indices.push_back(a);
+          indices.push_back(b);
+          indices.push_back(c);
+
+          indices.push_back(a);          
+          indices.push_back(c);
+          indices.push_back(d);
+        }
+      }
+
+      // the triangles
+      MeshPrimitive mesh_primitive;
+      mesh_primitive.count             = indices.size() / 3;
+      mesh_primitive.indexed           = true;
+      mesh_primitive.primitive_type    = GL_TRIANGLES;
+      mesh_primitive.start             = 0;
+      mesh_primitive.base_vertex_index = 0;
+      result->primitives.push_back(mesh_primitive);
+
+      // send the buffers to GPU
+      glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(float3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+      glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(GLuint) * indices.size(), &indices[0], GL_STATIC_DRAW);
+
+    }
+  }
   return nullptr;
+}
+
+float3 SphereMeshGenerator::GetSphereVertex(float alpha, float beta) const
+{
+  return primitive.radius * MathTools::PolarCoordToVector(alpha, beta) + primitive.position;
 }
 
 }; // namespace chaos

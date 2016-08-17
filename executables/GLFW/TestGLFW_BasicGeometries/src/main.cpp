@@ -72,6 +72,20 @@ protected:
     return src;  
   }
 
+  template<typename T, int dimension>
+  chaos::type_box<T, dimension> SlightDecreaseSize(chaos::type_box<T, dimension> src) const
+  {
+    src.half_size *= static_cast<T>(0.90);
+    return src;
+  }
+
+  template<typename T>
+  chaos::type_sphere<T> SlightDecreaseSize(chaos::type_sphere<T> src) const
+  {
+    src.radius *= static_cast<T>(0.90);
+    return src;
+  }
+
   char const * GetExampleTitle(int example)
   {
     if (example == 0)
@@ -95,6 +109,15 @@ protected:
       return "sphere intersection";
     if (example == 9)
       return "sphere union";
+
+    if (example == 10)
+      return "inner sphere";
+    if (example == 11)
+      return "bounding sphere";
+    if (example == 12)
+      return "bounding box";
+    if (example == 13)
+      return "split box";
   
     return nullptr;
   }
@@ -297,6 +320,67 @@ protected:
       chaos::sphere s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
       chaos::sphere s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
       DrawIntersectionOrUnion(ctx, s1, s2, display_example == 8);
+    }
+
+    // inner sphere
+    if (display_example == 10)
+    {
+      chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+      chaos::sphere s = GetInnerSphere(b);
+
+      DrawPrimitive(ctx, s, blue);
+
+      BeginTranslucency();
+      DrawPrimitive(ctx, b, red * translucent);
+      EndTranslucency();                 
+    }
+
+    // bounding sphere
+    if (display_example == 11)
+    {
+      chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+      chaos::sphere s = GetBoundingSphere(b);
+
+      DrawPrimitive(ctx, b, red);
+
+      BeginTranslucency();
+      DrawPrimitive(ctx, s, blue * translucent);
+      EndTranslucency();
+    }
+    // bounding box
+    if (display_example == 12)
+    {      
+      chaos::sphere s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
+
+      chaos::box3 b = GetBoundingBox(s);
+
+      DrawPrimitive(ctx, s, red);
+
+      BeginTranslucency();
+      DrawPrimitive(ctx, b, blue * translucent);
+      EndTranslucency();
+    }
+
+    // split box
+    if (display_example == 13)
+    {
+      chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+
+      for (int i = 0 ; i < 2 ; ++i)
+      {
+        for (int j = 0 ; j < 2 ; ++j)
+        {
+          for (int k = 0 ; k < 2 ; ++k)
+          {
+            chaos::box3 split_b = GetSplitBox(b, i, j, k);
+            DrawPrimitive(ctx, SlightDecreaseSize(split_b), red);
+          }
+        }
+      }
+
+      BeginTranslucency();
+      DrawPrimitive(ctx, b, blue * translucent);
+      EndTranslucency();
     }
 
 
@@ -506,10 +590,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  //params.width  = 1000;
-  //params.height = 600;
-  params.width  = 400;
-  params.height = 200;
+  params.width  = 1000;
+  params.height = 600;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

@@ -225,7 +225,7 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
       // construct the vertex buffer
       vertices.push_back(GetSphereVertex(0.0f, (float)M_PI_2));
 
-      float delta_alpha = ((float)M_PI * 2.0) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
+      float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
       float delta_beta  = ((float)M_PI)       / ((float)subdiv_beta);
 
       float beta = (float)M_PI_2 + delta_beta * 0.5f;

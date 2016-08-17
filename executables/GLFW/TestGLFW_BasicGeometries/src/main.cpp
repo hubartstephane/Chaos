@@ -66,7 +66,7 @@ protected:
   }
 
   template<typename T>
-  chaos::type_sphere<T> SlightIncreaseSize(chaos::type_sphere<T> src) const
+  chaos::type_sphere3<T> SlightIncreaseSize(chaos::type_sphere3<T> src) const
   {
     src.radius *= static_cast<T>(1.01);
     return src;  
@@ -80,7 +80,7 @@ protected:
   }
 
   template<typename T>
-  chaos::type_sphere<T> SlightDecreaseSize(chaos::type_sphere<T> src) const
+  chaos::type_sphere3<T> SlightDecreaseSize(chaos::type_sphere3<T> src) const
   {
     src.radius *= static_cast<T>(0.90);
     return src;
@@ -145,7 +145,7 @@ protected:
     program_data.SetUniform("color", prim_ctx.color);  
   }
 
-  void DrawPrimitive(RenderingContext const & ctx, chaos::sphere const & s, glm::vec4 const & color)
+  void DrawPrimitive(RenderingContext const & ctx, chaos::sphere3 const & s, glm::vec4 const & color)
   {
     if (s.IsEmpty())
       return;
@@ -305,9 +305,9 @@ protected:
     // ensure sphere touch alltogether
     if (display_example == 7)
     {
-      chaos::sphere s1(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-      chaos::sphere s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
-      chaos::sphere s3(glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);
+      chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+      chaos::sphere3 s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
+      chaos::sphere3 s3(glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);
 
       DrawPrimitive(ctx, s1, red);
       DrawPrimitive(ctx, s2, green);
@@ -317,8 +317,8 @@ protected:
     // sphere union or intersection
     if (display_example == 8 || display_example == 9)
     {
-      chaos::sphere s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
-      chaos::sphere s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
+      chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
+      chaos::sphere3 s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
       DrawIntersectionOrUnion(ctx, s1, s2, display_example == 8);
     }
 
@@ -326,7 +326,7 @@ protected:
     if (display_example == 10)
     {
       chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-      chaos::sphere s = GetInnerSphere(b);
+      chaos::sphere3 s = GetInnerSphere(b);
 
       DrawPrimitive(ctx, s, blue);
 
@@ -339,7 +339,7 @@ protected:
     if (display_example == 11)
     {
       chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-      chaos::sphere s = GetBoundingSphere(b);
+      chaos::sphere3 s = GetBoundingSphere(b);
 
       DrawPrimitive(ctx, b, red);
 
@@ -350,7 +350,7 @@ protected:
     // bounding box
     if (display_example == 12)
     {      
-      chaos::sphere s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
+      chaos::sphere3 s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
 
       chaos::box3 b = GetBoundingBox(s);
 
@@ -479,7 +479,7 @@ protected:
     if (mesh_box == nullptr)
       return false;
 
-    chaos::sphere s = chaos::sphere(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+    chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
     mesh_sphere = chaos::SphereMeshGenerator(s, 10).GenerateMesh();
     if (mesh_sphere == nullptr)

@@ -79,15 +79,15 @@ typedef glm::ivec4 int4;
 
 template<typename T, int dimension> class type_ray;
 template<typename T, int dimension> class type_box;
-template<typename T, int dimension> class type_spheroid;
+template<typename T, int dimension> class type_sphere;
 template<typename T, int dimension> class type_triangle;
 
 template<typename T> using type_ray2      = type_ray<T, 2>;
 template<typename T> using type_ray3      = type_ray<T, 3>;
 template<typename T> using type_box2      = type_box<T, 2>;
 template<typename T> using type_box3      = type_box<T, 3>;
-template<typename T> using type_circle    = type_spheroid<T, 2>;
-template<typename T> using type_sphere    = type_spheroid<T, 3>;
+template<typename T> using type_sphere2   = type_sphere<T, 2>;
+template<typename T> using type_sphere3   = type_sphere<T, 3>;
 template<typename T> using type_triangle2 = type_triangle<T, 2>;
 template<typename T> using type_triangle3 = type_triangle<T, 3>;
 
@@ -95,8 +95,8 @@ using ray2      = type_ray2<float>;
 using ray3      = type_ray3<float>;
 using box2      = type_box2<float>;
 using box3      = type_box3<float>;
-using circle    = type_circle<float>;
-using sphere    = type_sphere<float>;
+using sphere2   = type_sphere2<float>;
+using sphere3   = type_sphere3<float>;
 using triangle2 = type_triangle2<float>;
 using triangle3 = type_triangle3<float>;
 
@@ -280,30 +280,30 @@ T GetSurface(type_box3<T> const & b)
 
 /** returns the bounding circle for the box */
 template<typename T>
-type_circle<T> GetBoundingCircle(type_box2<T> const & b)
+type_sphere2<T> GetBoundingCircle(type_box2<T> const & b)
 {
-  return b.IsEmpty() ? type_circle<T>() : type_circle<T>(b.position, glm::length(b.half_size));
+  return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
 }
 
 /** returns the inner circle for the box */
 template<typename T>
-type_circle<T> GetInnerCircle(type_box2<T> const & b)
+type_sphere2<T> GetInnerCircle(type_box2<T> const & b)
 {
-  return b.IsEmpty() ? type_circle<T>() : type_circle<T>(b.position, GetMinComponent(b.half_size));
+  return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, GetMinComponent(b.half_size));
 }
 
 /** returns the bounding sphere for the box */
 template<typename T>
-type_sphere<T> GetBoundingSphere(type_box3<T> const & b)
+type_sphere3<T> GetBoundingSphere(type_box3<T> const & b)
 {
-  return b.IsEmpty() ? type_sphere<T>() : type_sphere<T>(b.position, glm::length(b.half_size));
+  return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
 }
 
 /** returns the inner sphere for the box */
 template<typename T>
-type_sphere<T> GetInnerSphere(type_box3<T> const & b)
+type_sphere3<T> GetInnerSphere(type_box3<T> const & b)
 {
-  return b.IsEmpty() ? type_sphere<T>() : type_sphere<T>(b.position, GetMinComponent(b.half_size));
+  return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, GetMinComponent(b.half_size));
 }
 
 /** returns the "aspect" of the box (width/height) */
@@ -517,7 +517,7 @@ bool operator != (type_ray<T, dimension> const & r1, type_ray<T, dimension> cons
 // ==============================================================================================
 
 template<typename T, int dimension>
-class type_spheroid : public type_geometric<T, dimension>
+class type_sphere : public type_geometric<T, dimension>
 {
 public:
 
@@ -525,11 +525,11 @@ public:
   typedef typename type_geometric<T, dimension>::type     type;
 
   /** constructor (empty circle) */
-  type_spheroid() : radius((T)-1.0f) {}
+  type_sphere() : radius((T)-1.0f) {}
   /** copy constructor */
-  type_spheroid(type_spheroid const & src) : position(src.position), radius(src.radius) {}
+  type_sphere(type_sphere const & src) : position(src.position), radius(src.radius) {}
   /** other constructor */
-  type_spheroid(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
+  type_sphere(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
 
   /** returns true whether the circle is empty */
   bool IsEmpty() const
@@ -564,42 +564,42 @@ public:
 
 /** equality function for circle */
 template<typename T, int dimension>
-bool operator == (type_spheroid<T, dimension> const & c1, type_spheroid<T, dimension> const & c2)
+bool operator == (type_sphere<T, dimension> const & c1, type_sphere<T, dimension> const & c2)
 {
   return (b1.position == b1.position) && (b1.radius == b2.radius);
 }
 
 /** difference function for circle */
 template<typename T, int dimension>
-bool operator != (type_spheroid<T, dimension> const & c1, type_spheroid<T, dimension> const & c2)
+bool operator != (type_sphere<T, dimension> const & c1, type_sphere<T, dimension> const & c2)
 {
   return !(c1 == c2);
 }
 
 /** returns the perimeter of the circle */
 template<typename T>
-float GetPerimeter(type_circle<T> const & c)
+float GetPerimeter(type_sphere2<T> const & c)
 {
   return static_cast<T>(2.0 * M_PI) * c.radius;
 }
 
 /** returns the surface of the circle */
 template<typename T>
-float GetSurface(type_circle<T> const & c)
+float GetSurface(type_sphere2<T> const & c)
 {
   return static_cast<T>(M_PI) * c.radius * c.radius;
 }
 
 /** returns the volume of the sphere */
 template<typename T>
-T GetVolume(type_sphere<T> const & s)
+T GetVolume(type_sphere3<T> const & s)
 {
   return static_cast<T>((4.0 / 3.0) * M_PI) * s.radius * s.radius * s.radius;
 }
 
 /** returns the surface of the sphere */
 template<typename T>
-float GetSurface(type_sphere<T> const & s)
+float GetSurface(type_sphere3<T> const & s)
 {
   return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
 }
@@ -607,18 +607,18 @@ float GetSurface(type_sphere<T> const & s)
 
 /** returns the bounding box of the circle */
 template<typename T>
-type_box2<T> GetBoundingBox(type_circle<T> const & c)
+type_box2<T> GetBoundingBox(type_sphere2<T> const & c)
 {
-  typedef typename type_circle<T>::vec_type vec_type;
+  typedef typename type_sphere2<T>::vec_type vec_type;
 
   return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
 }
 
 /** returns the bounding box of the circle (square) */
 template<typename T>
-type_box2<T> GetInnerBox(type_circle<T> const & c)
+type_box2<T> GetInnerBox(type_sphere2<T> const & c)
 {
-  typedef typename type_circle<T>::vec_type vec_type;
+  typedef typename type_sphere2<T>::vec_type vec_type;
 
   static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
@@ -626,17 +626,17 @@ type_box2<T> GetInnerBox(type_circle<T> const & c)
 }
 
 template<typename T>
-type_box3<T> GetBoundingBox(type_sphere<T> const & s)
+type_box3<T> GetBoundingBox(type_sphere3<T> const & s)
 {
-  typedef typename type_sphere<T>::vec_type vec_type;
+  typedef typename type_sphere3<T>::vec_type vec_type;
 
   return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
 }
 
 template<typename T>
-type_box3<T> GetInnerBox(type_sphere<T> const & s)
+type_box3<T> GetInnerBox(type_sphere3<T> const & s)
 {
-  typedef typename type_sphere<T>::vec_type vec_type;
+  typedef typename type_sphere3<T>::vec_type vec_type;
 
   static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 
@@ -645,20 +645,20 @@ type_box3<T> GetInnerBox(type_sphere<T> const & s)
 
 /** returns intersection of 2 spheres */
 template<typename T, int dimension>
-type_spheroid<T, dimension> operator & (const type_spheroid<T, dimension> & s1, const type_spheroid<T, dimension> & s2) // intersection
+type_sphere<T, dimension> operator & (const type_sphere<T, dimension> & s1, const type_sphere<T, dimension> & s2) // intersection
 {
-  typedef typename type_spheroid<T, dimension>::vec_type vec_type;
+  typedef typename type_sphere<T, dimension>::vec_type vec_type;
 
   if (s1.IsEmpty() || s2.IsEmpty())
-    return type_spheroid<T, dimension>();
+    return type_sphere<T, dimension>();
   if (s1.position == s2.position)
-    return type_spheroid<T, dimension>(s1.position, glm::min(s1.radius, s2.radius));
+    return type_sphere<T, dimension>(s1.position, glm::min(s1.radius, s2.radius));
 
   vec_type delta_pos = s2.position - s1.position;   // vector that go from center 1 to center 2  
   T        distance  = glm::length(delta_pos);      // length of such a vector
 
   if (distance >= s1.radius + s2.radius) // sphere too far => returns the empty sphere
-    return type_spheroid<T, dimension>();
+    return type_sphere<T, dimension>();
 
   T t1 = s1.radius / distance;  // positive     
   T t2 = s2.radius / distance;  // positive 
@@ -666,23 +666,23 @@ type_spheroid<T, dimension> operator & (const type_spheroid<T, dimension> & s1, 
   T a = glm::max(-t1, static_cast<T>(1) - t2);
   T b = glm::min( t1, static_cast<T>(1) + t2);
 
-  return type_spheroid<T, dimension>(
+  return type_sphere<T, dimension>(
     s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
     ((b - a) / static_cast<T>(2)) * distance);
 }
 
 /** returns union of 2 spheres */
 template<typename T, int dimension>
-type_spheroid<T, dimension> operator | (const type_spheroid<T, dimension> & s1, const type_spheroid<T, dimension> & s2) // union
+type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, const type_sphere<T, dimension> & s2) // union
 {
-  typedef typename type_spheroid<T, dimension>::vec_type vec_type;
+  typedef typename type_sphere<T, dimension>::vec_type vec_type;
 
   if (s1.IsEmpty())
     return s2;
   if (s2.IsEmpty())
     return s1;
   if (s1.position == s2.position)
-    return type_spheroid<T, dimension>(s1.position, glm::max(s1.radius, s2.radius));
+    return type_sphere<T, dimension>(s1.position, glm::max(s1.radius, s2.radius));
 
   vec_type delta_pos = s2.position - s1.position;    // vector that go from center 1 to center 2  
   T        distance  = glm::length(delta_pos);       // length of such a vector
@@ -693,7 +693,7 @@ type_spheroid<T, dimension> operator | (const type_spheroid<T, dimension> & s1, 
   T a = glm::min(-t1, static_cast<T>(1) - t2);
   T b = glm::max( t1, static_cast<T>(1) + t2);
 
-  return type_spheroid<T, dimension>(
+  return type_sphere<T, dimension>(
     s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
     ((b - a) / static_cast<T>(2)) * distance);
 }

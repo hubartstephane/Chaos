@@ -94,7 +94,7 @@ class SphereMeshGenerator : public SimpleMeshGenerator
 public:
 
   /** constructor */
-  SphereMeshGenerator(sphere const & in_primitive, int in_subdivisions) :
+  SphereMeshGenerator(sphere3 const & in_primitive, int in_subdivisions) :
     primitive(in_primitive),
     subdivisions(in_subdivisions){}
 
@@ -109,7 +109,7 @@ protected:
 protected:
 
   /** the sphere to generate */
-  sphere primitive;
+  sphere3 primitive;
   /** number of subdivisions */
   int subdivisions;
 };

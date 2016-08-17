@@ -99,6 +99,20 @@ protected:
     program_data.SetUniform("color", prim_ctx.color);  
   }
 
+  void DrawSphere(RenderingContext const & ctx, chaos::sphere const & s, glm::vec4 const & color)
+  {
+    if (s.IsEmpty())
+      return;
+
+    PrimitiveRenderingContext prim_ctx;
+    prim_ctx.local_to_world = glm::translate(s.position) * glm::scale(glm::vec3(s.radius, s.radius, s.radius));
+    prim_ctx.color = color;
+
+    PrepareObjectProgram(get_pointer(program_sphere), ctx, prim_ctx);
+
+    mesh_sphere->Render(program_sphere->GetProgramData(), nullptr, 0, 0);
+  }
+
   void DrawBox(RenderingContext const & ctx, chaos::box2 const & b, glm::vec4 const & color)
   {
     if (b.IsEmpty())
@@ -155,6 +169,13 @@ protected:
 
     glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
+
+    chaos::sphere s(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+
+    DrawSphere(ctx, s, red);
+
+    return;
+
 
     // ensure box touch alltogether
     if (display_example == 0)
@@ -342,6 +363,12 @@ protected:
 
     mesh_box = chaos::CubeMeshGenerator(b, true).GenerateMesh();
     if (mesh_box == nullptr)
+      return false;
+
+    chaos::sphere s = chaos::sphere(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+
+    mesh_sphere = chaos::SphereMeshGenerator(s, 10).GenerateMesh();
+    if (mesh_sphere == nullptr)
       return false;
 
     // place camera

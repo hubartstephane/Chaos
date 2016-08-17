@@ -56,6 +56,13 @@ protected:
     return src;  
   }
 
+  template<typename T>
+  chaos::type_sphere<T> SlightIncreaseSize(chaos::type_sphere<T> src) const
+  {
+    src.radius *= static_cast<T>(1.01);
+    return src;  
+  }
+
   char const * GetExampleTitle(int example)
   {
     if (example == 0)
@@ -72,6 +79,13 @@ protected:
       return "restrict box displacement : move bigger";
     if (example == 6)
       return "restrict box displacement : move smaller";
+
+    if (example == 7)
+      return "sphere touch each others";
+    if (example == 8)
+      return "sphere intersection";
+    if (example == 9)
+      return "sphere union";
   
     return nullptr;
   }
@@ -99,7 +113,7 @@ protected:
     program_data.SetUniform("color", prim_ctx.color);  
   }
 
-  void DrawSphere(RenderingContext const & ctx, chaos::sphere const & s, glm::vec4 const & color)
+  void DrawPrimitive(RenderingContext const & ctx, chaos::sphere const & s, glm::vec4 const & color)
   {
     if (s.IsEmpty())
       return;
@@ -113,7 +127,7 @@ protected:
     mesh_sphere->Render(program_sphere->GetProgramData(), nullptr, 0, 0);
   }
 
-  void DrawBox(RenderingContext const & ctx, chaos::box2 const & b, glm::vec4 const & color)
+  void DrawPrimitive(RenderingContext const & ctx, chaos::box2 const & b, glm::vec4 const & color)
   {
     if (b.IsEmpty())
       return;
@@ -127,7 +141,7 @@ protected:
     mesh_rect->Render(program_rect->GetProgramData(), nullptr, 0, 0);
   }
 
-  void DrawBox(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
+  void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
   {
     if (b.IsEmpty())
       return;
@@ -144,7 +158,7 @@ protected:
   void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color)
   {
     glm::vec3 half_point_size(0.125f);
-    DrawBox(ctx, chaos::box3(p, half_point_size), color);  
+    DrawPrimitive(ctx, chaos::box3(p, half_point_size), color);  
   }
 
   void BeginTranslucency()
@@ -170,13 +184,6 @@ protected:
     glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
-    chaos::sphere s(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-
-    DrawSphere(ctx, s, red);
-
-    return;
-
-
     // ensure box touch alltogether
     if (display_example == 0)
     {
@@ -184,9 +191,9 @@ protected:
       chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
       chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-      DrawBox(ctx, b1, red);
-      DrawBox(ctx, b2, green);
-      DrawBox(ctx, b3, blue);
+      DrawPrimitive(ctx, b1, red);
+      DrawPrimitive(ctx, b2, green);
+      DrawPrimitive(ctx, b3, blue);
     }
 
     // display box and corners
@@ -194,7 +201,7 @@ protected:
     {
       chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-      DrawBox(ctx, b, red);
+      DrawPrimitive(ctx, b, red);
 
       std::pair<glm::vec3, glm::vec3> corners = b.GetCorners();
       DrawPoint(ctx, corners.first, white);
@@ -209,7 +216,7 @@ protected:
 
       chaos::box3 b(std::make_pair(p1, p2));
 
-      DrawBox(ctx, b, red);
+      DrawPrimitive(ctx, b, red);
       DrawPoint(ctx, p1, white);
       DrawPoint(ctx, p2, white);
     }
@@ -225,20 +232,20 @@ protected:
 
       if (display_example == 3)
       {
-        DrawBox(ctx, SlightIncreaseSize(b1 & b2), white * solid);
+        DrawPrimitive(ctx, SlightIncreaseSize(b1 & b2), white * solid);
 
         BeginTranslucency();        
-        DrawBox(ctx, b1, red  * translucent);
-        DrawBox(ctx, b2, blue * translucent);
+        DrawPrimitive(ctx, b1, red  * translucent);
+        DrawPrimitive(ctx, b2, blue * translucent);
         EndTranslucency();
       }
       else
       {
-        DrawBox(ctx, b1, red  * solid);
-        DrawBox(ctx, b2, blue * solid);
+        DrawPrimitive(ctx, b1, red  * solid);
+        DrawPrimitive(ctx, b2, blue * solid);
 
         BeginTranslucency();        
-        DrawBox(ctx, SlightIncreaseSize(b1 | b2), white * translucent);
+        DrawPrimitive(ctx, SlightIncreaseSize(b1 | b2), white * translucent);
         EndTranslucency();        
       }
     }
@@ -259,15 +266,53 @@ protected:
 
       ForceToStayInside(bigger_box, smaller_box, display_example == 5);
 
-      DrawBox(ctx, smaller_box, blue * translucent);
+      DrawPrimitive(ctx, smaller_box, blue * translucent);
 
       BeginTranslucency();
-      DrawBox(ctx, SlightIncreaseSize(bigger_box), red * translucent);
+      DrawPrimitive(ctx, SlightIncreaseSize(bigger_box), red * translucent);
       EndTranslucency();
     }
 
+    // ensure sphere touch alltogether
+    if (display_example == 7)
+    {
+      chaos::sphere s1(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+      chaos::sphere s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
+      chaos::sphere s3(glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);
 
+      DrawPrimitive(ctx, s1, red);
+      DrawPrimitive(ctx, s2, green);
+      DrawPrimitive(ctx, s3, blue);
+    }
 
+    // sphere union or intersection
+    if (display_example == 8 || display_example == 9)
+    {
+      chaos::sphere s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
+      chaos::sphere s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
+
+      s1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
+      s2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
+
+      if (display_example == 8)
+      {
+        DrawPrimitive(ctx, SlightIncreaseSize(s1 & s2), white * solid);
+
+        BeginTranslucency();        
+        DrawPrimitive(ctx, s1, red  * translucent);
+        DrawPrimitive(ctx, s2, blue * translucent);
+        EndTranslucency();
+      }
+      else
+      {
+        DrawPrimitive(ctx, s1, red  * solid);
+        DrawPrimitive(ctx, s2, blue * solid);
+
+        BeginTranslucency();        
+        DrawPrimitive(ctx, SlightIncreaseSize(s1 | s2), white * translucent);
+        EndTranslucency();        
+      }
+    }
 
 
 
@@ -476,8 +521,10 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 1000;
-  params.height = 600;
+  //params.width  = 1000;
+  //params.height = 600;
+  params.width  = 400;
+  params.height = 200;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

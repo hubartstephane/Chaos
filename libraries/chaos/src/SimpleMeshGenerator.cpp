@@ -243,15 +243,14 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
       vertices.push_back(GetSphereVertex(0.0f, (float)-M_PI_2));
 
       // construct the index buffer
-#if 1
       for (int i = 0 ; i < subdiv_alpha ; ++i)
-      {
-        indices.push_back(0);
+      {        
         indices.push_back(1 + i);
+        indices.push_back(0);
         indices.push_back(1 + ((i + 1) % subdiv_alpha));
       }
 
-      for (int i = 0 ; i < subdiv_beta ; ++i)
+      for (int i = 0 ; i < subdiv_beta - 1 ; ++i)
       {
         int start_line = 1 + i * subdiv_alpha;
         int next_line  = start_line + subdiv_alpha;
@@ -264,34 +263,33 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
           GLint c = next_line  + next_on_line;
           GLint d = start_line + next_on_line;
 
-          indices.push_back(a);
           indices.push_back(b);
-          indices.push_back(c);
-
           indices.push_back(a);          
           indices.push_back(c);
+          
+          indices.push_back(c);
+          indices.push_back(a);                    
           indices.push_back(d);
         }
       }
-#endif
+
+      int start_line  = 1 + (subdiv_beta - 1) * subdiv_alpha;
+      int last_vertex = vertices.size() - 1;
+      for (int i = 0 ; i < subdiv_alpha ; ++i)
+      {
+        indices.push_back(last_vertex);
+        indices.push_back(start_line + i);
+        indices.push_back(start_line + ((i + 1) % subdiv_alpha));
+      }
+
       // the triangles
       MeshPrimitive mesh_primitive;
-
-#if 1
       mesh_primitive.count             = indices.size();
       mesh_primitive.indexed           = true;
       mesh_primitive.primitive_type    = GL_TRIANGLES;
       mesh_primitive.start             = 0;
       mesh_primitive.base_vertex_index = 0;
       result->primitives.push_back(mesh_primitive);
-#else
-      mesh_primitive.count             = vertices.size();
-      mesh_primitive.indexed           = false;
-      mesh_primitive.primitive_type    = GL_POINTS;
-      mesh_primitive.start             = 0;
-      mesh_primitive.base_vertex_index = 0;
-      result->primitives.push_back(mesh_primitive);
-#endif
 
       // send the buffers to GPU
       glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(float3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);

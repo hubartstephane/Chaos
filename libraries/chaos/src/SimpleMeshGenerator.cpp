@@ -243,19 +243,13 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
 
       // construct the index buffer
 
-      indices.push_back(0);
-      indices.push_back(1);
-      indices.push_back(2);
-
-      /*
       for (int i = 0 ; i < subdiv * 2 ; ++i)
       {
         indices.push_back(0);
         indices.push_back(1 + i);
         indices.push_back(1 + ((i + 1) % (subdiv * 2)));
       }
-      */
-#if 0
+
       for (int i = 0 ; i < subdiv ; ++i)
       {
         int start_line = 1 + i;
@@ -278,7 +272,6 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
           indices.push_back(d);
         }
       }
-#endif
 
       // the triangles
       MeshPrimitive mesh_primitive;
@@ -292,6 +285,9 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
       // send the buffers to GPU
       glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(float3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
       glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(GLuint) * indices.size(), &indices[0], GL_STATIC_DRAW);
+
+      // initialize the vertex array
+      result->FinalizeBindings();
 
       return result;
     }

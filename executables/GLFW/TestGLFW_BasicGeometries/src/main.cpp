@@ -17,6 +17,15 @@
 #include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
 
+static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+static glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
+
+
 class RenderingContext
 {
 public:
@@ -174,16 +183,34 @@ protected:
     glDisable(GL_BLEND);
   }
 
+  template<typename T>
+  void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
+  {
+    p1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
+    p2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
+
+    if (intersection)
+    {
+      DrawPrimitive(ctx, SlightIncreaseSize(p1 & p2), white * solid);
+
+      BeginTranslucency();        
+      DrawPrimitive(ctx, p1, red  * translucent);
+      DrawPrimitive(ctx, p2, blue * translucent);
+      EndTranslucency();
+    }
+    else
+    {
+      DrawPrimitive(ctx, p1, red  * solid);
+      DrawPrimitive(ctx, p2, blue * solid);
+
+      BeginTranslucency();        
+      DrawPrimitive(ctx, SlightIncreaseSize(p1 | p2), white * translucent);
+      EndTranslucency();        
+    }  
+  }
+
   void DrawGeometryObjects(RenderingContext const & ctx)
   {
-    glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-    glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
-
     // ensure box touch alltogether
     if (display_example == 0)
     {
@@ -226,28 +253,7 @@ protected:
     {
       chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
       chaos::box3 b2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 1.0f, 2.0f));
-
-      b1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
-      b2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
-
-      if (display_example == 3)
-      {
-        DrawPrimitive(ctx, SlightIncreaseSize(b1 & b2), white * solid);
-
-        BeginTranslucency();        
-        DrawPrimitive(ctx, b1, red  * translucent);
-        DrawPrimitive(ctx, b2, blue * translucent);
-        EndTranslucency();
-      }
-      else
-      {
-        DrawPrimitive(ctx, b1, red  * solid);
-        DrawPrimitive(ctx, b2, blue * solid);
-
-        BeginTranslucency();        
-        DrawPrimitive(ctx, SlightIncreaseSize(b1 | b2), white * translucent);
-        EndTranslucency();        
-      }
+      DrawIntersectionOrUnion(ctx, b1, b2, display_example == 3);
     }
 
     // restrict displacement
@@ -290,28 +296,7 @@ protected:
     {
       chaos::sphere s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
       chaos::sphere s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
-
-      s1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
-      s2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
-
-      if (display_example == 8)
-      {
-        DrawPrimitive(ctx, SlightIncreaseSize(s1 & s2), white * solid);
-
-        BeginTranslucency();        
-        DrawPrimitive(ctx, s1, red  * translucent);
-        DrawPrimitive(ctx, s2, blue * translucent);
-        EndTranslucency();
-      }
-      else
-      {
-        DrawPrimitive(ctx, s1, red  * solid);
-        DrawPrimitive(ctx, s2, blue * solid);
-
-        BeginTranslucency();        
-        DrawPrimitive(ctx, SlightIncreaseSize(s1 | s2), white * translucent);
-        EndTranslucency();        
-      }
+      DrawIntersectionOrUnion(ctx, s1, s2, display_example == 8);
     }
 
 

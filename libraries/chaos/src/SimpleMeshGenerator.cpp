@@ -213,7 +213,8 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
   {
     if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
     {
-      int subdiv = max(subdivisions, 3);
+      int subdiv_beta  = max(subdivisions, 3);
+      int subdiv_alpha = subdiv_beta * 2;
      
       // construct the vertex declaration
       result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
@@ -224,14 +225,14 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
       // construct the vertex buffer
       vertices.push_back(GetSphereVertex(0.0f, (float)M_PI_2));
 
-      float delta_alpha = ((float)M_2_PI) / ((float)subdiv * 2.0f); // there is twice more divisions along ALPHA than BETA
-      float delta_beta  = ((float)M_PI)   / ((float)subdiv);
+      float delta_alpha = ((float)M_PI * 2.0) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
+      float delta_beta  = ((float)M_PI)       / ((float)subdiv_beta);
 
       float beta = (float)M_PI_2 + delta_beta * 0.5f;
-      for (int i = 0 ; i < subdiv ; ++i)
+      for (int i = 0 ; i < subdiv_beta ; ++i)
       {
         float alpha = 0.0f;
-        for (int j = 0 ; j < subdiv * 2 ; ++j)
+        for (int j = 0 ; j < subdiv_alpha ; ++j)
         {
           vertices.push_back(GetSphereVertex(alpha, beta));
           alpha += delta_alpha;
@@ -242,21 +243,21 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
       vertices.push_back(GetSphereVertex(0.0f, (float)-M_PI_2));
 
       // construct the index buffer
-
-      for (int i = 0 ; i < subdiv * 2 ; ++i)
+#if 1
+      for (int i = 0 ; i < subdiv_alpha ; ++i)
       {
         indices.push_back(0);
         indices.push_back(1 + i);
-        indices.push_back(1 + ((i + 1) % (subdiv * 2)));
+        indices.push_back(1 + ((i + 1) % subdiv_alpha));
       }
 
-      for (int i = 0 ; i < subdiv ; ++i)
+      for (int i = 0 ; i < subdiv_beta ; ++i)
       {
-        int start_line = 1 + i;
-        int next_line  = 1 + i + (subdiv * 2);
-        for (int j = 0 ; j < subdiv * 2 ; ++j)
+        int start_line = 1 + i * subdiv_alpha;
+        int next_line  = start_line + subdiv_alpha;
+        for (int j = 0 ; j < subdiv_alpha ; ++j)
         {
-          GLint next_on_line = ((j + 1) % (subdiv * 2));
+          GLint next_on_line = ((j + 1) % subdiv_alpha);
 
           GLint a = start_line + j;
           GLint b = next_line  + j;
@@ -272,15 +273,25 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
           indices.push_back(d);
         }
       }
-
+#endif
       // the triangles
       MeshPrimitive mesh_primitive;
+
+#if 1
       mesh_primitive.count             = indices.size();
       mesh_primitive.indexed           = true;
       mesh_primitive.primitive_type    = GL_TRIANGLES;
       mesh_primitive.start             = 0;
       mesh_primitive.base_vertex_index = 0;
       result->primitives.push_back(mesh_primitive);
+#else
+      mesh_primitive.count             = vertices.size();
+      mesh_primitive.indexed           = false;
+      mesh_primitive.primitive_type    = GL_POINTS;
+      mesh_primitive.start             = 0;
+      mesh_primitive.base_vertex_index = 0;
+      result->primitives.push_back(mesh_primitive);
+#endif
 
       // send the buffers to GPU
       glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(float3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);

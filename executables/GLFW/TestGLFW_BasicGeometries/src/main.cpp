@@ -172,9 +172,9 @@ protected:
 
     chaos::sphere s(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
-    glDisable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-    glPointSize(5.0f);
+    //glDisable(GL_CULL_FACE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+    //glPointSize(5.0f);
     DrawSphere(ctx, s, red);
 
     return;
@@ -370,7 +370,7 @@ protected:
 
     chaos::sphere s = chaos::sphere(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
-    mesh_sphere = chaos::SphereMeshGenerator(s, 10).GenerateMesh();
+    mesh_sphere = chaos::SphereMeshGenerator(s, 4).GenerateMesh();
     if (mesh_sphere == nullptr)
       return false;
 

@@ -15,7 +15,7 @@
 namespace chaos
 {
 
-glm::vec3 const QuadMeshGenerator::vertices[4] =
+glm::vec3 const QuadMeshGeneratorProxy::vertices[4] =
 {
   glm::vec3(-1.0f, -1.0f, 0.0f),
   glm::vec3( 1.0f, -1.0f, 0.0f),
@@ -23,13 +23,13 @@ glm::vec3 const QuadMeshGenerator::vertices[4] =
   glm::vec3(-1.0f,  1.0f, 0.0f)
 };
 
-GLuint const QuadMeshGenerator::triangles[6] =
+GLuint const QuadMeshGeneratorProxy::triangles[6] =
 {
   0, 1, 2,  
   0, 2, 3
 };
 
-glm::vec3 const CubeMeshGenerator::vertices[8] =
+glm::vec3 const CubeMeshGeneratorProxy::vertices[8] =
 {
   glm::vec3(-1.0f, -1.0f, -1.0f),
   glm::vec3( 1.0f, -1.0f, -1.0f),
@@ -41,7 +41,7 @@ glm::vec3 const CubeMeshGenerator::vertices[8] =
   glm::vec3(-1.0f,  1.0f,  1.0f)
 };
 
-GLuint const CubeMeshGenerator::triangles[36] =
+GLuint const CubeMeshGeneratorProxy::triangles[36] =
 {
   0, 1, 5,
   0, 5, 4,
@@ -57,7 +57,7 @@ GLuint const CubeMeshGenerator::triangles[36] =
   7, 0, 4
 };
 
-glm::vec3 const CubeMeshGenerator::vertices_with_normals[24 * 2] =
+glm::vec3 const CubeMeshGeneratorProxy::vertices_with_normals[24 * 2] =
 {
   glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
   glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
@@ -90,7 +90,7 @@ glm::vec3 const CubeMeshGenerator::vertices_with_normals[24 * 2] =
   glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
 };
 
-GLuint const CubeMeshGenerator::triangles_with_normals[36] =
+GLuint const CubeMeshGeneratorProxy::triangles_with_normals[36] =
 {
   0, 2, 1,  
   0, 3, 2,
@@ -110,6 +110,117 @@ GLuint const CubeMeshGenerator::triangles_with_normals[36] =
   20, 22, 21,
   20, 23, 22
 };
+
+
+SimpleMeshGeneratorProxy * QuadMeshGenerator::CreateProxy() const { return new QuadMeshGeneratorProxy(*this); }
+
+SimpleMeshGeneratorProxy * CubeMeshGenerator::CreateProxy() const { return new CubeMeshGeneratorProxy(*this); }
+
+SimpleMeshGeneratorProxy * SphereMeshGenerator::CreateProxy() const { return new SphereMeshGeneratorProxy(*this); }
+
+bool MeshGenerationRequirement::IsValid() const
+{
+  if (vertices_count <= 0) // at least one vertex
+    return false;
+  if (indices_count < 0)
+    return false;
+  return true;
+}
+
+boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
+{
+  SimpleMesh * result = nullptr;
+
+  SimpleMeshGeneratorProxy * proxy = CreateProxy();
+  if (proxy != nullptr)
+  {
+    MeshGenerationRequirement requirement = proxy->GetRequirement();
+    if (requirement.IsValid())
+    {
+      SimpleMesh * mesh = new SimpleMesh();
+      if (mesh != nullptr)
+      {
+        boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &mesh->vertex_buffer : nullptr;
+        boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &mesh->index_buffer : nullptr;
+
+        if (GLTools::GenerateVertexAndIndexBuffersObject(&mesh->vertex_array, vb_ptr, ib_ptr))
+        {
+          // get the vertex declaration
+          proxy->GenerateVertexDeclaration(mesh->declaration);
+
+          // allocate buffer for vertices and indices
+          char   * vertices = nullptr;
+          GLuint * indices  = nullptr;
+
+          size_t vertex_size = mesh->declaration.GetVertexSize();
+          size_t vb_size     = requirement.vertices_count * vertex_size;
+
+          if (requirement.vertices_count > 0)
+            vertices = new char[vb_size];
+          if (requirement.indices_count > 0)
+            indices = new GLuint[requirement.indices_count];
+
+          // generate the indices and the vertices
+          proxy->GenerateMeshData(mesh->primitives, vertices, indices);
+
+          // transfert data top GPU and free memory
+          if (vertices != nullptr)
+          {
+            glNamedBufferData(mesh->vertex_buffer->GetResourceID(), vb_size, vertices, GL_STATIC_DRAW);
+            delete[] vertices;
+          }
+          if (indices != nullptr)
+          {
+            glNamedBufferData(mesh->index_buffer->GetResourceID(), requirement.indices_count * sizeof(GLuint), indices, GL_STATIC_DRAW);
+            delete[] indices;
+          }
+
+          mesh->FinalizeBindings();
+
+          result = mesh;
+        }
+      }
+    }
+    delete proxy;
+  }
+  return result;
+}
+
+MeshGenerationRequirement QuadMeshGeneratorProxy::GetRequirement() const
+{
+  MeshGenerationRequirement result;
+  result.vertices_count = sizeof(QuadMeshGeneratorProxy::vertices)  / sizeof(QuadMeshGeneratorProxy::vertices[0]);
+  result.indices_count  = sizeof(QuadMeshGeneratorProxy::triangles) / sizeof(QuadMeshGeneratorProxy::triangles[0]);
+  return result;
+}
+
+void QuadMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+{
+  declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
+}
+
+void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const
+{
+  MeshPrimitive mesh_primitive;
+  mesh_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
+  mesh_primitive.indexed = true;
+  mesh_primitive.primitive_type = GL_TRIANGLES;
+  mesh_primitive.start = 0;
+  mesh_primitive.base_vertex_index = 0;
+  primitives.push_back(mesh_primitive);
+
+
+
+
+
+
+
+
+}
+
+
+
+#if 0
 
 boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
 {
@@ -149,6 +260,39 @@ boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
   }
   return nullptr;
 }
+
+#endif
+
+
+
+
+
+
+
+MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
+{
+  MeshGenerationRequirement result;
+  result.vertices_count = sizeof(CubeMeshGeneratorProxy::vertices) / sizeof(CubeMeshGeneratorProxy::vertices[0]);
+  result.indices_count  = sizeof(CubeMeshGeneratorProxy::triangles) / sizeof(CubeMeshGeneratorProxy::triangles[0]);
+  return result;
+
+}
+
+void CubeMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+{
+  declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
+  if (generator.with_normals)
+    declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
+
+}
+
+void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const
+{
+
+
+}
+
+#if 0
 
 boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
 {
@@ -204,7 +348,42 @@ boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
   }
   return nullptr;
 }
+#endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
+{
+  MeshGenerationRequirement result;
+  result.vertices_count = 0;
+  result.indices_count  = 0;
+  return result;
+}
+
+void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+{
+
+
+}
+
+void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const
+{
+
+
+}
+
+
+#if 0
 
 boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
 {
@@ -304,9 +483,11 @@ boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
   return nullptr;
 }
 
-float3 SphereMeshGenerator::GetSphereVertex(float alpha, float beta) const
+#endif
+
+float3 SphereMeshGeneratorProxy::GetSphereVertex(float alpha, float beta) const
 {
-  return primitive.radius * MathTools::PolarCoordToVector(alpha, beta) + primitive.position;
+  return generator.primitive.radius * MathTools::PolarCoordToVector(alpha, beta) + generator.primitive.position;
 }
 
 }; // namespace chaos

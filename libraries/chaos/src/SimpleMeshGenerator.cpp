@@ -2,6 +2,9 @@
 #include <chaos/GLTools.h>
 #include <chaos/MathTools.h>
 
+
+#include <boost/iostreams/stream_buffer.hpp>
+
 // OpenGL coordinates for a fullscreen representation
 //   -1          +1
 // +1 +----------+
@@ -161,7 +164,9 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
             indices = new GLuint[requirement.indices_count];
 
           // generate the indices and the vertices
-          proxy->GenerateMeshData(mesh->primitives, vertices, indices);
+          MemoryBufferWriter vertices_buffer(vertices, vb_size);
+          MemoryBufferWriter indices_buffer(indices, requirement.indices_count * sizeof(GLuint));
+          proxy->GenerateMeshData(mesh->primitives, vertices_buffer, indices_buffer);
 
           // transfert data top GPU and free memory
           if (vertices != nullptr)
@@ -190,8 +195,8 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 MeshGenerationRequirement QuadMeshGeneratorProxy::GetRequirement() const
 {
   MeshGenerationRequirement result;
-  result.vertices_count = sizeof(QuadMeshGeneratorProxy::vertices)  / sizeof(QuadMeshGeneratorProxy::vertices[0]);
-  result.indices_count  = sizeof(QuadMeshGeneratorProxy::triangles) / sizeof(QuadMeshGeneratorProxy::triangles[0]);
+  result.vertices_count = sizeof(vertices)  / sizeof(vertices[0]);
+  result.indices_count  = sizeof(triangles) / sizeof(triangles[0]);
   return result;
 }
 
@@ -200,7 +205,7 @@ void QuadMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & decla
   declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 }
 
-void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const
+void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
 {
   MeshPrimitive mesh_primitive;
   mesh_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
@@ -273,8 +278,8 @@ boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
 MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
 {
   MeshGenerationRequirement result;
-  result.vertices_count = sizeof(CubeMeshGeneratorProxy::vertices) / sizeof(CubeMeshGeneratorProxy::vertices[0]);
-  result.indices_count  = sizeof(CubeMeshGeneratorProxy::triangles) / sizeof(CubeMeshGeneratorProxy::triangles[0]);
+  result.vertices_count = sizeof(vertices) / sizeof(vertices[0]);
+  result.indices_count  = sizeof(triangles) / sizeof(triangles[0]);
   return result;
 
 }
@@ -287,8 +292,15 @@ void CubeMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & decla
 
 }
 
-void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const
+void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
 {
+  MeshPrimitive mesh_primitive;
+  mesh_primitive.count             = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
+  mesh_primitive.indexed           = true;
+  mesh_primitive.primitive_type    = GL_TRIANGLES;
+  mesh_primitive.start             = 0;
+  mesh_primitive.base_vertex_index = 0;
+  primitives.push_back(mesh_primitive);
 
 
 }
@@ -376,8 +388,18 @@ void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & dec
   declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 }
 
-void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const
+void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
 {
+
+
+  //typedef boost::iostreams::basic_array_source<char> Device;
+  //boost::iostreams::stream<Device> stream(buf, 1024);
+  /*
+  uint16_t word1, word2;
+  stream.read((char*)&word1, sizeof(word1));
+  stream.read((char*)&word2, sizeof(word2));
+  std::cout << word1 << "," << word2 << std::endl;
+  */
 
 
 }

@@ -102,14 +102,12 @@ protected:
       return "restrict box displacement : move bigger";
     if (example == 6)
       return "restrict box displacement : move smaller";
-
     if (example == 7)
       return "sphere touch each others";
     if (example == 8)
       return "sphere intersection";
     if (example == 9)
       return "sphere union";
-
     if (example == 10)
       return "inner sphere";
     if (example == 11)

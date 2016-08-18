@@ -1,0 +1,49 @@
+#pragma once
+
+#include <chaos/StandardHeaders.h>
+
+namespace chaos
+{
+  /**
+   * MemoryBufferWriter : used to write untyped data in a buffer
+   */
+
+  class MemoryBufferWriter
+  {
+  public:
+
+    /** default constructor */
+    MemoryBufferWriter():
+      buffer(nullptr),
+      bufsize(0),
+      position(nullptr){}
+
+    /** constructor */
+    MemoryBufferWriter(void * in_buffer, size_t in_bufsize):
+      buffer(in_buffer),
+      bufsize(in_bufsize),
+      position(in_buffer){}
+
+    /** copy constructor */
+    MemoryBufferWriter(MemoryBufferWriter const & src):
+      buffer(src.buffer),
+      bufsize(src.bufsize),
+      position(src.position){}
+
+    /** get the size of the buffer */
+    size_t GetBufferSize() const { return bufsize; }
+    /** get the remaining size of the buffer */
+    size_t GetRemainingBufferSize() const
+    {
+      return bufsize - ((char*)position - (char*)buffer);    
+    }
+  
+
+    /** the buffer where writing is done */
+    void * buffer;
+    /** the size of the buffer */
+    size_t bufsize;
+    /** the current position in the buffer */
+    void * position;    
+  };
+}; // namespace chaos

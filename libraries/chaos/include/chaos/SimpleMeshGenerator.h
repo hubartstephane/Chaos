@@ -3,6 +3,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/StandardHeaders.h>
 #include <chaos/SimpleMesh.h>
+#include <chaos/MemoryBufferWriter.h>
 
 
 namespace chaos
@@ -47,7 +48,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const = 0;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const = 0;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const = 0;
 };
 
   /**
@@ -101,7 +102,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const override;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const override;
 
 protected:
 
@@ -156,7 +157,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const override;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const override;
 
 protected:
 
@@ -217,7 +218,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const override;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const override;
 
 protected:
 

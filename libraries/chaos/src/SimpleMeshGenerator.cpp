@@ -175,6 +175,7 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
             delete[] indices;
           }
 
+          // initialize the vertex array
           mesh->FinalizeBindings();
 
           result = mesh;
@@ -372,8 +373,7 @@ MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
 
 void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
-
-
+  declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 }
 
 void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, char * vertices, GLuint * indices) const

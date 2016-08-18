@@ -48,7 +48,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const = 0;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const = 0;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
 };
 
   /**
@@ -102,7 +102,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const override;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 protected:
 
@@ -127,9 +127,8 @@ class CubeMeshGenerator : public SimpleMeshGenerator
 public:
 
   /** constructor */
-  CubeMeshGenerator(box3 const & in_primitive, bool in_with_normals):
-    primitive(in_primitive),
-    with_normals(in_with_normals){}
+  CubeMeshGenerator(box3 const & in_primitive):
+    primitive(in_primitive){}
 
   /** generate a proxy */
   virtual SimpleMeshGeneratorProxy * CreateProxy() const;
@@ -138,8 +137,6 @@ protected:
 
   /** the box to generate */
   box3 primitive;
-  /** whether normals are to be generated */
-  bool with_normals;
 };
 
 /**
@@ -157,7 +154,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const override;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 protected:
 
@@ -165,14 +162,9 @@ protected:
   CubeMeshGenerator generator;
 
   /** the vertices defining a cube */
-  static glm::vec3 const vertices[8];
+  static glm::vec3 const vertices[24 * 2];
   /** the triangles defining a cube */
   static GLuint const triangles[36];
-
-  /** the vertices defining a cube */
-  static glm::vec3 const vertices_with_normals[24 * 2];
-  /** the triangles defining a cube */
-  static GLuint const triangles_with_normals[36];
 };
 
 
@@ -218,7 +210,7 @@ public:
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const override;
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 protected:
 

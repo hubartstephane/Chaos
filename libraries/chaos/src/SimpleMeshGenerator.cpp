@@ -32,35 +32,7 @@ GLuint const QuadMeshGeneratorProxy::triangles[6] =
   0, 2, 3
 };
 
-glm::vec3 const CubeMeshGeneratorProxy::vertices[8] =
-{
-  glm::vec3(-1.0f, -1.0f, -1.0f),
-  glm::vec3( 1.0f, -1.0f, -1.0f),
-  glm::vec3( 1.0f,  1.0f, -1.0f),
-  glm::vec3(-1.0f,  1.0f, -1.0f),
-  glm::vec3(-1.0f, -1.0f,  1.0f),
-  glm::vec3( 1.0f, -1.0f,  1.0f),
-  glm::vec3( 1.0f,  1.0f,  1.0f),
-  glm::vec3(-1.0f,  1.0f,  1.0f)
-};
-
-GLuint const CubeMeshGeneratorProxy::triangles[36] =
-{
-  0, 1, 5,
-  0, 5, 4,
-  3, 2, 1,
-  3, 1, 0,
-  2, 6, 5,
-  2, 5, 1,
-  7, 6, 2,
-  7, 2, 3,
-  6, 7, 4,
-  6, 4, 5,
-  7, 3, 0,
-  7, 0, 4
-};
-
-glm::vec3 const CubeMeshGeneratorProxy::vertices_with_normals[24 * 2] =
+glm::vec3 const CubeMeshGeneratorProxy::vertices[24 * 2] = // position + normal
 {
   glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
   glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
@@ -93,7 +65,7 @@ glm::vec3 const CubeMeshGeneratorProxy::vertices_with_normals[24 * 2] =
   glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
 };
 
-GLuint const CubeMeshGeneratorProxy::triangles_with_normals[36] =
+GLuint const CubeMeshGeneratorProxy::triangles[36] =
 {
   0, 2, 1,  
   0, 3, 2,
@@ -132,7 +104,7 @@ bool MeshGenerationRequirement::IsValid() const
 
 boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 {
-  SimpleMesh * result = nullptr;
+  boost::intrusive_ptr<SimpleMesh> result;
 
   SimpleMeshGeneratorProxy * proxy = CreateProxy();
   if (proxy != nullptr)
@@ -140,7 +112,7 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
     MeshGenerationRequirement requirement = proxy->GetRequirement();
     if (requirement.IsValid())
     {
-      SimpleMesh * mesh = new SimpleMesh();
+      boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh();
       if (mesh != nullptr)
       {
         boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &mesh->vertex_buffer : nullptr;
@@ -164,9 +136,12 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
             indices = new GLuint[requirement.indices_count];
 
           // generate the indices and the vertices
-          MemoryBufferWriter vertices_buffer(vertices, vb_size);
-          MemoryBufferWriter indices_buffer(indices, requirement.indices_count * sizeof(GLuint));
-          proxy->GenerateMeshData(mesh->primitives, vertices_buffer, indices_buffer);
+          MemoryBufferWriter vertices_writer(vertices, vb_size);
+          MemoryBufferWriter indices_writer(indices, requirement.indices_count * sizeof(GLuint));
+          proxy->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
+
+          size_t remaining_vertices = vertices_writer.GetRemainingBufferSize();
+          size_t remaining_indices  = indices_writer.GetRemainingBufferSize();
 
           // transfert data top GPU and free memory
           if (vertices != nullptr)
@@ -205,7 +180,7 @@ void QuadMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & decla
   declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 }
 
-void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
+void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
   MeshPrimitive mesh_primitive;
@@ -217,7 +192,7 @@ void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   primitives.push_back(mesh_primitive);
 
   // the indices
-  indices_buffer.Write(triangles, sizeof(triangles));
+  indices_writer.Write(triangles, sizeof(triangles));
 
   // the vertices 
   glm::vec3 hs = glm::vec3(generator.primitive.half_size.x, generator.primitive.half_size.y, 1.0f);
@@ -226,27 +201,24 @@ void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   int const vertex_count = sizeof(vertices) / sizeof(vertices[0]); 
   
   for (int i = 0; i < vertex_count; ++i)
-    vertices_buffer << (vertices[i] * hs + p);
+    vertices_writer << (vertices[i] * hs + p);
 }
 
 MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
 {
   MeshGenerationRequirement result;
-  result.vertices_count = sizeof(vertices) / sizeof(vertices[0]);
-  result.indices_count  = sizeof(triangles) / sizeof(triangles[0]);
+  result.vertices_count = (sizeof(vertices) / sizeof(vertices[0])) / 2; //  div by 2 because buffer contains POSITION + NORMAL
+  result.indices_count  = (sizeof(triangles) / sizeof(triangles[0]));
   return result;
-
 }
 
 void CubeMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
   declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
-  if (generator.with_normals)
-    declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
-
+  declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
 }
 
-void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
+void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
   MeshPrimitive mesh_primitive;
@@ -257,29 +229,32 @@ void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   mesh_primitive.base_vertex_index = 0;
   primitives.push_back(mesh_primitive);
 
+  // the indices
+  indices_writer.Write(triangles, sizeof(triangles));
+
   // the vertices
-  if (generator.with_normals)
+  glm::vec3 hs = generator.primitive.half_size;
+  glm::vec3 p  = generator.primitive.position;  
+
+  int const count = sizeof(vertices) / sizeof(vertices[0]);
+  for (int i = 0; i < count / 2; ++i)
   {
-    int const count = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); 
-    for (int i = 0 ; i < count / 2 ; ++i)
-    {        
-      vertices_buffer << vertices_with_normals[i * 2] * generator.primitive.half_size + generator.primitive.position; // resize position
-      vertices_buffer << vertices_with_normals[i * 2 + 1];    // copy normal
-    }
-  }
-  else
-  {
-    int const count = sizeof(vertices) / sizeof(vertices[0]);
-    for (int i = 0; i < count; ++i)
-      vertices_buffer << vertices[i] * generator.primitive.half_size + generator.primitive.position;
+    vertices_writer << vertices[i * 2] * hs + p; // resize position
+    vertices_writer << vertices[i * 2 + 1];      // copy normal
   }
 }
 
 MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
 {
+  int subdiv_beta  = max(generator.subdivisions, 3);
+  int subdiv_alpha = subdiv_beta * 2;
+
   MeshGenerationRequirement result;
-  result.vertices_count = 0;
-  result.indices_count  = 0;
+  result.vertices_count = 2 + subdiv_beta * subdiv_alpha;
+  result.indices_count =
+    subdiv_alpha * 3 +
+    subdiv_alpha * (subdiv_beta - 1) * 6 +
+    subdiv_alpha * 3;
   return result;
 }
 
@@ -288,114 +263,81 @@ void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & dec
   declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
 }
 
-void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
+void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
+  int subdiv_beta  = max(generator.subdivisions, 3);
+  int subdiv_alpha = subdiv_beta * 2;
 
+  // construct the vertex buffer
+  vertices_writer << GetSphereVertex(0.0f, (float)M_PI_2);
 
-}
+  float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
+  float delta_beta = ((float)M_PI) / ((float)subdiv_beta);
 
-
-#if 0
-
-boost::intrusive_ptr<SimpleMesh> SphereMeshGenerator::GenerateMesh() const
-{
-  boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
-  if (result != nullptr)
+  float beta = (float)M_PI_2 + delta_beta * 0.5f;
+  for (int i = 0; i < subdiv_beta; ++i)
   {
-    if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
+    float alpha = 0.0f;
+    for (int j = 0; j < subdiv_alpha; ++j)
     {
-      int subdiv_beta  = max(subdivisions, 3);
-      int subdiv_alpha = subdiv_beta * 2;
-     
-      // construct the vertex declaration
-      result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
+      vertices_writer << GetSphereVertex(alpha, beta);
+      alpha += delta_alpha;
+    }
+    beta += delta_beta;
+  }
 
-      std::vector<float3> vertices;
-      std::vector<GLuint> indices;
+  vertices_writer << GetSphereVertex(0.0f, (float)-M_PI_2);
 
-      // construct the vertex buffer
-      vertices.push_back(GetSphereVertex(0.0f, (float)M_PI_2));
+  // construct the index buffer
+  for (int i = 0; i < subdiv_alpha; ++i)   // the TOP-CAP
+  {
+    indices_writer << (GLuint)(1 + i);
+    indices_writer << (GLuint)0;
+    indices_writer << (GLuint)(1 + ((i + 1) % subdiv_alpha));
+  }
 
-      float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
-      float delta_beta  = ((float)M_PI)       / ((float)subdiv_beta);
+  for (int i = 0; i < subdiv_beta - 1; ++i) // the middle part
+  {
+    int start_line = 1 + i * subdiv_alpha;
+    int next_line = start_line + subdiv_alpha;
+    for (int j = 0; j < subdiv_alpha; ++j)
+    {
+      GLint next_on_line = ((j + 1) % subdiv_alpha);
 
-      float beta = (float)M_PI_2 + delta_beta * 0.5f;
-      for (int i = 0 ; i < subdiv_beta ; ++i)
-      {
-        float alpha = 0.0f;
-        for (int j = 0 ; j < subdiv_alpha ; ++j)
-        {
-          vertices.push_back(GetSphereVertex(alpha, beta));
-          alpha += delta_alpha;
-        }
-        beta += delta_beta;
-      }
+      GLint a = start_line + j;
+      GLint b = next_line + j;
+      GLint c = next_line + next_on_line;
+      GLint d = start_line + next_on_line;
 
-      vertices.push_back(GetSphereVertex(0.0f, (float)-M_PI_2));
-
-      // construct the index buffer
-      for (int i = 0 ; i < subdiv_alpha ; ++i)
-      {        
-        indices.push_back(1 + i);
-        indices.push_back(0);
-        indices.push_back(1 + ((i + 1) % subdiv_alpha));
-      }
-
-      for (int i = 0 ; i < subdiv_beta - 1 ; ++i)
-      {
-        int start_line = 1 + i * subdiv_alpha;
-        int next_line  = start_line + subdiv_alpha;
-        for (int j = 0 ; j < subdiv_alpha ; ++j)
-        {
-          GLint next_on_line = ((j + 1) % subdiv_alpha);
-
-          GLint a = start_line + j;
-          GLint b = next_line  + j;
-          GLint c = next_line  + next_on_line;
-          GLint d = start_line + next_on_line;
-
-          indices.push_back(b);
-          indices.push_back(a);          
-          indices.push_back(c);
-          
-          indices.push_back(c);
-          indices.push_back(a);                    
-          indices.push_back(d);
-        }
-      }
-
-      int start_line  = 1 + (subdiv_beta - 1) * subdiv_alpha;
-      int last_vertex = vertices.size() - 1;
-      for (int i = 0 ; i < subdiv_alpha ; ++i)
-      {
-        indices.push_back(last_vertex);
-        indices.push_back(start_line + i);
-        indices.push_back(start_line + ((i + 1) % subdiv_alpha));
-      }
-
-      // the triangles
-      MeshPrimitive mesh_primitive;
-      mesh_primitive.count             = indices.size();
-      mesh_primitive.indexed           = true;
-      mesh_primitive.primitive_type    = GL_TRIANGLES;
-      mesh_primitive.start             = 0;
-      mesh_primitive.base_vertex_index = 0;
-      result->primitives.push_back(mesh_primitive);
-
-      // send the buffers to GPU
-      glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(float3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-      glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(GLuint) * indices.size(), &indices[0], GL_STATIC_DRAW);
-
-      // initialize the vertex array
-      result->FinalizeBindings();
-
-      return result;
+      indices_writer << b << a << c;
+      indices_writer << c << a << d;
     }
   }
-  return nullptr;
-}
 
-#endif
+  int vertex_count = 2 + subdiv_beta * subdiv_alpha;
+  int start_line   = 1 + (subdiv_beta - 1) * subdiv_alpha;
+  int last_vertex  = vertex_count - 1;
+  for (int i = 0; i < subdiv_alpha; ++i) // the BOTTOM-CAP
+  {
+    indices_writer << (GLuint)(last_vertex);
+    indices_writer << (GLuint)(start_line + i);
+    indices_writer << (GLuint)(start_line + ((i + 1) % subdiv_alpha));
+  }
+
+  // the triangles
+  int indices_count =
+    subdiv_alpha * 3 +
+    subdiv_alpha * (subdiv_beta - 1) * 6 +
+    subdiv_alpha * 3;
+
+  MeshPrimitive mesh_primitive;
+  mesh_primitive.count             = indices_count;
+  mesh_primitive.indexed           = true;
+  mesh_primitive.primitive_type    = GL_TRIANGLES;
+  mesh_primitive.start             = 0;
+  mesh_primitive.base_vertex_index = 0;
+  primitives.push_back(mesh_primitive);
+}
 
 float3 SphereMeshGeneratorProxy::GetSphereVertex(float alpha, float beta) const
 {

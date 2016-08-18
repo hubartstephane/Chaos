@@ -37,8 +37,24 @@ namespace chaos
     {
       return bufsize - ((char*)position - (char*)buffer);    
     }
-  
 
+    /** insert data inside the buffer */
+    template<typename T>
+    MemoryBufferWriter & operator << (T const & data)
+    {
+      Write(&data, sizeof(T));
+      return *this;
+    }
+
+    /** insert raw data inside buffer */
+    void Write(void const * data, size_t size)
+    {
+      assert(buffer != nullptr);
+      assert(GetRemainingBufferSize() >= size);
+      memcpy(buffer, &data, size);
+      position = ((char *)position) + size;    
+    }
+  
     /** the buffer where writing is done */
     void * buffer;
     /** the size of the buffer */

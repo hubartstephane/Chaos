@@ -207,6 +207,7 @@ void QuadMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & decla
 
 void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
 {
+  // the primitives
   MeshPrimitive mesh_primitive;
   mesh_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
   mesh_primitive.indexed = true;
@@ -215,65 +216,18 @@ void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   mesh_primitive.base_vertex_index = 0;
   primitives.push_back(mesh_primitive);
 
+  // the indices
+  indices_buffer.Write(triangles, sizeof(triangles));
 
+  // the vertices 
+  glm::vec3 hs = glm::vec3(generator.primitive.half_size.x, generator.primitive.half_size.y, 1.0f);
+  glm::vec3 p  = glm::vec3(generator.primitive.position.x, generator.primitive.position.y,  0.0f);
 
-
-
-
-
-
+  int const vertex_count = sizeof(vertices) / sizeof(vertices[0]); 
+  
+  for (int i = 0; i < vertex_count; ++i)
+    vertices_buffer << (vertices[i] * hs + p);
 }
-
-
-
-#if 0
-
-boost::intrusive_ptr<SimpleMesh> QuadMeshGenerator::GenerateMesh() const
-{
-  boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
-  if (result != nullptr)
-  {
-    if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
-    {
-      result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
-
-      MeshPrimitive mesh_primitive;
-      mesh_primitive.count             = sizeof(triangles) / sizeof(triangles[0]);
-      mesh_primitive.indexed           = true;
-      mesh_primitive.primitive_type    = GL_TRIANGLES;
-      mesh_primitive.start             = 0;
-      mesh_primitive.base_vertex_index = 0;
-      result->primitives.push_back(mesh_primitive);
-
-      // fill the buffers
-      glm::vec3 hs = glm::vec3(primitive.half_size.x, primitive.half_size.y, 1.0f);
-      glm::vec3 p  = glm::vec3(primitive.position.x, primitive.position.y,  0.0f);
-
-      int const count = sizeof(vertices) / sizeof(vertices[0]); 
-
-      glm::vec3 final_vertices[count]; 
-      for (int i = 0; i < count; ++i)
-        final_vertices[i] = vertices[i] * hs + p;
-
-      glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
-      glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(triangles), triangles, GL_STATIC_DRAW);
-
-      // initialize the vertex array
-      result->FinalizeBindings();
-
-      return result;
-    }
-  }
-  return nullptr;
-}
-
-#endif
-
-
-
-
-
-
 
 MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
 {
@@ -294,6 +248,7 @@ void CubeMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & decla
 
 void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
 {
+  // the primitives
   MeshPrimitive mesh_primitive;
   mesh_primitive.count             = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
   mesh_primitive.indexed           = true;
@@ -302,78 +257,23 @@ void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   mesh_primitive.base_vertex_index = 0;
   primitives.push_back(mesh_primitive);
 
-
-}
-
-#if 0
-
-boost::intrusive_ptr<SimpleMesh> CubeMeshGenerator::GenerateMesh() const
-{
-  boost::intrusive_ptr<SimpleMesh> result = new SimpleMesh();
-  if (result != nullptr)
+  // the vertices
+  if (generator.with_normals)
   {
-    if (GLTools::GenerateVertexAndIndexBuffersObject(&result->vertex_array, &result->vertex_buffer, &result->index_buffer))
-    {
-      result->declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
-      if (with_normals)
-        result->declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
-
-      MeshPrimitive mesh_primitive;
-      mesh_primitive.count             = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
-      mesh_primitive.indexed           = true;
-      mesh_primitive.primitive_type    = GL_TRIANGLES;
-      mesh_primitive.start             = 0;
-      mesh_primitive.base_vertex_index = 0;
-      result->primitives.push_back(mesh_primitive);
-
-      // resize the mesh      
-      if (with_normals)
-      {
-        int const count = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); // number of vertex * number of component
-
-        glm::vec3 final_vertices[count];
-        for (int i = 0 ; i < count / 2 ; ++i)
-        {        
-          final_vertices[i * 2]     = vertices_with_normals[i * 2] * primitive.half_size + primitive.position; // resize position
-          final_vertices[i * 2 + 1] = vertices_with_normals[i * 2 + 1];    // copy normal
-        }
-
-        glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
-        glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(triangles_with_normals), triangles_with_normals, GL_STATIC_DRAW);
-      }
-      else
-      {
-        int const count = sizeof(vertices) / sizeof(vertices[0]);
-
-        glm::vec3 final_vertices[count];
-        for (int i = 0; i < count; ++i)
-          final_vertices[i] = vertices[i] * primitive.half_size + primitive.position;
-
-        glNamedBufferData(result->vertex_buffer->GetResourceID(), sizeof(glm::vec3) * count, final_vertices, GL_STATIC_DRAW);
-        glNamedBufferData(result->index_buffer->GetResourceID(), sizeof(triangles), triangles, GL_STATIC_DRAW);
-      }
-         
-      // initialize the vertex array
-      result->FinalizeBindings(); 
-
-      return result;
+    int const count = sizeof(vertices_with_normals) / sizeof(vertices_with_normals[0]); 
+    for (int i = 0 ; i < count / 2 ; ++i)
+    {        
+      vertices_buffer << vertices_with_normals[i * 2] * generator.primitive.half_size + generator.primitive.position; // resize position
+      vertices_buffer << vertices_with_normals[i * 2 + 1];    // copy normal
     }
   }
-  return nullptr;
+  else
+  {
+    int const count = sizeof(vertices) / sizeof(vertices[0]);
+    for (int i = 0; i < count; ++i)
+      vertices_buffer << vertices[i] * generator.primitive.half_size + generator.primitive.position;
+  }
 }
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
 
 MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
 {
@@ -390,16 +290,6 @@ void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & dec
 
 void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_buffer, MemoryBufferWriter & indices_buffer) const
 {
-
-
-  //typedef boost::iostreams::basic_array_source<char> Device;
-  //boost::iostreams::stream<Device> stream(buf, 1024);
-  /*
-  uint16_t word1, word2;
-  stream.read((char*)&word1, sizeof(word1));
-  stream.read((char*)&word2, sizeof(word2));
-  std::cout << word1 << "," << word2 << std::endl;
-  */
 
 
 }

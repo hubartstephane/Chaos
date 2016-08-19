@@ -57,6 +57,8 @@ public:
 
 class SimpleMeshGenerator
 {
+  friend class MultiMeshGenerator;
+
 public:
 
   /** generation function */

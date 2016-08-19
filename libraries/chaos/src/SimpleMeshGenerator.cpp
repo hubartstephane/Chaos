@@ -261,16 +261,20 @@ MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
 void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
   declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
+  declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
 }
 
 void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   int subdiv_beta  = max(generator.subdivisions, 3);
   int subdiv_alpha = subdiv_beta * 2;
+  
+  glm::vec3 position = generator.primitive.position;
+  float     radius   = generator.primitive.radius;
 
   // construct the vertex buffer
-  vertices_writer << GetSphereVertex(0.0f, (float)M_PI_2);
-
+  InsertVertex(vertices_writer, 0.0f, (float)M_PI_2);  
+    
   float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdiv_alpha); // there is twice more divisions along ALPHA than BETA
   float delta_beta = ((float)M_PI) / ((float)subdiv_beta);
 
@@ -280,13 +284,13 @@ void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & pri
     float alpha = 0.0f;
     for (int j = 0; j < subdiv_alpha; ++j)
     {
-      vertices_writer << GetSphereVertex(alpha, beta);
+      InsertVertex(vertices_writer, alpha, beta);
       alpha += delta_alpha;
     }
     beta += delta_beta;
   }
 
-  vertices_writer << GetSphereVertex(0.0f, (float)-M_PI_2);
+  InsertVertex(vertices_writer, 0.0f, (float)-M_PI_2);  
 
   // construct the index buffer
   for (int i = 0; i < subdiv_alpha; ++i)   // the TOP-CAP
@@ -339,9 +343,11 @@ void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & pri
   primitives.push_back(mesh_primitive);
 }
 
-float3 SphereMeshGeneratorProxy::GetSphereVertex(float alpha, float beta) const
+void SphereMeshGeneratorProxy::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
 {
-  return generator.primitive.radius * MathTools::PolarCoordToVector(alpha, beta) + generator.primitive.position;
+  glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
+  vertices_writer << generator.primitive.radius * normal + generator.primitive.position;
+  vertices_writer << normal;
 }
 
 }; // namespace chaos

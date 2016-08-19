@@ -215,7 +215,7 @@ public:
 protected:
 
   /** get a vertex on the sphere from polar angle */
-  float3 GetSphereVertex(float alpha, float beta) const;
+  void InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const;
 
 protected:
 

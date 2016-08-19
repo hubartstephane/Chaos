@@ -92,6 +92,8 @@ SimpleMeshGeneratorProxy * SphereMeshGenerator::CreateProxy() const { return new
 
 bool MeshGenerationRequirement::IsValid() const
 {
+  if (vertex_size <= 0) 
+    return false;
   if (vertices_count <= 0) // at least one vertex
     return false;
   if (indices_count < 0)
@@ -120,6 +122,8 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
           // get the vertex declaration
           proxy->GenerateVertexDeclaration(mesh->declaration);
 
+          assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
+
           // allocate buffer for vertices and indices
           char   * vertices = nullptr;
           GLuint * indices  = nullptr;
@@ -137,8 +141,13 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
           MemoryBufferWriter indices_writer(indices, requirement.indices_count * sizeof(GLuint));
           proxy->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
 
-          size_t remaining_vertices = vertices_writer.GetRemainingBufferSize();
-          size_t remaining_indices  = indices_writer.GetRemainingBufferSize();
+#ifdef _DEBUG
+          size_t remaining_vertex_buffer_size = vertices_writer.GetRemainingBufferSize();
+          size_t remaining_index_buffer_size  = indices_writer.GetRemainingBufferSize();
+
+          assert(remaining_vertex_buffer_size == 0);
+          assert(remaining_index_buffer_size  == 0);
+#endif
 
           // transfert data top GPU and free memory
           if (vertices != nullptr)
@@ -167,6 +176,7 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 MeshGenerationRequirement QuadMeshGeneratorProxy::GetRequirement() const
 {
   MeshGenerationRequirement result;
+  result.vertex_size    = sizeof(glm::vec3);
   result.vertices_count = sizeof(vertices)  / sizeof(vertices[0]);
   result.indices_count  = sizeof(triangles) / sizeof(triangles[0]);
   return result;
@@ -204,6 +214,7 @@ void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
 MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
 {
   MeshGenerationRequirement result;
+  result.vertex_size    = 2 * sizeof(glm::vec3);
   result.vertices_count = (sizeof(vertices) / sizeof(vertices[0])) / 2; //  div by 2 because buffer contains POSITION + NORMAL
   result.indices_count  = (sizeof(triangles) / sizeof(triangles[0]));
   return result;
@@ -247,8 +258,9 @@ MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
   int subdiv_alpha = subdiv_beta * 2;
 
   MeshGenerationRequirement result;
+  result.vertex_size    = 2 * sizeof(glm::vec3);
   result.vertices_count = 2 + subdiv_beta * subdiv_alpha;
-  result.indices_count =
+  result.indices_count  =
     subdiv_alpha * 3 +
     subdiv_alpha * (subdiv_beta - 1) * 6 +
     subdiv_alpha * 3;

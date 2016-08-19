@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ClockManager.h>
 
 namespace chaos
 {
@@ -87,7 +88,7 @@ public:
    * MyGLFWWindow : a binding class between chaos and GLFW to handle window (beware the prefix "My")
    */
 
-class MyGLFWWindow 
+class MyGLFWWindow : public ClockManager
 {
 public:
 
@@ -127,7 +128,7 @@ protected:
   /** bind MyGLFWWindow with GLFW */
   virtual void BindGLFWWindow(GLFWwindow * in_glfw_window);
   /** called every Tick (returns true whenever we want to redraw the window) */
-  virtual bool Tick(double delta_time){ return true; }
+  virtual bool Tick(double delta_time) { return true; }
   /** called at window creation (returns false if the window must be killed) */
   virtual bool Initialize(){ return true; }
   /** called at window destruction */

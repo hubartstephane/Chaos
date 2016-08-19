@@ -48,12 +48,8 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() :
-
     bigger_box (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f)),
     smaller_box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f)),
-
-    realtime(0.0),
-    time_scale(1.0),
     display_example(0){}
 
 protected:
@@ -207,6 +203,8 @@ protected:
   template<typename T>
   void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
   {
+    double realtime = ClockManager::GetClockTime();
+
     p1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
     p2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
 
@@ -232,6 +230,8 @@ protected:
 
   void DrawGeometryObjects(RenderingContext const & ctx)
   {
+    double realtime = ClockManager::GetClockTime();
+
     // ensure box touch alltogether
     if (display_example == 0)
     {
@@ -503,8 +503,6 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    realtime += delta_time * time_scale;
-
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
@@ -519,7 +517,7 @@ protected:
   {
     if (key == GLFW_KEY_T && action == GLFW_RELEASE)
     {
-      time_scale = 1.0 - time_scale;
+      ClockManager::Toggle();
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
@@ -565,10 +563,6 @@ protected:
 
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;
-
-  double realtime;
-
-  double time_scale;
 
   int    display_example;
 

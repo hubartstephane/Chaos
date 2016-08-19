@@ -19,6 +19,7 @@ public:
 
   /** constructor */
   MeshGenerationRequirement():
+    vertex_size(0),
     vertices_count(0), 
     indices_count(0){}
 
@@ -27,6 +28,8 @@ public:
 
 public: 
 
+  /** size of a vertex */
+  int vertex_size;
   /** number of vertices required */
   int vertices_count;
   /** number of indices required */

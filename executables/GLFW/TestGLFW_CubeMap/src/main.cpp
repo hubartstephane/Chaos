@@ -25,8 +25,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : 
-    realtime(0.0){}
+  MyGLFWWindowOpenGLTest1(){}
 
 protected:
 
@@ -162,8 +161,6 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    realtime += delta_time;
-
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
@@ -194,8 +191,6 @@ protected:
   boost::intrusive_ptr<chaos::Texture>    texture;
   
   chaos::SkyBoxImages skybox;
-
-  double realtime;
 
   chaos::MyGLFWFpsCamera fps_camera;
 

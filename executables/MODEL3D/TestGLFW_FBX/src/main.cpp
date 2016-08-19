@@ -20,8 +20,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : 
-    realtime(0.0)
+  MyGLFWWindowOpenGLTest1()
   {
     memset(program, 0, sizeof(GLuint) * MAX_BONE_COUNT);
   }
@@ -171,8 +170,6 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    realtime += delta_time;
-
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
@@ -197,8 +194,6 @@ protected:
 
   chaos::GLProgramData program_data[MAX_BONE_COUNT];
   
-  double realtime;
-
   chaos::MyGLFWFpsCamera fps_camera;
 
   chaos::MyFbxImporterOutput imported_data;

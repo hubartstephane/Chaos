@@ -17,8 +17,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : 
-    realtime(0.0){}
+  MyGLFWWindowOpenGLTest1(){}
 
 protected:
 
@@ -46,6 +45,8 @@ protected:
     int instance_cube_size = 20;
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
+
+    double realtime = ClockManager::GetClockTime();
 
     program_data.SetUniform("projection",         projection_matrix);
     program_data.SetUniform("local_to_world",     local_to_world_matrix);
@@ -104,8 +105,6 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    realtime += delta_time;
-
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
@@ -125,8 +124,6 @@ protected:
   }
 
 protected:
-
-  double realtime;
 
   boost::intrusive_ptr<chaos::GLProgram> program;
   

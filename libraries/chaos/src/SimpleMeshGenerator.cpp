@@ -2,9 +2,6 @@
 #include <chaos/GLTools.h>
 #include <chaos/MathTools.h>
 
-
-#include <boost/iostreams/stream_buffer.hpp>
-
 // OpenGL coordinates for a fullscreen representation
 //   -1          +1
 // +1 +----------+

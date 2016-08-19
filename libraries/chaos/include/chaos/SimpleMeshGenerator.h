@@ -1,7 +1,7 @@
 #pragma once
 
-#include <chaos/GeometryFramework.h>
 #include <chaos/StandardHeaders.h>
+#include <chaos/GeometryFramework.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MemoryBufferWriter.h>
 

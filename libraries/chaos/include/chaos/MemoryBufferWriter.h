@@ -35,7 +35,7 @@ namespace chaos
     /** get the remaining size of the buffer */
     size_t GetRemainingBufferSize() const
     {
-      return bufsize - ((char*)position - (char*)buffer);    
+      return bufsize - GetWrittenCount();
     }
 
     /** insert data inside the buffer */
@@ -53,6 +53,12 @@ namespace chaos
       assert(GetRemainingBufferSize() >= size);
       memcpy(position, data, size);
       position = ((char *)position) + size;    
+    }
+
+    /** returns the number of bytes written */
+    int GetWrittenCount() const
+    {
+      return (char*)position - (char*)buffer;
     }
   
     /** the buffer where writing is done */

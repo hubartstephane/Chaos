@@ -119,29 +119,27 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 
         if (GLTools::GenerateVertexAndIndexBuffersObject(&mesh->vertex_array, vb_ptr, ib_ptr))
         {
-          // get the vertex declaration
-          proxy->GenerateVertexDeclaration(mesh->declaration);
-
-          assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
-
           // allocate buffer for vertices and indices
           char   * vertices = nullptr;
           GLuint * indices  = nullptr;
 
-          size_t vertex_size = mesh->declaration.GetVertexSize();
-          size_t vb_size     = requirement.vertices_count * vertex_size;
+          size_t vb_size = requirement.vertices_count * requirement.vertex_size;
                    
           if (requirement.vertices_count > 0)
           {
             GLuint buffer_id = mesh->vertex_buffer->GetResourceID();
             glNamedBufferData(buffer_id, vb_size, nullptr, GL_STATIC_DRAW);
             vertices = (char *)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+            if (vertices == nullptr)
+              goto release_resources;
           }
           if (requirement.indices_count > 0)
           {
             GLuint buffer_id = mesh->index_buffer->GetResourceID();
             glNamedBufferData(buffer_id, requirement.indices_count * sizeof(GLuint), nullptr, GL_STATIC_DRAW);
             indices = (GLuint *)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+            if (indices == nullptr)
+              goto release_resources;
           }
 
           // generate the indices and the vertices
@@ -149,15 +147,20 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
           MemoryBufferWriter indices_writer(indices, requirement.indices_count * sizeof(GLuint));
           proxy->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
 
-#ifdef _DEBUG
-          size_t remaining_vertex_buffer_size = vertices_writer.GetRemainingBufferSize();
-          size_t remaining_index_buffer_size  = indices_writer.GetRemainingBufferSize();
+          assert(vertices_writer.GetRemainingBufferSize() == 0);
+          assert(indices_writer.GetRemainingBufferSize() == 0);
 
-          assert(remaining_vertex_buffer_size == 0);
-          assert(remaining_index_buffer_size  == 0);
-#endif
+          // get the vertex declaration
+          proxy->GenerateVertexDeclaration(mesh->declaration);
+          assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
 
-          // transfert data top GPU and free memory
+          // initialize the vertex array and validate
+          mesh->FinalizeBindings();
+          result = mesh;
+         
+release_resources:
+
+          // transfert data to GPU and free memory
           if (vertices != nullptr)
           {
             GLuint buffer_id = mesh->vertex_buffer->GetResourceID();
@@ -168,11 +171,6 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
             GLuint buffer_id = mesh->index_buffer->GetResourceID();
             glUnmapNamedBuffer(buffer_id);
           }
-
-          // initialize the vertex array
-          mesh->FinalizeBindings();
-
-          result = mesh;
         }
       }
     }

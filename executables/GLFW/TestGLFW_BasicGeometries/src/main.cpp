@@ -13,6 +13,7 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/MyGLFWFpsCamera.h>
 #include <chaos/SimpleMesh.h>
+#include <chaos/MultiMeshGenerator.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
@@ -471,7 +472,21 @@ protected:
       return false;
 
     // create meshes
-    chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+
+
+    chaos::MultiMeshGenerator generators;
+
+    
+    generators.AddGenerator(chaos::SphereMeshGenerator(s, 10), mesh_sphere);
+    generators.AddGenerator(chaos::CubeMeshGenerator(b), mesh_box);
+
+    if (!generators.GenerateMeshes())
+      return false;
+
+
+#if 0
 
     mesh_box = chaos::CubeMeshGenerator(b).GenerateMesh();
     if (mesh_box == nullptr)
@@ -482,6 +497,8 @@ protected:
     mesh_sphere = chaos::SphereMeshGenerator(s, 10).GenerateMesh();
     if (mesh_sphere == nullptr)
       return false;
+
+#endif
 
     // place camera
     fps_camera.fps_controller.position.y = 10.0f;

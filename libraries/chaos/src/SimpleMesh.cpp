@@ -13,6 +13,17 @@ namespace chaos
   {
   }
 
+  void MeshPrimitive::ShiftIndexAndVertexPosition(int vb_offset, int ib_offset)
+  {
+    if (!indexed)
+      start += vb_offset; 
+    else
+    {
+      start += ib_offset;
+      base_vertex_index += vb_offset;
+    }
+  }
+
   void MeshPrimitive::Render(int instance_count, int base_instance) const
   {
     // This function is able to render : 
@@ -68,6 +79,13 @@ namespace chaos
   SimpleMesh::~SimpleMesh()
   {
     Clear();
+  }
+
+  void SimpleMesh::ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset)
+  {
+    if (vb_offset != 0 || ib_offset != 0)
+      for (auto & primitive : primitives)
+        primitive.ShiftIndexAndVertexPosition(vb_offset, ib_offset);
   }
 
   void SimpleMesh::Clear()

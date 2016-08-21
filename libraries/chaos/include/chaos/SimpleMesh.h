@@ -26,6 +26,9 @@ namespace chaos
     /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
     void Render(int instance_count = 0, int base_instance = 0) const;
 
+    /** offset the index or vertex position */
+    void ShiftIndexAndVertexPosition(int vb_offset, int ib_offset);
+
   public:
 
     /** self descriptive */
@@ -60,7 +63,9 @@ namespace chaos
     void Render(GLProgramData const & data, GLProgramAttributeProvider const * provider = nullptr, int instance_count = 0, int base_instance = 0) const;
     /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
     void FinalizeBindings();
-
+    /** offset the index or vertex position */
+    void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
+    
   public:
 
     /** self descriptive */

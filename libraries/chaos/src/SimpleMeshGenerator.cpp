@@ -130,11 +130,19 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 
           size_t vertex_size = mesh->declaration.GetVertexSize();
           size_t vb_size     = requirement.vertices_count * vertex_size;
-
+                   
           if (requirement.vertices_count > 0)
-            vertices = new char[vb_size];
+          {
+            GLuint buffer_id = mesh->vertex_buffer->GetResourceID();
+            glNamedBufferData(buffer_id, vb_size, nullptr, GL_STATIC_DRAW);
+            vertices = (char *)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+          }
           if (requirement.indices_count > 0)
-            indices = new GLuint[requirement.indices_count];
+          {
+            GLuint buffer_id = mesh->index_buffer->GetResourceID();
+            glNamedBufferData(buffer_id, requirement.indices_count * sizeof(GLuint), nullptr, GL_STATIC_DRAW);
+            indices = (GLuint *)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+          }
 
           // generate the indices and the vertices
           MemoryBufferWriter vertices_writer(vertices, vb_size);
@@ -152,13 +160,13 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
           // transfert data top GPU and free memory
           if (vertices != nullptr)
           {
-            glNamedBufferData(mesh->vertex_buffer->GetResourceID(), vb_size, vertices, GL_STATIC_DRAW);
-            delete[] vertices;
+            GLuint buffer_id = mesh->vertex_buffer->GetResourceID();
+            glUnmapNamedBuffer(buffer_id);
           }
           if (indices != nullptr)
           {
-            glNamedBufferData(mesh->index_buffer->GetResourceID(), requirement.indices_count * sizeof(GLuint), indices, GL_STATIC_DRAW);
-            delete[] indices;
+            GLuint buffer_id = mesh->index_buffer->GetResourceID();
+            glUnmapNamedBuffer(buffer_id);
           }
 
           // initialize the vertex array

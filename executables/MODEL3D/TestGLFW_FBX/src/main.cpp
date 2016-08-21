@@ -197,7 +197,7 @@ protected:
   chaos::MyGLFWFpsCamera fps_camera;
 
   chaos::MyFbxImporterOutput imported_data;
-};
+}; 
 
 int _tmain(int argc, char ** argv, char ** env)
 {

@@ -224,6 +224,7 @@ protected:
 
 protected:
 
+  /** the generator */
   SphereMeshGenerator generator;
 };
 

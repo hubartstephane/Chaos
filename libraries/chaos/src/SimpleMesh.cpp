@@ -113,7 +113,7 @@ namespace chaos
       primitive.Render(instance_count, base_instance);
   }
 
-  void SimpleMesh::FinalizeBindings()
+  void SimpleMesh::FinalizeBindings(GLintptr vertex_buffer_offset)
   {
     assert(vertex_array != nullptr);
 
@@ -125,7 +125,7 @@ namespace chaos
     if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
     {
       GLuint binding_index = 0;
-      glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
+      glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), vertex_buffer_offset, declaration.GetVertexSize());
     }
   }
 

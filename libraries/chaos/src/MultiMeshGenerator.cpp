@@ -108,9 +108,9 @@ bool MultiMeshGenerator::GenerateMeshes() const
 
     assert(requirement.vertex_size == mesh->declaration.GetVertexSize());
 
-    mesh->ShiftPrimitivesIndexAndVertexPosition(written_vertices_count, written_indices_count);  // shift the position of vertices/indices for this mesh
+    mesh->ShiftPrimitivesIndexAndVertexPosition(0, written_indices_count / sizeof(GLuint));  // shift the position of vertices/indices for this mesh
     
-    mesh->FinalizeBindings();
+    mesh->FinalizeBindings(written_vertices_count);
 
     (*it.second) = mesh; // store the mesh as an output
   }

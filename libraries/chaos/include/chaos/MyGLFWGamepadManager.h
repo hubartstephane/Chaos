@@ -90,12 +90,10 @@ namespace chaos
   protected:
 
     /** the constructor */
-    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone, bool in_volatile_index) : 
+    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone) : 
       manager(in_manager),
       dead_zone(in_dead_zone), 
-      volatile_index(in_volatile_index),
-      stick_index(-1),
-      present(false)
+      stick_index(-1)
     { 
       assert(manager != nullptr);
     }
@@ -109,7 +107,7 @@ namespace chaos
   public:
 
     /** returns true whether the gamepad is connected */
-    inline bool IsPresent() const { return present; }
+    inline bool IsPresent() const { return (stick_index >= 0); }
     /** returns the button state */
     bool IsButtonPressed(size_t button_index) const;
     /** returns the button state */
@@ -131,12 +129,8 @@ namespace chaos
     MyGLFWGamepadManager * manager;
     /** the zone for axis that is considered 0 */
     float dead_zone;
-    /** indicates whether the index of the gamepad can be changed due to plug deconnection */
-    bool volatile_index;
     /** the current stick index */
     int stick_index;
-    /** indicates whether the stick is present */
-    bool present;
     /** the value for axis */
     std::vector<MyGLFWGamepadAxisData> axis;
     /** the value for buttons */
@@ -161,7 +155,7 @@ namespace chaos
     /** clean all the gamepad */
     void Reset();
     /** create a gamepad */
-    MyGLFWGamepad * AllocateGamepad(bool volatile_index = true);
+    MyGLFWGamepad * AllocateGamepad();
     /** release a gamepad */
     void FreeGamepad(MyGLFWGamepad * gamepad);
 
@@ -171,16 +165,16 @@ namespace chaos
   protected:
 
     /** called whenever a gamepad is being disconnected */
-    virtual void OnGamepadDisconnected(MyGLFWGamepad * gamepad){}
+    virtual bool OnGamepadDisconnected(MyGLFWGamepad * gamepad){return true;}
     /** called whenever a gamepad is being connected */
-    virtual void OnGamepadConnected(MyGLFWGamepad * gamepad){}
+    virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad){return true;}
 
   protected:
 
     /** Ensure if a stick index is already in use */
     bool IsStickIndexInUse(int stick_index) const;
     /** Try to get the stick index if a gamepad that is not used and who has at least one entry triggered */
-    int GetFreeStickIndex() const;
+    int GetFreeStickIndex(int start_index) const;
 
     /** the default dead zone value */
     float dead_zone;

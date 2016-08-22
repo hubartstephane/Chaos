@@ -7,6 +7,8 @@ namespace chaos
 
 void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
 {
+  in_raw_value = chaos::MathTools::Clamp(in_raw_value, -1.0f, +1.0f);  
+
   // store raw value
   raw_value = in_raw_value;
   max_value = max(max_value, in_raw_value);
@@ -16,11 +18,9 @@ void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
   if (in_raw_value > dead_zone || in_raw_value < -dead_zone)
   {
     if (in_raw_value > 0.0f)
-      in_raw_value =  (in_raw_value - dead_zone) / (max_value - dead_zone);
+      final_value =  (in_raw_value - dead_zone) / (max_value - dead_zone);
     else
-      in_raw_value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
-
-    final_value = chaos::MathTools::Clamp(in_raw_value, -1.0f, +1.0f);  
+      final_value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
   }
   else
     final_value = 0.0f;
@@ -28,7 +28,7 @@ void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
 
 bool MyGLFWGamepad::IsButtonPressed(size_t button_index) const
 {
-  if (!present)
+  if (!IsPresent())
     return false;
   if (button_index >= buttons.size())
     return false;
@@ -37,7 +37,7 @@ bool MyGLFWGamepad::IsButtonPressed(size_t button_index) const
 
 float MyGLFWGamepad::GetAxisValue(size_t axis_index) const
 {
-  if (!present)
+  if (!IsPresent())
     return 0.0f;
   if (axis_index >= axis.size())
     return 0.0f;
@@ -46,7 +46,7 @@ float MyGLFWGamepad::GetAxisValue(size_t axis_index) const
 
 bool MyGLFWGamepad::IsAnyButtonPressed() const
 {
-  if (!present)
+  if (!IsPresent())
     return false;
   for (unsigned int button : buttons)
     if (button)
@@ -56,7 +56,7 @@ bool MyGLFWGamepad::IsAnyButtonPressed() const
 
 bool MyGLFWGamepad::IsAnyAxisAction() const
 {
-  if (!present)
+  if (!IsPresent())
     return false;
   for (MyGLFWGamepadAxisData const & axis_data : axis)
     if (axis_data.GetValue() != 0.0f)
@@ -72,7 +72,7 @@ bool MyGLFWGamepad::IsAnyAction() const
 glm::vec2 MyGLFWGamepad::GetXBOXStickDirection(int stick_index) const
 {
   glm::vec2 result(0.0f, 0.0f);
-  if (present)
+  if (IsPresent())
   {
     if (stick_index == XBOX_LEFT_AXIS)
     {
@@ -125,41 +125,36 @@ void MyGLFWGamepad::UpdateAxisAndButtons()
 
 void MyGLFWGamepad::Tick(float delta_time) 
 {
-  bool old_present = present;
-
-  if (stick_index >= 0) // stick already possessed
+  if (IsPresent()) // stick already present
   {
-    int new_present = glfwJoystickPresent(stick_index);
-    if (new_present)
+    if (!glfwJoystickPresent(stick_index))
     {
-      if (!old_present)
-      {
-        present = true;
-        manager->OnGamepadConnected(this);
-      }
+      stick_index = -1;
+      manager->OnGamepadDisconnected(this);    // stick no more present
+    }
+    else
       UpdateAxisAndButtons();
-    }
-    else // stick is no more present
-    {
-      if (volatile_index)
-        stick_index = -1;
-      if (old_present)
-      {
-        present = false;
-        manager->OnGamepadDisconnected(this);
-      }
-    }
   }
-  else // stick not yet captured
+  else // stick no attributed, try get a new one
   {
-    int new_stick_index = manager->GetFreeStickIndex(); // this is a stick with some input set
-    if (new_stick_index >= 0)
+    int start_search_index = GLFW_JOYSTICK_1;
+    while (start_search_index <= GLFW_JOYSTICK_LAST) // search very first stick that is accepted by the manager
     {
-      present     = true;
+      // get a stick with some input 
+      int new_stick_index = manager->GetFreeStickIndex(start_search_index); 
+      if (new_stick_index < 0)
+        break; // no stick with an input
+
+      // does the manager accept it ?
       stick_index = new_stick_index;
-      manager->OnGamepadConnected(this);
       UpdateAxisAndButtons();
-    }  
+      if (manager->OnGamepadConnected(this)) 
+        break;
+
+      // manager, refused to acquire this stick, try next one
+      stick_index        = -1;
+      start_search_index = new_stick_index + 1;
+    }   
   }
 }
 
@@ -186,9 +181,9 @@ bool MyGLFWGamepadManager::HasAnyInputs(int stick_index, float dead_zone)
 }
 
 
-int MyGLFWGamepadManager::GetFreeStickIndex() const
+int MyGLFWGamepadManager::GetFreeStickIndex(int start_index) const
 {
-  for (int i = GLFW_JOYSTICK_1 ; i <= GLFW_JOYSTICK_LAST ; ++i)
+  for (int i = start_index ; i <= GLFW_JOYSTICK_LAST ; ++i)
     if (!IsStickIndexInUse(i))
       if (HasAnyInputs(i, dead_zone))
         return i;
@@ -209,9 +204,9 @@ void MyGLFWGamepadManager::Tick(float delta_time)
     gamepad->Tick(delta_time);
 }
 
-MyGLFWGamepad * MyGLFWGamepadManager::AllocateGamepad(bool volatile_index)
+MyGLFWGamepad * MyGLFWGamepadManager::AllocateGamepad()
 {
-  MyGLFWGamepad * result = new MyGLFWGamepad(this, dead_zone, volatile_index);
+  MyGLFWGamepad * result = new MyGLFWGamepad(this, dead_zone);
   if (result != nullptr)
     gamepads.push_back(result);
   return result;

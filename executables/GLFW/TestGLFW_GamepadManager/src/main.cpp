@@ -10,14 +10,16 @@ class MyGamepadManager : public chaos::MyGLFWGamepadManager
 {
 protected:
 
-  virtual void OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
+  virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
   {
     std::cout << "OnGamepadConnected : " << gamepad->GetGamepadIndex() << std::endl;
+    return true;
   }
 
-  virtual void OnGamepadDisconnected(chaos::MyGLFWGamepad * gamepad) override
+  virtual bool OnGamepadDisconnected(chaos::MyGLFWGamepad * gamepad) override
   {
     std::cout << "OnGamepadDisconnected : " << gamepad->GetGamepadIndex() << std::endl;
+    return true;
   }
 };
 
@@ -41,7 +43,7 @@ protected:
 
   virtual bool Initialize() override
   {
-    main_gamepad = gamepad_manager.AllocateGamepad(true);
+    main_gamepad = gamepad_manager.AllocateGamepad();
     return true;
   }
 

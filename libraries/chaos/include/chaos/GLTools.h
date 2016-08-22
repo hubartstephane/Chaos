@@ -103,7 +103,8 @@ public:
   static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 
-
+  /** map an index and vertex buffer at the same time, all mapped or none mapped */
+  static bool MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result);
   /** generate multiple arrays/buffer with a single call */
   static bool GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
   /** generate multiple arrays/buffer with a single call */

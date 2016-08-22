@@ -119,57 +119,37 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 
         if (GLTools::GenerateVertexAndIndexBuffersObject(&mesh->vertex_array, vb_ptr, ib_ptr))
         {
+          GLuint vb = (requirement.vertices_count > 0)? mesh->vertex_array->GetResourceID() : 0;
+          GLuint ib = (requirement.indices_count  > 0)? mesh->index_buffer->GetResourceID() : 0;
+
+          int vb_size = requirement.vertices_count * requirement.vertex_size;
+          int ib_size = requirement.indices_count * sizeof(GLuint);
+
           // allocate buffer for vertices and indices
-          char   * vertices = nullptr;
-          GLuint * indices  = nullptr;
-
-          size_t vb_size = requirement.vertices_count * requirement.vertex_size;
-                   
-          if (requirement.vertices_count > 0)
+          std::pair<char *, GLuint *> mapping;
+          if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
           {
-            GLuint buffer_id = mesh->vertex_buffer->GetResourceID();
-            glNamedBufferData(buffer_id, vb_size, nullptr, GL_STATIC_DRAW);
-            vertices = (char *)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
-            if (vertices == nullptr)
-              goto release_resources;
-          }
-          if (requirement.indices_count > 0)
-          {
-            GLuint buffer_id = mesh->index_buffer->GetResourceID();
-            glNamedBufferData(buffer_id, requirement.indices_count * sizeof(GLuint), nullptr, GL_STATIC_DRAW);
-            indices = (GLuint *)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
-            if (indices == nullptr)
-              goto release_resources;
-          }
+            // generate the indices and the vertices
+            MemoryBufferWriter vertices_writer(mapping.first, vb_size);
+            MemoryBufferWriter indices_writer(mapping.second, ib_size);
+            proxy->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);          
+          
+            assert(vertices_writer.GetRemainingBufferSize() == 0);
+            assert(indices_writer.GetRemainingBufferSize() == 0);
 
-          // generate the indices and the vertices
-          MemoryBufferWriter vertices_writer(vertices, vb_size);
-          MemoryBufferWriter indices_writer(indices, requirement.indices_count * sizeof(GLuint));
-          proxy->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
+            // get the vertex declaration
+            proxy->GenerateVertexDeclaration(mesh->declaration);
+            assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
 
-          assert(vertices_writer.GetRemainingBufferSize() == 0);
-          assert(indices_writer.GetRemainingBufferSize() == 0);
+            // initialize the vertex array and validate
+            mesh->FinalizeBindings();
+            result = mesh;
 
-          // get the vertex declaration
-          proxy->GenerateVertexDeclaration(mesh->declaration);
-          assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
-
-          // initialize the vertex array and validate
-          mesh->FinalizeBindings();
-          result = mesh;
-         
-release_resources:
-
-          // transfert data to GPU and free memory
-          if (vertices != nullptr)
-          {
-            GLuint buffer_id = mesh->vertex_buffer->GetResourceID();
-            glUnmapNamedBuffer(buffer_id);
-          }
-          if (indices != nullptr)
-          {
-            GLuint buffer_id = mesh->index_buffer->GetResourceID();
-            glUnmapNamedBuffer(buffer_id);
+            // transfert data to GPU and free memory
+            if (vb != 0)
+              glUnmapNamedBuffer(vb);
+            if (ib != 0)
+              glUnmapNamedBuffer(ib);
           }
         }
       }

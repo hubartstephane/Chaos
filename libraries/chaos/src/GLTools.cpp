@@ -77,6 +77,32 @@ void GLTools::FreeVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_b
   }
 }
 
+bool GLTools::MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result)
+{
+  result = std::make_pair(nullptr, nullptr);
+
+  if (vertex_buffer != 0)
+  {
+    glNamedBufferData(vertex_buffer, vb_size, nullptr, GL_STATIC_DRAW);
+    result.first = (char *)glMapNamedBuffer(vertex_buffer, GL_WRITE_ONLY);
+    if (result.first == nullptr)
+      return false;  
+  }
+
+  if (index_buffer != 0)
+  {
+    glNamedBufferData(index_buffer, ib_size, nullptr, GL_STATIC_DRAW);
+    result.second = (GLuint *)glMapNamedBuffer(index_buffer, GL_WRITE_ONLY);  
+    if (result.second == nullptr && vertex_buffer != 0)
+    {    
+      glUnmapNamedBuffer(vertex_buffer);
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool GLTools::GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer)
 {
   int buffer_count = 0;

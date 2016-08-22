@@ -93,16 +93,19 @@ namespace chaos
     MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone) : 
       manager(in_manager),
       dead_zone(in_dead_zone), 
-      stick_index(-1)
+      stick_index(-1),
+      ever_connected(false)
     { 
       assert(manager != nullptr);
     }
     /** the destructor is protected */
-    ~MyGLFWGamepad(){}
-    /** update all the gamepad */
-    void Tick(float delta_time);
+    virtual ~MyGLFWGamepad(){}
+    /** update the gamepad values. There are 3 steps */
+    void Tick(float delta_time, int step);
     /** update all the values for the axis and buttons */
     void UpdateAxisAndButtons();
+    /** try to capture a stick if the flag correspond */
+    void TryCaptureStick(bool wanted_ever_connected);
 
   public:
 
@@ -131,6 +134,8 @@ namespace chaos
     float dead_zone;
     /** the current stick index */
     int stick_index;
+    /** indicates whether the stick has already be connected */
+    bool ever_connected;
     /** the value for axis */
     std::vector<MyGLFWGamepadAxisData> axis;
     /** the value for buttons */
@@ -168,6 +173,8 @@ namespace chaos
     virtual bool OnGamepadDisconnected(MyGLFWGamepad * gamepad){return true;}
     /** called whenever a gamepad is being connected */
     virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad){return true;}
+    /** called to allocate a gamepad instance */
+    virtual MyGLFWGamepad * NewGamepadInstance();
 
   protected:
 

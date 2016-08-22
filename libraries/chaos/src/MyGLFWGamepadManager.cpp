@@ -123,38 +123,66 @@ void MyGLFWGamepad::UpdateAxisAndButtons()
     buttons[i] = buttons_buffer[i];
 }
 
-void MyGLFWGamepad::Tick(float delta_time) 
+void MyGLFWGamepad::TryCaptureStick(bool wanted_ever_connected)
 {
-  if (IsPresent()) // stick already present
-  {
-    if (!glfwJoystickPresent(stick_index))
-    {
-      stick_index = -1;
-      manager->OnGamepadDisconnected(this);    // stick no more present
-    }
-    else
-      UpdateAxisAndButtons();
-  }
-  else // stick no attributed, try get a new one
+  if (ever_connected == wanted_ever_connected)
   {
     int start_search_index = GLFW_JOYSTICK_1;
     while (start_search_index <= GLFW_JOYSTICK_LAST) // search very first stick that is accepted by the manager
     {
       // get a stick with some input 
-      int new_stick_index = manager->GetFreeStickIndex(start_search_index); 
+      int new_stick_index = manager->GetFreeStickIndex(start_search_index);
       if (new_stick_index < 0)
         break; // no stick with an input
-
+              
       // does the manager accept it ?
       stick_index = new_stick_index;
       UpdateAxisAndButtons();
-      if (manager->OnGamepadConnected(this)) 
+      if (manager->OnGamepadConnected(this))
+      {
+        ever_connected = true;
         break;
-
+      }
       // manager, refused to acquire this stick, try next one
-      stick_index        = -1;
+      stick_index = -1;
       start_search_index = new_stick_index + 1;
-    }   
+    }
+  }
+}
+
+// Some explanation : considering that a gamepad represents a player,
+//                    if a gamepad is disconnected, it has now greater priority for recapture that a gamepad that never has been captured
+//                    (want to reconnect old player instead of introducing a new one)
+//
+//                    the manager has the opportunity to refuse a stick input
+
+void MyGLFWGamepad::Tick(float delta_time, int step) 
+{
+  // STEP 0 : update values for connected sticks
+  if (step == 0)
+  {
+    if (IsPresent()) // stick already present
+    {
+      if (!glfwJoystickPresent(stick_index))
+      {
+        stick_index = -1;
+        manager->OnGamepadDisconnected(this);    // stick no more present => disconnection
+      }
+      else
+        UpdateAxisAndButtons();
+    }
+  }
+  // STEP 1 : try to recapture uncaptured stick that already have been captured once
+  else if (step == 1)
+  {
+    if (!IsPresent())
+      TryCaptureStick(true);
+  }
+  // STEP 2 : try to recapture never used stick
+  else if (step == 2)
+  {
+    if (!IsPresent())
+      TryCaptureStick(false);
   }
 }
 
@@ -200,16 +228,22 @@ bool MyGLFWGamepadManager::IsStickIndexInUse(int stick_index) const
 
 void MyGLFWGamepadManager::Tick(float delta_time)
 {
-  for (MyGLFWGamepad * gamepad : gamepads)
-    gamepad->Tick(delta_time);
+  for (int step = 0 ; step < 3 ; ++step)
+    for (MyGLFWGamepad * gamepad : gamepads)
+      gamepad->Tick(delta_time, step);
 }
 
 MyGLFWGamepad * MyGLFWGamepadManager::AllocateGamepad()
 {
-  MyGLFWGamepad * result = new MyGLFWGamepad(this, dead_zone);
+  MyGLFWGamepad * result = NewGamepadInstance();
   if (result != nullptr)
     gamepads.push_back(result);
   return result;
+}
+
+MyGLFWGamepad * MyGLFWGamepadManager::NewGamepadInstance()
+{
+  return new MyGLFWGamepad(this, dead_zone);
 }
 
 void MyGLFWGamepadManager::FreeGamepad(MyGLFWGamepad * gamepad)

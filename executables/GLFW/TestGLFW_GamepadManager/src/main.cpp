@@ -12,8 +12,12 @@ protected:
 
   virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
   {
-    std::cout << "OnGamepadConnected : " << gamepad->GetGamepadIndex() << std::endl;
-    return true;
+    if (gamepad->IsButtonPressed(chaos::MyGLFWGamepad::XBOX_BUTTON_START))
+    {
+      std::cout << "OnGamepadConnected : " << gamepad->GetGamepadIndex() << std::endl;
+      return true;
+    }    
+    return false;
   }
 
   virtual bool OnGamepadDisconnected(chaos::MyGLFWGamepad * gamepad) override

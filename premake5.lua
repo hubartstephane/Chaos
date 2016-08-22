@@ -628,7 +628,7 @@ function RestoreEnvironment(env)
   end  
 end  
 
-function ProcessSubPremake(proj_name, sub_path)
+function ProcessSubPremake(proj_name, sub_path, filename)
 
   INDENT = INDENT + 1
 
@@ -647,8 +647,9 @@ function ProcessSubPremake(proj_name, sub_path)
     PROJECT_SRC_PATH   = sub_path  -- should only be executed for external libraries 
     PROJECT_BUILD_PATH = nil   
   end          
-                  
-  ProcessFile(path.join(PROJECT_SRC_PATH, "subpremake5.lua"), false)
+                                 
+  filename = filename or "subpremake5.lua"                  
+  ProcessFile(path.join(PROJECT_SRC_PATH, filename), false)
   RestoreEnvironment(env)
   
   INDENT = INDENT - 1  
@@ -725,7 +726,8 @@ solution "TestNewPremake"
   ProcessSubPremake("common resources")
   
   CURRENT_GROUP = nil  
-  ProcessSubPremake("external", EXTERNAL_PATH)
+  --ProcessSubPremake("external", EXTERNAL_PATH, "external_premake5.lua")
+  ProcessSubPremake("external", ".", "external_premake5.lua")
   
   CURRENT_GROUP = "libraries"         
   ProcessSubPremake("libraries")

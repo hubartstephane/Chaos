@@ -111,9 +111,9 @@ namespace chaos
     void SetDebugMode(bool in_debug_mode = true);
 
     /** insert multiple texture before computation */
-    bool AddTextureFiles(boost::filesystem::path const & path);
+    bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert multiple texture before computation */
-    bool AddTextureFiles(char const * filename);
+    bool AddTextureFilesFromDirectory(char const * filename);
     /** insert a texture before computation */
     bool AddTextureFile(boost::filesystem::path const & path);
     /** insert a texture before computation */

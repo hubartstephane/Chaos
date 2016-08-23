@@ -33,7 +33,7 @@ public:
   int    width;
   /** the image height */
   int    height;
-  /** the bit per pixels : 24 or 32 */
+  /** the bit per pixels : 8, 24 or 32 */
   int    bpp;
   /** size of line in bytes (exclude padding) : width * bpp / 8 */
   int    line_size;

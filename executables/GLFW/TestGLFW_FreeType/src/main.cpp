@@ -14,9 +14,6 @@
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
 
-bool RECTANGLE_TEXTURE = true;
-
- 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
@@ -38,7 +35,7 @@ protected:
     glEnable(GL_CULL_FACE);
 
 
-#if 0
+#if 1
 
     GLuint program_id = program->GetResourceID();
        
@@ -96,6 +93,14 @@ protected:
     if (Err)
       return false;
 
+    for (int i = 0 ; i < face->num_charmaps ; ++i)
+    {
+
+
+
+    }
+
+
     Err = FT_Set_Char_Size(
       face,    /* handle to face object           */
       0,       /* char_width in 1/64th of points  */
@@ -104,7 +109,12 @@ protected:
       300 );   /* vertical device resolution      */
     if (Err)
       return false;
+#if 0
 
+    Err = FT_Set_Pixel_Sizes(face, 256, 256);
+    if (Err)
+      return false;
+#endif
     int glyph_index = FT_Get_Char_Index(face, 'a' );
 
     Err = FT_Load_Glyph(
@@ -117,9 +127,44 @@ protected:
 
     Err = FT_Render_Glyph(
       face->glyph,   /* glyph slot  */
-      FT_RENDER_MODE_NORMAL ); /* render mode */
+      FT_RENDER_MODE_NORMAL); /* render mode */
     if (Err)
       return false;
+
+
+
+#if 1
+    chaos::ImageDescription image_description;
+    image_description.data         = face->glyph->bitmap.buffer;
+    image_description.width        = face->glyph->bitmap.width;
+    image_description.height       = face->glyph->bitmap.width;
+    image_description.bpp          = 8;
+    image_description.padding_size = 0;
+    image_description.line_size    = image_description.width * image_description.bpp / 8;
+    image_description.pitch_size   = image_description.line_size + image_description.padding_size;
+
+#else
+
+    char * bb = new char [ 256 * 256];
+    for (int i = 0; i < 256 * 256; ++i)
+      bb[i] = (char)(i & 0xFF);
+
+    chaos::ImageDescription image_description;
+    image_description.data = bb;
+    image_description.width = 256;
+    image_description.height = 256;
+    image_description.bpp = 8;
+    image_description.padding_size = 0;
+    image_description.line_size = image_description.width * image_description.bpp / 8;
+    image_description.pitch_size = image_description.line_size + image_description.padding_size;
+
+#endif
+
+
+    texture = chaos::GLTools::GenTextureObject(image_description);
+
+
+
 
     glyph_index = glyph_index;
 
@@ -145,6 +190,10 @@ protected:
       return false;
 
     FreeImage_Unload(image);
+#endif
+
+    boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
+    boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
@@ -160,7 +209,7 @@ protected:
     mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
     if (mesh == nullptr)
       return false;
-#endif
+
     return true;
   }
 

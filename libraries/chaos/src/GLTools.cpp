@@ -333,11 +333,32 @@ void GLTools::SetDebugMessageHandler()
 #endif
 }
 
+std::pair<GLenum, GLenum> GLTools::GetTextureFormatsFromBPP(int bpp)
+{
+  GLenum format = GL_NONE;
+  if (bpp == 8)
+    format = GL_RED;
+  else if (bpp == 24)
+    format = GL_BGR;
+  else if (bpp == 32)
+    format = GL_BGRA;
+
+  GLenum internal_format = GL_NONE;
+  if (bpp == 8)
+    internal_format = GL_RED;
+  else if (bpp == 24)
+    internal_format = GL_RGB;
+  else if (bpp == 32)
+    internal_format = GL_RGBA;
+
+  return std::make_pair(format, internal_format);
+}
+
 GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
 {
   assert(image.width > 0);
   assert(image.height > 0);
-  assert(image.bpp == 24 || image.bpp == 32);
+  assert(image.bpp == 8 || image.bpp == 24 || image.bpp == 32);
 
   GenTextureResult result;
   glGenTextures(1, &result.texture_id); // Generate a texture ID
@@ -346,8 +367,11 @@ GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureP
     GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
     glBindTexture(target, result.texture_id);
    
-    GLenum internal_format = (image.bpp == 24)? GL_RGB : GL_RGBA; // choose format and internal format (beware FreeImage is BGR/BGRA)
-    GLenum format          = (image.bpp == 24)? GL_BGR : GL_BGRA;
+    // choose format and internal format (beware FreeImage is BGR/BGRA)
+    std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(image.bpp);
+
+    GLenum format          = all_formats.first;
+    GLenum internal_format = all_formats.second;
    
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * image.pitch_size / image.bpp);
@@ -450,8 +474,10 @@ GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePara
     int bpp  = skybox->GetSkyBoxBPP();
     int size = skybox->GetSkyBoxSize();
 
-    GLenum internal_format = (bpp == 24)? GL_RGB : GL_RGBA;
-    GLenum format          = (bpp == 24)? GL_BGR : GL_BGRA;
+    std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(bpp);
+
+    GLenum format          = all_formats.first;
+    GLenum internal_format = all_formats.second;
 
     GLenum targets[] = {
       GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT

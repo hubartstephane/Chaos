@@ -94,6 +94,8 @@ public:
   static GenTextureResult GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a cube texture from a skybox */
   static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
+  /** Get Format/Internal Format pair from BPP */
+  static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
 
   /** Generate a 1D/2D/rectangle texture from an image */
   static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());

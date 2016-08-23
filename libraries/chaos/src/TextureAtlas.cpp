@@ -18,7 +18,7 @@ namespace chaos
     debug_mode = in_debug_mode;
   }
 
-  bool TextureAtlasData::AddTextureFiles(boost::filesystem::path const & p)
+  bool TextureAtlasData::AddTextureFilesFromDirectory(boost::filesystem::path const & p)
   {
     // enumerate the source directory
     boost::filesystem::directory_iterator end;
@@ -31,9 +31,9 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasData::AddTextureFiles(char const * filename)
+  bool TextureAtlasData::AddTextureFilesFromDirectory(char const * filename)
   {
-    return AddTextureFiles(boost::filesystem::path(filename));
+    return AddTextureFilesFromDirectory(boost::filesystem::path(filename));
   }
 
   bool TextureAtlasData::AddTextureFile(boost::filesystem::path const & path)
@@ -217,10 +217,7 @@ namespace chaos
         return true;
       }      
       else
-      {
         data->OutputTextureInfo(std::cout, padding);
-        assert(0);
-      }
     }    
     return false;
   }
@@ -837,7 +834,7 @@ namespace chaos
     assert(dst_pattern != nullptr);
 
     TextureAtlasData data;
-    data.AddTextureFiles(src_dir);
+    data.AddTextureFilesFromDirectory(src_dir);
 
     // create the atlas files
     chaos::TextureAtlasCreator atlas_creator;

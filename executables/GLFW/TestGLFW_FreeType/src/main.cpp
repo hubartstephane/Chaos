@@ -80,17 +80,48 @@ protected:
     if (application == nullptr)
       return false;
 
-    FT_Library  library;
-    FT_Init_FreeType(&library);
+    FT_Error Err;
 
+    FT_Library library;
 
+    Err = FT_Init_FreeType(&library);
+    if (Err)
+      return false;
 
+    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+    boost::filesystem::path font_path      = resources_path / "Flatwheat-Italic.ttf";
+    
+    FT_Face face;
+    Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
+    if (Err)
+      return false;
 
+    Err = FT_Set_Char_Size(
+      face,    /* handle to face object           */
+      0,       /* char_width in 1/64th of points  */
+      16*64,   /* char_height in 1/64th of points */
+      300,     /* horizontal device resolution    */
+      300 );   /* vertical device resolution      */
+    if (Err)
+      return false;
 
+    int glyph_index = FT_Get_Char_Index(face, 'a' );
 
+    Err = FT_Load_Glyph(
+      face,          /* handle to face object */
+      glyph_index,   /* glyph index           */
+      FT_LOAD_DEFAULT);  /* load flags, see below */
 
+    if (Err)
+      return false;
 
+    Err = FT_Render_Glyph(
+      face->glyph,   /* glyph slot  */
+      FT_RENDER_MODE_NORMAL ); /* render mode */
+    if (Err)
+      return false;
 
+    glyph_index = glyph_index;
 
 
 

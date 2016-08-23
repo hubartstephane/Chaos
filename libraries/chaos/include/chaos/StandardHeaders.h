@@ -114,7 +114,9 @@ T max(T a, T b)
 #endif
 
 #include <lua.hpp>
-//#include <oolua.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include <tinyxml2.h>
 

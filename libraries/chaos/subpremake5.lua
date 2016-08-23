@@ -16,5 +16,12 @@
   DependOnLib("NANA")  
   DependOnLib("ASSIMP")       
   DependOnLib("FBX")  
-  DependOnLib("TRISTRIPPER")  
+  DependOnLib("TRISTRIPPER")
+  DependOnLib("FREETYPE2")    
+        
+  --DependOnLib("FMODSTUDIO")  
+  --DependOnLib("GLI")  
+  --DependOnLib("ZLIB")     
+  --DependOnLib("LIBXML2")    
+     
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 

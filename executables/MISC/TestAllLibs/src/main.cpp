@@ -112,7 +112,14 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 
+  // Test Freefont2
+  FT_Library  library;
+  if (!FT_Init_FreeType( &library ))
+  {
+    argc = argc;
 
+
+  }
   
 
 #if 0
@@ -151,14 +158,7 @@ int _tmain(int argc, char ** argv, char ** env)
   boost::thread new_thread(func);
   new_thread.join();
 
-  // Test Freefont2
-  FT_Library  library;
-  if (!FT_Init_FreeType( &library ))
-  {
-    argc = argc;
 
-
-  }
 
   // Test FMOD
     FMOD::System *system = NULL;

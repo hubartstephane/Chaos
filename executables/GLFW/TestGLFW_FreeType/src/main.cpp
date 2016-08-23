@@ -80,7 +80,8 @@ protected:
     if (application == nullptr)
       return false;
 
-
+    FT_Library  library;
+    FT_Init_FreeType(&library);
 
 
 

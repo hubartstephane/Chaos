@@ -87,15 +87,16 @@ DeclareExternalLib("GLEW", GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME)
 
 
   -- FREETYPE2 
-local FREETYPE2_PATH = "freetype-2.5.5"
+
+local FREETYPE2_PATH = "freetype-2.6.5"
 local FREETYPE2_INC_PATH = path.join(FREETYPE2_PATH, "include") 
 local FREETYPE2_LIB_PATH = {
-  x32 = path.join(FREETYPE2_PATH, "objs", "vc2010", win32),
-  x64 = path.join(FREETYPE2_PATH, "objs", "vc2010", x64)
+  x32 = path.join(FREETYPE2_PATH, "lib", "vc2015", win32),
+  x64 = path.join(FREETYPE2_PATH, "lib", "vc2015", x64)
 }
 local FREETYPE2_LIBNAME = {
-  DEBUG   = "freetype255d.lib",
-  RELEASE = "freetype255.lib"
+  DEBUG   = "freetyped.lib",
+  RELEASE = "freetype.lib"
 }      
 DeclareExternalLib("FREETYPE2", FREETYPE2_INC_PATH, FREETYPE2_LIB_PATH, FREETYPE2_LIBNAME)
 

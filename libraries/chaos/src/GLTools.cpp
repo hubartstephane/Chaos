@@ -351,6 +351,9 @@ std::pair<GLenum, GLenum> GLTools::GetTextureFormatsFromBPP(int bpp)
   else if (bpp == 32)
     internal_format = GL_RGBA;
 
+  assert(format != GL_NONE);
+  assert(internal_format != GL_NONE);
+
   return std::make_pair(format, internal_format);
 }
 

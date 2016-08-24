@@ -88,15 +88,18 @@ public:
   /** Initialize the Debug message handler */
   static void SetDebugMessageHandler();
 
+  /** Generate a 1D/2D/rectangle texture from an file */
+  static GenTextureResult GenTexture(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */
   static GenTextureResult GenTexture(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */
   static GenTextureResult GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a cube texture from a skybox */
   static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
-  /** Get Format/Internal Format pair from BPP */
-  static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
 
+
+  /** Generate a 1D/2D/rectangle texture from an file */
+  static boost::intrusive_ptr<Texture> GenTextureObject(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */
   static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */
@@ -104,7 +107,8 @@ public:
   /** Generate a cube texture from a skybox */
   static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
-
+  /** Get Format/Internal Format pair from BPP */
+  static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
   /** map an index and vertex buffer at the same time, all mapped or none mapped */
   static bool MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result);
   /** generate multiple arrays/buffer with a single call */

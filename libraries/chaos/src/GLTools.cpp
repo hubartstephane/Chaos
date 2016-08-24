@@ -429,6 +429,19 @@ GenTextureResult GLTools::GenTexture(FIBITMAP const * image, GenTextureParameter
   return GenTexture(ImageTools::GetImageDescription(image), parameters);
 }
 
+GenTextureResult GLTools::GenTexture(char const * filename, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
+  if (image != nullptr)
+  {
+    result = GenTexture(image, parameters);
+    FreeImage_Unload(image);  
+  }
+  return result;
+}
+
 
 // There are lots of very uncleared referenced for faces orientation
 // Most of pictures found one GoogleImage do not correspond to OpenGL but DirectX
@@ -517,6 +530,15 @@ GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePara
       GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
       GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  // BACK
     };
+    /*
+    0 	GL_TEXTURE_CUBE_MAP_POSITIVE_X
+      1 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+      2 	GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+      3 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+      4 	GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+      5 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 
+      */
+
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     
@@ -591,6 +613,14 @@ boost::intrusive_ptr<Texture> GLTools::GenTextureObject(FIBITMAP const * image, 
 boost::intrusive_ptr<Texture> GLTools::GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
 {
   GenTextureResult result = GenTexture(skybox, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(char const * filename, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(filename, parameters);
   if (result.texture_id > 0)
     return new Texture(result.texture_id, result.texture_description);
   return nullptr;

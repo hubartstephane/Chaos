@@ -69,15 +69,9 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
-    FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(image_path.string().c_str());
-    if (image == nullptr)
-      return false;
-
-    texture = chaos::GLTools::GenTextureObject(image);
+    texture = chaos::GLTools::GenTextureObject(image_path.string().c_str());
     if (texture == nullptr)
       return false;
-
-    FreeImage_Unload(image);
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);

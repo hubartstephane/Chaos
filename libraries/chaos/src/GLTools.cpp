@@ -522,18 +522,34 @@ GenTextureResult GLTools::GenTexture(char const * filename, GenTextureParameters
 //  v
 //
 
+int GLTools::GetLayerValueFromCubeMapFace(GLenum face, int level)
+{
+  if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_X)
+    return 0 + 6 * level;
+  if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_X)
+    return 1 + 6 * level;
+  if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Y)
+    return 2 + 6 * level;
+  if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Y)
+    return 3 + 6 * level;
+  if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Z)
+    return 4 + 6 * level;
+  if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
+    return 5 + 6 * level;
+  return -1;
+}
+
 GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
 {
   assert(skybox != nullptr);
   assert(!skybox->IsEmpty());
 
+  GLenum target = GL_TEXTURE_CUBE_MAP;
+
   GenTextureResult result;
-  glGenTextures(1, &result.texture_id);
+  glCreateTextures(target, 1, &result.texture_id);
   if (result.texture_id > 0)
   {
-    GLenum target = GL_TEXTURE_CUBE_MAP;
-    glBindTexture(target, result.texture_id);
-
     int bpp  = skybox->GetSkyBoxBPP();
     int size = skybox->GetSkyBoxSize();
 
@@ -550,17 +566,11 @@ GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePara
       GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
       GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  // BACK
     };
-    /*
-    0 	GL_TEXTURE_CUBE_MAP_POSITIVE_X
-      1 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-      2 	GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-      3 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-      4 	GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-      5 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 
-      */
-
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    int level_count = GetMipmapLevelCount(size, size);
+    glTextureStorage2D(result.texture_id, level_count, internal_format, size, size);
     
     for (int i = SkyBoxImages::IMAGE_LEFT ; i <= SkyBoxImages::IMAGE_BACK ; ++i)
     {
@@ -593,7 +603,9 @@ GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePara
      
       glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length); // do not remove this line from the loop. Maybe future implementation will accept                                                                             // image with same size but different pitch
 
-      glTexImage2D(targets[i], parameters.level, internal_format, image.width, image.height, parameters.border, format, GL_UNSIGNED_BYTE, data);
+      int depth = GetLayerValueFromCubeMapFace(targets[i], 0);
+      
+      glTextureSubImage3D(result.texture_id, 0, 0, 0, depth, image.width, image.height, 1, format, GL_UNSIGNED_BYTE, image.data);
 
       if (new_buffer != nullptr)
         delete [](new_buffer);

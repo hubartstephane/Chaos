@@ -111,6 +111,8 @@ public:
   /** returns the maximum number of mipmap */
   static int GetMipmapLevelCount(int width, int height);
   static int GetMipmapLevelCount(int width);
+  /** for cubemap texture, returns a layer index depending on the face considered */
+  static int GetLayerValueFromCubeMapFace(GLenum face, int level = 0);
   /** Get Format/Internal Format pair from BPP */
   static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
   /** map an index and vertex buffer at the same time, all mapped or none mapped */

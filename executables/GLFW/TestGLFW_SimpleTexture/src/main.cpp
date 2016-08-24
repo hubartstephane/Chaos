@@ -18,9 +18,23 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1(){}
+  MyGLFWWindowOpenGLTest1() : 
+    mipmap_level(0){}
 
 protected:
+
+  virtual void OnMouseButton(int button, int action, int modifier) override
+  {
+    if (button == 0 && action == GLFW_RELEASE)
+    {
+      chaos::TextureDescription desc = texture->GetTextureDescription();
+
+      int max_mipmap = chaos::GLTools::GetMipmapLevelCount(desc.width, desc.height);
+
+      mipmap_level = (mipmap_level + 1) % max_mipmap;
+      glTextureParameteri(texture->GetResourceID(), GL_TEXTURE_BASE_LEVEL, mipmap_level); //GL_TEXTURE_MAX_LEVEL
+    }
+  }
 
   virtual bool OnDraw(int width, int height) override
   {
@@ -33,11 +47,6 @@ protected:
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-
-    static int k = 0;
-    k = (k + 1) % 10;
-    glTextureParameteri(texture->GetResourceID(), GL_TEXTURE_BASE_LEVEL, k); //GL_TEXTURE_MAX_LEVEL
 
     glUseProgram(program->GetResourceID());
          
@@ -103,6 +112,8 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
+
+  int mipmap_level;
 };
 
 

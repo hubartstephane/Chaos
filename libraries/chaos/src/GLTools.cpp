@@ -5,6 +5,33 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/Buffer.h>
 
+//
+// Some reminders for OpenGL:
+// -------------------------
+//
+//                       +1
+//       +--------------+ 
+//       |              |
+//       |              |
+//       |    screen    |
+//       |     space    |
+//       |              |
+//       |              |
+//       +--------------+
+//     -1              
+//
+//
+//                       1
+//       +--------------+ 
+//       |     top      |
+//       |              |
+//       |    Texture   |  The OpenGL texture is oriented in the same direction than BITMAP FILE
+//       |              |
+//       |              |
+//       |    bottom    |
+//       +--------------+
+//      0       
+
 namespace chaos
 {
 

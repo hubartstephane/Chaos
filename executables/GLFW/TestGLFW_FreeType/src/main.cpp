@@ -34,33 +34,15 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-
-#if 1
-
-    GLuint program_id = program->GetResourceID();
-       
-    glValidateProgram(program_id);
-    GLint validation = chaos::GLTools::CheckProgramStatus(program_id, GL_VALIDATE_STATUS, "Program validation failure : %s");
-    
-    glUseProgram(program_id);
-      
-    static float FOV =  60.0f;
-    static float Z   = -20.0f;
-    glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)width, (float)height, 1.0f, far_plane);
-    glm::mat4 local_to_world  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
-    glm::mat4 world_to_camera = glm::translate(glm::vec3(0.0f, 0.0f, Z));
+    glUseProgram(program->GetResourceID());
+         
+    glBindTextureUnit(0, texture->GetResourceID());
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
-
-    program_data.SetUniform("projection",      projection);
-    program_data.SetUniform("local_to_world",  local_to_world);
-    program_data.SetUniform("world_to_camera", world_to_camera);
-
-    glBindTextureUnit(0, texture->GetResourceID());
     program_data.SetUniform("material", 0);
 
     mesh->Render(program_data, nullptr, 0, 0);
-#endif
+
     return true;
   }
 
@@ -86,7 +68,7 @@ protected:
       return false;
 
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
-    boost::filesystem::path font_path      = resources_path / "Flatwheat-Italic.ttf";
+    boost::filesystem::path font_path      = resources_path / "Flatwheat-Regular.ttf";
     
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
@@ -131,9 +113,6 @@ protected:
     if (Err)
       return false;
 
-
-
-#if 1
     chaos::ImageDescription image_description;
     image_description.data         = face->glyph->bitmap.buffer;
     image_description.width        = face->glyph->bitmap.width;
@@ -143,54 +122,7 @@ protected:
     image_description.line_size    = image_description.width * image_description.bpp / 8;
     image_description.pitch_size   = image_description.line_size + image_description.padding_size;
 
-#else
-
-    char * bb = new char [ 256 * 256];
-    for (int i = 0; i < 256 * 256; ++i)
-      bb[i] = (char)(i & 0xFF);
-
-    chaos::ImageDescription image_description;
-    image_description.data = bb;
-    image_description.width = 256;
-    image_description.height = 256;
-    image_description.bpp = 8;
-    image_description.padding_size = 0;
-    image_description.line_size = image_description.width * image_description.bpp / 8;
-    image_description.pitch_size = image_description.line_size + image_description.padding_size;
-
-#endif
-
-
     texture = chaos::GLTools::GenTextureObject(image_description);
-
-
-
-
-    glyph_index = glyph_index;
-
-
-
-#if 0
-
-
-
-    boost::filesystem::path resources_path       = application->GetApplicationPath() / "resources";
-    boost::filesystem::path image_path           = (RECTANGLE_TEXTURE)?
-      resources_path / "opengl_logo_rectangle.png":
-      resources_path / "opengl_logo.png";
-    boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader_face.txt";
-    boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
-
-    FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(image_path.string().c_str());
-    if (image == nullptr)
-      return false;
-
-    texture = chaos::GLTools::GenTextureObject(image);
-    if (texture == nullptr)
-      return false;
-
-    FreeImage_Unload(image);
-#endif
 
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";

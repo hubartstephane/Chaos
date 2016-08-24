@@ -41,7 +41,7 @@ public:
     wrap_s(GL_REPEAT),
     wrap_t(GL_REPEAT),
     wrap_r(GL_REPEAT),
-    mag_filter(GL_LINEAR_MIPMAP_LINEAR),
+    mag_filter(GL_LINEAR),
     min_filter(GL_LINEAR_MIPMAP_LINEAR),
     level(0),
     border(0),

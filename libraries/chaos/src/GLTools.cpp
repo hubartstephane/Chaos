@@ -337,7 +337,7 @@ std::pair<GLenum, GLenum> GLTools::GetTextureFormatsFromBPP(int bpp)
 {
   GLenum format = GL_NONE;
   if (bpp == 8)
-    format = GL_RED;
+    format = GL_RED; // GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
   else if (bpp == 24)
     format = GL_BGR;
   else if (bpp == 32)
@@ -345,7 +345,7 @@ std::pair<GLenum, GLenum> GLTools::GetTextureFormatsFromBPP(int bpp)
 
   GLenum internal_format = GL_NONE;
   if (bpp == 8)
-    internal_format = GL_RED;
+    internal_format = GL_R8; // GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
   else if (bpp == 24)
     internal_format = GL_RGB;
   else if (bpp == 32)

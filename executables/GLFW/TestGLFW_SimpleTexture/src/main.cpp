@@ -13,9 +13,6 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
-
-bool RECTANGLE_TEXTURE = false;
-
  
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -36,6 +33,11 @@ protected:
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+
+    static int k = 0;
+    k = (k + 1) % 10;
+    glTextureParameteri(texture->GetResourceID(), GL_TEXTURE_BASE_LEVEL, k); //GL_TEXTURE_MAX_LEVEL
 
     glUseProgram(program->GetResourceID());
          
@@ -63,9 +65,7 @@ protected:
       return false;
 
     boost::filesystem::path resources_path       = application->GetApplicationPath() / "resources";
-    boost::filesystem::path image_path           = (RECTANGLE_TEXTURE)?
-      resources_path / "opengl_logo_rectangle.png":
-      resources_path / "opengl_logo.png";
+    boost::filesystem::path image_path           = resources_path / "opengl_logo_rectangle.png";
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 

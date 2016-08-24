@@ -4,6 +4,8 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/Buffer.h>
+#include <chaos/MathTools.h>
+
 
 //
 // Some reminders for OpenGL:
@@ -360,6 +362,17 @@ void GLTools::SetDebugMessageHandler()
 #endif
 }
 
+int GLTools::GetMipmapLevelCount(int width, int height)
+{
+  return GetMipmapLevelCount(max(width, height));
+}
+
+int GLTools::GetMipmapLevelCount(int width)
+{
+  assert(width > 0);
+  return MathTools::bsr(width) + 1;
+}
+
 std::pair<GLenum, GLenum> GLTools::GetTextureFormatsFromBPP(int bpp)
 {
   GLenum format = GL_NONE;
@@ -374,9 +387,9 @@ std::pair<GLenum, GLenum> GLTools::GetTextureFormatsFromBPP(int bpp)
   if (bpp == 8)
     internal_format = GL_R8; // GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
   else if (bpp == 24)
-    internal_format = GL_RGB;
+    internal_format = GL_RGB8;
   else if (bpp == 32)
-    internal_format = GL_RGBA;
+    internal_format = GL_RGBA8;
 
   assert(format != GL_NONE);
   assert(internal_format != GL_NONE);
@@ -390,13 +403,12 @@ GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureP
   assert(image.height > 0);
   assert(image.bpp == 8 || image.bpp == 24 || image.bpp == 32);
 
+  GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
+
   GenTextureResult result;
-  glGenTextures(1, &result.texture_id); // Generate a texture ID
+  glCreateTextures(target, 1, &result.texture_id);
   if (result.texture_id > 0)
-  {
-    GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
-    glBindTexture(target, result.texture_id);
-   
+  {  
     // choose format and internal format (beware FreeImage is BGR/BGRA)
     std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(image.bpp);
 
@@ -408,9 +420,17 @@ GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureP
 
     // store the pixels
     if (target == GL_TEXTURE_1D)
-      glTexImage1D(target, parameters.level, internal_format, image.width, parameters.border, format, GL_UNSIGNED_BYTE, image.data);
+    {
+      int level_count = GetMipmapLevelCount(image.width);
+      glTextureStorage1D(result.texture_id, level_count, internal_format, image.width);
+      glTextureSubImage1D(result.texture_id, 0, 0, image.width, format, GL_UNSIGNED_BYTE, image.data);
+    }
     else
-      glTexImage2D(target, parameters.level, internal_format, image.width, image.height, parameters.border, format, GL_UNSIGNED_BYTE, image.data);
+    {
+      int level_count = GetMipmapLevelCount(image.width, image.height);
+      glTextureStorage2D(result.texture_id, level_count, internal_format, image.width, image.height);
+      glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, GL_UNSIGNED_BYTE, image.data);
+    }
 
     // apply parameters
     GenTextureApplyParameters(target, result.texture_id, parameters);

@@ -210,7 +210,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (int16_t)_BitScanForward(&result, (unsigned long)i);
+    _BitScanForward(&result, (unsigned long)i);
     return (int16_t)result;
   }
 
@@ -219,7 +219,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (int32_t)_BitScanForward(&result, (unsigned long)i);
+    _BitScanForward(&result, (unsigned long)i);
     return (int32_t)result;
   }
 
@@ -228,7 +228,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint16_t)_BitScanForward(&result, (unsigned long)i);
+    _BitScanForward(&result, (unsigned long)i);
     return (uint16_t)result;
   }
 
@@ -237,7 +237,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint32_t)_BitScanForward(&result, (unsigned long)i);
+    _BitScanForward(&result, (unsigned long)i);
     return (uint32_t)result;
   }
 
@@ -246,7 +246,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (int16_t)_BitScanReverse(&result, (unsigned long)i);
+    _BitScanReverse(&result, (unsigned long)i);
     return (int16_t)result;
   }
 
@@ -255,7 +255,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (int32_t)_BitScanReverse(&result, (unsigned long)i);
+    _BitScanReverse(&result, (unsigned long)i);
     return (int32_t)result;
   }
 
@@ -264,7 +264,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint16_t)_BitScanReverse(&result, (unsigned long)i);
+    _BitScanReverse(&result, (unsigned long)i);
     return (uint16_t)result;
   }
 
@@ -273,7 +273,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint16_t)_BitScanReverse(&result, (unsigned long)i);
+    _BitScanReverse(&result, (unsigned long)i);
     return (uint16_t)result;  
   }
 
@@ -287,7 +287,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint16_t)_BitScanForward64(&result, (__int64)i);
+    _BitScanForward64(&result, (__int64)i);
     return (uint16_t)result;
   }
 
@@ -296,7 +296,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint64_t)_BitScanForward64(&result, (unsigned __int64)i);
+    _BitScanForward64(&result, (unsigned __int64)i);
     return (uint64_t)result;
   }
 
@@ -305,7 +305,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint16_t)_BitScanReverse64(&result, (__int64)i);
+    _BitScanReverse64(&result, (__int64)i);
     return (uint16_t)result;
   }
 
@@ -314,7 +314,7 @@ public:
   {
     assert(i != 0);
     unsigned long result = 0;
-    return (uint64_t)_BitScanReverse64(&result, (unsigned __int64)i);
+    _BitScanReverse64(&result, (unsigned __int64)i);
     return (uint64_t)result;
   }
 

@@ -107,6 +107,10 @@ public:
   /** Generate a cube texture from a skybox */
   static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
+
+  /** returns the maximum number of mipmap */
+  static int GetMipmapLevelCount(int width, int height);
+  static int GetMipmapLevelCount(int width);
   /** Get Format/Internal Format pair from BPP */
   static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
   /** map an index and vertex buffer at the same time, all mapped or none mapped */

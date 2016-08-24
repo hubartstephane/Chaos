@@ -704,7 +704,7 @@ type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, cons
 // ==============================================================================================
 
 template<typename T, int dimension>
-void ForceToStayInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
+void RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
 {
   assert(!bigger.IsEmpty() || smaller.IsEmpty());
 
@@ -739,6 +739,18 @@ void ForceToStayInside(type_box<T, dimension> & bigger, type_box<T, dimension> &
       }   
     }
   }
+}
+
+template<typename T, int dimension>
+void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
+{
+  if (src.IsEmpty() || target.IsEmpty())
+    return;
+
+  auto src_corners    = src.GetCorners();
+  auto target_corners = target.GetCorners();
+
+
 }
 
 }; // namespace chaos

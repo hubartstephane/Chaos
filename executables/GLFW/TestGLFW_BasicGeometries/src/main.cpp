@@ -96,9 +96,9 @@ protected:
     if (example == 4)
       return "box union";
     if (example == 5)
-      return "restrict box displacement : move bigger";
+      return "restrict box displacement to inside : move bigger";
     if (example == 6)
-      return "restrict box displacement : move smaller";
+      return "restrict box displacement to inside : move smaller";
     if (example == 7)
       return "sphere touch each others";
     if (example == 8)
@@ -113,6 +113,8 @@ protected:
       return "bounding box";
     if (example == 13)
       return "split box";
+    if (example == 14)
+      return "restrict box displacement to outside";
   
     return nullptr;
   }
@@ -292,7 +294,7 @@ protected:
         bigger_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
       }
 
-      ForceToStayInside(bigger_box, smaller_box, display_example == 5);
+      chaos::RestrictToInside(bigger_box, smaller_box, display_example == 5);
 
       DrawPrimitive(ctx, smaller_box, blue * translucent);
 
@@ -382,6 +384,21 @@ protected:
       EndTranslucency();
     }
 
+    // restrict displacement
+    if (display_example == 14)
+    {
+      float cs = (float)chaos::MathTools::Cos(realtime * M_2_PI);
+
+      cs = chaos::MathTools::Fmod(cs * 2.0f + 2.0f, 2.0f);
+
+      smaller_box.position.x = 20.0f * cs;
+      smaller_box.position.y = 0.0f;
+
+      chaos::RestrictToOutside(smaller_box, bigger_box);
+
+      DrawPrimitive(ctx, smaller_box, blue);
+      DrawPrimitive(ctx, bigger_box, red);
+    }
 
 
 

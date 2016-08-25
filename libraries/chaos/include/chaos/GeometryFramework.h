@@ -700,7 +700,7 @@ type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, cons
 
 
 // ==============================================================================================
-// sphere/circle functions
+// Restriction function
 // ==============================================================================================
 
 template<typename T, int dimension>
@@ -751,6 +751,40 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
   auto target_corners = target.GetCorners();
 
 
+}
+
+// ==============================================================================================
+// Collision function
+// ==============================================================================================
+
+template<typename T, int dimension>
+bool Collide(type_box<T, dimension> & src1, type_box<T, dimension> & src2)
+{
+  if (src1.IsEmpty() || src2.IsEmpty())
+    return false;
+
+  auto src1_corners = src1.GetCorners();
+  auto src2_corners = src2.GetCorners();
+
+  if (glm::any(glm::lessThan(src1_corners.second, src2_corners.first)))
+    return false;
+  if (glm::any(glm::greaterThan(src1_corners.first, src2_corners.second)))
+    return false;
+
+  return true;
+}
+
+template<typename T, int dimension>
+bool Collide(type_sphere<T, dimension> & src1, type_sphere<T, dimension> & src2)
+{
+  if (src1.IsEmpty() || src2.IsEmpty())
+    return false;
+
+  float dist2 = (src1.position - src2.position).length();
+
+
+
+  return false;
 }
 
 }; // namespace chaos

@@ -273,13 +273,15 @@ protected:
   {
     double realtime = ClockManager::GetClockTime();
 
-    p1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
-    p2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
+    p1.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
+    p1.position.y = 0.0;
+    p2.position.x = 0.0;
+    p2.position.y = 10.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
 
-    bool collision = chaos::Collide(smaller_box, bigger_box);
+    bool collision = chaos::Collide(p1, p2);
 
-    DrawPrimitive(ctx, smaller_box, blue, collision);
-    DrawPrimitive(ctx, bigger_box, red, collision);
+    DrawPrimitive(ctx, p1, blue, collision);
+    DrawPrimitive(ctx, p2, red, collision);
   }
 
   void DrawGeometryObjects(RenderingContext const & ctx)
@@ -670,8 +672,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 1000;
-  params.height = 600;
+  params.width  = 400;
+  params.height = 300;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/MathTools.h>
 
 namespace chaos
 {
@@ -780,11 +781,7 @@ bool Collide(type_sphere<T, dimension> & src1, type_sphere<T, dimension> & src2)
   if (src1.IsEmpty() || src2.IsEmpty())
     return false;
 
-  float dist2 = (src1.position - src2.position).length();
-
-
-
-  return false;
+  return glm::length2(src1.position - src2.position) <= MathTools::Square(src1.radius + src2.radius);
 }
 
 }; // namespace chaos

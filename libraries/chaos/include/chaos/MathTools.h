@@ -63,6 +63,13 @@ public:
     return radian * static_cast<T>(180.0 / M_PI);
   }
 
+  /** return the square of a value */
+  template<typename T>
+  static T Square(T value)
+  {
+    return value * value;
+  }
+
   /** returns the minimum of 2 values */
   template<typename T> 
   static T Minimum(T x,T y)

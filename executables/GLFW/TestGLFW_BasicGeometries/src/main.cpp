@@ -26,6 +26,8 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
+static int const  MY_CLOCK_ID = 1;
+
 static int const RECTANGLE_DISPLAY_TEST     = 0;
 static int const RECTANGLE_CORNERS_TEST     = 1;
 static int const CORNERS_TO_RECTANGLE_TEST  = 2;
@@ -70,9 +72,10 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() :
-    bigger_box (glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f)),
-    smaller_box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f)),
-    display_example(0){}
+    display_example(0)
+  {
+    SetExample(0);
+  }
 
 protected:
 
@@ -250,7 +253,7 @@ protected:
   template<typename T>
   void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
   {
-    double realtime = ClockManager::GetClockTime();
+    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
 
     p1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
     p2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
@@ -275,7 +278,7 @@ protected:
   template<typename T>
   void DrawCollision(RenderingContext const & ctx, T p1, T p2)
   {
-    double realtime = ClockManager::GetClockTime();
+    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
 
     p1.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
     p1.position.y = 0.0;
@@ -290,7 +293,7 @@ protected:
 
   void DrawGeometryObjects(RenderingContext const & ctx)
   {
-    double realtime = ClockManager::GetClockTime();
+    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
 
     // ensure box touch alltogether
     if (display_example == RECTANGLE_DISPLAY_TEST)
@@ -553,6 +556,10 @@ protected:
     if (program_sphere == nullptr)
       return false;
 
+    // create a timer
+
+    AddClock(MY_CLOCK_ID);
+
     // create meshes
     chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
@@ -604,7 +611,7 @@ protected:
     {
       if (GetExampleTitle(display_example + 1) != nullptr)
       {
-        ++display_example;
+        SetExample(display_example + 1);
         DebugDisplayExampleTitle(false);   
       }
     }
@@ -612,10 +619,24 @@ protected:
     {
       if (display_example > 0)
       {
-        --display_example;
+        SetExample(display_example - 1);
         DebugDisplayExampleTitle(false);      
       }
     }
+  }
+
+  void SetExample(int new_display_example)
+  {
+    // reset the time
+    chaos::Clock * clock = ClockManager::GetClock(MY_CLOCK_ID);
+    if (clock != nullptr)
+      clock->Reset();
+
+    // restaure the box position each time example change
+    bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f));
+    smaller_box = chaos::box3(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+  
+    display_example = new_display_example;
   }
 
   virtual void OnMouseButton(int button, int action, int modifier) override

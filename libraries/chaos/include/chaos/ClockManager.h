@@ -39,6 +39,8 @@ public:
   void Toggle() { paused = !paused; }
   /** returns the status of the clock */
   bool IsPaused() const { return paused; }
+  /** Reset the time to 0 */
+  void Reset(){ clock_time = 0.0; }
 
   /** change the time scale */
   void SetTimeScale(double new_scale) { time_scale = new_scale; }

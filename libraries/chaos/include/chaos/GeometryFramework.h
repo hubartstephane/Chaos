@@ -751,7 +751,35 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
   auto src_corners    = src.GetCorners();
   auto target_corners = target.GetCorners();
 
+  // compute the minimum distance, and best direction (+X, -X, +Y ...) to move the box
+  T   best_distance  = (T)-1;
+  int best_direction = -1;
+  for (int i = 0 ; i < dimension ; ++i) 
+  {
+    // in positive direction (dist_pos is to be positive)
+    T dist_pos = src_corners.second[i] - target_corners.first[i];
+    if (dist_pos >= 0 && (best_distance < 0 || dist_pos < best_distance))
+    {
+      best_distance  = dist_pos;
+      best_direction = 2 * i;    
+    }
+    // in negative direction (dist_neg is to be positive)
+    T dist_neg = target_corners.second[i] - src_corners.first[i];
+    if (dist_neg >= 0 && (best_distance < 0 || dist_neg < best_distance))
+    {
+      best_distance  = dist_neg;
+      best_direction = 2 * i + 1;    
+    }  
+  }
 
+  // do the displacement
+  if (best_direction >= 0)
+  {
+    if ((best_direction & 1) == 0)
+      target.position[best_direction / 2] += best_distance; // positive direction
+    else
+      target.position[best_direction / 2] -= best_distance; // negative direction  
+  }
 }
 
 // ==============================================================================================

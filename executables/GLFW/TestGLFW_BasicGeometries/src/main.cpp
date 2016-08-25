@@ -26,6 +26,27 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
+static int const RECTANGLE_DISPLAY_TEST     = 0;
+static int const RECTANGLE_CORNERS_TEST     = 1;
+static int const CORNERS_TO_RECTANGLE_TEST  = 2;
+static int const BOX_INTERSECTION_TEST      = 3;
+static int const BOX_UNION_TEST             = 4;
+static int const RESTRICT_BOX_INSIDE_1_TEST = 5;
+static int const RESTRICT_BOX_INSIDE_2_TEST = 6;
+static int const SPHERE_DISPLAY_TEST        = 7;
+static int const SPHERE_INTERSECTION_TEST   = 8;
+static int const SPHERE_UNION_TEST          = 9;
+static int const INNER_SPHERE_TEST          = 10;
+static int const BOUNDING_SPHERE_TEST       = 11;
+static int const BOUNDING_BOX_TEST          = 12;
+static int const SPLIT_BOX_TEST             = 13;
+static int const BOX_COLLISION_TEST         = 14;
+static int const SPHERE_COLLISION_TEST      = 15;
+static int const RESTRICT_BOX_OUTSIDE_TEST  = 16;
+
+
+
+
 
 class RenderingContext
 {
@@ -85,40 +106,23 @@ protected:
 
   char const * GetExampleTitle(int example)
   {
-    if (example == 0)
-      return "boxes touch each others";
-    if (example == 1)
-      return "box.GetCorner(...)";
-    if (example == 2)
-      return "construct box from corners";
-    if (example == 3)
-      return "box intersection";
-    if (example == 4)
-      return "box union";
-    if (example == 5)
-      return "restrict box displacement to inside : move bigger";
-    if (example == 6)
-      return "restrict box displacement to inside : move smaller";
-    if (example == 7)
-      return "sphere touch each others";
-    if (example == 8)
-      return "sphere intersection";
-    if (example == 9)
-      return "sphere union";
-    if (example == 10)
-      return "inner sphere";
-    if (example == 11)
-      return "bounding sphere";
-    if (example == 12)
-      return "bounding box";
-    if (example == 13)
-      return "split box";
-    if (example == 14)
-      return "box collision";
-    if (example == 15)
-      return "sphere collision";
-    if (example == 16)
-      return "restrict box displacement to outside";
+    if (example == RECTANGLE_DISPLAY_TEST)     return "boxes touch each others";
+    if (example == RECTANGLE_CORNERS_TEST)     return "box.GetCorner(...)";
+    if (example == CORNERS_TO_RECTANGLE_TEST)  return "construct box from corners";
+    if (example == BOX_INTERSECTION_TEST)      return "box intersection";
+    if (example == BOX_UNION_TEST)             return "box union";
+    if (example == RESTRICT_BOX_INSIDE_1_TEST) return "restrict box displacement to inside : move bigger";
+    if (example == RESTRICT_BOX_INSIDE_2_TEST) return "restrict box displacement to inside : move smaller";
+    if (example == SPHERE_DISPLAY_TEST)        return "sphere touch each others";
+    if (example == SPHERE_INTERSECTION_TEST)   return "sphere intersection";
+    if (example == SPHERE_UNION_TEST)          return "sphere union";
+    if (example == INNER_SPHERE_TEST)          return "inner sphere";
+    if (example == BOUNDING_SPHERE_TEST)       return "bounding sphere";
+    if (example == BOUNDING_BOX_TEST)          return "bounding box";
+    if (example == SPLIT_BOX_TEST)             return "split box";
+    if (example == BOX_COLLISION_TEST)         return "box collision";
+    if (example == SPHERE_COLLISION_TEST)      return "sphere collision";
+    if (example == RESTRICT_BOX_OUTSIDE_TEST)  return "restrict box displacement to outside";
   
     return nullptr;
   }
@@ -289,7 +293,7 @@ protected:
     double realtime = ClockManager::GetClockTime();
 
     // ensure box touch alltogether
-    if (display_example == 0)
+    if (display_example == RECTANGLE_DISPLAY_TEST)
     {
       chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
       chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -301,7 +305,7 @@ protected:
     }
 
     // display box and corners
-    if (display_example == 1)
+    if (display_example == RECTANGLE_CORNERS_TEST)
     {
       chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -313,7 +317,7 @@ protected:
     }
 
     // box construction from corners
-    if (display_example == 2)
+    if (display_example == CORNERS_TO_RECTANGLE_TEST)
     {
       glm::vec3 p1(0.0f, 0.0f, 0.0f);
       glm::vec3 p2(1.0f, 2.0f, 3.0f);
@@ -326,17 +330,17 @@ protected:
     }
 
     // box union or intersection
-    if (display_example == 3 || display_example == 4)
+    if (display_example == BOX_INTERSECTION_TEST || display_example == BOX_UNION_TEST)
     {
       chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
       chaos::box3 b2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 1.0f, 2.0f));
-      DrawIntersectionOrUnion(ctx, b1, b2, display_example == 3);
+      DrawIntersectionOrUnion(ctx, b1, b2, display_example == BOX_INTERSECTION_TEST);
     }
-
+    
     // restrict displacement
-    if (display_example == 5 || display_example == 6)
+    if (display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_2_TEST)
     {
-      if (display_example == 5) // bigger should follow smaller
+      if (display_example == RESTRICT_BOX_INSIDE_1_TEST) // bigger should follow smaller
       {
         smaller_box.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
         smaller_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
@@ -347,14 +351,14 @@ protected:
         bigger_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
       }
 
-      chaos::RestrictToInside(bigger_box, smaller_box, display_example == 5);
+      chaos::RestrictToInside(bigger_box, smaller_box, display_example == RESTRICT_BOX_INSIDE_1_TEST);
 
       DrawPrimitive(ctx, smaller_box, blue, false);
       DrawPrimitive(ctx, SlightIncreaseSize(bigger_box), red, true);
     }
-
+    
     // ensure sphere touch alltogether
-    if (display_example == 7)
+    if (display_example == SPHERE_DISPLAY_TEST)
     {
       chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
       chaos::sphere3 s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
@@ -366,15 +370,15 @@ protected:
     }
 
     // sphere union or intersection
-    if (display_example == 8 || display_example == 9)
+    if (display_example == SPHERE_INTERSECTION_TEST || display_example == SPHERE_UNION_TEST)
     {
       chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
       chaos::sphere3 s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
-      DrawIntersectionOrUnion(ctx, s1, s2, display_example == 8);
+      DrawIntersectionOrUnion(ctx, s1, s2, display_example == SPHERE_INTERSECTION_TEST);
     }
 
     // inner sphere
-    if (display_example == 10)
+    if (display_example == INNER_SPHERE_TEST)
     {
       chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
       chaos::sphere3 s = GetInnerSphere(b);
@@ -384,7 +388,7 @@ protected:
     }
 
     // bounding sphere
-    if (display_example == 11)
+    if (display_example == BOUNDING_SPHERE_TEST)
     {
       chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
       chaos::sphere3 s = GetBoundingSphere(b);
@@ -393,7 +397,7 @@ protected:
       DrawPrimitive(ctx, s, blue, true);
     }
     // bounding box
-    if (display_example == 12)
+    if (display_example == BOUNDING_BOX_TEST)
     {      
       chaos::sphere3 s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
 
@@ -404,7 +408,7 @@ protected:
     }
 
     // split box
-    if (display_example == 13)
+    if (display_example == SPLIT_BOX_TEST)
     {
       chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 
@@ -424,7 +428,7 @@ protected:
     }
 
     // box collision
-    if (display_example == 14)
+    if (display_example == BOX_COLLISION_TEST)
     {
       chaos::box3 b1;
       chaos::box3 b2;
@@ -435,8 +439,7 @@ protected:
     }
 
     // sphere collision
-
-    if (display_example == 15)
+    if (display_example == SPHERE_COLLISION_TEST)
     {
       chaos::sphere3 s1;
       chaos::sphere3 s2;
@@ -446,34 +449,22 @@ protected:
       DrawCollision(ctx, s1, s2);
     }
 
-#if 0
     // restrict displacement
-    if (display_example == 14)
+    if (display_example == RESTRICT_BOX_OUTSIDE_TEST)
     {
       float cs = (float)chaos::MathTools::Cos(realtime * M_2_PI);
 
       cs = chaos::MathTools::Fmod(cs * 2.0f + 2.0f, 2.0f);
 
-      smaller_box.position.x = 20.0f * cs;
-      smaller_box.position.y = 0.0f;
+      bigger_box.position.x = 40.0f * cs;
+      bigger_box.position.y = 0.0f;
 
-      chaos::RestrictToOutside(smaller_box, bigger_box);
+      chaos::RestrictToOutside(bigger_box, smaller_box);
 
-      bool      collision = chaos::Collide(smaller_box, bigger_box);
-      glm::vec4 color     = solid;
-      if (collision)
-      {
-        BeginTranslucency();
-        color = translucent;
-      }
-
-      DrawPrimitive(ctx, smaller_box, blue * color);
-      DrawPrimitive(ctx, bigger_box, red * color);
-
-      if (collision)
-        EndTranslucency();
+      DrawPrimitive(ctx, smaller_box, blue, false);
+      DrawPrimitive(ctx, bigger_box, red, false);
     }
-#endif
+
 
 
   }

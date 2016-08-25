@@ -763,14 +763,19 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
   {
     // in positive direction (dist_pos is to be positive)
     T dist_pos = src_corners.second[i] - target_corners.first[i];
-    if (dist_pos >= 0 && (best_distance < 0 || dist_pos < best_distance))
+    if (dist_pos <= 0)
+      return; // no collision, nothing to do
+    T dist_neg = target_corners.second[i] - src_corners.first[i];
+    if (dist_neg <= 0)
+      return; // no collision, nothing to do
+
+    if (best_distance < 0 || dist_pos < best_distance)
     {
       best_distance  = dist_pos;
       best_direction = 2 * i;    
     }
     // in negative direction (dist_neg is to be positive)
-    T dist_neg = target_corners.second[i] - src_corners.first[i];
-    if (dist_neg >= 0 && (best_distance < 0 || dist_neg < best_distance))
+    if (best_distance < 0 || dist_neg < best_distance)
     {
       best_distance  = dist_neg;
       best_direction = 2 * i + 1;    

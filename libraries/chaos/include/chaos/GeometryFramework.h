@@ -751,6 +751,11 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
   auto src_corners    = src.GetCorners();
   auto target_corners = target.GetCorners();
 
+  if (glm::any(glm::lessThan(src_corners.second, target_corners.first)))
+    return;
+  if (glm::any(glm::greaterThan(src_corners.first, target_corners.second)))
+    return;
+
   // compute the minimum distance, and best direction (+X, -X, +Y ...) to move the box
   T   best_distance  = (T)-1;
   int best_direction = -1;

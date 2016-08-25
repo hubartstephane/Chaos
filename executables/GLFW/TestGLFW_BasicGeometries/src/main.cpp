@@ -585,7 +585,7 @@ protected:
   {
     chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel  = 1;
+    hints.toplevel  = 0;
     hints.decorated = 1;
   }
 

@@ -75,8 +75,11 @@ class ClockManager : public Clock // the absolute time of the clock manager is g
 
 public:
 
+  /** destructor */
+  ~ClockManager();
+
   /** add a clock */
-  void AddClock(int clock_id, double in_time_scale = 1.0, bool in_paused = false);
+  Clock * AddClock(int clock_id, double in_time_scale = 1.0, bool in_paused = false);
   /** remove a clock */
   void RemoveClock(int clock_id);
   /** remove all clocks */
@@ -93,7 +96,7 @@ public:
 protected:
 
   /** the clocks */
-  std::map<int, Clock> clocks;
+  std::map<int, Clock *> clocks;
 };
 
 }; // namespace chaos

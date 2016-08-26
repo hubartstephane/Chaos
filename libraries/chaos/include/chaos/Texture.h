@@ -21,6 +21,7 @@ namespace chaos
       internal_format(GL_NONE),
       width(0),
       height(0),
+      depth(0),
       texture_id(0) {}
 
     /** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
@@ -31,6 +32,8 @@ namespace chaos
     int    width;
     /** the image height */
     int    height;
+    /** the image depth */
+    int    depth;
     /** the GL handler for the texture */
     GLuint texture_id;
   };

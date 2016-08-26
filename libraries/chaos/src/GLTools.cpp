@@ -439,6 +439,7 @@ GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureP
     result.texture_description.internal_format = internal_format;
     result.texture_description.width           = image.width;
     result.texture_description.height          = image.height;
+    result.texture_description.depth           = 1;
   }
   return result;
 }
@@ -622,6 +623,7 @@ GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePara
     result.texture_description.internal_format = internal_format;
     result.texture_description.width           = size;
     result.texture_description.height          = size;
+    result.texture_description.depth           = 1;
   }
   return result;
 }

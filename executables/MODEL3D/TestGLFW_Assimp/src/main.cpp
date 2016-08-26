@@ -206,7 +206,7 @@ protected:
     if (application == nullptr)
       return false;
 
-    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+    boost::filesystem::path resources_path = application->GetResourcesPath();
 
     // load the FONT texture
     boost::filesystem::path image_path     = resources_path / "font.png";

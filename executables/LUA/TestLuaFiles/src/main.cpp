@@ -13,7 +13,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetApplicationPath() / "resources";
+  boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
   int i = 1;
   while(true)

@@ -62,7 +62,7 @@ protected:
   virtual bool Tick(double delta_time) override
   {
     gamepad_manager.Tick(0.0f);
-#if 0
+
     if (main_gamepad->IsPresent())
     {
       if (main_gamepad->IsAnyAction())
@@ -76,7 +76,7 @@ protected:
       if (r.x != 0.0f || r.y != 0.0f)
         std::cout << "RIGHT x : " << r.x << "    y : " << r.y << std::endl;
     }
-#endif
+
     return true; // no redraw
   }
 

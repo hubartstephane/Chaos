@@ -147,7 +147,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::Application * application = chaos::Application::GetInstance();
 
-  boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+  boost::filesystem::path resources_path = application->GetResourcesPath();
 
   TestConvertToSingle(resources_path / "Maskonaive", true);
   TestConvertToSingle(resources_path / "Maskonaive", false);

@@ -142,7 +142,7 @@ int _tmain(int argc, char ** argv, char ** env)
   boost::filesystem::path application_path = boost::filesystem::path(argv[0]);
   application_path = application_path.parent_path();
 
-
+  boost::filesystem::path resources_path = application_path / "resources";
   
   // Test GLEW
 
@@ -181,7 +181,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
     // Test GLI
 
-  boost::filesystem::path dds_path = application_path / "resources" / "cube.dds";
+  boost::filesystem::path dds_path = resources_path / "cube.dds";
 
   gli::texture2D TextureAtlasEntry(1, gli::RGBA8_UNORM, gli::texture2D::dimensions_type(256, 256)); 
   glm::u8vec4 * LinearAddress = TextureAtlasEntry.data<glm::u8vec4>(); 
@@ -209,7 +209,7 @@ int _tmain(int argc, char ** argv, char ** env)
   irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
   if (engine != NULL)
   {
-    boost::filesystem::path ogg_path = application_path / "resources" / "getout.ogg";
+    boost::filesystem::path ogg_path = resources_path / "getout.ogg";
 
     irrklang::ISound * sound = engine->play2D(ogg_path.string().c_str(), true /* looped */, false /*  start paused */, true /* track */, irrklang::ESM_AUTO_DETECT /* stearm mode */, true /* enable FX */);
 
@@ -242,7 +242,7 @@ int _tmain(int argc, char ** argv, char ** env)
   // Test ASSIMP
   Assimp::Importer importer;
 
-  boost::filesystem::path assimp_path = application_path / "resources" / "ThreeCubesGreen.ASE";
+  boost::filesystem::path assimp_path = resources_path / "ThreeCubesGreen.ASE";
 
   const aiScene* scene = importer.ReadFile( assimp_path.string().c_str(), 
         aiProcess_CalcTangentSpace       | 
@@ -253,7 +253,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   // Test FreeImage
   FreeImage_Initialise();
-  boost::filesystem::path freeimage_path = application_path / "resources" / "logo.png";
+  boost::filesystem::path freeimage_path = resources_path / "logo.png";
 
   FREE_IMAGE_FORMAT FI_Format = FreeImage_GetFileType(freeimage_path.string().c_str(), 0);
   if (FI_Format != FIF_UNKNOWN)
@@ -280,7 +280,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   // Test tinyxml2
 
-  boost::filesystem::path xml_path = application_path / "resources" / "HelloWorld.xml";
+  boost::filesystem::path xml_path = resources_path / "HelloWorld.xml";
 
 
 

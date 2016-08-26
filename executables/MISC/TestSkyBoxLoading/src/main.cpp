@@ -23,7 +23,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::Application * application = chaos::Application::GetInstance();
 
-  boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+  boost::filesystem::path resources_path = application->GetResourcesPath();
   boost::filesystem::path skybox_path    = resources_path / "Maskonaive";
  
   boost::filesystem::path left_image   = skybox_path / "negx.jpg";  

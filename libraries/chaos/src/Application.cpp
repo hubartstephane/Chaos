@@ -93,9 +93,9 @@ namespace chaos
 
     application_path     = p.parent_path();
     application_filename = p.filename(); 
-
-    application_userlocal_path = chaos::WinTools::GetUserLocalPath() / application_filename;
-    application_userlocal_path.replace_extension();
+    resources_path       = application_path / "resources";
+    userlocal_path       = chaos::WinTools::GetUserLocalPath() / application_filename;
+    userlocal_path.replace_extension();
   }
 
   char const * Application::GetEnvironment(char const * key) const

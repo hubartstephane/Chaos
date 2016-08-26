@@ -12,9 +12,10 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  boost::filesystem::path p1 = chaos::Application::GetInstance()->GetApplicationPath();
-  boost::filesystem::path p2 = chaos::Application::GetInstance()->GetApplicationFilename();
-  boost::filesystem::path p3 = chaos::Application::GetInstance()->GetApplicationUserLocalPath();
+  boost::filesystem::path const & p1 = chaos::Application::GetInstance()->GetApplicationPath();
+  boost::filesystem::path const & p2 = chaos::Application::GetInstance()->GetApplicationFilename();
+  boost::filesystem::path const & p3 = chaos::Application::GetInstance()->GetUserLocalPath();
+  boost::filesystem::path const & p4 = chaos::Application::GetInstance()->GetResourcesPath();
 
 
   std::cout << "Application path            : " << p1 << std::endl;

@@ -302,7 +302,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetApplicationPath() / "resources";
+  boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
   chaos::LogTools::DisplayTitle("Test0.lua : miscellaneous");
   StartLuaFile(resources_path / "test0.lua", WorkWithLua0, EnrichLuaState0);
@@ -326,7 +326,7 @@ int _tmain(int argc, char ** argv, char ** env)
   StartLuaFile(resources_path / "test6.lua", WorkWithLua6, EnrichLuaState6);
 
 
-//  chaos::WinTools::PressToContinue();
+  chaos::WinTools::PressToContinue();
 
   return 0;
 }

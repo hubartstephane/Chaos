@@ -67,8 +67,9 @@ protected:
     if (Err)
       return false;
 
-    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
-    boost::filesystem::path font_path      = resources_path / "Flatwheat-Regular.ttf";
+    boost::filesystem::path resources_path = application->GetResourcesPath();
+    //boost::filesystem::path font_path      = resources_path / "Flatwheat-Regular.ttf";
+    boost::filesystem::path font_path = resources_path / "Flatwheat-Italic.ttf";
     
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
@@ -122,7 +123,12 @@ protected:
     image_description.line_size    = image_description.width * image_description.bpp / 8;
     image_description.pitch_size   = image_description.line_size + image_description.padding_size;
 
-    texture = chaos::GLTools::GenTextureObject(image_description);
+    chaos::GenTextureParameters parameters;
+    parameters.wrap_r = GL_CLAMP;
+    parameters.wrap_s = GL_CLAMP;
+    parameters.wrap_t = GL_CLAMP;
+
+    texture = chaos::GLTools::GenTextureObject(image_description, parameters);
 
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";

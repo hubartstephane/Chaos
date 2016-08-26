@@ -73,7 +73,7 @@ protected:
     if (application == nullptr)
       return false;
 
-    boost::filesystem::path resources_path       = application->GetApplicationPath() / "resources";
+    boost::filesystem::path resources_path       = application->GetResourcesPath();
     boost::filesystem::path image_path           = resources_path / "opengl_logo_rectangle.png";
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";

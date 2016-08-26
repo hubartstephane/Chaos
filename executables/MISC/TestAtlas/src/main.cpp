@@ -77,19 +77,13 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MathTools::ResetRandSeed();
 
-  application_path = boost::filesystem::path(argv[0]);
-  application_path = application_path.parent_path();
-  resources_path   = application_path / "resources";
+  application_path = chaos::Application::GetInstance()->GetApplicationPath();
+  resources_path   = chaos::Application::GetInstance()->GetResourcesPath(); 
 
   TestAtlasDebugMode();
   TestAtlasNormalMode();
 
   FreeImage_DeInitialise();
-  
-
-
-
-
 
   chaos::WinTools::PressToContinue();
 

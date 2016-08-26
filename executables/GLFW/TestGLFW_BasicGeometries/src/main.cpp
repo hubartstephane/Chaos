@@ -529,7 +529,7 @@ protected:
       return false;
 
     // compute resource path
-    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+    boost::filesystem::path resources_path = application->GetResourcesPath();
     boost::filesystem::path image_path = resources_path / "font.png";
 
     // initialize debug font display 
@@ -682,8 +682,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 400;
-  params.height = 300;
+  params.width  = 1200;
+  params.height = 600;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

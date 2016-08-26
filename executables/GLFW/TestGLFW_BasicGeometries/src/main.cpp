@@ -46,6 +46,8 @@ static int const BOX_COLLISION_TEST         = 14;
 static int const SPHERE_COLLISION_TEST      = 15;
 static int const RESTRICT_BOX_OUTSIDE_TEST  = 16;
 
+static int const TEST_COUNT                 = 17;
+
 
 
 
@@ -455,21 +457,21 @@ protected:
     // restrict displacement
     if (display_example == RESTRICT_BOX_OUTSIDE_TEST)
     {
-      float cs = (float)chaos::MathTools::Cos(realtime * M_2_PI);
+      float x = (float)chaos::MathTools::Fmod(realtime, 2.0) - 1; // x in [-1 ... +1]
 
-      cs = chaos::MathTools::Fmod(cs * 2.0f + 2.0f, 2.0f);
+      float t = (x < 0) ? -x : x - 1.0f;
 
-      bigger_box.position.x = 40.0f * cs;
-      bigger_box.position.y = 0.0f;
+      int k = (int)chaos::MathTools::Fmod(realtime * 0.3, 3.0);
+
+      bigger_box.position[(k + 0) % 3] = 20.0f * t;
+      bigger_box.position[(k + 1) % 3] = 0.0f;
+      bigger_box.position[(k + 2) % 3] = 0.0f;
 
       chaos::RestrictToOutside(bigger_box, smaller_box);
 
       DrawPrimitive(ctx, smaller_box, blue, false);
       DrawPrimitive(ctx, bigger_box, red, false);
     }
-
-
-
   }
 
   virtual bool OnDraw(int width, int height) override
@@ -609,32 +611,28 @@ protected:
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
-      if (GetExampleTitle(display_example + 1) != nullptr)
-      {
-        SetExample(display_example + 1);
-        DebugDisplayExampleTitle(false);   
-      }
+      SetExample(display_example + 1);
+      DebugDisplayExampleTitle(false);
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
     {
-      if (display_example > 0)
-      {
-        SetExample(display_example - 1);
-        DebugDisplayExampleTitle(false);      
-      }
+      SetExample(display_example - 1);
+      DebugDisplayExampleTitle(false);      
     }
   }
 
   void SetExample(int new_display_example)
   {
+    new_display_example = (new_display_example + TEST_COUNT) % TEST_COUNT;
+
     // reset the time
     chaos::Clock * clock = ClockManager::GetClock(MY_CLOCK_ID);
     if (clock != nullptr)
       clock->Reset();
 
     // restaure the box position each time example change
-    bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(4.0f, 5.0f, 6.0f));
-    smaller_box = chaos::box3(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+    bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(5.0f, 6.0f, 7.0f));
+    smaller_box = chaos::box3(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(2.0f, 3.0f, 4.0f));
   
     display_example = new_display_example;
   }

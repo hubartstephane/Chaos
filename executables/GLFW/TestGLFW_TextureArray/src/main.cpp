@@ -55,15 +55,16 @@ protected:
     glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
     glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
-
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
-
 
     glUseProgram(program_box->GetResourceID());
     program_data.SetUniform("projection",      projection);
     program_data.SetUniform("world_to_camera", world_to_camera);
     program_data.SetUniform("local_to_world",  local_to_world);
-    program_data.SetUniform("color", red);
+
+    glBindTextureUnit(0, texture->GetResourceID());
+    program_data.SetUniform("material", 0);
+
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
     debug_display.Display(width, height);
@@ -75,6 +76,7 @@ protected:
   {
     mesh_box    = nullptr;
     program_box = nullptr;
+    texture     = nullptr;
 
     debug_display.Finalize();
   }
@@ -96,11 +98,11 @@ protected:
 
     // compute resource path
     boost::filesystem::path resources_path = application->GetResourcesPath();
-    boost::filesystem::path image_path = resources_path / "font.png";
+    boost::filesystem::path font_path = resources_path / "font.png";
 
     // initialize debug font display 
     chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path               = image_path;
+    debug_params.texture_path               = font_path;
     debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     debug_params.font_characters_per_line   = 10;
     debug_params.font_characters_line_count = 10;
@@ -116,6 +118,12 @@ protected:
     if (program_box == nullptr)
       return false;
 
+    // load texture
+    boost::filesystem::path image_path = resources_path / "brick_1.png";
+    texture = chaos::GLTools::GenTextureObject(image_path.string().c_str());
+    if (texture == nullptr)
+      return false;
+
     // create meshes
     chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -126,8 +134,8 @@ protected:
       return false;
 
     // place camera
-    fps_camera.fps_controller.position.y = 10.0f;
-    fps_camera.fps_controller.position.z = 30.0f;
+    fps_camera.fps_controller.position.y = 0.0f;
+    fps_camera.fps_controller.position.z = 10.0f;
 
     // initial display
     debug_display.AddLine("Draw a box with a texture array : \nthe 2 textures in the array have differents BPP (24 and 32)");
@@ -176,6 +184,7 @@ protected:
   // rendering for the box  
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
+  boost::intrusive_ptr<chaos::Texture>    texture;
 
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;

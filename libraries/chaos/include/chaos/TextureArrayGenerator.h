@@ -19,10 +19,19 @@ namespace chaos
 
     /** get the image description */
     virtual ImageDescription GetImageDescription() = 0;
-
   };
 
-  // -----------------------------------------------------------------------------------
+  /*
+  class ImageDescriptionGeneratorProxy : public ImageDescriptionGeneratorProxy
+  {
+
+
+  };
+  */
+
+  /**
+  * ImageDescriptionGenerator : used to generate proxy for TextureArrayGeneration
+  */
 
   class ImageDescriptionGenerator
   {
@@ -36,7 +45,9 @@ namespace chaos
     virtual ImageDescriptionGeneratorProxy * CreateProxy() const = 0;
   };
 
-  // -----------------------------------------------------------------------------------
+  /**
+   * TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
+   */
 
   class TextureArrayGenerator
   {
@@ -60,8 +71,6 @@ namespace chaos
     bool IsValid(ImageDescription const & desc) const;
     /** ensure the image format is compatible with previous format */
     bool IsCompatible(ImageDescription const & desc1, ImageDescription const & desc2) const;
-
-
 
   protected:
 

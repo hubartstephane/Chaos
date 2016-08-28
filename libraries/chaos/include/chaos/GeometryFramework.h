@@ -792,6 +792,32 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
   }
 }
 
+
+template<typename T, int dimension>
+void RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
+{
+  assert(!bigger.IsEmpty() || smaller.IsEmpty());
+
+  assert(smaller.radius <= bigger.radius);
+
+  if (bigger.IsEmpty() || smaller.IsEmpty())
+    return;
+
+  float l2 = glm::length2(smaller.position - bigger.position);
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
 // ==============================================================================================
 // Collision function
 // ==============================================================================================

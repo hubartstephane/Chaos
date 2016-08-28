@@ -41,35 +41,52 @@ namespace chaos
   {
 
 
+
+
+
     return true;
   }
 
   boost::intrusive_ptr<Texture> TextureArrayGenerator::GenerateTexture(GenTextureParameters const & parameters) const
   {
     Texture * result = nullptr;
-
+#if 0
+    // search max size, max bpp
+    int width  = 0;
+    int height = 0;
+    int bpp    = 0;
+    int count  = 0;
     for (auto it : generators)
     {
-      ImageDescription Desc = it->GetImageDescription();
-      if (IsValid(Desc))
+      ImageDescription desc = it->GetImageDescription();
+      if (IsValid(desc))
         break;
 
+      GLenum target = GLTools::GetTextureTargetFromSize(desc.width, desc.height, false);
 
-
-
+      width  = max(width,  desc.width);
+      height = max(height, desc.height);
+      bpp    = max(bpp,    desc.bpp);
+      count++;
     }
 
+    GL_TEXTURE_1D_ARRAY
+
+    GLuint texture_id = 0;
+
+    glCreateTextures(target, 1, &texture_id);
 
 
+//    std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(image.bpp);
+
+//    GetTextureTargetFromSize(int width, int height, bool rectangle_texture)
 
 
+    for (auto it : generators)
+      it->ReleaseImageDescription();
 
 
-
-
-
-
-
+#endif
     return result;
   }
 

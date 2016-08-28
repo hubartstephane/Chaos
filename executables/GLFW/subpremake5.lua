@@ -11,6 +11,7 @@ ProcessSubPremake("TestGLFW_FontTexture")
 ProcessSubPremake("TestGLFW_CubeMap")
 ProcessSubPremake("TestGLFW_Instancing")
 ProcessSubPremake("TestGLFW_FreeType")
+ProcessSubPremake("TestGLFW_TextureArray")
 
 
 

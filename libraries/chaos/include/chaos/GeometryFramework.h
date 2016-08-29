@@ -748,7 +748,7 @@ bool RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & 
 }
 
 template<typename T, int dimension>
-void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
+bool RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
 {
   if (src.IsEmpty() || target.IsEmpty())
     return false;

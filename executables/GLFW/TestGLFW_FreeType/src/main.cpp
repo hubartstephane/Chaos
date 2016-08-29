@@ -135,14 +135,12 @@ protected:
     std::cout << "  glyph  [MODE]  = " << (int)face->glyph->bitmap.pixel_mode << std::endl;
     std::cout << "  glyph  [ROWS]  = " << face->glyph->bitmap.rows       << std::endl;
 
-    chaos::ImageDescription image_description;
-    image_description.data         = face->glyph->bitmap.buffer;
-    image_description.width        = face->glyph->bitmap.width;
-    image_description.height       = face->glyph->bitmap.width;
-    image_description.bpp          = 8;
-    image_description.padding_size = 0;
-    image_description.line_size    = image_description.width * image_description.bpp / 8;
-    image_description.pitch_size   = image_description.line_size + image_description.padding_size;
+    chaos::ImageDescription image_description = chaos::ImageDescription(
+      face->glyph->bitmap.buffer,
+      face->glyph->bitmap.width, face->glyph->bitmap.width,
+      8,
+      0       
+    );
 
     chaos::GenTextureParameters parameters;
     parameters.wrap_r = GL_CLAMP;

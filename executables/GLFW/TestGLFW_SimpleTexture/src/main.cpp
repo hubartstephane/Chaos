@@ -78,7 +78,31 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
+#if 0
+    // create a gray scale texture : show order of lines in memory
+    char * image_buffer = new char [4 * 512 * 512];
+
+    chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, 32, 0);
+
+    for (int i = 0 ; i < 512 ; ++i)
+    {
+      for (int j = 0 ; j < 512 ; ++j)
+      {
+        image_buffer[4 * j + 0 + (i * image_desc.pitch_size)] = i;
+        image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = i;
+        image_buffer[4 * j + 2 + (i * image_desc.pitch_size)] = i;
+        image_buffer[4 * j + 3 + (i * image_desc.pitch_size)] = i;       
+      }    
+    }
+    texture = chaos::GLTools::GenTextureObject(image_desc);
+    delete [](image_buffer);
+
+#else
+
     texture = chaos::GLTools::GenTextureObject(image_path.string().c_str());
+
+#endif
+    
     if (texture == nullptr)
       return false;
 

@@ -16,19 +16,37 @@ public:
 
   /** constructor */
   ImageDescription() : 
+    data(nullptr),
     width(0),
     height(0),
     bpp(0),
     line_size(0),
     pitch_size(0),
-    padding_size(0),
-    data(nullptr){}
+    padding_size(0){}
+
+  ImageDescription(void * in_data, int in_width, int in_height, int in_bpp, int in_padding = 0):
+    data(in_data),
+    width(in_width),
+    height(in_height),
+    bpp(in_bpp),
+    padding_size(in_padding)
+  {
+    assert(width  >= 0);
+    assert(height >= 0);
+    assert(bpp == 8 || bpp == 24 || bpp == 32);
+    assert(padding_size >= 0);
+
+    line_size  = width * bpp / 8;
+    pitch_size = line_size + padding_size;  
+  }
 
   /** returns true whether the image is empty */
   bool IsEmpty() const { return (width == 0 || height == 0 || data == nullptr); }
   /** get the image information for a sub image */
   ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
 
+  /** the buffer */
+  void * data;
   /** the image width */
   int    width;
   /** the image height */
@@ -41,8 +59,7 @@ public:
   int    pitch_size;
   /** padding a the end of a line  */
   int    padding_size;
-  /** the buffer */
-  void * data;
+
 };
 
 

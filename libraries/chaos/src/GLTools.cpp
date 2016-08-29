@@ -33,6 +33,18 @@
 //       |    bottom    |
 //       +--------------+
 //      0       
+//
+// the storage in memory is reversed
+//
+//       +--------------+ 
+//       | LINE 5       |
+//       | LINE 4       |
+//       | LINE 3       |
+//       | LINE 2       |
+//       | LINE 1       |
+//       | LINE 0       |
+//       +--------------+
+//          
 
 namespace chaos
 {

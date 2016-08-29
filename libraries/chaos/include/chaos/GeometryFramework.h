@@ -705,12 +705,14 @@ type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, cons
 // ==============================================================================================
 
 template<typename T, int dimension>
-void RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
+bool RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
 {
+  bool result = false;
+
   assert(!bigger.IsEmpty() || smaller.IsEmpty());
 
   if (bigger.IsEmpty() || smaller.IsEmpty())
-    return;
+    return result;
 
   assert(glm::all(glm::lessThanEqual(smaller.half_size, bigger.half_size)));
 
@@ -727,6 +729,7 @@ void RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & 
         bigger.position[i] += delta1;
       else
         smaller.position[i] -= delta1;
+      result = true;
     }
     else
     {
@@ -737,24 +740,26 @@ void RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & 
           bigger.position[i] += delta2;
         else
           smaller.position[i] -= delta2;    
+        result = true;
       }   
     }
   }
+  return result;
 }
 
 template<typename T, int dimension>
 void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
 {
   if (src.IsEmpty() || target.IsEmpty())
-    return;
+    return false;
 
   auto src_corners    = src.GetCorners();
   auto target_corners = target.GetCorners();
 
   if (glm::any(glm::lessThan(src_corners.second, target_corners.first)))
-    return;
+    return false;
   if (glm::any(glm::greaterThan(src_corners.first, target_corners.second)))
-    return;
+    return false;
 
   // compute the minimum distance, and best direction (+X, -X, +Y ...) to move the box
   T   best_distance  = (T)-1;
@@ -764,10 +769,10 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
     // in positive direction (dist_pos is to be positive)
     T dist_pos = src_corners.second[i] - target_corners.first[i];
     if (dist_pos <= 0)
-      return; // no collision, nothing to do
+      return false; // no collision, nothing to do
     T dist_neg = target_corners.second[i] - src_corners.first[i];
     if (dist_neg <= 0)
-      return; // no collision, nothing to do
+      return false; // no collision, nothing to do
 
     if (best_distance < 0 || dist_pos < best_distance)
     {
@@ -789,24 +794,26 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
       target.position[best_direction / 2] += best_distance; // positive direction
     else
       target.position[best_direction / 2] -= best_distance; // negative direction  
+    return true;
   }
+  return false;
 }
 
 template<typename T, int dimension>
-void RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
+bool RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
 {
   assert(!bigger.IsEmpty() || smaller.IsEmpty());
 
   assert(smaller.radius <= bigger.radius);
 
   if (bigger.IsEmpty() || smaller.IsEmpty())
-    return;
+    return false;
 
   auto delta_pos = smaller.position - bigger.position;
   T    l         = glm::length(delta_pos);
   
   if (l + smaller.radius <= bigger.radius) // smaller fully inside bigger
-    return;
+    return false;
 
   T factor = ((bigger.radius - smaller.radius) / l);
 
@@ -816,10 +823,48 @@ void RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimensi
     bigger.position = smaller.position - delta_pos;
   else
     smaller.position = bigger.position + delta_pos;
+
+  return true;
 }
 
 
 
+
+
+
+
+
+
+template<typename T, int dimension>
+bool RestrictToOutside(type_sphere<T, dimension> & src, type_sphere<T, dimension> & target)
+{
+  if (src.IsEmpty() || target.IsEmpty())
+    return false;
+
+  auto delta_pos = target.position - src.position;
+  T    l         = glm::length(delta_pos);
+
+  if (l - target.radius >= src.radius) 
+    return false;
+
+  if (l != 0)
+  {
+    T factor  = ((src.radius + target.radius) / l);
+    delta_pos = delta_pos * factor;  
+  }
+  else
+  {
+    auto new_direction = type_sphere<T, dimension>::vec_type(0);
+    new_direction[0] = (T)1;
+
+    T factor  = (src.radius + target.radius);
+    delta_pos = new_direction * factor;    
+  }
+
+  target.position = src.position + delta_pos;
+
+  return true;
+}
 
 // ==============================================================================================
 // Collision function

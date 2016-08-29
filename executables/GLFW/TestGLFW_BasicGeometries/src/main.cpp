@@ -47,13 +47,9 @@ static int const SPLIT_BOX_TEST                = 15;
 static int const BOX_COLLISION_TEST            = 16;
 static int const SPHERE_COLLISION_TEST         = 17;
 static int const RESTRICT_BOX_OUTSIDE_TEST     = 18;
+static int const RESTRICT_SPHERE_OUTSIDE_TEST  = 19;
 
-
-static int const TEST_COUNT                  = 19;
-
-
-
-
+static int const TEST_COUNT = 20;
 
 class RenderingContext
 {
@@ -133,6 +129,7 @@ protected:
     if (example == BOX_COLLISION_TEST)            return "box collision";
     if (example == SPHERE_COLLISION_TEST)         return "sphere collision";
     if (example == RESTRICT_BOX_OUTSIDE_TEST)     return "restrict box displacement to outside";
+    if (example == RESTRICT_SPHERE_OUTSIDE_TEST)     return "restrict sphere displacement to outside";
     
       
     return nullptr;
@@ -305,6 +302,27 @@ protected:
   }
 
   template<typename T>
+  void DrawRestrictToOutside(RenderingContext const & ctx, T & src, T & target)
+  {
+    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+
+    float x = (float)chaos::MathTools::Fmod(realtime, 2.0) - 1; // x in [-1 ... +1]
+
+    float t = (x < 0) ? -x : x - 1.0f;
+
+    int k = (int)chaos::MathTools::Fmod(realtime * 0.3, 3.0);
+
+    src.position[(k + 0) % 3] = 20.0f * t;
+    src.position[(k + 1) % 3] = 0.0f;
+    src.position[(k + 2) % 3] = 0.0f;
+
+    chaos::RestrictToOutside(src, target);
+
+    DrawPrimitive(ctx, src, blue, false);
+    DrawPrimitive(ctx, target, red, false);
+  }
+
+  template<typename T>
   void DrawCollision(RenderingContext const & ctx, T p1, T p2)
   {
     double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
@@ -371,15 +389,10 @@ protected:
     
     // restrict displacement
     if (display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_2_TEST)
-    {
       DrawRestrictToInside(ctx, smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST);
-    }
 
     if (display_example == RESTRICT_SPHERE_INSIDE_1_TEST || display_example == RESTRICT_SPHERE_INSIDE_2_TEST)
-    {
       DrawRestrictToInside(ctx, smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
-    }
-
     
     // ensure sphere touch alltogether
     if (display_example == SPHERE_DISPLAY_TEST)
@@ -475,22 +488,10 @@ protected:
 
     // restrict displacement
     if (display_example == RESTRICT_BOX_OUTSIDE_TEST)
-    {
-      float x = (float)chaos::MathTools::Fmod(realtime, 2.0) - 1; // x in [-1 ... +1]
+      DrawRestrictToOutside(ctx, smaller_box, bigger_box);
 
-      float t = (x < 0) ? -x : x - 1.0f;
-
-      int k = (int)chaos::MathTools::Fmod(realtime * 0.3, 3.0);
-
-      bigger_box.position[(k + 0) % 3] = 20.0f * t;
-      bigger_box.position[(k + 1) % 3] = 0.0f;
-      bigger_box.position[(k + 2) % 3] = 0.0f;
-
-      chaos::RestrictToOutside(bigger_box, smaller_box);
-
-      DrawPrimitive(ctx, smaller_box, blue, false);
-      DrawPrimitive(ctx, bigger_box, red, false);
-    }
+    if (display_example == RESTRICT_SPHERE_OUTSIDE_TEST)
+      DrawRestrictToOutside(ctx, smaller_sphere, bigger_sphere);
   }
 
   virtual bool OnDraw(int width, int height) override

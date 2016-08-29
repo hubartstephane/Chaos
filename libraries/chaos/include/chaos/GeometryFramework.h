@@ -792,7 +792,6 @@ void RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & ta
   }
 }
 
-
 template<typename T, int dimension>
 void RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
 {
@@ -803,16 +802,20 @@ void RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimensi
   if (bigger.IsEmpty() || smaller.IsEmpty())
     return;
 
-  float l2 = glm::length2(smaller.position - bigger.position);
+  auto delta_pos = smaller.position - bigger.position;
+  T    l         = glm::length(delta_pos);
+  
+  if (l + smaller.radius <= bigger.radius) // smaller fully inside bigger
+    return;
 
+  T factor = ((bigger.radius - smaller.radius) / l);
 
+  delta_pos = delta_pos * factor;
 
-
-
-
-
-
-
+  if (move_big)
+    bigger.position = smaller.position - delta_pos;
+  else
+    smaller.position = bigger.position + delta_pos;
 }
 
 

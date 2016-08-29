@@ -28,25 +28,28 @@ static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
 static int const  MY_CLOCK_ID = 1;
 
-static int const RECTANGLE_DISPLAY_TEST     = 0;
-static int const RECTANGLE_CORNERS_TEST     = 1;
-static int const CORNERS_TO_RECTANGLE_TEST  = 2;
-static int const BOX_INTERSECTION_TEST      = 3;
-static int const BOX_UNION_TEST             = 4;
-static int const RESTRICT_BOX_INSIDE_1_TEST = 5;
-static int const RESTRICT_BOX_INSIDE_2_TEST = 6;
-static int const SPHERE_DISPLAY_TEST        = 7;
-static int const SPHERE_INTERSECTION_TEST   = 8;
-static int const SPHERE_UNION_TEST          = 9;
-static int const INNER_SPHERE_TEST          = 10;
-static int const BOUNDING_SPHERE_TEST       = 11;
-static int const BOUNDING_BOX_TEST          = 12;
-static int const SPLIT_BOX_TEST             = 13;
-static int const BOX_COLLISION_TEST         = 14;
-static int const SPHERE_COLLISION_TEST      = 15;
-static int const RESTRICT_BOX_OUTSIDE_TEST  = 16;
+static int const RECTANGLE_DISPLAY_TEST        = 0;
+static int const RECTANGLE_CORNERS_TEST        = 1;
+static int const CORNERS_TO_RECTANGLE_TEST     = 2;
+static int const BOX_INTERSECTION_TEST         = 3;
+static int const BOX_UNION_TEST                = 4;
+static int const RESTRICT_BOX_INSIDE_1_TEST    = 5;
+static int const RESTRICT_BOX_INSIDE_2_TEST    = 6;
+static int const RESTRICT_SPHERE_INSIDE_1_TEST = 7;
+static int const RESTRICT_SPHERE_INSIDE_2_TEST = 8;
+static int const SPHERE_DISPLAY_TEST           = 9;
+static int const SPHERE_INTERSECTION_TEST      = 10;
+static int const SPHERE_UNION_TEST             = 11;
+static int const INNER_SPHERE_TEST             = 12;
+static int const BOUNDING_SPHERE_TEST          = 13;
+static int const BOUNDING_BOX_TEST             = 14;
+static int const SPLIT_BOX_TEST                = 15;
+static int const BOX_COLLISION_TEST            = 16;
+static int const SPHERE_COLLISION_TEST         = 17;
+static int const RESTRICT_BOX_OUTSIDE_TEST     = 18;
 
-static int const TEST_COUNT                 = 17;
+
+static int const TEST_COUNT                  = 19;
 
 
 
@@ -111,24 +114,27 @@ protected:
 
   char const * GetExampleTitle(int example)
   {
-    if (example == RECTANGLE_DISPLAY_TEST)     return "boxes touch each others";
-    if (example == RECTANGLE_CORNERS_TEST)     return "box.GetCorner(...)";
-    if (example == CORNERS_TO_RECTANGLE_TEST)  return "construct box from corners";
-    if (example == BOX_INTERSECTION_TEST)      return "box intersection";
-    if (example == BOX_UNION_TEST)             return "box union";
-    if (example == RESTRICT_BOX_INSIDE_1_TEST) return "restrict box displacement to inside : move bigger";
-    if (example == RESTRICT_BOX_INSIDE_2_TEST) return "restrict box displacement to inside : move smaller";
-    if (example == SPHERE_DISPLAY_TEST)        return "sphere touch each others";
-    if (example == SPHERE_INTERSECTION_TEST)   return "sphere intersection";
-    if (example == SPHERE_UNION_TEST)          return "sphere union";
-    if (example == INNER_SPHERE_TEST)          return "inner sphere";
-    if (example == BOUNDING_SPHERE_TEST)       return "bounding sphere";
-    if (example == BOUNDING_BOX_TEST)          return "bounding box";
-    if (example == SPLIT_BOX_TEST)             return "split box";
-    if (example == BOX_COLLISION_TEST)         return "box collision";
-    if (example == SPHERE_COLLISION_TEST)      return "sphere collision";
-    if (example == RESTRICT_BOX_OUTSIDE_TEST)  return "restrict box displacement to outside";
-  
+    if (example == RECTANGLE_DISPLAY_TEST)        return "boxes touch each others";
+    if (example == RECTANGLE_CORNERS_TEST)        return "box.GetCorner(...)";
+    if (example == CORNERS_TO_RECTANGLE_TEST)     return "construct box from corners";
+    if (example == BOX_INTERSECTION_TEST)         return "box intersection";
+    if (example == BOX_UNION_TEST)                return "box union";
+    if (example == RESTRICT_BOX_INSIDE_1_TEST)    return "restrict box displacement to inside : move bigger";
+    if (example == RESTRICT_BOX_INSIDE_2_TEST)    return "restrict box displacement to inside : move smaller";
+    if (example == RESTRICT_SPHERE_INSIDE_1_TEST) return "restrict sphere displacement to inside : move bigger";
+    if (example == RESTRICT_SPHERE_INSIDE_2_TEST) return "restrict sphere displacement to inside : move smaller";
+    if (example == SPHERE_DISPLAY_TEST)           return "sphere touch each others";
+    if (example == SPHERE_INTERSECTION_TEST)      return "sphere intersection";
+    if (example == SPHERE_UNION_TEST)             return "sphere union";
+    if (example == INNER_SPHERE_TEST)             return "inner sphere";
+    if (example == BOUNDING_SPHERE_TEST)          return "bounding sphere";
+    if (example == BOUNDING_BOX_TEST)             return "bounding box";
+    if (example == SPLIT_BOX_TEST)                return "split box";
+    if (example == BOX_COLLISION_TEST)            return "box collision";
+    if (example == SPHERE_COLLISION_TEST)         return "sphere collision";
+    if (example == RESTRICT_BOX_OUTSIDE_TEST)     return "restrict box displacement to outside";
+    
+      
     return nullptr;
   }
 
@@ -276,6 +282,27 @@ protected:
     }  
   }
 
+  template<typename T>
+  void DrawRestrictToInside(RenderingContext const & ctx, T & smaller, T & bigger, bool move_bigger)
+  {
+    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+
+    if (move_bigger) // bigger should follow smaller
+    {
+      smaller.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+      smaller.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+    }
+    else // smaller should follow bigger
+    {
+      bigger.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+      bigger.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+    }
+
+    chaos::RestrictToInside(bigger, smaller, move_bigger);
+
+    DrawPrimitive(ctx, smaller, blue, false);
+    DrawPrimitive(ctx, SlightIncreaseSize(bigger), red, true);
+  }
 
   template<typename T>
   void DrawCollision(RenderingContext const & ctx, T p1, T p2)
@@ -345,22 +372,14 @@ protected:
     // restrict displacement
     if (display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_2_TEST)
     {
-      if (display_example == RESTRICT_BOX_INSIDE_1_TEST) // bigger should follow smaller
-      {
-        smaller_box.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
-        smaller_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
-      }
-      else // smaller should follow bigger
-      {
-        bigger_box.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
-        bigger_box.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
-      }
-
-      chaos::RestrictToInside(bigger_box, smaller_box, display_example == RESTRICT_BOX_INSIDE_1_TEST);
-
-      DrawPrimitive(ctx, smaller_box, blue, false);
-      DrawPrimitive(ctx, SlightIncreaseSize(bigger_box), red, true);
+      DrawRestrictToInside(ctx, smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST);
     }
+
+    if (display_example == RESTRICT_SPHERE_INSIDE_1_TEST || display_example == RESTRICT_SPHERE_INSIDE_2_TEST)
+    {
+      DrawRestrictToInside(ctx, smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
+    }
+
     
     // ensure sphere touch alltogether
     if (display_example == SPHERE_DISPLAY_TEST)
@@ -630,9 +649,13 @@ protected:
     if (clock != nullptr)
       clock->Reset();
 
-    // restaure the box position each time example change
+    // restore the box position each time example change
     bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(5.0f, 6.0f, 7.0f));
     smaller_box = chaos::box3(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(2.0f, 3.0f, 4.0f));
+
+    // restore the sphere position each time example change
+    bigger_sphere  = chaos::sphere3(glm::vec3(3.0f, 0.0f, 0.0f), 7.0f);
+    smaller_sphere = chaos::sphere3(glm::vec3(-3.0f, 0.0f, 0.0f), 3.0f);
   
     display_example = new_display_example;
   }
@@ -663,6 +686,9 @@ protected:
 
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;
+
+  chaos::sphere3 bigger_sphere;
+  chaos::sphere3 smaller_sphere;
 
   int    display_example;
 

@@ -30,6 +30,8 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
+    return true;
+
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -83,17 +85,30 @@ protected:
 
     }
 
+    std::cout << "num_glyphs : " << face->num_glyphs << std::endl;
+    std::cout << "num_faces  : " << face->num_faces << std::endl;
 
+    if (face->face_flags & FT_FACE_FLAG_SCALABLE)
+      std::cout << "FT_FACE_FLAG_SCALABLE" << std::endl;
+
+    for (int i = 0 ; i < face->num_fixed_sizes ; ++i)
+    {
+      std::cout << "- Fixed Size   [SIZE] = " << face->available_sizes[i].size   << std::endl;
+      std::cout << "  Fixed Size  [WIDTH] = " << face->available_sizes[i].width  << std::endl;
+      std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;  
+    }
+
+#if 1
     Err = FT_Set_Char_Size(
       face,    /* handle to face object           */
       0,       /* char_width in 1/64th of points  */
-      16*64,   /* char_height in 1/64th of points */
+      64*64,   /* char_height in 1/64th of points */
       300,     /* horizontal device resolution    */
       300 );   /* vertical device resolution      */
     if (Err)
       return false;
-#if 0
 
+#else
     Err = FT_Set_Pixel_Sizes(face, 256, 256);
     if (Err)
       return false;
@@ -113,6 +128,12 @@ protected:
       FT_RENDER_MODE_NORMAL); /* render mode */
     if (Err)
       return false;
+
+    std::cout << "- glyph  [WIDTH] = " << face->glyph->bitmap.width      << std::endl;
+    std::cout << "  glyph  [PITCH] = " << face->glyph->bitmap.pitch      << std::endl;
+    std::cout << "  glyph  [GRAYS] = " << face->glyph->bitmap.num_grays  << std::endl;
+    std::cout << "  glyph  [MODE]  = " << (int)face->glyph->bitmap.pixel_mode << std::endl;
+    std::cout << "  glyph  [ROWS]  = " << face->glyph->bitmap.rows       << std::endl;
 
     chaos::ImageDescription image_description;
     image_description.data         = face->glyph->bitmap.buffer;

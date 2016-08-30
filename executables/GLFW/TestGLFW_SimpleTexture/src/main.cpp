@@ -97,7 +97,7 @@ protected:
     texture = chaos::GLTools::GenTextureObject(image_desc);
     delete [](image_buffer);
 
-#elif 1
+#elif 0
 
     texture = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer) 
     {

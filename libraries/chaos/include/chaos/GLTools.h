@@ -14,6 +14,10 @@
 namespace chaos
 {
 
+  /**
+   * PixelRGB : a structure that helps manipulating 24 bit pixel
+   **/
+
   class PixelRGB
   {
   public:
@@ -21,6 +25,10 @@ namespace chaos
     unsigned char G;
     unsigned char R;
   };
+
+  /**
+   * PixelRGBA : a structure that helps manipulating 32 bit pixel
+   **/
 
   class PixelRGBA
   {
@@ -222,7 +230,7 @@ public:
 protected:
 
   /** utility function for texture loading */
-  static void GenTextureApplyParameters(GLenum target, GLint texture_id, GenTextureParameters const & parameters);
+  static void GenTextureApplyParameters(GLenum target, GenTextureResult const & result, GenTextureParameters const & parameters);
   /** an handler for debug messages */
   static void WINAPI DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data);
 };

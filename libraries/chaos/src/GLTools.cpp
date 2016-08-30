@@ -444,14 +444,14 @@ GenTextureResult GLTools::GenTexture(ImageDescription const & image, GenTextureP
       glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, GL_UNSIGNED_BYTE, image.data);
     }
 
-    // apply parameters
-    GenTextureApplyParameters(target, result.texture_id, parameters);
-
     result.texture_description.type            = target;
     result.texture_description.internal_format = internal_format;
     result.texture_description.width           = image.width;
     result.texture_description.height          = image.height;
     result.texture_description.depth           = 1;
+
+    // apply parameters
+    GenTextureApplyParameters(target, result, parameters);
   }
   return result;
 }
@@ -716,18 +716,18 @@ GenTextureResult GLTools::GenTexture(SkyBoxImages const * skybox, GenTexturePara
         delete [](new_buffer);
     }
 
-    // this is smoother to clamp at edges
-    GenTextureParameters tmp = parameters;
-    tmp.wrap_s = GL_CLAMP_TO_EDGE;
-    tmp.wrap_r = GL_CLAMP_TO_EDGE;
-    tmp.wrap_t = GL_CLAMP_TO_EDGE;
-    GenTextureApplyParameters(target, result.texture_id, tmp);
-
     result.texture_description.type            = target;
     result.texture_description.internal_format = internal_format;
     result.texture_description.width           = size;
     result.texture_description.height          = size;
     result.texture_description.depth           = 1;
+
+    // this is smoother to clamp at edges
+    GenTextureParameters tmp = parameters;
+    tmp.wrap_s = GL_CLAMP_TO_EDGE;
+    tmp.wrap_r = GL_CLAMP_TO_EDGE;
+    tmp.wrap_t = GL_CLAMP_TO_EDGE;
+    GenTextureApplyParameters(target, result, tmp);
   }
   return result;
 }
@@ -812,21 +812,29 @@ boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, int height, s
   return nullptr;
 }
 
-void GLTools::GenTextureApplyParameters(GLenum target, GLint texture_id, GenTextureParameters const & parameters)
+void GLTools::GenTextureApplyParameters(GLenum target, GenTextureResult const & result, GenTextureParameters const & parameters)
 {
   // there are to set of functions
   //   - glTexParameteri(TARGET ...)
   // and
   //   - glTextureParameteri(TEXTURE_ID ...)
-  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, parameters.wrap_s); 
-  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, parameters.wrap_t);
-  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, parameters.wrap_r);
-  glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
-  glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);        
+  glTextureParameteri(result.texture_id, GL_TEXTURE_WRAP_S, parameters.wrap_s);
+  glTextureParameteri(result.texture_id, GL_TEXTURE_WRAP_T, parameters.wrap_t);
+  glTextureParameteri(result.texture_id, GL_TEXTURE_WRAP_R, parameters.wrap_r);
+  glTextureParameteri(result.texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
+  glTextureParameteri(result.texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
+
+  if (result.texture_description.internal_format == GL_R8)
+  {
+    glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_R, GL_RED);
+    glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_G, GL_RED);
+    glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_B, GL_RED);
+    glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_A, GL_ONE);
+  }
 
   if (parameters.build_mipmaps)
     if (target != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
-      glGenerateTextureMipmap(texture_id);
+      glGenerateTextureMipmap(result.texture_id);
 }
 
 GLenum GLTools::GetTextureTargetFromSize(int width, int height, bool rectangle_texture)

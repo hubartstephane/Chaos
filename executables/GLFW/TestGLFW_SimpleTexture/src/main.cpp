@@ -97,6 +97,21 @@ protected:
     texture = chaos::GLTools::GenTextureObject(image_desc);
     delete [](image_buffer);
 
+#elif 1
+
+    texture = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer) 
+    {
+      for (int i = 0 ; i < desc.height ; ++i)
+      {
+        for (int j = 0; j < desc.width; ++j)
+        {
+          buffer[j + i * desc.width].R = (unsigned char)i;
+          buffer[j + i * desc.width].G = 0; 
+          buffer[j + i * desc.width].B = 0; 
+        }
+      }  
+    });
+
 #else
 
     texture = chaos::GLTools::GenTextureObject(image_path.string().c_str());

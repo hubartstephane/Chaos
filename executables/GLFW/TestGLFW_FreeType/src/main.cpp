@@ -30,7 +30,7 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    return true;
+    //return true;
 
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
@@ -131,7 +131,7 @@ protected:
     if (Err)
       return false;
 #endif
-    int glyph_index = FT_Get_Char_Index(face, 'a' );
+    int glyph_index = FT_Get_Char_Index(face, 'W' );
 
     Err = FT_Load_Glyph(
       face,          /* handle to face object */
@@ -251,8 +251,28 @@ protected:
   boost::intrusive_ptr<chaos::Texture>    texture;
 };
 
+
+
+
+void f(std::function<int(int)> const & f)
+{
+  std::cout << f(666) << std::endl;
+
+
+}
+
+
+
+
+
+
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
+
+  f([](int i) {return i * i; });
+
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

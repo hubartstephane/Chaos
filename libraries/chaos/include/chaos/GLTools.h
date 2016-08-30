@@ -14,6 +14,23 @@
 namespace chaos
 {
 
+  class PixelRGB
+  {
+  public:
+    unsigned char B;
+    unsigned char G;
+    unsigned char R;
+  };
+
+  class PixelRGBA
+  {
+  public:
+    unsigned char B;
+    unsigned char G;
+    unsigned char R;
+    unsigned char A;
+  };
+
   /**
   * GenTextureResult : result for gen texture methods
   **/
@@ -98,6 +115,14 @@ public:
   static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 
+  /** Generate a texture from lambda */
+  static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+
   /** Generate a 1D/2D/rectangle texture from an file */
   static boost::intrusive_ptr<Texture> GenTextureObject(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */
@@ -107,6 +132,13 @@ public:
   /** Generate a cube texture from a skybox */
   static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
+  /** Generate a texture from lambda */
+  static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+  static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
 
   /** returns the maximum number of mipmap */
   static int GetMipmapLevelCount(int width, int height);

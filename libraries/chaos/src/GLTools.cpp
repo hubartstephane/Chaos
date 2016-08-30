@@ -475,6 +475,98 @@ GenTextureResult GLTools::GenTexture(char const * filename, GenTextureParameters
   return result;
 }
 
+GenTextureResult GLTools::GenTexture(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  unsigned char * buffer = new unsigned char[width];
+  if (buffer != nullptr)
+  {
+    ImageDescription desc(buffer, width, 1, 8, 0);
+    func(desc, buffer);
+    result = GenTexture(desc, parameters);
+    delete[](buffer);
+  }
+  return result;
+}
+
+GenTextureResult GLTools::GenTexture(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  PixelRGB * buffer = new PixelRGB[width];
+  if (buffer != nullptr)
+  {
+    ImageDescription desc(buffer, width, 1, 24, 0);
+    func(desc, buffer);
+    result = GenTexture(desc, parameters);
+    delete[](buffer);
+  }
+  return result;
+}
+
+GenTextureResult GLTools::GenTexture(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  PixelRGBA * buffer = new PixelRGBA[width];
+  if (buffer != nullptr)
+  {
+    ImageDescription desc(buffer, width, 1, 32, 0);
+    func(desc, buffer);
+    result = GenTexture(desc, parameters);
+    delete[](buffer);
+  }
+  return result;
+}
+
+GenTextureResult GLTools::GenTexture(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  unsigned char * buffer = new unsigned char[width * height];
+  if (buffer != nullptr)
+  {
+    ImageDescription desc(buffer, width, height, 8, 0);
+    func(desc, buffer);
+    result = GenTexture(desc, parameters);
+    delete[](buffer);
+  }
+  return result;
+}
+
+GenTextureResult GLTools::GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  PixelRGB * buffer = new PixelRGB[width * height];
+  if (buffer != nullptr)
+  {
+    ImageDescription desc(buffer, width, height, 24, 0);
+    func(desc, buffer);
+    result = GenTexture(desc, parameters);
+    delete[](buffer);
+  }
+  return result;
+}
+
+GenTextureResult GLTools::GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result;
+
+  PixelRGBA * buffer = new PixelRGBA[width * height];
+  if (buffer != nullptr)
+  {
+    ImageDescription desc(buffer, width, height, 32, 0);
+    func(desc, buffer);
+    result = GenTexture(desc, parameters);
+    delete[](buffer);
+  }
+  return result;
+}
+
+
+
 
 // There are lots of very uncleared referenced for faces orientation
 // Most of pictures found one GoogleImage do not correspond to OpenGL but DirectX
@@ -672,6 +764,53 @@ boost::intrusive_ptr<Texture> GLTools::GenTextureObject(char const * filename, G
   return nullptr;
 }
 
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(width, func, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(width, func, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(width, func, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(width, height, func, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(width, height, func, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
+
+boost::intrusive_ptr<Texture> GLTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
+{
+  GenTextureResult result = GenTexture(width, height, func, parameters);
+  if (result.texture_id > 0)
+    return new Texture(result.texture_id, result.texture_description);
+  return nullptr;
+}
 
 void GLTools::GenTextureApplyParameters(GLenum target, GLint texture_id, GenTextureParameters const & parameters)
 {

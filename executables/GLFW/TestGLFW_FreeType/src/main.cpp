@@ -78,18 +78,33 @@ protected:
     if (Err)
       return false;
 
-    for (int i = 0 ; i < face->num_charmaps ; ++i)
-    {
+    std::cout << "num_glyphs         : " << face->num_glyphs << std::endl;
+    std::cout << "num_faces          : " << face->num_faces << std::endl;
+    std::cout << "units_per_EM       : " << face->units_per_EM << std::endl;
+    std::cout << "ascender           : " << face->ascender << std::endl;
+    std::cout << "descender          : " << face->descender << std::endl;
+    std::cout << "height             : " << face->height << std::endl;
+    std::cout << "max_advance_width  : " << face->max_advance_width << std::endl;
+    std::cout << "max_advance_height : " << face->max_advance_height << std::endl;
+    std::cout << "num_charmaps       : " << face->num_charmaps << std::endl;
 
+#define DISPLAY_FLAG(f) std::cout << #f " : " << (face->face_flags & f) << std::endl;
 
-
-    }
-
-    std::cout << "num_glyphs : " << face->num_glyphs << std::endl;
-    std::cout << "num_faces  : " << face->num_faces << std::endl;
-
-    if (face->face_flags & FT_FACE_FLAG_SCALABLE)
-      std::cout << "FT_FACE_FLAG_SCALABLE" << std::endl;
+    DISPLAY_FLAG(FT_FACE_FLAG_SCALABLE);
+    DISPLAY_FLAG(FT_FACE_FLAG_FIXED_SIZES);
+    DISPLAY_FLAG(FT_FACE_FLAG_FIXED_WIDTH);
+    DISPLAY_FLAG(FT_FACE_FLAG_SFNT);
+    DISPLAY_FLAG(FT_FACE_FLAG_HORIZONTAL);
+    DISPLAY_FLAG(FT_FACE_FLAG_VERTICAL);
+    DISPLAY_FLAG(FT_FACE_FLAG_KERNING);
+    DISPLAY_FLAG(FT_FACE_FLAG_FAST_GLYPHS);
+    DISPLAY_FLAG(FT_FACE_FLAG_MULTIPLE_MASTERS);
+    DISPLAY_FLAG(FT_FACE_FLAG_GLYPH_NAMES);
+    DISPLAY_FLAG(FT_FACE_FLAG_EXTERNAL_STREAM);
+    DISPLAY_FLAG(FT_FACE_FLAG_HINTER);
+    DISPLAY_FLAG(FT_FACE_FLAG_CID_KEYED);
+    DISPLAY_FLAG(FT_FACE_FLAG_TRICKY);
+    DISPLAY_FLAG(FT_FACE_FLAG_COLOR);
 
     for (int i = 0 ; i < face->num_fixed_sizes ; ++i)
     {
@@ -98,18 +113,21 @@ protected:
       std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;  
     }
 
-#if 1
+#if 0
     Err = FT_Set_Char_Size(
       face,    /* handle to face object           */
       0,       /* char_width in 1/64th of points  */
       64*64,   /* char_height in 1/64th of points */
-      300,     /* horizontal device resolution    */
-      300 );   /* vertical device resolution      */
+      72,     /* horizontal device resolution    */
+      72 );   /* vertical device resolution      */
     if (Err)
       return false;
 
+    //FT_Activate_Size(&face->size);
+
+
 #else
-    Err = FT_Set_Pixel_Sizes(face, 256, 256);
+    Err = FT_Set_Pixel_Sizes(face, 128, 128);
     if (Err)
       return false;
 #endif
@@ -118,7 +136,10 @@ protected:
     Err = FT_Load_Glyph(
       face,          /* handle to face object */
       glyph_index,   /* glyph index           */
-      FT_LOAD_DEFAULT);  /* load flags, see below */
+      FT_LOAD_DEFAULT);  /* load flags, see below */  // FT_LOAD_NO_SCALE  ???
+
+
+    // ori FT_LOAD_DEFAULT
 
     if (Err)
       return false;
@@ -129,11 +150,36 @@ protected:
     if (Err)
       return false;
 
-    std::cout << "- glyph  [WIDTH] = " << face->glyph->bitmap.width      << std::endl;
-    std::cout << "  glyph  [PITCH] = " << face->glyph->bitmap.pitch      << std::endl;
-    std::cout << "  glyph  [GRAYS] = " << face->glyph->bitmap.num_grays  << std::endl;
-    std::cout << "  glyph  [MODE]  = " << (int)face->glyph->bitmap.pixel_mode << std::endl;
-    std::cout << "  glyph  [ROWS]  = " << face->glyph->bitmap.rows       << std::endl;
+    std::cout << "- glyph  [WIDTH]     = " << face->glyph->bitmap.width << std::endl;
+    std::cout << "  glyph  [PITCH]     = " << face->glyph->bitmap.pitch << std::endl;
+    std::cout << "  glyph  [GRAYS]     = " << face->glyph->bitmap.num_grays << std::endl;
+    std::cout << "  glyph  [MODE]      = " << (int)face->glyph->bitmap.pixel_mode << std::endl;
+    std::cout << "  glyph  [ROWS]      = " << face->glyph->bitmap.rows  << std::endl;
+    std::cout << "  glyph  [ADVANCE X] = " << face->glyph->advance.x / 64<< std::endl;
+    std::cout << "  glyph  [ADVANCE Y] = " << face->glyph->advance.y / 64 << std::endl;
+    std::cout << "  glyph  [BITMAP L]  = " << face->glyph->bitmap_left << std::endl;
+    std::cout << "  glyph  [BITMAP T]  = " << face->glyph->bitmap_top << std::endl;
+
+    std::cout << "  glyph  [METRICS W] = " << face->glyph->metrics.width / 64 << std::endl;
+    std::cout << "  glyph  [METRICS H] = " << face->glyph->metrics.height / 64<< std::endl;
+
+
+
+    std::cout << "  glyph  [horiAdvance]  = " << face->glyph->metrics.horiAdvance / 64 << std::endl;
+    std::cout << "  glyph  [horiBearingX] = " << face->glyph->metrics.horiBearingX / 64  << std::endl;
+    std::cout << "  glyph  [horiBearingY] = " << face->glyph->metrics.horiBearingY / 64  << std::endl;
+    std::cout << "  glyph  [vertAdvance]  = " << face->glyph->metrics.vertAdvance / 64  << std::endl;
+    std::cout << "  glyph  [vertBearingX] = " << face->glyph->metrics.vertBearingX / 64  << std::endl;
+    std::cout << "  glyph  [vertBearingY] = " << face->glyph->metrics.vertBearingY / 64  << std::endl;
+
+    FT_BBox  bbox = face->bbox;
+    std::cout << "  bbox  [xMax] = " << bbox.xMax / 64 << std::endl;
+    std::cout << "  bbox  [xMin] = " << bbox.xMin / 64 << std::endl;
+    std::cout << "  bbox  [yMax] = " << bbox.yMax / 64 << std::endl;
+    std::cout << "  bbox  [yMin] = " << bbox.yMin / 64 << std::endl;
+
+    //FT_Glyph_Get_CBox(face->glyph, FT_GLYPH_BBOX_UNSCALED, &bbox );
+    
 
     chaos::ImageDescription image_description = chaos::ImageDescription(
       face->glyph->bitmap.buffer,
@@ -183,8 +229,6 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
 };
-
-
 
 int _tmain(int argc, char ** argv, char ** env)
 {

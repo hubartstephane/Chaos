@@ -70,8 +70,8 @@ protected:
       return false;
 
     boost::filesystem::path resources_path = application->GetResourcesPath();
-    //boost::filesystem::path font_path      = resources_path / "Flatwheat-Regular.ttf";
-    boost::filesystem::path font_path = resources_path / "Flatwheat-Italic.ttf";
+    boost::filesystem::path font_path      = resources_path / "Flatwheat-Regular.ttf";
+    //boost::filesystem::path font_path = resources_path / "Flatwheat-Italic.ttf";
     
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
@@ -179,7 +179,24 @@ protected:
     std::cout << "  bbox  [yMin] = " << bbox.yMin / 64 << std::endl;
 
     //FT_Glyph_Get_CBox(face->glyph, FT_GLYPH_BBOX_UNSCALED, &bbox );
-    
+    bool has_kerning = (FT_HAS_KERNING(face) != 0);
+    std::cout << "  has_kerning = " << has_kerning << std::endl;
+
+    int A_index = FT_Get_Char_Index(face, 'A' );
+    int V_index = FT_Get_Char_Index(face, 'V' );
+
+    FT_Vector kerning;
+    Err = FT_Get_Kerning( face, A_index, V_index, FT_KERNING_DEFAULT, &kerning);
+    if (Err)
+      return false;
+
+    std::cout << "  kerningX A/V = " << kerning.x << std::endl;
+    std::cout << "  kerningY A/V = " << kerning.y << std::endl;
+
+
+
+
+
 
     chaos::ImageDescription image_description = chaos::ImageDescription(
       face->glyph->bitmap.buffer,
@@ -194,6 +211,10 @@ protected:
     parameters.wrap_t = GL_CLAMP;
 
     texture = chaos::GLTools::GenTextureObject(image_description, parameters);
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(library);
+
 
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";

@@ -19,9 +19,86 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() : 
-    mipmap_level(0){}
+    mipmap_level(0),
+    texture_index(0){}
 
 protected:
+
+  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  {
+    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+    {
+      ChangeTexture(texture_index + 1);
+    }
+    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+    {
+      ChangeTexture(texture_index - 1);
+    }
+  }
+
+  void ChangeTexture(int index)
+  {
+    boost::intrusive_ptr<chaos::Texture> new_texture = GenerateTexture(index);
+    if (new_texture != nullptr)
+    {
+      texture_index = index;
+      texture = new_texture;
+    }
+  }
+
+  boost::intrusive_ptr<chaos::Texture> GenerateTexture(int index)
+  {
+    boost::intrusive_ptr<chaos::Texture> result;
+
+    if (index == 0)
+    {
+      // create a gray scale texture : show order of lines in memory
+      char * image_buffer = new char[4 * 512 * 512];
+
+      chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, 32, 0);
+
+      for (int i = 0; i < 512; ++i)
+      {
+        for (int j = 0; j < 512; ++j)
+        {
+          image_buffer[4 * j + 0 + (i * image_desc.pitch_size)] = i;
+          image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = i;
+          image_buffer[4 * j + 2 + (i * image_desc.pitch_size)] = i;
+          image_buffer[4 * j + 3 + (i * image_desc.pitch_size)] = i;
+        }
+      }
+      result = chaos::GLTools::GenTextureObject(image_desc);
+      delete[](image_buffer);
+    }
+
+    if (index == 1)
+    {
+      result = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
+      {
+        for (int i = 0; i < desc.height; ++i)
+        {
+          for (int j = 0; j < desc.width; ++j)
+          {
+            buffer[j + i * desc.width].R = (unsigned char)i;
+            buffer[j + i * desc.width].G = 0;
+            buffer[j + i * desc.width].B = 0;
+          }
+        }
+      });
+    }
+
+    if (index == 2 || index == 3)
+    {
+      chaos::Application * application = chaos::Application::GetInstance();
+      if (application == nullptr)
+        return false;
+      boost::filesystem::path resources_path = application->GetResourcesPath();
+      boost::filesystem::path image_path     = resources_path / ((index == 2)? "opengl_logo.png" : "opengl_logo_rectangle.png");
+      result = chaos::GLTools::GenTextureObject(image_path.string().c_str());
+    }
+
+    return result;
+  }
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
@@ -78,46 +155,8 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
-#if 0
-    // create a gray scale texture : show order of lines in memory
-    char * image_buffer = new char [4 * 512 * 512];
 
-    chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, 32, 0);
-
-    for (int i = 0 ; i < 512 ; ++i)
-    {
-      for (int j = 0 ; j < 512 ; ++j)
-      {
-        image_buffer[4 * j + 0 + (i * image_desc.pitch_size)] = i;
-        image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = i;
-        image_buffer[4 * j + 2 + (i * image_desc.pitch_size)] = i;
-        image_buffer[4 * j + 3 + (i * image_desc.pitch_size)] = i;       
-      }    
-    }
-    texture = chaos::GLTools::GenTextureObject(image_desc);
-    delete [](image_buffer);
-
-#elif 0
-
-    texture = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer) 
-    {
-      for (int i = 0 ; i < desc.height ; ++i)
-      {
-        for (int j = 0; j < desc.width; ++j)
-        {
-          buffer[j + i * desc.width].R = (unsigned char)i;
-          buffer[j + i * desc.width].G = 0; 
-          buffer[j + i * desc.width].B = 0; 
-        }
-      }  
-    });
-
-#else
-
-    texture = chaos::GLTools::GenTextureObject(image_path.string().c_str());
-
-#endif
-    
+    texture = GenerateTexture(texture_index);
     if (texture == nullptr)
       return false;
 
@@ -153,6 +192,7 @@ protected:
   boost::intrusive_ptr<chaos::Texture>    texture;
 
   int mipmap_level;
+  int texture_index;
 };
 
 

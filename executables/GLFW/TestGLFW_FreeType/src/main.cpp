@@ -15,6 +15,7 @@
 #include <chaos/Texture.h>
 
 #include FT_OUTLINE_H
+#include FT_IMAGE_H
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -71,7 +72,7 @@ protected:
 
   void ChangeFont(int index)
   {
-    boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index);
+    boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index, "Hello world");
     if (new_font != nullptr)
     {
       font_index = index;
@@ -79,7 +80,16 @@ protected:
     }
   }
 
-  boost::intrusive_ptr<chaos::Texture> LoadFont(int index)
+  boost::intrusive_ptr<chaos::Texture> ReleaseResourceImpl(FT_Library * library, FT_Face * face)
+  {
+    if (face != nullptr)
+      FT_Done_Face(*face);
+    if (library != nullptr)
+      FT_Done_FreeType(*library);
+    return nullptr;
+  }
+
+  boost::intrusive_ptr<chaos::Texture> LoadFont(int index, char const * str)
   {
     FT_Error Err;
 
@@ -91,10 +101,7 @@ protected:
 
     Err = FT_Init_FreeType(&library);
     if (Err)
-    {
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
+      return ReleaseResourceImpl(&library, nullptr);
 
     char const * font_name = nullptr;
     if (index == 0) font_name = "Flatwheat-Regular.ttf";
@@ -106,10 +113,7 @@ protected:
     if (index == 6) font_name = "Outwrite.ttf"; // kerning !!
     if (index == 7) font_name = "absender1.ttf";    // 3 charmaps
     if (font_name == nullptr)
-    {
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
+      return ReleaseResourceImpl(&library, nullptr);
 
 
     std::cout << "==================== " << font_name << " ====================" << std::endl;
@@ -120,10 +124,7 @@ protected:
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
     if (Err)
-    {
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
+      return ReleaseResourceImpl(&library, nullptr);
 
     std::cout << "num_glyphs         : " << face->num_glyphs << std::endl;
     std::cout << "num_faces          : " << face->num_faces << std::endl;
@@ -173,33 +174,137 @@ protected:
       std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;
     }
 
-    FT_Outline_Reverse(&face->glyph->outline);
-
-
-
     Err = FT_Set_Pixel_Sizes(face, 128, 128);
     if (Err)
+      return ReleaseResourceImpl(&library, &face);
+
+
+
+
+#if 1
+    // compute required size
+    int required_width  = 0;
+    int required_height = 0;
+
+    int character = 0;
+    while (str[character] != 0)
     {
-      FT_Done_Face(face);
-      FT_Done_FreeType(library);
-      return nullptr;
+      int glyph_index = FT_Get_Char_Index(face, str[character]);
+      if (glyph_index == 0)
+        return ReleaseResourceImpl(&library, &face);
+
+      Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+      if (Err)
+        return ReleaseResourceImpl(&library, &face);
+
+      int w = (int)face->glyph->metrics.width / 64;
+      int h = (int)face->glyph->metrics.height / 64;
+
+      int next = face->glyph->bitmap_left + w;
+
+      if (str[character + 1] == 0)
+        required_width += next;
+      else
+        required_width += max(next, (int)face->glyph->advance.x / 64);
+
+      required_height = max(required_height, h + face->glyph->bitmap_top);
+
+      ++character;
     }
+    // reserve a buffer big enought
+    boost::intrusive_ptr<chaos::Texture> result;
+
+    unsigned char * buffer = new unsigned char[required_width * required_height];
+    if (buffer != nullptr)
+    {
+      memset(buffer, 0, required_width * required_height);
+
+      int pos_x = 0;
+      int pos_y = 0;
+
+      int character = 0;
+      while (str[character] != 0)
+      {
+        int glyph_index = FT_Get_Char_Index(face, str[character]);
+
+        FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+
+        Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+        if (Err)
+          return ReleaseResourceImpl(&library, &face);
+
+        int w = face->glyph->metrics.width  / 64;
+        int h = face->glyph->metrics.height / 64;
+
+        unsigned char * dst = buffer + (pos_x + face->glyph->bitmap_left) + (pos_y /*+ face->glyph->bitmap_top*/) * required_width;
+        for (int j = 0 ; j < h ; ++j)
+          for (int i = 0 ; i < w ; ++i)
+            dst[i + j * required_width] = face->glyph->bitmap.buffer[i + j * w];
+
+        pos_x += face->glyph->advance.x / 64;
+
+        ++character;
+      }
+
+
+
+
+
+
+      // generate the texture
+      chaos::ImageDescription image_description = chaos::ImageDescription(buffer, required_width, required_height, 8, 0);
+
+      chaos::GenTextureParameters parameters;
+      parameters.wrap_r = GL_CLAMP;
+      parameters.wrap_s = GL_CLAMP;
+      parameters.wrap_t = GL_CLAMP;
+
+      result = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
+      {
+        for (int i = 0; i < desc.height; ++i)
+        {
+          for (int j = 0; j < desc.width; ++j)
+          {
+            buffer[j + i * desc.width].R = (unsigned char)i;
+            buffer[j + i * desc.width].G = 0;
+            buffer[j + i * desc.width].B = 0;
+          }
+        }
+      });
+
+     // result = chaos::GLTools::GenTextureObject(image_description, parameters);
+
+      delete[] buffer;
+    }
+
+
+    
+
+    ReleaseResourceImpl(&library, &face);
+    return result;
+
+#endif
+
+
+
+
+
+
+#if 0
 
     int glyph_index = FT_Get_Char_Index(face, 'R');
     if (glyph_index == 0)
-    {
-      FT_Done_Face(face);
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
+      return ReleaseResourceImpl(&library, &face);
 
     Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
     if (Err)
-    {
-      FT_Done_Face(face);
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
+      return ReleaseResourceImpl(&library, &face);
+
+
+
+    Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+    if (Err)
+      return ReleaseResourceImpl(&library, &face);
 
     if (face->glyph->format == FT_GLYPH_FORMAT_NONE) std::cout << "FT_GLYPH_FORMAT_NONE" << std::endl;
     if (face->glyph->format == FT_GLYPH_FORMAT_COMPOSITE) std::cout << "FT_GLYPH_FORMAT_COMPOSITE" << std::endl;
@@ -207,13 +312,6 @@ protected:
     if (face->glyph->format == FT_GLYPH_FORMAT_OUTLINE) std::cout << "FT_GLYPH_FORMAT_OUTLINE" << std::endl;
     if (face->glyph->format == FT_GLYPH_FORMAT_PLOTTER) std::cout << "FT_GLYPH_FORMAT_PLOTTER" << std::endl;
 
-    Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-    if (Err)
-    {
-      FT_Done_Face(face);
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
 
     std::cout << "- glyph  [WIDTH]     = " << face->glyph->bitmap.width << std::endl;
     std::cout << "  glyph  [PITCH]     = " << face->glyph->bitmap.pitch << std::endl;
@@ -245,11 +343,7 @@ protected:
     FT_Vector kerning;
     Err = FT_Get_Kerning(face, A_index, V_index, FT_KERNING_DEFAULT, &kerning);
     if (Err)
-    {
-      FT_Done_Face(face);
-      FT_Done_FreeType(library);
-      return nullptr;
-    }
+      return ReleaseResourceImpl(&library, &face);
 
     std::cout << "  kerningX A/V = " << kerning.x << std::endl;
     std::cout << "  kerningY A/V = " << kerning.y << std::endl;
@@ -267,11 +361,11 @@ protected:
     parameters.wrap_t = GL_CLAMP;
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTools::GenTextureObject(image_description, parameters);
+    ReleaseResourceImpl(&library, &face);
 
-    FT_Done_Face(face);
-    FT_Done_FreeType(library);
 
     return result;
+#endif
   }
 
   virtual bool Initialize() override
@@ -284,7 +378,7 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
-    texture = LoadFont(0);
+    texture = LoadFont(0, "Hello world");
     if (texture == nullptr)
       return false;
 

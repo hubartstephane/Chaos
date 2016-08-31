@@ -69,7 +69,7 @@ protected:
     if (Err)
       return false;
 
-    int font_index = 2;
+    int font_index = 7;
 
     char const * font_name = nullptr;    
     if (font_index == 0) font_name = "Flatwheat-Regular.ttf";
@@ -78,6 +78,8 @@ protected:
     if (font_index == 3) font_name = "unispace bold.ttf";
     if (font_index == 4) font_name = "unispace italic.ttf";
     if (font_index == 5) font_name = "unispace bold italic.ttf";
+    if (font_index == 6) font_name = "Outwrite.ttf"; // kerning !!
+    if (font_index == 7) font_name = "absender1.ttf";    // 3 charmaps
     if (font_name == nullptr)
       return false;
 

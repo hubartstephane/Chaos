@@ -69,10 +69,21 @@ protected:
     if (Err)
       return false;
 
+    int font_index = 2;
+
+    char const * font_name = nullptr;    
+    if (font_index == 0) font_name = "Flatwheat-Regular.ttf";
+    if (font_index == 1) font_name = "Flatwheat-Italic.ttf";
+    if (font_index == 2) font_name = "unispace.ttf";
+    if (font_index == 3) font_name = "unispace bold.ttf";
+    if (font_index == 4) font_name = "unispace italic.ttf";
+    if (font_index == 5) font_name = "unispace bold italic.ttf";
+    if (font_name == nullptr)
+      return false;
+
     boost::filesystem::path resources_path = application->GetResourcesPath();
-    boost::filesystem::path font_path      = resources_path / "Flatwheat-Regular.ttf";
-    //boost::filesystem::path font_path = resources_path / "Flatwheat-Italic.ttf";
-    
+    boost::filesystem::path font_path      = resources_path / font_name;
+
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
     if (Err)
@@ -88,23 +99,39 @@ protected:
     std::cout << "max_advance_height : " << face->max_advance_height << std::endl;
     std::cout << "num_charmaps       : " << face->num_charmaps << std::endl;
 
-#define DISPLAY_FLAG(f) std::cout << #f " : " << (face->face_flags & f) << std::endl;
+#define DISPLAY_FACE_FLAG(f) std::cout << #f " : " << ((face->face_flags & f) != 0) << std::endl;
 
-    DISPLAY_FLAG(FT_FACE_FLAG_SCALABLE);
-    DISPLAY_FLAG(FT_FACE_FLAG_FIXED_SIZES);
-    DISPLAY_FLAG(FT_FACE_FLAG_FIXED_WIDTH);
-    DISPLAY_FLAG(FT_FACE_FLAG_SFNT);
-    DISPLAY_FLAG(FT_FACE_FLAG_HORIZONTAL);
-    DISPLAY_FLAG(FT_FACE_FLAG_VERTICAL);
-    DISPLAY_FLAG(FT_FACE_FLAG_KERNING);
-    DISPLAY_FLAG(FT_FACE_FLAG_FAST_GLYPHS);
-    DISPLAY_FLAG(FT_FACE_FLAG_MULTIPLE_MASTERS);
-    DISPLAY_FLAG(FT_FACE_FLAG_GLYPH_NAMES);
-    DISPLAY_FLAG(FT_FACE_FLAG_EXTERNAL_STREAM);
-    DISPLAY_FLAG(FT_FACE_FLAG_HINTER);
-    DISPLAY_FLAG(FT_FACE_FLAG_CID_KEYED);
-    DISPLAY_FLAG(FT_FACE_FLAG_TRICKY);
-    DISPLAY_FLAG(FT_FACE_FLAG_COLOR);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_SCALABLE);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_FIXED_SIZES);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_FIXED_WIDTH);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_SFNT);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_HORIZONTAL);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_VERTICAL);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_KERNING);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_FAST_GLYPHS);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_MULTIPLE_MASTERS);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_GLYPH_NAMES);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_EXTERNAL_STREAM);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_HINTER);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_CID_KEYED);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_TRICKY);
+    DISPLAY_FACE_FLAG(FT_FACE_FLAG_COLOR);
+
+#define DISPLAY_FACE_TEST(f) std::cout << #f " : " << (f(face) != 0) << std::endl;
+
+    DISPLAY_FACE_TEST(FT_HAS_HORIZONTAL);
+    DISPLAY_FACE_TEST(FT_HAS_VERTICAL);
+    DISPLAY_FACE_TEST(FT_HAS_KERNING);
+    DISPLAY_FACE_TEST(FT_HAS_FIXED_SIZES);
+    DISPLAY_FACE_TEST(FT_HAS_GLYPH_NAMES);
+    DISPLAY_FACE_TEST(FT_HAS_MULTIPLE_MASTERS);
+    DISPLAY_FACE_TEST(FT_HAS_COLOR);
+
+    DISPLAY_FACE_TEST(FT_IS_SFNT);
+    DISPLAY_FACE_TEST(FT_IS_SCALABLE);
+    DISPLAY_FACE_TEST(FT_IS_FIXED_WIDTH);
+    DISPLAY_FACE_TEST(FT_IS_CID_KEYED);
+    DISPLAY_FACE_TEST(FT_IS_TRICKY);
 
     for (int i = 0 ; i < face->num_fixed_sizes ; ++i)
     {
@@ -113,40 +140,19 @@ protected:
       std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;  
     }
 
-#if 0
-    Err = FT_Set_Char_Size(
-      face,    /* handle to face object           */
-      0,       /* char_width in 1/64th of points  */
-      64*64,   /* char_height in 1/64th of points */
-      72,     /* horizontal device resolution    */
-      72 );   /* vertical device resolution      */
-    if (Err)
-      return false;
-
-    //FT_Activate_Size(&face->size);
-
-
-#else
     Err = FT_Set_Pixel_Sizes(face, 128, 128);
     if (Err)
       return false;
-#endif
-    int glyph_index = FT_Get_Char_Index(face, 'W' );
 
-    Err = FT_Load_Glyph(
-      face,          /* handle to face object */
-      glyph_index,   /* glyph index           */
-      FT_LOAD_DEFAULT);  /* load flags, see below */  // FT_LOAD_NO_SCALE  ???
+    int glyph_index = FT_Get_Char_Index(face, '9' );
+    if (glyph_index == 0)
+      return false;
 
-
-    // ori FT_LOAD_DEFAULT
-
+    Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
     if (Err)
       return false;
 
-    Err = FT_Render_Glyph(
-      face->glyph,   /* glyph slot  */
-      FT_RENDER_MODE_NORMAL); /* render mode */
+    Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
     if (Err)
       return false;
 
@@ -159,12 +165,8 @@ protected:
     std::cout << "  glyph  [ADVANCE Y] = " << face->glyph->advance.y / 64 << std::endl;
     std::cout << "  glyph  [BITMAP L]  = " << face->glyph->bitmap_left << std::endl;
     std::cout << "  glyph  [BITMAP T]  = " << face->glyph->bitmap_top << std::endl;
-
     std::cout << "  glyph  [METRICS W] = " << face->glyph->metrics.width / 64 << std::endl;
     std::cout << "  glyph  [METRICS H] = " << face->glyph->metrics.height / 64<< std::endl;
-
-
-
     std::cout << "  glyph  [horiAdvance]  = " << face->glyph->metrics.horiAdvance / 64 << std::endl;
     std::cout << "  glyph  [horiBearingX] = " << face->glyph->metrics.horiBearingX / 64  << std::endl;
     std::cout << "  glyph  [horiBearingY] = " << face->glyph->metrics.horiBearingY / 64  << std::endl;
@@ -173,14 +175,10 @@ protected:
     std::cout << "  glyph  [vertBearingY] = " << face->glyph->metrics.vertBearingY / 64  << std::endl;
 
     FT_BBox  bbox = face->bbox;
-    std::cout << "  bbox  [xMax] = " << bbox.xMax / 64 << std::endl;
-    std::cout << "  bbox  [xMin] = " << bbox.xMin / 64 << std::endl;
-    std::cout << "  bbox  [yMax] = " << bbox.yMax / 64 << std::endl;
-    std::cout << "  bbox  [yMin] = " << bbox.yMin / 64 << std::endl;
-
-    //FT_Glyph_Get_CBox(face->glyph, FT_GLYPH_BBOX_UNSCALED, &bbox );
-    bool has_kerning = (FT_HAS_KERNING(face) != 0);
-    std::cout << "  has_kerning = " << has_kerning << std::endl;
+    std::cout << "  bbox  [xMax] = " << bbox.xMax << std::endl;
+    std::cout << "  bbox  [xMin] = " << bbox.xMin << std::endl;
+    std::cout << "  bbox  [yMax] = " << bbox.yMax << std::endl;
+    std::cout << "  bbox  [yMin] = " << bbox.yMin << std::endl;
 
     int A_index = FT_Get_Char_Index(face, 'A' );
     int V_index = FT_Get_Char_Index(face, 'V' );
@@ -193,14 +191,9 @@ protected:
     std::cout << "  kerningX A/V = " << kerning.x << std::endl;
     std::cout << "  kerningY A/V = " << kerning.y << std::endl;
 
-
-
-
-
-
     chaos::ImageDescription image_description = chaos::ImageDescription(
-      face->glyph->bitmap.buffer,
-      face->glyph->bitmap.width, face->glyph->bitmap.width,
+      face->glyph->bitmap.buffer, 
+      face->glyph->metrics.width / 64, face->glyph->metrics.height / 64,
       8,
       0       
     );
@@ -214,7 +207,6 @@ protected:
 
     FT_Done_Face(face);
     FT_Done_FreeType(library);
-
 
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
@@ -251,28 +243,8 @@ protected:
   boost::intrusive_ptr<chaos::Texture>    texture;
 };
 
-
-
-
-void f(std::function<int(int)> const & f)
-{
-  std::cout << f(666) << std::endl;
-
-
-}
-
-
-
-
-
-
-
-
 int _tmain(int argc, char ** argv, char ** env)
 {
-
-  f([](int i) {return i * i; });
-
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

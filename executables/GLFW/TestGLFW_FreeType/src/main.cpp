@@ -14,11 +14,13 @@
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
 
+#include FT_OUTLINE_H
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1(){}
+  MyGLFWWindowOpenGLTest1() : font_index(0){}
 
 protected:
 
@@ -55,33 +57,62 @@ protected:
     texture = nullptr;
   }
 
-  virtual bool Initialize() override
-  {   
-    chaos::Application * application = chaos::Application::GetInstance();
-    if (application == nullptr)
-      return false;
+  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  {
+    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+    {
+      ChangeFont(font_index + 1);
+    }
+    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+    {
+      ChangeFont(font_index - 1);
+    }
+  }
 
+  void ChangeFont(int index)
+  {
+    boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index);
+    if (new_font != nullptr)
+    {
+      font_index = index;
+      texture = new_font;
+    }
+  }
+
+  boost::intrusive_ptr<chaos::Texture> LoadFont(int index)
+  {
     FT_Error Err;
 
     FT_Library library;
 
+    chaos::Application * application = chaos::Application::GetInstance();
+    if (application == nullptr)
+      return nullptr;
+
     Err = FT_Init_FreeType(&library);
     if (Err)
-      return false;
+    {
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
 
-    int font_index = 7;
-
-    char const * font_name = nullptr;    
-    if (font_index == 0) font_name = "Flatwheat-Regular.ttf";
-    if (font_index == 1) font_name = "Flatwheat-Italic.ttf";
-    if (font_index == 2) font_name = "unispace.ttf";
-    if (font_index == 3) font_name = "unispace bold.ttf";
-    if (font_index == 4) font_name = "unispace italic.ttf";
-    if (font_index == 5) font_name = "unispace bold italic.ttf";
-    if (font_index == 6) font_name = "Outwrite.ttf"; // kerning !!
-    if (font_index == 7) font_name = "absender1.ttf";    // 3 charmaps
+    char const * font_name = nullptr;
+    if (index == 0) font_name = "Flatwheat-Regular.ttf";
+    if (index == 1) font_name = "Flatwheat-Italic.ttf";
+    if (index == 2) font_name = "unispace.ttf";
+    if (index == 3) font_name = "unispace bold.ttf";
+    if (index == 4) font_name = "unispace italic.ttf";
+    if (index == 5) font_name = "unispace bold italic.ttf";
+    if (index == 6) font_name = "Outwrite.ttf"; // kerning !!
+    if (index == 7) font_name = "absender1.ttf";    // 3 charmaps
     if (font_name == nullptr)
-      return false;
+    {
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
+
+
+    std::cout << "==================== " << font_name << " ====================" << std::endl;
 
     boost::filesystem::path resources_path = application->GetResourcesPath();
     boost::filesystem::path font_path      = resources_path / font_name;
@@ -89,7 +120,10 @@ protected:
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
     if (Err)
-      return false;
+    {
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
 
     std::cout << "num_glyphs         : " << face->num_glyphs << std::endl;
     std::cout << "num_faces          : " << face->num_faces << std::endl;
@@ -102,7 +136,6 @@ protected:
     std::cout << "num_charmaps       : " << face->num_charmaps << std::endl;
 
 #define DISPLAY_FACE_FLAG(f) std::cout << #f " : " << ((face->face_flags & f) != 0) << std::endl;
-
     DISPLAY_FACE_FLAG(FT_FACE_FLAG_SCALABLE);
     DISPLAY_FACE_FLAG(FT_FACE_FLAG_FIXED_SIZES);
     DISPLAY_FACE_FLAG(FT_FACE_FLAG_FIXED_WIDTH);
@@ -120,7 +153,6 @@ protected:
     DISPLAY_FACE_FLAG(FT_FACE_FLAG_COLOR);
 
 #define DISPLAY_FACE_TEST(f) std::cout << #f " : " << (f(face) != 0) << std::endl;
-
     DISPLAY_FACE_TEST(FT_HAS_HORIZONTAL);
     DISPLAY_FACE_TEST(FT_HAS_VERTICAL);
     DISPLAY_FACE_TEST(FT_HAS_KERNING);
@@ -128,53 +160,78 @@ protected:
     DISPLAY_FACE_TEST(FT_HAS_GLYPH_NAMES);
     DISPLAY_FACE_TEST(FT_HAS_MULTIPLE_MASTERS);
     DISPLAY_FACE_TEST(FT_HAS_COLOR);
-
     DISPLAY_FACE_TEST(FT_IS_SFNT);
     DISPLAY_FACE_TEST(FT_IS_SCALABLE);
     DISPLAY_FACE_TEST(FT_IS_FIXED_WIDTH);
     DISPLAY_FACE_TEST(FT_IS_CID_KEYED);
     DISPLAY_FACE_TEST(FT_IS_TRICKY);
 
-    for (int i = 0 ; i < face->num_fixed_sizes ; ++i)
+    for (int i = 0; i < face->num_fixed_sizes; ++i)
     {
-      std::cout << "- Fixed Size   [SIZE] = " << face->available_sizes[i].size   << std::endl;
-      std::cout << "  Fixed Size  [WIDTH] = " << face->available_sizes[i].width  << std::endl;
-      std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;  
+      std::cout << "- Fixed Size   [SIZE] = " << face->available_sizes[i].size << std::endl;
+      std::cout << "  Fixed Size  [WIDTH] = " << face->available_sizes[i].width << std::endl;
+      std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;
     }
+
+    FT_Outline_Reverse(&face->glyph->outline);
+
+
 
     Err = FT_Set_Pixel_Sizes(face, 128, 128);
     if (Err)
-      return false;
+    {
+      FT_Done_Face(face);
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
 
-    int glyph_index = FT_Get_Char_Index(face, '9' );
+    int glyph_index = FT_Get_Char_Index(face, 'R');
     if (glyph_index == 0)
-      return false;
+    {
+      FT_Done_Face(face);
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
 
     Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
     if (Err)
-      return false;
+    {
+      FT_Done_Face(face);
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
+
+    if (face->glyph->format == FT_GLYPH_FORMAT_NONE) std::cout << "FT_GLYPH_FORMAT_NONE" << std::endl;
+    if (face->glyph->format == FT_GLYPH_FORMAT_COMPOSITE) std::cout << "FT_GLYPH_FORMAT_COMPOSITE" << std::endl;
+    if (face->glyph->format == FT_GLYPH_FORMAT_BITMAP) std::cout << "FT_GLYPH_FORMAT_BITMAP" << std::endl;
+    if (face->glyph->format == FT_GLYPH_FORMAT_OUTLINE) std::cout << "FT_GLYPH_FORMAT_OUTLINE" << std::endl;
+    if (face->glyph->format == FT_GLYPH_FORMAT_PLOTTER) std::cout << "FT_GLYPH_FORMAT_PLOTTER" << std::endl;
 
     Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
     if (Err)
-      return false;
+    {
+      FT_Done_Face(face);
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
 
     std::cout << "- glyph  [WIDTH]     = " << face->glyph->bitmap.width << std::endl;
     std::cout << "  glyph  [PITCH]     = " << face->glyph->bitmap.pitch << std::endl;
     std::cout << "  glyph  [GRAYS]     = " << face->glyph->bitmap.num_grays << std::endl;
     std::cout << "  glyph  [MODE]      = " << (int)face->glyph->bitmap.pixel_mode << std::endl;
-    std::cout << "  glyph  [ROWS]      = " << face->glyph->bitmap.rows  << std::endl;
-    std::cout << "  glyph  [ADVANCE X] = " << face->glyph->advance.x / 64<< std::endl;
+    std::cout << "  glyph  [ROWS]      = " << face->glyph->bitmap.rows << std::endl;
+    std::cout << "  glyph  [ADVANCE X] = " << face->glyph->advance.x / 64 << std::endl;
     std::cout << "  glyph  [ADVANCE Y] = " << face->glyph->advance.y / 64 << std::endl;
     std::cout << "  glyph  [BITMAP L]  = " << face->glyph->bitmap_left << std::endl;
     std::cout << "  glyph  [BITMAP T]  = " << face->glyph->bitmap_top << std::endl;
     std::cout << "  glyph  [METRICS W] = " << face->glyph->metrics.width / 64 << std::endl;
-    std::cout << "  glyph  [METRICS H] = " << face->glyph->metrics.height / 64<< std::endl;
+    std::cout << "  glyph  [METRICS H] = " << face->glyph->metrics.height / 64 << std::endl;
     std::cout << "  glyph  [horiAdvance]  = " << face->glyph->metrics.horiAdvance / 64 << std::endl;
-    std::cout << "  glyph  [horiBearingX] = " << face->glyph->metrics.horiBearingX / 64  << std::endl;
-    std::cout << "  glyph  [horiBearingY] = " << face->glyph->metrics.horiBearingY / 64  << std::endl;
-    std::cout << "  glyph  [vertAdvance]  = " << face->glyph->metrics.vertAdvance / 64  << std::endl;
-    std::cout << "  glyph  [vertBearingX] = " << face->glyph->metrics.vertBearingX / 64  << std::endl;
-    std::cout << "  glyph  [vertBearingY] = " << face->glyph->metrics.vertBearingY / 64  << std::endl;
+    std::cout << "  glyph  [horiBearingX] = " << face->glyph->metrics.horiBearingX / 64 << std::endl;
+    std::cout << "  glyph  [horiBearingY] = " << face->glyph->metrics.horiBearingY / 64 << std::endl;
+    std::cout << "  glyph  [vertAdvance]  = " << face->glyph->metrics.vertAdvance / 64 << std::endl;
+    std::cout << "  glyph  [vertBearingX] = " << face->glyph->metrics.vertBearingX / 64 << std::endl;
+    std::cout << "  glyph  [vertBearingY] = " << face->glyph->metrics.vertBearingY / 64 << std::endl;
 
     FT_BBox  bbox = face->bbox;
     std::cout << "  bbox  [xMax] = " << bbox.xMax << std::endl;
@@ -182,22 +239,26 @@ protected:
     std::cout << "  bbox  [yMax] = " << bbox.yMax << std::endl;
     std::cout << "  bbox  [yMin] = " << bbox.yMin << std::endl;
 
-    int A_index = FT_Get_Char_Index(face, 'A' );
-    int V_index = FT_Get_Char_Index(face, 'V' );
+    int A_index = FT_Get_Char_Index(face, 'A');
+    int V_index = FT_Get_Char_Index(face, 'V');
 
     FT_Vector kerning;
-    Err = FT_Get_Kerning( face, A_index, V_index, FT_KERNING_DEFAULT, &kerning);
+    Err = FT_Get_Kerning(face, A_index, V_index, FT_KERNING_DEFAULT, &kerning);
     if (Err)
-      return false;
+    {
+      FT_Done_Face(face);
+      FT_Done_FreeType(library);
+      return nullptr;
+    }
 
     std::cout << "  kerningX A/V = " << kerning.x << std::endl;
     std::cout << "  kerningY A/V = " << kerning.y << std::endl;
 
     chaos::ImageDescription image_description = chaos::ImageDescription(
-      face->glyph->bitmap.buffer, 
+      face->glyph->bitmap.buffer,
       face->glyph->metrics.width / 64, face->glyph->metrics.height / 64,
       8,
-      0       
+      0
     );
 
     chaos::GenTextureParameters parameters;
@@ -205,13 +266,27 @@ protected:
     parameters.wrap_s = GL_CLAMP;
     parameters.wrap_t = GL_CLAMP;
 
-    texture = chaos::GLTools::GenTextureObject(image_description, parameters);
+    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTools::GenTextureObject(image_description, parameters);
 
     FT_Done_Face(face);
     FT_Done_FreeType(library);
 
+    return result;
+  }
+
+  virtual bool Initialize() override
+  {   
+    chaos::Application * application = chaos::Application::GetInstance();
+    if (application == nullptr)
+      return false;
+
+    boost::filesystem::path resources_path       = application->GetResourcesPath();
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
+
+    texture = LoadFont(0);
+    if (texture == nullptr)
+      return false;
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
@@ -243,6 +318,8 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
+
+  int font_index;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

@@ -26,8 +26,6 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
-static int const  MY_CLOCK_ID = 1;
-
 static int const RECTANGLE_DISPLAY_TEST        = 0;
 static int const RECTANGLE_CORNERS_TEST        = 1;
 static int const CORNERS_TO_RECTANGLE_TEST     = 2;
@@ -73,7 +71,8 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 public:
 
   MyGLFWWindowOpenGLTest1() :
-    display_example(0)
+    display_example(0),
+    clock(nullptr)
   {
     SetExample(0);
   }
@@ -258,7 +257,7 @@ protected:
   template<typename T>
   void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
   {
-    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+    double realtime = clock->GetClockTime();
 
     p1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
     p2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
@@ -282,7 +281,7 @@ protected:
   template<typename T>
   void DrawRestrictToInside(RenderingContext const & ctx, T & smaller, T & bigger, bool move_bigger)
   {
-    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+    double realtime = clock->GetClockTime();
 
     if (move_bigger) // bigger should follow smaller
     {
@@ -304,7 +303,7 @@ protected:
   template<typename T>
   void DrawRestrictToOutside(RenderingContext const & ctx, T & src, T & target)
   {
-    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+    double realtime = clock->GetClockTime();
 
     float x = (float)chaos::MathTools::Fmod(realtime, 2.0) - 1; // x in [-1 ... +1]
 
@@ -325,7 +324,7 @@ protected:
   template<typename T>
   void DrawCollision(RenderingContext const & ctx, T p1, T p2)
   {
-    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+    double realtime = clock->GetClockTime();
 
     p1.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
     p1.position.y = 0.0;
@@ -340,7 +339,7 @@ protected:
 
   void DrawGeometryObjects(RenderingContext const & ctx)
   {
-    double realtime = ClockManager::GetClock(MY_CLOCK_ID)->GetClockTime();
+    double realtime = clock->GetClockTime();
 
     // ensure box touch alltogether
     if (display_example == RECTANGLE_DISPLAY_TEST)
@@ -531,6 +530,8 @@ protected:
     program_sphere = nullptr;
 
     debug_display.Finalize();
+
+    RemoveClock(clock->GetClockID());
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -579,8 +580,7 @@ protected:
       return false;
 
     // create a timer
-
-    AddClock(MY_CLOCK_ID);
+    clock = AddClock(-1);
 
     // create meshes
     chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -646,7 +646,6 @@ protected:
     new_display_example = (new_display_example + TEST_COUNT) % TEST_COUNT;
 
     // reset the time
-    chaos::Clock * clock = ClockManager::GetClock(MY_CLOCK_ID);
     if (clock != nullptr)
       clock->Reset();
 
@@ -685,6 +684,8 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
   boost::intrusive_ptr<chaos::GLProgram>  program_sphere;
 
+  chaos::Clock * clock;
+
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;
 
@@ -700,6 +701,31 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+
+#if 0
+  chaos::ClockManager man;
+  chaos::Clock * c1 = man.AddClock(3);
+  man.AddClock(1);
+  man.AddClock(2);
+  man.AddClock(2);
+  man.AddClock(4);
+  man.AddClock(5);
+  man.AddClock(6);
+  man.AddClock(8);
+  chaos::Clock * c2 = man.AddClock(std::numeric_limits<int>::max());
+
+  chaos::Clock * c3 = man.AddClock(-1);
+  c2 = c2;
+#endif
+
+
+
+
+
+
+
+
+
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

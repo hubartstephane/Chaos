@@ -237,9 +237,9 @@ protected:
         int h = face->glyph->metrics.height / 64;
 
         unsigned char * dst = buffer + (pos_x + face->glyph->bitmap_left) + (pos_y /*+ face->glyph->bitmap_top*/) * required_width;
-        for (int j = 0 ; j < h ; ++j)
-          for (int i = 0 ; i < w ; ++i)
-            dst[i + j * required_width] = face->glyph->bitmap.buffer[i + j * w];
+        for (int j = 0; j < h; ++j)
+          for (int i = 0; i < w; ++i)
+            dst[i + j * required_width] = 0;  //face->glyph->bitmap.buffer[i + j * w];
 
         pos_x += face->glyph->advance.x / 64;
 
@@ -259,20 +259,8 @@ protected:
       parameters.wrap_s = GL_CLAMP;
       parameters.wrap_t = GL_CLAMP;
 
-      result = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
-      {
-        for (int i = 0; i < desc.height; ++i)
-        {
-          for (int j = 0; j < desc.width; ++j)
-          {
-            buffer[j + i * desc.width].R = (unsigned char)i;
-            buffer[j + i * desc.width].G = 0;
-            buffer[j + i * desc.width].B = 0;
-          }
-        }
-      });
 
-     // result = chaos::GLTools::GenTextureObject(image_description, parameters);
+      result = chaos::GLTools::GenTextureObject(image_description, parameters);
 
       delete[] buffer;
     }

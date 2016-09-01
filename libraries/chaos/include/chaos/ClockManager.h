@@ -20,16 +20,20 @@ public:
   Clock(double in_time_scale = 1.0, bool in_paused = false) :
     clock_time(0.0),
     time_scale(in_time_scale),
-    paused(in_paused) {}
+    paused(in_paused),
+    clock_id(0){}
 
   /** copy constructor */
   Clock(Clock const & other):
     clock_time(0.0),
     time_scale(other.time_scale),
-    paused(other.paused) {}
+    paused(other.paused),
+    clock_id(other.clock_id) {}
 
   /** returns the internal time */
   double GetClockTime() const { return clock_time; }
+  /** returns the clock ID */
+  int GetClockID() const { return clock_id; }
 
   /** pause the clock */
   void Pause() { paused = true; }
@@ -47,13 +51,13 @@ public:
   /** returns the time scale */
   double GetTimeScale() const { return time_scale; }
 
-protected:
-
   /** advance the clock */
-  void TickClock(double delta_time)
+  bool TickClock(double delta_time)
   {
-    if (!paused)
-      clock_time += time_scale * delta_time;
+    if (paused || time_scale == 0.0)
+      return false;      
+    clock_time += time_scale * delta_time;
+    return true;
   }
 
 protected:
@@ -64,6 +68,8 @@ protected:
   double time_scale;
   /** whether the clock is paused or not */
   bool   paused;  
+  /** the ID of the clock */
+  int    clock_id;
 };
 
   /**
@@ -81,12 +87,12 @@ public:
   /** add a clock */
   Clock * AddClock(int clock_id, double in_time_scale = 1.0, bool in_paused = false);
   /** remove a clock */
-  void RemoveClock(int clock_id);
+  bool RemoveClock(int clock_id);
   /** remove all clocks */
   void Clean();
 
   /** Update clocks */
-  void TickManager(double delta_time);
+  bool TickManager(double delta_time);
 
   /** gets a clock by id */
   Clock * GetClock(int clock_id);
@@ -95,8 +101,13 @@ public:
 
 protected:
 
+  /** gets a free ID for a clock */
+  int FindUnusedID() const;
+
+protected:
+
   /** the clocks */
-  std::map<int, Clock *> clocks;
+  std::vector<Clock *> clocks;
 };
 
 }; // namespace chaos

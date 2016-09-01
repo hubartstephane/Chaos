@@ -46,8 +46,10 @@ static int const BOX_COLLISION_TEST            = 16;
 static int const SPHERE_COLLISION_TEST         = 17;
 static int const RESTRICT_BOX_OUTSIDE_TEST     = 18;
 static int const RESTRICT_SPHERE_OUTSIDE_TEST  = 19;
+static int const POINT_INSIDE_BOX_TEST         = 20;
+static int const POINT_INSIDE_SPHERE_TEST      = 21;
 
-static int const TEST_COUNT = 20;
+static int const TEST_COUNT = 22;
 
 class RenderingContext
 {
@@ -128,8 +130,9 @@ protected:
     if (example == BOX_COLLISION_TEST)            return "box collision";
     if (example == SPHERE_COLLISION_TEST)         return "sphere collision";
     if (example == RESTRICT_BOX_OUTSIDE_TEST)     return "restrict box displacement to outside";
-    if (example == RESTRICT_SPHERE_OUTSIDE_TEST)     return "restrict sphere displacement to outside";
-    
+    if (example == RESTRICT_SPHERE_OUTSIDE_TEST)  return "restrict sphere displacement to outside";
+    if (example == POINT_INSIDE_BOX_TEST)         return "point inside box";
+    if (example == POINT_INSIDE_SPHERE_TEST)      return "point inside sphere";
       
     return nullptr;
   }
@@ -337,6 +340,20 @@ protected:
     DrawPrimitive(ctx, p2, red, collision);
   }
 
+  template<typename T>
+  void DrawPointInside(RenderingContext const & ctx, T p)
+  {
+    double realtime = clock->GetClockTime();
+
+    glm::vec3 pos;
+    pos.x = 15.0f * (float)chaos::MathTools::Cos(2.5 * realtime * M_2_PI);
+    pos.y = 0.0f;
+    pos.z = 0.0f;
+
+    DrawPoint(ctx, pos, white);
+    DrawPrimitive(ctx, p, red, p.Contains(pos));
+  }
+
   void DrawGeometryObjects(RenderingContext const & ctx)
   {
     double realtime = clock->GetClockTime();
@@ -491,6 +508,14 @@ protected:
 
     if (display_example == RESTRICT_SPHERE_OUTSIDE_TEST)
       DrawRestrictToOutside(ctx, smaller_sphere, bigger_sphere);
+
+    if (display_example == POINT_INSIDE_BOX_TEST)
+      DrawPointInside(ctx, bigger_box);
+
+    if (display_example == POINT_INSIDE_SPHERE_TEST)
+      DrawPointInside(ctx, bigger_sphere);
+
+
   }
 
   virtual bool OnDraw(int width, int height) override
@@ -717,13 +742,6 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::Clock * c3 = man.AddClock(-1);
   c2 = c2;
 #endif
-
-
-
-
-
-
-
 
 
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);

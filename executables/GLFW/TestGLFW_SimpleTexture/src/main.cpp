@@ -2,6 +2,7 @@
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
+#include <chaos/GLTextureTools.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
@@ -67,13 +68,13 @@ protected:
           image_buffer[4 * j + 3 + (i * image_desc.pitch_size)] = i;
         }
       }
-      result = chaos::GLTools::GenTextureObject(image_desc);
+      result = chaos::GLTextureTools::GenTextureObject(image_desc);
       delete[](image_buffer);
     }
 
     if (index == 1)
     {
-      result = chaos::GLTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
+      result = chaos::GLTextureTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
       {
         for (int i = 0; i < desc.height; ++i)
         {
@@ -94,7 +95,7 @@ protected:
         return false;
       boost::filesystem::path resources_path = application->GetResourcesPath();
       boost::filesystem::path image_path     = resources_path / ((index == 2)? "opengl_logo.png" : "opengl_logo_rectangle.png");
-      result = chaos::GLTools::GenTextureObject(image_path.string().c_str());
+      result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
     }
 
     return result;
@@ -106,7 +107,7 @@ protected:
     {
       chaos::TextureDescription desc = texture->GetTextureDescription();
 
-      int max_mipmap = chaos::GLTools::GetMipmapLevelCount(desc.width, desc.height);
+      int max_mipmap = chaos::GLTextureTools::GetMipmapLevelCount(desc.width, desc.height);
 
       mipmap_level = (mipmap_level + 1) % max_mipmap;
       glTextureParameteri(texture->GetResourceID(), GL_TEXTURE_BASE_LEVEL, mipmap_level); //GL_TEXTURE_MAX_LEVEL

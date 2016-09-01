@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Texture.h>
-#include <chaos/GLTools.h>
+#include <chaos/GLTextureTools.h>
 #include <chaos/ImageTools.h>
 
 namespace chaos

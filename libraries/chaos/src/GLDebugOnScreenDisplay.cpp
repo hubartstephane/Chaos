@@ -4,6 +4,7 @@
 #include <chaos/BitmapFontTextMeshBuilder.h>
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
+#include <chaos/GLTextureTools.h>
 
 
 namespace chaos
@@ -183,7 +184,7 @@ namespace chaos
       return false;
 
     // create texture
-    texture = chaos::GLTools::GenTextureObject(image);
+    texture = chaos::GLTextureTools::GenTextureObject(image);
     FreeImage_Unload(image);
     if (texture == nullptr)
       return false;

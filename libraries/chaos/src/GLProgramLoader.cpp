@@ -1,5 +1,6 @@
 ﻿#include <chaos/GLProgramLoader.h>
 #include <chaos/GLTools.h>
+#include <chaos/GLShaderTools.h>
 #include <chaos/LogTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/StringTools.h>
@@ -188,11 +189,11 @@ GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLPro
       if (success)
       {
         glLinkProgram(result);
-        success = (GLTools::CheckProgramStatus(result,  GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
+        success = (GLShaderTools::CheckProgramStatus(result,  GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
 
 #if _DEBUG
         if (success)
-          GLTools::DisplayProgramDiagnostic(result);
+          GLShaderTools::DisplayProgramDiagnostic(result);
 #endif
       }
     }

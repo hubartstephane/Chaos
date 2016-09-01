@@ -2,6 +2,7 @@
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
+#include <chaos/GLTextureTools.h> 
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
@@ -260,7 +261,7 @@ protected:
       parameters.wrap_t = GL_CLAMP;
 
 
-      result = chaos::GLTools::GenTextureObject(image_description, parameters);
+      result = chaos::GLTextureTools::GenTextureObject(image_description, parameters);
 
       delete[] buffer;
     }

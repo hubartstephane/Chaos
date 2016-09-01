@@ -2,6 +2,7 @@
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
+#include <chaos/GLTextureTools.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
@@ -127,7 +128,7 @@ protected:
     if (skybox.IsEmpty())
       return false;
     
-    texture = chaos::GLTools::GenTextureObject(&skybox);
+    texture = chaos::GLTextureTools::GenTextureObject(&skybox);
     if (texture == nullptr)
       return false;
 

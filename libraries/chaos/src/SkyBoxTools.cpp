@@ -76,9 +76,26 @@ SkyBoxImages::SkyBoxImages() :
 {
 }
 
+#if 0
+SkyBoxImages::SkyBoxImages(SkyBoxImages && other):
+  single_image(std::move(other.single_image)),
+  left_image(std::move(other.left_image)),
+  right_image(std::move(other.right_image)),
+  top_image(std::move(other.top_image)),
+  bottom_image(std::move(other.bottom_image)),
+  front_image(std::move(other.front_image)),
+  back_image(std::move(other.back_image))
+{
+  int i = 0; 
+
+  ++i;
+
+}
+#endif
+
 SkyBoxImages::~SkyBoxImages()
 {
-  Release(false);
+  Release(true);
 }
 
 void SkyBoxImages::Release(bool bFreeMemory)

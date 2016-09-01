@@ -18,17 +18,77 @@
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
 
-
-bool IS_INSIDE_CUBE = true;
-int  SKYBOX_CHOICE  = 0;
-
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1(){}
+  MyGLFWWindowOpenGLTest1():
+    skybox_index(0){}
 
 protected:
+
+  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  {
+    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+    {
+      ChangeSkyBox(skybox_index + 1);
+    }
+    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+    {
+      ChangeSkyBox(skybox_index - 1);
+    }
+  }
+
+  void ChangeSkyBox(int index)
+  {
+    boost::intrusive_ptr<chaos::Texture> new_texture = GenerateSkyBox(index);
+    if (new_texture != nullptr)
+    {
+      skybox_index = index;
+      texture = new_texture;
+    }
+  }
+
+  boost::intrusive_ptr<chaos::Texture> GenerateSkyBox(int index)
+  {
+    boost::intrusive_ptr<chaos::Texture> result;
+
+    boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
+
+    chaos::SkyBoxImages skybox;
+    if (index == 0)
+    {
+      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg").string().c_str());
+    }
+    else if (index == 1)
+    {
+      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png").string().c_str());
+    }
+    else if (index == 2)
+    {
+      boost::filesystem::path p = resources_path / "Maskonaive";
+
+      boost::filesystem::path left_image   = p / "negx.jpg";
+      boost::filesystem::path front_image  = p / "posz.jpg";
+      boost::filesystem::path right_image  = p / "posx.jpg";
+      boost::filesystem::path back_image   = p / "negz.jpg";
+      boost::filesystem::path top_image    = p / "posy.jpg";
+      boost::filesystem::path bottom_image = p / "negy.jpg";
+
+      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
+        left_image.string().c_str(),
+        right_image.string().c_str(),
+        top_image.string().c_str(),
+        bottom_image.string().c_str(),
+        front_image.string().c_str(),
+        back_image.string().c_str());
+    }
+
+    if (!skybox.IsEmpty())
+      return chaos::GLTextureTools::GenTextureObject(&skybox);
+
+    return nullptr;
+  }
 
   virtual bool OnDraw(int width, int height) override
   {
@@ -72,8 +132,6 @@ protected:
     mesh    = nullptr;
     texture = nullptr;
 
-    skybox.Release(true);
-
     debug_display.Finalize();
   }
 
@@ -100,35 +158,7 @@ protected:
 
     debug_display.AddLine("HelloWorld");
 
-
-    if (SKYBOX_CHOICE == 0)
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg").string().c_str());
-    else if (SKYBOX_CHOICE == 1)
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png").string().c_str());
-    else
-    {
-      boost::filesystem::path p = resources_path / "Maskonaive";
-
-      boost::filesystem::path left_image   = p / "negx.jpg";  
-      boost::filesystem::path front_image  = p / "posz.jpg";
-      boost::filesystem::path right_image  = p / "posx.jpg";
-      boost::filesystem::path back_image   = p / "negz.jpg";
-      boost::filesystem::path top_image    = p / "posy.jpg";
-      boost::filesystem::path bottom_image = p / "negy.jpg";
-
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(), 
-        right_image.string().c_str(), 
-        top_image.string().c_str(), 
-        bottom_image.string().c_str(), 
-        front_image.string().c_str(), 
-        back_image.string().c_str());
-    }   
-
-    if (skybox.IsEmpty())
-      return false;
-    
-    texture = chaos::GLTextureTools::GenTextureObject(&skybox);
+    texture = GenerateSkyBox(0);
     if (texture == nullptr)
       return false;
 
@@ -145,9 +175,6 @@ protected:
     mesh = chaos::CubeMeshGenerator(b).GenerateMesh(); 
     if (mesh == nullptr)
       return false;
-
-    if (!IS_INSIDE_CUBE)
-      fps_camera.fps_controller.position.z = 50.0f;
    
     return true;
   }
@@ -190,12 +217,12 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
-  
-  chaos::SkyBoxImages skybox;
-
+ 
   chaos::MyGLFWFpsCamera fps_camera;
 
   chaos::GLDebugOnScreenDisplay debug_display;
+
+  int skybox_index;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

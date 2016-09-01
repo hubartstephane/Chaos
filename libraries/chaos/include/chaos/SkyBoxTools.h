@@ -60,6 +60,8 @@ public:
 
   /** constructor */
   SkyBoxImages();
+  /** move constructor */
+  SkyBoxImages(SkyBoxImages && other) = default;
   /** destructor */
   ~SkyBoxImages();
 

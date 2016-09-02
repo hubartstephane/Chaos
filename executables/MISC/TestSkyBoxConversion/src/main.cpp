@@ -2,6 +2,7 @@
 #include <chaos/SkyBoxTools.h>
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
+#include <chaos/StringTools.h>
 
 // ====================================================================================
 // Take 6 images and convert them into a single image. Then save into Temp. Show the file
@@ -46,7 +47,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 // Take 1 image and convert it into six images. Then save into Temp. Show the directory
 // ====================================================================================
 
-void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesystem::path const & p)
+void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, char const * dst_filename)
 {
   chaos::SkyBoxImages single_sky_box = chaos::SkyBoxTools::LoadSingleSkyBox(p.string().c_str());
   if (single_sky_box.IsSingleImage())
@@ -66,21 +67,22 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
         FIBITMAP * image = multiple_sky_box.GetImage(i);
         if (image != nullptr)
         {
-          boost::filesystem::path dst;
+         char const * suffix = nullptr;
           if (i == chaos::SkyBoxImages::IMAGE_LEFT)
-            dst = left_image;
+            suffix = left_image;
           else if (i == chaos::SkyBoxImages::IMAGE_RIGHT)
-            dst = right_image;
+            suffix = right_image;
           else if (i == chaos::SkyBoxImages::IMAGE_TOP)
-            dst = top_image;
+            suffix = top_image;
           else if (i == chaos::SkyBoxImages::IMAGE_BOTTOM)
-            dst = bottom_image;
+            suffix = bottom_image;
           else if (i == chaos::SkyBoxImages::IMAGE_FRONT)
-            dst = front_image;
+            suffix = front_image;
           else if (i == chaos::SkyBoxImages::IMAGE_BACK)
-            dst = back_image;
+            suffix = back_image;
 
-          FreeImage_Save(FIF_PNG ,image, (dst_p / dst).string().c_str(), 0);
+          std::string filename = chaos::StringTools::Printf("%s_%s", dst_filename, suffix);         
+          FreeImage_Save(FIF_PNG ,image, (dst_p / filename).string().c_str(), 0);
         } 
       }
     }
@@ -92,7 +94,7 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 // save it into Temp. Show the file
 // ====================================================================================
 
-void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesystem::path const & p)
+void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, char const * dst_filename)
 {
   chaos::SkyBoxImages single_image = chaos::SkyBoxTools::LoadSingleSkyBox(p.string().c_str());
   if (single_image.IsSingleImage())
@@ -108,7 +110,7 @@ void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesyst
         FIBITMAP * image = single_image_back.GetImage(chaos::SkyBoxImages::IMAGE_SINGLE);
         if (image != nullptr)
         {
-          boost::filesystem::path dst = dst_p / "DoubleConversion.png";
+          boost::filesystem::path dst = dst_p / dst_filename;
           FreeImage_Save(FIF_PNG ,image, dst.string().c_str(), 0);
         }
       }
@@ -134,11 +136,11 @@ int _tmain(int argc, char ** argv, char ** env)
     TestConvertToSingle(dst_p, resources_path / "Maskonaive", true);
     TestConvertToSingle(dst_p, resources_path / "Maskonaive", false);
 
-    TestConvertToMultiple(dst_p, resources_path / "violentdays_large.jpg");
-    TestConvertToMultiple(dst_p, resources_path / "originalcubecross.png");
+    TestConvertToMultiple(dst_p, resources_path / "violentdays_large.jpg", "MultipleConversionViolent");
+    TestConvertToMultiple(dst_p, resources_path / "originalcubecross.png", "MultipleConversionOriginalCube");
 
-    TestDoubleConversion(dst_p, resources_path / "violentdays_large.jpg");
-    TestDoubleConversion(dst_p, resources_path / "originalcubecross.png");
+    TestDoubleConversion(dst_p, resources_path / "violentdays_large.jpg", "DoubleConversionViolent.png");
+    TestDoubleConversion(dst_p, resources_path / "originalcubecross.png", "DoubleConversionOriginalCube.png");
 
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }

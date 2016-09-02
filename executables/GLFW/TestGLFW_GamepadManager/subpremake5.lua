@@ -4,6 +4,7 @@
 
   WindowedApp()
   DependOnLib("CHAOS")
+  DeclareResource("resources")      
     
 
                        

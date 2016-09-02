@@ -64,7 +64,6 @@ glm::ivec3 SkyBoxSingleDisposition::GetPositionAndFlags(int image_type) const
   return wrong_result;
 }
 
-
 SkyBoxImages::SkyBoxImages() : 
   single_image(nullptr),
   left_image(nullptr),
@@ -76,26 +75,39 @@ SkyBoxImages::SkyBoxImages() :
 {
 }
 
-#if 0
 SkyBoxImages::SkyBoxImages(SkyBoxImages && other):
-  single_image(std::move(other.single_image)),
-  left_image(std::move(other.left_image)),
-  right_image(std::move(other.right_image)),
-  top_image(std::move(other.top_image)),
-  bottom_image(std::move(other.bottom_image)),
-  front_image(std::move(other.front_image)),
-  back_image(std::move(other.back_image))
+  single_image(nullptr),
+  left_image(nullptr),
+  right_image(nullptr),
+  top_image(nullptr),
+  bottom_image(nullptr),
+  front_image(nullptr),
+  back_image(nullptr)
 {
-  int i = 0; 
-
-  ++i;
-
+  std::swap(single_image, other.single_image);
+  std::swap(left_image,   other.left_image);
+  std::swap(right_image,  other.right_image);
+  std::swap(top_image,    other.top_image);
+  std::swap(bottom_image, other.bottom_image);
+  std::swap(front_image,  other.front_image);
+  std::swap(back_image,   other.back_image);
 }
-#endif
 
 SkyBoxImages::~SkyBoxImages()
 {
   Release(true);
+}
+
+SkyBoxImages & SkyBoxImages::operator = (SkyBoxImages && other)
+{
+  std::swap(single_image, other.single_image);
+  std::swap(left_image,   other.left_image);
+  std::swap(right_image,  other.right_image);
+  std::swap(top_image,    other.top_image);
+  std::swap(bottom_image, other.bottom_image);
+  std::swap(front_image,  other.front_image);
+  std::swap(back_image,   other.back_image);
+  return *this;   
 }
 
 void SkyBoxImages::Release(bool bFreeMemory)

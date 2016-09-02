@@ -60,8 +60,10 @@ public:
 
   /** constructor */
   SkyBoxImages();
+  /** copy constructor */
+  SkyBoxImages(SkyBoxImages const & other) = delete;
   /** move constructor */
-  SkyBoxImages(SkyBoxImages && other) = default;
+  SkyBoxImages(SkyBoxImages && other);
   /** destructor */
   ~SkyBoxImages();
 
@@ -108,6 +110,12 @@ public:
   bool SetImage(int image_type, FIBITMAP * image, bool bReleasePrevious);
   /** compare 2 images and ensure they are compatible */
   static bool AreImageCompatible(FIBITMAP * image1, FIBITMAP * image2);
+
+  /** no copy */
+  SkyBoxImages & operator = (SkyBoxImages const & other) = delete;
+  /** move operator */
+  SkyBoxImages & operator = (SkyBoxImages && other);
+ 
 
 protected:
 

@@ -2,7 +2,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/Application.h>
-
+#include <chaos/FileTools.h>
 
 BOOL WINAPI EnumWindowCallback(HWND hWnd, LPARAM lParam)
 {
@@ -72,6 +72,14 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
   FreeImage_Initialise();
+
+  boost::filesystem::path dst_p;
+  if (chaos::FileTools::CreateTemporaryDirectory("toto", dst_p))
+  {
+  
+  
+  
+  }
 
   std::vector<MONITORINFOEX> monitors = chaos::WinTools::EnumerateMonitors();
 

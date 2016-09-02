@@ -5,12 +5,9 @@
 #include <chaos/TextureAtlas.h>
 #include <chaos/MathTools.h>
 #include <chaos/Application.h>
+#include <chaos/FileTools.h>
 
-
-boost::filesystem::path application_path;
-boost::filesystem::path resources_path;
-
-void TestAtlasDebugMode()
+void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
   chaos::TextureAtlasData data;
   data.SetDebugMode(true);
@@ -40,12 +37,12 @@ void TestAtlasDebugMode()
   
   if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
   {  
-    boost::filesystem::path html_path = chaos::WinTools::GetUserDesktopPath() / "Atlas_Final.html";
+    boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
     atlas_creator.OutputToHTMLFile(html_path.string().c_str(), params);
   }
 }
 
-void TestAtlasNormalMode()
+void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
   // XXX : the resources directory contains
   //        - a bmp image whose extension has been swapped to ".txt" => detected has an image
@@ -56,7 +53,7 @@ void TestAtlasNormalMode()
   int atlas_height  = 512;
   int atlas_padding = 10;
 
-  boost::filesystem::path result_path = chaos::WinTools::GetUserDesktopPath() / "AtlasResult" / "MyAtlas";
+  boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas";
 
   chaos::TextureAtlasCreator::CreateAtlasFromDirectory(
     resources_path.string().c_str(), 
@@ -77,11 +74,16 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MathTools::ResetRandSeed();
 
-  application_path = chaos::Application::GetInstance()->GetApplicationPath();
-  resources_path   = chaos::Application::GetInstance()->GetResourcesPath(); 
+  boost::filesystem::path dst_p;
+  if (chaos::FileTools::CreateTemporaryDirectory("TestAtlas", dst_p))
+  {
+    boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
-  TestAtlasDebugMode();
-  TestAtlasNormalMode();
+    TestAtlasDebugMode(dst_p, resources_path);
+    TestAtlasNormalMode(dst_p, resources_path);
+
+    chaos::WinTools::ShowFile(dst_p.string().c_str());
+  }
 
   FreeImage_DeInitialise();
 

@@ -3,6 +3,9 @@
 #include <chaos/StringTools.h>
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
+#include <chaos/Stringtools.h>
+
+#if 0
 
 BOOL WINAPI EnumWindowCallback(HWND hWnd, LPARAM lParam)
 {
@@ -59,9 +62,22 @@ void HandleConsoleEvents()
   }
 }
 
+#endif
 
-
-
+void CaptureAndSaveMonitor(boost::filesystem::path const & dst_p, char const * monitor_name, char const * filename)
+{
+  HDC hDC = CreateDC(monitor_name, NULL, NULL, NULL);
+  if (hDC != NULL)
+  {
+    FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(hDC);
+    if (bitmap != NULL)
+    {
+      FreeImage_Save(FIF_PNG, bitmap, (dst_p / filename).string().c_str());  
+      FreeImage_Unload(bitmap);
+    }
+    DeleteDC(hDC);
+  }
+}
 
 int _tmain(int argc, char ** argv, char ** env)
 {
@@ -69,55 +85,18 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-
-
   FreeImage_Initialise();
 
   boost::filesystem::path dst_p;
-  if (chaos::FileTools::CreateTemporaryDirectory("toto", dst_p))
+  if (chaos::FileTools::CreateTemporaryDirectory("ScreenShot", dst_p))
   {
+    std::vector<MONITORINFOEX> monitors = chaos::WinTools::EnumerateMonitors();
+    for (size_t i = 0 ; i < monitors.size() ; ++i)
+      CaptureAndSaveMonitor(dst_p, monitors[i].szDevice, chaos::StringTools::Printf("Monitor%d.png", i).c_str());
+    CaptureAndSaveMonitor(dst_p, "DISPLAY", "MainMonitor.png");
   
-  
-  
+    chaos::WinTools::ShowFile(dst_p.string().c_str());
   }
-
-  std::vector<MONITORINFOEX> monitors = chaos::WinTools::EnumerateMonitors();
-
-  for (size_t i = 0 ; i < monitors.size() ; ++i)
-  {
-    HDC hDC = CreateDC(monitors[i].szDevice, NULL, NULL, NULL);
-    if (hDC != NULL)
-    {
-      FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(hDC);
-      if (bitmap != NULL)
-      {
-        std::string path = chaos::StringTools::Printf("c:\\temp\\testshu_%d.png", i);
-
-        FreeImage_Save(FIF_PNG, bitmap, path.c_str());  
-        FreeImage_Unload(bitmap);
-      }
-      DeleteDC(hDC);
-    }
-  }
-  
-
-
-
-  HDC hDC = CreateDC("DISPLAY", NULL, NULL, NULL); // for the PRIMARY
-  if (hDC != NULL)
-  {
-    FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(hDC);
-    if (bitmap != NULL)
-    {
-      FreeImage_Save(FIF_PNG, bitmap, "c:\\temp\\display.png");  
-      FreeImage_Unload(bitmap);
-    }
-    DeleteDC(hDC);
-  }
-
-
-
-
 
   FreeImage_DeInitialise();
 

@@ -376,8 +376,8 @@ GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, GenText
       glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length); // do not remove this line from the loop. Maybe future implementation will accept                                                                             // image with same size but different pitch
 
       int depth = GetLayerValueFromCubeMapFace(targets[i], 0);
-      
-      glTextureSubImage3D(result.texture_id, 0, 0, 0, depth, image.width, image.height, 1, format, GL_UNSIGNED_BYTE, image.data);
+              
+      glTextureSubImage3D(result.texture_id, 0, 0, 0, depth, image.width, image.height, 1, format, GL_UNSIGNED_BYTE, data);
 
       if (new_buffer != nullptr)
         delete [](new_buffer);

@@ -156,7 +156,7 @@ protected:
     if (!debug_display.Initialize(debug_params))
       return false;
 
-    debug_display.AddLine("HelloWorld");
+    debug_display.AddLine("Press +/- to change skybox");
 
     texture = GenerateSkyBox(0);
     if (texture == nullptr)
@@ -236,8 +236,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor       = nullptr;
-  params.width         = 500;
-  params.height        = 500;
+  params.width         = 700;
+  params.height        = 700;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

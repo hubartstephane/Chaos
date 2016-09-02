@@ -69,18 +69,18 @@ void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription 
   {
     for (int l = 0 ; l < height ; ++l)
     {
-      SIZE3 const * s = ImageTools::GetPixelAddress<SIZE3>(src_desc, src_x, src_y + l);
-      SIZE3       * d = ImageTools::GetPixelAddress<SIZE3>(dst_desc, dst_x, dst_y + l);
-      memcpy(d, s, width * sizeof(SIZE3));
+      PixelRGB const * s = ImageTools::GetPixelAddress<PixelRGB>(src_desc, src_x, src_y + l);
+      PixelRGB       * d = ImageTools::GetPixelAddress<PixelRGB>(dst_desc, dst_x, dst_y + l);
+      memcpy(d, s, width * sizeof(PixelRGB));
     }
   }
   else if (src_desc.bpp == 32)
   {
     for (int l = 0 ; l < height ; ++l)
     {
-      SIZE4 const * s = ImageTools::GetPixelAddress<SIZE4>(src_desc, src_x, src_y + l);
-      SIZE4       * d = ImageTools::GetPixelAddress<SIZE4>(dst_desc, dst_x, dst_y + l);
-      memcpy(d, s, width * sizeof(SIZE4));
+      PixelRGBA const * s = ImageTools::GetPixelAddress<PixelRGBA>(src_desc, src_x, src_y + l);
+      PixelRGBA       * d = ImageTools::GetPixelAddress<PixelRGBA>(dst_desc, dst_x, dst_y + l);
+      memcpy(d, s, width * sizeof(PixelRGBA));
     }
   }
 }
@@ -100,8 +100,8 @@ void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc,
   {
     for (int l = 0 ; l < height ; ++l)
     {
-      SIZE3 const * s = ImageTools::GetPixelAddress<SIZE3>(src_desc, src_x, src_y + l);
-      SIZE3       * d = ImageTools::GetPixelAddress<SIZE3>(dst_desc, dst_x, dst_y + height - 1 - l);
+      PixelRGB const * s = ImageTools::GetPixelAddress<PixelRGB>(src_desc, src_x, src_y + l);
+      PixelRGB       * d = ImageTools::GetPixelAddress<PixelRGB>(dst_desc, dst_x, dst_y + height - 1 - l);
       for (int c = 0 ; c < width ; ++c)
         d[width - 1 - c] = s[c];
     }
@@ -110,8 +110,8 @@ void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc,
   {
     for (int l = 0 ; l < height ; ++l)
     {
-      SIZE4 const * s = ImageTools::GetPixelAddress<SIZE4>(src_desc, src_x, src_y + l);
-      SIZE4       * d = ImageTools::GetPixelAddress<SIZE4>(dst_desc, dst_x, dst_y + height - 1 - l);
+      PixelRGBA const * s = ImageTools::GetPixelAddress<PixelRGBA>(src_desc, src_x, src_y + l);
+      PixelRGBA       * d = ImageTools::GetPixelAddress<PixelRGBA>(dst_desc, dst_x, dst_y + height - 1 - l);
       for (int c = 0 ; c < width ; ++c)
         d[width - 1 - c] = s[c];
     }

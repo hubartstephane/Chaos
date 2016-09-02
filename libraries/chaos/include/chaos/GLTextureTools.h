@@ -9,31 +9,6 @@ namespace chaos
 {
 
   /**
-   * PixelRGB : a structure that helps manipulating 24 bit pixel
-   **/
-
-  class PixelRGB
-  {
-  public:
-    unsigned char B;
-    unsigned char G;
-    unsigned char R;
-  };
-
-  /**
-   * PixelRGBA : a structure that helps manipulating 32 bit pixel
-   **/
-
-  class PixelRGBA
-  {
-  public:
-    unsigned char B;
-    unsigned char G;
-    unsigned char R;
-    unsigned char A;
-  };
-
-  /**
   * GenTextureResult : result for gen texture methods
   **/
 

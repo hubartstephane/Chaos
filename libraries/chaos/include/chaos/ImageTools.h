@@ -5,6 +5,31 @@
 namespace chaos
 {
 
+  /**
+  * PixelRGB : a structure that helps manipulating 24 bit pixel
+  **/
+
+  class PixelRGB
+  {
+  public:
+    unsigned char B;
+    unsigned char G;
+    unsigned char R;
+  };
+
+  /**
+  * PixelRGBA : a structure that helps manipulating 32 bit pixel
+  **/
+
+  class PixelRGBA
+  {
+  public:
+    unsigned char B;
+    unsigned char G;
+    unsigned char R;
+    unsigned char A;
+  };
+
 
 /** 
  * ImageFaceDescription : data to work with pixels
@@ -69,14 +94,6 @@ public:
 
 class ImageTools
 {
-
-  /** class for pixel copy (RGB) */
-  typedef struct { char unused[3]; } SIZE3;
-  /** class for pixel copy (RGBA) */
-  typedef struct { char unused[4]; } SIZE4;
-
-  BOOST_STATIC_ASSERT(sizeof(SIZE3) == 3);
-  BOOST_STATIC_ASSERT(sizeof(SIZE4) == 4);
 
 public:
 

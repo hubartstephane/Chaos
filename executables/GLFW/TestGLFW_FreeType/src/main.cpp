@@ -1,4 +1,4 @@
-#include <chaos/StandardHeaders.h> 
+#include <chaos/StandardHeaders.h>
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
@@ -90,43 +90,29 @@ protected:
     return nullptr;
   }
 
-  boost::intrusive_ptr<chaos::Texture> LoadFont(int index, char const * str)
+  char const * GetFontName(int index) const
   {
-    FT_Error Err;
+    if (index == 0) 
+      return "Flatwheat-Regular.ttf";
+    if (index == 1) 
+      return "Flatwheat-Italic.ttf";
+    if (index == 2) 
+      return "unispace.ttf";
+    if (index == 3) 
+      return "unispace bold.ttf";
+    if (index == 4) 
+      return "unispace italic.ttf";
+    if (index == 5) 
+      return "unispace bold italic.ttf";
+    if (index == 6) 
+      return "Outwrite.ttf"; // kerning !!
+    if (index == 7) 
+      return "absender1.ttf";    // 3 charmaps    
+    return nullptr;
+  }
 
-    FT_Library library;
-
-    chaos::Application * application = chaos::Application::GetInstance();
-    if (application == nullptr)
-      return nullptr;
-
-    Err = FT_Init_FreeType(&library);
-    if (Err)
-      return ReleaseResourceImpl(&library, nullptr);
-
-    char const * font_name = nullptr;
-    if (index == 0) font_name = "Flatwheat-Regular.ttf";
-    if (index == 1) font_name = "Flatwheat-Italic.ttf";
-    if (index == 2) font_name = "unispace.ttf";
-    if (index == 3) font_name = "unispace bold.ttf";
-    if (index == 4) font_name = "unispace italic.ttf";
-    if (index == 5) font_name = "unispace bold italic.ttf";
-    if (index == 6) font_name = "Outwrite.ttf"; // kerning !!
-    if (index == 7) font_name = "absender1.ttf";    // 3 charmaps
-    if (font_name == nullptr)
-      return ReleaseResourceImpl(&library, nullptr);
-
-
-    std::cout << "==================== " << font_name << " ====================" << std::endl;
-
-    boost::filesystem::path resources_path = application->GetResourcesPath();
-    boost::filesystem::path font_path      = resources_path / font_name;
-
-    FT_Face face;
-    Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
-    if (Err)
-      return ReleaseResourceImpl(&library, nullptr);
-
+  void DisplayFaceInfo(FT_Face face) const
+  {
     std::cout << "num_glyphs         : " << face->num_glyphs << std::endl;
     std::cout << "num_faces          : " << face->num_faces << std::endl;
     std::cout << "units_per_EM       : " << face->units_per_EM << std::endl;
@@ -175,78 +161,214 @@ protected:
       std::cout << "  Fixed Size [HEIGHT] = " << face->available_sizes[i].height << std::endl;
     }
 
-    Err = FT_Set_Pixel_Sizes(face, 128, 128);
+    FT_BBox  bbox = face->bbox;
+    std::cout << "  bbox  [xMax] = " << bbox.xMax << std::endl;
+    std::cout << "  bbox  [xMin] = " << bbox.xMin << std::endl;
+    std::cout << "  bbox  [yMax] = " << bbox.yMax << std::endl;
+    std::cout << "  bbox  [yMin] = " << bbox.yMin << std::endl;
+  }
+
+  void DisplayGlyphInfo(FT_GlyphSlot glyph) const
+  {
+    if (glyph->format == FT_GLYPH_FORMAT_NONE) 
+      std::cout << "FT_GLYPH_FORMAT_NONE" << std::endl;
+    else if (glyph->format == FT_GLYPH_FORMAT_COMPOSITE) 
+      std::cout << "FT_GLYPH_FORMAT_COMPOSITE" << std::endl;
+    else if (glyph->format == FT_GLYPH_FORMAT_BITMAP)
+      std::cout << "FT_GLYPH_FORMAT_BITMAP" << std::endl;
+    else if (glyph->format == FT_GLYPH_FORMAT_OUTLINE)
+      std::cout << "FT_GLYPH_FORMAT_OUTLINE" << std::endl;
+    else if (glyph->format == FT_GLYPH_FORMAT_PLOTTER)
+      std::cout << "FT_GLYPH_FORMAT_PLOTTER" << std::endl;
+
+    std::cout << "- glyph  [WIDTH]     = " << glyph->bitmap.width << std::endl;
+    std::cout << "  glyph  [PITCH]     = " << glyph->bitmap.pitch << std::endl;
+    std::cout << "  glyph  [GRAYS]     = " << glyph->bitmap.num_grays << std::endl;
+    std::cout << "  glyph  [MODE]      = " << (int)glyph->bitmap.pixel_mode << std::endl;
+    std::cout << "  glyph  [ROWS]      = " << glyph->bitmap.rows << std::endl;
+    std::cout << "  glyph  [ADVANCE X] = " << glyph->advance.x / 64 << std::endl;
+    std::cout << "  glyph  [ADVANCE Y] = " << glyph->advance.y / 64 << std::endl;
+    std::cout << "  glyph  [BITMAP L]  = " << glyph->bitmap_left << std::endl;
+    std::cout << "  glyph  [BITMAP T]  = " << glyph->bitmap_top << std::endl;
+    std::cout << "  glyph  [METRICS W] = " << glyph->metrics.width / 64 << std::endl;
+    std::cout << "  glyph  [METRICS H] = " << glyph->metrics.height / 64 << std::endl;
+    std::cout << "  glyph  [horiAdvance]  = " << glyph->metrics.horiAdvance / 64 << std::endl;
+    std::cout << "  glyph  [horiBearingX] = " << glyph->metrics.horiBearingX / 64 << std::endl;
+    std::cout << "  glyph  [horiBearingY] = " << glyph->metrics.horiBearingY / 64 << std::endl;
+    std::cout << "  glyph  [vertAdvance]  = " << glyph->metrics.vertAdvance / 64 << std::endl;
+    std::cout << "  glyph  [vertBearingX] = " << glyph->metrics.vertBearingX / 64 << std::endl;
+    std::cout << "  glyph  [vertBearingY] = " << glyph->metrics.vertBearingY / 64 << std::endl;
+  }
+
+
+  boost::intrusive_ptr<chaos::Texture> LoadFont(int index, char const * str)
+  {
+    FT_Error Err;
+
+    FT_Library library;
+
+    chaos::Application * application = chaos::Application::GetInstance();
+    if (application == nullptr)
+      return nullptr;
+
+    Err = FT_Init_FreeType(&library);
+    if (Err)
+      return ReleaseResourceImpl(&library, nullptr);
+
+    char const * font_name = GetFontName(index);
+    if (font_name == nullptr)
+      return ReleaseResourceImpl(&library, nullptr);
+
+    std::cout << "==================== " << font_name << " ====================" << std::endl;
+
+    boost::filesystem::path resources_path = application->GetResourcesPath();
+    boost::filesystem::path font_path      = resources_path / font_name;
+
+    FT_Face face;
+    Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
+    if (Err)
+      return ReleaseResourceImpl(&library, nullptr);
+
+    DisplayFaceInfo(face);
+
+    Err = FT_Set_Pixel_Sizes(face, 128, 128); // Important else FT_Load_Glyph(...) fails
     if (Err)
       return ReleaseResourceImpl(&library, &face);
 
+    std::cout << " STEP 1 ---------------------------------------------" << std::endl;
 
+    int min_x = std::numeric_limits<int>::max();
+    int max_x = std::numeric_limits<int>::min();
+    int min_y = std::numeric_limits<int>::max();
+    int max_y = std::numeric_limits<int>::min();
 
-
-#if 1
     // compute required size
-    int required_width  = 0;
-    int required_height = 0;
-
+    int pos_x     = 0;
+    int pos_y     = 0;
     int character = 0;
     while (str[character] != 0)
-    {
-      int glyph_index = FT_Get_Char_Index(face, str[character]);
+    {    
+      // find, load glyph and render it (so bitmap_left, bitmap_top ... are initialized)
+      int glyph_index = FT_Get_Char_Index(face, str[character]); // first pass, ensure we get the character      
       if (glyph_index == 0)
-        return ReleaseResourceImpl(&library, &face);
+        continue; 
 
-      Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+      Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT); // first pass
       if (Err)
-        return ReleaseResourceImpl(&library, &face);
+        continue;
 
-      int w = (int)face->glyph->metrics.width / 64;
-      int h = (int)face->glyph->metrics.height / 64;
+      Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+      if (Err)
+        continue;
 
-      int next = face->glyph->bitmap_left + w;
+      // get the metrics
+      int w   = (int)face->glyph->metrics.width / 64;
+      int h   = (int)face->glyph->metrics.height / 64;
+      int bl  = face->glyph->bitmap_left;
+      int bt  = face->glyph->bitmap_top;
+      int avx = (int)face->glyph->advance.x / 64;
+      int avy = (int)face->glyph->advance.y / 64;
 
-      if (str[character + 1] == 0)
-        required_width += next;
-      else
-        required_width += max(next, (int)face->glyph->advance.x / 64);
+      bl = bt = 0;
 
-      required_height = max(required_height, h + face->glyph->bitmap_top);
+      std::cout << "character : " << str[character] << std::endl;
+      std::cout << " w     : " << w     << std::endl;
+      std::cout << " h     : " << h     << std::endl;
+      std::cout << " bl    : " << bl    << std::endl;
+      std::cout << " bt    : " << bt    << std::endl;
+      std::cout << " avx   : " << avx   << std::endl;
+      std::cout << " avy   : " << avy   << std::endl;
+      std::cout << " pos_x : " << pos_x << std::endl;
+      std::cout << " pos_y : " << pos_y << std::endl;
+
+      int x1 = pos_x + bl;
+      int x2 = pos_x + bl + w;
+
+      int y1 = pos_y + bt;
+      int y2 = pos_y + bt + h;
+
+      min_x = min(min_x, min(x1, x2));
+      min_y = min(min_y, min(y1, y2));
+
+      max_x = max(max_x, max(x1, x2));
+      max_y = max(max_y, max(y1, y2));
+
+      pos_x += avx;
+      pos_y += avy;
 
       ++character;
     }
-    // reserve a buffer big enought
-    boost::intrusive_ptr<chaos::Texture> result;
 
+    int required_width  = max_x - min_x;
+    int required_height = max_y - min_y;
+
+    std::cout << "required_width  : " << required_width  << std::endl;
+    std::cout << "required_height : " << required_height << std::endl;
+
+
+    std::cout << " STEP 2 ---------------------------------------------" << std::endl;
+
+    // reserve a buffer big enough
+    boost::intrusive_ptr<chaos::Texture> result;
+   
     unsigned char * buffer = new unsigned char[required_width * required_height];
     if (buffer != nullptr)
     {
       memset(buffer, 0, required_width * required_height);
 
-      int pos_x = 0;
-      int pos_y = 0;
+      unsigned char * decal_buffer = buffer - min_x - min_y * required_width; // work with negative coordinate easily
 
+      int pos_x     = 0;
+      int pos_y     = 0;
       int character = 0;
       while (str[character] != 0)
       {
         int glyph_index = FT_Get_Char_Index(face, str[character]);
 
-        FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+        Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+        if (Err)
+          continue;
 
         Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
         if (Err)
-          return ReleaseResourceImpl(&library, &face);
+          continue;
 
-        int w = face->glyph->metrics.width  / 64;
-        int h = face->glyph->metrics.height / 64;
+        // get the metrics
+        int w = (int)face->glyph->metrics.width / 64;
+        int h = (int)face->glyph->metrics.height / 64;
+        int bl = face->glyph->bitmap_left;
+        int bt = face->glyph->bitmap_top;
+        int avx = (int)face->glyph->advance.x / 64;
+        int avy = (int)face->glyph->advance.y / 64;
 
-        unsigned char * dst = buffer + (pos_x + face->glyph->bitmap_left) + (pos_y /*+ face->glyph->bitmap_top*/) * required_width;
+        bl = bt = 0;
+
+        std::cout << "character : " << str[character] << std::endl;
+        std::cout << " w     : " << w << std::endl;
+        std::cout << " h     : " << h << std::endl;
+        std::cout << " bl    : " << bl << std::endl;
+        std::cout << " bt    : " << bt << std::endl;
+        std::cout << " avx   : " << avx << std::endl;
+        std::cout << " avy   : " << avy << std::endl;
+        std::cout << " pos_x : " << pos_x << std::endl;
+        std::cout << " pos_y : " << pos_y << std::endl;
+
+        unsigned char * dst = decal_buffer + (pos_x + bl) + (pos_y + bt) * required_width;
+
         for (int j = 0; j < h; ++j)
+        {
           for (int i = 0; i < w; ++i)
-            dst[i + j * required_width] = 0;  //face->glyph->bitmap.buffer[i + j * w];
+          {
+            unsigned char       * d = &dst[i + j * required_width];
+            unsigned char const * s = &face->glyph->bitmap.buffer[i + (h - 1 - j) * w]; // XXX ! (h - 1 - j) => reverse up to down line
+            d[0] = s[0];
+          }
+        }
 
-        pos_x += face->glyph->advance.x / 64;
-
+        pos_x += avx;
+        pos_y += avy;
         ++character;
       }
-
 
 
 
@@ -260,19 +382,15 @@ protected:
       parameters.wrap_s = GL_CLAMP;
       parameters.wrap_t = GL_CLAMP;
 
-
       result = chaos::GLTextureTools::GenTextureObject(image_description, parameters);
 
       delete[] buffer;
     }
 
-
-    
-
     ReleaseResourceImpl(&library, &face);
     return result;
 
-#endif
+
 
 
 
@@ -281,50 +399,9 @@ protected:
 
 #if 0
 
-    int glyph_index = FT_Get_Char_Index(face, 'R');
-    if (glyph_index == 0)
-      return ReleaseResourceImpl(&library, &face);
-
-    Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
-    if (Err)
-      return ReleaseResourceImpl(&library, &face);
 
 
 
-    Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-    if (Err)
-      return ReleaseResourceImpl(&library, &face);
-
-    if (face->glyph->format == FT_GLYPH_FORMAT_NONE) std::cout << "FT_GLYPH_FORMAT_NONE" << std::endl;
-    if (face->glyph->format == FT_GLYPH_FORMAT_COMPOSITE) std::cout << "FT_GLYPH_FORMAT_COMPOSITE" << std::endl;
-    if (face->glyph->format == FT_GLYPH_FORMAT_BITMAP) std::cout << "FT_GLYPH_FORMAT_BITMAP" << std::endl;
-    if (face->glyph->format == FT_GLYPH_FORMAT_OUTLINE) std::cout << "FT_GLYPH_FORMAT_OUTLINE" << std::endl;
-    if (face->glyph->format == FT_GLYPH_FORMAT_PLOTTER) std::cout << "FT_GLYPH_FORMAT_PLOTTER" << std::endl;
-
-
-    std::cout << "- glyph  [WIDTH]     = " << face->glyph->bitmap.width << std::endl;
-    std::cout << "  glyph  [PITCH]     = " << face->glyph->bitmap.pitch << std::endl;
-    std::cout << "  glyph  [GRAYS]     = " << face->glyph->bitmap.num_grays << std::endl;
-    std::cout << "  glyph  [MODE]      = " << (int)face->glyph->bitmap.pixel_mode << std::endl;
-    std::cout << "  glyph  [ROWS]      = " << face->glyph->bitmap.rows << std::endl;
-    std::cout << "  glyph  [ADVANCE X] = " << face->glyph->advance.x / 64 << std::endl;
-    std::cout << "  glyph  [ADVANCE Y] = " << face->glyph->advance.y / 64 << std::endl;
-    std::cout << "  glyph  [BITMAP L]  = " << face->glyph->bitmap_left << std::endl;
-    std::cout << "  glyph  [BITMAP T]  = " << face->glyph->bitmap_top << std::endl;
-    std::cout << "  glyph  [METRICS W] = " << face->glyph->metrics.width / 64 << std::endl;
-    std::cout << "  glyph  [METRICS H] = " << face->glyph->metrics.height / 64 << std::endl;
-    std::cout << "  glyph  [horiAdvance]  = " << face->glyph->metrics.horiAdvance / 64 << std::endl;
-    std::cout << "  glyph  [horiBearingX] = " << face->glyph->metrics.horiBearingX / 64 << std::endl;
-    std::cout << "  glyph  [horiBearingY] = " << face->glyph->metrics.horiBearingY / 64 << std::endl;
-    std::cout << "  glyph  [vertAdvance]  = " << face->glyph->metrics.vertAdvance / 64 << std::endl;
-    std::cout << "  glyph  [vertBearingX] = " << face->glyph->metrics.vertBearingX / 64 << std::endl;
-    std::cout << "  glyph  [vertBearingY] = " << face->glyph->metrics.vertBearingY / 64 << std::endl;
-
-    FT_BBox  bbox = face->bbox;
-    std::cout << "  bbox  [xMax] = " << bbox.xMax << std::endl;
-    std::cout << "  bbox  [xMin] = " << bbox.xMin << std::endl;
-    std::cout << "  bbox  [yMax] = " << bbox.yMax << std::endl;
-    std::cout << "  bbox  [yMin] = " << bbox.yMin << std::endl;
 
     int A_index = FT_Get_Char_Index(face, 'A');
     int V_index = FT_Get_Char_Index(face, 'V');
@@ -344,16 +421,6 @@ protected:
       0
     );
 
-    chaos::GenTextureParameters parameters;
-    parameters.wrap_r = GL_CLAMP;
-    parameters.wrap_s = GL_CLAMP;
-    parameters.wrap_t = GL_CLAMP;
-
-    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTools::GenTextureObject(image_description, parameters);
-    ReleaseResourceImpl(&library, &face);
-
-
-    return result;
 #endif
   }
 
@@ -367,7 +434,7 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
-    texture = LoadFont(0, "Hello world");
+    texture = LoadFont(1, "Hello world");
     if (texture == nullptr)
       return false;
 

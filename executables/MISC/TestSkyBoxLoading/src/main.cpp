@@ -65,13 +65,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   DisplaySkyboxInfo(single_sky_box2, "SINGLE SKYBOX BAD SIZE");
 
-  // free images
-  multiple_sky_box1.Release(true);
-  multiple_sky_box2.Release(true);
-  multiple_sky_box3.Release(true);
-  single_sky_box1.Release(true);
-  single_sky_box2.Release(true);
-
   FreeImage_DeInitialise();
 
   chaos::WinTools::PressToContinue();

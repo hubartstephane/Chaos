@@ -123,6 +123,12 @@ protected:
     std::cout << "max_advance_height : " << face->max_advance_height << std::endl;
     std::cout << "num_charmaps       : " << face->num_charmaps << std::endl;
 
+    if (FT_HAS_VERTICAL(face))
+      face = face;
+
+    if (FT_HAS_KERNING(face))
+      face = face;
+
 #define DISPLAY_FACE_FLAG(f) std::cout << #f " : " << ((face->face_flags & f) != 0) << std::endl;
     DISPLAY_FACE_FLAG(FT_FACE_FLAG_SCALABLE);
     DISPLAY_FACE_FLAG(FT_FACE_FLAG_FIXED_SIZES);
@@ -200,6 +206,12 @@ protected:
     std::cout << "  glyph  [vertBearingY] = " << glyph->metrics.vertBearingY / 64 << std::endl;
   }
 
+  void TweakBitmapOffset(int & bl, int & bt) const
+  {
+   // bl = bt = 0;
+    //bt = -bt;
+
+  }
 
   boost::intrusive_ptr<chaos::Texture> LoadFont(int index, char const * str)
   {
@@ -211,16 +223,19 @@ protected:
     if (application == nullptr)
       return nullptr;
 
+    // initialize library
     Err = FT_Init_FreeType(&library);
     if (Err)
-      return ReleaseResourceImpl(&library, nullptr);
+      return ReleaseResourceImpl(nullptr, nullptr);
 
+    // get the font name for the example
     char const * font_name = GetFontName(index);
     if (font_name == nullptr)
       return ReleaseResourceImpl(&library, nullptr);
 
-    std::cout << "==================== " << font_name << " ====================" << std::endl;
+    str = font_name; // overide the font name
 
+    // load the foot
     boost::filesystem::path resources_path = application->GetResourcesPath();
     boost::filesystem::path font_path      = resources_path / font_name;
 
@@ -229,24 +244,23 @@ protected:
     if (Err)
       return ReleaseResourceImpl(&library, nullptr);
 
+    // display debug information
     DisplayFaceInfo(face);
 
-    Err = FT_Set_Pixel_Sizes(face, 128, 128); // Important else FT_Load_Glyph(...) fails
+    // set pixel size
+    Err = FT_Set_Pixel_Sizes(face, 32, 32); // Important else FT_Load_Glyph(...) fails
     if (Err)
       return ReleaseResourceImpl(&library, &face);
 
-    std::cout << " STEP 1 ---------------------------------------------" << std::endl;
-
+    // STEP 1 : compute required size
     int min_x = std::numeric_limits<int>::max();
     int max_x = std::numeric_limits<int>::min();
     int min_y = std::numeric_limits<int>::max();
     int max_y = std::numeric_limits<int>::min();
 
-    // compute required size
-    int pos_x     = 0;
-    int pos_y     = 0;
-    int character = 0;
-    while (str[character] != 0)
+    int pos_x = 0;
+    int pos_y = 0;
+    for (int character = 0 ; str[character] != 0 ; ++character)
     {    
       // find, load glyph and render it (so bitmap_left, bitmap_top ... are initialized)
       int glyph_index = FT_Get_Char_Index(face, str[character]); // first pass, ensure we get the character      
@@ -269,44 +283,28 @@ protected:
       int avx = (int)face->glyph->advance.x / 64;
       int avy = (int)face->glyph->advance.y / 64;
 
-      bl = bt = 0;
+      TweakBitmapOffset(bl, bt);
 
-      std::cout << "character : " << str[character] << std::endl;
-      std::cout << " w     : " << w     << std::endl;
-      std::cout << " h     : " << h     << std::endl;
-      std::cout << " bl    : " << bl    << std::endl;
-      std::cout << " bt    : " << bt    << std::endl;
-      std::cout << " avx   : " << avx   << std::endl;
-      std::cout << " avy   : " << avy   << std::endl;
-      std::cout << " pos_x : " << pos_x << std::endl;
-      std::cout << " pos_y : " << pos_y << std::endl;
-
+      // compute the position of the 4 corners
       int x1 = pos_x + bl;
       int x2 = pos_x + bl + w;
-
       int y1 = pos_y + bt;
       int y2 = pos_y + bt + h;
 
+      // update min/max X,Y
       min_x = min(min_x, min(x1, x2));
       min_y = min(min_y, min(y1, y2));
-
       max_x = max(max_x, max(x1, x2));
       max_y = max(max_y, max(y1, y2));
 
+      // advance the cursor
       pos_x += avx;
       pos_y += avy;
-
-      ++character;
     }
 
+    // STEP 2 : draw the string
     int required_width  = max_x - min_x;
     int required_height = max_y - min_y;
-
-    std::cout << "required_width  : " << required_width  << std::endl;
-    std::cout << "required_height : " << required_height << std::endl;
-
-
-    std::cout << " STEP 2 ---------------------------------------------" << std::endl;
 
     // reserve a buffer big enough
     boost::intrusive_ptr<chaos::Texture> result;
@@ -316,13 +314,13 @@ protected:
     {
       memset(buffer, 0, required_width * required_height);
 
-      unsigned char * decal_buffer = buffer - min_x - min_y * required_width; // work with negative coordinate easily
+      unsigned char * decal_buffer = buffer;// -min_x - min_y * required_width; // work with negative coordinate easily
 
-      int pos_x     = 0;
-      int pos_y     = 0;
-      int character = 0;
-      while (str[character] != 0)
+      int pos_x = 0;
+      int pos_y = 0;
+      for (int character = 0; str[character] != 0; ++character)
       {
+        // find, load and render the glyph
         int glyph_index = FT_Get_Char_Index(face, str[character]);
 
         Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
@@ -334,26 +332,20 @@ protected:
           continue;
 
         // get the metrics
-        int w = (int)face->glyph->metrics.width / 64;
-        int h = (int)face->glyph->metrics.height / 64;
-        int bl = face->glyph->bitmap_left;
-        int bt = face->glyph->bitmap_top;
+        int w   = (int)face->glyph->metrics.width / 64;
+        int h   = (int)face->glyph->metrics.height / 64;
+        int bl  = face->glyph->bitmap_left;
+        int bt  = face->glyph->bitmap_top;
         int avx = (int)face->glyph->advance.x / 64;
         int avy = (int)face->glyph->advance.y / 64;
 
-        bl = bt = 0;
+        if (str[character] == 'p')
+          DisplayGlyphInfo(face->glyph);
 
-        std::cout << "character : " << str[character] << std::endl;
-        std::cout << " w     : " << w << std::endl;
-        std::cout << " h     : " << h << std::endl;
-        std::cout << " bl    : " << bl << std::endl;
-        std::cout << " bt    : " << bt << std::endl;
-        std::cout << " avx   : " << avx << std::endl;
-        std::cout << " avy   : " << avy << std::endl;
-        std::cout << " pos_x : " << pos_x << std::endl;
-        std::cout << " pos_y : " << pos_y << std::endl;
+        TweakBitmapOffset(bl, bt);
 
-        unsigned char * dst = decal_buffer + (pos_x + bl) + (pos_y + bt) * required_width;
+        // copy the glyph to dest buffer : invert lines 
+        unsigned char * dst = decal_buffer + (pos_x + bl - min_x) + (pos_y + bt - min_y) * required_width;
 
         for (int j = 0; j < h; ++j)
         {
@@ -361,19 +353,26 @@ protected:
           {
             unsigned char       * d = &dst[i + j * required_width];
             unsigned char const * s = &face->glyph->bitmap.buffer[i + (h - 1 - j) * w]; // XXX ! (h - 1 - j) => reverse up to down line
+
+            if (d < buffer)
+              continue;
+            if (d >= buffer + required_width * required_height)
+              continue;
+
+            if (s < face->glyph->bitmap.buffer)
+              continue;
+            if (s >= &face->glyph->bitmap.buffer[w * h])
+              continue;
+
+
+
             d[0] = s[0];
           }
         }
 
         pos_x += avx;
         pos_y += avy;
-        ++character;
       }
-
-
-
-
-
       // generate the texture
       chaos::ImageDescription image_description = chaos::ImageDescription(buffer, required_width, required_height, 8, 0);
 
@@ -390,18 +389,7 @@ protected:
     ReleaseResourceImpl(&library, &face);
     return result;
 
-
-
-
-
-
-
-
 #if 0
-
-
-
-
 
     int A_index = FT_Get_Char_Index(face, 'A');
     int V_index = FT_Get_Char_Index(face, 'V');
@@ -413,14 +401,6 @@ protected:
 
     std::cout << "  kerningX A/V = " << kerning.x << std::endl;
     std::cout << "  kerningY A/V = " << kerning.y << std::endl;
-
-    chaos::ImageDescription image_description = chaos::ImageDescription(
-      face->glyph->bitmap.buffer,
-      face->glyph->metrics.width / 64, face->glyph->metrics.height / 64,
-      8,
-      0
-    );
-
 #endif
   }
 

@@ -2,6 +2,7 @@
 #include <chaos/HTMLTools.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/StringTools.h>
+#include <chaos/ImageTools.h>
 
 #include <boost/filesystem.hpp>
 
@@ -55,11 +56,7 @@ namespace chaos
     }
     else
     {
-      FREE_IMAGE_FORMAT FI_Format = FreeImage_GetFileType(filename, 0);
-      if (FI_Format == FIF_UNKNOWN)
-        return false;
-
-      new_texture.bitmap = FreeImage_Load(FI_Format, filename, 0);
+      new_texture.bitmap = ImageTools::LoadImageFromFile(filename);
       if (new_texture.bitmap == nullptr)
         return false;
 

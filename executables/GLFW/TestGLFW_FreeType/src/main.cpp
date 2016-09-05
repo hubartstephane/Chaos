@@ -61,7 +61,11 @@ protected:
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+      RequireWindowClosure();
+    }
+    else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
       ChangeFont(font_index + 1);
     }
@@ -76,8 +80,8 @@ protected:
     boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index, "Hello world");
     if (new_font != nullptr)
     {
-      font_index = index;
-      texture = new_font;
+      font_index   = index;
+      texture      = new_font;
     }
   }
 
@@ -208,9 +212,7 @@ protected:
 
   void TweakBitmapOffset(int & bl, int & bt) const
   {
-   // bl = bt = 0;
-    //bt = -bt;
-
+    bt = -bt;
   }
 
   boost::intrusive_ptr<chaos::Texture> LoadFont(int index, char const * str)
@@ -248,7 +250,7 @@ protected:
     DisplayFaceInfo(face);
 
     // set pixel size
-    Err = FT_Set_Pixel_Sizes(face, 32, 32); // Important else FT_Load_Glyph(...) fails
+    Err = FT_Set_Pixel_Sizes(face, 64, 64); // Important else FT_Load_Glyph(...) fails
     if (Err)
       return ReleaseResourceImpl(&library, &face);
 
@@ -258,14 +260,15 @@ protected:
     int min_y = std::numeric_limits<int>::max();
     int max_y = std::numeric_limits<int>::min();
 
+    int char_count = 0;
     int pos_x = 0;
     int pos_y = 0;
     for (int character = 0 ; str[character] != 0 ; ++character)
     {    
+      ++char_count;
+
       // find, load glyph and render it (so bitmap_left, bitmap_top ... are initialized)
       int glyph_index = FT_Get_Char_Index(face, str[character]); // first pass, ensure we get the character      
-      if (glyph_index == 0)
-        continue; 
 
       Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT); // first pass
       if (Err)
@@ -314,8 +317,6 @@ protected:
     {
       memset(buffer, 0, required_width * required_height);
 
-      unsigned char * decal_buffer = buffer;// -min_x - min_y * required_width; // work with negative coordinate easily
-
       int pos_x = 0;
       int pos_y = 0;
       for (int character = 0; str[character] != 0; ++character)
@@ -345,26 +346,17 @@ protected:
         TweakBitmapOffset(bl, bt);
 
         // copy the glyph to dest buffer : invert lines 
-        unsigned char * dst = decal_buffer + (pos_x + bl - min_x) + (pos_y + bt - min_y) * required_width;
-
         for (int j = 0; j < h; ++j)
         {
           for (int i = 0; i < w; ++i)
           {
-            unsigned char       * d = &dst[i + j * required_width];
-            unsigned char const * s = &face->glyph->bitmap.buffer[i + (h - 1 - j) * w]; // XXX ! (h - 1 - j) => reverse up to down line
-
-            if (d < buffer)
-              continue;
-            if (d >= buffer + required_width * required_height)
-              continue;
-
-            if (s < face->glyph->bitmap.buffer)
-              continue;
-            if (s >= &face->glyph->bitmap.buffer[w * h])
-              continue;
-
-
+            unsigned char * d = buffer + 
+              (pos_x + bl - min_x + i) + 
+              (required_height - 1 - (pos_y + bt - min_y + j)) * required_width;
+            
+            unsigned char const * s = face->glyph->bitmap.buffer
+              + i
+              + j * w; 
 
             d[0] = s[0];
           }
@@ -373,6 +365,7 @@ protected:
         pos_x += avx;
         pos_y += avy;
       }
+
       // generate the texture
       chaos::ImageDescription image_description = chaos::ImageDescription(buffer, required_width, required_height, 8, 0);
 
@@ -380,6 +373,8 @@ protected:
       parameters.wrap_r = GL_CLAMP;
       parameters.wrap_s = GL_CLAMP;
       parameters.wrap_t = GL_CLAMP;
+      //parameters.min_filter = GL_NEAREST;
+      //parameters.mag_filter = GL_NEAREST;
 
       result = chaos::GLTextureTools::GenTextureObject(image_description, parameters);
 
@@ -414,7 +409,7 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
-    texture = LoadFont(1, "Hello world");
+    texture = LoadFont(font_index, "Hello world");
     if (texture == nullptr)
       return false;
 
@@ -473,5 +468,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   return 0;
 }
+
 
 

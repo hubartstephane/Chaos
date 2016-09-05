@@ -286,7 +286,7 @@ protected:
       int avx = (int)face->glyph->advance.x / 64;
       int avy = (int)face->glyph->advance.y / 64;
 
-      TweakBitmapOffset(bl, bt);
+      bt = -bt;
 
       // compute the position of the 4 corners
       int x1 = pos_x + bl;
@@ -343,7 +343,7 @@ protected:
         if (str[character] == 'p')
           DisplayGlyphInfo(face->glyph);
 
-        TweakBitmapOffset(bl, bt);
+        bt = -bt;
 
         // copy the glyph to dest buffer : invert lines 
         for (int j = 0; j < h; ++j)
@@ -353,7 +353,7 @@ protected:
             unsigned char * d = buffer + 
               (pos_x + bl - min_x + i) + 
               (required_height - 1 - (pos_y + bt - min_y + j)) * required_width;
-            
+                          
             unsigned char const * s = face->glyph->bitmap.buffer
               + i
               + j * w; 

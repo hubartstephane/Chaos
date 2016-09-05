@@ -104,12 +104,9 @@ namespace chaos
   public:
 
     /** constructor */
-    TextureAtlasData(bool in_debug_mode = false): debug_mode(in_debug_mode){}
+    TextureAtlasData(){}
     /** destructor */
     ~TextureAtlasData(){ Clear(); }
-    /** Set the object in debug mode */ 
-    void SetDebugMode(bool in_debug_mode = true);
-
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert multiple texture before computation */
@@ -118,6 +115,11 @@ namespace chaos
     bool AddTextureFile(boost::filesystem::path const & path);
     /** insert a texture before computation */
     bool AddTextureFile(char const * filename);
+    /** insert an image inside the atlas */
+    bool AddImageSource(char const * filename, FIBITMAP * image);
+    /** insert an image inside the atlas */
+    bool AddFakeImageSource(char const * filename);
+
     /** reset result */
     void ResetResult();
     /** returns the surface for an atlas */
@@ -135,8 +137,6 @@ namespace chaos
     std::string GetTextureInfoString(TextureAtlasEntry const & texture, int padding) const;
 
   public:
-    /** atlas in debug mode */
-    bool debug_mode;
     /** all the textures */
     std::vector<TextureAtlasEntry> textures;
   };

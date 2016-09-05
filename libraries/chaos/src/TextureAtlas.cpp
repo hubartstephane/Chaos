@@ -13,12 +13,6 @@ namespace chaos
   // TextureAtlasData implementation
   // ========================================================================
 
-  void TextureAtlasData::SetDebugMode(bool in_debug_mode)
-  {
-    assert(textures.size() == 0);
-    debug_mode = in_debug_mode;
-  }
-
   bool TextureAtlasData::AddTextureFilesFromDirectory(boost::filesystem::path const & p)
   {
     // enumerate the source directory
@@ -46,24 +40,22 @@ namespace chaos
   {
     assert(filename != nullptr);
 
+    FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
+    if (image == nullptr)
+      return false;
+    return AddImageSource(filename, image);
+  }
+
+  bool TextureAtlasData::AddImageSource(char const * filename, FIBITMAP * image)
+  {
+    assert(filename != nullptr);
+    assert(image    != nullptr);
+
     TextureAtlasEntry new_texture;
 
-    if (debug_mode)
-    {
-      new_texture.bitmap = nullptr;
-      new_texture.height = 15 * (1 + rand() % 10);
-      new_texture.width  = 15 * (1 + rand() % 10);      
-    }
-    else
-    {
-      new_texture.bitmap = ImageTools::LoadImageFromFile(filename);
-      if (new_texture.bitmap == nullptr)
-        return false;
-
-      new_texture.width  = (int)FreeImage_GetWidth(new_texture.bitmap);
-      new_texture.height = (int)FreeImage_GetHeight(new_texture.bitmap);
-    }
-
+    new_texture.bitmap   = image;
+    new_texture.width    = (int)FreeImage_GetWidth(new_texture.bitmap);
+    new_texture.height   = (int)FreeImage_GetHeight(new_texture.bitmap);
     new_texture.filename = filename;
     new_texture.x        = 0;
     new_texture.y        = 0;
@@ -74,6 +66,26 @@ namespace chaos
 
     textures.push_back(std::move(new_texture));
     return true;
+  }
+
+  bool TextureAtlasData::AddFakeImageSource(char const * filename)
+  {
+    assert(filename != nullptr);
+
+    int w = 15 * (1 + rand() % 10);
+    int h = 15 * (1 + rand() % 10);
+
+    FIBITMAP * image = FreeImage_Allocate(w, h, 32); // allocate an image
+    if (image == nullptr)
+      return false;
+
+    unsigned char c = 55 + (rand() % 200);
+
+    unsigned char color[] = { c, c, c, 255 }; // B G R A
+
+    FreeImage_FillBackground(image, color, 0); // create a background color
+
+    return AddImageSource(filename, image);
   }
 
   void TextureAtlasData::ResetResult()
@@ -525,7 +537,6 @@ namespace chaos
  bool TextureAtlasCreatorBase::SaveResults(char const * pattern) const
  {
    assert(pattern != nullptr);
-   assert(!data->debug_mode);
 
    // generate the images and save them
    size_t atlas_cout = GetAtlasCount();

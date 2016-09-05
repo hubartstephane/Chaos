@@ -10,18 +10,17 @@
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
   chaos::TextureAtlasData data;
-  data.SetDebugMode(true);
 
-  data.AddTextureFile("A");
-  data.AddTextureFile("B");
-  data.AddTextureFile("C");
-  data.AddTextureFile("D");
-  data.AddTextureFile("E");
-  data.AddTextureFile("F");
-  data.AddTextureFile("G");
-  data.AddTextureFile("H");
-  data.AddTextureFile("I");
-  data.AddTextureFile("J");
+  data.AddFakeImageSource("A");
+  data.AddFakeImageSource("B");
+  data.AddFakeImageSource("C");
+  data.AddFakeImageSource("D");
+  data.AddFakeImageSource("E");
+  data.AddFakeImageSource("F");
+  data.AddFakeImageSource("G");
+  data.AddFakeImageSource("H");
+  data.AddFakeImageSource("I");
+  data.AddFakeImageSource("J");
 
   int atlas_width   = 256;
   int atlas_height  = 256;
@@ -39,6 +38,10 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
   {  
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
     atlas_creator.OutputToHTMLFile(html_path.string().c_str(), params);
+
+    boost::filesystem::path dst_pattern = dest_p / "AtlasResultFake" / "MyAtlas";
+    boost::filesystem::create_directories(dst_pattern.parent_path());
+    atlas_creator.SaveResults(dst_pattern.string().c_str());
   }
 }
 

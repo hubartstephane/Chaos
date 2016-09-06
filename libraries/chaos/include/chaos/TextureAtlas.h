@@ -202,6 +202,8 @@ namespace chaos
     /** output the atlas trees in HTML format */
     bool OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
 
+    /** returns a vector with all generated Image (to be deallocated after usage) */
+    std::vector<FIBITMAP *> GetAtlasTextures() const;
     /** function to save the results */
     bool SaveResults(char const * pattern) const;
 

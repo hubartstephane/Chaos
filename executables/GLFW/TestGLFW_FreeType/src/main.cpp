@@ -34,8 +34,6 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    //return true;
-
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

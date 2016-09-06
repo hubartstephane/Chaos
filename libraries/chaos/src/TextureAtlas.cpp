@@ -4,9 +4,6 @@
 #include <chaos/StringTools.h>
 #include <chaos/ImageTools.h>
 
-#include <boost/filesystem.hpp>
-
-
 namespace chaos
 {
   // ========================================================================
@@ -41,9 +38,13 @@ namespace chaos
     assert(filename != nullptr);
 
     FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
-    if (image == nullptr)
-      return false;
-    return AddImageSource(filename, image);
+    if (image != nullptr)
+    {
+      if (AddImageSource(filename, image))
+        return true;
+      FreeImage_Unload(image);    
+    }
+    return false;
   }
 
   bool TextureAtlasData::AddImageSource(char const * filename, FIBITMAP * image)
@@ -534,78 +535,92 @@ namespace chaos
     return (&new_texture - &data->textures[0]);
   }
 
- bool TextureAtlasCreatorBase::SaveResults(char const * pattern) const
- {
-   assert(pattern != nullptr);
+  std::vector<FIBITMAP *> TextureAtlasCreatorBase::GetAtlasTextures() const
+  {
+    unsigned char const color[] = {0, 0, 0, 255}; // B G R A
 
-   // generate the images and save them
-   size_t atlas_cout = GetAtlasCount();
-   for (size_t i = 0 ; i < atlas_cout ; ++i)
-   {
-     FIBITMAP * image = FreeImage_Allocate(width, height, 32);
-     if (image == nullptr)
-       return false;
+    std::vector<FIBITMAP *> result;
 
-     unsigned char color[] = {0, 0, 0, 255}; // B G R A
+    // generate the images and save them
+    size_t atlas_cout = GetAtlasCount();
+    for (size_t i = 0 ; i < atlas_cout ; ++i)
+    {
+      FIBITMAP * image = FreeImage_Allocate(width, height, 32);
+      if (image != nullptr)
+      {       
+        FreeImage_FillBackground(image, color, 0);
 
-     FreeImage_FillBackground(image, color, 0);
-     
-     for (TextureAtlasEntry const & texture : data->textures)
-     {
-       if (texture.atlas != i || texture.bitmap == nullptr)
-         continue;
-       FreeImage_Paste(image, texture.bitmap, texture.x + padding, texture.y + padding, 255);
-     }
+        for (TextureAtlasEntry const & texture : data->textures)
+        {
+          if (texture.atlas != i || texture.bitmap == nullptr)
+            continue;
+          FreeImage_Paste(image, texture.bitmap, texture.x + padding, texture.y + padding, 255);
+        }
+      }
+      result.push_back(image);
+    }
+    return result;
+  }
 
-     std::string filename = StringTools::Printf("%s_%d.png", pattern, i + 1);
+  bool TextureAtlasCreatorBase::SaveResults(char const * pattern) const
+  {
+    assert(pattern != nullptr);
 
-     BOOL success = FreeImage_Save(FIF_PNG, image, filename.c_str(), 0);
-     FreeImage_Unload(image);
+    // generate the images
+    std::vector<FIBITMAP *> images = GetAtlasTextures();
+    
+    // save them
+    for (size_t i = 0 ; i < images.size() ; ++i)
+    {
+      FIBITMAP * im = images[i];
+      if (im != nullptr)
+      {
+        std::string filename = StringTools::Printf("%s_%d.png", pattern, i + 1);
+        FreeImage_Save(FIF_PNG, im, filename.c_str(), 0);
+        FreeImage_Unload(im);      
+      }
+    }
 
-     if (!success)
-       return false;
-   }
+    // generate a file for the index (lua format)
+    std::string filename = StringTools::Printf("%s_index.txt", pattern);
 
-   // generate a file for the index (lua format)
-   std::string filename = StringTools::Printf("%s_index.txt", pattern);
+    std::ofstream stream(filename);
+    if (stream)
+    {
+      stream << "index = {" << std::endl;
 
-   std::ofstream stream(filename);
-   if (stream)
-   {
-     stream << "index = {" << std::endl;
+      bool first = true;
+      for (TextureAtlasEntry const & texture : data->textures)
+      {
+        if (texture.bitmap == nullptr)
+          continue;
+        if (!first)
+          stream << "  }, {" << std::endl; // close previous
+        else
+          stream << "  {" << std::endl;
 
-     bool first = true;
-     for (TextureAtlasEntry const & texture : data->textures)
-     {
-       if (texture.bitmap == nullptr)
-         continue;
-       if (!first)
-         stream << "  }, {" << std::endl; // close previous
-       else
-         stream << "  {" << std::endl;
+        std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, texture.atlas + 1);
+        boost::filesystem::path atlas_basename = boost::filesystem::path(atlas_filename).filename();
 
-       std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, texture.atlas + 1);
-       boost::filesystem::path atlas_basename = boost::filesystem::path(atlas_filename).filename();
+        boost::filesystem::path texture_basename = boost::filesystem::path(texture.filename).filename();
 
-       boost::filesystem::path texture_basename = boost::filesystem::path(texture.filename).filename();
+        stream << "    name   = \"" << texture_basename.string() << "\"," << std::endl;
+        stream << "    atlas  = \"" << atlas_basename.string()   << "\"," << std::endl;
+        stream << "    x      = " << texture.x + padding         << "," << std::endl;
+        stream << "    y      = " << texture.y + padding         << "," << std::endl;
+        stream << "    width  = " << texture.width               << "," << std::endl;
+        stream << "    height = " << texture.height              << std::endl;
 
-       stream << "    name   = \"" << texture_basename.string() << "\"," << std::endl;
-       stream << "    atlas  = \"" << atlas_basename.string()   << "\"," << std::endl;
-       stream << "    x      = " << texture.x + padding         << "," << std::endl;
-       stream << "    y      = " << texture.y + padding         << "," << std::endl;
-       stream << "    width  = " << texture.width               << "," << std::endl;
-       stream << "    height = " << texture.height              << std::endl;
+        first = false;
+      }
+      if (!first)
+        stream << "  }" << std::endl; // close previous
 
-       first = false;
-     }
-     if (!first)
-      stream << "  }" << std::endl; // close previous
+      stream << "}" << std::endl;
+    }
 
-     stream << "}" << std::endl;
-   }
-
-   return true;
- }
+    return true;
+  }
 
   // ========================================================================
   // TextureAtlasCreator implementation

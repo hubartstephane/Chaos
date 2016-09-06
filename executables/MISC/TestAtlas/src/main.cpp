@@ -30,7 +30,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
   params.show_header       = true;
   params.show_atlas_header = true;  
   params.texture_scale     = 3.0f;
-  params.auto_refresh      = true;  
+  params.auto_refresh      = false;  
 
   chaos::TextureAtlasCreator atlas_creator;
   

@@ -14,9 +14,8 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
+#include <chaos/FontTools.h>
 
-#include FT_OUTLINE_H
-#include FT_IMAGE_H
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -252,132 +251,18 @@ protected:
     if (Err)
       return ReleaseResourceImpl(&library, &face);
 
-    // STEP 1 : compute required size
-    int min_x = std::numeric_limits<int>::max();
-    int max_x = std::numeric_limits<int>::min();
-    int min_y = std::numeric_limits<int>::max();
-    int max_y = std::numeric_limits<int>::min();
+    chaos::GenTextureParameters parameters;
+    parameters.wrap_r = GL_CLAMP;
+    parameters.wrap_s = GL_CLAMP;
+    parameters.wrap_t = GL_CLAMP;
+    //parameters.min_filter = GL_NEAREST;
+    //parameters.mag_filter = GL_NEAREST;
 
-    int char_count = 0;
-    int pos_x = 0;
-    int pos_y = 0;
-    for (int character = 0 ; str[character] != 0 ; ++character)
-    {    
-      ++char_count;
+    FIBITMAP * bm = chaos::FontTools::GenerateImageFromFont(face, str);
 
-      // find, load glyph and render it (so bitmap_left, bitmap_top ... are initialized)
-      int glyph_index = FT_Get_Char_Index(face, str[character]); // first pass, ensure we get the character      
+    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 
-      Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT); // first pass
-      if (Err)
-        continue;
-
-      Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-      if (Err)
-        continue;
-
-      // get the metrics
-      int w   = (int)face->glyph->metrics.width / 64;
-      int h   = (int)face->glyph->metrics.height / 64;
-      int bl  = face->glyph->bitmap_left;
-      int bt  = face->glyph->bitmap_top;
-      int avx = (int)face->glyph->advance.x / 64;
-      int avy = (int)face->glyph->advance.y / 64;
-
-      bt = -bt;
-
-      // compute the position of the 4 corners
-      int x1 = pos_x + bl;
-      int x2 = pos_x + bl + w;
-      int y1 = pos_y + bt;
-      int y2 = pos_y + bt + h;
-
-      // update min/max X,Y
-      min_x = min(min_x, min(x1, x2));
-      min_y = min(min_y, min(y1, y2));
-      max_x = max(max_x, max(x1, x2));
-      max_y = max(max_y, max(y1, y2));
-
-      // advance the cursor
-      pos_x += avx;
-      pos_y += avy;
-    }
-
-    // STEP 2 : draw the string
-    int required_width  = max_x - min_x;
-    int required_height = max_y - min_y;
-
-    // reserve a buffer big enough
-    boost::intrusive_ptr<chaos::Texture> result;
-   
-    unsigned char * buffer = new unsigned char[required_width * required_height];
-    if (buffer != nullptr)
-    {
-      memset(buffer, 0, required_width * required_height);
-
-      int pos_x = 0;
-      int pos_y = 0;
-      for (int character = 0; str[character] != 0; ++character)
-      {
-        // find, load and render the glyph
-        int glyph_index = FT_Get_Char_Index(face, str[character]);
-
-        Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
-        if (Err)
-          continue;
-
-        Err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-        if (Err)
-          continue;
-
-        // get the metrics
-        int w   = (int)face->glyph->metrics.width / 64;
-        int h   = (int)face->glyph->metrics.height / 64;
-        int bl  = face->glyph->bitmap_left;
-        int bt  = face->glyph->bitmap_top;
-        int avx = (int)face->glyph->advance.x / 64;
-        int avy = (int)face->glyph->advance.y / 64;
-
-        if (str[character] == 'p')
-          DisplayGlyphInfo(face->glyph);
-
-        bt = -bt;
-
-        // copy the glyph to dest buffer : invert lines 
-        for (int j = 0; j < h; ++j)
-        {
-          for (int i = 0; i < w; ++i)
-          {
-            unsigned char * d = buffer + 
-              (pos_x + bl - min_x + i) + 
-              (required_height - 1 - (pos_y + bt - min_y + j)) * required_width;
-                          
-            unsigned char const * s = face->glyph->bitmap.buffer
-              + i
-              + j * w; 
-
-            d[0] = s[0];
-          }
-        }
-
-        pos_x += avx;
-        pos_y += avy;
-      }
-
-      // generate the texture
-      chaos::ImageDescription image_description = chaos::ImageDescription(buffer, required_width, required_height, 8, 0);
-
-      chaos::GenTextureParameters parameters;
-      parameters.wrap_r = GL_CLAMP;
-      parameters.wrap_s = GL_CLAMP;
-      parameters.wrap_t = GL_CLAMP;
-      //parameters.min_filter = GL_NEAREST;
-      //parameters.mag_filter = GL_NEAREST;
-
-      result = chaos::GLTextureTools::GenTextureObject(image_description, parameters);
-
-      delete[] buffer;
-    }
+    FreeImage_Unload(bm);
 
     ReleaseResourceImpl(&library, &face);
     return result;

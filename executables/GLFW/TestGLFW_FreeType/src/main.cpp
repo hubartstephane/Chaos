@@ -258,7 +258,20 @@ protected:
     //parameters.min_filter = GL_NEAREST;
     //parameters.mag_filter = GL_NEAREST;
 
+#if 1
     FIBITMAP * bm = chaos::FontTools::GenerateImageFromFont(face, str);
+#else
+
+    // get glyph index
+    int glyph_index = FT_Get_Char_Index(face, '9');
+
+    // load the glyph
+    Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+    if (Err)
+      return ReleaseResourceImpl(&library, &face);
+
+    FIBITMAP * bm = chaos::FontTools::GenerateImageFromGlyph(face->glyph);
+#endif
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 

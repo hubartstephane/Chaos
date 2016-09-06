@@ -57,7 +57,7 @@ ImageDescription ImageTools::GetImageDescription(FIBITMAP const * image)
 void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 {
   assert(src_desc.bpp == dst_desc.bpp);
-  assert(src_desc.bpp == 24 || src_desc.bpp == 32);
+  assert(src_desc.bpp == 8 || src_desc.bpp == 24 || src_desc.bpp == 32);
   assert(width  >= 0);
   assert(height >= 0);
   assert(src_x >= 0 && src_x + width  <= src_desc.width);
@@ -65,7 +65,16 @@ void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription 
   assert(dst_x >= 0 && dst_x + width  <= dst_desc.width);
   assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
 
-  if (src_desc.bpp == 24)
+  if (src_desc.bpp == 8)
+  {
+    for (int l = 0 ; l < height ; ++l)
+    {
+      unsigned char const * s = ImageTools::GetPixelAddress<unsigned char>(src_desc, src_x, src_y + l);
+      unsigned char       * d = ImageTools::GetPixelAddress<unsigned char>(dst_desc, dst_x, dst_y + l);
+      memcpy(d, s, width * sizeof(unsigned char));
+    }
+  }
+  else if (src_desc.bpp == 24)
   {
     for (int l = 0 ; l < height ; ++l)
     {
@@ -88,7 +97,7 @@ void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription 
 void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 {
   assert(src_desc.bpp == dst_desc.bpp);
-  assert(src_desc.bpp == 24 || src_desc.bpp == 32);
+  assert(src_desc.bpp == 8 || src_desc.bpp == 24 || src_desc.bpp == 32);
   assert(width  >= 0);
   assert(height >= 0);
   assert(src_x >= 0 && src_x + width  <= src_desc.width);
@@ -96,7 +105,17 @@ void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc,
   assert(dst_x >= 0 && dst_x + width  <= dst_desc.width);
   assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
 
-  if (src_desc.bpp == 24)
+  if (src_desc.bpp == 8)
+  {
+    for (int l = 0 ; l < height ; ++l)
+    {
+      unsigned char const * s = ImageTools::GetPixelAddress<unsigned char>(src_desc, src_x, src_y + l);
+      unsigned char       * d = ImageTools::GetPixelAddress<unsigned char>(dst_desc, dst_x, dst_y + height - 1 - l);
+      for (int c = 0 ; c < width ; ++c)
+        d[width - 1 - c] = s[c];
+    }
+  }
+  else if (src_desc.bpp == 24)
   {
     for (int l = 0 ; l < height ; ++l)
     {

@@ -52,20 +52,17 @@ namespace chaos
     assert(filename != nullptr);
     assert(image    != nullptr);
 
-    TextureAtlasEntry new_texture;
+    TextureAtlasEntry new_entry;
 
-    new_texture.bitmap   = image;
-    new_texture.width    = (int)FreeImage_GetWidth(new_texture.bitmap);
-    new_texture.height   = (int)FreeImage_GetHeight(new_texture.bitmap);
-    new_texture.filename = filename;
-    new_texture.x        = 0;
-    new_texture.y        = 0;
-    new_texture.atlas    = SIZE_MAX;
-#if _DEBUG
-    new_texture.order_of_insertion = SIZE_MAX;
-#endif
+    new_entry.bitmap   = image;
+    new_entry.width    = (int)FreeImage_GetWidth(new_entry.bitmap);
+    new_entry.height   = (int)FreeImage_GetHeight(new_entry.bitmap);
+    new_entry.filename = filename;
+    new_entry.x        = 0;
+    new_entry.y        = 0;
+    new_entry.atlas    = SIZE_MAX;
 
-    entries.push_back(std::move(new_texture));
+    entries.push_back(std::move(new_entry));
     return true;
   }
 
@@ -91,12 +88,19 @@ namespace chaos
 
   void TextureAtlasData::ResetResult()
   {
+    // clear the entries
     for (TextureAtlasEntry & entry : entries)
     {
       entry.x     = 0;
       entry.y     = 0;
       entry.atlas = SIZE_MAX;
     }
+
+    // clear the output texture
+    for (FIBITMAP * image : atlas_images)
+      if (image != nullptr)
+        FreeImage_Unload(image);
+    atlas_images.clear();
   }
 
   float TextureAtlasData::ComputeSurface(size_t atlas_index, int padding) const
@@ -114,10 +118,17 @@ namespace chaos
 
   void TextureAtlasData::Clear()
   {
+    // destroy the entries
     for (TextureAtlasEntry & entry : entries)
       if (entry.bitmap != nullptr)
         FreeImage_Unload(entry.bitmap);
     entries.empty();
+
+    // destroy the output
+    for (FIBITMAP * image : atlas_images)
+      if (image != nullptr)
+        FreeImage_Unload(image);
+    atlas_images.clear();
   }
 
   void TextureAtlasData::OutputTextureInfo(std::ostream & stream, int padding) const
@@ -150,6 +161,82 @@ namespace chaos
     OutputTextureInfo(entry, out, padding);
     return out.str();
   }
+
+  bool TextureAtlasData::SaveAtlas(char const * pattern) const
+  {
+    return SaveAtlasImages(pattern) && SaveAtlasIndex(pattern);
+  }
+
+  bool TextureAtlasData::SaveAtlasImages(char const * pattern) const
+  {
+    assert(pattern != nullptr);
+
+    bool result = true;
+    // save them
+    for (size_t i = 0 ; (i < atlas_images.size()) && result ; ++i)
+    {
+      FIBITMAP * im = atlas_images[i];
+      if (im != nullptr)
+      {
+        std::string filename = StringTools::Printf("%s_%d.png", pattern, i + 1);
+        result = (FreeImage_Save(FIF_PNG, im, filename.c_str(), 0) != 0);
+        FreeImage_Unload(im);      
+      }
+    }
+    return result;
+  }
+
+  bool TextureAtlasData::SaveAtlasIndex(char const * pattern) const
+  {
+    assert(pattern != nullptr);
+
+    // generate a file for the index (lua format)
+    std::string filename = StringTools::Printf("%s_index.txt", pattern);
+
+    std::ofstream stream(filename);
+    if (stream)
+    {
+      stream << "index = {" << std::endl;
+
+      bool first = true;
+      for (TextureAtlasEntry const & entry : entries)
+      {
+        if (entry.bitmap == nullptr)
+          continue;
+        if (!first)
+          stream << "  }, {" << std::endl; // close previous
+        else
+          stream << "  {" << std::endl;
+
+        std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, entry.atlas + 1);
+        boost::filesystem::path atlas_basename = boost::filesystem::path(atlas_filename).filename();
+
+        boost::filesystem::path texture_basename = boost::filesystem::path(entry.filename).filename();
+
+        stream << "    name   = \"" << texture_basename.string() << "\"," << std::endl;
+        stream << "    atlas  = \"" << atlas_basename.string()   << "\"," << std::endl;
+        stream << "    x      = "   << entry.x + padding         << "," << std::endl;
+        stream << "    y      = "   << entry.y + padding         << "," << std::endl;
+        stream << "    width  = "   << entry.width               << "," << std::endl;
+        stream << "    height = "   << entry.height              << std::endl;
+
+        first = false;
+      }
+      if (!first)
+        stream << "  }" << std::endl; // close previous
+
+      stream << "}" << std::endl;
+
+      return true;
+    }
+    return false;
+  }
+
+
+
+
+
+
 
   // ========================================================================
   // TextureAtlasCreatorBase implementation
@@ -218,16 +305,19 @@ namespace chaos
     // ensure this can be produced inside an atlas with size_restriction
     if (DoComputeResult())
     {
-      bool is_valid = EnsureValid();
-
-      if (is_valid)
+      if (EnsureValid())
       {
+        data->atlas_images = GenerateAtlasTextures();
+#if _DEBUG
         OutputAtlasSpaceOccupation(std::cout);
         data->OutputTextureInfo(std::cout, padding);
+#endif
         return true;
-      }      
+      }   
+#if _DEBUG
       else
         data->OutputTextureInfo(std::cout, padding);
+#endif
     }    
     return false;
   }
@@ -391,11 +481,7 @@ namespace chaos
             html.PushAttribute(TEXT, "y", y + p);
             html.PushAttribute(TEXT, "fill", "white");
 
-#if _DEBUG
-            html.PushText(TEXT, StringTools::Printf("%s [%d]", entry.filename.c_str(), entry.order_of_insertion).c_str());
-#else
             html.PushText(TEXT, entry.filename.c_str());
-#endif
           }
         }      
       }
@@ -526,16 +612,16 @@ namespace chaos
     return false;
   }
 
-  size_t TextureAtlasCreatorBase::UpdateTexture(TextureAtlasEntry & new_texture, size_t atlas, int x, int y)
+  size_t TextureAtlasCreatorBase::UpdateTexture(TextureAtlasEntry & new_entry, size_t atlas, int x, int y)
   {
-    new_texture.x     = x;
-    new_texture.y     = y;
-    new_texture.atlas = atlas;
+    new_entry.x     = x;
+    new_entry.y     = y;
+    new_entry.atlas = atlas;
 
-    return (&new_texture - &data->entries[0]);
+    return (&new_entry - &data->entries[0]);
   }
 
-  std::vector<FIBITMAP *> TextureAtlasCreatorBase::GetAtlasTextures() const
+  std::vector<FIBITMAP *> TextureAtlasCreatorBase::GenerateAtlasTextures() const
   {
     unsigned char const color[] = {0, 0, 0, 255}; // B G R A
 
@@ -562,65 +648,7 @@ namespace chaos
     return result;
   }
 
-  bool TextureAtlasCreatorBase::SaveResults(char const * pattern) const
-  {
-    assert(pattern != nullptr);
 
-    // generate the images
-    std::vector<FIBITMAP *> images = GetAtlasTextures();
-    
-    // save them
-    for (size_t i = 0 ; i < images.size() ; ++i)
-    {
-      FIBITMAP * im = images[i];
-      if (im != nullptr)
-      {
-        std::string filename = StringTools::Printf("%s_%d.png", pattern, i + 1);
-        FreeImage_Save(FIF_PNG, im, filename.c_str(), 0);
-        FreeImage_Unload(im);      
-      }
-    }
-
-    // generate a file for the index (lua format)
-    std::string filename = StringTools::Printf("%s_index.txt", pattern);
-
-    std::ofstream stream(filename);
-    if (stream)
-    {
-      stream << "index = {" << std::endl;
-
-      bool first = true;
-      for (TextureAtlasEntry const & entry : data->entries)
-      {
-        if (entry.bitmap == nullptr)
-          continue;
-        if (!first)
-          stream << "  }, {" << std::endl; // close previous
-        else
-          stream << "  {" << std::endl;
-
-        std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, entry.atlas + 1);
-        boost::filesystem::path atlas_basename = boost::filesystem::path(atlas_filename).filename();
-
-        boost::filesystem::path texture_basename = boost::filesystem::path(entry.filename).filename();
-
-        stream << "    name   = \"" << texture_basename.string() << "\"," << std::endl;
-        stream << "    atlas  = \"" << atlas_basename.string()   << "\"," << std::endl;
-        stream << "    x      = " << entry.x + padding           << "," << std::endl;
-        stream << "    y      = " << entry.y + padding           << "," << std::endl;
-        stream << "    width  = " << entry.width                 << "," << std::endl;
-        stream << "    height = " << entry.height                << std::endl;
-
-        first = false;
-      }
-      if (!first)
-        stream << "  }" << std::endl; // close previous
-
-      stream << "}" << std::endl;
-    }
-
-    return true;
-  }
 
   // ========================================================================
   // TextureAtlasCreator implementation
@@ -799,11 +827,7 @@ namespace chaos
 
     for (size_t i = 0 ; i < count ; ++i)
     {
-      TextureAtlasEntry & new_texture = data->entries[textures_indirection_table[i]];
-
-#if _DEBUG
-      new_texture.order_of_insertion = i;
-#endif
+      TextureAtlasEntry & new_entry = data->entries[textures_indirection_table[i]];
 
       size_t best_atlas_index =  SIZE_MAX;
       int    best_x           =  0;
@@ -813,7 +837,7 @@ namespace chaos
       for (size_t j = 0 ; j < atlas_definitions.size() ; ++j)
       {
         int   x, y;
-        float score = FindBestPositionInAtlas(new_texture, atlas_definitions[j], x, y);
+        float score = FindBestPositionInAtlas(new_entry, atlas_definitions[j], x, y);
 
         if (score < 0.0f)
           continue; // cannot insert the texture in this atlas
@@ -845,7 +869,7 @@ namespace chaos
         atlas_definitions.push_back(def);
       }
 
-      InsertTextureInAtlas(new_texture, atlas_definitions[best_atlas_index], best_x, best_y);
+      InsertTextureInAtlas(new_entry, atlas_definitions[best_atlas_index], best_x, best_y);
     }
 
     return true;
@@ -866,9 +890,8 @@ namespace chaos
     {
       boost::filesystem::path result_path = dst_pattern;
       boost::filesystem::create_directories(result_path.parent_path());
-      return atlas_creator.SaveResults(dst_pattern);
+      return data.SaveAtlas(dst_pattern);
     }
-
     return false;
   }
 };

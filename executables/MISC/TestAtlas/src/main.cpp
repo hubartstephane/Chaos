@@ -41,7 +41,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
 
     boost::filesystem::path dst_pattern = dest_p / "AtlasResultFake" / "MyAtlas";
     boost::filesystem::create_directories(dst_pattern.parent_path());
-    atlas_creator.SaveResults(dst_pattern.string().c_str());
+    data.SaveAtlas(dst_pattern.string().c_str());
   }
 }
 

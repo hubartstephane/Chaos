@@ -76,10 +76,6 @@ namespace chaos
     int         height;
     /** the bitmap */
     FIBITMAP  * bitmap;
-#if _DEBUG
-    /** the position at which it has been inserted inside an atlas */
-    size_t      order_of_insertion;
-#endif
 
   public:
 
@@ -136,9 +132,20 @@ namespace chaos
     /** display information about one texture */
     std::string GetTextureInfoString(TextureAtlasEntry const & texture, int padding) const;
 
+    /** function to save the results */
+    bool SaveAtlas(char const * pattern) const;
+    /** function to save images */
+    bool SaveAtlasImages(char const * pattern) const;
+    /** function to save images */
+    bool SaveAtlasIndex(char const * pattern) const;
+
   public:
-    /** all the textures */
+
+    /** all the textures for the input */
     std::vector<TextureAtlasEntry> entries;
+    /** all the image for the output */
+    std::vector<FIBITMAP *> atlas_images;
+
   };
 
   /**
@@ -203,9 +210,7 @@ namespace chaos
     bool OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
 
     /** returns a vector with all generated Image (to be deallocated after usage) */
-    std::vector<FIBITMAP *> GetAtlasTextures() const;
-    /** function to save the results */
-    bool SaveResults(char const * pattern) const;
+    std::vector<FIBITMAP *> GenerateAtlasTextures() const;
 
   protected:
 

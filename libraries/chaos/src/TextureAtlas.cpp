@@ -65,7 +65,7 @@ namespace chaos
     new_texture.order_of_insertion = SIZE_MAX;
 #endif
 
-    textures.push_back(std::move(new_texture));
+    entries.push_back(std::move(new_texture));
     return true;
   }
 
@@ -91,11 +91,11 @@ namespace chaos
 
   void TextureAtlasData::ResetResult()
   {
-    for (TextureAtlasEntry & texture : textures)
+    for (TextureAtlasEntry & entry : entries)
     {
-      texture.x     = 0;
-      texture.y     = 0;
-      texture.atlas = SIZE_MAX;
+      entry.x     = 0;
+      entry.y     = 0;
+      entry.atlas = SIZE_MAX;
     }
   }
 
@@ -103,38 +103,38 @@ namespace chaos
   {
     float p      = (float)padding;
     float result = 0.0f;
-    for (TextureAtlasEntry const & texture : textures)
+    for (TextureAtlasEntry const & entry : entries)
     {
-      if (texture.atlas != atlas_index && atlas_index != SIZE_MAX)
+      if (entry.atlas != atlas_index && atlas_index != SIZE_MAX)
         continue;
-      result += (float)((texture.width + padding) * (texture.height + padding));
+      result += (float)((entry.width + padding) * (entry.height + padding));
     }
     return result;
   }
 
   void TextureAtlasData::Clear()
   {
-    for (TextureAtlasEntry & texture : textures)
-      if (texture.bitmap != nullptr)
-        FreeImage_Unload(texture.bitmap);
-    textures.empty();
+    for (TextureAtlasEntry & entry : entries)
+      if (entry.bitmap != nullptr)
+        FreeImage_Unload(entry.bitmap);
+    entries.empty();
   }
 
   void TextureAtlasData::OutputTextureInfo(std::ostream & stream, int padding) const
   {
-    for (TextureAtlasEntry const & texture : textures)
-      OutputTextureInfo(texture, stream, padding);
+    for (TextureAtlasEntry const & entry : entries)
+      OutputTextureInfo(entry, stream, padding);
   }
 
-  void TextureAtlasData::OutputTextureInfo(TextureAtlasEntry const & texture, std::ostream & stream, int padding) const
+  void TextureAtlasData::OutputTextureInfo(TextureAtlasEntry const & entry, std::ostream & stream, int padding) const
   {
-    stream << "Texture " << (&texture - &textures[0]) << std::endl;
-    stream << "  filename : " << texture.filename    << std::endl;
-    stream << "  width    : " << texture.width       << std::endl;
-    stream << "  height   : " << texture.height      << std::endl;
-    stream << "  x        : " << texture.x + padding << std::endl;
-    stream << "  y        : " << texture.y + padding << std::endl;
-    stream << "  atlas    : " << texture.atlas       << std::endl;
+    stream << "Texture " << (&entry - &entries[0]) << std::endl;
+    stream << "  filename : " << entry.filename    << std::endl;
+    stream << "  width    : " << entry.width       << std::endl;
+    stream << "  height   : " << entry.height      << std::endl;
+    stream << "  x        : " << entry.x + padding << std::endl;
+    stream << "  y        : " << entry.y + padding << std::endl;
+    stream << "  atlas    : " << entry.atlas       << std::endl;
   }
 
   std::string TextureAtlasData::GetTextureInfoString(int padding) const
@@ -144,10 +144,10 @@ namespace chaos
     return out.str();
   }
 
-  std::string TextureAtlasData::GetTextureInfoString(TextureAtlasEntry const & texture, int padding) const
+  std::string TextureAtlasData::GetTextureInfoString(TextureAtlasEntry const & entry, int padding) const
   {
     std::ostringstream out;
-    OutputTextureInfo(texture, out, padding);
+    OutputTextureInfo(entry, out, padding);
     return out.str();
   }
 
@@ -200,12 +200,12 @@ namespace chaos
     int max_width  = -1;
     int max_height = -1;
 
-    for (TextureAtlasEntry & texture : data->textures)
+    for (TextureAtlasEntry & entry : data->entries)
     {
-      if (max_width < 0 || max_width < texture.width)
-        max_width = texture.width;
-      if (max_height < 0 || max_height < texture.height)
-        max_height = texture.height;
+      if (max_width < 0 || max_width < entry.width)
+        max_width = entry.width;
+      if (max_height < 0 || max_height < entry.height)
+        max_height = entry.height;
     }
 
     max_width  += padding * 2;
@@ -314,10 +314,10 @@ namespace chaos
       tinyxml2::XMLElement * TR = nullptr;
 
       size_t count = 0;
-      for (size_t j = 0 ; j < data->textures.size() ; ++j)
+      for (size_t j = 0 ; j < data->entries.size() ; ++j)
       {
-        TextureAtlasEntry const & texture = data->textures[j];
-        if (texture.atlas != i)
+        TextureAtlasEntry const & entry = data->entries[j];
+        if (entry.atlas != i)
           continue;
 
         if (TR == nullptr)
@@ -326,7 +326,7 @@ namespace chaos
         // first element of the line
         tinyxml2::XMLElement * TD  = html.PushElement(TR, "TD");
         tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
-        html.PushText(PRE, data->GetTextureInfoString(texture, padding).c_str());
+        html.PushText(PRE, data->GetTextureInfoString(entry, padding).c_str());
 
         if (count % 5 == 4)
           TR = nullptr;
@@ -348,18 +348,18 @@ namespace chaos
         html.PushAttribute(RECT, "height", h);
         html.PushAttribute(RECT, "style", texture_bgnd);
 
-        for (auto & texture : data->textures)
+        for (auto & entry : data->entries)
         {
           ++id;
-          if (texture.atlas != i)
+          if (entry.atlas != i)
             continue;
 
           int color = 10 + (id % 10) * 10;
 
-          int x = MultDimension(texture.x,      scale);
-          int y = MultDimension(texture.y,      scale);
-          int w = MultDimension(texture.width,  scale);
-          int h = MultDimension(texture.height, scale);
+          int x = MultDimension(entry.x,      scale);
+          int y = MultDimension(entry.y,      scale);
+          int w = MultDimension(entry.width,  scale);
+          int h = MultDimension(entry.height, scale);
           int p = MultDimension(padding, scale);
 
           char rect_props[1024];
@@ -376,14 +376,14 @@ namespace chaos
         // display the filenames
         if (params.show_textures_names)
         {
-          for (auto & texture : data->textures)
+          for (auto & entry : data->entries)
           {
-            if (texture.atlas != i)
+            if (entry.atlas != i)
               continue;
 
             int p = MultDimension(padding, scale);
-            int x = MultDimension(texture.x, scale) + MultDimension(texture.width , scale * 0.5f);
-            int y = MultDimension(texture.y, scale) + MultDimension(texture.height, scale * 0.5f);
+            int x = MultDimension(entry.x, scale) + MultDimension(entry.width , scale * 0.5f);
+            int y = MultDimension(entry.y, scale) + MultDimension(entry.height, scale * 0.5f);
 
             tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
             html.PushAttribute(TEXT, "text-anchor", "middle");
@@ -392,9 +392,9 @@ namespace chaos
             html.PushAttribute(TEXT, "fill", "white");
 
 #if _DEBUG
-            html.PushText(TEXT, StringTools::Printf("%s [%d]", texture.filename.c_str(), texture.order_of_insertion).c_str());
+            html.PushText(TEXT, StringTools::Printf("%s [%d]", entry.filename.c_str(), entry.order_of_insertion).c_str());
 #else
-            html.PushText(TEXT, texture.filename.c_str());
+            html.PushText(TEXT, entry.filename.c_str());
 #endif
           }
         }      
@@ -457,13 +457,13 @@ namespace chaos
     bool result = true;
 
     size_t atlas_count = GetAtlasCount();
-    size_t count       = data->textures.size();
+    size_t count       = data->entries.size();
 
     AtlasRectangle atlas_rectangle = GetAtlasRectangle();
 
     for (size_t i = 0 ; i < count ; ++i)
     {
-      TextureAtlasEntry const & t = data->textures[i];
+      TextureAtlasEntry const & t = data->entries[i];
 
       if (t.atlas >= atlas_count)
       {
@@ -483,8 +483,8 @@ namespace chaos
     {
       for (size_t j = i + 1 ; j < count ; ++j)
       {
-        TextureAtlasEntry const & t1 = data->textures[i];
-        TextureAtlasEntry const & t2 = data->textures[j];
+        TextureAtlasEntry const & t1 = data->entries[i];
+        TextureAtlasEntry const & t2 = data->entries[j];
 
         if (t1.atlas != t2.atlas)
           continue;
@@ -507,14 +507,14 @@ namespace chaos
   {
     AtlasRectangle r1 = AddPadding(r);
 
-    size_t count = data->textures.size();
+    size_t count = data->entries.size();
     for (size_t i = 0 ; i < count  ; ++i)
     {
-      TextureAtlasEntry const & texture = data->textures[i];
-      if (texture.atlas != atlas_index)
+      TextureAtlasEntry const & entry = data->entries[i];
+      if (entry.atlas != atlas_index)
         continue;
 
-      AtlasRectangle r2 = AddPadding(texture.GetRectangle());
+      AtlasRectangle r2 = AddPadding(entry.GetRectangle());
       if (r2.IsIntersecting(r1))
         return true;
     }
@@ -532,7 +532,7 @@ namespace chaos
     new_texture.y     = y;
     new_texture.atlas = atlas;
 
-    return (&new_texture - &data->textures[0]);
+    return (&new_texture - &data->entries[0]);
   }
 
   std::vector<FIBITMAP *> TextureAtlasCreatorBase::GetAtlasTextures() const
@@ -550,11 +550,11 @@ namespace chaos
       {       
         FreeImage_FillBackground(image, color, 0);
 
-        for (TextureAtlasEntry const & texture : data->textures)
+        for (TextureAtlasEntry const & entry : data->entries)
         {
-          if (texture.atlas != i || texture.bitmap == nullptr)
+          if (entry.atlas != i || entry.bitmap == nullptr)
             continue;
-          FreeImage_Paste(image, texture.bitmap, texture.x + padding, texture.y + padding, 255);
+          FreeImage_Paste(image, entry.bitmap, entry.x + padding, entry.y + padding, 255);
         }
       }
       result.push_back(image);
@@ -590,26 +590,26 @@ namespace chaos
       stream << "index = {" << std::endl;
 
       bool first = true;
-      for (TextureAtlasEntry const & texture : data->textures)
+      for (TextureAtlasEntry const & entry : data->entries)
       {
-        if (texture.bitmap == nullptr)
+        if (entry.bitmap == nullptr)
           continue;
         if (!first)
           stream << "  }, {" << std::endl; // close previous
         else
           stream << "  {" << std::endl;
 
-        std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, texture.atlas + 1);
+        std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, entry.atlas + 1);
         boost::filesystem::path atlas_basename = boost::filesystem::path(atlas_filename).filename();
 
-        boost::filesystem::path texture_basename = boost::filesystem::path(texture.filename).filename();
+        boost::filesystem::path texture_basename = boost::filesystem::path(entry.filename).filename();
 
         stream << "    name   = \"" << texture_basename.string() << "\"," << std::endl;
         stream << "    atlas  = \"" << atlas_basename.string()   << "\"," << std::endl;
-        stream << "    x      = " << texture.x + padding         << "," << std::endl;
-        stream << "    y      = " << texture.y + padding         << "," << std::endl;
-        stream << "    width  = " << texture.width               << "," << std::endl;
-        stream << "    height = " << texture.height              << std::endl;
+        stream << "    x      = " << entry.x + padding           << "," << std::endl;
+        stream << "    y      = " << entry.y + padding           << "," << std::endl;
+        stream << "    width  = " << entry.width                 << "," << std::endl;
+        stream << "    height = " << entry.height                << std::endl;
 
         first = false;
       }
@@ -637,7 +637,7 @@ namespace chaos
     atlas_definitions.clear();
   }
 
-  float TextureAtlasCreator::GetAdjacentSurface(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
+  float TextureAtlasCreator::GetAdjacentSurface(TextureAtlasEntry const & entry, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
   {
     float result = 0.0f;
 
@@ -666,21 +666,21 @@ namespace chaos
         int x1 = atlas.split_x[a];
         int x2 = atlas.split_x[u];
 
-        result = ((float)std::abs(x1 - x2)) * ((float)(texture.height + 2 * padding));
+        result = ((float)std::abs(x1 - x2)) * ((float)(entry.height + 2 * padding));
       }
       else
       {
         int y1 = atlas.split_y[b];
         int y2 = atlas.split_y[v];
 
-        result = ((float)std::abs(y1 - y2)) * ((float)(texture.width + 2 * padding));
+        result = ((float)std::abs(y1 - y2)) * ((float)(entry.width + 2 * padding));
       }
     }
 
     return result;
   }
 
-  float TextureAtlasCreator::FindBestPositionInAtlas(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, int & x, int & y) const
+  float TextureAtlasCreator::FindBestPositionInAtlas(TextureAtlasEntry const & entry, AtlasDefinition const & atlas, int & x, int & y) const
   {
     float result = -1.0f;
 
@@ -693,21 +693,21 @@ namespace chaos
 
     // find collision table
     AtlasRectangle r;
-    r.width  = texture.width;
-    r.height = texture.height;
+    r.width  = entry.width;
+    r.height = entry.height;
 
     bool any_value = false;
     for (size_t u = 0 ; u < x_count ; ++u)
     {
       int px = atlas.split_x[u];
-      if (px + texture.width + 2 * padding > width) // cannot puts the texture at this position (not fully inside the atlas)
+      if (px + entry.width + 2 * padding > width) // cannot puts the texture at this position (not fully inside the atlas)
         break;
       r.x = px;
 
       for (size_t v = 0 ; v < y_count ; ++v)
       {
         int py = atlas.split_y[v];
-        if (py + texture.height + 2 * padding > height)  // cannot puts the texture at this position (not fully inside the atlas)
+        if (py + entry.height + 2 * padding > height)  // cannot puts the texture at this position (not fully inside the atlas)
           break;
         r.y = py;
 
@@ -731,10 +731,10 @@ namespace chaos
         size_t index = u * y_count + v;
         if (!collision[index])
         {
-          float surf1 = GetAdjacentSurface(texture, atlas, collision, x_count, y_count, u, v, +1,  0);
-          float surf2 = GetAdjacentSurface(texture, atlas, collision, x_count, y_count, u, v, -1,  0);
-          float surf3 = GetAdjacentSurface(texture, atlas, collision, x_count, y_count, u, v,  0, +1);
-          float surf4 = GetAdjacentSurface(texture, atlas, collision, x_count, y_count, u, v,  0, -1);
+          float surf1 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v, +1,  0);
+          float surf2 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v, -1,  0);
+          float surf3 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v,  0, +1);
+          float surf4 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v,  0, -1);
 
           float sum_surf = surf1 + surf2 + surf3 + surf4;
 
@@ -766,30 +766,30 @@ namespace chaos
     v.insert(it, value);
   }
 
-  void TextureAtlasCreator::InsertTextureInAtlas(TextureAtlasEntry & texture, AtlasDefinition & atlas, int x, int y)
+  void TextureAtlasCreator::InsertTextureInAtlas(TextureAtlasEntry & entry, AtlasDefinition & atlas, int x, int y)
   {
-    texture.atlas = &atlas - &atlas_definitions[0];
-    texture.x     = x;
-    texture.y     = y;
+    entry.atlas = &atlas - &atlas_definitions[0];
+    entry.x     = x;
+    entry.y     = y;
 
     InsertOrdered(atlas.split_x, x);
-    InsertOrdered(atlas.split_x, x + texture.width + 2 * padding);
+    InsertOrdered(atlas.split_x, x + entry.width + 2 * padding);
 
     InsertOrdered(atlas.split_y, y);
-    InsertOrdered(atlas.split_y, y + texture.height + 2 * padding);
+    InsertOrdered(atlas.split_y, y + entry.height + 2 * padding);
   }
 
   bool TextureAtlasCreator::DoComputeResult()
   {
-    size_t count = data->textures.size();
+    size_t count = data->entries.size();
 
     float p = (float)padding;
 
     // create an indirection list for texture sorted by surface
     std::vector<size_t> textures_indirection_table = CreateTextureIndirectionTable([this, p](size_t i1, size_t i2){
 
-      TextureAtlasEntry const & t1 = data->textures[i1];
-      TextureAtlasEntry const & t2 = data->textures[i2];
+      TextureAtlasEntry const & t1 = data->entries[i1];
+      TextureAtlasEntry const & t2 = data->entries[i2];
 
       if ((t1.height + p) * (t1.width + p) > (t2.height + p) * (t2.width + p))
         return true;
@@ -799,7 +799,7 @@ namespace chaos
 
     for (size_t i = 0 ; i < count ; ++i)
     {
-      TextureAtlasEntry & new_texture = data->textures[textures_indirection_table[i]];
+      TextureAtlasEntry & new_texture = data->entries[textures_indirection_table[i]];
 
 #if _DEBUG
       new_texture.order_of_insertion = i;

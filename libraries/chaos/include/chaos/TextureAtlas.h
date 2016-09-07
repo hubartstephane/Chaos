@@ -138,7 +138,7 @@ namespace chaos
 
   public:
     /** all the textures */
-    std::vector<TextureAtlasEntry> textures;
+    std::vector<TextureAtlasEntry> entries;
   };
 
   /**
@@ -250,7 +250,7 @@ namespace chaos
     template<typename FUNC>
     std::vector<size_t> CreateTextureIndirectionTable(FUNC func)
     {
-      std::vector<size_t> result = CreateIndirectionTable(data->textures.size());
+      std::vector<size_t> result = CreateIndirectionTable(data->entries.size());
       std::sort(result.begin(), result.end(), func);
       return result;
     }

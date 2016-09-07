@@ -323,6 +323,12 @@ namespace chaos
   }
 
 
+
+
+
+
+
+
   tinyxml2::XMLDocument * TextureAtlasCreatorBase::OutputToHTMLDocument(TextureAtlasHTMLOutputParams params) const
   {
     tinyxml2::XMLDocument * result = new tinyxml2::XMLDocument();
@@ -705,8 +711,8 @@ namespace chaos
     size_t  y_count = atlas.split_y.size();
     size_t count = x_count * y_count;
 
-    std::vector<int> collision;
-    collision.insert(collision.begin(), count, 1); // by default, we cannot place the texture at any position
+    std::vector<int> collision_table;
+    collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
 
     // find collision table
     AtlasRectangle r;
@@ -719,21 +725,21 @@ namespace chaos
       int px = atlas.split_x[u];
       if (px + entry.width + 2 * padding > width) // cannot puts the texture at this position (not fully inside the atlas)
         break;
-      r.x = px;
+      r.x = px + padding;
 
       for (size_t v = 0 ; v < y_count ; ++v)
       {
         int py = atlas.split_y[v];
         if (py + entry.height + 2 * padding > height)  // cannot puts the texture at this position (not fully inside the atlas)
           break;
-        r.y = py;
+        r.y = py + padding;
 
-        bool ok = (!HasInterctingTexture(&atlas - &atlas_definitions[0], r));
+        bool collision = HasInterctingTexture(&atlas - &atlas_definitions[0], r);
 
-        any_value |= ok;
+        any_value |= !collision;
 
-        if (ok)
-          collision[u * y_count + v] = 0;
+        if (!collision)
+          collision_table[u * y_count + v] = 0;
       }
     }
 
@@ -746,12 +752,12 @@ namespace chaos
       for (size_t v = 0 ; v < y_count ; ++v)
       {
         size_t index = u * y_count + v;
-        if (!collision[index])
+        if (!collision_table[index])
         {
-          float surf1 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v, +1,  0);
-          float surf2 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v, -1,  0);
-          float surf3 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v,  0, +1);
-          float surf4 = GetAdjacentSurface(entry, atlas, collision, x_count, y_count, u, v,  0, -1);
+          float surf1 = GetAdjacentSurface(entry, atlas, collision_table, x_count, y_count, u, v, +1,  0);
+          float surf2 = GetAdjacentSurface(entry, atlas, collision_table, x_count, y_count, u, v, -1,  0);
+          float surf3 = GetAdjacentSurface(entry, atlas, collision_table, x_count, y_count, u, v,  0, +1);
+          float surf4 = GetAdjacentSurface(entry, atlas, collision_table, x_count, y_count, u, v,  0, -1);
 
           float sum_surf = surf1 + surf2 + surf3 + surf4;
 

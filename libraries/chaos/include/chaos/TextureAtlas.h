@@ -66,9 +66,9 @@ namespace chaos
     std::string filename;   
     /** the atlas in which it is stored in result */
     size_t      atlas;
-    /** the top-left corner of the texture (beware, padding must be add for correct result) */
+    /** the top-left corner of the texture */
     int         x;
-    /** the top-left corner of the texture (beware, padding must be add for correct result) */
+    /** the top-left corner of the texture */
     int         y;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
     int         width;
@@ -123,14 +123,14 @@ namespace chaos
     /** clear all the textures */
     void Clear();
     /** display information about all textures */
-    void OutputTextureInfo(std::ostream & stream, int padding) const;
+    void OutputTextureInfo(std::ostream & stream) const;
     /** display information about one texture */
-    void OutputTextureInfo(TextureAtlasEntry const & texture, std::ostream & stream, int padding) const;
+    void OutputTextureInfo(TextureAtlasEntry const & texture, std::ostream & stream) const;
 
     /** display information about all textures */
-    std::string GetTextureInfoString(int padding) const;
+    std::string GetTextureInfoString() const;
     /** display information about one texture */
-    std::string GetTextureInfoString(TextureAtlasEntry const & texture, int padding) const;
+    std::string GetTextureInfoString(TextureAtlasEntry const & texture) const;
 
     /** function to save the results */
     bool SaveAtlas(char const * pattern) const;
@@ -240,8 +240,6 @@ namespace chaos
     {
       return (int)(((float)a) * b);
     }
-    /** helper function to update texture data */
-    size_t UpdateTexture(TextureAtlasEntry & new_texture, size_t atlas, int x, int y);
     /** an utility function that returns an array with 0.. count - 1*/
     static std::vector<size_t> CreateIndirectionTable(size_t count)
     {

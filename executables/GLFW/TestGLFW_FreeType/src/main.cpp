@@ -74,7 +74,7 @@ protected:
 
   void ChangeFont(int index)
   {
-    boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index, "Hello world");
+    boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index);
     if (new_font != nullptr)
     {
       font_index   = index;
@@ -93,6 +93,8 @@ protected:
 
   char const * GetFontName(int index) const
   {
+    index = index / 2;
+
     if (index == 0) 
       return "Flatwheat-Regular.ttf";
     if (index == 1) 
@@ -212,7 +214,7 @@ protected:
     bt = -bt;
   }
 
-  boost::intrusive_ptr<chaos::Texture> LoadFont(int index, char const * str)
+  boost::intrusive_ptr<chaos::Texture> LoadFont(int index)
   {
     FT_Error Err;
 
@@ -231,8 +233,6 @@ protected:
     char const * font_name = GetFontName(index);
     if (font_name == nullptr)
       return ReleaseResourceImpl(&library, nullptr);
-
-    str = font_name; // overide the font name
 
     // load the foot
     boost::filesystem::path resources_path = application->GetResourcesPath();
@@ -258,20 +258,9 @@ protected:
     //parameters.min_filter = GL_NEAREST;
     //parameters.mag_filter = GL_NEAREST;
 
-#if 1
-    FIBITMAP * bm = chaos::FontTools::GenerateImageFromFont(face, str);
-#else
-
-    // get glyph index
-    int glyph_index = FT_Get_Char_Index(face, '9');
-
-    // load the glyph
-    Err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
-    if (Err)
-      return ReleaseResourceImpl(&library, &face);
-
-    FIBITMAP * bm = chaos::FontTools::GenerateImageFromGlyph(face->glyph);
-#endif
+    FIBITMAP * bm = ((index & 1) == 0)?
+      chaos::FontTools::GenerateImageFromString(face, font_name):
+      chaos::FontTools::GenerateImageFromChar(face, 'A');    
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 
@@ -305,7 +294,7 @@ protected:
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
-    texture = LoadFont(font_index, "Hello world");
+    texture = LoadFont(font_index);
     if (texture == nullptr)
       return false;
 

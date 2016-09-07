@@ -293,6 +293,8 @@ int _tmain(int argc, char ** argv, char ** env)
     lua_close(l);
   }
 
+  chaos::Application::Finalize();
+
   return 0;
 }
 

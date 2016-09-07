@@ -19,8 +19,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  FreeImage_Initialise();
-
   chaos::Application * application = chaos::Application::GetInstance();
 
   boost::filesystem::path resources_path = application->GetResourcesPath();
@@ -65,9 +63,9 @@ int _tmain(int argc, char ** argv, char ** env)
 
   DisplaySkyboxInfo(single_sky_box2, "SINGLE SKYBOX BAD SIZE");
 
-  FreeImage_DeInitialise();
-
   chaos::WinTools::PressToContinue();
+
+  chaos::Application::Finalize();
 
   return 0;
 }

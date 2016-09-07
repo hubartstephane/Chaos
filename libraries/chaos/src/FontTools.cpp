@@ -236,5 +236,54 @@ namespace chaos
       
     return result;  
   }
+
+
+
+  bool FontTools::GenerateTextureAtlas(FT_Face face, TextureAtlasData & data, char const * characters)
+  {
+    assert(face != nullptr);
+
+    if (characters == nullptr)
+      characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
+
+    // fill the texture data with all characters
+    for (int i = 0 ; characters[i] != 0 ; ++i)
+    {
+      char c = characters[i];
+
+      FIBITMAP * bitmap = GenerateImageFromChar(face, c);
+      if (bitmap != nullptr)
+      {
+        char name[] = " ";
+        name[0] = c;
+
+        data.AddImageSource(name, bitmap);
+      }
+    }
+    // generate the atlas
+    chaos::TextureAtlasCreator atlas_creator;
+    return atlas_creator.ComputeResult(data, 512, 512, 5);
+  }
+
+  bool FontTools::GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlasData & data, char const * characters, int width, int height)
+  {
+    assert(font_name != nullptr);
+    assert(width  > 0);
+    assert(height > 0);
+
+    bool result = false;
+
+    FT_Face face;
+    FT_Error error = FT_New_Face(library, font_name, 0, &face);
+    if (error == 0)
+    {
+      error = FT_Set_Pixel_Sizes(face, width, height); // Important else FT_Load_Glyph(...) fails
+      if (error == 0)
+        result = GenerateTextureAtlas(face, data, characters);
+      FT_Done_Face(face);
+    }
+    return result;
+  }
 };
+
 

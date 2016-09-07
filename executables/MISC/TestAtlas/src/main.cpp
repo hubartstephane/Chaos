@@ -73,8 +73,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  FreeImage_Initialise();
-
   chaos::MathTools::ResetRandSeed();
 
   boost::filesystem::path dst_p;
@@ -88,9 +86,9 @@ int _tmain(int argc, char ** argv, char ** env)
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }
 
-  FreeImage_DeInitialise();
-
   chaos::WinTools::PressToContinue();
+
+  chaos::Application::Finalize();
 
   return 0;
 }

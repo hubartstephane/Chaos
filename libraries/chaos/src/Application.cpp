@@ -10,59 +10,40 @@ namespace chaos
 
   Application::~Application()
   {
-    if (configuration_state != nullptr)
-    {
-      lua_close(configuration_state);
-      configuration_state = nullptr;
-    }
 
-    if (file_path_manager != nullptr)
+  }
+
+  void Application::DoFinalize()
+  {
+
+  }
+
+  void Application::Finalize()
+  {
+    if (singleton_instance != nullptr)
     {
-      delete(file_path_manager);
-      file_path_manager = nullptr;
+      singleton_instance->DoFinalize();
+      delete(singleton_instance);
+      singleton_instance = nullptr;
+      FinalizeStandardLibraries();
     }
+  }
+
+  void Application::InitializeStandardLibraries()
+  {
+    FreeImage_Initialise(); // glew will be initialized 
+    glfwInit();
+  }
+
+  void Application::FinalizeStandardLibraries()
+  {
+    glfwTerminate();
+    FreeImage_DeInitialise();
   }
 
   bool Application::DoInitialize(int argc, char ** argv, char ** env)
   {
-    assert(file_path_manager == nullptr);
-
-    StoreParameters(argc, argv, env);
-
-    file_path_manager = CreateFilePathManager();
-
-    LoadConfigurationFile();
     return true;
-  }
-
-  bool Application::LoadConfigurationFile()
-  {
-#if 0
-    Buffer<char> buffer = FileTools::LoadFile(application_path / "config.lua", true);
-    if (buffer != nullptr)
-    {
-      configuration_state = LuaTools::CreateStandardLuaState();
-      if (configuration_state != nullptr)
-      {
-        InitializeLuaState(configuration_state);
-        LuaTools::ExecBuffer(configuration_state, buffer, false);
-      }
-    }
-#endif
-    return true;
-  }
-
-  FilePathManager * Application::CreateFilePathManager()
-  {
-    return new FilePathManager();
-  }
-
-  void Application::InitializeLuaState(lua_State * state)
-  {
-    assert(state != nullptr);
-
- //   FilePathManager::InitializeLuaState(state);
- //   OOLUA::set_global(state, "path", file_path_manager);
   }
 
   void Application::StoreParameters(int argc, char ** argv, char ** env)

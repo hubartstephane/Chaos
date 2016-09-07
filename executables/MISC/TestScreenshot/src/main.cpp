@@ -85,8 +85,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  FreeImage_Initialise();
-
   boost::filesystem::path dst_p;
   if (chaos::FileTools::CreateTemporaryDirectory("ScreenShot", dst_p))
   {
@@ -98,7 +96,7 @@ int _tmain(int argc, char ** argv, char ** env)
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }
 
-  FreeImage_DeInitialise();
+  chaos::Application::Finalize();
 
   return 0;
 }

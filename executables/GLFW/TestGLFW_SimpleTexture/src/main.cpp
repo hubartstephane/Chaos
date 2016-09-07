@@ -204,9 +204,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
     
-  FreeImage_Initialise(); // glew will be initialized 
-  glfwInit();
-
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor       = nullptr;
   params.width         = 500;
@@ -214,8 +211,7 @@ int _tmain(int argc, char ** argv, char ** env)
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 
-  glfwTerminate();
-  FreeImage_DeInitialise();
+  chaos::Application::Finalize();
 
   return 0;
 }

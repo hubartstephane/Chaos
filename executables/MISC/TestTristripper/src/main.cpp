@@ -6,6 +6,7 @@ int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
+  chaos::Application::Finalize();
 
   return 0;
 }

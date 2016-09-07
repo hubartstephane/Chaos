@@ -71,6 +71,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::PressToContinue();
 
+  chaos::Application::Finalize();
+
   return 0;
 }
 

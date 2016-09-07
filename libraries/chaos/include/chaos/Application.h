@@ -13,7 +13,7 @@ class Application
 public:
 
   /** constructor */
-  Application() : configuration_state(nullptr), file_path_manager(nullptr){}
+  Application(){}
   /** destructor */
   virtual ~Application();
 
@@ -22,7 +22,9 @@ public:
   static bool Initialize(int argc, char ** argv, char ** env)
   {
     assert(singleton_instance == nullptr);
+    InitializeStandardLibraries();
     singleton_instance = new T;
+    singleton_instance->StoreParameters(argc, argv, env);
     return singleton_instance->DoInitialize(argc, argv, env);
   }
 
@@ -31,6 +33,9 @@ public:
   {
     return Initialize<Application>(argc, argv, env);
   }
+
+  /** finalization method */
+  static void Finalize();
 
   /** getter of the singleton instance */
   static inline Application * GetInstance(){ return singleton_instance; }
@@ -55,24 +60,21 @@ protected:
 
   /** Initialize the application with the main data */
   virtual bool DoInitialize(int argc, char ** argv, char ** env);
-  /** load the configuration file */
-  virtual bool LoadConfigurationFile();
   /** store the application parameters */
   virtual void StoreParameters(int argc, char ** argv, char ** env);
-  /** prepare lua state for configuration file */
-  virtual void InitializeLuaState(lua_State * state);
+  /** Finalization method */
+  virtual void DoFinalize();
 
-  /** initialize some members */
-  virtual FilePathManager * CreateFilePathManager();
-
+  /** standard library initialization */
+  static void InitializeStandardLibraries();
+  /** standard library finalization */
+  static void FinalizeStandardLibraries();
 
 protected:
 
     /** the single application instance */
   static Application * singleton_instance;
 
-  /** lua state from configuration file */
-  lua_State * configuration_state;
   /** the application parameters */
   std::vector<std::string> arguments;
   /** the application environments */
@@ -85,9 +87,6 @@ protected:
   boost::filesystem::path resources_path;
   /** path of the application to store user data */
   boost::filesystem::path userlocal_path;
-
-  /** the path manager */
-  FilePathManager * file_path_manager;
 };
 
 }; // namespace chaos

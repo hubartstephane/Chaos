@@ -92,8 +92,6 @@ int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
-  FreeImage_Initialise();
-
   chaos::SimpleWin32CreateParam create_params;
   create_params.x         = 10;
   create_params.y         = 10;
@@ -106,7 +104,7 @@ int _tmain(int argc, char ** argv, char ** env)
   c.CreateWindowHinstance(NULL, "my_window", create_params);
   chaos::SimpleWin32Window::SimpleMessageLoop();
 
-  FreeImage_DeInitialise();
+  chaos::Application::Finalize();
 
   return 0;
 }

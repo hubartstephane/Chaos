@@ -260,9 +260,11 @@ protected:
 
     FIBITMAP * bm = ((index & 1) == 0)?
       chaos::FontTools::GenerateImage(face, font_name):
-      chaos::FontTools::GenerateImage(face, 'A');    
+      chaos::FontTools::GenerateImage(face, font_name[2]);    
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
+
+    glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 
     FreeImage_Unload(bm);
 

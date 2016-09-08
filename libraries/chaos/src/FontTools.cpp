@@ -16,7 +16,7 @@
 
 namespace chaos
 {  
-  FIBITMAP * FontTools::GenerateImageFromGlyph(FT_GlyphSlot glyph)
+  FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph)
   {
     assert(glyph != nullptr);
 
@@ -24,11 +24,11 @@ namespace chaos
 
     FT_Error Err = FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL); // render the slot into a bitmap
     if (!Err)
-      result = GenerateImageFromGlyphBitmap(glyph->bitmap); // convert FreeType-bitmap into FreeImage-bitmap
+      result = GenerateImage(glyph->bitmap); // convert FreeType-bitmap into FreeImage-bitmap
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImageFromGlyphBitmap(FT_Bitmap & bitmap)
+  FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap)
   {
     int w = bitmap.width;
     int h = bitmap.rows;
@@ -55,7 +55,7 @@ namespace chaos
 
     // get glyph index
     int glyph_index = FT_Get_Char_Index(face, c);
-    if (glyph_index && !accept_notfound_glyph)
+    if (glyph_index ==  0 && !accept_notfound_glyph)
       return nullptr;
 
     // load the glyph
@@ -105,7 +105,7 @@ namespace chaos
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImageFromChar(FT_Face face, char c)
+  FIBITMAP * FontTools::GenerateImage(FT_Face face, char c)
   {
     assert(face != nullptr);
 
@@ -114,13 +114,13 @@ namespace chaos
     FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, true);
     if (bitmap_glyph != nullptr)
     {
-      result = GenerateImageFromGlyphBitmap(bitmap_glyph->bitmap);
+      result = GenerateImage(bitmap_glyph->bitmap);
       FT_Done_Glyph((FT_Glyph)bitmap_glyph);    
     }  
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImageFromString(FT_Face face, char const * str)
+  FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str)
   {
     assert(face != nullptr);
     assert(str  != nullptr);
@@ -237,51 +237,73 @@ namespace chaos
     return result;  
   }
 
-
-
-  bool FontTools::GenerateTextureAtlas(FT_Face face, TextureAtlasData & data, char const * characters)
+  bool FontTools::GenerateTextureAtlas(FT_Face face, TextureAtlasData & data, char const * characters, GenTextureAtlasParameters const & params)
   {
     assert(face != nullptr);
 
     if (characters == nullptr)
       characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
 
-    // fill the texture data with all characters
-    for (int i = 0 ; characters[i] != 0 ; ++i)
-    {
-      char c = characters[i];
+    std::map<char, CharacterBitmapGlyph> glyph_cache = GetGlyphCacheForString(face, characters);
 
-      FIBITMAP * bitmap = GenerateImageFromChar(face, c);
-      if (bitmap != nullptr)
+    for (auto & glyph : glyph_cache)
+    {
+      FIBITMAP * bm = GenerateImage(glyph.second.bitmap_glyph->bitmap);        
+      if (bm != nullptr)
       {
         char name[] = " ";
-        name[0] = c;
+        name[0] = glyph.first;
 
-        data.AddImageSource(name, bitmap);
-      }
+        data.AddImageSource(name, bm);   // bitmaps will be released at TextureAtlasData destruction   
+      }           
     }
+
+
+      // XXX : to do    returns somehow the glyph metrics
+
+
     // generate the atlas
-    chaos::TextureAtlasCreator atlas_creator;
-    return atlas_creator.ComputeResult(data, 512, 512, 5);
+    TextureAtlasCreator atlas_creator;
+    bool result = atlas_creator.ComputeResult(data, params.altas_width, params.altas_height, params.padding);
+
+    // release the glyphs
+    for (auto glyph_entry : glyph_cache)
+      FT_Done_Glyph((FT_Glyph)glyph_entry.second.bitmap_glyph);
+       
+    return result;
   }
 
-  bool FontTools::GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlasData & data, char const * characters, int width, int height)
+  bool FontTools::GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlasData & data, char const * characters, GenTextureAtlasParameters const & params)
   {
     assert(font_name != nullptr);
-    assert(width  > 0);
-    assert(height > 0);
 
-    bool result = false;
+    bool result         = false;
+    bool delete_library = false;
 
+    // create a library if necessary
+    if (library == nullptr)
+    {
+      FT_Error error = FT_Init_FreeType(&library);
+      if (error)
+        return false;    
+      delete_library = true;
+    }
+
+    // load the face and set pixel size
     FT_Face face;
     FT_Error error = FT_New_Face(library, font_name, 0, &face);
     if (error == 0)
     {
-      error = FT_Set_Pixel_Sizes(face, width, height); // Important else FT_Load_Glyph(...) fails
+      error = FT_Set_Pixel_Sizes(face, params.glyph_width, params.glyph_height); // Important else FT_Load_Glyph(...) fails
       if (error == 0)
-        result = GenerateTextureAtlas(face, data, characters);
+        result = GenerateTextureAtlas(face, data, characters, params);
       FT_Done_Face(face);
     }
+
+    // delete library if necessary
+    if (delete_library)
+      FT_Done_FreeType(library);
+
     return result;
   }
 };

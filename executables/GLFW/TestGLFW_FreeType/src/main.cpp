@@ -259,8 +259,8 @@ protected:
     //parameters.mag_filter = GL_NEAREST;
 
     FIBITMAP * bm = ((index & 1) == 0)?
-      chaos::FontTools::GenerateImageFromString(face, font_name):
-      chaos::FontTools::GenerateImageFromChar(face, 'A');    
+      chaos::FontTools::GenerateImage(face, font_name):
+      chaos::FontTools::GenerateImage(face, 'A');    
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 

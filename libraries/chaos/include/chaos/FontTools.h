@@ -56,25 +56,44 @@ namespace chaos
         CharacterMetrics(in_bitmap_glyph),
         bitmap_glyph(in_bitmap_glyph){}
 
+      /** the glyph */
       FT_BitmapGlyph bitmap_glyph;
     };
 
+    class GenTextureAtlasParameters
+    {
+    public:
+
+      GenTextureAtlasParameters():
+        altas_width(512),
+        altas_height(512),
+        glyph_width(32),
+        glyph_height(32),
+        padding(10){}
+      
+      int altas_width;
+      int altas_height;
+      int glyph_width;
+      int glyph_height;    
+      int padding;
+    };
+
     /** generate a bitmap from a glyph slot */
-    static FIBITMAP * GenerateImageFromGlyph(FT_GlyphSlot glyph);
+    static FIBITMAP * GenerateImage(FT_GlyphSlot glyph);
     /** generate a bitmap from a bitmap */
-    static FIBITMAP * GenerateImageFromGlyphBitmap(FT_Bitmap & bitmap);
+    static FIBITMAP * GenerateImage(FT_Bitmap & bitmap);
     /** generate a bitmap from a font an a string */
-    static FIBITMAP * GenerateImageFromString(FT_Face face, char const * str);
+    static FIBITMAP * GenerateImage(FT_Face face, char const * str);
     /** generate a bitmap from a font an a character */
-    static FIBITMAP * GenerateImageFromChar(FT_Face face, char c);
+    static FIBITMAP * GenerateImage(FT_Face face, char c);
     /** generate a bitmap glyph from a character */
     static FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph); 
     /** generate a cache with all glyph required for a string */
     static std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const * str);
 
     /** generate an atlas from a font */
-    static bool GenerateTextureAtlas(FT_Face face, TextureAtlasData & data, char const * characters);
+    static bool GenerateTextureAtlas(FT_Face face, TextureAtlasData & data, char const * characters, GenTextureAtlasParameters const & params = GenTextureAtlasParameters());
     /** generate an atlas from a font */
-    static bool GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlasData & data, char const * characters, int width, int height);
+    static bool GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlasData & data, char const * characters, GenTextureAtlasParameters const & params = GenTextureAtlasParameters());
   };
 };

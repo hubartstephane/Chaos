@@ -6,6 +6,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
+#include <chaos/FontTools.h>
 
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
@@ -66,6 +67,18 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
     atlas_padding);
 }
 
+void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
+{
+  chaos::TextureAtlasData data;
+
+  boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
+  if (chaos::FontTools::GenerateTextureAtlas(nullptr, font_path.string().c_str(), data, nullptr))
+  {
+    boost::filesystem::path dst_pattern = dest_p / "AtlasResultFont" / "MyAtlas";
+    boost::filesystem::create_directories(dst_pattern.parent_path());
+    data.SaveAtlas(dst_pattern.string().c_str());  
+  }
+}
 
 int _tmain(int argc, char ** argv, char ** env)
 {
@@ -82,6 +95,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
     TestAtlasDebugMode(dst_p, resources_path);
     TestAtlasNormalMode(dst_p, resources_path);
+    TestAtlasFont(dst_p, resources_path);
 
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }

@@ -55,7 +55,7 @@ namespace chaos
 
     // get glyph index
     int glyph_index = FT_Get_Char_Index(face, c);
-    if (glyph_index ==  0 && !accept_notfound_glyph)
+    if (c != 0 && (glyph_index == 0 && !accept_notfound_glyph))
       return nullptr;
 
     // load the glyph
@@ -88,6 +88,7 @@ namespace chaos
 
     std::map<char, CharacterBitmapGlyph> result;
 
+    // generate the glyph bitmap : for all characters
     for (int i = 0 ; str[i] != 0 ; ++i)
     {
       char c = str[i];
@@ -95,12 +96,17 @@ namespace chaos
       if (result.find(c) != result.end()) // already in cache
         continue;
 
-      FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, true);
+      FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, false);
       if (bitmap_glyph == nullptr)
         continue;
 
       result.insert(std::make_pair(c, CharacterBitmapGlyph(bitmap_glyph))); // insert into cache
     }
+
+    // generate the glyph bitmap : for 0
+    FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, 0, false);
+    if (bitmap_glyph != nullptr)
+      result.insert(std::make_pair(0, CharacterBitmapGlyph(bitmap_glyph))); // insert into cache
 
     return result;
   }

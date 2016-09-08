@@ -69,7 +69,7 @@ namespace chaos
         altas_height(512),
         glyph_width(32),
         glyph_height(32),
-        padding(10){}
+        padding(5){}
       
       int altas_width;
       int altas_height;

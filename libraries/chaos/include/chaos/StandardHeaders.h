@@ -120,6 +120,9 @@ T max(T a, T b)
 #include FT_GLYPH_H
 #include FT_BITMAP_H
 
+
+#include <json.hpp>
+
 #include <tinyxml2.h>
 
 #include <FreeImage.h>

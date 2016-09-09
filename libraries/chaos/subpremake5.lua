@@ -17,7 +17,9 @@
   DependOnLib("ASSIMP")       
   DependOnLib("FBX")  
   DependOnLib("TRISTRIPPER")
-  DependOnLib("FREETYPE2")    
+  DependOnLib("FREETYPE2")
+  DependOnLib("JSON")
+      
         
   --DependOnLib("FMODSTUDIO")  
   --DependOnLib("GLI")  

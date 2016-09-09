@@ -306,3 +306,9 @@ local TRISTRIPPER_LIB_PATH = {
   },
 } 
 DeclareExternalLib("TRISTRIPPER", TRISTRIPPER_INC_PATH, TRISTRIPPER_LIB_PATH, "tristripper.lib")
+
+  -- JSON
+local JSON_PATH     = "json-develop"
+local JSON_INC_PATH = path.join(JSON_PATH, "src")  
+
+DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)

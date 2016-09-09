@@ -4,6 +4,7 @@
 
 ProcessSubPremake("TestAllLibs")
 ProcessSubPremake("TestClientServer")
+ProcessSubPremake("TestJSON")
 ProcessSubPremake("TestOpenFileMap")
 ProcessSubPremake("TestBoostOptions")
 ProcessSubPremake("TestWindowsApp")

@@ -1,12 +1,18 @@
 {
-  "entier": 3,
-  "flottant": 12.6,
-  "boolean": true,
-  "chaine": "hello world",
-  "null": null,
-  "map": {
-    "entree1": 10,
-	"entree2": 20
-  },
-  "tableau": [1, 0, 2],
+    "answer": {
+        "everything": 42
+    },
+    "happy": true,
+    "list": [
+        1,
+        0,
+        2
+    ],
+    "name": "Niels",
+    "nothing": null,
+    "object": {
+        "currency": "USD",
+        "value": 42.99
+    },
+    "pi": 3.141
 }

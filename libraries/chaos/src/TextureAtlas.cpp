@@ -161,12 +161,23 @@ namespace chaos
     return out.str();
   }
 
-  bool TextureAtlasData::SaveAtlas(char const * pattern) const
+  bool TextureAtlasData::SaveAtlas(boost::filesystem::path const & dst_dir, char const * pattern) const
   {
-    return SaveAtlasImages(pattern) && SaveAtlasIndex(pattern);
+    boost::filesystem::create_directories(dst_dir);
+    return SaveAtlasImages(dst_dir, pattern) && SaveAtlasIndex(dst_dir, pattern);
   }
 
-  bool TextureAtlasData::SaveAtlasImages(char const * pattern) const
+  std::string TextureAtlasData::GetAtlasImageName(char const * pattern, int index) const
+  {
+    return StringTools::Printf("%s_%d.png", pattern, index + 1);
+  }
+
+  std::string TextureAtlasData::GetAtlasIndexName(char const * pattern) const
+  {
+    return StringTools::Printf("%s_index.txt", pattern);
+  }
+
+  bool TextureAtlasData::SaveAtlasImages(boost::filesystem::path const & dst_dir, char const * pattern) const
   {
     assert(pattern != nullptr);
 
@@ -177,23 +188,38 @@ namespace chaos
       FIBITMAP * im = atlas_images[i];
       if (im != nullptr)
       {
-        std::string filename = StringTools::Printf("%s_%d.png", pattern, i + 1);
-        result = (FreeImage_Save(FIF_PNG, im, filename.c_str(), 0) != 0);
+        boost::filesystem::path dst_filename = dst_dir / GetAtlasImageName(pattern, i);
+
+        result = (FreeImage_Save(FIF_PNG, im, dst_filename.string().c_str(), 0) != 0);
       }
     }
     return result;
   }
 
-  bool TextureAtlasData::SaveAtlasIndex(char const * pattern) const
+  bool TextureAtlasData::SaveAtlasIndex(boost::filesystem::path const & dst_dir, char const * pattern) const
   {
     assert(pattern != nullptr);
 
     // generate a file for the index (lua format)
-    std::string filename = StringTools::Printf("%s_index.txt", pattern);
+    boost::filesystem::path dst_filename = dst_dir / GetAtlasIndexName(pattern);
 
-    std::ofstream stream(filename);
+    std::ofstream stream(dst_filename.string().c_str());
     if (stream)
     {
+      nlohmann::json j;
+
+      j["files"] = nlohmann::json::array();
+      for (size_t i = 0 ; i < atlas_images.size() ; ++i)
+        j["files"].push_back(GetAtlasImageName(pattern, i));
+
+
+
+      stream << j.dump(4);
+
+#if 0
+
+
+
       stream << "index = {" << std::endl;
 
       bool first = true;
@@ -224,6 +250,13 @@ namespace chaos
         stream << "  }" << std::endl; // close previous
 
       stream << "}" << std::endl;
+
+
+
+
+
+
+#endif
 
       return true;
     }
@@ -870,23 +903,17 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasCreator::CreateAtlasFromDirectory(char const * src_dir, char const * dst_pattern, int atlas_width, int atlas_height, int atlas_padding)
+  bool TextureAtlasCreator::CreateAtlasFromDirectory(char const * src_dir, boost::filesystem::path const & dst_dir, char const * pattern, int atlas_width, int atlas_height, int atlas_padding)
   {
-    assert(src_dir     != nullptr);
-    assert(dst_pattern != nullptr);
+    assert(src_dir != nullptr);
 
     TextureAtlasData data;
     data.AddTextureFilesFromDirectory(src_dir);
 
     // create the atlas files
-    chaos::TextureAtlasCreator atlas_creator;
-  
+    chaos::TextureAtlasCreator atlas_creator;  
     if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
-    {
-      boost::filesystem::path result_path = dst_pattern;
-      boost::filesystem::create_directories(result_path.parent_path());
-      return data.SaveAtlas(dst_pattern);
-    }
+      return data.SaveAtlas(dst_dir, pattern);
     return false;
   }
 };

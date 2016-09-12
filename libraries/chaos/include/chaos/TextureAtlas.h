@@ -133,11 +133,16 @@ namespace chaos
     std::string GetTextureInfoString(TextureAtlasEntry const & texture) const;
 
     /** function to save the results */
-    bool SaveAtlas(char const * pattern) const;
+    bool SaveAtlas(boost::filesystem::path const & dst_dir, char const * pattern) const;
     /** function to save images */
-    bool SaveAtlasImages(char const * pattern) const;
+    bool SaveAtlasImages(boost::filesystem::path const & dst_dir, char const * pattern) const;
     /** function to save images */
-    bool SaveAtlasIndex(char const * pattern) const;
+    bool SaveAtlasIndex(boost::filesystem::path const & dst_dir, char const * pattern) const;
+
+    /** get the name of an atlas image */
+    std::string GetAtlasImageName(char const * pattern, int index) const;
+    /** get the name of an atlas index */
+    std::string GetAtlasIndexName(char const * pattern) const;
 
   public:
 
@@ -294,7 +299,7 @@ namespace chaos
     /** clear the results */
     virtual void Clear();
     /** create an atlas from a directory into another directory */
-    static bool CreateAtlasFromDirectory(char const * src_dir, char const * dst_pattern, int atlas_width, int atlas_height, int atlas_padding);
+    static bool CreateAtlasFromDirectory(char const * src_dir, boost::filesystem::path const & dst_dir, char const * pattern, int atlas_width, int atlas_height, int atlas_padding);
 
   protected:
 

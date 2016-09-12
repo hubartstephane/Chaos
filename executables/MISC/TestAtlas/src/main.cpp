@@ -40,9 +40,8 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
     atlas_creator.OutputToHTMLFile(html_path.string().c_str(), params);
 
-    boost::filesystem::path dst_pattern = dest_p / "AtlasResultFake" / "MyAtlas";
-    boost::filesystem::create_directories(dst_pattern.parent_path());
-    data.SaveAtlas(dst_pattern.string().c_str());
+    boost::filesystem::path dst_dir = dest_p / "AtlasResultFake";
+    data.SaveAtlas(dst_dir.string().c_str(), "MyAtlas");
   }
 }
 
@@ -57,11 +56,12 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   int atlas_height  = 512;
   int atlas_padding = 10;
 
-  boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas";
+  boost::filesystem::path result_path = dest_p / "AtlasResult";
 
   chaos::TextureAtlasCreator::CreateAtlasFromDirectory(
     resources_path.string().c_str(), 
-    result_path.string().c_str(), 
+    result_path, 
+    "MyAtlas",
     atlas_width, 
     atlas_height, 
     atlas_padding);
@@ -74,9 +74,8 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
   boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
   if (chaos::FontTools::GenerateTextureAtlas(nullptr, font_path.string().c_str(), data, nullptr))
   {
-    boost::filesystem::path dst_pattern = dest_p / "AtlasResultFont" / "MyAtlas";
-    boost::filesystem::create_directories(dst_pattern.parent_path());
-    data.SaveAtlas(dst_pattern.string().c_str());  
+    boost::filesystem::path dst_dir = dest_p / "AtlasResultFont";    
+    data.SaveAtlas(dst_dir.string().c_str(), "MyAtlas");
   }
 }
 

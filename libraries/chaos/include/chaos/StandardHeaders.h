@@ -42,6 +42,7 @@ T max(T a, T b)
 #include <time.h>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <tuple>
 #include <array>
 #include <cstdlib>

@@ -40,7 +40,7 @@ namespace chaos
     FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
     if (image != nullptr)
     {
-      if (AddImageSource(filename, image))
+      if (AddImageSource(boost::filesystem::path(filename).filename().string().c_str(), image))
         return true;
       FreeImage_Unload(image);    
     }
@@ -169,7 +169,7 @@ namespace chaos
 
   std::string TextureAtlasData::GetAtlasImageName(char const * pattern, int index) const
   {
-    return StringTools::Printf("%s_%d.png", pattern, index + 1);
+    return StringTools::Printf("%s_%d.png", pattern, index);
   }
 
   std::string TextureAtlasData::GetAtlasIndexName(char const * pattern) const
@@ -208,55 +208,29 @@ namespace chaos
     {
       nlohmann::json j;
 
-      j["files"] = nlohmann::json::array();
+      // insert the files
+      j["images"] = nlohmann::json::array();
       for (size_t i = 0 ; i < atlas_images.size() ; ++i)
-        j["files"].push_back(GetAtlasImageName(pattern, i));
+        j["images"].push_back(GetAtlasImageName(pattern, i));
 
+      // insert the entries
+      j["entries"] = nlohmann::json::array();
+      for (size_t i = 0 ; i < entries.size() ; ++i)
+      {
+        TextureAtlasEntry const & entry = entries[i];
 
+        auto json_entry = nlohmann::json();
+        json_entry["filename"] = entry.filename;
+        json_entry["atlas"]    = entry.atlas;
+        json_entry["x"]        = entry.x;
+        json_entry["y"]        = entry.y;
+        json_entry["width"]    = entry.width;
+        json_entry["height"]   = entry.height;
+
+        j["entries"].push_back(json_entry);
+      }
 
       stream << j.dump(4);
-
-#if 0
-
-
-
-      stream << "index = {" << std::endl;
-
-      bool first = true;
-      for (TextureAtlasEntry const & entry : entries)
-      {
-        if (entry.bitmap == nullptr)
-          continue;
-        if (!first)
-          stream << "  }, {" << std::endl; // close previous
-        else
-          stream << "  {" << std::endl;
-
-        std::string atlas_filename = StringTools::Printf("%s_%d.png", pattern, entry.atlas + 1);
-        boost::filesystem::path atlas_basename = boost::filesystem::path(atlas_filename).filename();
-
-        boost::filesystem::path texture_basename = boost::filesystem::path(entry.filename).filename();
-
-        stream << "    name   = \"" << texture_basename.string() << "\"," << std::endl;
-        stream << "    atlas  = \"" << atlas_basename.string()   << "\"," << std::endl;
-        stream << "    x      = "   << entry.x                   << "," << std::endl;
-        stream << "    y      = "   << entry.y                   << "," << std::endl;
-        stream << "    width  = "   << entry.width               << "," << std::endl;
-        stream << "    height = "   << entry.height              << std::endl;
-
-        first = false;
-      }
-      if (!first)
-        stream << "  }" << std::endl; // close previous
-
-      stream << "}" << std::endl;
-
-
-
-
-
-
-#endif
 
       return true;
     }

@@ -3,6 +3,10 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/StringTools.h>
 #include <chaos/ImageTools.h>
+#include <chaos/Buffer.h>
+#include <chaos/FileTools.h>
+#include <chaos/LogTools.h>
+
 
 namespace chaos
 {
@@ -161,6 +165,82 @@ namespace chaos
     return out.str();
   }
 
+  bool TextureAtlasData::LoadAtlas(boost::filesystem::path const & src_dir, char const * pattern)
+  {
+    bool result = false;
+
+    boost::filesystem::path index_filename = src_dir / GetAtlasIndexName(pattern);
+
+    Buffer<char> buf = FileTools::LoadFile(index_filename, true);
+    if (buf != nullptr)
+    {
+      try
+      {
+        nlohmann::json j = nlohmann::json::parse(buf.data);
+        result = LoadAtlas(j, src_dir);
+      }
+      catch (std::exception & e)
+      {
+        LogTools::Error("TextureAtlasData::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
+      }
+    }
+    return result;
+  }
+
+  bool TextureAtlasData::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir)
+  {
+    bool result = true;
+
+    // clean the object
+    Clear();
+
+    try
+    {
+      // load the files
+      nlohmann::json const & json_files = j["images"];
+      for (auto const json_filename : json_files)
+      {
+        std::string const & filename = json_filename;
+
+        FIBITMAP * bitmap = ImageTools::LoadImageFromFile((src_dir / filename).string().c_str());
+        if (bitmap == nullptr)
+        {
+          result = false;
+          break;
+        }
+        atlas_images.push_back(bitmap);
+      }
+      // load the entries
+      if (result)
+      {
+        nlohmann::json const & json_entries = j["entries"];
+        for (auto const json_entry : json_entries)
+        {
+          TextureAtlasEntry entry;
+            
+          entry.filename = json_entry["filename"].get<std::string>();
+          entry.atlas    = json_entry["atlas"];
+          entry.x        = json_entry["x"];
+          entry.y        = json_entry["y"];
+          entry.width    = json_entry["width"];
+          entry.height   = json_entry["height"];
+          entry.bitmap = nullptr;
+
+          entries.push_back(entry);
+        }
+      }
+    }
+    catch (std::exception & e)
+    {
+      LogTools::Error("TextureAtlasData::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
+    }
+    // in case of failure, reset the whole atlas
+    if (!result)
+      Clear();
+
+    return result;
+  }
+
   bool TextureAtlasData::SaveAtlas(boost::filesystem::path const & dst_dir, char const * pattern) const
   {
     boost::filesystem::create_directories(dst_dir);
@@ -236,12 +316,6 @@ namespace chaos
     }
     return false;
   }
-
-
-
-
-
-
 
   // ========================================================================
   // TextureAtlasCreatorBase implementation
@@ -328,13 +402,6 @@ namespace chaos
     }    
     return false;
   }
-
-
-
-
-
-
-
 
   tinyxml2::XMLDocument * TextureAtlasCreatorBase::OutputToHTMLDocument(TextureAtlasHTMLOutputParams params) const
   {
@@ -885,7 +952,7 @@ namespace chaos
     data.AddTextureFilesFromDirectory(src_dir);
 
     // create the atlas files
-    chaos::TextureAtlasCreator atlas_creator;  
+    TextureAtlasCreator atlas_creator;  
     if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
       return data.SaveAtlas(dst_dir, pattern);
     return false;

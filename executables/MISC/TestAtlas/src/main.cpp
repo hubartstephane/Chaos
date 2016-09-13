@@ -8,6 +8,12 @@
 #include <chaos/FileTools.h>
 #include <chaos/FontTools.h>
 
+void TestAtlasReload(boost::filesystem::path const & src_dir, char const * pattern)
+{
+  chaos::TextureAtlasData data;
+  data.LoadAtlas(src_dir, pattern);
+}
+
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
   chaos::TextureAtlasData data;
@@ -95,6 +101,8 @@ int _tmain(int argc, char ** argv, char ** env)
     TestAtlasDebugMode(dst_p, resources_path);
     TestAtlasNormalMode(dst_p, resources_path);
     TestAtlasFont(dst_p, resources_path);
+
+    TestAtlasReload(dst_p / "AtlasResult", "MyAtlas");
 
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }

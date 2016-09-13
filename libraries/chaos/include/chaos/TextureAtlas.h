@@ -134,15 +134,23 @@ namespace chaos
 
     /** function to save the results */
     bool SaveAtlas(boost::filesystem::path const & dst_dir, char const * pattern) const;
-    /** function to save images */
-    bool SaveAtlasImages(boost::filesystem::path const & dst_dir, char const * pattern) const;
-    /** function to save images */
-    bool SaveAtlasIndex(boost::filesystem::path const & dst_dir, char const * pattern) const;
+
+    /** load an atlas from an index file */
+    bool LoadAtlas(boost::filesystem::path const & src_dir, char const * pattern);
+    /** load an atlas from a json object */
+    bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
 
     /** get the name of an atlas image */
     std::string GetAtlasImageName(char const * pattern, int index) const;
     /** get the name of an atlas index */
     std::string GetAtlasIndexName(char const * pattern) const;
+
+  protected:
+
+    /** function to save images */
+    bool SaveAtlasImages(boost::filesystem::path const & dst_dir, char const * pattern) const;
+    /** function to save images */
+    bool SaveAtlasIndex(boost::filesystem::path const & dst_dir, char const * pattern) const;
 
   public:
 

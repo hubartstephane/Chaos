@@ -10,8 +10,8 @@
 
 void TestAtlasReload(boost::filesystem::path const & src_dir, char const * pattern)
 {
-  chaos::TextureAtlasData data;
-  data.LoadAtlas(src_dir, pattern);
+ // chaos::TextureAtlasData data;
+ // data.LoadAtlas(src_dir, pattern);
 }
 
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
@@ -46,8 +46,8 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
     atlas_creator.OutputToHTMLFile(html_path.string().c_str(), params);
 
-    boost::filesystem::path dst_dir = dest_p / "AtlasResultFake";
-    data.SaveAtlas(dst_dir.string().c_str(), "MyAtlas");
+    boost::filesystem::path dst_dir = dest_p / "AtlasResultFake" / "MyAtlas.x";
+    data.SaveAtlas(dst_dir);
   }
 }
 
@@ -62,15 +62,9 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   int atlas_height  = 512;
   int atlas_padding = 10;
 
-  boost::filesystem::path result_path = dest_p / "AtlasResult";
+  boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas.json";
 
-  chaos::TextureAtlasCreator::CreateAtlasFromDirectory(
-    resources_path.string().c_str(), 
-    result_path, 
-    "MyAtlas",
-    atlas_width, 
-    atlas_height, 
-    atlas_padding);
+  chaos::TextureAtlasCreator::CreateAtlasFromDirectory(resources_path, result_path, atlas_width, atlas_height, atlas_padding);
 }
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
@@ -80,8 +74,8 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
   boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
   if (chaos::FontTools::GenerateTextureAtlas(nullptr, font_path.string().c_str(), data, nullptr))
   {
-    boost::filesystem::path dst_dir = dest_p / "AtlasResultFont";    
-    data.SaveAtlas(dst_dir.string().c_str(), "MyAtlas");
+    boost::filesystem::path dst_dir = dest_p / "AtlasResultFont" / "MyAtlas";
+    data.SaveAtlas(dst_dir);
   }
 }
 
@@ -102,7 +96,7 @@ int _tmain(int argc, char ** argv, char ** env)
     TestAtlasNormalMode(dst_p, resources_path);
     TestAtlasFont(dst_p, resources_path);
 
-    TestAtlasReload(dst_p / "AtlasResult", "MyAtlas");
+  //  TestAtlasReload(dst_p / "AtlasResult", "MyAtlas");
 
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }

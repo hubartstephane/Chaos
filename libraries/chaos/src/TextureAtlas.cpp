@@ -27,11 +27,6 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasData::AddTextureFilesFromDirectory(char const * filename)
-  {
-    return AddTextureFilesFromDirectory(boost::filesystem::path(filename));
-  }
-
   bool TextureAtlasData::AddTextureFile(boost::filesystem::path const & path)
   {
     return AddTextureFile(path.string().c_str());
@@ -165,6 +160,7 @@ namespace chaos
     return out.str();
   }
 
+#if 0
   bool TextureAtlasData::LoadAtlas(boost::filesystem::path const & src_dir, char const * pattern)
   {
     bool result = false;
@@ -241,26 +237,48 @@ namespace chaos
     return result;
   }
 
-  bool TextureAtlasData::SaveAtlas(boost::filesystem::path const & dst_dir, char const * pattern) const
+#endif
+
+  bool TextureAtlasData::SaveAtlas(boost::filesystem::path const & filename) const
   {
-    boost::filesystem::create_directories(dst_dir);
-    return SaveAtlasImages(dst_dir, pattern) && SaveAtlasIndex(dst_dir, pattern);
+    // create a target directory if necessary
+    boost::filesystem::path target_dir = filename.parent_path();
+    
+    if (!boost::filesystem::is_directory(target_dir))
+      if (!boost::filesystem::create_directories(target_dir))
+        return false;
+
+    // decompose INDEX and IMAGES filename
+    boost::filesystem::path index_filename = filename.filename();
+    boost::filesystem::path image_filename = index_filename;
+
+    if (!index_filename.has_extension())
+      index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
+    else
+      image_filename.replace_extension(); // for moment, IMAGES files should not have any extension
+    
+    return SaveAtlasImages(target_dir, index_filename, image_filename) && SaveAtlasIndex(target_dir, index_filename, image_filename);
   }
 
-  std::string TextureAtlasData::GetAtlasImageName(char const * pattern, int index) const
+  boost::filesystem::path TextureAtlasData::GetAtlasImageName(boost::filesystem::path image_filename, int index) const
   {
-    return StringTools::Printf("%s_%d.png", pattern, index);
+    char buffer[20];
+    sprintf_s(buffer, "_%d.png", index);
+    return image_filename.concat(buffer);
+
+
+   // return StringTools::Printf("%s_%d.png", pattern, index);
   }
 
+  /*
   std::string TextureAtlasData::GetAtlasIndexName(char const * pattern) const
   {
     return StringTools::Printf("%s_index.txt", pattern);
   }
+  */
 
-  bool TextureAtlasData::SaveAtlasImages(boost::filesystem::path const & dst_dir, char const * pattern) const
+  bool TextureAtlasData::SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
   {
-    assert(pattern != nullptr);
-
     bool result = true;
     // save them
     for (size_t i = 0 ; (i < atlas_images.size()) && result ; ++i)
@@ -268,7 +286,7 @@ namespace chaos
       FIBITMAP * im = atlas_images[i];
       if (im != nullptr)
       {
-        boost::filesystem::path dst_filename = dst_dir / GetAtlasImageName(pattern, i);
+        boost::filesystem::path dst_filename = target_dir / GetAtlasImageName(image_filename, i);
 
         result = (FreeImage_Save(FIF_PNG, im, dst_filename.string().c_str(), 0) != 0);
       }
@@ -276,12 +294,10 @@ namespace chaos
     return result;
   }
 
-  bool TextureAtlasData::SaveAtlasIndex(boost::filesystem::path const & dst_dir, char const * pattern) const
+  bool TextureAtlasData::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
   {
-    assert(pattern != nullptr);
-
     // generate a file for the index (lua format)
-    boost::filesystem::path dst_filename = dst_dir / GetAtlasIndexName(pattern);
+    boost::filesystem::path dst_filename = target_dir / index_filename;
 
     std::ofstream stream(dst_filename.string().c_str());
     if (stream)
@@ -291,7 +307,7 @@ namespace chaos
       // insert the files
       j["images"] = nlohmann::json::array();
       for (size_t i = 0 ; i < atlas_images.size() ; ++i)
-        j["images"].push_back(GetAtlasImageName(pattern, i));
+        j["images"].push_back(GetAtlasImageName(image_filename, i).string());
 
       // insert the entries
       j["entries"] = nlohmann::json::array();
@@ -314,6 +330,7 @@ namespace chaos
 
       return true;
     }
+
     return false;
   }
 
@@ -944,17 +961,16 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasCreator::CreateAtlasFromDirectory(char const * src_dir, boost::filesystem::path const & dst_dir, char const * pattern, int atlas_width, int atlas_height, int atlas_padding)
+  bool TextureAtlasCreator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding)
   {
-    assert(src_dir != nullptr);
-
+    // fill the atlas
     TextureAtlasData data;
     data.AddTextureFilesFromDirectory(src_dir);
 
     // create the atlas files
     TextureAtlasCreator atlas_creator;  
     if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
-      return data.SaveAtlas(dst_dir, pattern);
+      return data.SaveAtlas(filename);
     return false;
   }
 };

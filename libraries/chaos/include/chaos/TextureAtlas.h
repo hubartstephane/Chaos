@@ -105,8 +105,6 @@ namespace chaos
     ~TextureAtlasData(){ Clear(); }
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
-    /** insert multiple texture before computation */
-    bool AddTextureFilesFromDirectory(char const * filename);
     /** insert a texture before computation */
     bool AddTextureFile(boost::filesystem::path const & path);
     /** insert a texture before computation */
@@ -133,24 +131,27 @@ namespace chaos
     std::string GetTextureInfoString(TextureAtlasEntry const & texture) const;
 
     /** function to save the results */
-    bool SaveAtlas(boost::filesystem::path const & dst_dir, char const * pattern) const;
+    bool SaveAtlas(boost::filesystem::path const & filename) const;
 
+#if 0
     /** load an atlas from an index file */
-    bool LoadAtlas(boost::filesystem::path const & src_dir, char const * pattern);
+    bool LoadAtlas(boost::filesystem::path const & filename);
     /** load an atlas from a json object */
     bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
+#endif
 
     /** get the name of an atlas image */
-    std::string GetAtlasImageName(char const * pattern, int index) const;
+    boost::filesystem::path GetAtlasImageName(boost::filesystem::path image_filename, int index) const;
+
     /** get the name of an atlas index */
-    std::string GetAtlasIndexName(char const * pattern) const;
+    //std::string GetAtlasIndexName(char const * pattern) const;
 
   protected:
 
     /** function to save images */
-    bool SaveAtlasImages(boost::filesystem::path const & dst_dir, char const * pattern) const;
+    bool SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
     /** function to save images */
-    bool SaveAtlasIndex(boost::filesystem::path const & dst_dir, char const * pattern) const;
+    bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
 
   public:
 
@@ -307,7 +308,7 @@ namespace chaos
     /** clear the results */
     virtual void Clear();
     /** create an atlas from a directory into another directory */
-    static bool CreateAtlasFromDirectory(char const * src_dir, boost::filesystem::path const & dst_dir, char const * pattern, int atlas_width, int atlas_height, int atlas_padding);
+    static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding);
 
   protected:
 

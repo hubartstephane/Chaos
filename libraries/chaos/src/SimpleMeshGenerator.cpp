@@ -170,7 +170,7 @@ MeshGenerationRequirement QuadMeshGeneratorProxy::GetRequirement() const
 
 void QuadMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
-  declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
+  declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 }
 
 void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -208,8 +208,8 @@ MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
 
 void CubeMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
-  declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
-  declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
+  declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+  declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 }
 
 void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -255,8 +255,8 @@ MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
 
 void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
-  declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3);
-  declaration.Push(chaos::SEMANTIC_NORMAL, 0, chaos::TYPE_FLOAT3);
+  declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+  declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 }
 
 void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const

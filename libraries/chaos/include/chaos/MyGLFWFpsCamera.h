@@ -41,7 +41,7 @@ protected:
 public:
 
   /** the fps matrix handler */
-  chaos::FPSViewController fps_controller;
+  FPSViewController fps_controller;
 
   /** some self descriptive speed */
   float strafe_speed;

@@ -199,7 +199,7 @@ void MyGLFWWindow::TweakSingleWindowApplicationHints(MyGLFWWindowHints & hints, 
 
 void MyGLFWWindow::OnError(int code, const char* msg)
 {
-  chaos::LogTools::Log("MyGLFWWindow(...) [%d] failure : %s", code, msg);
+  LogTools::Log("MyGLFWWindow(...) [%d] failure : %s", code, msg);
 }
 
 bool MyGLFWWindow::DoRunSingleWindowApplication(MyGLFWSingleWindowApplicationParams params)
@@ -273,7 +273,7 @@ bool MyGLFWWindow::DoRunSingleWindowApplication(MyGLFWSingleWindowApplicationPar
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
-      chaos::LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
+      LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
     }
     else
     {

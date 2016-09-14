@@ -83,7 +83,7 @@ public:
 	};
 
 	/** the main function */
-	chaos::box2 BuildBuffer(char const * msg, Params const & params, std::vector<float> & vertices) const;
+	box2 BuildBuffer(char const * msg, Params const & params, std::vector<float> & vertices) const;
 
 protected:
 

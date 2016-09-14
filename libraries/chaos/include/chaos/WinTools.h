@@ -61,7 +61,7 @@ namespace chaos
     public:
 
       /** the buffer that contains pixels RGB or RGBA */
-      chaos::Buffer<char> pixels;
+      Buffer<char> pixels;
       /** the size of the image */
       int width;
       /** the size of the image */

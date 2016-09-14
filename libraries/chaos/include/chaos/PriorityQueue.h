@@ -118,7 +118,7 @@ public:
     /** a unity check method */
     bool test_heap(size_type index = 0) const
     {
-        size_type level = chaos::MathTools::bsr(index + 1); 
+        size_type level = MathTools::bsr(index + 1); 
         size_type base  = heap_baselevel(level); 
         size_type count = size();
 
@@ -151,7 +151,7 @@ public:
     {
         size_type count = size();
 
-        size_type level = chaos::MathTools::bsr(index + 1); // +1 : to ensure non 0 parameter. if index == 0 then level = 0 => OK
+        size_type level = MathTools::bsr(index + 1); // +1 : to ensure non 0 parameter. if index == 0 then level = 0 => OK
 
         // try to make node up, if it is too great
         // (in example, suppress 20 that is replaced by 60)

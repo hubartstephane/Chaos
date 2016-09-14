@@ -128,7 +128,7 @@ namespace chaos
     int cx = mesh_builder_params.crop_texture.x;
     int cy = mesh_builder_params.crop_texture.y;
 
-    chaos::BitmapFontTextMeshBuilder::Params params;
+    BitmapFontTextMeshBuilder::Params params;
     params.font_characters            = mesh_builder_params.font_characters.c_str();
     params.font_characters_per_line   = cpl;
     params.font_characters_line_count = mesh_builder_params.font_characters_line_count;
@@ -140,12 +140,12 @@ namespace chaos
     // generate vertex buffer data
     std::vector<float> vertices;
 
-    chaos::BitmapFontTextMeshBuilder builder;
+    BitmapFontTextMeshBuilder builder;
     for (auto const & l : lines)
     {
       if (l.first.size() == 0)
         continue;
-      chaos::box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
+      box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
       if (!bounding.IsEmpty())
         params.position = bounding.GetCorners().first; // maybe some degenerated case 
     }
@@ -179,18 +179,18 @@ namespace chaos
   bool GLDebugOnScreenDisplay::DoInitialize(GLDebugOnScreenDisplay::Params const & params)
   {
     // load image
-    FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(params.texture_path.string().c_str());
+    FIBITMAP * image = ImageTools::LoadImageFromFile(params.texture_path.string().c_str());
     if (image == nullptr)
       return false;
 
     // create texture
-    texture = chaos::GLTextureTools::GenTextureObject(image);
+    texture = GLTextureTools::GenTextureObject(image);
     FreeImage_Unload(image);
     if (texture == nullptr)
       return false;
 
     // create GPU-Program
-    chaos::GLProgramLoader loader;
+    GLProgramLoader loader;
     loader.AddShaderSource(GL_VERTEX_SHADER,   vertex_shader_source);
     loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
@@ -199,8 +199,8 @@ namespace chaos
       return false;
 
     // prepare the vertex declaration
-    declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-    declaration.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT2);
+    declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT2);
+    declaration.Push(SEMANTIC_TEXCOORD, 0, TYPE_FLOAT2);
 
     // Generate Vertex Array and Buffer
     if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))

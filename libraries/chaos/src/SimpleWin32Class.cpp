@@ -10,7 +10,7 @@ SimpleWin32ClassBase::SimpleWin32ClassBase(char const * in_window_classname) : w
 
   bool native_class = false;
 
-  wc.lpfnWndProc   = native_class? DefWindowProc : chaos::SimpleWin32Window::WindowProc;
+  wc.lpfnWndProc   = native_class? DefWindowProc : SimpleWin32Window::WindowProc;
   wc.hInstance     = NULL;
   wc.lpszClassName = window_classname;  
 

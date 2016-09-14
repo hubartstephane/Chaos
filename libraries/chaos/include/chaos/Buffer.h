@@ -50,7 +50,7 @@ public:
   /** generate the buffer */
   static Buffer<T> NewBuffer(size_t count)
   {
-    auto obj = chaos::AllocatorTools::SingleAllocMultipleObjects<SharedBufferPolicy<T>, T>(1, count); // optimized : all in a single allocation
+    auto obj = AllocatorTools::SingleAllocMultipleObjects<SharedBufferPolicy<T>, T>(1, count); // optimized : all in a single allocation
     Buffer<T> result(std::get<1>(obj), count);
     result.SetPolicy(std::get<0>(obj));
     return result;
@@ -83,7 +83,7 @@ protected:
       for (size_t i = 0 ; i < b->bufsize ; ++i)
         b->data[i].~T();      
       b->GetPolicy()->~BufferPolicyBase();
-      chaos::AllocatorTools::Aligned16Free(b->GetPolicy());           
+      AllocatorTools::Aligned16Free(b->GetPolicy());           
     }    
   }
   

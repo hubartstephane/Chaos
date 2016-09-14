@@ -27,7 +27,7 @@ namespace chaos
     {
       SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
 
-      if (strstr(symbol->Name, "chaos::DebugTools::DisplayCallStack") == symbol->Name) // ignore current function from the callstack
+      if (strstr(symbol->Name, "DebugTools::DisplayCallStack") == symbol->Name) // ignore current function from the callstack
         continue;
       
       IMAGEHLP_LINE64 line;

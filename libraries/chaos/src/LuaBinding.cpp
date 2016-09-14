@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-char const * LuaBinding::TOMT_KEY = "chaos::LuaBinding::TOMT";
+char const * LuaBinding::TOMT_KEY = "LuaBinding::TOMT";
 
 char const * LuaBinding::ID_KEY   = "ID";
 
@@ -27,7 +27,7 @@ void LuaBinding::GetTOMT()
     lua_pushvalue(state, -2);            // push value (a duplication of the table), this wil be consumed soon
     lua_settable(state, LUA_REGISTRYINDEX);
   }
-  assert(lua_istable(state, -1)); // well if there is an object named "chaos::LuaBinding::TOMT" in registry that is not a table, there is a problem !
+  assert(lua_istable(state, -1)); // well if there is an object named "LuaBinding::TOMT" in registry that is not a table, there is a problem !
 }
 
 void LuaBinding::CreateEmptyMT(InheritanceIntrospection::ClassRuntimeID ID, int tomt_index) // leave the MT on the stack

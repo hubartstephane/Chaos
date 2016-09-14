@@ -141,7 +141,7 @@ static bool IsGeometryElementValid(T const * element)
 
 /** if element is valid, this function insert a new VertexDeclarationEntry in the declaration */
 template<typename T>
-static void UpdateVertexDeclarationWithGeometryElement(T const * element, chaos::VertexDeclaration & vertex_declaration, int semantic, int semantic_index, int type)
+static void UpdateVertexDeclarationWithGeometryElement(T const * element, VertexDeclaration & vertex_declaration, int semantic, int semantic_index, int type)
 {
   if (IsGeometryElementValid(element))
     vertex_declaration.Push(semantic, semantic_index, type);
@@ -172,7 +172,7 @@ static glm::tvec4<unsigned char> ConvertFbxDataToVertexComponent(FbxColor const 
 
 /** access data from the element (with appropriate index), and write it the buffer */
 template<typename T>
-static void WriteFbxComponent(T const * element, chaos::SparseWriteBuffer<> & vertex_write_buffer, int control_point_index, int polygon_index, int vertex_index)
+static void WriteFbxComponent(T const * element, SparseWriteBuffer<> & vertex_write_buffer, int control_point_index, int polygon_index, int vertex_index)
 {
   if (!IsGeometryElementValid(element))
     return;
@@ -207,24 +207,24 @@ bool MyFbxImporter::DoImportMesh(FbxMesh * mesh)
   //
   // STEP 1 : compute vertex declaration (ignore data per edge and none)
   //
-  chaos::VertexDeclaration vertex_declaration;
+  VertexDeclaration vertex_declaration;
 
-  vertex_declaration.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT3); // always containing a position
+  vertex_declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3); // always containing a position
 
   for (int i = 0 ; i < color_count ; ++i)
-    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementVertexColor(i), vertex_declaration, chaos::SEMANTIC_COLOR, i, chaos::TYPE_BYTE4);
+    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementVertexColor(i), vertex_declaration, SEMANTIC_COLOR, i, TYPE_BYTE4);
 
   for (int i = 0 ; i < uv_count ; ++i)
-    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementUV(i), vertex_declaration, chaos::SEMANTIC_TEXCOORD, i, chaos::TYPE_FLOAT2);
+    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementUV(i), vertex_declaration, SEMANTIC_TEXCOORD, i, TYPE_FLOAT2);
 
   for (int i = 0 ; i < normal_count ; ++i)
-    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementNormal(i), vertex_declaration, chaos::SEMANTIC_NORMAL, i, chaos::TYPE_FLOAT3);
+    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementNormal(i), vertex_declaration, SEMANTIC_NORMAL, i, TYPE_FLOAT3);
 
   for (int i = 0 ; i < binormal_count ; ++i)
-    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementBinormal(i), vertex_declaration, chaos::SEMANTIC_BINORMAL, i, chaos::TYPE_FLOAT3);
+    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementBinormal(i), vertex_declaration, SEMANTIC_BINORMAL, i, TYPE_FLOAT3);
 
   for (int i = 0 ; i < tangent_count ; ++i)
-    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementTangent(i), vertex_declaration, chaos::SEMANTIC_TANGENT, i, chaos::TYPE_FLOAT3);
+    UpdateVertexDeclarationWithGeometryElement(mesh->GetElementTangent(i), vertex_declaration, SEMANTIC_TANGENT, i, TYPE_FLOAT3);
 
   //
   // STEP 1.1 : search if there are some skinning information
@@ -235,8 +235,8 @@ bool MyFbxImporter::DoImportMesh(FbxMesh * mesh)
   size_t max_bone_count = GetMaxBoneCount(bone_table);
   for (size_t i = 0 ; i < max_bone_count ; ++i)
   {
-    vertex_declaration.Push(chaos::SEMANTIC_BONEWEIGHT, (int)i, chaos::TYPE_FLOAT1);
-    vertex_declaration.Push(chaos::SEMANTIC_BONEINDEX,  (int)i, chaos::TYPE_INT1);  
+    vertex_declaration.Push(SEMANTIC_BONEWEIGHT, (int)i, TYPE_FLOAT1);
+    vertex_declaration.Push(SEMANTIC_BONEINDEX,  (int)i, TYPE_INT1);  
   }
 
   int vertex_byte_size = vertex_declaration.GetVertexSize();
@@ -262,7 +262,7 @@ bool MyFbxImporter::DoImportMesh(FbxMesh * mesh)
   FbxVector4 const * control_points = mesh->GetControlPoints();
 
   // vertex_buffer is a mixed data buffer
-  chaos::SparseWriteBuffer<> vertex_write_buffer(vertex_byte_size * control_count); 
+  SparseWriteBuffer<> vertex_write_buffer(vertex_byte_size * control_count); 
   // the index buffer
   std::vector<int> index_buffer;
 

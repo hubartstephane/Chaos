@@ -237,10 +237,10 @@ void WINAPI GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, 
     char const * type_str     = GLenumToString(type);
     char const * severity_str = GLenumToString(severity);
 
-    chaos::LogTools::Log("OpenGL warning message   [%s]", msg);
-    chaos::LogTools::Log("               severity  [%s]", severity_str);
-    chaos::LogTools::Log("               source    [%s]", source_str);
-    chaos::LogTools::Log("               type      [%s]", type_str);
+    LogTools::Log("OpenGL warning message   [%s]", msg);
+    LogTools::Log("               severity  [%s]", severity_str);
+    LogTools::Log("               source    [%s]", source_str);
+    LogTools::Log("               type      [%s]", type_str);
 
     DebugTools::DisplayCallStack(std::cout);  
   }

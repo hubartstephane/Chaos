@@ -11,13 +11,13 @@ void BitmapFontTextMeshBuilder::InsertVertexComponent(std::vector<float> & verti
   vertices.push_back(1.0f - t.y); // the characters in the bitmap are in the direction of reading (top to bottom). That's not the texture coordinates
 }
 
-chaos::box2 BitmapFontTextMeshBuilder::BuildBuffer(char const * msg, BitmapFontTextMeshBuilder::Params const & params, std::vector<float> & vertices) const
+box2 BitmapFontTextMeshBuilder::BuildBuffer(char const * msg, BitmapFontTextMeshBuilder::Params const & params, std::vector<float> & vertices) const
 {
   assert(msg != nullptr);
 
   size_t initial_vertex_count = vertices.size();
 
-  chaos::box2 result;
+  box2 result;
    
   int char_in_line = 0;
 

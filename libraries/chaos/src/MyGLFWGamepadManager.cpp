@@ -7,7 +7,7 @@ namespace chaos
 
 void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
 {
-  in_raw_value = chaos::MathTools::Clamp(in_raw_value, -1.0f, +1.0f);  
+  in_raw_value = MathTools::Clamp(in_raw_value, -1.0f, +1.0f);  
 
   // store raw value
   raw_value = in_raw_value;

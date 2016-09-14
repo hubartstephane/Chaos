@@ -15,7 +15,7 @@ int LuaTools::DefaultErrorFunction(lua_State * state)
 {
   assert(state != nullptr);
   if (lua_isstring(state, -1))
-    chaos::LogTools::Log("Lua RUNTIME Error : %s", lua_tostring(state, -1));
+    LogTools::Log("Lua RUNTIME Error : %s", lua_tostring(state, -1));
   return 0;
 }
 

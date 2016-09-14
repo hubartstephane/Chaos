@@ -124,7 +124,7 @@ bool MyFbxImporter::ImportScene(boost::filesystem::path const & model_path, MyFb
         {
           char const * error = lImporter->GetStatus().GetErrorString();
           if (error != nullptr)
-            chaos::LogTools::Log("FBX Importer initialize failure [%s]", error);
+            LogTools::Log("FBX Importer initialize failure [%s]", error);
         }
         else
         {

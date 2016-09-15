@@ -160,30 +160,48 @@ namespace chaos
     return out.str();
   }
 
-#if 0
-  bool TextureAtlasData::LoadAtlas(boost::filesystem::path const & src_dir, char const * pattern)
+
+  void TextureAtlasData::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const
   {
-    bool result = false;
+    // decompose INDEX and IMAGES filename
+    target_dir     = filename.parent_path();
+    index_filename = filename;
+    image_filename = filename.filename();
 
-    boost::filesystem::path index_filename = src_dir / GetAtlasIndexName(pattern);
+    if (!index_filename.has_extension())
+      index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
+    else
+      image_filename.replace_extension(); // for moment, IMAGES files should not have any extension
+  }
 
+  bool TextureAtlasData::LoadAtlas(boost::filesystem::path const & filename)
+  {
+    // decompose the filename
+    boost::filesystem::path target_dir;
+    boost::filesystem::path index_filename;
+    boost::filesystem::path image_filename;
+    SplitFilename(filename, target_dir, index_filename, image_filename); // will be ignored during loading, real name is read from .JSON index
+
+    // load the file into memory
     Buffer<char> buf = FileTools::LoadFile(index_filename, true);
-    if (buf != nullptr)
+    if (buf == nullptr)
+      return false;
+
+    // parse JSON file
+    bool result = false;
+    try
     {
-      try
-      {
-        nlohmann::json j = nlohmann::json::parse(buf.data);
-        result = LoadAtlas(j, src_dir);
-      }
-      catch (std::exception & e)
-      {
-        LogTools::Error("TextureAtlasData::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
-      }
+      nlohmann::json j = nlohmann::json::parse(buf.data);
+      result = LoadAtlas(j, target_dir);
+    }
+    catch (std::exception & e)
+    {
+      LogTools::Error("TextureAtlasData::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
     }
     return result;
   }
 
-  bool TextureAtlasData::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir)
+  bool TextureAtlasData::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & target_dir)
   {
     bool result = true;
 
@@ -198,7 +216,7 @@ namespace chaos
       {
         std::string const & filename = json_filename;
 
-        FIBITMAP * bitmap = ImageTools::LoadImageFromFile((src_dir / filename).string().c_str());
+        FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
         if (bitmap == nullptr)
         {
           result = false;
@@ -230,52 +248,37 @@ namespace chaos
     {
       LogTools::Error("TextureAtlasData::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
     }
-    // in case of failure, reset the whole atlas
+
+    // in case of failure, reset the whole atlas once more
     if (!result)
       Clear();
 
     return result;
   }
 
-#endif
-
   bool TextureAtlasData::SaveAtlas(boost::filesystem::path const & filename) const
   {
-    // create a target directory if necessary
-    boost::filesystem::path target_dir = filename.parent_path();
-    
+    // decompose the filename
+    boost::filesystem::path target_dir;
+    boost::filesystem::path index_filename;
+    boost::filesystem::path image_filename;
+    SplitFilename(filename, target_dir, index_filename, image_filename);
+
+    // create a target directory if necessary   
     if (!boost::filesystem::is_directory(target_dir))
       if (!boost::filesystem::create_directories(target_dir))
         return false;
 
-    // decompose INDEX and IMAGES filename
-    boost::filesystem::path index_filename = filename.filename();
-    boost::filesystem::path image_filename = index_filename;
-
-    if (!index_filename.has_extension())
-      index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
-    else
-      image_filename.replace_extension(); // for moment, IMAGES files should not have any extension
-    
+    // save the atlas
     return SaveAtlasImages(target_dir, index_filename, image_filename) && SaveAtlasIndex(target_dir, index_filename, image_filename);
   }
 
   boost::filesystem::path TextureAtlasData::GetAtlasImageName(boost::filesystem::path image_filename, int index) const
   {
-    char buffer[20];
+    char buffer[30]; // big far enough
     sprintf_s(buffer, "_%d.png", index);
     return image_filename.concat(buffer);
-
-
-   // return StringTools::Printf("%s_%d.png", pattern, index);
   }
-
-  /*
-  std::string TextureAtlasData::GetAtlasIndexName(char const * pattern) const
-  {
-    return StringTools::Printf("%s_index.txt", pattern);
-  }
-  */
 
   bool TextureAtlasData::SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
   {
@@ -296,10 +299,8 @@ namespace chaos
 
   bool TextureAtlasData::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
   {
-    // generate a file for the index (lua format)
-    boost::filesystem::path dst_filename = target_dir / index_filename;
-
-    std::ofstream stream(dst_filename.string().c_str());
+    // generate a file for the index (JSON format)
+    std::ofstream stream(index_filename.string().c_str());
     if (stream)
     {
       nlohmann::json j;

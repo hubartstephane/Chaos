@@ -7,6 +7,37 @@ namespace chaos
 {
 
   /**
+   * TextureAtlasHTMLOutputParams : the parameters for HTML output of atlas 
+   */
+
+  class TextureAtlasHTMLOutputParams
+  {
+  public:
+
+    /** constructor */
+    TextureAtlasHTMLOutputParams():
+      show_header(true), 
+      show_atlas_header(true),
+      show_textures(true), 
+      show_textures_names(true),
+      auto_refresh(true),
+      texture_scale(-1.0f){}
+
+    /** show the HTML header */
+    bool  show_header;
+    /** show the atlas header */
+    bool  show_atlas_header;
+    /** show the textures */
+    bool  show_textures;
+    /** show the texture names */
+    bool  show_textures_names;
+    /** should the document refresh itself ("http-equiv", "refresh") every 2 seconds */
+    bool  auto_refresh;
+    /** a scale factor to be applied for the rendering of the textures (-1 for auto factor dependent on the atlas size) */
+    float texture_scale;
+  };
+
+  /**
    * AtlasRectangle : a class to represents rectangles
    */
 
@@ -97,6 +128,8 @@ namespace chaos
 
   class TextureAtlasData
   {
+    friend class TextureAtlasCreatorBase;
+
   public:
 
     /** constructor */
@@ -117,7 +150,7 @@ namespace chaos
     /** reset result */
     void ResetResult();
     /** returns the surface for an atlas */
-    float ComputeSurface(size_t atlas_index, int padding) const;
+    float ComputeSurface(size_t atlas_index) const;
     /** clear all the textures */
     void Clear();
     /** display information about all textures */
@@ -138,11 +171,43 @@ namespace chaos
     /** load an atlas from a json object */
     bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
 
-    /** get the name of an atlas image */
-    boost::filesystem::path GetAtlasImageName(boost::filesystem::path image_filename, int index) const;
+    /** create an XML document and output debug information */
+    tinyxml2::XMLDocument * OutputToHTMLDocument(TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
+    /** create an XML document and output debug information */
+    void OutputToHTMLDocument(tinyxml2::XMLDocument * doc, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
+    /** output the atlas trees in HTML format */
+    bool OutputToHTMLFile(boost::filesystem::path const & path, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
+    /** output the atlas trees in HTML format */
+    bool OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
+
+    /** get the number of atlas */
+    size_t GetAtlasCount() const { return atlas_images.size(); }
+    /** get the size of bitmap composing the atlas */
+    glm::ivec2 GetAtlasDimension() const;
 
   protected:
 
+    /** multiply an integer with a float (two conversions) */
+    static int MultDimension(int a, float b)
+    {
+      return (int)(((float)a) * b);
+    }
+
+    /** get a string with the general information */
+    std::string GetGeneralInformationString() const;
+    /** get a string with the surface occupation of all atlas */
+    std::string GetAtlasSpaceOccupationString() const;
+    /** get a string with the surface occupation of one atlas */
+    std::string GetAtlasSpaceOccupationString(size_t atlas_index) const;
+    /** display the surface occupation of all atlas */
+    void OutputAtlasSpaceOccupation(std::ostream & stream = std::cout) const;
+    /** display the surface occupation of all atlas */
+    void OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream = std::cout) const;
+    /** display the general information if the atlas */
+    void OutputGeneralInformation(std::ostream & stream = std::cout) const;
+
+    /** get the name of an atlas image */
+    boost::filesystem::path GetAtlasImageName(boost::filesystem::path image_filename, int index) const;
     /** split a filename into DIRECTORY, INDEX_FILENAME and IMAGE prefix path */
     void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const;
 
@@ -157,38 +222,6 @@ namespace chaos
     std::vector<TextureAtlasEntry> entries;
     /** all the image for the output */
     std::vector<FIBITMAP *> atlas_images;
-
-  };
-
-  /**
-   * TextureAtlasHTMLOutputParams : the parameters for HTML output of atlas 
-   */
-
-  class TextureAtlasHTMLOutputParams
-  {
-  public:
-
-    /** constructor */
-    TextureAtlasHTMLOutputParams():
-      show_header(true), 
-      show_atlas_header(true),
-      show_textures(true), 
-      show_textures_names(true),
-      auto_refresh(true),
-      texture_scale(-1.0f){}
-
-    /** show the HTML header */
-    bool  show_header;
-    /** show the atlas header */
-    bool  show_atlas_header;
-    /** show the textures */
-    bool  show_textures;
-    /** show the texture names */
-    bool  show_textures_names;
-    /** should the document refresh itself ("http-equiv", "refresh") every 2 seconds */
-    bool  auto_refresh;
-    /** a scale factor to be applied for the rendering of the textures (-1 for auto factor dependent on the atlas size) */
-    float texture_scale;
   };
 
   /**
@@ -212,46 +245,19 @@ namespace chaos
     /** returns the box for the atlas */
     AtlasRectangle GetAtlasRectangle() const;
 
-    /** create an XML document and output debug information */
-    tinyxml2::XMLDocument * OutputToHTMLDocument(TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-    /** create an XML document and output debug information */
-    void OutputToHTMLDocument(tinyxml2::XMLDocument * doc, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-    /** output the atlas trees in HTML format */
-    bool OutputToHTMLFile(boost::filesystem::path const & path, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-    /** output the atlas trees in HTML format */
-    bool OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-
     /** returns a vector with all generated Image (to be deallocated after usage) */
     std::vector<FIBITMAP *> GenerateAtlasTextures() const;
 
   protected:
 
-    /** get a string with the general information */
-    std::string GetGeneralInformationString() const;
-    /** get a string with the surface occupation of all atlas */
-    std::string GetAtlasSpaceOccupationString() const;
-    /** get a string with the surface occupation of one atlas */
-    std::string GetAtlasSpaceOccupationString(size_t atlas_index) const;
-
     /** add padding to a rectangle */
     AtlasRectangle AddPadding(AtlasRectangle const & r) const;
-    /** display the surface occupation of all atlas */
-    void OutputAtlasSpaceOccupation(std::ostream & stream = std::cout) const;
-    /** display the surface occupation of all atlas */
-    void OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream = std::cout) const;
-    /** display the general information if the atlas */
-    void OutputGeneralInformation(std::ostream & stream = std::cout) const;
     /** test whether there is an intersection between each pair of textures in an atlas */
     bool EnsureValid(std::ostream & stream = std::cout) const;
     /** test whether there is an intersection between each pair of textures in an atlas */
     bool HasInterctingTexture(size_t atlas_index, AtlasRectangle const & r) const;
     /** the effective function to do the computation */
     virtual bool DoComputeResult();
-    /** multiply an integer with a float (two conversions) */
-    static int MultDimension(int a, float b)
-    {
-      return (int)(((float)a) * b);
-    }
     /** an utility function that returns an array with 0.. count - 1*/
     static std::vector<size_t> CreateIndirectionTable(size_t count)
     {

@@ -44,7 +44,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
   if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
   {  
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
-    atlas_creator.OutputToHTMLFile(html_path.string().c_str(), params);
+    data.OutputToHTMLFile(html_path.string().c_str(), params);
 
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFake" / "MyAtlas.x";
     data.SaveAtlas(dst_dir);

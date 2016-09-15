@@ -102,14 +102,14 @@ namespace chaos
     atlas_images.clear();
   }
 
-  float TextureAtlasData::ComputeSurface(size_t atlas_index, int padding) const
+  float TextureAtlasData::ComputeSurface(size_t atlas_index) const
   {
     float result = 0.0f;
     for (TextureAtlasEntry const & entry : entries)
     {
       if (entry.atlas != atlas_index && atlas_index != SIZE_MAX)
         continue;
-      result += (float)((entry.width + 2 * padding) * (entry.height + 2 * padding));
+      result += (float)(entry.width * entry.height);
     }
     return result;
   }
@@ -335,6 +335,244 @@ namespace chaos
     return false;
   }
 
+  tinyxml2::XMLDocument * TextureAtlasData::OutputToHTMLDocument(TextureAtlasHTMLOutputParams params) const
+  {
+    tinyxml2::XMLDocument * result = new tinyxml2::XMLDocument();
+    OutputToHTMLDocument(result, params); 
+    return result;
+  }
+
+  bool TextureAtlasData::OutputToHTMLFile(boost::filesystem::path const & path, TextureAtlasHTMLOutputParams params) const
+  {
+    return OutputToHTMLFile(path.string().c_str());
+  }
+
+  bool TextureAtlasData::OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params) const
+  {
+    assert(filename != nullptr);
+
+    bool result = false;
+
+    tinyxml2::XMLDocument * doc = OutputToHTMLDocument(params);
+    if (doc != nullptr)
+    {
+      result = (doc->SaveFile(filename) == tinyxml2::XML_SUCCESS);
+      delete(doc);
+    }
+    return result;
+  }
+  
+
+  void TextureAtlasData::OutputToHTMLDocument(tinyxml2::XMLDocument * doc, TextureAtlasHTMLOutputParams params) const
+  {
+    assert(doc != nullptr);
+
+    HTMLTools html(doc);
+
+    tinyxml2::XMLElement * Header = html.PushElement(doc, "!DOCTYPE HTML");
+    tinyxml2::XMLElement * HTML   = html.PushElement(Header, "HTML");
+    tinyxml2::XMLElement * BODY   = html.PushElement(HTML, "BODY");
+    
+    glm::ivec2 atlas_dimension = GetAtlasDimension();
+
+    int width  = atlas_dimension.x;
+    int height = atlas_dimension.y;
+
+    float scale = params.texture_scale;
+    if (scale <= 0.0f)
+    {
+      if (width <= 256 || height <= 256)
+        scale = 3.0f;
+      else if (width <= 512 || height <= 512)
+        scale = 2.0f;
+    }
+
+    if (params.auto_refresh)
+    {
+      tinyxml2::XMLElement * META = html.PushElement(BODY, "META");
+      html.PushAttribute(META, "http-equiv", "refresh");
+      html.PushAttribute(META, "content", 2);
+    }
+      
+    if (params.show_header)
+    {
+      tinyxml2::XMLElement * P   = html.PushElement(BODY, "P");
+      tinyxml2::XMLElement * PRE = html.PushElement(P, "PRE");
+
+      html.PushText(PRE, GetGeneralInformationString().c_str());
+    }
+
+    int id = 0;
+    for (size_t i = 0 ; i < GetAtlasCount() ; ++i)
+    {
+      int w =  MultDimension(width,  scale);
+      int h =  MultDimension(height, scale);
+
+      if (params.show_atlas_header)
+      {
+        tinyxml2::XMLElement * P   = html.PushElement(BODY, "P");
+        tinyxml2::XMLElement * PRE = html.PushElement(P, "PRE");
+        html.PushText(PRE, GetAtlasSpaceOccupationString(i).c_str());
+      }
+
+      tinyxml2::XMLElement * TABLE = html.PushElement(BODY, "TABLE");
+      html.PushAttribute(TABLE, "border", 5);
+      html.PushAttribute(TABLE, "cellpadding", 10);
+
+      tinyxml2::XMLElement * TR = nullptr;
+
+      size_t count = 0;
+      for (size_t j = 0 ; j < entries.size() ; ++j)
+      {
+        TextureAtlasEntry const & entry = entries[j];
+        if (entry.atlas != i)
+          continue;
+
+        if (TR == nullptr)
+          TR = html.PushElement(TABLE, "TR");
+
+        // first element of the line
+        tinyxml2::XMLElement * TD  = html.PushElement(TR, "TD");
+        tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
+        html.PushText(PRE, GetTextureInfoString(entry).c_str());
+
+        if (count % 5 == 4)
+          TR = nullptr;
+        ++count;
+      }
+
+      if (params.show_textures)
+      {
+        char const * texture_bgnd = "fill-opacity:1.0;fill:rgb(150,150,150);stroke-width:2;stroke:rgb(0,0,0)";
+
+        tinyxml2::XMLElement * BR  = html.PushElement(BODY, "BR");
+        tinyxml2::XMLElement * SVG = html.PushElement(BODY, "SVG");
+
+        html.PushAttribute(SVG, "width", w);
+        html.PushAttribute(SVG, "height", h);
+
+        tinyxml2::XMLElement * RECT = html.PushElement(SVG, "RECT");
+        html.PushAttribute(RECT, "width", w);
+        html.PushAttribute(RECT, "height", h);
+        html.PushAttribute(RECT, "style", texture_bgnd);
+
+        for (auto & entry : entries)
+        {
+          ++id;
+          if (entry.atlas != i)
+            continue;
+
+          int color = 10 + (id % 10) * 10;
+
+          int x = MultDimension(entry.x,      scale);
+          int y = MultDimension(entry.y,      scale);
+          int w = MultDimension(entry.width,  scale);
+          int h = MultDimension(entry.height, scale);
+
+          char rect_props[1024];
+          sprintf_s(rect_props, 1024, "fill-opacity:0.5;fill:rgb(%d,0,0);stroke-width:1;stroke:rgb(0,0,0)", color);
+
+          tinyxml2::XMLElement * RECT = html.PushElement(SVG, "RECT");
+          html.PushAttribute(RECT, "x", x);
+          html.PushAttribute(RECT, "y", y);
+          html.PushAttribute(RECT, "width", w);
+          html.PushAttribute(RECT, "height", h);
+          html.PushAttribute(RECT, "style", rect_props);
+        }
+
+        // display the filenames
+        if (params.show_textures_names)
+        {
+          for (auto & entry : entries)
+          {
+            if (entry.atlas != i)
+              continue;
+
+            int x = MultDimension(entry.x, scale) + MultDimension(entry.width , scale * 0.5f);
+            int y = MultDimension(entry.y, scale) + MultDimension(entry.height, scale * 0.5f);
+
+            tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
+            html.PushAttribute(TEXT, "text-anchor", "middle");
+            html.PushAttribute(TEXT, "x", x);
+            html.PushAttribute(TEXT, "y", y);
+            html.PushAttribute(TEXT, "fill", "white");
+
+            html.PushText(TEXT, entry.filename.c_str());
+          }
+        }      
+      }
+    }
+  }
+
+  std::string TextureAtlasData::GetAtlasSpaceOccupationString(size_t atlas_index) const
+  {
+    std::ostringstream stream;
+    OutputAtlasSpaceOccupation(atlas_index, stream);
+    return stream.str();
+  }
+
+  std::string TextureAtlasData::GetAtlasSpaceOccupationString() const
+  {
+    std::ostringstream stream;
+    OutputAtlasSpaceOccupation(stream);
+    return stream.str();
+  }
+
+  void TextureAtlasData::OutputAtlasSpaceOccupation(std::ostream & stream) const
+  {
+    for (size_t i = 0 ; i < GetAtlasCount() ; ++i)
+      OutputAtlasSpaceOccupation(i, stream);
+  }
+
+  void TextureAtlasData::OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream) const
+  {
+    glm::ivec2 atlas_size = GetAtlasDimension();
+
+    float atlas_surface = (float)(atlas_size.x * atlas_size.y);
+
+    float atlas_used_surface = ComputeSurface(atlas_index);
+    float percent            = 100.0f * atlas_used_surface / atlas_surface;
+
+    stream << "Atlas " << atlas_index << std::endl;
+    stream << "  occupation : " << percent << "%" << std::endl;
+  }
+
+  void TextureAtlasData::OutputGeneralInformation(std::ostream & stream) const
+  {
+    glm::ivec2 atlas_size = GetAtlasDimension();
+
+    float atlas_surface   = (float)(atlas_size.x * atlas_size.y);
+    float texture_surface = ComputeSurface(SIZE_MAX);
+    int   min_atlas_count = (int)std::ceil(texture_surface / atlas_surface);
+
+    stream << "Texture surface    : " << texture_surface << std::endl;
+    stream << "Atlas surface      : " << atlas_surface   << std::endl;
+    stream << "Best atlas count   : " << min_atlas_count << std::endl;
+    stream << "Actual atlas count : " << GetAtlasCount() << std::endl;
+  }
+
+  std::string TextureAtlasData::GetGeneralInformationString() const
+  {
+    std::ostringstream stream;
+    OutputGeneralInformation(stream);
+    return stream.str();
+  } 
+
+  glm::ivec2 TextureAtlasData::GetAtlasDimension() const
+  {
+    for (size_t i = 0 ; i < atlas_images.size() ; ++i)
+    {
+      FIBITMAP * bitmap = atlas_images[i];
+      if (bitmap != nullptr)
+      {
+        int width  = (int)FreeImage_GetWidth(bitmap);
+        int height = (int)FreeImage_GetHeight(bitmap);
+        return glm::ivec2(width, height);
+      }       
+    }
+    return glm::ivec2(0, 0);
+  }
+  
   // ========================================================================
   // TextureAtlasCreatorBase implementation
   // ========================================================================
@@ -408,7 +646,7 @@ namespace chaos
       {
         data->atlas_images = GenerateAtlasTextures();
 #if _DEBUG
-        OutputAtlasSpaceOccupation(std::cout);
+        data->OutputAtlasSpaceOccupation(std::cout);
         data->OutputTextureInfo(std::cout);
 #endif
         return true;
@@ -421,218 +659,6 @@ namespace chaos
     return false;
   }
 
-  tinyxml2::XMLDocument * TextureAtlasCreatorBase::OutputToHTMLDocument(TextureAtlasHTMLOutputParams params) const
-  {
-    tinyxml2::XMLDocument * result = new tinyxml2::XMLDocument();
-    OutputToHTMLDocument(result, params); 
-    return result;
-  }
-
-  bool TextureAtlasCreatorBase::OutputToHTMLFile(boost::filesystem::path const & path, TextureAtlasHTMLOutputParams params) const
-  {
-    return OutputToHTMLFile(path.string().c_str());
-  }
-
-  bool TextureAtlasCreatorBase::OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params) const
-  {
-    assert(filename != nullptr);
-
-    bool result = false;
-
-    tinyxml2::XMLDocument * doc = TextureAtlasCreatorBase::OutputToHTMLDocument(params);
-    if (doc != nullptr)
-    {
-      result = (doc->SaveFile(filename) == tinyxml2::XML_SUCCESS);
-      delete(doc);
-    }
-    return result;
-  }
-
-  void TextureAtlasCreatorBase::OutputToHTMLDocument(tinyxml2::XMLDocument * doc, TextureAtlasHTMLOutputParams params) const
-  {
-    assert(doc != nullptr);
-
-    HTMLTools html(doc);
-
-    tinyxml2::XMLElement * Header = html.PushElement(doc, "!DOCTYPE HTML");
-    tinyxml2::XMLElement * HTML   = html.PushElement(Header, "HTML");
-    tinyxml2::XMLElement * BODY   = html.PushElement(HTML, "BODY");
-    
-    float scale = params.texture_scale;
-    if (scale <= 0.0f)
-    {
-      if (width <= 256 || height <= 256)
-        scale = 3.0f;
-      else if (width <= 512 || height <= 512)
-        scale = 2.0f;
-    }
-
-    if (params.auto_refresh)
-    {
-      tinyxml2::XMLElement * META = html.PushElement(BODY, "META");
-      html.PushAttribute(META, "http-equiv", "refresh");
-      html.PushAttribute(META, "content", 2);
-    }
-      
-    if (params.show_header)
-    {
-      tinyxml2::XMLElement * P   = html.PushElement(BODY, "P");
-      tinyxml2::XMLElement * PRE = html.PushElement(P, "PRE");
-
-      html.PushText(PRE, GetGeneralInformationString().c_str());
-    }
-
-    int id = 0;
-    for (size_t i = 0 ; i < GetAtlasCount() ; ++i)
-    {
-      int w =  MultDimension(width,  scale);
-      int h =  MultDimension(height, scale);
-
-      if (params.show_atlas_header)
-      {
-        tinyxml2::XMLElement * P   = html.PushElement(BODY, "P");
-        tinyxml2::XMLElement * PRE = html.PushElement(P, "PRE");
-        html.PushText(PRE, GetAtlasSpaceOccupationString(i).c_str());
-      }
-
-      tinyxml2::XMLElement * TABLE = html.PushElement(BODY, "TABLE");
-      html.PushAttribute(TABLE, "border", 5);
-      html.PushAttribute(TABLE, "cellpadding", 10);
-
-      tinyxml2::XMLElement * TR = nullptr;
-
-      size_t count = 0;
-      for (size_t j = 0 ; j < data->entries.size() ; ++j)
-      {
-        TextureAtlasEntry const & entry = data->entries[j];
-        if (entry.atlas != i)
-          continue;
-
-        if (TR == nullptr)
-          TR = html.PushElement(TABLE, "TR");
-
-        // first element of the line
-        tinyxml2::XMLElement * TD  = html.PushElement(TR, "TD");
-        tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
-        html.PushText(PRE, data->GetTextureInfoString(entry).c_str());
-
-        if (count % 5 == 4)
-          TR = nullptr;
-        ++count;
-      }
-
-      if (params.show_textures)
-      {
-        char const * texture_bgnd = "fill-opacity:1.0;fill:rgb(150,150,150);stroke-width:2;stroke:rgb(0,0,0)";
-
-        tinyxml2::XMLElement * BR  = html.PushElement(BODY, "BR");
-        tinyxml2::XMLElement * SVG = html.PushElement(BODY, "SVG");
-
-        html.PushAttribute(SVG, "width", w);
-        html.PushAttribute(SVG, "height", h);
-
-        tinyxml2::XMLElement * RECT = html.PushElement(SVG, "RECT");
-        html.PushAttribute(RECT, "width", w);
-        html.PushAttribute(RECT, "height", h);
-        html.PushAttribute(RECT, "style", texture_bgnd);
-
-        for (auto & entry : data->entries)
-        {
-          ++id;
-          if (entry.atlas != i)
-            continue;
-
-          int color = 10 + (id % 10) * 10;
-
-          int x = MultDimension(entry.x,      scale);
-          int y = MultDimension(entry.y,      scale);
-          int w = MultDimension(entry.width,  scale);
-          int h = MultDimension(entry.height, scale);
-
-          char rect_props[1024];
-          sprintf_s(rect_props, 1024, "fill-opacity:0.5;fill:rgb(%d,0,0);stroke-width:1;stroke:rgb(0,0,0)", color);
-
-          tinyxml2::XMLElement * RECT = html.PushElement(SVG, "RECT");
-          html.PushAttribute(RECT, "x", x);
-          html.PushAttribute(RECT, "y", y);
-          html.PushAttribute(RECT, "width", w);
-          html.PushAttribute(RECT, "height", h);
-          html.PushAttribute(RECT, "style", rect_props);
-        }
-
-        // display the filenames
-        if (params.show_textures_names)
-        {
-          for (auto & entry : data->entries)
-          {
-            if (entry.atlas != i)
-              continue;
-
-            int x = MultDimension(entry.x, scale) + MultDimension(entry.width , scale * 0.5f);
-            int y = MultDimension(entry.y, scale) + MultDimension(entry.height, scale * 0.5f);
-
-            tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
-            html.PushAttribute(TEXT, "text-anchor", "middle");
-            html.PushAttribute(TEXT, "x", x);
-            html.PushAttribute(TEXT, "y", y);
-            html.PushAttribute(TEXT, "fill", "white");
-
-            html.PushText(TEXT, entry.filename.c_str());
-          }
-        }      
-      }
-    }
-  }
-
-  std::string TextureAtlasCreatorBase::GetAtlasSpaceOccupationString(size_t atlas_index) const
-  {
-    std::ostringstream stream;
-    OutputAtlasSpaceOccupation(atlas_index, stream);
-    return stream.str();
-  }
-
-  std::string TextureAtlasCreatorBase::GetAtlasSpaceOccupationString() const
-  {
-    std::ostringstream stream;
-    OutputAtlasSpaceOccupation(stream);
-    return stream.str();
-  }
-
-  void TextureAtlasCreatorBase::OutputAtlasSpaceOccupation(std::ostream & stream) const
-  {
-    for (size_t i = 0 ; i < GetAtlasCount() ; ++i)
-      OutputAtlasSpaceOccupation(i, stream);
-  }
-
-  void TextureAtlasCreatorBase::OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream) const
-  {
-    float atlas_surface = (float)(width * height);
-
-    float atlas_used_surface = data->ComputeSurface(atlas_index, padding);
-    float percent            = 100.0f * atlas_used_surface / atlas_surface;
-
-    stream << "Atlas " << atlas_index << std::endl;
-    stream << "  occupation : " << percent << "%" << std::endl;
-  }
-
-  void TextureAtlasCreatorBase::OutputGeneralInformation(std::ostream & stream) const 
-  {
-    float atlas_surface   = (float)(width * height);
-    float texture_surface = data->ComputeSurface(SIZE_MAX, padding);
-    int   min_atlas_count = (int)std::ceil(texture_surface / atlas_surface);
-
-    stream << "Texture surface    : " << texture_surface << std::endl;
-    stream << "Atlas surface      : " << atlas_surface   << std::endl;
-    stream << "Best atlas count   : " << min_atlas_count << std::endl;
-    stream << "Actual atlas count : " << GetAtlasCount() << std::endl;
-  }
-
-  std::string TextureAtlasCreatorBase::GetGeneralInformationString() const 
-  {
-    std::ostringstream stream;
-    OutputGeneralInformation(stream);
-    return stream.str();
-  } 
 
   bool TextureAtlasCreatorBase::EnsureValid(std::ostream & stream) const
   {
@@ -734,8 +760,6 @@ namespace chaos
     }
     return result;
   }
-
-
 
   // ========================================================================
   // TextureAtlasCreator implementation

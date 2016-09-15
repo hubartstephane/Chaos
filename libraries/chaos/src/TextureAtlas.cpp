@@ -574,10 +574,10 @@ namespace chaos
   }
   
   // ========================================================================
-  // TextureAtlasCreatorBase implementation
+  // TextureAtlasGenerator implementation
   // ========================================================================
 
-  AtlasRectangle TextureAtlasCreatorBase::GetAtlasRectangle() const
+  AtlasRectangle TextureAtlasGenerator::GetAtlasRectangle() const
   {
     AtlasRectangle result;
     result.x      = 0;
@@ -587,19 +587,7 @@ namespace chaos
     return result;
   }
   
-  size_t TextureAtlasCreatorBase::GetAtlasCount() const
-  {
-    return 0;
-  }
-
-  void TextureAtlasCreatorBase::Clear()
-  {
-    width  = 0;
-    height = 0;
-    data   = nullptr;
-  }
-
-  AtlasRectangle TextureAtlasCreatorBase::AddPadding(AtlasRectangle const & r) const
+  AtlasRectangle TextureAtlasGenerator::AddPadding(AtlasRectangle const & r) const
   {
     AtlasRectangle result = r;
     result.x      -= padding;
@@ -609,7 +597,7 @@ namespace chaos
     return result;
   }
 
-  bool TextureAtlasCreatorBase::ComputeResult(TextureAtlasData & in_data, int in_width, int in_height, int in_padding)    
+  bool TextureAtlasGenerator::ComputeResult(TextureAtlasData & in_data, int in_width, int in_height, int in_padding)    
   {
     Clear();
 
@@ -660,7 +648,7 @@ namespace chaos
   }
 
 
-  bool TextureAtlasCreatorBase::EnsureValid(std::ostream & stream) const
+  bool TextureAtlasGenerator::EnsureValid(std::ostream & stream) const
   {
     bool result = true;
 
@@ -711,7 +699,7 @@ namespace chaos
     return result;
   }
 
-  bool TextureAtlasCreatorBase::HasInterctingTexture(size_t atlas_index, AtlasRectangle const & r) const
+  bool TextureAtlasGenerator::HasInterctingTexture(size_t atlas_index, AtlasRectangle const & r) const
   {
     AtlasRectangle r1 = AddPadding(r);
 
@@ -729,12 +717,7 @@ namespace chaos
     return false;
   }
 
-  bool TextureAtlasCreatorBase::DoComputeResult()
-  {
-    return false;
-  }
-
-  std::vector<FIBITMAP *> TextureAtlasCreatorBase::GenerateAtlasTextures() const
+  std::vector<FIBITMAP *> TextureAtlasGenerator::GenerateAtlasTextures() const
   {
     unsigned char const color[] = {0, 0, 0, 255}; // B G R A
 
@@ -761,22 +744,21 @@ namespace chaos
     return result;
   }
 
-  // ========================================================================
-  // TextureAtlasCreator implementation
-  // ========================================================================
-
-  size_t TextureAtlasCreator::GetAtlasCount() const
+  size_t TextureAtlasGenerator::GetAtlasCount() const
   {
     return atlas_definitions.size();
   }
 
-  void TextureAtlasCreator::Clear()
+  void TextureAtlasGenerator::Clear()
   {
-    TextureAtlasCreatorBase::Clear();
+    width  = 0;
+    height = 0;
+    data   = nullptr;
+
     atlas_definitions.clear();
   }
 
-  float TextureAtlasCreator::GetAdjacentSurface(TextureAtlasEntry const & entry, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
+  float TextureAtlasGenerator::GetAdjacentSurface(TextureAtlasEntry const & entry, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
   {
     float result = 0.0f;
 
@@ -819,7 +801,7 @@ namespace chaos
     return result;
   }
 
-  float TextureAtlasCreator::FindBestPositionInAtlas(TextureAtlasEntry const & entry, AtlasDefinition const & atlas, int & x, int & y) const
+  float TextureAtlasGenerator::FindBestPositionInAtlas(TextureAtlasEntry const & entry, AtlasDefinition const & atlas, int & x, int & y) const
   {
     float result = -1.0f;
 
@@ -897,7 +879,7 @@ namespace chaos
     return result;
   }
 
-  void TextureAtlasCreator::InsertOrdered(std::vector<int> & v, int value)
+  void TextureAtlasGenerator::InsertOrdered(std::vector<int> & v, int value)
   {
     auto it = std::lower_bound(v.begin(), v.end(), value);
     if ((it != v.end()) && (*it == value))
@@ -905,7 +887,7 @@ namespace chaos
     v.insert(it, value);
   }
 
-  void TextureAtlasCreator::InsertTextureInAtlas(TextureAtlasEntry & entry, AtlasDefinition & atlas, int x, int y)
+  void TextureAtlasGenerator::InsertTextureInAtlas(TextureAtlasEntry & entry, AtlasDefinition & atlas, int x, int y)
   {
     entry.atlas = &atlas - &atlas_definitions[0];
     entry.x     = x + padding;
@@ -918,7 +900,7 @@ namespace chaos
     InsertOrdered(atlas.split_y, y + entry.height + 2 * padding);
   }
 
-  bool TextureAtlasCreator::DoComputeResult()
+  bool TextureAtlasGenerator::DoComputeResult()
   {
     size_t count = data->entries.size();
 
@@ -986,14 +968,14 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasCreator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding)
+  bool TextureAtlasGenerator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding)
   {
     // fill the atlas
     TextureAtlasData data;
     data.AddTextureFilesFromDirectory(src_dir);
 
     // create the atlas files
-    TextureAtlasCreator atlas_creator;  
+    TextureAtlasGenerator atlas_creator;  
     if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
       return data.SaveAtlas(filename);
     return false;

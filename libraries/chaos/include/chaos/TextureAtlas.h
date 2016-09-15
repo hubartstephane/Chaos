@@ -128,7 +128,7 @@ namespace chaos
 
   class TextureAtlasData
   {
-    friend class TextureAtlasCreatorBase;
+    friend class TextureAtlasGenerator;
 
   public:
 
@@ -225,25 +225,39 @@ namespace chaos
   };
 
   /**
-   * TextureAtlasCreatorBase : base class for atlas creation
-   */
+  * TextureAtlasGenerator :
+  *   each time a texture is inserted, the space is split along 4 axis
+  *   this creates a grid of points that serve to new positions for inserting textures ...
+  *   it select the best position as the one that minimize space at left, right, top and bottom
+  */
 
-  class TextureAtlasCreatorBase
+  class TextureAtlasGenerator
   {
+    /** an definition is a set of vertical and horizontal lines that split the space */
+    class AtlasDefinition
+    {
+    public:
+      std::vector<int> split_x;
+      std::vector<int> split_y;
+    };
+
   public:
 
     /** constructor */     
-    TextureAtlasCreatorBase() : width(0), height(0), padding(0), data(nullptr){}
+    TextureAtlasGenerator() : width(0), height(0), padding(0), data(nullptr){}
     /** destructor */     
-    virtual ~TextureAtlasCreatorBase(){}
-    /** returns the number of textures needed for the atlas */
-    virtual size_t GetAtlasCount() const;
-    /** reset the object */
-    virtual void Clear();    
+    virtual ~TextureAtlasGenerator(){} 
     /** compute all texture positions */
     bool ComputeResult(TextureAtlasData & in_data, int in_width, int in_height, int in_padding);
     /** returns the box for the atlas */
     AtlasRectangle GetAtlasRectangle() const;
+
+    /** returns the number of atlas */
+    size_t GetAtlasCount() const;
+    /** clear the results */
+    void Clear();
+    /** create an atlas from a directory into another directory */
+    static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding);
 
     /** returns a vector with all generated Image (to be deallocated after usage) */
     std::vector<FIBITMAP *> GenerateAtlasTextures() const;
@@ -257,7 +271,15 @@ namespace chaos
     /** test whether there is an intersection between each pair of textures in an atlas */
     bool HasInterctingTexture(size_t atlas_index, AtlasRectangle const & r) const;
     /** the effective function to do the computation */
-    virtual bool DoComputeResult();
+    bool DoComputeResult();
+    /** an utility function that gets a score for a rectangle */
+    float GetAdjacentSurface(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
+    /** returns the position (if any) in an atlas withe the best score */
+    float FindBestPositionInAtlas(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, int & x, int & y) const;
+    /** insert an integer in a vector. keep it ordered */
+    void InsertOrdered(std::vector<int> & v, int value);
+    /** insert a texture in an atlas definition */
+    void InsertTextureInAtlas(TextureAtlasEntry & texture, AtlasDefinition & atlas, int x, int y);
     /** an utility function that returns an array with 0.. count - 1*/
     static std::vector<size_t> CreateIndirectionTable(size_t count)
     {
@@ -286,48 +308,6 @@ namespace chaos
     int                  padding;
     /** the result */
     TextureAtlasData   * data;
-  };
-
-  /**
-   * TextureAtlasCreator : the "final" implementation of the AtlasCreator
-   *                       each time a texture is inserted, the space is split along 4 axis
-   *                       this creates a grid of points that serve to new positions for inserting textures ...
-   *                       it select the best position as the one that minimize space at left, right, top and bottom
-   */
-
-  class TextureAtlasCreator : public TextureAtlasCreatorBase
-  {
-    /** an definition is a set of vertical and horizontal lines that split the space */
-    class AtlasDefinition 
-    {
-    public:
-      std::vector<int> split_x;
-      std::vector<int> split_y;
-    };
-
-  public:
-
-    /** returns the number of atlas */
-    virtual size_t GetAtlasCount() const;
-    /** clear the results */
-    virtual void Clear();
-    /** create an atlas from a directory into another directory */
-    static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding);
-
-  protected:
-
-    /** an utility function that gets a score for a rectangle */
-    float GetAdjacentSurface(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
-    /** returns the position (if any) in an atlas withe the best score */
-    float FindBestPositionInAtlas(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, int & x, int & y) const;
-    /** insert an integer in a vector. keep it ordered */
-    void InsertOrdered(std::vector<int> & v, int value);
-    /** insert a texture in an atlas definition */
-    void InsertTextureInAtlas(TextureAtlasEntry & texture, AtlasDefinition & atlas, int x, int y);
-    /** the computation method */
-    virtual bool DoComputeResult();
-
-  protected:
     /** all definitions */
     std::vector<AtlasDefinition> atlas_definitions;
   };

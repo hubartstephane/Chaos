@@ -269,7 +269,7 @@ namespace chaos
 
 
     // generate the atlas
-    TextureAtlasCreator atlas_creator;
+    TextureAtlasGenerator atlas_creator;
     bool result = atlas_creator.ComputeResult(data, params.altas_width, params.altas_height, params.padding);
 
     // release the glyphs

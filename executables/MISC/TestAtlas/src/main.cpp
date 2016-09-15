@@ -39,7 +39,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
   params.texture_scale     = 3.0f;
   params.auto_refresh      = false;  
 
-  chaos::TextureAtlasCreator atlas_creator;
+  chaos::TextureAtlasGenerator atlas_creator;
   
   if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
   {  
@@ -64,7 +64,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
   boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas.json";
 
-  chaos::TextureAtlasCreator::CreateAtlasFromDirectory(resources_path, result_path, atlas_width, atlas_height, atlas_padding);
+  chaos::TextureAtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, atlas_width, atlas_height, atlas_padding);
 }
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)

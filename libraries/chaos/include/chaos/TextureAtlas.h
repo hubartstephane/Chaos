@@ -196,12 +196,12 @@ namespace chaos
     /** display information about all textures */
     void OutputTextureInfo(std::ostream & stream) const;
     /** display information about one texture */
-    void OutputTextureInfo(TextureAtlasEntry const & texture, std::ostream & stream) const;
+    void OutputTextureInfo(TextureAtlasEntry const & entry, std::ostream & stream) const;
 
     /** display information about all textures */
     std::string GetTextureInfoString() const;
     /** display information about one texture */
-    std::string GetTextureInfoString(TextureAtlasEntry const & texture) const;
+    std::string GetTextureInfoString(TextureAtlasEntry const & entry) const;
 
     /** function to save the results */
     bool SaveAtlas(boost::filesystem::path const & filename) const;
@@ -307,13 +307,13 @@ namespace chaos
     /** the effective function to do the computation */
     bool DoComputeResult();
     /** an utility function that gets a score for a rectangle */
-    float GetAdjacentSurface(TextureAtlasInputEntry const & entry, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
+    float GetAdjacentSurface(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
     /** returns the position (if any) in an atlas withe the best score */
-    float FindBestPositionInAtlas(TextureAtlasInputEntry const & entry, AtlasDefinition const & atlas, int & x, int & y) const;
+    float FindBestPositionInAtlas(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, int & x, int & y) const;
     /** insert an integer in a vector. keep it ordered */
     void InsertOrdered(std::vector<int> & v, int value);
     /** insert a texture in an atlas definition */
-    void InsertTextureInAtlas(TextureAtlasEntry & texture, AtlasDefinition & atlas, int x, int y);
+    void InsertTextureInAtlas(TextureAtlasEntry & output_entry, AtlasDefinition & atlas_def, int x, int y);
     /** an utility function that returns an array with 0.. count - 1*/
     static std::vector<size_t> CreateIndirectionTable(size_t count)
     {

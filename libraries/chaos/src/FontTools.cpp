@@ -243,34 +243,32 @@ namespace chaos
     return result;  
   }
 
-  bool FontTools::GenerateTextureAtlas(FT_Face face, TextureAtlasData & data, char const * characters, GenTextureAtlasParameters const & params)
+  bool FontTools::GenerateTextureAtlas(FT_Face face, TextureAtlas & atlas, char const * characters, GenTextureAtlasParameters const & params)
   {
     assert(face != nullptr);
-
+   
     if (characters == nullptr)
       characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
 
     std::map<char, CharacterBitmapGlyph> glyph_cache = GetGlyphCacheForString(face, characters);
 
+    TextureAtlasInput input;
+    char name[] = " ";
     for (auto & glyph : glyph_cache)
     {
       FIBITMAP * bm = GenerateImage(glyph.second.bitmap_glyph->bitmap);        
       if (bm != nullptr)
-      {
-        char name[] = " ";
+      {        
         name[0] = glyph.first;
-
-        data.AddImageSource(name, bm);   // bitmaps will be released at TextureAtlasData destruction   
+        input.AddImageSource(name, bm);   // bitmaps will be released at TextureAtlasData destruction   
       }           
-    }
-
-
-      // XXX : to do    returns somehow the glyph metrics
+    }      
+    // XXX : to do    returns somehow the glyph metrics
 
 
     // generate the atlas
-    TextureAtlasGenerator atlas_creator;
-    bool result = atlas_creator.ComputeResult(data, params.altas_width, params.altas_height, params.padding);
+    TextureAtlasGenerator generator;
+    bool result = generator.ComputeResult(input, atlas, params.altas_width, params.altas_height, params.padding);
 
     // release the glyphs
     for (auto glyph_entry : glyph_cache)
@@ -279,7 +277,7 @@ namespace chaos
     return result;
   }
 
-  bool FontTools::GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlasData & data, char const * characters, GenTextureAtlasParameters const & params)
+  bool FontTools::GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlas & atlas, char const * characters, GenTextureAtlasParameters const & params)
   {
     assert(font_name != nullptr);
 
@@ -302,7 +300,7 @@ namespace chaos
     {
       error = FT_Set_Pixel_Sizes(face, params.glyph_width, params.glyph_height); // Important else FT_Load_Glyph(...) fails
       if (error == 0)
-        result = GenerateTextureAtlas(face, data, characters, params);
+        result = GenerateTextureAtlas(face, atlas, characters, params);
       FT_Done_Face(face);
     }
 

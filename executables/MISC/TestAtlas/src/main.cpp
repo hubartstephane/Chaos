@@ -10,24 +10,24 @@
 
 void TestAtlasReload(boost::filesystem::path const & filename)
 {
-  chaos::TextureAtlasData data;
-  data.LoadAtlas(filename);
+  chaos::TextureAtlas atlas;
+  atlas.LoadAtlas(filename);
 }
 
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
-  chaos::TextureAtlasData data;
+  chaos::TextureAtlasInput input;
 
-  data.AddFakeImageSource("A");
-  data.AddFakeImageSource("B");
-  data.AddFakeImageSource("C");
-  data.AddFakeImageSource("D");
-  data.AddFakeImageSource("E");
-  data.AddFakeImageSource("F");
-  data.AddFakeImageSource("G");
-  data.AddFakeImageSource("H");
-  data.AddFakeImageSource("I");
-  data.AddFakeImageSource("J");
+  input.AddFakeImageSource("A");
+  input.AddFakeImageSource("B");
+  input.AddFakeImageSource("C");
+  input.AddFakeImageSource("D");
+  input.AddFakeImageSource("E");
+  input.AddFakeImageSource("F");
+  input.AddFakeImageSource("G");
+  input.AddFakeImageSource("H");
+  input.AddFakeImageSource("I");
+  input.AddFakeImageSource("J");
 
   int atlas_width   = 256;
   int atlas_height  = 256;
@@ -39,15 +39,16 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
   params.texture_scale     = 3.0f;
   params.auto_refresh      = false;  
 
-  chaos::TextureAtlasGenerator atlas_creator;
+  chaos::TextureAtlas          atlas;
+  chaos::TextureAtlasGenerator generator;
   
-  if (atlas_creator.ComputeResult(data, atlas_width, atlas_height, atlas_padding))
+  if (generator.ComputeResult(input, atlas, atlas_width, atlas_height, atlas_padding))
   {  
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
-    data.OutputToHTMLFile(html_path.string().c_str(), params);
+    atlas.OutputToHTMLFile(html_path.string().c_str(), params);
 
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFake" / "MyAtlas.x";
-    data.SaveAtlas(dst_dir);
+    atlas.SaveAtlas(dst_dir);
   }
 }
 
@@ -69,13 +70,13 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
-  chaos::TextureAtlasData data;
+  chaos::TextureAtlas atlas;
 
   boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
-  if (chaos::FontTools::GenerateTextureAtlas(nullptr, font_path.string().c_str(), data, nullptr))
+  if (chaos::FontTools::GenerateTextureAtlas(nullptr, font_path.string().c_str(), atlas, nullptr))
   {
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFont" / "MyAtlas";
-    data.SaveAtlas(dst_dir);
+    atlas.SaveAtlas(dst_dir);
   }
 }
 

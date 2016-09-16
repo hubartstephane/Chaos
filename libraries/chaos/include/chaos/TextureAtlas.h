@@ -85,6 +85,25 @@ namespace chaos
     }
   };
 
+
+  /**
+  * TextureAtlasInputEntry : class to represents an entry inside the atlas
+  */
+
+  class TextureAtlasInputEntry
+  {
+  public:
+
+    /** the name of the texture */
+    std::string filename;
+    /** the size of the texture (beware, 2 x padding must be add for correct result) */
+    int         width;
+    /** the size of the texture (beware, 2 x padding must be add for correct result) */
+    int         height;
+    /** the bitmap */
+    FIBITMAP  * bitmap;
+  };
+
   /**
    * TextureAtlasEntry : class to represents an entry inside the atlas
    */
@@ -105,8 +124,6 @@ namespace chaos
     int         width;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
     int         height;
-    /** the bitmap */
-    FIBITMAP  * bitmap;
 
   public:
 
@@ -123,19 +140,22 @@ namespace chaos
   };
 
   /**
-   * TextureAtlasData : the set of textures to be given to an AtlasCreator (both input and output)
+   * TextureAtlasInput : the set of textures to be given to an AtlasCreator (input)
    */
 
-  class TextureAtlasData
+  class TextureAtlasInput
   {
     friend class TextureAtlasGenerator;
 
   public:
 
     /** constructor */
-    TextureAtlasData(){}
+    TextureAtlasInput() {}
     /** destructor */
-    ~TextureAtlasData(){ Clear(); }
+    ~TextureAtlasInput(){ Clear(); }
+
+    /** clear all the textures */
+    void Clear();
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert a texture before computation */
@@ -147,8 +167,28 @@ namespace chaos
     /** insert an image inside the atlas */
     bool AddFakeImageSource(char const * filename);
 
-    /** reset result */
-    void ResetResult();
+  protected:
+
+    /** all the textures for the input */
+    std::vector<TextureAtlasInputEntry> entries;
+  };
+
+
+  /**
+   * TextureAtlas : the result computation of TextureAtlasGenerator
+   */
+
+  class TextureAtlas
+  {
+    friend class TextureAtlasGenerator;
+
+  public:
+
+    /** constructor */
+    TextureAtlas() {}
+    /** destructor */
+    ~TextureAtlas(){ Clear(); }
+
     /** returns the surface for an atlas */
     float ComputeSurface(size_t atlas_index) const;
     /** clear all the textures */
@@ -186,12 +226,6 @@ namespace chaos
     glm::ivec2 GetAtlasDimension() const;
 
   protected:
-
-    /** multiply an integer with a float (two conversions) */
-    static int MultDimension(int a, float b)
-    {
-      return (int)(((float)a) * b);
-    }
 
     /** get a string with the general information */
     std::string GetGeneralInformationString() const;
@@ -244,18 +278,12 @@ namespace chaos
   public:
 
     /** constructor */     
-    TextureAtlasGenerator() : width(0), height(0), padding(0), data(nullptr){}
+    TextureAtlasGenerator() : width(0), height(0), padding(0), input(nullptr), output(nullptr){}
     /** destructor */     
     virtual ~TextureAtlasGenerator(){} 
     /** compute all texture positions */
-    bool ComputeResult(TextureAtlasData & in_data, int in_width, int in_height, int in_padding);
-    /** returns the box for the atlas */
-    AtlasRectangle GetAtlasRectangle() const;
+    bool ComputeResult(TextureAtlasInput & in_input, TextureAtlas & in_ouput, int in_width, int in_height, int in_padding);
 
-    /** returns the number of atlas */
-    size_t GetAtlasCount() const;
-    /** clear the results */
-    void Clear();
     /** create an atlas from a directory into another directory */
     static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding);
 
@@ -264,18 +292,24 @@ namespace chaos
 
   protected:
 
+    /** clear the results */
+    void Clear();
+    /** returns the box for the atlas */
+    AtlasRectangle GetAtlasRectangle() const;
+    /** returns the number of atlas */
+    size_t GetAtlasCount() const;
     /** add padding to a rectangle */
     AtlasRectangle AddPadding(AtlasRectangle const & r) const;
     /** test whether there is an intersection between each pair of textures in an atlas */
-    bool EnsureValid(std::ostream & stream = std::cout) const;
+    bool EnsureValidResults(std::ostream & stream = std::cout) const;
     /** test whether there is an intersection between each pair of textures in an atlas */
     bool HasInterctingTexture(size_t atlas_index, AtlasRectangle const & r) const;
     /** the effective function to do the computation */
     bool DoComputeResult();
     /** an utility function that gets a score for a rectangle */
-    float GetAdjacentSurface(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
+    float GetAdjacentSurface(TextureAtlasInputEntry const & entry, AtlasDefinition const & atlas, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
     /** returns the position (if any) in an atlas withe the best score */
-    float FindBestPositionInAtlas(TextureAtlasEntry const & texture, AtlasDefinition const & atlas, int & x, int & y) const;
+    float FindBestPositionInAtlas(TextureAtlasInputEntry const & entry, AtlasDefinition const & atlas, int & x, int & y) const;
     /** insert an integer in a vector. keep it ordered */
     void InsertOrdered(std::vector<int> & v, int value);
     /** insert a texture in an atlas definition */
@@ -293,7 +327,7 @@ namespace chaos
     template<typename FUNC>
     std::vector<size_t> CreateTextureIndirectionTable(FUNC func)
     {
-      std::vector<size_t> result = CreateIndirectionTable(data->entries.size());
+      std::vector<size_t> result = CreateIndirectionTable(input->entries.size());
       std::sort(result.begin(), result.end(), func);
       return result;
     }
@@ -306,8 +340,10 @@ namespace chaos
     int                  height;
     /** some padding for the texture : should be even */
     int                  padding;
+    /** the input files */
+    TextureAtlasInput  * input;
     /** the result */
-    TextureAtlasData   * data;
+    TextureAtlas       * output;
     /** all definitions */
     std::vector<AtlasDefinition> atlas_definitions;
   };

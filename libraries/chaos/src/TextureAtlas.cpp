@@ -585,6 +585,16 @@ namespace chaos
     result.height = height;
     return result;
   }
+
+  AtlasRectangle TextureAtlasGenerator::GetRectangle(TextureAtlasEntry const & entry) const
+  {
+    AtlasRectangle result;
+    result.x      = entry.x;
+    result.y      = entry.y;
+    result.width  = entry.width;
+    result.height = entry.height;
+    return result; 
+  }
   
   AtlasRectangle TextureAtlasGenerator::AddPadding(AtlasRectangle const & r) const
   {
@@ -688,7 +698,7 @@ namespace chaos
         result = false;
       }
 
-      AtlasRectangle r = AddPadding(t.GetRectangle());
+      AtlasRectangle r = AddPadding(GetRectangle(t));
       if (!r.IsFullyInside(atlas_rectangle))
       {
         stream << "Texture should be fully inside any atlas !!! (index = " << i << ")" << std::endl;
@@ -700,14 +710,14 @@ namespace chaos
     {
       for (size_t j = i + 1 ; j < count ; ++j)
       {
-        TextureAtlasEntry const & t1 = output->entries[i];
-        TextureAtlasEntry const & t2 = output->entries[j];
+        TextureAtlasEntry const & output_entry_1 = output->entries[i];
+        TextureAtlasEntry const & output_entry_2 = output->entries[j];
 
-        if (t1.atlas != t2.atlas)
+        if (output_entry_1.atlas != output_entry_2.atlas)
           continue;
 
-        AtlasRectangle r1 = AddPadding(t1.GetRectangle());
-        AtlasRectangle r2 = AddPadding(t2.GetRectangle());
+        AtlasRectangle r1 = AddPadding(GetRectangle(output_entry_1));
+        AtlasRectangle r2 = AddPadding(GetRectangle(output_entry_2));
 
         if (r1.IsIntersecting(r2))
         {
@@ -731,7 +741,7 @@ namespace chaos
       if (output_entry.atlas != atlas_index)
         continue;
 
-      AtlasRectangle r2 = AddPadding(output_entry.GetRectangle());
+      AtlasRectangle r2 = AddPadding(GetRectangle(output_entry));
       if (r2.IsIntersecting(r1))
         return true;
     }

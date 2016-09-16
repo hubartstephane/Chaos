@@ -124,19 +124,6 @@ namespace chaos
     int         width;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
     int         height;
-
-  public:
-
-    /** returns the rectangle corresponding to the texture */
-    AtlasRectangle GetRectangle() const
-    {
-      AtlasRectangle result;
-      result.x      = x;
-      result.y      = y;
-      result.width  = width;
-      result.height = height;
-      return result; 
-    }
   };
 
   /**
@@ -292,6 +279,8 @@ namespace chaos
 
   protected:
 
+  public:
+
     /** clear the results */
     void Clear();
     /** returns the box for the atlas */
@@ -300,6 +289,8 @@ namespace chaos
     size_t GetAtlasCount() const;
     /** add padding to a rectangle */
     AtlasRectangle AddPadding(AtlasRectangle const & r) const;
+    /** returns the rectangle corresponding to the texture */
+    AtlasRectangle GetRectangle(TextureAtlasEntry const & entry) const;
     /** test whether there is an intersection between each pair of textures in an atlas */
     bool EnsureValidResults(std::ostream & stream = std::cout) const;
     /** test whether there is an intersection between each pair of textures in an atlas */

@@ -12,17 +12,17 @@ namespace chaos
 {
 
   // ========================================================================
-  // TextureAtlasEntry function
+  // TextureAtlasEntry functions
   // ========================================================================
 
   void SaveIntoJSON(TextureAtlasEntry const & entry, nlohmann::json & json_entry)
   {
     json_entry["filename"] = entry.filename;
-    json_entry["atlas"] = entry.atlas;
-    json_entry["x"] = entry.x;
-    json_entry["y"] = entry.y;
-    json_entry["width"] = entry.width;
-    json_entry["height"] = entry.height;
+    json_entry["atlas"]    = entry.atlas;
+    json_entry["x"]        = entry.x;
+    json_entry["y"]        = entry.y;
+    json_entry["width"]    = entry.width;
+    json_entry["height"]   = entry.height;
   }
 
   void LoadFromJSON(TextureAtlasEntry & entry, nlohmann::json const & json_entry)
@@ -34,9 +34,6 @@ namespace chaos
     entry.width    = json_entry["width"];
     entry.height   = json_entry["height"];
   }
-
-
-
 
   // ========================================================================
   // Independant function
@@ -301,18 +298,6 @@ namespace chaos
     return result;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   // ========================================================================
   // TextureAtlas implementation
   // ========================================================================
@@ -359,19 +344,6 @@ namespace chaos
     OutputTextureInfo(entry, out);
     return out.str();
   }
-
-
-
- 
-
- 
-
-
-
-
-
-
-
 
   tinyxml2::XMLDocument * TextureAtlas::OutputToHTMLDocument(TextureAtlasHTMLOutputParams params) const
   {
@@ -595,15 +567,6 @@ namespace chaos
     OutputGeneralInformation(stream);
     return stream.str();
   } 
-
-
-  
-
-
-
-
-
-
 
   // ========================================================================
   // TextureAtlasGenerator implementation

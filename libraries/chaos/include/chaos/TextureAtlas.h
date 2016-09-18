@@ -260,7 +260,6 @@ namespace chaos
     std::vector<entry_type> entries;
   };
 
-
   /**
    * TextureAtlas : the result computation of TextureAtlasGenerator
    */
@@ -283,8 +282,6 @@ namespace chaos
     std::string GetTextureInfoString() const;
     /** display information about one texture */
     std::string GetTextureInfoString(TextureAtlasEntry const & entry) const;
-
-
 
     /** create an XML document and output debug information */
     tinyxml2::XMLDocument * OutputToHTMLDocument(TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
@@ -309,15 +306,6 @@ namespace chaos
     void OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream = std::cout) const;
     /** display the general information if the atlas */
     void OutputGeneralInformation(std::ostream & stream = std::cout) const;
-
-
-
-    /** function to save images */
-    bool SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
-    /** function to save images */
-    bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
-
-
   };
 
   /**

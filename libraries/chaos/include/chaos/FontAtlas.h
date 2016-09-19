@@ -28,8 +28,19 @@ namespace chaos
    * FontAtlas : an atlas to hold glyphs
    */
 
-  class FontAtlas : public TextureAtlasTypedBase<FontAtlasEntry>
-  {
+  using FontAtlas = TextureAtlasTypedBase<FontAtlasEntry>;
 
-  };
+  /**
+  * FontAtlasGenerator : generates a FontAtlas
+  */
+
+class FontAtlasGenerator
+{
+public:
+
+  bool GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters, FontTools::GenTextureAtlasParameters const & params);
+
+  bool GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters, FontTools::GenTextureAtlasParameters const & params);
+};
+
 };

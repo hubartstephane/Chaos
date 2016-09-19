@@ -7,6 +7,7 @@
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
 #include <chaos/FontTools.h>
+#include <chaos/FontAtlas.h>
 
 void TestAtlasReload(boost::filesystem::path const & filename)
 {
@@ -70,10 +71,13 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
-  chaos::TextureAtlas atlas;
+  
 
   boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
-  if (chaos::FontTools::GenerateTextureAtlas(nullptr, font_path.string().c_str(), atlas, nullptr))
+
+  chaos::FontAtlas          atlas;
+  chaos::FontAtlasGenerator generator;
+  if (generator.GenerateTextureAtlas(nullptr, font_path.string().c_str(), atlas, nullptr))
   {
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFont" / "MyAtlas";
     atlas.SaveAtlas(dst_dir);

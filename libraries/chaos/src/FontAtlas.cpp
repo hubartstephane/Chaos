@@ -33,7 +33,7 @@ namespace chaos
   // FontAtlasGenerator functions
   // ========================================================================
 
-  bool FontAtlasGenerator::GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters, FontTools::GenTextureAtlasParameters const & params)
+  bool FontAtlasGenerator::GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters, FontTools::GenTextureAtlasParameters const & params) const
   {
     assert(face != nullptr);
 
@@ -55,23 +55,45 @@ namespace chaos
     }      
 
     // generate the atlas
-    TextureAtlas          texture_atlas;
+    TextureAtlas          texture_atlas; // use a temporary texture_atlas ... will be used to generate a font atlas
     TextureAtlasGenerator generator;
     bool result = generator.ComputeResult(input, texture_atlas, params.altas_width, params.altas_height, params.padding);
+
+    // copy data from texture_atlas to (font_)atlas
+    std::swap(atlas.atlas_images, texture_atlas.atlas_images);
+
+    size_t count = texture_atlas.entries.size();
+    atlas.entries.reserve(count);
+    for (size_t i = 0 ; i < count ; ++i)
+    {
+      TextureAtlasEntry const & texture_atlas_entry = texture_atlas.entries[i];
+
+      FontAtlasEntry font_atlas_entry;
+      (TextureAtlasEntry &)font_atlas_entry = texture_atlas_entry; 
+
+      font_atlas_entry.advance.x   = 0;
+      font_atlas_entry.advance.y   = 0;
+      font_atlas_entry.bitmap_left = 0;
+      font_atlas_entry.bitmap_top  = 0;
+
+      auto const & it = glyph_cache.find(texture_atlas_entry.filename[0]); // glyph are indexed un a map with char, texture_atlas_entries with a string 
+      if (it != glyph_cache.cend())
+      {
+        font_atlas_entry.advance     = it->second.advance;
+        font_atlas_entry.bitmap_left = it->second.bitmap_left;
+        font_atlas_entry.bitmap_top  = it->second.bitmap_top;      
+      }      
+      atlas.entries.push_back(font_atlas_entry);    
+    }
 
     // release the glyphs
     for (auto glyph_entry : glyph_cache)
       FT_Done_Glyph((FT_Glyph)glyph_entry.second.bitmap_glyph);
 
-    // copy data from texture_atlas to (font_)atlas
-
-
-
-
     return result;
   }
 
-  bool FontAtlasGenerator::GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters, FontTools::GenTextureAtlasParameters const & params)
+  bool FontAtlasGenerator::GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters, FontTools::GenTextureAtlasParameters const & params) const
   {
     assert(font_name != nullptr);
 

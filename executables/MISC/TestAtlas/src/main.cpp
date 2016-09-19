@@ -70,9 +70,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 }
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
-{
-  
-
+{ 
   boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
 
   chaos::FontAtlas          atlas;

@@ -73,13 +73,17 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 { 
   boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
 
+  boost::filesystem::path dst_dir1 = dest_p / "AtlasResultFont" / "MyAtlas";
+  boost::filesystem::path dst_dir2 = dest_p / "AtlasResultFontReloaded" / "MyAtlas";
+
   chaos::FontAtlas          atlas;
   chaos::FontAtlasGenerator generator;
-  if (generator.GenerateTextureAtlas(nullptr, font_path.string().c_str(), atlas, nullptr))
-  {
-    boost::filesystem::path dst_dir = dest_p / "AtlasResultFont" / "MyAtlas";
-    atlas.SaveAtlas(dst_dir);
-  }
+  if (generator.GenerateTextureAtlas(nullptr, font_path.string().c_str(), atlas, nullptr))   
+    atlas.SaveAtlas(dst_dir1);
+
+  chaos::FontAtlas atlas_reloaded;
+  if (atlas_reloaded.LoadAtlas(dst_dir1))
+    atlas_reloaded.SaveAtlas(dst_dir2);
 }
 
 int _tmain(int argc, char ** argv, char ** env)

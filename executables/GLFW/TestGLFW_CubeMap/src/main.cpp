@@ -83,6 +83,44 @@ protected:
         front_image.string().c_str(),
         back_image.string().c_str());
     }
+    else if (index == 3)
+    {
+      boost::filesystem::path p = resources_path / "skybox";
+
+      boost::filesystem::path left_image = p / "nx.jpg";
+      boost::filesystem::path front_image = p / "pz.jpg";
+      boost::filesystem::path right_image = p / "px.jpg";
+      boost::filesystem::path back_image = p / "nz.jpg";
+      boost::filesystem::path top_image = p / "py.jpg";
+      boost::filesystem::path bottom_image = p / "ny.jpg";
+
+      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
+        left_image.string().c_str(),
+        right_image.string().c_str(),
+        top_image.string().c_str(),
+        bottom_image.string().c_str(),
+        front_image.string().c_str(),
+        back_image.string().c_str());
+    }
+    else if (index == 4)
+    {
+      boost::filesystem::path p = resources_path / "MilkyWay";
+
+      boost::filesystem::path left_image = p / "dark-s_nx.jpg";
+      boost::filesystem::path front_image = p / "dark-s_pz.jpg";
+      boost::filesystem::path right_image = p / "dark-s_px.jpg";
+      boost::filesystem::path back_image = p / "dark-s_nz.jpg";
+      boost::filesystem::path top_image = p / "dark-s_py.jpg";
+      boost::filesystem::path bottom_image = p / "dark-s_ny.jpg";
+
+      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
+        left_image.string().c_str(),
+        right_image.string().c_str(),
+        top_image.string().c_str(),
+        bottom_image.string().c_str(),
+        front_image.string().c_str(),
+        back_image.string().c_str());
+    }
 
     if (!skybox.IsEmpty())
       return chaos::GLTextureTools::GenTextureObject(&skybox);

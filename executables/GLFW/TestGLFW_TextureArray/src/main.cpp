@@ -86,35 +86,97 @@ protected:
     return loader.GenerateProgramObject();
   }
 
+
+
+
+  boost::intrusive_ptr<chaos::Texture> LoadTextureArray(std::vector<FIBITMAP*> const & images, int max_bpp, int max_width, int max_height)
+  {
+    chaos::GenTextureResult result;
+    glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &result.texture_id);
+    if (result.texture_id > 0)
+    {
+      // choose format and internal format (beware FreeImage is BGR/BGRA)
+      std::pair<GLenum, GLenum> all_formats = chaos::GLTextureTools::GetTextureFormatsFromBPP(max_bpp);
+
+      GLenum format = all_formats.first;
+      GLenum internal_format = all_formats.second;
+
+      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+      int level_count = chaos::GLTextureTools::GetMipmapLevelCount(max_width, max_height);
+      glTextureStorage3D(result.texture_id, level_count, internal_format, max_width, max_height, images.size());
+
+      for (size_t i = 0 ; i < images.size() ; ++i)
+      {
+        FIBITMAP * image = images[i];
+
+        chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(image);
+
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / desc.bpp);
+
+        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, format, GL_UNSIGNED_BYTE, desc.data);
+      }
+
+      result.texture_description.type            = GL_TEXTURE_2D_ARRAY;
+      result.texture_description.internal_format = internal_format;
+      result.texture_description.width           = max_width;
+      result.texture_description.height          = max_height;
+      result.texture_description.depth           = images.size();
+
+      return new chaos::Texture(result.texture_id, result.texture_description);
+    }
+
+    return nullptr;
+  }
+
   boost::intrusive_ptr<chaos::Texture> LoadTextureArray(boost::filesystem::path const & resources_path)
   {
     boost::intrusive_ptr<chaos::Texture> result;
 
     std::vector<FIBITMAP *> images;
 
-    for (int i = 0 ; i < 10 ; ++i)
+    // load the images
+    int i = 0;
+    while (true)
     {
-    
-    
+      std::string filename = chaos::StringTools::Printf("Brick_%d.png", i + 1);
+
+      FIBITMAP * image = chaos::ImageTools::LoadImageFromFile((resources_path / filename).string().c_str());
+      if (image == nullptr)
+        break;
+      images.push_back(image);    
+      ++i;
     }
 
-    FIBITMAP * 
+    // at least one texture ?
+    if (images.size() == 0)
+      return result; // nothing loaded
 
+    // search max size/bpp
+    int max_bpp    = 0;
+    int max_width  = 0;
+    int max_height = 0;
+    for (auto image : images)
+    {
+      int bpp    = (int)FreeImage_GetBPP(image);
+      int width  = (int)FreeImage_GetWidth(image);
+      int height = (int)FreeImage_GetHeight(image);
+
+      max_bpp    = max(max_bpp, bpp);
+      max_width  = max(max_width, width);
+      max_height = max(max_height, height);
+    }
+    // generate a texture for that
+    result = LoadTextureArray(images, max_bpp, max_width, max_height);
+
+    // free the images
+    for (auto image : images)
+      FreeImage_Unload(image);
+    images.clear();
 
     return result;
   }
 
-
-
-
-
-
-  /*
-  boost::filesystem::path image_path = resources_path / "brick_1.png";
-  texture = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
-  if (texture == nullptr)
-    return false;
-  */
   virtual bool Initialize() override
   {
     chaos::Application * application = chaos::Application::GetInstance();
@@ -138,14 +200,14 @@ protected:
     if (!debug_display.Initialize(debug_params))
       return false;
     
-    // load programs      
-    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
-    if (program_box == nullptr)
-      return false;
-
     // load texture
     texture = LoadTextureArray(resources_path);
     if (texture == nullptr)
+      return false;
+
+    // load programs      
+    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
+    if (program_box == nullptr)
       return false;
 
     // create meshes

@@ -17,11 +17,7 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
-
-static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+#include <chaos/GLTextureTools.h>
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
@@ -90,6 +86,35 @@ protected:
     return loader.GenerateProgramObject();
   }
 
+  boost::intrusive_ptr<chaos::Texture> LoadTextureArray(boost::filesystem::path const & resources_path)
+  {
+    boost::intrusive_ptr<chaos::Texture> result;
+
+    std::vector<FIBITMAP *> images;
+
+    for (int i = 0 ; i < 10 ; ++i)
+    {
+    
+    
+    }
+
+    FIBITMAP * 
+
+
+    return result;
+  }
+
+
+
+
+
+
+  /*
+  boost::filesystem::path image_path = resources_path / "brick_1.png";
+  texture = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
+  if (texture == nullptr)
+    return false;
+  */
   virtual bool Initialize() override
   {
     chaos::Application * application = chaos::Application::GetInstance();
@@ -119,8 +144,7 @@ protected:
       return false;
 
     // load texture
-    boost::filesystem::path image_path = resources_path / "brick_1.png";
-    texture = chaos::GLTools::GenTextureObject(image_path.string().c_str());
+    texture = LoadTextureArray(resources_path);
     if (texture == nullptr)
       return false;
 

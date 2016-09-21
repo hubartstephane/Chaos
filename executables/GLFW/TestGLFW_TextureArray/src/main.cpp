@@ -96,10 +96,7 @@ protected:
     if (result.texture_id > 0)
     {
       // choose format and internal format (beware FreeImage is BGR/BGRA)
-      std::pair<GLenum, GLenum> all_formats = chaos::GLTextureTools::GetTextureFormatsFromBPP(max_bpp);
-
-      GLenum format = all_formats.first;
-      GLenum internal_format = all_formats.second;
+      GLenum internal_format = chaos::GLTextureTools::GetTextureFormatsFromBPP(max_bpp).second;
 
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -108,13 +105,12 @@ protected:
 
       for (size_t i = 0 ; i < images.size() ; ++i)
       {
-        FIBITMAP * image = images[i];
-
-        chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(image);
+        chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(images[i]);
 
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / desc.bpp);
 
-        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, format, GL_UNSIGNED_BYTE, desc.data);
+        GLenum current_format = chaos::GLTextureTools::GetTextureFormatsFromBPP(desc.bpp).first;
+        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, GL_UNSIGNED_BYTE, desc.data);
       }
 
       result.texture_description.type            = GL_TEXTURE_2D_ARRAY;

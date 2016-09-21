@@ -71,6 +71,16 @@ class GLTextureTools
 {
 public:
 
+  /** returns true whether type is an array texture type */
+  static bool IsArrayTextureType(GLenum type);
+  /** returns true whether type is not an array texture type */
+  static bool IsFlatTextureType(GLenum type);
+
+  /** transform a texture type into an array type */
+  static GLenum ToArrayTextureType(GLenum type);
+  /** transform a texture type into a flat type */
+  static GLenum ToFlatTextureType(GLenum type);
+
   /** Generate a 1D/2D/rectangle texture from an file */
   static GenTextureResult GenTexture(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
   /** Generate a 1D/2D/rectangle texture from an image */

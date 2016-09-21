@@ -44,6 +44,66 @@
 namespace chaos
 {
 
+bool GLTextureTools::IsArrayTextureType(GLenum type)
+{
+  if (type == GL_TEXTURE_1D_ARRAY)
+    return true;
+  if (type == GL_TEXTURE_2D_ARRAY)
+    return true;
+  if (type == GL_TEXTURE_CUBE_MAP_ARRAY)
+    return true;
+  return false;
+}
+
+bool GLTextureTools::IsFlatTextureType(GLenum type)
+{
+  if (type == GL_TEXTURE_1D)
+    return true;
+  if (type == GL_TEXTURE_2D)
+    return true;
+  if (type == GL_TEXTURE_3D)
+    return true;
+  if (type == GL_TEXTURE_RECTANGLE)
+    return true;
+  if (type == GL_TEXTURE_CUBE_MAP)
+    return true;
+  return false;
+}
+
+GLenum GLTextureTools::ToFlatTextureType(GLenum type)
+{
+  if (IsFlatTextureType(type)) // already flat
+    return type;
+
+  if (type == GL_TEXTURE_1D_ARRAY)
+    return GL_TEXTURE_1D;
+  if (type == GL_TEXTURE_2D_ARRAY)
+    return GL_TEXTURE_2D;
+  if (type == GL_TEXTURE_CUBE_MAP_ARRAY)
+    return GL_TEXTURE_CUBE_MAP;
+
+  assert(0);
+  return GL_NONE;
+}
+
+GLenum GLTextureTools::ToArrayTextureType(GLenum type)
+{
+  if (IsArrayTextureType(type)) // already array
+    return type;
+
+  if (type == GL_TEXTURE_1D)
+    return GL_TEXTURE_1D_ARRAY;
+  if (type == GL_TEXTURE_2D)
+    return GL_TEXTURE_2D_ARRAY;
+  if (type == GL_TEXTURE_CUBE_MAP)
+    return GL_TEXTURE_CUBE_MAP_ARRAY;  // XXX : GL_TEXTURE_3D and GL_TEXTURE_RECTANGLE has no correspondance in arrays
+
+  assert(0);
+  return GL_NONE;
+}
+
+
+
 int GLTextureTools::GetMipmapLevelCount(int width, int height)
 {
   return GetMipmapLevelCount(max(width, height));

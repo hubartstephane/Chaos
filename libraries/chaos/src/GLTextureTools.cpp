@@ -181,7 +181,7 @@ GenTextureResult GLTextureTools::GenTexture(ImageDescription const & image, GenT
     result.texture_description.depth           = 1;
 
     // apply parameters
-    GenTextureApplyParameters(target, result, parameters);
+    GenTextureApplyParameters(result, parameters);
   }
   return result;
 }
@@ -454,7 +454,7 @@ GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, GenText
     tmp.wrap_s = GL_CLAMP_TO_EDGE;
     tmp.wrap_r = GL_CLAMP_TO_EDGE;
     tmp.wrap_t = GL_CLAMP_TO_EDGE;
-    GenTextureApplyParameters(target, result, tmp);
+    GenTextureApplyParameters(result, tmp);
   }
   return result;
 }
@@ -539,7 +539,7 @@ boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, int he
   return nullptr;
 }
 
-void GLTextureTools::GenTextureApplyParameters(GLenum target, GenTextureResult const & result, GenTextureParameters const & parameters)
+void GLTextureTools::GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters)
 {
   // there are to set of functions
   //   - glTexParameteri(TARGET ...)
@@ -560,7 +560,7 @@ void GLTextureTools::GenTextureApplyParameters(GLenum target, GenTextureResult c
   }
 
   if (parameters.build_mipmaps)
-    if (target != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
+    if (result.texture_description.type != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
       glGenerateTextureMipmap(result.texture_id);
 }
 

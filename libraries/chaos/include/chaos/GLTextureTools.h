@@ -126,10 +126,8 @@ public:
   /** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
   static GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);
 
-protected:
-
   /** utility function for texture loading */
-  static void GenTextureApplyParameters(GLenum target, GenTextureResult const & result, GenTextureParameters const & parameters);
+  static void GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters);
 };
 
 }; // namespace chaos

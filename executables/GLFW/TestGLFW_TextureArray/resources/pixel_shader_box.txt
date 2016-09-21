@@ -2,10 +2,16 @@ out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindF
 
 in vec3 vs_position;
 
-uniform sampler2D material;
+uniform sampler2DArray material;
+
+uniform float texture_slice;
 
 void main()
 {
-  output_color.xyz = texture(material, vs_position.xy);
+  vec3 tex_coord;
+  tex_coord.xy = vs_position.xy;
+  tex_coord.z  = texture_slice;
+
+  output_color.xyz = texture(material, tex_coord).xyz;
   output_color.w = 0.0; // keep alpha from incomming color
 }

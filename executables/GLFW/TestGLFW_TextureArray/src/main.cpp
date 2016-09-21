@@ -24,7 +24,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1()
+  MyGLFWWindowOpenGLTest1() : texture_slice(0)
   {
 
   }
@@ -60,6 +60,7 @@ protected:
 
     glBindTextureUnit(0, texture->GetResourceID());
     program_data.SetUniform("material", 0);
+    program_data.SetUniform("texture_slice", (float)texture_slice);
 
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
@@ -118,6 +119,8 @@ protected:
       result.texture_description.width           = max_width;
       result.texture_description.height          = max_height;
       result.texture_description.depth           = images.size();
+
+      chaos::GLTextureTools::GenTextureApplyParameters(result, chaos::GenTextureParameters());
 
       return new chaos::Texture(result.texture_id, result.texture_description);
     }
@@ -220,7 +223,7 @@ protected:
     fps_camera.fps_controller.position.z = 10.0f;
 
     // initial display
-    debug_display.AddLine("Draw a box with a texture array : \nthe 2 textures in the array have differents BPP (24 and 32)");
+    debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
 
     return true;
   }
@@ -247,7 +250,14 @@ protected:
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-
+    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+    {
+      texture_slice = texture_slice + 1;
+    }
+    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+    {
+      texture_slice = texture_slice - 1;
+    }
   }
 
 
@@ -268,10 +278,7 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
   boost::intrusive_ptr<chaos::Texture>    texture;
 
-  chaos::box3 bigger_box;
-  chaos::box3 smaller_box;
-
-  int    display_example;
+  int texture_slice;
 
   chaos::MyGLFWFpsCamera fps_camera;
 

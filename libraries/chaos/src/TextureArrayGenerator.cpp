@@ -12,24 +12,29 @@ namespace chaos
     Clean();
   }
 
-  int TextureArrayGenerator::AddGenerator(ImageDescriptionGenerator const & generator)
+  int TextureArrayGenerator::AddGenerator(ImageDescriptionGenerator const & generator, int * slice_index)
   {
     ImageDescriptionGeneratorProxy * proxy = generator.CreateProxy();
     if (proxy == nullptr)
       return -1;
-    generators.push_back(proxy);
+    GeneratorEntry entry;
+    entry.proxy       = proxy;
+    entry.slice_index = slice_index;
+    generators.push_back(entry);
     return (int)(generators.size() - 1);
   }
 
   void TextureArrayGenerator::Clean()
   {
     for (auto it : generators)
-      delete (it);
+      delete (it.proxy);
     generators.clear(); // destroy the intrusive_ptr
   }
 
   bool TextureArrayGenerator::IsValid(ImageDescription const & desc) const
   {
+    if (desc.bpp != 8 && desc.bpp != 24 && desc.bpp != 32)
+      return false;
     if (desc.width <= 0 || desc.height <= 0)
       return false;
     if (desc.data == nullptr)
@@ -50,6 +55,18 @@ namespace chaos
   boost::intrusive_ptr<Texture> TextureArrayGenerator::GenerateTexture(GenTextureParameters const & parameters) const
   {
     Texture * result = nullptr;
+
+    std::vector<ImageDescription> descriptions;
+    std::vector<size_t>           description_count;
+    for (GeneratorEntry entry : generators)
+    {
+      size_t c1 = descriptions.size();
+      //entry.proxy->
+      size_t c2 = descriptions.size();
+
+      description_count.push_back(c2 - c1);
+    }
+
 #if 0
     // search max size, max bpp
     int width  = 0;

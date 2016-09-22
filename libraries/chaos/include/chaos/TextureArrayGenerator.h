@@ -53,16 +53,25 @@ namespace chaos
   {
   public:
 
+    class GeneratorEntry
+    {
+    public:
+      /** the proxy that will request some slices */
+      ImageDescriptionGeneratorProxy * proxy;
+      /** optional int where the first slice allocated will be stored */
+      int * slice_index;
+    };
+
     /** constructor */
     TextureArrayGenerator();
     /** destructor */
     virtual ~TextureArrayGenerator();
 
     /** the insertion method (returns the slice considered) */
-    int AddGenerator(ImageDescriptionGenerator const & generator);
+    int AddGenerator(ImageDescriptionGenerator const & generator, int * resulting_slice_index = nullptr);
     /** clean all generators */
     void Clean();
-    /** generate all meshes */
+    /** generate the texture array */
     boost::intrusive_ptr<Texture> GenerateTexture(GenTextureParameters const & parameters) const;
 
   protected:
@@ -76,7 +85,7 @@ namespace chaos
 
 
     /** the registered element to generate */
-    std::vector<ImageDescriptionGeneratorProxy *> generators;
+    std::vector<GeneratorEntry> generators;
   };
 
 };

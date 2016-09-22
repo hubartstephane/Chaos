@@ -111,6 +111,8 @@ protected:
       return "Outwrite.ttf"; // kerning !!
     if (index == 7) 
       return "absender1.ttf";    // 3 charmaps    
+    if (index == 8) 
+      return "Destroy x.ttf";   
     return nullptr;
   }
 

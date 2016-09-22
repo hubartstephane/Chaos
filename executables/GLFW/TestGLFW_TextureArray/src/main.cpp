@@ -24,7 +24,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : texture_slice(0)
+  MyGLFWWindowOpenGLTest1() : texture_slice(0), texture_slice_count(0)
   {
 
   }
@@ -148,7 +148,8 @@ protected:
     }
 
     // at least one texture ?
-    if (images.size() == 0)
+    texture_slice_count = (int)images.size();
+    if (texture_slice_count == 0)
       return result; // nothing loaded
 
     // search max size/bpp
@@ -252,11 +253,11 @@ protected:
   {
     if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
-      texture_slice = texture_slice + 1;
+      texture_slice = (texture_slice + 1) % texture_slice_count;
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
     {
-      texture_slice = texture_slice - 1;
+      texture_slice = (texture_slice - 1 + texture_slice_count) % texture_slice_count;
     }
   }
 
@@ -279,6 +280,7 @@ protected:
   boost::intrusive_ptr<chaos::Texture>    texture;
 
   int texture_slice;
+  int texture_slice_count;
 
   chaos::MyGLFWFpsCamera fps_camera;
 

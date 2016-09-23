@@ -103,6 +103,7 @@ protected:
        break;
      ++i;
    }
+   texture_slice_count = i;
 
    // generate the texture
    return generator.GenerateTexture();  

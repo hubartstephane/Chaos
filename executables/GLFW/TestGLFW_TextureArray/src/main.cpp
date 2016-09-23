@@ -18,6 +18,7 @@
 #include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
+#include <chaos/TextureArrayGenerator.h>
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
@@ -82,99 +83,29 @@ protected:
   {
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
+    loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
     return loader.GenerateProgramObject();
   }
 
 
-
-
-  boost::intrusive_ptr<chaos::Texture> LoadTextureArray(std::vector<FIBITMAP*> const & images, int max_bpp, int max_width, int max_height)
-  {
-    chaos::GenTextureResult result;
-    glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &result.texture_id);
-    if (result.texture_id > 0)
-    {
-      // choose format and internal format (beware FreeImage is BGR/BGRA)
-      GLenum internal_format = chaos::GLTextureTools::GetTextureFormatsFromBPP(max_bpp).second;
-
-      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-      int level_count = chaos::GLTextureTools::GetMipmapLevelCount(max_width, max_height);
-      glTextureStorage3D(result.texture_id, level_count, internal_format, max_width, max_height, images.size());
-
-      for (size_t i = 0 ; i < images.size() ; ++i)
-      {
-        chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(images[i]);
-
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / desc.bpp);
-
-        GLenum current_format = chaos::GLTextureTools::GetTextureFormatsFromBPP(desc.bpp).first;
-        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, GL_UNSIGNED_BYTE, desc.data);
-      }
-
-      result.texture_description.type            = GL_TEXTURE_2D_ARRAY;
-      result.texture_description.internal_format = internal_format;
-      result.texture_description.width           = max_width;
-      result.texture_description.height          = max_height;
-      result.texture_description.depth           = images.size();
-
-      chaos::GLTextureTools::GenTextureApplyParameters(result, chaos::GenTextureParameters());
-
-      return new chaos::Texture(result.texture_id, result.texture_description);
-    }
-
-    return nullptr;
-  }
-
   boost::intrusive_ptr<chaos::Texture> LoadTextureArray(boost::filesystem::path const & resources_path)
   {
-    boost::intrusive_ptr<chaos::Texture> result;
+   chaos::TextureArrayGenerator generator;
 
-    std::vector<FIBITMAP *> images;
+   // fill the generator
+   int i = 0;
+   while (true)
+   {
+     std::string filename = chaos::StringTools::Printf("Brick_%d.png", i + 1);
 
-    // load the images
-    int i = 0;
-    while (true)
-    {
-      std::string filename = chaos::StringTools::Printf("Brick_%d.png", i + 1);
+     if (!generator.AddGenerator(chaos::ImageLoaderSliceGenerator(resources_path / filename)))
+       break;
+     ++i;
+   }
 
-      FIBITMAP * image = chaos::ImageTools::LoadImageFromFile((resources_path / filename).string().c_str());
-      if (image == nullptr)
-        break;
-      images.push_back(image);    
-      ++i;
-    }
-
-    // at least one texture ?
-    texture_slice_count = (int)images.size();
-    if (texture_slice_count == 0)
-      return result; // nothing loaded
-
-    // search max size/bpp
-    int max_bpp    = 0;
-    int max_width  = 0;
-    int max_height = 0;
-    for (auto image : images)
-    {
-      int bpp    = (int)FreeImage_GetBPP(image);
-      int width  = (int)FreeImage_GetWidth(image);
-      int height = (int)FreeImage_GetHeight(image);
-
-      max_bpp    = max(max_bpp, bpp);
-      max_width  = max(max_width, width);
-      max_height = max(max_height, height);
-    }
-    // generate a texture for that
-    result = LoadTextureArray(images, max_bpp, max_width, max_height);
-
-    // free the images
-    for (auto image : images)
-      FreeImage_Unload(image);
-    images.clear();
-
-    return result;
+   // generate the texture
+   return generator.GenerateTexture();  
   }
 
   virtual bool Initialize() override

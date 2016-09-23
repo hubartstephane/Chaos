@@ -121,6 +121,10 @@ protected:
         front_image.string().c_str(),
         back_image.string().c_str());
     }
+    else if (index == 5)
+    {
+      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "space.png").string().c_str());
+    }
 
     if (!skybox.IsEmpty())
       return chaos::GLTextureTools::GenTextureObject(&skybox);

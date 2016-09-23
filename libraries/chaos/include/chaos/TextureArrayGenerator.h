@@ -80,17 +80,50 @@ namespace chaos
     virtual ImageDescriptionGeneratorProxy * CreateProxy() const = 0;
   };
 
-
-
-  /*
-  class ImageDescriptionGeneratorProxy : public ImageDescriptionGeneratorProxy
-  {
-
-
-  };
+  /**
+  * ImageLoaderDescriptionGeneratorProxy : a slice generator proxy from a image filename
   */
 
+  class ImageLoaderDescriptionGeneratorProxy : public ImageDescriptionGeneratorProxy
+  {
+  public:
 
+    /** constructor */
+    ImageLoaderDescriptionGeneratorProxy(boost::filesystem::path const & in_image_path): 
+      image_path(in_image_path) {}
+    /** the method to override to add all slice we want */
+    virtual void AddSlices(ImageSliceRegister & slice_register);
+    /** the method to override to release all slices */
+    virtual void ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count);
+
+  protected:
+
+    /** path of the resource file */
+    boost::filesystem::path image_path;
+  };
+
+  /**
+   * ImageLoaderDescriptionGenerator : a slice generator from a image filename
+   */
+
+  class ImageLoaderDescriptionGenerator
+  {
+  public:
+
+    /** constructor */
+    ImageLoaderDescriptionGenerator(boost::filesystem::path const & in_image_path): 
+      image_path(in_image_path){}
+    /** proxy generation method */
+    virtual ImageDescriptionGeneratorProxy * CreateProxy() const
+    {
+      return new ImageLoaderDescriptionGeneratorProxy(image_path);
+    }
+
+  protected:
+
+    /** path of the resource file */
+    boost::filesystem::path image_path;
+  };
 
   /**
    * TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY

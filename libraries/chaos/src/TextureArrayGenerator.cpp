@@ -36,6 +36,28 @@ namespace chaos
   // TextureArrayGenerator functions
   // ========================================================================
 
+  void ImageLoaderDescriptionGeneratorProxy::AddSlices(ImageSliceRegister & slice_register)
+  {
+    FIBITMAP * image = ImageTools::LoadImageFromFile(image_path.string().c_str());
+    if (image != nullptr)
+      slice_register.InsertSlice(ImageTools::GetImageDescription(image), image);
+  }
+
+  void ImageLoaderDescriptionGeneratorProxy::ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count)
+  {
+    for (size_t i = 0 ; i < count ; ++i)
+    {
+      FIBITMAP * image = (FIBITMAP *)slices[i].user_data;
+      if (image != nullptr)
+        continue;
+      FreeImage_Unload(image);    
+    }
+  }
+
+  // ========================================================================
+  // TextureArrayGenerator functions
+  // ========================================================================
+
   TextureArrayGenerator::TextureArrayGenerator()
   {
 

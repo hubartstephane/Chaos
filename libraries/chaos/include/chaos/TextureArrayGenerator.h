@@ -8,26 +8,61 @@
 namespace chaos
 {
 
+  /**
+  * ImageSliceRegiterEntry : an entry in the register of slices
+  */
+
+  class ImageSliceRegiterEntry
+  {
+  public:
+
+    /** the image description */
+    ImageDescription description;
+    /** a user data that may be used later for memory releasing */
+    void * user_data;
+  };
+
+  /**
+   * ImageSliceRegister : utility function that serves to register a slice into a vector
+   */
+
+  class ImageSliceRegister
+  {
+  public:
+    
+    /** constructor */
+    ImageSliceRegister(std::vector<ImageSliceRegiterEntry> & in_slice_register):
+      slice_register(in_slice_register){}
+    
+    /** the method to insert one slice */
+    bool InsertSlice(ImageDescription & description, void * user_data = nullptr);
+
+  protected:
+
+    /** test whether the description is valid */
+    bool IsImageSliceValid(ImageDescription const & description) const;
+
+    /** the array that contains all slices */
+    std::vector<ImageSliceRegiterEntry> & slice_register;
+  };
+
+  /**
+  * ImageDescriptionGeneratorProxy : class that deserve registration of several slices
+  */
+
   class ImageDescriptionGeneratorProxy
   {
   public:
 
     /** constructor */
-    ImageDescriptionGeneratorProxy() {}
+    ImageDescriptionGeneratorProxy(){}
     /** destructor */
-    virtual ~ImageDescriptionGeneratorProxy() {}
-
-    /** get the image description */
-    virtual ImageDescription GetImageDescription() = 0;
+    virtual ~ImageDescriptionGeneratorProxy(){}
+    /** the method to override to add all slice we want */
+    virtual void AddSlices(ImageSliceRegister & slice_register){}
+    /** the method to override to release all slices */
+    virtual void ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count){}
   };
-
-  /*
-  class ImageDescriptionGeneratorProxy : public ImageDescriptionGeneratorProxy
-  {
-
-
-  };
-  */
 
   /**
   * ImageDescriptionGenerator : used to generate proxy for TextureArrayGeneration
@@ -44,6 +79,18 @@ namespace chaos
     /** proxy generation method */
     virtual ImageDescriptionGeneratorProxy * CreateProxy() const = 0;
   };
+
+
+
+  /*
+  class ImageDescriptionGeneratorProxy : public ImageDescriptionGeneratorProxy
+  {
+
+
+  };
+  */
+
+
 
   /**
    * TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
@@ -76,13 +123,10 @@ namespace chaos
 
   protected:
 
-    /** ensure some image format is compatible with Texture Array requirements */
-    bool IsValid(ImageDescription const & desc) const;
-    /** ensure the image format is compatible with previous format */
-    bool IsCompatible(ImageDescription const & desc1, ImageDescription const & desc2) const;
+    /** internal method to generate the texture array */
+    boost::intrusive_ptr<Texture> GenerateTexture(std::vector<ImageSliceRegiterEntry> & slices, int bpp, int width, int height, GenTextureParameters const & parameters) const;
 
   protected:
-
 
     /** the registered element to generate */
     std::vector<GeneratorEntry> generators;

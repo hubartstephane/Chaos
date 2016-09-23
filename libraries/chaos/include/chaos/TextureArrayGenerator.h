@@ -94,6 +94,8 @@ namespace chaos
     ImageLoaderSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
       image(in_image),
       release_image(in_release_image) {}
+    /** destructor */
+    ~ImageLoaderSliceGeneratorProxy();
     /** the method to override to add all slice we want */
     virtual void AddSlices(ImageSliceRegister & slice_register);
     /** the method to override to release all slices */
@@ -135,13 +137,23 @@ namespace chaos
   {
   public:
 
+    class SliceInfo
+    {
+    public:
+
+      /** first slice allocated for the generator */
+      int first_slice;
+      /** number of slice used by the generator */
+      int slice_count;
+    };
+
     class GeneratorEntry
     {
     public:
       /** the proxy that will request some slices */
       ImageSliceGeneratorProxy * proxy;
-      /** optional int where the first slice allocated will be stored */
-      int * slice_index;
+      /** optional where the slices are allocated */
+      SliceInfo * slice_info;
     };
 
     /** constructor */
@@ -150,11 +162,11 @@ namespace chaos
     virtual ~TextureArrayGenerator();
 
     /** the insertion method (returns the slice considered) */
-    bool AddGenerator(ImageSliceGenerator const & generator, int * resulting_slice_index = nullptr);
+    bool AddGenerator(ImageSliceGenerator const & generator, SliceInfo * slice_info = nullptr);
     /** clean all generators */
     void Clean();
     /** generate the texture array */
-    boost::intrusive_ptr<Texture> GenerateTexture(GenTextureParameters const & parameters = GenTextureParameters()) const;
+    boost::intrusive_ptr<Texture> GenerateTexture(GenTextureParameters const & parameters = GenTextureParameters());
 
   protected:
 

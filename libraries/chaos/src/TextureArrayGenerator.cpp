@@ -48,6 +48,15 @@ namespace chaos
   // ImageSliceGeneratorProxy functions
   // ========================================================================
 
+  ImageLoaderSliceGeneratorProxy::~ImageLoaderSliceGeneratorProxy()
+  {
+    if (release_image && image != nullptr)
+    {
+      FreeImage_Unload(image);
+      image = nullptr;
+    }
+  }
+
   void ImageLoaderSliceGeneratorProxy::AddSlices(ImageSliceRegister & slice_register)
   {
     if (image != nullptr)
@@ -56,15 +65,16 @@ namespace chaos
 
   void ImageLoaderSliceGeneratorProxy::ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count)
   {
-    if (release_image)
+    assert(count == 1);
+    
+    FIBITMAP * slice_image = (FIBITMAP *)slices[0].user_data;
+
+    assert(slice_image == image);
+
+    if (release_image && image != nullptr)
     {
-      for (size_t i = 0; i < count; ++i)
-      {
-        FIBITMAP * image = (FIBITMAP *)slices[i].user_data;
-        if (image != nullptr)
-          continue;
-        FreeImage_Unload(image);
-      }
+      FreeImage_Unload(image);
+      image = nullptr;
     }
   }
 
@@ -82,7 +92,7 @@ namespace chaos
     Clean();
   }
 
-  bool TextureArrayGenerator::AddGenerator(ImageSliceGenerator const & generator, int * slice_index)
+  bool TextureArrayGenerator::AddGenerator(ImageSliceGenerator const & generator, SliceInfo * slice_info)
   {
     // creates the proxy
     ImageSliceGeneratorProxy * proxy = generator.CreateProxy();
@@ -90,8 +100,8 @@ namespace chaos
       return false;
     // insert it into the list
     GeneratorEntry entry;
-    entry.proxy       = proxy;
-    entry.slice_index = slice_index;
+    entry.proxy      = proxy;
+    entry.slice_info = slice_info;
     generators.push_back(entry);
     return true;
   }
@@ -103,7 +113,7 @@ namespace chaos
     generators.clear(); // destroy the intrusive_ptr
   }
 
-  boost::intrusive_ptr<Texture> TextureArrayGenerator::GenerateTexture(GenTextureParameters const & parameters) const
+  boost::intrusive_ptr<Texture> TextureArrayGenerator::GenerateTexture(GenTextureParameters const & parameters)
   {
     ImageSliceRegister  slice_register;
     std::vector<size_t> slice_counts;
@@ -112,9 +122,17 @@ namespace chaos
     {
       GeneratorEntry entry = generators[i];
 
+      // fill the slice register. keep trace of how many insertion
       size_t c1 = slice_register.size();
       entry.proxy->AddSlices(slice_register);
       size_t c2 = slice_register.size();
+
+      // return back the slices values
+      if (entry.slice_info != nullptr)
+      {
+        entry.slice_info->first_slice = (int)c1;
+        entry.slice_info->slice_count = (int)(c2 - c1);
+      }
 
       slice_counts.push_back(c2 - c1); // insert the count of slices inserted for that generator
     }
@@ -147,6 +165,9 @@ namespace chaos
       entry.proxy->ReleaseSlices(&slice_register.slices[start], count); // each proxy is responsible for releasing its own slices
       start += count;
     }
+
+    // clean the generator
+    Clean();
 
     return result;
   }

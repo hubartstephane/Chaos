@@ -65,17 +65,9 @@ namespace chaos
 
   void ImageLoaderSliceGeneratorProxy::ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count)
   {
-    assert(count == 1);
-    
-    FIBITMAP * slice_image = (FIBITMAP *)slices[0].user_data;
-
-    assert(slice_image == image);
-
-    if (release_image && image != nullptr)
-    {
-      FreeImage_Unload(image);
-      image = nullptr;
-    }
+    // no releasing here. wait until proxy destructor is called.
+    // because if user wants to call 
+    //   - generator.GenerateTexture();   twice in a row, we still expect to generate a texture array twice (an effective clean would break that)
   }
 
   // ========================================================================

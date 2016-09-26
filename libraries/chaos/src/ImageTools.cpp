@@ -152,6 +152,12 @@ FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
       FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
 
       result = FreeImage_LoadFromMemory(format, memory, 0);
+      if (FreeImage_GetBPP(result) == 8 && FreeImage_GetPalette(result) != nullptr)
+      {
+        FIBITMAP * other = FreeImage_ConvertTo32Bits(result);
+        FreeImage_Unload(result);
+        result = other;           // this code is good even if the conversion fails 
+      }
 
       FreeImage_CloseMemory(memory);
     }

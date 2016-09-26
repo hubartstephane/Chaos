@@ -88,13 +88,20 @@ protected:
       });
     }
 
-    if (index == 2 || index == 3)
+    if (index == 2 || index == 3 || index == 4)
     {
       chaos::Application * application = chaos::Application::GetInstance();
       if (application == nullptr)
         return false;
       boost::filesystem::path resources_path = application->GetResourcesPath();
-      boost::filesystem::path image_path     = resources_path / ((index == 2)? "opengl_logo.png" : "opengl_logo_rectangle.png");
+      boost::filesystem::path image_path;
+	  if (index == 2)
+		  image_path = resources_path / "opengl_logo.png";
+	  else if (index == 3)
+		  image_path = resources_path / "opengl_logo_rectangle.png";
+	  else if (index == 4)
+		  image_path = resources_path / "icons-animation.gif";
+	  
       result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
     }
 
@@ -152,7 +159,6 @@ protected:
       return false;
 
     boost::filesystem::path resources_path       = application->GetResourcesPath();
-    boost::filesystem::path image_path           = resources_path / "opengl_logo_rectangle.png";
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
     boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 

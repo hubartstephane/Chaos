@@ -93,7 +93,14 @@ namespace chaos
     /** constructor */
     ImageLoaderSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
       image(in_image),
+      multi_image(nullptr),
       release_image(in_release_image) {}
+
+    ImageLoaderSliceGeneratorProxy(FIMULTIBITMAP * in_multi_image, bool in_release_image) :
+      image(nullptr),
+      multi_image(in_multi_image),
+      release_image(in_release_image) {}
+
     /** destructor */
     ~ImageLoaderSliceGeneratorProxy();
     /** the method to override to add all slice we want */
@@ -105,6 +112,8 @@ namespace chaos
 
     /** the image */
     FIBITMAP * image;
+    /** the image */
+    FIMULTIBITMAP * multi_image;
     /** whether the image has to be released */
     bool release_image;
   };
@@ -119,7 +128,27 @@ namespace chaos
 
     /** constructor */
     ImageLoaderSliceGenerator(boost::filesystem::path const & in_image_path):
-      image_path(in_image_path){}
+      image_path(in_image_path), 
+      image(nullptr), 
+      multi_image(nullptr),
+      release_image(false){}
+
+    ImageLoaderSliceGenerator(FIBITMAP * in_image, bool in_release_image):
+      image(in_image),
+      multi_image(nullptr),
+      release_image(in_release_image) 
+    {
+      assert(image != nullptr);
+    }
+
+    ImageLoaderSliceGenerator(FIMULTIBITMAP * in_multi_image, bool in_release_image):
+      image(nullptr),
+      multi_image(in_multi_image),
+      release_image(in_release_image) 
+    {
+      assert(multi_image != nullptr);
+    }
+
     /** proxy generation method */
     virtual ImageSliceGeneratorProxy * CreateProxy() const;
 
@@ -127,7 +156,27 @@ namespace chaos
 
     /** path of the resource file */
     boost::filesystem::path image_path;
+
+    /** the image */
+    FIBITMAP * image;
+    /** the image */
+    FIMULTIBITMAP * multi_image;
+    /** whether the image has to be released */
+    bool release_image;
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /**
    * TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY

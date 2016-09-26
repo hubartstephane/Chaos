@@ -100,9 +100,7 @@ public:
   /** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */
   static FIBITMAP * LoadImageFromFile(char const * filename);
   /** load multiple image from a file (animated gif) */
-#if 0
   static FIMULTIBITMAP * LoadMultiImageFromFile(char const * filename);
-#endif
 
   /** get the image information from a FreeImage */
   static ImageDescription GetImageDescription(FIBITMAP const * image);

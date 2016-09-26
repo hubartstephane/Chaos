@@ -165,12 +165,11 @@ FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
   return result;
 }
 
-#if 0
-FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
+FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(char const * filename)
 {
   assert(filename != nullptr);
 
-  FIBITMAP * result = nullptr;
+  FIMULTIBITMAP * result = nullptr;
 
   Buffer<char> buffer = FileTools::LoadFile(filename, false);
   if (buffer != nullptr)
@@ -180,36 +179,12 @@ FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
     {
       FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
 
-      //FreeImage_OpenMultiBitmap(FREE_IMAGE_FORMAT fif, const char *filename, BOOL create_new, BOOL read_only, BOOL keep_cache_in_memory FI_DEFAULT(FALSE), int flags FI_DEFAULT(0));
-      FIMULTIBITMAP * multi = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
-
-
-      //FIMULTIBITMAP * multi = FreeImage_OpenMultiBitmap(format, filename, false, false);
-      if (multi != nullptr)
-      {
-        int page = FreeImage_GetPageCount(multi);
-
-        result = FreeImage_LockPage(multi, 0);
-
-
-      }
-
-#if 0
-      result = FreeImage_LoadFromMemory(format, memory, 0);
-      if (FreeImage_GetBPP(result) == 8 && FreeImage_GetPalette(result) != nullptr)
-      {
-        FIBITMAP * other = FreeImage_ConvertTo32Bits(result);
-        FreeImage_Unload(result);
-        result = other;           // this code is good even if the conversion fails 
-      }
-
-#endif
+      result = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
 
       FreeImage_CloseMemory(memory);
     }
   }
   return result;
 }
-#endif
 
 }; // namespace chaos

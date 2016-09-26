@@ -70,6 +70,9 @@ protected:
   /** standard library finalization */
   static void FinalizeStandardLibraries();
 
+  /** a debugging function to output some message from FreeImage */
+  static void FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg);
+
 protected:
 
     /** the single application instance */

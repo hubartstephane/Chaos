@@ -29,9 +29,16 @@ namespace chaos
     }
   }
 
+  void Application::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
+  {
+
+
+  }
+
   void Application::InitializeStandardLibraries()
   {
     FreeImage_Initialise(); // glew will be initialized 
+    FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
     glfwInit();
   }
 

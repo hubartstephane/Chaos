@@ -95,12 +95,13 @@ protected:
         return false;
       boost::filesystem::path resources_path = application->GetResourcesPath();
       boost::filesystem::path image_path;
-	  if (index == 2)
-		  image_path = resources_path / "opengl_logo.png";
-	  else if (index == 3)
-		  image_path = resources_path / "opengl_logo_rectangle.png";
-	  else if (index == 4)
-		  image_path = resources_path / "icons-animation.gif";
+
+      if (index == 2)
+        image_path = resources_path / "opengl_logo.png";
+      else if (index == 3)
+        image_path = resources_path / "opengl_logo_rectangle.png";
+      else if (index == 4)
+        image_path = resources_path / "icons-animation.gif";
 	  
       result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
     }

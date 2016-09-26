@@ -16,6 +16,9 @@ class GenTextureResult
 {
 public:
 
+  /** constructor */
+  GenTextureResult() : texture_id(0) {}
+
   /** the id of the texture */
   GLuint             texture_id;
   /** the GL handler for the texture */

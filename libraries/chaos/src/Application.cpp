@@ -32,7 +32,6 @@ namespace chaos
   void Application::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
   {
 
-
   }
 
   void Application::InitializeStandardLibraries()

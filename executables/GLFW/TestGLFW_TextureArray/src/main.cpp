@@ -99,7 +99,7 @@ protected:
    {
      std::string filename = chaos::StringTools::Printf("Brick_%d.png", i + 1);
 
-     if (!generator.AddGenerator(chaos::ImageLoaderSliceGenerator(resources_path / filename)))
+     if (!generator.AddGenerator(chaos::ImageSliceGenerator(resources_path / filename)))
        break;
      ++i;
    }

@@ -14,7 +14,7 @@ namespace chaos
       return false;      
 
     // insert the slice into the register
-    ImageSliceRegiterEntry entry;
+	ImageSliceRegisterEntry entry;
     entry.description = description;
     entry.user_data   = user_data;
     slices.push_back(entry);
@@ -33,20 +33,20 @@ namespace chaos
   }
 
   // ========================================================================
-  // ImageLoaderDescriptionGenerator functions
+  // ImageSliceGenerator functions
   // ========================================================================
 
-  ImageSliceGeneratorProxy * ImageLoaderSliceGenerator::CreateProxy() const
+  ImageSliceGeneratorProxyBase * ImageSliceGenerator::CreateProxy() const
   {
     if (image != nullptr)
-      return new ImageLoaderSliceGeneratorProxy(image, release_image);
+      return new ImageSliceGeneratorProxy(image, release_image);
     else if (multi_image != nullptr)
-      return new ImageLoaderSliceGeneratorProxy(multi_image, release_image);
+      return new ImageSliceGeneratorProxy(multi_image, release_image);
     else
     {
       FIBITMAP * image = ImageTools::LoadImageFromFile(image_path.string().c_str());
       if (image != nullptr)
-        return new ImageLoaderSliceGeneratorProxy(image, true);
+        return new ImageSliceGeneratorProxy(image, true);
     }
     return nullptr;
   }
@@ -55,7 +55,7 @@ namespace chaos
   // ImageSliceGeneratorProxy functions
   // ========================================================================
 
-  ImageLoaderSliceGeneratorProxy::~ImageLoaderSliceGeneratorProxy()
+  ImageSliceGeneratorProxy::~ImageSliceGeneratorProxy()
   {
     if (release_image)
     {
@@ -72,7 +72,7 @@ namespace chaos
     }
   }
 
-  void ImageLoaderSliceGeneratorProxy::AddSlices(ImageSliceRegister & slice_register)
+  void ImageSliceGeneratorProxy::AddSlices(ImageSliceRegister & slice_register)
   {
     if (image != nullptr)
       slice_register.InsertSlice(ImageTools::GetImageDescription(image), image);
@@ -89,7 +89,7 @@ namespace chaos
     }
   }
 
-  void ImageLoaderSliceGeneratorProxy::ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count)
+  void ImageSliceGeneratorProxy::ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count)
   {
     // no releasing here. wait until proxy destructor is called.
     // because if user wants to call 
@@ -123,7 +123,7 @@ namespace chaos
   bool TextureArrayGenerator::AddGenerator(ImageSliceGenerator const & generator, SliceInfo * slice_info)
   {
     // creates the proxy
-    ImageSliceGeneratorProxy * proxy = generator.CreateProxy();
+    ImageSliceGeneratorProxyBase * proxy = generator.CreateProxy();
     if (proxy == nullptr)
       return false;
     // insert it into the list
@@ -173,7 +173,7 @@ namespace chaos
     int width  = 0;
     int height = 0;
     int bpp    = 0;
-    for (ImageSliceRegiterEntry const & entry : slice_register.slices)
+    for (ImageSliceRegisterEntry const & entry : slice_register.slices)
     {
       width  = max(width,  entry.description.width);
       height = max(height, entry.description.height);

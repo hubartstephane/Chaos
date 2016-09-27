@@ -9,10 +9,10 @@ namespace chaos
 {
 
   /**
-  * ImageSliceRegiterEntry : an entry in the register of slices
+  * ImageSliceRegisterEntry : an entry in the register of slices
   */
 
-  class ImageSliceRegiterEntry
+  class ImageSliceRegisterEntry
   {
   public:
 
@@ -45,68 +45,68 @@ namespace chaos
     bool IsImageSliceValid(ImageDescription const & description) const;
 
     /** the array that contains all slices */
-    std::vector<ImageSliceRegiterEntry> slices;
+    std::vector<ImageSliceRegisterEntry> slices;
   };
 
   /**
-  * ImageSliceGeneratorProxy : class that deserve registration of several slices
+  * ImageSliceGeneratorProxyBase : class that deserve registration of several slices
   */
 
-  class ImageSliceGeneratorProxy
+  class ImageSliceGeneratorProxyBase
   {
   public:
 
     /** constructor */
-    ImageSliceGeneratorProxy(){}
+	  ImageSliceGeneratorProxyBase(){}
     /** destructor */
-    virtual ~ImageSliceGeneratorProxy(){}
+    virtual ~ImageSliceGeneratorProxyBase(){}
     /** the method to override to add all slice we want */
     virtual void AddSlices(ImageSliceRegister & slice_register){}
     /** the method to override to release all slices */
-    virtual void ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count){}
+    virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count){}
   };
 
   /**
-  * ImageSliceGenerator : used to generate proxy for TextureArrayGeneration
+  * ImageSliceGeneratorBase : used to generate proxy for TextureArrayGeneration
   */
 
-  class ImageSliceGenerator
+  class ImageSliceGeneratorBase
   {
   public:
 
     /** constructor */
-    ImageSliceGenerator() {}
+	  ImageSliceGeneratorBase() {}
     /** destructor */
-    virtual ~ImageSliceGenerator() {}
+    virtual ~ImageSliceGeneratorBase() {}
     /** proxy generation method */
-    virtual ImageSliceGeneratorProxy * CreateProxy() const = 0;
+    virtual ImageSliceGeneratorProxyBase * CreateProxy() const = 0;
   };
 
   /**
-  * ImageLoaderSliceGeneratorProxy : a slice generator proxy from a image 
+  * ImageSliceGeneratorProxy : a slice generator proxy from a image 
   */
 
-  class ImageLoaderSliceGeneratorProxy : public ImageSliceGeneratorProxy
+  class ImageSliceGeneratorProxy : public ImageSliceGeneratorProxyBase
   {
   public:
 
     /** constructor */
-    ImageLoaderSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
+	  ImageSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
       image(in_image),
       multi_image(nullptr),
       release_image(in_release_image) {}
 
-    ImageLoaderSliceGeneratorProxy(FIMULTIBITMAP * in_multi_image, bool in_release_image) :
+	  ImageSliceGeneratorProxy(FIMULTIBITMAP * in_multi_image, bool in_release_image) :
       image(nullptr),
       multi_image(in_multi_image),
       release_image(in_release_image) {}
 
     /** destructor */
-    ~ImageLoaderSliceGeneratorProxy();
+    ~ImageSliceGeneratorProxy();
     /** the method to override to add all slice we want */
     virtual void AddSlices(ImageSliceRegister & slice_register);
     /** the method to override to release all slices */
-    virtual void ReleaseSlices(ImageSliceRegiterEntry * slices, size_t count);
+    virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count);
 
   protected:
 
@@ -119,21 +119,21 @@ namespace chaos
   };
 
   /**
-   * ImageLoaderSliceGenerator : a slice generator from a image filename
+   * ImageSliceGenerator : a slice generator from a image filename
    */
 
-  class ImageLoaderSliceGenerator : public ImageSliceGenerator
+  class ImageSliceGenerator : public ImageSliceGeneratorBase
   {
   public:
 
     /** constructor */
-    ImageLoaderSliceGenerator(boost::filesystem::path const & in_image_path):
+	  ImageSliceGenerator(boost::filesystem::path const & in_image_path):
       image_path(in_image_path), 
       image(nullptr), 
       multi_image(nullptr),
       release_image(false){}
 
-    ImageLoaderSliceGenerator(FIBITMAP * in_image, bool in_release_image):
+	  ImageSliceGenerator(FIBITMAP * in_image, bool in_release_image):
       image(in_image),
       multi_image(nullptr),
       release_image(in_release_image) 
@@ -141,7 +141,7 @@ namespace chaos
       assert(image != nullptr);
     }
 
-    ImageLoaderSliceGenerator(FIMULTIBITMAP * in_multi_image, bool in_release_image):
+	  ImageSliceGenerator(FIMULTIBITMAP * in_multi_image, bool in_release_image):
       image(nullptr),
       multi_image(in_multi_image),
       release_image(in_release_image) 
@@ -150,7 +150,7 @@ namespace chaos
     }
 
     /** proxy generation method */
-    virtual ImageSliceGeneratorProxy * CreateProxy() const;
+    virtual ImageSliceGeneratorProxyBase * CreateProxy() const;
 
   protected:
 
@@ -200,7 +200,7 @@ namespace chaos
     {
     public:
       /** the proxy that will request some slices */
-      ImageSliceGeneratorProxy * proxy;
+      ImageSliceGeneratorProxyBase * proxy;
       /** optional where the slices are allocated */
       SliceInfo * slice_info;
     };

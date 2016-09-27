@@ -139,6 +139,27 @@ void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc,
 
 FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
 {
+	FIMULTIBITMAP * multi = LoadMultiImageFromFile(filename);
+	if (multi != nullptr)
+	{
+		int page_count = FreeImage_GetPageCount(multi);
+
+		FIBITMAP * result = FreeImage_LockPage(multi, 0);
+
+
+		return result;
+
+
+	}
+	return nullptr;
+
+
+
+
+
+
+#if 0
+
   assert(filename != nullptr);
 
   FIBITMAP * result = nullptr;
@@ -163,6 +184,10 @@ FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
     }
   }
   return result;
+
+#endif
+
+
 }
 
 FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(char const * filename)

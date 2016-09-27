@@ -40,8 +40,6 @@ namespace chaos
   {
     if (image != nullptr)
       return new ImageSliceGeneratorProxy(image, release_image);
-    else if (multi_image != nullptr)
-      return new ImageSliceGeneratorProxy(multi_image, release_image);
     else
     {
       FIBITMAP * image = ImageTools::LoadImageFromFile(image_path.string().c_str());
@@ -64,11 +62,6 @@ namespace chaos
         FreeImage_Unload(image);
         image = nullptr;
       }
-      else if (multi_image != nullptr)
-      {
-        FreeImage_CloseMultiBitmap(multi_image);
-        multi_image = nullptr;
-      }
     }
   }
 
@@ -76,17 +69,6 @@ namespace chaos
   {
     if (image != nullptr)
       slice_register.InsertSlice(ImageTools::GetImageDescription(image), image);
-    else if (multi_image != nullptr)
-    {
-      int page_count = FreeImage_GetPageCount(multi_image);
-      for (int i = 0 ; i < page_count ; ++i)
-      {
-        FIBITMAP * page_image = FreeImage_LockPage(multi_image, i);
-        if (page_image == nullptr)
-          continue;
-        slice_register.InsertSlice(ImageTools::GetImageDescription(page_image), page_image); // insert each image of the animated image into register        
-      }                                                                                      // keep a reference to the locked page for unlocking
-    }
   }
 
   void ImageSliceGeneratorProxy::ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count)
@@ -94,16 +76,6 @@ namespace chaos
     // no releasing here. wait until proxy destructor is called.
     // because if user wants to call 
     //   - generator.GenerateTexture();   twice in a row, we still expect to generate a texture array twice (an effective clean would break that)
-    if (multi_image != nullptr)
-    {
-      for (size_t i = 0 ; i < count ; ++i)
-      {
-        FIBITMAP * page_image = (FIBITMAP *)slices[i].user_data;
-        if (page_image == nullptr)
-          continue;
-        FreeImage_UnlockPage(multi_image, page_image, false);
-      }
-    }
   }
 
   // ========================================================================

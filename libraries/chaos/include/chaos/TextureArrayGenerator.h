@@ -93,12 +93,6 @@ namespace chaos
     /** constructor */
 	  ImageSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
       image(in_image),
-      multi_image(nullptr),
-      release_image(in_release_image) {}
-
-	  ImageSliceGeneratorProxy(FIMULTIBITMAP * in_multi_image, bool in_release_image) :
-      image(nullptr),
-      multi_image(in_multi_image),
       release_image(in_release_image) {}
 
     /** destructor */
@@ -112,8 +106,6 @@ namespace chaos
 
     /** the image */
     FIBITMAP * image;
-    /** the image */
-    FIMULTIBITMAP * multi_image;
     /** whether the image has to be released */
     bool release_image;
   };
@@ -130,23 +122,13 @@ namespace chaos
 	  ImageSliceGenerator(boost::filesystem::path const & in_image_path):
       image_path(in_image_path), 
       image(nullptr), 
-      multi_image(nullptr),
-      release_image(false){}
+      release_image(false){} // release_image is unused with that constructor : the proxy will destroy the image loaded
 
 	  ImageSliceGenerator(FIBITMAP * in_image, bool in_release_image):
       image(in_image),
-      multi_image(nullptr),
       release_image(in_release_image) 
     {
       assert(image != nullptr);
-    }
-
-	  ImageSliceGenerator(FIMULTIBITMAP * in_multi_image, bool in_release_image):
-      image(nullptr),
-      multi_image(in_multi_image),
-      release_image(in_release_image) 
-    {
-      assert(multi_image != nullptr);
     }
 
     /** proxy generation method */
@@ -159,24 +141,9 @@ namespace chaos
 
     /** the image */
     FIBITMAP * image;
-    /** the image */
-    FIMULTIBITMAP * multi_image;
     /** whether the image has to be released */
     bool release_image;
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   /**
    * TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY

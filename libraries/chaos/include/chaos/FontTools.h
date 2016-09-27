@@ -90,10 +90,5 @@ namespace chaos
     static FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph); 
     /** generate a cache with all glyph required for a string */
     static std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const * str);
-
-    /** generate an atlas from a font */
-    static bool GenerateTextureAtlas(FT_Face face, TextureAtlas & atlas, char const * characters, GenTextureAtlasParameters const & params = GenTextureAtlasParameters());
-    /** generate an atlas from a font */
-    static bool GenerateTextureAtlas(FT_Library library, char const * font_name, TextureAtlas & atlas, char const * characters, GenTextureAtlasParameters const & params = GenTextureAtlasParameters());
   };
 };

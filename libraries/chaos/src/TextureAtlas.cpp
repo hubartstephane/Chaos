@@ -577,8 +577,8 @@ namespace chaos
     AtlasRectangle result;
     result.x      = 0;
     result.y      = 0;
-    result.width  = width;
-    result.height = height;
+    result.width  = params.atlas_width;
+    result.height = params.atlas_height;
     return result;
   }
 
@@ -595,24 +595,22 @@ namespace chaos
   AtlasRectangle TextureAtlasGenerator::AddPadding(AtlasRectangle const & r) const
   {
     AtlasRectangle result = r;
-    result.x      -= padding;
-    result.y      -= padding;
-    result.width  += 2 * padding;
-    result.height += 2 * padding;
+    result.x      -= params.atlas_padding;
+    result.y      -= params.atlas_padding;
+    result.width  += 2 * params.atlas_padding;
+    result.height += 2 * params.atlas_padding;
     return result;
   }
 
-  bool TextureAtlasGenerator::ComputeResult(TextureAtlasInput & in_input, TextureAtlas & in_output, int in_width, int in_height, int in_padding)
+  bool TextureAtlasGenerator::ComputeResult(TextureAtlasInput & in_input, TextureAtlas & in_output, TextureAtlasGeneratorParams const & in_params)
   {
     // clear generator from previous usage
     Clear();
 
     // store arguments inside
-    width   = in_width;
-    height  = in_height;
-    padding = in_padding;
-    input   = &in_input;
-    output  = &in_output;
+    params = in_params;
+    input  = &in_input;
+    output = &in_output;
 
     // prepare the result to receive new compuation
     output->Clear(); 
@@ -629,11 +627,11 @@ namespace chaos
         max_height = input_entry.height;
     }
 
-    max_width  += padding * 2;
-    max_height += padding * 2;
+    max_width  += params.atlas_padding * 2;
+    max_height += params.atlas_padding * 2;
 
     // ensure this can be produced inside an atlas with size restriction
-    if (max_width > width || max_height > height)
+    if (max_width > params.atlas_width || max_height > params.atlas_height)
       return false;
 
     // generate an entry in output for each entry in input
@@ -754,7 +752,7 @@ namespace chaos
     size_t atlas_cout = GetAtlasCount();
     for (size_t i = 0 ; i < atlas_cout ; ++i)
     {
-      FIBITMAP * image = FreeImage_Allocate(width, height, 32);
+      FIBITMAP * image = FreeImage_Allocate(params.atlas_width, params.atlas_height, 32);
       if (image != nullptr)
       {       
         FreeImage_FillBackground(image, color, 0);
@@ -783,8 +781,7 @@ namespace chaos
 
   void TextureAtlasGenerator::Clear()
   {
-    width  = 0;
-    height = 0;
+    params = TextureAtlasGeneratorParams();
     input  = nullptr;
     output = nullptr;
 
@@ -820,14 +817,14 @@ namespace chaos
         int x1 = atlas_def.split_x[a];
         int x2 = atlas_def.split_x[u];
 
-        result = ((float)std::abs(x1 - x2)) * ((float)(input_entry.height + 2 * padding));
+        result = ((float)std::abs(x1 - x2)) * ((float)(input_entry.height + 2 * params.atlas_padding));
       }
       else
       {
         int y1 = atlas_def.split_y[b];
         int y2 = atlas_def.split_y[v];
 
-        result = ((float)std::abs(y1 - y2)) * ((float)(input_entry.width + 2 * padding));
+        result = ((float)std::abs(y1 - y2)) * ((float)(input_entry.width + 2 * params.atlas_padding));
       }
     }
 
@@ -854,16 +851,16 @@ namespace chaos
     for (size_t u = 0 ; u < x_count ; ++u)
     {
       int px = atlas_def.split_x[u];
-      if (px + input_entry.width + 2 * padding > width) // cannot puts the texture at this position (not fully inside the atlas)
+      if (px + input_entry.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
         break;
-      r.x = px + padding;
+      r.x = px + params.atlas_padding;
 
       for (size_t v = 0 ; v < y_count ; ++v)
       {
         int py = atlas_def.split_y[v];
-        if (py + input_entry.height + 2 * padding > height)  // cannot puts the texture at this position (not fully inside the atlas)
+        if (py + input_entry.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
           break;
-        r.y = py + padding;
+        r.y = py + params.atlas_padding;
 
         bool collision = HasInterctingTexture(&atlas_def - &atlas_definitions[0], r);
 
@@ -923,21 +920,21 @@ namespace chaos
   void TextureAtlasGenerator::InsertTextureInAtlas(TextureAtlasEntry & input_entry, AtlasDefinition & atlas_def, int x, int y)
   {
     input_entry.atlas = &atlas_def - &atlas_definitions[0];
-    input_entry.x     = x + padding;
-    input_entry.y     = y + padding;
+    input_entry.x     = x + params.atlas_padding;
+    input_entry.y     = y + params.atlas_padding;
 
     InsertOrdered(atlas_def.split_x, x);
-    InsertOrdered(atlas_def.split_x, x + input_entry.width + 2 * padding);
+    InsertOrdered(atlas_def.split_x, x + input_entry.width + 2 * params.atlas_padding);
 
     InsertOrdered(atlas_def.split_y, y);
-    InsertOrdered(atlas_def.split_y, y + input_entry.height + 2 * padding);
+    InsertOrdered(atlas_def.split_y, y + input_entry.height + 2 * params.atlas_padding);
   }
 
   bool TextureAtlasGenerator::DoComputeResult()
   {
     size_t count = input->entries.size();
 
-    float p = (float)padding;
+    float p = (float)params.atlas_padding;
 
     // create an indirection list for texture sorted by surface
     std::vector<size_t> textures_indirection_table = CreateTextureIndirectionTable([this, p](size_t i1, size_t i2){
@@ -985,9 +982,9 @@ namespace chaos
       {
         AtlasDefinition def;
         def.split_x.push_back(0);
-        def.split_x.push_back(width + 2 * padding);
+        def.split_x.push_back(params.atlas_width + 2 * params.atlas_padding);
         def.split_y.push_back(0);
-        def.split_y.push_back(height + 2 * padding);
+        def.split_y.push_back(params.atlas_height + 2 * params.atlas_padding);
 
         best_atlas_index = atlas_definitions.size();
         best_x           = 0;
@@ -1002,7 +999,7 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasGenerator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding)
+  bool TextureAtlasGenerator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, TextureAtlasGeneratorParams const & in_params)
   {
     // fill the atlas
     TextureAtlasInput input;
@@ -1011,7 +1008,7 @@ namespace chaos
     // create the atlas files
     TextureAtlas          atlas;
     TextureAtlasGenerator generator;  
-    if (generator.ComputeResult(input, atlas, atlas_width, atlas_height, atlas_padding))
+    if (generator.ComputeResult(input, atlas, in_params))
       return atlas.SaveAtlas(filename);
     return false;
   }

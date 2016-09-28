@@ -309,6 +309,39 @@ namespace chaos
   };
 
   /**
+   * TextureAtlasGeneratorParams : parameters used when generating an atlas
+   */
+
+  class TextureAtlasGeneratorParams
+  {
+  public:
+
+    /** default constructor */
+    TextureAtlasGeneratorParams() :
+      atlas_width(0),
+      atlas_height(0),
+      atlas_padding(0),
+      atlas_bpp(0){}
+
+    /** initializer contructor */
+    TextureAtlasGeneratorParams(int in_width, int in_height, int in_padding, int in_bpp):
+      atlas_width(in_width),
+      atlas_height(in_height),
+      atlas_padding(in_padding),
+      atlas_bpp(in_bpp) {}
+
+    /** the width of an atlas texture */
+    int atlas_width;
+    /** the height of an atlas texture */
+    int atlas_height;
+    /** some padding for the texture : should be even */
+    int atlas_padding;
+    /** the wanted bpp (0 for deduced from images) */
+    int atlas_bpp;
+  };
+
+
+  /**
   * TextureAtlasGenerator :
   *   each time a texture is inserted, the space is split along 4 axis
   *   this creates a grid of points that serve to new positions for inserting textures ...
@@ -328,21 +361,19 @@ namespace chaos
   public:
 
     /** constructor */     
-    TextureAtlasGenerator() : width(0), height(0), padding(0), input(nullptr), output(nullptr){}
+    TextureAtlasGenerator() : input(nullptr), output(nullptr){}
     /** destructor */     
     virtual ~TextureAtlasGenerator(){} 
     /** compute all texture positions */
-    bool ComputeResult(TextureAtlasInput & in_input, TextureAtlas & in_ouput, int in_width, int in_height, int in_padding);
+    bool ComputeResult(TextureAtlasInput & in_input, TextureAtlas & in_ouput, TextureAtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
 
     /** create an atlas from a directory into another directory */
-    static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, int atlas_width, int atlas_height, int atlas_padding);
+    static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, TextureAtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
 
     /** returns a vector with all generated Image (to be deallocated after usage) */
     std::vector<FIBITMAP *> GenerateAtlasTextures() const;
 
   protected:
-
-  public:
 
     /** clear the results */
     void Clear();
@@ -388,12 +419,8 @@ namespace chaos
 
   protected:
 
-    /** the width of an atlas texture */
-    int                  width;
-    /** the height of an atlas texture */
-    int                  height;
-    /** some padding for the texture : should be even */
-    int                  padding;
+    /** the params for generation */
+    TextureAtlasGeneratorParams params;
     /** the input files */
     TextureAtlasInput  * input;
     /** the result */

@@ -30,23 +30,20 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
   input.AddFakeImageSource("I");
   input.AddFakeImageSource("J");
 
-  int atlas_width   = 256;
-  int atlas_height  = 256;
-  int atlas_padding = 3;
-
-  chaos::TextureAtlasHTMLOutputParams params;
-  params.show_header       = true;
-  params.show_atlas_header = true;  
-  params.texture_scale     = 3.0f;
-  params.auto_refresh      = false;  
-
-  chaos::TextureAtlas          atlas;
-  chaos::TextureAtlasGenerator generator;
+  chaos::TextureAtlas                atlas;
+  chaos::TextureAtlasGenerator       generator;
+  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(256, 256, 3, 0);
   
-  if (generator.ComputeResult(input, atlas, atlas_width, atlas_height, atlas_padding))
+  if (generator.ComputeResult(input, atlas, params))
   {  
+    chaos::TextureAtlasHTMLOutputParams html_params;
+    html_params.show_header       = true;
+    html_params.show_atlas_header = true;
+    html_params.texture_scale     = 3.0f;
+    html_params.auto_refresh      = false;
+
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
-    atlas.OutputToHTMLFile(html_path.string().c_str(), params);
+    atlas.OutputToHTMLFile(html_path.string().c_str(), html_params);
 
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFake" / "MyAtlas.x";
     atlas.SaveAtlas(dst_dir);
@@ -60,13 +57,11 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   //        - a text file                                            => not detected has an image
   // correct behavior 
 
-  int atlas_width   = 512;
-  int atlas_height  = 512;
-  int atlas_padding = 10;
+  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(512, 512, 10, 0);
 
   boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas.json";
 
-  chaos::TextureAtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, atlas_width, atlas_height, atlas_padding);
+  chaos::TextureAtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, params);
 }
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)

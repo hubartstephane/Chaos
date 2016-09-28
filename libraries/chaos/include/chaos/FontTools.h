@@ -60,24 +60,6 @@ namespace chaos
       FT_BitmapGlyph bitmap_glyph;
     };
 
-    class GenTextureAtlasParameters
-    {
-    public:
-
-      GenTextureAtlasParameters():
-        altas_width(512),
-        altas_height(512),
-        glyph_width(32),
-        glyph_height(32),
-        padding(5){}
-      
-      int altas_width;
-      int altas_height;
-      int glyph_width;
-      int glyph_height;    
-      int padding;
-    };
-
     /** generate a bitmap from a glyph slot */
     static FIBITMAP * GenerateImage(FT_GlyphSlot glyph);
     /** generate a bitmap from a bitmap */

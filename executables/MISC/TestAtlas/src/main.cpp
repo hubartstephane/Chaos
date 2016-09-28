@@ -103,8 +103,6 @@ int _tmain(int argc, char ** argv, char ** env)
     chaos::WinTools::ShowFile(dst_p.string().c_str());
   }
 
-  chaos::WinTools::PressToContinue();
-
   chaos::Application::Finalize();
 
   return 0;

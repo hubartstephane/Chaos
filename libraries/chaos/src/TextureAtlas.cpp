@@ -91,6 +91,7 @@ namespace chaos
     new_entry.bitmap   = image;
     new_entry.width    = (int)FreeImage_GetWidth(new_entry.bitmap);
     new_entry.height   = (int)FreeImage_GetHeight(new_entry.bitmap);
+    new_entry.bpp      = (int)FreeImage_GetBPP(new_entry.bitmap);
     new_entry.filename = filename;
 
     entries.push_back(std::move(new_entry));
@@ -615,9 +616,14 @@ namespace chaos
     // prepare the result to receive new compuation
     output->Clear(); 
 
+    // ensure BPP is valid
+    if (params.atlas_bpp != 0 && params.atlas_bpp != 8 && params.atlas_bpp != 24 && params.atlas_bpp != 32)
+      return false;
+
     // search max texture size
     int max_width  = -1;
     int max_height = -1;
+    int max_bpp    = -1;
 
     for (TextureAtlasInputEntry & input_entry : input->entries)
     {
@@ -625,15 +631,33 @@ namespace chaos
         max_width = input_entry.width;
       if (max_height < 0 || max_height < input_entry.height)
         max_height = input_entry.height;
+      if (max_bpp < 0 || max_bpp < input_entry.bpp)
+        max_bpp = input_entry.bpp;
     }
 
     max_width  += params.atlas_padding * 2;
     max_height += params.atlas_padding * 2;
 
-    // ensure this can be produced inside an atlas with size restriction
-    if (max_width > params.atlas_width || max_height > params.atlas_height)
+    // match atlas width to biggest texture width, or ends if atlas is too small
+    if (params.atlas_width <= 0)
+      params.atlas_width = max_width;
+    else if (params.atlas_width < max_width)
       return false;
 
+    // match atlas height to biggest texture height, or ends if atlas is too small
+    if (params.atlas_height <= 0)
+      params.atlas_height = max_height;
+    else if (params.atlas_height < max_height)
+      return false;
+
+    // if necessary match BPP to textures in input
+    if (params.atlas_bpp <= 0)
+    {
+      if (max_bpp != 8 && max_bpp != 24 && max_bpp != 32) // 16 BPP is unused
+        max_bpp = 32;
+      params.atlas_bpp = max_bpp;
+    }
+    
     // generate an entry in output for each entry in input
     size_t count = input->entries.size();
 

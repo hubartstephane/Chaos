@@ -99,6 +99,8 @@ namespace chaos
     int         width;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
     int         height;
+    /** the bpp of the texture */
+    int         bpp;
     /** the bitmap */
     FIBITMAP  * bitmap;
   };

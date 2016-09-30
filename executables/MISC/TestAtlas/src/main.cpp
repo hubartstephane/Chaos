@@ -9,6 +9,8 @@
 #include <chaos/FontTools.h>
 #include <chaos/FontAtlas.h>
 
+static int ATLAS_BPP = 8;
+
 void TestAtlasReload(boost::filesystem::path const & filename)
 {
   chaos::TextureAtlas atlas;
@@ -32,7 +34,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
 
   chaos::TextureAtlas                atlas;
   chaos::TextureAtlasGenerator       generator;
-  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(256, 256, 3, 0);
+  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(256, 256, 3, ATLAS_BPP);
   
   if (generator.ComputeResult(input, atlas, params))
   {  
@@ -57,7 +59,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   //        - a text file                                            => not detected has an image
   // correct behavior 
 
-  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(512, 512, 10, 0);
+  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
 
   boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas.json";
 

@@ -768,7 +768,7 @@ namespace chaos
 
   std::vector<FIBITMAP *> TextureAtlasGenerator::GenerateAtlasTextures() const
   {
-    unsigned char const color[] = {0, 0, 0, 255}; // B G R A
+    unsigned char const color[] = {0, 0, 0, 0}; // B G R A
 
     std::vector<FIBITMAP *> result;
 
@@ -776,7 +776,7 @@ namespace chaos
     size_t atlas_cout = GetAtlasCount();
     for (size_t i = 0 ; i < atlas_cout ; ++i)
     {
-      FIBITMAP * image = FreeImage_Allocate(params.atlas_width, params.atlas_height, 32);
+      FIBITMAP * image = FreeImage_Allocate(params.atlas_width, params.atlas_height, params.atlas_bpp);
       if (image != nullptr)
       {       
         FreeImage_FillBackground(image, color, 0);

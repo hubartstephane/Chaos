@@ -113,6 +113,14 @@ protected:
       return "absender1.ttf";    // 3 charmaps    
     if (index == 8) 
       return "Destroy x.ttf";   
+	if (index == 9) 
+		return "AgreloyInB1.ttf";   
+	if (index == 10) 
+		return "AgreloyInT3.ttf";   
+	if (index == 11) 
+		return "AgreloyOut1.ttf";   
+	if (index == 12) 
+		return "AgreloyS1.ttf";   
     return nullptr;
   }
 

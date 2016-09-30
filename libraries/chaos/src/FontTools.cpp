@@ -33,6 +33,10 @@ namespace chaos
     int w = bitmap.width;
     int h = bitmap.rows;
 
+	int mode = bitmap.pixel_mode;
+	if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
+		return nullptr;
+
     FIBITMAP * result = FreeImage_Allocate(w, h, 8);
     if (result != nullptr)
     {

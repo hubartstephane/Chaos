@@ -95,33 +95,31 @@ protected:
   {
     index = index / 2;
 
-    if (index == 0) 
-      return "Flatwheat-Regular.ttf";
-    if (index == 1) 
-      return "Flatwheat-Italic.ttf";
-    if (index == 2) 
-      return "unispace.ttf";
-    if (index == 3) 
-      return "unispace bold.ttf";
-    if (index == 4) 
-      return "unispace italic.ttf";
-    if (index == 5) 
-      return "unispace bold italic.ttf";
-    if (index == 6) 
-      return "Outwrite.ttf"; // kerning !!
-    if (index == 7) 
-      return "absender1.ttf";    // 3 charmaps    
-    if (index == 8) 
-      return "Destroy x.ttf";   
-	if (index == 9) 
-		return "AgreloyInB1.ttf";   
-	if (index == 10) 
-		return "AgreloyInT3.ttf";   
-	if (index == 11) 
-		return "AgreloyOut1.ttf";   
-	if (index == 12) 
-		return "AgreloyS1.ttf";   
-    return nullptr;
+	char const * font_names[] = {
+		"Multicolore.otf",
+		"Flatwheat-Regular.ttf",
+		"Flatwheat-Italic.ttf",
+		"unispace.ttf",
+		"unispace bold.ttf",
+		"unispace italic.ttf",
+		"unispace bold italic.ttf",
+		"Outwrite.ttf", // kerning !!
+		"absender1.ttf",    // 3 charmaps    
+		"Destroy x.ttf", 
+		"AgreloyInB1.ttf",   
+		"AgreloyInT3.ttf",   
+		"AgreloyOut1.ttf",
+		"AgreloyS1.ttf"		
+	};
+
+	int font_count = sizeof(font_names) / sizeof(font_names[0]);
+
+	if (index < 0)
+		return nullptr;
+	if (index >= font_count)
+		return nullptr;
+
+	return font_names[index];
   }
 
   void DisplayFaceInfo(FT_Face face) const

@@ -102,6 +102,9 @@ public:
   /** load multiple image from a file (animated gif) */
   static FIMULTIBITMAP * LoadMultiImageFromFile(char const * filename);
 
+  /** returns true whether the image is paletted, 8 bits and its color are grays */
+  static bool IsGreyscaleImage(FIBITMAP * image);
+
   /** get the image information from a FreeImage */
   static ImageDescription GetImageDescription(FIBITMAP const * image);
   /** copy pixels */

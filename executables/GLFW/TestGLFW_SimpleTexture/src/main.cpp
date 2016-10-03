@@ -88,7 +88,7 @@ protected:
       });
     }
 
-    if (index == 2 || index == 3 || index == 4 || index == 5)
+    if (index >= 2 && index <= 7)
     {
       chaos::Application * application = chaos::Application::GetInstance();
       if (application == nullptr)
@@ -104,6 +104,10 @@ protected:
         image_path = resources_path / "opengl_logo_rectangle.png";
       else if (index == 5)
         image_path = resources_path / "icons-animation.gif";
+      else if (index == 6)
+        image_path = resources_path / "grayscale.png";
+      else if (index == 7)
+        image_path = resources_path / "grayscale.gif";
 	  
       result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
     }

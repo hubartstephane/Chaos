@@ -47,6 +47,40 @@ namespace chaos
 
   class FontAtlas : public TextureAtlasTypedBase<FontAtlasEntry> {};
 
+
+
+  /**
+  * FontAtlasInput : the input to uses to generate a font atlas
+  */
+
+class FontAtlasInput
+{
+
+	friend class FontAtlasGenerator;
+
+public:
+
+	/** constructor */
+	FontAtlasInput() {}
+	/** destructor */
+	~FontAtlasInput(){ Clear(); }
+
+	/** clear all the textures */
+	void Clear();
+
+	/** Add a font */
+	void AddFont(FT_Library library, char const * font_name, char const * characters = nullptr);
+	/** Add a font */
+	void AddFont(FT_Face face, char const * characters = nullptr);
+
+
+
+	FT_Library library;
+
+	FT_Face    face;
+
+};
+
   /**
   * FontAtlasGenerator : generates a FontAtlas
   */
@@ -54,6 +88,23 @@ namespace chaos
 class FontAtlasGenerator
 {
 public:
+
+	bool ComputeResult(FontAtlasInput & in_input, FontAtlas & in_ouput, FontAtlasGeneratorParams const & in_params = FontAtlasGeneratorParams());
+
+#if 0
+
+	/** constructor */     
+	TextureAtlasGenerator() : input(nullptr), output(nullptr){}
+	/** destructor */     
+	virtual ~TextureAtlasGenerator(){} 
+	/** compute all texture positions */
+	
+
+
+	/** create an atlas from a directory into another directory */
+	static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, TextureAtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
+
+#endif
 
   /** generate a font atlas */
   bool GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters = nullptr, FontAtlasGeneratorParams const & params = FontAtlasGeneratorParams()) const;

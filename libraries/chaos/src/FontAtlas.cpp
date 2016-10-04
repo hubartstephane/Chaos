@@ -30,8 +30,24 @@ namespace chaos
   }
 
   // ========================================================================
+  // FontAtlasInput functions
+  // ========================================================================
+
+void FontAtlasInput::Clear()
+{
+
+}
+
+  // ========================================================================
   // FontAtlasGenerator functions
   // ========================================================================
+
+  bool FontAtlasGenerator::ComputeResult(FontAtlasInput & in_input, FontAtlas & in_ouput, FontAtlasGeneratorParams const & in_params)
+  {
+  
+  
+	  return true;
+  }
 
   bool FontAtlasGenerator::GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters, FontAtlasGeneratorParams const & params) const
   {

@@ -123,7 +123,8 @@ namespace chaos
     // destroy the entries
     for (TextureAtlasInputEntry & input_entry : entries)
       if (input_entry.bitmap != nullptr)
-        FreeImage_Unload(input_entry.bitmap);
+        if (input_entry.release_bitmap)
+          FreeImage_Unload(input_entry.bitmap);
     entries.empty();
   }
 

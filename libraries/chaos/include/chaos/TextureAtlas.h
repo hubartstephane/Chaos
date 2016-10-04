@@ -103,6 +103,8 @@ namespace chaos
     int         bpp;
     /** the bitmap */
     FIBITMAP  * bitmap;
+    /** whether the bitmap is to be destroyed at the end */
+    bool        release_bitmap;
   };
 
   /**
@@ -151,11 +153,11 @@ namespace chaos
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert a texture before computation */
-    bool AddTextureFile(boost::filesystem::path const & path);
+    bool AddTextureFile(boost::filesystem::path const & path, bool release_bitmap = true);
     /** insert a texture before computation */
-    bool AddTextureFile(char const * filename);
+    bool AddTextureFile(char const * filename, bool release_bitmap = true);
     /** insert an image inside the atlas */
-    bool AddImageSource(char const * filename, FIBITMAP * image);
+    bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true);
     /** insert an image inside the atlas */
     bool AddFakeImageSource(char const * filename);
 

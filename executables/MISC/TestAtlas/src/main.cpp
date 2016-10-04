@@ -9,7 +9,7 @@
 #include <chaos/FontTools.h>
 #include <chaos/FontAtlas.h>
 
-static int ATLAS_BPP = 8;
+static int ATLAS_BPP = 0;
 
 void TestAtlasReload(boost::filesystem::path const & filename)
 {

@@ -57,44 +57,45 @@ namespace chaos
     {
       boost::filesystem::path filename = it->path(); 
       if (boost::filesystem::is_regular_file(filename))
-        AddTextureFile(filename);                           // this will reject files that are not images .. not an error
+        AddTextureFile(filename, true);                           // this will reject files that are not images .. not an error
     }
     return true;
   }
 
-  bool TextureAtlasInput::AddTextureFile(boost::filesystem::path const & path)
+  bool TextureAtlasInput::AddTextureFile(boost::filesystem::path const & path, bool release_bitmap)
   {
-    return AddTextureFile(path.string().c_str());
+    return AddTextureFile(path.string().c_str(), release_bitmap);
   }
 
-  bool TextureAtlasInput::AddTextureFile(char const * filename)
+  bool TextureAtlasInput::AddTextureFile(char const * filename, bool release_bitmap)
   {
     assert(filename != nullptr);
 
     FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
     if (image != nullptr)
     {
-      if (AddImageSource(boost::filesystem::path(filename).filename().string().c_str(), image))
+      if (AddImageSource(boost::filesystem::path(filename).filename().string().c_str(), image, release_bitmap))
         return true;
       FreeImage_Unload(image);    
     }
     return false;
   }
 
-  bool TextureAtlasInput::AddImageSource(char const * filename, FIBITMAP * image)
+  bool TextureAtlasInput::AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap)
   {
     assert(filename != nullptr);
     assert(image    != nullptr);
 
     TextureAtlasInputEntry new_entry;
 
-    new_entry.bitmap   = image;
-    new_entry.width    = (int)FreeImage_GetWidth(new_entry.bitmap);
-    new_entry.height   = (int)FreeImage_GetHeight(new_entry.bitmap);
-    new_entry.bpp      = (int)FreeImage_GetBPP(new_entry.bitmap);
-    new_entry.filename = filename;
+    new_entry.bitmap         = image;
+    new_entry.width          = (int)FreeImage_GetWidth(new_entry.bitmap);
+    new_entry.height         = (int)FreeImage_GetHeight(new_entry.bitmap);
+    new_entry.bpp            = (int)FreeImage_GetBPP(new_entry.bitmap);
+    new_entry.filename       = filename;
+    new_entry.release_bitmap = release_bitmap;
 
-    entries.push_back(std::move(new_entry));
+    entries.push_back(std::move(new_entry)); // move for std::string copy
     return true;
   }
 
@@ -115,7 +116,7 @@ namespace chaos
 
     FreeImage_FillBackground(image, color, 0); // create a background color
 
-    return AddImageSource(filename, image);
+    return AddImageSource(filename, image, false);
   }
 
   void TextureAtlasInput::Clear()

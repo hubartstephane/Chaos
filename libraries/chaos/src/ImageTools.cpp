@@ -178,12 +178,6 @@ namespace chaos
 
         result = FreeImage_LoadFromMemory(format, memory, 0);
 
-
-		result = FreeImage_ConvertToGreyscale(result);
-
-		if (IsGreyscaleImage(result))
-			result = result;
-
         if (FreeImage_GetBPP(result) == 8)
         {
           if (FreeImage_GetPalette(result) != nullptr)

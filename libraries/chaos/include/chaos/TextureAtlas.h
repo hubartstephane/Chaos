@@ -93,6 +93,14 @@ namespace chaos
   {
   public:
 
+    /** constructor */
+    TextureAtlasInputEntry():
+      width(0),
+      height(0),
+      bpp(0),
+      bitmap(nullptr),
+      release_bitmap(true) {}
+
     /** the name of the texture */
     std::string filename;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
@@ -132,24 +140,20 @@ namespace chaos
   void SaveIntoJSON(TextureAtlasEntry const & entry, nlohmann::json & json_entry);
 
   void LoadFromJSON(TextureAtlasEntry & entry, nlohmann::json const & json_entry);
-  
+
   /**
-   * TextureAtlasInput : the set of textures to be given to an AtlasCreator (input)
+   * TextureAtlasInputBase : the set of textures to be given to an AtlasCreator (input)
    */
 
-  class TextureAtlasInput
+  class TextureAtlasInputBase
   {
     friend class TextureAtlasGenerator;
 
   public:
 
-    /** constructor */
-    TextureAtlasInput() {}
     /** destructor */
-    ~TextureAtlasInput(){ Clear(); }
+    virtual ~TextureAtlasInputBase(){}
 
-    /** clear all the textures */
-    void Clear();
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert a texture before computation */
@@ -157,9 +161,30 @@ namespace chaos
     /** insert a texture before computation */
     bool AddTextureFile(char const * filename, bool release_bitmap = true);
     /** insert an image inside the atlas */
-    bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true);
-    /** insert an image inside the atlas */
     bool AddFakeImageSource(char const * filename);
+
+    /** insert an image inside the atlas */
+    virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true) = 0;
+    /** clear all the textures */
+    virtual void Clear() = 0;
+  };
+
+  /**
+   * TextureAtlasInput : the set of textures to be given to an AtlasCreator (input)
+   */
+
+  class TextureAtlasInput : public TextureAtlasInputBase
+  {
+    friend class TextureAtlasGenerator;
+
+  public:
+
+    /** destructor */
+    virtual ~TextureAtlasInput(){ Clear(); }    
+    /** inherited */
+    virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true) override;
+    /** inherited */
+    virtual void Clear() override;
 
   protected:
 

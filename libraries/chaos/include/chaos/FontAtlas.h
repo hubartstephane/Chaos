@@ -45,40 +45,67 @@ namespace chaos
    * FontAtlas : an atlas to hold glyphs
    */
 
-  class FontAtlas : public TextureAtlasTypedBase<FontAtlasEntry> {};
+class FontAtlas : public TextureAtlasTypedBase<FontAtlasEntry> {};
 
+  /**
+   * FontAtlasInputEntry : an entry for the Font Atlas (this is a sort of big aggregate)
+   */
 
+class FontAtlasInputEntry : public TextureAtlasInputEntry
+{
+public:
+
+  /** constructor */
+  FontAtlasInputEntry() :
+    library(nullptr),
+    face(nullptr),
+    release_library(true),
+    release_face(true) {}
+
+  /** the characters contained in the entry */
+  std::string characters;
+  /** the Freetype library if appropriate */
+  FT_Library library;
+  /** the Freetype face if appropriate */
+  FT_Face    face;
+  /** should the library be released at destruction */
+  bool       release_library;
+  /** should the face be released at destruction */
+  bool       release_face;
+};
 
   /**
   * FontAtlasInput : the input to uses to generate a font atlas
   */
 
-class FontAtlasInput
+class FontAtlasInput : public TextureAtlasInputBase
 {
 
 	friend class FontAtlasGenerator;
 
 public:
 
-	/** constructor */
-	FontAtlasInput() {}
 	/** destructor */
-	~FontAtlasInput(){ Clear(); }
-
-	/** clear all the textures */
-	void Clear();
+	virtual ~FontAtlasInput(){ Clear(); }
+  /** inherited */
+  virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap) override;
+  /** inherited */
+  virtual void Clear() override;
 
 	/** Add a font */
-	void AddFont(FT_Library library, char const * font_name, char const * characters = nullptr);
+	bool AddFont(FT_Library library, char const * font_name, char const * characters = nullptr, bool release_library = true);
 	/** Add a font */
-	void AddFont(FT_Face face, char const * characters = nullptr);
+  bool AddFont(FT_Face face, char const * characters = nullptr, bool release_face = true);
 
+protected:
 
+  /** internal method to add a font */
+  bool AddFontImpl(FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face);
 
-	FT_Library library;
+protected:
 
-	FT_Face    face;
-
+  /** all the textures for the input */
+  std::vector<FontAtlasInputEntry> entries;
 };
 
   /**

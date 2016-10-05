@@ -46,10 +46,10 @@ namespace chaos
   }
 
   // ========================================================================
-  // TextureAtlasInput implementation
+  // TextureAtlasInputBase implementation
   // ========================================================================
 
-  bool TextureAtlasInput::AddTextureFilesFromDirectory(boost::filesystem::path const & p)
+  bool TextureAtlasInputBase::AddTextureFilesFromDirectory(boost::filesystem::path const & p)
   {
     // enumerate the source directory
     boost::filesystem::directory_iterator end;
@@ -62,12 +62,12 @@ namespace chaos
     return true;
   }
 
-  bool TextureAtlasInput::AddTextureFile(boost::filesystem::path const & path, bool release_bitmap)
+  bool TextureAtlasInputBase::AddTextureFile(boost::filesystem::path const & path, bool release_bitmap)
   {
     return AddTextureFile(path.string().c_str(), release_bitmap);
   }
 
-  bool TextureAtlasInput::AddTextureFile(char const * filename, bool release_bitmap)
+  bool TextureAtlasInputBase::AddTextureFile(char const * filename, bool release_bitmap)
   {
     assert(filename != nullptr);
 
@@ -81,25 +81,7 @@ namespace chaos
     return false;
   }
 
-  bool TextureAtlasInput::AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap)
-  {
-    assert(filename != nullptr);
-    assert(image    != nullptr);
-
-    TextureAtlasInputEntry new_entry;
-
-    new_entry.bitmap         = image;
-    new_entry.width          = (int)FreeImage_GetWidth(new_entry.bitmap);
-    new_entry.height         = (int)FreeImage_GetHeight(new_entry.bitmap);
-    new_entry.bpp            = (int)FreeImage_GetBPP(new_entry.bitmap);
-    new_entry.filename       = filename;
-    new_entry.release_bitmap = release_bitmap;
-
-    entries.push_back(std::move(new_entry)); // move for std::string copy
-    return true;
-  }
-
-  bool TextureAtlasInput::AddFakeImageSource(char const * filename)
+  bool TextureAtlasInputBase::AddFakeImageSource(char const * filename)
   {
     assert(filename != nullptr);
 
@@ -117,6 +99,28 @@ namespace chaos
     FreeImage_FillBackground(image, color, 0); // create a background color
 
     return AddImageSource(filename, image, false);
+  }
+
+  // ========================================================================
+  // TextureAtlasInput implementation
+  // ========================================================================
+
+  bool TextureAtlasInput::AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap)
+  {
+    assert(filename != nullptr);
+    assert(image    != nullptr);
+
+    TextureAtlasInputEntry new_entry;
+
+    new_entry.bitmap         = image;
+    new_entry.width          = (int)FreeImage_GetWidth(new_entry.bitmap);
+    new_entry.height         = (int)FreeImage_GetHeight(new_entry.bitmap);
+    new_entry.bpp            = (int)FreeImage_GetBPP(new_entry.bitmap);
+    new_entry.filename       = filename;
+    new_entry.release_bitmap = release_bitmap;
+
+    entries.push_back(std::move(new_entry)); // move for std::string copy
+    return true;
   }
 
   void TextureAtlasInput::Clear()

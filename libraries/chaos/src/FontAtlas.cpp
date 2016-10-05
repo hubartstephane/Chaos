@@ -33,10 +33,88 @@ namespace chaos
   // FontAtlasInput functions
   // ========================================================================
 
-void FontAtlasInput::Clear()
-{
+  bool FontAtlasInput::AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap)
+  {
+    assert(filename != nullptr);
+    assert(image != nullptr);
 
-}
+    FontAtlasInputEntry new_entry;
+
+    new_entry.bitmap          = image;
+    new_entry.width           = (int)FreeImage_GetWidth(new_entry.bitmap);
+    new_entry.height          = (int)FreeImage_GetHeight(new_entry.bitmap);
+    new_entry.bpp             = (int)FreeImage_GetBPP(new_entry.bitmap);
+    new_entry.filename        = filename;
+    new_entry.release_bitmap  = release_bitmap;
+
+    entries.push_back(std::move(new_entry)); // move for std::string copy
+
+    return true;
+  }
+
+  void FontAtlasInput::Clear()
+  {
+    // destroy the entries
+    for (FontAtlasInputEntry & input_entry : entries)
+    {
+      if (input_entry.bitmap != nullptr)
+        if (input_entry.release_bitmap)
+          FreeImage_Unload(input_entry.bitmap);
+      if (input_entry.library != nullptr)
+        if (input_entry.release_library)
+          FT_Done_FreeType(input_entry.library);
+      if (input_entry.face != nullptr)
+        if (input_entry.release_face)
+          FT_Done_Face(input_entry.face);
+    }
+    entries.empty();
+  }
+
+  bool FontAtlasInput::AddFont(FT_Library library, char const * font_name, char const * characters, bool release_library)
+  {
+    assert(font_name != nullptr);
+
+    // create a library if necessary
+    if (library == nullptr)
+    {
+      FT_Error error = FT_Init_FreeType(&library);
+      if (error)
+        return false;
+      release_library = true;
+    }
+
+    // load the face and set pixel size
+    FT_Face face;
+    FT_Error error = FT_New_Face(library, font_name, 0, &face);
+    if (error)
+    {      
+      if (release_library)
+        FT_Done_FreeType(library); // delete library if necessary
+      return false;
+    }
+
+    return AddFontImpl(library, face, characters, release_library, true);
+  }
+
+  bool FontAtlasInput::AddFont(FT_Face face, char const * characters, bool release_face)
+  {
+    return AddFontImpl(nullptr, face, characters, false, release_face);
+  }
+
+  bool FontAtlasInput::AddFontImpl(FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face)
+  {
+    assert(face != nullptr);
+
+    FontAtlasInputEntry new_entry;
+    new_entry.library         = library;
+    new_entry.face            = face;
+    new_entry.release_library = release_library;
+    new_entry.release_face    = release_face;
+    new_entry.characters      = characters;
+    entries.push_back(std::move(new_entry)); // move for std::string copy
+
+    return true;
+  }
 
   // ========================================================================
   // FontAtlasGenerator functions
@@ -73,7 +151,7 @@ void FontAtlasInput::Clear()
       if (bm != nullptr)
       {        
         name[0] = glyph.first;
-        input.AddImageSource(name, bm);   // bitmaps will be released at TextureAtlasData destruction   
+        input.AddImageSource(name, bm, true);   // bitmaps will be released at TextureAtlasData destruction   
       }           
     }      
 

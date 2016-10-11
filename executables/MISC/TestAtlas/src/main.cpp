@@ -75,7 +75,10 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 
   chaos::FontAtlas          atlas;
   chaos::FontAtlasGenerator generator;
-  if (generator.GenerateTextureAtlas(nullptr, font_path.string().c_str(), atlas, nullptr))   
+  chaos::FontAtlasInput     input;
+  input.AddFont(nullptr, font_path.string().c_str(), nullptr, true, chaos::FontAtlasFontParams());
+
+  if (generator.ComputeResult(input, atlas, chaos::FontAtlasGeneratorParams()))
     atlas.SaveAtlas(dst_dir1);
 
   chaos::FontAtlas atlas_reloaded;

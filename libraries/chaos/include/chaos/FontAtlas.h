@@ -28,16 +28,23 @@ namespace chaos
   * FontAtlasGeneratorParams : parameters for generating a font atlas
   */
 
-  class FontAtlasGeneratorParams : public TextureAtlasGeneratorParams
+  using FontAtlasGeneratorParams = TextureAtlasGeneratorParams;
+
+  /**
+   * FontAtlasFontParams : parameters for generating a font 
+   */
+
+  class FontAtlasFontParams
   {
   public:
-    
-    FontAtlasGeneratorParams() :
-      TextureAtlasGeneratorParams(512, 512, 5, 0),
+
+    FontAtlasFontParams() :
       glyph_width(32),
       glyph_height(32){}
 
+    /** width of the glyph */
     int glyph_width;
+    /** height of the glyph */
     int glyph_height;
   };
 
@@ -72,6 +79,8 @@ public:
   bool       release_library;
   /** should the face be released at destruction */
   bool       release_face;
+  /** the parameters for fonts */
+  FontAtlasFontParams font_params;
 };
 
   /**
@@ -93,14 +102,14 @@ public:
   virtual void Clear() override;
 
 	/** Add a font */
-	bool AddFont(FT_Library library, char const * font_name, char const * characters = nullptr, bool release_library = true);
+	bool AddFont(FT_Library library, char const * font_name, char const * characters = nullptr, bool release_library = true, FontAtlasFontParams const & font_params = FontAtlasFontParams());
 	/** Add a font */
-  bool AddFont(FT_Face face, char const * characters = nullptr, bool release_face = true);
+  bool AddFont(FT_Face face, char const * characters = nullptr, bool release_face = true, FontAtlasFontParams const & font_params = FontAtlasFontParams());
 
 protected:
 
   /** internal method to add a font */
-  bool AddFontImpl(FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face);
+  bool AddFontImpl(FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face, FontAtlasFontParams const & font_params);
 
 protected:
 
@@ -131,12 +140,13 @@ public:
 	/** create an atlas from a directory into another directory */
 	static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, TextureAtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
 
-#endif
 
   /** generate a font atlas */
   bool GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters = nullptr, FontAtlasGeneratorParams const & params = FontAtlasGeneratorParams()) const;
   /** generate a font atlas */
   bool GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters = nullptr, FontAtlasGeneratorParams const & params = FontAtlasGeneratorParams()) const;
+
+#endif
 };
 
 };

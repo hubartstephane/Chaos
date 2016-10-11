@@ -70,7 +70,7 @@ namespace chaos
     entries.empty();
   }
 
-  bool FontAtlasInput::AddFont(FT_Library library, char const * font_name, char const * characters, bool release_library)
+  bool FontAtlasInput::AddFont(FT_Library library, char const * font_name, char const * characters, bool release_library, FontAtlasFontParams const & font_params)
   {
     assert(font_name != nullptr);
 
@@ -93,15 +93,15 @@ namespace chaos
       return false;
     }
 
-    return AddFontImpl(library, face, characters, release_library, true);
+    return AddFontImpl(library, face, characters, release_library, true, font_params);
   }
 
-  bool FontAtlasInput::AddFont(FT_Face face, char const * characters, bool release_face)
+  bool FontAtlasInput::AddFont(FT_Face face, char const * characters, bool release_face, FontAtlasFontParams const & font_params)
   {
-    return AddFontImpl(nullptr, face, characters, false, release_face);
+    return AddFontImpl(nullptr, face, characters, false, release_face, font_params);
   }
 
-  bool FontAtlasInput::AddFontImpl(FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face)
+  bool FontAtlasInput::AddFontImpl(FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face, FontAtlasFontParams const & font_params)
   {
     assert(face != nullptr);
 
@@ -111,6 +111,7 @@ namespace chaos
     new_entry.release_library = release_library;
     new_entry.release_face    = release_face;
     new_entry.characters      = characters;
+    new_entry.font_params     = font_params;
     entries.push_back(std::move(new_entry)); // move for std::string copy
 
     return true;
@@ -127,6 +128,8 @@ namespace chaos
 	  return true;
   }
 
+
+#if 0
   bool FontAtlasGenerator::GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters, FontAtlasGeneratorParams const & params) const
   {
     assert(face != nullptr);
@@ -197,6 +200,7 @@ namespace chaos
 
   bool FontAtlasGenerator::GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters, FontAtlasGeneratorParams const & params) const
   {
+
     assert(font_name != nullptr);
 
     bool result         = false;
@@ -226,5 +230,7 @@ namespace chaos
 
     return result;
   }
+
+#endif
 };
 

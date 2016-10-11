@@ -167,6 +167,9 @@ namespace chaos
     virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true) = 0;
     /** clear all the textures */
     virtual void Clear() = 0;
+
+    /** gets the number of entries in the input */
+    virtual size_t GetEntriesCount() const = 0;
   };
 
   /**
@@ -185,6 +188,8 @@ namespace chaos
     virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true) override;
     /** inherited */
     virtual void Clear() override;
+    /** gets the number of entries in the input */
+    virtual size_t GetEntriesCount() const override { return entries.size();};
 
   protected:
 

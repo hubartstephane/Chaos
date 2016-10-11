@@ -79,6 +79,10 @@ public:
   bool       release_library;
   /** should the face be released at destruction */
   bool       release_face;
+  /** a glyph cache for fonts */
+  std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache;
+  /** during generation, this vector contains indices of all generated entries (both ENTRIES and both INPUT ENTRIES for standard ATLAS) */
+  std::vector<size_t> generated_entries;
   /** the parameters for fonts */
   FontAtlasFontParams font_params;
 };
@@ -100,6 +104,8 @@ public:
   virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap) override;
   /** inherited */
   virtual void Clear() override;
+  /** inherited */
+  virtual size_t GetEntriesCount() const override { return entries.size(); };
 
 	/** Add a font */
 	bool AddFont(FT_Library library, char const * font_name, char const * characters = nullptr, bool release_library = true, FontAtlasFontParams const & font_params = FontAtlasFontParams());
@@ -125,28 +131,7 @@ class FontAtlasGenerator
 {
 public:
 
-	bool ComputeResult(FontAtlasInput & in_input, FontAtlas & in_ouput, FontAtlasGeneratorParams const & in_params = FontAtlasGeneratorParams());
-
-#if 0
-
-	/** constructor */     
-	TextureAtlasGenerator() : input(nullptr), output(nullptr){}
-	/** destructor */     
-	virtual ~TextureAtlasGenerator(){} 
-	/** compute all texture positions */
-	
-
-
-	/** create an atlas from a directory into another directory */
-	static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, TextureAtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
-
-
-  /** generate a font atlas */
-  bool GenerateTextureAtlas(FT_Library library, char const * font_name, FontAtlas & atlas, char const * characters = nullptr, FontAtlasGeneratorParams const & params = FontAtlasGeneratorParams()) const;
-  /** generate a font atlas */
-  bool GenerateTextureAtlas(FT_Face face, FontAtlas & atlas, char const * characters = nullptr, FontAtlasGeneratorParams const & params = FontAtlasGeneratorParams()) const;
-
-#endif
+	bool ComputeResult(FontAtlasInput & in_input, FontAtlas & in_output, FontAtlasGeneratorParams const & in_params = FontAtlasGeneratorParams());
 };
 
 };

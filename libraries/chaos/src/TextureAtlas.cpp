@@ -54,17 +54,15 @@ namespace chaos
     // enumerate the source directory
     boost::filesystem::directory_iterator end;
     for (boost::filesystem::directory_iterator it(p) ; it != end ; ++it)
-    {
-      boost::filesystem::path filename = it->path(); 
-      if (boost::filesystem::is_regular_file(filename))
-        AddTextureFile(filename, true);                           // this will reject files that are not images .. not an error
-    }
+      AddTextureFile(it->path(), true);                           // this will reject files that are not images .. not an error
     return true;
   }
 
   bool TextureAtlasInputBase::AddTextureFile(boost::filesystem::path const & path, bool release_bitmap)
   {
-    return AddTextureFile(path.string().c_str(), release_bitmap);
+    if (boost::filesystem::is_regular_file(path))
+      return AddTextureFile(path.string().c_str(), release_bitmap);
+    return false;
   }
 
   bool TextureAtlasInputBase::AddTextureFile(char const * filename, bool release_bitmap)

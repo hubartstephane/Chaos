@@ -165,9 +165,9 @@ namespace chaos
           FIBITMAP * bm = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap);
           if (bm != nullptr)
           {
-            name[0] = glyph.first;
-            entry.generated_entries.push_back(std_atlas_input.GetEntriesCount()); 
-            std_atlas_input.AddImageSource(name, bm, true);   // bitmaps will be released at TextureAtlasData destruction   
+            name[0] = glyph.first;            
+            if (std_atlas_input.AddImageSource(name, bm, true))   // bitmaps will be released at TextureAtlasData destruction   
+              entry.generated_entries.push_back(std_atlas_input.GetEntriesCount() - 1);
           }
         }
         continue;
@@ -179,13 +179,31 @@ namespace chaos
     TextureAtlasGenerator generator;
 
     bool result = generator.ComputeResult(std_atlas_input, std_atlas, in_params);
+    if (result)
+      TransformStandardAtlasIntoFontAtlas(std_atlas, in_output, in_input);
+ 
+    // release glyph caches : glyph_cache is only a member for WORK so, 
+    //                        it is important to do it here (and not input destruction) because user may call this function twice without changing the INPUT !
+    //                        this would cause memory leak
+    for (FontAtlasInputEntry & entry : in_input.entries)
+    {
+      for (auto & glyph : entry.glyph_cache)
+        FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
+      entry.glyph_cache.clear();
+      entry.generated_entries.clear();
+    }
 
+	  return result;
+  }
+
+  void FontAtlasGenerator::TransformStandardAtlasIntoFontAtlas(TextureAtlas & std_atlas, FontAtlas & font_atlas, FontAtlasInput & font_atlas_input)
+  {
     // steal data from texture_atlas to (font_)atlas
-    std::swap(in_output.atlas_images, std_atlas.atlas_images);
+    std::swap(font_atlas.atlas_images, std_atlas.atlas_images);
 
     // convert standard atlas entries into font atlas entries (missing information to be fullfilled later)
     size_t count = std_atlas.entries.size();
-    in_output.entries.reserve(count);
+    font_atlas.entries.reserve(count);
     for (size_t i = 0; i < count; ++i)
     {
       TextureAtlasEntry const & std_atlas_entry = std_atlas.entries[i];
@@ -193,12 +211,12 @@ namespace chaos
       FontAtlasEntry font_atlas_entry;
       (TextureAtlasEntry &)font_atlas_entry = std_atlas_entry;
 
-      font_atlas_entry.advance.x   = 0;
-      font_atlas_entry.advance.y   = 0;
+      font_atlas_entry.advance.x = 0;
+      font_atlas_entry.advance.y = 0;
       font_atlas_entry.bitmap_left = 0;
-      font_atlas_entry.bitmap_top  = 0;
+      font_atlas_entry.bitmap_top = 0;
 
-      in_output.entries.push_back(font_atlas_entry);
+      font_atlas.entries.push_back(font_atlas_entry);
     }
 
     // XXX : for standard atlas, there is a ONE for ONE correspondance between INPUT_ENTRIES and ENTRIES
@@ -213,36 +231,24 @@ namespace chaos
     //
     //          - STANDARD ATLAS ENTRY       and FONT ATLAS ENTRY
     //          - STANDARD ATLAS INPUT ENTRY and FONT ATLAS ENTRY
-    
-    for (size_t i = 0 ; i < in_input.entries.size() ; ++i) // fill missing information like ADVANCE, BITMAP_LEFT, and BITMAP_RIGHT
+
+    for (size_t i = 0; i < font_atlas_input.entries.size(); ++i) // fill missing information like ADVANCE, BITMAP_LEFT, and BITMAP_RIGHT
     {
-      FontAtlasInputEntry & input_entry = in_input.entries[i];
-      for (size_t j = 0 ; j < input_entry.generated_entries.size() ; ++j)
-      {       
-        FontAtlasEntry & entry = in_output.entries[input_entry.generated_entries[j]];
+      FontAtlasInputEntry & input_entry = font_atlas_input.entries[i];
+      for (size_t j = 0; j < input_entry.generated_entries.size(); ++j)
+      {
+        FontAtlasEntry & entry = font_atlas.entries[input_entry.generated_entries[j]];
 
         auto const & it = input_entry.glyph_cache.find(entry.filename[0]); // glyph are indexed un a map with char, texture_atlas_entries with a string 
         if (it != input_entry.glyph_cache.cend())
         {
-          entry.advance     = it->second.advance;
+          entry.advance = it->second.advance;
           entry.bitmap_left = it->second.bitmap_left;
-          entry.bitmap_top  = it->second.bitmap_top;
+          entry.bitmap_top = it->second.bitmap_top;
         }
       }
     }
 
-    // release glyph caches : glyph_cache is only a member for WORK so, 
-    //                        it is important to do it here (and not input destruction) because user may call this function twice without changing the INPUT !
-    //                        this would cause memory leak
-    for (FontAtlasInputEntry & entry : in_input.entries)
-    {
-      for (auto & glyph : entry.glyph_cache)
-        FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
-      entry.glyph_cache.clear();
-      entry.generated_entries.clear();
-    }
-
-	  return result;
   }
 };
 

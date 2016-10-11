@@ -131,7 +131,12 @@ class FontAtlasGenerator
 {
 public:
 
+  /** main method for font atlas generation */
 	bool ComputeResult(FontAtlasInput & in_input, FontAtlas & in_output, FontAtlasGeneratorParams const & in_params = FontAtlasGeneratorParams());
+
+protected:
+  /** internal method used to make convertion (destructive) */
+  void TransformStandardAtlasIntoFontAtlas(TextureAtlas & std_atlas, FontAtlas & font_atlas, FontAtlasInput & font_atlas_input);
 };
 
 };

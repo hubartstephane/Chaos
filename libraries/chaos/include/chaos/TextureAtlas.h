@@ -357,6 +357,7 @@ namespace chaos
       atlas_max_width(0),
       atlas_max_height(0),
       force_power_of_2(true),
+      force_square(true),
       atlas_padding(0),
       atlas_bpp(0){}
 
@@ -367,6 +368,7 @@ namespace chaos
       atlas_max_width(0),
       atlas_max_height(0),
       force_power_of_2(true),
+      force_square(true),
       atlas_padding(in_padding),
       atlas_bpp(in_bpp) {}
 
@@ -380,6 +382,8 @@ namespace chaos
     int atlas_max_height;
     /** whether we have to use power of 2 values */
     bool force_power_of_2;
+    /** whether we have to use square texture */
+    bool force_square;
     /** some padding for the texture : should be even */
     int atlas_padding;
     /** the wanted bpp (0 for deduced from images) */

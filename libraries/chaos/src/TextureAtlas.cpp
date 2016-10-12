@@ -654,6 +654,9 @@ namespace chaos
       params.atlas_height = MathTools::GetNearestPowerOf2(params.atlas_height);
     }
 
+    if (params.force_square)
+      params.atlas_width = params.atlas_height = max(params.atlas_width, params.atlas_height);
+
     // test the validity of size
     if (params.atlas_max_width > 0 && params.atlas_max_width < params.atlas_width)
       return false;

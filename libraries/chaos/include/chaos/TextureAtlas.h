@@ -102,7 +102,7 @@ namespace chaos
       release_bitmap(true) {}
 
     /** the name of the texture */
-    std::string filename;
+    std::string name;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
     int         width;
     /** the size of the texture (beware, 2 x padding must be add for correct result) */
@@ -124,7 +124,7 @@ namespace chaos
   public:
 
     /** the name of the texture */
-    std::string filename;   
+    std::string name;   
     /** the atlas in which it is stored in result */
     size_t      atlas;
     /** the top-left corner of the texture */
@@ -157,14 +157,14 @@ namespace chaos
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert a texture before computation */
-    bool AddTextureFile(boost::filesystem::path const & path);
+    bool AddTextureFile(boost::filesystem::path const & path, char const * name /*= nullptr*/);
     /** insert a texture before computation */
-    bool AddTextureFile(char const * filename);
+    bool AddTextureFile(char const * filename, char const * name /*= nullptr*/);
     /** insert an image inside the atlas */
-    bool AddFakeImageSource(char const * filename);
+    bool AddFakeImageSource(char const * name);
 
     /** insert an image inside the atlas */
-    virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap = true) = 0;
+    virtual bool AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap = true) = 0;
     /** clear all the textures */
     virtual void Clear() = 0;
 

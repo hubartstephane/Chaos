@@ -102,7 +102,7 @@ int _tmain(int argc, char ** argv, char ** env)
     boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
     TestAtlasDebugMode(dst_p, resources_path);
-    TestAtlasNormalMode(dst_p, resources_path);
+    TestAtlasNormalMode(dst_p, resources_path / "Images");
     TestAtlasFont(dst_p, resources_path);
 
     TestAtlasReload(dst_p / "AtlasResult" / "MyAtlas");

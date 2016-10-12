@@ -33,9 +33,9 @@ namespace chaos
   // FontAtlasInput functions
   // ========================================================================
 
-  bool FontAtlasInput::AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap)
+  bool FontAtlasInput::AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap)
   {
-    assert(filename != nullptr);
+    assert(name  != nullptr);
     assert(image != nullptr);
 
     FontAtlasInputEntry new_entry;
@@ -44,7 +44,7 @@ namespace chaos
     new_entry.width           = (int)FreeImage_GetWidth(new_entry.bitmap);
     new_entry.height          = (int)FreeImage_GetHeight(new_entry.bitmap);
     new_entry.bpp             = (int)FreeImage_GetBPP(new_entry.bitmap);
-    new_entry.filename        = filename;
+    new_entry.name            = name;
     new_entry.release_bitmap  = release_bitmap;
 
     entries.push_back(std::move(new_entry)); // move for std::string copy
@@ -141,7 +141,7 @@ namespace chaos
       // standard bitmap : conversion is direct
       if (entry.bitmap != nullptr)
       {
-        std_atlas_input.AddImageSource(entry.filename.c_str(), entry.bitmap, false); // standard texture generator is not responsible for BITMAP destruction. The FontAtlasInputEntry is responsible of that
+        std_atlas_input.AddImageSource(entry.name.c_str(), entry.bitmap, false); // standard texture generator is not responsible for BITMAP destruction. The FontAtlasInputEntry is responsible of that
         continue;
       }
 
@@ -239,7 +239,7 @@ namespace chaos
       {
         FontAtlasEntry & entry = font_atlas.entries[input_entry.generated_entries[j]];
 
-        auto const & it = input_entry.glyph_cache.find(entry.filename[0]); // glyph are indexed un a map with char, texture_atlas_entries with a string 
+        auto const & it = input_entry.glyph_cache.find(entry.name[0]); // glyph are indexed un a map with char, texture_atlas_entries with a string 
         if (it != input_entry.glyph_cache.cend())
         {
           entry.advance = it->second.advance;

@@ -101,7 +101,7 @@ public:
 	/** destructor */
 	virtual ~FontAtlasInput(){ Clear(); }
   /** inherited */
-  virtual bool AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap) override;
+  virtual bool AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap) override;
   /** inherited */
   virtual void Clear() override;
   /** inherited */

@@ -17,22 +17,22 @@ namespace chaos
 
   void SaveIntoJSON(TextureAtlasEntry const & entry, nlohmann::json & json_entry)
   {
-    json_entry["filename"] = entry.filename;
-    json_entry["atlas"]    = entry.atlas;
-    json_entry["x"]        = entry.x;
-    json_entry["y"]        = entry.y;
-    json_entry["width"]    = entry.width;
-    json_entry["height"]   = entry.height;
+    json_entry["name"]   = entry.name;
+    json_entry["atlas"]  = entry.atlas;
+    json_entry["x"]      = entry.x;
+    json_entry["y"]      = entry.y;
+    json_entry["width"]  = entry.width;
+    json_entry["height"] = entry.height;
   }
 
   void LoadFromJSON(TextureAtlasEntry & entry, nlohmann::json const & json_entry)
   {
-    entry.filename = json_entry["filename"].get<std::string>();
-    entry.atlas    = json_entry["atlas"];
-    entry.x        = json_entry["x"];
-    entry.y        = json_entry["y"];
-    entry.width    = json_entry["width"];
-    entry.height   = json_entry["height"];
+    entry.name   = json_entry["name"].get<std::string>();
+    entry.atlas  = json_entry["atlas"];
+    entry.x      = json_entry["x"];
+    entry.y      = json_entry["y"];
+    entry.width  = json_entry["width"];
+    entry.height = json_entry["height"];
   }
 
   // ========================================================================
@@ -54,37 +54,43 @@ namespace chaos
     // enumerate the source directory
     boost::filesystem::directory_iterator end;
     for (boost::filesystem::directory_iterator it(p) ; it != end ; ++it)
-      AddTextureFile(it->path());                           // this will reject files that are not images .. not an error
+      AddTextureFile(it->path(), nullptr);                           // this will reject files that are not images .. not an error
     return true;
   }
 
-  bool TextureAtlasInputBase::AddTextureFile(boost::filesystem::path const & path)
+  bool TextureAtlasInputBase::AddTextureFile(boost::filesystem::path const & path, char const * name)
   {
     if (boost::filesystem::is_regular_file(path))
-      return AddTextureFile(path.string().c_str());
+      return AddTextureFile(path.string().c_str(), name);
     return false;
   }
 
-  bool TextureAtlasInputBase::AddTextureFile(char const * filename)
-  {
+  bool TextureAtlasInputBase::AddTextureFile(char const * filename, char const * name)
+  {   
     assert(filename != nullptr);
+
+    bool result = false;
 
     FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
     if (image != nullptr)
     {
-      if (AddImageSource(boost::filesystem::path(filename).filename().string().c_str(), image, true))
-        return true;
-      FreeImage_Unload(image);    
+      result = AddImageSource(
+          (name != nullptr) ? name : boost::filesystem::path(filename).filename().string().c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+          image, true); 
+      if (!result)
+        FreeImage_Unload(image);    
     }
-    return false;
+    return result;
   }
 
-  bool TextureAtlasInputBase::AddFakeImageSource(char const * filename)
+  bool TextureAtlasInputBase::AddFakeImageSource(char const * name)
   {
-    assert(filename != nullptr);
+    assert(name != nullptr);
 
     int w = 15 * (1 + rand() % 10);
     int h = 15 * (1 + rand() % 10);
+
+    bool result = false;
 
     FIBITMAP * image = FreeImage_Allocate(w, h, 32); // allocate an image
     if (image != nullptr)
@@ -95,22 +101,21 @@ namespace chaos
 
       FreeImage_FillBackground(image, color, 0); // create a background color
 
-      if (AddImageSource(filename, image, true))
-        return true;
-
-      FreeImage_Unload(image);
+      result = AddImageSource(name, image, true);
+      if (!result)
+        FreeImage_Unload(image);
     }
-    return false;
+    return result;
   }
 
   // ========================================================================
   // TextureAtlasInput implementation
   // ========================================================================
 
-  bool TextureAtlasInput::AddImageSource(char const * filename, FIBITMAP * image, bool release_bitmap)
+  bool TextureAtlasInput::AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap)
   {
-    assert(filename != nullptr);
-    assert(image    != nullptr);
+    assert(name  != nullptr);
+    assert(image != nullptr);
 
     TextureAtlasInputEntry new_entry;
 
@@ -118,7 +123,7 @@ namespace chaos
     new_entry.width          = (int)FreeImage_GetWidth(new_entry.bitmap);
     new_entry.height         = (int)FreeImage_GetHeight(new_entry.bitmap);
     new_entry.bpp            = (int)FreeImage_GetBPP(new_entry.bitmap);
-    new_entry.filename       = filename;
+    new_entry.name           = name;
     new_entry.release_bitmap = release_bitmap;
 
     entries.push_back(std::move(new_entry)); // move for std::string copy
@@ -332,12 +337,12 @@ namespace chaos
   void TextureAtlas::OutputTextureInfo(TextureAtlasEntry const & entry, std::ostream & stream) const
   {
     stream << "Texture " << (&entry - &entries[0]) << std::endl;
-    stream << "  filename : " << entry.filename    << std::endl;
-    stream << "  width    : " << entry.width       << std::endl;
-    stream << "  height   : " << entry.height      << std::endl;
-    stream << "  x        : " << entry.x           << std::endl;
-    stream << "  y        : " << entry.y           << std::endl;
-    stream << "  atlas    : " << entry.atlas       << std::endl;
+    stream << "  name   : " << entry.name   << std::endl;
+    stream << "  width  : " << entry.width  << std::endl;
+    stream << "  height : " << entry.height << std::endl;
+    stream << "  x      : " << entry.x      << std::endl;
+    stream << "  y      : " << entry.y      << std::endl;
+    stream << "  atlas  : " << entry.atlas  << std::endl;
   }
 
   std::string TextureAtlas::GetTextureInfoString() const
@@ -516,7 +521,7 @@ namespace chaos
             html.PushAttribute(TEXT, "y", y);
             html.PushAttribute(TEXT, "fill", "white");
 
-            html.PushText(TEXT, entry.filename.c_str());
+            html.PushText(TEXT, entry.name.c_str());
           }
         }      
       }
@@ -684,12 +689,12 @@ namespace chaos
       TextureAtlasInputEntry const & input_entry = input->entries[i];
 
       TextureAtlasEntry output_entry;
-      output_entry.filename = input_entry.filename;
-      output_entry.atlas    = SIZE_MAX;
-      output_entry.x        = 0;
-      output_entry.y        = 0;
-      output_entry.width    = input_entry.width;
-      output_entry.height   = input_entry.height;
+      output_entry.name   = input_entry.name;
+      output_entry.atlas  = SIZE_MAX;
+      output_entry.x      = 0;
+      output_entry.y      = 0;
+      output_entry.width  = input_entry.width;
+      output_entry.height = input_entry.height;
 
       output->entries.push_back(output_entry);
     }

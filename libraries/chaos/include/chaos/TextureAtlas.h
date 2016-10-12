@@ -157,9 +157,9 @@ namespace chaos
     /** insert multiple texture before computation */
     bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
     /** insert a texture before computation */
-    bool AddTextureFile(boost::filesystem::path const & path, bool release_bitmap = true);
+    bool AddTextureFile(boost::filesystem::path const & path);
     /** insert a texture before computation */
-    bool AddTextureFile(char const * filename, bool release_bitmap = true);
+    bool AddTextureFile(char const * filename);
     /** insert an image inside the atlas */
     bool AddFakeImageSource(char const * filename);
 

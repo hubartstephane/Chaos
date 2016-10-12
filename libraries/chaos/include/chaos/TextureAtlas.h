@@ -354,6 +354,9 @@ namespace chaos
     TextureAtlasGeneratorParams() :
       atlas_width(0),
       atlas_height(0),
+      atlas_max_width(0),
+      atlas_max_height(0),
+      force_power_of_2(true),
       atlas_padding(0),
       atlas_bpp(0){}
 
@@ -361,6 +364,9 @@ namespace chaos
     TextureAtlasGeneratorParams(int in_width, int in_height, int in_padding, int in_bpp):
       atlas_width(in_width),
       atlas_height(in_height),
+      atlas_max_width(0),
+      atlas_max_height(0),
+      force_power_of_2(true),
       atlas_padding(in_padding),
       atlas_bpp(in_bpp) {}
 
@@ -368,6 +374,12 @@ namespace chaos
     int atlas_width;
     /** the height of an atlas texture */
     int atlas_height;
+    /** the max width of an atlas texture (if resized). 0 = no limit */
+    int atlas_max_width;
+    /** the max height of an atlas texture (if resized). 0 = no limit */
+    int atlas_max_height;
+    /** whether we have to use power of 2 values */
+    bool force_power_of_2;
     /** some padding for the texture : should be even */
     int atlas_padding;
     /** the wanted bpp (0 for deduced from images) */

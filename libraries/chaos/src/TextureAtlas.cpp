@@ -642,16 +642,22 @@ namespace chaos
     max_width  += params.atlas_padding * 2;
     max_height += params.atlas_padding * 2;
 
-    // match atlas width to biggest texture width, or ends if atlas is too small
-    if (params.atlas_width <= 0)
+    // compute final atlas size
+    if (params.atlas_width <= 0 || params.atlas_width < max_width)
       params.atlas_width = max_width;
-    else if (params.atlas_width < max_width)
-      return false;
-
-    // match atlas height to biggest texture height, or ends if atlas is too small
-    if (params.atlas_height <= 0)
+    if (params.atlas_height <= 0 || params.atlas_height < max_height)
       params.atlas_height = max_height;
-    else if (params.atlas_height < max_height)
+
+    if (params.force_power_of_2)
+    {
+      params.atlas_width  = MathTools::GetNearestPowerOf2(params.atlas_width);
+      params.atlas_height = MathTools::GetNearestPowerOf2(params.atlas_height);
+    }
+
+    // test the validity of size
+    if (params.atlas_max_width > 0 && params.atlas_max_width < params.atlas_width)
+      return false;
+    if (params.atlas_max_height > 0 && params.atlas_max_height < params.atlas_height)
       return false;
 
     // if necessary match BPP to textures in input

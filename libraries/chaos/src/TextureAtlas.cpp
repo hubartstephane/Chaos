@@ -87,16 +87,20 @@ namespace chaos
     int h = 15 * (1 + rand() % 10);
 
     FIBITMAP * image = FreeImage_Allocate(w, h, 32); // allocate an image
-    if (image == nullptr)
-      return false;
+    if (image != nullptr)
+    {
+      unsigned char c = 55 + (rand() % 200);
 
-    unsigned char c = 55 + (rand() % 200);
+      unsigned char color[] = { c, c, c, 255 }; // B G R A
 
-    unsigned char color[] = { c, c, c, 255 }; // B G R A
+      FreeImage_FillBackground(image, color, 0); // create a background color
 
-    FreeImage_FillBackground(image, color, 0); // create a background color
+      if (AddImageSource(filename, image, true))
+        return true;
 
-    return AddImageSource(filename, image, false);
+      FreeImage_Unload(image);
+    }
+    return false;
   }
 
   // ========================================================================

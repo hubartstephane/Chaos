@@ -209,6 +209,25 @@ public:
     srand((unsigned int)time(nullptr));
   }
 
+  /** a function to detect if an entry is power of 2 */
+  template<typename T>
+  static bool IsPowerOf2(T src)
+  {
+    return ((src != 0) && (src & (src - 1)) == 0);
+
+  }
+
+  /** a function to find the smallest power of 2 greater or equal than src */
+  template<typename T>
+  static T GetNearestPowerOf2(T src)
+  {
+    if (src == 0)
+      return 1;
+    if (IsPowerOf2(src))
+      return src;
+    return 1 << (bsr(src) + 1);
+  }
+
 
 #if _WIN32
 

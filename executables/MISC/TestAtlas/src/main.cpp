@@ -3,6 +3,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/TextureAtlas.h>
+#include <chaos/TextureAtlasHTMLGenerator.h>
 #include <chaos/MathTools.h>
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
@@ -45,7 +46,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesyste
     html_params.auto_refresh      = false;
 
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
-    atlas.OutputToHTMLFile(html_path.string().c_str(), html_params);
+    chaos::TextureAtlasHTMLGenerator::OutputToHTMLFile(atlas, html_path.string().c_str(), html_params);
 
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFake" / "MyAtlas.x";
     atlas.SaveAtlas(dst_dir);

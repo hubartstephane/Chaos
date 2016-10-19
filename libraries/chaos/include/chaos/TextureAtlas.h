@@ -7,37 +7,6 @@ namespace chaos
 {
 
   /**
-   * TextureAtlasHTMLOutputParams : the parameters for HTML output of atlas 
-   */
-
-  class TextureAtlasHTMLOutputParams
-  {
-  public:
-
-    /** constructor */
-    TextureAtlasHTMLOutputParams():
-      show_header(true), 
-      show_atlas_header(true),
-      show_textures(true), 
-      show_textures_names(true),
-      auto_refresh(true),
-      texture_scale(-1.0f){}
-
-    /** show the HTML header */
-    bool  show_header;
-    /** show the atlas header */
-    bool  show_atlas_header;
-    /** show the textures */
-    bool  show_textures;
-    /** show the texture names */
-    bool  show_textures_names;
-    /** should the document refresh itself ("http-equiv", "refresh") every 2 seconds */
-    bool  auto_refresh;
-    /** a scale factor to be applied for the rendering of the textures (-1 for auto factor dependent on the atlas size) */
-    float texture_scale;
-  };
-
-  /**
    * AtlasRectangle : a class to represents rectangles
    */
 
@@ -301,6 +270,7 @@ namespace chaos
   class TextureAtlas : public TextureAtlasTypedBase<TextureAtlasEntry>
   {
     friend class TextureAtlasGenerator;
+    friend class TextureAtlasHTMLGenerator;
 
   public:
 
@@ -316,15 +286,6 @@ namespace chaos
     std::string GetTextureInfoString() const;
     /** display information about one texture */
     std::string GetTextureInfoString(TextureAtlasEntry const & entry) const;
-
-    /** create an XML document and output debug information */
-    tinyxml2::XMLDocument * OutputToHTMLDocument(TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-    /** create an XML document and output debug information */
-    void OutputToHTMLDocument(tinyxml2::XMLDocument * doc, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-    /** output the atlas trees in HTML format */
-    bool OutputToHTMLFile(boost::filesystem::path const & path, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
-    /** output the atlas trees in HTML format */
-    bool OutputToHTMLFile(char const * filename, TextureAtlasHTMLOutputParams params = TextureAtlasHTMLOutputParams()) const;
 
   protected:
 

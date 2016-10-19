@@ -27,31 +27,9 @@ namespace chaos
       return (x == src.x) && (y == src.y) && (width == src.width) && (height == src.height);
     }
     /** returns true whenever big does fully contains this */
-    bool IsFullyInside(AtlasRectangle const & big) const
-    {
-      if (x < big.x)
-        return false;
-      if (x + width > big.x + big.width)
-        return false;
-      if (y < big.y)
-        return false;
-      if (y + height > big.y + big.height)
-        return false;
-      return true;
-    }
+    bool IsFullyInside(AtlasRectangle const & big) const;
     /** returns true whenever there is an intersection between this and big */
-    bool IsIntersecting(AtlasRectangle const & big) const
-    {
-      if (x >= big.x + big.width)
-        return false;
-      if (x + width <= big.x)
-        return false;
-      if (y >= big.y + big.height)
-        return false;
-      if (y + height <= big.y)
-        return false;
-      return true;
-    }
+    bool IsIntersecting(AtlasRectangle const & big) const;
   };
 
   /**

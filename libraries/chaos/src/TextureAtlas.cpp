@@ -40,10 +40,10 @@ namespace chaos
   void TextureAtlasBase::Clear()
   {
     // destroy the output
-    for (FIBITMAP * image : atlas_images)
+    for (FIBITMAP * image : bitmaps)
       if (image != nullptr)
         FreeImage_Unload(image);
-    atlas_images.clear();
+    bitmaps.clear();
   }
 
   void TextureAtlasBase::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const
@@ -68,9 +68,9 @@ namespace chaos
 
   glm::ivec2 TextureAtlasBase::GetAtlasDimension() const
   {
-    for (size_t i = 0; i < atlas_images.size(); ++i)
+    for (size_t i = 0; i < bitmaps.size(); ++i)
     {
-      FIBITMAP * bitmap = atlas_images[i];
+      FIBITMAP * bitmap = bitmaps[i];
       if (bitmap != nullptr)
       {
         int width = (int)FreeImage_GetWidth(bitmap);
@@ -102,9 +102,9 @@ namespace chaos
   {
     bool result = true;
     // save them
-    for (size_t i = 0; (i < atlas_images.size()) && result; ++i)
+    for (size_t i = 0; (i < bitmaps.size()) && result; ++i)
     {
-      FIBITMAP * im = atlas_images[i];
+      FIBITMAP * im = bitmaps[i];
       if (im != nullptr)
       {
         boost::filesystem::path dst_filename = target_dir / GetAtlasImageName(image_filename, i);
@@ -124,7 +124,7 @@ namespace chaos
       nlohmann::json j;
       // insert the files
       j["images"] = nlohmann::json::array();
-      for (size_t i = 0; i < atlas_images.size(); ++i)
+      for (size_t i = 0; i < bitmaps.size(); ++i)
         j["images"].push_back(GetAtlasImageName(image_filename, i).string());
       // insert the entries
       j["entries"] = nlohmann::json::array();
@@ -183,7 +183,7 @@ namespace chaos
           result = false;
           break;
         }
-        atlas_images.push_back(bitmap);
+        bitmaps.push_back(bitmap);
       }
       // load the entries
       if (result)

@@ -199,7 +199,7 @@ namespace chaos
   void FontAtlasGenerator::TransformStandardAtlasIntoFontAtlas(TextureAtlas & std_atlas, FontAtlas & font_atlas, FontAtlasInput & font_atlas_input)
   {
     // steal data from texture_atlas to (font_)atlas
-    std::swap(font_atlas.atlas_images, std_atlas.atlas_images);
+    std::swap(font_atlas.bitmaps, std_atlas.bitmaps);
 
     // convert standard atlas entries into font atlas entries (missing information to be fullfilled later)
     size_t count = std_atlas.entries.size();

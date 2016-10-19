@@ -7,6 +7,36 @@ namespace chaos
 {
   
   // ========================================================================
+  // AtlasRectangle implementation
+  // ========================================================================
+
+  bool AtlasRectangle::IsFullyInside(AtlasRectangle const & big) const
+  {
+    if (x < big.x)
+      return false;
+    if (x + width > big.x + big.width)
+      return false;
+    if (y < big.y)
+      return false;
+    if (y + height > big.y + big.height)
+      return false;
+    return true;
+  }
+
+  bool AtlasRectangle::IsIntersecting(AtlasRectangle const & big) const
+  {
+    if (x >= big.x + big.width)
+      return false;
+    if (x + width <= big.x)
+      return false;
+    if (y >= big.y + big.height)
+      return false;
+    if (y + height <= big.y)
+      return false;
+    return true;
+  }
+
+  // ========================================================================
   // TextureAtlasInputBase implementation
   // ========================================================================
 
@@ -222,7 +252,7 @@ namespace chaos
     {
       if (EnsureValidResults())
       {
-        output->atlas_images = GenerateAtlasTextures();
+        output->bitmaps = GenerateAtlasTextures();
 #if _DEBUG
         output->OutputAtlasSpaceOccupation(std::cout);
         output->OutputTextureInfo(std::cout);

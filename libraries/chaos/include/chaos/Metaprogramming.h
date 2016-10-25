@@ -11,7 +11,7 @@ namespace chaos
 		using add_uniq_pointer = boost::mpl::eval_if<
 			boost::is_pointer<T>,
 			boost::mpl::identity<T>,
-			boost::add_pointer<T>
+      boost::add_pointer<T>
 		>;	
 	};
 

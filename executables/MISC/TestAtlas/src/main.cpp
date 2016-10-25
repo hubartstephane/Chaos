@@ -98,8 +98,14 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
 
+  chaos::NamedObjectArray<chaos::NamedObject> m1;
+  chaos::NamedObjectArray<chaos::NamedObject*> m2;
 
+  chaos::NamedObject * p1 = m1.GetElementByName(nullptr);
+  chaos::NamedObject * p2 = m2.GetElementByName(nullptr);
 
+  chaos::NamedObject * p3 = m1.GetElementByTag(0);
+  chaos::NamedObject * p4 = m2.GetElementByTag(0);
 
 
 	using b1 = chaos::Metaprog::add_uniq_pointer<int *>;

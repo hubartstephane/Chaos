@@ -1,9 +1,194 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/Metaprogramming.h>
 
 namespace chaos
 {
+  using TagType = intptr_t;
+
+
+
+
+
+  class NamedObject
+  {
+  public:
+
+    /** constructor */
+    NamedObject() : tag(0) {}
+
+  public:
+
+    /** the name of the object */
+    std::string name;
+    /** the tag of the object */
+    TagType tag;
+  };
+
+
+
+  template<typename T>
+  class AutoDestroyObjectArray
+  {
+  public:
+
+    using type = T;
+    
+    using const_type = typename boost::add_const<type>::type;
+
+    using ptr_type = typename Metaprog::add_uniq_pointer<type>::type;
+
+    using const_ptr_type = typename Metaprog::add_uniq_pointer<const_type>::type;
+
+    using is_pointer_type = typename boost::is_pointer<type>::type;
+
+    /** destructor */
+    ~AutoDestroyObjectArray()
+    {
+      Clear(true);
+    }
+
+    /** destroy the whole content */
+    void Clear(bool release = true)    
+    {
+      if (release)
+        DestroyElements(is_pointer_type());
+      elements.clear();
+    }
+
+    /** the elements of the arrays */
+    std::vector<type> elements;
+
+  protected:
+
+    /** the full destruction method */
+    void DestroyElements(boost::mpl::true_)
+    {
+      for (auto elem : elements)
+        delete(elem);
+    }
+
+    /** empty implementation for destruction */
+    void DestroyElements(boost::mpl::false_){}
+  };
+
+
+  template<typename T>
+  class NamedObjectArray : public AutoDestroyObjectArray<T>
+  {
+  public:
+
+    using type = typename AutoDestroyObjectArray<T>::type;
+
+    using const_type = typename AutoDestroyObjectArray<T>::const_type;
+
+    using ptr_type = typename AutoDestroyObjectArray<T>::ptr_type;
+
+    using const_ptr_type = typename AutoDestroyObjectArray<T>::const_ptr_type;
+
+    ptr_type GetElementByName(char const * name)
+    {
+      if (name != nullptr)
+      {
+        size_t count = elements.size();
+        for(size_t i = 0 ; i < count ; ++i)
+          if (MatchName(elements[i], name))
+            return ElemToPointer(elements[i]);
+      }
+      return nullptr;
+    }
+
+    const_ptr_type GetElementByName(char const * name) const
+    {
+      if (name != nullptr)
+      {
+        size_t count = elements.size();
+        for (size_t i = 0 ; i < count ; ++i)
+          if (MatchName(elements[i], name))
+            return ElemToPointer(elements[i]);
+      }
+      return nullptr;
+    }
+
+    ptr_type GetElementByTag(TagType tag)
+    {
+      size_t count = elements.size();
+      for (size_t i = 0 ; i < count ; ++i)
+        //if (MatchTag(elements[i], tag))
+          return ElemToPointer(elements[i]);
+      return nullptr;
+    }
+
+    const_ptr_type GetElementByTag(TagType tag) const
+    {
+      size_t count = elements.size();
+      for (size_t i = 0 ; i < count ; ++i)
+    //    if (MatchTag(elements[i], tag))
+          return ElemToPointer(elements[i]);
+      return nullptr;
+    }
+
+  protected:
+
+
+
+    bool MatchName(const_type & elem, char const * name) const
+    {
+      return (elem.name == name);
+    }
+
+    bool MatchName(const_ptr_type elem, char const * name) const
+    {
+      return (elem->name == name);
+    }
+
+    bool MatchTag(const_type & elem, TagType tag) const
+    {
+      return (elem.tag == tag);
+    }
+
+    bool MatchTag(const_ptr_type elem, TagType tag) const
+    {
+      return (elem->tag == tag);
+    }
+
+
+
+
+
+
+    ptr_type ElemToPointer(ptr_type elem)
+    {
+      return elem;
+    }
+
+    ptr_type ElemToPointer(type & elem)
+    {
+      return &elem;
+    }
+
+    const_ptr_type ElemToPointer(const_ptr_type elem) const
+    {
+      return elem;
+    }
+
+    const_ptr_type ElemToPointer(const_type & elem) const
+    {
+      return &elem;
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
 
 #if 0
 

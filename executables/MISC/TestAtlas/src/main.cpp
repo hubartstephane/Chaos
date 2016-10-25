@@ -10,6 +10,8 @@
 #include <chaos/FontTools.h>
 #include <chaos/FontAtlas.h>
 
+#include <chaos/Metaprogramming.h>
+
 static int ATLAS_BPP = 0;
 
 void TestAtlasReload(boost::filesystem::path const & filename)
@@ -94,6 +96,20 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+
+
+
+
+
+
+	using b1 = chaos::Metaprog::add_uniq_pointer<int *>;
+	using b2 = chaos::Metaprog::add_uniq_pointer<int>;
+
+	b1 i;
+	b2 ii;
+
+
+
 
   chaos::MathTools::ResetRandSeed();
 

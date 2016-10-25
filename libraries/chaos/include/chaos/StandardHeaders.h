@@ -62,6 +62,7 @@ T max(T a, T b)
 #include <thread>
 #include <chrono>
 #include <forward_list>
+#include <type_traits>
 
 #include <boost/static_assert.hpp>
 #include <boost/thread.hpp>
@@ -75,6 +76,7 @@ T max(T a, T b)
 #include <boost/program_options/parsers.hpp>
 #include <boost/call_traits.hpp>
 #include <boost/crc.hpp> 
+#include <boost/type_traits.hpp>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -82,7 +84,9 @@ T max(T a, T b)
 
 #include <boost/log/utility/functional/nop.hpp>
 
+
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 
 #include <boost/preprocessor/repetition/enum_params.hpp>

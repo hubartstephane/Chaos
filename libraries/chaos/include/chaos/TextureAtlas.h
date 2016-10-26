@@ -5,10 +5,110 @@
 
 namespace chaos
 {
+#if 0
+
+  namespace TextureAtlas
+  {
+    class InputElementBase
+    {
+
+    };
+
+    class InputBitmapSet : public InputElementBase
+    {
+
+    };
+
+    class InputFont : public InputElementBase
+    {
+
+    };
+
+
+
+    class Input
+    {
+    public:
+
+      InputBitmapSet * AddBitmapSet(char const * set_name);
+
+      InputFont * AddFont(char const * font_name);
+    };
+
+    class BitmapEntry
+    {
+      /** the atlas in which it is stored in result */
+      size_t bitmap_index;
+      /** the top-left corner of the texture */
+      int    x;
+      /** the top-left corner of the texture */
+      int    y;
+      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      int    width;
+      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      int    height;
+    };
+
+    class FontEntry : public BitmapEntry
+    {
+    public:
+      FT_Vector advance;
+      int       bitmap_left; // from 'CharacterMetrics' class
+      int       bitmap_top;
+    };
+
+    class AtlasDataSetBase : public ClassBase<bool, false>
+    {
+
+
+    };
+
+    template<typename T>
+    class AtlasDataSet : public AtlasDataSetBase
+    {
+
+
+    };
+
+    class BitmapDataSet : public AtlasDataSet<BitmapEntry>
+    {
+
+
+    };
+
+    class FontDataSet : public AtlasDataSet<FontEntry>
+    {
+
+
+    };
+
+
+
+
+    class Atlas
+    {
+
+
+      public:
+
+
+
+        std::vector<FIBITMAP *> bitmaps;
+
+        std::vector<
+
+    };
+
+
+
+  };
+
+
+
   using TagType = intptr_t;
 
 
-
+  
 
 
   class NamedObject
@@ -181,7 +281,7 @@ namespace chaos
 
 
 
-
+#endif
 
 
 

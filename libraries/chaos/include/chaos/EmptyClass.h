@@ -8,23 +8,54 @@ namespace chaos
 /**
  * Simply a base class
  */
+
 class EmptyClass {};
 
-
 /**
- * Simply a base class with a virtual destructor
+ * VirtualDestructor : an utility class to add a virtual destructor to any base class 
  */
-class EmptyClassWithVirtualDestructor
+
+template<typename BASE_CLASS>
+class AddVirtualDestructor : public BASE_CLASS
 {
 public:
 
-  virtual ~EmptyClassWithVirtualDestructor(){}
+  /** simply a virtual destructor */
+  virtual ~AddVirtualDestructor() {}
 };
 
+template<typename COND, typename BASE_CLASS = EmptyClass>
+using ConditionnalAddVirtualDestructor = boost::mpl::eval_if <
+  COND,
+  AddVirtualDestructor<BASE_CLASS>,
+  BASE_CLASS>::type;
+
 /**
- * A meta function to select one of the previous class according to a boolean
+ * NoCopy : an utility class to suppress copy construction/operator
  */
-template<bool VIRTUAL_DESTRUCTOR>
-struct BaseEmptyClass : public boost::mpl::if_c<VIRTUAL_DESTRUCTOR, EmptyClassWithVirtualDestructor, EmptyClass>{};
+
+template<typename BASE_CLASS = EmptyClass>
+class NoCopy : public BASE_CLASS
+{
+public:
+
+  /** keep default constructor */
+  NoCopy() {}
+  /** delete copy constructor */
+  NoCopy(NoCopy const &) = delete;
+  /** delete copy operator */
+  NoCopy & operator = (NoCopy const &) = delete;
+};
+
+
+
+
+
+
+/** template */
+template<bool VIRTUAL_DESTRUCTOR, bool CANCOPY>
+class ClassBase {};
+
+
 
 }; // namespace chaos

@@ -11,6 +11,7 @@
 #include <chaos/FontAtlas.h>
 
 #include <chaos/Metaprogramming.h>
+#include <chaos/EmptyClass.h>
 
 static int ATLAS_BPP = 0;
 
@@ -91,12 +92,41 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
     atlas_reloaded.SaveAtlas(dst_dir2);
 }
 
+
+
+
+class BB
+{
+
+};
+
+class Base : public BB
+{
+public:
+
+  ~Base()
+  {
+    std::cout << "virtual destructor" << std::endl;
+  }
+
+};
+
 int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
+  BB * b = new chaos::ConditionnalAddVirtualDestructor<boost::mpl::true_, Base>;
+
+  delete(b);
+
+//  B b;
+//  B b2;
+
+
+
+#if 0
 
   chaos::NamedObjectArray<chaos::NamedObject> m1;
   chaos::NamedObjectArray<chaos::NamedObject*> m2;
@@ -114,7 +144,7 @@ int _tmain(int argc, char ** argv, char ** env)
 	b1 i;
 	b2 ii;
 
-
+#endif
 
 
   chaos::MathTools::ResetRandSeed();

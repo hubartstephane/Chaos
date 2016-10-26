@@ -84,10 +84,19 @@ T max(T a, T b)
 
 #include <boost/log/utility/functional/nop.hpp>
 
-
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/find.hpp>
+#include <boost/mpl/find_if.hpp>
+#include <boost/mpl/placeholders.hpp>
+#include <boost/mpl/apply.hpp>
+#include <boost/mpl/begin.hpp>
+#include <boost/mpl/end.hpp>
+#include <boost/mpl/not_equal_to.hpp>
+#include <boost/mpl/comparison.hpp>
+
 
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>

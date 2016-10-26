@@ -137,9 +137,9 @@ namespace chaos
     
     using const_type = typename boost::add_const<type>::type;
 
-    using ptr_type = typename Metaprog::add_uniq_pointer<type>::type;
+    using ptr_type = typename meta::add_uniq_pointer<type>::type;
 
-    using const_ptr_type = typename Metaprog::add_uniq_pointer<const_type>::type;
+    using const_ptr_type = typename meta::add_uniq_pointer<const_type>::type;
 
     using is_pointer_type = typename boost::is_pointer<type>::type;
 

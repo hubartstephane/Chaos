@@ -100,16 +100,70 @@ class BB
 
 };
 
-class Base : public BB
+class Base : public chaos::ConditionnalAddVirtualDestructor<boost::mpl::true_, BB>
 {
 public:
 
-  ~Base()
+	~Base()
   {
-    std::cout << "virtual destructor" << std::endl;
+    std::cout << "Base::destructor" << std::endl;
   }
 
 };
+
+class C : public Base
+{
+public:
+
+	~C()
+	{
+		std::cout << "C::destructor" << std::endl;
+	}
+};
+
+bool IsTrue(boost::mpl::true_)
+{
+	return true;
+}
+
+bool IsTrue(boost::mpl::false_)
+{
+	return false;
+}
+
+
+
+template<typename ...TAGS>
+class BClass
+{
+public:
+
+	using all_tags = boost::mpl::vector<TAGS...>;
+
+
+
+};
+
+//template<typename VECTOR, typename PRED>
+//using TOTO = boost::mpl::find_if<VECTOR, PRED<boost::mpl::_>>;
+
+
+
+namespace chaos
+{
+template<typename SEQ, typename PRED>
+using has_satisfying_element = boost::mpl::not_<
+	boost::is_same<
+		typename boost::mpl::end<SEQ>::type,
+		typename boost::mpl::find_if<SEQ, PRED>::type
+	>
+>;
+
+
+};
+
+
+
 
 int _tmain(int argc, char ** argv, char ** env)
 {
@@ -117,13 +171,62 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  BB * b = new chaos::ConditionnalAddVirtualDestructor<boost::mpl::true_, Base>;
+  //BB * b = new chaos::ConditionnalAddVirtualDestructor<boost::mpl::true_, Base>;
+
+	Base * b = new C;
 
   delete(b);
+
+	b = nullptr;
+
+
+	bool t1 = IsTrue(chaos::has_nocopy<chaos::NoCopy>::type());
+	bool t2 = IsTrue(chaos::has_nocopy<chaos::VirtualDestructor>::type());
 
 //  B b;
 //  B b2;
 
+	{
+
+	using vec = boost::mpl::vector<chaos::EmptyClass, chaos::NoCopy, int>;
+
+	using has1 = chaos::meta::has_satisfying_element<vec, boost::is_same<int,boost::mpl::_> >;
+	using has2 = chaos::meta::has_satisfying_element<vec, boost::is_same<float,boost::mpl::_> >;
+	//using has3 = chaos::has_satisfying_element<vec, boost::mpl::identity<boost::mpl::true_ >>;
+	//using has4 = chaos::has_satisfying_element<vec, boost::mpl::identity<boost::mpl::false_ >>;
+
+
+	using has3 = chaos::meta::has_satisfying_element<vec, chaos::has_nocopy<boost::mpl::_> >;
+	using has4 = chaos::meta::has_satisfying_element<vec, chaos::has_virtual_destructor<boost::mpl::_> >;
+
+	bool t1 = IsTrue(has1::type());
+	bool t2 = IsTrue(has2::type());
+	bool t3 = IsTrue(has3::type());
+	bool t4 = IsTrue(has4::type());
+	//bool t3 = IsTrue(has3::type());
+	//bool t4 = IsTrue(has4::type());
+
+	int i = 0;
+	++i;
+	//using has1 = chaos::has_satisfying_element<vec, boost::mpl::true_>;
+	//using has2 = chaos::has_satisfying_element<vec, boost::mpl::false_>;
+
+	//bool t1 = IsTrue(has1::type());
+	//bool t2 = IsTrue(has2());
+
+#if 0
+
+	using h1 = boost::is_same<
+		boost::mpl::end,
+		boost::mpl::find_if<vec, chaos::has_nocopy<boost::mpl::_>
+		>;
+	using h2 = boost::mpl::find_if<vec, chaos::has_nocopy<boost::mpl::_>>;
+
+	bool t1 = IsTrue(h1::type());
+	bool t2 = IsTrue(h2::type());
+#endif
+	}
+	return 0;
 
 
 #if 0
@@ -138,8 +241,8 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::NamedObject * p4 = m2.GetElementByTag(0);
 
 
-	using b1 = chaos::Metaprog::add_uniq_pointer<int *>;
-	using b2 = chaos::Metaprog::add_uniq_pointer<int>;
+	using b1 = chaos::meta::add_uniq_pointer<int *>;
+	using b2 = chaos::meta::add_uniq_pointer<int>;
 
 	b1 i;
 	b2 ii;

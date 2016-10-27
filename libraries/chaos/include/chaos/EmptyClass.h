@@ -6,53 +6,53 @@ namespace chaos
 {
 
 /** generate meta tags functions */
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_nocopy_tag, NoCopyTag, true)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_virtual_destructor_tag, VirtualDestructorTag, true)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_nocopy_tag, nocopy_tag, true)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_vdestroy_tag, vdestroy_tag, true)
 
 /** tag classes generation */
-#define CHAOS_GENERATE_TAG_CLASS(name)  struct name { class name##Tag {}; }
-CHAOS_GENERATE_TAG_CLASS(NoCopy);
-CHAOS_GENERATE_TAG_CLASS(VirtualDestructor);
+#define CHAOS_GENERATE_TAG_CLASS(name)  struct name { class name##_tag {}; }
+CHAOS_GENERATE_TAG_CLASS(nocopy);
+CHAOS_GENERATE_TAG_CLASS(vdestroy);
 
 /** Simply a base class */
 class EmptyClass {};
 
 /** utility class to add a virtual destructor to any base class */
 template<typename BASE_CLASS = EmptyClass>
-class AddVirtualDestructor : public BASE_CLASS
+class add_vdestroy : public BASE_CLASS
 {
 public:
 
   /** simply a virtual destructor */
-  virtual ~AddVirtualDestructor() {}
+  virtual ~add_vdestroy() {}
 };
 
 /** an utility class to conditionnally add a virtual destructor to any base class */
 template<typename COND, typename BASE_CLASS = EmptyClass>
-using ConditionnalAddVirtualDestructor = boost::mpl::eval_if <
+using cond_add_vdestroy = boost::mpl::eval_if <
   COND,
-  AddVirtualDestructor<BASE_CLASS>,
+	add_vdestroy<BASE_CLASS>,
   BASE_CLASS>;
 
 /** RemoveCopy : an utility class to suppress copy construction/operator */
 template<typename BASE_CLASS = EmptyClass>
-class RemoveCopy : public BASE_CLASS
+class remove_copy : public BASE_CLASS
 {
 public:
 
   /** keep default constructor */
-	RemoveCopy() {}
+	remove_copy() {}
   /** delete copy constructor */
-	RemoveCopy(RemoveCopy const &) = delete;
+	remove_copy(remove_copy const &) = delete;
   /** delete copy operator */
-	RemoveCopy & operator = (RemoveCopy const &) = delete;
+	remove_copy & operator = (remove_copy const &) = delete;
 };
 
 /** an utility class to conditionnally suppress copy construction/operator */
 template<typename COND, typename BASE_CLASS = EmptyClass>
-using ConditionnalRemoveCopy = boost::mpl::eval_if <
+using cond_remove_copy = boost::mpl::eval_if <
 	COND,
-	RemoveCopy<BASE_CLASS>,
+	remove_copy<BASE_CLASS>,
 	BASE_CLASS>;
 
 

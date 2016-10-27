@@ -87,7 +87,13 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 
+	{
+		class A : public chaos::cond_add_logger<boost::mpl::false_>{};
 
+		delete(new A);
+	
+	
+	}
 
 
 

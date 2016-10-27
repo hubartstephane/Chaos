@@ -5,17 +5,27 @@
 namespace chaos
 {
 
-/** generate meta tags functions */
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_nocopy_tag, nocopy_tag, true)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_vdestroy_tag, vdestroy_tag, true)
-
 /** tag classes generation */
-#define CHAOS_GENERATE_TAG_CLASS(name)  struct name { class name##_tag {}; }
+#define CHAOS_GENERATE_TAG_CLASS(name)\
+	BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_##name##_tag, name##_tag, true)\
+	struct name { class name##_tag {}; }
+
 CHAOS_GENERATE_TAG_CLASS(nocopy);
 CHAOS_GENERATE_TAG_CLASS(vdestroy);
+CHAOS_GENERATE_TAG_CLASS(logger);
 
 /** Simply a base class */
 using EmptyClass = boost::mpl::empty_base;
+
+
+
+template<typename COND, typename FUNC, typename BASE_CLASS>
+using cond_enrich_class = boost::mpl::eval_if <
+	COND,
+	typename boost::mpl::apply<FUNC, BASE_CLASS>::type,
+	BASE_CLASS>;
+
+
 
 /** utility class to add a virtual destructor to any base class */
 template<typename BASE_CLASS = EmptyClass>
@@ -27,12 +37,44 @@ public:
   virtual ~add_vdestroy() {}
 };
 
+
+template<typename COND, typename BASE_CLASS = EmptyClass>
+using cond_add_vdestroy = cond_enrich_class<COND, add_vdestroy<boost::mpl::_1>, BASE_CLASS>;
+
+/** utility class to add loggers at construction/destruction */
+template<typename BASE_CLASS = EmptyClass>
+class add_logger : public BASE_CLASS
+{
+public:
+
+	/** constructor */
+	add_logger(){ std::cout << "construct object : " << this << std::endl;}
+	/** destructor */
+	~add_logger(){ std::cout << "destruct object : " << this << std::endl;}
+};
+
+template<typename COND, typename BASE_CLASS = EmptyClass>
+using cond_add_logger = cond_enrich_class<COND, add_logger<boost::mpl::_1>, BASE_CLASS>;
+
+
+
+
+
+
+
+
+
+
+#if 0
+
 /** an utility class to conditionnally add a virtual destructor to any base class */
 template<typename COND, typename BASE_CLASS = EmptyClass>
 using cond_add_vdestroy = boost::mpl::eval_if <
   COND,
 	add_vdestroy<BASE_CLASS>,
   BASE_CLASS>;
+
+#endif
 
 /** RemoveCopy : an utility class to suppress copy construction/operator */
 template<typename BASE_CLASS = EmptyClass>

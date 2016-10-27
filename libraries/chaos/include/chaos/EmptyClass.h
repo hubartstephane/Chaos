@@ -15,7 +15,7 @@ CHAOS_GENERATE_TAG_CLASS(nocopy);
 CHAOS_GENERATE_TAG_CLASS(vdestroy);
 
 /** Simply a base class */
-class EmptyClass {};
+using EmptyClass = boost::mpl::empty_base;
 
 /** utility class to add a virtual destructor to any base class */
 template<typename BASE_CLASS = EmptyClass>
@@ -55,6 +55,11 @@ using cond_remove_copy = boost::mpl::eval_if <
 	remove_copy<BASE_CLASS>,
 	BASE_CLASS>;
 
+/** the list of the operations */
+using class_tag_operations = boost::mpl::vector<
+	boost::mpl::pair<has_vdestroy_tag<boost::mpl::_1>, cond_add_vdestroy<boost::mpl::_1, boost::mpl::_2> >,
+	boost::mpl::pair<has_nocopy_tag<boost::mpl::_1>, cond_remove_copy<boost::mpl::_1, boost::mpl::_2> >
+>;
 
 #if 0
 

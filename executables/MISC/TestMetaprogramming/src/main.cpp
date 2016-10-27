@@ -9,6 +9,23 @@
 #include <chaos/EmptyClass.h>
 
 
+/*
+typedef boost::mpl::inherit_linearly<
+	boost::mpl::vector<int,char const*,bool>
+	, boost::mpl::inherit< boost::mpl::_1, tuple_field<_2> >
+>::type tuple;
+*/
+
+template<typename T1, typename T2>
+using A = boost::mpl::inherit_linearly<
+	boost::mpl::vector<T1, T2>,
+	boost::mpl::inherit< 
+		boost::mpl::_1, 
+		boost::mpl::identity<boost::mpl::_2> 
+	> 
+>;
+
+
 /***********************************************************************************************/
 
 class BB
@@ -47,7 +64,18 @@ bool IsTrue(boost::mpl::false_)
 	return false;
 }
 
+class X
+{
+public:
 
+	X(){std::cout << "X" << std::endl;}
+};
+class Y
+{
+public:
+
+	Y(){std::cout << "Y" << std::endl;}
+};
 
 /***********************************************************************************************/
 
@@ -56,6 +84,27 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+
+
+
+
+
+
+
+
+	A<X, Y>::type t;
+
+
+
+
+	chaos::Application::Finalize();
+	return 0;
+
+
+
+
+
+#if 0
 
   //BB * b = new chaos::ConditionnalAddVirtualDestructor<boost::mpl::true_, Base>;
 
@@ -135,9 +184,9 @@ int _tmain(int argc, char ** argv, char ** env)
 
 #endif
 
-  chaos::Application::Finalize();
 
-  return 0;
+#endif
+
 }
 
 

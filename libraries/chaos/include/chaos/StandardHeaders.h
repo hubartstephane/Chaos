@@ -96,6 +96,10 @@ T max(T a, T b)
 #include <boost/mpl/end.hpp>
 #include <boost/mpl/not_equal_to.hpp>
 #include <boost/mpl/comparison.hpp>
+#include <boost/mpl/inherit_linearly.hpp>
+#include <boost/mpl/inherit.hpp>
+#include <boost/mpl/empty_base.hpp>
+
 
 
 #include <boost/preprocessor/repetition/enum_params.hpp>

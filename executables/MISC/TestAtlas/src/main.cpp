@@ -133,36 +133,6 @@ bool IsTrue(boost::mpl::false_)
 
 
 
-template<typename ...TAGS>
-class BClass
-{
-public:
-
-	using all_tags = boost::mpl::vector<TAGS...>;
-
-
-
-};
-
-//template<typename VECTOR, typename PRED>
-//using TOTO = boost::mpl::find_if<VECTOR, PRED<boost::mpl::_>>;
-
-
-
-namespace chaos
-{
-template<typename SEQ, typename PRED>
-using has_satisfying_element = boost::mpl::not_<
-	boost::is_same<
-		typename boost::mpl::end<SEQ>::type,
-		typename boost::mpl::find_if<SEQ, PRED>::type
-	>
->;
-
-
-};
-
-
 
 
 int _tmain(int argc, char ** argv, char ** env)
@@ -180,8 +150,8 @@ int _tmain(int argc, char ** argv, char ** env)
 	b = nullptr;
 
 
-	bool t1 = IsTrue(chaos::has_nocopy<chaos::NoCopy>::type());
-	bool t2 = IsTrue(chaos::has_nocopy<chaos::VirtualDestructor>::type());
+	bool t1 = IsTrue(chaos::has_nocopy_tag<chaos::NoCopy>::type());
+	bool t2 = IsTrue(chaos::has_nocopy_tag<chaos::VirtualDestructor>::type());
 
 //  B b;
 //  B b2;
@@ -196,8 +166,8 @@ int _tmain(int argc, char ** argv, char ** env)
 	//using has4 = chaos::has_satisfying_element<vec, boost::mpl::identity<boost::mpl::false_ >>;
 
 
-	using has3 = chaos::meta::has_satisfying_element<vec, chaos::has_nocopy<boost::mpl::_> >;
-	using has4 = chaos::meta::has_satisfying_element<vec, chaos::has_virtual_destructor<boost::mpl::_> >;
+	using has3 = chaos::meta::has_satisfying_element<vec, chaos::has_nocopy_tag<boost::mpl::_> >;
+	using has4 = chaos::meta::has_satisfying_element<vec, chaos::has_virtual_destructor_tag<boost::mpl::_> >;
 
 	bool t1 = IsTrue(has1::type());
 	bool t2 = IsTrue(has2::type());

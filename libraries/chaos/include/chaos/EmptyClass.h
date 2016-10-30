@@ -17,15 +17,12 @@ CHAOS_GENERATE_TAG_CLASS(logger);
 /** Simply a base class */
 using EmptyClass = boost::mpl::empty_base;
 
-
-
+/** an utility class that derives from BASE CLASS or from FUNC<BASE_CLASS>::type */
 template<typename COND, typename FUNC, typename BASE_CLASS>
 using cond_enrich_class = boost::mpl::eval_if <
 	COND,
 	typename boost::mpl::apply<FUNC, BASE_CLASS>::type,
 	BASE_CLASS>;
-
-
 
 /** utility class to add a virtual destructor to any base class */
 template<typename BASE_CLASS = EmptyClass>
@@ -36,7 +33,6 @@ public:
   /** simply a virtual destructor */
   virtual ~add_vdestroy() {}
 };
-
 
 template<typename COND, typename BASE_CLASS = EmptyClass>
 using cond_add_vdestroy = cond_enrich_class<COND, add_vdestroy<boost::mpl::_1>, BASE_CLASS>;
@@ -56,27 +52,7 @@ public:
 template<typename COND, typename BASE_CLASS = EmptyClass>
 using cond_add_logger = cond_enrich_class<COND, add_logger<boost::mpl::_1>, BASE_CLASS>;
 
-
-
-
-
-
-
-
-
-
-#if 0
-
-/** an utility class to conditionnally add a virtual destructor to any base class */
-template<typename COND, typename BASE_CLASS = EmptyClass>
-using cond_add_vdestroy = boost::mpl::eval_if <
-  COND,
-	add_vdestroy<BASE_CLASS>,
-  BASE_CLASS>;
-
-#endif
-
-/** RemoveCopy : an utility class to suppress copy construction/operator */
+/** remove_copy : an utility class to suppress copy construction/operator */
 template<typename BASE_CLASS = EmptyClass>
 class remove_copy : public BASE_CLASS
 {
@@ -90,20 +66,77 @@ public:
 	remove_copy & operator = (remove_copy const &) = delete;
 };
 
-/** an utility class to conditionnally suppress copy construction/operator */
 template<typename COND, typename BASE_CLASS = EmptyClass>
-using cond_remove_copy = boost::mpl::eval_if <
-	COND,
-	remove_copy<BASE_CLASS>,
-	BASE_CLASS>;
+using cond_remove_copy = cond_enrich_class<COND, remove_copy<boost::mpl::_1>, BASE_CLASS>;
 
-/** the list of the operations */
-using class_tag_operations = boost::mpl::vector<
-	boost::mpl::pair<has_vdestroy_tag<boost::mpl::_1>, cond_add_vdestroy<boost::mpl::_1, boost::mpl::_2> >,
-	boost::mpl::pair<has_nocopy_tag<boost::mpl::_1>, cond_remove_copy<boost::mpl::_1, boost::mpl::_2> >
->;
+/** in chain conditionnal inheritance */
+namespace details
+{
+  /** the list of the operations */
+  using class_tag_operations = boost::mpl::vector<
+    cond_add_vdestroy<has_vdestroy_tag<boost::mpl::_1>, boost::mpl::_2>,
+    cond_remove_copy<has_nocopy_tag<boost::mpl::_1>, boost::mpl::_2>,
+    cond_add_logger<has_logger_tag<boost::mpl::_1>, boost::mpl::_2>
+  >;
+
+  template<typename TAGS, typename BEGIN, typename END, typename BASE>
+  class BaseClassIteratorImpl : public BaseClassIteratorImpl <
+    TAGS,
+    typename boost::mpl::next<BEGIN>::type,
+    END,
+    typename boost::mpl::apply<
+      typename boost::mpl::deref<BEGIN>::type,
+      TAGS,
+      BASE
+    >::type
+  > {};
+
+  template<typename TAGS, typename IT, typename BASE>
+  class BaseClassIteratorImpl<TAGS, IT, IT, BASE> {};
+
+  template<typename TAGS = boost::mpl::vector<>>
+  using BaseClassImpl = details::BaseClassIteratorImpl<
+    TAGS,
+    boost::mpl::begin<details::class_tag_operations>::type,
+    boost::mpl::end<details::class_tag_operations>::type,
+    EmptyClass
+  >;
+};
+
+template<typename ...TAGS>
+using BaseClass = details::BaseClassImpl<boost::mpl::vector<TAGS...>>;
+
+
+
 
 #if 0
+
+
+
+template<typename BEGIN, typename END, typename BASE>
+class MyClassImpl : public MyClassImpl <
+  typename boost::mpl::next<BEGIN>::type,
+  END,
+  typename boost::mpl::apply<
+  typename boost::mpl::deref<BEGIN>::type,
+  BASE
+  >::type
+> {};
+
+
+template<typename IT, typename BASE>
+class MyClassImpl < IT, IT, BASE > : public BASE {};
+
+template<typename SEQ, typename BASE = chaos::EmptyClass>
+using MyClass = MyClassImpl<
+  typename boost::mpl::template begin<SEQ>::type,
+  typename boost::mpl::template end<SEQ>::type,
+  BASE>;
+
+
+
+
+
 
 template<typename SEQ>
 using BaseClassImpl = 

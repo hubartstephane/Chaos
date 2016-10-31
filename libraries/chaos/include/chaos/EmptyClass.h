@@ -2,6 +2,9 @@
 
 #include <chaos/StandardHeaders.h>
 
+
+#include <boost/mpl/apply_wrap.hpp>
+
 namespace chaos
 {
 
@@ -20,7 +23,7 @@ using EmptyClass = boost::mpl::empty_base;
 /** an utility class that derives from BASE CLASS or from FUNC<BASE_CLASS>::type */
 template<typename COND, typename FUNC, typename BASE_CLASS>
 using cond_enrich_class = boost::mpl::eval_if <
-	COND,
+	typename COND::type,
 	typename boost::mpl::apply<FUNC, BASE_CLASS>::type,
 	BASE_CLASS>;
 
@@ -85,77 +88,28 @@ namespace details
     typename boost::mpl::next<BEGIN>::type,
     END,
     typename boost::mpl::apply<
-      typename boost::mpl::deref<BEGIN>::type,
+			boost::mpl::identity<boost::mpl::_2>,
+      //typename boost::mpl::deref<BEGIN>::type,
       TAGS,
-      BASE
+			BASE
     >::type
-  > {};
+	> {};
 
   template<typename TAGS, typename IT, typename BASE>
-  class BaseClassIteratorImpl<TAGS, IT, IT, BASE> {};
+	class BaseClassIteratorImpl<TAGS, IT, IT, BASE> : public BASE {};
 
   template<typename TAGS = boost::mpl::vector<>>
   using BaseClassImpl = details::BaseClassIteratorImpl<
     TAGS,
     boost::mpl::begin<details::class_tag_operations>::type,
     boost::mpl::end<details::class_tag_operations>::type,
-    EmptyClass
+		add_logger<add_logger<>>
+    //EmptyClass
   >;
 };
 
 template<typename ...TAGS>
 using BaseClass = details::BaseClassImpl<boost::mpl::vector<TAGS...>>;
-
-
-
-
-#if 0
-
-
-
-template<typename BEGIN, typename END, typename BASE>
-class MyClassImpl : public MyClassImpl <
-  typename boost::mpl::next<BEGIN>::type,
-  END,
-  typename boost::mpl::apply<
-  typename boost::mpl::deref<BEGIN>::type,
-  BASE
-  >::type
-> {};
-
-
-template<typename IT, typename BASE>
-class MyClassImpl < IT, IT, BASE > : public BASE {};
-
-template<typename SEQ, typename BASE = chaos::EmptyClass>
-using MyClass = MyClassImpl<
-  typename boost::mpl::template begin<SEQ>::type,
-  typename boost::mpl::template end<SEQ>::type,
-  BASE>;
-
-
-
-
-
-
-template<typename SEQ>
-using BaseClassImpl = 
-chaos::ConditionnalRemoveCopy<
-	chaos::meta::has_satisfying_element<SEQ, chaos::has_nocopy<boost::mpl::_>>,
-	chaos::ConditionnalAddVirtualDestructor<
-	chaos::meta::has_satisfying_element<SEQ, chaos::has_virtual_destructor<boost::mpl::_>>,
-	chaos::EmpyClass
-	>
->
->;
-
-
-template<typename ...TAGS>
-using BaseClass = BaseClassImpl<boost::mpl::vector<TAGS...>>;
-
-#endif
-
-
 
 
 }; // namespace chaos

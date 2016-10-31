@@ -68,8 +68,16 @@ using MyClass = MyClassImpl<
   BASE>;
 
 
-class T : public chaos::BaseClass<> {};
+class T : public chaos::BaseClass<chaos::logger> {};
 
+//class T : public chaos::add_logger<> {};
+
+
+//class T : public cond_add_logger<has_logger_tag<boost::mpl::_1>, boost::mpl::_2>
+
+//using TAGS = boost::mpl::vector<chaos::logger>;
+
+//class T : public chaos::cond_add_logger<chaos::has_logger_tag<TAGS>, chaos::EmptyClass> {};
 
 int _tmain(int argc, char ** argv, char ** env)
 {
@@ -77,11 +85,14 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  delete(new MyClass<MyTransf>);
+  //delete(new MyClass<MyTransf>);
 
   std::cout << "======================" << std::endl;
 
+	delete(new T);
  
+
+	IsTrue(chaos::has_logger_tag<chaos::logger>::type());
 
 	chaos::Application::Finalize();
 	return 0;

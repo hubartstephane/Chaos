@@ -93,12 +93,19 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
 
+  {
 
-	chaos::NamedObjectVector<A>  vector1;
+    chaos::NamedObjectVector<A>  vector1;
+    vector1.elements.push_back(A());
+    A* a1 = vector1.Find(666);
+    A* a2 = vector1.Find("toto");
 
-	//vector1.Find(666);
+    chaos::NamedObjectVector<A*> vector2;
+    vector2.elements.push_back(new A());
+    A* a3 = vector2.Find(666);
+    A* a4 = vector2.Find("toto");
 
-	chaos::NamedObjectVector<A*> vector2;
+  }
 
 	//vector2.Find(666);
 

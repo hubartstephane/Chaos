@@ -7,7 +7,8 @@
 
 #include <chaos/Metaprogramming.h>
 #include <chaos/EmptyClass.h>
-#include <chaos/ElementVector.h>
+#include <chaos/NamedObject.h>
+#include <chaos/NamedObjectVector.h>
 
 
 
@@ -80,6 +81,11 @@ class T : public chaos::BaseClass<chaos::logger> {};
 
 //class T : public chaos::cond_add_logger<chaos::has_logger_tag<TAGS>, chaos::EmptyClass> {};
 
+class A : public chaos::NamedObject
+{
+
+};
+
 int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
@@ -88,8 +94,13 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 
-	chaos::NamedObjectVector<int> vector;
+	chaos::NamedObjectVector<A>  vector1;
 
+	//vector1.Find(666);
+
+	chaos::NamedObjectVector<A*> vector2;
+
+	//vector2.Find(666);
 
 
 

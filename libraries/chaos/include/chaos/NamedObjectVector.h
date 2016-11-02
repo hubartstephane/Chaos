@@ -5,18 +5,56 @@
 
 namespace chaos
 {
-	/** a class that describe an object that can be reference by tag and by name */
-	class NamedObject
+
+	/** a class that describe an vector of element that have to be deleted at destruction */
+	template<typename T, typename BASE = EmptyClass>
+	class ObjectVector : public BASE
 	{
 	public:
 
-		/** constructor */
-		NamedObject() : tag(0){}
+		using base_type = typename boost::remove_const<meta::remove_all_pointer<T>>::type;
 
-		/** the name of the object */
-		std::string name;
-		/** the tag of the object */
-		TagType tag;
+		using const_base_type = typename boost::add_const<base_type>::type;
+			
+		using ptr_type = typename boost::add_pointer<base_type>:type;
+
+		using const_ptr_type = typename boost::add_pointer<const_base_type>:type;
+
+		using ref_type = typename boost::add_reference<base_type>:type;
+
+		using const_ref_type = typename boost::add_reference<const_base_type>:type;
+
+
+			
+			
+
+		/** destructor */
+		~ObjectVector(){ Clear(); }
+
+		/** clear the list of elements */
+		void Clear()
+		{
+			for (auto & element : elements)
+				DeleteElement(element);
+			elements.clear();
+		}
+
+	protected:
+
+		/** fake destruction of elements */
+		void DeleteElement(ref_type element)
+		{
+		}
+		/** destruction of elements */
+		void DeleteElement(ptr_type element) 
+		{
+			delete(element);
+		}
+
+	public:
+
+		/** the elements of the arrays */
+		std::vector<type> elements;
 	};
 
 
@@ -24,9 +62,9 @@ namespace chaos
 
 
 
-
+	/** a class that describe an vector of element that can be named */
 	template<typename T, typename BASE = EmptyClass>
-	class NamedObjectVector : public BASE
+	class NamedObjectVector : public ObjectVector<T, BASE>
 	{
 	public:
 
@@ -162,20 +200,7 @@ namespace chaos
 		{
 			return (element->tag == tag);
 		}
-		/** fake destruction of elements */
-		void DeleteElement(ref_type element)
-		{
-		}
-		/** destruction of elements */
-		void DeleteElement(ptr_type element) 
-		{
-			delete(element);
-		}
 
-	public:
-
-		/** the elements of the arrays */
-		std::vector<type> elements;
 
 #endif
 

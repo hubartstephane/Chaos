@@ -6,6 +6,14 @@ namespace chaos
 {
 	namespace meta
 	{
+		/** remove all pointer */
+		template<typename T>
+		struct remove_all_pointer : boost::mpl::eval_if<
+			boost::is_pointer<T>,
+			remove_all_pointer<typename boost::remove_pointer<T>::type>,
+			boost::mpl::identity<T>
+		>{};	
+
 		/** add a pointer only if it is not already a pointer */
 		template<typename T>
 		using add_uniq_pointer = boost::mpl::eval_if<

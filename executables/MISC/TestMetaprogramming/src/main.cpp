@@ -7,6 +7,7 @@
 
 #include <chaos/Metaprogramming.h>
 #include <chaos/EmptyClass.h>
+#include <chaos/ElementVector.h>
 
 
 
@@ -85,6 +86,18 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
+
+
+	chaos::NamedObjectVector<int> vector;
+
+
+
+
+
+#if 0
+	chaos::meta::remove_all_pointer<int ****>::type iii = 666;
+
+
   //delete(new MyClass<MyTransf>);
 
   std::cout << "======================" << std::endl;
@@ -93,6 +106,9 @@ int _tmain(int argc, char ** argv, char ** env)
  
 
 	IsTrue(chaos::has_logger_tag<chaos::logger>::type());
+
+#endif
+
 
 	chaos::Application::Finalize();
 	return 0;

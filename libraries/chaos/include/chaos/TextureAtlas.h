@@ -2,60 +2,185 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Metaprogramming.h>
+#include <chaos/EmptyClass.h>
 
 namespace chaos
 {
+
+
+#if 0
+
+
+
+
+
+	namespace TextureAtlas
+	{
+		using TagType = intptr_t;
+
+		class NamedObject
+		{
+		public:
+
+			/** constructor */
+			NamedObject() : tag(0){}
+
+			/** the name of the object */
+			std::string name;
+			/** the tag of the object */
+			TagType tag;
+		};
+
+		class BitmapEntry : public NamedObject
+		{
+			/** the atlas in which it is stored in result */
+			size_t bitmap_index;
+			/** the top-left corner of the texture */
+			int    x;
+			/** the top-left corner of the texture */
+			int    y;
+			/** the size of the texture (beware, 2 x padding must be add for correct result) */
+			int    width;
+			/** the size of the texture (beware, 2 x padding must be add for correct result) */
+			int    height;
+		};
+
+		class FontEntry : public BitmapEntry
+		{
+		public:
+			FT_Vector advance;
+			int       bitmap_left; // from 'CharacterMetrics' class
+			int       bitmap_top;
+		};
+
+		class AtlasEntryBase : public NamedObject
+		{
+		public:
+
+			virtual ~AtlasEntryBase(){};		
+		};
+
+
+
+
+
+
+
+
+		template<typename T>
+		class Entry : public NamedObject
+		{
+		public:
+
+			using type = T;
+
+
+
+			
+			std::vector<type> elements;
+		};
+
+		using BitmapSetEntry = Entry<BitmapEntry>;
+		using FontEntry      = Entry<FontEntry>;
+
+
+
+
+		class Atlas
+		{
+
+		public:
+
+			virtual ~Atlas(){}
+
+
+		public:
+			
+			std::vector<AtlasEntryBase*> entries;
+
+		};
+
+
+		using BitmapSetEntry = ElementList<BitmapEntry, AtlasEntryBase>;
+		using FontEntry      = ElementList<BitmapEntry, AtlasEntryBase>;
+
+
+		class Atlas : public ElementList<AtlasEntryBase *, EmptyClass>
+		{
+
+		}
+
+		class BitmapSetInput
+		{
+		public:
+
+			AddBitmap();		
+		};
+
+		class FontInput
+		{
+		public:
+
+			AddFont();		
+		};
+
+		class AtlasInput
+		{
+		public:
+
+			BitmapSetInput * NewBitmapSet(char const * name, TypeType * tag)
+			{
+				// test whether entry is already existing
+				if (name != nullptr && bitmaps.Find(name) != nullptr) 
+					return nullptr;
+				if (tag != 0 && bitmaps.Find(name) != nullptr) 
+					return nullptr;
+
+				BitmapSetInput * result = new BitmapSetInput(name, tag);
+				if (result != nullptr)
+				{
+					bitmaps.push_back(result);
+
+				}
+				return result;			
+			}
+
+			FontInput * NewFont()
+
+		protected:
+
+			ElementList<BitmapSetInput*> bitmaps;
+			ElementList<FontInput*>      fonts;
+		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+	};
+
+
+
+#endif // shu
+
+
+
+
 #if 0
 
   namespace TextureAtlas
   {
-    class InputElementBase
-    {
-
-    };
-
-    class InputBitmapSet : public InputElementBase
-    {
-
-    };
-
-    class InputFont : public InputElementBase
-    {
-
-    };
 
 
 
-    class Input
-    {
-    public:
-
-      InputBitmapSet * AddBitmapSet(char const * set_name);
-
-      InputFont * AddFont(char const * font_name);
-    };
-
-    class BitmapEntry
-    {
-      /** the atlas in which it is stored in result */
-      size_t bitmap_index;
-      /** the top-left corner of the texture */
-      int    x;
-      /** the top-left corner of the texture */
-      int    y;
-      /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int    width;
-      /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int    height;
-    };
-
-    class FontEntry : public BitmapEntry
-    {
-    public:
-      FT_Vector advance;
-      int       bitmap_left; // from 'CharacterMetrics' class
-      int       bitmap_top;
-    };
 
     class AtlasDataSetBase : public ClassBase<bool, false>
     {
@@ -111,20 +236,6 @@ namespace chaos
   
 
 
-  class NamedObject
-  {
-  public:
-
-    /** constructor */
-    NamedObject() : tag(0) {}
-
-  public:
-
-    /** the name of the object */
-    std::string name;
-    /** the tag of the object */
-    TagType tag;
-  };
 
 
 
@@ -157,8 +268,7 @@ namespace chaos
       elements.clear();
     }
 
-    /** the elements of the arrays */
-    std::vector<type> elements;
+
 
   protected:
 
@@ -283,284 +393,6 @@ namespace chaos
 
 #endif
 
-
-
-
-
-
-
-
-#if 0
-
-  /**
-   * TextureAtlasNamedObject : a base class for object that have a NAME and TAG
-   */
-
-  class TextureAtlasNamedObject
-  {
-  public:
-
-    /** constructor */
-    TextureAtlasEntry() : tag(0) {}
-
-  public:
-
-    /** the name of the object */
-    std::string name;
-    /** the tag of the object */
-    int         tag;   
-  };
-
-  /**
-   * TextureAtlasElement : this represents a "bitmap" in the atlas (a texture slice + sub coordinates)
-   */
-
-  class TextureAtlasElement : public TextureAtlasNamedObject
-  {
-  public:
-
-    /** the atlas in which it is stored in result */
-    size_t bitmap_index;
-    /** the top-left corner of the texture */
-    int    x;
-    /** the top-left corner of the texture */
-    int    y;
-    /** the size of the texture (beware, 2 x padding must be add for correct result) */
-    int    width;
-    /** the size of the texture (beware, 2 x padding must be add for correct result) */
-    int    height;
-  };
-
-  /**
-   * TextureAtlasBitmapElement : an element for a simple bitmap with no additionnal info
-   */
-
-  class TextureAtlasBitmapElement : public TextureAtlasElement
-  {
-  };
-
-  /**
-   * TextureAtlasGlyphElement : an element for a glyph inside the atlas
-   */
-
-  class TextureAtlasGlyphElement : public TextureAtlasElement
-  {
-  public:
-
-    FT_Vector advance;
-    int       bitmap_left; // from 'CharacterMetrics' class
-    int       bitmap_top;
-  };
-
-
-
-
-
-
-
-
-
-
-
-  /**
-   * TextureAtlasEntry : an object in atlas that contains several elements
-   */
-
-  class TextureAtlasEntry : public TextureAtlasNamedObject 
-  {
-  public:
-
-    /** destructor */
-    virtual ~TextureAtlasEntry() {}
-    /** clear all elements in this entries */
-    virtual void Clear() {}
-  };
-
-
-
-  /**
-   *
-   */
-
-  template<typename T> 
-  class TextureAtlasNamedObjectOwner
-  {
-  public:
-
-    using ELEMENT_TYPE = T;
-
-    using ELEMENT_TYPE_PTR = boost::mpl::if_<
-      boost::mpl::is_pointer<ELEMENT_TYPE>, 
-      ELEMENT_TYPE, 
-      boost::mpl::add_pointer<ELEMENT_TYPE>
-    >::type;
-
-    /** the destructor */
-    virtual ~TextureAtlasNamedObjectOwner() { Clear(); }
-
-  public:
-
-    /** clear all the entries */
-    virtual void Clear()
-    {
-      Clear(boost::mpl::is_pointer<ELEMENT_TYPE>::type());
-    }
-
-    /** gets an entry from a name */
-    ELEMENT_TYPE_PTR GetEntryByName(char const * name)
-    {
-
-    }
-    /** gets an entry from a name */
-    ELEMENT_TYPE_PTR const * GetEntryByName(char const * name) const
-    {
-
-    }
-
-    /** gets an entry from a tag */
-    ELEMENT_TYPE_PTR GetEntryByTag(int tag)
-    {
-    }
-
-    /** gets an entry from a tag */
-    ELEMENT_TYPE_PTR const * GetEntryByTag(int tag) const
-    {
-
-    }
-
-  protected:
-
-    /** utility pointer to destroy the content of the array (if it contains pointer elements) */
-    void Clear(boost::mpl::true_)
-    {
-      for (ELEMENT_TYPE * entry : entries)
-        delete(entry);
-      entries.clear();
-    }
-    /** utility pointer to destroy the content of the array (if it contains non-pointer elements) */
-    void Clear(boost::mpl::false_)
-    {
-      entries.clear();
-    }
-
-  public:
-
-    /** the elements contained */
-    std::vector<ELEMENT_TYPE> entries;
-  };
-
-
-
-
-
-  /**
-   * TextureAtlasBitmapEntry : a entry in atlas that contains set of images
-   */
-
-  class TextureAtlasBitmapEntry : public TextureAtlasEntry, public TextureAtlasNamedObjectOwner<TextureAtlasBitmapElement>
-  {
-
-  public:
-    
-  };
-
-
-  /**
-  * TextureAtlasFontEntry : a entry in atlas that contains set of glyph from a font
-  */
-
-  class TextureAtlasFontEntry : public TextureAtlasEntry, public TextureAtlasNamedObjectOwner<TextureAtlasFontElement>
-  {
-
-
-  };
-
-
-
-  class TextureAtlas : public TextureAtlasNamedObjectOwner<TextureAtlasEntry*>
-  {
-  public:
-
-    /** destructor */
-    virtual ~TextureAtlas() { Clear(); }
-
-    /** clear the object */
-    virtual void Clear();
-
-
-
-
-  protected:
-
-    /** all the image for the output */
-    std::vector<FIBITMAP *> bitmaps;
-  };
-
-
-
-
-
-
-
-    // ===========================================================================================
-
-  void TextureAtlas::Clear()
-  {
-    // destroy the entries
-    TextureAtlasNamedObjectOwner<TextureAtlasEntry*>::Clear();
-
-    // destroy the bitmaps
-    for (FIBITMAP * bitmap : bitmaps)
-      if (bitmap != nullptr)
-        FreeImage_Unload(bitmap);
-    bitmaps.clear();   
-  }
-
-  TextureAtlasEntry * TextureAtlas::GetEntryByName(char const * name)
-  {
-    assert(name != nullptr);
-    for (TextureAtlasEntry * entry : entries)
-      if (entry->name == name)
-        return entry;
-    return nullptr;
-  }
-
-  TextureAtlasEntry const * TextureAtlas::GetEntryByName(char const * name) const
-  {
-    assert(name != nullptr);
-    for (TextureAtlasEntry const * entry : entries)
-      if (entry->name == name)
-        return entry;
-    return nullptr;
-  }
-
-  TextureAtlasEntry * TextureAtlas::GetEntryByTag(int tag)
-  {
-    assert(name != nullptr);
-    for (TextureAtlasEntry * entry : entries)
-      if (entry->tag == tag)
-        return entry;
-    return nullptr;
-  }
-
-  TextureAtlasEntry const * TextureAtlas::GetEntryByTag(int tag) const
-  {
-    assert(name != nullptr);
-    for (TextureAtlasEntry const * entry : entries)
-      if (entry->tag == tag)
-        return entry;
-    return nullptr;
-  }
-
-
-
-// ===========================================================================================
-
-
-
-
-
-#endif
 
 
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/Metaprogramming.h>
+#include <chaos/NamedObject.h>
 #include <chaos/EmptyClass.h>
 
 namespace chaos

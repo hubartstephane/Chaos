@@ -5,7 +5,227 @@
 
 namespace chaos
 {
-  
+  namespace TextureAtlasx
+  {
+
+    // ========================================================================
+    // AtlasInput implementation
+    // ========================================================================
+
+    void AtlasInput::Clear()
+    {
+      // destroy the bitmaps
+      for (BitmapSetInput * bitmap : bitmap_sets)
+        delete(bitmap);
+      bitmap_sets.clear();
+      // destroy the fonts
+      for (FontInput * font : fonts)
+        delete(font);
+      fonts.clear();
+    }
+
+    BitmapSetInput * AtlasInput::AddBitmapSet(char const * name)
+    {
+      assert(name != nullptr);
+
+      BitmapSetInput * result = new BitmapSetInput;
+      if (result != nullptr)
+      {
+        result->name = name;
+        bitmap_sets.push_back(result);
+      }
+      return result;
+    }
+
+    FontInput * AtlasInput::AddFont(char const * name, FT_Library library, char const * font_name, char const * characters, bool release_library, FontAtlasFontParams const & font_params)
+    {
+      assert(font_name != nullptr);
+
+      // create a library if necessary
+      if (library == nullptr)
+      {
+        FT_Error error = FT_Init_FreeType(&library);
+        if (error)
+          return nullptr;
+        release_library = true;
+      }
+
+      // load the face and set pixel size
+      FT_Face face;
+      FT_Error error = FT_New_Face(library, font_name, 0, &face);
+      if (error)
+      {
+        if (release_library)
+          FT_Done_FreeType(library); // delete library if necessary
+        return nullptr;
+      }
+
+      return AddFontImpl(name, library, face, characters, release_library, true, font_params);
+    }
+
+    FontInput * AtlasInput::AddFont(char const * name, FT_Face face, char const * characters, bool release_face, FontAtlasFontParams const & font_params)
+    {
+      return AddFontImpl(name, nullptr, face, characters, false, release_face, font_params);
+    }
+
+    FontInput * AtlasInput::AddFontImpl(char const * name, FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face, FontAtlasFontParams const & font_params)
+    {
+      assert(name != nullptr);
+      assert(face != nullptr);
+
+      FontInput * result = new FontInput;
+      if (result != nullptr)
+      {
+        result->name            = name;
+        result->library         = library;
+        result->face            = face;
+        result->release_library = release_library;
+        result->release_face    = release_face;
+        result->font_params     = font_params;
+        if (characters != nullptr)
+          result->characters = characters;
+        fonts.push_back(result);
+      }
+      return result;
+    }
+
+    // ========================================================================
+    // BitmapSetInput implementation
+    // ========================================================================
+
+    BitmapSetInput::~BitmapSetInput()
+    {
+      for (auto & element : elements)
+        if (element.release_bitmap)
+          FreeImage_Unload(element.bitmap);
+      elements.clear();
+    }
+
+    bool BitmapSetInput::AddTextureFilesFromDirectory(boost::filesystem::path const & p)
+    {
+      // enumerate the source directory
+      boost::filesystem::directory_iterator end;
+      for (boost::filesystem::directory_iterator it(p); it != end; ++it)
+        AddTextureFile(it->path(), nullptr);                           // this will reject files that are not images .. not an error
+      return true;
+    }
+
+    bool BitmapSetInput::AddTextureFile(boost::filesystem::path const & path, char const * name)
+    {
+      if (boost::filesystem::is_regular_file(path))
+        return AddTextureFile(path.string().c_str(), name);
+      return false;
+    }
+
+    bool BitmapSetInput::AddTextureFile(char const * filename, char const * name)
+    {
+      assert(filename != nullptr);
+
+      bool result = false;
+
+      FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
+      if (image != nullptr)
+      {
+        result = AddImageSource(
+          (name != nullptr) ? name : boost::filesystem::path(filename).filename().string().c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+          image, true);
+        if (!result)
+          FreeImage_Unload(image);
+      }
+      return result;
+    }
+
+    bool BitmapSetInput::AddFakeImageSource(char const * name)
+    {
+      assert(name != nullptr);
+
+      int w = 15 * (1 + rand() % 10);
+      int h = 15 * (1 + rand() % 10);
+
+      bool result = false;
+
+      FIBITMAP * image = FreeImage_Allocate(w, h, 32); // allocate an image
+      if (image != nullptr)
+      {
+        unsigned char c = 55 + (rand() % 200);
+
+        unsigned char color[] = { c, c, c, 255 }; // B G R A
+
+        FreeImage_FillBackground(image, color, 0); // create a background color
+
+        result = AddImageSource(name, image, true);
+        if (!result)
+          FreeImage_Unload(image);
+      }
+      return result;
+    }
+
+    bool BitmapSetInput::AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap)
+    {
+      assert(name != nullptr);
+      assert(image != nullptr);
+
+      BitmapInputEntry new_entry;
+
+      new_entry.bitmap = image;
+      new_entry.width  = (int)FreeImage_GetWidth(new_entry.bitmap);
+      new_entry.height = (int)FreeImage_GetHeight(new_entry.bitmap);
+      new_entry.bpp    = (int)FreeImage_GetBPP(new_entry.bitmap);
+      new_entry.name   = name;
+      new_entry.release_bitmap = release_bitmap;
+
+      elements.push_back(std::move(new_entry)); // move for std::string copy
+      return true;
+    }
+
+    // ========================================================================
+    // FontInput implementation
+    // ========================================================================
+
+    FontInput::~FontInput()
+    {
+      // release face
+      if (face != nullptr)
+        if (release_face)
+          FT_Done_Face(face);
+      // release library
+      if (library != nullptr)
+        if (release_library)
+          FT_Done_FreeType(library);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // ========================================================================
   // AtlasRectangle implementation
   // ========================================================================

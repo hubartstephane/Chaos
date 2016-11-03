@@ -9,6 +9,91 @@
 namespace chaos
 {
 
+  namespace TextureAtlasx
+  {
+    // ========================================================================
+    // BitmapSet functions
+    // ========================================================================
+
+    BitmapEntry const * BitmapSet::GetEntry(char const * name) const
+    {
+      for (auto const & element : elements)
+        if (element.name == name)
+          return &element;
+      return nullptr;
+    }
+
+    // ========================================================================
+    // Font functions
+    // ========================================================================
+
+    FontEntry const * Font::GetEntry(char const * name) const
+    {
+      for (auto const & element : elements)
+        if (element.name == name)
+          return &element;
+      return nullptr;
+    }
+
+    // ========================================================================
+    // Atlas functions
+    // ========================================================================
+
+    void Atlas::Clear()
+    {
+      // destroy the bitmap sets
+      for (BitmapSet * bitmap_set : bitmap_sets)
+        delete(bitmap_set);
+      bitmap_sets.clear();
+
+      // destroy the fonts
+      for (Font * font : fonts)
+        delete(font);
+      fonts.clear();
+
+      // destroy the bitmaps
+      for (FIBITMAP * image : bitmaps)
+        FreeImage_Unload(image);
+      bitmaps.clear();
+    }
+
+    BitmapSet const * Atlas::GetBitmapSet(char const * name) const
+    {
+      assert(name != nullptr);
+      for (BitmapSet * bitmap_set : bitmap_sets)
+        if (bitmap_set->name == name)
+          return bitmap_set;
+      return nullptr;
+    }
+
+    Font const * Atlas::GetFont(char const * name) const
+    {
+      assert(name != nullptr);
+      for (Font * font : fonts)
+        if (font->name == name)
+          return font;
+      return nullptr;
+    }
+
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // ========================================================================
   // TextureAtlasEntry functions
   // ========================================================================

@@ -1,400 +1,105 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/Metaprogramming.h>
-#include <chaos/EmptyClass.h>
+#include <chaos/NamedObjectVector.h>
+#include <chaos/NamedObject.h>
 
 namespace chaos
 {
-
-
-#if 0
-
-
-
-
-
-	namespace TextureAtlas
-	{
-		using TagType = intptr_t;
-
-		class NamedObject
-		{
-		public:
-
-			/** constructor */
-			NamedObject() : tag(0){}
-
-			/** the name of the object */
-			std::string name;
-			/** the tag of the object */
-			TagType tag;
-		};
-
-		class BitmapEntry : public NamedObject
-		{
-			/** the atlas in which it is stored in result */
-			size_t bitmap_index;
-			/** the top-left corner of the texture */
-			int    x;
-			/** the top-left corner of the texture */
-			int    y;
-			/** the size of the texture (beware, 2 x padding must be add for correct result) */
-			int    width;
-			/** the size of the texture (beware, 2 x padding must be add for correct result) */
-			int    height;
-		};
-
-		class FontEntry : public BitmapEntry
-		{
-		public:
-			FT_Vector advance;
-			int       bitmap_left; // from 'CharacterMetrics' class
-			int       bitmap_top;
-		};
-
-		class AtlasEntryBase : public NamedObject
-		{
-		public:
-
-			virtual ~AtlasEntryBase(){};		
-		};
-
-
-
-
-
-
-
-
-		template<typename T>
-		class Entry : public NamedObject
-		{
-		public:
-
-			using type = T;
-
-
-
-			
-			std::vector<type> elements;
-		};
-
-		using BitmapSetEntry = Entry<BitmapEntry>;
-		using FontEntry      = Entry<FontEntry>;
-
-
-
-
-		class Atlas
-		{
-
-		public:
-
-			virtual ~Atlas(){}
-
-
-		public:
-			
-			std::vector<AtlasEntryBase*> entries;
-
-		};
-
-
-		using BitmapSetEntry = ElementList<BitmapEntry, AtlasEntryBase>;
-		using FontEntry      = ElementList<BitmapEntry, AtlasEntryBase>;
-
-
-		class Atlas : public ElementList<AtlasEntryBase *, EmptyClass>
-		{
-
-		}
-
-		class BitmapSetInput
-		{
-		public:
-
-			AddBitmap();		
-		};
-
-		class FontInput
-		{
-		public:
-
-			AddFont();		
-		};
-
-		class AtlasInput
-		{
-		public:
-
-			BitmapSetInput * NewBitmapSet(char const * name, TypeType * tag)
-			{
-				// test whether entry is already existing
-				if (name != nullptr && bitmaps.Find(name) != nullptr) 
-					return nullptr;
-				if (tag != 0 && bitmaps.Find(name) != nullptr) 
-					return nullptr;
-
-				BitmapSetInput * result = new BitmapSetInput(name, tag);
-				if (result != nullptr)
-				{
-					bitmaps.push_back(result);
-
-				}
-				return result;			
-			}
-
-			FontInput * NewFont()
-
-		protected:
-
-			ElementList<BitmapSetInput*> bitmaps;
-			ElementList<FontInput*>      fonts;
-		};
-
-
-
-
-
-
-
-
-
-
-
-
-
-	};
-
-
-
-#endif // shu
-
-
-
-
-#if 0
-
-  namespace TextureAtlas
+  namespace TextureAtlasx
   {
-
-
-
-
-    class AtlasDataSetBase : public ClassBase<bool, false>
+    class BitmapEntry : public NamedObject
     {
-
-
+      /** the atlas in which it is stored in result */
+      size_t bitmap_index;
+      /** the top-left corner of the texture */
+      int    x;
+      /** the top-left corner of the texture */
+      int    y;
+      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      int    width;
+      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      int    height;
     };
 
-    template<typename T>
-    class AtlasDataSet : public AtlasDataSetBase
+    class FontEntry : public BitmapEntry
     {
-
-
+    public:
+      FT_Vector advance;
+      int       bitmap_left; // from 'CharacterMetrics' class
+      int       bitmap_top;
     };
 
-    class BitmapDataSet : public AtlasDataSet<BitmapEntry>
+    class BitmapSet : public NamedObject
     {
+      friend class Atlas;
 
+    protected:
 
+      /** destructor protected */
+      virtual ~BitmapSet() {}
+
+    public:
+
+      /** gets an entry by its name */
+      BitmapEntry const * GetEntry(char const * name) const;
+
+    protected:
+
+      /** the bitmap contained in the font set */
+      std::vector<BitmapEntry> elements;
     };
 
-    class FontDataSet : public AtlasDataSet<FontEntry>
+    class Font : public NamedObject
     {
+      friend class Atlas;
 
+    protected:
 
+      /** destructor protected */
+      virtual ~Font() {}
+
+    public:
+
+      /** gets an entry by its name */
+      FontEntry const * GetEntry(char const * name) const;
+
+    protected:
+
+      /** the glyph contained in the font */
+      std::vector<FontEntry> elements;
     };
-
-
-
 
     class Atlas
     {
+    public:
 
+      /** the destructor */
+      virtual ~Atlas() { Clear(); }
+      /** the clearing method */
+      void Clear();
+      /** Get a bitmap set */
+      BitmapSet const * GetBitmapSet(char const * name) const;
+      /** Get a font */
+      Font const * GetFont(char const * name) const;
 
-      public:
+    protected:
 
-
-
-        std::vector<FIBITMAP *> bitmaps;
-
-        std::vector<
-
+      /** the bitmaps contained in the atlas */
+      std::vector<FIBITMAP *> bitmaps;
+      /** the bitmap sets contained in the atlas */
+      std::vector<BitmapSet *> bitmap_sets;
+      /** the fonts contained in the atlas */
+      std::vector<Font *> fonts;
     };
 
 
 
-  };
-
-
-
-  using TagType = intptr_t;
-
-
-  
 
 
 
 
-
-  template<typename T>
-  class AutoDestroyObjectArray
-  {
-  public:
-
-    using type = T;
-    
-    using const_type = typename boost::add_const<type>::type;
-
-    using ptr_type = typename meta::add_uniq_pointer<type>::type;
-
-    using const_ptr_type = typename meta::add_uniq_pointer<const_type>::type;
-
-    using is_pointer_type = typename boost::is_pointer<type>::type;
-
-    /** destructor */
-    ~AutoDestroyObjectArray()
-    {
-      Clear(true);
-    }
-
-    /** destroy the whole content */
-    void Clear(bool release = true)    
-    {
-      if (release)
-        DestroyElements(is_pointer_type());
-      elements.clear();
-    }
-
-
-
-  protected:
-
-    /** the full destruction method */
-    void DestroyElements(boost::mpl::true_)
-    {
-      for (auto elem : elements)
-        delete(elem);
-    }
-
-    /** empty implementation for destruction */
-    void DestroyElements(boost::mpl::false_){}
-  };
-
-
-  template<typename T>
-  class NamedObjectArray : public AutoDestroyObjectArray<T>
-  {
-  public:
-
-    using type = typename AutoDestroyObjectArray<T>::type;
-
-    using const_type = typename AutoDestroyObjectArray<T>::const_type;
-
-    using ptr_type = typename AutoDestroyObjectArray<T>::ptr_type;
-
-    using const_ptr_type = typename AutoDestroyObjectArray<T>::const_ptr_type;
-
-    ptr_type GetElementByName(char const * name)
-    {
-      if (name != nullptr)
-      {
-        size_t count = elements.size();
-        for(size_t i = 0 ; i < count ; ++i)
-          if (MatchName(elements[i], name))
-            return ElemToPointer(elements[i]);
-      }
-      return nullptr;
-    }
-
-    const_ptr_type GetElementByName(char const * name) const
-    {
-      if (name != nullptr)
-      {
-        size_t count = elements.size();
-        for (size_t i = 0 ; i < count ; ++i)
-          if (MatchName(elements[i], name))
-            return ElemToPointer(elements[i]);
-      }
-      return nullptr;
-    }
-
-    ptr_type GetElementByTag(TagType tag)
-    {
-      size_t count = elements.size();
-      for (size_t i = 0 ; i < count ; ++i)
-        //if (MatchTag(elements[i], tag))
-          return ElemToPointer(elements[i]);
-      return nullptr;
-    }
-
-    const_ptr_type GetElementByTag(TagType tag) const
-    {
-      size_t count = elements.size();
-      for (size_t i = 0 ; i < count ; ++i)
-    //    if (MatchTag(elements[i], tag))
-          return ElemToPointer(elements[i]);
-      return nullptr;
-    }
-
-  protected:
-
-
-
-    bool MatchName(const_type & elem, char const * name) const
-    {
-      return (elem.name == name);
-    }
-
-    bool MatchName(const_ptr_type elem, char const * name) const
-    {
-      return (elem->name == name);
-    }
-
-    bool MatchTag(const_type & elem, TagType tag) const
-    {
-      return (elem.tag == tag);
-    }
-
-    bool MatchTag(const_ptr_type elem, TagType tag) const
-    {
-      return (elem->tag == tag);
-    }
-
-
-
-
-
-
-    ptr_type ElemToPointer(ptr_type elem)
-    {
-      return elem;
-    }
-
-    ptr_type ElemToPointer(type & elem)
-    {
-      return &elem;
-    }
-
-    const_ptr_type ElemToPointer(const_ptr_type elem) const
-    {
-      return elem;
-    }
-
-    const_ptr_type ElemToPointer(const_type & elem) const
-    {
-      return &elem;
-    }
-  };
-
-
-
-#endif
-
-
-
+    };
 
 
 

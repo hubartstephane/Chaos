@@ -2,9 +2,193 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/TextureAtlas.h>
+#include <chaos/NamedObject.h>
+#include <chaos/FontTools.h>
 
 namespace chaos
 {
+  namespace TextureAtlasx
+  {
+    class BitmapInputEntry : public NamedObject
+    {
+    public:
+
+      /** constructor */
+      BitmapInputEntry() :
+        width(0),
+        height(0),
+        bpp(0),
+        bitmap(nullptr),
+        release_bitmap(true) {}
+
+      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      int         width;
+      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      int         height;
+      /** the bpp of the texture */
+      int         bpp;
+      /** the bitmap */
+      FIBITMAP  * bitmap;
+      /** whether the bitmap is to be destroyed at the end */
+      bool        release_bitmap;
+    };
+
+    class BitmapSetInput : public NamedObject
+    {
+      friend class AtlasInput;
+
+    protected:
+
+      /** constructor is protected */
+      BitmapSetInput() {}
+      /** destructor is protected */
+      virtual ~BitmapSetInput();
+
+    public:
+
+      /** insert multiple texture before computation */
+      bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
+      /** insert a texture before computation */
+      bool AddTextureFile(boost::filesystem::path const & path, char const * name);
+      /** insert a texture before computation */
+      bool AddTextureFile(char const * filename, char const * name);
+      /** insert an image inside the atlas */
+      bool AddFakeImageSource(char const * name);
+      /** insert an image inside the atlas */
+      bool AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap = true);
+
+    protected:
+
+      /** the bitmaps composing the set */
+      std::vector<BitmapInputEntry> elements;
+    };
+
+    class FontAtlasFontParams
+    {
+    public:
+
+      FontAtlasFontParams() : glyph_width(32), glyph_height(32) {}
+
+      /** width of the glyph */
+      int glyph_width;
+      /** height of the glyph */
+      int glyph_height;
+    };
+
+    class FontInput : public NamedObject
+    {
+      friend class AtlasInput;
+
+    protected:
+
+      /** constructor */
+      FontInput() :
+        library(nullptr),
+        face(nullptr),
+        release_library(true),
+        release_face(true) {}
+      /** destructor */
+      virtual ~FontInput();
+
+    protected:
+
+      /** the characters contained in the entry */
+      std::string characters;
+      /** the Freetype library if appropriate */
+      FT_Library library;
+      /** the Freetype face if appropriate */
+      FT_Face    face;
+      /** should the library be released at destruction */
+      bool       release_library;
+      /** should the face be released at destruction */
+      bool       release_face;
+      /** a glyph cache for fonts */
+      std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache;
+      /** during generation, this vector contains indices of all generated entries (both ENTRIES and both INPUT ENTRIES for standard ATLAS) */
+      std::vector<size_t> generated_entries;
+      /** the parameters for fonts */
+      FontAtlasFontParams font_params;
+    };
+
+    class AtlasInput
+    {
+    public:
+
+      /** destructor */
+      virtual ~AtlasInput() { Clear(); }
+
+      /** clearing method */
+      void Clear();
+
+      /** insert a Bitmap set inside the input */
+      BitmapSetInput * AddBitmapSet(char const * name);
+
+      /** Add a font */
+      FontInput * AddFont(
+        char const * name,
+        FT_Library library, 
+        char const * font_name, 
+        char const * characters = nullptr, 
+        bool release_library = true, 
+        FontAtlasFontParams const & font_params = FontAtlasFontParams());
+      /** Add a font */
+      FontInput * AddFont(
+        char const * name,
+        FT_Face face, 
+        char const * characters = nullptr, 
+        bool release_face = true, 
+        FontAtlasFontParams const & font_params = FontAtlasFontParams());
+
+    protected:
+
+      /** internal method to add a font */
+      FontInput * AddFontImpl(
+        char const * name, 
+        FT_Library library, 
+        FT_Face face, 
+        char const * characters, 
+        bool release_library, 
+        bool release_face, 
+        FontAtlasFontParams const & font_params);
+
+    protected:
+
+      /** the bitmaps */
+      std::vector<BitmapSetInput *> bitmap_sets;
+      /** the fonts */
+      std::vector<FontInput *> fonts;
+    };
+
+
+
+
+
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // =======================================================================
+
+
+
+
+
 
   /**
    * AtlasRectangle : a class to represents rectangles

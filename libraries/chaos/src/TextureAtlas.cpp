@@ -410,13 +410,13 @@ namespace chaos
 						OutputInfo(entry, stream);
 		}
 
-		void Atlas::OutputInfo(NamedObject const & entry, std::ostream & stream) const
+		void Atlas::OutputInfo(NamedObject const & entry, std::ostream & stream)
 		{
 			stream << "  name         : " << entry.name << std::endl;
 			stream << "  tag          : " << entry.tag  << std::endl;		
 		}
 
-		void Atlas::OutputInfo(BitmapEntry const & entry, std::ostream & stream) const
+		void Atlas::OutputInfo(BitmapEntry const & entry, std::ostream & stream)
 		{
 			NamedObject const & named_entry = entry;
 			OutputInfo(named_entry, stream);
@@ -428,7 +428,7 @@ namespace chaos
 			stream << "  y            : " << entry.y            << std::endl;
 		}
 
-		void Atlas::OutputInfo(FontEntry const & entry, std::ostream & stream) const
+		void Atlas::OutputInfo(FontEntry const & entry, std::ostream & stream)
 		{
 			BitmapEntry const & bitmap_entry = entry;
 			OutputInfo(bitmap_entry, stream);
@@ -439,9 +439,6 @@ namespace chaos
 			stream << "  bitmap_top   : " << entry.bitmap_top  << std::endl;
 		}
 
-
-
-
 		std::string Atlas::GetInfoString() const
 		{
 			std::ostringstream out;
@@ -449,21 +446,21 @@ namespace chaos
 			return out.str();
 		}
 
-		std::string Atlas::GetInfoString(NamedObject const & entry) const
+		std::string Atlas::GetInfoString(NamedObject const & entry)
 		{
 			std::ostringstream out;
 			OutputInfo(entry, out);
 			return out.str();
 		}
 
-		std::string Atlas::GetInfoString(BitmapEntry const & entry) const
+		std::string Atlas::GetInfoString(BitmapEntry const & entry)
 		{
 			std::ostringstream out;
 			OutputInfo(entry, out);
 			return out.str();
 		}
 
-		std::string Atlas::GetInfoString(FontEntry const & entry) const
+		std::string Atlas::GetInfoString(FontEntry const & entry)
 		{
 			std::ostringstream out;
 			OutputInfo(entry, out);

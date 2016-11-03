@@ -122,20 +122,20 @@ namespace chaos
 			/** display information about all textures */
 			void OutputInfo(std::ostream & stream) const;
 			/** display information about one named element */
-			void OutputInfo(NamedObject const & entry, std::ostream & stream) const;
+			static void OutputInfo(NamedObject const & entry, std::ostream & stream);
 			/** display information about one bitmap entry */
-			void OutputInfo(BitmapEntry const & entry, std::ostream & stream) const;
+      static void OutputInfo(BitmapEntry const & entry, std::ostream & stream);
 			/** display information about one font entry */
-			void OutputInfo(FontEntry const & entry, std::ostream & stream) const;
+      static void OutputInfo(FontEntry const & entry, std::ostream & stream);
 
 			/** display information about all entries */
 			std::string GetInfoString() const;
 			/** display information about one texture */
-			std::string GetInfoString(NamedObject const & entry) const;
+      static std::string GetInfoString(NamedObject const & entry);
 			/** display information about one texture */
-			std::string GetInfoString(BitmapEntry const & entry) const;
+      static std::string GetInfoString(BitmapEntry const & entry);
 			/** display information about one font */
-			std::string GetInfoString(FontEntry const & entry) const;
+      static std::string GetInfoString(FontEntry const & entry);
 
       /** returns the bitmaps contained in the atlas */
       std::vector<FIBITMAP *> const & GetBitmaps() const { return bitmaps; }

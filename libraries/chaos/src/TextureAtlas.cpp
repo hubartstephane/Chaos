@@ -377,7 +377,153 @@ namespace chaos
 			return result;
 		}
 
+		float Atlas::ComputeSurface(size_t atlas_index) const
+		{
+			float result = 0.0f;
+			// surface for standard bitmaps 
+			for (BitmapSet const * bitmap_set : bitmap_sets)
+				if (bitmap_set != nullptr)
+					for (BitmapEntry const & entry : bitmap_set->elements)
+						if (entry.bitmap_index == atlas_index || atlas_index != SIZE_MAX)
+							result += (float)(entry.width * entry.height);
+			// surface for fonts
+			for (Font const * font : fonts)
+				if (font != nullptr)
+					for (FontEntry const & entry : font->elements)
+						if (entry.bitmap_index == atlas_index || atlas_index != SIZE_MAX)
+							result += (float)(entry.width * entry.height);
+			
+			return result;
+		}
 
+		void Atlas::OutputInfo(std::ostream & stream) const
+		{
+			// info for bitmaps
+			for (BitmapSet const * bitmap_set : bitmap_sets)
+				if (bitmap_set != nullptr)
+					for (BitmapEntry const & entry : bitmap_set->elements)
+						OutputInfo(entry, stream);
+			// info for fonts
+			for (Font const * font : fonts)
+				if (font != nullptr)
+					for (FontEntry const & entry : font->elements)
+						OutputInfo(entry, stream);
+		}
+
+		void Atlas::OutputInfo(NamedObject const & entry, std::ostream & stream) const
+		{
+			stream << "  name         : " << entry.name << std::endl;
+			stream << "  tag          : " << entry.tag  << std::endl;		
+		}
+
+		void Atlas::OutputInfo(BitmapEntry const & entry, std::ostream & stream) const
+		{
+			NamedObject const & named_entry = entry;
+			OutputInfo(named_entry, stream);
+
+			stream << "  bitmap_index : " << entry.bitmap_index << std::endl;
+			stream << "  width        : " << entry.width        << std::endl;
+			stream << "  height       : " << entry.height       << std::endl;
+			stream << "  x            : " << entry.x            << std::endl;
+			stream << "  y            : " << entry.y            << std::endl;
+		}
+
+		void Atlas::OutputInfo(FontEntry const & entry, std::ostream & stream) const
+		{
+			BitmapEntry const & bitmap_entry = entry;
+			OutputInfo(bitmap_entry, stream);
+
+			stream << "  advance.x    : " << entry.advance.x   << std::endl;
+			stream << "  advance.y    : " << entry.advance.y   << std::endl;
+			stream << "  bitmap_left  : " << entry.bitmap_left << std::endl;
+			stream << "  bitmap_top   : " << entry.bitmap_top  << std::endl;
+		}
+
+
+
+
+		std::string Atlas::GetInfoString() const
+		{
+			std::ostringstream out;
+			OutputInfo(out);
+			return out.str();
+		}
+
+		std::string Atlas::GetInfoString(NamedObject const & entry) const
+		{
+			std::ostringstream out;
+			OutputInfo(entry, out);
+			return out.str();
+		}
+
+		std::string Atlas::GetInfoString(BitmapEntry const & entry) const
+		{
+			std::ostringstream out;
+			OutputInfo(entry, out);
+			return out.str();
+		}
+
+		std::string Atlas::GetInfoString(FontEntry const & entry) const
+		{
+			std::ostringstream out;
+			OutputInfo(entry, out);
+			return out.str();
+		}
+
+		std::string Atlas::GetAtlasSpaceOccupationString(size_t atlas_index) const
+		{
+			std::ostringstream stream;
+			OutputAtlasSpaceOccupation(atlas_index, stream);
+			return stream.str();
+		}
+
+		std::string Atlas::GetAtlasSpaceOccupationString() const
+		{
+			std::ostringstream stream;
+			OutputAtlasSpaceOccupation(stream);
+			return stream.str();
+		}
+
+		void Atlas::OutputAtlasSpaceOccupation(std::ostream & stream) const
+		{
+			size_t count = bitmaps.size();
+			for (size_t i = 0 ; i < count ; ++i)
+				OutputAtlasSpaceOccupation(i, stream);
+		}
+
+		void Atlas::OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream) const
+		{
+			glm::ivec2 atlas_size = GetAtlasDimension();
+
+			float atlas_surface = (float)(atlas_size.x * atlas_size.y);
+
+			float atlas_used_surface = ComputeSurface(atlas_index);
+			float percent            = 100.0f * atlas_used_surface / atlas_surface;
+
+			stream << "Atlas " << atlas_index << std::endl;
+			stream << "  occupation : " << percent << "%" << std::endl;
+		}
+
+		void Atlas::OutputGeneralInformation(std::ostream & stream) const
+		{
+			glm::ivec2 atlas_size = GetAtlasDimension();
+
+			float atlas_surface   = (float)(atlas_size.x * atlas_size.y);
+			float texture_surface = ComputeSurface(SIZE_MAX);
+			int   min_atlas_count = (int)std::ceil(texture_surface / atlas_surface);
+
+			stream << "Texture surface    : " << texture_surface << std::endl;
+			stream << "Atlas surface      : " << atlas_surface   << std::endl;
+			stream << "Best atlas count   : " << min_atlas_count << std::endl;
+			stream << "Actual atlas count : " << bitmaps.size() << std::endl;
+		}
+
+		std::string Atlas::GetGeneralInformationString() const
+		{
+			std::ostringstream stream;
+			OutputGeneralInformation(stream);
+			return stream.str();
+		} 
 
 
 
@@ -411,7 +557,7 @@ namespace chaos
 
 
 
-
+// =================================================================================
 
 
 

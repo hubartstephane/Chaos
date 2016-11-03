@@ -116,7 +116,41 @@ namespace chaos
 			/** load an atlas from a json object */
 			bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
 
+			/** returns the surface for an atlas */
+			float ComputeSurface(size_t atlas_index) const;
+
+			/** display information about all textures */
+			void OutputInfo(std::ostream & stream) const;
+			/** display information about one named element */
+			void OutputInfo(NamedObject const & entry, std::ostream & stream) const;
+			/** display information about one bitmap entry */
+			void OutputInfo(BitmapEntry const & entry, std::ostream & stream) const;
+			/** display information about one font entry */
+			void OutputInfo(FontEntry const & entry, std::ostream & stream) const;
+
+			/** display information about all entries */
+			std::string GetInfoString() const;
+			/** display information about one texture */
+			std::string GetInfoString(NamedObject const & entry) const;
+			/** display information about one texture */
+			std::string GetInfoString(BitmapEntry const & entry) const;
+			/** display information about one font */
+			std::string GetInfoString(FontEntry const & entry) const;
+
 		protected:
+
+			/** get a string with the general information */
+			std::string GetGeneralInformationString() const;
+			/** get a string with the surface occupation of all atlas */
+			std::string GetAtlasSpaceOccupationString() const;
+			/** get a string with the surface occupation of one atlas */
+			std::string GetAtlasSpaceOccupationString(size_t atlas_index) const;
+			/** display the surface occupation of all atlas */
+			void OutputAtlasSpaceOccupation(std::ostream & stream = std::cout) const;
+			/** display the surface occupation of all atlas */
+			void OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream = std::cout) const;
+			/** display the general information if the atlas */
+			void OutputGeneralInformation(std::ostream & stream = std::cout) const;
 
 			/** split a filename into DIRECTORY, INDEX_FILENAME and IMAGE prefix path */
 			void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const;

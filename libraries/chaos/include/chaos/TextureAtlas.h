@@ -90,8 +90,8 @@ namespace chaos
     class Atlas
     {
 
-			friend class TextureAtlasGenerator;
-			friend class TextureAtlasHTMLGenerator;
+			friend class AtlasGenerator;
+			friend class AtlasHTMLGenerator;
 
     public:
 
@@ -136,6 +136,13 @@ namespace chaos
 			std::string GetInfoString(BitmapEntry const & entry) const;
 			/** display information about one font */
 			std::string GetInfoString(FontEntry const & entry) const;
+
+      /** returns the bitmaps contained in the atlas */
+      std::vector<FIBITMAP *> const & GetBitmaps() const { return bitmaps; }
+      /** returns the bitmap sets contained in the atlas */
+      std::vector<BitmapSet *> const & GetBitmapSets() const { return bitmap_sets; }
+      /** returns the fonts contained in the atlas */
+      std::vector<Font *> const & GetFonts() const { return fonts; }
 
 		protected:
 

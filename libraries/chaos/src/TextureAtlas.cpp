@@ -35,6 +35,150 @@ namespace chaos
       return nullptr;
     }
 
+		// ========================================================================
+		// JSON functions
+		// ========================================================================
+
+		template<typename T>
+		void SaveIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
+		{
+			for (auto const & element : elements)
+			{
+				auto json_entry = nlohmann::json();
+				SaveIntoJSON(element, json_entry);
+				json_entries.push_back(json_entry);
+			}
+		}
+
+		template<typename T>
+		void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
+		{
+			for (auto const * element : elements)
+			{
+				if (element != nullptr)
+					continue;
+				auto json_entry = nlohmann::json();
+				SaveIntoJSON(*element, json_entry);
+				json_entries.push_back(json_entry);
+			}
+		}
+
+		template<typename T>
+		void LoadFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
+		{
+			for (auto const & json_entry : json_entries)
+			{
+				T element;
+				LoadFromJSON(element, json_entry);
+				elements.push_back(element);
+			}					
+		}
+
+		template<typename T>
+		void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
+		{
+			for (auto const & json_entry : json_entries)
+			{
+				T * element = new T;
+				if (element == nullptr)
+					continue;
+				LoadFromJSON(*element, json_entry);
+				elements.push_back(element);
+			}		
+		}
+
+		void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry)
+		{
+			json_entry["name"] = entry.name;
+			json_entry["tag"]  = entry.tag;
+		}
+
+		void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry)
+		{
+			entry.name = json_entry["name"].get<std::string>();
+			entry.tag  = json_entry["tag"];
+		}
+
+		void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry)
+		{
+			NamedObject const & named_entry = entry;
+			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+
+			json_entry["bitmap_index"] = entry.bitmap_index;
+			json_entry["x"]            = entry.x;
+			json_entry["y"]            = entry.y;
+			json_entry["width"]        = entry.width;
+			json_entry["height"]       = entry.height;		
+		}
+
+		void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry)
+		{
+			NamedObject & named_entry = entry;
+			LoadFromJSON(named_entry, json_entry); // call 'super' method
+
+			entry.bitmap_index = json_entry["bitmap_index"];
+			entry.x            = json_entry["x"];
+			entry.y            = json_entry["y"];
+			entry.width        = json_entry["width"];
+			entry.height       = json_entry["height"];		
+		}
+
+		void SaveIntoJSON(FontEntry const & entry, nlohmann::json & json_entry)
+		{
+			BitmapEntry const & bitmap_entry = entry;
+			SaveIntoJSON(bitmap_entry, json_entry); // call 'super' method
+
+			json_entry["advance_x"]   = entry.advance.x;
+			json_entry["advance_y"]   = entry.advance.y;
+			json_entry["bitmap_left"] = entry.bitmap_left;
+			json_entry["bitmap_top"]  = entry.bitmap_top;
+		}
+
+		void LoadFromJSON(FontEntry & entry, nlohmann::json const & json_entry)
+		{
+			BitmapEntry & bitmap_entry = entry;
+			LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
+
+			entry.advance.x   = json_entry["advance_x"];
+			entry.advance.y   = json_entry["advance_y"];
+			entry.bitmap_left = json_entry["bitmap_left"];
+			entry.bitmap_top  = json_entry["bitmap_top"];
+		}
+
+		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry)
+		{
+			NamedObject const & named_entry = entry;
+			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+
+			json_entry["elements"] = nlohmann::json::array();
+			SaveIntoJSON(entry.elements, json_entry["elements"]);
+		}
+
+		void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry)
+		{
+			NamedObject & named_entry = entry;
+			LoadFromJSON(named_entry, json_entry); // call 'super' method
+
+			LoadFromJSON(entry.elements, json_entry["elements"]);
+		}
+
+		void SaveIntoJSON(Font const & entry, nlohmann::json & json_entry)
+		{
+			NamedObject const & named_entry = entry;
+			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+
+			json_entry["elements"] = nlohmann::json::array();
+			SaveIntoJSON(entry.elements, json_entry["elements"]);
+		}
+
+		void LoadFromJSON(Font & entry, nlohmann::json const & json_entry)
+		{
+			NamedObject & named_entry = entry;
+			LoadFromJSON(named_entry, json_entry); // call 'super' method
+
+			LoadFromJSON(entry.elements, json_entry["elements"]);
+		}
+
     // ========================================================================
     // Atlas functions
     // ========================================================================
@@ -45,12 +189,10 @@ namespace chaos
       for (BitmapSet * bitmap_set : bitmap_sets)
         delete(bitmap_set);
       bitmap_sets.clear();
-
       // destroy the fonts
       for (Font * font : fonts)
         delete(font);
       fonts.clear();
-
       // destroy the bitmaps
       for (FIBITMAP * image : bitmaps)
         FreeImage_Unload(image);
@@ -74,6 +216,190 @@ namespace chaos
           return font;
       return nullptr;
     }
+
+		void Atlas::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const
+		{
+			// decompose INDEX and IMAGES filename
+			target_dir = filename.parent_path();
+			index_filename = filename;
+			image_filename = filename.filename();
+
+			if (!index_filename.has_extension())
+				index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
+			else
+				image_filename.replace_extension(); // for moment, IMAGES files should not have any extension
+		}
+
+		boost::filesystem::path Atlas::GetAtlasImageName(boost::filesystem::path image_filename, int index) const
+		{
+			char buffer[30]; // big far enough
+			sprintf_s(buffer, "_%d.png", index);
+			return image_filename.concat(buffer);
+		}
+
+		glm::ivec2 Atlas::GetAtlasDimension() const
+		{
+			for (size_t i = 0; i < bitmaps.size(); ++i)
+			{
+				FIBITMAP * bitmap = bitmaps[i];
+				if (bitmap != nullptr)
+				{
+					int width = (int)FreeImage_GetWidth(bitmap);
+					int height = (int)FreeImage_GetHeight(bitmap);
+					return glm::ivec2(width, height);
+				}
+			}
+			return glm::ivec2(0, 0);
+		}
+
+		bool Atlas::SaveAtlas(boost::filesystem::path const & filename) const
+		{
+			// decompose the filename
+			boost::filesystem::path target_dir;
+			boost::filesystem::path index_filename;
+			boost::filesystem::path image_filename;
+			SplitFilename(filename, target_dir, index_filename, image_filename);
+
+			// create a target directory if necessary   
+			if (!boost::filesystem::is_directory(target_dir))
+				if (!boost::filesystem::create_directories(target_dir))
+					return false;
+
+			// save the atlas
+			return SaveAtlasImages(target_dir, index_filename, image_filename) && SaveAtlasIndex(target_dir, index_filename, image_filename);
+		}
+
+		bool Atlas::SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
+		{
+			bool result = true;
+			// save them
+			for (size_t i = 0; (i < bitmaps.size()) && result; ++i)
+			{
+				FIBITMAP * im = bitmaps[i];
+				if (im != nullptr)
+				{
+					boost::filesystem::path dst_filename = target_dir / GetAtlasImageName(image_filename, i);
+
+					result = (FreeImage_Save(FIF_PNG, im, dst_filename.string().c_str(), 0) != 0);
+				}
+			}
+			return result;
+		}
+
+		bool Atlas::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
+		{
+			// generate a file for the index (JSON format)
+			std::ofstream stream(index_filename.string().c_str());
+			if (stream)
+			{
+				nlohmann::json j;
+				// insert the files
+				j["images"] = nlohmann::json::array();
+				for (size_t i = 0; i < bitmaps.size(); ++i)
+					j["images"].push_back(GetAtlasImageName(image_filename, i).string());
+				// insert the entries
+				j["bitmap_sets"] = nlohmann::json::array();
+				SaveIntoJSON(bitmap_sets, j["bitmap_sets"]);
+				j["fonts"] = nlohmann::json::array();
+				SaveIntoJSON(bitmap_sets, j["fonts"]);
+				// format the JSON into string and insert it into stream
+				stream << j.dump(4);
+				return true;
+			}
+			return false;
+		}
+
+		bool Atlas::LoadAtlas(boost::filesystem::path const & filename)
+		{
+			// decompose the filename
+			boost::filesystem::path target_dir;
+			boost::filesystem::path index_filename;
+			boost::filesystem::path image_filename;
+			SplitFilename(filename, target_dir, index_filename, image_filename); // will be ignored during loading, real name is read from .JSON index
+																																					 // load the file into memory
+			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
+			if (buf == nullptr)
+				return false;
+
+			// parse JSON file
+			bool result = false;
+			try
+			{
+				nlohmann::json j = nlohmann::json::parse(buf.data);
+				result = LoadAtlas(j, target_dir);
+			}
+			catch (std::exception & e)
+			{
+				LogTools::Error("TextureAtlasBase::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
+			}
+			return result;
+		}
+
+		bool Atlas::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & target_dir)
+		{
+			bool result = true;
+
+			// clean the object
+			Clear();
+
+			try
+			{
+				// load the files
+				nlohmann::json const & json_files = j["images"];
+				for (auto const json_filename : json_files)
+				{
+					std::string const & filename = json_filename;
+
+					FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
+					if (bitmap == nullptr)
+					{
+						result = false;
+						break;
+					}
+					bitmaps.push_back(bitmap);
+				}
+				// load the entries
+				if (result)
+				{
+					LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
+					LoadFromJSON(fonts, j["fonts"]);
+				}
+			}
+			catch (std::exception & e)
+			{
+				LogTools::Error("TextureAtlasBase::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
+			}
+
+			// in case of failure, reset the whole atlas once more
+			if (!result)
+				Clear();
+
+			return result;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   };
 

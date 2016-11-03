@@ -10,7 +10,8 @@
 #include <chaos/NamedObject.h>
 #include <chaos/NamedObjectVector.h>
 
-
+#include <chaos/TextureAtlas.h>
+#include <chaos/TextureAtlasGenerator.h>
 
 
 /*
@@ -106,6 +107,9 @@ int _tmain(int argc, char ** argv, char ** env)
     A* a4 = vector2.Find("toto");
 
   }
+
+	chaos::TextureAtlasx::FontAtlasFontParams entry;
+	entry = entry;
 
 	//vector2.Find(666);
 

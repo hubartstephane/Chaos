@@ -13,24 +13,16 @@ namespace chaos
     {
     public:
 
-      /** constructor */
-      BitmapInputEntry() :
-        width(0),
-        height(0),
-        bpp(0),
-        bitmap(nullptr),
-        release_bitmap(true) {}
-
       /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int         width;
+			int         width {0};
       /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int         height;
+			int         height {0};
       /** the bpp of the texture */
-      int         bpp;
+			int         bpp {0};
       /** the bitmap */
-      FIBITMAP  * bitmap;
+			FIBITMAP  * bitmap {nullptr};
       /** whether the bitmap is to be destroyed at the end */
-      bool        release_bitmap;
+			bool        release_bitmap {true};
     };
 
     class BitmapSetInput : public NamedObject
@@ -67,12 +59,10 @@ namespace chaos
     {
     public:
 
-      FontAtlasFontParams() : glyph_width(32), glyph_height(32) {}
-
       /** width of the glyph */
-      int glyph_width;
+			int glyph_width {32};
       /** height of the glyph */
-      int glyph_height;
+      int glyph_height {32};
     };
 
     class FontInput : public NamedObject

@@ -10,24 +10,25 @@ namespace chaos
   {
     class BitmapEntry : public NamedObject
     {
+		public:
       /** the atlas in which it is stored in result */
-      size_t bitmap_index;
+			size_t bitmap_index {0};
       /** the top-left corner of the texture */
-      int    x;
+      int    x {0};
       /** the top-left corner of the texture */
-      int    y;
+      int    y {0};
       /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int    width;
+      int    width {0};
       /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int    height;
+      int    height {0};
     };
 
     class FontEntry : public BitmapEntry
     {
     public:
-      FT_Vector advance;
-      int       bitmap_left; // from 'CharacterMetrics' class
-      int       bitmap_top;
+      FT_Vector advance {0, 0};
+      int       bitmap_left {0}; // from 'CharacterMetrics' class
+      int       bitmap_top {0};
     };
 
     class BitmapSet : public NamedObject
@@ -37,14 +38,12 @@ namespace chaos
     protected:
 
       /** destructor protected */
-      virtual ~BitmapSet() {}
+      virtual ~BitmapSet() = default;
 
     public:
 
       /** gets an entry by its name */
       BitmapEntry const * GetEntry(char const * name) const;
-
-    protected:
 
       /** the bitmap contained in the font set */
       std::vector<BitmapEntry> elements;
@@ -57,21 +56,43 @@ namespace chaos
     protected:
 
       /** destructor protected */
-      virtual ~Font() {}
+      virtual ~Font() = default;
 
     public:
 
       /** gets an entry by its name */
       FontEntry const * GetEntry(char const * name) const;
 
-    protected:
-
       /** the glyph contained in the font */
       std::vector<FontEntry> elements;
     };
 
+		void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry);
+
+		void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry);
+
+		void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(FontEntry const & entry, nlohmann::json & json_entry);
+
+		void LoadFromJSON(FontEntry & entry, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry);
+
+		void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(Font const & entry, nlohmann::json & json_entry);
+
+		void LoadFromJSON(Font & entry, nlohmann::json const & json_entry);
+
     class Atlas
     {
+
+			friend class TextureAtlasGenerator;
+			friend class TextureAtlasHTMLGenerator;
+
     public:
 
       /** the destructor */
@@ -82,6 +103,30 @@ namespace chaos
       BitmapSet const * GetBitmapSet(char const * name) const;
       /** Get a font */
       Font const * GetFont(char const * name) const;
+
+			/** get the number of atlas */
+			size_t GetBitmapCount() const { return bitmaps.size(); }
+			/** get the size of bitmap composing the atlas */
+			glm::ivec2 GetAtlasDimension() const;
+
+			/** function to save the results */
+			bool SaveAtlas(boost::filesystem::path const & filename) const;
+			/** load an atlas from an index file */
+			bool LoadAtlas(boost::filesystem::path const & filename);
+			/** load an atlas from a json object */
+			bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
+
+		protected:
+
+			/** split a filename into DIRECTORY, INDEX_FILENAME and IMAGE prefix path */
+			void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const;
+			/** get the name of an atlas image */
+			boost::filesystem::path GetAtlasImageName(boost::filesystem::path image_filename, int index) const;
+
+			/** function to save images */
+			bool SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
+			/** function to save images */
+			bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
 
     protected:
 
@@ -104,7 +149,7 @@ namespace chaos
 
 
 
-
+		// ==========================================================================
 
 
   /**
@@ -167,10 +212,9 @@ namespace chaos
     /** function to save images */
     bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
     /** save all entries inside a json object */
-    virtual void SaveAtlasEntriesInIndex(nlohmann::json & json_entries) const {};
-
+		virtual void SaveAtlasEntriesInIndex(nlohmann::json & json_entries) const {};
     /** load one entry from json object and insert it into entries array */
-    virtual void LoadAtlasEntryFromIndex(nlohmann::json const & json_entry) {};
+		virtual void LoadAtlasEntryFromIndex(nlohmann::json const & json_entry) {};
 
   public:
 

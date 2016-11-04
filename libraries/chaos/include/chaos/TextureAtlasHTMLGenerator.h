@@ -45,17 +45,17 @@ namespace chaos
 
     protected:
 
-      /** utility methods to iterate over BitmapSets or Fonts and display their entries informations into HTML */
+      /** utility methods to iterate over BitmapSets or CharacterSets and display their entries informations into HTML */
       template<typename T>
-      static void OutputToHTMLDocumentElements(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, size_t bitmap_index, size_t & count);
+      static void OutputElementsToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count);
 
-      /** utility methods to iterate over BitmapSets or Fonts and display the texture rectangle into HTML */
+      /** utility methods to iterate over BitmapSets or CharacterSets and display the texture rectangle into HTML */
       template<typename T>
-      static void OutputToHTMLDocumentTexture(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, size_t bitmap_index, float scale);
+      static void OutputBitmapsToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
 
-      /** utility methods to iterate over BitmapSets or Fonts and display the texture filename into HTML */
+      /** utility methods to iterate over BitmapSets or CharacterSets and display the texture filename into HTML */
       template<typename T>
-      static void OutputToHTMLDocumentTextureFilename(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, size_t bitmap_index, float scale);
+      static void OutputBitmapFilenamesToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
     };
 
 

@@ -47,11 +47,11 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputToHTMLDocumentElements(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, size_t bitmap_index, size_t & count)
+    void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
     {
-      for (auto const * element : elements) // iterate over Font or BitmapSet
+      for (auto const * element : elements) // iterate over CharacterSet or BitmapSet
       {
-        for (auto const & entry : element->elements) // all elements of Font or BitmapSet (i.e FontEntry or BitmapEntry)
+        for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         { 
           // keep only entries of corresponding bitmap 
           if (entry.bitmap_index != bitmap_index)
@@ -64,7 +64,9 @@ namespace chaos
           // output the element and its entry
           tinyxml2::XMLElement * TD  = html.PushElement(TR, "TD");
           tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
+					html.PushText(PRE, "Set");
           html.PushText(PRE, Atlas::GetInfoString(*element).c_str());
+					html.PushText(PRE, "Entry");
           html.PushText(PRE, Atlas::GetInfoString(entry).c_str());
 
           // reset TR every 5 elements
@@ -75,13 +77,12 @@ namespace chaos
       }
     }
 
-
     template<typename T>
-    void AtlasHTMLGenerator::OutputToHTMLDocumentTexture(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, size_t bitmap_index, float scale)
+    void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
     {
-      for (auto const * element : elements) // iterate over Font or BitmapSet
+      for (auto const * element : elements) // iterate over CharacterSet or BitmapSet
       {
-        for (auto const & entry : element->elements) // all elements of Font or BitmapSet (i.e FontEntry or BitmapEntry)
+        for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         {
           // keep only entries of corresponding bitmap 
           if (entry.bitmap_index != bitmap_index)
@@ -108,11 +109,11 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputToHTMLDocumentTextureFilename(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, size_t bitmap_index, float scale)
+    void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
     {
-      for (auto const * element : elements) // iterate over Font or BitmapSet
+      for (auto const * element : elements) // iterate over CharacterSet or BitmapSet
       {
-        for (auto const & entry : element->elements) // all elements of Font or BitmapSet (i.e FontEntry or BitmapEntry)
+        for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         {
           // keep only entries of corresponding bitmap 
           if (entry.bitmap_index != bitmap_index)
@@ -190,10 +191,10 @@ namespace chaos
 
         tinyxml2::XMLElement * TR = nullptr;
 
-        // enumerate all BitmapEntry and FontEntry using given bitmap
-        size_t count = 0;
-        OutputToHTMLDocumentElements(atlas.bitmap_sets, html, TABLE, TR, i, count);
-        OutputToHTMLDocumentElements(atlas.fonts, html, TABLE, TR, i, count);
+        // enumerate all BitmapEntry and CharacterEntry using given bitmap
+        int count = 0;
+        OutputElementsToHTMLDocument(atlas.bitmap_sets, html, TABLE, TR, i, count);
+				OutputElementsToHTMLDocument(atlas.character_sets, html, TABLE, TR, i, count);
 
         if (params.show_textures)
         {
@@ -211,13 +212,13 @@ namespace chaos
           html.PushAttribute(RECT, "style", texture_bgnd);
 
           // Display the rectangles
-          OutputToHTMLDocumentTexture(atlas.bitmap_sets, html, SVG, i, scale);
-          OutputToHTMLDocumentTexture(atlas.fonts, html, SVG, i, scale);
+          OutputBitmapsToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
+					OutputBitmapsToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
           // Display the filenames
           if (params.show_textures_names)
           {
-            OutputToHTMLDocumentTextureFilename(atlas.bitmap_sets, html, SVG, i, scale);
-            OutputToHTMLDocumentTextureFilename(atlas.fonts, html, SVG, i, scale);
+						OutputBitmapFilenamesToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
+						OutputBitmapFilenamesToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
           }
         }
       }
@@ -349,7 +350,7 @@ namespace chaos
 
       tinyxml2::XMLElement * TR = nullptr;
 
-      size_t count = 0;
+      int count = 0;
       for (size_t j = 0; j < atlas.entries.size(); ++j)
       {
         TextureAtlasEntry const & entry = atlas.entries[j];

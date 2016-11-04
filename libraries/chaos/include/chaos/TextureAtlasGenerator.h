@@ -28,7 +28,8 @@ namespace chaos
     class BitmapSetInput : public NamedObject
     {
       friend class AtlasInput;
-
+			friend class AtlasGenerator;
+			
     protected:
 
       /** constructor is protected */
@@ -38,16 +39,16 @@ namespace chaos
 
     public:
 
-      /** insert multiple texture before computation */
-      bool AddTextureFilesFromDirectory(boost::filesystem::path const & path);
-      /** insert a texture before computation */
-      bool AddTextureFile(boost::filesystem::path const & path, char const * name);
-      /** insert a texture before computation */
-      bool AddTextureFile(char const * filename, char const * name);
+      /** insert multiple bitmap before computation */
+      bool AddBitmapFilesFromDirectory(boost::filesystem::path const & path);
+      /** insert a bitmap before computation */
+      bool AddBitmapFile(boost::filesystem::path const & path, char const * name);
+      /** insert a bitmap before computation */
+      bool AddBitmapFile(char const * filename, char const * name);
       /** insert an image inside the atlas */
-      bool AddFakeImageSource(char const * name);
+      bool AddFakeBitmap(char const * name);
       /** insert an image inside the atlas */
-      bool AddImageSource(char const * name, FIBITMAP * image, bool release_bitmap = true);
+      bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap = true);
 
     protected:
 
@@ -68,6 +69,7 @@ namespace chaos
     class FontInput : public NamedObject
     {
       friend class AtlasInput;
+			friend class AtlasGenerator;
 
     protected:
 
@@ -102,6 +104,8 @@ namespace chaos
 
     class AtlasInput
     {
+			friend class AtlasGenerator;
+
     public:
 
       /** destructor */
@@ -148,6 +152,172 @@ namespace chaos
       /** the fonts */
       std::vector<FontInput *> fonts;
     };
+
+
+		/**
+		 * AtlasGeneratorParams : parameters used when generating an atlas
+	   */
+
+		class AtlasGeneratorParams
+		{
+		public:
+
+			/** contructor */
+			AtlasGeneratorParams(int in_width = 0, int in_height = 0, int in_padding = 0, int in_bpp = 0):
+				atlas_width(in_width),
+				atlas_height(in_height),
+				atlas_padding(in_padding),
+				atlas_bpp(in_bpp) {}
+
+			/** the width of an atlas texture */
+			int atlas_width {0};
+			/** the height of an atlas texture */
+			int atlas_height {0};
+			/** the max width of an atlas texture (if resized). 0 = no limit */
+			int atlas_max_width {0};
+			/** the max height of an atlas texture (if resized). 0 = no limit */
+			int atlas_max_height {0};
+			/** whether we have to use power of 2 values */
+			bool force_power_of_2 {true};
+			/** whether we have to use square texture */
+			bool force_square {true};
+			/** some padding for the texture : should be even */
+			int atlas_padding {0};
+			/** the wanted bpp (0 for deduced from images) */
+			int atlas_bpp {0};
+		};
+
+		/**
+		 * EntrySurface : a class to represents rectangles
+		 */
+
+		class Rectangle
+		{
+		public:
+			/** the top-left corner of the rectangle */
+			int x;
+			/** the top-left corner of the rectangle */
+			int y;
+			/** the size of the rectangle */
+			int width;
+			/** the size of the rectangle */
+			int height;
+			/** equality test */
+			bool operator == (Rectangle const & src) const
+			{
+				return (x == src.x) && (y == src.y) && (width == src.width) && (height == src.height);
+			}
+			/** returns true whenever big does fully contains this */
+			bool IsFullyInside(Rectangle const & big) const;
+			/** returns true whenever there is an intersection between this and big */
+			bool IsIntersecting(Rectangle const & big) const;
+		};
+
+
+#if 0
+
+		/**
+		* AtlasGenerator :
+		*   each time a texture is inserted, the space is split along 4 axis
+		*   this creates a grid of points that serve to new positions for inserting textures ...
+		*   it select the best position as the one that minimize space at left, right, top and bottom
+		*/
+
+		class AtlasGenerator
+		{
+			/** an definition is a set of vertical and horizontal lines that split the space */
+			class AtlasDefinition
+			{
+			public:
+				std::vector<int> split_x;
+				std::vector<int> split_y;
+			};
+
+		public:
+
+			/** make destructor virtual */     
+			virtual ~AtlasGenerator() = default;
+			/** compute all texture positions */
+			bool ComputeResult(AtlasInput & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+
+			/** create an atlas from a directory into another directory */
+			static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
+
+			/** returns a vector with all generated Image (to be deallocated after usage) */
+			std::vector<FIBITMAP *> GenerateBitmaps() const;
+
+		protected:
+
+			/** clear the results */
+			void Clear();
+			/** returns the box for the atlas */
+			Rectangle GetAtlasRectangle() const;
+			/** add padding to a rectangle */
+			Rectangle AddPadding(Rectangle const & r) const;
+			/** returns the rectangle corresponding to the texture */
+			Rectangle GetRectangle(BitmapEntry const & entry) const;
+			/** test whether there is an intersection between each pair of textures in an atlas */
+			bool EnsureValidResults(std::ostream & stream = std::cout) const;
+			/** test whether there is an intersection between each pair of textures in an atlas */
+			bool HasInterctingObject(size_t atlas_index, Rectangle const & r) const;
+			/** the effective function to do the computation */
+			bool DoComputeResult();
+			/** an utility function that gets a score for a rectangle */
+			float GetAdjacentSurface(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
+			/** returns the position (if any) in an atlas withe the best score */
+			float FindBestPositionInAtlas(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, int & x, int & y) const;
+			/** insert an integer in a vector. keep it ordered */
+			void InsertOrdered(std::vector<int> & v, int value);
+			/** insert a texture in an atlas definition */
+			void InsertTextureInAtlas(TextureAtlasEntry & output_entry, AtlasDefinition & atlas_def, int x, int y);
+			/** an utility function that returns an array with 0.. count - 1*/
+			static std::vector<size_t> CreateIndirectionTable(size_t count)
+			{
+				std::vector<size_t> result;    
+				result.reserve(count);
+				for (size_t i = 0 ; i < count ; ++i)
+					result.push_back(i);
+				return result;
+			}
+			/** an utility function to generate sub series from a function */
+			template<typename FUNC>
+			std::vector<size_t> CreateTextureIndirectionTable(FUNC func)
+			{
+				std::vector<size_t> result = CreateIndirectionTable(input->entries.size());
+				std::sort(result.begin(), result.end(), func);
+				return result;
+			}
+
+			/** a function that register all entries of the Atlas into a vector */
+			void CollectAtlasEntries(std::vector<BitmapEntry const*> & result) const;
+			/** fill the entries of the atlas from input */
+			void FillAtlasEntriesFromInput();
+
+		protected:
+
+			/** the params for generation */
+			AtlasGeneratorParams params;
+			/** the input files */
+			AtlasInput  * input {nullptr};
+			/** the result */
+			Atlas       * output {nullptr};
+			/** all definitions */
+			std::vector<AtlasDefinition> atlas_definitions;
+		};
+
+
+
+
+
+#endif
+
+
+
+
+
+
+
+
 
 
 

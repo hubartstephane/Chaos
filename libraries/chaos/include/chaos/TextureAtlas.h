@@ -12,18 +12,18 @@ namespace chaos
     {
 		public:
       /** the atlas in which it is stored in result */
-			size_t bitmap_index {0};
-      /** the top-left corner of the texture */
-      int    x {0};
-      /** the top-left corner of the texture */
-      int    y {0};
-      /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int    width {0};
-      /** the size of the texture (beware, 2 x padding must be add for correct result) */
-      int    height {0};
+			int bitmap_index {-1};
+      /** the top-left corner of the bitmap */
+      int x {0};
+      /** the top-left corner of the bitmap */
+      int y {0};
+      /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
+      int width {0};
+      /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
+      int height {0};
     };
 
-    class FontEntry : public BitmapEntry
+    class CharacterEntry : public BitmapEntry
     {
     public:
       FT_Vector advance {0, 0};
@@ -45,26 +45,26 @@ namespace chaos
       /** gets an entry by its name */
       BitmapEntry const * GetEntry(char const * name) const;
 
-      /** the bitmap contained in the font set */
+      /** the bitmap contained in the bitmap set */
       std::vector<BitmapEntry> elements;
     };
 
-    class Font : public NamedObject
+    class CharacterSet : public NamedObject
     {
       friend class Atlas;
 
     protected:
 
       /** destructor protected */
-      virtual ~Font() = default;
+      virtual ~CharacterSet() = default;
 
     public:
 
       /** gets an entry by its name */
-      FontEntry const * GetEntry(char const * name) const;
+      CharacterEntry const * GetEntry(char const * name) const;
 
-      /** the glyph contained in the font */
-      std::vector<FontEntry> elements;
+      /** the glyph contained in the character set */
+      std::vector<CharacterEntry> elements;
     };
 
 		void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry);
@@ -75,17 +75,17 @@ namespace chaos
 
 		void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(FontEntry const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry);
 
-		void LoadFromJSON(FontEntry & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(CharacterEntry & entry, nlohmann::json const & json_entry);
 
 		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry);
 
 		void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(Font const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry);
 
-		void LoadFromJSON(Font & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry);
 
     class Atlas
     {
@@ -101,12 +101,12 @@ namespace chaos
       void Clear();
       /** Get a bitmap set */
       BitmapSet const * GetBitmapSet(char const * name) const;
-      /** Get a font */
-      Font const * GetFont(char const * name) const;
+      /** Get a character set */
+      CharacterSet const * GetCharacterSet(char const * name) const;
 
-			/** get the number of atlas */
+			/** get the number of bitmap to hold the atlas */
 			size_t GetBitmapCount() const { return bitmaps.size(); }
-			/** get the size of bitmap composing the atlas */
+			/** get the size of bitmaps composing the atlas */
 			glm::ivec2 GetAtlasDimension() const;
 
 			/** function to save the results */
@@ -116,33 +116,33 @@ namespace chaos
 			/** load an atlas from a json object */
 			bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
 
-			/** returns the surface for an atlas */
-			float ComputeSurface(size_t atlas_index) const;
+			/** returns the used surface for a bitmap */
+			float ComputeSurface(int bitmap_index) const;
 
-			/** display information about all textures */
+			/** display information */
 			void OutputInfo(std::ostream & stream) const;
 			/** display information about one named element */
 			static void OutputInfo(NamedObject const & entry, std::ostream & stream);
 			/** display information about one bitmap entry */
       static void OutputInfo(BitmapEntry const & entry, std::ostream & stream);
-			/** display information about one font entry */
-      static void OutputInfo(FontEntry const & entry, std::ostream & stream);
+			/** display information about one character entry */
+      static void OutputInfo(CharacterEntry const & entry, std::ostream & stream);
 
-			/** display information about all entries */
+			/** display information */
 			std::string GetInfoString() const;
-			/** display information about one texture */
+			/** display information about one named object */
       static std::string GetInfoString(NamedObject const & entry);
-			/** display information about one texture */
+			/** display information about one bitmap entry */
       static std::string GetInfoString(BitmapEntry const & entry);
-			/** display information about one font */
-      static std::string GetInfoString(FontEntry const & entry);
+			/** display information about one character entry */
+      static std::string GetInfoString(CharacterEntry const & entry);
 
       /** returns the bitmaps contained in the atlas */
       std::vector<FIBITMAP *> const & GetBitmaps() const { return bitmaps; }
       /** returns the bitmap sets contained in the atlas */
       std::vector<BitmapSet *> const & GetBitmapSets() const { return bitmap_sets; }
-      /** returns the fonts contained in the atlas */
-      std::vector<Font *> const & GetFonts() const { return fonts; }
+      /** returns the character set contained in the atlas */
+      std::vector<CharacterSet *> const & GetCharacterSet() const { return character_sets; }
 
 		protected:
 
@@ -151,23 +151,23 @@ namespace chaos
 			/** get a string with the surface occupation of all atlas */
 			std::string GetAtlasSpaceOccupationString() const;
 			/** get a string with the surface occupation of one atlas */
-			std::string GetAtlasSpaceOccupationString(size_t atlas_index) const;
+			std::string GetAtlasSpaceOccupationString(int bitmap_index) const;
 			/** display the surface occupation of all atlas */
 			void OutputAtlasSpaceOccupation(std::ostream & stream = std::cout) const;
 			/** display the surface occupation of all atlas */
-			void OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream = std::cout) const;
+			void OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream = std::cout) const;
 			/** display the general information if the atlas */
 			void OutputGeneralInformation(std::ostream & stream = std::cout) const;
 
-			/** split a filename into DIRECTORY, INDEX_FILENAME and IMAGE prefix path */
+			/** split a filename into DIRECTORY, INDEX_FILENAME and BITMAP prefix path */
 			void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const;
-			/** get the name of an atlas image */
-			boost::filesystem::path GetAtlasImageName(boost::filesystem::path image_filename, int index) const;
+			/** get the name of a bitmap */
+			boost::filesystem::path GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const;
 
-			/** function to save images */
-			bool SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
-			/** function to save images */
-			bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const;
+			/** function to save bitmaps */
+			bool SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
+			/** function to save contents */
+			bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
 
     protected:
 
@@ -175,8 +175,8 @@ namespace chaos
       std::vector<FIBITMAP *> bitmaps;
       /** the bitmap sets contained in the atlas */
       std::vector<BitmapSet *> bitmap_sets;
-      /** the fonts contained in the atlas */
-      std::vector<Font *> fonts;
+      /** the character sets contained in the atlas */
+      std::vector<CharacterSet *> character_sets;
     };
 
 

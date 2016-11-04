@@ -24,10 +24,10 @@ namespace chaos
     }
 
     // ========================================================================
-    // Font functions
+    // CharacterSet functions
     // ========================================================================
 
-    FontEntry const * Font::GetEntry(char const * name) const
+		CharacterEntry const * CharacterSet::GetEntry(char const * name) const
     {
       for (auto const & element : elements)
         if (element.name == name)
@@ -123,7 +123,7 @@ namespace chaos
 			entry.height       = json_entry["height"];		
 		}
 
-		void SaveIntoJSON(FontEntry const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry)
 		{
 			BitmapEntry const & bitmap_entry = entry;
 			SaveIntoJSON(bitmap_entry, json_entry); // call 'super' method
@@ -134,7 +134,7 @@ namespace chaos
 			json_entry["bitmap_top"]  = entry.bitmap_top;
 		}
 
-		void LoadFromJSON(FontEntry & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(CharacterEntry & entry, nlohmann::json const & json_entry)
 		{
 			BitmapEntry & bitmap_entry = entry;
 			LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
@@ -162,7 +162,7 @@ namespace chaos
 			LoadFromJSON(entry.elements, json_entry["elements"]);
 		}
 
-		void SaveIntoJSON(Font const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry)
 		{
 			NamedObject const & named_entry = entry;
 			SaveIntoJSON(named_entry, json_entry); // call 'super' method
@@ -171,7 +171,7 @@ namespace chaos
 			SaveIntoJSON(entry.elements, json_entry["elements"]);
 		}
 
-		void LoadFromJSON(Font & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry)
 		{
 			NamedObject & named_entry = entry;
 			LoadFromJSON(named_entry, json_entry); // call 'super' method
@@ -189,13 +189,13 @@ namespace chaos
       for (BitmapSet * bitmap_set : bitmap_sets)
         delete(bitmap_set);
       bitmap_sets.clear();
-      // destroy the fonts
-      for (Font * font : fonts)
-        delete(font);
-      fonts.clear();
+      // destroy the character sets
+      for (CharacterSet * character_set : character_sets)
+        delete(character_set);
+			character_sets.clear();
       // destroy the bitmaps
-      for (FIBITMAP * image : bitmaps)
-        FreeImage_Unload(image);
+      for (FIBITMAP * bitmap : bitmaps)
+        FreeImage_Unload(bitmap);
       bitmaps.clear();
     }
 
@@ -208,33 +208,33 @@ namespace chaos
       return nullptr;
     }
 
-    Font const * Atlas::GetFont(char const * name) const
+		CharacterSet const * Atlas::GetCharacterSet(char const * name) const
     {
       assert(name != nullptr);
-      for (Font * font : fonts)
-        if (font->name == name)
-          return font;
+      for (CharacterSet * character_set : character_sets)
+        if (character_set->name == name)
+          return character_set;
       return nullptr;
     }
 
-		void Atlas::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & image_filename) const
+		void Atlas::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const
 		{
-			// decompose INDEX and IMAGES filename
-			target_dir = filename.parent_path();
-			index_filename = filename;
-			image_filename = filename.filename();
+			// decompose INDEX and BITMAPS filename
+			target_dir      = filename.parent_path();
+			index_filename  = filename;
+			bitmap_filename = filename.filename();
 
 			if (!index_filename.has_extension())
 				index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
 			else
-				image_filename.replace_extension(); // for moment, IMAGES files should not have any extension
+				bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
 		}
 
-		boost::filesystem::path Atlas::GetAtlasImageName(boost::filesystem::path image_filename, int index) const
+		boost::filesystem::path Atlas::GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const
 		{
 			char buffer[30]; // big far enough
 			sprintf_s(buffer, "_%d.png", index);
-			return image_filename.concat(buffer);
+			return bitmap_filename.concat(buffer);
 		}
 
 		glm::ivec2 Atlas::GetAtlasDimension() const
@@ -244,7 +244,7 @@ namespace chaos
 				FIBITMAP * bitmap = bitmaps[i];
 				if (bitmap != nullptr)
 				{
-					int width = (int)FreeImage_GetWidth(bitmap);
+					int width  = (int)FreeImage_GetWidth(bitmap);
 					int height = (int)FreeImage_GetHeight(bitmap);
 					return glm::ivec2(width, height);
 				}
@@ -257,8 +257,8 @@ namespace chaos
 			// decompose the filename
 			boost::filesystem::path target_dir;
 			boost::filesystem::path index_filename;
-			boost::filesystem::path image_filename;
-			SplitFilename(filename, target_dir, index_filename, image_filename);
+			boost::filesystem::path bitmap_filename;
+			SplitFilename(filename, target_dir, index_filename, bitmap_filename);
 
 			// create a target directory if necessary   
 			if (!boost::filesystem::is_directory(target_dir))
@@ -266,19 +266,20 @@ namespace chaos
 					return false;
 
 			// save the atlas
-			return SaveAtlasImages(target_dir, index_filename, image_filename) && SaveAtlasIndex(target_dir, index_filename, image_filename);
+			return SaveAtlasBitmaps(target_dir, index_filename, bitmap_filename) && SaveAtlasIndex(target_dir, index_filename, bitmap_filename);
 		}
 
-		bool Atlas::SaveAtlasImages(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
+		bool Atlas::SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const
 		{
 			bool result = true;
 			// save them
-			for (size_t i = 0; (i < bitmaps.size()) && result; ++i)
+			size_t count = bitmaps.size();
+			for (size_t i = 0; (i < count) && result; ++i)
 			{
 				FIBITMAP * im = bitmaps[i];
 				if (im != nullptr)
 				{
-					boost::filesystem::path dst_filename = target_dir / GetAtlasImageName(image_filename, i);
+					boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(bitmap_filename, i);
 
 					result = (FreeImage_Save(FIF_PNG, im, dst_filename.string().c_str(), 0) != 0);
 				}
@@ -286,7 +287,7 @@ namespace chaos
 			return result;
 		}
 
-		bool Atlas::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & image_filename) const
+		bool Atlas::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const
 		{
 			// generate a file for the index (JSON format)
 			std::ofstream stream(index_filename.string().c_str());
@@ -294,14 +295,14 @@ namespace chaos
 			{
 				nlohmann::json j;
 				// insert the files
-				j["images"] = nlohmann::json::array();
+				j["bitmaps"] = nlohmann::json::array();
 				for (size_t i = 0; i < bitmaps.size(); ++i)
-					j["images"].push_back(GetAtlasImageName(image_filename, i).string());
+					j["bitmaps"].push_back(GetBitmapFilename(bitmap_filename, i).string());
 				// insert the entries
 				j["bitmap_sets"] = nlohmann::json::array();
 				SaveIntoJSON(bitmap_sets, j["bitmap_sets"]);
-				j["fonts"] = nlohmann::json::array();
-				SaveIntoJSON(bitmap_sets, j["fonts"]);
+				j["character_sets"] = nlohmann::json::array();
+				SaveIntoJSON(bitmap_sets, j["character_sets"]);
 				// format the JSON into string and insert it into stream
 				stream << j.dump(4);
 				return true;
@@ -314,8 +315,8 @@ namespace chaos
 			// decompose the filename
 			boost::filesystem::path target_dir;
 			boost::filesystem::path index_filename;
-			boost::filesystem::path image_filename;
-			SplitFilename(filename, target_dir, index_filename, image_filename); // will be ignored during loading, real name is read from .JSON index
+			boost::filesystem::path bitmap_filename;
+			SplitFilename(filename, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
 																																					 // load the file into memory
 			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
 			if (buf == nullptr)
@@ -330,7 +331,7 @@ namespace chaos
 			}
 			catch (std::exception & e)
 			{
-				LogTools::Error("TextureAtlasBase::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
+				LogTools::Error("Atlas::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
 			}
 			return result;
 		}
@@ -345,7 +346,7 @@ namespace chaos
 			try
 			{
 				// load the files
-				nlohmann::json const & json_files = j["images"];
+				nlohmann::json const & json_files = j["bitmaps"];
 				for (auto const json_filename : json_files)
 				{
 					std::string const & filename = json_filename;
@@ -362,12 +363,12 @@ namespace chaos
 				if (result)
 				{
 					LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
-					LoadFromJSON(fonts, j["fonts"]);
+					LoadFromJSON(character_sets, j["character_sets"]);
 				}
 			}
 			catch (std::exception & e)
 			{
-				LogTools::Error("TextureAtlasBase::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
+				LogTools::Error("Atlas::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
 			}
 
 			// in case of failure, reset the whole atlas once more
@@ -377,20 +378,20 @@ namespace chaos
 			return result;
 		}
 
-		float Atlas::ComputeSurface(size_t atlas_index) const
+		float Atlas::ComputeSurface(int bitmap_index) const
 		{
 			float result = 0.0f;
-			// surface for standard bitmaps 
+			// surface for the bitmap sets
 			for (BitmapSet const * bitmap_set : bitmap_sets)
 				if (bitmap_set != nullptr)
 					for (BitmapEntry const & entry : bitmap_set->elements)
-						if (entry.bitmap_index == atlas_index || atlas_index != SIZE_MAX)
+						if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
 							result += (float)(entry.width * entry.height);
-			// surface for fonts
-			for (Font const * font : fonts)
-				if (font != nullptr)
-					for (FontEntry const & entry : font->elements)
-						if (entry.bitmap_index == atlas_index || atlas_index != SIZE_MAX)
+			// surface for character sets
+			for (CharacterSet const * character_set : character_sets)
+				if (character_set != nullptr)
+					for (CharacterEntry const & entry : character_set->elements)
+						if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
 							result += (float)(entry.width * entry.height);
 			
 			return result;
@@ -398,15 +399,15 @@ namespace chaos
 
 		void Atlas::OutputInfo(std::ostream & stream) const
 		{
-			// info for bitmaps
+			// info for bitmap sets
 			for (BitmapSet const * bitmap_set : bitmap_sets)
 				if (bitmap_set != nullptr)
 					for (BitmapEntry const & entry : bitmap_set->elements)
 						OutputInfo(entry, stream);
-			// info for fonts
-			for (Font const * font : fonts)
-				if (font != nullptr)
-					for (FontEntry const & entry : font->elements)
+			// info for character sets
+			for (CharacterSet const * character_set : character_sets)
+				if (character_set != nullptr)
+					for (CharacterEntry const & entry : character_set->elements)
 						OutputInfo(entry, stream);
 		}
 
@@ -428,7 +429,7 @@ namespace chaos
 			stream << "  y            : " << entry.y            << std::endl;
 		}
 
-		void Atlas::OutputInfo(FontEntry const & entry, std::ostream & stream)
+		void Atlas::OutputInfo(CharacterEntry const & entry, std::ostream & stream)
 		{
 			BitmapEntry const & bitmap_entry = entry;
 			OutputInfo(bitmap_entry, stream);
@@ -460,17 +461,17 @@ namespace chaos
 			return out.str();
 		}
 
-		std::string Atlas::GetInfoString(FontEntry const & entry)
+		std::string Atlas::GetInfoString(CharacterEntry const & entry)
 		{
 			std::ostringstream out;
 			OutputInfo(entry, out);
 			return out.str();
 		}
 
-		std::string Atlas::GetAtlasSpaceOccupationString(size_t atlas_index) const
+		std::string Atlas::GetAtlasSpaceOccupationString(int bitmap_index) const
 		{
 			std::ostringstream stream;
-			OutputAtlasSpaceOccupation(atlas_index, stream);
+			OutputAtlasSpaceOccupation(bitmap_index, stream);
 			return stream.str();
 		}
 
@@ -488,16 +489,15 @@ namespace chaos
 				OutputAtlasSpaceOccupation(i, stream);
 		}
 
-		void Atlas::OutputAtlasSpaceOccupation(size_t atlas_index, std::ostream & stream) const
+		void Atlas::OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream) const
 		{
 			glm::ivec2 atlas_size = GetAtlasDimension();
 
-			float atlas_surface = (float)(atlas_size.x * atlas_size.y);
-
-			float atlas_used_surface = ComputeSurface(atlas_index);
+			float atlas_surface      = (float)(atlas_size.x * atlas_size.y);
+			float atlas_used_surface = ComputeSurface(bitmap_index);
 			float percent            = 100.0f * atlas_used_surface / atlas_surface;
 
-			stream << "Atlas " << atlas_index << std::endl;
+			stream << "Atlas " << bitmap_index << std::endl;
 			stream << "  occupation : " << percent << "%" << std::endl;
 		}
 
@@ -506,7 +506,7 @@ namespace chaos
 			glm::ivec2 atlas_size = GetAtlasDimension();
 
 			float atlas_surface   = (float)(atlas_size.x * atlas_size.y);
-			float texture_surface = ComputeSurface(SIZE_MAX);
+			float texture_surface = ComputeSurface(-1);
 			int   min_atlas_count = (int)std::ceil(texture_surface / atlas_surface);
 
 			stream << "Texture surface    : " << texture_surface << std::endl;

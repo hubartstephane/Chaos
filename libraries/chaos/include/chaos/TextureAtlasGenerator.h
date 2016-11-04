@@ -9,15 +9,15 @@ namespace chaos
 {
   namespace TextureAtlasx
   {
-    class BitmapInputEntry : public NamedObject
+    class BitmapEntryInput : public NamedObject
     {
     public:
 
-      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
 			int         width {0};
-      /** the size of the texture (beware, 2 x padding must be add for correct result) */
+      /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
 			int         height {0};
-      /** the bpp of the texture */
+      /** the bpp of the bitmap */
 			int         bpp {0};
       /** the bitmap */
 			FIBITMAP  * bitmap {nullptr};
@@ -53,10 +53,10 @@ namespace chaos
     protected:
 
       /** the bitmaps composing the set */
-      std::vector<BitmapInputEntry> elements;
+      std::vector<BitmapEntryInput> elements;
     };
 
-    class FontAtlasFontParams
+    class CharacterSetInputParams
     {
     public:
 
@@ -66,7 +66,7 @@ namespace chaos
       int glyph_height {32};
     };
 
-    class FontInput : public NamedObject
+    class CharacterSetInput : public NamedObject
     {
       friend class AtlasInput;
 			friend class AtlasGenerator;
@@ -74,32 +74,28 @@ namespace chaos
     protected:
 
       /** constructor */
-      FontInput() :
-        library(nullptr),
-        face(nullptr),
-        release_library(true),
-        release_face(true) {}
+      CharacterSetInput() = default;
       /** destructor */
-      virtual ~FontInput();
+      virtual ~CharacterSetInput();
 
     protected:
 
       /** the characters contained in the entry */
       std::string characters;
       /** the Freetype library if appropriate */
-      FT_Library library;
+      FT_Library library {nullptr};
       /** the Freetype face if appropriate */
-      FT_Face    face;
+      FT_Face    face {nullptr};
       /** should the library be released at destruction */
-      bool       release_library;
+      bool       release_library {true};
       /** should the face be released at destruction */
-      bool       release_face;
-      /** a glyph cache for fonts */
-      std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache;
+      bool       release_face {true};
+      /** a cache for each entries of the character set */
+      std::map<TagType, FIBITMAP *> bitmap_cache;
       /** during generation, this vector contains indices of all generated entries (both ENTRIES and both INPUT ENTRIES for standard ATLAS) */
       std::vector<size_t> generated_entries;
       /** the parameters for fonts */
-      FontAtlasFontParams font_params;
+      CharacterSetInputParams params;
     };
 
     class AtlasInput
@@ -118,39 +114,39 @@ namespace chaos
       BitmapSetInput * AddBitmapSet(char const * name);
 
       /** Add a font */
-      FontInput * AddFont(
+      CharacterSetInput * AddCharacterSet(
         char const * name,
         FT_Library library, 
         char const * font_name, 
         char const * characters = nullptr, 
         bool release_library = true, 
-        FontAtlasFontParams const & font_params = FontAtlasFontParams());
+        CharacterSetInputParams const & params = CharacterSetInputParams());
       /** Add a font */
-      FontInput * AddFont(
+      CharacterSetInput * AddCharacterSet(
         char const * name,
         FT_Face face, 
         char const * characters = nullptr, 
         bool release_face = true, 
-        FontAtlasFontParams const & font_params = FontAtlasFontParams());
+        CharacterSetInputParams const & params = CharacterSetInputParams());
 
     protected:
 
       /** internal method to add a font */
-      FontInput * AddFontImpl(
+      CharacterSetInput * AddCharacterSetImpl(
         char const * name, 
         FT_Library library, 
         FT_Face face, 
         char const * characters, 
         bool release_library, 
         bool release_face, 
-        FontAtlasFontParams const & font_params);
+        CharacterSetInputParams const & params);
 
     protected:
 
       /** the bitmaps */
       std::vector<BitmapSetInput *> bitmap_sets;
       /** the fonts */
-      std::vector<FontInput *> fonts;
+      std::vector<CharacterSetInput *> character_sets;
     };
 
 
@@ -169,6 +165,10 @@ namespace chaos
 				atlas_padding(in_padding),
 				atlas_bpp(in_bpp) {}
 
+      /** whether we have to use power of 2 values */
+      bool force_power_of_2 {true};
+      /** whether we have to use square texture */
+      bool force_square {true};
 			/** the width of an atlas texture */
 			int atlas_width {0};
 			/** the height of an atlas texture */
@@ -177,10 +177,6 @@ namespace chaos
 			int atlas_max_width {0};
 			/** the max height of an atlas texture (if resized). 0 = no limit */
 			int atlas_max_height {0};
-			/** whether we have to use power of 2 values */
-			bool force_power_of_2 {true};
-			/** whether we have to use square texture */
-			bool force_square {true};
 			/** some padding for the texture : should be even */
 			int atlas_padding {0};
 			/** the wanted bpp (0 for deduced from images) */
@@ -214,7 +210,7 @@ namespace chaos
 		};
 
 
-#if 0
+
 
 		/**
 		* AtlasGenerator :
@@ -233,18 +229,19 @@ namespace chaos
 				std::vector<int> split_y;
 			};
 
+      /** an utility class used to reference all entries in ouput */
+      using BitmapEntryVector = std::vector<BitmapEntry const *>;
+
 		public:
 
 			/** make destructor virtual */     
 			virtual ~AtlasGenerator() = default;
 			/** compute all texture positions */
-			bool ComputeResult(AtlasInput & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
-
-			/** create an atlas from a directory into another directory */
-			static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params = TextureAtlasGeneratorParams());
-
-			/** returns a vector with all generated Image (to be deallocated after usage) */
-			std::vector<FIBITMAP *> GenerateBitmaps() const;
+			bool ComputeResult(AtlasInput & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());	
+			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
+			std::vector<FIBITMAP *> GenerateBitmaps(BitmapEntryVector const & entries) const;
+      /** create an atlas from a directory into another directory */
+      static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 
 		protected:
 
@@ -256,12 +253,26 @@ namespace chaos
 			Rectangle AddPadding(Rectangle const & r) const;
 			/** returns the rectangle corresponding to the texture */
 			Rectangle GetRectangle(BitmapEntry const & entry) const;
-			/** test whether there is an intersection between each pair of textures in an atlas */
-			bool EnsureValidResults(std::ostream & stream = std::cout) const;
-			/** test whether there is an intersection between each pair of textures in an atlas */
-			bool HasInterctingObject(size_t atlas_index, Rectangle const & r) const;
-			/** the effective function to do the computation */
-			bool DoComputeResult();
+
+      /** a function that register all entries of the Atlas into a vector */
+      void CollectAtlasEntries(BitmapEntryVector & result) const;
+      /** test whether there is an intersection between each pair of textures in an atlas */
+      bool EnsureValidResults(BitmapEntryVector const & result, std::ostream & stream = std::cout) const;
+      /** test whether rectangle intersects with any of the entries */
+      bool HasInterctingEntry(BitmapEntryVector const & entries, int bitmap_index, Rectangle const & r) const;
+      /** fill the entries of the atlas from input */
+      void FillAtlasEntriesFromInput();
+      /** the effective function to do the computation */
+      bool DoComputeResult(BitmapEntryVector const & entries);
+
+
+
+#if 0
+
+
+			
+			
+			
 			/** an utility function that gets a score for a rectangle */
 			float GetAdjacentSurface(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
 			/** returns the position (if any) in an atlas withe the best score */
@@ -288,10 +299,10 @@ namespace chaos
 				return result;
 			}
 
-			/** a function that register all entries of the Atlas into a vector */
-			void CollectAtlasEntries(std::vector<BitmapEntry const*> & result) const;
-			/** fill the entries of the atlas from input */
-			void FillAtlasEntriesFromInput();
+
+
+
+#endif
 
 		protected:
 
@@ -304,12 +315,6 @@ namespace chaos
 			/** all definitions */
 			std::vector<AtlasDefinition> atlas_definitions;
 		};
-
-
-
-
-
-#endif
 
 
 

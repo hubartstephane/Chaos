@@ -14,15 +14,25 @@ namespace chaos
     public:
 
       /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
-			int         width {0};
+			int           width {0};
       /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
-			int         height {0};
+			int           height {0};
       /** the bpp of the bitmap */
-			int         bpp {0};
+			int           bpp {0};
       /** the bitmap */
-			FIBITMAP  * bitmap {nullptr};
+			FIBITMAP    * bitmap {nullptr};
       /** whether the bitmap is to be destroyed at the end */
-			bool        release_bitmap {true};
+			bool          release_bitmap {true};
+      /** a pointer on the destination entry associated */
+      BitmapEntry * output_entry {nullptr};
+    };
+
+    class CharacterEntryInput : public BitmapEntryInput
+    {
+    public:
+      FT_Vector advance {0, 0};
+      int       bitmap_left {0}; // from 'CharacterMetrics' class
+      int       bitmap_top {0};
     };
 
     class BitmapSetInput : public NamedObject
@@ -80,8 +90,6 @@ namespace chaos
 
     protected:
 
-      /** the characters contained in the entry */
-      std::string characters;
       /** the Freetype library if appropriate */
       FT_Library library {nullptr};
       /** the Freetype face if appropriate */
@@ -90,13 +98,17 @@ namespace chaos
       bool       release_library {true};
       /** should the face be released at destruction */
       bool       release_face {true};
-      /** a cache for each entries of the character set */
-      std::map<TagType, FIBITMAP *> bitmap_cache;
-      /** during generation, this vector contains indices of all generated entries (both ENTRIES and both INPUT ENTRIES for standard ATLAS) */
-      std::vector<size_t> generated_entries;
-      /** the parameters for fonts */
-      CharacterSetInputParams params;
+
+      /** the bitmaps composing the set */
+      std::vector<CharacterEntryInput> elements;
     };
+
+
+
+
+
+
+
 
     class AtlasInput
     {
@@ -229,8 +241,8 @@ namespace chaos
 				std::vector<int> split_y;
 			};
 
-      /** an utility class used to reference all entries in ouput */
-      using BitmapEntryVector = std::vector<BitmapEntry const *>;
+      /** an utility class used to reference all entries in input */
+      using BitmapEntryInputVector = std::vector<BitmapEntryInput *>;
 
 		public:
 
@@ -239,7 +251,7 @@ namespace chaos
 			/** compute all texture positions */
 			bool ComputeResult(AtlasInput & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());	
 			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
-			std::vector<FIBITMAP *> GenerateBitmaps(BitmapEntryVector const & entries) const;
+			std::vector<FIBITMAP *> GenerateBitmaps(BitmapEntryInputVector const & entries) const;
       /** create an atlas from a directory into another directory */
       static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 
@@ -254,16 +266,15 @@ namespace chaos
 			/** returns the rectangle corresponding to the texture */
 			Rectangle GetRectangle(BitmapEntry const & entry) const;
 
-      /** a function that register all entries of the Atlas into a vector */
-      void CollectAtlasEntries(BitmapEntryVector & result) const;
+      /** fill the entries of the atlas from input (collect all input entries) */
+      void FillAtlasEntriesFromInput(BitmapEntryInputVector & result);
       /** test whether there is an intersection between each pair of textures in an atlas */
-      bool EnsureValidResults(BitmapEntryVector const & result, std::ostream & stream = std::cout) const;
+      bool EnsureValidResults(BitmapEntryInputVector const & result, std::ostream & stream = std::cout) const;
       /** test whether rectangle intersects with any of the entries */
-      bool HasInterctingEntry(BitmapEntryVector const & entries, int bitmap_index, Rectangle const & r) const;
-      /** fill the entries of the atlas from input */
-      void FillAtlasEntriesFromInput();
+      bool HasIntersectingEntry(BitmapEntryInputVector const & entries, int bitmap_index, Rectangle const & r) const;
+      
       /** the effective function to do the computation */
-      bool DoComputeResult(BitmapEntryVector const & entries);
+      bool DoComputeResult(BitmapEntryInputVector const & entries);
 
 
 

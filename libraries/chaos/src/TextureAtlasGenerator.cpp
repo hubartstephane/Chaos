@@ -73,17 +73,57 @@ namespace chaos
       assert(name != nullptr);
       assert(face != nullptr);
 
+      // if user does not provide a list of charset for the fonts, use this hard coded one
+      static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
+
       CharacterSetInput * result = new CharacterSetInput;
       if (result != nullptr)
       {
-        result->name = name;
-        result->library = library;
-        result->face = face;
+        // new character set input
+        result->name            = name;
+        result->library         = library;
+        result->face            = face;
         result->release_library = release_library;
-        result->release_face = release_face;
-        result->params = params;
-        if (characters != nullptr)
-          result->characters = characters;
+        result->release_face    = release_face;        
+        
+        // set font size
+        FT_Error error = FT_Set_Pixel_Sizes(result->face, params.glyph_width, params.glyph_height);
+        if (error != 0)
+        {
+          delete(result);
+          return nullptr;
+        }
+
+        // generate glyph cache
+        if (characters == nullptr || strlen(characters) == 0)
+          characters = DEFAULT_CHARACTERS;
+
+        std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
+
+        // transforms each entry of the glyph map into a bitmap
+        for (auto & glyph : glyph_cache)
+        {
+          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap);
+          if (bitmap != nullptr)
+          {
+            CharacterEntryInput entry;
+            entry.tag            = glyph.first;
+            entry.width          = (int)FreeImage_GetWidth(bitmap);
+            entry.height         = (int)FreeImage_GetHeight(bitmap);
+            entry.bpp            = (int)FreeImage_GetBPP(bitmap);
+            entry.bitmap         = bitmap;
+            entry.release_bitmap = true;
+            entry.advance        = glyph.second.advance;
+            entry.bitmap_left    = glyph.second.bitmap_left;
+            entry.bitmap_top     = glyph.second.bitmap_top;
+            result->elements.push_back(entry);
+          }
+        }
+
+        // release the glyph cache 
+        for (auto & glyph : glyph_cache)
+          FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
+
         character_sets.push_back(result);
       }
       return result;
@@ -166,11 +206,11 @@ namespace chaos
 
       BitmapEntryInput new_entry;
 
-      new_entry.name = name;
-      new_entry.bitmap = bitmap;
-      new_entry.width = (int)FreeImage_GetWidth(new_entry.bitmap);
-      new_entry.height = (int)FreeImage_GetHeight(new_entry.bitmap);
-      new_entry.bpp = (int)FreeImage_GetBPP(new_entry.bitmap);
+      new_entry.name           = name;
+      new_entry.bitmap         = bitmap;
+      new_entry.width          = (int)FreeImage_GetWidth(new_entry.bitmap);
+      new_entry.height         = (int)FreeImage_GetHeight(new_entry.bitmap);
+      new_entry.bpp            = (int)FreeImage_GetBPP(new_entry.bitmap);
       new_entry.release_bitmap = release_bitmap;
 
       elements.push_back(std::move(new_entry)); // move for std::string copy
@@ -191,6 +231,10 @@ namespace chaos
       if (library != nullptr)
         if (release_library)
           FT_Done_FreeType(library);
+      // release the bitmaps
+      for (CharacterEntryInput & element : elements)
+        if (element.release_bitmap)
+          FreeImage_Unload(element.bitmap);
     }
 
     // ========================================================================
@@ -230,7 +274,7 @@ namespace chaos
     void AtlasGenerator::Clear()
     {
       params = AtlasGeneratorParams();
-      input = nullptr;
+      input  = nullptr;
       output = nullptr;
       atlas_definitions.clear();
     }
@@ -238,9 +282,9 @@ namespace chaos
     Rectangle AtlasGenerator::GetAtlasRectangle() const
     {
       Rectangle result;
-      result.x = 0;
-      result.y = 0;
-      result.width = params.atlas_width;
+      result.x      = 0;
+      result.y      = 0;
+      result.width  = params.atlas_width;
       result.height = params.atlas_height;
       return result;
     }
@@ -248,9 +292,9 @@ namespace chaos
     Rectangle AtlasGenerator::GetRectangle(BitmapEntry const & entry) const
     {
       Rectangle result;
-      result.x = entry.x;
-      result.y = entry.y;
-      result.width = entry.width;
+      result.x      = entry.x;
+      result.y      = entry.y;
+      result.width  = entry.width;
       result.height = entry.height;
       return result;
     }
@@ -258,27 +302,14 @@ namespace chaos
     Rectangle AtlasGenerator::AddPadding(Rectangle const & r) const
     {
       Rectangle result = r;
-      result.x -= params.atlas_padding;
-      result.y -= params.atlas_padding;
-      result.width += 2 * params.atlas_padding;
+      result.x      -=     params.atlas_padding;
+      result.y      -=     params.atlas_padding;
+      result.width  += 2 * params.atlas_padding;
       result.height += 2 * params.atlas_padding;
       return result;
     }
 
-    void AtlasGenerator::CollectAtlasEntries(BitmapEntryVector & result) const
-    {
-      // collect entries in bitmap set
-      for (BitmapSet const * bitmap_set : output->bitmap_sets)
-        for (BitmapEntry const & entry : bitmap_set->elements)
-          result.push_back(&entry);
-
-      // collect entries in fonts
-      for (CharacterSet const * character_set : output->character_sets)
-        for (CharacterEntry const & entry : character_set->elements)
-          result.push_back(&entry);
-    }
-
-    bool AtlasGenerator::EnsureValidResults(BitmapEntryVector const & entries, std::ostream & stream) const
+    bool AtlasGenerator::EnsureValidResults(BitmapEntryInputVector const & entries, std::ostream & stream) const
     {
       bool result = true;
 
@@ -286,8 +317,10 @@ namespace chaos
 
       // individual tests
       int bitmap_count = output->bitmaps.size();
-      for (BitmapEntry const * entry : entries)
+      for (BitmapEntryInput const * entry_input : entries)
       {
+        BitmapEntry const * entry = entry_input->output_entry;
+
         // test whether all entry's bitmap_index are initialized
         if (entry->bitmap_index < 0)
         {
@@ -315,8 +348,8 @@ namespace chaos
       {
         for (int j = i + 1; j < count; ++j)
         {
-          BitmapEntry const * entry1 = entries[i];
-          BitmapEntry const * entry2 = entries[j];
+          BitmapEntry const * entry1 = entries[i]->output_entry;
+          BitmapEntry const * entry2 = entries[j]->output_entry;
 
           if (entry1->bitmap_index != entry2->bitmap_index) // ignore entries not in the same bitmap
             continue;
@@ -336,23 +369,22 @@ namespace chaos
       return result;
     }
 
-    bool AtlasGenerator::HasInterctingEntry(BitmapEntryVector const & entries, int bitmap_index, Rectangle const & r) const
+    bool AtlasGenerator::HasIntersectingEntry(BitmapEntryInputVector const & entries, int bitmap_index, Rectangle const & r) const
     {
       Rectangle r1 = AddPadding(r);
 
-      for (BitmapEntry const * entry : entries)
+      for (BitmapEntryInput const * entry : entries)
       {
-        if (entry->bitmap_index != bitmap_index)
+        if (entry->output_entry->bitmap_index != bitmap_index)
           continue;
-        Rectangle r2 = AddPadding(GetRectangle(*entry));
+        Rectangle r2 = AddPadding(GetRectangle(*entry->output_entry));
         if (r2.IsIntersecting(r1))
           return true;
       }
-
       return false;
     }
 
-    std::vector<FIBITMAP *> AtlasGenerator::GenerateBitmaps(BitmapEntryVector const & entries) const
+    std::vector<FIBITMAP *> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries) const
     {
       unsigned char const bgra[] = { 0, 0, 0, 0 }; // B G R A
 
@@ -360,43 +392,44 @@ namespace chaos
 
       // generate the bitmaps
       int bitmap_count = atlas_definitions.size();
-      for (size_t i = 0; i < bitmap_count; ++i)
+      for (int i = 0 ; i < bitmap_count ; ++i)
       {
-        FIBITMAP * image = FreeImage_Allocate(params.atlas_width, params.atlas_height, params.atlas_bpp);
-        if (image != nullptr)
+        FIBITMAP * bitmap = FreeImage_Allocate(params.atlas_width, params.atlas_height, params.atlas_bpp);
+        if (bitmap != nullptr)
         {
-          FreeImage_FillBackground(image, bgra, 0);
+          FreeImage_FillBackground(bitmap, bgra, 0);
 
-          for (BitmapEntry const * entry : entries)
+          for (BitmapEntryInput const * entry_input : entries)
           {
+            BitmapEntry const * entry = entry_input->output_entry;
+
             if (entry->bitmap_index != i)
               continue;
-
-
-            //FreeImage_Paste(image, input_entry.bitmap, entry->x, entry->y, 255);
+            FreeImage_Paste(bitmap, entry_input->bitmap, entry->x, entry->y, 255);
 
           }
-          result.push_back(image);
+          result.push_back(bitmap);
         }
       }
-
       return result;
     }
 
 
-
-    void AtlasGenerator::FillAtlasEntriesFromInput()
+    void AtlasGenerator::FillAtlasEntriesFromInput(BitmapEntryInputVector & result)
     {
       // fill with bitmap sets 
-      for (BitmapSetInput const * bitmap_set_input : input->bitmap_sets)
+      for (BitmapSetInput * bitmap_set_input : input->bitmap_sets)
       {
         BitmapSet * bitmap_set = new BitmapSet;
         bitmap_set->name = bitmap_set_input->name;
         bitmap_set->tag  = bitmap_set_input->tag;
         output->bitmap_sets.push_back(bitmap_set);
 
-        for (BitmapEntryInput const & entry_input : bitmap_set_input->elements)
+        size_t count = bitmap_set_input->elements.size();
+        for (size_t i = 0 ; i < count ; ++i)
         {
+          BitmapEntryInput const & entry_input = bitmap_set_input->elements[i];
+
           BitmapEntry entry;
           entry.name         = entry_input.name;
           entry.tag          = entry_input.tag;
@@ -407,55 +440,46 @@ namespace chaos
           entry.height       = entry_input.height;
           bitmap_set->elements.push_back(entry);
         }
+        // once we are sure that Atlas.BitmapSet.Entry vector does not resize anymore, we can store pointers         
+        for (size_t i = 0 ; i < count ; ++i)
+        {
+          bitmap_set_input->elements[i].output_entry = &bitmap_set->elements[i];
+          result.push_back(&bitmap_set_input->elements[i]);
+        }
       }
 
-      // fill with the character sets
-
-      // if user does not provide a list of charset for the fonts, use this hard coded one
-      static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
-
-      for (CharacterSetInput const * character_set_input : input->character_sets)
+      // fill with  character sets
+      for (CharacterSetInput * character_set_input : input->character_sets)
       {
         CharacterSet * character_set = new CharacterSet;
         character_set->name = character_set_input->name;
         character_set->tag  = character_set_input->tag;
         output->character_sets.push_back(character_set);
 
-        // set font size
-        FT_Error error = FT_Set_Pixel_Sizes(character_set_input->face, character_set_input->params.glyph_width, character_set_input->params.glyph_height);
-        if (error != 0)
-          continue;
-
-        // generate glyph cache 
-        char const * characters = (character_set_input->characters.length() != 0)? 
-          character_set_input->characters.c_str() : 
-          DEFAULT_CHARACTERS;
-
-        std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(character_set_input->face, characters);
-
-        // transforms each entry of the glyph map into a bitmap
-        for (auto & glyph : glyph_cache)
+        size_t count = character_set_input->elements.size();
+        for (size_t i = 0 ; i < count ; ++i)
         {
-          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap);
-          if (bitmap != nullptr)
-          {
-            CharacterEntry entry;
-            entry.tag          = glyph.first;           
-            entry.bitmap_index = -1;
-            entry.x            = 0;
-            entry.y            = 0;
-            entry.width        = (int)FreeImage_GetWidth(bitmap);
-            entry.height       = (int)FreeImage_GetHeight(bitmap);
-            entry.advance      = glyph.second.advance;
-            entry.bitmap_left  = glyph.second.bitmap_left;
-            entry.bitmap_top   = glyph.second.bitmap_top;
-            character_set->elements.push_back(entry);            
-          }
-        }
+          CharacterEntryInput const & entry_input = character_set_input->elements[i];
 
-        // release the glyph cache 
-        for (auto & glyph : glyph_cache)
-          FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
+          CharacterEntry entry;
+          entry.name         = entry_input.name;
+          entry.tag          = entry_input.tag;
+          entry.bitmap_index = -1;
+          entry.x            = 0;
+          entry.y            = 0;
+          entry.width        = entry_input.width;
+          entry.height       = entry_input.height;
+          entry.advance      = entry_input.advance;
+          entry.bitmap_left  = entry_input.bitmap_left;
+          entry.bitmap_top   = entry_input.bitmap_top;
+          character_set->elements.push_back(entry);
+        }
+        // once we are sure that Atlas.CharacterSet.Entry vector does not resize anymore, we can store pointers         
+        for (size_t i = 0 ; i < count ; ++i)
+        {
+          character_set_input->elements[i].output_entry = &character_set->elements[i];
+          result.push_back(&character_set_input->elements[i]);
+        }
       }
     }
 
@@ -476,26 +500,23 @@ namespace chaos
 			if (params.atlas_bpp != 0 && params.atlas_bpp != 8 && params.atlas_bpp != 24 && params.atlas_bpp != 32)
 				return false;
 
-      // generate character set bitmaps and initialize all entries
-      FillAtlasEntriesFromInput();
-
-      // collect all entries
-      BitmapEntryVector entries;
-      CollectAtlasEntries(entries);
+      // generate input entries and sets. Collect input entries
+      BitmapEntryInputVector entries;
+      FillAtlasEntriesFromInput(entries);
 
 			// search max texture size
 			int max_width  = -1;
 			int max_height = -1;
 			int max_bpp    = -1;
 
-			for (BitmapEntry const * entry : entries)
+			for (BitmapEntryInput const * entry : entries)
 			{
 				if (max_width < 0 || max_width < entry->width)
 					max_width = entry->width;
 				if (max_height < 0 || max_height < entry->height)
 					max_height = entry->height;
-				//if (max_bpp < 0 || max_bpp < entry->bpp)
-				//	max_bpp = entry->bpp;
+				if (max_bpp < 0 || max_bpp < entry->bpp)
+					max_bpp = entry->bpp;
 			}
 
 			max_width  += params.atlas_padding * 2;
@@ -551,7 +572,7 @@ namespace chaos
 			return false;
 		}
 
-    bool AtlasGenerator::DoComputeResult(BitmapEntryVector const & entries)
+    bool AtlasGenerator::DoComputeResult(BitmapEntryInputVector const & entries)
     {
 #if 0
 

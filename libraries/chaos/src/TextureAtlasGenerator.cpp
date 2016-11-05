@@ -574,23 +574,20 @@ namespace chaos
 
     bool AtlasGenerator::DoComputeResult(BitmapEntryInputVector const & entries)
     {
-#if 0
+      size_t count = entries.size();
+      
+      // create an indirection list for entries sorted by surface
+      float padding = (float)params.atlas_padding;
+      std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2) {
 
-      size_t count = input->entries.size();
+        BitmapEntryInput const * entry_1 = entries[i1];
+        BitmapEntryInput const * entry_2 = entries[i2];
 
-      float p = (float)params.atlas_padding;
-
-      // create an indirection list for texture sorted by surface
-      std::vector<size_t> textures_indirection_table = CreateTextureIndirectionTable([this, p](size_t i1, size_t i2) {
-
-        TextureAtlasInputEntry const & input_entry_1 = input->entries[i1];
-        TextureAtlasInputEntry const & input_entry_2 = input->entries[i2];
-
-        if ((input_entry_1.height + p) * (input_entry_1.width + p) > (input_entry_2.height + p) * (input_entry_2.width + p))
+        if ((entry_1->height + padding) * (entry_1->width + padding) > (entry_2->height + padding) * (entry_2->width + padding))
           return true;
         return false;
       });
-
+#if 0
       for (size_t i = 0; i < count; ++i)
       {
         int entry_index = textures_indirection_table[i];
@@ -655,16 +652,9 @@ namespace chaos
 
 
 
-#if 0
-
-		size_t TextureAtlasGenerator::GetAtlasCount() const
-		{
-			return atlas_definitions.size();
-		}
 
 
-
-		float TextureAtlasGenerator::GetAdjacentSurface(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
+		float AtlasGenerator::GetAdjacentSurface(BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
 		{
 			float result = 0.0f;
 
@@ -693,21 +683,21 @@ namespace chaos
 					int x1 = atlas_def.split_x[a];
 					int x2 = atlas_def.split_x[u];
 
-					result = ((float)std::abs(x1 - x2)) * ((float)(input_entry.height + 2 * params.atlas_padding));
+					result = ((float)std::abs(x1 - x2)) * ((float)(entry.height + 2 * params.atlas_padding));
 				}
 				else
 				{
 					int y1 = atlas_def.split_y[b];
 					int y2 = atlas_def.split_y[v];
 
-					result = ((float)std::abs(y1 - y2)) * ((float)(input_entry.width + 2 * params.atlas_padding));
+					result = ((float)std::abs(y1 - y2)) * ((float)(entry.width + 2 * params.atlas_padding));
 				}
 			}
 
 			return result;
 		}
 
-		float TextureAtlasGenerator::FindBestPositionInAtlas(TextureAtlasInputEntry const & input_entry, AtlasDefinition const & atlas_def, int & x, int & y) const
+		float AtlasGenerator::FindBestPositionInAtlas(BitmapEntryInputVector const & entries, BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, int & x, int & y) const
 		{
 			float result = -1.0f;
 
@@ -719,27 +709,26 @@ namespace chaos
 			collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
 
 																																 // find collision table
-			AtlasRectangle r;
-			r.width  = input_entry.width;
-			r.height = input_entry.height;
+			Rectangle r;
+			r.width  = entry.width;
+			r.height = entry.height;
 
 			bool any_value = false;
 			for (size_t u = 0 ; u < x_count ; ++u)
 			{
 				int px = atlas_def.split_x[u];
-				if (px + input_entry.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
+				if (px + entry.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
 					break;
 				r.x = px + params.atlas_padding;
 
 				for (size_t v = 0 ; v < y_count ; ++v)
 				{
 					int py = atlas_def.split_y[v];
-					if (py + input_entry.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
+					if (py + entry.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
 						break;
 					r.y = py + params.atlas_padding;
 
-					bool collision = HasInterctingObject(&atlas_def - &atlas_definitions[0], r);
-
+					bool collision = HasIntersectingEntry(entries, &atlas_def - &atlas_definitions[0], r);
 					any_value |= !collision;
 
 					if (!collision)
@@ -758,10 +747,10 @@ namespace chaos
 					size_t index = u * y_count + v;
 					if (!collision_table[index])
 					{
-						float surf1 = GetAdjacentSurface(input_entry, atlas_def, collision_table, x_count, y_count, u, v, +1,  0);
-						float surf2 = GetAdjacentSurface(input_entry, atlas_def, collision_table, x_count, y_count, u, v, -1,  0);
-						float surf3 = GetAdjacentSurface(input_entry, atlas_def, collision_table, x_count, y_count, u, v,  0, +1);
-						float surf4 = GetAdjacentSurface(input_entry, atlas_def, collision_table, x_count, y_count, u, v,  0, -1);
+						float surf1 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, +1,  0);
+						float surf2 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, -1,  0);
+						float surf3 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v,  0, +1);
+						float surf4 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v,  0, -1);
 
 						float sum_surf = surf1 + surf2 + surf3 + surf4;
 
@@ -785,7 +774,7 @@ namespace chaos
 			return result;
 		}
 
-		void TextureAtlasGenerator::InsertOrdered(std::vector<int> & v, int value)
+		void AtlasGenerator::InsertOrdered(std::vector<int> & v, int value)
 		{
 			auto it = std::lower_bound(v.begin(), v.end(), value);
 			if ((it != v.end()) && (*it == value))
@@ -793,23 +782,18 @@ namespace chaos
 			v.insert(it, value);
 		}
 
-		void TextureAtlasGenerator::InsertTextureInAtlas(TextureAtlasEntry & input_entry, AtlasDefinition & atlas_def, int x, int y)
+		void AtlasGenerator::InsertBitmapInAtlas(BitmapEntry & entry, AtlasDefinition & atlas_def, int x, int y)
 		{
-			input_entry.atlas = &atlas_def - &atlas_definitions[0];
-			input_entry.x     = x + params.atlas_padding;
-			input_entry.y     = y + params.atlas_padding;
+      entry.bitmap_index = &atlas_def - &atlas_definitions[0];
+      entry.x            = x + params.atlas_padding;
+      entry.y            = y + params.atlas_padding;
 
 			InsertOrdered(atlas_def.split_x, x);
-			InsertOrdered(atlas_def.split_x, x + input_entry.width + 2 * params.atlas_padding);
+			InsertOrdered(atlas_def.split_x, x + entry.width + 2 * params.atlas_padding);
 
 			InsertOrdered(atlas_def.split_y, y);
-			InsertOrdered(atlas_def.split_y, y + input_entry.height + 2 * params.atlas_padding);
+			InsertOrdered(atlas_def.split_y, y + entry.height + 2 * params.atlas_padding);
 		}
-
-	
-#endif
-
-
 
 		bool AtlasGenerator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params)
 		{

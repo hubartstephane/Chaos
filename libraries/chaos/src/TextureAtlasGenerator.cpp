@@ -587,22 +587,22 @@ namespace chaos
           return true;
         return false;
       });
-#if 0
+
       for (size_t i = 0; i < count; ++i)
       {
         int entry_index = textures_indirection_table[i];
 
-        TextureAtlasInputEntry & input_entry = input->entries[entry_index];
+        BitmapEntryInput const * input_entry = entries[entry_index];
 
-        size_t best_atlas_index = SIZE_MAX;
-        int    best_x = 0;
-        int    best_y = 0;
-        float  best_score = -1.0f;
+        int   best_atlas_index = -1;
+        int   best_x = 0;
+        int   best_y = 0;
+        float best_score = -1.0f;
 
         for (size_t j = 0; j < atlas_definitions.size(); ++j)
         {
           int   x, y;
-          float score = FindBestPositionInAtlas(input_entry, atlas_definitions[j], x, y);
+          float score = FindBestPositionInAtlas(entries, *input_entry, atlas_definitions[j], x, y);
 
           if (score < 0.0f)
             continue; // cannot insert the texture in this atlas
@@ -619,7 +619,7 @@ namespace chaos
             break;
         }
 
-        if (best_atlas_index == SIZE_MAX) // not enough size in any existing atlas. create a new one
+        if (best_atlas_index == -1) // not enough size in any existing atlas. create a new one
         {
           AtlasDefinition def;
           def.split_x.push_back(0);
@@ -633,26 +633,10 @@ namespace chaos
 
           atlas_definitions.push_back(def);
         }
-
-        InsertTextureInAtlas(output->entries[entry_index], atlas_definitions[best_atlas_index], best_x, best_y);
+        InsertBitmapInAtlas(*entries[entry_index]->output_entry, atlas_definitions[best_atlas_index], best_x, best_y);
       }
-#endif
       return true;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		float AtlasGenerator::GetAdjacentSurface(BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
 		{

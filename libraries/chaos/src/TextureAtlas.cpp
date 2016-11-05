@@ -71,7 +71,7 @@ namespace chaos
 		{
 			for (auto const * element : elements)
 			{
-				if (element != nullptr)
+				if (element == nullptr)
 					continue;
 				auto json_entry = nlohmann::json();
 				SaveIntoJSON(*element, json_entry);
@@ -332,7 +332,7 @@ namespace chaos
 				j["bitmap_sets"] = nlohmann::json::array();
 				SaveIntoJSON(bitmap_sets, j["bitmap_sets"]);
 				j["character_sets"] = nlohmann::json::array();
-				SaveIntoJSON(bitmap_sets, j["character_sets"]);
+				SaveIntoJSON(character_sets, j["character_sets"]);
 				// format the JSON into string and insert it into stream
 				stream << j.dump(4);
 				return true;

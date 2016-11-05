@@ -14,39 +14,41 @@ static int ATLAS_BPP = 0;
 
 void TestAtlasReload(boost::filesystem::path const & filename)
 {
-  chaos::TextureAtlas atlas;
+  chaos::BitmapAtlas::Atlas atlas;
   atlas.LoadAtlas(filename);
 }
 
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
-  chaos::TextureAtlasInput input;
+  chaos::BitmapAtlas::AtlasInput input;
 
-  input.AddFakeImageSource("A");
-  input.AddFakeImageSource("B");
-  input.AddFakeImageSource("C");
-  input.AddFakeImageSource("D");
-  input.AddFakeImageSource("E");
-  input.AddFakeImageSource("F");
-  input.AddFakeImageSource("G");
-  input.AddFakeImageSource("H");
-  input.AddFakeImageSource("I");
-  input.AddFakeImageSource("J");
+  chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("bitmap_set1");
 
-  chaos::TextureAtlas                atlas;
-  chaos::TextureAtlasGenerator       generator;
-  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(256, 256, 3, ATLAS_BPP);
+  bitmap_set->AddFakeBitmap("A");
+  bitmap_set->AddFakeBitmap("B");
+  bitmap_set->AddFakeBitmap("C");
+  bitmap_set->AddFakeBitmap("D");
+  bitmap_set->AddFakeBitmap("E");
+  bitmap_set->AddFakeBitmap("F");
+  bitmap_set->AddFakeBitmap("G");
+  bitmap_set->AddFakeBitmap("H");
+  bitmap_set->AddFakeBitmap("I");
+  bitmap_set->AddFakeBitmap("J");
+
+  chaos::BitmapAtlas::Atlas                atlas;
+  chaos::BitmapAtlas::AtlasGenerator       generator;
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(256, 256, 3, ATLAS_BPP);
   
   if (generator.ComputeResult(input, atlas, params))
   {  
-    chaos::TextureAtlasHTMLOutputParams html_params;
+    chaos::BitmapAtlas::AtlasHTMLOutputParams html_params;
     html_params.show_header       = true;
     html_params.show_atlas_header = true;
     html_params.texture_scale     = 3.0f;
     html_params.auto_refresh      = false;
 
     boost::filesystem::path html_path = dest_p / "Atlas_Final.html";
-    chaos::TextureAtlasHTMLGenerator::OutputToHTMLFile(atlas, html_path.string().c_str(), html_params);
+    chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_path.string().c_str(), html_params);
 
     boost::filesystem::path dst_dir = dest_p / "AtlasResultFake" / "MyAtlas.x";
     atlas.SaveAtlas(dst_dir);
@@ -60,11 +62,11 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   //        - a text file                                            => not detected has an image
   // correct behavior 
 
-  chaos::TextureAtlasGeneratorParams params = chaos::TextureAtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
 
   boost::filesystem::path result_path = dest_p / "AtlasResult" / "MyAtlas.json";
 
-  chaos::TextureAtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, params);
+  chaos::BitmapAtlas::AtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, params);
 }
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
@@ -74,17 +76,23 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
   boost::filesystem::path dst_dir1 = dest_p / "AtlasResultFont" / "MyAtlas";
   boost::filesystem::path dst_dir2 = dest_p / "AtlasResultFontReloaded" / "MyAtlas";
 
-  chaos::FontAtlas          atlas;
-  chaos::FontAtlasGenerator generator;
-  chaos::FontAtlasInput     input;
-  input.AddFont(nullptr, font_path.string().c_str(), nullptr, true, chaos::FontAtlasFontParams());
-  input.AddTextureFilesFromDirectory(resources_path / "ButtonImages");
+  chaos::BitmapAtlas::Atlas          atlas;
+  chaos::BitmapAtlas::AtlasGenerator generator;
+  chaos::BitmapAtlas::AtlasInput     input;
 
-  chaos::FontAtlasGeneratorParams params = chaos::FontAtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
+  chaos::BitmapAtlas::CharacterSetInput * character_set = 
+    input.AddCharacterSet("character_set1", nullptr, font_path.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+
+  chaos::BitmapAtlas::BitmapSetInput * bitmap_set =
+    input.AddBitmapSet("bitmap_set1");
+
+  bitmap_set->AddBitmapFilesFromDirectory(resources_path / "ButtonImages");
+
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
   if (generator.ComputeResult(input, atlas, params))
     atlas.SaveAtlas(dst_dir1);
 
-  chaos::FontAtlas atlas_reloaded;
+  chaos::BitmapAtlas::Atlas atlas_reloaded;
   if (atlas_reloaded.LoadAtlas(dst_dir1))
     atlas_reloaded.SaveAtlas(dst_dir2);
 }

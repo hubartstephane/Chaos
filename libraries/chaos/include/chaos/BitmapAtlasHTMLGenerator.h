@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/TextureAtlas.h>
+#include <chaos/BitmapAtlas.h>
 #include <chaos/HTMLTools.h>
 
 namespace chaos

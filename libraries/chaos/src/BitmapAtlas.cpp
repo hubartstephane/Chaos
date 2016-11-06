@@ -1,4 +1,4 @@
-#include <chaos/TextureAtlas.h>
+#include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/ImageTools.h>
 #include <chaos/Buffer.h>

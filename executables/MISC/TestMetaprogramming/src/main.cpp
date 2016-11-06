@@ -10,8 +10,6 @@
 #include <chaos/NamedObject.h>
 #include <chaos/NamedObjectVector.h>
 
-#include <chaos/TextureAtlas.h>
-#include <chaos/TextureAtlasGenerator.h>
 
 
 /*

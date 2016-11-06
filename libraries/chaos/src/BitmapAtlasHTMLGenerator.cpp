@@ -1,4 +1,4 @@
-#include <chaos/TextureAtlasHTMLGenerator.h>
+#include <chaos/BitmapAtlasHTMLGenerator.h>
 
 namespace chaos
 {
@@ -15,7 +15,7 @@ namespace chaos
     }
 
     // ========================================================================
-    // TextureAtlasHTMLGenerator function
+    // BitmapAtlasHTMLGenerator function
     // ========================================================================
 
     tinyxml2::XMLDocument * AtlasHTMLGenerator::OutputToHTMLDocument(Atlas const & atlas, AtlasHTMLOutputParams params)

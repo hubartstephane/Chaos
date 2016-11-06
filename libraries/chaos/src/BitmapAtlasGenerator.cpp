@@ -1,5 +1,5 @@
-#include <chaos/TextureAtlasGenerator.h>
-#include <chaos/TextureAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/BitmapAtlas.h>
 #include <chaos/ImageTools.h>
 #include <chaos/MathTools.h>
 

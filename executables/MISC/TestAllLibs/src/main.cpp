@@ -183,8 +183,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
   boost::filesystem::path dds_path = resources_path / "cube.dds";
 
-  gli::texture2D TextureAtlasEntry(1, gli::RGBA8_UNORM, gli::texture2D::dimensions_type(256, 256)); 
-  glm::u8vec4 * LinearAddress = TextureAtlasEntry.data<glm::u8vec4>(); 
+  gli::texture2D BitmapAtlasEntry(1, gli::RGBA8_UNORM, gli::texture2D::dimensions_type(256, 256)); 
+  glm::u8vec4 * LinearAddress = BitmapAtlasEntry.data<glm::u8vec4>(); 
   gli::storage StorageDDS(gli::load_dds(dds_path.string().c_str()));
 
   // Test GLFW3

@@ -2,13 +2,13 @@
 #include <chaos/SimpleWin32Window.h>
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
-#include <chaos/TextureAtlas.h>
-#include <chaos/TextureAtlasHTMLGenerator.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/BitmapAtlasHTMLGenerator.h>
 #include <chaos/MathTools.h>
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
 #include <chaos/FontTools.h>
-#include <chaos/FontAtlas.h>
 
 static int ATLAS_BPP = 0;
 

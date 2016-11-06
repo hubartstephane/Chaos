@@ -1,7 +1,6 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/TextureAtlas.h>
 
 namespace chaos
 {

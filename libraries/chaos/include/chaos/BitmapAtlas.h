@@ -44,7 +44,7 @@ namespace chaos
 
     class BitmapSet : public NamedObject
     {
-      friend class Atlas;
+      friend class AtlasBase;
 
     protected:
 
@@ -68,7 +68,7 @@ namespace chaos
 
     class CharacterSet : public NamedObject
     {
-      friend class Atlas;
+      friend class AtlasBase;
 
     protected:
 
@@ -111,10 +111,10 @@ namespace chaos
     void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry);
 
     /**
-     * Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
+     * AtlasBase : base class for Atlas and TextureArrayAtlas
      */
 
-    class Atlas
+    class AtlasBase
     {
 
       friend class AtlasGenerator;
@@ -123,9 +123,9 @@ namespace chaos
     public:
 
       /** the destructor */
-      virtual ~Atlas() { Clear(); }
+      virtual ~AtlasBase() { Clear(); }
       /** the clearing method */
-      void Clear();
+      virtual void Clear();
       /** Get a bitmap set */
       BitmapSet const * GetBitmapSet(char const * name) const;
       /** Get a bitmap set */
@@ -136,16 +136,9 @@ namespace chaos
       CharacterSet const * GetCharacterSet(TagType tag) const;
 
       /** get the number of bitmap to hold the atlas */
-      size_t GetBitmapCount() const { return bitmaps.size(); }
+      size_t GetBitmapCount() const { return atlas_count; }
       /** get the size of bitmaps composing the atlas */
-      glm::ivec2 GetAtlasDimension() const;
-
-      /** function to save the results */
-      bool SaveAtlas(boost::filesystem::path const & filename) const;
-      /** load an atlas from an index file */
-      bool LoadAtlas(boost::filesystem::path const & filename);
-      /** load an atlas from a json object */
-      bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
+      glm::ivec2 GetAtlasDimension() const { return dimension; }
 
       /** returns the used surface for a bitmap */
       float ComputeSurface(int bitmap_index) const;
@@ -168,8 +161,6 @@ namespace chaos
       /** display information about one character entry */
       static std::string GetInfoString(CharacterEntry const & entry);
 
-      /** returns the bitmaps contained in the atlas */
-      std::vector<FIBITMAP *> const & GetBitmaps() const { return bitmaps; }
       /** returns the bitmap sets contained in the atlas */
       std::vector<BitmapSet *> const & GetBitmapSets() const { return bitmap_sets; }
       /** returns the character set contained in the atlas */
@@ -190,24 +181,61 @@ namespace chaos
       /** display the general information if the atlas */
       void OutputGeneralInformation(std::ostream & stream = std::cout) const;
 
-      /** split a filename into DIRECTORY, INDEX_FILENAME and BITMAP prefix path */
-      void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const;
-      /** get the name of a bitmap */
-      boost::filesystem::path GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const;
+    protected:
+
+      /** atlas count */
+      int atlas_count {0};
+      /** atlas dimension */
+      glm::ivec2 dimension{ 0,0 };
+      /** the bitmap sets contained in the atlas */
+      std::vector<BitmapSet *> bitmap_sets;
+      /** the character sets contained in the atlas */
+      std::vector<CharacterSet *> character_sets;
+    };
+
+    /**
+     * Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
+     */
+
+    class Atlas : public AtlasBase
+    {
+      friend class AtlasGenerator;
+
+    public:
+
+      /** the destructor */
+      virtual ~Atlas() { Clear(); }
+      /** the clearing method */
+      virtual void Clear();
+
+      /** get the number of bitmap to hold the atlas */
+      size_t GetBitmapCount() const { return bitmaps.size(); }
+
+      /** load an atlas from an index file */
+      bool LoadAtlas(boost::filesystem::path const & filename);
+      /** load an atlas from a json object */
+      bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
+      /** function to save the results */
+      bool SaveAtlas(boost::filesystem::path const & filename) const;
+
+      /** returns the bitmaps contained in the atlas */
+      std::vector<FIBITMAP *> const & GetBitmaps() const { return bitmaps; }
+
+    protected:
 
       /** function to save bitmaps */
       bool SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
       /** function to save contents */
       bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
+      /** split a filename into DIRECTORY, INDEX_FILENAME and BITMAP prefix path */
+      void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const;
+      /** get the name of a bitmap */
+      boost::filesystem::path GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const;
 
     protected:
 
       /** the bitmaps contained in the atlas */
       std::vector<FIBITMAP *> bitmaps;
-      /** the bitmap sets contained in the atlas */
-      std::vector<BitmapSet *> bitmap_sets;
-      /** the character sets contained in the atlas */
-      std::vector<CharacterSet *> character_sets;
     };
   };
 };

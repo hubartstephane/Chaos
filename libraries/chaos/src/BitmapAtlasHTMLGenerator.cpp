@@ -173,7 +173,7 @@ namespace chaos
       }
 
       // output ordered per bitmaps
-      for (size_t i = 0; i < atlas.bitmaps.size(); ++i)
+      for (size_t i = 0; i < atlas.atlas_count; ++i)
       {
         int w = MultDimensionMixedTypes(width, scale);
         int h = MultDimensionMixedTypes(height, scale);

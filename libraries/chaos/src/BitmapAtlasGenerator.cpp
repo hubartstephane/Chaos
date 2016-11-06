@@ -556,7 +556,9 @@ namespace chaos
 			{
 				if (EnsureValidResults(entries))
 				{
-					output->bitmaps = GenerateBitmaps(entries);
+					output->bitmaps     = GenerateBitmaps(entries);
+          output->atlas_count = output->bitmaps.size();
+          output->dimension   = glm::ivec2(params.atlas_width, params.atlas_height);
 #if _DEBUG
 					output->OutputAtlasSpaceOccupation(std::cout);
 					output->OutputInfo(std::cout);
@@ -569,6 +571,8 @@ namespace chaos
 #endif
 			}    
 
+      // in case of failure, clean the atlas
+      Clear();
 			return false;
 		}
 

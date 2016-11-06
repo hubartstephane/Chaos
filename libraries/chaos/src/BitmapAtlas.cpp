@@ -51,156 +51,159 @@ namespace chaos
       return nullptr;
     }
 
-		// ========================================================================
-		// JSON functions
-		// ========================================================================
+    // ========================================================================
+    // JSON functions
+    // ========================================================================
 
-		template<typename T>
-		void SaveIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto const & element : elements)
-			{
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(element, json_entry);
-				json_entries.push_back(json_entry);
-			}
-		}
+    template<typename T>
+    void SaveIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
+    {
+      for (auto const & element : elements)
+      {
+        auto json_entry = nlohmann::json();
+        SaveIntoJSON(element, json_entry);
+        json_entries.push_back(json_entry);
+      }
+    }
 
-		template<typename T>
-		void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto const * element : elements)
-			{
-				if (element == nullptr)
-					continue;
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(*element, json_entry);
-				json_entries.push_back(json_entry);
-			}
-		}
+    template<typename T>
+    void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
+    {
+      for (auto const * element : elements)
+      {
+        if (element == nullptr)
+          continue;
+        auto json_entry = nlohmann::json();
+        SaveIntoJSON(*element, json_entry);
+        json_entries.push_back(json_entry);
+      }
+    }
 
-		template<typename T>
-		void LoadFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T element;
-				LoadFromJSON(element, json_entry);
-				elements.push_back(element);
-			}					
-		}
+    template<typename T>
+    void LoadFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
+    {
+      for (auto const & json_entry : json_entries)
+      {
+        T element;
+        LoadFromJSON(element, json_entry);
+        elements.push_back(element);
+      }
+    }
 
-		template<typename T>
-		void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T * element = new T;
-				if (element == nullptr)
-					continue;
-				LoadFromJSON(*element, json_entry);
-				elements.push_back(element);
-			}		
-		}
+    template<typename T>
+    void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
+    {
+      for (auto const & json_entry : json_entries)
+      {
+        T * element = new T;
+        if (element == nullptr)
+          continue;
+        LoadFromJSON(*element, json_entry);
+        elements.push_back(element);
+      }
+    }
 
-		void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry)
-		{
-			json_entry["name"] = entry.name;
-			json_entry["tag"]  = entry.tag;
-		}
+    void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry)
+    {
+      json_entry["name"] = entry.name;
+      json_entry["tag"] = entry.tag;
+    }
 
-		void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry)
-		{
-			entry.name = json_entry["name"].get<std::string>();
-			entry.tag  = json_entry["tag"];
-		}
+    void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry)
+    {
+      entry.name = json_entry["name"].get<std::string>();
+      entry.tag = json_entry["tag"];
+    }
 
-		void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry)
-		{
-			NamedObject const & named_entry = entry;
-			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+    void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry)
+    {
+      NamedObject const & named_entry = entry;
+      SaveIntoJSON(named_entry, json_entry); // call 'super' method
 
-			json_entry["bitmap_index"] = entry.bitmap_index;
-			json_entry["x"]            = entry.x;
-			json_entry["y"]            = entry.y;
-			json_entry["width"]        = entry.width;
-			json_entry["height"]       = entry.height;		
-		}
+      json_entry["bitmap_index"] = entry.bitmap_index;
+      json_entry["x"] = entry.x;
+      json_entry["y"] = entry.y;
+      json_entry["width"] = entry.width;
+      json_entry["height"] = entry.height;
+    }
 
-		void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry)
-		{
-			NamedObject & named_entry = entry;
-			LoadFromJSON(named_entry, json_entry); // call 'super' method
+    void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry)
+    {
+      NamedObject & named_entry = entry;
+      LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-			entry.bitmap_index = json_entry["bitmap_index"];
-			entry.x            = json_entry["x"];
-			entry.y            = json_entry["y"];
-			entry.width        = json_entry["width"];
-			entry.height       = json_entry["height"];		
-		}
+      entry.bitmap_index = json_entry["bitmap_index"];
+      entry.x = json_entry["x"];
+      entry.y = json_entry["y"];
+      entry.width = json_entry["width"];
+      entry.height = json_entry["height"];
+    }
 
-		void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry)
-		{
-			BitmapEntry const & bitmap_entry = entry;
-			SaveIntoJSON(bitmap_entry, json_entry); // call 'super' method
+    void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry)
+    {
+      BitmapEntry const & bitmap_entry = entry;
+      SaveIntoJSON(bitmap_entry, json_entry); // call 'super' method
 
-			json_entry["advance_x"]   = entry.advance.x;
-			json_entry["advance_y"]   = entry.advance.y;
-			json_entry["bitmap_left"] = entry.bitmap_left;
-			json_entry["bitmap_top"]  = entry.bitmap_top;
-		}
+      json_entry["advance_x"] = entry.advance.x;
+      json_entry["advance_y"] = entry.advance.y;
+      json_entry["bitmap_left"] = entry.bitmap_left;
+      json_entry["bitmap_top"] = entry.bitmap_top;
+    }
 
-		void LoadFromJSON(CharacterEntry & entry, nlohmann::json const & json_entry)
-		{
-			BitmapEntry & bitmap_entry = entry;
-			LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
+    void LoadFromJSON(CharacterEntry & entry, nlohmann::json const & json_entry)
+    {
+      BitmapEntry & bitmap_entry = entry;
+      LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
 
-			entry.advance.x   = json_entry["advance_x"];
-			entry.advance.y   = json_entry["advance_y"];
-			entry.bitmap_left = json_entry["bitmap_left"];
-			entry.bitmap_top  = json_entry["bitmap_top"];
-		}
+      entry.advance.x = json_entry["advance_x"];
+      entry.advance.y = json_entry["advance_y"];
+      entry.bitmap_left = json_entry["bitmap_left"];
+      entry.bitmap_top = json_entry["bitmap_top"];
+    }
 
-		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry)
-		{
-			NamedObject const & named_entry = entry;
-			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+    void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry)
+    {
+      NamedObject const & named_entry = entry;
+      SaveIntoJSON(named_entry, json_entry); // call 'super' method
 
-			json_entry["elements"] = nlohmann::json::array();
-			SaveIntoJSON(entry.elements, json_entry["elements"]);
-		}
+      json_entry["elements"] = nlohmann::json::array();
+      SaveIntoJSON(entry.elements, json_entry["elements"]);
+    }
 
-		void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry)
-		{
-			NamedObject & named_entry = entry;
-			LoadFromJSON(named_entry, json_entry); // call 'super' method
+    void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry)
+    {
+      NamedObject & named_entry = entry;
+      LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-			LoadFromJSON(entry.elements, json_entry["elements"]);
-		}
+      LoadFromJSON(entry.elements, json_entry["elements"]);
+    }
 
-		void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry)
-		{
-			NamedObject const & named_entry = entry;
-			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+    void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry)
+    {
+      NamedObject const & named_entry = entry;
+      SaveIntoJSON(named_entry, json_entry); // call 'super' method
 
-			json_entry["elements"] = nlohmann::json::array();
-			SaveIntoJSON(entry.elements, json_entry["elements"]);
-		}
+      json_entry["elements"] = nlohmann::json::array();
+      SaveIntoJSON(entry.elements, json_entry["elements"]);
+    }
 
-		void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry)
-		{
-			NamedObject & named_entry = entry;
-			LoadFromJSON(named_entry, json_entry); // call 'super' method
+    void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry)
+    {
+      NamedObject & named_entry = entry;
+      LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-			LoadFromJSON(entry.elements, json_entry["elements"]);
-		}
+      LoadFromJSON(entry.elements, json_entry["elements"]);
+    }
 
     // ========================================================================
     // Atlas functions
     // ========================================================================
 
-    void Atlas::Clear()
+    void AtlasBase::Clear()
     {
+      // reset members
+      atlas_count = 0;
+      dimension   = glm::ivec2(0, 0);
       // destroy the bitmap sets
       for (BitmapSet * bitmap_set : bitmap_sets)
         delete(bitmap_set);
@@ -208,14 +211,10 @@ namespace chaos
       // destroy the character sets
       for (CharacterSet * character_set : character_sets)
         delete(character_set);
-			character_sets.clear();
-      // destroy the bitmaps
-      for (FIBITMAP * bitmap : bitmaps)
-        FreeImage_Unload(bitmap);
-      bitmaps.clear();
+      character_sets.clear();
     }
 
-    BitmapSet const * Atlas::GetBitmapSet(char const * name) const
+    BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
     {
       for (BitmapSet * bitmap_set : bitmap_sets)
         if (bitmap_set->name == name)
@@ -223,7 +222,7 @@ namespace chaos
       return nullptr;
     }
 
-    BitmapSet const * Atlas::GetBitmapSet(TagType tag) const
+    BitmapSet const * AtlasBase::GetBitmapSet(TagType tag) const
     {
       for (BitmapSet * bitmap_set : bitmap_sets)
         if (bitmap_set->tag == tag)
@@ -231,7 +230,7 @@ namespace chaos
       return nullptr;
     }
 
-    CharacterSet const * Atlas::GetCharacterSet(char const * name) const
+    CharacterSet const * AtlasBase::GetCharacterSet(char const * name) const
     {
       for (CharacterSet * character_set : character_sets)
         if (character_set->name == name)
@@ -239,7 +238,7 @@ namespace chaos
       return nullptr;
     }
 
-		CharacterSet const * Atlas::GetCharacterSet(TagType tag) const
+    CharacterSet const * AtlasBase::GetCharacterSet(TagType tag) const
     {
       for (CharacterSet * character_set : character_sets)
         if (character_set->tag == tag)
@@ -247,310 +246,323 @@ namespace chaos
       return nullptr;
     }
 
-		void Atlas::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const
-		{
-			// decompose INDEX and BITMAPS filename
-			target_dir      = filename.parent_path();
-			index_filename  = filename;
-			bitmap_filename = filename.filename();
+    float AtlasBase::ComputeSurface(int bitmap_index) const
+    {
+      float result = 0.0f;
+      // surface for the bitmap sets
+      for (BitmapSet const * bitmap_set : bitmap_sets)
+        if (bitmap_set != nullptr)
+          for (BitmapEntry const & entry : bitmap_set->elements)
+            if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
+              result += (float)(entry.width * entry.height);
+      // surface for character sets
+      for (CharacterSet const * character_set : character_sets)
+        if (character_set != nullptr)
+          for (CharacterEntry const & entry : character_set->elements)
+            if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
+              result += (float)(entry.width * entry.height);
 
-			if (!index_filename.has_extension())
-				index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
-			else
-				bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
-		}
+      return result;
+    }
 
-		boost::filesystem::path Atlas::GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const
-		{
-			char buffer[30]; // big far enough
-			sprintf_s(buffer, "_%d.png", index);
-			return bitmap_filename.concat(buffer);
-		}
+    void AtlasBase::OutputInfo(std::ostream & stream) const
+    {
+      // info for bitmap sets
+      for (BitmapSet const * bitmap_set : bitmap_sets)
+        if (bitmap_set != nullptr)
+          for (BitmapEntry const & entry : bitmap_set->elements)
+            OutputInfo(entry, stream);
+      // info for character sets
+      for (CharacterSet const * character_set : character_sets)
+        if (character_set != nullptr)
+          for (CharacterEntry const & entry : character_set->elements)
+            OutputInfo(entry, stream);
+    }
 
-		glm::ivec2 Atlas::GetAtlasDimension() const
-		{
-			for (size_t i = 0; i < bitmaps.size(); ++i)
-			{
-				FIBITMAP * bitmap = bitmaps[i];
-				if (bitmap != nullptr)
-				{
-					int width  = (int)FreeImage_GetWidth(bitmap);
-					int height = (int)FreeImage_GetHeight(bitmap);
-					return glm::ivec2(width, height);
-				}
-			}
-			return glm::ivec2(0, 0);
-		}
+    void AtlasBase::OutputInfo(NamedObject const & entry, std::ostream & stream)
+    {
+      stream << "  name         : " << entry.name << std::endl;
+      stream << "  tag          : " << entry.tag << std::endl;
+    }
 
-		bool Atlas::SaveAtlas(boost::filesystem::path const & filename) const
-		{
-			// decompose the filename
-			boost::filesystem::path target_dir;
-			boost::filesystem::path index_filename;
-			boost::filesystem::path bitmap_filename;
-			SplitFilename(filename, target_dir, index_filename, bitmap_filename);
+    void AtlasBase::OutputInfo(BitmapEntry const & entry, std::ostream & stream)
+    {
+      NamedObject const & named_entry = entry;
+      OutputInfo(named_entry, stream);
 
-			// create a target directory if necessary   
-			if (!boost::filesystem::is_directory(target_dir))
-				if (!boost::filesystem::create_directories(target_dir))
-					return false;
+      stream << "  bitmap_index : " << entry.bitmap_index << std::endl;
+      stream << "  width        : " << entry.width << std::endl;
+      stream << "  height       : " << entry.height << std::endl;
+      stream << "  x            : " << entry.x << std::endl;
+      stream << "  y            : " << entry.y << std::endl;
+    }
 
-			// save the atlas
-			return SaveAtlasBitmaps(target_dir, index_filename, bitmap_filename) && SaveAtlasIndex(target_dir, index_filename, bitmap_filename);
-		}
+    void AtlasBase::OutputInfo(CharacterEntry const & entry, std::ostream & stream)
+    {
+      BitmapEntry const & bitmap_entry = entry;
+      OutputInfo(bitmap_entry, stream);
 
-		bool Atlas::SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const
-		{
-			bool result = true;
-			// save them
-			size_t count = bitmaps.size();
-			for (size_t i = 0; (i < count) && result; ++i)
-			{
-				FIBITMAP * im = bitmaps[i];
-				if (im != nullptr)
-				{
-					boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(bitmap_filename, i);
+      stream << "  advance.x    : " << entry.advance.x << std::endl;
+      stream << "  advance.y    : " << entry.advance.y << std::endl;
+      stream << "  bitmap_left  : " << entry.bitmap_left << std::endl;
+      stream << "  bitmap_top   : " << entry.bitmap_top << std::endl;
+    }
 
-					result = (FreeImage_Save(FIF_PNG, im, dst_filename.string().c_str(), 0) != 0);
-				}
-			}
-			return result;
-		}
+    std::string AtlasBase::GetInfoString() const
+    {
+      std::ostringstream out;
+      OutputInfo(out);
+      return out.str();
+    }
 
-		bool Atlas::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const
-		{
-			// generate a file for the index (JSON format)
-			std::ofstream stream(index_filename.string().c_str());
-			if (stream)
-			{
-				nlohmann::json j;
-				// insert the files
-				j["bitmaps"] = nlohmann::json::array();
-				for (size_t i = 0; i < bitmaps.size(); ++i)
-					j["bitmaps"].push_back(GetBitmapFilename(bitmap_filename, i).string());
-				// insert the entries
-				j["bitmap_sets"] = nlohmann::json::array();
-				SaveIntoJSON(bitmap_sets, j["bitmap_sets"]);
-				j["character_sets"] = nlohmann::json::array();
-				SaveIntoJSON(character_sets, j["character_sets"]);
-				// format the JSON into string and insert it into stream
-				stream << j.dump(4);
-				return true;
-			}
-			return false;
-		}
+    std::string AtlasBase::GetInfoString(NamedObject const & entry)
+    {
+      std::ostringstream out;
+      OutputInfo(entry, out);
+      return out.str();
+    }
 
-		bool Atlas::LoadAtlas(boost::filesystem::path const & filename)
-		{
-			// decompose the filename
-			boost::filesystem::path target_dir;
-			boost::filesystem::path index_filename;
-			boost::filesystem::path bitmap_filename;
-			SplitFilename(filename, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
-																																					 // load the file into memory
-			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
-			if (buf == nullptr)
-				return false;
+    std::string AtlasBase::GetInfoString(BitmapEntry const & entry)
+    {
+      std::ostringstream out;
+      OutputInfo(entry, out);
+      return out.str();
+    }
 
-			// parse JSON file
-			bool result = false;
-			try
-			{
-				nlohmann::json j = nlohmann::json::parse(buf.data);
-				result = LoadAtlas(j, target_dir);
-			}
-			catch (std::exception & e)
-			{
-				LogTools::Error("Atlas::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
-			}
-			return result;
-		}
+    std::string AtlasBase::GetInfoString(CharacterEntry const & entry)
+    {
+      std::ostringstream out;
+      OutputInfo(entry, out);
+      return out.str();
+    }
 
-		bool Atlas::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & target_dir)
-		{
-			bool result = true;
+    std::string AtlasBase::GetAtlasSpaceOccupationString(int bitmap_index) const
+    {
+      std::ostringstream stream;
+      OutputAtlasSpaceOccupation(bitmap_index, stream);
+      return stream.str();
+    }
 
-			// clean the object
-			Clear();
+    std::string AtlasBase::GetAtlasSpaceOccupationString() const
+    {
+      std::ostringstream stream;
+      OutputAtlasSpaceOccupation(stream);
+      return stream.str();
+    }
 
-			try
-			{
-				// load the files
-				nlohmann::json const & json_files = j["bitmaps"];
-				for (auto const json_filename : json_files)
-				{
-					std::string const & filename = json_filename;
+    void AtlasBase::OutputAtlasSpaceOccupation(std::ostream & stream) const
+    {
+      size_t count = atlas_count;
+      for (size_t i = 0; i < count; ++i)
+        OutputAtlasSpaceOccupation(i, stream);
+    }
 
-					FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
-					if (bitmap == nullptr)
-					{
-						result = false;
-						break;
-					}
-					bitmaps.push_back(bitmap);
-				}
-				// load the entries
-				if (result)
-				{
-					LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
-					LoadFromJSON(character_sets, j["character_sets"]);
-				}
-			}
-			catch (std::exception & e)
-			{
-				LogTools::Error("Atlas::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
-			}
+    void AtlasBase::OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream) const
+    {
+      float atlas_surface      = (float)(dimension.x * dimension.y);
+      float atlas_used_surface = ComputeSurface(bitmap_index);
+      float percent            = 100.0f * atlas_used_surface / atlas_surface;
 
-			// in case of failure, reset the whole atlas once more
-			if (!result)
-				Clear();
+      stream << "Atlas " << bitmap_index << std::endl;
+      stream << "  occupation : " << percent << "%" << std::endl;
+    }
 
-			return result;
-		}
+    void AtlasBase::OutputGeneralInformation(std::ostream & stream) const
+    {
+      float atlas_surface   = (float)(dimension.x * dimension.y);
+      float full_surface    = ComputeSurface(-1);
+      int   min_atlas_count = (int)std::ceil(full_surface / atlas_surface);
 
-		float Atlas::ComputeSurface(int bitmap_index) const
-		{
-			float result = 0.0f;
-			// surface for the bitmap sets
-			for (BitmapSet const * bitmap_set : bitmap_sets)
-				if (bitmap_set != nullptr)
-					for (BitmapEntry const & entry : bitmap_set->elements)
-						if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
-							result += (float)(entry.width * entry.height);
-			// surface for character sets
-			for (CharacterSet const * character_set : character_sets)
-				if (character_set != nullptr)
-					for (CharacterEntry const & entry : character_set->elements)
-						if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
-							result += (float)(entry.width * entry.height);
-			
-			return result;
-		}
+      stream << "Full used surface  : " << full_surface << std::endl;
+      stream << "Atlas surface      : " << atlas_surface << std::endl;
+      stream << "Best atlas count   : " << min_atlas_count << std::endl;
+      stream << "Actual atlas count : " << atlas_count << std::endl;
+    }
 
-		void Atlas::OutputInfo(std::ostream & stream) const
-		{
-			// info for bitmap sets
-			for (BitmapSet const * bitmap_set : bitmap_sets)
-				if (bitmap_set != nullptr)
-					for (BitmapEntry const & entry : bitmap_set->elements)
-						OutputInfo(entry, stream);
-			// info for character sets
-			for (CharacterSet const * character_set : character_sets)
-				if (character_set != nullptr)
-					for (CharacterEntry const & entry : character_set->elements)
-						OutputInfo(entry, stream);
-		}
+    std::string AtlasBase::GetGeneralInformationString() const
+    {
+      std::ostringstream stream;
+      OutputGeneralInformation(stream);
+      return stream.str();
+    }
 
-		void Atlas::OutputInfo(NamedObject const & entry, std::ostream & stream)
-		{
-			stream << "  name         : " << entry.name << std::endl;
-			stream << "  tag          : " << entry.tag  << std::endl;		
-		}
+    // ========================================================================
+    // Atlas functions
+    // ========================================================================
 
-		void Atlas::OutputInfo(BitmapEntry const & entry, std::ostream & stream)
-		{
-			NamedObject const & named_entry = entry;
-			OutputInfo(named_entry, stream);
+    void Atlas::Clear()
+    {
+      AtlasBase::Clear();
 
-			stream << "  bitmap_index : " << entry.bitmap_index << std::endl;
-			stream << "  width        : " << entry.width        << std::endl;
-			stream << "  height       : " << entry.height       << std::endl;
-			stream << "  x            : " << entry.x            << std::endl;
-			stream << "  y            : " << entry.y            << std::endl;
-		}
+      // destroy the bitmaps
+      for (FIBITMAP * bitmap : bitmaps)
+        FreeImage_Unload(bitmap);
+      bitmaps.clear();
+    }
 
-		void Atlas::OutputInfo(CharacterEntry const & entry, std::ostream & stream)
-		{
-			BitmapEntry const & bitmap_entry = entry;
-			OutputInfo(bitmap_entry, stream);
+    bool Atlas::SaveAtlas(boost::filesystem::path const & filename) const
+    {
+      // decompose the filename
+      boost::filesystem::path target_dir;
+      boost::filesystem::path index_filename;
+      boost::filesystem::path bitmap_filename;
+      SplitFilename(filename, target_dir, index_filename, bitmap_filename);
 
-			stream << "  advance.x    : " << entry.advance.x   << std::endl;
-			stream << "  advance.y    : " << entry.advance.y   << std::endl;
-			stream << "  bitmap_left  : " << entry.bitmap_left << std::endl;
-			stream << "  bitmap_top   : " << entry.bitmap_top  << std::endl;
-		}
+      // create a target directory if necessary   
+      if (!boost::filesystem::is_directory(target_dir))
+        if (!boost::filesystem::create_directories(target_dir))
+          return false;
 
-		std::string Atlas::GetInfoString() const
-		{
-			std::ostringstream out;
-			OutputInfo(out);
-			return out.str();
-		}
+      // save the atlas
+      return SaveAtlasBitmaps(target_dir, index_filename, bitmap_filename) && SaveAtlasIndex(target_dir, index_filename, bitmap_filename);
+    }
 
-		std::string Atlas::GetInfoString(NamedObject const & entry)
-		{
-			std::ostringstream out;
-			OutputInfo(entry, out);
-			return out.str();
-		}
+    bool Atlas::SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const
+    {
+      bool result = true;
+      // save them
+      size_t count = bitmaps.size();
+      for (size_t i = 0; (i < count) && result; ++i)
+      {
+        FIBITMAP * im = bitmaps[i];
+        if (im != nullptr)
+        {
+          boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(bitmap_filename, i);
 
-		std::string Atlas::GetInfoString(BitmapEntry const & entry)
-		{
-			std::ostringstream out;
-			OutputInfo(entry, out);
-			return out.str();
-		}
+          result = (FreeImage_Save(FIF_PNG, im, dst_filename.string().c_str(), 0) != 0);
+        }
+      }
+      return result;
+    }
 
-		std::string Atlas::GetInfoString(CharacterEntry const & entry)
-		{
-			std::ostringstream out;
-			OutputInfo(entry, out);
-			return out.str();
-		}
+    bool Atlas::SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const
+    {
+      // generate a file for the index (JSON format)
+      std::ofstream stream(index_filename.string().c_str());
+      if (stream)
+      {
+        nlohmann::json j;
+        // insert the files
+        j["bitmaps"] = nlohmann::json::array();
+        for (size_t i = 0; i < bitmaps.size(); ++i)
+          j["bitmaps"].push_back(GetBitmapFilename(bitmap_filename, i).string());
+        // insert the entries
+        j["bitmap_sets"] = nlohmann::json::array();
+        SaveIntoJSON(bitmap_sets, j["bitmap_sets"]);
+        j["character_sets"] = nlohmann::json::array();
+        SaveIntoJSON(character_sets, j["character_sets"]);
+        // format the JSON into string and insert it into stream
+        stream << j.dump(4);
+        return true;
+      }
+      return false;
+    }
 
-		std::string Atlas::GetAtlasSpaceOccupationString(int bitmap_index) const
-		{
-			std::ostringstream stream;
-			OutputAtlasSpaceOccupation(bitmap_index, stream);
-			return stream.str();
-		}
+    bool Atlas::LoadAtlas(boost::filesystem::path const & filename)
+    {
+      // decompose the filename
+      boost::filesystem::path target_dir;
+      boost::filesystem::path index_filename;
+      boost::filesystem::path bitmap_filename;
+      SplitFilename(filename, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
+                                                                            // load the file into memory
+      Buffer<char> buf = FileTools::LoadFile(index_filename, true);
+      if (buf == nullptr)
+        return false;
 
-		std::string Atlas::GetAtlasSpaceOccupationString() const
-		{
-			std::ostringstream stream;
-			OutputAtlasSpaceOccupation(stream);
-			return stream.str();
-		}
+      // parse JSON file
+      bool result = false;
+      try
+      {
+        nlohmann::json j = nlohmann::json::parse(buf.data);
+        result = LoadAtlas(j, target_dir);
+      }
+      catch (std::exception & e)
+      {
+        LogTools::Error("AtlasBase::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
+      }
+      return result;
+    }
 
-		void Atlas::OutputAtlasSpaceOccupation(std::ostream & stream) const
-		{
-			size_t count = bitmaps.size();
-			for (size_t i = 0 ; i < count ; ++i)
-				OutputAtlasSpaceOccupation(i, stream);
-		}
+    bool Atlas::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & target_dir)
+    {
+      bool result = true;
 
-		void Atlas::OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream) const
-		{
-			glm::ivec2 atlas_size = GetAtlasDimension();
+      // clean the object
+      Clear();
 
-			float atlas_surface      = (float)(atlas_size.x * atlas_size.y);
-			float atlas_used_surface = ComputeSurface(bitmap_index);
-			float percent            = 100.0f * atlas_used_surface / atlas_surface;
+      try
+      {
+        // load the files
+        nlohmann::json const & json_files = j["bitmaps"];
+        for (auto const json_filename : json_files)
+        {
+          std::string const & filename = json_filename;
 
-			stream << "Atlas " << bitmap_index << std::endl;
-			stream << "  occupation : " << percent << "%" << std::endl;
-		}
+          FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
+          if (bitmap == nullptr)
+          {
+            result = false;
+            break;
+          }
+          bitmaps.push_back(bitmap);
+        }
+        // load the entries
+        if (result)
+        {
+          LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
+          LoadFromJSON(character_sets, j["character_sets"]);
+        }
+      }
+      catch (std::exception & e)
+      {
+        LogTools::Error("AtlasBase::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
+      }
 
-		void Atlas::OutputGeneralInformation(std::ostream & stream) const
-		{
-			glm::ivec2 atlas_size = GetAtlasDimension();
+      // in case of failure, reset the whole atlas once more
+      if (!result)
+        Clear();
 
-			float atlas_surface   = (float)(atlas_size.x * atlas_size.y);
-			float texture_surface = ComputeSurface(-1);
-			int   min_atlas_count = (int)std::ceil(texture_surface / atlas_surface);
+      return result;
+    }
 
-			stream << "Texture surface    : " << texture_surface << std::endl;
-			stream << "Atlas surface      : " << atlas_surface   << std::endl;
-			stream << "Best atlas count   : " << min_atlas_count << std::endl;
-			stream << "Actual atlas count : " << bitmaps.size() << std::endl;
-		}
+    boost::filesystem::path Atlas::GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const
+    {
+      char buffer[30]; // big far enough
+      sprintf_s(buffer, "_%d.png", index);
+      return bitmap_filename.concat(buffer);
+    }
 
-		std::string Atlas::GetGeneralInformationString() const
-		{
-			std::ostringstream stream;
-			OutputGeneralInformation(stream);
-			return stream.str();
-		} 
+    void Atlas::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const
+    {
+      // decompose INDEX and BITMAPS filename
+      target_dir = filename.parent_path();
+      index_filename = filename;
+      bitmap_filename = filename.filename();
+
+      if (!index_filename.has_extension())
+        index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON
+      else
+        bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
+    }
+
+#if 0
+    glm::ivec2 AtlasBase::GetAtlasDimension() const
+    {
+      for (size_t i = 0; i < bitmaps.size(); ++i)
+      {
+        FIBITMAP * bitmap = bitmaps[i];
+        if (bitmap != nullptr)
+        {
+          int width = (int)FreeImage_GetWidth(bitmap);
+          int height = (int)FreeImage_GetHeight(bitmap);
+          return glm::ivec2(width, height);
+        }
+      }
+      return glm::ivec2(0, 0);
+    }
+#endif
+
   };
 };
 

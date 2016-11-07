@@ -80,12 +80,12 @@ namespace chaos
       if (result != nullptr)
       {
         // new character set input
-        result->name            = name;
-        result->library         = library;
-        result->face            = face;
+        result->name = name;
+        result->library = library;
+        result->face = face;
         result->release_library = release_library;
-        result->release_face    = release_face;        
-        
+        result->release_face = release_face;
+
         // set font size
         FT_Error error = FT_Set_Pixel_Sizes(result->face, params.glyph_width, params.glyph_height);
         if (error != 0)
@@ -107,15 +107,15 @@ namespace chaos
           if (bitmap != nullptr)
           {
             CharacterEntryInput entry;
-            entry.tag            = glyph.first;
-            entry.width          = (int)FreeImage_GetWidth(bitmap);
-            entry.height         = (int)FreeImage_GetHeight(bitmap);
-            entry.bpp            = (int)FreeImage_GetBPP(bitmap);
-            entry.bitmap         = bitmap;
+            entry.tag = glyph.first;
+            entry.width = (int)FreeImage_GetWidth(bitmap);
+            entry.height = (int)FreeImage_GetHeight(bitmap);
+            entry.bpp = (int)FreeImage_GetBPP(bitmap);
+            entry.bitmap = bitmap;
             entry.release_bitmap = true;
-            entry.advance        = glyph.second.advance;
-            entry.bitmap_left    = glyph.second.bitmap_left;
-            entry.bitmap_top     = glyph.second.bitmap_top;
+            entry.advance = glyph.second.advance;
+            entry.bitmap_left = glyph.second.bitmap_left;
+            entry.bitmap_top = glyph.second.bitmap_top;
             result->elements.push_back(entry);
           }
         }
@@ -206,11 +206,11 @@ namespace chaos
 
       BitmapEntryInput new_entry;
 
-      new_entry.name           = name;
-      new_entry.bitmap         = bitmap;
-      new_entry.width          = (int)FreeImage_GetWidth(new_entry.bitmap);
-      new_entry.height         = (int)FreeImage_GetHeight(new_entry.bitmap);
-      new_entry.bpp            = (int)FreeImage_GetBPP(new_entry.bitmap);
+      new_entry.name = name;
+      new_entry.bitmap = bitmap;
+      new_entry.width = (int)FreeImage_GetWidth(new_entry.bitmap);
+      new_entry.height = (int)FreeImage_GetHeight(new_entry.bitmap);
+      new_entry.bpp = (int)FreeImage_GetBPP(new_entry.bitmap);
       new_entry.release_bitmap = release_bitmap;
 
       elements.push_back(std::move(new_entry)); // move for std::string copy
@@ -274,7 +274,7 @@ namespace chaos
     void AtlasGenerator::Clear()
     {
       params = AtlasGeneratorParams();
-      input  = nullptr;
+      input = nullptr;
       output = nullptr;
       atlas_definitions.clear();
     }
@@ -282,9 +282,9 @@ namespace chaos
     Rectangle AtlasGenerator::GetAtlasRectangle() const
     {
       Rectangle result;
-      result.x      = 0;
-      result.y      = 0;
-      result.width  = params.atlas_width;
+      result.x = 0;
+      result.y = 0;
+      result.width = params.atlas_width;
       result.height = params.atlas_height;
       return result;
     }
@@ -292,9 +292,9 @@ namespace chaos
     Rectangle AtlasGenerator::GetRectangle(BitmapEntry const & entry) const
     {
       Rectangle result;
-      result.x      = entry.x;
-      result.y      = entry.y;
-      result.width  = entry.width;
+      result.x = entry.x;
+      result.y = entry.y;
+      result.width = entry.width;
       result.height = entry.height;
       return result;
     }
@@ -302,9 +302,9 @@ namespace chaos
     Rectangle AtlasGenerator::AddPadding(Rectangle const & r) const
     {
       Rectangle result = r;
-      result.x      -=     params.atlas_padding;
-      result.y      -=     params.atlas_padding;
-      result.width  += 2 * params.atlas_padding;
+      result.x -= params.atlas_padding;
+      result.y -= params.atlas_padding;
+      result.width += 2 * params.atlas_padding;
       result.height += 2 * params.atlas_padding;
       return result;
     }
@@ -384,20 +384,20 @@ namespace chaos
       return false;
     }
 
-    std::vector<FIBITMAP *> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries) const
+    std::vector<unique_bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries) const
     {
       unsigned char const bgra[] = { 0, 0, 0, 0 }; // B G R A
 
-      std::vector<FIBITMAP *> result;
+      std::vector<unique_bitmap_ptr> result;
 
       // generate the bitmaps
       int bitmap_count = atlas_definitions.size();
-      for (int i = 0 ; i < bitmap_count ; ++i)
+      for (int i = 0; i < bitmap_count; ++i)
       {
-        FIBITMAP * bitmap = FreeImage_Allocate(params.atlas_width, params.atlas_height, params.atlas_bpp);
-        if (bitmap != nullptr)
+        unique_bitmap_ptr bitmap = unique_bitmap_ptr(FreeImage_Allocate(params.atlas_width, params.atlas_height, params.atlas_bpp));
+        if (bitmap)
         {
-          FreeImage_FillBackground(bitmap, bgra, 0);
+          FreeImage_FillBackground(bitmap.get(), bgra, 0);
 
           for (BitmapEntryInput const * entry_input : entries)
           {
@@ -405,10 +405,10 @@ namespace chaos
 
             if (entry->bitmap_index != i)
               continue;
-            FreeImage_Paste(bitmap, entry_input->bitmap, entry->x, entry->y, 255);
+            FreeImage_Paste(bitmap.get(), entry_input->bitmap, entry->x, entry->y, 255);
 
           }
-          result.push_back(bitmap);
+          result.push_back(std::move(bitmap));
         }
       }
       return result;
@@ -422,26 +422,26 @@ namespace chaos
       {
         BitmapSet * bitmap_set = new BitmapSet;
         bitmap_set->name = bitmap_set_input->name;
-        bitmap_set->tag  = bitmap_set_input->tag;
+        bitmap_set->tag = bitmap_set_input->tag;
         output->bitmap_sets.push_back(std::move(std::unique_ptr<BitmapSet>(bitmap_set))); // 'move' in mandatory because, unique_ptr has no copy operator
 
         size_t count = bitmap_set_input->elements.size();
-        for (size_t i = 0 ; i < count ; ++i)
+        for (size_t i = 0; i < count; ++i)
         {
           BitmapEntryInput const & entry_input = bitmap_set_input->elements[i];
 
           BitmapEntry entry;
-          entry.name         = entry_input.name;
-          entry.tag          = entry_input.tag;
+          entry.name = entry_input.name;
+          entry.tag = entry_input.tag;
           entry.bitmap_index = -1;
-          entry.x            = 0;
-          entry.y            = 0;
-          entry.width        = entry_input.width;
-          entry.height       = entry_input.height;
+          entry.x = 0;
+          entry.y = 0;
+          entry.width = entry_input.width;
+          entry.height = entry_input.height;
           bitmap_set->elements.push_back(entry);
         }
         // once we are sure that Atlas.BitmapSet.Entry vector does not resize anymore, we can store pointers         
-        for (size_t i = 0 ; i < count ; ++i)
+        for (size_t i = 0; i < count; ++i)
         {
           bitmap_set_input->elements[i].output_entry = &bitmap_set->elements[i];
           result.push_back(&bitmap_set_input->elements[i]);
@@ -453,29 +453,29 @@ namespace chaos
       {
         CharacterSet * character_set = new CharacterSet;
         character_set->name = character_set_input->name;
-        character_set->tag  = character_set_input->tag;
+        character_set->tag = character_set_input->tag;
         output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
 
         size_t count = character_set_input->elements.size();
-        for (size_t i = 0 ; i < count ; ++i)
+        for (size_t i = 0; i < count; ++i)
         {
           CharacterEntryInput const & entry_input = character_set_input->elements[i];
 
           CharacterEntry entry;
-          entry.name         = entry_input.name;
-          entry.tag          = entry_input.tag;
+          entry.name = entry_input.name;
+          entry.tag = entry_input.tag;
           entry.bitmap_index = -1;
-          entry.x            = 0;
-          entry.y            = 0;
-          entry.width        = entry_input.width;
-          entry.height       = entry_input.height;
-          entry.advance      = entry_input.advance;
-          entry.bitmap_left  = entry_input.bitmap_left;
-          entry.bitmap_top   = entry_input.bitmap_top;
+          entry.x = 0;
+          entry.y = 0;
+          entry.width = entry_input.width;
+          entry.height = entry_input.height;
+          entry.advance = entry_input.advance;
+          entry.bitmap_left = entry_input.bitmap_left;
+          entry.bitmap_top = entry_input.bitmap_top;
           character_set->elements.push_back(entry);
         }
         // once we are sure that Atlas.CharacterSet.Entry vector does not resize anymore, we can store pointers         
-        for (size_t i = 0 ; i < count ; ++i)
+        for (size_t i = 0; i < count; ++i)
         {
           character_set_input->elements[i].output_entry = &character_set->elements[i];
           result.push_back(&character_set_input->elements[i]);
@@ -483,103 +483,103 @@ namespace chaos
       }
     }
 
-		bool AtlasGenerator::ComputeResult(AtlasInput & in_input, Atlas & in_output, AtlasGeneratorParams const & in_params)
-		{
-			// clear generator from previous usage
-			Clear();
+    bool AtlasGenerator::ComputeResult(AtlasInput & in_input, Atlas & in_output, AtlasGeneratorParams const & in_params)
+    {
+      // clear generator from previous usage
+      Clear();
 
-			// store arguments inside
-			params = in_params;
-			input  = &in_input;
-			output = &in_output;
+      // store arguments inside
+      params = in_params;
+      input = &in_input;
+      output = &in_output;
 
-			// prepare the result to receive new computation
-			output->Clear(); 
+      // prepare the result to receive new computation
+      output->Clear();
 
-			// ensure BPP is valid
-			if (params.atlas_bpp != 0 && params.atlas_bpp != 8 && params.atlas_bpp != 24 && params.atlas_bpp != 32)
-				return false;
+      // ensure BPP is valid
+      if (params.atlas_bpp != 0 && params.atlas_bpp != 8 && params.atlas_bpp != 24 && params.atlas_bpp != 32)
+        return false;
 
       // generate input entries and sets. Collect input entries
       BitmapEntryInputVector entries;
       FillAtlasEntriesFromInput(entries);
 
-			// search max texture size
-			int max_width  = -1;
-			int max_height = -1;
-			int max_bpp    = -1;
+      // search max texture size
+      int max_width = -1;
+      int max_height = -1;
+      int max_bpp = -1;
 
-			for (BitmapEntryInput const * entry : entries)
-			{
-				if (max_width < 0 || max_width < entry->width)
-					max_width = entry->width;
-				if (max_height < 0 || max_height < entry->height)
-					max_height = entry->height;
-				if (max_bpp < 0 || max_bpp < entry->bpp)
-					max_bpp = entry->bpp;
-			}
+      for (BitmapEntryInput const * entry : entries)
+      {
+        if (max_width < 0 || max_width < entry->width)
+          max_width = entry->width;
+        if (max_height < 0 || max_height < entry->height)
+          max_height = entry->height;
+        if (max_bpp < 0 || max_bpp < entry->bpp)
+          max_bpp = entry->bpp;
+      }
 
-			max_width  += params.atlas_padding * 2;
-			max_height += params.atlas_padding * 2;
+      max_width += params.atlas_padding * 2;
+      max_height += params.atlas_padding * 2;
 
-			// compute final atlas size
-			if (params.atlas_width <= 0 || params.atlas_width < max_width)
-				params.atlas_width = max_width;
-			if (params.atlas_height <= 0 || params.atlas_height < max_height)
-				params.atlas_height = max_height;
+      // compute final atlas size
+      if (params.atlas_width <= 0 || params.atlas_width < max_width)
+        params.atlas_width = max_width;
+      if (params.atlas_height <= 0 || params.atlas_height < max_height)
+        params.atlas_height = max_height;
 
-			if (params.force_power_of_2)
-			{
-				params.atlas_width  = MathTools::GetNearestPowerOf2(params.atlas_width);
-				params.atlas_height = MathTools::GetNearestPowerOf2(params.atlas_height);
-			}
+      if (params.force_power_of_2)
+      {
+        params.atlas_width = MathTools::GetNearestPowerOf2(params.atlas_width);
+        params.atlas_height = MathTools::GetNearestPowerOf2(params.atlas_height);
+      }
 
-			if (params.force_square)
-				params.atlas_width = params.atlas_height = max(params.atlas_width, params.atlas_height);
+      if (params.force_square)
+        params.atlas_width = params.atlas_height = max(params.atlas_width, params.atlas_height);
 
-			// test the validity of size
-			if (params.atlas_max_width > 0 && params.atlas_max_width < params.atlas_width)
-				return false;
-			if (params.atlas_max_height > 0 && params.atlas_max_height < params.atlas_height)
-				return false;
+      // test the validity of size
+      if (params.atlas_max_width > 0 && params.atlas_max_width < params.atlas_width)
+        return false;
+      if (params.atlas_max_height > 0 && params.atlas_max_height < params.atlas_height)
+        return false;
 
-			// if necessary match BPP to textures in input
-			if (params.atlas_bpp <= 0)
-			{
-				if (max_bpp != 8 && max_bpp != 24 && max_bpp != 32) // 16 BPP is unused
-					max_bpp = 32;
-				params.atlas_bpp = max_bpp;
-			}
+      // if necessary match BPP to textures in input
+      if (params.atlas_bpp <= 0)
+      {
+        if (max_bpp != 8 && max_bpp != 24 && max_bpp != 32) // 16 BPP is unused
+          max_bpp = 32;
+        params.atlas_bpp = max_bpp;
+      }
 
-			// ensure this can be produced inside an atlas with size_restriction
-			if (DoComputeResult(entries))
-			{
-				if (EnsureValidResults(entries))
-				{
-					output->bitmaps     = GenerateBitmaps(entries);
+      // ensure this can be produced inside an atlas with size_restriction
+      if (DoComputeResult(entries))
+      {
+        if (EnsureValidResults(entries))
+        {
+          output->bitmaps = GenerateBitmaps(entries);
           output->atlas_count = output->bitmaps.size();
-          output->dimension   = glm::ivec2(params.atlas_width, params.atlas_height);
+          output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
 #if _DEBUG
-					output->OutputAtlasSpaceOccupation(std::cout);
-					output->OutputInfo(std::cout);
+          output->OutputAtlasSpaceOccupation(std::cout);
+          output->OutputInfo(std::cout);
 #endif
-					return true;
-				}   
+          return true;
+        }
 #if _DEBUG
-				else
-					output->OutputInfo(std::cout);
+        else
+          output->OutputInfo(std::cout);
 #endif
-			}    
+      }
 
       // in case of failure, clean the atlas
       Clear();
-			return false;
-		}
+      return false;
+    }
 
     bool AtlasGenerator::DoComputeResult(BitmapEntryInputVector const & entries)
     {
       size_t count = entries.size();
-      
+
       // create an indirection list for entries sorted by surface
       float padding = (float)params.atlas_padding;
       std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2) {
@@ -642,160 +642,160 @@ namespace chaos
       return true;
     }
 
-		float AtlasGenerator::GetAdjacentSurface(BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
-		{
-			float result = 0.0f;
+    float AtlasGenerator::GetAdjacentSurface(BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
+    {
+      float result = 0.0f;
 
-			size_t a = u;
-			size_t b = v;
+      size_t a = u;
+      size_t b = v;
 
-			// search the first intersection
-			u += dx;
-			v += dy;
-			while ((u < x_count) && (u != SIZE_MAX) && (v < y_count) && (v != SIZE_MAX))
-			{
-				size_t index = u * y_count + v;
-				if (collision[index])
-					break;
-				u += dx;
-				v += dy;
-			}
+      // search the first intersection
+      u += dx;
+      v += dy;
+      while ((u < x_count) && (u != SIZE_MAX) && (v < y_count) && (v != SIZE_MAX))
+      {
+        size_t index = u * y_count + v;
+        if (collision[index])
+          break;
+        u += dx;
+        v += dy;
+      }
 
-			u -= dx;
-			v -= dy;
+      u -= dx;
+      v -= dy;
 
-			if (u != a || v != b)
-			{
-				if (dx != 0)
-				{
-					int x1 = atlas_def.split_x[a];
-					int x2 = atlas_def.split_x[u];
+      if (u != a || v != b)
+      {
+        if (dx != 0)
+        {
+          int x1 = atlas_def.split_x[a];
+          int x2 = atlas_def.split_x[u];
 
-					result = ((float)std::abs(x1 - x2)) * ((float)(entry.height + 2 * params.atlas_padding));
-				}
-				else
-				{
-					int y1 = atlas_def.split_y[b];
-					int y2 = atlas_def.split_y[v];
+          result = ((float)std::abs(x1 - x2)) * ((float)(entry.height + 2 * params.atlas_padding));
+        }
+        else
+        {
+          int y1 = atlas_def.split_y[b];
+          int y2 = atlas_def.split_y[v];
 
-					result = ((float)std::abs(y1 - y2)) * ((float)(entry.width + 2 * params.atlas_padding));
-				}
-			}
+          result = ((float)std::abs(y1 - y2)) * ((float)(entry.width + 2 * params.atlas_padding));
+        }
+      }
 
-			return result;
-		}
+      return result;
+    }
 
-		float AtlasGenerator::FindBestPositionInAtlas(BitmapEntryInputVector const & entries, BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, int & x, int & y) const
-		{
-			float result = -1.0f;
+    float AtlasGenerator::FindBestPositionInAtlas(BitmapEntryInputVector const & entries, BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, int & x, int & y) const
+    {
+      float result = -1.0f;
 
-			size_t  x_count = atlas_def.split_x.size();
-			size_t  y_count = atlas_def.split_y.size();
-			size_t count = x_count * y_count;
+      size_t  x_count = atlas_def.split_x.size();
+      size_t  y_count = atlas_def.split_y.size();
+      size_t count = x_count * y_count;
 
-			std::vector<int> collision_table;
-			collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
+      std::vector<int> collision_table;
+      collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
 
-																																 // find collision table
-			Rectangle r;
-			r.width  = entry.width;
-			r.height = entry.height;
+                                                                 // find collision table
+      Rectangle r;
+      r.width = entry.width;
+      r.height = entry.height;
 
-			bool any_value = false;
-			for (size_t u = 0 ; u < x_count ; ++u)
-			{
-				int px = atlas_def.split_x[u];
-				if (px + entry.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
-					break;
-				r.x = px + params.atlas_padding;
+      bool any_value = false;
+      for (size_t u = 0; u < x_count; ++u)
+      {
+        int px = atlas_def.split_x[u];
+        if (px + entry.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
+          break;
+        r.x = px + params.atlas_padding;
 
-				for (size_t v = 0 ; v < y_count ; ++v)
-				{
-					int py = atlas_def.split_y[v];
-					if (py + entry.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
-						break;
-					r.y = py + params.atlas_padding;
+        for (size_t v = 0; v < y_count; ++v)
+        {
+          int py = atlas_def.split_y[v];
+          if (py + entry.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
+            break;
+          r.y = py + params.atlas_padding;
 
-					bool collision = HasIntersectingEntry(entries, &atlas_def - &atlas_definitions[0], r);
-					any_value |= !collision;
+          bool collision = HasIntersectingEntry(entries, &atlas_def - &atlas_definitions[0], r);
+          any_value |= !collision;
 
-					if (!collision)
-						collision_table[u * y_count + v] = 0;
-				}
-			}
+          if (!collision)
+            collision_table[u * y_count + v] = 0;
+        }
+      }
 
-			if (!any_value)
-				return -1.0f; // texture can be set nowhere in that atlas
+      if (!any_value)
+        return -1.0f; // texture can be set nowhere in that atlas
 
-											// find the best position
-			for (size_t u = 0 ; u < x_count ; ++u)
-			{
-				for (size_t v = 0 ; v < y_count ; ++v)
-				{
-					size_t index = u * y_count + v;
-					if (!collision_table[index])
-					{
-						float surf1 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, +1,  0);
-						float surf2 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, -1,  0);
-						float surf3 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v,  0, +1);
-						float surf4 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v,  0, -1);
+                      // find the best position
+      for (size_t u = 0; u < x_count; ++u)
+      {
+        for (size_t v = 0; v < y_count; ++v)
+        {
+          size_t index = u * y_count + v;
+          if (!collision_table[index])
+          {
+            float surf1 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, +1, 0);
+            float surf2 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, -1, 0);
+            float surf3 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, 0, +1);
+            float surf4 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, 0, -1);
 
-						float sum_surf = surf1 + surf2 + surf3 + surf4;
+            float sum_surf = surf1 + surf2 + surf3 + surf4;
 
-						if (sum_surf == 0.0f) // perfect fit
-						{
-							x = atlas_def.split_x[u];
-							y = atlas_def.split_y[v];
-							return 0.0f;
-						}
+            if (sum_surf == 0.0f) // perfect fit
+            {
+              x = atlas_def.split_x[u];
+              y = atlas_def.split_y[v];
+              return 0.0f;
+            }
 
-						if (result < 0.0f || sum_surf < result)
-						{
-							x = atlas_def.split_x[u];
-							y = atlas_def.split_y[v];
-							result = sum_surf;          
-						}
-					}
-				}
-			}
+            if (result < 0.0f || sum_surf < result)
+            {
+              x = atlas_def.split_x[u];
+              y = atlas_def.split_y[v];
+              result = sum_surf;
+            }
+          }
+        }
+      }
 
-			return result;
-		}
+      return result;
+    }
 
-		void AtlasGenerator::InsertOrdered(std::vector<int> & v, int value)
-		{
-			auto it = std::lower_bound(v.begin(), v.end(), value);
-			if ((it != v.end()) && (*it == value))
-				return;
-			v.insert(it, value);
-		}
+    void AtlasGenerator::InsertOrdered(std::vector<int> & v, int value)
+    {
+      auto it = std::lower_bound(v.begin(), v.end(), value);
+      if ((it != v.end()) && (*it == value))
+        return;
+      v.insert(it, value);
+    }
 
-		void AtlasGenerator::InsertBitmapInAtlas(BitmapEntry & entry, AtlasDefinition & atlas_def, int x, int y)
-		{
+    void AtlasGenerator::InsertBitmapInAtlas(BitmapEntry & entry, AtlasDefinition & atlas_def, int x, int y)
+    {
       entry.bitmap_index = &atlas_def - &atlas_definitions[0];
-      entry.x            = x + params.atlas_padding;
-      entry.y            = y + params.atlas_padding;
+      entry.x = x + params.atlas_padding;
+      entry.y = y + params.atlas_padding;
 
-			InsertOrdered(atlas_def.split_x, x);
-			InsertOrdered(atlas_def.split_x, x + entry.width + 2 * params.atlas_padding);
+      InsertOrdered(atlas_def.split_x, x);
+      InsertOrdered(atlas_def.split_x, x + entry.width + 2 * params.atlas_padding);
 
-			InsertOrdered(atlas_def.split_y, y);
-			InsertOrdered(atlas_def.split_y, y + entry.height + 2 * params.atlas_padding);
-		}
+      InsertOrdered(atlas_def.split_y, y);
+      InsertOrdered(atlas_def.split_y, y + entry.height + 2 * params.atlas_padding);
+    }
 
-		bool AtlasGenerator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params)
-		{
-			// fill the atlas
-			AtlasInput input;
-			BitmapSetInput * bitmap_set = input.AddBitmapSet("files");
-			bitmap_set->AddBitmapFilesFromDirectory(src_dir);
-			// create the atlas files
-			Atlas          atlas;
-			AtlasGenerator generator;  
-			if (generator.ComputeResult(input, atlas, in_params))
-				return atlas.SaveAtlas(filename);
-			return false;
-		}
+    bool AtlasGenerator::CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params)
+    {
+      // fill the atlas
+      AtlasInput input;
+      BitmapSetInput * bitmap_set = input.AddBitmapSet("files");
+      bitmap_set->AddBitmapFilesFromDirectory(src_dir);
+      // create the atlas files
+      Atlas          atlas;
+      AtlasGenerator generator;
+      if (generator.ComputeResult(input, atlas, in_params))
+        return atlas.SaveAtlas(filename);
+      return false;
+    }
   };
 };
 

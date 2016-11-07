@@ -2,9 +2,9 @@
 
 namespace chaos
 {
-	namespace TextureArrayAtlas
-	{
-	
-	};
+  namespace TextureArrayAtlas
+  {
+
+  };
 };
 

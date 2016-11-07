@@ -51,28 +51,28 @@ namespace chaos
     {
       for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
-				T const * element = element_ptr.get();
+        T const * element = element_ptr.get();
 
         for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
-        { 
+        {
           // keep only entries of corresponding bitmap 
           if (entry.bitmap_index != bitmap_index)
             continue;
 
           // create a TR element if necessary
           if (TR == nullptr)
-            TR = html.PushElement(TABLE, "TR"); 
+            TR = html.PushElement(TABLE, "TR");
 
           // output the element and its entry
-          tinyxml2::XMLElement * TD  = html.PushElement(TR, "TD");
+          tinyxml2::XMLElement * TD = html.PushElement(TR, "TD");
           tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
-					html.PushText(PRE, "Set\n");
+          html.PushText(PRE, "Set\n");
           html.PushText(PRE, Atlas::GetInfoString(*element).c_str());
-					html.PushText(PRE, "Entry\n");
+          html.PushText(PRE, "Entry\n");
           html.PushText(PRE, Atlas::GetInfoString(entry).c_str());
 
           // reset TR every 5 elements
-          if (count % 5 == 4) 
+          if (count % 5 == 4)
             TR = nullptr;
           ++count;
         }
@@ -84,7 +84,7 @@ namespace chaos
     {
       for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
-				T const * element = element_ptr.get();
+        T const * element = element_ptr.get();
 
         for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         {
@@ -117,7 +117,7 @@ namespace chaos
     {
       for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
-				T const * element = element_ptr.get();
+        T const * element = element_ptr.get();
 
         for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         {
@@ -146,8 +146,8 @@ namespace chaos
       HTMLTools html(doc);
 
       tinyxml2::XMLElement * Header = html.PushElement(doc, "!DOCTYPE HTML");
-      tinyxml2::XMLElement * HTML   = html.PushElement(Header, "HTML");
-      tinyxml2::XMLElement * BODY   = html.PushElement(HTML, "BODY");
+      tinyxml2::XMLElement * HTML = html.PushElement(Header, "HTML");
+      tinyxml2::XMLElement * BODY = html.PushElement(HTML, "BODY");
 
       glm::ivec2 atlas_dimension = atlas.GetAtlasDimension();
 
@@ -200,7 +200,7 @@ namespace chaos
         // enumerate all BitmapEntry and CharacterEntry using given bitmap
         int count = 0;
         OutputElementsToHTMLDocument(atlas.bitmap_sets, html, TABLE, TR, i, count);
-				OutputElementsToHTMLDocument(atlas.character_sets, html, TABLE, TR, i, count);
+        OutputElementsToHTMLDocument(atlas.character_sets, html, TABLE, TR, i, count);
 
         if (params.show_textures)
         {
@@ -219,12 +219,12 @@ namespace chaos
 
           // Display the rectangles
           OutputBitmapsToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
-					OutputBitmapsToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
+          OutputBitmapsToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
           // Display the filenames
           if (params.show_textures_names)
           {
-						OutputBitmapFilenamesToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
-						OutputBitmapFilenamesToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
+            OutputBitmapFilenamesToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
+            OutputBitmapFilenamesToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
           }
         }
       }

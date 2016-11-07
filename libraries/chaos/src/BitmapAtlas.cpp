@@ -66,16 +66,16 @@ namespace chaos
       }
     }
 
-		template<typename T>
-		void SaveIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto & element : elements)
-			{
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(*element.get(), json_entry);
-				json_entries.push_back(json_entry);
-			}
-		}
+    template<typename T>
+    void SaveIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
+    {
+      for (auto & element : elements)
+      {
+        auto json_entry = nlohmann::json();
+        SaveIntoJSON(*element.get(), json_entry);
+        json_entries.push_back(json_entry);
+      }
+    }
 
     template<typename T>
     void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
@@ -101,25 +101,25 @@ namespace chaos
       }
     }
 
-		template<typename T>
-		void LoadFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T * element = new T;
-				if (element == nullptr)
-					continue;
-				LoadFromJSON(*element, json_entry);
-				elements.push_back(std::move(std::unique_ptr<T>(element)));
-			}
-		}
+    template<typename T>
+    void LoadFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
+    {
+      for (auto const & json_entry : json_entries)
+      {
+        std::unique_ptr<T> element(new T);
+        if (element == nullptr)
+          continue;
+        LoadFromJSON(*element, json_entry);
+        elements.push_back(std::move(element));
+      }
+    }
 
     template<typename T>
     void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
     {
       for (auto const & json_entry : json_entries)
       {
-        T * element = new T;
+        std::unique_ptr<T> element(new T);
         if (element == nullptr)
           continue;
         LoadFromJSON(*element, json_entry);
@@ -227,9 +227,9 @@ namespace chaos
     {
       // reset members
       atlas_count = 0;
-      dimension   = glm::ivec2(0, 0);
+      dimension = glm::ivec2(0, 0);
       // destroy the bitmap sets
-			bitmap_sets.clear();
+      bitmap_sets.clear();
       // destroy the character sets
       character_sets.clear();
     }
@@ -237,44 +237,44 @@ namespace chaos
     BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
     {
       for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
+      {
+        BitmapSet const * bitmap_set = bitmap_set_ptr.get();
         if (bitmap_set->name == name)
           return bitmap_set;
-			}
+      }
       return nullptr;
     }
 
     BitmapSet const * AtlasBase::GetBitmapSet(TagType tag) const
     {
-			for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
-				if (bitmap_set->tag == tag)
-					return bitmap_set;
-			}
+      for (auto & bitmap_set_ptr : bitmap_sets)
+      {
+        BitmapSet const * bitmap_set = bitmap_set_ptr.get();
+        if (bitmap_set->tag == tag)
+          return bitmap_set;
+      }
       return nullptr;
     }
 
     CharacterSet const * AtlasBase::GetCharacterSet(char const * name) const
     {
       for (auto & character_set_ptr : character_sets)
-			{
-				CharacterSet const * character_set = character_set_ptr.get();
+      {
+        CharacterSet const * character_set = character_set_ptr.get();
         if (character_set->name == name)
           return character_set;
-			}
+      }
       return nullptr;
     }
 
     CharacterSet const * AtlasBase::GetCharacterSet(TagType tag) const
     {
-			for (auto & character_set_ptr : character_sets)
-			{
-				CharacterSet const * character_set = character_set_ptr.get();
-				if (character_set->tag == tag)
-					return character_set;
-			}
+      for (auto & character_set_ptr : character_sets)
+      {
+        CharacterSet const * character_set = character_set_ptr.get();
+        if (character_set->tag == tag)
+          return character_set;
+      }
       return nullptr;
     }
 
@@ -283,22 +283,22 @@ namespace chaos
       float result = 0.0f;
       // surface for the bitmap sets
       for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
+      {
+        BitmapSet const * bitmap_set = bitmap_set_ptr.get();
         if (bitmap_set != nullptr)
           for (BitmapEntry const & entry : bitmap_set->elements)
             if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
               result += (float)(entry.width * entry.height);
-			}
+      }
       // surface for character sets
       for (auto & character_set_ptr : character_sets)
-			{
-				CharacterSet const * character_set = character_set_ptr.get();
+      {
+        CharacterSet const * character_set = character_set_ptr.get();
         if (character_set != nullptr)
           for (CharacterEntry const & entry : character_set->elements)
             if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
               result += (float)(entry.width * entry.height);
-			}
+      }
 
       return result;
     }
@@ -307,20 +307,20 @@ namespace chaos
     {
       // info for bitmap sets
       for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
+      {
+        BitmapSet const * bitmap_set = bitmap_set_ptr.get();
         if (bitmap_set != nullptr)
           for (BitmapEntry const & entry : bitmap_set->elements)
             OutputInfo(entry, stream);
-			}
+      }
       // info for character sets
       for (auto & character_set_ptr : character_sets)
-			{
-				CharacterSet const * character_set = character_set_ptr.get();
+      {
+        CharacterSet const * character_set = character_set_ptr.get();
         if (character_set != nullptr)
           for (CharacterEntry const & entry : character_set->elements)
             OutputInfo(entry, stream);
-			}
+      }
     }
 
     void AtlasBase::OutputInfo(NamedObject const & entry, std::ostream & stream)
@@ -403,9 +403,9 @@ namespace chaos
 
     void AtlasBase::OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream) const
     {
-      float atlas_surface      = (float)(dimension.x * dimension.y);
+      float atlas_surface = (float)(dimension.x * dimension.y);
       float atlas_used_surface = ComputeSurface(bitmap_index);
-      float percent            = 100.0f * atlas_used_surface / atlas_surface;
+      float percent = 100.0f * atlas_used_surface / atlas_surface;
 
       stream << "Atlas " << bitmap_index << std::endl;
       stream << "  occupation : " << percent << "%" << std::endl;
@@ -413,8 +413,8 @@ namespace chaos
 
     void AtlasBase::OutputGeneralInformation(std::ostream & stream) const
     {
-      float atlas_surface   = (float)(dimension.x * dimension.y);
-      float full_surface    = ComputeSurface(-1);
+      float atlas_surface = (float)(dimension.x * dimension.y);
+      float full_surface = ComputeSurface(-1);
       int   min_atlas_count = (int)std::ceil(full_surface / atlas_surface);
 
       stream << "Full used surface  : " << full_surface << std::endl;
@@ -437,10 +437,7 @@ namespace chaos
     void Atlas::Clear()
     {
       AtlasBase::Clear();
-
-      // destroy the bitmaps
-      for (FIBITMAP * bitmap : bitmaps)
-        FreeImage_Unload(bitmap);
+      // destroy the bitmaps      
       bitmaps.clear();
     }
 
@@ -468,7 +465,7 @@ namespace chaos
       size_t count = bitmaps.size();
       for (size_t i = 0; (i < count) && result; ++i)
       {
-        FIBITMAP * im = bitmaps[i];
+        FIBITMAP * im = bitmaps[i].get();
         if (im != nullptr)
         {
           boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(bitmap_filename, i);
@@ -550,29 +547,29 @@ namespace chaos
             break;
           }
 
-					int width  = (int)FreeImage_GetWidth(bitmap);
-					int height = (int)FreeImage_GetHeight(bitmap);
-					if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
-					{
-						dimension.x = width;
-						dimension.y = height;
-					}
-					else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
-					{
-						if (dimension.x != width || dimension.y != height)
-						{
-							result = false;
-							break;
-						}						
-					}
-          bitmaps.push_back(bitmap);
+          int width = (int)FreeImage_GetWidth(bitmap);
+          int height = (int)FreeImage_GetHeight(bitmap);
+          if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
+          {
+            dimension.x = width;
+            dimension.y = height;
+          }
+          else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
+          {
+            if (dimension.x != width || dimension.y != height)
+            {
+              result = false;
+              break;
+            }
+          }
+          bitmaps.push_back(std::move(unique_bitmap_ptr(bitmap)));
         }
         // load the entries
         if (result)
         {
           LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
           LoadFromJSON(character_sets, j["character_sets"]);
-					atlas_count = bitmaps.size();
+          atlas_count = bitmaps.size();
         }
       }
       catch (std::exception & e)

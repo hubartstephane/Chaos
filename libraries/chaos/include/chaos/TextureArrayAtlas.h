@@ -10,15 +10,15 @@ namespace chaos
   {
     class Atlas : public BitmapAtlas::AtlasBase
     {
-		public:
+    public:
 
-			/** the clearing method */
-			void Clear();
+      /** the clearing method */
+      void Clear();
 
 
     public:
 
-			boost::intrusive_ptr<Texture> texture;
+      boost::intrusive_ptr<Texture> texture;
     };
   };
 #if 0
@@ -29,8 +29,8 @@ namespace chaos
 
 
     /**
-     * Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
-     */
+    * Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
+    */
 
     class Atlas
     {

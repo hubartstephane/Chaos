@@ -7,9 +7,21 @@ namespace chaos
 {
   namespace BitmapAtlas
   {
+
     /**
-     * BitmapEntry : represents an Base Bitmap entry in the atlas. Contained in a BitmapSet
-     */
+    * FIBITMAPDeleter : deleter for FIBITMAP
+    */
+
+    struct FIBITMAPDeleter
+    {
+      void operator ()(FIBITMAP * bitmap) { FreeImage_Unload(bitmap); }
+    };
+
+    using unique_bitmap_ptr = std::unique_ptr<FIBITMAP, FIBITMAPDeleter>;
+
+    /**
+    * BitmapEntry : represents an Base Bitmap entry in the atlas. Contained in a BitmapSet
+    */
 
     class BitmapEntry : public NamedObject
     {
@@ -27,8 +39,8 @@ namespace chaos
     };
 
     /**
-     * CharacterEntry : represents a Character entry in the atlas. Contained in a CharacterSet. It is a BitmapEntry with additionnal information
-     */
+    * CharacterEntry : represents a Character entry in the atlas. Contained in a CharacterSet. It is a BitmapEntry with additionnal information
+    */
 
     class CharacterEntry : public BitmapEntry
     {
@@ -39,8 +51,8 @@ namespace chaos
     };
 
     /**
-     * BitmapSet : this is a named group of Bitmaps (BitmapEntry)
-     */
+    * BitmapSet : this is a named group of Bitmaps (BitmapEntry)
+    */
 
     class BitmapSet : public NamedObject
     {
@@ -58,8 +70,8 @@ namespace chaos
     };
 
     /**
-     * CharacterSet : this is a named group of Characters (CharacterEntry)
-     */
+    * CharacterSet : this is a named group of Characters (CharacterEntry)
+    */
 
     class CharacterSet : public NamedObject
     {
@@ -77,8 +89,8 @@ namespace chaos
     };
 
     /**
-     * Some JSON utility functions
-     */
+    * Some JSON utility functions
+    */
 
     void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry);
 
@@ -101,8 +113,8 @@ namespace chaos
     void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry);
 
     /**
-     * AtlasBase : base class for Atlas and TextureArrayAtlas
-     */
+    * AtlasBase : base class for Atlas and TextureArrayAtlas
+    */
 
     class AtlasBase
     {
@@ -113,7 +125,7 @@ namespace chaos
     public:
 
       /** the destructor */
-      virtual ~AtlasBase() { Clear(); }
+      virtual ~AtlasBase() = default;
       /** the clearing method */
       virtual void Clear();
       /** Get a bitmap set */
@@ -174,7 +186,7 @@ namespace chaos
     protected:
 
       /** atlas count */
-      int atlas_count {0};
+      int atlas_count{ 0 };
       /** atlas dimension */
       glm::ivec2 dimension{ 0,0 };
       /** the bitmap sets contained in the atlas */
@@ -184,17 +196,15 @@ namespace chaos
     };
 
     /**
-     * Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
-     */
+    * Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
+    */
 
     class Atlas : public AtlasBase
     {
       friend class AtlasGenerator;
-
+     
     public:
 
-      /** the destructor */
-      virtual ~Atlas() { Clear(); }
       /** the clearing method */
       virtual void Clear();
 
@@ -209,7 +219,7 @@ namespace chaos
       bool SaveAtlas(boost::filesystem::path const & filename) const;
 
       /** returns the bitmaps contained in the atlas */
-      std::vector<FIBITMAP *> const & GetBitmaps() const { return bitmaps; }
+      std::vector<unique_bitmap_ptr> const & GetBitmaps() const { return bitmaps; }
 
     protected:
 
@@ -225,7 +235,7 @@ namespace chaos
     protected:
 
       /** the bitmaps contained in the atlas */
-      std::vector<FIBITMAP *> bitmaps;
+      std::vector<unique_bitmap_ptr> bitmaps;
     };
   };
 };

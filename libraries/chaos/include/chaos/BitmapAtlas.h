@@ -46,11 +46,6 @@ namespace chaos
     {
       friend class AtlasBase;
 
-    protected:
-
-      /** destructor protected */
-      virtual ~BitmapSet() = default;
-
     public:
 
       /** gets an entry by its name */
@@ -69,11 +64,6 @@ namespace chaos
     class CharacterSet : public NamedObject
     {
       friend class AtlasBase;
-
-    protected:
-
-      /** destructor protected */
-      virtual ~CharacterSet() = default;
 
     public:
 
@@ -162,9 +152,9 @@ namespace chaos
       static std::string GetInfoString(CharacterEntry const & entry);
 
       /** returns the bitmap sets contained in the atlas */
-      std::vector<BitmapSet *> const & GetBitmapSets() const { return bitmap_sets; }
+      std::vector<std::unique_ptr<BitmapSet>> const & GetBitmapSets() const { return bitmap_sets; }
       /** returns the character set contained in the atlas */
-      std::vector<CharacterSet *> const & GetCharacterSet() const { return character_sets; }
+      std::vector<std::unique_ptr<CharacterSet>> const & GetCharacterSet() const { return character_sets; }
 
     protected:
 
@@ -188,9 +178,9 @@ namespace chaos
       /** atlas dimension */
       glm::ivec2 dimension{ 0,0 };
       /** the bitmap sets contained in the atlas */
-      std::vector<BitmapSet *> bitmap_sets;
+      std::vector<std::unique_ptr<BitmapSet>> bitmap_sets;
       /** the character sets contained in the atlas */
-      std::vector<CharacterSet *> character_sets;
+      std::vector<std::unique_ptr<CharacterSet>> character_sets;
     };
 
     /**

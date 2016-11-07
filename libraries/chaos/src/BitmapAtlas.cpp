@@ -66,6 +66,17 @@ namespace chaos
       }
     }
 
+		template<typename T>
+		void SaveIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
+		{
+			for (auto & element : elements)
+			{
+				auto json_entry = nlohmann::json();
+				SaveIntoJSON(*element.get(), json_entry);
+				json_entries.push_back(json_entry);
+			}
+		}
+
     template<typename T>
     void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
     {
@@ -89,6 +100,19 @@ namespace chaos
         elements.push_back(element);
       }
     }
+
+		template<typename T>
+		void LoadFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
+		{
+			for (auto const & json_entry : json_entries)
+			{
+				T * element = new T;
+				if (element == nullptr)
+					continue;
+				LoadFromJSON(*element, json_entry);
+				elements.push_back(std::move(std::unique_ptr<T>(element)));
+			}
+		}
 
     template<typename T>
     void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
@@ -205,44 +229,52 @@ namespace chaos
       atlas_count = 0;
       dimension   = glm::ivec2(0, 0);
       // destroy the bitmap sets
-      for (BitmapSet * bitmap_set : bitmap_sets)
-        delete(bitmap_set);
-      bitmap_sets.clear();
+			bitmap_sets.clear();
       // destroy the character sets
-      for (CharacterSet * character_set : character_sets)
-        delete(character_set);
       character_sets.clear();
     }
 
     BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
     {
-      for (BitmapSet * bitmap_set : bitmap_sets)
+      for (auto & bitmap_set_ptr : bitmap_sets)
+			{
+				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
         if (bitmap_set->name == name)
           return bitmap_set;
+			}
       return nullptr;
     }
 
     BitmapSet const * AtlasBase::GetBitmapSet(TagType tag) const
     {
-      for (BitmapSet * bitmap_set : bitmap_sets)
-        if (bitmap_set->tag == tag)
-          return bitmap_set;
+			for (auto & bitmap_set_ptr : bitmap_sets)
+			{
+				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
+				if (bitmap_set->tag == tag)
+					return bitmap_set;
+			}
       return nullptr;
     }
 
     CharacterSet const * AtlasBase::GetCharacterSet(char const * name) const
     {
-      for (CharacterSet * character_set : character_sets)
+      for (auto & character_set_ptr : character_sets)
+			{
+				CharacterSet const * character_set = character_set_ptr.get();
         if (character_set->name == name)
           return character_set;
+			}
       return nullptr;
     }
 
     CharacterSet const * AtlasBase::GetCharacterSet(TagType tag) const
     {
-      for (CharacterSet * character_set : character_sets)
-        if (character_set->tag == tag)
-          return character_set;
+			for (auto & character_set_ptr : character_sets)
+			{
+				CharacterSet const * character_set = character_set_ptr.get();
+				if (character_set->tag == tag)
+					return character_set;
+			}
       return nullptr;
     }
 
@@ -250,17 +282,23 @@ namespace chaos
     {
       float result = 0.0f;
       // surface for the bitmap sets
-      for (BitmapSet const * bitmap_set : bitmap_sets)
+      for (auto & bitmap_set_ptr : bitmap_sets)
+			{
+				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
         if (bitmap_set != nullptr)
           for (BitmapEntry const & entry : bitmap_set->elements)
             if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
               result += (float)(entry.width * entry.height);
+			}
       // surface for character sets
-      for (CharacterSet const * character_set : character_sets)
+      for (auto & character_set_ptr : character_sets)
+			{
+				CharacterSet const * character_set = character_set_ptr.get();
         if (character_set != nullptr)
           for (CharacterEntry const & entry : character_set->elements)
             if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
               result += (float)(entry.width * entry.height);
+			}
 
       return result;
     }
@@ -268,15 +306,21 @@ namespace chaos
     void AtlasBase::OutputInfo(std::ostream & stream) const
     {
       // info for bitmap sets
-      for (BitmapSet const * bitmap_set : bitmap_sets)
+      for (auto & bitmap_set_ptr : bitmap_sets)
+			{
+				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
         if (bitmap_set != nullptr)
           for (BitmapEntry const & entry : bitmap_set->elements)
             OutputInfo(entry, stream);
+			}
       // info for character sets
-      for (CharacterSet const * character_set : character_sets)
+      for (auto & character_set_ptr : character_sets)
+			{
+				CharacterSet const * character_set = character_set_ptr.get();
         if (character_set != nullptr)
           for (CharacterEntry const & entry : character_set->elements)
             OutputInfo(entry, stream);
+			}
     }
 
     void AtlasBase::OutputInfo(NamedObject const & entry, std::ostream & stream)

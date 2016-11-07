@@ -423,7 +423,7 @@ namespace chaos
         BitmapSet * bitmap_set = new BitmapSet;
         bitmap_set->name = bitmap_set_input->name;
         bitmap_set->tag  = bitmap_set_input->tag;
-        output->bitmap_sets.push_back(bitmap_set);
+        output->bitmap_sets.push_back(std::move(std::unique_ptr<BitmapSet>(bitmap_set))); // 'move' in mandatory because, unique_ptr has no copy operator
 
         size_t count = bitmap_set_input->elements.size();
         for (size_t i = 0 ; i < count ; ++i)
@@ -454,7 +454,7 @@ namespace chaos
         CharacterSet * character_set = new CharacterSet;
         character_set->name = character_set_input->name;
         character_set->tag  = character_set_input->tag;
-        output->character_sets.push_back(character_set);
+        output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
 
         size_t count = character_set_input->elements.size();
         for (size_t i = 0 ; i < count ; ++i)

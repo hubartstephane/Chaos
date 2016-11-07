@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/Texture.h>
 
 namespace chaos
 {
@@ -9,9 +10,15 @@ namespace chaos
   {
     class Atlas : public BitmapAtlas::AtlasBase
     {
+		public:
+
+			/** the clearing method */
+			void Clear();
 
 
     public:
+
+			boost::intrusive_ptr<Texture> texture;
     };
   };
 #if 0

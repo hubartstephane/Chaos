@@ -47,10 +47,12 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
+    void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
     {
-      for (auto const * element : elements) // iterate over CharacterSet or BitmapSet
+      for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
+				T const * element = element_ptr.get();
+
         for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         { 
           // keep only entries of corresponding bitmap 
@@ -78,10 +80,12 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+    void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
     {
-      for (auto const * element : elements) // iterate over CharacterSet or BitmapSet
+      for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
+				T const * element = element_ptr.get();
+
         for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         {
           // keep only entries of corresponding bitmap 
@@ -109,10 +113,12 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<T*> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+    void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
     {
-      for (auto const * element : elements) // iterate over CharacterSet or BitmapSet
+      for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
+				T const * element = element_ptr.get();
+
         for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
         {
           // keep only entries of corresponding bitmap 
@@ -173,7 +179,7 @@ namespace chaos
       }
 
       // output ordered per bitmaps
-      for (size_t i = 0; i < atlas.atlas_count; ++i)
+      for (int i = 0; i < atlas.atlas_count; ++i)
       {
         int w = MultDimensionMixedTypes(width, scale);
         int h = MultDimensionMixedTypes(height, scale);

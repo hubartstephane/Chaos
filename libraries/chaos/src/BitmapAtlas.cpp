@@ -505,6 +505,22 @@ namespace chaos
             result = false;
             break;
           }
+
+					int width  = (int)FreeImage_GetWidth(bitmap);
+					int height = (int)FreeImage_GetHeight(bitmap);
+					if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
+					{
+						dimension.x = width;
+						dimension.y = height;
+					}
+					else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
+					{
+						if (dimension.x != width || dimension.y != height)
+						{
+							result = false;
+							break;
+						}						
+					}
           bitmaps.push_back(bitmap);
         }
         // load the entries
@@ -512,6 +528,7 @@ namespace chaos
         {
           LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
           LoadFromJSON(character_sets, j["character_sets"]);
+					atlas_count = bitmaps.size();
         }
       }
       catch (std::exception & e)
@@ -545,24 +562,6 @@ namespace chaos
       else
         bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
     }
-
-#if 0
-    glm::ivec2 AtlasBase::GetAtlasDimension() const
-    {
-      for (size_t i = 0; i < bitmaps.size(); ++i)
-      {
-        FIBITMAP * bitmap = bitmaps[i];
-        if (bitmap != nullptr)
-        {
-          int width = (int)FreeImage_GetWidth(bitmap);
-          int height = (int)FreeImage_GetHeight(bitmap);
-          return glm::ivec2(width, height);
-        }
-      }
-      return glm::ivec2(0, 0);
-    }
-#endif
-
   };
 };
 

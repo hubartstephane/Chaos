@@ -121,6 +121,7 @@ namespace chaos
 
       friend class AtlasGenerator;
       friend class AtlasHTMLGenerator;
+      friend class TextureArrayAtlas;
 
     public:
 
@@ -206,15 +207,13 @@ namespace chaos
     public:
 
       /** the clearing method */
-      virtual void Clear();
+      virtual void Clear() override;
 
       /** get the number of bitmap to hold the atlas */
       size_t GetBitmapCount() const { return bitmaps.size(); }
 
       /** load an atlas from an index file */
       bool LoadAtlas(boost::filesystem::path const & filename);
-      /** load an atlas from a json object */
-      bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
       /** function to save the results */
       bool SaveAtlas(boost::filesystem::path const & filename) const;
 
@@ -223,6 +222,8 @@ namespace chaos
 
     protected:
 
+      /** load an atlas from a json object */
+      bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
       /** function to save bitmaps */
       bool SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
       /** function to save contents */

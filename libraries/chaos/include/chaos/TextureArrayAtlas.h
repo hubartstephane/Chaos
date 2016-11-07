@@ -17,7 +17,9 @@ namespace chaos
       /** load an atlas from an index file */
       bool LoadAtlas(boost::filesystem::path const & filename);
 
-    public:
+      boost::intrusive_ptr<Texture> GetTexture() { return texture; }
+
+    protected:
 
       /** the texture array that will be generated */
       boost::intrusive_ptr<Texture> texture;

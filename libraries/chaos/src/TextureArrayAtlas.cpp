@@ -17,7 +17,7 @@ namespace chaos
 
       // use a temporary standard atlas to load everything necessary from file
       Atlas atlas;
-      if (atlas.LoadAtlas(filename))
+      if (!atlas.LoadAtlas(filename))
         return false;
 
       // create and fill a texture array generator
@@ -36,6 +36,8 @@ namespace chaos
       }
       
       // capture all data
+			atlas_count    = atlas.atlas_count;
+			dimension      = atlas.dimension;
       bitmap_sets    = std::move(atlas.bitmap_sets);
       character_sets = std::move(atlas.character_sets);
       return true;

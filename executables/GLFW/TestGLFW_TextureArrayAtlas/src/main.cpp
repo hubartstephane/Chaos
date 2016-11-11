@@ -25,12 +25,52 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() : texture_slice(0)
+  MyGLFWWindowOpenGLTest1()
   {
 
   }
 
 protected:
+
+
+
+  chaos::BitmapAtlas::BitmapEntry * ClampBitmapIndexAndGetEntry()
+  {
+    chaos::BitmapAtlas::BitmapEntry * result = nullptr;
+
+    if (atlas.GetBitmapCount() != 0)
+    {
+      if (bitmap_index < 0)
+        bitmap_index = 0;
+
+      int count = 0;
+      // go throught all bitmap_sets
+      auto const & bitmap_sets = atlas.GetBitmapSets();
+      for (auto const & bitmap_set : bitmap_sets)
+      {
+        if (bitmap_index - count < (int)bitmap_set->elements.size())
+          return &bitmap_set->elements[bitmap_index - count];
+
+        count += bitmap_set->elements.size();
+        result = &bitmap_set->elements[bitmap_set->elements.size() - 1]; // in case of there is not enough entry after, keep a reference on the last
+      }
+      // go throught all character sets
+      auto const & character_sets = atlas.GetCharacterSets();
+      for (auto const & character_set : character_sets)
+      {
+        if (bitmap_index - count < (int)character_set->elements.size())
+          return &character_set->elements[bitmap_index - count];
+
+        count += character_set->elements.size();
+        result = &character_set->elements[character_set->elements.size() - 1]; // in case of there is not enough entry after, keep a reference on the last
+      }
+
+      // not enough entry : keep the last one (and clamp bitmap_index)
+      bitmap_index = count;
+    }
+    return result;
+  }
+
 
   virtual bool OnDraw(int width, int height) override
   {
@@ -39,6 +79,10 @@ protected:
 
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+
+    chaos::BitmapAtlas::BitmapEntry * Entry = ClampBitmapIndexAndGetEntry();
+    if (Entry == nullptr)
+      return true;
 
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
@@ -61,7 +105,7 @@ protected:
 
     glBindTextureUnit(0, atlas.GetTexture()->GetResourceID());
     program_data.SetUniform("material", 0);
-    program_data.SetUniform("texture_slice", (float)texture_slice);
+    program_data.SetUniform("bitmap_index", (float)bitmap_index);
 
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
@@ -167,18 +211,10 @@ protected:
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    int texture_slice_count = atlas.GetBitmapCount();
-    if (texture_slice_count == 0)
-      return;
-
     if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
-    {
-      texture_slice = (texture_slice + 1) % texture_slice_count;
-    }
+      ++bitmap_index;
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
-    {
-      texture_slice = (texture_slice - 1 + texture_slice_count) % texture_slice_count;
-    }
+      --bitmap_index;
   }
 
 
@@ -200,7 +236,7 @@ protected:
 
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
 
-  int texture_slice;
+  int bitmap_index {0};
 
   chaos::MyGLFWFpsCamera fps_camera;
 

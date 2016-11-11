@@ -167,7 +167,7 @@ namespace chaos
       /** returns the bitmap sets contained in the atlas */
       std::vector<std::unique_ptr<BitmapSet>> const & GetBitmapSets() const { return bitmap_sets; }
       /** returns the character set contained in the atlas */
-      std::vector<std::unique_ptr<CharacterSet>> const & GetCharacterSet() const { return character_sets; }
+      std::vector<std::unique_ptr<CharacterSet>> const & GetCharacterSets() const { return character_sets; }
 
     protected:
 

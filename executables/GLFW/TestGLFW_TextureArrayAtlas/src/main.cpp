@@ -80,8 +80,8 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    chaos::BitmapAtlas::BitmapEntry * Entry = ClampBitmapIndexAndGetEntry();
-    if (Entry == nullptr)
+    chaos::BitmapAtlas::BitmapEntry * entry = ClampBitmapIndexAndGetEntry();
+    if (entry == nullptr)
       return true;
 
     glViewport(0, 0, width, height);
@@ -105,7 +105,17 @@ protected:
 
     glBindTextureUnit(0, atlas.GetTexture()->GetResourceID());
     program_data.SetUniform("material", 0);
-    program_data.SetUniform("bitmap_index", (float)bitmap_index);
+    program_data.SetUniform("texture_slice", (float)entry->bitmap_index);
+
+
+    glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
+
+    glm::vec2 entry_start = glm::vec2((float)entry->x, (float)entry->y);
+    glm::vec2 entry_size  = glm::vec2((float)entry->width, (float)entry->height);
+    glm::vec2 entry_end   = entry_start + entry_size;
+
+    program_data.SetUniform("entry_start", entry_start / atlas_dimension);
+    program_data.SetUniform("entry_end", entry_end / atlas_dimension);
 
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 

@@ -106,16 +106,20 @@ namespace chaos
           FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap);
           if (bitmap != nullptr)
           {
+            char name[] = " ";
+            sprintf_s(name, 2, "%c", glyph.first);
+
             CharacterEntryInput entry;
-            entry.tag = glyph.first;
-            entry.width = (int)FreeImage_GetWidth(bitmap);
-            entry.height = (int)FreeImage_GetHeight(bitmap);
-            entry.bpp = (int)FreeImage_GetBPP(bitmap);
-            entry.bitmap = bitmap;
+            entry.name           = name;
+            entry.tag            = glyph.first;
+            entry.width          = (int)FreeImage_GetWidth(bitmap);
+            entry.height         = (int)FreeImage_GetHeight(bitmap);
+            entry.bpp            = (int)FreeImage_GetBPP(bitmap);
+            entry.bitmap         = bitmap;
             entry.release_bitmap = true;
-            entry.advance = glyph.second.advance;
-            entry.bitmap_left = glyph.second.bitmap_left;
-            entry.bitmap_top = glyph.second.bitmap_top;
+            entry.advance        = glyph.second.advance;
+            entry.bitmap_left    = glyph.second.bitmap_left;
+            entry.bitmap_top     = glyph.second.bitmap_top;
             result->elements.push_back(entry);
           }
         }

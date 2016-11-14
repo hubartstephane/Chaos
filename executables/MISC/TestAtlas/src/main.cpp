@@ -11,6 +11,7 @@
 #include <chaos/FontTools.h>
 
 static int ATLAS_BPP = 0;
+static int ATLAS_PADDING = 0;
 
 
 void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, boost::filesystem::path const & dest_p, boost::filesystem::path const & html_dest_p)
@@ -45,7 +46,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 
   chaos::BitmapAtlas::Atlas                atlas;
   chaos::BitmapAtlas::AtlasGenerator       generator;
-  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(256, 256, 3, ATLAS_BPP);
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(256, 256, ATLAS_PADDING, ATLAS_BPP);
   
   if (generator.ComputeResult(input, atlas, params))
     SaveAtlasAndOutputAtlasToHTML(atlas, dest_p / "MyAtlas.x", dest_p / "atlas.html");
@@ -70,7 +71,7 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 
   bitmap_set->AddBitmapFilesFromDirectory(resources_path / "ButtonImages");
 
-  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, ATLAS_BPP);
   if (generator.ComputeResult(input, atlas, params))
     SaveAtlasAndOutputAtlasToHTML(atlas, dst_dir1 / "MyAtlas", dst_dir1 / "MyAtlas.html");
 
@@ -92,7 +93,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   //        - a text file                                            => not detected has an image
   // correct behavior 
 
-  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, 10, ATLAS_BPP);
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, ATLAS_BPP);
 
   boost::filesystem::path result_path = dest_p / "MyAtlas.json";
 

@@ -22,14 +22,14 @@
 //       +--------------+ 
 //       |     top      |
 //       |              |
-//       |    Texture   |  The OpenGL texture is oriented in the same direction than BITMAP FILE
+//       |    Texture   |  The OpenGL texture is oriented like this
 //       |              |
 //       |              |
 //       |    bottom    |
 //       +--------------+
 //      0       
 //
-// the storage in memory is reversed
+// for FreeImage, the line storage is done with the convention below 
 //
 //       +--------------+ 
 //       | LINE 5       |
@@ -40,6 +40,18 @@
 //       | LINE 0       |
 //       +--------------+
 //          
+// but for FreeImage, the coordinates used are (Y is inversed compared to OpenGL)
+//
+//      0,0
+//       +--------------+ 
+//       |     top      |
+//       |              |
+//       |              |
+//       |              |
+//       |              |
+//       |    bottom    |
+//       +--------------+
+//
 
 namespace chaos
 {

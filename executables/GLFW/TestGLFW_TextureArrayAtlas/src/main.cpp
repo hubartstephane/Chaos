@@ -74,7 +74,7 @@ protected:
 
   virtual bool OnDraw(int width, int height) override
   {
-    glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
     float far_plane = 1000.0f;

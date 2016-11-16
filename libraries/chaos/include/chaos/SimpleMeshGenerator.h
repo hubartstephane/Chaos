@@ -17,23 +17,17 @@ class MeshGenerationRequirement
 {
 public:
 
-  /** constructor */
-  MeshGenerationRequirement():
-    vertex_size(0),
-    vertices_count(0), 
-    indices_count(0){}
-
   /** test whether the requirement is valid */
   bool IsValid() const;
 
 public: 
 
   /** size of a vertex */
-  int vertex_size;
+	int vertex_size{0};
   /** number of vertices required */
-  int vertices_count;
+  int vertices_count{0};
   /** number of indices required */
-  int indices_count;
+  int indices_count{0};
 };
 
   /**

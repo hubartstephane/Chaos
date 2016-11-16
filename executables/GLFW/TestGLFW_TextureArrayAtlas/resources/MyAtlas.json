@@ -8,17 +8,17 @@
                     "name": "xboxControllerBack.tga",
                     "tag": 0,
                     "width": 83,
-                    "x": 389,
-                    "y": 199
+                    "x": 101,
+                    "y": 201
                 },
                 {
-                    "bitmap_index": 0,
+                    "bitmap_index": 1,
                     "height": 80,
                     "name": "xboxControllerButtonA.tga",
                     "tag": 0,
                     "width": 80,
-                    "x": 116,
-                    "y": 216
+                    "x": 5,
+                    "y": 184
                 },
                 {
                     "bitmap_index": 1,
@@ -26,17 +26,17 @@
                     "name": "xboxControllerButtonB.tga",
                     "tag": 0,
                     "width": 80,
-                    "x": 10,
-                    "y": 168
+                    "x": 5,
+                    "y": 274
                 },
                 {
-                    "bitmap_index": 1,
+                    "bitmap_index": 0,
                     "height": 138,
                     "name": "xboxControllerButtonGuide.tga",
                     "tag": 0,
                     "width": 138,
-                    "x": 10,
-                    "y": 10
+                    "x": 364,
+                    "y": 5
                 },
                 {
                     "bitmap_index": 1,
@@ -44,8 +44,8 @@
                     "name": "xboxControllerButtonX.tga",
                     "tag": 0,
                     "width": 80,
-                    "x": 110,
-                    "y": 199
+                    "x": 5,
+                    "y": 364
                 },
                 {
                     "bitmap_index": 1,
@@ -53,8 +53,8 @@
                     "name": "xboxControllerButtonY.tga",
                     "tag": 0,
                     "width": 80,
-                    "x": 10,
-                    "y": 268
+                    "x": 95,
+                    "y": 184
                 },
                 {
                     "bitmap_index": 0,
@@ -62,8 +62,8 @@
                     "name": "xboxControllerDPad.tga",
                     "tag": 0,
                     "width": 186,
-                    "x": 10,
-                    "y": 10
+                    "x": 5,
+                    "y": 5
                 },
                 {
                     "bitmap_index": 0,
@@ -71,8 +71,8 @@
                     "name": "xboxControllerLeftShoulder.tga",
                     "tag": 0,
                     "width": 218,
-                    "x": 10,
-                    "y": 368
+                    "x": 5,
+                    "y": 343
                 },
                 {
                     "bitmap_index": 0,
@@ -80,8 +80,8 @@
                     "name": "xboxControllerLeftThumbstick.tga",
                     "tag": 0,
                     "width": 153,
-                    "x": 216,
-                    "y": 190
+                    "x": 201,
+                    "y": 175
                 },
                 {
                     "bitmap_index": 1,
@@ -89,8 +89,8 @@
                     "name": "xboxControllerLeftTrigger.tga",
                     "tag": 0,
                     "width": 88,
-                    "x": 168,
-                    "y": 10
+                    "x": 5,
+                    "y": 5
                 },
                 {
                     "bitmap_index": 0,
@@ -98,8 +98,8 @@
                     "name": "xboxControllerRightShoulder.tga",
                     "tag": 0,
                     "width": 218,
-                    "x": 248,
-                    "y": 368
+                    "x": 233,
+                    "y": 343
                 },
                 {
                     "bitmap_index": 0,
@@ -107,8 +107,8 @@
                     "name": "xboxControllerRightThumbstick.tga",
                     "tag": 0,
                     "width": 153,
-                    "x": 216,
-                    "y": 10
+                    "x": 201,
+                    "y": 5
                 },
                 {
                     "bitmap_index": 0,
@@ -116,8 +116,8 @@
                     "name": "xboxControllerRightTrigger.tga",
                     "tag": 0,
                     "width": 88,
-                    "x": 389,
-                    "y": 10
+                    "x": 364,
+                    "y": 153
                 },
                 {
                     "bitmap_index": 0,
@@ -125,8 +125,8 @@
                     "name": "xboxControllerStart.tga",
                     "tag": 0,
                     "width": 86,
-                    "x": 10,
-                    "y": 216
+                    "x": 5,
+                    "y": 201
                 }
             ],
             "name": "bitmap_set1",
@@ -150,8 +150,8 @@
                     "name": "",
                     "tag": 0,
                     "width": 25,
-                    "x": 291,
-                    "y": 360
+                    "x": 95,
+                    "y": 400
                 },
                 {
                     "advance_x": 24,
@@ -160,11 +160,11 @@
                     "bitmap_left": 9,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "!",
                     "tag": 33,
                     "width": 13,
-                    "x": 486,
-                    "y": 418
+                    "x": 494,
+                    "y": 390
                 },
                 {
                     "advance_x": 24,
@@ -173,11 +173,11 @@
                     "bitmap_left": 11,
                     "bitmap_top": 34,
                     "height": 11,
-                    "name": "",
+                    "name": "\"",
                     "tag": 34,
                     "width": 15,
-                    "x": 110,
-                    "y": 168
+                    "x": 319,
+                    "y": 144
                 },
                 {
                     "advance_x": 25,
@@ -186,11 +186,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "$",
                     "tag": 36,
                     "width": 26,
-                    "x": 108,
-                    "y": 419
+                    "x": 152,
+                    "y": 442
                 },
                 {
                     "advance_x": 24,
@@ -199,37 +199,37 @@
                     "bitmap_left": 14,
                     "bitmap_top": 34,
                     "height": 11,
-                    "name": "",
+                    "name": "'",
                     "tag": 39,
                     "width": 8,
-                    "x": 300,
-                    "y": 274
+                    "x": 337,
+                    "y": 165
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 1,
+                    "bitmap_index": 0,
                     "bitmap_left": 5,
                     "bitmap_top": 38,
                     "height": 48,
-                    "name": "",
+                    "name": "(",
                     "tag": 40,
                     "width": 23,
-                    "x": 210,
-                    "y": 199
+                    "x": 462,
+                    "y": 269
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 1,
+                    "bitmap_index": 0,
                     "bitmap_left": 2,
                     "bitmap_top": 38,
                     "height": 48,
-                    "name": "",
+                    "name": ")",
                     "tag": 41,
                     "width": 23,
-                    "x": 210,
-                    "y": 267
+                    "x": 461,
+                    "y": 390
                 },
                 {
                     "advance_x": 24,
@@ -238,11 +238,11 @@
                     "bitmap_left": 8,
                     "bitmap_top": 32,
                     "height": 17,
-                    "name": "",
+                    "name": "*",
                     "tag": 42,
                     "width": 18,
-                    "x": 385,
-                    "y": 483
+                    "x": 319,
+                    "y": 117
                 },
                 {
                     "advance_x": 24,
@@ -251,11 +251,11 @@
                     "bitmap_left": 7,
                     "bitmap_top": 26,
                     "height": 17,
-                    "name": "",
+                    "name": "+",
                     "tag": 43,
                     "width": 18,
-                    "x": 468,
-                    "y": 479
+                    "x": 152,
+                    "y": 484
                 },
                 {
                     "advance_x": 24,
@@ -264,11 +264,11 @@
                     "bitmap_left": 4,
                     "bitmap_top": 17,
                     "height": 4,
-                    "name": "",
+                    "name": "-",
                     "tag": 45,
                     "width": 22,
-                    "x": 479,
-                    "y": 236
+                    "x": 311,
+                    "y": 204
                 },
                 {
                     "advance_x": 24,
@@ -277,11 +277,11 @@
                     "bitmap_left": 9,
                     "bitmap_top": 4,
                     "height": 4,
-                    "name": "",
+                    "name": ".",
                     "tag": 46,
                     "width": 8,
-                    "x": 253,
-                    "y": 308
+                    "x": 344,
+                    "y": 144
                 },
                 {
                     "advance_x": 24,
@@ -290,11 +290,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "/",
                     "tag": 47,
                     "width": 29,
-                    "x": 10,
-                    "y": 314
+                    "x": 78,
+                    "y": 290
                 },
                 {
                     "advance_x": 24,
@@ -303,11 +303,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "0",
                     "tag": 48,
                     "width": 25,
-                    "x": 416,
-                    "y": 62
+                    "x": 168,
+                    "y": 358
                 },
                 {
                     "advance_x": 24,
@@ -316,11 +316,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "1",
                     "tag": 49,
                     "width": 23,
-                    "x": 342,
-                    "y": 464
+                    "x": 204,
+                    "y": 262
                 },
                 {
                     "advance_x": 25,
@@ -329,11 +329,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "2",
                     "tag": 50,
                     "width": 26,
-                    "x": 251,
-                    "y": 414
+                    "x": 168,
+                    "y": 274
                 },
                 {
                     "advance_x": 24,
@@ -342,37 +342,37 @@
                     "bitmap_left": 2,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "3",
                     "tag": 51,
                     "width": 26,
-                    "x": 154,
+                    "x": 185,
+                    "y": 178
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "4",
+                    "tag": 52,
+                    "width": 25,
+                    "x": 224,
                     "y": 442
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
                     "bitmap_index": 1,
-                    "bitmap_left": 2,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 52,
-                    "width": 25,
-                    "x": 297,
-                    "y": 464
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "5",
                     "tag": 53,
                     "width": 26,
-                    "x": 10,
-                    "y": 420
+                    "x": 132,
+                    "y": 274
                 },
                 {
                     "advance_x": 24,
@@ -381,11 +381,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "6",
                     "tag": 54,
                     "width": 22,
-                    "x": 385,
-                    "y": 431
+                    "x": 237,
+                    "y": 262
                 },
                 {
                     "advance_x": 24,
@@ -394,11 +394,11 @@
                     "bitmap_left": 4,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "7",
                     "tag": 55,
                     "width": 26,
-                    "x": 336,
-                    "y": 360
+                    "x": 166,
+                    "y": 400
                 },
                 {
                     "advance_x": 25,
@@ -407,11 +407,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "8",
                     "tag": 56,
                     "width": 25,
-                    "x": 416,
-                    "y": 114
+                    "x": 202,
+                    "y": 400
                 },
                 {
                     "advance_x": 24,
@@ -420,37 +420,37 @@
                     "bitmap_left": 4,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "9",
                     "tag": 57,
                     "width": 25,
-                    "x": 390,
-                    "y": 166
+                    "x": 185,
+                    "y": 220
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 0,
+                    "bitmap_index": 1,
                     "bitmap_left": 9,
                     "bitmap_top": 19,
                     "height": 19,
-                    "name": "",
+                    "name": ":",
                     "tag": 58,
                     "width": 11,
-                    "x": 10,
-                    "y": 480
+                    "x": 116,
+                    "y": 486
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 1,
+                    "bitmap_index": 0,
                     "bitmap_left": 7,
                     "bitmap_top": 19,
                     "height": 26,
-                    "name": "",
+                    "name": ";",
                     "tag": 59,
                     "width": 13,
-                    "x": 479,
-                    "y": 190
+                    "x": 494,
+                    "y": 432
                 },
                 {
                     "advance_x": 24,
@@ -459,24 +459,24 @@
                     "bitmap_left": 9,
                     "bitmap_top": 30,
                     "height": 26,
-                    "name": "",
+                    "name": "<",
                     "tag": 60,
                     "width": 16,
-                    "x": 297,
-                    "y": 414
+                    "x": 311,
+                    "y": 168
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 0,
+                    "bitmap_index": 1,
                     "bitmap_left": 7,
                     "bitmap_top": 30,
                     "height": 26,
-                    "name": "",
+                    "name": ">",
                     "tag": 62,
                     "width": 16,
-                    "x": 486,
-                    "y": 470
+                    "x": 219,
+                    "y": 50
                 },
                 {
                     "advance_x": 24,
@@ -485,11 +485,11 @@
                     "bitmap_left": 5,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "?",
                     "tag": 63,
                     "width": 22,
-                    "x": 392,
-                    "y": 218
+                    "x": 251,
+                    "y": 93
                 },
                 {
                     "advance_x": 24,
@@ -498,153 +498,10 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "@",
                     "tag": 64,
                     "width": 25,
-                    "x": 416,
-                    "y": 10
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 1,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 65,
-                    "width": 22,
-                    "x": 382,
-                    "y": 379
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 1,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 66,
-                    "width": 27,
-                    "x": 369,
-                    "y": 62
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 3,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 67,
-                    "width": 26,
-                    "x": 370,
-                    "y": 114
-                },
-                {
-                    "advance_x": 25,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 2,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 68,
-                    "width": 27,
-                    "x": 300,
-                    "y": 222
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 2,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 69,
-                    "width": 27,
-                    "x": 323,
-                    "y": 114
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 2,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 70,
-                    "width": 27,
-                    "x": 369,
-                    "y": 10
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 3,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 71,
-                    "width": 26,
-                    "x": 205,
-                    "y": 390
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 0,
-                    "bitmap_left": 1,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 72,
-                    "width": 29,
-                    "x": 59,
-                    "y": 314
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 2,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 73,
-                    "width": 27,
-                    "x": 291,
-                    "y": 308
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 2,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 74,
-                    "width": 27,
-                    "x": 343,
-                    "y": 166
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 0,
-                    "bitmap_left": 1,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 75,
-                    "width": 29,
-                    "x": 108,
+                    "x": 168,
                     "y": 316
                 },
                 {
@@ -654,11 +511,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
-                    "tag": 76,
-                    "width": 23,
-                    "x": 383,
-                    "y": 270
+                    "name": "A",
+                    "tag": 65,
+                    "width": 22,
+                    "x": 251,
+                    "y": 135
                 },
                 {
                     "advance_x": 24,
@@ -667,24 +524,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
-                    "tag": 77,
-                    "width": 29,
-                    "x": 110,
-                    "y": 367
-                },
-                {
-                    "advance_x": 24,
-                    "advance_y": 0,
-                    "bitmap_index": 1,
-                    "bitmap_left": 1,
-                    "bitmap_top": 32,
-                    "height": 32,
-                    "name": "",
-                    "tag": 78,
-                    "width": 29,
-                    "x": 10,
-                    "y": 368
+                    "name": "B",
+                    "tag": 66,
+                    "width": 27,
+                    "x": 79,
+                    "y": 454
                 },
                 {
                     "advance_x": 24,
@@ -693,11 +537,115 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
-                    "tag": 79,
+                    "name": "C",
+                    "tag": 67,
                     "width": 26,
-                    "x": 336,
-                    "y": 412
+                    "x": 116,
+                    "y": 444
+                },
+                {
+                    "advance_x": 25,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "D",
+                    "tag": 68,
+                    "width": 27,
+                    "x": 95,
+                    "y": 316
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "E",
+                    "tag": 69,
+                    "width": 27,
+                    "x": 5,
+                    "y": 454
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "F",
+                    "tag": 70,
+                    "width": 27,
+                    "x": 42,
+                    "y": 454
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 3,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "G",
+                    "tag": 71,
+                    "width": 26,
+                    "x": 132,
+                    "y": 358
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 0,
+                    "bitmap_left": 1,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "H",
+                    "tag": 72,
+                    "width": 29,
+                    "x": 117,
+                    "y": 290
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "I",
+                    "tag": 73,
+                    "width": 27,
+                    "x": 95,
+                    "y": 274
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 2,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "J",
+                    "tag": 74,
+                    "width": 27,
+                    "x": 95,
+                    "y": 358
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 0,
+                    "bitmap_left": 1,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "K",
+                    "tag": 75,
+                    "width": 29,
+                    "x": 156,
+                    "y": 290
                 },
                 {
                     "advance_x": 24,
@@ -706,11 +654,63 @@
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "L",
+                    "tag": 76,
+                    "width": 23,
+                    "x": 221,
+                    "y": 177
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 1,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "M",
+                    "tag": 77,
+                    "width": 29,
+                    "x": 135,
+                    "y": 5
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 1,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "N",
+                    "tag": 78,
+                    "width": 29,
+                    "x": 103,
+                    "y": 105
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 3,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "O",
+                    "tag": 79,
+                    "width": 26,
+                    "x": 188,
+                    "y": 442
+                },
+                {
+                    "advance_x": 24,
+                    "advance_y": 0,
+                    "bitmap_index": 1,
+                    "bitmap_left": 1,
+                    "bitmap_top": 32,
+                    "height": 32,
+                    "name": "P",
                     "tag": 80,
                     "width": 26,
-                    "x": 159,
-                    "y": 390
+                    "x": 130,
+                    "y": 400
                 },
                 {
                     "advance_x": 24,
@@ -719,11 +719,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 36,
-                    "name": "",
+                    "name": "Q",
                     "tag": 81,
                     "width": 25,
-                    "x": 253,
-                    "y": 199
+                    "x": 178,
+                    "y": 89
                 },
                 {
                     "advance_x": 24,
@@ -732,11 +732,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "R",
                     "tag": 82,
                     "width": 26,
-                    "x": 56,
-                    "y": 420
+                    "x": 132,
+                    "y": 316
                 },
                 {
                     "advance_x": 24,
@@ -745,11 +745,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "S",
                     "tag": 83,
                     "width": 25,
-                    "x": 347,
-                    "y": 218
+                    "x": 254,
+                    "y": 5
                 },
                 {
                     "advance_x": 24,
@@ -758,11 +758,11 @@
                     "bitmap_left": 8,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "T",
                     "tag": 84,
                     "width": 21,
-                    "x": 468,
-                    "y": 427
+                    "x": 289,
+                    "y": 5
                 },
                 {
                     "advance_x": 24,
@@ -771,11 +771,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "U",
                     "tag": 85,
                     "width": 28,
-                    "x": 276,
-                    "y": 62
+                    "x": 181,
+                    "y": 47
                 },
                 {
                     "advance_x": 24,
@@ -784,11 +784,11 @@
                     "bitmap_left": 8,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "V",
                     "tag": 86,
                     "width": 22,
-                    "x": 425,
-                    "y": 322
+                    "x": 254,
+                    "y": 177
                 },
                 {
                     "advance_x": 24,
@@ -797,11 +797,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "W",
                     "tag": 87,
                     "width": 28,
-                    "x": 276,
-                    "y": 10
+                    "x": 174,
+                    "y": 5
                 },
                 {
                     "advance_x": 24,
@@ -810,11 +810,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "X",
                     "tag": 88,
                     "width": 29,
-                    "x": 59,
-                    "y": 368
+                    "x": 142,
+                    "y": 47
                 },
                 {
                     "advance_x": 24,
@@ -823,24 +823,24 @@
                     "bitmap_left": 7,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "Y",
                     "tag": 89,
                     "width": 23,
-                    "x": 382,
-                    "y": 327
+                    "x": 220,
+                    "y": 220
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 0,
+                    "bitmap_index": 1,
                     "bitmap_left": 1,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "Z",
                     "tag": 90,
                     "width": 29,
-                    "x": 157,
-                    "y": 316
+                    "x": 103,
+                    "y": 63
                 },
                 {
                     "advance_x": 24,
@@ -849,24 +849,24 @@
                     "bitmap_left": 3,
                     "bitmap_top": 38,
                     "height": 48,
-                    "name": "",
+                    "name": "[",
                     "tag": 91,
                     "width": 24,
-                    "x": 433,
-                    "y": 298
+                    "x": 462,
+                    "y": 153
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 0,
+                    "bitmap_index": 1,
                     "bitmap_left": 8,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "\\",
                     "tag": 92,
                     "width": 15,
-                    "x": 486,
-                    "y": 366
+                    "x": 286,
+                    "y": 168
                 },
                 {
                     "advance_x": 24,
@@ -875,11 +875,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 38,
                     "height": 48,
-                    "name": "",
+                    "name": "]",
                     "tag": 93,
                     "width": 24,
-                    "x": 389,
-                    "y": 298
+                    "x": 461,
+                    "y": 332
                 },
                 {
                     "advance_x": 24,
@@ -888,11 +888,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "a",
                     "tag": 97,
                     "width": 24,
-                    "x": 461,
-                    "y": 100
+                    "x": 269,
+                    "y": 261
                 },
                 {
                     "advance_x": 24,
@@ -901,11 +901,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "b",
                     "tag": 98,
                     "width": 25,
-                    "x": 200,
-                    "y": 442
+                    "x": 216,
+                    "y": 134
                 },
                 {
                     "advance_x": 24,
@@ -914,11 +914,11 @@
                     "bitmap_left": 4,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "c",
                     "tag": 99,
                     "width": 24,
-                    "x": 461,
-                    "y": 10
+                    "x": 293,
+                    "y": 464
                 },
                 {
                     "advance_x": 24,
@@ -927,11 +927,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "d",
                     "tag": 100,
                     "width": 27,
-                    "x": 253,
-                    "y": 255
+                    "x": 179,
+                    "y": 135
                 },
                 {
                     "advance_x": 25,
@@ -940,11 +940,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "e",
                     "tag": 101,
                     "width": 24,
-                    "x": 461,
-                    "y": 55
+                    "x": 237,
+                    "y": 304
                 },
                 {
                     "advance_x": 24,
@@ -953,11 +953,11 @@
                     "bitmap_left": 6,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "f",
                     "tag": 102,
                     "width": 24,
-                    "x": 245,
-                    "y": 466
+                    "x": 203,
+                    "y": 316
                 },
                 {
                     "advance_x": 24,
@@ -966,11 +966,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 35,
-                    "name": "",
+                    "name": "g",
                     "tag": 103,
                     "width": 25,
-                    "x": 298,
-                    "y": 167
+                    "x": 213,
+                    "y": 89
                 },
                 {
                     "advance_x": 25,
@@ -979,11 +979,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "h",
                     "tag": 104,
                     "width": 25,
-                    "x": 338,
-                    "y": 274
+                    "x": 248,
+                    "y": 50
                 },
                 {
                     "advance_x": 24,
@@ -992,24 +992,24 @@
                     "bitmap_left": 2,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "i",
                     "tag": 105,
                     "width": 21,
-                    "x": 466,
-                    "y": 374
+                    "x": 283,
+                    "y": 90
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 1,
+                    "bitmap_index": 0,
                     "bitmap_left": 2,
                     "bitmap_top": 33,
                     "height": 43,
-                    "name": "",
+                    "name": "j",
                     "tag": 106,
                     "width": 25,
-                    "x": 152,
-                    "y": 299
+                    "x": 5,
+                    "y": 289
                 },
                 {
                     "advance_x": 24,
@@ -1018,11 +1018,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "k",
                     "tag": 107,
                     "width": 27,
-                    "x": 276,
-                    "y": 114
+                    "x": 142,
+                    "y": 135
                 },
                 {
                     "advance_x": 24,
@@ -1031,11 +1031,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 33,
                     "height": 33,
-                    "name": "",
+                    "name": "l",
                     "tag": 108,
                     "width": 21,
-                    "x": 427,
-                    "y": 431
+                    "x": 283,
+                    "y": 47
                 },
                 {
                     "advance_x": 24,
@@ -1044,11 +1044,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "m",
                     "tag": 109,
                     "width": 26,
-                    "x": 10,
-                    "y": 472
+                    "x": 283,
+                    "y": 133
                 },
                 {
                     "advance_x": 24,
@@ -1057,11 +1057,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "n",
                     "tag": 110,
                     "width": 25,
-                    "x": 434,
-                    "y": 218
+                    "x": 237,
+                    "y": 394
                 },
                 {
                     "advance_x": 24,
@@ -1070,24 +1070,24 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "o",
                     "tag": 111,
                     "width": 24,
-                    "x": 435,
-                    "y": 166
+                    "x": 259,
+                    "y": 464
                 },
                 {
                     "advance_x": 24,
                     "advance_y": 0,
-                    "bitmap_index": 1,
+                    "bitmap_index": 0,
                     "bitmap_left": -1,
                     "bitmap_top": 25,
                     "height": 35,
-                    "name": "",
+                    "name": "p",
                     "tag": 112,
                     "width": 28,
-                    "x": 197,
-                    "y": 335
+                    "x": 40,
+                    "y": 289
                 },
                 {
                     "advance_x": 24,
@@ -1096,11 +1096,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 35,
-                    "name": "",
+                    "name": "q",
                     "tag": 113,
                     "width": 25,
-                    "x": 324,
-                    "y": 10
+                    "x": 219,
+                    "y": 5
                 },
                 {
                     "advance_x": 24,
@@ -1109,11 +1109,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "r",
                     "tag": 114,
                     "width": 26,
-                    "x": 56,
-                    "y": 472
+                    "x": 314,
+                    "y": 47
                 },
                 {
                     "advance_x": 24,
@@ -1122,11 +1122,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "s",
                     "tag": 115,
                     "width": 25,
-                    "x": 472,
-                    "y": 263
+                    "x": 259,
+                    "y": 429
                 },
                 {
                     "advance_x": 24,
@@ -1135,11 +1135,11 @@
                     "bitmap_left": 6,
                     "bitmap_top": 32,
                     "height": 32,
-                    "name": "",
+                    "name": "t",
                     "tag": 116,
                     "width": 22,
-                    "x": 424,
-                    "y": 379
+                    "x": 253,
+                    "y": 219
                 },
                 {
                     "advance_x": 24,
@@ -1148,11 +1148,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "u",
                     "tag": 117,
                     "width": 25,
-                    "x": 324,
-                    "y": 65
+                    "x": 203,
+                    "y": 359
                 },
                 {
                     "advance_x": 24,
@@ -1161,11 +1161,11 @@
                     "bitmap_left": 6,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "v",
                     "tag": 118,
                     "width": 23,
-                    "x": 479,
-                    "y": 145
+                    "x": 285,
+                    "y": 219
                 },
                 {
                     "advance_x": 24,
@@ -1174,11 +1174,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "w",
                     "tag": 119,
                     "width": 26,
-                    "x": 426,
-                    "y": 270
+                    "x": 320,
+                    "y": 5
                 },
                 {
                     "advance_x": 24,
@@ -1187,11 +1187,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "x",
                     "tag": 120,
                     "width": 28,
-                    "x": 102,
-                    "y": 471
+                    "x": 103,
+                    "y": 147
                 },
                 {
                     "advance_x": 24,
@@ -1200,11 +1200,11 @@
                     "bitmap_left": 3,
                     "bitmap_top": 25,
                     "height": 35,
-                    "name": "",
+                    "name": "y",
                     "tag": 121,
                     "width": 26,
-                    "x": 245,
-                    "y": 335
+                    "x": 142,
+                    "y": 89
                 },
                 {
                     "advance_x": 24,
@@ -1213,11 +1213,11 @@
                     "bitmap_left": 2,
                     "bitmap_top": 25,
                     "height": 25,
-                    "name": "",
+                    "name": "z",
                     "tag": 122,
                     "width": 26,
-                    "x": 467,
-                    "y": 315
+                    "x": 314,
+                    "y": 82
                 },
                 {
                     "advance_x": 24,
@@ -1226,11 +1226,11 @@
                     "bitmap_left": 7,
                     "bitmap_top": 38,
                     "height": 48,
-                    "name": "",
+                    "name": "{",
                     "tag": 123,
                     "width": 22,
-                    "x": 110,
-                    "y": 299
+                    "x": 103,
+                    "y": 5
                 },
                 {
                     "advance_x": 25,
@@ -1239,11 +1239,11 @@
                     "bitmap_left": 1,
                     "bitmap_top": 38,
                     "height": 48,
-                    "name": "",
+                    "name": "}",
                     "tag": 125,
                     "width": 23,
-                    "x": 477,
-                    "y": 298
+                    "x": 462,
+                    "y": 211
                 }
             ],
             "name": "character_set1",

@@ -409,8 +409,12 @@ namespace chaos
 
             if (entry->bitmap_index != i)
               continue;
-            FreeImage_Paste(bitmap.get(), entry_input->bitmap, entry->x, entry->y, 255);
 
+						// beware, according to FreeImage, the coordinate origin is top-left
+						// to match with OpenGL (bottom-left), we have to make a swap
+						int tex_x = entry->x;
+						int tex_y = params.atlas_height - entry->y - entry->height;
+						FreeImage_Paste(bitmap.get(), entry_input->bitmap, tex_x, tex_y, 255);
           }
           result.push_back(std::move(bitmap));
         }

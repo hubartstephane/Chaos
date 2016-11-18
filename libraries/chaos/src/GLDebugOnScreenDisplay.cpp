@@ -35,13 +35,6 @@ namespace chaos
     output_color = vec4(1.0, 1.0, 1.0, alpha); \n\
     }";
 
-  GLDebugOnScreenDisplay::GLDebugOnScreenDisplay():
-    rebuild_required(true),
-    screen_width(-1)
-  {
-
-  }
-
   bool GLDebugOnScreenDisplay::Tick(double delta_time)
   {
     int count = (int)lines.size();

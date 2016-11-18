@@ -24,32 +24,21 @@ public:
   {
   public:
 
-    /** constructor */
-    Params():
-      font_characters_per_line(0),
-      font_characters_line_count(0),
-      character_width(20),
-      spacing(0, 0),
-      crop_texture(0, 0){}
-
     /** the path of the bitmap texture */
     boost::filesystem::path texture_path;
     /** the characters contained inside the font bitmap, in order */
     std::string font_characters;
     /** the number of characters on a line of the bitmap */
-    int         font_characters_per_line;
+    int         font_characters_per_line{0};
     /** the number of lines of the bitmap */
-    int         font_characters_line_count;
+    int         font_characters_line_count{0};
     /** character size in pixel */
-    int         character_width;
+    int         character_width{20};
     /** some space to add (or remove between each characters) in pixels */
-    glm::ivec2  spacing;
+    glm::ivec2  spacing{0, 0};
     /** some texels to remove in texture font grid to have pixels of interest */
-    glm::ivec2  crop_texture;
+    glm::ivec2  crop_texture{0, 0};
   };
-
-  /** constructor */
-  GLDebugOnScreenDisplay();
 
   /** display the debug text */
   void Display(int width, int height) const;
@@ -80,9 +69,9 @@ protected:
   /** the lines of the log (string + lifetime */
   std::vector<std::pair<std::string, float>> lines;
   /** indicates whether the buffer as to be updated */
-  mutable bool rebuild_required;
+  mutable bool rebuild_required{true};
   /** size of the screen (useful to know when lines have to change) */
-  mutable int screen_width;
+  mutable int screen_width{-1};
 
   /** the program to run */
   boost::intrusive_ptr<GLProgram> program;
@@ -96,7 +85,7 @@ protected:
   VertexDeclaration declaration;
 
   /** number of element to draw */
-  mutable size_t draw_count;
+  mutable size_t draw_count{0};
 
   /** a copy of the parameters */
   Params mesh_builder_params;

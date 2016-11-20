@@ -20,6 +20,117 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
 
+// --------------------------------------------------------------------
+
+class SpriteVertex
+{
+public:
+
+  glm::vec2 position;
+  glm::vec3 texcoord;
+
+
+};
+
+class SpriteManager
+{
+public:
+  /*
+  static glm::vec2 const CORNER_TOP_LEFT{-0.5f, 0.5f};
+  static glm::vec2 const CORNER_BOTTOM_LEFT{-0.5f, -0.5f};
+  static glm::vec2 const CORNER_TOP_RIGHT{0.5f, 0.5f};
+  static glm::vec2 const CORNER_BOTTOM_RIGHT{0.5f, -0.5f};
+  static glm::vec2 const CORNER_CENTER{0.0f, 0.0f};
+  */
+
+  /** theses are the offset are the ones to apply to position, if position correspond to a given border */
+  static glm::vec2 const CORNER_TOP_LEFT{0.0f, -1.0f};
+  static glm::vec2 const CORNER_BOTTOM_LEFT{0.0f, 0.0f};
+  static glm::vec2 const CORNER_TOP_RIGHT{-1.0f, -1.0f};
+  static glm::vec2 const CORNER_BOTTOM_RIGHT{-1.0f, 0.0f};
+  static glm::vec2 const CORNER_CENTER {-0.5f, -0.5f};
+
+  void AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler)
+  {
+    glm::vec2 pos_bottom_left = position + size * handler;
+    glm::vec2 pos_top_right   = pos_bottom_left + size;
+        
+    SpriteVertex bl;
+    bl.position   = pos_bottom_left;
+    bl.texcoord.x = entry->x;
+    bl.texcoord.y = entry->y;
+    bl.texcoord.z = entry->bitmap_index;
+
+    SpriteVertex tr;
+    tr.position   = pos_top_right;
+    tr.texcoord.x = entry->x + entry->width;
+    tr.texcoord.y = entry->y + entry->height;
+    tr.texcoord.z = entry->bitmap_index;
+
+    SpriteVertex tl;
+    tl.position.x = pos_bottom_left.x;
+    tl.position.y = pos_top_right.y;
+    tl.texcoord.x = entry->x;
+    tl.texcoord.y = entry->y + entry->height;
+    tl.texcoord.z = entry->bitmap_index;
+
+    SpriteVertex br;
+    br.position.x = pos_top_right.x;
+    br.position.y = pos_bottom_left.y;
+    br.texcoord.x = entry->x + entry->width;
+    br.texcoord.y = entry->y;
+    br.texcoord.z = entry->bitmap_index;
+
+    sprites.push_back(bl);
+    sprites.push_back(br);
+    sprites.push_back(tr);
+
+    sprites.push_back(bl);    
+    sprites.push_back(tr);
+    sprites.push_back(tl);
+  }
+
+protected:
+
+
+
+
+
+protected:
+
+  chaos::BitmapAtlas::TextureArrayAtlas atlas;
+
+  std::vector<SpriteVertex> sprites;
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --------------------------------------------------------------------
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -27,7 +138,9 @@ public:
 
   MyGLFWWindowOpenGLTest1()
   {
+    auto u = SpriteManager::CORNER_BOTTOM_LEFT;
 
+    u = u;
   }
 
 protected:

@@ -1,19 +1,10 @@
 #include <chaos/BitmapAtlasHTMLGenerator.h>
+#include <chaos/MathTools.h>
 
 namespace chaos
 {
   namespace BitmapAtlas
   {
-    // ========================================================================
-    // Independant function
-    // ========================================================================
-
-    /** multiply an integer with a float (two conversions) */
-    static int MultDimensionMixedTypes(int a, float b)
-    {
-      return (int)(((float)a) * b);
-    }
-
     // ========================================================================
     // BitmapAtlasHTMLGenerator function
     // ========================================================================
@@ -94,10 +85,10 @@ namespace chaos
 
           int color = 10 + (rand() % 10) * 10;
 
-          int x = MultDimensionMixedTypes(entry.x, scale);
-          int y = MultDimensionMixedTypes(entry.y, scale);
-          int w = MultDimensionMixedTypes(entry.width, scale);
-          int h = MultDimensionMixedTypes(entry.height, scale);
+          int x = MathTools::CastAndMul<int>(entry.x, scale);
+          int y = MathTools::CastAndMul<int>(entry.y, scale);
+          int w = MathTools::CastAndMul<int>(entry.width, scale);
+          int h = MathTools::CastAndMul<int>(entry.height, scale);
 
           char rect_props[1024];
           sprintf_s(rect_props, 1024, "fill-opacity:0.5;fill:rgb(%d,0,0);stroke-width:1;stroke:rgb(0,0,0)", color);
@@ -125,8 +116,8 @@ namespace chaos
           if (entry.bitmap_index != bitmap_index)
             continue;
 
-          int x = MultDimensionMixedTypes(entry.x, scale) + MultDimensionMixedTypes(entry.width, scale * 0.5f);
-          int y = MultDimensionMixedTypes(entry.y, scale) + MultDimensionMixedTypes(entry.height, scale * 0.5f);
+          int x = MathTools::CastAndMul<int>(entry.x, scale) + MathTools::CastAndMul<int>(entry.width, scale * 0.5f);
+          int y = MathTools::CastAndMul<int>(entry.y, scale) + MathTools::CastAndMul<int>(entry.height, scale * 0.5f);
 
           tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
           html.PushAttribute(TEXT, "text-anchor", "middle");
@@ -181,8 +172,8 @@ namespace chaos
       // output ordered per bitmaps
       for (int i = 0; i < atlas.atlas_count; ++i)
       {
-        int w = MultDimensionMixedTypes(width, scale);
-        int h = MultDimensionMixedTypes(height, scale);
+        int w = MathTools::CastAndMul<int>(width, scale);
+        int h = MathTools::CastAndMul<int>(height, scale);
 
         if (params.show_atlas_header)
         {

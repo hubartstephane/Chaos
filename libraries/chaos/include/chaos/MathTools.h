@@ -49,6 +49,23 @@ public:
     return r.sign;
   }
 
+  /** a function to multiply to values and convert */
+  template<typename T, typename T1, typename T2>
+  static T CastAndMul(T1 src1, T2 src2)
+  {
+	return static_cast<T>(
+		static_cast<float>(src1) * static_cast<float>(src2)
+	);
+  }
+
+  template<typename T, typename T1, typename T2>
+  static T CastAndDiv(T1 src1, T2 src2)
+  {
+	return static_cast<T>(
+		static_cast<float>(src1) / static_cast<float>(src2)
+	);
+  }
+
   /** convert an angle into Radian (for float or double) */
   template<typename T>
   static T DegreeToRadian(T degree)
@@ -214,7 +231,6 @@ public:
   static bool IsPowerOf2(T src)
   {
     return ((src != 0) && (src & (src - 1)) == 0);
-
   }
 
   /** a function to find the smallest power of 2 greater or equal than src */

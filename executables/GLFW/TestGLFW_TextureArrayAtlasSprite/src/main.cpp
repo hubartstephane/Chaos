@@ -19,6 +19,7 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
+#include <chaos/MathTools.h>
 
 // --------------------------------------------------------------------
 
@@ -44,42 +45,102 @@ public:
   */
 
   /** theses are the offset are the ones to apply to position, if position correspond to a given border */
-  static glm::vec2 const CORNER_TOP_LEFT{0.0f, -1.0f};
-  static glm::vec2 const CORNER_BOTTOM_LEFT{0.0f, 0.0f};
-  static glm::vec2 const CORNER_TOP_RIGHT{-1.0f, -1.0f};
-  static glm::vec2 const CORNER_BOTTOM_RIGHT{-1.0f, 0.0f};
-  static glm::vec2 const CORNER_CENTER {-0.5f, -0.5f};
+  static int const HOTPOINT_BOTTOM  = 1;	
+  static int const HOTPOINT_TOP     = 2;	
+  static int const HOTPOINT_VMIDDLE = 0;	
 
-  void AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler)
+  static int const HOTPOINT_LEFT    = 4;	
+  static int const HOTPOINT_RIGHT   = 8;	
+  static int const HOTPOINT_HMIDDLE = 0;	
+
+  static int const HOTPOINT_BOTTOM_LEFT  = HOTPOINT_BOTTOM  | HOTPOINT_LEFT;
+  static int const HOTPOINT_TOP_LEFT     = HOTPOINT_TOP     | HOTPOINT_LEFT;
+  static int const HOTPOINT_BOTTOM_RIGHT = HOTPOINT_BOTTOM  | HOTPOINT_RIGHT;
+  static int const HOTPOINT_TOP_RIGHT    = HOTPOINT_TOP     | HOTPOINT_RIGHT;  
+  static int const HOTPOINT_CENTER       = HOTPOINT_VMIDDLE | HOTPOINT_HMIDDLE;
+
+  static glm::vec2 GetBottomLeftPositionTo(glm::vec2 const & position, glm::vec2 const & size, int hotpoint);
+
+
+  void Initialize();
+
+  void AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler);
+
+protected:
+
+	/** the vertex array */
+	boost::intrusive_ptr<chaos::VertexArray> vertex_array;
+	/** the vertex buffer */
+	boost::intrusive_ptr<chaos::VertexBuffer> vertex_buffer;
+	/** the declaration of the vertex buffer */
+	chaos::VertexDeclaration declaration;
+	/** the texture atlas */
+	chaos::BitmapAtlas::TextureArrayAtlas atlas;
+	/** the sprites */
+	std::vector<SpriteVertex> sprites;
+};
+
+void SpriteManager::Initialize()
+{
+
+}
+
+glm::vec2 SpriteManager::GetBottomLeftPositionTo(glm::vec2 const & position, glm::vec2 const & size, int hotpoint)
+{
+	float const offset_factor[] = {-0.5f, 0.0f, -1.0f, 0.0f};
+
+	int h_part = (hotpoint >> 0) & 3;
+	int v_part = (hotpoint >> 2) & 3;
+
+	assert(h_part != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
+	assert(v_part != 3);  
+	
+	glm::vec2 result = position;	
+	result.x += size.x * offset_factor[h_part];
+	result.y += size.y * offset_factor[v_part];
+	return result;
+}
+
+
+
+  void SpriteManager::AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler)
   {
+	glm::vec2 atlas_size      = atlas.GetAtlasDimension(); 
     glm::vec2 pos_bottom_left = position + size * handler;
     glm::vec2 pos_top_right   = pos_bottom_left + size;
+
+	float tex_x1 = chaos::MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
+	float tex_y1 = chaos::MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
+	float tex_x2 = chaos::MathTools::CastAndDiv<float>(entry->x + entry->width,  atlas_size.x);
+	float tex_y2 = chaos::MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
+
+	float bitmap_index = (float)entry->bitmap_index;
         
     SpriteVertex bl;
     bl.position   = pos_bottom_left;
-    bl.texcoord.x = entry->x;
-    bl.texcoord.y = entry->y;
-    bl.texcoord.z = entry->bitmap_index;
+    bl.texcoord.x = tex_x1;
+    bl.texcoord.y = tex_y1;
+    bl.texcoord.z = bitmap_index;
 
     SpriteVertex tr;
     tr.position   = pos_top_right;
-    tr.texcoord.x = entry->x + entry->width;
-    tr.texcoord.y = entry->y + entry->height;
-    tr.texcoord.z = entry->bitmap_index;
+	tr.texcoord.x = tex_x2;
+	tr.texcoord.y = tex_y2;
+    tr.texcoord.z = bitmap_index;
 
     SpriteVertex tl;
     tl.position.x = pos_bottom_left.x;
     tl.position.y = pos_top_right.y;
-    tl.texcoord.x = entry->x;
-    tl.texcoord.y = entry->y + entry->height;
-    tl.texcoord.z = entry->bitmap_index;
+	tl.texcoord.x = tex_x1;
+	tl.texcoord.y = tex_y2;
+    tl.texcoord.z = bitmap_index;
 
     SpriteVertex br;
     br.position.x = pos_top_right.x;
     br.position.y = pos_bottom_left.y;
-    br.texcoord.x = entry->x + entry->width;
-    br.texcoord.y = entry->y;
-    br.texcoord.z = entry->bitmap_index;
+	br.texcoord.x = tex_x2;
+	br.texcoord.y = tex_y1;
+    br.texcoord.z = bitmap_index;
 
     sprites.push_back(bl);
     sprites.push_back(br);
@@ -90,20 +151,6 @@ public:
     sprites.push_back(tl);
   }
 
-protected:
-
-
-
-
-
-protected:
-
-  chaos::BitmapAtlas::TextureArrayAtlas atlas;
-
-  std::vector<SpriteVertex> sprites;
-
-
-};
 
 
 
@@ -140,50 +187,16 @@ public:
   {
     auto u = SpriteManager::CORNER_BOTTOM_LEFT;
 
-    u = u;
+
+	glm::vec2 p(0.0f,   0.0f);
+	glm::vec2 s(10.0f, 10.0f);
+
+	auto p2 = SpriteManager::GetBottomLeftPositionTo(p, s, SpriteManager::CORNER_TOP);
+
+	p2 = p2;
   }
 
 protected:
-
-
-
-  chaos::BitmapAtlas::BitmapEntry * ClampBitmapIndexAndGetEntry()
-  {
-    chaos::BitmapAtlas::BitmapEntry * result = nullptr;
-
-    if (atlas.GetBitmapCount() != 0)
-    {
-      if (bitmap_index < 0)
-        bitmap_index = 0;
-
-      int count = 0;
-      // go throught all bitmap_sets
-      auto const & bitmap_sets = atlas.GetBitmapSets();
-      for (auto const & bitmap_set : bitmap_sets)
-      {
-        if (bitmap_index - count < (int)bitmap_set->elements.size())
-          return &bitmap_set->elements[bitmap_index - count];
-
-        count += bitmap_set->elements.size();
-        result = &bitmap_set->elements[bitmap_set->elements.size() - 1]; // in case of there is not enough entry after, keep a reference on the last
-      }
-      // go throught all character sets
-      auto const & character_sets = atlas.GetCharacterSets();
-      for (auto const & character_set : character_sets)
-      {
-        if (bitmap_index - count < (int)character_set->elements.size())
-          return &character_set->elements[bitmap_index - count];
-
-        count += character_set->elements.size();
-        result = &character_set->elements[character_set->elements.size() - 1]; // in case of there is not enough entry after, keep a reference on the last
-      }
-
-      // not enough entry : keep the last one (and clamp bitmap_index)
-      bitmap_index = count;
-    }
-    return result;
-  }
-
 
   virtual bool OnDraw(int width, int height) override
   {
@@ -192,10 +205,6 @@ protected:
 
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-    chaos::BitmapAtlas::BitmapEntry * entry = ClampBitmapIndexAndGetEntry();
-    if (entry == nullptr)
-      return true;
 
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
@@ -216,19 +225,7 @@ protected:
     program_data.SetUniform("world_to_camera", world_to_camera);
     program_data.SetUniform("local_to_world",  local_to_world);
 
-    glBindTextureUnit(0, atlas.GetTexture()->GetResourceID());
-    program_data.SetUniform("material", 0);
-    program_data.SetUniform("texture_slice", (float)entry->bitmap_index);
 
-
-    glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
-
-    glm::vec2 entry_start = glm::vec2((float)entry->x, (float)entry->y);
-    glm::vec2 entry_size  = glm::vec2((float)entry->width, (float)entry->height);
-    glm::vec2 entry_end   = entry_start + entry_size;
-
-    program_data.SetUniform("entry_start", entry_start / atlas_dimension);
-    program_data.SetUniform("entry_end", entry_end / atlas_dimension);
 
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 

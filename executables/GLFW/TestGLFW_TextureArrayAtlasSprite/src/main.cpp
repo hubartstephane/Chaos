@@ -58,6 +58,9 @@ class TextParserData
 {
 
 
+
+  /** the stack used for parsing */
+  std::vector<TextParseElement> parse_stack;
 };
 
 class TextParser
@@ -99,11 +102,6 @@ public:
   std::map<std::string, chaos::BitmapAtlas::CharacterSet const *> character_sets;
   /** the atlas where to find entries */
   chaos::BitmapAtlas::Atlas const * atlas{nullptr};
-
-protected:
-
-  /** the stack used for parsing */
-  std::vector<TextParseElement> parse_stack;
 };
 
 
@@ -183,18 +181,18 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
   assert(text != nullptr);
 
   // clear the parsing stack and initialize it with default params
-  parse_stack.clear();
+  TextParserData parse_data;
 
   TextParseElement element;
   element.type  = TextParseElement::CHANGE_COLOR;
   element.color = params.default_color;
-  parse_stack.push_back(element);
+  parse_data.parse_stack.push_back(element);
 
   int tab_size = params.tab_size;
   if (tab_size < 1)
     tab_size = 1;
 
-  TextParserData parse_data;
+
 
   float x = 0;
   float y = 0;

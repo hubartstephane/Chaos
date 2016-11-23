@@ -23,7 +23,17 @@
 
 // --------------------------------------------------------------------
 
-class TextParseElement
+//
+// accepted markups: 
+//
+//   <COLOR=MyColor> ... </COLOR> 
+//   <FONT=MyFont>   ... </FONT>
+//   <BITMAP=MyBitmap>
+//
+//
+
+/** during parsing, some 'commands' are put on the stack for text formating, TextParseStackElement is such a command */
+class TextParseStackElement
 {
 public:
 
@@ -38,30 +48,46 @@ public:
   chaos::BitmapAtlas::CharacterSet * character_set{nullptr};
 };
 
+/** some parameters used during text parsing */
 class ParseTextParams
 {
 public:
+
+  static const int ALIGN_LEFT    = 0;
+  static const int ALIGN_RIGHT   = 1;
+  static const int ALIGN_CENTER  = 2;
+  static const int ALIGN_JUSTIFY = 3;
 
   /** the size to use for the characters */
   float character_height{32.0f};
   /** the text limits */
   float max_text_width{0.0f};
-  /** the text limits */
-  float max_text_height{0.0f};
+  /** word wrap enabled */
+  bool word_wrap{true};
+  /** the line alignment */
+  int alignment{};
   /** the color to use for the parsing */
   glm::vec3 default_color{1.0f, 1.0f, 1.0f};
   /** tab size */
   int tab_size{2};
 };
 
+/** a structure used to contains data during parsing */
 class TextParserData
 {
+public:
 
-
+  void EndCurrentLine();
 
   /** the stack used for parsing */
-  std::vector<TextParseElement> parse_stack;
+  std::vector<TextParseStackElement> parse_stack;
 };
+
+void TextParserData::EndCurrentLine()
+{
+
+}
+
 
 class TextParser
 {
@@ -183,8 +209,8 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
   // clear the parsing stack and initialize it with default params
   TextParserData parse_data;
 
-  TextParseElement element;
-  element.type  = TextParseElement::CHANGE_COLOR;
+  TextParseStackElement element;
+  element.type  = TextParseStackElement::CHANGE_COLOR;
   element.color = params.default_color;
   parse_data.parse_stack.push_back(element);
 
@@ -203,7 +229,7 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
 
     if (text[i] == '\n') // next line
     {
-
+      parse_data.EndCurrentLine();
       continue;
     }
 
@@ -232,16 +258,13 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
 
     if (text[i] == ']') // parse stack should be decreased (keep the very first element)
     {
-      if (parse_stack.size() > 1)
-        parse_stack.pop_back();
+      if (parse_data.parse_stack.size() > 1)
+		  parse_data.parse_stack.pop_back();
       continue;
     }
   
     EmitCharacters(text[i], 1, parse_data); // this is not a special character  
   }
-  
-  // clear the stack 
-  parse_stack.clear();
 }
 
 // -----------------------------------------------

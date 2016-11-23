@@ -23,6 +23,231 @@
 
 // --------------------------------------------------------------------
 
+class TextParseElement
+{
+public:
+
+  static const int CHANGE_COLOR         = 0;
+  static const int CHANGE_CHARACTER_SET = 1;
+
+  /** the type of the element in the stack */
+  int type{CHANGE_COLOR};
+  /** the color to use */
+  glm::vec3 color;
+  /** the character set selected */
+  chaos::BitmapAtlas::CharacterSet * character_set{nullptr};
+};
+
+class ParseTextParams
+{
+public:
+
+  /** the size to use for the characters */
+  float character_height{32.0f};
+  /** the text limits */
+  float max_text_width{0.0f};
+  /** the text limits */
+  float max_text_height{0.0f};
+  /** the color to use for the parsing */
+  glm::vec3 default_color{1.0f, 1.0f, 1.0f};
+  /** tab size */
+  int tab_size{2};
+};
+
+class TextParserData
+{
+
+
+};
+
+class TextParser
+{
+public:
+
+  /** default constructor */
+  TextParser() = default;
+  /** constructor with atlas initialization */
+  TextParser(chaos::BitmapAtlas::Atlas const & in_atlas) : atlas(&in_atlas) {}
+
+  /** add a named color in the parser */
+  bool AddColor(char const * name, glm::vec3 const & color);
+  /** add a named bitmap in the parser */
+  bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
+  /** add a named bitmap in the parser */
+  bool AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry const * entry);
+
+  /** add a named character set in the parser */
+  bool AddCharacterSet(char const * name, char const * font_name);
+  /** add a named character set in the parser */
+  bool AddCharacterSet(char const * name, chaos::BitmapAtlas::CharacterSet const * character_set);
+
+  /** the method to parse a text */
+  void ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
+
+protected:
+
+  /** utility method to emit characters */
+  void EmitCharacters(char const c, int count, TextParserData & data);
+
+public:
+
+  /** the colors to use, indexed by a joker name */
+  std::map<std::string, glm::vec3> colors;
+  /** the bitmaps to use, indexed by a joker name */
+  std::map<std::string, chaos::BitmapAtlas::BitmapEntry const *> bitmaps;
+  /** the character_set to use, indexed by a joker name */
+  std::map<std::string, chaos::BitmapAtlas::CharacterSet const *> character_sets;
+  /** the atlas where to find entries */
+  chaos::BitmapAtlas::Atlas const * atlas{nullptr};
+
+protected:
+
+  /** the stack used for parsing */
+  std::vector<TextParseElement> parse_stack;
+};
+
+
+
+bool TextParser::AddColor(char const * name, glm::vec3 const & color)
+{
+  assert(name != nullptr);
+
+  if (colors.find(name) != colors.end())
+    return false;
+  colors.insert(std::make_pair(name, color));
+  return true;
+}
+
+bool TextParser::AddCharacterSet(char const * name, char const * font_name)
+{
+  assert(name      != nullptr);
+  assert(font_name != nullptr);
+
+  if (atlas == nullptr)
+    return false;
+
+  chaos::BitmapAtlas::CharacterSet const * character_set = atlas->GetCharacterSet(font_name);
+  if (character_set == nullptr)
+    return false;
+  return AddCharacterSet(name, character_set);
+}
+
+bool TextParser::AddCharacterSet(char const * name, chaos::BitmapAtlas::CharacterSet const * character_set)
+{
+  assert(name          != nullptr);
+  assert(character_set != nullptr);
+
+  if (character_sets.find(name) != character_sets.end()) // name already in used
+    return false;
+  character_sets.insert(std::make_pair(name, character_set));
+  return true;
+}
+
+bool TextParser::AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name)
+{
+  assert(name            != nullptr);
+  assert(bitmap_set_name != nullptr);
+  assert(bitmap_name     != nullptr);
+
+  if (atlas == nullptr)
+    return false;
+
+  chaos::BitmapAtlas::BitmapSet const * bitmap_set = atlas->GetBitmapSet(bitmap_set_name);
+  if (bitmap_set == nullptr)
+    return false;
+  chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name);
+  if (entry == nullptr)
+    return false;
+  return AddBitmap(name, entry);
+}
+
+bool TextParser::AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry const * entry)
+{
+  assert(name  != nullptr);
+  assert(entry != nullptr);
+
+  if (bitmaps.find(name) != bitmaps.end()) // name already in used
+    return false;
+  bitmaps.insert(std::make_pair(name, entry));
+  return true;
+}
+
+void TextParser::EmitCharacters(char const c, int count, TextParserData & data)
+{
+
+
+}
+
+void TextParser::ParseText(char const * text, ParseTextParams const & params)
+{
+  assert(text != nullptr);
+
+  // clear the parsing stack and initialize it with default params
+  parse_stack.clear();
+
+  TextParseElement element;
+  element.type  = TextParseElement::CHANGE_COLOR;
+  element.color = params.default_color;
+  parse_stack.push_back(element);
+
+  int tab_size = params.tab_size;
+  if (tab_size < 1)
+    tab_size = 1;
+
+  TextParserData parse_data;
+
+  float x = 0;
+  float y = 0;
+  for (int i = 0 ; text[i] != 0 ; ++i)
+  {
+    if (text[i] == '\r') // ignore chariot return (UNIX/WINDOWS differences)
+      continue;
+
+    if (text[i] == '\n') // next line
+    {
+
+      continue;
+    }
+
+    if (text[i] == '\t') // tab
+    {
+      EmitCharacters(' ', tab_size, parse_data);
+      continue;
+    }
+  
+    if (text[i] == '/')
+    {
+      if (text[i + 1] == '/' || text[i + 1] == '[' || text[i + 1] == ']')
+      {
+        EmitCharacters(text[i + 1], 1, parse_data); // Emit the character and additionnaly skip the extra character
+        ++i;
+      }
+      continue; // if character after '/' does correspond to nothing, skip it
+    }
+
+    if (text[i] == '[')
+    {
+
+
+      continue;
+    }
+
+    if (text[i] == ']') // parse stack should be decreased (keep the very first element)
+    {
+      if (parse_stack.size() > 1)
+        parse_stack.pop_back();
+      continue;
+    }
+  
+    EmitCharacters(text[i], 1, parse_data); // this is not a special character  
+  }
+  
+  // clear the stack 
+  parse_stack.clear();
+}
+
+// -----------------------------------------------
+
 class SpriteVertex
 {
 public:
@@ -36,30 +261,27 @@ public:
 class SpriteManager
 {
 public:
-  /*
-  static glm::vec2 const CORNER_TOP_LEFT{-0.5f, 0.5f};
-  static glm::vec2 const CORNER_BOTTOM_LEFT{-0.5f, -0.5f};
-  static glm::vec2 const CORNER_TOP_RIGHT{0.5f, 0.5f};
-  static glm::vec2 const CORNER_BOTTOM_RIGHT{0.5f, -0.5f};
-  static glm::vec2 const CORNER_CENTER{0.0f, 0.0f};
-  */
 
   /** theses are the offset are the ones to apply to position, if position correspond to a given border */
-  static int const HOTPOINT_BOTTOM  = 1;	
-  static int const HOTPOINT_TOP     = 2;	
-  static int const HOTPOINT_VMIDDLE = 0;	
 
-  static int const HOTPOINT_LEFT    = 4;	
-  static int const HOTPOINT_RIGHT   = 8;	
-  static int const HOTPOINT_HMIDDLE = 0;	
+  static int const HOTPOINT_LEFT    = 1;
+  static int const HOTPOINT_RIGHT   = 2;
+  static int const HOTPOINT_HMIDDLE = 0;
+
+  static int const HOTPOINT_BOTTOM  = 4;
+  static int const HOTPOINT_TOP     = 8;
+  static int const HOTPOINT_VMIDDLE = 0;
 
   static int const HOTPOINT_BOTTOM_LEFT  = HOTPOINT_BOTTOM  | HOTPOINT_LEFT;
   static int const HOTPOINT_TOP_LEFT     = HOTPOINT_TOP     | HOTPOINT_LEFT;
   static int const HOTPOINT_BOTTOM_RIGHT = HOTPOINT_BOTTOM  | HOTPOINT_RIGHT;
-  static int const HOTPOINT_TOP_RIGHT    = HOTPOINT_TOP     | HOTPOINT_RIGHT;  
+  static int const HOTPOINT_TOP_RIGHT    = HOTPOINT_TOP     | HOTPOINT_RIGHT;
   static int const HOTPOINT_CENTER       = HOTPOINT_VMIDDLE | HOTPOINT_HMIDDLE;
 
-  static glm::vec2 GetBottomLeftPositionTo(glm::vec2 const & position, glm::vec2 const & size, int hotpoint);
+  /** given a hotpoint, a sprite size, and the hotpoint_type, returns the BottomLeft hotpoint position */
+  static glm::vec2 GetBottomLeftHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type);
+  /** given a hotpoint, a sprite size, and the hotpoint_type, returns the any other hotpoint_type position */
+  static glm::vec2 GetHotpointPosition(glm::vec2 const & position, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
 
 
   void Initialize();
@@ -68,16 +290,16 @@ public:
 
 protected:
 
-	/** the vertex array */
-	boost::intrusive_ptr<chaos::VertexArray> vertex_array;
-	/** the vertex buffer */
-	boost::intrusive_ptr<chaos::VertexBuffer> vertex_buffer;
-	/** the declaration of the vertex buffer */
-	chaos::VertexDeclaration declaration;
-	/** the texture atlas */
-	chaos::BitmapAtlas::TextureArrayAtlas atlas;
-	/** the sprites */
-	std::vector<SpriteVertex> sprites;
+  /** the vertex array */
+  boost::intrusive_ptr<chaos::VertexArray> vertex_array;
+  /** the vertex buffer */
+  boost::intrusive_ptr<chaos::VertexBuffer> vertex_buffer;
+  /** the declaration of the vertex buffer */
+  chaos::VertexDeclaration declaration;
+  /** the texture atlas */
+  chaos::BitmapAtlas::TextureArrayAtlas atlas;
+  /** the sprites */
+  std::vector<SpriteVertex> sprites;
 };
 
 void SpriteManager::Initialize()
@@ -85,71 +307,96 @@ void SpriteManager::Initialize()
 
 }
 
-glm::vec2 SpriteManager::GetBottomLeftPositionTo(glm::vec2 const & position, glm::vec2 const & size, int hotpoint)
+glm::vec2 SpriteManager::GetHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type)
 {
-	float const offset_factor[] = {-0.5f, 0.0f, -1.0f, 0.0f};
+  if (initial_hotpoint_type == final_hotpoint_type)
+    return hotpoint;
 
-	int h_part = (hotpoint >> 0) & 3;
-	int v_part = (hotpoint >> 2) & 3;
+  static float const offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 
-	assert(h_part != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
-	assert(v_part != 3);  
-	
-	glm::vec2 result = position;	
-	result.x += size.x * offset_factor[h_part];
-	result.y += size.y * offset_factor[v_part];
-	return result;
+  int initial_h_part = (initial_hotpoint_type >> 0) & 3;
+  int initial_v_part = (initial_hotpoint_type >> 2) & 3;
+
+  int final_h_part = (final_hotpoint_type >> 0) & 3;
+  int final_v_part = (final_hotpoint_type >> 2) & 3;
+
+  assert(initial_h_part != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
+  assert(initial_v_part != 3);
+  assert(final_h_part   != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
+  assert(final_v_part   != 3);
+
+  glm::vec2 result = hotpoint;
+  result.x += size.x * (offset_factor[initial_h_part] - offset_factor[final_h_part]);
+  result.y += size.y * (offset_factor[initial_v_part] - offset_factor[final_v_part]);
+  return result;
+
+}
+
+glm::vec2 SpriteManager::GetBottomLeftHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type)
+{
+  static float const offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
+
+  int h_part = (hotpoint_type >> 0) & 3;
+  int v_part = (hotpoint_type >> 2) & 3;
+
+  assert(h_part != 3); // not both LEFT and RIGHT, nor TOP and BOTTOM at the same time
+  assert(v_part != 3);
+
+  glm::vec2 result = hotpoint;
+  result.x += size.x * offset_factor[h_part];
+  result.y += size.y * offset_factor[v_part];
+  return result;
 }
 
 
 
-  void SpriteManager::AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler)
-  {
-	glm::vec2 atlas_size      = atlas.GetAtlasDimension(); 
-    glm::vec2 pos_bottom_left = position + size * handler;
-    glm::vec2 pos_top_right   = pos_bottom_left + size;
+void SpriteManager::AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler)
+{
+  glm::vec2 atlas_size = atlas.GetAtlasDimension();
+  glm::vec2 pos_bottom_left = position + size * handler;
+  glm::vec2 pos_top_right = pos_bottom_left + size;
 
-	float tex_x1 = chaos::MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
-	float tex_y1 = chaos::MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
-	float tex_x2 = chaos::MathTools::CastAndDiv<float>(entry->x + entry->width,  atlas_size.x);
-	float tex_y2 = chaos::MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
+  float tex_x1 = chaos::MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
+  float tex_y1 = chaos::MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
+  float tex_x2 = chaos::MathTools::CastAndDiv<float>(entry->x + entry->width, atlas_size.x);
+  float tex_y2 = chaos::MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
 
-	float bitmap_index = (float)entry->bitmap_index;
-        
-    SpriteVertex bl;
-    bl.position   = pos_bottom_left;
-    bl.texcoord.x = tex_x1;
-    bl.texcoord.y = tex_y1;
-    bl.texcoord.z = bitmap_index;
+  float bitmap_index = (float)entry->bitmap_index;
 
-    SpriteVertex tr;
-    tr.position   = pos_top_right;
-	tr.texcoord.x = tex_x2;
-	tr.texcoord.y = tex_y2;
-    tr.texcoord.z = bitmap_index;
+  SpriteVertex bl;
+  bl.position = pos_bottom_left;
+  bl.texcoord.x = tex_x1;
+  bl.texcoord.y = tex_y1;
+  bl.texcoord.z = bitmap_index;
 
-    SpriteVertex tl;
-    tl.position.x = pos_bottom_left.x;
-    tl.position.y = pos_top_right.y;
-	tl.texcoord.x = tex_x1;
-	tl.texcoord.y = tex_y2;
-    tl.texcoord.z = bitmap_index;
+  SpriteVertex tr;
+  tr.position = pos_top_right;
+  tr.texcoord.x = tex_x2;
+  tr.texcoord.y = tex_y2;
+  tr.texcoord.z = bitmap_index;
 
-    SpriteVertex br;
-    br.position.x = pos_top_right.x;
-    br.position.y = pos_bottom_left.y;
-	br.texcoord.x = tex_x2;
-	br.texcoord.y = tex_y1;
-    br.texcoord.z = bitmap_index;
+  SpriteVertex tl;
+  tl.position.x = pos_bottom_left.x;
+  tl.position.y = pos_top_right.y;
+  tl.texcoord.x = tex_x1;
+  tl.texcoord.y = tex_y2;
+  tl.texcoord.z = bitmap_index;
 
-    sprites.push_back(bl);
-    sprites.push_back(br);
-    sprites.push_back(tr);
+  SpriteVertex br;
+  br.position.x = pos_top_right.x;
+  br.position.y = pos_bottom_left.y;
+  br.texcoord.x = tex_x2;
+  br.texcoord.y = tex_y1;
+  br.texcoord.z = bitmap_index;
 
-    sprites.push_back(bl);    
-    sprites.push_back(tr);
-    sprites.push_back(tl);
-  }
+  sprites.push_back(bl);
+  sprites.push_back(br);
+  sprites.push_back(tr);
+
+  sprites.push_back(bl);
+  sprites.push_back(tr);
+  sprites.push_back(tl);
+}
 
 
 
@@ -185,15 +432,21 @@ public:
 
   MyGLFWWindowOpenGLTest1()
   {
-    auto u = SpriteManager::CORNER_BOTTOM_LEFT;
+    auto u = SpriteManager::HOTPOINT_BOTTOM_LEFT;
 
 
-	glm::vec2 p(0.0f,   0.0f);
-	glm::vec2 s(10.0f, 10.0f);
+    glm::vec2 p(0.0f, 0.0f);
+    glm::vec2 s(10.0f, 10.0f);
 
-	auto p2 = SpriteManager::GetBottomLeftPositionTo(p, s, SpriteManager::CORNER_TOP);
+    auto p2 = SpriteManager::GetBottomLeftHotpointPosition(p, s, SpriteManager::HOTPOINT_TOP);
 
-	p2 = p2;
+    p2 = p2;
+
+    auto p3 = SpriteManager::GetHotpointPosition(p, s, SpriteManager::HOTPOINT_TOP, SpriteManager::HOTPOINT_BOTTOM_LEFT);
+    p3 = p3;
+
+    auto p4 = SpriteManager::GetHotpointPosition(p2, s, SpriteManager::HOTPOINT_BOTTOM_LEFT, SpriteManager::HOTPOINT_TOP);
+    p4 = p4;
   }
 
 protected:
@@ -210,20 +463,20 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
-    // XXX : the scaling is used to avoid the near plane clipping
+                              // XXX : the scaling is used to avoid the near plane clipping
     chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
     static float FOV = 60.0f;
-    glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
+    glm::mat4 projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
     glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
-    glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
+    glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
 
     glUseProgram(program_box->GetResourceID());
-    program_data.SetUniform("projection",      projection);
+    program_data.SetUniform("projection", projection);
     program_data.SetUniform("world_to_camera", world_to_camera);
-    program_data.SetUniform("local_to_world",  local_to_world);
+    program_data.SetUniform("local_to_world", local_to_world);
 
 
 
@@ -236,7 +489,7 @@ protected:
 
   virtual void Finalize() override
   {
-    mesh_box    = nullptr;
+    mesh_box = nullptr;
     program_box = nullptr;
     atlas.Clear();
 
@@ -270,17 +523,17 @@ protected:
 
     // initialize debug font display 
     chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path               = font_path;
-    debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    debug_params.font_characters_per_line   = 10;
+    debug_params.texture_path = font_path;
+    debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    debug_params.font_characters_per_line = 10;
     debug_params.font_characters_line_count = 10;
-    debug_params.character_width            = 20;
-    debug_params.spacing                    = glm::ivec2( 0, 0);
-    debug_params.crop_texture               = glm::ivec2(15, 7);
+    debug_params.character_width = 20;
+    debug_params.spacing = glm::ivec2(0, 0);
+    debug_params.crop_texture = glm::ivec2(15, 7);
 
     if (!debug_display.Initialize(debug_params))
       return false;
-    
+
     // load texture
     if (!LoadTextureArray(resources_path))
       return false;
@@ -293,7 +546,7 @@ protected:
     // create meshes
     chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    chaos::MultiMeshGenerator generators;    
+    chaos::MultiMeshGenerator generators;
     generators.AddGenerator(chaos::CubeMeshGenerator(b), mesh_box);
 
     if (!generators.GenerateMeshes())
@@ -313,7 +566,7 @@ protected:
   {
     chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel  = 0;
+    hints.toplevel = 0;
     hints.decorated = 1;
   }
 
@@ -356,7 +609,7 @@ protected:
 
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
 
-  int bitmap_index {0};
+  int bitmap_index{ 0 };
 
   chaos::MyGLFWFpsCamera fps_camera;
 
@@ -371,7 +624,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 1200;
+  params.width = 1200;
   params.height = 600;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);

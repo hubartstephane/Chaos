@@ -37,16 +37,87 @@ class TextParseStackElement
 {
 public:
 
-  static const int CHANGE_COLOR         = 0;
-  static const int CHANGE_CHARACTER_SET = 1;
-
-  /** the type of the element in the stack */
-  int type{CHANGE_COLOR};
   /** the color to use */
   glm::vec3 color;
   /** the character set selected */
   chaos::BitmapAtlas::CharacterSet * character_set{nullptr};
 };
+
+class TextParseToken
+{
+public:
+
+	static int const TOKEN_BITMAP    = 1;
+	static int const TOKEN_CHARACTER = 2;
+	static int const TOKEN_SEPARATOR = 3;
+
+	glm::vec2 position{0.0f, 0.0f};
+
+	chaos::BitmapAtlas::BitmapEntry    * bitmap_entry{nullptr};
+	chaos::BitmapAtlas::CharacterEntry * character_entry{nullptr};
+};
+
+
+/** a structure used to contains data during parsing */
+class TextParserData
+{
+public:
+
+	/** utility method to emit characters */
+	void EmitCharacters(char const c, int count);
+	/** end the current line */
+	void EndCurrentLine();
+
+	/** add an element on parse stack : keep color, but change current character_set */
+	void PushCharacterSet(chaos::BitmapAtlas::CharacterSet * character_set);
+	/** add an element on parse stack : keep character_set, but change current color */
+	void PushColor(glm::vec3 const & color);
+
+public:
+	/** the stack used for parsing */
+	std::vector<TextParseStackElement> parse_stack;
+};
+
+void TextParserData::PushCharacterSet(chaos::BitmapAtlas::CharacterSet * character_set)
+{
+	TextParseStackElement element = parse_stack[parse_stack.size() - 1];
+	if (character_set != nullptr)
+		element.character_set = character_set;
+	parse_stack.push_back(element);
+}
+
+void TextParserData::PushColor(glm::vec3 const & color)
+{
+	TextParseStackElement element = parse_stack[parse_stack.size() - 1];
+	element.color = color;
+	parse_stack.push_back(element);
+}
+
+void TextParserData::EmitCharacters(char const c, int count)
+{
+
+}
+
+
+void TextParserData::EndCurrentLine()
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /** some parameters used during text parsing */
 class ParseTextParams
@@ -65,28 +136,14 @@ public:
   /** word wrap enabled */
   bool word_wrap{true};
   /** the line alignment */
-  int alignment{};
-  /** the color to use for the parsing */
+  int alignment{ALIGN_LEFT};
+  /** the color to use by default */
   glm::vec3 default_color{1.0f, 1.0f, 1.0f};
+  /** the font to use by default */
+  std::string character_set_name;
   /** tab size */
   int tab_size{2};
 };
-
-/** a structure used to contains data during parsing */
-class TextParserData
-{
-public:
-
-  void EndCurrentLine();
-
-  /** the stack used for parsing */
-  std::vector<TextParseStackElement> parse_stack;
-};
-
-void TextParserData::EndCurrentLine()
-{
-
-}
 
 
 class TextParser
@@ -113,10 +170,10 @@ public:
   /** the method to parse a text */
   void ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
 
-protected:
+public:
 
-  /** utility method to emit characters */
-  void EmitCharacters(char const c, int count, TextParserData & data);
+  /** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
+  bool IsNameInUse(char const * name) const;
 
 public:
 
@@ -130,13 +187,23 @@ public:
   chaos::BitmapAtlas::Atlas const * atlas{nullptr};
 };
 
+bool TextParser::IsNameInUse(char const * name) const
+{
+	if (colors.find(name) != colors.end())
+		return true;
+	if (bitmaps.find(name) != bitmaps.end()) // name already in used
+		return true;
+	if (character_sets.find(name) != character_sets.end()) // name already in used
+		return true;
+	return false;
+}
 
 
 bool TextParser::AddColor(char const * name, glm::vec3 const & color)
 {
   assert(name != nullptr);
 
-  if (colors.find(name) != colors.end())
+  if (IsNameInUse(name))
     return false;
   colors.insert(std::make_pair(name, color));
   return true;
@@ -161,8 +228,8 @@ bool TextParser::AddCharacterSet(char const * name, chaos::BitmapAtlas::Characte
   assert(name          != nullptr);
   assert(character_set != nullptr);
 
-  if (character_sets.find(name) != character_sets.end()) // name already in used
-    return false;
+  if (IsNameInUse(name))
+	  return false;
   character_sets.insert(std::make_pair(name, character_set));
   return true;
 }
@@ -190,82 +257,108 @@ bool TextParser::AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry co
   assert(name  != nullptr);
   assert(entry != nullptr);
 
-  if (bitmaps.find(name) != bitmaps.end()) // name already in used
-    return false;
+  if (IsNameInUse(name))
+	  return false;
   bitmaps.insert(std::make_pair(name, entry));
   return true;
 }
 
-void TextParser::EmitCharacters(char const c, int count, TextParserData & data)
-{
 
 
-}
+
+
+
+
+
+
 
 void TextParser::ParseText(char const * text, ParseTextParams const & params)
 {
-  assert(text != nullptr);
+	assert(text != nullptr);
 
-  // clear the parsing stack and initialize it with default params
-  TextParserData parse_data;
+	// initialize parse params
+	TextParserData parse_data;
 
-  TextParseStackElement element;
-  element.type  = TextParseStackElement::CHANGE_COLOR;
-  element.color = params.default_color;
-  parse_data.parse_stack.push_back(element);
+	TextParseStackElement element;
+	element.color = params.default_color;
+	parse_data.parse_stack.push_back(element);
 
-  int tab_size = params.tab_size;
-  if (tab_size < 1)
-    tab_size = 1;
+	// clamp the tab size
+	int tab_size = params.tab_size;
+	if (tab_size < 1)
+		tab_size = 1;
+
+	// iterate over all characters
+	bool escape_character = false;
+	for (int i = 0 ; text[i] != 0 ; ++i)
+	{
+		char c = text[i];
+
+		bool new_escape_character = (c == '\\');
+
+		// ignore chariot return (UNIX/WINDOWS differences)
+		if (c == '\r') 
+		{
+
+		}
+		// next line
+		else if (c == '\n') 
+		{			
+			parse_data.EndCurrentLine();
+		}
+		// tabulation
+		else if (c == '\t') 
+		{			
+			parse_data.EmitCharacters(' ', tab_size);
+		}
+		// if escape is set, simply display the incomming character no matter what it is (except \n \r \t)
+		else if (escape_character) 
+		{
+			parse_data.EmitCharacters(c, 1);	
+		}
+		// start an escape
+		else if (new_escape_character) 
+		{
+
+		}
+		// close previously started markup 
+		else if (c == ']') 
+		{
+			if (parse_data.parse_stack.size() > 1) // decrease parse stack (keep the very first element, in case of error)
+				parse_data.parse_stack.pop_back();
+		}
+		// start a new markup
+		else if (c == '[') 
+		{
 
 
 
-  float x = 0;
-  float y = 0;
-  for (int i = 0 ; text[i] != 0 ; ++i)
-  {
-    if (text[i] == '\r') // ignore chariot return (UNIX/WINDOWS differences)
-      continue;
 
-    if (text[i] == '\n') // next line
-    {
-      parse_data.EndCurrentLine();
-      continue;
-    }
-
-    if (text[i] == '\t') // tab
-    {
-      EmitCharacters(' ', tab_size, parse_data);
-      continue;
-    }
-  
-    if (text[i] == '/')
-    {
-      if (text[i + 1] == '/' || text[i + 1] == '[' || text[i + 1] == ']')
-      {
-        EmitCharacters(text[i + 1], 1, parse_data); // Emit the character and additionnaly skip the extra character
-        ++i;
-      }
-      continue; // if character after '/' does correspond to nothing, skip it
-    }
-
-    if (text[i] == '[')
-    {
-
-
-      continue;
-    }
-
-    if (text[i] == ']') // parse stack should be decreased (keep the very first element)
-    {
-      if (parse_data.parse_stack.size() > 1)
-		  parse_data.parse_stack.pop_back();
-      continue;
-    }
-  
-    EmitCharacters(text[i], 1, parse_data); // this is not a special character  
-  }
+		}
+		// finally, this is not a special character  		
+		else
+		{
+			parse_data.EmitCharacters(c, 1); 
+		}
+		
+		escape_character = !escape_character && new_escape_character;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // -----------------------------------------------
 

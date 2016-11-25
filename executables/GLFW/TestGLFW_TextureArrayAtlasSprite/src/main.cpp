@@ -10,7 +10,6 @@
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/MyGLFWFpsCamera.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
@@ -53,14 +52,23 @@ public:
 	static int const TOKEN_CHARACTER = 2;
 	static int const TOKEN_SEPARATOR = 3;
 
+  /** get the width of the token after renormalization */
+  float GetWidth(class ParseTextParams const & params) const;
+
+public:
+
 	/** the type of the token */
 	int type{TOKEN_NONE};
+  /** the character */
+  char character{0};
 	/** the position of the generated image */
 	glm::vec2 position{0.0f, 0.0f};
 	/** the corresponding bitmap (if valid) */
-	chaos::BitmapAtlas::BitmapEntry * bitmap_entry{nullptr};
+	chaos::BitmapAtlas::BitmapEntry const * bitmap_entry{nullptr};
 	/** the corresponding character (if valid) */
-	chaos::BitmapAtlas::CharacterEntry * character_entry{nullptr};
+	chaos::BitmapAtlas::CharacterEntry const * character_entry{nullptr};
+  /** the corresponding character set (if valid) */
+  chaos::BitmapAtlas::CharacterSet const * character_set{ nullptr };
 };
 
 
@@ -70,7 +78,7 @@ class TextParserData
 public:
 
 	/** the constructor */
-	TextParserData(chaos::BitmapAtlas::Atlas const * in_atlas) : atlas(in_atlas){}
+  TextParserData(chaos::BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
 
 	/** start the markup */
 	bool StartMarkup(char const * text, int & i, class TextParser & parser, ParseTextParams const & params);
@@ -82,6 +90,8 @@ public:
 	void EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry, ParseTextParams const & params);
 	/** end the current line */
 	void EndCurrentLine(ParseTextParams const & params);
+  /** insert a token */
+  void InsertTokenInLine(TextParseToken & token, ParseTextParams const & params);
 
 	/** duplicate the last stack element */
 	void PushDuplicate();
@@ -95,12 +105,12 @@ public:
 
 public:
 
+  /** the atlas in used */
+  chaos::BitmapAtlas::AtlasBase const & atlas;
 	/** current line position */
 	glm::vec2 position{0.0f, 0.0f};
 	/** the lines */
 	std::vector<std::vector<TextParseToken>> lines;
-	/** the atlas in used */
-	chaos::BitmapAtlas::Atlas const * atlas;
 	/** the stack used for parsing */
 	std::vector<TextParseStackElement> parse_stack;
 };
@@ -137,10 +147,8 @@ class TextParser
 {
 public:
 
-	/** default constructor */
-	TextParser() = default;
 	/** constructor with atlas initialization */
-	TextParser(chaos::BitmapAtlas::Atlas const & in_atlas) : atlas(&in_atlas) {}
+  TextParser(chaos::BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
 
 	/** add a named color in the parser */
 	bool AddColor(char const * name, glm::vec3 const & color);
@@ -168,7 +176,12 @@ public:
 
 protected:
 
-	bool GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data);
+  /** generate the lines, without cutting them */
+	bool GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data);
+  /** cut the lines so they are not too big. Cut them only when it is possible */
+  bool CutLines(ParseTextParams const & params, TextParserData & parse_data);
+  /** remove separators at end of lines, and empty lines at the end */
+  bool RemoveUselessSeparators(ParseTextParams const & params, TextParserData & parse_data);
 
 public:
 
@@ -179,9 +192,39 @@ public:
 	/** the character_set to use, indexed by a joker name */
 	std::map<std::string, chaos::BitmapAtlas::CharacterSet const *> character_sets;
 	/** the atlas where to find entries */
-	chaos::BitmapAtlas::Atlas const * atlas{ nullptr };
+	chaos::BitmapAtlas::AtlasBase const & atlas;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================================
+// TextParseToken methods
+// ============================================================
+
+float TextParseToken::GetWidth(ParseTextParams const & params) const
+{
+  if (bitmap_entry != nullptr)
+    return bitmap_entry->width * (bitmap_entry->height / params.character_height);
+  if (character_entry != nullptr)
+    return character_entry->width * (character_entry->height / params.character_height);
+  return 0.0f;
+}
 
 // ============================================================
 // TextParserData methods
@@ -189,31 +232,27 @@ public:
 
 chaos::BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName(char const * character_set_name) const
 {
-	chaos::BitmapAtlas::CharacterSet const * result = nullptr;
-	if (atlas != nullptr)
-	{
-		result = atlas->GetCharacterSet(character_set_name);
-		if (result == nullptr)
-		{
-			// for convinience, if we cannot find the character set, try to use the one on the top of the stack
-			if (parse_stack.size() > 0)
-				result = parse_stack[parse_stack.size() - 1].character_set;
-			// if we still have no character set, take the very first available
-			if (result == nullptr)
-			{
-				auto const & character_sets = atlas->GetCharacterSets();
-				if (character_sets.size() > 0)
-					result = character_sets[0].get();
-			}
-		}
-	}
+	chaos::BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
+  if (result == nullptr)
+  {
+    // for convinience, if we cannot find the character set, try to use the one on the top of the stack
+    if (parse_stack.size() > 0)
+      result = parse_stack[parse_stack.size() - 1].character_set;
+    // if we still have no character set, take the very first available
+    if (result == nullptr)
+    {
+      auto const & character_sets = atlas.GetCharacterSets();
+      if (character_sets.size() > 0)
+        result = character_sets[0].get();
+    }
+  }
 	return result;
 }
 
 void TextParserData::PushDuplicate()
 {
 	TextParseStackElement element = parse_stack[parse_stack.size() - 1];
-	parse_stack.push_back(element);
+	parse_stack.push_back(element); // push a duplicate of previous element
 }
 
 void TextParserData::PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * character_set)
@@ -243,51 +282,41 @@ void TextParserData::EmitCharacters(char c, int count, ParseTextParams const & p
 	if (entry == nullptr)
 		return;
 
-	// if there was no line, insert the very first one ...
-	if (lines.size() == 0)
-		lines.push_back(std::vector<TextParseToken>()); 
-
 	// emit the characters
 	for (int i = 0 ; i < count ; ++i)
 		EmitCharacter(c, entry, character_set, params);
 }
 
+
 void TextParserData::EmitCharacter(char c, chaos::BitmapAtlas::CharacterEntry const * entry, chaos::BitmapAtlas::CharacterSet const * character_set, ParseTextParams const & params)
 {
-	// XXX : we do not draw space because, for justification reason we want to skip space and tabs at end of line
-	//       we cannot afford to have pixels drawn in that case. We still have to insert an entry in the line because
-	//       we may have another character coming
-
-	TextParseToken token;
-	token.type = (c != ' ')? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_SEPARATOR;
-
-	// get references on last line and last token
-	std::vector<TextParseToken> & current_line = lines[lines.size() - 1];
-
-	TextParseToken const * previous_token = (current_line.size() > 0)? &current_line[current_line.size() - 1] : nullptr;
-
-
-	if (params.max_text_width > 0.0f)
-	{
-
-	
-	}
-
-
-	// insert the token in the list
-	token.position = position;
-	lines[lines.size() - 1].push_back(token);
-	// decal current cursor
-	position += entry->width * (entry->height / params.character_height);
+  TextParseToken token;
+  token.type            = (c != ' ') ? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_SEPARATOR;
+  token.character       = c;
+  token.character_entry = entry;
+  token.character_set   = character_set;
+  InsertTokenInLine(token, params);
 }
 
 void TextParserData::EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry, ParseTextParams const & params)
 {
-	// if there was no line, insert the very first one ...
-	if (lines.size() == 0)
-		lines.push_back(std::vector<TextParseToken>()); 
+  TextParseToken token;
+  token.type         = TextParseToken::TOKEN_BITMAP;
+  token.bitmap_entry = entry;
+  InsertTokenInLine(token, params);
+}
 
 
+void TextParserData::InsertTokenInLine(TextParseToken & token, ParseTextParams const & params)
+{
+  // if there was no line, insert the very first one ...
+  if (lines.size() == 0)
+    lines.push_back(std::vector<TextParseToken>());
+
+  // insert the token in the list and decal current cursor
+  token.position = position;
+  lines[lines.size() - 1].push_back(token);
+  position += token.GetWidth(params);
 }
 
 void TextParserData::EndCurrentLine(ParseTextParams const & params)
@@ -302,7 +331,6 @@ void TextParserData::EndCurrentLine(ParseTextParams const & params)
 	lines.push_back(std::vector<TextParseToken>()); 
 }
 
-
 bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser, ParseTextParams const & params)
 {
 	int j = i;
@@ -311,7 +339,7 @@ bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & 
 		if (!chaos::StringTools::IsVariableCharacter(text[i])) // searched string is contained in  [j .. i-1]
 		{
 			// no character : skip
-			if (i - j <= 1) 
+			if (i - j < 1) 
 				return false; // ill-formed string
 			// the markup
 			std::string markup = std::string(&text[j], &text[i]);
@@ -413,10 +441,7 @@ bool TextParser::AddCharacterSet(char const * name, char const * font_name)
 	assert(name      != nullptr);
 	assert(font_name != nullptr);
 
-	if (atlas == nullptr)
-		return false;
-
-	chaos::BitmapAtlas::CharacterSet const * character_set = atlas->GetCharacterSet(font_name);
+	chaos::BitmapAtlas::CharacterSet const * character_set = atlas.GetCharacterSet(font_name);
 	if (character_set == nullptr)
 		return false;
 	return AddCharacterSet(name, character_set);
@@ -438,10 +463,7 @@ bool TextParser::AddBitmap(char const * name, char const * bitmap_set_name, char
 	assert(bitmap_set_name != nullptr);
 	assert(bitmap_name     != nullptr);
 
-	if (atlas == nullptr)
-		return false;
-
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = atlas->GetBitmapSet(bitmap_set_name);
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = atlas.GetBitmapSet(bitmap_set_name);
 	if (bitmap_set == nullptr)
 		return false;
 	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name);
@@ -473,16 +495,21 @@ bool TextParser::ParseText(char const * text, ParseTextParams const & params)
 	parse_data.parse_stack.push_back(element);
 
 	// first iteration to generate the bitmaps/glyphs
-	if (GenerateBitmaps(text, params, parse_data))
+	if (GenerateLines(text, params, parse_data))
 	{
+    if (RemoveUselessSeparators(params, parse_data))
+    {
+      if (CutLines(params, parse_data))
+      {
 
-		return true;
+        return true;
+      }
+    }		
 	}
 	return false;
 }
 
-
-bool TextParser::GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data)
+bool TextParser::GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data)
 {
 	// iterate over all characters
 	bool escape_character = false;
@@ -539,6 +566,56 @@ bool TextParser::GenerateBitmaps(char const * text, ParseTextParams const & para
 	}
 	return true;
 }
+
+bool TextParser::RemoveUselessSeparators(ParseTextParams const & params, TextParserData & parse_data)
+{
+  // remove separators at the end of lines
+  for (auto & line : parse_data.lines)
+  {
+    while (line.size() > 0 && line.back().type == )
+
+
+  }
+
+  return true;
+}
+
+bool TextParser::CutLines(ParseTextParams const & params, TextParserData & parse_data)
+{
+
+  return true;
+}
+
+
+#if 0
+// XXX : we do not draw space because, for justification reason we want to skip space and tabs at end of line
+//       we cannot afford to have pixels drawn in that case. We still have to insert an entry in the line because
+//       we may have another character coming
+
+// get references on last line and last token
+std::vector<TextParseToken> & current_line = lines[lines.size() - 1];
+
+TextParseToken const * previous_token = (current_line.size() > 0) ? &current_line[current_line.size() - 1] : nullptr;
+
+
+
+if (token.type != TextParseToken::TOKEN_SEPARATOR)  // SEPARATORS are always inserted in the line : they may be filtered out after that
+{
+  if (params.max_text_width > 0.0f)
+  {
+    if (position.x + w > params.max_text_width) // good candidate to force a line change
+    {
+
+
+    }
+  }
+}
+
+
+}
+
+#endif
+
 
 
 
@@ -742,28 +819,6 @@ public:
   MyGLFWWindowOpenGLTest1()
   {
 
-
-
-
-
-
-
-
-    auto u = SpriteManager::HOTPOINT_BOTTOM_LEFT;
-
-
-    glm::vec2 p(0.0f, 0.0f);
-    glm::vec2 s(10.0f, 10.0f);
-
-    auto p2 = SpriteManager::GetBottomLeftHotpointPosition(p, s, SpriteManager::HOTPOINT_TOP);
-
-    p2 = p2;
-
-    auto p3 = SpriteManager::GetHotpointPosition(p, s, SpriteManager::HOTPOINT_TOP, SpriteManager::HOTPOINT_BOTTOM_LEFT);
-    p3 = p3;
-
-    auto p4 = SpriteManager::GetHotpointPosition(p2, s, SpriteManager::HOTPOINT_BOTTOM_LEFT, SpriteManager::HOTPOINT_TOP);
-    p4 = p4;
   }
 
 protected:
@@ -795,22 +850,13 @@ protected:
     program_data.SetUniform("world_to_camera", world_to_camera);
     program_data.SetUniform("local_to_world", local_to_world);
 
-
-
-    mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
-
-    debug_display.Display(width, height);
-
     return true;
   }
 
   virtual void Finalize() override
   {
-    mesh_box = nullptr;
     program_box = nullptr;
     atlas.Clear();
-
-    debug_display.Finalize();
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -823,9 +869,21 @@ protected:
   }
 
 
-  bool LoadTextureArray(boost::filesystem::path const & resources_path)
+  bool LoadAtlas(boost::filesystem::path const & resources_path)
   {
     return atlas.LoadAtlas(resources_path / "MyAtlas.json");
+  }
+
+  bool ParseText()
+  {
+    TextParser parser(atlas);
+    ParseTextParams params;
+
+    bool result = parser.ParseText("Hello worl[d]\n");
+
+
+
+    return result;
   }
 
   virtual bool Initialize() override
@@ -838,21 +896,12 @@ protected:
     boost::filesystem::path resources_path = application->GetResourcesPath();
     boost::filesystem::path font_path = resources_path / "font.png";
 
-    // initialize debug font display 
-    chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path = font_path;
-    debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    debug_params.font_characters_per_line = 10;
-    debug_params.font_characters_line_count = 10;
-    debug_params.character_width = 20;
-    debug_params.spacing = glm::ivec2(0, 0);
-    debug_params.crop_texture = glm::ivec2(15, 7);
-
-    if (!debug_display.Initialize(debug_params))
+    // load atlas
+    if (!LoadAtlas(resources_path))
       return false;
 
-    // load texture
-    if (!LoadTextureArray(resources_path))
+    // parse the text
+    if (!ParseText())
       return false;
 
     // load programs      
@@ -860,21 +909,9 @@ protected:
     if (program_box == nullptr)
       return false;
 
-    // create meshes
-    chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-    chaos::MultiMeshGenerator generators;
-    generators.AddGenerator(chaos::CubeMeshGenerator(b), mesh_box);
-
-    if (!generators.GenerateMeshes())
-      return false;
-
     // place camera
     fps_camera.fps_controller.position.y = 0.0f;
     fps_camera.fps_controller.position.z = 10.0f;
-
-    // initial display
-    debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
 
     return true;
   }
@@ -894,19 +931,13 @@ protected:
 
     fps_camera.Tick(glfw_window, delta_time);
 
-    debug_display.Tick(delta_time);
-
     return true; // refresh
   }
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
-      ++bitmap_index;
-    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
-      --bitmap_index;
-  }
 
+  }
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
@@ -921,34 +952,15 @@ protected:
 protected:
 
   // rendering for the box  
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
-
+  // the atlas
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
-
-  int bitmap_index{ 0 };
-
+  // the camera
   chaos::MyGLFWFpsCamera fps_camera;
-
-  chaos::GLDebugOnScreenDisplay debug_display;
 };
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-
-
-
-
-
-  TextParser parser;
-
-  char const * t = "abc[TOTO]uv";
-  parser.ParseText(t);
-
-
-  return 0;
-
-
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

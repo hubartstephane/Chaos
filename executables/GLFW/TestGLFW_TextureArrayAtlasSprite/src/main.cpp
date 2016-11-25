@@ -38,23 +38,28 @@ class TextParseStackElement
 {
 public:
 
-  /** the color to use */
-  glm::vec3 color;
-  /** the character set selected */
-  chaos::BitmapAtlas::CharacterSet const * character_set{nullptr};
+	/** the color to use */
+	glm::vec3 color;
+	/** the character set selected */
+	chaos::BitmapAtlas::CharacterSet const * character_set{nullptr};
 };
 
 class TextParseToken
 {
 public:
 
+	static int const TOKEN_NONE      = 0;
 	static int const TOKEN_BITMAP    = 1;
 	static int const TOKEN_CHARACTER = 2;
 	static int const TOKEN_SEPARATOR = 3;
 
+	/** the type of the token */
+	int type{TOKEN_NONE};
+	/** the position of the generated image */
 	glm::vec2 position{0.0f, 0.0f};
-
-	chaos::BitmapAtlas::BitmapEntry    * bitmap_entry{nullptr};
+	/** the corresponding bitmap (if valid) */
+	chaos::BitmapAtlas::BitmapEntry * bitmap_entry{nullptr};
+	/** the corresponding character (if valid) */
 	chaos::BitmapAtlas::CharacterEntry * character_entry{nullptr};
 };
 
@@ -64,32 +69,38 @@ class TextParserData
 {
 public:
 
-  /** the constructor */
-  TextParserData(chaos::BitmapAtlas::Atlas const * in_atlas) : atlas(in_atlas){}
+	/** the constructor */
+	TextParserData(chaos::BitmapAtlas::Atlas const * in_atlas) : atlas(in_atlas){}
 
-  /** start the markup */
-  bool StartMarkup(char const * text, int & i, class TextParser & parser);
+	/** start the markup */
+	bool StartMarkup(char const * text, int & i, class TextParser & parser, ParseTextParams const & params);
 	/** utility method to emit characters */
-	void EmitCharacters(char const c, int count);
-  /** emit a bitmap */
-  void EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry);
+	void EmitCharacters(char c, int count, ParseTextParams const & params);
+	/** utility method to emit character */
+	void EmitCharacter(char c, chaos::BitmapAtlas::CharacterEntry const * entry, chaos::BitmapAtlas::CharacterSet const * character_set, ParseTextParams const & params);
+	/** emit a bitmap */
+	void EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry, ParseTextParams const & params);
 	/** end the current line */
-	void EndCurrentLine();
+	void EndCurrentLine(ParseTextParams const & params);
 
-  /** duplicate the last stack element */
-  void PushDuplicate();
+	/** duplicate the last stack element */
+	void PushDuplicate();
 	/** add an element on parse stack : keep color, but change current character_set */
 	void PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * character_set);
 	/** add an element on parse stack : keep character_set, but change current color */
 	void PushColor(glm::vec3 const & color);
 
-  /** get a character set from its name */
-  chaos::BitmapAtlas::CharacterSet const * GetCharacterSetFromName(char const * character_set_name) const;
+	/** get a character set from its name */
+	chaos::BitmapAtlas::CharacterSet const * GetCharacterSetFromName(char const * character_set_name) const;
 
 public:
 
-  /** the atlas in used */
-  chaos::BitmapAtlas::Atlas const * atlas;
+	/** current line position */
+	glm::vec2 position{0.0f, 0.0f};
+	/** the lines */
+	std::vector<std::vector<TextParseToken>> lines;
+	/** the atlas in used */
+	chaos::BitmapAtlas::Atlas const * atlas;
 	/** the stack used for parsing */
 	std::vector<TextParseStackElement> parse_stack;
 };
@@ -100,25 +111,25 @@ class ParseTextParams
 {
 public:
 
-  static const int ALIGN_LEFT = 0;
-  static const int ALIGN_RIGHT = 1;
-  static const int ALIGN_CENTER = 2;
-  static const int ALIGN_JUSTIFY = 3;
+	static const int ALIGN_LEFT = 0;
+	static const int ALIGN_RIGHT = 1;
+	static const int ALIGN_CENTER = 2;
+	static const int ALIGN_JUSTIFY = 3;
 
-  /** the size to use for the characters */
-  float character_height{ 32.0f };
-  /** the text limits */
-  float max_text_width{ 0.0f };
-  /** word wrap enabled */
-  bool word_wrap{ true };
-  /** the line alignment */
-  int alignment{ ALIGN_LEFT };
-  /** the color to use by default */
-  glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
-  /** the font to use by default */
-  std::string character_set_name;
-  /** tab size */
-  int tab_size{ 2 };
+	/** the size to use for the characters */
+	float character_height{ 32.0f };
+	/** the text limits */
+	float max_text_width{ 0.0f };
+	/** word wrap enabled */
+	bool word_wrap{ true };
+	/** the line alignment */
+	int alignment{ ALIGN_LEFT };
+	/** the color to use by default */
+	glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
+	/** the font to use by default */
+	std::string character_set_name;
+	/** tab size */
+	int tab_size{ 2 };
 };
 
 
@@ -126,49 +137,49 @@ class TextParser
 {
 public:
 
-  /** default constructor */
-  TextParser() = default;
-  /** constructor with atlas initialization */
-  TextParser(chaos::BitmapAtlas::Atlas const & in_atlas) : atlas(&in_atlas) {}
+	/** default constructor */
+	TextParser() = default;
+	/** constructor with atlas initialization */
+	TextParser(chaos::BitmapAtlas::Atlas const & in_atlas) : atlas(&in_atlas) {}
 
-  /** add a named color in the parser */
-  bool AddColor(char const * name, glm::vec3 const & color);
-  /** add a named bitmap in the parser */
-  bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
-  /** add a named bitmap in the parser */
-  bool AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry const * entry);
+	/** add a named color in the parser */
+	bool AddColor(char const * name, glm::vec3 const & color);
+	/** add a named bitmap in the parser */
+	bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
+	/** add a named bitmap in the parser */
+	bool AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry const * entry);
 
-  /** add a named character set in the parser */
-  bool AddCharacterSet(char const * name, char const * font_name);
-  /** add a named character set in the parser */
-  bool AddCharacterSet(char const * name, chaos::BitmapAtlas::CharacterSet const * character_set);
+	/** add a named character set in the parser */
+	bool AddCharacterSet(char const * name, char const * font_name);
+	/** add a named character set in the parser */
+	bool AddCharacterSet(char const * name, chaos::BitmapAtlas::CharacterSet const * character_set);
 
-  /** the main method to parse a text */
-  bool ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
+	/** the main method to parse a text */
+	bool ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
 
-  /** get a color by its name */
-  glm::vec3 const * GetColor(char const * name) const;
-  /** get a bitmap by its name */
-  chaos::BitmapAtlas::BitmapEntry const * GetBitmap(char const * name) const;
-  /** get a character set by its name */
-  chaos::BitmapAtlas::CharacterSet const * GetCharacterSet(char const * name) const;
-  /** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
-  bool IsNameValid(char const * name) const;
+	/** get a color by its name */
+	glm::vec3 const * GetColor(char const * name) const;
+	/** get a bitmap by its name */
+	chaos::BitmapAtlas::BitmapEntry const * GetBitmap(char const * name) const;
+	/** get a character set by its name */
+	chaos::BitmapAtlas::CharacterSet const * GetCharacterSet(char const * name) const;
+	/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
+	bool IsNameValid(char const * name) const;
 
 protected:
 
-  bool GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data);
+	bool GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data);
 
 public:
 
-  /** the colors to use, indexed by a joker name */
-  std::map<std::string, glm::vec3> colors;
-  /** the bitmaps to use, indexed by a joker name */
-  std::map<std::string, chaos::BitmapAtlas::BitmapEntry const *> bitmaps;
-  /** the character_set to use, indexed by a joker name */
-  std::map<std::string, chaos::BitmapAtlas::CharacterSet const *> character_sets;
-  /** the atlas where to find entries */
-  chaos::BitmapAtlas::Atlas const * atlas{ nullptr };
+	/** the colors to use, indexed by a joker name */
+	std::map<std::string, glm::vec3> colors;
+	/** the bitmaps to use, indexed by a joker name */
+	std::map<std::string, chaos::BitmapAtlas::BitmapEntry const *> bitmaps;
+	/** the character_set to use, indexed by a joker name */
+	std::map<std::string, chaos::BitmapAtlas::CharacterSet const *> character_sets;
+	/** the atlas where to find entries */
+	chaos::BitmapAtlas::Atlas const * atlas{ nullptr };
 };
 
 
@@ -178,31 +189,31 @@ public:
 
 chaos::BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName(char const * character_set_name) const
 {
-  chaos::BitmapAtlas::CharacterSet const * result = nullptr;
-  if (atlas != nullptr)
-  {
-    result = atlas->GetCharacterSet(character_set_name);
-    if (result == nullptr)
-    {
-      // for convinience, if we cannot find the character set, try to use the one on the top of the stack
-      if (parse_stack.size() > 0)
-        result = parse_stack[parse_stack.size() - 1].character_set;
-      // if we still have no character set, take the very first available
-      if (result == nullptr)
-      {
-        auto const & character_sets = atlas->GetCharacterSets();
-        if (character_sets.size() > 0)
-          result = character_sets[0].get();
-      }
-    }
-  }
-  return result;
+	chaos::BitmapAtlas::CharacterSet const * result = nullptr;
+	if (atlas != nullptr)
+	{
+		result = atlas->GetCharacterSet(character_set_name);
+		if (result == nullptr)
+		{
+			// for convinience, if we cannot find the character set, try to use the one on the top of the stack
+			if (parse_stack.size() > 0)
+				result = parse_stack[parse_stack.size() - 1].character_set;
+			// if we still have no character set, take the very first available
+			if (result == nullptr)
+			{
+				auto const & character_sets = atlas->GetCharacterSets();
+				if (character_sets.size() > 0)
+					result = character_sets[0].get();
+			}
+		}
+	}
+	return result;
 }
 
 void TextParserData::PushDuplicate()
 {
-  TextParseStackElement element = parse_stack[parse_stack.size() - 1];
-  parse_stack.push_back(element);
+	TextParseStackElement element = parse_stack[parse_stack.size() - 1];
+	parse_stack.push_back(element);
 }
 
 void TextParserData::PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * character_set)
@@ -220,91 +231,127 @@ void TextParserData::PushColor(glm::vec3 const & color)
 	parse_stack.push_back(element); // push a copy of previous element, except the color
 }
 
-void TextParserData::EmitCharacters(char const c, int count)
+void TextParserData::EmitCharacters(char c, int count, ParseTextParams const & params)
 {
-  // get current character set
-  chaos::BitmapAtlas::CharacterSet const * character_set = parse_stack[parse_stack.size() - 1].character_set;
-  if (character_set == nullptr)
-    return;
+	// get current character set
+	chaos::BitmapAtlas::CharacterSet const * character_set = parse_stack[parse_stack.size() - 1].character_set;
+	if (character_set == nullptr)
+		return;
 
-  // get entry corresponding to the glyph
-  chaos::BitmapAtlas::CharacterEntry const * entry = character_set->GetEntry(c);
-  if (entry == nullptr)
-    return;
+	// get entry corresponding to the glyph
+	chaos::BitmapAtlas::CharacterEntry const * entry = character_set->GetEntry(c);
+	if (entry == nullptr)
+		return;
+
+	// if there was no line, insert the very first one ...
+	if (lines.size() == 0)
+		lines.push_back(std::vector<TextParseToken>()); 
+
+	// emit the characters
+	for (int i = 0 ; i < count ; ++i)
+		EmitCharacter(c, entry, character_set, params);
+}
+
+void TextParserData::EmitCharacter(char c, chaos::BitmapAtlas::CharacterEntry const * entry, chaos::BitmapAtlas::CharacterSet const * character_set, ParseTextParams const & params)
+{
+	// XXX : we do not draw space because, for justification reason we want to skip space and tabs at end of line
+	//       we cannot afford to have pixels drawn in that case. We still have to insert an entry in the line because
+	//       we may have another character coming
+
+	TextParseToken token;
+	token.type = (c != ' ')? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_SEPARATOR;
+
+	// get references on last line and last token
+	std::vector<TextParseToken> & current_line = lines[lines.size() - 1];
+
+	TextParseToken const * previous_token = (current_line.size() > 0)? &current_line[current_line.size() - 1] : nullptr;
+
+
+	if (params.max_text_width > 0.0f)
+	{
+
+	
+	}
+
+
+	// insert the token in the list
+	token.position = position;
+	lines[lines.size() - 1].push_back(token);
+	// decal current cursor
+	position += entry->width * (entry->height / params.character_height);
+}
+
+void TextParserData::EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry, ParseTextParams const & params)
+{
+	// if there was no line, insert the very first one ...
+	if (lines.size() == 0)
+		lines.push_back(std::vector<TextParseToken>()); 
+
 
 }
 
-void TextParserData::EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry)
+void TextParserData::EndCurrentLine(ParseTextParams const & params)
 {
-
-
-}
-
-void TextParserData::EndCurrentLine()
-{
-
-}
-
-bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser)
-{
-  int j = i;
-  while (text[i] != 0)
-  {
-    if (!chaos::StringTools::IsVariableCharacter(text[i])) // searched string is contained in  [j .. i-1]
-    {
-      // no character : skip
-      if (i - j == 1) 
-        return false; // ill-formed string
-      // the markup
-      std::string markup = std::string(&text[j], &text[i]);
-      // markup correspond to a bitmap, the current character MUST be ']'
-      auto bitmap = parser.GetBitmap(markup.c_str());
-      if (bitmap != nullptr)
-      {
-        if (text[i] == ']')
-        {
-          EmitBitmap(bitmap);
-          return true;
-        }
-        return false; // ill-formed string
-      }
-      // if ']' is found, do nothing because, we are about to put a color/character set on the stack that is to be immediatly popped
-      if (text[i] == ']') 
-        return true;
-      // color markup found
-      auto color = parser.GetColor(markup.c_str());
-      if (color != nullptr)
-      {
-        PushColor(*color);
-        return true;
-      }
-      // character set markup found
-      auto character_set = parser.GetCharacterSet(markup.c_str());
-      if (character_set != nullptr)
-      {
-        PushCharacterSet(character_set);
-        return true;
-      }
-      // a markup has been detected but we don'k know to what it correspond, so push a duplicate on the stack so that
-      // a markup closure, this works
-      PushDuplicate(); 
-      return true;     
-    }
-    ++i;
-  }
-  return false; // markup started, but not finished : ill-formed
+	// update position
+	position.x  = 0.0f;
+	position.y -= params.character_height;
+	// if there was no line, insert the very first one ...
+	if (lines.size() == 0)
+		lines.push_back(std::vector<TextParseToken>()); 
+	// ... then you can add a new line
+	lines.push_back(std::vector<TextParseToken>()); 
 }
 
 
-
-
-
-
-
-
-
-
-
+bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser, ParseTextParams const & params)
+{
+	int j = i;
+	while (text[i] != 0)
+	{
+		if (!chaos::StringTools::IsVariableCharacter(text[i])) // searched string is contained in  [j .. i-1]
+		{
+			// no character : skip
+			if (i - j <= 1) 
+				return false; // ill-formed string
+			// the markup
+			std::string markup = std::string(&text[j], &text[i]);
+			// markup correspond to a bitmap, the current character MUST be ']'
+			auto bitmap = parser.GetBitmap(markup.c_str());
+			if (bitmap != nullptr)
+			{
+				if (text[i] == ']')
+				{
+					EmitBitmap(bitmap, params);
+					return true;
+				}
+				return false; // ill-formed string
+			}
+			// if ']' is found, do nothing because, we are about to push a color/character set on the stack that is to be immediatly popped
+			if (text[i] == ']') 
+				return true;
+			// color markup found
+			auto color = parser.GetColor(markup.c_str());
+			if (color != nullptr)
+			{
+				PushColor(*color);
+				return true;
+			}
+			// character set markup found
+			auto character_set = parser.GetCharacterSet(markup.c_str());
+			if (character_set != nullptr)
+			{
+				PushCharacterSet(character_set);
+				return true;
+			}
+			// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack 
+			// because we expect a markup closure later
+			PushDuplicate(); 
+			return true;     
+		}
+		++i;
+	}
+	return false; // markup started, but not finished : ill-formed
+}
 
 // ============================================================
 // TextParser methods
@@ -312,42 +359,42 @@ bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & 
 
 glm::vec3 const * TextParser::GetColor(char const * name) const
 {
-  auto it = colors.find(name);
-  if (it == colors.end())
-    return nullptr;
-  return &it->second;
+	auto it = colors.find(name);
+	if (it == colors.end())
+		return nullptr;
+	return &it->second;
 }
 
 chaos::BitmapAtlas::BitmapEntry const * TextParser::GetBitmap(char const * name) const
 {
-  auto it = bitmaps.find(name);
-  if (it == bitmaps.end())
-    return nullptr;
-  return it->second;
+	auto it = bitmaps.find(name);
+	if (it == bitmaps.end())
+		return nullptr;
+	return it->second;
 }
 chaos::BitmapAtlas::CharacterSet const * TextParser::GetCharacterSet(char const * name) const
 {
-  auto it = character_sets.find(name);
-  if (it == character_sets.end())
-    return nullptr;
-  return it->second;
+	auto it = character_sets.find(name);
+	if (it == character_sets.end())
+		return nullptr;
+	return it->second;
 }
 
 bool TextParser::IsNameValid(char const * name) const
 {
-  // ignore empty name
-  if (name == nullptr)
-    return false;
-  // ensure name is a valid variable name
-  if (!chaos::StringTools::IsVariableName(name))
-    return false;
-  // ensure name is not already used by a color
+	// ignore empty name
+	if (name == nullptr)
+		return false;
+	// ensure name is a valid variable name
+	if (!chaos::StringTools::IsVariableName(name))
+		return false;
+	// ensure name is not already used by a color
 	if (colors.find(name) != colors.end())
 		return true;
-  // ensure name is not already used by a bitmap
+	// ensure name is not already used by a bitmap
 	if (bitmaps.find(name) != bitmaps.end())
 		return true;
-  // ensure name is not already used by a character set
+	// ensure name is not already used by a character set
 	if (character_sets.find(name) != character_sets.end())
 		return true;
 	return false;
@@ -355,86 +402,86 @@ bool TextParser::IsNameValid(char const * name) const
 
 bool TextParser::AddColor(char const * name, glm::vec3 const & color)
 {
-  if (IsNameValid(name))
-    return false;
-  colors.insert(std::make_pair(name, color));
-  return true;
+	if (IsNameValid(name))
+		return false;
+	colors.insert(std::make_pair(name, color));
+	return true;
 }
 
 bool TextParser::AddCharacterSet(char const * name, char const * font_name)
 {
-  assert(name      != nullptr);
-  assert(font_name != nullptr);
+	assert(name      != nullptr);
+	assert(font_name != nullptr);
 
-  if (atlas == nullptr)
-    return false;
+	if (atlas == nullptr)
+		return false;
 
-  chaos::BitmapAtlas::CharacterSet const * character_set = atlas->GetCharacterSet(font_name);
-  if (character_set == nullptr)
-    return false;
-  return AddCharacterSet(name, character_set);
+	chaos::BitmapAtlas::CharacterSet const * character_set = atlas->GetCharacterSet(font_name);
+	if (character_set == nullptr)
+		return false;
+	return AddCharacterSet(name, character_set);
 }
 
 bool TextParser::AddCharacterSet(char const * name, chaos::BitmapAtlas::CharacterSet const * character_set)
 {
-  assert(character_set != nullptr);
+	assert(character_set != nullptr);
 
-  if (IsNameValid(name))
-	  return false;
-  character_sets.insert(std::make_pair(name, character_set));
-  return true;
+	if (IsNameValid(name))
+		return false;
+	character_sets.insert(std::make_pair(name, character_set));
+	return true;
 }
 
 bool TextParser::AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name)
 {
-  assert(name            != nullptr);
-  assert(bitmap_set_name != nullptr);
-  assert(bitmap_name     != nullptr);
+	assert(name            != nullptr);
+	assert(bitmap_set_name != nullptr);
+	assert(bitmap_name     != nullptr);
 
-  if (atlas == nullptr)
-    return false;
+	if (atlas == nullptr)
+		return false;
 
-  chaos::BitmapAtlas::BitmapSet const * bitmap_set = atlas->GetBitmapSet(bitmap_set_name);
-  if (bitmap_set == nullptr)
-    return false;
-  chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name);
-  if (entry == nullptr)
-    return false;
-  return AddBitmap(name, entry);
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = atlas->GetBitmapSet(bitmap_set_name);
+	if (bitmap_set == nullptr)
+		return false;
+	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name);
+	if (entry == nullptr)
+		return false;
+	return AddBitmap(name, entry);
 }
 
 bool TextParser::AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry const * entry)
 {
-  assert(entry != nullptr);
+	assert(entry != nullptr);
 
-  if (IsNameValid(name))
-	  return false;
-  bitmaps.insert(std::make_pair(name, entry));
-  return true;
+	if (IsNameValid(name))
+		return false;
+	bitmaps.insert(std::make_pair(name, entry));
+	return true;
 }
 
 bool TextParser::ParseText(char const * text, ParseTextParams const & params)
 {
-  assert(text != nullptr);
+	assert(text != nullptr);
 
-  // initialize parse params
-  TextParserData parse_data(atlas);
+	// initialize parse params
+	TextParserData parse_data(atlas);
 
-  TextParseStackElement element;
-  element.color = params.default_color;
-  element.character_set = parse_data.GetCharacterSetFromName(params.character_set_name.c_str());
-  parse_data.parse_stack.push_back(element);
+	TextParseStackElement element;
+	element.color = params.default_color;
+	element.character_set = parse_data.GetCharacterSetFromName(params.character_set_name.c_str());
+	parse_data.parse_stack.push_back(element);
 
-  // first iteration to generate the bitmaps/glyphs
-  if (GenerateBitmaps(text, params, parse_data))
-  {
+	// first iteration to generate the bitmaps/glyphs
+	if (GenerateBitmaps(text, params, parse_data))
+	{
 
-    return true;
-  }
-  return false;
+		return true;
+	}
+	return false;
 }
 
-  
+
 bool TextParser::GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data)
 {
 	// iterate over all characters
@@ -445,25 +492,25 @@ bool TextParser::GenerateBitmaps(char const * text, ParseTextParams const & para
 
 		bool new_escape_character = (c == '\\');
 
-		// ignore chariot return (UNIX/WINDOWS differences)
+		// ignore chariot return (UNIX/WINDOWS differences) : no different handling if previous character was an escape character
 		if (c == '\r') 
 		{
 
 		}
-		// next line
+		// next line  : no different handling if previous character was an escape character
 		else if (c == '\n') 
 		{			
-			parse_data.EndCurrentLine();
+			parse_data.EndCurrentLine(params);
 		}
-		// tabulation
+		// tabulation : no different handling if previous character was an escape character
 		else if (c == '\t') 
 		{			
-			parse_data.EmitCharacters(' ', (params.tab_size < 1)? 1 : params.tab_size);
+			parse_data.EmitCharacters(' ', (params.tab_size < 1)? 1 : params.tab_size, params);
 		}
 		// if escape is set, simply display the incomming character no matter what it is (except \n \r \t)
 		else if (escape_character) 
 		{
-			parse_data.EmitCharacters(c, 1);	
+			parse_data.EmitCharacters(c, 1, params);	
 		}
 		// start an escape
 		else if (new_escape_character) 
@@ -479,18 +526,18 @@ bool TextParser::GenerateBitmaps(char const * text, ParseTextParams const & para
 		// start a new markup
 		else if (c == '[') 
 		{
-      if (!parse_data.StartMarkup(text, ++i, *this)) // ill-formed markup
-        return false;
+			if (!parse_data.StartMarkup(text, ++i, *this, params)) // ill-formed markup
+				return false;
 		}
 		// finally, this is not a special character  		
 		else
 		{
-			parse_data.EmitCharacters(c, 1); 
+			parse_data.EmitCharacters(c, 1, params); 
 		}
-		
+
 		escape_character = !escape_character && new_escape_character;
 	}
-  return true;
+	return true;
 }
 
 

@@ -68,7 +68,7 @@ public:
   TextParserData(chaos::BitmapAtlas::Atlas const * in_atlas) : atlas(in_atlas){}
 
   /** start the markup */
-  void StartMarkup(char const * text, int & i, class TextParser & parser);
+  bool StartMarkup(char const * text, int & i, class TextParser & parser);
 	/** utility method to emit characters */
 	void EmitCharacters(char const c, int count);
   /** emit a bitmap */
@@ -76,6 +76,8 @@ public:
 	/** end the current line */
 	void EndCurrentLine();
 
+  /** duplicate the last stack element */
+  void PushDuplicate();
 	/** add an element on parse stack : keep color, but change current character_set */
 	void PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * character_set);
 	/** add an element on parse stack : keep character_set, but change current color */
@@ -141,9 +143,8 @@ public:
   /** add a named character set in the parser */
   bool AddCharacterSet(char const * name, chaos::BitmapAtlas::CharacterSet const * character_set);
 
-  /** the method to parse a text */
-  void ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
-
+  /** the main method to parse a text */
+  bool ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
 
   /** get a color by its name */
   glm::vec3 const * GetColor(char const * name) const;
@@ -151,11 +152,12 @@ public:
   chaos::BitmapAtlas::BitmapEntry const * GetBitmap(char const * name) const;
   /** get a character set by its name */
   chaos::BitmapAtlas::CharacterSet const * GetCharacterSet(char const * name) const;
-
-public:
-
   /** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
   bool IsNameValid(char const * name) const;
+
+protected:
+
+  bool GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data);
 
 public:
 
@@ -195,6 +197,12 @@ chaos::BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName
     }
   }
   return result;
+}
+
+void TextParserData::PushDuplicate()
+{
+  TextParseStackElement element = parse_stack[parse_stack.size() - 1];
+  parse_stack.push_back(element);
 }
 
 void TextParserData::PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * character_set)
@@ -237,7 +245,7 @@ void TextParserData::EndCurrentLine()
 
 }
 
-void TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser)
+bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser)
 {
   int j = i;
   while (text[i] != 0)
@@ -246,44 +254,45 @@ void TextParserData::StartMarkup(char const * text, int & i, class TextParser & 
     {
       // no character : skip
       if (i - j == 1) 
-        return;
-
+        return false; // ill-formed string
+      // the markup
       std::string markup = std::string(&text[j], &text[i]);
-
-      // markup correspond to a bitmap, the current character MUST be ']', else ignore the it
+      // markup correspond to a bitmap, the current character MUST be ']'
       auto bitmap = parser.GetBitmap(markup.c_str());
       if (bitmap != nullptr)
       {
         if (text[i] == ']')
+        {
           EmitBitmap(bitmap);
-        return;
+          return true;
+        }
+        return false; // ill-formed string
       }
-
       // if ']' is found, do nothing because, we are about to put a color/character set on the stack that is to be immediatly popped
       if (text[i] == ']') 
-        return;
-
+        return true;
       // color markup found
       auto color = parser.GetColor(markup.c_str());
       if (color != nullptr)
       {
         PushColor(*color);
-        return;
+        return true;
       }
-
       // character set markup found
       auto character_set = parser.GetCharacterSet(markup.c_str());
       if (character_set != nullptr)
       {
         PushCharacterSet(character_set);
-        return;
+        return true;
       }
-
-      return;
+      // a markup has been detected but we don'k know to what it correspond, so push a duplicate on the stack so that
+      // a markup closure, this works
+      PushDuplicate(); 
+      return true;     
     }
     ++i;
   }
-  --i; // because, it will be incremented later by caller causing an out of bound
+  return false; // markup started, but not finished : ill-formed
 }
 
 
@@ -404,23 +413,30 @@ bool TextParser::AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry co
   return true;
 }
 
-void TextParser::ParseText(char const * text, ParseTextParams const & params)
+bool TextParser::ParseText(char const * text, ParseTextParams const & params)
 {
-	assert(text != nullptr);
+  assert(text != nullptr);
 
-	// initialize parse params
-	TextParserData parse_data(atlas);
+  // initialize parse params
+  TextParserData parse_data(atlas);
 
-	TextParseStackElement element;
-	element.color         = params.default_color;
+  TextParseStackElement element;
+  element.color = params.default_color;
   element.character_set = parse_data.GetCharacterSetFromName(params.character_set_name.c_str());
-	parse_data.parse_stack.push_back(element);
+  parse_data.parse_stack.push_back(element);
 
-	// clamp the tab size
-	int tab_size = params.tab_size;
-	if (tab_size < 1)
-		tab_size = 1;
+  // first iteration to generate the bitmaps/glyphs
+  if (GenerateBitmaps(text, params, parse_data))
+  {
 
+    return true;
+  }
+  return false;
+}
+
+  
+bool TextParser::GenerateBitmaps(char const * text, ParseTextParams const & params, TextParserData & parse_data)
+{
 	// iterate over all characters
 	bool escape_character = false;
 	for (int i = 0 ; text[i] != 0 ; ++i)
@@ -442,7 +458,7 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
 		// tabulation
 		else if (c == '\t') 
 		{			
-			parse_data.EmitCharacters(' ', tab_size);
+			parse_data.EmitCharacters(' ', (params.tab_size < 1)? 1 : params.tab_size);
 		}
 		// if escape is set, simply display the incomming character no matter what it is (except \n \r \t)
 		else if (escape_character) 
@@ -463,7 +479,8 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
 		// start a new markup
 		else if (c == '[') 
 		{
-      parse_data.StartMarkup(text, ++i, *this);
+      if (!parse_data.StartMarkup(text, ++i, *this)) // ill-formed markup
+        return false;
 		}
 		// finally, this is not a special character  		
 		else
@@ -473,6 +490,7 @@ void TextParser::ParseText(char const * text, ParseTextParams const & params)
 		
 		escape_character = !escape_character && new_escape_character;
 	}
+  return true;
 }
 
 

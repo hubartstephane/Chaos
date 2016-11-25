@@ -2,9 +2,23 @@
 
 namespace chaos
 {
+  bool StringTools::IsVariableCharacter(char c)
+  {
+    return (std::isalnum(c) || c == '_');
+  }
+
+  bool StringTools::IsVariableName(char const * name)
+  {
+    assert(name != nullptr);
+    for (int i = 0 ; name[i] != 0 ; ++i)
+      if (!IsVariableCharacter(name[i]))
+        return false;
+    return true;
+  }
 
   std::string StringTools::Printf(char const * format, ...)
   {
+    assert(format != nullptr);
     std::string result;
     va_list va;
     va_start(va, format);
@@ -15,6 +29,7 @@ namespace chaos
 
   std::string StringTools::VPrintf(char const * format, va_list va) // well, this function needs to have a smarted behavior for too long output
   {  
+    assert(format != nullptr);
     char buffer[4096];
     vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
     return buffer;

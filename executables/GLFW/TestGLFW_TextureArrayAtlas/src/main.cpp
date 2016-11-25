@@ -52,7 +52,7 @@ protected:
           return &bitmap_set->elements[bitmap_index - count];
 
         count += bitmap_set->elements.size();
-        result = &bitmap_set->elements[bitmap_set->elements.size() - 1]; // in case of there is not enough entry after, keep a reference on the last
+        result = &bitmap_set->elements.back(); // in case of there is not enough entry after, keep a reference on the last
       }
       // go throught all character sets
       auto const & character_sets = atlas.GetCharacterSets();
@@ -62,7 +62,7 @@ protected:
           return &character_set->elements[bitmap_index - count];
 
         count += character_set->elements.size();
-        result = &character_set->elements[character_set->elements.size() - 1]; // in case of there is not enough entry after, keep a reference on the last
+        result = &character_set->elements.back(); // in case of there is not enough entry after, keep a reference on the last
       }
 
       // not enough entry : keep the last one (and clamp bitmap_index)

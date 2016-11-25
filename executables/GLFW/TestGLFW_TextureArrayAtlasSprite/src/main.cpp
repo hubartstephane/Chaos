@@ -47,10 +47,10 @@ class TextParseToken
 {
 public:
 
-	static int const TOKEN_NONE      = 0;
-	static int const TOKEN_BITMAP    = 1;
-	static int const TOKEN_CHARACTER = 2;
-	static int const TOKEN_SEPARATOR = 3;
+	static int const TOKEN_NONE       = 0;
+	static int const TOKEN_BITMAP     = 1;
+	static int const TOKEN_CHARACTER  = 2;
+	static int const TOKEN_WHITESPACE = 3;
 
   /** get the width of the token after renormalization */
   float GetWidth(class ParseTextParams const & params) const;
@@ -180,8 +180,14 @@ protected:
 	bool GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data);
   /** cut the lines so they are not too big. Cut them only when it is possible */
   bool CutLines(ParseTextParams const & params, TextParserData & parse_data);
-  /** remove separators at end of lines, and empty lines at the end */
-  bool RemoveUselessSeparators(ParseTextParams const & params, TextParserData & parse_data);
+  /** remove whitespaces at end of lines, and empty lines at the end */
+  bool RemoveUselessWhitespaces(ParseTextParams const & params, TextParserData & parse_data);
+  /** update lines according to justification */
+  bool JustifyLines(ParseTextParams const & params, TextParserData & parse_data);
+  /** generate the sprites */
+  bool GenerateSprites(ParseTextParams const & params, TextParserData & parse_data);
+  /** group tokens */
+  std::vector<std::pair<size_t, size_t>> GroupTokens(std::vector<TextParseToken> const & line);
 
 public:
 
@@ -237,7 +243,7 @@ chaos::BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName
   {
     // for convinience, if we cannot find the character set, try to use the one on the top of the stack
     if (parse_stack.size() > 0)
-      result = parse_stack[parse_stack.size() - 1].character_set;
+      result = parse_stack.back().character_set;
     // if we still have no character set, take the very first available
     if (result == nullptr)
     {
@@ -251,13 +257,13 @@ chaos::BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName
 
 void TextParserData::PushDuplicate()
 {
-	TextParseStackElement element = parse_stack[parse_stack.size() - 1];
+	TextParseStackElement element = parse_stack.back();
 	parse_stack.push_back(element); // push a duplicate of previous element
 }
 
 void TextParserData::PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * character_set)
 {
-	TextParseStackElement element = parse_stack[parse_stack.size() - 1]; 
+	TextParseStackElement element = parse_stack.back();
 	if (character_set != nullptr)
 		element.character_set = character_set;
 	parse_stack.push_back(element); // push a copy of previous element, except the character set
@@ -265,7 +271,7 @@ void TextParserData::PushCharacterSet(chaos::BitmapAtlas::CharacterSet const * c
 
 void TextParserData::PushColor(glm::vec3 const & color)
 {
-	TextParseStackElement element = parse_stack[parse_stack.size() - 1];
+	TextParseStackElement element = parse_stack.back();
 	element.color = color;
 	parse_stack.push_back(element); // push a copy of previous element, except the color
 }
@@ -273,7 +279,7 @@ void TextParserData::PushColor(glm::vec3 const & color)
 void TextParserData::EmitCharacters(char c, int count, ParseTextParams const & params)
 {
 	// get current character set
-	chaos::BitmapAtlas::CharacterSet const * character_set = parse_stack[parse_stack.size() - 1].character_set;
+	chaos::BitmapAtlas::CharacterSet const * character_set = parse_stack.back().character_set;
 	if (character_set == nullptr)
 		return;
 
@@ -291,7 +297,7 @@ void TextParserData::EmitCharacters(char c, int count, ParseTextParams const & p
 void TextParserData::EmitCharacter(char c, chaos::BitmapAtlas::CharacterEntry const * entry, chaos::BitmapAtlas::CharacterSet const * character_set, ParseTextParams const & params)
 {
   TextParseToken token;
-  token.type            = (c != ' ') ? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_SEPARATOR;
+  token.type            = (c != ' ') ? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_WHITESPACE;
   token.character       = c;
   token.character_entry = entry;
   token.character_set   = character_set;
@@ -315,7 +321,7 @@ void TextParserData::InsertTokenInLine(TextParseToken & token, ParseTextParams c
 
   // insert the token in the list and decal current cursor
   token.position = position;
-  lines[lines.size() - 1].push_back(token);
+  lines.back().push_back(token);
   position += token.GetWidth(params);
 }
 
@@ -486,7 +492,7 @@ bool TextParser::ParseText(char const * text, ParseTextParams const & params)
 {
 	assert(text != nullptr);
 
-	// initialize parse params
+	// initialize parse params stack with a default element that defines current color and fonts
 	TextParserData parse_data(atlas);
 
 	TextParseStackElement element;
@@ -494,19 +500,19 @@ bool TextParser::ParseText(char const * text, ParseTextParams const & params)
 	element.character_set = parse_data.GetCharacterSetFromName(params.character_set_name.c_str());
 	parse_data.parse_stack.push_back(element);
 
-	// first iteration to generate the bitmaps/glyphs
-	if (GenerateLines(text, params, parse_data))
-	{
-    if (RemoveUselessSeparators(params, parse_data))
-    {
-      if (CutLines(params, parse_data))
-      {
+	// all steps to properly generate the result
+  if (!GenerateLines(text, params, parse_data))
+    return false;
+  if (!RemoveUselessWhitespaces(params, parse_data))
+    return false;
+  if (!CutLines(params, parse_data))
+    return false;
+  if (!JustifyLines(params, parse_data))
+    return false;
+  if (!GenerateSprites(params, parse_data))
+    return false;
 
-        return true;
-      }
-    }		
-	}
-	return false;
+	return true;
 }
 
 bool TextParser::GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data)
@@ -567,24 +573,93 @@ bool TextParser::GenerateLines(char const * text, ParseTextParams const & params
 	return true;
 }
 
-bool TextParser::RemoveUselessSeparators(ParseTextParams const & params, TextParserData & parse_data)
+bool TextParser::RemoveUselessWhitespaces(ParseTextParams const & params, TextParserData & parse_data)
 {
-  // remove separators at the end of lines
+  // remove whitespaces at the end of lines
   for (auto & line : parse_data.lines)
+    while (line.size() > 0 && line.back().type == TextParseToken::TOKEN_WHITESPACE)
+      line.pop_back();
+  // remove all empty lines
+  while (parse_data.lines.size() > 0 && parse_data.lines.back().size() == 0)
+    parse_data.lines.pop_back();
+  return true;
+}
+
+std::vector<std::pair<size_t, size_t>> TextParser::GroupTokens(std::vector<TextParseToken> const & line)
+{
+  std::vector<std::pair<size_t, size_t>> result;
+
+  size_t last_group_type = TextParseToken::TOKEN_NONE;
+
+  size_t count = line.size();
+  for (size_t i = 0; i < count; ++i)
   {
-    while (line.size() > 0 && line.back().type == )
-
-
+    TextParseToken const & token = line[i];
+    if (token.type == TextParseToken::TOKEN_BITMAP)
+      result.push_back(std::make_pair(i, i)); // bitmap are always in their own group        
+    else if (token.type != last_group_type)
+      result.push_back(std::make_pair(i, i)); // create a new group for this element          
+    else
+    {
+      if (result.size() == 0)
+        result.push_back(std::make_pair(i, i)); // insert the first group
+      else
+        ++result.back().second = i; // concat element in its group
+    }
+    last_group_type = TextParseToken::TOKEN_BITMAP;
   }
 
-  return true;
+  return result;
 }
 
 bool TextParser::CutLines(ParseTextParams const & params, TextParserData & parse_data)
 {
+  if (params.max_text_width > 0)
+  {
+    std::vector<std::vector<TextParseToken>> result_lines;
+
+    for (auto const & line : parse_data.lines)
+    {
+      // line has been left empty after useless whitespace removal. Can simply ignore it, no sprites will be generated for that
+      if (line.size() == 0)
+        continue;
+
+      // token are grouped as consecutive elements of same type
+      // except for bitmaps that are in groups of one element
+      // group = [index first element, index of last element]
+      std::vector<std::pair<size_t, size_t>> token_groups = GroupTokens(line);
+
+
+
+
+
+
+
+      std::vector<TextParseToken> new_line;
+
+
+
+
+    }
+    parse_data.lines = std::move(result_lines); // replace the line after filtering
+  }
+  return true;
+}
+
+bool TextParser::JustifyLines(ParseTextParams const & params, TextParserData & parse_data)
+{
+
 
   return true;
 }
+
+bool TextParser::GenerateSprites(ParseTextParams const & params, TextParserData & parse_data)
+{
+
+
+  return true;
+}
+
 
 
 #if 0
@@ -593,13 +668,13 @@ bool TextParser::CutLines(ParseTextParams const & params, TextParserData & parse
 //       we may have another character coming
 
 // get references on last line and last token
-std::vector<TextParseToken> & current_line = lines[lines.size() - 1];
+std::vector<TextParseToken> & current_line = lines.back();
 
-TextParseToken const * previous_token = (current_line.size() > 0) ? &current_line[current_line.size() - 1] : nullptr;
+TextParseToken const * previous_token = (current_line.size() > 0) ? &current_line.back() : nullptr;
 
 
 
-if (token.type != TextParseToken::TOKEN_SEPARATOR)  // SEPARATORS are always inserted in the line : they may be filtered out after that
+if (token.type != TextParseToken::TOKEN_WHITESPACE)  // SEPARATORS are always inserted in the line : they may be filtered out after that
 {
   if (params.max_text_width > 0.0f)
   {

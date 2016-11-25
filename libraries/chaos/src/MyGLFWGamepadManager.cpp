@@ -255,7 +255,7 @@ void MyGLFWGamepadManager::FreeGamepad(MyGLFWGamepad * gamepad)
   if (it != gamepads.end())
   {
     size_t index = &*it - &gamepads[0];
-    gamepads[index] = gamepads[gamepads.size() - 1];
+    gamepads[index] = gamepads.back();
     gamepads.pop_back();
     delete(gamepad);
   }

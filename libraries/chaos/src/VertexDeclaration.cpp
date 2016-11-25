@@ -51,7 +51,7 @@ void VertexDeclaration::Push(int semantic, int semantic_index, int type)
   int offset = 0;
   if (entries.size() > 0)
   {
-    VertexDeclarationEntry const & previous_entry = entries[entries.size() - 1];
+    VertexDeclarationEntry const & previous_entry = entries.back();
     offset = previous_entry.offset + previous_entry.GetEntrySize();
   }
 

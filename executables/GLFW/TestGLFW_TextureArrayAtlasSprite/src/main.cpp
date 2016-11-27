@@ -180,6 +180,12 @@ protected:
 	bool GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data);
   /** cut the lines so they are not too big. Cut them only when it is possible */
   bool CutLines(ParseTextParams const & params, TextParserData & parse_data);
+  /** utility method to cut one line an insert it into a new result */
+  void CutOneLine(float & y, std::vector<TextParseToken> const & line, std::vector<std::vector<TextParseToken>> & result_lines, ParseTextParams const & params, TextParserData & parse_data);
+  /** goto next line */
+  void FlushLine(float & x, float & y, std::vector<TextParseToken> & current_line, std::vector<std::vector<TextParseToken>> & result_lines, ParseTextParams const & params);
+  /** insert all tokens of a group in one line */
+  void InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, std::vector<TextParseToken> const & line, std::vector<TextParseToken> & current_line);
   /** remove whitespaces at end of lines, and empty lines at the end */
   bool RemoveUselessWhitespaces(ParseTextParams const & params, TextParserData & parse_data);
   /** update lines according to justification */
@@ -598,7 +604,7 @@ std::vector<std::pair<size_t, size_t>> TextParser::GroupTokens(std::vector<TextP
     if (token.type == TextParseToken::TOKEN_BITMAP)
       result.push_back(std::make_pair(i, i)); // bitmap are always in their own group        
     else if (token.type != last_group_type)
-      result.push_back(std::make_pair(i, i)); // create a new group for this element          
+      result.push_back(std::make_pair(i, i)); // create a new group for this element of a new type          
     else
     {
       if (result.size() == 0)
@@ -606,7 +612,7 @@ std::vector<std::pair<size_t, size_t>> TextParser::GroupTokens(std::vector<TextP
       else
         ++result.back().second = i; // concat element in its group
     }
-    last_group_type = TextParseToken::TOKEN_BITMAP;
+    last_group_type = token.type;
   }
 
   return result;
@@ -618,32 +624,120 @@ bool TextParser::CutLines(ParseTextParams const & params, TextParserData & parse
   {
     std::vector<std::vector<TextParseToken>> result_lines;
 
+    float y = 0.0f;
     for (auto const & line : parse_data.lines)
     {
-      // line has been left empty after useless whitespace removal. Can simply ignore it, no sprites will be generated for that
-      if (line.size() == 0)
-        continue;
-
-      // token are grouped as consecutive elements of same type
-      // except for bitmaps that are in groups of one element
-      // group = [index first element, index of last element]
-      std::vector<std::pair<size_t, size_t>> token_groups = GroupTokens(line);
-
-
-
-
-
-
-
-      std::vector<TextParseToken> new_line;
-
-
-
-
+      // line may have been left empty after useless whitespace removal. 
+      // Can simply ignore it, no sprites will be generated for that
+      if (line.size() != 0)
+        CutOneLine(y, line, result_lines, params, parse_data);
+      // update the y position of characters
+      y += params.character_height;      
     }
     parse_data.lines = std::move(result_lines); // replace the line after filtering
   }
   return true;
+}
+
+void TextParser::InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, std::vector<TextParseToken> const & line, std::vector<TextParseToken> & current_line)
+{
+  for (size_t i = group.first ; i <= group.second ; ++i)
+  {
+    TextParseToken const & token = line[i]; // the token to insert
+
+    
+  }
+}
+
+void TextParser::FlushLine(
+  float & x, float & y, 
+  std::vector<TextParseToken> & current_line, 
+  std::vector<std::vector<TextParseToken>> & result_lines,
+  ParseTextParams const & params)
+{
+  x  = 0.0f;
+  y += params.character_height;
+
+  result_lines.push_back(std::move(current_line));
+  current_line = std::vector<TextParseToken>();
+}
+
+void TextParser::CutOneLine(
+  float & y, 
+  std::vector<TextParseToken> const & line, 
+  std::vector<std::vector<TextParseToken>> & result_lines, 
+  ParseTextParams const & params, 
+  TextParserData & parse_data)
+{
+  size_t initial_line_count = result_lines.size();
+
+  // token are grouped as consecutive elements of same type
+  // except for bitmaps that are in groups of one element
+  // group = [index first element, index of last element]
+  std::vector<std::pair<size_t, size_t>> token_groups = GroupTokens(line);
+
+  // rules
+  //   -an initial line may be splitted into multiples lines
+  //   -do not insert WHITESPACES at the begining of thoses new lines (except for the very first line maybe)
+  
+  std::vector<TextParseToken> current_line;
+  float x = 0.0f;
+
+  // iterate over all groups a try to insert them in lines
+  size_t group_count = token_groups.size();
+  for (size_t i = 0; i < group_count; ++i)
+  {
+    auto const & group = token_groups[i];
+
+    int group_type = line[group.first].type;
+
+    if (group_type == TextParseToken::TOKEN_WHITESPACE)
+    {
+      if (result_lines.size() != initial_line_count) // this is an additionnal line
+        if (current_line.size() == 0)                // that have no previous entry : skip the group
+          continue;
+
+      InsertAllTokensInLine(x, y, group, line, current_line); // insert all whitespaces in this line
+    }
+    else
+    {
+      float w1 = line[group.first].position.x;
+      float w2 = line[group.second].position.x + line[group.second].GetWidth(params);
+
+      float group_width = (w2 - w1);
+
+      // the group cannot fully fit in this line. Is it worth splitting the group on several lines ?
+      if (x + group_width > params.max_text_width)
+      {
+        // the group would fit entirely in the next line 
+        if (group_width <= params.max_text_width)
+        {
+          FlushLine(x, y, current_line, result_lines, params);            
+          InsertAllTokensInLine(x, y, group, line, current_line); // go to next line, insert the whole group
+        }
+        // the group is too big, even for empty line
+        else
+        {
+          // try to reduce bitmap clamping by changing line
+          if (x > 0.0f && group_type == TextParseToken::TOKEN_BITMAP)
+          {
+            FlushLine(x, y, current_line, result_lines, params);
+            InsertAllTokensInLine(x, y, group, line, current_line); // go to next line, insert the bitmap (the group)
+          }
+          else
+          {
+
+
+          }
+        }
+      }
+      // the group can fully be contained in this line
+      else
+      {
+        InsertAllTokensInLine(x, y, group, line, current_line); // you can fully insert the group with no splitting
+      }
+    }
+  }
 }
 
 bool TextParser::JustifyLines(ParseTextParams const & params, TextParserData & parse_data)
@@ -666,28 +760,6 @@ bool TextParser::GenerateSprites(ParseTextParams const & params, TextParserData 
 // XXX : we do not draw space because, for justification reason we want to skip space and tabs at end of line
 //       we cannot afford to have pixels drawn in that case. We still have to insert an entry in the line because
 //       we may have another character coming
-
-// get references on last line and last token
-std::vector<TextParseToken> & current_line = lines.back();
-
-TextParseToken const * previous_token = (current_line.size() > 0) ? &current_line.back() : nullptr;
-
-
-
-if (token.type != TextParseToken::TOKEN_WHITESPACE)  // SEPARATORS are always inserted in the line : they may be filtered out after that
-{
-  if (params.max_text_width > 0.0f)
-  {
-    if (position.x + w > params.max_text_width) // good candidate to force a line change
-    {
-
-
-    }
-  }
-}
-
-
-}
 
 #endif
 
@@ -953,8 +1025,9 @@ protected:
   {
     TextParser parser(atlas);
     ParseTextParams params;
+    params.max_text_width = 300;
 
-    bool result = parser.ParseText("Hello worl[d]\n");
+    bool result = parser.ParseText("Hello worl[d]\n", params);
 
 
 

@@ -20,6 +20,11 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
 
+
+
+#include <boost/algorithm/string.hpp>
+
+
 // --------------------------------------------------------------------
 
 //
@@ -198,11 +203,11 @@ protected:
 public:
 
 	/** the colors to use, indexed by a joker name */
-	std::map<std::string, glm::vec3> colors;
+	std::map<std::string, glm::vec3, chaos::StringTools::ci_less> colors;
 	/** the bitmaps to use, indexed by a joker name */
-	std::map<std::string, chaos::BitmapAtlas::BitmapEntry const *> bitmaps;
+	std::map<std::string, chaos::BitmapAtlas::BitmapEntry const *, chaos::StringTools::ci_less> bitmaps;
 	/** the character_set to use, indexed by a joker name */
-	std::map<std::string, chaos::BitmapAtlas::CharacterSet const *> character_sets;
+	std::map<std::string, chaos::BitmapAtlas::CharacterSet const *, chaos::StringTools::ci_less> character_sets;
 	/** the atlas where to find entries */
 	chaos::BitmapAtlas::AtlasBase const & atlas;
 };
@@ -231,10 +236,10 @@ public:
 
 float TextParseToken::GetWidth(ParseTextParams const & params) const
 {
+	if (character_entry != nullptr)
+		return character_entry->width * (params.character_height / character_entry->height);
   if (bitmap_entry != nullptr)
-    return bitmap_entry->width * (bitmap_entry->height / params.character_height);
-  if (character_entry != nullptr)
-    return character_entry->width * (character_entry->height / params.character_height);
+    return bitmap_entry->width * (params.character_height / bitmap_entry->height);
   return 0.0f;
 }
 
@@ -318,7 +323,6 @@ void TextParserData::EmitBitmap(chaos::BitmapAtlas::BitmapEntry const * entry, P
   InsertTokenInLine(token, params);
 }
 
-
 void TextParserData::InsertTokenInLine(TextParseToken & token, ParseTextParams const & params)
 {
   // if there was no line, insert the very first one ...
@@ -348,7 +352,9 @@ bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & 
 	int j = i;
 	while (text[i] != 0)
 	{
-		if (!chaos::StringTools::IsVariableCharacter(text[i])) // searched string is contained in  [j .. i-1]
+		char c = text[i];
+
+		if (!chaos::StringTools::IsVariableCharacter(c)) // searched string is contained in  [j .. i-1]
 		{
 			// no character : skip
 			if (i - j < 1) 
@@ -359,7 +365,7 @@ bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & 
 			auto bitmap = parser.GetBitmap(markup.c_str());
 			if (bitmap != nullptr)
 			{
-				if (text[i] == ']')
+				if (c == ']')
 				{
 					EmitBitmap(bitmap, params);
 					return true;
@@ -367,7 +373,7 @@ bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & 
 				return false; // ill-formed string
 			}
 			// if ']' is found, do nothing because, we are about to push a color/character set on the stack that is to be immediatly popped
-			if (text[i] == ']') 
+			if (c == ']') 
 				return true;
 			// color markup found
 			auto color = parser.GetColor(markup.c_str());
@@ -430,19 +436,19 @@ bool TextParser::IsNameValid(char const * name) const
 		return false;
 	// ensure name is not already used by a color
 	if (colors.find(name) != colors.end())
-		return true;
+		return false;
 	// ensure name is not already used by a bitmap
 	if (bitmaps.find(name) != bitmaps.end())
-		return true;
+		return false;
 	// ensure name is not already used by a character set
 	if (character_sets.find(name) != character_sets.end())
-		return true;
-	return false;
+		return false;
+	return true;
 }
 
 bool TextParser::AddColor(char const * name, glm::vec3 const & color)
 {
-	if (IsNameValid(name))
+	if (!IsNameValid(name))
 		return false;
 	colors.insert(std::make_pair(name, color));
 	return true;
@@ -463,7 +469,7 @@ bool TextParser::AddCharacterSet(char const * name, chaos::BitmapAtlas::Characte
 {
 	assert(character_set != nullptr);
 
-	if (IsNameValid(name))
+	if (!IsNameValid(name))
 		return false;
 	character_sets.insert(std::make_pair(name, character_set));
 	return true;
@@ -488,7 +494,7 @@ bool TextParser::AddBitmap(char const * name, chaos::BitmapAtlas::BitmapEntry co
 {
 	assert(entry != nullptr);
 
-	if (IsNameValid(name))
+	if (!IsNameValid(name))
 		return false;
 	bitmaps.insert(std::make_pair(name, entry));
 	return true;
@@ -559,8 +565,9 @@ bool TextParser::GenerateLines(char const * text, ParseTextParams const & params
 		// close previously started markup 
 		else if (c == ']') 
 		{
-			if (parse_data.parse_stack.size() > 1) // decrease parse stack (keep the very first element, in case of error)
-				parse_data.parse_stack.pop_back();
+			if (parse_data.parse_stack.size() >= 1) // the very first element is manually inserted. It should never be popped
+				return false;				
+			parse_data.parse_stack.pop_back();
 		}
 		// start a new markup
 		else if (c == '[') 
@@ -576,6 +583,10 @@ bool TextParser::GenerateLines(char const * text, ParseTextParams const & params
 
 		escape_character = !escape_character && new_escape_character;
 	}
+
+	if (parse_data.parse_stack.size() != 1) // all markups should be correctly closed
+		return false;
+
 	return true;
 }
 
@@ -585,7 +596,7 @@ bool TextParser::RemoveUselessWhitespaces(ParseTextParams const & params, TextPa
   for (auto & line : parse_data.lines)
     while (line.size() > 0 && line.back().type == TextParseToken::TOKEN_WHITESPACE)
       line.pop_back();
-  // remove all empty lines
+  // remove all empty lines at the end
   while (parse_data.lines.size() > 0 && parse_data.lines.back().size() == 0)
     parse_data.lines.pop_back();
   return true;
@@ -950,7 +961,34 @@ void SpriteManager::AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2
 
 
 
+#if 0
+int operator ()(std::string const & a, std::string const & b) const
+{
+	char const * s1 = a.c_str();
+	char const * s2 = b.c_str();
 
+	if (s1 == nullptr)
+		return (s2 == nullptr)? 0 : -1;
+	if (s2 == nullptr)
+		return +1;
+
+	int  i  = 0;
+	char c1 = toupper(s1[i]);
+	char c2 = toupper(s2[i]);			
+	while (c1 != 0 && c2 != 0)
+	{
+		if (c1 != c2)
+			return (c1 > c2)? +1 : -1;				
+		++i;				
+		c1 = toupper(s1[i]);
+		c2 = toupper(s2[i]);
+	}
+
+	if (c1 == c2)
+		return 0;
+	return (c1 > c2)? +1 : -1;	
+}
+#endif
 
 
 
@@ -965,6 +1003,31 @@ public:
 
   MyGLFWWindowOpenGLTest1()
   {
+
+
+	  std::string ss;
+	  std::string s2;
+
+	  auto pp = ss.c_str();
+	  auto p2 = s2.c_str();
+
+	  std::map<std::string, int, chaos::StringTools::ci_less> m;
+	  m["toto"] = 3;
+	  m["atoto"] = 34;
+	  m["ztoto"] = 35;
+
+	  int u = m["TOTO"];
+
+
+	  char const * str1 = "hello, world!";
+	  char const * str2 = "HELLO, WORLD!";
+
+	  if (boost::iequals(str1, str2))
+	  {
+		  int i = 0;
+		  ++i;
+	  }
+
 
   }
 

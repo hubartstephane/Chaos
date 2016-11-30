@@ -6,26 +6,52 @@ namespace chaos
 {
 
 /**
- * StringTools : this is an utility class to help handling strings
+ * StringTools : a namespace for string related functions
  */
 
-class StringTools
+namespace StringTools
 {
-public:
 
   /** returns true whether the character is valid for a variable name */
-  static bool IsVariableCharacter(char c);
+  bool IsVariableCharacter(char c);
   /** returns true whether the name is a standard variable name */
-  static bool IsVariableName(char const * name);
+  bool IsVariableName(char const * name);
   /** create a string from a format */
-  static std::string Printf(char const * format, ...);
+  std::string Printf(char const * format, ...);
   /** create a string from a format */
-  static std::string VPrintf(char const * format, va_list va);
+  std::string VPrintf(char const * format, va_list va);
   /** remove end line */
-  static std::string RemoveEndLine(std::string src);
+  std::string RemoveEndLine(std::string src);
   /** returns a spaces made string */
-  static std::string IndentString(size_t count);
+  std::string IndentString(size_t count);
 
-};
+	/** ci_less : a case insensitive comparator */
+	struct ci_less
+	{
+		bool operator ()(std::string const & s1, std::string const & s2) const
+		{		
+			return (_stricmp(s1.c_str(), s2.c_str()) < 0);
+		}
+
+		bool operator ()(char const * s1, char const * s2) const
+		{		
+			return (_stricmp(s1, s2) < 0);
+		}
+	};
+
+	/** ci_less : a case insensitive comparator */
+	struct ci_greater
+	{
+		bool operator ()(std::string const & s1, std::string const & s2) const
+		{		
+			return (_stricmp(s1.c_str(), s2.c_str()) > 0);
+		}
+
+		bool operator ()(char const * s1, char const * s2) const
+		{		
+			return (_stricmp(s1, s2) > 0);
+		}
+	};
+}; // namespace StringTools
 
 }; // namespace chaos

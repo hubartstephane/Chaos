@@ -77,6 +77,7 @@ T max(T a, T b)
 #include <boost/call_traits.hpp>
 #include <boost/crc.hpp> 
 #include <boost/type_traits.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>

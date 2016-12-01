@@ -21,9 +21,7 @@
 #include <chaos/MathTools.h>
 
 
-
-#include <boost/algorithm/string.hpp>
-
+#if 0
 
 // --------------------------------------------------------------------
 
@@ -796,15 +794,22 @@ class SpriteVertex
 {
 public:
 
-  glm::vec2 position;
+  glm::vec3 position;
   glm::vec3 texcoord;
 
 
 };
 
+
+
 class SpriteManager
 {
 public:
+
+	/** the source for the vertex shader */
+	static char const * vertex_shader_source;
+	/** the source for the pixel shader */
+	static char const * pixel_shader_source;
 
   /** theses are the offset are the ones to apply to position, if position correspond to a given border */
 
@@ -828,7 +833,7 @@ public:
   static glm::vec2 GetHotpointPosition(glm::vec2 const & position, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
 
 
-  void Initialize();
+  bool Initialize();
 
   void AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler);
 
@@ -846,9 +851,60 @@ protected:
   std::vector<SpriteVertex> sprites;
 };
 
-void SpriteManager::Initialize()
+
+// should try string literal from C++ 11
+char const * SpriteManager::vertex_shader_source = 
+"layout (location = 0) in vec2 position; \n\
+    layout (location = 1) in vec2 texcoord; \n\
+    uniform vec2 position_factor; \n\
+    out vec2 tex_coord; \n\
+    void main() \n\
+    { \n\
+    tex_coord = texcoord; \n\
+    vec2 pos = (position * position_factor) + vec2(-1.0, 1.0); \n\
+    gl_Position = vec4(pos, 0.0, 1.0); \n\
+    }";
+// should try string literal from C++ 11
+char const * SpriteManager::pixel_shader_source = 
+"out vec4 output_color; \n\
+    in vec2 tex_coord; \n\
+    uniform sampler2D material; \n\
+    void main() \n\
+    { \n\
+    vec4 color = texture(material, tex_coord); \n\
+    float alpha = 1.0; \n\
+    if ((color.r + color.b + color.a) > 2.0) \n\
+    discard; \n\
+    output_color = vec4(1.0, 1.0, 1.0, alpha); \n\
+    }";
+
+
+bool SpriteManager::Initialize()
 {
 
+
+	// create GPU-Program
+	chaos::GLProgramLoader loader;
+	loader.AddShaderSource(GL_VERTEX_SHADER,   vertex_shader_source);
+	loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+
+	program = loader.GenerateProgramObject();
+	if (program == nullptr)
+		return false;
+
+	// prepare the vertex declaration
+	declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+	declaration.Push(SEMANTIC_TEXCOORD, 0, TYPE_FLOAT3);
+
+	// Generate Vertex Array and Buffer
+	if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
+		return false;
+
+
+
+
+
+	return true;
 }
 
 glm::vec2 SpriteManager::GetHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type)
@@ -959,7 +1015,7 @@ void SpriteManager::AddSprite(chaos::BitmapAtlas::BitmapEntry * entry, glm::vec2
 
 
 
-
+#endif
 
 #if 0
 int operator ()(std::string const & a, std::string const & b) const
@@ -1003,7 +1059,7 @@ public:
 
   MyGLFWWindowOpenGLTest1()
   {
-
+	  /*
 
 	  std::string ss;
 	  std::string s2;
@@ -1027,7 +1083,7 @@ public:
 		  int i = 0;
 		  ++i;
 	  }
-
+	  */
 
   }
 
@@ -1086,6 +1142,7 @@ protected:
 
   bool ParseText()
   {
+	  /*
     TextParser parser(atlas);
     ParseTextParams params;
     params.max_text_width = 300;
@@ -1095,6 +1152,9 @@ protected:
 
 
     return result;
+	*/
+
+	  return true;
   }
 
   virtual bool Initialize() override

@@ -8,7 +8,17 @@ namespace chaos
 {
 
 	// should try string literal from C++ 11
-	char const * SpriteManager::vertex_shader_source = 
+	char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
+		
+		
+		
+		
+		
+		
+	)SHADERCODE";
+
+	char const * sss =
+
 		"layout (location = 0) in vec2 position; \n\
     layout (location = 1) in vec2 texcoord; \n\
     uniform vec2 position_factor; \n\
@@ -163,5 +173,10 @@ namespace chaos
 		sprites.push_back(bl);
 		sprites.push_back(tr);
 		sprites.push_back(tl);
+	}
+
+	void SpriteManager::Display()
+	{
+	
 	}
 };

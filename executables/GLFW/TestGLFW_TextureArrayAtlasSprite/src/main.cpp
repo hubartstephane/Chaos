@@ -20,6 +20,9 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
 
+#include <chaos/SpriteTextParser.h>
+#include <chaos/SpriteManager.h>
+
 
 #if 0
 int operator ()(std::string const & a, std::string const & b) const
@@ -63,6 +66,9 @@ public:
 
   MyGLFWWindowOpenGLTest1()
   {
+	  chaos::SpriteManager man;
+	  man.Initialize();
+
 	  /*
 
 	  std::string ss;

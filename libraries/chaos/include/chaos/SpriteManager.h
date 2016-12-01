@@ -61,6 +61,8 @@ namespace chaos
 		void Finalize();
 		/** add a sprite to be rendered */
 		void AddSprite(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler);
+		/** Display the sprites */
+		void Display();
 
 	protected:
 
@@ -76,5 +78,7 @@ namespace chaos
 		BitmapAtlas::TextureArrayAtlas atlas;
 		/** the sprites */
 		std::vector<SpriteVertex> sprites;
+		
+
 	};
 };

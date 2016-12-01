@@ -9,31 +9,33 @@
 
 namespace chaos
 {
-  // should try string literal from C++ 11
-  char const * GLDebugOnScreenDisplay::vertex_shader_source = 
-    "layout (location = 0) in vec2 position; \n\
-    layout (location = 1) in vec2 texcoord; \n\
-    uniform vec2 position_factor; \n\
-    out vec2 tex_coord; \n\
-    void main() \n\
-    { \n\
-    tex_coord = texcoord; \n\
-    vec2 pos = (position * position_factor) + vec2(-1.0, 1.0); \n\
-    gl_Position = vec4(pos, 0.0, 1.0); \n\
-    }";
-  // should try string literal from C++ 11
-  char const * GLDebugOnScreenDisplay::pixel_shader_source = 
-    "out vec4 output_color; \n\
-    in vec2 tex_coord; \n\
-    uniform sampler2D material; \n\
-    void main() \n\
-    { \n\
-    vec4 color = texture(material, tex_coord); \n\
-    float alpha = 1.0; \n\
-    if ((color.r + color.b + color.a) > 2.0) \n\
-    discard; \n\
-    output_color = vec4(1.0, 1.0, 1.0, alpha); \n\
-    }";
+	// should try string literal from C++ 11
+	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"SHADERCODE(
+    layout (location = 0) in vec2 position;
+    layout (location = 1) in vec2 texcoord;
+    uniform vec2 position_factor;
+    out vec2 tex_coord;
+    void main()
+    {
+		tex_coord   = texcoord;
+		vec2 pos    = (position * position_factor) + vec2(-1.0, 1.0);
+		gl_Position = vec4(pos, 0.0, 1.0);
+    }
+	)SHADERCODE";
+	// should try string literal from C++ 11
+	char const * GLDebugOnScreenDisplay::pixel_shader_source = R"SHADERCODE(
+    out vec4 output_color;
+    in vec2 tex_coord;
+    uniform sampler2D material;
+    void main()
+    {
+		vec4 color = texture(material, tex_coord);
+		float alpha = 1.0;
+		if ((color.r + color.b + color.a) > 2.0)
+			discard;
+		output_color = vec4(1.0, 1.0, 1.0, alpha);
+    }
+	)SHADERCODE";
 
   bool GLDebugOnScreenDisplay::Tick(double delta_time)
   {
@@ -74,7 +76,7 @@ namespace chaos
     // GPU-Program
     glUseProgram(program->GetResourceID());
 
-    // Initialize the vertex arra
+    // Initialize the vertex array
     glBindVertexArray(vertex_array->GetResourceID()); 
 
     GLProgramData const & program_data = program->GetProgramData();

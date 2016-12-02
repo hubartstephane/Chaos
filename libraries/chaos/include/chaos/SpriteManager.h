@@ -61,9 +61,9 @@ namespace chaos
     /** Finalize the manager */
     void Finalize();
     /** add a sprite to be rendered */
-    void AddSprite(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
+    void AddSprite(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
     /** add a sprite to be rendered */
-    void AddSprite(BitmapAtlas::CharacterEntry * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
+    void AddSprite(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
     /** Display the sprites */
     void Display();
 
@@ -71,7 +71,7 @@ namespace chaos
   protected:
 
     /** internal method to insert a sprite in the buffer */
-    void AddSpriteImpl(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color);
+    void AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color);
 
   protected:
 

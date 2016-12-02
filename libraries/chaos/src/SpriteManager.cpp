@@ -12,8 +12,7 @@ namespace chaos
     in vec2 position;
     in vec3 texcoord;
     in vec3 color;
-    in byte swizzle;
-
+    
     out vec3 vs_texcoord;
     out vec3 vs_color;
     
@@ -21,39 +20,24 @@ namespace chaos
     {
       vs_texcoord = texcoord;
       vs_color    = color;
-
-
       gl_Position = vec4(position, 0.0, 1.0);
     };											
 	)SHADERCODE";
 
-	char const * sss1 =
-
-		"layout (location = 0) in vec2 position; \n\
-    layout (location = 1) in vec2 texcoord; \n\
-    uniform vec2 position_factor; \n\
-    out vec2 tex_coord; \n\
-    void main() \n\
-    { \n\
-    tex_coord = texcoord; \n\
-    vec2 pos = (position * position_factor) + vec2(-1.0, 1.0); \n\
-    gl_Position = vec4(pos, 0.0, 1.0); \n\
-    }";
 	// should try string literal from C++ 11
   char const * SpriteManager::pixel_shader_source = R"SHADERCODE(
-    out vec4 output_color;
     in  vec3 vs_texcoord;
     in  vec3 vs_color;
+
+    out vec4 output_color;
 
     uniform sampler3D material;
 
     void main()
     {
       vec4 color = texture(material, vs_texcoord);
-      color.xyz *= vs_color;
-
-
-      output_color = color;
+      output_color.xyz = color.xyz * vs_color;
+      output_color.a   = color.a;
     };
 	)SHADERCODE";
 
@@ -135,20 +119,20 @@ namespace chaos
 		return result;
 	}
 
-  void SpriteManager::AddSprite(BitmapAtlas::CharacterEntry * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
+  void SpriteManager::AddSprite(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
   {
     glm::vec2 bottom_left_position = GetBottomLeftHotpointPosition(position, size, hotpoint_type);
     AddSpriteImpl(entry, bottom_left_position, size, color);
   }
 
-  void SpriteManager::AddSprite(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
+  void SpriteManager::AddSprite(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
   {
-    static glm::vec3 const color(0.0f, 0.0f, 0.0f);
+    static glm::vec3 const color(1.0f, 1.0f, 1.0f);
     glm::vec2 bottom_left_position = GetBottomLeftHotpointPosition(position, size, hotpoint_type);
     AddSpriteImpl(entry, bottom_left_position, size, color);
   }
 
-  void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
+  void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
   {
 		glm::vec2 topright_position = bottomleft_position + size;
     glm::vec2 atlas_size        = atlas.GetAtlasDimension();

@@ -118,19 +118,20 @@ protected:
     glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
+#if 0
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
 
     glUseProgram(program_box->GetResourceID());
     program_data.SetUniform("projection", projection);
     program_data.SetUniform("world_to_camera", world_to_camera);
     program_data.SetUniform("local_to_world", local_to_world);
+#endif
 
     return true;
   }
 
   virtual void Finalize() override
   {
-    program_box = nullptr;
     atlas.Clear();
   }
 
@@ -149,15 +150,33 @@ protected:
     return atlas.LoadAtlas(resources_path / "MyAtlas.json");
   }
 
-  bool ParseText()
+  bool InitializeSpriteManager()
   {
+    if (!sprite_manager.Initialize())
+      return false;
 
-    chaos::SpriteManager man;
-    man.Initialize();
+    auto const & character_sets = atlas.GetCharacterSets();
+    if (character_sets.size() == 0)
+      return false;
+
+    chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
+
+    size_t element_count = character_set->elements.size();
+    if (element_count == 0)
+      return false;
+
+    for (int i = 0; i < 100; ++i)
+    {
+      chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
+      
+      glm::vec2 position = 100.0f * chaos::MathTools::RandVec2();      
+      glm::vec2 size     = 20.0f  * chaos::MathTools::RandVec2();
+      glm::vec3 color    = chaos::MathTools::RandVec3();
+      sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
+    }
 
 
-    int i = 0;
-    ++i;
+    return true;
 
 	  /*
     TextParser parser(atlas);
@@ -171,7 +190,7 @@ protected:
     return result;
 	*/
 
-	  return true;
+
   }
 
   virtual bool Initialize() override
@@ -189,12 +208,7 @@ protected:
       return false;
 
     // parse the text
-    if (!ParseText())
-      return false;
-
-    // load programs      
-    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
-    if (program_box == nullptr)
+    if (!InitializeSpriteManager())
       return false;
 
     // place camera
@@ -239,8 +253,8 @@ protected:
 
 protected:
 
-  // rendering for the box  
-  boost::intrusive_ptr<chaos::GLProgram>  program_box;
+  // the sprite manager
+  chaos::SpriteManager sprite_manager;
   // the atlas
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
   // the camera

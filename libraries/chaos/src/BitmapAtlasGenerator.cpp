@@ -103,7 +103,7 @@ namespace chaos
         // transforms each entry of the glyph map into a bitmap
         for (auto & glyph : glyph_cache)
         {
-          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap);
+          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, 32);
           if (bitmap != nullptr)
           {
             char name[] = " ";

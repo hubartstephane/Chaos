@@ -60,13 +60,13 @@ namespace chaos
     };
 
     /** generate a bitmap from a glyph slot */
-    static FIBITMAP * GenerateImage(FT_GlyphSlot glyph);
+    static FIBITMAP * GenerateImage(FT_GlyphSlot glyph, int bpp = 8);
     /** generate a bitmap from a bitmap */
-    static FIBITMAP * GenerateImage(FT_Bitmap & bitmap);
+    static FIBITMAP * GenerateImage(FT_Bitmap & bitmap, int bpp = 8);
     /** generate a bitmap from a font an a string */
-    static FIBITMAP * GenerateImage(FT_Face face, char const * str);
+    static FIBITMAP * GenerateImage(FT_Face face, char const * str, int bpp = 8);
     /** generate a bitmap from a font an a character */
-    static FIBITMAP * GenerateImage(FT_Face face, char c);
+    static FIBITMAP * GenerateImage(FT_Face face, char c, int bpp = 8);
     /** generate a bitmap glyph from a character */
     static FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph); 
     /** generate a cache with all glyph required for a string */

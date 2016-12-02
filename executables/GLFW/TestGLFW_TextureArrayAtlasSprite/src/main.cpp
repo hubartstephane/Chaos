@@ -66,8 +66,7 @@ public:
 
   MyGLFWWindowOpenGLTest1()
   {
-	  chaos::SpriteManager man;
-	  man.Initialize();
+
 
 	  /*
 
@@ -152,6 +151,14 @@ protected:
 
   bool ParseText()
   {
+
+    chaos::SpriteManager man;
+    man.Initialize();
+
+
+    int i = 0;
+    ++i;
+
 	  /*
     TextParser parser(atlas);
     ParseTextParams params;

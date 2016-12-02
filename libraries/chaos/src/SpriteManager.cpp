@@ -8,16 +8,26 @@ namespace chaos
 {
 
 	// should try string literal from C++ 11
-	char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
-		
-		
-		
-		
-		
-		
+  char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
+    in vec2 position;
+    in vec3 texcoord;
+    in vec3 color;
+    in byte swizzle;
+
+    out vec3 vs_texcoord;
+    out vec3 vs_color;
+    
+    void main()
+    {
+      vs_texcoord = texcoord;
+      vs_color    = color;
+
+
+      gl_Position = vec4(position, 0.0, 1.0);
+    };											
 	)SHADERCODE";
 
-	char const * sss =
+	char const * sss1 =
 
 		"layout (location = 0) in vec2 position; \n\
     layout (location = 1) in vec2 texcoord; \n\
@@ -30,18 +40,22 @@ namespace chaos
     gl_Position = vec4(pos, 0.0, 1.0); \n\
     }";
 	// should try string literal from C++ 11
-	char const * SpriteManager::pixel_shader_source = 
-		"out vec4 output_color; \n\
-    in vec2 tex_coord; \n\
-    uniform sampler2D material; \n\
-    void main() \n\
-    { \n\
-    vec4 color = texture(material, tex_coord); \n\
-    float alpha = 1.0; \n\
-    if ((color.r + color.b + color.a) > 2.0) \n\
-    discard; \n\
-    output_color = vec4(1.0, 1.0, 1.0, alpha); \n\
-    }";
+  char const * SpriteManager::pixel_shader_source = R"SHADERCODE(
+    out vec4 output_color;
+    in  vec3 vs_texcoord;
+    in  vec3 vs_color;
+
+    uniform sampler3D material;
+
+    void main()
+    {
+      vec4 color = texture(material, vs_texcoord);
+      color.xyz *= vs_color;
+
+
+      output_color = color;
+    };
+	)SHADERCODE";
 
 	void SpriteManager::Finalize()
 	{
@@ -64,8 +78,10 @@ namespace chaos
 			return false;
 
 		// prepare the vertex declaration
-		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT2);
 		declaration.Push(SEMANTIC_TEXCOORD, 0, TYPE_FLOAT3);
+    declaration.Push(SEMANTIC_COLOR,    0, TYPE_FLOAT3);
+   // declaration.Push(SEMANTIC_COLOR,    0, TYPE_BYTE1);
 
 		// Generate Vertex Array and Buffer
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
@@ -119,13 +135,23 @@ namespace chaos
 		return result;
 	}
 
+  void SpriteManager::AddSprite(BitmapAtlas::CharacterEntry * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
+  {
+    glm::vec2 bottom_left_position = GetBottomLeftHotpointPosition(position, size, hotpoint_type);
+    AddSpriteImpl(entry, bottom_left_position, size, color);
+  }
 
+  void SpriteManager::AddSprite(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
+  {
+    static glm::vec3 const color(0.0f, 0.0f, 0.0f);
+    glm::vec2 bottom_left_position = GetBottomLeftHotpointPosition(position, size, hotpoint_type);
+    AddSpriteImpl(entry, bottom_left_position, size, color);
+  }
 
-	void SpriteManager::AddSprite(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & position, glm::vec2 const & size, glm::vec2 const & handler)
-	{
-		glm::vec2 atlas_size = atlas.GetAtlasDimension();
-		glm::vec2 pos_bottom_left = position + size * handler;
-		glm::vec2 pos_top_right = pos_bottom_left + size;
+  void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
+  {
+		glm::vec2 topright_position = bottomleft_position + size;
+    glm::vec2 atlas_size        = atlas.GetAtlasDimension();
 
 		float tex_x1 = MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
 		float tex_y1 = MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
@@ -135,36 +161,36 @@ namespace chaos
 		float bitmap_index = (float)entry->bitmap_index;
 
 		SpriteVertex bl;
-		bl.position.x = pos_bottom_left.x;
-		bl.position.y = pos_bottom_left.y;
-		bl.position.z = 0.0f;
+		bl.position.x = bottomleft_position.x;
+		bl.position.y = bottomleft_position.y;
 		bl.texcoord.x = tex_x1;
 		bl.texcoord.y = tex_y1;
 		bl.texcoord.z = bitmap_index;
+    bl.color      = color;
 
 		SpriteVertex tr;
-		tr.position.x = pos_top_right.x;
-		tr.position.y = pos_top_right.y;
-		tr.position.z = 0.0f;
+		tr.position.x = topright_position.x;
+		tr.position.y = topright_position.y;
 		tr.texcoord.x = tex_x2;
 		tr.texcoord.y = tex_y2;
 		tr.texcoord.z = bitmap_index;
+    tr.color      = color;
 
 		SpriteVertex tl;
-		tl.position.x = pos_bottom_left.x;
-		tl.position.y = pos_top_right.y;
-		tl.position.z = 0.0f;
+		tl.position.x = bottomleft_position.x;
+		tl.position.y = topright_position.y;
 		tl.texcoord.x = tex_x1;
 		tl.texcoord.y = tex_y2;
 		tl.texcoord.z = bitmap_index;
+    tl.color      = color;
 
 		SpriteVertex br;
-		br.position.x = pos_top_right.x;
-		br.position.y = pos_bottom_left.y;
-		br.position.z = 0.0f;
+		br.position.x = topright_position.x;
+		br.position.y = bottomleft_position.y;
 		br.texcoord.x = tex_x2;
 		br.texcoord.y = tex_y1;
 		br.texcoord.z = bitmap_index;
+    br.color      = color;
 
 		sprites.push_back(bl);
 		sprites.push_back(br);
@@ -174,6 +200,7 @@ namespace chaos
 		sprites.push_back(tr);
 		sprites.push_back(tl);
 	}
+
 
 	void SpriteManager::Display()
 	{

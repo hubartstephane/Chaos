@@ -8,11 +8,11 @@
 
 
 namespace chaos
-{
-	// should try string literal from C++ 11
-	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"SHADERCODE(
-    layout (location = 0) in vec2 position;
-    layout (location = 1) in vec2 texcoord;
+{	
+  // should try string literal from C++ 11
+  char const * GLDebugOnScreenDisplay::vertex_shader_source = R"SHADERCODE(
+    in vec2 position;
+    in vec2 texcoord;
     uniform vec2 position_factor;
     out vec2 tex_coord;
     void main()

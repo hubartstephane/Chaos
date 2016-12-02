@@ -15,8 +15,8 @@
 // 
 
 namespace chaos
-{  
-  FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph)
+{
+  FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph, int bpp)
   {
     assert(glyph != nullptr);
 
@@ -24,20 +24,23 @@ namespace chaos
 
     FT_Error Err = FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL); // render the slot into a bitmap
     if (!Err)
-      result = GenerateImage(glyph->bitmap); // convert FreeType-bitmap into FreeImage-bitmap
+      result = GenerateImage(glyph->bitmap, bpp); // convert FreeType-bitmap into FreeImage-bitmap
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap)
+  FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, int bpp)
   {
+    if (bpp != 8 && bpp != 32)
+      return nullptr;
+
     int w = bitmap.width;
     int h = bitmap.rows;
 
-	int mode = bitmap.pixel_mode;
-	if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
-		return nullptr;
+    int mode = bitmap.pixel_mode;
+    if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
+      return nullptr;
 
-    FIBITMAP * result = FreeImage_Allocate(w, h, 8);
+    FIBITMAP * result = FreeImage_Allocate(w, h, bpp);
     if (result != nullptr)
     {
       ImageDescription image_description = ImageTools::GetImageDescription(result);
@@ -45,9 +48,28 @@ namespace chaos
       unsigned char       * dst = (unsigned char *)image_description.data;
       unsigned char const * src = bitmap.buffer;
 
-      for (int j = 0; j < h; ++j)
-        for (int i = 0; i < w; ++i)
-          dst[i + j * image_description.pitch_size] = src[i + (h - 1 - j) * w]; // glyph is reversed compare to what we want
+      if (bpp == 8)
+      {
+        for (int j = 0; j < h; ++j)
+          for (int i = 0; i < w; ++i)
+            dst[i + j * image_description.pitch_size] = src[i + (h - 1 - j) * w]; // glyph is reversed compare to what we want
+      }
+      else if (bpp == 32)
+      {
+        for (int j = 0; j < h; ++j)
+        {
+          for (int i = 0; i < w; ++i)
+          {
+            unsigned char color = src[i + (h - 1 - j) * w]; // glyph is reversed compare to what we want
+
+            int base_index = i * 4 + j * image_description.pitch_size;
+            dst[base_index + 0] = color; // B
+            dst[base_index + 1] = color; // G
+            dst[base_index + 2] = color; // R
+            dst[base_index + 3] = color; // A
+          }
+        }
+      }
     }
     return result;
   }
@@ -63,19 +85,19 @@ namespace chaos
       return nullptr;
 
     // load the glyph
-    error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT); 
+    error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
     if (error)
       return nullptr;
 
     FT_Glyph glyph;
 
     // copy the glyph
-    error = FT_Get_Glyph(face->glyph, &glyph); 
+    error = FT_Get_Glyph(face->glyph, &glyph);
     if (error || glyph == nullptr)
       return nullptr;
 
     // convert to a bitmap if necessary
-    if (glyph->format != FT_GLYPH_FORMAT_BITMAP) 
+    if (glyph->format != FT_GLYPH_FORMAT_BITMAP)
     {
       error = FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, nullptr, true);
       if (error)
@@ -88,12 +110,12 @@ namespace chaos
   std::map<char, FontTools::CharacterBitmapGlyph> FontTools::GetGlyphCacheForString(FT_Face face, char const * str)
   {
     assert(face != nullptr);
-    assert(str  != nullptr); 
+    assert(str != nullptr);
 
     std::map<char, CharacterBitmapGlyph> result;
 
     // generate the glyph bitmap : for all characters
-    for (int i = 0 ; str[i] != 0 ; ++i)
+    for (int i = 0; str[i] != 0; ++i)
     {
       char c = str[i];
 
@@ -115,7 +137,7 @@ namespace chaos
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImage(FT_Face face, char c)
+  FIBITMAP * FontTools::GenerateImage(FT_Face face, char c, int bpp)
   {
     assert(face != nullptr);
 
@@ -124,18 +146,20 @@ namespace chaos
     FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, true);
     if (bitmap_glyph != nullptr)
     {
-      result = GenerateImage(bitmap_glyph->bitmap);
-      FT_Done_Glyph((FT_Glyph)bitmap_glyph);    
-    }  
+      result = GenerateImage(bitmap_glyph->bitmap, bpp);
+      FT_Done_Glyph((FT_Glyph)bitmap_glyph);
+    }
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str)
+  FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, int bpp)
   {
     assert(face != nullptr);
-    assert(str  != nullptr);
-    
+    assert(str != nullptr);
+
     FIBITMAP * result = nullptr;
+    if (bpp != 8 && bpp != 32)
+      return result;
 
     // generate all required glyph
     std::map<char, CharacterBitmapGlyph> glyph_cache = GetGlyphCacheForString(face, str);
@@ -148,7 +172,7 @@ namespace chaos
 
     int pos_x = 0;
     int pos_y = 0;
-    for (int i = 0 ; str[i] != 0 ; ++i)
+    for (int i = 0; str[i] != 0; ++i)
     {
       char c = str[i];
 
@@ -159,10 +183,10 @@ namespace chaos
       CharacterBitmapGlyph const & record = it->second;
 
       // get the metrics
-      int w   = record.width;
-      int h   = record.height;
-      int bl  = record.bitmap_left;
-      int bt  = record.bitmap_top;
+      int w = record.width;
+      int h = record.height;
+      int bl = record.bitmap_left;
+      int bt = record.bitmap_top;
       int avx = record.advance.x;
       int avy = record.advance.y;
 
@@ -186,12 +210,12 @@ namespace chaos
     }
 
     // STEP 2 : draw the string
-    int required_width  = max_x - min_x;
+    int required_width = max_x - min_x;
     int required_height = max_y - min_y;
 
-    result = FreeImage_Allocate(required_width, required_height, 8); // create bitmap
+    result = FreeImage_Allocate(required_width, required_height, bpp); // create bitmap
     if (result != nullptr)
-    {     
+    {
       int pitch = FreeImage_GetPitch(result);
 
       unsigned char * buffer = FreeImage_GetBits(result);
@@ -200,7 +224,7 @@ namespace chaos
 
       int pos_x = 0;
       int pos_y = 0;
-      for (int i = 0 ; str[i] != 0 ; ++i)
+      for (int i = 0; str[i] != 0; ++i)
       {
         char c = str[i];
 
@@ -211,27 +235,49 @@ namespace chaos
         CharacterBitmapGlyph const & record = it->second;
 
         // get the metrics
-        int w   = record.width;
-        int h   = record.height;
-        int bl  = record.bitmap_left;
-        int bt  = record.bitmap_top;
+        int w = record.width;
+        int h = record.height;
+        int bl = record.bitmap_left;
+        int bt = record.bitmap_top;
         int avx = record.advance.x;
         int avy = record.advance.y;
 
         bt = -bt;
 
         // copy the glyph to dest buffer : invert lines 
-        for (int y = 0 ; y < h ; ++y)
+        if (bpp == 8)
         {
-          for (int x = 0 ; x < w ; ++x)
+          for (int y = 0; y < h; ++y)
           {
-            unsigned char * d = buffer + 
-              (pos_x + bl - min_x + x) +
-              (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
+            for (int x = 0; x < w; ++x)
+            {
+              unsigned char * d = buffer +
+                (pos_x + bl - min_x + x) +
+                (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
 
-            unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
+              unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
 
-            d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
+              d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
+            }
+          }
+        }
+        else if (bpp == 32)
+        {
+          for (int y = 0; y < h; ++y)
+          {
+            for (int x = 0; x < w; ++x)
+            {
+              unsigned char * d = buffer +
+                4 * (pos_x + bl - min_x + x) +
+                (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
+
+              unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
+
+              d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
+              d[1] = max(d[1], s[0]);
+              d[2] = max(d[2], s[0]);
+              d[3] = max(d[3], s[0]);
+            }
           }
         }
         // advance the cursor
@@ -243,8 +289,8 @@ namespace chaos
     // release the glyphs
     for (auto glyph_entry : glyph_cache)
       FT_Done_Glyph((FT_Glyph)glyph_entry.second.bitmap_glyph);
-      
-    return result;  
+
+    return result;
   }
 
 };

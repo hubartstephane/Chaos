@@ -158,7 +158,7 @@ protected:
           chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
 
           glm::vec2 position = 2.0f * chaos::MathTools::RandVec2() - glm::vec2(1.0f);
-          glm::vec2 size = 0.1f * chaos::MathTools::RandVec2();
+          glm::vec2 size = 0.3f * glm::vec2(chaos::MathTools::RandFloat());
           glm::vec3 color = chaos::MathTools::RandVec3();
 
           sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
@@ -181,7 +181,7 @@ protected:
           chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
 
           glm::vec2 position = 2.0f * chaos::MathTools::RandVec2() - glm::vec2(1.0f);
-          glm::vec2 size = 0.1f * chaos::MathTools::RandVec2();
+          glm::vec2 size = 0.3f * glm::vec2(chaos::MathTools::RandFloat());
 
           sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER);
         }

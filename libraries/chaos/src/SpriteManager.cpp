@@ -192,13 +192,13 @@ namespace chaos
 		br.texcoord.z = bitmap_index;
     br.color      = color;
 
-		sprites.push_back(bl);		
-		sprites.push_back(tr);
+		sprites.push_back(bl);				
     sprites.push_back(br);
-
-		sprites.push_back(bl);		
-		sprites.push_back(tl);
     sprites.push_back(tr);
+
+		sprites.push_back(bl);				
+    sprites.push_back(tr);
+    sprites.push_back(tl);
 	}
 
 
@@ -210,8 +210,8 @@ namespace chaos
     UpdateGPUVertexBuffer();
 
     // context states
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
@@ -236,6 +236,7 @@ namespace chaos
     // restore states
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 	}
 
   void SpriteManager::UpdateGPUVertexBuffer()

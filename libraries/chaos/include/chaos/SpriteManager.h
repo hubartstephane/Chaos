@@ -24,6 +24,14 @@ namespace chaos
 
   };
 
+  /** a structure to for manager initialization data */
+  class SpriteManagerInitParams
+  {
+  public:
+
+    /** the texture atlas */
+    BitmapAtlas::TextureArrayAtlas * atlas{nullptr};
+  };
 
 
   class SpriteManager
@@ -57,7 +65,7 @@ namespace chaos
     static glm::vec2 GetHotpointPosition(glm::vec2 const & position, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
 
     /** initialize the manager */
-    bool Initialize();
+    bool Initialize(SpriteManagerInitParams & params);
     /** Finalize the manager */
     void Finalize();
     /** add a sprite to be rendered */
@@ -69,6 +77,11 @@ namespace chaos
 
 
   protected:
+
+    /** initialize the manager */
+    bool DoInitialize(SpriteManagerInitParams & params);
+    /** internal method to send data to GPU */
+    void UpdateGPUVertexBuffer();
 
     /** internal method to insert a sprite in the buffer */
     void AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color);
@@ -84,7 +97,7 @@ namespace chaos
     /** the declaration of the vertex buffer */
     VertexDeclaration declaration;
     /** the texture atlas */
-    BitmapAtlas::TextureArrayAtlas atlas;
+    BitmapAtlas::TextureArrayAtlas * atlas{nullptr};
     /** the sprites */
     std::vector<SpriteVertex> sprites;
   };

@@ -118,32 +118,16 @@ protected:
     glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-#if 0
-    chaos::GLProgramData const & program_data = program_box->GetProgramData();
-
-    glUseProgram(program_box->GetResourceID());
-    program_data.SetUniform("projection", projection);
-    program_data.SetUniform("world_to_camera", world_to_camera);
-    program_data.SetUniform("local_to_world", local_to_world);
-#endif
+    sprite_manager.Display();
 
     return true;
   }
 
   virtual void Finalize() override
   {
+    sprite_manager.Finalize();
     atlas.Clear();
   }
-
-  boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
-  {
-    chaos::GLProgramLoader loader;
-    loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
-
-    return loader.GenerateProgramObject();
-  }
-
 
   bool LoadAtlas(boost::filesystem::path const & resources_path)
   {
@@ -152,7 +136,10 @@ protected:
 
   bool InitializeSpriteManager()
   {
-    if (!sprite_manager.Initialize())
+    chaos::SpriteManagerInitParams params;
+    params.atlas = &atlas;
+
+    if (!sprite_manager.Initialize(params))
       return false;
 
     auto const & character_sets = atlas.GetCharacterSets();
@@ -165,13 +152,15 @@ protected:
     if (element_count == 0)
       return false;
 
-    for (int i = 0; i < 100; ++i)
+    int SPRITE_COUNT = 1;
+    for (int i = 0; i < SPRITE_COUNT; ++i)
     {
       chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
       
-      glm::vec2 position = 100.0f * chaos::MathTools::RandVec2();      
-      glm::vec2 size     = 20.0f  * chaos::MathTools::RandVec2();
+      glm::vec2 position = 1.0f * chaos::MathTools::RandVec2();      
+      glm::vec2 size     = 0.3f * chaos::MathTools::RandVec2();
       glm::vec3 color    = chaos::MathTools::RandVec3();
+
       sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
     }
 
@@ -203,11 +192,11 @@ protected:
     boost::filesystem::path resources_path = application->GetResourcesPath();
     boost::filesystem::path font_path = resources_path / "font.png";
 
-    // load atlas
+    // initialize the atlas
     if (!LoadAtlas(resources_path))
       return false;
 
-    // parse the text
+    // initialize the sprite manager
     if (!InitializeSpriteManager())
       return false;
 

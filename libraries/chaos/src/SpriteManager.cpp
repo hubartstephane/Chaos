@@ -20,14 +20,14 @@ namespace chaos
     {
       vs_texcoord = texcoord;
       vs_color    = color;
-      gl_Position = vec4(position, 0.0, 1.0);
+      gl_Position = vec4(position.x, position.y, 0.0, 1.0);
     };											
 	)SHADERCODE";
 
 	// should try string literal from C++ 11
   char const * SpriteManager::pixel_shader_source = R"SHADERCODE(
-    in  vec3 vs_texcoord;
-    in  vec3 vs_color;
+    in vec3 vs_texcoord;
+    in vec3 vs_color;
 
     out vec4 output_color;
 
@@ -36,8 +36,8 @@ namespace chaos
     void main()
     {
       vec4 color = texture(material, vs_texcoord);
-      output_color.xyz = color.xyz * vs_color;
-      output_color.a   = color.a;
+      output_color.xyz = color.xyz; // * vs_color;
+      output_color.a   = 1.0; //color.a;
     };
 	)SHADERCODE";
 
@@ -46,12 +46,29 @@ namespace chaos
 		program       = nullptr;
 		vertex_array  = nullptr;
 		vertex_buffer = nullptr;
+    atlas         = nullptr;
 
 		declaration.Clear();	
 	}
 
-	bool SpriteManager::Initialize()
-	{
+  bool SpriteManager::Initialize(SpriteManagerInitParams & params)
+  {
+    Finalize();
+    if (!DoInitialize(params))
+    {
+      Finalize();
+      return false;
+    }
+    return true;
+  }
+
+  bool SpriteManager::DoInitialize(SpriteManagerInitParams & params)
+  {
+    if (params.atlas == nullptr)
+      return false;
+
+    atlas = params.atlas;
+
 		// create GPU-Program
 		GLProgramLoader loader;
 		loader.AddShaderSource(GL_VERTEX_SHADER,   vertex_shader_source);
@@ -65,7 +82,6 @@ namespace chaos
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT2);
 		declaration.Push(SEMANTIC_TEXCOORD, 0, TYPE_FLOAT3);
     declaration.Push(SEMANTIC_COLOR,    0, TYPE_FLOAT3);
-   // declaration.Push(SEMANTIC_COLOR,    0, TYPE_BYTE1);
 
 		// Generate Vertex Array and Buffer
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
@@ -135,14 +151,22 @@ namespace chaos
   void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
   {
 		glm::vec2 topright_position = bottomleft_position + size;
-    glm::vec2 atlas_size        = atlas.GetAtlasDimension();
+    glm::vec2 atlas_size        = atlas->GetAtlasDimension();
 
 		float tex_x1 = MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
 		float tex_y1 = MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
 		float tex_x2 = MathTools::CastAndDiv<float>(entry->x + entry->width, atlas_size.x);
 		float tex_y2 = MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
 
+
+    tex_x1 = 0.0f;
+    tex_x2 = 1.0f;
+    tex_y1 = 0.0f;
+    tex_y2 = 1.0f;
+
 		float bitmap_index = (float)entry->bitmap_index;
+
+    bitmap_index = 0.0f;
 
 		SpriteVertex bl;
 		bl.position.x = bottomleft_position.x;
@@ -176,18 +200,68 @@ namespace chaos
 		br.texcoord.z = bitmap_index;
     br.color      = color;
 
-		sprites.push_back(bl);
-		sprites.push_back(br);
+		sprites.push_back(bl);		
 		sprites.push_back(tr);
+    sprites.push_back(br);
 
 		sprites.push_back(bl);
-		sprites.push_back(tr);
+		
 		sprites.push_back(tl);
+    sprites.push_back(tr);
 	}
 
 
 	void SpriteManager::Display()
 	{
-	
+    if (sprites.size() == 0)
+      return;
+
+    UpdateGPUVertexBuffer();
+
+    // context states
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+
+    // GPU-Program
+    glUseProgram(program->GetResourceID());
+
+    // Initialize the vertex array
+    glBindVertexArray(vertex_array->GetResourceID());
+
+    GLProgramData const & program_data = program->GetProgramData();
+    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
+    // Texture
+    glBindTextureUnit(0, atlas->GetTexture()->GetResourceID());
+
+    GLUniformInfo const * material = program->GetProgramData().FindUniform("material");
+    if (material != nullptr)
+      glUniform1i(material->location, 0);
+       
+    // The drawing   
+    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());
+
+    // restore states
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
 	}
+
+  void SpriteManager::UpdateGPUVertexBuffer()
+  {
+#if 0
+#define glMapNamedBuffer GLEW_GET_FUN(__glewMapNamedBuffer)
+#define glMapNamedBufferRange GLEW_GET_FUN(__glewMapNamedBufferRange)
+#define glNamedBufferData GLEW_GET_FUN(__glewNamedBufferData)
+#define glNamedBufferStorage GLEW_GET_FUN(__glewNamedBufferStorage)
+#define glNamedBufferSubData GLEW_GET_FUN(__glewNamedBufferSubData)
+#endif
+
+    // fill GPU buffer
+    size_t count = sprites.size();
+    glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
+
+    GLuint binding_index = 0;
+    glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
+  }
 };

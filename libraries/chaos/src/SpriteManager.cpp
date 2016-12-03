@@ -31,13 +31,13 @@ namespace chaos
 
     out vec4 output_color;
 
-    uniform sampler3D material;
+    uniform sampler2DArray material;
 
     void main()
     {
       vec4 color = texture(material, vs_texcoord);
-      output_color.xyz = color.xyz; // * vs_color;
-      output_color.a   = 1.0; //color.a;
+      output_color.xyz = color.xyz * vs_color;
+      output_color.a   = color.a;
     };
 	)SHADERCODE";
 
@@ -158,15 +158,7 @@ namespace chaos
 		float tex_x2 = MathTools::CastAndDiv<float>(entry->x + entry->width, atlas_size.x);
 		float tex_y2 = MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
 
-
-    tex_x1 = 0.0f;
-    tex_x2 = 1.0f;
-    tex_y1 = 0.0f;
-    tex_y2 = 1.0f;
-
 		float bitmap_index = (float)entry->bitmap_index;
-
-    bitmap_index = 0.0f;
 
 		SpriteVertex bl;
 		bl.position.x = bottomleft_position.x;
@@ -204,8 +196,7 @@ namespace chaos
 		sprites.push_back(tr);
     sprites.push_back(br);
 
-		sprites.push_back(bl);
-		
+		sprites.push_back(bl);		
 		sprites.push_back(tl);
     sprites.push_back(tr);
 	}

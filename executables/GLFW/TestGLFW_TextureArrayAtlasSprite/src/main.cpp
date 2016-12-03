@@ -142,26 +142,51 @@ protected:
     if (!sprite_manager.Initialize(params))
       return false;
 
+    int SPRITE_COUNT = 100;
+
+    // add characters
     auto const & character_sets = atlas.GetCharacterSets();
-    if (character_sets.size() == 0)
-      return false;
-
-    chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
-
-    size_t element_count = character_set->elements.size();
-    if (element_count == 0)
-      return false;
-
-    int SPRITE_COUNT = 1;
-    for (int i = 0; i < SPRITE_COUNT; ++i)
+    if (character_sets.size() > 0)
     {
-      chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
-      
-      glm::vec2 position = 1.0f * chaos::MathTools::RandVec2();      
-      glm::vec2 size     = 0.3f * chaos::MathTools::RandVec2();
-      glm::vec3 color    = chaos::MathTools::RandVec3();
+      chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
 
-      sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
+      size_t element_count = character_set->elements.size();
+      if (element_count > 0)
+      {
+        for (int i = 0; i < SPRITE_COUNT; ++i)
+        {
+          chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
+
+          glm::vec2 position = 2.0f * chaos::MathTools::RandVec2() - glm::vec2(1.0f);
+          glm::vec2 size = 0.1f * chaos::MathTools::RandVec2();
+          glm::vec3 color = chaos::MathTools::RandVec3();
+
+          sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
+        }
+
+      }
+    }
+
+    // add bitmap
+    auto const & bitmap_sets = atlas.GetBitmapSets();
+    if (bitmap_sets.size() > 0)
+    {
+      chaos::BitmapAtlas::BitmapSet const * bitmap_set = bitmap_sets.at(0).get();
+
+      size_t element_count = bitmap_set->elements.size();
+      if (element_count > 0)
+      {        
+        for (int i = 0; i < SPRITE_COUNT; ++i)
+        {
+          chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
+
+          glm::vec2 position = 2.0f * chaos::MathTools::RandVec2() - glm::vec2(1.0f);
+          glm::vec2 size = 0.1f * chaos::MathTools::RandVec2();
+
+          sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER);
+        }
+
+      }
     }
 
 

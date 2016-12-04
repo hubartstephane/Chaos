@@ -11,7 +11,7 @@
 #include <chaos/FontTools.h>
 
 static int ATLAS_BPP = 0;
-static int ATLAS_PADDING = 5;
+static int ATLAS_PADDING = 10;
 
 void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, boost::filesystem::path const & dest_p, boost::filesystem::path const & html_dest_p)
 {

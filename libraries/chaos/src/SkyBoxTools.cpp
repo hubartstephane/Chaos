@@ -311,13 +311,13 @@ SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fil
       ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
 
       // fill the background (Blue - Green - Red - Alpha)
-      unsigned char color_8bits[4];
-      color_8bits[0] = (unsigned char)(fill_color.b * 255.0f);
-      color_8bits[1] = (unsigned char)(fill_color.g * 255.0f);
-      color_8bits[2] = (unsigned char)(fill_color.r * 255.0f);
-      color_8bits[3] = (unsigned char)(fill_color.a * 255.0f);
+      unsigned char bgra[4];
+      bgra[0] = (unsigned char)(fill_color.b * 255.0f);
+      bgra[1] = (unsigned char)(fill_color.g * 255.0f);
+      bgra[2] = (unsigned char)(fill_color.r * 255.0f);
+      bgra[3] = (unsigned char)(fill_color.a * 255.0f);
 
-      FreeImage_FillBackground(new_image, color_8bits, (bpp == 24)? FI_COLOR_IS_RGB_COLOR : FI_COLOR_IS_RGBA_COLOR);
+      FreeImage_FillBackground(new_image, bgra, (bpp == 24)? FI_COLOR_IS_RGB_COLOR : FI_COLOR_IS_RGBA_COLOR);
 
       // copy the faces into the single image
       for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)

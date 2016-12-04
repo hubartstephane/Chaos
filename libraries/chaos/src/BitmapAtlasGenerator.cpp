@@ -192,9 +192,9 @@ namespace chaos
       if (bitmap != nullptr)
       {
         unsigned char color = 55 + (rand() % 200);
-        unsigned char bgra[] = { color, color, color, 255 };
+        unsigned char bgra[] = { color, color, color, 0 };
 
-        FreeImage_FillBackground(bitmap, bgra, 0); // create a background color
+        FreeImage_FillBackground(bitmap, bgra, FI_COLOR_IS_RGBA_COLOR); // create a background color
 
         result = AddBitmap(name, bitmap, true);
         if (!result)
@@ -401,7 +401,7 @@ namespace chaos
         unique_bitmap_ptr bitmap = unique_bitmap_ptr(FreeImage_Allocate(params.atlas_width, params.atlas_height, params.atlas_bpp));
         if (bitmap)
         {
-          FreeImage_FillBackground(bitmap.get(), bgra, 0);
+          FreeImage_FillBackground(bitmap.get(), bgra, FI_COLOR_IS_RGBA_COLOR);
 
           for (BitmapEntryInput const * entry_input : entries)
           {

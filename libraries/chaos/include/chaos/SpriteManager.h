@@ -75,6 +75,10 @@ namespace chaos
     /** Display the sprites */
     void Display();
 
+    boost::intrusive_ptr<GLProgram> GetProgram() { return program; }
+
+    /** get the number of sprites in the buffer */
+    int GetSpriteCount() const { return sprites.size() / 6;}
 
   protected:
 
@@ -82,7 +86,6 @@ namespace chaos
     bool DoInitialize(SpriteManagerInitParams & params);
     /** internal method to send data to GPU */
     void UpdateGPUVertexBuffer();
-
     /** internal method to insert a sprite in the buffer */
     void AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color);
 

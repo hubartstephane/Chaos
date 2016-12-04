@@ -12,6 +12,8 @@ namespace chaos
     in vec2 position;
     in vec3 texcoord;
     in vec3 color;
+
+    uniform mat4 local_to_cam;
     
     out vec3 vs_texcoord;
     out vec3 vs_color;
@@ -20,7 +22,7 @@ namespace chaos
     {
       vs_texcoord = texcoord;
       vs_color    = color;
-      gl_Position = vec4(position.x, position.y, 0.0, 1.0);
+      gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
     };											
 	)SHADERCODE";
 

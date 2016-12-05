@@ -13,7 +13,9 @@ ProcessSubPremake("TestGLFW_Instancing")
 ProcessSubPremake("TestGLFW_FreeType")
 ProcessSubPremake("TestGLFW_TextureArray")
 ProcessSubPremake("TestGLFW_TextureArrayAtlas")
-ProcessSubPremake("TestGLFW_TextureArrayAtlasSprite")
+ProcessSubPremake("TestGLFW_TextureArrayAtlasSprite") 
+ProcessSubPremake("TestGLFW_TextSpriteFormat")
+
 
 
 

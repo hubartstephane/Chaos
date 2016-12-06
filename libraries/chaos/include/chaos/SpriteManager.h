@@ -9,6 +9,7 @@
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/TextureArrayAtlas.h>
+#include <chaos/GLProgramUniformProvider.h>
 
 namespace chaos
 {
@@ -20,8 +21,6 @@ namespace chaos
     glm::vec2 position;
     glm::vec3 texcoord;
     glm::vec3 color;
-
-
   };
 
   /** a structure to for manager initialization data */
@@ -31,6 +30,8 @@ namespace chaos
 
     /** the texture atlas */
     BitmapAtlas::TextureArrayAtlas * atlas{nullptr};
+    /** the replacement program */
+    boost::intrusive_ptr<GLProgram> program;
   };
 
 
@@ -73,10 +74,7 @@ namespace chaos
     /** add a sprite to be rendered */
     void AddSprite(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
     /** Display the sprites */
-    void Display();
-
-    boost::intrusive_ptr<GLProgram> GetProgram() { return program; }
-
+    void Display(GLProgramUniformProvider * uniform_provider);
     /** get the number of sprites in the buffer */
     int GetSpriteCount() const { return sprites.size() / 6;}
 

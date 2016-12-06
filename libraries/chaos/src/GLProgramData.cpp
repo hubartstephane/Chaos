@@ -5,6 +5,13 @@
 namespace chaos
 {
 
+  void GLProgramData::BindUniforms(GLProgramUniformProvider const * provider) const
+  {
+    assert(provider != nullptr);
+    for (GLUniformInfo const & uniform : uniforms)
+      provider->BindUniform(uniform);
+  }
+
   GLUniformInfo * GLProgramData::FindUniform(char const * name)
   {
     assert(name != nullptr);

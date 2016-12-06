@@ -72,13 +72,18 @@ namespace chaos
     atlas = params.atlas;
 
 		// create GPU-Program
-		GLProgramLoader loader;
-		loader.AddShaderSource(GL_VERTEX_SHADER,   vertex_shader_source);
-		loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+    if (params.program != nullptr)
+      program = params.program;
+    else
+    {
+      GLProgramLoader loader;
+      loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+      loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-		program = loader.GenerateProgramObject();
-		if (program == nullptr)
-			return false;
+      program = loader.GenerateProgramObject();
+      if (program == nullptr)
+        return false;
+    }
 
 		// prepare the vertex declaration
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT2);
@@ -88,10 +93,6 @@ namespace chaos
 		// Generate Vertex Array and Buffer
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
 			return false;
-
-
-
-
 
 		return true;
 	}
@@ -204,7 +205,7 @@ namespace chaos
 	}
 
 
-	void SpriteManager::Display()
+	void SpriteManager::Display(GLProgramUniformProvider * uniform_provider)
 	{
     if (sprites.size() == 0)
       return;
@@ -225,6 +226,8 @@ namespace chaos
 
     GLProgramData const & program_data = program->GetProgramData();
     program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
+    if (uniform_provider != nullptr)
+      program_data.BindUniforms(uniform_provider);
     // Texture
     glBindTextureUnit(0, atlas->GetTexture()->GetResourceID());
 

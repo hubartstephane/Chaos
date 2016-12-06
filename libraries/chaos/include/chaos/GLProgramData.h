@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramAttributeProvider.h>
+#include <chaos/GLProgramUniformProvider.h>
 
 namespace chaos
 {
@@ -84,6 +85,8 @@ public:
     GLTools::SetUniform(uniform->location, value); // beware, there is no verification of data coherence
     return true;  
   }
+  /** try to bind all uniforms */
+  void BindUniforms(class GLProgramUniformProvider const * provider) const;
 
 protected:
 

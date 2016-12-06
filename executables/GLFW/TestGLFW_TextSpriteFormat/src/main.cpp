@@ -75,54 +75,6 @@ protected:
     if (sprite_manager.GetSpriteCount() > 0)
       return;
 
-    glm::vec2 screen_size = glm::vec2(w, h);
-    float     sprite_size = max(w, h);
-
-    int SPRITE_COUNT = 100;
-
-    // add characters
-    auto const & character_sets = atlas.GetCharacterSets();
-    if (character_sets.size() > 0)
-    {
-      chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
-
-      size_t element_count = character_set->elements.size();
-      if (element_count > 0)
-      {
-        for (int i = 0; i < SPRITE_COUNT; ++i)
-        {
-          chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
-
-          glm::vec2 position = screen_size * chaos::MathTools::RandVec2();
-          glm::vec2 size = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-          glm::vec3 color = chaos::MathTools::RandVec3();
-
-          sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
-        }
-
-      }
-    }
-
-    // add bitmap
-    auto const & bitmap_sets = atlas.GetBitmapSets();
-    if (bitmap_sets.size() > 0)
-    {
-      chaos::BitmapAtlas::BitmapSet const * bitmap_set = bitmap_sets.at(0).get();
-
-      size_t element_count = bitmap_set->elements.size();
-      if (element_count > 0)
-      {
-        for (int i = 0; i < SPRITE_COUNT; ++i)
-        {
-          chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
-
-          glm::vec2 position = screen_size * chaos::MathTools::RandVec2();
-          glm::vec2 size     = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-
-          sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER);
-        }
-      }
-    }
   }
 
   virtual bool OnDraw(int width, int height) override
@@ -145,20 +97,19 @@ protected:
     glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-
     float w = (float)width;
     float h = (float)height;
     GenerateSprite(w, h);
 
     glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
-    glm::vec3 tr    = glm::vec3(-1.0f, -1.0f, 0.0f);
+    glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::GLProgramData const & program_data = sprite_manager.GetProgram()->GetProgramData();
-    program_data.SetUniform("local_to_cam", local_to_cam);
+    chaos::GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddUniform("local_to_cam", local_to_cam);
 
-    sprite_manager.Display();
+    sprite_manager.Display(&uniform_provider);
 
     return true;
   }

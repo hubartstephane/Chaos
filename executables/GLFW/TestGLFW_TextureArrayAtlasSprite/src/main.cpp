@@ -23,43 +23,6 @@
 #include <chaos/SpriteTextParser.h>
 #include <chaos/SpriteManager.h>
 
-
-#if 0
-int operator ()(std::string const & a, std::string const & b) const
-{
-	char const * s1 = a.c_str();
-	char const * s2 = b.c_str();
-
-	if (s1 == nullptr)
-		return (s2 == nullptr)? 0 : -1;
-	if (s2 == nullptr)
-		return +1;
-
-	int  i  = 0;
-	char c1 = toupper(s1[i]);
-	char c2 = toupper(s2[i]);			
-	while (c1 != 0 && c2 != 0)
-	{
-		if (c1 != c2)
-			return (c1 > c2)? +1 : -1;				
-		++i;				
-		c1 = toupper(s1[i]);
-		c2 = toupper(s2[i]);
-	}
-
-	if (c1 == c2)
-		return 0;
-	return (c1 > c2)? +1 : -1;	
-}
-#endif
-
-
-
-
-
-
-// --------------------------------------------------------------------
-
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
@@ -145,7 +108,6 @@ protected:
     glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-
     float w = (float)width;
     float h = (float)height;
     GenerateSprite(w, h);
@@ -155,10 +117,10 @@ protected:
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::GLProgramData const & program_data = sprite_manager.GetProgram()->GetProgramData();
-    program_data.SetUniform("local_to_cam", local_to_cam);
+    chaos::GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddUniform("local_to_cam", local_to_cam);
 
-    sprite_manager.Display();
+    sprite_manager.Display(&uniform_provider);
 
     return true;
   }
@@ -182,24 +144,7 @@ protected:
     if (!sprite_manager.Initialize(params))
       return false;
 
-
-
-
     return true;
-
-	  /*
-    TextParser parser(atlas);
-    ParseTextParams params;
-    params.max_text_width = 300;
-
-    bool result = parser.ParseText("Hello worl[d]\n", params);
-
-
-
-    return result;
-	*/
-
-
   }
 
   virtual bool Initialize() override

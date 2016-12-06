@@ -57,35 +57,45 @@ namespace chaos
     return GetEnumVectorArityImpl(value, GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4);
   }
 
-
-
-
-
-
-
-
-
-
-  template<typename VECTOR_TYPE, typename T2>
-  bool SetUniformVectorImplHelper2(GLUniformInfo const & uniform, T2 const & value)
+  /** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+  template<typename T>
+  glm::tvec1<T> const & ConvertIntoVector(glm::tvec1<T> const & value)
   {
-    VECTOR_TYPE vec;
-
-    int count = min(arity, (int)value.length());
-
-    for (int i = 0; i < count; ++i)
-      tmp[i] = static_cast<T1>(value[i]); // XXX : beware, value may be too small	
-
-    GLTools::SetUniform(uniform.location, vec);
+    return value;
+  }
+  /** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+  template<typename T>
+  glm::tvec2<T> const & ConvertIntoVector(glm::tvec2<T> const & value)
+  {
+    return value;
+  }
+  /** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+  template<typename T>
+  glm::tvec3<T> const & ConvertIntoVector(glm::tvec3<T> const & value)
+  {
+    return value;
+  }
+  /** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+  template<typename T>
+  glm::tvec4<T> const & ConvertIntoVector(glm::tvec4<T> const & value)
+  {
+    return value;
+  }
+  /** convert argument into a glm::vector */
+  template<typename T>
+  glm::tvec1<T> ConvertIntoVector(T value)
+  {
+    return glm::tvec1<T>(value);
   }
 
-  template<typename VECTOR_TYPE, typename T2>
-  VECTOR_TYPE ConvertVector(T2 const & value)
+  /** cast a vector into another vector (arity and type may change) */
+  template<typename VECTOR_TYPE1, typename VECTOR_TYPE2>
+  VECTOR_TYPE RecastVector(VECTOR_TYPE2 const & value)
   {
-    VECTOR_TYPE result(0);
+    VECTOR_TYPE1 result(0);
     size_t count = min(result.length(), value.length());
     for (size_t i = 0 ; i < count ; ++i)
-      result[i] = static_cast<VECTOR_TYPE::value_type>(value[i]);
+      result[i] = static_cast<VECTOR_TYPE1::value_type>(value[i]);
 
     return result;
   }
@@ -98,13 +108,13 @@ namespace chaos
       return false;
     
     if (arity == 1)
-      GLTools::SetUniform(uniform.location, ConvertVector<glm::tvec1<T1>>(value));
+      GLTools::SetUniform(uniform.location, RecastVector<glm::tvec1<T1>>(ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
     else if (arity == 2)
-      GLTools::SetUniform(uniform.location, ConvertVector<glm::tvec2<T1>>(value));
+      GLTools::SetUniform(uniform.location, RecastVector<glm::tvec2<T1>>(ConvertIntoVector(value)));
     else if (arity == 3)
-      GLTools::SetUniform(uniform.location, ConvertVector<glm::tvec3<T1>>(value));
+      GLTools::SetUniform(uniform.location, RecastVector<glm::tvec3<T1>>(ConvertIntoVector(value)));
     else if (arity == 4)
-      GLTools::SetUniform(uniform.location, ConvertVector<glm::tvec4<T1>>(value));
+      GLTools::SetUniform(uniform.location, RecastVector<glm::tvec4<T1>>(ConvertIntoVector(value)));
 
     return true;
   }
@@ -112,6 +122,7 @@ namespace chaos
 	template<typename T> 
   bool SetUniformVectorImpl(GLUniformInfo const & uniform, T const & value)
   {
+    // try a conversion/set uniform for each basic types
     if (SetUniformVectorImplHelper<GLfloat>(uniform, value))
       return true;
     if (SetUniformVectorImplHelper<GLdouble>(uniform, value))

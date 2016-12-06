@@ -109,7 +109,7 @@ protected:
     chaos::GLProgramUniformProvider uniform_provider;
     uniform_provider.AddUniform("local_to_cam", local_to_cam);
 
-    sprite_manager.Display(&uniform_provider);
+  //  sprite_manager.Display(&uniform_provider);
 
     return true;
   }

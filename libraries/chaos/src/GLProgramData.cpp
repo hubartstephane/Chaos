@@ -4,6 +4,176 @@
 
 namespace chaos
 {
+	int GetEnumArityImpl(GLenum value, GLenum v1, GLenum v2, GLenum v3, GLenum v4)
+	{
+		if (value == v1)
+			return 1;
+		if (value == v2)
+			return 2;
+		if (value == v3)
+			return 3;
+		if (value == v4)
+			return 4;
+		return -1;	
+	}
+
+	int GetEnumFloatArity(GLenum value)
+	{
+		return GetEnumArityImpl(value, GL_FLOAT, GL_FLOAT_VEC2, GL_FLOAT_VEC3, GL_FLOAT_VEC4);	
+	}
+
+	int GetEnumDoubleArity(GLenum value)
+	{
+		return GetEnumArityImpl(value, GL_DOUBLE, GL_DOUBLE_VEC2, GL_DOUBLE_VEC3, GL_DOUBLE_VEC4);
+	}
+
+	int GetEnumIntArity(GLenum value)
+	{
+		return GetEnumArityImpl(value, GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4);
+	}
+
+	int GetEnumUnsignedIntArity(GLenum value)
+	{
+		return GetEnumArityImpl(value, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
+	}
+
+	int GetEnumBooleanArity(GLenum value)
+	{
+		return GetEnumArityImpl(value, GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4);
+	}
+
+	template<typename T1, int A = 5, typename T2>
+	void SetUniformImplHelper(GLUniformInfo const & uniform, int arity, T2 const & value)
+	{
+		assert(arity >= 1 && arity <= 4)
+		T1 tmp[4] = 
+		{
+			static_cast<T1>(0), 
+			static_cast<T1>(0), 
+			static_cast<T1>(0), 
+			static_cast<T1>(1)
+		};
+
+
+		for (int i = 0 ; i < arity ; ++i)
+			tmp[i] = static_cast<T1>(value[i]); // XXX : beware, value may be too small	
+
+		//GLTools::SetUniform(uniform.location)
+	}
+
+	template<typename T> 
+	void SetUniformImpl(GLUniformInfo const & uniform, T const & value)
+	{
+		int arity = 0;
+
+		arity = GetEnumFloatArity(uniform.type);
+		if (arity > 0)
+			return SetUniformImplHelper<GLfloat, arity>(uniform, arity, value);
+
+		arity = GetEnumDoubleArity(uniform.type);
+		if (arity > 0)
+			return SetUniformImplHelper<GLDouble>(uniform, arity, value);
+
+		arity = GetEnumIntArity(uniform.type);
+		if (arity > 0)
+			return SetUniformImplHelper<GLint>(uniform, arity, value);
+
+		arity = GetEnumUnsignedIntArity(uniform.type);
+		if (arity > 0)
+			return SetUniformImplHelper<GLuint>(uniform, arity, value);	
+
+		arity = GetEnumBooleanArity(uniform.type);
+		if (arity > 0)
+			return SetUniformImplHelper<GLboolean>(uniform, arity, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::mat4 const & value)
+	{
+	}
+
+	void GLUniformInfo::SetUniform(glm::dmat4 const & value)
+	{
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec2<GLfloat> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec3<GLfloat> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec4<GLfloat> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec2<GLdouble> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec3<GLdouble> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec4<GLdouble> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec2<GLint> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec3<GLint> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec4<GLint> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec2<GLuint> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec3<GLuint> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(glm::tvec4<GLuint> const & value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(GLfloat value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(GLdouble value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(GLint value)
+	{
+		SetUniformImpl(*this, value);
+	}
+
+	void GLUniformInfo::SetUniform(GLuint   value)
+	{
+		SetUniformImpl(*this, value);
+	}
 
   void GLProgramData::BindUniforms(GLProgramUniformProvider const * provider) const
   {

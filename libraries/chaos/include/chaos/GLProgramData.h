@@ -32,7 +32,31 @@ namespace chaos
 
   class GLUniformInfo : public GLVariableInfo
   {
+  public:
   
+	  void SetUniform(glm::mat4  const & value);
+	  void SetUniform(glm::dmat4 const & value);
+
+	  void SetUniform(glm::tvec2<GLfloat> const & value);
+	  void SetUniform(glm::tvec3<GLfloat> const & value);
+	  void SetUniform(glm::tvec4<GLfloat> const & value);
+
+	  void SetUniform(glm::tvec2<GLdouble> const & value);
+	  void SetUniform(glm::tvec3<GLdouble> const & value);
+	  void SetUniform(glm::tvec4<GLdouble> const & value);
+
+	  void SetUniform(glm::tvec2<GLint> const & value);
+	  void SetUniform(glm::tvec3<GLint> const & value);
+	  void SetUniform(glm::tvec4<GLint> const & value);
+
+	  void SetUniform(glm::tvec2<GLuint> const & value);
+	  void SetUniform(glm::tvec3<GLuint> const & value);
+	  void SetUniform(glm::tvec4<GLuint> const & value);
+
+	  void SetUniform(GLfloat  value);
+	  void SetUniform(GLdouble value);
+	  void SetUniform(GLint    value);
+	  void SetUniform(GLuint   value);
   };
 
   /**

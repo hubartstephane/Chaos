@@ -42,18 +42,22 @@ public:
   static void SetUniform(GLint location, glm::mat4  const & value){ glUniformMatrix4fv(location, 1, false, (GLfloat const *)&value);}
   static void SetUniform(GLint location, glm::dmat4 const & value){ glUniformMatrix4dv(location, 1, false, (GLdouble const *)&value);}
 
+  static void SetUniform(GLint location, glm::tvec1<GLfloat> const & value){ glUniform1fv(location, 1, (GLfloat const *)&value);}
   static void SetUniform(GLint location, glm::tvec2<GLfloat> const & value){ glUniform2fv(location, 1, (GLfloat const *)&value);}
   static void SetUniform(GLint location, glm::tvec3<GLfloat> const & value){ glUniform3fv(location, 1, (GLfloat const *)&value);}
   static void SetUniform(GLint location, glm::tvec4<GLfloat> const & value){ glUniform4fv(location, 1, (GLfloat const *)&value);}
 
+  static void SetUniform(GLint location, glm::tvec1<GLdouble> const & value){ glUniform1dv(location, 1, (GLdouble const *)&value);}
   static void SetUniform(GLint location, glm::tvec2<GLdouble> const & value){ glUniform2dv(location, 1, (GLdouble const *)&value);}
   static void SetUniform(GLint location, glm::tvec3<GLdouble> const & value){ glUniform3dv(location, 1, (GLdouble const *)&value);}
   static void SetUniform(GLint location, glm::tvec4<GLdouble> const & value){ glUniform4dv(location, 1, (GLdouble const *)&value);}
 
+  static void SetUniform(GLint location, glm::tvec1<GLint> const & value){ glUniform1iv(location, 1, (GLint const *)&value);}
   static void SetUniform(GLint location, glm::tvec2<GLint> const & value){ glUniform2iv(location, 1, (GLint const *)&value);}
   static void SetUniform(GLint location, glm::tvec3<GLint> const & value){ glUniform3iv(location, 1, (GLint const *)&value);}
   static void SetUniform(GLint location, glm::tvec4<GLint> const & value){ glUniform4iv(location, 1, (GLint const *)&value);}
 
+  static void SetUniform(GLint location, glm::tvec1<GLuint> const & value){ glUniform1uiv(location, 1, (GLuint const *)&value);}
   static void SetUniform(GLint location, glm::tvec2<GLuint> const & value){ glUniform2uiv(location, 1, (GLuint const *)&value);}
   static void SetUniform(GLint location, glm::tvec3<GLuint> const & value){ glUniform3uiv(location, 1, (GLuint const *)&value);}
   static void SetUniform(GLint location, glm::tvec4<GLuint> const & value){ glUniform4uiv(location, 1, (GLuint const *)&value);}

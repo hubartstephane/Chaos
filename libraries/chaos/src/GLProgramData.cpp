@@ -94,6 +94,9 @@ namespace chaos
 
 	void GLUniformInfo::SetUniform(glm::mat4 const & value)
 	{
+		
+
+
 	}
 
 	void GLUniformInfo::SetUniform(glm::dmat4 const & value)

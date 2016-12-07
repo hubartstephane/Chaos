@@ -1,0 +1,154 @@
+#pragma once
+
+#include <chaos/StandardHeaders.h>
+#include <chaos/MathTools.h>
+
+namespace chaos
+{
+	// ==============================================================================================
+	// Some common typedefs (outside of 'namespace' GLMTools)
+	// ==============================================================================================
+
+	typedef glm::vec2 float2;
+	typedef glm::vec3 float3;
+	typedef glm::vec4 float4;
+
+	typedef glm::ivec2 int2;
+	typedef glm::ivec3 int3;
+	typedef glm::ivec4 int4;
+
+	// ==============================================================================================
+	// GLMTools
+	// ==============================================================================================
+
+	class GLMTools
+	{
+
+	public:
+
+		/** cast a vector into another vector (arity and type may change) */
+		template<typename VECTOR_TYPE1, typename VECTOR_TYPE2>
+		static VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const & value)
+		{
+			VECTOR_TYPE1 result(0);
+			size_t count = min(result.length(), value.length());
+			for (size_t i = 0; i < count; ++i)
+				result[i] = static_cast<VECTOR_TYPE1::value_type>(value[i]);
+
+			return result;
+		}
+
+		/** returns the min component of a vector */
+		template<typename T>
+		static T GetMinComponent(glm::tvec1<T> const & src)
+		{
+			return src.x;
+		}
+
+		/** returns the min component of a vector */
+		template<typename T>
+		static T GetMinComponent(glm::tvec2<T> const & src)
+		{
+			return glm::min(src.x, src.y);
+		}
+
+		/** returns the min component of a vector */
+		template<typename T>
+		static T GetMinComponent(glm::tvec3<T> const & src)
+		{
+			return glm::min(src.x, glm::min(src.y, src.z));
+		}
+
+		/** returns the min component of a vector */
+		template<typename T>
+		static T GetMinComponent(glm::tvec4<T> const & src)
+		{
+			return glm::min(glm::min(src.x, src.y), glm::min(src.z, src.w));
+		}
+
+		/** returns the max component of a vector */
+		template<typename T>
+		static T GetMaxComponent(glm::tvec1<T> const & src)
+		{
+			return src.x;
+		}
+
+		/** returns the max component of a vector */
+		template<typename T>
+		static T GetMaxComponent(glm::tvec2<T> const & src)
+		{
+			return glm::max(src.x, src.y);
+		}
+
+		/** returns the max component of a vector */
+		template<typename T>
+		static T GetMaxComponent(glm::tvec3<T> const & src)
+		{
+			return glm::max(src.x, glm::max(src.y, src.z));
+		}
+
+		/** returns the max component of a vector */
+		template<typename T>
+		static T GetMaxComponent(glm::tvec4<T> const & src)
+		{
+			return glm::max(glm::max(src.x, src.y), glm::max(src.z, src.w));
+		}
+
+		/** returns a random vec1 */
+		static glm::tvec1<float> RandVec1()
+		{
+			return glm::tvec1<float>(MathTools::RandFloat());
+		}
+
+		/** returns a random vec2 */
+		static glm::vec2 RandVec2()
+		{
+			return glm::vec2(MathTools::RandFloat(), MathTools::RandFloat());
+		}
+
+		/** returns a random vec3 */
+		static glm::vec3 RandVec3()
+		{
+			return glm::vec3(MathTools::RandFloat(), MathTools::RandFloat(), MathTools::RandFloat());
+		}
+		/** returns a random vec4 */
+		static glm::vec4 RandVec4()
+		{
+			return glm::vec4(MathTools::RandFloat(), MathTools::RandFloat(), MathTools::RandFloat(), MathTools::RandFloat());
+		}
+
+
+		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+		template<typename T>
+		static glm::tvec1<T> const & ConvertIntoVector(glm::tvec1<T> const & value)
+		{
+			return value;
+		}
+		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+		template<typename T>
+		static glm::tvec2<T> const & ConvertIntoVector(glm::tvec2<T> const & value)
+		{
+			return value;
+		}
+		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+		template<typename T>
+		static glm::tvec3<T> const & ConvertIntoVector(glm::tvec3<T> const & value)
+		{
+			return value;
+		}
+		/** convert argument into a glm::vector, returns value remains unchanged if it is already a vector */
+		template<typename T>
+		static glm::tvec4<T> const & ConvertIntoVector(glm::tvec4<T> const & value)
+		{
+			return value;
+		}
+		/** convert argument into a glm::vector */
+		template<typename T>
+		static glm::tvec1<T> ConvertIntoVector(T value)
+		{
+			return glm::tvec1<T>(value);
+		}
+	};
+
+}; // namespace chaos
+

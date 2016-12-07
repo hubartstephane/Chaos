@@ -1,82 +1,15 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GLMTools.h>
 #include <chaos/MathTools.h>
 
 namespace chaos
 {
 
 // ==============================================================================================
-// utility function
-// ==============================================================================================
-
-/** returns the min component of a vector */
-template<typename T>
-T GetMinComponent(glm::tvec1<T> const & src)
-{
-  return src.x;
-}
-
-/** returns the min component of a vector */
-template<typename T>
-T GetMinComponent(glm::tvec2<T> const & src)
-{
-  return glm::min(src.x, src.y);
-}
-
-/** returns the min component of a vector */
-template<typename T>
-T GetMinComponent(glm::tvec3<T> const & src)
-{
-  return glm::min(src.x, glm::min(src.y, src.z));
-}
-
-/** returns the min component of a vector */
-template<typename T>
-T GetMinComponent(glm::tvec4<T> const & src)
-{
-  return glm::min(glm::min(src.x, src.y), glm::min(src.z, src.w));
-}
-
-/** returns the max component of a vector */
-template<typename T>
-T GetMaxComponent(glm::tvec1<T> const & src)
-{
-  return src.x;
-}
-
-/** returns the max component of a vector */
-template<typename T>
-T GetMaxComponent(glm::tvec2<T> const & src)
-{
-  return glm::max(src.x, src.y);
-}
-
-/** returns the max component of a vector */
-template<typename T>
-T GetMaxComponent(glm::tvec3<T> const & src)
-{
-  return glm::max(src.x, glm::max(src.y, src.z));
-}
-
-/** returns the max component of a vector */
-template<typename T>
-T GetMaxComponent(glm::tvec4<T> const & src)
-{
-  return glm::max(glm::max(src.x, src.y), glm::max(src.z, src.w));
-}
-
-// ==============================================================================================
 // Some common typedefs for geometry
 // ==============================================================================================
-
-typedef glm::vec2 float2;
-typedef glm::vec3 float3;
-typedef glm::vec4 float4;
-
-typedef glm::ivec2 int2;
-typedef glm::ivec3 int3;
-typedef glm::ivec4 int4;
 
 template<typename T, int dimension> class type_ray;
 template<typename T, int dimension> class type_box;

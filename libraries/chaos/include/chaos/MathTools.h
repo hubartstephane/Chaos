@@ -230,21 +230,6 @@ public:
   {
     return CastAndDiv<float>(rand(), RAND_MAX);
   }
-  /** returns a random vec2 */
-  static glm::vec2 RandVec2()
-  {
-    return glm::vec2(RandFloat(), RandFloat());
-  }
-  /** returns a random vec3 */
-  static glm::vec3 RandVec3()
-  {
-    return glm::vec3(RandFloat(), RandFloat(), RandFloat());
-  }
-  /** returns a random vec4 */
-  static glm::vec4 RandVec4()
-  {
-    return glm::vec4(RandFloat(), RandFloat(), RandFloat(), RandFloat());
-  }
 
   /** a function to detect if an entry is power of 2 */
   template<typename T>

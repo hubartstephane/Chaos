@@ -19,6 +19,7 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
+#include <chaos/GLMTools.h>
 
 #include <chaos/SpriteTextParser.h>
 #include <chaos/SpriteManager.h>
@@ -56,9 +57,9 @@ protected:
         {
           chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
 
-          glm::vec2 position = screen_size * chaos::MathTools::RandVec2();
+          glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
           glm::vec2 size = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-          glm::vec3 color = chaos::MathTools::RandVec3();
+          glm::vec3 color = chaos::GLMTools::RandVec3();
 
           sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
         }
@@ -79,7 +80,7 @@ protected:
         {
           chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
 
-          glm::vec2 position = screen_size * chaos::MathTools::RandVec2();
+          glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
           glm::vec2 size     = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
 
           sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER);

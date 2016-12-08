@@ -34,8 +34,25 @@ namespace chaos
   {
   public:
   
-	  bool SetUniform(glm::mat4  const & value) const;
-    bool SetUniform(glm::dmat4 const & value) const;
+    bool SetUniform(glm::mat2x3 const & value) const;
+    bool SetUniform(glm::mat2x4 const & value) const;
+    bool SetUniform(glm::mat3x2 const & value) const;
+    bool SetUniform(glm::mat3x4 const & value) const;
+    bool SetUniform(glm::mat4x2 const & value) const;
+    bool SetUniform(glm::mat4x3 const & value) const;
+    bool SetUniform(glm::mat2   const & value) const;
+    bool SetUniform(glm::mat3   const & value) const;
+	  bool SetUniform(glm::mat4   const & value) const;
+
+    bool SetUniform(glm::dmat2x3 const & value) const;
+    bool SetUniform(glm::dmat2x4 const & value) const;
+    bool SetUniform(glm::dmat3x2 const & value) const;
+    bool SetUniform(glm::dmat3x4 const & value) const;
+    bool SetUniform(glm::dmat4x2 const & value) const;
+    bool SetUniform(glm::dmat4x3 const & value) const;
+    bool SetUniform(glm::dmat2   const & value) const;
+    bool SetUniform(glm::dmat3   const & value) const;
+    bool SetUniform(glm::dmat4   const & value) const;
 
     bool SetUniform(glm::tvec1<GLfloat> const & value) const;
     bool SetUniform(glm::tvec2<GLfloat> const & value) const;

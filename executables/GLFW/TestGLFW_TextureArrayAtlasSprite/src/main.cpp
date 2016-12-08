@@ -121,6 +121,10 @@ protected:
     chaos::GLProgramUniformProvider uniform_provider;
     uniform_provider.AddUniform("local_to_cam", local_to_cam);
 
+
+    glm::mat4 dd = glm::mat4x2();
+    uniform_provider.AddUniform("dd", dd);
+
     sprite_manager.Display(&uniform_provider);
 
     return true;

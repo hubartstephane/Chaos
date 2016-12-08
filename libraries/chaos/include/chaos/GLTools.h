@@ -38,9 +38,26 @@ public:
     return ((char *)nullptr) + s;
   }
 
-  /** settings uniforms */
-  static void SetUniform(GLint location, glm::mat4  const & value){ glUniformMatrix4fv(location, 1, false, (GLfloat const *)&value);}
-  static void SetUniform(GLint location, glm::dmat4 const & value){ glUniformMatrix4dv(location, 1, false, (GLdouble const *)&value);}
+  /** settings uniforms */   
+  static void SetUniform(GLint location, glm::mat2x3 const & value){ glUniformMatrix2x3fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat2x4 const & value){ glUniformMatrix2x4fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat3x2 const & value){ glUniformMatrix3x2fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat3x4 const & value){ glUniformMatrix3x4fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat4x2 const & value){ glUniformMatrix4x2fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat4x3 const & value){ glUniformMatrix4x3fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat2   const & value){ glUniformMatrix2fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat3   const & value){ glUniformMatrix3fv(location, 1, false, (GLfloat const *)&value);}
+  static void SetUniform(GLint location, glm::mat4   const & value){ glUniformMatrix4fv(location, 1, false, (GLfloat const *)&value);}
+
+  static void SetUniform(GLint location, glm::dmat2x3 const & value){ glUniformMatrix2x3dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat2x4 const & value){ glUniformMatrix2x4dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat3x2 const & value){ glUniformMatrix3x2dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat3x4 const & value){ glUniformMatrix3x4dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat4x2 const & value){ glUniformMatrix4x2dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat4x3 const & value){ glUniformMatrix4x3dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat2   const & value){ glUniformMatrix2dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat3   const & value){ glUniformMatrix3dv(location, 1, false, (GLdouble const *)&value);}
+  static void SetUniform(GLint location, glm::dmat4   const & value){ glUniformMatrix4dv(location, 1, false, (GLdouble const *)&value);}
 
   static void SetUniform(GLint location, glm::tvec1<GLfloat> const & value){ glUniform1fv(location, 1, (GLfloat const *)&value);}
   static void SetUniform(GLint location, glm::tvec2<GLfloat> const & value){ glUniform2fv(location, 1, (GLfloat const *)&value);}

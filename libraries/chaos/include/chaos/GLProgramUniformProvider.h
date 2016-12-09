@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/GLTools.h>
+#include <chaos/Texture.h>
 
 namespace chaos
 {
@@ -22,7 +23,7 @@ protected:
     /** destructor */
     virtual ~UniformProviderBase() = default;
     /** set uniform */
-    virtual void BindUniform(GLUniformInfo const & uniform) = 0;
+    virtual bool BindUniform(GLUniformInfo const & uniform) = 0;
   };
 
   /** UniformProvider : a typed specialization of UniformProviderBase */
@@ -33,7 +34,7 @@ protected:
     /** the constructor */
     UniformProvider(T const & in_value) : value(in_value) {}
     /** setting the uniform */
-    virtual void BindUniform(GLUniformInfo const & uniform) override { uniform.SetUniform(value); }
+    virtual bool BindUniform(GLUniformInfo const & uniform) override { return uniform.SetUniform(value); }
     /** the value to be set */
     T value;
   };
@@ -61,6 +62,12 @@ public:
     );
   }
 
+  /** register a texture as uniform */
+  void AddTexture(char const * name, boost::intrusive_ptr<class Texture> const & texture)
+  {
+    texture_map[name] = texture;
+  }
+
 protected:
 
   /** protected implementation of uniform binding */
@@ -70,6 +77,8 @@ protected:
 
   /** responsability chain for providers */
   GLProgramUniformProvider * previous_provider;
+  /** the uniforms texture to be set */
+  std::map<std::string, boost::intrusive_ptr<Texture>> texture_map;
   /** the uniforms to be set */
   std::map<std::string, std::unique_ptr<UniformProviderBase>> uniform_map;
 };

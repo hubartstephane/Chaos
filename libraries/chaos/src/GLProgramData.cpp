@@ -324,6 +324,15 @@ namespace chaos
 		return SetUniformVectorImpl(*this, value);
 	}
 
+  bool GLUniformInfo::SetUniform(boost::intrusive_ptr<Texture> const & texture) const
+  {
+
+
+
+
+    return false;
+  }
+
 	void GLProgramData::BindUniforms(GLProgramUniformProvider const * provider) const
 	{
 		assert(provider != nullptr);

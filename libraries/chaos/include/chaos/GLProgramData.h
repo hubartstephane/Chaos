@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
+#include <chaos/Texture.h>
 
 namespace chaos
 {
@@ -76,6 +77,8 @@ namespace chaos
     bool SetUniform(GLdouble value) const;
     bool SetUniform(GLint    value) const;
     bool SetUniform(GLuint   value) const;
+
+    bool SetUniform(boost::intrusive_ptr<Texture> const & texture) const;
   };
 
   /**

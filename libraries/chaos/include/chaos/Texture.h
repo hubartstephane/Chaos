@@ -5,8 +5,6 @@
 
 namespace chaos
 {
-
-
   /**
   * TextureDescription : used to describe an openGL texture
   */
@@ -15,27 +13,18 @@ namespace chaos
   {
   public:
 
-    /** constructor */
-    TextureDescription() :
-      type(GL_NONE),
-      internal_format(GL_NONE),
-      width(0),
-      height(0),
-      depth(0),
-      texture_id(0) {}
-
     /** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
-    GLenum type;
+    GLenum type{GL_NONE};
     /** the format of the texture (RGB / RGBA) */
-    GLenum internal_format;
+    GLenum internal_format{GL_NONE};
     /** the image width */
-    int    width;
+    int    width{0};
     /** the image height */
-    int    height;
+    int    height{0};
     /** the image depth */
-    int    depth;
+    int    depth{0};
     /** the GL handler for the texture */
-    GLuint texture_id;
+    GLuint texture_id{0};
   };
 
   class Texture : public GraphicResource

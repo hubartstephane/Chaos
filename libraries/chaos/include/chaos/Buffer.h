@@ -24,7 +24,7 @@ class BufferPolicyBase
 public:
 
   /** destructor */
-  virtual ~BufferPolicyBase(){}
+  virtual ~BufferPolicyBase() = default;
 
 protected:
 

@@ -99,7 +99,7 @@ namespace chaos
       assert(manager != nullptr);
     }
     /** the destructor is protected */
-    virtual ~MyGLFWGamepad(){}
+    virtual ~MyGLFWGamepad() = default;
     /** update the gamepad values. There are 3 steps */
     void Tick(float delta_time, int step);
     /** update all the values for the axis and buttons */

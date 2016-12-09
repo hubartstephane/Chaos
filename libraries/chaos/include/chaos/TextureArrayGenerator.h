@@ -32,8 +32,6 @@ namespace chaos
 
   public:
     
-    /** constructor */
-    ImageSliceRegister(){}    
     /** the method to insert one slice */
     bool InsertSlice(ImageDescription & description, void * user_data = nullptr);
     /** gets the number of slices inserted */
@@ -56,10 +54,8 @@ namespace chaos
   {
   public:
 
-    /** constructor */
-	  ImageSliceGeneratorProxyBase(){}
     /** destructor */
-    virtual ~ImageSliceGeneratorProxyBase(){}
+    virtual ~ImageSliceGeneratorProxyBase() = default;
     /** the method to override to add all slice we want */
     virtual void AddSlices(ImageSliceRegister & slice_register){}
     /** the method to override to release all slices */
@@ -74,10 +70,8 @@ namespace chaos
   {
   public:
 
-    /** constructor */
-	  ImageSliceGeneratorBase() {}
     /** destructor */
-    virtual ~ImageSliceGeneratorBase() {}
+    virtual ~ImageSliceGeneratorBase() = default;
     /** proxy generation method */
     virtual ImageSliceGeneratorProxyBase * CreateProxy() const = 0;
   };

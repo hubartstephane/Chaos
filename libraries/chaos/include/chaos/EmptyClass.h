@@ -34,7 +34,7 @@ class add_vdestroy : public BASE_CLASS
 public:
 
   /** simply a virtual destructor */
-  virtual ~add_vdestroy() {}
+  virtual ~add_vdestroy() = default;
 };
 
 template<typename COND, typename BASE_CLASS = EmptyClass>

@@ -14,14 +14,10 @@ class GLProgramAttributeProvider
 {
 public:
 
-  /** constructor */
-  GLProgramAttributeProvider(){}
   /** destructor */
-  virtual ~GLProgramAttributeProvider(){}
-
+  virtual ~GLProgramAttributeProvider() = default;
   /** the main method */
   virtual bool BindAttribute(class GLAttributeInfo const & attribute) const;
-
 };
 
 }; // namespace chaos

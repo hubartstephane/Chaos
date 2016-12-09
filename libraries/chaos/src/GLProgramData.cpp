@@ -2,6 +2,8 @@
 #include <chaos/LogTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLMTools.h>
+#include <chaos/GLProgramAttributeProvider.h>
+#include <chaos/GLProgramUniformProvider.h>
 
 namespace chaos
 {

@@ -39,7 +39,7 @@ class SimpleMeshGeneratorProxy
 public:
 
   /** the destructor */
-  virtual ~SimpleMeshGeneratorProxy(){}
+  virtual ~SimpleMeshGeneratorProxy() = default;
   /** get requirement */
   virtual MeshGenerationRequirement GetRequirement() const = 0;
   /** get the vertex declaration */

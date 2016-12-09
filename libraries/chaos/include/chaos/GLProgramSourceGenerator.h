@@ -15,7 +15,7 @@ namespace chaos
   public:
 
     /** destructor */
-    virtual ~GLProgramSourceGenerator(){}
+    virtual ~GLProgramSourceGenerator() = default;
   
     /** returns generated code */
     virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions)

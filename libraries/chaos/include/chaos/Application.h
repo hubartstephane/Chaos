@@ -12,10 +12,8 @@ class Application
 {
 public:
 
-  /** constructor */
-  Application(){}
   /** destructor */
-  virtual ~Application();
+  virtual ~Application() = default;
 
   /** a generic function for initializing */
   template<typename T>

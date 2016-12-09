@@ -2,8 +2,6 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramAttributeProvider.h>
-#include <chaos/GLProgramUniformProvider.h>
 
 namespace chaos
 {

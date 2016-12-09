@@ -8,11 +8,6 @@ namespace chaos
 {
   Application * Application::singleton_instance = nullptr;
 
-  Application::~Application()
-  {
-
-  }
-
   void Application::DoFinalize()
   {
 

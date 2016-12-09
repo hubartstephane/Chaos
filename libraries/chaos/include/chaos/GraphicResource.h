@@ -9,10 +9,8 @@ namespace chaos
   class GraphicResource : public ReferencedObject
   {
   public:
-
     /** destructor */
-    virtual ~GraphicResource(){}
-
+    virtual ~GraphicResource() = default;
     /** cleaning the resource */
     virtual void Release(){}
   };

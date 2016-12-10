@@ -5,7 +5,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-
+#include <chaos/GLProgramUniformProvider.h>
 
 namespace chaos
 {	
@@ -90,16 +90,11 @@ namespace chaos
     float factor_y = (character_height * 2.0f / ((float)height));  // for [width, height] pixels
                                                                                               // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
                                                                                               // see BitmapFontTextMeshBuilder
-    GLUniformInfo const * position_factor = program_data.FindUniform("position_factor");
-    if (position_factor != nullptr)
-      glUniform2f(position_factor->location, factor_x, factor_y);   
 
-    // Texture
-    glBindTextureUnit(0, texture->GetResourceID());
-
-    GLUniformInfo const * material = program_data.FindUniform("material");
-    if (material != nullptr)
-      glUniform1i(material->location, 0);   
+    GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddUniform("position_factor", glm::vec2(factor_x, factor_y));
+    uniform_provider.AddTexture("material", texture);
+    program_data.BindUniforms(&uniform_provider);
 
     // The drawing   
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)draw_count);

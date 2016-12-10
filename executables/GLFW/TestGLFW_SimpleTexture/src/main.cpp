@@ -14,6 +14,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
+#include <chaos/GLProgramUniformProvider.h>
  
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -141,11 +142,12 @@ protected:
     glEnable(GL_CULL_FACE);
 
     glUseProgram(program->GetResourceID());
-         
-    glBindTextureUnit(0, texture->GetResourceID());
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
-    program_data.SetUniform("material", 0);
+
+    chaos::GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddTexture("material", texture);
+    program_data.BindUniforms(&uniform_provider);
 
     mesh->Render(program_data, nullptr, 0, 0);
 

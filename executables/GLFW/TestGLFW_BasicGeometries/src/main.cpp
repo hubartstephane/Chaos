@@ -17,6 +17,8 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
+#include <chaos/GLProgramUniformProvider.h>
+
 
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -154,10 +156,13 @@ protected:
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
     glUseProgram(program->GetResourceID());
-    program_data.SetUniform("projection", ctx.projection);    
-    program_data.SetUniform("world_to_camera", ctx.world_to_camera);
-    program_data.SetUniform("local_to_world", prim_ctx.local_to_world);
-    program_data.SetUniform("color", prim_ctx.color);  
+
+    chaos::GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddUniform("projection", ctx.projection);
+    uniform_provider.AddUniform("world_to_camera", ctx.world_to_camera);
+    uniform_provider.AddUniform("local_to_world", prim_ctx.local_to_world);
+    uniform_provider.AddUniform("color", prim_ctx.color);
+    program_data.BindUniforms(&uniform_provider);
   }
 
   void DrawPrimitiveImpl(

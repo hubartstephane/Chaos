@@ -19,20 +19,12 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
-
+#include <chaos/GLProgramUniformProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1()
-  {
-
-  }
 
 protected:
-
-
 
   chaos::BitmapAtlas::BitmapEntry * ClampBitmapIndexAndGetEntry()
   {
@@ -99,14 +91,15 @@ protected:
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
 
     glUseProgram(program_box->GetResourceID());
-    program_data.SetUniform("projection",      projection);
-    program_data.SetUniform("world_to_camera", world_to_camera);
-    program_data.SetUniform("local_to_world",  local_to_world);
 
-    glBindTextureUnit(0, atlas.GetTexture()->GetResourceID());
-    program_data.SetUniform("material", 0);
-    program_data.SetUniform("texture_slice", (float)entry->bitmap_index);
+    chaos::GLProgramUniformProvider uniform_provider;
 
+    uniform_provider.AddUniform("projection",      projection);
+    uniform_provider.AddUniform("world_to_camera", world_to_camera);
+    uniform_provider.AddUniform("local_to_world",  local_to_world);
+    uniform_provider.AddUniform("texture_slice", (float)entry->bitmap_index);
+
+    uniform_provider.AddTexture("material", atlas.GetTexture());
 
     glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
 
@@ -114,8 +107,10 @@ protected:
     glm::vec2 entry_size  = glm::vec2((float)entry->width, (float)entry->height);
     glm::vec2 entry_end   = entry_start + entry_size;
 
-    program_data.SetUniform("entry_start", entry_start / atlas_dimension);
-    program_data.SetUniform("entry_end", entry_end / atlas_dimension);
+    uniform_provider.AddUniform("entry_start", entry_start / atlas_dimension);
+    uniform_provider.AddUniform("entry_end", entry_end / atlas_dimension);
+
+    program_data.BindUniforms(&uniform_provider);
 
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 

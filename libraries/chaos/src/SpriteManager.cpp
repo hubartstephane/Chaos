@@ -226,14 +226,11 @@ namespace chaos
 
     GLProgramData const & program_data = program->GetProgramData();
     program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
-    if (uniform_provider != nullptr)
-      program_data.BindUniforms(uniform_provider);
-    // Texture
-    glBindTextureUnit(0, atlas->GetTexture()->GetResourceID());
 
-    GLUniformInfo const * material = program->GetProgramData().FindUniform("material");
-    if (material != nullptr)
-      glUniform1i(material->location, 0);
+    GLProgramUniformProvider main_uniform_provider(uniform_provider);
+    main_uniform_provider.AddTexture("material", atlas->GetTexture());
+
+    program_data.BindUniforms(&main_uniform_provider);
        
     // The drawing   
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());

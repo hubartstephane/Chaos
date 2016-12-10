@@ -79,6 +79,11 @@ namespace chaos
     bool SetUniform(GLuint   value) const;
 
     bool SetUniform(boost::intrusive_ptr<Texture> const & texture) const;
+
+  public:
+
+    /** the number of the sampler in the program */
+    GLuint sampler_index{0};
   };
 
   /**

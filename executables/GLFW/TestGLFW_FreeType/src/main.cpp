@@ -15,6 +15,7 @@
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/FontTools.h>
+#include <chaos/GLProgramUniformProvider.h>
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
@@ -39,10 +40,11 @@ protected:
 
     glUseProgram(program->GetResourceID());
          
-    glBindTextureUnit(0, texture->GetResourceID());
+    chaos::GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddTexture("material", texture);
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
-    program_data.SetUniform("material", 0);
+    program_data.BindUniforms(&uniform_provider);
 
     mesh->Render(program_data, nullptr, 0, 0);
 

@@ -8,6 +8,25 @@
 namespace chaos
 {
 
+  static bool IsSamplerType(GLenum type)
+  {
+    // XXX : samplers type, maybe some error or some missing elements
+    GLenum const sampler_types[] = {
+      GL_SAMPLER_1D, GL_SAMPLER_2D, GL_SAMPLER_3D, GL_SAMPLER_CUBE,
+      GL_SAMPLER_1D_SHADOW, GL_SAMPLER_2D_SHADOW, GL_SAMPLER_1D_ARRAY,
+      GL_SAMPLER_2D_ARRAY, GL_SAMPLER_1D_ARRAY_SHADOW, GL_SAMPLER_2D_ARRAY_SHADOW, GL_SAMPLER_CUBE_SHADOW,
+      GL_INT_SAMPLER_1D, GL_INT_SAMPLER_2D, GL_INT_SAMPLER_3D, GL_INT_SAMPLER_CUBE, GL_INT_SAMPLER_1D_ARRAY,
+      GL_INT_SAMPLER_2D_ARRAY, GL_UNSIGNED_INT_SAMPLER_1D, GL_UNSIGNED_INT_SAMPLER_2D, GL_UNSIGNED_INT_SAMPLER_3D,
+      GL_UNSIGNED_INT_SAMPLER_CUBE, GL_UNSIGNED_INT_SAMPLER_1D_ARRAY, GL_UNSIGNED_INT_SAMPLER_2D_ARRAY,
+      GL_SAMPLER_2D_RECT, GL_SAMPLER_2D_RECT_SHADOW, GL_SAMPLER_CUBE_MAP_ARRAY, GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW, GL_NONE
+    };
+
+    for (int i = 0; sampler_types[i] != GL_NONE; ++i)
+      if (type == sampler_types[i])
+        return true;
+    return false;
+  }
+
 	/** compare value to 4 other enum value, returns the 'index' of the result */
 	static int GetEnumVectorArityImpl(GLenum value, GLenum v1, GLenum v2, GLenum v3, GLenum v4)
 	{
@@ -326,18 +345,20 @@ namespace chaos
 
   bool GLUniformInfo::SetUniform(boost::intrusive_ptr<Texture> const & texture) const
   {
+    if (!IsSamplerType(type))
+      return false;
 
+    glBindTextureUnit(sampler_index, texture->GetResourceID());
+    glUniform1i(location, sampler_index);
 
-
-
-    return false;
+    return true;
   }
 
 	void GLProgramData::BindUniforms(GLProgramUniformProvider const * provider) const
 	{
-		assert(provider != nullptr);
-		for (GLUniformInfo const & uniform : uniforms)
-			provider->BindUniform(uniform);
+		if (provider != nullptr)
+		  for (GLUniformInfo const & uniform : uniforms)
+			  provider->BindUniform(uniform);
 	}
 
 	GLUniformInfo * GLProgramData::FindUniform(char const * name)
@@ -487,8 +508,9 @@ namespace chaos
 				}
 			}
 
-			// read the uniforms
-			GLint uniform_count = 0;
+			// read the uniforms     
+      GLuint sampler_index = 0;
+			GLint  uniform_count = 0;
 			glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
 			for (GLint i = 0; i < uniform_count; ++i)
 			{
@@ -509,6 +531,8 @@ namespace chaos
 				uniform.array_size = is_array ? array_size : -1;
 				uniform.type = type;
 				uniform.location = location;
+        if (IsSamplerType(type))
+          uniform.sampler_index = sampler_index++;
 
 				result.uniforms.push_back(uniform);
 			}

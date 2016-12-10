@@ -19,16 +19,10 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayGenerator.h>
-
+#include <chaos/GLProgramUniformProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1() : texture_slice(0), texture_slice_count(0)
-  {
-
-  }
 
 protected:
 
@@ -55,14 +49,17 @@ protected:
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
 
     glUseProgram(program_box->GetResourceID());
-    program_data.SetUniform("projection",      projection);
-    program_data.SetUniform("world_to_camera", world_to_camera);
-    program_data.SetUniform("local_to_world",  local_to_world);
 
-    glBindTextureUnit(0, texture->GetResourceID());
-    program_data.SetUniform("material", 0);
-    program_data.SetUniform("texture_slice", (float)texture_slice);
+    chaos::GLProgramUniformProvider uniform_provider;
 
+    uniform_provider.AddUniform("projection",      projection);
+    uniform_provider.AddUniform("world_to_camera", world_to_camera);
+    uniform_provider.AddUniform("local_to_world",  local_to_world);
+    uniform_provider.AddUniform("texture_slice",   (float)texture_slice);
+    uniform_provider.AddTexture("material", texture);
+
+    program_data.BindUniforms(&uniform_provider);
+    
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
     debug_display.Display(width, height);
@@ -211,8 +208,8 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
   boost::intrusive_ptr<chaos::Texture>    texture;
 
-  int texture_slice;
-  int texture_slice_count;
+  int texture_slice{0};
+  int texture_slice_count{0};
 
   chaos::MyGLFWFpsCamera fps_camera;
 

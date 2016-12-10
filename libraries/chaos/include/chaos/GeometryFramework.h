@@ -223,7 +223,7 @@ type_sphere2<T> GetBoundingCircle(type_box2<T> const & b)
 template<typename T>
 type_sphere2<T> GetInnerCircle(type_box2<T> const & b)
 {
-  return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, GetMinComponent(b.half_size));
+  return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 }
 
 /** returns the bounding sphere for the box */
@@ -237,7 +237,7 @@ type_sphere3<T> GetBoundingSphere(type_box3<T> const & b)
 template<typename T>
 type_sphere3<T> GetInnerSphere(type_box3<T> const & b)
 {
-  return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, GetMinComponent(b.half_size));
+  return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 }
 
 /** returns the "aspect" of the box (width/height) */

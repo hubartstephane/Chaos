@@ -17,6 +17,7 @@
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
+#include <chaos/GLProgramUniformProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -154,12 +155,15 @@ protected:
       
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
-    program_data.SetUniform("projection",      projection_matrix);
-    program_data.SetUniform("local_to_world",  local_to_world_matrix);
-    program_data.SetUniform("world_to_camera", world_to_camera_matrix);
+    chaos::GLProgramUniformProvider uniform_provider;
 
-    glBindTextureUnit(0, texture->GetResourceID());
-    program_data.SetUniform("material", 0);
+    uniform_provider.AddUniform("projection",      projection_matrix);
+    uniform_provider.AddUniform("local_to_world",  local_to_world_matrix);
+    uniform_provider.AddUniform("world_to_camera", world_to_camera_matrix);
+
+    uniform_provider.AddTexture("material", texture);
+
+    program_data.BindUniforms(&uniform_provider);
 
     mesh->Render(program_data, nullptr, 0, 0);
 

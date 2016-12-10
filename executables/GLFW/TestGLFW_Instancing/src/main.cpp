@@ -12,6 +12,7 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GLProgramUniformProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -48,11 +49,13 @@ protected:
 
     double realtime = ClockManager::GetClockTime();
 
-    program_data.SetUniform("projection",         projection_matrix);
-    program_data.SetUniform("local_to_world",     local_to_world_matrix);
-    program_data.SetUniform("world_to_camera",    world_to_camera_matrix);
-    program_data.SetUniform("instance_cube_size", instance_cube_size);
-    program_data.SetUniform("realtime",           realtime);
+    chaos::GLProgramUniformProvider uniform_provider;
+    uniform_provider.AddUniform("projection",         projection_matrix);
+    uniform_provider.AddUniform("local_to_world",     local_to_world_matrix);
+    uniform_provider.AddUniform("world_to_camera",    world_to_camera_matrix);
+    uniform_provider.AddUniform("instance_cube_size", instance_cube_size);
+    uniform_provider.AddUniform("realtime",           realtime);
+    program_data.BindUniforms(&uniform_provider);
 
     int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
     int base_instance  = 0;

@@ -19,12 +19,13 @@ public:
   /** cleaning the object */
   virtual void Release();
 
+  /** use the program */
+  bool UseProgram(class GLProgramUniformProvider * uniform_provider, class GLProgramAttributeProvider * attribute_provider);
+
   /** returns the GL name of the resource */
   GLuint GetResourceID() const { return program_id; }
-
   /** returns true whether the resource is valid */
   bool IsValid() const { return glIsProgram(program_id) == GL_TRUE;}
-
   /** get the program data */
   GLProgramData const & GetProgramData() const { return program_data; }
 

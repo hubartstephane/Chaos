@@ -109,7 +109,7 @@ protected:
     chaos::GLProgramUniformProvider uniform_provider;
     uniform_provider.AddUniform("local_to_cam", local_to_cam);
 
-  //  sprite_manager.Display(&uniform_provider);
+    sprite_manager.Display(&uniform_provider);
 
     return true;
   }
@@ -133,24 +133,13 @@ protected:
     if (!sprite_manager.Initialize(params))
       return false;
 
+    chaos::TextParser parser(atlas);
 
-
+    chaos::TextParseParams parse_params;
+    chaos::TextParseResult parse_result;
+    parser.ParseText("Hello world\ntoto", parse_result, parse_params);
 
     return true;
-
-	  /*
-    TextParser parser(atlas);
-    ParseTextParams params;
-    params.max_text_width = 300;
-
-    bool result = parser.ParseText("Hello worl[d]\n", params);
-
-
-
-    return result;
-	*/
-
-
   }
 
   virtual bool Initialize() override

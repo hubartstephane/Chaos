@@ -19,7 +19,7 @@ namespace chaos
 	// TextParseToken methods
 	// ============================================================
 
-	float TextParseToken::GetWidth(ParseTextParams const & params) const
+	float TextParseToken::GetWidth(TextParseParams const & params) const
 	{
 		if (character_entry != nullptr)
 			return character_entry->width * (params.character_height / character_entry->height);
@@ -72,7 +72,7 @@ namespace chaos
 		parse_stack.push_back(element); // push a copy of previous element, except the color
 	}
 
-	void TextParserData::EmitCharacters(char c, int count, ParseTextParams const & params)
+	void TextParserData::EmitCharacters(char c, int count, TextParseParams const & params)
 	{
 		// get current character set
 		BitmapAtlas::CharacterSet const * character_set = parse_stack.back().character_set;
@@ -90,7 +90,7 @@ namespace chaos
 	}
 
 
-	void TextParserData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, ParseTextParams const & params)
+	void TextParserData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, TextParseParams const & params)
 	{
 		TextParseToken token;
 		token.type            = (c != ' ') ? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_WHITESPACE;
@@ -100,7 +100,7 @@ namespace chaos
 		InsertTokenInLine(token, params);
 	}
 
-	void TextParserData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry, ParseTextParams const & params)
+	void TextParserData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry, TextParseParams const & params)
 	{
 		TextParseToken token;
 		token.type         = TextParseToken::TOKEN_BITMAP;
@@ -108,31 +108,31 @@ namespace chaos
 		InsertTokenInLine(token, params);
 	}
 
-	void TextParserData::InsertTokenInLine(TextParseToken & token, ParseTextParams const & params)
+	void TextParserData::InsertTokenInLine(TextParseToken & token, TextParseParams const & params)
 	{
 		// if there was no line, insert the very first one ...
-		if (lines.size() == 0)
-			lines.push_back(std::vector<TextParseToken>());
+		if (parse_result.size() == 0)
+      parse_result.push_back(TextParseLine());
 
 		// insert the token in the list and decal current cursor
 		token.position = position;
-		lines.back().push_back(token);
+    parse_result.back().push_back(token);
 		position += token.GetWidth(params);
 	}
 
-	void TextParserData::EndCurrentLine(ParseTextParams const & params)
+	void TextParserData::EndCurrentLine(TextParseParams const & params)
 	{
 		// update position
 		position.x  = 0.0f;
 		position.y -= params.character_height;
 		// if there was no line, insert the very first one ...
-		if (lines.size() == 0)
-			lines.push_back(std::vector<TextParseToken>()); 
+		if (parse_result.size() == 0)
+      parse_result.push_back(TextParseLine());
 		// ... then you can add a new line
-		lines.push_back(std::vector<TextParseToken>()); 
+    parse_result.push_back(TextParseLine());
 	}
 
-	bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser, ParseTextParams const & params)
+	bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser, TextParseParams const & params)
 	{
 		int j = i;
 		while (text[i] != 0)
@@ -285,7 +285,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::ParseText(char const * text, ParseTextParams const & params)
+  bool TextParser::ParseText(char const * text, TextParseResult & parse_result, TextParseParams const & params)
 	{
 		assert(text != nullptr);
 
@@ -309,10 +309,12 @@ namespace chaos
 		if (!GenerateSprites(params, parse_data))
 			return false;
 
+    parse_result = std::move(parse_data.parse_result);
+
 		return true;
 	}
 
-	bool TextParser::GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data)
+	bool TextParser::GenerateLines(char const * text, TextParseParams const & params, TextParserData & parse_data)
 	{
 		// iterate over all characters
 		bool escape_character = false;
@@ -375,19 +377,19 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::RemoveUselessWhitespaces(ParseTextParams const & params, TextParserData & parse_data)
+	bool TextParser::RemoveUselessWhitespaces(TextParseParams const & params, TextParserData & parse_data)
 	{
 		// remove whitespaces at the end of lines
-		for (auto & line : parse_data.lines)
+		for (auto & line : parse_data.parse_result)
 			while (line.size() > 0 && line.back().type == TextParseToken::TOKEN_WHITESPACE)
 				line.pop_back();
 		// remove all empty lines at the end
-		while (parse_data.lines.size() > 0 && parse_data.lines.back().size() == 0)
-			parse_data.lines.pop_back();
+		while (parse_data.parse_result.size() > 0 && parse_data.parse_result.back().size() == 0)
+			parse_data.parse_result.pop_back();
 		return true;
 	}
 
-	std::vector<std::pair<size_t, size_t>> TextParser::GroupTokens(std::vector<TextParseToken> const & line)
+	std::vector<std::pair<size_t, size_t>> TextParser::GroupTokens(TextParseLine const & line)
 	{
 		std::vector<std::pair<size_t, size_t>> result;
 
@@ -414,28 +416,28 @@ namespace chaos
 		return result;
 	}
 
-	bool TextParser::CutLines(ParseTextParams const & params, TextParserData & parse_data)
+	bool TextParser::CutLines(TextParseParams const & params, TextParserData & parse_data)
 	{
 		if (params.max_text_width > 0)
 		{
-			std::vector<std::vector<TextParseToken>> result_lines;
+      TextParseResult parse_result;
 
 			float y = 0.0f;
-			for (auto const & line : parse_data.lines)
+			for (auto const & line : parse_data.parse_result)
 			{
 				// line may have been left empty after useless whitespace removal. 
 				// Can simply ignore it, no sprites will be generated for that
 				if (line.size() != 0)
-					CutOneLine(y, line, result_lines, params, parse_data);
+					CutOneLine(y, line, parse_result, params, parse_data);
 				// update the y position of characters
 				y += params.character_height;      
 			}
-			parse_data.lines = std::move(result_lines); // replace the line after filtering
+			parse_data.parse_result = std::move(parse_result); // replace the line after filtering
 		}
 		return true;
 	}
 
-	void TextParser::InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, std::vector<TextParseToken> const & line, std::vector<TextParseToken> & current_line)
+	void TextParser::InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, TextParseLine const & line, TextParseLine & current_line)
 	{
 		for (size_t i = group.first ; i <= group.second ; ++i)
 		{
@@ -445,27 +447,18 @@ namespace chaos
 		}
 	}
 
-	void TextParser::FlushLine(
-		float & x, float & y, 
-		std::vector<TextParseToken> & current_line, 
-		std::vector<std::vector<TextParseToken>> & result_lines,
-		ParseTextParams const & params)
+	void TextParser::FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & parse_result, TextParseParams const & params)
 	{
 		x  = 0.0f;
 		y += params.character_height;
 
-		result_lines.push_back(std::move(current_line));
-		current_line = std::vector<TextParseToken>();
+    parse_result.push_back(std::move(current_line));
+		current_line = TextParseLine();
 	}
 
-	void TextParser::CutOneLine(
-		float & y, 
-		std::vector<TextParseToken> const & line, 
-		std::vector<std::vector<TextParseToken>> & result_lines, 
-		ParseTextParams const & params, 
-		TextParserData & parse_data)
+	void TextParser::CutOneLine(float & y, TextParseLine const & line, TextParseResult & parse_result, TextParseParams const & params, TextParserData & parse_data)
 	{
-		size_t initial_line_count = result_lines.size();
+		size_t initial_line_count = parse_result.size();
 
 		// token are grouped as consecutive elements of same type
 		// except for bitmaps that are in groups of one element
@@ -476,7 +469,7 @@ namespace chaos
 		//   -an initial line may be splitted into multiples lines
 		//   -do not insert WHITESPACES at the begining of thoses new lines (except for the very first line maybe)
 
-		std::vector<TextParseToken> current_line;
+    TextParseLine current_line;
 		float x = 0.0f;
 
 		// iterate over all groups a try to insert them in lines
@@ -489,7 +482,7 @@ namespace chaos
 
 			if (group_type == TextParseToken::TOKEN_WHITESPACE)
 			{
-				if (result_lines.size() != initial_line_count) // this is an additionnal line
+				if (parse_result.size() != initial_line_count) // this is an additionnal line
 					if (current_line.size() == 0)                // that have no previous entry : skip the group
 						continue;
 
@@ -508,7 +501,7 @@ namespace chaos
 					// the group would fit entirely in the next line 
 					if (group_width <= params.max_text_width)
 					{
-						FlushLine(x, y, current_line, result_lines, params);            
+						FlushLine(x, y, current_line, parse_result, params);
 						InsertAllTokensInLine(x, y, group, line, current_line); // go to next line, insert the whole group
 					}
 					// the group is too big, even for empty line
@@ -517,7 +510,7 @@ namespace chaos
 						// try to reduce bitmap clamping by changing line
 						if (x > 0.0f && group_type == TextParseToken::TOKEN_BITMAP)
 						{
-							FlushLine(x, y, current_line, result_lines, params);
+							FlushLine(x, y, current_line, parse_result, params);
 							InsertAllTokensInLine(x, y, group, line, current_line); // go to next line, insert the bitmap (the group)
 						}
 						else
@@ -536,14 +529,14 @@ namespace chaos
 		}
 	}
 
-	bool TextParser::JustifyLines(ParseTextParams const & params, TextParserData & parse_data)
+	bool TextParser::JustifyLines(TextParseParams const & params, TextParserData & parse_data)
 	{
 
 
 		return true;
 	}
 
-	bool TextParser::GenerateSprites(ParseTextParams const & params, TextParserData & parse_data)
+	bool TextParser::GenerateSprites(TextParseParams const & params, TextParserData & parse_data)
 	{
 
 

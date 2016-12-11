@@ -28,7 +28,7 @@ namespace chaos
 		static int const TOKEN_WHITESPACE = 3;
 
 		/** get the width of the token after renormalization */
-		float GetWidth(class ParseTextParams const & params) const;
+		float GetWidth(class TextParseParams const & params) const;
 
 	public:
 
@@ -47,6 +47,11 @@ namespace chaos
 	};
 
 
+  /** the of a line of parsing */
+  using TextParseLine = std::vector<TextParseToken>;
+  /** the result of parsing */
+  using TextParseResult = std::vector<TextParseLine>;
+
 	/** a structure used to contains data during parsing */
 	class TextParserData
 	{
@@ -56,17 +61,17 @@ namespace chaos
 		TextParserData(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
 
 		/** start the markup */
-		bool StartMarkup(char const * text, int & i, class TextParser & parser, ParseTextParams const & params);
+		bool StartMarkup(char const * text, int & i, class TextParser & parser, TextParseParams const & params);
 		/** utility method to emit characters */
-		void EmitCharacters(char c, int count, ParseTextParams const & params);
+		void EmitCharacters(char c, int count, TextParseParams const & params);
 		/** utility method to emit character */
-		void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, ParseTextParams const & params);
+		void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, TextParseParams const & params);
 		/** emit a bitmap */
-		void EmitBitmap(BitmapAtlas::BitmapEntry const * entry, ParseTextParams const & params);
+		void EmitBitmap(BitmapAtlas::BitmapEntry const * entry, TextParseParams const & params);
 		/** end the current line */
-		void EndCurrentLine(ParseTextParams const & params);
+		void EndCurrentLine(TextParseParams const & params);
 		/** insert a token */
-		void InsertTokenInLine(TextParseToken & token, ParseTextParams const & params);
+		void InsertTokenInLine(TextParseToken & token, TextParseParams const & params);
 
 		/** duplicate the last stack element */
 		void PushDuplicate();
@@ -84,15 +89,15 @@ namespace chaos
 		BitmapAtlas::AtlasBase const & atlas;
 		/** current line position */
 		glm::vec2 position{0.0f, 0.0f};
-		/** the lines */
-		std::vector<std::vector<TextParseToken>> lines;
+		/** the result */
+    TextParseResult parse_result;
 		/** the stack used for parsing */
 		std::vector<TextParseStackElement> parse_stack;
 	};
 
 
 	/** some parameters used during text parsing */
-	class ParseTextParams
+	class TextParseParams
 	{
 	public:
 
@@ -138,7 +143,7 @@ namespace chaos
 		bool AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set);
 
 		/** the main method to parse a text */
-		bool ParseText(char const * text, ParseTextParams const & params = ParseTextParams());
+		bool ParseText(char const * text, TextParseResult & parse_result, TextParseParams const & params = TextParseParams());
 
 		/** get a color by its name */
 		glm::vec3 const * GetColor(char const * name) const;
@@ -152,23 +157,23 @@ namespace chaos
 	protected:
 
 		/** generate the lines, without cutting them */
-		bool GenerateLines(char const * text, ParseTextParams const & params, TextParserData & parse_data);
+		bool GenerateLines(char const * text, TextParseParams const & params, TextParserData & parse_data);
 		/** cut the lines so they are not too big. Cut them only when it is possible */
-		bool CutLines(ParseTextParams const & params, TextParserData & parse_data);
+		bool CutLines(TextParseParams const & params, TextParserData & parse_data);
 		/** utility method to cut one line an insert it into a new result */
-		void CutOneLine(float & y, std::vector<TextParseToken> const & line, std::vector<std::vector<TextParseToken>> & result_lines, ParseTextParams const & params, TextParserData & parse_data);
+		void CutOneLine(float & y, TextParseLine const & line, TextParseResult & result_lines, TextParseParams const & params, TextParserData & parse_data);
 		/** goto next line */
-		void FlushLine(float & x, float & y, std::vector<TextParseToken> & current_line, std::vector<std::vector<TextParseToken>> & result_lines, ParseTextParams const & params);
+		void FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & result_lines, TextParseParams const & params);
 		/** insert all tokens of a group in one line */
-		void InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, std::vector<TextParseToken> const & line, std::vector<TextParseToken> & current_line);
+		void InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, TextParseLine const & line, TextParseLine & current_line);
 		/** remove whitespaces at end of lines, and empty lines at the end */
-		bool RemoveUselessWhitespaces(ParseTextParams const & params, TextParserData & parse_data);
+		bool RemoveUselessWhitespaces(TextParseParams const & params, TextParserData & parse_data);
 		/** update lines according to justification */
-		bool JustifyLines(ParseTextParams const & params, TextParserData & parse_data);
+		bool JustifyLines(TextParseParams const & params, TextParserData & parse_data);
 		/** generate the sprites */
-		bool GenerateSprites(ParseTextParams const & params, TextParserData & parse_data);
+		bool GenerateSprites(TextParseParams const & params, TextParserData & parse_data);
 		/** group tokens */
-		std::vector<std::pair<size_t, size_t>> GroupTokens(std::vector<TextParseToken> const & line);
+		std::vector<std::pair<size_t, size_t>> GroupTokens(TextParseLine const & line);
 
 	public:
 

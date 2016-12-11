@@ -1,6 +1,7 @@
 ﻿#include <chaos/GLProgram.h>
-
-
+#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramAttributeProvider.h>
+ 
 namespace chaos
 {
 
@@ -23,4 +24,17 @@ namespace chaos
       program_id = 0;    
     }  
   }
+
+  bool GLProgram::UseProgram(class GLProgramUniformProvider * uniform_provider, class GLProgramAttributeProvider * attribute_provider)
+  {
+    if (!IsValid())
+      return false;
+
+    glUseProgram(program_id);
+
+    program_data.BindUniforms(uniform_provider);
+
+    return true;
+  }
+
 }; // namespace chaos

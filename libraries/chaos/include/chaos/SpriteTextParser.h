@@ -68,6 +68,8 @@ namespace chaos
 		glm::vec2 position{0.0f, 0.0f};
     /** the size of the generated image */
     glm::vec2 size{ 0.0f, 0.0f };
+    /** the color of the token */
+    glm::vec3 color{ 1.0f, 1.0f, 1.0f };
 		/** the corresponding bitmap (if valid) */
 		BitmapAtlas::BitmapEntry const * bitmap_entry{nullptr};
 		/** the corresponding character (if valid) */

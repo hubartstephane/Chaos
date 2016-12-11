@@ -83,6 +83,7 @@ namespace chaos
     token.character = c;
     token.character_entry = entry;
     token.character_set = character_set;
+    token.color = parse_stack.back().color;
     InsertTokenInLine(token, params);
   }
 
@@ -345,7 +346,7 @@ namespace chaos
       // close previously started markup 
       else if (c == ']')
       {
-        if (parse_data.parse_stack.size() >= 1) // the very first element is manually inserted. It should never be popped
+        if (parse_data.parse_stack.size() <= 1) // the very first element is manually inserted. It should never be popped
           return false;
         parse_data.parse_stack.pop_back();
       }
@@ -543,9 +544,9 @@ namespace chaos
         glm::vec2 offset(0.0f, 300.0f);
 
         if (token.bitmap_entry != nullptr)
-          sprite_manager->AddSprite(token.bitmap_entry, token.position + offset, token.size, SpriteManager::HOTPOINT_TOP_LEFT);
+          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position + offset, token.size, SpriteManager::HOTPOINT_TOP_LEFT);
         if (token.character_entry != nullptr)
-          sprite_manager->AddSprite(token.character_entry, token.position + offset, token.size, SpriteManager::HOTPOINT_TOP_LEFT);
+          sprite_manager->AddSpriteCharacter(token.character_entry, token.position + offset, token.size, SpriteManager::HOTPOINT_TOP_LEFT, token.color);
       }
     }
     return true;

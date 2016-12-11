@@ -137,7 +137,8 @@ protected:
 
     chaos::TextParseParams parse_params;
     chaos::TextParseResult parse_result;
-    parser.ParseText("Hello world\ntoto", parse_result, parse_params);
+
+    parser.ParseText("Hello world\ntoto", &sprite_manager, &parse_result, parse_params);
 
     return true;
   }

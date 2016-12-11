@@ -3,9 +3,39 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/StringTools.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/SpriteManager.h>
 
 namespace chaos
 {
+  /** some parameters used during text parsing */
+  class TextParseParams
+  {
+  public:
+
+    static const int ALIGN_LEFT = 0;
+    static const int ALIGN_RIGHT = 1;
+    static const int ALIGN_CENTER = 2;
+    static const int ALIGN_JUSTIFY = 3;
+
+    /** the size to use for the characters */
+    float character_height{ 32.0f };
+    /** spacing between lines */
+    float line_spacing{5.0f};
+    /** spacing between characters */
+    float character_spacing{ 5.0f };
+    /** the text limits */
+    float max_text_width{ 0.0f };
+    /** word wrap enabled */
+    bool word_wrap{ true };
+    /** the line alignment */
+    int alignment{ ALIGN_LEFT };
+    /** the color to use by default */
+    glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
+    /** the font to use by default */
+    std::string character_set_name;
+    /** tab size */
+    int tab_size{ 2 };
+  };
 
 	/** during parsing, some 'commands' are put on the stack for text formating, TextParseStackElement is such a command */
 	class TextParseStackElement
@@ -18,6 +48,7 @@ namespace chaos
 		BitmapAtlas::CharacterSet const * character_set{nullptr};
 	};
 
+  /** a token generated during parsing */
 	class TextParseToken
 	{
 	public:
@@ -27,9 +58,6 @@ namespace chaos
 		static int const TOKEN_CHARACTER  = 2;
 		static int const TOKEN_WHITESPACE = 3;
 
-		/** get the width of the token after renormalization */
-		float GetWidth(class TextParseParams const & params) const;
-
 	public:
 
 		/** the type of the token */
@@ -38,6 +66,8 @@ namespace chaos
 		char character{0};
 		/** the position of the generated image */
 		glm::vec2 position{0.0f, 0.0f};
+    /** the size of the generated image */
+    glm::vec2 size{ 0.0f, 0.0f };
 		/** the corresponding bitmap (if valid) */
 		BitmapAtlas::BitmapEntry const * bitmap_entry{nullptr};
 		/** the corresponding character (if valid) */
@@ -47,12 +77,14 @@ namespace chaos
 	};
 
 
+  /** groups of token */
+  using TextTokenGroup = std::vector<std::pair<size_t, size_t>>;
   /** the of a line of parsing */
   using TextParseLine = std::vector<TextParseToken>;
   /** the result of parsing */
   using TextParseResult = std::vector<TextParseLine>;
 
-	/** a structure used to contains data during parsing */
+	/** an utility structure used to contains data during parsing */
 	class TextParserData
 	{
 	public:
@@ -73,6 +105,8 @@ namespace chaos
 		/** insert a token */
 		void InsertTokenInLine(TextParseToken & token, TextParseParams const & params);
 
+    /** initialize the size of a token */
+    void ComputeTokenSize(TextParseToken & token, TextParseParams const & params) const;
 		/** duplicate the last stack element */
 		void PushDuplicate();
 		/** add an element on parse stack : keep color, but change current character_set */
@@ -95,36 +129,11 @@ namespace chaos
 		std::vector<TextParseStackElement> parse_stack;
 	};
 
-
-	/** some parameters used during text parsing */
-	class TextParseParams
-	{
-	public:
-
-		static const int ALIGN_LEFT = 0;
-		static const int ALIGN_RIGHT = 1;
-		static const int ALIGN_CENTER = 2;
-		static const int ALIGN_JUSTIFY = 3;
-
-		/** the size to use for the characters */
-		float character_height{ 32.0f };
-		/** the text limits */
-		float max_text_width{ 0.0f };
-		/** word wrap enabled */
-		bool word_wrap{ true };
-		/** the line alignment */
-		int alignment{ ALIGN_LEFT };
-		/** the color to use by default */
-		glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
-		/** the font to use by default */
-		std::string character_set_name;
-		/** tab size */
-		int tab_size{ 2 };
-	};
-
-
+  /** the parser */
 	class TextParser
 	{
+    friend class TextParserData;
+
 	public:
 
 		/** constructor with atlas initialization */
@@ -143,7 +152,9 @@ namespace chaos
 		bool AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set);
 
 		/** the main method to parse a text */
-		bool ParseText(char const * text, TextParseResult & parse_result, TextParseParams const & params = TextParseParams());
+		bool ParseText(char const * text, SpriteManager * sprite_manager = nullptr, TextParseResult * parse_result = nullptr, TextParseParams const & params = TextParseParams());
+
+  protected:
 
 		/** get a color by its name */
 		glm::vec3 const * GetColor(char const * name) const;
@@ -153,8 +164,6 @@ namespace chaos
 		BitmapAtlas::CharacterSet const * GetCharacterSet(char const * name) const;
 		/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
 		bool IsNameValid(char const * name) const;
-
-	protected:
 
 		/** generate the lines, without cutting them */
 		bool GenerateLines(char const * text, TextParseParams const & params, TextParserData & parse_data);
@@ -171,9 +180,9 @@ namespace chaos
 		/** update lines according to justification */
 		bool JustifyLines(TextParseParams const & params, TextParserData & parse_data);
 		/** generate the sprites */
-		bool GenerateSprites(TextParseParams const & params, TextParserData & parse_data);
+		bool GenerateSprites(SpriteManager * sprite_manager, TextParseParams const & params, TextParserData & parse_data);
 		/** group tokens */
-		std::vector<std::pair<size_t, size_t>> GroupTokens(TextParseLine const & line);
+    TextTokenGroup GroupTokens(TextParseLine const & line);
 
 	public:
 

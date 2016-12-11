@@ -62,11 +62,6 @@ int operator ()(std::string const & a, std::string const & b) const
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1()
-  {
-  }
 
 protected:
 
@@ -141,7 +136,7 @@ protected:
     chaos::TextParseResult parse_result;
 
 
-    parser.ParseText("Hello[RED world]\nto[button]to", &sprite_manager, &parse_result, parse_params);
+    parser.ParseText("Hello[RED world\nto[button]to]", &sprite_manager, &parse_result, parse_params);
 
     return true;
   }

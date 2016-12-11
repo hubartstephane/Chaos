@@ -544,9 +544,9 @@ namespace chaos
         glm::vec2 offset(0.0f, 300.0f);
 
         if (token.bitmap_entry != nullptr)
-          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position + offset, token.size, SpriteManager::HOTPOINT_TOP_LEFT);
+          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position + offset, token.size, Hotpoint::TOP_LEFT);
         if (token.character_entry != nullptr)
-          sprite_manager->AddSpriteCharacter(token.character_entry, token.position + offset, token.size, SpriteManager::HOTPOINT_TOP_LEFT, token.color);
+          sprite_manager->AddSpriteCharacter(token.character_entry, token.position + offset, token.size, Hotpoint::TOP_LEFT, token.color);
       }
     }
     return true;

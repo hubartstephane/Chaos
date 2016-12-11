@@ -23,6 +23,8 @@
 
 #include <chaos/SpriteTextParser.h>
 #include <chaos/SpriteManager.h>
+#include <chaos/Hotpoint.h>
+
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -61,7 +63,7 @@ protected:
           glm::vec2 size = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
           glm::vec3 color = chaos::GLMTools::RandVec3();
 
-          sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER, color);
+          sprite_manager.AddSpriteCharacter(entry, position, size, chaos::Hotpoint::CENTER, color);
         }
 
       }
@@ -83,7 +85,7 @@ protected:
           glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
           glm::vec2 size     = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
 
-          sprite_manager.AddSprite(entry, position, size, chaos::SpriteManager::HOTPOINT_CENTER);
+          sprite_manager.AddSpriteBitmap(entry, position, size, chaos::Hotpoint::CENTER);
         }
       }
     }

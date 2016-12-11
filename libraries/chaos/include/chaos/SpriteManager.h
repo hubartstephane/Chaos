@@ -10,10 +10,12 @@
 #include <chaos/VertexBuffer.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GLProgramUniformProvider.h>
+#include <chaos/Hotpoint.h>
 
 namespace chaos
 {
 
+  /** the sprite structure */
   class SpriteVertex
   {
   public:
@@ -35,6 +37,7 @@ namespace chaos
   };
 
 
+  /** the manager for sprites */
   class SpriteManager
   {
   public:
@@ -43,27 +46,6 @@ namespace chaos
     static char const * vertex_shader_source;
     /** the source for the pixel shader */
     static char const * pixel_shader_source;
-
-    /** theses are the offset are the ones to apply to position, if position correspond to a given border */
-
-    static int const HOTPOINT_LEFT = 1;
-    static int const HOTPOINT_RIGHT = 2;
-    static int const HOTPOINT_HMIDDLE = 0;
-
-    static int const HOTPOINT_BOTTOM = 4;
-    static int const HOTPOINT_TOP = 8;
-    static int const HOTPOINT_VMIDDLE = 0;
-
-    static int const HOTPOINT_BOTTOM_LEFT = HOTPOINT_BOTTOM | HOTPOINT_LEFT;
-    static int const HOTPOINT_TOP_LEFT = HOTPOINT_TOP | HOTPOINT_LEFT;
-    static int const HOTPOINT_BOTTOM_RIGHT = HOTPOINT_BOTTOM | HOTPOINT_RIGHT;
-    static int const HOTPOINT_TOP_RIGHT = HOTPOINT_TOP | HOTPOINT_RIGHT;
-    static int const HOTPOINT_CENTER = HOTPOINT_VMIDDLE | HOTPOINT_HMIDDLE;
-
-    /** given a hotpoint, a sprite size, and the hotpoint_type, returns the BottomLeft hotpoint position */
-    static glm::vec2 GetBottomLeftHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type);
-    /** given a hotpoint, a sprite size, and the hotpoint_type, returns the any other hotpoint_type position */
-    static glm::vec2 GetHotpointPosition(glm::vec2 const & position, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
 
     /** initialize the manager */
     bool Initialize(SpriteManagerInitParams & params);

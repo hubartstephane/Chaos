@@ -99,14 +99,14 @@ namespace chaos
 
   void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
   {
-    glm::vec2 bottom_left_position = Hotpoint::GetBottomLeftHotpointPosition(position, size, hotpoint_type);
+    glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
     AddSpriteImpl(entry, bottom_left_position, size, color);
   }
 
   void SpriteManager::AddSpriteBitmap(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
   {
     static glm::vec3 const color(1.0f, 1.0f, 1.0f);
-    glm::vec2 bottom_left_position = Hotpoint::GetBottomLeftHotpointPosition(position, size, hotpoint_type);
+    glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
     AddSpriteImpl(entry, bottom_left_position, size, color);
   }
 

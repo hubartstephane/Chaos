@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-  glm::vec2 Hotpoint::GetHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type)
+  glm::vec2 Hotpoint::Convert(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type)
   {
     if (initial_hotpoint_type == final_hotpoint_type)
       return hotpoint;
@@ -27,7 +27,7 @@ namespace chaos
 
   }
 
-  glm::vec2 Hotpoint::GetBottomLeftHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type)
+  glm::vec2 Hotpoint::ConvertToBottomLeft(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type)
   {
     static float const offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 

@@ -11,9 +11,9 @@ namespace chaos
   public:
 
     /** given a hotpoint and a hotpoint_type, returns the BottomLeft hotpoint position */
-    static glm::vec2 GetBottomLeftHotpointPosition(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type);
+    static glm::vec2 ConvertToBottomLeft(glm::vec2 const & hotpoint, glm::vec2 const & size, int hotpoint_type);
     /** given a hotpoint and a hotpoint_type, returns any other hotpoint_type position */
-    static glm::vec2 GetHotpointPosition(glm::vec2 const & position, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
+    static glm::vec2 Convert(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
 
     static int const LEFT = 1;
     static int const RIGHT = 2;

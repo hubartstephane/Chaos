@@ -133,7 +133,8 @@ protected:
     parser.AddBitmap("BUTTON", atlas.GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
 
     chaos::TextParseParams parse_params;
-    parse_params.position = glm::vec2(0.0f, 300.0f);
+    parse_params.position      = glm::vec2(0.0f, 0.0f);
+	parse_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
     chaos::TextParseResult parse_result;
 
 

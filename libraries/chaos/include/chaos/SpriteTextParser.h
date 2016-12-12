@@ -39,7 +39,7 @@ namespace chaos
     /** the position */
     glm::vec2 position{ 0.0f , 0.0f };
     /** the hotpoint */
-    int hotpoint_type{ Hotpoint::TOP_LEFT };
+    int hotpoint_type{ Hotpoint::BOTTOM_LEFT };
   };
 
 	/** during parsing, some 'commands' are put on the stack for text formating, TextParseStackElement is such a command */

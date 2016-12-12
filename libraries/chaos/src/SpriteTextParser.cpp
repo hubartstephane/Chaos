@@ -596,9 +596,9 @@ namespace chaos
           continue;
 
         if (token.bitmap_entry != nullptr)
-          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position, token.size, Hotpoint::TOP_LEFT);
+          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position, token.size, Hotpoint::BOTTOM_LEFT);
         if (token.character_entry != nullptr)
-          sprite_manager->AddSpriteCharacter(token.character_entry, token.position, token.size, Hotpoint::TOP_LEFT, token.color);
+          sprite_manager->AddSpriteCharacter(token.character_entry, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
       }
     }
     return true;

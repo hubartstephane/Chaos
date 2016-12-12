@@ -289,13 +289,17 @@ namespace chaos
     // all steps to properly generate the result
     if (!GenerateLines(text, params, parse_data))
       return false;
-    if (!RemoveUselessWhitespaces(params, parse_data))
+    if (!RemoveUselessWhitespaces(parse_data))
       return false;
     if (!CutLines(params, parse_data))
       return false;
+    if (!RemoveWhitespaces(parse_data))
+      return false;
     if (!JustifyLines(params, parse_data))
       return false;
-    
+    if (!MoveSpritesToHotpoint(params, parse_data))
+      return false;
+       
     // output the sprites if wanted
     if (sprite_manager != nullptr)
       if (!GenerateSprites(sprite_manager, params, parse_data))
@@ -371,7 +375,57 @@ namespace chaos
     return true;
   }
 
-  bool TextParser::RemoveUselessWhitespaces(TextParseParams const & params, TextParserData & parse_data)
+  void TextParser::GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const
+  {
+    min_position.x =  std::numeric_limits<float>::max();
+    min_position.y =  std::numeric_limits<float>::max();
+    max_position.x = -std::numeric_limits<float>::max();
+    max_position.y = -std::numeric_limits<float>::max();
+
+    for (auto const & line : parse_result)
+    {
+      for (TextParseToken const & token : line)
+      {
+        min_position = glm::min(min_position, token.position);
+        max_position = glm::max(max_position, token.position + token.size);
+      }
+    }
+  }
+
+  bool TextParser::MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data)
+  {
+    // compute the min/max bounding box
+    glm::vec2 min_position;
+    glm::vec2 max_position;
+    GetBoundingBox(parse_data.parse_result, min_position, max_position);
+
+    // displace all the sprites to match the position
+    glm::vec2 offset =
+      params.position -
+      Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, params.hotpoint_type);
+    
+    if (offset.x != 0.0f || offset.y != 0.0f)
+      for (auto & line : parse_data.parse_result)
+        for (TextParseToken & token : line)
+          token.position += offset;
+
+    return true;
+  }
+
+  bool TextParser::RemoveWhitespaces(TextParserData & parse_data)
+  {
+    for (auto & line : parse_data.parse_result)
+    {
+      auto it = std::remove_if(line.begin(), line.end(), [](TextParseToken const & token) {
+        return (token.type == TextParseToken::TOKEN_WHITESPACE);
+      });
+
+      line.erase(it, line.end());
+    }
+    return true;
+  }
+
+  bool TextParser::RemoveUselessWhitespaces(TextParserData & parse_data)
   {
     // remove whitespaces at the end of lines
     for (auto & line : parse_data.parse_result)
@@ -541,12 +595,10 @@ namespace chaos
         if (token.type == TextParseToken::TOKEN_WHITESPACE)
           continue;
 
-        glm::vec2 offset(0.0f, 300.0f);
-
         if (token.bitmap_entry != nullptr)
-          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position + offset, token.size, Hotpoint::TOP_LEFT);
+          sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position, token.size, Hotpoint::TOP_LEFT);
         if (token.character_entry != nullptr)
-          sprite_manager->AddSpriteCharacter(token.character_entry, token.position + offset, token.size, Hotpoint::TOP_LEFT, token.color);
+          sprite_manager->AddSpriteCharacter(token.character_entry, token.position, token.size, Hotpoint::TOP_LEFT, token.color);
       }
     }
     return true;

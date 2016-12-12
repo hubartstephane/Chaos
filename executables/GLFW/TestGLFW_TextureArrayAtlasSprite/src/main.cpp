@@ -28,11 +28,6 @@
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1()
-  {
-  }
 
 protected:
 

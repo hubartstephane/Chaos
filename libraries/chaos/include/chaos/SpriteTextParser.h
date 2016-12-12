@@ -35,6 +35,11 @@ namespace chaos
     std::string character_set_name;
     /** tab size */
     int tab_size{ 2 };
+
+    /** the position */
+    glm::vec2 position{ 0.0f , 0.0f };
+    /** the hotpoint */
+    int hotpoint_type{ Hotpoint::TOP_LEFT };
   };
 
 	/** during parsing, some 'commands' are put on the stack for text formating, TextParseStackElement is such a command */
@@ -156,6 +161,9 @@ namespace chaos
 		/** the main method to parse a text */
 		bool ParseText(char const * text, SpriteManager * sprite_manager = nullptr, TextParseResult * parse_result = nullptr, TextParseParams const & params = TextParseParams());
 
+    /** compute the bounding box for all sprite generated */
+    void GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
+
   protected:
 
 		/** get a color by its name */
@@ -177,10 +185,15 @@ namespace chaos
 		void FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & result_lines, TextParseParams const & params);
 		/** insert all tokens of a group in one line */
 		void InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, TextParseLine const & line, TextParseLine & current_line);
+    /** Remove all whitespaces */
+    bool RemoveWhitespaces(TextParserData & parse_data);
 		/** remove whitespaces at end of lines, and empty lines at the end */
-		bool RemoveUselessWhitespaces(TextParseParams const & params, TextParserData & parse_data);
+		bool RemoveUselessWhitespaces(TextParserData & parse_data);
 		/** update lines according to justification */
 		bool JustifyLines(TextParseParams const & params, TextParserData & parse_data);
+    /** apply offset for hotpoint */
+    bool MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data);
+
 		/** generate the sprites */
 		bool GenerateSprites(SpriteManager * sprite_manager, TextParseParams const & params, TextParserData & parse_data);
 		/** group tokens */

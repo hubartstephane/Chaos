@@ -85,6 +85,8 @@ namespace chaos
         result->face = face;
         result->release_library = release_library;
         result->release_face = release_face;
+        result->glyph_width = params.glyph_width;
+        result->glyph_height = params.glyph_height;
 
         // set font size
         FT_Error error = FT_Set_Pixel_Sizes(result->face, params.glyph_width, params.glyph_height);
@@ -462,6 +464,8 @@ namespace chaos
         CharacterSet * character_set = new CharacterSet;
         character_set->name = character_set_input->name;
         character_set->tag = character_set_input->tag;
+        character_set->glyph_width = character_set_input->glyph_width;
+        character_set->glyph_height = character_set_input->glyph_height;
         output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
 
         size_t count = character_set_input->elements.size();

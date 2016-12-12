@@ -84,6 +84,10 @@ namespace chaos
       /** gets an entry by its tag */
       CharacterEntry const * GetEntry(TagType tag) const;
 
+      /** the glyph width */
+      int glyph_width{ 0 };
+      /** the glyph height */
+      int glyph_height{ 0 };
       /** the glyph contained in the character set */
       std::vector<CharacterEntry> elements;
     };

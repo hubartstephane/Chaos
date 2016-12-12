@@ -101,6 +101,14 @@ namespace chaos
     if (parse_result.size() == 0)
       parse_result.push_back(TextParseLine());
 
+    //token.character_set->
+
+    token.character_entry->bitmap_left;
+    token.character_entry->bitmap_top;
+    token.character_entry->advance.x;
+    token.character_entry->advance.y;
+
+
     // insert the token in the list and decal current cursor
     token.position = position;
     ComputeTokenSize(token, params);

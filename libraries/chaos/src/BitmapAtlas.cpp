@@ -207,7 +207,9 @@ namespace chaos
       NamedObject const & named_entry = entry;
       SaveIntoJSON(named_entry, json_entry); // call 'super' method
 
-      json_entry["elements"] = nlohmann::json::array();
+      json_entry["glyph_width"]  = entry.glyph_width;
+      json_entry["glyph_height"] = entry.glyph_height;
+      json_entry["elements"]     = nlohmann::json::array();
       SaveIntoJSON(entry.elements, json_entry["elements"]);
     }
 
@@ -216,6 +218,8 @@ namespace chaos
       NamedObject & named_entry = entry;
       LoadFromJSON(named_entry, json_entry); // call 'super' method
 
+      entry.glyph_width  = json_entry["glyph_width"];
+      entry.glyph_height = json_entry["glyph_height"];
       LoadFromJSON(entry.elements, json_entry["elements"]);
     }
 

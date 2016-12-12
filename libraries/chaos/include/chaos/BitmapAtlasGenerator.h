@@ -118,6 +118,10 @@ namespace chaos
       bool       release_library{ true };
       /** should the face be released at destruction */
       bool       release_face{ true };
+      /** the glyph width */
+      int        glyph_width{ 0 };
+      /** the glyph height */
+      int        glyph_height{ 0 };
 
       /** the bitmaps composing the set */
       std::vector<CharacterEntryInput> elements;

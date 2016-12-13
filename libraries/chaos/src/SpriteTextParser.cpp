@@ -6,19 +6,7 @@ namespace chaos
   // ============================================================
   // TextParserData methods
   // ============================================================
-
-  void TextParserData::ComputeTokenSize(TextParseToken & token, TextParseParams const & params) const
-  {
-    if (token.character_entry != nullptr)
-      token.size.x = ((float)token.character_entry->width) * (params.character_height / (float)token.character_entry->height);
-    else if (token.bitmap_entry != nullptr)
-      token.size.x = ((float)token.bitmap_entry->width) * (params.character_height / (float)token.bitmap_entry->height);
-    else
-      token.size.x = 0.0f;
-
-    token.size.y = params.character_height;
-  }
-
+  
   BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName(char const * character_set_name) const
   {
     BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
@@ -102,55 +90,30 @@ namespace chaos
     if (parse_result.size() == 0)
       parse_result.push_back(TextParseLine());
 
-	if (token.bitmap_entry != nullptr)
-	{
-		float factor = MathTools::CastAndDiv<float>(params.character_height, token.bitmap_entry->height);
+    if (token.bitmap_entry != nullptr)
+    {
+      float factor = MathTools::CastAndDiv<float>(params.character_height, token.bitmap_entry->height);
 
-		token.position = position;
-		token.size.x   = factor * (float)token.bitmap_entry->width;
-		token.size.y   = params.character_height;
+      token.position = position;
+      token.size.x = factor * (float)token.bitmap_entry->width;
+      token.size.y = params.character_height;
 
-		position.x += token.size.x + params.character_spacing;	
-	}
-	else if (token.character_entry != nullptr)
-	{
-		float factor = MathTools::CastAndDiv<float>(params.character_height, token.character_set->glyph_height);
+      position.x += token.size.x + params.character_spacing;
+    }
+    else if (token.character_entry != nullptr)
+    {
+      float factor = MathTools::CastAndDiv<float>(params.character_height, token.character_set->glyph_height);
 
-		token.position = position + glm::vec2(
-			+(float)token.character_entry->bitmap_left, 
-			-(float)token.character_entry->bitmap_top);
+      token.position = position + factor * glm::vec2(
+        (float)(token.character_entry->bitmap_left),
+        (float)(token.character_entry->bitmap_top - token.character_entry->height));
 
-		//token.size.x = factor * (float)token.bitmap_entry->width;
-		//token.size.y = params.character_height;
-	}
-		
+      token.size.x = factor * (float)token.character_entry->width;
+      token.size.y = factor * (float)token.character_entry->height;
 
-
-
-    token.character_entry->bitmap_left;
-    token.character_entry->bitmap_top;
-    token.character_entry->advance.x;
-    token.character_entry->advance.y;
-
-
-    // insert the token in the list and decal current cursor
-    token.position = position;
-    ComputeTokenSize(token, params);
-
-
-
-	if (token.character_entry != nullptr)
-		token.size.x = ((float)token.character_entry->width) * (params.character_height / (float)token.character_entry->height);
-	else if (token.bitmap_entry != nullptr)
-		token.size.x = ((float)token.bitmap_entry->width) * (params.character_height / (float)token.bitmap_entry->height);
-	else
-		token.size.x = 0.0f;
-
-	token.size.y = params.character_height;
-
-    
+      position.x += params.character_spacing + factor * (float)token.character_entry->advance.x;
+    }
     parse_result.back().push_back(token);
-    position.x += token.size.x + params.character_spacing;
   }
 
   void TextParserData::EndCurrentLine(TextParseParams const & params)
@@ -343,7 +306,7 @@ namespace chaos
       return false;
     if (!MoveSpritesToHotpoint(params, parse_data))
       return false;
-       
+
     // output the sprites if wanted
     if (sprite_manager != nullptr)
       if (!GenerateSprites(sprite_manager, params, parse_data))
@@ -421,8 +384,8 @@ namespace chaos
 
   void TextParser::GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const
   {
-    min_position.x =  std::numeric_limits<float>::max();
-    min_position.y =  std::numeric_limits<float>::max();
+    min_position.x = std::numeric_limits<float>::max();
+    min_position.y = std::numeric_limits<float>::max();
     max_position.x = -std::numeric_limits<float>::max();
     max_position.y = -std::numeric_limits<float>::max();
 
@@ -447,7 +410,7 @@ namespace chaos
     glm::vec2 offset =
       params.position -
       Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, params.hotpoint_type);
-    
+
     if (offset.x != 0.0f || offset.y != 0.0f)
       for (auto & line : parse_data.parse_result)
         for (TextParseToken & token : line)

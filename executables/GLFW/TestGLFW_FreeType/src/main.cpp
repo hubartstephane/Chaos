@@ -17,12 +17,10 @@
 #include <chaos/FontTools.h>
 #include <chaos/GLProgramUniformProvider.h>
 
+static int const TESTS_PER_FONT = 4;
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1() : font_index(0){}
 
 protected:
 
@@ -95,7 +93,7 @@ protected:
 
   char const * GetFontName(int index) const
   {
-    index = index / 2;
+    index = index / TESTS_PER_FONT;
 
 	char const * font_names[] = {
 		"Multicolore.otf",
@@ -268,9 +266,15 @@ protected:
     //parameters.min_filter = GL_NEAREST;
     //parameters.mag_filter = GL_NEAREST;
 
-    FIBITMAP * bm = ((index & 1) == 0)?
-      chaos::FontTools::GenerateImage(face, font_name, 32):
-      chaos::FontTools::GenerateImage(face, font_name[2], 32);    
+    FIBITMAP * bm = nullptr;
+    if ((index % TESTS_PER_FONT) == 0)
+      bm = chaos::FontTools::GenerateImage(face, font_name, 32);
+    else if ((index % TESTS_PER_FONT) == 1)
+      bm = chaos::FontTools::GenerateImage(face, font_name[2], 32);
+    else if ((index % TESTS_PER_FONT) == 2)
+      bm = chaos::FontTools::GenerateImage(face, "abcdefghijklmnopqrstuvwxyz", 32);
+    else if ((index % TESTS_PER_FONT) == 3)
+      bm = chaos::FontTools::GenerateImage(face, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 
@@ -341,7 +345,7 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
 
-  int font_index;
+  int font_index{0};
 };
 
 int _tmain(int argc, char ** argv, char ** env)
@@ -361,6 +365,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   return 0;
 }
+
 
 
 

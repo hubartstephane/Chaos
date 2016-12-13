@@ -112,8 +112,6 @@ namespace chaos
 		/** insert a token */
 		void InsertTokenInLine(TextParseToken & token, TextParseParams const & params);
 
-    /** initialize the size of a token */
-    void ComputeTokenSize(TextParseToken & token, TextParseParams const & params) const;
 		/** duplicate the last stack element */
 		void PushDuplicate();
 		/** add an element on parse stack : keep color, but change current character_set */

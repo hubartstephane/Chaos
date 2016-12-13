@@ -138,7 +138,7 @@ protected:
     chaos::TextParseResult parse_result;
 
 
-    parser.ParseText("Hello[RED world\nto[button]to]", &sprite_manager, &parse_result, parse_params);
+    parser.ParseText("HelloyYjg[RED world\n    to[button]to]", &sprite_manager, &parse_result, parse_params);
 
     return true;
   }

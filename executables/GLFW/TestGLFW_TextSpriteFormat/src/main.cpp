@@ -27,29 +27,29 @@
 #if 0
 int operator ()(std::string const & a, std::string const & b) const
 {
-	char const * s1 = a.c_str();
-	char const * s2 = b.c_str();
+  char const * s1 = a.c_str();
+  char const * s2 = b.c_str();
 
-	if (s1 == nullptr)
-		return (s2 == nullptr)? 0 : -1;
-	if (s2 == nullptr)
-		return +1;
+  if (s1 == nullptr)
+    return (s2 == nullptr) ? 0 : -1;
+  if (s2 == nullptr)
+    return +1;
 
-	int  i  = 0;
-	char c1 = toupper(s1[i]);
-	char c2 = toupper(s2[i]);			
-	while (c1 != 0 && c2 != 0)
-	{
-		if (c1 != c2)
-			return (c1 > c2)? +1 : -1;				
-		++i;				
-		c1 = toupper(s1[i]);
-		c2 = toupper(s2[i]);
-	}
+  int  i = 0;
+  char c1 = toupper(s1[i]);
+  char c2 = toupper(s2[i]);
+  while (c1 != 0 && c2 != 0)
+  {
+    if (c1 != c2)
+      return (c1 > c2) ? +1 : -1;
+    ++i;
+    c1 = toupper(s1[i]);
+    c2 = toupper(s2[i]);
+  }
 
-	if (c1 == c2)
-		return 0;
-	return (c1 > c2)? +1 : -1;	
+  if (c1 == c2)
+    return 0;
+  return (c1 > c2) ? +1 : -1;
 }
 #endif
 
@@ -133,12 +133,15 @@ protected:
     parser.AddBitmap("BUTTON", atlas.GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
 
     chaos::TextParseParams parse_params;
-    parse_params.position      = glm::vec2(0.0f, 0.0f);
-	parse_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
+    parse_params.character_height = 64.0f;
+    parse_params.position = glm::vec2(0.0f, 0.0f);
+    parse_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
+    parse_params.character_spacing = 0.0f;
+    parse_params.line_spacing = 0.0f;
     chaos::TextParseResult parse_result;
 
 
-    parser.ParseText("HelloyYjg[RED world\n    to[button]to]", &sprite_manager, &parse_result, parse_params);
+    parser.ParseText("Hello[button] aaBLyYjg[RED world\n    to[button]to]", &sprite_manager, &parse_result, parse_params);
 
     return true;
   }

@@ -39,6 +39,15 @@ protected:
     T value;
   };
 
+  class UniformProviderVisitor
+  {
+  public:
+
+	  virtual void Visit(){};
+
+  
+  };
+
 public:
 
   /** constructor */

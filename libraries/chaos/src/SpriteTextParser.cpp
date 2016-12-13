@@ -1,4 +1,5 @@
 #include <chaos/SpriteTextParser.h>
+#include <chaos/MathTools.h>
 
 namespace chaos
 {
@@ -23,7 +24,7 @@ namespace chaos
     BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
     if (result == nullptr)
     {
-      // for convinience, if we cannot find the character set, try to use the one on the top of the stack
+      // for convenience, if we cannot find the character set, try to use the one on the top of the stack
       if (parse_stack.size() > 0)
         result = parse_stack.back().character_set;
       // if we still have no character set, take the very first available
@@ -101,7 +102,30 @@ namespace chaos
     if (parse_result.size() == 0)
       parse_result.push_back(TextParseLine());
 
-    //token.character_set->
+	if (token.bitmap_entry != nullptr)
+	{
+		float factor = MathTools::CastAndDiv<float>(params.character_height, token.bitmap_entry->height);
+
+		token.position = position;
+		token.size.x   = factor * (float)token.bitmap_entry->width;
+		token.size.y   = params.character_height;
+
+		position.x += token.size.x + params.character_spacing;	
+	}
+	else if (token.character_entry != nullptr)
+	{
+		float factor = MathTools::CastAndDiv<float>(params.character_height, token.character_set->glyph_height);
+
+		token.position = position + glm::vec2(
+			+(float)token.character_entry->bitmap_left, 
+			-(float)token.character_entry->bitmap_top);
+
+		//token.size.x = factor * (float)token.bitmap_entry->width;
+		//token.size.y = params.character_height;
+	}
+		
+
+
 
     token.character_entry->bitmap_left;
     token.character_entry->bitmap_top;
@@ -112,6 +136,18 @@ namespace chaos
     // insert the token in the list and decal current cursor
     token.position = position;
     ComputeTokenSize(token, params);
+
+
+
+	if (token.character_entry != nullptr)
+		token.size.x = ((float)token.character_entry->width) * (params.character_height / (float)token.character_entry->height);
+	else if (token.bitmap_entry != nullptr)
+		token.size.x = ((float)token.bitmap_entry->width) * (params.character_height / (float)token.bitmap_entry->height);
+	else
+		token.size.x = 0.0f;
+
+	token.size.y = params.character_height;
+
     
     parse_result.back().push_back(token);
     position.x += token.size.x + params.character_spacing;
@@ -345,7 +381,7 @@ namespace chaos
       {
         parse_data.EmitCharacters(' ', (params.tab_size < 1) ? 1 : params.tab_size, params);
       }
-      // if escape is set, simply display the incomming character no matter what it is (except \n \r \t)
+      // if escape is set, simply display the incoming character no matter what it is (except \n \r \t)
       else if (escape_character)
       {
         parse_data.EmitCharacters(c, 1, params);
@@ -435,7 +471,7 @@ namespace chaos
 
   bool TextParser::RemoveUselessWhitespaces(TextParserData & parse_data)
   {
-    // remove whitespaces at the end of lines
+    // remove whitespace at the end of lines
     for (auto & line : parse_data.parse_result)
       while (line.size() > 0 && line.back().type == TextParseToken::TOKEN_WHITESPACE)
         line.pop_back();
@@ -522,8 +558,8 @@ namespace chaos
     TextTokenGroup token_groups = GroupTokens(line);
 
     // rules
-    //   -an initial line may be splitted into multiples lines
-    //   -do not insert WHITESPACES at the begining of thoses new lines (except for the very first line maybe)
+    //   -an initial line may be split into multiples lines
+    //   -do not insert WHITESPACES at the beginning of those new lines (except for the very first line maybe)
 
     TextParseLine current_line;
     float x = 0.0f;
@@ -538,11 +574,11 @@ namespace chaos
 
       if (group_type == TextParseToken::TOKEN_WHITESPACE)
       {
-        if (parse_result.size() != initial_line_count) // this is an additionnal line
+        if (parse_result.size() != initial_line_count) // this is an additional line
           if (current_line.size() == 0)                // that have no previous entry : skip the group
             continue;
 
-        InsertAllTokensInLine(x, y, group, line, current_line); // insert all whitespaces in this line
+        InsertAllTokensInLine(x, y, group, line, current_line); // insert all whitespace in this line
       }
       else
       {

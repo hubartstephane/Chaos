@@ -111,7 +111,9 @@ namespace chaos
       token.size.x = factor * (float)token.character_entry->width;
       token.size.y = factor * (float)token.character_entry->height;
 
-      position.x += params.character_spacing + factor * (float)token.character_entry->advance.x;
+      position.x += params.character_spacing + factor * (float)(token.character_entry->advance.x);
+
+      //position.x += params.character_spacing + token.size.x;
     }
     parse_result.back().push_back(token);
   }

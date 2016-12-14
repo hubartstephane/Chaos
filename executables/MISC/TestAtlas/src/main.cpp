@@ -53,7 +53,8 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 
 void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
 {
-  boost::filesystem::path font_path = resources_path / "unispace bold italic.ttf";
+  boost::filesystem::path font_path1 = resources_path / "unispace bold italic.ttf";
+  boost::filesystem::path font_path2 = resources_path / "unispace.ttf";
 
   boost::filesystem::path dst_dir1 = dest_p / "AtlasResultFont";
   boost::filesystem::path dst_dir2 = dest_p / "AtlasResultFontReloaded";
@@ -62,8 +63,11 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
   chaos::BitmapAtlas::AtlasGenerator generator;
   chaos::BitmapAtlas::AtlasInput     input;
 
-  chaos::BitmapAtlas::CharacterSetInput * character_set =
-    input.AddCharacterSet("character_set1", nullptr, font_path.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+  chaos::BitmapAtlas::CharacterSetInput * character_set1 =
+    input.AddCharacterSet("character_set1", nullptr, font_path1.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+
+  chaos::BitmapAtlas::CharacterSetInput * character_set2 =
+    input.AddCharacterSet("character_set2", nullptr, font_path2.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
 
   chaos::BitmapAtlas::BitmapSetInput * bitmap_set =
     input.AddBitmapSet("bitmap_set1");

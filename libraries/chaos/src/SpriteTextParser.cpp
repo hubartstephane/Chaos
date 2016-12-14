@@ -298,12 +298,12 @@ namespace chaos
     // all steps to properly generate the result
     if (!GenerateLines(text, params, parse_data))
       return false;
-    //if (!RemoveUselessWhitespaces(parse_data))
-    //  return false;
+    if (!RemoveUselessWhitespaces(parse_data))
+      return false;
     if (!CutLines(params, parse_data))
       return false;
-    //if (!RemoveWhitespaces(parse_data))
-    //  return false;
+    if (!RemoveWhitespaces(parse_data))
+      return false;
     if (!JustifyLines(params, parse_data))
       return false;
     if (!MoveSpritesToHotpoint(params, parse_data))

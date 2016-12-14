@@ -87,6 +87,10 @@ namespace chaos
         result->release_face = release_face;
         result->glyph_width = params.glyph_width;
         result->glyph_height = params.glyph_height;
+        result->ascender = face->ascender / 64;
+        result->descender = face->descender / 64;
+        result->line_spacing = face->height / 64;
+        result->underline_position = face->underline_position / 64;
 
         // set font size
         FT_Error error = FT_Set_Pixel_Sizes(result->face, params.glyph_width, params.glyph_height);
@@ -469,6 +473,11 @@ namespace chaos
         character_set->tag = character_set_input->tag;
         character_set->glyph_width = character_set_input->glyph_width;
         character_set->glyph_height = character_set_input->glyph_height;
+        character_set->ascender = character_set_input->ascender;
+        character_set->descender = character_set_input->descender;
+        character_set->line_spacing = character_set_input->line_spacing;
+        character_set->underline_position = character_set_input->underline_position;
+        
         output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
 
         size_t count = character_set_input->elements.size();

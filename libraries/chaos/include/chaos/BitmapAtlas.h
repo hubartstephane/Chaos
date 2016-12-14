@@ -88,6 +88,14 @@ namespace chaos
       int glyph_width{ 0 };
       /** the glyph height */
       int glyph_height{ 0 };
+      /** the face ascender */
+      int ascender{ 0 };
+      /** the face descender */
+      int descender{ 0 };
+      /** distance between 2 lines */
+      int line_spacing{ 0 };
+      /** the position of the underline */
+      int underline_position{ 0 };
       /** the glyph contained in the character set */
       std::vector<CharacterEntry> elements;
     };

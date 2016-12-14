@@ -140,6 +140,8 @@
     ],
     "character_sets": [
         {
+            "ascender": 18,
+            "descender": -4,
             "elements": [
                 {
                     "advance_x": 24,
@@ -1262,10 +1264,14 @@
             ],
             "glyph_height": 32,
             "glyph_width": 32,
+            "line_spacing": 23,
             "name": "character_set1",
-            "tag": 0
+            "tag": 0,
+            "underline_position": -2
         },
         {
+            "ascender": 18,
+            "descender": -4,
             "elements": [
                 {
                     "advance_x": 24,
@@ -2388,8 +2394,10 @@
             ],
             "glyph_height": 32,
             "glyph_width": 32,
+            "line_spacing": 23,
             "name": "character_set2",
-            "tag": 0
+            "tag": 0,
+            "underline_position": -2
         }
     ]
 }

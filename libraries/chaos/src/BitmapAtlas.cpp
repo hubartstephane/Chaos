@@ -207,9 +207,13 @@ namespace chaos
       NamedObject const & named_entry = entry;
       SaveIntoJSON(named_entry, json_entry); // call 'super' method
 
-      json_entry["glyph_width"]  = entry.glyph_width;
+      json_entry["glyph_width"] = entry.glyph_width;
       json_entry["glyph_height"] = entry.glyph_height;
-      json_entry["elements"]     = nlohmann::json::array();
+      json_entry["ascender"] = entry.ascender;
+      json_entry["descender"] = entry.descender;
+      json_entry["line_spacing"] = entry.line_spacing;
+      json_entry["underline_position"] = entry.underline_position;
+      json_entry["elements"] = nlohmann::json::array();
       SaveIntoJSON(entry.elements, json_entry["elements"]);
     }
 
@@ -218,8 +222,12 @@ namespace chaos
       NamedObject & named_entry = entry;
       LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-      entry.glyph_width  = json_entry["glyph_width"];
+      entry.glyph_width = json_entry["glyph_width"];
       entry.glyph_height = json_entry["glyph_height"];
+      entry.ascender = json_entry["ascender"];
+      entry.descender = json_entry["descender"];
+      entry.line_spacing = json_entry["line_spacing"];
+      entry.underline_position = json_entry["underline_position"];
       LoadFromJSON(entry.elements, json_entry["elements"]);
     }
 

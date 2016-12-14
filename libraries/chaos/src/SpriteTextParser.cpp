@@ -104,6 +104,17 @@ namespace chaos
     {
       float factor = MathTools::CastAndDiv<float>(params.character_height, token.character_set->glyph_height);
 
+      //
+      //      +-------+ TOP = +25           example for 'y':
+      //      |       |                     ----------------
+      //      |   Y   |                     
+      //      |       |                            size for 'y' = 35    => BOTTOM_LEFT = TOP - HEIGHT                       
+      //  ----+-------+------- line = 0   
+      //      |       |                   
+      //      +-------+                   
+      //   BOTTOM_LEFT
+
+
       token.position = position + factor * glm::vec2(
         (float)(token.character_entry->bitmap_left),
         (float)(token.character_entry->bitmap_top - token.character_entry->height));

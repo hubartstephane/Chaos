@@ -136,7 +136,7 @@ protected:
 
 
     chaos::TextParseParams parse_params;
-    parse_params.character_height = 64.0f;
+    parse_params.character_height = 25;
     parse_params.character_set_name = "character_set1"; // the default character set
     parse_params.position = glm::vec2(0.0f, 0.0f);
     parse_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
@@ -145,7 +145,7 @@ protected:
     chaos::TextParseResult parse_result;
 
 
-    parser.ParseText("He llo[button] aaBLyYjg[RED world\n    to[button]to]\n[C2 Change[button]Charset 2\n[C1 Change[button]Charset 1]]\nRetour   Charset[button]normal", &sprite_manager, &parse_result, parse_params);
+    parser.ParseText("He llo[button]aaBLyYjg[RED world\n    to[button]to]\n[C2 Change[button]Charset 2\n[C1 Change[button]Charset 1]]\nRetour   Charset[button]normal", &sprite_manager, &parse_result, parse_params);
 
     return true;
   }

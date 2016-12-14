@@ -133,10 +133,12 @@ namespace chaos
 	void TextParserData::EndCurrentLine(TextParseParams const & params)
 	{
 		// update position
+		float delta_y = params.character_height + params.line_spacing;
+
 		bitmap_position.x = 0.0f;
-		bitmap_position.y -= params.character_height + params.line_spacing;
+		bitmap_position.y -= delta_y;
 		character_position.x = 0.0f;
-		character_position.y -= params.character_height + params.line_spacing;
+		character_position.y -= delta_y;
 		// if there was no line, insert the very first one ...
 		if (parse_result.size() == 0)
 			parse_result.push_back(TextParseLine());

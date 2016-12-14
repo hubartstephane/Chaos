@@ -126,8 +126,10 @@ namespace chaos
 
 		/** the atlas in used */
 		BitmapAtlas::AtlasBase const & atlas;
-		/** current line position */
-		glm::vec2 position{0.0f, 0.0f};
+		/** current line position for a bitmap */
+		glm::vec2 bitmap_position{0.0f, 0.0f};
+		/** current line position for a character */
+		glm::vec2 character_position{ 0.0f, 0.0f };
 		/** the result */
     TextParseResult parse_result;
 		/** the stack used for parsing */

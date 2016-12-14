@@ -105,8 +105,11 @@ namespace chaos
         // transforms each entry of the glyph map into a bitmap
         for (auto & glyph : glyph_cache)
         {
-          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, 32);
-          if (bitmap != nullptr)
+          int w = glyph.second.bitmap_glyph->bitmap.width;
+          int h = glyph.second.bitmap_glyph->bitmap.rows;
+
+          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, 32); 
+          if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The entry is still interesting                                          
           {
             char name[] = " ";
             sprintf_s(name, 2, "%c", glyph.first);

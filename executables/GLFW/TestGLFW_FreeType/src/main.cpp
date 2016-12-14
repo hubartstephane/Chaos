@@ -272,9 +272,9 @@ protected:
     else if ((index % TESTS_PER_FONT) == 1)
       bm = chaos::FontTools::GenerateImage(face, font_name[2], 32);
     else if ((index % TESTS_PER_FONT) == 2)
-      bm = chaos::FontTools::GenerateImage(face, "abcdefghijklmnopqrstuvwxyz", 32);
+      bm = chaos::FontTools::GenerateImage(face, "abcdefghijkl  mnopqrstuvwxyz", 32);
     else if ((index % TESTS_PER_FONT) == 3)
-      bm = chaos::FontTools::GenerateImage(face, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 32);
+      bm = chaos::FontTools::GenerateImage(face, "ABCDEFGHIJKL  MNOPQRSTUVWXYZ", 32);
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 

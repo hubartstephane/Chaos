@@ -84,10 +84,10 @@ namespace chaos
       /** gets an entry by its tag */
       CharacterEntry const * GetEntry(TagType tag) const;
 
-      /** the glyph width */
-      int glyph_width{ 0 };
-      /** the glyph height */
-      int glyph_height{ 0 };
+      /** the max bitmap size in the set */
+      int max_character_width{ 0 };
+      /** the max bitmap size in the set */
+      int max_character_height{ 0 };
       /** the face ascender */
       int ascender{ 0 };
       /** the face descender */
@@ -96,14 +96,14 @@ namespace chaos
       int line_spacing{ 0 };
       /** the position of the underline */
       int underline_position{ 0 };
-	  /** the min X of a glyph */
-	  int min_glyph_x{ 0 };
-	  /** the max X of a glyph */
-	  int max_glyph_x{ 0 };
-	  /** the min Y of a glyph  */
-	  int min_glyph_y{ 0 };
-	  /** the max Y of a glyph  */
-	  int max_glyph_y{ 0 };
+      /** the min X of a glyph */
+      int min_glyph_x{ 0 };
+      /** the max X of a glyph */
+      int max_glyph_x{ 0 };
+      /** the min Y of a glyph  */
+      int min_glyph_y{ 0 };
+      /** the max Y of a glyph  */
+      int max_glyph_y{ 0 };
 
       /** the glyph contained in the character set */
       std::vector<CharacterEntry> elements;
@@ -224,7 +224,7 @@ namespace chaos
     class Atlas : public AtlasBase
     {
       friend class AtlasGenerator;
-     
+
     public:
 
       /** the clearing method */

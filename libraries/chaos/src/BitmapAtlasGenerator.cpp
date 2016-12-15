@@ -85,18 +85,18 @@ namespace chaos
         result->face = face;
         result->release_library = release_library;
         result->release_face = release_face;
-        result->glyph_width = params.glyph_width;
-        result->glyph_height = params.glyph_height;		
-		result->ascender = face->ascender / 64;
+        result->max_character_width = params.max_character_width;
+        result->max_character_height = params.max_character_height;
+        result->ascender = face->ascender / 64;
         result->descender = face->descender / 64;
         result->line_spacing = face->height / 64;
         result->underline_position = face->underline_position / 64;
-		result->min_glyph_x = face->bbox.xMin / 64;
-		result->max_glyph_x = face->bbox.xMax / 64;
-		result->min_glyph_y = face->bbox.yMin / 64;
-		result->max_glyph_y = face->bbox.yMax / 64;
+        result->min_glyph_x = face->bbox.xMin / 64;
+        result->max_glyph_x = face->bbox.xMax / 64;
+        result->min_glyph_y = face->bbox.yMin / 64;
+        result->max_glyph_y = face->bbox.yMax / 64;
         // set font size
-        FT_Error error = FT_Set_Pixel_Sizes(result->face, params.glyph_width, params.glyph_height);
+        FT_Error error = FT_Set_Pixel_Sizes(result->face, params.max_character_width, params.max_character_height);
         if (error != 0)
         {
           delete(result);
@@ -115,23 +115,23 @@ namespace chaos
           int w = glyph.second.bitmap_glyph->bitmap.width;
           int h = glyph.second.bitmap_glyph->bitmap.rows;
 
-          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, 32); 
+          FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, 32);
           if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The entry is still interesting                                          
           {
             char name[] = " ";
             sprintf_s(name, 2, "%c", glyph.first);
 
             CharacterEntryInput entry;
-            entry.name           = name;
-            entry.tag            = glyph.first;
-            entry.width          = (int)FreeImage_GetWidth(bitmap);
-            entry.height         = (int)FreeImage_GetHeight(bitmap);
-            entry.bpp            = (int)FreeImage_GetBPP(bitmap);
-            entry.bitmap         = bitmap;
+            entry.name = name;
+            entry.tag = glyph.first;
+            entry.width = (int)FreeImage_GetWidth(bitmap);
+            entry.height = (int)FreeImage_GetHeight(bitmap);
+            entry.bpp = (int)FreeImage_GetBPP(bitmap);
+            entry.bitmap = bitmap;
             entry.release_bitmap = true;
-            entry.advance        = glyph.second.advance;
-            entry.bitmap_left    = glyph.second.bitmap_left;
-            entry.bitmap_top     = glyph.second.bitmap_top;
+            entry.advance = glyph.second.advance;
+            entry.bitmap_left = glyph.second.bitmap_left;
+            entry.bitmap_top = glyph.second.bitmap_top;
             result->elements.push_back(entry);
           }
         }
@@ -422,11 +422,11 @@ namespace chaos
             if (entry->bitmap_index != i)
               continue;
 
-						// beware, according to FreeImage, the coordinate origin is top-left
-						// to match with OpenGL (bottom-left), we have to make a swap
-						int tex_x = entry->x;
-						int tex_y = params.atlas_height - entry->y - entry->height;
-						FreeImage_Paste(bitmap.get(), entry_input->bitmap, tex_x, tex_y, 255);
+            // beware, according to FreeImage, the coordinate origin is top-left
+            // to match with OpenGL (bottom-left), we have to make a swap
+            int tex_x = entry->x;
+            int tex_y = params.atlas_height - entry->y - entry->height;
+            FreeImage_Paste(bitmap.get(), entry_input->bitmap, tex_x, tex_y, 255);
           }
           result.push_back(std::move(bitmap));
         }
@@ -474,18 +474,18 @@ namespace chaos
         CharacterSet * character_set = new CharacterSet;
         character_set->name = character_set_input->name;
         character_set->tag = character_set_input->tag;
-        character_set->glyph_width = character_set_input->glyph_width;
-        character_set->glyph_height = character_set_input->glyph_height;
+        character_set->max_character_width = character_set_input->max_character_width;
+        character_set->max_character_height = character_set_input->max_character_height;
         character_set->ascender = character_set_input->ascender;
         character_set->descender = character_set_input->descender;
         character_set->line_spacing = character_set_input->line_spacing;
         character_set->underline_position = character_set_input->underline_position;
 
-		character_set->min_glyph_x = character_set_input->min_glyph_x;
-		character_set->max_glyph_x = character_set_input->max_glyph_x;
-		character_set->min_glyph_y = character_set_input->min_glyph_y;
-		character_set->max_glyph_y = character_set_input->max_glyph_y;
-        
+        character_set->min_glyph_x = character_set_input->min_glyph_x;
+        character_set->max_glyph_x = character_set_input->max_glyph_x;
+        character_set->min_glyph_y = character_set_input->min_glyph_y;
+        character_set->max_glyph_y = character_set_input->max_glyph_y;
+
         output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
 
         size_t count = character_set_input->elements.size();

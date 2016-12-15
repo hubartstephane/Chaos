@@ -691,13 +691,9 @@ namespace chaos
             float whitespace_width = 0.0f;
             for (TextParseToken const & token : line)
             {
-              whitespace_width = max(whitespace_width, token.size.x);
-              
+              whitespace_width = max(whitespace_width, token.size.x); // considere that the widdest character is a reference for whitespace size
               if (token.type == TextParseToken::TOKEN_WHITESPACE)
-              {
-                //whitespace_width = token.size.x;
                 ++whitespace_count;
-              }
             }
             // no whitespace, we cannot redistribute extra size => next line
             if (whitespace_count == 0)
@@ -706,8 +702,8 @@ namespace chaos
             // count how much space must be redistributed for each whitespace
             float extra_whitespace_width = MathTools::CastAndDiv<float>(W1 - W2, whitespace_count);
 
-            static float const FACTOR_LIMIT = 2.0f; // new whitespace cannot be X time greater than initial one
-            
+            // new whitespace cannot be X time greater than initial one
+            static float const FACTOR_LIMIT = 2.0f;             
             if ((whitespace_width + extra_whitespace_width) > FACTOR_LIMIT * whitespace_width) // => else ignore
               continue;
 

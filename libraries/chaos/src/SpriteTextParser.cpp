@@ -131,10 +131,13 @@ namespace chaos
       //      +-------+                   
       //   BOTTOM_LEFT
 
+      //          x factor 1                    x factor 2
+      // ATLAS =================> FREE_TYPE =================> SPRITE
+      //
 
-			token.position = character_position + factor * glm::vec2(
-				(float)(token.character_entry->bitmap_left),
-				(float)(token.character_entry->bitmap_top - token.character_entry->height));
+			token.position = character_position + glm::vec2(
+				(float)(token.character_entry->bitmap_left * factor),
+				(float)(token.character_entry->bitmap_top * factor - token.character_entry->height * factor));
 
 			token.size.x = factor * (float)token.character_entry->width;
 			token.size.y = factor * (float)token.character_entry->height;
@@ -333,11 +336,11 @@ namespace chaos
 		if (!RemoveUselessWhitespaces(parse_data))
 			return false;
 		if (!CutLines(params, parse_data))
-			return false;
-		if (!RemoveWhitespaces(parse_data))
-			return false;
+			return false;		
 		if (!JustifyLines(params, parse_data))
 			return false;
+    if (!RemoveWhitespaces(parse_data))
+      return false;
 		if (!MoveSpritesToHotpoint(params, parse_data))
 			return false;
 
@@ -416,39 +419,74 @@ namespace chaos
 		return true;
 	}
 
-	void TextParser::GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const
-	{
-		min_position.x = std::numeric_limits<float>::max();
-		min_position.y = std::numeric_limits<float>::max();
-		max_position.x = -std::numeric_limits<float>::max();
-		max_position.y = -std::numeric_limits<float>::max();
+  bool TextParser::GetBoundingBox(TextParseLine const & parse_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const
+  {
+    min_line_position.x = min_line_position.y = std::numeric_limits<float>::max();
+    max_line_position.x = max_line_position.y = -std::numeric_limits<float>::max();
 
-		for (auto const & line : parse_result)
-		{
-			for (TextParseToken const & token : line)
-			{
-				min_position = glm::min(min_position, token.position);
-				max_position = glm::max(max_position, token.position + token.size);
-			}
-		}
+    if (parse_line.size() == 0)
+      return false;
+
+    for (TextParseToken const & token : parse_line)
+    {
+      min_line_position = glm::min(min_line_position, token.position);
+      max_line_position = glm::max(max_line_position, token.position + token.size);
+    }
+    return true;
+  }
+
+	bool TextParser::GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const
+	{
+    bool result = false;
+    if (parse_result.size() > 0)
+    {
+      min_position.x = min_position.y = std::numeric_limits<float>::max();
+      max_position.x = max_position.y = -std::numeric_limits<float>::max();
+
+      for (auto const & line : parse_result)
+      {
+        glm::vec2 min_line_position;
+        glm::vec2 max_line_position;
+        if (GetBoundingBox(line, min_line_position, max_line_position))
+        {
+          min_position = glm::min(min_position, min_line_position);
+          max_position = glm::max(max_position, max_line_position);
+          result = true;
+        }
+      }
+    }
+    return result;
 	}
+
+  void TextParser::MoveSprites(TextParseLine & parse_line, glm::vec2 const & offset)
+  {
+    if (offset.x != 0.0f || offset.y != 0.0f)
+      for (TextParseToken & token : parse_line)
+        token.position += offset;
+  }
+
+  void TextParser::MoveSprites(TextParseResult & parse_result, glm::vec2 const & offset)
+  {
+    if (offset.x != 0.0f || offset.y != 0.0f)
+      for (auto & line : parse_result)
+        for (TextParseToken & token : line)
+          token.position += offset;
+  }
 
 	bool TextParser::MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data)
 	{
 		// compute the min/max bounding box
 		glm::vec2 min_position;
 		glm::vec2 max_position;
-		GetBoundingBox(parse_data.parse_result, min_position, max_position);
+    if (!GetBoundingBox(parse_data.parse_result, min_position, max_position)) // no sprite, nothing to do
+      return true;
 
 		// displace all the sprites to match the position
 		glm::vec2 offset =
 			params.position -
 			Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, params.hotpoint_type);
 
-		if (offset.x != 0.0f || offset.y != 0.0f)
-			for (auto & line : parse_data.parse_result)
-				for (TextParseToken & token : line)
-					token.position += offset;
+    MoveSprites(parse_data.parse_result, offset);
 
 		return true;
 	}
@@ -620,8 +658,71 @@ namespace chaos
 
 	bool TextParser::JustifyLines(TextParseParams const & params, TextParserData & parse_data)
 	{
+    if (params.alignment == TextParseParams::ALIGN_LEFT)
+      return true;
 
+    glm::vec2 min_position;
+    glm::vec2 max_position;
+    if (!GetBoundingBox(parse_data.parse_result, min_position, max_position)) // nothing to do for empty sprite
+      return true;
 
+    float W1 = max_position.x - min_position.x;
+    for (TextParseLine & line : parse_data.parse_result)
+    {
+      glm::vec2 min_line_position;
+      glm::vec2 max_line_position;
+      if (GetBoundingBox(line, min_line_position, max_line_position))
+      {
+        float W2 = max_line_position.x - min_line_position.x;
+        if (params.alignment == TextParseParams::ALIGN_RIGHT)
+        {
+          MoveSprites(line, glm::vec2(W1 - W2, 0.0f));
+        }
+        else if (params.alignment == TextParseParams::ALIGN_CENTER)
+        {
+          MoveSprites(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
+        }
+        else if (params.alignment == TextParseParams::ALIGN_JUSTIFY)
+        {
+          if (W1 != W2)
+          {
+            // count the number of whitespace token
+            int   whitespace_count = 0;
+            float whitespace_width = 0.0f;
+            for (TextParseToken const & token : line)
+            {
+              whitespace_width = max(whitespace_width, token.size.x);
+              
+              if (token.type == TextParseToken::TOKEN_WHITESPACE)
+              {
+                //whitespace_width = token.size.x;
+                ++whitespace_count;
+              }
+            }
+            // no whitespace, we cannot redistribute extra size => next line
+            if (whitespace_count == 0)
+              continue; 
+
+            // count how much space must be redistributed for each whitespace
+            float extra_whitespace_width = MathTools::CastAndDiv<float>(W1 - W2, whitespace_count);
+
+            static float const FACTOR_LIMIT = 2.0f; // new whitespace cannot be X time greater than initial one
+            
+            if ((whitespace_width + extra_whitespace_width) > FACTOR_LIMIT * whitespace_width) // => else ignore
+              continue;
+
+            // redistribute extra space
+            float offset = 0.0f;
+            for (TextParseToken & token : line)
+            {
+              token.position.x += offset;
+              if (token.type == TextParseToken::TOKEN_WHITESPACE)
+                offset += extra_whitespace_width;
+            }
+          }
+        }
+      }
+    }    
 		return true;
 	}
 

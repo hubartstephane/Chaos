@@ -161,9 +161,6 @@ namespace chaos
 		/** the main method to parse a text */
 		bool ParseText(char const * text, SpriteManager * sprite_manager = nullptr, TextParseResult * parse_result = nullptr, TextParseParams const & params = TextParseParams());
 
-    /** compute the bounding box for all sprite generated */
-    void GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
-
   protected:
 
 		/** get a color by its name */
@@ -198,6 +195,16 @@ namespace chaos
 		bool GenerateSprites(SpriteManager * sprite_manager, TextParseParams const & params, TextParserData & parse_data);
 		/** group tokens */
     TextTokenGroup GroupTokens(TextParseLine const & line);
+
+
+    /** compute the bounding box for all sprite generated */
+    bool GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
+    /** compute the bounding box for a single line */
+    bool GetBoundingBox(TextParseLine const & parse_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
+    /** move all sprites in a line */
+    void MoveSprites(TextParseLine & parse_line, glm::vec2 const & offset);
+    /** move all sprites */
+    void MoveSprites(TextParseResult & parse_result, glm::vec2 const & offset);
 
 	public:
 

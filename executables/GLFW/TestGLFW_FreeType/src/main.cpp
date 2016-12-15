@@ -133,6 +133,10 @@ protected:
     std::cout << "max_advance_width  : " << face->max_advance_width << std::endl;
     std::cout << "max_advance_height : " << face->max_advance_height << std::endl;
     std::cout << "num_charmaps       : " << face->num_charmaps << std::endl;
+	std::cout << "min_glyph_x        : " << face->bbox.xMin << std::endl;
+	std::cout << "max_glyph_x        : " << face->bbox.xMax << std::endl;
+	std::cout << "min_glyph_y        : " << face->bbox.yMin << std::endl;
+	std::cout << "max_glyph_y        : " << face->bbox.yMax << std::endl;
 
     if (FT_HAS_VERTICAL(face))
       face = face;

@@ -17,8 +17,8 @@ namespace chaos
     static const int ALIGN_CENTER = 2;
     static const int ALIGN_JUSTIFY = 3;
 
-    /** the size to use for the characters */
-    float character_height{ 32.0f };
+    /** the size to use for the line */
+    float line_height{ 32.0f };
     /** spacing between lines */
     float line_spacing{5.0f};
     /** spacing between characters */

@@ -92,18 +92,20 @@ namespace chaos
 
 		if (token.bitmap_entry != nullptr)
 		{
-			float factor = MathTools::CastAndDiv<float>(params.character_height, token.bitmap_entry->height);
-
+			float factor = MathTools::CastAndDiv<float>(params.line_height, token.bitmap_entry->height);
+					
 			token.position = bitmap_position;
 			token.size.x = factor * (float)token.bitmap_entry->width;
-			token.size.y = params.character_height;
+			token.size.y = params.line_height;
 
 			bitmap_position.x    += token.size.x + params.character_spacing;
 			character_position.x += token.size.x + params.character_spacing;
 		}
 		else if (token.character_entry != nullptr)
 		{
-			float factor = MathTools::CastAndDiv<float>(params.character_height, token.character_set->glyph_height);
+			float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->glyph_height);
+
+			//float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
 
 			//
 			//      +-------+ TOP = +25           example for 'y':
@@ -133,7 +135,7 @@ namespace chaos
 	void TextParserData::EndCurrentLine(TextParseParams const & params)
 	{
 		// update position
-		float delta_y = params.character_height + params.line_spacing;
+		float delta_y = params.line_height + params.line_spacing;
 
 		bitmap_position.x = 0.0f;
 		bitmap_position.y -= delta_y;
@@ -503,7 +505,7 @@ namespace chaos
 				if (line.size() != 0)
 					CutOneLine(y, line, parse_result, params, parse_data);
 				// update the y position of characters
-				y -= params.character_height + params.line_spacing;
+				y -= params.line_height + params.line_spacing;
 			}
 			parse_data.parse_result = std::move(parse_result); // replace the line after filtering
 		}
@@ -523,7 +525,7 @@ namespace chaos
 	void TextParser::FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & parse_result, TextParseParams const & params)
 	{
 		x = 0.0f;
-		y += params.character_height;
+		y += params.line_height;
 
 		parse_result.push_back(std::move(current_line));
 		current_line = TextParseLine();

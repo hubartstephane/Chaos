@@ -130,6 +130,14 @@ namespace chaos
       int        line_spacing{ 0 };
       /** the position of the underline */
       int        underline_position{ 0 };
+	  /** the min X of a glyph */
+	  int        min_glyph_x{ 0 };
+	  /** the max X of a glyph */
+	  int        max_glyph_x{ 0 };
+	  /** the min Y of a glyph  */
+	  int        min_glyph_y{ 0 };
+	  /** the max Y of a glyph  */
+	  int        max_glyph_y{ 0 };
 
       /** the bitmaps composing the set */
       std::vector<CharacterEntryInput> elements;

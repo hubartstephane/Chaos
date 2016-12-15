@@ -136,7 +136,7 @@ protected:
 
 
     chaos::TextParseParams parse_params;
-    parse_params.character_height = 25;
+    parse_params.line_height = 25;
     parse_params.character_set_name = "character_set1"; // the default character set
     parse_params.position = glm::vec2(0.0f, 0.0f);
     parse_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;

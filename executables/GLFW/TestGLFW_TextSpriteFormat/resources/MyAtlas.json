@@ -1265,6 +1265,10 @@
             "glyph_height": 32,
             "glyph_width": 32,
             "line_spacing": 23,
+            "max_glyph_x": 15,
+            "max_glyph_y": 18,
+            "min_glyph_x": 0,
+            "min_glyph_y": -4,
             "name": "character_set1",
             "tag": 0,
             "underline_position": -2
@@ -2395,6 +2399,10 @@
             "glyph_height": 32,
             "glyph_width": 32,
             "line_spacing": 23,
+            "max_glyph_x": 11,
+            "max_glyph_y": 18,
+            "min_glyph_x": 0,
+            "min_glyph_y": -4,
             "name": "character_set2",
             "tag": 0,
             "underline_position": -2

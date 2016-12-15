@@ -213,6 +213,11 @@ namespace chaos
       json_entry["descender"] = entry.descender;
       json_entry["line_spacing"] = entry.line_spacing;
       json_entry["underline_position"] = entry.underline_position;
+	  json_entry["min_glyph_x"] = entry.min_glyph_x;
+	  json_entry["max_glyph_x"] = entry.max_glyph_x;
+	  json_entry["min_glyph_y"] = entry.min_glyph_y;
+	  json_entry["max_glyph_y"] = entry.max_glyph_y;
+
       json_entry["elements"] = nlohmann::json::array();
       SaveIntoJSON(entry.elements, json_entry["elements"]);
     }
@@ -228,6 +233,10 @@ namespace chaos
       entry.descender = json_entry["descender"];
       entry.line_spacing = json_entry["line_spacing"];
       entry.underline_position = json_entry["underline_position"];
+	  entry.min_glyph_x = json_entry["min_glyph_x"];
+	  entry.max_glyph_x = json_entry["max_glyph_x"];
+	  entry.min_glyph_y = json_entry["min_glyph_y"];
+	  entry.max_glyph_y = json_entry["max_glyph_y"];
       LoadFromJSON(entry.elements, json_entry["elements"]);
     }
 

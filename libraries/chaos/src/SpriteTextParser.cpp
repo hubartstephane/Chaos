@@ -691,12 +691,13 @@ namespace chaos
             float whitespace_width = 0.0f;
             for (TextParseToken const & token : line)
             {
-              whitespace_width = max(whitespace_width, token.size.x); // considere that the widdest character is a reference for whitespace size
-              if (token.type == TextParseToken::TOKEN_WHITESPACE)
+              if (token.type == TextParseToken::TOKEN_CHARACTER)              
+                whitespace_width = max(whitespace_width, token.size.x); // considere that the widdest character is a reference for whitespace size
+              else if (token.type == TextParseToken::TOKEN_WHITESPACE)
                 ++whitespace_count;
             }
             // no whitespace, we cannot redistribute extra size => next line
-            if (whitespace_count == 0)
+            if (whitespace_count == 0 || whitespace_width == 0.0f)
               continue; 
 
             // count how much space must be redistributed for each whitespace

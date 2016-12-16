@@ -52,10 +52,10 @@ protected:
 
     chaos::GLProgramUniformProvider uniform_provider;
 
-    uniform_provider.AddUniform("projection",      projection);
-    uniform_provider.AddUniform("world_to_camera", world_to_camera);
-    uniform_provider.AddUniform("local_to_world",  local_to_world);
-    uniform_provider.AddUniform("texture_slice",   (float)texture_slice);
+    uniform_provider.AddUniformValue("projection",      projection);
+    uniform_provider.AddUniformValue("world_to_camera", world_to_camera);
+    uniform_provider.AddUniformValue("local_to_world",  local_to_world);
+    uniform_provider.AddUniformValue("texture_slice",   (float)texture_slice);
     uniform_provider.AddTexture("material", texture);
 
     program_data.BindUniforms(&uniform_provider);

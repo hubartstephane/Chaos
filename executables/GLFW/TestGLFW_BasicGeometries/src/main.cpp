@@ -158,10 +158,10 @@ protected:
     glUseProgram(program->GetResourceID());
 
     chaos::GLProgramUniformProvider uniform_provider;
-    uniform_provider.AddUniform("projection", ctx.projection);
-    uniform_provider.AddUniform("world_to_camera", ctx.world_to_camera);
-    uniform_provider.AddUniform("local_to_world", prim_ctx.local_to_world);
-    uniform_provider.AddUniform("color", prim_ctx.color);
+    uniform_provider.AddUniformValue("projection", ctx.projection);
+    uniform_provider.AddUniformValue("world_to_camera", ctx.world_to_camera);
+    uniform_provider.AddUniformValue("local_to_world", prim_ctx.local_to_world);
+    uniform_provider.AddUniformValue("color", prim_ctx.color);
     program_data.BindUniforms(&uniform_provider);
   }
 

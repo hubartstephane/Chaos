@@ -92,7 +92,7 @@ namespace chaos
                                                                                               // see BitmapFontTextMeshBuilder
 
     GLProgramUniformProvider uniform_provider;
-    uniform_provider.AddUniform("position_factor", glm::vec2(factor_x, factor_y));
+    uniform_provider.AddUniformValue("position_factor", glm::vec2(factor_x, factor_y));
     uniform_provider.AddTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);
 

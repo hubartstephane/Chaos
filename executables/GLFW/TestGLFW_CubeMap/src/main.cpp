@@ -155,7 +155,7 @@ protected:
       
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
-    chaos::GLProgramUniformProvider uniform_provider;
+    chaos::GLProgramUniformProviderChain uniform_provider;
 
     uniform_provider.AddUniformValue("projection",      projection_matrix);
     uniform_provider.AddUniformValue("local_to_world",  local_to_world_matrix);

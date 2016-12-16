@@ -42,19 +42,19 @@ namespace chaos
 
 
 	/**
-	* GLProgramUniformProvider : used to fill GLProgram binding for uniforms
+	* GLProgramUniformProviderChain : used to fill GLProgram binding for uniforms
 	*/
 
-	class GLProgramUniformProvider
+	class GLProgramUniformProviderChain
 	{
 
 	public:
 
 		/** constructor */
-		GLProgramUniformProvider(GLProgramUniformProvider * in_previous_provider = nullptr):
+		GLProgramUniformProviderChain(GLProgramUniformProviderChain * in_previous_provider = nullptr):
 			previous_provider(in_previous_provider) {}
 		/** destructor */
-		virtual ~GLProgramUniformProvider() = default;
+		virtual ~GLProgramUniformProviderChain() = default;
 		/** the main method */
 		bool BindUniform(GLUniformInfo const & uniform) const;
 		/** remove all uniforms for binding */
@@ -87,7 +87,7 @@ namespace chaos
 	protected:
 
 		/** responsability chain for providers */
-		GLProgramUniformProvider * previous_provider;
+		GLProgramUniformProviderChain * previous_provider;
 		/** the uniforms texture to be set */
 		std::map<std::string, boost::intrusive_ptr<Texture>> texture_map;
 		/** the uniforms to be set */

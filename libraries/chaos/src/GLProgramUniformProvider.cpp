@@ -3,7 +3,7 @@
 
 namespace chaos
 {
-  bool GLProgramUniformProvider::BindUniform(class GLUniformInfo const & uniform) const
+  bool GLProgramUniformProviderChain::BindUniform(class GLUniformInfo const & uniform) const
   {
     if (!BindUniformImpl(uniform))
       if (previous_provider != nullptr)
@@ -11,7 +11,7 @@ namespace chaos
     return false;
   }
 
-  bool GLProgramUniformProvider::BindUniformImpl(class GLUniformInfo const & uniform) const
+  bool GLProgramUniformProviderChain::BindUniformImpl(class GLUniformInfo const & uniform) const
   {
     // try textures
     auto texture_it = texture_map.find(uniform.name);

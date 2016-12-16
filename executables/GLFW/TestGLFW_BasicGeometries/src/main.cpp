@@ -157,7 +157,7 @@ protected:
 
     glUseProgram(program->GetResourceID());
 
-    chaos::GLProgramUniformProvider uniform_provider;
+    chaos::GLProgramUniformProviderChain uniform_provider;
     uniform_provider.AddUniformValue("projection", ctx.projection);
     uniform_provider.AddUniformValue("world_to_camera", ctx.world_to_camera);
     uniform_provider.AddUniformValue("local_to_world", prim_ctx.local_to_world);

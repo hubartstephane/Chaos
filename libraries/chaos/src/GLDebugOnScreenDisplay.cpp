@@ -91,7 +91,7 @@ namespace chaos
                                                                                               // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
                                                                                               // see BitmapFontTextMeshBuilder
 
-    GLProgramUniformProvider uniform_provider;
+	GLProgramUniformProviderChain uniform_provider;
     uniform_provider.AddUniformValue("position_factor", glm::vec2(factor_x, factor_y));
     uniform_provider.AddTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);

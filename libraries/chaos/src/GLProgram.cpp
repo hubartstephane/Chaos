@@ -25,7 +25,7 @@ namespace chaos
     }  
   }
 
-  bool GLProgram::UseProgram(class GLProgramUniformProvider * uniform_provider, class GLProgramAttributeProvider * attribute_provider)
+  bool GLProgram::UseProgram(class GLProgramUniformProviderChain * uniform_provider, class GLProgramAttributeProvider * attribute_provider)
   {
     if (!IsValid())
       return false;

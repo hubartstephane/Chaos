@@ -56,7 +56,7 @@ protected:
     uniform_provider.AddUniformValue("world_to_camera", world_to_camera);
     uniform_provider.AddUniformValue("local_to_world",  local_to_world);
     uniform_provider.AddUniformValue("texture_slice",   (float)texture_slice);
-    uniform_provider.AddTexture("material", texture);
+    uniform_provider.AddUniformTexture("material", texture);
 
     program_data.BindUniforms(&uniform_provider);
     

@@ -354,7 +354,7 @@ namespace chaos
     return true;
   }
 
-	void GLProgramData::BindUniforms(GLProgramUniformProviderChain const * provider) const
+	void GLProgramData::BindUniforms(GLProgramUniformProvider const * provider) const
 	{
 		if (provider != nullptr)
 		  for (GLUniformInfo const & uniform : uniforms)

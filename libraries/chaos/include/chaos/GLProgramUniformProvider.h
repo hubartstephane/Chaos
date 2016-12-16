@@ -8,90 +8,114 @@
 namespace chaos
 {
 
-	/** GLUniformProviderEntryBase : hold data to be send as uniform */
-	class GLUniformProviderEntryBase
-	{
-	public:
-		/** destructor */
-		virtual ~GLUniformProviderEntryBase() = default;
-		/** set uniform */
-		virtual bool BindUniform(GLUniformInfo const & uniform) = 0;
-	};
+  /**
+  * GLProgramUniformProvider : a base class for filling uniforms in a program
+  */
 
-	/** GLUniformProviderEntryValue : a typed specialization of GLUniformProviderEntryBase */
-	template<typename T>
-	class GLUniformProviderEntryValue : public GLUniformProviderEntryBase
-	{
-	public:
-		/** the constructor */
-		GLUniformProviderEntryValue(T const & in_value) : value(in_value) {}
-		/** setting the uniform */
-		virtual bool BindUniform(GLUniformInfo const & uniform) override { return uniform.SetUniform(value); }
-		/** the value to be set */
-		T value;
-	};
+  class GLProgramUniformProvider
+  {
+  public:
 
-	class UniformProviderVisitor
-	{
-	public:
+    /** destructor */
+    virtual ~GLProgramUniformProvider() = default;
+    /** the main method */
+    virtual bool BindUniform(GLUniformInfo const & uniform) const { return false; }
+  };
 
-		virtual void Visit(){};
+  /**
+  * GLProgramUniformProviderValue : used to fill GLProgram binding for uniforms with simple values
+  */
 
+  template<typename T>
+  class GLProgramUniformProviderValue : public GLProgramUniformProvider
+  {
+  public:
 
-	};
+    /** constructor */
+    GLProgramUniformProviderValue(char const * in_name, T const & in_value) :
+      name(in_name), value(in_value) {}
+    /** the main method */
+    virtual bool BindUniform(GLUniformInfo const & uniform) const 
+    { 
+      if (uniform.name != name)
+        return false; 
+      uniform.SetUniform(value);
+      return true;
+    }
+
+  protected:
+
+    /** the name of the uniform handled */
+    std::string name;
+    /** the value of the uniform */
+    T value;
+  };
+
+  /**
+  * GLProgramUniformProviderTexture : used to fill GLProgram binding for a texture
+  */
+
+  class GLProgramUniformProviderTexture : public GLProgramUniformProvider
+  {
+  public:
+
+    /** constructor */
+    GLProgramUniformProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
+      name(in_name), value(in_value) {}
+    /** the main method */
+    virtual bool BindUniform(GLUniformInfo const & uniform) const;
+
+  protected:
+
+    /** the name of the uniform handled */
+    std::string name;
+    /** the value of the uniform */
+    boost::intrusive_ptr<Texture> value;
+  };
 
 
 	/**
-	* GLProgramUniformProviderChain : used to fill GLProgram binding for uniforms
+	* GLProgramUniformProviderChain : used to fill GLProgram binding for multiple uniforms
 	*/
 
-	class GLProgramUniformProviderChain
+	class GLProgramUniformProviderChain : public GLProgramUniformProvider
 	{
 
 	public:
 
 		/** constructor */
-		GLProgramUniformProviderChain(GLProgramUniformProviderChain * in_previous_provider = nullptr):
-			previous_provider(in_previous_provider) {}
-		/** destructor */
-		virtual ~GLProgramUniformProviderChain() = default;
+		GLProgramUniformProviderChain(GLProgramUniformProvider * in_next_provider = nullptr):
+      next_provider(in_next_provider) {}
 		/** the main method */
-		bool BindUniform(GLUniformInfo const & uniform) const;
+		virtual bool BindUniform(GLUniformInfo const & uniform) const;
 		/** remove all uniforms for binding */
 		void Clear()
 		{
-			uniform_map.clear();
+      children_providers.clear();
 		}
 		/** register a uniform value */
 		template<typename T>
 		void AddUniformValue(char const * name, T const & value)
 		{
-			AddUniform(name, new GLUniformProviderEntryValue<T>(value));
-		}
-		/** register a uniform */
-		void AddUniform(char const * name, GLUniformProviderEntryBase * uniform)
-		{
-			uniform_map[name] = std::move(std::unique_ptr<GLUniformProviderEntryBase>(uniform));		
+			AddUniform(new GLProgramUniformProviderValue<T>(name, value));
 		}
 		/** register a texture as uniform */
-		void AddTexture(char const * name, boost::intrusive_ptr<class Texture> const & texture)
+		void AddUniformTexture(char const * name, boost::intrusive_ptr<class Texture> texture)
 		{
-			texture_map[name] = texture;
+      AddUniform(new GLProgramUniformProviderTexture(name, texture));
 		}
-
-	protected:
-
-		/** protected implementation of uniform binding */
-		virtual bool BindUniformImpl(GLUniformInfo const & uniform) const;
+    /** register a generic uniform */
+    void AddUniform(GLProgramUniformProvider * provider)
+    {
+      children_providers.push_back(std::move(std::unique_ptr<GLProgramUniformProvider>(provider)));
+    }
 
 	protected:
 
 		/** responsability chain for providers */
-		GLProgramUniformProviderChain * previous_provider;
-		/** the uniforms texture to be set */
-		std::map<std::string, boost::intrusive_ptr<Texture>> texture_map;
+		GLProgramUniformProvider * next_provider;
 		/** the uniforms to be set */
-		std::map<std::string, std::unique_ptr<GLUniformProviderEntryBase>> uniform_map;
+		std::vector<std::unique_ptr<GLProgramUniformProvider>> children_providers;
 	};
 
 }; // namespace chaos

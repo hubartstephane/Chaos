@@ -3,27 +3,27 @@
 
 namespace chaos
 {
-  bool GLProgramUniformProviderChain::BindUniform(class GLUniformInfo const & uniform) const
+
+  bool GLProgramUniformProviderTexture::BindUniform(GLUniformInfo const & uniform) const
   {
-    if (!BindUniformImpl(uniform))
-      if (previous_provider != nullptr)
-        return previous_provider->BindUniform(uniform);
-    return false;
+    if (uniform.name != name)
+      return false;
+    glBindTextureUnit(uniform.sampler_index, value->GetResourceID());
+    glUniform1i(uniform.location, uniform.sampler_index);
+    return true;
   }
 
-  bool GLProgramUniformProviderChain::BindUniformImpl(class GLUniformInfo const & uniform) const
+  bool GLProgramUniformProviderChain::BindUniform(class GLUniformInfo const & uniform) const
   {
-    // try textures
-    auto texture_it = texture_map.find(uniform.name);
-    if (texture_it != texture_map.end())
-      if (uniform.SetUniform(texture_it->second))
+    // handle children providers
+    size_t count = children_providers.size();
+    for (size_t i = 0; i < count; ++i)
+      if (children_providers[i]->BindUniform(uniform))
         return true;
-    // try uniforms
-    auto uniform_it = uniform_map.find(uniform.name);
-    if (uniform_it != uniform_map.end())
-      if (uniform_it->second->BindUniform(uniform))
-        return true;
-    // everything failed
+    // handle the next provider in the chain
+    if (next_provider != nullptr)
+      return next_provider->BindUniform(uniform);
+    // failure
     return false;
   }
 

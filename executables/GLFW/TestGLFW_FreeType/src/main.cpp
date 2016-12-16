@@ -39,7 +39,7 @@ protected:
     glUseProgram(program->GetResourceID());
          
     chaos::GLProgramUniformProviderChain uniform_provider;
-    uniform_provider.AddTexture("material", texture);
+    uniform_provider.AddUniformTexture("material", texture);
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
     program_data.BindUniforms(&uniform_provider);

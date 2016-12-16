@@ -161,7 +161,7 @@ protected:
     uniform_provider.AddUniformValue("local_to_world",  local_to_world_matrix);
     uniform_provider.AddUniformValue("world_to_camera", world_to_camera_matrix);
 
-    uniform_provider.AddTexture("material", texture);
+    uniform_provider.AddUniformTexture("material", texture);
 
     program_data.BindUniforms(&uniform_provider);
 

@@ -137,7 +137,7 @@ public:
     return true;  
   }
   /** try to bind all uniforms */
-  void BindUniforms(class GLProgramUniformProviderChain const * provider) const;
+  void BindUniforms(class GLProgramUniformProvider const * provider) const;
 
 protected:
 

@@ -93,7 +93,7 @@ namespace chaos
 
 	GLProgramUniformProviderChain uniform_provider;
     uniform_provider.AddUniformValue("position_factor", glm::vec2(factor_x, factor_y));
-    uniform_provider.AddTexture("material", texture);
+    uniform_provider.AddUniformTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);
 
     // The drawing   

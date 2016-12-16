@@ -56,7 +56,7 @@ namespace chaos
     /** add a sprite to be rendered */
     void AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
     /** Display the sprites */
-    void Display(GLProgramUniformProviderChain * uniform_provider);
+    void Display(GLProgramUniformProvider * uniform_provider);
     /** get the number of sprites in the buffer */
     int GetSpriteCount() const { return sprites.size() / 6;}
 

@@ -99,7 +99,7 @@ protected:
     uniform_provider.AddUniformValue("local_to_world",  local_to_world);
     uniform_provider.AddUniformValue("texture_slice", (float)entry->bitmap_index);
 
-    uniform_provider.AddTexture("material", atlas.GetTexture());
+    uniform_provider.AddUniformTexture("material", atlas.GetTexture());
 
     glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
 

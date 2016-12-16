@@ -164,7 +164,7 @@ namespace chaos
 	}
 
 
-	void SpriteManager::Display(GLProgramUniformProviderChain * uniform_provider)
+	void SpriteManager::Display(GLProgramUniformProvider * uniform_provider)
 	{
     if (sprites.size() == 0)
       return;
@@ -187,7 +187,7 @@ namespace chaos
     program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 	GLProgramUniformProviderChain main_uniform_provider(uniform_provider);
-    main_uniform_provider.AddTexture("material", atlas->GetTexture());
+    main_uniform_provider.AddUniformTexture("material", atlas->GetTexture());
 
     program_data.BindUniforms(&main_uniform_provider);
        

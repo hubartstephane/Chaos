@@ -96,14 +96,14 @@ namespace chaos
   protected:
 
     /** the GLProgramUniformAction interface */
-    virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) { return uniform.SetUniform(value); }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) { return uniform.SetUniform(value); }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) { return false; }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) { return uniform.SetUniform(value);}
-    virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) { return uniform.SetUniform(value);}
-    virtual bool DoProcess(char const * name, glm::mat4 const & value) { return uniform.SetUniform(value);}
-    virtual bool DoProcess(char const * name, glm::dmat4 const & value) { return uniform.SetUniform(value);}
-    virtual bool DoProcess(char const * name, Texture const * value) { return uniform.SetUniform(value);}
+    virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return uniform.SetUniform(value); }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return uniform.SetUniform(value); }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return uniform.SetUniform(value);}
+    virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return uniform.SetUniform(value);}
+    virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return uniform.SetUniform(value);}
+    virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return uniform.SetUniform(value);}
+    virtual bool DoProcess(char const * name, Texture const * value) override { return uniform.SetUniform(value);}
 
   protected:
 
@@ -111,17 +111,9 @@ namespace chaos
     GLUniformInfo const & uniform;
   };
 
-
-
-
-
-
-
-
-
-
-
-
+  /**
+   * GLProgramUniformGetValueAction : action used to get value for an uniform
+   */
 
   template<typename T>
   class GLProgramUniformGetValueAction : public GLProgramUniformAction
@@ -129,56 +121,72 @@ namespace chaos
   public:
 
     /** constructor */
-    GLProgramUniformGetValueAction(T & in_result_value, bool & in_result) :
-      result_value(in_result_value), result(in_result) {
-      result = false;
-    }
-
-
-
-#if 0
-
-
-    /** the main methods are conversion ones: we want to cast into T, the incomming values from Providers : glm::tvec1<...> => T */
-    virtual void Process(char const * name, glm::tvec1<GLfloat> const & value) // convert T
-    {
-      CastAndProcess<T>(result_value, result, value, GLMTools::IsVectorType<T>::type(), );
-    }
-
-
-
-
-
-    virtual void Process(char const * name, glm::tvec2<GLfloat> const & value) {}
-    virtual void Process(char const * name, glm::tvec3<GLfloat> const & value) {}
-    virtual void Process(char const * name, glm::tvec4<GLfloat> const & value) {}
-
-#endif
-
+    GLProgramUniformGetValueAction(T & in_result_value) : result_value(in_result_value) {}
 
   protected:
 
-#if 0
+    virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return ConvertAndGet(value); }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return ConvertAndGet(value); }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return ConvertAndGet(value); }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return ConvertAndGet(value); }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return ConvertAndGet(value); }
+    virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return ConvertAndGet(value); }
+    virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return ConvertAndGet(value); }
 
-    /** the default call is a failure */
-    template<typename U, typename V>
-    static void CastAndProcess(U & result_value, bool & result, V const & value)
+    virtual bool DoProcess(char const * name, Texture const * value) override
     {
-      result = false;
+
+      return false;
     }
 
-
+  
+        
+    template<typename U>
+    bool ConvertAndGet(U const & value)
     {
-
+      if (DoConvertAndGetVector(value, GLMTools::IsVectorType<T>::type(), GLMTools::IsVectorType<U>::type()))
+        return true;
+      if (DoConvertAndGetMatrix(value, GLMTools::IsMatrixType<T>::type(), GLMTools::IsMatrixType<U>::type()))
+        return true;
+      return false;
     }
-#endif
+
+    /** recasting vector into vector (type and arity) */
+    template<typename U, typename B1, typename B2>
+    bool DoConvertAndGetVector(U const & value, B1 b1, B2 b2) { return false; }
+
+    template<typename U>
+    bool DoConvertAndGetVector(U const & value, boost::mpl::true_, boost::mpl::true_)
+    { 
+      result_value = GLMTools::RecastVector<T>(value);
+      return true; 
+    }
+
+    /** recasting matrix into matrix (type and size) */
+    template<typename U, typename B1, typename B2>
+    bool DoConvertAndGetMatrix(U const & value, B1 b1, B2 b2) { return false; }
+
+    template<typename U>
+    bool DoConvertAndGetMatrix(U const & value, boost::mpl::true_, boost::mpl::true_)
+    {
+      
+      return true;
+    }
+
+    
+
+
+
+
+
+
+
+
 
   protected:
 
     /** the value we get */
     T & result_value;
-    /** whether the value is correctly be get */
-    bool & result;
   };
 
 
@@ -227,7 +235,7 @@ namespace chaos
       handled_name(in_name), value(in_value) {}
 
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const
+    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const override
     {
       if (handled_name != name)
         return false;
@@ -254,7 +262,7 @@ namespace chaos
     GLProgramUniformProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
       handled_name(in_name), value(in_value) {}
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const;
+    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const override;
 
   protected:
 
@@ -278,7 +286,7 @@ namespace chaos
 		GLProgramUniformProviderChain(GLProgramUniformProvider * in_next_provider = nullptr):
       next_provider(in_next_provider) {}
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const;
+    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const override;
 		/** remove all uniforms for binding */
 		void Clear()
 		{

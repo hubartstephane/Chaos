@@ -12,9 +12,6 @@ class MyGamepadManager : public chaos::MyGLFWGamepadManager
 {
 public:
 
-  MyGamepadManager():
-    debug_display(nullptr){}
-
   void SetDebugDisplay(chaos::GLDebugOnScreenDisplay * in_debug_display)
   {
     debug_display = in_debug_display;
@@ -47,14 +44,11 @@ protected:
 
 protected:
 
-  chaos::GLDebugOnScreenDisplay * debug_display;
+  chaos::GLDebugOnScreenDisplay * debug_display{ nullptr };
 };
 
 class MyGLFWWindowGamepadTest : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowGamepadTest(){}
 
 protected:
 

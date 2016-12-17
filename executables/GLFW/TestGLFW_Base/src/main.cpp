@@ -8,9 +8,6 @@
 
 class MyGLFWWindowTest : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowTest(){}
 
 protected:
 

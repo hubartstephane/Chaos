@@ -18,11 +18,6 @@
  
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1() : 
-    mipmap_level(0),
-    texture_index(0){}
 
 protected:
 
@@ -207,8 +202,8 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
 
-  int mipmap_level;
-  int texture_index;
+  int mipmap_level{ 0 };
+  int texture_index{ 0 };
 };
 
 

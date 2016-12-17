@@ -21,10 +21,6 @@
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1():
-    skybox_index(0){}
 
 protected:
 
@@ -268,7 +264,7 @@ protected:
 
   chaos::GLDebugOnScreenDisplay debug_display;
 
-  int skybox_index;
+  int skybox_index{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)

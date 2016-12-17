@@ -74,9 +74,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 public:
 
-  MyGLFWWindowOpenGLTest1() :
-    display_example(0),
-    clock(nullptr)
+  MyGLFWWindowOpenGLTest1()
   {
     SetExample(0);
   }
@@ -714,7 +712,7 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
   boost::intrusive_ptr<chaos::GLProgram>  program_sphere;
 
-  chaos::Clock * clock;
+  chaos::Clock * clock{ nullptr };
 
   chaos::box3 bigger_box;
   chaos::box3 smaller_box;
@@ -722,7 +720,7 @@ protected:
   chaos::sphere3 bigger_sphere;
   chaos::sphere3 smaller_sphere;
 
-  int    display_example;
+  int    display_example{ 0 };
 
   chaos::MyGLFWFpsCamera fps_camera;
 

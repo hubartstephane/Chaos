@@ -20,9 +20,6 @@
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-public:
-
-  MyGLFWWindowOpenGLTest1() : click_count(0){}
 
 protected:
 
@@ -107,7 +104,7 @@ protected:
 
   chaos::GLDebugOnScreenDisplay debug_display;
 
-  int click_count;
+  int click_count{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)

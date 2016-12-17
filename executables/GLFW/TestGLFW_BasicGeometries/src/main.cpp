@@ -17,7 +17,7 @@
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
 
 
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -155,7 +155,7 @@ protected:
 
     glUseProgram(program->GetResourceID());
 
-    chaos::GLProgramUniformProviderChain uniform_provider;
+    chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddUniformValue("projection", ctx.projection);
     uniform_provider.AddUniformValue("world_to_camera", ctx.world_to_camera);
     uniform_provider.AddUniformValue("local_to_world", prim_ctx.local_to_world);

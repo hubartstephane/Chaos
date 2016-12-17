@@ -109,7 +109,7 @@ namespace chaos
     primitives.clear();
   }
 
-  void SimpleMesh::Render(GLProgramData const & data, GLProgramAttributeProvider const * provider, int instance_count, int base_instance) const
+  void SimpleMesh::Render(GLProgramData const & data, GLProgramVariableProvider const * provider, int instance_count, int base_instance) const
   {
     assert(vertex_array != nullptr);
 

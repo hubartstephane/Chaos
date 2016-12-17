@@ -1,6 +1,5 @@
 ﻿#include <chaos/GLProgram.h>
-#include <chaos/GLProgramUniformProvider.h>
-#include <chaos/GLProgramAttributeProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
  
 namespace chaos
 {
@@ -25,7 +24,7 @@ namespace chaos
     }  
   }
 
-  bool GLProgram::UseProgram(class GLProgramUniformProvider * uniform_provider, class GLProgramAttributeProvider * attribute_provider)
+  bool GLProgram::UseProgram(class GLProgramVariableProvider * uniform_provider, class GLProgramVariableProvider * attribute_provider)
   {
     if (!IsValid())
       return false;

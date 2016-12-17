@@ -5,7 +5,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
 
 namespace chaos
 {	
@@ -91,7 +91,7 @@ namespace chaos
                                                                                               // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
                                                                                               // see BitmapFontTextMeshBuilder
 
-	GLProgramUniformProviderChain uniform_provider;
+	GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddUniformValue("position_factor", glm::vec2(factor_x, factor_y));
     uniform_provider.AddUniformTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);

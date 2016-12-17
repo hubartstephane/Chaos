@@ -4,7 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramData.h>
-#include <chaos/GLProgramAttributeProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/IndexBuffer.h>
@@ -60,7 +60,7 @@ namespace chaos
     /** clear the mesh */
     void Clear();
     /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-    void Render(GLProgramData const & data, GLProgramAttributeProvider const * provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+    void Render(GLProgramData const & data, GLProgramVariableProvider const * provider = nullptr, int instance_count = 0, int base_instance = 0) const;
     /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
     void FinalizeBindings(GLintptr vertex_buffer_offset = 0);
     /** offset the index or vertex position */

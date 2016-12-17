@@ -20,7 +20,7 @@ public:
   virtual void Release();
 
   /** use the program */
-  bool UseProgram(class GLProgramUniformProvider * uniform_provider, class GLProgramAttributeProvider * attribute_provider);
+  bool UseProgram(class GLProgramVariableProvider * uniform_provider, class GLProgramVariableProvider * attribute_provider);
 
   /** returns the GL name of the resource */
   GLuint GetResourceID() const { return program_id; }

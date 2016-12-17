@@ -19,7 +19,7 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -92,7 +92,7 @@ protected:
 
     glUseProgram(program_box->GetResourceID());
 
-    chaos::GLProgramUniformProviderChain uniform_provider;
+    chaos::GLProgramVariableProviderChain uniform_provider;
 
     uniform_provider.AddUniformValue("projection",      projection);
     uniform_provider.AddUniformValue("world_to_camera", world_to_camera);

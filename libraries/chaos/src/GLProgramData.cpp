@@ -2,8 +2,7 @@
 #include <chaos/LogTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLMTools.h>
-#include <chaos/GLProgramAttributeProvider.h>
-#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
 
 namespace chaos
 {
@@ -283,7 +282,7 @@ namespace chaos
     return true;
   }
 
-	void GLProgramData::BindUniforms(GLProgramUniformProvider const * provider) const
+	void GLProgramData::BindUniforms(GLProgramVariableProvider const * provider) const
 	{
 		if (provider != nullptr)
 		  for (GLUniformInfo const & uniform : uniforms)
@@ -506,7 +505,7 @@ namespace chaos
 		return -1;
 	}
 
-	void GLProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GLProgramAttributeProvider const * provider) const
+	void GLProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GLProgramVariableProvider const * provider) const
 	{
 		int vertex_size = declaration.GetVertexSize();
 

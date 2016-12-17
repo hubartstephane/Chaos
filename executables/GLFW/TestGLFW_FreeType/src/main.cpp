@@ -15,7 +15,7 @@
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/FontTools.h>
-#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
 
 static int const TESTS_PER_FONT = 4;
 
@@ -38,7 +38,7 @@ protected:
 
     glUseProgram(program->GetResourceID());
          
-    chaos::GLProgramUniformProviderChain uniform_provider;
+    chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddUniformTexture("material", texture);
 
     chaos::GLProgramData const & program_data = program->GetProgramData();

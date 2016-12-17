@@ -9,14 +9,14 @@
 namespace chaos
 {
   /**
-   * GLProgramUniformAction : base class action to be applyed to Providers
+   * GLProgramVariableAction : base class action to be applyed to Providers
    */
 
-  class GLProgramUniformAction
+  class GLProgramVariableAction
   {
   public:
 
-    virtual ~GLProgramUniformAction() = default;
+    virtual ~GLProgramVariableAction() = default;
 
     /** processing base scalar types */
     bool Process(char const * name, GLfloat value) { return Process(name, glm::tvec1<GLfloat>(value));}
@@ -83,19 +83,19 @@ namespace chaos
   };
 
   /**
-   * GLProgramUniformSetUniformAction : action used to initialize an uniform
+   * GLProgramVariableSetUniformAction : action used to initialize an uniform
    */
 
-  class GLProgramUniformSetUniformAction : public GLProgramUniformAction
+  class GLProgramVariableSetUniformAction : public GLProgramVariableAction
   {
   public:
 
     /** constructor */
-    GLProgramUniformSetUniformAction(GLUniformInfo const & in_uniform) : uniform(in_uniform) {}
+    GLProgramVariableSetUniformAction(GLUniformInfo const & in_uniform) : uniform(in_uniform) {}
 
   protected:
 
-    /** the GLProgramUniformAction interface */
+    /** the GLProgramVariableAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
@@ -112,19 +112,49 @@ namespace chaos
   };
 
   /**
-   * GLProgramUniformGetValueAction : action used to get value for an uniform
-   */
+  * GLProgramVariableSetUniformAction : action used to initialize an uniform
+  */
 
-  template<typename T>
-  class GLProgramUniformGetValueAction : public GLProgramUniformAction
+  class GLProgramVariableSetAttributeAction : public GLProgramVariableAction
   {
   public:
 
     /** constructor */
-    GLProgramUniformGetValueAction(T & in_result) : result(in_result) {}
+    GLProgramVariableSetAttributeAction(GLAttributeInfo const & in_attribute) : attribute(in_attribute) {}
 
   protected:
 
+    /** the GLProgramVariableAction interface */
+    virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return false; }
+    virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return false; }
+    virtual bool DoProcess(char const * name, Texture const * value) override { return false;}
+
+  protected:
+
+    /** the uniform to set */
+    GLAttributeInfo const & attribute;
+  };
+
+  /**
+   * GLProgramVariableGetValueAction : action used to get value for an uniform
+   */
+
+  template<typename T>
+  class GLProgramVariableGetValueAction : public GLProgramVariableAction
+  {
+  public:
+
+    /** constructor */
+    GLProgramVariableGetValueAction(T & in_result) : result(in_result) {}
+
+  protected:
+
+    /** main methods */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return ConvertAndGet(value); }
@@ -133,14 +163,9 @@ namespace chaos
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return ConvertAndGet(value); }
 
-    virtual bool DoProcess(char const * name, Texture const * value) override
-    {
-
-      return false;
-    }
-
+    virtual bool DoProcess(char const * name, Texture const * value) override { return false;} // texture not implemented
   
-        
+    /** the generic conversions methods */        
     template<typename U>
     bool ConvertAndGet(U const & value)
     {
@@ -180,47 +205,53 @@ namespace chaos
   };
 
   /**
-  * GLProgramUniformProvider : a base class for filling uniforms in a program. The purpose is to take responsability to start an ACTION
+  * GLProgramVariableProvider : a base class for filling uniforms in a program. The purpose is to take responsability to start an ACTION
   */
 
-  class GLProgramUniformProvider
+  class GLProgramVariableProvider
   {
   public:
 
     /** destructor */
-    virtual ~GLProgramUniformProvider() = default;
+    virtual ~GLProgramVariableProvider() = default;
     /** the main method : returns try whether tha action has been handled (even if failed) */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const { return false; }
+    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const { return false; }
 
     /** utility function that deserve to set uniform */
     bool BindUniform(GLUniformInfo const & uniform) const
     {
-      return ProcessAction(uniform.name.c_str(), GLProgramUniformSetUniformAction(uniform));
+      return ProcessAction(uniform.name.c_str(), GLProgramVariableSetUniformAction(uniform));
+    }
+
+    /** utility function that deserve to set attribute */
+    bool BindAttribute(GLAttributeInfo const & attribute) const
+    {
+      return ProcessAction(attribute.name.c_str(), GLProgramVariableSetAttributeAction(attribute));
     }
 
     /** get a value for the uniform */
     template<typename T>
     bool GetValue(char const * name, T & result) const
     {
-      return ProcessAction(name, GLProgramUniformGetValueAction<T>(result));
+      return ProcessAction(name, GLProgramVariableGetValueAction<T>(result));
     }
   };
 
   /**
-  * GLProgramUniformProviderValue : used to fill GLProgram binding for uniforms with simple values
+  * GLProgramVariableProviderValue : used to fill GLProgram binding for uniforms with simple values
   */
 
   template<typename T>
-  class GLProgramUniformProviderValue : public GLProgramUniformProvider
+  class GLProgramVariableProviderValue : public GLProgramVariableProvider
   {
   public:
 
     /** constructor */
-    GLProgramUniformProviderValue(char const * in_name, T const & in_value) :
+    GLProgramVariableProviderValue(char const * in_name, T const & in_value) :
       handled_name(in_name), value(in_value) {}
 
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const override
+    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const override
     {
       if (handled_name != name)
         return false;
@@ -236,18 +267,18 @@ namespace chaos
   };
 
   /**
-  * GLProgramUniformProviderTexture : used to fill GLProgram binding for a texture
+  * GLProgramVariableProviderTexture : used to fill GLProgram binding for a texture
   */
 
-  class GLProgramUniformProviderTexture : public GLProgramUniformProvider
+  class GLProgramVariableProviderTexture : public GLProgramVariableProvider
   {
   public:
 
     /** constructor */
-    GLProgramUniformProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
+    GLProgramVariableProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
       handled_name(in_name), value(in_value) {}
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const override;
+    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const override;
 
   protected:
 
@@ -257,21 +288,20 @@ namespace chaos
     boost::intrusive_ptr<Texture> value;
   };
 
-
 	/**
-	* GLProgramUniformProviderChain : used to fill GLProgram binding for multiple uniforms
+	* GLProgramVariableProviderChain : used to fill GLProgram binding for multiple uniforms
 	*/
 
-	class GLProgramUniformProviderChain : public GLProgramUniformProvider
+	class GLProgramVariableProviderChain : public GLProgramVariableProvider
 	{
 
 	public:
 
 		/** constructor */
-		GLProgramUniformProviderChain(GLProgramUniformProvider * in_next_provider = nullptr):
+		GLProgramVariableProviderChain(GLProgramVariableProvider * in_next_provider = nullptr):
       next_provider(in_next_provider) {}
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramUniformAction & action) const override;
+    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const override;
 		/** remove all uniforms for binding */
 		void Clear()
 		{
@@ -281,25 +311,25 @@ namespace chaos
 		template<typename T>
 		void AddUniformValue(char const * name, T const & value)
 		{
-			AddUniform(new GLProgramUniformProviderValue<T>(name, value));
+			AddUniform(new GLProgramVariableProviderValue<T>(name, value));
 		}
 		/** register a uniform texture */
 		void AddUniformTexture(char const * name, boost::intrusive_ptr<class Texture> texture)
 		{
-      AddUniform(new GLProgramUniformProviderTexture(name, texture));
+      AddUniform(new GLProgramVariableProviderTexture(name, texture));
 		}
     /** register a generic uniform */
-    void AddUniform(GLProgramUniformProvider * provider)
+    void AddUniform(GLProgramVariableProvider * provider)
     {
-      children_providers.push_back(std::move(std::unique_ptr<GLProgramUniformProvider>(provider)));
+      children_providers.push_back(std::move(std::unique_ptr<GLProgramVariableProvider>(provider)));
     }
 
 	protected:
 
 		/** responsability chain for providers */
-		GLProgramUniformProvider * next_provider;
+		GLProgramVariableProvider * next_provider;
 		/** the uniforms to be set */
-		std::vector<std::unique_ptr<GLProgramUniformProvider>> children_providers;
+		std::vector<std::unique_ptr<GLProgramVariableProvider>> children_providers;
 	};
 
 }; // namespace chaos

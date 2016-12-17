@@ -14,7 +14,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Texture.h>
-#include <chaos/GLProgramUniformProvider.h>
+#include <chaos/GLProgramVariableProvider.h>
  
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -140,7 +140,7 @@ protected:
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
-    chaos::GLProgramUniformProviderChain uniform_provider;
+    chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddUniformTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);
 

@@ -103,6 +103,43 @@ protected:
 
     chaos::GLProgramUniformProviderChain uniform_provider;
     uniform_provider.AddUniformValue("local_to_cam", local_to_cam);
+    uniform_provider.AddUniformValue("toto", glm::vec2(5.0f, 6.0f));
+
+
+
+    glm::mat4 m1;
+    glm::dmat4 m2;
+    glm::mat3x2 m3;
+    glm::dmat4x2 m4;
+    glm::vec2    v1;
+
+    glm::mat4 m5;
+    glm::dmat4 m6;
+    glm::mat3x2 m7;
+    glm::dmat4x2 m8;
+    glm::vec2    v2;
+    glm::vec3    v3;
+    glm::vec4    v4;
+    glm::tvec2<GLint>    v5;
+    glm::tvec3<GLint>    v6;
+    glm::tvec4<GLint>    v7;
+
+    bool b1 = uniform_provider.GetValue("local_to_cam", m1);
+    bool b2 = uniform_provider.GetValue("local_to_cam", m2);
+    bool b3 = uniform_provider.GetValue("local_to_cam", m3);
+    bool b4 = uniform_provider.GetValue("local_to_cam", m4);
+    bool b5 = uniform_provider.GetValue("local_to_cam", v1);
+
+    bool b6 = uniform_provider.GetValue("toto", m5);
+    bool b7 = uniform_provider.GetValue("toto", m6);
+    bool b8 = uniform_provider.GetValue("toto", m7);
+    bool b9 = uniform_provider.GetValue("toto", m8);
+    bool b10 = uniform_provider.GetValue("toto", v2);
+    bool b11 = uniform_provider.GetValue("toto", v3);
+    bool b12 = uniform_provider.GetValue("toto", v4);
+    bool b13 = uniform_provider.GetValue("toto", v5);
+    bool b14 = uniform_provider.GetValue("toto", v6);
+    bool b15 = uniform_provider.GetValue("toto", v7);
 
     sprite_manager.Display(&uniform_provider);
 
@@ -238,5 +275,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
   return 0;
 }
+
 
 

@@ -121,7 +121,7 @@ namespace chaos
   public:
 
     /** constructor */
-    GLProgramUniformGetValueAction(T & in_result_value) : result_value(in_result_value) {}
+    GLProgramUniformGetValueAction(T & in_result) : result(in_result) {}
 
   protected:
 
@@ -158,7 +158,7 @@ namespace chaos
     template<typename U>
     bool DoConvertAndGetVector(U const & value, boost::mpl::true_, boost::mpl::true_)
     { 
-      result_value = GLMTools::RecastVector<T>(value);
+      result = GLMTools::RecastVector<T>(value);
       return true; 
     }
 
@@ -169,30 +169,15 @@ namespace chaos
     template<typename U>
     bool DoConvertAndGetMatrix(U const & value, boost::mpl::true_, boost::mpl::true_)
     {
-      
+      result = T(value);
       return true;
     }
-
-    
-
-
-
-
-
-
-
-
 
   protected:
 
     /** the value we get */
-    T & result_value;
+    T & result;
   };
-
-
-  // ====================================================================================
-
-
 
   /**
   * GLProgramUniformProvider : a base class for filling uniforms in a program. The purpose is to take responsability to start an ACTION
@@ -215,9 +200,9 @@ namespace chaos
 
     /** get a value for the uniform */
     template<typename T>
-    bool GetValue(T & result_value) const
+    bool GetValue(char const * name, T & result) const
     {
-      return ProcessAction(uniform, GLProgramUniformGetValueAction(result_value, result));                
+      return ProcessAction(name, GLProgramUniformGetValueAction<T>(result));
     }
   };
 

@@ -272,7 +272,7 @@ namespace chaos
 		return SetUniformVectorImpl(*this, value);
 	}
 
-  bool GLUniformInfo::SetUniform(boost::intrusive_ptr<Texture> const & texture) const
+  bool GLUniformInfo::SetUniform(Texture const * texture) const
   {
     if (!GLTools::IsSamplerType(type))
       return false;

@@ -7,82 +7,11 @@
 
 namespace chaos
 {
-
-  static bool IsSamplerType(GLenum type)
-  {
-    // XXX : samplers type, maybe some error or some missing elements
-    GLenum const sampler_types[] = {
-      GL_SAMPLER_1D, GL_SAMPLER_2D, GL_SAMPLER_3D, GL_SAMPLER_CUBE,
-      GL_SAMPLER_1D_SHADOW, GL_SAMPLER_2D_SHADOW, GL_SAMPLER_1D_ARRAY,
-      GL_SAMPLER_2D_ARRAY, GL_SAMPLER_1D_ARRAY_SHADOW, GL_SAMPLER_2D_ARRAY_SHADOW, GL_SAMPLER_CUBE_SHADOW,
-      GL_INT_SAMPLER_1D, GL_INT_SAMPLER_2D, GL_INT_SAMPLER_3D, GL_INT_SAMPLER_CUBE, GL_INT_SAMPLER_1D_ARRAY,
-      GL_INT_SAMPLER_2D_ARRAY, GL_UNSIGNED_INT_SAMPLER_1D, GL_UNSIGNED_INT_SAMPLER_2D, GL_UNSIGNED_INT_SAMPLER_3D,
-      GL_UNSIGNED_INT_SAMPLER_CUBE, GL_UNSIGNED_INT_SAMPLER_1D_ARRAY, GL_UNSIGNED_INT_SAMPLER_2D_ARRAY,
-      GL_SAMPLER_2D_RECT, GL_SAMPLER_2D_RECT_SHADOW, GL_SAMPLER_CUBE_MAP_ARRAY, GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW, GL_NONE
-    };
-
-    for (int i = 0; sampler_types[i] != GL_NONE; ++i)
-      if (type == sampler_types[i])
-        return true;
-    return false;
-  }
-
-	/** compare value to 4 other enum value, returns the 'index' of the result */
-	static int GetEnumVectorArityImpl(GLenum value, GLenum v1, GLenum v2, GLenum v3, GLenum v4)
-	{
-		if (value == v1) return 1;
-		if (value == v2) return 2;
-		if (value == v3) return 3;
-		if (value == v4) return 4;
-		return 0;
-	}
-
-	/** default template for enum vector arity */
-	template<typename T>
-	static int GetEnumVectorArity(GLenum value)
-	{
-		return 0;
-	}
-
-	/** returns the arity of the vector enum if it is float, 0 elsewhere */
-	template<>
-	static int GetEnumVectorArity<GLfloat>(GLenum value)
-	{
-		return GetEnumVectorArityImpl(value, GL_FLOAT, GL_FLOAT_VEC2, GL_FLOAT_VEC3, GL_FLOAT_VEC4);
-	}
-
-	/** returns the arity of the vector enum if it is double, 0 elsewhere */
-	template<>
-	static int GetEnumVectorArity<GLdouble>(GLenum value)
-	{
-		return GetEnumVectorArityImpl(value, GL_DOUBLE, GL_DOUBLE_VEC2, GL_DOUBLE_VEC3, GL_DOUBLE_VEC4);
-	}
-
-	/** returns the arity of the vector enum if it is int, 0 elsewhere */
-	template<>
-	static int GetEnumVectorArity<GLint>(GLenum value)
-	{
-		return GetEnumVectorArityImpl(value, GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4);
-	}
-
-	/** returns the arity of the vector enum if it is unsigned int, 0 elsewhere */
-	template<>
-	static int GetEnumVectorArity<GLuint>(GLenum value)
-	{
-		return GetEnumVectorArityImpl(value, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
-	}
-
-	/** returns the arity of the vector enum if it is boolean, 0 elsewhere */
-	template<>
-	static int GetEnumVectorArity<GLboolean>(GLenum value)
-	{
-		return GetEnumVectorArityImpl(value, GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4);
-	}
-
+  
 	template<typename T1, typename T2>
 	static bool SetUniformVectorImplHelper(GLUniformInfo const & uniform, T2 const & value)
 	{
-		int arity = GetEnumVectorArity<T1>(uniform.type);
+		int arity = GLTools::GetTypedEnumVectorArity<T1>(uniform.type);
 		if (arity < 1 || arity > 4)
 			return false;
 
@@ -345,7 +274,7 @@ namespace chaos
 
   bool GLUniformInfo::SetUniform(boost::intrusive_ptr<Texture> const & texture) const
   {
-    if (!IsSamplerType(type))
+    if (!GLTools::IsSamplerType(type))
       return false;
 
     glBindTextureUnit(sampler_index, texture->GetResourceID());
@@ -531,7 +460,7 @@ namespace chaos
 				uniform.array_size = is_array ? array_size : -1;
 				uniform.type = type;
 				uniform.location = location;
-        if (IsSamplerType(type))
+        if (GLTools::IsSamplerType(type))
           uniform.sampler_index = sampler_index++;
 
 				result.uniforms.push_back(uniform);

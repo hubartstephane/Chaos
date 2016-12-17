@@ -106,7 +106,55 @@ public:
   static void SetVertexAttrib(GLint location, glm::tvec4<GLubyte>  const & value){ glVertexAttrib4ubv(location, (GLubyte const *)&value);}
   static void SetVertexAttrib(GLint location, glm::tvec4<GLushort> const & value){ glVertexAttrib4usv(location, (GLushort const *)&value);}
 
+
+  /** returns true whether the enum is a matrix type */
+  static bool IsMatrixType(GLenum type);
+  /** returns true whether the enum is a sampler type */
+  static bool IsSamplerType(GLenum type);
+  /** returns the arity of the vector whether the enum is a vector type */
+  static int GetEnumVectorArity(GLenum type);
+  /** returns the arity of the vector whether the enum is a (bool) vector type */
+  static int GetEnumVectorArityBool(GLenum type);
+  /** returns the arity of the vector whether the enum is a (bool) vector type */
+  static int GetEnumVectorArityFloat(GLenum type);
+  /** returns the arity of the vector whether the enum is a (bool) vector type */
+  static int GetEnumVectorArityDouble(GLenum type);
+  /** returns the arity of the vector whether the enum is a (int) vector type */
+  static int GetEnumVectorArityInt(GLenum type);
+  /** returns the arity of the vector whether the enum is a (int) vector type */
+  static int GetEnumVectorArityUnsignedInt(GLenum type);
+
+
+
+
+  /** default template for enum vector arity */
+  template<typename T>
+  static int GetTypedEnumVectorArity(GLenum type){ return 0; }
+
+  /** returns the arity of the vector enum if it is float, 0 elsewhere */
+  template<>
+  static int GetTypedEnumVectorArity<GLfloat>(GLenum type) { return GetEnumVectorArityFloat(type); }
+
+  /** returns the arity of the vector enum if it is double, 0 elsewhere */
+  template<>
+  static int GetTypedEnumVectorArity<GLdouble>(GLenum type) { return GetEnumVectorArityDouble(type); }
+
+  /** returns the arity of the vector enum if it is int, 0 elsewhere */
+  template<>
+  static int GetTypedEnumVectorArity<GLint>(GLenum type) { return GetEnumVectorArityInt(type); }
+
+  /** returns the arity of the vector enum if it is unsigned int, 0 elsewhere */
+  template<>
+  static int GetTypedEnumVectorArity<GLuint>(GLenum type) { return GetEnumVectorArityUnsignedInt(type); }
+
+  /** returns the arity of the vector enum if it is boolean, 0 elsewhere */
+  template<>
+  static int GetTypedEnumVectorArity<GLboolean>(GLenum type) { return GetEnumVectorArityBool(type); }
+
 protected:
+
+  /** compare value to 4 other enum value, returns the 'index' of the result */
+  static int GetEnumVectorArityImpl(GLenum value, GLenum v1, GLenum v2, GLenum v3, GLenum v4);
 
   /** an handler for debug messages */
   static void WINAPI DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data);

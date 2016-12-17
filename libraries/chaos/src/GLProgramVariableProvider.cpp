@@ -4,23 +4,23 @@
 namespace chaos
 {
 
-  bool GLProgramVariableProviderTexture::ProcessAction(char const * name, GLProgramVariableAction & action) const
+  bool GLProgramVariableProviderTexture::DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const
   {
     if (handled_name != name)
       return false;
     return action.Process(name, value.get());
   }
 
-  bool GLProgramVariableProviderChain::ProcessAction(char const * name, GLProgramVariableAction & action) const
+  bool GLProgramVariableProviderChain::DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const
   {
     // handle children providers
     size_t count = children_providers.size();
     for (size_t i = 0; i < count; ++i)
-      if (children_providers[i]->ProcessAction(name, action))
+      if (children_providers[i].get()->DoProcessAction(name, action, top_provider))
         return true;
     // handle the next provider in the chain
     if (next_provider != nullptr)
-      return next_provider->ProcessAction(name, action);
+      return next_provider->DoProcessAction(name, action, top_provider);
     // failure
     return false;
   }

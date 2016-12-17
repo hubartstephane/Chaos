@@ -33,7 +33,7 @@ static void DisplayCurves(FbxObject * obj)
 static void DisplaySceneAnimation(FbxScene* pScene)
 {
 
-	int i;//FbxAnimStack
+	//int i;FbxAnimStack
 	//for (i = 0; i < pScene->GetSrcObjectCount<FbxObject>(); i++)
 	{
 

@@ -210,12 +210,17 @@ namespace chaos
 
   class GLProgramVariableProvider
   {
+    friend class GLProgramVariableProviderChain; // WTF : GLProgramVariableProviderChain could not call DoProcessAction(...) an another instance without that !!
+
   public:
 
     /** destructor */
     virtual ~GLProgramVariableProvider() = default;
     /** the main method : returns try whether tha action has been handled (even if failed) */
-    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const { return false; }
+    bool ProcessAction(char const * name, GLProgramVariableAction & action) const 
+    { 
+      return DoProcessAction(name, action, this);
+    }
 
     /** utility function that deserve to set uniform */
     bool BindUniform(GLUniformInfo const & uniform) const
@@ -235,6 +240,11 @@ namespace chaos
     {
       return ProcessAction(name, GLProgramVariableGetValueAction<T>(result));
     }
+
+  protected:
+
+    /** the main method : returns true whether that action has been successfully handled */
+    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const { return false; }
   };
 
   /**
@@ -250,8 +260,10 @@ namespace chaos
     GLProgramVariableProviderValue(char const * in_name, T const & in_value) :
       handled_name(in_name), value(in_value) {}
 
+  protected:
+
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const override
+    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const override
     {
       if (handled_name != name)
         return false;
@@ -277,8 +289,11 @@ namespace chaos
     /** constructor */
     GLProgramVariableProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
       handled_name(in_name), value(in_value) {}
+
+  protected:
+
     /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const override;
+    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const override;
 
   protected:
 
@@ -300,8 +315,6 @@ namespace chaos
 		/** constructor */
 		GLProgramVariableProviderChain(GLProgramVariableProvider * in_next_provider = nullptr):
       next_provider(in_next_provider) {}
-    /** the main method */
-    virtual bool ProcessAction(char const * name, GLProgramVariableAction & action) const override;
 		/** remove all uniforms for binding */
 		void Clear()
 		{
@@ -325,6 +338,11 @@ namespace chaos
     }
     /** change the next */
     void SetNextProvider(GLProgramVariableProvider * in_next_provider){ next_provider = in_next_provider; }
+
+  protected:
+
+    /** the main method */
+    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const override;
 
 	protected:
 

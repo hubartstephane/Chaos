@@ -47,11 +47,11 @@ protected:
     double realtime = ClockManager::GetClockTime();
 
     chaos::GLProgramVariableProviderChain uniform_provider;
-    uniform_provider.AddUniformValue("projection",         projection_matrix);
-    uniform_provider.AddUniformValue("local_to_world",     local_to_world_matrix);
-    uniform_provider.AddUniformValue("world_to_camera",    world_to_camera_matrix);
-    uniform_provider.AddUniformValue("instance_cube_size", instance_cube_size);
-    uniform_provider.AddUniformValue("realtime",           realtime);
+    uniform_provider.AddVariableValue("projection",         projection_matrix);
+    uniform_provider.AddVariableValue("local_to_world",     local_to_world_matrix);
+    uniform_provider.AddVariableValue("world_to_camera",    world_to_camera_matrix);
+    uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
+    uniform_provider.AddVariableValue("realtime",           realtime);
     program_data.BindUniforms(&uniform_provider);
 
     int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;

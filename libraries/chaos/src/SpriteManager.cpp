@@ -187,7 +187,7 @@ namespace chaos
     program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 	GLProgramVariableProviderChain main_uniform_provider(uniform_provider);
-    main_uniform_provider.AddUniformTexture("material", atlas->GetTexture());
+    main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
     program_data.BindUniforms(&main_uniform_provider);
        

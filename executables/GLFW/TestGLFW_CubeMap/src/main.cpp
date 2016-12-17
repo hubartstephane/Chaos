@@ -153,11 +153,11 @@ protected:
 
     chaos::GLProgramVariableProviderChain uniform_provider;
 
-    uniform_provider.AddUniformValue("projection",      projection_matrix);
-    uniform_provider.AddUniformValue("local_to_world",  local_to_world_matrix);
-    uniform_provider.AddUniformValue("world_to_camera", world_to_camera_matrix);
+    uniform_provider.AddVariableValue("projection",      projection_matrix);
+    uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
+    uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 
-    uniform_provider.AddUniformTexture("material", texture);
+    uniform_provider.AddVariableTexture("material", texture);
 
     program_data.BindUniforms(&uniform_provider);
 

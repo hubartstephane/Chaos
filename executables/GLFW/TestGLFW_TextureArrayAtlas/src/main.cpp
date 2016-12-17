@@ -94,12 +94,12 @@ protected:
 
     chaos::GLProgramVariableProviderChain uniform_provider;
 
-    uniform_provider.AddUniformValue("projection",      projection);
-    uniform_provider.AddUniformValue("world_to_camera", world_to_camera);
-    uniform_provider.AddUniformValue("local_to_world",  local_to_world);
-    uniform_provider.AddUniformValue("texture_slice", (float)entry->bitmap_index);
+    uniform_provider.AddVariableValue("projection",      projection);
+    uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
+    uniform_provider.AddVariableValue("local_to_world",  local_to_world);
+    uniform_provider.AddVariableValue("texture_slice", (float)entry->bitmap_index);
 
-    uniform_provider.AddUniformTexture("material", atlas.GetTexture());
+    uniform_provider.AddVariableTexture("material", atlas.GetTexture());
 
     glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
 
@@ -107,8 +107,8 @@ protected:
     glm::vec2 entry_size  = glm::vec2((float)entry->width, (float)entry->height);
     glm::vec2 entry_end   = entry_start + entry_size;
 
-    uniform_provider.AddUniformValue("entry_start", entry_start / atlas_dimension);
-    uniform_provider.AddUniformValue("entry_end", entry_end / atlas_dimension);
+    uniform_provider.AddVariableValue("entry_start", entry_start / atlas_dimension);
+    uniform_provider.AddVariableValue("entry_end", entry_end / atlas_dimension);
 
     program_data.BindUniforms(&uniform_provider);
 

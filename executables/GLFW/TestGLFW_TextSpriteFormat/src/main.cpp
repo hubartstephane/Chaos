@@ -101,9 +101,38 @@ protected:
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
-    uniform_provider.AddUniformValue("local_to_cam", local_to_cam);
-    uniform_provider.AddUniformValue("toto", glm::vec2(5.0f, 6.0f));
+#if 0
+
+    class MyProvider : public chaos::GLProgramVariableProvider
+    {
+    public: 
+
+      virtual bool ProcessAction(char const * name, chaos::GLProgramVariableAction & action) const override
+      {
+        if (strcmp("local_to_cam", name) == 0)
+        {
+
+
+        }
+          
+
+        return false;
+      }
+
+
+    };
+
+
+    MyProvider dynamic_provider;
+
+#endif
+
+    chaos::GLProgramVariableProviderChain uniform_provider(nullptr);
+    //uniform_provider.AddVariableValue("my_scale", glm::scale(scale));
+
+
+    uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
+    uniform_provider.AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
 
 
 

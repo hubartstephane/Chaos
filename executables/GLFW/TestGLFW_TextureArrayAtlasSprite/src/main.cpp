@@ -116,7 +116,7 @@ protected:
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
     chaos::GLProgramVariableProviderChain uniform_provider;
-    uniform_provider.AddUniformValue("local_to_cam", local_to_cam);
+    uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
     sprite_manager.Display(&uniform_provider);
 

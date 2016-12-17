@@ -141,7 +141,7 @@ protected:
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
     chaos::GLProgramVariableProviderChain uniform_provider;
-    uniform_provider.AddUniformTexture("material", texture);
+    uniform_provider.AddVariableTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);
 
     mesh->Render(program_data, nullptr, 0, 0);

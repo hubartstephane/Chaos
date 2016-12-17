@@ -205,7 +205,7 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableProvider : a base class for filling uniforms in a program. The purpose is to take responsability to start an ACTION
+  * GLProgramVariableProvider : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
   */
 
   class GLProgramVariableProvider
@@ -229,7 +229,7 @@ namespace chaos
       return ProcessAction(attribute.name.c_str(), GLProgramVariableSetAttributeAction(attribute));
     }
 
-    /** get a value for the uniform */
+    /** get a value for the uniform / attribute */
     template<typename T>
     bool GetValue(char const * name, T & result) const
     {
@@ -238,7 +238,7 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableProviderValue : used to fill GLProgram binding for uniforms with simple values
+  * GLProgramVariableProviderValue : used to fill GLProgram binding for uniforms / attribute with simple values
   */
 
   template<typename T>
@@ -289,7 +289,7 @@ namespace chaos
   };
 
 	/**
-	* GLProgramVariableProviderChain : used to fill GLProgram binding for multiple uniforms
+	* GLProgramVariableProviderChain : used to fill GLProgram binding for multiple uniforms / uniforms
 	*/
 
 	class GLProgramVariableProviderChain : public GLProgramVariableProvider
@@ -309,20 +309,22 @@ namespace chaos
 		}
 		/** register a uniform value */
 		template<typename T>
-		void AddUniformValue(char const * name, T const & value)
+		void AddVariableValue(char const * name, T const & value)
 		{
-			AddUniform(new GLProgramVariableProviderValue<T>(name, value));
+      AddVariableProvider(new GLProgramVariableProviderValue<T>(name, value));
 		}
 		/** register a uniform texture */
-		void AddUniformTexture(char const * name, boost::intrusive_ptr<class Texture> texture)
+		void AddVariableTexture(char const * name, boost::intrusive_ptr<class Texture> texture)
 		{
-      AddUniform(new GLProgramVariableProviderTexture(name, texture));
+      AddVariableProvider(new GLProgramVariableProviderTexture(name, texture));
 		}
     /** register a generic uniform */
-    void AddUniform(GLProgramVariableProvider * provider)
+    void AddVariableProvider(GLProgramVariableProvider * provider)
     {
       children_providers.push_back(std::move(std::unique_ptr<GLProgramVariableProvider>(provider)));
     }
+    /** change the next */
+    void SetNextProvider(GLProgramVariableProvider * in_next_provider){ next_provider = in_next_provider; }
 
 	protected:
 

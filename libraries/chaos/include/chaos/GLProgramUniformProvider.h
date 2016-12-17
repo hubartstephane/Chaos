@@ -8,6 +8,62 @@
 namespace chaos
 {
 
+  class GLProgramUniformAction
+  {
+  public:
+
+    virtual ~GLProgramUniformAction() = default;
+
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec1<GLfloat> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec2<GLfloat> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec3<GLfloat> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec4<GLfloat> const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec1<GLdouble> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec2<GLdouble> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec3<GLdouble> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec4<GLdouble> const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec1<GLboolean> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec2<GLboolean> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec3<GLboolean> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec4<GLboolean> const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec1<GLint> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec2<GLint> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec3<GLint> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec4<GLint> const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec1<GLuint> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec2<GLuint> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec3<GLuint> const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::tvec4<GLuint> const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, glm::mat2x3 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat2x4 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat3x2 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat3x4 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat4x2 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat4x3 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat2 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat3 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::mat4 const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat2x3 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat2x4 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat3x2 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat3x4 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat4x2 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat4x3 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat2 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat3 const & value) {}
+    virtual void Process(GLUniformInfo const & uniform, glm::dmat4 const & value) {}
+
+    virtual void Process(GLUniformInfo const & uniform, boost::intrusive_ptr<Texture> value) {}
+  };
+
+
+
   /**
   * GLProgramUniformProvider : a base class for filling uniforms in a program
   */
@@ -20,6 +76,8 @@ namespace chaos
     virtual ~GLProgramUniformProvider() = default;
     /** the main method */
     virtual bool BindUniform(GLUniformInfo const & uniform) const { return false; }
+    /** the main method */
+    virtual bool ProcessAction(GLUniformInfo const & uniform, GLProgramUniformAction & action) const { return false; }
   };
 
   /**
@@ -40,6 +98,14 @@ namespace chaos
       if (uniform.name != name)
         return false; 
       uniform.SetUniform(value);
+      return true;
+    }
+    /** the main method */
+    virtual bool ProcessAction(GLUniformInfo const & uniform, GLProgramUniformAction & action) const
+    {
+      if (uniform.name != name)
+        return false;
+      action.Process(uniform, value);
       return true;
     }
 
@@ -64,6 +130,8 @@ namespace chaos
       name(in_name), value(in_value) {}
     /** the main method */
     virtual bool BindUniform(GLUniformInfo const & uniform) const;
+    /** the main method */
+    virtual bool ProcessAction(GLUniformInfo const & uniform, GLProgramUniformAction & action) const;
 
   protected:
 
@@ -88,6 +156,8 @@ namespace chaos
       next_provider(in_next_provider) {}
 		/** the main method */
 		virtual bool BindUniform(GLUniformInfo const & uniform) const;
+    /** the main method */
+    virtual bool ProcessAction(GLUniformInfo const & uniform, GLProgramUniformAction & action) const;
 		/** remove all uniforms for binding */
 		void Clear()
 		{

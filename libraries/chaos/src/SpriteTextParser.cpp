@@ -90,24 +90,34 @@ namespace chaos
 		if (parse_result.size() == 0)
 			parse_result.push_back(TextParseLine());
 
+    // insert the token
 		if (token.bitmap_entry != nullptr)
 		{
-			float factor = MathTools::CastAndDiv<float>(params.line_height, token.bitmap_entry->height);
+      // restrict the bitmap to the size of the line
+			float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_entry->height);
 					
-			token.position = bitmap_position;
-			token.size.x = factor * (float)token.bitmap_entry->width;
-			token.size.y = params.line_height;
+			token.position = bitmap_position + params.bitmap_padding;
 
-			bitmap_position.x    += token.size.x + params.character_spacing;
-			character_position.x += token.size.x + params.character_spacing;
+			token.size.x = factor * (float)token.bitmap_entry->width;
+			token.size.y = params.line_height - 2 * params.bitmap_padding.y;
+
+			bitmap_position.x    += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
+			character_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 		}
 		else if (token.character_entry != nullptr)
 		{
+      // get the descender 
+      TextParseStackElement const & context = parse_stack.back();
+      float descender = (context.character_set == nullptr) ? 0.0f : context.character_set->descender;
+
+      // scale the character back to the size of the scanline
       float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
 
-			token.position = character_position + factor * glm::vec2(
-				(float)(token.character_entry->bitmap_left),
-				(float)(token.character_entry->bitmap_top - token.character_entry->height));
+			token.position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
+        factor * glm::vec2(
+				  (float)(token.character_entry->bitmap_left),
+				  (float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
+        ); 
 
 			token.size.x = factor * (float)token.character_entry->width;
 			token.size.y = factor * (float)token.character_entry->height;

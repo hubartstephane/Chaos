@@ -23,6 +23,8 @@ namespace chaos
     float line_spacing{5.0f};
     /** spacing between characters */
     float character_spacing{ 5.0f };
+    /** padding for bitmaps */
+    glm::vec2 bitmap_padding{ 5.0f, 5.0f };
     /** the text limits */
     float max_text_width{ 0.0f };
     /** word wrap enabled */
@@ -69,7 +71,7 @@ namespace chaos
 		int type{TOKEN_NONE};
 		/** the character */
 		char character{0};
-		/** the position of the generated image */
+		/** the position of the generated image (BOTTOM LEFT) */
 		glm::vec2 position{0.0f, 0.0f};
     /** the size of the generated image */
     glm::vec2 size{ 0.0f, 0.0f };
@@ -126,9 +128,9 @@ namespace chaos
 
 		/** the atlas in used */
 		BitmapAtlas::AtlasBase const & atlas;
-		/** current line position for a bitmap */
+		/** current line position for a bitmap (below scanline, at descender level) */
 		glm::vec2 bitmap_position{0.0f, 0.0f};
-		/** current line position for a character */
+		/** current line position for a character (below scanline, at descender level) */
 		glm::vec2 character_position{ 0.0f, 0.0f };
 		/** the result */
     TextParseResult parse_result;

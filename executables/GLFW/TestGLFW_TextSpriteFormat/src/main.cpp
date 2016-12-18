@@ -195,10 +195,12 @@ protected:
     parse_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
     parse_params.character_spacing = 0.0f;
     parse_params.line_spacing = 0.0f;
+    parse_params.bitmap_padding.x = 10.0f;
+    parse_params.bitmap_padding.y = 5.0f;
     parse_params.alignment = chaos::TextParseParams::ALIGN_RIGHT;
     chaos::TextParseResult parse_result;
 
-    parser.ParseText("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon bidon", &sprite_manager, &parse_result, parse_params);
+    parser.ParseText("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon[button]bidon", &sprite_manager, &parse_result, parse_params);
 
 
     //parser.ParseText("He llo[button]aaBLyYjg[RED world\n    to[button]to]\n[C2 Change[button]Charset 2\n[C1 Change[button]Charset 1]]\nRetour   Charset[button]normal", &sprite_manager, &parse_result, parse_params);

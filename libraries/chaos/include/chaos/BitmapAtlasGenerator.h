@@ -115,30 +115,19 @@ namespace chaos
       /** the Freetype face if appropriate */
       FT_Face    face{ nullptr };
       /** should the library be released at destruction */
-      bool       release_library{ true };
+      bool release_library{ true };
       /** should the face be released at destruction */
-      bool       release_face{ true };
+      bool release_face{ true };
       /** the glyph width */
-      int        max_character_width{ 0 };
+      int  max_character_width{ 0 };
       /** the glyph height */
-      int        max_character_height{ 0 };
+      int  max_character_height{ 0 };
       /** the face ascender */
-      int        ascender{ 0 };
+      int  ascender{ 0 };
       /** the face descender */
-      int        descender{ 0 };
-      /** distance between 2 lines */
-      int        line_spacing{ 0 };
-      /** the position of the underline */
-      int        underline_position{ 0 };
-      /** the min X of a glyph */
-      int        min_glyph_x{ 0 };
-      /** the max X of a glyph */
-      int        max_glyph_x{ 0 };
-      /** the min Y of a glyph  */
-      int        min_glyph_y{ 0 };
-      /** the max Y of a glyph  */
-      int        max_glyph_y{ 0 };
-
+      int  descender{ 0 };
+      /** the maximum size of a character */
+      int  face_height{ 0 };
       /** the bitmaps composing the set */
       std::vector<CharacterEntryInput> elements;
     };

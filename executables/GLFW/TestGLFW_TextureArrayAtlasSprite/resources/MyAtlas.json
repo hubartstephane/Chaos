@@ -140,8 +140,8 @@
     ],
     "character_sets": [
         {
-            "ascender": 18,
-            "descender": -4,
+            "ascender": 38,
+            "descender": -10,
             "elements": [
                 {
                     "advance_x": 24,
@@ -1262,20 +1262,15 @@
                     "y": 267
                 }
             ],
-            "line_spacing": 23,
+            "face_height": 49,
             "max_character_height": 32,
             "max_character_width": 32,
-            "max_glyph_x": 15,
-            "max_glyph_y": 18,
-            "min_glyph_x": 0,
-            "min_glyph_y": -4,
             "name": "character_set1",
-            "tag": 0,
-            "underline_position": -2
+            "tag": 0
         },
         {
-            "ascender": 18,
-            "descender": -4,
+            "ascender": 38,
+            "descender": -10,
             "elements": [
                 {
                     "advance_x": 24,
@@ -2396,16 +2391,11 @@
                     "y": 366
                 }
             ],
-            "line_spacing": 23,
+            "face_height": 49,
             "max_character_height": 32,
             "max_character_width": 32,
-            "max_glyph_x": 11,
-            "max_glyph_y": 18,
-            "min_glyph_x": 0,
-            "min_glyph_y": -4,
             "name": "character_set2",
-            "tag": 0,
-            "underline_position": -2
+            "tag": 0
         }
     ]
 }

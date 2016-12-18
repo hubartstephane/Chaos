@@ -211,13 +211,7 @@ namespace chaos
       json_entry["max_character_height"] = entry.max_character_height;
       json_entry["ascender"] = entry.ascender;
       json_entry["descender"] = entry.descender;
-      json_entry["line_spacing"] = entry.line_spacing;
-      json_entry["underline_position"] = entry.underline_position;
-      json_entry["min_glyph_x"] = entry.min_glyph_x;
-      json_entry["max_glyph_x"] = entry.max_glyph_x;
-      json_entry["min_glyph_y"] = entry.min_glyph_y;
-      json_entry["max_glyph_y"] = entry.max_glyph_y;
-
+      json_entry["face_height"] = entry.face_height;
       json_entry["elements"] = nlohmann::json::array();
       SaveIntoJSON(entry.elements, json_entry["elements"]);
     }
@@ -231,12 +225,7 @@ namespace chaos
       entry.max_character_height = json_entry["max_character_height"];
       entry.ascender = json_entry["ascender"];
       entry.descender = json_entry["descender"];
-      entry.line_spacing = json_entry["line_spacing"];
-      entry.underline_position = json_entry["underline_position"];
-      entry.min_glyph_x = json_entry["min_glyph_x"];
-      entry.max_glyph_x = json_entry["max_glyph_x"];
-      entry.min_glyph_y = json_entry["min_glyph_y"];
-      entry.max_glyph_y = json_entry["max_glyph_y"];
+      entry.face_height = json_entry["face_height"];
       LoadFromJSON(entry.elements, json_entry["elements"]);
     }
 

@@ -79,6 +79,15 @@ namespace chaos
       CharacterSetInput * result = new CharacterSetInput;
       if (result != nullptr)
       {
+        // set font size
+        // XXX : order is important. Face.size.metrics will not be initialized elsewhere
+        FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
+        if (error != 0)
+        {
+          delete(result);
+          return nullptr;
+        }
+
         // new character set input
         result->name = name;
         result->library = library;
@@ -86,22 +95,10 @@ namespace chaos
         result->release_library = release_library;
         result->release_face = release_face;
         result->max_character_width = params.max_character_width;
-        result->max_character_height = params.max_character_height;
-        result->ascender = face->ascender / 64;
-        result->descender = face->descender / 64;
-        result->line_spacing = face->height / 64;
-        result->underline_position = face->underline_position / 64;
-        result->min_glyph_x = face->bbox.xMin / 64;
-        result->max_glyph_x = face->bbox.xMax / 64;
-        result->min_glyph_y = face->bbox.yMin / 64;
-        result->max_glyph_y = face->bbox.yMax / 64;
-        // set font size
-        FT_Error error = FT_Set_Pixel_Sizes(result->face, params.max_character_width, params.max_character_height);
-        if (error != 0)
-        {
-          delete(result);
-          return nullptr;
-        }
+        result->max_character_height = params.max_character_height; 
+        result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
+        result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
+        result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
         // generate glyph cache
         if (characters == nullptr || strlen(characters) == 0)
@@ -129,9 +126,9 @@ namespace chaos
             entry.bpp = (int)FreeImage_GetBPP(bitmap);
             entry.bitmap = bitmap;
             entry.release_bitmap = true;
-            entry.advance = glyph.second.advance;
-            entry.bitmap_left = glyph.second.bitmap_left;
-            entry.bitmap_top = glyph.second.bitmap_top;
+            entry.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
+            entry.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
+            entry.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
             result->elements.push_back(entry);
           }
         }
@@ -478,13 +475,7 @@ namespace chaos
         character_set->max_character_height = character_set_input->max_character_height;
         character_set->ascender = character_set_input->ascender;
         character_set->descender = character_set_input->descender;
-        character_set->line_spacing = character_set_input->line_spacing;
-        character_set->underline_position = character_set_input->underline_position;
-
-        character_set->min_glyph_x = character_set_input->min_glyph_x;
-        character_set->max_glyph_x = character_set_input->max_glyph_x;
-        character_set->min_glyph_y = character_set_input->min_glyph_y;
-        character_set->max_glyph_y = character_set_input->max_glyph_y;
+        character_set->face_height = character_set_input->face_height;
 
         output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
 

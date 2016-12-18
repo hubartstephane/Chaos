@@ -96,62 +96,49 @@ protected:
     float h = (float)height;
     GenerateSprite(w, h);
 
-    glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
-    glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
-
-    glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
-
-#if 0
-
     class MyProvider : public chaos::GLProgramVariableProvider
     {
-    public: 
+    protected: 
 
-      virtual bool ProcessAction(char const * name, chaos::GLProgramVariableAction & action) const override
+      virtual bool DoProcessAction(char const * name, chaos::GLProgramVariableAction & action, chaos::GLProgramVariableProvider const * top_level) const override
       {
         if (strcmp("local_to_cam", name) == 0)
         {
+          glm::mat4 translate_mat;
+          glm::mat4 scale_mat;
 
-
-        }
-          
-
+          if (top_level->GetValue<glm::mat4>("translate_mat", translate_mat))
+            if (top_level->GetValue<glm::mat4>("scale_mat", scale_mat))
+              return action.Process("local_to_cam", translate_mat * scale_mat);
+        }         
         return false;
       }
-
-
     };
 
+    glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
+    glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
     MyProvider dynamic_provider;
-
-#endif
-
-    chaos::GLProgramVariableProviderChain uniform_provider(nullptr);
-    //uniform_provider.AddVariableValue("my_scale", glm::scale(scale));
-
-
-    uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
+    chaos::GLProgramVariableProviderChain uniform_provider(&dynamic_provider);
+    uniform_provider.AddVariableValue("translate_mat", glm::translate(tr));
+    uniform_provider.AddVariableValue("scale_mat", glm::scale(scale));
     uniform_provider.AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
-
-
 
     glm::mat4 m1;
     glm::dmat4 m2;
     glm::mat3x2 m3;
     glm::dmat4x2 m4;
-    glm::vec2    v1;
-
     glm::mat4 m5;
     glm::dmat4 m6;
     glm::mat3x2 m7;
     glm::dmat4x2 m8;
+    glm::vec2    v1;
     glm::vec2    v2;
     glm::vec3    v3;
     glm::vec4    v4;
-    glm::tvec2<GLint>    v5;
-    glm::tvec3<GLint>    v6;
-    glm::tvec4<GLint>    v7;
+    glm::tvec2<GLint> v5;
+    glm::tvec3<GLint> v6;
+    glm::tvec4<GLint> v7;
 
     bool b1 = uniform_provider.GetValue("local_to_cam", m1);
     bool b2 = uniform_provider.GetValue("local_to_cam", m2);

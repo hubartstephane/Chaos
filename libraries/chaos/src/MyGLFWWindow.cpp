@@ -5,29 +5,6 @@
 namespace chaos
 {
 
-
-MyGLFWWindowHints::MyGLFWWindowHints()
-{
-  debug_context  = 1;
-  major_version  = 4;
-  minor_version  = 4;
-  refresh_rate   = 60;
-  opengl_profile = GLFW_OPENGL_CORE_PROFILE;
-  resizable      = 1;
-  start_visible  = 1;
-  decorated      = 1;
-  toplevel       = 0;
-  samples        = 0;
-  double_buffer  = 1;
-  depth_bits     = 24;
-  stencil_bits   = 8;
-  red_bits       = 8;
-  green_bits     = 8;
-  blue_bits      = 8;
-  alpha_bits     = 8;
-  focused        = 0;
-}
-
 void MyGLFWWindowHints::ApplyHints()
 {
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, debug_context);
@@ -49,13 +26,6 @@ void MyGLFWWindowHints::ApplyHints()
   glfwWindowHint(GLFW_ALPHA_BITS, alpha_bits);
   glfwWindowHint(GLFW_FOCUSED, focused);
 }
-
-MyGLFWSingleWindowApplicationParams::MyGLFWSingleWindowApplicationParams():
-  title(nullptr),
-  monitor(nullptr),
-  monitor_index(0), // primary
-  width(0),
-  height(0){}
 
 void MyGLFWWindow::BindGLFWWindow(GLFWwindow * in_glfw_window)
 {

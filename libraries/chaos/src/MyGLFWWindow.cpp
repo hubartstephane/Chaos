@@ -301,7 +301,7 @@ void MyGLFWWindow::DoRunSingleWindowMainLoop(GLFWwindow * glfw_window)
     double t2         = glfwGetTime();
     double delta_time = t2 - t1;
 
-    ClockManager::TickManager(delta_time);
+    GetMainClock().TickClock(delta_time);
 
     if (Tick(delta_time))
       RequireWindowRefresh();

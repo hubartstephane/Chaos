@@ -11,7 +11,7 @@ namespace chaos
 
 	class Clock
 	{
-
+    
 	public:
 
 		/** returns the internal time */
@@ -38,38 +38,26 @@ namespace chaos
 		void SetTimeScale(double new_scale) { time_scale = new_scale; }
 		/** returns the time scale */
 		double GetTimeScale() const { return time_scale; }
+    /** gets a clock by id */
+    Clock * GetChildClock(int id, bool recursive = true);
+    /** gets a clock by id */
+    Clock const * GetChildClock(int id, bool recursive = true) const;
 
 		/** advance the clock */
-		bool TickClock(double delta_time)
-		{
-			if (paused || time_scale == 0.0)
-				return false;      
-			clock_time += time_scale * delta_time;
-			return true;
-		}
-
-
-
+    bool TickClock(double delta_time);
 		/** add a clock */
-		Clock * AddChildClock(int clock_id, double in_time_scale = 1.0, bool in_paused = false);
+		Clock * AddChildClock(int id, double in_time_scale = 1.0, bool in_paused = false);
 		/** remove a clock */
-		bool RemoveChildClock(int clock_id);
-		/** gets a clock by id */
-		Clock * GetChildClock(int clock_id);
-		/** gets a clock by id */
-		Clock const * GetChildClock(int clock_id) const;
-
-
-		/** remove all clocks */
-		void Clean();
-
-		/** Update clocks */
-		bool TickManager(double delta_time);
+		bool RemoveChildClock(int id, bool recursive = true);
 
 	protected:
 
 		/** gets a free ID for a clock */
 		int FindUnusedID(bool recursive) const;
+    /** iterate over the children and get min and max ID's in use */
+    void FindUnusedIDStep1(int & smaller_id, int & bigger_id, bool recursive) const;
+    /** iterate over the children store all ID's in use */
+    void FindUnusedIDStep2(std::vector<int> & IDs, bool recursive) const;
 
 	protected:
 

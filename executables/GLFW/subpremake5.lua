@@ -15,6 +15,7 @@ ProcessSubPremake("TestGLFW_TextureArray")
 ProcessSubPremake("TestGLFW_TextureArrayAtlas")
 ProcessSubPremake("TestGLFW_TextureArrayAtlasSprite") 
 ProcessSubPremake("TestGLFW_TextSpriteFormat")
+ProcessSubPremake("TestGLFW_Clocks")
 
 
 

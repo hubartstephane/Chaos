@@ -53,6 +53,7 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM1 & NUM2 : %f", clock1->GetClockID(), clock1->GetTimeScale()).c_str());
     debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM3 & NUM4 : %f", clock2->GetClockID(), clock2->GetTimeScale()).c_str());
     debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM5 & NUM6 : %f", clock3->GetClockID(), clock3->GetTimeScale()).c_str());
+    debug_display.AddLine("Press T to pause");
   }
 
   void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
@@ -144,9 +145,12 @@ protected:
 
     debug_display.Finalize();
 
-//    GetMainClock().RemoveChildClock(clock1->GetClockID());
-//    GetMainClock().RemoveChildClock(clock2->GetClockID());
-//    GetMainClock().RemoveChildClock(clock3->GetClockID());
+    // XXX : order is important because clock1 would destroy clock2 & clock3
+    //       In fact, MainClock->FindChild(clock2) would fails, causing the removing to abord
+    //       pointer clock2 & clock3 would be inconsistant
+    GetMainClock().RemoveChildClock(clock1); // => clock2 & clock3 are destroyed ...
+    GetMainClock().RemoveChildClock(clock3); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
+    GetMainClock().RemoveChildClock(clock2);           
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)

@@ -2,13 +2,27 @@
 
 namespace chaos
 {  
+  bool Clock::IsDescendantClock(Clock const * clock) const
+  {
+    assert(clock != nullptr);
+
+    if (clock == this)
+      return true;
+
+    size_t count = children_clocks.size();
+    for (size_t i = 0; i < count; ++i)
+      if (children_clocks[i]->IsDescendantClock(clock))
+        return true;
+    return false;
+  }
+
   Clock * Clock::GetChildClock(int id, bool recursive)
   {
     Clock * result = nullptr;
 
     if (clock_id == id)
       result = this;
-    else if (recursive)
+    else if (recursive && id > 0) // no clock with negative ID !
     {
       size_t count = children_clocks.size();
       for (size_t i = 0; (i < count) && (result == nullptr); ++i)
@@ -23,7 +37,7 @@ namespace chaos
 
     if (clock_id == id)
       result = this;
-    else if (recursive)
+    else if (recursive && id > 0)  // no clock with negative ID !
     {
       size_t count = children_clocks.size();
       for (size_t i = 0; (i < count) && (result == nullptr); ++i)
@@ -32,7 +46,29 @@ namespace chaos
     return result;
   }
 
-  bool Clock::TickClock(double delta_time)
+  Clock * Clock::GetTopLevelParent()
+  {
+    Clock * result = this;
+    while (result->parent_clock != nullptr)
+      result = result->parent_clock;
+    return result;
+  }
+  
+  Clock const * Clock::GetTopLevelParent() const
+  {
+    Clock const * result = this;
+    while (result->parent_clock != nullptr)
+      result = result->parent_clock;
+    return result;
+  }
+
+  bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
+  {
+    assert(parent_clock == nullptr);
+    return TickClockImpl(delta_time);
+  }
+
+  bool Clock::TickClockImpl(double delta_time) // protected interface
   {
     // internal tick
     if (paused || time_scale == 0.0)
@@ -41,7 +77,7 @@ namespace chaos
     // recursive click    
     size_t count = children_clocks.size();
     for (size_t i = 0; i < count ; ++i)
-      children_clocks[i]->TickClock(time_scale * delta_time);
+      children_clocks[i]->TickClockImpl(time_scale * delta_time);
 
     return true;
   }
@@ -72,20 +108,26 @@ namespace chaos
     return nullptr;
   }
 
-  bool Clock::RemoveChildClock(int id, bool recursive)
+  bool Clock::RemoveChildClock(Clock * clock)
   {
-    Clock * clock = GetChildClock(id, recursive); // can return this
+    assert(clock != nullptr);
 
-    if (clock != nullptr && clock->parent_clock != nullptr) // can only remove the clock if it belongs to a parent
+    // XXX : ensure it is in the hierarchy (even a parent) 
+    //       This is really good, because even if the pointer clock has been removed
+    //       Memory is not read until found in Clock Tree
+    if (GetTopLevelParent()->IsDescendantClock(clock)) 
     {
-      size_t count = clock->parent_clock->children_clocks.size();
-      for (size_t i = 0; i < count; ++i)
+      if (clock->parent_clock != nullptr) // can only remove the clock if it belongs to a parent
       {
-        if (clock->parent_clock->children_clocks[i].get() == clock) // remove swap
+        size_t count = clock->parent_clock->children_clocks.size();
+        for (size_t i = 0; i < count; ++i)
         {
-          clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());
-          clock->parent_clock->children_clocks.pop_back();
-          return true;
+          if (clock->parent_clock->children_clocks[i].get() == clock) // remove swap
+          {
+            clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());
+            clock->parent_clock->children_clocks.pop_back();
+            return true;
+          }
         }
       }
     }

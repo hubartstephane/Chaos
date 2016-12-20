@@ -43,15 +43,24 @@ namespace chaos
     /** gets a clock by id */
     Clock const * GetChildClock(int id, bool recursive = true) const;
 
-		/** advance the clock */
+    /** get the top level clock */
+    Clock * GetTopLevelParent();
+    /** get the top level clock */
+    Clock const * GetTopLevelParent() const;
+
+		/** advance the clock (public interface) */
     bool TickClock(double delta_time);
 		/** add a clock */
 		Clock * AddChildClock(int id, double in_time_scale = 1.0, bool in_paused = false);
 		/** remove a clock */
-		bool RemoveChildClock(int id, bool recursive = true);
+		bool RemoveChildClock(Clock * clock);
 
 	protected:
 
+    /** advance the clock */
+    bool TickClockImpl(double delta_time);
+    /** ensure given clock is a child of the hierarchy tree */
+    bool IsDescendantClock(Clock const * clock) const;
 		/** gets a free ID for a clock */
 		int FindUnusedID(bool recursive) const;
     /** iterate over the children and get min and max ID's in use */

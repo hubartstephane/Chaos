@@ -1,18 +1,71 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
 
 namespace chaos
 {
+	/** 
+	 * ClockTickData : information for tick
+	 */
+
+	class ClockTickData
+	{
+	public:
+
+		/** the absolute time */
+		double clock_time{0.0};
+		/** the delta time */
+		double delta_time{0.0};
+		/** the delta loop count */
+		double delta_count{0.0};	
+	};
+
+
+	/**
+	* Event that can be triggered by clock
+	*/
+
+	class ClockEvent
+	{
+	public:
+
+		/** destructor */
+		virtual ~ClockEvent() = default;
+
+
+
+	};
+
+	/**
+	 * ClockCreateParams : data for clock creation
+	 */
+
+	class ClockCreateParams
+	{
+	public:
+
+		/** a time scale for the clock */
+		double time_scale{1.0};
+		/** a frequency at with clock is rest */
+		double time_frequency{0.0};
+		/** whether the clock is paused or not */
+		bool   paused{false};  	
+	};
 
 	/**
 	* This represents a clock that may paused or have a different time scale than absolute time. It can have inner clocks
 	*/
 
-	class Clock
+	class Clock : public ReferencedObject
 	{
-    
+
 	public:
+
+		/** the constructor */
+		Clock(ClockCreateParams const & params = ClockCreateParams());
+		/** the destructor */
+		virtual ~Clock();
 
 		/** returns the internal time */
 		double GetClockTime() const { return clock_time; }
@@ -38,35 +91,39 @@ namespace chaos
 		void SetTimeScale(double new_scale) { time_scale = new_scale; }
 		/** returns the time scale */
 		double GetTimeScale() const { return time_scale; }
-    /** gets a clock by id */
-    Clock * GetChildClock(int id, bool recursive = true);
-    /** gets a clock by id */
-    Clock const * GetChildClock(int id, bool recursive = true) const;
+		/** change the time frequency */
+		void SetTimeFrequency(double new_frequency) { time_frequency = new_frequency; }
+		/** returns the time frequency */
+		double GetTimeFrequency() const { return time_frequency; }
+		/** gets a clock by id */
+		Clock * GetChildClock(int id, bool recursive = true);
+		/** gets a clock by id */
+		Clock const * GetChildClock(int id, bool recursive = true) const;
 
-    /** get the top level clock */
-    Clock * GetTopLevelParent();
-    /** get the top level clock */
-    Clock const * GetTopLevelParent() const;
+		/** get the top level clock */
+		Clock * GetTopLevelParent();
+		/** get the top level clock */
+		Clock const * GetTopLevelParent() const;
 
 		/** advance the clock (public interface) */
-    bool TickClock(double delta_time);
+		bool TickClock(double delta_time);
 		/** add a clock */
-		Clock * AddChildClock(int id, double in_time_scale = 1.0, bool in_paused = false);
+		Clock * AddChildClock(int id, ClockCreateParams const & params = ClockCreateParams());
 		/** remove a clock */
 		bool RemoveChildClock(Clock * clock);
 
 	protected:
 
-    /** advance the clock */
-    bool TickClockImpl(double delta_time);
-    /** ensure given clock is a child of the hierarchy tree */
-    bool IsDescendantClock(Clock const * clock) const;
+		/** advance the clock */
+		bool TickClockImpl(ClockTickData tick_data);
+		/** ensure given clock is a child of the hierarchy tree */
+		bool IsDescendantClock(Clock const * clock) const;
 		/** gets a free ID for a clock */
 		int FindUnusedID(bool recursive) const;
-    /** iterate over the children and get min and max ID's in use */
-    void FindUnusedIDStep1(int & smaller_id, int & bigger_id, bool recursive) const;
-    /** iterate over the children store all ID's in use */
-    void FindUnusedIDStep2(std::vector<int> & IDs, bool recursive) const;
+		/** iterate over the children and get min and max ID's in use */
+		void FindUnusedIDStep1(int & smaller_id, int & bigger_id, bool recursive) const;
+		/** iterate over the children store all ID's in use */
+		void FindUnusedIDStep2(std::vector<int> & IDs, bool recursive) const;
 
 	protected:
 
@@ -76,13 +133,15 @@ namespace chaos
 		double clock_time{0.0};
 		/** a time scale for the clock */
 		double time_scale{1.0};
+		/** a frequency at with clock is rest */
+		double time_frequency{0.0};
 		/** whether the clock is paused or not */
 		bool   paused{false};  
 		/** the ID of the clock */
 		int    clock_id{0};
 
 		/** the child clocks */
-		std::vector<std::unique_ptr<Clock>> children_clocks;
+		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
 	};
 
 }; // namespace chaos

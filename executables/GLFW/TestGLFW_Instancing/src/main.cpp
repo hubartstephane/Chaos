@@ -44,7 +44,7 @@ protected:
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
-    double realtime = GetMainClock().GetClockTime();
+    double realtime = GetMainClock()->GetClockTime();
 
     chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("projection",         projection_matrix);

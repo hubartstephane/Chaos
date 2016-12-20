@@ -148,9 +148,9 @@ protected:
     // XXX : order is important because clock1 would destroy clock2 & clock3
     //       In fact, MainClock->FindChild(clock2) would fails, causing the removing to abord
     //       pointer clock2 & clock3 would be inconsistant
-    GetMainClock().RemoveChildClock(clock1); // => clock2 & clock3 are destroyed ...
-    GetMainClock().RemoveChildClock(clock3); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
-    GetMainClock().RemoveChildClock(clock2);           
+    GetMainClock()->RemoveChildClock(clock1); // => clock2 & clock3 are destroyed ...
+    GetMainClock()->RemoveChildClock(clock3); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
+    GetMainClock()->RemoveChildClock(clock2);           
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -191,7 +191,7 @@ protected:
       return false;
 
     // create a timer
-    clock1 = GetMainClock().AddChildClock(-1);
+    clock1 = GetMainClock()->AddChildClock(-1);
     clock2 = clock1->AddChildClock(-1);
     clock3 = clock2->AddChildClock(-1);
 
@@ -264,7 +264,7 @@ protected:
   {
     if (key == GLFW_KEY_T && action == GLFW_RELEASE)
     {
-      GetMainClock().Toggle();
+      GetMainClock()->Toggle();
     }
     else
     {
@@ -301,6 +301,12 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+	double x = chaos::MathTools::Fmod(18.0, 8.0);
+
+
+
+
+	return 0;
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

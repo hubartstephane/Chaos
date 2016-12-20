@@ -559,7 +559,7 @@ protected:
 
     debug_display.Finalize();
 
-    GetMainClock().RemoveChildClock(clock->GetClockID());
+    GetMainClock()->RemoveChildClock(clock);
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -608,7 +608,7 @@ protected:
       return false;
 
     // create a timer
-    clock = GetMainClock().AddChildClock(-1);
+    clock = GetMainClock()->AddChildClock(-1);
 
     // create meshes
     chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -655,7 +655,7 @@ protected:
   {
     if (key == GLFW_KEY_T && action == GLFW_RELEASE)
     {
-      GetMainClock().Toggle();
+      GetMainClock()->Toggle();
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {

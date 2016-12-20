@@ -111,9 +111,9 @@ namespace chaos
 		static GLFWmonitor * GetMonitorByIndex(int monitor_index);
 
 		/** gets the main clock */
-		Clock & GetMainClock(){ return main_clock;}
+		Clock * GetMainClock(){ return main_clock.get();}
 		/** gets the main clock */
-		Clock const & GetMainClock() const { return main_clock;}
+		Clock const * GetMainClock() const { return main_clock.get();}
 
 	protected:
 
@@ -184,7 +184,7 @@ namespace chaos
 	protected:
 
 		/** the main clock of the manager */
-		Clock main_clock;
+		boost::intrusive_ptr<Clock> main_clock;
 		/** the window in GLFW library */
 		GLFWwindow * glfw_window{nullptr};
 		/** is a refresh required */

@@ -83,13 +83,23 @@ namespace chaos
 		return result;
 	}
 
+	void Clock::TriggerClockEvents(std::vector<ClockEventRegistration> & clock_events)
+	{
+	
+	}
+
 	bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
 	{
 		assert(parent_clock == nullptr);
-		return TickClockImpl(delta_time);
+
+		std::vector<ClockEventRegistration> clock_events;
+		
+		bool result = TickClockImpl(delta_time, clock_events);
+		TriggerClockEvents(clock_events);		
+		return result;
 	}
 
-	bool Clock::TickClockImpl(double delta_time) // protected interface
+	bool Clock::TickClockImpl(double delta_time, std::vector<ClockEventRegistration> & clock_events) // protected interface
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)
@@ -98,7 +108,7 @@ namespace chaos
 		// recursive click
 		size_t count = children_clocks.size();
 		for (size_t i = 0; i < count ; ++i)
-			children_clocks[i]->TickClockImpl(time_scale * delta_time);
+			children_clocks[i]->TickClockImpl(time_scale * delta_time, clock_events);
 
 		return true;
 	}
@@ -218,4 +228,27 @@ namespace chaos
 
 		return -1;
 	}
+
+	
+	bool Clock::RegisterEvent(ClockEvent * clock_event, double start_time)
+	{
+		assert(clock_event != nullptr);
+		assert(start_time >= 0);
+	
+	
+		return false;
+	}
+	
+	void Clock::RemoveEvent(ClockEvent * clock_event)
+	{
+		assert(clock_event != nullptr);
+
+		for (auto it = registered_events.begin() ; it != )
+
+
+		return false;
+	}
+
+	
+
 }; // namespace chaos

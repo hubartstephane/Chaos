@@ -5,39 +5,40 @@
 
 namespace chaos
 {
-  /**
-  * EventCreation params
-  */
+	/**
+	* EventCreation params
+	*/
 
-  class ClockCreateParams
-  {
-  public:
+	class ClockEventCreateParams
+	{
+	public:
 
 
-  };
+	};
 
-  /**
-   * ClockEventTickResult
-   */
+	/**
+	* ClockEventTickResult
+	*/
 
-  class ClockEventTickResult
-  {
-  public:
+	class ClockEventTickResult
+	{
+	public:
 
-    /** default constructor */
-    ClockEventTickResult() {}
+		/** default constructor */
+		ClockEventTickResult() {}
 
-  public:
+	public:
 
-    /** the event wants to be restarted later */
-    static ClockEventTickResult RestartAt(double time);
-    /** the event is finished */
-    static ClockEventTickResult Finished();
+		/** the event wants to be restarted later */
+		static ClockEventTickResult RestartAt(double time);
+		/** the event is finished */
+		static ClockEventTickResult Finished();
 
-    
 
-  };
 
+	};
+
+	
 
 	/**
 	* Event that can be triggered by clock
@@ -45,34 +46,49 @@ namespace chaos
 
 	class ClockEvent : public ReferencedObject
 	{
-    friend class Clock;
+		friend class Clock;
 
 	public:
 
 		/** destructor */
 		virtual ~ClockEvent() = default;
 
-    /** start time */
-    double start_time{0.0};
-    /** duration */
-    double duration{0.0};
-    /** the frequency between repetitions */
-    double frequency{0.0};
-    /** the number of repetitions */
-    int repetition_count{0};
-    /** the method to process */
+		/** start time */
+		double start_time{0.0};
+		/** duration */
+		double duration{0.0};
+		/** the frequency between repetitions */
+		double frequency{0.0};
+		/** the number of repetitions */
+		int repetition_count{0};
+		/** the method to process */
 
-    virtual bool Process(double clock_time) { return true; }
+		virtual bool Process(double clock_time) { return true; }
 
-  protected:
+	protected:
 
-    /** the clock it belongs to */
-    class Clock * clock{nullptr};
+		/** the clock it belongs to */
+		class Clock * clock{nullptr};
 	};
 
 	/**
-	 * ClockCreateParams : data for clock creation
-	 */
+	* ClockEventRegistration : the registration of an event in a time line
+	*/
+
+	class ClockEventRegistration
+	{
+	public:
+
+		/** the start time */
+		double start_time{0.0};
+		/** the event to be played */
+		boost::intrusive_ptr<ClockEvent> clock_event;
+	};
+
+
+	/**
+	* ClockCreateParams : data for clock creation
+	*/
 
 	class ClockCreateParams
 	{
@@ -139,10 +155,17 @@ namespace chaos
 		/** remove a clock */
 		bool RemoveChildClock(Clock * clock);
 
+		/** add an event to be ticked */
+		bool RegisterEvent(ClockEvent * clock_event, double start_time);
+		/** Remove an event */
+		bool RemoveEvent(ClockEvent * clock_event);
+
 	protected:
 
 		/** advance the clock */
-		bool TickClockImpl(double delta_time);
+		bool TickClockImpl(double delta_time, std::vector<ClockEventRegistration> & clock_events);
+		/** internal methods to trigger all the event */
+		void TriggerClockEvents(std::vector<ClockEventRegistration> & clock_events);
 		/** ensure given clock is a child of the hierarchy tree */
 		bool IsDescendantClock(Clock const * clock) const;
 		/** gets a free ID for a clock */
@@ -155,7 +178,7 @@ namespace chaos
 	protected:
 
 		/** the parent clock */
-    Clock * parent_clock{nullptr};
+		Clock * parent_clock{nullptr};
 		/** the time of the clock */
 		double clock_time{0.0};
 		/** a time scale for the clock */
@@ -165,8 +188,8 @@ namespace chaos
 		/** the ID of the clock */
 		int    clock_id{0};
 
-    /** the events */
-    std::vector<boost::intrusive_ptr<ClockEvent>> events;
+		/** the events */
+		std::vector<ClockEventRegistration> registered_events;
 		/** the child clocks */
 		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
 	};

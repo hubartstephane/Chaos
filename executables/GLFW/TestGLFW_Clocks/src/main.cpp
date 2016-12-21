@@ -51,8 +51,8 @@ protected:
   {
     debug_display.Clear();
     debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM1 & NUM2 : %f", clock1->GetClockID(), clock1->GetTimeScale()).c_str());
-    debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM3 & NUM4 : %f", clock2->GetClockID(), clock2->GetTimeScale()).c_str());
-    debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM5 & NUM6 : %f", clock3->GetClockID(), clock3->GetTimeScale()).c_str());
+    debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM4 & NUM5 : %f", clock2->GetClockID(), clock2->GetTimeScale()).c_str());
+    debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM7 & NUM8 : %f", clock3->GetClockID(), clock3->GetTimeScale()).c_str());
     debug_display.AddLine("Press T to pause");
   }
 
@@ -148,9 +148,13 @@ protected:
     // XXX : order is important because clock1 would destroy clock2 & clock3
     //       In fact, MainClock->FindChild(clock2) would fails, causing the removing to abord
     //       pointer clock2 & clock3 would be inconsistant
-    GetMainClock()->RemoveChildClock(clock1); // => clock2 & clock3 are destroyed ...
-    GetMainClock()->RemoveChildClock(clock3); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
-    GetMainClock()->RemoveChildClock(clock2);           
+    GetMainClock()->RemoveChildClock(clock1.get()); // => clock2 & clock3 are destroyed ...
+    GetMainClock()->RemoveChildClock(clock3.get()); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
+    GetMainClock()->RemoveChildClock(clock2.get());
+
+    clock1 = nullptr;
+    clock2 = nullptr;
+    clock3 = nullptr;
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -268,9 +272,9 @@ protected:
     }
     else
     {
-      if (!UpdateClockTimeScaleWithKeys(clock1, key, GLFW_KEY_KP_1, GLFW_KEY_KP_2, action))
-        if (!UpdateClockTimeScaleWithKeys(clock2, key, GLFW_KEY_KP_3, GLFW_KEY_KP_4, action))
-          UpdateClockTimeScaleWithKeys(clock3, key, GLFW_KEY_KP_5, GLFW_KEY_KP_6, action);
+      if (!UpdateClockTimeScaleWithKeys(clock1.get(), key, GLFW_KEY_KP_1, GLFW_KEY_KP_2, action))
+        if (!UpdateClockTimeScaleWithKeys(clock2.get(), key, GLFW_KEY_KP_4, GLFW_KEY_KP_5, action))
+          UpdateClockTimeScaleWithKeys(clock3.get(), key, GLFW_KEY_KP_7, GLFW_KEY_KP_8, action);
     }
   }
 
@@ -290,9 +294,9 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
 
-  chaos::Clock * clock1{ nullptr };
-  chaos::Clock * clock2{ nullptr };
-  chaos::Clock * clock3{ nullptr };
+  boost::intrusive_ptr<chaos::Clock> clock1;
+  boost::intrusive_ptr<chaos::Clock> clock2;
+  boost::intrusive_ptr<chaos::Clock> clock3;
 
   chaos::MyGLFWFpsCamera fps_camera;
 
@@ -301,12 +305,6 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	double x = chaos::MathTools::Fmod(18.0, 8.0);
-
-
-
-
-	return 0;
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();

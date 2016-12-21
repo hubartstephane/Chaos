@@ -4,7 +4,6 @@ namespace chaos
 {  
 	Clock::Clock(ClockCreateParams const & params) : 
 		time_scale(params.time_scale), 
-		time_frequency(params.time_frequency), 
 		paused(params.paused)
 	{
 			
@@ -15,9 +14,13 @@ namespace chaos
 		// after destructor, the children vector will be cleared
 		// the problem is that children may survive to their parents due to reference count
 		// so orphan all children to ensure they cannot access parent's anymore
-		size_t count = children_clocks.size();
-		for (size_t i = 0; i < count; ++i)
+		size_t child_count = children_clocks.size();
+		for (size_t i = 0; i < child_count; ++i)
 			children_clocks[i]->parent_clock = nullptr;	
+    // same thing with events
+    size_t event_count = events.size();
+    for (size_t i = 0; i < event_count; ++i)
+      events[i]->clock = nullptr;
 	}
 
 	bool Clock::IsDescendantClock(Clock const * clock) const
@@ -82,39 +85,20 @@ namespace chaos
 
 	bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
 	{
-
 		assert(parent_clock == nullptr);
-
-		ClockTickData tick_data;
-		tick_data.delta_time = 0.0f;
-		return TickClockImpl(tick_data);
-
-		return true;
+		return TickClockImpl(delta_time);
 	}
 
-	bool Clock::TickClockImpl(ClockTickData tick_data) // protected interface
+	bool Clock::TickClockImpl(double delta_time) // protected interface
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)
 			return false;
-		double previous_clock_time = clock_time;
-		clock_time = clock_time + time_scale * tick_data.delta_time;
-		
-		ClockTickData child_tick_data;	
-		if (time_frequency > 0.0)
-		{
-
-		
-		}
-		else
-		{
-			child_tick_data.delta_time = time_scale * tick_data.delta_time;		
-		}
-
+		clock_time = clock_time + time_scale * delta_time;
 		// recursive click
 		size_t count = children_clocks.size();
 		for (size_t i = 0; i < count ; ++i)
-			children_clocks[i]->TickClockImpl(tick_data);
+			children_clocks[i]->TickClockImpl(time_scale * delta_time);
 
 		return true;
 	}

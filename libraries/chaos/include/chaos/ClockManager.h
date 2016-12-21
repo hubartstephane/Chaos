@@ -5,36 +5,69 @@
 
 namespace chaos
 {
-	/** 
-	 * ClockTickData : information for tick
-	 */
+  /**
+  * EventCreation params
+  */
 
-	class ClockTickData
-	{
-	public:
+  class ClockCreateParams
+  {
+  public:
 
-		/** the absolute time */
-		double clock_time{0.0};
-		/** the delta time */
-		double delta_time{0.0};
-		/** the delta loop count */
-		double delta_count{0.0};	
-	};
+
+  };
+
+  /**
+   * ClockEventTickResult
+   */
+
+  class ClockEventTickResult
+  {
+  public:
+
+    /** default constructor */
+    ClockEventTickResult() {}
+
+  public:
+
+    /** the event wants to be restarted later */
+    static ClockEventTickResult RestartAt(double time);
+    /** the event is finished */
+    static ClockEventTickResult Finished();
+
+    
+
+  };
 
 
 	/**
 	* Event that can be triggered by clock
 	*/
 
-	class ClockEvent
+	class ClockEvent : public ReferencedObject
 	{
+    friend class Clock;
+
 	public:
 
 		/** destructor */
 		virtual ~ClockEvent() = default;
 
+    /** start time */
+    double start_time{0.0};
+    /** duration */
+    double duration{0.0};
+    /** the frequency between repetitions */
+    double frequency{0.0};
+    /** the number of repetitions */
+    int repetition_count{0};
+    /** the method to process */
 
+    virtual bool Process(double clock_time) { return true; }
 
+  protected:
+
+    /** the clock it belongs to */
+    class Clock * clock{nullptr};
 	};
 
 	/**
@@ -47,8 +80,6 @@ namespace chaos
 
 		/** a time scale for the clock */
 		double time_scale{1.0};
-		/** a frequency at with clock is rest */
-		double time_frequency{0.0};
 		/** whether the clock is paused or not */
 		bool   paused{false};  	
 	};
@@ -91,10 +122,6 @@ namespace chaos
 		void SetTimeScale(double new_scale) { time_scale = new_scale; }
 		/** returns the time scale */
 		double GetTimeScale() const { return time_scale; }
-		/** change the time frequency */
-		void SetTimeFrequency(double new_frequency) { time_frequency = new_frequency; }
-		/** returns the time frequency */
-		double GetTimeFrequency() const { return time_frequency; }
 		/** gets a clock by id */
 		Clock * GetChildClock(int id, bool recursive = true);
 		/** gets a clock by id */
@@ -115,7 +142,7 @@ namespace chaos
 	protected:
 
 		/** advance the clock */
-		bool TickClockImpl(ClockTickData tick_data);
+		bool TickClockImpl(double delta_time);
 		/** ensure given clock is a child of the hierarchy tree */
 		bool IsDescendantClock(Clock const * clock) const;
 		/** gets a free ID for a clock */
@@ -128,18 +155,18 @@ namespace chaos
 	protected:
 
 		/** the parent clock */
-		Clock * parent_clock;
+    Clock * parent_clock{nullptr};
 		/** the time of the clock */
 		double clock_time{0.0};
 		/** a time scale for the clock */
 		double time_scale{1.0};
-		/** a frequency at with clock is rest */
-		double time_frequency{0.0};
 		/** whether the clock is paused or not */
 		bool   paused{false};  
 		/** the ID of the clock */
 		int    clock_id{0};
 
+    /** the events */
+    std::vector<boost::intrusive_ptr<ClockEvent>> events;
 		/** the child clocks */
 		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
 	};

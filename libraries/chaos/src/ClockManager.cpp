@@ -12,15 +12,15 @@ namespace chaos
 	Clock::~Clock()
 	{
 		// after destructor, the children vector will be cleared
-		// the problem is that children may survive to their parents due to reference count
+		// the problem is that children may survive to their parent death due to reference count
 		// so orphan all children to ensure they cannot access parent's anymore
 		size_t child_count = children_clocks.size();
 		for (size_t i = 0; i < child_count; ++i)
 			children_clocks[i]->parent_clock = nullptr;	
 		// same thing with events
-		size_t event_count = registered_events.size();
+		size_t event_count = pending_events.size();
 		for (size_t i = 0; i < event_count; ++i)
-			registered_events[i]->clock = nullptr;
+			pending_events[i]->clock = nullptr;
 	}
 
 	bool Clock::IsDescendantClock(Clock const * child_clock) const
@@ -110,6 +110,10 @@ namespace chaos
 		if (paused || time_scale == 0.0)
 			return false;
 		clock_time = clock_time + time_scale * delta_time;
+		// register all events in the list
+
+
+
 		// recursive click
 		size_t count = children_clocks.size();
 		for (size_t i = 0; i < count ; ++i)
@@ -118,55 +122,46 @@ namespace chaos
 		return true;
 	}
 
-	Clock * Clock::AddChildClock(int id, ClockCreateParams const & params)
+	Clock * Clock::CreateChildClock(int id, ClockCreateParams const & params)
 	{
-		if (id > 0 && GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
+		if (id > 0 && GetTopLevelParent()->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
 			return nullptr;
 
 		if (id < 0) // generate a own ID if necessary
 		{
-			id = FindUnusedID(true);
+			id = GetTopLevelParent()->FindUnusedID(true);
 			if (id < 0)
 				return nullptr;
 		}
 
-		boost::intrusive_ptr<Clock> clock = boost::intrusive_ptr<Clock>(new Clock(params)); // allocate the clock
+		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params)); // allocate the clock
 		if (clock != nullptr)
 		{
-			clock->clock_id = id;
-			clock->parent_clock = this;
-			children_clocks.push_back(clock);
-			return clock.get();
+			child_clock->clock_id = id;
+			child_clock->parent_clock = this;
+			children_clocks.push_back(child_clock);
 		}   
-		return nullptr;
+		return child_clock.get();
 	}
 
-	bool Clock::RemoveChildClock(Clock * clock)
+	bool Clock::RemoveFromParent()
 	{
-		assert(clock != nullptr);
-
-		// can only remove the clock if it belongs to a parent
-		if (clock->parent_clock == nullptr) 
-			return false;
-
-		// XXX : ensure it is in the hierarchy (even a parent) 
-		//       This is really good, because even if the pointer clock has been removed
-		//       Memory is not read until found in Clock Tree
-		if (clock->parent_clock == this || GetTopLevelParent()->IsDescendantClock(clock)) 
+		Clock * tmp = parent_clock;
+		if (tmp != nullptr) 
 		{
-			size_t count = clock->parent_clock->children_clocks.size();
+			size_t count = tmp->children_clocks.size();
 			for (size_t i = 0; i < count; ++i)
 			{
-				if (clock->parent_clock->children_clocks[i].get() == clock) // remove swap
+				if (tmp->children_clocks[i].get() == this) // remove swap
 				{
 					if (i != count - 1) // nothing to do if already last element
-						clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());							
+						tmp->children_clocks[i] = std::move(tmp->children_clocks.back());							
 
-					clock->parent_clock = nullptr;
-					clock->parent_clock->children_clocks.pop_back();
-					return true;
+					parent_clock = nullptr;          // XXX : we cannot invert these 2 lines because, because 'this' could be deleted and then
+					tmp->children_clocks.pop_back(); //       and then we would access 'parent_clock' member after destructor
+					return true;                     //       that's why we are using 'tmp'
 				}
-			}
+			}		
 		}
 		return false;
 	}
@@ -238,7 +233,7 @@ namespace chaos
 	}
 
 
-	bool Clock::RegisterEvent(ClockEvent * clock_event, ClockEventInfo event_info)
+	bool Clock::AddPendingEvent(ClockEvent * clock_event, ClockEventInfo event_info, bool relative_time)
 	{
 		assert(clock_event != nullptr);
 
@@ -251,31 +246,30 @@ namespace chaos
 		// do the registration
 		clock_event->clock = this;
 		clock_event->event_info = event_info;
-		registered_events.push_back(clock_event);
+		pending_events.push_back(clock_event);
 
 		return true;
 	}
 
-	bool Clock::RemoveEvent(ClockEvent * in_clock_event)
+	bool ClockEvent::RemoveFromClock()
 	{
-		assert(in_clock_event != nullptr);
-
-		// ensure the event belongs to the clock of concern
-		if (in_clock_event->clock != this)
-			return false;
-
-		size_t count = registered_events.size();
-		for (size_t i = 0; i < count; ++i)
+		Clock * tmp = clock; // keep a trace of parent
+		if (tmp != nullptr)
 		{
-			if (registered_events[i].get() == in_clock_event)
+			size_t count = tmp->pending_events.size();
+			for (size_t i = 0; i < count; ++i)
 			{
-				if (i != count - 1)
-					registered_events[i] = std::move(registered_events.back());
-				in_clock_event->clock = nullptr;
-				registered_events.pop_back();
-				return true;
-			}
-		}
+				if (tmp->pending_events[i].get() == this)
+				{
+					if (i != count - 1)
+						tmp->pending_events[i] = std::move(tmp->pending_events.back());
+
+					clock = nullptr;                // XXX : we cannot invert these 2 lines because this could be destroyed 
+					tmp->pending_events.pop_back(); // and we then would access 'clock' member after destructor 
+					return true;                    // that's why we are using 'tmp'
+				}		                            
+			}		
+		}			
 		return false;
 	}
 

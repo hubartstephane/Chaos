@@ -161,6 +161,9 @@ namespace chaos
 
 		/** destructor */
 		virtual ~ClockEvent() = default;
+		/** remove event from its clock */
+		bool RemoveFromClock();
+
 		/** the method to process */
 		virtual ClockEventTickResult Process(ClockEventTickData const & tick_data) { return ClockEventTickResult(); }
 
@@ -192,6 +195,7 @@ namespace chaos
 
 	class Clock : public ReferencedObject
 	{
+		friend class ClockEvent;
 
 	public:
 
@@ -237,14 +241,12 @@ namespace chaos
 		/** advance the clock (public interface) */
 		bool TickClock(double delta_time);
 		/** add a clock */
-		Clock * AddChildClock(int id, ClockCreateParams const & params = ClockCreateParams());
+		Clock * CreateChildClock(int id, ClockCreateParams const & params = ClockCreateParams());
 		/** remove a clock */
-		bool RemoveChildClock(Clock * clock);
+		bool RemoveFromParent();
 
 		/** add an event to be ticked */
-		bool RegisterEvent(ClockEvent * clock_event, ClockEventInfo event_info);
-		/** Remove an event by pointer (beware, issue using same pointer) */
-		bool RemoveEvent(ClockEvent * clock_event);
+		bool AddPendingEvent(ClockEvent * clock_event, ClockEventInfo event_info, bool relative_time);
 
 	protected:
 
@@ -275,7 +277,7 @@ namespace chaos
 		int    clock_id{0};
 
 		/** the events */
-		std::vector<boost::intrusive_ptr<ClockEvent>> registered_events;
+		std::vector<boost::intrusive_ptr<ClockEvent>> pending_events;
 		/** the child clocks */
 		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
 	};

@@ -148,9 +148,9 @@ protected:
     // XXX : order is important because clock1 would destroy clock2 & clock3
     //       In fact, MainClock->FindChild(clock2) would fails, causing the removing to abord
     //       pointer clock2 & clock3 would be inconsistant
-    GetMainClock()->RemoveChildClock(clock1.get()); // => clock2 & clock3 are destroyed ...
-    GetMainClock()->RemoveChildClock(clock3.get()); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
-    GetMainClock()->RemoveChildClock(clock2.get());
+	clock1->RemoveFromParent(); // => clock2 & clock3 are destroyed ...
+	clock3->RemoveFromParent(); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
+    clock2->RemoveFromParent();
 
     clock1 = nullptr;
     clock2 = nullptr;
@@ -195,9 +195,9 @@ protected:
       return false;
 
     // create a timer
-    clock1 = GetMainClock()->AddChildClock(-1);
-    clock2 = clock1->AddChildClock(-1);
-    clock3 = clock2->AddChildClock(-1);
+    clock1 = GetMainClock()->CreateChildClock(-1);
+    clock2 = clock1->CreateChildClock(-1);
+    clock3 = clock2->CreateChildClock(-1);
 
     // create meshes
     chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));

@@ -91,7 +91,7 @@ namespace chaos
 		bool IsSingleTickEvent() const { return (duration == 0.0);}
 		/** returns true whether the event is to be ticked for a given range */
 		bool IsRangeEvent() const { return (duration > 0.0);}
-		/** returns true whether the event is to be ticked for an undermined time*/
+		/** returns true whether the event is to be ticked for an undermined time */
 		bool IsForeverEvent() const { return (duration < 0.0);}
 
 		/** the maximum time the event can be triggered */
@@ -105,7 +105,7 @@ namespace chaos
 		}
 
 		/** returns true whether this event will never be triggered */
-		bool IsTooLate(double current_time) const
+		bool IsTooLateFor(double current_time) const
 		{
 			double max_time = GetMaxEventTime();
 			if (current_time > max_time)
@@ -120,6 +120,18 @@ namespace chaos
 	};
 
 	/**
+	* ClockEventTickData : the data that will be given to event
+	*/
+
+	class ClockEventTickData
+	{
+	public:
+
+		double current_time;
+	
+	};
+
+	/**
 	* ClockEventTickResult
 	*/
 
@@ -128,15 +140,9 @@ namespace chaos
 	public:
 
 		/** default constructor */
-		ClockEventTickResult() {}
+		ClockEventTickResult() = default;
 
-	public:
-#if 0
-		/** the event wants to be restarted later */
-		static ClockEventTickResult RestartAt(double time);
-		/** the event is finished */
-		static ClockEventTickResult Finished();
-#endif
+
 
 
 	};
@@ -155,38 +161,16 @@ namespace chaos
 
 		/** destructor */
 		virtual ~ClockEvent() = default;
-
-		/** duration (0 for single tick event, <0 for unknown duration, >0 for a well known duration) */
-		double duration{0.0};
-		/** the frequency between repetitions (no repetition if <= 0) */
-		double frequency{0.0};
-		/** the number of repetitions (0 for no repetition, <0 for unlimited repetition, >0 for well known repetition count) */
-		int repetition_count{0};
 		/** the method to process */
-		virtual bool Process(double clock_time) { return true; }
+		virtual ClockEventTickResult Process(ClockEventTickData const & tick_data) { return ClockEventTickResult(); }
 
 	protected:
 
+		/** the information for the event */
+		ClockEventInfo event_info;
 		/** the clock it belongs to */
 		class Clock * clock{nullptr};
 	};
-
-	/**
-	* ClockEventRegistration : the registration of an event in a time line
-	*/
-
-	class ClockEventRegistration
-	{
-	public:
-
-		/** the start time */
-		double start_time{0.0};
-		/** the ID of the event */
-		int    event_id{0};
-		/** the event to be played */
-		boost::intrusive_ptr<ClockEvent> clock_event;
-	};
-
 
 	/**
 	* ClockCreateParams : data for clock creation
@@ -257,21 +241,19 @@ namespace chaos
 		/** remove a clock */
 		bool RemoveChildClock(Clock * clock);
 
-		/** add an event to be ticked. returns its ID */
-		int RegisterEvent(ClockEvent * clock_event, double start_time);
+		/** add an event to be ticked */
+		bool RegisterEvent(ClockEvent * clock_event, ClockEventInfo event_info);
 		/** Remove an event by pointer (beware, issue using same pointer) */
 		bool RemoveEvent(ClockEvent * clock_event);
-		/** Remove an event by ID */
-		bool RemoveEvent(int event_id);
 
 	protected:
 
 		/** advance the clock */
-		bool TickClockImpl(double delta_time, std::vector<ClockEventRegistration> & clock_events);
+		bool TickClockImpl(double delta_time, std::vector<ClockEvent *> & clock_events);
 		/** internal methods to trigger all the event */
-		void TriggerClockEvents(std::vector<ClockEventRegistration> & clock_events);
+		void TriggerClockEvents(std::vector<ClockEvent *> & clock_events);
 		/** ensure given clock is a child of the hierarchy tree */
-		bool IsDescendantClock(Clock const * clock) const;
+		bool IsDescendantClock(Clock const * child_clock) const;
 		/** gets a free ID for a clock */
 		int FindUnusedID(bool recursive) const;
 		/** iterate over the children and get min and max ID's in use */
@@ -291,11 +273,9 @@ namespace chaos
 		bool   paused{false};  
 		/** the ID of the clock */
 		int    clock_id{0};
-		/** the ID for the events */
-		int    next_event_id{0};
 
 		/** the events */
-		std::vector<ClockEventRegistration> registered_events;
+		std::vector<boost::intrusive_ptr<ClockEvent>> registered_events;
 		/** the child clocks */
 		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
 	};

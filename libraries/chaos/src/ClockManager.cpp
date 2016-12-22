@@ -6,7 +6,7 @@ namespace chaos
 		time_scale(params.time_scale), 
 		paused(params.paused)
 	{
-			
+
 	}
 
 	Clock::~Clock()
@@ -17,22 +17,23 @@ namespace chaos
 		size_t child_count = children_clocks.size();
 		for (size_t i = 0; i < child_count; ++i)
 			children_clocks[i]->parent_clock = nullptr;	
-    // same thing with events
-   // size_t event_count = registered_events.size();
-   // for (size_t i = 0; i < event_count; ++i)
-   //   registered_events[i]->clock = nullptr;
+		// same thing with events
+		size_t event_count = registered_events.size();
+		for (size_t i = 0; i < event_count; ++i)
+			registered_events[i]->clock = nullptr;
 	}
 
-	bool Clock::IsDescendantClock(Clock const * clock) const
+	bool Clock::IsDescendantClock(Clock const * child_clock) const
 	{
-		assert(clock != nullptr);
+		assert(child_clock != nullptr);
 
-		if (clock == this)
+		// consider that a clock is it own child !!
+		if (child_clock == this)
 			return true;
-
+		// recurse
 		size_t count = children_clocks.size();
 		for (size_t i = 0; i < count; ++i)
-			if (children_clocks[i]->IsDescendantClock(clock))
+			if (children_clocks[i]->IsDescendantClock(child_clock))
 				return true;
 		return false;
 	}
@@ -40,14 +41,16 @@ namespace chaos
 	Clock * Clock::GetChildClock(int id, bool recursive)
 	{
 		Clock * result = nullptr;
-
-		if (clock_id == id)
-			result = this;
-		else if (recursive && id > 0) // no clock with negative ID !
+		if (id > 0)  // no clock with negative ID !
 		{
-			size_t count = children_clocks.size();
-			for (size_t i = 0; (i < count) && (result == nullptr); ++i)
-				result = children_clocks[i]->GetChildClock(id, recursive);
+			if (clock_id == id)
+				result = this;
+			else if (recursive)
+			{
+				size_t count = children_clocks.size();
+				for (size_t i = 0; (i < count) && (result == nullptr); ++i)
+					result = children_clocks[i]->GetChildClock(id, recursive);
+			}		
 		}
 		return result;
 	}
@@ -55,14 +58,16 @@ namespace chaos
 	Clock const * Clock::GetChildClock(int id, bool recursive) const
 	{
 		Clock const * result = nullptr;
-
-		if (clock_id == id)
-			result = this;
-		else if (recursive && id > 0)  // no clock with negative ID !
+		if (id > 0)  // no clock with negative ID !
 		{
-			size_t count = children_clocks.size();
-			for (size_t i = 0; (i < count) && (result == nullptr); ++i)
-				result = children_clocks[i]->GetChildClock(id, recursive);
+			if (clock_id == id)
+				result = this;
+			else if (recursive)
+			{
+				size_t count = children_clocks.size();
+				for (size_t i = 0; (i < count) && (result == nullptr); ++i)
+					result = children_clocks[i]->GetChildClock(id, recursive);
+			}		
 		}
 		return result;
 	}
@@ -83,23 +88,23 @@ namespace chaos
 		return result;
 	}
 
-	void Clock::TriggerClockEvents(std::vector<ClockEventRegistration> & clock_events)
+	void Clock::TriggerClockEvents(std::vector<ClockEvent *> & clock_events)
 	{
-	
+
 	}
 
 	bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
 	{
 		assert(parent_clock == nullptr);
 
-		std::vector<ClockEventRegistration> clock_events;
-		
+		std::vector<ClockEvent *> clock_events;
+
 		bool result = TickClockImpl(delta_time, clock_events);
 		TriggerClockEvents(clock_events);		
 		return result;
 	}
 
-	bool Clock::TickClockImpl(double delta_time, std::vector<ClockEventRegistration> & clock_events) // protected interface
+	bool Clock::TickClockImpl(double delta_time, std::vector<ClockEvent *> & clock_events) // protected interface
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)
@@ -140,26 +145,26 @@ namespace chaos
 	{
 		assert(clock != nullptr);
 
+		// can only remove the clock if it belongs to a parent
+		if (clock->parent_clock == nullptr) 
+			return false;
+
 		// XXX : ensure it is in the hierarchy (even a parent) 
 		//       This is really good, because even if the pointer clock has been removed
 		//       Memory is not read until found in Clock Tree
-		if (GetTopLevelParent()->IsDescendantClock(clock)) 
+		if (clock->parent_clock == this || GetTopLevelParent()->IsDescendantClock(clock)) 
 		{
-			if (clock->parent_clock != nullptr) // can only remove the clock if it belongs to a parent
+			size_t count = clock->parent_clock->children_clocks.size();
+			for (size_t i = 0; i < count; ++i)
 			{
-				size_t count = clock->parent_clock->children_clocks.size();
-				for (size_t i = 0; i < count; ++i)
+				if (clock->parent_clock->children_clocks[i].get() == clock) // remove swap
 				{
-					if (clock->parent_clock->children_clocks[i].get() == clock) // remove swap
-					{
-            if (i != count - 1) // nothing to do if already last element
-            {
-              clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());
-              clock->parent_clock->children_clocks.pop_back();
-              clock->parent_clock = nullptr;
-            }
-						return true;
-					}
+					if (i != count - 1) // nothing to do if already last element
+						clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());							
+
+					clock->parent_clock = nullptr;
+					clock->parent_clock->children_clocks.pop_back();
+					return true;
 				}
 			}
 		}
@@ -232,61 +237,47 @@ namespace chaos
 		return -1;
 	}
 
-	
-	int Clock::RegisterEvent(ClockEvent * clock_event, double start_time)
-	{
-		assert(clock_event != nullptr);
-		assert(start_time >= 0);
-    
-    ClockEventRegistration event_registration;
-    event_registration.start_time = start_time;
-    event_registration.event_id = next_event_id++;
-    event_registration.clock_event = clock_event;
-    
-    registered_events.push_back(std::move(event_registration));
-    return event_registration.event_id;
-	}
-	
-	bool Clock::RemoveEvent(ClockEvent * clock_event)
+
+	bool Clock::RegisterEvent(ClockEvent * clock_event, ClockEventInfo event_info)
 	{
 		assert(clock_event != nullptr);
 
-    size_t count = registered_events.size();
-    for (size_t i = 0; i < count; ++i)
-    {
-      ClockEventRegistration & event_registration = registered_events[i];
-      if (event_registration.clock_event == clock_event)
-      {
-        if (i != count - 1)
-        {
-          event_registration = std::move(registered_events.back());
-          registered_events.pop_back();
-        }
-        return true;
-      }
-    }
-    return false;
+		// event already registered ?
+		if (clock_event->clock != nullptr)
+			return false;
+		// is it too late for that event ?
+		if (event_info.IsTooLateFor(clock_time))
+			return false;
+		// do the registration
+		clock_event->clock = this;
+		clock_event->event_info = event_info;
+		registered_events.push_back(clock_event);
+
+		return true;
 	}
 
-  bool Clock::RemoveEvent(int event_id)
-  {
-    assert(event_id >= 0);
+	bool Clock::RemoveEvent(ClockEvent * in_clock_event)
+	{
+		assert(in_clock_event != nullptr);
 
-    size_t count = registered_events.size();
-    for (size_t i = 0; i < count; ++i)
-    {
-      ClockEventRegistration & event_registration = registered_events[i];
-      if (event_registration.event_id == event_id)
-      {
-        if (i != count - 1)
-        {
-          event_registration = std::move(registered_events.back());
-          registered_events.pop_back();
-        }
-        return true;
-      }
-    }
-    return false;
-  }
+		// ensure the event belongs to the clock of concern
+		if (in_clock_event->clock != this)
+			return false;
+
+		size_t count = registered_events.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			if (registered_events[i].get() == in_clock_event)
+			{
+				if (i != count - 1)
+					registered_events[i] = std::move(registered_events.back());
+				in_clock_event->clock = nullptr;
+				registered_events.pop_back();
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 }; // namespace chaos

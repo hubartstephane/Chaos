@@ -18,9 +18,9 @@ namespace chaos
 		for (size_t i = 0; i < child_count; ++i)
 			children_clocks[i]->parent_clock = nullptr;	
     // same thing with events
-    size_t event_count = events.size();
-    for (size_t i = 0; i < event_count; ++i)
-      events[i]->clock = nullptr;
+   // size_t event_count = registered_events.size();
+   // for (size_t i = 0; i < event_count; ++i)
+   //   registered_events[i]->clock = nullptr;
 	}
 
 	bool Clock::IsDescendantClock(Clock const * clock) const
@@ -152,9 +152,12 @@ namespace chaos
 				{
 					if (clock->parent_clock->children_clocks[i].get() == clock) // remove swap
 					{
-						clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());
-						clock->parent_clock->children_clocks.pop_back();
-						clock->parent_clock = nullptr;
+            if (i != count - 1) // nothing to do if already last element
+            {
+              clock->parent_clock->children_clocks[i] = std::move(clock->parent_clock->children_clocks.back());
+              clock->parent_clock->children_clocks.pop_back();
+              clock->parent_clock = nullptr;
+            }
 						return true;
 					}
 				}
@@ -230,25 +233,60 @@ namespace chaos
 	}
 
 	
-	bool Clock::RegisterEvent(ClockEvent * clock_event, double start_time)
+	int Clock::RegisterEvent(ClockEvent * clock_event, double start_time)
 	{
 		assert(clock_event != nullptr);
 		assert(start_time >= 0);
-	
-	
-		return false;
+    
+    ClockEventRegistration event_registration;
+    event_registration.start_time = start_time;
+    event_registration.event_id = next_event_id++;
+    event_registration.clock_event = clock_event;
+    
+    registered_events.push_back(std::move(event_registration));
+    return event_registration.event_id;
 	}
 	
-	void Clock::RemoveEvent(ClockEvent * clock_event)
+	bool Clock::RemoveEvent(ClockEvent * clock_event)
 	{
 		assert(clock_event != nullptr);
 
-		for (auto it = registered_events.begin() ; it != )
-
-
-		return false;
+    size_t count = registered_events.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      ClockEventRegistration & event_registration = registered_events[i];
+      if (event_registration.clock_event == clock_event)
+      {
+        if (i != count - 1)
+        {
+          event_registration = std::move(registered_events.back());
+          registered_events.pop_back();
+        }
+        return true;
+      }
+    }
+    return false;
 	}
 
-	
+  bool Clock::RemoveEvent(int event_id)
+  {
+    assert(event_id >= 0);
+
+    size_t count = registered_events.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      ClockEventRegistration & event_registration = registered_events[i];
+      if (event_registration.event_id == event_id)
+      {
+        if (i != count - 1)
+        {
+          event_registration = std::move(registered_events.back());
+          registered_events.pop_back();
+        }
+        return true;
+      }
+    }
+    return false;
+  }
 
 }; // namespace chaos

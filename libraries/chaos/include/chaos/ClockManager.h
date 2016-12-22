@@ -28,12 +28,12 @@ namespace chaos
 		ClockEventTickResult() {}
 
 	public:
-
+#if 0
 		/** the event wants to be restarted later */
 		static ClockEventTickResult RestartAt(double time);
 		/** the event is finished */
 		static ClockEventTickResult Finished();
-
+#endif
 
 
 	};
@@ -53,16 +53,13 @@ namespace chaos
 		/** destructor */
 		virtual ~ClockEvent() = default;
 
-		/** start time */
-		double start_time{0.0};
-		/** duration */
+		/** duration (0 for single tick event, <0 for unknown duration, >0 for a well known duration) */
 		double duration{0.0};
-		/** the frequency between repetitions */
+		/** the frequency between repetitions (no repetition if <= 0) */
 		double frequency{0.0};
-		/** the number of repetitions */
+		/** the number of repetitions (0 for no repetition, <0 for unlimited repetition, >0 for well known repetition count) */
 		int repetition_count{0};
 		/** the method to process */
-
 		virtual bool Process(double clock_time) { return true; }
 
 	protected:
@@ -81,6 +78,8 @@ namespace chaos
 
 		/** the start time */
 		double start_time{0.0};
+    /** the ID of the event */
+    int    event_id{0};
 		/** the event to be played */
 		boost::intrusive_ptr<ClockEvent> clock_event;
 	};
@@ -155,10 +154,12 @@ namespace chaos
 		/** remove a clock */
 		bool RemoveChildClock(Clock * clock);
 
-		/** add an event to be ticked */
-		bool RegisterEvent(ClockEvent * clock_event, double start_time);
-		/** Remove an event */
+		/** add an event to be ticked. returns its ID */
+		int RegisterEvent(ClockEvent * clock_event, double start_time);
+		/** Remove an event by pointer (beware, issue using same pointer) */
 		bool RemoveEvent(ClockEvent * clock_event);
+    /** Remove an event by ID */
+    bool RemoveEvent(int event_id);
 
 	protected:
 
@@ -187,6 +188,8 @@ namespace chaos
 		bool   paused{false};  
 		/** the ID of the clock */
 		int    clock_id{0};
+    /** the ID for the events */
+    int    next_event_id{0};
 
 		/** the events */
 		std::vector<ClockEventRegistration> registered_events;

@@ -6,14 +6,117 @@
 namespace chaos
 {
 	/**
-	* EventCreation params
-	*/
+	 * ClockEventRepetitionInfo
+	 */
 
-	class ClockEventCreateParams
+	class ClockEventRepetitionInfo
 	{
 	public:
 
+		/** default constructor */
+		ClockEventRepetitionInfo() = default;
+		/** intialization constructor */
+		ClockEventRepetitionInfo(double in_frequency, int in_repetition_count):
+			frequency(in_frequency),
+			repetition_count(in_repetition_count){}
 
+		/** return an instance with no repetition */
+		static ClockEventRepetitionInfo NoRepetition()
+		{
+			return ClockEventRepetitionInfo();
+		}
+
+		ClockEventRepetitionInfo InfiniteRepetition(double in_frequency)
+		{
+			assert(in_frequency >= 0.0);
+			return ClockEventRepetitionInfo(in_frequency, -1);
+		}
+
+		ClockEventRepetitionInfo Repetition(double in_frequency, int in_repetition_count)
+		{
+			assert(in_frequency >= 0.0);
+			assert(in_repetition_count >= 0);
+			return ClockEventRepetitionInfo(in_frequency, in_repetition_count);
+		}
+
+		/** returns true whether the event is repeated */
+		bool IsRepeated() const { return (frequency >= 0.0);}
+		/** returns true whether the event is repeated for ever  */
+		bool IsRepeatedInfinitly() const { return IsRepeated() && (repetition_count < 0);}
+
+	public:
+	
+		/** the frequency between repetitions (no repetition if < 0) */
+		double frequency{-1.0};
+		/** the number of repetitions (0 for no repetition, <0 for unlimited repetition, >0 for well known repetition count) */
+		int repetition_count{0};
+	};
+
+
+	/**
+	* ClockEventInfo : some information that describes the event
+	*/
+
+	class ClockEventInfo : public ClockEventRepetitionInfo
+	{
+	public:
+
+		/** default constructor */
+		ClockEventInfo() = default;
+		/** constructor with initialization */
+		ClockEventInfo(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo()):
+			ClockEventRepetitionInfo(in_repetition_info),
+			start_time(in_start_time),
+			duration(in_duration)
+		{
+		}
+		
+		/** creates an instance that describes an event to be ticked once */
+		static ClockEventInfo SingleTickEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo())
+		{
+			return ClockEventInfo(in_start_time, 0.0, in_repetition_info);
+		}
+		/** creates an instance that describes an event to be ticked for a given time */
+		static ClockEventInfo RangeEvent(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo())
+		{
+			return ClockEventInfo(in_start_time, in_duration,in_repetition_info);
+		}
+		/** creates an instance that describes an event to be ticked for a given time */
+		static ClockEventInfo ForeverEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo())
+		{
+			return ClockEventInfo(in_start_time, -1.0, in_repetition_info);
+		}
+		
+		/** returns true whether the event is to be ticked only once */
+		bool IsSingleTickEvent() const { return (duration == 0.0);}
+		/** returns true whether the event is to be ticked for a given range */
+		bool IsRangeEvent() const { return (duration > 0.0);}
+		/** returns true whether the event is to be ticked for an undermined time*/
+		bool IsForeverEvent() const { return (duration < 0.0);}
+
+		/** the maximum time the event can be triggered */
+		double GetMaxEventTime() const
+		{
+			if (IsForeverEvent())
+				return std::numeric_limits<float>::max();
+			if (IsRepeatedInfinitly())
+				return std::numeric_limits<float>::max();
+			return start_time + duration + (duration + frequency) * (float)repetition_count;
+		}
+
+		/** returns true whether this event will never be triggered */
+		bool IsTooLate(double current_time) const
+		{
+			double max_time = GetMaxEventTime();
+			if (current_time > max_time)
+				return false;
+			return true;
+		}
+
+		/** the initial time */
+		double start_time{0.0};
+		/** duration (0 for single tick event, <0 for unknown duration, >0 for a well known duration) */
+		double duration{0.0};
 	};
 
 	/**
@@ -38,7 +141,7 @@ namespace chaos
 
 	};
 
-	
+
 
 	/**
 	* Event that can be triggered by clock
@@ -78,8 +181,8 @@ namespace chaos
 
 		/** the start time */
 		double start_time{0.0};
-    /** the ID of the event */
-    int    event_id{0};
+		/** the ID of the event */
+		int    event_id{0};
 		/** the event to be played */
 		boost::intrusive_ptr<ClockEvent> clock_event;
 	};
@@ -158,8 +261,8 @@ namespace chaos
 		int RegisterEvent(ClockEvent * clock_event, double start_time);
 		/** Remove an event by pointer (beware, issue using same pointer) */
 		bool RemoveEvent(ClockEvent * clock_event);
-    /** Remove an event by ID */
-    bool RemoveEvent(int event_id);
+		/** Remove an event by ID */
+		bool RemoveEvent(int event_id);
 
 	protected:
 
@@ -188,8 +291,8 @@ namespace chaos
 		bool   paused{false};  
 		/** the ID of the clock */
 		int    clock_id{0};
-    /** the ID for the events */
-    int    next_event_id{0};
+		/** the ID for the events */
+		int    next_event_id{0};
 
 		/** the events */
 		std::vector<ClockEventRegistration> registered_events;

@@ -164,6 +164,10 @@ namespace chaos
 		/** remove event from its clock */
 		bool RemoveFromClock();
 
+		/** get the info */
+		ClockEventInfo & GetEventInfo(){ return event_info;}
+		ClockEventInfo const & GetEventInfo() const { return event_info;}
+
 		/** the method to process */
 		virtual ClockEventTickResult Process(ClockEventTickData const & tick_data) { return ClockEventTickResult(); }
 

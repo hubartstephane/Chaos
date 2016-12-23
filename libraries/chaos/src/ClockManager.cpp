@@ -108,15 +108,23 @@ namespace chaos
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)
-			return false;
-		clock_time = clock_time + time_scale * delta_time;
+			return false;		
 		// register all events in the list
+		size_t event_count = pending_events.size();
+		for (size_t i = 0; i < event_count ; ++i)
+		{
+			if (pending_events[i]->GetEventInfo().IsTooLateFor(clock_time))
+			{
+			
+			}
+			else
+				clock_events.push_back(pending_events[i].get());		
+		}
 
-
-
-		// recursive click
-		size_t count = children_clocks.size();
-		for (size_t i = 0; i < count ; ++i)
+		clock_time = clock_time + time_scale * delta_time;
+		// recursive tick 
+		size_t child_count = children_clocks.size();
+		for (size_t i = 0; i < child_count ; ++i)
 			children_clocks[i]->TickClockImpl(time_scale * delta_time, clock_events);
 
 		return true;
@@ -159,7 +167,8 @@ namespace chaos
 
 					parent_clock = nullptr;          // XXX : we cannot invert these 2 lines because, because 'this' could be deleted and then
 					tmp->children_clocks.pop_back(); //       and then we would access 'parent_clock' member after destructor
-					return true;                     //       that's why we are using 'tmp'
+					--count;                         //       that's why we are using 'tmp'					
+					return true;                     
 				}
 			}		
 		}
@@ -266,7 +275,8 @@ namespace chaos
 
 					clock = nullptr;                // XXX : we cannot invert these 2 lines because this could be destroyed 
 					tmp->pending_events.pop_back(); // and we then would access 'clock' member after destructor 
-					return true;                    // that's why we are using 'tmp'
+					--count;                        // that's why we are using 'tmp'
+					return true;
 				}		                            
 			}		
 		}			

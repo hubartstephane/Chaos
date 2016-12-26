@@ -40,9 +40,9 @@ namespace chaos
 		}
 
 		/** returns true whether the event is repeated */
-		bool IsRepeated() const { return (frequency >= 0.0);}
+		bool IsRepeated() const { return (frequency >= 0.0) && (repetition_count != 0);}
 		/** returns true whether the event is repeated for ever  */
-		bool IsRepeatedInfinitly() const { return IsRepeated() && (repetition_count < 0);}
+		bool IsRepeatedInfinitly() const { return (frequency >= 0.0) && (repetition_count < 0);}
 
 	public:
 	
@@ -107,17 +107,45 @@ namespace chaos
 		/** returns true whether this event will never be triggered */
 		bool IsTooLateFor(double current_time) const
 		{
-			double max_time = GetMaxEventTime();
-			if (current_time > max_time)
+			double max_event_time = GetMaxEventTime();
+			if (current_time > max_event_time)
 				return false;
 			return true;
 		}
+
+    /** returns true whether element is to be ticked in the range */
+    bool IsInsideRange(double t1, double t2) const
+    {
+      assert(t1 <= t2);
+      if (start_time > t2)
+        return false;
+      double max_event_time = GetMaxEventTime();
+      if (t1 > max_event_time)
+        return false;
+      return true;
+    }
 
 		/** the initial time */
 		double start_time{0.0};
 		/** duration (0 for single tick event, <0 for unknown duration, >0 for a well known duration) */
 		double duration{0.0};
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	* ClockEventTickData : the data that will be given to event
@@ -127,7 +155,12 @@ namespace chaos
 	{
 	public:
 
-		double current_time;
+    /** the time range for the click */
+    double time1{ 0.0 };
+    /** the time range for the click */
+    double time2{ 0.0 };
+    /** the delta time */
+    double delta_time{ 0.0 };
 	
 	};
 
@@ -137,17 +170,58 @@ namespace chaos
 
 	class ClockEventTickResult
 	{
+  protected:
+
+    /** default constructor is protected */
+    ClockEventTickResult() = default;
+
 	public:
 
-		/** default constructor */
-		ClockEventTickResult() = default;
+    /** returns true whether the event is completed */
+    bool IsCompleted() const { return completed && !restarted; }
+    /** returns true whether the event is completed and is to be restarted */
+    bool IsRestarted() const { return completed && restarted; }
+    /** returns true whether the event is to be ticked again */
+    bool IsContinued() const { return !completed; }
 
+    /** some default 'constructor' */
+    static ClockEventTickResult Completed()
+    {
+      ClockEventTickResult result;
+      result.completed = true;
+      result.restarted = false;
+      return result;
+    }
+    /** some default 'constructor' */
+    static ClockEventTickResult UnFinished()
+    {
+      ClockEventTickResult result;
+      result.completed = false;
+      result.restarted = false;
+      return result;
+    }
+    /** some default 'constructor' */
+    static ClockEventTickResult Restart(double in_start_time, bool in_relative_time)
+    {
+      ClockEventTickResult result;
+      result.completed = true;
+      result.restarted = true;
+      result.start_time = in_start_time;
+      result.relative_time = in_relative_time;
+      return result;
+    }
 
+  public:
 
-
+    /** whether event is completed */
+    bool completed{ true };
+    /** whether event is to be restarted */
+    bool restarted{ false };
+    /** the start time for a restarted event */
+    double start_time{ 0.0 };
+    /** whether restart time is in relative reference */
+    double relative_time{ 0.0 };
 	};
-
-
 
 	/**
 	* Event that can be triggered by clock
@@ -168,16 +242,86 @@ namespace chaos
 		ClockEventInfo & GetEventInfo(){ return event_info;}
 		ClockEventInfo const & GetEventInfo() const { return event_info;}
 
-		/** the method to process */
-		virtual ClockEventTickResult Process(ClockEventTickData const & tick_data) { return ClockEventTickResult(); }
+    /** returns true whether the event is ticked for the very first time */
+    bool IsFirstTick() const { return tick_count == 0; }
+    /** returns true whether the event is executed for the very first time */
+    bool IsFirstExecution() const { return execution_count == 0; }
 
+    /** returns the tick count */
+    int GetTickCount() const { return tick_count; }
+    /** returns the execution count */
+    int GetExecutionCount() const { return execution_count; }
+
+		/** the public method to process */
+    void Tick(ClockEventTickData const & tick_data);
+
+  protected:
+
+    /** the method to process */
+    virtual ClockEventTickResult TickImpl(ClockEventTickData const & tick_data) { return Completed(); }
+
+    /** utility functions to for process results */
+    ClockEventTickResult Completed() const { return ClockEventTickResult::Completed(); }
+    /** utility functions to for process results */
+    ClockEventTickResult UnFinished() const { return ClockEventTickResult::UnFinished(); }
+    /** utility functions to for process results */
+    ClockEventTickResult Restart(double in_start_time, bool in_relative_time) const { return ClockEventTickResult::Restart(in_start_time, in_relative_time); }
+
+    /** try to start a next execution */
+    void NextExecution();
+    
 	protected:
 
 		/** the information for the event */
 		ClockEventInfo event_info;
+    /** the tick count for current execution */
+    int tick_count{ 0 };
+    /** the execution count (used for restarted event) */
+    int execution_count{ 0 };    
 		/** the clock it belongs to */
-		class Clock * clock{nullptr};
+		class Clock * clock{nullptr};    
 	};
+
+  /**
+   * ClockEventTickRegistration : events to tick are registered inside that structure 
+   */
+
+
+  class ClockEventTickRegistration
+  {
+  public:
+
+    /** the event */
+    boost::intrusive_ptr<ClockEvent> clock_event;
+    /** the time range for the click */
+    double time1{ 0.0 };
+    /** the time range for the click */
+    double time2{ 0.0 };
+    /** the delta time */
+    double delta_time{ 0.0 };  
+    /** the absolute (top level clock reference) time lapse before starting the event */
+    double abs_time_to_start{ 0.0 };
+  };
+
+  /**
+   * ClockEventTickSort : used to sort events by start time
+   */
+
+  class ClockEventTickSort
+  {
+  public:
+
+    bool operator ()(ClockEventTickRegistration const & src1, ClockEventTickRegistration const & src2)
+    {
+      return src1.abs_time_to_start < src2.abs_time_to_start;
+    };
+  };
+
+  /**
+   * ClockEventTickSet : events ordered by start time
+   */
+
+  using ClockEventTickSet = std::set<ClockEventTickRegistration, ClockEventTickSort>;
 
 	/**
 	* ClockCreateParams : data for clock creation
@@ -255,9 +399,9 @@ namespace chaos
 	protected:
 
 		/** advance the clock */
-		bool TickClockImpl(double delta_time, std::vector<ClockEvent *> & clock_events);
+		bool TickClockImpl(double delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set);
 		/** internal methods to trigger all the event */
-		void TriggerClockEvents(std::vector<ClockEvent *> & clock_events);
+		void TriggerClockEvents(ClockEventTickSet & event_tick_set);
 		/** ensure given clock is a child of the hierarchy tree */
 		bool IsDescendantClock(Clock const * child_clock) const;
 		/** gets a free ID for a clock */
@@ -281,7 +425,7 @@ namespace chaos
 		int    clock_id{0};
 
 		/** the events */
-		std::vector<boost::intrusive_ptr<ClockEvent>> pending_events;
+    std::vector<boost::intrusive_ptr<ClockEvent>> pending_events;
 		/** the child clocks */
 		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
 	};

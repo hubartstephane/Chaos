@@ -20,9 +20,9 @@
 #include <chaos/GLProgramVariableProvider.h>
 
 
-static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+static glm::vec4 const red = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+static glm::vec4 const blue = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 class RenderingContext
@@ -70,13 +70,13 @@ protected:
     program_data.BindUniforms(&uniform_provider);
   }
 
-  void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::SimpleMesh * mesh, chaos::GLProgram * program, glm::vec4 const & color,  glm::mat4 const & local_to_world)
+  void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::SimpleMesh * mesh, chaos::GLProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
   {
     glm::vec4 final_color = color;
 
     PrimitiveRenderingContext prim_ctx;
     prim_ctx.local_to_world = local_to_world;
-    prim_ctx.color          = final_color;
+    prim_ctx.color = final_color;
 
     PrepareObjectProgram(program, ctx, prim_ctx);
 
@@ -90,7 +90,7 @@ protected:
 
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-    DrawPrimitiveImpl(ctx, get_pointer(mesh_box), get_pointer(program_box), color, local_to_world );
+    DrawPrimitiveImpl(ctx, get_pointer(mesh_box), get_pointer(program_box), color, local_to_world);
   }
 
   void DrawGeometryObjects(RenderingContext const & ctx)
@@ -124,11 +124,11 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
-    // XXX : the scaling is used to avoid the near plane clipping
+                              // XXX : the scaling is used to avoid the near plane clipping
     RenderingContext ctx;
 
     static float FOV = 60.0f;
-    ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
+    ctx.projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
     ctx.world_to_camera = fps_camera.GlobalToLocal();
 
     DrawGeometryObjects(ctx);
@@ -140,7 +140,7 @@ protected:
 
   virtual void Finalize() override
   {
-    mesh_box    = nullptr;
+    mesh_box = nullptr;
     program_box = nullptr;
 
     debug_display.Finalize();
@@ -148,8 +148,8 @@ protected:
     // XXX : order is important because clock1 would destroy clock2 & clock3
     //       In fact, MainClock->FindChild(clock2) would fails, causing the removing to abord
     //       pointer clock2 & clock3 would be inconsistant
-	clock1->RemoveFromParent(); // => clock2 & clock3 are destroyed ...
-	clock3->RemoveFromParent(); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
+    clock1->RemoveFromParent(); // => clock2 & clock3 are destroyed ...
+    clock3->RemoveFromParent(); // ... but RemoveChildClock(...) does not read the content of clock3 before the clock is found
     clock2->RemoveFromParent();
 
     clock1 = nullptr;
@@ -161,7 +161,7 @@ protected:
   {
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
+    loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
     return loader.GenerateProgramObject();
   }
@@ -178,17 +178,17 @@ protected:
 
     // initialize debug font display 
     chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path               = image_path;
-    debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    debug_params.font_characters_per_line   = 10;
+    debug_params.texture_path = image_path;
+    debug_params.font_characters = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    debug_params.font_characters_per_line = 10;
     debug_params.font_characters_line_count = 10;
-    debug_params.character_width            = 20;
-    debug_params.spacing                    = glm::ivec2( 0, 0);
-    debug_params.crop_texture               = glm::ivec2(15, 7);
+    debug_params.character_width = 20;
+    debug_params.spacing = glm::ivec2(0, 0);
+    debug_params.crop_texture = glm::ivec2(15, 7);
 
     if (!debug_display.Initialize(debug_params))
       return false;
-    
+
     // load programs      
     program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
     if (program_box == nullptr)
@@ -203,7 +203,7 @@ protected:
     chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
-    chaos::MultiMeshGenerator generators;    
+    chaos::MultiMeshGenerator generators;
     generators.AddGenerator(chaos::CubeMeshGenerator(b), mesh_box);
 
     if (!generators.GenerateMeshes())
@@ -223,7 +223,7 @@ protected:
   {
     chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel  = 0;
+    hints.toplevel = 0;
     hints.decorated = 1;
   }
 
@@ -311,7 +311,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::MyGLFWSingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 1200;
+  params.width = 1200;
   params.height = 600;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);

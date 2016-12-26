@@ -88,61 +88,163 @@ namespace chaos
 		return result;
 	}
 
-	void Clock::TriggerClockEvents(std::vector<ClockEvent *> & clock_events)
-	{
+  void ClockEvent::NextExecution()
+  {
+    ++execution_count;
+    tick_count = 0;
+    event_info.start_time = event_info.frequency;
+  }
 
+  void ClockEvent::Tick(ClockEventTickData const & tick_data)
+  {
+    ClockEventTickResult result = TickImpl(tick_data);
+
+    // want to continue to next frame
+    if (result.IsContinued())
+    {
+      ++tick_count;
+      return;
+    }
+    // want to finish the event
+    if (result.IsCompleted())
+    {
+      if (event_info.IsRepeatedInfinitly())
+        NextExecution();
+      else if (execution_count++ < event_info.repetition_count)
+        NextExecution();
+      else
+        RemoveFromClock();
+      return;
+    }
+
+
+   
+
+#if 0
+    ClockEventInfo const & event_info = clock_event->GetEventInfo();
+
+    if (tick_result.IsContinued())
+      ++clock_event->tick_count;
+    else if (tick_result.IsCompleted())
+      clock_event->NextRepetition();
+
+    {
+      if (event_info.IsRepeated())
+
+
+
+
+
+        registered_event.clock_event->RemoveFromClock();
+    }
+    else if (tick_result.IsRestarted())
+    {
+
+
+
+    }
+#endif
+  }
+
+	void Clock::TriggerClockEvents(ClockEventTickSet & events_set)
+	{
+    for (ClockEventTickRegistration const & registered_event : events_set)
+    {
+      ClockEvent * clock_event = registered_event.clock_event.get();
+
+      // degenerated use case :
+      //   the processing of a previous event remove another event from execution
+      if (clock_event == nullptr)
+        continue;
+
+      // compute the tick information & tick
+      ClockEventTickData tick_data;
+      tick_data.time1 = registered_event.time1;
+      tick_data.time2 = registered_event.time2;
+      tick_data.delta_time = registered_event.delta_time;
+
+      clock_event->Tick(tick_data);     
+    }
 	}
 
 	bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
 	{
 		assert(parent_clock == nullptr);
 
-		std::vector<ClockEvent *> clock_events;
+    ClockEventTickSet event_tick_set;
 
-		bool result = TickClockImpl(delta_time, clock_events);
-		TriggerClockEvents(clock_events);		
+		bool result = TickClockImpl(delta_time, 1.0, event_tick_set);
+		TriggerClockEvents(event_tick_set);
 		return result;
 	}
 
-	bool Clock::TickClockImpl(double delta_time, std::vector<ClockEvent *> & clock_events) // protected interface
+	bool Clock::TickClockImpl(double delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set) // protected interface
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)
 			return false;		
 		// register all events in the list
-		size_t event_count = pending_events.size();
-		for (size_t i = 0; i < event_count ; ++i)
-		{
-			if (pending_events[i]->GetEventInfo().IsTooLateFor(clock_time))
-			{
-			
-			}
-			else
-				clock_events.push_back(pending_events[i].get());		
-		}
+    double old_clock_time = clock_time;
+    clock_time = clock_time + time_scale * delta_time;
 
-		clock_time = clock_time + time_scale * delta_time;
+    double time1 = old_clock_time;
+    double time2 = clock_time;
+    for (size_t i = 0; i < pending_events.size(); ++i)
+    {
+      ClockEventInfo const & event_info = pending_events[i]->GetEventInfo();
+
+      if (event_info.IsTooLateFor(clock_time))
+      {
+        pending_events[i]->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace"
+        --i;
+      }
+      else if (event_info.IsInsideRange(old_clock_time, clock_time))
+      {
+        ClockEventTickRegistration registration;
+        registration.clock_event = pending_events[i];
+        registration.time1 = old_clock_time;
+        registration.time2 = clock_time;
+        registration.delta_time = delta_time;
+        
+        if (event_info.start_time <= time1)
+          registration.abs_time_to_start = 0.0;
+        else
+          registration.abs_time_to_start = (event_info.start_time - time1) * cumulated_factor;
+
+        event_tick_set.insert(registration);
+      }
+		}
 		// recursive tick 
 		size_t child_count = children_clocks.size();
 		for (size_t i = 0; i < child_count ; ++i)
-			children_clocks[i]->TickClockImpl(time_scale * delta_time, clock_events);
+			children_clocks[i]->TickClockImpl(time_scale * delta_time, cumulated_factor * time_scale, event_tick_set);
 
 		return true;
 	}
 
 	Clock * Clock::CreateChildClock(int id, ClockCreateParams const & params)
 	{
-		if (id > 0 && GetTopLevelParent()->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
-			return nullptr;
+    // want an ID : automatic or user-defined
+    if (id != 0) 
+    {
+      Clock * top_level_clock = GetTopLevelParent();
 
-		if (id < 0) // generate a own ID if necessary
-		{
-			id = GetTopLevelParent()->FindUnusedID(true);
-			if (id < 0)
-				return nullptr;
-		}
+      // user-defined
+      if (id > 0 && top_level_clock->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
+        return nullptr;
+      // generate a own ID if necessary
+      else 
+      {
+        assert(id < 0);
+        
+        id = top_level_clock->FindUnusedID(true);
+        if (id < 0)
+          return nullptr;
+      }
+    }
 
-		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params)); // allocate the clock
+    // allocate the clock
+		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params)); 
 		if (clock != nullptr)
 		{
 			child_clock->clock_id = id;
@@ -167,8 +269,7 @@ namespace chaos
 
 					parent_clock = nullptr;          // XXX : we cannot invert these 2 lines because, because 'this' could be deleted and then
 					tmp->children_clocks.pop_back(); //       and then we would access 'parent_clock' member after destructor
-					--count;                         //       that's why we are using 'tmp'					
-					return true;                     
+					return true;                     //       that's why we are using 'tmp'					
 				}
 			}		
 		}
@@ -249,12 +350,17 @@ namespace chaos
 		// event already registered ?
 		if (clock_event->clock != nullptr)
 			return false;
-		// is it too late for that event ?
+		// make the event_info, relative to current_time if necessary
+    if (relative_time)
+      event_info.start_time += clock_time;
+    // is it too late for that event ?
 		if (event_info.IsTooLateFor(clock_time))
 			return false;
 		// do the registration
 		clock_event->clock = this;
 		clock_event->event_info = event_info;
+    clock_event->tick_count = 0;
+    clock_event->execution_count = 0;
 		pending_events.push_back(clock_event);
 
 		return true;
@@ -275,8 +381,7 @@ namespace chaos
 
 					clock = nullptr;                // XXX : we cannot invert these 2 lines because this could be destroyed 
 					tmp->pending_events.pop_back(); // and we then would access 'clock' member after destructor 
-					--count;                        // that's why we are using 'tmp'
-					return true;
+					return true;                    // that's why we are using 'tmp'
 				}		                            
 			}		
 		}			

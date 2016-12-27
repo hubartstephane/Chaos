@@ -139,6 +139,14 @@ public:
   static float Fmod(float numer, float denom){ return fmodf(numer, denom); }
   /** mathematic function wrapper for meta programming for fmod */
   static double Fmod(double  numer, double  denom){ return fmod(numer, denom); }
+  /** mathematic function wrapper for meta programming for ceil */
+  static float Ceil(float f){ return ceilf(f); }
+  /** mathematic function wrapper for meta programming for ceil */
+  static double Ceil(double f){ return ceil(f); }
+  /** mathematic function wrapper for meta programming for floor */
+  static float Floor(float f){ return floorf(f); }
+  /** mathematic function wrapper for meta programming for floor */
+  static double Floor(double f){ return floor(f); }
 
   /** returns the linear interpolation between 2 values */
   template<typename T> 

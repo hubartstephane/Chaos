@@ -1,7 +1,98 @@
 #include <chaos/ClockManager.h>
+#include <chaos/MathTools.h>
 
 namespace chaos
-{  
+{ 	
+	// ============================================================
+	// ClockEventInfo functions
+	// ============================================================
+	
+	double ClockEventInfo::GetMaxEventTime() const
+	{
+		if (IsForeverEvent())
+			return std::numeric_limits<float>::max();
+		if (IsRepeatedInfinitly())
+			return std::numeric_limits<float>::max();
+		return start_time + duration + (duration + repetition_delay) * (float)repetition_count;
+	}
+
+	ClockEventExecutionInfo ClockEventInfo::GetExecutionInfo(double t1, double t2) const
+	{
+		ClockEventExecutionInfo result;
+		result.event_tick_time1 = result.event_tick_time2 = std::numeric_limits<float>::max();
+
+		// event to come later
+		if (start_time > t2) 
+			return result;
+
+		// event with unknown duration
+		if (IsForeverEvent())
+		{
+			result.event_tick_time1 = max(start_time, t1);
+			result.event_tick_time2 = t2;		
+		}
+		// event without REPETITION
+		else if (!IsRepeated())
+		{
+			result.event_tick_time1 = max(start_time, t1);
+			result.event_tick_time2 = min(start_time + duration, t2);
+		}
+		// event with limited duration (0 or finite) + REPETITION
+		else
+		{
+			// we want to test start_time + K.repetition against 't1'
+			//
+			// start_time + K.(duration + repetition_delay) >= t1
+
+			double tmp = (t1 - start_time) / (duration + repetition_delay);
+
+			double k1 = MathTools::Floor(tmp);			
+			double s1 = start_time + k1 * (duration + repetition_delay);
+
+			if (s1 + duration >= t1)
+			{
+				result.event_tick_time1 = max(s1, t1);
+				result.event_tick_time2 = min(s1 + duration, t2);			
+				result.repetition_index = (int)k1;
+			}
+			else
+			{
+				double k2 = MathTools::Ceil(tmp);
+				double s2 = start_time + k2 * repetition_delay;
+				if (s2 + duration >= t1)
+				{
+					result.event_tick_time1 = max(s2, t1);
+					result.event_tick_time2 = min(s2 + duration, t2);			
+					result.repetition_index = (int)k2;
+				}			
+			}					
+		}
+		return result;
+	}
+
+	bool ClockEventInfo::IsTooLateFor(double current_time) const
+	{
+		double max_event_time = GetMaxEventTime();
+		if (current_time > max_event_time)
+			return false;
+		return true;
+	}
+
+	bool ClockEventInfo::IsInsideRange(double t1, double t2) const
+	{
+		assert(t1 <= t2);
+		if (start_time > t2)
+			return false;
+		double max_event_time = GetMaxEventTime();
+		if (t1 > max_event_time)
+			return false;
+		return true;
+	} 
+
+	// ============================================================
+	// Clock functions
+	// ============================================================
+
 	Clock::Clock(ClockCreateParams const & params) : 
 		time_scale(params.time_scale), 
 		paused(params.paused)
@@ -88,90 +179,62 @@ namespace chaos
 		return result;
 	}
 
-  void ClockEvent::NextExecution()
-  {
-    ++execution_count;
-    tick_count = 0;
-    event_info.start_time = event_info.frequency;
-  }
-
-  void ClockEvent::Tick(ClockEventTickData const & tick_data)
-  {
-    ClockEventTickResult result = TickImpl(tick_data);
-
-    // want to continue to next frame
-    if (result.IsContinued())
-    {
-      ++tick_count;
-      return;
-    }
-    // want to finish the event
-    if (result.IsCompleted())
-    {
-      if (event_info.IsRepeatedInfinitly())
-        NextExecution();
-      else if (execution_count++ < event_info.repetition_count)
-        NextExecution();
-      else
-        RemoveFromClock();
-      return;
-    }
-
-
-   
-
-#if 0
-    ClockEventInfo const & event_info = clock_event->GetEventInfo();
-
-    if (tick_result.IsContinued())
-      ++clock_event->tick_count;
-    else if (tick_result.IsCompleted())
-      clock_event->NextRepetition();
-
-    {
-      if (event_info.IsRepeated())
-
-
-
-
-
-        registered_event.clock_event->RemoveFromClock();
-    }
-    else if (tick_result.IsRestarted())
-    {
-
-
-
-    }
-#endif
-  }
-
 	void Clock::TriggerClockEvents(ClockEventTickSet & events_set)
 	{
-    for (ClockEventTickRegistration const & registered_event : events_set)
-    {
-      ClockEvent * clock_event = registered_event.clock_event.get();
+		while (events_set.size() > 0)
+		{
+			auto it = events_set.begin();
 
-      // degenerated use case :
-      //   the processing of a previous event remove another event from execution
-      if (clock_event == nullptr)
-        continue;
+			// extract the very first element of the sorted queue
+			ClockEventTickRegistration registered_event = *it;
+			events_set.erase(it);
 
-      // compute the tick information & tick
-      ClockEventTickData tick_data;
-      tick_data.time1 = registered_event.time1;
-      tick_data.time2 = registered_event.time2;
-      tick_data.delta_time = registered_event.delta_time;
+			ClockEvent * clock_event = registered_event.clock_event.get();
 
-      clock_event->Tick(tick_data);     
-    }
+			// degenerated use case :
+			//   the processing of a previous event remove another event from execution
+			if (clock_event == nullptr)
+				continue;
+
+			// ensure the event is still in range
+
+
+			// compute the tick information & tick
+			ClockEventTickData tick_data;
+			tick_data.tick_time1 = registered_event.tick_time1;
+			tick_data.tick_time2 = registered_event.tick_time2;
+			tick_data.event_tick_time1 = registered_event.event_tick_time1;
+			tick_data.event_tick_time2 = registered_event.event_tick_time2;
+
+			ClockEventTickResult tick_result = clock_event->Tick(tick_data);  
+			// handle the result
+			if (tick_result.IsExecutionCompleted())
+			{
+				if (!tick_result.CanRepeatExecution()) // want to stop all executions
+					clock_event->RemoveFromClock();
+				else
+				{
+					ClockEventInfo const & event_info = clock_event->GetEventInfo();
+					if (event_info.IsRepeated())
+					{
+					
+					}
+				
+				
+				}
+			}	
+			else
+			{
+				clock_event->tick_count++; 			
+			}
+		}
 	}
 
 	bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
 	{
 		assert(parent_clock == nullptr);
 
-    ClockEventTickSet event_tick_set;
+		ClockEventTickSet event_tick_set;
 
 		bool result = TickClockImpl(delta_time, 1.0, event_tick_set);
 		TriggerClockEvents(event_tick_set);
@@ -184,35 +247,41 @@ namespace chaos
 		if (paused || time_scale == 0.0)
 			return false;		
 		// register all events in the list
-    double old_clock_time = clock_time;
-    clock_time = clock_time + time_scale * delta_time;
+		double old_clock_time = clock_time;
+		clock_time = clock_time + time_scale * delta_time;
 
-    double time1 = old_clock_time;
-    double time2 = clock_time;
-    for (size_t i = 0; i < pending_events.size(); ++i)
-    {
-      ClockEventInfo const & event_info = pending_events[i]->GetEventInfo();
+		double time1 = old_clock_time;
+		double time2 = clock_time;
+		for (size_t i = 0; i < pending_events.size(); ++i)
+		{
+			ClockEventInfo const & event_info = pending_events[i]->GetEventInfo();
 
-      if (event_info.IsTooLateFor(clock_time))
-      {
-        pending_events[i]->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace"
-        --i;
-      }
-      else if (event_info.IsInsideRange(old_clock_time, clock_time))
-      {
-        ClockEventTickRegistration registration;
-        registration.clock_event = pending_events[i];
-        registration.time1 = old_clock_time;
-        registration.time2 = clock_time;
-        registration.delta_time = delta_time;
-        
-        if (event_info.start_time <= time1)
-          registration.abs_time_to_start = 0.0;
-        else
-          registration.abs_time_to_start = (event_info.start_time - time1) * cumulated_factor;
+			if (event_info.IsTooLateFor(clock_time))
+			{
+				pending_events[i]->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
+				--i;
+			}
+			else
+			{
+				ClockEventExecutionInfo execution_info = event_info.GetExecutionInfo(time1, time2);
+				if (execution_info.IsValid())
+				{
+					ClockEventTickRegistration registration;
+					registration.clock_event = pending_events[i];
+					registration.tick_time1  = time1;
+					registration.tick_time2  = time2;
+					registration.event_tick_time1 = execution_info.event_tick_time1;
+					registration.event_tick_time2 = execution_info.event_tick_time2;
+					registration.repetition_index = execution_info.repetition_index;
 
-        event_tick_set.insert(registration);
-      }
+					if (registration.event_tick_time1 <= time1)
+						registration.abs_time_to_start = 0.0;
+					else
+						registration.abs_time_to_start = (registration.event_tick_time1 - time1) * cumulated_factor;
+				
+					event_tick_set.insert(registration);				
+				}				
+			}
 		}
 		// recursive tick 
 		size_t child_count = children_clocks.size();
@@ -224,26 +293,26 @@ namespace chaos
 
 	Clock * Clock::CreateChildClock(int id, ClockCreateParams const & params)
 	{
-    // want an ID : automatic or user-defined
-    if (id != 0) 
-    {
-      Clock * top_level_clock = GetTopLevelParent();
+		// want an ID : automatic or user-defined
+		if (id != 0) 
+		{
+			Clock * top_level_clock = GetTopLevelParent();
 
-      // user-defined
-      if (id > 0 && top_level_clock->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
-        return nullptr;
-      // generate a own ID if necessary
-      else 
-      {
-        assert(id < 0);
-        
-        id = top_level_clock->FindUnusedID(true);
-        if (id < 0)
-          return nullptr;
-      }
-    }
+			// user-defined
+			if (id > 0 && top_level_clock->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
+				return nullptr;
+			// generate a own ID if necessary
+			else 
+			{
+				assert(id < 0);
 
-    // allocate the clock
+				id = top_level_clock->FindUnusedID(true);
+				if (id < 0)
+					return nullptr;
+			}
+		}
+
+		// allocate the clock
 		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params)); 
 		if (clock != nullptr)
 		{
@@ -351,16 +420,16 @@ namespace chaos
 		if (clock_event->clock != nullptr)
 			return false;
 		// make the event_info, relative to current_time if necessary
-    if (relative_time)
-      event_info.start_time += clock_time;
-    // is it too late for that event ?
+		if (relative_time)
+			event_info.start_time += clock_time;
+		// is it too late for that event ?
 		if (event_info.IsTooLateFor(clock_time))
 			return false;
 		// do the registration
 		clock_event->clock = this;
 		clock_event->event_info = event_info;
-    clock_event->tick_count = 0;
-    clock_event->execution_count = 0;
+		clock_event->tick_count = 0;
+		clock_event->execution_count = 0;
 		pending_events.push_back(clock_event);
 
 		return true;

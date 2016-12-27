@@ -16,10 +16,13 @@ namespace chaos
 		return start_time + duration + (duration + repetition_delay) * (float)repetition_count;
 	}
 
-	ClockEventExecutionInfo ClockEventInfo::GetExecutionInfo(double t1, double t2) const
+	ClockEventTickData ClockEventInfo::GetExecutionInfo(double t1, double t2) const
 	{
-		ClockEventExecutionInfo result;
-		result.event_tick_time1 = result.event_tick_time2 = std::numeric_limits<float>::max();
+		ClockEventTickData result;
+		result.tick_time1 = t1;
+		result.tick_time2 = t2;
+		result.event_tick_time1 = std::numeric_limits<float>::max();		
+		result.event_tick_time2 = std::numeric_limits<float>::max();
 
 		// event to come later
 		if (start_time > t2) 
@@ -28,14 +31,18 @@ namespace chaos
 		// event with unknown duration
 		if (IsForeverEvent())
 		{
-			result.event_tick_time1 = max(start_time, t1);
-			result.event_tick_time2 = t2;		
+			result.execution_start_time = start_time;
+			result.execution_end_time   = std::numeric_limits<double>::max();
+			result.event_tick_time1     = max(start_time, t1);
+			result.event_tick_time2     = t2;		
 		}
 		// event without REPETITION
 		else if (!IsRepeated())
 		{
-			result.event_tick_time1 = max(start_time, t1);
-			result.event_tick_time2 = min(start_time + duration, t2);
+			result.execution_start_time = start_time;
+			result.execution_end_time   = start_time + duration;
+			result.event_tick_time1     = max(start_time, t1);
+			result.event_tick_time2     = min(start_time + duration, t2);
 		}
 		// event with limited duration (0 or finite) + REPETITION
 		else
@@ -51,9 +58,11 @@ namespace chaos
 
 			if (s1 + duration >= t1)
 			{
-				result.event_tick_time1 = max(s1, t1);
-				result.event_tick_time2 = min(s1 + duration, t2);			
-				result.repetition_index = (int)k1;
+				result.execution_start_time = s1;
+				result.execution_end_time   = s1 + duration;
+				result.event_tick_time1     = max(s1, t1);
+				result.event_tick_time2     = min(s1 + duration, t2);			
+				result.repetition_index     = (int)k1;
 			}
 			else
 			{
@@ -61,9 +70,11 @@ namespace chaos
 				double s2 = start_time + k2 * repetition_delay;
 				if (s2 + duration >= t1)
 				{
-					result.event_tick_time1 = max(s2, t1);
-					result.event_tick_time2 = min(s2 + duration, t2);			
-					result.repetition_index = (int)k2;
+					result.execution_start_time = s2;
+					result.execution_end_time   = s2 + duration;
+					result.event_tick_time1     = max(s2, t1);
+					result.event_tick_time2     = min(s2 + duration, t2);			
+					result.repetition_index     = (int)k2;
 				}			
 			}					
 		}
@@ -205,10 +216,23 @@ namespace chaos
 			tick_data.tick_time2 = registered_event.tick_time2;
 			tick_data.event_tick_time1 = registered_event.event_tick_time1;
 			tick_data.event_tick_time2 = registered_event.event_tick_time2;
+			tick_data.repetition_index = registered_event.repetition_index;
 
 			ClockEventTickResult tick_result = clock_event->Tick(tick_data);  
 			// handle the result
-			if (tick_result.IsExecutionCompleted())
+			ClockEventInfo const & event_info = clock_event->GetEventInfo();
+
+			bool execution_completed = tick_result.IsExecutionCompleted();
+			if (!execution_completed)
+			{
+				
+			
+			
+			}
+
+
+
+			if (execution_completed)
 			{
 				if (!tick_result.CanRepeatExecution()) // want to stop all executions
 					clock_event->RemoveFromClock();
@@ -263,7 +287,7 @@ namespace chaos
 			}
 			else
 			{
-				ClockEventExecutionInfo execution_info = event_info.GetExecutionInfo(time1, time2);
+				ClockEventTickData execution_info = event_info.GetExecutionInfo(time1, time2);
 				if (execution_info.IsValid())
 				{
 					ClockEventTickRegistration registration;

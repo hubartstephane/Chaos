@@ -5,6 +5,61 @@
 
 namespace chaos
 {
+	//
+	//                                                               EXECUTION (execution time range)
+	//                                                             +--------------+
+	//                                                             v              v
+	//                                                         EVENT (event time range)
+	//                                          +---------------------------------+
+	//                                          v                                 v
+	// +-----------------------------+-----------------------------+-----------------------------+ Tick system
+	//                                                                         TIME SLICE
+	//
+	//
+
+	using ClockTimeRange = std::pair<double, double>;
+
+	/**
+	* ClockEventTickData : describe all information for ticking an event
+	*/
+
+	class ClockEventTickData
+	{
+
+	public:
+
+		/** returns the event is really to be ticked */
+		bool IsValid() const
+		{
+			return 
+				(execution_time_range.first  != std::numeric_limits<double>::max()) &&
+				(execution_time_range.second != std::numeric_limits<double>::max());
+		}
+
+	public:
+
+		/** the event without any consideration of time slicing */
+		ClockTimeRange event_time_range{0.0, 0.0}; 
+		/** the time slice for this tick */
+		ClockTimeRange time_slice_range{0.0, 0.0}; 
+		/** the time range for current execution */
+		ClockTimeRange execution_time_range{0.0, 0.0}; 
+	};
+
+	/**
+	* ClockEventTickRegistration : events to tick are registered inside that structure 
+	*/
+
+	class ClockEventTickRegistration : public ClockEventTickData
+	{
+	public:
+
+		/** the event */
+		boost::intrusive_ptr<ClockEvent> clock_event;
+		/** the absolute (top level clock reference) time lapse before starting the event */
+		double abs_time_to_start{ 0.0 };
+	};
+
 	/**
 	* ClockEventRepetitionInfo
 	*/
@@ -55,34 +110,6 @@ namespace chaos
 	};
 
 	/**
-	* ClockEventExecutionInfo : some information that execution of an event
-	*/
-
-	class ClockEventExecutionInfo
-	{
-	
-	public:
-		
-		/** returns true whether this correspond to a correct info */
-		bool IsValid() const
-		{
-			return 
-				(event_tick_time1 != std::numeric_limits<double>::max()) &&
-				(event_tick_time2 != std::numeric_limits<double>::max());
-		}
-
-	public:
-
-		/** the time range for execution of the event in given time slice */
-		double event_tick_time1{std::numeric_limits<double>::max()};
-		/** the time range for execution of the event in given time slice */
-		double event_tick_time2{std::numeric_limits<double>::max()};
-		/** the current repetition index */
-		int repetition_index{0};	
-	};
-
-
-	/**
 	* ClockEventInfo : some information that describes the event
 	*/
 
@@ -126,7 +153,7 @@ namespace chaos
 		/** the maximum time the event can be triggered */
 		double GetMaxEventTime() const;
 		/** get the time range for the first execution in this time slice */
-		ClockEventExecutionInfo GetExecutionInfo(double t1, double t2) const;
+		ClockEventTickData GetExecutionInfo(double t1, double t2) const;
 		/** returns true whether this event will never be triggered */
 		bool IsTooLateFor(double current_time) const;
 		/** returns true whether element is to be ticked in the range */
@@ -138,27 +165,6 @@ namespace chaos
 		double start_time{0.0};
 		/** duration (0 for single tick event, <0 for unknown duration, >0 for a well known duration) */
 		double duration{0.0};
-	};
-
-	/**
-	* ClockEventTickData : the data that will be given to event
-	*/
-
-	class ClockEventTickData
-	{
-	public:
-
-		/** the time range for the tick system */
-		double tick_time1{ 0.0 };
-		/** the time range for the tick system */
-		double tick_time2{ 0.0 };
-
-		/** the time range for the tick function */
-		double event_tick_time1{ 0.0 };
-		/** the time range for the tick function */
-		double event_tick_time2{ 0.0 };
-		/** the repetition index */
-		int repetition_index{0};	
 	};
 
 	/**
@@ -263,35 +269,6 @@ namespace chaos
 		int execution_count{ 0 };    
 		/** the clock it belongs to */
 		class Clock * clock{nullptr};    
-	};
-
-	/**
-	* ClockEventTickRegistration : events to tick are registered inside that structure 
-	*/
-
-
-	class ClockEventTickRegistration
-	{
-	public:
-
-		/** the event */
-		boost::intrusive_ptr<ClockEvent> clock_event;
-
-		/** the time range for the tick system */
-		double tick_time1{ 0.0 };
-		/** the time range for the tick system */
-		double tick_time2{ 0.0 };
-
-		/** the time range for the tick function */
-		double event_tick_time1{ 0.0 };
-		/** the time range for the tick function */
-		double event_tick_time2{ 0.0 };
-
-		/** the current repetition index */
-		int repetition_index{0};	
-
-		/** the absolute (top level clock reference) time lapse before starting the event */
-		double abs_time_to_start{ 0.0 };
 	};
 
 	/**

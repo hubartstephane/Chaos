@@ -52,7 +52,10 @@ protected:
     debug_display.Clear();
     debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM1 & NUM2 : %f", clock1->GetClockID(), clock1->GetTimeScale()).c_str());
     debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM4 & NUM5 : %f", clock2->GetClockID(), clock2->GetTimeScale()).c_str());
-    debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM7 & NUM8 : %f", clock3->GetClockID(), clock3->GetTimeScale()).c_str());
+    debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM7 & NUM8 : %f", clock3->GetClockID(), clock3->GetTimeScale()).c_str());    
+    debug_display.AddLine("Press A to generate an Event on Clock 1");
+    debug_display.AddLine("Press Z to generate an Event on Clock 2");
+    debug_display.AddLine("Press E to generate an Event on Clock 3");
     debug_display.AddLine("Press T to pause");
   }
 
@@ -264,6 +267,40 @@ protected:
     return false;
   }
 
+  bool GenerateEvent(chaos::Clock * clock, int key, int create_key, int action, char const * str)
+  {
+    if (action == GLFW_RELEASE && key == create_key)
+    {
+      class MyEvent : public chaos::ClockEvent
+      {
+      public:
+
+        MyEvent(char const * in_message, chaos::GLDebugOnScreenDisplay * in_debug_display) : message(in_message), debug_display(in_debug_display) {}
+
+        ~MyEvent()
+        {
+          debug_display->AddLine(chaos::StringTools::Printf("MyEvent [%s] destroyed", message.c_str()).c_str(), 5.0f);
+        }
+
+        virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data)
+        { 
+          debug_display->AddLine(chaos::StringTools::Printf("MyEvent [%s] tick", message.c_str()).c_str(), 1.0f);
+          return CompleteExecution(); 
+        }
+
+        std::string message;
+        chaos::GLDebugOnScreenDisplay * debug_display{ nullptr };
+      };
+
+      chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(2.0f);
+
+      clock->AddPendingEvent(new MyEvent(str, &debug_display), event_info, true);
+
+      return true;
+    }
+    return false;
+  }
+
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
     if (key == GLFW_KEY_T && action == GLFW_RELEASE)
@@ -275,6 +312,10 @@ protected:
       if (!UpdateClockTimeScaleWithKeys(clock1.get(), key, GLFW_KEY_KP_1, GLFW_KEY_KP_2, action))
         if (!UpdateClockTimeScaleWithKeys(clock2.get(), key, GLFW_KEY_KP_4, GLFW_KEY_KP_5, action))
           UpdateClockTimeScaleWithKeys(clock3.get(), key, GLFW_KEY_KP_7, GLFW_KEY_KP_8, action);
+
+      if (!GenerateEvent(clock1.get(), key, GLFW_KEY_A, action, "EVENT 1"))
+        if (!GenerateEvent(clock2.get(), key, GLFW_KEY_Z, action, "EVENT 2"))
+          GenerateEvent(clock3.get(), key, GLFW_KEY_E, action, "EVENT 3");
     }
   }
 

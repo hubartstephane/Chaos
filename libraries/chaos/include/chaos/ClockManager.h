@@ -120,7 +120,7 @@ namespace chaos
 		/** default constructor */
 		ClockEventInfo() = default;
 		/** constructor with initialization */
-		ClockEventInfo(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo()):
+		ClockEventInfo(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition()):
 			ClockEventRepetitionInfo(in_repetition_info),
 			start_time(in_start_time),
 			duration(in_duration)
@@ -128,17 +128,17 @@ namespace chaos
 		}
 
 		/** creates an instance that describes an event to be ticked once */
-		static ClockEventInfo SingleTickEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo())
+		static ClockEventInfo SingleTickEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
 		{
 			return ClockEventInfo(in_start_time, 0.0, in_repetition_info);
 		}
 		/** creates an instance that describes an event to be ticked for a given time */
-		static ClockEventInfo RangeEvent(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo())
+		static ClockEventInfo RangeEvent(double in_start_time, double in_duration, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
 		{
 			return ClockEventInfo(in_start_time, in_duration,in_repetition_info);
 		}
 		/** creates an instance that describes an event to be ticked for a given time */
-		static ClockEventInfo ForeverEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo())
+		static ClockEventInfo ForeverEvent(double in_start_time, ClockEventRepetitionInfo const & in_repetition_info = ClockEventRepetitionInfo::NoRepetition())
 		{
 			return ClockEventInfo(in_start_time, -1.0, in_repetition_info);
 		}

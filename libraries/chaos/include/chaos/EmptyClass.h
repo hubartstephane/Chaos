@@ -7,7 +7,6 @@
 
 namespace chaos
 {
-
 /** tag classes generation */
 #define CHAOS_GENERATE_TAG_CLASS(name)\
 	BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_##name##_tag, name##_tag, true)\

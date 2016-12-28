@@ -344,6 +344,8 @@ protected:
   chaos::GLDebugOnScreenDisplay debug_display;
 };
 
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);

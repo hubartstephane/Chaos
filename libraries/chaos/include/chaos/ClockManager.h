@@ -6,14 +6,14 @@
 namespace chaos
 {
 	//
-	//                                                               EXECUTION (execution time range)
-	//                                                             +--------------+
-	//                                                             v              v
-	//                                                         EVENT (event time range)
-	//                                          +---------------------------------+
-	//                                          v                                 v
-	// +-----------------------------+-----------------------------+-----------------------------+ Tick system
-	//                                                                         TIME SLICE
+	//                            EXECUTION (execution time range)
+	//                                   +--------------+
+	//                                   v              v
+	//                           EVENT (event time range)
+	//                +---------------------------------+
+	//                v                                 v
+	// ----+-----------------------------+-----------------------------+ Tick system
+	//                                   |          TIME SLICE         |
 	//
 	//
 
@@ -55,7 +55,7 @@ namespace chaos
 	public:
 
 		/** the event */
-		boost::intrusive_ptr<ClockEvent> clock_event;
+		boost::intrusive_ptr<class ClockEvent> clock_event;
 		/** the absolute (top level clock reference) time lapse before starting the event */
 		double abs_time_to_start{ 0.0 };
 	};
@@ -156,8 +156,6 @@ namespace chaos
 		ClockEventTickData GetExecutionInfo(double t1, double t2) const;
 		/** returns true whether this event will never be triggered */
 		bool IsTooLateFor(double current_time) const;
-		/** returns true whether element is to be ticked in the range */
-		bool IsInsideRange(double t1, double t2) const;
 
 	public:
 

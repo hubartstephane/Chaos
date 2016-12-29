@@ -10,7 +10,7 @@
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
-#include <chaos/MyGLFWFpsCamera.h>
+#include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GLProgramData.h>
@@ -103,7 +103,7 @@ protected:
 
     static float FOV = 60.0f;
     glm::mat4 projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
-    glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
+    glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
     float w = (float)width;
@@ -164,8 +164,8 @@ protected:
       return false;
 
     // place camera
-    fps_camera.fps_controller.position.y = 0.0f;
-    fps_camera.fps_controller.position.z = 10.0f;
+    fps_view_controller.fps_controller.position.y = 0.0f;
+    fps_view_controller.fps_controller.position.z = 10.0f;
 
     return true;
   }
@@ -183,7 +183,7 @@ protected:
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
-    fps_camera.Tick(glfw_window, delta_time);
+    fps_view_controller.Tick(glfw_window, delta_time);
 
     return true; // refresh
   }
@@ -195,12 +195,12 @@ protected:
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
-    fps_camera.OnMouseButton(glfw_window, button, action, modifier);
+    fps_view_controller.OnMouseButton(glfw_window, button, action, modifier);
   }
 
   virtual void OnMouseMove(double x, double y) override
   {
-    fps_camera.OnMouseMove(glfw_window, x, y);
+    fps_view_controller.OnMouseMove(glfw_window, x, y);
   }
 
 protected:
@@ -210,7 +210,7 @@ protected:
   // the atlas
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
   // the camera
-  chaos::MyGLFWFpsCamera fps_camera;
+  chaos::FPSViewInputController fps_view_controller;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

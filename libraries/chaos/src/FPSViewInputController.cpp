@@ -1,10 +1,10 @@
-#include <chaos/MyGLFWFpsCamera.h>
+#include <chaos/FPSViewInputController.h>
 #include <chaos/LogTools.h>
 #include <chaos/GLTools.h>
 
 namespace chaos
 {
-	void MyGLFWFpsCamera::Tick(GLFWwindow * glfw_window, double delta_time)
+	void FPSViewInputController::Tick(GLFWwindow * glfw_window, double delta_time)
 	{
 		// handle mouse movement
 		if (mouse_captured)
@@ -50,7 +50,7 @@ namespace chaos
 			fps_controller.position.y += movement_speed.up * (float)delta_time;
 	}
 
-	void MyGLFWFpsCamera::OnMouseButton(GLFWwindow * glfw_window, int button, int action, int modifier)
+	void FPSViewInputController::OnMouseButton(GLFWwindow * glfw_window, int button, int action, int modifier)
 	{
 #if 0
 		if (action == GLFW_RELEASE)
@@ -63,7 +63,7 @@ namespace chaos
 #endif
 	}
 
-	void MyGLFWFpsCamera::OnMouseMove(GLFWwindow * glfw_window, double x, double y)
+	void FPSViewInputController::OnMouseMove(GLFWwindow * glfw_window, double x, double y)
 	{
 #if 0
 		if (!mouse_captured)

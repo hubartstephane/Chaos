@@ -11,7 +11,7 @@
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/MyGLFWFpsCamera.h>
+#include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GLProgramData.h>
@@ -43,7 +43,7 @@ protected:
 
     static float FOV = 60.0f;
     glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
-    glm::mat4 world_to_camera = fps_camera.GlobalToLocal();
+    glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
@@ -149,8 +149,8 @@ protected:
       return false;
 
     // place camera
-    fps_camera.fps_controller.position.y = 0.0f;
-    fps_camera.fps_controller.position.z = 10.0f;
+    fps_view_controller.fps_controller.position.y = 0.0f;
+    fps_view_controller.fps_controller.position.z = 10.0f;
 
     // initial display
     debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
@@ -171,7 +171,7 @@ protected:
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
-    fps_camera.Tick(glfw_window, delta_time);
+    fps_view_controller.Tick(glfw_window, delta_time);
 
     debug_display.Tick(delta_time);
 
@@ -193,12 +193,12 @@ protected:
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
-    fps_camera.OnMouseButton(glfw_window, button, action, modifier);
+    fps_view_controller.OnMouseButton(glfw_window, button, action, modifier);
   }
 
   virtual void OnMouseMove(double x, double y) override
   {
-    fps_camera.OnMouseMove(glfw_window, x, y);
+    fps_view_controller.OnMouseMove(glfw_window, x, y);
   }
 
 protected:
@@ -211,7 +211,7 @@ protected:
   int texture_slice{0};
   int texture_slice_count{0};
 
-  chaos::MyGLFWFpsCamera fps_camera;
+  chaos::FPSViewInputController fps_view_controller;
 
   chaos::GLDebugOnScreenDisplay debug_display;
 };

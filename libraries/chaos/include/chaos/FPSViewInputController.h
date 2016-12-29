@@ -27,10 +27,10 @@ namespace chaos
 	};
 
 	/**
-	* MyGLFWFpsCamera : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
+	* FPSViewInputController : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
 	*/
 
-	class MyGLFWFpsCamera
+	class FPSViewInputController
 	{
 	public:
 

@@ -7,7 +7,7 @@
 #include <chaos/GLProgramLoader.h>
 #include <chaos/GLProgram.h>
 #include <chaos/Application.h>
-#include <chaos/MyGLFWFpsCamera.h>
+#include <chaos/FPSViewInputController.h>
 #include <chaos/MyFbxImporter.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/SimpleMesh.h>
@@ -38,7 +38,7 @@ protected:
 
     glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
 
-    glm::mat4 world_to_camera_matrix = fps_camera.GlobalToLocal();
+    glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
     int instance_cube_size = 20;
 
@@ -90,7 +90,7 @@ protected:
     if (program == nullptr)
       return false;
 
-    fps_camera.fps_controller.position.z = 100.0f;
+    fps_view_controller.fps_controller.position.z = 100.0f;
    
     return true;
   }
@@ -108,19 +108,19 @@ protected:
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
-    fps_camera.Tick(glfw_window, delta_time);
+    fps_view_controller.Tick(glfw_window, delta_time);
 
     return true; // refresh
   }
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
-    fps_camera.OnMouseButton(glfw_window, button, action, modifier);
+    fps_view_controller.OnMouseButton(glfw_window, button, action, modifier);
   }
 
   virtual void OnMouseMove(double x, double y) override
   {
-    fps_camera.OnMouseMove(glfw_window, x, y);
+    fps_view_controller.OnMouseMove(glfw_window, x, y);
   }
 
 protected:
@@ -129,7 +129,7 @@ protected:
   
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 
-  chaos::MyGLFWFpsCamera fps_camera;
+  chaos::FPSViewInputController fps_view_controller;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

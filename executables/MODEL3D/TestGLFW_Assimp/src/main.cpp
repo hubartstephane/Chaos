@@ -8,7 +8,7 @@
 #include <chaos/GLProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
-#include <chaos/MyGLFWFpsCamera.h>
+#include <chaos/FPSViewInputController.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/MyAssimpImporter.h>
 
@@ -252,7 +252,7 @@ protected:
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
-    fps_camera.Tick(glfw_window, delta_time);
+    fps_view_controller.Tick(glfw_window, delta_time);
 
     debug_display.Tick(delta_time);
 
@@ -261,17 +261,17 @@ protected:
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
-    fps_camera.OnMouseButton(glfw_window, button, action, modifier);
+    fps_view_controller.OnMouseButton(glfw_window, button, action, modifier);
   }
 
   virtual void OnMouseMove(double x, double y) override
   {
-    fps_camera.OnMouseMove(glfw_window, x, y);
+    fps_view_controller.OnMouseMove(glfw_window, x, y);
   }
 
 protected:
 
-  chaos::MyGLFWFpsCamera fps_camera;
+  chaos::FPSViewInputController fps_view_controller;
 
   chaos::GLDebugOnScreenDisplay debug_display;
 };

@@ -95,16 +95,16 @@ namespace chaos
 		}
 
 		/** returns true whether the event is repeated */
-		bool IsRepeated() const { return (repetition_delay >= 0.0) && (repetition_count != 0);}
+		bool IsRepeated() const { return (repetition_count != 0);}
 		/** returns true whether the event is repeated a limited number of time */
-		bool IsRepeatedLimited() const { return (repetition_delay >= 0.0) && (repetition_count > 0);}
+		bool IsRepeatedLimited() const { return IsRepeated() && (repetition_delay >= 0.0);}
 		/** returns true whether the event is repeated forever  */
-		bool IsRepeatedInfinitly() const { return (repetition_delay >= 0.0) && (repetition_count < 0);}
+		bool IsRepeatedInfinitly() const { return IsRepeated() && (repetition_delay < 0.0);}
 
 	public:
 
-		/** the delay between repetitions (no repetition if < 0) */
-		double repetition_delay{-1.0};
+		/** the delay between repetitions */
+		double repetition_delay{0.0};
 		/** the number of repetitions (0 for no repetition, <0 for unlimited repetition, >0 for well known repetition count) */
 		int repetition_count{0};
 	};

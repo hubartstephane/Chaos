@@ -15,7 +15,7 @@ namespace chaos
 		public:
 
 			/** the new operator */
-			void * operator new (size_t size){ return _aligned_malloc( 16, size );}
+			void * operator new (size_t size){ return _aligned_malloc( size, 16 );}
 			/** the delete operator */
 			void operator delete(void * ptr){ _aligned_free( ptr);}		
 		};

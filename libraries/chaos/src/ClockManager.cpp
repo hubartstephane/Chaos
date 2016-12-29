@@ -6,7 +6,7 @@ namespace chaos
 	// ============================================================
 	// ClockEventInfo functions
 	// ============================================================
-	
+
 	double ClockEventInfo::GetMaxEventTime() const
 	{
 		if (IsForeverEvent())
@@ -19,12 +19,12 @@ namespace chaos
 	ClockEventTickData ClockEventInfo::GetExecutionInfo(double t1, double t2) const
 	{
 		ClockEventTickData result;
-    result.time_slice_range.first      = t1;
-    result.time_slice_range.second     = t2;
-    result.event_time_range.first      = std::numeric_limits<float>::max();
-    result.event_time_range.second     = std::numeric_limits<float>::max();
-    result.execution_time_range.first  = std::numeric_limits<float>::max();
-    result.execution_time_range.second = std::numeric_limits<float>::max();
+		result.time_slice_range.first      = t1;
+		result.time_slice_range.second     = t2;
+		result.event_time_range.first      = std::numeric_limits<float>::max();
+		result.event_time_range.second     = std::numeric_limits<float>::max();
+		result.execution_time_range.first  = std::numeric_limits<float>::max();
+		result.execution_time_range.second = std::numeric_limits<float>::max();
 
 		// event to come later
 		if (start_time > t2) 
@@ -33,18 +33,18 @@ namespace chaos
 		// event with unknown duration
 		if (IsForeverEvent())
 		{
-      result.event_time_range.first      = start_time;
-      result.event_time_range.second     = std::numeric_limits<float>::max();
-      result.execution_time_range.first  = max(start_time, t1);
-      result.execution_time_range.second = t2;
+			result.event_time_range.first      = start_time;
+			result.event_time_range.second     = std::numeric_limits<float>::max();
+			result.execution_time_range.first  = max(start_time, t1);
+			result.execution_time_range.second = t2;
 		}
 		// event without REPETITION
 		else if (!IsRepeated())
 		{
-      result.event_time_range.first      = start_time;
-      result.event_time_range.second     = start_time + duration;
-      result.execution_time_range.first  = max(start_time, t1);
-      result.execution_time_range.second = min(start_time + duration, t2);
+			result.event_time_range.first      = start_time;
+			result.event_time_range.second     = start_time + duration;
+			result.execution_time_range.first  = max(start_time, t1);
+			result.execution_time_range.second = min(start_time + duration, t2);
 		}
 		// event with limited duration (0 or finite) + REPETITION
 		else
@@ -60,10 +60,10 @@ namespace chaos
 
 			if (s1 + duration >= t1)
 			{
-        result.event_time_range.first      = s1;
-        result.event_time_range.second     = s1 + duration;
-        result.execution_time_range.first  = max(s1, t1);
-        result.execution_time_range.second = min(s1 + duration, t2);
+				result.event_time_range.first      = s1;
+				result.event_time_range.second     = s1 + duration;
+				result.execution_time_range.first  = max(s1, t1);
+				result.execution_time_range.second = min(s1 + duration, t2);
 			}
 			else
 			{
@@ -71,10 +71,10 @@ namespace chaos
 				double s2 = start_time + k2 * (duration + repetition_delay);
 				if (s2 < t2)
 				{
-          result.event_time_range.first      = s2;
-          result.event_time_range.second     = s2 + duration;
-          result.execution_time_range.first  = max(s2, t1);
-          result.execution_time_range.second = min(s2 + duration, t2);
+					result.event_time_range.first      = s2;
+					result.event_time_range.second     = s2 + duration;
+					result.execution_time_range.first  = max(s2, t1);
+					result.execution_time_range.second = min(s2 + duration, t2);
 				}			
 			}					
 		}
@@ -84,9 +84,9 @@ namespace chaos
 	bool ClockEventInfo::IsTooLateFor(double current_time) const
 	{
 		double max_event_time = GetMaxEventTime();
-		if (current_time > max_event_time)
-			return false;
-		return true;
+		if (max_event_time < current_time)
+			return true;
+		return false;
 	}
 
 	// ============================================================
@@ -201,9 +201,9 @@ namespace chaos
 
 			// compute the tick information & tick
 			ClockEventTickData tick_data;
-      tick_data.time_slice_range     = registered_event.time_slice_range;        
-      tick_data.event_time_range     = registered_event.event_time_range;
-      tick_data.execution_time_range = registered_event.execution_time_range;
+			tick_data.time_slice_range     = registered_event.time_slice_range;        
+			tick_data.event_time_range     = registered_event.event_time_range;
+			tick_data.execution_time_range = registered_event.execution_time_range;
 
 			ClockEventTickResult tick_result = clock_event->Tick(tick_data);  
 			// handle the result
@@ -212,9 +212,9 @@ namespace chaos
 			bool execution_completed = tick_result.IsExecutionCompleted();
 			if (!execution_completed)
 			{
-				
-			
-			
+
+
+
 			}
 
 
@@ -228,10 +228,10 @@ namespace chaos
 					ClockEventInfo const & event_info = clock_event->GetEventInfo();
 					if (event_info.IsRepeated())
 					{
-					
+
 					}
-				
-				
+
+
 				}
 			}	
 			else
@@ -258,16 +258,17 @@ namespace chaos
 		if (paused || time_scale == 0.0)
 			return false;		
 		// register all events in the list
-		double old_clock_time = clock_time;
-		clock_time = clock_time + time_scale * delta_time;
+		double time1 = clock_time;
+		double time2 = clock_time + time_scale * delta_time;
 
-		double time1 = old_clock_time;
-		double time2 = clock_time;
+		clock_time = time2;
+
+
 		for (size_t i = 0; i < pending_events.size(); ++i)
 		{
 			ClockEventInfo const & event_info = pending_events[i]->GetEventInfo();
 
-			if (event_info.IsTooLateFor(clock_time))
+			if (event_info.IsTooLateFor(time1))
 			{
 				pending_events[i]->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
 				--i;
@@ -279,15 +280,15 @@ namespace chaos
 				{
 					ClockEventTickRegistration registration;
 					registration.clock_event = pending_events[i];
-          registration.time_slice_range = execution_info.time_slice_range;
-          registration.event_time_range = execution_info.event_time_range;
-          registration.execution_time_range = execution_info.execution_time_range;
+					registration.time_slice_range = execution_info.time_slice_range;
+					registration.event_time_range = execution_info.event_time_range;
+					registration.execution_time_range = execution_info.execution_time_range;
 
 					if (registration.execution_time_range.first <= time1)
 						registration.abs_time_to_start = 0.0;
 					else
 						registration.abs_time_to_start = (registration.execution_time_range.first - time1) * cumulated_factor;
-				
+
 					event_tick_set.insert(registration);				
 				}				
 			}
@@ -306,7 +307,6 @@ namespace chaos
 		if (id != 0) 
 		{
 			Clock * top_level_clock = GetTopLevelParent();
-
 			// user-defined
 			if (id > 0 && top_level_clock->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
 				return nullptr;
@@ -314,7 +314,6 @@ namespace chaos
 			else 
 			{
 				assert(id < 0);
-
 				id = top_level_clock->FindUnusedID(true);
 				if (id < 0)
 					return nullptr;

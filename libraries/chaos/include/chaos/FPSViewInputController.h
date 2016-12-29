@@ -36,10 +36,6 @@ namespace chaos
 
 		/** the tick method */
 		virtual void Tick(GLFWwindow * glfw_window, double delta_time);
-		/** the mouse button method */
-		virtual void OnMouseButton(GLFWwindow * glfw_window, int button, int action, int modifier);
-		/** the mouse button method */
-		virtual void OnMouseMove(GLFWwindow * glfw_window, double x, double y);
 
 		/** matrix getter */
 		inline glm::mat4 GlobalToLocal() const { return fps_controller.GlobalToLocal(); }

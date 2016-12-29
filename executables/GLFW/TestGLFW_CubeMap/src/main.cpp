@@ -245,13 +245,6 @@ protected:
   {
     if (button == 1 && action == GLFW_RELEASE)
       debug_display.AddLine("HelloWorld");
-
-    fps_view_controller.OnMouseButton(glfw_window, button, action, modifier);
-  }
-
-  virtual void OnMouseMove(double x, double y) override
-  {
-    fps_view_controller.OnMouseMove(glfw_window, x, y);
   }
 
 protected:

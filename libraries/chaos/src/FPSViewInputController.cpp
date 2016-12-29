@@ -50,35 +50,7 @@ namespace chaos
 			fps_controller.position.y += movement_speed.up * (float)delta_time;
 	}
 
-	void FPSViewInputController::OnMouseButton(GLFWwindow * glfw_window, int button, int action, int modifier)
-	{
-#if 0
-		if (action == GLFW_RELEASE)
-			mouse_captured = false;
-		else if (action == GLFW_PRESS)
-		{
-			mouse_captured = true;
-			glfwGetCursorPos(glfw_window, &previous_mouse_x, &previous_mouse_y);
-		}
-#endif
-	}
 
-	void FPSViewInputController::OnMouseMove(GLFWwindow * glfw_window, double x, double y)
-	{
-#if 0
-		if (!mouse_captured)
-			return;
 
-		if (glfwGetMouseButton(glfw_window, 0) == GLFW_PRESS)
-		{
-			if (x != previous_mouse_x)
-				fps_controller.IncrementYaw(-(float)((x - previous_mouse_x) * mouse_sensibility));
-			if (y != previous_mouse_y)
-				fps_controller.IncrementPitch(-(float)((y - previous_mouse_y) * mouse_sensibility));
-		}
-		previous_mouse_x = x;
-		previous_mouse_y = y;
-#endif
-	}
 
 }; // namespace chaos

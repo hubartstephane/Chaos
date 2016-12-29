@@ -319,16 +319,6 @@ protected:
     }
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override
-  {
-    fps_view_controller.OnMouseButton(glfw_window, button, action, modifier);
-  }
-
-  virtual void OnMouseMove(double x, double y) override
-  {
-    fps_view_controller.OnMouseMove(glfw_window, x, y);
-  }
-
 protected:
 
   // rendering for the box  

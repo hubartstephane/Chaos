@@ -279,12 +279,12 @@ protected:
 
         ~MyEvent()
         {
-          debug_display->AddLine(chaos::StringTools::Printf("MyEvent [%s] destroyed", message.c_str()).c_str(), 5.0f);
+          debug_display->AddLine(chaos::StringTools::Printf("MyEvent [%s] destroyed", message.c_str()).c_str(), 1.0f);
         }
 
         virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data)
         { 
-          debug_display->AddLine(chaos::StringTools::Printf("MyEvent [%s] tick", message.c_str()).c_str(), 1.0f);
+          debug_display->AddLine(chaos::StringTools::Printf("MyEvent [%s] tick [%d]", message.c_str(), GetExecutionCount()).c_str(), 1.0f);
           return CompleteExecution(); 
         }
 
@@ -292,7 +292,7 @@ protected:
         chaos::GLDebugOnScreenDisplay * debug_display{ nullptr };
       };
 
-      chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(2.0f);
+      chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(2.0f, chaos::ClockEventRepetitionInfo::Repetition(1.0f, 3));
 
       clock->AddPendingEvent(new MyEvent(str, &debug_display), event_info, true);
 

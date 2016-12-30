@@ -2,7 +2,7 @@
 #include <chaos/MathTools.h>
 
 namespace chaos
-{ 	
+{
 	// ============================================================
 	// ClockEventInfo functions
 	// ============================================================
@@ -10,41 +10,41 @@ namespace chaos
 	double ClockEventInfo::GetMaxEventTime() const
 	{
 		if (IsForeverEvent())
-			return std::numeric_limits<float>::max();
+			return std::numeric_limits<double>::max();
 		if (IsRepeatedInfinitly())
-			return std::numeric_limits<float>::max();
-		return start_time + duration + (duration + repetition_delay) * (float)repetition_count;
+			return std::numeric_limits<double>::max();
+		return start_time + duration + (duration + repetition_delay) * (double)repetition_count;
 	}
 
 	ClockEventTickData ClockEventInfo::GetExecutionInfo(double t1, double t2) const
 	{
 		ClockEventTickData result;
-		result.time_slice_range.first      = t1;
-		result.time_slice_range.second     = t2;
-		result.event_time_range.first      = std::numeric_limits<float>::max();
-		result.event_time_range.second     = std::numeric_limits<float>::max();
-		result.execution_time_range.first  = std::numeric_limits<float>::max();
-		result.execution_time_range.second = std::numeric_limits<float>::max();
+		result.time_slice.first = t1;
+		result.time_slice.second = t2;
+		result.execution_range.first = std::numeric_limits<double>::max();
+		result.execution_range.second = std::numeric_limits<double>::max();
+		result.tick_range.first = std::numeric_limits<double>::max();
+		result.tick_range.second = std::numeric_limits<double>::max();
 
 		// event to come later
-		if (start_time > t2) 
+		if (start_time > t2)
 			return result;
 
 		// event with unknown duration
 		if (IsForeverEvent())
 		{
-			result.event_time_range.first      = start_time;
-			result.event_time_range.second     = std::numeric_limits<float>::max();
-			result.execution_time_range.first  = max(start_time, t1);
-			result.execution_time_range.second = t2;
+			result.execution_range.first = start_time;
+			result.execution_range.second = std::numeric_limits<double>::max();
+			result.tick_range.first = max(start_time, t1);
+			result.tick_range.second = t2;
 		}
 		// event without REPETITION
 		else if (!IsRepeated())
 		{
-			result.event_time_range.first      = start_time;
-			result.event_time_range.second     = start_time + duration;
-			result.execution_time_range.first  = max(start_time, t1);
-			result.execution_time_range.second = min(start_time + duration, t2);
+			result.execution_range.first = start_time;
+			result.execution_range.second = start_time + duration;
+			result.tick_range.first = max(start_time, t1);
+			result.tick_range.second = min(start_time + duration, t2);
 		}
 		// event with limited duration (0 or finite) + REPETITION
 		else
@@ -55,28 +55,28 @@ namespace chaos
 
 			double tmp = (t1 - start_time) / (duration + repetition_delay);
 
-			double k1 = MathTools::Floor(tmp);			
+			double k1 = MathTools::Floor(tmp);
 			double s1 = start_time + k1 * (duration + repetition_delay);
 
-			if (s1 + duration >= t1)
+			if (s1 <= t2 && s1 + duration >= t1)
 			{
-				result.event_time_range.first      = s1;
-				result.event_time_range.second     = s1 + duration;
-				result.execution_time_range.first  = max(s1, t1);
-				result.execution_time_range.second = min(s1 + duration, t2);
+				result.execution_range.first = s1;
+				result.execution_range.second = s1 + duration;
+				result.tick_range.first = max(s1, t1);
+				result.tick_range.second = min(s1 + duration, t2);
 			}
 			else
 			{
 				double k2 = MathTools::Ceil(tmp);
 				double s2 = start_time + k2 * (duration + repetition_delay);
-				if (s2 < t2)
+				if (s2 <= t2 && s2 + duration >= t1)
 				{
-					result.event_time_range.first      = s2;
-					result.event_time_range.second     = s2 + duration;
-					result.execution_time_range.first  = max(s2, t1);
-					result.execution_time_range.second = min(s2 + duration, t2);
-				}			
-			}					
+					result.execution_range.first = s2;
+					result.execution_range.second = s2 + duration;
+					result.tick_range.first = max(s2, t1);
+					result.tick_range.second = min(s2 + duration, t2);
+				}
+			}
 		}
 		return result;
 	}
@@ -93,8 +93,8 @@ namespace chaos
 	// Clock functions
 	// ============================================================
 
-	Clock::Clock(ClockCreateParams const & params) : 
-		time_scale(params.time_scale), 
+	Clock::Clock(ClockCreateParams const & params) :
+		time_scale(params.time_scale),
 		paused(params.paused)
 	{
 
@@ -107,7 +107,7 @@ namespace chaos
 		// so orphan all children to ensure they cannot access parent's anymore
 		size_t child_count = children_clocks.size();
 		for (size_t i = 0; i < child_count; ++i)
-			children_clocks[i]->parent_clock = nullptr;	
+			children_clocks[i]->parent_clock = nullptr;
 		// same thing with events
 		size_t event_count = pending_events.size();
 		for (size_t i = 0; i < event_count; ++i)
@@ -141,7 +141,7 @@ namespace chaos
 				size_t count = children_clocks.size();
 				for (size_t i = 0; (i < count) && (result == nullptr); ++i)
 					result = children_clocks[i]->GetChildClock(id, recursive);
-			}		
+			}
 		}
 		return result;
 	}
@@ -158,7 +158,7 @@ namespace chaos
 				size_t count = children_clocks.size();
 				for (size_t i = 0; (i < count) && (result == nullptr); ++i)
 					result = children_clocks[i]->GetChildClock(id, recursive);
-			}		
+			}
 		}
 		return result;
 	}
@@ -179,65 +179,64 @@ namespace chaos
 		return result;
 	}
 
-	void Clock::TriggerClockEvents(ClockEventTickSet & events_set)
+	void Clock::TriggerClockEvent(ClockEventTickRegistration & registered_event)
 	{
-		while (events_set.size() > 0)
+		// degenerated use case :
+		//   the processing of a previous event remove another event from execution
+		ClockEvent * clock_event = registered_event.clock_event.get();
+		if (clock_event == nullptr)
+			return;
+
+		// ensure the event is still in range
+
+
+		// compute the tick information & tick
+		ClockEventTickData tick_data;
+		tick_data.time_slice = registered_event.time_slice;
+		tick_data.execution_range = registered_event.execution_range;
+		tick_data.tick_range = registered_event.tick_range;
+
+		ClockEventTickResult tick_result = clock_event->Tick(tick_data);
+		// handle the result
+		ClockEventInfo & event_info = clock_event->GetEventInfo();
+
+		// current execution is completed if :
+		//   - explicitely required
+		//   - time is over
+		bool execution_completed = tick_result.IsExecutionCompleted(); // explicit request
+		if (!execution_completed)
+			if (tick_data.time_slice.second >= tick_data.tick_range.second) // time is over
+				execution_completed = true;
+
+		if (execution_completed) // current execution is beeing ended : can start a repetition ?
 		{
-			auto it = events_set.begin();
-
-			// extract the very first element of the sorted queue
-			ClockEventTickRegistration registered_event = *it;
-			events_set.erase(it);
-
-			ClockEvent * clock_event = registered_event.clock_event.get();
-
-			// degenerated use case :
-			//   the processing of a previous event remove another event from execution
-			if (clock_event == nullptr)
-				continue;
-
-			// ensure the event is still in range
-
-
-			// compute the tick information & tick
-			ClockEventTickData tick_data;
-			tick_data.time_slice_range     = registered_event.time_slice_range;        
-			tick_data.event_time_range     = registered_event.event_time_range;
-			tick_data.execution_time_range = registered_event.execution_time_range;
-
-			ClockEventTickResult tick_result = clock_event->Tick(tick_data);  
-			// handle the result
-			ClockEventInfo const & event_info = clock_event->GetEventInfo();
-
-			bool execution_completed = tick_result.IsExecutionCompleted();
-			if (!execution_completed)
-			{
-
-
-
-			}
-
-
-
-			if (execution_completed)
-			{
-				if (!tick_result.CanRepeatExecution()) // want to stop all executions
-					clock_event->RemoveFromClock();
-				else
-				{
-					ClockEventInfo const & event_info = clock_event->GetEventInfo();
-					if (event_info.IsRepeated())
-					{
-
-					}
-
-
-				}
-			}	
+			if (!tick_result.CanRepeatExecution() || !event_info.IsRepeated()) // want to stop all executions
+				clock_event->RemoveFromClock();
 			else
 			{
-				clock_event->tick_count++; 			
+				// still repetition possible ?
+				if (!event_info.IsRepeatedInfinitly())
+				{
+					if (event_info.repetition_count == 0) // no more repetition 
+					{
+						clock_event->RemoveFromClock();
+						return;
+					}
+					else
+						event_info.repetition_count--;
+				}
+				// do the repetition
+				event_info.start_time =
+					min(tick_data.tick_range.second, tick_data.time_slice.second) +
+					event_info.repetition_delay;
+
+				clock_event->tick_count = 0;
+				clock_event->execution_count++;
 			}
+		}
+		else
+		{
+			clock_event->tick_count++; // increment internal counter
 		}
 	}
 
@@ -247,8 +246,17 @@ namespace chaos
 
 		ClockEventTickSet event_tick_set;
 
+		// updates the clocks and collect the events (sorted)
 		bool result = TickClockImpl(delta_time, 1.0, event_tick_set);
-		TriggerClockEvents(event_tick_set);
+		// tick the events
+		while (event_tick_set.size() > 0)
+		{
+			auto it = event_tick_set.begin();
+			
+			ClockEventTickRegistration registered_event = *it;			
+			event_tick_set.erase(it);
+			TriggerClockEvent(registered_event);
+		}		
 		return result;
 	}
 
@@ -256,7 +264,7 @@ namespace chaos
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)
-			return false;		
+			return false;
 		// register all events in the list
 		double time1 = clock_time;
 		double time2 = clock_time + time_scale * delta_time;
@@ -280,22 +288,22 @@ namespace chaos
 				{
 					ClockEventTickRegistration registration;
 					registration.clock_event = pending_events[i];
-					registration.time_slice_range = execution_info.time_slice_range;
-					registration.event_time_range = execution_info.event_time_range;
-					registration.execution_time_range = execution_info.execution_time_range;
+					registration.time_slice = execution_info.time_slice;
+					registration.execution_range = execution_info.execution_range;
+					registration.tick_range = execution_info.tick_range;
 
-					if (registration.execution_time_range.first <= time1)
+					if (registration.tick_range.first <= time1)
 						registration.abs_time_to_start = 0.0;
 					else
-						registration.abs_time_to_start = (registration.execution_time_range.first - time1) * cumulated_factor;
+						registration.abs_time_to_start = (registration.tick_range.first - time1) * cumulated_factor;
 
-					event_tick_set.insert(registration);				
-				}				
+					event_tick_set.insert(registration);
+				}
 			}
 		}
 		// recursive tick 
 		size_t child_count = children_clocks.size();
-		for (size_t i = 0; i < child_count ; ++i)
+		for (size_t i = 0; i < child_count; ++i)
 			children_clocks[i]->TickClockImpl(time_scale * delta_time, cumulated_factor * time_scale, event_tick_set);
 
 		return true;
@@ -304,14 +312,14 @@ namespace chaos
 	Clock * Clock::CreateChildClock(int id, ClockCreateParams const & params)
 	{
 		// want an ID : automatic or user-defined
-		if (id != 0) 
+		if (id != 0)
 		{
 			Clock * top_level_clock = GetTopLevelParent();
 			// user-defined
 			if (id > 0 && top_level_clock->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
 				return nullptr;
 			// generate a own ID if necessary
-			else 
+			else
 			{
 				assert(id < 0);
 				id = top_level_clock->FindUnusedID(true);
@@ -321,20 +329,20 @@ namespace chaos
 		}
 
 		// allocate the clock
-		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params)); 
+		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params));
 		if (clock != nullptr)
 		{
 			child_clock->clock_id = id;
 			child_clock->parent_clock = this;
 			children_clocks.push_back(child_clock);
-		}   
+		}
 		return child_clock.get();
 	}
 
 	bool Clock::RemoveFromParent()
 	{
 		Clock * tmp = parent_clock;
-		if (tmp != nullptr) 
+		if (tmp != nullptr)
 		{
 			size_t count = tmp->children_clocks.size();
 			for (size_t i = 0; i < count; ++i)
@@ -342,13 +350,13 @@ namespace chaos
 				if (tmp->children_clocks[i].get() == this) // remove swap
 				{
 					if (i != count - 1) // nothing to do if already last element
-						tmp->children_clocks[i] = std::move(tmp->children_clocks.back());							
+						tmp->children_clocks[i] = std::move(tmp->children_clocks.back());
 
 					parent_clock = nullptr;          // XXX : we cannot invert these 2 lines because, because 'this' could be deleted and then
 					tmp->children_clocks.pop_back(); //       and then we would access 'parent_clock' member after destructor
 					return true;                     //       that's why we are using 'tmp'					
 				}
-			}		
+			}
 		}
 		return false;
 	}
@@ -379,7 +387,7 @@ namespace chaos
 		size_t count = children_clocks.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			Clock const * clock = children_clocks[i].get(); 
+			Clock const * clock = children_clocks[i].get();
 			if (clock->clock_id > 0)
 				IDs.push_back(clock->clock_id); // store only 'REAL' id's
 			if (recursive)
@@ -393,7 +401,7 @@ namespace chaos
 		//          search bigger and smaller ids (no memory allocation)
 		//          if max and min values found are not MAX/MIN INTEGER values, just use increment/decrement values
 		int smaller_id = (clock_id > 0) ? clock_id : std::numeric_limits<int>::max();
-		int bigger_id  = (clock_id > 0) ? clock_id : 0;
+		int bigger_id = (clock_id > 0) ? clock_id : 0;
 
 		FindUnusedIDStep1(smaller_id, bigger_id, recursive);
 		if (bigger_id < std::numeric_limits<int>::max())   // XXX : try BIGGER first because ID will increment : 1, 2, 3 ..
@@ -412,7 +420,7 @@ namespace chaos
 		std::sort(IDs.begin(), IDs.end());
 
 		size_t count = IDs.size();
-		for (size_t i = 0 ; i < count - 1 ; ++i)
+		for (size_t i = 0; i < count - 1; ++i)
 			if (IDs[i] + 1 < IDs[i + 1]) // search for holes in the ID list
 				return IDs[i] + 1;
 
@@ -459,9 +467,9 @@ namespace chaos
 					clock = nullptr;                // XXX : we cannot invert these 2 lines because this could be destroyed 
 					tmp->pending_events.pop_back(); // and we then would access 'clock' member after destructor 
 					return true;                    // that's why we are using 'tmp'
-				}		                            
-			}		
-		}			
+				}
+			}
+		}
 		return false;
 	}
 

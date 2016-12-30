@@ -6,10 +6,10 @@
 namespace chaos
 {
 	//
-	//                            EXECUTION (execution time range)
+	//                                      TICK RANGE 
 	//                                   +--------------+
 	//                                   v              v
-	//                           EVENT (event time range)
+	//                           EXECUTION RANGE 
 	//                +---------------------------------+
 	//                v                                 v
 	// ----+-----------------------------+-----------------------------+ Tick system
@@ -32,18 +32,18 @@ namespace chaos
 		bool IsValid() const
 		{
 			return 
-				(execution_time_range.first  != std::numeric_limits<double>::max()) &&
-				(execution_time_range.second != std::numeric_limits<double>::max());
+				(tick_range.first  != std::numeric_limits<double>::max()) &&
+				(tick_range.second != std::numeric_limits<double>::max());
 		}
 
 	public:
 
 		/** the event without any consideration of time slicing */
-		ClockTimeRange event_time_range{0.0, 0.0}; 
-		/** the time slice for this tick */
-		ClockTimeRange time_slice_range{0.0, 0.0}; 
-		/** the time range for current execution */
-		ClockTimeRange execution_time_range{0.0, 0.0}; 
+		ClockTimeRange execution_range{0.0, 0.0}; 
+		/** the whole tick range */
+		ClockTimeRange time_slice{0.0, 0.0}; 
+		/** the tick range where event is activate */
+		ClockTimeRange tick_range{0.0, 0.0};
 	};
 
 	/**
@@ -81,13 +81,13 @@ namespace chaos
 			return ClockEventRepetitionInfo();
 		}
 
-		ClockEventRepetitionInfo InfiniteRepetition(double in_repetition_delay)
+		static ClockEventRepetitionInfo InfiniteRepetition(double in_repetition_delay)
 		{
 			assert(in_repetition_delay >= 0.0);
 			return ClockEventRepetitionInfo(in_repetition_delay, -1);
 		}
 
-		ClockEventRepetitionInfo Repetition(double in_repetition_delay, int in_repetition_count)
+		static ClockEventRepetitionInfo Repetition(double in_repetition_delay, int in_repetition_count)
 		{
 			assert(in_repetition_delay >= 0.0);
 			assert(in_repetition_count >= 0);
@@ -192,20 +192,20 @@ namespace chaos
 			return result;
 		}
 		/** some default 'constructor' */
+		static ClockEventTickResult CompleteAll() // current execution is finished, next repetition are aborded
+		{
+			ClockEventTickResult result;
+			result.completed = true;
+			result.can_repeat = false;
+			return result;
+		}
+		/** some default 'constructor' */
 		static ClockEventTickResult ContinueExecution() // this execution is not finished. continued on next tick
 		{
 			ClockEventTickResult result;
 			result.completed = false;
 			result.can_repeat = true;
 			return result;
-		}
-		/** some default 'constructor' */
-		static ClockEventTickResult CompleteAll() // current execution is finished, next repetition are aborded
-		{
-			ClockEventTickResult result;
-			result.completed = true;
-			result.can_repeat = false;
-			return result;		
 		}
 
 	public:
@@ -367,7 +367,7 @@ namespace chaos
 		/** advance the clock */
 		bool TickClockImpl(double delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set);
 		/** internal methods to trigger all the event */
-		void TriggerClockEvents(ClockEventTickSet & event_tick_set);
+		void TriggerClockEvent(ClockEventTickRegistration & registered_event);
 		/** ensure given clock is a child of the hierarchy tree */
 		bool IsDescendantClock(Clock const * child_clock) const;
 		/** gets a free ID for a clock */

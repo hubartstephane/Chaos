@@ -89,6 +89,21 @@ protected:
 
   virtual bool Initialize() override
   {   
+
+
+
+	  MMRESULT midiInOpen(
+		  LPHMIDIIN lphMidiIn,
+		  UINT      uDeviceID,
+		  DWORD_PTR dwCallback,
+		  DWORD_PTR dwCallbackInstance,
+		  DWORD     dwFlags
+	  );
+
+
+
+
+
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;

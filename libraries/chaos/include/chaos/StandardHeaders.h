@@ -131,6 +131,7 @@ T max(T a, T b)
 #  include <tchar.h> 
 #  include <windows.h>
 #  include <Windowsx.h>
+#  include <Mmsystem.h>
 #  include <Shlobj.h>
 #  include <Dbghelp.h>
 #endif

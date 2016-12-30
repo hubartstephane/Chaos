@@ -205,7 +205,7 @@ namespace chaos
 		//   - time is over
 		bool execution_completed = tick_result.IsExecutionCompleted(); // explicit request
 		if (!execution_completed)
-			if (tick_data.time_slice.second >= tick_data.tick_range.second) // time is over
+			if (tick_data.time_slice.second >= tick_data.execution_range.second) // time is over
 				execution_completed = true;
 
 		if (execution_completed) // current execution is beeing ended : can start a repetition ?

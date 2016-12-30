@@ -1,10 +1,10 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_IRRKlang
+-- ROOT_PATH/executables/SOUND
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
-  DeclareResource("resources")    
-    
+ProcessSubPremake("Test_IRRKLANG_Drum")
 
-                       
+
+
+
+

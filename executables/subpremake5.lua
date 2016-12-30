@@ -13,6 +13,9 @@ ProcessSubPremake("LUA")
 CURRENT_GROUP = BASE_GROUP .. "/MISC"
 ProcessSubPremake("MISC")
 
+CURRENT_GROUP = BASE_GROUP .. "/SOUND"
+ProcessSubPremake("SOUND")
+
 CURRENT_GROUP = BASE_GROUP .. "/NANA"
 ProcessSubPremake("NANA")
 

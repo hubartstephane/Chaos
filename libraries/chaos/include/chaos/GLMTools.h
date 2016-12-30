@@ -56,9 +56,6 @@ namespace chaos
     template<> class IsMatrixType<glm::dmat4x2> : public boost::mpl::true_ {};
     template<> class IsMatrixType<glm::dmat4x3> : public boost::mpl::true_ {};
 
-
-
-
 	public:
        
 		/** cast a vector into another vector (arity and type may change) */

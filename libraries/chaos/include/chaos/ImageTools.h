@@ -40,14 +40,7 @@ class ImageDescription
 public:
 
   /** constructor */
-  ImageDescription() : 
-    data(nullptr),
-    width(0),
-    height(0),
-    bpp(0),
-    line_size(0),
-    pitch_size(0),
-    padding_size(0){}
+	ImageDescription() = default;
 
   ImageDescription(void * in_data, int in_width, int in_height, int in_bpp, int in_padding = 0):
     data(in_data),
@@ -71,19 +64,19 @@ public:
   ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
 
   /** the buffer */
-  void * data;
+	void * data{ nullptr };
   /** the image width */
-  int    width;
+	int    width{ 0 };
   /** the image height */
-  int    height;
+  int    height{ 0 };
   /** the bit per pixels : 8, 24 or 32 */
-  int    bpp;
+  int    bpp{ 0 };
   /** size of line in bytes (exclude padding) : width * bpp / 8 */
-  int    line_size;
+  int    line_size{ 0 };
   /** size of line in bytes (including padding) : padding + line_size */
-  int    pitch_size;
+  int    pitch_size{ 0 };
   /** padding a the end of a line  */
-  int    padding_size;
+  int    padding_size{ 0 };
 
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/AllocatorTools.h>
 
 namespace chaos
 {
@@ -15,9 +16,9 @@ namespace chaos
 		public:
 
 			/** the new operator */
-			void * operator new (size_t size){ return _aligned_malloc( size, 16 );}
+			void * operator new (size_t size){ return AllocatorTools::Aligned16Alloc(size);}
 			/** the delete operator */
-			void operator delete(void * ptr){ _aligned_free( ptr);}		
+			void operator delete(void * ptr){ AllocatorTools::Aligned16Free(ptr);}
 		};
 	
 	}; // namespace ClassTools

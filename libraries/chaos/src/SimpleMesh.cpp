@@ -4,14 +4,6 @@
 namespace chaos
 {
 
-  MeshPrimitive::MeshPrimitive() :
-    primitive_type(GL_TRIANGLES),
-    indexed(false),
-    count(0),
-    start(0),
-    base_vertex_index(0)
-  {
-  }
   //
   // XXX : the vb_offset is not really usefull in mixed BUFFER (one buffer with 2 parts)
   //       
@@ -81,10 +73,6 @@ namespace chaos
           glDrawElementsInstancedBaseVertexBaseInstance(primitive_type, count, GL_UNSIGNED_INT, offset, instance_count, base_vertex_index, base_instance);
       }
     }
-  }
-
-  SimpleMesh::SimpleMesh()
-  {
   }
 
   SimpleMesh::~SimpleMesh()

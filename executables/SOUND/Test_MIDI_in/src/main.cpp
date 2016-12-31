@@ -21,67 +21,46 @@ protected:
 		return true;
 	}
 
-	void DropAllSounds()
+	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
-		for (auto sound : playing_sounds)
-			if (sound != nullptr)
-				sound->stop();
-
-		playing_sounds.clear();
+		MyGLFWWindowOpenGLTest1 * self = (MyGLFWWindowOpenGLTest1 *)dwInstance;
+		self->OnMidiInEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
 	}
 
-	virtual void Finalize() override
+	void OnMidiInEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
 	{
-		DropAllSounds();
-		engine = nullptr;
-		sound_source1 = nullptr;
-		sound_source2 = nullptr;
-	}
-
-	// XXX : when we call addSoundSourceFromFile(...), no reference is add to the ISoundSource
-	// 
-	//   => calling both 
-	//           sound_source1->drop();   
-	//        and 
-	//           engine->drop();   
-	//
-	// provoke a double-deletion => crash
-	//
-
-
-	virtual bool Tick(double delta_time) override
-	{
-		for (size_t i = 0; i < playing_sounds.size(); ++i)
-		{
-			if (playing_sounds[i] == nullptr || playing_sounds[i]->isFinished())
-			{
-				if (i != playing_sounds.size() - 1)
-					playing_sounds[i] = playing_sounds[playing_sounds.size() - 1];
-				playing_sounds.pop_back();
-				i--;
-			}
+		switch (wMsg) {
+			case MIM_OPEN:
+				chaos::LogTools::Log("wMsg = MIM_OPEN\n");
+				break;
+			case MIM_CLOSE:
+				chaos::LogTools::Log("wMsg = MIM_CLOSE\n");
+				break;
+			case MIM_DATA:
+				chaos::LogTools::Log("wMsg = MIM_DATA, dwParam1=%08x, dwParam2=%08x\n", dwParam1, dwParam2);
+				break;
+			case MIM_LONGDATA:
+				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
+				break;
+			case MIM_ERROR:
+				chaos::LogTools::Log("wMsg = MIM_ERROR\n");
+				break;
+			case MIM_LONGERROR:
+				chaos::LogTools::Log("wMsg = MIM_LONGERROR\n");
+				break;
+			case MIM_MOREDATA:
+				chaos::LogTools::Log("wMsg = MIM_MOREDATA\n");
+				break;
+			default:
+				chaos::LogTools::Log("wMsg = unknown\n");
+				break;
 		}
-		return false; // no redraw
-	}
-
-	virtual void OnMouseButton(int button, int action, int modifier) override
-	{
-		if (button == 0 && action == GLFW_PRESS)
-		{
-			irrklang::ISound * sound = engine->play2D(sound_source1.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
-			playing_sounds.push_back(sound);
-		}
-		else if (button == 1 && action == GLFW_PRESS)
-		{
-			irrklang::ISound * sound = engine->play2D(sound_source2.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
-			playing_sounds.push_back(sound);
-		}
-		else if (button == 2 && action == GLFW_PRESS)
-			DropAllSounds();
+		return;
 	}
 
 	virtual bool Initialize() override
 	{
+		// enumerate the midi IN devices
 		UINT midi_device_count = midiInGetNumDevs();
 		for (UINT i = 0; i < midi_device_count; ++i)
 		{
@@ -95,53 +74,22 @@ protected:
 			chaos::LogTools::Log("                    : pid     = %d", caps.wPid);
 		}
 
-
-		/*
-		MMRESULT midiInOpen(
-			LPHMIDIIN lphMidiIn,
-			UINT      uDeviceID,
-			DWORD_PTR dwCallback,
-			DWORD_PTR dwCallbackInstance,
-			DWORD     dwFlags
-		);
-		*/
-
-
-
-
-		chaos::Application * application = chaos::Application::GetInstance();
-		if (application == nullptr)
+		// open the device
+		MMRESULT rv = midiInOpen(&hMidiDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
+		if (rv != MMSYSERR_NOERROR)
 			return false;
 
-		// list of sound devices
-		boost::intrusive_ptr<irrklang::ISoundDeviceList> deviceList = irrklang::createSoundDeviceList();
-		if (deviceList != nullptr)
-		{
-			for (int i = 0; i < deviceList->getDeviceCount(); ++i)
-				chaos::LogTools::Log("DEVICE %d: [%s]  [%s]\n", i, deviceList->getDeviceDescription(i), deviceList->getDeviceID(i));
-			deviceList = nullptr;
-		}
-
-		// create the engine
-		engine = irrklang::createIrrKlangDevice();
-		if (engine == nullptr)
-			return false;
-		engine->drop(); // XXX : because we add our own reference to an object already having one
-
-		// create the sound
-		boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
-		boost::filesystem::path src1_path = resources_path / "70_Stir_HiHatOpen.wav";
-		boost::filesystem::path src2_path = resources_path / "70_Stir_Kick.wav";
-
-		sound_source1 = engine->addSoundSourceFromFile(src1_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
-		if (sound_source1 == nullptr)
-			return false;
-
-		sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
-		if (sound_source2 == nullptr)
-			return false;
+		// start device usage
+		midiInStart(hMidiDevice);
 
 		return true;
+	}
+
+	virtual void Finalize() override
+	{
+		midiInStop(hMidiDevice);
+		midiInClose(hMidiDevice);
+		hMidiDevice = nullptr;
 	}
 
 	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
@@ -153,11 +101,8 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<irrklang::ISoundEngine> engine;
-	boost::intrusive_ptr<irrklang::ISoundSource> sound_source1;
-	boost::intrusive_ptr<irrklang::ISoundSource> sound_source2;
-
-	std::vector<boost::intrusive_ptr<irrklang::ISound>> playing_sounds;
+	HMIDIIN hMidiDevice{ nullptr };
+	DWORD nMidiPort{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)

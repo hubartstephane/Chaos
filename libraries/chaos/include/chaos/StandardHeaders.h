@@ -172,6 +172,15 @@ T max(T a, T b)
 #include <fbxsdk/fileio/fbxiosettings.h>
 #include <fbxsdk/scene/fbxscene.h>
 
+
+// ==========================================================================================
+// Some library link : prefer to use libraries/chaos/subpremake5 for that
+// ==========================================================================================
+
+//#pragma comment(lib, "winmm.lib")
+//#pragma comment(lib, "Dbghelp.lib")
+
+
 // ==========================================================================================
 // The usage of openGL and its libraries can be tedious (mainly for the different inclusions)
 // The files deserve to simplify the process into a single inclusion of this file

@@ -6,6 +6,9 @@
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
 
+
+//#pragma comment(lib, "winmm.lib")
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 
@@ -79,6 +82,18 @@ protected:
 
 	virtual bool Initialize() override
 	{
+		UINT midi_device_count = midiInGetNumDevs();
+		for (UINT i = 0; i < midi_device_count; ++i)
+		{
+			MIDIINCAPS caps;
+			midiInGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
+
+			chaos::LogTools::Log("Midi IN Device [%d] : name    = %s", i, caps.szPname);
+			chaos::LogTools::Log("                    : support = %d", caps.dwSupport);
+			chaos::LogTools::Log("                    : driver  = %d", caps.vDriverVersion);
+			chaos::LogTools::Log("                    : mid     = %d", caps.wMid);
+			chaos::LogTools::Log("                    : pid     = %d", caps.wPid);
+		}
 
 
 		/*
@@ -103,7 +118,7 @@ protected:
 		if (deviceList != nullptr)
 		{
 			for (int i = 0; i < deviceList->getDeviceCount(); ++i)
-				printf("DEVICE %d: [%s]  [%s]\n", i, deviceList->getDeviceDescription(i), deviceList->getDeviceID(i));
+				chaos::LogTools::Log("DEVICE %d: [%s]  [%s]\n", i, deviceList->getDeviceDescription(i), deviceList->getDeviceID(i));
 			deviceList = nullptr;
 		}
 

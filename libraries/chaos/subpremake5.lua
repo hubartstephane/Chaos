@@ -27,3 +27,4 @@
   --DependOnLib("LIBXML2")    
      
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
+  DependOnStandardLib("winmm.lib")    -- used for midi

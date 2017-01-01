@@ -97,9 +97,9 @@ namespace chaos
 		/** returns true whether the event is repeated */
 		bool IsRepeated() const { return (repetition_count != 0);}
 		/** returns true whether the event is repeated a limited number of time */
-		bool IsRepeatedLimited() const { return IsRepeated() && (repetition_delay >= 0.0);}
+		bool IsRepeatedLimited() const { return (repetition_count > 0.0);}
 		/** returns true whether the event is repeated forever  */
-		bool IsRepeatedInfinitly() const { return IsRepeated() && (repetition_delay < 0.0);}
+		bool IsRepeatedInfinitly() const { return (repetition_count < 0.0);}
 
 	public:
 

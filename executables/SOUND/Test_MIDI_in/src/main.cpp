@@ -6,6 +6,34 @@
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
 
+struct MIDICommand
+{
+	MIDICommand() = default;
+
+	MIDICommand(DWORD value) { SetValue(value); }
+
+	void SetValue(DWORD value);
+
+	unsigned char command;
+	unsigned char param1;
+	unsigned char param2;
+	unsigned char param3;
+
+	unsigned char command_id;
+	unsigned char channel;
+};
+
+void MIDICommand::SetValue(DWORD value)
+{
+	command = (unsigned char)((value & 0xFF) >> 0);
+	param1  = (unsigned char)((value & 0xFF) >> 8);
+	param2  = (unsigned char)((value & 0xFF) >> 16);
+	param3  = (unsigned char)((value & 0xFF) >> 24);
+
+	command_id = command & ~15; // remove the channel part
+	channel = command & 15;
+}
+
 
 //#pragma comment(lib, "winmm.lib")
 
@@ -20,7 +48,7 @@ protected:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return true;
 	}
-
+	
 	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
 		MyGLFWWindowOpenGLTest1 * self = (MyGLFWWindowOpenGLTest1 *)dwInstance;
@@ -29,31 +57,64 @@ protected:
 
 	void OnMidiInEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
 	{
-		switch (wMsg) {
-			case MIM_OPEN:
+		switch (wMsg) 		
+		{
+			case MIM_OPEN: // reserved, reserved
+			{
 				chaos::LogTools::Log("wMsg = MIM_OPEN\n");
 				break;
-			case MIM_CLOSE:
+			}
+			case MIM_CLOSE: // reserved, reserved
+			{
 				chaos::LogTools::Log("wMsg = MIM_CLOSE\n");
 				break;
-			case MIM_DATA:
-				chaos::LogTools::Log("wMsg = MIM_DATA, dwParam1=%08x, dwParam2=%08x\n", dwParam1, dwParam2);
-				break;
-			case MIM_LONGDATA:
-				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
-				break;
+			}
 			case MIM_ERROR:
+			{
+				DWORD dwMidiMessage = dwParam1;
+				DWORD dwTimestamp = dwParam2;
 				chaos::LogTools::Log("wMsg = MIM_ERROR\n");
 				break;
+			}
+			case MIM_DATA:
+			{
+
+
+				DWORD dwMidiMessage = dwParam1;
+				DWORD dwTimestamp   = dwParam2; // milliseconds
+
+				MIDICommand command(dwMidiMessage);
+
+				BYTE b1 = (dwParam1 & 0xFF) >> 24;
+				BYTE b2 = (dwParam1 & 0xFF) >> 16;
+				BYTE b3 = (dwParam1 & 0xFF) >> 8;
+				BYTE b4 = (dwParam1 & 0xFF) >> 0; // midi status
+
+				if (b1 != 0 || b2 != 0 || b3 != 0)
+
+					chaos::LogTools::Log("wMsg = MIM_DATA, dwParam1=%08x, dwParam2=%08x\n", dwParam1, dwParam2);
+				break;
+			}
+			case MIM_LONGDATA:
+			{
+				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
+				break;
+			}
 			case MIM_LONGERROR:
+			{
 				chaos::LogTools::Log("wMsg = MIM_LONGERROR\n");
 				break;
+			}
 			case MIM_MOREDATA:
+			{
 				chaos::LogTools::Log("wMsg = MIM_MOREDATA\n");
 				break;
+			}
 			default:
+			{
 				chaos::LogTools::Log("wMsg = unknown\n");
 				break;
+			}
 		}
 		return;
 	}
@@ -74,13 +135,42 @@ protected:
 			chaos::LogTools::Log("                    : pid     = %d", caps.wPid);
 		}
 
+		MMRESULT rv;
 		// open the device
-		MMRESULT rv = midiInOpen(&hMidiDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
+		rv = midiInOpen(&hMidiDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (rv != MMSYSERR_NOERROR)
 			return false;
 
+	#if 0		
+		LPSTR       lpData;               /* pointer to locked data block */
+		DWORD       dwBufferLength;       /* length of data in data block */
+		DWORD       dwBytesRecorded;      /* used for input only */
+		DWORD_PTR   dwUser;               /* for client's use */
+		DWORD       dwFlags;              /* assorted flags (see defines) */
+		struct midihdr_tag far *lpNext;   /* reserved for driver */
+		DWORD_PTR   reserved;             /* reserved for driver */
+
+	#if (WINVER >= 0x0400)
+		DWORD       dwOffset;             /* Callback offset into buffer */
+		DWORD_PTR   dwReserved[8];        /* Reserved for MMSYSTEM */
+	#endif
+	
+
+		MIDIHDR hdr;
+		rv = midiInAddBuffer(hMidiDevice, &hdr, sizeof(hdr));
+		if (rv != MMSYSERR_NOERROR)
+			return false;
+	#endif
+
 		// start device usage
 		midiInStart(hMidiDevice);
+
+	#if 0
+		// reset the recording and mark all pending buffer as done
+		midiInReset(hMidiDevice);
+		// stop the recording
+		midiInStop(hMidiDevice);
+	#endif
 
 		return true;
 	}

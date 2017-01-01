@@ -5,37 +5,7 @@
 #include <chaos/WinTools.h> 
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
-
-struct MIDICommand
-{
-	MIDICommand() = default;
-
-	MIDICommand(DWORD value) { SetValue(value); }
-
-	void SetValue(DWORD value);
-
-	unsigned char command;
-	unsigned char param1;
-	unsigned char param2;
-	unsigned char param3;
-
-	unsigned char command_id;
-	unsigned char channel;
-};
-
-void MIDICommand::SetValue(DWORD value)
-{
-	command = (unsigned char)((value & 0xFF) >> 0);
-	param1  = (unsigned char)((value & 0xFF) >> 8);
-	param2  = (unsigned char)((value & 0xFF) >> 16);
-	param3  = (unsigned char)((value & 0xFF) >> 24);
-
-	command_id = command & ~15; // remove the channel part
-	channel = command & 15;
-}
-
-
-//#pragma comment(lib, "winmm.lib")
+#include <chaos/MIDITools.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
@@ -83,7 +53,7 @@ protected:
 				DWORD dwMidiMessage = dwParam1;
 				DWORD dwTimestamp   = dwParam2; // milliseconds
 
-				MIDICommand command(dwMidiMessage);
+				chaos::MIDICommand command(dwMidiMessage);
 
 				BYTE b1 = (dwParam1 & 0xFF) >> 24;
 				BYTE b2 = (dwParam1 & 0xFF) >> 16;

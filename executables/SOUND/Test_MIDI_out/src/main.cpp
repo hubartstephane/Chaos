@@ -7,56 +7,9 @@
 #include <chaos/IrrklangTools.h>
 
 #include <chaos/ClockManager.h>
-
-struct MIDICommand
-{
-	MIDICommand() = default;
-
-	MIDICommand(DWORD value) { SetValue(value); }
-
-	MIDICommand(unsigned char in_command, unsigned char in_param1 = 0, unsigned char in_param2 = 0, unsigned char in_param3 = 0) { SetValue(in_command, in_param1, in_param2, in_param3); }
+#include <chaos/MIDITools.h>
 
 
-	void SetValue(DWORD value);
-	void SetValue(unsigned char in_command, unsigned char in_param1 = 0, unsigned char in_param2 = 0, unsigned char in_param3 = 0);
-
-	DWORD GetValue() const;
-
-	unsigned char command;
-	unsigned char param1;
-	unsigned char param2;
-	unsigned char param3;
-
-	unsigned char command_id;
-	unsigned char channel;
-};
-
-void MIDICommand::SetValue(unsigned char in_command, unsigned char in_param1, unsigned char in_param2, unsigned char in_param3)
-{
-	command = in_command;
-	param1  = in_param1;
-	param2  = in_param2;
-	param3  = in_param3;
-
-	command_id = command & ~15; // remove the channel part
-	channel = command & 15;
-}
-
-DWORD MIDICommand::GetValue() const
-{
-	return command | (((DWORD)param1) >> 8) | (((DWORD)param2) >> 16) | (((DWORD)param3) >> 24);
-}
-
-void MIDICommand::SetValue(DWORD value)
-{
-	command = (unsigned char)((value & 0xFF) >> 0);
-	param1  = (unsigned char)((value & 0xFF) >> 8);
-	param2  = (unsigned char)((value & 0xFF) >> 16);
-	param3  = (unsigned char)((value & 0xFF) >> 24);
-
-	command_id = command & ~15; // remove the channel part
-	channel = command & 15;
-}
 
 // ================================================================
 
@@ -77,7 +30,7 @@ protected:
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
-	friend class MyPlaySoundEvent;
+	friend class MIDIPlaySoundEvent;
 
 protected:
 
@@ -182,7 +135,7 @@ protected:
 		MMRESULT rv;
 		// open the device
 
-		rv = midiOutOpen(&hMidiDevice, MIDIMAPPER, 0, 0, 0);
+		rv = midiOutOpen(&hMidiDevice, 2, 0, 0, 0); // MIDIMAPPER
 
 		//rv = midiOutOpen(&hMidiDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiOutEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (rv != MMSYSERR_NOERROR)
@@ -218,7 +171,17 @@ protected:
 
 chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData const & tick_data)
 {
-	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick\n");
+	int count = GetExecutionCount() % 16;
+
+	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick[%d]\n", count);
+
+
+
+	chaos::MIDICommand midi_command(0x90, count, 70);
+	MMRESULT result = midiOutShortMsg(application->hMidiDevice, midi_command.GetValue());
+
+	if (result != MMSYSERR_NOERROR)
+		result = result;
 	
 	return ContinueExecution(); 
 }

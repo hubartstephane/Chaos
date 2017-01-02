@@ -86,7 +86,7 @@ protected:
 		return;
 	}
 
-	virtual bool Initialize() override
+	bool InitializeMIDIIn()
 	{
 		// enumerate the midi IN devices
 		UINT midi_device_count = midiInGetNumDevs();
@@ -104,7 +104,7 @@ protected:
 
 		MMRESULT rv;
 		// open the device
-		rv = midiInOpen(&hMidiInDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
+		rv = midiInOpen(&hMidiInDevice, nMidiInPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (rv != MMSYSERR_NOERROR)
 			return false;
 
@@ -114,11 +114,22 @@ protected:
 		return true;
 	}
 
-	virtual void Finalize() override
+	virtual bool Initialize() override
+	{
+		if (!InitializeMIDIIn())
+			return false;
+	}
+
+	void FinalizeMIDIIn()
 	{
 		midiInStop(hMidiInDevice);
 		midiInClose(hMidiInDevice);
 		hMidiInDevice = nullptr;
+	}
+
+	virtual void Finalize() override
+	{
+		FinalizeMIDIIn();
 	}
 
 	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
@@ -131,7 +142,7 @@ protected:
 protected:
 
 	HMIDIIN hMidiInDevice{ nullptr };
-	DWORD nMidiPort{ 0 };
+	DWORD nMidiInPort{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)

@@ -41,7 +41,7 @@ protected:
 		return true;
 	}
 
-	virtual bool Initialize() override
+	bool InitializeMIDIOut()
 	{
 		// enumerate the midi IN devices
 		UINT midi_device_count = midiOutGetNumDevs();
@@ -61,14 +61,14 @@ protected:
 			chaos::LogTools::Log("                     : voices       = %d", caps.wVoices);
 		}
 
-		//nMidiPort = 0;
-		//nMidiPort = 1;
-		//nMidiPort = MIDIMAPPER;
-		nMidiPort = 2;
+		//nMidiOutPort = 0;
+		//nMidiOutPort = 1;
+		//nMidiOutPort = MIDIMAPPER;
+		nMidiOutPort = 2;
 
 		MMRESULT rv;
 		// open the device
-		rv = midiOutOpen(&hMidiOutDevice, nMidiPort, 0, 0, 0); // MIDIMAPPER
+		rv = midiOutOpen(&hMidiOutDevice, nMidiOutPort, 0, 0, 0); // MIDIMAPPER
 		if (rv != MMSYSERR_NOERROR)
 			return false;
 
@@ -78,11 +78,23 @@ protected:
 		return true;
 	}
 
-	virtual void Finalize() override
+	virtual bool Initialize() override
+	{
+		if (!InitializeMIDIOut())
+			return false;
+		return true;
+	}
+
+	void FinalizeMIDIOut()
 	{
 		midiOutReset(hMidiOutDevice);
 		midiOutClose(hMidiOutDevice);
 		hMidiOutDevice = nullptr;
+	}
+
+	virtual void Finalize() override
+	{
+		FinalizeMIDIOut();
 	}
 
 	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
@@ -95,7 +107,7 @@ protected:
 protected:
 
 	HMIDIOUT hMidiOutDevice{ nullptr };
-	DWORD nMidiPort{ 0 };
+	DWORD nMidiOutPort{ 0 };
 };
 
 // ================================================================

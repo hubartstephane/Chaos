@@ -86,7 +86,41 @@ protected:
 		return;
 	}
 
-	virtual bool Initialize() override
+	bool InitializeMIDIOut()
+	{
+		// enumerate the midi IN devices
+		UINT midi_device_count = midiOutGetNumDevs();
+		for (UINT i = 0; i < midi_device_count; ++i)
+		{
+			MIDIOUTCAPS caps;
+			midiOutGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
+
+			chaos::LogTools::Log("Midi OUT Device [%d] : name         = %s", i, caps.szPname);
+			chaos::LogTools::Log("                     : support      = %d", caps.dwSupport);
+			chaos::LogTools::Log("                     : driver       = %d", caps.vDriverVersion);
+			chaos::LogTools::Log("                     : mid          = %d", caps.wMid);
+			chaos::LogTools::Log("                     : pid          = %d", caps.wPid);
+			chaos::LogTools::Log("                     : notes        = %d", caps.wNotes);
+			chaos::LogTools::Log("                     : channel mask = %d", caps.wChannelMask);
+			chaos::LogTools::Log("                     : technology   = %d", caps.wTechnology);
+			chaos::LogTools::Log("                     : voices       = %d", caps.wVoices);
+		}
+
+		//nMidiOutPort = 0;
+		//nMidiOutPort = 1;
+		//nMidiOutPort = MIDIMAPPER;
+		nMidiOutPort = 2;
+
+		MMRESULT rv;
+		// open the device
+		rv = midiOutOpen(&hMidiOutDevice, nMidiOutPort, 0, 0, 0); // MIDIMAPPER
+		if (rv != MMSYSERR_NOERROR)
+			return false;
+
+		return true;
+	}
+
+	bool InitializeMIDIIn()
 	{
 		// enumerate the midi IN devices
 		UINT midi_device_count = midiInGetNumDevs();
@@ -104,7 +138,7 @@ protected:
 
 		MMRESULT rv;
 		// open the device
-		rv = midiInOpen(&hMidiInDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
+		rv = midiInOpen(&hMidiInDevice, nMidiInPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (rv != MMSYSERR_NOERROR)
 			return false;
 
@@ -114,12 +148,35 @@ protected:
 		return true;
 	}
 
-	virtual void Finalize() override
+	virtual bool Initialize() override
+	{
+		if (!InitializeMIDIIn())
+			return false;
+		if (!InitializeMIDIOut())
+			return false;
+		return true;		
+	}
+
+	void FinalizeMIDIIn()
 	{
 		midiInStop(hMidiInDevice);
 		midiInClose(hMidiInDevice);
 		hMidiInDevice = nullptr;
 	}
+
+	void FinalizeMIDIOut()
+	{
+		midiOutReset(hMidiOutDevice);
+		midiOutClose(hMidiOutDevice);
+		hMidiOutDevice = nullptr;
+	}
+
+	virtual void Finalize() override
+	{
+		FinalizeMIDIIn();
+		FinalizeMIDIOut();
+	}
+
 
 	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
@@ -130,8 +187,10 @@ protected:
 
 protected:
 
+	HMIDIOUT hMidiOutDevice{ nullptr };
+	DWORD nMidiInPort{ 0 };
 	HMIDIIN hMidiInDevice{ nullptr };
-	DWORD nMidiPort{ 0 };
+	DWORD nMidiOutPort{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)

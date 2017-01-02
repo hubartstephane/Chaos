@@ -103,27 +103,37 @@ namespace chaos
 				(((uint32_t)param2) << 16) | 
 				(((uint32_t)param3) << 24);
 		}
-
+		/** returns true if the message is a system message */
 		bool IsSystemMessage() const
 		{
 			return (status >= 0xF0 && status <= 0xFF);
 		}
-
+		/** returns true if the message is a common system message */
 		bool IsSystemCommonMessage() const
 		{
 			return (status >= 0xF0 && status <= 0xF7);
 		}
-
+		/** returns true if the message is a realtime system message */
 		bool IsSystemRealtimeMessage() const
 		{
 			return (status >= 0xF8 && status <= 0xFF);
 		}
-
+		/** returns true if the message is a not off message */
+		bool IsNoteOffMessage() const
+		{
+			return (GetCommand() == CMD_NOTE_OFF);
+		}
+		/** returns true if the message is a note on message */
+		bool IsNoteOnMessage() const
+		{
+			return (GetCommand() == CMD_NOTE_ON);
+		}
+		/** gets the channel of the message (lower 4 bits of status) */
 		unsigned char GetChannel() const
 		{
 			return (status & 0x0F);
 		}
-
+		/** gets the command (status without 4 lower bits) */
 		unsigned char GetCommand() const
 		{
 			return (status & 0xF0);

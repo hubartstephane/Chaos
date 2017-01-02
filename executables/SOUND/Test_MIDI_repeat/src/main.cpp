@@ -7,8 +7,30 @@
 #include <chaos/IrrklangTools.h>
 #include <chaos/MIDITools.h>
 
+// ================================================================
+
+class MIDICommandEvent : public chaos::ClockEvent
+{
+public:
+
+	MIDICommandEvent(class MyGLFWWindowOpenGLTest1 * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
+
+	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
+
+protected:
+
+	class MyGLFWWindowOpenGLTest1 * application;
+
+	chaos::MIDICommand command;
+};
+
+
+// ================================================================
+
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
+	friend class MIDICommandEvent;
 
 protected:
 
@@ -27,63 +49,19 @@ protected:
 
 	void OnMidiInEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
 	{
-		switch (wMsg) 		
+		if (wMsg == MIM_DATA)
 		{
-			case MIM_OPEN: // reserved, reserved
-			{
-				chaos::LogTools::Log("wMsg = MIM_OPEN\n");
-				break;
-			}
-			case MIM_CLOSE: // reserved, reserved
-			{
-				chaos::LogTools::Log("wMsg = MIM_CLOSE\n");
-				break;
-			}
-			case MIM_ERROR:
-			{
-				DWORD dwMidiMessage = dwParam1;
-				DWORD dwTimestamp = dwParam2;
-				chaos::LogTools::Log("wMsg = MIM_ERROR\n");
-				break;
-			}
-			case MIM_DATA:
-			{
+			DWORD dwMidiMessage = dwParam1;
+			DWORD dwTimestamp = dwParam2; // milliseconds
 
+			chaos::MIDICommand command((uint32_t)dwMidiMessage);
 
-				DWORD dwMidiMessage = dwParam1;
-				DWORD dwTimestamp   = dwParam2; // milliseconds
-
-				chaos::MIDICommand command((uint32_t)dwMidiMessage);
-
-				if (command.IsSystemMessage())
-					break;
-
-
-				chaos::LogTools::Log("status [%02x] command [%02x] channel [%02x] param1 [%02x] param2 [%02x] param3 [%02x]\n", command.status, command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
-				break;
-			}
-			case MIM_LONGDATA:
+			if (!command.IsSystemMessage())
 			{
-				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
-				break;
-			}
-			case MIM_LONGERROR:
-			{
-				chaos::LogTools::Log("wMsg = MIM_LONGERROR\n");
-				break;
-			}
-			case MIM_MOREDATA:
-			{
-				chaos::LogTools::Log("wMsg = MIM_MOREDATA\n");
-				break;
-			}
-			default:
-			{
-				chaos::LogTools::Log("wMsg = unknown\n");
-				break;
+				chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(1.0, chaos::ClockEventRepetitionInfo::NoRepetition());
+				GetMainClock()->AddPendingEvent(new MIDICommandEvent(this, command), event_info, true);
 			}
 		}
-		return;
 	}
 
 	bool InitializeMIDIOut()
@@ -192,6 +170,23 @@ protected:
 	HMIDIIN hMidiInDevice{ nullptr };
 	DWORD nMidiOutPort{ 0 };
 };
+
+// ================================================================
+
+chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData const & tick_data)
+{
+
+	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick command = [%02x] channel = [%02x] param1 = [%02x] param2 = [%02x] param3 = [%02x]\n", command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
+
+	MMRESULT result = midiOutShortMsg(application->hMidiOutDevice, command.GetValue());
+	if (result != MMSYSERR_NOERROR)
+		result = result;
+
+	return ContinueExecution();
+}
+
+// ================================================================
+
 
 int _tmain(int argc, char ** argv, char ** env)
 {

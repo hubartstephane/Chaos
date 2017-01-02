@@ -104,49 +104,21 @@ protected:
 
 		MMRESULT rv;
 		// open the device
-		rv = midiInOpen(&hMidiDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
+		rv = midiInOpen(&hMidiInDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
 		if (rv != MMSYSERR_NOERROR)
 			return false;
-
-	#if 0		
-		LPSTR       lpData;               /* pointer to locked data block */
-		DWORD       dwBufferLength;       /* length of data in data block */
-		DWORD       dwBytesRecorded;      /* used for input only */
-		DWORD_PTR   dwUser;               /* for client's use */
-		DWORD       dwFlags;              /* assorted flags (see defines) */
-		struct midihdr_tag far *lpNext;   /* reserved for driver */
-		DWORD_PTR   reserved;             /* reserved for driver */
-
-	#if (WINVER >= 0x0400)
-		DWORD       dwOffset;             /* Callback offset into buffer */
-		DWORD_PTR   dwReserved[8];        /* Reserved for MMSYSTEM */
-	#endif
-	
-
-		MIDIHDR hdr;
-		rv = midiInAddBuffer(hMidiDevice, &hdr, sizeof(hdr));
-		if (rv != MMSYSERR_NOERROR)
-			return false;
-	#endif
 
 		// start device usage
-		midiInStart(hMidiDevice);
-
-	#if 0
-		// reset the recording and mark all pending buffer as done
-		midiInReset(hMidiDevice);
-		// stop the recording
-		midiInStop(hMidiDevice);
-	#endif
+		midiInStart(hMidiInDevice);
 
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
-		midiInStop(hMidiDevice);
-		midiInClose(hMidiDevice);
-		hMidiDevice = nullptr;
+		midiInStop(hMidiInDevice);
+		midiInClose(hMidiInDevice);
+		hMidiInDevice = nullptr;
 	}
 
 	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
@@ -158,7 +130,7 @@ protected:
 
 protected:
 
-	HMIDIIN hMidiDevice{ nullptr };
+	HMIDIIN hMidiInDevice{ nullptr };
 	DWORD nMidiPort{ 0 };
 };
 

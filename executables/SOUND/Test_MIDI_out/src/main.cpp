@@ -40,77 +40,6 @@ protected:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return true;
 	}
-#if 0	
-	static void CALLBACK OnMidiOutEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
-	{
-		MyGLFWWindowOpenGLTest1 * self = (MyGLFWWindowOpenGLTest1 *)dwInstance;
-		self->OnMidiOutEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
-	}
-
-	void OnMidiOutEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
-	{
-		switch (wMsg) 		
-		{
-			case MIM_OPEN: // reserved, reserved
-			{
-				chaos::LogTools::Log("wMsg = MIM_OPEN\n");
-				break;
-			}
-			case MIM_CLOSE: // reserved, reserved
-			{
-				chaos::LogTools::Log("wMsg = MIM_CLOSE\n");
-				break;
-			}
-			case MIM_ERROR:
-			{
-				DWORD dwMidiMessage = dwParam1;
-				DWORD dwTimestamp = dwParam2;
-				chaos::LogTools::Log("wMsg = MIM_ERROR\n");
-				break;
-			}
-			case MIM_DATA:
-			{
-
-
-				DWORD dwMidiMessage = dwParam1;
-				DWORD dwTimestamp   = dwParam2; // milliseconds
-
-				MIDICommand command(dwMidiMessage);
-
-				BYTE b1 = (dwParam1 & 0xFF) >> 24;
-				BYTE b2 = (dwParam1 & 0xFF) >> 16;
-				BYTE b3 = (dwParam1 & 0xFF) >> 8;
-				BYTE b4 = (dwParam1 & 0xFF) >> 0; // midi status
-
-				if (b1 != 0 || b2 != 0 || b3 != 0)
-
-					chaos::LogTools::Log("wMsg = MIM_DATA, dwParam1=%08x, dwParam2=%08x\n", dwParam1, dwParam2);
-				break;
-			}
-			case MIM_LONGDATA:
-			{
-				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
-				break;
-			}
-			case MIM_LONGERROR:
-			{
-				chaos::LogTools::Log("wMsg = MIM_LONGERROR\n");
-				break;
-			}
-			case MIM_MOREDATA:
-			{
-				chaos::LogTools::Log("wMsg = MIM_MOREDATA\n");
-				break;
-			}
-			default:
-			{
-				chaos::LogTools::Log("wMsg = unknown\n");
-				break;
-			}
-		}
-		return;
-	}
-#endif
 
 	virtual bool Initialize() override
 	{
@@ -132,12 +61,14 @@ protected:
 			chaos::LogTools::Log("                     : voices       = %d", caps.wVoices);
 		}
 
+		//nMidiPort = 0;
+		//nMidiPort = 1;
+		//nMidiPort = MIDIMAPPER;
+		nMidiPort = 2;
+
 		MMRESULT rv;
 		// open the device
-
-		rv = midiOutOpen(&hMidiDevice, 2, 0, 0, 0); // MIDIMAPPER
-
-		//rv = midiOutOpen(&hMidiDevice, nMidiPort, (DWORD_PTR)(void*)OnMidiOutEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
+		rv = midiOutOpen(&hMidiOutDevice, nMidiPort, 0, 0, 0); // MIDIMAPPER
 		if (rv != MMSYSERR_NOERROR)
 			return false;
 
@@ -149,9 +80,9 @@ protected:
 
 	virtual void Finalize() override
 	{
-		midiOutReset(hMidiDevice);
-		midiOutClose(hMidiDevice);
-		hMidiDevice = nullptr;		
+		midiOutReset(hMidiOutDevice);
+		midiOutClose(hMidiOutDevice);
+		hMidiOutDevice = nullptr;
 	}
 
 	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
@@ -163,16 +94,16 @@ protected:
 
 protected:
 
-	HMIDIOUT hMidiDevice{ nullptr };
+	HMIDIOUT hMidiOutDevice{ nullptr };
 	DWORD nMidiPort{ 0 };
 };
 
 // ================================================================
 
-void PlayNote(HMIDIOUT hMidiDevice, unsigned char note, unsigned char volume, unsigned char channel)
+void PlayNote(HMIDIOUT hMidiOutDevice, unsigned char note, unsigned char volume, unsigned char channel)
 {
 	chaos::MIDICommand midi_command(0x90 + channel, note, volume);
-	MMRESULT result = midiOutShortMsg(hMidiDevice, midi_command.GetValue());
+	MMRESULT result = midiOutShortMsg(hMidiOutDevice, midi_command.GetValue());
 	if (result != MMSYSERR_NOERROR)
 		result = result;
 }
@@ -186,8 +117,8 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 	unsigned char volume = 60 + (count % 10) * 10;
 	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick note = [%d] volume = [%d]\n", note, volume);
 
-	PlayNote(application->hMidiDevice, note, volume, 0);
-	PlayNote(application->hMidiDevice, note + 1, volume, 1);
+	PlayNote(application->hMidiOutDevice, note, volume, 0);
+	PlayNote(application->hMidiOutDevice, note + 1, volume, 1);
 
 	return ContinueExecution(); 
 }

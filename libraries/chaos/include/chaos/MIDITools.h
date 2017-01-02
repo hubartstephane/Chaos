@@ -47,10 +47,10 @@ namespace chaos
 		uint32_t GetValue() const
 		{
 			return  
-				(((uint32_t)command) >> 0) | 
-				(((uint32_t)param1) >> 8)  | 
-				(((uint32_t)param2) >> 16) | 
-				(((uint32_t)param3) >> 24);
+				(((uint32_t)command) << 0) | 
+				(((uint32_t)param1) << 8)  | 
+				(((uint32_t)param2) << 16) | 
+				(((uint32_t)param3) << 24);
 		}
 
 		/** the command */

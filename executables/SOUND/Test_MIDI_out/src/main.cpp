@@ -169,19 +169,29 @@ protected:
 
 // ================================================================
 
-chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData const & tick_data)
+void PlayNote(HMIDIOUT hMidiDevice, unsigned char note, unsigned char volume, unsigned char channel)
 {
-	int count = GetExecutionCount() % 16;
-
-	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick[%d]\n", count);
-
-
-
-	chaos::MIDICommand midi_command(0x90, count, 70);
-	MMRESULT result = midiOutShortMsg(application->hMidiDevice, midi_command.GetValue());
-
+	chaos::MIDICommand midi_command(0x90 + channel, note, volume);
+	MMRESULT result = midiOutShortMsg(hMidiDevice, midi_command.GetValue());
 	if (result != MMSYSERR_NOERROR)
 		result = result;
+}
+
+
+chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData const & tick_data)
+{
+	int count = GetExecutionCount();
+
+	unsigned char note   = 60 + (count % 16);
+	unsigned char volume = 60 + (count % 10) * 10;
+	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick note = [%d] volume = [%d]\n", note, volume);
+
+	PlayNote(application->hMidiDevice, note, volume, 0);
+	PlayNote(application->hMidiDevice, note + 1, volume, 1);
+
+
+
+
 	
 	return ContinueExecution(); 
 }

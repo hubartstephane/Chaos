@@ -53,7 +53,7 @@ protected:
 				DWORD dwMidiMessage = dwParam1;
 				DWORD dwTimestamp   = dwParam2; // milliseconds
 
-				chaos::MIDICommand command(dwMidiMessage);
+				chaos::MIDICommand command((uint32_t)dwMidiMessage);
 
 				BYTE b1 = (dwParam1 & 0xFF) >> 24;
 				BYTE b2 = (dwParam1 & 0xFF) >> 16;

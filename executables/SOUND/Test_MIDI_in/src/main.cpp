@@ -55,14 +55,11 @@ protected:
 
 				chaos::MIDICommand command((uint32_t)dwMidiMessage);
 
-				BYTE b1 = (dwParam1 & 0xFF) >> 24;
-				BYTE b2 = (dwParam1 & 0xFF) >> 16;
-				BYTE b3 = (dwParam1 & 0xFF) >> 8;
-				BYTE b4 = (dwParam1 & 0xFF) >> 0; // midi status
+				if (command.IsSystemMessage())
+					break;
 
-				if (b1 != 0 || b2 != 0 || b3 != 0)
 
-					chaos::LogTools::Log("wMsg = MIM_DATA, dwParam1=%08x, dwParam2=%08x\n", dwParam1, dwParam2);
+				chaos::LogTools::Log("status [%02x] command [%02x] channel [%02x] param1 [%02x] param2 [%02x] param3 [%02x]\n", command.status, command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
 				break;
 			}
 			case MIM_LONGDATA:

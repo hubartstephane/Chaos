@@ -141,7 +141,7 @@ protected:
 		if (rv != MMSYSERR_NOERROR)
 			return false;
 
-		chaos::ClockEventInfo event_info = chaos::ClockEventInfo(0.0, 0.0, chaos::ClockEventRepetitionInfo::InfiniteRepetition(1.0));
+		chaos::ClockEventInfo event_info = chaos::ClockEventInfo(0.0, 0.0, chaos::ClockEventRepetitionInfo::InfiniteRepetition(0.5));
 		GetMainClock()->AddPendingEvent(new MIDIPlaySoundEvent(this), event_info, false);
 
 		return true;
@@ -189,10 +189,6 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 	PlayNote(application->hMidiDevice, note, volume, 0);
 	PlayNote(application->hMidiDevice, note + 1, volume, 1);
 
-
-
-
-	
 	return ContinueExecution(); 
 }
 

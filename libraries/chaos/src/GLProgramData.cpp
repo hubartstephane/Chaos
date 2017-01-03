@@ -5,8 +5,7 @@
 #include <chaos/GLProgramVariableProvider.h>
 
 namespace chaos
-{
-  
+{ 
 	template<typename T1, typename T2>
 	static bool SetUniformVectorImplHelper(GLUniformInfo const & uniform, T2 const & value)
 	{
@@ -281,6 +280,12 @@ namespace chaos
 
     return true;
   }
+
+	void GLProgramData::Clear()
+	{
+		uniforms.clear();
+		attributes.clear();
+	}
 
 	void GLProgramData::BindUniforms(GLProgramVariableProvider const * provider) const
 	{

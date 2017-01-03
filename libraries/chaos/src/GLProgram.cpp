@@ -18,9 +18,10 @@ namespace chaos
   void GLProgram::Release()
   {
     if (program_id != 0)
-    {
+    {			
       glDeleteProgram(program_id);
       program_id = 0;    
+			program_data.Clear();
     }  
   }
 

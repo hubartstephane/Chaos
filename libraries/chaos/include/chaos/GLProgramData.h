@@ -139,6 +139,9 @@ public:
   /** try to bind all uniforms */
   void BindUniforms(class GLProgramVariableProvider const * provider) const;
 
+	/** clear the program data object */
+	void Clear();
+
 protected:
 
   /** compute the semantic and semantic index from a name */

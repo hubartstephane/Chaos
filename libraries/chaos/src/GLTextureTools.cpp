@@ -56,6 +56,65 @@
 namespace chaos
 {
 
+ImageDescription	GLTextureTools::GetTextureImage(GLuint texture_id, GLint level)
+{
+	ImageDescription result;
+	if (texture_id != 0)
+	{
+		GLint width  = 0;				
+		glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_WIDTH, &width);
+		if (width > 0)
+		{
+			GLint height = 0;
+			glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_HEIGHT, &height);
+			if (height > 0)
+			{
+				GLint internal_format = 0;
+				glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
+				
+				GLint  bpp = 0;
+				GLenum format = GL_NONE;
+				if (internal_format == GL_R8)
+				{
+					bpp = 8;
+					format = GL_RED;
+				}
+				else if (internal_format == GL_RGB8)
+				{
+					bpp = 24;
+					format = GL_BGR;
+				}
+				else if (internal_format == GL_RGBA8)
+				{
+					bpp = 32;
+					format = GL_BGRA;
+				}
+
+				if (bpp != 0)
+				{
+					size_t bufsize = width * height * bpp >> 3;
+
+					result.data = new char[bufsize];
+					if (result.data != nullptr)
+					{
+						result.width = width;
+						result.height = height;
+						result.bpp = bpp;
+						result.line_size    = width * bpp >> 3;
+						result.pitch_size   = result.line_size; // no padding
+						result.padding_size = 0;
+
+						glPixelStorei(GL_PACK_ALIGNMENT, 1);
+						glPixelStorei(GL_PACK_ROW_LENGTH, 8 * result.pitch_size / result.bpp);
+						glGetTextureImage(texture_id, level, format, GL_UNSIGNED_BYTE, bufsize, result.data);
+					}					
+				}
+			}
+		}					
+	}
+	return result;
+}
+
 bool GLTextureTools::IsArrayTextureType(GLenum type)
 {
   if (type == GL_TEXTURE_1D_ARRAY)

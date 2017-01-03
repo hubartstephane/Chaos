@@ -62,6 +62,9 @@ namespace chaos
 	{
 	public:
 
+		/** get buffer containing the texture data */
+		static ImageDescription	GetTextureImage(GLuint texture_id, GLint level);
+
 		/** returns true whether type is an array texture type */
 		static bool IsArrayTextureType(GLenum type);
 		/** returns true whether type is not an array texture type */

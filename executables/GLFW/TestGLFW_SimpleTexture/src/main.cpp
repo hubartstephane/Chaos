@@ -31,7 +31,26 @@ protected:
     {
       ChangeTexture(texture_index - 1);
     }
+		else if (key == GLFW_KEY_KP_ENTER && action == GLFW_RELEASE)
+		{
+			ChangeTextureLevel();
+		}
   }
+
+	void ChangeTextureLevel()
+	{
+		if (texture != nullptr)
+		{
+			chaos::ImageDescription desc = chaos::GLTextureTools::GetTextureImage(texture->GetResourceID(), 0);
+			if (desc.data != nullptr)
+			{
+				boost::intrusive_ptr<chaos::Texture> new_texture = chaos::GLTextureTools::GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 1, desc.height - 1));
+				if (new_texture != nullptr)
+					texture = new_texture;
+				delete[](desc.data);
+			}
+		}
+	}
 
   void ChangeTexture(int index)
   {

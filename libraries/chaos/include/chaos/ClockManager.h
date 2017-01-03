@@ -247,6 +247,8 @@ namespace chaos
 
 		/** the public method to process */
 		virtual ClockEventTickResult Tick(ClockEventTickData const & tick_data) { return CompleteExecution(); }
+		/** called whenever the event is removed from the clock */
+		virtual void OnEventRemovedFromClock() {}
 
 	protected:
 

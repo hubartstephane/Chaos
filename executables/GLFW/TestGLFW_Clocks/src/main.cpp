@@ -40,6 +40,8 @@ public:
 
 	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
 
+	virtual void OnEventRemovedFromClock() override;
+
 protected:
 
 	std::string message;
@@ -324,7 +326,7 @@ protected:
 			if (type == 0)
 				event_info = chaos::ClockEventInfo::SingleTickEvent(start_time, chaos::ClockEventRepetitionInfo::Repetition(1.0f, 3));
 			else if (type == 1)
-				event_info = chaos::ClockEventInfo::RangeEvent(start_time, 2.0f, chaos::ClockEventRepetitionInfo::Repetition(1.0f, 3));
+				event_info = chaos::ClockEventInfo::RangeEvent(start_time, 4.0f, chaos::ClockEventRepetitionInfo::Repetition(1.0f, 3));
 			else
 				event_info = chaos::ClockEventInfo::ForeverEvent(start_time, chaos::ClockEventRepetitionInfo::Repetition(1.0f, 3));
 
@@ -389,6 +391,12 @@ MyEvent::~MyEvent()
 	application->debug_display.AddLine(chaos::StringTools::Printf("MyEvent [%s] destroyed", message.c_str()).c_str(), 1.0f);
 }
 
+void MyEvent::OnEventRemovedFromClock()
+{
+	if (application->clock_event == this)
+		application->clock_event = nullptr;
+}
+
 chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick_data)
 {
 	if (type == EVENT_SINGLE_TEST)
@@ -406,10 +414,14 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 	{
 		application->time_line_box_position = (float)(tick_data.execution_range.first);
 		application->time_line_box_size = (float)(tick_data.tick_range.second - tick_data.execution_range.first);
+
+		if (tick_data.tick_range.first - tick_data.execution_range.first > 4.0)
+		{
+			if (GetExecutionCount() == 2)
+				return CompleteAll();
+			return CompleteExecution();
+		}
 	}
-
-
-
 
 	application->debug_display.AddLine(chaos::StringTools::Printf("MyEvent [%s] tick [%d] execution [%d]", message.c_str(), GetTickCount(), GetExecutionCount()).c_str(), 0.1f);
 	return ContinueExecution(); 

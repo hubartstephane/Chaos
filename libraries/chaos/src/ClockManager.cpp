@@ -183,7 +183,7 @@ namespace chaos
 	{
 		// degenerated use case :
 		//   the processing of a previous event remove another event from execution
-		ClockEvent * clock_event = registered_event.clock_event.get();
+		boost::intrusive_ptr<ClockEvent> clock_event = registered_event.clock_event;
 		if (clock_event == nullptr)
 			return;
 
@@ -211,7 +211,9 @@ namespace chaos
 		if (execution_completed) // current execution is beeing ended : can start a repetition ?
 		{
 			if (!tick_result.CanRepeatExecution() || !event_info.IsRepeated()) // want to stop all executions
+			{
 				clock_event->RemoveFromClock();
+			}
 			else
 			{
 				// still repetition possible ?
@@ -252,11 +254,11 @@ namespace chaos
 		while (event_tick_set.size() > 0)
 		{
 			auto it = event_tick_set.begin();
-			
-			ClockEventTickRegistration registered_event = *it;			
+
+			ClockEventTickRegistration registered_event = *it;
 			event_tick_set.erase(it);
 			TriggerClockEvent(registered_event);
-		}		
+		}
 		return result;
 	}
 
@@ -278,7 +280,8 @@ namespace chaos
 
 			if (event_info.IsTooLateFor(time1))
 			{
-				pending_events[i]->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
+				boost::intrusive_ptr<ClockEvent> clock_event = pending_events[i]; // XXX : important to keep a reference after RemoveFromClock(...)
+				clock_event->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
 				--i;
 			}
 			else
@@ -350,7 +353,7 @@ namespace chaos
 				if (tmp->children_clocks[i].get() == this) // remove swap
 				{
 					if (i != count - 1) // nothing to do if already last element
-						tmp->children_clocks[i] = std::move(tmp->children_clocks.back());
+						std::swap(tmp->children_clocks[i], tmp->children_clocks.back());
 
 					parent_clock = nullptr;          // XXX : we cannot invert these 2 lines because, because 'this' could be deleted and then
 					tmp->children_clocks.pop_back(); //       and then we would access 'parent_clock' member after destructor
@@ -461,12 +464,16 @@ namespace chaos
 			{
 				if (tmp->pending_events[i].get() == this)
 				{
-					if (i != count - 1)
-						tmp->pending_events[i] = std::move(tmp->pending_events.back());
+					AddReference(); // because, we want to pop back the event, then call OnEventRemovedFromClock(...)
 
-					clock = nullptr;                // XXX : we cannot invert these 2 lines because this could be destroyed 
-					tmp->pending_events.pop_back(); // and we then would access 'clock' member after destructor 
-					return true;                    // that's why we are using 'tmp'
+					if (i != count - 1)
+						std::swap(tmp->pending_events[i], tmp->pending_events.back());
+					clock = nullptr;
+					tmp->pending_events.pop_back();
+
+					OnEventRemovedFromClock();
+					SubReference();
+					return true;
 				}
 			}
 		}

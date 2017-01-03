@@ -178,6 +178,7 @@ namespace chaos
     GLenum flat_target = GLTextureTools::GetTextureTargetFromSize(width, height, false);
     // convert to 'array' target 
     GLenum array_target = GLTextureTools::ToArrayTextureType(flat_target);
+		assert(array_target != GL_NONE);
 
     GenTextureResult result;
     glCreateTextures(array_target, 1, &result.texture_id);
@@ -185,6 +186,7 @@ namespace chaos
     {
       // choose format and internal format (beware FreeImage is BGR/BGRA)
       GLenum internal_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).second;
+			assert(internal_format != GL_NONE);
 
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -198,6 +200,7 @@ namespace chaos
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / desc.bpp);
 
         GLenum current_format = GLTextureTools::GetTextureFormatsFromBPP(desc.bpp).first;
+				assert(current_format != GL_NONE);
         glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, GL_UNSIGNED_BYTE, desc.data);
       }
             

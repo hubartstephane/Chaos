@@ -153,7 +153,6 @@ GLenum GLTextureTools::ToFlatTextureType(GLenum type)
   if (type == GL_TEXTURE_CUBE_MAP_ARRAY)
     return GL_TEXTURE_CUBE_MAP;
 
-  assert(0);
   return GL_NONE;
 }
 
@@ -169,11 +168,8 @@ GLenum GLTextureTools::ToArrayTextureType(GLenum type)
   if (type == GL_TEXTURE_CUBE_MAP)
     return GL_TEXTURE_CUBE_MAP_ARRAY;  // XXX : GL_TEXTURE_3D and GL_TEXTURE_RECTANGLE has no correspondance in arrays
 
-  assert(0);
   return GL_NONE;
 }
-
-
 
 int GLTextureTools::GetMipmapLevelCount(int width, int height)
 {
@@ -204,9 +200,6 @@ std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormatsFromBPP(int bpp)
   else if (bpp == 32)
     internal_format = GL_RGBA8;
 
-  assert(format != GL_NONE);
-  assert(internal_format != GL_NONE);
-
   return std::make_pair(format, internal_format);
 }
 
@@ -224,6 +217,8 @@ GenTextureResult GLTextureTools::GenTexture(ImageDescription const & image, GenT
   {  
     // choose format and internal format (beware FreeImage is BGR/BGRA)
     std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(image.bpp);
+		assert(all_formats.first != GL_NONE);
+		assert(all_formats.second != GL_NONE);
 
     GLenum format          = all_formats.first;
     GLenum internal_format = all_formats.second;
@@ -457,6 +452,8 @@ GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, GenText
     int size = skybox->GetSkyBoxSize();
 
     std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(bpp);
+		assert(all_formats.first != GL_NONE);
+		assert(all_formats.second != GL_NONE);
 
     GLenum format          = all_formats.first;
     GLenum internal_format = all_formats.second;

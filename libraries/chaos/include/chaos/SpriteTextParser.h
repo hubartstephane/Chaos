@@ -219,8 +219,4 @@ namespace chaos
 		/** the atlas where to find entries */
 		BitmapAtlas::AtlasBase const & atlas;
 	};
-
-
-
-
 };

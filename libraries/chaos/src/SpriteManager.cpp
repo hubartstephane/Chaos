@@ -7,8 +7,8 @@
 namespace chaos
 {
 
-	// should try string literal from C++ 11
-  char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
+
+	char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
     in vec2 position;
     in vec3 texcoord;
     in vec3 color;
@@ -26,8 +26,7 @@ namespace chaos
     };											
 	)SHADERCODE";
 
-	// should try string literal from C++ 11
-  char const * SpriteManager::pixel_shader_source = R"SHADERCODE(
+	char const * SpriteManager::pixel_shader_source = R"SHADERCODE(
     in vec3 vs_texcoord;
     in vec3 vs_color;
 
@@ -45,50 +44,50 @@ namespace chaos
 
 	void SpriteManager::Finalize()
 	{
-		program       = nullptr;
-		vertex_array  = nullptr;
+		program = nullptr;
+		vertex_array = nullptr;
 		vertex_buffer = nullptr;
-    atlas         = nullptr;
+		atlas = nullptr;
 
-		declaration.Clear();	
+		declaration.Clear();
 	}
 
-  bool SpriteManager::Initialize(SpriteManagerInitParams & params)
-  {
-    Finalize();
-    if (!DoInitialize(params))
-    {
-      Finalize();
-      return false;
-    }
-    return true;
-  }
+	bool SpriteManager::Initialize(SpriteManagerInitParams & params)
+	{
+		Finalize();
+		if (!DoInitialize(params))
+		{
+			Finalize();
+			return false;
+		}
+		return true;
+	}
 
-  bool SpriteManager::DoInitialize(SpriteManagerInitParams & params)
-  {
-    if (params.atlas == nullptr)
-      return false;
+	bool SpriteManager::DoInitialize(SpriteManagerInitParams & params)
+	{
+		if (params.atlas == nullptr)
+			return false;
 
-    atlas = params.atlas;
+		atlas = params.atlas;
 
 		// create GPU-Program
-    if (params.program != nullptr)
-      program = params.program;
-    else
-    {
-      GLProgramLoader loader;
-      loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-      loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+		if (params.program != nullptr)
+			program = params.program;
+		else
+		{
+			GLProgramLoader loader;
+			loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+			loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-      program = loader.GenerateProgramObject();
-      if (program == nullptr)
-        return false;
-    }
+			program = loader.GenerateProgramObject();
+			if (program == nullptr)
+				return false;
+		}
 
 		// prepare the vertex declaration
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT2);
 		declaration.Push(SEMANTIC_TEXCOORD, 0, TYPE_FLOAT3);
-    declaration.Push(SEMANTIC_COLOR,    0, TYPE_FLOAT3);
+		declaration.Push(SEMANTIC_COLOR, 0, TYPE_FLOAT3);
 
 		// Generate Vertex Array and Buffer
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
@@ -97,23 +96,23 @@ namespace chaos
 		return true;
 	}
 
-  void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
-  {
-    glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
-    AddSpriteImpl(entry, bottom_left_position, size, color);
-  }
+	void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
+	{
+		glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
+		AddSpriteImpl(entry, bottom_left_position, size, color);
+	}
 
-  void SpriteManager::AddSpriteBitmap(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
-  {
-    static glm::vec3 const color(1.0f, 1.0f, 1.0f);
-    glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
-    AddSpriteImpl(entry, bottom_left_position, size, color);
-  }
+	void SpriteManager::AddSpriteBitmap(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
+	{
+		static glm::vec3 const color(1.0f, 1.0f, 1.0f);
+		glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
+		AddSpriteImpl(entry, bottom_left_position, size, color);
+	}
 
-  void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
-  {
+	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
+	{
 		glm::vec2 topright_position = bottomleft_position + size;
-    glm::vec2 atlas_size        = atlas->GetAtlasDimension();
+		glm::vec2 atlas_size = atlas->GetAtlasDimension();
 
 		float tex_x1 = MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
 		float tex_y1 = MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
@@ -128,7 +127,7 @@ namespace chaos
 		bl.texcoord.x = tex_x1;
 		bl.texcoord.y = tex_y1;
 		bl.texcoord.z = bitmap_index;
-    bl.color      = color;
+		bl.color = color;
 
 		SpriteVertex tr;
 		tr.position.x = topright_position.x;
@@ -136,7 +135,7 @@ namespace chaos
 		tr.texcoord.x = tex_x2;
 		tr.texcoord.y = tex_y2;
 		tr.texcoord.z = bitmap_index;
-    tr.color      = color;
+		tr.color = color;
 
 		SpriteVertex tl;
 		tl.position.x = bottomleft_position.x;
@@ -144,7 +143,7 @@ namespace chaos
 		tl.texcoord.x = tex_x1;
 		tl.texcoord.y = tex_y2;
 		tl.texcoord.z = bitmap_index;
-    tl.color      = color;
+		tl.color = color;
 
 		SpriteVertex br;
 		br.position.x = topright_position.x;
@@ -152,69 +151,69 @@ namespace chaos
 		br.texcoord.x = tex_x2;
 		br.texcoord.y = tex_y1;
 		br.texcoord.z = bitmap_index;
-    br.color      = color;
+		br.color = color;
 
-		sprites.push_back(bl);				
-    sprites.push_back(br);
-    sprites.push_back(tr);
+		sprites.push_back(bl);
+		sprites.push_back(br);
+		sprites.push_back(tr);
 
-		sprites.push_back(bl);				
-    sprites.push_back(tr);
-    sprites.push_back(tl);
+		sprites.push_back(bl);
+		sprites.push_back(tr);
+		sprites.push_back(tl);
 	}
 
 
 	void SpriteManager::Display(GLProgramVariableProvider * uniform_provider)
 	{
-    if (sprites.size() == 0)
-      return;
+		if (sprites.size() == 0)
+			return;
 
-    UpdateGPUVertexBuffer();
+		UpdateGPUVertexBuffer();
 
-    // context states
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+		// context states
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
 
-    // GPU-Program
-    glUseProgram(program->GetResourceID());
+		// GPU-Program
+		glUseProgram(program->GetResourceID());
 
-    // Initialize the vertex array
-    glBindVertexArray(vertex_array->GetResourceID());
+		// Initialize the vertex array
+		glBindVertexArray(vertex_array->GetResourceID());
 
-    GLProgramData const & program_data = program->GetProgramData();
-    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
+		GLProgramData const & program_data = program->GetProgramData();
+		program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
-	GLProgramVariableProviderChain main_uniform_provider(uniform_provider);
-    main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
+		GLProgramVariableProviderChain main_uniform_provider(uniform_provider);
+		main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
-    program_data.BindUniforms(&main_uniform_provider);
-       
-    // The drawing   
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());
+		program_data.BindUniforms(&main_uniform_provider);
 
-    // restore states
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+		// The drawing   
+		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());
+
+		// restore states
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 	}
 
-  void SpriteManager::UpdateGPUVertexBuffer()
-  {
-#if 0
-#define glMapNamedBuffer GLEW_GET_FUN(__glewMapNamedBuffer)
-#define glMapNamedBufferRange GLEW_GET_FUN(__glewMapNamedBufferRange)
-#define glNamedBufferData GLEW_GET_FUN(__glewNamedBufferData)
-#define glNamedBufferStorage GLEW_GET_FUN(__glewNamedBufferStorage)
-#define glNamedBufferSubData GLEW_GET_FUN(__glewNamedBufferSubData)
-#endif
+	void SpriteManager::UpdateGPUVertexBuffer()
+	{
+	#if 0
+	#define glMapNamedBuffer GLEW_GET_FUN(__glewMapNamedBuffer)
+	#define glMapNamedBufferRange GLEW_GET_FUN(__glewMapNamedBufferRange)
+	#define glNamedBufferData GLEW_GET_FUN(__glewNamedBufferData)
+	#define glNamedBufferStorage GLEW_GET_FUN(__glewNamedBufferStorage)
+	#define glNamedBufferSubData GLEW_GET_FUN(__glewNamedBufferSubData)
+	#endif
 
-    // fill GPU buffer
-    size_t count = sprites.size();
-    glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
+		// fill GPU buffer
+		size_t count = sprites.size();
+		glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
 
-    GLuint binding_index = 0;
-    glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
-  }
+		GLuint binding_index = 0;
+		glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
+	}
 };

@@ -9,7 +9,6 @@
 
 namespace chaos
 {	
-  // should try string literal from C++ 11
   char const * GLDebugOnScreenDisplay::vertex_shader_source = R"SHADERCODE(
     in vec2 position;
     in vec2 texcoord;
@@ -22,7 +21,7 @@ namespace chaos
 		gl_Position = vec4(pos, 0.0, 1.0);
     }
 	)SHADERCODE";
-	// should try string literal from C++ 11
+
 	char const * GLDebugOnScreenDisplay::pixel_shader_source = R"SHADERCODE(
     out vec4 output_color;
     in vec2 tex_coord;

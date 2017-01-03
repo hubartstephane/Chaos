@@ -126,44 +126,6 @@ namespace chaos
       if (bitmap_glyph == nullptr)
         continue;
 
-      // top is a NOT in 64''
-
-      auto as = face->size->metrics.ascender / 64; // <=== the good values are here !!!
-      auto ds = face->size->metrics.descender / 64;
-      auto h = face->size->metrics.height / 64;
-      auto xs = face->size->metrics.x_scale / 64;
-
-      int asce = face->ascender;
-      int desc = face->descender;
-      int yMin = face->bbox.yMin;
-      int yMax = face->bbox.yMax;
-
-      if ((int)bitmap_glyph->top > as)
-        str = str;
-      if ((int)bitmap_glyph->top == as)
-        str = str;
-      if ((int)bitmap_glyph->top - (int)bitmap_glyph->bitmap.rows< ds)
-        str = str;
-      if ((int)bitmap_glyph->top - (int)bitmap_glyph->bitmap.rows== ds)
-        str = str;
-      if ((int)bitmap_glyph->bitmap.rows > as - ds)
-        str = str;
-      if ((int)bitmap_glyph->bitmap.rows > h)
-        str = str;
-
-      /*
-      if (bitmap_glyph->top > yMax / 64)
-        str = str;
-
-      if (bitmap_glyph->top - bitmap_glyph->bitmap.rows< yMin / 64)
-        str = str;
-
-      if (bitmap_glyph->bitmap.rows > (yMax - yMin) / 64)
-        str = str;
-        */
-
-
-
       result.insert(std::make_pair(c, CharacterBitmapGlyph(bitmap_glyph))); // insert into cache
     }
 

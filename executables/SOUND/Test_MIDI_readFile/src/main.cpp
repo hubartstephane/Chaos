@@ -7,161 +7,8 @@
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
 #include <chaos/MIDITools.h>
+#include <chaos/EndianTools.h>
 
-//
-// Little Endian :
-// 
-//    lsb        msb
-//   --+----------+-->
-//
-// Big Endian :
-//
-//    msb        lsb
-//   --+----------+-->
-//
-// 0x86   : Little Endian
-// TCP/IP : Big Endian
-// MIDI File : BigEndian
-//
-
-class EndianTools
-{
-public:
-
-	/** whether the host is Little Endian */
-	static bool IsHostLittleEndian()
-	{
-		uint16_t const tmp = 0x00FF;
-
-		unsigned char lsb = ((unsigned char const *)&tmp)[0];
-
-		return (lsb == 0xFF);	
-	}
-
-	/** whether the host is Big Endian */
-	static bool IsHostBigEndian(){ return !IsHostLittleEndian();}
-
-	/** convert endianness */
-	template<typename T>
-	static T HostToLittleEndian(T src)
-	{
-		if (IsHostBigEndian())
-			return EndianSwap(src);
-		return src;	
-	}
-
-	/** convert endianness */
-	template<typename T>
-	static T LittleEndianToHost(T src)
-	{
-		return HostToLittleEndian(src);
-	}
-
-	/** convert endianness */
-	template<typename T>
-	static T HostToBigEndian(T src)
-	{
-		if (IsHostLittleEndian())
-			return EndianSwap(src);
-		return src;	
-	}
-	/** convert endianness */
-	template<typename T>
-	static T BigEndianToHost(T src)
-	{
-		return HostToBigEndian(src);
-	}
-
-	static uint16_t EndianSwap(uint16_t src)
-	{
-		uint16_t result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[0];	
-		return result;
-	}
-
-	static int16_t EndianSwap(int16_t src)
-	{
-		int16_t result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[0];	
-		return result;
-	}
-
-	static uint32_t EndianSwap(uint32_t src)
-	{
-		uint32_t result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[2];
-		((unsigned char *)&result)[2] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];	
-		return result;
-	}
-
-	static int32_t EndianSwap(int32_t src)
-	{
-		int32_t result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[2];
-		((unsigned char *)&result)[2] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];	
-		return result;
-	}
-
-	static uint64_t EndianSwap(uint64_t src)
-	{
-		uint64_t result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[6];
-		((unsigned char *)&result)[2] = ((unsigned char const *)&src)[5];
-		((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];	
-		((unsigned char *)&result)[4] = ((unsigned char const *)&src)[3];
-		((unsigned char *)&result)[5] = ((unsigned char const *)&src)[2];
-		((unsigned char *)&result)[6] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[7] = ((unsigned char const *)&src)[0];
-		return result;
-	}
-
-	static int64_t EndianSwap(int64_t src)
-	{
-		int64_t result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[6];
-		((unsigned char *)&result)[2] = ((unsigned char const *)&src)[5];
-		((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];	
-		((unsigned char *)&result)[4] = ((unsigned char const *)&src)[3];
-		((unsigned char *)&result)[5] = ((unsigned char const *)&src)[2];
-		((unsigned char *)&result)[6] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[7] = ((unsigned char const *)&src)[0];
-		return result;
-	}
-
-	static float EndianSwap(float src)
-	{
-		float result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[2];
-		((unsigned char *)&result)[2] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[3] = ((unsigned char const *)&src)[0];	
-		return result;
-	}
-
-	static double EndianSwap(double src)
-	{
-		double result = 0;
-		((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
-		((unsigned char *)&result)[1] = ((unsigned char const *)&src)[6];
-		((unsigned char *)&result)[2] = ((unsigned char const *)&src)[5];
-		((unsigned char *)&result)[3] = ((unsigned char const *)&src)[4];	
-		((unsigned char *)&result)[4] = ((unsigned char const *)&src)[3];
-		((unsigned char *)&result)[5] = ((unsigned char const *)&src)[2];
-		((unsigned char *)&result)[6] = ((unsigned char const *)&src)[1];
-		((unsigned char *)&result)[7] = ((unsigned char const *)&src)[0];
-		return result;
-	}
-		
-
-};
 
 
 class BufferReader
@@ -190,7 +37,16 @@ public:
 		position += sizeof(T) * count;
 		return true;
 	}
-	
+	/** get a pointer on the current buffer at position */
+	char const * GetCurrentPosition() const { return &buffer.data[position];}
+
+	/** advance current pointer */
+	void Advance(size_t offset)
+	{
+		position += offset;
+		assert(position <= buffer.bufsize);	
+	}
+
 protected:
 
 	/** the position in the buffer */
@@ -211,17 +67,33 @@ public:
 	bool IsTypedTrackChunk(char const * type_name) const {return (strncmp(chunk_name, type_name, 4) == 0); }
 
 public:
-
+	/** the name for the chunk */
 	char chunk_name[5] = {0, 0, 0, 0, 0};
 };
+
+class MidiHeader
+{
+public:
+
+	static int16_t const FORMAT_SINGLE_TRACK = 0;
+	static int16_t const FORMAT_MULTIPLE_TRACK = 1;
+	static int16_t const FORMAT_MULTIPLE_SONG  = 2;
+
+	int16_t format;
+	int16_t track_count;
+	int16_t division;
+
+	/** returns true whether the header is correct */
+	bool IsValid() const { return (format == FORMAT_SINGLE_TRACK) || (format == FORMAT_MULTIPLE_TRACK) || (format == FORMAT_MULTIPLE_SONG);}
+	
+};
+
 
 class MidiLoader
 {
 public:
 
-
-
-
+	/** the entry point for reading a MIDI file */
 	bool LoadBuffer(chaos::Buffer<char> const & buffer);
 
 protected:
@@ -232,20 +104,27 @@ protected:
 	bool DoLoadBuffer(BufferReader & reader);
 
 	/** read a sub chunk of data */
-	MidiChunk ReadChunk(BufferReader & reader);
+	MidiChunk const ReadChunk(BufferReader & reader);
 	/** read the header chunk */
-	MidiChunk ReadHeaderChunk(BufferReader & reader);
+	MidiChunk const ReadHeaderChunk(BufferReader & reader);
+	/** read a track chunk */
+	MidiChunk const ReadTrackChunk(BufferReader & reader);
+
+	/** convert the header chunk into a header structure */
+	bool GetHeaderFromChunk(MidiChunk const & chunk, MidiHeader & result);
+
+
+protected:
+
+	/** the header */
+	MidiHeader header;
+
 };
 
 
 
-MidiChunk MidiLoader::ReadChunk(BufferReader & reader)
+MidiChunk const MidiLoader::ReadChunk(BufferReader & reader)
 {
-//	int a = BIG_ENDIAN;
-//		int b = LITTLE_ENDIAN;
-//		int c = BYTE_ORDER;
-
-
 	MidiChunk result;
 	if (reader.IsEnoughData(8))
 	{
@@ -254,23 +133,31 @@ MidiChunk MidiLoader::ReadChunk(BufferReader & reader)
 		// read the size of the data
 		uint32_t data_size;
 		reader.Read(data_size);
-		data_size = EndianTools::BigEndianToHost(data_size);
+		data_size = chaos::EndianTools::BigEndianToHost(data_size);
 		
 		if (reader.IsEnoughData(data_size))
 		{
 			result.bufsize = data_size;
-			result.data    = reader.GetCurrentPiosition();
-		
-			data_size = data_size;
+			result.data    = (char *)reader.GetCurrentPosition();
+			reader.Advance(data_size);
 		}		
 	}
 	return result;
 }
 
-MidiChunk MidiLoader::ReadHeaderChunk(BufferReader & reader)
+MidiChunk const MidiLoader::ReadHeaderChunk(BufferReader & reader)
 {
-	MidiChunk result = ReadChunk(reader);
+	MidiChunk const result = ReadChunk(reader);
 	if (result.IsHeaderChunk())
+		if (result.bufsize == 6)
+			return result;
+	return MidiChunk();
+}
+
+MidiChunk const MidiLoader::ReadTrackChunk(BufferReader & reader)
+{
+	MidiChunk const result = ReadChunk(reader);
+	if (result.IsTrackChunk())
 		return result;
 	return MidiChunk();
 }
@@ -293,13 +180,39 @@ void MidiLoader::Clean()
 
 bool MidiLoader::DoLoadBuffer(BufferReader & reader)
 {
-	MidiChunk chunk = ReadHeaderChunk(reader);
-	if (chunk == nullptr)
+	// get the headers
+	MidiChunk header_chunk = ReadHeaderChunk(reader);
+	if (header_chunk == nullptr)
 		return false;
+
+	if (!GetHeaderFromChunk(header_chunk, header))
+		return false;
+	// read the tracks
+	for (int16_t i = 0 ; i < header.track_count ; ++i)
+	{
+		MidiChunk track_chunk = ReadTrackChunk(reader);
+		if (track_chunk == nullptr)
+			return false;
+	
+	}
+
 
 
 
 	return true;
+}
+
+
+bool MidiLoader::GetHeaderFromChunk(MidiChunk const & chunk, MidiHeader & result)
+{
+	BufferReader reader(chunk);
+	reader.Read(result.format);
+	reader.Read(result.track_count);
+	reader.Read(result.division);
+	result.format      = chaos::EndianTools::BigEndianToHost(result.format);
+	result.track_count = chaos::EndianTools::BigEndianToHost(result.track_count);
+	result.division    = chaos::EndianTools::BigEndianToHost(result.division);
+	return result.IsValid();
 }
 
 
@@ -357,7 +270,7 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	bool b1 = EndianTools::IsHostLittleEndian();
+	bool b1 = chaos::EndianTools::IsHostLittleEndian();
 
 	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 

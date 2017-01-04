@@ -18,14 +18,20 @@ public:
 	bool IsEOF() const { return position >= buffer.bufsize; }
 	/** returns true whether there is enough data in buffer to read wanted value */
 	bool IsEnoughData(size_t size) const { return (buffer.bufsize - position) >= size; }
-	/** read the data */
+	/** read data for one POD object */
 	template<typename T>
 	bool Read(T & result)
 	{
-		if (!IsEnoughData(sizeof(T)))
+		return ReadN(&result, 1);
+	}
+	/** read data for several POD object */
+	template<typename T>
+	bool ReadN(T * result, size_t count = 1)
+	{
+		if (!IsEnoughData(sizeof(T) * count))
 			return false;
-		memcpy(&result, buffer[position], sizeof(T));
-		position += sizeof(T);
+		memcpy(result, &buffer[position], sizeof(T) * count);
+		position += sizeof(T) * count;
 		return true;
 	}
 	
@@ -37,11 +43,28 @@ protected:
 	chaos::Buffer<char> const & buffer;
 };
 
+class MidiChunk : public chaos::Buffer<char>
+{
+public:
+
+	/** returns true whether the chunk is a header chunk */
+	bool IsHeaderChunk() const { return IsTypedTrackChunk("MThd");}
+	/** returns true whether the chunk is a track chunk */
+	bool IsTrackChunk() const { return IsTypedTrackChunk("MTrk");}
+	/** utility method to test for chunk name */
+	bool IsTypedTrackChunk(char const * type_name) const {return (strncmp(chunk_name, type_name, 4) == 0); }
+
+public:
+
+	char chunk_name[5] = {0, 0, 0, 0, 0};
+};
+
 class MidiLoader
 {
 public:
 
-	using MidiChunk = chaos::Buffer<char>;
+
+
 
 	bool LoadBuffer(chaos::Buffer<char> const & buffer);
 
@@ -58,20 +81,34 @@ protected:
 	MidiChunk ReadHeaderChunk(BufferReader & reader);
 };
 
-MidiLoader::MidiChunk MidiLoader::ReadChunk(BufferReader & reader)
+MidiChunk MidiLoader::ReadChunk(BufferReader & reader)
 {
 	MidiChunk result;
-
-
+	if (reader.IsEnoughData(8))
+	{
+		// read the chunk name
+		reader.ReadN(result.chunk_name, 4);
+		// read the size of the data
+		uint32_t data_size;
+		reader.Read(data_size);
+		
+		if (reader.IsEnoughData(data_size))
+		{
+		
+			data_size = data_size;
+		}
+		
+	
+	}
 	return result;
 }
 
-MidiLoader::MidiChunk MidiLoader::ReadHeaderChunk(BufferReader & reader)
+MidiChunk MidiLoader::ReadHeaderChunk(BufferReader & reader)
 {
-	MidiChunk result;
-
-
-	return result;
+	MidiChunk result = ReadChunk(reader);
+	if (result.IsHeaderChunk())
+		return result;
+	return MidiChunk();
 }
 
 bool MidiLoader::LoadBuffer(chaos::Buffer<char> const & buffer)

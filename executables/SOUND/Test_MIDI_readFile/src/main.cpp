@@ -1,5 +1,6 @@
 #include <chaos/StandardHeaders.h> 
 #include <chaos/FileTools.h> 
+#include <chaos/Buffer.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
@@ -7,22 +8,98 @@
 #include <chaos/IrrklangTools.h>
 #include <chaos/MIDITools.h>
 
-// ================================================================
-
-class MIDICommandEvent : public chaos::ClockEvent
+class BufferReader
 {
 public:
 
-	MIDICommandEvent(class MyGLFWWindowOpenGLTest1 * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
+	/** constructor */
+	BufferReader(chaos::Buffer<char> const & in_buffer) : buffer(in_buffer){}
+	/** test whether eof is reached */
+	bool IsEOF() const { return position >= buffer.bufsize; }
+	/** returns true whether there is enough data in buffer to read wanted value */
+	bool IsEnoughData(size_t size) const { return (buffer.bufsize - position) >= size; }
+	/** read the data */
+	template<typename T>
+	bool Read(T & result)
+	{
+		if (!IsEnoughData(sizeof(T)))
+			return false;
+		memcpy(&result, buffer[position], sizeof(T));
+		position += sizeof(T);
+		return true;
+	}
+	
+protected:
 
-	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
+	/** the position in the buffer */
+	size_t position{0};
+	/** the reference of the buffer where to stream data */
+	chaos::Buffer<char> const & buffer;
+};
+
+class MidiLoader
+{
+public:
+
+	using MidiChunk = chaos::Buffer<char>;
+
+	bool LoadBuffer(chaos::Buffer<char> const & buffer);
 
 protected:
 
-	class MyGLFWWindowOpenGLTest1 * application;
+	/** clean the content thata have parsed */
+	void Clean();
+	/** the effective method to read the buffer */
+	bool DoLoadBuffer(BufferReader & reader);
 
-	chaos::MIDICommand command;
+	/** read a sub chunk of data */
+	MidiChunk ReadChunk(BufferReader & reader);
+	/** read the header chunk */
+	MidiChunk ReadHeaderChunk(BufferReader & reader);
 };
+
+MidiLoader::MidiChunk MidiLoader::ReadChunk(BufferReader & reader)
+{
+	MidiChunk result;
+
+
+	return result;
+}
+
+MidiLoader::MidiChunk MidiLoader::ReadHeaderChunk(BufferReader & reader)
+{
+	MidiChunk result;
+
+
+	return result;
+}
+
+bool MidiLoader::LoadBuffer(chaos::Buffer<char> const & buffer)
+{
+	Clean();
+	if (!DoLoadBuffer(BufferReader(buffer)))
+	{
+		Clean();
+		return false;
+	}
+	return true;
+}
+
+void MidiLoader::Clean()
+{
+
+}
+
+bool MidiLoader::DoLoadBuffer(BufferReader & reader)
+{
+	MidiChunk chunk = ReadHeaderChunk(reader);
+	if (chunk == nullptr)
+		return false;
+
+
+
+	return true;
+}
 
 
 // ================================================================
@@ -40,119 +117,29 @@ protected:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return true;
 	}
-	
-	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
-	{
-		MyGLFWWindowOpenGLTest1 * self = (MyGLFWWindowOpenGLTest1 *)dwInstance;
-		self->OnMidiInEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
-	}
 
-	void OnMidiInEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
-	{
-		if (wMsg == MIM_DATA)
-		{
-			DWORD dwMidiMessage = dwParam1;
-			DWORD dwTimestamp = dwParam2; // milliseconds
 
-			chaos::MIDICommand command((uint32_t)dwMidiMessage);
-
-			if (!command.IsSystemMessage())
-			{
-				chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(1.0, chaos::ClockEventRepetitionInfo::NoRepetition());
-				GetMainClock()->AddPendingEvent(new MIDICommandEvent(this, command), event_info, true);
-			}
-		}
-	}
-
-	bool InitializeMIDIOut()
-	{
-		// enumerate the midi IN devices
-		UINT midi_device_count = midiOutGetNumDevs();
-		for (UINT i = 0; i < midi_device_count; ++i)
-		{
-			MIDIOUTCAPS caps;
-			midiOutGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
-
-			chaos::LogTools::Log("Midi OUT Device [%d] : name         = %s", i, caps.szPname);
-			chaos::LogTools::Log("                     : support      = %d", caps.dwSupport);
-			chaos::LogTools::Log("                     : driver       = %d", caps.vDriverVersion);
-			chaos::LogTools::Log("                     : mid          = %d", caps.wMid);
-			chaos::LogTools::Log("                     : pid          = %d", caps.wPid);
-			chaos::LogTools::Log("                     : notes        = %d", caps.wNotes);
-			chaos::LogTools::Log("                     : channel mask = %d", caps.wChannelMask);
-			chaos::LogTools::Log("                     : technology   = %d", caps.wTechnology);
-			chaos::LogTools::Log("                     : voices       = %d", caps.wVoices);
-		}
-
-		//nMidiOutPort = 0;
-		//nMidiOutPort = 1;
-		//nMidiOutPort = MIDIMAPPER;
-		nMidiOutPort = 2;
-
-		MMRESULT rv;
-		// open the device
-		rv = midiOutOpen(&hMidiOutDevice, nMidiOutPort, 0, 0, 0); // MIDIMAPPER
-		if (rv != MMSYSERR_NOERROR)
-			return false;
-
-		return true;
-	}
-
-	bool InitializeMIDIIn()
-	{
-		// enumerate the midi IN devices
-		UINT midi_device_count = midiInGetNumDevs();
-		for (UINT i = 0; i < midi_device_count; ++i)
-		{
-			MIDIINCAPS caps;
-			midiInGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
-
-			chaos::LogTools::Log("Midi IN Device [%d] : name    = %s", i, caps.szPname);
-			chaos::LogTools::Log("                    : support = %d", caps.dwSupport);
-			chaos::LogTools::Log("                    : driver  = %d", caps.vDriverVersion);
-			chaos::LogTools::Log("                    : mid     = %d", caps.wMid);
-			chaos::LogTools::Log("                    : pid     = %d", caps.wPid);
-		}
-
-		MMRESULT rv;
-		// open the device
-		rv = midiInOpen(&hMidiInDevice, nMidiInPort, (DWORD_PTR)(void*)OnMidiInEvent, (DWORD_PTR)this, CALLBACK_FUNCTION);
-		if (rv != MMSYSERR_NOERROR)
-			return false;
-
-		// start device usage
-		midiInStart(hMidiInDevice);
-
-		return true;
-	}
 
 	virtual bool Initialize() override
 	{
-		if (!InitializeMIDIIn())
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
 			return false;
-		if (!InitializeMIDIOut())
+
+		boost::filesystem::path const & resource_path = application->GetResourcesPath();
+
+		chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Blues Breaker - 8 Bars" / "BluesBreaker_8Bars_01.mid", false);
+		if (buffer == nullptr)
 			return false;
-		return true;		
+
+		MidiLoader loader;
+		return loader.LoadBuffer(buffer);	
 	}
 
-	void FinalizeMIDIIn()
-	{
-		midiInStop(hMidiInDevice);
-		midiInClose(hMidiInDevice);
-		hMidiInDevice = nullptr;
-	}
-
-	void FinalizeMIDIOut()
-	{
-		midiOutReset(hMidiOutDevice);
-		midiOutClose(hMidiOutDevice);
-		hMidiOutDevice = nullptr;
-	}
 
 	virtual void Finalize() override
 	{
-		FinalizeMIDIIn();
-		FinalizeMIDIOut();
+
 	}
 
 
@@ -162,28 +149,7 @@ protected:
 		hints.toplevel = 0;
 		hints.decorated = 1;
 	}
-
-protected:
-
-	HMIDIOUT hMidiOutDevice{ nullptr };
-	DWORD nMidiInPort{ 0 };
-	HMIDIIN hMidiInDevice{ nullptr };
-	DWORD nMidiOutPort{ 0 };
 };
-
-// ================================================================
-
-chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData const & tick_data)
-{
-
-	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick command = [%02x] channel = [%02x] param1 = [%02x] param2 = [%02x] param3 = [%02x]\n", command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
-
-	MMRESULT result = midiOutShortMsg(application->hMidiOutDevice, command.GetValue());
-	if (result != MMSYSERR_NOERROR)
-		result = result;
-
-	return ContinueExecution();
-}
 
 // ================================================================
 

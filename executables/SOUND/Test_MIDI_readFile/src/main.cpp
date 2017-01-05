@@ -71,21 +71,107 @@ public:
 	char chunk_name[5] = {0, 0, 0, 0, 0};
 };
 
+
+class MidiEvent
+{
+public:
+
+	MidiEvent(unsigned char in_signature) : signature(in_signature){}
+
+	virtual ~MidiEvent() = default;
+
+	virtual bool InitializeEventFromChunk(BufferReader & reader){ return false;}
+
+public:
+
+	unsigned char signature{0};
+};
+
+class MidiSystemExclusiveEvent : public MidiEvent
+{
+public:
+
+	MidiSystemExclusiveEvent(unsigned char in_signature) : MidiEvent(in_signature){}
+
+	virtual bool InitializeEventFromChunk(BufferReader & reader) override;
+};
+
+class MidiMetaEvent : public MidiEvent
+{
+public:
+
+	MidiMetaEvent(unsigned char in_signature) : MidiEvent(in_signature){}
+
+	virtual bool InitializeEventFromChunk(BufferReader & reader) override;
+};
+
+class MidiCommandEvent : public MidiEvent
+{
+public:
+
+	MidiCommandEvent(unsigned char in_signature) : MidiEvent(in_signature){}
+
+	virtual bool InitializeEventFromChunk(BufferReader & reader) override;
+};
+
+bool MidiSystemExclusiveEvent::InitializeEventFromChunk(BufferReader & reader)
+{
+
+	return true;
+}
+
+bool MidiMetaEvent::InitializeEventFromChunk(BufferReader & reader)
+{
+
+	return true;
+}
+
+bool MidiCommandEvent::InitializeEventFromChunk(BufferReader & reader)
+{
+
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+class MidiTrack
+{
+public:
+
+	virtual ~MidiTrack() = default;
+
+public:
+
+	/** the events */
+	std::vector<std::unique_ptr<MidiEvent>> events;
+};
+
 class MidiHeader
 {
+public:
+
+	/** returns true whether the header is correct */
+	bool IsValid() const { return (format == FORMAT_SINGLE_TRACK) || (format == FORMAT_MULTIPLE_TRACK) || (format == FORMAT_MULTIPLE_SONG);}	
+
 public:
 
 	static int16_t const FORMAT_SINGLE_TRACK = 0;
 	static int16_t const FORMAT_MULTIPLE_TRACK = 1;
 	static int16_t const FORMAT_MULTIPLE_SONG  = 2;
 
-	int16_t format;
-	int16_t track_count;
-	int16_t division;
-
-	/** returns true whether the header is correct */
-	bool IsValid() const { return (format == FORMAT_SINGLE_TRACK) || (format == FORMAT_MULTIPLE_TRACK) || (format == FORMAT_MULTIPLE_SONG);}
-	
+	int16_t format{0};
+	int16_t track_count{0};
+	int16_t division{0};
 };
 
 
@@ -109,7 +195,10 @@ protected:
 	MidiChunk const ReadHeaderChunk(BufferReader & reader);
 	/** read a track chunk */
 	MidiChunk const ReadTrackChunk(BufferReader & reader);
-
+	/** initialize the track from data contained in the chunk */
+	bool InitializeTrackFromChunk(MidiTrack * track, MidiChunk const & track_chunk);
+	/** read a variable length time in stream */
+	bool ReadVLTime(BufferReader & reader, uint32_t & result);
 	/** convert the header chunk into a header structure */
 	bool GetHeaderFromChunk(MidiChunk const & chunk, MidiHeader & result);
 
@@ -118,7 +207,8 @@ protected:
 
 	/** the header */
 	MidiHeader header;
-
+	/** the tracks */
+	std::vector<std::unique_ptr<MidiTrack>> tracks;
 };
 
 
@@ -175,7 +265,69 @@ bool MidiLoader::LoadBuffer(chaos::Buffer<char> const & buffer)
 
 void MidiLoader::Clean()
 {
+	header = MidiHeader();
+	tracks.clear();
+}
 
+bool MidiLoader::ReadVLTime(BufferReader & reader, uint32_t & result)
+{
+	result = 0;
+		
+	unsigned char tmp = 0;
+	uint32_t shift = 0;
+	while (!reader.Read(tmp) && (shift > 32 - 7)) // 32 - 7 => too much shift !! some data lost
+	{
+		result |= ((uint32_t)(tmp & ~0x80));	
+		// last byte reached
+		if ((tmp & 0x80) == 0)
+			return true;
+		result <<= 7;
+		shift += 7;
+	}
+	return false;
+}
+
+bool MidiLoader::InitializeTrackFromChunk(MidiTrack * track, MidiChunk const & track_chunk)
+{
+	BufferReader reader(track_chunk);
+	while(!reader.IsEOF())
+	{
+		// read the time of the event
+		uint32_t event_time = 0;
+		if (!ReadVLTime(reader, event_time))
+			return false;
+
+		unsigned char signature = 0;
+		reader.Read(signature);
+
+		// misformed event
+		if ((signature & 0x80) == 0) 
+			return false;
+
+		std::unique_ptr<MidiEvent> new_event;
+
+
+		if (signature == 0xF0 || signature == 0xF7) // System exclusive event
+		{
+			new_event = std::move(std::unique_ptr<MidiEvent>(new MidiSystemExclusiveEvent(signature)));		
+		}
+		else if (signature == 0xFF) // meta event
+		{
+			new_event = std::move(std::unique_ptr<MidiEvent>(new MidiMetaEvent(signature)));		
+		}
+		else // standard MIDI event
+		{
+			new_event = std::move(std::unique_ptr<MidiEvent>(new MidiCommandEvent(signature)));		
+		}
+
+		if (new_event == nullptr)
+			return false;
+
+		if (!new_event->InitializeEventFromChunk(reader))
+			return false;
+		track->events.push_back(std::move(new_event));
+	}
+	return true;
 }
 
 bool MidiLoader::DoLoadBuffer(BufferReader & reader)
@@ -193,12 +345,15 @@ bool MidiLoader::DoLoadBuffer(BufferReader & reader)
 		MidiChunk track_chunk = ReadTrackChunk(reader);
 		if (track_chunk == nullptr)
 			return false;
-	
+
+		std::unique_ptr<MidiTrack> new_track(new MidiTrack());
+		if (new_track != nullptr)
+		{
+			if (!InitializeTrackFromChunk(new_track.get(), track_chunk))
+				return false;		
+			tracks.push_back(std::move(new_track));		
+		}	
 	}
-
-
-
-
 	return true;
 }
 

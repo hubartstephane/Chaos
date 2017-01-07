@@ -273,34 +273,36 @@ namespace chaos
 
 		clock_time = time2;
 
-
-		for (size_t i = 0; i < pending_events.size(); ++i)
+		if (tick_events)
 		{
-			ClockEventInfo const & event_info = pending_events[i]->GetEventInfo();
+			for (size_t i = 0; i < pending_events.size(); ++i)
+			{
+				ClockEventInfo const & event_info = pending_events[i]->GetEventInfo();
 
-			if (event_info.IsTooLateFor(time1))
-			{
-				boost::intrusive_ptr<ClockEvent> clock_event = pending_events[i]; // XXX : important to keep a reference after RemoveFromClock(...)
-				clock_event->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
-				--i;
-			}
-			else
-			{
-				ClockEventTickData execution_info = event_info.GetExecutionInfo(time1, time2);
-				if (execution_info.IsValid())
+				if (event_info.IsTooLateFor(time1))
 				{
-					ClockEventTickRegistration registration;
-					registration.clock_event = pending_events[i];
-					registration.time_slice = execution_info.time_slice;
-					registration.execution_range = execution_info.execution_range;
-					registration.tick_range = execution_info.tick_range;
+					boost::intrusive_ptr<ClockEvent> clock_event = pending_events[i]; // XXX : important to keep a reference after RemoveFromClock(...)
+					clock_event->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
+					--i;
+				}
+				else
+				{
+					ClockEventTickData execution_info = event_info.GetExecutionInfo(time1, time2);
+					if (execution_info.IsValid())
+					{
+						ClockEventTickRegistration registration;
+						registration.clock_event = pending_events[i];
+						registration.time_slice = execution_info.time_slice;
+						registration.execution_range = execution_info.execution_range;
+						registration.tick_range = execution_info.tick_range;
 
-					if (registration.tick_range.first <= time1)
-						registration.abs_time_to_start = 0.0;
-					else
-						registration.abs_time_to_start = (registration.tick_range.first - time1) * cumulated_factor;
+						if (registration.tick_range.first <= time1)
+							registration.abs_time_to_start = 0.0;
+						else
+							registration.abs_time_to_start = (registration.tick_range.first - time1) * cumulated_factor;
 
-					event_tick_set.insert(registration);
+						event_tick_set.insert(registration);
+					}
 				}
 			}
 		}
@@ -454,6 +456,24 @@ namespace chaos
 		return true;
 	}
 
+	void Clock::RemoveAllChildClocks()
+	{
+		while (children_clocks.size() > 0)
+		{
+			boost::intrusive_ptr<Clock> child_clock = children_clocks[children_clocks.size() - 1];
+			child_clock->RemoveFromParent();
+		}
+	}
+
+	void Clock::RemoveAllPendingEvents()
+	{
+		while (pending_events.size() > 0)
+		{
+			boost::intrusive_ptr<ClockEvent> clock_event = pending_events[pending_events.size() - 1];
+			clock_event->RemoveFromClock();
+		}
+	}
+
 	bool ClockEvent::RemoveFromClock()
 	{
 		Clock * tmp = clock; // keep a trace of parent
@@ -479,6 +499,8 @@ namespace chaos
 		}
 		return false;
 	}
+	
+
 
 
 }; // namespace chaos

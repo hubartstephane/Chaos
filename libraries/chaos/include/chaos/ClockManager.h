@@ -356,6 +356,7 @@ namespace chaos
 
 		/** advance the clock (public interface) */
 		bool TickClock(double delta_time);
+
 		/** add a clock */
 		Clock * CreateChildClock(int id, ClockCreateParams const & params = ClockCreateParams());
 		/** remove a clock */
@@ -363,6 +364,15 @@ namespace chaos
 
 		/** add an event to be ticked */
 		bool AddPendingEvent(ClockEvent * clock_event, ClockEventInfo event_info, bool relative_time);
+		/** remove all child clocks */
+		void RemoveAllChildClocks();
+		/** remove all pending events */
+		void RemoveAllPendingEvents();
+
+		/** change the behavior for tick events */
+		void EnableTickEvents(bool value) { tick_events = value; }
+		/** get the value of ticking event */
+		bool GetTickEventsEnabled() const { return tick_events; }
 
 	protected:
 
@@ -389,6 +399,8 @@ namespace chaos
 		double time_scale{1.0};
 		/** whether the clock is paused or not */
 		bool   paused{false};  
+		/** whether events should be ticked */
+		bool   tick_events{ true };
 		/** the ID of the clock */
 		int    clock_id{0};
 

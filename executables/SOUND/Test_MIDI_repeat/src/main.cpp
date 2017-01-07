@@ -7,6 +7,28 @@
 #include <chaos/IrrklangTools.h>
 #include <chaos/MIDITools.h>
 
+
+// ================================================================
+
+class MIDITimeoutEvent : public chaos::ClockEvent
+{
+public:
+
+	MIDITimeoutEvent(class MyGLFWWindowOpenGLTest1 * in_application, int in_value) : application(in_application), value(in_value){}
+
+	virtual ~MIDITimeoutEvent();
+
+	virtual void OnEventRemovedFromClock() override;
+
+	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
+
+protected:
+
+	class MyGLFWWindowOpenGLTest1 * application;
+
+	int value;
+};
+
 // ================================================================
 
 class MIDICommandEvent : public chaos::ClockEvent
@@ -14,6 +36,10 @@ class MIDICommandEvent : public chaos::ClockEvent
 public:
 
 	MIDICommandEvent(class MyGLFWWindowOpenGLTest1 * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
+
+	virtual ~MIDICommandEvent();
+
+	virtual void OnEventRemovedFromClock() override;
 
 	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
 
@@ -31,6 +57,14 @@ protected:
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 {
 	friend class MIDICommandEvent;
+	friend class MIDITimeoutEvent;
+
+	static int const STATE_NONE = 0;
+	static int const STATE_PLAYING = 1;
+	static int const STATE_RECORDING = 2;
+
+	static int const SILENCE_TIMER = 0;
+	static int const END_OF_TRACK_TIMER = 1;
 
 protected:
 
@@ -47,20 +81,76 @@ protected:
 		self->OnMidiInEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
 	}
 
+	void DoRecordCommand(chaos::MIDICommand const & command)
+	{
+		chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(0.0, chaos::ClockEventRepetitionInfo::NoRepetition());
+		track_clock->AddPendingEvent(new MIDICommandEvent(this, command), event_info, true);
+	}
+
+	void AddTimeoutEvent(chaos::Clock * clock, int value, double delta_time, bool relative_time)
+	{
+		chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(delta_time, chaos::ClockEventRepetitionInfo::NoRepetition());
+		clock->AddPendingEvent(new MIDITimeoutEvent(this, value), event_info, relative_time);
+	}
+
+	void OnTimeOut(int value)
+	{
+		if (current_state == STATE_RECORDING)
+		{
+			if (value == SILENCE_TIMER)
+			{
+				management_clock->Reset();
+				management_clock->RemoveAllPendingEvents();
+				AddTimeoutEvent(track_clock.get(), END_OF_TRACK_TIMER, 0.0, true);
+				track_clock->Reset();
+				track_clock->EnableTickEvents(true);
+				current_state = STATE_PLAYING;
+				chaos::LogTools::Log("[STATE_PLAYING] : %lf", track_clock->GetClockTime());
+			}
+		}
+		else if (current_state == STATE_PLAYING)
+		{
+			if (value == END_OF_TRACK_TIMER)
+			{
+				track_clock->Reset();
+				track_clock->RemoveAllPendingEvents();
+				management_clock->Reset();
+				management_clock->RemoveAllPendingEvents();
+				current_state = STATE_NONE;
+				chaos::LogTools::Log("[STATE_NONE] : %ld" , track_clock->GetClockTime());
+			}
+		}
+	}
+
+	void OnCommandReceived(chaos::MIDICommand const & command)
+	{
+		// stop the current replay
+		if (current_state == STATE_PLAYING)
+		{			
+			track_clock->Reset();
+			track_clock->RemoveAllPendingEvents();
+		}
+		// handle the new MIDI event
+		management_clock->Reset();
+		management_clock->RemoveAllPendingEvents();
+		AddTimeoutEvent(management_clock.get(), SILENCE_TIMER, 5.0, false); 		// displace the timeout
+		// record the event
+		DoRecordCommand(command);
+		track_clock->EnableTickEvents(false);
+		current_state = STATE_RECORDING; 
+
+		chaos::LogTools::Log("[STATE_RECORDING] : %lf", track_clock->GetClockTime());
+	}
+
 	void OnMidiInEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
 	{
 		if (wMsg == MIM_DATA)
 		{
 			DWORD dwMidiMessage = dwParam1;
 			DWORD dwTimestamp = dwParam2; // milliseconds
-
 			chaos::MIDICommand command((uint32_t)dwMidiMessage);
-
 			if (!command.IsSystemMessage())
-			{
-				chaos::ClockEventInfo event_info = chaos::ClockEventInfo::SingleTickEvent(1.0, chaos::ClockEventRepetitionInfo::NoRepetition());
-				GetMainClock()->AddPendingEvent(new MIDICommandEvent(this, command), event_info, true);
-			}
+				OnCommandReceived(command);
 		}
 	}
 
@@ -132,6 +222,13 @@ protected:
 			return false;
 		if (!InitializeMIDIOut())
 			return false;
+
+		track_clock = GetMainClock()->CreateChildClock(0);
+		if (track_clock == nullptr)
+			return false;
+		management_clock = GetMainClock()->CreateChildClock(0);
+		if (management_clock == nullptr)
+			return false;
 		return true;		
 	}
 
@@ -153,6 +250,9 @@ protected:
 	{
 		FinalizeMIDIIn();
 		FinalizeMIDIOut();
+
+		track_clock = nullptr;
+		management_clock = nullptr;
 	}
 
 
@@ -169,19 +269,54 @@ protected:
 	DWORD nMidiInPort{ 0 };
 	HMIDIIN hMidiInDevice{ nullptr };
 	DWORD nMidiOutPort{ 0 };
+
+	int current_state{ STATE_NONE };
+
+	boost::intrusive_ptr<chaos::Clock> track_clock;
+	boost::intrusive_ptr<chaos::Clock> management_clock;
 };
 
 // ================================================================
 
+MIDITimeoutEvent::~MIDITimeoutEvent()
+{
+//	chaos::LogTools::Log("~MIDICommandEvent() [%08x]\n", this);
+}
+
+void MIDITimeoutEvent::OnEventRemovedFromClock()
+{
+//	chaos::LogTools::Log("MIDITimeoutEvent() [%08x]\n", this);
+}
+
+chaos::ClockEventTickResult MIDITimeoutEvent::Tick(chaos::ClockEventTickData const & tick_data)
+{
+	application->OnTimeOut(value);
+	return CompleteExecution();
+}
+
+// ================================================================
+
+MIDICommandEvent::~MIDICommandEvent()
+{
+//	chaos::LogTools::Log("~MIDICommandEvent() [%08x]\n", this);
+}
+
+void MIDICommandEvent::OnEventRemovedFromClock()
+{
+//	chaos::LogTools::Log("OnEventRemovedFromClock() [%08x]\n", this);
+}
+
 chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData const & tick_data)
 {
+//	if (command.IsNoteOnMessage())
+	{
 
-	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick command = [%02x] channel = [%02x] param1 = [%02x] param2 = [%02x] param3 = [%02x]\n", command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
+		//chaos::LogTools::Log("MIDIPlaySoundEvent::Tick command = [%02x] channel = [%02x] param1 = [%02x] param2 = [%02x] param3 = [%02x]\n", command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
 
-	MMRESULT result = midiOutShortMsg(application->hMidiOutDevice, command.GetValue());
-	if (result != MMSYSERR_NOERROR)
-		result = result;
-
+		MMRESULT result = midiOutShortMsg(application->hMidiOutDevice, command.GetValue());
+		if (result != MMSYSERR_NOERROR)
+			result = result;
+	}
 	return ContinueExecution();
 }
 

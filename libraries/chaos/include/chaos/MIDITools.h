@@ -128,6 +128,14 @@ namespace chaos
 		{
 			return (GetCommand() == CMD_NOTE_ON);
 		}
+
+		bool IsNoteEndMessage() const
+		{
+			return IsNoteOnMessage() && (param2 == 0);
+
+
+		}
+
 		/** gets the channel of the message (lower 4 bits of status) */
 		unsigned char GetChannel() const
 		{

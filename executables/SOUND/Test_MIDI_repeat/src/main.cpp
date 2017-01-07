@@ -59,12 +59,14 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 	friend class MIDICommandEvent;
 	friend class MIDITimeoutEvent;
 
-	static int const STATE_NONE = 0;
-	static int const STATE_PLAYING = 1;
-	static int const STATE_RECORDING = 2;
+	int const STATE_NONE = 0;
+	int const STATE_PLAYING = 1;
+	int const STATE_RECORDING = 2;
 
-	static int const SILENCE_TIMER = 0;
-	static int const END_OF_TRACK_TIMER = 1;
+	int const SILENCE_TIMER = 0;
+	int const END_OF_TRACK_TIMER = 1;
+
+	double const SILENCE_DURATION{ 2.0 };
 
 protected:
 
@@ -133,7 +135,7 @@ protected:
 		// handle the new MIDI event
 		management_clock->Reset();
 		management_clock->RemoveAllPendingEvents();
-		AddTimeoutEvent(management_clock.get(), SILENCE_TIMER, 5.0, false); 		// displace the timeout
+		AddTimeoutEvent(management_clock.get(), SILENCE_TIMER, SILENCE_DURATION, false); 		// displace the timeout
 		// record the event
 		DoRecordCommand(command);
 		track_clock->EnableTickEvents(false);

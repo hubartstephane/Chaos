@@ -66,7 +66,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
 	int const SILENCE_TIMER = 0;
 	int const END_OF_TRACK_TIMER = 1;
 
-	double const SILENCE_DURATION{ 2.0 };
+	double const SILENCE_DURATION{ 1.0 };
 
 protected:
 

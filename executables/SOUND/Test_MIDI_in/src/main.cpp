@@ -59,11 +59,14 @@ protected:
 					break;
 
 
-				chaos::LogTools::Log("status [%02x] command [%02x] channel [%02x] param1 [%02x] param2 [%02x] param3 [%02x]\n", command.status, command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
+				chaos::LogTools::Log("status [%02x] command [%02x] channel [%02x] param1 [%02x] param2 [%02x] param3 [%02x]\n", command.status, command.GetCommand(), command.GetChannel(), command.params[0], command.params[1], command.params[2]);
 				break;
 			}
 			case MIM_LONGDATA:
 			{
+				MIDIHDR * hdr = (MIDIHDR*)dwParam1;
+				DWORD dwTimestamp = dwParam2;
+
 				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
 				break;
 			}
@@ -118,6 +121,7 @@ protected:
 	{
 		if (!InitializeMIDIIn())
 			return false;
+		return true;
 	}
 
 	void FinalizeMIDIIn()

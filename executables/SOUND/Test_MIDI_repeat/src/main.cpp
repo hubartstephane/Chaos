@@ -5,7 +5,7 @@
 #include <chaos/WinTools.h> 
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
-#include <chaos/MIDITools.h>
+#include <chaos/MIDICommand.h>
 
 
 // ================================================================

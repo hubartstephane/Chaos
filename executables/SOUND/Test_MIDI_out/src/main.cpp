@@ -7,7 +7,7 @@
 #include <chaos/IrrklangTools.h>
 
 #include <chaos/ClockManager.h>
-#include <chaos/MIDITools.h>
+#include <chaos/MIDICommand.h>
 
 
 

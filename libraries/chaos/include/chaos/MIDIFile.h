@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/Buffer.h>
 #include <chaos/BufferReader.h>
-#include <chaos/MIDITools.h>
+#include <chaos/MIDICommand.h>
 
 namespace chaos
 {

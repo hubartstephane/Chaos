@@ -112,7 +112,7 @@ namespace chaos
 	public:
 
 		/** returns true whether the header is correct */
-		bool IsValid() const { return (format == FORMAT_SINGLE_TRACK) || (format == FORMAT_MULTIPLE_TRACK) || (format == FORMAT_MULTIPLE_SONG); }
+		bool IsValid() const;
 
 	public:
 
@@ -150,8 +150,6 @@ namespace chaos
 		MidiChunk const ReadChunk(BufferReader & reader);
 		/** read the header chunk */
 		MidiChunk const ReadHeaderChunk(BufferReader & reader);
-		/** read a track chunk */
-		MidiChunk const ReadTrackChunk(BufferReader & reader);
 		/** initialize the track from data contained in the chunk */
 		bool InitializeTrackFromChunk(MidiTrack * track, MidiChunk const & track_chunk);
 		/** read a variable length time in stream */

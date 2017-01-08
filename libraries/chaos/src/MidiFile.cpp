@@ -3,7 +3,14 @@
 
 namespace chaos
 {
-
+	bool MidiHeader::IsValid() const
+	{
+		if ((format != FORMAT_SINGLE_TRACK) && (format != FORMAT_MULTIPLE_TRACK) && (format != FORMAT_MULTIPLE_SONG))
+			return false;
+		if (format == FORMAT_SINGLE_TRACK && track_count != 1)
+			return false;
+		return true;
+	}
 
 	bool MidiSystemExclusiveEvent::InitializeEventFromChunk(BufferReader & reader)
 	{
@@ -26,7 +33,7 @@ namespace chaos
 	MidiChunk const MidiLoader::ReadChunk(BufferReader & reader)
 	{
 		MidiChunk result;
-		if (reader.IsEnoughData(8))
+		if (reader.IsEnoughData(8)) // 8 = name + size
 		{
 			// read the chunk name
 			reader.ReadN(result.chunk_name, 4);
@@ -49,16 +56,8 @@ namespace chaos
 	{
 		MidiChunk const result = ReadChunk(reader);
 		if (result.IsHeaderChunk())
-			if (result.bufsize == 6)
+			if (result.bufsize == 6) // because header is always 6 bytes long
 				return result;
-		return MidiChunk();
-	}
-
-	MidiChunk const MidiLoader::ReadTrackChunk(BufferReader & reader)
-	{
-		MidiChunk const result = ReadChunk(reader);
-		if (result.IsTrackChunk())
-			return result;
 		return MidiChunk();
 	}
 
@@ -84,15 +83,14 @@ namespace chaos
 		result = 0;
 
 		unsigned char tmp = 0;
-		uint32_t shift = 0;
-		while (!reader.Read(tmp) && (shift > 32 - 7)) // 32 - 7 => too much shift !! some data lost
+		uint32_t count = 0;
+		while (!reader.Read(tmp) && count++ < 4) // time is at much 4 bytes long
 		{
-			result |= ((uint32_t)(tmp & ~0x80));
+			result |= ((uint32_t)(tmp & ~0x80));		
 			// last byte reached
 			if ((tmp & 0x80) == 0)
 				return true;
 			result <<= 7;
-			shift += 7;
 		}
 		return false;
 	}
@@ -115,7 +113,6 @@ namespace chaos
 				return false;
 
 			std::unique_ptr<MidiEvent> new_event;
-
 
 			if (signature == 0xF0 || signature == 0xF7) // System exclusive event
 			{
@@ -150,21 +147,32 @@ namespace chaos
 		if (!GetHeaderFromChunk(header_chunk, header))
 			return false;
 		// read the tracks
-		for (int16_t i = 0; i < header.track_count; ++i)
+		size_t track_found = 0;
+		
+		MidiChunk data_chunk = ReadChunk(reader);
+		while (data_chunk.data != nullptr)
 		{
-			MidiChunk track_chunk = ReadTrackChunk(reader);
-			if (track_chunk == nullptr)
-				return false;
+			// don't know how to handle NON-TRACK chunk
+			if (!data_chunk.IsTrackChunk())
+				continue;
+			// do we already have read all expected track chunk
+			if (track_found == header.track_count)
+				continue;
 
+			// create a track from the chunk
 			std::unique_ptr<MidiTrack> new_track(new MidiTrack());
 			if (new_track != nullptr)
 			{
-				if (!InitializeTrackFromChunk(new_track.get(), track_chunk))
+				if (!InitializeTrackFromChunk(new_track.get(), data_chunk))
 					return false;
 				tracks.push_back(std::move(new_track));
 			}
+
+			// update counts
+			++track_found;
 		}
-		return true;
+
+		return (track_found == header.track_count); // all expected tracks read
 	}
 
 	bool MidiLoader::GetHeaderFromChunk(MidiChunk const & chunk, MidiHeader & result)

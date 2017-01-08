@@ -1,9 +1,11 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/BufferReader.h>
 
 namespace chaos
 {
+
 	class MIDICommand
 	{
 	public:
@@ -45,7 +47,7 @@ namespace chaos
 		//    0xF0 - 0xF7 : common messages
 		//    0xF8 - 0xFF : realtime messages
 		//
-		// MIDI Message = CMD + DATA (0, 1 or 2 bytesà
+		// MIDI Message = CMD + DATA (0, 1 or 2 bytes)
 		//
 		//   CMD (or STATUS) : always has bit 7 set
 		//   DATA            : never have bit 7 set
@@ -81,26 +83,26 @@ namespace chaos
 		void SetValue(unsigned char in_status, unsigned char in_param1, unsigned char in_param2, unsigned char in_param3)
 		{
 			status = in_status;
-			param1 = in_param1;
-			param2 = in_param2;
-			param3 = in_param3;
+			params[0] = in_param1;
+			params[1] = in_param2;
+			params[2] = in_param3;
 		}
 		/** setter */
 		void SetValue(uint32_t value)
 		{
 			status = (unsigned char)((value >> 0) & 0xFF);
-			param1 = (unsigned char)((value >> 8) & 0xFF);
-			param2 = (unsigned char)((value >> 16) & 0xFF);
-			param3 = (unsigned char)((value >> 24) & 0xFF);
+			params[0] = (unsigned char)((value >> 8) & 0xFF);
+			params[1] = (unsigned char)((value >> 16) & 0xFF);
+			params[2] = (unsigned char)((value >> 24) & 0xFF);
 		}
 		/** getter */
 		uint32_t GetValue() const
 		{
 			return  
 				(((uint32_t)status) << 0) |
-				(((uint32_t)param1) << 8)  | 
-				(((uint32_t)param2) << 16) | 
-				(((uint32_t)param3) << 24);
+				(((uint32_t)params[0]) << 8)  |
+				(((uint32_t)params[1]) << 16) |
+				(((uint32_t)params[2]) << 24);
 		}
 		/** returns true if the message is a system message */
 		bool IsSystemMessage() const
@@ -130,7 +132,7 @@ namespace chaos
 
 		bool IsNoteEndMessage() const
 		{
-			return IsNoteOnMessage() && (param2 == 0);
+			return IsNoteOnMessage() && (params[1] == 0);
 		}
 
 		/** gets the channel of the message (lower 4 bits of status) */
@@ -144,14 +146,18 @@ namespace chaos
 			return (status & 0xF0);
 		}
 
+		/** read the command from a buffer reader */
+		bool ReadParams(BufferReader & reader);
+
+		/** get number of bytes for the command */
+		static int GetCommandParamCount(unsigned char status);
+
+public:
+
 		/** the command */
 		unsigned char status;
-		/** the parameter */
-		unsigned char param1;
-		/** the parameter */
-		unsigned char param2;
-		/** the parameter */
-		unsigned char param3;
+		/** the parameters */
+		unsigned char params[3];
 	};
 
 

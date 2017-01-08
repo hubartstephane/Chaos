@@ -136,7 +136,7 @@ class BufferBase
 public:
 
   /** default constructor */
-  BufferBase() : policy(nullptr){}
+	BufferBase() = default;
   /** destructor */
   ~BufferBase()
   {
@@ -171,7 +171,7 @@ protected:
 protected:
   
   /** the policy */
-  BufferPolicyBase * policy;
+	BufferPolicyBase * policy{ nullptr };
 };
 
 
@@ -190,9 +190,7 @@ public:
   typedef TYPE type;
 
   /** default constructor */    
-  Buffer() : 
-    data(nullptr), 
-    bufsize(0){}
+	Buffer() = default;
 
   /** constructor with initialization */
   Buffer(TYPE * in_data, size_t in_bufsize):
@@ -200,9 +198,7 @@ public:
     bufsize(in_bufsize){}
 
   /** copy constructor (let the policy decide what to do) */
-  Buffer(Buffer<TYPE> const & other):
-    data(nullptr), 
-    bufsize(0)
+  Buffer(Buffer<TYPE> const & other)
   {
     if (other.policy == nullptr) // buffer is unmanaged => simple copy
     {
@@ -216,9 +212,7 @@ public:
   }
 
   /** move constructor */
-  Buffer(Buffer<TYPE> && other):
-    data(nullptr), 
-    bufsize(0)
+  Buffer(Buffer<TYPE> && other)
   {
     std::swap(policy,  other.policy);
     std::swap(data,    other.data);
@@ -273,9 +267,9 @@ public:
 public:
 
   /** the pointer on the data */
-  type * data;
+	type * data{ nullptr };
   /** the number of elements in the buffer */
-  size_t bufsize;
+	size_t bufsize{ 0 };
 };
 
 

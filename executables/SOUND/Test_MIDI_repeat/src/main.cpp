@@ -126,6 +126,12 @@ protected:
 
 	void OnCommandReceived(chaos::MIDICommand const & command)
 	{
+		if (command.IsSystemMessage())
+			return;
+
+		//if (!command.IsNoteOnMessage() && !command.IsNoteOffMessage())
+		//		return;
+
 		// stop the current replay
 		if (current_state == STATE_PLAYING)
 		{			
@@ -150,9 +156,8 @@ protected:
 		{
 			DWORD dwMidiMessage = dwParam1;
 			DWORD dwTimestamp = dwParam2; // milliseconds
-			chaos::MIDICommand command((uint32_t)dwMidiMessage);
-			if (!command.IsSystemMessage())
-				OnCommandReceived(command);
+			chaos::MIDICommand command((uint32_t)dwMidiMessage);			
+			OnCommandReceived(command);
 		}
 	}
 
@@ -219,17 +224,18 @@ protected:
 	}
 
 	virtual bool Initialize() override
-	{
-		if (!InitializeMIDIIn())
-			return false;
-		if (!InitializeMIDIOut())
-			return false;
-
+	{	
+		// create child clocks (BEFORE !!)
 		track_clock = GetMainClock()->CreateChildClock(0);
 		if (track_clock == nullptr)
 			return false;
 		management_clock = GetMainClock()->CreateChildClock(0);
 		if (management_clock == nullptr)
+			return false;
+		// initialize MIDI's
+		if (!InitializeMIDIIn())
+			return false;
+		if (!InitializeMIDIOut())
 			return false;
 		return true;		
 	}

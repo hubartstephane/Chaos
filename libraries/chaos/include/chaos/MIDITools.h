@@ -64,7 +64,6 @@ namespace chaos
 		static const unsigned int CMD_PITCH_WHEEL_CHANGE  = 0xE0; 
 		static const unsigned int CMD_SYSTEM_MESSAGE = 0xF0;
 
-
 		/** default constructor */
 		MIDICommand() = default;
 		/** constructor with initialization */
@@ -132,8 +131,6 @@ namespace chaos
 		bool IsNoteEndMessage() const
 		{
 			return IsNoteOnMessage() && (param2 == 0);
-
-
 		}
 
 		/** gets the channel of the message (lower 4 bits of status) */

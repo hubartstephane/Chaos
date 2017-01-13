@@ -55,8 +55,24 @@ b o n
 
 #endif
 
+std::vector<std::string> ReadFileLines(boost::filesystem::path const & p)
+{
+	std::vector<std::string> result;
+
+	std::ifstream file(p.c_str());
+	if (file)
+	{
+		std::copy(std::istream_iterator<std::string>(file),
+							std::istream_iterator<std::string>(),
+							std::back_inserter(result));
+	}
+	return result;
+}
+
 int const TYPE_CONSONANT = 0;
 int const TYPE_VOWEL = 1;
+int const TYPE_SPECIAL = 1;
+
 
 struct Token
 {
@@ -97,6 +113,15 @@ std::vector<Token> CutStringPerTypes(char const * str)
 		if (i != j)
 		{
 			result.emplace_back(i, j - 1, TYPE_CONSONANT);
+			i = j;
+		}
+		// test for other special characters
+		j = i;
+		while (str[j] != 0 && (!IsVowel(str[j]) && !IsConsonant(str[j])))
+			++j;
+		if (i != j)
+		{
+			result.emplace_back(i, j - 1, TYPE_SPECIAL);
 			i = j;
 		}
 	}
@@ -144,6 +169,10 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::Application::Initialize(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+
+	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
+	
+//	std::vector<std::string> dictionnary = ReadFileLines(resources_path / "dictionnaire.txt");
 
 	TestCutWord("bonjour");
 	TestCutWord("peuple");

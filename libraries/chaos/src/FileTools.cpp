@@ -112,4 +112,18 @@ bool FileTools::CreateTemporaryDirectory(char const * pattern, boost::filesystem
   return false;
 }
 
+std::vector<std::string> FileTools::ReadFileLines(char const * filename)
+{
+	std::vector<std::string> result;
+
+	std::ifstream file(filename);
+	if (file)
+	{
+		std::copy(std::istream_iterator<std::string>(file),
+							std::istream_iterator<std::string>(),
+							std::back_inserter(result));
+	}
+	return result;
+}
+
 }; // namespace chaos

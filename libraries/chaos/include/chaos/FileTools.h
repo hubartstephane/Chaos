@@ -25,6 +25,8 @@ public:
   /** create a temporary directory */
   static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);
 
+	/** read file as a vector of strings */
+	static std::vector<std::string> ReadFileLines(char const * filename);
 };
 
 }; // namespace chaos

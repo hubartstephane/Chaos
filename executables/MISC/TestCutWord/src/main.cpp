@@ -85,16 +85,18 @@ public:
 	/** cut a string into tokens */
 	static std::vector<Token> Tokenize(char const * str);
 	/** an utility method to have a debug string from a tokenized result */
-	static std::string GetDebugCutString(char const * str, std::vector<TextSplitter::Token> const & tokens);
+	static std::string GetDebugCutString(char const * str, std::vector<Token> const & tokens);
 
 protected:
 
 	/** internal method to cut a string in tokens */
 	static std::vector<Token> TokenizePerType(char const * str);
 	/** internal method to cut consonnant tokens if a character repetition is found */
-	static void SplitDoubleConsonantTokens(char const * str, std::vector<TextSplitter::Token> & tokens);
+	static void SplitDoubleConsonantTokens(char const * str, std::vector<Token> & tokens);
 	/** internal method to merge tokens as non splittable unities */
-	static void MergeTokens(char const * str, std::vector<TextSplitter::Token> & tokens);
+	static void CreateTokenUnit(char const * str, std::vector<Token> & tokens);
+
+	static Token MergeTokens(Token const & src1, Token const & src2);
 };
 
 
@@ -114,7 +116,7 @@ std::vector<TextSplitter::Token> TextSplitter::Tokenize(char const * str)
 {
 	std::vector<TextSplitter::Token> result = TokenizePerType(str);
 	SplitDoubleConsonantTokens(str, result);
-	MergeTokens(str, result);
+	CreateTokenUnit(str, result);
 	return result;
 }
 
@@ -204,68 +206,84 @@ void TextSplitter::SplitDoubleConsonantTokens(char const * str, std::vector<Text
 	std::swap(tokens, result);
 }
 
-void TextSplitter::MergeTokens(char const * str, std::vector<TextSplitter::Token> & tokens)
+TextSplitter::Token TextSplitter::MergeTokens(TextSplitter::Token const & src1, TextSplitter::Token const & src2)
 {
-	std::vector<Token> result = tokens;
-
-
-	std::swap(result, tokens);
+	return TextSplitter::Token(src1.start, src2.end, src2.type);
 }
 
-
-
-
-#if 0
-
-void MergeTokens(char const * str, std::vector<Token> & tokens)
+void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::Token> & tokens)
 {
 	std::vector<Token> result;
 
+	size_t i = 0;
 
-	int current_type = TOKEN_TYPE_UNKNOWN;
-
-	int i = 0;
-
-
-
-	for (size_t i = 0; i < tokens.size() - 1; ++i)
+	while (i < tokens.size())
 	{
-
-
-
-
-
-
-
-
-		Token & token1 = tokens[i];
-		assert(token1.type_start == token1.type_end);
-		if (token1.type_start == TYPE_SPECIAL) // cannot merge nothing with Group-Special
-			continue;
-
-		Token & token2 = tokens[i + 1];
-		assert(token2.type_start == token2.type_end);
-		if (token2.type_start == TYPE_SPECIAL) // cannot merge nothing with Group-Special
-			continue;
+		// take current token and push it into result
+		TextSplitter::Token & token = tokens[i++];
+		result.push_back(token); 
 		
-		if (token1.type_end == token2.type_start) // cannot merge groups of same type
+		if (token.type == TOKEN_TYPE_SPECIAL)
 			continue;
 
+		TextSplitter::Token & current_token = result[result.size() - 1];
+		while (i < tokens.size())
+		{
+			TextSplitter::Token & incomming_token = tokens[i];
+			if (incomming_token.type == TOKEN_TYPE_SPECIAL)
+				break;
 
+			// can merge CONSONANT + VOWEL
+			if (current_token.type == TOKEN_TYPE_CONSONANT && incomming_token.type == TOKEN_TYPE_VOWEL)
+			{
+				current_token = MergeTokens(current_token, incomming_token);
+				++i;
+				continue;
+			}
 
-
-
+			// can merge VOWEL + ...
+			if (current_token.type == TOKEN_TYPE_VOWEL && incomming_token.type == TOKEN_TYPE_CONSONANT)
+			{
+				// + ... (N | M)
+				if (incomming_token.end - incomming_token.start != 0) // not single character consonant groupe
+				{
+					char c = str[incomming_token.start]; 
+					if (c == 'n' || c == 'm')
+					{
+						++current_token.end;
+						++incomming_token.start; // eat the 'n' or 'm' from one token to the other
+						break;
+					}
+				}
+				// + ... repetition consonant
+				if (i + 1 <= tokens.size() - 1)
+				{
+					if (tokens[i + 1].type == TOKEN_TYPE_CONSONANT)
+					{
+						current_token = MergeTokens(current_token, incomming_token);
+						++i;
+						break;
+					}
+				}					
+			}
+			break;
+		}
 	}
-	//std::swap(tokens, result);
+
+	size_t count = result.size();
+	if (count >= 2)
+	{
+		Token & t1 = result[count - 2];
+		Token & t2 = result[count - 1];
+		if (t1.type != TOKEN_TYPE_SPECIAL && t2.type == TOKEN_TYPE_CONSONANT)
+		{
+			t1 = MergeTokens(t1, t2);
+			result.pop_back();
+		}		
+	}
+
+	std::swap(result, tokens);
 }
-
-
-
-
-
-#endif
-
-
 
 
 void TestCutWord(char const * str)
@@ -286,9 +304,7 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
 	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-	
-	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "dictionnaire.txt").string().c_str());
-
+		
 	TestCutWord("bonjour");
 	TestCutWord("peuple");
 	TestCutWord("trottinette");
@@ -296,6 +312,10 @@ int _tmain(int argc, char ** argv, char ** env)
 	TestCutWord("aqueuse");
 	TestCutWord("autour");
 	TestCutWord("ancien");
+	TestCutWord("comptable");
+
+
+	//std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "dictionnaire.txt").string().c_str());
 
 
 

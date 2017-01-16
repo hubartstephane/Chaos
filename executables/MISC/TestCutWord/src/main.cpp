@@ -338,7 +338,8 @@ int _tmain(int argc, char ** argv, char ** env)
 #if 1
 
 	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "french_dictionnary.txt").string().c_str());
+	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "english_dictionnary.txt").string().c_str());
+	//std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "french_dictionnary.txt").string().c_str());
 
 	if (dictionnary.size() > 0)
 	{

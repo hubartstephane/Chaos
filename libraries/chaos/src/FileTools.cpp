@@ -126,4 +126,16 @@ std::vector<std::string> FileTools::ReadFileLines(char const * filename)
 	return result;
 }
 
+bool FileTools::WriteFileLines(char const * filename, std::vector<std::string> const & lines)
+{
+	std::ofstream file(filename);
+	if (file)
+	{
+		for (std::string const & str : lines)
+			file << str << std::endl;
+		return true;
+	}
+	return false;
+}
+
 }; // namespace chaos

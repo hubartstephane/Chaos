@@ -27,6 +27,8 @@ public:
 
 	/** read file as a vector of strings */
 	static std::vector<std::string> ReadFileLines(char const * filename);
+	/** write a file with a vector of strings */
+	static bool WriteFileLines(char const * filename, std::vector<std::string> const & lines);
 };
 
 }; // namespace chaos

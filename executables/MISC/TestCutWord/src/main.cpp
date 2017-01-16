@@ -248,7 +248,7 @@ void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::T
 				if (incomming_token.end - incomming_token.start != 0) // not single character consonant groupe
 				{
 					char c = str[incomming_token.start]; 
-					if (c == 'n' || c == 'm')
+					if (c == 'n' || c == 'm' || c == 'r')
 					{
 						++current_token.end;
 						++incomming_token.start; // eat the 'n' or 'm' from one token to the other
@@ -303,7 +303,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
+// exemple a tester ai|gre|s|-|dou|ces	
 		
 	TestCutWord("bonjour");
 	TestCutWord("peuple");
@@ -314,10 +314,29 @@ int _tmain(int argc, char ** argv, char ** env)
 	TestCutWord("ancien");
 	TestCutWord("comptable");
 
+	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
+	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "dictionnaire.txt").string().c_str());
 
-	//std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "dictionnaire.txt").string().c_str());
-
-
+	if (dictionnary.size() > 0)
+	{
+		// transform strings into the split information
+		std::vector < TextSplitter::Token> tokens;
+		for (std::string & str : dictionnary)
+		{
+			tokens = TextSplitter::Tokenize(str.c_str());			
+			str = TextSplitter::GetDebugCutString(str.c_str(), tokens);
+			tokens.clear();
+		}
+			
+		// save the new 'directory' into a file
+		boost::filesystem::path dst_p;
+		if (chaos::FileTools::CreateTemporaryDirectory("TestCutWords", dst_p))
+		{
+			boost::filesystem::path dst_file = dst_p / "cut_words.txt";
+			chaos::FileTools::WriteFileLines(dst_file.string().c_str(), dictionnary);
+			chaos::WinTools::ShowFile(dst_file.string().c_str());
+		}
+	}
 
   chaos::WinTools::PressToContinue();
 

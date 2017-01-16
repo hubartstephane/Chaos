@@ -61,14 +61,16 @@ public:
 	{
 		Token() = default;
 
-		Token(int s, int e, int t) :
+		Token(int s, int e, int ts, int te) :
 			start(s),
 			end(e),
-			type(t){}
+			type_start(ts),
+			type_end(te){}
 
 		int start{ 0 };
 		int end{ 0 };
-		int type{ 0 };
+		int type_start{ 0 };
+		int type_end{ 0 };
 	};
 
 	/** the types for tokens */
@@ -150,7 +152,7 @@ std::vector<TextSplitter::Token> TextSplitter::TokenizePerType(char const * str)
 			++j;
 		if (i != j)
 		{
-			result.emplace_back(i, j - 1, TOKEN_TYPE_VOWEL);
+			result.emplace_back(i, j - 1, TOKEN_TYPE_VOWEL, TOKEN_TYPE_VOWEL);
 			i = j;
 		}
 		// test for consonant
@@ -159,7 +161,7 @@ std::vector<TextSplitter::Token> TextSplitter::TokenizePerType(char const * str)
 			++j;
 		if (i != j)
 		{
-			result.emplace_back(i, j - 1, TOKEN_TYPE_CONSONANT);
+			result.emplace_back(i, j - 1, TOKEN_TYPE_CONSONANT, TOKEN_TYPE_CONSONANT);
 			i = j;
 		}
 		// test for other special characters
@@ -168,7 +170,7 @@ std::vector<TextSplitter::Token> TextSplitter::TokenizePerType(char const * str)
 			++j;
 		if (i != j)
 		{
-			result.emplace_back(i, j - 1, TOKEN_TYPE_SPECIAL);
+			result.emplace_back(i, j - 1, TOKEN_TYPE_SPECIAL, TOKEN_TYPE_SPECIAL);
 			i = j;
 		}
 	}
@@ -181,9 +183,10 @@ void TextSplitter::SplitDoubleConsonantTokens(char const * str, std::vector<Text
 	for (size_t i = 0; i < tokens.size(); ++i)
 	{
 		TextSplitter::Token & token = tokens[i];
+		assert(token.type_start == token.type_end);
 
 		// ignore NON CONSONANT and ONE LETTER group
-		if (token.type != TOKEN_TYPE_CONSONANT || token.start == token.end)
+		if (token.type_start != TOKEN_TYPE_CONSONANT || token.start == token.end)
 		{
 			result.push_back(token);
 			continue;
@@ -194,8 +197,8 @@ void TextSplitter::SplitDoubleConsonantTokens(char const * str, std::vector<Text
 		{
 			if (str[j] == str[j + 1])
 			{
-				result.emplace_back(token.start, j, TOKEN_TYPE_CONSONANT);
-				result.emplace_back(j + 1, token.end, TOKEN_TYPE_CONSONANT);
+				result.emplace_back(token.start, j, TOKEN_TYPE_CONSONANT, TOKEN_TYPE_CONSONANT);
+				result.emplace_back(j + 1, token.end, TOKEN_TYPE_CONSONANT, TOKEN_TYPE_CONSONANT);
 				break;
 			}
 		}
@@ -208,7 +211,7 @@ void TextSplitter::SplitDoubleConsonantTokens(char const * str, std::vector<Text
 
 TextSplitter::Token TextSplitter::MergeTokens(TextSplitter::Token const & src1, TextSplitter::Token const & src2)
 {
-	return TextSplitter::Token(src1.start, src2.end, src2.type);
+	return TextSplitter::Token(src1.start, src2.end, src1.type_start, src2.type_end);
 }
 
 void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::Token> & tokens)
@@ -221,20 +224,21 @@ void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::T
 	{
 		// take current token and push it into result
 		TextSplitter::Token & token = tokens[i++];
+		assert(token.type_start == token.type_end);
 		result.push_back(token); 
-		
-		if (token.type == TOKEN_TYPE_SPECIAL)
+
+		if (token.type_start == TOKEN_TYPE_SPECIAL)
 			continue;
 
 		TextSplitter::Token & current_token = result[result.size() - 1];
 		while (i < tokens.size())
 		{
 			TextSplitter::Token & incomming_token = tokens[i];
-			if (incomming_token.type == TOKEN_TYPE_SPECIAL)
+			if (incomming_token.type_start == TOKEN_TYPE_SPECIAL)
 				break;
 
 			// can merge CONSONANT + VOWEL
-			if (current_token.type == TOKEN_TYPE_CONSONANT && incomming_token.type == TOKEN_TYPE_VOWEL)
+			if (current_token.type_end == TOKEN_TYPE_CONSONANT && incomming_token.type_start == TOKEN_TYPE_VOWEL)
 			{
 				current_token = MergeTokens(current_token, incomming_token);
 				++i;
@@ -242,7 +246,7 @@ void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::T
 			}
 
 			// can merge VOWEL + ...
-			if (current_token.type == TOKEN_TYPE_VOWEL && incomming_token.type == TOKEN_TYPE_CONSONANT)
+			if (current_token.type_end == TOKEN_TYPE_VOWEL && incomming_token.type_start == TOKEN_TYPE_CONSONANT)
 			{
 				// + ... (N | M)
 				if (incomming_token.end - incomming_token.start != 0) // not single character consonant groupe
@@ -250,15 +254,16 @@ void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::T
 					char c = str[incomming_token.start]; 
 					if (c == 'n' || c == 'm' || c == 'r')
 					{
+						current_token.type_end = TOKEN_TYPE_VOWEL; // !!! we considere some token as 'an' as a vowel
 						++current_token.end;
-						++incomming_token.start; // eat the 'n' or 'm' from one token to the other
+						++incomming_token.start; // eat the first character from one token to the other
 						break;
 					}
 				}
-				// + ... repetition consonant
+				// + ... repetition consonant .. or consonnant+separator (ex : aigreS-douce)
 				if (i + 1 <= tokens.size() - 1)
 				{
-					if (tokens[i + 1].type == TOKEN_TYPE_CONSONANT)
+					if (tokens[i + 1].type_start == TOKEN_TYPE_CONSONANT || tokens[i + 1].type_start == TOKEN_TYPE_SPECIAL)
 					{
 						current_token = MergeTokens(current_token, incomming_token);
 						++i;
@@ -270,17 +275,33 @@ void TextSplitter::CreateTokenUnit(char const * str, std::vector<TextSplitter::T
 		}
 	}
 
+	// if word starts by a single vowel, merge with next => example a|bsent (a better separation would be ab|sent)
 	size_t count = result.size();
+#if 0
+	if (count >= 2)
+	{
+		Token & t1 = result[0];
+		Token & t2 = result[1];		
+		if (t1.type_start == TOKEN_TYPE_VOWEL && t1.type_end == TOKEN_TYPE_VOWEL && t2.type_start == TOKEN_TYPE_CONSONANT)
+		{
+			t2 = MergeTokens(t1, t2);
+			result.erase(result.begin());			
+		}		
+	}
+#endif
+	// if word finishes by a single consonnant, merge it with previous
+	count = result.size();
 	if (count >= 2)
 	{
 		Token & t1 = result[count - 2];
-		Token & t2 = result[count - 1];
-		if (t1.type != TOKEN_TYPE_SPECIAL && t2.type == TOKEN_TYPE_CONSONANT)
+		Token & t2 = result[count - 1];		
+		if (t1.type_end != TOKEN_TYPE_SPECIAL && t2.type_start == TOKEN_TYPE_CONSONANT && t2.type_end == TOKEN_TYPE_CONSONANT)
 		{
 			t1 = MergeTokens(t1, t2);
 			result.pop_back();
 		}		
 	}
+
 
 	std::swap(result, tokens);
 }
@@ -299,23 +320,25 @@ void TestCutWord(char const * str)
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize(argc, argv, env);
+	chaos::Application::Initialize(argc, argv, env);
 
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-// exemple a tester ai|gre|s|-|dou|ces	
-		
 	TestCutWord("bonjour");
 	TestCutWord("peuple");
 	TestCutWord("trottinette");
 	TestCutWord("lance-pierre");
 	TestCutWord("aqueuse");
 	TestCutWord("autour");
+	TestCutWord("absent");
 	TestCutWord("ancien");
 	TestCutWord("comptable");
+	TestCutWord("aigres-douces");
+
+#if 1
 
 	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "dictionnaire.txt").string().c_str());
+	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "french_dictionnary.txt").string().c_str());
 
 	if (dictionnary.size() > 0)
 	{
@@ -327,7 +350,7 @@ int _tmain(int argc, char ** argv, char ** env)
 			str = TextSplitter::GetDebugCutString(str.c_str(), tokens);
 			tokens.clear();
 		}
-			
+
 		// save the new 'directory' into a file
 		boost::filesystem::path dst_p;
 		if (chaos::FileTools::CreateTemporaryDirectory("TestCutWords", dst_p))
@@ -338,11 +361,13 @@ int _tmain(int argc, char ** argv, char ** env)
 		}
 	}
 
-  chaos::WinTools::PressToContinue();
+#endif
 
-  chaos::Application::Finalize();
+	chaos::WinTools::PressToContinue();
 
-  return 0;
+	chaos::Application::Finalize();
+
+	return 0;
 }
 
 

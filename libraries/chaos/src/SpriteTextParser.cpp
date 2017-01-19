@@ -452,6 +452,9 @@ namespace chaos
 		if (!GenerateLines(text, params, generator_data))
 			return false;
 
+		// compute line dispositions
+		if (!BreakLines(params, generator_data))
+			return false;
 		
 
 
@@ -461,13 +464,9 @@ namespace chaos
 
 	#if 0
 
-		if (!RemoveUselessWhitespaces(generator_data))
-			return false;
 		if (!CutLines(params, generator_data))
 			return false;
 		if (!JustifyLines(params, generator_data))
-			return false;
-		if (!RemoveWhitespaces(generator_data))
 			return false;
 	#endif
 		if (!MoveSpritesToHotpoint(params, generator_data))
@@ -480,12 +479,32 @@ namespace chaos
 
 		// output the result if wanted
 		if (generator_result != nullptr)
-			*generator_result = std::move(generator_data.generator_result);
-
+			std::swap(*generator_result, generator_data.generator_result);
+			
 		return true;
 	}
 
+	bool SpriteTextGenerator::BreakLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
+	{
+		if (params.max_text_width > 0 && params.word_wrap)
+			return true;
 
+		SpriteTextResult generator_result;
+		
+
+		float y = 0.0f;
+		for (auto & line : generator_data.generator_result)
+		{
+
+
+			// update the y position of characters
+			y -= params.line_height + params.line_spacing;
+		}
+
+		std::swap(generator_data.generator_result, generator_result);
+
+		return true;
+	}
 
 
 
@@ -493,30 +512,7 @@ namespace chaos
 
 #if 0
 
-	bool SpriteTextGenerator::RemoveWhitespaces(SpriteTextGeneratorData & generator_data)
-	{
-		for (auto & line : generator_data.generator_result)
-		{
-			auto it = std::remove_if(line.begin(), line.end(), [](SpriteTextToken const & token) {
-				return (token.type == SpriteTextToken::TOKEN_WHITESPACE);
-			});
 
-			line.erase(it, line.end());
-		}
-		return true;
-	}
-
-	bool SpriteTextGenerator::RemoveUselessWhitespaces(SpriteTextGeneratorData & generator_data)
-	{
-		// remove whitespace at the end of lines
-		for (auto & line : generator_data.generator_result)
-			while (line.size() > 0 && line.back().type == SpriteTextToken::TOKEN_WHITESPACE)
-				line.pop_back();
-		// remove all empty lines at the end
-		while (generator_data.generator_result.size() > 0 && generator_data.generator_result.back().size() == 0)
-			generator_data.generator_result.pop_back();
-		return true;
-	}
 
 	bool SpriteTextGenerator::CutLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{

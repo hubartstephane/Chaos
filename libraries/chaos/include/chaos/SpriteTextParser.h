@@ -194,7 +194,14 @@ namespace chaos
 		/** generate the lines, without cutting them */
 		bool GenerateLines(char const * text, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 
+		/** cut the line when necessary */
+		bool BreakLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
+
 	#if 0
+
+
+		
+
 		/** cut the lines so they are not too big. Cut them only when it is possible */
 		bool CutLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 		/** utility method to cut one line an insert it into a new result */
@@ -203,12 +210,6 @@ namespace chaos
 
 
 
-		/** goto next line */
-		void FlushLine(float & x, float & y, SpriteTextLine & current_line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params);
-		/** Remove all whitespaces */
-		bool RemoveWhitespaces(SpriteTextGeneratorData & generator_data);
-		/** remove whitespaces at end of lines, and empty lines at the end */
-		bool RemoveUselessWhitespaces(SpriteTextGeneratorData & generator_data);
 	#endif
 
 

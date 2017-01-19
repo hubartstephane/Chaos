@@ -88,8 +88,6 @@ public:
 	static int const TOKEN_TYPE_CONSONANT = 1;
 	static int const TOKEN_TYPE_VOWEL     = 2;
 	static int const TOKEN_TYPE_SPECIAL   = 3;
-	static int const TOKEN_TYPE_PUNCT     = 4;
-	static int const TOKEN_TYPE_SEPARATOR = 5;
 
 	/** returns true whether entry is a vowel */
 	static bool IsVowel(char c);

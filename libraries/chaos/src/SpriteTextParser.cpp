@@ -4,17 +4,17 @@
 namespace chaos
 {
 	// ============================================================
-	// TextParserData methods
+	// SpriteTextGeneratorData methods
 	// ============================================================
 
-	BitmapAtlas::CharacterSet const * TextParserData::GetCharacterSetFromName(char const * character_set_name) const
+	BitmapAtlas::CharacterSet const * SpriteTextGeneratorData::GetCharacterSetFromName(char const * character_set_name) const
 	{
 		BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
 		if (result == nullptr)
 		{
 			// for convenience, if we cannot find the character set, try to use the one on the top of the stack
-			if (parse_stack.size() > 0)
-				result = parse_stack.back().character_set;
+			if (generator_stack.size() > 0)
+				result = generator_stack.back().character_set;
 			// if we still have no character set, take the very first available
 			if (result == nullptr)
 			{
@@ -26,31 +26,31 @@ namespace chaos
 		return result;
 	}
 
-	void TextParserData::PushDuplicate()
+	void SpriteTextGeneratorData::PushDuplicate()
 	{
-		TextParseStackElement element = parse_stack.back();
-		parse_stack.push_back(element); // push a duplicate of previous element
+		SpriteTextStackElement element = generator_stack.back();
+		generator_stack.push_back(element); // push a duplicate of previous element
 	}
 
-	void TextParserData::PushCharacterSet(BitmapAtlas::CharacterSet const * character_set)
+	void SpriteTextGeneratorData::PushCharacterSet(BitmapAtlas::CharacterSet const * character_set)
 	{
-		TextParseStackElement element = parse_stack.back();
+		SpriteTextStackElement element = generator_stack.back();
 		if (character_set != nullptr)
 			element.character_set = character_set;
-		parse_stack.push_back(element); // push a copy of previous element, except the character set
+		generator_stack.push_back(element); // push a copy of previous element, except the character set
 	}
 
-	void TextParserData::PushColor(glm::vec3 const & color)
+	void SpriteTextGeneratorData::PushColor(glm::vec3 const & color)
 	{
-		TextParseStackElement element = parse_stack.back();
+		SpriteTextStackElement element = generator_stack.back();
 		element.color = color;
-		parse_stack.push_back(element); // push a copy of previous element, except the color
+		generator_stack.push_back(element); // push a copy of previous element, except the color
 	}
 
-	void TextParserData::EmitCharacters(char c, int count, TextParseParams const & params)
+	void SpriteTextGeneratorData::EmitCharacters(char c, int count, SpriteTextGeneratorParams const & params)
 	{
 		// get current character set
-		BitmapAtlas::CharacterSet const * character_set = parse_stack.back().character_set;
+		BitmapAtlas::CharacterSet const * character_set = generator_stack.back().character_set;
 		if (character_set == nullptr)
 			return;
 
@@ -65,30 +65,28 @@ namespace chaos
 	}
 
 
-	void TextParserData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, TextParseParams const & params)
+	void SpriteTextGeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, SpriteTextGeneratorParams const & params)
 	{
-		TextParseToken token;
-		token.type = (c != ' ') ? TextParseToken::TOKEN_CHARACTER : TextParseToken::TOKEN_WHITESPACE;
+		SpriteTextToken token;
 		token.character = c;
 		token.character_entry = entry;
 		token.character_set = character_set;
-		token.color = parse_stack.back().color;
+		token.color = generator_stack.back().color;
 		InsertTokenInLine(token, params);
 	}
 
-	void TextParserData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry, TextParseParams const & params)
+	void SpriteTextGeneratorData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry, SpriteTextGeneratorParams const & params)
 	{
-		TextParseToken token;
-		token.type = TextParseToken::TOKEN_BITMAP;
+		SpriteTextToken token;
 		token.bitmap_entry = entry;
 		InsertTokenInLine(token, params);
 	}
 
-	void TextParserData::InsertTokenInLine(TextParseToken & token, TextParseParams const & params)
+	void SpriteTextGeneratorData::InsertTokenInLine(SpriteTextToken & token, SpriteTextGeneratorParams const & params)
 	{
 		// if there was no line, insert the very first one ...
-		if (parse_result.size() == 0)
-			parse_result.push_back(TextParseLine());
+		if (generator_result.size() == 0)
+			generator_result.push_back(SpriteTextLine());
 
 		// insert the token
 		if (token.bitmap_entry != nullptr)
@@ -107,7 +105,7 @@ namespace chaos
 		else if (token.character_entry != nullptr)
 		{
 			// get the descender 
-			TextParseStackElement const & context = parse_stack.back();
+			SpriteTextStackElement const & context = generator_stack.back();
 			float descender = (context.character_set == nullptr) ? 0.0f : context.character_set->descender;
 
 			// scale the character back to the size of the scanline
@@ -129,10 +127,10 @@ namespace chaos
 			bitmap_position.x = token.position.x + params.character_spacing + token.size.x;
 			character_position.x = token.position.x + params.character_spacing + factor * (float)(token.character_entry->advance.x); 
 		}
-		parse_result.back().push_back(token);
+		generator_result.back().push_back(token);
 	}
 
-	void TextParserData::EndCurrentLine(TextParseParams const & params)
+	void SpriteTextGeneratorData::EndCurrentLine(SpriteTextGeneratorParams const & params)
 	{
 		// update position
 		float delta_y = params.line_height + params.line_spacing;
@@ -142,13 +140,13 @@ namespace chaos
 		character_position.x = 0.0f;
 		character_position.y -= delta_y;
 		// if there was no line, insert the very first one ...
-		if (parse_result.size() == 0)
-			parse_result.push_back(TextParseLine());
+		if (generator_result.size() == 0)
+			generator_result.push_back(SpriteTextLine());
 		// ... then you can add a new line
-		parse_result.push_back(TextParseLine());
+		generator_result.push_back(SpriteTextLine());
 	}
 
-	bool TextParserData::StartMarkup(char const * text, int & i, class TextParser & parser, TextParseParams const & params)
+	bool SpriteTextGeneratorData::StartMarkup(char const * text, int & i, class SpriteTextGenerator & generator, SpriteTextGeneratorParams const & params)
 	{
 		int j = i;
 		while (text[i] != 0)
@@ -163,7 +161,7 @@ namespace chaos
 												// the markup
 				std::string markup = std::string(&text[j], &text[i]);
 				// markup correspond to a bitmap, the current character MUST be ']'
-				auto bitmap = parser.GetBitmap(markup.c_str());
+				auto bitmap = generator.GetBitmap(markup.c_str());
 				if (bitmap != nullptr)
 				{
 					if (c == ']')
@@ -177,14 +175,14 @@ namespace chaos
 				if (c == ']')
 					return true;
 				// color markup found
-				auto color = parser.GetColor(markup.c_str());
+				auto color = generator.GetColor(markup.c_str());
 				if (color != nullptr)
 				{
 					PushColor(*color);
 					return true;
 				}
 				// character set markup found
-				auto character_set = parser.GetCharacterSet(markup.c_str());
+				auto character_set = generator.GetCharacterSet(markup.c_str());
 				if (character_set != nullptr)
 				{
 					PushCharacterSet(character_set);
@@ -201,10 +199,10 @@ namespace chaos
 	}
 
 	// ============================================================
-	// TextParser methods
+	// SpriteTextGenerator methods
 	// ============================================================
 
-	glm::vec3 const * TextParser::GetColor(char const * name) const
+	glm::vec3 const * SpriteTextGenerator::GetColor(char const * name) const
 	{
 		auto it = colors.find(name);
 		if (it == colors.end())
@@ -212,14 +210,14 @@ namespace chaos
 		return &it->second;
 	}
 
-	BitmapAtlas::BitmapEntry const * TextParser::GetBitmap(char const * name) const
+	BitmapAtlas::BitmapEntry const * SpriteTextGenerator::GetBitmap(char const * name) const
 	{
 		auto it = bitmaps.find(name);
 		if (it == bitmaps.end())
 			return nullptr;
 		return it->second;
 	}
-	BitmapAtlas::CharacterSet const * TextParser::GetCharacterSet(char const * name) const
+	BitmapAtlas::CharacterSet const * SpriteTextGenerator::GetCharacterSet(char const * name) const
 	{
 		auto it = character_sets.find(name);
 		if (it == character_sets.end())
@@ -227,7 +225,7 @@ namespace chaos
 		return it->second;
 	}
 
-	bool TextParser::IsNameValid(char const * name) const
+	bool SpriteTextGenerator::IsNameValid(char const * name) const
 	{
 		// ignore empty name
 		if (name == nullptr)
@@ -247,7 +245,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::AddColor(char const * name, glm::vec3 const & color)
+	bool SpriteTextGenerator::AddColor(char const * name, glm::vec3 const & color)
 	{
 		if (!IsNameValid(name))
 			return false;
@@ -255,7 +253,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::AddCharacterSet(char const * name, char const * font_name)
+	bool SpriteTextGenerator::AddCharacterSet(char const * name, char const * font_name)
 	{
 		assert(name != nullptr);
 		assert(font_name != nullptr);
@@ -266,7 +264,7 @@ namespace chaos
 		return AddCharacterSet(name, character_set);
 	}
 
-	bool TextParser::AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set)
+	bool SpriteTextGenerator::AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set)
 	{
 		assert(character_set != nullptr);
 
@@ -276,7 +274,7 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name)
+	bool SpriteTextGenerator::AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name)
 	{
 		assert(name != nullptr);
 		assert(bitmap_set_name != nullptr);
@@ -291,7 +289,7 @@ namespace chaos
 		return AddBitmap(name, entry);
 	}
 
-	bool TextParser::AddBitmap(char const * name, BitmapAtlas::BitmapEntry const * entry)
+	bool SpriteTextGenerator::AddBitmap(char const * name, BitmapAtlas::BitmapEntry const * entry)
 	{
 		assert(entry != nullptr);
 
@@ -301,45 +299,9 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::ParseText(char const * text, SpriteManager * sprite_manager, TextParseResult * parse_result, TextParseParams const & params)
-	{
-		assert(text != nullptr);
 
-		// initialize parse params stack with a default element that defines current color and fonts
-		TextParserData parse_data(atlas);
 
-		TextParseStackElement element;
-		element.color = params.default_color;
-		element.character_set = parse_data.GetCharacterSetFromName(params.character_set_name.c_str());
-		parse_data.parse_stack.push_back(element);
-
-		// all steps to properly generate the result
-		if (!GenerateLines(text, params, parse_data))
-			return false;
-		if (!RemoveUselessWhitespaces(parse_data))
-			return false;
-		if (!CutLines(params, parse_data))
-			return false;
-		if (!JustifyLines(params, parse_data))
-			return false;
-		if (!RemoveWhitespaces(parse_data))
-			return false;
-		if (!MoveSpritesToHotpoint(params, parse_data))
-			return false;
-
-		// output the sprites if wanted
-		if (sprite_manager != nullptr)
-			if (!GenerateSprites(sprite_manager, params, parse_data))
-				return false;
-
-		// output the result if wanted
-		if (parse_result != nullptr)
-			*parse_result = std::move(parse_data.parse_result);
-
-		return true;
-	}
-
-	bool TextParser::GenerateLines(char const * text, TextParseParams const & params, TextParserData & parse_data)
+	bool SpriteTextGenerator::GenerateLines(char const * text, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
 		// iterate over all characters
 		bool escape_character = false;
@@ -357,17 +319,17 @@ namespace chaos
 			// next line  : no different handling if previous character was an escape character
 			else if (c == '\n')
 			{
-				parse_data.EndCurrentLine(params);
+				generator_data.EndCurrentLine(params);
 			}
 			// tabulation : no different handling if previous character was an escape character
 			else if (c == '\t')
 			{
-				parse_data.EmitCharacters(' ', (params.tab_size < 1) ? 1 : params.tab_size, params);
+				generator_data.EmitCharacters(' ', (params.tab_size < 1) ? 1 : params.tab_size, params);
 			}
 			// if escape is set, simply display the incoming character no matter what it is (except \n \r \t)
 			else if (escape_character)
 			{
-				parse_data.EmitCharacters(c, 1, params);
+				generator_data.EmitCharacters(c, 1, params);
 			}
 			// start an escape
 			else if (new_escape_character)
@@ -377,40 +339,40 @@ namespace chaos
 			// close previously started markup 
 			else if (c == ']')
 			{
-				if (parse_data.parse_stack.size() <= 1) // the very first element is manually inserted. It should never be popped
+				if (generator_data.generator_stack.size() <= 1) // the very first element is manually inserted. It should never be popped
 					return false;
-				parse_data.parse_stack.pop_back();
+				generator_data.generator_stack.pop_back();
 			}
 			// start a new markup
 			else if (c == '[')
 			{
-				if (!parse_data.StartMarkup(text, ++i, *this, params)) // ill-formed markup
+				if (!generator_data.StartMarkup(text, ++i, *this, params)) // ill-formed markup
 					return false;
 			}
 			// finally, this is not a special character  		
 			else
 			{
-				parse_data.EmitCharacters(c, 1, params);
+				generator_data.EmitCharacters(c, 1, params);
 			}
 
 			escape_character = !escape_character && new_escape_character;
 		}
 
-		if (parse_data.parse_stack.size() != 1) // all markups should be correctly closed (except the very first we have manually inserted)
+		if (generator_data.generator_stack.size() != 1) // all markups should be correctly closed (except the very first we have manually inserted)
 			return false;
 
 		return true;
 	}
 
-	bool TextParser::GetBoundingBox(TextParseLine const & parse_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const
+	bool SpriteTextGenerator::GetBoundingBox(SpriteTextLine const & generator_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const
 	{
 		min_line_position.x = min_line_position.y = std::numeric_limits<float>::max();
 		max_line_position.x = max_line_position.y = -std::numeric_limits<float>::max();
 
-		if (parse_line.size() == 0)
+		if (generator_line.size() == 0)
 			return false;
 
-		for (TextParseToken const & token : parse_line)
+		for (SpriteTextToken const & token : generator_line)
 		{
 			min_line_position = glm::min(min_line_position, token.position);
 			max_line_position = glm::max(max_line_position, token.position + token.size);
@@ -418,15 +380,15 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const
+	bool SpriteTextGenerator::GetBoundingBox(SpriteTextResult const & generator_result, glm::vec2 & min_position, glm::vec2 & max_position) const
 	{
 		bool result = false;
-		if (parse_result.size() > 0)
+		if (generator_result.size() > 0)
 		{
 			min_position.x = min_position.y = std::numeric_limits<float>::max();
 			max_position.x = max_position.y = -std::numeric_limits<float>::max();
 
-			for (auto const & line : parse_result)
+			for (auto const & line : generator_result)
 			{
 				glm::vec2 min_line_position;
 				glm::vec2 max_line_position;
@@ -441,27 +403,27 @@ namespace chaos
 		return result;
 	}
 
-	void TextParser::MoveSprites(TextParseLine & parse_line, glm::vec2 const & offset)
+	void SpriteTextGenerator::MoveSprites(SpriteTextLine & generator_line, glm::vec2 const & offset)
 	{
 		if (offset.x != 0.0f || offset.y != 0.0f)
-			for (TextParseToken & token : parse_line)
+			for (SpriteTextToken & token : generator_line)
 				token.position += offset;
 	}
 
-	void TextParser::MoveSprites(TextParseResult & parse_result, glm::vec2 const & offset)
+	void SpriteTextGenerator::MoveSprites(SpriteTextResult & generator_result, glm::vec2 const & offset)
 	{
 		if (offset.x != 0.0f || offset.y != 0.0f)
-			for (auto & line : parse_result)
-				for (TextParseToken & token : line)
+			for (auto & line : generator_result)
+				for (SpriteTextToken & token : line)
 					token.position += offset;
 	}
 
-	bool TextParser::MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data)
+	bool SpriteTextGenerator::MoveSpritesToHotpoint(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
 		// compute the min/max bounding box
 		glm::vec2 min_position;
 		glm::vec2 max_position;
-		if (!GetBoundingBox(parse_data.parse_result, min_position, max_position)) // no sprite, nothing to do
+		if (!GetBoundingBox(generator_data.generator_result, min_position, max_position)) // no sprite, nothing to do
 			return true;
 
 		// displace all the sprites to match the position
@@ -469,17 +431,74 @@ namespace chaos
 			params.position -
 			Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, params.hotpoint_type);
 
-		MoveSprites(parse_data.parse_result, offset);
+		MoveSprites(generator_data.generator_result, offset);
 
 		return true;
 	}
 
-	bool TextParser::RemoveWhitespaces(TextParserData & parse_data)
+	bool SpriteTextGenerator::GenerateSprites(char const * text, SpriteManager * sprite_manager, SpriteTextResult * generator_result, SpriteTextGeneratorParams const & params)
 	{
-		for (auto & line : parse_data.parse_result)
+		assert(text != nullptr);
+
+		// initialize parse params stack with a default element that defines current color and fonts
+		SpriteTextGeneratorData generator_data(atlas);
+
+		SpriteTextStackElement element;
+		element.color = params.default_color;
+		element.character_set = generator_data.GetCharacterSetFromName(params.character_set_name.c_str());
+		generator_data.generator_stack.push_back(element);
+
+		// all steps to properly generate the result
+		if (!GenerateLines(text, params, generator_data))
+			return false;
+
+		
+
+
+		
+
+
+
+	#if 0
+
+		if (!RemoveUselessWhitespaces(generator_data))
+			return false;
+		if (!CutLines(params, generator_data))
+			return false;
+		if (!JustifyLines(params, generator_data))
+			return false;
+		if (!RemoveWhitespaces(generator_data))
+			return false;
+	#endif
+		if (!MoveSpritesToHotpoint(params, generator_data))
+			return false;
+
+		// output the sprites if wanted
+		if (sprite_manager != nullptr)
+			if (!GenerateSprites(sprite_manager, params, generator_data))
+				return false;
+
+		// output the result if wanted
+		if (generator_result != nullptr)
+			*generator_result = std::move(generator_data.generator_result);
+
+		return true;
+	}
+
+
+
+
+
+
+
+#if 0
+
+	bool SpriteTextGenerator::RemoveWhitespaces(SpriteTextGeneratorData & generator_data)
+	{
+		for (auto & line : generator_data.generator_result)
 		{
-			auto it = std::remove_if(line.begin(), line.end(), [](TextParseToken const & token) {
-				return (token.type == TextParseToken::TOKEN_WHITESPACE);
+			auto it = std::remove_if(line.begin(), line.end(), [](SpriteTextToken const & token) {
+				return (token.type == SpriteTextToken::TOKEN_WHITESPACE);
 			});
 
 			line.erase(it, line.end());
@@ -487,112 +506,93 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::RemoveUselessWhitespaces(TextParserData & parse_data)
+	bool SpriteTextGenerator::RemoveUselessWhitespaces(SpriteTextGeneratorData & generator_data)
 	{
 		// remove whitespace at the end of lines
-		for (auto & line : parse_data.parse_result)
-			while (line.size() > 0 && line.back().type == TextParseToken::TOKEN_WHITESPACE)
+		for (auto & line : generator_data.generator_result)
+			while (line.size() > 0 && line.back().type == SpriteTextToken::TOKEN_WHITESPACE)
 				line.pop_back();
 		// remove all empty lines at the end
-		while (parse_data.parse_result.size() > 0 && parse_data.parse_result.back().size() == 0)
-			parse_data.parse_result.pop_back();
+		while (generator_data.generator_result.size() > 0 && generator_data.generator_result.back().size() == 0)
+			generator_data.generator_result.pop_back();
 		return true;
 	}
 
-	bool TextParser::CutLines(TextParseParams const & params, TextParserData & parse_data)
+	bool SpriteTextGenerator::CutLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
 		if (params.max_text_width > 0)
 		{
-			TextParseResult parse_result;
+			SpriteTextResult generator_result;
 
 			float y = 0.0f;
-			for (auto const & line : parse_data.parse_result)
+			for (auto const & line : generator_data.generator_result)
 			{
 				// line may have been left empty after useless whitespace removal. 
 				// Can simply ignore it, no sprites will be generated for that
 				if (line.size() != 0)
-					CutOneLine(y, line, parse_result, params, parse_data);
+					CutOneLine(y, line, generator_result, params, generator_data);
 				// update the y position of characters
 				y -= params.line_height + params.line_spacing;
 			}
-			parse_data.parse_result = std::move(parse_result); // replace the line after filtering
+			generator_data.generator_result = std::move(generator_result); // replace the line after filtering
 		}
 		return true;
 	}
 
-	void TextParser::FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & parse_result, TextParseParams const & params)
+	void SpriteTextGenerator::FlushLine(float & x, float & y, SpriteTextLine & current_line, SpriteTextResult & generator_result, SpriteTextGeneratorParams const & params)
 	{
 		x = 0.0f;
 		y += params.line_height;
 
-		parse_result.push_back(std::move(current_line));
-		current_line = TextParseLine();
+		generator_result.push_back(std::move(current_line));
+		current_line = SpriteTextLine();
 	}
 
-	void TextParser::CutOneLine(float & y, TextParseLine const & line, TextParseResult & parse_result, TextParseParams const & params, TextParserData & parse_data)
+	void SpriteTextGenerator::CutOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & generator_result, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
 
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	bool TextParser::JustifyLines(TextParseParams const & params, TextParserData & parse_data)
+	bool SpriteTextGenerator::JustifyLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
-		if (params.alignment == TextParseParams::ALIGN_LEFT)
+		if (params.alignment == SpriteTextGeneratorParams::ALIGN_LEFT)
 			return true;
 
 		glm::vec2 min_position;
 		glm::vec2 max_position;
-		if (!GetBoundingBox(parse_data.parse_result, min_position, max_position)) // nothing to do for empty sprite
+		if (!GetBoundingBox(generator_data.generator_result, min_position, max_position)) // nothing to do for empty sprite
 			return true;
 
 		float W1 = max_position.x - min_position.x;
-		for (TextParseLine & line : parse_data.parse_result)
+		for (SpriteTextLine & line : generator_data.generator_result)
 		{
 			glm::vec2 min_line_position;
 			glm::vec2 max_line_position;
 			if (GetBoundingBox(line, min_line_position, max_line_position))
 			{
 				float W2 = max_line_position.x - min_line_position.x;
-				if (params.alignment == TextParseParams::ALIGN_RIGHT)
+				if (params.alignment == SpriteTextGeneratorParams::ALIGN_RIGHT)
 				{
 					MoveSprites(line, glm::vec2(W1 - W2, 0.0f));
 				}
-				else if (params.alignment == TextParseParams::ALIGN_CENTER)
+				else if (params.alignment == SpriteTextGeneratorParams::ALIGN_CENTER)
 				{
 					MoveSprites(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
 				}
-				else if (params.alignment == TextParseParams::ALIGN_JUSTIFY)
+				else if (params.alignment == SpriteTextGeneratorParams::ALIGN_JUSTIFY)
 				{
 					if (W1 != W2)
 					{
 						// count the number of whitespace token
 						int   whitespace_count = 0;
 						float whitespace_width = 0.0f;
-						for (TextParseToken const & token : line)
+						for (SpriteTextToken const & token : line)
 						{
 							// XXX : there may be multiple fonts on the same line, so several whitespace size.
 							//       there is no universal reference for a whitespace size
-							if (token.type == TextParseToken::TOKEN_CHARACTER)
+							if (token.type == SpriteTextToken::TOKEN_CHARACTER)
 								whitespace_width = max(whitespace_width, token.size.x); // considere that the widdest character is a reference for whitespace size
-							else if (token.type == TextParseToken::TOKEN_WHITESPACE)
+							else if (token.type == SpriteTextToken::TOKEN_WHITESPACE)
 								++whitespace_count;
 						}
 						// no whitespace, we cannot redistribute extra size => next line
@@ -609,10 +609,10 @@ namespace chaos
 
 						// redistribute extra space
 						float offset = 0.0f;
-						for (TextParseToken & token : line)
+						for (SpriteTextToken & token : line)
 						{
 							token.position.x += offset;
-							if (token.type == TextParseToken::TOKEN_WHITESPACE)
+							if (token.type == SpriteTextToken::TOKEN_WHITESPACE)
 								offset += extra_whitespace_width;
 						}
 					}
@@ -622,20 +622,17 @@ namespace chaos
 		return true;
 	}
 
-	bool TextParser::GenerateSprites(SpriteManager * sprite_manager, TextParseParams const & params, TextParserData & parse_data)
-	{
-		for (TextParseLine const & line : parse_data.parse_result)
-		{
-			for (TextParseToken const & token : line)
-			{
-				if (token.type == TextParseToken::TOKEN_NONE)
-					continue;
-				if (token.type == TextParseToken::TOKEN_WHITESPACE)
-					continue;
+#endif
 
-				if (token.bitmap_entry != nullptr)
+	bool SpriteTextGenerator::GenerateSprites(SpriteManager * sprite_manager, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
+	{
+		for (SpriteTextLine const & line : generator_data.generator_result)
+		{
+			for (SpriteTextToken const & token : line)
+			{
+				if (token.IsBitmap())
 					sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position, token.size, Hotpoint::BOTTOM_LEFT);
-				if (token.character_entry != nullptr)
+				else if (token.IsVisibleCharacter())
 					sprite_manager->AddSpriteCharacter(token.character_entry, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
 			}
 		}

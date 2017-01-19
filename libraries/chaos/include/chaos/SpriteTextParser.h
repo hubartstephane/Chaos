@@ -8,7 +8,7 @@
 namespace chaos
 {
 	/** some parameters used during text parsing */
-	class TextParseParams
+	class SpriteTextGeneratorParams
 	{
 	public:
 
@@ -20,7 +20,7 @@ namespace chaos
 		/** the size to use for the line */
 		float line_height{ 32.0f };
 		/** spacing between lines */
-		float line_spacing{5.0f};
+		float line_spacing{ 5.0f };
 		/** spacing between characters */
 		float character_spacing{ 5.0f };
 		/** padding for bitmaps */
@@ -29,6 +29,8 @@ namespace chaos
 		float max_text_width{ 0.0f };
 		/** word wrap enabled */
 		bool word_wrap{ true };
+		/** the factor for space to apply when lines are to be justified */
+		float justify_space_factor{ 2.0f };
 		/** the line alignment */
 		int alignment{ ALIGN_LEFT };
 		/** the color to use by default */
@@ -44,78 +46,79 @@ namespace chaos
 		int hotpoint_type{ Hotpoint::BOTTOM_LEFT };
 	};
 
-	/** during parsing, some 'commands' are put on the stack for text formating, TextParseStackElement is such a command */
-	class TextParseStackElement
+	/** during parsing, some 'commands' are put on the stack for text formating, SpriteTextStackElement is such a command */
+	class SpriteTextStackElement
 	{
 	public:
 
 		/** the color to use */
 		glm::vec3 color;
 		/** the character set selected */
-		BitmapAtlas::CharacterSet const * character_set{nullptr};
+		BitmapAtlas::CharacterSet const * character_set{ nullptr };
 	};
 
 	/** a token generated during parsing */
-	class TextParseToken
+	class SpriteTextToken
 	{
-	public:
-
-		static int const TOKEN_NONE       = 0;
-		static int const TOKEN_BITMAP     = 1;
-		static int const TOKEN_CHARACTER  = 2;
-		static int const TOKEN_WHITESPACE = 3;
 
 	public:
 
-		/** the type of the token */
-		int type{TOKEN_NONE};
+		/** returns true whether the token is a bitmap */
+		bool IsBitmap() const { return (bitmap_entry != nullptr); }
+		/** returns true whether the token is a character */
+		bool IsCharacter() const { return (character_entry != nullptr); }
+		/** returns true whethe the token correspond to a visible character */
+		bool IsVisibleCharacter() const { return (IsCharacter() && character != ' '); }
+
+	public:
+
 		/** the character */
-		char character{0};
+		char character{ 0 };
 		/** the position of the generated image (BOTTOM LEFT) */
-		glm::vec2 position{0.0f, 0.0f};
+		glm::vec2 position{ 0.0f, 0.0f };
 		/** the size of the generated image */
 		glm::vec2 size{ 0.0f, 0.0f };
 		/** the color of the token */
 		glm::vec3 color{ 1.0f, 1.0f, 1.0f };
 		/** the corresponding bitmap (if valid) */
-		BitmapAtlas::BitmapEntry const * bitmap_entry{nullptr};
+		BitmapAtlas::BitmapEntry const * bitmap_entry{ nullptr };
 		/** the corresponding character (if valid) */
-		BitmapAtlas::CharacterEntry const * character_entry{nullptr};
+		BitmapAtlas::CharacterEntry const * character_entry{ nullptr };
 		/** the corresponding character set (if valid) */
 		BitmapAtlas::CharacterSet const * character_set{ nullptr };
 	};
 
 	/** the of a line of parsing */
-	using TextParseLine = std::vector<TextParseToken>;
+	using SpriteTextLine = std::vector<SpriteTextToken>;
 	/** the result of parsing */
-	using TextParseResult = std::vector<TextParseLine>;
+	using SpriteTextResult = std::vector<SpriteTextLine>;
 
 	/** an utility structure used to contains data during parsing */
-	class TextParserData
+	class SpriteTextGeneratorData
 	{
 	public:
 
 		/** the constructor */
-		TextParserData(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
+		SpriteTextGeneratorData(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
 
 		/** start the markup */
-		bool StartMarkup(char const * text, int & i, class TextParser & parser, TextParseParams const & params);
+		bool StartMarkup(char const * text, int & i, class SpriteTextGenerator & generator, SpriteTextGeneratorParams const & params);
 		/** utility method to emit characters */
-		void EmitCharacters(char c, int count, TextParseParams const & params);
+		void EmitCharacters(char c, int count, SpriteTextGeneratorParams const & params);
 		/** utility method to emit character */
-		void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, TextParseParams const & params);
+		void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, SpriteTextGeneratorParams const & params);
 		/** emit a bitmap */
-		void EmitBitmap(BitmapAtlas::BitmapEntry const * entry, TextParseParams const & params);
+		void EmitBitmap(BitmapAtlas::BitmapEntry const * entry, SpriteTextGeneratorParams const & params);
 		/** end the current line */
-		void EndCurrentLine(TextParseParams const & params);
+		void EndCurrentLine(SpriteTextGeneratorParams const & params);
 		/** insert a token */
-		void InsertTokenInLine(TextParseToken & token, TextParseParams const & params);
+		void InsertTokenInLine(SpriteTextToken & token, SpriteTextGeneratorParams const & params);
 
 		/** duplicate the last stack element */
 		void PushDuplicate();
-		/** add an element on parse stack : keep color, but change current character_set */
+		/** add an element on generator stack : keep color, but change current character_set */
 		void PushCharacterSet(BitmapAtlas::CharacterSet const * character_set);
-		/** add an element on parse stack : keep character_set, but change current color */
+		/** add an element on generator stack : keep character_set, but change current color */
 		void PushColor(glm::vec3 const & color);
 
 		/** get a character set from its name */
@@ -126,39 +129,51 @@ namespace chaos
 		/** the atlas in used */
 		BitmapAtlas::AtlasBase const & atlas;
 		/** current line position for a bitmap (below scanline, at descender level) */
-		glm::vec2 bitmap_position{0.0f, 0.0f};
+		glm::vec2 bitmap_position{ 0.0f, 0.0f };
 		/** current line position for a character (below scanline, at descender level) */
 		glm::vec2 character_position{ 0.0f, 0.0f };
 		/** the result */
-		TextParseResult parse_result;
+		SpriteTextResult generator_result;
 		/** the stack used for parsing */
-		std::vector<TextParseStackElement> parse_stack;
+		std::vector<SpriteTextStackElement> generator_stack;
 	};
 
-	/** the parser */
-	class TextParser
+
+
+
+
+
+
+
+
+
+
+
+
+	/** the text generator */
+	class SpriteTextGenerator
 	{
-		friend class TextParserData;
+		friend class SpriteTextGeneratorData;
 
 	public:
 
 		/** constructor with atlas initialization */
-		TextParser(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
+		SpriteTextGenerator(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
 
-		/** add a named color in the parser */
+		/** add a named color in the generator */
 		bool AddColor(char const * name, glm::vec3 const & color);
-		/** add a named bitmap in the parser */
+		/** add a named bitmap in the generator */
 		bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
-		/** add a named bitmap in the parser */
+		/** add a named bitmap in the generator */
 		bool AddBitmap(char const * name, BitmapAtlas::BitmapEntry const * entry);
 
-		/** add a named character set in the parser */
+		/** add a named character set in the generator */
 		bool AddCharacterSet(char const * name, char const * font_name);
-		/** add a named character set in the parser */
+		/** add a named character set in the generator */
 		bool AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set);
 
-		/** the main method to parse a text */
-		bool ParseText(char const * text, SpriteManager * sprite_manager = nullptr, TextParseResult * parse_result = nullptr, TextParseParams const & params = TextParseParams());
+		/** the main method to generator a text */
+		bool GenerateSprites(char const * text, SpriteManager * sprite_manager = nullptr, SpriteTextResult * generator_result = nullptr, SpriteTextGeneratorParams const & params = SpriteTextGeneratorParams());
 
 	protected:
 
@@ -171,34 +186,48 @@ namespace chaos
 		/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
 		bool IsNameValid(char const * name) const;
 
+
+
+		
+
+
 		/** generate the lines, without cutting them */
-		bool GenerateLines(char const * text, TextParseParams const & params, TextParserData & parse_data);
+		bool GenerateLines(char const * text, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
+
+	#if 0
 		/** cut the lines so they are not too big. Cut them only when it is possible */
-		bool CutLines(TextParseParams const & params, TextParserData & parse_data);
+		bool CutLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 		/** utility method to cut one line an insert it into a new result */
-		void CutOneLine(float & y, TextParseLine const & line, TextParseResult & result_lines, TextParseParams const & params, TextParserData & parse_data);
+		void CutOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
+
+
+
+
 		/** goto next line */
-		void FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & result_lines, TextParseParams const & params);
+		void FlushLine(float & x, float & y, SpriteTextLine & current_line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params);
 		/** Remove all whitespaces */
-		bool RemoveWhitespaces(TextParserData & parse_data);
+		bool RemoveWhitespaces(SpriteTextGeneratorData & generator_data);
 		/** remove whitespaces at end of lines, and empty lines at the end */
-		bool RemoveUselessWhitespaces(TextParserData & parse_data);
+		bool RemoveUselessWhitespaces(SpriteTextGeneratorData & generator_data);
+	#endif
+
+
 		/** update lines according to justification */
-		bool JustifyLines(TextParseParams const & params, TextParserData & parse_data);
+		bool JustifyLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 		/** apply offset for hotpoint */
-		bool MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data);
+		bool MoveSpritesToHotpoint(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 
 		/** generate the sprites */
-		bool GenerateSprites(SpriteManager * sprite_manager, TextParseParams const & params, TextParserData & parse_data);
+		bool GenerateSprites(SpriteManager * sprite_manager, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 
 		/** compute the bounding box for all sprite generated */
-		bool GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
+		bool GetBoundingBox(SpriteTextResult const & generator_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
 		/** compute the bounding box for a single line */
-		bool GetBoundingBox(TextParseLine const & parse_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
+		bool GetBoundingBox(SpriteTextLine const & generator_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
 		/** move all sprites in a line */
-		void MoveSprites(TextParseLine & parse_line, glm::vec2 const & offset);
+		void MoveSprites(SpriteTextLine & generator_line, glm::vec2 const & offset);
 		/** move all sprites */
-		void MoveSprites(TextParseResult & parse_result, glm::vec2 const & offset);
+		void MoveSprites(SpriteTextResult & generator_result, glm::vec2 const & offset);
 
 	public:
 

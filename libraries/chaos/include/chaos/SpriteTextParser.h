@@ -7,42 +7,42 @@
 
 namespace chaos
 {
-  /** some parameters used during text parsing */
-  class TextParseParams
-  {
-  public:
+	/** some parameters used during text parsing */
+	class TextParseParams
+	{
+	public:
 
-    static const int ALIGN_LEFT = 0;
-    static const int ALIGN_RIGHT = 1;
-    static const int ALIGN_CENTER = 2;
-    static const int ALIGN_JUSTIFY = 3;
+		static const int ALIGN_LEFT = 0;
+		static const int ALIGN_RIGHT = 1;
+		static const int ALIGN_CENTER = 2;
+		static const int ALIGN_JUSTIFY = 3;
 
-    /** the size to use for the line */
-    float line_height{ 32.0f };
-    /** spacing between lines */
-    float line_spacing{5.0f};
-    /** spacing between characters */
-    float character_spacing{ 5.0f };
-    /** padding for bitmaps */
-    glm::vec2 bitmap_padding{ 5.0f, 5.0f };
-    /** the text limits */
-    float max_text_width{ 0.0f };
-    /** word wrap enabled */
-    bool word_wrap{ true };
-    /** the line alignment */
-    int alignment{ ALIGN_LEFT };
-    /** the color to use by default */
-    glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
-    /** the font to use by default */
-    std::string character_set_name;
-    /** tab size */
-    int tab_size{ 2 };
+		/** the size to use for the line */
+		float line_height{ 32.0f };
+		/** spacing between lines */
+		float line_spacing{5.0f};
+		/** spacing between characters */
+		float character_spacing{ 5.0f };
+		/** padding for bitmaps */
+		glm::vec2 bitmap_padding{ 5.0f, 5.0f };
+		/** the text limits */
+		float max_text_width{ 0.0f };
+		/** word wrap enabled */
+		bool word_wrap{ true };
+		/** the line alignment */
+		int alignment{ ALIGN_LEFT };
+		/** the color to use by default */
+		glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
+		/** the font to use by default */
+		std::string character_set_name;
+		/** tab size */
+		int tab_size{ 2 };
 
-    /** the position */
-    glm::vec2 position{ 0.0f , 0.0f };
-    /** the hotpoint */
-    int hotpoint_type{ Hotpoint::BOTTOM_LEFT };
-  };
+		/** the position */
+		glm::vec2 position{ 0.0f , 0.0f };
+		/** the hotpoint */
+		int hotpoint_type{ Hotpoint::BOTTOM_LEFT };
+	};
 
 	/** during parsing, some 'commands' are put on the stack for text formating, TextParseStackElement is such a command */
 	class TextParseStackElement
@@ -55,7 +55,7 @@ namespace chaos
 		BitmapAtlas::CharacterSet const * character_set{nullptr};
 	};
 
-  /** a token generated during parsing */
+	/** a token generated during parsing */
 	class TextParseToken
 	{
 	public:
@@ -73,10 +73,10 @@ namespace chaos
 		char character{0};
 		/** the position of the generated image (BOTTOM LEFT) */
 		glm::vec2 position{0.0f, 0.0f};
-    /** the size of the generated image */
-    glm::vec2 size{ 0.0f, 0.0f };
-    /** the color of the token */
-    glm::vec3 color{ 1.0f, 1.0f, 1.0f };
+		/** the size of the generated image */
+		glm::vec2 size{ 0.0f, 0.0f };
+		/** the color of the token */
+		glm::vec3 color{ 1.0f, 1.0f, 1.0f };
 		/** the corresponding bitmap (if valid) */
 		BitmapAtlas::BitmapEntry const * bitmap_entry{nullptr};
 		/** the corresponding character (if valid) */
@@ -85,13 +85,10 @@ namespace chaos
 		BitmapAtlas::CharacterSet const * character_set{ nullptr };
 	};
 
-
-  /** groups of token */
-  using TextTokenGroup = std::vector<std::pair<size_t, size_t>>;
-  /** the of a line of parsing */
-  using TextParseLine = std::vector<TextParseToken>;
-  /** the result of parsing */
-  using TextParseResult = std::vector<TextParseLine>;
+	/** the of a line of parsing */
+	using TextParseLine = std::vector<TextParseToken>;
+	/** the result of parsing */
+	using TextParseResult = std::vector<TextParseLine>;
 
 	/** an utility structure used to contains data during parsing */
 	class TextParserData
@@ -133,15 +130,15 @@ namespace chaos
 		/** current line position for a character (below scanline, at descender level) */
 		glm::vec2 character_position{ 0.0f, 0.0f };
 		/** the result */
-    TextParseResult parse_result;
+		TextParseResult parse_result;
 		/** the stack used for parsing */
 		std::vector<TextParseStackElement> parse_stack;
 	};
 
-  /** the parser */
+	/** the parser */
 	class TextParser
 	{
-    friend class TextParserData;
+		friend class TextParserData;
 
 	public:
 
@@ -163,7 +160,7 @@ namespace chaos
 		/** the main method to parse a text */
 		bool ParseText(char const * text, SpriteManager * sprite_manager = nullptr, TextParseResult * parse_result = nullptr, TextParseParams const & params = TextParseParams());
 
-  protected:
+	protected:
 
 		/** get a color by its name */
 		glm::vec3 const * GetColor(char const * name) const;
@@ -182,31 +179,26 @@ namespace chaos
 		void CutOneLine(float & y, TextParseLine const & line, TextParseResult & result_lines, TextParseParams const & params, TextParserData & parse_data);
 		/** goto next line */
 		void FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & result_lines, TextParseParams const & params);
-		/** insert all tokens of a group in one line */
-		void InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, TextParseLine const & line, TextParseLine & current_line);
-    /** Remove all whitespaces */
-    bool RemoveWhitespaces(TextParserData & parse_data);
+		/** Remove all whitespaces */
+		bool RemoveWhitespaces(TextParserData & parse_data);
 		/** remove whitespaces at end of lines, and empty lines at the end */
 		bool RemoveUselessWhitespaces(TextParserData & parse_data);
 		/** update lines according to justification */
 		bool JustifyLines(TextParseParams const & params, TextParserData & parse_data);
-    /** apply offset for hotpoint */
-    bool MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data);
+		/** apply offset for hotpoint */
+		bool MoveSpritesToHotpoint(TextParseParams const & params, TextParserData & parse_data);
 
 		/** generate the sprites */
 		bool GenerateSprites(SpriteManager * sprite_manager, TextParseParams const & params, TextParserData & parse_data);
-		/** group tokens */
-    TextTokenGroup GroupTokens(TextParseLine const & line);
 
-
-    /** compute the bounding box for all sprite generated */
-    bool GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
-    /** compute the bounding box for a single line */
-    bool GetBoundingBox(TextParseLine const & parse_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
-    /** move all sprites in a line */
-    void MoveSprites(TextParseLine & parse_line, glm::vec2 const & offset);
-    /** move all sprites */
-    void MoveSprites(TextParseResult & parse_result, glm::vec2 const & offset);
+		/** compute the bounding box for all sprite generated */
+		bool GetBoundingBox(TextParseResult const & parse_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
+		/** compute the bounding box for a single line */
+		bool GetBoundingBox(TextParseLine const & parse_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
+		/** move all sprites in a line */
+		void MoveSprites(TextParseLine & parse_line, glm::vec2 const & offset);
+		/** move all sprites */
+		void MoveSprites(TextParseResult & parse_result, glm::vec2 const & offset);
 
 	public:
 

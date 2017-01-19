@@ -11,6 +11,16 @@
 #if 0
 
 
+
+bc
+bd
+bf
+bg
+bh
+bj
+
+opti
+
 an
 amiante
 #endif
@@ -74,10 +84,12 @@ public:
 	};
 
 	/** the types for tokens */
-	static int const TOKEN_TYPE_UNKNOWN = 0;
+	static int const TOKEN_TYPE_UNKNOWN   = 0;
 	static int const TOKEN_TYPE_CONSONANT = 1;
-	static int const TOKEN_TYPE_VOWEL = 2;
-	static int const TOKEN_TYPE_SPECIAL = 3;
+	static int const TOKEN_TYPE_VOWEL     = 2;
+	static int const TOKEN_TYPE_SPECIAL   = 3;
+	static int const TOKEN_TYPE_PUNCT     = 4;
+	static int const TOKEN_TYPE_SEPARATOR = 5;
 
 	/** returns true whether entry is a vowel */
 	static bool IsVowel(char c);
@@ -316,30 +328,10 @@ void TestCutWord(char const * str)
 	chaos::LogTools::Log("TestCutWord[%s] = [%s]", str, debug_string.c_str());
 }
 
-
-
-int _tmain(int argc, char ** argv, char ** env)
+void CutDirectionnaryWords(char const * filename)
 {
-	chaos::Application::Initialize(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	TestCutWord("bonjour");
-	TestCutWord("peuple");
-	TestCutWord("trottinette");
-	TestCutWord("lance-pierre");
-	TestCutWord("aqueuse");
-	TestCutWord("autour");
-	TestCutWord("absent");
-	TestCutWord("ancien");
-	TestCutWord("comptable");
-	TestCutWord("aigres-douces");
-
-#if 1
-
 	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "english_dictionnary.txt").string().c_str());
-	//std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / "french_dictionnary.txt").string().c_str());
+	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / filename).string().c_str());
 
 	if (dictionnary.size() > 0)
 	{
@@ -361,8 +353,28 @@ int _tmain(int argc, char ** argv, char ** env)
 			chaos::WinTools::ShowFile(dst_file.string().c_str());
 		}
 	}
+}
 
-#endif
+int _tmain(int argc, char ** argv, char ** env)
+{
+	chaos::Application::Initialize(argc, argv, env);
+
+	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+
+	TestCutWord("bonjour");
+	TestCutWord("peuple");
+	TestCutWord("trottinette");
+	TestCutWord("lance-pierre");
+	TestCutWord("aqueuse");
+	TestCutWord("autour");
+	TestCutWord("absent");
+	TestCutWord("ancien");
+	TestCutWord("comptable");
+	TestCutWord("aigres-douces");
+
+
+	CutDirectionnaryWords("french_dictionnary.txt");
+	CutDirectionnaryWords("english_dictionnary.txt");
 
 	chaos::WinTools::PressToContinue();
 

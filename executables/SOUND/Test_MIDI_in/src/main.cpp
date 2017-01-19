@@ -151,6 +151,15 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+	int a = 83;
+	int b = 0;
+
+	int c = ((a & 127) << 7) + b;
+	
+
+
+	return 0;
+
 	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();

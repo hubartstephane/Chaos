@@ -301,15 +301,6 @@ namespace chaos
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
 	bool TextParser::ParseText(char const * text, SpriteManager * sprite_manager, TextParseResult * parse_result, TextParseParams const & params)
 	{
 		assert(text != nullptr);
@@ -508,53 +499,6 @@ namespace chaos
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	TextTokenGroup TextParser::GroupTokens(TextParseLine const & line)
-	{
-		TextTokenGroup result;
-
-		size_t last_group_type = TextParseToken::TOKEN_NONE;
-
-		size_t count = line.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			TextParseToken const & token = line[i];
-			if (token.type == TextParseToken::TOKEN_BITMAP)
-				result.push_back(std::make_pair(i, i)); // bitmap are always in their own group        
-			else if (token.type != last_group_type)
-				result.push_back(std::make_pair(i, i)); // create a new group for this element of a new type          
-			else
-			{
-				if (result.size() == 0)
-					result.push_back(std::make_pair(i, i)); // insert the first group
-				else
-					++result.back().second = i; // concat element in its group
-			}
-			last_group_type = token.type;
-		}
-
-		return result;
-	}
-
 	bool TextParser::CutLines(TextParseParams const & params, TextParserData & parse_data)
 	{
 		if (params.max_text_width > 0)
@@ -576,16 +520,6 @@ namespace chaos
 		return true;
 	}
 
-	void TextParser::InsertAllTokensInLine(float & x, float & y, std::pair<size_t, size_t> const & group, TextParseLine const & line, TextParseLine & current_line)
-	{
-		for (size_t i = group.first; i <= group.second; ++i)
-		{
-			TextParseToken const & token = line[i]; // the token to insert
-
-
-		}
-	}
-
 	void TextParser::FlushLine(float & x, float & y, TextParseLine & current_line, TextParseResult & parse_result, TextParseParams const & params)
 	{
 		x = 0.0f;
@@ -597,75 +531,7 @@ namespace chaos
 
 	void TextParser::CutOneLine(float & y, TextParseLine const & line, TextParseResult & parse_result, TextParseParams const & params, TextParserData & parse_data)
 	{
-		size_t initial_line_count = parse_result.size();
 
-		// token are grouped as consecutive elements of same type
-		// except for bitmaps that are in groups of one element
-		// group = [index first element, index of last element]
-		TextTokenGroup token_groups = GroupTokens(line);
-
-		// rules
-		//   -an initial line may be split into multiples lines
-		//   -do not insert WHITESPACES at the beginning of those new lines (except for the very first line maybe)
-
-		TextParseLine current_line;
-		float x = 0.0f;
-
-		// iterate over all groups a try to insert them in lines
-		size_t group_count = token_groups.size();
-		for (size_t i = 0; i < group_count; ++i)
-		{
-			auto const & group = token_groups[i];
-
-			int group_type = line[group.first].type;
-
-			if (group_type == TextParseToken::TOKEN_WHITESPACE)
-			{
-				if (parse_result.size() != initial_line_count) // this is an additional line
-					if (current_line.size() == 0)                // that have no previous entry : skip the group
-						continue;
-
-				InsertAllTokensInLine(x, y, group, line, current_line); // insert all whitespace in this line
-			}
-			else
-			{
-				float w1 = line[group.first].position.x;
-				float w2 = line[group.second].position.x + line[group.second].size.x;
-
-				float group_width = (w2 - w1);
-
-				// the group cannot fully fit in this line. Is it worth splitting the group on several lines ?
-				if (x + group_width > params.max_text_width)
-				{
-					// the group would fit entirely in the next line 
-					if (group_width <= params.max_text_width)
-					{
-						FlushLine(x, y, current_line, parse_result, params);
-						InsertAllTokensInLine(x, y, group, line, current_line); // go to next line, insert the whole group
-					}
-					// the group is too big, even for empty line
-					else
-					{
-						// try to reduce bitmap clamping by changing line
-						if (x > 0.0f && group_type == TextParseToken::TOKEN_BITMAP)
-						{
-							FlushLine(x, y, current_line, parse_result, params);
-							InsertAllTokensInLine(x, y, group, line, current_line); // go to next line, insert the bitmap (the group)
-						}
-						else
-						{
-
-
-						}
-					}
-				}
-				// the group can fully be contained in this line
-				else
-				{
-					InsertAllTokensInLine(x, y, group, line, current_line); // you can fully insert the group with no splitting
-				}
-			}
-		}
 	}
 
 

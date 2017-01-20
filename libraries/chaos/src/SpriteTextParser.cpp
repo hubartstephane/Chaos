@@ -452,23 +452,13 @@ namespace chaos
 		if (!GenerateLines(text, params, generator_data))
 			return false;
 
-		// compute line dispositions
+		// break the lines
 		if (!BreakLines(params, generator_data))
 			return false;
-		
-
-
-		
-
-
-
-	#if 0
-
-		if (!CutLines(params, generator_data))
-			return false;
+		// justification
 		if (!JustifyLines(params, generator_data))
 			return false;
-	#endif
+		// finally, recenter the whole sprites
 		if (!MoveSpritesToHotpoint(params, generator_data))
 			return false;
 
@@ -491,20 +481,35 @@ namespace chaos
 
 		SpriteTextResult generator_result;
 		
-
 		float y = 0.0f;
 		for (auto & line : generator_data.generator_result)
 		{
-
-
-			// update the y position of characters
+			if (line.size() != 0)
+				BreakOneLine(y, line, generator_result, params, generator_data);			
 			y -= params.line_height + params.line_spacing;
 		}
 
-		std::swap(generator_data.generator_result, generator_result);
+	//	std::swap(generator_data.generator_result, generator_result);
 
 		return true;
 	}
+
+	void SpriteTextGenerator::BreakOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
+	{
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -514,26 +519,7 @@ namespace chaos
 
 
 
-	bool SpriteTextGenerator::CutLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
-	{
-		if (params.max_text_width > 0)
-		{
-			SpriteTextResult generator_result;
 
-			float y = 0.0f;
-			for (auto const & line : generator_data.generator_result)
-			{
-				// line may have been left empty after useless whitespace removal. 
-				// Can simply ignore it, no sprites will be generated for that
-				if (line.size() != 0)
-					CutOneLine(y, line, generator_result, params, generator_data);
-				// update the y position of characters
-				y -= params.line_height + params.line_spacing;
-			}
-			generator_data.generator_result = std::move(generator_result); // replace the line after filtering
-		}
-		return true;
-	}
 
 	void SpriteTextGenerator::FlushLine(float & x, float & y, SpriteTextLine & current_line, SpriteTextResult & generator_result, SpriteTextGeneratorParams const & params)
 	{
@@ -544,21 +530,25 @@ namespace chaos
 		current_line = SpriteTextLine();
 	}
 
-	void SpriteTextGenerator::CutOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & generator_result, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
-	{
-
-	}
+#endif
 
 	bool SpriteTextGenerator::JustifyLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
+		// left align : nothing to do
 		if (params.alignment == SpriteTextGeneratorParams::ALIGN_LEFT)
 			return true;
 
+		// justifaction : cannot increase line size if the factor is below 1.0
+		if (params.alignment == SpriteTextGeneratorParams::ALIGN_JUSTIFY && params.justify_space_factor <= 1.0f)
+			return true;
+
+		// compute the whole text bounding box
 		glm::vec2 min_position;
 		glm::vec2 max_position;
 		if (!GetBoundingBox(generator_data.generator_result, min_position, max_position)) // nothing to do for empty sprite
 			return true;
 
+		// apply the modifications
 		float W1 = max_position.x - min_position.x;
 		for (SpriteTextLine & line : generator_data.generator_result)
 		{
@@ -567,49 +557,58 @@ namespace chaos
 			if (GetBoundingBox(line, min_line_position, max_line_position))
 			{
 				float W2 = max_line_position.x - min_line_position.x;
+
+				// current line size is exactly the biggest line. No modification to do
+				if (W1 == W2)
+					continue;
+
+				// right align
 				if (params.alignment == SpriteTextGeneratorParams::ALIGN_RIGHT)
 				{
 					MoveSprites(line, glm::vec2(W1 - W2, 0.0f));
 				}
+				// center align
 				else if (params.alignment == SpriteTextGeneratorParams::ALIGN_CENTER)
 				{
 					MoveSprites(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
 				}
-				else if (params.alignment == SpriteTextGeneratorParams::ALIGN_JUSTIFY)
+				// justification
+				else if (params.alignment == SpriteTextGeneratorParams::ALIGN_JUSTIFY && W2 < W1) // cannot justify to decrease line size 
 				{
-					if (W1 != W2)
+					// count the total size of whitespace token						
+					float whitespace_width = 0.0f;
+					for (SpriteTextToken const & token : line)
 					{
-						// count the number of whitespace token
-						int   whitespace_count = 0;
-						float whitespace_width = 0.0f;
-						for (SpriteTextToken const & token : line)
+						if (token.IsWhitespaceCharacter())
 						{
-							// XXX : there may be multiple fonts on the same line, so several whitespace size.
-							//       there is no universal reference for a whitespace size
-							if (token.type == SpriteTextToken::TOKEN_CHARACTER)
-								whitespace_width = max(whitespace_width, token.size.x); // considere that the widdest character is a reference for whitespace size
-							else if (token.type == SpriteTextToken::TOKEN_WHITESPACE)
-								++whitespace_count;
+							float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+
+							whitespace_width += factor * token.character_entry->advance.x;
 						}
-						// no whitespace, we cannot redistribute extra size => next line
-						if (whitespace_count == 0 || whitespace_width == 0.0f)
-							continue;
+					}
 
-						// count how much space must be redistributed for each whitespace
-						float extra_whitespace_width = MathTools::CastAndDiv<float>(W1 - W2, whitespace_count);
+					// no whitespace, we cannot redistribute extra size => next line
+					if (whitespace_width == 0.0f) 
+						continue;
 
-						// new whitespace cannot be X time greater than initial one
-						static float const FACTOR_LIMIT = 2.0f;
-						if ((whitespace_width + extra_whitespace_width) > FACTOR_LIMIT * whitespace_width) // => else ignore
-							continue;
+					// compute the scale factor to apply to each whitespace : W1 = W2 + whitespace_width * whitespace_scale_factor
 
-						// redistribute extra space
-						float offset = 0.0f;
-						for (SpriteTextToken & token : line)
+					float whitespace_scale_factor = (W1 - W2) / whitespace_width;
+
+					// the scale factor to be applied is greater than what we want. Abandon fully the idea of justification
+					if (whitespace_scale_factor > params.justify_space_factor)
+						continue;
+
+					// redistribute extra space
+					float offset = 0.0f;
+					for (SpriteTextToken & token : line)
+					{
+						token.position.x += offset;
+						if (token.IsWhitespaceCharacter())
 						{
-							token.position.x += offset;
-							if (token.type == SpriteTextToken::TOKEN_WHITESPACE)
-								offset += extra_whitespace_width;
+							float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+
+							offset += factor * token.character_entry->advance.x * whitespace_scale_factor;
 						}
 					}
 				}
@@ -617,8 +616,6 @@ namespace chaos
 		}
 		return true;
 	}
-
-#endif
 
 	bool SpriteTextGenerator::GenerateSprites(SpriteManager * sprite_manager, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{

@@ -69,6 +69,8 @@ namespace chaos
 		bool IsCharacter() const { return (character_entry != nullptr); }
 		/** returns true whethe the token correspond to a visible character */
 		bool IsVisibleCharacter() const { return (IsCharacter() && character != ' '); }
+		/** returns true whethe the token correspond to a whitespace character */
+		bool IsWhitespaceCharacter() const { return (IsCharacter() && character == ' '); }
 
 	public:
 
@@ -186,33 +188,12 @@ namespace chaos
 		/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
 		bool IsNameValid(char const * name) const;
 
-
-
-		
-
-
 		/** generate the lines, without cutting them */
 		bool GenerateLines(char const * text, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
-
 		/** cut the line when necessary */
 		bool BreakLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
-
-	#if 0
-
-
-		
-
-		/** cut the lines so they are not too big. Cut them only when it is possible */
-		bool CutLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 		/** utility method to cut one line an insert it into a new result */
-		void CutOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
-
-
-
-
-	#endif
-
-
+		void BreakOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 		/** update lines according to justification */
 		bool JustifyLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data);
 		/** apply offset for hotpoint */

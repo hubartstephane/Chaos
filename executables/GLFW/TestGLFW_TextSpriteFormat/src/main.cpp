@@ -181,14 +181,14 @@ protected:
 		if (!sprite_manager.Initialize(params))
 			return false;
 
-		chaos::SpriteTextGenerator generator(atlas);
+		chaos::SpriteText::Generator generator(atlas);
 		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
 		generator.AddBitmap("BUTTON", atlas.GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
 		generator.AddCharacterSet("C1", atlas.GetCharacterSet("character_set1"));
 		generator.AddCharacterSet("C2", atlas.GetCharacterSet("character_set2"));
 
 
-		chaos::SpriteTextGeneratorParams generator_params;
+		chaos::SpriteText::GeneratorParams generator_params;
 		generator_params.line_height = 50;
 		generator_params.character_set_name = "character_set1"; // the default character set
 		generator_params.position = glm::vec2(0.0f, 0.0f);
@@ -197,11 +197,14 @@ protected:
 		generator_params.line_spacing = 0.0f;
 		generator_params.bitmap_padding.x = 10.0f;
 		generator_params.bitmap_padding.y = 5.0f;
-		generator_params.alignment = chaos::SpriteTextGeneratorParams::ALIGN_JUSTIFY;
-		generator_params.justify_space_factor = 50.0f;
+		generator_params.alignment = chaos::SpriteText::GeneratorParams::ALIGN_JUSTIFY;
+		generator_params.justify_space_factor = 8.0f;
+		generator_params.max_text_width = 200.0f;
+		generator_params.word_wrap = true;
+
 			//chaos::SpriteTextGeneratorParams::ALIGN_RIGHT;
 
-		chaos::SpriteTextResult generator_result;
+		chaos::SpriteText::GeneratorResult generator_result;
 
 		generator.GenerateSprites("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon[button]bidon", &sprite_manager, &generator_result, generator_params);
 

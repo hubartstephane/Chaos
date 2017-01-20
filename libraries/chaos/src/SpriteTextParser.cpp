@@ -462,6 +462,7 @@ namespace chaos
 		if (!MoveSpritesToHotpoint(params, generator_data))
 			return false;
 
+
 		// output the sprites if wanted
 		if (sprite_manager != nullptr)
 			if (!GenerateSprites(sprite_manager, params, generator_data))
@@ -489,15 +490,30 @@ namespace chaos
 			y -= params.line_height + params.line_spacing;
 		}
 
-	//	std::swap(generator_data.generator_result, generator_result);
+		std::swap(generator_data.generator_result, generator_result);
 
 		return true;
 	}
 
 	void SpriteTextGenerator::BreakOneLine(float & y, SpriteTextLine const & line, SpriteTextResult & result_lines, SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{
+		bool leave_entry_unchanged = true;
 
+		glm::vec2 min_line_position;
+		glm::vec2 max_line_position;
+		if (GetBoundingBox(line, min_line_position, max_line_position))
+		{
+			float W = max_line_position.x - min_line_position.x; // if the line is too small
+			if (W > params.max_text_width)
+			{
+			
+			
+			}
+		}
 
+		// copy the entry, if nothing has been done
+		if (leave_entry_unchanged)
+			result_lines.push_back(line);
 	}
 
 
@@ -515,22 +531,6 @@ namespace chaos
 
 
 
-#if 0
-
-
-
-
-
-	void SpriteTextGenerator::FlushLine(float & x, float & y, SpriteTextLine & current_line, SpriteTextResult & generator_result, SpriteTextGeneratorParams const & params)
-	{
-		x = 0.0f;
-		y += params.line_height;
-
-		generator_result.push_back(std::move(current_line));
-		current_line = SpriteTextLine();
-	}
-
-#endif
 
 	bool SpriteTextGenerator::JustifyLines(SpriteTextGeneratorParams const & params, SpriteTextGeneratorData & generator_data)
 	{

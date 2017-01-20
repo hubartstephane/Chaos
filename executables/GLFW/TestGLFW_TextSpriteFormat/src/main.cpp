@@ -20,7 +20,7 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
 
-#include <chaos/SpriteTextParser.h>
+#include <chaos/SpriteTextGenerator.h>
 #include <chaos/SpriteManager.h>
 
 

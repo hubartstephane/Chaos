@@ -8,185 +8,185 @@
 namespace chaos
 {
 
-  /**
-  * ImageSliceRegisterEntry : an entry in the register of slices
-  */
+	/**
+	* ImageSliceRegisterEntry : an entry in the register of slices
+	*/
 
-  class ImageSliceRegisterEntry
-  {
-  public:
+	class ImageSliceRegisterEntry
+	{
+	public:
 
-    /** the image description */
-    ImageDescription description;
-    /** a user data that may be used later for memory releasing */
-    void * user_data;
-  };
+		/** the image description */
+		ImageDescription description;
+		/** a user data that may be used later for memory releasing */
+		void * user_data;
+	};
 
-  /**
-   * ImageSliceRegister : utility function that serves to register a slice into a vector
-   */
+	/**
+	* ImageSliceRegister : utility function that serves to register a slice into a vector
+	*/
 
-  class ImageSliceRegister
-  {
-    friend class TextureArrayGenerator;
+	class ImageSliceRegister
+	{
+		friend class TextureArrayGenerator;
 
-  public:
-    
-    /** the method to insert one slice */
-    bool InsertSlice(ImageDescription & description, void * user_data = nullptr);
-    /** gets the number of slices inserted */
-    size_t size() const { return slices.size();}
+	public:
 
-  protected:
+		/** the method to insert one slice */
+		bool InsertSlice(ImageDescription & description, void * user_data = nullptr);
+		/** gets the number of slices inserted */
+		size_t size() const { return slices.size();}
 
-    /** test whether the description is valid */
-    bool IsImageSliceValid(ImageDescription const & description) const;
+	protected:
 
-    /** the array that contains all slices */
-    std::vector<ImageSliceRegisterEntry> slices;
-  };
+		/** test whether the description is valid */
+		bool IsImageSliceValid(ImageDescription const & description) const;
 
-  /**
-  * ImageSliceGeneratorProxyBase : class that deserve registration of several slices
-  */
+		/** the array that contains all slices */
+		std::vector<ImageSliceRegisterEntry> slices;
+	};
 
-  class ImageSliceGeneratorProxyBase
-  {
-  public:
+	/**
+	* ImageSliceGeneratorProxyBase : class that deserve registration of several slices
+	*/
 
-    /** destructor */
-    virtual ~ImageSliceGeneratorProxyBase() = default;
-    /** the method to override to add all slice we want */
-    virtual void AddSlices(ImageSliceRegister & slice_register){}
-    /** the method to override to release all slices */
-    virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count){}
-  };
+	class ImageSliceGeneratorProxyBase
+	{
+	public:
 
-  /**
-  * ImageSliceGeneratorBase : used to generate proxy for TextureArrayGeneration
-  */
+		/** destructor */
+		virtual ~ImageSliceGeneratorProxyBase() = default;
+		/** the method to override to add all slice we want */
+		virtual void AddSlices(ImageSliceRegister & slice_register){}
+		/** the method to override to release all slices */
+		virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count){}
+	};
 
-  class ImageSliceGeneratorBase
-  {
-  public:
+	/**
+	* ImageSliceGeneratorBase : used to generate proxy for TextureArrayGeneration
+	*/
 
-    /** destructor */
-    virtual ~ImageSliceGeneratorBase() = default;
-    /** proxy generation method */
-    virtual ImageSliceGeneratorProxyBase * CreateProxy() const = 0;
-  };
+	class ImageSliceGeneratorBase
+	{
+	public:
 
-  /**
-  * ImageSliceGeneratorProxy : a slice generator proxy from a image 
-  */
+		/** destructor */
+		virtual ~ImageSliceGeneratorBase() = default;
+		/** proxy generation method */
+		virtual ImageSliceGeneratorProxyBase * CreateProxy() const = 0;
+	};
 
-  class ImageSliceGeneratorProxy : public ImageSliceGeneratorProxyBase
-  {
-  public:
+	/**
+	* ImageSliceGeneratorProxy : a slice generator proxy from a image 
+	*/
 
-    /** constructor */
-	  ImageSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
-      image(in_image),
-      release_image(in_release_image) {}
+	class ImageSliceGeneratorProxy : public ImageSliceGeneratorProxyBase
+	{
+	public:
 
-    /** destructor */
-    ~ImageSliceGeneratorProxy();
-    /** the method to override to add all slice we want */
-    virtual void AddSlices(ImageSliceRegister & slice_register);
-    /** the method to override to release all slices */
-    virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count);
+		/** constructor */
+		ImageSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
+			image(in_image),
+			release_image(in_release_image) {}
 
-  protected:
+		/** destructor */
+		~ImageSliceGeneratorProxy();
+		/** the method to override to add all slice we want */
+		virtual void AddSlices(ImageSliceRegister & slice_register);
+		/** the method to override to release all slices */
+		virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count);
 
-    /** the image */
-    FIBITMAP * image;
-    /** whether the image has to be released */
-    bool release_image;
-  };
+	protected:
 
-  /**
-   * ImageSliceGenerator : a slice generator from a image filename
-   */
+		/** the image */
+		FIBITMAP * image;
+		/** whether the image has to be released */
+		bool release_image;
+	};
 
-  class ImageSliceGenerator : public ImageSliceGeneratorBase
-  {
-  public:
+	/**
+	* ImageSliceGenerator : a slice generator from a image filename
+	*/
 
-    /** constructor */
-	  ImageSliceGenerator(boost::filesystem::path const & in_image_path):
-      image_path(in_image_path), 
-      image(nullptr), 
-      release_image(false){} // release_image is unused with that constructor : the proxy will destroy the image loaded
+	class ImageSliceGenerator : public ImageSliceGeneratorBase
+	{
+	public:
 
-	  ImageSliceGenerator(FIBITMAP * in_image, bool in_release_image):
-      image(in_image),
-      release_image(in_release_image) 
-    {
-      assert(image != nullptr);
-    }
+		/** constructor */
+		ImageSliceGenerator(boost::filesystem::path const & in_image_path):
+			image_path(in_image_path), 
+			image(nullptr), 
+			release_image(false){} // release_image is unused with that constructor : the proxy will destroy the image loaded
 
-    /** proxy generation method */
-    virtual ImageSliceGeneratorProxyBase * CreateProxy() const;
+		ImageSliceGenerator(FIBITMAP * in_image, bool in_release_image):
+			image(in_image),
+			release_image(in_release_image) 
+		{
+			assert(image != nullptr);
+		}
 
-  protected:
+		/** proxy generation method */
+		virtual ImageSliceGeneratorProxyBase * CreateProxy() const;
 
-    /** path of the resource file */
-    boost::filesystem::path image_path;
+	protected:
 
-    /** the image */
-    FIBITMAP * image;
-    /** whether the image has to be released */
-    bool release_image;
-  };
+		/** path of the resource file */
+		boost::filesystem::path image_path;
 
-  /**
-   * TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
-   */
+		/** the image */
+		FIBITMAP * image;
+		/** whether the image has to be released */
+		bool release_image;
+	};
 
-  class TextureArrayGenerator
-  {
-  public:
+	/**
+	* TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
+	*/
 
-    class SliceInfo
-    {
-    public:
+	class TextureArrayGenerator
+	{
+	public:
 
-      /** first slice allocated for the generator */
-      int first_slice;
-      /** number of slice used by the generator */
-      int slice_count;
-    };
+		class SliceInfo
+		{
+		public:
 
-    class GeneratorEntry
-    {
-    public:
-      /** the proxy that will request some slices */
-      ImageSliceGeneratorProxyBase * proxy;
-      /** optional where the slices are allocated */
-      SliceInfo * slice_info;
-    };
+			/** first slice allocated for the generator */
+			int first_slice;
+			/** number of slice used by the generator */
+			int slice_count;
+		};
 
-    /** constructor */
-    TextureArrayGenerator();
-    /** destructor */
-    virtual ~TextureArrayGenerator();
+		class GeneratorEntry
+		{
+		public:
+			/** the proxy that will request some slices */
+			ImageSliceGeneratorProxyBase * proxy;
+			/** optional where the slices are allocated */
+			SliceInfo * slice_info;
+		};
 
-    /** the insertion method (returns the slice considered) */
-    bool AddGenerator(ImageSliceGenerator const & generator, SliceInfo * slice_info = nullptr);
-    /** clean all generators */
-    void Clean();
-    /** generate the texture array */
-    boost::intrusive_ptr<Texture> GenerateTexture(GenTextureParameters const & parameters = GenTextureParameters());
+		/** constructor */
+		TextureArrayGenerator();
+		/** destructor */
+		virtual ~TextureArrayGenerator();
 
-  protected:
+		/** the insertion method (returns the slice considered) */
+		bool AddGenerator(ImageSliceGenerator const & generator, SliceInfo * slice_info = nullptr);
+		/** clean all generators */
+		void Clean();
+		/** generate the texture array */
+		boost::intrusive_ptr<Texture> GenerateTexture(GenTextureParameters const & parameters = GenTextureParameters());
 
-    /** internal method to generate the texture array */
-    boost::intrusive_ptr<Texture> GenerateTexture(ImageSliceRegister & slice_register, int bpp, int width, int height, GenTextureParameters const & parameters) const;
+	protected:
 
-  protected:
+		/** internal method to generate the texture array */
+		boost::intrusive_ptr<Texture> GenerateTexture(ImageSliceRegister & slice_register, int bpp, int width, int height, GenTextureParameters const & parameters) const;
 
-    /** the registered element to generate */
-    std::vector<GeneratorEntry> generators;
-  };
+	protected:
+
+		/** the registered element to generate */
+		std::vector<GeneratorEntry> generators;
+	};
 
 };

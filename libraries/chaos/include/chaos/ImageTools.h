@@ -7,6 +7,12 @@ namespace chaos
 {
 
 	/**
+	* PixelGray : a grayscale pixel
+	**/
+
+	using PixelGray = unsigned char;
+
+	/**
 	* PixelRGB : a structure that helps manipulating 24 bit pixel
 	**/
 
@@ -31,6 +37,36 @@ namespace chaos
 		unsigned char A;
 	};
 
+	/**
+	* PixelGrayFloat : a grayscale pixel (float data)
+	**/
+
+	using PixelGrayFloat = float;
+
+	/**
+	* PixelRGBFloat : a structure that helps manipulating 3 x float pixels
+	**/
+
+	class PixelRGBFloat
+	{
+	public:
+		float B;
+		float G;
+		float R;
+	};
+
+	/**
+	* PixelRGBAFloat : a structure that helps manipulating 4 x float pixels
+	**/
+
+	class PixelRGBAFloat
+	{
+	public:
+		float B;
+		float G;
+		float R;
+		float A;
+	};
 
 	/** 
 	* ImageFaceDescription : data to work with pixels
@@ -40,29 +76,30 @@ namespace chaos
 	{
 	public:
 
+		/** the type of each component of each pixels */
+		static int const TYPE_UNSIGNED_CHAR = 0;
+		static int const TYPE_FLOAT = 1;
+
 		/** constructor */
 		ImageDescription() = default;
 
-		ImageDescription(void * in_data, int in_width, int in_height, int in_bpp, int in_padding = 0):
-			data(in_data),
-			width(in_width),
-			height(in_height),
-			bpp(in_bpp),
-			padding_size(in_padding)
-		{
-			assert(width  >= 0);
-			assert(height >= 0);
-			assert(bpp == 8 || bpp == 24 || bpp == 32);
-			assert(padding_size >= 0);
+		ImageDescription(void * in_data, int in_width, int in_height, int in_component_type, int in_component_count, int in_padding = 0);
 
-			line_size  = width * bpp / 8;
-			pitch_size = line_size + padding_size;  
-		}
-
+		/** returns true whether the description is valid */
+		bool IsValid() const;
 		/** returns true whether the image is empty */
-		bool IsEmpty() const { return (width == 0 || height == 0 || data == nullptr); }
+		bool IsEmpty() const;
+		/** get the size of one component */
+		int GetComponentSize() const;
+		/** get the size of one pixel */
+		int GetPixelSize() const;
+		/** returns true whether the pixel format is handled */
+		bool IsPixelFormatValid() const;
+		/** returns true whether the pixel format are same */
+		bool ArePixelFormatSame(ImageDescription const & other) const;
 		/** get the image information for a sub image */
 		ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
+
 
 		/** the buffer */
 		void * data{ nullptr };
@@ -70,17 +107,17 @@ namespace chaos
 		int    width{ 0 };
 		/** the image height */
 		int    height{ 0 };
-		/** the bit per pixels : 8, 24 or 32 */
-		int    bpp{ 0 };
-		/** size of line in bytes (exclude padding) : width * bpp / 8 */
+		/** the type of the components */
+		int    component_type{ 0 };
+		/** the number of components for each pixels */
+		int    component_count{ 0 };		
+		/** size of line in bytes (exclude padding) : width * pixel_size */
 		int    line_size{ 0 };
 		/** size of line in bytes (including padding) : padding + line_size */
 		int    pitch_size{ 0 };
-		/** padding a the end of a line  */
+		/** padding a the end of a line in bytes */
 		int    padding_size{ 0 };
-
 	};
-
 
 	/** 
 	* ImageTools : deserve to load some images

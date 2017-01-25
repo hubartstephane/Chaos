@@ -64,7 +64,7 @@ namespace chaos
 		return wrong_result;
 	}
 
-	SkyBoxImages::SkyBoxImages(SkyBoxImages && other):
+	SkyBoxImages::SkyBoxImages(SkyBoxImages && other)
 	{
 		std::swap(single_image, other.single_image);
 		std::swap(left_image,   other.left_image);
@@ -273,7 +273,7 @@ namespace chaos
 				SkyBoxSingleDisposition::HorizontalDisposition: 
 				SkyBoxSingleDisposition::VerticalDisposition;
 
-			// get the very first image to decide for the bpp
+			// get the very first image to decide for the pixel format
 			FIBITMAP * other_image = nullptr;
 			for (int i = IMAGE_LEFT ; (i <= IMAGE_BACK) && (other_image == nullptr) ; ++i)
 				other_image = GetImage(i);

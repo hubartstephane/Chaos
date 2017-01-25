@@ -64,25 +64,7 @@ namespace chaos
 		return wrong_result;
 	}
 
-	SkyBoxImages::SkyBoxImages() : 
-		single_image(nullptr),
-		left_image(nullptr),
-		right_image(nullptr),
-		top_image(nullptr),
-		bottom_image(nullptr),
-		front_image(nullptr),
-		back_image(nullptr)
-	{
-	}
-
 	SkyBoxImages::SkyBoxImages(SkyBoxImages && other):
-		single_image(nullptr),
-		left_image(nullptr),
-		right_image(nullptr),
-		top_image(nullptr),
-		bottom_image(nullptr),
-		front_image(nullptr),
-		back_image(nullptr)
 	{
 		std::swap(single_image, other.single_image);
 		std::swap(left_image,   other.left_image);
@@ -292,14 +274,14 @@ namespace chaos
 				SkyBoxSingleDisposition::VerticalDisposition;
 
 			// get the very first image to decide for the bpp
-			FIBITMAP const * other_image = nullptr;
+			FIBITMAP * other_image = nullptr;
 			for (int i = IMAGE_LEFT ; (i <= IMAGE_BACK) && (other_image == nullptr) ; ++i)
 				other_image = GetImage(i);
 
 			assert(other_image != nullptr); // not empty, so, it has to find another image
 
-			int size = FreeImage_GetWidth((FIBITMAP*)other_image);
-			int bpp  = FreeImage_GetBPP((FIBITMAP*)other_image);
+			int size = FreeImage_GetWidth(other_image);
+			int bpp  = FreeImage_GetBPP(other_image);
 
 			int new_image_width  = size * dispo.image_count_horiz;
 			int new_image_height = size * dispo.image_count_vert;
@@ -322,7 +304,7 @@ namespace chaos
 				// copy the faces into the single image
 				for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 				{
-					FIBITMAP const * image = GetImage(i);
+					FIBITMAP * image = GetImage(i);
 					if (image == nullptr)
 						continue;
 
@@ -377,7 +359,7 @@ namespace chaos
 		}
 		else
 		{
-			FIBITMAP const * image = GetImage(image_type);
+			FIBITMAP * image = GetImage(image_type);
 			if (image != nullptr)
 				result = ImageTools::GetImageDescription(image);
 		}
@@ -446,26 +428,7 @@ namespace chaos
 		return true;
 	}
 
-	FIBITMAP * SkyBoxImages::GetImage(int image_type)
-	{
-		if (image_type == IMAGE_SINGLE)
-			return single_image;
-		if (image_type == IMAGE_LEFT)
-			return left_image;
-		if (image_type == IMAGE_RIGHT)
-			return right_image;
-		if (image_type == IMAGE_TOP)
-			return top_image;
-		if (image_type == IMAGE_BOTTOM)
-			return bottom_image;
-		if (image_type == IMAGE_FRONT)
-			return front_image;
-		if (image_type == IMAGE_BACK)
-			return back_image;
-		return nullptr;
-	}
-
-	FIBITMAP const * SkyBoxImages::GetImage(int image_type) const
+	FIBITMAP * SkyBoxImages::GetImage(int image_type) const
 	{
 		if (image_type == IMAGE_SINGLE)
 			return single_image;

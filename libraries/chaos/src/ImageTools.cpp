@@ -14,13 +14,10 @@ namespace chaos
 		component_count(in_component_count),
 		padding_size(in_padding)
 	{
-		assert(width  >= 0);
-		assert(height >= 0);
-		assert(IsPixelFormatValid());
-		assert(padding_size >= 0);
-
 		line_size  = width * GetPixelSize();
 		pitch_size = line_size + padding_size;  
+
+    assert(IsValid());
 	}
 
 	bool ImageDescription::IsEmpty() const 
@@ -31,9 +28,9 @@ namespace chaos
 	int ImageDescription::GetComponentSize() const
 	{
 		if (component_type == TYPE_UNSIGNED_CHAR)
-			return 1;
+			return sizeof(unsigned char);
 		if (component_type == TYPE_FLOAT)
-			return 4;
+			return sizeof(float);
 		return 0;	
 	}
 
@@ -109,7 +106,7 @@ namespace chaos
 		result.line_size       = wanted_width * pixel_size;
 		result.padding_size    = result.pitch_size - result.line_size;
 
-		if (!IsEmpty())
+		if (wanted_width != 0 && wanted_height != 0 && !IsEmpty())
 		{
 			int offset = 0;    
 			offset += (x * pixel_size);
@@ -120,7 +117,7 @@ namespace chaos
 		return result;
 	}
 
-	ImageDescription ImageTools::GetImageDescription(FIBITMAP const * image)
+	ImageDescription ImageTools::GetImageDescription(FIBITMAP * image)
 	{
 		assert(image != nullptr);
 
@@ -130,15 +127,15 @@ namespace chaos
 		int component_count = 0;
 		int component_type  = 0;
 
-		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType((FIBITMAP*)image);
+		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
 		if (image_type == FIT_BITMAP)
 		{			
-			int bpp = FreeImage_GetBPP((FIBITMAP*)image); // ignore other format than 8, 24 and 32 bpp
+			int bpp = FreeImage_GetBPP(image); // ignore other format than 8, 24 and 32 bpp
 			if (bpp != 8 && bpp != 24 && bpp != 32)
 				return result;			
 
 			component_type  = ImageDescription::TYPE_UNSIGNED_CHAR;
-			component_count = (bpp << 3);
+			component_count = bpp / 8;
 		}
 		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
 		{
@@ -155,14 +152,14 @@ namespace chaos
 			return result;
 				
 		// fullfill missing members
-		result.width           = FreeImage_GetWidth((FIBITMAP*)image); // FREEIMAGE does use constness correctly
-		result.height          = FreeImage_GetHeight((FIBITMAP*)image);
+		result.width           = FreeImage_GetWidth(image); // FREEIMAGE does use constness correctly
+		result.height          = FreeImage_GetHeight(image);
 		result.component_type  = component_type;
 		result.component_count = component_count;
-		result.line_size       = FreeImage_GetLine((FIBITMAP*)image);
-		result.pitch_size      = FreeImage_GetPitch((FIBITMAP*)image);
+		result.line_size       = FreeImage_GetLine(image);
+		result.pitch_size      = FreeImage_GetPitch(image);
 		result.padding_size    = result.pitch_size - result.line_size;
-		result.data            = FreeImage_GetBits((FIBITMAP*)image);
+		result.data            = FreeImage_GetBits(image);
 
 		// test whether the result is valid (line_size & pitch come from FreeImage)
 		if (!result.IsValid())
@@ -199,11 +196,10 @@ namespace chaos
 		}	
 	};
 
-
-
 	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
 		assert(src_desc.IsValid());
+    assert(dst_desc.IsValid());
 		assert(src_desc.ArePixelFormatSame(dst_desc));
 
 		assert(width  >= 0);
@@ -236,6 +232,7 @@ namespace chaos
 	void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
 		assert(src_desc.IsValid());
+    assert(dst_desc.IsValid());
 		assert(src_desc.ArePixelFormatSame(dst_desc));
 
 		assert(width  >= 0);
@@ -265,15 +262,32 @@ namespace chaos
 		}
 	}
 
-	bool ImageTools::IsGreyscaleImage(FIBITMAP * image)
+	bool ImageTools::IsGrayscaleImage(FIBITMAP * image)
 	{
-		if (FreeImage_GetBPP(image) != 8)
-			return false;
+    assert(image != nullptr);
 
-		RGBQUAD * palette = FreeImage_GetPalette(image);
-		if (palette != nullptr)
-			return false;
+    // ignore unhandled message
+    ImageDescription desc = ImageTools::GetImageDescription(image);
+    if (!desc.IsValid())
+      return false;
 
+    // multiple components => not grayscale
+    if (desc.component_count != 1)
+      return false;
+
+    // a 'luminance' image is a grayscale
+    if (desc.component_type == ImageDescription::TYPE_FLOAT)
+      return true;
+
+    // 1 component of type UNSIGNED CHAR :
+    //   - can be an index on a palette
+    //   - can be a 'luminance' value
+
+    RGBQUAD * palette = FreeImage_GetPalette(image); // luminance ?
+    if (palette == nullptr)
+      return true;
+
+    // test whether the palette is a grayscale palette
 		unsigned int color_count = FreeImage_GetColorsUsed(image);
 		if (color_count != 256)
 			return false;
@@ -303,9 +317,9 @@ namespace chaos
 
 				result = FreeImage_LoadFromMemory(format, memory, 0);
 
-				if (FreeImage_GetBPP(result) == 8)
+        if (FreeImage_GetImageType(result) == FIT_BITMAP && FreeImage_GetBPP(result) == 8)
 				{
-					if (FreeImage_GetPalette(result) != nullptr)
+					if (!IsGrayscaleImage(result)) // don't want a palette any more
 					{
 						FIBITMAP * other = FreeImage_ConvertTo32Bits(result);
 						FreeImage_Unload(result);

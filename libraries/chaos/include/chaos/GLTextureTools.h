@@ -16,11 +16,8 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GenTextureResult() : texture_id(0) {}
-
 		/** the id of the texture */
-		GLuint             texture_id;
+    GLuint             texture_id{ 0 };
 		/** the GL handler for the texture */
 		TextureDescription texture_description;
 	};
@@ -80,7 +77,7 @@ namespace chaos
 		/** Generate a 1D/2D/rectangle texture from an image */
 		static GenTextureResult GenTexture(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */
-		static GenTextureResult GenTexture(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
+		static GenTextureResult GenTexture(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a cube texture from a skybox */
 		static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
@@ -126,7 +123,7 @@ namespace chaos
 		/** Generate a 1D/2D/rectangle texture from an image */
 		static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */
-		static boost::intrusive_ptr<Texture> GenTextureObject(FIBITMAP const * image, GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a cube texture from a skybox */
 		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 

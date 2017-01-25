@@ -59,7 +59,7 @@ public:
   static int const IMAGE_CENTRAL_SYMETRY = 1;
 
   /** constructor */
-  SkyBoxImages();
+  SkyBoxImages() = default;
   /** copy constructor */
   SkyBoxImages(SkyBoxImages const & other) = delete;
   /** move constructor */
@@ -97,9 +97,7 @@ public:
   bool IsSingleImageVertical() const;
 
   /** Gets an image */
-  FIBITMAP * GetImage(int image_type);
-  /** Gets an image */
-  FIBITMAP const * GetImage(int image_type) const;
+  FIBITMAP * GetImage(int image_type) const;
 
   /** Gets the description of one face */
   ImageDescription GetImageFaceDescription(int image_type) const;
@@ -116,7 +114,6 @@ public:
   /** move operator */
   SkyBoxImages & operator = (SkyBoxImages && other);
  
-
 protected:
 
   /** simply set one of the multiple image pointer (no check)*/
@@ -125,19 +122,19 @@ protected:
 protected:
 
   /** whenever the skybox is contained into a single image */
-  FIBITMAP * single_image;
+  FIBITMAP * single_image{ nullptr };
   /** left image */
-  FIBITMAP * left_image;
+  FIBITMAP * left_image{ nullptr };
   /** right image */
-  FIBITMAP * right_image;
+  FIBITMAP * right_image{ nullptr };
   /** top image */
-  FIBITMAP * top_image;
+  FIBITMAP * top_image{ nullptr };
   /** bottom image */
-  FIBITMAP * bottom_image;
+  FIBITMAP * bottom_image{ nullptr };
   /** front image */
-  FIBITMAP * front_image;
+  FIBITMAP * front_image{ nullptr };
   /** back image */
-  FIBITMAP * back_image;
+  FIBITMAP * back_image{ nullptr };
 };
 
 

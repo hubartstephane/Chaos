@@ -103,7 +103,7 @@ namespace chaos
 
 		/** transform a type into pixel format (component type and count) */
 		template<typename T>
-		static std::pair<int, int> GetPixelFormat(){ return std::make_pair(0, 0);}
+    static std::pair<int, int> GetPixelFormat();
 
 		template<>
 		static std::pair<int, int> GetPixelFormat<PixelGray>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 1);}
@@ -155,10 +155,10 @@ namespace chaos
 		static FIMULTIBITMAP * LoadMultiImageFromFile(char const * filename);
 
 		/** returns true whether the image is paletted, 8 bits and its color are grays */
-		static bool IsGreyscaleImage(FIBITMAP * image);
+		static bool IsGrayscaleImage(FIBITMAP * image);
 
 		/** get the image information from a FreeImage */
-		static ImageDescription GetImageDescription(FIBITMAP const * image);
+		static ImageDescription GetImageDescription(FIBITMAP * image);
 		/** copy pixels */
 		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 		/** copy pixel with symetry */

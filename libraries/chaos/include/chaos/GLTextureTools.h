@@ -85,12 +85,41 @@ namespace chaos
 		static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
-		static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+		template<typename T>
+		static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		{
+			GenTextureResult result;
+
+			T * buffer = new T[width];
+			if (buffer != nullptr)
+			{
+				std::pair<int, int> pixel_format = ImageDescription::GetPixelFormat<T>();
+
+				ImageDescription desc(buffer, width, 1, pixel_format.first, pixel_format.second, 0);
+				generator(desc, buffer);
+				result = GenTexture(desc, parameters);
+				delete[](buffer);
+			}
+			return result;
+		}
+
+		template<typename T>
+		GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		{
+			GenTextureResult result;
+
+			T * buffer = new T[width * height];
+			if (buffer != nullptr)
+			{
+				std::pair<int, int> pixel_format = ImageDescription::GetPixelFormat<T>();
+
+				ImageDescription desc(buffer, width, height, pixel_format.first, pixel_format.second, 0);
+				generator(desc, buffer);
+				result = GenTexture(desc, parameters);
+				delete[](buffer);
+			}
+			return result;
+		}
 
 		/** Generate a 1D/2D/rectangle texture from an file */
 		static boost::intrusive_ptr<Texture> GenTextureObject(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
@@ -102,12 +131,24 @@ namespace chaos
 		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters = GenTextureParameters());
+		template<typename T>
+		static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		{
+			GenTextureResult result = GenTexture(width, generator, parameters);
+			if (result.texture_id > 0)
+				return new Texture(result.texture_id, result.texture_description);
+			return nullptr;
+		}
+
+		template<typename T>
+		boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		{
+			GenTextureResult result = GenTexture(width, height, generator, parameters);
+			if (result.texture_id > 0)
+				return new Texture(result.texture_id, result.texture_description);
+			return nullptr;
+		}
+
 
 		/** returns the maximum number of mipmap */
 		static int GetMipmapLevelCount(int width, int height);
@@ -115,7 +156,7 @@ namespace chaos
 		/** for cubemap texture, returns a layer index depending on the face considered */
 		static int GetLayerValueFromCubeMapFace(GLenum face, int level = 0);
 		/** Get Format/Internal Format pair from BPP */
-		static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
+		static std::pair<GLenum, GLenum> GetTextureFormats(int component_type, int component_count);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
 		static GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);

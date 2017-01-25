@@ -72,42 +72,64 @@ namespace chaos
 					GLint internal_format = 0;
 					glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
 
-					GLint  bpp = 0;
+					int component_type = 0;
+					int component_count = 0;
 					GLenum format = GL_NONE;
+					GLenum type = GL_NONE;
 					if (internal_format == GL_R8)
 					{
-						bpp = 8;
 						format = GL_RED;
+						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
+						component_count = 1;
 					}
 					else if (internal_format == GL_RGB8)
 					{
-						bpp = 24;
 						format = GL_BGR;
+						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
+						component_count = 3;
 					}
 					else if (internal_format == GL_RGBA8)
 					{
-						bpp = 32;
 						format = GL_BGRA;
+						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
+						component_count = 4;
 					}
 
-					if (bpp != 0)
+
+
+
+
+
+
+
+
+
+
+
+
+					if (component_type != 0 && component_count != 0)
 					{
-						size_t bufsize = width * height * bpp >> 3;
+						result.width           = width;
+						result.height          = height;
+						result.component_type  = component_type;
+						result.component_count = component_count;
+						result.line_size       = width * result.GetPixelSize();
+						result.pitch_size      = result.line_size; // no padding
+						result.padding_size    = 0;
+
+						int pixel_size = result.GetPixelSize();
+
+						size_t bufsize = width * height * pixel_size;
 
 						result.data = new char[bufsize];
 						if (result.data != nullptr)
 						{
-							result.width = width;
-							result.height = height;
-							result.bpp = bpp;
-							result.line_size    = width * bpp >> 3;
-							result.pitch_size   = result.line_size; // no padding
-							result.padding_size = 0;
-
 							glPixelStorei(GL_PACK_ALIGNMENT, 1);
-							glPixelStorei(GL_PACK_ROW_LENGTH, 8 * result.pitch_size / result.bpp);
+							glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
 							glGetTextureImage(texture_id, level, format, GL_UNSIGNED_BYTE, bufsize, result.data);
-						}					
+						}
+						else
+							result = ImageDescription();
 					}
 				}
 			}					
@@ -182,41 +204,43 @@ namespace chaos
 		return MathTools::bsr(width) + 1;
 	}
 
-	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormatsFromBPP(int bpp)
+	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(int component_type, int component_count)
 	{
-		GLenum format = GL_NONE;
-		if (bpp == 8)
-			format = GL_RED; // GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
-		else if (bpp == 24)
-			format = GL_BGR;
-		else if (bpp == 32)
-			format = GL_BGRA;
-
-		GLenum internal_format = GL_NONE;
-		if (bpp == 8)
-			internal_format = GL_R8; // GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
-		else if (bpp == 24)
-			internal_format = GL_RGB8;
-		else if (bpp == 32)
-			internal_format = GL_RGBA8;
-
-		return std::make_pair(format, internal_format);
+		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
+		if (component_type == ImageDescription::TYPE_UNSIGNED_CHAR)
+		{
+			if (component_count == 1)
+				return std::make_pair(GL_RED, GL_R8);
+			if (component_count == 3)
+				return std::make_pair(GL_BGR, GL_RGB8);
+			if (component_count == 4)
+				return std::make_pair(GL_BGRA, GL_RGBA8);				
+		}
+		else if (component_type == ImageDescription::TYPE_FLOAT)
+		{
+			if (component_count == 1)
+				return std::make_pair(GL_NONE, GL_NONE);
+			if (component_count == 3)
+				return std::make_pair(GL_NONE, GL_NONE);
+			if (component_count == 4)
+				return std::make_pair(GL_NONE, GL_NONE);	
+		}
+		return std::make_pair(GL_NONE, GL_NONE);
 	}
 
 	GenTextureResult GLTextureTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
 	{
-		assert(image.width > 0);
-		assert(image.height > 0);
-		assert(image.bpp == 8 || image.bpp == 24 || image.bpp == 32);
+		GenTextureResult result;
+		if (!image.IsValid() || image.IsEmpty())
+			return result;
 
 		GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
-
-		GenTextureResult result;
+		
 		glCreateTextures(target, 1, &result.texture_id);
 		if (result.texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
-			std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(image.bpp);
+			std::pair<GLenum, GLenum> all_formats = GetTextureFormats(image.component_type, image.component_count);
 			assert(all_formats.first != GL_NONE);
 			assert(all_formats.second != GL_NONE);
 
@@ -224,7 +248,7 @@ namespace chaos
 			GLenum internal_format = all_formats.second;
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * image.pitch_size / image.bpp);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, image.pitch_size / image.GetPixelSize());
 
 			// store the pixels
 			if (target == GL_TEXTURE_1D)
@@ -267,96 +291,6 @@ namespace chaos
 		{
 			result = GenTexture(image, parameters);
 			FreeImage_Unload(image);  
-		}
-		return result;
-	}
-
-	GenTextureResult GLTextureTools::GenTexture(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result;
-
-		unsigned char * buffer = new unsigned char[width];
-		if (buffer != nullptr)
-		{
-			ImageDescription desc(buffer, width, 1, 8, 0);
-			func(desc, buffer);
-			result = GenTexture(desc, parameters);
-			delete[](buffer);
-		}
-		return result;
-	}
-
-	GenTextureResult GLTextureTools::GenTexture(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result;
-
-		PixelRGB * buffer = new PixelRGB[width];
-		if (buffer != nullptr)
-		{
-			ImageDescription desc(buffer, width, 1, 24, 0);
-			func(desc, buffer);
-			result = GenTexture(desc, parameters);
-			delete[](buffer);
-		}
-		return result;
-	}
-
-	GenTextureResult GLTextureTools::GenTexture(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result;
-
-		PixelRGBA * buffer = new PixelRGBA[width];
-		if (buffer != nullptr)
-		{
-			ImageDescription desc(buffer, width, 1, 32, 0);
-			func(desc, buffer);
-			result = GenTexture(desc, parameters);
-			delete[](buffer);
-		}
-		return result;
-	}
-
-	GenTextureResult GLTextureTools::GenTexture(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result;
-
-		unsigned char * buffer = new unsigned char[width * height];
-		if (buffer != nullptr)
-		{
-			ImageDescription desc(buffer, width, height, 8, 0);
-			func(desc, buffer);
-			result = GenTexture(desc, parameters);
-			delete[](buffer);
-		}
-		return result;
-	}
-
-	GenTextureResult GLTextureTools::GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result;
-
-		PixelRGB * buffer = new PixelRGB[width * height];
-		if (buffer != nullptr)
-		{
-			ImageDescription desc(buffer, width, height, 24, 0);
-			func(desc, buffer);
-			result = GenTexture(desc, parameters);
-			delete[](buffer);
-		}
-		return result;
-	}
-
-	GenTextureResult GLTextureTools::GenTexture(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result;
-
-		PixelRGBA * buffer = new PixelRGBA[width * height];
-		if (buffer != nullptr)
-		{
-			ImageDescription desc(buffer, width, height, 32, 0);
-			func(desc, buffer);
-			result = GenTexture(desc, parameters);
-			delete[](buffer);
 		}
 		return result;
 	}
@@ -476,8 +410,10 @@ namespace chaos
 			{
 				ImageDescription image = skybox->GetImageFaceDescription(i);
 
+				int pixel_size = image.GetPixelSize();
+
 				void const * data = image.data;
-				GLint        unpack_row_length = image.pitch_size * 8 / image.bpp;
+				GLint        unpack_row_length = image.pitch_size / pixel_size;
 				char       * new_buffer = nullptr;
 
 				if (skybox->IsSingleImage()) // in single image, there may be some inversion to correct with a temporary buffer
@@ -485,7 +421,7 @@ namespace chaos
 					glm::ivec3 position_and_flags = skybox->GetPositionAndFlags(i);
 					if (position_and_flags.z == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
 					{
-						new_buffer = new char[image.width * image.height * image.bpp >> 3];
+						new_buffer = new char[image.width * image.height * pixel_size];
 						if (new_buffer != nullptr)
 						{
 							ImageDescription new_image = image;
@@ -554,54 +490,6 @@ namespace chaos
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(char const * filename, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result = GenTexture(filename, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
-		return nullptr;
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result = GenTexture(width, func, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
-		return nullptr;
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result = GenTexture(width, func, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
-		return nullptr;
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result = GenTexture(width, func, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
-		return nullptr;
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, unsigned char *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result = GenTexture(width, height, func, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
-		return nullptr;
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGB *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result = GenTexture(width, height, func, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
-		return nullptr;
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, PixelRGBA *)> const & func, GenTextureParameters const & parameters)
-	{
-		GenTextureResult result = GenTexture(width, height, func, parameters);
 		if (result.texture_id > 0)
 			return new Texture(result.texture_id, result.texture_description);
 		return nullptr;

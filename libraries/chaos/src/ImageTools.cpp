@@ -6,7 +6,7 @@
 namespace chaos
 {
 
-	ImageDescription::ImageDescription(void * in_data, int in_width, int in_height, int in_component_type, int in_component_count, int in_padding = 0):
+	ImageDescription::ImageDescription(void * in_data, int in_width, int in_height, int in_component_type, int in_component_count, int in_padding):
 		data(in_data),
 		width(in_width),
 		height(in_height),
@@ -53,7 +53,7 @@ namespace chaos
 
 	bool ImageDescription::ArePixelFormatSame(ImageDescription const & other) const
 	{
-		return (component_type = other.component_type) && (component_count = other.component_count);	
+		return (component_type == other.component_type) && (component_count == other.component_count);	
 	}
 
 	bool ImageDescription::IsValid() const

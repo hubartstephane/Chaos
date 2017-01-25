@@ -77,8 +77,9 @@ namespace chaos
 	public:
 
 		/** the type of each component of each pixels */
-		static int const TYPE_UNSIGNED_CHAR = 0;
-		static int const TYPE_FLOAT = 1;
+		static int const TYPE_UNKNOWN = 0;
+		static int const TYPE_UNSIGNED_CHAR = 1;
+		static int const TYPE_FLOAT = 2;
 
 		/** constructor */
 		ImageDescription() = default;
@@ -100,6 +101,24 @@ namespace chaos
 		/** get the image information for a sub image */
 		ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
 
+		/** transform a type into pixel format (component type and count) */
+		template<typename T>
+		static std::pair<int, int> GetPixelFormat(){ return std::make_pair(0, 0);}
+
+		template<>
+		static std::pair<int, int> GetPixelFormat<PixelGray>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 1);}
+		template<>
+		static std::pair<int, int> GetPixelFormat<PixelRGB>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 3);}
+		template<>
+		static std::pair<int, int> GetPixelFormat<PixelRGBA>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 4);}
+		template<>
+		static std::pair<int, int> GetPixelFormat<PixelGrayFloat>(){ return std::make_pair(TYPE_FLOAT, 1);}
+		template<>
+		static std::pair<int, int> GetPixelFormat<PixelRGBFloat>(){ return std::make_pair(TYPE_FLOAT, 3);}
+		template<>
+		static std::pair<int, int> GetPixelFormat<PixelRGBAFloat>(){ return std::make_pair(TYPE_FLOAT, 4);}
+
+	public:
 
 		/** the buffer */
 		void * data{ nullptr };

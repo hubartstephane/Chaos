@@ -23,11 +23,9 @@ namespace chaos
 
 	bool ImageSliceRegister::IsImageSliceValid(ImageDescription const & description) const
 	{
-		if (description.bpp != 8 && description.bpp != 24 && description.bpp != 32)
+		if (!description.IsValid())
 			return false;
-		if (description.width <= 0 || description.height <= 0)
-			return false;
-		if (description.data == nullptr)
+		if (description.IsEmpty())
 			return false;
 		return true;
 	}

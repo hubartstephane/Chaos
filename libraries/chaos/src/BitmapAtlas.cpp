@@ -135,8 +135,8 @@ namespace chaos
 
     void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry)
     {
-      entry.name = json_entry["name"].get<std::string>();
-      entry.tag = json_entry["tag"];
+      entry.name = json_entry.value("name", std::string());
+      entry.tag = json_entry.value("tag", 0);
     }
 
     void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry)
@@ -156,11 +156,11 @@ namespace chaos
       NamedObject & named_entry = entry;
       LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-      entry.bitmap_index = json_entry["bitmap_index"];
-      entry.x = json_entry["x"];
-      entry.y = json_entry["y"];
-      entry.width = json_entry["width"];
-      entry.height = json_entry["height"];
+      entry.bitmap_index = json_entry.value("bitmap_index", 0);
+      entry.x = json_entry.value("x", 0);
+      entry.y = json_entry.value("y", 0);
+      entry.width = json_entry.value("width", 0);
+      entry.height = json_entry.value("height", 0);
     }
 
     void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry)
@@ -179,10 +179,10 @@ namespace chaos
       BitmapEntry & bitmap_entry = entry;
       LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
 
-      entry.advance.x = json_entry["advance_x"];
-      entry.advance.y = json_entry["advance_y"];
-      entry.bitmap_left = json_entry["bitmap_left"];
-      entry.bitmap_top = json_entry["bitmap_top"];
+      entry.advance.x = json_entry.value("advance_x", 0);
+      entry.advance.y = json_entry.value("advance_y", 0);
+      entry.bitmap_left = json_entry.value("bitmap_left", 0);
+      entry.bitmap_top = json_entry.value("bitmap_top", 0);
     }
 
     void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry)
@@ -221,11 +221,11 @@ namespace chaos
       NamedObject & named_entry = entry;
       LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-      entry.max_character_width = json_entry["max_character_width"];
-      entry.max_character_height = json_entry["max_character_height"];
-      entry.ascender = json_entry["ascender"];
-      entry.descender = json_entry["descender"];
-      entry.face_height = json_entry["face_height"];
+      entry.max_character_width = json_entry.value("max_character_width", 0);
+      entry.max_character_height = json_entry.value("max_character_height", 0);
+      entry.ascender = json_entry.value("ascender", 0);
+      entry.descender = json_entry.value("descender", 0);
+      entry.face_height = json_entry.value("face_height", 0);
       LoadFromJSON(entry.elements, json_entry["elements"]);
     }
 

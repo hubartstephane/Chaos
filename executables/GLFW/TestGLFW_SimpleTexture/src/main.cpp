@@ -71,7 +71,7 @@ protected:
       // create a gray scale texture : show order of lines in memory
       char * image_buffer = new char[4 * 512 * 512];
 
-      chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, 32, 0);
+      chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, chaos::ImageDescription::TYPE_UNSIGNED_CHAR, 4, 0);
 
       for (int i = 0; i < 512; ++i)
       {
@@ -89,7 +89,7 @@ protected:
 
     if (index == 1)
     {
-      result = chaos::GLTextureTools::GenTextureObject(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
+      result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGB>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
       {
         for (int i = 0; i < desc.height; ++i)
         {

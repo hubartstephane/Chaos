@@ -82,8 +82,8 @@ namespace chaos
 		static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
-		template<typename T>
-		static GenTextureResult GenTexture(int width, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		template<typename T, typename GENERATOR>
+		static GenTextureResult GenTexture(int width, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
 		{
 			GenTextureResult result;
 
@@ -100,8 +100,8 @@ namespace chaos
 			return result;
 		}
 
-		template<typename T>
-		GenTextureResult GenTexture(int width, int height, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		template<typename T, typename GENERATOR>
+		static GenTextureResult GenTexture(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
 		{
 			GenTextureResult result;
 
@@ -128,24 +128,23 @@ namespace chaos
 		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
-		template<typename T>
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		template<typename T, typename GENERATOR>
+		static boost::intrusive_ptr<Texture> GenTextureObject(int width, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
 		{
-			GenTextureResult result = GenTexture(width, generator, parameters);
+			GenTextureResult result = GenTexture<T>(width, generator, parameters);
 			if (result.texture_id > 0)
 				return new Texture(result.texture_id, result.texture_description);
 			return nullptr;
 		}
 
-		template<typename T>
-		boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(int width, int height, std::function<void(ImageDescription const &, T *)> const & generator, GenTextureParameters const & parameters)
+		template<typename T, typename GENERATOR>
+		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
 		{
-			GenTextureResult result = GenTexture(width, height, generator, parameters);
+			GenTextureResult result = GenTexture<T>(width, height, generator, parameters);
 			if (result.texture_id > 0)
 				return new Texture(result.texture_id, result.texture_description);
 			return nullptr;
 		}
-
 
 		/** returns the maximum number of mipmap */
 		static int GetMipmapLevelCount(int width, int height);

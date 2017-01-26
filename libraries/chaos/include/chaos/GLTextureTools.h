@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** the id of the texture */
-    GLuint             texture_id{ 0 };
+		GLuint             texture_id{ 0 };
 		/** the GL handler for the texture */
 		TextureDescription texture_description;
 	};
@@ -153,6 +153,8 @@ namespace chaos
 		/** for cubemap texture, returns a layer index depending on the face considered */
 		static int GetLayerValueFromCubeMapFace(GLenum face, int level = 0);
 		/** Get Format/Internal Format pair from BPP */
+		static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
+		/** Get Format/Internal Format pair from the description */
 		static std::pair<GLenum, GLenum> GetTextureFormats(int component_type, int component_count);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */

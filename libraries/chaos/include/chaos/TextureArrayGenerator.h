@@ -167,7 +167,7 @@ namespace chaos
 		};
 
 		/** constructor */
-		TextureArrayGenerator();
+		TextureArrayGenerator() = default;
 		/** destructor */
 		virtual ~TextureArrayGenerator();
 

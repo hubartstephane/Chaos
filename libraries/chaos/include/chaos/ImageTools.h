@@ -98,12 +98,14 @@ namespace chaos
 		bool IsPixelFormatValid() const;
 		/** returns true whether the pixel format are same */
 		bool ArePixelFormatSame(ImageDescription const & other) const;
+		/** gets the BPP if applyable (non float texture) */
+		int GetBPP() const;
 		/** get the image information for a sub image */
 		ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
 
 		/** transform a type into pixel format (component type and count) */
 		template<typename T>
-    static std::pair<int, int> GetPixelFormat();
+		static std::pair<int, int> GetPixelFormat();
 
 		template<>
 		static std::pair<int, int> GetPixelFormat<PixelGray>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 1);}

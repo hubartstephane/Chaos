@@ -59,6 +59,9 @@ namespace chaos
 	ImageDescription GLTextureTools::GetTextureImage(GLuint texture_id, GLint level)
 	{
 		ImageDescription result;
+
+#if 0
+
 		if (texture_id != 0)
 		{
 			GLint width  = 0;				
@@ -134,6 +137,7 @@ namespace chaos
 				}
 			}					
 		}
+#endif
 		return result;
 	}
 
@@ -204,6 +208,18 @@ namespace chaos
 		return MathTools::bsr(width) + 1;
 	}
 
+	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormatsFromBPP(int bpp)
+	{
+		if (bpp == 8)
+			return std::make_pair(GL_RED, GL_R8);
+		if (bpp == 24)
+			return std::make_pair(GL_BGR, GL_RGB8);
+		if (bpp == 32)
+			return std::make_pair(GL_BGRA, GL_RGBA8);	
+
+		return std::make_pair(GL_NONE, GL_NONE);
+	}
+
 	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(int component_type, int component_count)
 	{
 		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
@@ -219,11 +235,11 @@ namespace chaos
 		else if (component_type == ImageDescription::TYPE_FLOAT)
 		{
 			if (component_count == 1)
-				return std::make_pair(GL_NONE, GL_NONE);
+				return std::make_pair(GL_RED, GL_R8);
 			if (component_count == 3)
-				return std::make_pair(GL_NONE, GL_NONE);
+				return std::make_pair(GL_BGR, GL_RGB8);
 			if (component_count == 4)
-				return std::make_pair(GL_NONE, GL_NONE);	
+				return std::make_pair(GL_BGRA, GL_RGBA8);	
 		}
 		return std::make_pair(GL_NONE, GL_NONE);
 	}
@@ -246,6 +262,7 @@ namespace chaos
 
 			GLenum format          = all_formats.first;
 			GLenum internal_format = all_formats.second;
+			GLenum type            = (image.component_type == ImageDescription::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, image.pitch_size / image.GetPixelSize());
@@ -255,13 +272,13 @@ namespace chaos
 			{
 				int level_count = GetMipmapLevelCount(image.width);
 				glTextureStorage1D(result.texture_id, level_count, internal_format, image.width);
-				glTextureSubImage1D(result.texture_id, 0, 0, image.width, format, GL_UNSIGNED_BYTE, image.data);
+				glTextureSubImage1D(result.texture_id, 0, 0, image.width, format, type, image.data);
 			}
 			else
 			{
 				int level_count = GetMipmapLevelCount(image.width, image.height);
 				glTextureStorage2D(result.texture_id, level_count, internal_format, image.width, image.height);
-				glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, GL_UNSIGNED_BYTE, image.data);
+				glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, type, image.data);
 			}
 
 			result.texture_description.type            = target;

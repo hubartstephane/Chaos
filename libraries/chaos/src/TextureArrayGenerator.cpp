@@ -27,6 +27,8 @@ namespace chaos
 			return false;
 		if (description.IsEmpty())
 			return false;
+		if (description.component_type != ImageDescription::TYPE_UNSIGNED_CHAR)
+			return false;
 		return true;
 	}
 
@@ -79,11 +81,6 @@ namespace chaos
 	// ========================================================================
 	// TextureArrayGenerator functions
 	// ========================================================================
-
-	TextureArrayGenerator::TextureArrayGenerator()
-	{
-
-	}
 
 	TextureArrayGenerator::~TextureArrayGenerator()
 	{
@@ -147,7 +144,7 @@ namespace chaos
 		{
 			width  = max(width,  entry.description.width);
 			height = max(height, entry.description.height);
-			bpp    = max(bpp,    entry.description.bpp);
+			bpp    = max(bpp,    entry.description.GetBPP());
 		}
 
 		// create the texture and fill the slices
@@ -195,11 +192,14 @@ namespace chaos
 			{
 				ImageDescription desc = slice_register.slices[i].description;
 
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / desc.bpp);
+				int bpp  = desc.GetBPP();
+				int type = desc.component_type == (ImageDescription::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
-				GLenum current_format = GLTextureTools::GetTextureFormatsFromBPP(desc.bpp).first;
+				glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / bpp);
+
+				GLenum current_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).first;
 				assert(current_format != GL_NONE);
-				glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, GL_UNSIGNED_BYTE, desc.data);
+				glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, type, desc.data);
 			}
 
 			result.texture_description.type   = GL_TEXTURE_2D_ARRAY;

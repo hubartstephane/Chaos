@@ -229,6 +229,10 @@ namespace chaos
 		{
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
 
+			int bpp = src_image_desc.GetBPP();
+			if (bpp <= 0)
+				return result;
+
 			int size = GetSingleImageSize(single_image); // the wanted size for every face
 
 			for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
@@ -238,7 +242,7 @@ namespace chaos
 				int left   = position_and_flags.x * size; // number of pixels / number of images aligned
 				int bottom = position_and_flags.y * size;
 
-				FIBITMAP * image = FreeImage_Allocate(size, size, src_image_desc.bpp);
+				FIBITMAP * image = FreeImage_Allocate(size, size, bpp);
 				if (image == nullptr)
 				{
 					result.Release(true);
@@ -580,8 +584,5 @@ namespace chaos
 		}
 		return true;
 	}
-
-
-
 };
 

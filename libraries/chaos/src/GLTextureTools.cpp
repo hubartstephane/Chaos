@@ -220,7 +220,7 @@ namespace chaos
 		return std::make_pair(GL_NONE, GL_NONE);
 	}
 
-	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(int component_type, int component_count)
+	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(int component_type, int component_count) // format / internal format
 	{
 		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
 		if (component_type == ImageDescription::TYPE_UNSIGNED_CHAR)
@@ -228,18 +228,18 @@ namespace chaos
 			if (component_count == 1)
 				return std::make_pair(GL_RED, GL_R8);
 			if (component_count == 3)
-				return std::make_pair(GL_BGR, GL_RGB8);
+				return std::make_pair(GL_BGR, GL_RGB8); // FreeImage produce BGR(A) images
 			if (component_count == 4)
 				return std::make_pair(GL_BGRA, GL_RGBA8);				
 		}
-		else if (component_type == ImageDescription::TYPE_FLOAT)
+		else if (component_type == ImageDescription::TYPE_FLOAT) 
 		{
 			if (component_count == 1)
 				return std::make_pair(GL_RED, GL_R8);
 			if (component_count == 3)
-				return std::make_pair(GL_BGR, GL_RGB8);
+				return std::make_pair(GL_RGB, GL_RGB32F);
 			if (component_count == 4)
-				return std::make_pair(GL_BGRA, GL_RGBA8);	
+				return std::make_pair(GL_RGBA, GL_RGBA32F);
 		}
 		return std::make_pair(GL_NONE, GL_NONE);
 	}

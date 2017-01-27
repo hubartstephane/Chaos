@@ -89,7 +89,7 @@ protected:
 
     if (index == 1)
     {
-      result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGB>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGB * buffer)
+      result = chaos::GLTextureTools::GenTextureObject<chaos::PixelBGR>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelBGR * buffer)
       {
         for (int i = 0; i < desc.height; ++i)
         {
@@ -102,6 +102,8 @@ protected:
         }
       });
     }
+
+
 
     if (index >= 2 && index <= 7)
     {

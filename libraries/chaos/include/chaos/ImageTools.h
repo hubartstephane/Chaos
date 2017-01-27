@@ -5,6 +5,13 @@
 
 namespace chaos
 {
+	// FreeImage produces
+	// 
+	//   - BGR(A) pixels for UNSIGNED CHAR images
+	//   - RGB(A) pixels for FLOAT images
+	//
+	// The difference come from endianess. That have no signification for FLOAT but for 32bits encoded values it has !
+	//
 
 	/**
 	* PixelGray : a grayscale pixel
@@ -13,10 +20,10 @@ namespace chaos
 	using PixelGray = unsigned char;
 
 	/**
-	* PixelRGB : a structure that helps manipulating 24 bit pixel
+	* PixelBGR : a structure that helps manipulating 24 bit pixel 
 	**/
 
-	class PixelRGB
+	class PixelBGR // FreeImage produce BGR pixels by default (for unsigned char)
 	{
 	public:
 		unsigned char B;
@@ -25,10 +32,10 @@ namespace chaos
 	};
 
 	/**
-	* PixelRGBA : a structure that helps manipulating 32 bit pixel
+	* PixelBGRA : a structure that helps manipulating 32 bit pixel
 	**/
 
-	class PixelRGBA
+	class PixelBGRA // FreeImage produce BGRA pixels by default (for unsigned char)
 	{
 	public:
 		unsigned char B;
@@ -47,24 +54,24 @@ namespace chaos
 	* PixelRGBFloat : a structure that helps manipulating 3 x float pixels
 	**/
 
-	class PixelRGBFloat
+	class PixelRGBFloat // FreeImage produce RGB pixels by default (for float) !!!
 	{
 	public:
-		float B;
-		float G;
 		float R;
+		float G;
+		float B;
 	};
 
 	/**
 	* PixelRGBAFloat : a structure that helps manipulating 4 x float pixels
 	**/
 
-	class PixelRGBAFloat
+	class PixelRGBAFloat // FreeImage produce RGBA pixels by default (for float) !!!
 	{
 	public:
-		float B;
-		float G;
 		float R;
+		float G;
+		float B;
 		float A;
 	};
 
@@ -110,9 +117,9 @@ namespace chaos
 		template<>
 		static std::pair<int, int> GetPixelFormat<PixelGray>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 1);}
 		template<>
-		static std::pair<int, int> GetPixelFormat<PixelRGB>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 3);}
+		static std::pair<int, int> GetPixelFormat<PixelBGR>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 3);}
 		template<>
-		static std::pair<int, int> GetPixelFormat<PixelRGBA>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 4);}
+		static std::pair<int, int> GetPixelFormat<PixelBGRA>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 4);}
 		template<>
 		static std::pair<int, int> GetPixelFormat<PixelGrayFloat>(){ return std::make_pair(TYPE_FLOAT, 1);}
 		template<>

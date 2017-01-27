@@ -223,9 +223,9 @@ namespace chaos
 			if (src_desc.component_count == 1)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelGray>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 			else if (src_desc.component_count == 3)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelRGB>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
+				ImageToolsCopyPixelsImpl::CopyPixels<PixelBGR>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 			else if (src_desc.component_count == 4)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelRGBA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
+				ImageToolsCopyPixelsImpl::CopyPixels<PixelBGRA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
 		}
 		else if (src_desc.component_type == ImageDescription::TYPE_FLOAT)
 		{
@@ -256,9 +256,9 @@ namespace chaos
 			if (src_desc.component_count == 1)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelGray>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 			else if (src_desc.component_count == 3)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelRGB>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
+				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelBGR>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 			else if (src_desc.component_count == 4)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelRGBA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
+				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelBGRA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
 		}
 		else if (src_desc.component_type == ImageDescription::TYPE_FLOAT)
 		{
@@ -335,6 +335,7 @@ namespace chaos
 						result = other;           // this code is good even if the conversion fails 
 					}
 				}
+
 				FreeImage_CloseMemory(memory);
 			}
 		}	

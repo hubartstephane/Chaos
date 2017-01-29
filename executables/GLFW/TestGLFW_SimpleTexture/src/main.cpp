@@ -68,7 +68,7 @@ protected:
 
     if (index == 0)
     {
-      // create a gray scale texture : show order of lines in memory
+      // test manual buffer
       char * image_buffer = new char[4 * 512 * 512];
 
       chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, chaos::ImageDescription::TYPE_UNSIGNED_CHAR, 4, 0);
@@ -87,7 +87,18 @@ protected:
       delete[](image_buffer);
     }
 
+    // test GENERATION GRAY
     if (index == 1)
+    {
+      result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGray>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGray* buffer)
+      {
+        for (int i = 0; i < desc.height; ++i)
+          for (int j = 0; j < desc.width; ++j)
+            buffer[j + i * desc.width] = (unsigned char)i;
+      });
+    }
+    // test GENERATION RGB
+    if (index == 2)
     {
       result = chaos::GLTextureTools::GenTextureObject<chaos::PixelBGR>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelBGR * buffer)
       {
@@ -103,9 +114,36 @@ protected:
       });
     }
 
+    // test GENERATION GRAY FLOAT
+    if (index == 3)
+    {
+      result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGrayFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGrayFloat* buffer)
+      {
+        for (int i = 0; i < desc.height; ++i)
+          for (int j = 0; j < desc.width; ++j)
+            buffer[j + i * desc.width] = chaos::MathTools::CastAndDiv(i, desc.height);
+      });
+    }
 
+    // test GENERATION RGB FLOAT
+    if (index == 4)
+    {
+      result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGBFloat * buffer)
+      {
+        for (int i = 0; i < desc.height; ++i)
+        {
+          for (int j = 0; j < desc.width; ++j)
+          {
+            buffer[j + i * desc.width].R = chaos::MathTools::CastAndDiv(i, desc.width);
+            buffer[j + i * desc.width].G = chaos::MathTools::CastAndDiv(i, desc.height);
+            buffer[j + i * desc.width].B = 0.0f;
+          }
+        }
+      });
+    }
 
-    if (index >= 2 && index <= 7)
+    // Load files
+    if (index >= 5 && index <= 10)
     {
       chaos::Application * application = chaos::Application::GetInstance();
       if (application == nullptr)
@@ -113,17 +151,17 @@ protected:
       boost::filesystem::path resources_path = application->GetResourcesPath();
       boost::filesystem::path image_path;
 
-      if (index == 2)
+      if (index == 5)
         image_path = resources_path / "opengl_logo.gif";
-      else if (index == 3)
-        image_path = resources_path / "opengl_logo.png";
-      else if (index == 4)
-        image_path = resources_path / "opengl_logo_rectangle.png";
-      else if (index == 5)
-        image_path = resources_path / "icons-animation.gif";
       else if (index == 6)
-        image_path = resources_path / "grayscale.png";
+        image_path = resources_path / "opengl_logo.png";
       else if (index == 7)
+        image_path = resources_path / "opengl_logo_rectangle.png";
+      else if (index == 8)
+        image_path = resources_path / "icons-animation.gif";
+      else if (index == 9)
+        image_path = resources_path / "grayscale.png";
+      else if (index == 10)
         image_path = resources_path / "grayscale.gif";
 	  
       result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());

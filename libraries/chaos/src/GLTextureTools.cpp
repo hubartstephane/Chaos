@@ -60,8 +60,6 @@ namespace chaos
 	{
 		ImageDescription result;
 
-#if 0
-
 		if (texture_id != 0)
 		{
 			GLint width  = 0;				
@@ -77,40 +75,54 @@ namespace chaos
 
 					int component_type = 0;
 					int component_count = 0;
+
 					GLenum format = GL_NONE;
-					GLenum type = GL_NONE;
+					GLenum type   = GL_NONE;
+
 					if (internal_format == GL_R8)
 					{
 						format = GL_RED;
+						type   = GL_UNSIGNED_BYTE;
 						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
 						component_count = 1;
 					}
 					else if (internal_format == GL_RGB8)
 					{
 						format = GL_BGR;
+						type   = GL_UNSIGNED_BYTE;
 						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
 						component_count = 3;
 					}
 					else if (internal_format == GL_RGBA8)
 					{
 						format = GL_BGRA;
+						type   = GL_UNSIGNED_BYTE;
 						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
 						component_count = 4;
 					}
+					else if (internal_format == GL_R32F)
+					{
+						format = GL_RED;
+						type   = GL_FLOAT;
+						component_type = ImageDescription::TYPE_FLOAT;
+						component_count = 1;
+					}
+					else if (internal_format == GL_RGB32F)
+					{
+						format = GL_RGB;
+						type   = GL_FLOAT;
+						component_type = ImageDescription::TYPE_FLOAT;
+						component_count = 3;
+					}
+					else if (internal_format == GL_RGBA8)
+					{
+						format = GL_RGBA;
+						type   = GL_FLOAT;
+						component_type = ImageDescription::TYPE_FLOAT;
+						component_count = 4;
+					}
 
-
-
-
-
-
-
-
-
-
-
-
-
-					if (component_type != 0 && component_count != 0)
+					if (format != GL_NONE && type != GL_NONE && component_type != 0 && component_count != 0)
 					{
 						result.width           = width;
 						result.height          = height;
@@ -129,15 +141,16 @@ namespace chaos
 						{
 							glPixelStorei(GL_PACK_ALIGNMENT, 1);
 							glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
-							glGetTextureImage(texture_id, level, format, GL_UNSIGNED_BYTE, bufsize, result.data);
+							glGetTextureImage(texture_id, level, format, type, bufsize, result.data);
+
+							assert(result.IsValid());
 						}
 						else
-							result = ImageDescription();
+							result = ImageDescription(); // overide previous information
 					}
 				}
 			}					
 		}
-#endif
 		return result;
 	}
 
@@ -235,7 +248,7 @@ namespace chaos
 		else if (component_type == ImageDescription::TYPE_FLOAT) 
 		{
 			if (component_count == 1)
-				return std::make_pair(GL_RED, GL_R8);
+				return std::make_pair(GL_RED, GL_R32F);
 			if (component_count == 3)
 				return std::make_pair(GL_RGB, GL_RGB32F);
 			if (component_count == 4)

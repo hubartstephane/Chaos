@@ -121,7 +121,7 @@ protected:
       {
         for (int i = 0; i < desc.height; ++i)
           for (int j = 0; j < desc.width; ++j)
-            buffer[j + i * desc.width] = chaos::MathTools::CastAndDiv(i, desc.height);
+            buffer[j + i * desc.width] = chaos::MathTools::CastAndDiv<float>(i, desc.height);
       });
     }
 
@@ -134,8 +134,8 @@ protected:
         {
           for (int j = 0; j < desc.width; ++j)
           {
-            buffer[j + i * desc.width].R = chaos::MathTools::CastAndDiv(i, desc.width);
-            buffer[j + i * desc.width].G = chaos::MathTools::CastAndDiv(i, desc.height);
+            buffer[j + i * desc.width].R = chaos::MathTools::CastAndDiv<float>(j, desc.width);
+            buffer[j + i * desc.width].G = chaos::MathTools::CastAndDiv<float>(i, desc.height);
             buffer[j + i * desc.width].B = 0.0f;
           }
         }

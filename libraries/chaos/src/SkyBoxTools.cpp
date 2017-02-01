@@ -229,7 +229,7 @@ namespace chaos
 		{
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
 
-			int bpp = src_image_desc.GetBPP();
+			int bpp = src_image_desc.pixel_format.GetBPP();
 			if (bpp <= 0)
 				return result;
 

@@ -108,9 +108,9 @@ namespace chaos
 			T * buffer = new T[width * height];
 			if (buffer != nullptr)
 			{
-				std::pair<int, int> pixel_format = ImageDescription::GetPixelFormat<T>();
+				PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
 
-				ImageDescription desc(buffer, width, height, pixel_format.first, pixel_format.second, 0);
+				ImageDescription desc(buffer, width, height, pixel_format, 0);
 				generator(desc, buffer);
 				result = GenTexture(desc, parameters);
 				delete[](buffer);
@@ -154,7 +154,7 @@ namespace chaos
 		/** Get Format/Internal Format pair from BPP */
 		static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
 		/** Get Format/Internal Format pair from the description */
-		static std::pair<GLenum, GLenum> GetTextureFormats(int component_type, int component_count);
+		static std::pair<GLenum, GLenum> GetTextureFormats(PixelFormat const & pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
 		static GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);

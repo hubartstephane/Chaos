@@ -73,6 +73,8 @@ namespace chaos
 					GLint internal_format = 0;
 					glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
 
+
+					PixelFormat pixel_format;
 					int component_type = 0;
 					int component_count = 0;
 
@@ -83,56 +85,52 @@ namespace chaos
 					{
 						format = GL_RED;
 						type   = GL_UNSIGNED_BYTE;
-						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
-						component_count = 1;
+						pixel_format = PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 1);
 					}
 					else if (internal_format == GL_RGB8)
 					{
 						format = GL_BGR;
 						type   = GL_UNSIGNED_BYTE;
-						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
-						component_count = 3;
+						pixel_format = PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 3);
 					}
 					else if (internal_format == GL_RGBA8)
 					{
 						format = GL_BGRA;
 						type   = GL_UNSIGNED_BYTE;
-						component_type = ImageDescription::TYPE_UNSIGNED_CHAR;
-						component_count = 4;
+						pixel_format = PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 4);
 					}
 					else if (internal_format == GL_R32F)
 					{
 						format = GL_RED;
 						type   = GL_FLOAT;
-						component_type = ImageDescription::TYPE_FLOAT;
-						component_count = 1;
+						pixel_format = PixelFormat(PixelFormat::TYPE_FLOAT, 1);
 					}
 					else if (internal_format == GL_RGB32F)
 					{
 						format = GL_RGB;
 						type   = GL_FLOAT;
-						component_type = ImageDescription::TYPE_FLOAT;
-						component_count = 3;
+						pixel_format = PixelFormat(PixelFormat::TYPE_FLOAT, 3);
 					}
 					else if (internal_format == GL_RGBA8)
 					{
 						format = GL_RGBA;
 						type   = GL_FLOAT;
-						component_type = ImageDescription::TYPE_FLOAT;
-						component_count = 4;
+						pixel_format = PixelFormat(PixelFormat::TYPE_FLOAT, 4);
 					}
 
-					if (format != GL_NONE && type != GL_NONE && component_type != 0 && component_count != 0)
+					if (pixel_format.IsValid())
 					{
-						result.width           = width;
-						result.height          = height;
-						result.component_type  = component_type;
-						result.component_count = component_count;
-						result.line_size       = width * result.GetPixelSize();
-						result.pitch_size      = result.line_size; // no padding
-						result.padding_size    = 0;
+						assert(format != GL_NONE);
+						assert(type != GL_NONE);
 
-						int pixel_size = result.GetPixelSize();
+						result.width        = width;
+						result.height       = height;
+						result.pixel_format = pixel_format;
+						result.line_size    = width * result.pixel_format.GetPixelSize();
+						result.pitch_size   = result.line_size; // no padding
+						result.padding_size = 0;
+
+						int pixel_size = result.pixel_format.GetPixelSize();
 
 						size_t bufsize = width * height * pixel_size;
 
@@ -235,25 +233,25 @@ namespace chaos
 		return std::make_pair(GL_NONE, GL_NONE);
 	}
 
-	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(int component_type, int component_count) // format / internal format
+	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(PixelFormat const & pixel_format) // format / internal format
 	{
 		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
-		if (component_type == ImageDescription::TYPE_UNSIGNED_CHAR)
+		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
 		{
-			if (component_count == 1)
+			if (pixel_format.component_count == 1)
 				return std::make_pair(GL_RED, GL_R8);
-			if (component_count == 3)
+			if (pixel_format.component_count == 3)
 				return std::make_pair(GL_BGR, GL_RGB8); // FreeImage produce BGR(A) images
-			if (component_count == 4)
+			if (pixel_format.component_count == 4)
 				return std::make_pair(GL_BGRA, GL_RGBA8);				
 		}
-		else if (component_type == ImageDescription::TYPE_FLOAT) 
+		else if (pixel_format.component_type == PixelFormat::TYPE_FLOAT) 
 		{
-			if (component_count == 1)
+			if (pixel_format.component_count == 1)
 				return std::make_pair(GL_RED, GL_R32F);
-			if (component_count == 3)
+			if (pixel_format.component_count == 3)
 				return std::make_pair(GL_RGB, GL_RGB32F);
-			if (component_count == 4)
+			if (pixel_format.component_count == 4)
 				return std::make_pair(GL_RGBA, GL_RGBA32F);
 		}
 		return std::make_pair(GL_NONE, GL_NONE);
@@ -271,16 +269,16 @@ namespace chaos
 		if (result.texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
-			std::pair<GLenum, GLenum> all_formats = GetTextureFormats(image.component_type, image.component_count);
+			std::pair<GLenum, GLenum> all_formats = GetTextureFormats(image.pixel_format);
 			assert(all_formats.first != GL_NONE);
 			assert(all_formats.second != GL_NONE);
 
 			GLenum format          = all_formats.first;
 			GLenum internal_format = all_formats.second;
-			GLenum type            = (image.component_type == ImageDescription::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
+			GLenum type            = (image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, image.pitch_size / image.GetPixelSize());
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, image.pitch_size / image.pixel_format.GetPixelSize());
 
 			// store the pixels
 			if (target == GL_TEXTURE_1D)
@@ -442,7 +440,7 @@ namespace chaos
 			{
 				ImageDescription image = skybox->GetImageFaceDescription(i);
 
-				int pixel_size = image.GetPixelSize();
+				int pixel_size = image.pixel_format.GetPixelSize();
 
 				void const * data = image.data;
 				GLint        unpack_row_length = image.pitch_size / pixel_size;

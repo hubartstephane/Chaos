@@ -27,7 +27,7 @@ namespace chaos
 			return false;
 		if (description.IsEmpty())
 			return false;
-		if (description.component_type != ImageDescription::TYPE_UNSIGNED_CHAR)
+		if (description.pixel_format.component_type != PixelFormat::TYPE_UNSIGNED_CHAR)
 			return false;
 		return true;
 	}
@@ -139,12 +139,14 @@ namespace chaos
 		// search max size, max bpp, and final target (GL_TEXTURE_1D_ARRAY or GL_TEXTURE_2D_ARRAY)
 		int width  = 0;
 		int height = 0;
-		int bpp    = 0;
+		int bpp = 0;
+		int component_count = 0;
+		int component_type  = 0;
 		for (ImageSliceRegisterEntry const & entry : slice_register.slices)
 		{
 			width  = max(width,  entry.description.width);
 			height = max(height, entry.description.height);
-			bpp    = max(bpp,    entry.description.GetBPP());
+			bpp    = max(bpp,    entry.description.pixel_format.GetBPP());
 		}
 
 		// create the texture and fill the slices
@@ -192,8 +194,8 @@ namespace chaos
 			{
 				ImageDescription desc = slice_register.slices[i].description;
 
-				int bpp  = desc.GetBPP();
-				int type = desc.component_type == (ImageDescription::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
+				int bpp  = desc.pixel_format.GetBPP();
+				int type = desc.pixel_format.component_type == (PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 				glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / bpp);
 

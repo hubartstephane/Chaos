@@ -76,10 +76,10 @@ namespace chaos
 	};
 
 	/** 
-	* ImageFaceDescription : data to work with pixels
+	* PixelFormat : the accepted pixel formats
 	*/
 
-	class ImageDescription
+	class PixelFormat
 	{
 	public:
 
@@ -88,44 +88,75 @@ namespace chaos
 		static int const TYPE_UNSIGNED_CHAR = 1;
 		static int const TYPE_FLOAT = 2;
 
+	public:
+
+		/** constructor */
+		PixelFormat() = default;
+		
+		PixelFormat(PixelFormat const & other) = default;
+
+		PixelFormat(int in_component_type, int in_component_count) : 
+			component_type(in_component_type), 
+			component_count(in_component_count){};
+
+		/** get the size of one pixel */
+		int GetPixelSize() const;
+		/** returns true whether the pixel format is handled */
+		bool IsValid() const;
+		/** returns true whether the pixel format are same */
+		bool operator == (PixelFormat const & other) const;
+		/** returns true whether the pixel format are different */
+		bool operator != (PixelFormat const & other) const;
+		/** gets the BPP if applyable (non float texture) */
+		int GetBPP() const;
+
+		/** get pixel format corresponding to an image */
+		static PixelFormat FromImageDescription(FIBITMAP * image);
+
+		/** transform a type into pixel format (component type and count) */
+		template<typename T>
+		static PixelFormat GetPixelFormat();
+
+		template<>
+		static PixelFormat GetPixelFormat<PixelGray>(){ return PixelFormat(TYPE_UNSIGNED_CHAR, 1);}
+		template<>
+		static PixelFormat GetPixelFormat<PixelBGR>(){ return PixelFormat(TYPE_UNSIGNED_CHAR, 3);}
+		template<>
+		static PixelFormat GetPixelFormat<PixelBGRA>(){ return PixelFormat(TYPE_UNSIGNED_CHAR, 4);}
+		template<>
+		static PixelFormat GetPixelFormat<PixelGrayFloat>(){ return PixelFormat(TYPE_FLOAT, 1);}
+		template<>
+		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return PixelFormat(TYPE_FLOAT, 3);}
+		template<>
+		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return PixelFormat(TYPE_FLOAT, 4);}
+
+	public:
+
+		/** the type of the components */
+		int component_type{ TYPE_UNKNOWN };
+		/** the number of components for each pixels */
+		int component_count{ 0 };		
+	};
+
+	/** 
+	* ImageFaceDescription : data to work with pixels
+	*/
+
+	class ImageDescription
+	{
+	public:
+
 		/** constructor */
 		ImageDescription() = default;
 
-		ImageDescription(void * in_data, int in_width, int in_height, int in_component_type, int in_component_count, int in_padding = 0);
+		ImageDescription(void * in_data, int in_width, int in_height, PixelFormat const & in_pixel_format, int in_padding = 0);
 
 		/** returns true whether the description is valid */
 		bool IsValid() const;
 		/** returns true whether the image is empty */
 		bool IsEmpty() const;
-		/** get the size of one component */
-		int GetComponentSize() const;
-		/** get the size of one pixel */
-		int GetPixelSize() const;
-		/** returns true whether the pixel format is handled */
-		bool IsPixelFormatValid() const;
-		/** returns true whether the pixel format are same */
-		bool ArePixelFormatSame(ImageDescription const & other) const;
-		/** gets the BPP if applyable (non float texture) */
-		int GetBPP() const;
 		/** get the image information for a sub image */
 		ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
-
-		/** transform a type into pixel format (component type and count) */
-		template<typename T>
-		static std::pair<int, int> GetPixelFormat();
-
-		template<>
-		static std::pair<int, int> GetPixelFormat<PixelGray>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 1);}
-		template<>
-		static std::pair<int, int> GetPixelFormat<PixelBGR>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 3);}
-		template<>
-		static std::pair<int, int> GetPixelFormat<PixelBGRA>(){ return std::make_pair(TYPE_UNSIGNED_CHAR, 4);}
-		template<>
-		static std::pair<int, int> GetPixelFormat<PixelGrayFloat>(){ return std::make_pair(TYPE_FLOAT, 1);}
-		template<>
-		static std::pair<int, int> GetPixelFormat<PixelRGBFloat>(){ return std::make_pair(TYPE_FLOAT, 3);}
-		template<>
-		static std::pair<int, int> GetPixelFormat<PixelRGBAFloat>(){ return std::make_pair(TYPE_FLOAT, 4);}
 
 	public:
 
@@ -134,17 +165,34 @@ namespace chaos
 		/** the image width */
 		int    width{ 0 };
 		/** the image height */
-		int    height{ 0 };
-		/** the type of the components */
-		int    component_type{ 0 };
-		/** the number of components for each pixels */
-		int    component_count{ 0 };		
+		int    height{ 0 };	
+		/** the pixel format */
+		PixelFormat pixel_format;
 		/** size of line in bytes (exclude padding) : width * pixel_size */
 		int    line_size{ 0 };
 		/** size of line in bytes (including padding) : padding + line_size */
 		int    pitch_size{ 0 };
 		/** padding a the end of a line in bytes */
 		int    padding_size{ 0 };
+	};
+
+
+	/**
+	* TextureArrayGeneratorParams : parameters for merging some slices of different format
+	*/
+
+	class xTextureArrayGeneratorParams
+	{
+	public:
+
+		/** whether grayscale sliced must be converted into color slice */
+		bool accept_grayscaled{true};
+		/** whether float images must be converted into unsigned char slice */
+		bool accept_float{true};
+		/** the wanted component count */
+		int component_count{0};
+		/** the wanted component type */
+		int component_type{0};		
 	};
 
 	/** 

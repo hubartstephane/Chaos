@@ -71,7 +71,7 @@ protected:
 			// test manual buffer
 			char * image_buffer = new char[4 * 512 * 512];
 
-			chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, chaos::ImageDescription::TYPE_UNSIGNED_CHAR, 4, 0);
+			chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 0);
 
 			for (int i = 0; i < 512; ++i)
 			{

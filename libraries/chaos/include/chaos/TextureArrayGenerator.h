@@ -139,6 +139,30 @@ namespace chaos
 		bool release_image;
 	};
 
+
+
+
+	/**
+	* TextureArrayGeneratorParams : parameters for merging some slices of different format
+	*/
+
+	class TextureArrayGeneratorParams
+	{
+	public:
+
+		/** whether grayscale sliced must be converted into color slice */
+		bool accept_grayscaled{true};
+		/** whether float images must be converted into unsigned char slice */
+		bool accept_float{true};
+		/** the wanted component count */
+		int component_count{0};
+		/** the wanted component type */
+		int component_type{0};		
+	};
+
+
+
+
 	/**
 	* TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
 	*/
@@ -152,18 +176,18 @@ namespace chaos
 		public:
 
 			/** first slice allocated for the generator */
-			int first_slice;
+			int first_slice{0};
 			/** number of slice used by the generator */
-			int slice_count;
+			int slice_count{0};
 		};
 
 		class GeneratorEntry
 		{
 		public:
 			/** the proxy that will request some slices */
-			ImageSliceGeneratorProxyBase * proxy;
+			ImageSliceGeneratorProxyBase * proxy{nullptr};
 			/** optional where the slices are allocated */
-			SliceInfo * slice_info;
+			SliceInfo * slice_info{nullptr};
 		};
 
 		/** constructor */

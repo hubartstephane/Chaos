@@ -6,49 +6,20 @@
 namespace chaos
 {
 
-	ImageDescription::ImageDescription(void * in_data, int in_width, int in_height, int in_component_type, int in_component_count, int in_padding):
-		data(in_data),
-		width(in_width),
-		height(in_height),
-		component_type(in_component_type),
-		component_count(in_component_count),
-		padding_size(in_padding)
-	{
-		line_size  = width * GetPixelSize();
-		pitch_size = line_size + padding_size;  
+	// ==================================================================================
+	// PixelFormat methods
+	// ==================================================================================
 
-		assert(IsValid());
-	}
-
-	int ImageDescription::GetBPP() const
-	{
-		if (!IsValid())
-			return 0;
-		if (component_type == TYPE_FLOAT)
-			return 0;
-		return component_count * 8;
-	}
-
-	bool ImageDescription::IsEmpty() const 
-	{ 
-		return (width == 0 || height == 0 || data == nullptr); 
-	}
-
-	int ImageDescription::GetComponentSize() const
+	int PixelFormat::GetPixelSize() const
 	{
 		if (component_type == TYPE_UNSIGNED_CHAR)
-			return sizeof(unsigned char);
+			return component_count * sizeof(unsigned char);
 		if (component_type == TYPE_FLOAT)
-			return sizeof(float);
+			return component_count * sizeof(float);
 		return 0;	
 	}
 
-	int ImageDescription::GetPixelSize() const
-	{
-		return GetComponentSize() * component_count;	
-	}
-
-	bool ImageDescription::IsPixelFormatValid() const
+	bool PixelFormat::IsValid() const
 	{
 		if (component_type != TYPE_UNSIGNED_CHAR && component_type != TYPE_FLOAT)
 			return false;
@@ -57,9 +28,75 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageDescription::ArePixelFormatSame(ImageDescription const & other) const
+	bool PixelFormat::operator == (PixelFormat const & other) const
 	{
 		return (component_type == other.component_type) && (component_count == other.component_count);	
+	}
+
+	bool PixelFormat::operator != (PixelFormat const & other) const
+	{
+		return !operator == (other);
+	}
+
+	int PixelFormat::GetBPP() const
+	{
+		if (!IsValid())
+			return 0;
+		if (component_type == TYPE_FLOAT)
+			return 0;
+		return component_count * 8;
+	}
+
+	PixelFormat PixelFormat::FromImageDescription(FIBITMAP * image)
+	{
+		assert(image != nullptr);
+
+		PixelFormat result;
+	
+		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
+		if (image_type == FIT_BITMAP)
+		{			
+			int bpp = FreeImage_GetBPP(image); // ignore other format than 8, 24 and 32 bpp
+			if (bpp != 8 && bpp != 24 && bpp != 32)
+				return result;			
+
+			result.component_type  = TYPE_UNSIGNED_CHAR;
+			result.component_count = bpp / 8;
+		}
+		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
+		{
+			result.component_type  = TYPE_FLOAT;
+
+			if (image_type == FIT_FLOAT)
+				result.component_count = 1;
+			else if (image_type == FIT_RGBF)
+				result.component_count = 3;
+			else if (image_type == FIT_RGBAF)
+				result.component_count = 4;
+		}
+		return result;
+	}
+
+	// ==================================================================================
+	// ImageDescription methods
+	// ==================================================================================
+
+	ImageDescription::ImageDescription(void * in_data, int in_width, int in_height, PixelFormat const & in_pixel_format, int in_padding):
+		data(in_data),
+		width(in_width),
+		height(in_height),		
+		pixel_format(in_pixel_format),
+		padding_size(in_padding)
+	{
+		line_size  = width * pixel_format.GetPixelSize();
+		pitch_size = line_size + padding_size;  
+
+		assert(IsValid());
+	}
+
+	bool ImageDescription::IsEmpty() const 
+	{ 
+		return (width == 0 || height == 0 || data == nullptr); 
 	}
 
 	bool ImageDescription::IsValid() const
@@ -76,10 +113,10 @@ namespace chaos
 			if (width != 0 || height != 0)
 				return false;
 		// the format should be well known
-		if (!IsPixelFormatValid())
+		if (!pixel_format.IsValid())
 			return false;
 		// test data consistency
-		if (line_size != width * GetPixelSize())
+		if (line_size != width * pixel_format.GetPixelSize())
 			return false;
 		if (pitch_size < 0 || padding_size < 0)
 			return false;
@@ -105,15 +142,14 @@ namespace chaos
 		if (y < 0 || y + wanted_height > height)
 			return result;
 
-		int pixel_size = GetPixelSize();
+		int pixel_size = pixel_format.GetPixelSize();
 
-		result.width           = wanted_width;
-		result.height          = wanted_height;
-		result.component_type  = component_type;
-		result.component_count = component_count;
-		result.pitch_size      = pitch_size;
-		result.line_size       = wanted_width * pixel_size;
-		result.padding_size    = result.pitch_size - result.line_size;
+		result.width        = wanted_width;
+		result.height       = wanted_height;
+		result.pixel_format = pixel_format;
+		result.pitch_size   = pitch_size;
+		result.line_size    = wanted_width * pixel_size;
+		result.padding_size = result.pitch_size - result.line_size;
 
 		if (wanted_width != 0 && wanted_height != 0 && !IsEmpty())
 		{
@@ -130,51 +166,24 @@ namespace chaos
 	{
 		assert(image != nullptr);
 
-		ImageDescription result;
-
 		// test whether we can handle that format
-		int component_count = 0;
-		int component_type  = 0;
-
-		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
-		if (image_type == FIT_BITMAP)
-		{			
-			int bpp = FreeImage_GetBPP(image); // ignore other format than 8, 24 and 32 bpp
-			if (bpp != 8 && bpp != 24 && bpp != 32)
-				return result;			
-
-			component_type  = ImageDescription::TYPE_UNSIGNED_CHAR;
-			component_count = bpp / 8;
-		}
-		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
+		PixelFormat pixel_format = PixelFormat::FromImageDescription(image);
+		if (pixel_format.IsValid())
 		{
-			component_type  = ImageDescription::TYPE_FLOAT;
+			ImageDescription result;
+			result.width        = FreeImage_GetWidth(image);
+			result.height       = FreeImage_GetHeight(image);
+			result.pixel_format = pixel_format;
+			result.line_size    = FreeImage_GetLine(image);
+			result.pitch_size   = FreeImage_GetPitch(image);
+			result.padding_size = result.pitch_size - result.line_size;
+			result.data         = FreeImage_GetBits(image);
 
-			if (image_type == FIT_FLOAT)
-				component_count = 1;
-			else if (image_type == FIT_RGBF)
-				component_count = 3;
-			else if (image_type == FIT_RGBAF)
-				component_count = 4;
-		}
-		else
-			return result;
-
-		// fullfill missing members
-		result.width           = FreeImage_GetWidth(image); // FREEIMAGE does use constness correctly
-		result.height          = FreeImage_GetHeight(image);
-		result.component_type  = component_type;
-		result.component_count = component_count;
-		result.line_size       = FreeImage_GetLine(image);
-		result.pitch_size      = FreeImage_GetPitch(image);
-		result.padding_size    = result.pitch_size - result.line_size;
-		result.data            = FreeImage_GetBits(image);
-
-		// test whether the result is valid (line_size & pitch come from FreeImage)
-		if (!result.IsValid())
-			result = ImageDescription();
-
-		return result;
+			// test whether the result is valid (line_size & pitch come from FreeImage)
+			if (result.IsValid())
+				return result;				
+		}			
+		return ImageDescription();
 	}
 
 	class ImageToolsCopyPixelsImpl
@@ -209,7 +218,7 @@ namespace chaos
 	{
 		assert(src_desc.IsValid());
 		assert(dst_desc.IsValid());
-		assert(src_desc.ArePixelFormatSame(dst_desc));
+		assert(src_desc.pixel_format == dst_desc.pixel_format);
 
 		assert(width  >= 0);
 		assert(height >= 0);
@@ -218,22 +227,24 @@ namespace chaos
 		assert(dst_x >= 0 && dst_x + width  <= dst_desc.width);
 		assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
 
-		if (src_desc.component_type == ImageDescription::TYPE_UNSIGNED_CHAR)
+		PixelFormat const & src_pixel_format = src_desc.pixel_format;
+
+		if (src_pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
 		{
-			if (src_desc.component_count == 1)
+			if (src_pixel_format.component_count == 1)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelGray>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 3)
+			else if (src_pixel_format.component_count == 3)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelBGR>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 4)
+			else if (src_pixel_format.component_count == 4)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelBGRA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
 		}
-		else if (src_desc.component_type == ImageDescription::TYPE_FLOAT)
+		else if (src_pixel_format.component_type == PixelFormat::TYPE_FLOAT)
 		{
-			if (src_desc.component_count == 1)
+			if (src_pixel_format.component_count == 1)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelGrayFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 3)
+			else if (src_pixel_format.component_count == 3)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelRGBFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 4)
+			else if (src_pixel_format.component_count == 4)
 				ImageToolsCopyPixelsImpl::CopyPixels<PixelRGBAFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
 		}
 	}
@@ -242,7 +253,7 @@ namespace chaos
 	{
 		assert(src_desc.IsValid());
 		assert(dst_desc.IsValid());
-		assert(src_desc.ArePixelFormatSame(dst_desc));
+		assert(src_desc.pixel_format == dst_desc.pixel_format);
 
 		assert(width  >= 0);
 		assert(height >= 0);
@@ -251,22 +262,24 @@ namespace chaos
 		assert(dst_x >= 0 && dst_x + width  <= dst_desc.width);
 		assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
 
-		if (src_desc.component_type == ImageDescription::TYPE_UNSIGNED_CHAR)
+		PixelFormat const & src_pixel_format = src_desc.pixel_format;
+
+		if (src_pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
 		{
-			if (src_desc.component_count == 1)
+			if (src_pixel_format.component_count == 1)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelGray>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 3)
+			else if (src_pixel_format.component_count == 3)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelBGR>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 4)
+			else if (src_pixel_format.component_count == 4)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelBGRA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
 		}
-		else if (src_desc.component_type == ImageDescription::TYPE_FLOAT)
+		else if (src_pixel_format.component_type == PixelFormat::TYPE_FLOAT)
 		{
-			if (src_desc.component_count == 1)
+			if (src_pixel_format.component_count == 1)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelGrayFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 3)
+			else if (src_pixel_format.component_count == 3)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelRGBFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_desc.component_count == 4)
+			else if (src_pixel_format.component_count == 4)
 				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelRGBAFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
 		}
 	}
@@ -281,11 +294,11 @@ namespace chaos
 			return false;
 
 		// multiple components => not grayscale
-		if (desc.component_count != 1)
+		if (desc.pixel_format.component_count != 1)
 			return false;
 
 		// a 'luminance' image is a grayscale
-		if (desc.component_type == ImageDescription::TYPE_FLOAT)
+		if (desc.pixel_format.component_type == PixelFormat::TYPE_FLOAT)
 			return true;
 
 		// 1 component of type UNSIGNED CHAR :

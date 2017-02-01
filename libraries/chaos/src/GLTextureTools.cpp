@@ -137,12 +137,14 @@ namespace chaos
 						size_t bufsize = width * height * pixel_size;
 
 						result.data = new char[bufsize];
-						if (result.data != nullptr)
+						if (result.data != nullptr)						
 						{
 							glPixelStorei(GL_PACK_ALIGNMENT, 1);
-							glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
-							glGetTextureImage(texture_id, level, format, type, bufsize, result.data);
 
+							glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
+
+							glGetTextureImage(texture_id, level, format, type, bufsize, result.data);
+					
 							assert(result.IsValid());
 						}
 						else

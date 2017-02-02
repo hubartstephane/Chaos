@@ -56,6 +56,52 @@
 namespace chaos
 {
 
+	bool GLPixelFormat::IsValid() const
+	{
+		if (format != GL_RED &&
+			format != GL_BGR &&
+			format != GL_BGRA &&
+			format != GL_R32F &&
+			format != GL_RGB32F &&
+			format != GL_RGBA32F)
+			return false;
+
+		if (internal_format != GL_R8 &&
+			internal_format != GL_RGB8 &&
+			internal_format != GL_RGBA8 &&
+			internal_format != GL_R32F &&
+			internal_format != GL_RGB32F &&
+			internal_format != GL_RGBA32F)
+			return false;
+
+		return true;
+	
+	}
+
+
+	PixelFormat GLTextureTools::GetTexturePixelFormat(GLuint texture_id, GLint level)
+	{
+		if (texture_id != 0)
+		{
+			GLint internal_format = 0;
+			glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);	
+
+			if (internal_format == GL_R8)
+				return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 1);
+			if (internal_format == GL_RGB8)
+				return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 3);
+			if (internal_format == GL_RGBA8)
+				return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 4);
+			if (internal_format == GL_R32F)
+				return PixelFormat(PixelFormat::TYPE_FLOAT, 1);
+			if (internal_format == GL_RGB32F)
+				return PixelFormat(PixelFormat::TYPE_FLOAT, 3);
+			if (internal_format == GL_RGBA32F)
+				return PixelFormat(PixelFormat::TYPE_FLOAT, 4);
+		}
+		return PixelFormat();
+	}
+
 	ImageDescription GLTextureTools::GetTextureImage(GLuint texture_id, GLint level)
 	{
 		ImageDescription result;
@@ -73,8 +119,8 @@ namespace chaos
 					GLint internal_format = 0;
 					glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
 
-
 					PixelFormat pixel_format;
+
 					int component_type = 0;
 					int component_count = 0;
 

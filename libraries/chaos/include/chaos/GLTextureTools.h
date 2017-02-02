@@ -8,6 +8,23 @@
 namespace chaos
 {
 
+	class GLPixelFormat
+	{
+	public:
+
+		/** returns true whether the pixel format is supported */
+		bool IsValid() const;
+
+	public:
+
+		/** how the data should be stored in CPU side */
+		GLenum format{GL_NONE};
+		/** how the data should be stored in GPU side */
+		GLenum internal_format{GL_NONE};
+		/** the kind for each component of pixel */
+		GLenum type{GL_NONE};
+	};
+
 	/**
 	* GenTextureResult : result for gen texture methods
 	**/
@@ -61,6 +78,8 @@ namespace chaos
 
 		/** get buffer containing the texture data */
 		static ImageDescription	GetTextureImage(GLuint texture_id, GLint level);
+		/** get the pixel format of the texture */
+		static PixelFormat GetTexturePixelFormat(GLuint texture_id, GLint level);
 
 		/** returns true whether type is an array texture type */
 		static bool IsArrayTextureType(GLenum type);

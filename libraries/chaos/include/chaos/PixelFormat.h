@@ -87,7 +87,7 @@ namespace chaos
 		static int const TYPE_UNSIGNED_CHAR = 1;
 		static int const TYPE_FLOAT = 2;
 
-		/** the well know format */
+		/** the well known formats */
 		static int const FORMAT_UNKNOWN    = 0;
 		static int const FORMAT_GRAY       = 1;
 		static int const FORMAT_RGB        = 2;
@@ -146,6 +146,28 @@ namespace chaos
 		int component_type{ TYPE_UNKNOWN };
 		/** the number of components for each pixels */
 		int component_count{ 0 };		
+	};
+
+	/**
+	 * PixelFormatMerger : 
+	 */
+
+	class PixelFormatMerger
+	{
+
+	public:
+
+		/** merge 2 pixel formats */
+		PixelFormat Merge(PixelFormat const & src1, PixelFormat const & src2) const;
+	
+	public:
+
+		/** if valid, the resulting pixel format should be set to this */
+		PixelFormat pixel_format;
+		/** if set to false, all luminances formats will become RGB */
+		bool accept_luminance{true};
+		/** if set to false, all float formats will become unsigned char */
+		bool accept_float{true};	
 	};
 
 }; // namespace chaos

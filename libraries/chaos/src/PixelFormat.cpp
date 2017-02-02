@@ -103,4 +103,21 @@ namespace chaos
 		return result;
 	}
 
+	PixelFormat PixelFormatMergeParams::Merge(PixelFormat const & src1, PixelFormat const & src2) const
+	{
+		PixelFormat result;
+
+		if (pixel_format.IsValid())
+			return pixel_format;
+
+		if (!accept_luminance && result.component_count == 1)
+			result.component_count = 3;
+		
+		if (!accept_float && result.component_type == PixelFormat::TYPE_FLOAT)
+			result.component_count = PixelFormat::TYPE_UNSIGNED_CHAR;
+
+		return result;			
+	}
+
+
 }; // namespace chaos

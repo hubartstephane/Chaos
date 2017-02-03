@@ -235,49 +235,55 @@ namespace chaos
 	SkyBoxImages SkyBoxImages::ToMultipleImages() const
 	{
 		SkyBoxImages result;
-		if (IsSingleImage()) // must be single (so it is non empty)
+
+		// must be single (so it is non empty)
+		if (!IsSingleImage()) 
+			return result;
+
+		// get the single image description
+		ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
+		if (!src_image_desc.IsValid())
+			return result;
+		
+		// get the FREEIMAGE corresponding format
+		int bpp = 0;
+		FREE_IMAGE_TYPE image_type = ImageTools::GetFreeImageType(src_image_desc.pixel_format, &bpp);
+		if (image_type == FIT_UNKNOWN)
+			return result;
+
+		// the wanted size for every face
+		int size = GetSingleImageSize(src_image_desc); 
+
+		// iterate over all faces
+		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 		{
-			ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
-			if (!src_image_desc.IsValid())
-				return result;
+			glm::ivec3 position_and_flags = GetPositionAndFlags(i);
 
-			int bpp = 0;
-			FREE_IMAGE_TYPE image_type = ImageTools::GetFreeImageType(src_image_desc.pixel_format, &bpp);
-			if (image_type == FIT_UNKNOWN)
-				return result;
+			int left   = position_and_flags.x * size; // number of pixels / number of images aligned
+			int bottom = position_and_flags.y * size;
 
-			int size = GetSingleImageSize(src_image_desc); // the wanted size for every face
+			// allocate a face => in case of error, forget about result and returns an empty object
+			FIBITMAP * image = FreeImage_Allocate(image_type, size, size, bpp);
+			if (image == nullptr)
+				return SkyBoxImages();
 
-			for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
-			{
-				glm::ivec3 position_and_flags = GetPositionAndFlags(i);
+			// copy pixels
+			ImageDescription dst_image_desc = ImageTools::GetImageDescription(image);
 
-				int left   = position_and_flags.x * size; // number of pixels / number of images aligned
-				int bottom = position_and_flags.y * size;
+			int src_x = left;
+			int src_y = bottom;
+			int dst_x = 0;
+			int dst_y = 0;
 
-				FIBITMAP * image = FreeImage_Allocate(image_type, size, size, bpp);
-				if (image == nullptr)
-				{
-					result.Release(true);
-					break;
-				}
+			int flag = position_and_flags.z;
+			if (flag == SkyBoxImages::IMAGE_NO_TRANSFORM)
+				ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
+			else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
+				ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
 
-				ImageDescription dst_image_desc = ImageTools::GetImageDescription(image);
-
-				int src_x = left;
-				int src_y = bottom;
-				int dst_x = 0;
-				int dst_y = 0;
-
-				int flag = position_and_flags.z;
-				if (flag == SkyBoxImages::IMAGE_NO_TRANSFORM)
-					ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-				else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
-					ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-
-				result.SetImagePtrUnchecked(i, image);
-			}
+			result.SetImagePtrUnchecked(i, image);
 		}
+
 		return result;
 	}
 
@@ -290,11 +296,111 @@ namespace chaos
 	SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color) const
 	{
 		SkyBoxImages result;
+
+		// must be multiple 
+		if (IsSingleImage() || IsEmpty()) 
+			return result;
+
+		// find the final format and size
+		int size = -1;
+
+		PixelFormatMergeParams merge_params;
+
+		PixelFormatMerger pixel_format_merger(merge_params);
+		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		{
+			FIBITMAP * face_image = GetImage(i);
+			if (face_image == nullptr)
+				continue;		
+
+			ImageDescription face_image_desc = ImageTools::GetImageDescription(face_image);
+		
+			pixel_format_merger.Merge(face_image_desc.pixel_format);		
+
+			if (size < 0)
+				size = GetMultipleImageSize(face_image_desc);
+		}
+
+		PixelFormat final_pixel_format;
+		if (size <= 0 || !pixel_format_merger.GetResult(final_pixel_format))
+			return result;
+
+		if (!final_pixel_format.IsValid())
+			return result;
+
+		// get the FREEIMAGE corresponding format
+		int bpp = 0;
+		FREE_IMAGE_TYPE image_type = ImageTools::GetFreeImageType(final_pixel_format, &bpp);
+		if (image_type == FIT_UNKNOWN)
+			return result;
+
+		// get the disposition
+		SkyBoxSingleDisposition const & dispo = bHorizontal? 
+			SkyBoxSingleDisposition::HorizontalDisposition : 
+			SkyBoxSingleDisposition::VerticalDisposition;
+			
+		// allocate the image
+		int new_image_width  = size * dispo.image_count_horiz;
+		int new_image_height = size * dispo.image_count_vert;
+
+		FIBITMAP * new_image = FreeImage_Allocate(image_type, new_image_width, new_image_height, bpp);
+		if (new_image == nullptr)
+			return result;
+		result.SetImage(IMAGE_SINGLE, new_image, true);
+
+		
+
+		// fill the background (Blue - Green - Red - Alpha)
+#if 0
+		unsigned char bgra[4];
+		bgra[0] = (unsigned char)(fill_color.b * 255.0f);
+		bgra[1] = (unsigned char)(fill_color.g * 255.0f);
+		bgra[2] = (unsigned char)(fill_color.r * 255.0f);
+		bgra[3] = (unsigned char)(fill_color.a * 255.0f);
+
+		FreeImage_FillBackground(new_image, bgra, (bpp == 24)? FI_COLOR_IS_RGB_COLOR : FI_COLOR_IS_RGBA_COLOR);
+#endif
+		
+		// copy the faces into the single image
+		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
+		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		{
+			FIBITMAP * image = GetImage(i);
+			if (image == nullptr)
+				continue;
+
+			ImageDescription src_image_desc = ImageTools::GetImageDescription(image);
+
+			glm::ivec3 position_and_flags = dispo.GetPositionAndFlags(i);
+
+			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
+			int sub_image_index_y = position_and_flags.y;
+
+			int left   = sub_image_index_x * size;
+			int bottom = sub_image_index_y * size;
+
+			int src_x = 0;    // src = multiple => corner = origin
+			int src_y = 0;
+			int dst_x = left;
+			int dst_y = bottom;
+
+			int flag = position_and_flags.z;
+			if (flag == SkyBoxImages::IMAGE_NO_TRANSFORM)
+				ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
+			else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
+				ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
+		}
+
+		return result;
+	}
+
+	
+
+#if 0
+		SkyBoxImages result;
 		if (!IsSingleImage() && !IsEmpty()) // must be multiple
 		{
-			SkyBoxSingleDisposition const & dispo = bHorizontal? 
-				SkyBoxSingleDisposition::HorizontalDisposition: 
-				SkyBoxSingleDisposition::VerticalDisposition;
+
 
 			// get the very first image to decide for the pixel format
 			FIBITMAP * other_image = nullptr;
@@ -324,51 +430,10 @@ namespace chaos
 
 				FreeImage_FillBackground(new_image, bgra, (bpp == 24)? FI_COLOR_IS_RGB_COLOR : FI_COLOR_IS_RGBA_COLOR);
 
-				// copy the faces into the single image
-				for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
-				{
-					FIBITMAP * image = GetImage(i);
-					if (image == nullptr)
-						continue;
-
-					ImageDescription src_image_desc = ImageTools::GetImageDescription(image);
-
-					glm::ivec3 position_and_flags = dispo.GetPositionAndFlags(i);
-
-					int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
-					int sub_image_index_y = position_and_flags.y;
-
-					int left   = sub_image_index_x * size;
-					int bottom = sub_image_index_y * size;
-
-					int src_x = 0;    // src = multiple => corner = origin
-					int src_y = 0;
-					int dst_x = left;
-					int dst_y = bottom;
-
-					int flag = position_and_flags.z;
-					if (flag == SkyBoxImages::IMAGE_NO_TRANSFORM)
-						ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-					else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
-						ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-				}
-
-				// fill the result
-				result.SetImage(IMAGE_SINGLE, new_image, true);
-			}
-		}
-		return result;
-	}
 
 
 
-
-
-
-
-
-
-
+#endif
 
 
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const

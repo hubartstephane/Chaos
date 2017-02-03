@@ -76,6 +76,11 @@ public:
   /** Get skybox size for a multiple image (returns -1 if not a good candidate i.e square) */
   static int GetMultipleImageSize(FIBITMAP * image);
 
+  /** Get skybox size for a single image (returns -1 if not a good candidate i.e 4/3) */
+  static int GetSingleImageSize(ImageDescription const & image_description);
+  /** Get skybox size for a multiple image (returns -1 if not a good candidate i.e square) */
+  static int GetMultipleImageSize(ImageDescription const & image_description);
+
   /** Method to clean the skybox */
   void Release(bool bFreeMemory = true);
   /** Transform a 6 images box into a one image box */
@@ -151,7 +156,6 @@ public:
   static SkyBoxImages LoadSingleSkyBox(char const * filename);
   /** load a skybox from a multiple files */
   static SkyBoxImages LoadMultipleSkyBox(char const * left_image, char const * right_image, char const * top_image, char const * bottom_image, char const * front_image, char const * back_image);
-
 
 protected:
 

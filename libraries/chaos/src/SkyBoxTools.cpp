@@ -161,11 +161,10 @@ namespace chaos
 		return -1;
 	}
 
-	int SkyBoxImages::GetSingleImageSize(FIBITMAP * image)
+	int SkyBoxImages::GetSingleImageSize(ImageDescription const & image_description)
 	{
-		assert(image != nullptr);
-		int width  = FreeImage_GetWidth(image);
-		int height = FreeImage_GetHeight(image);
+		int width  = image_description.width;
+		int height = image_description.height;
 		if (width > 0 && height > 0)
 		{
 			// image should be 4/3
@@ -182,6 +181,12 @@ namespace chaos
 				return min_size;
 		}
 		return -1;
+	}
+	
+	int SkyBoxImages::GetSingleImageSize(FIBITMAP * image)
+	{
+		assert(image != nullptr);
+		return GetSingleImageSize(ImageTools::GetImageDescription(image));
 	}
 
 	bool SkyBoxImages::IsSingleImageHorizontal() const
@@ -202,14 +207,19 @@ namespace chaos
 		return (height > width);
 	}
 
+	int SkyBoxImages::GetMultipleImageSize(ImageDescription const & image_description)
+	{
+		int width  = image_description.width;
+		int height = image_description.height;
+		if (width == height && width > 0)
+			return width;
+		return -1;	
+	}
+
 	int SkyBoxImages::GetMultipleImageSize(FIBITMAP * image)
 	{
 		assert(image != nullptr);
-		int width  = FreeImage_GetWidth(image);
-		int height = FreeImage_GetHeight(image);
-		if (width == height && width > 0)
-			return width;
-		return -1;
+		return GetMultipleImageSize(ImageTools::GetImageDescription(image));
 	}
 
 	glm::ivec3 SkyBoxImages::GetPositionAndFlags(int image_type) const
@@ -228,12 +238,15 @@ namespace chaos
 		if (IsSingleImage()) // must be single (so it is non empty)
 		{
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
-
-			int bpp = src_image_desc.pixel_format.GetBPP();
-			if (bpp <= 0)
+			if (!src_image_desc.IsValid())
 				return result;
 
-			int size = GetSingleImageSize(single_image); // the wanted size for every face
+			int bpp = 0;
+			FREE_IMAGE_TYPE image_type = ImageTools::GetFreeImageType(src_image_desc.pixel_format, &bpp);
+			if (image_type == FIT_UNKNOWN)
+				return result;
+
+			int size = GetSingleImageSize(src_image_desc); // the wanted size for every face
 
 			for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 			{
@@ -242,7 +255,7 @@ namespace chaos
 				int left   = position_and_flags.x * size; // number of pixels / number of images aligned
 				int bottom = position_and_flags.y * size;
 
-				FIBITMAP * image = FreeImage_Allocate(size, size, bpp);
+				FIBITMAP * image = FreeImage_Allocate(image_type, size, size, bpp);
 				if (image == nullptr)
 				{
 					result.Release(true);
@@ -267,6 +280,12 @@ namespace chaos
 		}
 		return result;
 	}
+
+
+
+
+
+
 
 	SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color) const
 	{
@@ -341,11 +360,21 @@ namespace chaos
 		return result;
 	}
 
+
+
+
+
+
+
+
+
+
+
+
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const
 	{
 		assert(image_type >= IMAGE_LEFT && image_type <= IMAGE_BACK);
 
-		ImageDescription result;
 		if (IsSingleImage())
 		{
 			glm::ivec3 position_and_flags = GetPositionAndFlags(image_type);
@@ -359,15 +388,15 @@ namespace chaos
 			int x    = sub_image_index_x * size;
 			int y    = sub_image_index_y * size;
 
-			result = src_image_desc.GetSubImageDescription(x, y, size, size);   
+			return src_image_desc.GetSubImageDescription(x, y, size, size);   
 		}
 		else
 		{
 			FIBITMAP * image = GetImage(image_type);
 			if (image != nullptr)
-				result = ImageTools::GetImageDescription(image);
+				return ImageTools::GetImageDescription(image);
 		}
-		return result;
+		return ImageDescription();
 	}
 
 	bool SkyBoxImages::IsEmpty() const // Empty = no images
@@ -459,8 +488,6 @@ namespace chaos
 			return false;
 		if (FreeImage_GetHeight(image1) != FreeImage_GetHeight(image2))
 			return false;
-		if (FreeImage_GetBPP(image1) != FreeImage_GetBPP(image2))
-			return false;
 		return true;
 	}
 
@@ -487,17 +514,15 @@ namespace chaos
 		assert(image != nullptr);
 		assert(image_type >= IMAGE_FIRST_INDEX && image_type <= IMAGE_LAST_INDEX); 
 
-		// only 24 bit or 32 bit images
-		if (FreeImage_GetImageType(image) != FIT_BITMAP)
-			return false;
-		int bpp = FreeImage_GetBPP(image);
-		if (bpp != 24 && bpp != 32)
+		// test whether the pixel format is supported
+		ImageDescription description = ImageTools::GetImageDescription(image);
+		if (!description.IsValid())
 			return false;
 
 		if (image_type == IMAGE_SINGLE)
 		{
 			// ensure image is 3/4 or 4/3
-			int size = GetSingleImageSize(image);
+			int size = GetSingleImageSize(description);
 			if (size <= 0)
 				return false;
 			// if multiple face skybox, we cannot set the image
@@ -512,7 +537,7 @@ namespace chaos
 		else
 		{
 			// ensure image size is square
-			int size = GetMultipleImageSize(image);
+			int size = GetMultipleImageSize(description);
 			if (size <= 0)
 				return false;
 
@@ -549,7 +574,7 @@ namespace chaos
 	SkyBoxImages SkyBoxTools::LoadSingleSkyBox(char const * filename)
 	{  
 		SkyBoxImages result;
-		DoLoadMultipleSkyBox_OneImage(result, filename,   SkyBoxImages::IMAGE_SINGLE);
+		DoLoadMultipleSkyBox_OneImage(result, filename, SkyBoxImages::IMAGE_SINGLE);
 		return result;
 	}
 

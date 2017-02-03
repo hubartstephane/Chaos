@@ -15,6 +15,9 @@ namespace chaos
 
 	public:
 
+		/** get the free image description frm a type */
+		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const & pixel_format, int * bpp = nullptr);
+
 		/** load an image from a buffer */
 		static FIBITMAP * LoadImageFromBuffer(Buffer<char> buffer);
 		/** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */

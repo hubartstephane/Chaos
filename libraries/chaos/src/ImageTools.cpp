@@ -5,6 +5,29 @@
 
 namespace chaos
 {
+	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
+	{
+		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
+		{
+			if (pixel_format.component_count == 1 || pixel_format.component_count == 3 || pixel_format.component_count == 4)
+			{
+				if (bpp != nullptr)
+					*bpp = pixel_format.component_count * 8;
+				return FIT_BITMAP;		
+			}
+		}
+		else if (pixel_format.component_type == PixelFormat::TYPE_FLOAT)
+		{
+			if (pixel_format.component_count == 1)
+				return FIT_FLOAT;
+			if (pixel_format.component_count == 3)
+				return FIT_RGBF;
+			if (pixel_format.component_count == 4)
+				return FIT_RGBAF;
+		}
+		return FIT_UNKNOWN;
+	}
+
 	ImageDescription ImageTools::GetImageDescription(FIBITMAP * image)
 	{
 		assert(image != nullptr);

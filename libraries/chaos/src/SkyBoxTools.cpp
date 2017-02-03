@@ -245,12 +245,6 @@ namespace chaos
 		if (!src_image_desc.IsValid())
 			return result;
 		
-		// get the FREEIMAGE corresponding format
-		int bpp = 0;
-		FREE_IMAGE_TYPE image_type = ImageTools::GetFreeImageType(src_image_desc.pixel_format, &bpp);
-		if (image_type == FIT_UNKNOWN)
-			return result;
-
 		// the wanted size for every face
 		int size = GetSingleImageSize(src_image_desc); 
 
@@ -263,7 +257,7 @@ namespace chaos
 			int bottom = position_and_flags.y * size;
 
 			// allocate a face => in case of error, forget about result and returns an empty object
-			FIBITMAP * image = FreeImage_Allocate(image_type, size, size, bpp);
+			FIBITMAP * image = ImageTools::GenFreeImage(src_image_desc.pixel_format, size, size);
 			if (image == nullptr)
 				return SkyBoxImages();
 
@@ -293,7 +287,7 @@ namespace chaos
 
 
 
-	SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color) const
+	SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params) const
 	{
 		SkyBoxImages result;
 
@@ -303,8 +297,6 @@ namespace chaos
 
 		// find the final format and size
 		int size = -1;
-
-		PixelFormatMergeParams merge_params;
 
 		PixelFormatMerger pixel_format_merger(merge_params);
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
@@ -316,7 +308,6 @@ namespace chaos
 			ImageDescription face_image_desc = ImageTools::GetImageDescription(face_image);
 		
 			pixel_format_merger.Merge(face_image_desc.pixel_format);		
-
 			if (size < 0)
 				size = GetMultipleImageSize(face_image_desc);
 		}
@@ -324,14 +315,7 @@ namespace chaos
 		PixelFormat final_pixel_format;
 		if (size <= 0 || !pixel_format_merger.GetResult(final_pixel_format))
 			return result;
-
 		if (!final_pixel_format.IsValid())
-			return result;
-
-		// get the FREEIMAGE corresponding format
-		int bpp = 0;
-		FREE_IMAGE_TYPE image_type = ImageTools::GetFreeImageType(final_pixel_format, &bpp);
-		if (image_type == FIT_UNKNOWN)
 			return result;
 
 		// get the disposition
@@ -343,7 +327,7 @@ namespace chaos
 		int new_image_width  = size * dispo.image_count_horiz;
 		int new_image_height = size * dispo.image_count_vert;
 
-		FIBITMAP * new_image = FreeImage_Allocate(image_type, new_image_width, new_image_height, bpp);
+		FIBITMAP * new_image = ImageTools::GenFreeImage(final_pixel_format, new_image_width, new_image_height);
 		if (new_image == nullptr)
 			return result;
 		result.SetImage(IMAGE_SINGLE, new_image, true);
@@ -393,48 +377,6 @@ namespace chaos
 
 		return result;
 	}
-
-	
-
-#if 0
-		SkyBoxImages result;
-		if (!IsSingleImage() && !IsEmpty()) // must be multiple
-		{
-
-
-			// get the very first image to decide for the pixel format
-			FIBITMAP * other_image = nullptr;
-			for (int i = IMAGE_LEFT ; (i <= IMAGE_BACK) && (other_image == nullptr) ; ++i)
-				other_image = GetImage(i);
-
-			assert(other_image != nullptr); // not empty, so, it has to find another image
-
-			int size = FreeImage_GetWidth(other_image);
-			int bpp  = FreeImage_GetBPP(other_image);
-
-			int new_image_width  = size * dispo.image_count_horiz;
-			int new_image_height = size * dispo.image_count_vert;
-
-			FIBITMAP * new_image = FreeImage_Allocate(new_image_width, new_image_height, bpp);
-			if (new_image != nullptr)
-			{
-				// gets the description of destination
-				ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
-
-				// fill the background (Blue - Green - Red - Alpha)
-				unsigned char bgra[4];
-				bgra[0] = (unsigned char)(fill_color.b * 255.0f);
-				bgra[1] = (unsigned char)(fill_color.g * 255.0f);
-				bgra[2] = (unsigned char)(fill_color.r * 255.0f);
-				bgra[3] = (unsigned char)(fill_color.a * 255.0f);
-
-				FreeImage_FillBackground(new_image, bgra, (bpp == 24)? FI_COLOR_IS_RGB_COLOR : FI_COLOR_IS_RGBA_COLOR);
-
-
-
-
-#endif
-
 
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const
 	{

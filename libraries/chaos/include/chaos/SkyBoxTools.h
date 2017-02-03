@@ -86,7 +86,7 @@ public:
   /** Transform a 6 images box into a one image box */
   SkyBoxImages ToMultipleImages() const;
   /** Transform a single image box into a six images box */
-  SkyBoxImages ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color) const;
+  SkyBoxImages ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams()) const;
 
   /** returns true whether the skybox is empty */
   bool IsEmpty() const;

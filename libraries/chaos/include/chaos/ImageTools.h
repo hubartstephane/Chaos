@@ -15,6 +15,9 @@ namespace chaos
 
 	public:
 
+		/** generate a free image corresponding to a given pixel format */
+		static FIBITMAP * GenFreeImage(PixelFormat const & pixel_format, int width, int height);
+
 		/** get the free image description frm a type */
 		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const & pixel_format, int * bpp = nullptr);
 
@@ -50,30 +53,14 @@ namespace chaos
 
 		/** Generate an image from lambda */
 		template<typename T, typename GENERATOR>
-		static FIBITMAP * GenImage(int width, int height, GENERATOR const & generator)
+		static FIBITMAP * GenFreeImage(int width, int height, GENERATOR const & generator)
 		{
-			FIBITMAP * result = nullptr;
-
-			// get corresponding pixel format
-			PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
-			if (!pixel_format.IsValid)
-				return result;
-
-			// get freeimage format
-			int bpp = 0;
-			FREE_IMAGE_TYPE image_type = GetFreeImageType(pixel_format, &bpp);
-			if (image_type == FIT_UNKNOWN)
-				return nullptr;
-
-			// allocate the freeimage
-			result = FreeImage_Allocate(image_type, width, height, bpp);
-			if (result == nullptr)
-				return result;
-
-			// generate the pixels
-			ImageDescription image_desc = GetImageDescription(result);
-			generator(image_desc, (T*)image_desc.data);
-
+			FIBITMAP * result = GenFreeImage(PixelFormat::GetPixelFormat<T>(), width, height);
+			if (result != nullptr)
+			{
+				ImageDescription image_desc = GetImageDescription(result);
+				generator(image_desc, (T*)image_desc.data);			
+			}
 			return result;
 		}
 	};

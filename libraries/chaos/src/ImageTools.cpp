@@ -5,6 +5,25 @@
 
 namespace chaos
 {
+	FIBITMAP * ImageTools::GenFreeImage(PixelFormat const & pixel_format, int width, int height)
+	{
+		FIBITMAP * result = nullptr;
+
+		// get corresponding pixel format
+		if (!pixel_format.IsValid())
+			return result;
+
+		// get freeimage format
+		int bpp = 0;
+		FREE_IMAGE_TYPE image_type = GetFreeImageType(pixel_format, &bpp);
+		if (image_type == FIT_UNKNOWN)
+			return nullptr;
+
+		// allocate the freeimage
+		return FreeImage_Allocate(image_type, width, height, bpp);
+	}
+
+
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
 	{
 		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)

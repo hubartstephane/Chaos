@@ -28,7 +28,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
   {
     static glm::vec4 back_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f); 
 
-    chaos::SkyBoxImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color);
+    chaos::SkyBoxImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color, chaos::PixelFormatMergeParams());
     if (single_sky_box.IsSingleImage())
     {
       FIBITMAP * image = single_sky_box.GetImage(chaos::SkyBoxImages::IMAGE_SINGLE);
@@ -104,7 +104,7 @@ void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesyst
     chaos::SkyBoxImages multiple_image = single_image.ToMultipleImages();
     if (multiple_image.IsMultipleImage())
     {
-      chaos::SkyBoxImages single_image_back = multiple_image.ToSingleImage(!horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+      chaos::SkyBoxImages single_image_back = multiple_image.ToSingleImage(!horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), chaos::PixelFormatMergeParams());
       if (single_image_back.IsSingleImage())
       {
         FIBITMAP * image = single_image_back.GetImage(chaos::SkyBoxImages::IMAGE_SINGLE);

@@ -2,6 +2,10 @@
 
 namespace chaos
 {
+	// ==============================================================================================
+	// PixelFormat methods
+	// ==============================================================================================
+
 	PixelFormat::PixelFormat(int in_format)
 	{
 		if (in_format == FORMAT_GRAY)
@@ -103,21 +107,51 @@ namespace chaos
 		return result;
 	}
 
-	PixelFormat PixelFormatMergeParams::Merge(PixelFormat const & src1, PixelFormat const & src2) const
+	// ==============================================================================================
+	// PixelFormatMerger methods
+	// ==============================================================================================
+
+	PixelFormatMerger::PixelFormatMerger(PixelFormatMergeParams const & in_params) : params(in_params)
 	{
-		PixelFormat result;
-
-		if (pixel_format.IsValid())
-			return pixel_format;
-
-		if (!accept_luminance && result.component_count == 1)
-			result.component_count = 3;
-		
-		if (!accept_float && result.component_type == PixelFormat::TYPE_FLOAT)
-			result.component_count = PixelFormat::TYPE_UNSIGNED_CHAR;
-
-		return result;			
+		if (in_params.pixel_format.IsValid())
+		{
+			result = in_params.pixel_format;
+			result_is_available = true;		
+		}
 	}
 
+	void PixelFormatMerger::Reset(PixelFormatMergeParams const & in_params)
+	{
+		operator = (PixelFormatMerger(in_params));
+	}
+
+	void PixelFormatMerger::Merge(PixelFormat src)
+	{
+		assert(src.IsValid());
+
+		if (!params.accept_luminance && src.component_count == 1) // transform luminance into RGB
+			src.component_count = 3;
+
+		if (!params.accept_float && src.component_type == PixelFormat::TYPE_FLOAT) // transform float into unsigned char
+			src.component_count = PixelFormat::TYPE_UNSIGNED_CHAR;	
+
+		if (!result_is_available)
+		{
+			result = src;
+			result_is_available = true;
+		}
+		else
+		{
+			result.component_type = max(result.component_type, src.component_type);
+			result.component_count = max(result.component_count, src.component_count);		
+		}
+	}
+
+	bool PixelFormatMerger::GetResult(PixelFormat & value) const
+	{
+		if (result_is_available)
+			value = result;
+		return result_is_available;	
+	}
 
 }; // namespace chaos

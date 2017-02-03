@@ -149,16 +149,11 @@ namespace chaos
 	};
 
 	/**
-	 * PixelFormatMerger : 
+	 * PixelFormatMergeParams
 	 */
 
-	class PixelFormatMerger
+	class PixelFormatMergeParams
 	{
-
-	public:
-
-		/** merge 2 pixel formats */
-		PixelFormat Merge(PixelFormat const & src1, PixelFormat const & src2) const;
 	
 	public:
 
@@ -168,6 +163,35 @@ namespace chaos
 		bool accept_luminance{true};
 		/** if set to false, all float formats will become unsigned char */
 		bool accept_float{true};	
+	};
+
+	/**
+	* PixelFormatMerger : utility function to find a common PixelFormat for multiple images
+	*/
+
+	class PixelFormatMerger
+	{
+	
+	public:
+
+		/** constructor */
+		PixelFormatMerger(PixelFormatMergeParams const & in_params = PixelFormatMergeParams());
+
+		/** reset the merger */
+		void Reset(PixelFormatMergeParams const & in_params = PixelFormatMergeParams());
+		/** the merge method */
+		void Merge(PixelFormat src);
+		/** get the result if available */
+		bool GetResult(PixelFormat & value) const;
+
+	protected:
+
+		/** the result */
+		PixelFormat result;
+		/** whether a valid result is available */
+		bool result_is_available{false};
+		/** the parameter for the merge */
+		PixelFormatMergeParams params;
 	};
 
 }; // namespace chaos

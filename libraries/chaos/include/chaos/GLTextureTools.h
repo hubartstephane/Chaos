@@ -102,24 +102,6 @@ namespace chaos
 
 		/** Generate a texture from lambda */
 		template<typename T, typename GENERATOR>
-		static GenTextureResult GenTexture(int width, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
-		{
-			GenTextureResult result;
-
-			T * buffer = new T[width];
-			if (buffer != nullptr)
-			{
-				std::pair<int, int> pixel_format = ImageDescription::GetPixelFormat<T>();
-
-				ImageDescription desc(buffer, width, 1, pixel_format.first, pixel_format.second, 0);
-				generator(desc, buffer);
-				result = GenTexture(desc, parameters);
-				delete[](buffer);
-			}
-			return result;
-		}
-
-		template<typename T, typename GENERATOR>
 		static GenTextureResult GenTexture(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
 		{
 			GenTextureResult result;
@@ -147,15 +129,6 @@ namespace chaos
 		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
-		template<typename T, typename GENERATOR>
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
-		{
-			GenTextureResult result = GenTexture<T>(width, generator, parameters);
-			if (result.texture_id > 0)
-				return new Texture(result.texture_id, result.texture_description);
-			return nullptr;
-		}
-
 		template<typename T, typename GENERATOR>
 		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
 		{

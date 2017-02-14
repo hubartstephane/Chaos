@@ -124,6 +124,9 @@ int _tmain(int argc, char ** argv, char ** env)
 
 		TestAtlasDebugMode(dst_p / "TestAtlasDebugMode");
 		TestAtlasNormalMode(dst_p / "TestAtlasNormalMode", resources_path / "Images");
+		TestAtlasNormalMode(dst_p / "TestAtlasGrayOnly", resources_path / "GrayOnlyImages");
+		TestAtlasNormalMode(dst_p / "TestAtlasMixed", resources_path / "MixedImages24");
+		TestAtlasNormalMode(dst_p / "TestAtlasMixed", resources_path / "MixedImages32");
 		TestAtlasFont(dst_p, resources_path);
 
 		chaos::WinTools::ShowFile(dst_p.string().c_str());

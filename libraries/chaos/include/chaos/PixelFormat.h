@@ -121,7 +121,7 @@ namespace chaos
 		int GetBPP() const;
 
 		/** get pixel format corresponding to an image */
-		static PixelFormat FromImageDescription(FIBITMAP * image);
+		static PixelFormat FromImage(FIBITMAP * image);
 
 		/** transform a type into pixel format (component type and count) */
 		template<typename T>

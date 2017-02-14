@@ -52,7 +52,7 @@ namespace chaos
 		assert(image != nullptr);
 
 		// test whether we can handle that format
-		PixelFormat pixel_format = PixelFormat::FromImageDescription(image);
+		PixelFormat pixel_format = PixelFormat::FromImage(image);
 		if (pixel_format.IsValid())
 		{
 			ImageDescription result;
@@ -64,7 +64,7 @@ namespace chaos
 			result.padding_size = result.pitch_size - result.line_size;
 			result.data         = FreeImage_GetBits(image);
 
-			// test whether the result is valid (line_size & pitch come from FreeImage)
+			// test whether the result is valid (line_size & pitch come from FreeImage ... just in case)
 			if (result.IsValid())
 				return result;				
 		}			

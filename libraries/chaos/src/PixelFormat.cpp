@@ -42,10 +42,13 @@ namespace chaos
 
 	int PixelFormat::GetPixelSize() const
 	{
-		if (component_type == TYPE_UNSIGNED_CHAR)
-			return component_count * sizeof(unsigned char);
-		if (component_type == TYPE_FLOAT)
-			return component_count * sizeof(float);
+		if (!IsValid())
+		{
+			if (component_type == TYPE_UNSIGNED_CHAR)
+				return component_count * sizeof(unsigned char);
+			if (component_type == TYPE_FLOAT)
+				return component_count * sizeof(float);
+		}
 		return 0;	
 	}
 
@@ -77,7 +80,7 @@ namespace chaos
 		return component_count * 8;
 	}
 
-	PixelFormat PixelFormat::FromImageDescription(FIBITMAP * image)
+	PixelFormat PixelFormat::FromImage(FIBITMAP * image)
 	{
 		assert(image != nullptr);
 
@@ -122,7 +125,7 @@ namespace chaos
 
 	void PixelFormatMerger::Reset(PixelFormatMergeParams const & in_params)
 	{
-		operator = (PixelFormatMerger(in_params));
+		operator = (PixelFormatMerger(in_params)); // copy from a newly created instance
 	}
 
 	void PixelFormatMerger::Merge(PixelFormat src)

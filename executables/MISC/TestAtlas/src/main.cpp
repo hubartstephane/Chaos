@@ -125,8 +125,8 @@ int _tmain(int argc, char ** argv, char ** env)
 		TestAtlasDebugMode(dst_p / "TestAtlasDebugMode");
 		TestAtlasNormalMode(dst_p / "TestAtlasNormalMode", resources_path / "Images");
 		TestAtlasNormalMode(dst_p / "TestAtlasGrayOnly", resources_path / "GrayOnlyImages");
-		TestAtlasNormalMode(dst_p / "TestAtlasMixed", resources_path / "MixedImages24");
-		TestAtlasNormalMode(dst_p / "TestAtlasMixed", resources_path / "MixedImages32");
+		TestAtlasNormalMode(dst_p / "TestAtlasMixed24", resources_path / "MixedImages24"); 
+		TestAtlasNormalMode(dst_p / "TestAtlasMixed32", resources_path / "MixedImages32"); // there is a 8bpp non gray picture that will be converted to 32 bpp => causing a 32bpp atlas
 		TestAtlasFont(dst_p, resources_path);
 
 		chaos::WinTools::ShowFile(dst_p.string().c_str());

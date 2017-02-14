@@ -91,14 +91,12 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 
 
 
-void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path)
+void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesystem::path const & resources_path, chaos::PixelFormatMergeParams const & merge_params = chaos::PixelFormatMergeParams())
 {
 	// XXX : the resources directory contains
 	//        - a bmp image whose extension has been swapped to ".txt" => detected has an image
 	//        - a text file                                            => not detected has an image
 	// correct behavior 
-
-	chaos::PixelFormatMergeParams merge_params;
 
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 
@@ -125,8 +123,14 @@ int _tmain(int argc, char ** argv, char ** env)
 		TestAtlasDebugMode(dst_p / "TestAtlasDebugMode");
 		TestAtlasNormalMode(dst_p / "TestAtlasNormalMode", resources_path / "Images");
 		TestAtlasNormalMode(dst_p / "TestAtlasGrayOnly", resources_path / "GrayOnlyImages");
-		TestAtlasNormalMode(dst_p / "TestAtlasMixed24", resources_path / "MixedImages24"); 
-		TestAtlasNormalMode(dst_p / "TestAtlasMixed32", resources_path / "MixedImages32"); // there is a 8bpp non gray picture that will be converted to 32 bpp => causing a 32bpp atlas
+		TestAtlasNormalMode(dst_p / "TestAtlasMixed24", resources_path / "MixedImages24"); // there is a 8bpp GRAY + 24bpp => 24 bpp atlas
+		TestAtlasNormalMode(dst_p / "TestAtlasMixed32", resources_path / "MixedImages32"); // there is a 8bpp NON-GRAY picture that will be converted to 32 bpp => causing a 32bpp atlas
+
+
+		chaos::PixelFormatMergeParams no_luminance_merge_params;
+		no_luminance_merge_params.accept_luminance = false;
+		TestAtlasNormalMode(dst_p / "TestAtlasNoLuminance", resources_path / "GrayOnlyImages", no_luminance_merge_params);
+		
 		TestAtlasFont(dst_p, resources_path);
 
 		chaos::WinTools::ShowFile(dst_p.string().c_str());

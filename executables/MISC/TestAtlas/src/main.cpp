@@ -43,9 +43,10 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
   bitmap_set->AddFakeBitmap("I");
   bitmap_set->AddFakeBitmap("J");
 
+	chaos::PixelFormatMergeParams            merge_params;
   chaos::BitmapAtlas::Atlas                atlas;
   chaos::BitmapAtlas::AtlasGenerator       generator;
-  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(256, 256, ATLAS_PADDING, ATLAS_BPP);
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(256, 256, ATLAS_PADDING, merge_params);
   
   if (generator.ComputeResult(input, atlas, params))
     SaveAtlasAndOutputAtlasToHTML(atlas, dest_p / "MyAtlas.x", dest_p / "atlas.html");
@@ -59,6 +60,7 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
   boost::filesystem::path dst_dir1 = dest_p / "AtlasResultFont";
   boost::filesystem::path dst_dir2 = dest_p / "AtlasResultFontReloaded";
 
+	chaos::PixelFormatMergeParams      merge_params;
   chaos::BitmapAtlas::Atlas          atlas;
   chaos::BitmapAtlas::AtlasGenerator generator;
   chaos::BitmapAtlas::AtlasInput     input;
@@ -74,7 +76,7 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 
   bitmap_set->AddBitmapFilesFromDirectory(resources_path / "ButtonImages");
 
-  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, ATLAS_BPP);
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
   if (generator.ComputeResult(input, atlas, params))
     SaveAtlasAndOutputAtlasToHTML(atlas, dst_dir1 / "MyAtlas", dst_dir1 / "MyAtlas.html");
 
@@ -96,7 +98,9 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
   //        - a text file                                            => not detected has an image
   // correct behavior 
 
-  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, ATLAS_BPP);
+	chaos::PixelFormatMergeParams merge_params;
+
+  chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 
   boost::filesystem::path result_path = dest_p / "MyAtlas.json";
 

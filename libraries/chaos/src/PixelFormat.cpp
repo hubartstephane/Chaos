@@ -42,7 +42,7 @@ namespace chaos
 
 	int PixelFormat::GetPixelSize() const
 	{
-		if (!IsValid())
+		if (IsValid())
 		{
 			if (component_type == TYPE_UNSIGNED_CHAR)
 				return component_count * sizeof(unsigned char);

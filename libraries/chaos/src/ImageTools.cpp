@@ -20,7 +20,7 @@ namespace chaos
 			return nullptr;
 
 		// allocate the freeimage
-		return FreeImage_Allocate(image_type, width, height, bpp);
+		return FreeImage_AllocateT(image_type, width, height, bpp);
 	}
 
 

@@ -31,25 +31,6 @@ protected:
 		{
 			ChangeTexture(texture_index - 1);
 		}
-		else if (key == GLFW_KEY_KP_ENTER && action == GLFW_RELEASE)
-		{
-			ChangeTextureLevel();
-		}
-	}
-
-	void ChangeTextureLevel()
-	{
-		if (texture != nullptr)
-		{
-			chaos::ImageDescription desc = chaos::GLTextureTools::GetTextureImage(texture->GetResourceID(), 0);
-			if (desc.data != nullptr)
-			{
-				boost::intrusive_ptr<chaos::Texture> new_texture = chaos::GLTextureTools::GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
-				if (new_texture != nullptr)
-					texture = new_texture;
-				delete[](desc.data);
-			}
-		}
 	}
 
 	void ChangeTexture(int index)
@@ -66,121 +47,12 @@ protected:
 	{
 		boost::intrusive_ptr<chaos::Texture> result;
 
-		if (index == 0)
-		{
-			// test manual buffer
-			char * image_buffer = new char[4 * 512 * 512];
+		if (index < 0 || index >= (int)texture_paths.size())
+			return result;
 
-			chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 0);
-
-			for (int i = 0; i < 512; ++i)
-			{
-				for (int j = 0; j < 512; ++j)
-				{
-					image_buffer[4 * j + 0 + (i * image_desc.pitch_size)] = i;
-					image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = i;
-					image_buffer[4 * j + 2 + (i * image_desc.pitch_size)] = i;
-					image_buffer[4 * j + 3 + (i * image_desc.pitch_size)] = i;
-				}
-			}
-			result = chaos::GLTextureTools::GenTextureObject(image_desc);
-			delete[](image_buffer);
-		}
-
-		// test GENERATION GRAY
-		if (index == 1)
-		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGray>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGray* buffer)
-			{
-				for (int i = 0; i < desc.height; ++i)
-					for (int j = 0; j < desc.width; ++j)
-						buffer[j + i * desc.width] = (unsigned char)i;
-			});
-		}
-		// test GENERATION RGB
-		if (index == 2)
-		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelBGR>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelBGR * buffer)
-			{
-				for (int i = 0; i < desc.height; ++i)
-				{
-					for (int j = 0; j < desc.width; ++j)
-					{
-						buffer[j + i * desc.width].R = (unsigned char)i;
-						buffer[j + i * desc.width].G = 0;
-						buffer[j + i * desc.width].B = 0;
-					}
-				}
-			});
-		}
-
-		// test GENERATION GRAY FLOAT
-		if (index == 3)
-		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGrayFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGrayFloat* buffer)
-			{
-				for (int i = 0; i < desc.height; ++i)
-					for (int j = 0; j < desc.width; ++j)
-						buffer[j + i * desc.width] = chaos::MathTools::CastAndDiv<float>(i, desc.height);
-			});
-		}
-
-		// test GENERATION RGB FLOAT
-		if (index == 4)
-		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGBFloat * buffer)
-			{
-				for (int i = 0; i < desc.height; ++i)
-				{
-					for (int j = 0; j < desc.width; ++j)
-					{
-						buffer[j + i * desc.width].R = chaos::MathTools::CastAndDiv<float>(j, desc.width);
-						buffer[j + i * desc.width].G = chaos::MathTools::CastAndDiv<float>(i, desc.height);
-						buffer[j + i * desc.width].B = 0.0f;
-					}
-				}
-			});
-		}
-
-		// Load files
-		if (index >= 5 && index <= 10)
-		{
-			chaos::Application * application = chaos::Application::GetInstance();
-			if (application == nullptr)
-				return false;
-			boost::filesystem::path resources_path = application->GetResourcesPath();
-			boost::filesystem::path image_path;
-
-			if (index == 5)
-				image_path = resources_path / "opengl_logo.gif";
-			else if (index == 6)
-				image_path = resources_path / "opengl_logo.png";
-			else if (index == 7)
-				image_path = resources_path / "opengl_logo_rectangle.png";
-			else if (index == 8)
-				image_path = resources_path / "icons-animation.gif";
-			else if (index == 9)
-				image_path = resources_path / "grayscale.png";
-			else if (index == 10)
-				image_path = resources_path / "grayscale.gif";
-
-			result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
-		}
+		result = chaos::GLTextureTools::GenTextureObject(texture_paths[index].string().c_str());
 
 		return result;
-	}
-
-	virtual void OnMouseButton(int button, int action, int modifier) override
-	{
-		if (button == 0 && action == GLFW_RELEASE)
-		{
-			chaos::TextureDescription desc = texture->GetTextureDescription();
-
-			int max_mipmap = chaos::GLTextureTools::GetMipmapLevelCount(desc.width, desc.height);
-
-			mipmap_level = (mipmap_level + 1) % max_mipmap;
-			glTextureParameteri(texture->GetResourceID(), GL_TEXTURE_BASE_LEVEL, mipmap_level); //GL_TEXTURE_MAX_LEVEL
-		}
 	}
 
 	virtual bool OnDraw(int width, int height) override
@@ -225,6 +97,12 @@ protected:
 		boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
 		boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
 
+		boost::filesystem::path image_path = resources_path / "Images";
+
+
+		boost::filesystem::directory_iterator end;
+		for (boost::filesystem::directory_iterator it(image_path); it != end; ++it)
+			texture_paths.push_back(it->path());
 
 		texture = GenerateTexture(texture_index);
 		if (texture == nullptr)
@@ -256,6 +134,8 @@ protected:
 	}
 
 protected:
+
+	std::vector<boost::filesystem::path> texture_paths;
 
 	boost::intrusive_ptr<chaos::GLProgram>  program;
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;

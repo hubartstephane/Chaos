@@ -23,7 +23,6 @@ namespace chaos
 		return FreeImage_AllocateT(image_type, width, height, bpp);
 	}
 
-
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
 	{
 		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
@@ -224,13 +223,21 @@ namespace chaos
 
 				result = FreeImage_LoadFromMemory(format, memory, 0);
 
-				if (FreeImage_GetImageType(result) == FIT_BITMAP && FreeImage_GetBPP(result) == 8)
+				if (FreeImage_GetImageType(result) == FIT_BITMAP)
 				{
-					if (!IsGrayscaleImage(result)) // don't want a palette any more
+					int bpp = FreeImage_GetBPP(result);
+
+					if (bpp == 8 && !IsGrayscaleImage(result)) // don't want a palette any more
 					{
 						FIBITMAP * other = FreeImage_ConvertTo32Bits(result);
 						FreeImage_Unload(result);
 						result = other;           // this code is good even if the conversion fails 
+					}
+					else if (bpp == 16) // don't want 16 bpp any more
+					{
+						FIBITMAP * other = FreeImage_ConvertTo24Bits(result);
+						FreeImage_Unload(result);
+						result = other;
 					}
 				}
 

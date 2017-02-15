@@ -56,17 +56,22 @@
 namespace chaos
 {
 
+	GLPixelFormat::GLPixelFormat(GLenum in_format, GLenum in_internal_format) :
+		format(in_format),
+		internal_format(in_internal_format) {}
+
 	bool GLPixelFormat::IsValid() const
 	{
-		if (format != GL_RED &&
+		if (
+			format != GL_RED &&
 			format != GL_BGR &&
 			format != GL_BGRA &&
-			format != GL_R32F &&
-			format != GL_RGB32F &&
-			format != GL_RGBA32F)
+			format != GL_RGB &&
+			format != GL_RGBA)
 			return false;
 
-		if (internal_format != GL_R8 &&
+		if (
+			internal_format != GL_R8 &&
 			internal_format != GL_RGB8 &&
 			internal_format != GL_RGBA8 &&
 			internal_format != GL_R32F &&
@@ -75,7 +80,6 @@ namespace chaos
 			return false;
 
 		return true;
-	
 	}
 
 
@@ -267,40 +271,40 @@ namespace chaos
 		return MathTools::bsr(width) + 1;
 	}
 
-	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormatsFromBPP(int bpp)
+	GLPixelFormat GLTextureTools::GetTextureFormatsFromBPP(int bpp)
 	{
 		if (bpp == 8)
-			return std::make_pair(GL_RED, GL_R8);
+			return GLPixelFormat(GL_RED, GL_R8);
 		if (bpp == 24)
-			return std::make_pair(GL_BGR, GL_RGB8);
+			return GLPixelFormat(GL_BGR, GL_RGB8);
 		if (bpp == 32)
-			return std::make_pair(GL_BGRA, GL_RGBA8);	
+			return GLPixelFormat(GL_BGRA, GL_RGBA8);
 
-		return std::make_pair(GL_NONE, GL_NONE);
+		return GLPixelFormat(GL_NONE, GL_NONE);
 	}
 
-	std::pair<GLenum, GLenum> GLTextureTools::GetTextureFormats(PixelFormat const & pixel_format) // format / internal format
+	GLPixelFormat GLTextureTools::GetTextureFormats(PixelFormat const & pixel_format) // format / internal format
 	{
 		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
 		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
 		{
 			if (pixel_format.component_count == 1)
-				return std::make_pair(GL_RED, GL_R8);
+				return GLPixelFormat(GL_RED, GL_R8);
 			if (pixel_format.component_count == 3)
-				return std::make_pair(GL_BGR, GL_RGB8); // FreeImage produce BGR(A) images
+				return GLPixelFormat(GL_BGR, GL_RGB8); // FreeImage produce BGR(A) images
 			if (pixel_format.component_count == 4)
-				return std::make_pair(GL_BGRA, GL_RGBA8);				
+				return GLPixelFormat(GL_BGRA, GL_RGBA8);
 		}
 		else if (pixel_format.component_type == PixelFormat::TYPE_FLOAT) 
 		{
 			if (pixel_format.component_count == 1)
-				return std::make_pair(GL_RED, GL_R32F);
+				return GLPixelFormat(GL_RED, GL_R32F);
 			if (pixel_format.component_count == 3)
-				return std::make_pair(GL_RGB, GL_RGB32F);
+				return GLPixelFormat(GL_RGB, GL_RGB32F);
 			if (pixel_format.component_count == 4)
-				return std::make_pair(GL_RGBA, GL_RGBA32F);
+				return GLPixelFormat(GL_RGBA, GL_RGBA32F);
 		}
-		return std::make_pair(GL_NONE, GL_NONE);
+		return GLPixelFormat(GL_NONE, GL_NONE);
 	}
 
 	GenTextureResult GLTextureTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
@@ -315,12 +319,11 @@ namespace chaos
 		if (result.texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
-			std::pair<GLenum, GLenum> all_formats = GetTextureFormats(image.pixel_format);
-			assert(all_formats.first != GL_NONE);
-			assert(all_formats.second != GL_NONE);
+			GLPixelFormat all_formats = GetTextureFormats(image.pixel_format);
+			assert(all_formats.IsValid());
 
-			GLenum format          = all_formats.first;
-			GLenum internal_format = all_formats.second;
+			GLenum format          = all_formats.format;
+			GLenum internal_format = all_formats.internal_format;
 			GLenum type            = (image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -461,12 +464,11 @@ namespace chaos
 			int bpp  = skybox->GetSkyBoxBPP();
 			int size = skybox->GetSkyBoxSize();
 
-			std::pair<GLenum, GLenum> all_formats = GetTextureFormatsFromBPP(bpp);
-			assert(all_formats.first != GL_NONE);
-			assert(all_formats.second != GL_NONE);
+			GLPixelFormat all_formats = GetTextureFormatsFromBPP(bpp);
+			assert(all_formats.IsValid());
 
-			GLenum format          = all_formats.first;
-			GLenum internal_format = all_formats.second;
+			GLenum format          = all_formats.format;
+			GLenum internal_format = all_formats.internal_format;
 
 			GLenum targets[] = {
 				GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
@@ -583,7 +585,7 @@ namespace chaos
 		glTextureParameteri(result.texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
 		glTextureParameteri(result.texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
 
-		if (result.texture_description.internal_format == GL_R8)
+		if (result.texture_description.internal_format == GL_R8 || result.texture_description.internal_format == GL_R32F)
 		{
 			glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_R, GL_RED);
 			glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_G, GL_RED);

@@ -12,6 +12,11 @@ namespace chaos
 	{
 	public:
 
+		/** constructor */
+		GLPixelFormat() = default;
+
+		GLPixelFormat(GLenum in_format, GLenum in_internal_format);
+
 		/** returns true whether the pixel format is supported */
 		bool IsValid() const;
 
@@ -21,8 +26,6 @@ namespace chaos
 		GLenum format{GL_NONE};
 		/** how the data should be stored in GPU side */
 		GLenum internal_format{GL_NONE};
-		/** the kind for each component of pixel */
-		GLenum type{GL_NONE};
 	};
 
 	/**
@@ -144,9 +147,9 @@ namespace chaos
 		/** for cubemap texture, returns a layer index depending on the face considered */
 		static int GetLayerValueFromCubeMapFace(GLenum face, int level = 0);
 		/** Get Format/Internal Format pair from BPP */
-		static std::pair<GLenum, GLenum> GetTextureFormatsFromBPP(int bpp);
+		static GLPixelFormat GetTextureFormatsFromBPP(int bpp);
 		/** Get Format/Internal Format pair from the description */
-		static std::pair<GLenum, GLenum> GetTextureFormats(PixelFormat const & pixel_format);
+		static GLPixelFormat GetTextureFormats(PixelFormat const & pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
 		static GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);

@@ -182,7 +182,7 @@ namespace chaos
 		if (result.texture_id > 0)
 		{
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
-			GLenum internal_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).second;
+			GLenum internal_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).internal_format;
 			assert(internal_format != GL_NONE);
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -199,7 +199,7 @@ namespace chaos
 
 				glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / bpp);
 
-				GLenum current_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).first;
+				GLenum current_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).format;
 				assert(current_format != GL_NONE);
 				glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, type, desc.data);
 			}

@@ -7,9 +7,12 @@ namespace chaos
 {
 	FIBITMAP * ImageTools::GenFreeImage(PixelFormat const & pixel_format, int width, int height)
 	{
+		assert(width >= 0);
+		assert(height >= 0);
+
 		FIBITMAP * result = nullptr;
 
-		// get corresponding pixel format
+		// test whether pixel format is valid and supported
 		if (!pixel_format.IsValid())
 			return result;
 
@@ -63,7 +66,7 @@ namespace chaos
 			result.padding_size = result.pitch_size - result.line_size;
 			result.data         = FreeImage_GetBits(image);
 
-			// test whether the result is valid (line_size & pitch come from FreeImage ... just in case)
+			// test whether the result is valid (line_size & pitch come from FreeImage ... just in case ... helps ensure ::IsValid() implementation is correct)
 			if (result.IsValid())
 				return result;				
 		}			
@@ -168,21 +171,28 @@ namespace chaos
 		}
 	}
 
-	bool ImageTools::IsGrayscaleImage(FIBITMAP * image)
+	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)
 	{
 		assert(image != nullptr);
 
-		// ignore unhandled message
-		ImageDescription desc = ImageTools::GetImageDescription(image);
-		if (!desc.IsValid())
+		// pointer on alpha_needed
+		bool tmp_alpha_needed = false;
+		if (alpha_needed == nullptr)
+			alpha_needed = &tmp_alpha_needed;
+
+		*alpha_needed = false;
+
+		// ignore unhandled pixel format
+		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		if (!pixel_format.IsValid())
 			return false;
 
 		// multiple components => not grayscale
-		if (desc.pixel_format.component_count != 1)
+		if (pixel_format.component_count != 1)
 			return false;
 
 		// a 'luminance' image is a grayscale
-		if (desc.pixel_format.component_type == PixelFormat::TYPE_FLOAT)
+		if (pixel_format.component_type == PixelFormat::TYPE_FLOAT)
 			return true;
 
 		// 1 component of type UNSIGNED CHAR :
@@ -206,8 +216,56 @@ namespace chaos
 				return false;
 			if (palette[i].rgbBlue != (BYTE)i)
 				return false;
+
+			*alpha_needed |= (palette[i].rgbReserved != 255);
 		}
 		return true;
+	}
+
+	FIBITMAP * ImageTools::ConvertToSupportedType(FIBITMAP * image, bool can_delete_src)
+	{
+		if (image == nullptr)
+			return nullptr;
+		
+		// try convert some format
+		if (FreeImage_GetImageType(image) == FIT_BITMAP)
+		{
+			int bpp = FreeImage_GetBPP(image);
+
+			if (bpp == 8)
+			{
+				bool alpha_needed = false;
+				if (!IsGrayscaleImage(image, &alpha_needed)) // don't want a palette any more (this code is good even if the conversion fails)
+				{
+					FIBITMAP * other = nullptr;					
+					if (alpha_needed)
+						other = FreeImage_ConvertTo32Bits(image); // keep alpha
+					else
+						other = FreeImage_ConvertTo24Bits(image);
+					if (can_delete_src)
+						FreeImage_Unload(image);
+					return other;
+				}
+				return image; // ok					
+			}
+			else if (bpp == 16) // don't want 16 bpp any more
+			{
+				FIBITMAP * other = FreeImage_ConvertTo24Bits(image);
+				if (can_delete_src)
+					FreeImage_Unload(image);
+				return other;
+			}
+		}	
+
+		// test whether pixel format is valid
+		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		if (!pixel_format.IsValid())
+		{
+			if (can_delete_src)
+				FreeImage_Unload(image);
+			return nullptr;		
+		}
+		return image;
 	}
 
 	FIBITMAP * ImageTools::LoadImageFromBuffer(Buffer<char> buffer)
@@ -221,25 +279,7 @@ namespace chaos
 			{
 				FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
 
-				result = FreeImage_LoadFromMemory(format, memory, 0);
-
-				if (FreeImage_GetImageType(result) == FIT_BITMAP)
-				{
-					int bpp = FreeImage_GetBPP(result);
-
-					if (bpp == 8 && !IsGrayscaleImage(result)) // don't want a palette any more
-					{
-						FIBITMAP * other = FreeImage_ConvertTo32Bits(result);
-						FreeImage_Unload(result);
-						result = other;           // this code is good even if the conversion fails 
-					}
-					else if (bpp == 16) // don't want 16 bpp any more
-					{
-						FIBITMAP * other = FreeImage_ConvertTo24Bits(result);
-						FreeImage_Unload(result);
-						result = other;
-					}
-				}
+				result = ConvertToSupportedType(FreeImage_LoadFromMemory(format, memory, 0), true);
 
 				FreeImage_CloseMemory(memory);
 			}

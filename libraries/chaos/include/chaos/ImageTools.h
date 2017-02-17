@@ -29,7 +29,9 @@ namespace chaos
 		static FIMULTIBITMAP * LoadMultiImageFromFile(char const * filename);
 
 		/** returns true whether the image is paletted, 8 bits and its color are grays */
-		static bool IsGrayscaleImage(FIBITMAP * image);
+		static bool IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed = nullptr);
+		/** transform input image into a supported format whenever possible (may destroy the input in case of failure) */
+		static FIBITMAP * ConvertToSupportedType(FIBITMAP * src, bool can_delete_src);
 
 		/** get the image information from a FreeImage */
 		static ImageDescription GetImageDescription(FIBITMAP * image);

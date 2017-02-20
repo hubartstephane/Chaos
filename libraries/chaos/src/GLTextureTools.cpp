@@ -120,83 +120,40 @@ namespace chaos
 				glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_HEIGHT, &height);
 				if (height > 0)
 				{
-					GLint internal_format = 0;
-					glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
-
-					PixelFormat pixel_format;
-
-					int component_type = 0;
-					int component_count = 0;
-
-					GLenum format = GL_NONE;
-					GLenum type   = GL_NONE;
-
-					if (internal_format == GL_R8)
-					{
-						format = GL_RED;
-						type   = GL_UNSIGNED_BYTE;
-						pixel_format = PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 1);
-					}
-					else if (internal_format == GL_RGB8)
-					{
-						format = GL_BGR;
-						type   = GL_UNSIGNED_BYTE;
-						pixel_format = PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 3);
-					}
-					else if (internal_format == GL_RGBA8)
-					{
-						format = GL_BGRA;
-						type   = GL_UNSIGNED_BYTE;
-						pixel_format = PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 4);
-					}
-					else if (internal_format == GL_R32F)
-					{
-						format = GL_RED;
-						type   = GL_FLOAT;
-						pixel_format = PixelFormat(PixelFormat::TYPE_FLOAT, 1);
-					}
-					else if (internal_format == GL_RGB32F)
-					{
-						format = GL_RGB;
-						type   = GL_FLOAT;
-						pixel_format = PixelFormat(PixelFormat::TYPE_FLOAT, 3);
-					}
-					else if (internal_format == GL_RGBA8)
-					{
-						format = GL_RGBA;
-						type   = GL_FLOAT;
-						pixel_format = PixelFormat(PixelFormat::TYPE_FLOAT, 4);
-					}
-
+					PixelFormat pixel_format = GetTexturePixelFormat(texture_id, level);
 					if (pixel_format.IsValid())
 					{
-						assert(format != GL_NONE);
-						assert(type != GL_NONE);
-
-						result.width        = width;
-						result.height       = height;
-						result.pixel_format = pixel_format;
-						result.line_size    = width * result.pixel_format.GetPixelSize();
-						result.pitch_size   = result.line_size; // no padding
-						result.padding_size = 0;
-
-						int pixel_size = result.pixel_format.GetPixelSize();
-
-						size_t bufsize = width * height * pixel_size;
-
-						result.data = new char[bufsize];
-						if (result.data != nullptr)						
+						GLPixelFormat gl_pixel_format = GetTextureFormats(pixel_format);
+						if (gl_pixel_format.IsValid())
 						{
-							glPixelStorei(GL_PACK_ALIGNMENT, 1);
+							GLenum type = (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)?
+								GL_UNSIGNED_BYTE : GL_FLOAT;
 
-							glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
+							result.width        = width;
+							result.height       = height;
+							result.pixel_format = pixel_format;
+							result.line_size    = width * result.pixel_format.GetPixelSize();
+							result.pitch_size   = result.line_size; // no padding
+							result.padding_size = 0;
 
-							glGetTextureImage(texture_id, level, format, type, bufsize, result.data);
-					
-							assert(result.IsValid());
+							int pixel_size = result.pixel_format.GetPixelSize();
+
+							size_t bufsize = width * height * pixel_size;
+
+							result.data = new char[bufsize];
+							if (result.data != nullptr)						
+							{
+								glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+								glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
+
+								glGetTextureImage(texture_id, level, gl_pixel_format.format, type, bufsize, result.data);
+
+								assert(result.IsValid());
+							}
+							else
+								result = ImageDescription(); // overide previous information						
 						}
-						else
-							result = ImageDescription(); // overide previous information
 					}
 				}
 			}					

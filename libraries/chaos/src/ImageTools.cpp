@@ -171,6 +171,23 @@ namespace chaos
 		}
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)
 	{
 		assert(image != nullptr);

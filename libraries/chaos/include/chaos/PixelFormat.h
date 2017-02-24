@@ -83,21 +83,22 @@ namespace chaos
 	{
 	public:
 
+		/// conversion from 'unsigned char' template : no implementation
 		template<typename T>
 		static inline T Convert(unsigned char src);
-
+		/// conversion from 'float' template : no implementation
 		template<typename T>
 		static inline T Convert(float src);
-
+		/// conversion from 'unsigned char' specialization for return type
 		template<>
 		static inline unsigned char Convert<unsigned char>(unsigned char src){ return src;}
-
+		/// conversion from 'unsigned char' specialization for return type
 		template<>
 		static inline float Convert<float>(float src){ return src;}
-
+		/// conversion from 'float' specialization for return type
 		template<>
 		static inline unsigned char Convert<unsigned char>(float src){ return (unsigned char)(255.0f * src);}
-
+		/// conversion from 'float' specialization for return type
 		template<>
 		static inline float Convert<float>(unsigned char src){ return ((float)src) / 255.0f;}
 	};
@@ -116,7 +117,7 @@ namespace chaos
 	{
 	public:
 		
-		/// null 'conversion' method
+		/// nop 'conversion' method
 		template<typename T>
 		static inline void Convert(T & dst, T const & src){ dst = src;}
 
@@ -164,172 +165,128 @@ namespace chaos
 			dst = PixelComponentConverter::Convert<float>((src.R + src.G + src.B) / 3.0f);
 		}
 
+		/// conversion to 'PixelBGR' methods
+		static inline void Convert(PixelBGR & dst, PixelGray const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<unsigned char>(src);
+		}
+		static inline void Convert(PixelBGR & dst, PixelGrayFloat const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<unsigned char>(src);
+		}
+		static inline void Convert(PixelBGR & dst, PixelBGRA const & src)
+		{
+			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
+			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
+			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+		}
+		static inline void Convert(PixelBGR & dst, PixelRGBFloat const & src)
+		{
+			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
+			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
+			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+		}
+		static inline void Convert(PixelBGR & dst, PixelRGBAFloat const & src)
+		{
+			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
+			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
+			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+		}
 
+		/// conversion to 'PixelBGRA' methods
+		static inline void Convert(PixelBGRA & dst, PixelGray const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<unsigned char>(src);
+			dst.A = 255;
+		}
+		static inline void Convert(PixelBGRA & dst, PixelGrayFloat const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<unsigned char>(src);
+			dst.A = 255;
+		}
+		static inline void Convert(PixelBGRA & dst, PixelBGR const & src)
+		{
+			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
+			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
+			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+			dst.A = 255;
+		}
+		static inline void Convert(PixelBGRA & dst, PixelRGBFloat const & src)
+		{
+			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
+			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
+			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+			dst.A = 255;
+		}
+		static inline void Convert(PixelBGRA & dst, PixelRGBAFloat const & src)
+		{
+			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
+			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
+			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+			dst.A = PixelComponentConverter::Convert<unsigned char>(src.A);
+		}
 
+		/// conversion to 'PixelRGBFloat' methods
+		static inline void Convert(PixelRGBFloat & dst, PixelGray const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<float>(src);
+		}
+		static inline void Convert(PixelRGBFloat & dst, PixelGrayFloat const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<float>(src);
+		}
+		static inline void Convert(PixelRGBFloat & dst, PixelBGR const & src)
+		{
+			dst.R = PixelComponentConverter::Convert<float>(src.R);
+			dst.G = PixelComponentConverter::Convert<float>(src.G);
+			dst.B = PixelComponentConverter::Convert<float>(src.B);					
+		}
+		static inline void Convert(PixelRGBFloat & dst, PixelBGRA const & src)
+		{
+			dst.R = PixelComponentConverter::Convert<float>(src.R);
+			dst.G = PixelComponentConverter::Convert<float>(src.G);
+			dst.B = PixelComponentConverter::Convert<float>(src.B);
+		}
+		static inline void Convert(PixelRGBFloat & dst, PixelRGBAFloat const & src)
+		{
+			dst.R = PixelComponentConverter::Convert<float>(src.R);
+			dst.G = PixelComponentConverter::Convert<float>(src.G);
+			dst.B = PixelComponentConverter::Convert<float>(src.B);
+		}
+
+		/// conversion to 'PixelRGBAFloat' methods
+		static inline void Convert(PixelRGBAFloat & dst, PixelGray const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<float>(src);
+			dst.A = 1.0f;
+		}
+		static inline void Convert(PixelRGBAFloat & dst, PixelGrayFloat const & src)
+		{
+			dst.B = dst.G = dst.R = PixelComponentConverter::Convert<float>(src);
+			dst.A = 1.0f;
+		}
+		static inline void Convert(PixelRGBAFloat & dst, PixelBGR const & src)
+		{
+			dst.R = PixelComponentConverter::Convert<float>(src.R);
+			dst.G = PixelComponentConverter::Convert<float>(src.G);
+			dst.B = PixelComponentConverter::Convert<float>(src.B);
+			dst.A = 1.0f;
+		}
+		static inline void Convert(PixelRGBAFloat & dst, PixelBGRA const & src)
+		{
+			dst.R = PixelComponentConverter::Convert<float>(src.R);
+			dst.G = PixelComponentConverter::Convert<float>(src.G);
+			dst.B = PixelComponentConverter::Convert<float>(src.B);
+			dst.A = PixelComponentConverter::Convert<float>(src.A);
+		}
+		static inline void Convert(PixelRGBAFloat & dst, PixelRGBFloat const & src)
+		{
+			dst.R = PixelComponentConverter::Convert<float>(src.R);
+			dst.G = PixelComponentConverter::Convert<float>(src.G);
+			dst.B = PixelComponentConverter::Convert<float>(src.B);
+			dst.A = 1.0f;
+		}
 	};
-
-
-
-
-
-
-#if 0
-
-
-
-
-
-
-	static inline void Convert(PixelGrayFloat & dst, PixelGray const & src)
-	{	
-	}
-	static inline void Convert(PixelGrayFloat & dst, PixelGrayFloat const & src)
-	{	
-
-	}
-	static inline void Convert(PixelGrayFloat & dst, PixelBGR const & src)
-	{
-
-	}
-	static inline void Convert(PixelGrayFloat & dst, PixelBGRA const & src)
-	{
-
-	}
-	static inline void Convert(PixelGrayFloat & dst, PixelRGBFloat const & src)
-	{
-
-	}
-	static inline void Convert(PixelGrayFloat & dst, PixelRGBAFloat const & src)
-	{
-		
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	static inline void Convert(PixelBGR & dst, PixelGray const & src)
-	{
-		
-	}
-	static inline void Convert(PixelBGR & dst, PixelGrayFloat const & src)
-	{	
-
-	}
-	static inline void Convert(PixelBGR & dst, PixelBGR const & src)
-	{
-		dst = src;
-	}
-	static inline void Convert(PixelBGR & dst, PixelBGRA const & src)
-	{
-
-	}
-	static inline void Convert(PixelBGR & dst, PixelRGBFloat const & src)
-	{
-
-	}
-	static inline void Convert(PixelBGR & dst, PixelRGBAFloat const & src)
-	{
-
-	}
-
-
-	static inline void Convert(PixelBGRA & dst, PixelGray const & src)
-	{	
-	}
-	static inline void Convert(PixelBGRA & dst, PixelGrayFloat const & src)
-	{	
-
-	}
-	static inline void Convert(PixelBGRA & dst, PixelBGR const & src)
-	{
-
-	}
-	static inline void Convert(PixelBGRA & dst, PixelBGRA const & src)
-	{
-		dst = src;
-	}
-	static inline void Convert(PixelBGRA & dst, PixelRGBFloat const & src)
-	{
-
-	}
-	static inline void Convert(PixelBGRA & dst, PixelRGBAFloat const & src)
-	{
-
-	}
-
-
-
-
-	static inline void Convert(PixelRGBFloat & dst, PixelGray const & src)
-	{	
-	}
-	static inline void Convert(PixelRGBFloat & dst, PixelGrayFloat const & src)
-	{	
-
-	}
-	static inline void Convert(PixelRGBFloat & dst, PixelBGR const & src)
-	{
-
-	}
-	static inline void Convert(PixelRGBFloat & dst, PixelBGRA const & src)
-	{
-
-	}
-	static inline void Convert(PixelRGBFloat & dst, PixelRGBFloat const & src)
-	{
-		dst = src;
-	}
-	static inline void Convert(PixelRGBFloat & dst, PixelRGBAFloat const & src)
-	{
-
-	}
-
-	static inline void Convert(PixelRGBAFloat & dst, PixelGray const & src)
-	{	
-	}
-	static inline void Convert(PixelRGBAFloat & dst, PixelGrayFloat const & src)
-	{	
-
-	}
-	static inline void Convert(PixelRGBAFloat & dst, PixelBGR const & src)
-	{
-
-	}
-	static inline void Convert(PixelRGBAFloat & dst, PixelBGRA const & src)
-	{
-
-	}
-	static inline void Convert(PixelRGBAFloat & dst, PixelRGBFloat const & src)
-	{
-
-	}
-	static inline void Convert(PixelRGBAFloat & dst, PixelRGBAFloat const & src)
-	{
-		dst = src;
-	}
-
-
-
-
-
-
-
-
-
-
-#endif
-
 
 	/** 
 	* PixelFormat : the accepted pixel formats

@@ -40,6 +40,29 @@ namespace chaos
 		}
 	}
 
+	int PixelFormat::GetFormat() const
+	{
+		if (component_type == TYPE_UNSIGNED_CHAR)
+		{
+			if (component_count == 1)
+				return FORMAT_GRAY;
+			if (component_count == 3)
+				return FORMAT_RGB;
+			if (component_count == 4)
+				return FORMAT_RGBA;
+		}
+		else if (component_type == TYPE_FLOAT)
+		{
+			if (component_count == 1)
+				return FORMAT_GRAY_FLOAT;
+			if (component_count == 3)
+				return FORMAT_RGB_FLOAT;
+			if (component_count == 4)
+				return FORMAT_RGBA_FLOAT;
+		}
+		return FORMAT_UNKNOWN;
+	}
+
 	int PixelFormat::GetPixelSize() const
 	{
 		if (IsValid())

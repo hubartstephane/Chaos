@@ -73,120 +73,180 @@ namespace chaos
 		return ImageDescription();
 	}
 
-	class ImageToolsCopyPixelsImpl
+	//
+	// To copy pixels and make conversions, we have to
+	//
+	//   - from src_desc => get a Pixel Type
+	//   - from dst_desc => get a Pixel Type
+	//
+	// we use the boost::mpl::for_each(...) function twice for that.
+	// and the end we can call a meta function
+	//
+	//   CopyPixels<DST_TYPE, SRC_TYPE> or CopyPixelsWithCentralSymetry<DST_TYPE, SRC_TYPE> 
+
+	template<typename SRC_TYPE, bool COPY_WITH_SYMETRY> // forward declaration
+	class CopyPixelFuncMap2;
+
+	template<bool COPY_WITH_SYMETRY>
+	class CopyPixelFuncMap
 	{
 	public:
 
-		template<typename T>
-		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
+		/// whether the copy must use a central symetry or not
+		static bool const copy_with_symetry = COPY_WITH_SYMETRY;
+
+		/// constructor
+		CopyPixelFuncMap(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height) :
+			src_desc(in_src_desc), dst_desc(in_dst_desc),
+			src_x(in_src_x), src_y(in_src_y),
+			dst_x(in_dst_x), dst_y(in_dst_y),
+			width(in_width), height(in_height)
 		{
-			for (int l = 0 ; l < height ; ++l)
+			assert(src_desc.IsValid());
+			assert(dst_desc.IsValid());
+
+			assert(width >= 0);
+			assert(height >= 0);
+			assert(src_x >= 0 && src_x + width <= src_desc.width);
+			assert(src_y >= 0 && src_y + height <= src_desc.height);
+			assert(dst_x >= 0 && dst_x + width <= dst_desc.width);
+			assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
+
+			src_format = src_desc.pixel_format.GetFormat();
+			dst_format = dst_desc.pixel_format.GetFormat();
+		}
+
+		/// the dispatch function
+		template<typename DST_TYPE>
+		void operator()(DST_TYPE x)
+		{
+			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
+			if (pf.GetFormat() == dst_format)
+				boost::mpl::for_each < PixelTypes, boost::mpl::identity < boost::mpl::_1 > >(
+					CopyPixelFuncMap2<DST_TYPE, COPY_WITH_SYMETRY>(this));
+		}
+
+	public:
+
+		/// copy function
+		template<typename DST_TYPE, typename SRC_TYPE>
+		void CopyPixels()
+		{
+			for (int l = 0; l < height; ++l)
+			{
+				SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
+				DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + l);
+				for (int c = 0; c < width; ++c)
+					PixelConverter::Convert(d[c], s[c]);
+			}
+		}
+#if 0
+		/// copy function for non-conversion specialization
+		template<typename T>
+		void CopyPixels<T, T>()
+		{
+			for (int l = 0; l < height; ++l)
 			{
 				T const * s = ImageTools::GetPixelAddress<T>(src_desc, src_x, src_y + l);
 				T       * d = ImageTools::GetPixelAddress<T>(dst_desc, dst_x, dst_y + l);
 				memcpy(d, s, width * sizeof(T));
-			}		
-		}	
+			}
+		}
+#endif
 
-		template<typename T>
-		static void CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
+		/// copy function with symetry		
+		template<typename DST_TYPE, typename SRC_TYPE>
+		void CopyPixelsWithCentralSymetry()
 		{
-			for (int l = 0 ; l < height ; ++l)
+			for (int l = 0; l < height; ++l)
+			{
+				SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
+				DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + height - 1 - l);
+				for (int c = 0; c < width; ++c)
+					PixelConverter::Convert(d[width - 1 - c], s[c]);
+			}
+		}
+#if 0
+		/// copy function with symetry for non-conversion specialization
+		template<typename T>
+		void CopyPixelsWithCentralSymetry<T, T>()
+		{
+			for (int l = 0; l < height; ++l)
 			{
 				T const * s = ImageTools::GetPixelAddress<T>(src_desc, src_x, src_y + l);
 				T       * d = ImageTools::GetPixelAddress<T>(dst_desc, dst_x, dst_y + height - 1 - l);
-				for (int c = 0 ; c < width ; ++c)
+				for (int c = 0; c < width; ++c)
 					d[width - 1 - c] = s[c];
-			}		
-		}	
+			}
+		}
+#endif
+
+	public:
+
+		/// the well known format for source pixels
+		int src_format;
+		/// the well known format for destination pixels
+		int dst_format;
+		/// the parameters for copy
+		ImageDescription src_desc;
+		ImageDescription dst_desc;
+		int src_x;
+		int src_y;
+		int dst_x;
+		int dst_y;
+		int width; 
+		int height;
+	};
+
+	//
+	// CopyPixelFuncMap2 : used to find SRC_TYPE and start the copy
+	// (DST_TYPE is already well known)
+	//
+
+	template<typename DST_TYPE, bool COPY_WITH_SYMETRY> 
+	class CopyPixelFuncMap2
+	{
+	public:
+
+		/// constructor
+		CopyPixelFuncMap2(CopyPixelFuncMap<COPY_WITH_SYMETRY> * in_params) : params(in_params) {}
+
+		/// dispatch function
+		template<typename SRC_TYPE>
+		void operator()(SRC_TYPE x)
+		{
+			PixelFormat pf = PixelFormat::GetPixelFormat<SRC_TYPE>();
+			if (pf.GetFormat() == params->src_format)
+			{
+				if (params->copy_with_symetry)
+					params->CopyPixelsWithCentralSymetry<DST_TYPE, SRC_TYPE>(); 
+				else
+					params->CopyPixels<DST_TYPE, SRC_TYPE>();
+			}
+		}
+
+	public:
+
+		CopyPixelFuncMap<COPY_WITH_SYMETRY> * params;
 	};
 
 	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
-		assert(src_desc.IsValid());
-		assert(dst_desc.IsValid());
-		assert(src_desc.pixel_format == dst_desc.pixel_format);
+		CopyPixelFuncMap<false> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 
-		assert(width  >= 0);
-		assert(height >= 0);
-		assert(src_x >= 0 && src_x + width  <= src_desc.width);
-		assert(src_y >= 0 && src_y + height <= src_desc.height);
-		assert(dst_x >= 0 && dst_x + width  <= dst_desc.width);
-		assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
-
-		PixelFormat const & src_pixel_format = src_desc.pixel_format;
-
-		if (src_pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
-		{
-			if (src_pixel_format.component_count == 1)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelGray>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 3)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelBGR>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 4)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelBGRA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
-		}
-		else if (src_pixel_format.component_type == PixelFormat::TYPE_FLOAT)
-		{
-			if (src_pixel_format.component_count == 1)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelGrayFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 3)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelRGBFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 4)
-				ImageToolsCopyPixelsImpl::CopyPixels<PixelRGBAFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
-		}
+		boost::mpl::for_each<
+			PixelTypes, boost::mpl::identity < boost::mpl::_1 > // start by detecting DST_TYPE
+		> (copy_func_map);			
 	}
 
 	void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
-		assert(src_desc.IsValid());
-		assert(dst_desc.IsValid());
-		assert(src_desc.pixel_format == dst_desc.pixel_format);
+		CopyPixelFuncMap<true> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 
-		assert(width  >= 0);
-		assert(height >= 0);
-		assert(src_x >= 0 && src_x + width  <= src_desc.width);
-		assert(src_y >= 0 && src_y + height <= src_desc.height);
-		assert(dst_x >= 0 && dst_x + width  <= dst_desc.width);
-		assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
-
-		PixelFormat const & src_pixel_format = src_desc.pixel_format;
-
-		if (src_pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
-		{
-			if (src_pixel_format.component_count == 1)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelGray>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 3)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelBGR>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 4)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelBGRA>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
-		}
-		else if (src_pixel_format.component_type == PixelFormat::TYPE_FLOAT)
-		{
-			if (src_pixel_format.component_count == 1)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelGrayFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 3)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelRGBFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-			else if (src_pixel_format.component_count == 4)
-				ImageToolsCopyPixelsImpl::CopyPixelsWithCentralSymetry<PixelRGBAFloat>(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);		
-		}
+		boost::mpl::for_each<
+			PixelTypes, boost::mpl::identity < boost::mpl::_1 > // start by detecting DST_TYPE
+		>(copy_func_map);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)
 	{
@@ -234,7 +294,7 @@ namespace chaos
 			if (palette[i].rgbBlue != (BYTE)i)
 				return false;
 
-			*alpha_needed |= (palette[i].rgbReserved != 255);
+			*alpha_needed |= (palette[i].rgbReserved != 255); // alpha should always be 255 or the palette is interesting for encoding alpha
 		}
 		return true;
 	}
@@ -333,3 +393,4 @@ namespace chaos
 	}
 
 }; // namespace chaos
+

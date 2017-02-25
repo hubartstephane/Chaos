@@ -132,28 +132,28 @@ namespace chaos
 		template<typename DST_TYPE, typename SRC_TYPE>
 		void CopyPixels()
 		{
-			for (int l = 0; l < height; ++l)
+			if (boost::is_same<DST_TYPE, SRC_TYPE>::value)
 			{
-				SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
-				DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + l);
-				for (int c = 0; c < width; ++c)
-					PixelConverter::Convert(d[c], s[c]);
-			}
-		}
-#if 0
-		/// copy function for non-conversion specialization
-		template<typename T>
-		void CopyPixels<T, T>()
-		{
-			for (int l = 0; l < height; ++l)
-			{
-				T const * s = ImageTools::GetPixelAddress<T>(src_desc, src_x, src_y + l);
-				T       * d = ImageTools::GetPixelAddress<T>(dst_desc, dst_x, dst_y + l);
-				memcpy(d, s, width * sizeof(T));
-			}
-		}
-#endif
+				for (int l = 0; l < height; ++l) // optimized version using memcopy, if there is no conversion to do
+				{
+					using TYPE = DST_TYPE; // same types fro both src and dst
 
+					TYPE const * s = ImageTools::GetPixelAddress<TYPE>(src_desc, src_x, src_y + l);
+					TYPE       * d = ImageTools::GetPixelAddress<TYPE>(dst_desc, dst_x, dst_y + l);
+					memcpy(d, s, width * sizeof(TYPE));
+				}
+			}
+			else
+			{
+				for (int l = 0; l < height; ++l)
+				{
+					SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
+					DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + l);
+					for (int c = 0; c < width; ++c)
+						PixelConverter::Convert(d[c], s[c]);
+				}
+			}
+		}
 		/// copy function with symetry		
 		template<typename DST_TYPE, typename SRC_TYPE>
 		void CopyPixelsWithCentralSymetry()
@@ -166,20 +166,6 @@ namespace chaos
 					PixelConverter::Convert(d[width - 1 - c], s[c]);
 			}
 		}
-#if 0
-		/// copy function with symetry for non-conversion specialization
-		template<typename T>
-		void CopyPixelsWithCentralSymetry<T, T>()
-		{
-			for (int l = 0; l < height; ++l)
-			{
-				T const * s = ImageTools::GetPixelAddress<T>(src_desc, src_x, src_y + l);
-				T       * d = ImageTools::GetPixelAddress<T>(dst_desc, dst_x, dst_y + height - 1 - l);
-				for (int c = 0; c < width; ++c)
-					d[width - 1 - c] = s[c];
-			}
-		}
-#endif
 
 	public:
 

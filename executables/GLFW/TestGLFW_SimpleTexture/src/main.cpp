@@ -64,9 +64,17 @@ protected:
 
 	boost::intrusive_ptr<chaos::Texture> GenerateTexture(int index)
 	{
+		static int const GENERATE_RGBA = 0;
+		static int const GENERATE_GRAY = 1;
+		static int const GENERATE_RGB  = 2;
+		static int const GENERATE_GRAY_FLOAT = 3;
+		static int const GENERATE_RGB_FLOAT = 4;
+		static int const GENERATE_RGBA_FLOAT = 5;
+
+
 		boost::intrusive_ptr<chaos::Texture> result;
 
-		if (index == 0)
+		if (index == GENERATE_RGBA)
 		{
 			// test manual buffer
 			char * image_buffer = new char[4 * 512 * 512];
@@ -88,7 +96,7 @@ protected:
 		}
 
 		// test GENERATION GRAY
-		if (index == 1)
+		if (index == GENERATE_GRAY)
 		{
 			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGray>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGray* buffer)
 			{
@@ -98,7 +106,7 @@ protected:
 			});
 		}
 		// test GENERATION RGB
-		if (index == 2)
+		if (index == GENERATE_RGB)
 		{
 			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelBGR>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelBGR * buffer)
 			{
@@ -115,7 +123,7 @@ protected:
 		}
 
 		// test GENERATION GRAY FLOAT
-		if (index == 3)
+		if (index == GENERATE_GRAY_FLOAT)
 		{
 			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGrayFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGrayFloat* buffer)
 			{
@@ -126,7 +134,7 @@ protected:
 		}
 
 		// test GENERATION RGB FLOAT
-		if (index == 4)
+		if (index == GENERATE_RGB_FLOAT)
 		{
 			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGBFloat * buffer)
 			{
@@ -142,29 +150,22 @@ protected:
 			});
 		}
 
-		// Load files
-		if (index >= 5 && index <= 10)
+		// test GENERATION RGBA FLOAT
+		if (index == GENERATE_RGBA_FLOAT)
 		{
-			chaos::Application * application = chaos::Application::GetInstance();
-			if (application == nullptr)
-				return false;
-			boost::filesystem::path resources_path = application->GetResourcesPath();
-			boost::filesystem::path image_path;
-
-			if (index == 5)
-				image_path = resources_path / "opengl_logo.gif";
-			else if (index == 6)
-				image_path = resources_path / "opengl_logo.png";
-			else if (index == 7)
-				image_path = resources_path / "opengl_logo_rectangle.png";
-			else if (index == 8)
-				image_path = resources_path / "icons-animation.gif";
-			else if (index == 9)
-				image_path = resources_path / "grayscale.png";
-			else if (index == 10)
-				image_path = resources_path / "grayscale.gif";
-
-			result = chaos::GLTextureTools::GenTextureObject(image_path.string().c_str());
+			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBAFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGBAFloat * buffer)
+			{
+				for (int i = 0; i < desc.height; ++i)
+				{
+					for (int j = 0; j < desc.width; ++j)
+					{
+						buffer[j + i * desc.width].R = chaos::MathTools::CastAndDiv<float>(j, desc.width);
+						buffer[j + i * desc.width].G = chaos::MathTools::CastAndDiv<float>(i, desc.height);
+						buffer[j + i * desc.width].B = 0.0f;
+						buffer[j + i * desc.width].A = 1.0f;
+					}
+				}
+			});
 		}
 
 		return result;

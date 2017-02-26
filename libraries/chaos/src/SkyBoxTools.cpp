@@ -287,6 +287,16 @@ namespace chaos
 
 
 
+
+
+
+
+
+
+
+
+
+
 	SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params) const
 	{
 		SkyBoxImages result;
@@ -331,9 +341,7 @@ namespace chaos
 		if (new_image == nullptr)
 			return result;
 		result.SetImage(IMAGE_SINGLE, new_image, true);
-
-		
-
+	
 		// fill the background (Blue - Green - Red - Alpha)
 #if 0
 		unsigned char bgra[4];
@@ -377,6 +385,20 @@ namespace chaos
 
 		return result;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const
 	{

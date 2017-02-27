@@ -14,9 +14,8 @@ void main()
   float check_y = step(fract(gl_FragCoord.y / 100.0), 0.5);
   float check =
 	(check_x + check_y) * 0.5;
-  //check_x * check_y;
 
-  output_color.xyz = texture_color.xyz;
-  //output_color.xyz = texture_color.xyz * texture_color.a + vec3(check, check, check) * (1.0 - texture_color.a);
+  //output_color.xyz = texture_color.xyz;
+  output_color.xyz = texture_color.xyz * texture_color.a + vec3(check, check, check) * (1.0 - texture_color.a);
   output_color.w = 1.0;
 }

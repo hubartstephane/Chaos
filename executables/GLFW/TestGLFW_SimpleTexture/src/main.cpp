@@ -200,7 +200,7 @@ protected:
 			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_FLOAT, 4), 512, 512);
 			if (image != nullptr)
 			{
-				chaos::ImageTools::FillImageBackground(image, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+				chaos::ImageTools::FillImageBackground(image, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
 
 				result = chaos::GLTextureTools::GenTextureObject(image);
 				FreeImage_Unload(image);

@@ -8,7 +8,7 @@ namespace chaos
 	//
 	// XXX : the usage of FreeImage_FillBackground(...) is rather unclear
 	//
-	// for RGBA unsigned values, ALPHA must be 255 !!!
+	// for RGBA unsigned values, ALPHA must be 255 !!! (for RGBA float values, ALPHA is supported)
 	//
 	// for RGBA float values, we must use C float array
 	//
@@ -68,9 +68,9 @@ namespace chaos
 					rgba[0] = color.r;
 					rgba[1] = color.g;
 					rgba[2] = color.b;
-					rgba[3] = 1.0f;
+					rgba[3] = color.a;
 
-					FreeImage_FillBackground(image, rgba, FI_COLOR_IS_RGB_COLOR);
+					FreeImage_FillBackground(image, rgba, FI_COLOR_IS_RGBA_COLOR);
 				}
 			}
 		}

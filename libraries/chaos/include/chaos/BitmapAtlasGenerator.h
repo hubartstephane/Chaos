@@ -66,8 +66,6 @@ namespace chaos
 			/** insert a bitmap before computation */
 			bool AddBitmapFile(char const * filename, char const * name);
 			/** insert an image inside the atlas */
-			bool AddFakeBitmap(char const * name);
-			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap = true);
 
 		protected:

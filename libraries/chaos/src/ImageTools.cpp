@@ -5,6 +5,77 @@
 
 namespace chaos
 {
+	//
+	// XXX : the usage of FreeImage_FillBackground(...) is rather unclear
+	//
+	// for RGBA unsigned values, ALPHA must be 255 !!!
+	//
+	// for RGBA float values, we must use C float array
+	//
+	// for palettized image, there is a search in texture
+	//
+
+	void ImageTools::FillImageBackground(FIBITMAP * image, glm::vec4 const & color)
+	{
+		assert(image != nullptr);
+
+		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		if (pixel_format.IsValid())
+		{
+			if (pixel_format.component_count == 1) // GRAY
+			{
+				if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
+				{
+					unsigned char gray_color = (unsigned char)(255.0f * (color.r + color.g + color.b) / 3.0f);
+
+					unsigned char bgra[4];
+					bgra[0] = gray_color;
+					bgra[1] = gray_color;						
+					bgra[2] = gray_color;
+					bgra[3] = 255; // XXX : important for FreeImage (depending of the flag of FI_COLOR_IS_RGBA_COLOR)
+
+					FreeImage_FillBackground(image, bgra, FI_COLOR_IS_RGB_COLOR);
+				}
+				else if (pixel_format.component_type == PixelFormat::TYPE_FLOAT)
+				{
+					float gray_color = (color.r + color.g + color.b) / 3.0f;
+
+					float rgba[4];
+					rgba[0] = gray_color;
+					rgba[1] = gray_color;
+					rgba[2] = gray_color;
+					rgba[3] = 1.0f;
+
+					FreeImage_FillBackground(image, rgba, FI_COLOR_IS_RGB_COLOR);
+				}
+			}
+			else // COLOR
+			{
+				if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
+				{
+					unsigned char bgra[4];
+					bgra[0] = (unsigned char)(color.b * 255.0f);
+					bgra[1] = (unsigned char)(color.g * 255.0f);
+					bgra[2] = (unsigned char)(color.r * 255.0f);
+					bgra[3] = 255; // XXX : important for FreeImage (depending of the flag of FI_COLOR_IS_RGBA_COLOR)
+
+					FreeImage_FillBackground(image, bgra, FI_COLOR_IS_RGB_COLOR);
+
+				}
+				else if (pixel_format.component_type == PixelFormat::TYPE_FLOAT)
+				{
+					float rgba[4];
+					rgba[0] = color.r;
+					rgba[1] = color.g;
+					rgba[2] = color.b;
+					rgba[3] = 1.0f;
+
+					FreeImage_FillBackground(image, rgba, FI_COLOR_IS_RGB_COLOR);
+				}
+			}
+		}
+	}
+
 	FIBITMAP * ImageTools::GenFreeImage(PixelFormat const & pixel_format, int width, int height)
 	{
 		assert(width >= 0);

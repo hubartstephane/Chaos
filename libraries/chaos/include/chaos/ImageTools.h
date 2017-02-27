@@ -15,6 +15,9 @@ namespace chaos
 
 	public:
 
+		/** fill the color of the background */
+		static void FillImageBackground(FIBITMAP * image, glm::vec4 const & color);
+
 		/** generate a free image corresponding to a given pixel format */
 		static FIBITMAP * GenFreeImage(PixelFormat const & pixel_format, int width, int height);
 

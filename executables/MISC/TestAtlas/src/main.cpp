@@ -9,6 +9,7 @@
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
 #include <chaos/FontTools.h>
+#include <chaos/ImageTools.h>
 
 static int ATLAS_BPP = 0;
 static int ATLAS_PADDING = 10;
@@ -26,22 +27,45 @@ void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, boost::fil
 	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p.string().c_str(), html_params);
 }
 
+bool AddFakeBitmap(chaos::BitmapAtlas::BitmapSetInput * bitmap_set, char const * name)
+{
+	assert(name != nullptr);
+
+	int w = 15 * (1 + rand() % 10);
+	int h = 15 * (1 + rand() % 10);
+
+	bool result = false;
+
+	FIBITMAP * bitmap = FreeImage_Allocate(w, h, 32); // allocate an image
+	if (bitmap != nullptr)
+	{
+		float color = chaos::MathTools::RandFloat();
+
+		chaos::ImageTools::FillImageBackground(bitmap, glm::vec4(color, color, color, 1.0f));
+
+		result = bitmap_set->AddBitmap(name, bitmap, true);
+		if (!result)
+			FreeImage_Unload(bitmap);
+	}
+	return result;
+}
+
 void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 {
 	chaos::BitmapAtlas::AtlasInput input;
 
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("bitmap_set1");
 
-	bitmap_set->AddFakeBitmap("A");
-	bitmap_set->AddFakeBitmap("B");
-	bitmap_set->AddFakeBitmap("C");
-	bitmap_set->AddFakeBitmap("D");
-	bitmap_set->AddFakeBitmap("E");
-	bitmap_set->AddFakeBitmap("F");
-	bitmap_set->AddFakeBitmap("G");
-	bitmap_set->AddFakeBitmap("H");
-	bitmap_set->AddFakeBitmap("I");
-	bitmap_set->AddFakeBitmap("J");
+	AddFakeBitmap(bitmap_set, "A");
+	AddFakeBitmap(bitmap_set, "B");
+	AddFakeBitmap(bitmap_set, "C");
+	AddFakeBitmap(bitmap_set, "D");
+	AddFakeBitmap(bitmap_set, "E");
+	AddFakeBitmap(bitmap_set, "F");
+	AddFakeBitmap(bitmap_set, "G");
+	AddFakeBitmap(bitmap_set, "H");
+	AddFakeBitmap(bitmap_set, "I");
+	AddFakeBitmap(bitmap_set, "J");
 
 	chaos::PixelFormatMergeParams            merge_params;
 	chaos::BitmapAtlas::Atlas                atlas;

@@ -2,10 +2,21 @@ out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindF
 
 in vec4 out_position;
 
+uniform vec2 screen_size;
 uniform sampler2D material;
 
 void main()
 {
   vec2 c = out_position.xy * 0.5 + vec2(0.5);
-  output_color = texture(material, c);
+  vec4 texture_color = texture(material, c);
+
+  float check_x = step(fract(gl_FragCoord.x / 100.0), 0.5);
+  float check_y = step(fract(gl_FragCoord.y / 100.0), 0.5);
+  float check =
+	(check_x + check_y) * 0.5;
+  //check_x * check_y;
+
+  output_color.xyz = texture_color.xyz;
+  //output_color.xyz = texture_color.xyz * texture_color.a + vec3(check, check, check) * (1.0 - texture_color.a);
+  output_color.w = 1.0;
 }

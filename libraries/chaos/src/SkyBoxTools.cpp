@@ -343,15 +343,7 @@ namespace chaos
 		result.SetImage(IMAGE_SINGLE, new_image, true);
 	
 		// fill the background (Blue - Green - Red - Alpha)
-#if 0
-		unsigned char bgra[4];
-		bgra[0] = (unsigned char)(fill_color.b * 255.0f);
-		bgra[1] = (unsigned char)(fill_color.g * 255.0f);
-		bgra[2] = (unsigned char)(fill_color.r * 255.0f);
-		bgra[3] = (unsigned char)(fill_color.a * 255.0f);
-
-		FreeImage_FillBackground(new_image, bgra, (bpp == 24)? FI_COLOR_IS_RGB_COLOR : FI_COLOR_IS_RGBA_COLOR);
-#endif
+		ImageTools::FillImageBackground(new_image, fill_color);
 		
 		// copy the faces into the single image
 		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);

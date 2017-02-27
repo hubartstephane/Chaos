@@ -70,7 +70,9 @@ protected:
 		static int const GENERATE_GRAY_FLOAT = 3;
 		static int const GENERATE_RGB_FLOAT = 4;
 		static int const GENERATE_RGBA_FLOAT = 5;
-
+		static const int GENERATE_BACKGROUND = 6;
+		static const int GENERATE_BACKGROUND_GRAY = 7;
+		static const int GENERATE_FLOAT_BACKGROUND = 8;
 
 		boost::intrusive_ptr<chaos::Texture> result;
 
@@ -86,8 +88,8 @@ protected:
 				for (int j = 0; j < 512; ++j)
 				{
 					image_buffer[4 * j + 0 + (i * image_desc.pitch_size)] = i;
-					image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = i;
-					image_buffer[4 * j + 2 + (i * image_desc.pitch_size)] = i;
+					image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = 0;
+					image_buffer[4 * j + 2 + (i * image_desc.pitch_size)] = 0;
 					image_buffer[4 * j + 3 + (i * image_desc.pitch_size)] = i;
 				}
 			}
@@ -160,12 +162,49 @@ protected:
 					for (int j = 0; j < desc.width; ++j)
 					{
 						buffer[j + i * desc.width].R = chaos::MathTools::CastAndDiv<float>(j, desc.width);
-						buffer[j + i * desc.width].G = chaos::MathTools::CastAndDiv<float>(i, desc.height);
-						buffer[j + i * desc.width].B = 0.0f;
+						buffer[j + i * desc.width].G = 0.0f;
+						buffer[j + i * desc.width].B = chaos::MathTools::CastAndDiv<float>(i, desc.height); 
 						buffer[j + i * desc.width].A = 1.0f;
 					}
 				}
 			});
+		}
+
+		// test for background
+		if (index == GENERATE_BACKGROUND)
+		{
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 512, 512);
+			if (image != nullptr)
+			{
+				chaos::ImageTools::FillImageBackground(image, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+				result = chaos::GLTextureTools::GenTextureObject(image);
+				FreeImage_Unload(image);
+			}
+		}
+
+		if (index == GENERATE_BACKGROUND_GRAY)
+		{
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 1), 512, 512);
+			if (image != nullptr)
+			{
+				chaos::ImageTools::FillImageBackground(image, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+				result = chaos::GLTextureTools::GenTextureObject(image);
+				FreeImage_Unload(image);
+			}
+		}
+
+		if (index == GENERATE_FLOAT_BACKGROUND)
+		{
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_FLOAT, 4), 512, 512);
+			if (image != nullptr)
+			{
+				chaos::ImageTools::FillImageBackground(image, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+				result = chaos::GLTextureTools::GenTextureObject(image);
+				FreeImage_Unload(image);
+			}
 		}
 
 		return result;
@@ -202,6 +241,7 @@ protected:
 
 		chaos::GLProgramVariableProviderChain uniform_provider;
 		uniform_provider.AddVariableTexture("material", texture);
+		uniform_provider.AddVariableValue("screen_size", glm::vec2((float)width, (float)height));
 		program_data.BindUniforms(&uniform_provider);
 
 		mesh->Render(program_data, nullptr, 0, 0);

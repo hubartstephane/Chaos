@@ -187,30 +187,6 @@ namespace chaos
 			return result;
 		}
 
-		bool BitmapSetInput::AddFakeBitmap(char const * name)
-		{
-			assert(name != nullptr);
-
-			int w = 15 * (1 + rand() % 10);
-			int h = 15 * (1 + rand() % 10);
-
-			bool result = false;
-
-			FIBITMAP * bitmap = FreeImage_Allocate(w, h, 32); // allocate an image
-			if (bitmap != nullptr)
-			{
-				unsigned char color = 55 + (rand() % 200);
-				unsigned char bgra[] = { color, color, color, 0 };
-
-				FreeImage_FillBackground(bitmap, bgra, FI_COLOR_IS_RGBA_COLOR); // create a background color
-
-				result = AddBitmap(name, bitmap, true);
-				if (!result)
-					FreeImage_Unload(bitmap);
-			}
-			return result;
-		}
-
 		bool BitmapSetInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap)
 		{
 			assert(name != nullptr);
@@ -395,9 +371,7 @@ namespace chaos
 		}
 
 		std::vector<unique_bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const
-		{
-			unsigned char const bgra[] = { 0, 0, 0, 0 }; // B G R A
-
+		{		
 			std::vector<unique_bitmap_ptr> result;
 
 			// generate the bitmaps
@@ -407,16 +381,10 @@ namespace chaos
 				unique_bitmap_ptr bitmap = unique_bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
 				if (bitmap != nullptr)
 				{
+					// set the background to black
+					ImageTools::FillImageBackground(bitmap.get(), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-
-
-					// shuxxx
-
-
-
-
-					FreeImage_FillBackground(bitmap.get(), bgra, FI_COLOR_IS_RGBA_COLOR);
-
+					// copy-paste all entries
 					for (BitmapEntryInput const * entry_input : entries)
 					{
 						BitmapEntry const * entry = entry_input->output_entry;

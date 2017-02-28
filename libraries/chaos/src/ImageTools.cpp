@@ -5,12 +5,12 @@
 
 namespace chaos
 {
-	class alignas(16) FillImageFuncMap
+	class FillImageFuncMap
 	{
 	public:
 
 		/// constructor
-		FillImageFuncMap(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :
+		FillImageFuncMap(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :	
 			dst_desc(in_dst_desc),
 			color(in_color)
 		{
@@ -25,12 +25,18 @@ namespace chaos
 			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
 			if (pf.GetFormat() == dst_format)
 			{
-				PixelConverter::Convert(dst_color, color); // boost provide an argument for color, use it as a temp variable
+				PixelRGBAFloat rgba_color;
+				rgba_color.R = color.x;
+				rgba_color.G = color.y;
+				rgba_color.B = color.z;
+				rgba_color.A = color.w;
+
+				PixelConverter::Convert(dst_color, rgba_color); // boost provide an argument for color, use it as a temp variable
 
 				for (int l = 0; l < dst_desc.height; ++l)
 				{
 					DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, l);
-					for (int c = 0; c < width; ++c)
+					for (int c = 0; c < dst_desc.width; ++c)
 						d[c] = dst_color;
 				}
 			}
@@ -41,26 +47,21 @@ namespace chaos
 		/// the well known format for destination pixels
 		int dst_format;
 		/// the color to be applyed
-		alignas(16) glm::vec4 color;
+		glm::vec4 color;
 		/// the parameters for copy
 		ImageDescription dst_desc;
 	};
 
 	void ImageTools::FillImage(FIBITMAP * image, glm::vec4 const & color)
 	{
+		assert(image != nullptr);
+
 		ImageDescription dst_desc = GetImageDescription(image);
 
 		FillImageFuncMap fill_func_map(dst_desc, color);
 
 		boost::mpl::for_each<PixelTypes>(fill_func_map);
 	}
-
-
-
-
-
-
-
 
 	//
 	// XXX : the usage of FreeImage_FillBackground(...) is rather unclear
@@ -74,6 +75,10 @@ namespace chaos
 
 	void ImageTools::FillImageBackground(FIBITMAP * image, glm::vec4 const & color)
 	{
+		FillImage(image, color);
+
+#if 0 // keep for example, but the template implementation should fix the alpha issue
+
 		assert(image != nullptr);
 
 		PixelFormat pixel_format = PixelFormat::FromImage(image);
@@ -131,6 +136,7 @@ namespace chaos
 				}
 			}
 		}
+#endif
 	}
 
 	FIBITMAP * ImageTools::GenFreeImage(PixelFormat const & pixel_format, int width, int height)

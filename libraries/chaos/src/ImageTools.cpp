@@ -15,6 +15,7 @@ namespace chaos
 			color(in_color)
 		{
 			assert(dst_desc.IsValid());
+			assert(!dst_desc.IsEmpty());
 			dst_format = dst_desc.pixel_format.GetFormat();
 		}
 
@@ -33,11 +34,16 @@ namespace chaos
 
 				PixelConverter::Convert(dst_color, rgba_color); // boost provide an argument for color, use it as a temp variable
 
-				for (int l = 0; l < dst_desc.height; ++l)
+				// step 1 : fill line 1 (with standard assignement)
+				DST_TYPE * d1 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, 0);
+				for (int c = 0; c < dst_desc.width; ++c)
+					d1[c] = dst_color;
+
+				// step2 : fill other lines with memcpy(...) : should be faster
+				for (int l = 1; l < dst_desc.height; ++l)
 				{
-					DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, l);
-					for (int c = 0; c < dst_desc.width; ++c)
-						d[c] = dst_color;
+					DST_TYPE * d2 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, l);
+					memcpy(d2, d1, dst_desc.line_size);
 				}
 			}
 		}
@@ -57,10 +63,12 @@ namespace chaos
 		assert(image != nullptr);
 
 		ImageDescription dst_desc = GetImageDescription(image);
+		if (!dst_desc.IsEmpty())
+		{
+			FillImageFuncMap fill_func_map(dst_desc, color);
 
-		FillImageFuncMap fill_func_map(dst_desc, color);
-
-		boost::mpl::for_each<PixelTypes>(fill_func_map);
+			boost::mpl::for_each<PixelTypes>(fill_func_map);
+		}
 	}
 
 	//

@@ -10,10 +10,9 @@ void main()
   vec2 c = out_position.xy * 0.5 + vec2(0.5);
   vec4 texture_color = texture(material, c);
 
-  float check_x = step(fract(gl_FragCoord.x / 100.0), 0.5);
-  float check_y = step(fract(gl_FragCoord.y / 100.0), 0.5);
-  float check =
-	(check_x + check_y) * 0.5;
+  int check_x = int(gl_FragCoord.x / 50.0);
+  int check_y = int(gl_FragCoord.y / 50.0);
+  float check = (check_x % 2 == check_y % 2)? 1.0 : 0.0;
 
   //output_color.xyz = texture_color.xyz;
   output_color.xyz = texture_color.xyz * texture_color.a + vec3(check, check, check) * (1.0 - texture_color.a);

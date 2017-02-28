@@ -15,6 +15,8 @@ namespace chaos
 
 	public:
 
+		static void FillImage(FIBITMAP * image, glm::vec4 const & color);
+
 		/** fill the color of the background */
 		static void FillImageBackground(FIBITMAP * image, glm::vec4 const & color);
 

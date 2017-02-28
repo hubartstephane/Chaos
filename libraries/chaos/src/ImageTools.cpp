@@ -5,6 +5,63 @@
 
 namespace chaos
 {
+	class alignas(16) FillImageFuncMap
+	{
+	public:
+
+		/// constructor
+		FillImageFuncMap(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :
+			dst_desc(in_dst_desc),
+			color(in_color)
+		{
+			assert(dst_desc.IsValid());
+			dst_format = dst_desc.pixel_format.GetFormat();
+		}
+
+		/// the dispatch function
+		template<typename DST_TYPE>
+		void operator()(DST_TYPE dst_color)
+		{
+			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
+			if (pf.GetFormat() == dst_format)
+			{
+				PixelConverter::Convert(dst_color, color); // boost provide an argument for color, use it as a temp variable
+
+				for (int l = 0; l < dst_desc.height; ++l)
+				{
+					DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, l);
+					for (int c = 0; c < width; ++c)
+						d[c] = dst_color;
+				}
+			}
+		}
+
+	public:
+
+		/// the well known format for destination pixels
+		int dst_format;
+		/// the color to be applyed
+		alignas(16) glm::vec4 color;
+		/// the parameters for copy
+		ImageDescription dst_desc;
+	};
+
+	void ImageTools::FillImage(FIBITMAP * image, glm::vec4 const & color)
+	{
+		ImageDescription dst_desc = GetImageDescription(image);
+
+		FillImageFuncMap fill_func_map(dst_desc, color);
+
+		boost::mpl::for_each<PixelTypes>(fill_func_map);
+	}
+
+
+
+
+
+
+
+
 	//
 	// XXX : the usage of FreeImage_FillBackground(...) is rather unclear
 	//
@@ -193,8 +250,7 @@ namespace chaos
 		{
 			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
 			if (pf.GetFormat() == dst_format)
-				boost::mpl::for_each < PixelTypes, boost::mpl::identity < boost::mpl::_1 > >(
-					CopyPixelFuncMap2<DST_TYPE, COPY_WITH_SYMETRY>(this));
+				boost::mpl::for_each<PixelTypes>(CopyPixelFuncMap2<DST_TYPE, COPY_WITH_SYMETRY>(this));
 		}
 
 	public:
@@ -291,18 +347,14 @@ namespace chaos
 	{
 		CopyPixelFuncMap<false> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 
-		boost::mpl::for_each<
-			PixelTypes, boost::mpl::identity < boost::mpl::_1 > // start by detecting DST_TYPE
-		> (copy_func_map);			
+		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
 	}
 
 	void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
 		CopyPixelFuncMap<true> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 
-		boost::mpl::for_each<
-			PixelTypes, boost::mpl::identity < boost::mpl::_1 > // start by detecting DST_TYPE
-		>(copy_func_map);
+		boost::mpl::for_each<PixelTypes>(copy_func_map); // start by detecting DST_TYPE
 	}
 
 	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)

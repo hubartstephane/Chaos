@@ -5,12 +5,12 @@
 
 namespace chaos
 {
-	class FillImageFuncMap
+	class FillImageMetaFunc
 	{
 	public:
 
 		/// constructor
-		FillImageFuncMap(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :	
+		FillImageMetaFunc(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :	
 			dst_desc(in_dst_desc),
 			color(in_color)
 		{
@@ -65,7 +65,7 @@ namespace chaos
 		ImageDescription dst_desc = GetImageDescription(image);
 		if (!dst_desc.IsEmpty())
 		{
-			FillImageFuncMap fill_func_map(dst_desc, color);
+			FillImageMetaFunc fill_func_map(dst_desc, color);
 
 			boost::mpl::for_each<PixelTypes>(fill_func_map);
 		}
@@ -227,10 +227,10 @@ namespace chaos
 	//   CopyPixels<DST_TYPE, SRC_TYPE> or CopyPixelsWithCentralSymetry<DST_TYPE, SRC_TYPE> 
 
 	template<typename SRC_TYPE, bool COPY_WITH_SYMETRY> // forward declaration
-	class CopyPixelFuncMap2;
+	class CopyPixelMetaFunc2;
 
 	template<bool COPY_WITH_SYMETRY>
-	class CopyPixelFuncMap
+	class CopyPixelMetaFunc
 	{
 	public:
 
@@ -238,7 +238,7 @@ namespace chaos
 		static bool const copy_with_symetry = COPY_WITH_SYMETRY;
 
 		/// constructor
-		CopyPixelFuncMap(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height) :
+		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height) :
 			src_desc(in_src_desc), dst_desc(in_dst_desc),
 			src_x(in_src_x), src_y(in_src_y),
 			dst_x(in_dst_x), dst_y(in_dst_y),
@@ -264,7 +264,7 @@ namespace chaos
 		{
 			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
 			if (pf.GetFormat() == dst_format)
-				boost::mpl::for_each<PixelTypes>(CopyPixelFuncMap2<DST_TYPE, COPY_WITH_SYMETRY>(this));
+				boost::mpl::for_each<PixelTypes>(CopyPixelMetaFunc2<DST_TYPE, COPY_WITH_SYMETRY>(this));
 		}
 
 	public:
@@ -326,17 +326,17 @@ namespace chaos
 	};
 
 	//
-	// CopyPixelFuncMap2 : used to find SRC_TYPE and start the copy
+	// CopyPixelMetaFunc2 : used to find SRC_TYPE and start the copy
 	// (DST_TYPE is already well known)
 	//
 
 	template<typename DST_TYPE, bool COPY_WITH_SYMETRY> 
-	class CopyPixelFuncMap2
+	class CopyPixelMetaFunc2
 	{
 	public:
 
 		/// constructor
-		CopyPixelFuncMap2(CopyPixelFuncMap<COPY_WITH_SYMETRY> * in_params) : params(in_params) {}
+		CopyPixelMetaFunc2(CopyPixelMetaFunc<COPY_WITH_SYMETRY> * in_params) : params(in_params) {}
 
 		/// dispatch function
 		template<typename SRC_TYPE>
@@ -354,19 +354,19 @@ namespace chaos
 
 	public:
 
-		CopyPixelFuncMap<COPY_WITH_SYMETRY> * params;
+		CopyPixelMetaFunc<COPY_WITH_SYMETRY> * params;
 	};
 
 	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
-		CopyPixelFuncMap<false> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
+		CopyPixelMetaFunc<false> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 
 		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
 	}
 
 	void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
 	{
-		CopyPixelFuncMap<true> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
+		CopyPixelMetaFunc<true> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
 
 		boost::mpl::for_each<PixelTypes>(copy_func_map); // start by detecting DST_TYPE
 	}

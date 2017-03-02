@@ -197,7 +197,8 @@ protected:
 		generator_params.line_spacing = 0.0f;
 		generator_params.bitmap_padding.x = 10.0f;
 		generator_params.bitmap_padding.y = 5.0f;
-		generator_params.alignment = chaos::SpriteText::GeneratorParams::ALIGN_JUSTIFY;
+		//generator_params.alignment = chaos::SpriteText::GeneratorParams::ALIGN_JUSTIFY;
+		generator_params.alignment = chaos::SpriteText::GeneratorParams::ALIGN_LEFT;
 		generator_params.justify_space_factor = 8.0f;
 		generator_params.max_text_width = 200.0f;
 		generator_params.word_wrap = true;
@@ -206,7 +207,9 @@ protected:
 
 		chaos::SpriteText::GeneratorResult generator_result;
 
-		generator.GenerateSprites("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon[button]bidon", &sprite_manager, &generator_result, generator_params);
+		//generator.GenerateSprites("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon[button]bidon", &sprite_manager, &generator_result, generator_params);
+
+		generator.GenerateSprites("Hi [RED Ben]\nHere is a first example\nof my own stuff with [button] embedded", &sprite_manager, &generator_result, generator_params);
 
 
 		//generator.GenerateSprites("He llo[button]aaBLyYjg[RED world\n    to[button]to]\n[C2 Change[button]Charset 2\n[C1 Change[button]Charset 1]]\nRetour   Charset[button]normal", &sprite_manager, &generator_result, generator_params);

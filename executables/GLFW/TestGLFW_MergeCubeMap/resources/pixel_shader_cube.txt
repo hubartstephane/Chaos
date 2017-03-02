@@ -1,0 +1,14 @@
+out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+in vec3 pos;
+in vec3 col;
+
+uniform samplerCube material;
+
+void main()
+{
+  output_color = texture(material, pos.xyz * vec3(1.0, -1.0, 1.0)); // position to inversion for opengl system (compared to DirectX)
+
+  //output_color.xyz = col;
+  //output_color.w   = 1.0;
+}

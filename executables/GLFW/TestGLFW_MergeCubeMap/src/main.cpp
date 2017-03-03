@@ -48,83 +48,8 @@ protected:
 
 	boost::intrusive_ptr<chaos::Texture> GenerateSkyBox(int index)
 	{
-		boost::intrusive_ptr<chaos::Texture> result;
-
-		boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-
-		chaos::SkyBoxImages skybox;
-		if (index == 0)
-		{
-			skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg").string().c_str());
-		}
-		else if (index == 1)
-		{
-			skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png").string().c_str());
-		}
-		else if (index == 2)
-		{
-			boost::filesystem::path p = resources_path / "Maskonaive";
-
-			boost::filesystem::path left_image   = p / "negx.jpg";
-			boost::filesystem::path front_image  = p / "posz.jpg";
-			boost::filesystem::path right_image  = p / "posx.jpg";
-			boost::filesystem::path back_image   = p / "negz.jpg";
-			boost::filesystem::path top_image    = p / "posy.jpg";
-			boost::filesystem::path bottom_image = p / "negy.jpg";
-
-			skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-				left_image.string().c_str(),
-				right_image.string().c_str(),
-				top_image.string().c_str(),
-				bottom_image.string().c_str(),
-				front_image.string().c_str(),
-				back_image.string().c_str());
-		}
-		else if (index == 3)
-		{
-			boost::filesystem::path p = resources_path / "skybox";
-
-			boost::filesystem::path left_image = p / "nx.jpg";
-			boost::filesystem::path front_image = p / "pz.jpg";
-			boost::filesystem::path right_image = p / "px.jpg";
-			boost::filesystem::path back_image = p / "nz.jpg";
-			boost::filesystem::path top_image = p / "py.jpg";
-			boost::filesystem::path bottom_image = p / "ny.jpg";
-
-			skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-				left_image.string().c_str(),
-				right_image.string().c_str(),
-				top_image.string().c_str(),
-				bottom_image.string().c_str(),
-				front_image.string().c_str(),
-				back_image.string().c_str());
-		}
-		else if (index == 4)
-		{
-			boost::filesystem::path p = resources_path / "MilkyWay";
-
-			boost::filesystem::path left_image = p / "dark-s_nx.jpg";
-			boost::filesystem::path front_image = p / "dark-s_pz.jpg";
-			boost::filesystem::path right_image = p / "dark-s_px.jpg";
-			boost::filesystem::path back_image = p / "dark-s_nz.jpg";
-			boost::filesystem::path top_image = p / "dark-s_py.jpg";
-			boost::filesystem::path bottom_image = p / "dark-s_ny.jpg";
-
-			skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-				left_image.string().c_str(),
-				right_image.string().c_str(),
-				top_image.string().c_str(),
-				bottom_image.string().c_str(),
-				front_image.string().c_str(),
-				back_image.string().c_str());
-		}
-		else if (index == 5)
-		{
-			skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "space.png").string().c_str());
-		}
-
-		if (!skybox.IsEmpty())
-			return chaos::GLTextureTools::GenTextureObject(&skybox);
+	//	if (!skybox.IsEmpty())
+	//		return chaos::GLTextureTools::GenTextureObject(&skybox);
 
 		return nullptr;
 	}
@@ -170,6 +95,8 @@ protected:
 
 	virtual void Finalize() override
 	{
+		skybox.Release();
+
 		for (FIBITMAP * bitmap : skybox_bitmaps)
 			FreeImage_Unload(bitmap);
 		skybox_bitmaps.clear();
@@ -211,10 +138,16 @@ protected:
 		// resize the image
 		for (FIBITMAP * & bitmap : skybox_bitmaps)
 		{
-		
+			FIBITMAP * old_bitmap = bitmap;
+			bitmap = FreeImage_CreateView(bitmap, 0, 0, size, size);
+			FreeImage_Unload(old_bitmap);
 		}
 
-
+		// generate the skybox
+		for (size_t i = 0; i < skybox_bitmaps.size() ; ++i)
+		{
+			skybox.SetImage(i, skybox_bitmaps[i], false);
+		}
 		return true;
 	}
 
@@ -295,6 +228,8 @@ protected:
 protected:
 
 	std::vector<FIBITMAP*> skybox_bitmaps;
+
+	chaos::SkyBoxImages skybox;
 			
 	boost::intrusive_ptr<chaos::GLProgram>  program;
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;

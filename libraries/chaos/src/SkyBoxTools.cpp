@@ -66,98 +66,56 @@ namespace chaos
 
 	SkyBoxImages::SkyBoxImages(SkyBoxImages && other)
 	{
-		std::swap(single_image, other.single_image);
-		std::swap(left_image,   other.left_image);
-		std::swap(right_image,  other.right_image);
-		std::swap(top_image,    other.top_image);
-		std::swap(bottom_image, other.bottom_image);
-		std::swap(front_image,  other.front_image);
-		std::swap(back_image,   other.back_image);
+		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+		{
+			std::swap(images[i], other.images[i]);
+			std::swap(release_images[i], other.release_images[i]);
+		}
 	}
 
 	SkyBoxImages::~SkyBoxImages()
 	{
-		Release(true);
+		Release();
 	}
 
 	SkyBoxImages & SkyBoxImages::operator = (SkyBoxImages && other)
 	{
-		std::swap(single_image, other.single_image);
-		std::swap(left_image,   other.left_image);
-		std::swap(right_image,  other.right_image);
-		std::swap(top_image,    other.top_image);
-		std::swap(bottom_image, other.bottom_image);
-		std::swap(front_image,  other.front_image);
-		std::swap(back_image,   other.back_image);
+		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+		{
+			std::swap(images[i], other.images[i]);
+			std::swap(release_images[i], other.release_images[i]);
+		}
 		return *this;   
 	}
 
-	void SkyBoxImages::Release(bool bFreeMemory)
+	void SkyBoxImages::Release()
 	{
-		if (bFreeMemory)
+		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
 		{
-			if (single_image != nullptr)
-				FreeImage_Unload(single_image);
-			if (left_image != nullptr)
-				FreeImage_Unload(left_image);
-			if (right_image != nullptr)
-				FreeImage_Unload(right_image);
-			if (top_image != nullptr)
-				FreeImage_Unload(top_image);
-			if (bottom_image != nullptr)
-				FreeImage_Unload(bottom_image);
-			if (front_image != nullptr)
-				FreeImage_Unload(front_image);
-			if (back_image != nullptr)
-				FreeImage_Unload(back_image);
+			if (images[i] != nullptr)
+			{
+				if (release_images[i])
+					FreeImage_Unload(images[i]);
+				images[i] = nullptr;		
+			}
 		}
-
-		single_image = nullptr;
-		left_image   = nullptr;
-		right_image  = nullptr;
-		top_image    = nullptr;
-		bottom_image = nullptr;
-		front_image  = nullptr;
-		back_image   = nullptr;
 	}
 
 	int SkyBoxImages::GetSkyBoxSize() const
 	{
-		if (single_image != nullptr)
-			return GetSingleImageSize(single_image);
-
-		if (left_image != nullptr)
-			return GetMultipleImageSize(left_image);
-		if (right_image != nullptr)
-			return GetMultipleImageSize(right_image);
-		if (top_image != nullptr)
-			return GetMultipleImageSize(top_image);
-		if (bottom_image != nullptr)
-			return GetMultipleImageSize(bottom_image);
-		if (front_image != nullptr)
-			return GetMultipleImageSize(front_image);
-		if (back_image != nullptr)
-			return GetMultipleImageSize(back_image);
+		if (images[IMAGE_SINGLE] != nullptr)
+			return GetSingleImageSize(images[IMAGE_SINGLE]);
+		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+			if (images[i] != nullptr)
+				return GetMultipleImageSize(images[i]);
 		return -1;
 	}
 
 	int SkyBoxImages::GetSkyBoxBPP() const
 	{
-		if (single_image != nullptr)
-			return FreeImage_GetBPP(single_image);
-
-		if (left_image != nullptr)
-			return FreeImage_GetBPP(left_image);
-		if (right_image != nullptr)
-			return FreeImage_GetBPP(right_image);
-		if (top_image != nullptr)
-			return FreeImage_GetBPP(top_image);
-		if (bottom_image != nullptr)
-			return FreeImage_GetBPP(bottom_image);
-		if (front_image != nullptr)
-			return FreeImage_GetBPP(front_image);
-		if (back_image != nullptr)
-			return FreeImage_GetBPP(back_image);
+		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+			if (images[i] != nullptr)
+				return FreeImage_GetBPP(images[i]);
 		return -1;
 	}
 
@@ -193,8 +151,8 @@ namespace chaos
 	{
 		if (!IsSingleImage())
 			return false;
-		int width  = FreeImage_GetWidth(single_image);
-		int height = FreeImage_GetHeight(single_image);
+		int width  = FreeImage_GetWidth(images[IMAGE_SINGLE]);
+		int height = FreeImage_GetHeight(images[IMAGE_SINGLE]);
 		return (width > height);
 	}
 
@@ -202,8 +160,8 @@ namespace chaos
 	{
 		if (!IsSingleImage())
 			return false;
-		int width  = FreeImage_GetWidth(single_image);
-		int height = FreeImage_GetHeight(single_image);
+		int width  = FreeImage_GetWidth(images[IMAGE_SINGLE]);
+		int height = FreeImage_GetHeight(images[IMAGE_SINGLE]);
 		return (height > width);
 	}
 
@@ -241,7 +199,7 @@ namespace chaos
 			return result;
 
 		// get the single image description
-		ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
+		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[IMAGE_SINGLE]);
 		if (!src_image_desc.IsValid())
 			return result;
 		
@@ -275,27 +233,12 @@ namespace chaos
 			else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
 				ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
 
-			result.SetImagePtrUnchecked(i, image);
+			result.images[i] = image;
+			result.release_images[i] = true;
 		}
 
 		return result;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	SkyBoxImages SkyBoxImages::ToSingleImage(bool bHorizontal, glm::vec4 const & fill_color, PixelFormatMergeParams const & merge_params) const
 	{
@@ -311,7 +254,7 @@ namespace chaos
 		PixelFormatMerger pixel_format_merger(merge_params);
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 		{
-			FIBITMAP * face_image = GetImage(i);
+			FIBITMAP * face_image = images[i];
 			if (face_image == nullptr)
 				continue;		
 
@@ -349,7 +292,7 @@ namespace chaos
 		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 		{
-			FIBITMAP * image = GetImage(i);
+			FIBITMAP * image = images[i];
 			if (image == nullptr)
 				continue;
 
@@ -377,21 +320,7 @@ namespace chaos
 
 		return result;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const
 	{
 		assert(image_type >= IMAGE_LEFT && image_type <= IMAGE_BACK);
@@ -400,12 +329,12 @@ namespace chaos
 		{
 			glm::ivec3 position_and_flags = GetPositionAndFlags(image_type);
 
-			ImageDescription src_image_desc = ImageTools::GetImageDescription(single_image);
+			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[IMAGE_SINGLE]);
 
 			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
 			int sub_image_index_y = position_and_flags.y;
 
-			int size = GetSingleImageSize(single_image); // size of each face
+			int size = GetSingleImageSize(images[IMAGE_SINGLE]); // size of each face
 			int x    = sub_image_index_x * size;
 			int y    = sub_image_index_y * size;
 
@@ -413,7 +342,7 @@ namespace chaos
 		}
 		else
 		{
-			FIBITMAP * image = GetImage(image_type);
+			FIBITMAP * image = images[image_type];
 			if (image != nullptr)
 				return ImageTools::GetImageDescription(image);
 		}
@@ -422,83 +351,35 @@ namespace chaos
 
 	bool SkyBoxImages::IsEmpty() const // Empty = no images
 	{
-		if (single_image != nullptr)
-			return false;
-		if (left_image != nullptr)
-			return false;
-		if (right_image != nullptr)
-			return false;
-		if (top_image != nullptr)
-			return false;
-		if (bottom_image != nullptr)
-			return false;
-		if (front_image != nullptr)
-			return false;
-		if (back_image != nullptr)
-			return false;
+		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+			if (images[i] != nullptr)
+				return false;
 		return true;  
 	}
 
 	bool SkyBoxImages::IsSingleImage() const
 	{
-		return (single_image != nullptr);
+		return (images[IMAGE_SINGLE] != nullptr);
 	}
 
 	bool SkyBoxImages::IsMultipleImage() const // no single image, at least one multiple image
 	{
-		if (single_image != nullptr)
+		if (images[IMAGE_SINGLE] != nullptr)
 			return false;
-		if (left_image != nullptr)
-			return true;
-		if (right_image != nullptr)
-			return true;
-		if (top_image != nullptr)
-			return true;
-		if (bottom_image != nullptr)
-			return true;
-		if (front_image != nullptr)
-			return true;
-		if (back_image != nullptr)
-			return true;
+		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+			if (images[i] != nullptr)			
+				return true;
 		return false;  
 	}
 
 	bool SkyBoxImages::IsMultipleImageComplete() const // no single image, every face defined
 	{
-		if (single_image != nullptr)
+		if (images[IMAGE_SINGLE] != nullptr)
 			return false;
-		if (left_image == nullptr)
-			return false;
-		if (right_image == nullptr)
-			return false;
-		if (top_image == nullptr)
-			return false;
-		if (bottom_image == nullptr)
-			return false;
-		if (front_image == nullptr)
-			return false;
-		if (back_image == nullptr)
-			return false;
-		return true;
-	}
-
-	FIBITMAP * SkyBoxImages::GetImage(int image_type) const
-	{
-		if (image_type == IMAGE_SINGLE)
-			return single_image;
-		if (image_type == IMAGE_LEFT)
-			return left_image;
-		if (image_type == IMAGE_RIGHT)
-			return right_image;
-		if (image_type == IMAGE_TOP)
-			return top_image;
-		if (image_type == IMAGE_BOTTOM)
-			return bottom_image;
-		if (image_type == IMAGE_FRONT)
-			return front_image;
-		if (image_type == IMAGE_BACK)
-			return back_image;
-		return nullptr;
+		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+			if (images[i] == nullptr)			
+				return false;
+		return true;  
 	}
 
 	bool SkyBoxImages::AreImageCompatible(FIBITMAP * image1, FIBITMAP * image2)
@@ -512,25 +393,7 @@ namespace chaos
 		return true;
 	}
 
-	void SkyBoxImages::SetImagePtrUnchecked(int image_type, FIBITMAP * image)
-	{
-		if (image_type == IMAGE_SINGLE)
-			single_image = image;
-		else if (image_type == IMAGE_LEFT)
-			left_image = image;
-		else if (image_type == IMAGE_RIGHT)
-			right_image = image;
-		else if (image_type == IMAGE_TOP)
-			top_image = image;
-		else if (image_type == IMAGE_BOTTOM)
-			bottom_image = image;
-		else if (image_type == IMAGE_FRONT)
-			front_image = image;
-		else if (image_type == IMAGE_BACK)
-			back_image = image;
-	}
-
-	bool SkyBoxImages::SetImage(int image_type, FIBITMAP * image, bool bReleasePrevious)
+	bool SkyBoxImages::SetImage(int image_type, FIBITMAP * image, bool release_image)
 	{
 		assert(image != nullptr);
 		assert(image_type >= IMAGE_FIRST_INDEX && image_type <= IMAGE_LAST_INDEX); 
@@ -549,9 +412,10 @@ namespace chaos
 			// if multiple face skybox, we cannot set the image
 			if (IsEmpty() || IsSingleImage()) 
 			{
-				if (single_image != nullptr && bReleasePrevious)
-					FreeImage_Unload(single_image);
-				single_image = image;
+				if (images[IMAGE_SINGLE] != nullptr && release_images[IMAGE_SINGLE])
+					FreeImage_Unload(images[IMAGE_SINGLE]);
+				images[IMAGE_SINGLE] = image;
+				release_images[IMAGE_SINGLE] = release_image;
 				return true;
 			}
 		}
@@ -568,29 +432,29 @@ namespace chaos
 				FIBITMAP * other_image = nullptr;
 				for (int i = IMAGE_LEFT ; (i <= IMAGE_BACK) && (other_image == nullptr) ; ++i)
 					if (i != image_type)
-						other_image = GetImage(i);
+						other_image = images[i];
 
 				// if there is other images in the skybox, ensure for compatibility
 				if (other_image != nullptr && !AreImageCompatible(image, other_image))
 					return false;
 
 				// release previous image
-				if (bReleasePrevious)
+				if (release_images[image_type])
 				{
-					FIBITMAP * previous_image = GetImage(image_type); 
+					FIBITMAP * previous_image = images[image_type]; 
 					if (previous_image != nullptr)
 						FreeImage_Unload(previous_image);
 				}
 
 				// do the writing
-				SetImagePtrUnchecked(image_type, image);
+				images[image_type] = image;
+				release_images[image_type] = release_image;
 
 				return true;
 			}
 		}
 		return false;
 	}
-
 
 	SkyBoxImages SkyBoxTools::LoadSingleSkyBox(char const * filename)
 	{  
@@ -610,7 +474,7 @@ namespace chaos
 			!DoLoadMultipleSkyBox_OneImage(result, front_image,  SkyBoxImages::IMAGE_FRONT)  ||
 			!DoLoadMultipleSkyBox_OneImage(result, back_image,   SkyBoxImages::IMAGE_BACK)
 			)
-			result.Release(true); // release whole object in case of error
+			result.Release(); // release whole object in case of error
 		return result;
 	}
 

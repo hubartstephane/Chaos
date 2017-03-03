@@ -142,8 +142,10 @@ namespace chaos
 		if (in_params.pixel_format.IsValid())
 		{
 			result = in_params.pixel_format;
-			result_is_available = true;		
+			result_is_available = true;
 		}
+		else
+			params.upgrade_pixel_format = true; // well, if no format is given as input, we want to take care of all incomming formats
 	}
 
 	void PixelFormatMerger::Reset(PixelFormatMergeParams const & in_params)
@@ -166,7 +168,7 @@ namespace chaos
 			result = src;
 			result_is_available = true;
 		}
-		else
+		else if (params.upgrade_pixel_format)
 		{
 			result.component_type = max(result.component_type, src.component_type);
 			result.component_count = max(result.component_count, src.component_count);		

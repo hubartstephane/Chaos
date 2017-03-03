@@ -48,8 +48,17 @@ protected:
 
 	boost::intrusive_ptr<chaos::Texture> GenerateSkyBox(int index)
 	{
-	//	if (!skybox.IsEmpty())
-	//		return chaos::GLTextureTools::GenTextureObject(&skybox);
+		chaos::PixelFormat pixel_format = chaos::PixelFormat(index + 1); // 0 = UNKNOWN FORMAT
+		if (!pixel_format.IsValid())
+			return nullptr;
+
+		chaos::PixelFormatMergeParams merge_params;
+		merge_params.pixel_format = pixel_format;
+		
+		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
+
+		if (!single_skybox.IsEmpty())
+			return chaos::GLTextureTools::GenTextureObject(&single_skybox);
 
 		return nullptr;
 	}
@@ -136,10 +145,30 @@ protected:
 			return false;
 
 		// resize the image
+		unsigned char c1[4] = { 0, 0, 0, 0 };
+		glm::vec4 c2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
 		for (FIBITMAP * & bitmap : skybox_bitmaps)
 		{
+			//
+			// FreeImage_EnlargeCanvas : enlarge or shrink image (returns a new image)
+			//
+			// FreeImage_CreateView : there is an issue, it created a new image that points the same buffer => at destruction of one, the buffer is release (no ref count)
+			//
+
+			chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(bitmap);
+
+			void * color = (desc.pixel_format.component_type == chaos::PixelFormat::TYPE_UNSIGNED_CHAR) ? (void*)&c1[0] : (void*)&c2; // select a color for background
+
 			FIBITMAP * old_bitmap = bitmap;
-			bitmap = FreeImage_CreateView(bitmap, 0, 0, size, size);
+			bitmap = FreeImage_EnlargeCanvas(bitmap, 0, 0, size - desc.width, size - desc.height, color);
+			if (bitmap == nullptr)
+				return false;
+
+
+			chaos::ImageDescription d1 = chaos::ImageTools::GetImageDescription(old_bitmap);
+			chaos::ImageDescription d2 = chaos::ImageTools::GetImageDescription(bitmap);
+
 			FreeImage_Unload(old_bitmap);
 		}
 

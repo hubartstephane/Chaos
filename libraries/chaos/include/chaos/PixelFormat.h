@@ -92,6 +92,8 @@ namespace chaos
 
 		/** if valid, the resulting pixel format should be set to this */
 		PixelFormat pixel_format;
+		/** if false the pixel_format cannot be 'upgraded' with incomming format */
+		bool upgrade_pixel_format{false};
 		/** if set to false, all luminances formats will become RGB */
 		bool accept_luminance{true};
 		/** if set to false, all float formats will become unsigned char */

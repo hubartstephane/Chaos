@@ -136,10 +136,16 @@ protected:
 		for (FIBITMAP * bitmap : skybox_bitmaps)
 		{
 			chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(bitmap);
+			if (size < 0 || desc.width > size)
+				size = desc.width;
+			if (size < 0 || desc.height > size)
+				size = desc.height;		
+#if 0
 			if (size < 0 || desc.width < size)
 				size = desc.width;
 			if (size < 0 || desc.height < size)
-				size = desc.height;		
+				size = desc.height;
+#endif
 		}
 		if (size <= 0)
 			return false;
@@ -160,14 +166,13 @@ protected:
 
 			void * color = (desc.pixel_format.component_type == chaos::PixelFormat::TYPE_UNSIGNED_CHAR) ? (void*)&c1[0] : (void*)&c2; // select a color for background
 
+			int dx = size - desc.width;
+			int dy = size - desc.height;
+
 			FIBITMAP * old_bitmap = bitmap;
-			bitmap = FreeImage_EnlargeCanvas(bitmap, 0, 0, size - desc.width, size - desc.height, color);
+			bitmap = FreeImage_EnlargeCanvas(bitmap, dx / 2, dy / 2, dx - dx / 2, dy - dy / 2 , color);
 			if (bitmap == nullptr)
 				return false;
-
-
-			chaos::ImageDescription d1 = chaos::ImageTools::GetImageDescription(old_bitmap);
-			chaos::ImageDescription d2 = chaos::ImageTools::GetImageDescription(bitmap);
 
 			FreeImage_Unload(old_bitmap);
 		}

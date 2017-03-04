@@ -1,6 +1,7 @@
 #include <chaos/StandardHeaders.h> 
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
+#include <chaos/StringTools.h>
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
 #include <chaos/MyGLFWGamepadManager.h> 
@@ -43,6 +44,8 @@ protected:
 		{
 			skybox_index = index;
 			texture = new_texture;
+			debug_display.Clear();
+			debug_display.AddLine(chaos::StringTools::Printf("format : %d", index).c_str());
 		}
 	}
 
@@ -140,12 +143,6 @@ protected:
 				size = desc.width;
 			if (size < 0 || desc.height > size)
 				size = desc.height;		
-#if 0
-			if (size < 0 || desc.width < size)
-				size = desc.width;
-			if (size < 0 || desc.height < size)
-				size = desc.height;
-#endif
 		}
 		if (size <= 0)
 			return false;

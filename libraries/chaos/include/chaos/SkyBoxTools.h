@@ -26,18 +26,9 @@ namespace chaos
 		int image_count_horiz;
 		/** the number of aligned images vertically */
 		int image_count_vert;
-		/** corner for left image + flags */
-		glm::ivec3 left_image_position;
-		/** corner for right image + flags */
-		glm::ivec3 right_image_position;
-		/** corner for top image + flags */
-		glm::ivec3 top_image_position;
-		/** corner for bottom image + flags */
-		glm::ivec3 bottom_image_position;
-		/** corner for front image + flags */
-		glm::ivec3 front_image_position;
-		/** corner for back image + flags */
-		glm::ivec3 back_image_position;
+
+		/** the position for the images */
+		glm::ivec3 image_position[6];
 	};
 
 	class SkyBoxImages
@@ -69,8 +60,6 @@ namespace chaos
 
 		/** Get skybox size */
 		int GetSkyBoxSize() const;
-		/** Get skybox bpp */
-		int GetSkyBoxBPP() const;
 		/** Get skybox size for a single image (returns -1 if not a good candidate i.e 4/3) */
 		static int GetSingleImageSize(FIBITMAP * image);
 		/** Get skybox size for a multiple image (returns -1 if not a good candidate i.e square) */
@@ -111,13 +100,18 @@ namespace chaos
 
 		/** Sets an image (verify that it is a coherent call) */
 		bool SetImage(int image_type, FIBITMAP * image, bool release_image);
-		/** compare 2 images and ensure they are compatible */
-		static bool AreImageCompatible(FIBITMAP * image1, FIBITMAP * image2);
+		/** get the image of any face */
+		FIBITMAP * GetImage(int face) const;
 
 		/** no copy */
 		SkyBoxImages & operator = (SkyBoxImages const & other) = delete;
 		/** move operator */
 		SkyBoxImages & operator = (SkyBoxImages && other);
+
+	protected:
+
+		/** compare 2 images and ensure they are compatible */
+		static bool AreImageCompatible(FIBITMAP * image1, FIBITMAP * image2);
 
 	protected:
 

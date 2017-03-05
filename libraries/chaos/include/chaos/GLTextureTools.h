@@ -145,11 +145,11 @@ namespace chaos
 		static int GetMipmapLevelCount(int width, int height);
 		static int GetMipmapLevelCount(int width);
 		/** for cubemap texture, returns a layer index depending on the face considered */
-		static int GetLayerValueFromCubeMapFace(GLenum face, int level = 0);
+		static int GetCubeMapLayerValueFromSkyBoxFace(int face, int level = 0);
 		/** Get Format/Internal Format pair from BPP */
 		static GLPixelFormat GetTextureFormatsFromBPP(int bpp);
 		/** Get Format/Internal Format pair from the description */
-		static GLPixelFormat GetTextureFormats(PixelFormat const & pixel_format);
+		static GLPixelFormat GetGLPixelFormat(PixelFormat const & pixel_format);
 
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
 		static GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);

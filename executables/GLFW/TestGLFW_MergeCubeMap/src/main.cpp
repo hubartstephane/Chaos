@@ -57,6 +57,9 @@ protected:
 
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;
+
+		return chaos::GLTextureTools::GenTextureObject(&skybox, merge_params);
+
 		
 		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 

@@ -26,42 +26,33 @@ namespace chaos
 	SkyBoxSingleDisposition const SkyBoxSingleDisposition::HorizontalDisposition = 
 	{
 		4, 3,
-		glm::ivec3(0, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // left
-		glm::ivec3(2, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // right
-		glm::ivec3(1, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // top
-		glm::ivec3(1, 0, SkyBoxImages::IMAGE_NO_TRANSFORM), // bottom
-		glm::ivec3(1, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // front
-		glm::ivec3(3, 1, SkyBoxImages::IMAGE_NO_TRANSFORM)  // back
+		{
+			glm::ivec3(0, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // left
+			glm::ivec3(2, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // right
+			glm::ivec3(1, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // top
+			glm::ivec3(1, 0, SkyBoxImages::IMAGE_NO_TRANSFORM), // bottom
+			glm::ivec3(1, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // front
+			glm::ivec3(3, 1, SkyBoxImages::IMAGE_NO_TRANSFORM)  // back	
+		}
 	};
 	SkyBoxSingleDisposition const SkyBoxSingleDisposition::VerticalDisposition = 
 	{
 		3, 4,
-		glm::ivec3(0, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // left
-		glm::ivec3(2, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // right
-		glm::ivec3(1, 3, SkyBoxImages::IMAGE_NO_TRANSFORM), // top
-		glm::ivec3(1, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // bottom
-		glm::ivec3(1, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // front
-		glm::ivec3(1, 0, SkyBoxImages::IMAGE_CENTRAL_SYMETRY)  // back  
+		{
+			glm::ivec3(0, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // left
+			glm::ivec3(2, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // right
+			glm::ivec3(1, 3, SkyBoxImages::IMAGE_NO_TRANSFORM), // top
+			glm::ivec3(1, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // bottom
+			glm::ivec3(1, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // front
+			glm::ivec3(1, 0, SkyBoxImages::IMAGE_CENTRAL_SYMETRY)  // back  	
+		}
 	};
 
 	glm::ivec3 SkyBoxSingleDisposition::GetPositionAndFlags(int image_type) const
 	{
-		if (image_type == SkyBoxImages::IMAGE_LEFT)
-			return left_image_position;
-		if (image_type == SkyBoxImages::IMAGE_RIGHT)
-			return right_image_position;
-		if (image_type == SkyBoxImages::IMAGE_TOP)
-			return top_image_position;
-		if (image_type == SkyBoxImages::IMAGE_BOTTOM)
-			return bottom_image_position;
-		if (image_type == SkyBoxImages::IMAGE_FRONT)
-			return front_image_position;
-		if (image_type == SkyBoxImages::IMAGE_BACK)
-			return back_image_position;
-
-		assert(0);
-		static glm::ivec3 const wrong_result = glm::ivec3(0, 0, 0);
-		return wrong_result;
+		assert(image_type >= 0);
+		assert(image_type <= 5);
+		return image_position[image_type];
 	}
 
 	SkyBoxImages::SkyBoxImages(SkyBoxImages && other)
@@ -108,14 +99,6 @@ namespace chaos
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 			if (images[i] != nullptr)
 				return GetMultipleImageSize(images[i]);
-		return -1;
-	}
-
-	int SkyBoxImages::GetSkyBoxBPP() const
-	{
-		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
-			if (images[i] != nullptr)
-				return FreeImage_GetBPP(images[i]);
 		return -1;
 	}
 
@@ -407,6 +390,13 @@ namespace chaos
 		return true;
 	}
 
+	FIBITMAP * SkyBoxImages::GetImage(int face) const
+	{
+		assert(face >= IMAGE_FIRST_INDEX);
+		assert(face <= IMAGE_LAST_INDEX);
+		return images[face];
+	}
+
 	bool SkyBoxImages::SetImage(int image_type, FIBITMAP * image, bool release_image)
 	{
 		assert(image != nullptr);
@@ -453,17 +443,13 @@ namespace chaos
 					return false;
 
 				// release previous image
-				if (release_images[image_type])
-				{
-					FIBITMAP * previous_image = images[image_type]; 
-					if (previous_image != nullptr)
+				FIBITMAP * previous_image = images[image_type];
+				if (previous_image != nullptr && release_images[image_type])
 						FreeImage_Unload(previous_image);
-				}
 
 				// do the writing
 				images[image_type] = image;
 				release_images[image_type] = release_image;
-
 				return true;
 			}
 		}

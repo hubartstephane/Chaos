@@ -123,7 +123,7 @@ namespace chaos
 					PixelFormat pixel_format = GetTexturePixelFormat(texture_id, level);
 					if (pixel_format.IsValid())
 					{
-						GLPixelFormat gl_pixel_format = GetTextureFormats(pixel_format);
+						GLPixelFormat gl_pixel_format = GetGLPixelFormat(pixel_format);
 						if (gl_pixel_format.IsValid())
 						{
 							GLenum type = (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)?
@@ -240,7 +240,7 @@ namespace chaos
 		return GLPixelFormat(GL_NONE, GL_NONE);
 	}
 
-	GLPixelFormat GLTextureTools::GetTextureFormats(PixelFormat const & pixel_format) // format / internal format
+	GLPixelFormat GLTextureTools::GetGLPixelFormat(PixelFormat const & pixel_format) // format / internal format
 	{
 		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5
 		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
@@ -276,11 +276,11 @@ namespace chaos
 		if (result.texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
-			GLPixelFormat all_formats = GetTextureFormats(image.pixel_format);
-			assert(all_formats.IsValid());
+			GLPixelFormat gl_formats = GetGLPixelFormat(image.pixel_format);
+			assert(gl_formats.IsValid());
 
-			GLenum format          = all_formats.format;
-			GLenum internal_format = all_formats.internal_format;
+			GLenum format          = gl_formats.format;
+			GLenum internal_format = gl_formats.internal_format;
 			GLenum type            = (image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -390,21 +390,21 @@ namespace chaos
 	//  v
 	//
 
-	int GLTextureTools::GetLayerValueFromCubeMapFace(GLenum face, int level)
+	int GLTextureTools::GetCubeMapLayerValueFromSkyBoxFace(int face, int level)
 	{
-		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_X)
-			return 0 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_X)
-			return 1 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Y)
-			return 2 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Y)
-			return 3 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Z)
-			return 4 + 6 * level;
-		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
-			return 5 + 6 * level;
-		return -1;
+		GLenum const targets[] = {
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X, // RIGHT      
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // BOTTOM
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Y, // TOP
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  // BACK
+		};
+
+		if (face < 0 || face > 5)
+			return -1;
+
+		return targets[face] + 6 * level;
 	}
 
 	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, chaos::PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
@@ -418,14 +418,107 @@ namespace chaos
 		glCreateTextures(target, 1, &result.texture_id);
 		if (result.texture_id > 0)
 		{
+			PixelFormat final_pixel_format = skybox->GetMergedPixelFormat(merge_params);
+
+			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
+
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+			int size = skybox->GetSkyBoxSize();
+			int level_count = GetMipmapLevelCount(size, size);
+			glTextureStorage2D(result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
+
+			for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
+			{
+				ImageDescription image = skybox->GetImageFaceDescription(i);
+
+				GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(image.pixel_format);
+
+				int pixel_size = image.pixel_format.GetPixelSize();
+
+				void const * data = image.data;
+				GLint        unpack_row_length = image.pitch_size / pixel_size;
+				char       * new_buffer = nullptr;
+
+				if (skybox->IsSingleImage()) // in single image, there may be some inversion to correct with a temporary buffer
+				{
+					glm::ivec3 position_and_flags = skybox->GetPositionAndFlags(i);
+					if (position_and_flags.z == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
+					{
+						new_buffer = new char[image.width * image.height * pixel_size];
+						if (new_buffer != nullptr)
+						{
+							ImageDescription new_image = image;
+
+							new_image.data = new_buffer;
+							new_image.pitch_size = new_image.line_size;
+							new_image.padding_size = 0;
+
+							ImageTools::CopyPixelsWithCentralSymetry(image, new_image, 0, 0, 0, 0, image.width, image.height); // do the symmetry
+							unpack_row_length = 0;
+							data = new_buffer;
+						}
+					}
+				}
+
+				glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length); // do not remove this line from the loop. Maybe future implementation will accept                                                                           
+																																// image with same size but different pitch
+
+				int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
+
+				glTextureSubImage3D(result.texture_id, 0, 0, 0, depth, image.width, image.height, 1, gl_face_pixel_format.format, image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR? GL_UNSIGNED_BYTE : GL_FLOAT, data);
+
+				if (new_buffer != nullptr)
+					delete[](new_buffer);
+			}
+
+			result.texture_description.type = target;
+			result.texture_description.internal_format = gl_final_pixel_format.internal_format;
+			result.texture_description.width = size;
+			result.texture_description.height = size;
+			result.texture_description.depth = 1;
+
+			// this is smoother to clamp at edges
+			GenTextureParameters tmp = parameters;
+			tmp.wrap_s = GL_CLAMP_TO_EDGE;
+			tmp.wrap_r = GL_CLAMP_TO_EDGE;
+			tmp.wrap_t = GL_CLAMP_TO_EDGE;
+			GenTextureApplyParameters(result, tmp);
+		}
+		return result;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+		assert(skybox != nullptr);
+		assert(!skybox->IsEmpty());
+
+		GLenum target = GL_TEXTURE_CUBE_MAP;
+
+		GenTextureResult result;
+		glCreateTextures(target, 1, &result.texture_id);
+		if (result.texture_id > 0)
+		{
 			int bpp  = skybox->GetSkyBoxBPP();
 			int size = skybox->GetSkyBoxSize();
 
-			GLPixelFormat all_formats = GetTextureFormatsFromBPP(bpp);
-			assert(all_formats.IsValid());
+			GLPixelFormat gl_formats = GetTextureFormatsFromBPP(bpp);
+			assert(gl_formats.IsValid());
 
-			GLenum format          = all_formats.format;
-			GLenum internal_format = all_formats.internal_format;
+			GLenum format          = gl_formats.format;
+			GLenum internal_format = gl_formats.internal_format;
 
 			GLenum targets[] = {
 				GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
@@ -496,6 +589,8 @@ namespace chaos
 			GenTextureApplyParameters(result, tmp);
 		}
 		return result;
+
+#endif
 	}
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)

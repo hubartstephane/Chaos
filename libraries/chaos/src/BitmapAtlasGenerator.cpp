@@ -516,8 +516,8 @@ namespace chaos
 			}
 
 			// test whether a correct pixel format has been found
-			PixelFormat final_pixel_format;
-			if (!pixel_format_merger.GetResult(final_pixel_format))
+			PixelFormat final_pixel_format = pixel_format_merger.GetResult();
+			if (!final_pixel_format.IsValid())
 				return false;
 
 			// compute final atlas size

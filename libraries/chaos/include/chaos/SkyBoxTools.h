@@ -101,6 +101,9 @@ namespace chaos
 		/** returns true whether it is a single image in vertical direction */
 		bool IsSingleImageVertical() const;
 
+		/** get the pixel format for the skybox according to a merge param */
+		PixelFormat GetMergedPixelFormat(PixelFormatMergeParams const & merge_params) const;
+
 		/** Gets the description of one face */
 		ImageDescription GetImageFaceDescription(int image_type) const;
 		/** Gets position and flags for a single image */

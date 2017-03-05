@@ -407,7 +407,7 @@ namespace chaos
 		return -1;
 	}
 
-	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
+	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, chaos::PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		assert(skybox != nullptr);
 		assert(!skybox->IsEmpty());
@@ -514,9 +514,9 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result = GenTexture(skybox, parameters);
+		GenTextureResult result = GenTexture(skybox, merge_params, parameters);
 		if (result.texture_id > 0)
 			return new Texture(result.texture_id, result.texture_description);
 		return nullptr;

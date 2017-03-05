@@ -101,7 +101,7 @@ namespace chaos
 		/** Generate a 1D/2D/rectangle texture from an image */
 		static GenTextureResult GenTexture(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a cube texture from a skybox */
-		static GenTextureResult GenTexture(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
+		static GenTextureResult GenTexture(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
 		template<typename T, typename GENERATOR>
@@ -129,7 +129,7 @@ namespace chaos
 		/** Generate a 1D/2D/rectangle texture from an image */
 		static boost::intrusive_ptr<Texture> GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a cube texture from a skybox */
-		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
 
 		/** Generate a texture from lambda */
 		template<typename T, typename GENERATOR>

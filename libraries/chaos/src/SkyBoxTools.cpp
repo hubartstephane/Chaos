@@ -248,6 +248,11 @@ namespace chaos
 		if (IsSingleImage() || IsEmpty()) 
 			return result;
 
+		// find the final format
+		PixelFormat final_pixel_format = GetMergedPixelFormat(merge_params);
+		if (!final_pixel_format.IsValid())
+			return result;
+
 		// find the final format and size
 		int size = -1;
 
@@ -259,16 +264,11 @@ namespace chaos
 				continue;		
 
 			ImageDescription face_image_desc = ImageTools::GetImageDescription(face_image);
-		
-			pixel_format_merger.Merge(face_image_desc.pixel_format);		
 			if (size < 0)
 				size = GetMultipleImageSize(face_image_desc);
 		}
 
-		PixelFormat final_pixel_format;
-		if (size <= 0 || !pixel_format_merger.GetResult(final_pixel_format))
-			return result;
-		if (!final_pixel_format.IsValid())
+		if (size <= 0)
 			return result;
 
 		// get the disposition
@@ -319,6 +319,28 @@ namespace chaos
 		}
 
 		return result;
+	}
+
+	PixelFormat SkyBoxImages::GetMergedPixelFormat(PixelFormatMergeParams const & merge_params) const
+	{
+		PixelFormatMerger pixel_format_merger(merge_params);
+
+		if (!IsEmpty())
+		{
+			if (IsSingleImage())
+				pixel_format_merger.Merge(PixelFormat::FromImage(images[IMAGE_SINGLE]));
+			else
+			{
+				for (int i = IMAGE_LEFT; i <= IMAGE_BACK; ++i)
+				{
+					FIBITMAP * face_image = images[i];
+					if (face_image == nullptr)
+						continue;
+					pixel_format_merger.Merge(PixelFormat::FromImage(images[i]));
+				}
+			}
+		}
+		return pixel_format_merger.GetResult();
 	}
 	
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const

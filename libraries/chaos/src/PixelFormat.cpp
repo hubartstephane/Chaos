@@ -175,11 +175,9 @@ namespace chaos
 		}
 	}
 
-	bool PixelFormatMerger::GetResult(PixelFormat & value) const
+	PixelFormat PixelFormatMerger::GetResult() const
 	{
-		if (result_is_available)
-			value = result;
-		return result_is_available;	
+		return result;
 	}
 
 }; // namespace chaos

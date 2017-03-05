@@ -117,7 +117,7 @@ namespace chaos
 		/** the merge method */
 		void Merge(PixelFormat src);
 		/** get the result if available */
-		bool GetResult(PixelFormat & value) const;
+		PixelFormat GetResult() const;
 
 	protected:
 

@@ -392,19 +392,26 @@ namespace chaos
 
 	int GLTextureTools::GetCubeMapLayerValueFromSkyBoxFace(int face, int level)
 	{
-		GLenum const targets[] = {
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X, // RIGHT      
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // BOTTOM
-			GL_TEXTURE_CUBE_MAP_POSITIVE_Y, // TOP
-			GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  // BACK
-		};
+		// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+		// GL_TEXTURE_CUBE_MAP_POSITIVE_X
+		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+		// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+		// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 
-		if (face < 0 || face > 5)
-			return -1;
-
-		return targets[face] + 6 * level;
+		if (face == SkyBoxImages::IMAGE_LEFT)
+			return 0 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_RIGHT)
+			return 1 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_TOP)
+			return 3 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_BOTTOM)
+			return 2 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_FRONT)
+			return 4 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_BACK)
+			return 5 + 6 * level;
+		return -1;
 	}
 
 	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, chaos::PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
@@ -424,13 +431,19 @@ namespace chaos
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
 			int size = skybox->GetSkyBoxSize();
 			int level_count = GetMipmapLevelCount(size, size);
 			glTextureStorage2D(result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
+			// fill the faces in GPU with the images of SkyBox
 			for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
 			{
+				// ensure the image is valid and not empty
 				ImageDescription image = skybox->GetImageFaceDescription(i);
+				if (image.data == nullptr || !image.pixel_format.IsValid())
+					continue;
+
 
 				GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(image.pixel_format);
 
@@ -463,10 +476,17 @@ namespace chaos
 
 				glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length); // do not remove this line from the loop. Maybe future implementation will accept                                                                           
 																																// image with same size but different pitch
-
 				int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
 
-				glTextureSubImage3D(result.texture_id, 0, 0, 0, depth, image.width, image.height, 1, gl_face_pixel_format.format, image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR? GL_UNSIGNED_BYTE : GL_FLOAT, data);
+				// fill GPU
+				glTextureSubImage3D(
+					result.texture_id, 
+					0, 
+					0, 0, depth, 
+					image.width, image.height, 1, 
+					gl_face_pixel_format.format, 
+					image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR? GL_UNSIGNED_BYTE : GL_FLOAT, 
+					data);
 
 				if (new_buffer != nullptr)
 					delete[](new_buffer);

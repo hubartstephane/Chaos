@@ -89,7 +89,7 @@ namespace chaos
 
 		assert(image != nullptr);
 
-		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
 		if (pixel_format.IsValid())
 		{
 			if (pixel_format.component_count == 1) // GRAY
@@ -191,12 +191,42 @@ namespace chaos
 		return FIT_UNKNOWN;
 	}
 
+	PixelFormat ImageTools::GetPixelFormat(FIBITMAP * image)
+	{
+		assert(image != nullptr);
+
+		PixelFormat result;
+
+		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
+		if (image_type == FIT_BITMAP)
+		{
+			int bpp = FreeImage_GetBPP(image); // ignore other format than 8, 24 and 32 bpp
+			if (bpp != 8 && bpp != 24 && bpp != 32)
+				return result;
+
+			result.component_type = PixelFormat::TYPE_UNSIGNED_CHAR;
+			result.component_count = bpp / 8;
+		}
+		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
+		{
+			result.component_type = PixelFormat::TYPE_FLOAT;
+
+			if (image_type == FIT_FLOAT)
+				result.component_count = 1;
+			else if (image_type == FIT_RGBF)
+				result.component_count = 3;
+			else if (image_type == FIT_RGBAF)
+				result.component_count = 4;
+		}
+		return result;
+	}
+
 	ImageDescription ImageTools::GetImageDescription(FIBITMAP * image)
 	{
 		assert(image != nullptr);
 
 		// test whether we can handle that format
-		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
 		if (pixel_format.IsValid())
 		{
 			ImageDescription result;
@@ -383,7 +413,7 @@ namespace chaos
 		*alpha_needed = false;
 
 		// ignore unhandled pixel format
-		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
 		if (!pixel_format.IsValid())
 			return false;
 
@@ -458,7 +488,7 @@ namespace chaos
 		}	
 
 		// test whether pixel format is valid
-		PixelFormat pixel_format = PixelFormat::FromImage(image);
+		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
 		if (!pixel_format.IsValid())
 		{
 			if (can_delete_src)

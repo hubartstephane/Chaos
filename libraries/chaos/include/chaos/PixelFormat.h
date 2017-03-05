@@ -53,9 +53,6 @@ namespace chaos
 		/** gets the BPP if applyable (non float texture) */
 		int GetBPP() const;
 
-		/** get pixel format corresponding to an image */
-		static PixelFormat FromImage(FIBITMAP * image);
-
 		/** transform a type into pixel format (component type and count) */
 		template<typename T>
 		static PixelFormat GetPixelFormat();

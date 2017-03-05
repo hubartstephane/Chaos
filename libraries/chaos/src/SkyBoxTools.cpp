@@ -255,8 +255,6 @@ namespace chaos
 
 		// find the final format and size
 		int size = -1;
-
-		PixelFormatMerger pixel_format_merger(merge_params);
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 		{
 			FIBITMAP * face_image = images[i];
@@ -328,17 +326,11 @@ namespace chaos
 		if (!IsEmpty())
 		{
 			if (IsSingleImage())
-				pixel_format_merger.Merge(PixelFormat::FromImage(images[IMAGE_SINGLE]));
+				pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[IMAGE_SINGLE]));
 			else
-			{
 				for (int i = IMAGE_LEFT; i <= IMAGE_BACK; ++i)
-				{
-					FIBITMAP * face_image = images[i];
-					if (face_image == nullptr)
-						continue;
-					pixel_format_merger.Merge(PixelFormat::FromImage(images[i]));
-				}
-			}
+					if (images[i] != nullptr)
+						pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[i]));
 		}
 		return pixel_format_merger.GetResult();
 	}

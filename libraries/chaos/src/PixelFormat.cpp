@@ -103,36 +103,6 @@ namespace chaos
 		return component_count * 8;
 	}
 
-	PixelFormat PixelFormat::FromImage(FIBITMAP * image)
-	{
-		assert(image != nullptr);
-
-		PixelFormat result;
-	
-		FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(image);
-		if (image_type == FIT_BITMAP)
-		{			
-			int bpp = FreeImage_GetBPP(image); // ignore other format than 8, 24 and 32 bpp
-			if (bpp != 8 && bpp != 24 && bpp != 32)
-				return result;			
-
-			result.component_type  = TYPE_UNSIGNED_CHAR;
-			result.component_count = bpp / 8;
-		}
-		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
-		{
-			result.component_type  = TYPE_FLOAT;
-
-			if (image_type == FIT_FLOAT)
-				result.component_count = 1;
-			else if (image_type == FIT_RGBF)
-				result.component_count = 3;
-			else if (image_type == FIT_RGBAF)
-				result.component_count = 4;
-		}
-		return result;
-	}
-
 	// ==============================================================================================
 	// PixelFormatMerger methods
 	// ==============================================================================================

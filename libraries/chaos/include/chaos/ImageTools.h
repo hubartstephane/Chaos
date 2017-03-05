@@ -40,6 +40,9 @@ namespace chaos
 
 		/** get the image information from a FreeImage */
 		static ImageDescription GetImageDescription(FIBITMAP * image);
+		/** get pixel format corresponding to an image */
+		static PixelFormat GetPixelFormat(FIBITMAP * image);
+
 		/** copy pixels */
 		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 		/** copy pixel with symetry */

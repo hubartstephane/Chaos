@@ -419,20 +419,74 @@ namespace chaos
 		assert(skybox != nullptr);
 		assert(!skybox->IsEmpty());
 
-		GLenum target = GL_TEXTURE_CUBE_MAP;
-
 		GenTextureResult result;
-		glCreateTextures(target, 1, &result.texture_id);
+
+		PixelFormat final_pixel_format = skybox->GetMergedPixelFormat(merge_params);
+
+		int size = skybox->GetSkyBoxSize();
+
+		// detect whether some conversion will be required and the size of buffer required (avoid multiple allocations)
+		//
+		// There are 2 kinds of alterations to do :
+		//  - if there is a central symetry to do, will have to make a special 'copy'
+		//
+		//  - LUMINANCE textures are obsolet in GL 4. The texture give RED pixels except if we use 
+		//    glTextureParameteri( ..., GL_TEXTURE_SWIZZLE_XXX, GL_RED)
+		//
+		//    That is possible if the whole cubemap is LUMINANCE
+		//    But if some face are LUMINANCE and some not, we ll have to do 
+		//    the conversion ourselves because we can not apply GL_TEXTURE_SWIZZLE_XXX on 
+		//    independant face
+		//
+		bool is_single_image = skybox->IsSingleImage();
+
+		size_t required_allocation = 0;
+
+		bool face_valid[6] = { false, false, false, false, false, false };
+		bool conversion_required[6] = { false, false, false, false, false, false };
+		bool central_symetry[6] = { false, false, false, false, false, false };
+
+		for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
+		{
+			// ensure the image is valid and not empty
+			ImageDescription image = skybox->GetImageFaceDescription(i);
+			if (image.data == nullptr || !image.pixel_format.IsValid())
+				continue;
+			face_valid[i] = true;
+
+			// test whether a conversion/copy is required
+			if ((image.pixel_format.component_count == 1) && (final_pixel_format.component_count != 1))
+				conversion_required[i] = true;
+
+			if (is_single_image)
+			{
+				glm::ivec3 position_and_flags = skybox->GetPositionAndFlags(i);
+				if (position_and_flags.z == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
+					central_symetry[i] = conversion_required[i] = true;
+			}
+			// compute memory required
+			if (conversion_required[i])
+				required_allocation = max(required_allocation, (size_t)(size * size * final_pixel_format.GetPixelSize()));
+		}
+
+		// allocate the buffer
+		char * conversion_buffer = nullptr;
+		if (required_allocation != 0)
+		{
+			conversion_buffer = new char[required_allocation];
+			if (conversion_buffer == nullptr)
+				return result;
+		}
+		
+		// GPU-allocate the texture
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &result.texture_id);
 		if (result.texture_id > 0)
 		{
-			PixelFormat final_pixel_format = skybox->GetMergedPixelFormat(merge_params);
-
 			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
 
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
-			int size = skybox->GetSkyBoxSize();
 			int level_count = GetMipmapLevelCount(size, size);
 			glTextureStorage2D(result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
@@ -440,59 +494,55 @@ namespace chaos
 			for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
 			{
 				// ensure the image is valid and not empty
-				ImageDescription image = skybox->GetImageFaceDescription(i);
-				if (image.data == nullptr || !image.pixel_format.IsValid())
+				if (!face_valid[i])
 					continue;
 
+				// do the conversion, central symetry
+				ImageDescription image = skybox->GetImageFaceDescription(i);
 
-				GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(image.pixel_format);
+				ImageDescription effective_image = image;
 
-				int pixel_size = image.pixel_format.GetPixelSize();
-
-				void const * data = image.data;
-				GLint        unpack_row_length = image.pitch_size / pixel_size;
-				char       * new_buffer = nullptr;
-
-				if (skybox->IsSingleImage()) // in single image, there may be some inversion to correct with a temporary buffer
+				if (conversion_required[i])
 				{
-					glm::ivec3 position_and_flags = skybox->GetPositionAndFlags(i);
-					if (position_and_flags.z == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
-					{
-						new_buffer = new char[image.width * image.height * pixel_size];
-						if (new_buffer != nullptr)
-						{
-							ImageDescription new_image = image;
+					effective_image.pixel_format = final_pixel_format;
+					effective_image.width = size;
+					effective_image.height = size;
+					effective_image.data = conversion_buffer;
+					effective_image.line_size = size * final_pixel_format.GetPixelSize();
+					effective_image.pitch_size = effective_image.line_size;
+					effective_image.padding_size = 0;
 
-							new_image.data = new_buffer;
-							new_image.pitch_size = new_image.line_size;
-							new_image.padding_size = 0;
+					assert(effective_image.IsValid());
 
-							ImageTools::CopyPixels(image, new_image, 0, 0, 0, 0, image.width, image.height, true); // do the symmetry
-							unpack_row_length = 0;
-							data = new_buffer;
-						}
-					}
+					ImageTools::CopyPixels(image, effective_image, 0, 0, 0, 0, size, size, central_symetry[i]); // do the symmetry
 				}
 
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length); // do not remove this line from the loop. Maybe future implementation will accept                                                                           
-																																// image with same size but different pitch
-				int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
+				// fill glPixelStorei(...)
+				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch          
+				int pixel_size = effective_image.pixel_format.GetPixelSize();
+
+				GLint unpack_row_length = effective_image.pitch_size / pixel_size;
+
+				glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length);                                                                 
 
 				// fill GPU
-				glTextureSubImage3D(
-					result.texture_id, 
-					0, 
-					0, 0, depth, 
-					image.width, image.height, 1, 
-					gl_face_pixel_format.format, 
-					image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR? GL_UNSIGNED_BYTE : GL_FLOAT, 
-					data);
+				int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
 
-				if (new_buffer != nullptr)
-					delete[](new_buffer);
+				GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
+
+				glTextureSubImage3D(
+					result.texture_id,
+					0,
+					0, 0, depth,
+					size, size, 1,
+					gl_face_pixel_format.format,
+					effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
+					effective_image.data
+				);
 			}
 
-			result.texture_description.type = target;
+			// finalize the result information
+			result.texture_description.type = GL_TEXTURE_CUBE_MAP;
 			result.texture_description.internal_format = gl_final_pixel_format.internal_format;
 			result.texture_description.width = size;
 			result.texture_description.height = size;
@@ -505,6 +555,11 @@ namespace chaos
 			tmp.wrap_t = GL_CLAMP_TO_EDGE;
 			GenTextureApplyParameters(result, tmp);
 		}
+		
+		// release the buffer
+		if (conversion_buffer != nullptr)
+			delete[](conversion_buffer);
+
 		return result;
 	}
 

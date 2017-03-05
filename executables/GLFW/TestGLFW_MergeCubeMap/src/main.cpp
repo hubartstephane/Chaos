@@ -45,7 +45,12 @@ protected:
 			skybox_index = index;
 			texture = new_texture;
 			debug_display.Clear();
-			debug_display.AddLine(chaos::StringTools::Printf("format : %d", index).c_str());
+
+			chaos::PixelFormat pf(index + 1);
+		
+			char const * component_type = (pf.component_type == chaos::PixelFormat::TYPE_UNSIGNED_CHAR) ? "unsigned char" : "float";
+
+			debug_display.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
 		}
 	}
 
@@ -58,7 +63,7 @@ protected:
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;
 
-		return chaos::GLTextureTools::GenTextureObject(&skybox, merge_params);
+		//return chaos::GLTextureTools::GenTextureObject(&skybox, merge_params);
 
 		
 		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);

@@ -103,7 +103,7 @@ namespace chaos
 		static inline float Convert<float>(float src){ return src;}
 		/// conversion from 'float' specialization for return type
 		template<>
-		static inline unsigned char Convert<unsigned char>(float src){ return (unsigned char)(255.0f * src);}
+		static inline unsigned char Convert<unsigned char>(float src){ return (unsigned char)min(255.0f, 255.0f * src);}
 		/// conversion from 'float' specialization for return type
 		template<>
 		static inline float Convert<float>(unsigned char src){ return ((float)src) / 255.0f;}

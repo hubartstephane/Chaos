@@ -454,7 +454,7 @@ namespace chaos
 							new_image.pitch_size = new_image.line_size;
 							new_image.padding_size = 0;
 
-							ImageTools::CopyPixelsWithCentralSymetry(image, new_image, 0, 0, 0, 0, image.width, image.height); // do the symmetry
+							ImageTools::CopyPixels(image, new_image, 0, 0, 0, 0, image.width, image.height, true); // do the symmetry
 							unpack_row_length = 0;
 							data = new_buffer;
 						}
@@ -558,7 +558,7 @@ namespace chaos
 							new_image.pitch_size   = new_image.line_size;
 							new_image.padding_size = 0;
 
-							ImageTools::CopyPixelsWithCentralSymetry(image, new_image, 0, 0, 0, 0, image.width, image.height); // do the symmetry
+							ImageTools::CopyPixelsWithCentralSymetry(image, new_image, 0, 0, 0, 0, image.width, image.height, true); // do the symmetry
 							unpack_row_length = 0;
 							data              = new_buffer;
 						}

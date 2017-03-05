@@ -254,25 +254,22 @@ namespace chaos
 	// we use the boost::mpl::for_each(...) function twice for that.
 	// and the end we can call a meta function
 	//
-	//   CopyPixels<DST_TYPE, SRC_TYPE> or CopyPixelsWithCentralSymetry<DST_TYPE, SRC_TYPE> 
+	//   CopyPixels<DST_TYPE, SRC_TYPE>
 
-	template<typename SRC_TYPE, bool COPY_WITH_SYMETRY> // forward declaration
+	template<typename SRC_TYPE> // forward declaration
 	class CopyPixelMetaFunc2;
 
-	template<bool COPY_WITH_SYMETRY>
 	class CopyPixelMetaFunc
 	{
 	public:
 
-		/// whether the copy must use a central symetry or not
-		static bool const copy_with_symetry = COPY_WITH_SYMETRY;
-
 		/// constructor
-		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height) :
+		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height, bool in_central_symetry) :
 			src_desc(in_src_desc), dst_desc(in_dst_desc),
 			src_x(in_src_x), src_y(in_src_y),
 			dst_x(in_dst_x), dst_y(in_dst_y),
-			width(in_width), height(in_height)
+			width(in_width), height(in_height),
+			central_symetry(in_central_symetry)
 		{
 			assert(src_desc.IsValid());
 			assert(dst_desc.IsValid());
@@ -294,47 +291,50 @@ namespace chaos
 		{
 			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
 			if (pf.GetFormat() == dst_format)
-				boost::mpl::for_each<PixelTypes>(CopyPixelMetaFunc2<DST_TYPE, COPY_WITH_SYMETRY>(this));
+				boost::mpl::for_each<PixelTypes>(CopyPixelMetaFunc2<DST_TYPE>(this));
 		}
 
 	public:
 
 		/// copy function
 		template<typename DST_TYPE, typename SRC_TYPE>
-		void CopyPixels()
+		void CopyPixels(bool central_symetry)
 		{
-			if (boost::is_same<DST_TYPE, SRC_TYPE>::value)
+			// normal copy
+			if (!central_symetry)
 			{
-				for (int l = 0; l < height; ++l) // optimized version using memcopy, if there is no conversion to do
+				if (boost::is_same<DST_TYPE, SRC_TYPE>::value)
 				{
-					using TYPE = DST_TYPE; // same types fro both src and dst
+					for (int l = 0; l < height; ++l) // optimized version using memcopy, if there is no conversion to do
+					{
+						using TYPE = DST_TYPE; // same types fro both src and dst
 
-					TYPE const * s = ImageTools::GetPixelAddress<TYPE>(src_desc, src_x, src_y + l);
-					TYPE       * d = ImageTools::GetPixelAddress<TYPE>(dst_desc, dst_x, dst_y + l);
-					memcpy(d, s, width * sizeof(TYPE));
+						TYPE const * s = ImageTools::GetPixelAddress<TYPE>(src_desc, src_x, src_y + l);
+						TYPE       * d = ImageTools::GetPixelAddress<TYPE>(dst_desc, dst_x, dst_y + l);
+						memcpy(d, s, width * sizeof(TYPE));
+					}
+				}
+				else
+				{
+					for (int l = 0; l < height; ++l)
+					{
+						SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
+						DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + l);
+						for (int c = 0; c < width; ++c)
+							PixelConverter::Convert(d[c], s[c]);
+					}
 				}
 			}
+			// copy with central symetry
 			else
 			{
 				for (int l = 0; l < height; ++l)
 				{
 					SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
-					DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + l);
+					DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + height - 1 - l);
 					for (int c = 0; c < width; ++c)
-						PixelConverter::Convert(d[c], s[c]);
+						PixelConverter::Convert(d[width - 1 - c], s[c]);
 				}
-			}
-		}
-		/// copy function with symetry		
-		template<typename DST_TYPE, typename SRC_TYPE>
-		void CopyPixelsWithCentralSymetry()
-		{
-			for (int l = 0; l < height; ++l)
-			{
-				SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
-				DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + height - 1 - l);
-				for (int c = 0; c < width; ++c)
-					PixelConverter::Convert(d[width - 1 - c], s[c]);
 			}
 		}
 
@@ -353,6 +353,8 @@ namespace chaos
 		int dst_y;
 		int width; 
 		int height;
+		// whether a central symetry is to be applyed
+		bool central_symetry;
 	};
 
 	//
@@ -360,13 +362,13 @@ namespace chaos
 	// (DST_TYPE is already well known)
 	//
 
-	template<typename DST_TYPE, bool COPY_WITH_SYMETRY> 
+	template<typename DST_TYPE> 
 	class CopyPixelMetaFunc2
 	{
 	public:
 
 		/// constructor
-		CopyPixelMetaFunc2(CopyPixelMetaFunc<COPY_WITH_SYMETRY> * in_params) : params(in_params) {}
+		CopyPixelMetaFunc2(CopyPixelMetaFunc * in_params) : params(in_params) {}
 
 		/// dispatch function
 		template<typename SRC_TYPE>
@@ -374,31 +376,19 @@ namespace chaos
 		{
 			PixelFormat pf = PixelFormat::GetPixelFormat<SRC_TYPE>();
 			if (pf.GetFormat() == params->src_format)
-			{
-				if (params->copy_with_symetry)
-					params->CopyPixelsWithCentralSymetry<DST_TYPE, SRC_TYPE>(); 
-				else
-					params->CopyPixels<DST_TYPE, SRC_TYPE>();
-			}
+				params->CopyPixels<DST_TYPE, SRC_TYPE>(params->central_symetry);
 		}
 
 	public:
 
-		CopyPixelMetaFunc<COPY_WITH_SYMETRY> * params;
+		CopyPixelMetaFunc * params;
 	};
 
-	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
+	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, bool central_symetry)
 	{
-		CopyPixelMetaFunc<false> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
+		CopyPixelMetaFunc copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height, central_symetry);
 
 		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
-	}
-
-	void ImageTools::CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height)
-	{
-		CopyPixelMetaFunc<true> copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height);
-
-		boost::mpl::for_each<PixelTypes>(copy_func_map); // start by detecting DST_TYPE
 	}
 
 	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)

@@ -211,11 +211,8 @@ namespace chaos
 			int dst_y = 0;
 
 			int flag = position_and_flags.z;
-			if (flag == SkyBoxImages::IMAGE_NO_TRANSFORM)
-				ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-			else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
-				ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY));
+				
 			result.images[i] = image;
 			result.release_images[i] = true;
 		}
@@ -293,10 +290,7 @@ namespace chaos
 			int dst_y = bottom;
 
 			int flag = position_and_flags.z;
-			if (flag == SkyBoxImages::IMAGE_NO_TRANSFORM)
-				ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
-			else if (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
-				ImageTools::CopyPixelsWithCentralSymetry(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size);
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY));
 		}
 
 		return result;

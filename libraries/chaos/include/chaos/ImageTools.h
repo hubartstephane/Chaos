@@ -44,9 +44,7 @@ namespace chaos
 		static PixelFormat GetPixelFormat(FIBITMAP * image);
 
 		/** copy pixels */
-		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
-		/** copy pixel with symetry */
-		static void CopyPixelsWithCentralSymetry(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
+		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, bool central_symetry);
 
 		/** compute the address of a pixel (type T is usefull to know for pixel size/format) */
 		template<typename T> 

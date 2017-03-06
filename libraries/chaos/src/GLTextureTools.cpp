@@ -392,21 +392,40 @@ namespace chaos
 
 	int GLTextureTools::GetCubeMapLayerValueFromSkyBoxFace(int face, int level)
 	{
-		// GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-		// GL_TEXTURE_CUBE_MAP_POSITIVE_X
-		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-		// GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-		// GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-		// GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+#if 0
+		// previous code was using GL_enum
+		GLenum targets[] = {
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // LEFT
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X, // RIGHT      
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // BOTTOM
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Y, // TOP
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // FRONT
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z  // BACK
+		};
 
-		if (face == SkyBoxImages::IMAGE_LEFT)
+		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_X)
 			return 0 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_RIGHT)
+		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_X)
 			return 1 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_TOP)
+		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Y)
+			return 2 + 6 * level;
+		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Y)
 			return 3 + 6 * level;
+		if (face == GL_TEXTURE_CUBE_MAP_POSITIVE_Z)
+			return 4 + 6 * level;
+		if (face == GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
+			return 5 + 6 * level;
+
+#endif
+
+		if (face == SkyBoxImages::IMAGE_RIGHT)
+			return 0 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_LEFT)
+			return 1 + 6 * level;
 		if (face == SkyBoxImages::IMAGE_BOTTOM)
 			return 2 + 6 * level;
+		if (face == SkyBoxImages::IMAGE_TOP)
+			return 3 + 6 * level;
 		if (face == SkyBoxImages::IMAGE_FRONT)
 			return 4 + 6 * level;
 		if (face == SkyBoxImages::IMAGE_BACK)

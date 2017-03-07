@@ -45,6 +45,8 @@ namespace chaos
 
 		/** copy pixels */
 		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, bool central_symetry);
+    /** convert image into another pixel format + central symetry if required */
+    static ImageDescription ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry);
 
 		/** compute the address of a pixel (type T is usefull to know for pixel size/format) */
 		template<typename T> 

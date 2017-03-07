@@ -137,11 +137,8 @@ namespace chaos
     // search max size, max bpp, and final target (GL_TEXTURE_1D_ARRAY or GL_TEXTURE_2D_ARRAY)
     PixelFormatMerger pixel_format_merger(merge_params);
 
-
     int width = 0;
     int height = 0;
-    int component_count = 0;
-    int component_type = 0;
     for (ImageSliceRegisterEntry const & entry : slice_register.slices)
     {
       width = max(width, entry.description.width);
@@ -158,7 +155,11 @@ namespace chaos
       return nullptr;
 
     // create the texture and fill the slices
-    boost::intrusive_ptr<Texture> result = GenerateTexture(slice_register, pixel_format, width, height, parameters);
+    GenTextureResult texture_result = GenerateTexture(slice_register, pixel_format, width, height, parameters);
+    if (texture_result.texture_id <= 0)
+      return nullptr;
+
+    boost::intrusive_ptr<Texture> result = new Texture(texture_result.texture_id, texture_result.texture_description);
 
     // release slices
     size_t start = 0;
@@ -177,55 +178,90 @@ namespace chaos
     return result;
   }
 
-  boost::intrusive_ptr<Texture> TextureArrayGenerator::GenerateTexture(ImageSliceRegister & slice_register, PixelFormat const & pixel_format, int width, int height, GenTextureParameters const & parameters) const
+  GenTextureResult TextureArrayGenerator::GenerateTexture(ImageSliceRegister & slice_register, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
   {
-#if 0
+    GenTextureResult result;
 
     // compute the 'flat' texture target
     GLenum flat_target = GLTextureTools::GetTextureTargetFromSize(width, height, false);
+    if (flat_target == GL_NONE)
+      return result;
+
     // convert to 'array' target 
     GLenum array_target = GLTextureTools::ToArrayTextureType(flat_target);
-    assert(array_target != GL_NONE);
+    if (array_target == GL_NONE)
+      return result;
 
-    GenTextureResult result;
+    // choose format and internal format
+    GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
+    if (!gl_pixel_format.IsValid())
+      return result;
+
+    // the number of slices
+    size_t slice_count = slice_register.slices.size();
+
+    // find whether some conversion will be necessary (same remarks than for GLTextureTools::GenTexture(SkyBoxImages ...)
+    // and allocate the buffer
+    char * conversion_buffer = nullptr;
+
+    if (final_pixel_format.component_count != 1) // destination is not GRAY, the RED texture + SWIZZLE cannot be used on independant slices
+    {
+      size_t required_allocation = 0;
+      for (size_t i = 0; i < slice_count ; ++i)
+      {
+        ImageDescription const & desc = slice_register.slices[i].description;
+        if (desc.pixel_format.component_count == 1)
+          required_allocation = max(required_allocation, (size_t)(desc.width * desc.height * final_pixel_format.GetPixelSize())); // slice is GRAY
+      }
+      if (required_allocation > 0)
+      {
+        conversion_buffer = new char[required_allocation];
+        if (conversion_buffer == nullptr)
+          return result;
+      }
+    }
+
+    // generate the texture
     glCreateTextures(array_target, 1, &result.texture_id);
     if (result.texture_id > 0)
     {
-      // choose format and internal format (beware FreeImage is BGR/BGRA)
-      GLenum internal_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).internal_format;
-      assert(internal_format != GL_NONE);
-
-      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
+      // initialize the storage
       int level_count = GLTextureTools::GetMipmapLevelCount(width, height);
-      glTextureStorage3D(result.texture_id, level_count, internal_format, width, height, slice_register.size());
+      glTextureStorage3D(result.texture_id, level_count, gl_pixel_format.internal_format, width, height, slice_count);
 
-      for (size_t i = 0; i < slice_register.size(); ++i)
+      // fill each slices into GPU
+      for (size_t i = 0; i < slice_count; ++i)
       {
-        ImageDescription desc = slice_register.slices[i].description;
+        ImageDescription image = slice_register.slices[i].description;
 
-        int bpp = desc.pixel_format.GetBPP();
-        int type = desc.pixel_format.component_type == (PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
+        ImageDescription effective_image = (final_pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
+          ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, false) :
+          image;
 
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 8 * desc.pitch_size / bpp);
+        int pixel_size = effective_image.pixel_format.GetPixelSize();
+        int type = (effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
-        GLenum current_format = GLTextureTools::GetTextureFormatsFromBPP(bpp).format;
-        assert(current_format != GL_NONE);
-        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, desc.width, desc.height, 1, current_format, type, desc.data);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, effective_image.pitch_size / pixel_size);
+
+        GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
+        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, effective_image.data);
       }
 
-      result.texture_description.type = GL_TEXTURE_2D_ARRAY;
+      // finalize the result data
+      result.texture_description.type = array_target;
       result.texture_description.width = width;
       result.texture_description.height = height;
-      result.texture_description.depth = slice_register.size();
-      result.texture_description.internal_format = internal_format;
+      result.texture_description.depth = slice_count;
+      result.texture_description.internal_format = gl_pixel_format.internal_format;
 
       GLTextureTools::GenTextureApplyParameters(result, parameters);
-
-      return new Texture(result.texture_id, result.texture_description);
     }
-#endif
-    return nullptr;
+
+    // release the conversion buffer if necessary
+    if (conversion_buffer != nullptr)
+      delete[](conversion_buffer);
+
+    return result;
   }
 
 };

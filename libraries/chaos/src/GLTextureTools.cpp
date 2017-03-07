@@ -519,22 +519,9 @@ namespace chaos
 				// do the conversion, central symetry
 				ImageDescription image = skybox->GetImageFaceDescription(i);
 
-				ImageDescription effective_image = image;
-
-				if (conversion_required[i])
-				{
-					effective_image.pixel_format = final_pixel_format;
-					effective_image.width = size;
-					effective_image.height = size;
-					effective_image.data = conversion_buffer;
-					effective_image.line_size = size * final_pixel_format.GetPixelSize();
-					effective_image.pitch_size = effective_image.line_size;
-					effective_image.padding_size = 0;
-
-					assert(effective_image.IsValid());
-
-					ImageTools::CopyPixels(image, effective_image, 0, 0, 0, 0, size, size, central_symetry[i]); // do the symmetry
-				}
+        ImageDescription effective_image = (conversion_required[i]) ?
+          ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]) :
+          image;
 
 				// fill glPixelStorei(...)
 				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch          

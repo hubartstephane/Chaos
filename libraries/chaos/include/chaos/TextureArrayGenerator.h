@@ -181,7 +181,7 @@ namespace chaos
   protected:
 
     /** internal method to generate the texture array */
-    boost::intrusive_ptr<Texture> GenerateTexture(ImageSliceRegister & slice_register, PixelFormat const & pixel_format, int width, int height, GenTextureParameters const & parameters) const;
+    GenTextureResult GenerateTexture(ImageSliceRegister & slice_register, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
 
   protected:
 

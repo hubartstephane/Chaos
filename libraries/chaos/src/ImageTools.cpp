@@ -391,6 +391,26 @@ namespace chaos
 		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
 	}
 
+
+  ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry)
+  {
+    ImageDescription result;
+
+    result.pixel_format = final_pixel_format;
+    result.width = src_desc.width;
+    result.height = src_desc.height;
+    result.data = conversion_buffer;
+    result.line_size = result.width * final_pixel_format.GetPixelSize();
+    result.pitch_size = result.line_size;
+    result.padding_size = 0;
+
+    assert(result.IsValid());
+
+    ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, central_symetry); // do the conversion + symmetry
+
+    return result;
+  }
+
 	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)
 	{
 		assert(image != nullptr);

@@ -16,7 +16,7 @@
 
 namespace chaos
 {
-  FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph, int bpp)
+  FIBITMAP * FontTools::GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format)
   {
     assert(glyph != nullptr);
 
@@ -24,13 +24,13 @@ namespace chaos
 
     FT_Error Err = FT_Render_Glyph(glyph, FT_RENDER_MODE_NORMAL); // render the slot into a bitmap
     if (!Err)
-      result = GenerateImage(glyph->bitmap, bpp); // convert FreeType-bitmap into FreeImage-bitmap
+      result = GenerateImage(glyph->bitmap, pixel_format); // convert FreeType-bitmap into FreeImage-bitmap
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, int bpp)
+  FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format)
   {
-    if (bpp != 8 && bpp != 32)
+    if (!pixel_format.IsValid())
       return nullptr;
 
     int w = bitmap.width;
@@ -40,13 +40,20 @@ namespace chaos
     if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
       return nullptr;
 
-    FIBITMAP * result = FreeImage_Allocate(w, h, bpp);
+	FIBITMAP * result = ImageTools::GenFreeImage(pixel_format, w, h);
     if (result != nullptr)
     {
       ImageDescription image_description = ImageTools::GetImageDescription(result);
 
       unsigned char       * dst = (unsigned char *)image_description.data;
       unsigned char const * src = bitmap.buffer;
+
+
+
+
+
+
+
 
       if (bpp == 8)
       {
@@ -70,7 +77,15 @@ namespace chaos
           }
         }
       }
+
+
+
+
+
+
+
     }
+
     return result;
   }
 
@@ -137,7 +152,7 @@ namespace chaos
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImage(FT_Face face, char c, int bpp)
+  FIBITMAP * FontTools::GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format)
   {
     assert(face != nullptr);
 
@@ -146,19 +161,19 @@ namespace chaos
     FT_BitmapGlyph bitmap_glyph = GetBitmapGlyph(face, c, true);
     if (bitmap_glyph != nullptr)
     {
-      result = GenerateImage(bitmap_glyph->bitmap, bpp);
+      result = GenerateImage(bitmap_glyph->bitmap, pixel_format);
       FT_Done_Glyph((FT_Glyph)bitmap_glyph);
     }
     return result;
   }
 
-  FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, int bpp)
+  FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format)
   {
     assert(face != nullptr);
     assert(str != nullptr);
 
     FIBITMAP * result = nullptr;
-    if (bpp != 8 && bpp != 32)
+    if (!pixel_format.IsValid())
       return result;
 
     // generate all required glyph
@@ -213,7 +228,9 @@ namespace chaos
     int required_width = max_x - min_x;
     int required_height = max_y - min_y;
 
-    result = FreeImage_Allocate(required_width, required_height, bpp); // create bitmap
+
+
+	result = ImageTools::GenFreeImage(pixel_format, required_width, required_height);
     if (result != nullptr)
     {
       int pitch = FreeImage_GetPitch(result);

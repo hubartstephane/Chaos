@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/PixelFormat.h>
 
 namespace chaos
 {
@@ -12,19 +13,13 @@ namespace chaos
   {
   public:
 
-
     /** Metrics of a character */
     class CharacterMetrics
     {
     public:
 
       /** default constructor */
-      CharacterMetrics():
-        advance({0, 0}),
-        width(0),
-        height(0),
-        bitmap_left(0),
-        bitmap_top(0){}
+      CharacterMetrics() = default;
 
       /** constructor with initialization */
       CharacterMetrics(FT_BitmapGlyph in_bitmap_glyph):
@@ -34,11 +29,11 @@ namespace chaos
         bitmap_left(in_bitmap_glyph->left),
         bitmap_top(in_bitmap_glyph->top){}
 
-      FT_Vector advance;      
-      int       width;
-      int       height;
-      int       bitmap_left;
-      int       bitmap_top;        
+	  FT_Vector advance{0, 0};      
+	  int       width{0};
+      int       height{0};
+      int       bitmap_left{0};
+      int       bitmap_top{0};        
     };
 
     /** Bitmap + Metrics of a character */
@@ -47,8 +42,7 @@ namespace chaos
     public:
 
       /** default constructor */
-      CharacterBitmapGlyph(): 
-        bitmap_glyph(nullptr){}
+      CharacterBitmapGlyph() = default; 
 
       /** constructor with initialization */
       CharacterBitmapGlyph(FT_BitmapGlyph in_bitmap_glyph):
@@ -56,17 +50,17 @@ namespace chaos
         bitmap_glyph(in_bitmap_glyph){}
 
       /** the glyph */
-      FT_BitmapGlyph bitmap_glyph;
+	  FT_BitmapGlyph bitmap_glyph{nullptr};
     };
 
     /** generate a bitmap from a glyph slot */
-    static FIBITMAP * GenerateImage(FT_GlyphSlot glyph, int bpp = 8);
+    static FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY));
     /** generate a bitmap from a bitmap */
-    static FIBITMAP * GenerateImage(FT_Bitmap & bitmap, int bpp = 8);
+    static FIBITMAP * GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY));
     /** generate a bitmap from a font an a string */
-    static FIBITMAP * GenerateImage(FT_Face face, char const * str, int bpp = 8);
+    static FIBITMAP * GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY));
     /** generate a bitmap from a font an a character */
-    static FIBITMAP * GenerateImage(FT_Face face, char c, int bpp = 8);
+    static FIBITMAP * GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY));
     /** generate a bitmap glyph from a character */
     static FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph); 
     /** generate a cache with all glyph required for a string */

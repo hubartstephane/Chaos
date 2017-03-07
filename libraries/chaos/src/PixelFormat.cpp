@@ -94,15 +94,6 @@ namespace chaos
 		return !operator == (other);
 	}
 
-	int PixelFormat::GetBPP() const
-	{
-		if (!IsValid())
-			return 0;
-		if (component_type == TYPE_FLOAT)
-			return 0;
-		return component_count * 8;
-	}
-
 	// ==============================================================================================
 	// PixelFormatMerger methods
 	// ==============================================================================================

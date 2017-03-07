@@ -134,7 +134,7 @@ namespace chaos
     if (slice_register.size() == 0)
       return nullptr;
 
-    // search max size, max bpp, and final target (GL_TEXTURE_1D_ARRAY or GL_TEXTURE_2D_ARRAY)
+    // search max size and merged pixel format
     PixelFormatMerger pixel_format_merger(merge_params);
 
     int width = 0;

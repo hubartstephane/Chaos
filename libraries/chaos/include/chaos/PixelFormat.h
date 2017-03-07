@@ -50,8 +50,6 @@ namespace chaos
 		bool operator == (PixelFormat const & other) const;
 		/** returns true whether the pixel format are different */
 		bool operator != (PixelFormat const & other) const;
-		/** gets the BPP if applyable (non float texture) */
-		int GetBPP() const;
 
 		/** transform a type into pixel format (component type and count) */
 		template<typename T>

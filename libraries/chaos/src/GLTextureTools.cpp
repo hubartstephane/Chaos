@@ -228,18 +228,6 @@ namespace chaos
 		return MathTools::bsr(width) + 1;
 	}
 
-	GLPixelFormat GLTextureTools::GetTextureFormatsFromBPP(int bpp)
-	{
-		if (bpp == 8)
-			return GLPixelFormat(GL_RED, GL_R8);
-		if (bpp == 24)
-			return GLPixelFormat(GL_BGR, GL_RGB8);
-		if (bpp == 32)
-			return GLPixelFormat(GL_BGRA, GL_RGBA8);
-
-		return GLPixelFormat(GL_NONE, GL_NONE);
-	}
-
 	GLPixelFormat GLTextureTools::GetGLPixelFormat(PixelFormat const & pixel_format) // format / internal format
 	{
 		// XXX : GL_LUMINANCE / GL_LUMINANCE8 deprecated in OpenGL 4.5

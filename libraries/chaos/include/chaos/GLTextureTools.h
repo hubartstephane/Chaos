@@ -146,8 +146,6 @@ namespace chaos
 		static int GetMipmapLevelCount(int width);
 		/** for cubemap texture, returns a layer index depending on the face considered */
 		static int GetCubeMapLayerValueFromSkyBoxFace(int face, int level = 0);
-		/** Get Format/Internal Format pair from BPP */
-		static GLPixelFormat GetTextureFormatsFromBPP(int bpp);
 		/** Get Format/Internal Format pair from the description */
 		static GLPixelFormat GetGLPixelFormat(PixelFormat const & pixel_format);
 

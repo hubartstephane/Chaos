@@ -41,7 +41,9 @@ bool AddFakeBitmap(chaos::BitmapAtlas::BitmapSetInput * bitmap_set, char const *
 	{
 		float color = chaos::MathTools::RandFloat();
 
-		chaos::ImageTools::FillImageBackground(bitmap, glm::vec4(color, color, color, 1.0f));
+    chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(bitmap);
+
+		chaos::ImageTools::FillImageBackground(image_description, glm::vec4(color, color, color, 1.0f));
 
 		result = bitmap_set->AddBitmap(name, bitmap, true);
 		if (!result)

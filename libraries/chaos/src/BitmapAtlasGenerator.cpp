@@ -382,7 +382,9 @@ namespace chaos
 				if (bitmap != nullptr)
 				{
 					// set the background to black
-					ImageTools::FillImageBackground(bitmap.get(), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+          ImageDescription image_description = ImageTools::GetImageDescription(bitmap.get());
+
+					ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 					// copy-paste all entries
 					for (BitmapEntryInput const * entry_input : entries)

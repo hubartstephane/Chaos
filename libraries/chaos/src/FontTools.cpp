@@ -28,6 +28,46 @@ namespace chaos
     return result;
   }
 
+  class FillFontImageMetaFunc
+  {
+  public:
+
+    FillFontImageMetaFunc(ImageDescription const & in_image_description, PixelGray const * in_src_buffer) :
+      image_description(in_image_description),
+      src_buffer(in_src_buffer)
+    {}
+
+    /// the dispatch function
+    template<typename DST_TYPE>
+    void operator()(DST_TYPE dst_color)
+    {
+      PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
+      if (pf == image_description.pixel_format)
+      {
+        int w = image_description.width;
+        int h = image_description.height;
+        int pitch_size = image_description.pitch_size;
+        
+        unsigned char * dst_buffer = (unsigned char *)image_description.data;
+
+        for (int j = 0; j < h; ++j)
+        {
+          DST_TYPE * d = (DST_TYPE *)(&dst_buffer[j * pitch_size]);
+          PixelGray const * s = &src_buffer[(h - 1 - j) * w];
+
+          for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
+            PixelConverter::Convert(d[i], s[i]);
+        }
+      }
+    }
+
+  protected:
+
+    ImageDescription image_description;
+
+    PixelGray const * src_buffer;
+  };
+
   FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format)
   {
     if (!pixel_format.IsValid())
@@ -40,50 +80,14 @@ namespace chaos
     if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
       return nullptr;
 
-	FIBITMAP * result = ImageTools::GenFreeImage(pixel_format, w, h);
+    FIBITMAP * result = ImageTools::GenFreeImage(pixel_format, w, h);
     if (result != nullptr)
     {
       ImageDescription image_description = ImageTools::GetImageDescription(result);
 
-      unsigned char       * dst = (unsigned char *)image_description.data;
-      unsigned char const * src = bitmap.buffer;
+      FillFontImageMetaFunc fill_func_map(image_description, (PixelGray const*)bitmap.buffer);
 
-
-
-
-
-
-
-
-      if (bpp == 8)
-      {
-        for (int j = 0; j < h; ++j)
-          for (int i = 0; i < w; ++i)
-            dst[i + j * image_description.pitch_size] = src[i + (h - 1 - j) * w]; // glyph is reversed compare to what we want
-      }
-      else if (bpp == 32)
-      {
-        for (int j = 0; j < h; ++j)
-        {
-          for (int i = 0; i < w; ++i)
-          {
-            unsigned char color = src[i + (h - 1 - j) * w]; // glyph is reversed compare to what we want
-
-            int base_index = i * 4 + j * image_description.pitch_size;
-            dst[base_index + 0] = color; // B
-            dst[base_index + 1] = color; // G
-            dst[base_index + 2] = color; // R
-            dst[base_index + 3] = color; // A
-          }
-        }
-      }
-
-
-
-
-
-
-
+      boost::mpl::for_each<PixelTypes>(fill_func_map);
     }
 
     return result;
@@ -167,6 +171,176 @@ namespace chaos
     return result;
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  class FillFontStringImageMetaFunc
+  {
+  public:
+
+    FillFontStringImageMetaFunc(ImageDescription const & in_image_description, char const * in_str, std::map<char, FontTools::CharacterBitmapGlyph> const & in_glyph_cache, int in_min_x, int in_min_y) :
+      image_description(in_image_description),
+      str(in_str),
+      glyph_cache(in_glyph_cache),    
+      min_x(in_min_x),
+      min_y(in_min_y)
+    {}
+
+    /// the dispatch function
+    template<typename DST_TYPE>
+    void operator()(DST_TYPE dst_color)
+    {
+      PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
+      if (pf == image_description.pixel_format)
+      {
+        // fill the background with empty data
+        ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+       
+        // copy each character glyph into buffer
+        int pitch_size = image_description.pitch_size;
+
+        int dst_height = image_description.height;
+
+        unsigned char * dst_buffer = (unsigned char *)image_description.data;
+
+        int pos_x = 0;
+        int pos_y = 0;
+        for (int i = 0; str[i] != 0; ++i)
+        {
+          char c = str[i];
+
+          auto const it = glyph_cache.find(c);
+          if (it == glyph_cache.cend())
+            continue;
+
+          FontTools::CharacterBitmapGlyph const & record = it->second;
+
+          // get the metrics
+          int w = record.width;
+          int h = record.height;
+          int bl = record.bitmap_left;
+          int bt = record.bitmap_top;
+          int avx = record.advance.x;
+          int avy = record.advance.y;
+
+          bt = -bt;
+
+          // copy the glyph to dest buffer : invert lines 
+          for (int y = 0; y < h; ++y)
+          {
+
+            DST_TYPE * d = (DST_TYPE*)(dst_buffer +
+              sizeof(DST_TYPE) * (pos_x + bl - min_x) +
+              (dst_height - 1 - (pos_y + bt - min_y + y)) * pitch_size); // compute destination address
+
+            PixelGray const * s = (PixelGray const *)record.bitmap_glyph->bitmap.buffer + y * w; // compute source address
+
+
+            for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
+              PixelConverter::Convert(d[x], s[x]);
+#if 0
+            for (int x = 0; x < w; ++x)
+            {
+              unsigned char * d = buffer +
+                (pos_x + bl - min_x + x) +
+                (dst_height - 1 - (pos_y + bt - min_y + y)) * pitch_size; // compute destination address
+
+              PixelGray const * s = (PixelGray const *)record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
+
+             // d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
+            }
+
+#endif
+
+
+
+
+          }
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+
+          // copy the glyph to dest buffer : invert lines 
+          if (bpp == 8)
+          {
+            for (int y = 0; y < h; ++y)
+            {
+              for (int x = 0; x < w; ++x)
+              {
+                unsigned char * d = buffer +
+                  (pos_x + bl - min_x + x) +
+                  (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
+
+                unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
+
+                d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
+              }
+            }
+          }
+          else if (bpp == 32)
+          {
+            for (int y = 0; y < h; ++y)
+            {
+              for (int x = 0; x < w; ++x)
+              {
+                unsigned char * d = buffer +
+                  4 * (pos_x + bl - min_x + x) +
+                  (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
+
+                unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
+
+                d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
+                d[1] = max(d[1], s[0]);
+                d[2] = max(d[2], s[0]);
+                d[3] = max(d[3], s[0]);
+              }
+            }
+          }
+
+
+
+#endif
+
+
+          // advance the cursor
+          pos_x += avx;
+          pos_y += avy;
+        }
+      }
+    }
+
+  protected:
+
+    ImageDescription image_description;
+
+    char const * str;
+
+    std::map<char, FontTools::CharacterBitmapGlyph> const & glyph_cache;
+
+    int min_x;
+    int min_y;
+  };
+
   FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format)
   {
     assert(face != nullptr);
@@ -228,79 +402,14 @@ namespace chaos
     int required_width = max_x - min_x;
     int required_height = max_y - min_y;
 
-
-
-	result = ImageTools::GenFreeImage(pixel_format, required_width, required_height);
+    result = ImageTools::GenFreeImage(pixel_format, required_width, required_height);
     if (result != nullptr)
     {
-      int pitch = FreeImage_GetPitch(result);
+      ImageDescription image_description = ImageTools::GetImageDescription(result);
 
-      unsigned char * buffer = FreeImage_GetBits(result);
+      FillFontStringImageMetaFunc fill_func_map(image_description, str, glyph_cache, min_x, min_y);
 
-      memset(buffer, 0, pitch * required_height); // fill with 0
-
-      int pos_x = 0;
-      int pos_y = 0;
-      for (int i = 0; str[i] != 0; ++i)
-      {
-        char c = str[i];
-
-        auto const it = glyph_cache.find(c);
-        if (it == glyph_cache.cend())
-          continue;
-
-        CharacterBitmapGlyph const & record = it->second;
-
-        // get the metrics
-        int w = record.width;
-        int h = record.height;
-        int bl = record.bitmap_left;
-        int bt = record.bitmap_top;
-        int avx = record.advance.x;
-        int avy = record.advance.y;
-
-        bt = -bt;
-
-        // copy the glyph to dest buffer : invert lines 
-        if (bpp == 8)
-        {
-          for (int y = 0; y < h; ++y)
-          {
-            for (int x = 0; x < w; ++x)
-            {
-              unsigned char * d = buffer +
-                (pos_x + bl - min_x + x) +
-                (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
-
-              unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
-
-              d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
-            }
-          }
-        }
-        else if (bpp == 32)
-        {
-          for (int y = 0; y < h; ++y)
-          {
-            for (int x = 0; x < w; ++x)
-            {
-              unsigned char * d = buffer +
-                4 * (pos_x + bl - min_x + x) +
-                (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
-
-              unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
-
-              d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
-              d[1] = max(d[1], s[0]);
-              d[2] = max(d[2], s[0]);
-              d[3] = max(d[3], s[0]);
-            }
-          }
-        }
-        // advance the cursor
-        pos_x += avx;
-        pos_y += avy;
-      }
+      boost::mpl::for_each<PixelTypes>(fill_func_map);
     }
 
     // release the glyphs

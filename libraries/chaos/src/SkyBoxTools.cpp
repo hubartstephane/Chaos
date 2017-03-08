@@ -264,10 +264,11 @@ namespace chaos
 		result.SetImage(IMAGE_SINGLE, new_image, true);
 	
 		// fill the background (Blue - Green - Red - Alpha)
-		ImageTools::FillImageBackground(new_image, fill_color);
+    ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
+
+		ImageTools::FillImageBackground(dst_image_desc, fill_color);
 		
 		// copy the faces into the single image
-		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 		{
 			FIBITMAP * image = images[i];

@@ -270,15 +270,24 @@ protected:
     //parameters.min_filter = GL_NEAREST;
     //parameters.mag_filter = GL_NEAREST;
 
+
+  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY);
+    chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB);
+  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA);
+
+  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY_FLOAT);
+  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB_FLOAT);
+  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA_FLOAT);
+
     FIBITMAP * bm = nullptr;
     if ((index % TESTS_PER_FONT) == 0)
-      bm = chaos::FontTools::GenerateImage(face, font_name, 32);
+      bm = chaos::FontTools::GenerateImage(face, font_name, pixel_format);
     else if ((index % TESTS_PER_FONT) == 1)
-      bm = chaos::FontTools::GenerateImage(face, font_name[2], 32);
+      bm = chaos::FontTools::GenerateImage(face, font_name[2], pixel_format);
     else if ((index % TESTS_PER_FONT) == 2)
-      bm = chaos::FontTools::GenerateImage(face, "abcdefghijkl  mnopqrstuvwxyz", 32);
+      bm = chaos::FontTools::GenerateImage(face, "abcdefghijkl  mnopqrstuvwxyz", pixel_format);
     else if ((index % TESTS_PER_FONT) == 3)
-      bm = chaos::FontTools::GenerateImage(face, "ABCDEFGHIJKL  MNOPQRSTUVWXYZ", 32);
+      bm = chaos::FontTools::GenerateImage(face, "ABCDEFGHIJKL  MNOPQRSTUVWXYZ", pixel_format);
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 

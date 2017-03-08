@@ -176,7 +176,9 @@ protected:
 			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 512, 512);
 			if (image != nullptr)
 			{
-				chaos::ImageTools::FillImageBackground(image, glm::vec4(0.0f, 1.0f, 0.0f, 0.9f));
+        chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
+
+				chaos::ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 1.0f, 0.0f, 0.9f));
 
 				result = chaos::GLTextureTools::GenTextureObject(image);
 				FreeImage_Unload(image);
@@ -188,7 +190,9 @@ protected:
 			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 1), 512, 512);
 			if (image != nullptr)
 			{
-				chaos::ImageTools::FillImageBackground(image, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
+        chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
+
+				chaos::ImageTools::FillImageBackground(image_description, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
 
 				result = chaos::GLTextureTools::GenTextureObject(image);
 				FreeImage_Unload(image);
@@ -200,7 +204,9 @@ protected:
 			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_FLOAT, 4), 512, 512);
 			if (image != nullptr)
 			{
-				chaos::ImageTools::FillImageBackground(image, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
+        chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
+
+				chaos::ImageTools::FillImageBackground(image_description, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
 
 				result = chaos::GLTextureTools::GenTextureObject(image);
 				FreeImage_Unload(image);

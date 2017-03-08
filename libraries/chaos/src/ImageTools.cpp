@@ -58,14 +58,11 @@ namespace chaos
 		ImageDescription dst_desc;
 	};
 
-	void ImageTools::FillImage(FIBITMAP * image, glm::vec4 const & color)
+	void ImageTools::FillImage(ImageDescription & image_description, glm::vec4 const & color)
 	{
-		assert(image != nullptr);
-
-		ImageDescription dst_desc = GetImageDescription(image);
-		if (!dst_desc.IsEmpty())
+		if (!image_description.IsEmpty())
 		{
-			FillImageMetaFunc fill_func_map(dst_desc, color);
+			FillImageMetaFunc fill_func_map(image_description, color);
 
 			boost::mpl::for_each<PixelTypes>(fill_func_map);
 		}
@@ -81,9 +78,9 @@ namespace chaos
 	// for palettized image, there is a search in texture
 	//
 
-	void ImageTools::FillImageBackground(FIBITMAP * image, glm::vec4 const & color)
+	void ImageTools::FillImageBackground(ImageDescription & image_description, glm::vec4 const & color)
 	{
-		FillImage(image, color);
+		FillImage(image_description, color);
 
 #if 0 // keep for example, but the template implementation should fix the alpha issue
 

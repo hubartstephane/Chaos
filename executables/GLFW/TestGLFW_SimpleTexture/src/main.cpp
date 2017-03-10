@@ -62,6 +62,22 @@ protected:
 		}
 	}
 
+  virtual void OnDropFile(int count, char const ** paths) override
+  {
+    for (int i = 0; i < count; ++i)
+      if (GenerateTextureFromFilename(paths[i]))
+        return;
+  }
+
+  bool GenerateTextureFromFilename(char const * filename)
+  {
+    boost::intrusive_ptr<chaos::Texture> new_texture = chaos::GLTextureTools::GenTextureObject(filename);
+    if (new_texture == nullptr)
+      return false;
+    texture = new_texture;
+    return true;
+  }
+
 	boost::intrusive_ptr<chaos::Texture> GenerateTexture(int index)
 	{
 		static int const GENERATE_RGBA = 0;
@@ -76,16 +92,19 @@ protected:
 
 		boost::intrusive_ptr<chaos::Texture> result;
 
+    static int TEXTURE_SIZE = 512;
+
+
 		if (index == GENERATE_RGBA)
 		{
 			// test manual buffer
-			char * image_buffer = new char[4 * 512 * 512];
+			char * image_buffer = new char[4 * TEXTURE_SIZE * TEXTURE_SIZE];
 
-			chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, 512, 512, chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 0);
+			chaos::ImageDescription image_desc = chaos::ImageDescription(image_buffer, TEXTURE_SIZE, TEXTURE_SIZE, chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 0);
 
-			for (int i = 0; i < 512; ++i)
+			for (int i = 0; i < TEXTURE_SIZE; ++i)
 			{
-				for (int j = 0; j < 512; ++j)
+				for (int j = 0; j < TEXTURE_SIZE; ++j)
 				{
 					image_buffer[4 * j + 0 + (i * image_desc.pitch_size)] = i;
 					image_buffer[4 * j + 1 + (i * image_desc.pitch_size)] = 0;
@@ -100,7 +119,7 @@ protected:
 		// test GENERATION GRAY
 		if (index == GENERATE_GRAY)
 		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGray>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGray* buffer)
+			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGray>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription const & desc, chaos::PixelGray* buffer)
 			{
 				for (int i = 0; i < desc.height; ++i)
 					for (int j = 0; j < desc.width; ++j)
@@ -110,7 +129,7 @@ protected:
 		// test GENERATION RGB
 		if (index == GENERATE_RGB)
 		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelBGR>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelBGR * buffer)
+			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelBGR>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription const & desc, chaos::PixelBGR * buffer)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -127,7 +146,7 @@ protected:
 		// test GENERATION GRAY FLOAT
 		if (index == GENERATE_GRAY_FLOAT)
 		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGrayFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelGrayFloat* buffer)
+			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelGrayFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription const & desc, chaos::PixelGrayFloat* buffer)
 			{
 				for (int i = 0; i < desc.height; ++i)
 					for (int j = 0; j < desc.width; ++j)
@@ -138,7 +157,7 @@ protected:
 		// test GENERATION RGB FLOAT
 		if (index == GENERATE_RGB_FLOAT)
 		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGBFloat * buffer)
+			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription const & desc, chaos::PixelRGBFloat * buffer)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -155,7 +174,7 @@ protected:
 		// test GENERATION RGBA FLOAT
 		if (index == GENERATE_RGBA_FLOAT)
 		{
-			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBAFloat>(512, 512, [](chaos::ImageDescription const & desc, chaos::PixelRGBAFloat * buffer)
+			result = chaos::GLTextureTools::GenTextureObject<chaos::PixelRGBAFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription const & desc, chaos::PixelRGBAFloat * buffer)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -173,7 +192,7 @@ protected:
 		// test for background
 		if (index == GENERATE_BACKGROUND)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), 512, 512);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 4), TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
         chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -187,7 +206,7 @@ protected:
 
 		if (index == GENERATE_BACKGROUND_GRAY)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 1), 512, 512);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_UNSIGNED_CHAR, 1), TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
         chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);
@@ -201,7 +220,7 @@ protected:
 
 		if (index == GENERATE_FLOAT_BACKGROUND)
 		{
-			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_FLOAT, 4), 512, 512);
+			FIBITMAP * image = chaos::ImageTools::GenFreeImage(chaos::PixelFormat(chaos::PixelFormat::TYPE_FLOAT, 4), TEXTURE_SIZE, TEXTURE_SIZE);
 			if (image != nullptr)
 			{
         chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(image);

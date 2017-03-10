@@ -280,6 +280,11 @@ protected:
   //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA_FLOAT);
 
     FIBITMAP * bm = nullptr;
+
+    bm = chaos::FontTools::GenerateImage(face, font_name[2], pixel_format);
+
+#if 0
+
     if ((index % TESTS_PER_FONT) == 0)
       bm = chaos::FontTools::GenerateImage(face, font_name, pixel_format);
     else if ((index % TESTS_PER_FONT) == 1)
@@ -288,6 +293,9 @@ protected:
       bm = chaos::FontTools::GenerateImage(face, "abcdefghijkl  mnopqrstuvwxyz", pixel_format);
     else if ((index % TESTS_PER_FONT) == 3)
       bm = chaos::FontTools::GenerateImage(face, "ABCDEFGHIJKL  MNOPQRSTUVWXYZ", pixel_format);
+
+
+#endif
 
     boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 

@@ -55,8 +55,14 @@ namespace chaos
           DST_TYPE * d = (DST_TYPE *)(&dst_buffer[j * pitch_size]);
           PixelGray const * s = &src_buffer[(h - 1 - j) * w];
 
+
+
           for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
-            PixelConverter::Convert(d[i], s[i]);
+          //  PixelConverter::Convert(d[i], s[i]);
+          {
+            PixelGray pp = (PixelGray)(i * 10);
+            PixelConverter::Convert(d[i], pp);
+          }
         }
       }
     }

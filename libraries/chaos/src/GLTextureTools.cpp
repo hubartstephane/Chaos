@@ -143,6 +143,8 @@ namespace chaos
 							result.data = new char[bufsize];
 							if (result.data != nullptr)						
 							{
+
+
 								glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 								glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
@@ -626,5 +628,33 @@ namespace chaos
 
 	// GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_CUBE_MAP, or GL_TEXTURE_CUBE_MAP_ARRAY
 
+	void GLTextureTools::SetGLPixelStoreParams(ImageDescription const & desc, int x, int y)
+	{
+		assert(desc.IsValid());
+
+		int pixel_size = desc.pixel_format.GetPixelSize();
+
+		//GL_PACK_SKIP_PIXELS
+
+		uintptr_t buf = (uintptr_t)desc.data;
+
+		if (buf % 4 == 0)
+			glPixelStorei(GL_PACK_ALIGNMENT, 4);
+		else
+			glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+
+		
+
+	//	glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
+
+
+
+
+
+
+
+	
+	}
 
 }; // namespace chaos

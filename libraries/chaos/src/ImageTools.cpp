@@ -26,15 +26,15 @@ namespace chaos
 			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
 			if (pf.GetFormat() == dst_format)
 			{
-				PixelRGBAFloat rgba_color;
+				PixelRGBAFloat rgba_color; // take the color with the most precision ...
 				rgba_color.R = color.x;
 				rgba_color.G = color.y;
 				rgba_color.B = color.z;
 				rgba_color.A = color.w;
 
-				PixelConverter::Convert(dst_color, rgba_color); // boost provide an argument for color, use it as a temp variable
+				PixelConverter::Convert(dst_color, rgba_color); // ... convert it into the wanted PixelType
 
-				// step 1 : fill line 1 (with standard assignement)
+																// step 1 : fill line 1 (with standard assignement)
 				DST_TYPE * d1 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, 0);
 				for (int c = 0; c < dst_desc.width; ++c)
 					d1[c] = dst_color;
@@ -58,16 +58,6 @@ namespace chaos
 		ImageDescription dst_desc;
 	};
 
-	void ImageTools::FillImage(ImageDescription & image_description, glm::vec4 const & color)
-	{
-		if (!image_description.IsEmpty())
-		{
-			FillImageMetaFunc fill_func_map(image_description, color);
-
-			boost::mpl::for_each<PixelTypes>(fill_func_map);
-		}
-	}
-
 	//
 	// XXX : the usage of FreeImage_FillBackground(...) is rather unclear
 	//
@@ -80,7 +70,12 @@ namespace chaos
 
 	void ImageTools::FillImageBackground(ImageDescription & image_description, glm::vec4 const & color)
 	{
-		FillImage(image_description, color);
+		if (!image_description.IsEmpty())
+		{
+			FillImageMetaFunc fill_func_map(image_description, color);
+
+			boost::mpl::for_each<PixelTypes>(fill_func_map);
+		}
 
 #if 0 // keep for example, but the template implementation should fix the alpha issue
 
@@ -388,25 +383,24 @@ namespace chaos
 		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
 	}
 
+	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry)
+	{
+		ImageDescription result;
 
-  ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry)
-  {
-    ImageDescription result;
+		result.pixel_format = final_pixel_format;
+		result.width = src_desc.width;
+		result.height = src_desc.height;
+		result.data = conversion_buffer;
+		result.line_size = result.width * final_pixel_format.GetPixelSize();
+		result.pitch_size = result.line_size;
+		result.padding_size = 0;
 
-    result.pixel_format = final_pixel_format;
-    result.width = src_desc.width;
-    result.height = src_desc.height;
-    result.data = conversion_buffer;
-    result.line_size = result.width * final_pixel_format.GetPixelSize();
-    result.pitch_size = result.line_size;
-    result.padding_size = 0;
+		assert(result.IsValid());
 
-    assert(result.IsValid());
+		ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, central_symetry); // do the conversion + symmetry
 
-    ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, central_symetry); // do the conversion + symmetry
-
-    return result;
-  }
+		return result;
+	}
 
 	bool ImageTools::IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed)
 	{
@@ -463,7 +457,7 @@ namespace chaos
 	{
 		if (image == nullptr)
 			return nullptr;
-		
+
 		// try convert some format
 		if (FreeImage_GetImageType(image) == FIT_BITMAP)
 		{

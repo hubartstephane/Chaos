@@ -109,15 +109,11 @@ namespace chaos
 		{
 			GenTextureResult result;
 
-			T * buffer = new T[width * height];
-			if (buffer != nullptr)
+			FIBITMAP * image = ImageTools::GenFreeImage<T>(width, height, generator); // XXX : use FreeImage because it generates a buffer with correct alignment
+			if (image != nullptr)
 			{
-				PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
-
-				ImageDescription desc(buffer, width, height, pixel_format, 0);
-				generator(desc, buffer);
-				result = GenTexture(desc, parameters);
-				delete[](buffer);
+				result = GenTexture(image, parameters);
+				FreeImage_Unload(image);
 			}
 			return result;
 		}

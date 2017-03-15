@@ -123,7 +123,7 @@ namespace chaos
 		}
 		return -1;
 	}
-	
+
 	int SkyBoxImages::GetSingleImageSize(FIBITMAP * image)
 	{
 		assert(image != nullptr);
@@ -185,7 +185,7 @@ namespace chaos
 		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[IMAGE_SINGLE]);
 		if (!src_image_desc.IsValid())
 			return result;
-		
+
 		// the wanted size for every face
 		int size = GetSingleImageSize(src_image_desc); 
 
@@ -212,7 +212,7 @@ namespace chaos
 
 			int flag = position_and_flags.z;
 			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY));
-				
+
 			result.images[i] = image;
 			result.release_images[i] = true;
 		}
@@ -253,7 +253,7 @@ namespace chaos
 		SkyBoxSingleDisposition const & dispo = bHorizontal? 
 			SkyBoxSingleDisposition::HorizontalDisposition : 
 			SkyBoxSingleDisposition::VerticalDisposition;
-			
+
 		// allocate the image
 		int new_image_width  = size * dispo.image_count_horiz;
 		int new_image_height = size * dispo.image_count_vert;
@@ -262,12 +262,12 @@ namespace chaos
 		if (new_image == nullptr)
 			return result;
 		result.SetImage(IMAGE_SINGLE, new_image, true);
-	
+
 		// fill the background (Blue - Green - Red - Alpha)
-    ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
+		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
 
 		ImageTools::FillImageBackground(dst_image_desc, fill_color);
-		
+
 		// copy the faces into the single image
 		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
 		{
@@ -312,7 +312,7 @@ namespace chaos
 		}
 		return pixel_format_merger.GetResult();
 	}
-	
+
 	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const
 	{
 		assert(image_type >= IMAGE_LEFT && image_type <= IMAGE_BACK);
@@ -440,7 +440,7 @@ namespace chaos
 				// release previous image
 				FIBITMAP * previous_image = images[image_type];
 				if (previous_image != nullptr && release_images[image_type])
-						FreeImage_Unload(previous_image);
+					FreeImage_Unload(previous_image);
 
 				// do the writing
 				images[image_type] = image;

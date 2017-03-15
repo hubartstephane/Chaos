@@ -58,11 +58,7 @@ namespace chaos
 
 
           for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
-          //  PixelConverter::Convert(d[i], s[i]);
-          {
-            PixelGray pp = (PixelGray)(i * 10);
-            PixelConverter::Convert(d[i], pp);
-          }
+            PixelConverter::Convert(d[i], s[i]);
         }
       }
     }

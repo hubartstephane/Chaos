@@ -67,7 +67,7 @@ namespace chaos
 			if (result != nullptr)
 			{
 				ImageDescription image_desc = GetImageDescription(result);
-				generator(image_desc, (T*)image_desc.data);			
+				generator(image_desc);			
 			}
 			return result;
 		}

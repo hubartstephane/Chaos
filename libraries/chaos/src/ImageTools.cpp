@@ -34,7 +34,7 @@ namespace chaos
 
 				PixelConverter::Convert(dst_color, rgba_color); // ... convert it into the wanted PixelType
 
-																// step 1 : fill line 1 (with standard assignement)
+				// step 1 : fill line 1 (with standard assignement)
 				DST_TYPE * d1 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, 0);
 				for (int c = 0; c < dst_desc.width; ++c)
 					d1[c] = dst_color;
@@ -317,7 +317,8 @@ namespace chaos
 					}
 				}
 			}
-			// copy with central symetry
+			// copy with central symetry 
+			//   do not test if source type and dest type are same because we cannot use memcpy(...) due to symetry
 			else
 			{
 				for (int l = 0; l < height; ++l)

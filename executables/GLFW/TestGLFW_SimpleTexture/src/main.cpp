@@ -41,13 +41,16 @@ protected:
 	{
 		if (texture != nullptr)
 		{
-			chaos::ImageDescription desc = chaos::GLTextureTools::GetTextureImage(texture->GetResourceID(), 0);
-			if (desc.data != nullptr)
+			chaos::ImageDescription desc;
+
+			char * buffer = chaos::GLTextureTools::GetTextureImage(texture->GetResourceID(), 0, desc);
+			if (buffer != nullptr)
 			{
 				boost::intrusive_ptr<chaos::Texture> new_texture = chaos::GLTextureTools::GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
 				if (new_texture != nullptr)
 					texture = new_texture;
-				delete[](desc.data);
+			
+				delete [](buffer);
 			}
 		}
 	}

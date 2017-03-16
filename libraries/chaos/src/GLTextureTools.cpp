@@ -106,9 +106,9 @@ namespace chaos
 		return PixelFormat();
 	}
 
-	ImageDescription GLTextureTools::GetTextureImage(GLuint texture_id, GLint level)
+	char * GLTextureTools::GetTextureImage(GLuint texture_id, GLint level, ImageDescription & desc)
 	{
-		ImageDescription result;
+		char * result = nullptr;
 
 		if (texture_id != 0)
 		{
@@ -126,35 +126,21 @@ namespace chaos
 						GLPixelFormat gl_pixel_format = GetGLPixelFormat(pixel_format);
 						if (gl_pixel_format.IsValid())
 						{
-							GLenum type = (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)?
-								GL_UNSIGNED_BYTE : GL_FLOAT;
+							GLenum type = (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
-							result.width        = width;
-							result.height       = height;
-							result.pixel_format = pixel_format;
-							result.line_size    = width * result.pixel_format.GetPixelSize();
-							result.pitch_size   = result.line_size; // no padding
-							result.padding_size = 0;
+							int buffer_size = ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, width, height);
 
-							int pixel_size = result.pixel_format.GetPixelSize();
-
-							size_t bufsize = width * height * pixel_size;
-
-							result.data = new char[bufsize];
-							if (result.data != nullptr)						
+							result = new char[buffer_size];
+							if (result != nullptr)
 							{
-
+								desc = ImageTools::GetImageDescriptionForAlignedTexture(pixel_format, width, height, result);
 
 								glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-								glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
+								glPixelStorei(GL_PACK_ROW_LENGTH, desc.pitch_size / desc.pixel_format.GetPixelSize());
 
-								glGetTextureImage(texture_id, level, gl_pixel_format.format, type, bufsize, result.data);
-
-								assert(result.IsValid());
+								glGetTextureImage(texture_id, level, gl_pixel_format.format, type, buffer_size, desc.data);
 							}
-							else
-								result = ImageDescription(); // overide previous information						
 						}
 					}
 				}
@@ -273,31 +259,37 @@ namespace chaos
 			GLenum internal_format = gl_formats.internal_format;
 			GLenum type            = (image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
 
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, image.pitch_size / image.pixel_format.GetPixelSize());
+			char * texture_buffer = PrepareGLTextureTransfert(image);
+			if (texture_buffer != nullptr)
+			{			
+				// store the pixels
+				if (target == GL_TEXTURE_1D)
+				{
+					int level_count = GetMipmapLevelCount(image.width);
+					glTextureStorage1D(result.texture_id, level_count, internal_format, image.width);
+					glTextureSubImage1D(result.texture_id, 0, 0, image.width, format, type, texture_buffer);
+				}
+				else
+				{
+					int level_count = GetMipmapLevelCount(image.width, image.height);
+					glTextureStorage2D(result.texture_id, level_count, internal_format, image.width, image.height);
+					glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
+				}
 
-			// store the pixels
-			if (target == GL_TEXTURE_1D)
-			{
-				int level_count = GetMipmapLevelCount(image.width);
-				glTextureStorage1D(result.texture_id, level_count, internal_format, image.width);
-				glTextureSubImage1D(result.texture_id, 0, 0, image.width, format, type, image.data);
+				result.texture_description.type            = target;
+				result.texture_description.internal_format = internal_format;
+				result.texture_description.width           = image.width;
+				result.texture_description.height          = image.height;
+				result.texture_description.depth           = 1;
+
+				// apply parameters
+				GenTextureApplyParameters(result, parameters);
 			}
 			else
 			{
-				int level_count = GetMipmapLevelCount(image.width, image.height);
-				glTextureStorage2D(result.texture_id, level_count, internal_format, image.width, image.height);
-				glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, type, image.data);
+				glDeleteTextures(1, &result.texture_id);
+				result = GenTextureResult();
 			}
-
-			result.texture_description.type            = target;
-			result.texture_description.internal_format = internal_format;
-			result.texture_description.width           = image.width;
-			result.texture_description.height          = image.height;
-			result.texture_description.depth           = 1;
-
-			// apply parameters
-			GenTextureApplyParameters(result, parameters);
 		}
 		return result;
 	}
@@ -493,8 +485,6 @@ namespace chaos
 		{
 			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
 
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
 			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
 			int level_count = GetMipmapLevelCount(size, size);
 			glTextureStorage2D(result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
@@ -515,26 +505,25 @@ namespace chaos
 
 				// fill glPixelStorei(...)
 				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch          
-				int pixel_size = effective_image.pixel_format.GetPixelSize();
 
-				GLint unpack_row_length = effective_image.pitch_size / pixel_size;
+				char * texture_buffer = PrepareGLTextureTransfert(effective_image);
+				if (texture_buffer != nullptr)
+				{
+					// fill GPU
+					int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
 
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, unpack_row_length);                                                                 
+					GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
 
-				// fill GPU
-				int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
-
-				GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
-
-				glTextureSubImage3D(
-					result.texture_id,
-					0,
-					0, 0, depth,
-					size, size, 1,
-					gl_face_pixel_format.format,
-					effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
-					effective_image.data
-				);
+					glTextureSubImage3D(
+						result.texture_id,
+						0,
+						0, 0, depth,
+						size, size, 1,
+						gl_face_pixel_format.format,
+						effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
+						texture_buffer
+					);								
+				}
 			}
 
 			// finalize the result information
@@ -628,33 +617,37 @@ namespace chaos
 
 	// GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_CUBE_MAP, or GL_TEXTURE_CUBE_MAP_ARRAY
 
-	void GLTextureTools::SetGLPixelStoreParams(ImageDescription const & desc, int x, int y)
-	{
-		assert(desc.IsValid());
+
+	char * GLTextureTools::PrepareGLTextureTransfert(ImageDescription const & desc)
+	{	
+		char * result = (char*)desc.data;
 
 		int pixel_size = desc.pixel_format.GetPixelSize();
+		int row_length = desc.pitch_size / pixel_size;
+		int skip_pixel = 0;
 
-		//GL_PACK_SKIP_PIXELS
+		// first pixel already aligned on DWORD ?? 
+		uintptr_t b = (uintptr_t)desc.data; 
+		if (b % 4 != 0) 
+		{
+			uintptr_t r = pixel_size % 4;
 
-		uintptr_t buf = (uintptr_t)desc.data;
+			if (r == 0) // cannot find a correct offset to meet wanted alignment
+				return nullptr;
+		
+			while (b % 4 != 0)
+				b -= pixel_size;
 
-		if (buf % 4 == 0)
-			glPixelStorei(GL_PACK_ALIGNMENT, 4);
-		else
-			glPixelStorei(GL_PACK_ALIGNMENT, 1);
+			skip_pixel = (((uintptr_t)desc.data) - b) / pixel_size;
 
+			result = (char*)b;
+		}
 
-
-
-		//	glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
-
-
-
-
-
-
-
-
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, skip_pixel);
+		
+		return result;
 	}
 
 }; // namespace chaos

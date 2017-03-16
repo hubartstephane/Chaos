@@ -80,7 +80,7 @@ namespace chaos
 	public:
 
 		/** get buffer containing the texture data */
-		static ImageDescription	GetTextureImage(GLuint texture_id, GLint level);
+		static char * GetTextureImage(GLuint texture_id, GLint level, ImageDescription & desc);
 		/** get the pixel format of the texture */
 		static PixelFormat GetTexturePixelFormat(GLuint texture_id, GLint level);
 
@@ -155,9 +155,8 @@ namespace chaos
 		/** utility function to compute target (GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE) from dimension */
 		static GLenum GetTextureTargetFromSize(int width, int height, bool rectangle_texture);
 
-
 		/** prepare store parameters */
-		void SetGLPixelStoreParams(ImageDescription const & desc, int x, int y);
+		static char * PrepareGLTextureTransfert(ImageDescription const & desc);
 
 		/** utility function for texture loading */
 		static void GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters);

@@ -47,7 +47,7 @@ namespace chaos
 		static ImageDescription ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry);
 
 		/** create a ImageTexture with DWORD alignment requirements with a given buffer */
-		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * conversion_buffer);
+		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * buffer);
 		/** compute the memory requirement for a texture with DWORD aligned rows texture */
 		static int GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height);
 	

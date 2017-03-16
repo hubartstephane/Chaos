@@ -391,7 +391,7 @@ namespace chaos
 			+ 3; // for base alignment
 	}
 
-	ImageDescription ImageTools::GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * conversion_buffer)
+	ImageDescription ImageTools::GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * buffer)
 	{
 		ImageDescription result;
 
@@ -400,12 +400,12 @@ namespace chaos
 		int pitch_size = ((line_size + 3) & ~3);
 		int padding    = (pitch_size - line_size);
 
-		void * buffer = (void*)((((uintptr_t)conversion_buffer) + 3) & ~3);
+		void * aligned_buffer = (void*)((((uintptr_t)buffer) + 3) & ~3);
 	
 		result.pixel_format = pixel_format;
 		result.width        = width;
 		result.height       = height;
-		result.data         = buffer;
+		result.data         = aligned_buffer;
 		result.line_size    = line_size;
 		result.pitch_size   = pitch_size;
 		result.padding_size = padding;	

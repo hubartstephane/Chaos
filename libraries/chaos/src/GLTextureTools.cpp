@@ -261,7 +261,7 @@ namespace chaos
 			return result;
 
 		GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
-		
+
 		glCreateTextures(target, 1, &result.texture_id);
 		if (result.texture_id > 0)
 		{  
@@ -475,7 +475,7 @@ namespace chaos
 			}
 			// compute memory required
 			if (conversion_required[i])
-				required_allocation = max(required_allocation, (size_t)(size * size * final_pixel_format.GetPixelSize()));
+				required_allocation = max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, size, size));
 		}
 
 		// allocate the buffer
@@ -486,7 +486,7 @@ namespace chaos
 			if (conversion_buffer == nullptr)
 				return result;
 		}
-		
+
 		// GPU-allocate the texture
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &result.texture_id);
 		if (result.texture_id > 0)
@@ -509,9 +509,9 @@ namespace chaos
 				// do the conversion, central symetry
 				ImageDescription image = skybox->GetImageFaceDescription(i);
 
-        ImageDescription effective_image = (conversion_required[i]) ?
-          ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]) :
-          image;
+				ImageDescription effective_image = (conversion_required[i]) ?
+					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]) :
+					image;
 
 				// fill glPixelStorei(...)
 				// do not remove this line from the loop. Maybe future implementation will accept image with same size but different pitch          
@@ -551,7 +551,7 @@ namespace chaos
 			tmp.wrap_t = GL_CLAMP_TO_EDGE;
 			GenTextureApplyParameters(result, tmp);
 		}
-		
+
 		// release the buffer
 		if (conversion_buffer != nullptr)
 			delete[](conversion_buffer);
@@ -644,17 +644,17 @@ namespace chaos
 			glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 
-		
-
-	//	glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
 
 
+		//	glPixelStorei(GL_PACK_ROW_LENGTH, result.pitch_size / pixel_size);
 
 
 
 
 
-	
+
+
+
 	}
 
 }; // namespace chaos

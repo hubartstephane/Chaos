@@ -11,12 +11,12 @@ namespace chaos
 
 		/// constructor
 		FillImageMetaFunc(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :	
+			dst_format(in_dst_desc.pixel_format.GetFormat()),
 			dst_desc(in_dst_desc),
 			color(in_color)
 		{
 			assert(dst_desc.IsValid());
 			assert(!dst_desc.IsEmpty());
-			dst_format = dst_desc.pixel_format.GetFormat();
 		}
 
 		/// the dispatch function
@@ -67,6 +67,7 @@ namespace chaos
 	//
 	// for palettized image, there is a search in texture
 	//
+	//   => use our own implementation
 
 	void ImageTools::FillImageBackground(ImageDescription & image_description, glm::vec4 const & color)
 	{
@@ -257,6 +258,8 @@ namespace chaos
 
 		/// constructor
 		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height, bool in_central_symetry) :
+			src_format(in_src_desc.pixel_format.GetFormat()),
+			dst_format(in_dst_desc.pixel_format.GetFormat()),
 			src_desc(in_src_desc), dst_desc(in_dst_desc),
 			src_x(in_src_x), src_y(in_src_y),
 			dst_x(in_dst_x), dst_y(in_dst_y),
@@ -272,9 +275,6 @@ namespace chaos
 			assert(src_y >= 0 && src_y + height <= src_desc.height);
 			assert(dst_x >= 0 && dst_x + width <= dst_desc.width);
 			assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
-
-			src_format = src_desc.pixel_format.GetFormat();
-			dst_format = dst_desc.pixel_format.GetFormat();
 		}
 
 		/// the dispatch function
@@ -318,7 +318,7 @@ namespace chaos
 				}
 			}
 			// copy with central symetry 
-			//   do not test if source type and dest type are same because we cannot use memcpy(...) due to symetry
+			//   no interest to test if source type and dest types are identical because we cannot use memcpy(...) due to symetry
 			else
 			{
 				for (int l = 0; l < height; ++l)
@@ -384,17 +384,38 @@ namespace chaos
 		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
 	}
 
-	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry)
+	int ImageTools::GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height)
+	{
+		return ((width * pixel_format.GetPixelSize() + 3) & ~3) // aligned rows
+			* height
+			+ 3; // for base alignment
+	}
+
+	ImageDescription ImageTools::GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * conversion_buffer)
 	{
 		ImageDescription result;
 
-		result.pixel_format = final_pixel_format;
-		result.width = src_desc.width;
-		result.height = src_desc.height;
-		result.data = conversion_buffer;
-		result.line_size = result.width * final_pixel_format.GetPixelSize();
-		result.pitch_size = result.line_size;
-		result.padding_size = 0;
+		int pixel_size = pixel_format.GetPixelSize();
+		int line_size  = width * pixel_size;
+		int pitch_size = ((line_size + 3) & ~3);
+		int padding    = (pitch_size - line_size);
+
+		void * buffer = (void*)((((uintptr_t)conversion_buffer) + 3) & ~3);
+	
+		result.pixel_format = pixel_format;
+		result.width        = width;
+		result.height       = height;
+		result.data         = buffer;
+		result.line_size    = line_size;
+		result.pitch_size   = pitch_size;
+		result.padding_size = padding;	
+
+		return result;
+	}
+
+	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry)
+	{
+		ImageDescription result = GetImageDescriptionForAlignedTexture(final_pixel_format, src_desc.width, src_desc.height, conversion_buffer);
 
 		assert(result.IsValid());
 

@@ -211,7 +211,7 @@ namespace chaos
       {
         ImageDescription const & desc = slice_register.slices[i].description;
         if (desc.pixel_format.component_count == 1)
-          required_allocation = max(required_allocation, (size_t)(desc.width * desc.height * final_pixel_format.GetPixelSize())); // slice is GRAY
+          required_allocation = max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, desc.width, desc.height)); // slice is GRAY
       }
       if (required_allocation > 0)
       {

@@ -618,39 +618,66 @@ namespace chaos
 	// GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_CUBE_MAP, or GL_TEXTURE_CUBE_MAP_ARRAY
 
 
-  //
-  // XXX : When transfering a texture in OpenGL, we can use
-  //
-  //   GL_UNPACK_ALIGNMENT
-  //   GL_UNPACK_ROW_LENGTH
-  //   GL_UNPACK_SKIP_PIXELS
-  //
-  // to define the memory buffer layout.
-  //
-  // OpenGL has a important limitation. Offsets are not defined in bytes but in multiple of Pixel Size !!
-  //
-  // In a random ImageDefinition, this is a blocker. We cannot have all paddings we want 
-  // => Mainly in SubImageDefinition, this is a issue
-  //
-  //
-  //
-  // If the memory disposition (pitch, line size ...) was fully random, we would end copying data from an incorrect layout into a new buffer
-  // wasting lots of resources.
-  //
-  // XXX : There is a solution !!!
-  // 
-  //       for images coming from FreeImage, we can ensure (in specifications) that lines are DWORD aligned
-  //       So if we want to transfert a block a pixel starting at pointer B, we will work a virtual pointer B' and use SKIP_PIXELS and ROW_LENGTH
-  //       B' has to be DWORD aligned and (B - B') has to be a multiple of DWORD
-  //
-  // XXX : If we are not working with FreeImage but with our own buffer, we have to meet theses requirements :
-  //
-  //         Row are DWORD aligned
-  //
-  //       See
-  //         ImageTools::GetImageDescriptionForAlignedTexture(...) and  
-  //         ImageTools::GetMemoryRequirementForAlignedTexture(...)
-  //
+	//
+	// XXX : When transfering a texture in OpenGL, we can use
+	//
+	//   GL_UNPACK_ALIGNMENT
+	//   GL_UNPACK_ROW_LENGTH
+	//   GL_UNPACK_SKIP_PIXELS
+	//
+	// to define the memory buffer layout.
+	//
+	//  buffer
+	//   x  SKIP_PIXELS +------------+       |
+	//   |              |            |       |
+	//   |              |            |       |
+	//   |              |    Image   |       |
+	//   |              |            |       |
+	//   |              |            |       |
+	//   |              +------------+       |
+	//    <--------------------------><----->
+	//               ROW LENGTH     some padding
+	//
+	// OpenGL has a important limitation. Offsets are not defined in bytes but in multiple of Pixel Size !!
+	// That means that we have no way to require for an explicit padding !
+	// 
+	// note : with SubImageDefinition, the padding maybe a huge value to skip lots of pixel at the end of the scanline
+	//
+	// In a random ImageDefinition, this is a blocker. We cannot have all paddings we want 
+	//
+	//
+	// If the memory disposition (pitch, line size ...) was fully random, we would end copying data from an incorrect layout into a new buffer
+	// wasting lots of resources.
+	//
+	// XXX : There is a solution !!!
+	// 
+	//       for images coming from FreeImage, we can ensure (in specifications) that lines are DWORD aligned
+	//       So if we want to transfert a block a pixel starting at pointer B, we will work a virtual pointer B' and use SKIP_PIXELS and ROW_LENGTH
+	//       B' has to be DWORD aligned and (B - B') has to be a multiple of DWORD
+	//
+	//
+	// buffer 
+	// x
+	//
+	//          B'
+	//           x  SKIP_PIXELS' +------------+       |
+	//           |               |            |       |
+	//           |               |            |       |
+	//           |               |    Image   |       |
+	//           |               |            |       |
+	//           |               |            |       |
+	//           |               +------------+       |
+	// ---------><-------------------------------------
+	//                               ROW LENGTH'     
+	//
+	// XXX : If we are not working with FreeImage but with our own buffer, we have to meet theses requirements :
+	//
+	//         Row are DWORD aligned
+	//
+	//       See
+	//         ImageTools::GetImageDescriptionForAlignedTexture(...) and  
+	//         ImageTools::GetMemoryRequirementForAlignedTexture(...)
+	//
 
 	char * GLTextureTools::PrepareGLTextureTransfert(ImageDescription const & desc)
 	{	
@@ -663,30 +690,30 @@ namespace chaos
 		// first pixel already aligned on DWORD ?? 
 		uintptr_t b = (uintptr_t)desc.data; 
 
-    // find pointer b' before b that is DWORD aligned and at a distance multiple of pixel size from th real buffer.
-    //
-    // XXX : with some algebrae knowledge it would be done through a formula
-    //       i use a algorithm to fullfill that purpose
-    //
-    // DWORD aligned => with 4 iterations i should find a pointer that correspond to our needs
+		// find pointer b' before b that is DWORD aligned and at a distance multiple of pixel size from th real buffer.
+		//
+		// XXX : with some algebrae knowledge it would be done through a formula
+		//       i use a algorithm to fullfill that purpose
+		//
+		// DWORD aligned => with 4 iterations i should find a pointer that correspond to our needs
 
-    int i = 0;
-    while (i < 4 && (b % 4 != 0))
-    {
-      b -= pixel_size;
-      ++i;
-    }
+		int i = 0;
+		while (i < 4 && (b % 4 != 0))
+		{
+			b -= pixel_size;
+			++i;
+		}
 
-    if (b % 4 != 0)
-      return nullptr;  // cannot find a correct offset to meet wanted alignment after 4 iterations, this will never happen
+		if (b % 4 != 0)
+			return nullptr;  // cannot find a correct offset to meet wanted alignment after 4 iterations, this will never happen
 
-    skip_pixel = (((uintptr_t)desc.data) - b) / pixel_size;
-    result = (char*)b;
+		skip_pixel = (((uintptr_t)desc.data) - b) / pixel_size;
+		result = (char*)b;
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
 		glPixelStorei(GL_UNPACK_SKIP_PIXELS, skip_pixel);
-		
+
 		return result;
 	}
 

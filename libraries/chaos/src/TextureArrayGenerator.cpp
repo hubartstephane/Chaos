@@ -233,18 +233,19 @@ namespace chaos
       for (size_t i = 0; i < slice_count; ++i)
       {
         ImageDescription image = slice_register.slices[i].description;
-
+		
         ImageDescription effective_image = (final_pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
           ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, false) :
           image;
+	
+		char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(effective_image);
+		if (texture_buffer != nullptr)
+		{
+			int type = (effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
-        int pixel_size = effective_image.pixel_format.GetPixelSize();
-        int type = (effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
-
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, effective_image.pitch_size / pixel_size);
-
-        GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
-        glTextureSubImage3D(result.texture_id, 0, 0, 0, i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, effective_image.data);
+			GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
+			glTextureSubImage3D(result.texture_id, 0, 0, 0, i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);		
+		}
       }
 
       // finalize the result data

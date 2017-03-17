@@ -47,10 +47,32 @@ protected:
 	{
 		boost::intrusive_ptr<chaos::Texture> result;
 
-		if (index < 0 || index >= (int)texture_paths.size())
+    int texture_index  = index / 4;
+    int texture_offset = index % 4;
+
+
+		if (texture_index < 0 || texture_index >= (int)texture_paths.size())
 			return result;
 
+#if 1
+
+    FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(texture_paths[texture_index].string().c_str());
+    if (image != nullptr)
+    {
+      int k = 5 * texture_offset + texture_offset;
+
+      chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(image);
+
+      chaos::ImageDescription sub_desc = desc.GetSubImageDescription(k, k, desc.width - 2 * k, desc.height - 2 * k);
+
+      result = chaos::GLTextureTools::GenTextureObject(sub_desc);
+
+      FreeImage_Unload(image);
+    }
+
+#else
 		result = chaos::GLTextureTools::GenTextureObject(texture_paths[index].string().c_str());
+#endif
 
 		return result;
 	}

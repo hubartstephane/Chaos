@@ -37,7 +37,7 @@ protected:
     glEnable(GL_CULL_FACE);
 
     glUseProgram(program->GetResourceID());
-         
+
     chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableTexture("material", texture);
 
@@ -52,7 +52,7 @@ protected:
   virtual void Finalize() override
   {
     program = nullptr;
-    mesh    = nullptr;
+    mesh = nullptr;
     texture = nullptr;
   }
 
@@ -77,8 +77,8 @@ protected:
     boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index);
     if (new_font != nullptr)
     {
-      font_index   = index;
-      texture      = new_font;
+      font_index = index;
+      texture = new_font;
     }
   }
 
@@ -95,31 +95,31 @@ protected:
   {
     index = index / TESTS_PER_FONT;
 
-	char const * font_names[] = {
-		"Multicolore.otf",
-		"Flatwheat-Regular.ttf",
-		"Flatwheat-Italic.ttf",
-		"unispace.ttf",
-		"unispace bold.ttf",
-		"unispace italic.ttf",
-		"unispace bold italic.ttf",
-		"Outwrite.ttf", // kerning !!
-		"absender1.ttf",    // 3 charmaps    
-		"Destroy x.ttf", 
-		"AgreloyInB1.ttf",   
-		"AgreloyInT3.ttf",   
-		"AgreloyOut1.ttf",
-		"AgreloyS1.ttf"		
-	};
+    char const * font_names[] = {
+      "Multicolore.otf",
+      "Flatwheat-Regular.ttf",
+      "Flatwheat-Italic.ttf",
+      "unispace.ttf",
+      "unispace bold.ttf",
+      "unispace italic.ttf",
+      "unispace bold italic.ttf",
+      "Outwrite.ttf", // kerning !!
+      "absender1.ttf",    // 3 charmaps    
+      "Destroy x.ttf",
+      "AgreloyInB1.ttf",
+      "AgreloyInT3.ttf",
+      "AgreloyOut1.ttf",
+      "AgreloyS1.ttf"
+    };
 
-	int font_count = sizeof(font_names) / sizeof(font_names[0]);
+    int font_count = sizeof(font_names) / sizeof(font_names[0]);
 
-	if (index < 0)
-		return nullptr;
-	if (index >= font_count)
-		return nullptr;
+    if (index < 0)
+      return nullptr;
+    if (index >= font_count)
+      return nullptr;
 
-	return font_names[index];
+    return font_names[index];
   }
 
   void DisplayFaceInfo(FT_Face face) const
@@ -133,10 +133,10 @@ protected:
     std::cout << "max_advance_width  : " << face->max_advance_width << std::endl;
     std::cout << "max_advance_height : " << face->max_advance_height << std::endl;
     std::cout << "num_charmaps       : " << face->num_charmaps << std::endl;
-	std::cout << "min_glyph_x        : " << face->bbox.xMin << std::endl;
-	std::cout << "max_glyph_x        : " << face->bbox.xMax << std::endl;
-	std::cout << "min_glyph_y        : " << face->bbox.yMin << std::endl;
-	std::cout << "max_glyph_y        : " << face->bbox.yMax << std::endl;
+    std::cout << "min_glyph_x        : " << face->bbox.xMin << std::endl;
+    std::cout << "max_glyph_x        : " << face->bbox.xMax << std::endl;
+    std::cout << "min_glyph_y        : " << face->bbox.yMin << std::endl;
+    std::cout << "max_glyph_y        : " << face->bbox.yMax << std::endl;
 
     if (FT_HAS_VERTICAL(face))
       face = face;
@@ -191,9 +191,9 @@ protected:
 
   void DisplayGlyphInfo(FT_GlyphSlot glyph) const
   {
-    if (glyph->format == FT_GLYPH_FORMAT_NONE) 
+    if (glyph->format == FT_GLYPH_FORMAT_NONE)
       std::cout << "FT_GLYPH_FORMAT_NONE" << std::endl;
-    else if (glyph->format == FT_GLYPH_FORMAT_COMPOSITE) 
+    else if (glyph->format == FT_GLYPH_FORMAT_COMPOSITE)
       std::cout << "FT_GLYPH_FORMAT_COMPOSITE" << std::endl;
     else if (glyph->format == FT_GLYPH_FORMAT_BITMAP)
       std::cout << "FT_GLYPH_FORMAT_BITMAP" << std::endl;
@@ -248,7 +248,7 @@ protected:
 
     // load the foot
     boost::filesystem::path resources_path = application->GetResourcesPath();
-    boost::filesystem::path font_path      = resources_path / font_name;
+    boost::filesystem::path font_path = resources_path / font_name;
 
     FT_Face face;
     Err = FT_New_Face(library, font_path.string().c_str(), 0, &face);
@@ -271,19 +271,19 @@ protected:
     //parameters.mag_filter = GL_NEAREST;
 
 
-  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY);
+    //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY);
     chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB);
-  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA);
+    //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA);
 
-  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY_FLOAT);
-  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB_FLOAT);
-  //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA_FLOAT);
+    //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY_FLOAT);
+    //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB_FLOAT);
+    //  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA_FLOAT);
 
     FIBITMAP * bm = nullptr;
-
+#if 0
     bm = chaos::FontTools::GenerateImage(face, font_name[2], pixel_format);
 
-#if 0
+#else
 
     if ((index % TESTS_PER_FONT) == 0)
       bm = chaos::FontTools::GenerateImage(face, font_name, pixel_format);
@@ -322,14 +322,14 @@ protected:
   }
 
   virtual bool Initialize() override
-  {   
+  {
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;
 
-    boost::filesystem::path resources_path       = application->GetResourcesPath();
+    boost::filesystem::path resources_path = application->GetResourcesPath();
     boost::filesystem::path fragment_shader_path = resources_path / "pixel_shader.txt";
-    boost::filesystem::path vertex_shader_path   = resources_path / "vertex_shader.txt";
+    boost::filesystem::path vertex_shader_path = resources_path / "vertex_shader.txt";
 
     texture = LoadFont(font_index);
     if (texture == nullptr)
@@ -337,8 +337,8 @@ protected:
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
-    
+    loader.AddShaderSourceFile(GL_VERTEX_SHADER, vertex_shader_path);
+
     program = loader.GenerateProgramObject();
     if (program == nullptr)
       return false;
@@ -356,7 +356,7 @@ protected:
   virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
     chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
-    hints.toplevel  = 0;
+    hints.toplevel = 0;
     hints.decorated = 1;
   }
 
@@ -366,7 +366,7 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
 
-  int font_index{0};
+  int font_index{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)
@@ -374,11 +374,11 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-    
+
   chaos::MyGLFWSingleWindowApplicationParams params;
-  params.monitor       = nullptr;
-  params.width         = 500;
-  params.height        = 500;
+  params.monitor = nullptr;
+  params.width = 500;
+  params.height = 500;
   params.monitor_index = 0;
   chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

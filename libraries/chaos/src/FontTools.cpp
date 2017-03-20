@@ -32,9 +32,9 @@ namespace chaos
   {
   public:
 
-    FillFontImageMetaFunc(ImageDescription const & in_image_description, PixelGray const * in_src_buffer) :
-      image_description(in_image_description),
-      src_buffer(in_src_buffer)
+    FillFontImageMetaFunc(ImageDescription & in_dst_desc, ImageDescription & in_src_desc) :
+      dst_desc(in_dst_desc),
+      src_desc(in_src_desc)
     {}
 
     /// the dispatch function
@@ -42,20 +42,15 @@ namespace chaos
     void operator()(DST_TYPE dst_color)
     {
       PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
-      if (pf == image_description.pixel_format)
+      if (pf == dst_desc.pixel_format)
       {
-        int w = image_description.width;
-        int h = image_description.height;
-        int pitch_size = image_description.pitch_size;
-        
-        unsigned char * dst_buffer = (unsigned char *)image_description.data;
+        int w = dst_desc.width;
+        int h = dst_desc.height;
 
         for (int j = 0; j < h; ++j)
         {
-          DST_TYPE * d = (DST_TYPE *)(&dst_buffer[j * pitch_size]);
-          PixelGray const * s = &src_buffer[(h - 1 - j) * w];
-
-
+          DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, j);
+          PixelGray const * s = ImageTools::GetPixelAddress<PixelGray>(src_desc, 0, (h - 1 - j));
 
           for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
             PixelConverter::Convert(d[i], s[i]);
@@ -65,9 +60,8 @@ namespace chaos
 
   protected:
 
-    ImageDescription image_description;
-
-    PixelGray const * src_buffer;
+    ImageDescription dst_desc;
+    ImageDescription src_desc;
   };
 
   FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format)
@@ -75,19 +69,30 @@ namespace chaos
     if (!pixel_format.IsValid())
       return nullptr;
 
-    int w = bitmap.width;
-    int h = bitmap.rows;
-
     int mode = bitmap.pixel_mode;
     if (mode != FT_PIXEL_MODE_GRAY) // other format not supported yet
       return nullptr;
 
+    int w = bitmap.width;
+    int h = bitmap.rows;
+
     FIBITMAP * result = ImageTools::GenFreeImage(pixel_format, w, h);
     if (result != nullptr)
     {
-      ImageDescription image_description = ImageTools::GetImageDescription(result);
+      ImageDescription src_desc;
+      src_desc.width  = w;
+      src_desc.height = h;
+      src_desc.pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY);
+      src_desc.line_size  = w * sizeof(PixelGray);
+      src_desc.pitch_size = bitmap.pitch;
+      src_desc.padding_size = src_desc.pitch_size - src_desc.line_size;
+      src_desc.data = bitmap.buffer;
 
-      FillFontImageMetaFunc fill_func_map(image_description, (PixelGray const*)bitmap.buffer);
+      assert(src_desc.IsValid() && !src_desc.IsEmpty());
+
+      ImageDescription dst_desc = ImageTools::GetImageDescription(result);
+
+      FillFontImageMetaFunc fill_func_map(dst_desc, src_desc);
 
       boost::mpl::for_each<PixelTypes>(fill_func_map);
     }
@@ -185,14 +190,12 @@ namespace chaos
 
 
 
-
-
   class FillFontStringImageMetaFunc
   {
   public:
 
-    FillFontStringImageMetaFunc(ImageDescription const & in_image_description, char const * in_str, std::map<char, FontTools::CharacterBitmapGlyph> const & in_glyph_cache, int in_min_x, int in_min_y) :
-      image_description(in_image_description),
+    FillFontStringImageMetaFunc(ImageDescription const & in_dst_desc, char const * in_str, std::map<char, FontTools::CharacterBitmapGlyph> const & in_glyph_cache, int in_min_x, int in_min_y) :
+      dst_desc(in_dst_desc),
       str(in_str),
       glyph_cache(in_glyph_cache),    
       min_x(in_min_x),
@@ -204,17 +207,17 @@ namespace chaos
     void operator()(DST_TYPE dst_color)
     {
       PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
-      if (pf == image_description.pixel_format)
+      if (pf == dst_desc.pixel_format)
       {
         // fill the background with empty data
-        ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+        ImageTools::FillImageBackground(dst_desc, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
        
         // copy each character glyph into buffer
-        int pitch_size = image_description.pitch_size;
+        int pitch_size = dst_desc.pitch_size;
 
-        int dst_height = image_description.height;
+        int dst_height = dst_desc.height;
 
-        unsigned char * dst_buffer = (unsigned char *)image_description.data;
+        unsigned char * dst_buffer = (unsigned char *)dst_desc.data;
 
         int pos_x = 0;
         int pos_y = 0;
@@ -333,7 +336,7 @@ namespace chaos
 
   protected:
 
-    ImageDescription image_description;
+    ImageDescription dst_desc;
 
     char const * str;
 
@@ -407,9 +410,9 @@ namespace chaos
     result = ImageTools::GenFreeImage(pixel_format, required_width, required_height);
     if (result != nullptr)
     {
-      ImageDescription image_description = ImageTools::GetImageDescription(result);
+      ImageDescription dst_desc = ImageTools::GetImageDescription(result);
 
-      FillFontStringImageMetaFunc fill_func_map(image_description, str, glyph_cache, min_x, min_y);
+      FillFontStringImageMetaFunc fill_func_map(dst_desc, str, glyph_cache, min_x, min_y);
 
       boost::mpl::for_each<PixelTypes>(fill_func_map);
     }

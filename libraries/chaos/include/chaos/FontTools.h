@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/PixelFormat.h>
+#include <chaos/ImageDescription.h>
 
 namespace chaos
 {
@@ -52,6 +53,9 @@ namespace chaos
       /** the glyph */
       FT_BitmapGlyph bitmap_glyph{ nullptr };
     };
+
+    /** get an image description from a FT_Bitmap object */
+    static ImageDescription GetImageDescription(FT_Bitmap & bitmap);
 
     /** generate a bitmap from a glyph slot */
     static FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY));

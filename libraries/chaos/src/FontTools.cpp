@@ -64,6 +64,26 @@ namespace chaos
     ImageDescription src_desc;
   };
 
+  ImageDescription FontTools::GetImageDescription(FT_Bitmap & bitmap)
+  {
+    ImageDescription result;
+
+    int w = bitmap.width;
+    int h = bitmap.rows;
+
+    result.width = w;
+    result.height = h;
+    result.pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY);
+    result.line_size = w * sizeof(PixelGray);
+    result.pitch_size = bitmap.pitch;
+    result.padding_size = result.pitch_size - result.line_size;
+    result.data = bitmap.buffer;
+
+    assert(result.IsValid() && !result.IsEmpty());
+
+    return result;
+  }
+
   FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format)
   {
     if (!pixel_format.IsValid())
@@ -79,17 +99,7 @@ namespace chaos
     FIBITMAP * result = ImageTools::GenFreeImage(pixel_format, w, h);
     if (result != nullptr)
     {
-      ImageDescription src_desc;
-      src_desc.width  = w;
-      src_desc.height = h;
-      src_desc.pixel_format = PixelFormat(PixelFormat::FORMAT_GRAY);
-      src_desc.line_size  = w * sizeof(PixelGray);
-      src_desc.pitch_size = bitmap.pitch;
-      src_desc.padding_size = src_desc.pitch_size - src_desc.line_size;
-      src_desc.data = bitmap.buffer;
-
-      assert(src_desc.IsValid() && !src_desc.IsEmpty());
-
+      ImageDescription src_desc = FontTools::GetImageDescription(bitmap);
       ImageDescription dst_desc = ImageTools::GetImageDescription(result);
 
       FillFontImageMetaFunc fill_func_map(dst_desc, src_desc);
@@ -241,9 +251,21 @@ namespace chaos
 
           bt = -bt;
 
+          ImageDescription src_desc = FontTools::GetImageDescription(record.bitmap_glyph->bitmap);
+
           // copy the glyph to dest buffer : invert lines 
           for (int y = 0; y < h; ++y)
           {
+            int delta_x = (pos_x + bl - min_x);
+            int delta_y = (pos_y + bt - min_y + y);
+
+            DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, delta_x, h - 1 - delta_y);
+            PixelGray const * s = ImageTools::GetPixelAddress<PixelGray>(src_desc, 0, y);
+
+            for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
+              PixelConverter::Convert(d[x], s[x]);
+
+#if 0
 
             DST_TYPE * d = (DST_TYPE*)(dst_buffer +
               sizeof(DST_TYPE) * (pos_x + bl - min_x) +
@@ -254,6 +276,9 @@ namespace chaos
 
             for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
               PixelConverter::Convert(d[x], s[x]);
+
+#endif
+
 #if 0
             for (int x = 0; x < w; ++x)
             {
@@ -280,51 +305,6 @@ namespace chaos
 
 
 
-
-
-#if 0
-
-
-          // copy the glyph to dest buffer : invert lines 
-          if (bpp == 8)
-          {
-            for (int y = 0; y < h; ++y)
-            {
-              for (int x = 0; x < w; ++x)
-              {
-                unsigned char * d = buffer +
-                  (pos_x + bl - min_x + x) +
-                  (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
-
-                unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
-
-                d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
-              }
-            }
-          }
-          else if (bpp == 32)
-          {
-            for (int y = 0; y < h; ++y)
-            {
-              for (int x = 0; x < w; ++x)
-              {
-                unsigned char * d = buffer +
-                  4 * (pos_x + bl - min_x + x) +
-                  (required_height - 1 - (pos_y + bt - min_y + y)) * pitch; // compute destination address
-
-                unsigned char const * s = record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
-
-                d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
-                d[1] = max(d[1], s[0]);
-                d[2] = max(d[2], s[0]);
-                d[3] = max(d[3], s[0]);
-              }
-            }
-          }
-
-
-
-#endif
 
 
           // advance the cursor

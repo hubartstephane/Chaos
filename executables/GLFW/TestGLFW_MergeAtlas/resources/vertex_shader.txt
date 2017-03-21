@@ -1,0 +1,23 @@
+layout (location = 0) in vec3 position0;
+layout (location = 1) in vec3 normal;
+
+out vec3 pos;
+out vec3 col;
+
+uniform mat4  projection;
+uniform mat4  local_to_world;
+uniform mat4  world_to_camera;
+
+void main() 
+{
+  pos = position0;
+
+  vec4 tmp = vec4(pos, 1.0);
+  tmp = local_to_world  * tmp;
+  tmp = world_to_camera * tmp;
+  tmp = projection      * tmp;
+
+  col = abs(normal);
+
+  gl_Position = tmp;
+}

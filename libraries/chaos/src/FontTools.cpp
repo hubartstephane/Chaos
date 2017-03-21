@@ -79,8 +79,6 @@ namespace chaos
     result.padding_size = result.pitch_size - result.line_size;
     result.data = bitmap.buffer;
 
-    assert(result.IsValid() && !result.IsEmpty());
-
     return result;
   }
 
@@ -188,18 +186,6 @@ namespace chaos
     return result;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   class FillFontStringImageMetaFunc
   {
   public:
@@ -259,7 +245,7 @@ namespace chaos
             int delta_x = (pos_x + bl - min_x);
             int delta_y = (pos_y + bt - min_y + y);
 
-            DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, delta_x, h - 1 - delta_y);
+            DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, delta_x, dst_height - 1 - delta_y);
             PixelGray const * s = ImageTools::GetPixelAddress<PixelGray>(src_desc, 0, y);
 
             for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
@@ -278,35 +264,7 @@ namespace chaos
               PixelConverter::Convert(d[x], s[x]);
 
 #endif
-
-#if 0
-            for (int x = 0; x < w; ++x)
-            {
-              unsigned char * d = buffer +
-                (pos_x + bl - min_x + x) +
-                (dst_height - 1 - (pos_y + bt - min_y + y)) * pitch_size; // compute destination address
-
-              PixelGray const * s = (PixelGray const *)record.bitmap_glyph->bitmap.buffer + x + y * w; // compute source address
-
-             // d[0] = max(d[0], s[0]); // 'max' because there can be an overlaps between consecutive characters : want to BLEND
-            }
-
-#endif
-
-
-
-
           }
-
-
-
-
-
-
-
-
-
-
           // advance the cursor
           pos_x += avx;
           pos_y += avy;

@@ -241,7 +241,7 @@ namespace chaos
       /** split a filename into DIRECTORY, INDEX_FILENAME and BITMAP prefix path */
       void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const;
       /** get the name of a bitmap */
-      boost::filesystem::path GetBitmapFilename(boost::filesystem::path bitmap_filename, int index) const;
+      boost::filesystem::path GetBitmapFilename(FREE_IMAGE_FORMAT image_format, boost::filesystem::path bitmap_filename, int index) const;
 
     protected:
 

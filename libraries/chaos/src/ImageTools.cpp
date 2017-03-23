@@ -161,6 +161,11 @@ namespace chaos
 		return FreeImage_AllocateT(image_type, width, height, bpp);
 	}
 
+	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
+	{
+		return (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? FIF_PNG : FIF_EXR;	
+	}
+	
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
 	{
 		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)

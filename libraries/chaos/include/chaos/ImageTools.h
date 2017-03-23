@@ -20,10 +20,11 @@ namespace chaos
 
 		/** generate a free image corresponding to a given pixel format */
 		static FIBITMAP * GenFreeImage(PixelFormat const & pixel_format, int width, int height);
-
 		/** get the free image description frm a type */
 		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const & pixel_format, int * bpp = nullptr);
-
+		/** the free image prefered file format for a given PixelFormat */
+		static FREE_IMAGE_FORMAT GetFreeImageFormat(PixelFormat const & pixel_format);
+		
 		/** load an image from a buffer */
 		static FIBITMAP * LoadImageFromBuffer(Buffer<char> buffer);
 		/** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */

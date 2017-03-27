@@ -11,6 +11,8 @@
 #include <chaos/FontTools.h>
 #include <chaos/ImageTools.h>
 
+#if 0
+
 static int ATLAS_BPP = 0;
 static int ATLAS_PADDING = 10;
 
@@ -135,8 +137,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 
 
-
-
+#endif
 
 
 
@@ -149,6 +150,43 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat const & pixel_format, boost::filesystem::path const & dst_p)
 {
+  chaos::BitmapAtlas::Atlas          atlas;
+  chaos::BitmapAtlas::AtlasGenerator generator;
+  chaos::BitmapAtlas::AtlasGeneratorParams params;
+  chaos::BitmapAtlas::AtlasInput     input;
+
+  std::string dir_name = chaos::StringTools::Printf("Test_%d", pixel_format.GetFormat());
+
+  boost::filesystem::path atlas_path = dst_p / dir_name;
+
+  if (boost::filesystem::create_directories(atlas_path))
+  {
+    // initialize the atlas to save
+    chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("bitmap_set1");
+
+    for (size_t i = 0; i < atlas_bitmaps.size(); ++i)
+    {
+      std::string name = chaos::StringTools::Printf("Bitmap_%02d", i);
+
+      bitmap_set->AddBitmap(name.c_str(), atlas_bitmaps[i], false);
+    }
+
+    params.merge_params.pixel_format = pixel_format;
+    generator.ComputeResult(input, atlas, params);
+
+    atlas.SaveAtlas(atlas_path / "Atlas");
+  }
+
+
+
+  // save the atlas
+
+
+
+  
+
+
+
 
 
 }

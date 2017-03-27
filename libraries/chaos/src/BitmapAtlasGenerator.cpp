@@ -398,6 +398,11 @@ namespace chaos
 						// to match with OpenGL (bottom-left), we have to make a swap
 						int tex_x = entry->x;
 						int tex_y = params.atlas_height - entry->y - entry->height;
+
+
+            // shuxxx
+
+
 						FreeImage_Paste(bitmap.get(), entry_input->bitmap, tex_x, tex_y, 255);
 					}
 					result.push_back(std::move(bitmap));

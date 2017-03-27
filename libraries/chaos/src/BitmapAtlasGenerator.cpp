@@ -399,11 +399,11 @@ namespace chaos
 						int tex_x = entry->x;
 						int tex_y = params.atlas_height - entry->y - entry->height;
 
+            // copy and convert pixels
+            ImageDescription src_desc = ImageTools::GetImageDescription(entry_input->bitmap);
+            ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
 
-            // shuxxx
-
-
-						FreeImage_Paste(bitmap.get(), entry_input->bitmap, tex_x, tex_y, 255);
+            ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, false);
 					}
 					result.push_back(std::move(bitmap));
 				}

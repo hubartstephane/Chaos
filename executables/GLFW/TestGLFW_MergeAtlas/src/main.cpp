@@ -150,45 +150,42 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat const & pixel_format, boost::filesystem::path const & dst_p)
 {
-  chaos::BitmapAtlas::Atlas          atlas;
-  chaos::BitmapAtlas::AtlasGenerator generator;
-  chaos::BitmapAtlas::AtlasGeneratorParams params;
-  chaos::BitmapAtlas::AtlasInput     input;
+	std::string dir_name = chaos::StringTools::Printf("Test_%d", pixel_format.GetFormat());
 
-  std::string dir_name = chaos::StringTools::Printf("Test_%d", pixel_format.GetFormat());
+	boost::filesystem::path atlas_path = dst_p / dir_name;
 
-  boost::filesystem::path atlas_path = dst_p / dir_name;
+	// STEP 1 : create atlas from images of distinct formats
+	if (boost::filesystem::create_directories(atlas_path))
+	{
+		chaos::BitmapAtlas::Atlas          atlas;
+		chaos::BitmapAtlas::AtlasGenerator generator;
+		chaos::BitmapAtlas::AtlasGeneratorParams params;
+		chaos::BitmapAtlas::AtlasInput     input;
 
-  if (boost::filesystem::create_directories(atlas_path))
-  {
-    // initialize the atlas to save
-    chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("bitmap_set1");
+		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("bitmap_set1");
 
-    for (size_t i = 0; i < atlas_bitmaps.size(); ++i)
-    {
-      std::string name = chaos::StringTools::Printf("Bitmap_%02d", i);
+		for (size_t i = 0; i < atlas_bitmaps.size(); ++i)
+		{
+			std::string name = chaos::StringTools::Printf("Bitmap_%02d", i);
 
-      bitmap_set->AddBitmap(name.c_str(), atlas_bitmaps[i], false);
-    }
+			bitmap_set->AddBitmap(name.c_str(), atlas_bitmaps[i], false);
+		}
 
-    params.merge_params.pixel_format = pixel_format;
-    generator.ComputeResult(input, atlas, params);
+		params.merge_params.pixel_format = pixel_format;
+		generator.ComputeResult(input, atlas, params);
 
-    atlas.SaveAtlas(atlas_path / "Atlas");
-  }
+		atlas.SaveAtlas(atlas_path / "Atlas");
+	}
+	// STEP 2 : Reload - Resave Atlas
+	boost::filesystem::path resave_path = atlas_path / "Resave";
 
+	if (boost::filesystem::create_directories(resave_path))
+	{
+		chaos::BitmapAtlas::Atlas atlas;
 
-
-  // save the atlas
-
-
-
-  
-
-
-
-
-
+		atlas.LoadAtlas(atlas_path / "Atlas");
+		atlas.SaveAtlas(resave_path / "ResavedAtlas");
+	}
 }
 
 void LoadBitmaps(std::vector<FIBITMAP*> & atlas_bitmaps)
@@ -236,7 +233,7 @@ int _tmain(int argc, char ** argv, char ** env)
 		for (int i = chaos::PixelFormat::FORMAT_GRAY ; i <= chaos::PixelFormat::FORMAT_RGBA_FLOAT ; ++i)
 		{
 			chaos::PixelFormat pixel_format = chaos::PixelFormat(i);
-		
+
 			TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p);		
 		}
 		chaos::WinTools::ShowFile(dst_p.string().c_str());

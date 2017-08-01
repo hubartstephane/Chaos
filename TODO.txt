@@ -1,0 +1,151 @@
+DebugTools::DisplayCallStack(...) : 200 ?
+
+
+DoubleZone.h
+
+  template<typename>  ======> manque T
+  CheckZoneChange(...)
+  
+  
+EmptyClass.h
+
+  ce framework est abandonn‚
+  
+EndianTools:
+
+  on peut introduire une boucle et generaliser le code
+  ajouter un executable de test
+  
+FilePathManager
+
+  a faire 
+  
+NULL => remplacer par nullptr
+
+FileTools:
+
+  peut etre tenter de faire plus du code generique LINUX
+  
+  
+  GetSubImageDescription : on pourrait ajouter un bAcceptClamp parameter, et reduire la taille autant que necessaire
+  
+  
+ImageTools::FillImageBackground(...) :
+
+  pourrait prendre n importe quel type de couleur (PixelGray ...)
+  
+ZoneCamera : a faire
+
+IndexBuffer : missing override
+VertexBuffer
+
+
+Wintools:
+  cleaning
+  d ou viennent 1600 et 2000
+  
+  result.pixels = SharedPolicy ... (attention aux pb d alignement !!!)
+
+ VertexDeclaration
+ 
+   GetSemanticCount(...) : pourQUOI max et pas count++;
+   
+StringTools
+
+   commentaire ; ci_greater
+   is variable name : peut commencer par un chiffre ?
+   RemoveEndLine : popup_back (et le 0 ??)
+
+
+GLResourcePool:
+
+  a faire  
+
+
+ ClockManager
+ 
+  isDescendantClock : better to try child to top clock? isn't it
+  FindUnusedID  merite un early exit avec smaller and bigger
+  commentaire : try bigger first incomprehensible
+  ajouter un commentaire sur
+  ID = 0 => no id, don't care
+  ID > 0 => want unique ID => bug probable CreateChildClock (329
+  ID < 0 => automatic
+
+  RemoveAllChildClock,RemoveAllPendingEvents : eviter la copie de boost_intrusive_ptr
+  
+  Simplifier la gestion des events :
+  Les Repetitions, tout ca : trop complique
+  L 284, important to keep reference : semble faux
+  
+  
+GLTools
+
+  GetEnumVectorArity (faire passer float avant)
+  MapBuffers :meriterait d envoyer (std::make_pai<nullptr,nullptr) en cas d erreur)
+  commentaire dans les fonctions SetUniformImpl pour expliquer les conversions
+  
+  
+GLProgramData
+
+  557 : 3xGLfunction => utiliser location plutot que attrib.location
+  il y a du clean a faire avec les fonctions 
+  SetUniformVectorImpl : manque boolean ???
+  peut etre faudrait il ajouter la meme chose avec les attributes
+  
+GLProgramData
+
+  Extract => bug avec desc chaines du genre position9autrechose
+  Extract => pas de array + semantic_index (ca a l'air d etre voulu quand meme)
+  
+ FPSViewInputController :  ajouter la configuration des touches, voire de la manette  
+ 
+ 
+ 
+MyGLFWGamepadManager :
+
+  GetXBOXStickDirection. La renormalization devrait etre faite en fonction des MAX vaues de chaque axes??
+  
+  Ca peut etre interressant que le manager detecte les inputs de stick qui ne sont pas allou‚ => creation automatique de nouveaux players
+  
+  Destructeur du gamepad devrait peut etre desenregistrer le gamepad du manager. utilisation de intrusive_ptrs
+  
+NamedObjectVector :
+
+  a supprimer ?
+  
+  SkinnedMesh / SkinnedMeshAnimation:
+  
+    vide
+    
+  SkeletonHierarchyDef :
+  
+    quasi vide
+    
+  SimpleWin32Class :
+  
+    utiliser std::string
+    
+    CreateWindowHinstance(...) ca vaut peut etre le coup d'utiliser le perferct forwarding de c++11
+    
+  MyGLFWWindow:
+    
+    RequiredWindowRefresh : a voir la meilleure solution  
+    
+    fonction de moniteurs meriterait peut etre leur propre espace de nom
+    le clamp de l index du moniteur ... bofbof
+    moniteur[-1] => peut retourner primary si unique
+    
+    gestion du curseur
+    tester les tweak sur la position des moniteurs
+    
+Texture:
+
+  TextureDescription contient un texture ID (duplicata)
+  
+TextureArrayGenerator:
+
+  eviter les proxy qui n'apportent rien ??
+  ImageSliceGenerator => TextureSliceGenerator
+  ::clean => commentaire desqtroy intrusive_ptr incomprehensible
+  Clean() : the generator should not clean itself after texturearray generation

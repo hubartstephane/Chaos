@@ -209,7 +209,7 @@ protected:
 
 		//generator.GenerateSprites("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon[button]bidon", &sprite_manager, &generator_result, generator_params);
 
-		generator.GenerateSprites("Hi [RED Ben]\nHere is a first example\nof my own stuff with [button] embedded", &sprite_manager, &generator_result, generator_params);
+		generator.GenerateSprites("Hi [RED Ben]\nHere is a first example\nof my own stuff with [button][button][button] embedded", &sprite_manager, &generator_result, generator_params);
 
 
 		//generator.GenerateSprites("He llo[button]aaBLyYjg[RED world\n    to[button]to]\n[C2 Change[button]Charset 2\n[C1 Change[button]Charset 1]]\nRetour   Charset[button]normal", &sprite_manager, &generator_result, generator_params);

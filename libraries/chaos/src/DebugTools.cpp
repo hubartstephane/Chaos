@@ -3,43 +3,55 @@
 namespace chaos
 {
 
-  // code inspired from OpenGL insights : chapter 33
-  void DebugTools::DisplayCallStack(std::ostream & stream)
-  {   
-    HANDLE process = GetCurrentProcess();
-   
-    SymSetOptions(SYMOPT_LOAD_LINES);
-    SymInitialize(process, NULL, TRUE);
+	// code inspired from OpenGL insights : chapter 33
+	void DebugTools::DisplayCallStack(std::ostream & stream)
+	{
+		// Note on CaptureStackBackTrace : https://msdn.microsoft.com/fr-fr/library/windows/desktop/bb204633(v=vs.85).aspx
 
-    void * stack[ 200 ];
-    memset(stack, 0, sizeof(stack));
+		HANDLE process = GetCurrentProcess();
 
-    unsigned short frames = CaptureStackBackTrace(0, 200, stack, NULL);
+		SymSetOptions(SYMOPT_LOAD_LINES);
+		SymInitialize(process, NULL, TRUE);
 
-    char symbol_info_buffer[sizeof(SYMBOL_INFO) + 256 * sizeof( char )];
-    memset(symbol_info_buffer, 0, sizeof(symbol_info_buffer));
+		ULONG frame_to_skip = 0;
+		while (true)
+		{
+			void * stack[ 64 ];
+			memset(stack, 0, sizeof(stack));
 
-    SYMBOL_INFO  * symbol = (SYMBOL_INFO *)symbol_info_buffer;
-    symbol->MaxNameLen    = 255;
-    symbol->SizeOfStruct  = sizeof( SYMBOL_INFO );
+			ULONG frame_to_capture = sizeof(stack) / sizeof(stack[0]);
 
-    for(unsigned short i = 0 ; (i < frames) && (stack[i] != nullptr) ; i++)
-    {
-      SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+			unsigned short frames = CaptureStackBackTrace(frame_to_skip, frame_to_capture, stack, NULL);
+			if (frames == 0)
+				return;
 
-      if (strstr(symbol->Name, "DebugTools::DisplayCallStack") == symbol->Name) // ignore current function from the callstack
-        continue;
-      
-      IMAGEHLP_LINE64 line;
-      DWORD           dwDisplacement;
+			frame_to_skip += frame_to_capture;
 
-      line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+			char symbol_info_buffer[sizeof(SYMBOL_INFO) + 256 * sizeof( char )];
+			memset(symbol_info_buffer, 0, sizeof(symbol_info_buffer));
 
-      if (SymGetLineFromAddr64(process, (DWORD64)(stack[i]), &dwDisplacement, &line))
-      {
-        stream << "- " << line.FileName << "(" << line.LineNumber << ")    : " << symbol->Name << std::endl;
-      }
-    }
-  }
+			SYMBOL_INFO  * symbol = (SYMBOL_INFO *)symbol_info_buffer;
+			symbol->MaxNameLen    = 255;
+			symbol->SizeOfStruct  = sizeof( SYMBOL_INFO );
+
+			for(unsigned short i = 0 ; (i < frames) && (stack[i] != nullptr) ; i++)
+			{
+				SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+
+				if (strstr(symbol->Name, "DebugTools::DisplayCallStack") == symbol->Name) // ignore current function from the callstack
+					continue;
+
+				IMAGEHLP_LINE64 line;
+				DWORD           dwDisplacement;
+
+				line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+
+				if (SymGetLineFromAddr64(process, (DWORD64)(stack[i]), &dwDisplacement, &line))
+				{
+					stream << "- " << line.FileName << "(" << line.LineNumber << ")    : " << symbol->Name << std::endl;
+				}
+			}
+		}
+	}
 
 }; // namespace chaos

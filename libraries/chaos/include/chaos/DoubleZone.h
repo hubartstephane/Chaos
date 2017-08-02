@@ -37,7 +37,6 @@ public:
   static int const LEAVE_ZONE    = 2; 
 
   /** returns the zone where is the point */
-  template<typename T>
   int GetPointZone(vec_type const & p) const
   {
     if (!inside(p, outer_zone))
@@ -48,7 +47,6 @@ public:
   }
 
   /** returns the point zone changement */
-  template<typename>
   int CheckZoneChange(vec_type const & before, vec_type const & after) const
   {
     int before_zone = GetPointZone(before);
@@ -57,7 +55,6 @@ public:
   }
 
   /** returns the point zone changement */
-  template<typename>
   static int CheckZoneChange(int before, int after)
   {  
     if (before_zone != after_zone)

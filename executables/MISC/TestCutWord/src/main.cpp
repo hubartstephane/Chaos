@@ -11,23 +11,6 @@
 #if 0
 
 
-
-bc
-bd
-bf
-bg
-bh
-bj
-
-opti
-
-an
-amiante
-#endif
-
-#if 0
-
-
 PREFIX           MIDDLE           SUFFIX
 .MOT = (CONSONNE*.VOYELLE).(CONSONNE.VOYELLE)*.(CONSONNE)*
 

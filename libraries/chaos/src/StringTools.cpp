@@ -39,20 +39,17 @@ namespace chaos
 			return buffer;
 		}
 
-		std::string RemoveEndLine(std::string src)
+		std::string RemoveEndOfLines(std::string const & src)
 		{
 			size_t len = src.length();
 			while (len > 0)
 			{
-				if (src[len - 1] == '\n')
-					src.pop_back();
-				else if (src[len - 1] == '\r')
-					src.pop_back();
-				else 
+				char c = src[len - 1];
+				if (c != '\n' && c != '\r')
 					break;
 				--len;
 			}
-			return src;
+			return std::string(src.c_str(), len);
 		}
 
 		std::string IndentString(size_t count)

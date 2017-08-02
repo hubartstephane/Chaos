@@ -119,7 +119,7 @@ namespace chaos
       std::string err_msg = GetErrorString(err_code);
 
       // remove end of lines
-      err_msg = StringTools::RemoveEndLine(std::move(err_msg));
+      err_msg = StringTools::RemoveEndOfLines(std::move(err_msg));
 
       if (title == nullptr)
         LogTools::Error("Error : [%s]", err_msg.c_str());

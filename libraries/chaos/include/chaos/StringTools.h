@@ -21,7 +21,7 @@ namespace StringTools
   /** create a string from a format */
   std::string VPrintf(char const * format, va_list va);
   /** remove end line */
-  std::string RemoveEndLine(std::string src);
+  std::string RemoveEndOfLines(std::string const & src);
   /** returns a spaces made string */
   std::string IndentString(size_t count);
 

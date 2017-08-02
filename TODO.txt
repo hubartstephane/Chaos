@@ -17,6 +17,10 @@ VertexBuffer
 ...
 
   missing override
+    
+FileTools
+
+  peut etre tenter de faire plus du code generique LINUX
 
 ===================================================================================
 TODO
@@ -44,11 +48,7 @@ FilePathManager
   
 NULL => remplacer par nullptr
 
-FileTools:
 
-  peut etre tenter de faire plus du code generique LINUX
-  
-  
   GetSubImageDescription : on pourrait ajouter un bAcceptClamp parameter, et reduire la taille autant que necessaire
   
   

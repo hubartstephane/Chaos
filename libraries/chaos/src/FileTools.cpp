@@ -8,31 +8,31 @@ namespace chaos
 
 char const * FileTools::GetFilenameExtension(char const * filename)
 {
-  assert(filename != NULL);
+  assert(filename != nullptr);
   char const * result = strchr(filename, '.');
-  while (result != NULL)
+  while (result != nullptr)
   {
     char const * next_result = strchr(result + 1, '.');
-    if (next_result == NULL)
+    if (next_result == nullptr)
       break;
     result = next_result;
   }
-  if (result != NULL)
+  if (result != nullptr)
   {
     if (result[0] == '.') // do not include separator
       ++result;
     if (result[0] == 0) // empty extension is considered has no extension
-      result = NULL;
+      result = nullptr;
   }
   return result;
 }
 
 bool FileTools::IsTypedFile(char const * filename, char const * expected_ext)
 {
-  assert(filename     != NULL);
-  assert(expected_ext != NULL);
+  assert(filename     != nullptr);
+  assert(expected_ext != nullptr);
   char const * ext = GetFilenameExtension(filename);
-  if (ext != NULL)
+  if (ext != nullptr)
     return (_stricmp(ext, expected_ext) == 0);
   return false;
 }
@@ -44,55 +44,31 @@ Buffer<char> FileTools::LoadFile(boost::filesystem::path const & filename, bool 
 
 Buffer<char> FileTools::LoadFile(char const * filename, bool ascii)
 {
-  assert(filename != NULL);
+  assert(filename != nullptr);
 
   Buffer<char> result;
 
-#if _WIN32
-
-  HANDLE hFile = CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (hFile != INVALID_HANDLE_VALUE)
+  std::ifstream file(filename, std::ifstream::binary); // never want to format data
+  if (file)
   {
-    DWORD FileSize = GetFileSize(hFile, NULL);
-    if (FileSize != INVALID_FILE_SIZE)
-    {
-      result = SharedBufferPolicy<char>::NewBuffer(FileSize + (ascii? 1 : 0));
+	std::streampos start = file.tellg();
+	file.seekg(0, std::ios::end);
+	std::streampos end = file.tellg();
+	file.seekg(0, std::ios::beg);
 
-      if (result != nullptr)
-      {
-        DWORD FileRead = 0;
-        if (!ReadFile(hFile, result.data, FileSize, &FileRead, NULL))
-          result = Buffer<char>();
-        else if (ascii)
-          result.data[FileSize] = 0; 
-      }
-    }
-    CloseHandle(hFile);
+	size_t file_size = end - start;
+  
+	result = SharedBufferPolicy<char>::NewBuffer(file_size + (ascii? 1 : 0));
+
+	if (result != nullptr)
+	{
+		file.read((char *)result.data, file_size);
+		if (file.gcount() != file_size) // read all or failure
+			result = Buffer<char>();
+		else if (ascii)
+			result.data[file_size] = 0; 
+	}   
   }
-  //else
-  //  LogTools::Log("FileTools::LoadFile : failed to load file [%s]", filename);
-
-#elif _LINUX
-
-  FILE * file = fopen(filename, "r");
-  if (file != NULL)
-  {
-    struct stat st;
-    if (fstat(fileno(file), &st) != -1)
-    {
-      if (result.Allocate(st.st_size + (ascii? 1 : 0)) != NULL)
-      {
-        if (fread(result.data, st.st_size, 1, file) != 1)
-          result.Release(true);
-        else if (ascii)
-          result.buffer[st.st_size] = 0;
-      }
-    }
-
-    fclose(file);
-  }
-#endif // _LINUX
-
   return result;
 }
 bool FileTools::CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result)

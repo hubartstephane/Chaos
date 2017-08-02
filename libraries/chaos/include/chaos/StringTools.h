@@ -39,7 +39,7 @@ namespace StringTools
 		}
 	};
 
-	/** ci_less : a case insensitive comparator */
+	/** ci_greater : a case insensitive comparator */
 	struct ci_greater
 	{
 		bool operator ()(std::string const & s1, std::string const & s2) const

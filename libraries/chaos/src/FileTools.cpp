@@ -56,7 +56,7 @@ Buffer<char> FileTools::LoadFile(char const * filename, bool ascii)
 	std::streampos end = file.tellg();
 	file.seekg(0, std::ios::beg);
 
-	size_t file_size = end - start;
+	size_t file_size = (size_t)(end - start);
   
 	result = SharedBufferPolicy<char>::NewBuffer(file_size + (ascii? 1 : 0));
 

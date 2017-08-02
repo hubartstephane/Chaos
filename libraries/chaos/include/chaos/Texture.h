@@ -23,8 +23,6 @@ namespace chaos
     int    height{0};
     /** the image depth */
     int    depth{0};
-    /** the GL handler for the texture */
-    GLuint texture_id{0};
   };
 
   class Texture : public GraphicResource
@@ -37,7 +35,7 @@ namespace chaos
     virtual ~Texture();
 
     /** cleaning the object */
-    virtual void Release();
+	virtual void Release() override;
 
     /** returns the GL name of the resource */
     GLuint GetResourceID() const { return texture_id; }

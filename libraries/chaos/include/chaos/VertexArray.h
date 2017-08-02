@@ -16,7 +16,7 @@ namespace chaos
     virtual ~VertexArray();
 
     /** cleaning the object */
-    virtual void Release();
+	virtual void Release() override;
 
     /** returns the GL name of the resource */
     GLuint GetResourceID() const { return vertex_array_id; }

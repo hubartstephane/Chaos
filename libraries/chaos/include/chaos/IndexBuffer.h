@@ -16,7 +16,7 @@ namespace chaos
     virtual ~IndexBuffer();
 
     /** cleaning the object */
-    virtual void Release();
+	virtual void Release() override;
 
     /** returns the GL name of the resource */
     GLuint GetResourceID() const { return index_buffer_id; }

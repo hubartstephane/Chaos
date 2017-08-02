@@ -17,7 +17,7 @@ public:
   virtual ~GLProgram();
 
   /** cleaning the object */
-  virtual void Release();
+  virtual void Release() override;
 
   /** use the program */
   bool UseProgram(class GLProgramVariableProvider * uniform_provider, class GLProgramVariableProvider * attribute_provider);

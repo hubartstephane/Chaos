@@ -17,7 +17,7 @@ namespace chaos
     /** destructor */
     virtual ~GraphicResourceManager();
     /** cleaning the resources */
-    virtual void Release();
+	virtual void Release() override;
 
   public:
 

@@ -9,10 +9,10 @@ namespace chaos
 {
 
   /**
-  * ImageSliceRegisterEntry : an entry in the register of slices
+  * TextureArraySliceRegistryEntry : an entry in the registry of slices
   */
 
-  class ImageSliceRegisterEntry
+  class TextureArraySliceRegistryEntry
   {
   public:
 
@@ -23,10 +23,10 @@ namespace chaos
   };
 
   /**
-  * ImageSliceRegister : utility function that serves to register a slice into a vector
+  * TextureArraySliceRegistry : utility function that serves to registry a slice into a vector
   */
 
-  class ImageSliceRegister
+  class TextureArraySliceRegistry
   {
     friend class TextureArrayGenerator;
 
@@ -35,7 +35,7 @@ namespace chaos
     /** the method to insert one slice */
     bool InsertSlice(ImageDescription & description, void * user_data = nullptr);
     /** gets the number of slices inserted */
-    size_t size() const { return slices.size(); }
+    size_t GetSliceCount() const { return slices.size(); }
 
   protected:
 
@@ -43,100 +43,63 @@ namespace chaos
     bool IsImageSliceValid(ImageDescription const & description) const;
 
     /** the array that contains all slices */
-    std::vector<ImageSliceRegisterEntry> slices;
+    std::vector<TextureArraySliceRegistryEntry> slices;
   };
 
   /**
-  * ImageSliceGeneratorProxyBase : class that deserve registration of several slices
+  * TextureArraySliceGenerator : base class for slice generators
   */
 
-  class ImageSliceGeneratorProxyBase
+  class TextureArraySliceGenerator : public ReferencedObject
   {
   public:
-
-    /** destructor */
-    virtual ~ImageSliceGeneratorProxyBase() = default;
+  
     /** the method to override to add all slice we want */
-    virtual void AddSlices(ImageSliceRegister & slice_register) {}
+	virtual void RegisterSlices(TextureArraySliceRegistry & slice_registry){}
     /** the method to override to release all slices */
-    virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count) {}
+	virtual void ReleaseSlices(TextureArraySliceRegistryEntry * slices, size_t count){}
+	/** called just before the insertion into the registry */
+	virtual bool PreRegister(){return true;}
+
   };
 
   /**
-  * ImageSliceGeneratorBase : used to generate proxy for TextureArrayGeneration
+  * TextureArraySliceGenerator_Image : a generator that use a FBITMAP, or a path
   */
 
-  class ImageSliceGeneratorBase
+  class TextureArraySliceGenerator_Image : public TextureArraySliceGenerator
   {
   public:
+  
+	  /** constructor */
+	  TextureArraySliceGenerator_Image(boost::filesystem::path const & in_image_path) :
+		  image_path(in_image_path),
+		  image(nullptr),
+		  release_image(false) {} 
 
-    /** destructor */
-    virtual ~ImageSliceGeneratorBase() = default;
-    /** proxy generation method */
-    virtual ImageSliceGeneratorProxyBase * CreateProxy() const = 0;
-  };
+	  TextureArraySliceGenerator_Image(FIBITMAP * in_image, bool in_release_image) :
+		  image(in_image),
+		  release_image(in_release_image)
+	  {
+		  assert(image != nullptr);
+	  }
 
-  /**
-  * ImageSliceGeneratorProxy : a slice generator proxy from a image
-  */
+	  /** destructor */
+	  virtual ~TextureArraySliceGenerator_Image() override;
 
-  class ImageSliceGeneratorProxy : public ImageSliceGeneratorProxyBase
-  {
-  public:
+	  /** inherited */
+	  virtual void RegisterSlices(TextureArraySliceRegistry & slice_registry) override;
 
-    /** constructor */
-    ImageSliceGeneratorProxy(FIBITMAP * in_image, bool in_release_image) :
-      image(in_image),
-      release_image(in_release_image) {}
-
-    /** destructor */
-    ~ImageSliceGeneratorProxy();
-    /** the method to override to add all slice we want */
-    virtual void AddSlices(ImageSliceRegister & slice_register);
-    /** the method to override to release all slices */
-    virtual void ReleaseSlices(ImageSliceRegisterEntry * slices, size_t count);
+	  virtual bool PreRegister() override;
 
   protected:
 
-    /** the image */
-    FIBITMAP * image{ nullptr };
-    /** whether the image has to be released */
-    bool release_image{ false };
-  };
-
-  /**
-  * ImageSliceGenerator : a slice generator from a image filename
-  */
-
-  class ImageSliceGenerator : public ImageSliceGeneratorBase
-  {
-  public:
-
-    /** constructor */
-    ImageSliceGenerator(boost::filesystem::path const & in_image_path) :
-      image_path(in_image_path),
-      image(nullptr),
-      release_image(false) {} // release_image is unused with that constructor : the proxy will destroy the image loaded
-
-    ImageSliceGenerator(FIBITMAP * in_image, bool in_release_image) :
-      image(in_image),
-      release_image(in_release_image)
-    {
-      assert(image != nullptr);
-    }
-
-    /** proxy generation method */
-    virtual ImageSliceGeneratorProxyBase * CreateProxy() const;
-
-  protected:
-
-    /** path of the resource file */
-    boost::filesystem::path image_path;
-
-    /** the image */
-    FIBITMAP * image{ nullptr };
-    /** whether the image has to be released */
-    bool release_image{ false };
+	  /** path of the resource file */
+	  boost::filesystem::path image_path;
+	  /** the image */
+	  FIBITMAP * image{ nullptr };
+	  /** whether the image has to be released */
+	  bool release_image{ false };  
   };
 
   /**
@@ -160,8 +123,8 @@ namespace chaos
     class GeneratorEntry
     {
     public:
-      /** the proxy that will request some slices */
-      ImageSliceGeneratorProxyBase * proxy{ nullptr };
+      /** the generator that will request some slices */
+      boost::intrusive_ptr<TextureArraySliceGenerator> generator;
       /** optional where the slices are allocated */
       SliceInfo * slice_info{ nullptr };
     };
@@ -172,7 +135,7 @@ namespace chaos
     virtual ~TextureArrayGenerator();
 
     /** the insertion method (returns the slice considered) */
-    bool AddGenerator(ImageSliceGenerator const & generator, SliceInfo * slice_info = nullptr);
+    bool AddGenerator(TextureArraySliceGenerator * generator, SliceInfo * slice_info = nullptr);
     /** clean all generators */
     void Clean();
     /** generate the texture array */
@@ -181,7 +144,7 @@ namespace chaos
   protected:
 
     /** internal method to generate the texture array */
-    GenTextureResult GenerateTexture(ImageSliceRegister & slice_register, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
+    GenTextureResult GenerateTexture(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
 
   protected:
 

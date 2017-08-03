@@ -173,7 +173,7 @@ protected:
 
 		chaos::TextureArrayGenerator generator;
 		for (size_t i = 0 ; i < bitmaps.size() ; ++i)
-			generator.AddGenerator(chaos::ImageSliceGenerator(bitmaps[i], false));
+			generator.AddGenerator(new chaos::TextureArraySliceGenerator_Image(bitmaps[i], false));
 
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;

@@ -25,7 +25,7 @@ namespace chaos
 
 			TextureArrayGenerator generator;
 			for (size_t i = 0; i < bitmaps.size(); ++i)
-				generator.AddGenerator(ImageSliceGenerator(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
+				generator.AddGenerator(new TextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
 
 																					  // generate the texture array
 			texture = generator.GenerateTexture();

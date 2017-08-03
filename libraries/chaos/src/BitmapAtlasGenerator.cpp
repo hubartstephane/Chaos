@@ -100,7 +100,7 @@ namespace chaos
 				result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
 				result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
-																																	// generate glyph cache
+																		  // generate glyph cache
 				if (characters == nullptr || strlen(characters) == 0)
 					characters = DEFAULT_CHARACTERS;
 
@@ -382,7 +382,7 @@ namespace chaos
 				if (bitmap != nullptr)
 				{
 					// set the background to black
-          ImageDescription image_description = ImageTools::GetImageDescription(bitmap.get());
+					ImageDescription image_description = ImageTools::GetImageDescription(bitmap.get());
 
 					ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
@@ -399,11 +399,11 @@ namespace chaos
 						int tex_x = entry->x;
 						int tex_y = params.atlas_height - entry->y - entry->height;
 
-            // copy and convert pixels
-            ImageDescription src_desc = ImageTools::GetImageDescription(entry_input->bitmap);
-            ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
+						// copy and convert pixels
+						ImageDescription src_desc = ImageTools::GetImageDescription(entry_input->bitmap);
+						ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
 
-            ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, false);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, false);
 					}
 					result.push_back(std::move(bitmap));
 				}
@@ -696,7 +696,7 @@ namespace chaos
 			std::vector<int> collision_table;
 			collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
 
-																																 // find collision table
+																	   // find collision table
 			Rectangle r;
 			r.width = entry.description.width;
 			r.height = entry.description.height;
@@ -727,7 +727,7 @@ namespace chaos
 			if (!any_value)
 				return -1.0f; // texture can be set nowhere in that atlas
 
-											// find the best position
+							  // find the best position
 			for (size_t u = 0; u < x_count; ++u)
 			{
 				for (size_t v = 0; v < y_count; ++v)

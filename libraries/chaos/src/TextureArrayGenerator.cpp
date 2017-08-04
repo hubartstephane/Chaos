@@ -76,12 +76,15 @@ namespace chaos
 	bool TextureArrayGenerator::AddGenerator(TextureArraySliceGenerator * generator, SliceInfo * slice_info)
 	{
 		assert(generator != nullptr);
+
+		boost::intrusive_ptr<TextureArraySliceGenerator> generator_ptr = generator; // want to ensure that if PreRegister(...) fails, the resource is released
+
 		// prepare the generator
 		if (!generator->PreRegister())
 			return false;
 		// insert it into the list
 		GeneratorEntry entry;
-		entry.generator = generator;
+		entry.generator = generator_ptr;
 		entry.slice_info = slice_info;
 		generators.push_back(entry);
 		return true;

@@ -112,19 +112,24 @@ namespace chaos
     /** returns true whether the gamepad is connected */
     inline bool IsPresent() const { return (stick_index >= 0); }
     /** returns the button state */
-    bool IsButtonPressed(size_t button_index) const;
+    bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
     /** returns the button state */
-    float GetAxisValue(size_t axis_index) const;
+    float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
     /** returns the stick index */
     int GetGamepadIndex() const { return stick_index; }
     /** returns true whether there is any pressed button */
-    bool IsAnyButtonPressed() const;
+    bool IsAnyButtonPressed(bool previous_frame = false) const;
     /** returns true whether there is any axis in use */
-    bool IsAnyAxisAction() const;
+    bool IsAnyAxisAction(bool previous_frame = false) const;
     /** returns true whenever a buttons is pressed or an axis is in action */
-    bool IsAnyAction() const;
+    bool IsAnyAction(bool previous_frame = false) const;
     /** returns the direction of one stick (a combinaison of 2 axis) */
-    glm::vec2 GetXBOXStickDirection(int stick_index) const;
+    glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
+
+	/** returns the number of buttons */
+	size_t GetButtonCount() const;
+	/** returns the number of axis */
+	size_t GetAxisCount() const;
 
   protected:
 

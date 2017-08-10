@@ -26,63 +26,95 @@ void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
     final_value = 0.0f;
 }
 
-bool MyGLFWGamepad::IsButtonPressed(size_t button_index) const
+size_t MyGLFWGamepad::GetButtonCount() const
+{
+	return buttons.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
+}
+
+size_t MyGLFWGamepad::GetAxisCount() const
+{
+	return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
+}
+
+bool MyGLFWGamepad::IsButtonPressed(size_t button_index, bool previous_frame) const
 {
   if (!IsPresent())
     return false;
-  if (button_index >= buttons.size())
-    return false;
+
+  size_t count = buttons.size();
+  if (button_index >= count / 2)
+	  return false;
+
+  if (previous_frame)
+	  button_index += count / 2; // upper part of the array for previous_frame
+  
   return (buttons[button_index] != 0);
 }
 
-float MyGLFWGamepad::GetAxisValue(size_t axis_index) const
+float MyGLFWGamepad::GetAxisValue(size_t axis_index, bool previous_frame) const
 {
   if (!IsPresent())
     return 0.0f;
-  if (axis_index >= axis.size())
-    return 0.0f;
+
+  size_t count = axis.size();
+  if (axis_index >= count / 2)
+	  return 0.0f;
+
+  if (previous_frame)
+	  axis_index += count / 2; // upper part of the array for previous_frame
+
   return axis[axis_index].GetValue();
 }
 
-bool MyGLFWGamepad::IsAnyButtonPressed() const
+bool MyGLFWGamepad::IsAnyButtonPressed(bool previous_frame) const
 {
   if (!IsPresent())
     return false;
-  for (unsigned int button : buttons)
-    if (button)
-      return true;
+
+  size_t count = buttons.size();
+  size_t start = (previous_frame)? count / 2 : 0;
+  size_t end   = start + count / 2;
+
+  for (size_t i = start ; i < end ; ++i)
+	  if (buttons[i])
+		  return true;
   return false;
 }
 
-bool MyGLFWGamepad::IsAnyAxisAction() const
+bool MyGLFWGamepad::IsAnyAxisAction(bool previous_frame) const
 {
   if (!IsPresent())
     return false;
-  for (MyGLFWGamepadAxisData const & axis_data : axis)
-    if (axis_data.GetValue() != 0.0f)
-      return true;
+
+  size_t count = axis.size();
+  size_t start = (previous_frame)? count / 2 : 0;
+  size_t end   = start + count / 2;
+
+  for (size_t i = start ; i < end ; ++i)
+	  if (axis[i].GetValue() != 0.0f)
+		  return true;
   return false;
 }
 
-bool MyGLFWGamepad::IsAnyAction() const
+bool MyGLFWGamepad::IsAnyAction(bool previous_frame) const
 {
-  return IsAnyButtonPressed() || IsAnyAxisAction();
+  return IsAnyButtonPressed(previous_frame) || IsAnyAxisAction(previous_frame);
 }
 
-glm::vec2 MyGLFWGamepad::GetXBOXStickDirection(int stick_index) const
+glm::vec2 MyGLFWGamepad::GetXBOXStickDirection(int stick_index, bool previous_frame) const
 {
   glm::vec2 result(0.0f, 0.0f);
   if (IsPresent())
   {
     if (stick_index == XBOX_LEFT_AXIS)
     {
-      result.x = GetAxisValue(XBOX_LEFT_AXIS_X);
-      result.y = GetAxisValue(XBOX_LEFT_AXIS_Y);
+      result.x = GetAxisValue(XBOX_LEFT_AXIS_X, previous_frame);
+      result.y = GetAxisValue(XBOX_LEFT_AXIS_Y, previous_frame);
     }
     else if (stick_index == XBOX_RIGHT_AXIS)
     {
-      result.x = GetAxisValue(XBOX_RIGHT_AXIS_X);
-      result.y = GetAxisValue(XBOX_RIGHT_AXIS_Y);
+      result.x = GetAxisValue(XBOX_RIGHT_AXIS_X, previous_frame);
+      result.y = GetAxisValue(XBOX_RIGHT_AXIS_Y, previous_frame);
     }
     else
       return result;
@@ -104,23 +136,51 @@ void MyGLFWGamepad::UpdateAxisAndButtons()
   int buttons_count = 0;
   int axis_count    = 0;
 
+  // update the axis
   float const * axis_buffer = glfwGetJoystickAxes(stick_index,  &axis_count);
-  if (axis.size() != (size_t)axis_count)
+
+  size_t ac = (size_t)axis_count;
+  
+  bool axis_reallocated = (axis.size() != ac * 2);
+  if (axis_reallocated)
   {
     axis.clear();
-    axis.insert(axis.begin(), (size_t)axis_count, MyGLFWGamepadAxisData(dead_zone));
-  }
-  for (size_t i = 0 ; i < (size_t)axis_count ; ++i)
-    axis[i].UpdateValue(axis_buffer[i]);
+    axis.insert(axis.begin(), ac * 2, MyGLFWGamepadAxisData(dead_zone)); // 2 * because we want to insert row for previous frame
 
+	for (size_t i = 0 ; i < ac ; ++i)
+	{
+		axis[i].UpdateValue(axis_buffer[i]);
+		axis[i + ac] = axis[i];
+	}
+  }
+  else
+  {
+	  for (size_t i = 0 ; i < ac ; ++i)
+	  {
+		  axis[i + ac] = axis[i]; // copy current frame to previous
+		  axis[i].UpdateValue(axis_buffer[i]);
+	  }  
+  }
+
+
+
+
+  // update the buttons
   unsigned char const * buttons_buffer = glfwGetJoystickButtons(stick_index,  &buttons_count);
-  if (buttons.size() != (size_t)buttons_count)
+
+  size_t bc = (size_t)buttons_count;
+
+  bool buttons_reallocated = (buttons.size() != bc * 2);
+  if (buttons_reallocated)
   {
     buttons.clear();
-    buttons.insert(buttons.begin(), (size_t)buttons_count, 0);
+    buttons.insert(buttons.begin(), bc * 2, 0);   
   }
-  for (size_t i = 0 ; i < (size_t)buttons_count ; ++i)
+  for (size_t i = 0 ; i < bc ; ++i)
+  {
+	buttons[i + ac] = buttons[i]; // copy current frame to previous
     buttons[i] = buttons_buffer[i];
+  }
 }
 
 void MyGLFWGamepad::TryCaptureStick(bool wanted_ever_connected)

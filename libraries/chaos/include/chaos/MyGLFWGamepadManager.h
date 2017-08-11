@@ -40,6 +40,15 @@ namespace chaos
   {
   public:
 
+	/** button status change */
+	static int const BUTTON_STAY_RELEASED = 0;
+	/** button status change */
+	static int const BUTTON_STAY_PRESSED  = 1;
+	/** button status change */
+	static int const BUTTON_BECOME_RELEASED = 2;
+	/** button status change */
+	static int const BUTTON_BECOME_PRESSED  = 3;
+
     /** index in buttons of A for XBOX like pad */
     static int const XBOX_BUTTON_A = 0;
     /** index in buttons of B for XBOX like pad */
@@ -111,6 +120,8 @@ namespace chaos
 
     /** returns true whether the gamepad is connected */
     inline bool IsPresent() const { return (stick_index >= 0); }
+	/* returns a status giving the change of button relative to previous frame */
+	int GetButtonChanges(size_t button_index) const;
     /** returns the button state */
     bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
     /** returns the button state */

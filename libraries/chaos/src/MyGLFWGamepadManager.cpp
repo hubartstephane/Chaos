@@ -36,6 +36,17 @@ size_t MyGLFWGamepad::GetAxisCount() const
 	return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
 }
 
+int MyGLFWGamepad::GetButtonChanges(size_t button_index) const
+{
+	bool current_state  = IsButtonPressed(button_index, false);
+	bool previous_state = IsButtonPressed(button_index, true);
+
+	if (current_state == previous_state)
+		return (current_state)? BUTTON_STAY_PRESSED : BUTTON_STAY_RELEASED;
+	else
+		return (current_state)? BUTTON_BECOME_PRESSED : BUTTON_BECOME_RELEASED;
+}
+
 bool MyGLFWGamepad::IsButtonPressed(size_t button_index, bool previous_frame) const
 {
   if (!IsPresent())
@@ -162,9 +173,6 @@ void MyGLFWGamepad::UpdateAxisAndButtons()
 	  }  
   }
 
-
-
-
   // update the buttons
   unsigned char const * buttons_buffer = glfwGetJoystickButtons(stick_index,  &buttons_count);
 
@@ -175,11 +183,20 @@ void MyGLFWGamepad::UpdateAxisAndButtons()
   {
     buttons.clear();
     buttons.insert(buttons.begin(), bc * 2, 0);   
+
+	for (size_t i = 0 ; i < ac ; ++i)
+	{
+		buttons[i] = buttons_buffer[i]; 
+		buttons[i + ac] = buttons[i];
+	}
   }
-  for (size_t i = 0 ; i < bc ; ++i)
+  else
   {
-	buttons[i + ac] = buttons[i]; // copy current frame to previous
-    buttons[i] = buttons_buffer[i];
+	  for (size_t i = 0 ; i < bc ; ++i)
+	  {
+		  buttons[i + ac] = buttons[i]; // copy current frame to previous
+		  buttons[i] = buttons_buffer[i];
+	  }  
   }
 }
 

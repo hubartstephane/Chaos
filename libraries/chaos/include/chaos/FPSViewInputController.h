@@ -14,6 +14,9 @@ namespace chaos
   {
   public:
 
+    /** mouse speed */
+    float mouse_sensibility{ 1.0f };
+
     /** some self descriptive speed */
     float strafe{ 20.0f };
     /** some self descriptive speed */
@@ -24,6 +27,38 @@ namespace chaos
     float up{ 20.0f };
     /** some self descriptive speed */
     float down{ 20.0f };
+
+    /** some self descriptive speed */
+    float yaw{ 90.0f };
+    /** some self descriptive speed */
+    float pitch{ 90.0f };
+  };
+
+  class FPSViewMovementKeyboardConfiguration
+  {
+  public:
+
+    /** self descriptive key */
+    int key_left = GLFW_KEY_LEFT;
+    /** self descriptive key */
+    int key_right = GLFW_KEY_RIGHT;
+    /** self descriptive key */
+    int key_forward = GLFW_KEY_UP;
+    /** self descriptive key */
+    int key_backward = GLFW_KEY_DOWN;
+    /** self descriptive key */
+    int key_up = GLFW_KEY_PAGE_DOWN;
+    /** self descriptive key */
+    int key_down = GLFW_KEY_PAGE_UP;
+
+    /** self descriptive key */
+    int key_yaw_left = GLFW_KEY_KP_4;
+    /** self descriptive key */
+    int key_yaw_right = GLFW_KEY_KP_6;
+    /** self descriptive key */
+    int key_pitch_up = GLFW_KEY_KP_8;
+    /** self descriptive key */
+    int key_pitch_down = GLFW_KEY_KP_2;
   };
 
   /**
@@ -42,10 +77,27 @@ namespace chaos
     /** matrix getter */
     inline glm::mat4 LocalToGlobal() const { return fps_controller.LocalToGlobal(); }
 
+
+    /** returns true whether mouse capture is enabled */
+    bool IsMouseEnabled() const { return mouse_enabled; }
+    /** change the mouse capture policy */
+    void SetMouseEnabled(bool in_mouse_enabled);
+
   protected:
+
+    /** handle the mouse displacement */
+    void HandleMouseInputs(GLFWwindow * glfw_window, double delta_time);
+    /** handle the keyboard inputs */
+    void HandleKeyboardInputs(GLFWwindow * glfw_window, double delta_time);
+
+    /** check whether keyboard input is down */
+    bool CheckKeyInput(GLFWwindow * glfw_window, int key) const;
+
 
     static double const INVALID_MOUSE_VALUE;
 
+    /** whether the mouse is enabled or not */
+    bool mouse_enabled{ true };
     /** whether the mouse has been captured */
     bool mouse_captured{ false };
     /** position of the mouse once captured */
@@ -59,8 +111,9 @@ namespace chaos
     FPSViewController fps_controller;
     /** the speed for the displacement */
     FPSViewMovementSpeed movement_speed;
-    /** mouse speed */
-    float mouse_sensibility{ 1.0f };
+    /** the mapping for the displacement */
+    FPSViewMovementKeyboardConfiguration keyboard_config;
+
     /** whether we need to capture to move the camera */
     bool must_click_to_rotate{ true };
   };

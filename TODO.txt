@@ -38,6 +38,10 @@ TextureArrayGenerator:
   ImageSliceGenerator => TextureSliceGenerator
   ::clean => commentaire desqtroy intrusive_ptr incomprehensible
   Clean() : the generator should not clean itself after texturearray generation
+
+FPSViewInputController:  
+
+  ajouter la configuration des touches, voire de la manette  
    
 ===================================================================================
 TODO
@@ -132,7 +136,7 @@ GLProgramData
   Extract => bug avec desc chaines du genre position9autrechose
   Extract => pas de array + semantic_index (ca a l'air d etre voulu quand meme)
   
- FPSViewInputController :  ajouter la configuration des touches, voire de la manette  
+
  
  
  

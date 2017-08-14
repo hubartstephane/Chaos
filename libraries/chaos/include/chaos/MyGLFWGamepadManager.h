@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
 
 namespace chaos
 {
@@ -36,7 +37,7 @@ namespace chaos
   /**
    * MyGLFWGamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
    */
-  class MyGLFWGamepad
+  class MyGLFWGamepad : public ReferencedObject
   {
   public:
 
@@ -96,9 +97,14 @@ namespace chaos
 
     friend class MyGLFWGamepadManager;
 
+  public:
+
+	/** destructor */
+	virtual ~MyGLFWGamepad();
+
   protected:
 
-    /** the constructor */
+    /** the constructor is protected */
     MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone) : 
       manager(in_manager),
       dead_zone(in_dead_zone), 
@@ -107,8 +113,7 @@ namespace chaos
     { 
       assert(manager != nullptr);
     }
-    /** the destructor is protected */
-    virtual ~MyGLFWGamepad() = default;
+
     /** update the gamepad values. There are 3 steps */
     void Tick(float delta_time, int step);
     /** update all the values for the axis and buttons */

@@ -67,6 +67,7 @@ protected:
 
 	virtual void Finalize() override
 	{
+		main_gamepad = nullptr;
 		debug_display.Finalize();
 	}
 
@@ -147,7 +148,7 @@ protected:
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 
-	chaos::MyGLFWGamepad * main_gamepad;
+	boost::intrusive_ptr<chaos::MyGLFWGamepad> main_gamepad;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

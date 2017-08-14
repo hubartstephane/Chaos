@@ -31,6 +31,11 @@ size_t MyGLFWGamepad::GetButtonCount() const
 	return buttons.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
 }
 
+MyGLFWGamepad::~MyGLFWGamepad()
+{
+	manager->FreeGamepad(this);
+}
+
 size_t MyGLFWGamepad::GetAxisCount() const
 {
 	return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
@@ -334,7 +339,6 @@ void MyGLFWGamepadManager::FreeGamepad(MyGLFWGamepad * gamepad)
     size_t index = &*it - &gamepads[0];
     gamepads[index] = gamepads.back();
     gamepads.pop_back();
-    delete(gamepad);
   }
 }
 

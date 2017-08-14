@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/Buffer.h>
 
 
@@ -10,13 +11,13 @@ namespace chaos
    * GLProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
    */
   
-  class GLProgramSourceGenerator
+  class GLProgramSourceGenerator : public ReferencedObject
   {
   public:
 
     /** destructor */
     virtual ~GLProgramSourceGenerator() = default;
-  
+
     /** returns generated code */
     virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions)
     { 

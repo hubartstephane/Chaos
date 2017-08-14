@@ -217,10 +217,6 @@ boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgramObject(Definitio
 
 void GLProgramLoader::Reset()
 {
-  for (auto shader : shaders)
-    for (auto generator : shader.second)
-      if (generator != nullptr)
-        delete(generator);
   shaders.clear();
 }
 

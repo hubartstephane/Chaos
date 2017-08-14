@@ -35,12 +35,12 @@ class GLProgramLoader
 {
 public:
 
-  typedef std::vector<GLProgramSourceGenerator *> GeneratorSet;
+  typedef std::vector<boost::intrusive_ptr<GLProgramSourceGenerator>> GeneratorSet;
 
   typedef std::map<std::string, int> DefinitionSet;
 
   /** destructor */
-  ~GLProgramLoader(){ Reset(); }
+  virtual ~GLProgramLoader() = default;
   /** reset the content */
   void Reset();
   /** generate a program from the sources */

@@ -187,14 +187,14 @@ void MyGLFWGamepad::UpdateAxisAndButtons()
 	for (size_t i = 0 ; i < ac ; ++i)
 	{
 		buttons[i] = buttons_buffer[i]; 
-		buttons[i + ac] = buttons[i];
+		buttons[i + bc] = buttons[i];
 	}
   }
   else
   {
 	  for (size_t i = 0 ; i < bc ; ++i)
 	  {
-		  buttons[i + ac] = buttons[i]; // copy current frame to previous
+		  buttons[i + bc] = buttons[i]; // copy current frame to previous
 		  buttons[i] = buttons_buffer[i];
 	  }  
   }

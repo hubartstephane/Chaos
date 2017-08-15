@@ -8,7 +8,6 @@
 #include <chaos/Metaprogramming.h>
 #include <chaos/EmptyClass.h>
 #include <chaos/NamedObject.h>
-#include <chaos/NamedObjectVector.h>
 
 
 

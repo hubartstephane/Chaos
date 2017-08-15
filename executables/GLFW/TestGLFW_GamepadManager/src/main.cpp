@@ -8,18 +8,45 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/StringTools.h>
 
+class TestGamepadCallbacks : public chaos::MyGLFWGamepadCallbacks
+{
+public:
+
+  TestGamepadCallbacks(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
+
+
+  virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad, bool first_connection) override
+  {
+    if (debug_display != nullptr)
+      debug_display->AddLine(chaos::StringTools::Printf("TestGamepadCallbacks::OnGamepadConnected first_connection = %d", first_connection).c_str());
+    return true;
+  }
+
+  virtual bool OnGamepadDisconnected(chaos::MyGLFWGamepad * gamepad) override
+  {
+    if (debug_display != nullptr)
+      debug_display->AddLine("TestGamepadCallbacks::OnGamepadDisconnected");
+    return true;
+  }
+
+
+protected:
+
+  chaos::GLDebugOnScreenDisplay * debug_display{ nullptr };
+};
+
+
+
+
 class MyGamepadManager : public chaos::MyGLFWGamepadManager
 {
 public:
 
-	void SetDebugDisplay(chaos::GLDebugOnScreenDisplay * in_debug_display)
-	{
-		debug_display = in_debug_display;
-	}
+  MyGamepadManager(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
 
 protected:
 
-	virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
+	virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad, bool first_connection) override
 	{
 		if (gamepad->IsButtonPressed(chaos::MyGLFWGamepad::XBOX_BUTTON_START))
 		{
@@ -68,6 +95,7 @@ protected:
 	virtual void Finalize() override
 	{
 		main_gamepad = nullptr;
+    gamepad_manager = nullptr;
 		debug_display.Finalize();
 	}
 
@@ -92,9 +120,9 @@ protected:
 		if (!debug_display.Initialize(debug_params))
 			return false;
 
-		gamepad_manager.SetDebugDisplay(&debug_display);
+		gamepad_manager = new MyGamepadManager(&debug_display);
 
-		main_gamepad = gamepad_manager.AllocateGamepad();
+		main_gamepad = gamepad_manager->AllocateGamepad(new TestGamepadCallbacks(&debug_display));
 		return true;
 	}
 
@@ -109,7 +137,7 @@ protected:
 	virtual bool Tick(double delta_time) override
 	{
 		debug_display.Tick(delta_time);
-		gamepad_manager.Tick(0.0f);
+		gamepad_manager->Tick(0.0f);
 
 		if (main_gamepad->IsPresent())
 		{
@@ -144,7 +172,7 @@ protected:
 
 protected:
 
-	MyGamepadManager gamepad_manager;
+	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 

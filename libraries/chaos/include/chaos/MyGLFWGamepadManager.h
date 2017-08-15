@@ -5,16 +5,34 @@
 
 namespace chaos
 {
+
   /**
-   * MyGLFWGamepadAxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
-   *                         we have to store the upper and lower values to renormalize the output
+   * 
    */
+
+  class MyGLFWGamepadCallbacks : public ReferencedObject
+  {
+  public:
+
+    /** destructor */
+    virtual ~MyGLFWGamepadCallbacks() = default;
+
+    /** callback whenever a gamepad is disconnected */
+    virtual bool OnGamepadDisconnected(class MyGLFWGamepad *) { return true; }
+    /** callback whenever a gamepad is "connected" (a new ID is given to it) */
+    virtual bool OnGamepadConnected(class MyGLFWGamepad *, bool first_connection) { return true; }
+  };
+
+  /**
+  * MyGLFWGamepadAxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
+  *                         we have to store the upper and lower values to renormalize the output
+  */
   class MyGLFWGamepadAxisData
   {
   public:
 
     /** constructor */
-    MyGLFWGamepadAxisData(float in_dead_zone) : dead_zone(in_dead_zone), raw_value(0.0f), min_value(-0.8f), max_value(+0.8f), final_value(0.0f){}
+    MyGLFWGamepadAxisData(float in_dead_zone) : dead_zone(in_dead_zone), raw_value(0.0f), min_value(-0.8f), max_value(+0.8f), final_value(0.0f) {}
     /** update the value */
     void UpdateValue(float in_raw_value);
     /** get the value */
@@ -33,22 +51,22 @@ namespace chaos
     /** the final value of the stick after computation */
     float final_value;
   };
-  
+
   /**
-   * MyGLFWGamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
-   */
+  * MyGLFWGamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
+  */
   class MyGLFWGamepad : public ReferencedObject
   {
   public:
 
-	/** button status change */
-	static int const BUTTON_STAY_RELEASED = 0;
-	/** button status change */
-	static int const BUTTON_STAY_PRESSED  = 1;
-	/** button status change */
-	static int const BUTTON_BECOME_RELEASED = 2;
-	/** button status change */
-	static int const BUTTON_BECOME_PRESSED  = 3;
+    /** button status change */
+    static int const BUTTON_STAY_RELEASED = 0;
+    /** button status change */
+    static int const BUTTON_STAY_PRESSED = 1;
+    /** button status change */
+    static int const BUTTON_BECOME_RELEASED = 2;
+    /** button status change */
+    static int const BUTTON_BECOME_PRESSED = 3;
 
     /** index in buttons of A for XBOX like pad */
     static int const XBOX_BUTTON_A = 0;
@@ -59,23 +77,23 @@ namespace chaos
     /** index in buttons of Y for XBOX like pad */
     static int const XBOX_BUTTON_Y = 3;
     /** index in buttons of LEFT for XBOX like pad (the one behind the LEFT TRIGGER) */
-    static int const XBOX_BUTTON_LEFTBUT  = 4;
+    static int const XBOX_BUTTON_LEFTBUT = 4;
     /** index in buttons of RIGHT for XBOX like pad (the one behind the RIGHT TRIGGER) */
     static int const XBOX_BUTTON_RIGHTBUT = 5;
     /** index in buttons of SELECT for XBOX like pad */
     static int const XBOX_BUTTON_SELECT = 6;
     /** index in buttons of START for XBOX like pad */
-    static int const XBOX_BUTTON_START  = 7;
+    static int const XBOX_BUTTON_START = 7;
     /** index in buttons of LEFT-STICK-CLICKED for XBOX like pad */
-    static int const XBOX_BUTTON_LEFTSTICK  = 8;
+    static int const XBOX_BUTTON_LEFTSTICK = 8;
     /** index in buttons of RIGHT-STICK-CLICKED for XBOX like pad */
     static int const XBOX_BUTTON_RIGHTSTICK = 9;
     /** index in buttons of UP for XBOX like pad */
-    static int const XBOX_BUTTON_UP    = 10;
+    static int const XBOX_BUTTON_UP = 10;
     /** index in buttons of DOWN for XBOX like pad */
-    static int const XBOX_BUTTON_DOWN  = 12;
+    static int const XBOX_BUTTON_DOWN = 12;
     /** index in buttons of LEFT for XBOX like pad */
-    static int const XBOX_BUTTON_LEFT  = 13;
+    static int const XBOX_BUTTON_LEFT = 13;
     /** index in buttons of RIGHT for XBOX like pad */
     static int const XBOX_BUTTON_RIGHT = 11;
 
@@ -83,15 +101,15 @@ namespace chaos
     static int const XBOX_LEFT_AXIS_X = 0;
     /** index in axis of LEFT Y for XBOX like pad */
     static int const XBOX_LEFT_AXIS_Y = 1; // STICK DOWN = positive values
-    /** index in axis for the trigger for XBOX like pad */
+                                           /** index in axis for the trigger for XBOX like pad */
     static int const XBOX_TRIGGER = 2; // LEFT TRIGGER = positive values,  RIGHT TRIGGER = negative values
-    /** index in axis of RIGHT Y for XBOX like pad */
+                                       /** index in axis of RIGHT Y for XBOX like pad */
     static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
-    /** index in axis of RIGHT X for XBOX like pad */
+                                             /** index in axis of RIGHT X for XBOX like pad */
     static int const XBOX_RIGHT_AXIS_X = 4;
 
     /** returns the direction of left stick (beware the low level interface only knows for axis) */
-    static int const XBOX_LEFT_AXIS  = 0;
+    static int const XBOX_LEFT_AXIS = 0;
     /** returns the direction of right stick (beware the low level interface only knows for axis) */
     static int const XBOX_RIGHT_AXIS = 1;
 
@@ -99,18 +117,19 @@ namespace chaos
 
   public:
 
-	/** destructor */
-	virtual ~MyGLFWGamepad();
+    /** destructor */
+    virtual ~MyGLFWGamepad();
 
   protected:
 
     /** the constructor is protected */
-    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone) : 
+    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone, MyGLFWGamepadCallbacks * in_callbacks) :
       manager(in_manager),
-      dead_zone(in_dead_zone), 
+      dead_zone(in_dead_zone),
       stick_index(-1),
-      ever_connected(false)
-    { 
+      ever_connected(false),
+      callbacks(in_callbacks)
+    {
       assert(manager != nullptr);
     }
 
@@ -125,8 +144,8 @@ namespace chaos
 
     /** returns true whether the gamepad is connected */
     inline bool IsPresent() const { return (stick_index >= 0); }
-	/* returns a status giving the change of button relative to previous frame */
-	int GetButtonChanges(size_t button_index) const;
+    /* returns a status giving the change of button relative to previous frame */
+    int GetButtonChanges(size_t button_index) const;
     /** returns the button state */
     bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
     /** returns the button state */
@@ -142,15 +161,18 @@ namespace chaos
     /** returns the direction of one stick (a combinaison of 2 axis) */
     glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
 
-	/** returns the number of buttons */
-	size_t GetButtonCount() const;
-	/** returns the number of axis */
-	size_t GetAxisCount() const;
+    /** returns the number of buttons */
+    size_t GetButtonCount() const;
+    /** returns the number of axis */
+    size_t GetAxisCount() const;
 
   protected:
 
     /** manager */
     MyGLFWGamepadManager * manager;
+    /** the callbacks */
+    boost::intrusive_ptr<MyGLFWGamepadCallbacks> callbacks;
+
     /** the zone for axis that is considered 0 */
     float dead_zone;
     /** the current stick index */
@@ -164,24 +186,24 @@ namespace chaos
   };
 
   /**
-   * MyGLFWGamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
-   */
+  * MyGLFWGamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
+  */
 
-  class MyGLFWGamepadManager
+  class MyGLFWGamepadManager : public ReferencedObject
   {
     friend class MyGLFWGamepad;
 
   public:
 
     /** constructor */
-    MyGLFWGamepadManager(float in_dead_zone = 0.2f) : dead_zone(in_dead_zone){}
+    MyGLFWGamepadManager(float in_dead_zone = 0.2f) : dead_zone(in_dead_zone) {}
 
     /** update all the joysticks */
     void Tick(float delta_time);
     /** clean all the gamepad */
     void Reset();
     /** create a gamepad */
-    MyGLFWGamepad * AllocateGamepad();
+    MyGLFWGamepad * AllocateGamepad(MyGLFWGamepadCallbacks * in_callbacks = nullptr);
     /** release a gamepad */
     void FreeGamepad(MyGLFWGamepad * gamepad);
 
@@ -191,11 +213,11 @@ namespace chaos
   protected:
 
     /** called whenever a gamepad is being disconnected */
-    virtual bool OnGamepadDisconnected(MyGLFWGamepad * gamepad){return true;}
+    virtual bool OnGamepadDisconnected(MyGLFWGamepad * gamepad) { return true; }
     /** called whenever a gamepad is being connected */
-    virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad){return true;}
+    virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad, bool first_connection) { return true; }
     /** called to allocate a gamepad instance */
-    virtual MyGLFWGamepad * NewGamepadInstance();
+    virtual MyGLFWGamepad * NewGamepadInstance(MyGLFWGamepadCallbacks * in_callbacks);
 
   protected:
 

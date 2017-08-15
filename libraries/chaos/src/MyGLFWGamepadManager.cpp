@@ -220,9 +220,13 @@ void MyGLFWGamepad::TryCaptureStick(bool wanted_ever_connected)
       // does the manager accept it ?
       stick_index = new_stick_index;
       UpdateAxisAndButtons();
-      if (manager->OnGamepadConnected(this))
+
+      bool first_connection = !ever_connected;
+      if (manager->OnGamepadConnected(this, first_connection))
       {
         ever_connected = true;
+        if (callbacks != nullptr)
+          callbacks->OnGamepadConnected(this, first_connection);
         break;
       }
       // manager, refused to acquire this stick, try next one
@@ -249,6 +253,8 @@ void MyGLFWGamepad::Tick(float delta_time, int step)
       {
         stick_index = -1;
         manager->OnGamepadDisconnected(this);    // stick no more present => disconnection
+        if (callbacks != nullptr)
+          callbacks->OnGamepadDisconnected(this);
       }
       else
         UpdateAxisAndButtons();
@@ -315,17 +321,17 @@ void MyGLFWGamepadManager::Tick(float delta_time)
       gamepad->Tick(delta_time, step);
 }
 
-MyGLFWGamepad * MyGLFWGamepadManager::AllocateGamepad()
+MyGLFWGamepad * MyGLFWGamepadManager::AllocateGamepad(MyGLFWGamepadCallbacks * in_callbacks)
 {
-  MyGLFWGamepad * result = NewGamepadInstance();
+  MyGLFWGamepad * result = NewGamepadInstance(in_callbacks);
   if (result != nullptr)
     gamepads.push_back(result);
   return result;
 }
 
-MyGLFWGamepad * MyGLFWGamepadManager::NewGamepadInstance()
+MyGLFWGamepad * MyGLFWGamepadManager::NewGamepadInstance(MyGLFWGamepadCallbacks * in_callbacks)
 {
-  return new MyGLFWGamepad(this, dead_zone);
+  return new MyGLFWGamepad(this, dead_zone, in_callbacks);
 }
 
 void MyGLFWGamepadManager::FreeGamepad(MyGLFWGamepad * gamepad)

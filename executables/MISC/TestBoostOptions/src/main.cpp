@@ -274,6 +274,64 @@ std::pair<std::string, std::string> reg_foo(const std::string& s)
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+  boost::filesystem::path p1 = "c:/toto/titi.txt";
+  boost::filesystem::path p2 = "c:/toto/../toto/titi.txt";
+
+  boost::filesystem::path p3 = p2.branch_path();
+  boost::filesystem::path p4 = p2.generic();
+  
+  boost::filesystem::path p5 = p2.make_preferred();
+
+  boost::filesystem::path p6 = p2.remove_trailing_separator();
+
+  boost::filesystem::path p7 = p2.stem();
+
+
+  std::string s1 = p1.string();
+  std::string s2 = p2.string();
+  std::string s3 = p3.string();
+  std::string s4 = p4.string();
+  std::string s5 = p5.string();
+  std::string s6 = p6.string();
+  std::string s7 = p7.string();
+
+  boost::filesystem::path a = "c:/titi.txt";
+  boost::filesystem::path b = "titi.txt";
+  boost::filesystem::path c = "../truc/titi.txt";
+
+  bool a1 = a.is_absolute();
+  bool a2 = a.is_complete();
+  bool a3 = a.is_relative();
+
+  bool b1 = b.is_absolute();
+  bool b2 = b.is_complete();
+  bool b3 = b.is_relative();
+
+  bool c1 = c.is_absolute();
+  bool c2 = c.is_complete();
+  bool c3 = c.is_relative();
+
+
+  
+  if (p1 == p2)
+    env = env;
+
+
+
+
+
+  return 0;
+
+
+
+
+
+
+
+
+
+
+
     long l = strtol("0x17", NULL,  16);
 
     l =l;

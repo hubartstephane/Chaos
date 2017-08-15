@@ -13,17 +13,17 @@ MultiMeshGenerator::~MultiMeshGenerator()
   Clean();
 }
 
-void MultiMeshGenerator::AddGenerator(SimpleMeshGenerator const & generator, boost::intrusive_ptr<SimpleMesh> & target_ptr)
+void MultiMeshGenerator::AddGenerator(SimpleMeshGenerator * generator, boost::intrusive_ptr<SimpleMesh> & target_ptr)
 {
-  SimpleMeshGeneratorProxy * proxy = generator.CreateProxy();
-  if (proxy != nullptr)
-    generators.push_back(std::make_pair(proxy, &target_ptr));
+  assert(generator != nullptr);
+
+  boost::intrusive_ptr<SimpleMeshGenerator> generator_ptr = generator;
+
+  generators.push_back(std::make_pair(generator_ptr, &target_ptr));
 }
 
 void MultiMeshGenerator::Clean()
 {
-  for (auto it : generators)
-    delete (it.first);
   generators.clear(); // destroy the intrusive_ptr
 }
 

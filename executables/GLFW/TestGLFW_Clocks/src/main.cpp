@@ -246,7 +246,7 @@ protected:
 		chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 		chaos::MultiMeshGenerator generators;
-		generators.AddGenerator(chaos::CubeMeshGenerator(b), mesh_box);
+		generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
 
 		if (!generators.GenerateMeshes())
 			return false;

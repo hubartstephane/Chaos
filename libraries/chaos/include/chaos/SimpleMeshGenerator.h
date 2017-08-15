@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/SimpleMesh.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/MemoryBufferWriter.h>
 
 
@@ -31,40 +32,25 @@ public:
 };
 
   /**
-   * SimpleMeshGeneratorProxy : an object that is responsible for generating the mesh data
+   * SimpleMeshGenerator : an object that is responsible for generating the mesh data
    */
 
-class SimpleMeshGeneratorProxy
+class SimpleMeshGenerator : public ReferencedObject
 {
 public:
 
   /** the destructor */
-  virtual ~SimpleMeshGeneratorProxy() = default;
+  virtual ~SimpleMeshGenerator() = default;
+
   /** get requirement */
   virtual MeshGenerationRequirement GetRequirement() const = 0;
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const = 0;
   /** get the mesh data */
   virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
-};
-
-  /**
-   * A base class for mesh generators
-   */
-
-class SimpleMeshGenerator
-{
-  friend class MultiMeshGenerator;
-
-public:
 
   /** generation function */
   boost::intrusive_ptr<SimpleMesh> GenerateMesh() const;
-
-protected:
-
-  /** generate a proxy */
-  virtual SimpleMeshGeneratorProxy * CreateProxy() const = 0;
 };
 
 /**
@@ -73,7 +59,6 @@ protected:
 
 class QuadMeshGenerator : public SimpleMeshGenerator
 {
-  friend class QuadMeshGeneratorProxy;
 
 public:
 
@@ -81,32 +66,17 @@ public:
   QuadMeshGenerator(box2 const & in_primitive): 
     primitive(in_primitive) {}
 
-  /** generate a proxy */
-  virtual SimpleMeshGeneratorProxy * CreateProxy() const;
- 
-protected:
-
-  /** the box to generate */
-  box2 primitive;
-};
-
-class QuadMeshGeneratorProxy : public SimpleMeshGeneratorProxy
-{
-public:
-
-  /** the constructor */
-  QuadMeshGeneratorProxy(QuadMeshGenerator const & in_generator): generator(in_generator){}
   /** get requirement */
   virtual MeshGenerationRequirement GetRequirement() const override;
   /** get the vertex declaration */
   virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
   /** get the mesh data */
   virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
-
+ 
 protected:
 
-  /** the generator */
-  QuadMeshGenerator generator;
+  /** the box to generate */
+  box2 primitive;
 
   /** the vertices defining a face facing planes inside [-1, +1] */
   static glm::vec3 const vertices[4];
@@ -121,33 +91,12 @@ protected:
 class CubeMeshGenerator : public SimpleMeshGenerator
 {
 
-  friend class CubeMeshGeneratorProxy;
-
 public:
 
   /** constructor */
   CubeMeshGenerator(box3 const & in_primitive):
     primitive(in_primitive){}
 
-  /** generate a proxy */
-  virtual SimpleMeshGeneratorProxy * CreateProxy() const;
-
-protected:
-
-  /** the box to generate */
-  box3 primitive;
-};
-
-/**
- * CubeMeshGeneratorProxy : proxy for CubeMeshGenerator
- */
-
-class CubeMeshGeneratorProxy : public SimpleMeshGeneratorProxy
-{
-public:
-
-  /** the constructor */
-  CubeMeshGeneratorProxy(CubeMeshGenerator const & in_generator) : generator(in_generator) {}
   /** get requirement */
   virtual MeshGenerationRequirement GetRequirement() const override;
   /** get the vertex declaration */
@@ -157,15 +106,14 @@ public:
 
 protected:
 
-  /** the generator */
-  CubeMeshGenerator generator;
+  /** the box to generate */
+  box3 primitive;
 
   /** the vertices defining a cube */
   static glm::vec3 const vertices[24 * 2];
   /** the triangles defining a cube */
   static GLuint const triangles[36];
 };
-
 
 /**
 * SphereMeshGenerator : help defines mesh as simple sphere
@@ -174,8 +122,6 @@ protected:
 class SphereMeshGenerator : public SimpleMeshGenerator
 {
 
-  friend class SphereMeshGeneratorProxy;
-
 public:
 
   /** constructor */
@@ -183,27 +129,6 @@ public:
     primitive(in_primitive),
     subdivisions(in_subdivisions){}
 
-  /** generate a proxy */
-  virtual SimpleMeshGeneratorProxy * CreateProxy() const;
-
-protected:
-
-  /** the sphere to generate */
-  sphere3 primitive;
-  /** number of subdivisions */
-  int subdivisions;
-};
-
-/**
- * SphereMeshGeneratorProxy : proxy for SphereMeshGenerator
- */
-
-class SphereMeshGeneratorProxy : public SimpleMeshGeneratorProxy
-{
-public:
-
-  /** the constructor */
-  SphereMeshGeneratorProxy(SphereMeshGenerator const & in_generator) : generator(in_generator) {}
   /** get requirement */
   virtual MeshGenerationRequirement GetRequirement() const override;
   /** get the vertex declaration */
@@ -218,10 +143,11 @@ protected:
 
 protected:
 
-  /** the generator */
-  SphereMeshGenerator generator;
+  /** the sphere to generate */
+  sphere3 primitive;
+  /** number of subdivisions */
+  int subdivisions;
 };
-
 
 }; // namespace chaos
 

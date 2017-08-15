@@ -19,7 +19,7 @@ public:
   virtual ~MultiMeshGenerator();
 
   /** the insertion method */
-  void AddGenerator(SimpleMeshGenerator const & generator, boost::intrusive_ptr<SimpleMesh> & target_ptr);
+  void AddGenerator(SimpleMeshGenerator * generator, boost::intrusive_ptr<SimpleMesh> & target_ptr);
   /** clean all generators */
   void Clean();
   /** generate all meshes */
@@ -28,7 +28,7 @@ public:
 protected:
 
   /** the registered element to generate */
-  std::vector<std::pair<SimpleMeshGeneratorProxy *, boost::intrusive_ptr<SimpleMesh> *>> generators;   
+  std::vector<std::pair<boost::intrusive_ptr<SimpleMeshGenerator>, boost::intrusive_ptr<SimpleMesh> *>> generators;
 };
 
 

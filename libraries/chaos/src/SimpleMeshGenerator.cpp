@@ -15,7 +15,7 @@
 namespace chaos
 {
 
-glm::vec3 const QuadMeshGeneratorProxy::vertices[4] =
+glm::vec3 const QuadMeshGenerator::vertices[4] =
 {
   glm::vec3(-1.0f, -1.0f, 0.0f),
   glm::vec3( 1.0f, -1.0f, 0.0f),
@@ -23,13 +23,13 @@ glm::vec3 const QuadMeshGeneratorProxy::vertices[4] =
   glm::vec3(-1.0f,  1.0f, 0.0f)
 };
 
-GLuint const QuadMeshGeneratorProxy::triangles[6] =
+GLuint const QuadMeshGenerator::triangles[6] =
 {
   0, 1, 2,  
   0, 2, 3
 };
 
-glm::vec3 const CubeMeshGeneratorProxy::vertices[24 * 2] = // position + normal
+glm::vec3 const CubeMeshGenerator::vertices[24 * 2] = // position + normal
 {
   glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
   glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
@@ -62,7 +62,7 @@ glm::vec3 const CubeMeshGeneratorProxy::vertices[24 * 2] = // position + normal
   glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
 };
 
-GLuint const CubeMeshGeneratorProxy::triangles[36] =
+GLuint const CubeMeshGenerator::triangles[36] =
 {
   0, 2, 1,  
   0, 3, 2,
@@ -83,13 +83,6 @@ GLuint const CubeMeshGeneratorProxy::triangles[36] =
   20, 23, 22
 };
 
-
-SimpleMeshGeneratorProxy * QuadMeshGenerator::CreateProxy() const { return new QuadMeshGeneratorProxy(*this); }
-
-SimpleMeshGeneratorProxy * CubeMeshGenerator::CreateProxy() const { return new CubeMeshGeneratorProxy(*this); }
-
-SimpleMeshGeneratorProxy * SphereMeshGenerator::CreateProxy() const { return new SphereMeshGeneratorProxy(*this); }
-
 bool MeshGenerationRequirement::IsValid() const
 {
   if (vertex_size <= 0) 
@@ -105,61 +98,57 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 {
   boost::intrusive_ptr<SimpleMesh> result;
 
-  SimpleMeshGeneratorProxy * proxy = CreateProxy();
-  if (proxy != nullptr)
+  MeshGenerationRequirement requirement = GetRequirement();
+  if (requirement.IsValid())
   {
-    MeshGenerationRequirement requirement = proxy->GetRequirement();
-    if (requirement.IsValid())
+    boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh();
+    if (mesh != nullptr)
     {
-      boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh();
-      if (mesh != nullptr)
+      boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &mesh->vertex_buffer : nullptr;
+      boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &mesh->index_buffer : nullptr;
+
+      if (GLTools::GenerateVertexAndIndexBuffersObject(&mesh->vertex_array, vb_ptr, ib_ptr))
       {
-        boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &mesh->vertex_buffer : nullptr;
-        boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &mesh->index_buffer : nullptr;
+        GLuint vb = (requirement.vertices_count > 0) ? mesh->vertex_array->GetResourceID() : 0;
+        GLuint ib = (requirement.indices_count  > 0) ? mesh->index_buffer->GetResourceID() : 0;
 
-        if (GLTools::GenerateVertexAndIndexBuffersObject(&mesh->vertex_array, vb_ptr, ib_ptr))
+        int vb_size = requirement.vertices_count * requirement.vertex_size;
+        int ib_size = requirement.indices_count * sizeof(GLuint);
+
+        // allocate buffer for vertices and indices
+        std::pair<char *, GLuint *> mapping;
+        if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
         {
-          GLuint vb = (requirement.vertices_count > 0)? mesh->vertex_array->GetResourceID() : 0;
-          GLuint ib = (requirement.indices_count  > 0)? mesh->index_buffer->GetResourceID() : 0;
+          // generate the indices and the vertices
+          MemoryBufferWriter vertices_writer(mapping.first, vb_size);
+          MemoryBufferWriter indices_writer(mapping.second, ib_size);
+          GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
 
-          int vb_size = requirement.vertices_count * requirement.vertex_size;
-          int ib_size = requirement.indices_count * sizeof(GLuint);
+          assert(vertices_writer.GetRemainingBufferSize() == 0);
+          assert(indices_writer.GetRemainingBufferSize() == 0);
 
-          // allocate buffer for vertices and indices
-          std::pair<char *, GLuint *> mapping;
-          if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
-          {
-            // generate the indices and the vertices
-            MemoryBufferWriter vertices_writer(mapping.first, vb_size);
-            MemoryBufferWriter indices_writer(mapping.second, ib_size);
-            proxy->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);          
-          
-            assert(vertices_writer.GetRemainingBufferSize() == 0);
-            assert(indices_writer.GetRemainingBufferSize() == 0);
+          // get the vertex declaration
+          GenerateVertexDeclaration(mesh->declaration);
+          assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
 
-            // get the vertex declaration
-            proxy->GenerateVertexDeclaration(mesh->declaration);
-            assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
+          // initialize the vertex array and validate
+          mesh->FinalizeBindings();
+          result = mesh;
 
-            // initialize the vertex array and validate
-            mesh->FinalizeBindings();
-            result = mesh;
-
-            // transfert data to GPU and free memory
-            if (vb != 0)
-              glUnmapNamedBuffer(vb);
-            if (ib != 0)
-              glUnmapNamedBuffer(ib);
-          }
+          // transfert data to GPU and free memory
+          if (vb != 0)
+            glUnmapNamedBuffer(vb);
+          if (ib != 0)
+            glUnmapNamedBuffer(ib);
         }
       }
     }
-    delete proxy;
   }
+
   return result;
 }
 
-MeshGenerationRequirement QuadMeshGeneratorProxy::GetRequirement() const
+MeshGenerationRequirement QuadMeshGenerator::GetRequirement() const
 {
   MeshGenerationRequirement result;
   result.vertex_size    = sizeof(glm::vec3);
@@ -168,12 +157,12 @@ MeshGenerationRequirement QuadMeshGeneratorProxy::GetRequirement() const
   return result;
 }
 
-void QuadMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+void QuadMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
   declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 }
 
-void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void QuadMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
   MeshPrimitive mesh_primitive;
@@ -188,8 +177,8 @@ void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   indices_writer.Write(triangles, sizeof(triangles));
 
   // the vertices 
-  glm::vec3 hs = glm::vec3(generator.primitive.half_size.x, generator.primitive.half_size.y, 1.0f);
-  glm::vec3 p  = glm::vec3(generator.primitive.position.x, generator.primitive.position.y,  0.0f);
+  glm::vec3 hs = glm::vec3(primitive.half_size.x, primitive.half_size.y, 1.0f);
+  glm::vec3 p  = glm::vec3(primitive.position.x, primitive.position.y,  0.0f);
 
   int const vertex_count = sizeof(vertices) / sizeof(vertices[0]); 
   
@@ -197,7 +186,7 @@ void QuadMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
     vertices_writer << (vertices[i] * hs + p);
 }
 
-MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
+MeshGenerationRequirement CubeMeshGenerator::GetRequirement() const
 {
   MeshGenerationRequirement result;
   result.vertex_size    = 2 * sizeof(glm::vec3);
@@ -206,13 +195,13 @@ MeshGenerationRequirement CubeMeshGeneratorProxy::GetRequirement() const
   return result;
 }
 
-void CubeMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+void CubeMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
   declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
   declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 }
 
-void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void CubeMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
   MeshPrimitive mesh_primitive;
@@ -227,8 +216,8 @@ void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   indices_writer.Write(triangles, sizeof(triangles));
 
   // the vertices
-  glm::vec3 hs = generator.primitive.half_size;
-  glm::vec3 p  = generator.primitive.position;  
+  glm::vec3 hs = primitive.half_size;
+  glm::vec3 p  = primitive.position;  
 
   int const count = sizeof(vertices) / sizeof(vertices[0]);
   for (int i = 0; i < count / 2; ++i)
@@ -238,9 +227,9 @@ void CubeMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primi
   }
 }
 
-MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
+MeshGenerationRequirement SphereMeshGenerator::GetRequirement() const
 {
-  int subdiv_beta  = max(generator.subdivisions, 3);
+  int subdiv_beta  = max(subdivisions, 3);
   int subdiv_alpha = subdiv_beta * 2;
 
   MeshGenerationRequirement result;
@@ -253,19 +242,19 @@ MeshGenerationRequirement SphereMeshGeneratorProxy::GetRequirement() const
   return result;
 }
 
-void SphereMeshGeneratorProxy::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+void SphereMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
 {
   declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
   declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 }
 
-void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void SphereMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
-  int subdiv_beta  = max(generator.subdivisions, 3);
+  int subdiv_beta  = max(subdivisions, 3);
   int subdiv_alpha = subdiv_beta * 2;
   
-  glm::vec3 position = generator.primitive.position;
-  float     radius   = generator.primitive.radius;
+  glm::vec3 position = primitive.position;
+  float     radius   = primitive.radius;
 
   // construct the vertex buffer
   InsertVertex(vertices_writer, 0.0f, (float)M_PI_2);  
@@ -338,10 +327,10 @@ void SphereMeshGeneratorProxy::GenerateMeshData(std::vector<MeshPrimitive> & pri
   primitives.push_back(mesh_primitive);
 }
 
-void SphereMeshGeneratorProxy::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
+void SphereMeshGenerator::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
 {
   glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
-  vertices_writer << generator.primitive.radius * normal + generator.primitive.position;
+  vertices_writer << primitive.radius * normal + primitive.position;
   vertices_writer << normal;
 }
 

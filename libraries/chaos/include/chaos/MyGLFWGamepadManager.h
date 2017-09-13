@@ -204,15 +204,15 @@ namespace chaos
   {
   public:
 
-    static size_t const ENTRY_COUNT = GLFW_JOYSTICK_LAST + 1;
+    static size_t const MAX_SUPPORT_STICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
     /** register a gamepad into the resume */
-    bool InsertGamepad(MyGLFWGamepad * gamepad, bool allocated);
+    bool InsertGamepadEntry(MyGLFWGamepadEntry & entry, size_t entry_index);
 
   public:
 
-    /** the list of all gamepads by ID */
-    MyGLFWGamepadEntry entries[ENTRY_COUNT];
+    /** a map : [STICK_ID] => [INDEX of ENTRY in MANAGER] */
+    size_t entries[MAX_SUPPORT_STICK_COUNT] = { std::numeric_limits<size_t>::max() };
   };
 
   /**
@@ -245,22 +245,24 @@ namespace chaos
     /** called to allocate a gamepad instance */
     virtual MyGLFWGamepad * NewGamepadInstance(MyGLFWGamepadCallbacks * in_callbacks);
     /** internal method to recycle / allocate a gamepad entry*/
-    MyGLFWGamepadEntry * AllocateGamepadEntry(MyGLFWGamepadCallbacks * in_callbacks);
+    MyGLFWGamepadEntry * AllocateGamepadEntry(MyGLFWGamepadCallbacks * in_callbacks, bool want_unallocated);
 
     /** get an array of all gamepads by IDS */
     MyGLFWGamepadPresenceInfo GetGamepadPresenceInfo();
+
     /** called whenever a gamepad is being connected */
     void HandleGamepadConnection(int stick_index);
-
-
-
     /** called whenever a gamepad is being diconnected */
-    void HandleGamepadDisconnection(MyGLFWGamepad * gamepad);
+    void HandleGamepadDisconnection(MyGLFWGamepadEntry & entry);
+    /** called whenever a gamepad is present and is state is not changing */
+    void HandleGamepadTick(MyGLFWGamepadEntry & entry, float delta_time);
 
 
 
-    /** find a gamepad still not connected (some criteria in step parameter) */
-    MyGLFWGamepadEntry * FindUnusedGamepadEntry(int step);
+    /** find a gamepad still not connected */
+    MyGLFWGamepadEntry * FindNotPresentGamepadEntry();
+    /** find a gamepad that is used by nobody */
+    MyGLFWGamepadEntry * FindUnallocatedGamepadEntry();
 
 
     /** called whenever a gamepad is being disconnected */

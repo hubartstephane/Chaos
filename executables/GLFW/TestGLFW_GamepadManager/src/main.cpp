@@ -14,11 +14,10 @@ public:
 
   TestGamepadCallbacks(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
 
-
-  virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad, bool first_connection) override
+  virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
   {
     if (debug_display != nullptr)
-      debug_display->AddLine(chaos::StringTools::Printf("TestGamepadCallbacks::OnGamepadConnected first_connection = %d", first_connection).c_str());
+      debug_display->AddLine(chaos::StringTools::Printf("TestGamepadCallbacks::OnGamepadConnected EVER CONNECTED = %d", gamepad->IsEverConnected()).c_str());
     return true;
   }
 
@@ -46,7 +45,7 @@ public:
 
 protected:
 
-	virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad, bool first_connection) override
+	virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
 	{
 		if (gamepad->IsButtonPressed(chaos::MyGLFWGamepad::XBOX_BUTTON_START))
 		{

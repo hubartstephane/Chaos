@@ -20,7 +20,7 @@ namespace chaos
     /** callback whenever a gamepad is disconnected */
     virtual bool OnGamepadDisconnected(class MyGLFWGamepad *) { return true; }
     /** callback whenever a gamepad is "connected" (a new ID is given to it) */
-    virtual bool OnGamepadConnected(class MyGLFWGamepad *, bool first_connection) { return true; }
+    virtual bool OnGamepadConnected(class MyGLFWGamepad *) { return true; }
   };
 
   /**
@@ -123,10 +123,9 @@ namespace chaos
   protected:
 
     /** the constructor is protected */
-    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone, MyGLFWGamepadCallbacks * in_callbacks) :
+    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone) :
       manager(in_manager),
-      dead_zone(in_dead_zone),
-      callbacks(in_callbacks)
+      dead_zone(in_dead_zone)
     {
       assert(manager != nullptr);
     }
@@ -163,6 +162,11 @@ namespace chaos
     /** returns whether the gamepad has already been connected once */
     inline bool IsEverConnected() const { return ever_connected; }
    
+  protected:
+
+    /** called at unconnection to be sure input cannot be consulted anymore */
+    void ClearInputs();
+
   protected:
 
     /** manager */
@@ -230,8 +234,6 @@ namespace chaos
 
     /** update all the joysticks */
     void Tick(float delta_time);
-    /** clean all the gamepad */
-    void Reset();
     /** create a gamepad */
     MyGLFWGamepad * AllocateGamepad(MyGLFWGamepadCallbacks * in_callbacks = nullptr);
     /** release a gamepad */
@@ -243,9 +245,9 @@ namespace chaos
   protected:
 
     /** called to allocate a gamepad instance */
-    virtual MyGLFWGamepad * NewGamepadInstance(MyGLFWGamepadCallbacks * in_callbacks);
+    virtual MyGLFWGamepad * NewGamepadInstance();
     /** internal method to recycle / allocate a gamepad entry*/
-    MyGLFWGamepadEntry * AllocateGamepadEntry(MyGLFWGamepadCallbacks * in_callbacks, bool want_unallocated);
+    MyGLFWGamepadEntry * AllocateGamepadEntry(bool want_unallocated);
 
     /** get an array of all gamepads by IDS */
     MyGLFWGamepadPresenceInfo GetGamepadPresenceInfo();
@@ -257,21 +259,17 @@ namespace chaos
     /** called whenever a gamepad is present and is state is not changing */
     void HandleGamepadTick(MyGLFWGamepadEntry & entry, float delta_time);
 
-
-
     /** find a gamepad still not connected */
     MyGLFWGamepadEntry * FindNotPresentGamepadEntry();
     /** find a gamepad that is used by nobody */
     MyGLFWGamepadEntry * FindUnallocatedGamepadEntry();
 
-
     /** called whenever a gamepad is being disconnected */
     virtual bool OnGamepadDisconnected(MyGLFWGamepad * gamepad) { return true; }
     /** called whenever a gamepad is being connected */
-    virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad, bool first_connection) { return true; }
-
-
-
+    virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad) { return true; }
+    /** called whenever an input is detected on a non allocated gamepad. returns true if the gamepad is allocated as a result */
+    virtual bool OnUnallocatedGamepadInput(MyGLFWGamepad * gamepad) { return false; }
 
   protected:
 

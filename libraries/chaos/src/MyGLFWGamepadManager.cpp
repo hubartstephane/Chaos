@@ -4,7 +4,6 @@
 
 namespace chaos
 {
-
   void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
   {
     in_raw_value = MathTools::Clamp(in_raw_value, -1.0f, +1.0f);
@@ -34,6 +33,12 @@ namespace chaos
   MyGLFWGamepad::~MyGLFWGamepad()
   {
     manager->FreeGamepad(this);
+  }
+
+  void MyGLFWGamepad::ClearInputs()
+  {
+    axis.clear();
+    buttons.clear();
   }
 
   size_t MyGLFWGamepad::GetAxisCount() const
@@ -230,6 +235,8 @@ namespace chaos
     return result;
   }
 
+  // XXX : We want to give a gamepad ID => search a gamepad that is not yet bound to an ID
+  //       Prefere a gamepad that is allocated for someone usage
   MyGLFWGamepadEntry * MyGLFWGamepadManager::FindNotPresentGamepadEntry()
   {
     for (int step = 0; step <= 2; ++step)
@@ -245,7 +252,7 @@ namespace chaos
 
         if (step == 0) // the best is to find a gamepad IN USE that has already been connected once (recycle)
         {
-          if (entry.allocated && entry.gamepad->IsEverConnected())
+          if (entry.allocated && entry.gamepad->IsEverConnected()) // this is a lost gamepad
             return &entry;
         }
         else if (step == 1) // gamepad IN USE that never has been connected in fine too (2nd better choice)
@@ -262,9 +269,11 @@ namespace chaos
     return nullptr;
   }
 
+  // XXX : user explicitly require a gamepad
+  //       try to give one that is bound to an ID
   MyGLFWGamepadEntry * MyGLFWGamepadManager::FindUnallocatedGamepadEntry()
   {
-    for (int step = 0; step <= 1; ++step)
+    for (int step = 0; step <= 2; ++step)
     {
       for (size_t i = 0; i < gamepad_entries.size(); ++i)
       {
@@ -275,12 +284,17 @@ namespace chaos
         if (entry.allocated) // we want an entry that is owned by nobody
           continue;
 
-        if (step == 0) // the best is to find a gamepad PRESENT
+        if (step == 0) // the best is to find a gamepad PRESENT and that has any input
+        {
+          if (entry.gamepad->IsPresent() && entry.gamepad->IsAnyAction(false))
+            return &entry;
+        }
+        else if (step == 1) // the best is to find a gamepad PRESENT (even if no input)
         {
           if (entry.gamepad->IsPresent())
             return &entry;
         }
-        else if (step == 1)
+        else if (step == 2)
         {
           return &entry; // any gamepad will be enought
         }
@@ -290,17 +304,19 @@ namespace chaos
   }
 
 
-  MyGLFWGamepad * MyGLFWGamepadManager::NewGamepadInstance(MyGLFWGamepadCallbacks * in_callbacks)
+  MyGLFWGamepad * MyGLFWGamepadManager::NewGamepadInstance()
   {
-    return new MyGLFWGamepad(this, dead_zone, in_callbacks);
+    return new MyGLFWGamepad(this, dead_zone);
   }
 
   MyGLFWGamepad * MyGLFWGamepadManager::AllocateGamepad(MyGLFWGamepadCallbacks * in_callbacks) // user explicitly require a gamepad
   {
-    MyGLFWGamepadEntry * gamepad_entry = AllocateGamepadEntry(in_callbacks, true);
+    MyGLFWGamepadEntry * gamepad_entry = AllocateGamepadEntry(true);
     if (gamepad_entry == nullptr)
       return nullptr;
     gamepad_entry->allocated = true;
+    gamepad_entry->gamepad->ever_connected = gamepad_entry->gamepad->IsPresent();
+    gamepad_entry->gamepad->callbacks = in_callbacks;
     return gamepad_entry->gamepad;
   }
 
@@ -313,21 +329,22 @@ namespace chaos
   //           => try to recycle a gamepad that has no ID
   //           => preference is to find a gamepad that is USED by someone
 
-  MyGLFWGamepadEntry * MyGLFWGamepadManager::AllocateGamepadEntry(MyGLFWGamepadCallbacks * in_callbacks, bool want_unallocated)
+  MyGLFWGamepadEntry * MyGLFWGamepadManager::AllocateGamepadEntry(bool want_unallocated)
   {
     // try to recycle a gamepad
     MyGLFWGamepadEntry * new_entry = (want_unallocated) ? FindUnallocatedGamepadEntry() : FindNotPresentGamepadEntry();
-
     if (new_entry != nullptr)
       return new_entry;
 
     // or create a new one
-    MyGLFWGamepad * new_gamepad = NewGamepadInstance(nullptr);
+    MyGLFWGamepad * new_gamepad = NewGamepadInstance();
     if (new_gamepad == nullptr)
       return nullptr;
 
+    // update the information
     new_gamepad->UpdateAxisAndButtons();
 
+    // insert new entry
     MyGLFWGamepadEntry tmp;
     tmp.gamepad = new_gamepad;
     tmp.allocated = false;
@@ -336,94 +353,73 @@ namespace chaos
     return &gamepad_entries.back();
   }
 
-
-
-
-
-
-
   void MyGLFWGamepadManager::Tick(float delta_time)
   {
     MyGLFWGamepadPresenceInfo presence_info = GetGamepadPresenceInfo();
 
-    for (size_t i = 0; i < MyGLFWGamepadPresenceInfo::MAX_SUPPORT_STICK_COUNT; ++i) // iterate over MAX SUPPORTED stick index
+    for (size_t stick_index = 0; stick_index < MyGLFWGamepadPresenceInfo::MAX_SUPPORT_STICK_COUNT; ++stick_index) // iterate over MAX SUPPORTED stick index
     {
-      size_t entry_index = presence_info.entries[i];
-      if (entry_index < 0 && entry_index >= gamepad_entries.size()) // indirection with the map
-        continue;
+      size_t entry_index = presence_info.entries[stick_index];
 
-      MyGLFWGamepadEntry & entry = gamepad_entries[entry_index];
+      // get the ENTRY corresponding to this ID (if any)
+      MyGLFWGamepadEntry * entry = nullptr;
+      if (entry_index >= 0 && entry_index < gamepad_entries.size()) // indirection with the map (value is std::numeric_limit<size_t>::max() if not initialized)
+        entry = &gamepad_entries[entry_index];
 
-      bool gamepad_present = (glfwJoystickPresent(i) > 0);
+      // is the gamepad corresponding to this ID present ?
+      bool gamepad_present = (glfwJoystickPresent(stick_index) > 0);
 
-      if (entry.gamepad == nullptr) // no gamepad is associated with this entry : detect new ?
+      // no gamepad is associated with this ID : detect new ?
+      if (entry == nullptr) 
       {
         if (gamepad_present) // require to take/recycle a gamepad
-          HandleGamepadConnection(i);
+          HandleGamepadConnection(stick_index);
       }
-      else // gamepad associated with the entry
+      // some gamepad associated with the ID
+      else 
       {
         if (gamepad_present) // gamepad still present
-          HandleGamepadTick(entry, delta_time);
+          HandleGamepadTick(*entry, delta_time); // no state change
         else // gamepad lost
-          HandleGamepadDisconnection(entry);
+          HandleGamepadDisconnection(*entry); // was present, is no more present
       }
     }
   }
 
-  void MyGLFWGamepadManager::HandleGamepadDisconnection(MyGLFWGamepadEntry & entry)
+  void MyGLFWGamepadManager::HandleGamepadTick(MyGLFWGamepadEntry & entry, float delta_time) // no state change
   {
+    entry.gamepad->UpdateAxisAndButtons();
+    if (!entry.allocated)
+      entry.allocated = OnUnallocatedGamepadInput(entry.gamepad); // auto Allocate the gamepad to a client
+  }
 
+  void MyGLFWGamepadManager::HandleGamepadDisconnection(MyGLFWGamepadEntry & entry) // gamepad was connected, it is no more
+  {
+    MyGLFWGamepad * gamepad = entry.gamepad;
+
+    gamepad->stick_index = -1; // the gamepad is no more connected
+    gamepad->ClearInputs();
+    if (entry.allocated && gamepad->callbacks != nullptr)
+      gamepad->callbacks->OnGamepadDisconnected(gamepad); 
   }
   
-  void MyGLFWGamepadManager::HandleGamepadTick(MyGLFWGamepadEntry & entry, float delta_time)
-  {
-
-  }
-
   void MyGLFWGamepadManager::HandleGamepadConnection(int stick_index)
   {
+    MyGLFWGamepadEntry * gamepad_entry = AllocateGamepadEntry(false);
+    if (gamepad_entry == nullptr)
+      return;
 
-
-#if 0
-    MyGLFWGamepadEntry * new_entry = nullptr;
-
-    // try to recycle a gamepad
-    for (int step = 0; (step <= 2) && (new_entry == nullptr); ++step)
-      new_entry = FindUnusedGamepadEntry(step);
-
-    // or create a new one
-    if (new_entry == nullptr)
-    {
-      MyGLFWGamepad * new_gamepad = NewGamepadInstance(nullptr);
-      if (new_gamepad == nullptr)
-        return;
-
-      MyGLFWGamepadEntry tmp;
-      tmp.gamepad = new_gamepad;
-      tmp.allocated = false;
-      gamepad_entries.push_back(tmp);
-
-      new_entry = &gamepad_entries.back();
-    }
-
-    // handle the stick
-    MyGLFWGamepad * gamepad = new_entry->gamepad;
-
+    MyGLFWGamepad * gamepad = gamepad_entry->gamepad;
     gamepad->stick_index = stick_index;
-    gamepad->UpdateAxisAndButtons();
+    if (gamepad_entry->allocated)
+    {
+      if (gamepad->callbacks != nullptr)
+        gamepad->callbacks->OnGamepadConnected(gamepad); // if stick was already given to someone, warn him about the reconnection      
+    }
+    else
+      gamepad_entry->allocated = OnUnallocatedGamepadInput(gamepad);
 
-    gamepad->callbacks->OnGamepadDisconnected(gamepad);
-
-    gamepad->callbacks.
-
-      if ()
-        manager->OnGamepadConnected(this, first_connection))
-
-
-
-#endif
-
+    gamepad->ever_connected = true;
   }
   
   // Some explanation : considering that a gamepad represents a player,
@@ -454,37 +450,22 @@ namespace chaos
     return false;
   }
 
-
-
-
-
-
-
-
   void MyGLFWGamepadManager::FreeGamepad(MyGLFWGamepad * gamepad)
   {
-#if 0
     assert(gamepad != nullptr);
     assert(gamepad->manager == this);
 
-    auto it = std::find(gamepads.begin(), gamepads.end(), gamepad);
-    if (it != gamepads.end())
+    size_t count = gamepad_entries.size();
+    for (size_t i = 0; i < count; ++i)
     {
-      size_t index = &*it - &gamepads[0];
-      gamepads[index] = gamepads.back();
-      gamepads.pop_back();
+      if (gamepad_entries[i].gamepad == gamepad) // search th entry corresponding to the gamepad
+      {
+        if (i != count - 1)
+          gamepad_entries[i] = gamepad_entries.back(); // remove swap
+        gamepad_entries.pop_back();
+        return;
+      }
     }
-#endif
-  }
-
-  void MyGLFWGamepadManager::Reset()
-  {
-#if 0
-    for (MyGLFWGamepad * gamepad : gamepads)
-      if (gamepad != nullptr)
-        delete(gamepad);
-    gamepads.clear();
-#endif
   }
 
 }; // namespace chaos

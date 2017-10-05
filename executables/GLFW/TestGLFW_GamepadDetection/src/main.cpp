@@ -76,7 +76,7 @@ protected:
       int present = glfwJoystickPresent(i);
       if (present)
       {
-        bool input = chaos::MyGLFWGamepadManager::HasAnyInputs(i, 0.2f);
+        bool input = chaos::MyGLFW::GamepadManager::HasAnyInputs(i, 0.2f);
 
         debug_display.AddLine(chaos::StringTools::Printf("[%02d] : present. Input[%d]", i, input).c_str());        
       }

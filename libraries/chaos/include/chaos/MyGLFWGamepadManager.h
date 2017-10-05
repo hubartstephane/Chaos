@@ -5,59 +5,11 @@
 
 namespace chaos
 {
-
-  /**
-   * MyGLFWGamepadCallbacks : some callbacks that may be plugged into a gamepad
-   */
-
-  class MyGLFWGamepadCallbacks : public ReferencedObject
+  namespace MyGLFW
   {
-  public:
-
-    /** destructor */
-    virtual ~MyGLFWGamepadCallbacks() = default;
-
-    /** callback whenever a gamepad is disconnected */
-    virtual bool OnGamepadDisconnected(class MyGLFWGamepad *) { return true; }
-    /** callback whenever a gamepad is "connected" (a new ID is given to it) */
-    virtual bool OnGamepadConnected(class MyGLFWGamepad *) { return true; }
-  };
-
-  /**
-  * MyGLFWGamepadAxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
-  *                         we have to store the upper and lower values to renormalize the output
-  */
-  class MyGLFWGamepadAxisData
-  {
-  public:
-
-    /** constructor */
-    MyGLFWGamepadAxisData(float in_dead_zone) : dead_zone(in_dead_zone), raw_value(0.0f), min_value(-0.8f), max_value(+0.8f), final_value(0.0f) {}
-    /** update the value */
-    void UpdateValue(float in_raw_value);
-    /** get the value */
-    inline float GetValue() const { return final_value; }
-
-  protected:
-
-    /** the dead zone of the stick */
-    float dead_zone;
-    /** value of the stick (with no filter) */
-    float raw_value;
-    /** min value always encountered */
-    float min_value;
-    /** max value always encountered */
-    float max_value;
-    /** the final value of the stick after computation */
-    float final_value;
-  };
-
-  /**
-  * MyGLFWGamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
-  */
-  class MyGLFWGamepad : public ReferencedObject
-  {
-  public:
+    /**
+    * Some constants
+    */
 
     /** button status change */
     static int const BUTTON_STAY_RELEASED = 0;
@@ -101,11 +53,11 @@ namespace chaos
     static int const XBOX_LEFT_AXIS_X = 0;
     /** index in axis of LEFT Y for XBOX like pad */
     static int const XBOX_LEFT_AXIS_Y = 1; // STICK DOWN = positive values
-    /** index in axis for the trigger for XBOX like pad */
+                                           /** index in axis for the trigger for XBOX like pad */
     static int const XBOX_TRIGGER = 2; // LEFT TRIGGER = positive values,  RIGHT TRIGGER = negative values
-    /** index in axis of RIGHT Y for XBOX like pad */
+                                       /** index in axis of RIGHT Y for XBOX like pad */
     static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
-    /** index in axis of RIGHT X for XBOX like pad */
+                                             /** index in axis of RIGHT X for XBOX like pad */
     static int const XBOX_RIGHT_AXIS_X = 4;
 
     /** returns the direction of left stick (beware the low level interface only knows for axis) */
@@ -113,105 +65,245 @@ namespace chaos
     /** returns the direction of right stick (beware the low level interface only knows for axis) */
     static int const XBOX_RIGHT_AXIS = 1;
 
-    friend class MyGLFWGamepadManager;
+    /**
+    * GamepadCallbacks : some callbacks that may be plugged into a gamepad
+    */
 
-  public:
-
-    /** destructor */
-    virtual ~MyGLFWGamepad();
-
-  protected:
-
-    /** the constructor is protected */
-    MyGLFWGamepad(class MyGLFWGamepadManager * in_manager, float in_dead_zone) :
-      manager(in_manager),
-      dead_zone(in_dead_zone)
+    class GamepadCallbacks : public ReferencedObject
     {
-      assert(manager != nullptr);
-    }
+    public:
 
-    /** update all the values for the axis and buttons */
-    void UpdateAxisAndButtons();
+      /** destructor */
+      virtual ~GamepadCallbacks() = default;
 
-  public:
+      /** callback whenever a gamepad is disconnected */
+      virtual bool OnGamepadDisconnected(class Gamepad *) { return true; }
+      /** callback whenever a gamepad is "connected" (a new ID is given to it) */
+      virtual bool OnGamepadConnected(class Gamepad *) { return true; }
+    };
 
-    /** returns true whether the gamepad is connected */
-    inline bool IsPresent() const { return (stick_index >= 0); }
-    /* returns a status giving the change of button relative to previous frame */
-    int GetButtonChanges(size_t button_index) const;
-    /** returns the button state */
-    bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
-    /** returns the button state */
-    float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
-    /** returns the stick index */
-    int GetGamepadIndex() const { return stick_index; }
-    /** returns true whether there is any pressed button */
-    bool IsAnyButtonPressed(bool previous_frame = false) const;
-    /** returns true whether there is any axis in use */
-    bool IsAnyAxisAction(bool previous_frame = false) const;
-    /** returns true whenever a buttons is pressed or an axis is in action */
-    bool IsAnyAction(bool previous_frame = false) const;
-    /** returns the direction of one stick (a combinaison of 2 axis) */
-    glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
+    /**
+    * GamepadAxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
+    *                         we have to store the upper and lower values to renormalize the output
+    */
+    class GamepadAxisData
+    {
+    public:
 
-    /** returns the number of buttons */
-    size_t GetButtonCount() const;
-    /** returns the number of axis */
-    size_t GetAxisCount() const;
+      /** update the value */
+      void UpdateValue(float in_raw_value, float dead_zone);
+      /** get the value */
+      inline float GetValue() const { return final_value; }
 
-    /** returns whether the gamepad has already been connected once */
-    inline bool IsEverConnected() const { return ever_connected; }
-   
-  protected:
+    protected:
 
-    /** called at unconnection to be sure input cannot be consulted anymore */
-    void ClearInputs();
+      /** value of the stick (with no filter) */
+      float raw_value = 0.0f;
+      /** min value always encountered */
+      float min_value = -0.8f;
+      /** max value always encountered */
+      float max_value = +0.8f;
+      /** the final value of the stick after computation */
+      float final_value = 0.0f;
+    };
 
-  protected:
+    /**
+    * PhysicalGamepad : the physical device. Client do not directly use it
+    */
+    class PhysicalGamepad : public ReferencedObject
+    {
+    public:
 
-    /** manager */
-    MyGLFWGamepadManager * manager = nullptr;
-    /** the callbacks */
-    boost::intrusive_ptr<MyGLFWGamepadCallbacks> callbacks;
 
-    /** the zone for axis that is considered 0 */
-    float dead_zone = 0.0f;
-    /** the current stick index */
-    int stick_index = -1;
-    /** indicates whether the stick has already be connected */
-    bool ever_connected = false;
-    /** the value for axis */
-    std::vector<MyGLFWGamepadAxisData> axis;
-    /** the value for buttons */
-    std::vector<int> buttons;
-  };
+      friend class GamepadManager;
+      friend class Gamepad;
+
+    protected:
+
+      /** the constructor is protected */
+      PhysicalGamepad() = default
+      /** update all the values for the axis and buttons */
+      void UpdateAxisAndButtons(float dead_zone);
+
+    public:
+
+      /** returns true whether the gamepad is connected */
+      inline bool IsPresent() const { return (stick_index >= 0); }
+      /* returns a status giving the change of button relative to previous frame */
+      int GetButtonChanges(size_t button_index) const;
+      /** returns the button state */
+      bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+      /** returns the button state */
+      float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+      /** returns the stick index */
+      int GetGamepadIndex() const { return stick_index; }
+      /** returns true whether there is any pressed button */
+      bool IsAnyButtonPressed(bool previous_frame = false) const;
+      /** returns true whether there is any axis in use */
+      bool IsAnyAxisAction(bool previous_frame = false) const;
+      /** returns true whenever a buttons is pressed or an axis is in action */
+      bool IsAnyAction(bool previous_frame = false) const;
+      /** returns the direction of one stick (a combinaison of 2 axis) */
+      glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
+
+      /** returns the number of buttons */
+      size_t GetButtonCount() const;
+      /** returns the number of axis */
+      size_t GetAxisCount() const;
+
+      /** returns whether the gamepad has already been connected once */
+      inline bool IsEverConnected() const { return ever_connected; }
+
+    protected:
+
+      /** called at unconnection to be sure input cannot be consulted anymore */
+      void ClearInputs();
+
+    protected:
+
+      /** the callbacks */
+      boost::intrusive_ptr<GamepadCallbacks> callbacks;
+
+      /** the current stick index */
+      int stick_index = -1;
+      /** indicates whether the stick has already be connected */
+      bool ever_connected = false;
+      /** indicates whether the stick is allocated to a client */
+      bool allocated = false;
+
+      /** the value for axis */
+      std::vector<GamepadAxisData> axis;
+      /** the value for buttons */
+      std::vector<int> buttons;
+    };
+
+
+    /**
+    * MyGLFWGamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
+    */
+    class Gamepad : public ReferencedObject
+    {
+    public:
+
+      friend class GamepadManager;
+
+    public:
+
+      /** destructor */
+      virtual ~Gamepad();
+
+      /* returns a status giving the change of button relative to previous frame */
+      int GetButtonChanges(size_t button_index) const;
+      /** returns the button state */
+      bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+      /** returns the button state */
+      float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+      /** returns the stick index */
+      int GetGamepadIndex() const;
+      /** returns true whether there is any pressed button */
+      bool IsAnyButtonPressed(bool previous_frame = false) const;
+      /** returns true whether there is any axis in use */
+      bool IsAnyAxisAction(bool previous_frame = false) const;
+      /** returns true whenever a buttons is pressed or an axis is in action */
+      bool IsAnyAction(bool previous_frame = false) const;
+      /** returns the direction of one stick (a combinaison of 2 axis) */
+      glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
+      /** returns the number of buttons */
+      size_t GetButtonCount() const;
+      /** returns the number of axis */
+      size_t GetAxisCount() const;
+      /** returns whether the gamepad has already been connected once */
+      bool IsEverConnected() const;
+      /** returns true whether the gamepad is connected */
+      bool IsPresent() const;
+
+    protected:
+
+      /* the device */
+      boost::intrusive_ptr<PhysicalGamepad> physical_device;
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }; // namespace MyGLFW
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /**
-  * MyGLFWGamepadEntry
+  * GamepadPresenceInfo : this is an array that contains reference on all gamepads by ids
   */
 
-  class MyGLFWGamepadEntry
-  {
-  public:
-
-    /** the gamepad */
-    MyGLFWGamepad * gamepad = nullptr;
-    /** whether the gamepad is allocated */
-    bool allocated = false;
-  };
-
-  /**
-  * MyGLFWGamepadPresenceInfo : this is an array that contains reference on all gamepads by ids
-  */
-
-  class MyGLFWGamepadPresenceInfo
+  class GamepadPresenceInfo
   {
   public:
 
     static size_t const MAX_SUPPORT_STICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
     /** register a gamepad into the resume */
-    bool InsertGamepadEntry(MyGLFWGamepadEntry & entry, size_t entry_index);
+    bool InsertGamepadEntry(GamepadEntry & entry, size_t entry_index);
 
   public:
 
@@ -220,24 +312,24 @@ namespace chaos
   };
 
   /**
-  * MyGLFWGamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
+  * GamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
   */
 
-  class MyGLFWGamepadManager : public ReferencedObject
+  class GamepadManager : public ReferencedObject
   {
-    friend class MyGLFWGamepad;
+    friend class Gamepad;
 
   public:
 
     /** constructor */
-    MyGLFWGamepadManager(float in_dead_zone = 0.2f) : dead_zone(in_dead_zone) {}
+    GamepadManager(float in_dead_zone = 0.2f) : dead_zone(in_dead_zone) {}
 
     /** update all the joysticks */
     void Tick(float delta_time);
     /** create a gamepad */
-    MyGLFWGamepad * AllocateGamepad(MyGLFWGamepadCallbacks * in_callbacks = nullptr);
+    Gamepad * AllocateGamepad(GamepadCallbacks * in_callbacks = nullptr);
     /** release a gamepad */
-    void FreeGamepad(MyGLFWGamepad * gamepad);
+    void FreeGamepad(Gamepad * gamepad);
 
     /** returns whether the given stick has any input set */
     static bool HasAnyInputs(int stick_index, float dead_zone);
@@ -245,38 +337,38 @@ namespace chaos
   protected:
 
     /** called to allocate a gamepad instance */
-    virtual MyGLFWGamepad * NewGamepadInstance();
+    virtual Gamepad * NewGamepadInstance();
     /** internal method to recycle / allocate a gamepad entry*/
-    MyGLFWGamepadEntry * AllocateGamepadEntry(bool want_unallocated);
+    GamepadEntry * AllocateGamepadEntry(bool want_unallocated);
 
     /** get an array of all gamepads by IDS */
-    MyGLFWGamepadPresenceInfo GetGamepadPresenceInfo();
+    GamepadPresenceInfo GetGamepadPresenceInfo();
 
     /** called whenever a gamepad is being connected */
     void HandleGamepadConnection(int stick_index);
     /** called whenever a gamepad is being diconnected */
-    void HandleGamepadDisconnection(MyGLFWGamepadEntry & entry);
+    void HandleGamepadDisconnection(GamepadEntry & entry);
     /** called whenever a gamepad is present and is state is not changing */
-    void HandleGamepadTick(MyGLFWGamepadEntry & entry, float delta_time);
+    void HandleGamepadTick(GamepadEntry & entry, float delta_time);
 
     /** find a gamepad still not connected */
-    MyGLFWGamepadEntry * FindNotPresentGamepadEntry();
+    GamepadEntry * FindNotPresentGamepadEntry();
     /** find a gamepad that is used by nobody */
-    MyGLFWGamepadEntry * FindUnallocatedGamepadEntry();
+    GamepadEntry * FindUnallocatedGamepadEntry();
 
     /** called whenever a gamepad is being disconnected */
-    virtual bool OnGamepadDisconnected(MyGLFWGamepad * gamepad) { return true; }
+    virtual bool OnGamepadDisconnected(Gamepad * gamepad) { return true; }
     /** called whenever a gamepad is being connected */
-    virtual bool OnGamepadConnected(MyGLFWGamepad * gamepad) { return true; }
+    virtual bool OnGamepadConnected(Gamepad * gamepad) { return true; }
     /** called whenever an input is detected on a non allocated gamepad. returns true if the gamepad is allocated as a result */
-    virtual bool OnUnallocatedGamepadInput(MyGLFWGamepad * gamepad) { return false; }
+    virtual bool OnUnallocatedGamepadInput(Gamepad * gamepad) { return false; }
 
   protected:
 
     /** the default dead zone value */
     float dead_zone;
     /** the gamepads */
-    std::vector<MyGLFWGamepadEntry> gamepad_entries;
+    std::vector<boost::intrusive_ptr<PhysicalGamepad>> physical_gamepads;
   };
 
 

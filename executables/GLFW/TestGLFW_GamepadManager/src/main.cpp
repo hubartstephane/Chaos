@@ -8,20 +8,20 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/StringTools.h>
 
-class TestGamepadCallbacks : public chaos::MyGLFWGamepadCallbacks
+class TestGamepadCallbacks : public chaos::MyGLFW::GamepadCallbacks
 {
 public:
 
   TestGamepadCallbacks(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
 
-  virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
+  virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
   {
     if (debug_display != nullptr)
       debug_display->AddLine(chaos::StringTools::Printf("TestGamepadCallbacks::OnGamepadConnected EVER CONNECTED = %d", gamepad->IsEverConnected()).c_str());
     return true;
   }
 
-  virtual bool OnGamepadDisconnected(chaos::MyGLFWGamepad * gamepad) override
+  virtual bool OnGamepadDisconnected(chaos::MyGLFW::Gamepad * gamepad) override
   {
     if (debug_display != nullptr)
       debug_display->AddLine("TestGamepadCallbacks::OnGamepadDisconnected");
@@ -37,7 +37,7 @@ protected:
 
 
 
-class MyGamepadManager : public chaos::MyGLFWGamepadManager
+class MyGamepadManager : public chaos::MyGLFW::GamepadManager
 {
 public:
 
@@ -45,9 +45,9 @@ public:
 
 protected:
 
-	virtual bool OnGamepadConnected(chaos::MyGLFWGamepad * gamepad) override
+	virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
 	{
-		if (gamepad->IsButtonPressed(chaos::MyGLFWGamepad::XBOX_BUTTON_START))
+		if (gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_START))
 		{
 			if (debug_display != nullptr)
 				debug_display->AddLine(chaos::StringTools::Printf("OnGamepadConnected %d : accepted ", gamepad->GetGamepadIndex()).c_str(), 1.0f);
@@ -61,7 +61,7 @@ protected:
 		}    
 	}
 
-	virtual bool OnGamepadDisconnected(chaos::MyGLFWGamepad * gamepad) override
+	virtual bool OnGamepadDisconnected(chaos::MyGLFW::Gamepad * gamepad) override
 	{
 		if (debug_display != nullptr)
 			debug_display->AddLine(chaos::StringTools::Printf("OnGamepadDisconnected %d", gamepad->GetGamepadIndex()).c_str(), 1.0f);
@@ -143,24 +143,24 @@ protected:
 
 			int change = main_gamepad->GetButtonChanges(chaos::MyGLFWGamepad::XBOX_BUTTON_B);
 
-			//if (change == chaos::MyGLFWGamepad::BUTTON_STAY_RELEASED)
+			//if (change == chaos::MyGLFW::BUTTON_STAY_RELEASED)
 			//	debug_display.AddLine("BUTTON_STAY_RELEASED", 1.0f);
-			//if (change == chaos::MyGLFWGamepad::BUTTON_STAY_PRESSED)
+			//if (change == chaos::MyGLFW::BUTTON_STAY_PRESSED)
 			//	debug_display.AddLine("BUTTON_STAY_PRESSED", 1.0f);
-			if (change == chaos::MyGLFWGamepad::BUTTON_BECOME_RELEASED)
+			if (change == chaos::MyGLFW::BUTTON_BECOME_RELEASED)
 				debug_display.AddLine("BUTTON_BECOME_RELEASED", 1.0f);
-			if (change == chaos::MyGLFWGamepad::BUTTON_BECOME_PRESSED)
+			if (change == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
 				debug_display.AddLine("BUTTON_BECOME_PRESSED", 1.0f);
 
 
 			if (main_gamepad->IsAnyAction())
 				debug_display.AddLine("IsAnyAction()", 1.0f);
 
-			glm::vec2 l = main_gamepad->GetXBOXStickDirection(chaos::MyGLFWGamepad::XBOX_LEFT_AXIS);
+			glm::vec2 l = main_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 			if (l.x != 0.0f || l.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("LEFT x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
-			glm::vec2 r = main_gamepad->GetXBOXStickDirection(chaos::MyGLFWGamepad::XBOX_RIGHT_AXIS);
+			glm::vec2 r = main_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 			if (r.x != 0.0f || r.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("RIGHT x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 		}
@@ -175,7 +175,7 @@ protected:
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 
-	boost::intrusive_ptr<chaos::MyGLFWGamepad> main_gamepad;
+	boost::intrusive_ptr<chaos::MyGLFW::Gamepad> main_gamepad;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

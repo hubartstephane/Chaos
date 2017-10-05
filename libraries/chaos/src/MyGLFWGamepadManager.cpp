@@ -4,6 +4,11 @@
 
 namespace chaos
 {
+  // XXX : some sticks are not abled to physicaly returns 1.0 when they are fully triggered (depend on the device)
+  //       that's why i use some min/max values (initialized with a coherent value)
+  //       i the stick goes further than theses values, we update them.
+  //       that help us to have a good evaluation of the stick range over time.
+
   void MyGLFWGamepadAxisData::UpdateValue(float in_raw_value)
   {
     in_raw_value = MathTools::Clamp(in_raw_value, -1.0f, +1.0f);
@@ -62,12 +67,12 @@ namespace chaos
     if (!IsPresent())
       return false;
 
-    size_t count = buttons.size();
-    if (button_index >= count / 2)
+    size_t count = GetButtonCount();
+    if (button_index >= count)
       return false;
 
     if (previous_frame)
-      button_index += count / 2; // upper part of the array for previous_frame
+      button_index += count; // upper part of the array for previous_frame
 
     return (buttons[button_index] != 0);
   }
@@ -77,12 +82,12 @@ namespace chaos
     if (!IsPresent())
       return 0.0f;
 
-    size_t count = axis.size();
-    if (axis_index >= count / 2)
+    size_t count = GetAxisCount();
+    if (axis_index >= count)
       return 0.0f;
 
     if (previous_frame)
-      axis_index += count / 2; // upper part of the array for previous_frame
+      axis_index += count; // upper part of the array for previous_frame
 
     return axis[axis_index].GetValue();
   }
@@ -92,9 +97,9 @@ namespace chaos
     if (!IsPresent())
       return false;
 
-    size_t count = buttons.size();
-    size_t start = (previous_frame) ? count / 2 : 0;
-    size_t end = start + count / 2;
+    size_t count = GetButtonCount();
+    size_t start = (previous_frame) ? count : 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
+    size_t end   = start + count;
 
     for (size_t i = start; i < end; ++i)
       if (buttons[i])
@@ -107,9 +112,9 @@ namespace chaos
     if (!IsPresent())
       return false;
 
-    size_t count = axis.size();
-    size_t start = (previous_frame) ? count / 2 : 0;
-    size_t end = start + count / 2;
+    size_t count = GetAxisCount();
+    size_t start = (previous_frame) ? count : 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
+    size_t end   = start + count;
 
     for (size_t i = start; i < end; ++i)
       if (axis[i].GetValue() != 0.0f)
@@ -212,6 +217,16 @@ namespace chaos
       }
     }
   }
+
+
+
+
+
+
+
+
+
+
 
   bool MyGLFWGamepadPresenceInfo::InsertGamepadEntry(MyGLFWGamepadEntry & entry, size_t entry_index)
   {

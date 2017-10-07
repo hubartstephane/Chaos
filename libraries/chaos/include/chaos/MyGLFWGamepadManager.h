@@ -53,17 +53,20 @@ namespace chaos
     static int const XBOX_LEFT_AXIS_X = 0;
     /** index in axis of LEFT Y for XBOX like pad */
     static int const XBOX_LEFT_AXIS_Y = 1; // STICK DOWN = positive values
-                                           /** index in axis for the trigger for XBOX like pad */
+    /** index in axis for the trigger for XBOX like pad */
     static int const XBOX_TRIGGER = 2; // LEFT TRIGGER = positive values,  RIGHT TRIGGER = negative values
-                                       /** index in axis of RIGHT Y for XBOX like pad */
+    /** index in axis of RIGHT Y for XBOX like pad */
     static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
-                                             /** index in axis of RIGHT X for XBOX like pad */
+    /** index in axis of RIGHT X for XBOX like pad */
     static int const XBOX_RIGHT_AXIS_X = 4;
 
     /** returns the direction of left stick (beware the low level interface only knows for axis) */
     static int const XBOX_LEFT_AXIS = 0;
     /** returns the direction of right stick (beware the low level interface only knows for axis) */
     static int const XBOX_RIGHT_AXIS = 1;
+
+    /** maximum number of supported physical gamepads */
+    static int const MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
     /**
     * GamepadCallbacks : some callbacks that may be plugged into a gamepad
@@ -83,10 +86,10 @@ namespace chaos
     };
 
     /**
-    * GamepadAxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
-    *                         we have to store the upper and lower values to renormalize the output
+    * AxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
+    *            we have to store the upper and lower values to renormalize the output
     */
-    class GamepadAxisData
+    class AxisData
     {
     public:
 
@@ -114,21 +117,18 @@ namespace chaos
     {
     public:
 
-
       friend class GamepadManager;
       friend class Gamepad;
 
     protected:
 
       /** the constructor is protected */
-      PhysicalGamepad() = default
+      PhysicalGamepad() = default;
       /** update all the values for the axis and buttons */
-      void UpdateAxisAndButtons(float dead_zone);
+      void UpdateAxisAndButtons(float delta_time, float dead_zone);
 
     public:
 
-      /** returns true whether the gamepad is connected */
-      inline bool IsPresent() const { return (stick_index >= 0); }
       /* returns a status giving the change of button relative to previous frame */
       int GetButtonChanges(size_t button_index) const;
       /** returns the button state */
@@ -153,6 +153,10 @@ namespace chaos
 
       /** returns whether the gamepad has already been connected once */
       inline bool IsEverConnected() const { return ever_connected; }
+      /** returns whether the gamepad is allocated for a user */
+      inline bool IsAllocated() const { return (user_gamepad != nullptr); }
+      /** returns true whether the gamepad is connected */
+      inline bool IsPresent() const { return (stick_index >= 0); }
 
     protected:
 
@@ -161,31 +165,32 @@ namespace chaos
 
     protected:
 
-      /** the callbacks */
-      boost::intrusive_ptr<GamepadCallbacks> callbacks;
-
       /** the current stick index */
       int stick_index = -1;
       /** indicates whether the stick has already be connected */
       bool ever_connected = false;
       /** indicates whether the stick is allocated to a client */
-      bool allocated = false;
+      class Gamepad * user_gamepad = nullptr;
 
       /** the value for axis */
-      std::vector<GamepadAxisData> axis;
+      std::vector<AxisData> axis;
       /** the value for buttons */
       std::vector<int> buttons;
     };
 
 
     /**
-    * MyGLFWGamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
+    * Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
     */
     class Gamepad : public ReferencedObject
     {
     public:
 
       friend class GamepadManager;
+
+    protected:
+
+      Gamepad(PhysicalGamepad * in_physical_device); // protected constructor
 
     public:
 
@@ -217,160 +222,92 @@ namespace chaos
       /** returns true whether the gamepad is connected */
       bool IsPresent() const;
 
+      void SetCallbacks(GamepadCallbacks * in_callbacks);
+
     protected:
 
       /* the device */
       boost::intrusive_ptr<PhysicalGamepad> physical_device;
+      /** the callbacks */
+      boost::intrusive_ptr<GamepadCallbacks> callbacks;
+    };
+
+    /**
+    * GamepadPresenceInfo : this is an array that contains reference on all gamepads by ids
+    */
+
+    class GamepadPresenceInfo
+    {
+    public:
+
+      /** register a gamepad into the resume */
+      bool InsertGamepad(PhysicalGamepad * gamepad, size_t entry_index);
+
+    public:
+
+      /** a map : [STICK_ID] => [INDEX of ENTRY in MANAGER] */
+      size_t entries[MAX_SUPPORTED_GAMEPAD_COUNT] = { std::numeric_limits<size_t>::max() };
     };
 
 
+    /**
+    * GamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
+    */
 
+    class GamepadManager : public ReferencedObject
+    {
+      friend class Gamepad;
 
+    public:
 
+      /** constructor */
+      GamepadManager(float in_dead_zone = 0.2f) : dead_zone(in_dead_zone) {}
 
+      /** update all the joysticks */
+      void Tick(float delta_time);
 
+      /** create a gamepad */
+      Gamepad * AllocateGamepad(GamepadCallbacks * in_callbacks = nullptr);
 
+      /** returns whether the given stick has any input set */
+      static bool HasAnyInputs(int stick_index, float dead_zone);
 
+    protected:
 
+      /** internal method to recycle / allocate a gamepad entry*/
+      PhysicalGamepad * AllocatePhysicalGamepad(bool want_unallocated);
 
+      /** get an array of all gamepads by IDS */
+      GamepadPresenceInfo GetGamepadPresenceInfo();
 
+      /** called whenever a gamepad is being connected */
+      void HandleGamepadConnection(int stick_index);
+      /** called whenever a gamepad is being diconnected */
+      void HandleGamepadDisconnection(PhysicalGamepad * physical_gamepad);
+      /** called whenever a gamepad is present and is state is not changing */
+      void HandleGamepadTick(PhysicalGamepad * physical_gamepad, float delta_time);
 
+      /** find a gamepad still not connected */
+      PhysicalGamepad * FindNotPresentPhysicalGamepad();
+      /** find a gamepad that is used by nobody */
+      PhysicalGamepad * FindUnallocatedPhysicalGamepad();
 
+      /** called whenever a gamepad is being disconnected */
+      virtual bool OnGamepadDisconnected(Gamepad * gamepad) { return true; }
+      /** called whenever a gamepad is being connected */
+      virtual bool OnGamepadConnected(Gamepad * gamepad) { return true; }
+      /** called whenever an input is detected on a non allocated gamepad. returns a gamepad if some user is created */
+      virtual Gamepad * OnUnallocatedGamepadInput(PhysicalGamepad * gamepad) { return nullptr; }
 
+    protected:
 
-
-
-
-
-
+      /** the default dead zone value */
+      float dead_zone;
+      /** the gamepads */
+      std::vector<boost::intrusive_ptr<PhysicalGamepad>> physical_gamepads;
+    };
 
   }; // namespace MyGLFW
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /**
-  * GamepadPresenceInfo : this is an array that contains reference on all gamepads by ids
-  */
-
-  class GamepadPresenceInfo
-  {
-  public:
-
-    static size_t const MAX_SUPPORT_STICK_COUNT = GLFW_JOYSTICK_LAST + 1;
-
-    /** register a gamepad into the resume */
-    bool InsertGamepadEntry(GamepadEntry & entry, size_t entry_index);
-
-  public:
-
-    /** a map : [STICK_ID] => [INDEX of ENTRY in MANAGER] */
-    size_t entries[MAX_SUPPORT_STICK_COUNT] = { std::numeric_limits<size_t>::max() };
-  };
-
-  /**
-  * GamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
-  */
-
-  class GamepadManager : public ReferencedObject
-  {
-    friend class Gamepad;
-
-  public:
-
-    /** constructor */
-    GamepadManager(float in_dead_zone = 0.2f) : dead_zone(in_dead_zone) {}
-
-    /** update all the joysticks */
-    void Tick(float delta_time);
-    /** create a gamepad */
-    Gamepad * AllocateGamepad(GamepadCallbacks * in_callbacks = nullptr);
-    /** release a gamepad */
-    void FreeGamepad(Gamepad * gamepad);
-
-    /** returns whether the given stick has any input set */
-    static bool HasAnyInputs(int stick_index, float dead_zone);
-
-  protected:
-
-    /** called to allocate a gamepad instance */
-    virtual Gamepad * NewGamepadInstance();
-    /** internal method to recycle / allocate a gamepad entry*/
-    GamepadEntry * AllocateGamepadEntry(bool want_unallocated);
-
-    /** get an array of all gamepads by IDS */
-    GamepadPresenceInfo GetGamepadPresenceInfo();
-
-    /** called whenever a gamepad is being connected */
-    void HandleGamepadConnection(int stick_index);
-    /** called whenever a gamepad is being diconnected */
-    void HandleGamepadDisconnection(GamepadEntry & entry);
-    /** called whenever a gamepad is present and is state is not changing */
-    void HandleGamepadTick(GamepadEntry & entry, float delta_time);
-
-    /** find a gamepad still not connected */
-    GamepadEntry * FindNotPresentGamepadEntry();
-    /** find a gamepad that is used by nobody */
-    GamepadEntry * FindUnallocatedGamepadEntry();
-
-    /** called whenever a gamepad is being disconnected */
-    virtual bool OnGamepadDisconnected(Gamepad * gamepad) { return true; }
-    /** called whenever a gamepad is being connected */
-    virtual bool OnGamepadConnected(Gamepad * gamepad) { return true; }
-    /** called whenever an input is detected on a non allocated gamepad. returns true if the gamepad is allocated as a result */
-    virtual bool OnUnallocatedGamepadInput(Gamepad * gamepad) { return false; }
-
-  protected:
-
-    /** the default dead zone value */
-    float dead_zone;
-    /** the gamepads */
-    std::vector<boost::intrusive_ptr<PhysicalGamepad>> physical_gamepads;
-  };
-
 
 }; // namespace chaos
 

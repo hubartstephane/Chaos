@@ -141,7 +141,7 @@ protected:
 		if (main_gamepad->IsPresent())
 		{
 
-			int change = main_gamepad->GetButtonChanges(chaos::MyGLFWGamepad::XBOX_BUTTON_B);
+			int change = main_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_B);
 
 			//if (change == chaos::MyGLFW::BUTTON_STAY_RELEASED)
 			//	debug_display.AddLine("BUTTON_STAY_RELEASED", 1.0f);

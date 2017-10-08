@@ -17,7 +17,7 @@ public:
   virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
   {
     if (debug_display != nullptr)
-      debug_display->AddLine(chaos::StringTools::Printf("TestGamepadCallbacks::OnGamepadConnected EVER CONNECTED = %d", gamepad->IsEverConnected()).c_str());
+      debug_display->AddLine("TestGamepadCallbacks::OnGamepadConnected");
     return true;
   }
 
@@ -45,6 +45,8 @@ public:
 
 protected:
 
+#if 0
+
 	virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
 	{
 		if (gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_START))
@@ -67,6 +69,8 @@ protected:
 			debug_display->AddLine(chaos::StringTools::Printf("OnGamepadDisconnected %d", gamepad->GetGamepadIndex()).c_str(), 1.0f);
 		return true;
 	}
+#endif
+
 
 protected:
 
@@ -121,7 +125,7 @@ protected:
 
 		gamepad_manager = new MyGamepadManager(&debug_display);
 
-		main_gamepad = gamepad_manager->AllocateGamepad(new TestGamepadCallbacks(&debug_display));
+		main_gamepad = gamepad_manager->AllocateGamepad(false, new TestGamepadCallbacks(&debug_display));
 		return true;
 	}
 

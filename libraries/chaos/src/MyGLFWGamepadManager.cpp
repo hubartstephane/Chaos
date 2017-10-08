@@ -444,27 +444,44 @@ namespace chaos
 
     void GamepadManager::Tick(float delta_time)
     {
-      size_t count = physical_gamepads.size();
-      for (size_t i = 0; i < count; ++i) // iterate over the physical gamepads
+      // XXX : we use a 2 steps algorithm because we want to be sure to have all physical gamepads state correct before working with user device
+
+      bool was_present[MAX_SUPPORTED_GAMEPAD_COUNT] = { false };
+      bool is_present [MAX_SUPPORTED_GAMEPAD_COUNT] = { false };
+
+      size_t count = MAX_SUPPORTED_GAMEPAD_COUNT;
+      assert(count == physical_gamepads.size());
+
+      // update physical stick status
+      for (size_t i = 0; i < count; ++i)
       {
         PhysicalGamepad * physical_gamepad = physical_gamepads[i];
         if (physical_gamepad == nullptr)
           continue;
 
-        // is the gamepad corresponding to this ID present ?
-        bool gamepad_present = (glfwJoystickPresent(i) > 0);
+        was_present[i] = physical_gamepad->IsPresent();
+        is_present[i]  = (glfwJoystickPresent(i) > 0);
 
-        if (gamepad_present)
-        {
+        if (is_present[i])
           physical_gamepad->UpdateAxisAndButtons(delta_time, dead_zone);
-          if (!physical_gamepad->IsPresent())
-            HandleGamepadConnection(physical_gamepad);         // stick newly connected
-        }
-        else
-        {
-          if (physical_gamepad->IsPresent())
-            HandleGamepadDisconnection(physical_gamepad);  // was present, and is no more present ...
-        }
+
+        physical_gamepad->is_present = is_present[i];
+      }
+
+      // handle user gamepads
+      for (size_t i = 0; i < count; ++i)
+      {
+        PhysicalGamepad * physical_gamepad = physical_gamepads[i];
+        if (physical_gamepad == nullptr)
+          continue;
+
+        if (is_present[i] == was_present[i]) // do not connect/disconnect any user gamepad
+          continue;
+
+        if (is_present[i]) // new connection
+          HandleGamepadConnection(physical_gamepad);
+        else // disconnection
+          HandleGamepadDisconnection(physical_gamepad);
       }
     }
 
@@ -505,6 +522,11 @@ namespace chaos
 
         if (user_gamepad->callbacks != nullptr)
           user_gamepad->callbacks->OnGamepadDisconnected(user_gamepad);
+
+
+
+        ... try to auto reconnect
+
       }
     }
 

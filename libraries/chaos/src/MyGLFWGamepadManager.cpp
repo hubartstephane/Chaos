@@ -349,6 +349,8 @@ namespace chaos
         {
           gamepad->gamepad_manager = nullptr;
           gamepad->physical_device = nullptr;
+          if (gamepad->callbacks != nullptr)
+            gamepad->callbacks->OnManagerDestroyed(gamepad);
         }
       }
       user_gamepads.clear();
@@ -388,7 +390,7 @@ namespace chaos
 
     Gamepad * GamepadManager::AllocateGamepad(bool want_connected, GamepadCallbacks * in_callbacks) // user explicitly require a gamepad
     {
-      PhysicalGamepad * physical_gamepad = FindUnallocatedPhysicalGamepad();
+      PhysicalGamepad * physical_gamepad = FindUnallocatedPhysicalGamepad(want_connected);
       if (want_connected && (physical_gamepad == nullptr || !physical_gamepad->IsPresent())) // all physical device in use or not present ?
         return nullptr;
 
@@ -406,7 +408,7 @@ namespace chaos
     // user explicitly require a physical gamepad
     PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad(bool want_connected)
     {
-      int step_count = (want_connected) ? 2 : 1;  // last step is useless if we want a connected gamepad
+      int step_count = (want_connected) ? 1 : 2;  // last step is useless if we want a connected gamepad
       for (int step = 0; step <= want_connected; ++step)
       {
         for (size_t i = 0; i < physical_gamepads.size(); ++i)
@@ -430,7 +432,7 @@ namespace chaos
           }
           else if (step == 2)
           {
-            return physical_gamepad; // any gamepad will be enought
+            return physical_gamepad; // any gamepad will be enough
           }
         }
       }
@@ -450,26 +452,54 @@ namespace chaos
       bool was_present[MAX_SUPPORTED_GAMEPAD_COUNT] = { false };
       bool is_present [MAX_SUPPORTED_GAMEPAD_COUNT] = { false };
 
-      size_t count = MAX_SUPPORTED_GAMEPAD_COUNT;
-      assert(count == physical_gamepads.size());
+      size_t count = physical_gamepads.size();
 
       // update physical stick status
+      int unconnected_present_physical_device_count = 0;
       for (size_t i = 0; i < count; ++i)
       {
         PhysicalGamepad * physical_gamepad = physical_gamepads[i];
         if (physical_gamepad == nullptr)
           continue;
 
-        is_present[i]  = (glfwJoystickPresent(i) > 0);
-        was_present[i] = physical_gamepad->IsPresent();
+        bool is_present  = (glfwJoystickPresent(i) > 0);
+        bool was_present = physical_gamepad->IsPresent();
 
-        if (is_present[i])
+        physical_gamepad->is_present = is_present; // update presence flag
+
+        if (is_present)
+        {
           physical_gamepad->UpdateAxisAndButtons(delta_time, dead_zone);
-        else if (was_present[i])
+          if (physical_gamepad->user_gamepad == nullptr)
+            ++unconnected_present_physical_device_count; // count the number of physical device not owned by a logical device
+        }
+        else if (was_present)
+        {
           physical_gamepad->ClearInputs();
 
-        physical_gamepad->is_present = is_present[i];
+          Gamepad * user_gamepad = physical_gamepad->user_gamepad;
+          if (user_gamepad != nullptr)
+          {
+            user_gamepad->physical_device  = nullptr; // unbind physical and logical device
+            physical_gamepad->user_gamepad = nullptr;
+            if (user_gamepad->callbacks != nullptr)
+              user_gamepad->callbacks->OnGamepadDisconnected(user_gamepad);
+          }
+        }
       }
+
+      // try to give all logical device a physical device
+
+
+
+
+
+
+
+
+
+
+
 
       // handle user gamepads
       for (size_t i = 0; i < count; ++i)

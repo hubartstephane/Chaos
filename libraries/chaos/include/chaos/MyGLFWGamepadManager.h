@@ -79,10 +79,12 @@ namespace chaos
       /** destructor */
       virtual ~GamepadCallbacks() = default;
 
-      /** callback whenever a gamepad is disconnected */
+      /** called whenever a gamepad is disconnected */
       virtual bool OnGamepadDisconnected(class Gamepad *) { return true; }
-      /** callback whenever a gamepad is "connected" (a new ID is given to it) */
+      /** called whenever a gamepad is "connected" (a new ID is given to it) */
       virtual bool OnGamepadConnected(class Gamepad *) { return true; }
+      /** called whenever the manager is destroyed before the gamepad */
+      virtual bool OnManagerDestroyed(class Gamepad *) { return true; }
     };
 
     /**
@@ -149,8 +151,6 @@ namespace chaos
       /** returns the number of axis */
       size_t GetAxisCount() const;
 
-      /** returns whether the gamepad has already been connected once */
-      inline bool IsEverConnected() const { return ever_connected; }
       /** returns whether the gamepad is allocated for a user */
       inline bool IsAllocated() const { return (user_gamepad != nullptr); }
       /** returns true whether the gamepad is connected */
@@ -165,8 +165,6 @@ namespace chaos
       int stick_index = -1;
       /** indicates whether the stick is present */
       bool is_present = false;
-      /** indicates whether the stick has already be connected */
-      bool ever_connected = false;
       /** indicates whether the stick is allocated to a client */
       class Gamepad * user_gamepad = nullptr;
 
@@ -218,7 +216,10 @@ namespace chaos
 
       /** returns true whether the gamepad is connected */
       bool IsPresent() const;
+      /** returns whether the gamepad has already been connected once */
+      inline bool IsEverConnected() const { return ever_connected; }
 
+      /** give a callback object to the gamepad */
       void SetCallbacks(GamepadCallbacks * in_callbacks);
 
     protected:
@@ -229,6 +230,8 @@ namespace chaos
       PhysicalGamepad * physical_device = nullptr;
       /** the callbacks */
       boost::intrusive_ptr<GamepadCallbacks> callbacks;
+      /** indicates whether the stick has already be connected to a physical device */
+      bool ever_connected = false;
     };
 
     /**

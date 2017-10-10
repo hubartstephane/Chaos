@@ -262,21 +262,10 @@ namespace chaos
       /** called whenever a gamepad is being diconnected */
       void HandleGamepadDisconnection(PhysicalGamepad * physical_gamepad);
 
-
-#if 0
-      /** called whenever a gamepad is present and is state is not changing */
-      void HandleGamepadTick(PhysicalGamepad * physical_gamepad, float delta_time);
-#endif
-
       /** find a gamepad still not connected */
       Gamepad * FindUnconnectedGamepad();
-
-#if 0
-      PhysicalGamepad * FindNotPresentPhysicalGamepad();
-#endif
-
       /** find a gamepad that is used by nobody */
-      PhysicalGamepad * FindUnallocatedPhysicalGamepad();
+      PhysicalGamepad * FindUnallocatedPhysicalGamepad(bool want_connected);
 
 
 #if 0
@@ -287,9 +276,6 @@ namespace chaos
 #endif
       /** called whenever a gamepad is destroyed */
       virtual bool OnGamepadDestroyed(Gamepad * gamepad);
-
-      /** called whenever an input is detected on a non allocated gamepad. returns a gamepad if some user is created */
-      virtual Gamepad * OnUnallocatedGamepadInput(PhysicalGamepad * gamepad) { return nullptr; }
 
     protected:
 

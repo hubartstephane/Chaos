@@ -404,9 +404,10 @@ namespace chaos
 
 
     // user explicitly require a physical gamepad
-    PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad()
+    PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad(bool want_connected)
     {
-      for (int step = 0; step <= 2; ++step)
+      int step_count = (want_connected) ? 2 : 1;  // last step is useless if we want a connected gamepad
+      for (int step = 0; step <= want_connected; ++step)
       {
         for (size_t i = 0; i < physical_gamepads.size(); ++i)
         {
@@ -459,11 +460,13 @@ namespace chaos
         if (physical_gamepad == nullptr)
           continue;
 
-        was_present[i] = physical_gamepad->IsPresent();
         is_present[i]  = (glfwJoystickPresent(i) > 0);
+        was_present[i] = physical_gamepad->IsPresent();
 
         if (is_present[i])
           physical_gamepad->UpdateAxisAndButtons(delta_time, dead_zone);
+        else if (was_present[i])
+          physical_gamepad->ClearInputs();
 
         physical_gamepad->is_present = is_present[i];
       }
@@ -496,8 +499,6 @@ namespace chaos
         if (gamepad->callbacks != nullptr)
           gamepad->callbacks->OnGamepadConnected(gamepad); // if stick was already given to someone, warn him about the reconnection      
       }
-      else
-        OnUnallocatedGamepadInput(physical_gamepad);
     }
 
     Gamepad * GamepadManager::FindUnconnectedGamepad()
@@ -522,11 +523,6 @@ namespace chaos
 
         if (user_gamepad->callbacks != nullptr)
           user_gamepad->callbacks->OnGamepadDisconnected(user_gamepad);
-
-
-
-        ... try to auto reconnect
-
       }
     }
 
@@ -630,25 +626,6 @@ namespace chaos
 
 
 
-
-
-    void GamepadManager::HandleGamepadTick(PhysicalGamepad * physical_gamepad, float delta_time) // no state change
-    {
-      physical_gamepad->UpdateAxisAndButtons(delta_time, dead_zone);
-      if (physical_gamepad == nullptr)
-        physical_gamepad->user_gamepad = OnUnallocatedGamepadInput(physical_gamepad); // auto Allocate the gamepad to a client
-    }
-
-    void GamepadManager::HandleGamepadDisconnection(PhysicalGamepad * physical_gamepad) // gamepad was connected, it is no more
-    {
-      physical_gamepad->stick_index = -1; // the gamepad is no more connected
-      physical_gamepad->ClearInputs();
-
-      Gamepad * gamepad = physical_gamepad->user_gamepad;
-
-      if (gamepad != nullptr && gamepad->callbacks != nullptr)
-        gamepad->callbacks->OnGamepadDisconnected(gamepad);
-    }
 
 
 

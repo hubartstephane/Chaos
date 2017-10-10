@@ -260,23 +260,17 @@ namespace chaos
 
     protected:
 
-      /** called whenever a gamepad is being connected */
-      void HandleGamepadConnection(PhysicalGamepad * physical_gamepad);
-      /** called whenever a gamepad is being diconnected */
-      void HandleGamepadDisconnection(PhysicalGamepad * physical_gamepad);
-
-      /** find a gamepad still not connected */
-      Gamepad * FindUnconnectedGamepad();
       /** find a gamepad that is used by nobody */
-      PhysicalGamepad * FindUnallocatedPhysicalGamepad(bool want_connected);
+      PhysicalGamepad * FindUnallocatedPhysicalGamepad();
+      /** update the physical devices and detect unconnections */
+      void UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unconnected_present_physical_device_count);
+      /** try to give a physical device to all unconnected logical device */
+      void GiveGamepadPhysicalDevices(int & unconnected_present_physical_device_count);
+      /** returns false if no more logical device to bound with */
+      bool DoGiveGamepadPhysicalDevice(PhysicalGamepad * physical_gamepad);
+      /** find the best gamepad that can be bound */
+      Gamepad * FindBestGamepadToBeBoundToPhysicalDevice();
 
-
-#if 0
-      /** called whenever a gamepad is being disconnected */
-      virtual bool OnGamepadDisconnected(Gamepad * gamepad);
-      /** called whenever a gamepad is being connected */
-      virtual bool OnGamepadConnected(Gamepad * gamepad);
-#endif
       /** called whenever a gamepad is destroyed */
       virtual bool OnGamepadDestroyed(Gamepad * gamepad);
 

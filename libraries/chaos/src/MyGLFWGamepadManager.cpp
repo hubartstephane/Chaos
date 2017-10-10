@@ -232,7 +232,10 @@ namespace chaos
     {
       assert(gamepad_manager != nullptr);
       if (physical_device != nullptr)
+      {
         physical_device->user_gamepad = this;
+        ever_connected = true;
+      }
     }
 
     Gamepad::~Gamepad()
@@ -356,20 +359,6 @@ namespace chaos
       user_gamepads.clear();
     }
 
-#if 0
-    bool GamepadManager::OnGamepadDisconnected(Gamepad * gamepad) 
-    {
-      assert(gamepad != nullptr);
-      return true; 
-    }
-
-    bool GamepadManager::OnGamepadConnected(Gamepad * gamepad) 
-    {
-      assert(gamepad != nullptr);
-      return true; 
-    }
-#endif
-
     bool GamepadManager::OnGamepadDestroyed(Gamepad * gamepad)
     {
       assert(gamepad != nullptr);
@@ -388,10 +377,44 @@ namespace chaos
       return true;
     }
 
+    // user explicitly require a physical gamepad
+    PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad()
+    {
+      PhysicalGamepad * best_physical_gamepad = nullptr;
+      int               best_value = -1;
+
+      size_t count = physical_gamepads.size();
+      for (size_t i = 0; i < count; ++i)
+      {
+        PhysicalGamepad * physical_gamepad = physical_gamepads[i];
+        if (physical_gamepad == nullptr)
+          continue;
+        if (!physical_gamepad->IsPresent())
+          continue;
+        if (physical_gamepad->IsAllocated()) // we want an entry that is owned by nobody
+          continue;
+
+        // the 1st best is to find a physical PRESENT gamepad and that has any input (value = 1)
+        // the 2nd best is to find a physical PRESENT gamepad (even if no input)     (value = 0)
+
+        int value = (physical_gamepad->IsAnyAction(false)) ? 1 : 0;
+
+        if (value == 1)
+          return physical_gamepad; // no better choice can be expected => immediate returns
+
+        if (value > best_value)
+        {
+          best_physical_gamepad = physical_gamepad;
+          best_value = value;
+        }
+      }
+      return best_physical_gamepad;
+    }
+
     Gamepad * GamepadManager::AllocateGamepad(bool want_connected, GamepadCallbacks * in_callbacks) // user explicitly require a gamepad
     {
-      PhysicalGamepad * physical_gamepad = FindUnallocatedPhysicalGamepad(want_connected);
-      if (want_connected && (physical_gamepad == nullptr || !physical_gamepad->IsPresent())) // all physical device in use or not present ?
+      PhysicalGamepad * physical_gamepad = FindUnallocatedPhysicalGamepad();
+      if (want_connected && physical_gamepad == nullptr) // all physical device in use or not present ?
         return nullptr;
 
       Gamepad * result = new Gamepad(this, physical_gamepad);
@@ -399,70 +422,25 @@ namespace chaos
       {
         user_gamepads.push_back(result);
         if (in_callbacks != nullptr)
+        {
           result->SetCallbacks(in_callbacks);
+          if (physical_gamepad != nullptr)
+            result->callbacks->OnGamepadConnected(result);
+        }
       }
       return result;
     }
 
-
-    // user explicitly require a physical gamepad
-    PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad(bool want_connected)
+    void GamepadManager::UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unconnected_present_physical_device_count)
     {
-      int step_count = (want_connected) ? 1 : 2;  // last step is useless if we want a connected gamepad
-      for (int step = 0; step <= want_connected; ++step)
-      {
-        for (size_t i = 0; i < physical_gamepads.size(); ++i)
-        {
-          PhysicalGamepad * physical_gamepad = physical_gamepads[i];
-          if (physical_gamepad == nullptr)
-            continue;
-
-          if (physical_gamepad->IsAllocated()) // we want an entry that is owned by nobody
-            continue;
-
-          if (step == 0) // the best is to find a gamepad PRESENT and that has any input
-          {
-            if (physical_gamepad->IsPresent() && physical_gamepad->IsAnyAction(false))
-              return physical_gamepad;
-          }
-          else if (step == 1) // the best is to find a gamepad PRESENT (even if no input)
-          {
-            if (physical_gamepad->IsPresent())
-              return physical_gamepad;
-          }
-          else if (step == 2)
-          {
-            return physical_gamepad; // any gamepad will be enough
-          }
-        }
-      }
-      return nullptr;
-    }
-
-
-
-
-
-
-
-    void GamepadManager::Tick(float delta_time)
-    {
-      // XXX : we use a 2 steps algorithm because we want to be sure to have all physical gamepads state correct before working with user device
-
-      bool was_present[MAX_SUPPORTED_GAMEPAD_COUNT] = { false };
-      bool is_present [MAX_SUPPORTED_GAMEPAD_COUNT] = { false };
-
       size_t count = physical_gamepads.size();
-
-      // update physical stick status
-      int unconnected_present_physical_device_count = 0;
       for (size_t i = 0; i < count; ++i)
       {
         PhysicalGamepad * physical_gamepad = physical_gamepads[i];
         if (physical_gamepad == nullptr)
           continue;
 
-        bool is_present  = (glfwJoystickPresent(i) > 0);
+        bool is_present = (glfwJoystickPresent(i) > 0);
         bool was_present = physical_gamepad->IsPresent();
 
         physical_gamepad->is_present = is_present; // update presence flag
@@ -480,206 +458,93 @@ namespace chaos
           Gamepad * user_gamepad = physical_gamepad->user_gamepad;
           if (user_gamepad != nullptr)
           {
-            user_gamepad->physical_device  = nullptr; // unbind physical and logical device
+            user_gamepad->physical_device = nullptr; // unbind physical and logical device
             physical_gamepad->user_gamepad = nullptr;
             if (user_gamepad->callbacks != nullptr)
               user_gamepad->callbacks->OnGamepadDisconnected(user_gamepad);
           }
         }
       }
+    }
+
+
+    void GamepadManager::Tick(float delta_time)
+    {
+      // update physical stick data / handle disconnection
+      int unconnected_present_physical_device_count = 0;
+      UpdateAndUnconnectPhysicalGamepads(delta_time, unconnected_present_physical_device_count); // get the number of physical devices to bind
 
       // try to give all logical device a physical device
-
-
-
-
-
-
-
-
-
-
-
-
-      // handle user gamepads
-      for (size_t i = 0; i < count; ++i)
-      {
-        PhysicalGamepad * physical_gamepad = physical_gamepads[i];
-        if (physical_gamepad == nullptr)
-          continue;
-
-        if (is_present[i] == was_present[i]) // do not connect/disconnect any user gamepad
-          continue;
-
-        if (is_present[i]) // new connection
-          HandleGamepadConnection(physical_gamepad);
-        else // disconnection
-          HandleGamepadDisconnection(physical_gamepad);
-      }
+      if (unconnected_present_physical_device_count > 0)
+        GiveGamepadPhysicalDevices(unconnected_present_physical_device_count);
     }
 
-    void GamepadManager::HandleGamepadConnection(PhysicalGamepad * physical_gamepad) // a new physical device is beeing detected. Give it to a user
+    void GamepadManager::GiveGamepadPhysicalDevices(int & unconnected_present_physical_device_count)
     {
-      Gamepad * gamepad = FindUnconnectedGamepad();
-      if (gamepad != nullptr)
+      size_t count = physical_gamepads.size();
+
+      for (int step = 0; step < 2; ++step) // 2 steps algorithm : 1 - physical device with any inputs  2 - any physical device (even without inputs)
       {
-        gamepad->physical_device = physical_gamepad; // bind physical and logical device altogether
-        physical_gamepad->user_gamepad = gamepad;
-
-        if (gamepad->callbacks != nullptr)
-          gamepad->callbacks->OnGamepadConnected(gamepad); // if stick was already given to someone, warn him about the reconnection      
-      }
-    }
-
-    Gamepad * GamepadManager::FindUnconnectedGamepad()
-    {
-      for (Gamepad * gamepad : user_gamepads)
-      {
-        if (gamepad == nullptr)
-          continue;
-        if (gamepad->physical_device != nullptr)
-          continue;
-        return gamepad;
-      }
-    }
-
-    void GamepadManager::HandleGamepadDisconnection(PhysicalGamepad * physical_gamepad)
-    {
-      Gamepad * user_gamepad = physical_gamepad->user_gamepad;
-      if (user_gamepad != nullptr)
-      {
-        user_gamepad->physical_device = nullptr;
-        physical_gamepad->user_gamepad = nullptr;
-
-        if (user_gamepad->callbacks != nullptr)
-          user_gamepad->callbacks->OnGamepadDisconnected(user_gamepad);
-      }
-    }
-
-
-#if 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // XXX : this function may be called with 2 purposes :
-    //
-    //       -the user require explicitly a gamepad for is own ownership
-    //           => try to recycle a gamepad that is used by nobody
-    //
-    //       -the tick(..) function has detect a new incoming gamepad
-    //           => try to recycle a gamepad that has no ID
-    //           => preference is to find a gamepad that is USED by someone
-
-    PhysicalGamepad * GamepadManager::FindPhysicalGamepad(bool want_unallocated)
-    {
-      return (want_unallocated) ? FindUnallocatedPhysicalGamepad() : FindNotPresentPhysicalGamepad();
-    }
-
-    // XXX : We want to give a gamepad ID => search a gamepad that is not yet bound to an ID
-    //       Prefere a gamepad that is allocated for someone usage
-    PhysicalGamepad * GamepadManager::FindNotPresentPhysicalGamepad()
-    {
-      for (int step = 0; step <= 2; ++step)
-      {
-        for (size_t i = 0; i < physical_gamepads.size(); ++i)
+        for (size_t i = 0; i < count; ++i)
         {
-          PhysicalGamepad * physical_gamepad = physical_gamepads[i].get();
+          if (unconnected_present_physical_device_count == 0) // no more present physical device ?
+            return;
+
+          PhysicalGamepad * physical_gamepad = physical_gamepads[i];
           if (physical_gamepad == nullptr)
             continue;
-
-          if (physical_gamepad->IsPresent()) // we do not want a gamepad that already has an ID
+          if (!physical_gamepad->IsPresent())
+            continue;
+          if (physical_gamepad->IsAllocated()) // want unbound physical device
             continue;
 
-          if (step == 0) // the best is to find a gamepad IN USE that has already been connected once (recycle)
-          {
-            if (physical_gamepad->IsAllocated() && physical_gamepad->IsEverConnected()) // this is a lost gamepad
-              return physical_gamepad;
-          }
-          else if (step == 1) // gamepad IN USE that never has been connected is fine too (2nd better choice)
-          {
-            if (physical_gamepad->IsAllocated())
-              return physical_gamepad;
-          }
-          else if (step == 2) // last choice
-          {
-            return physical_gamepad; // any gamepad still not present will be enought
-          }
+          if (step == 0 && !physical_gamepad->IsAnyAction(false)) // in step 0, ignore sticks that have no inputs
+            continue;
+
+          if (!DoGiveGamepadPhysicalDevice(physical_gamepad)) // returns false if no logical gamepad wants a physical device
+            return;
+
+          --unconnected_present_physical_device_count;
         }
       }
-      return nullptr;
     }
 
+    Gamepad * GamepadManager::FindBestGamepadToBeBoundToPhysicalDevice()
+    {
+      Gamepad * best_gamepad = nullptr;
 
+      size_t count = user_gamepads.size();
+      for (size_t i = 0; i < count; ++i)
+      {
+        Gamepad * gamepad = user_gamepads[i];
+        if (gamepad == nullptr)
+          continue;
+        if (gamepad->physical_device != nullptr) // logical device does not need to be bound to a physical device
+          continue;
+        if (gamepad->IsEverConnected()) // the best is to use a gamepad that has already received a physical device (more likely to have been really used)
+          return gamepad;
 
+        if (best_gamepad == nullptr)
+          best_gamepad = gamepad; // in a second step, we will return any gamepad (by order of allocation)
+      }
+      return best_gamepad;
+    }
 
+    bool GamepadManager::DoGiveGamepadPhysicalDevice(PhysicalGamepad * physical_gamepad)
+    {
+      Gamepad * best_gamepad = FindBestGamepadToBeBoundToPhysicalDevice();
+      if (best_gamepad == nullptr)
+        return false;               // no orphan logical device
 
+      physical_gamepad->user_gamepad = best_gamepad;
+      best_gamepad->physical_device  = physical_gamepad;
+      best_gamepad->ever_connected   = true;
 
+      if (best_gamepad->callbacks != nullptr)
+        best_gamepad->callbacks->OnGamepadConnected(best_gamepad);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Some explanation : considering that a gamepad represents a player,
-    //                    if a gamepad is disconnected, it has now greater priority for recapture that a gamepad that never has been captured
-    //                    (want to reconnect old player instead of introducing a new one)
-    //
-    //                    the manager has the opportunity to refuse a stick input
+      return true;
+    }
 
     bool GamepadManager::HasAnyInputs(int stick_index, float dead_zone)
     {

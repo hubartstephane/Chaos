@@ -125,7 +125,7 @@ namespace chaos
     protected:
 
       /** the constructor is protected */
-      PhysicalGamepad(int in_stick_index) : stick_index(in_stick_index) {}
+      PhysicalGamepad(int in_stick_index);
       /** update all the values for the axis and buttons */
       void UpdateAxisAndButtons(float delta_time, float dead_zone);
 
@@ -253,7 +253,7 @@ namespace chaos
       void Tick(float delta_time);
 
       /** create a gamepad */
-      Gamepad * AllocateGamepad(bool want_connected = true, GamepadCallbacks * in_callbacks = nullptr);
+      Gamepad * AllocateGamepad(bool want_present = false, GamepadCallbacks * in_callbacks = nullptr);
 
       /** returns whether the given stick has any input set */
       static bool HasAnyInputs(int stick_index, float dead_zone);

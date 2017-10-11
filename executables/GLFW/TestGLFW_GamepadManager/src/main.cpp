@@ -14,6 +14,13 @@ public:
 
   TestGamepadCallbacks(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
 
+  virtual bool AcceptPhysicalDevice(chaos::MyGLFW::PhysicalGamepad * physical_device) override
+  {
+	  if (!physical_device->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A))
+		  return false;
+	  return true;
+  }
+
   virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
   {
     if (debug_display != nullptr)

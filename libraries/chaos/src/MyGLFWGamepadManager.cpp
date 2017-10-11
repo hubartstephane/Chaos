@@ -393,7 +393,7 @@ namespace chaos
     }
 
     // user explicitly require a physical gamepad
-    PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad()
+    PhysicalGamepad * GamepadManager::FindUnallocatedPhysicalGamepad(GamepadCallbacks * in_callbacks)
     {
       PhysicalGamepad * best_physical_gamepad = nullptr;
 
@@ -407,6 +407,8 @@ namespace chaos
           continue;
         if (physical_gamepad->IsAllocated()) // we want an entry that is owned by nobody
           continue;
+		if (in_callbacks != nullptr && !in_callbacks->AcceptPhysicalDevice(physical_gamepad)) // user filter
+			continue;
 
         // the 1st best is to find a physical PRESENT gamepad and that has any input
         // the 2nd best is to find a physical PRESENT gamepad (even if no input)    
@@ -422,7 +424,7 @@ namespace chaos
 
     Gamepad * GamepadManager::AllocateGamepad(bool want_present, GamepadCallbacks * in_callbacks) // user explicitly require a gamepad
     {
-      PhysicalGamepad * physical_gamepad = FindUnallocatedPhysicalGamepad();
+      PhysicalGamepad * physical_gamepad = FindUnallocatedPhysicalGamepad(in_callbacks);
       if (want_present && physical_gamepad == nullptr) // all physical device in use or not present ?
         return nullptr;
 
@@ -517,7 +519,7 @@ namespace chaos
       }
     }
 
-    Gamepad * GamepadManager::FindBestGamepadToBeBoundToPhysicalDevice()
+    Gamepad * GamepadManager::FindBestGamepadToBeBoundToPhysicalDevice(PhysicalGamepad * physical_gamepad)
     {
       Gamepad * best_gamepad = nullptr;
 
@@ -529,9 +531,10 @@ namespace chaos
           continue;
         if (gamepad->physical_device != nullptr) // logical device does not need to be bound to a physical device
           continue;
+		if (gamepad->callbacks != nullptr && !gamepad->callbacks->AcceptPhysicalDevice(physical_gamepad)) // user filter
+			continue;
         if (gamepad->IsEverConnected()) // the best is to use a gamepad that has already received a physical device (more likely to have been really used)
           return gamepad;
-
         if (best_gamepad == nullptr)
           best_gamepad = gamepad; // in a second step, we will return any gamepad (by order of allocation)
       }
@@ -540,7 +543,7 @@ namespace chaos
 
     bool GamepadManager::DoGiveGamepadPhysicalDevice(PhysicalGamepad * physical_gamepad)
     {
-      Gamepad * best_gamepad = FindBestGamepadToBeBoundToPhysicalDevice();
+      Gamepad * best_gamepad = FindBestGamepadToBeBoundToPhysicalDevice(physical_gamepad);
       if (best_gamepad == nullptr)
         return false;               // no orphan logical device
 

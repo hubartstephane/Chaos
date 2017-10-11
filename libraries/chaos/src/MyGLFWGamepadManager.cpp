@@ -373,6 +373,16 @@ namespace chaos
       }
       user_gamepads.clear();
     }
+	
+	void GamepadManager::EnableInputPooling(bool in_pooling_enabled)
+	{
+		pooling_enabled = in_pooling_enabled;
+	}
+	
+	bool GamepadManager::IsInputPoolingEnabled() const
+	{
+		return pooling_enabled;
+	}
 
     bool GamepadManager::OnGamepadDestroyed(Gamepad * gamepad)
     {
@@ -451,7 +461,41 @@ namespace chaos
       // try to give all logical device a physical device
       if (unconnected_present_physical_device_count > 0)
         GiveGamepadPhysicalDevices(unconnected_present_physical_device_count);
+
+	  // uncatched inputs pooling
+	  if (unconnected_present_physical_device_count > 0 && pooling_enabled)
+		  PoolInputs(unconnected_present_physical_device_count);
     }
+
+	void GamepadManager::PoolInputs(int & unconnected_present_physical_device_count)
+	{
+		size_t count = physical_gamepads.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			if (unconnected_present_physical_device_count == 0) // early exit
+				return;
+
+			PhysicalGamepad * physical_gamepad = physical_gamepads[i];
+			if (physical_gamepad == nullptr)
+				continue;
+			if (!physical_gamepad->IsPresent())
+				continue;
+			if (physical_gamepad->IsAllocated())
+				continue;
+			if (!physical_gamepad->IsAnyAction(false))
+				continue;
+
+			--unconnected_present_physical_device_count;
+			if (!DoPoolGamepad(physical_gamepad))
+				break;			
+		}
+	}
+
+	bool GamepadManager::DoPoolGamepad(PhysicalGamepad * physical_gamepad)
+	{	
+		return true;
+	}
+
 
     void GamepadManager::UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unconnected_present_physical_device_count)
     {

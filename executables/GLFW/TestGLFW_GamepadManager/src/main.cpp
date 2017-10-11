@@ -52,32 +52,10 @@ public:
 
 protected:
 
-#if 0
-
-	virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
+	virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override
 	{
-		if (gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_START))
-		{
-			if (debug_display != nullptr)
-				debug_display->AddLine(chaos::StringTools::Printf("OnGamepadConnected %d : accepted ", gamepad->GetGamepadIndex()).c_str(), 1.0f);
-			return true;
-		}    
-		else
-		{
-			if (debug_display != nullptr)
-				debug_display->AddLine(chaos::StringTools::Printf("OnGamepadConnected %d : refused (PRESS START)", gamepad->GetGamepadIndex()).c_str(), 1.0f);    
-			return false;
-		}    
-	}
-
-	virtual bool OnGamepadDisconnected(chaos::MyGLFW::Gamepad * gamepad) override
-	{
-		if (debug_display != nullptr)
-			debug_display->AddLine(chaos::StringTools::Printf("OnGamepadDisconnected %d", gamepad->GetGamepadIndex()).c_str(), 1.0f);
 		return true;
 	}
-#endif
-
 
 protected:
 

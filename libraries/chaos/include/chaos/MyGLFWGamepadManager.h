@@ -252,9 +252,12 @@ namespace chaos
 
 			/** update all the joysticks */
 			void Tick(float delta_time);
-
 			/** create a gamepad */
 			Gamepad * AllocateGamepad(bool want_present = false, GamepadCallbacks * in_callbacks = nullptr);
+			/** enable / disable pooling */
+			void EnableInputPooling(bool in_pooling_enabled);
+			/** returns true whether input pooling is enabled */
+			bool IsInputPoolingEnabled() const;
 
 			/** returns whether the given stick has any input set */
 			static bool HasAnyInputs(int stick_index, float dead_zone);
@@ -271,10 +274,16 @@ namespace chaos
 			bool DoGiveGamepadPhysicalDevice(PhysicalGamepad * physical_gamepad);
 			/** find the best gamepad that can be bound */
 			Gamepad * FindBestGamepadToBeBoundToPhysicalDevice(PhysicalGamepad * physical_gamepad);
-
 			/** called whenever a gamepad is destroyed */
-			virtual bool OnGamepadDestroyed(Gamepad * gamepad);
+			bool OnGamepadDestroyed(Gamepad * gamepad);
+			/** called to pool inputs on unbound connected physical device */
+			void PoolInputs(int & unconnected_present_physical_device_count);
+			
+		protected:
 
+			/** the pool method to override */
+			virtual bool DoPoolGamepad(PhysicalGamepad * physical_gamepad);
+			
 		protected:
 
 			/** the default dead zone value */
@@ -283,6 +292,8 @@ namespace chaos
 			std::vector<Gamepad *> user_gamepads;
 			/** the physical gamepads */
 			std::vector<PhysicalGamepad *> physical_gamepads;
+			/** enable pooling unused inputs */
+			bool pooling_enabled = true;
 		};
 
 	}; // namespace MyGLFW

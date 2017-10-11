@@ -19,7 +19,7 @@
 
 static int const TESTS_PER_FONT = 4;
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
+class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
 protected:
@@ -353,9 +353,9 @@ protected:
     return true;
   }
 
-  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
-    chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+    chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
     hints.toplevel = 0;
     hints.decorated = 1;
   }
@@ -375,12 +375,12 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  chaos::MyGLFWSingleWindowApplicationParams params;
+  chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;
   params.height = 500;
   params.monitor_index = 0;
-  chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
+  chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 
   chaos::Application::Finalize();
 

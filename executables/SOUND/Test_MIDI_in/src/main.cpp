@@ -7,7 +7,7 @@
 #include <chaos/IrrklangTools.h>
 #include <chaos/MIDICommand.h>
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
+class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
 protected:
@@ -136,9 +136,9 @@ protected:
 		FinalizeMIDIIn();
 	}
 
-	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+		chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 		hints.toplevel = 0;
 		hints.decorated = 1;
 	}
@@ -164,12 +164,12 @@ int _tmain(int argc, char ** argv, char ** env)
 
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-	chaos::MyGLFWSingleWindowApplicationParams params;
+	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
-	chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
+	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 
 	return 0;
 }

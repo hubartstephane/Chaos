@@ -16,7 +16,7 @@ static int const MAX_BONE_COUNT = 10;
 static int const SKELETAL_BONE_COUNT = 250;
 
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFWWindow
+class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 public:
 
@@ -160,9 +160,9 @@ protected:
     return true;
   }
 
-  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFWWindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
-    chaos::MyGLFWWindow::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+    chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
     hints.toplevel  = 1;
     hints.decorated = 1;
@@ -195,13 +195,13 @@ int _tmain(int argc, char ** argv, char ** env)
 
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  chaos::MyGLFWSingleWindowApplicationParams params;
+  chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor       = nullptr;
   params.monitor_index = -1;
   params.width         = 500;
   params.height        = 500;
   params.monitor_index = 0;
-  chaos::MyGLFWWindow::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
+  chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 
   chaos::Application::Finalize();
 

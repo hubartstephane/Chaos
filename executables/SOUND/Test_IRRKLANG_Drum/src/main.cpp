@@ -78,6 +78,7 @@ protected:
 		{
 			for (int i = 0; i < deviceList->getDeviceCount(); ++i)
 				printf("DEVICE %d: [%s]  [%s]\n", i, deviceList->getDeviceDescription(i), deviceList->getDeviceID(i));
+      deviceList->drop();
 			deviceList = nullptr;
 		}
 
@@ -95,10 +96,12 @@ protected:
 		sound_source1 = engine->addSoundSourceFromFile(src1_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
 		if (sound_source1 == nullptr)
 			return false;
+    sound_source1->drop(); 
 
 		sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
 		if (sound_source2 == nullptr)
 			return false;
+    sound_source2->drop();
 
 		return true;
 	}

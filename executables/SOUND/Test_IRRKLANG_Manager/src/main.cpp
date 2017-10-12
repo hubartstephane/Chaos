@@ -7,10 +7,76 @@
 #include <chaos/IrrklangTools.h>
 
 
+class SoundCategory
+{
+public:
+
+  /** the volume */
+
+  /** the name of the category */
+  std::string name;
+
+};
 
 
+class SoundManager
+{
+public:
+
+  bool StartManager();
+
+  bool StopManager();
+
+  void Tick(double delta_time);
 
 
+  void StopSound(char const * selector, double fadeout_time = 0.0);
+ 
+
+protected:
+
+  /** the categories */
+  std::vector<boost::intrusive_ptr<SoundCategory>> categories;
+
+  /** all detected devices */
+  boost::intrusive_ptr<irrklang::ISoundDeviceList> devices;
+  /** the irrklank engine */
+  boost::intrusive_ptr<irrklang::ISoundEngine> engine;
+};
+
+void SoundManager::Tick(double delta_time)
+{
+
+
+}
+
+bool SoundManager::StartManager()
+{
+  StopManager(); // destroy previous references
+
+  // get the list of all devices
+  devices = irrklang::createSoundDeviceList();
+  if (devices == nullptr)
+    return false;
+  devices->drop();
+
+  // create the engine
+  engine = irrklang::createIrrKlangDevice();
+  if (engine == nullptr)
+    return false;
+  engine->drop(); // suppress the extra reference
+
+
+  return true;
+}
+
+bool SoundManager::StopManager()
+{
+  devices = nullptr;
+  engine  = nullptr;
+
+  return true;
+}
 
 
 

@@ -175,9 +175,7 @@ void Sound::Tick(float delta_time)
 	if (IsFinished())
 		return;
 
-	if ()
-
-	float current_time = irrklang_sound->getPlayPosition();
+	float current_time = 1000.0f * (float)irrklang_sound->getPlayPosition();
 
 }
 
@@ -192,7 +190,7 @@ public:
 
 	bool StopManager();
 
-	void Tick(double delta_time);
+	void Tick(float delta_time);
 
 	void StopCategory(char const * selector, double blend_time);
 
@@ -216,7 +214,7 @@ protected:
 
 };
 
-void SoundManager::Tick(double delta_time)
+void SoundManager::Tick(float delta_time)
 {
 	// tick all categories
 

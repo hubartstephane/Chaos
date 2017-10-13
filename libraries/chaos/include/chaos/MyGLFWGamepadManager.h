@@ -12,13 +12,13 @@ namespace chaos
 		*/
 
 		/** button status change */
-		static int const BUTTON_STAY_RELEASED = 0;
+		static int const BUTTON_STAY_RELEASED = 1;
 		/** button status change */
-		static int const BUTTON_STAY_PRESSED = 1;
+		static int const BUTTON_STAY_PRESSED = 2;
 		/** button status change */
-		static int const BUTTON_BECOME_RELEASED = 2;
+		static int const BUTTON_BECOME_RELEASED = 3;
 		/** button status change */
-		static int const BUTTON_BECOME_PRESSED = 3;
+		static int const BUTTON_BECOME_PRESSED = 4;
 
 		/** index in buttons of A for XBOX like pad */
 		static int const XBOX_BUTTON_A = 0;
@@ -87,6 +87,8 @@ namespace chaos
 			virtual bool OnGamepadConnected(class Gamepad *) { return true; }
 			/** called whenever the manager is destroyed before the gamepad */
 			virtual bool OnManagerDestroyed(class Gamepad *) { return true; }
+      /** called to add some filters on inputs */
+      virtual void OnGamepadDataUpdated(class GamepadData &) {}
 		};
 
 		/**
@@ -114,15 +116,59 @@ namespace chaos
 			float final_value = 0.0f;
 		};
 
+    /**
+     * GamepadData : the data contained in the device
+     */
+
+    class GamepadData
+    {
+      friend class PhysicalGamepad;
+
+    public:
+
+      /* returns a status giving the change of button relative to previous frame */
+      int GetButtonChanges(size_t button_index) const;
+      /** returns the button state */
+      bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+      /** returns the button state */
+      float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+      /** returns true whether there is any pressed button */
+      bool IsAnyButtonPressed(bool previous_frame = false) const;
+      /** returns true whether there is any axis in use */
+      bool IsAnyAxisAction(bool previous_frame = false) const;
+      /** returns true whenever a buttons is pressed or an axis is in action */
+      bool IsAnyAction(bool previous_frame = false) const;
+      /** returns the direction of one stick (a combinaison of 2 axis) */
+      glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
+      /** returns the number of buttons */
+      size_t GetButtonCount() const;
+      /** returns the number of axis */
+      size_t GetAxisCount() const;
+
+    protected:
+
+      /** update all the values for the axis and buttons */
+      void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);
+      /** reset the content of the object */
+      void Clear();
+
+    protected:
+
+      /** the value for axis */
+      std::vector<AxisData> axis;
+      /** the value for buttons */
+      std::vector<int> buttons;
+    };
+
 		/**
 		* PhysicalGamepad : the physical device. Client do not directly use it
 		*/
 		class PhysicalGamepad
 		{
-		public:
+      friend class GamepadManager;
+      friend class Gamepad;
 
-			friend class GamepadManager;
-			friend class Gamepad;
+		public:
 
 			/* returns a status giving the change of button relative to previous frame */
 			int GetButtonChanges(size_t button_index) const;
@@ -130,8 +176,6 @@ namespace chaos
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
 			float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
-			/** returns the stick index */
-			int GetGamepadIndex() const { return stick_index; }
 			/** returns true whether there is any pressed button */
 			bool IsAnyButtonPressed(bool previous_frame = false) const;
 			/** returns true whether there is any axis in use */
@@ -139,13 +183,15 @@ namespace chaos
 			/** returns true whenever a buttons is pressed or an axis is in action */
 			bool IsAnyAction(bool previous_frame = false) const;
 			/** returns the direction of one stick (a combinaison of 2 axis) */
-			glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
+			glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
 
 			/** returns the number of buttons */
 			size_t GetButtonCount() const;
 			/** returns the number of axis */
 			size_t GetAxisCount() const;
 
+      /** returns the stick index */
+      inline int GetGamepadIndex() const { return stick_index; }
 			/** returns whether the gamepad is allocated for a user */
 			inline bool IsAllocated() const { return (user_gamepad != nullptr); }
 			/** returns true whether the gamepad is connected */
@@ -168,11 +214,8 @@ namespace chaos
 			bool is_present = false;
 			/** indicates whether the stick is allocated to a client */
 			class Gamepad * user_gamepad = nullptr;
-
-			/** the value for axis */
-			std::vector<AxisData> axis;
-			/** the value for buttons */
-			std::vector<int> buttons;
+      /** the device data */
+      GamepadData gamepad_data;
 		};
 
 
@@ -200,8 +243,6 @@ namespace chaos
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
 			float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
-			/** returns the stick index */
-			int GetGamepadIndex() const;
 			/** returns true whether there is any pressed button */
 			bool IsAnyButtonPressed(bool previous_frame = false) const;
 			/** returns true whether there is any axis in use */
@@ -209,12 +250,14 @@ namespace chaos
 			/** returns true whenever a buttons is pressed or an axis is in action */
 			bool IsAnyAction(bool previous_frame = false) const;
 			/** returns the direction of one stick (a combinaison of 2 axis) */
-			glm::vec2 GetXBOXStickDirection(int stick_index, bool previous_frame = false) const;
+			glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
 			/** returns the number of buttons */
 			size_t GetButtonCount() const;
 			/** returns the number of axis */
 			size_t GetAxisCount() const;
 
+      /** returns the stick index */
+      int GetGamepadIndex() const;
 			/** returns true whether the gamepad is connected */
 			bool IsPresent() const;
 			/** returns whether the gamepad has already been connected once */

@@ -35,6 +35,15 @@ public:
     return true;
   }
 
+  virtual void OnGamepadDataUpdated(class chaos::MyGLFW::GamepadData & gamepad_data) override
+  {
+    if (gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_Y))
+    {
+      if (debug_display != nullptr)
+        debug_display->AddLine("Y");
+    }
+  }
+
 
 protected:
 

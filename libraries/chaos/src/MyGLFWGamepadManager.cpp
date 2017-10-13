@@ -33,35 +33,25 @@ namespace chaos
         final_value = 0.0f;
     }
 
- 
-    //
-    // PhysicalGamepad functions
-    //
-
-    PhysicalGamepad::PhysicalGamepad(int in_stick_index) : 
-      stick_index(in_stick_index) 
-    {
-    }
-
-    size_t PhysicalGamepad::GetButtonCount() const
-    {
-      return buttons.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
-    }
-
-    void PhysicalGamepad::ClearInputs()
+    void GamepadData::Clear()
     {
       axis.clear();
       buttons.clear();
     }
 
-    size_t PhysicalGamepad::GetAxisCount() const
+    size_t GamepadData::GetButtonCount() const
+    {
+      return buttons.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
+    }
+
+    size_t GamepadData::GetAxisCount() const
     {
       return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
     }
 
-    int PhysicalGamepad::GetButtonChanges(size_t button_index) const
+    int GamepadData::GetButtonChanges(size_t button_index) const
     {
-      bool current_state  = IsButtonPressed(button_index, false);
+      bool current_state = IsButtonPressed(button_index, false);
       bool previous_state = IsButtonPressed(button_index, true);
 
       if (current_state == previous_state)
@@ -70,11 +60,8 @@ namespace chaos
         return (current_state) ? BUTTON_BECOME_PRESSED : BUTTON_BECOME_RELEASED;
     }
 
-    bool PhysicalGamepad::IsButtonPressed(size_t button_index, bool previous_frame) const
+    bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
     {
-      if (!IsPresent())
-        return false;
-
       size_t count = GetButtonCount();
       if (button_index >= count)
         return false;
@@ -85,11 +72,8 @@ namespace chaos
       return (buttons[button_index] != 0);
     }
 
-    float PhysicalGamepad::GetAxisValue(size_t axis_index, bool previous_frame) const
+    float GamepadData::GetAxisValue(size_t axis_index, bool previous_frame) const
     {
-      if (!IsPresent())
-        return 0.0f;
-
       size_t count = GetAxisCount();
       if (axis_index >= count)
         return 0.0f;
@@ -100,11 +84,8 @@ namespace chaos
       return axis[axis_index].GetValue();
     }
 
-    bool PhysicalGamepad::IsAnyButtonPressed(bool previous_frame) const
+    bool GamepadData::IsAnyButtonPressed(bool previous_frame) const
     {
-      if (!IsPresent())
-        return false;
-
       size_t count = GetButtonCount();
       size_t start = (previous_frame) ? count : 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
       size_t end = start + count;
@@ -115,11 +96,8 @@ namespace chaos
       return false;
     }
 
-    bool PhysicalGamepad::IsAnyAxisAction(bool previous_frame) const
+    bool GamepadData::IsAnyAxisAction(bool previous_frame) const
     {
-      if (!IsPresent())
-        return false;
-
       size_t count = GetAxisCount();
       size_t start = (previous_frame) ? count : 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
       size_t end = start + count;
@@ -130,46 +108,40 @@ namespace chaos
       return false;
     }
 
-    bool PhysicalGamepad::IsAnyAction(bool previous_frame) const
+    bool GamepadData::IsAnyAction(bool previous_frame) const
     {
       return IsAnyButtonPressed(previous_frame) || IsAnyAxisAction(previous_frame);
     }
 
-    glm::vec2 PhysicalGamepad::GetXBOXStickDirection(int stick_index, bool previous_frame) const
+    glm::vec2 GamepadData::GetXBOXStickDirection(int stick_number, bool previous_frame) const
     {
       glm::vec2 result(0.0f, 0.0f);
-      if (IsPresent())
+      if (stick_number == XBOX_LEFT_AXIS)
       {
-        if (stick_index == XBOX_LEFT_AXIS)
-        {
-          result.x = GetAxisValue(XBOX_LEFT_AXIS_X, previous_frame);
-          result.y = GetAxisValue(XBOX_LEFT_AXIS_Y, previous_frame);
-        }
-        else if (stick_index == XBOX_RIGHT_AXIS)
-        {
-          result.x = GetAxisValue(XBOX_RIGHT_AXIS_X, previous_frame);
-          result.y = GetAxisValue(XBOX_RIGHT_AXIS_Y, previous_frame);
-        }
-        else
-          return result;
+        result.x = GetAxisValue(XBOX_LEFT_AXIS_X, previous_frame);
+        result.y = GetAxisValue(XBOX_LEFT_AXIS_Y, previous_frame);
+      }
+      else if (stick_number == XBOX_RIGHT_AXIS)
+      {
+        result.x = GetAxisValue(XBOX_RIGHT_AXIS_X, previous_frame);
+        result.y = GetAxisValue(XBOX_RIGHT_AXIS_Y, previous_frame);
+      }
+      else
+        return result;
 
-        // if the length is greater than 1, renormalize it to 1.0f !
-        float sqr_len = result.x * result.x + result.y * result.y;
-        if (sqr_len > 1.0f)
-        {
-          float len = MathTools::Sqrt(sqr_len);
-          result.x /= len;
-          result.y /= len;
-        }
+      // if the length is greater than 1, renormalize it to 1.0f !
+      float sqr_len = result.x * result.x + result.y * result.y;
+      if (sqr_len > 1.0f)
+      {
+        float len = MathTools::Sqrt(sqr_len);
+        result.x /= len;
+        result.y /= len;
       }
       return result;
     }
 
-    void PhysicalGamepad::UpdateAxisAndButtons(float delta_time, float dead_zone)
+    void GamepadData::UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone)
     {
-      if (!IsPresent())
-        return;
-
       int buttons_count = 0;
       int axis_count = 0;
 
@@ -226,6 +198,90 @@ namespace chaos
       }
     }
 
+    //
+    // PhysicalGamepad functions
+    //
+
+    PhysicalGamepad::PhysicalGamepad(int in_stick_index) : 
+      stick_index(in_stick_index) 
+    {
+    }
+
+    void PhysicalGamepad::ClearInputs()
+    {
+      if (IsPresent())
+        gamepad_data.Clear();
+    }
+
+    size_t PhysicalGamepad::GetButtonCount() const
+    {
+      if (!IsPresent())
+        return 0;
+      return gamepad_data.GetButtonCount();
+    }
+
+    size_t PhysicalGamepad::GetAxisCount() const
+    {
+      if (!IsPresent())
+        return 0;
+      return gamepad_data.GetAxisCount();
+    }
+
+    int PhysicalGamepad::GetButtonChanges(size_t button_index) const
+    {
+      if (!IsPresent())
+        return 0;
+      return gamepad_data.GetButtonChanges(button_index);
+    }
+
+    bool PhysicalGamepad::IsButtonPressed(size_t button_index, bool previous_frame) const
+    {
+      if (!IsPresent())
+        return false;
+      return gamepad_data.IsButtonPressed(button_index, previous_frame);
+    }
+
+    float PhysicalGamepad::GetAxisValue(size_t axis_index, bool previous_frame) const
+    {
+      if (!IsPresent())
+        return 0.0f;
+      return gamepad_data.GetAxisValue(axis_index, previous_frame);
+    }
+
+    bool PhysicalGamepad::IsAnyButtonPressed(bool previous_frame) const
+    {
+      if (!IsPresent())
+        return false;
+      return gamepad_data.IsAnyButtonPressed(previous_frame);
+    }
+
+    bool PhysicalGamepad::IsAnyAxisAction(bool previous_frame) const
+    {
+      if (!IsPresent())
+        return false;
+      return gamepad_data.IsAnyAxisAction(previous_frame);
+    }
+
+    bool PhysicalGamepad::IsAnyAction(bool previous_frame) const
+    {
+      if (!IsPresent())
+        return false;
+      return gamepad_data.IsAnyAction(previous_frame);
+    }
+
+    glm::vec2 PhysicalGamepad::GetXBOXStickDirection(int stick_number, bool previous_frame) const
+    {
+      if (!IsPresent())
+        return glm::vec2(0.0f, 0.0f);
+      return gamepad_data.GetXBOXStickDirection(stick_number, previous_frame);
+    }
+
+    void PhysicalGamepad::UpdateAxisAndButtons(float delta_time, float dead_zone)
+    {
+      if (!IsPresent())
+        return;
+      gamepad_data.UpdateAxisAndButtons(stick_index, delta_time, dead_zone);
+    }
 
     //
     // Gamepad functions
@@ -514,6 +570,11 @@ namespace chaos
         if (is_present)
         {
           physical_gamepad->UpdateAxisAndButtons(delta_time, dead_zone);
+
+          Gamepad * user_gamepad = physical_gamepad->user_gamepad;
+          if (user_gamepad != nullptr && user_gamepad->callbacks != nullptr)
+            user_gamepad->callbacks->OnGamepadDataUpdated(physical_gamepad->gamepad_data); // notify the user of the update
+
           if (!physical_gamepad->IsAllocated())
             ++unconnected_present_physical_device_count; // count the number of physical device not owned by a logical device
         }

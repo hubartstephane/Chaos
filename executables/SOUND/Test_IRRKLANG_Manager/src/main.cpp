@@ -5,77 +5,266 @@
 #include <chaos/WinTools.h> 
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
+#include <chaos/MathTools.h>
 
-
-class SoundCategory
+class SoundVolumeObject : public chaos::ReferencedObject
 {
 public:
 
-  /** the volume */
+	/** get the own object volume */
+	float GetVolume() const;
+	/** get the final volume for the object (category and blendings taken into account) */
+	virtual float GetEffectiveVolume() const;
+	/** tick the object */
+	virtual void Tick(float delta_time);
+	/** whether the object is finished */
+	virtual bool IsFinished() const;
 
-  /** the name of the category */
-  std::string name;
+	/** require the stop (destroy the object) with or without a blend time */
+	void StopAndKill(float in_blendout_time);
+
+protected:
+
+	/** the volume */
+	float volume = 1.0f;
+	/** the blend out factor (whether the object is blending out) */
+	float blendout_factor = 1.0f;
+	float blendout_time   = 0.0f;
+	/** whether the object is to be killed */
+	bool should_kill = false;
 
 };
+
+float SoundVolumeObject::GetVolume() const
+{
+	return volume;
+}
+
+float SoundVolumeObject::GetEffectiveVolume() const
+{
+	float result = volume;
+	if (blendout_time >= 0.0f && blendout_factor >= 0.0f)
+		result *= blendout_factor;
+	return result;
+}
+
+bool SoundVolumeObject::IsFinished() const
+{
+	if (blendout_time >= 0.0f && blendout_factor <= 0.0f) // the sound is being blending out
+		return true;
+	return false;
+}
+
+void SoundVolumeObject::Tick(float delta_time)
+{
+	if (blendout_time >= 0.0f)
+		blendout_factor = max(0.0f, blendout_factor - delta_time / blendout_time); // blend out the object
+}
+
+void SoundVolumeObject::StopAndKill(float in_blendout_time) // the object will only be destroyed after the tick
+{
+	blendout_time = in_blendout_time;
+	if (blendout_time <= 0.0f) // if this is the first call
+	{
+		blendout_factor = 1.0f;
+		should_kill = true;	
+	}
+}
+
+
+
+
+
+
+
+
+
+class SoundCategory : public SoundVolumeObject
+{
+public:
+
+
+
+protected:
+	
+	/** the name of the category */
+	std::string name;
+};
+
+
+
+
+
+class Sound : public SoundVolumeObject
+{
+public:
+
+	/** tick the sounds */
+	void Tick(float delta_time);
+
+	/** returns true if the sound is finished */
+	bool IsFinished() const;
+	/** returns true whether the sound should be removed from the list at the end */
+	bool ShouldKillAtEnd() const;
+	/** get the final volume for the sound (category and blendings taken into account) */
+	virtual float GetEffectiveVolume() const override;
+
+	/** stop the sound */
+	void Stop(double in_blendout_factor);
+	/** pause the sound */
+
+
+	bool IsLooping() const;
+	
+
+protected:
+
+	/* the name */
+	std::string name;
+	/** the category */
+	SoundCategory * category = nullptr;
+
+	/** the looping information */
+	float loop_start = -1.0f;
+	float loop_end   = -1.0f;
+	float loop_blend_time = 0.5f;
+	/** the sound */
+	boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
+	boost::intrusive_ptr<irrklang::ISound> irrklang_loop_sound;
+};
+
+float Sound::GetEffectiveVolume() const
+{
+	float result = SoundVolumeObject::GetEffectiveVolume();
+	if (category != nullptr)
+		result *= category->GetEffectiveVolume();
+	return result;
+}
+
+bool Sound::IsLooping() const
+{
+	// irrklang native looping
+	if (irrklang_sound->isLooped()) 
+		return true;
+	// our manual looping
+	if (loop_start >= 0.0f && loop_start < loop_end)
+	{
+	
+	
+	}
+	return false;
+}
+
+bool Sound::IsFinished() const
+{
+	if (SoundVolumeObject::IsFinished())
+		return true;
+	if (irrklang_sound->isFinished() && !IsLooping())
+		return true;
+	return false;
+}
+
+bool Sound::ShouldKillAtEnd() const
+{
+	return false;
+}
+
+void Sound::Tick(float delta_time)
+{
+	SoundVolumeObject::Tick(delta_time);
+	if (IsFinished())
+		return;
+
+	if ()
+
+	float current_time = irrklang_sound->getPlayPosition();
+
+}
+
+
 
 
 class SoundManager
 {
 public:
 
-  bool StartManager();
+	bool StartManager();
 
-  bool StopManager();
+	bool StopManager();
 
-  void Tick(double delta_time);
+	void Tick(double delta_time);
+
+	void StopCategory(char const * selector, double blend_time);
 
 
-  void StopSound(char const * selector, double fadeout_time = 0.0);
- 
+	void StopSound(char const * selector, double fadeout_time = 0.0);
+
 
 protected:
 
-  /** the categories */
-  std::vector<boost::intrusive_ptr<SoundCategory>> categories;
+	/** all detected devices */
+	boost::intrusive_ptr<irrklang::ISoundDeviceList> irrklang_devices;
+	/** the irrklank engine */
+	boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
 
-  /** all detected devices */
-  boost::intrusive_ptr<irrklang::ISoundDeviceList> devices;
-  /** the irrklank engine */
-  boost::intrusive_ptr<irrklang::ISoundEngine> engine;
+	/** the categories */
+	std::vector<boost::intrusive_ptr<SoundCategory>> categories;
+	/** the sounds */
+	std::vector<boost::intrusive_ptr<Sound>> sounds;
+
+
+
 };
 
 void SoundManager::Tick(double delta_time)
 {
+	// tick all categories
+
+
+	// tick all sounds
+	for (int i = sounds.size() - 1 ; i >= 0 ; --i)
+	{
+		Sound * sound = sounds[i].get();
+		if (sound == nullptr)
+			continue;
+		sound->Tick(delta_time);
+		if (sound->IsFinished() && sound->ShouldKillAtEnd())
+		{
+			if (i != sounds.size() - 1)
+				sounds[i] = sounds[sounds.size() - 1]; // destroy sound that is to be destroyed
+			sounds.pop_back();
+		}	
+	}
 
 
 }
 
 bool SoundManager::StartManager()
 {
-  StopManager(); // destroy previous references
+	StopManager(); // destroy previous references
 
-  // get the list of all devices
-  devices = irrklang::createSoundDeviceList();
-  if (devices == nullptr)
-    return false;
-  devices->drop();
+				   // get the list of all devices
+	irrklang_devices = irrklang::createSoundDeviceList();
+	if (irrklang_devices == nullptr)
+		return false;
+	irrklang_devices->drop();
 
-  // create the engine
-  engine = irrklang::createIrrKlangDevice();
-  if (engine == nullptr)
-    return false;
-  engine->drop(); // suppress the extra reference
+	// create the engine
+	irrklang_engine = irrklang::createIrrKlangDevice();
+	if (irrklang_engine == nullptr)
+		return false;
+	irrklang_engine->drop(); // suppress the extra reference
 
 
-  return true;
+	return true;
 }
 
 bool SoundManager::StopManager()
 {
-  devices = nullptr;
-  engine  = nullptr;
+	irrklang_devices = nullptr;
+	irrklang_engine  = nullptr;
 
-  return true;
+	return true;
 }
 
 
@@ -161,7 +350,7 @@ protected:
 			return false;
 		engine->drop(); // XXX : because we add our own reference to an object already having one
 
-										// create the sound
+						// create the sound
 		boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
 		boost::filesystem::path src1_path = resources_path / "70_Stir_HiHatOpen.wav";
 		boost::filesystem::path src2_path = resources_path / "70_Stir_Kick.wav";

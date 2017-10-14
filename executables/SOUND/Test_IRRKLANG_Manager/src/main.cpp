@@ -15,6 +15,11 @@ static int const BLEND_OUT  = 2;
 
 class SoundBaseObject : public chaos::ReferencedObject
 {
+protected:
+
+  /** protected constructor */
+  SoundBaseObject(class SoundManager * in_sound_manager);
+
 public:
 
   /** get the name of the object */
@@ -34,6 +39,11 @@ protected:
 class SoundVolumeObject : public SoundBaseObject
 {
   friend class SoundManager;
+
+protected:
+
+  /** protected constructor */
+  SoundVolumeObject(class SoundManager * in_sound_manager);
 
 public:
 
@@ -179,7 +189,7 @@ protected:
 // ================================================================================
 
 
-  class SoundManager : public chaos::ReferencedObject
+class SoundManager : public chaos::ReferencedObject
 {
 public:
 
@@ -234,7 +244,7 @@ protected:
   /** the sounds */
   std::vector<boost::intrusive_ptr<Sound>> sounds;
   /** the sources */
-  std::vector<boost::intrusive_ptr<SoundSources>> sources;
+  std::vector<boost::intrusive_ptr<SoundSource>> sources;
 };
 
 
@@ -242,7 +252,11 @@ protected:
 
 // ================================================================================
 
-// ================================================================================
+SoundBaseObject::SoundBaseObject(class SoundManager * in_sound_manager) :
+  sound_manager(in_sound_manager)
+{
+  assert(sound_manager != nullptr);
+}
 
 // ================================================================================
 
@@ -250,10 +264,13 @@ protected:
 
 // ================================================================================
 
+// ================================================================================
 
-
-
-
+SoundVolumeObject::SoundVolumeObject(class SoundManager * in_sound_manager) :
+  SoundBaseObject(in_sound_manager)
+{
+  assert(sound_manager != nullptr);
+}
 
 float SoundVolumeObject::GetVolume() const
 {
@@ -347,12 +364,15 @@ void SoundVolumeObject::StopBlending()
 
 void SoundVolumeObject::StopAndKill(float in_blendout_time) // the object will only be destroyed after the tick
 {
+
+#if 0
 	blendout_time = in_blendout_time;
 	if (blendout_time <= 0.0f) // if this is the first call
 	{
 		blendout_factor = 1.0f;
 		should_kill = true;	
 	}
+#endif
 }
 
 // ================================================================================
@@ -373,7 +393,7 @@ void SoundVolumeObject::StopAndKill(float in_blendout_time) // the object will o
 
 
 SoundSource::SoundSource(class SoundManager * in_sound_manager) :
-  sound_manager(in_sound_manager) 
+  SoundBaseObject(in_sound_manager)
 {
   assert(sound_manager != nullptr);
 }
@@ -389,11 +409,10 @@ SoundSource::~SoundSource()
 // ================================================================================
 
 SoundCategory::SoundCategory(class SoundManager * in_sound_manager) :
-  sound_manager(in_sound_manager)
+  SoundVolumeObject(in_sound_manager)
 {
   assert(sound_manager != nullptr);
 }
-
 
 SoundCategory::~SoundCategory()
 {
@@ -405,7 +424,7 @@ SoundCategory::~SoundCategory()
   // ================================================================================
 
 Sound::Sound(class SoundManager * in_sound_manager) :
-  sound_manager(in_sound_manager)
+  SoundVolumeObject(in_sound_manager)
 {
   assert(sound_manager != nullptr);
 }

@@ -34,7 +34,6 @@ protected:
   class SoundManager * sound_manager = nullptr;
 };
 
-
 // ================================================================================
 
 class SoundVolumeObject : public SoundBaseObject
@@ -48,27 +47,29 @@ protected:
 
 public:
 
-
-
   /** get the own object volume */
   float GetVolume() const;
   /** change the volume of the object */
   void SetVolume(float in_volume);
+  /** start a blend effect to 1.0f */
+  void StartBlendIn(float blend_time, bool fullrange_blend_time = true);
+  /** start a blend effect to 0.0f */
+  void StartBlendOut(float blend_time, bool fullrange_blend_time = true);
+  /** stop current blend effects */
+  void StopBlending(bool set_blend_to_final_value = false);
 
   /** get the final volume for the object (category and blendings taken into account) */
   virtual float GetEffectiveVolume() const;
+
+
+
   /** tick the object */
   virtual void Tick(float delta_time);
   /** whether the object is finished */
   virtual bool IsFinished() const;
 
 
-  /** start a blend effect to 1.0f */
-  void StartBlendIn(float blend_time, bool fullrange_blend_time = true);
-  /** start a blend effect to 0.0f */
-  void StartBlendOut(float blend_time, bool fullrange_blend_time = true);
-  /** stop current blend effects */
-  void StopBlending();
+
 
   /** require the stop (destroy the object) with or without a blend time */
   void StopAndKill(float in_blendout_time);
@@ -159,6 +160,8 @@ public:
   glm::vec3 GetSpeed() const;
 
 
+  /** an utility conversion method */
+  static irrklang::vec3df ConvertVectorToIrrklang(glm::vec3 const & src);
 
 protected:
 
@@ -170,13 +173,9 @@ protected:
   glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
   glm::vec3 speed    = glm::vec3(0.0f, 0.0f, 0.0f);
 
-  /** the looping information */
-  float loop_start = -1.0f;
-  float loop_end = -1.0f;
-  float loop_blend_time = 0.5f;
   /** the sound */
   boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
-  boost::intrusive_ptr<irrklang::ISound> irrklang_loop_sound;
+  boost::intrusive_ptr<irrklang::ISound> irrklang_loop_sound; // for looping special sound
   /** the source */
   SoundSource * source = nullptr;
 };
@@ -191,13 +190,29 @@ public:
   std::string category_name;
   /** or a pointer on the category */
   SoundCategory * category = nullptr;
-
-  
-  
   /** whether we want to loop */
   bool looping = false;
-
 };
+
+class Play3DSoundDesc : public PlaySoundDesc
+{
+public:
+
+  /** the position of the sound */
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the speed of the sound */
+  glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
+};
+
+
+
+
+
+
+
+
+
+
 
 class SoundSource : public SoundBaseObject
 {
@@ -214,8 +229,61 @@ protected:
 
 public:
 
+  /** returns true whether the source require a non conventionnal loop */
+  bool IsManualLoopRequired() const;
+
   /** play a sound */
   Sound * PlaySound(PlaySoundDesc const & desc);
+  /** play a 3D sound */
+  Sound * Play3DSound(Play3DSoundDesc const & desc);
+
+protected:
+
+  /** generate irrklang sound for a 2D sound (returns a pair for manual looping) */
+  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSound(PlaySoundDesc const & desc);
+  /** generate irrklang sound for a 3D sound (returns a pair for manual looping) */
+  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSound(Play3DSoundDesc const & desc);
+
+  /** generate pair of sounds (for manual looping) */
+  template<typename T>
+  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSoundPair(T const & desc)
+  {
+    std::pair<irrklang::ISound *, irrklang::ISound *> result;
+    result.first = result.second = nullptr;
+
+
+    return result;
+  }
+
+  /** general function to play a sound */
+  template<typename T>
+  Sound * DoPlaySound(T const & desc)
+  {
+    // get the engine
+    irrklang::ISoundEngine * irrklang_engine = sound_manager->irrklang_engine.get();
+    if (irrklang_engine == nullptr)
+      return nullptr;
+
+    // search the category
+    SoundCategory * category = desc.category;
+    if (category == nullptr)
+      category = sound_manager->FindSoundCategory(desc.category_name.c_str());
+
+    // generate the irrklang sound
+    boost::intrusive_ptr<irrklang::ISound> irrklang_sound = DoPlayIrrklangSound(desc);
+    if (irrklang_sound == nullptr)
+      return nullptr;
+
+    Sound * result = new Sound(sound_manager);
+    if (result != nullptr)
+    {
+      result->name = desc.name;
+      result->category = category;
+      result->source = this;
+      result->irrklang_sound = irrklang_sound;
+    }
+    return result;
+  }
 
 protected:
 
@@ -342,6 +410,12 @@ float SoundVolumeObject::GetEffectiveVolume() const
   return volume * blend_factor;
 }
 
+
+
+
+
+
+
 void SoundVolumeObject::UpdateBlendFactor(float delta_time)
 {
   if (blend_type == BLEND_IN)
@@ -409,8 +483,15 @@ void SoundVolumeObject::StartBlendOut(float in_blend_time, bool fullrange_blend_
   }
 }
 
-void SoundVolumeObject::StopBlending()
+void SoundVolumeObject::StopBlending(bool set_blend_to_final_value)
 {
+  if (set_blend_to_final_value)
+  {
+    if (blend_type == BLEND_IN)
+      blend_factor = 1.0f;
+    else if (blend_type == BLEND_OUT)
+      blend_factor = 0.0f;
+  }
   blend_type = BLEND_NONE;
 }
 
@@ -445,33 +526,66 @@ SoundSource::~SoundSource()
 
 }
 
-Sound * SoundSource::PlaySound(PlaySoundDesc const & desc)
+bool SoundSource::IsManualLoopRequired() const
 {
-  Sound * result = nullptr;
-
-  // get the engine
-  irrklang::ISoundEngine * irrklang_engine = sound_manager->irrklang_engine.get();
-  if (irrklang_engine == nullptr)
-    return nullptr;
-
-  // search the category
-  SoundCategory * category = desc.category;
-  if (category == nullptr)
-    category = sound_manager->FindSoundCategory(desc.category_name.c_str());
+  return (loop_start > 0.0f || loop_end > 0.0f) && (loop_blend_time >= 0.0f);
+}
 
 
+irrklang::ISound * SoundSource::DoPlayIrrklangSound(PlaySoundDesc const & desc)
+{
+  bool looping = desc.looping;
+  bool paused = false;
+  bool track = true;
+  bool sound_effect = true;
 
+  return sound_manager->irrklang_engine->play2D(
+    irrklang_source.get(), 
+    looping, 
+    paused, 
+    track, 
+    sound_effect);
+}
 
+irrklang::ISound * SoundSource::DoPlayIrrklangSound(Play3DSoundDesc const & desc)
+{
+  bool looping = desc.looping;
+  bool paused = false;
+  bool track = true;
+  bool sound_effect = true;
 
+  irrklang::ISound * result = sound_manager->irrklang_engine->play3D(
+    irrklang_source.get(), 
+    Sound::ConvertVectorToIrrklang(desc.position),
+    looping, 
+    paused, 
+    track, 
+    sound_effect);
 
-  irrklang_engine->play3D(irrklang_source, position, looping, paused, track, sound_effect);
-  
-
- // irrklang::ISound * sound = engine->play2D(sound_source1.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
-
+  if (result != nullptr)
+    result->setVelocity(Sound::ConvertVectorToIrrklang(desc.speed));
 
   return result;
 }
+
+Sound * SoundSource::PlaySound(PlaySoundDesc const & desc)
+{
+  return DoPlaySound(desc);
+}
+
+Sound * SoundSource::Play3DSound(Play3DSoundDesc const & desc)
+{
+  Sound * result = DoPlaySound(desc);
+  if (result != nullptr)
+  {
+    result->is_3D_sound = true;
+    result->position    = desc.position;
+    result->speed       = desc.speed;
+  }
+  return result;
+}
+
+
 
 
 // ================================================================================
@@ -504,12 +618,25 @@ Sound::~Sound()
 
 }
 
+irrklang::vec3df Sound::ConvertVectorToIrrklang(glm::vec3 const & src)
+{
+  irrklang::vec3df result;
+  result.X = (float)src.x;
+  result.Y = (float)src.y;
+  result.Z = (float)src.z;
+  return result;
+}
 
 void Sound::SetPosition(glm::vec3 const & in_position)
 {
   if (!is_3D_sound)
     return;
+
   position = in_position;
+  if (irrklang_sound != nullptr)
+    irrklang_sound->setPosition(ConvertVectorToIrrklang(in_position));
+  if (irrklang_loop_sound != nullptr)
+    irrklang_loop_sound->setPosition(ConvertVectorToIrrklang(in_position));
 }
 
 glm::vec3 Sound::GetPosition() const
@@ -523,7 +650,12 @@ void Sound::SetSpeed(glm::vec3 const & in_speed)
 {
   if (!is_3D_sound)
     return;
+
   speed = in_speed;
+  if (irrklang_sound != nullptr)
+    irrklang_sound->setVelocity(ConvertVectorToIrrklang(in_speed));
+  if (irrklang_loop_sound != nullptr)
+    irrklang_loop_sound->setVelocity(ConvertVectorToIrrklang(in_speed));
 }
 
 glm::vec3 Sound::GetSpeed() const
@@ -541,17 +673,24 @@ float Sound::GetEffectiveVolume() const
   return result;
 }
 
+
+
+
+
+
 bool Sound::IsLooping() const
 {
   // irrklang native looping
   if (irrklang_sound->isLooped())
     return true;
+#if 0
   // our manual looping
   if (loop_start >= 0.0f && loop_start < loop_end)
   {
 
 
   }
+#endif
   return false;
 }
 
@@ -588,6 +727,7 @@ void Sound::Tick(float delta_time)
 
 void SoundManager::Tick(float delta_time)
 {
+#if 0
 
   // tick all sounds
   for (int i = sounds.size() - 1; i >= 0; --i)
@@ -618,7 +758,7 @@ void SoundManager::Tick(float delta_time)
       categories.pop_back();
     }
   }
-
+#endif
 
 
 

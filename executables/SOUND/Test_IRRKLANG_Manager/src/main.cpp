@@ -76,12 +76,10 @@ public:
 
 protected:
 
+  /** internal method to update the blend factor */
   void UpdateBlendFactor(float delta_time);
 
 protected:
-
-  /* the name */
-  std::string name;
 
   /** the volume */
   float volume = 1.0f;
@@ -91,7 +89,6 @@ protected:
   float blend_time = 0.0f;
   /** whether the object is to be killed */
   bool should_kill = false;
-
 };
 
 // ================================================================================
@@ -114,6 +111,150 @@ public:
 
 
 
+};
+
+// ================================================================================
+
+class SoundLoopInfo
+{
+public:
+  /** when the loop starts on the time line (negative for the very beginning of the sound) */
+  float start = -1.0f;
+  /** when the loop ends on the time line (negative for the very end of the sound) */
+  float end = -1.0f;
+  /** the time for blending (negative for no blending) */
+  float blend_time = -1.0f;
+};
+
+class PlaySoundDesc
+{
+public:
+
+  /** the name of the sound */
+  std::string sound_name;
+  /** the name of the category */
+  std::string category_name;
+  /** or a pointer on the category */
+  SoundCategory * category = nullptr;
+  /** whether we want to loop */
+  bool looping = false;
+};
+
+class Play3DSoundDesc : public PlaySoundDesc
+{
+public:
+
+  /** the position of the sound */
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the speed of the sound */
+  glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
+};
+
+class SoundSource : public SoundBaseObject
+{
+  friend class Sound;
+  friend class SoundCategory;
+  friend class SoundManager;
+
+protected:
+
+  /** constructor is protected */
+  SoundSource(class SoundManager * in_sound_manager);
+  /** destructor too */
+  virtual ~SoundSource();
+
+public:
+
+  /** play a sound */
+  Sound * PlaySound(PlaySoundDesc const & desc);
+  /** play a 3D sound */
+  Sound * Play3DSound(Play3DSoundDesc const & desc);
+
+  /** get the length in seconds of the source */
+  float GetPlayLength() const;
+
+protected:
+
+  /** returns true whether the source require a non conventionnal loop */
+  bool IsManualLoopRequired(PlaySoundDesc const & desc) const;
+
+  /** generate irrklang sound for a 2D sound */
+  irrklang::ISound * DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused);
+  /** generate irrklang sound for a 3D sound */
+  irrklang::ISound * DoPlayIrrklangSound(Play3DSoundDesc const & desc, bool in_looping, bool in_paused);
+
+  /** generate pair of sounds (for manual looping) */
+  template<typename T>
+  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSoundPair(T const & desc)
+  {
+    std::pair<irrklang::ISound *, irrklang::ISound *> result;
+    result.first = result.second = nullptr;
+
+    bool manual_looping = IsManualLoopRequired(desc); 
+
+    irrklang::ISound * first = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, false); // generate first sound
+    if (first != nullptr)
+    {
+      if (manual_looping)
+      {
+        irrklang::ISound * second = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, true); // generate second sound if required (paused at beginning)
+        if (second == nullptr)
+        {
+          first->drop(); // in case of failure of this second creation, destroy the first => failure of the whole function
+          return result;
+        }
+        result.second = second;
+      }
+      result.first = first;      
+    }
+    return result;
+  }
+
+  /** general function to play a sound */
+  template<typename T>
+  Sound * DoPlaySound(T const & desc)
+  {
+    // get the engine
+    irrklang::ISoundEngine * irrklang_engine = sound_manager->irrklang_engine.get();
+    if (irrklang_engine == nullptr)
+      return nullptr;
+
+    // search the category
+    SoundCategory * category = desc.category;
+    if (category == nullptr)
+      category = sound_manager->FindSoundCategory(desc.category_name.c_str());
+
+    // generate the irrklang sound
+    std::pair<irrklang::ISound *, irrklang::ISound *> irrklang_sound_pair = DoPlayIrrklangSoundPair(desc);
+    if (irrklang_sound_pair.first == nullptr)
+      return nullptr;
+
+    // create the chaos side object
+    Sound * result = new Sound(sound_manager);
+    if (result != nullptr)
+    {
+      result->name = desc.sound_name;
+      result->category = category;
+      result->source = this;
+      result->irrklang_sound = irrklang_sound_pair.first; // keep our own reference on irrklang objects
+      result->irrklang_loop_sound = irrklang_sound_pair.second; 
+    }
+
+    // independant of success of failure, we have a copy of irrklang interface or we don't need them anymore
+    // destroy the reference
+    irrklang_sound_pair.first->drop();
+    if (irrklang_sound_pair.second != nullptr)
+      irrklang_sound_pair.second->drop();
+
+    return result;
+  }
+
+protected:
+
+  /** the irrklang source */
+  boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
+  /** the loop information */
+  SoundLoopInfo loop_info;
 };
 
 // ================================================================================
@@ -180,120 +321,7 @@ protected:
   SoundSource * source = nullptr;
 };
 
-// ================================================================================
 
-class PlaySoundDesc
-{
-public:
-
-  /** the name of the category */
-  std::string category_name;
-  /** or a pointer on the category */
-  SoundCategory * category = nullptr;
-  /** whether we want to loop */
-  bool looping = false;
-};
-
-class Play3DSoundDesc : public PlaySoundDesc
-{
-public:
-
-  /** the position of the sound */
-  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-  /** the speed of the sound */
-  glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
-};
-
-
-
-
-
-
-
-
-
-
-
-class SoundSource : public SoundBaseObject
-{
-  friend class Sound;
-  friend class SoundCategory;
-  friend class SoundManager;
-
-protected:
-
-  /** constructor is protected */
-  SoundSource(class SoundManager * in_sound_manager);
-  /** destructor too */
-  virtual ~SoundSource();
-
-public:
-
-  /** returns true whether the source require a non conventionnal loop */
-  bool IsManualLoopRequired() const;
-
-  /** play a sound */
-  Sound * PlaySound(PlaySoundDesc const & desc);
-  /** play a 3D sound */
-  Sound * Play3DSound(Play3DSoundDesc const & desc);
-
-protected:
-
-  /** generate irrklang sound for a 2D sound (returns a pair for manual looping) */
-  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSound(PlaySoundDesc const & desc);
-  /** generate irrklang sound for a 3D sound (returns a pair for manual looping) */
-  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSound(Play3DSoundDesc const & desc);
-
-  /** generate pair of sounds (for manual looping) */
-  template<typename T>
-  std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSoundPair(T const & desc)
-  {
-    std::pair<irrklang::ISound *, irrklang::ISound *> result;
-    result.first = result.second = nullptr;
-
-
-    return result;
-  }
-
-  /** general function to play a sound */
-  template<typename T>
-  Sound * DoPlaySound(T const & desc)
-  {
-    // get the engine
-    irrklang::ISoundEngine * irrklang_engine = sound_manager->irrklang_engine.get();
-    if (irrklang_engine == nullptr)
-      return nullptr;
-
-    // search the category
-    SoundCategory * category = desc.category;
-    if (category == nullptr)
-      category = sound_manager->FindSoundCategory(desc.category_name.c_str());
-
-    // generate the irrklang sound
-    boost::intrusive_ptr<irrklang::ISound> irrklang_sound = DoPlayIrrklangSound(desc);
-    if (irrklang_sound == nullptr)
-      return nullptr;
-
-    Sound * result = new Sound(sound_manager);
-    if (result != nullptr)
-    {
-      result->name = desc.name;
-      result->category = category;
-      result->source = this;
-      result->irrklang_sound = irrklang_sound;
-    }
-    return result;
-  }
-
-protected:
-
-  /** the irrklang source */
-  boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
-  /** the loop information */
-  float loop_start      = -1.0f;
-  float loop_end        = -1.0f;
-  float loop_blend_time =  0.5f;
-};
 
 
 // ================================================================================
@@ -323,7 +351,7 @@ public:
   SoundSource * FindSoundSource(char const * name);
 
   /** add a source */
-  SoundSource * AddSource(char const * in_name, char const * in_filename, float in_loop_start = -1.0f, float in_loop_end = -1.0f, float in_loop_blend_time = 0.5f);
+  SoundSource * AddSource(char const * in_filename, char const * in_name = nullptr, SoundLoopInfo in_loop_info = SoundLoopInfo());
 
 
 
@@ -402,19 +430,13 @@ float SoundVolumeObject::GetVolume() const
 
 void SoundVolumeObject::SetVolume(float in_volume)
 {
-  volume = in_volume;
+  volume = chaos::MathTools::Clamp(in_volume, 0.0f, 1.0f);
 }
 
 float SoundVolumeObject::GetEffectiveVolume() const
 {
   return volume * blend_factor;
 }
-
-
-
-
-
-
 
 void SoundVolumeObject::UpdateBlendFactor(float delta_time)
 {
@@ -526,16 +548,33 @@ SoundSource::~SoundSource()
 
 }
 
-bool SoundSource::IsManualLoopRequired() const
+float SoundSource::GetPlayLength() const
 {
-  return (loop_start > 0.0f || loop_end > 0.0f) && (loop_blend_time >= 0.0f);
+  irrklang::ik_u32 milliseconds = irrklang_source->getPlayLength();
+  if (milliseconds < 0)
+    return -1.0f;
+  return 1000.0f * (float)milliseconds;
+}
+
+bool SoundSource::IsManualLoopRequired(PlaySoundDesc const & desc) const
+{
+  if (!desc.looping)
+    return false;
+  if (loop_info.blend_time <= 0.0f)
+    return false;
+
+  float length = GetPlayLength();
+  if (length < 0.0f)
+    return false;    // if we cannot determine the length (streaming), we cannot use manual looping
+
+  return true;
 }
 
 
-irrklang::ISound * SoundSource::DoPlayIrrklangSound(PlaySoundDesc const & desc)
+irrklang::ISound * SoundSource::DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused)
 {
-  bool looping = desc.looping;
-  bool paused = false;
+  bool looping = in_looping;
+  bool paused = in_paused;
   bool track = true;
   bool sound_effect = true;
 
@@ -547,10 +586,10 @@ irrklang::ISound * SoundSource::DoPlayIrrklangSound(PlaySoundDesc const & desc)
     sound_effect);
 }
 
-irrklang::ISound * SoundSource::DoPlayIrrklangSound(Play3DSoundDesc const & desc)
+irrklang::ISound * SoundSource::DoPlayIrrklangSound(Play3DSoundDesc const & desc, bool in_looping, bool in_paused)
 {
-  bool looping = desc.looping;
-  bool paused = false;
+  bool looping = in_looping;
+  bool paused = in_paused;
   bool track = true;
   bool sound_effect = true;
 
@@ -614,8 +653,6 @@ Sound::Sound(class SoundManager * in_sound_manager) :
 
 Sound::~Sound()
 {
-
-
 }
 
 irrklang::vec3df Sound::ConvertVectorToIrrklang(glm::vec3 const & src)
@@ -779,7 +816,7 @@ SoundSource * SoundManager::FindSoundSource(char const * name)
   return FindSoundObject<SoundSource>(name, sources);
 }
 
-SoundSource * SoundManager::AddSource(char const * in_name, char const * in_filename, float in_loop_start, float in_loop_end, float in_loop_blend_time)
+SoundSource * SoundManager::AddSource(char const * in_filename, char const * in_name, SoundLoopInfo in_loop_info)
 {
   assert(in_filename != nullptr);
   assert(irrklang_engine.get() != nullptr);
@@ -806,9 +843,7 @@ SoundSource * SoundManager::AddSource(char const * in_name, char const * in_file
 
   result->name = in_name;
   result->irrklang_source = irrklang_source;
-  result->loop_start = in_loop_start;
-  result->loop_end = in_loop_end;
-  result->loop_blend_time = in_loop_blend_time;
+  result->loop_info = in_loop_info;
 
   irrklang_source->drop(); // now that we have a reference on the resource, we can unref it
 

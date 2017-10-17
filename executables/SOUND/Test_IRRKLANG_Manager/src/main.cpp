@@ -401,6 +401,21 @@ public:
 
 protected:
 
+  /** detach all elements from a list */
+  template<typename T>
+  void DetachAllObjectsFromList(T & v)
+  {
+    size_t count = v.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      auto obj = v[i].get();
+      if (obj == nullptr)
+        continue;
+      obj->DetachFromManager();
+    }
+    v.clear();
+  }
+
   /** destroy all sounds in a category */
   void DetroyAllSoundPerCategory(SoundCategory * category);
 
@@ -987,6 +1002,10 @@ bool SoundManager::StartManager()
 
 bool SoundManager::StopManager()
 {
+  DetachAllObjectsFromList(sounds);
+  DetachAllObjectsFromList(categories);
+  DetachAllObjectsFromList(sources);
+
   irrklang_devices = nullptr;
   irrklang_engine = nullptr;
 

@@ -147,11 +147,11 @@ class PlaySoundDesc
 {
 public:
 
-  /** the name of the sound */
+  /** the name of the sound object to create*/
   std::string sound_name;
-  /** the name of the category */
+  /** the name of the category ... */
   std::string category_name;
-  /** or a pointer on the category */
+  /** ... or a pointer on the category */
   SoundCategory * category = nullptr;
   /** whether we want to loop */
   bool looping = false;

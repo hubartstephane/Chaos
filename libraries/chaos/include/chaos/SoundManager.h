@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/IrrklangTools.h>
 
 
 namespace chaos
@@ -23,6 +24,8 @@ namespace chaos
     virtual void DetachFromManager();
     /** returns whether the object is attached to a manager */
     bool IsAttachedToManager() const;
+    /** remove the object from the manager */
+    virtual void RemoveFromManager() {}
 
   public:
 
@@ -59,20 +62,18 @@ namespace chaos
 
   public:
 
+    /** returns true whether there is a pending kill */
+    bool IsPendingKill() const;
     /** get the own object volume */
     float GetVolume() const;
     /** change the volume of the object */
     void SetVolume(float in_volume);
     /** start a blend effect to 1.0f */
-    void StartBlendIn(float blend_time, bool fullrange_blend_time = true);
+    bool StartBlendIn(float in_blend_volume_time, bool in_fullrange_blend_volume_time = true);
     /** start a blend effect to 0.0f */
-    void StartBlendOut(float blend_time, bool fullrange_blend_time = true);
-
-
-    /** stop current blend effects */
-    void StopBlending(bool set_blend_to_final_value = false);
+    bool StartBlendOut(float in_blend_volume_time, bool in_fullrange_blend_volume_time = true);
     /** require the stop (destroy the object) with or without a blend time */
-    void StopAndKill(float in_blendout_time);
+    bool StopAndKill(float in_blendout_time, bool in_fullrange_blend_volume_time);
 
   protected:
 
@@ -88,35 +89,16 @@ namespace chaos
     /** the volume */
     float volume = 1.0f;
     /** the blend factor (whether the object is blending) */
-    int   blend_type = BLEND_VOLUME_NONE;
-    float blend_factor = 1.0f;
-    float blend_time = 0.0f;
+    int   blend_volume_type = BLEND_VOLUME_NONE;
+    float blend_volume_factor = 1.0f;
+    float blend_volume_time = 0.0f;
     /** whether the object is to be killed */
-    bool should_kill = false;
+    bool pending_kill = false;
   };
 
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-  // ================================================================================
-
-
-
-  // ================================================================================
-
-
-
-  // ================================================================================
+  /**
+  * SoundCategory : an object used to share some volume settings 
+  */
 
   class SoundCategory : public SoundVolumeObject
   {
@@ -130,29 +112,18 @@ namespace chaos
     SoundCategory(class SoundManager * in_sound_manager);
     /** destructor too */
     virtual ~SoundCategory();
-
     /** unbind from manager */
     virtual void DetachFromManager() override;
+    /** remove the object from the manager */
+    virtual void RemoveFromManager() override;
 
   public:
 
-
-
-
   };
 
-  // ================================================================================
-
-  class SoundLoopInfo
-  {
-  public:
-    /** when the loop starts on the time line (negative for the very beginning of the sound) */
-    float start = -1.0f;
-    /** when the loop ends on the time line (negative for the very end of the sound) */
-    float end = -1.0f;
-    /** the time for blending (negative for no blending) */
-    float blend_time = -1.0f;
-  };
+  /**
+   * PlaySoundDesc : used as parameters for playing 2D sounds
+   */
 
   class PlaySoundDesc
   {
@@ -168,6 +139,10 @@ namespace chaos
     bool looping = false;
   };
 
+  /**
+  * Play3DSoundDesc : used as parameters for playing 3D sounds
+  */
+
   class Play3DSoundDesc : public PlaySoundDesc
   {
   public:
@@ -177,6 +152,25 @@ namespace chaos
     /** the speed of the sound */
     glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
   };
+
+  /**
+   * SoundLoopInfo : use to describe how looping source should be handled
+   */
+
+  class SoundLoopInfo
+  {
+  public:
+    /** when the loop starts on the time line (negative for the very beginning of the sound) */
+    float start = -1.0f;
+    /** when the loop ends on the time line (negative for the very end of the sound) */
+    float end = -1.0f;
+    /** the time for blending (negative for no blending) */
+    float blend_time = -1.0f;
+  };
+
+  /**
+   * SoundSource : used to describe some source of sound for irrklang
+   */
 
   class SoundSource : public SoundBaseObject
   {
@@ -190,9 +184,10 @@ namespace chaos
     SoundSource(class SoundManager * in_sound_manager);
     /** destructor too */
     virtual ~SoundSource();
-
     /** unbind from manager */
     virtual void DetachFromManager() override;
+    /** remove the object from the manager */
+    virtual void RemoveFromManager() override;
 
   public:
 
@@ -292,7 +287,9 @@ namespace chaos
     SoundLoopInfo loop_info;
   };
 
-  // ================================================================================
+  /**
+   * Sound : a sound (may use several irrklang objects for looping) 
+   */
 
   class Sound : public SoundVolumeObject
   {
@@ -306,15 +303,14 @@ namespace chaos
     Sound(class SoundManager * in_sound_manager);
     /** destructor too */
     virtual ~Sound();
-
     /** unbind from manager */
     virtual void DetachFromManager() override;
+    /** remove the object from the manager */
+    virtual void RemoveFromManager() override;
     /** get the final volume for the sound (category and blendings taken into account) */
     virtual float GetEffectiveVolume() const override;
 
   public:
-
-
 
     /** change the position */
     void SetPosition(glm::vec3 const & in_position);
@@ -324,6 +320,9 @@ namespace chaos
     void SetSpeed(glm::vec3 const & in_speed);
     /** get the speed */
     glm::vec3 GetSpeed() const;
+
+    /** returns true whether the sound is in 3D */
+    bool Is3DSound() const;
 
 
 
@@ -369,13 +368,11 @@ namespace chaos
     SoundSource * source = nullptr;
   };
 
+  /**
+   * SoundManager : the main class to handle sound
+   */
 
-
-
-  // ================================================================================
-
-
-  class SoundManager : public chaos::ReferencedObject
+  class SoundManager : public ReferencedObject
   {
     friend class Sound;
     friend class SoundCategory;
@@ -428,8 +425,9 @@ namespace chaos
     }
 
     /** destroy all sounds in a category */
-    void DetroyAllSoundPerCategory(SoundCategory * category);
-
+    void DestroyAllSoundPerCategory(SoundCategory * category);
+    /** destroy all sounds with a given source */
+    void DestroyAllSoundPerSource(SoundSource * source);
     /** replace some category by another in sound */
     void ReplaceSoundCategory(SoundCategory * new_category, SoundCategory * old_category);
 
@@ -452,6 +450,13 @@ namespace chaos
       return nullptr;
     }
 
+    /** remove a category from the list */
+    void Remove(SoundCategory * sound_category);
+    /** remove a sound from the list */
+    void Remove(Sound * sound);
+    /** remove a sound source from the list */
+    void Remove(SoundSource * source);
+
   protected:
 
     /** all detected devices */
@@ -466,7 +471,5 @@ namespace chaos
     /** the sources */
     std::vector<boost::intrusive_ptr<SoundSource>> sources;
   };
-
-#endif
 
 }; // namespace chaos

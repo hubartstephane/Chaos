@@ -33,7 +33,12 @@ namespace chaos
   SoundVolumeObject::SoundVolumeObject(class SoundManager * in_sound_manager) :
     SoundBaseObject(in_sound_manager)
   {
-    assert(sound_manager != nullptr);
+
+  }
+
+  bool SoundVolumeObject::IsPendingKill() const
+  {
+    return pending_kill;
   }
 
   float SoundVolumeObject::GetVolume() const
@@ -54,85 +59,76 @@ namespace chaos
   {
     assert(IsAttachedToManager()); // should never be called elsewhere
 
-    return volume * blend_factor;
+    return volume * blend_volume_factor;
   }
 
   void SoundVolumeObject::UpdateBlendFactor(float delta_time)
   {
     assert(IsAttachedToManager()); // should never be called elsewhere
 
-    if (blend_type == BLEND_VOLUME_IN)
+    if (blend_volume_type == BLEND_VOLUME_IN)
     {
-      if (blend_time == 0.0f) // immediate blending
-        blend_factor = 1.0f;
+      if (blend_volume_time <= 0.0f) // immediate blending
+        blend_volume_factor = 1.0f;
       else
-        blend_factor = chaos::MathTools::Clamp(blend_factor + delta_time / blend_time, 0.0f, 1.0f);
+        blend_volume_factor = chaos::MathTools::Clamp(blend_volume_factor + delta_time / blend_volume_time, 0.0f, 1.0f);
     }
-    else if (blend_type == BLEND_VOLUME_OUT)
+    else if (blend_volume_type == BLEND_VOLUME_OUT)
     {
-      if (blend_time == 0.0f) // immediate blending
-        blend_factor = 0.0f;
+      if (blend_volume_time <= 0.0f) // immediate blending
+        blend_volume_factor = 0.0f;
       else
-        blend_factor = chaos::MathTools::Clamp(blend_factor - delta_time / blend_time, 0.0f, 1.0f);
+        blend_volume_factor = chaos::MathTools::Clamp(blend_volume_factor - delta_time / blend_volume_time, 0.0f, 1.0f);
     }
   }
 
-  // fullrange_blend_time == true
-  // ----------------------------
-  //    blend_time = time to go from 0 to 1
+  // fullrange_blend_volume_time == true
+  // -----------------------------------
+  //    blend_volume_time = time to go from 0 to 1
   //
   //
-  // fullrange_blend_time == false
-  // -----------------------------
-  //    blend_time = time to go from current_value to 1
+  // fullrange_blend_volume_time == false
+  // ------------------------------------
+  //    blend_volume_time = time to go from current_value to 1
 
-  void SoundVolumeObject::StartBlendIn(float in_blend_time, bool fullrange_blend_time)
+  bool SoundVolumeObject::StartBlendIn(float in_blend_volume_time, bool in_fullrange_blend_volume_time)
   {
     if (!IsAttachedToManager())
-      return;
+      return false;
+    if (IsPendingKill()) // do not start a blend if there is a pending kill => the object must continue its blending out effect if any
+      return false;
 
-    blend_type = BLEND_VOLUME_IN;
-    if (fullrange_blend_time)
-      blend_time = in_blend_time;
+    blend_volume_type = BLEND_VOLUME_IN;
+    if (in_fullrange_blend_volume_time)
+      blend_volume_time = in_blend_volume_time;
     else
     {
-      if (blend_factor == 1.0f)
-        blend_time = 1.0f; // well, a non null value for division. It is useless because the wanted final value is already reached
+      if (blend_volume_factor == 1.0f)
+        blend_volume_time = 1.0f; // well, a non null value for division. It is useless because the wanted final value is already reached
       else
-        blend_time = in_blend_time / (1.0f - blend_factor);
+        blend_volume_time = in_blend_volume_time / (1.0f - blend_volume_factor);
     }
+    return true;
   }
 
-  void SoundVolumeObject::StartBlendOut(float in_blend_time, bool fullrange_blend_time) // blend_time = 0 for immediate change at next tick
+  bool SoundVolumeObject::StartBlendOut(float in_blend_volume_time, bool in_fullrange_blend_volume_time) // blend_time = 0 for immediate change at next tick
   {
     if (!IsAttachedToManager())
-      return;
+      return false;
+    if (IsPendingKill()) // do not start a blend if there is a pending kill => the object must continue its blending out effect if any
+      return false;
 
-    blend_type = BLEND_VOLUME_OUT;
-    if (fullrange_blend_time)
-      blend_time = in_blend_time;
+    blend_volume_type = BLEND_VOLUME_OUT;
+    if (in_fullrange_blend_volume_time)
+      blend_volume_time = in_blend_volume_time;
     else
     {
-      if (blend_factor == 0.0f)
-        blend_time = 1.0f; // well, a non null value for division. It is useless because the wanted final value is already reached
+      if (blend_volume_factor == 0.0f)
+        blend_volume_time = 1.0f; // well, a non null value for division. It is useless because the wanted final value is already reached
       else
-        blend_time = in_blend_time / (blend_factor - 0.0f);
+        blend_volume_time = in_blend_volume_time / (blend_volume_factor - 0.0f);
     }
-  }
-
-  void SoundVolumeObject::StopBlending(bool set_blend_to_final_value)
-  {
-    if (sound_manager == nullptr) // detached from manager
-      return;
-
-    if (set_blend_to_final_value)
-    {
-      if (blend_type == BLEND_VOLUME_IN)
-        blend_factor = 1.0f;
-      else if (blend_type == BLEND_VOLUME_OUT)
-        blend_factor = 0.0f;
-    }
-    blend_type = BLEND_VOLUME_NONE;
+    return true;
   }
 
   void SoundVolumeObject::Tick(float delta_time)
@@ -146,74 +142,97 @@ namespace chaos
   {
     assert(IsAttachedToManager()); // should never be called elsewhere
 
-    if (blend_type == BLEND_VOLUME_OUT && blend_factor <= 0.0f) // blending out is finished
-      return true;
+    if (IsPendingKill())
+    {
+      if (blend_volume_type == BLEND_VOLUME_NONE)
+        return true;
+      assert(blend_volume_type == BLEND_VOLUME_OUT);
+      if (blend_volume_factor <= 0.0f)
+        return true;
+    }
     return false;
   }
 
-  void SoundVolumeObject::StopAndKill(float in_blendout_time) // the object will only be destroyed after the tick
+  bool SoundVolumeObject::StopAndKill(float in_blendout_time, bool in_fullrange_blend_volume_time) // the object will only be destroyed after the tick
   {
+    if (!IsAttachedToManager())
+      return false;
+    if (IsPendingKill()) // already pending kill
+      return false;
 
-#if 0
-    blendout_time = in_blendout_time;
-    if (blendout_time <= 0.0f) // if this is the first call
+    if (in_blendout_time > 0.0f)
     {
-      blendout_factor = 1.0f;
-      should_kill = true;
+      StartBlendOut(in_blendout_time, in_fullrange_blend_volume_time); // XXX : order is important
+      pending_kill = true;
     }
-#endif
+    else
+      RemoveFromManager();
+
+    else
+      blend_volume_type = BLEND_VOLUME_NONE; // stop all blend effects, the kill should be immediate
+
+    
   }
 
+  //
+  // SoundCategory methods
+  //
 
+  SoundCategory::SoundCategory(class SoundManager * in_sound_manager) :
+    SoundVolumeObject(in_sound_manager)
+  {
 
+  }
 
+  SoundCategory::~SoundCategory()
+  {
 
+  }
 
+  void SoundCategory::DetachFromManager()
+  {
+    sound_manager->DestroyAllSoundPerCategory(this);
+    SoundBaseObject::DetachFromManager();
+  }
 
+  
+  void SoundCategory::RemoveFromManager()
+  {
+    assert(IsAttachedToManager());
+    sound_manager->Remove(this);
+  }
 
-
-
-
-
-
-
-
-
-
-#if 0
-
-  // ================================================================================
-
-
-
-  // ================================================================================
-
-
-
-  // ================================================================================
+  //
+  // SoundSource methods
+  // 
 
   SoundSource::SoundSource(class SoundManager * in_sound_manager) :
     SoundBaseObject(in_sound_manager)
   {
-    assert(sound_manager != nullptr);
-  }
 
+  }
 
   SoundSource::~SoundSource()
   {
 
+  }
 
+  void SoundSource::RemoveFromManager()
+  {
+    assert(IsAttachedToManager());
+    sound_manager->Remove(this);
   }
 
   void SoundSource::DetachFromManager()
   {
+    sound_manager->DestroyAllSoundPerSource(this);
     irrklang_source = nullptr;
     SoundBaseObject::DetachFromManager();
   }
 
   float SoundSource::GetPlayLength() const
   {
-    if (sound_manager == nullptr) // detached source
+    if (!IsAttachedToManager())
       return 0.0f;
 
     irrklang::ik_u32 milliseconds = irrklang_source->getPlayLength();
@@ -222,9 +241,15 @@ namespace chaos
     return 1000.0f * (float)milliseconds;
   }
 
+
+
+
+
+
+
   bool SoundSource::IsManualLoopRequired(PlaySoundDesc const & desc) const
   {
-    assert(sound_manager != nullptr);
+    assert(IsAttachedToManager()); // should never be called elsewhere
 
     if (!desc.looping)
       return false;
@@ -240,7 +265,7 @@ namespace chaos
 
   irrklang::ISound * SoundSource::DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused)
   {
-    assert(sound_manager != nullptr);
+    assert(IsAttachedToManager()); // should never be called elsewhere
 
     bool looping = in_looping;
     bool paused = in_paused;
@@ -257,7 +282,7 @@ namespace chaos
 
   irrklang::ISound * SoundSource::DoPlayIrrklangSound(Play3DSoundDesc const & desc, bool in_looping, bool in_paused)
   {
-    assert(sound_manager != nullptr);
+    assert(IsAttachedToManager()); // should never be called elsewhere
 
     bool looping = in_looping;
     bool paused = in_paused;
@@ -280,7 +305,7 @@ namespace chaos
 
   Sound * SoundSource::PlaySound(PlaySoundDesc const & desc)
   {
-    if (sound_manager == nullptr) // detached from manager
+    if (!IsAttachedToManager())
       return nullptr;
     return DoPlaySound(desc);
   }
@@ -300,39 +325,24 @@ namespace chaos
     return result;
   }
 
-
-
-
-  // ================================================================================
-
-  SoundCategory::SoundCategory(class SoundManager * in_sound_manager) :
-    SoundVolumeObject(in_sound_manager)
-  {
-    assert(sound_manager != nullptr);
-  }
-
-  SoundCategory::~SoundCategory()
-  {
-
-
-  }
-
-  void SoundCategory::DetachFromManager()
-  {
-    sound_manager->DetroyAllSoundPerCategory(this);
-    SoundBaseObject::DetachFromManager();
-  }
-
-  // ================================================================================
+  //
+  // Sound methods
+  //
 
   Sound::Sound(class SoundManager * in_sound_manager) :
     SoundVolumeObject(in_sound_manager)
   {
-    assert(sound_manager != nullptr);
+
   }
 
   Sound::~Sound()
   {
+  }
+
+  void Sound::RemoveFromManager()
+  {
+    assert(IsAttachedToManager());
+    sound_manager->Remove(this);
   }
 
   void Sound::DetachFromManager()
@@ -353,7 +363,7 @@ namespace chaos
 
   void Sound::SetPosition(glm::vec3 const & in_position)
   {
-    if (sound_manager == nullptr) // detached from manager
+    if (!IsAttachedToManager())
       return;
     if (!is_3D_sound)
       return;
@@ -367,7 +377,7 @@ namespace chaos
 
   glm::vec3 Sound::GetPosition() const
   {
-    if (sound_manager == nullptr) // detached from manager
+    if (!IsAttachedToManager())
       return glm::vec3(0.0f, 0.0f, 0.0f);
     if (!is_3D_sound)
       return glm::vec3(0.0f, 0.0f, 0.0f);
@@ -376,7 +386,7 @@ namespace chaos
 
   void Sound::SetSpeed(glm::vec3 const & in_speed)
   {
-    if (sound_manager == nullptr) // detached from manager
+    if (!IsAttachedToManager())
       return;
     if (!is_3D_sound)
       return;
@@ -390,16 +400,21 @@ namespace chaos
 
   glm::vec3 Sound::GetSpeed() const
   {
-    if (sound_manager == nullptr) // detached from manager
+    if (!IsAttachedToManager())
       return glm::vec3(0.0f, 0.0f, 0.0f);
     if (!is_3D_sound)
       return glm::vec3(0.0f, 0.0f, 0.0f);
     return speed;
   }
 
+  bool Sound::Is3DSound() const
+  {
+    return is_3D_sound;
+  }
+
   float Sound::GetEffectiveVolume() const
   {
-    assert(sound_manager != nullptr);
+    assert(IsAttachedToManager()); // should never be called elsewhere
 
     float result = SoundVolumeObject::GetEffectiveVolume();
     if (category != nullptr)
@@ -463,11 +478,9 @@ namespace chaos
   }
 
 
-  // ================================================================================
-
-
-
-  // ================================================================================
+  //
+  // SoundManager methods
+  //
 
   void SoundManager::Tick(float delta_time)
   {
@@ -530,7 +543,7 @@ namespace chaos
     if (irrklang_engine != nullptr) // not initialized engine
       return nullptr;
 
-    if (in_name == nullptr)
+    if (in_name == nullptr) // by default the name of a source is its filepath
       in_name = in_filename;
 
     if (FindSoundSource(in_name) != nullptr) // name already existing
@@ -565,7 +578,7 @@ namespace chaos
   {
     StopManager(); // destroy previous references
 
-                   // get the list of all devices
+    // get the list of all devices
     irrklang_devices = irrklang::createSoundDeviceList();
     if (irrklang_devices == nullptr)
       return false;
@@ -582,9 +595,14 @@ namespace chaos
 
   bool SoundManager::StopManager()
   {
-    DetachAllObjectsFromList(sounds);
+    DetachAllObjectsFromList(sounds); // destroy sounds first to make other list destructions faster
+    sounds.clear();
+
     DetachAllObjectsFromList(categories);
+    categories.clear();
+
     DetachAllObjectsFromList(sources);
+    sources.clear();
 
     irrklang_devices = nullptr;
     irrklang_engine = nullptr;
@@ -600,15 +618,16 @@ namespace chaos
       Sound * sound = sounds[i].get();
       if (sound == nullptr)
         continue;
-      if (sound->category == old_category)
+      if (sound->category == old_category) // replace the category
         sound->category = new_category;
     }
   }
 
-  void SoundManager::DetroyAllSoundPerCategory(SoundCategory * category)
+  void SoundManager::DestroyAllSoundPerCategory(SoundCategory * category)
   {
-    int count = sounds.size();
-    for (int i = count - 1; i >= 0; --i)
+    assert(category != nullptr);
+
+    for (int i = sounds.size() - 1; i >= 0; --i)
     {
       Sound * sound = sounds[i].get();
       if (sound == nullptr)
@@ -616,17 +635,83 @@ namespace chaos
       if (sound->category != category)
         continue;
 
+      sound->DetachFromManager();
 
+      int count = sounds.size();
+      if (i < count - 1)
+        sounds[i] = sounds[count - 1]; // this may destroy the instance of the sound
+
+      sounds.pop_back();
     }
-
   }
-#endif
 
+  void SoundManager::DestroyAllSoundPerSource(SoundSource * source)
+  {
+    assert(source != nullptr);
 
+    for (int i = sounds.size() - 1; i >= 0; --i)
+    {
+      Sound * sound = sounds[i].get();
+      if (sound == nullptr)
+        continue;
+      if (sound->source != source)
+        continue;
 
+      sound->DetachFromManager();
 
+      int count = sounds.size();
+      if (i < count - 1)
+        sounds[i] = sounds[count - 1]; // this may destroy the instance of the sound
 
+      sounds.pop_back();
+    }
+  }
 
+  template<typename T>
+  static int GetObjectIndexInVector(T * object, std::vector<boost::intrusive_ptr<T>> const & vector)
+  {
+    assert(object != nullptr);
+    int count = vector.size();
+    for (int i = 0; i < count; ++i)
+      if (vector[i].get() == object)
+        return i;
+    return -1;
+  }
 
+  void SoundManager::Remove(SoundCategory * sound_category)
+  {
+    int index = GetObjectIndexInVector(sound_category, categories);
+    assert(index >= 0);
+
+    sound_category->DetachFromManager(); // order is important because next operation could destroy the object
+
+    if (index != categories.size() - 1)
+      categories[index] = categories[categories.size() - 1];
+    categories.pop_back();
+  }
+
+  void SoundManager::Remove(Sound * sound)
+  {
+    int index = GetObjectIndexInVector(sound, sounds);
+    assert(index >= 0);
+
+    sound->DetachFromManager(); // order is important because next operation could destroy the object
+
+    if (index != sounds.size() - 1)
+      sounds[index] = sounds[sounds.size() - 1];
+    sounds.pop_back();
+  }
+
+  void SoundManager::Remove(SoundSource * source)
+  {
+    int index = GetObjectIndexInVector(source, sources);
+    assert(index >= 0);
+
+    source->DetachFromManager(); // order is important because next operation could destroy the object
+
+    if (index != sources.size() - 1)
+      sources[index] = categories[sources.size() - 1];
+    sources.pop_back();
+  }
 
 }; // namespace chaos

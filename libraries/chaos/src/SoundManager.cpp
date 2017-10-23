@@ -430,6 +430,12 @@ namespace chaos
     if (IsFinished())
       return;
 
+    if (source == nullptr) // whatever happens next, we cannot due anything with that sound
+      return;
+
+    if (!IsLooping() || !source->IsManualLoopRequired())
+      return;
+
 
 
   }

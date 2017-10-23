@@ -202,7 +202,7 @@ namespace chaos
   protected:
 
     /** returns true whether the source require a non conventionnal loop */
-    bool IsManualLoopRequired(PlaySoundDesc const & desc) const;
+    bool IsManualLoopRequired() const;
 
     /** generate irrklang sound for a 2D sound */
     irrklang::ISound * DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused);
@@ -213,12 +213,12 @@ namespace chaos
     template<typename T>
     std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSoundPair(T const & desc)
     {
-      assert(sound_manager != nullptr);
+      assert(IsAttachedToManager());
 
       std::pair<irrklang::ISound *, irrklang::ISound *> result;
       result.first = result.second = nullptr;
 
-      bool manual_looping = IsManualLoopRequired(desc);
+      bool manual_looping = desc.looping && IsManualLoopRequired();
 
       irrklang::ISound * first = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, false); // generate first sound
       if (first != nullptr)
@@ -242,7 +242,7 @@ namespace chaos
     template<typename T>
     Sound * DoPlaySound(T const & desc)
     {
-      assert(sound_manager != nullptr);
+      assert(IsAttachedToManager());
 
       // get the engine
       irrklang::ISoundEngine * irrklang_engine = sound_manager->irrklang_engine.get();
@@ -256,7 +256,7 @@ namespace chaos
 
       // generate the irrklang sound
       std::pair<irrklang::ISound *, irrklang::ISound *> irrklang_sound_pair = DoPlayIrrklangSoundPair(desc);
-      if (irrklang_sound_pair.first == nullptr)
+      if (irrklang_sound_pair.first == nullptr) // if the call fails, both first and second are garanted to be null
         return nullptr;
 
       // create the chaos side object
@@ -266,6 +266,7 @@ namespace chaos
         result->name = desc.sound_name;
         result->category = category;
         result->source = this;
+        result->looping = desc.looping;
         result->irrklang_sound = irrklang_sound_pair.first; // keep our own reference on irrklang objects
         result->irrklang_loop_sound = irrklang_sound_pair.second;
       }
@@ -309,6 +310,10 @@ namespace chaos
     virtual void RemoveFromManager() override;
     /** get the final volume for the sound (category and blendings taken into account) */
     virtual float GetEffectiveVolume() const override;
+    /** tick the sounds */
+    virtual void Tick(float delta_time) override;
+    /** returns true if the sound is finished */
+    virtual bool IsFinished() const override;
 
   public:
 
@@ -321,8 +326,20 @@ namespace chaos
     /** get the speed */
     glm::vec3 GetSpeed() const;
 
+    /** get the category of the sound */
+    SoundCategory const * GetCategory() const { return category; }
+    /** get the category of the sound */
+    SoundCategory * GetCategory(){ return category; }
+
+    /** get the source of the sound */
+    SoundSource const * GetSource() const { return source; }
+    /** get the source of the sound */
+    SoundSource * GetSource() { return source; }
+
     /** returns true whether the sound is in 3D */
     bool Is3DSound() const;
+    /** returns true whether the sound is looping */
+    bool IsLooping() const;
 
 
 
@@ -330,17 +347,16 @@ namespace chaos
 
 
 
-    /** tick the sounds */
-    void Tick(float delta_time);
-    /** returns true if the sound is finished */
-    bool IsFinished() const;
+#if 0
+
+
     /** returns true whether the sound should be removed from the list at the end */
     bool ShouldKillAtEnd() const;
     /** stop the sound */
     void Stop(double in_blendout_factor);
     /** pause the sound */
     bool IsLooping() const;
-
+#endif
 
 
 
@@ -361,10 +377,13 @@ namespace chaos
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
 
+    /** whether we want to loop */
+    bool looping = false;
+
     /** the sound */
     boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
     boost::intrusive_ptr<irrklang::ISound> irrklang_loop_sound; // for looping special sound
-                                                                /** the source */
+    /** the source */
     SoundSource * source = nullptr;
   };
 
@@ -395,17 +414,8 @@ namespace chaos
     /** add a source */
     SoundSource * AddSource(char const * in_filename, char const * in_name = nullptr, SoundLoopInfo in_loop_info = SoundLoopInfo());
 
-
-
-
+    /** the tick function of the manager */
     void Tick(float delta_time);
-
-
-
-
-
-
-
 
   protected:
 
@@ -451,11 +461,32 @@ namespace chaos
     }
 
     /** remove a category from the list */
-    void Remove(SoundCategory * sound_category);
+    void RemoveSoundCategory(SoundCategory * sound_category);
     /** remove a sound from the list */
-    void Remove(Sound * sound);
+    void RemoveSound(Sound * sound);
     /** remove a sound source from the list */
-    void Remove(SoundSource * source);
+    void RemoveSoundSource(SoundSource * source);
+
+    /** remove a category from the list */
+    void RemoveSoundCategory(int index);
+    /** remove a sound from the list */
+    void RemoveSound(int index);
+    /** remove a sound source from the list */
+    void RemoveSoundSource(int index);
+
+
+    /** utility function to remove a sound object from a list */
+    template<typename T>
+    void DoRemoveSoundObject(int index, T & vector)
+    {
+      assert(index >= 0 && index < (int)vector.size());
+
+      vector[index]->DetachFromManager(); // order is important because next operation could destroy the object
+
+      if (index != vector.size() - 1)
+        vector[index] = vector[vector.size() - 1];
+      vector.pop_back();
+    }
 
   protected:
 

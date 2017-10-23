@@ -18,6 +18,7 @@ namespace chaos
 
   void SoundBaseObject::DetachFromManager()
   {
+    assert(IsAttachedToManager());
     sound_manager = nullptr;
   }
 
@@ -146,7 +147,7 @@ namespace chaos
     {
       if (blend_volume_type == BLEND_VOLUME_NONE)
         return true;
-      assert(blend_volume_type == BLEND_VOLUME_OUT);
+      assert(blend_volume_type == BLEND_VOLUME_OUT); // cannot have BLEND IN and pending kill
       if (blend_volume_factor <= 0.0f)
         return true;
     }
@@ -166,12 +167,7 @@ namespace chaos
       pending_kill = true;
     }
     else
-      RemoveFromManager();
-
-    else
-      blend_volume_type = BLEND_VOLUME_NONE; // stop all blend effects, the kill should be immediate
-
-    
+      RemoveFromManager(); // immediate removal  
   }
 
   //
@@ -199,7 +195,7 @@ namespace chaos
   void SoundCategory::RemoveFromManager()
   {
     assert(IsAttachedToManager());
-    sound_manager->Remove(this);
+    sound_manager->RemoveSoundCategory(this);
   }
 
   //
@@ -220,7 +216,7 @@ namespace chaos
   void SoundSource::RemoveFromManager()
   {
     assert(IsAttachedToManager());
-    sound_manager->Remove(this);
+    sound_manager->RemoveSoundSource(this);
   }
 
   void SoundSource::DetachFromManager()
@@ -241,19 +237,11 @@ namespace chaos
     return 1000.0f * (float)milliseconds;
   }
 
-
-
-
-
-
-
-  bool SoundSource::IsManualLoopRequired(PlaySoundDesc const & desc) const
+  bool SoundSource::IsManualLoopRequired() const
   {
     assert(IsAttachedToManager()); // should never be called elsewhere
 
-    if (!desc.looping)
-      return false;
-    if (loop_info.blend_time <= 0.0f)
+    if (loop_info.blend_time <= 0.0f) // no blend => no manual looping 
       return false;
 
     float length = GetPlayLength();
@@ -342,7 +330,7 @@ namespace chaos
   void Sound::RemoveFromManager()
   {
     assert(IsAttachedToManager());
-    sound_manager->Remove(this);
+    sound_manager->RemoveSound(this);
   }
 
   void Sound::DetachFromManager()
@@ -412,6 +400,11 @@ namespace chaos
     return is_3D_sound;
   }
 
+  bool Sound::IsLooping() const
+  {
+    return looping;
+  }
+
   float Sound::GetEffectiveVolume() const
   {
     assert(IsAttachedToManager()); // should never be called elsewhere
@@ -422,58 +415,22 @@ namespace chaos
     return result;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  bool Sound::IsLooping() const
-  {
-    // irrklang native looping
-    if (irrklang_sound->isLooped())
-      return true;
-#if 0
-    // our manual looping
-    if (loop_start >= 0.0f && loop_start < loop_end)
-    {
-
-
-    }
-#endif
-    return false;
-  }
-
   bool Sound::IsFinished() const
   {
-    if (SoundVolumeObject::IsFinished())
+    if (SoundVolumeObject::IsFinished()) // finished due to blend out
       return true;
-    if (irrklang_sound->isFinished() && !IsLooping())
-      return true;
-    return false;
-  }
-
-  bool Sound::ShouldKillAtEnd() const
-  {
-    return false;
+    if (IsLooping()) // a looping sound is never finished
+      return false;
+    return irrklang_sound->isFinished(); // ignore manual looping system (it is looping so never finishing)
   }
 
   void Sound::Tick(float delta_time)
   {
-    SoundVolumeObject::Tick(delta_time);
+    SoundVolumeObject::Tick(delta_time); // update blend volumes
     if (IsFinished())
       return;
 
-    float current_time = 1000.0f * (float)irrklang_sound->getPlayPosition();
+
 
   }
 
@@ -484,41 +441,29 @@ namespace chaos
 
   void SoundManager::Tick(float delta_time)
   {
-#if 0
-
-    // tick all sounds
-    for (int i = sounds.size() - 1; i >= 0; --i)
-    {
-      Sound * sound = sounds[i].get();
-      if (sound == nullptr)
-        continue;
-      sound->Tick(delta_time);
-      if (sound->IsFinished() && sound->ShouldKillAtEnd())
-      {
-        if (i != sounds.size() - 1)
-          sounds[i] = sounds[sounds.size() - 1]; // destroy sound that is to be destroyed
-        sounds.pop_back();
-      }
-    }
-
     // tick all categories
-    for (int i = categories.size() - 1; i >= 0; --i)
+    for (int i = categories.size() - 1; i >= 0; ++i)
     {
       SoundCategory * category = categories[i].get();
       if (category == nullptr)
         continue;
       category->Tick(delta_time);
-      if (category->IsFinished() && category->ShouldKillAtEnd())
-      {
-        if (i != categories.size() - 1)
-          categories[i] = categories[categories.size() - 1]; // destroy sound that is to be destroyed
-        categories.pop_back();
-      }
+
+      if (category->IsFinished())
+        RemoveSoundCategory(i);
     }
-#endif
 
+    // tick all sounds
+    for (int i = sounds.size() - 1; i >= 0; ++i)
+    {
+      Sound * sound = sounds[i].get();
+      if (sound == nullptr)
+        continue;
+      sound->Tick(delta_time);
 
-
+      if (sound->IsFinished())
+        RemoveSound(i);
+    }
   }
 
   Sound * SoundManager::FindSound(char const * name)
@@ -667,8 +612,8 @@ namespace chaos
     }
   }
 
-  template<typename T>
-  static int GetObjectIndexInVector(T * object, std::vector<boost::intrusive_ptr<T>> const & vector)
+  template<typename T, typename U>
+  static int GetObjectIndexInVector(T * object, U const & vector)
   {
     assert(object != nullptr);
     int count = vector.size();
@@ -678,40 +623,34 @@ namespace chaos
     return -1;
   }
 
-  void SoundManager::Remove(SoundCategory * sound_category)
+  void SoundManager::RemoveSoundCategory(SoundCategory * sound_category)
   {
-    int index = GetObjectIndexInVector(sound_category, categories);
-    assert(index >= 0);
-
-    sound_category->DetachFromManager(); // order is important because next operation could destroy the object
-
-    if (index != categories.size() - 1)
-      categories[index] = categories[categories.size() - 1];
-    categories.pop_back();
+    RemoveSoundCategory(GetObjectIndexInVector(sound_category, categories));
   }
 
-  void SoundManager::Remove(Sound * sound)
+  void SoundManager::RemoveSoundCategory(int index)
   {
-    int index = GetObjectIndexInVector(sound, sounds);
-    assert(index >= 0);
-
-    sound->DetachFromManager(); // order is important because next operation could destroy the object
-
-    if (index != sounds.size() - 1)
-      sounds[index] = sounds[sounds.size() - 1];
-    sounds.pop_back();
+    DoRemoveSoundObject(index, categories);
   }
 
-  void SoundManager::Remove(SoundSource * source)
+  void SoundManager::RemoveSound(Sound * sound)
   {
-    int index = GetObjectIndexInVector(source, sources);
-    assert(index >= 0);
+    RemoveSoundCategory(GetObjectIndexInVector(sound, sounds));
+  }
 
-    source->DetachFromManager(); // order is important because next operation could destroy the object
+  void SoundManager::RemoveSound(int index)
+  {
+    DoRemoveSoundObject(index, sounds);
+  }
 
-    if (index != sources.size() - 1)
-      sources[index] = categories[sources.size() - 1];
-    sources.pop_back();
+  void SoundManager::RemoveSoundSource(SoundSource * source)
+  {
+    RemoveSoundCategory(GetObjectIndexInVector(source, sources));
+  }
+
+  void SoundManager::RemoveSoundSource(int index)
+  {
+    DoRemoveSoundObject(index, sources);
   }
 
 }; // namespace chaos

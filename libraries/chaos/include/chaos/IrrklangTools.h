@@ -3,32 +3,10 @@
 #include <chaos/StandardHeaders.h>
 
 /** boost smart pointer adapter */
-void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted * obj)
-{
-	obj->grab();
-}
-
+extern void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted * obj);
 /** boost smart pointer adapter */
-void intrusive_ptr_release(irrklang::IVirtualRefCounted * obj)
-{
-	obj->drop();
-}
-
+extern void intrusive_ptr_release(irrklang::IVirtualRefCounted * obj);
 /** boost smart pointer adapter */
-void intrusive_ptr_add_ref(irrklang::IRefCounted * obj)
-{
-	obj->grab();
-}
-
+extern void intrusive_ptr_add_ref(irrklang::IRefCounted * obj);
 /** boost smart pointer adapter */
-void intrusive_ptr_release(irrklang::IRefCounted * obj)
-{
-	obj->drop();
-}
-
-namespace chaos
-{
-
-
-
-}; // namespace chaos
+extern void intrusive_ptr_release(irrklang::IRefCounted * obj);

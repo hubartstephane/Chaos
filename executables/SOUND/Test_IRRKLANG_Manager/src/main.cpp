@@ -7,14 +7,7 @@
 #include <chaos/Application.h>
 #include <chaos/IrrklangTools.h>
 #include <chaos/MathTools.h>
-
-
-
-
-
-
-
-
+#include <chaos/SoundManager.h>
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -31,33 +24,24 @@ protected:
 
   void DropAllSounds()
   {
-    for (auto sound : playing_sounds)
-      if (sound != nullptr)
-        sound->stop();
 
-    playing_sounds.clear();
   }
 
   virtual void Finalize() override
   {
-    DropAllSounds();
-    engine = nullptr;
-    sound_source1 = nullptr;
-    sound_source2 = nullptr;
+    if (sound_manager != nullptr)
+    {
+      sound_manager->StopManager();
+      sound_manager = nullptr;
+    }
+
+    source1 = nullptr;
   }
 
   virtual bool Tick(double delta_time) override
   {
-    for (size_t i = 0; i < playing_sounds.size(); ++i)
-    {
-      if (playing_sounds[i] == nullptr || playing_sounds[i]->isFinished())
-      {
-        if (i != playing_sounds.size() - 1)
-          playing_sounds[i] = playing_sounds[playing_sounds.size() - 1];
-        playing_sounds.pop_back();
-        i--;
-      }
-    }
+    sound_manager->Tick((float)delta_time);
+
     return false; // no redraw
   }
 
@@ -65,16 +49,13 @@ protected:
   {
     if (button == 0 && action == GLFW_PRESS)
     {
-      irrklang::ISound * sound = engine->play2D(sound_source1.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
-      playing_sounds.push_back(sound);
+
     }
     else if (button == 1 && action == GLFW_PRESS)
     {
-      irrklang::ISound * sound = engine->play2D(sound_source2.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
-      playing_sounds.push_back(sound);
+
     }
-    else if (button == 2 && action == GLFW_PRESS)
-      DropAllSounds();
+
   }
 
   virtual bool Initialize() override
@@ -83,14 +64,20 @@ protected:
     if (application == nullptr)
       return false;
 
-    // list of sound devices
-    boost::intrusive_ptr<irrklang::ISoundDeviceList> deviceList = irrklang::createSoundDeviceList();
-    if (deviceList != nullptr)
-    {
-      for (int i = 0; i < deviceList->getDeviceCount(); ++i)
-        printf("DEVICE %d: [%s]  [%s]\n", i, deviceList->getDeviceDescription(i), deviceList->getDeviceID(i));
-      deviceList = nullptr;
-    }
+    // create the sound manager
+    sound_manager = new chaos::SoundManager;
+    if (sound_manager == nullptr)
+      return false;
+
+    sound_manager->StartManager();
+
+    // create the sound
+    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
+    boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
+
+    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr);
+#if 0
+
 
     // create the engine
     engine = irrklang::createIrrKlangDevice();
@@ -98,7 +85,7 @@ protected:
       return false;
     engine->drop(); // XXX : because we add our own reference to an object already having one
 
-                    // create the sound
+    // create the sound
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
     boost::filesystem::path src1_path = resources_path / "70_Stir_HiHatOpen.wav";
     boost::filesystem::path src2_path = resources_path / "70_Stir_Kick.wav";
@@ -110,7 +97,7 @@ protected:
     sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
     if (sound_source2 == nullptr)
       return false;
-
+#endif
     return true;
   }
 
@@ -123,11 +110,9 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<irrklang::ISoundEngine> engine;
-  boost::intrusive_ptr<irrklang::ISoundSource> sound_source1;
-  boost::intrusive_ptr<irrklang::ISoundSource> sound_source2;
+  boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
-  std::vector<boost::intrusive_ptr<irrklang::ISound>> playing_sounds;
+  boost::intrusive_ptr<chaos::SoundSource> source1;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

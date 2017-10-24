@@ -168,6 +168,8 @@ namespace chaos
     }
     else
       RemoveFromManager(); // immediate removal  
+
+    return true;
   }
 
   //
@@ -447,6 +449,11 @@ namespace chaos
   // SoundManager methods
   //
 
+  SoundManager::~SoundManager()
+  {
+    StopManager();
+  }
+
   void SoundManager::Tick(float delta_time)
   {
     // tick all categories
@@ -523,7 +530,7 @@ namespace chaos
     irrklang_source->drop(); // now that we have a reference on the resource, we can unref it
 
     sources.push_back(result);
-
+  
     return result;
   }
 

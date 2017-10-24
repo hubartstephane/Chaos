@@ -399,6 +399,9 @@ namespace chaos
 
   public:
 
+    /** destructor */
+    virtual ~SoundManager();
+
     /** start the manager */
     bool StartManager();
     /** stop the manager */

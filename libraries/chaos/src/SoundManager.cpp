@@ -500,7 +500,7 @@ namespace chaos
   {
     assert(in_filename != nullptr);
 
-    if (irrklang_engine != nullptr) // not initialized engine
+    if (irrklang_engine == nullptr) // not initialized engine
       return nullptr;
 
     if (in_name == nullptr) // by default the name of a source is its filepath

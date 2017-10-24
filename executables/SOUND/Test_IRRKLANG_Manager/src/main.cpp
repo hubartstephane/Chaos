@@ -49,6 +49,7 @@ protected:
   {
     if (button == 0 && action == GLFW_PRESS)
     {
+      source1->PlaySound(chaos::PlaySoundDesc());
 
     }
     else if (button == 1 && action == GLFW_PRESS)
@@ -76,28 +77,7 @@ protected:
     boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
 
     source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr);
-#if 0
 
-
-    // create the engine
-    engine = irrklang::createIrrKlangDevice();
-    if (engine == nullptr)
-      return false;
-    engine->drop(); // XXX : because we add our own reference to an object already having one
-
-    // create the sound
-    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
-    boost::filesystem::path src1_path = resources_path / "70_Stir_HiHatOpen.wav";
-    boost::filesystem::path src2_path = resources_path / "70_Stir_Kick.wav";
-
-    sound_source1 = engine->addSoundSourceFromFile(src1_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
-    if (sound_source1 == nullptr)
-      return false;
-
-    sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
-    if (sound_source2 == nullptr)
-      return false;
-#endif
     return true;
   }
 

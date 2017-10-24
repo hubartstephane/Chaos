@@ -231,6 +231,8 @@ namespace chaos
     if (!IsAttachedToManager())
       return 0.0f;
 
+	assert(irrklang_source != nullptr);
+
     irrklang::ik_u32 milliseconds = irrklang_source->getPlayLength();
     if (milliseconds < 0)
       return -1.0f;
@@ -578,21 +580,14 @@ namespace chaos
   {
     assert(category != nullptr);
 
-    for (int i = sounds.size() - 1; i >= 0; --i)
+    for (int i = sounds.size() - 1; i >= 0; --i) // from back to beginning because we are about to suppress elements
     {
       Sound * sound = sounds[i].get();
       if (sound == nullptr)
         continue;
       if (sound->category != category)
         continue;
-
-      sound->DetachFromManager();
-
-      int count = sounds.size();
-      if (i < count - 1)
-        sounds[i] = sounds[count - 1]; // this may destroy the instance of the sound
-
-      sounds.pop_back();
+	  RemoveSound(i);
     }
   }
 
@@ -600,21 +595,14 @@ namespace chaos
   {
     assert(source != nullptr);
 
-    for (int i = sounds.size() - 1; i >= 0; --i)
+    for (int i = sounds.size() - 1; i >= 0; --i) // from back to beginning because we are about to suppress elements
     {
       Sound * sound = sounds[i].get();
       if (sound == nullptr)
         continue;
       if (sound->source != source)
         continue;
-
-      sound->DetachFromManager();
-
-      int count = sounds.size();
-      if (i < count - 1)
-        sounds[i] = sounds[count - 1]; // this may destroy the instance of the sound
-
-      sounds.pop_back();
+	  RemoveSound(i);
     }
   }
 
@@ -641,7 +629,7 @@ namespace chaos
 
   void SoundManager::RemoveSound(Sound * sound)
   {
-    RemoveSoundCategory(GetObjectIndexInVector(sound, sounds));
+	RemoveSound(GetObjectIndexInVector(sound, sounds));
   }
 
   void SoundManager::RemoveSound(int index)
@@ -651,7 +639,7 @@ namespace chaos
 
   void SoundManager::RemoveSoundSource(SoundSource * source)
   {
-    RemoveSoundCategory(GetObjectIndexInVector(source, sources));
+	  RemoveSoundSource(GetObjectIndexInVector(source, sources));
   }
 
   void SoundManager::RemoveSoundSource(int index)

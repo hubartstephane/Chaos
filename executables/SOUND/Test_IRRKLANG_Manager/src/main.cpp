@@ -36,6 +36,8 @@ protected:
     }
 
     source1 = nullptr;
+
+    sound1 = nullptr;
   }
 
   virtual bool Tick(double delta_time) override
@@ -49,14 +51,14 @@ protected:
   {
     if (button == 0 && action == GLFW_PRESS)
     {
-      source1->PlaySound(chaos::PlaySoundDesc());
+      sound1 = source1->PlaySound(chaos::PlaySoundDesc());
 
     }
     else if (button == 1 && action == GLFW_PRESS)
     {
-
+      if (sound1 != nullptr)
+        sound1->StopAndKill(0.0f, true);
     }
-
   }
 
   virtual bool Initialize() override
@@ -93,6 +95,8 @@ protected:
   boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
   boost::intrusive_ptr<chaos::SoundSource> source1;
+
+  boost::intrusive_ptr<chaos::Sound> sound1;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

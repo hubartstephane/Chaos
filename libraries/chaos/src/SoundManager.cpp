@@ -304,7 +304,7 @@ namespace chaos
 
   Sound * SoundSource::Play3DSound(Play3DSoundDesc const & desc)
   {
-    if (sound_manager == nullptr) // detached from manager
+    if (!IsAttachedToManager())
       return nullptr;
 
     Sound * result = DoPlaySound(desc);
@@ -339,8 +339,16 @@ namespace chaos
 
   void Sound::DetachFromManager()
   {
-    irrklang_sound = nullptr;
-    irrklang_loop_sound = nullptr;
+    if (irrklang_sound != nullptr)
+    {
+      irrklang_sound->stop();
+      irrklang_sound = nullptr;
+    }
+    if (irrklang_sound != nullptr)
+    {
+      irrklang_sound->stop();
+      irrklang_loop_sound = nullptr;
+    }
     SoundBaseObject::DetachFromManager();
   }
 
@@ -434,6 +442,10 @@ namespace chaos
     if (IsFinished())
       return;
 
+    float current_volume = GetEffectiveVolume();
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setVolume((irrklang::ik_f32)current_volume);
+
     if (source == nullptr) // whatever happens next, we cannot due anything with that sound
       return;
 
@@ -457,7 +469,7 @@ namespace chaos
   void SoundManager::Tick(float delta_time)
   {
     // tick all categories
-    for (int i = categories.size() - 1; i >= 0; ++i)
+    for (int i = categories.size() - 1; i >= 0; --i)
     {
       SoundCategory * category = categories[i].get();
       if (category == nullptr)
@@ -469,7 +481,7 @@ namespace chaos
     }
 
     // tick all sounds
-    for (int i = sounds.size() - 1; i >= 0; ++i)
+    for (int i = sounds.size() - 1; i >= 0; --i)
     {
       Sound * sound = sounds[i].get();
       if (sound == nullptr)

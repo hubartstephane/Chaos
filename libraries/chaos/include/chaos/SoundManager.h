@@ -269,6 +269,8 @@ namespace chaos
         result->looping = desc.looping;
         result->irrklang_sound = irrklang_sound_pair.first; // keep our own reference on irrklang objects
         result->irrklang_loop_sound = irrklang_sound_pair.second;
+
+        sound_manager->sounds.push_back(result);
       }
 
       // independant of success of failure, we have a copy of irrklang interface or we don't need them anymore

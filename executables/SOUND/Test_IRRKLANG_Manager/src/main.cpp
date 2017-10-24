@@ -28,16 +28,16 @@ protected:
   }
 
   virtual void Finalize() override
-  {
+  {   
+    sound1    = nullptr;
+    category1 = nullptr;
+    source1   = nullptr;
+
     if (sound_manager != nullptr)
     {
       sound_manager->StopManager();
       sound_manager = nullptr;
     }
-
-    source1 = nullptr;
-
-    sound1 = nullptr;
   }
 
   virtual bool Tick(double delta_time) override
@@ -57,7 +57,12 @@ protected:
     else if (button == 1 && action == GLFW_PRESS)
     {
       if (sound1 != nullptr)
-        sound1->StopAndKill(0.0f, true);
+        sound1->StopAndKill(2.0f, true);
+    }
+    else if (button == 2 && action == GLFW_PRESS)
+    {
+      if (category1 != nullptr)
+        category1->StopAndKill(2.0f, true);
     }
   }
 
@@ -97,6 +102,10 @@ protected:
   boost::intrusive_ptr<chaos::SoundSource> source1;
 
   boost::intrusive_ptr<chaos::Sound> sound1;
+
+  boost::intrusive_ptr<chaos::SoundCategory> category1;
+
+  
 };
 
 int _tmain(int argc, char ** argv, char ** env)

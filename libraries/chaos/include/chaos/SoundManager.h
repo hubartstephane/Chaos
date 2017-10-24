@@ -418,6 +418,8 @@ namespace chaos
 
     /** add a source */
     SoundSource * AddSource(char const * in_filename, char const * in_name = nullptr, SoundLoopInfo in_loop_info = SoundLoopInfo());
+    /** add a category */
+    SoundCategory * AddCategory(char const * in_name = nullptr);
 
     /** the tick function of the manager */
     void Tick(float delta_time);

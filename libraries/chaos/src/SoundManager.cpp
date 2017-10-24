@@ -344,9 +344,9 @@ namespace chaos
       irrklang_sound->stop();
       irrklang_sound = nullptr;
     }
-    if (irrklang_sound != nullptr)
+    if (irrklang_loop_sound != nullptr)
     {
-      irrklang_sound->stop();
+      irrklang_loop_sound->stop();
       irrklang_loop_sound = nullptr;
     }
     SoundBaseObject::DetachFromManager();
@@ -508,6 +508,22 @@ namespace chaos
     return FindSoundObject<SoundSource>(name, sources);
   }
 
+  SoundCategory * SoundManager::AddCategory(char const * in_name)
+  {
+    if (in_name != nullptr)
+      if (FindSoundCategory(in_name) != nullptr) // category already existing
+        return nullptr;
+
+    SoundCategory * result = new SoundCategory(this);
+    if (result != nullptr)
+    {
+      if (in_name != nullptr)
+        result->name = in_name;
+      categories.push_back(result);
+    }
+    return result;
+  }
+
   SoundSource * SoundManager::AddSource(char const * in_filename, char const * in_name, SoundLoopInfo in_loop_info)
   {
     assert(in_filename != nullptr);
@@ -535,7 +551,8 @@ namespace chaos
     if (result == nullptr)
       return nullptr;
 
-    result->name = in_name;
+    if (in_name != nullptr)
+      result->name = in_name;
     result->irrklang_source = irrklang_source;
     result->loop_info = in_loop_info;
 
@@ -648,7 +665,7 @@ namespace chaos
 
   void SoundManager::RemoveSound(Sound * sound)
   {
-	RemoveSound(GetObjectIndexInVector(sound, sounds));
+	  RemoveSound(GetObjectIndexInVector(sound, sounds));
   }
 
   void SoundManager::RemoveSound(int index)

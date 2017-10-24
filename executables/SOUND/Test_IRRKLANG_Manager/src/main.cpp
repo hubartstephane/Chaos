@@ -51,7 +51,9 @@ protected:
   {
     if (button == 0 && action == GLFW_PRESS)
     {
-      sound1 = source1->PlaySound(chaos::PlaySoundDesc());
+      chaos::PlaySoundDesc desc;
+      desc.category = category1.get();
+      sound1 = source1->PlaySound(desc);
 
     }
     else if (button == 1 && action == GLFW_PRESS)
@@ -84,6 +86,8 @@ protected:
     boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
 
     source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr);
+
+    category1 = sound_manager->AddCategory();
 
     return true;
   }

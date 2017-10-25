@@ -556,7 +556,11 @@ namespace chaos
     result->irrklang_source = irrklang_source;
     result->loop_info = in_loop_info;
 
-    irrklang_source->drop(); // now that we have a reference on the resource, we can unref it
+    // XXX : for unknown reasons, irrklang sound_source must not be drop() 
+    //       (except for additionnal reference counter)
+    //       see comments in headers
+    //
+    // irrklang_source->drop(); 
 
     sources.push_back(result);
   

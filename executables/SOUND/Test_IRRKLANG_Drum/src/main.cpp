@@ -30,6 +30,7 @@ protected:
 	virtual void Finalize() override
 	{
 		DropAllSounds();
+
 		engine = nullptr;
 		sound_source1 = nullptr;
 		sound_source2 = nullptr;
@@ -56,11 +57,13 @@ protected:
 		{
 			irrklang::ISound * sound = engine->play2D(sound_source1.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
 			playing_sounds.push_back(sound);
+			sound->drop();
 		}
 		else if (button == 1 && action == GLFW_PRESS)
 		{
 			irrklang::ISound * sound = engine->play2D(sound_source2.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
 			playing_sounds.push_back(sound);
+			sound->drop();
 		}
 		else if (button == 2 && action == GLFW_PRESS)
 			DropAllSounds();
@@ -78,7 +81,7 @@ protected:
 		{
 			for (int i = 0; i < deviceList->getDeviceCount(); ++i)
 				printf("DEVICE %d: [%s]  [%s]\n", i, deviceList->getDeviceDescription(i), deviceList->getDeviceID(i));
-      deviceList->drop();
+			deviceList->drop();
 			deviceList = nullptr;
 		}
 
@@ -88,7 +91,7 @@ protected:
 			return false;
 		engine->drop(); // XXX : because we add our own reference to an object already having one
 
-										// create the sound
+		// create the sound
 		boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
 		boost::filesystem::path src1_path = resources_path / "70_Stir_HiHatOpen.wav";
 		boost::filesystem::path src2_path = resources_path / "70_Stir_Kick.wav";
@@ -96,12 +99,16 @@ protected:
 		sound_source1 = engine->addSoundSourceFromFile(src1_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
 		if (sound_source1 == nullptr)
 			return false;
-    sound_source1->drop(); 
+		// XXX :  Not from IRRKLANG   addSoundSourceFromFile(...)
+		// 
+		// DONOT CALL  sound_source1->drop(); 
 
 		sound_source2 = engine->addSoundSourceFromFile(src2_path.string().c_str(), irrklang::ESM_NO_STREAMING, true);
 		if (sound_source2 == nullptr)
 			return false;
-    sound_source2->drop();
+		// XXX :  Not from IRRKLANG   addSoundSourceFromFile(...)
+		// 
+		// DONOT CALL  sound_source2->drop(); 
 
 		return true;
 	}

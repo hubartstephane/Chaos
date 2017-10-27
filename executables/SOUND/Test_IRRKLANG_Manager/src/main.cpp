@@ -53,6 +53,7 @@ protected:
     {
       chaos::PlaySoundDesc desc;
       desc.category = category1.get();
+      desc.looping = true;
       sound1 = source1->PlaySound(desc);
 
     }
@@ -85,7 +86,12 @@ protected:
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
     boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
 
-    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr);
+    chaos::SoundLoopInfo loop_info;
+    loop_info.start = 3.0f;
+    loop_info.end   = 5.0f;
+    loop_info.blend_time = 3.0f;
+
+    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr, loop_info);
 
     category1 = sound_manager->AddCategory();
 

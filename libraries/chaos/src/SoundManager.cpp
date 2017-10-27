@@ -193,7 +193,7 @@ namespace chaos
     SoundBaseObject::DetachFromManager();
   }
 
-  
+
   void SoundCategory::RemoveFromManager()
   {
     assert(IsAttachedToManager());
@@ -215,6 +215,52 @@ namespace chaos
 
   }
 
+  SoundLoopInfo SoundSource::GetEffectiveLoopInfo(SoundLoopInfo const & in_loop_info) const
+  {
+    SoundLoopInfo result = in_loop_info;
+
+    // length unknown : no manual blending possible
+    float play_length = GetPlayLength();
+    if (play_length < 0.0f) 
+    {
+      result.blend_time = 0.0f;
+      return result;
+    }
+
+    // clamp the result according to the play length
+    if (result.start < 0.0f)
+      result.start = 0.0f;
+    else if (result.start > play_length)
+      result.start = play_length;
+
+    if (result.end < 0.0f || result.end > play_length)
+      result.end = play_length;
+
+    // start and end equals => no blending possible
+    if (result.start == result.end)
+    {
+      result.blend_time = 0.0f;
+      return result;
+    }
+    
+    if (result.start > result.end)
+      std::swap(result.start, result.end);
+
+    // clamp blend time
+    if (result.blend_time > 0.0f) // blend after end
+    {
+      float clamped_end = min(result.end + result.blend_time, play_length);
+      result.blend_time = (clamped_end - result.end);
+    }
+    else if (result.blend_time < 0.0f) // blend before start
+    {
+      float clamped_start = max(result.start + result.blend_time, 0.0f);
+      result.blend_time = (result.start - clamped_start);
+    }
+
+    return result;
+  }
+
   void SoundSource::RemoveFromManager()
   {
     assert(IsAttachedToManager());
@@ -224,6 +270,11 @@ namespace chaos
   void SoundSource::DetachFromManager()
   {
     sound_manager->DestroyAllSoundPerSource(this);
+
+    if (irrklang_source != nullptr)
+      if (sound_manager->irrklang_engine != nullptr)
+        sound_manager->irrklang_engine->removeSoundSource(irrklang_source.get());
+
     irrklang_source = nullptr;
     SoundBaseObject::DetachFromManager();
   }
@@ -233,24 +284,24 @@ namespace chaos
     if (!IsAttachedToManager())
       return 0.0f;
 
-	assert(irrklang_source != nullptr);
+    if (irrklang_source == nullptr) // no sound, no duration
+      return -1.0f;
 
     irrklang::ik_u32 milliseconds = irrklang_source->getPlayLength();
     if (milliseconds < 0)
       return -1.0f;
-    return 1000.0f * (float)milliseconds;
+    return ((float)milliseconds) / 1000.0f;
   }
 
-  bool SoundSource::IsManualLoopRequired() const
+
+  bool SoundSource::IsManualLoopRequired(SoundLoopInfo const & in_loop_info) const
   {
     assert(IsAttachedToManager()); // should never be called elsewhere
 
-    if (loop_info.blend_time <= 0.0f) // no blend => no manual looping 
+    // compute the effective loop info (no blend => no manual looping)
+    SoundLoopInfo effective_loop_info = GetEffectiveLoopInfo(in_loop_info);
+    if (effective_loop_info.blend_time == 0.0f)
       return false;
-
-    float length = GetPlayLength();
-    if (length < 0.0f)
-      return false;    // if we cannot determine the length (streaming), we cannot use manual looping
 
     return true;
   }
@@ -329,6 +380,20 @@ namespace chaos
 
   Sound::~Sound()
   {
+  }
+
+  float Sound::GetPlayPosition() const
+  {
+    if (!IsAttachedToManager())
+      return 0.0f;
+
+    if (irrklang_sound == nullptr)
+      return 0.0f;
+
+    irrklang::ik_u32 milliseconds = irrklang_sound->getPlayPosition();
+    if (milliseconds < 0)
+      return 0.0f;
+    return ((float)milliseconds) / 1000.0f;
   }
 
   void Sound::RemoveFromManager()
@@ -442,18 +507,88 @@ namespace chaos
     if (IsFinished())
       return;
 
+    if (irrklang_sound == nullptr || source == nullptr) // whatever happens next, we cannot due anything with that sound
+      return;
+
+    // get current volume
     float current_volume = GetEffectiveVolume();
-    if (irrklang_sound != nullptr)
-      irrklang_sound->setVolume((irrklang::ik_f32)current_volume);
+    float v1 = 1.0f;
 
-    if (source == nullptr) // whatever happens next, we cannot due anything with that sound
-      return;
+    SoundLoopInfo loop_info = source->loop_info;
 
-    if (!IsLooping() || !source->IsManualLoopRequired())
-      return;
+    if (IsLooping() && source->IsManualLoopRequired(loop_info))
+    {
+      assert(irrklang_loop_sound != nullptr);
 
+      float positive_blend_time = (loop_info.blend_time < 0.0f)? 
+        -loop_info.blend_time:
+        +loop_info.blend_time;
 
+      // compute s1 & s2 the blending ranges start
+      float s1 = loop_info.start;
+      float s2 = loop_info.end;
+      if (loop_info.blend_time < 0.0f) // blend before start
+      {
+        s1 -= positive_blend_time;
+        s2 -= positive_blend_time;
+      }
 
+      // get position of current main track
+      float p1 = ((float)irrklang_sound->getPlayPosition()) / 1000.0f;
+      float p2 = 0.0f;
+
+      bool playing1 = true;
+      bool playing2 = false;
+
+      if (p1 < s2)
+      {
+        v1 = 1.0f;
+        playing1 = true;
+        playing2 = false;
+      }
+      else if (p1 < s2 + positive_blend_time) // inside blend range
+      {
+        v1 = 1.0f - (p1 - s2) / positive_blend_time;
+        p2 = (s1 + (p1 - s2)); // position of second track depends on the first
+
+        playing1 = true;
+        playing2 = true;
+      }
+      else // over blend range
+      {
+        v1 = 0.0f;
+        p2 = (s1 + (p1 - s2)); // position of second track depends on the first
+        playing1 = false;
+        playing2 = true;
+      }
+
+      if (playing1 != !irrklang_sound->getIsPaused()) // change state => this is the good moment to set track position
+      {
+        irrklang_sound->setIsPaused(!playing1);
+        if (playing1)
+          irrklang_sound->setPlayPosition((irrklang::ik_u32)(p1 * 1000.0f));
+      }
+
+      if (playing2 != !irrklang_loop_sound->getIsPaused()) // change state => this is the good moment to set track position
+      {
+        irrklang_loop_sound->setIsPaused(!playing2);
+        if (playing2)
+          irrklang_loop_sound->setPlayPosition((irrklang::ik_u32)(p2 * 1000.0f));
+      }
+
+      if (!playing1 && playing2) // swap tracks if necessary
+      {
+        v1 = 1.0f - v1;
+        std::swap(irrklang_sound, irrklang_loop_sound);
+      }
+    }
+
+    // apply volumes
+    irrklang_sound->setVolume((irrklang::ik_f32)current_volume * v1);
+
+    float v2 = 1.0f - v1;
+    if (irrklang_loop_sound != nullptr)
+      irrklang_loop_sound->setVolume((irrklang::ik_f32)current_volume * v2);
   }
 
 
@@ -554,7 +689,7 @@ namespace chaos
     if (in_name != nullptr)
       result->name = in_name;
     result->irrklang_source = irrklang_source;
-    result->loop_info = in_loop_info;
+    result->loop_info = result->GetEffectiveLoopInfo(in_loop_info);
 
     // XXX : for unknown reasons, irrklang sound_source must not be drop() 
     //       (except for additionnal reference counter)
@@ -563,7 +698,7 @@ namespace chaos
     // irrklang_source->drop(); 
 
     sources.push_back(result);
-  
+
     return result;
   }
 
@@ -571,7 +706,7 @@ namespace chaos
   {
     StopManager(); // destroy previous references
 
-    // get the list of all devices
+                   // get the list of all devices
     irrklang_devices = irrklang::createSoundDeviceList();
     if (irrklang_devices == nullptr)
       return false;
@@ -627,7 +762,7 @@ namespace chaos
         continue;
       if (sound->category != category)
         continue;
-	  RemoveSound(i);
+      RemoveSound(i);
     }
   }
 
@@ -642,7 +777,7 @@ namespace chaos
         continue;
       if (sound->source != source)
         continue;
-	  RemoveSound(i);
+      RemoveSound(i);
     }
   }
 
@@ -669,7 +804,7 @@ namespace chaos
 
   void SoundManager::RemoveSound(Sound * sound)
   {
-	  RemoveSound(GetObjectIndexInVector(sound, sounds));
+    RemoveSound(GetObjectIndexInVector(sound, sounds));
   }
 
   void SoundManager::RemoveSound(int index)
@@ -679,7 +814,7 @@ namespace chaos
 
   void SoundManager::RemoveSoundSource(SoundSource * source)
   {
-	  RemoveSoundSource(GetObjectIndexInVector(source, sources));
+    RemoveSoundSource(GetObjectIndexInVector(source, sources));
   }
 
   void SoundManager::RemoveSoundSource(int index)

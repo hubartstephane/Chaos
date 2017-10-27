@@ -164,7 +164,7 @@ namespace chaos
     float start = -1.0f;
     /** when the loop ends on the time line (negative for the very end of the sound) */
     float end = -1.0f;
-    /** the time for blending (negative for no blending) */
+    /** the time for blending (0 => no blend, < 0 => blend before start, > 0 => blend after end) */
     float blend_time = -1.0f;
   };
 
@@ -202,7 +202,10 @@ namespace chaos
   protected:
 
     /** returns true whether the source require a non conventionnal loop */
-    bool IsManualLoopRequired() const;
+    bool IsManualLoopRequired(SoundLoopInfo const & in_loop_info) const;
+
+    /** get the effective loop information according to the track length */
+    SoundLoopInfo GetEffectiveLoopInfo(SoundLoopInfo const & in_loop_info) const;
 
     /** generate irrklang sound for a 2D sound */
     irrklang::ISound * DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused);
@@ -218,7 +221,7 @@ namespace chaos
       std::pair<irrklang::ISound *, irrklang::ISound *> result;
       result.first = result.second = nullptr;
 
-      bool manual_looping = desc.looping && IsManualLoopRequired();
+      bool manual_looping = desc.looping && IsManualLoopRequired(loop_info);
 
       irrklang::ISound * first = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, false); // generate first sound
       if (first != nullptr)
@@ -343,26 +346,8 @@ namespace chaos
     /** returns true whether the sound is looping */
     bool IsLooping() const;
 
-
-
-
-
-
-
-#if 0
-
-
-    /** returns true whether the sound should be removed from the list at the end */
-    bool ShouldKillAtEnd() const;
-    /** stop the sound */
-    void Stop(double in_blendout_factor);
-    /** pause the sound */
-    bool IsLooping() const;
-#endif
-
-
-
-
+    /** get the position in seconds of the source */
+    float GetPlayPosition() const;
 
   protected:
 

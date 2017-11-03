@@ -19,11 +19,12 @@
   DependOnLib("TRISTRIPPER")
   DependOnLib("FREETYPE2")
   DependOnLib("JSON")
+  DependOnLib("ZLIB")  
       
         
   --DependOnLib("FMODSTUDIO")  
   --DependOnLib("GLI")  
-  --DependOnLib("ZLIB")     
+ 
   --DependOnLib("LIBXML2")    
      
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 

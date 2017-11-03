@@ -148,6 +148,8 @@ T max(T a, T b)
 
 #include <json.hpp>
 
+#include <zlib.h>
+
 #include <tinyxml2.h>
 
 #include <FreeImage.h>

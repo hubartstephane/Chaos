@@ -31,6 +31,14 @@ protected:
 	{
 		DropAllSounds();
 
+		if (engine != nullptr)
+		{
+			if (sound_source1 != nullptr)
+				engine->removeSoundSource(sound_source1.get());
+			if (sound_source2 != nullptr)
+				engine->removeSoundSource(sound_source2.get());		
+		}
+
 		engine = nullptr;
 		sound_source1 = nullptr;
 		sound_source2 = nullptr;

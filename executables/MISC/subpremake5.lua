@@ -3,6 +3,8 @@
 -- =============================================================================
 
 ProcessSubPremake("TestAllLibs")
+ProcessSubPremake("TestMyZLib")
+ProcessSubPremake("TestMyBase64")
 ProcessSubPremake("TestClientServer")
 ProcessSubPremake("TestJSON")
 ProcessSubPremake("TestOpenFileMap")

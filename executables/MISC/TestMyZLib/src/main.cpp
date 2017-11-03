@@ -2,6 +2,9 @@
 #include <chaos/StringTools.h>
 #include <chaos/WinTools.h>
 #include <chaos/MathTools.h>
+#include <chaos/LogTools.h>
+#include <chaos/SparseWriteBuffer.h>
+#include <chaos/Buffer.h>
 #include <chaos/MyZLib.h>
 
 bool AreBuffersEquals(chaos::Buffer<char> const & b1, chaos::Buffer<char> const & b2)
@@ -25,11 +28,47 @@ chaos::Buffer<char> GenerateRandomBuffer()
 	if (result.data != nullptr)
 	{
 		for (size_t i = 0 ; i < 256 ; ++i)
-			result.data[i] = (char)(i); // ensure all numbers appear at least once
+			result.data[i] = (char)(i + 1); // ensure all numbers appear at least once
 		for (size_t i = 256 ; i < 256 + size ; ++i)
 			result.data[i] = (char)(rand() % 32); // % 32 just to make sur some characters do not happen, and so is the compression better				
 	}
 	return result;
+}
+
+chaos::Buffer<char> GetIpsumBuffer()
+{
+	static char * ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+	int length = strlen(ipsum) + 1;
+
+	chaos::SparseWriteBuffer<> writer(512);
+
+	for (int i = 0 ; i < 30 ; ++i) // multiple time the text, to be sure compression added data do not kill the benefit (for small data set)
+		writer.Write(ipsum, length);
+
+	chaos::Buffer<char> result = chaos::SharedBufferPolicy<char>::NewBuffer(writer.GetWrittenSize());
+	writer.CopyToBuffer(result.data, result.bufsize);
+	return result;
+
+}
+
+void TestCompression(chaos::Buffer<char> initial_buffer, char const * title)
+{
+	chaos::Buffer<char> compressed = chaos::MyZLib().Encode(initial_buffer);
+
+	chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(compressed);
+
+	bool success = AreBuffersEquals(initial_buffer, uncompressed);
+
+	chaos::LogTools::Log("Compression %s : %d", title, success);
+	if (success)
+	{
+		float compression_ratio = 100.0f * ((float)(compressed.bufsize) / (float)(initial_buffer.bufsize));
+
+		chaos::LogTools::Log("  Source length      : %d", initial_buffer.bufsize);
+		chaos::LogTools::Log("  Destination length : %d", compressed.bufsize);
+		chaos::LogTools::Log("  Compression ratio  : %f %%", compression_ratio);
+	}
 }
 
 int _tmain(int argc, char ** argv, char ** env)
@@ -38,14 +77,9 @@ int _tmain(int argc, char ** argv, char ** env)
 	
 	chaos::MathTools::ResetRandSeed();
 
-	chaos::Buffer<char> initial_buffer = GenerateRandomBuffer();
+	TestCompression(GenerateRandomBuffer(), "Random text");
 
-	chaos::Buffer<char> compressed = chaos::MyZLib().Encode(initial_buffer);
-
-	chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(compressed);
-
-	bool success = AreBuffersEquals(initial_buffer, uncompressed);
-
+	TestCompression(GetIpsumBuffer(), "Ipsum text");
 
 	chaos::WinTools::PressToContinue();
 

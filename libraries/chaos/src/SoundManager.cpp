@@ -99,16 +99,15 @@ namespace chaos
     if (IsPendingKill()) // do not start a blend if there is a pending kill => the object must continue its blending out effect if any
       return false;
 
+    if (blend_volume_factor == 1.0f) // max value already reached. Do nothing
+      return true;
+
     blend_volume_type = BLEND_VOLUME_IN;
     if (in_fullrange_blend_volume_time)
       blend_volume_time = in_blend_volume_time;
     else
-    {
-      if (blend_volume_factor == 1.0f)
-        blend_volume_time = 1.0f; // well, a non null value for division. It is useless because the wanted final value is already reached
-      else
-        blend_volume_time = in_blend_volume_time / (1.0f - blend_volume_factor);
-    }
+      blend_volume_time = in_blend_volume_time / (1.0f - blend_volume_factor);
+
     return true;
   }
 
@@ -119,16 +118,32 @@ namespace chaos
     if (IsPendingKill()) // do not start a blend if there is a pending kill => the object must continue its blending out effect if any
       return false;
 
+    if (blend_volume_factor == 0.0f) // min value already reached. Do nothing
+      return true;
+
     blend_volume_type = BLEND_VOLUME_OUT;
     if (in_fullrange_blend_volume_time)
       blend_volume_time = in_blend_volume_time;
     else
+      blend_volume_time = in_blend_volume_time / (blend_volume_factor - 0.0f);
+    return true;
+  }
+
+  bool SoundVolumeObject::StopAndKill(float in_blendout_time, bool in_fullrange_blend_volume_time) // the object will only be destroyed after the tick
+  {
+    if (!IsAttachedToManager())
+      return false;
+    if (IsPendingKill()) // already pending kill
+      return false;
+
+    if (in_blendout_time > 0.0f && blend_volume_factor > 0.0f) // do not want immediate blending. Min blend value still not reached
     {
-      if (blend_volume_factor == 0.0f)
-        blend_volume_time = 1.0f; // well, a non null value for division. It is useless because the wanted final value is already reached
-      else
-        blend_volume_time = in_blend_volume_time / (blend_volume_factor - 0.0f);
+      StartBlendOut(in_blendout_time, in_fullrange_blend_volume_time); // XXX : order is important
+      pending_kill = true;
     }
+    else
+      RemoveFromManager(); // immediate removal  
+
     return true;
   }
 
@@ -152,24 +167,6 @@ namespace chaos
         return true;
     }
     return false;
-  }
-
-  bool SoundVolumeObject::StopAndKill(float in_blendout_time, bool in_fullrange_blend_volume_time) // the object will only be destroyed after the tick
-  {
-    if (!IsAttachedToManager())
-      return false;
-    if (IsPendingKill()) // already pending kill
-      return false;
-
-    if (in_blendout_time > 0.0f)
-    {
-      StartBlendOut(in_blendout_time, in_fullrange_blend_volume_time); // XXX : order is important
-      pending_kill = true;
-    }
-    else
-      RemoveFromManager(); // immediate removal  
-
-    return true;
   }
 
   //
@@ -215,26 +212,26 @@ namespace chaos
 
   }
 
-  SoundLoopInfo SoundSource::GetEffectiveLoopInfo(SoundLoopInfo const & in_loop_info) const
+  SoundLoopInfoExt SoundSource::GetClampedLoopInfoExt(SoundLoopInfo const & in_loop_info) const
   {
-    SoundLoopInfo result = in_loop_info;
+    SoundLoopInfoExt result;
+    result.start      = in_loop_info.start;
+    result.end        = in_loop_info.end;
+    result.blend_time = in_loop_info.blend_time;
 
     // length unknown : no manual blending possible
-    float play_length = GetPlayLength();
-    if (play_length < 0.0f) 
-    {
-      result.blend_time = 0.0f;
+    result.play_length = DoGetPlayLength();
+    if (result.play_length < 0.0f)
       return result;
-    }
 
     // clamp the result according to the play length
     if (result.start < 0.0f)
       result.start = 0.0f;
-    else if (result.start > play_length)
-      result.start = play_length;
+    else if (result.start > result.play_length)
+      result.start = result.play_length;
 
-    if (result.end < 0.0f || result.end > play_length)
-      result.end = play_length;
+    if (result.end < 0.0f || result.end > result.play_length)
+      result.end = result.play_length;
 
     // start and end equals => no blending possible
     if (result.start == result.end)
@@ -243,13 +240,14 @@ namespace chaos
       return result;
     }
     
+    // sort start and end
     if (result.start > result.end)
       std::swap(result.start, result.end);
 
     // clamp blend time
     if (result.blend_time > 0.0f) // blend after end
     {
-      float clamped_end = min(result.end + result.blend_time, play_length);
+      float clamped_end = min(result.end + result.blend_time, result.play_length);
       result.blend_time = (clamped_end - result.end);
     }
     else if (result.blend_time < 0.0f) // blend before start
@@ -272,10 +270,12 @@ namespace chaos
     sound_manager->DestroyAllSoundPerSource(this);
 
     if (irrklang_source != nullptr)
+    {
       if (sound_manager->irrklang_engine != nullptr)
         sound_manager->irrklang_engine->removeSoundSource(irrklang_source.get());
+      irrklang_source = nullptr;
+    }
 
-    irrklang_source = nullptr;
     SoundBaseObject::DetachFromManager();
   }
 
@@ -283,7 +283,15 @@ namespace chaos
   {
     if (!IsAttachedToManager())
       return 0.0f;
+    if (irrklang_source == nullptr) // no sound, no duration
+      return -1.0f;
+    return loop_info_ext.play_length;
+  }
 
+  float SoundSource::DoGetPlayLength() const
+  {
+    if (!IsAttachedToManager())
+      return 0.0f;
     if (irrklang_source == nullptr) // no sound, no duration
       return -1.0f;
 
@@ -293,17 +301,18 @@ namespace chaos
     return ((float)milliseconds) / 1000.0f;
   }
 
-
-  bool SoundSource::IsManualLoopRequired(SoundLoopInfo const & in_loop_info) const
+  bool SoundSource::IsManualLoopRequired(SoundLoopInfoExt const & in_loop_info)
   {
-    assert(IsAttachedToManager()); // should never be called elsewhere
+    if (in_loop_info.blend_time > 0.0f) // blending => manual blend required
+      return true;
 
-    // compute the effective loop info (no blend => no manual looping)
-    SoundLoopInfo effective_loop_info = GetEffectiveLoopInfo(in_loop_info);
-    if (effective_loop_info.blend_time == 0.0f)
-      return false;
+    if (in_loop_info.start > 0.0f) // start not aligned on track start => manual required
+      return true;
 
-    return true;
+    if (in_loop_info.end < in_loop_info.play_length) // end not aligned on track end => manual required
+      return true;
+
+    return false;
   }
 
   irrklang::ISound * SoundSource::DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused)
@@ -501,6 +510,105 @@ namespace chaos
     return irrklang_sound->isFinished(); // ignore manual looping system (it is looping so never finishing)
   }
 
+
+  float Sound::DoTickManualLoopNoBlend(float delta_time)
+  {
+    assert(irrklang_loop_sound == nullptr);
+
+    float v1 = 1.0f; // the volume of track 1
+
+    SoundLoopInfoExt loop_info_ext = source->loop_info_ext;
+
+    // get position of current main track
+    float p1 = ((float)irrklang_sound->getPlayPosition()) / 1000.0f;
+
+    // compute s1 & s2 the blending ranges start
+    float s1 = loop_info_ext.start;
+    float s2 = loop_info_ext.end;
+
+    // end reached ?
+    if (p1 >= s2)
+    {
+      p1 = s1 + (p1 - s2);
+
+      irrklang_sound->setPlayPosition((irrklang::ik_u32)(p1 * 1000.0f));
+    }
+    return v1;
+  }
+
+  float Sound::DoTickManualLoopWithBlend(float delta_time)
+  {
+    assert(irrklang_loop_sound != nullptr);
+
+    float v1 = 1.0f; // the volume of track 1
+
+    SoundLoopInfoExt loop_info_ext = source->loop_info_ext;
+
+    float positive_blend_time = (loop_info_ext.blend_time < 0.0f) ?
+      -loop_info_ext.blend_time :
+      +loop_info_ext.blend_time;
+
+    // compute s1 & s2 the blending ranges start
+    float s1 = loop_info_ext.start;
+    float s2 = loop_info_ext.end;
+    if (loop_info_ext.blend_time < 0.0f) // blend before start
+    {
+      s1 -= positive_blend_time;
+      s2 -= positive_blend_time;
+    }
+
+    // get position of current main track
+    float p1 = ((float)irrklang_sound->getPlayPosition()) / 1000.0f;
+    float p2 = 0.0f;
+
+    bool playing1 = true;
+    bool playing2 = false;
+
+    if (p1 < s2)
+    {
+      v1 = 1.0f;
+      playing1 = true;
+      playing2 = false;
+    }
+    else if (p1 < s2 + positive_blend_time) // inside blend range
+    {
+      v1 = 1.0f - (p1 - s2) / positive_blend_time;
+      p2 = (s1 + (p1 - s2)); // position of second track depends on the first
+
+      playing1 = true;
+      playing2 = true;
+    }
+    else // over blend range
+    {
+      v1 = 0.0f;
+      p2 = (s1 + (p1 - s2)); // position of second track depends on the first
+      playing1 = false;
+      playing2 = true;
+    }
+
+    if (playing1 != !irrklang_sound->getIsPaused()) // change state => this is the good moment to set track position
+    {
+      irrklang_sound->setIsPaused(!playing1);
+      if (playing1)
+        irrklang_sound->setPlayPosition((irrklang::ik_u32)(p1 * 1000.0f));
+    }
+
+    if (playing2 != !irrklang_loop_sound->getIsPaused()) // change state => this is the good moment to set track position
+    {
+      irrklang_loop_sound->setIsPaused(!playing2);
+      if (playing2)
+        irrklang_loop_sound->setPlayPosition((irrklang::ik_u32)(p2 * 1000.0f));
+    }
+
+    if (!playing1 && playing2) // swap tracks if necessary
+    {
+      v1 = 1.0f - v1;
+      std::swap(irrklang_sound, irrklang_loop_sound);
+    }
+
+    return v1;
+  }
+
   void Sound::Tick(float delta_time)
   {
     SoundVolumeObject::Tick(delta_time); // update blend volumes
@@ -511,84 +619,26 @@ namespace chaos
       return;
 
     // get current volume
-    float current_volume = GetEffectiveVolume();
+
     float v1 = 1.0f;
-
-    SoundLoopInfo loop_info = source->loop_info;
-
-    if (IsLooping() && source->IsManualLoopRequired(loop_info))
-    {
-      assert(irrklang_loop_sound != nullptr);
-
-      float positive_blend_time = (loop_info.blend_time < 0.0f)? 
-        -loop_info.blend_time:
-        +loop_info.blend_time;
-
-      // compute s1 & s2 the blending ranges start
-      float s1 = loop_info.start;
-      float s2 = loop_info.end;
-      if (loop_info.blend_time < 0.0f) // blend before start
-      {
-        s1 -= positive_blend_time;
-        s2 -= positive_blend_time;
-      }
-
-      // get position of current main track
-      float p1 = ((float)irrklang_sound->getPlayPosition()) / 1000.0f;
-      float p2 = 0.0f;
-
-      bool playing1 = true;
-      bool playing2 = false;
-
-      if (p1 < s2)
-      {
-        v1 = 1.0f;
-        playing1 = true;
-        playing2 = false;
-      }
-      else if (p1 < s2 + positive_blend_time) // inside blend range
-      {
-        v1 = 1.0f - (p1 - s2) / positive_blend_time;
-        p2 = (s1 + (p1 - s2)); // position of second track depends on the first
-
-        playing1 = true;
-        playing2 = true;
-      }
-      else // over blend range
-      {
-        v1 = 0.0f;
-        p2 = (s1 + (p1 - s2)); // position of second track depends on the first
-        playing1 = false;
-        playing2 = true;
-      }
-
-      if (playing1 != !irrklang_sound->getIsPaused()) // change state => this is the good moment to set track position
-      {
-        irrklang_sound->setIsPaused(!playing1);
-        if (playing1)
-          irrklang_sound->setPlayPosition((irrklang::ik_u32)(p1 * 1000.0f));
-      }
-
-      if (playing2 != !irrklang_loop_sound->getIsPaused()) // change state => this is the good moment to set track position
-      {
-        irrklang_loop_sound->setIsPaused(!playing2);
-        if (playing2)
-          irrklang_loop_sound->setPlayPosition((irrklang::ik_u32)(p2 * 1000.0f));
-      }
-
-      if (!playing1 && playing2) // swap tracks if necessary
-      {
-        v1 = 1.0f - v1;
-        std::swap(irrklang_sound, irrklang_loop_sound);
-      }
+    if (IsLooping() && SoundSource::IsManualLoopRequired(source->loop_info_ext))
+    {   
+      if (source->loop_info_ext.blend_time == 0.0f)
+        v1 = DoTickManualLoopNoBlend(delta_time);
+      else
+        v1 = DoTickManualLoopWithBlend(delta_time);
     }
 
     // apply volumes
+    float current_volume = GetEffectiveVolume();
+
     irrklang_sound->setVolume((irrklang::ik_f32)current_volume * v1);
 
-    float v2 = 1.0f - v1;
     if (irrklang_loop_sound != nullptr)
+    {
+      float v2 = 1.0f - v1;
       irrklang_loop_sound->setVolume((irrklang::ik_f32)current_volume * v2);
+    }
   }
 
 
@@ -689,8 +739,9 @@ namespace chaos
     if (in_name != nullptr)
       result->name = in_name;
     result->irrklang_source = irrklang_source;
-    result->loop_info = result->GetEffectiveLoopInfo(in_loop_info);
 
+    result->loop_info_ext = result->GetClampedLoopInfoExt(in_loop_info); // clamp the loop info
+   
     // XXX : for unknown reasons, irrklang sound_source must not be drop() 
     //       (except for additionnal reference counter)
     //       see comments in headers

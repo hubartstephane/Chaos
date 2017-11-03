@@ -88,8 +88,8 @@ protected:
 
     chaos::SoundLoopInfo loop_info;
     loop_info.start = 3.0f;
-    loop_info.end   = 5.0f;
-    loop_info.blend_time = 3.0f;
+    loop_info.end   = 6.0f;
+    loop_info.blend_time = 1.0f;
 
     source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr, loop_info);
 

@@ -169,6 +169,17 @@ namespace chaos
   };
 
   /**
+  * SoundLoopInfoExt : SoundLoopInfo enriched with the track length
+  */
+
+  class SoundLoopInfoExt : public SoundLoopInfo
+  {
+  public:
+    /** the length of the source */
+    float play_length = -1.0f;
+  };
+
+  /**
    * SoundSource : used to describe some source of sound for irrklang
    */
 
@@ -202,10 +213,11 @@ namespace chaos
   protected:
 
     /** returns true whether the source require a non conventionnal loop */
-    bool IsManualLoopRequired(SoundLoopInfo const & in_loop_info) const;
-
-    /** get the effective loop information according to the track length */
-    SoundLoopInfo GetEffectiveLoopInfo(SoundLoopInfo const & in_loop_info) const;
+    static bool IsManualLoopRequired(SoundLoopInfoExt const & in_loop_info);
+    /** get the length in seconds of the source (uncached value) */
+    float DoGetPlayLength() const;
+    /** Get clamped SoundLoopInfoExt */
+    SoundLoopInfoExt GetClampedLoopInfoExt(SoundLoopInfo const & in_loop_info) const;
 
     /** generate irrklang sound for a 2D sound */
     irrklang::ISound * DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused);
@@ -221,12 +233,12 @@ namespace chaos
       std::pair<irrklang::ISound *, irrklang::ISound *> result;
       result.first = result.second = nullptr;
 
-      bool manual_looping = desc.looping && IsManualLoopRequired(loop_info);
+      bool manual_looping = desc.looping && IsManualLoopRequired(loop_info_ext);
 
       irrklang::ISound * first = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, false); // generate first sound
       if (first != nullptr)
       {
-        if (manual_looping)
+        if (manual_looping && loop_info_ext.blend_time != 0.0f) // use blending => require a second track
         {
           irrklang::ISound * second = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, true); // generate second sound if required (paused at beginning)
           if (second == nullptr)
@@ -290,7 +302,7 @@ namespace chaos
     /** the irrklang source */
     boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
     /** the loop information */
-    SoundLoopInfo loop_info;
+    SoundLoopInfoExt loop_info_ext;
   };
 
   /**
@@ -319,6 +331,11 @@ namespace chaos
     virtual void Tick(float delta_time) override;
     /** returns true if the sound is finished */
     virtual bool IsFinished() const override;
+
+    /** internal method to tick a sound with no blending but with manual loop (returns volume of track 1) */
+    float DoTickManualLoopNoBlend(float delta_time);
+    /** internal method to tick a sound with blending and a manual loop (returns volume of track 1) */
+    float DoTickManualLoopWithBlend(float delta_time);
 
   public:
 

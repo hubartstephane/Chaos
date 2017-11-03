@@ -9,6 +9,22 @@ namespace chaos
 {
 
   /**
+  * SoundObjectCallbacks : an object to store some callbacks
+  */
+
+  class SoundObjectCallbacks : public ReferencedObject
+  {
+  public:
+
+    /** destructor */
+    virtual ~SoundObjectCallbacks() = default;
+    /** called whenever an object is finished */
+    virtual void OnFinished(class SoundBaseObject * sound_object) {}
+    /** called whenever an object is removed from manager */
+    virtual void OnRemovedFromManager(class SoundBaseObject * sound_object) {}
+  };
+
+  /**
    * SoundBaseObject : base class for sound objects. They are object with a name that helps accessing them
    */
 
@@ -31,6 +47,8 @@ namespace chaos
 
     /** get the name of the object */
     char const * GetName() const { return name.c_str(); }
+    /** give a callback object to the gamepad */
+    void SetCallbacks(SoundObjectCallbacks * in_callbacks);
 
   protected:
 
@@ -38,6 +56,8 @@ namespace chaos
     std::string name;
     /** the manager */
     class SoundManager * sound_manager = nullptr;
+    /** the callbacks */
+    boost::intrusive_ptr<SoundObjectCallbacks> callbacks;
   };
 
   /**

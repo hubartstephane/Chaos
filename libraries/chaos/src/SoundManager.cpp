@@ -20,11 +20,18 @@ namespace chaos
   {
     assert(IsAttachedToManager());
     sound_manager = nullptr;
+    if (callbacks != nullptr)
+      callbacks->OnRemovedFromManager(this);
   }
 
   bool SoundBaseObject::IsAttachedToManager() const
   {
     return (sound_manager != nullptr);
+  }
+
+  void SoundBaseObject::SetCallbacks(SoundObjectCallbacks * in_callbacks)
+  {
+    callbacks = in_callbacks;
   }
 
   //
@@ -142,7 +149,11 @@ namespace chaos
       pending_kill = true;
     }
     else
+    {
+      if (callbacks != nullptr)
+        callbacks->OnFinished(this);
       RemoveFromManager(); // immediate removal  
+    }
 
     return true;
   }
@@ -203,7 +214,7 @@ namespace chaos
     if (IsPendingKill())
       return nullptr;
 
-    SoundCategory * Result = sound_manager->DoAddCategory(name.c_str(), this);
+    SoundCategory * Result = sound_manager->DoAddCategory(nullptr, this);
     if (Result != nullptr)
     {
       sound_manager->ReplaceSoundCategory(Result, this);
@@ -677,7 +688,11 @@ namespace chaos
       category->Tick(delta_time);
 
       if (category->IsFinished())
+      {
+        if (category->callbacks != nullptr)
+          category->callbacks->OnFinished(category);
         RemoveSoundCategory(i);
+      }
     }
 
     // tick all sounds
@@ -689,7 +704,11 @@ namespace chaos
       sound->Tick(delta_time);
 
       if (sound->IsFinished())
+      {
+        if (sound->callbacks != nullptr)
+          sound->callbacks->OnFinished(sound);
         RemoveSound(i);
+      }
     }
   }
 

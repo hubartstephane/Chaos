@@ -119,6 +119,9 @@ namespace chaos
 
   public:
 
+    /** a category may be cloned and faded out (returns the cloned temp category) */
+    SoundCategory * CloneCategoryAndStop(float in_blend_volume_time, bool in_fullrange_blend_volume_time = true);
+
   };
 
   /**
@@ -427,6 +430,9 @@ namespace chaos
     void Tick(float delta_time);
 
   protected:
+
+    /** add a category internal method. If parent_category is not null, this means we want a temp object for fadeout and kill purpose */
+    SoundCategory * DoAddCategory(char const * in_name, SoundCategory * parent_category);
 
     /** detach all elements from a list */
     template<typename T>

@@ -22,11 +22,6 @@ protected:
     return true;
   }
 
-  void DropAllSounds()
-  {
-
-  }
-
   virtual void Finalize() override
   {   
     sound1    = nullptr;
@@ -65,7 +60,20 @@ protected:
     else if (button == 2 && action == GLFW_PRESS)
     {
       if (category1 != nullptr)
-        category1->StopAndKill(2.0f, true);
+      {
+        if ((modifier & GLFW_MOD_SHIFT) != 0)
+        {
+          category1->CloneCategoryAndStop(3.0f, true);
+
+          chaos::PlaySoundDesc desc;
+          desc.category = category1.get();
+          desc.looping = true;
+          sound1 = source1->PlaySound(desc);
+        }
+        else
+          category1->StopAndKill(2.0f, true);
+
+      }
     }
   }
 

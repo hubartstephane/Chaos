@@ -190,11 +190,26 @@ namespace chaos
     SoundBaseObject::DetachFromManager();
   }
 
-
   void SoundCategory::RemoveFromManager()
   {
     assert(IsAttachedToManager());
     sound_manager->RemoveSoundCategory(this);
+  }
+
+  SoundCategory * SoundCategory::CloneCategoryAndStop(float in_blend_volume_time, bool in_fullrange_blend_volume_time)
+  {
+    if (!IsAttachedToManager())
+      return nullptr;
+    if (IsPendingKill())
+      return nullptr;
+
+    SoundCategory * Result = sound_manager->DoAddCategory(name.c_str(), this);
+    if (Result != nullptr)
+    {
+      sound_manager->ReplaceSoundCategory(Result, this);
+      Result->StopAndKill(in_blend_volume_time, in_fullrange_blend_volume_time);
+    }
+    return Result;
   }
 
   //
@@ -695,7 +710,12 @@ namespace chaos
 
   SoundCategory * SoundManager::AddCategory(char const * in_name)
   {
-    if (in_name != nullptr)
+    return DoAddCategory(in_name, nullptr);
+  }
+
+  SoundCategory * SoundManager::DoAddCategory(char const * in_name, SoundCategory * parent_category)
+  {
+    if (in_name != nullptr && parent_category == nullptr)
       if (FindSoundCategory(in_name) != nullptr) // category already existing
         return nullptr;
 

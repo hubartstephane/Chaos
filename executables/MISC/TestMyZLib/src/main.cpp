@@ -1,4 +1,5 @@
 #include <chaos/WinTools.h>
+#include <chaos/Application.h>
 #include <chaos/StringTools.h>
 #include <chaos/WinTools.h>
 #include <chaos/MathTools.h>
@@ -6,6 +7,8 @@
 #include <chaos/SparseWriteBuffer.h>
 #include <chaos/Buffer.h>
 #include <chaos/MyZLib.h>
+#include <chaos/FileTools.h>
+
 
 bool AreBuffersEquals(chaos::Buffer<char> const & b1, chaos::Buffer<char> const & b2)
 {
@@ -71,8 +74,30 @@ void TestCompression(chaos::Buffer<char> initial_buffer, char const * title)
 	}
 }
 
+void TestFromFile()
+{
+  chaos::Application * application = chaos::Application::GetInstance();
+  if (application == nullptr)
+    return;
+
+  boost::filesystem::path const & resource_path = application->GetResourcesPath();
+
+  chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip", false);
+  if (buffer != nullptr)
+  {
+    chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);
+
+    int i = 0;
+    ++i;
+  }
+
+
+}
+
 int _tmain(int argc, char ** argv, char ** env)
 {
+  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
+
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 	
 	chaos::MathTools::ResetRandSeed();
@@ -80,6 +105,8 @@ int _tmain(int argc, char ** argv, char ** env)
 	TestCompression(GenerateRandomBuffer(), "Random text");
 
 	TestCompression(GetIpsumBuffer(), "Ipsum text");
+
+  TestFromFile();
 
 	chaos::WinTools::PressToContinue();
 

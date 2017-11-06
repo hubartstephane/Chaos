@@ -21,7 +21,9 @@ namespace chaos
 
 		/** utility function to encode 3 bytes into 4 bytes */
 		static void EncodeBuffer(unsigned char const * char_array_3, unsigned char * char_array_4);
-
+    /** utility function to decode 4 bytes into 3 bytes */
+    static void DecodeBuffer(unsigned char const * char_array_4, unsigned char * char_array_3);
+    /** returns true whether the input is a valid character */
 		static bool IsBase64(unsigned char c);
 
 	protected:

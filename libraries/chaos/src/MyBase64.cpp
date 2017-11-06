@@ -3,6 +3,12 @@
 
 namespace chaos
 {
+
+	static bool MyBase64::IsBase64(unsigned char c) 
+	{
+		return (isalnum(c) || (c == '+') || (c == '/'));
+	}
+
 	char const * MyBase64::base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 	// XXX : explanation
@@ -21,50 +27,83 @@ namespace chaos
 		char_array_4[3] = char_array_3[2] & 0x3f;
 	}
 
-	Buffer<char> MyBase64::Encode(Buffer<char> const & src)
+	std::string MyBase64::Encode(Buffer<char> const & src)
 	{
 		static const int CHUNK_SIZE = 1024 * 16;
 
-		SparseWriteBuffer<> writer(CHUNK_SIZE);
+		std::string result;
+		result.reserve((src.bufsize * 4) / 3); // there is a 4/3 ratio between input and output
 	
-		int tmp1 = 0;
+		int tmp = 0;
 
 		unsigned char char_array_3[3];
 		unsigned char char_array_4[4];
 		for (size_t i = 0 ; i < src.bufsize ; ++i)
 		{
-			char_array_3[tmp1++] = src.data[i];
-			if (tmp1 == 3) 
+			char_array_3[tmp++] = src.data[i];
+			if (tmp == 3) 
 			{			
 				EncodeBuffer(char_array_3, char_array_4);
 				for (int k = 0 ; k < 4 ; ++k)
-					writer << base64_chars[char_array_4[k]]; // flush the buffer
-
-				tmp1 = 0;
+					result += base64_chars[char_array_4[k]]; // flush the buffer
+				tmp = 0;
 			}
 		}
 
-		if (tmp1 > 0) // there are still some bytes to flush
+		if (tmp > 0) // there are still some bytes to flush
 		{
-			for(int k = tmp1 ; k < 3; k++) // complete the buffer with 0
+			for(int k = tmp ; k < 3; k++) // complete the buffer with 0
 				char_array_3[k] = '\0';
 
 			EncodeBuffer(char_array_3, char_array_4);
-			for (int k = 0; k < tmp1 + 1 ; k++)
-				writer << base64_chars[char_array_4[k]];
+			for (int k = 0; k < tmp + 1 ; k++)
+				result += base64_chars[char_array_4[k]];
 
-			while (tmp1++ < 3) // add some 'padding'
-				writer << '=';
+			while (tmp++ < 3) // add some 'padding'
+				result += '=';
 		}
 
-		Buffer<char> result = SharedBufferPolicy<char>::NewBuffer(writer.GetWrittenSize());
-		writer.CopyToBuffer(result.data, result.bufsize);
 		return result;
 	}
 
-	Buffer<char> MyBase64::Decode(Buffer<char> const & src)
+	Buffer<char> MyBase64::Decode(char const * src)
 	{
-		Buffer<char> result;
+		assert(src != nullptr);
+
+		static const int CHUNK_SIZE = 1024 * 16;
+
+		SparseWriteBuffer<> writer(CHUNK_SIZE);
+
+		size_t i = 0;
+		int tmp = 0;
+
+		char c;
+
+		unsigned char char_array_3[3];
+		unsigned char char_array_4[4];
+		while (true)
+		{
+			c = src[i];
+			if (c == 0 || c == '=')
+				break;
+			if (!IsBase64(c))
+				break;
+
+			// replace incomming byte by its index and pack it
+			char_array_4[tmp++] = strchr(base64_chars, c) - base64_chars;
+			if (tmp == 4) 
+			{
+				char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+				char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+				char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+				for (int k = 0 ; k < 3 ; ++k)
+					writer << char_array_3[k];
+				tmp = 0;
+			}
+			++i;
+		}
+
 
 
 
@@ -115,7 +154,9 @@ namespace chaos
 		}
 #endif
 
-		return result;	
+		Buffer<char> result = SharedBufferPolicy<char>::NewBuffer(writer.GetWrittenSize());
+		writer.CopyToBuffer(result.data, result.bufsize);
+		return result;
 	}
 
 }; // namespace chaos

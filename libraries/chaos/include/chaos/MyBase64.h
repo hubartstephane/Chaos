@@ -13,14 +13,16 @@ namespace chaos
 	public:
 
 		/** encoding method */
-		Buffer<char> Encode(Buffer<char> const & src);
+		std::string Encode(Buffer<char> const & src);
 		/** decoding method */
-		Buffer<char> Decode(Buffer<char> const & src);
+		Buffer<char> Decode(char const * src);
 
 	protected:
 
 		/** utility function to encode 3 bytes into 4 bytes */
 		static void EncodeBuffer(unsigned char const * char_array_3, unsigned char * char_array_4);
+
+		static bool IsBase64(unsigned char c);
 
 	protected:
 

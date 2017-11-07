@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="32" infinite="1" nextobjectid="1">
+ <properties>
+  <property name="monster_live" type="float" value="17"/>
+  <property name="monster_name" value="le monstre"/>
+ </properties>
+ <layer name="Calque de Tile 1" width="30" height="30">
+  <properties>
+   <property name="layer_name" value="my layer"/>
+   <property name="layer_timeout" type="int" value="15"/>
+   <property name="visible" type="bool" value="true"/>
+  </properties>
+  <data encoding="csv"/>
+ </layer>
+ <imagelayer name="Calque d'image 1"/>
+ <objectgroup name="Calque d'objets 1"/>
+</map>

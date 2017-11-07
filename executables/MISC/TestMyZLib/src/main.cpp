@@ -87,11 +87,8 @@ void TestFromFile()
   {
     chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);
 
-    int i = 0;
-    ++i;
+    chaos::LogTools::Log("Uncompress Zip file      : %d", uncompressed.bufsize > 0);
   }
-
-
 }
 
 int _tmain(int argc, char ** argv, char ** env)

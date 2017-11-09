@@ -9,30 +9,37 @@
 #include <chaos/TiledMapReader.h>
 #include <chaos/FileTools.h>
 
-void TestFromFile()
+// tiled_map : it use tile set that are ordered
+//             each tile as a number that correspond to 
+//             - a tileset.
+//             - a tile in the tileset
+// in a tile_set
+//    top-left = 1
+
+void LoadTileMap()
 {
-  chaos::Application * application = chaos::Application::GetInstance();
-  if (application == nullptr)
-    return;
+	chaos::Application * application = chaos::Application::GetInstance();
+	if (application == nullptr)
+		return;
 
-  boost::filesystem::path const & resource_path = application->GetResourcesPath();
+	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-  chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "tiled_map.tmx", false);
-  if (buffer != nullptr)
-  {
+	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "tiled_map.tmx", false);
+	if (buffer != nullptr)
+	{
 
-  }
+	}
 }
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
+	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-	
 
 
-  TestFromFile();
+
+	LoadTileMap();
 
 	chaos::WinTools::PressToContinue();
 

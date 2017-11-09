@@ -27,21 +27,21 @@ namespace chaos
 		char_array_4[3] =  (char_array_3[2] & 0x3f);
 	}
 
-  void MyBase64::DecodeBuffer(unsigned char const * char_array_4, unsigned char * char_array_3)
-  {
-    char_array_3[0] = ((char_array_4[0] << 2)) + ((char_array_4[1] & 0x30) >> 4);
-    char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
-    char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
-  }
+	void MyBase64::DecodeBuffer(unsigned char const * char_array_4, unsigned char * char_array_3)
+	{
+		char_array_3[0] = ((char_array_4[0] << 2)) + ((char_array_4[1] & 0x30) >> 4);
+		char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+		char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+	}
 
 	std::string MyBase64::Encode(Buffer<char> const & src)
 	{
 		std::string result;
 		result.reserve((src.bufsize * 4) / 3); // there is a 4/3 ratio between input and output
-	
+
 		unsigned char char_array_3[3];
 		unsigned char char_array_4[4];
-    int tmp = 0;
+		int tmp = 0;
 
 		for (size_t i = 0 ; i < src.bufsize ; ++i) 
 		{
@@ -81,9 +81,9 @@ namespace chaos
 
 		unsigned char char_array_3[3];
 		unsigned char char_array_4[4];
-    int tmp = 0;
+		int tmp = 0;
 
-    size_t i = 0;
+		size_t i = 0;
 		while (true)
 		{
 			char c = src[i];
@@ -96,7 +96,7 @@ namespace chaos
 			char_array_4[tmp++] = strchr(base64_chars, c) - base64_chars;
 			if (tmp == 4) 
 			{
-        DecodeBuffer(char_array_4, char_array_3);
+				DecodeBuffer(char_array_4, char_array_3);
 				for (int k = 0 ; k < 3 ; ++k)
 					writer << char_array_3[k];
 				tmp = 0;
@@ -104,15 +104,15 @@ namespace chaos
 			++i;
 		}
 
-    if (tmp > 0) // flush the array
-    {
-      for (int j = tmp ; j < 4 ; j++) // add additionnal 0 to clean the end of the array
-        char_array_4[j] = 0;
+		if (tmp > 0) // flush the array
+		{
+			for (int j = tmp ; j < 4 ; j++) // add additionnal 0 to clean the end of the array
+				char_array_4[j] = 0;
 
-      DecodeBuffer(char_array_4, char_array_3);
-      for (int j = 0; j < tmp - 1 ; j++)
-        writer << char_array_3[j];
-    }
+			DecodeBuffer(char_array_4, char_array_3);
+			for (int j = 0; j < tmp - 1 ; j++)
+				writer << char_array_3[j];
+		}
 
 		Buffer<char> result = SharedBufferPolicy<char>::NewBuffer(writer.GetWrittenSize());
 		writer.CopyToBuffer(result.data, result.bufsize);

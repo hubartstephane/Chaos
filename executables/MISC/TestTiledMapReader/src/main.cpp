@@ -14,6 +14,10 @@
 
 class TiledMapObjectBase : public chaos::ReferencedObject
 {
+public:
+
+  /** returns true whether the name match the resource name */
+  bool IsMatchingName(char const * filename) const;
 
 };
 
@@ -33,29 +37,44 @@ class TiledMapManager
 {
 public:
 
-  /** load a tiled map */
+  /** load a tiled map set */
   TiledMap * LoadTiledMap(char const * filename);
-  /** load a tiled map */
-  TiledMap * LoadTiledMap(chaos::Buffer<char> buffer);
-  /** load a tiled map */
-  TiledMap * LoadTiledMap(tinyxml2::XMLDocument * doc);
+  /** load a tiled map set */
+  TiledMap * LoadTiledMap(char const * name, chaos::Buffer<char> buffer);
+  /** load a tiled map set */
+  TiledMap * LoadTiledMap(char const * name, tinyxml2::XMLDocument * doc);
 
   /** load a tiled map */
   TiledMapSet * LoadTiledMapSet(char const * filename);
   /** load a tiled map */
-  TiledMapSet * LoadTiledMapSet(chaos::Buffer<char> buffer);
+  TiledMapSet * LoadTiledMapSet(char const * filename, chaos::Buffer<char> buffer);
   /** load a tiled map */
-  TiledMapSet * LoadTiledMapSet(tinyxml2::XMLDocument * doc);
+  TiledMapSet * LoadTiledMapSet(char const * filename, tinyxml2::XMLDocument * doc);
 
 
+  /** find tiled map */
+	TiledMap * FindTiledMap(char const * filename);
+  TiledMap const * FindTiledMap(char const * filename) const;
+  /** find tiled map set */
+  TiledMapSet * FindTiledMapSet(char const * filename);
+  TiledMapSet const * FindTiledMapSet(char const * filename) const;
 
-  /*
-	TiledMap * FindTiledMap(char const * name);
 
-  TiledMapSet * FindTiledMapSet(char const * name);
-*/
+protected:
 
+  /** internal method to load a tiled map set (with no search for exisiting items) */
+  TiledMap * DoLoadTiledMap(char const * filename);
+  /** internal method to load a tiled map set (with no search for exisiting items) */
+  TiledMap * DoLoadTiledMap(char const * name, chaos::Buffer<char> buffer);
+  /** internal method to load a tiled map set (with no search for exisiting items) */
+  TiledMap * DoLoadTiledMap(char const * name, tinyxml2::XMLDocument * doc);
 
+  /** internal method to load a tiled map (with no search for exisiting items) */
+  TiledMapSet * DoLoadTiledMapSet(char const * filename);
+  /** internal method to load a tiled map (with no search for exisiting items) */
+  TiledMapSet * DoLoadTiledMapSet(char const * filename, chaos::Buffer<char> buffer);
+  /** internal method to load a tiled map (with no search for exisiting items) */
+  TiledMapSet * DoLoadTiledMapSet(char const * filename, tinyxml2::XMLDocument * doc);
 
 protected:
 
@@ -68,17 +87,119 @@ protected:
 
 
 
+
+bool TiledMapObjectBase::IsMatchingName(char const * filename) const
+{
+
+  return false;
+}
+
 TiledMapSet * TiledMapManager::LoadTiledMapSet(char const * filename)
+{
+  TiledMapSet * result = FindTiledMapSet(filename);
+  if (result != nullptr)
+    return result;
+  return DoLoadTiledMapSet(filename);
+}
+
+TiledMapSet * TiledMapManager::LoadTiledMapSet(char const * filename, chaos::Buffer<char> buffer)
+{
+  TiledMapSet * result = FindTiledMapSet(filename);
+  if (result != nullptr)
+    return result;
+  return DoLoadTiledMapSet(filename, buffer);
+}
+
+TiledMapSet * TiledMapManager::LoadTiledMapSet(char const * filename, tinyxml2::XMLDocument * doc)
+{
+  TiledMapSet * result = FindTiledMapSet(filename);
+  if (result != nullptr)
+    return result;
+  return DoLoadTiledMapSet(filename, doc);
+}
+
+TiledMap * TiledMapManager::LoadTiledMap(char const * filename)
+{
+  TiledMap * result = FindTiledMap(filename);
+  if (result != nullptr)
+    return result;
+  return DoLoadTiledMap(filename);
+}
+
+TiledMap * TiledMapManager::LoadTiledMap(char const * filename, chaos::Buffer<char> buffer)
+{
+  TiledMap * result = FindTiledMap(filename);
+  if (result != nullptr)
+    return result;
+  return DoLoadTiledMap(filename, buffer);
+}
+
+TiledMap * TiledMapManager::LoadTiledMap(char const * filename, tinyxml2::XMLDocument * doc)
+{
+  TiledMap * result = FindTiledMap(filename);
+  if (result != nullptr)
+    return result;
+  return DoLoadTiledMap(filename, doc);
+}
+
+TiledMap * TiledMapManager::FindTiledMap(char const * filename)
+{
+  size_t count = tiled_maps.size();
+  for (size_t i = 0; i < count; ++i)
+    if (tiled_maps[i]->IsMatchingName(filename))
+      return tiled_maps[i].get();
+  return nullptr;
+}
+
+TiledMap const * TiledMapManager::FindTiledMap(char const * filename) const
+{
+  size_t count = tiled_maps.size();
+  for (size_t i = 0; i < count; ++i)
+    if (tiled_maps[i]->IsMatchingName(filename))
+      return tiled_maps[i].get();
+  return nullptr;
+}
+
+TiledMapSet * TiledMapManager::FindTiledMapSet(char const * filename)
+{
+  size_t count = tiled_sets.size();
+  for (size_t i = 0; i < count; ++i)
+    if (tiled_sets[i]->IsMatchingName(filename))
+      return tiled_sets[i].get();
+  return nullptr;
+}
+
+TiledMapSet const * TiledMapManager::FindTiledMapSet(char const * filename) const
+{
+  size_t count = tiled_sets.size();
+  for (size_t i = 0; i < count; ++i)
+    if (tiled_sets[i]->IsMatchingName(filename))
+      return tiled_sets[i].get();
+  return nullptr;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+TiledMapSet * TiledMapManager::DoLoadTiledMapSet(char const * filename)
 {
   assert(filename != nullptr);
 
   chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(filename, true);
   if (buffer != nullptr)
-    return LoadTiledMapSet(buffer);
+    return DoLoadTiledMapSet(filename, buffer);
   return nullptr;
 }
 
-TiledMapSet * TiledMapManager::LoadTiledMapSet(chaos::Buffer<char> buffer)
+TiledMapSet * TiledMapManager::DoLoadTiledMapSet(char const * filename, chaos::Buffer<char> buffer)
 {
   TiledMapSet * result = nullptr;
 
@@ -87,14 +208,14 @@ TiledMapSet * TiledMapManager::LoadTiledMapSet(chaos::Buffer<char> buffer)
   {
     tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
     if (error == tinyxml2::XML_SUCCESS)
-      result = LoadTiledMapSet(doc);      
+      result = DoLoadTiledMapSet(filename, doc);
     delete(doc);
   }
   return result;
 
 }
 
-TiledMapSet * TiledMapManager::LoadTiledMapSet(tinyxml2::XMLDocument * doc)
+TiledMapSet * TiledMapManager::DoLoadTiledMapSet(char const * filename, tinyxml2::XMLDocument * doc)
 {
   assert(doc != nullptr);
 
@@ -112,17 +233,27 @@ TiledMapSet * TiledMapManager::LoadTiledMapSet(tinyxml2::XMLDocument * doc)
 }
 
 
-TiledMap * TiledMapManager::LoadTiledMap(char const * filename)
+
+
+
+
+
+
+
+
+
+
+TiledMap * TiledMapManager::DoLoadTiledMap(char const * filename)
 {
   assert(filename != nullptr);
 
   chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(filename, true);
   if (buffer != nullptr)
-    return LoadTiledMap(buffer);
+    return DoLoadTiledMap(filename, buffer);
   return nullptr;
 }
 
-TiledMap * TiledMapManager::LoadTiledMap(chaos::Buffer<char> buffer)
+TiledMap * TiledMapManager::DoLoadTiledMap(char const * filename, chaos::Buffer<char> buffer)
 {
   TiledMap * result = nullptr;
 
@@ -131,14 +262,14 @@ TiledMap * TiledMapManager::LoadTiledMap(chaos::Buffer<char> buffer)
   {
     tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
     if (error == tinyxml2::XML_SUCCESS)
-      result = LoadTiledMap(doc);
+      result = DoLoadTiledMap(filename, doc);
     delete(doc);
   }
   return result;
 
 }
 
-TiledMap * TiledMapManager::LoadTiledMap(tinyxml2::XMLDocument * doc)
+TiledMap * TiledMapManager::DoLoadTiledMap(char const * filename, tinyxml2::XMLDocument * doc)
 {
   assert(doc != nullptr);
 
@@ -171,17 +302,7 @@ TiledMap * TiledMapManager::LoadTiledMap(tinyxml2::XMLDocument * doc)
 
 /*
 
-TiledMap * TiledMapManager::FindTiledMap(char const * name)
-{
 
-	return nullptr;
-}
-
-TiledMap * TiledMapManager::FindTiledMapAsset(char const * name)
-{
-
-	return nullptr;
-}
 
 */
 

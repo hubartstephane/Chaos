@@ -46,7 +46,7 @@ protected:
     // XXX : the scaling is used to avoid the near plane clipping      
     static float FOV =  60.0f;
     glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)width, (float)height, 1.0f, far_plane);
-    glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
+    glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f)) * glm::translate(GetBoxPosition());
     glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
       
     chaos::GLProgramData const & program_data = program->GetProgramData();
@@ -127,6 +127,10 @@ protected:
 
     fps_view_controller.Tick(glfw_window, delta_time);
 
+    box_alpha += rotation_speed * (float)delta_time;
+    while (box_alpha > 2.0f * (float)M_PI)
+      box_alpha -= 2.0f * (float)M_PI;
+
     debug_display.Tick(delta_time);
     
     return true; // refresh
@@ -135,6 +139,15 @@ protected:
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
 
+  }
+
+  glm::vec3 GetBoxPosition() const
+  {
+    return glm::vec3(
+      radius * chaos::MathTools::Cos(-box_alpha),
+      0.0f,
+      radius * chaos::MathTools::Sin(-box_alpha)
+    );
   }
 
 protected:
@@ -146,7 +159,10 @@ protected:
 
   chaos::GLDebugOnScreenDisplay debug_display;
 
-  int skybox_index{ 0 };
+
+  float radius = 15.0f;
+  float box_alpha = 0.0f;
+  float rotation_speed = 0.6f;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

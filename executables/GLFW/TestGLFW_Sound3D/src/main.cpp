@@ -18,6 +18,7 @@
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramVariableProvider.h>
+#include <chaos/SoundManager.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -68,8 +69,11 @@ protected:
 
   virtual void Finalize() override
   {
-    program = nullptr;
-    mesh    = nullptr;
+    sound_manager = nullptr;
+    sound_source  = nullptr;
+    sound         = nullptr;
+    program       = nullptr;
+    mesh          = nullptr;
 
     debug_display.Finalize();
   }
@@ -94,6 +98,26 @@ protected:
 
     if (!debug_display.Initialize(debug_params))
       return false;
+
+    sound_manager = new chaos::SoundManager;
+    if (sound_manager == nullptr)
+      return false;
+    if (!sound_manager->StartManager())
+      return false;
+
+    chaos::SoundLoopInfo loop_info;
+    loop_info.end = 2.0f;
+  //  loop_info.blend_time = 0.1f;
+
+    sound_source = sound_manager->AddSource((resources_path / "Tom.wav").string().c_str(), nullptr, loop_info);
+    if (sound_source == nullptr)
+      return false;
+
+    chaos::Play3DSoundDesc desc;
+    desc.looping = true;
+    desc.position = GetBoxPosition();
+
+    sound = sound_source->PlaySound(desc);
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
@@ -125,11 +149,24 @@ protected:
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
+    if (sound_manager != nullptr)
+    {
+      glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
+      sound_manager->SetListenerPosition(world_to_camera_matrix);
+      sound_manager->Tick((float)delta_time);
+    }
+
     fps_view_controller.Tick(glfw_window, delta_time);
 
-    box_alpha += rotation_speed * (float)delta_time;
-    while (box_alpha > 2.0f * (float)M_PI)
-      box_alpha -= 2.0f * (float)M_PI;
+    if (rotation_started)
+    {
+      box_alpha += rotation_speed * (float)delta_time;
+      while (box_alpha > 2.0f * (float)M_PI)
+        box_alpha -= 2.0f * (float)M_PI;
+    }
+
+    glm::vec3 pos = GetBoxPosition();
+    sound->SetPosition(pos);
 
     debug_display.Tick(delta_time);
     
@@ -138,6 +175,8 @@ protected:
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
+    if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS)
+      rotation_started = !rotation_started;
 
   }
 
@@ -152,6 +191,10 @@ protected:
 
 protected:
 
+  boost::intrusive_ptr<chaos::SoundManager> sound_manager;
+  boost::intrusive_ptr<chaos::SoundSource> sound_source;
+  boost::intrusive_ptr<chaos::Sound> sound;
+  
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
  
@@ -159,6 +202,7 @@ protected:
 
   chaos::GLDebugOnScreenDisplay debug_display;
 
+  bool rotation_started = true;
 
   float radius = 15.0f;
   float box_alpha = 0.0f;

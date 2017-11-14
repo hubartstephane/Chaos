@@ -391,11 +391,6 @@ namespace chaos
 
   protected:
 
-    /** an utility conversion method */
-    static irrklang::vec3df ConvertVectorToIrrklang(glm::vec3 const & src);
-
-  protected:
-
     /** the category */
     SoundCategory * category = nullptr;
 
@@ -445,6 +440,9 @@ namespace chaos
     SoundSource * AddSource(char const * in_filename, char const * in_name = nullptr, SoundLoopInfo in_loop_info = SoundLoopInfo());
     /** add a category */
     SoundCategory * AddCategory(char const * in_name = nullptr);
+
+    /** update the listener position */
+    void SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
 
     /** the tick function of the manager */
     void Tick(float delta_time);
@@ -509,7 +507,6 @@ namespace chaos
     /** remove a sound source from the list */
     void RemoveSoundSource(int index);
 
-
     /** utility function to remove a sound object from a list */
     template<typename T>
     void DoRemoveSoundObject(int index, T & vector)
@@ -522,6 +519,8 @@ namespace chaos
         vector[index] = vector[vector.size() - 1];
       vector.pop_back();
     }
+    /** an utility conversion method */
+    static irrklang::vec3df ToIrrklangVector(glm::vec3 const & src);
 
   protected:
 

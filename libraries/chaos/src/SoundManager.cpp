@@ -369,14 +369,14 @@ namespace chaos
 
     irrklang::ISound * result = sound_manager->irrklang_engine->play3D(
       irrklang_source.get(),
-      Sound::ConvertVectorToIrrklang(desc.position),
+      SoundManager::ToIrrklangVector(desc.position),
       looping,
       paused,
       track,
       sound_effect);
 
     if (result != nullptr)
-      result->setVelocity(Sound::ConvertVectorToIrrklang(desc.speed));
+      result->setVelocity(SoundManager::ToIrrklangVector(desc.speed));
 
     return result;
   }
@@ -452,14 +452,7 @@ namespace chaos
     SoundBaseObject::DetachFromManager();
   }
 
-  irrklang::vec3df Sound::ConvertVectorToIrrklang(glm::vec3 const & src)
-  {
-    irrklang::vec3df result;
-    result.X = (float)src.x;
-    result.Y = (float)src.y;
-    result.Z = (float)src.z;
-    return result;
-  }
+
 
   void Sound::SetPosition(glm::vec3 const & in_position)
   {
@@ -470,9 +463,9 @@ namespace chaos
 
     position = in_position;
     if (irrklang_sound != nullptr)
-      irrklang_sound->setPosition(ConvertVectorToIrrklang(in_position));
+      irrklang_sound->setPosition(SoundManager::ToIrrklangVector(in_position));
     if (irrklang_loop_sound != nullptr)
-      irrklang_loop_sound->setPosition(ConvertVectorToIrrklang(in_position));
+      irrklang_loop_sound->setPosition(SoundManager::ToIrrklangVector(in_position));
   }
 
   glm::vec3 Sound::GetPosition() const
@@ -493,9 +486,9 @@ namespace chaos
 
     speed = in_speed;
     if (irrklang_sound != nullptr)
-      irrklang_sound->setVelocity(ConvertVectorToIrrklang(in_speed));
+      irrklang_sound->setVelocity(SoundManager::ToIrrklangVector(in_speed));
     if (irrklang_loop_sound != nullptr)
-      irrklang_loop_sound->setVelocity(ConvertVectorToIrrklang(in_speed));
+      irrklang_loop_sound->setVelocity(SoundManager::ToIrrklangVector(in_speed));
   }
 
   glm::vec3 Sound::GetSpeed() const
@@ -910,6 +903,27 @@ namespace chaos
   void SoundManager::RemoveSoundSource(int index)
   {
     DoRemoveSoundObject(index, sources);
+  }
+
+  irrklang::vec3df SoundManager::ToIrrklangVector(glm::vec3 const & src)
+  {
+    irrklang::vec3df result;
+    result.X = (float)src.x;
+    result.Y = (float)src.y;
+    result.Z = (float)src.z;
+    return result;
+  }
+
+  void SoundManager::SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed)
+  {
+    if (irrklang_engine == nullptr)
+      return;
+
+    glm::vec3 position = view[3];
+    glm::vec3 lookdir  = view[2];
+    glm::vec3 up       = view[1];
+
+    irrklang_engine->setListenerPosition(ToIrrklangVector(position), ToIrrklangVector(lookdir), ToIrrklangVector(speed), ToIrrklangVector(up));
   }
 
 }; // namespace chaos

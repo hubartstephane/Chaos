@@ -47,7 +47,7 @@ protected:
     // XXX : the scaling is used to avoid the near plane clipping      
     static float FOV =  60.0f;
     glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)width, (float)height, 1.0f, far_plane);
-    glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f)) * glm::translate(GetBoxPosition());
+    glm::mat4 local_to_world_matrix  = glm::translate(GetBoxPosition());
     glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
       
     chaos::GLProgramData const & program_data = program->GetProgramData();
@@ -106,7 +106,7 @@ protected:
       return false;
 
     chaos::SoundLoopInfo loop_info;
-    loop_info.end = 2.0f;
+    loop_info.end = 1.0f;
   //  loop_info.blend_time = 0.1f;
 
     sound_source = sound_manager->AddSource((resources_path / "Tom.wav").string().c_str(), nullptr, loop_info);
@@ -117,7 +117,7 @@ protected:
     desc.looping = true;
     desc.position = GetBoxPosition();
 
-    sound = sound_source->PlaySound(desc);
+    sound = sound_source->Play3DSound(desc);
 
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
@@ -151,8 +151,9 @@ protected:
 
     if (sound_manager != nullptr)
     {
-      glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
-      sound_manager->SetListenerPosition(world_to_camera_matrix);
+    //  glm::mat4 view = fps_view_controller.GlobalToLocal();
+      glm::mat4 view = fps_view_controller.LocalToGlobal();
+      sound_manager->SetListenerPosition(view);
       sound_manager->Tick((float)delta_time);
     }
 

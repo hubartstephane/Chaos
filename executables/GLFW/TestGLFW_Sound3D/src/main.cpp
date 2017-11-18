@@ -106,7 +106,7 @@ protected:
       return false;
 
     chaos::SoundLoopInfo loop_info;
-    loop_info.end = 1.0f;
+    loop_info.end = 0.5f;
   //  loop_info.blend_time = 0.1f;
 
     sound_source = sound_manager->AddSource((resources_path / "Tom.wav").string().c_str(), nullptr, loop_info);

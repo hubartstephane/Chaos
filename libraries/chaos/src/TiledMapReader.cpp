@@ -1,5 +1,6 @@
 #include <chaos/TiledMapReader.h>
 #include <chaos/FileTools.h>
+#include <chaos/XMLTools.h>
 
 namespace chaos
 {
@@ -38,36 +39,37 @@ namespace chaos
         if (strcmp(node->Name(), "property") != 0)
           continue;
 
-        char const * property_name  = node->Attribute("name"); // want name + type + value
-        if (property_name == nullptr)
+        tinyxml2::XMLAttribute const * name_attribute = node->FindAttribute("name"); // name is mandatory
+        if (name_attribute == nullptr)
           continue;
-        if (FindProperty(property_name) != nullptr) // cannot handle property already existing
-          continue;
-        char const * property_value = node->Attribute("type");
-        if (property_value == nullptr)
-          continue;
-        char const * property_type  = node->Attribute("value");
-        if (property_type == nullptr)
+        char const * property_name = name_attribute->Value();
+        if (FindProperty(property_name) != nullptr) // and must be unique
           continue;
 
-        if (strcmp(property_type, "int") == 0)
+        tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is mandatory
+        if (value_attribute == nullptr)
+          continue;
+
+        tinyxml2::XMLAttribute const * type_attribute = node->FindAttribute("type"); // type is NOT mandatory (default is string)
+
+        char const * property_type = (type_attribute != nullptr) ? 
+          type_attribute->Value() : nullptr;
+
+        if (property_type == nullptr || strcmp(property_type, "string") == 0)
         {
-          int value = atoi(property_value);
-          DoInsertProperty(property_name, value);
+          DoInsertProperty(property_name, value_attribute->Value());
+        }
+        else if (strcmp(property_type, "int") == 0)
+        {
+          DoInsertProperty(property_name, value_attribute->IntValue());
         }
         else if (strcmp(property_type, "float") == 0)
         {
-          float value = (float)atof(property_value);
-          DoInsertProperty(property_name, value);
+          DoInsertProperty(property_name, value_attribute->FloatValue());
         }
         else if (strcmp(property_type, "bool") == 0)
         {
-          bool value = (strcmp(property_value, "true") == 0);
-          DoInsertProperty(property_name, value);
-        }
-        else if (strcmp(property_type, "string") == 0)
-        {
-          DoInsertProperty(property_name, property_value);
+          DoInsertProperty(property_name, value_attribute->BoolValue());
         }
       }
       return true;
@@ -179,7 +181,9 @@ namespace chaos
 
     bool Map::DoLoad(tinyxml2::XMLElement const * element)
     {
-    
+      if (!ManagerObject::DoLoad(element))
+        return false;
+ 
 
 
       return true;
@@ -197,7 +201,8 @@ namespace chaos
 
     bool TileSet::DoLoad(tinyxml2::XMLElement const * element)
     {
-
+      if (!ManagerObject::DoLoad(element))
+        return false;
 
 
 

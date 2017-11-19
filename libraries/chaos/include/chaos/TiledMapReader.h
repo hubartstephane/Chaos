@@ -6,220 +6,276 @@
 
 namespace chaos
 {
-  //
-  // TiledMapPropertyBase : base class for some properties
-  //
-
-  class TiledMapPropertyBase : public ReferencedObject
+  namespace TiledMap
   {
-  public:
+    //
+    // Property : base class for some properties
+    //
 
-    /** returns whether the property is of type int */
-    bool IsIntProperty() const { return GetIntProperty() != nullptr; }
-    /** returns whether the property is of type float */
-    bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
-    /** returns whether the property is of type bool */
-    bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
-    /** returns whether the property is of type string */
-    bool IsStringProperty() const { return GetStringProperty() != nullptr; }
+    class Property : public ReferencedObject
+    {
+    public:
 
-    /** returns a pointer on the int property */
-    virtual int * GetIntProperty() { return nullptr; }
-    virtual int const * GetIntProperty() const { return nullptr; }
-    /** returns a pointer on the float property */
-    virtual float * GetFloatProperty() { return nullptr; }
-    virtual float const * GetFloatProperty() const { return nullptr; }
-    /** returns a pointer on the bool property */
-    virtual bool * GetBoolProperty() { return nullptr; }
-    virtual bool const * GetBoolProperty() const { return nullptr; }
-    /** returns a pointer on the string property */
-    virtual std::string * GetStringProperty() { return nullptr; }
-    virtual std::string const * GetStringProperty() const { return nullptr; }
+      /** returns whether the property is of type int */
+      bool IsIntProperty() const { return GetIntProperty() != nullptr; }
+      /** returns whether the property is of type float */
+      bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
+      /** returns whether the property is of type bool */
+      bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
+      /** returns whether the property is of type string */
+      bool IsStringProperty() const { return GetStringProperty() != nullptr; }
 
-  public:
+      /** returns a pointer on the int property */
+      virtual int * GetIntProperty() { return nullptr; }
+      virtual int const * GetIntProperty() const { return nullptr; }
+      /** returns a pointer on the float property */
+      virtual float * GetFloatProperty() { return nullptr; }
+      virtual float const * GetFloatProperty() const { return nullptr; }
+      /** returns a pointer on the bool property */
+      virtual bool * GetBoolProperty() { return nullptr; }
+      virtual bool const * GetBoolProperty() const { return nullptr; }
+      /** returns a pointer on the string property */
+      virtual std::string * GetStringProperty() { return nullptr; }
+      virtual std::string const * GetStringProperty() const { return nullptr; }
 
-    /** the name of the property */
-    std::string property_name;
-  };
+      /** returns the name of the property */
+      char const * GetPropertyName() const { return property_name.c_str(); }
 
-  //
-  // TiledMapPropertyTemplate : templated specialization for properties
-  //
+    protected:
 
-  template<typename T>
-  class TiledMapPropertyTemplate : public TiledMapPropertyBase
-  {
-  public:
+      /** the name of the property */
+      std::string property_name;
+    };
 
-    /** the type of the property */
-    typedef T property_type;
+    //
+    // PropertyTemplate : templated specialization for properties
+    //
 
-    /** returns a pointer on the int property */
-    virtual int * GetIntProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<int>()); }
-    virtual int const * GetIntProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<int>()); }
-    /** returns a pointer on the float property */
-    virtual float * GetFloatProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<float>()); }
-    virtual float const * GetFloatProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<float>()); }
-    /** returns a pointer on the int property */
-    virtual bool * GetBoolProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<bool>()); }
-    virtual bool const * GetBoolProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<bool>()); }
-    /** returns a pointer on the int property */
-    virtual std::string * GetStringProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<std::string>()); }
-    virtual std::string const * GetStringProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<std::string>()); }
+    template<typename T>
+    class PropertyTemplate : public Property
+    {
+    public:
 
-  protected:
+      /** the type of the property */
+      typedef T property_type;
 
-    /** default template to try casting into given class */
-    template<typename U, typename V>
-    static typename V::type * CastPropertyTo(U * ptr, V) { return nullptr; }
-    /** specialisation if input and wanted class match */
-    template<typename U>
-    static typename U * CastPropertyTo(U * ptr, boost::mpl::identity<U>) { return ptr; }
-    /** specialisation if input and wanted class match (const version) */
-    template<typename U>
-    static typename U const * CastPropertyTo(U const * ptr, boost::mpl::identity<U>) { return ptr; }
+      /** returns a pointer on the int property */
+      virtual int * GetIntProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<int>()); }
+      virtual int const * GetIntProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<int>()); }
+      /** returns a pointer on the float property */
+      virtual float * GetFloatProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<float>()); }
+      virtual float const * GetFloatProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<float>()); }
+      /** returns a pointer on the int property */
+      virtual bool * GetBoolProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<bool>()); }
+      virtual bool const * GetBoolProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<bool>()); }
+      /** returns a pointer on the int property */
+      virtual std::string * GetStringProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<std::string>()); }
+      virtual std::string const * GetStringProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<std::string>()); }
 
-  public:
+    protected:
 
-    /** the value of the property */
-    T property_value;
-  };
+      /** default template to try casting into given class */
+      template<typename U, typename V>
+      static typename V::type * CastPropertyTo(U * ptr, V) { return nullptr; }
+      /** specialisation if input and wanted class match */
+      template<typename U>
+      static typename U * CastPropertyTo(U * ptr, boost::mpl::identity<U>) { return ptr; }
+      /** specialisation if input and wanted class match (const version) */
+      template<typename U>
+      static typename U const * CastPropertyTo(U const * ptr, boost::mpl::identity<U>) { return ptr; }
 
-  //
-  // Specialization of properties
-  //
+    public:
 
-  using TiledMapPropertyInt = TiledMapPropertyTemplate<int>;
-  using TiledMapPropertyFloat = TiledMapPropertyTemplate<float>;
-  using TiledMapPropertyBool = TiledMapPropertyTemplate<bool>;
-  using TiledMapPropertyString = TiledMapPropertyTemplate<std::string>;
+      /** the value of the property */
+      T property_value;
+    };
 
+    //
+    // Specialization of properties
+    //
 
-  //
-  // TiledMapObjectBase : base object for both Map and both MapSet
-  //
-
-  class TiledMapObjectBase : public ReferencedObject
-  {
-    friend class TiledMapManager;
-
-  public:
-
-    /** returns true whether the name match the resource name */
-    bool IsMatchingName(char const * in_filename) const;
-    /** get the path */
-    boost::filesystem::path const & GetPath() const { return filename; }
-
-  protected:
-
-    /** the constructor */
-    TiledMapObjectBase(class TiledMapManager * in_manager, char const * in_filename);
-    /** loading method from XML */
-    virtual bool DoLoad(tinyxml2::XMLDocument const * doc);
-
-  protected:
-
-    /** the manager */
-    TiledMapManager * manager = nullptr;
-    /** the filename */
-    boost::filesystem::path filename;
+    using PropertyInt = PropertyTemplate<int>;
+    using PropertyFloat = PropertyTemplate<float>;
+    using PropertyBool = PropertyTemplate<bool>;
+    using PropertyString = PropertyTemplate<std::string>;
 
 
-  };
-
-  //
-  // TiledMap : some map class
-  //
-
-  class TiledMap : public TiledMapObjectBase
-  {
-    friend class TiledMapManager;
-
-  protected:
-
-    /** the constructor */
-    TiledMap(class TiledMapManager * in_manager, char const * in_filename);
-    /** loading method from XML */
-    virtual bool DoLoad(tinyxml2::XMLDocument const * doc) override;
-
-  protected:
-
-    int  width = 0;
-    int  height = 0;
-    int  tilewidth = 0;
-    int  tileheight = 0;
-    bool infinite = false;
-  };
-
-  //
-  // TiledMapSet
-  //
-
-  class TiledMapSet : public TiledMapObjectBase
-  {
-    friend class TiledMapManager;
-
-  protected:
-
-    /** the constructor */
-    TiledMapSet(class TiledMapManager * in_manager, char const * in_filename);
-    /** loading method from XML */
-    virtual bool DoLoad(tinyxml2::XMLDocument const * doc) override;
-  };
-
-  //
-  // TiledMapManager : container for maps and tileset
-  //
-
-  class TiledMapManager
-  {
-  public:
-
-    /** load a tiled map set */
-    TiledMap * LoadTiledMap(char const * in_filename);
-    /** load a tiled map set */
-    TiledMap * LoadTiledMap(char const * name, Buffer<char> buffer);
-    /** load a tiled map set */
-    TiledMap * LoadTiledMap(char const * name, tinyxml2::XMLDocument const * doc);
-
-    /** load a tiled map */
-    TiledMapSet * LoadTiledMapSet(char const * in_filename);
-    /** load a tiled map */
-    TiledMapSet * LoadTiledMapSet(char const * in_filename, Buffer<char> buffer);
-    /** load a tiled map */
-    TiledMapSet * LoadTiledMapSet(char const * in_filename, tinyxml2::XMLDocument const * doc);
 
 
-    /** find tiled map */
-    TiledMap * FindTiledMap(char const * in_filename);
-    TiledMap const * FindTiledMap(char const * in_filename) const;
-    /** find tiled map set */
-    TiledMapSet * FindTiledMapSet(char const * in_filename);
-    TiledMapSet const * FindTiledMapSet(char const * in_filename) const;
 
 
-  protected:
 
-    /** internal method to load a tiled map set (with no search for exisiting items) */
-    TiledMap * DoLoadTiledMap(char const * in_filename);
-    /** internal method to load a tiled map set (with no search for exisiting items) */
-    TiledMap * DoLoadTiledMap(char const * name, Buffer<char> buffer);
-    /** internal method to load a tiled map set (with no search for exisiting items) */
-    TiledMap * DoLoadTiledMap(char const * name, tinyxml2::XMLDocument const * doc);
 
-    /** internal method to load a tiled map (with no search for exisiting items) */
-    TiledMapSet * DoLoadTiledMapSet(char const * in_filename);
-    /** internal method to load a tiled map (with no search for exisiting items) */
-    TiledMapSet * DoLoadTiledMapSet(char const * in_filename, Buffer<char> buffer);
-    /** internal method to load a tiled map (with no search for exisiting items) */
-    TiledMapSet * DoLoadTiledMapSet(char const * in_filename, tinyxml2::XMLDocument const * doc);
 
-  protected:
 
-    /** the maps */
-    std::vector<boost::intrusive_ptr<TiledMap>> tiled_maps;
-    /** the assets */
-    std::vector<boost::intrusive_ptr<TiledMapSet>> tiled_sets;
-  };
+
+
+
+
+    //
+    // TiledMapObject : some objects that have dynamic properties
+    //
+
+    class TiledMapObject : public ReferencedObject
+    {
+      friend class Manager;
+
+    public:
+
+      /** find property by name */
+      Property * FindProperty(char const * property_name);
+      /** find property by name */
+      Property * FindProperty(char const * property_name) const;
+
+    protected:
+
+      /** the properties of the object */
+      std::vector<boost::intrusive_ptr<Property>> properties;
+
+
+
+
+    };
+
+
+
+
+
+    //
+    // TiledMapObjectBase : base object for both Map and both MapSet
+    //
+
+    class TiledMapObjectBase : public ReferencedObject
+    {
+      friend class Manager;
+
+    public:
+
+      /** returns true whether the name match the resource name */
+      bool IsMatchingName(char const * in_filename) const;
+      /** get the path */
+      boost::filesystem::path const & GetPath() const { return filename; }
+
+      /** find property by name */
+      Property * FindProperty(char const * property_name);
+      /** find property by name */
+      Property * FindProperty(char const * property_name) const;
+
+    protected:
+
+      /** the constructor */
+      TiledMapObjectBase(class Manager * in_manager, char const * in_filename);
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLDocument const * doc);
+
+    protected:
+
+      /** the manager */
+      Manager * manager = nullptr;
+      /** the filename */
+      boost::filesystem::path filename;
+
+
+    };
+
+
+
+
+
+    //
+    // Map : some map class
+    //
+
+    class Map : public TiledMapObjectBase
+    {
+      friend class Manager;
+
+    protected:
+
+      /** the constructor */
+      Map(class Manager * in_manager, char const * in_filename);
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLDocument const * doc) override;
+
+    protected:
+
+      int  width = 0;
+      int  height = 0;
+      int  tilewidth = 0;
+      int  tileheight = 0;
+      bool infinite = false;
+    };
+
+    //
+    // TileSet
+    //
+
+    class TileSet : public TiledMapObjectBase
+    {
+      friend class Manager;
+
+    protected:
+
+      /** the constructor */
+      TileSet(class Manager * in_manager, char const * in_filename);
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLDocument const * doc) override;
+    };
+
+    //
+    // Manager : container for maps and tileset
+    //
+
+    class Manager
+    {
+    public:
+
+      /** load a tiled map set */
+      Map * LoadMap(char const * in_filename);
+      /** load a tiled map set */
+      Map * LoadMap(char const * name, Buffer<char> buffer);
+      /** load a tiled map set */
+      Map * LoadMap(char const * name, tinyxml2::XMLDocument const * doc);
+
+      /** load a tiled map */
+      TileSet * LoadTileSet(char const * in_filename);
+      /** load a tiled map */
+      TileSet * LoadTileSet(char const * in_filename, Buffer<char> buffer);
+      /** load a tiled map */
+      TileSet * LoadTileSet(char const * in_filename, tinyxml2::XMLDocument const * doc);
+
+      /** find tiled map */
+      Map * FindMap(char const * in_filename);
+      Map const * FindMap(char const * in_filename) const;
+      /** find tiled map set */
+      TileSet * FindTileSet(char const * in_filename);
+      TileSet const * FindTileSet(char const * in_filename) const;
+
+    protected:
+
+      /** internal method to load a tiled map set (with no search for exisiting items) */
+      Map * DoLoadMap(char const * in_filename);
+      /** internal method to load a tiled map set (with no search for exisiting items) */
+      Map * DoLoadMap(char const * name, Buffer<char> buffer);
+      /** internal method to load a tiled map set (with no search for exisiting items) */
+      Map * DoLoadMap(char const * name, tinyxml2::XMLDocument const * doc);
+
+      /** internal method to load a tiled map (with no search for exisiting items) */
+      TileSet * DoLoadTileSet(char const * in_filename);
+      /** internal method to load a tiled map (with no search for exisiting items) */
+      TileSet * DoLoadTileSet(char const * in_filename, Buffer<char> buffer);
+      /** internal method to load a tiled map (with no search for exisiting items) */
+      TileSet * DoLoadTileSet(char const * in_filename, tinyxml2::XMLDocument const * doc);
+
+    protected:
+
+      /** the maps */
+      std::vector<boost::intrusive_ptr<Map>> maps;
+      /** the assets */
+      std::vector<boost::intrusive_ptr<TileSet>> tile_sets;
+    };
+
+
+  }; // namespace TiledMap
 
 }; // namespace chaos

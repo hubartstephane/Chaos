@@ -19,7 +19,7 @@
 // in a tile_set
 //    top-left = 1
 
-void LoadTileMap(chaos::TiledMapManager & manager)
+void LoadTileMap(chaos::TiledMap::Manager & manager)
 {
 	chaos::Application * application = chaos::Application::GetInstance();
 	if (application == nullptr)
@@ -32,7 +32,7 @@ void LoadTileMap(chaos::TiledMapManager & manager)
   chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(map_path.string().c_str(), false);
   if (buffer1 != nullptr)
   {
-    chaos::TiledMapSet * map_set = manager.LoadTiledMapSet(map_path.string().c_str(), buffer1);
+    chaos::TiledMap::TileSet * map_set = manager.LoadTileSet(map_path.string().c_str(), buffer1);
 
   }
 
@@ -41,24 +41,24 @@ void LoadTileMap(chaos::TiledMapManager & manager)
 	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(set_path.string().c_str(), false);
 	if (buffer2 != nullptr)
 	{
-    chaos::TiledMap * map = manager.LoadTiledMap(set_path.string().c_str(), buffer2);
+    chaos::TiledMap::Map * map = manager.LoadMap(set_path.string().c_str(), buffer2);
 
 	}
 }
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::TiledMapManager manager;
+  chaos::TiledMap::Manager manager;
 
   size_t t = sizeof(std::string);
 
   boost::filesystem::path p;
 
-  chaos::TiledMapPropertyInt pi;
-  chaos::TiledMapPropertyInt const pic;
+  chaos::TiledMap::PropertyInt pi;
+  chaos::TiledMap::PropertyInt const pic;
 
-  chaos::TiledMapPropertyString ps;
-  chaos::TiledMapPropertyString const psc;
+  chaos::TiledMap::PropertyString ps;
+  chaos::TiledMap::PropertyString const psc;
 
   auto p1 = pi.GetBoolProperty();
   auto p2 = pi.GetIntProperty();

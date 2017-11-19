@@ -7,12 +7,12 @@ namespace chaos
   /**
    * HTML is a set of utility function to create HTML document with tinyxml2
    */
-  class HTMLTools
+  class XMLTools
   {
   public:
 
     /** constructor */
-    HTMLTools(tinyxml2::XMLDocument * in_doc) : doc(in_doc) { assert(doc != nullptr); }
+    XMLTools(tinyxml2::XMLDocument * in_doc) : doc(in_doc) { assert(doc != nullptr); }
     /** create an element an give it to its parent */
     tinyxml2::XMLElement * PushElement(tinyxml2::XMLNode * parent, char const * name);
     /** create a text an give it to its parent */

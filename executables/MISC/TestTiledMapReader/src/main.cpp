@@ -9,7 +9,7 @@
 #include <chaos/TiledMapReader.h>
 #include <chaos/FileTools.h>
 #include <chaos/ReferencedObject.h>
-#include <chaos/HTMLTools.h>
+#include <chaos/XMLTools.h>
 #include <chaos/TiledMapReader.h>
 
 // tiled_map : it use tile set that are ordered

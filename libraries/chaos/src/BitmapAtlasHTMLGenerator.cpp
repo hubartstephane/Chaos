@@ -38,7 +38,7 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, HTMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
+    void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
     {
       for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
@@ -71,7 +71,7 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+    void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
     {
       for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
@@ -104,7 +104,7 @@ namespace chaos
     }
 
     template<typename T>
-    void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, HTMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+    void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
     {
       for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
       {
@@ -134,7 +134,7 @@ namespace chaos
     {
       assert(doc != nullptr);
 
-      HTMLTools html(doc);
+      XMLTools html(doc);
 
       tinyxml2::XMLElement * Header = html.PushElement(doc, "!DOCTYPE HTML");
       tinyxml2::XMLElement * HTML = html.PushElement(Header, "HTML");

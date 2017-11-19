@@ -1,9 +1,9 @@
-#include <chaos/HTMLTools.h>
+#include <chaos/XMLTools.h>
 #include <chaos/StringTools.h>
 
 namespace chaos
 {
-    tinyxml2::XMLElement * HTMLTools::PushElement(tinyxml2::XMLNode * parent, char const * name)
+    tinyxml2::XMLElement * XMLTools::PushElement(tinyxml2::XMLNode * parent, char const * name)
     {
       assert(parent != nullptr);
       assert(name   != nullptr);
@@ -13,7 +13,7 @@ namespace chaos
       return result;
     }
 
-    tinyxml2::XMLText * HTMLTools::PushText(tinyxml2::XMLNode * parent, char const * txt)
+    tinyxml2::XMLText * XMLTools::PushText(tinyxml2::XMLNode * parent, char const * txt)
     {
       assert(parent != nullptr);
       assert(txt    != nullptr);
@@ -23,7 +23,7 @@ namespace chaos
       return result;
     }
 
-    void HTMLTools::InsertNodeAsChild(tinyxml2::XMLNode * parent, tinyxml2::XMLNode * node)
+    void XMLTools::InsertNodeAsChild(tinyxml2::XMLNode * parent, tinyxml2::XMLNode * node)
     {
       assert(parent != nullptr);
       assert(node   != nullptr);
@@ -33,7 +33,7 @@ namespace chaos
         parent->InsertAfterChild(parent->LastChild(), node);  
     }
 
-    void HTMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, char const * value)
+    void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, char const * value)
     {
       assert(element != nullptr);
       assert(name    != nullptr);
@@ -41,35 +41,35 @@ namespace chaos
       element->SetAttribute(name, value);
     }
 
-    void HTMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, int value)
+    void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, int value)
     {
       assert(element != nullptr);
       assert(name    != nullptr);
       element->SetAttribute(name, value);
     }
 
-    void HTMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, float value)
+    void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, float value)
     {
       assert(element != nullptr);
       assert(name    != nullptr);
       element->SetAttribute(name, value);
     }
 
-    void HTMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, double value)
+    void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, double value)
     {
       assert(element != nullptr);
       assert(name    != nullptr);
       element->SetAttribute(name, value);
     }
 
-    void HTMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, bool value)
+    void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, bool value)
     {
       assert(element != nullptr);
       assert(name    != nullptr);
       element->SetAttribute(name, value);
     }
 
-    void HTMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, unsigned int value)
+    void XMLTools::PushAttribute(tinyxml2::XMLElement * element, char const * name, unsigned int value)
     {
       assert(element != nullptr);
       assert(name    != nullptr);

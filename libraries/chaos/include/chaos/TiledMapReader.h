@@ -14,6 +14,8 @@ namespace chaos
 
     class Property : public ReferencedObject
     {
+      friend class PropertyOwner;
+
     public:
 
       /** returns whether the property is of type int */
@@ -39,12 +41,12 @@ namespace chaos
       virtual std::string const * GetStringProperty() const { return nullptr; }
 
       /** returns the name of the property */
-      char const * GetPropertyName() const { return property_name.c_str(); }
+      char const * GetName() const { return name.c_str(); }
 
     protected:
 
       /** the name of the property */
-      std::string property_name;
+      std::string name;
     };
 
     //
@@ -60,17 +62,17 @@ namespace chaos
       typedef T property_type;
 
       /** returns a pointer on the int property */
-      virtual int * GetIntProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<int>()); }
-      virtual int const * GetIntProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<int>()); }
+      virtual int * GetIntProperty() { return CastPropertyTo(&value, boost::mpl::identity<int>()); }
+      virtual int const * GetIntProperty() const { return CastPropertyTo(&value, boost::mpl::identity<int>()); }
       /** returns a pointer on the float property */
-      virtual float * GetFloatProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<float>()); }
-      virtual float const * GetFloatProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<float>()); }
+      virtual float * GetFloatProperty() { return CastPropertyTo(&value, boost::mpl::identity<float>()); }
+      virtual float const * GetFloatProperty() const { return CastPropertyTo(&value, boost::mpl::identity<float>()); }
       /** returns a pointer on the int property */
-      virtual bool * GetBoolProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<bool>()); }
-      virtual bool const * GetBoolProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<bool>()); }
+      virtual bool * GetBoolProperty() { return CastPropertyTo(&value, boost::mpl::identity<bool>()); }
+      virtual bool const * GetBoolProperty() const { return CastPropertyTo(&value, boost::mpl::identity<bool>()); }
       /** returns a pointer on the int property */
-      virtual std::string * GetStringProperty() { return CastPropertyTo(&property_value, boost::mpl::identity<std::string>()); }
-      virtual std::string const * GetStringProperty() const { return CastPropertyTo(&property_value, boost::mpl::identity<std::string>()); }
+      virtual std::string * GetStringProperty() { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
+      virtual std::string const * GetStringProperty() const { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
 
     protected:
 
@@ -87,7 +89,7 @@ namespace chaos
     public:
 
       /** the value of the property */
-      T property_value;
+      T value;
     };
 
     //
@@ -99,53 +101,46 @@ namespace chaos
     using PropertyBool = PropertyTemplate<bool>;
     using PropertyString = PropertyTemplate<std::string>;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     //
-    // TiledMapObject : some objects that have dynamic properties
+    // PropertyOwner : some objects that have dynamic properties
     //
 
-    class TiledMapObject : public ReferencedObject
+    class PropertyOwner : public ReferencedObject
     {
       friend class Manager;
 
     public:
 
       /** find property by name */
-      Property * FindProperty(char const * property_name);
+      Property * FindProperty(char const * name);
       /** find property by name */
-      Property * FindProperty(char const * property_name) const;
+      Property * FindProperty(char const * name) const;
+
+    protected:
+
+      /** the method to override */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element);
+
+      /** create property */
+      PropertyInt * DoInsertProperty(char const * name, int value);
+      /** create property */
+      PropertyFloat * DoInsertProperty(char const * name, float value);
+      /** create property */
+      PropertyBool * DoInsertProperty(char const * name, bool value);
+      /** create property */
+      PropertyString * DoInsertProperty(char const * name, char const * value);
 
     protected:
 
       /** the properties of the object */
       std::vector<boost::intrusive_ptr<Property>> properties;
-
-
-
-
     };
 
-
-
-
-
     //
-    // TiledMapObjectBase : base object for both Map and both MapSet
+    // ManagerObject : objects control by the manager (Map & TileSet)
     //
 
-    class TiledMapObjectBase : public ReferencedObject
+    class ManagerObject : public PropertyOwner
     {
       friend class Manager;
 
@@ -156,17 +151,16 @@ namespace chaos
       /** get the path */
       boost::filesystem::path const & GetPath() const { return filename; }
 
-      /** find property by name */
-      Property * FindProperty(char const * property_name);
-      /** find property by name */
-      Property * FindProperty(char const * property_name) const;
-
     protected:
 
       /** the constructor */
-      TiledMapObjectBase(class Manager * in_manager, char const * in_filename);
+      ManagerObject(class Manager * in_manager, char const * in_filename);
       /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLDocument const * doc);
+      virtual bool DoLoadDocument(tinyxml2::XMLDocument const * doc);
+      /** the method to override */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** get the name of the expected markup */
+      virtual char const * GetXMLMarkupName() const { return nullptr; }
 
     protected:
 
@@ -174,19 +168,13 @@ namespace chaos
       Manager * manager = nullptr;
       /** the filename */
       boost::filesystem::path filename;
-
-
     };
-
-
-
-
 
     //
     // Map : some map class
     //
 
-    class Map : public TiledMapObjectBase
+    class Map : public ManagerObject
     {
       friend class Manager;
 
@@ -195,7 +183,9 @@ namespace chaos
       /** the constructor */
       Map(class Manager * in_manager, char const * in_filename);
       /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLDocument const * doc) override;
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** get the name of the expected markup */
+      virtual char const * GetXMLMarkupName() const override { return "map"; }
 
     protected:
 
@@ -210,7 +200,7 @@ namespace chaos
     // TileSet
     //
 
-    class TileSet : public TiledMapObjectBase
+    class TileSet : public ManagerObject
     {
       friend class Manager;
 
@@ -219,7 +209,9 @@ namespace chaos
       /** the constructor */
       TileSet(class Manager * in_manager, char const * in_filename);
       /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLDocument const * doc) override;
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** get the name of the expected markup */
+      virtual char const * GetXMLMarkupName() const override { return "tileset"; }
     };
 
     //

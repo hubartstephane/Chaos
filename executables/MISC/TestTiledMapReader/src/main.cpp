@@ -27,21 +27,22 @@ void LoadTileMap(chaos::TiledMap::Manager & manager)
 
 	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-  boost::filesystem::path map_path = resource_path / "tiled_map.tmx";
+  
+  boost::filesystem::path set_path = resource_path / "tile set 1.tsx";
 
-  chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(map_path.string().c_str(), false);
+  chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path.string().c_str(), false);
   if (buffer1 != nullptr)
   {
-    chaos::TiledMap::TileSet * map_set = manager.LoadTileSet(map_path.string().c_str(), buffer1);
+    chaos::TiledMap::TileSet * map_set = manager.LoadTileSet(set_path.string().c_str(), buffer1);
 
   }
 
-  boost::filesystem::path set_path = resource_path / "tile set 1.tmx";
+  boost::filesystem::path map_path = resource_path / "tiled_map.tmx";
 
-	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(set_path.string().c_str(), false);
+	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path.string().c_str(), false);
 	if (buffer2 != nullptr)
 	{
-    chaos::TiledMap::Map * map = manager.LoadMap(set_path.string().c_str(), buffer2);
+    chaos::TiledMap::Map * map = manager.LoadMap(map_path.string().c_str(), buffer2);
 
 	}
 }

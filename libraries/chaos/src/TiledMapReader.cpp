@@ -6,39 +6,126 @@ namespace chaos
   namespace TiledMap
   {
 
-    Property * TiledMapObject::FindProperty(char const * property_name)
-    {
-      assert(property_name != nullptr);
+    //
+    // PropertyOwner methods
+    //
 
+    Property * PropertyOwner::FindProperty(char const * name)
+    {
+      assert(name != nullptr);
       for (auto & property : properties)
-        if (property->GetPropertyName() == property_name)
+        if (property->GetName() == name)
           return property.get();
       return nullptr;
     }
 
-    Property * TiledMapObject::FindProperty(char const * property_name) const
+    Property * PropertyOwner::FindProperty(char const * name) const
     {
+      assert(name != nullptr);
       for (auto & property : properties)
-        if (property->GetPropertyName() == property_name)
+        if (property->GetName() == name)
           return property.get();
       return nullptr;
     }
 
+    bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      assert(element != nullptr);
 
+      tinyxml2::XMLElement const * node = element->FirstChildElement();
+      for (; node != nullptr ; node = node->NextSiblingElement())
+      {
+        if (strcmp(node->Name(), "property") != 0)
+          continue;
 
+        char const * property_name  = node->Attribute("name"); // want name + type + value
+        if (property_name == nullptr)
+          continue;
+        if (FindProperty(property_name) != nullptr) // cannot handle property already existing
+          continue;
+        char const * property_value = node->Attribute("type");
+        if (property_value == nullptr)
+          continue;
+        char const * property_type  = node->Attribute("value");
+        if (property_type == nullptr)
+          continue;
 
+        if (strcmp(property_type, "int") == 0)
+        {
+          int value = atoi(property_value);
+          DoInsertProperty(property_name, value);
+        }
+        else if (strcmp(property_type, "float") == 0)
+        {
+          float value = (float)atof(property_value);
+          DoInsertProperty(property_name, value);
+        }
+        else if (strcmp(property_type, "bool") == 0)
+        {
+          bool value = (strcmp(property_value, "true") == 0);
+          DoInsertProperty(property_name, value);
+        }
+        else if (strcmp(property_type, "string") == 0)
+        {
+          DoInsertProperty(property_name, property_value);
+        }
+      }
+      return true;
+    }
 
+    PropertyInt * PropertyOwner::DoInsertProperty(char const * name, int value)
+    {
+      PropertyInt * result = new PropertyInt;
+      if (result != nullptr)
+      {
+        result->name = name;
+        result->value = value;
+        properties.push_back(result);
+      }
+      return result;
+    }
 
+    PropertyFloat * PropertyOwner::DoInsertProperty(char const * name, float value)
+    {
+      PropertyFloat * result = new PropertyFloat;
+      if (result != nullptr)
+      {
+        result->name = name;
+        result->value = value;
+        properties.push_back(result);
+      }
+      return result;
+    }
 
+    PropertyBool * PropertyOwner::DoInsertProperty(char const * name, bool value)
+    {
+      PropertyBool * result = new PropertyBool;
+      if (result != nullptr)
+      {
+        result->name = name;
+        result->value = value;
+        properties.push_back(result);
+      }
+      return result;
+    }
 
-
-
+    PropertyString * PropertyOwner::DoInsertProperty(char const * name, char const * value)
+    {
+      PropertyString * result = new PropertyString;
+      if (result != nullptr)
+      {
+        result->name = name;
+        result->value = value;
+        properties.push_back(result);
+      }
+      return result;
+    }
 
     //
-    // TiledMapObjectBase methods
+    // ManagerObject methods
     //
 
-    TiledMapObjectBase::TiledMapObjectBase(class Manager * in_manager, char const * in_filename) :
+    ManagerObject::ManagerObject(class Manager * in_manager, char const * in_filename) :
       manager(in_manager)
     {
       assert(in_manager != nullptr);
@@ -47,16 +134,34 @@ namespace chaos
         filename = in_filename;
     }
 
-    bool TiledMapObjectBase::IsMatchingName(char const * in_filename) const
+    bool ManagerObject::IsMatchingName(char const * in_filename) const
     {
 
 
       return false;
     }
 
-    bool TiledMapObjectBase::DoLoad(tinyxml2::XMLDocument const * doc)
+    bool ManagerObject::DoLoadDocument(tinyxml2::XMLDocument const * doc)
     {
       assert(doc != nullptr);
+
+      tinyxml2::XMLElement const * element = doc->RootElement();
+      if (element == nullptr)
+        return false;
+
+      if (strcmp(element->Name(), GetXMLMarkupName()) != 0)
+        return false;
+
+      return DoLoad(element);
+    }
+
+    bool ManagerObject::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      assert(element != nullptr);
+
+      tinyxml2::XMLElement const * properties_element = element->FirstChildElement("properties");
+      if (properties_element != nullptr)
+        PropertyOwner::DoLoad(properties_element);
       return true;
     }
 
@@ -65,21 +170,17 @@ namespace chaos
     //
 
     Map::Map(class Manager * in_manager, char const * in_filename) :
-      TiledMapObjectBase(in_manager, in_filename)
+      ManagerObject(in_manager, in_filename)
     {
 
     }
 
-    bool Map::DoLoad(tinyxml2::XMLDocument const * doc)
+
+
+    bool Map::DoLoad(tinyxml2::XMLElement const * element)
     {
-      assert(doc != nullptr);
-      /*
-      doc->FirstChild;
-      doc->FirstChildElement;
-      doc->
+    
 
-
-      */
 
       return true;
     }
@@ -89,35 +190,13 @@ namespace chaos
     //
 
     TileSet::TileSet(class Manager * in_manager, char const * in_filename) :
-      TiledMapObjectBase(in_manager, in_filename)
+      ManagerObject(in_manager, in_filename)
     {
 
     }
 
-    bool TileSet::DoLoad(tinyxml2::XMLDocument const * doc)
+    bool TileSet::DoLoad(tinyxml2::XMLElement const * element)
     {
-      assert(doc != nullptr);
-
-      tinyxml2::XMLElement const * root = doc->RootElement();
-      if (root != nullptr)
-      {
-        tinyxml2::XMLAttribute const * attribute = root->FirstAttribute();
-        while (attribute != nullptr)
-        {
-
-
-          attribute = attribute->Next();
-        }
-      }
-
-
-
-      tinyxml2::XMLNode const * children = doc->FirstChild();
-      while (children != nullptr)
-      {
-
-        children = children->NextSiblingElement();
-      }
 
 
 
@@ -126,6 +205,33 @@ namespace chaos
 
       return true;
     }
+
+
+#if 0
+
+    tinyxml2::XMLElement const * root = doc->RootElement();
+    if (root != nullptr)
+    {
+      tinyxml2::XMLAttribute const * attribute = root->FirstAttribute();
+      while (attribute != nullptr)
+      {
+
+
+        attribute = attribute->Next();
+      }
+    }
+
+
+
+    tinyxml2::XMLNode const * children = doc->FirstChild();
+    while (children != nullptr)
+    {
+
+      children = children->NextSiblingElement();
+    }
+
+
+#endif
 
     //
     // Manager methods
@@ -258,7 +364,7 @@ namespace chaos
       TileSet * result = new TileSet(this, in_filename);
       if (result != nullptr)
       {
-        if (result->DoLoad(doc))
+        if (result->DoLoadDocument(doc))
           tile_sets.push_back(result);
         else
         {
@@ -313,7 +419,7 @@ namespace chaos
       Map * result = new Map(this, in_filename);
       if (result != nullptr)
       {
-        if (result->DoLoad(doc))
+        if (result->DoLoadDocument(doc))
           maps.push_back(result);
         else
         {

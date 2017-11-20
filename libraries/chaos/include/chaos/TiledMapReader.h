@@ -137,6 +137,37 @@ namespace chaos
     };
 
     //
+    // Layer
+    //
+
+    class Layer : public PropertyOwner
+    {
+      friend class Map;
+
+    protected:
+
+      /** the loading method */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element);
+
+    protected:
+
+      /** the size of the layer */
+      int width = 0;
+      /** the size of the layer */
+      int height = 0;
+      /** the name of the layer */
+      std::string name;
+    };
+
+
+
+
+
+
+
+
+
+    //
     // ManagerObject : objects control by the manager (Map & TileSet)
     //
 
@@ -171,32 +202,6 @@ namespace chaos
     };
 
     //
-    // Map : some map class
-    //
-
-    class Map : public ManagerObject
-    {
-      friend class Manager;
-
-    protected:
-
-      /** the constructor */
-      Map(class Manager * in_manager, char const * in_filename);
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-      /** get the name of the expected markup */
-      virtual char const * GetXMLMarkupName() const override { return "map"; }
-
-    protected:
-
-      int  width = 0;
-      int  height = 0;
-      int  tilewidth = 0;
-      int  tileheight = 0;
-      bool infinite = false;
-    };
-
-    //
     // TileSet
     //
 
@@ -213,6 +218,60 @@ namespace chaos
       /** get the name of the expected markup */
       virtual char const * GetXMLMarkupName() const override { return "tileset"; }
     };
+
+    //
+    // Map : some map class
+    //
+
+    class TileSetData
+    {
+    public:
+
+      /** the first gid for the tileset */
+      int firstgid = 1;
+      /** the tileset */
+      boost::intrusive_ptr<TileSet> tileset;
+    };
+
+    class Map : public ManagerObject
+    {
+      friend class Manager;
+
+    protected:
+
+      /** the constructor */
+      Map(class Manager * in_manager, char const * in_filename);
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** get the name of the expected markup */
+      virtual char const * GetXMLMarkupName() const override { return "map"; }
+
+      /** load the tile sets */
+      bool DoLoadTileSet(tinyxml2::XMLElement const * element);
+      /** load the layers */
+      bool DoLoadLayers(tinyxml2::XMLElement const * element);
+
+    protected:
+
+      /** the dimension of the map */
+      int  width = 0;
+      /** the dimension of the map */
+      int  height = 0;
+      /** the dimension of the map */
+      int  tilewidth = 0;
+      /** the dimension of the map */
+      int  tileheight = 0;
+      /** the dimension of the map */
+      bool infinite = false;
+
+
+      /** the tileset used */
+      std::vector<TileSetData> tilesets;
+      /** the layers composing the map */
+      std::vector<boost::intrusive_ptr<Layer>> layers;
+    };
+
+
 
     //
     // Manager : container for maps and tileset

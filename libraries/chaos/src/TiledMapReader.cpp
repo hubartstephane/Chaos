@@ -168,23 +168,17 @@ namespace chaos
     }
 
     //
-    // Map methods
+    // Layer methods
     //
-
-    Map::Map(class Manager * in_manager, char const * in_filename) :
-      ManagerObject(in_manager, in_filename)
+      
+    bool Layer::DoLoad(tinyxml2::XMLElement const * element)
     {
-
-    }
-
-
-
-    bool Map::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!ManagerObject::DoLoad(element))
+      if (!PropertyOwner::DoLoad(element))
         return false;
- 
 
+      XMLTools::ReadAttribute(element, "name", name);
+      XMLTools::ReadAttribute(element, "width", width);
+      XMLTools::ReadAttribute(element, "height", height);
 
       return true;
     }
@@ -211,32 +205,79 @@ namespace chaos
       return true;
     }
 
+    //
+    // Map methods
+    //
 
-#if 0
-
-    tinyxml2::XMLElement const * root = doc->RootElement();
-    if (root != nullptr)
+    Map::Map(class Manager * in_manager, char const * in_filename) :
+      ManagerObject(in_manager, in_filename)
     {
-      tinyxml2::XMLAttribute const * attribute = root->FirstAttribute();
-      while (attribute != nullptr)
+
+    }
+
+
+
+    bool Map::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!ManagerObject::DoLoad(element))
+        return false;
+
+      XMLTools::ReadAttribute(element, "width", width);
+      XMLTools::ReadAttribute(element, "height", height);
+      XMLTools::ReadAttribute(element, "tilewidth", tilewidth);
+      XMLTools::ReadAttribute(element, "tileheight", tileheight);
+      XMLTools::ReadAttribute(element, "infinite", infinite);
+
+      DoLoadTileSet(element);
+      DoLoadLayers(element);
+
+        //orientation = "orthogonal" renderorder = "right-down" width = "32" height = "48" tilewidth = "32" tileheight = "32" infinite = "0"
+ 
+
+
+      return true;
+    }
+
+    bool Map::DoLoadTileSet(tinyxml2::XMLElement const * element)
+    {
+      assert(element != nullptr);
+
+      tinyxml2::XMLElement const * tileset = element->FirstChildElement("tileset");
+      for (; tileset != nullptr; tileset = tileset->NextSiblingElement("tileset"))
+      {
+        int firstgid = 0;
+        std::string source;
+
+        if (!XMLTools::ReadAttribute(tileset, "firstgid", firstgid))
+          continue;
+        if (!XMLTools::ReadAttribute(tileset, "source", source))
+          continue;
+
+        //boost::filesystem::path p = GetRelativePath()
+
+
+        firstgid = firstgid;
+
+      }
+      return true;
+    }
+
+    bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)
+    {
+      tinyxml2::XMLElement const * tileset = element->FirstChildElement("layer");
+      for (; tileset != nullptr; tileset = tileset->NextSiblingElement("layer"))
       {
 
 
-        attribute = attribute->Next();
+
+        tileset = tileset;
       }
+
+
+      return true;
     }
 
 
-
-    tinyxml2::XMLNode const * children = doc->FirstChild();
-    while (children != nullptr)
-    {
-
-      children = children->NextSiblingElement();
-    }
-
-
-#endif
 
     //
     // Manager methods

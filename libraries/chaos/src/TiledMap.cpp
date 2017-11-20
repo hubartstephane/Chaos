@@ -1,4 +1,4 @@
-#include <chaos/TiledMapReader.h>
+#include <chaos/TiledMap.h>
 #include <chaos/FileTools.h>
 #include <chaos/XMLTools.h>
 

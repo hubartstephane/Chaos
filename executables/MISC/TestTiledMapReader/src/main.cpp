@@ -6,11 +6,10 @@
 #include <chaos/LogTools.h>
 #include <chaos/SparseWriteBuffer.h>
 #include <chaos/Buffer.h>
-#include <chaos/TiledMapReader.h>
 #include <chaos/FileTools.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/XMLTools.h>
-#include <chaos/TiledMapReader.h>
+#include <chaos/TiledMap.h>
 #include <chaos/BoostTools.h>
 
 // tiled_map : it use tile set that are ordered

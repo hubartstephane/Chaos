@@ -33,12 +33,13 @@ namespace chaos
     {
       assert(element != nullptr);
 
-      tinyxml2::XMLElement const * node = element->FirstChildElement();
-      for (; node != nullptr ; node = node->NextSiblingElement())
-      {
-        if (strcmp(node->Name(), "property") != 0)
-          continue;
+      tinyxml2::XMLElement const * properties_element = element->FirstChildElement("properties");
+      if (properties_element == nullptr)
+        return true; // no properties is not an error
 
+      tinyxml2::XMLElement const * node = properties_element->FirstChildElement("property");
+      for (; node != nullptr ; node = node->NextSiblingElement("property"))
+      {
         tinyxml2::XMLAttribute const * name_attribute = node->FindAttribute("name"); // name is mandatory
         if (name_attribute == nullptr)
           continue;
@@ -127,20 +128,16 @@ namespace chaos
     // ManagerObject methods
     //
 
-    ManagerObject::ManagerObject(class Manager * in_manager, char const * in_filename) :
-      manager(in_manager)
+    ManagerObject::ManagerObject(class Manager * in_manager, boost::filesystem::path in_path) :
+      manager(in_manager),
+      path(std::move(in_path))
     {
       assert(in_manager != nullptr);
-
-      if (in_filename != nullptr)
-        filename = in_filename;
     }
 
-    bool ManagerObject::IsMatchingName(char const * in_filename) const
+    bool ManagerObject::IsMatchingName(boost::filesystem::path const & in_path) const
     {
-
-
-      return false;
+      return (path.compare(in_path) == 0);
     }
 
     bool ManagerObject::DoLoadDocument(tinyxml2::XMLDocument const * doc)
@@ -160,10 +157,8 @@ namespace chaos
     bool ManagerObject::DoLoad(tinyxml2::XMLElement const * element)
     {
       assert(element != nullptr);
-
-      tinyxml2::XMLElement const * properties_element = element->FirstChildElement("properties");
-      if (properties_element != nullptr)
-        PropertyOwner::DoLoad(properties_element);
+      if (!PropertyOwner::DoLoad(element))
+        return false;
       return true;
     }
 
@@ -187,8 +182,8 @@ namespace chaos
     // TileSet methods
     //
 
-    TileSet::TileSet(class Manager * in_manager, char const * in_filename) :
-      ManagerObject(in_manager, in_filename)
+    TileSet::TileSet(class Manager * in_manager, boost::filesystem::path in_path) :
+      ManagerObject(in_manager, in_path)
     {
 
     }
@@ -209,8 +204,8 @@ namespace chaos
     // Map methods
     //
 
-    Map::Map(class Manager * in_manager, char const * in_filename) :
-      ManagerObject(in_manager, in_filename)
+    Map::Map(class Manager * in_manager, boost::filesystem::path in_path) :
+      ManagerObject(in_manager, in_path)
     {
 
     }
@@ -283,112 +278,99 @@ namespace chaos
     // Manager methods
     //
 
-    TileSet * Manager::LoadTileSet(char const * in_filename)
+    TileSet * Manager::LoadTileSet(boost::filesystem::path path)
     {
-      TileSet * result = FindTileSet(in_filename);
+      TileSet * result = FindTileSet(path);
       if (result != nullptr)
         return result;
-      return DoLoadTileSet(in_filename);
+      return DoLoadTileSet(std::move(path));
     }
 
-    TileSet * Manager::LoadTileSet(char const * in_filename, Buffer<char> buffer)
+    TileSet * Manager::LoadTileSet(boost::filesystem::path path, Buffer<char> buffer)
     {
-      TileSet * result = FindTileSet(in_filename);
+      TileSet * result = FindTileSet(path);
       if (result != nullptr)
         return result;
-      return DoLoadTileSet(in_filename, buffer);
+      return DoLoadTileSet(std::move(path), buffer);
     }
 
-    TileSet * Manager::LoadTileSet(char const * in_filename, tinyxml2::XMLDocument const * doc)
+    TileSet * Manager::LoadTileSet(boost::filesystem::path path, tinyxml2::XMLDocument const * doc)
     {
-      TileSet * result = FindTileSet(in_filename);
+      TileSet * result = FindTileSet(path);
       if (result != nullptr)
         return result;
-      return DoLoadTileSet(in_filename, doc);
+      return DoLoadTileSet(std::move(path), doc);
     }
 
-    Map * Manager::LoadMap(char const * in_filename)
+    Map * Manager::LoadMap(boost::filesystem::path path)
     {
-      Map * result = FindMap(in_filename);
+      Map * result = FindMap(path);
       if (result != nullptr)
         return result;
-      return DoLoadMap(in_filename);
+      return DoLoadMap(std::move(path));
     }
 
-    Map * Manager::LoadMap(char const * in_filename, Buffer<char> buffer)
+    Map * Manager::LoadMap(boost::filesystem::path path, Buffer<char> buffer)
     {
-      Map * result = FindMap(in_filename);
+      Map * result = FindMap(path);
       if (result != nullptr)
         return result;
-      return DoLoadMap(in_filename, buffer);
+      return DoLoadMap(std::move(path), buffer);
     }
 
-    Map * Manager::LoadMap(char const * in_filename, tinyxml2::XMLDocument const * doc)
+    Map * Manager::LoadMap(boost::filesystem::path path, tinyxml2::XMLDocument const * doc)
     {
-      Map * result = FindMap(in_filename);
+      Map * result = FindMap(path);
       if (result != nullptr)
         return result;
-      return DoLoadMap(in_filename, doc);
+      return DoLoadMap(std::move(path), doc);
     }
 
-    Map * Manager::FindMap(char const * in_filename)
+    Map * Manager::FindMap(boost::filesystem::path const & path)
     {
       size_t count = maps.size();
       for (size_t i = 0; i < count; ++i)
-        if (maps[i]->IsMatchingName(in_filename))
+        if (maps[i]->IsMatchingName(path))
           return maps[i].get();
       return nullptr;
     }
 
-    Map const * Manager::FindMap(char const * in_filename) const
+    Map const * Manager::FindMap(boost::filesystem::path const & path) const
     {
       size_t count = maps.size();
       for (size_t i = 0; i < count; ++i)
-        if (maps[i]->IsMatchingName(in_filename))
+        if (maps[i]->IsMatchingName(path))
           return maps[i].get();
       return nullptr;
     }
 
-    TileSet * Manager::FindTileSet(char const * in_filename)
+    TileSet * Manager::FindTileSet(boost::filesystem::path const & path)
     {
       size_t count = tile_sets.size();
       for (size_t i = 0; i < count; ++i)
-        if (tile_sets[i]->IsMatchingName(in_filename))
+        if (tile_sets[i]->IsMatchingName(path))
           return tile_sets[i].get();
       return nullptr;
     }
 
-    TileSet const * Manager::FindTileSet(char const * in_filename) const
+    TileSet const * Manager::FindTileSet(boost::filesystem::path const & path) const
     {
       size_t count = tile_sets.size();
       for (size_t i = 0; i < count; ++i)
-        if (tile_sets[i]->IsMatchingName(in_filename))
+        if (tile_sets[i]->IsMatchingName(path))
           return tile_sets[i].get();
       return nullptr;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    TileSet * Manager::DoLoadTileSet(char const * in_filename)
+    TileSet * Manager::DoLoadTileSet(boost::filesystem::path path)
     {
-      assert(in_filename != nullptr);
-
-      Buffer<char> buffer = FileTools::LoadFile(in_filename, true);
+      Buffer<char> buffer = FileTools::LoadFile(path, true);
       if (buffer != nullptr)
-        return DoLoadTileSet(in_filename, buffer);
+        return DoLoadTileSet(std::move(path), buffer);
       return nullptr;
     }
 
-    TileSet * Manager::DoLoadTileSet(char const * in_filename, Buffer<char> buffer)
+    TileSet * Manager::DoLoadTileSet(boost::filesystem::path path, Buffer<char> buffer)
     {
       TileSet * result = nullptr;
 
@@ -397,17 +379,17 @@ namespace chaos
       {
         tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
         if (error == tinyxml2::XML_SUCCESS)
-          result = DoLoadTileSet(in_filename, doc);
+          result = DoLoadTileSet(std::move(path), doc);
         delete(doc);
       }
       return result;
 
     }
 
-    TileSet * Manager::DoLoadTileSet(char const * in_filename, tinyxml2::XMLDocument const * doc)
+    TileSet * Manager::DoLoadTileSet(boost::filesystem::path path, tinyxml2::XMLDocument const * doc)
     {
       assert(doc != nullptr);
-      TileSet * result = new TileSet(this, in_filename);
+      TileSet * result = new TileSet(this, std::move(path));
       if (result != nullptr)
       {
         if (result->DoLoadDocument(doc))
@@ -421,28 +403,15 @@ namespace chaos
       return result;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    Map * Manager::DoLoadMap(char const * in_filename)
+    Map * Manager::DoLoadMap(boost::filesystem::path path)
     {
-      assert(in_filename != nullptr);
-
-      Buffer<char> buffer = FileTools::LoadFile(in_filename, true);
+      Buffer<char> buffer = FileTools::LoadFile(path, true);
       if (buffer != nullptr)
-        return DoLoadMap(in_filename, buffer);
+        return DoLoadMap(std::move(path), buffer);
       return nullptr;
     }
 
-    Map * Manager::DoLoadMap(char const * in_filename, Buffer<char> buffer)
+    Map * Manager::DoLoadMap(boost::filesystem::path path, Buffer<char> buffer)
     {
       Map * result = nullptr;
 
@@ -451,18 +420,15 @@ namespace chaos
       {
         tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
         if (error == tinyxml2::XML_SUCCESS)
-          result = DoLoadMap(in_filename, doc);
+          result = DoLoadMap(std::move(path), doc);
         delete(doc);
       }
       return result;
-
     }
 
-    Map * Manager::DoLoadMap(char const * in_filename, tinyxml2::XMLDocument const * doc)
+    Map * Manager::DoLoadMap(boost::filesystem::path path, tinyxml2::XMLDocument const * doc)
     {
-      assert(doc != nullptr);
-
-      Map * result = new Map(this, in_filename);
+      Map * result = new Map(this, std::move(path));
       if (result != nullptr)
       {
         if (result->DoLoadDocument(doc))

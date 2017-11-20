@@ -178,14 +178,14 @@ namespace chaos
     public:
 
       /** returns true whether the name match the resource name */
-      bool IsMatchingName(char const * in_filename) const;
+      bool IsMatchingName(boost::filesystem::path const & in_path) const;
       /** get the path */
-      boost::filesystem::path const & GetPath() const { return filename; }
+      boost::filesystem::path const & GetPath() const { return path; }
 
     protected:
 
       /** the constructor */
-      ManagerObject(class Manager * in_manager, char const * in_filename);
+      ManagerObject(class Manager * in_manager, boost::filesystem::path in_path);
       /** loading method from XML */
       virtual bool DoLoadDocument(tinyxml2::XMLDocument const * doc);
       /** the method to override */
@@ -198,7 +198,7 @@ namespace chaos
       /** the manager */
       Manager * manager = nullptr;
       /** the filename */
-      boost::filesystem::path filename;
+      boost::filesystem::path path;
     };
 
     //
@@ -212,7 +212,7 @@ namespace chaos
     protected:
 
       /** the constructor */
-      TileSet(class Manager * in_manager, char const * in_filename);
+      TileSet(class Manager * in_manager, boost::filesystem::path in_path);
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
       /** get the name of the expected markup */
@@ -240,7 +240,7 @@ namespace chaos
     protected:
 
       /** the constructor */
-      Map(class Manager * in_manager, char const * in_filename);
+      Map(class Manager * in_manager, boost::filesystem::path in_path);
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
       /** get the name of the expected markup */
@@ -282,41 +282,41 @@ namespace chaos
     public:
 
       /** load a tiled map set */
-      Map * LoadMap(char const * in_filename);
+      Map * LoadMap(boost::filesystem::path path);
       /** load a tiled map set */
-      Map * LoadMap(char const * name, Buffer<char> buffer);
+      Map * LoadMap(boost::filesystem::path path, Buffer<char> buffer);
       /** load a tiled map set */
-      Map * LoadMap(char const * name, tinyxml2::XMLDocument const * doc);
+      Map * LoadMap(boost::filesystem::path path, tinyxml2::XMLDocument const * doc);
 
       /** load a tiled map */
-      TileSet * LoadTileSet(char const * in_filename);
+      TileSet * LoadTileSet(boost::filesystem::path path);
       /** load a tiled map */
-      TileSet * LoadTileSet(char const * in_filename, Buffer<char> buffer);
+      TileSet * LoadTileSet(boost::filesystem::path path, Buffer<char> buffer);
       /** load a tiled map */
-      TileSet * LoadTileSet(char const * in_filename, tinyxml2::XMLDocument const * doc);
+      TileSet * LoadTileSet(boost::filesystem::path path, tinyxml2::XMLDocument const * doc);
 
       /** find tiled map */
-      Map * FindMap(char const * in_filename);
-      Map const * FindMap(char const * in_filename) const;
+      Map * FindMap(boost::filesystem::path const & path);
+      Map const * FindMap(boost::filesystem::path const & path) const;
       /** find tiled map set */
-      TileSet * FindTileSet(char const * in_filename);
-      TileSet const * FindTileSet(char const * in_filename) const;
+      TileSet * FindTileSet(boost::filesystem::path const & path);
+      TileSet const * FindTileSet(boost::filesystem::path const & path) const;
 
     protected:
 
       /** internal method to load a tiled map set (with no search for exisiting items) */
-      Map * DoLoadMap(char const * in_filename);
+      Map * DoLoadMap(boost::filesystem::path path);
       /** internal method to load a tiled map set (with no search for exisiting items) */
-      Map * DoLoadMap(char const * name, Buffer<char> buffer);
+      Map * DoLoadMap(boost::filesystem::path path, Buffer<char> buffer);
       /** internal method to load a tiled map set (with no search for exisiting items) */
-      Map * DoLoadMap(char const * name, tinyxml2::XMLDocument const * doc);
+      Map * DoLoadMap(boost::filesystem::path path, tinyxml2::XMLDocument const * doc);
 
       /** internal method to load a tiled map (with no search for exisiting items) */
-      TileSet * DoLoadTileSet(char const * in_filename);
+      TileSet * DoLoadTileSet(boost::filesystem::path path);
       /** internal method to load a tiled map (with no search for exisiting items) */
-      TileSet * DoLoadTileSet(char const * in_filename, Buffer<char> buffer);
+      TileSet * DoLoadTileSet(boost::filesystem::path path, Buffer<char> buffer);
       /** internal method to load a tiled map (with no search for exisiting items) */
-      TileSet * DoLoadTileSet(char const * in_filename, tinyxml2::XMLDocument const * doc);
+      TileSet * DoLoadTileSet(boost::filesystem::path path, tinyxml2::XMLDocument const * doc);
 
     protected:
 

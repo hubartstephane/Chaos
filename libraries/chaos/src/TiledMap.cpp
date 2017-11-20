@@ -1,6 +1,7 @@
 #include <chaos/TiledMap.h>
 #include <chaos/FileTools.h>
 #include <chaos/XMLTools.h>
+#include <chaos/BoostTools.h>
 
 namespace chaos
 {
@@ -175,7 +176,21 @@ namespace chaos
       XMLTools::ReadAttribute(element, "width", width);
       XMLTools::ReadAttribute(element, "height", height);
 
-      return true;
+      tinyxml2::XMLElement const * data_element = element->FirstChildElement("data");
+      if (data_element == nullptr)
+        return false;
+
+      std::string encoding;
+      if (!XMLTools::ReadAttribute(data_element, "encoding", encoding))
+        return false;
+
+      if (encoding == "csv")
+      {
+
+
+        return true;
+      }
+      return false;
     }
 
     //
@@ -193,7 +208,10 @@ namespace chaos
       if (!ManagerObject::DoLoad(element))
         return false;
 
-
+      XMLTools::ReadAttribute(element, "tilewidth", tilewidth);
+      XMLTools::ReadAttribute(element, "tileheight", tileheight);
+      XMLTools::ReadAttribute(element, "tilecount", tilecount);
+      XMLTools::ReadAttribute(element, "columns", columns);
 
 
 
@@ -210,8 +228,6 @@ namespace chaos
 
     }
 
-
-
     bool Map::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!ManagerObject::DoLoad(element))
@@ -223,12 +239,19 @@ namespace chaos
       XMLTools::ReadAttribute(element, "tileheight", tileheight);
       XMLTools::ReadAttribute(element, "infinite", infinite);
 
-      DoLoadTileSet(element);
-      DoLoadLayers(element);
+      std::string orientation;
+      std::string renderorder;
+      XMLTools::ReadAttribute(element, "orientation", orientation);
+      XMLTools::ReadAttribute(element, "renderorder", renderorder);
 
-        //orientation = "orthogonal" renderorder = "right-down" width = "32" height = "48" tilewidth = "32" tileheight = "32" infinite = "0"
- 
-
+      if (!DoLoadTileSet(element))
+        return false;
+      if (!DoLoadLayers(element))
+        return false;
+      if (!DoLoadImageLayers(element))
+        return false;
+      if (!DoLoadObjectGroups(element))
+        return false;
 
       return true;
     }
@@ -243,17 +266,35 @@ namespace chaos
         int firstgid = 0;
         std::string source;
 
-        if (!XMLTools::ReadAttribute(tileset, "firstgid", firstgid))
-          continue;
-        if (!XMLTools::ReadAttribute(tileset, "source", source))
-          continue;
+        if (!XMLTools::ReadAttribute(tileset, "firstgid", firstgid)) // firstgid is mandatory (map would be incomplete)
+          return false;
+        if (!XMLTools::ReadAttribute(tileset, "source", source)) // source is mandatory (map would be incomplete)
+          return false;
 
-        //boost::filesystem::path p = GetRelativePath()
+        boost::filesystem::path tileset_path = BoostTools::FindAbsolutePath(path, source); // compute the path of the tileset relative to this
 
+        TileSet * tileset = manager->LoadTileSet(tileset_path);
+        if (tileset == nullptr)
+          return false;
 
-        firstgid = firstgid;
-
+        TileSetData data;
+        data.firstgid = firstgid;
+        data.tileset = tileset;
+        tilesets.push_back(data);
       }
+      return true;
+    }
+
+    bool Map::DoLoadImageLayers(tinyxml2::XMLElement const * element)
+    {
+
+
+      return true;
+    }
+    
+    bool Map::DoLoadObjectGroups(tinyxml2::XMLElement const * element)
+    {
+
       return true;
     }
 

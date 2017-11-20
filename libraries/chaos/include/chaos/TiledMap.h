@@ -205,6 +205,19 @@ namespace chaos
     // TileSet
     //
 
+    class TileData : public PropertyOwner
+    {
+      friend class Manager;
+
+    public:
+
+    protected:
+
+      /** the id of the tile */
+      int id = 0;
+
+    };
+
     class TileSet : public ManagerObject
     {
       friend class Manager;
@@ -217,6 +230,20 @@ namespace chaos
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
       /** get the name of the expected markup */
       virtual char const * GetXMLMarkupName() const override { return "tileset"; }
+
+    protected:
+
+      /** dimension of the tileset */
+      int tilewidth = 0;
+      /** dimension of the tileset */
+      int tileheight = 0;
+      /** dimension of the tileset */
+      int tilecount = 0;
+      /** dimension of the tileset */
+      int columns = 0;
+
+      /** the data for the tiles */
+      std::vector<boost::intrusive_ptr<TileData>> tiles;
     };
 
     //
@@ -250,6 +277,10 @@ namespace chaos
       bool DoLoadTileSet(tinyxml2::XMLElement const * element);
       /** load the layers */
       bool DoLoadLayers(tinyxml2::XMLElement const * element);
+      /** load the image layers */
+      bool DoLoadImageLayers(tinyxml2::XMLElement const * element);
+      /** load the object groups */
+      bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
 
     protected:
 

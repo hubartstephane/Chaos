@@ -7,7 +7,7 @@
  <tileset firstgid="1" source="tile set 1.tsx"/>
  <tileset firstgid="50" source="wall.tsx"/>
  <imagelayer name="Calque d'image 1" locked="1" opacity="0" offsetx="-240" offsety="530">
-  <image source="C:/Users/mamour/Desktop/achat/066.jpg" width="200" height="285"/>
+  <image source="C:/Users/mamour/Desktop/achat/066.jpg" trans="000100" width="200" height="285"/>
  </imagelayer>
  <layer name="Calque de Tile 1" width="32" height="48" offsetx="200" offsety="548">
   <properties>

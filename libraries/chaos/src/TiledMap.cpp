@@ -205,6 +205,18 @@ namespace chaos
       if (!PropertyOwner::DoLoad(element))
         return false;
 
+      tinyxml2::XMLElement const * image_source = element->FirstChildElement("image");
+      if (image_source != nullptr)
+      {
+        int color = 0;
+        XMLTools::ReadAttribute(image_source, "trans", color);
+
+        std::string source;
+        XMLTools::ReadAttribute(image_source, "source", source);
+
+        color = color;
+      }
+
 
 
 
@@ -337,7 +349,7 @@ namespace chaos
 #endif
       if (!DoLoadTileSet(element))
         return false;
-      if (!DoLoadLayers(element))
+      if (!DoLoadTileLayers(element))
         return false;
       if (!DoLoadImageLayers(element))
         return false;
@@ -378,33 +390,18 @@ namespace chaos
 
     bool Map::DoLoadImageLayers(tinyxml2::XMLElement const * element)
     {
-
-
-      return true;
+      return DoLoadLayerHelper(element, image_layers, "imagelayer");
     }
     
     bool Map::DoLoadObjectGroups(tinyxml2::XMLElement const * element)
-    {
-
-      return true;
+    { 
+      return DoLoadLayerHelper(element, object_layers, "objectgroup");
     }
 
-    bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)
+    bool Map::DoLoadTileLayers(tinyxml2::XMLElement const * element)
     {
-      tinyxml2::XMLElement const * tileset = element->FirstChildElement("layer");
-      for (; tileset != nullptr; tileset = tileset->NextSiblingElement("layer"))
-      {
-
-
-
-        tileset = tileset;
-      }
-
-
-      return true;
+      return DoLoadLayerHelper(element, tile_layers, "layer");
     }
-
-
 
     //
     // Manager methods

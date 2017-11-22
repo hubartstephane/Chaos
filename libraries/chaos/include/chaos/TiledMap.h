@@ -154,7 +154,7 @@ namespace chaos
       /** the name of the layer */
       std::string name;
       /** whether the layer is visible */
-      bool visible = false;
+      bool visible = true;
       /** whether the layer is locked */
       bool locked = false;
       /** the opacity */
@@ -385,12 +385,30 @@ namespace chaos
 
       /** load the tile sets */
       bool DoLoadTileSet(tinyxml2::XMLElement const * element);
-      /** load the layers */
-      bool DoLoadLayers(tinyxml2::XMLElement const * element);
+      /** load the tile layers */
+      bool DoLoadTileLayers(tinyxml2::XMLElement const * element);
       /** load the image layers */
       bool DoLoadImageLayers(tinyxml2::XMLElement const * element);
       /** load the object groups */
       bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
+
+      /** utility function to load a layer */
+      template<typename T>
+      bool DoLoadLayerHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name)
+      {
+        tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
+        for (; e != nullptr; e = e->NextSiblingElement(element_name))
+        {
+          T * layer = new T;
+          if (layer == nullptr)
+            break;
+          if (!layer->DoLoad(e))
+            delete(layer);
+          else
+            result.push_back(layer);
+        }
+        return true;
+      }
 
     protected:
 

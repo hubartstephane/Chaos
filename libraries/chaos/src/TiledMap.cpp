@@ -163,35 +163,124 @@ namespace chaos
       return true;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //
-    // Layer methods
+    // LayerBase methods
     //
       
-    bool Layer::DoLoad(tinyxml2::XMLElement const * element)
+    bool LayerBase::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!PropertyOwner::DoLoad(element))
         return false;
 
       XMLTools::ReadAttribute(element, "name", name);
-      XMLTools::ReadAttribute(element, "width", width);
-      XMLTools::ReadAttribute(element, "height", height);
+      XMLTools::ReadAttribute(element, "visible", visible);
+      XMLTools::ReadAttribute(element, "locked", locked);
+      XMLTools::ReadAttribute(element, "opacity", opacity);
+      XMLTools::ReadAttribute(element, "offsetx", offset.x);
+      XMLTools::ReadAttribute(element, "offsety", offset.y);
 
-      tinyxml2::XMLElement const * data_element = element->FirstChildElement("data");
-      if (data_element == nullptr)
-        return false;
-
-      std::string encoding;
-      if (!XMLTools::ReadAttribute(data_element, "encoding", encoding))
-        return false;
-
-      if (encoding == "csv")
-      {
-
-
-        return true;
-      }
-      return false;
+      return true;
     }
+
+    //
+    // ImageLayer methods
+    //
+
+    bool ImageLayer::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!PropertyOwner::DoLoad(element))
+        return false;
+
+
+
+
+
+
+      return true;
+    }
+
+    //
+    // LayerBase methods
+    //
+
+    bool ObjectLayer::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!LayerBase::DoLoad(element))
+        return false;
+
+
+
+      return true;
+    }
+
+    //
+    // TileLayer methods
+    //
+
+    bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!LayerBase::DoLoad(element))
+        return false;
+
+
+
+
+
+
+
+      return true;
+    }
+
+    //
+    // LayerBase methods
+    //
+
+
+
+
+
+
+
+
+
+
+#if 0
+    XMLTools::ReadAttribute(element, "name", name);
+    XMLTools::ReadAttribute(element, "width", width);
+    XMLTools::ReadAttribute(element, "height", height);
+
+    tinyxml2::XMLElement const * data_element = element->FirstChildElement("data");
+    if (data_element == nullptr)
+      return false;
+
+    std::string encoding;
+    if (!XMLTools::ReadAttribute(data_element, "encoding", encoding))
+      return false;
+
+    if (encoding == "csv")
+    {
+
+
+      return true;
+    }
+
+
+#endif
+
 
     //
     // TileSet methods
@@ -207,13 +296,15 @@ namespace chaos
     {
       if (!ManagerObject::DoLoad(element))
         return false;
-
+#if 0
       XMLTools::ReadAttribute(element, "tilewidth", tilewidth);
       XMLTools::ReadAttribute(element, "tileheight", tileheight);
       XMLTools::ReadAttribute(element, "tilecount", tilecount);
       XMLTools::ReadAttribute(element, "columns", columns);
 
-
+      std::string orientation;
+      XMLTools::ReadAttribute(element, "orientation", orientation);
+#endif
 
       return true;
     }
@@ -232,7 +323,7 @@ namespace chaos
     {
       if (!ManagerObject::DoLoad(element))
         return false;
-
+#if 0
       XMLTools::ReadAttribute(element, "width", width);
       XMLTools::ReadAttribute(element, "height", height);
       XMLTools::ReadAttribute(element, "tilewidth", tilewidth);
@@ -243,7 +334,7 @@ namespace chaos
       std::string renderorder;
       XMLTools::ReadAttribute(element, "orientation", orientation);
       XMLTools::ReadAttribute(element, "renderorder", renderorder);
-
+#endif
       if (!DoLoadTileSet(element))
         return false;
       if (!DoLoadLayers(element))
@@ -263,10 +354,10 @@ namespace chaos
       tinyxml2::XMLElement const * tileset = element->FirstChildElement("tileset");
       for (; tileset != nullptr; tileset = tileset->NextSiblingElement("tileset"))
       {
-        int firstgid = 0;
+        int first_gid = 0;
         std::string source;
 
-        if (!XMLTools::ReadAttribute(tileset, "firstgid", firstgid)) // firstgid is mandatory (map would be incomplete)
+        if (!XMLTools::ReadAttribute(tileset, "firstgid", first_gid)) // firstgid is mandatory (map would be incomplete)
           return false;
         if (!XMLTools::ReadAttribute(tileset, "source", source)) // source is mandatory (map would be incomplete)
           return false;
@@ -278,7 +369,7 @@ namespace chaos
           return false;
 
         TileSetData data;
-        data.firstgid = firstgid;
+        data.first_gid = first_gid;
         data.tileset = tileset;
         tilesets.push_back(data);
       }

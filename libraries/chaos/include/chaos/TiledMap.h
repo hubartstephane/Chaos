@@ -137,10 +137,10 @@ namespace chaos
     };
 
     //
-    // Layer
+    // LayerBase
     //
 
-    class Layer : public PropertyOwner
+    class LayerBase : public PropertyOwner
     {
       friend class Map;
 
@@ -151,16 +151,79 @@ namespace chaos
 
     protected:
 
-      /** the size of the layer */
-      int width = 0;
-      /** the size of the layer */
-      int height = 0;
       /** the name of the layer */
       std::string name;
+      /** whether the layer is visible */
+      bool visible = false;
+      /** whether the layer is locked */
+      bool locked = false;
+      /** the opacity */
+      float opacity = 1.0f;
+      /** the offset of the layer */
+      glm::ivec2 offset = glm::ivec2(0, 0);
     };
 
 
 
+
+
+
+
+
+
+
+
+
+    //
+    // ImageLayer
+    //
+
+    class ImageLayer : public LayerBase
+    {
+    public:
+
+      /** the loading method */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    protected:
+      
+      /** layer information */
+      boost::filesystem::path image_path;
+      /** layer information */
+      glm::vec4 transparent_color;
+    };
+
+    //
+    // ImageLayer
+    //
+
+    class ObjectLayer : public LayerBase
+    {
+      static int const DRAW_ORDER_MANUAL  = 0;
+      static int const DRAW_ORDER_TOPDOWN = 1;
+
+    public:
+
+      /** the loading method */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    protected:
+
+      /** layer information */
+      glm::vec4 color;
+      /** layer information */
+      int       draw_order;
+    };
+
+    class TileLayer : public LayerBase
+    {
+    public:
+
+      /** the loading method */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+
+    };
 
 
 
@@ -215,11 +278,19 @@ namespace chaos
 
       /** the id of the tile */
       int id = 0;
-
     };
+
+
+
+
+
+
 
     class TileSet : public ManagerObject
     {
+      static int const ORIENTATION_ORTHOGONAL = 0;
+      static int const ORIENTATION_ISOMETRIC  = 1;
+
       friend class Manager;
 
     protected:
@@ -232,6 +303,29 @@ namespace chaos
       virtual char const * GetXMLMarkupName() const override { return "tileset"; }
 
     protected:
+#if 0
+      /** tileset information */
+      std::string name;
+      /** tileset information */
+      glm::ivec2  offset;
+      /** tileset information */
+      glm::vec4   background_color;
+      /** tileset information */
+      int         orientation;
+      /** tileset information */
+      glm::ivec2  grid_size;
+      /** tileset information */
+      int         columns;
+      /** tileset information */
+      boost::filesystem image_path;
+      /** tileset information */
+      glm::ivec2        image_tile_size;
+      /** tileset information */
+      int               image_margin;
+      /** tileset information */
+      int               image_spacing;
+
+
 
       /** dimension of the tileset */
       int tilewidth = 0;
@@ -241,7 +335,7 @@ namespace chaos
       int tilecount = 0;
       /** dimension of the tileset */
       int columns = 0;
-
+#endif
       /** the data for the tiles */
       std::vector<boost::intrusive_ptr<TileData>> tiles;
     };
@@ -255,7 +349,7 @@ namespace chaos
     public:
 
       /** the first gid for the tileset */
-      int firstgid = 1;
+      int first_gid = 1;
       /** the tileset */
       boost::intrusive_ptr<TileSet> tileset;
     };
@@ -263,6 +357,22 @@ namespace chaos
     class Map : public ManagerObject
     {
       friend class Manager;
+
+      static int const ORIENTATION_ORTHOGONAL = 0;
+      static int const ORIENTATION_ISOMETRIC  = 1;
+      static int const ORIENTATION_STAGGERED  = 2;
+      static int const ORIENTATION_HEXAGONAL  = 3;
+
+      static int const STAGGERED_AXIS_X = 0;
+      static int const STAGGERED_AXIS_Y = 1;
+
+      static int const STAGGERED_INDEX_ODD  = 0;
+      static int const STAGGERED_INDEX_EVEN = 1;
+
+      static int const RENDER_ORDER_RIGHT_UP   = 0;
+      static int const RENDER_ORDER_RIGHT_DOWN = 1;
+      static int const RENDER_ORDER_LEFT_UP    = 2;
+      static int const RENDER_ORDER_LEFT_DOWN  = 3;
 
     protected:
 
@@ -284,23 +394,49 @@ namespace chaos
 
     protected:
 
-      /** the dimension of the map */
-      int  width = 0;
-      /** the dimension of the map */
-      int  height = 0;
-      /** the dimension of the map */
-      int  tilewidth = 0;
-      /** the dimension of the map */
-      int  tileheight = 0;
-      /** the dimension of the map */
+      /** map information */
+      int orientation = ORIENTATION_ORTHOGONAL;
+      /** map information */
+      glm::ivec2 size = glm::ivec2(100, 100);
+      /** map information */
+      glm::ivec2 tile_size = glm::ivec2(32, 32);
+      /** map information */
       bool infinite = false;
-
+      /** map information */
+      int hex_side_length = 0;
+      /** map information */
+      int stagger_axis = STAGGERED_AXIS_Y;
+      /** map information */
+      int stagger_index = STAGGERED_INDEX_ODD;
+      /** map information */
+      int render_order = RENDER_ORDER_RIGHT_DOWN;
+      /** map information */
+      glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+      /** map information */
+      std::string version;
 
       /** the tileset used */
       std::vector<TileSetData> tilesets;
       /** the layers composing the map */
-      std::vector<boost::intrusive_ptr<Layer>> layers;
+      std::vector<boost::intrusive_ptr<ImageLayer>> image_layers;
+      /** the layers composing the map */
+      std::vector<boost::intrusive_ptr<TileLayer>> tile_layers;
+      /** the layers composing the map */
+      std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

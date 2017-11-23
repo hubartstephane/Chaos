@@ -56,6 +56,40 @@ namespace chaos
 		{
 			return std::string().insert(0, count, ' ');
 		}	
+
+    unsigned int GetHexValueForChar(char c)
+    {
+      if (c >= '0' && c <= '9')
+        return (c - '0');
+      if (c >= 'a' && c <= 'f')
+        return (c - 'a') + 10;
+      if (c >= 'A' && c <= 'F')
+        return (c - 'A') + 10;
+      return std::numeric_limits<unsigned int>::max();
+    }
+
+    unsigned int AtoiH(char const * str)
+    {
+      unsigned int result = 0;
+
+      if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) // skip hexadecimal prefix if any
+        str += 2;
+
+      int i = 0;
+      while (str[i] != 0)
+      {
+        unsigned int letter_value = GetHexValueForChar(str[i]);
+        if (letter_value >= 16)
+          break;
+        result = (result << 4) | letter_value;
+        ++i;
+      }
+      return result;
+    }
+
+
+
+
 	} // namespace StringTools
 
 }; // namespace chaos

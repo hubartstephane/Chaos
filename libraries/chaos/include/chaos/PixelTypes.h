@@ -26,6 +26,22 @@ namespace chaos
 	{
 	public:
 
+    /** constructor */
+    PixelBGR() = default;
+    /** copy constructor */
+    PixelBGR(PixelBGR const & src) = default;
+    /** conversion */
+    PixelBGR(unsigned int color) { operator = (color); }
+
+    /** assignation */
+    PixelBGR & operator = (unsigned int color)
+    {
+      B = (color >> 0) & 0xFF;
+      G = (color >> 8) & 0xFF;
+      R = (color >> 16) & 0xFF;
+      return *this;
+    }
+
 		unsigned char B;
 		unsigned char G;
 		unsigned char R;
@@ -38,6 +54,24 @@ namespace chaos
 	class PixelBGRA // FreeImage produce BGRA pixels by default (for unsigned char)
 	{
 	public:
+
+    /** constructor */
+    PixelBGRA() = default;
+    /** copy constructor */
+    PixelBGRA(PixelBGRA const & src) = default;
+    /** conversion */
+    PixelBGRA(unsigned int color){ operator = (color); }
+
+    /** assignation */
+    PixelBGRA & operator = (unsigned int color)
+    {
+      B = (color >> 0) & 0xFF;
+      G = (color >> 8) & 0xFF;
+      R = (color >> 16) & 0xFF;
+      A = (color >> 24) & 0xFF;
+      return *this;
+    }
+
 		unsigned char B;
 		unsigned char G;
 		unsigned char R;
@@ -57,6 +91,32 @@ namespace chaos
 	class PixelRGBFloat // FreeImage produce RGB pixels by default (for float) !!!
 	{
 	public:
+
+    /** constructor */
+    PixelRGBFloat() = default;
+    /** copy constructor */
+    PixelRGBFloat(PixelRGBFloat const & src) = default;
+    /** conversion */
+    PixelRGBFloat(glm::vec3 const & color) { operator = (color); }
+
+    /** assignation */
+    PixelRGBFloat & operator = (glm::vec3 const & color)
+    {
+      B = color.b;
+      G = color.g;
+      R = color.r;
+      return *this;
+    }
+    /** conversion */
+    operator glm::vec3() const
+    {
+      glm::vec3 result;
+      result.b = B;
+      result.g = G;
+      result.r = R;
+      return result;
+    }
+
 		float R;
 		float G;
 		float B;
@@ -69,6 +129,34 @@ namespace chaos
 	class PixelRGBAFloat // FreeImage produce RGBA pixels by default (for float) !!!
 	{
 	public:
+
+    /** constructor */
+    PixelRGBAFloat() = default;
+    /** copy constructor */
+    PixelRGBAFloat(PixelRGBAFloat const & src) = default;
+    /** conversion */
+    PixelRGBAFloat(glm::vec4 const & color) { operator = (color); }
+
+    /** automatic conversion */
+    PixelRGBAFloat & operator = (glm::vec4 const & color)
+    {
+      B = color.b;
+      G = color.g;
+      R = color.r;
+      A = color.a;
+      return *this;
+    }
+
+    operator glm::vec4() const
+    {
+      glm::vec4 result;
+      result.b = B;
+      result.g = G;
+      result.r = R;
+      result.a = A;
+      return result;
+    }
+
 		float R;
 		float G;
 		float B;

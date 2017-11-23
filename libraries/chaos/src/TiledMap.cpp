@@ -2,6 +2,9 @@
 #include <chaos/FileTools.h>
 #include <chaos/XMLTools.h>
 #include <chaos/BoostTools.h>
+#include <chaos/PixelTypes.h>
+#include <chaos/StringTools.h>
+
 
 namespace chaos
 {
@@ -200,6 +203,8 @@ namespace chaos
     // ImageLayer methods
     //
 
+
+
     bool ImageLayer::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!PropertyOwner::DoLoad(element))
@@ -208,8 +213,16 @@ namespace chaos
       tinyxml2::XMLElement const * image_source = element->FirstChildElement("image");
       if (image_source != nullptr)
       {
-        int color = 0;
-        XMLTools::ReadAttribute(image_source, "trans", color);
+
+        std::string color_hex;
+        XMLTools::ReadAttribute(image_source, "trans", color_hex);
+
+        unsigned int color = StringTools::AtoiH(color_hex.c_str());
+        PixelBGRA rgba = color;
+ 
+        PixelRGBAFloat rgba_float;
+        PixelConverter::Convert(rgba_float, rgba);
+        transparent_color = rgba_float;
 
         std::string source;
         XMLTools::ReadAttribute(image_source, "source", source);

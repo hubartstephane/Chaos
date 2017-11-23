@@ -25,6 +25,11 @@ namespace StringTools
   /** returns a spaces made string */
   std::string IndentString(size_t count);
 
+  /** get the value of a character in hexadeximal meaning (0-15) */
+  unsigned int GetHexValueForChar(char c);
+  /** parse a string into hexadeximal value (with or without 0x prefix) */    
+  unsigned int AtoiH(char const * str);
+
 	/** ci_less : a case insensitive comparator */
 	struct ci_less
 	{

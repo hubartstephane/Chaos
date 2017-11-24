@@ -146,10 +146,17 @@ namespace chaos
 
     protected:
 
+      /** constructor */
+      LayerBase(class Map * in_map) : 
+        map(in_map) { assert(map != nullptr); }
+
       /** the loading method */
       virtual bool DoLoad(tinyxml2::XMLElement const * element);
 
     protected:
+
+      /** the owner of the object */
+      class Map * map = nullptr;
 
       /** the name of the layer */
       std::string name;
@@ -180,7 +187,13 @@ namespace chaos
 
     class ImageLayer : public LayerBase
     {
-    public:
+      friend class Map;
+
+    protected:
+
+      /** constructor */
+      ImageLayer(class Map * in_map) :
+        LayerBase(in_map) {  }
 
       /** the loading method */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -190,19 +203,29 @@ namespace chaos
       /** layer information */
       boost::filesystem::path image_path;
       /** layer information */
+      int width = 0;
+      /** layer information */
+      int height = 0;
+      /** layer information */
       glm::vec4 transparent_color;
     };
 
     //
-    // ImageLayer
+    // ObjectLayer
     //
 
     class ObjectLayer : public LayerBase
     {
+      friend class Map;
+
       static int const DRAW_ORDER_MANUAL  = 0;
       static int const DRAW_ORDER_TOPDOWN = 1;
 
-    public:
+    protected:
+
+      /** constructor */
+      ObjectLayer(class Map * in_map) :
+        LayerBase(in_map) {  }
 
       /** the loading method */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -217,7 +240,14 @@ namespace chaos
 
     class TileLayer : public LayerBase
     {
-    public:
+
+      friend class Map;
+
+    protected:
+
+      /** constructor */
+      TileLayer(class Map * in_map) :
+        LayerBase(in_map) {  }
 
       /** the loading method */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -399,7 +429,7 @@ namespace chaos
         tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
         for (; e != nullptr; e = e->NextSiblingElement(element_name))
         {
-          T * layer = new T;
+          T * layer = new T(this);
           if (layer == nullptr)
             break;
           if (!layer->DoLoad(e))

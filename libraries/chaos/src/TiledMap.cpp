@@ -11,6 +11,18 @@ namespace chaos
   namespace TiledMap
   {
 
+    static bool ReadXMLColor(tinyxml2::XMLElement const * element, char const * attribute_name, glm::vec4 & result)
+    {
+      unsigned int color = 0;
+      if (!XMLTools::ReadAttributeHEX(element, attribute_name, color))
+        return false;
+
+      PixelRGBAFloat rgba_float;
+      PixelConverter::Convert(rgba_float, PixelBGRA(color));
+
+      result = rgba_float;
+    }
+
     //
     // PropertyOwner methods
     //
@@ -166,20 +178,6 @@ namespace chaos
       return true;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //
     // LayerBase methods
     //
@@ -203,38 +201,23 @@ namespace chaos
     // ImageLayer methods
     //
 
-
-
     bool ImageLayer::DoLoad(tinyxml2::XMLElement const * element)
     {
-      if (!PropertyOwner::DoLoad(element))
+      if (!LayerBase::DoLoad(element))
         return false;
 
       tinyxml2::XMLElement const * image_source = element->FirstChildElement("image");
       if (image_source != nullptr)
       {
-
-        std::string color_hex;
-        XMLTools::ReadAttribute(image_source, "trans", color_hex);
-
-        unsigned int color = StringTools::AtoiH(color_hex.c_str());
-        PixelBGRA rgba = color;
- 
-        PixelRGBAFloat rgba_float;
-        PixelConverter::Convert(rgba_float, rgba);
-        transparent_color = rgba_float;
+        ReadXMLColor(image_source, "trans", transparent_color);
+        XMLTools::ReadAttribute(image_source, "width", width);
+        XMLTools::ReadAttribute(image_source, "height", height);
 
         std::string source;
         XMLTools::ReadAttribute(image_source, "source", source);
 
-        color = color;
+        image_path = BoostTools::FindAbsolutePath(map->GetPath(), boost::filesystem::path(source));
       }
-
-
-
-
-
-
       return true;
     }
 

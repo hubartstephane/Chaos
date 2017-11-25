@@ -162,24 +162,5 @@ namespace chaos
         return false;
       return ReadAttribute(attribute, result);
     }
-
-    bool XMLTools::ReadAttributeHEX(tinyxml2::XMLAttribute const * attribute, unsigned int & result)
-    {
-      std::string result_string;
-      if (!ReadAttribute(attribute, result_string))
-        return false;
-      result = StringTools::AtoiH(result_string.c_str());
-      return true;
-    }
-
-    bool XMLTools::ReadAttributeHEX(tinyxml2::XMLElement const * element, char const * attribute_name, unsigned int & result)
-    {
-      std::string result_string;
-      if (!ReadAttribute(element, attribute_name, result_string))
-        return false;
-      result = StringTools::AtoiH(result_string.c_str());
-      return true;
-    }
-
 };
 

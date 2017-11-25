@@ -229,6 +229,10 @@ namespace chaos
 
       /** the loading method */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** the loading method */
+      bool DoLoadObjects(tinyxml2::XMLElement const * element);
+      /** the loading method */
+      bool DoLoadOneObject(tinyxml2::XMLElement const * object_element);
 
     protected:
 
@@ -251,8 +255,14 @@ namespace chaos
 
       /** the loading method */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** the loading method */
+      bool DoLoadTileBuffer(tinyxml2::XMLElement const * element);
+    protected:
 
-
+      /** layer information */
+      int width = 0;
+      /** layer information */
+      int height = 0;
     };
 
 

@@ -58,12 +58,6 @@ namespace chaos
     /** Find an attribute a read into result */
     static bool ReadAttribute(tinyxml2::XMLElement const * element, char const * attribute_name, std::string & result);
 
-
-    /** Find an attribute a read into result */
-    static bool ReadAttributeHEX(tinyxml2::XMLAttribute const * attribute, unsigned int & result);
-    /** Find an attribute a read into result */
-    static bool ReadAttributeHEX(tinyxml2::XMLElement const * element, char const * attribute_name, unsigned int & result);
-
   protected:
 
     /** insert a child node */

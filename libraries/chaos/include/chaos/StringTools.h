@@ -25,6 +25,8 @@ namespace StringTools
   /** returns a spaces made string */
   std::string IndentString(size_t count);
 
+  /** skip 0x prefix if existing */
+  char const * SkipHEXPrefix(char const * c);
   /** get the value of a character in hexadeximal meaning (0-15) */
   unsigned int GetHexValueForChar(char c);
   /** parse a string into hexadeximal value (with or without 0x prefix) */    

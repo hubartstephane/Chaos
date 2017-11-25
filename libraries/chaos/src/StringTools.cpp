@@ -57,6 +57,13 @@ namespace chaos
 			return std::string().insert(0, count, ' ');
 		}	
 
+    char const * SkipHEXPrefix(char const * c)
+    {
+      if (c[0] == '0' && (c[1] == 'x' || c[1] == 'X')) // skip hexadecimal prefix if any
+        c += 2;
+      return c;
+    }
+
     unsigned int GetHexValueForChar(char c)
     {
       if (c >= '0' && c <= '9')
@@ -72,8 +79,7 @@ namespace chaos
     {
       unsigned int result = 0;
 
-      if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) // skip hexadecimal prefix if any
-        str += 2;
+      str = SkipHEXPrefix(str);
 
       int i = 0;
       while (str[i] != 0)

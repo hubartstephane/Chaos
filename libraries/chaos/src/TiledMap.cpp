@@ -10,17 +10,45 @@ namespace chaos
 {
   namespace TiledMap
   {
+    int GetHEXCharacterCount(char const * c)
+    {
+      int result = 0;
+      while (StringTools::GetHexValueForChar(c[result]) < 16)
+        ++result;
+      return result;
+    }
+
+    bool ReadAttributeHEX(tinyxml2::XMLElement const * element, char const * attribute_name, unsigned int & result)
+    {
+      std::string result_string;
+      if (!XMLTools::ReadAttribute(element, attribute_name, result_string))
+        return false;
+ 
+      result = StringTools::AtoiH(result_string.c_str());
+      return true;
+    }
 
     static bool ReadXMLColor(tinyxml2::XMLElement const * element, char const * attribute_name, glm::vec4 & result)
     {
-      unsigned int color = 0;
-      if (!XMLTools::ReadAttributeHEX(element, attribute_name, color))
+      std::string result_string;
+      if (!XMLTools::ReadAttribute(element, attribute_name, result_string))
         return false;
 
+      char const * c = result_string.c_str(); // #00000000 is a valid attribute too, as well as hexadecimal strings
+      if (c[0] == '#')
+        c = c + 1;
+      else
+        c = StringTools::SkipHEXPrefix(c);
+     
       PixelRGBAFloat rgba_float;
-      PixelConverter::Convert(rgba_float, PixelBGRA(color));
+      PixelConverter::Convert(rgba_float, PixelBGRA(StringTools::AtoiH(c)));
+
+      int count = GetHEXCharacterCount(c);
+      if (count == 6)
+        rgba_float.A = 1.0f;
 
       result = rgba_float;
+      return true;
     }
 
     //
@@ -215,7 +243,6 @@ namespace chaos
 
         std::string source;
         XMLTools::ReadAttribute(image_source, "source", source);
-
         image_path = BoostTools::FindAbsolutePath(map->GetPath(), boost::filesystem::path(source));
       }
       return true;
@@ -230,7 +257,33 @@ namespace chaos
       if (!LayerBase::DoLoad(element))
         return false;
 
+      ReadXMLColor(element, "color", color);
 
+      std::string draw_order_string;
+      XMLTools::ReadAttribute(element, "draworder", draw_order_string);
+      if (draw_order_string == "index")
+        draw_order = DRAW_ORDER_MANUAL;
+      else
+        draw_order = DRAW_ORDER_TOPDOWN;
+
+      if (!DoLoadObjects(element))
+        return false;
+      
+      return true;
+    }
+
+    bool ObjectLayer::DoLoadObjects(tinyxml2::XMLElement const * element)
+    {
+      tinyxml2::XMLElement const * object_element = element->FirstChildElement("object");
+      for (; object_element != nullptr; object_element = object_element->NextSiblingElement("object"))
+        if (!DoLoadOneObject(object_element))
+          return false;
+      return true;
+    }
+
+    bool ObjectLayer::DoLoadOneObject(tinyxml2::XMLElement const * object_element)
+    {
+      
 
       return true;
     }
@@ -244,10 +297,25 @@ namespace chaos
       if (!LayerBase::DoLoad(element))
         return false;
 
+      XMLTools::ReadAttribute(element, "width", width);
+      XMLTools::ReadAttribute(element, "height", height);
 
+      if (!DoLoadTileBuffer(element))
+        return false;
 
+      return true;
+    }
 
+    bool TileLayer::DoLoadTileBuffer(tinyxml2::XMLElement const * element)
+    {
+      tinyxml2::XMLElement const * data = element->FirstChildElement("data");
+      if (data == nullptr)
+        return true;
 
+      std::string encoding;
+      XMLTools::ReadAttribute(data, "encoding", encoding);
+
+      char const * txt = data->GetText();
 
 
       return true;

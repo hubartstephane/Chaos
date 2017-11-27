@@ -1,4 +1,5 @@
 #include <chaos/StringTools.h>
+#include <chaos/MyBase64.h>
 
 namespace chaos
 {
@@ -93,6 +94,20 @@ namespace chaos
       return result;
     }
 
+    std::string TrimBase64String(char const * src)
+    {
+      assert(src != nullptr);
+
+      // escape the non 64 characters and extract the buffer to read
+      int i = 0;
+      while (src[i] != 0 && !MyBase64::IsBase64(src[i]))
+        ++i;
+      int j = i;
+      while (src[j] != 0 && MyBase64::IsBase64(src[j]))
+        ++j;
+
+      return std::string(&src[i], j - i);
+    }
 
 
 

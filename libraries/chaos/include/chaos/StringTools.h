@@ -32,6 +32,9 @@ namespace StringTools
   /** parse a string into hexadeximal value (with or without 0x prefix) */    
   unsigned int AtoiH(char const * str);
 
+  /** trim string to the left and to the right to only keep the base64 characters */
+  std::string TrimBase64String(char const * src);
+
 	/** ci_less : a case insensitive comparator */
 	struct ci_less
 	{

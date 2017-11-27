@@ -312,11 +312,31 @@ namespace chaos
       return true;
     }
 
+    void TileLayer::DoLoadTileBufferFromBase64(Buffer<char> const & buffer)
+    {
+      size_t count = size.x * size.y;
+
+      if (buffer.bufsize != count * sizeof(uint32_t))  // array width * height * sizeof(uint32)
+        return;
+
+      // transform the char buffer into tiles
+      for (size_t i = 0; i < count; ++i)
+      {
+        unsigned int a = (unsigned int)buffer[i * 4 + 0]; 
+        unsigned int b = (unsigned int)buffer[i * 4 + 1];
+        unsigned int c = (unsigned int)buffer[i * 4 + 2];
+        unsigned int d = (unsigned int)buffer[i * 4 + 3];
+
+        int tile = (a << 0) | (b << 8) | (c << 16) | (d << 24);
+        tile_indices.push_back(tile);
+      }
+    }
+
     bool TileLayer::DoLoadTileBuffer(tinyxml2::XMLElement const * element)
     {
       tinyxml2::XMLElement const * data = element->FirstChildElement("data");
       if (data == nullptr)
-        return true;
+        return false;
 
       std::string encoding;
       XMLTools::ReadAttribute(data, "encoding", encoding);
@@ -330,48 +350,28 @@ namespace chaos
         std::string compression;
         XMLTools::ReadAttribute(data, "compression", compression);
 
-        if (encoding == "gzip")
+        if (compression == "gzip")
         {
           char const * txt = data->GetText();
           txt = txt;
 
         }
-        else if (encoding == "zlib")
+        else if (compression == "zlib")
         {
-          char const * txt = data->GetText();
-          txt = txt;
+          std::string content = StringTools::TrimBase64String(data->GetText());
 
+          Buffer<char> base64  = MyBase64().Decode(content.c_str()); 
+          Buffer<char> decoded = MyZLib().Decode(base64);
+
+          DoLoadTileBufferFromBase64(decoded);
         }
         else // no encoding
         {
-          char const * txt = data->GetText();
+          std::string content = StringTools::TrimBase64String(data->GetText());
 
-          // escape the non 64 characters and extract the buffer to read
-          int i = 0;
-          while (txt[i] != 0 && !MyBase64::IsBase64(txt[i]))
-            ++i;
-          int j = i;
-          while (txt[j] != 0 && MyBase64::IsBase64(txt[j]))
-            ++j;
-          std::string content = std::string(&txt[i], j - i);
+          Buffer<char> base64 = MyBase64().Decode(content.c_str());
 
-          // decode the string
-          Buffer<char> decoded = MyBase64().Decode(content.c_str()); // array width * height * sizeof(uint32)
-
-          if (decoded.bufsize != size.x * size.y * sizeof(uint32_t))
-            return false;
-
-          // transform the char buffer into tiles
-          for (size_t i = 0; i < count; ++i)
-          {
-            unsigned int a = (unsigned int)decoded[i * 4 + 0];
-            unsigned int b = (unsigned int)decoded[i * 4 + 1];
-            unsigned int c = (unsigned int)decoded[i * 4 + 2];
-            unsigned int d = (unsigned int)decoded[i * 4 + 3];
-
-            int tile = (a << 0) | (b << 8) | (c << 16) | (d << 24);
-            tile_indices.push_back(tile);
-          }
+          DoLoadTileBufferFromBase64(base64);
         }
       }
       else if (encoding == "csv")
@@ -405,7 +405,7 @@ namespace chaos
           child = child->NextSiblingElement("tile");
         }
       }
-      return true;
+      return (tile_indices.size() == count);
     }
 
     //

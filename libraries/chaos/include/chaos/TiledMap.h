@@ -244,6 +244,8 @@ namespace chaos
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
       /** the loading method */
       bool DoLoadTileBuffer(tinyxml2::XMLElement const * element);
+      /** loading buffer method */
+      void DoLoadTileBufferFromBase64(Buffer<char> const & buffer);
 
     protected:
 

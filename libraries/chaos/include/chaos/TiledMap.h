@@ -257,6 +257,7 @@ namespace chaos
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
       /** the loading method */
       bool DoLoadTileBuffer(tinyxml2::XMLElement const * element);
+
     protected:
 
       /** layer information */
@@ -423,6 +424,8 @@ namespace chaos
       /** get the name of the expected markup */
       virtual char const * GetXMLMarkupName() const override { return "map"; }
 
+      /** load internal data */
+      bool DoLoadMembers(tinyxml2::XMLElement const * element);
       /** load the tile sets */
       bool DoLoadTileSet(tinyxml2::XMLElement const * element);
       /** load the tile layers */

@@ -259,12 +259,11 @@ namespace chaos
 
       ReadXMLColor(element, "color", color);
 
-      std::string draw_order_string;
-      XMLTools::ReadAttribute(element, "draworder", draw_order_string);
-      if (draw_order_string == "index")
-        draw_order = DRAW_ORDER_MANUAL;
-      else
-        draw_order = DRAW_ORDER_TOPDOWN;
+      std::pair<char const*, int> const draw_order_map[] = {
+        { "index", DRAW_ORDER_MANUAL },
+        { nullptr, DRAW_ORDER_TOPDOWN }
+      };
+      XMLTools::ReadEnumAttribute(element, "draworder", draw_order_map, draw_order);
 
       if (!DoLoadObjects(element))
         return false;
@@ -283,6 +282,12 @@ namespace chaos
 
     bool ObjectLayer::DoLoadOneObject(tinyxml2::XMLElement const * object_element)
     {
+
+
+
+
+
+
       
 
       return true;
@@ -317,46 +322,35 @@ namespace chaos
 
       char const * txt = data->GetText();
 
+      if (encoding == "base64")
+      {
+        std::string compression;
+        XMLTools::ReadAttribute(data, "compression", compression);
 
+        if (encoding == "gzip")
+        {
+
+        }
+        else if (encoding == "zlib")
+        {
+
+        }
+        else // no encoding
+        {
+
+        }
+
+      }
+      else if (encoding == "csv")
+      {
+
+      }
+      else // else XML
+      {
+
+      }
       return true;
     }
-
-    //
-    // LayerBase methods
-    //
-
-
-
-
-
-
-
-
-
-
-#if 0
-    XMLTools::ReadAttribute(element, "name", name);
-    XMLTools::ReadAttribute(element, "width", width);
-    XMLTools::ReadAttribute(element, "height", height);
-
-    tinyxml2::XMLElement const * data_element = element->FirstChildElement("data");
-    if (data_element == nullptr)
-      return false;
-
-    std::string encoding;
-    if (!XMLTools::ReadAttribute(data_element, "encoding", encoding))
-      return false;
-
-    if (encoding == "csv")
-    {
-
-
-      return true;
-    }
-
-
-#endif
-
 
     //
     // TileSet methods
@@ -395,22 +389,58 @@ namespace chaos
 
     }
 
+    bool Map::DoLoadMembers(tinyxml2::XMLElement const * element)
+    {
+      std::pair<char const*, int> const orient_map[] = {
+        { "orthogonal", ORIENTATION_ORTHOGONAL },
+        { "isometric" , ORIENTATION_ISOMETRIC },
+        { "staggered" , ORIENTATION_STAGGERED },
+        { "hexagonal" , ORIENTATION_HEXAGONAL },
+        { nullptr, 0}
+      };
+      XMLTools::ReadEnumAttribute(element, "orientation", orient_map, orientation);
+
+      std::pair<char const*, int> const stagger_axis_map[] = {
+        { "Y", STAGGERED_AXIS_Y },
+        { nullptr, STAGGERED_AXIS_X }
+      };
+      XMLTools::ReadEnumAttribute(element, "staggeraxis", stagger_axis_map, stagger_axis);
+
+      std::pair<char const*, int> const stagger_index_map[] = {
+        { "even", STAGGERED_INDEX_EVEN },
+        { nullptr, STAGGERED_INDEX_ODD }
+      };
+      XMLTools::ReadEnumAttribute(element, "staggeraxis", stagger_index_map, stagger_index);
+
+      std::pair<char const*, int> const render_order_map[] = {
+        { "right-up", RENDER_ORDER_RIGHT_UP },
+        { "right-down", RENDER_ORDER_RIGHT_DOWN },
+        { "left-up", RENDER_ORDER_LEFT_UP },
+        { "left-down", RENDER_ORDER_LEFT_DOWN },
+        { nullptr, 0 }
+      };
+      XMLTools::ReadEnumAttribute(element, "staggeraxis", render_order_map, render_order);
+
+      XMLTools::ReadAttribute(element, "version", version);
+      XMLTools::ReadAttribute(element, "width", size.x);
+      XMLTools::ReadAttribute(element, "height", size.y);
+      XMLTools::ReadAttribute(element, "tilewidth", tile_size.x);
+      XMLTools::ReadAttribute(element, "tileheight", tile_size.y);
+      XMLTools::ReadAttribute(element, "infinite", infinite);
+      XMLTools::ReadAttribute(element, "hexsidelength", hex_side_length);
+
+      ReadXMLColor(element, "backgroundcolor", background_color);
+
+      return true;
+    }
+
     bool Map::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!ManagerObject::DoLoad(element))
         return false;
-#if 0
-      XMLTools::ReadAttribute(element, "width", width);
-      XMLTools::ReadAttribute(element, "height", height);
-      XMLTools::ReadAttribute(element, "tilewidth", tilewidth);
-      XMLTools::ReadAttribute(element, "tileheight", tileheight);
-      XMLTools::ReadAttribute(element, "infinite", infinite);
 
-      std::string orientation;
-      std::string renderorder;
-      XMLTools::ReadAttribute(element, "orientation", orientation);
-      XMLTools::ReadAttribute(element, "renderorder", renderorder);
-#endif
+      if (!DoLoadMembers(element))
+        return false;
       if (!DoLoadTileSet(element))
         return false;
       if (!DoLoadTileLayers(element))

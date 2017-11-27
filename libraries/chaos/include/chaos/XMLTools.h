@@ -57,6 +57,8 @@ namespace chaos
     static bool ReadAttribute(tinyxml2::XMLElement const * element, char const * attribute_name, unsigned int & result);
     /** Find an attribute a read into result */
     static bool ReadAttribute(tinyxml2::XMLElement const * element, char const * attribute_name, std::string & result);
+    /** Find an attribute, read it as a string an find corresponding value in translation map (returns very last value in case of failure) */
+    static bool ReadEnumAttribute(tinyxml2::XMLElement const * element, char const * name, std::pair<char const *, int> const * values, int & result_value);
 
   protected:
 

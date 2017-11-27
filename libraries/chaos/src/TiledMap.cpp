@@ -322,7 +322,8 @@ namespace chaos
       XMLTools::ReadAttribute(data, "encoding", encoding);
 
       // read the data
-      char const * txt = data->GetText();
+      size_t count = size.x * size.y;
+      tile_indices.reserve(count);
 
       if (encoding == "base64")
       {
@@ -331,16 +332,20 @@ namespace chaos
 
         if (encoding == "gzip")
         {
+          char const * txt = data->GetText();
           txt = txt;
 
         }
         else if (encoding == "zlib")
         {
+          char const * txt = data->GetText();
           txt = txt;
 
         }
         else // no encoding
         {
+          char const * txt = data->GetText();
+
           // escape the non 64 characters and extract the buffer to read
           int i = 0;
           while (txt[i] != 0 && !MyBase64::IsBase64(txt[i]))
@@ -357,9 +362,6 @@ namespace chaos
             return false;
 
           // transform the char buffer into tiles
-          size_t count = size.x * size.y;
-          tile_indices.reserve(count);
-
           for (size_t i = 0; i < count; ++i)
           {
             unsigned int a = (unsigned int)decoded[i * 4 + 0];
@@ -374,8 +376,7 @@ namespace chaos
       }
       else if (encoding == "csv")
       {
-        size_t count = size.x * size.y;
-        tile_indices.reserve(count);
+        char const * txt = data->GetText();
 
         int i = 0;
         while (txt[i] != 0 && tile_indices.size() != count)
@@ -394,8 +395,15 @@ namespace chaos
       }
       else // else XML
       {
-        txt = txt;
+        tinyxml2::XMLElement const * child = data->FirstChildElement("tile");
+        while (child != nullptr && tile_indices.size() != count)
+        {
+          int value = 0;
+          XMLTools::ReadAttribute(child, "gid", value);
+          tile_indices.push_back(value);
 
+          child = child->NextSiblingElement("tile");
+        }
       }
       return true;
     }

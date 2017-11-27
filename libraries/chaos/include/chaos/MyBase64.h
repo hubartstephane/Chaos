@@ -15,7 +15,10 @@ namespace chaos
 		/** encoding method */
 		std::string Encode(Buffer<char> const & src);
 		/** decoding method */
-		Buffer<char> Decode(char const * src);
+    Buffer<char> Decode(char const * src);
+
+    /** returns true whether the input is a valid character */
+    static bool IsBase64(unsigned char c);
 
 	protected:
 
@@ -23,8 +26,6 @@ namespace chaos
 		static void EncodeBuffer(unsigned char const * char_array_3, unsigned char * char_array_4);
     /** utility function to decode 4 bytes into 3 bytes */
     static void DecodeBuffer(unsigned char const * char_array_4, unsigned char * char_array_3);
-    /** returns true whether the input is a valid character */
-		static bool IsBase64(unsigned char c);
 
 	protected:
 

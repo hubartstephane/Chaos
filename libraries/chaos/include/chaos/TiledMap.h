@@ -170,17 +170,6 @@ namespace chaos
       glm::ivec2 offset = glm::ivec2(0, 0);
     };
 
-
-
-
-
-
-
-
-
-
-
-
     //
     // ImageLayer
     //
@@ -203,9 +192,7 @@ namespace chaos
       /** layer information */
       boost::filesystem::path image_path;
       /** layer information */
-      int width = 0;
-      /** layer information */
-      int height = 0;
+      glm::ivec2 size = { 0, 0 };
       /** layer information */
       glm::vec4 transparent_color;
     };
@@ -261,9 +248,9 @@ namespace chaos
     protected:
 
       /** layer information */
-      int width = 0;
-      /** layer information */
-      int height = 0;
+      glm::ivec2 size = { 0, 0 };
+      /** the tiles */
+      std::vector<int> tile_indices;
     };
 
 

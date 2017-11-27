@@ -4,7 +4,8 @@
 #include <chaos/BoostTools.h>
 #include <chaos/PixelTypes.h>
 #include <chaos/StringTools.h>
-
+#include <chaos/MyBase64.h>
+#include <chaos/MyZLib.h>
 
 namespace chaos
 {
@@ -238,8 +239,8 @@ namespace chaos
       if (image_source != nullptr)
       {
         ReadXMLColor(image_source, "trans", transparent_color);
-        XMLTools::ReadAttribute(image_source, "width", width);
-        XMLTools::ReadAttribute(image_source, "height", height);
+        XMLTools::ReadAttribute(image_source, "width", size.x);
+        XMLTools::ReadAttribute(image_source, "height", size.y);
 
         std::string source;
         XMLTools::ReadAttribute(image_source, "source", source);
@@ -302,8 +303,8 @@ namespace chaos
       if (!LayerBase::DoLoad(element))
         return false;
 
-      XMLTools::ReadAttribute(element, "width", width);
-      XMLTools::ReadAttribute(element, "height", height);
+      XMLTools::ReadAttribute(element, "width", size.x);
+      XMLTools::ReadAttribute(element, "height", size.y);
 
       if (!DoLoadTileBuffer(element))
         return false;
@@ -320,6 +321,7 @@ namespace chaos
       std::string encoding;
       XMLTools::ReadAttribute(data, "encoding", encoding);
 
+      // read the data
       char const * txt = data->GetText();
 
       if (encoding == "base64")
@@ -329,24 +331,70 @@ namespace chaos
 
         if (encoding == "gzip")
         {
+          txt = txt;
 
         }
         else if (encoding == "zlib")
         {
+          txt = txt;
 
         }
         else // no encoding
         {
+          // escape the non 64 characters and extract the buffer to read
+          int i = 0;
+          while (txt[i] != 0 && !MyBase64::IsBase64(txt[i]))
+            ++i;
+          int j = i;
+          while (txt[j] != 0 && MyBase64::IsBase64(txt[j]))
+            ++j;
+          std::string content = std::string(&txt[i], j - i);
 
+          // decode the string
+          Buffer<char> decoded = MyBase64().Decode(content.c_str()); // array width * height * sizeof(uint32)
+
+          if (decoded.bufsize != size.x * size.y * sizeof(uint32_t))
+            return false;
+
+          // transform the char buffer into tiles
+          size_t count = size.x * size.y;
+          tile_indices.reserve(count);
+
+          for (size_t i = 0; i < count; ++i)
+          {
+            unsigned int a = (unsigned int)decoded[i * 4 + 0];
+            unsigned int b = (unsigned int)decoded[i * 4 + 1];
+            unsigned int c = (unsigned int)decoded[i * 4 + 2];
+            unsigned int d = (unsigned int)decoded[i * 4 + 3];
+
+            int tile = (a << 0) | (b << 8) | (c << 16) | (d << 24);
+            tile_indices.push_back(tile);
+          }
         }
-
       }
       else if (encoding == "csv")
       {
+        size_t count = size.x * size.y;
+        tile_indices.reserve(count);
 
+        int i = 0;
+        while (txt[i] != 0 && tile_indices.size() != count)
+        {
+          while (txt[i] != 0 && !isdigit(txt[i])) // search first figure
+            ++i;
+          if (txt[i] == 0)
+            break;
+
+          int value = atoi(&txt[i]);
+          tile_indices.push_back(value); // get and push the tile
+
+          while (txt[i] != 0 && isdigit(txt[i])) // skip all figures
+            ++i;
+        }
       }
       else // else XML
       {
+        txt = txt;
 
       }
       return true;

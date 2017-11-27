@@ -410,7 +410,7 @@ namespace chaos
         { "even", STAGGERED_INDEX_EVEN },
         { nullptr, STAGGERED_INDEX_ODD }
       };
-      XMLTools::ReadEnumAttribute(element, "staggeraxis", stagger_index_map, stagger_index);
+      XMLTools::ReadEnumAttribute(element, "staggerindex", stagger_index_map, stagger_index);
 
       std::pair<char const*, int> const render_order_map[] = {
         { "right-up", RENDER_ORDER_RIGHT_UP },
@@ -419,7 +419,7 @@ namespace chaos
         { "left-down", RENDER_ORDER_LEFT_DOWN },
         { nullptr, 0 }
       };
-      XMLTools::ReadEnumAttribute(element, "staggeraxis", render_order_map, render_order);
+      XMLTools::ReadEnumAttribute(element, "renderorder", render_order_map, render_order);
 
       XMLTools::ReadAttribute(element, "version", version);
       XMLTools::ReadAttribute(element, "width", size.x);

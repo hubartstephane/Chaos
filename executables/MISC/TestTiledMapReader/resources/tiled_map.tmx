@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="hexagonal" renderorder="right-up" width="32" height="48" tilewidth="32" tileheight="32" infinite="0" hexsidelength="55" staggeraxis="y" staggerindex="even" backgroundcolor="#000100" nextobjectid="11">
+<map version="1.0" tiledversion="2017.10.31" orientation="hexagonal" renderorder="left-up" width="32" height="48" tilewidth="32" tileheight="32" infinite="0" hexsidelength="55" staggeraxis="y" staggerindex="odd" backgroundcolor="#000100" nextobjectid="11">
  <properties>
   <property name="monster_live" type="float" value="17"/>
   <property name="monster_name" value="le monstre"/>

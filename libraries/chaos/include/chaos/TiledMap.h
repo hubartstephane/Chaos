@@ -192,7 +192,7 @@ namespace chaos
       /** layer information */
       boost::filesystem::path image_path;
       /** layer information */
-      glm::ivec2 size = { 0, 0 };
+      glm::ivec2 size = glm::ivec2(0, 0);
       /** layer information */
       glm::vec4 transparent_color;
     };
@@ -250,15 +250,10 @@ namespace chaos
     protected:
 
       /** layer information */
-      glm::ivec2 size = { 0, 0 };
+      glm::ivec2 size = glm::ivec2(0, 0);
       /** the tiles */
       std::vector<int> tile_indices;
     };
-
-
-
-
-
 
     //
     // ManagerObject : objects control by the manager (Map & TileSet)
@@ -283,6 +278,8 @@ namespace chaos
       virtual bool DoLoadDocument(tinyxml2::XMLDocument const * doc);
       /** the method to override */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** the method to override */
+      virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) { return true; }
       /** get the name of the expected markup */
       virtual char const * GetXMLMarkupName() const { return nullptr; }
 
@@ -295,7 +292,7 @@ namespace chaos
     };
 
     //
-    // TileSet
+    // TileData
     //
 
     class TileData : public PropertyOwner
@@ -310,11 +307,9 @@ namespace chaos
       int id = 0;
     };
 
-
-
-
-
-
+    //
+    // TileSet
+    //
 
     class TileSet : public ManagerObject
     {
@@ -329,43 +324,41 @@ namespace chaos
       TileSet(class Manager * in_manager, boost::filesystem::path in_path);
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** loading method from XML */
+      virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
+      /** loading method from XML */
+      bool DoLoadTiles(tinyxml2::XMLElement const * element);
+
       /** get the name of the expected markup */
       virtual char const * GetXMLMarkupName() const override { return "tileset"; }
 
     protected:
-#if 0
+
       /** tileset information */
       std::string name;
       /** tileset information */
-      glm::ivec2  offset;
+      int         orientation;
+      /** tileset information */
+      glm::ivec2  size = glm::ivec2(32, 32);
+      /** tileset information */
+      glm::ivec2  tile_size = glm::ivec2(0, 0);
+      /** tileset information */
+      int         columns = 0;
+      /** tileset information */
+      int         tile_count = 0;
       /** tileset information */
       glm::vec4   background_color;
       /** tileset information */
-      int         orientation;
+      boost::filesystem::path image_path;
       /** tileset information */
-      glm::ivec2  grid_size;
+      glm::ivec2        image_size = glm::vec2(0, 0);
       /** tileset information */
-      int         columns;
+      int               image_margin = 0;
       /** tileset information */
-      boost::filesystem image_path;
+      int               image_spacing = 0;
       /** tileset information */
-      glm::ivec2        image_tile_size;
-      /** tileset information */
-      int               image_margin;
-      /** tileset information */
-      int               image_spacing;
+      glm::vec4         transparent_color;
 
-
-
-      /** dimension of the tileset */
-      int tilewidth = 0;
-      /** dimension of the tileset */
-      int tileheight = 0;
-      /** dimension of the tileset */
-      int tilecount = 0;
-      /** dimension of the tileset */
-      int columns = 0;
-#endif
       /** the data for the tiles */
       std::vector<boost::intrusive_ptr<TileData>> tiles;
     };
@@ -414,7 +407,7 @@ namespace chaos
       virtual char const * GetXMLMarkupName() const override { return "map"; }
 
       /** load internal data */
-      bool DoLoadMembers(tinyxml2::XMLElement const * element);
+      virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
       /** load the tile sets */
       bool DoLoadTileSet(tinyxml2::XMLElement const * element);
       /** load the tile layers */
@@ -474,21 +467,6 @@ namespace chaos
       /** the layers composing the map */
       std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //
     // Manager : container for maps and tileset

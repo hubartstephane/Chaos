@@ -204,6 +204,8 @@ namespace chaos
       assert(element != nullptr);
       if (!PropertyOwner::DoLoad(element))
         return false;
+      if (!DoLoadMembers(element))
+        return false;
       return true;
     }
 
@@ -418,20 +420,59 @@ namespace chaos
 
     }
 
+    bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
+    {
+
+      return true;
+    }
+
+    bool TileSet::DoLoadMembers(tinyxml2::XMLElement const * element)
+    {
+      XMLTools::ReadAttribute(element, "name", name);
+      XMLTools::ReadAttribute(element, "tilewidth", tile_size.x);
+      XMLTools::ReadAttribute(element, "tileheight", tile_size.y);
+      XMLTools::ReadAttribute(element, "tilecount", tile_count);
+      XMLTools::ReadAttribute(element, "columns", columns);
+      XMLTools::ReadAttribute(element, "margin", image_margin);
+      XMLTools::ReadAttribute(element, "spacing", image_spacing);
+
+      ReadXMLColor(element, "backgroundcolor", background_color);
+
+      tinyxml2::XMLElement const * grid_element = element->FirstChildElement("grid");
+      if (grid_element != nullptr)
+      {
+        std::pair<char const*, int> const orientation_map[] = {
+          { "isometric", ORIENTATION_ISOMETRIC },
+          { nullptr, ORIENTATION_ORTHOGONAL }
+        };
+        XMLTools::ReadEnumAttribute(grid_element, "orientation", orientation_map, orientation);
+
+        XMLTools::ReadAttribute(grid_element, "width", size.x);
+        XMLTools::ReadAttribute(grid_element, "height", size.y);
+      }
+
+      tinyxml2::XMLElement const * image_element = element->FirstChildElement("image");
+      if (image_element != nullptr)
+      {
+        std::string source;
+        XMLTools::ReadAttribute(image_element, "source", source);
+        image_path = BoostTools::FindAbsolutePath(GetPath(), boost::filesystem::path(source));
+
+        ReadXMLColor(image_element, "trans", transparent_color);
+
+        XMLTools::ReadAttribute(image_element, "width", image_size.x);
+        XMLTools::ReadAttribute(image_element, "height", image_size.y);
+      }
+
+      return true;
+    }
+
     bool TileSet::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!ManagerObject::DoLoad(element))
         return false;
-#if 0
-      XMLTools::ReadAttribute(element, "tilewidth", tilewidth);
-      XMLTools::ReadAttribute(element, "tileheight", tileheight);
-      XMLTools::ReadAttribute(element, "tilecount", tilecount);
-      XMLTools::ReadAttribute(element, "columns", columns);
-
-      std::string orientation;
-      XMLTools::ReadAttribute(element, "orientation", orientation);
-#endif
-
+      if (!DoLoadTiles(element))
+        return false;
       return true;
     }
 
@@ -493,9 +534,6 @@ namespace chaos
     bool Map::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!ManagerObject::DoLoad(element))
-        return false;
-
-      if (!DoLoadMembers(element))
         return false;
       if (!DoLoadTileSet(element))
         return false;

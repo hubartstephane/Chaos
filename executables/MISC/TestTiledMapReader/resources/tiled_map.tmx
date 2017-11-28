@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="hexagonal" renderorder="left-up" width="32" height="48" tilewidth="32" tileheight="32" infinite="0" hexsidelength="55" staggeraxis="y" staggerindex="odd" backgroundcolor="#000100" nextobjectid="11">
+<map version="1.0" tiledversion="2017.10.31" orientation="hexagonal" renderorder="left-up" width="32" height="48" tilewidth="32" tileheight="32" infinite="0" hexsidelength="55" staggeraxis="y" staggerindex="odd" backgroundcolor="#000100" nextobjectid="20">
  <properties>
   <property name="monster_live" type="float" value="17"/>
   <property name="monster_name" value="le monstre"/>
  </properties>
  <tileset firstgid="1" source="tile set 1.tsx"/>
- <tileset firstgid="50" source="wall.tsx"/>
+ <tileset firstgid="48" source="wall.tsx"/>
  <imagelayer name="Calque d'image 1" locked="1" opacity="0" offsetx="-240" offsety="530">
   <image source="C:/Users/mamour/Desktop/achat/066.jpg" trans="7fc823" width="200" height="285"/>
  </imagelayer>
@@ -20,7 +20,7 @@
   </data>
  </layer>
  <objectgroup color="#3264c8" name="Calque d'objets 1" opacity="0.64" offsetx="-422" offsety="566">
-  <object id="1" name="obj3" x="522" y="-500" width="416" height="296">
+  <object id="1" name="obj3" type="xxx" x="522" y="-500" width="416" height="296" rotation="20">
    <properties>
     <property name="life" type="int" value="68"/>
    </properties>
@@ -40,7 +40,14 @@
    <point/>
   </object>
   <object id="8" name="obj9" x="101.5" y="-949.5" width="201" height="117">
-   <text fontfamily="MS Shell Dlg 2" pixelsize="27" wrap="1">Exemple de texte</text>
+   <text fontfamily="MS Shell Dlg 2" pixelsize="27" color="#fa0000" valign="bottom">Exemple de texte</text>
+  </object>
+  <object id="11" name="obj12" x="467.455" y="-1369.03" width="315.152" height="227.273"/>
+  <object id="12" name="obj11" x="1067.45" y="-1226.61">
+   <polygon points="0,0 -78.7879,221.212 184.848,384.848 366.667,115.152 427.273,-212.121"/>
+  </object>
+  <object id="13" name="obj10" x="1276.55" y="-472.061">
+   <polyline points="-134,-86 173.818,184.121 415.091,-154.121 721.212,-496.97 557.576,-781.818"/>
   </object>
  </objectgroup>
 </map>

@@ -8,11 +8,41 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+    class BaseObject : public ReferencedObject
+    {
+    protected:
+
+      /** utility function to load a layer */
+      template<typename T, typename ...PARAMS>
+      static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
+      {
+        if (container_name != nullptr) // is there an intermediate node to contain all objects
+        {
+          element = element->FirstChildElement(container_name);
+          if (element == nullptr)
+            return true;
+        }
+
+        tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
+        for (; e != nullptr; e = e->NextSiblingElement(element_name))
+        {
+          T * object = new T(params...);
+          if (object == nullptr)
+            break;
+          if (!object->DoLoad(e))
+            delete(object);
+          else
+            result.push_back(object);
+        }
+        return true;
+      }
+    };
+
 		//
 		// Property : base class for some properties
 		//
 
-		class Property : public ReferencedObject
+		class Property : public BaseObject
 		{
 			friend class PropertyOwner;
 
@@ -105,7 +135,7 @@ namespace chaos
 		// PropertyOwner : some objects that have dynamic properties
 		//
 
-		class PropertyOwner : public ReferencedObject
+		class PropertyOwner : public BaseObject
 		{
 			friend class Manager;
 
@@ -135,6 +165,123 @@ namespace chaos
 			/** the properties of the object */
 			std::vector<boost::intrusive_ptr<Property>> properties;
 		};
+
+
+    //
+    // GeometricObject
+    //
+
+    class GeometricObject : public PropertyOwner
+    {
+      friend class Manager;
+      friend class BaseObject;
+      friend class TileSet;
+
+    protected:
+
+      /** protected constructor */
+      GeometricObject() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+      /** loading method from XML */
+      std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
+
+    protected:
+
+      /** tile information */
+      int id = 0;
+      /** tile information */
+      int gid = 0;             // for tiles
+      /** tile information */
+      std::string name;
+      /** tile information */
+      std::string type;
+      /** tile information */
+      glm::vec2 position = glm::vec2(0.0f, 0.0f);
+      /** tile information */
+      glm::vec2 size = glm::vec2(0.0f, 0.0f);
+      /** tile information */
+      float rotation = 0.0f; // clockwisze rotation in degree
+    };
+
+    //
+    // WangSetData
+    //
+
+#if 0
+    class WangSetData : public PropertyOwner
+    {
+      friend class Manager;
+      friend class ManagerObject;
+      friend class TileSet;
+
+    protected:
+
+      /** protected constructor */
+      WangSetData() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    protected:
+
+      /** tile information */
+      int tile_index = 0;
+      /** tile information */
+      std::string name;
+    };
+#endif
+    //
+    // GroundData
+    //
+
+    class GroundData : public PropertyOwner
+    {
+      friend class Manager;
+      friend class BaseObject;
+      friend class TileSet;
+
+    protected:
+
+      /** protected constructor */
+      GroundData() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    protected:
+
+      /** tile information */
+      int tile_index = 0;
+      /** tile information */
+      std::string name;
+    };
+
+    //
+    // TileData
+    //
+
+    class TileData : public PropertyOwner
+    {
+      friend class Manager;
+      friend class BaseObject;
+      friend class TileSet;
+
+    protected:
+
+      /** protected constructor */
+      TileData() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    protected:
+
+      /** tile information */
+      int id = 0;
+      /** tile information */
+      std::string type;
+      /** tile information */
+      float probability = 1.0f;
+    };
+
 
 		//
 		// LayerBase
@@ -177,7 +324,7 @@ namespace chaos
 		class ImageLayer : public LayerBase
 		{
 			friend class Map;
-      friend class ManagerObject;
+      friend class BaseObject;
 
 		protected:
 
@@ -195,7 +342,7 @@ namespace chaos
 			/** layer information */
 			glm::ivec2 size = glm::ivec2(0, 0);
 			/** layer information */
-			glm::vec4 transparent_color;
+			glm::vec4 transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		};
 
 		//
@@ -205,7 +352,7 @@ namespace chaos
 		class ObjectLayer : public LayerBase
 		{
 			friend class Map;
-      friend class ManagerObject;
+      friend class BaseObject;
 
 			static int const DRAW_ORDER_MANUAL  = 0;
 			static int const DRAW_ORDER_TOPDOWN = 1;
@@ -220,22 +367,27 @@ namespace chaos
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** the loading method */
 			bool DoLoadObjects(tinyxml2::XMLElement const * element);
-			/** the loading method */
-			bool DoLoadOneObject(tinyxml2::XMLElement const * object_element);
 
 		protected:
 
 			/** layer information */
-			glm::vec4 color;
+			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** layer information */
-			int       draw_order;
+      int       draw_order = DRAW_ORDER_MANUAL;
+
+      /** the properties of the object */
+      std::vector<boost::intrusive_ptr<GeometricObject>> geometric_objects;
 		};
+
+    //
+    // TileLayer
+    //
 
 		class TileLayer : public LayerBase
 		{
 
 			friend class Map;
-      friend class ManagerObject;
+      friend class BaseObject;
       
 		protected:
 
@@ -286,31 +438,6 @@ namespace chaos
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const { return nullptr; }
 
-      /** utility function to load a layer */
-      template<typename T, typename ...PARAMS>
-      bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
-      {
-        if (container_name != nullptr) // is there an intermediate node to contain all objects
-        {
-          element = element->FirstChildElement(container_name);
-          if (element == nullptr)
-            return false;
-        }
-
-        tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
-        for (; e != nullptr; e = e->NextSiblingElement(element_name))
-        {
-          T * object = new T(params...);
-          if (object == nullptr)
-            break;
-          if (!object->DoLoad(e))
-            delete(object);
-          else
-            result.push_back(object);
-        }
-        return true;
-      }
-
 		protected:
 
 			/** the manager */
@@ -319,55 +446,7 @@ namespace chaos
 			boost::filesystem::path path;
 		};
 
-    // GroundData
 
-    class GroundData : public PropertyOwner
-    {
-      friend class Manager;
-      friend class ManagerObject;   
-      friend class TileSet;
-
-    protected:
-
-      /** protected constructor */
-      GroundData() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-
-    protected:
-
-      /** tile information */
-      int tile_index = 0;
-      /** tile information */
-      std::string name;
-    };
-
-		//
-		// TileData
-		//
-
-		class TileData : public PropertyOwner
-		{
-			friend class Manager;
-      friend class ManagerObject;  
-			friend class TileSet;
-
-		protected:
-
-			/** protected constructor */
-			TileData() = default;
-			/** loading method from XML */
-			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-
-		protected:
-
-			/** tile information */
-			int id = 0;
-			/** tile information */
-			std::string type;
-			/** tile information */
-			float probability = 1.0f;
-		};
 
 		//
 		// TileSet
@@ -401,7 +480,7 @@ namespace chaos
 			/** tileset information */
 			std::string name;
 			/** tileset information */
-			int         orientation;
+			int         orientation = ORIENTATION_ORTHOGONAL;
 			/** tileset information */
 			glm::ivec2  size = glm::ivec2(32, 32);
 			/** tileset information */
@@ -411,7 +490,7 @@ namespace chaos
 			/** tileset information */
 			int         tile_count = 0;
 			/** tileset information */
-			glm::vec4   background_color;
+			glm::vec4   background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** tileset information */
 			boost::filesystem::path image_path;
 			/** tileset information */
@@ -421,7 +500,7 @@ namespace chaos
 			/** tileset information */
 			int               image_spacing = 0;
 			/** tileset information */
-			glm::vec4         transparent_color;
+			glm::vec4         transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 			/** the data for the tiles */
 			std::vector<boost::intrusive_ptr<TileData>> tiles;

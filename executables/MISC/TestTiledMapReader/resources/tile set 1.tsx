@@ -39,20 +39,21 @@
  </tile>
  <tile id="33" type="xxx" probability="7"/>
  <wangsets>
-  <wangset name="wangset1" tile="-1">
+  <wangset name="wangset1" tile="1">
    <wangedgecolor name="" color="#ff0000" tile="-1" probability="1"/>
    <wangedgecolor name="" color="#00ff00" tile="-1" probability="1"/>
    <wangedgecolor name="" color="#0000ff" tile="-1" probability="1"/>
    <wangedgecolor name="" color="#ff7700" tile="-1" probability="1"/>
-   <wangtile tileid="0" wangid="0x1010202"/>
-   <wangtile tileid="5" wangid="0x1010202"/>
-   <wangtile tileid="10" wangid="0x1010202"/>
-   <wangtile tileid="11" wangid="0x1010202"/>
+   <wangtile tileid="0" wangid="0x1010101"/>
+   <wangtile tileid="5" wangid="0x1010101"/>
+   <wangtile tileid="10" wangid="0x1010101"/>
+   <wangtile tileid="11" wangid="0x1010101"/>
    <wangtile tileid="12" wangid="0x1010202"/>
    <wangtile tileid="13" wangid="0x1010202"/>
-   <wangtile tileid="16" wangid="0x1010102"/>
-   <wangtile tileid="17" wangid="0x1010102"/>
-   <wangtile tileid="18" wangid="0x1010202"/>
+   <wangtile tileid="16" wangid="0x1010101"/>
+   <wangtile tileid="17" wangid="0x1010101"/>
+   <wangtile tileid="18" wangid="0x1010101"/>
+   <wangtile tileid="19" wangid="0x1010101"/>
    <wangtile tileid="22" wangid="0x1010102"/>
    <wangtile tileid="23" wangid="0x1010102"/>
    <wangtile tileid="24" wangid="0x1010102"/>
@@ -60,23 +61,26 @@
    <wangtile tileid="26" wangid="0x1010101"/>
    <wangtile tileid="29" wangid="0x1010102"/>
    <wangtile tileid="30" wangid="0x1010102"/>
-   <wangtile tileid="31" wangid="0x1010102"/>
+   <wangtile tileid="31" wangid="0x1010101"/>
    <wangtile tileid="32" wangid="0x1010102"/>
    <wangtile tileid="33" wangid="0x1010102"/>
    <wangtile tileid="35" wangid="0x1010102"/>
-   <wangtile tileid="36" wangid="0x1010102"/>
+   <wangtile tileid="36" wangid="0x1010101"/>
    <wangtile tileid="37" wangid="0x1010102"/>
    <wangtile tileid="38" wangid="0x1010102"/>
    <wangtile tileid="39" wangid="0x1010102"/>
    <wangtile tileid="40" wangid="0x1010102"/>
-   <wangtile tileid="41" wangid="0x1010102"/>
+   <wangtile tileid="41" wangid="0x1010101"/>
    <wangtile tileid="45" wangid="0x1010102"/>
    <wangtile tileid="46" wangid="0x1010102"/>
   </wangset>
-  <wangset name="wangset2" tile="-1">
+  <wangset name="wangset2" tile="7">
    <wangedgecolor name="" color="#ff0000" tile="-1" probability="1"/>
    <wangedgecolor name="" color="#00ff00" tile="-1" probability="1"/>
-   <wangtile tileid="0" wangid="0x1010101"/>
+   <wangedgecolor name="" color="#0000ff" tile="-1" probability="1"/>
+   <wangcornercolor name="" color="#ff0000" tile="-1" probability="1"/>
+   <wangcornercolor name="" color="#00ff00" tile="-1" probability="1"/>
+   <wangtile tileid="11" wangid="0x11121321"/>
   </wangset>
  </wangsets>
 </tileset>

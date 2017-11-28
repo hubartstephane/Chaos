@@ -354,8 +354,14 @@ namespace chaos
 
 				if (compression == "gzip")
 				{
-					char const * txt = data->GetText();
-					txt = txt;
+
+
+
+
+
+
+
+
 
 				}
 				else if (compression == "zlib")
@@ -410,6 +416,21 @@ namespace chaos
 			return (tile_indices.size() == count);
 		}
 
+    //
+    // GroundData methods
+    //
+
+    bool GroundData::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!PropertyOwner::DoLoad(element))
+        return false;
+
+      XMLTools::ReadAttribute(element, "tile", tile_index);
+      XMLTools::ReadAttribute(element, "name", name);
+
+      return true;
+    }
+
 		//
 		// TileData methods
 		//
@@ -435,20 +456,15 @@ namespace chaos
 		{
 
 		}
+    
+    bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
+    {
+      return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes");
+    }
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
 		{
-			tinyxml2::XMLElement const * tile_node = element->FirstChildElement("tile");
-			while (tile_node != nullptr)
-			{
-				TileData * tile = new TileData();
-				if (tile == nullptr)
-					return false;
-				tile->DoLoad(tile_node);
-				tiles.push_back(tile);
-				tile_node = tile_node->NextSiblingElement("tile");
-			}
-			return true;
+      return DoLoadObjectListHelper(element, tiles, "tile", nullptr);		
 		}
 
 		bool TileSet::DoLoadMembers(tinyxml2::XMLElement const * element)
@@ -498,6 +514,8 @@ namespace chaos
 				return false;
 			if (!DoLoadTiles(element))
 				return false;
+      if (!DoLoadGrounds(element))
+        return false;
 			return true;
 		}
 
@@ -603,17 +621,17 @@ namespace chaos
 
 		bool Map::DoLoadImageLayers(tinyxml2::XMLElement const * element)
 		{
-			return DoLoadLayerHelper(element, image_layers, "imagelayer");
+			return DoLoadObjectListHelper(element, image_layers, "imagelayer", nullptr, this);
 		}
 
 		bool Map::DoLoadObjectGroups(tinyxml2::XMLElement const * element)
 		{ 
-			return DoLoadLayerHelper(element, object_layers, "objectgroup");
+			return DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
 		}
 
 		bool Map::DoLoadTileLayers(tinyxml2::XMLElement const * element)
 		{
-			return DoLoadLayerHelper(element, tile_layers, "layer");
+			return DoLoadObjectListHelper(element, tile_layers, "layer", nullptr, this);
 		}
 
 		//

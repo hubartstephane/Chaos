@@ -177,6 +177,7 @@ namespace chaos
 		class ImageLayer : public LayerBase
 		{
 			friend class Map;
+      friend class ManagerObject;
 
 		protected:
 
@@ -204,6 +205,7 @@ namespace chaos
 		class ObjectLayer : public LayerBase
 		{
 			friend class Map;
+      friend class ManagerObject;
 
 			static int const DRAW_ORDER_MANUAL  = 0;
 			static int const DRAW_ORDER_TOPDOWN = 1;
@@ -233,7 +235,8 @@ namespace chaos
 		{
 
 			friend class Map;
-
+      friend class ManagerObject;
+      
 		protected:
 
 			/** constructor */
@@ -283,6 +286,31 @@ namespace chaos
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const { return nullptr; }
 
+      /** utility function to load a layer */
+      template<typename T, typename ...PARAMS>
+      bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
+      {
+        if (container_name != nullptr) // is there an intermediate node to contain all objects
+        {
+          element = element->FirstChildElement(container_name);
+          if (element == nullptr)
+            return false;
+        }
+
+        tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
+        for (; e != nullptr; e = e->NextSiblingElement(element_name))
+        {
+          T * object = new T(params...);
+          if (object == nullptr)
+            break;
+          if (!object->DoLoad(e))
+            delete(object);
+          else
+            result.push_back(object);
+        }
+        return true;
+      }
+
 		protected:
 
 			/** the manager */
@@ -291,6 +319,29 @@ namespace chaos
 			boost::filesystem::path path;
 		};
 
+    // GroundData
+
+    class GroundData : public PropertyOwner
+    {
+      friend class Manager;
+      friend class ManagerObject;   
+      friend class TileSet;
+
+    protected:
+
+      /** protected constructor */
+      GroundData() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    protected:
+
+      /** tile information */
+      int tile_index = 0;
+      /** tile information */
+      std::string name;
+    };
+
 		//
 		// TileData
 		//
@@ -298,6 +349,7 @@ namespace chaos
 		class TileData : public PropertyOwner
 		{
 			friend class Manager;
+      friend class ManagerObject;  
 			friend class TileSet;
 
 		protected:
@@ -338,6 +390,8 @@ namespace chaos
 			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
 			/** loading method from XML */
 			bool DoLoadTiles(tinyxml2::XMLElement const * element);
+      /** loading method from XML */
+      bool DoLoadGrounds(tinyxml2::XMLElement const * element);
 
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const override { return "tileset"; }
@@ -371,6 +425,8 @@ namespace chaos
 
 			/** the data for the tiles */
 			std::vector<boost::intrusive_ptr<TileData>> tiles;
+      /** the data for the tiles */
+      std::vector<boost::intrusive_ptr<GroundData>> grounds;
 		};
 
 		//
@@ -390,6 +446,7 @@ namespace chaos
 		class Map : public ManagerObject
 		{
 			friend class Manager;
+      friend class TileSet;
 
 			static int const ORIENTATION_ORTHOGONAL = 0;
 			static int const ORIENTATION_ISOMETRIC  = 1;
@@ -426,24 +483,6 @@ namespace chaos
 			bool DoLoadImageLayers(tinyxml2::XMLElement const * element);
 			/** load the object groups */
 			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
-
-			/** utility function to load a layer */
-			template<typename T>
-			bool DoLoadLayerHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name)
-			{
-				tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
-				for (; e != nullptr; e = e->NextSiblingElement(element_name))
-				{
-					T * layer = new T(this);
-					if (layer == nullptr)
-						break;
-					if (!layer->DoLoad(e))
-						delete(layer);
-					else
-						result.push_back(layer);
-				}
-				return true;
-			}
 
 		protected:
 

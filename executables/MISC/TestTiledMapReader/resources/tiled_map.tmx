@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="hexagonal" renderorder="left-up" width="32" height="48" tilewidth="32" tileheight="32" infinite="0" hexsidelength="55" staggeraxis="y" staggerindex="odd" backgroundcolor="#000100" nextobjectid="20">
+<map version="1.0" tiledversion="2017.10.31" orientation="hexagonal" renderorder="left-up" width="32" height="48" tilewidth="32" tileheight="32" infinite="0" hexsidelength="55" staggeraxis="y" staggerindex="odd" backgroundcolor="#000100" nextobjectid="31">
  <properties>
   <property name="monster_live" type="float" value="17"/>
   <property name="monster_name" value="le monstre"/>
@@ -20,12 +20,12 @@
   </data>
  </layer>
  <objectgroup color="#3264c8" name="Calque d'objets 1" opacity="0.64" offsetx="-422" offsety="566">
-  <object id="1" name="obj3" type="xxx" x="522" y="-500" width="416" height="296" rotation="20">
+  <object id="1" name="obj3" type="xxx" x="522" y="-500" width="416" height="296" rotation="20" visible="0">
    <properties>
     <property name="life" type="int" value="68"/>
    </properties>
   </object>
-  <object id="2" name="obj2" x="280" y="-444"/>
+  <object id="2" name="obj2" x="280" y="-444" visible="0"/>
   <object id="3" name="obj1" x="486" y="-562" width="204" height="422"/>
   <object id="4" name="obj4" x="114" y="-252">
    <polygon points="0,0 194,-128 226,208 -46,148 -138,74 -156,194 -150,-180 44,-290 90,-158"/>
@@ -49,5 +49,9 @@
   <object id="13" name="obj10" x="1276.55" y="-472.061" visible="0">
    <polyline points="-134,-86 173.818,184.121 415.091,-154.121 721.212,-496.97 557.576,-781.818"/>
   </object>
+  <object id="27" gid="5" x="1020" y="-718" width="32" height="32"/>
+  <object id="28" gid="2147483653" x="1094" y="-704" width="32" height="32"/>
+  <object id="29" gid="1073741829" x="954" y="-632" width="32" height="32"/>
+  <object id="30" gid="3221225477" x="1058" y="-612" width="32" height="32" visible="0"/>
  </objectgroup>
 </map>

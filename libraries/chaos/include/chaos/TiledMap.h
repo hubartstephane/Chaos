@@ -222,17 +222,17 @@ namespace chaos
 
     public:
 
-      /** tile information */
+      /** object information */
       int id = 0;
-      /** tile information */
+      /** object information */
       std::string name;
-      /** tile information */
+      /** object information */
       std::string type;
-      /** tile information */
+      /** object information */
       bool visible = true;
-      /** tile information */
+      /** object information */
       glm::vec2 position = glm::vec2(0.0f, 0.0f);
-      /** tile information */
+      /** object information */
       float rotation = 0.0f; // clockwise rotation in degree
     };
 
@@ -258,10 +258,31 @@ namespace chaos
     };
 
     // 
+    // GeometricObjectSurface
+    //
+
+    class GeometricObjectSurface : public GeometricObject
+    {
+      friend class ObjectLayer;
+
+    protected:
+
+      /** protected constructor */
+      GeometricObjectSurface() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    public:
+
+      /** object information */
+      glm::vec2 size = glm::vec2(0.0f, 0.0f);
+    };
+
+    // 
     // GeometricObjectRectangle
     //
 
-    class GeometricObjectRectangle : public GeometricObject
+    class GeometricObjectRectangle : public GeometricObjectSurface
     {
       friend class ObjectLayer;
 
@@ -276,18 +297,13 @@ namespace chaos
       GeometricObjectRectangle() = default;
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-
-    public:
-
-      /** tile information */
-      glm::vec2 size = glm::vec2(0.0f, 0.0f);
     };
 
     // 
     // GeometricObjectEllipse
     //
 
-    class GeometricObjectEllipse : public GeometricObject
+    class GeometricObjectEllipse : public GeometricObjectSurface
     {
       friend class ObjectLayer;
 
@@ -302,11 +318,6 @@ namespace chaos
       GeometricObjectEllipse() = default;
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-
-    public:
-
-      /** tile information */
-      glm::vec2 size = glm::vec2(0.0f, 0.0f);
     };
 
     // 
@@ -365,7 +376,7 @@ namespace chaos
     // GeometricObjectText
     //
 
-    class GeometricObjectText : public GeometricObject
+    class GeometricObjectText : public GeometricObjectSurface
     {
       friend class ObjectLayer;
 
@@ -408,15 +419,13 @@ namespace chaos
       int wrap = 0;
       /** object information */
       glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-      /** object information */
-      glm::vec2 size = glm::vec2(0.0f, 0.0f);
     };
 
     // 
     // GeometricObjectTile
     //
 
-    class GeometricObjectTile : public GeometricObject
+    class GeometricObjectTile : public GeometricObjectSurface
     {
     public:
 
@@ -432,6 +441,10 @@ namespace chaos
 
       /** object information */
       int gid = 0;
+      /** object information */
+      bool horizontal_flip = false;
+      /** object information */
+      bool vertical_flip = false;
     };
 
     //
@@ -478,11 +491,11 @@ namespace chaos
 
     public:
 
-      /** tile information */
+      /** object information */
       int id = 0;
-      /** tile information */
+      /** object information */
       std::string type;
-      /** tile information */
+      /** object information */
       float probability = 1.0f;
     };
 
@@ -543,11 +556,11 @@ namespace chaos
 
 		public:
 
-			/** layer information */
+			/** object information */
 			boost::filesystem::path image_path;
-			/** layer information */
+			/** object information */
 			glm::ivec2 size = glm::ivec2(0, 0);
-			/** layer information */
+			/** object information */
 			glm::vec4 transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		};
 
@@ -578,9 +591,9 @@ namespace chaos
 
 		public:
 
-			/** layer information */
+			/** object information */
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-			/** layer information */
+			/** object information */
       int       draw_order = DRAW_ORDER_MANUAL;
 
       /** the properties of the object */
@@ -612,7 +625,7 @@ namespace chaos
 
 		public:
 
-			/** layer information */
+			/** object information */
 			glm::ivec2 size = glm::ivec2(0, 0);
 			/** the tiles */
 			std::vector<int> tile_indices;
@@ -686,29 +699,29 @@ namespace chaos
 
 		public:
 
-			/** tileset information */
+			/** object information */
 			std::string name;
-			/** tileset information */
+			/** object information */
 			int         orientation = ORIENTATION_ORTHOGONAL;
-			/** tileset information */
+			/** object information */
 			glm::ivec2  size = glm::ivec2(32, 32);
-			/** tileset information */
+			/** object information */
 			glm::ivec2  tile_size = glm::ivec2(0, 0);
-			/** tileset information */
+			/** object information */
 			int         columns = 0;
-			/** tileset information */
+			/** object information */
 			int         tile_count = 0;
-			/** tileset information */
+			/** object information */
 			glm::vec4   background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-			/** tileset information */
+			/** object information */
 			boost::filesystem::path image_path;
-			/** tileset information */
+			/** object information */
 			glm::ivec2        image_size = glm::vec2(0, 0);
-			/** tileset information */
+			/** object information */
 			int               image_margin = 0;
-			/** tileset information */
+			/** object information */
 			int               image_spacing = 0;
-			/** tileset information */
+			/** object information */
 			glm::vec4         transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 			/** the data for the tiles */
@@ -774,25 +787,25 @@ namespace chaos
 
 		public:
 
-			/** map information */
+			/** object information */
 			int orientation = ORIENTATION_ORTHOGONAL;
-			/** map information */
+			/** object information */
 			glm::ivec2 size = glm::ivec2(100, 100);
-			/** map information */
+			/** object information */
 			glm::ivec2 tile_size = glm::ivec2(32, 32);
-			/** map information */
+			/** object information */
 			bool infinite = false;
-			/** map information */
+			/** object information */
 			int hex_side_length = 0;
-			/** map information */
+			/** object information */
 			int stagger_axis = STAGGERED_AXIS_Y;
-			/** map information */
+			/** object information */
 			int stagger_index = STAGGERED_INDEX_ODD;
-			/** map information */
+			/** object information */
 			int render_order = RENDER_ORDER_RIGHT_DOWN;
-			/** map information */
+			/** object information */
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-			/** map information */
+			/** object information */
 			std::string version;
 
 			/** the tileset used */

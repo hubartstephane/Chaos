@@ -209,6 +209,15 @@ namespace chaos
       return result;
     }
 
+    bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
+      XMLTools::ReadAttribute(element, "width", size.x);
+      XMLTools::ReadAttribute(element, "height", size.y);
+      return true;
+    }
+
     bool GeometricObject::DoLoad(tinyxml2::XMLElement const * element)
     {
       if (!PropertyOwner::DoLoad(element))
@@ -232,19 +241,15 @@ namespace chaos
 
     bool GeometricObjectRectangle::DoLoad(tinyxml2::XMLElement const * element)
     {
-      if (!GeometricObject::DoLoad(element))
+      if (!GeometricObjectSurface::DoLoad(element))
         return false;
-      XMLTools::ReadAttribute(element, "width", size.x);
-      XMLTools::ReadAttribute(element, "height", size.y);
       return true;
     }
 
     bool GeometricObjectEllipse::DoLoad(tinyxml2::XMLElement const * element)
     {
-      if (!GeometricObject::DoLoad(element))
+      if (!GeometricObjectSurface::DoLoad(element))
         return false;
-      XMLTools::ReadAttribute(element, "width", size.x);
-      XMLTools::ReadAttribute(element, "height", size.y);
       return true;
     }
 
@@ -268,13 +273,10 @@ namespace chaos
 
     bool GeometricObjectText::DoLoad(tinyxml2::XMLElement const * element)
     {
-      if (!GeometricObject::DoLoad(element))
+      if (!GeometricObjectSurface::DoLoad(element))
         return false;
 
       tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
-
-      XMLTools::ReadAttribute(element, "width", size.x);
-      XMLTools::ReadAttribute(element, "height", size.y);
 
       std::pair<char const*, int> const halign_map[] = {
         { "left", HALIGN_LEFT },
@@ -307,9 +309,17 @@ namespace chaos
 
     bool GeometricObjectTile::DoLoad(tinyxml2::XMLElement const * element)
     {
-      if (!GeometricObject::DoLoad(element))
+      if (!GeometricObjectSurface::DoLoad(element))
         return false;
-      XMLTools::ReadAttribute(element, "gid", gid);
+
+      int pseudo_gid = 0;// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
+      XMLTools::ReadAttribute(element, "gid", pseudo_gid);
+
+      gid = (pseudo_gid & ~((1 << 31) | (1 << 30)));
+
+      horizontal_flip = ((pseudo_gid & (1 << 31)) != 0);
+      vertical_flip = ((pseudo_gid & (1 << 30)) != 0);
+
       return true;
     }
 
@@ -446,8 +456,8 @@ namespace chaos
     GeometricObject * ObjectLayer::DoLoadOneObject(tinyxml2::XMLElement const * element)
     {
       // tile ?
-      int gid = 0;
-      if (XMLTools::ReadAttribute(element, "gid", gid))
+      int pseudo_gid = 0;
+      if (XMLTools::ReadAttribute(element, "gid", pseudo_gid)) // this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
         return new GeometricObjectTile;
 
       // ellipse ?

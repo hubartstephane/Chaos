@@ -213,99 +213,103 @@ namespace chaos
     {
       if (!PropertyOwner::DoLoad(element))
         return false;
-
       XMLTools::ReadAttribute(element, "id", id);
-      XMLTools::ReadAttribute(element, "gid", gid);
       XMLTools::ReadAttribute(element, "name", name);
       XMLTools::ReadAttribute(element, "type", type);
+      XMLTools::ReadAttribute(element, "visible", visible);
       XMLTools::ReadAttribute(element, "x", position.x);
       XMLTools::ReadAttribute(element, "y", position.y);
+      XMLTools::ReadAttribute(element, "rotation", rotation);
+      return true;
+    }
+
+    bool GeometricObjectPoint::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
+      return true;
+    }
+
+    bool GeometricObjectRectangle::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
       XMLTools::ReadAttribute(element, "width", size.x);
       XMLTools::ReadAttribute(element, "height", size.y);
-      XMLTools::ReadAttribute(element, "rotation", rotation);
+      return true;
+    }
 
-      tinyxml2::XMLElement const * ellipse_element = element->FirstChildElement("ellipse");
-      if (ellipse_element != nullptr)
-      {
+    bool GeometricObjectEllipse::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
+      XMLTools::ReadAttribute(element, "width", size.x);
+      XMLTools::ReadAttribute(element, "height", size.y);
+      return true;
+    }
 
-        ellipse_element = ellipse_element;
-      }
+    bool GeometricObjectPolygon::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
+      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
+      points = GetPointArray(polygon_element, "points");
+      return true;
+    }
+
+    bool GeometricObjectPolyline::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
+      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polyline");
+      points = GetPointArray(polygon_element, "points");
+      return true;
+    }
+
+    bool GeometricObjectText::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
 
       tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
-      if (text_element != nullptr)
-      {
-        int horizontal_alignment = 0; // left
-        int vertical_alignment = 0; // up
 
-        std::string fontfamily;
-        std::string text;
-        int pixelsize = 0;
-        int wrap = 0;
+      XMLTools::ReadAttribute(element, "width", size.x);
+      XMLTools::ReadAttribute(element, "height", size.y);
 
-        static int const HALIGN_LEFT    = 0;
-        static int const HALIGN_CENTER  = 1;
-        static int const HALIGN_RIGHT   = 2;
-        static int const HALIGN_JUSTIFY = 3;
+      std::pair<char const*, int> const halign_map[] = {
+        { "left", HALIGN_LEFT },
+        { "center", HALIGN_CENTER },
+        { "right", HALIGN_RIGHT },
+        { "justify", HALIGN_JUSTIFY },
+        { nullptr, HALIGN_LEFT }
+      };
+      XMLTools::ReadEnumAttribute(text_element, "halign", halign_map, halign);
 
-        static int const VALIGN_TOP     = 0;
-        static int const VALIGN_CENTER  = 1;
-        static int const VALIGN_BOTTOM  = 2;
+      std::pair<char const*, int> const valign_map[] = {
+        { "top", VALIGN_TOP },
+        { "center", VALIGN_CENTER },
+        { "bottom", VALIGN_BOTTOM },
+        { nullptr, VALIGN_TOP }
+      };
+      XMLTools::ReadEnumAttribute(text_element, "valign", valign_map, valign);
 
+      XMLTools::ReadAttribute(text_element, "pixelsize", pixelsize);
+      XMLTools::ReadAttribute(text_element, "wrap", wrap);
+      XMLTools::ReadAttribute(text_element, "fontfamily", fontfamily);
+      ReadXMLColor(text_element, "color", color);
 
-        int halign = 0;
-        int valign = 0;
+      char const * txt = text_element->GetText();
+      if (txt != nullptr)
+        text = txt;
 
-        glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+      return true;
+    }
 
-        std::pair<char const*, int> const halign_map[] = {
-          { "left", HALIGN_LEFT },
-          { "center", HALIGN_CENTER },
-          { "right", HALIGN_RIGHT },
-          { "justify", HALIGN_JUSTIFY },
-          { nullptr, HALIGN_LEFT }
-        };
-        XMLTools::ReadEnumAttribute(element, "halign", halign_map, halign);
-
-        std::pair<char const*, int> const valign_map[] = {
-          { "top", VALIGN_TOP },
-          { "center", VALIGN_CENTER },
-          { "bottom", VALIGN_BOTTOM },
-          { nullptr, VALIGN_TOP }
-        };
-        XMLTools::ReadEnumAttribute(element, "valign", valign_map, valign);
-
-        XMLTools::ReadAttribute(text_element, "pixelsize", pixelsize);
-        XMLTools::ReadAttribute(text_element, "wrap", wrap);
-        XMLTools::ReadAttribute(text_element, "fontfamily", fontfamily);
-        ReadXMLColor(text_element, "color", color);
-
-        text = text_element->GetText();
-
-        text_element = text_element;
-      }
-
-      tinyxml2::XMLElement const * point_element = element->FirstChildElement("point");
-      if (point_element != nullptr)
-      {
-
-
-        point_element = point_element;
-      }
-
-      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
-      if (polygon_element != nullptr)
-      {
-        std::vector<glm::vec2> points = GetPointArray(polygon_element, "points");
-
-        polygon_element = polygon_element;
-      }
-
-      tinyxml2::XMLElement const * polyline_element = element->FirstChildElement("polyline");
-      if (polyline_element != nullptr)
-      {
-        std::vector<glm::vec2> points = GetPointArray(polyline_element, "points");
-      }
-
+    bool GeometricObjectTile::DoLoad(tinyxml2::XMLElement const * element)
+    {
+      if (!GeometricObject::DoLoad(element))
+        return false;
+      XMLTools::ReadAttribute(element, "gid", gid);
       return true;
     }
 
@@ -317,10 +321,8 @@ namespace chaos
     {
       if (!PropertyOwner::DoLoad(element))
         return false;
-
       XMLTools::ReadAttribute(element, "tile", tile_index);
       XMLTools::ReadAttribute(element, "name", name);
-
       return true;
     }
 
@@ -332,11 +334,9 @@ namespace chaos
     {
       if (!PropertyOwner::DoLoad(element))
         return false;
-
       XMLTools::ReadAttribute(element, "id", id);
       XMLTools::ReadAttribute(element, "type", type);
       XMLTools::ReadAttribute(element, "probability", probability);
-
       return true;
     }
 
@@ -388,14 +388,12 @@ namespace chaos
 		{
 			if (!PropertyOwner::DoLoad(element))
 				return false;
-
 			XMLTools::ReadAttribute(element, "name", name);
 			XMLTools::ReadAttribute(element, "visible", visible);
 			XMLTools::ReadAttribute(element, "locked", locked);
 			XMLTools::ReadAttribute(element, "opacity", opacity);
 			XMLTools::ReadAttribute(element, "offsetx", offset.x);
 			XMLTools::ReadAttribute(element, "offsety", offset.y);
-
 			return true;
 		}
 
@@ -445,9 +443,56 @@ namespace chaos
 			return true;
 		}
 
+    GeometricObject * ObjectLayer::DoLoadOneObject(tinyxml2::XMLElement const * element)
+    {
+      // tile ?
+      int gid = 0;
+      if (XMLTools::ReadAttribute(element, "gid", gid))
+        return new GeometricObjectTile;
+
+      // ellipse ?
+      tinyxml2::XMLElement const * ellipse_element = element->FirstChildElement("ellipse");
+      if (ellipse_element != nullptr)
+        return new GeometricObjectEllipse;
+
+      // text ?
+      tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
+      if (text_element != nullptr)
+        return new GeometricObjectText;
+
+      // polygon ?
+      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
+      if (polygon_element != nullptr)
+        return new GeometricObjectPolygon;
+
+      // polyline ?
+      tinyxml2::XMLElement const * polyline_element = element->FirstChildElement("polyline");
+      if (polyline_element != nullptr)
+        return new GeometricObjectPolyline;
+
+      // point ?
+      tinyxml2::XMLElement const * point_element = element->FirstChildElement("point");
+      if (point_element != nullptr)      
+        return new GeometricObjectPoint;
+
+      // rectangle ?
+      return new GeometricObjectRectangle;
+    }
+
 		bool ObjectLayer::DoLoadObjects(tinyxml2::XMLElement const * element)
 		{
-      return DoLoadObjectListHelper(element, geometric_objects, "object", nullptr);
+      tinyxml2::XMLElement const * e = element->FirstChildElement("object");
+      for (; e != nullptr; e = e->NextSiblingElement("object"))
+      {
+        GeometricObject * object = DoLoadOneObject(e);
+        if (object == nullptr)
+          continue;
+        if (!object->DoLoad(e))
+          delete(object);
+        else
+          geometric_objects.push_back(object);
+      }
+      return true;
 		}
 
 		//
@@ -587,7 +632,7 @@ namespace chaos
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
 		{
-      return DoLoadObjectListHelper(element, tiles, "tile", nullptr);		
+      return DoLoadObjectListHelper(element, tiles, "tile", nullptr);
 		}
 
 		bool TileSet::DoLoadMembers(tinyxml2::XMLElement const * element)
@@ -925,8 +970,6 @@ namespace chaos
 			return result;
 		}
 
-
 	};  // namespace TiledMap
-
 
 }; // namespace chaos

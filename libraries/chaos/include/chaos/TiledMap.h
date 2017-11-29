@@ -169,7 +169,6 @@ namespace chaos
 			std::vector<boost::intrusive_ptr<Property>> properties;
 		};
 
-
     //
     // GeometricObject
     //
@@ -179,6 +178,7 @@ namespace chaos
       friend class Manager;
       friend class BaseObject;
       friend class TileSet;
+      friend class ObjectLayer;
 
     public:
 
@@ -220,81 +220,154 @@ namespace chaos
       /** loading method from XML */
       std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
 
-    protected:
+    public:
 
       /** tile information */
       int id = 0;
-      /** tile information */
-      int gid = 0;             // for tiles
       /** tile information */
       std::string name;
       /** tile information */
       std::string type;
       /** tile information */
-      glm::vec2 position = glm::vec2(0.0f, 0.0f);
+      bool visible = true;
       /** tile information */
-      glm::vec2 size = glm::vec2(0.0f, 0.0f);
+      glm::vec2 position = glm::vec2(0.0f, 0.0f);
       /** tile information */
       float rotation = 0.0f; // clockwise rotation in degree
     };
 
     //
-    //
+    // GeometricObjectPoint
     //
 
     class GeometricObjectPoint : public GeometricObject
     {
+      friend class ObjectLayer;
+
     public:
 
       virtual GeometricObjectPoint * GetObjectPoint() override { return this; }
       virtual GeometricObjectPoint const * GetObjectPoint() const override { return this; }
+
+    protected:
+
+      /** protected constructor */
+      GeometricObjectPoint() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
     };
+
+    // 
+    // GeometricObjectRectangle
+    //
 
     class GeometricObjectRectangle : public GeometricObject
     {
+      friend class ObjectLayer;
+
     public:
 
       virtual GeometricObjectRectangle * GetObjectRectangle() override { return this; }
       virtual GeometricObjectRectangle const * GetObjectRectangle() const override { return this; }
+
+    protected:
+
+      /** protected constructor */
+      GeometricObjectRectangle() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    public:
+
+      /** tile information */
+      glm::vec2 size = glm::vec2(0.0f, 0.0f);
     };
+
+    // 
+    // GeometricObjectEllipse
+    //
 
     class GeometricObjectEllipse : public GeometricObject
     {
+      friend class ObjectLayer;
+
     public:
 
       virtual GeometricObjectEllipse * GetObjectEllipse() override { return this; }
       virtual GeometricObjectEllipse const * GetObjectEllipse() const override { return this; }
+
+    protected:
+
+      /** protected constructor */
+      GeometricObjectEllipse() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+    public:
+
+      /** tile information */
+      glm::vec2 size = glm::vec2(0.0f, 0.0f);
     };
 
+    // 
+    // GeometricObjectPolygon
+    //
 
     class GeometricObjectPolygon : public GeometricObject
     {
+      friend class ObjectLayer;
+
     public:
 
       virtual GeometricObjectPolygon * GetObjectPolygon() override { return this; }
       virtual GeometricObjectPolygon const * GetObjectPolygon() const override { return this; }
 
+    protected:
+
+      /** protected constructor */
+      GeometricObjectPolygon() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
     public:
 
       /** object information */
       std::vector<glm::vec2> points;
     };
 
+    // 
+    // GeometricObjectPolyline
+    //
+
     class GeometricObjectPolyline : public GeometricObject
     {
+      friend class ObjectLayer;
+
     public:
 
       virtual GeometricObjectPolyline * GetObjectPolyline() override { return this; }
       virtual GeometricObjectPolyline const * GetObjectPolyline() const override { return this; }
 
+    protected:
+
+      /** protected constructor */
+      GeometricObjectPolyline() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
     public:
 
       /** object information */
       std::vector<glm::vec2> points;
     };
 
+    // 
+    // GeometricObjectText
+    //
+
     class GeometricObjectText : public GeometricObject
     {
+      friend class ObjectLayer;
 
     public:
 
@@ -312,6 +385,13 @@ namespace chaos
       virtual GeometricObjectText * GetObjectText() override { return this; }
       virtual GeometricObjectText const * GetObjectText() const override { return this; }
 
+    protected:
+
+      /** protected constructor */
+      GeometricObjectText() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
     public:
 
       /** object information */
@@ -328,7 +408,13 @@ namespace chaos
       int wrap = 0;
       /** object information */
       glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+      /** object information */
+      glm::vec2 size = glm::vec2(0.0f, 0.0f);
     };
+
+    // 
+    // GeometricObjectTile
+    //
 
     class GeometricObjectTile : public GeometricObject
     {
@@ -337,38 +423,17 @@ namespace chaos
       virtual GeometricObjectTile * GetObjectTile() override { return this; }
       virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
 
+      /** protected constructor */
+      GeometricObjectTile() = default;
+      /** loading method from XML */
+      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
     public:
 
       /** object information */
       int gid = 0;
     };
 
-    //
-    // WangSetData
-    //
-
-#if 0
-    class WangSetData : public PropertyOwner
-    {
-      friend class Manager;
-      friend class ManagerObject;
-      friend class TileSet;
-
-    protected:
-
-      /** protected constructor */
-      WangSetData() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-
-    protected:
-
-      /** tile information */
-      int tile_index = 0;
-      /** tile information */
-      std::string name;
-    };
-#endif
     //
     // GroundData
     //
@@ -508,6 +573,8 @@ namespace chaos
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** the loading method */
 			bool DoLoadObjects(tinyxml2::XMLElement const * element);
+      /** the loading method */
+      GeometricObject * DoLoadOneObject(tinyxml2::XMLElement const * element);
 
 		public:
 
@@ -589,8 +656,6 @@ namespace chaos
 			/** the filename */
 			boost::filesystem::path path;
 		};
-
-
 
 		//
 		// TileSet

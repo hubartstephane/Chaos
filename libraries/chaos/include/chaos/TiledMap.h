@@ -48,15 +48,6 @@ namespace chaos
 
 		public:
 
-			/** returns whether the property is of type int */
-			bool IsIntProperty() const { return GetIntProperty() != nullptr; }
-			/** returns whether the property is of type float */
-			bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
-			/** returns whether the property is of type bool */
-			bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
-			/** returns whether the property is of type string */
-			bool IsStringProperty() const { return GetStringProperty() != nullptr; }
-
 			/** returns a pointer on the int property */
 			virtual int * GetIntProperty() { return nullptr; }
 			virtual int const * GetIntProperty() const { return nullptr; }
@@ -69,6 +60,15 @@ namespace chaos
 			/** returns a pointer on the string property */
 			virtual std::string * GetStringProperty() { return nullptr; }
 			virtual std::string const * GetStringProperty() const { return nullptr; }
+
+      /** returns whether the property is of type int */
+      bool IsIntProperty() const { return GetIntProperty() != nullptr; }
+      /** returns whether the property is of type float */
+      bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
+      /** returns whether the property is of type bool */
+      bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
+      /** returns whether the property is of type string */
+      bool IsStringProperty() const { return GetStringProperty() != nullptr; }
 
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }
@@ -103,6 +103,9 @@ namespace chaos
 			/** returns a pointer on the int property */
 			virtual std::string * GetStringProperty() { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
 			virtual std::string const * GetStringProperty() const { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
+
+      /** returns the value of the property */
+      T GetValue() { return value; }
 
 		protected:
 
@@ -177,6 +180,37 @@ namespace chaos
       friend class BaseObject;
       friend class TileSet;
 
+    public:
+
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectPoint * GetObjectPoint() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectPoint const * GetObjectPoint() const { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectRectangle * GetObjectRectangle() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectRectangle const * GetObjectRectangle() const { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectEllipse * GetObjectEllipse() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectEllipse const * GetObjectEllipse() const { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectPolygon * GetObjectPolygon() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectPolygon const * GetObjectPolygon() const { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectPolyline * GetObjectPolyline() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectPolyline const * GetObjectPolyline() const { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectText * GetObjectText() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectText const * GetObjectText() const { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectTile * GetObjectTile() { return nullptr; }
+      /** cast method into iyts subtype */
+      virtual class GeometricObjectTile const * GetObjectTile() const { return nullptr; }
+
     protected:
 
       /** protected constructor */
@@ -201,7 +235,112 @@ namespace chaos
       /** tile information */
       glm::vec2 size = glm::vec2(0.0f, 0.0f);
       /** tile information */
-      float rotation = 0.0f; // clockwisze rotation in degree
+      float rotation = 0.0f; // clockwise rotation in degree
+    };
+
+    //
+    //
+    //
+
+    class GeometricObjectPoint : public GeometricObject
+    {
+    public:
+
+      virtual GeometricObjectPoint * GetObjectPoint() override { return this; }
+      virtual GeometricObjectPoint const * GetObjectPoint() const override { return this; }
+    };
+
+    class GeometricObjectRectangle : public GeometricObject
+    {
+    public:
+
+      virtual GeometricObjectRectangle * GetObjectRectangle() override { return this; }
+      virtual GeometricObjectRectangle const * GetObjectRectangle() const override { return this; }
+    };
+
+    class GeometricObjectEllipse : public GeometricObject
+    {
+    public:
+
+      virtual GeometricObjectEllipse * GetObjectEllipse() override { return this; }
+      virtual GeometricObjectEllipse const * GetObjectEllipse() const override { return this; }
+    };
+
+
+    class GeometricObjectPolygon : public GeometricObject
+    {
+    public:
+
+      virtual GeometricObjectPolygon * GetObjectPolygon() override { return this; }
+      virtual GeometricObjectPolygon const * GetObjectPolygon() const override { return this; }
+
+    public:
+
+      /** object information */
+      std::vector<glm::vec2> points;
+    };
+
+    class GeometricObjectPolyline : public GeometricObject
+    {
+    public:
+
+      virtual GeometricObjectPolyline * GetObjectPolyline() override { return this; }
+      virtual GeometricObjectPolyline const * GetObjectPolyline() const override { return this; }
+
+    public:
+
+      /** object information */
+      std::vector<glm::vec2> points;
+    };
+
+    class GeometricObjectText : public GeometricObject
+    {
+
+    public:
+
+      static int const HALIGN_LEFT = 0;
+      static int const HALIGN_CENTER = 1;
+      static int const HALIGN_RIGHT = 2;
+      static int const HALIGN_JUSTIFY = 3;
+
+      static int const VALIGN_TOP = 0;
+      static int const VALIGN_CENTER = 1;
+      static int const VALIGN_BOTTOM = 2;
+
+    public:
+
+      virtual GeometricObjectText * GetObjectText() override { return this; }
+      virtual GeometricObjectText const * GetObjectText() const override { return this; }
+
+    public:
+
+      /** object information */
+      int halign = HALIGN_LEFT;
+      /** object information */
+      int valign = VALIGN_TOP;
+      /** object information */
+      std::string fontfamily;
+      /** object information */
+      std::string text;
+      /** object information */
+      int pixelsize = 0;
+      /** object information */
+      int wrap = 0;
+      /** object information */
+      glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    };
+
+    class GeometricObjectTile : public GeometricObject
+    {
+    public:
+
+      virtual GeometricObjectTile * GetObjectTile() override { return this; }
+      virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
+
+    public:
+
+      /** object information */
+      int gid = 0;
     };
 
     //
@@ -247,11 +386,11 @@ namespace chaos
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-    protected:
+    public:
 
-      /** tile information */
+      /** object information */
       int tile_index = 0;
-      /** tile information */
+      /** object information */
       std::string name;
     };
 
@@ -272,7 +411,7 @@ namespace chaos
       /** loading method from XML */
       virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-    protected:
+    public:
 
       /** tile information */
       int id = 0;
@@ -305,6 +444,8 @@ namespace chaos
 			/** the owner of the object */
 			class Map * map = nullptr;
 
+    public:
+
 			/** the name of the layer */
 			std::string name;
 			/** whether the layer is visible */
@@ -335,7 +476,7 @@ namespace chaos
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-		protected:
+		public:
 
 			/** layer information */
 			boost::filesystem::path image_path;
@@ -368,7 +509,7 @@ namespace chaos
 			/** the loading method */
 			bool DoLoadObjects(tinyxml2::XMLElement const * element);
 
-		protected:
+		public:
 
 			/** layer information */
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -402,7 +543,7 @@ namespace chaos
 			/** loading buffer method */
 			void DoLoadTileBufferFromBase64(Buffer<char> const & buffer);
 
-		protected:
+		public:
 
 			/** layer information */
 			glm::ivec2 size = glm::ivec2(0, 0);
@@ -442,6 +583,9 @@ namespace chaos
 
 			/** the manager */
 			Manager * manager = nullptr;
+
+    public:
+
 			/** the filename */
 			boost::filesystem::path path;
 		};
@@ -475,7 +619,7 @@ namespace chaos
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const override { return "tileset"; }
 
-		protected:
+		public:
 
 			/** tileset information */
 			std::string name;
@@ -563,7 +707,7 @@ namespace chaos
 			/** load the object groups */
 			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
 
-		protected:
+		public:
 
 			/** map information */
 			int orientation = ORIENTATION_ORTHOGONAL;

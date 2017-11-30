@@ -812,6 +812,46 @@ namespace chaos
 			return DoLoadObjectListHelper(element, tile_layers, "layer", nullptr, this);
 		}
 
+    TileInfo Map::FindTileInfo(int gid)
+    {
+      TileInfo result;
+      if (gid <= 0)
+      {
+        int count = tilesets.size();
+        for (int i = count - 1; i >= 0; --i)
+        {
+          TileSetData & data = tilesets[i];
+          if (gid >= data.first_gid)
+          {
+            result.gid = 1 + (gid - data.first_gid);
+            result.tileset = data.tileset.get();
+            return result;
+          }
+        }
+      }
+      return result;
+    }
+    
+    TileInfo const Map::FindTileInfo(int gid) const
+    {
+      TileInfo result;
+      if (gid <= 0)
+      {
+        int count = tilesets.size();
+        for (int i = count - 1; i >= 0; --i)
+        {
+          TileSetData const & data = tilesets[i];
+          if (gid >= data.first_gid)
+          {
+            result.gid = 1 + (gid - data.first_gid);
+            result.tileset = data.tileset.get();
+            return result;
+          }
+        }
+      }
+      return result;
+    }
+
 		//
 		// Manager methods
 		//

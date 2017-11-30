@@ -744,6 +744,16 @@ namespace chaos
 			boost::intrusive_ptr<TileSet> tileset;
 		};
 
+    class TileInfo
+    {
+    public:
+
+      /** the final gid of the search tile */
+      int gid = 0;
+      /** the tileset considered */
+      TileSet * tileset = nullptr;
+    };
+
 		class Map : public ManagerObject
 		{
 			friend class Manager;
@@ -784,6 +794,11 @@ namespace chaos
 			bool DoLoadImageLayers(tinyxml2::XMLElement const * element);
 			/** load the object groups */
 			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
+
+      /** find tileset data for a given gid */
+      TileInfo FindTileInfo(int gid);
+      /** find tileset data for a given gid */
+      TileInfo const FindTileInfo(int gid) const;
 
 		public:
 

@@ -7,34 +7,28 @@ namespace chaos
 {
 	void GLTools::SetViewportWithAspect(glm::ivec2 & size, float aspect)
 	{
-		int x = 0;
-		int y = 0;
-
-#if 0
-		if (width <= 0.0f || height <= 0.0f)
+		if (size.x <= 0.0f || size.y <= 0.0f)
 			return;
 
-
+		int x = 0;
+		int y = 0;
 		if (aspect > 0.0f)
 		{
-			float effective_aspect = ((float)width) / ((float)height);
-			if (effective_aspect > 1.0f)
-			{
-				width = (int)(aspect * (float)height);
-			
-
-		
+			float effective_aspect = ((float)size.x) / ((float)size.y);
+						
+			glm::ivec2 ori_size = size;
+			if (effective_aspect > aspect) // width too large
+			{				
+				size.x = (int)(aspect * (float)size.y);			
+				x      = (ori_size.x - size.x) / 2;				
 			}
-			else if (effective_aspect < 1.0f)
+			else if (effective_aspect < aspect) // height too large
 			{
-				height = (int)(((float)width) / aspect);
-			
-			
+				size.y = (int)(((float)size.x) / aspect);			
+				y      = (ori_size.y - size.y) / 2;
 			}	
 		}
-#endif
 		glViewport(x, y, size.x, size.y);
-
 	}
 
 	bool GLTools::IsMatrixType(GLenum type)

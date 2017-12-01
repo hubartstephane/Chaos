@@ -81,7 +81,7 @@ protected:
 		return nullptr;
 	}
 
-	virtual bool OnDraw(int width, int height) override
+	virtual bool OnDraw(glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -89,7 +89,7 @@ protected:
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
@@ -97,7 +97,7 @@ protected:
 
 		// XXX : the scaling is used to avoid the near plane clipping      
 		static float FOV =  60.0f;
-		glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)width, (float)height, 1.0f, far_plane);
+		glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
 		glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
@@ -115,7 +115,7 @@ protected:
 
 		mesh->Render(program_data, nullptr, 0, 0);
 
-		debug_display.Display(width, height);    
+		debug_display.Display(size.x, size.y);    
 
 		return true;
 	}

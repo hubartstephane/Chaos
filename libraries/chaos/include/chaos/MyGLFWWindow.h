@@ -136,9 +136,9 @@ namespace chaos
       /** called whenever the user try to close window */
       virtual bool OnWindowClosed() { return true; }
       /** called whenever the window is resized */
-      virtual void OnWindowResize(int width, int height) {}
+      virtual void OnWindowResize(glm::ivec2 size) {}
       /** called whenever the window is redrawn */
-      virtual bool OnDraw(int width, int height) { return true; }
+      virtual bool OnDraw(glm::ivec2 size) { return true; }
       /** called whenever the mouse is moved */
       virtual void OnMouseMove(double x, double y) {}
       /** called whenever the mouse button is down / up */

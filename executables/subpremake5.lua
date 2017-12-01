@@ -21,3 +21,6 @@ ProcessSubPremake("NANA")
 
 CURRENT_GROUP = BASE_GROUP .. "/MODEL3D"
 ProcessSubPremake("MODEL3D")
+
+CURRENT_GROUP = BASE_GROUP .. "/LUDUMDARE"
+ProcessSubPremake("LUDUMDARE")

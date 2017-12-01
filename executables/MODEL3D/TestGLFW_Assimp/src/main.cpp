@@ -18,7 +18,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-  virtual bool OnDraw(int width, int height) override
+  virtual bool OnDraw(glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -26,7 +26,7 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, size.x, size.y);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 

@@ -75,7 +75,7 @@ namespace chaos
     {
       Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
       if (my_window != nullptr)
-        my_window->OnWindowResize(width, height);
+        my_window->OnWindowResize(glm::ivec2(width, height));
     }
 
     void Window::DoOnDraw(GLFWwindow * in_glfw_window)
@@ -92,7 +92,7 @@ namespace chaos
         if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
           return;
 
-        if (my_window->OnDraw(width, height))
+        if (my_window->OnDraw(glm::ivec2(width, height)))
           if (my_window->double_buffer)
             glfwSwapBuffers(in_glfw_window);
       }

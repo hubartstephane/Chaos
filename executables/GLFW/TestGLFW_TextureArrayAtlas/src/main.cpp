@@ -64,7 +64,7 @@ protected:
   }
 
 
-  virtual bool OnDraw(int width, int height) override
+  virtual bool OnDraw(glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -76,7 +76,7 @@ protected:
     if (entry == nullptr)
       return true;
 
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, size.x, size.y);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
@@ -84,7 +84,7 @@ protected:
     chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
     static float FOV = 60.0f;
-    glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)width, (float)height, 1.0f, far_plane);
+    glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
     glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
@@ -114,7 +114,7 @@ protected:
 
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
-    debug_display.Display(width, height);
+    debug_display.Display(size.x, size.y);
 
     return true;
   }

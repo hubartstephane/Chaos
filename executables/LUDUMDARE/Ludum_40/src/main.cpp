@@ -48,7 +48,7 @@ protected:
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
-		glm::vec4 clear_color(1.0f, 0.5f, 0.5f, 0.0f);
+		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		float far_plane = 1000.0f;
@@ -141,8 +141,8 @@ protected:
 
 	virtual void OnMouseButton(int button, int action, int modifier) override
 	{
-		if (button == 1 && action == GLFW_RELEASE)
-			debug_display.AddLine("HelloWorld");
+		//if (button == 1 && action == GLFW_RELEASE)
+		//	debug_display.AddLine("HelloWorld");
 	}
 
 protected:

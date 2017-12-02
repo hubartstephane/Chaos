@@ -18,266 +18,210 @@
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramVariableProvider.h>
+#include <chaos/SoundManager.h>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
 protected:
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
-  {
-    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
-    {
-      ChangeSkyBox(skybox_index + 1);
-    }
-    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
-    {
-      ChangeSkyBox(skybox_index - 1);
-    }
-  }
+	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	{
+		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+		{
 
-  void ChangeSkyBox(int index)
-  {
-    boost::intrusive_ptr<chaos::Texture> new_texture = GenerateSkyBox(index);
-    if (new_texture != nullptr)
-    {
-      skybox_index = index;
-      texture = new_texture;
-    }
-  }
+		}
+		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+		{
 
-  boost::intrusive_ptr<chaos::Texture> GenerateSkyBox(int index)
-  {
-    boost::intrusive_ptr<chaos::Texture> result;
+		}
+	}
 
-    boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
-    chaos::SkyBoxImages skybox;
-    if (index == 0)
-    {
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg").string().c_str());
-    }
-    else if (index == 1)
-    {
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png").string().c_str());
-    }
-    else if (index == 2)
-    {
-      boost::filesystem::path p = resources_path / "Maskonaive";
 
-      boost::filesystem::path left_image   = p / "negx.jpg";
-      boost::filesystem::path front_image  = p / "posz.jpg";
-      boost::filesystem::path right_image  = p / "posx.jpg";
-      boost::filesystem::path back_image   = p / "negz.jpg";
-      boost::filesystem::path top_image    = p / "posy.jpg";
-      boost::filesystem::path bottom_image = p / "negy.jpg";
+	virtual bool OnDraw(glm::ivec2 size) override
+	{
+		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(),
-        right_image.string().c_str(),
-        top_image.string().c_str(),
-        bottom_image.string().c_str(),
-        front_image.string().c_str(),
-        back_image.string().c_str());
-    }
-    else if (index == 3)
-    {
-      boost::filesystem::path p = resources_path / "skybox";
+		float far_plane = 1000.0f;
+		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-      boost::filesystem::path left_image = p / "nx.jpg";
-      boost::filesystem::path front_image = p / "pz.jpg";
-      boost::filesystem::path right_image = p / "px.jpg";
-      boost::filesystem::path back_image = p / "nz.jpg";
-      boost::filesystem::path top_image = p / "py.jpg";
-      boost::filesystem::path bottom_image = p / "ny.jpg";
+		chaos::GLTools::SetViewportWithAspect(size, 16.0f/9.0f);
 
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(),
-        right_image.string().c_str(),
-        top_image.string().c_str(),
-        bottom_image.string().c_str(),
-        front_image.string().c_str(),
-        back_image.string().c_str());
-    }
-    else if (index == 4)
-    {
-      boost::filesystem::path p = resources_path / "MilkyWay";
+		//glViewport(0, 0, size.x, size.y);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
-      boost::filesystem::path left_image = p / "dark-s_nx.jpg";
-      boost::filesystem::path front_image = p / "dark-s_pz.jpg";
-      boost::filesystem::path right_image = p / "dark-s_px.jpg";
-      boost::filesystem::path back_image = p / "dark-s_nz.jpg";
-      boost::filesystem::path top_image = p / "dark-s_py.jpg";
-      boost::filesystem::path bottom_image = p / "dark-s_ny.jpg";
+		glUseProgram(program->GetResourceID());
 
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(),
-        right_image.string().c_str(),
-        top_image.string().c_str(),
-        bottom_image.string().c_str(),
-        front_image.string().c_str(),
-        back_image.string().c_str());
-    }
-    else if (index == 5)
-    {
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "space.png").string().c_str());
-    }
+#if 0
 
-    if (!skybox.IsEmpty())
-      return chaos::GLTextureTools::GenTextureObject(&skybox);
+		// XXX : the scaling is used to avoid the near plane clipping      
+		static float FOV =  60.0f;
+		glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
+		glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
+		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
-    return nullptr;
-  }
+		chaos::GLProgramData const & program_data = program->GetProgramData();
 
-  virtual bool OnDraw(glm::ivec2 size) override
-  {
-    glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+		chaos::GLProgramVariableProviderChain uniform_provider;
 
-    float far_plane = 1000.0f;
-    glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+		uniform_provider.AddVariableValue("projection",      projection_matrix);
+		uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
+		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 
-	chaos::GLTools::SetViewportWithAspect(size, 16.0f/9.0f);
+		uniform_provider.AddVariableTexture("material", texture);
 
-    //glViewport(0, 0, size.x, size.y);
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);   // when viewer is inside the cube
-   
-    glUseProgram(program->GetResourceID());
+		program_data.BindUniforms(&uniform_provider);
 
-    // XXX : the scaling is used to avoid the near plane clipping      
-    static float FOV =  60.0f;
-    glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
-    glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
-    glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
-      
-    chaos::GLProgramData const & program_data = program->GetProgramData();
+		mesh->Render(program_data, nullptr, 0, 0);
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+		debug_display.Display(size.x, size.y);    
+#endif
+		return true;
+	}
 
-    uniform_provider.AddVariableValue("projection",      projection_matrix);
-    uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
-    uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
+	virtual void Finalize() override
+	{
+		program = nullptr;
+		mesh    = nullptr;
+		texture = nullptr;
 
-    uniform_provider.AddVariableTexture("material", texture);
+		debug_display.Finalize();
 
-    program_data.BindUniforms(&uniform_provider);
+		sound_manager = nullptr;
+	}
 
-    mesh->Render(program_data, nullptr, 0, 0);
+	virtual bool Initialize() override
+	{   
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return false;
 
-    debug_display.Display(size.x, size.y);    
+		boost::filesystem::path resources_path = application->GetResourcesPath();
+		boost::filesystem::path image_path     = resources_path / "font.png";
 
-    return true;
-  }
+		chaos::GLDebugOnScreenDisplay::Params debug_params;
+		debug_params.texture_path               = image_path;
+		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+		debug_params.font_characters_per_line   = 10;
+		debug_params.font_characters_line_count = 10;
+		debug_params.character_width            = 20;
+		debug_params.spacing                    = glm::ivec2( 0, 0);
+		debug_params.crop_texture               = glm::ivec2(15, 7);
 
-  virtual void Finalize() override
-  {
-    program = nullptr;
-    mesh    = nullptr;
-    texture = nullptr;
+		if (!debug_display.Initialize(debug_params))
+			return false;
 
-    debug_display.Finalize();
-  }
+		sound_manager = new chaos::SoundManager;
+		if (sound_manager == nullptr)
+			return false;
 
-  virtual bool Initialize() override
-  {   
-    chaos::Application * application = chaos::Application::GetInstance();
-    if (application == nullptr)
-      return false;
 
-    boost::filesystem::path resources_path = application->GetResourcesPath();
-    boost::filesystem::path image_path     = resources_path / "font.png";
+#if 0
 
-    chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path               = image_path;
-    debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    debug_params.font_characters_per_line   = 10;
-    debug_params.font_characters_line_count = 10;
-    debug_params.character_width            = 20;
-    debug_params.spacing                    = glm::ivec2( 0, 0);
-    debug_params.crop_texture               = glm::ivec2(15, 7);
+		chaos::GLProgramLoader loader;
+		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
+		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
 
-    if (!debug_display.Initialize(debug_params))
-      return false;
+		program = loader.GenerateProgramObject();
+		if (program == nullptr)
+			return false;
 
-    debug_display.AddLine("Press +/- to change skybox");
+		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    texture = GenerateSkyBox(0);
-    if (texture == nullptr)
-      return false;
+		mesh = chaos::CubeMeshGenerator(b).GenerateMesh(); 
+		if (mesh == nullptr)
+			return false;
 
-    chaos::GLProgramLoader loader;
-    loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
-    
-    program = loader.GenerateProgramObject();
-    if (program == nullptr)
-      return false;
+#endif
+		return true;
+	}
 
-    chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	{
+		chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
-    mesh = chaos::CubeMeshGenerator(b).GenerateMesh(); 
-    if (mesh == nullptr)
-      return false;
-   
-    return true;
-  }
+		hints.toplevel  = 1;
+		hints.decorated = 1;
+	}
 
-  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
-  {
-    chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+	virtual bool Tick(double delta_time) override
+	{
+		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			RequireWindowClosure();
 
-    hints.toplevel  = 1;
-    hints.decorated = 1;
-  }
+		fps_view_controller.Tick(glfw_window, delta_time);
 
-  virtual bool Tick(double delta_time) override
-  {
-    if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      RequireWindowClosure();
+		debug_display.Tick(delta_time);
 
-    fps_view_controller.Tick(glfw_window, delta_time);
+		return true; // refresh
+	}
 
-    debug_display.Tick(delta_time);
-    
-    return true; // refresh
-  }
-
-  virtual void OnMouseButton(int button, int action, int modifier) override
-  {
-    if (button == 1 && action == GLFW_RELEASE)
-      debug_display.AddLine("HelloWorld");
-  }
+	virtual void OnMouseButton(int button, int action, int modifier) override
+	{
+		if (button == 1 && action == GLFW_RELEASE)
+			debug_display.AddLine("HelloWorld");
+	}
 
 protected:
 
-  boost::intrusive_ptr<chaos::GLProgram>  program;
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-  boost::intrusive_ptr<chaos::Texture>    texture;
- 
-  chaos::FPSViewInputController fps_view_controller;
+	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
-  chaos::GLDebugOnScreenDisplay debug_display;
+	boost::intrusive_ptr<chaos::GLProgram>  program;
+	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
+	boost::intrusive_ptr<chaos::Texture>    texture;
 
-  int skybox_index{ 0 };
+	chaos::FPSViewInputController fps_view_controller;
+
+	chaos::GLDebugOnScreenDisplay debug_display;
+
+	int skybox_index{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
+	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor       = nullptr;
-  params.width         = 700;
-  params.height        = 700;
-  params.monitor_index = 0;
-  chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
+	chaos::MyGLFW::SingleWindowApplicationParams params;
+	params.monitor       = nullptr;
+	params.width         = 700;
+	params.height        = 700;
+	params.monitor_index = 0;
+	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 
-  chaos::Application::Finalize();
+	chaos::Application::Finalize();
 
-  return 0;
+	return 0;
 }
 
 

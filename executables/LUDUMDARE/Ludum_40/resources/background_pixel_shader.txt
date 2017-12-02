@@ -1,0 +1,6 @@
+out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+void main()
+{
+  output_color = vec4(0.0, 0.0, 0.0, 0.0);
+}

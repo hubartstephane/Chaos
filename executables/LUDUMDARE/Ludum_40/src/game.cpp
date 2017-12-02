@@ -226,11 +226,14 @@ bool Game::Initialize(glm::vec2 const & in_world_size, boost::filesystem::path c
 		return false;
 	if (!GenerateAtlas(object_path))
 		return false;
-	if (!GenerateSpriteGPUProgram(path))
-		return false;
 	if (!GenerateSpriteLayers())
 		return false;
 	if (!InitializeGamepadManager())
+		return false;
+
+	if (!GenerateBackgroundGPUProgram(path))
+		return false;
+	if (!GenerateBackgroundMesh())
 		return false;
 
 	return true;
@@ -249,7 +252,9 @@ void Game::Finalize()
 	object_definitions.clear();
 	texture_atlas.Clear();
 
-	sprite_program = nullptr;
+	background_program = nullptr;
+	background_mesh = nullptr;
+	background_texture = nullptr;
 
 	gamepad_manager = nullptr;
 }
@@ -308,17 +313,28 @@ bool Game::GenerateSpriteLayers()
 	return true;
 }
 
-bool Game::GenerateSpriteGPUProgram(boost::filesystem::path const & path)
-{
-#if 0
-	chaos::GLProgramLoader loader;
-	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");
-	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "sprite_pixel_shader.txt");
 
-	sprite_program = loader.GenerateProgramObject();
-	if (sprite_program == nullptr)
+bool Game::GenerateBackgroundMesh()
+{
+	chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+
+	background_mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
+	if (background_mesh == nullptr)
 		return false;
-#endif
+
+	return true;
+}
+
+bool Game::GenerateBackgroundGPUProgram(boost::filesystem::path const & path)
+{
+	chaos::GLProgramLoader loader;
+	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
+	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
+
+	background_program = loader.GenerateProgramObject();
+	if (background_program == nullptr)
+		return false;
+
 	return true;
 }
 
@@ -349,7 +365,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 		return false;
 
 	// Display debug Atlas
-#if 1
+#if 0
 	boost::filesystem::path dst_p;
 	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
 	{
@@ -405,13 +421,25 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 	return true;
 }
 
-void Game::Display(glm::ivec2 viewport_size)
-{	
-	// XXX : for screen,
-	//
-	//       (0, 0) is center.
-	//       (world_size.x / 2, world_size.y) are limits of the the viewport
+void Game::DisplayBackground(glm::ivec2 viewport_size)
+{
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
+	chaos::GLProgramData const & program_data = background_program->GetProgramData();
+
+	chaos::GLProgramVariableProviderChain uniform_provider;
+	//uniform_provider.AddVariableTexture("material", batexture);
+	uniform_provider.AddVariableValue("screen_size", glm::vec2((float)viewport_size.x, (float)viewport_size.y));
+	program_data.BindUniforms(&uniform_provider);
+
+	glUseProgram(background_program->GetResourceID());
+	background_mesh->Render(program_data, nullptr, 0, 0);
+}
+
+void Game::DisplaySprites(glm::ivec2 viewport_size)
+{
 	chaos::GLProgramVariableProviderChain uniform_provider;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f); // XXX : no translation, (0, 0) is center of the screen
@@ -424,6 +452,17 @@ void Game::Display(glm::ivec2 viewport_size)
 		sprite_layers[i].Draw(&uniform_provider);
 }
 
+void Game::Display(glm::ivec2 viewport_size)
+{
+	// XXX : for screen,
+	//
+	//       (0, 0) is center.
+	//       (world_size.x / 2, world_size.y) are limits of the the viewport
+
+	DisplayBackground(viewport_size);
+			
+	DisplaySprites(viewport_size);
+}
 
 bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {

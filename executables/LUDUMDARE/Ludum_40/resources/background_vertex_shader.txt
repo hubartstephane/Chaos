@@ -1,0 +1,10 @@
+layout (location = 0) in vec3 position0;
+layout (location = 1) in vec3 normal;
+
+void main() 
+{
+  gl_Position.x = position0.x;
+  gl_Position.y = position0.y;
+  gl_Position.z = 0.0;
+  gl_Position.w = 1.0;
+}

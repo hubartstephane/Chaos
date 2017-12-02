@@ -157,7 +157,11 @@ protected:
 
 	bool GenerateAtlas(boost::filesystem::path const & path);
 
-	bool GenerateSpriteGPUProgram(boost::filesystem::path const & path);
+	bool GenerateBackgroundGPUProgram(boost::filesystem::path const & path);
+	bool GenerateBackgroundMesh();
+
+	void DisplaySprites(glm::ivec2 viewport_size);
+	void DisplayBackground(glm::ivec2 viewport_size);
 
 	bool GenerateSpriteLayers();
 
@@ -189,8 +193,6 @@ protected:
 
 	std::vector<ObjectDefinition> object_definitions;
 
-	boost::intrusive_ptr<chaos::GLProgram> sprite_program;
-
 	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
 
 	bool game_paused = false;
@@ -198,4 +200,9 @@ protected:
 	bool game_started = false;
 
 	glm::vec2 world_size;
+
+	// background data
+	boost::intrusive_ptr<chaos::GLProgram>  background_program;
+	boost::intrusive_ptr<chaos::SimpleMesh> background_mesh;
+	boost::intrusive_ptr<chaos::Texture>    background_texture;
 };

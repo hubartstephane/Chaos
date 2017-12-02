@@ -32,6 +32,8 @@
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
+	static float const VIEWPORT_WANTED_ASPECT;
+
 protected:
 
 	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
@@ -53,13 +55,16 @@ protected:
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 		float aspect = (16.0f / 9.0f) * 0.0f;
-		chaos::GLTools::SetViewportWithAspect(size, aspect);
+		chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
+		float world_x = 1000.0f;
+		float world_y = world_x / VIEWPORT_WANTED_ASPECT;
+		
 		if (game != nullptr)
-			game->Display(size);
+			game->Display(glm::vec2(world_x, world_y));
 
 		return true;
 	}
@@ -105,7 +110,10 @@ protected:
 		game = new Game;
 		if (game == nullptr)
 			return false;
-		if (!game->Initialize(resources_path))
+
+		float WORLD_X = 1000.0f;
+		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
+		if (!game->Initialize(world_size, resources_path))
 			return false;
 
 		return true;
@@ -149,6 +157,8 @@ protected:
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 };
+
+float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 int _tmain(int argc, char ** argv, char ** env)
 {

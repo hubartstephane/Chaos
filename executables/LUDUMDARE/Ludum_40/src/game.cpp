@@ -28,45 +28,6 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
 
-static glm::ivec2 sss;
-
-char const * Game::vertex_shader_source = R"SHADERCODE(
-    in vec2 position;
-    in vec3 texcoord;
-    in vec3 color;
-
-    uniform mat4 local_to_cam;
-    
-    out vec3 vs_texcoord;
-    out vec3 vs_color;
-    
-    void main()
-    {
-      vs_texcoord = texcoord;
-      vs_color    = color;
-      gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
-    };											
-	)SHADERCODE";
-
-char const * Game::pixel_shader_source = R"SHADERCODE(
-    in vec3 vs_texcoord;
-    in vec3 vs_color;
-
-    out vec4 output_color;
-
-    uniform sampler2DArray material;
-
-    void main()
-    {
-		vec3 tc = vs_texcoord;
-		tc.y = 1.0 - tc.y;
-   
-		vec4 color = texture(material, tc);
-		output_color.xyz = color.xyz * vs_color;
-		output_color.a   = color.a;
-    };
-	)SHADERCODE";
-
 // ======================================================================================
 
 bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
@@ -189,15 +150,13 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		// generate the particles
 		static float SCALE = 100.0f;
 
-
 		Particle p;
 		p.id = def.id;
 		p.life_time = 0.0f;
 		p.half_size = 0.5f * SCALE * glm::vec2(def.scale, def.scale * ratio);
 		for (int i = 0 ; i < def.initial_particle_count ; ++i)
 		{
-			//p.position = (float)i * glm::vec2(0.0f, 0.0f);
-			p.position = glm::vec2(sss.x * 0.5f, sss.y * 0.5f); // + (float)i * glm::vec2(50.0f, 50.0f);
+			p.position = glm::vec2(-500.0f, 0.0f);
 			p.velocity = glm::vec2(0.0f, 0.0f);
 			particles.push_back(p);
 		}
@@ -257,8 +216,10 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 		sprite_layers[i].Tick(delta_time, game_info, clip_rect);
 }
 
-bool Game::Initialize(boost::filesystem::path const & path)
+bool Game::Initialize(glm::vec2 const & in_world_size, boost::filesystem::path const & path)
 {
+	world_size = in_world_size;
+
 	boost::filesystem::path object_path = path / "objects";
 
 	if (!LoadObjectDefinition(object_path / "objects.json"))
@@ -305,8 +266,7 @@ bool Game::GenerateSpriteLayers()
 {
 	chaos::SpriteManagerInitParams sprite_params;
 	sprite_params.atlas = &texture_atlas;
-	sprite_params.program = sprite_program;
-
+	
 	for (size_t i = 0 ; i < object_definitions.size() ; ++i)
 	{
 		int object_layer = object_definitions[i].layer;
@@ -319,6 +279,8 @@ bool Game::GenerateSpriteLayers()
 				return false;			
 			if (!sprite_manager->Initialize(sprite_params))
 				return false;	
+
+			sprite_params.program = sprite_manager->GetProgram(); // reuse the program of the first manager into the other managers
 
 			SpriteLayer sl;
 			sl.layer = object_layer;
@@ -340,17 +302,15 @@ bool Game::GenerateSpriteLayers()
 
 bool Game::GenerateSpriteGPUProgram(boost::filesystem::path const & path)
 {
+#if 0
 	chaos::GLProgramLoader loader;
-	loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-	loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
-
-	//loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");
-	//loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "sprite_pixel_shader.txt");
+	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");
+	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "sprite_pixel_shader.txt");
 
 	sprite_program = loader.GenerateProgramObject();
 	if (sprite_program == nullptr)
 		return false;
-
+#endif
 	return true;
 }
 
@@ -429,14 +389,13 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 	return true;
 }
 
-void Game::Display(glm::ivec2 size)
+void Game::Display(glm::ivec2 viewport_size)
 {	
-	sss = size;
-
 	chaos::GLProgramVariableProviderChain uniform_provider;
 
-	glm::vec3 scale = glm::vec3(2.0f / size.x, 2.0f / size.y, 1.0f);
-	glm::vec3 tr    = glm::vec3(-1.0f, -1.0f, 0.0f);
+	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f); // XXX : no translation, (0, 0) is center of the screen
+	glm::vec3 tr    = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 

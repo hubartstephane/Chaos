@@ -132,11 +132,11 @@ public:
 
 	void Tick(double delta_time, chaos::box2 const * clip_rect);
 
-	bool Initialize(boost::filesystem::path const & path);
+	bool Initialize(glm::vec2 const & in_world_size, boost::filesystem::path const & path);
 
 	void Finalize();
 
-	void Display(glm::ivec2 size);
+	void Display(glm::ivec2 viewport_size);
 
 	void SetPause(bool in_paused);
 
@@ -166,15 +166,6 @@ protected:
 
 protected:
 
-	static char const * Game::pixel_shader_source;
-	static char const * Game::vertex_shader_source;
-
-
-
-	bool game_paused = false;
-
-	bool game_started = false;
-
 	std::vector<SpriteLayer> sprite_layers;
 
 	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
@@ -185,5 +176,9 @@ protected:
 
 	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
 
+	bool game_paused = false;
 
+	bool game_started = false;
+
+	glm::vec2 world_size;
 };

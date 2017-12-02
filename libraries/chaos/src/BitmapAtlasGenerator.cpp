@@ -158,18 +158,18 @@ namespace chaos
 			// enumerate the source directory
 			boost::filesystem::directory_iterator end;
 			for (boost::filesystem::directory_iterator it(p); it != end; ++it)
-				AddBitmapFile(it->path(), nullptr);                           // this will reject files that are not images .. not an error
+				AddBitmapFile(it->path(), nullptr, 0);                           // this will reject files that are not images .. not an error
 			return true;
 		}
 
-		bool BitmapSetInput::AddBitmapFile(boost::filesystem::path const & path, char const * name)
+		bool BitmapSetInput::AddBitmapFile(boost::filesystem::path const & path, char const * name, int tag)
 		{
 			if (boost::filesystem::is_regular_file(path))
-				return AddBitmapFile(path.string().c_str(), name);
+				return AddBitmapFile(path.string().c_str(), name, tag);
 			return false;
 		}
 
-		bool BitmapSetInput::AddBitmapFile(char const * filename, char const * name)
+		bool BitmapSetInput::AddBitmapFile(char const * filename, char const * name, int tag)
 		{
 			assert(filename != nullptr);
 
@@ -180,14 +180,14 @@ namespace chaos
 			{
 				result = AddBitmap(
 					(name != nullptr) ? name : boost::filesystem::path(filename).filename().string().c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
-					bitmap, true);
+					bitmap, true, tag);
 				if (!result)
 					FreeImage_Unload(bitmap);
 			}
 			return result;
 		}
 
-		bool BitmapSetInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap)
+		bool BitmapSetInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
 		{
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
@@ -198,6 +198,7 @@ namespace chaos
 			new_entry.bitmap = bitmap;
 			new_entry.description = ImageTools::GetImageDescription(bitmap);
 			new_entry.release_bitmap = release_bitmap;
+			new_entry.tag            = tag;
 
 			elements.push_back(std::move(new_entry)); // move for std::string copy
 			return true;

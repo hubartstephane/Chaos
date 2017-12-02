@@ -9,9 +9,7 @@
 #include <chaos/GLProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
-#include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/GLProgramData.h>
 #include <chaos/GLProgram.h>
@@ -19,21 +17,44 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
+#include <json.hpp>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+
 
 class ObjectDefinition
 {
+
+public:
+
+	bool LoadFromJSON(nlohmann::json const & json_entry);
+
 public:
 
 	int id = 0;
 	int layer = 0;
+	float scale = 1.0f;
+	boost::filesystem::path bitmap_path;
+
 
 };
 
+bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
+{
+	id = json_entry.value("id", 0);
+	layer = json_entry.value("layer", 0);
+	scale = json_entry.value("scale", 1.0f);
+	bitmap_path = json_entry.value("bitmap", "");
+
+	return true;
+}
 
 
 class Game : public chaos::ReferencedObject
 {
 public:
+
+	void Tick(double delta_time);
 
 	bool Initialize(boost::filesystem::path const & resources_path);
 
@@ -43,18 +64,25 @@ protected:
 
 	bool LoadObjectDefinition(boost::filesystem::path const & obj_def_path);
 
+	bool LoadObjectDefinition(nlohmann::json const & json_entry);
 
-
+	bool GenerateAtlas();
 
 	std::vector<ObjectDefinition> object_definitions;
 };
 
+void Game::Tick(double delta_time)
+{
+
+}
+
 bool Game::Initialize(boost::filesystem::path const & resources_path)
 {
-	boost::filesystem::path obj_def_path = resources_path / "object_definition.json";
-	if (LoadObjectDefinition(obj_def_path))
+	boost::filesystem::path obj_def_path = resources_path / "objects" / "object_definitions.json";
+	if (!LoadObjectDefinition(obj_def_path))
 		return false;
-
+	if (!GenerateAtlas())
+		return false;
 
 
 
@@ -69,14 +97,67 @@ void Game::Finalize()
 
 }
 
-
-bool Game::LoadObjectDefinition(boost::filesystem::path const & obj_def_path)
+bool Game::GenerateAtlas()
 {
+	int ATLAS_SIZE = 1024;
+	int ATLAS_PADDING = 10;
+	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+	
+	chaos::BitmapAtlas::AtlasInput input;
+
+	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
+	if (bitmap_set == nullptr)
+		return false;
+
+	for (ObjectDefinition const & def : object_definitions)
+	{
+		bitmap_set->AddBitmapFile(nullptr, nullptr);
+
+		
+
+
+
+	}
+
+	chaos::BitmapAtlas::Atlas          atlas;
+	chaos::BitmapAtlas::AtlasGenerator generator;
+	if (!generator.ComputeResult(input, atlas, params))
+		return false;
 
 	return true;
 }
 
+bool Game::LoadObjectDefinition(boost::filesystem::path const & obj_def_path)
+{
+	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(obj_def_path, true);
+	if (buf == nullptr)
+		return false;
 
+	try
+	{
+		nlohmann::json json_entry = nlohmann::json::parse(buf.data);
+		return LoadObjectDefinition(json_entry);
+	}
+	catch(...)
+	{
+
+	}
+	return false;
+}
+
+bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
+{
+	nlohmann::json objects = json_entry["objects"];
+
+	for (auto const & obj : objects)
+	{
+		ObjectDefinition def;
+		if (!def.LoadFromJSON(obj))
+			continue;
+		object_definitions.push_back(std::move(def));
+	}
+	return true;
+}
 
 
 
@@ -233,7 +314,7 @@ protected:
 		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			RequireWindowClosure();
 
-		fps_view_controller.Tick(glfw_window, delta_time);
+		game->Tick(delta_time);
 
 		debug_display.Tick(delta_time);
 
@@ -256,8 +337,6 @@ protected:
 	boost::intrusive_ptr<chaos::GLProgram>  program;
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 	boost::intrusive_ptr<chaos::Texture>    texture;
-
-	chaos::FPSViewInputController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 

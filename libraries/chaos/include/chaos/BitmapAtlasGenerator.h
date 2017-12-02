@@ -62,11 +62,11 @@ namespace chaos
 			/** insert multiple bitmap before computation */
 			bool AddBitmapFilesFromDirectory(boost::filesystem::path const & path);
 			/** insert a bitmap before computation */
-			bool AddBitmapFile(boost::filesystem::path const & path, char const * name);
+			bool AddBitmapFile(boost::filesystem::path const & path, char const * name, int tag);
 			/** insert a bitmap before computation */
-			bool AddBitmapFile(char const * filename, char const * name);
+			bool AddBitmapFile(char const * filename, char const * name, int tag);
 			/** insert an image inside the atlas */
-			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap = true);
+			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
 
 		protected:
 

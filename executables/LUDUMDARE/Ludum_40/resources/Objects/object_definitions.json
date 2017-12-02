@@ -1,0 +1,46 @@
+{
+  "objects": [
+    {
+      "id": 1,
+      "layer": 0,
+      "scale": 1.0,
+      "bitmap": "meteor1.png"
+    },
+    {
+      "id": 2,
+      "layer": 0,
+      "scale": 1.0,
+      "bitmap": "meteor2.png"
+    },
+    {
+      "id": 3,
+      "layer": 0,
+      "scale": 1.0,
+      "bitmap": "meteor3.png"
+    },
+    {
+      "id": 4,
+      "layer": 0,
+      "scale": 1.0,
+      "bitmap": "meteor4.png"
+    },
+    {
+      "id": 5,
+      "layer": 1,
+      "scale": 1.0,
+      "bitmap": "planet1.png"
+    },
+    {
+      "id": 6,
+      "layer": 1,
+      "scale": 1.0,
+      "bitmap": "planet2.png"
+    },
+    {
+      "id": 7,
+      "layer": 1,
+      "scale": 1.0,
+      "bitmap": "planet3.png"
+    }
+  ]
+}

@@ -41,11 +41,11 @@ bool AddFakeBitmap(chaos::BitmapAtlas::BitmapSetInput * bitmap_set, char const *
 	{
 		float color = chaos::MathTools::RandFloat();
 
-    chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(bitmap);
+		chaos::ImageDescription image_description = chaos::ImageTools::GetImageDescription(bitmap);
 
 		chaos::ImageTools::FillImageBackground(image_description, glm::vec4(color, color, color, 1.0f));
 
-		result = bitmap_set->AddBitmap(name, bitmap, true);
+		result = bitmap_set->AddBitmap(name, bitmap, true, 0);
 		if (!result)
 			FreeImage_Unload(bitmap);
 	}
@@ -156,7 +156,7 @@ int _tmain(int argc, char ** argv, char ** env)
 		chaos::PixelFormatMergeParams no_luminance_merge_params;
 		no_luminance_merge_params.accept_luminance = false;
 		TestAtlasNormalMode(dst_p / "TestAtlasNoLuminance", resources_path / "GrayOnlyImages", no_luminance_merge_params);
-		
+
 		TestAtlasFont(dst_p, resources_path);
 
 		chaos::WinTools::ShowFile(dst_p.string().c_str());

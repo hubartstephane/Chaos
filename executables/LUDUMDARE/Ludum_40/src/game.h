@@ -157,8 +157,7 @@ protected:
 
 	bool GenerateAtlas(boost::filesystem::path const & path);
 
-	bool GenerateBackgroundGPUProgram(boost::filesystem::path const & path);
-	bool GenerateBackgroundMesh();
+	bool GenerateBackgroundResources(boost::filesystem::path const & path);
 
 	void DisplaySprites(glm::ivec2 viewport_size);
 	void DisplayBackground(glm::ivec2 viewport_size);

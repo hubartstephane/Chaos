@@ -230,10 +230,7 @@ bool Game::Initialize(glm::vec2 const & in_world_size, boost::filesystem::path c
 		return false;
 	if (!InitializeGamepadManager())
 		return false;
-
-	if (!GenerateBackgroundGPUProgram(path))
-		return false;
-	if (!GenerateBackgroundMesh())
+	if (!GenerateBackgroundResources(path))
 		return false;
 
 	return true;
@@ -314,25 +311,27 @@ bool Game::GenerateSpriteLayers()
 }
 
 
-bool Game::GenerateBackgroundMesh()
+bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
-	chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
-
-	background_mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
-	if (background_mesh == nullptr)
+	// generate the background texture
+	background_texture = chaos::GLTextureTools::GenTextureObject((path / "background.jpg").string().c_str());
+	if (background_texture == nullptr)
 		return false;
 
-	return true;
-}
-
-bool Game::GenerateBackgroundGPUProgram(boost::filesystem::path const & path)
-{
+	// generate the background program
 	chaos::GLProgramLoader loader;
 	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
 	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
 
 	background_program = loader.GenerateProgramObject();
 	if (background_program == nullptr)
+		return false;
+
+	// generate the background mesh
+	chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+
+	background_mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
+	if (background_mesh == nullptr)
 		return false;
 
 	return true;
@@ -570,7 +569,7 @@ glm::vec2 Game::GetPlayerInitialPosition() const
 	{
 		return glm::vec2(
 			0.0f,
-			-0.5f * world_size.y + player_particle->half_size.y		
+			0.75f * (-0.5f * world_size.y + player_particle->half_size.y)		
 		);		
 	}
 	return glm::vec2(0.0f, 0.0f);	

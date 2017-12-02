@@ -74,6 +74,7 @@ public:
 	float size = 1.0f;
 	float min_lifetime = 0.0f;
 	float max_lifetime = 0.0f;
+	bool  visible = true;
 
 	boost::filesystem::path bitmap_path;
 };
@@ -126,6 +127,8 @@ class Game : public chaos::ReferencedObject
 {
 	static const int PLAYER_LAYER = -1;
 	static const int PLAYER_OBJECT_ID = 0;
+	static const int TITLE_OBJECT_ID = -1;
+	static const int PAUSED_OBJECT_ID = -2;
 
 	friend class GameInfo;
 

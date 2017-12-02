@@ -1,59 +1,74 @@
 {
   "objects": [
     {
+      "id": -2,
+      "layer": -2,
+      "size": 500.0,
+      "initial_particle_count":1,
+      "bitmap": "Paused.png",        
+      "start_visible": false
+    },    
+    {
+      "id": -1,
+      "layer": -2,
+      "size": 500.0,
+      "initial_particle_count": 1,
+      "bitmap": "Title.png"
+    },
+    {
       "id": 0,
       "layer": -1,
       "size": 50.0,
-      "initial_particle_count":1,
+      "initial_particle_count": 1,
       "bitmap": "spaceship.png"
-    },  
+    },
     {
       "id": 1,
       "layer": 0,
       "size": 80.0,
-      "initial_particle_count":100,
+      "initial_particle_count": 100,
       "bitmap": "meteor1.png"
     },
     {
       "id": 2,
       "layer": 0,
       "size": 50.0,
-      "initial_particle_count":100,
+      "initial_particle_count": 100,
       "bitmap": "meteor2.png"
     },
     {
       "id": 3,
       "layer": 0,
       "size": 40.0,
-      "initial_particle_count":100,
+      "initial_particle_count": 100,
       "bitmap": "meteor3.png"
     },
     {
       "id": 4,
       "layer": 0,
       "size": 30.0,
-      "initial_particle_count":100,
+      "initial_particle_count": 100,
       "bitmap": "meteor4.png"
     },
     {
       "id": 5,
       "layer": 1,
       "size": 300.0,
-      "initial_particle_count":0,
+      "initial_particle_count": 0,
       "bitmap": "planet1.png"
     },
     {
       "id": 6,
       "layer": 1,
       "size": 150.0,
-      "initial_particle_count":0,
+      "initial_particle_count": 0,
       "bitmap": "planet2.png"
     },
     {
       "id": 7,
       "layer": 1,
       "size": 100.0,
-      "initial_particle_count":1,
+      "initial_particle_count": 1,
       "bitmap": "planet3.png"
     }
   ]

@@ -45,6 +45,7 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 	layer = json_entry.value("layer", 0);
 	size = json_entry.value("size", 1.0f);
 	bitmap_path = json_entry.value("bitmap", "");
+	visible = json_entry.value("start_visible", true);
 
 	initial_particle_count = json_entry.value("initial_particle_count", 0);
 	min_lifetime = json_entry.value("min_lifetime", 0.0f);
@@ -428,8 +429,28 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 
 	glUseProgram(background_program->GetResourceID());
 
-	glm::vec2 min_texture_coord = glm::vec2(0.3f, 0.3f);
-	glm::vec2 max_texture_coord = glm::vec2(0.7f, 0.7f);
+	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
+	chaos::TextureDescription texture_description = background_texture->GetTextureDescription();
+
+	float texture_aspect = chaos::MathTools::CastAndDiv<float>(texture_description.width, texture_description.height);
+	float world_aspect   = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
+
+	glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
+	glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
+	if (texture_aspect > world_aspect) // texture too large
+	{
+		float DX = 0.5f * world_aspect;
+		min_texture_coord.x = 0.5f - DX;
+		max_texture_coord.x = 0.5f + DX;	
+	}
+	else if (texture_aspect < world_aspect) // texture too high
+	{
+		float DY = 0.5f * (1.0f / world_aspect);
+		min_texture_coord.y = 0.5f - DY;
+		max_texture_coord.y = 0.5f + DY;	
+	}
+
+	// set the data for program
 
 	chaos::GLProgramData const & program_data = background_program->GetProgramData();
 
@@ -438,7 +459,6 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
 	program_data.BindUniforms(&uniform_provider);
-
 	
 	background_mesh->Render(program_data, nullptr, 0, 0);
 }

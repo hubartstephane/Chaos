@@ -21,6 +21,7 @@
 #include <chaos/BoostTools.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/TextureArrayAtlas.h>
 
 
 class ObjectDefinition
@@ -68,6 +69,10 @@ protected:
 	bool LoadObjectDefinition(nlohmann::json const & json_entry);
 
 	bool GenerateAtlas(boost::filesystem::path const & obj_def_path);
+
+protected:
+
+	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
 
 	std::vector<ObjectDefinition> object_definitions;
 };
@@ -133,9 +138,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & obj_def_path)
 
 #endif
 
-
-
-
+	texture_atlas.LoadFromBitmapAtlas(atlas);
 
 	return true;
 }

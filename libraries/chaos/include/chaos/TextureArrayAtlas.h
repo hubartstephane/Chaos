@@ -16,7 +16,10 @@ namespace chaos
       virtual void Clear() override;
       /** load an atlas from an index file */
       bool LoadAtlas(boost::filesystem::path const & filename);
+	  /** generate a texture atlas from a standard atlas */
+	  bool LoadFromBitmapAtlas(Atlas const & atlas);
 
+	  /* get the array texture */
       boost::intrusive_ptr<Texture> GetTexture() { return texture; }
 
     protected:

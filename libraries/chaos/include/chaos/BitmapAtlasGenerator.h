@@ -212,6 +212,8 @@ namespace chaos
 			int atlas_max_height{ 0 };
 			/** some padding for the bitmap : should be even */
 			int atlas_padding{ 0 };
+			/** the background color */
+			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 			/** parameters for merging different pixel format */
 			PixelFormatMergeParams merge_params;
 		};

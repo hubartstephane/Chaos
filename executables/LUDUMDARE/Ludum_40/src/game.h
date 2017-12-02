@@ -166,6 +166,11 @@ protected:
 
 protected:
 
+	static char const * Game::pixel_shader_source;
+	static char const * Game::vertex_shader_source;
+
+
+
 	bool game_paused = false;
 
 	bool game_started = false;

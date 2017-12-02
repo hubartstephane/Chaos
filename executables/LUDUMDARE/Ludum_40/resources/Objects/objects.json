@@ -39,18 +39,21 @@
       "id": 5,
       "layer": 1,
       "scale": 1.0,
+      "initial_particle_count":0,
       "bitmap": "planet1.png"
     },
     {
       "id": 6,
       "layer": 1,
       "scale": 1.0,
+      "initial_particle_count":0,
       "bitmap": "planet2.png"
     },
     {
       "id": 7,
       "layer": 1,
       "scale": 1.0,
+      "initial_particle_count":1,
       "bitmap": "planet3.png"
     }
   ]

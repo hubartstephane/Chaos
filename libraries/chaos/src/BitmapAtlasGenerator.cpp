@@ -385,7 +385,7 @@ namespace chaos
 					// set the background to black
 					ImageDescription image_description = ImageTools::GetImageDescription(bitmap.get());
 
-					ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+					ImageTools::FillImageBackground(image_description, params.background_color);
 
 					// copy-paste all entries
 					for (BitmapEntryInput const * entry_input : entries)

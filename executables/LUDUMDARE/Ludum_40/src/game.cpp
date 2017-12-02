@@ -28,6 +28,45 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
 
+static glm::ivec2 sss;
+
+char const * Game::vertex_shader_source = R"SHADERCODE(
+    in vec2 position;
+    in vec3 texcoord;
+    in vec3 color;
+
+    uniform mat4 local_to_cam;
+    
+    out vec3 vs_texcoord;
+    out vec3 vs_color;
+    
+    void main()
+    {
+      vs_texcoord = texcoord;
+      vs_color    = color;
+      gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
+    };											
+	)SHADERCODE";
+
+char const * Game::pixel_shader_source = R"SHADERCODE(
+    in vec3 vs_texcoord;
+    in vec3 vs_color;
+
+    out vec4 output_color;
+
+    uniform sampler2DArray material;
+
+    void main()
+    {
+		vec3 tc = vs_texcoord;
+		tc.y = 1.0 - tc.y;
+   
+		vec4 color = texture(material, tc);
+		output_color.xyz = color.xyz * vs_color;
+		output_color.a   = color.a;
+    };
+	)SHADERCODE";
+
 // ======================================================================================
 
 bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
@@ -148,7 +187,7 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_entry->height, bitmap_entry->width);
 
 		// generate the particles
-		static float SCALE = 50.0f;
+		static float SCALE = 100.0f;
 
 
 		Particle p;
@@ -157,7 +196,8 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		p.half_size = 0.5f * SCALE * glm::vec2(def.scale, def.scale * ratio);
 		for (int i = 0 ; i < def.initial_particle_count ; ++i)
 		{
-			p.position = glm::vec2(0.0f, 0.0f);
+			//p.position = (float)i * glm::vec2(0.0f, 0.0f);
+			p.position = glm::vec2(sss.x * 0.5f, sss.y * 0.5f); // + (float)i * glm::vec2(50.0f, 50.0f);
 			p.velocity = glm::vec2(0.0f, 0.0f);
 			particles.push_back(p);
 		}
@@ -168,9 +208,9 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 {	
 	sprite_manager->ClearSprites(); // remove all GPU buffer data
 
-	// the buffer stores particles that share the layer value, but not the 'type'
-	// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
-	// This algo uses another approch to avoid that
+									// the buffer stores particles that share the layer value, but not the 'type'
+									// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
+									// This algo uses another approch to avoid that
 
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
@@ -182,7 +222,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 			continue;
 
 		int id = def.id;
-		
+
 		chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = bitmap_set->GetEntry(id); // search data corresponding the the model of this sprite
 		if (bitmap_entry == nullptr)
 			continue;
@@ -193,7 +233,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 			Particle const & p = particles[j]; // only manage the particles corresponding to this model of sprite
 			if (p.id != id)
 				continue;
-			sprite_manager->AddSpriteBitmap(bitmap_entry, p.position, p.half_size, chaos::Hotpoint::CENTER);
+			sprite_manager->AddSpriteBitmap(bitmap_entry, p.position, 8.0f * p.half_size, chaos::Hotpoint::CENTER);
 		}
 	}
 }
@@ -238,7 +278,7 @@ bool Game::Initialize(boost::filesystem::path const & path)
 bool Game::InitializeGamepadManager()
 {
 	gamepad_manager = new MyGamepadManager(this);
-	
+
 	return (gamepad_manager != nullptr);
 }
 
@@ -265,7 +305,7 @@ bool Game::GenerateSpriteLayers()
 {
 	chaos::SpriteManagerInitParams sprite_params;
 	sprite_params.atlas = &texture_atlas;
-	//sprite_params.program = sprite_program;
+	sprite_params.program = sprite_program;
 
 	for (size_t i = 0 ; i < object_definitions.size() ; ++i)
 	{
@@ -280,14 +320,12 @@ bool Game::GenerateSpriteLayers()
 			if (!sprite_manager->Initialize(sprite_params))
 				return false;	
 
-			sprite_params.program = sprite_manager->GetProgram(); // duplicate program for all other layers
-
 			SpriteLayer sl;
 			sl.layer = object_layer;
 			sl.sprite_manager = sprite_manager;
 
 			sprite_layers.push_back(std::move(sl));
-			
+
 			sprite_layer = &sprite_layers.back();
 		} 
 	}
@@ -302,14 +340,12 @@ bool Game::GenerateSpriteLayers()
 
 bool Game::GenerateSpriteGPUProgram(boost::filesystem::path const & path)
 {
-	return true;
-
-
-
 	chaos::GLProgramLoader loader;
+	loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+	loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");
-	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "sprite_pixel_shader.txt");
+	//loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");
+	//loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "sprite_pixel_shader.txt");
 
 	sprite_program = loader.GenerateProgramObject();
 	if (sprite_program == nullptr)
@@ -324,7 +360,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	int ATLAS_SIZE = 1024;
 	int ATLAS_PADDING = 10;
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
-	
+
 	chaos::BitmapAtlas::AtlasInput input;
 
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
@@ -395,19 +431,17 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 
 void Game::Display(glm::ivec2 size)
 {	
-	chaos::GLProgramVariableProvider uniform_provider;
+	sss = size;
+
+	chaos::GLProgramVariableProviderChain uniform_provider;
+
+	glm::vec3 scale = glm::vec3(2.0f / size.x, 2.0f / size.y, 1.0f);
+	glm::vec3 tr    = glm::vec3(-1.0f, -1.0f, 0.0f);
+	glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
+	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
 	for (int i = sprite_layers.size() - 1 ; i >= 0; --i)
 		sprite_layers[i].Draw(&uniform_provider);
-
-
-
-#if 0
-	chaos::GLProgramVariableProviderChain uniform_provider;
-	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
-
-	sprite_manager.Display(&uniform_provider);
-#endif
 }
 
 

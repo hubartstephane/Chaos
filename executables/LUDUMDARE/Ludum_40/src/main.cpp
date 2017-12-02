@@ -46,49 +46,21 @@ protected:
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
-		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 clear_color(1.0f, 0.5f, 0.5f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		chaos::GLTools::SetViewportWithAspect(size, 16.0f/9.0f);
+		float aspect = (16.0f / 9.0f) * 0.0f;
+		chaos::GLTools::SetViewportWithAspect(size, aspect);
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
-
 		if (game != nullptr)
 			game->Display(size);
 
-
-#if 0
-		glUseProgram(program->GetResourceID());
-
-
-
-		// XXX : the scaling is used to avoid the near plane clipping      
-		static float FOV =  60.0f;
-		glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
-		glm::mat4 local_to_world_matrix  = glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
-		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
-
-		chaos::GLProgramData const & program_data = program->GetProgramData();
-
-		chaos::GLProgramVariableProviderChain uniform_provider;
-
-		uniform_provider.AddVariableValue("projection",      projection_matrix);
-		uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
-		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
-
-		uniform_provider.AddVariableTexture("material", texture);
-
-		program_data.BindUniforms(&uniform_provider);
-
-		mesh->Render(program_data, nullptr, 0, 0);
-
-		debug_display.Display(size.x, size.y);    
-#endif
 		return true;
 	}
 

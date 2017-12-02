@@ -34,7 +34,9 @@ namespace chaos
 
     void main()
     {
-      vec4 color = texture(material, vs_texcoord);
+      vec3 texcoord = vs_texcoord;
+      texcoord.y = 1.0 - texcoord.y;
+      vec4 color = texture(material, texcoord);
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
     };

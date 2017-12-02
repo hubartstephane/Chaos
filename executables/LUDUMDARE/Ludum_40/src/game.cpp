@@ -381,7 +381,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 		return false;
 
 	// Display debug Atlas
-#if 0
+#if 1
 	boost::filesystem::path dst_p;
 	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
 	{

@@ -34,9 +34,7 @@ namespace chaos
 
     void main()
     {
-      vec3 texcoord = vs_texcoord;
-      texcoord.y = 1.0 - texcoord.y;
-      vec4 color = texture(material, texcoord);
+      vec4 color = texture(material, vs_texcoord);
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
     };
@@ -120,10 +118,15 @@ namespace chaos
 		glm::vec2 topright_position = bottomleft_position + size;
 		glm::vec2 atlas_size = atlas->GetAtlasDimension();
 
+		// XXX : for OpenGL, texture 0, 0 is top-level
+		//       in image space (0, 0) is bottom-left
+		//       => explains why (1. - Y)
+		//
+
 		float tex_x1 = MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
-		float tex_y1 = MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
+		float tex_y1 = 1.0f - MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
 		float tex_x2 = MathTools::CastAndDiv<float>(entry->x + entry->width, atlas_size.x);
-		float tex_y2 = MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
+		float tex_y2 = 1.0f - MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
 
 		float bitmap_index = (float)entry->bitmap_index;
 

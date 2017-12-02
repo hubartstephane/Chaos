@@ -426,8 +426,10 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
-	glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
-	glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
+	glUseProgram(background_program->GetResourceID());
+
+	glm::vec2 min_texture_coord = glm::vec2(0.3f, 0.3f);
+	glm::vec2 max_texture_coord = glm::vec2(0.7f, 0.7f);
 
 	chaos::GLProgramData const & program_data = background_program->GetProgramData();
 
@@ -437,7 +439,7 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
 	program_data.BindUniforms(&uniform_provider);
 
-	glUseProgram(background_program->GetResourceID());
+	
 	background_mesh->Render(program_data, nullptr, 0, 0);
 }
 

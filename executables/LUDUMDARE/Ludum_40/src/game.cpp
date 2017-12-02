@@ -1,6 +1,8 @@
 #include "game.h"
 
+
 #include <chaos/StandardHeaders.h> 
+#include <chaos/MathTools.h> 
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
@@ -35,24 +37,28 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 	scale = json_entry.value("scale", 1.0f);
 	bitmap_path = json_entry.value("bitmap", "");
 
+	initial_particle_count = json_entry.value("initial_particle_count", 0);
+	min_lifetime = json_entry.value("min_lifetime", 0.0f);
+	max_lifetime = json_entry.value("max_lifetime", 0.0f);
+
 	return true;
 }
 
 // ======================================================================================
 
-TickSpriteLayerInfo::TickSpriteLayerInfo(class Game const & game):
+GameInfo::GameInfo(class Game const & game):
 	texture_atlas(game.texture_atlas),
 	object_definitions(game.object_definitions){}
 
 // ======================================================================================
 
 
-void SpriteLayer::Tick(double delta_time, TickSpriteLayerInfo tick_info, chaos::box2 const * clip_rect)
+void SpriteLayer::Tick(double delta_time, GameInfo game_info, chaos::box2 const * clip_rect)
 {
 	UpdateParticleLifetime(delta_time);
 	UpdateParticleVelocity(delta_time);
 	DestroyParticleByClipRect(clip_rect);
-	UpdateGPUBuffer(tick_info);	
+	UpdateGPUBuffer(game_info);	
 }
 
 void SpriteLayer::UpdateParticleLifetime(double delta_time)
@@ -105,56 +111,97 @@ void SpriteLayer::DestroyParticleByClipRect(chaos::box2 const * in_clip_rect)
 	}
 }
 
+void SpriteLayer::DestroyAllParticles()
+{
+	particles.clear();
+}
 
+void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
+{
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
+	if (bitmap_set == nullptr)
+		return;
 
+	for (ObjectDefinition const & def : game_info.object_definitions)
+	{
+		if (def.layer != layer) // only our layer
+			continue;
+		if (def.initial_particle_count == 0) // only if some particles are to be created
+			continue;
 
-void SpriteLayer::UpdateGPUBuffer(TickSpriteLayerInfo tick_info)
+		chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = bitmap_set->GetEntry(def.id);  // texturing info required to get a ratio between width & height
+		if (bitmap_entry == nullptr)
+			continue;
+
+		if (bitmap_entry->height <= 0.0f || bitmap_entry->width <= 0.0f) // "empty particles" => ignore
+			continue;
+
+		float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_entry->height, bitmap_entry->width);
+
+		// generate the particles
+		Particle p;
+		p.id = def.id;
+		p.life_time = 0.0f;
+		p.half_size = 0.5f * glm::vec2(def.scale, def.scale * ratio);
+		for (int i = 0 ; i < def.initial_particle_count ; ++i)
+		{
+			Particle p;
+			p.position = glm::vec2(0.0f, 0.0f);
+			p.velocity = glm::vec2(0.0f, 0.0f);
+			particles.push_back(p);
+		}
+	}
+}
+
+void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 {	
+	sprite_manager->ClearSprites(); // remove all GPU buffer data
+
 	// the buffer stores particles that share the layer value, but not the 'type'
 	// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
 	// This algo uses another approch to avoid that
 
-	for (ObjectDefinition const & def : tick_info.object_definitions)  // take all object definitions of the whole GAME
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
+	if (bitmap_set == nullptr)
+		return;
+
+	for (ObjectDefinition const & def : game_info.object_definitions)  // take all object definitions of the whole GAME
 	{
 		if (def.layer != layer) // manage only the ones of concerns (layer number consideration) 
 			continue;
 
 		int id = def.id;
+		
+		chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = bitmap_set->GetEntry(id); // search data corresponding the the model of this sprite
+		if (bitmap_entry == nullptr)
+			continue;
 
-	//	chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = 
-
-
-	}
-
-
-
-
-
-	sprite_manager->ClearSprites(); // remove all GPU buffer data
-
-
-
-
-	for (size_t i = 0 ; i < particles.size() ; ++i)
-	{
-	//	sprite_manager->AddSpriteBitmap()
-	
+		size_t particle_count = particles.size();
+		for (size_t j = 0 ; j < particle_count ; ++j)
+		{
+			Particle const & p = particles[j]; // only manage the particles corresponding to this model of sprite
+			if (p.id != id)
+				continue;
+			sprite_manager->AddSpriteBitmap(bitmap_entry, p.position, p.half_size, chaos::Hotpoint::CENTER);
+		}
 	}
 }
 
-void SpriteLayer::Draw(chaos::GLProgramVariableProviderChain & uniform_provider)
+void SpriteLayer::Draw(chaos::GLProgramVariableProvider * uniform_provider)
 {
-
-
+	sprite_manager->Display(uniform_provider);
 }
 
 // ======================================================================================
 
 void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
-	TickSpriteLayerInfo tick_info(*this);
+	if (game_paused)
+		return;
+
+	GameInfo game_info(*this);
 	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
-		sprite_layers[i].Tick(delta_time, tick_info, clip_rect);
+		sprite_layers[i].Tick(delta_time, game_info, clip_rect);
 }
 
 bool Game::Initialize(boost::filesystem::path const & path)
@@ -318,10 +365,10 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 
 void Game::Display(glm::ivec2 size)
 {	
-	chaos::GLProgramVariableProviderChain uniform_provider;
+	chaos::GLProgramVariableProvider uniform_provider;
 
 	for (int i = sprite_layers.size() - 1 ; i >= 0; --i)
-		sprite_layers[i].Draw(uniform_provider);
+		sprite_layers[i].Draw(&uniform_provider);
 
 
 
@@ -331,4 +378,19 @@ void Game::Display(glm::ivec2 size)
 
 	sprite_manager.Display(&uniform_provider);
 #endif
+}
+
+void Game::SetPause(bool in_paused)
+{
+	game_paused = in_paused;
+}
+
+void Game::OnGameStarted()
+{
+	GameInfo game_info(*this);
+	for (SpriteLayer & layer : sprite_layers)
+	{
+		layer.DestroyAllParticles();
+		layer.InitialPopulateSprites(game_info);	
+	}
 }

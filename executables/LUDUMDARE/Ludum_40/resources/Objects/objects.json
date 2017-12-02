@@ -4,30 +4,35 @@
       "id": 0,
       "layer": -1,
       "scale": 1.0,
+      "initial_particle_count":1,
       "bitmap": "spaceship.png"
     },  
     {
       "id": 1,
       "layer": 0,
       "scale": 1.0,
+      "initial_particle_count":100,
       "bitmap": "meteor1.png"
     },
     {
       "id": 2,
       "layer": 0,
       "scale": 1.0,
+      "initial_particle_count":100,
       "bitmap": "meteor2.png"
     },
     {
       "id": 3,
       "layer": 0,
       "scale": 1.0,
+      "initial_particle_count":100,
       "bitmap": "meteor3.png"
     },
     {
       "id": 4,
       "layer": 0,
       "scale": 1.0,
+      "initial_particle_count":100,
       "bitmap": "meteor4.png"
     },
     {

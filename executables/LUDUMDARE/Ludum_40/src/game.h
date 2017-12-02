@@ -36,6 +36,7 @@ public:
 	glm::vec2 half_size;
 	glm::vec2 velocity;
 	float life_time;
+	int   id;
 };
 
 
@@ -52,17 +53,21 @@ public:
 
 	int id = 0;
 	int layer = 0;
+	int initial_particle_count = 0;
 	float scale = 1.0f;
+	float min_lifetime = 0.0f;
+	float max_lifetime = 0.0f;
+
 	boost::filesystem::path bitmap_path;
 };
 
 // ======================================================================================
 
-class TickSpriteLayerInfo
+class GameInfo
 {
 public:
 
-	TickSpriteLayerInfo(class Game const & game);
+	GameInfo(class Game const & game);
 
 	chaos::BitmapAtlas::TextureArrayAtlas const & texture_atlas;
 	std::vector<ObjectDefinition> const & object_definitions;
@@ -74,16 +79,20 @@ class SpriteLayer
 {
 public:
 
-	void Draw(chaos::GLProgramVariableProviderChain & uniform_provider);
+	void Draw(chaos::GLProgramVariableProvider * uniform_provider);
 
-	void Tick(double delta_time, TickSpriteLayerInfo tick_info, chaos::box2 const * clip_rect);
+	void Tick(double delta_time, GameInfo game_info, chaos::box2 const * clip_rect);
+
+	void DestroyAllParticles();
+
+	void InitialPopulateSprites(GameInfo game_info);
 
 protected:
 
 	void UpdateParticleLifetime(double delta_time);
 	void UpdateParticleVelocity(double delta_time);
 	void DestroyParticleByClipRect(chaos::box2 const * clip_rect);
-	void UpdateGPUBuffer(TickSpriteLayerInfo tick_info);
+	void UpdateGPUBuffer(GameInfo game_info);
 
 public:
 
@@ -98,7 +107,7 @@ public:
 
 class Game : public chaos::ReferencedObject
 {
-	friend class TickSpriteLayerInfo;
+	friend class GameInfo;
 
 public:
 
@@ -110,7 +119,11 @@ public:
 
 	void Display(glm::ivec2 size);
 
+	void SetPause(bool in_paused);
+
 protected:
+
+	void OnGameStarted();
 
 	bool LoadObjectDefinition(boost::filesystem::path const & path);
 
@@ -124,9 +137,11 @@ protected:
 
 	SpriteLayer * FindSpriteLayer(int layer);
 
-
-
 protected:
+
+	bool game_paused = false;
+
+	bool game_started = false;
 
 	std::vector<SpriteLayer> sprite_layers;
 

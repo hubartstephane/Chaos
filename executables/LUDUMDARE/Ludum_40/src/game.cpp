@@ -148,13 +148,15 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_entry->height, bitmap_entry->width);
 
 		// generate the particles
+		static float SCALE = 50.0f;
+
+
 		Particle p;
 		p.id = def.id;
 		p.life_time = 0.0f;
-		p.half_size = 0.5f * glm::vec2(def.scale, def.scale * ratio);
+		p.half_size = 0.5f * SCALE * glm::vec2(def.scale, def.scale * ratio);
 		for (int i = 0 ; i < def.initial_particle_count ; ++i)
 		{
-			Particle p;
 			p.position = glm::vec2(0.0f, 0.0f);
 			p.velocity = glm::vec2(0.0f, 0.0f);
 			particles.push_back(p);
@@ -263,7 +265,7 @@ bool Game::GenerateSpriteLayers()
 {
 	chaos::SpriteManagerInitParams sprite_params;
 	sprite_params.atlas = &texture_atlas;
-	sprite_params.program = sprite_program;
+	//sprite_params.program = sprite_program;
 
 	for (size_t i = 0 ; i < object_definitions.size() ; ++i)
 	{
@@ -277,6 +279,8 @@ bool Game::GenerateSpriteLayers()
 				return false;			
 			if (!sprite_manager->Initialize(sprite_params))
 				return false;	
+
+			sprite_params.program = sprite_manager->GetProgram(); // duplicate program for all other layers
 
 			SpriteLayer sl;
 			sl.layer = object_layer;
@@ -298,6 +302,10 @@ bool Game::GenerateSpriteLayers()
 
 bool Game::GenerateSpriteGPUProgram(boost::filesystem::path const & path)
 {
+	return true;
+
+
+
 	chaos::GLProgramLoader loader;
 
 	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");

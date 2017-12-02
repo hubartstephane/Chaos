@@ -1,6 +1,12 @@
 {
   "objects": [
     {
+      "id": 0,
+      "layer": -1,
+      "scale": 1.0,
+      "bitmap": "spaceship.png"
+    },  
+    {
       "id": 1,
       "layer": 0,
       "scale": 1.0,

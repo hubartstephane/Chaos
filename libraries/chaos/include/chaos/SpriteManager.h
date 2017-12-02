@@ -11,6 +11,8 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GLProgramVariableProvider.h>
 #include <chaos/Hotpoint.h>
+#include <chaos/SpriteManager.h>
+
 
 namespace chaos
 {
@@ -38,7 +40,7 @@ namespace chaos
 
 
   /** the manager for sprites */
-  class SpriteManager
+  class SpriteManager : public ReferencedObject
   {
   public:
 

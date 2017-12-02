@@ -22,7 +22,9 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
+#include <chaos/SpriteManager.h>
 
+// ======================================================================================
 
 class ObjectDefinition
 {
@@ -37,8 +39,6 @@ public:
 	int layer = 0;
 	float scale = 1.0f;
 	boost::filesystem::path bitmap_path;
-
-
 };
 
 bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
@@ -51,6 +51,29 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 	return true;
 }
 
+// ======================================================================================
+
+class SpriteLayer
+{
+public:
+
+	void Draw(chaos::GLProgramVariableProviderChain & uniform_provider);
+
+public:
+
+	boost::intrusive_ptr<chaos::SpriteManager> sprite_manager;
+
+	int layer;
+};
+
+void SpriteLayer::Draw(chaos::GLProgramVariableProviderChain & uniform_provider)
+{
+
+
+}
+
+
+// ======================================================================================
 
 class Game : public chaos::ReferencedObject
 {
@@ -58,52 +81,133 @@ public:
 
 	void Tick(double delta_time);
 
-	bool Initialize(boost::filesystem::path const & obj_def_path);
+	bool Initialize(boost::filesystem::path const & path);
 
 	void Finalize();
 
+	void Display(glm::ivec2 size);
+
 protected:
 
-	bool LoadObjectDefinition(boost::filesystem::path const & obj_def_path);
+	bool LoadObjectDefinition(boost::filesystem::path const & path);
 
 	bool LoadObjectDefinition(nlohmann::json const & json_entry);
 
-	bool GenerateAtlas(boost::filesystem::path const & obj_def_path);
+	bool GenerateAtlas(boost::filesystem::path const & path);
+
+	bool GenerateSpriteGPUProgram(boost::filesystem::path const & path);
+
+	bool GenerateSpriteLayers();
+
+	SpriteLayer * FindSpriteLayer(int layer);
+
+
 
 protected:
+
+	std::vector<SpriteLayer> sprite_layers;
 
 	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
 
 	std::vector<ObjectDefinition> object_definitions;
+
+	boost::intrusive_ptr<chaos::GLProgram> sprite_program;
 };
+
+// ======================================================================================
 
 void Game::Tick(double delta_time)
 {
 
 }
 
-bool Game::Initialize(boost::filesystem::path const & obj_def_path)
+bool Game::Initialize(boost::filesystem::path const & path)
 {
-	if (!LoadObjectDefinition(obj_def_path))
+	boost::filesystem::path object_path = path / "objects";
+
+	if (!LoadObjectDefinition(object_path / "objects.json"))
 		return false;
-	if (!GenerateAtlas(obj_def_path))
+	if (!GenerateAtlas(object_path))
 		return false;
-
-
-
+	if (!GenerateSpriteGPUProgram(path))
+		return false;
+	if (!GenerateSpriteLayers())
+		return false;
 
 	return true;
 }
 
 void Game::Finalize()
 {
+	sprite_layers.clear();
 	object_definitions.clear();
+	texture_atlas.Clear();
 
-
+	sprite_program = nullptr;
 }
 
-bool Game::GenerateAtlas(boost::filesystem::path const & obj_def_path)
+SpriteLayer * Game::FindSpriteLayer(int layer)
 {
+	for (size_t i = 0 ; i < sprite_layers.size(); ++i)
+		if (sprite_layers[i].layer == layer)
+			return &sprite_layers[i];
+	return nullptr;
+}
+
+bool Game::GenerateSpriteLayers()
+{
+	chaos::SpriteManagerInitParams sprite_params;
+	sprite_params.atlas = &texture_atlas;
+	sprite_params.program = sprite_program;
+
+	for (size_t i = 0 ; i < object_definitions.size() ; ++i)
+	{
+		int object_layer = object_definitions[i].layer;
+
+		SpriteLayer * sprite_layer = FindSpriteLayer(object_layer);
+		if (sprite_layer == nullptr)
+		{		
+			boost::intrusive_ptr<chaos::SpriteManager> sprite_manager = new chaos::SpriteManager();
+			if (sprite_manager == nullptr)
+				return false;			
+			if (!sprite_manager->Initialize(sprite_params))
+				return false;	
+
+			SpriteLayer sl;
+			sl.layer = object_layer;
+			sl.sprite_manager = sprite_manager;
+
+			sprite_layers.push_back(std::move(sl));
+			
+			sprite_layer = &sprite_layers.back();
+		} 
+	}
+
+	// sort the layers
+	std::sort(sprite_layers.begin(), sprite_layers.end(), [](SpriteLayer const & obj1, SpriteLayer const & obj2){	
+		return (obj1.layer < obj2.layer);			
+	});
+
+	return true;
+}
+
+bool Game::GenerateSpriteGPUProgram(boost::filesystem::path const & path)
+{
+	chaos::GLProgramLoader loader;
+
+	loader.AddShaderSource(GL_VERTEX_SHADER, (path / "sprite_vertex_shader.txt").string().c_str());
+	loader.AddShaderSource(GL_FRAGMENT_SHADER, (path / "sprite_pixel_shader.txt").string().c_str());
+
+	sprite_program = loader.GenerateProgramObject();
+	if (sprite_program == nullptr)
+		return false;
+
+	return true;
+}
+
+bool Game::GenerateAtlas(boost::filesystem::path const & path)
+{
+	// Fill Atlas generation Input
 	int ATLAS_SIZE = 1024;
 	int ATLAS_PADDING = 10;
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
@@ -116,36 +220,37 @@ bool Game::GenerateAtlas(boost::filesystem::path const & obj_def_path)
 
 	for (ObjectDefinition const & def : object_definitions)
 	{
-		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(obj_def_path, def.bitmap_path); // make the image path relative to resource path
+		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(path, def.bitmap_path); // make the image path relative to resource path
 		if (!bitmap_set->AddBitmapFile(image_path, nullptr, def.id))
 			return false;
 	}
 
+	// generate STD Atlas
 	chaos::BitmapAtlas::Atlas          atlas;
 	chaos::BitmapAtlas::AtlasGenerator generator;
 	if (!generator.ComputeResult(input, atlas, params))
 		return false;
 
-#if 1
-
-	// the tests
+	// Display debug Atlas
+#if 0
 	boost::filesystem::path dst_p;
 	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
 	{
 		atlas.SaveAtlas(dst_p / "LudumAtlas");
 		chaos::WinTools::ShowFile(dst_p.string().c_str());
 	}
-
 #endif
 
-	texture_atlas.LoadFromBitmapAtlas(atlas);
+	// generate texture Atlas
+	if (!texture_atlas.LoadFromBitmapAtlas(atlas))
+		return false;
 
 	return true;
 }
 
-bool Game::LoadObjectDefinition(boost::filesystem::path const & obj_def_path)
+bool Game::LoadObjectDefinition(boost::filesystem::path const & path)
 {
-	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(obj_def_path, true);
+	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(path, true);
 	if (buf == nullptr)
 		return false;
 
@@ -175,6 +280,22 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 	return true;
 }
 
+void Game::Display(glm::ivec2 size)
+{	
+	chaos::GLProgramVariableProviderChain uniform_provider;
+
+	for (int i = sprite_layers.size() - 1 ; i >= 0; --i)
+		sprite_layers[i].Draw(uniform_provider);
+
+
+
+#if 0
+	chaos::GLProgramVariableProviderChain uniform_provider;
+	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
+
+	sprite_manager.Display(&uniform_provider);
+#endif
+}
 
 
 
@@ -189,6 +310,8 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 
 
 
+
+// ======================================================================================
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -220,9 +343,13 @@ protected:
 
 		chaos::GLTools::SetViewportWithAspect(size, 16.0f/9.0f);
 
-		//glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
+
+
+		game->Display(size);
+
+
 #if 0
 		glUseProgram(program->GetResourceID());
 
@@ -294,7 +421,7 @@ protected:
 		game = new Game;
 		if (game == nullptr)
 			return false;
-		if (!game->Initialize(resources_path / "objects" / "object_definitions.json"))
+		if (!game->Initialize(resources_path))
 			return false;
 
 #if 0

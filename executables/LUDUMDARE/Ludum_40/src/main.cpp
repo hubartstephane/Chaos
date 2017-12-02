@@ -18,6 +18,7 @@
 #include <chaos/GLProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
+#include <chaos/BoostTools.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 
@@ -56,7 +57,7 @@ public:
 
 	void Tick(double delta_time);
 
-	bool Initialize(boost::filesystem::path const & resources_path);
+	bool Initialize(boost::filesystem::path const & obj_def_path);
 
 	void Finalize();
 
@@ -66,7 +67,7 @@ protected:
 
 	bool LoadObjectDefinition(nlohmann::json const & json_entry);
 
-	bool GenerateAtlas();
+	bool GenerateAtlas(boost::filesystem::path const & obj_def_path);
 
 	std::vector<ObjectDefinition> object_definitions;
 };
@@ -76,12 +77,11 @@ void Game::Tick(double delta_time)
 
 }
 
-bool Game::Initialize(boost::filesystem::path const & resources_path)
+bool Game::Initialize(boost::filesystem::path const & obj_def_path)
 {
-	boost::filesystem::path obj_def_path = resources_path / "objects" / "object_definitions.json";
 	if (!LoadObjectDefinition(obj_def_path))
 		return false;
-	if (!GenerateAtlas())
+	if (!GenerateAtlas(obj_def_path))
 		return false;
 
 
@@ -97,7 +97,7 @@ void Game::Finalize()
 
 }
 
-bool Game::GenerateAtlas()
+bool Game::GenerateAtlas(boost::filesystem::path const & obj_def_path)
 {
 	int ATLAS_SIZE = 1024;
 	int ATLAS_PADDING = 10;
@@ -111,18 +111,31 @@ bool Game::GenerateAtlas()
 
 	for (ObjectDefinition const & def : object_definitions)
 	{
-		bitmap_set->AddBitmapFile(nullptr, nullptr);
-
-		
-
-
-
+		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(obj_def_path, def.bitmap_path); // make the image path relative to resource path
+		if (!bitmap_set->AddBitmapFile(image_path, nullptr, def.id))
+			return false;
 	}
 
 	chaos::BitmapAtlas::Atlas          atlas;
 	chaos::BitmapAtlas::AtlasGenerator generator;
 	if (!generator.ComputeResult(input, atlas, params))
 		return false;
+
+#if 1
+
+	// the tests
+	boost::filesystem::path dst_p;
+	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
+	{
+
+		chaos::WinTools::ShowFile(dst_p.string().c_str());
+	}
+
+#endif
+
+
+
+
 
 	return true;
 }
@@ -278,7 +291,7 @@ protected:
 		game = new Game;
 		if (game == nullptr)
 			return false;
-		if (!game->Initialize(resources_path))
+		if (!game->Initialize(resources_path / "objects" / "object_definitions.json"))
 			return false;
 
 #if 0

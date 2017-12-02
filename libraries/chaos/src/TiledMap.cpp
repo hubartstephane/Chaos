@@ -169,186 +169,186 @@ namespace chaos
 			return result;
 		}
 
-    //
-    // GeometricObject methods
-    //
+		//
+		// GeometricObject methods
+		//
 
-    std::vector<glm::vec2> GeometricObject::GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name)
-    {
-      std::vector<glm::vec2> result;
+		std::vector<glm::vec2> GeometricObject::GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name)
+		{
+			std::vector<glm::vec2> result;
 
-      tinyxml2::XMLAttribute const * attribute = element->FindAttribute(attribute_name);
-      if (attribute != nullptr)
-      {
-        char const * values = attribute->Value();
-        if (values != nullptr)
-        {
-          glm::vec2 p = glm::vec2(0.0f, 0.0f);
+			tinyxml2::XMLAttribute const * attribute = element->FindAttribute(attribute_name);
+			if (attribute != nullptr)
+			{
+				char const * values = attribute->Value();
+				if (values != nullptr)
+				{
+					glm::vec2 p = glm::vec2(0.0f, 0.0f);
 
-          int coord = 0;         
-          int i = 0;
-          while (values[i] != 0)
-          {
-            p[coord++] = (float)atof(&values[i]);
-            if (coord == 2)
-            {
-              result.push_back(p);
-              p = glm::vec2(0.0f, 0.0f); // flush the point if both axis are found
-              coord = 0;
-            }
+					int coord = 0;         
+					int i = 0;
+					while (values[i] != 0)
+					{
+						p[coord++] = (float)atof(&values[i]);
+						if (coord == 2)
+						{
+							result.push_back(p);
+							p = glm::vec2(0.0f, 0.0f); // flush the point if both axis are found
+							coord = 0;
+						}
 
-            while (values[i] != 0 && values[i] != ',' && values[i] != ' ') // skip until separator
-              ++i;
-            if (values[i] == ',' || values[i] == ' ')
-              ++i;
-          }
-          if (coord == 1)
-            result.push_back(p); // flush the point even if there is a missing axis
-        }
-      }
-      return result;
-    }
+						while (values[i] != 0 && values[i] != ',' && values[i] != ' ') // skip until separator
+							++i;
+						if (values[i] == ',' || values[i] == ' ')
+							++i;
+					}
+					if (coord == 1)
+						result.push_back(p); // flush the point even if there is a missing axis
+				}
+			}
+			return result;
+		}
 
-    bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObject::DoLoad(element))
-        return false;
-      XMLTools::ReadAttribute(element, "width", size.x);
-      XMLTools::ReadAttribute(element, "height", size.y);
-      return true;
-    }
+		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "width", size.x);
+			XMLTools::ReadAttribute(element, "height", size.y);
+			return true;
+		}
 
-    bool GeometricObject::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!PropertyOwner::DoLoad(element))
-        return false;
-      XMLTools::ReadAttribute(element, "id", id);
-      XMLTools::ReadAttribute(element, "name", name);
-      XMLTools::ReadAttribute(element, "type", type);
-      XMLTools::ReadAttribute(element, "visible", visible);
-      XMLTools::ReadAttribute(element, "x", position.x);
-      XMLTools::ReadAttribute(element, "y", position.y);
-      XMLTools::ReadAttribute(element, "rotation", rotation);
-      return true;
-    }
+		bool GeometricObject::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!PropertyOwner::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "id", id);
+			XMLTools::ReadAttribute(element, "name", name);
+			XMLTools::ReadAttribute(element, "type", type);
+			XMLTools::ReadAttribute(element, "visible", visible);
+			XMLTools::ReadAttribute(element, "x", position.x);
+			XMLTools::ReadAttribute(element, "y", position.y);
+			XMLTools::ReadAttribute(element, "rotation", rotation);
+			return true;
+		}
 
-    bool GeometricObjectPoint::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObject::DoLoad(element))
-        return false;
-      return true;
-    }
+		bool GeometricObjectPoint::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			return true;
+		}
 
-    bool GeometricObjectRectangle::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObjectSurface::DoLoad(element))
-        return false;
-      return true;
-    }
+		bool GeometricObjectRectangle::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObjectSurface::DoLoad(element))
+				return false;
+			return true;
+		}
 
-    bool GeometricObjectEllipse::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObjectSurface::DoLoad(element))
-        return false;
-      return true;
-    }
+		bool GeometricObjectEllipse::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObjectSurface::DoLoad(element))
+				return false;
+			return true;
+		}
 
-    bool GeometricObjectPolygon::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObject::DoLoad(element))
-        return false;
-      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
-      points = GetPointArray(polygon_element, "points");
-      return true;
-    }
+		bool GeometricObjectPolygon::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
+			points = GetPointArray(polygon_element, "points");
+			return true;
+		}
 
-    bool GeometricObjectPolyline::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObject::DoLoad(element))
-        return false;
-      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polyline");
-      points = GetPointArray(polygon_element, "points");
-      return true;
-    }
+		bool GeometricObjectPolyline::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polyline");
+			points = GetPointArray(polygon_element, "points");
+			return true;
+		}
 
-    bool GeometricObjectText::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObjectSurface::DoLoad(element))
-        return false;
+		bool GeometricObjectText::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObjectSurface::DoLoad(element))
+				return false;
 
-      tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
+			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
 
-      std::pair<char const*, int> const halign_map[] = {
-        { "left", HALIGN_LEFT },
-        { "center", HALIGN_CENTER },
-        { "right", HALIGN_RIGHT },
-        { "justify", HALIGN_JUSTIFY },
-        { nullptr, HALIGN_LEFT }
-      };
-      XMLTools::ReadEnumAttribute(text_element, "halign", halign_map, halign);
+			std::pair<char const*, int> const halign_map[] = {
+				{ "left", HALIGN_LEFT },
+				{ "center", HALIGN_CENTER },
+				{ "right", HALIGN_RIGHT },
+				{ "justify", HALIGN_JUSTIFY },
+				{ nullptr, HALIGN_LEFT }
+			};
+			XMLTools::ReadEnumAttribute(text_element, "halign", halign_map, halign);
 
-      std::pair<char const*, int> const valign_map[] = {
-        { "top", VALIGN_TOP },
-        { "center", VALIGN_CENTER },
-        { "bottom", VALIGN_BOTTOM },
-        { nullptr, VALIGN_TOP }
-      };
-      XMLTools::ReadEnumAttribute(text_element, "valign", valign_map, valign);
+			std::pair<char const*, int> const valign_map[] = {
+				{ "top", VALIGN_TOP },
+				{ "center", VALIGN_CENTER },
+				{ "bottom", VALIGN_BOTTOM },
+				{ nullptr, VALIGN_TOP }
+			};
+			XMLTools::ReadEnumAttribute(text_element, "valign", valign_map, valign);
 
-      XMLTools::ReadAttribute(text_element, "pixelsize", pixelsize);
-      XMLTools::ReadAttribute(text_element, "wrap", wrap);
-      XMLTools::ReadAttribute(text_element, "fontfamily", fontfamily);
-      ReadXMLColor(text_element, "color", color);
+			XMLTools::ReadAttribute(text_element, "pixelsize", pixelsize);
+			XMLTools::ReadAttribute(text_element, "wrap", wrap);
+			XMLTools::ReadAttribute(text_element, "fontfamily", fontfamily);
+			ReadXMLColor(text_element, "color", color);
 
-      char const * txt = text_element->GetText();
-      if (txt != nullptr)
-        text = txt;
+			char const * txt = text_element->GetText();
+			if (txt != nullptr)
+				text = txt;
 
-      return true;
-    }
+			return true;
+		}
 
-    bool GeometricObjectTile::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!GeometricObjectSurface::DoLoad(element))
-        return false;
+		bool GeometricObjectTile::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!GeometricObjectSurface::DoLoad(element))
+				return false;
 
-      int pseudo_gid = 0;// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
-      XMLTools::ReadAttribute(element, "gid", pseudo_gid);
+			int pseudo_gid = 0;// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
+			XMLTools::ReadAttribute(element, "gid", pseudo_gid);
 
-      gid = (pseudo_gid & ~((1 << 31) | (1 << 30)));
+			gid = (pseudo_gid & ~((1 << 31) | (1 << 30)));
 
-      horizontal_flip = ((pseudo_gid & (1 << 31)) != 0);
-      vertical_flip = ((pseudo_gid & (1 << 30)) != 0);
+			horizontal_flip = ((pseudo_gid & (1 << 31)) != 0);
+			vertical_flip = ((pseudo_gid & (1 << 30)) != 0);
 
-      return true;
-    }
+			return true;
+		}
 
-    //
-    // GroundData methods
-    //
+		//
+		// GroundData methods
+		//
 
-    bool GroundData::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!PropertyOwner::DoLoad(element))
-        return false;
-      XMLTools::ReadAttribute(element, "tile", tile_index);
-      XMLTools::ReadAttribute(element, "name", name);
-      return true;
-    }
+		bool GroundData::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!PropertyOwner::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "tile", tile_index);
+			XMLTools::ReadAttribute(element, "name", name);
+			return true;
+		}
 
-    //
-    // TileData methods
-    //
+		//
+		// TileData methods
+		//
 
-    bool TileData::DoLoad(tinyxml2::XMLElement const * element)
-    {
-      if (!PropertyOwner::DoLoad(element))
-        return false;
-      XMLTools::ReadAttribute(element, "id", id);
-      XMLTools::ReadAttribute(element, "type", type);
-      XMLTools::ReadAttribute(element, "probability", probability);
-      return true;
-    }
+		bool TileData::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!PropertyOwner::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "id", id);
+			XMLTools::ReadAttribute(element, "type", type);
+			XMLTools::ReadAttribute(element, "probability", probability);
+			return true;
+		}
 
 		//
 		// ManagerObject methods
@@ -453,56 +453,56 @@ namespace chaos
 			return true;
 		}
 
-    GeometricObject * ObjectLayer::DoLoadOneObject(tinyxml2::XMLElement const * element)
-    {
-      // tile ?
-      int pseudo_gid = 0;
-      if (XMLTools::ReadAttribute(element, "gid", pseudo_gid)) // this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
-        return new GeometricObjectTile;
+		GeometricObject * ObjectLayer::DoLoadOneObject(tinyxml2::XMLElement const * element)
+		{
+			// tile ?
+			int pseudo_gid = 0;
+			if (XMLTools::ReadAttribute(element, "gid", pseudo_gid)) // this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
+				return new GeometricObjectTile;
 
-      // ellipse ?
-      tinyxml2::XMLElement const * ellipse_element = element->FirstChildElement("ellipse");
-      if (ellipse_element != nullptr)
-        return new GeometricObjectEllipse;
+			// ellipse ?
+			tinyxml2::XMLElement const * ellipse_element = element->FirstChildElement("ellipse");
+			if (ellipse_element != nullptr)
+				return new GeometricObjectEllipse;
 
-      // text ?
-      tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
-      if (text_element != nullptr)
-        return new GeometricObjectText;
+			// text ?
+			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
+			if (text_element != nullptr)
+				return new GeometricObjectText;
 
-      // polygon ?
-      tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
-      if (polygon_element != nullptr)
-        return new GeometricObjectPolygon;
+			// polygon ?
+			tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
+			if (polygon_element != nullptr)
+				return new GeometricObjectPolygon;
 
-      // polyline ?
-      tinyxml2::XMLElement const * polyline_element = element->FirstChildElement("polyline");
-      if (polyline_element != nullptr)
-        return new GeometricObjectPolyline;
+			// polyline ?
+			tinyxml2::XMLElement const * polyline_element = element->FirstChildElement("polyline");
+			if (polyline_element != nullptr)
+				return new GeometricObjectPolyline;
 
-      // point ?
-      tinyxml2::XMLElement const * point_element = element->FirstChildElement("point");
-      if (point_element != nullptr)      
-        return new GeometricObjectPoint;
+			// point ?
+			tinyxml2::XMLElement const * point_element = element->FirstChildElement("point");
+			if (point_element != nullptr)      
+				return new GeometricObjectPoint;
 
-      // rectangle ?
-      return new GeometricObjectRectangle;
-    }
+			// rectangle ?
+			return new GeometricObjectRectangle;
+		}
 
 		bool ObjectLayer::DoLoadObjects(tinyxml2::XMLElement const * element)
 		{
-      tinyxml2::XMLElement const * e = element->FirstChildElement("object");
-      for (; e != nullptr; e = e->NextSiblingElement("object"))
-      {
-        GeometricObject * object = DoLoadOneObject(e);
-        if (object == nullptr)
-          continue;
-        if (!object->DoLoad(e))
-          delete(object);
-        else
-          geometric_objects.push_back(object);
-      }
-      return true;
+			tinyxml2::XMLElement const * e = element->FirstChildElement("object");
+			for (; e != nullptr; e = e->NextSiblingElement("object"))
+			{
+				GeometricObject * object = DoLoadOneObject(e);
+				if (object == nullptr)
+					continue;
+				if (!object->DoLoad(e))
+					delete(object);
+				else
+					geometric_objects.push_back(object);
+			}
+			return true;
 		}
 
 		//
@@ -634,15 +634,15 @@ namespace chaos
 		{
 
 		}
-    
-    bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
-    {
-      return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes");
-    }
+
+		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
+		{
+			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes");
+		}
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
 		{
-      return DoLoadObjectListHelper(element, tiles, "tile", nullptr);
+			return DoLoadObjectListHelper(element, tiles, "tile", nullptr);
 		}
 
 		bool TileSet::DoLoadMembers(tinyxml2::XMLElement const * element)
@@ -692,8 +692,8 @@ namespace chaos
 				return false;
 			if (!DoLoadTiles(element))
 				return false;
-      if (!DoLoadGrounds(element))
-        return false;
+			if (!DoLoadGrounds(element))
+				return false;
 			return true;
 		}
 
@@ -812,45 +812,45 @@ namespace chaos
 			return DoLoadObjectListHelper(element, tile_layers, "layer", nullptr, this);
 		}
 
-    TileInfo Map::FindTileInfo(int gid)
-    {
-      TileInfo result;
-      if (gid <= 0)
-      {
-        int count = tilesets.size();
-        for (int i = count - 1; i >= 0; --i)
-        {
-          TileSetData & data = tilesets[i];
-          if (gid >= data.first_gid)
-          {
-            result.gid = 1 + (gid - data.first_gid);
-            result.tileset = data.tileset.get();
-            return result;
-          }
-        }
-      }
-      return result;
-    }
-    
-    TileInfo const Map::FindTileInfo(int gid) const
-    {
-      TileInfo result;
-      if (gid <= 0)
-      {
-        int count = tilesets.size();
-        for (int i = count - 1; i >= 0; --i)
-        {
-          TileSetData const & data = tilesets[i];
-          if (gid >= data.first_gid)
-          {
-            result.gid = 1 + (gid - data.first_gid);
-            result.tileset = data.tileset.get();
-            return result;
-          }
-        }
-      }
-      return result;
-    }
+		TileInfo Map::FindTileInfo(int gid)
+		{
+			TileInfo result;
+			if (gid <= 0)
+			{
+				int count = tilesets.size();
+				for (int i = count - 1; i >= 0; --i)
+				{
+					TileSetData & data = tilesets[i];
+					if (gid >= data.first_gid)
+					{
+						result.gid = 1 + (gid - data.first_gid);
+						result.tileset = data.tileset.get();
+						return result;
+					}
+				}
+			}
+			return result;
+		}
+
+		TileInfo const Map::FindTileInfo(int gid) const
+		{
+			TileInfo result;
+			if (gid <= 0)
+			{
+				int count = tilesets.size();
+				for (int i = count - 1; i >= 0; --i)
+				{
+					TileSetData const & data = tilesets[i];
+					if (gid >= data.first_gid)
+					{
+						result.gid = 1 + (gid - data.first_gid);
+						result.tileset = data.tileset.get();
+						return result;
+					}
+				}
+			}
+			return result;
+		}
 
 		//
 		// Manager methods

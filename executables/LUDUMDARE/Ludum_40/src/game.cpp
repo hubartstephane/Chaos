@@ -40,13 +40,19 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 
 // ======================================================================================
 
+TickSpriteLayerInfo::TickSpriteLayerInfo(class Game const & game):
+	texture_atlas(game.texture_atlas),
+	object_definitions(game.object_definitions){}
 
-void SpriteLayer::Tick(double delta_time, chaos::box2 const * clip_rect)
+// ======================================================================================
+
+
+void SpriteLayer::Tick(double delta_time, TickSpriteLayerInfo tick_info, chaos::box2 const * clip_rect)
 {
 	UpdateParticleLifetime(delta_time);
 	UpdateParticleVelocity(delta_time);
 	DestroyParticleByClipRect(clip_rect);
-	UpdateGPUBuffer();	
+	UpdateGPUBuffer(tick_info);	
 }
 
 void SpriteLayer::UpdateParticleLifetime(double delta_time)
@@ -72,8 +78,7 @@ void SpriteLayer::UpdateParticleLifetime(double delta_time)
 
 void SpriteLayer::UpdateParticleVelocity(double delta_time)
 {
-	float dt = (float)delta_time;
-	
+	float dt = (float)delta_time;	
 	for (size_t i = 0 ; i < particles.size() ; ++i)
 		particles[i].position += particles[i].velocity * dt;
 }
@@ -103,14 +108,36 @@ void SpriteLayer::DestroyParticleByClipRect(chaos::box2 const * in_clip_rect)
 
 
 
-void SpriteLayer::UpdateGPUBuffer()
-{
+void SpriteLayer::UpdateGPUBuffer(TickSpriteLayerInfo tick_info)
+{	
+	// the buffer stores particles that share the layer value, but not the 'type'
+	// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
+	// This algo uses another approch to avoid that
+
+	for (ObjectDefinition const & def : tick_info.object_definitions)  // take all object definitions of the whole GAME
+	{
+		if (def.layer != layer) // manage only the ones of concerns (layer number consideration) 
+			continue;
+
+		int id = def.id;
+
+	//	chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = 
+
+
+	}
+
+
+
+
 
 	sprite_manager->ClearSprites(); // remove all GPU buffer data
 
+
+
+
 	for (size_t i = 0 ; i < particles.size() ; ++i)
 	{
-		//sprite_manager->AddSpriteBitmap()
+	//	sprite_manager->AddSpriteBitmap()
 	
 	}
 }
@@ -125,13 +152,9 @@ void SpriteLayer::Draw(chaos::GLProgramVariableProviderChain & uniform_provider)
 
 void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
+	TickSpriteLayerInfo tick_info(*this);
 	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
-		sprite_layers[i].Tick(delta_time, clip_rect);
-
-
-
-	
-
+		sprite_layers[i].Tick(delta_time, tick_info, clip_rect);
 }
 
 bool Game::Initialize(boost::filesystem::path const & path)
@@ -208,8 +231,8 @@ bool Game::GenerateSpriteGPUProgram(boost::filesystem::path const & path)
 {
 	chaos::GLProgramLoader loader;
 
-	loader.AddShaderSourceFile(GL_VERTEX_SHADER, (path / "sprite_vertex_shader.txt").string().c_str());
-	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, (path / "sprite_pixel_shader.txt").string().c_str());
+	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "sprite_vertex_shader.txt");
+	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "sprite_pixel_shader.txt");
 
 	sprite_program = loader.GenerateProgramObject();
 	if (sprite_program == nullptr)

@@ -58,20 +58,32 @@ public:
 
 // ======================================================================================
 
+class TickSpriteLayerInfo
+{
+public:
+
+	TickSpriteLayerInfo(class Game const & game);
+
+	chaos::BitmapAtlas::TextureArrayAtlas const & texture_atlas;
+	std::vector<ObjectDefinition> const & object_definitions;
+};
+
+// ======================================================================================
+
 class SpriteLayer
 {
 public:
 
 	void Draw(chaos::GLProgramVariableProviderChain & uniform_provider);
 
-	void Tick(double delta_time, chaos::box2 const * clip_rect);
+	void Tick(double delta_time, TickSpriteLayerInfo tick_info, chaos::box2 const * clip_rect);
 
 protected:
 
 	void UpdateParticleLifetime(double delta_time);
 	void UpdateParticleVelocity(double delta_time);
 	void DestroyParticleByClipRect(chaos::box2 const * clip_rect);
-	void UpdateGPUBuffer();
+	void UpdateGPUBuffer(TickSpriteLayerInfo tick_info);
 
 public:
 
@@ -86,6 +98,8 @@ public:
 
 class Game : public chaos::ReferencedObject
 {
+	friend class TickSpriteLayerInfo;
+
 public:
 
 	void Tick(double delta_time, chaos::box2 const * clip_rect);

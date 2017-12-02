@@ -20,10 +20,33 @@
 #include <chaos/GLProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 
+class ObjectDefinition
+{
+public:
+
+	int id = 0;
+	int layer = 0;
+
+
+};
+
+
+
+class Game
+{
+public:
+
+	void Initialize();
+
+	void Finalize();
+
+	void LoadObjectDefinition();
 
 
 
 
+
+};
 
 
 
@@ -78,10 +101,10 @@ protected:
 		//glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
-
+#if 0
 		glUseProgram(program->GetResourceID());
 
-#if 0
+
 
 		// XXX : the scaling is used to avoid the near plane clipping      
 		static float FOV =  60.0f;

@@ -112,7 +112,7 @@ namespace chaos
 					int w = glyph.second.bitmap_glyph->bitmap.width;
 					int h = glyph.second.bitmap_glyph->bitmap.rows;
 
-					FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, 32);
+					FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::FORMAT_RGBA);
 					if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The entry is still interesting                                          
 					{
 						char name[] = " ";
@@ -392,6 +392,8 @@ namespace chaos
 						BitmapEntry const * entry = entry_input->output_entry;
 
 						if (entry->bitmap_index != i)
+							continue;
+						if (entry_input->bitmap == nullptr)
 							continue;
 
 						// beware, according to FreeImage, the coordinate origin is top-left

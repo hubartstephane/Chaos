@@ -1,2 +1,1 @@
-AddPath("resources")
-AddPath("common resources")
+-- unsupported yet

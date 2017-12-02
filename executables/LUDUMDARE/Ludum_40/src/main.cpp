@@ -27,29 +27,54 @@ public:
 	int id = 0;
 	int layer = 0;
 
-
 };
 
 
 
-class Game
+class Game : public chaos::ReferencedObject
 {
 public:
 
-	void Initialize();
+	bool Initialize(boost::filesystem::path const & resources_path);
 
 	void Finalize();
 
-	void LoadObjectDefinition();
+protected:
+
+	bool LoadObjectDefinition(boost::filesystem::path const & obj_def_path);
 
 
 
 
-
+	std::vector<ObjectDefinition> object_definitions;
 };
 
+bool Game::Initialize(boost::filesystem::path const & resources_path)
+{
+	boost::filesystem::path obj_def_path = resources_path / "object_definition.json";
+	if (LoadObjectDefinition(obj_def_path))
+		return false;
 
 
+
+
+
+	return true;
+}
+
+void Game::Finalize()
+{
+	object_definitions.clear();
+
+
+}
+
+
+bool Game::LoadObjectDefinition(boost::filesystem::path const & obj_def_path)
+{
+
+	return true;
+}
 
 
 
@@ -133,6 +158,8 @@ protected:
 
 	virtual void Finalize() override
 	{
+		game = nullptr;
+
 		program = nullptr;
 		mesh    = nullptr;
 		texture = nullptr;
@@ -167,6 +194,11 @@ protected:
 		if (sound_manager == nullptr)
 			return false;
 
+		game = new Game;
+		if (game == nullptr)
+			return false;
+		if (!game->Initialize(resources_path))
+			return false;
 
 #if 0
 
@@ -215,6 +247,9 @@ protected:
 	}
 
 protected:
+
+	boost::intrusive_ptr<Game> game;
+
 
 	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 

@@ -28,6 +28,19 @@
 
 // ======================================================================================
 
+class Particle
+{
+public:
+
+	glm::vec2 position;
+	glm::vec2 half_size;
+	glm::vec2 velocity;
+	float life_time;
+};
+
+
+// ======================================================================================
+
 class ObjectDefinition
 {
 
@@ -51,9 +64,20 @@ public:
 
 	void Draw(chaos::GLProgramVariableProviderChain & uniform_provider);
 
+	void Tick(double delta_time, chaos::box2 const * clip_rect);
+
+protected:
+
+	void UpdateParticleLifetime(double delta_time);
+	void UpdateParticleVelocity(double delta_time);
+	void DestroyParticleByClipRect(chaos::box2 const * clip_rect);
+	void UpdateGPUBuffer();
+
 public:
 
 	boost::intrusive_ptr<chaos::SpriteManager> sprite_manager;
+
+	std::vector<Particle> particles;
 
 	int layer;
 };
@@ -64,7 +88,7 @@ class Game : public chaos::ReferencedObject
 {
 public:
 
-	void Tick(double delta_time);
+	void Tick(double delta_time, chaos::box2 const * clip_rect);
 
 	bool Initialize(boost::filesystem::path const & path);
 

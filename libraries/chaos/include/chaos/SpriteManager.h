@@ -61,6 +61,10 @@ namespace chaos
     void Display(GLProgramVariableProvider * uniform_provider);
     /** get the number of sprites in the buffer */
     int GetSpriteCount() const { return sprites.size() / 6;}
+	/** remove the sprites (GPU buffer will be clean at next UpdateGPUVertexBuffer)*/
+	void ClearSprites();
+	/** get the program */
+	GLProgram * GetProgram(){ return program.get(); }
 
   protected:
 

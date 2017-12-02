@@ -48,6 +48,12 @@ namespace chaos
 		atlas = nullptr;
 
 		declaration.Clear();
+		sprites.clear();
+	}
+
+	void SpriteManager::ClearSprites()
+	{
+		sprites.clear();
 	}
 
 	bool SpriteManager::Initialize(SpriteManagerInitParams & params)
@@ -209,9 +215,13 @@ namespace chaos
 
 		// fill GPU buffer
 		size_t count = sprites.size();
-		glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
-
-		GLuint binding_index = 0;
-		glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
+		if (count > 0)
+		{
+			GLuint binding_index = 0;
+			glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);		
+			glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());		
+		}
 	}
+
+	
 };

@@ -40,6 +40,81 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 
 // ======================================================================================
 
+
+void SpriteLayer::Tick(double delta_time, chaos::box2 const * clip_rect)
+{
+	UpdateParticleLifetime(delta_time);
+	UpdateParticleVelocity(delta_time);
+	DestroyParticleByClipRect(clip_rect);
+	UpdateGPUBuffer();	
+}
+
+void SpriteLayer::UpdateParticleLifetime(double delta_time)
+{
+	float dt = (float)delta_time;
+
+	size_t i = 0;
+	while (i < particles.size())
+	{
+		if (particles[i].life_time > 0.0f)
+		{
+			particles[i].life_time -= dt;
+			if (particles[i].life_time <= 0.0f)
+			{
+				particles[i] = particles.back();
+				particles.pop_back();
+				continue;
+			}
+		}				
+		++i;
+	}
+}
+
+void SpriteLayer::UpdateParticleVelocity(double delta_time)
+{
+	float dt = (float)delta_time;
+	
+	for (size_t i = 0 ; i < particles.size() ; ++i)
+		particles[i].position += particles[i].velocity * dt;
+}
+
+void SpriteLayer::DestroyParticleByClipRect(chaos::box2 const * in_clip_rect)
+{
+	if (in_clip_rect != nullptr)
+	{
+		chaos::box2 clip_rect = *in_clip_rect;
+
+		size_t i = 0;
+		while (i < particles.size())
+		{
+			chaos::box2 particle_box = chaos::box2(particles[i].position, particles[i].half_size);
+
+			if (!chaos::Collide(clip_rect, particle_box))
+			{
+				particles[i] = particles.back();
+				particles.pop_back();
+				continue;
+			}
+			++i;
+		}
+	}
+}
+
+
+
+
+void SpriteLayer::UpdateGPUBuffer()
+{
+
+	sprite_manager->ClearSprites(); // remove all GPU buffer data
+
+	for (size_t i = 0 ; i < particles.size() ; ++i)
+	{
+		//sprite_manager->AddSpriteBitmap()
+	
+	}
+}
+
 void SpriteLayer::Draw(chaos::GLProgramVariableProviderChain & uniform_provider)
 {
 
@@ -48,8 +123,14 @@ void SpriteLayer::Draw(chaos::GLProgramVariableProviderChain & uniform_provider)
 
 // ======================================================================================
 
-void Game::Tick(double delta_time)
+void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
+	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
+		sprite_layers[i].Tick(delta_time, clip_rect);
+
+
+
+	
 
 }
 

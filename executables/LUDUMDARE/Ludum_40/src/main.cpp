@@ -172,7 +172,7 @@ protected:
 		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			RequireWindowClosure();
 
-		game->Tick(delta_time);
+		game->Tick(delta_time, nullptr);
 
 		debug_display.Tick(delta_time);
 

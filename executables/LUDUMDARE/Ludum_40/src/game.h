@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
+#include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
@@ -25,6 +26,22 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
+
+
+class MyGamepadManager : public chaos::MyGLFW::GamepadManager
+{
+public:
+
+	MyGamepadManager(class Game * in_game) : game(in_game) {}
+
+protected:
+
+	virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
+
+protected:
+
+	class Game * game = nullptr;
+};
 
 // ======================================================================================
 
@@ -109,6 +126,8 @@ class Game : public chaos::ReferencedObject
 {
 	friend class GameInfo;
 
+	friend class MyGamepadManager;
+
 public:
 
 	void Tick(double delta_time, chaos::box2 const * clip_rect);
@@ -120,6 +139,10 @@ public:
 	void Display(glm::ivec2 size);
 
 	void SetPause(bool in_paused);
+
+	void StartGame();
+
+	bool OnKeyEvent(int key, int action);
 
 protected:
 
@@ -134,6 +157,10 @@ protected:
 	bool GenerateSpriteGPUProgram(boost::filesystem::path const & path);
 
 	bool GenerateSpriteLayers();
+
+	bool InitializeGamepadManager();
+
+	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
 	SpriteLayer * FindSpriteLayer(int layer);
 
@@ -150,4 +177,8 @@ protected:
 	std::vector<ObjectDefinition> object_definitions;
 
 	boost::intrusive_ptr<chaos::GLProgram> sprite_program;
+
+	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
+
+
 };

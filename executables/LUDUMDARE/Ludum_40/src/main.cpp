@@ -36,17 +36,13 @@ protected:
 
 	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
-		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
-		{
+		if (game != nullptr)
+			if (game->OnKeyEvent(key, action))
+				return;
 
-		}
-		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
-		{
-
-		}
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+			RequireWindowClosure();
 	}
-
-
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
@@ -62,7 +58,8 @@ protected:
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
 
-		game->Display(size);
+		if (game != nullptr)
+			game->Display(size);
 
 
 #if 0
@@ -139,23 +136,6 @@ protected:
 		if (!game->Initialize(resources_path))
 			return false;
 
-#if 0
-
-		chaos::GLProgramLoader loader;
-		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
-
-		program = loader.GenerateProgramObject();
-		if (program == nullptr)
-			return false;
-
-		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-		mesh = chaos::CubeMeshGenerator(b).GenerateMesh(); 
-		if (mesh == nullptr)
-			return false;
-
-#endif
 		return true;
 	}
 
@@ -189,7 +169,6 @@ protected:
 
 	boost::intrusive_ptr<Game> game;
 
-
 	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
 	boost::intrusive_ptr<chaos::GLProgram>  program;
@@ -197,8 +176,6 @@ protected:
 	boost::intrusive_ptr<chaos::Texture>    texture;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
-
-	int skybox_index{ 0 };
 };
 
 int _tmain(int argc, char ** argv, char ** env)

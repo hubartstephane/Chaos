@@ -30,6 +30,15 @@
 
 // ======================================================================================
 
+bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+{
+	if (game != nullptr)
+		return game->OnPhysicalGamepadInput(physical_gamepad);
+	return true;
+}
+
+// ======================================================================================
+
 bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 {
 	id = json_entry.value("id", 0);
@@ -196,6 +205,8 @@ void SpriteLayer::Draw(chaos::GLProgramVariableProvider * uniform_provider)
 
 void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
+	gamepad_manager->Tick((float)delta_time);
+
 	if (game_paused)
 		return;
 
@@ -216,8 +227,17 @@ bool Game::Initialize(boost::filesystem::path const & path)
 		return false;
 	if (!GenerateSpriteLayers())
 		return false;
+	if (!InitializeGamepadManager())
+		return false;
 
 	return true;
+}
+
+bool Game::InitializeGamepadManager()
+{
+	gamepad_manager = new MyGamepadManager(this);
+	
+	return (gamepad_manager != nullptr);
 }
 
 void Game::Finalize()
@@ -227,6 +247,8 @@ void Game::Finalize()
 	texture_atlas.Clear();
 
 	sprite_program = nullptr;
+
+	gamepad_manager = nullptr;
 }
 
 SpriteLayer * Game::FindSpriteLayer(int layer)
@@ -380,8 +402,57 @@ void Game::Display(glm::ivec2 size)
 #endif
 }
 
+
+bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+{
+	if (!game_started)
+	{		
+		if (physical_gamepad->IsAnyButtonPressed())
+			StartGame();
+	}
+	else
+	{
+		if ((physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) || 
+			(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+			SetPause(!game_paused);		
+	}		
+	return true;
+}
+
+
+bool Game::OnKeyEvent(int key, int action)
+{
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		StartGame();	
+		return true;
+	}
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		SetPause(!game_paused);
+		return true;
+	}
+
+	return false;
+}
+
+void Game::StartGame()
+{
+	if (game_started)
+		return;
+
+	game_started = true;
+	game_paused  = false;
+	OnGameStarted();
+}
+
 void Game::SetPause(bool in_paused)
 {
+	if (!game_started)
+		return;
+	if (game_paused == in_paused)
+		return;
+
 	game_paused = in_paused;
 }
 

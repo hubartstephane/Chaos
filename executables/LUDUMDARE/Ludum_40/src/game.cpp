@@ -43,7 +43,7 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 {
 	id = json_entry.value("id", 0);
 	layer = json_entry.value("layer", 0);
-	scale = json_entry.value("scale", 1.0f);
+	size = json_entry.value("size", 1.0f);
 	bitmap_path = json_entry.value("bitmap", "");
 
 	initial_particle_count = json_entry.value("initial_particle_count", 0);
@@ -148,15 +148,15 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_entry->height, bitmap_entry->width);
 
 		// generate the particles
-		static float SCALE = 100.0f;
+		static float SCALE = 1.0f;
 
 		Particle p;
 		p.id = def.id;
 		p.life_time = 0.0f;
-		p.half_size = 0.5f * SCALE * glm::vec2(def.scale, def.scale * ratio);
+		p.half_size = 0.5f * SCALE * glm::vec2(def.size, def.size * ratio);
 		for (int i = 0 ; i < def.initial_particle_count ; ++i)
 		{
-			p.position = glm::vec2(-500.0f, 0.0f);
+			p.position = glm::vec2(0.0f, 0.0f);
 			p.velocity = glm::vec2(0.0f, 0.0f);
 			particles.push_back(p);
 		}
@@ -192,7 +192,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 			Particle const & p = particles[j]; // only manage the particles corresponding to this model of sprite
 			if (p.id != id)
 				continue;
-			sprite_manager->AddSpriteBitmap(bitmap_entry, p.position, 8.0f * p.half_size, chaos::Hotpoint::CENTER);
+			sprite_manager->AddSpriteBitmap(bitmap_entry, p.position, 2.0f * p.half_size, chaos::Hotpoint::CENTER);
 		}
 	}
 }
@@ -255,6 +255,14 @@ void Game::Finalize()
 }
 
 SpriteLayer * Game::FindSpriteLayer(int layer)
+{
+	for (size_t i = 0 ; i < sprite_layers.size(); ++i)
+		if (sprite_layers[i].layer == layer)
+			return &sprite_layers[i];
+	return nullptr;
+}
+
+SpriteLayer const * Game::FindSpriteLayer(int layer) const
 {
 	for (size_t i = 0 ; i < sprite_layers.size(); ++i)
 		if (sprite_layers[i].layer == layer)
@@ -375,6 +383,14 @@ bool Game::LoadObjectDefinition(boost::filesystem::path const & path)
 	return false;
 }
 
+ObjectDefinition const * Game::FindObjectDefinition(int id) const
+{
+	for (ObjectDefinition const & def : object_definitions)
+		if (def.id == id)
+			return &def;
+	return nullptr;
+}
+
 bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 {
 	nlohmann::json objects = json_entry["objects"];
@@ -391,6 +407,11 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 
 void Game::Display(glm::ivec2 viewport_size)
 {	
+	// XXX : for screen,
+	//
+	//       (0, 0) is center.
+	//       (world_size.x / 2, world_size.y) are limits of the the viewport
+
 	chaos::GLProgramVariableProviderChain uniform_provider;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f); // XXX : no translation, (0, 0) is center of the screen
@@ -465,4 +486,53 @@ void Game::OnGameStarted()
 		layer.DestroyAllParticles();
 		layer.InitialPopulateSprites(game_info);	
 	}
+
+	SetPlayerPosition(GetPlayerInitialPosition());
+}
+
+
+Particle const * Game::GetPlayerParticle() const
+{
+	SpriteLayer const * layer = FindSpriteLayer(PLAYER_LAYER);
+	if (layer != nullptr)
+		if (layer->particles.size() == 1)
+			return &layer->particles[0];
+	return nullptr;
+}
+
+Particle * Game::GetPlayerParticle()
+{
+	SpriteLayer * layer = FindSpriteLayer(PLAYER_LAYER);
+	if (layer != nullptr)
+		if (layer->particles.size() == 1)
+			return &layer->particles[0];
+	return nullptr;
+}
+
+glm::vec2 Game::GetPlayerPosition() const
+{
+	Particle const * player_particle = GetPlayerParticle();
+	if (player_particle != nullptr)
+		return player_particle->position;
+	return glm::vec2(0.0f, 0.0f);
+}
+
+void Game::SetPlayerPosition(glm::vec2 const & in_position)
+{
+	Particle * player_particle = GetPlayerParticle();
+	if (player_particle != nullptr)
+		player_particle->position = in_position;
+}
+
+glm::vec2 Game::GetPlayerInitialPosition() const
+{
+	Particle const * player_particle = GetPlayerParticle();
+	if (player_particle != nullptr)
+	{
+		return glm::vec2(
+			0.0f,
+			-0.5f * world_size.y + player_particle->half_size.y		
+		);		
+	}
+	return glm::vec2(0.0f, 0.0f);	
 }

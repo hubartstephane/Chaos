@@ -71,7 +71,7 @@ public:
 	int id = 0;
 	int layer = 0;
 	int initial_particle_count = 0;
-	float scale = 1.0f;
+	float size = 1.0f;
 	float min_lifetime = 0.0f;
 	float max_lifetime = 0.0f;
 
@@ -124,6 +124,9 @@ public:
 
 class Game : public chaos::ReferencedObject
 {
+	static const int PLAYER_LAYER = -1;
+	static const int PLAYER_OBJECT_ID = 0;
+
 	friend class GameInfo;
 
 	friend class MyGamepadManager;
@@ -163,6 +166,20 @@ protected:
 	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
 	SpriteLayer * FindSpriteLayer(int layer);
+
+	SpriteLayer const * FindSpriteLayer(int layer) const;
+
+	glm::vec2 GetPlayerPosition() const;
+
+	glm::vec2 GetPlayerInitialPosition() const;
+
+	void SetPlayerPosition(glm::vec2 const & in_position);
+
+	ObjectDefinition const * FindObjectDefinition(int id) const;
+
+	Particle const * GetPlayerParticle() const;
+
+	Particle * GetPlayerParticle();
 
 protected:
 

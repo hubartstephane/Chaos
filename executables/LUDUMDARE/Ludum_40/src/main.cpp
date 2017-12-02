@@ -127,7 +127,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & obj_def_path)
 	boost::filesystem::path dst_p;
 	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
 	{
-
+		atlas.SaveAtlas(dst_p / "LudumAtlas");
 		chaos::WinTools::ShowFile(dst_p.string().c_str());
 	}
 

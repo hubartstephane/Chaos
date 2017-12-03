@@ -50,7 +50,7 @@ public:
 
 	static int const SPAWN_TYPE_CENTER = 0;
 	static int const SPAWN_TYPE_OUTASCREEN = 1;
-	static int const SPAWN_TYPE_BACKGROUND = 2;
+	static int const SPAWN_TYPE_OUTASCREEN_TESTCOLLISION = 2;
 
 	bool LoadFromJSON(nlohmann::json const & json_entry);
 
@@ -58,7 +58,6 @@ public:
 
 	int id = 0;
 	int layer = 0;
-	int initial_particle_count = 0;
 	float size = 1.0f;
 	float min_lifetime = 0.0f;
 	float max_lifetime = 0.0f;
@@ -74,6 +73,8 @@ class GameInfo
 public:
 
 	GameInfo(class Game const & game);
+
+	ObjectDefinition const * GetObjectDefinition(int id);
 
 	chaos::BitmapAtlas::TextureArrayAtlas const & texture_atlas;
 	std::vector<ObjectDefinition> const & object_definitions;
@@ -98,8 +99,8 @@ public:
 
 	void DestroyAllParticles();
 
-	void InitialPopulateSprites(GameInfo game_info);
-
+	void PopulateSprites(GameInfo game_info, int count);
+	
 	void SetVisible(bool in_visible);
 
 	bool LoadFromJSON(nlohmann::json const & json_entry);
@@ -110,6 +111,9 @@ protected:
 	void UpdateParticleVelocity(double delta_time);
 	void DestroyParticleByClipRect(GameInfo game_info);
 	void UpdateGPUBuffer(GameInfo game_info);
+
+	std::vector<std::pair<int, size_t>> GetSpritePopulationStats(GameInfo game_info) const;
+	void PopulateSpritesWithDef(GameInfo game_info, int & count, ObjectDefinition const & def);
 
 public:
 

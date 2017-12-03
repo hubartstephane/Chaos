@@ -82,7 +82,7 @@ protected:
 
 	void UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos);
 
-
+	void SpawnExtraParticles(GameInfo game_info, float delta_time);
 
 	void DisplaySprites(glm::ivec2 viewport_size);
 

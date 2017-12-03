@@ -120,15 +120,14 @@ protected:
 	{
 		chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
 
+#if !_DEBUG
 		hints.toplevel  = 1;
+#endif
 		hints.decorated = 1;
 	}
 
 	virtual bool Tick(double delta_time) override
 	{
-		//if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		//	RequireWindowClosure();
-
 		game->Tick(delta_time);
 
 		debug_display.Tick(delta_time);

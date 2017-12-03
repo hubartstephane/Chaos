@@ -68,19 +68,33 @@ void Game::Tick(double delta_time)
 	{
 		gamepad_manager->Tick((float)delta_time);
 
+		GameInfo game_info(*this);
 		if (game_started && !game_paused)
 		{
+			SpawnExtraParticles(game_info, (float)delta_time);
 			UpdatePlayerDisplacement((float)delta_time);
 			FindPlayerCollision();
 		}
-
-		GameInfo game_info(*this);
+		
 		for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
 			sprite_layers[i].Tick(delta_time, game_info);		
 
 		ResetPlayerCachedInputs();
 	}
 }
+
+void Game::SpawnExtraParticles(GameInfo game_info, float delta_time)
+{
+	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
+	{
+		SpriteLayer & layer = sprite_layers[i];
+		if ((int)layer.particles.size() >= layer.max_particle_count) // already too much particles
+			continue;
+
+		layer.PopulateSprites(game_info, layer.max_particle_count - layer.particles.size());		
+	}
+}
+
 
 chaos::box2 Game::GetWorldBox(bool use_padding) const
 {
@@ -225,8 +239,8 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 {
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
-		if (--life < 0)
-			pending_gameover = true;
+		//if (--life < 0)
+		//	pending_gameover = true;
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{
@@ -636,7 +650,7 @@ void Game::ResetWorld()
 	{
 		layer.SetVisible(layer.start_visible);
 		layer.DestroyAllParticles();
-		layer.InitialPopulateSprites(game_info);	
+		layer.PopulateSprites(game_info, layer.max_particle_count);	
 	}
 
 	glm::vec2 screen_space_position = GetPlayerInitialScreenPosition();

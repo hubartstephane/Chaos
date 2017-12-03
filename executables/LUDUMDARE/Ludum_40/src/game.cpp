@@ -180,14 +180,15 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_si
 
 bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json_entry)
 {
+	if (!LoadSpriteLayerInfo(json_entry))
+		return false;
 	if (!LoadObjectDefinition(json_entry))
 		return false;
 	if (!GenerateAtlas(object_path))
 		return false;
-	if (!GenerateSpriteLayers())
+	if (!InitializeSpriteManagers())
 		return false;
-	if (!LoadSpriteLayerInfo(json_entry))
-		return false;
+
 	if (!InitializeGamepadManager())
 		return false;
 	if (!GenerateBackgroundResources(resource_path))
@@ -240,47 +241,36 @@ bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
 
 	for (auto const & json_layer : layers)
 	{
-		int id = json_layer.value("layer", -100);
-		int visible = json_layer.value("start_visible", 1);
+		SpriteLayer sprite_layer;
+		if (!sprite_layer.LoadFromJSON(json_layer))
+			continue;			
 
-		SpriteLayer * sprite_layer = FindSpriteLayer(id);
-		if (sprite_layer != nullptr)
-		{
-			sprite_layer->initial_visible = (visible > 0);
-			sprite_layer->SetVisible(sprite_layer->initial_visible);					
-		}	
+		if (FindSpriteLayer(sprite_layer.layer) != nullptr) // already existing
+			continue;				
+
+		sprite_layers.push_back(sprite_layer);
 	}
 	return true;
 }
 
-bool Game::GenerateSpriteLayers()
+bool Game::InitializeSpriteManagers()
 {
 	chaos::SpriteManagerInitParams sprite_params;
 	sprite_params.atlas = &texture_atlas;
-	
-	for (size_t i = 0 ; i < object_definitions.size() ; ++i)
+
+	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
-		int object_layer = object_definitions[i].layer;
+		SpriteLayer & layer = sprite_layers[i];
+	
+		boost::intrusive_ptr<chaos::SpriteManager> sprite_manager = new chaos::SpriteManager();
+		if (sprite_manager == nullptr)
+			return false;			
+		if (!sprite_manager->Initialize(sprite_params))
+			return false;	
 
-		SpriteLayer * sprite_layer = FindSpriteLayer(object_layer);
-		if (sprite_layer == nullptr)
-		{		
-			boost::intrusive_ptr<chaos::SpriteManager> sprite_manager = new chaos::SpriteManager();
-			if (sprite_manager == nullptr)
-				return false;			
-			if (!sprite_manager->Initialize(sprite_params))
-				return false;	
+		sprite_params.program = sprite_manager->GetProgram(); // reuse the program of the first manager into the other managers
 
-			sprite_params.program = sprite_manager->GetProgram(); // reuse the program of the first manager into the other managers
-
-			SpriteLayer sl;
-			sl.layer = object_layer;
-			sl.sprite_manager = sprite_manager;
-
-			sprite_layers.push_back(std::move(sl));
-
-			sprite_layer = &sprite_layers.back();
-		} 
+		layer.sprite_manager = sprite_manager;
 	}
 
 	// sort the layers
@@ -378,6 +368,10 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 		ObjectDefinition def;
 		if (!def.LoadFromJSON(json_obj))
 			continue;
+
+		if (FindSpriteLayer(def.layer) == nullptr) // layer not existing
+			continue;
+
 		object_definitions.push_back(std::move(def));
 	}
 
@@ -505,7 +499,7 @@ void Game::ResetWorld()
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
 	{
-		layer.SetVisible(layer.initial_visible);
+		layer.SetVisible(layer.start_visible);
 		layer.DestroyAllParticles();
 		layer.InitialPopulateSprites(game_info);	
 	}

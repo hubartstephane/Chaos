@@ -1,16 +1,44 @@
 {
   "layers": [
     {
+      "name": "paused",
       "layer": -3,
+      "collision": 0,
+      "max_particle_count": 1,
+      "relative_speed": 0.0,
       "start_visible": 0
     },
     {
-      "layer": 0,
-      "start_visible": 1
+      "name" :  "press start",
+      "layer": -2,
+      "start_visible": 1,
+      "max_particle_count": 1,
+      "relative_speed": 0.0,
+      "collision" : 0
     },
     {
+      "name" :  "player",
+      "layer": -1,
+      "start_visible": 1,
+      "max_particle_count": 1,
+      "relative_speed": 1,
+      "collision" : 0
+    },
+    {
+      "name" :  "meteors",
+      "layer": 0,
+      "start_visible": 1,
+      "max_particle_count": 500,
+      "relative_speed": 1.0,
+      "collision" : 1
+    },
+    {
+      "name": "planets",
       "layer": 1,
-      "start_visible": 1
+      "start_visible": 1,
+      "max_particle_count": 1,
+      "relative_speed": 0.5,
+      "collision": 0
     }
   ],
   "objects": [
@@ -19,8 +47,8 @@
       "layer": -3,
       "size": 500.0,
       "initial_particle_count": 1,
-      "bitmap": "Paused.png",    
-      "spawn_type": 0      
+      "bitmap": "Paused.png",
+      "spawn_type": 0
     },
     {
       "id": -1,

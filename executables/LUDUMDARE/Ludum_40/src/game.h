@@ -97,7 +97,7 @@ protected:
 
 	bool GenerateBackgroundResources(boost::filesystem::path const & path);
 
-	bool GenerateSpriteLayers();
+	bool InitializeSpriteManagers();
 
 	bool LoadSpriteLayerInfo(nlohmann::json const & json_entry);
 

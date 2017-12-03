@@ -41,7 +41,6 @@ public:
 	int   id;
 };
 
-
 // ======================================================================================
 
 class ObjectDefinition
@@ -98,6 +97,8 @@ public:
 
 	void SetVisible(bool in_visible);
 
+	bool LoadFromJSON(nlohmann::json const & json_entry);
+
 protected:
 
 	void UpdateParticleLifetime(double delta_time);
@@ -111,9 +112,16 @@ public:
 
 	std::vector<Particle> particles;
 
-	int layer;
 
+	// current state	
 	bool visible = true;
-
-	bool initial_visible = true;
+	
+	// properties
+	std::string name;
+	
+	float relative_speed = 1.0f;
+	bool  start_visible = true;
+	bool  collision = true;
+	int   max_particle_count = 0;
+	int   layer = 0;
 };

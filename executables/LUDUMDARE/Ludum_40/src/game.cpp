@@ -90,11 +90,30 @@ void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
 	if (player_particle == nullptr)
 		return;
 
-	float speed = 500.0f;
+	player_particle->position = player_particle->position + delta_time * player_speed * direction;
 
-	player_particle->position = 
-		player_particle->position +  
-		delta_time * speed * direction;
+	
+	chaos::box2 world_bbox  = chaos::box2(glm::vec2(0.0f, 0.0f), world_size * 0.5f);
+	chaos::box2 player_bbox = chaos::box2(player_particle->position, player_particle->half_size);
+
+	chaos::RestrictToInside(world_bbox, player_bbox, false);
+
+	player_particle->position = player_bbox.position;
+
+
+	//chaos::RestrictToInside(world_size, player_bbox, false);
+
+
+	//template<typename T, int dimension>
+	//bool RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
+
+
+
+
+
+
+
+
 }
 
 bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path)

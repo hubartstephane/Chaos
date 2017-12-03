@@ -147,6 +147,7 @@ protected:
 
 	glm::vec2 world_size;
 
+	float player_speed = 500.0f;
 	
 	/** the window in GLFW library */
 	GLFWwindow * glfw_window = nullptr;

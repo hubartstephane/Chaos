@@ -87,6 +87,11 @@ class SpriteLayer
 {
 public:
 
+	static const int NO_COLLISION = 0;
+	static const int COLLISION_DEATH = 1;
+	static const int COLLISION_LEVELUP = 2;
+	static const int COLLISION_SPEEDUP = 3;
+
 	void Draw(chaos::GLProgramVariableProvider * uniform_provider);
 
 	void Tick(double delta_time, GameInfo game_info);
@@ -121,7 +126,7 @@ public:
 	
 	float relative_speed = 1.0f;
 	bool  start_visible = true;
-	bool  collision = true;
+	int   collision_type = 0;
 	int   max_particle_count = 0;
 	int   layer = 0;
 };

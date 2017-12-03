@@ -81,6 +81,8 @@ public:
 
 protected:
 
+
+
 	void DisplaySprites(glm::ivec2 viewport_size);
 
 	void DisplayBackground(glm::ivec2 viewport_size);
@@ -130,6 +132,8 @@ protected:
 	void UpdateWorldDisplacement(float delta_time);
 
 	bool FindPlayerCollision();
+
+	bool OnCollision(Particle & p, int index, SpriteLayer & layer);
 
 	void ResetPlayerCachedInputs();
 

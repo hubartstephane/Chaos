@@ -165,28 +165,47 @@ bool Game::FindPlayerCollision()
 
 	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
-		SpriteLayer const & layer = sprite_layers[i];
-		if (!layer.collision)
+		SpriteLayer & layer = sprite_layers[i];
+		if (layer.collision_type == SpriteLayer::NO_COLLISION)
 			continue;
 
 		size_t count = layer.particles.size();
 		for (size_t j = 0 ; j < count ; ++j)
 		{
-			Particle const & p = layer.particles[j];
+			Particle & p = layer.particles[j];
 
 			chaos::box2 particle_bbox = chaos::box2(p.position, p.half_size);
 		
 			if (chaos::Collide(player_bbox, particle_bbox)) // raw collision detection
-			{
-				result = true;
-			
-			
+			{				
+				result = OnCollision(p, j, layer);			
+				if (result)
+					return result;
 			}
 		}
 	}
 	return result;
 }
 
+bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
+{
+	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
+	{
+		index = index;
+
+	}
+	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
+	{
+		index = index;
+	}
+	else if (layer.collision_type == SpriteLayer::COLLISION_SPEEDUP)
+	{
+		index = index;
+	}
+
+
+	return false;
+}
 
 
 

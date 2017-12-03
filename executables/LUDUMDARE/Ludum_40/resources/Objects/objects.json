@@ -3,7 +3,7 @@
     {
       "name": "paused",
       "layer": -3,
-      "collision": 0,
+      "collision_type": 0,
       "max_particle_count": 1,
       "relative_speed": 0.0,
       "start_visible": 0
@@ -14,15 +14,15 @@
       "start_visible": 1,
       "max_particle_count": 1,
       "relative_speed": 0.0,
-      "collision" : 0
+      "collision_type" : 0
     },
     {
-      "name" :  "player",
+      "name": "player",
       "layer": -1,
       "start_visible": 1,
       "max_particle_count": 1,
       "relative_speed": 1,
-      "collision" : 0
+      "collision_type": 0
     },
     {
       "name" :  "meteors",
@@ -30,7 +30,7 @@
       "start_visible": 1,
       "max_particle_count": 500,
       "relative_speed": 1.0,
-      "collision" : 1
+      "collision_type" : 1
     },
     {
       "name": "planets",
@@ -38,7 +38,23 @@
       "start_visible": 1,
       "max_particle_count": 1,
       "relative_speed": 0.5,
-      "collision": 0
+      "collision_type": 0
+    },
+    {
+      "name": "levelup",
+      "layer": 3,
+      "start_visible": 1,
+      "max_particle_count": 1,
+      "relative_speed": 1.0,
+      "collision_type": 2
+    },
+    {
+      "name" : "speedup",
+      "layer": 4,
+      "start_visible": 1,
+      "max_particle_count": 1,
+      "relative_speed": 1.0,
+      "collision_type" : 3
     }
   ],
   "objects": [
@@ -120,7 +136,32 @@
       "size": 100.0,
       "initial_particle_count": 0,
       "bitmap": "planet3.png",
-      "spawn_type": 2      
+      "spawn_type": 2
+    },
+    {
+      "id": 8,
+      "layer": 3,
+      "size": 30.0,
+      "initial_particle_count": 100,
+      "bitmap": "LevelUp.png",
+      "spawn_type": 1
+    },
+    {
+      "id": 9,
+      "layer": 4,
+      "size": 30.0,
+      "initial_particle_count": 200,
+      "bitmap": "SpeedUp.png",
+      "spawn_type": 1
+    },
+    {
+      "id": 10,
+      "layer": 2,
+      "size": 30.0,
+      "initial_particle_count": 200,
+      "bitmap": "Life.png",
+      "spawn_type": 1
     }
+
   ]
 }

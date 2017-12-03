@@ -38,7 +38,7 @@ bool SpriteLayer::LoadFromJSON(nlohmann::json const & json_entry)
 	layer = json_entry.value("layer", 0);
 	relative_speed = json_entry.value("relative_speed", 1.0f);
 	start_visible = json_entry.value("start_visible", 1) > 0;
-	collision = json_entry.value("collision", 1) > 0;
+	collision_type = json_entry.value("collision_type", 1);
 	max_particle_count = json_entry.value("max_particle_count", 0);
 
 	return true;

@@ -51,11 +51,10 @@ protected:
 
 class Game : public chaos::ReferencedObject
 {	
-	static const int PLAYER_OBJECT_ID = 0;
-
-	static const int PLAYER_LAYER = -1;
-	static const int TITLE_OBJECT_LAYER = -2;
+	static const int PLAYER_LAYER = -1;	
 	static const int PAUSED_OBJECT_LAYER = -3;
+	static const int TITLE_OBJECT_LAYER = -2;
+	static const int GAMEOVER_OBJECT_LAYER = -4;
 
 	friend class GameInfo;
 

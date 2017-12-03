@@ -607,18 +607,22 @@ bool Game::OnKeyEvent(int key, int action)
 
 void Game::GameOver()
 {
-	SetLayerVisibility(PAUSED_OBJECT_LAYER, false);
-	SetLayerVisibility(TITLE_OBJECT_LAYER, true);
-
+	bool old_pending_gameover = pending_gameover;
+	bool old_pending_restart_game = pending_restart_game;
+	
 	game_started = false;
 	game_paused  = false;
 
-	ResetWorld();
+	ResetWorld(); // Layer visibility flags are reseted here !!! => copy want we want for "game over" or "restart"
+
+	SetLayerVisibility(PAUSED_OBJECT_LAYER, false);
+	SetLayerVisibility(GAMEOVER_OBJECT_LAYER, old_pending_gameover);
+	SetLayerVisibility(TITLE_OBJECT_LAYER, old_pending_restart_game);
 }
 
 void Game::ResetWorld()
 {
-	pending_restart_game = pending_gameover = false;
+	pending_restart_game = pending_gameover = false;	
 
 	world_position = GetWorldInitialPosition();
 
@@ -675,6 +679,7 @@ void Game::OnGameStarted()
 	game_paused  = false;
 
 	SetLayerVisibility(TITLE_OBJECT_LAYER, false);
+	SetLayerVisibility(GAMEOVER_OBJECT_LAYER, false);
 }
 
 

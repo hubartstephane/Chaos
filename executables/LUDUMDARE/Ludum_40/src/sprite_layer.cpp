@@ -167,13 +167,11 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_entry->height, bitmap_entry->width);
 
 		// generate the particles
-		static float SCALE = 1.0f;
-
 		Particle p;
 		p.id = def.id;
 		p.life_time = 0.0f;
 		p.velocity = glm::vec2(0.0f, 0.0f);
-		p.half_size = 0.5f * SCALE * glm::vec2(def.size, def.size * ratio);
+		p.half_size = 0.5f * glm::vec2(def.size, def.size * ratio);
 
 		if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_CENTER)
 		{
@@ -184,7 +182,7 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 				particles.push_back(p);
 			}			
 		}
-		else if (true || def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN)
+		else // if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN)
 		{
 			// compute the 5 spawn zone probabilities => compute their relative surface
 			chaos::box2 world_box         = game_info.world_box;
@@ -259,14 +257,6 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 					zones[surface_index].position + 
 					zones[surface_index].half_size * random - world_box.position; // screen space position
 
-				particles.push_back(p);
-			}		
-		}
-		else if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_BACKGROUND)
-		{
-			for (int i = 0 ; i < def.initial_particle_count * 5; ++i)
-			{
-				p.position = glm::vec2(0.0f, 0.0f);
 				particles.push_back(p);
 			}		
 		}

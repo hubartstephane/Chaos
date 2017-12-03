@@ -1,6 +1,14 @@
 {
   "layers": [
     {
+      "name": "gameover",
+      "layer": -4,
+      "collision_type": 0,
+      "max_particle_count": 1,
+      "relative_speed": 0.0,
+      "start_visible": 0
+    },
+    {
       "name": "paused",
       "layer": -3,
       "collision_type": 0,
@@ -79,6 +87,14 @@
 
   "objects": [
     {
+      "id": -3,
+      "layer": -4,
+      "size": 500.0,
+      "initial_particle_count": 1,
+      "bitmap": "GameOver.png",
+      "spawn_type": 0
+    },
+    {
       "id": -2,
       "layer": -3,
       "size": 500.0,
@@ -132,7 +148,7 @@
       "size": 80.0,
       "initial_particle_count": 20,
       "bitmap": "meteor1.png",
-      "spawn_type": 1      
+      "spawn_type": 1
     },
     {
       "id": 5,
@@ -140,7 +156,7 @@
       "size": 50.0,
       "initial_particle_count": 20,
       "bitmap": "meteor2.png",
-      "spawn_type": 1      
+      "spawn_type": 1
     },
     {
       "id": 6,
@@ -156,15 +172,15 @@
       "size": 30.0,
       "initial_particle_count": 20,
       "bitmap": "meteor4.png",
-      "spawn_type": 1      
+      "spawn_type": 1
     },
     {
-      "id":8,
+      "id": 8,
       "layer": 3,
       "size": 300.0,
       "initial_particle_count": 15,
       "bitmap": "planet1.png",
-      "spawn_type": 2      
+      "spawn_type": 2
     },
     {
       "id": 9,
@@ -172,7 +188,7 @@
       "size": 150.0,
       "initial_particle_count": 15,
       "bitmap": "planet2.png",
-      "spawn_type": 2      
+      "spawn_type": 2
     },
     {
       "id": 10,

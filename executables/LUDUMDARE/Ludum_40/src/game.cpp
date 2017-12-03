@@ -524,12 +524,23 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	}
 
 	// set the data for program
+	float life_ratio = chaos::MathTools::CastAndDiv<float>(life, initial_life);
+	if (life_ratio > 1.0f)
+		life_ratio = 1.0f;
+
+	float level_ratio = chaos::MathTools::CastAndDiv<float>(level, 40);
+	if (level_ratio > 1.0f)
+		level_ratio = 1.0f;
+
 	chaos::GLProgramData const & program_data = background_program->GetProgramData();
 
 	chaos::GLProgramVariableProviderChain uniform_provider;
 	uniform_provider.AddVariableTexture("material", background_texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
+	uniform_provider.AddVariableValue("life_ratio", life_ratio);
+	uniform_provider.AddVariableValue("level", level_ratio);
+
 	program_data.BindUniforms(&uniform_provider);
 	
 	background_mesh->Render(program_data, nullptr, 0, 0);

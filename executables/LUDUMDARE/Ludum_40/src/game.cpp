@@ -136,7 +136,7 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 }
 void Game::UpdateWorldDisplacement(float delta_time)
 {
-	world_position += world_speed * delta_time;
+	world_position.y += world_speed * delta_time;
 }
 
 void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
@@ -511,6 +511,8 @@ bool Game::OnKeyEvent(int key, int action)
 void Game::ResetWorld()
 {
 	world_position = glm::vec2(0.0f, 0.0f);
+	player_speed   = player_initial_speed;
+	world_speed    = world_initial_speed;
 
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)

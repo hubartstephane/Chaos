@@ -146,9 +146,7 @@ protected:
 
 	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
 
-	bool game_paused = false;
 
-	bool game_started = false;
 
 	glm::vec2 world_size;
 
@@ -158,10 +156,24 @@ protected:
 
 	glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
 
-	glm::vec2 world_speed = glm::vec2(0.0f, 30.0f);
+	float world_speed = 30.0f;
 
 	float player_speed = 500.0f;
 	
+	// some in game values
+
+
+	// initial values
+	float player_initial_speed = 500.0f;
+
+	float world_initial_speed = 30.0f;
+
+
+	// game state
+	bool game_paused = false;
+
+	bool game_started = false;
+
 	/** the window in GLFW library */
 	GLFWwindow * glfw_window = nullptr;
 

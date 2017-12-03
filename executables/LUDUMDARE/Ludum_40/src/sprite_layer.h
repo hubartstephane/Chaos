@@ -78,7 +78,8 @@ public:
 
 	chaos::BitmapAtlas::TextureArrayAtlas const & texture_atlas;
 	std::vector<ObjectDefinition> const & object_definitions;
-	glm::vec2 world_size;
+	chaos::box2 world_box;
+	chaos::box2 world_box_padding;
 };
 
 // ======================================================================================

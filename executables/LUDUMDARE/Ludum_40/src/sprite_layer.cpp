@@ -53,7 +53,8 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 GameInfo::GameInfo(class Game const & game):
 	texture_atlas(game.texture_atlas),
 	object_definitions(game.object_definitions),
-	world_size(game.world_size)
+	world_box(game.GetWorldBBox(false)),
+	world_box_padding(game.GetWorldBBox(true))
 {}
 
 // ======================================================================================
@@ -157,14 +158,15 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		Particle p;
 		p.id = def.id;
 		p.life_time = 0.0f;
+		p.velocity = glm::vec2(0.0f, 0.0f);
 		p.half_size = 0.5f * SCALE * glm::vec2(def.size, def.size * ratio);
 
 		if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_CENTER)
 		{
 			for (int i = 0 ; i < def.initial_particle_count ; ++i)
 			{
-				p.position = glm::vec2(0.0f, 0.0f);
-				p.velocity = glm::vec2(0.0f, 0.0f);
+				p.position = game_info.world_box.position;				
+
 				particles.push_back(p);
 			}			
 		}
@@ -175,7 +177,8 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 				float rx = (2.0f * chaos::MathTools::RandFloat()) - 1.0f; // random numbers between -1 and +1
 				float ry = (2.0f * chaos::MathTools::RandFloat()) - 1.0f;
 
-				p.position = 0.5f * game_info.world_size * glm::vec2(rx, ry);			
+				p.position = game_info.world_box.position + game_info.world_box.half_size * glm::vec2(rx, ry);			
+
 				particles.push_back(p);
 			}		
 		}
@@ -184,7 +187,6 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 			for (int i = 0 ; i < def.initial_particle_count ; ++i)
 			{
 				p.position = glm::vec2(0.0f, 0.0f);
-				p.velocity = glm::vec2(0.0f, 0.0f);
 				particles.push_back(p);
 			}		
 		}

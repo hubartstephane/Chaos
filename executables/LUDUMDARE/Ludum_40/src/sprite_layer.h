@@ -131,6 +131,7 @@ public:
 	float relative_speed = 1.0f;
 	bool  start_visible = true;
 	int   collision_type = 0;
+	int   min_particle_count = 0;
 	int   max_particle_count = 0;
 	int   layer = 0;
 };

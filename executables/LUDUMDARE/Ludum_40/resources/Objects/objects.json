@@ -4,6 +4,7 @@
       "name": "gameover",
       "layer": -4,
       "collision_type": 0,
+      "min_particle_count": 1,
       "max_particle_count": 1,
       "relative_speed": 0.0,
       "start_visible": 0
@@ -12,6 +13,7 @@
       "name": "paused",
       "layer": -3,
       "collision_type": 0,
+      "min_particle_count": 1,
       "max_particle_count": 1,
       "relative_speed": 0.0,
       "start_visible": 0
@@ -20,6 +22,7 @@
       "name": "press start",
       "layer": -2,
       "start_visible": 1,
+      "min_particle_count": 1,
       "max_particle_count": 1,
       "relative_speed": 0.0,
       "collision_type": 0
@@ -28,6 +31,7 @@
       "name": "player",
       "layer": -1,
       "start_visible": 1,
+      "min_particle_count": 1,
       "max_particle_count": 1,
       "relative_speed": 0,
       "collision_type": 0
@@ -36,6 +40,7 @@
       "name": "levelup",
       "layer": 0,
       "start_visible": 1,
+      "min_particle_count": 20,
       "max_particle_count": 20,
       "relative_speed": 1.0,
       "collision_type": 2
@@ -44,6 +49,7 @@
       "name": "speedup",
       "layer": 1,
       "start_visible": 1,
+      "min_particle_count": 20,
       "max_particle_count": 20,
       "relative_speed": 1.0,
       "collision_type": 3
@@ -52,7 +58,8 @@
       "name": "meteors",
       "layer": 2,
       "start_visible": 1,
-      "max_particle_count": 50,
+      "min_particle_count": 10,
+      "max_particle_count": 300,
       "relative_speed": 1.0,
       "collision_type": 1
     },
@@ -60,6 +67,7 @@
       "name": "planets 0",
       "layer": 3,
       "start_visible": 1,
+      "min_particle_count": 5,
       "max_particle_count": 5,
       "relative_speed": 0.5,
       "collision_type": 0
@@ -68,6 +76,7 @@
       "name": "planets 2",
       "layer": 4,
       "start_visible": 1,
+      "min_particle_count": 5,
       "max_particle_count": 5,
       "relative_speed": 0.4,
       "collision_type": 0
@@ -76,6 +85,7 @@
       "name": "planets 3",
       "layer": 5,
       "start_visible": 1,
+      "min_particle_count": 5,
       "max_particle_count": 5,
       "relative_speed": 0.3,
       "collision_type": 0

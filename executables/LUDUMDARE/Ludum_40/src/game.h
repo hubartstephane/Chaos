@@ -168,7 +168,9 @@ protected:
 	glm::vec2 world_position = glm::vec2(0.0f, 0.0f); 
 	
 	// initial values
-	int   initial_life  = 5;
+	int   level_particle_increment = 10;
+	int   max_particles_per_frame = 100;
+	int   initial_life  = 50;
 	int   initial_level = 0;
 	float initial_player_screen_speed = 500.0f;   // speed at which the player may move on screen
 	float initial_player_absolute_speed = 50.0f; // speed at which the player is push forward by its engine

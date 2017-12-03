@@ -91,7 +91,20 @@ void Game::SpawnExtraParticles(GameInfo game_info, float delta_time)
 		if ((int)layer.particles.size() >= layer.max_particle_count) // already too much particles
 			continue;
 
-		layer.PopulateSprites(game_info, layer.max_particle_count - layer.particles.size());		
+		// number of particles we would like to have at the end (with LEVEL consideration)		
+		int count = layer.min_particle_count + (level * level_particle_increment); 
+
+		// clamp to the max count (singleton will remains singletons)
+		if (count > layer.max_particle_count) 
+			count = layer.max_particle_count;
+
+		int particles_to_spawn = (count - layer.particles.size());
+
+		if (particles_to_spawn > max_particles_per_frame)
+			particles_to_spawn = max_particles_per_frame;
+
+		if (particles_to_spawn > 0)
+			layer.PopulateSprites(game_info, particles_to_spawn);		
 	}
 }
 
@@ -239,8 +252,8 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 {
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
-		//if (--life < 0)
-		//	pending_gameover = true;
+		if (--life < 0)
+			pending_gameover = true;
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{

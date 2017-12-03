@@ -90,7 +90,7 @@ public:
 
 	void Draw(chaos::GLProgramVariableProvider * uniform_provider);
 
-	void Tick(double delta_time, GameInfo game_info, chaos::box2 const * clip_rect);
+	void Tick(double delta_time, GameInfo game_info);
 
 	void DestroyAllParticles();
 

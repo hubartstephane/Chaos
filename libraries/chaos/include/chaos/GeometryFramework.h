@@ -111,8 +111,8 @@ public:
     vec_type a = glm::min(pts.first, pts.second);
     vec_type b = glm::max(pts.first, pts.second);
 
-    position  = (b + a) / static_cast<type>(2);
-    half_size = (b - a) / static_cast<type>(2);
+    position  = (b + a) / static_cast<T>(2);
+    half_size = (b - a) / static_cast<T>(2);
   }
 
   /** get the corners of the box */
@@ -188,28 +188,28 @@ bool operator != (type_box<T, dimension> const & b1, type_box<T, dimension> cons
 template<typename T> 
 T GetPerimeter(type_box2<T> const & b)
 {
-  return static_cast<type>(4) * (b.half_size.x + b.half_size.y);
+  return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
 }
 
 /** returns the surface of the box */
 template<typename T>
 T GetSurface(type_box2<T> const & b)
 {
-  return static_cast<type>(4) * (b.half_size.x * b.half_size.y);
+  return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
 }
 
 /** return the volume of the box */
 template<typename T>
 T GetVolume(type_box3<T> const & b)
 {
-  return static_cast<type>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
+  return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
 }
 
 /** return the surface of the box */
 template<typename T>
 T GetSurface(type_box3<T> const & b)
 {
-  return static_cast<type>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
+  return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
 };
 
 /** returns the bounding circle for the box */

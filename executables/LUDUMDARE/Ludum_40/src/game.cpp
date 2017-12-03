@@ -29,10 +29,11 @@
 
 // ======================================================================================
 
+//                                             extra_x
 // +---------------+----------------------+---------------+
 // |               |                      |               |
 // |   ZONE A      |       ZONE B         |   ZONE C      |
-// |               |                      |               |
+// |               |                      |               | extra_y
 // |               |                      |               |
 // +---------------+----------------------+---------------+
 // |               |                      |               |
@@ -61,11 +62,6 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
 	gamepad_manager->Tick((float)delta_time);
 
-
-	
-	chaos::box2 b1 = GetWorldBBox(false);
-	chaos::box2 b2 = GetWorldBBox(true);
-
 	if (game_started && !game_paused)
 	{
 		UpdateWorldDisplacement((float)delta_time);
@@ -74,7 +70,7 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 
 	GameInfo game_info(*this);
 	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
-		sprite_layers[i].Tick(delta_time, game_info, clip_rect);		
+		sprite_layers[i].Tick(delta_time, game_info);		
 
 	ResetPlayerCachedInputs();
 }
@@ -154,14 +150,6 @@ void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
 	player_screen_position = player_bbox.position;
 
 	player_particle->position = player_screen_position + world_position;
-
-	
-
-
-	
-
-
-
 }
 
 bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path)

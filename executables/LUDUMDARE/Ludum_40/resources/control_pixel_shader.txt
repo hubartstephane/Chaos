@@ -19,11 +19,11 @@ void main()
 	// match with min_texture_coord & max_texture_coord 
 	texcoord = min_texture_coord + texcoord * (max_texture_coord - min_texture_coord);
 
-	vec4 background = texture(material, texcoord);
+	vec4 control = texture(material, texcoord);
 
-	// add effect on background
-	background.x *= 1.0 - life_ratio;
-	
-	// combine colors
-	output_color = background;
+	// clamp the 2 bars
+	control.r = control.r * (step(abs(out_position.x), life_ratio));
+	control.b = control.b * (step(abs(out_position.x), level_ratio));
+		
+	output_color = control;
 }

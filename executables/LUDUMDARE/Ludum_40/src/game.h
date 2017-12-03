@@ -87,6 +87,8 @@ protected:
 	void DisplaySprites(glm::ivec2 viewport_size);
 
 	void DisplayBackground(glm::ivec2 viewport_size);
+	void DisplayControls(glm::ivec2 viewport_size);
+	void DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GLProgram> program);
 
 	void SetLayerVisibility(int layer, bool visible);
 
@@ -191,8 +193,11 @@ protected:
 	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
 
 	// background data
-	boost::intrusive_ptr<chaos::GLProgram>  background_program;
-	boost::intrusive_ptr<chaos::SimpleMesh> background_mesh;
+	boost::intrusive_ptr<chaos::SimpleMesh> fullscreen_mesh;
+
+	boost::intrusive_ptr<chaos::GLProgram>  background_program;	
 	boost::intrusive_ptr<chaos::Texture>    background_texture;
+	boost::intrusive_ptr<chaos::GLProgram>  control_program;
 	boost::intrusive_ptr<chaos::Texture>    control_texture;
+	
 };

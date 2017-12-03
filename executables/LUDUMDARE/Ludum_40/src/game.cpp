@@ -334,11 +334,14 @@ void Game::Finalize()
 	object_definitions.clear();
 	texture_atlas.Clear();
 
-	background_program = nullptr;
-	background_mesh = nullptr;
-	background_texture = nullptr;
-	control_texture = nullptr;
+	fullscreen_mesh = nullptr;
 
+	background_program = nullptr;	
+	background_texture = nullptr;
+
+	control_program = nullptr;
+	control_texture = nullptr;
+	
 	gamepad_manager = nullptr;
 }
 
@@ -417,19 +420,28 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the background program
-	chaos::GLProgramLoader loader;
-	loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
-	loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
+	chaos::GLProgramLoader background_loader;
+	background_loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
+	background_loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
 
-	background_program = loader.GenerateProgramObject();
+	background_program = background_loader.GenerateProgramObject();
 	if (background_program == nullptr)
+		return false;
+
+	// generate the controls program
+	chaos::GLProgramLoader control_loader;
+	control_loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "control_vertex_shader.txt");
+	control_loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "control_pixel_shader.txt");
+
+	control_program = control_loader.GenerateProgramObject();
+	if (control_program == nullptr)
 		return false;
 
 	// generate the background mesh
 	chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 
-	background_mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
-	if (background_mesh == nullptr)
+	fullscreen_mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
+	if (fullscreen_mesh == nullptr)
 		return false;
 
 	return true;
@@ -510,11 +522,24 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
+	DisplayFullscreen(viewport_size, background_texture, background_program);
+}
 
-	glUseProgram(background_program->GetResourceID());
+void Game::DisplayControls(glm::ivec2 viewport_size)
+{
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	DisplayFullscreen(viewport_size, control_texture, control_program);	
+}
+
+void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GLProgram> program)
+{
+	glUseProgram(program->GetResourceID());
 
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
-	chaos::TextureDescription texture_description = background_texture->GetTextureDescription();
+	chaos::TextureDescription texture_description = texture->GetTextureDescription();
 
 	float texture_aspect = chaos::MathTools::CastAndDiv<float>(texture_description.width, texture_description.height);
 	float world_aspect   = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
@@ -543,11 +568,10 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	if (level_ratio > 1.0f)
 		level_ratio = 1.0f;
 
-	chaos::GLProgramData const & program_data = background_program->GetProgramData();
+	chaos::GLProgramData const & program_data = program->GetProgramData();
 
 	chaos::GLProgramVariableProviderChain uniform_provider;
-	uniform_provider.AddVariableTexture("material", background_texture);
-	uniform_provider.AddVariableTexture("control", control_texture);
+	uniform_provider.AddVariableTexture("material", texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
@@ -555,7 +579,7 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 
 	program_data.BindUniforms(&uniform_provider);
 	
-	background_mesh->Render(program_data, nullptr, 0, 0);
+	fullscreen_mesh->Render(program_data, nullptr, 0, 0);
 }
 
 void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
@@ -599,6 +623,8 @@ void Game::Display(glm::ivec2 viewport_size)
 	DisplayBackground(viewport_size);
 			
 	DisplaySprites(viewport_size);
+
+	DisplayControls(viewport_size);
 }
 
 bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)

@@ -49,6 +49,10 @@ class ObjectDefinition
 
 public:
 
+	static int const SPAWN_TYPE_CENTER = 0;
+	static int const SPAWN_TYPE_OUTASCREEN = 1;
+	static int const SPAWN_TYPE_BACKGROUND = 2;
+
 	bool LoadFromJSON(nlohmann::json const & json_entry);
 
 public:
@@ -59,6 +63,7 @@ public:
 	float size = 1.0f;
 	float min_lifetime = 0.0f;
 	float max_lifetime = 0.0f;
+	int   spawn_type = SPAWN_TYPE_CENTER;
 	
 	boost::filesystem::path bitmap_path;
 };
@@ -73,6 +78,7 @@ public:
 
 	chaos::BitmapAtlas::TextureArrayAtlas const & texture_atlas;
 	std::vector<ObjectDefinition> const & object_definitions;
+	glm::vec2 world_size;
 };
 
 // ======================================================================================

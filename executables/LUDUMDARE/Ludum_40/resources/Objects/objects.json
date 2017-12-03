@@ -3,6 +3,14 @@
     {
       "layer": -3,
       "start_visible": 0
+    },
+    {
+      "layer": 0,
+      "start_visible": 1
+    },
+    {
+      "layer": 1,
+      "start_visible": 1
     }
   ],
   "objects": [
@@ -11,70 +19,80 @@
       "layer": -3,
       "size": 500.0,
       "initial_particle_count": 1,
-      "bitmap": "Paused.png"      
+      "bitmap": "Paused.png",    
+      "spawn_type": 0      
     },
     {
       "id": -1,
       "layer": -2,
       "size": 500.0,
       "initial_particle_count": 1,
-      "bitmap": "Title.png"
+      "bitmap": "Title.png",
+      "spawn_type": 0      
     },
     {
       "id": 0,
       "layer": -1,
       "size": 50.0,
       "initial_particle_count": 1,
-      "bitmap": "spaceship.png"
+      "bitmap": "spaceship.png",
+      "spawn_type": 0      
     },
     {
       "id": 1,
       "layer": 0,
       "size": 80.0,
-      "initial_particle_count": 100,
-      "bitmap": "meteor1.png"
+      "initial_particle_count": 20,
+      "bitmap": "meteor1.png",
+      "spawn_type": 1      
     },
     {
       "id": 2,
       "layer": 0,
       "size": 50.0,
-      "initial_particle_count": 100,
-      "bitmap": "meteor2.png"
+      "initial_particle_count": 20,
+      "bitmap": "meteor2.png",
+      "spawn_type": 1      
     },
     {
       "id": 3,
       "layer": 0,
       "size": 40.0,
-      "initial_particle_count": 100,
-      "bitmap": "meteor3.png"
+      "initial_particle_count": 20,
+      "bitmap": "meteor3.png",
+      "spawn_type": 1
     },
     {
       "id": 4,
       "layer": 0,
       "size": 30.0,
-      "initial_particle_count": 100,
-      "bitmap": "meteor4.png"
+      "initial_particle_count": 20,
+      "bitmap": "meteor4.png",
+      "spawn_type": 1      
     },
     {
       "id": 5,
       "layer": 1,
       "size": 300.0,
       "initial_particle_count": 0,
-      "bitmap": "planet1.png"
+      "bitmap": "planet1.png",
+      "spawn_type": 2      
     },
     {
       "id": 6,
       "layer": 1,
       "size": 150.0,
       "initial_particle_count": 0,
-      "bitmap": "planet2.png"
+      "bitmap": "planet2.png",
+      "spawn_type": 2      
     },
     {
       "id": 7,
       "layer": 1,
       "size": 100.0,
-      "initial_particle_count": 1,
-      "bitmap": "planet3.png"
+      "initial_particle_count": 0,
+      "bitmap": "planet3.png",
+      "spawn_type": 2      
     }
   ]
 }

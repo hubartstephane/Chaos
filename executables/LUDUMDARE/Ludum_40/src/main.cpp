@@ -41,9 +41,6 @@ protected:
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, action))
 				return;
-
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-			RequireWindowClosure();
 	}
 
 	virtual bool OnDraw(glm::ivec2 size) override
@@ -137,12 +134,6 @@ protected:
 		debug_display.Tick(delta_time);
 
 		return true; // refresh
-	}
-
-	virtual void OnMouseButton(int button, int action, int modifier) override
-	{
-		//if (button == 1 && action == GLFW_RELEASE)
-		//	debug_display.AddLine("HelloWorld");
 	}
 
 protected:

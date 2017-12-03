@@ -425,10 +425,13 @@ bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_game
 
 bool Game::OnKeyEvent(int key, int action)
 {
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	if (!game_started)
 	{
-		StartGame();	
-		return true;
+		if (action == GLFW_PRESS)
+		{
+			StartGame();	
+			return true;
+		}	
 	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{

@@ -264,6 +264,8 @@ bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::fi
 	if (!GenerateBackgroundResources(resource_path))
 		return false;
 
+	ResetWorld();
+
 	return true;
 }
 
@@ -312,9 +314,7 @@ bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
 		int id = json_layer.value("layer", -100);
 		int visible = json_layer.value("start_visible", 1);
 
-		SpriteLayer * layer = FindSpriteLayer(id);
-		if (layer != nullptr)
-			layer->SetVisible(visible > 0);
+		SetLayerVisibility(id, visible > 0);
 	}
 	return true;
 }
@@ -551,14 +551,32 @@ bool Game::OnKeyEvent(int key, int action)
 	return false;
 }
 
+void Game::ResetWorld()
+{
+	GameInfo game_info(*this);
+	for (SpriteLayer & layer : sprite_layers)
+	{
+		layer.DestroyAllParticles();
+		layer.InitialPopulateSprites(game_info);	
+	}
+
+	SetPlayerPosition(GetPlayerInitialPosition());
+}
+
 void Game::StartGame()
 {
 	if (game_started)
 		return;
-
-	game_started = true;
-	game_paused  = false;
+	if (game_paused)
+		return;
 	OnGameStarted();
+}
+
+void Game::SetLayerVisibility(int layer, bool visible)
+{
+	SpriteLayer * sprite_layer = FindSpriteLayer(layer);
+	if (sprite_layer != nullptr)
+		sprite_layer->SetVisible(visible);
 }
 
 void Game::SetPause(bool in_paused)
@@ -569,18 +587,16 @@ void Game::SetPause(bool in_paused)
 		return;
 
 	game_paused = in_paused;
+
+	SetLayerVisibility(PAUSED_OBJECT_LAYER, game_paused);
 }
 
 void Game::OnGameStarted()
 {
-	GameInfo game_info(*this);
-	for (SpriteLayer & layer : sprite_layers)
-	{
-		layer.DestroyAllParticles();
-		layer.InitialPopulateSprites(game_info);	
-	}
+	game_started = true;
+	game_paused  = false;
 
-	SetPlayerPosition(GetPlayerInitialPosition());
+	SetLayerVisibility(TITLE_OBJECT_LAYER, false);
 }
 
 

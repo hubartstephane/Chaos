@@ -127,11 +127,12 @@ public:
 // ======================================================================================
 
 class Game : public chaos::ReferencedObject
-{
-	static const int PLAYER_LAYER = -1;
+{	
 	static const int PLAYER_OBJECT_ID = 0;
-	static const int TITLE_OBJECT_ID = -1;
-	static const int PAUSED_OBJECT_ID = -2;
+
+	static const int PLAYER_LAYER = -1;
+	static const int TITLE_OBJECT_LAYER = -2;
+	static const int PAUSED_OBJECT_LAYER = -3;
 
 	friend class GameInfo;
 
@@ -151,6 +152,8 @@ public:
 
 	void StartGame();
 
+	void ResetWorld();
+
 	bool OnKeyEvent(int key, int action);
 
 protected:
@@ -158,6 +161,8 @@ protected:
 	void DisplaySprites(glm::ivec2 viewport_size);
 
 	void DisplayBackground(glm::ivec2 viewport_size);
+
+	void SetLayerVisibility(int layer, bool visible);
 
 
 

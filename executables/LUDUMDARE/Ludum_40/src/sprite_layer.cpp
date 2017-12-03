@@ -285,6 +285,13 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 		zones[3].position.y = zones[4].position.y =
 			world_box.position.y;
 
+		// add some padding so that particles are never spawned directly on screen
+		zones[0].position += p.half_size * glm::vec2(-1.0f, 1.0f);
+		zones[1].position += p.half_size * glm::vec2( 0.0f, 1.0f);
+		zones[2].position += p.half_size * glm::vec2(+1.0f, 1.0f);
+		zones[3].position += p.half_size * glm::vec2(-1.0f, 0.0f);
+		zones[4].position += p.half_size * glm::vec2(+1.0f, 0.0f);
+
 		// compute the half_size
 		zones[0].half_size = zones[2].half_size = 
 			glm::vec2(half_extra_x, half_extra_y);

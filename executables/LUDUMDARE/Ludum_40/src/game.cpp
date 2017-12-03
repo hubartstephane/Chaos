@@ -66,6 +66,7 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 	{
 		UpdateWorldDisplacement((float)delta_time);
 		UpdatePlayerDisplacement((float)delta_time);
+		FindPlayerCollision();
 	}
 
 	GameInfo game_info(*this);
@@ -151,6 +152,43 @@ void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
 
 	player_particle->position = player_screen_position + world_position;
 }
+
+bool Game::FindPlayerCollision()
+{
+	bool result = false;
+
+	Particle const * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return result;
+
+	chaos::box2 player_bbox = chaos::box2(player_particle->position, player_particle->half_size);
+
+	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
+	{
+		SpriteLayer const & layer = sprite_layers[i];
+		if (!layer.collision)
+			continue;
+
+		size_t count = layer.particles.size();
+		for (size_t j = 0 ; j < count ; ++j)
+		{
+			Particle const & p = layer.particles[j];
+
+			chaos::box2 particle_bbox = chaos::box2(p.position, p.half_size);
+		
+			if (chaos::Collide(player_bbox, particle_bbox)) // raw collision detection
+			{
+				result = true;
+			
+			
+			}
+		}
+	}
+	return result;
+}
+
+
+
 
 bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path)
 {

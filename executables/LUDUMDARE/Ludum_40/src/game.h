@@ -129,6 +129,8 @@ protected:
 
 	void UpdateWorldDisplacement(float delta_time);
 
+	bool FindPlayerCollision();
+
 	void ResetPlayerCachedInputs();
 
 	void ApplyStickDisplacement(float delta_time, glm::vec2 const & direction);

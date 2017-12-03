@@ -804,7 +804,7 @@ bool RestrictToOutside(type_sphere<T, dimension> & src, type_sphere<T, dimension
 // ==============================================================================================
 
 template<typename T, int dimension>
-bool Collide(type_box<T, dimension> & src1, type_box<T, dimension> & src2)
+bool Collide(type_box<T, dimension> const & src1, type_box<T, dimension> const & src2)
 {
   if (src1.IsEmpty() || src2.IsEmpty())
     return false;
@@ -821,7 +821,7 @@ bool Collide(type_box<T, dimension> & src1, type_box<T, dimension> & src2)
 }
 
 template<typename T, int dimension>
-bool Collide(type_sphere<T, dimension> & src1, type_sphere<T, dimension> & src2)
+bool Collide(type_sphere<T, dimension> const & src1, type_sphere<T, dimension> const & src2)
 {
   if (src1.IsEmpty() || src2.IsEmpty())
     return false;

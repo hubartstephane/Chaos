@@ -76,13 +76,11 @@ GameInfo::GameInfo(class Game const & game):
 
 void SpriteLayer::Tick(double delta_time, GameInfo game_info)
 {
-	chaos::box2 const * clip_rect = nullptr;
-
 	if (!visible)
 		return;
 	UpdateParticleLifetime(delta_time);
 	UpdateParticleVelocity(delta_time);
-	DestroyParticleByClipRect(clip_rect);
+	DestroyParticleByClipRect(game_info.world_box_padding);
 	UpdateGPUBuffer(game_info);	
 }
 
@@ -119,25 +117,20 @@ void SpriteLayer::UpdateParticleVelocity(double delta_time)
 		particles[i].position += particles[i].velocity * dt;
 }
 
-void SpriteLayer::DestroyParticleByClipRect(chaos::box2 const * in_clip_rect)
+void SpriteLayer::DestroyParticleByClipRect(chaos::box2 const & clip_rect)
 {
-	if (in_clip_rect != nullptr)
+	size_t i = 0;
+	while (i < particles.size())
 	{
-		chaos::box2 clip_rect = *in_clip_rect;
+		chaos::box2 particle_box = chaos::box2(particles[i].position, particles[i].half_size);
 
-		size_t i = 0;
-		while (i < particles.size())
+		if (!chaos::Collide(clip_rect, particle_box))
 		{
-			chaos::box2 particle_box = chaos::box2(particles[i].position, particles[i].half_size);
-
-			if (!chaos::Collide(clip_rect, particle_box))
-			{
-				particles[i] = particles.back();
-				particles.pop_back();
-				continue;
-			}
-			++i;
+			particles[i] = particles.back();
+			particles.pop_back();
+			continue;
 		}
+		++i;
 	}
 }
 
@@ -277,9 +270,9 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 {	
 	sprite_manager->ClearSprites(); // remove all GPU buffer data
 
-									// the buffer stores particles that share the layer value, but not the 'type'
-									// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
-									// This algo uses another approch to avoid that
+	// the buffer stores particles that share the layer value, but not the 'type'
+	// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
+	// This algo uses another approch to avoid that
 
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
@@ -309,9 +302,6 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 
 void SpriteLayer::Draw(chaos::GLProgramVariableProvider * uniform_provider)
 {
-	if (layer == -3)
-		layer = layer;
-
 	if (visible)
 		sprite_manager->Display(uniform_provider);
 }

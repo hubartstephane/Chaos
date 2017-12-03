@@ -103,7 +103,7 @@ protected:
 
 	void UpdateParticleLifetime(double delta_time);
 	void UpdateParticleVelocity(double delta_time);
-	void DestroyParticleByClipRect(chaos::box2 const * clip_rect);
+	void DestroyParticleByClipRect(chaos::box2 const & clip_rect);
 	void UpdateGPUBuffer(GameInfo game_info);
 
 public:

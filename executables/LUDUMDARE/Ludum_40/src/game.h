@@ -74,8 +74,7 @@ public:
 	float size = 1.0f;
 	float min_lifetime = 0.0f;
 	float max_lifetime = 0.0f;
-	bool  visible = true;
-
+	
 	boost::filesystem::path bitmap_path;
 };
 
@@ -105,6 +104,8 @@ public:
 
 	void InitialPopulateSprites(GameInfo game_info);
 
+	void SetVisible(bool in_visible);
+
 protected:
 
 	void UpdateParticleLifetime(double delta_time);
@@ -119,6 +120,8 @@ public:
 	std::vector<Particle> particles;
 
 	int layer;
+
+	bool visible = true;
 };
 
 // ======================================================================================
@@ -152,9 +155,13 @@ public:
 
 protected:
 
-	void OnGameStarted();
+	void DisplaySprites(glm::ivec2 viewport_size);
 
-	bool LoadObjectDefinition(boost::filesystem::path const & path);
+	void DisplayBackground(glm::ivec2 viewport_size);
+
+
+
+	bool DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json_entry);
 
 	bool LoadObjectDefinition(nlohmann::json const & json_entry);
 
@@ -162,12 +169,15 @@ protected:
 
 	bool GenerateBackgroundResources(boost::filesystem::path const & path);
 
-	void DisplaySprites(glm::ivec2 viewport_size);
-	void DisplayBackground(glm::ivec2 viewport_size);
-
 	bool GenerateSpriteLayers();
 
+	bool LoadSpriteLayerInfo(nlohmann::json const & json_entry);
+
 	bool InitializeGamepadManager();
+
+
+
+	void OnGameStarted();
 
 	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 

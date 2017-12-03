@@ -1,13 +1,18 @@
 {
+  "layers": [
+    {
+      "layer": -3,
+      "start_visible": 0
+    }
+  ],
   "objects": [
     {
       "id": -2,
-      "layer": -2,
+      "layer": -3,
       "size": 500.0,
-      "initial_particle_count":1,
-      "bitmap": "Paused.png",        
-      "start_visible": false
-    },    
+      "initial_particle_count": 1,
+      "bitmap": "Paused.png"      
+    },
     {
       "id": -1,
       "layer": -2,

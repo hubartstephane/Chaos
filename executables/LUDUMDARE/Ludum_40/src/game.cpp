@@ -45,7 +45,6 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 	layer = json_entry.value("layer", 0);
 	size = json_entry.value("size", 1.0f);
 	bitmap_path = json_entry.value("bitmap", "");
-	visible = json_entry.value("start_visible", true);
 
 	initial_particle_count = json_entry.value("initial_particle_count", 0);
 	min_lifetime = json_entry.value("min_lifetime", 0.0f);
@@ -65,10 +64,18 @@ GameInfo::GameInfo(class Game const & game):
 
 void SpriteLayer::Tick(double delta_time, GameInfo game_info, chaos::box2 const * clip_rect)
 {
-	UpdateParticleLifetime(delta_time);
-	UpdateParticleVelocity(delta_time);
-	DestroyParticleByClipRect(clip_rect);
-	UpdateGPUBuffer(game_info);	
+	if (visible)
+	{
+		UpdateParticleLifetime(delta_time);
+		UpdateParticleVelocity(delta_time);
+		DestroyParticleByClipRect(clip_rect);
+		UpdateGPUBuffer(game_info);	
+	}
+}
+
+void SpriteLayer::SetVisible(bool in_visible)
+{
+	visible = in_visible;
 }
 
 void SpriteLayer::UpdateParticleLifetime(double delta_time)
@@ -200,7 +207,8 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 
 void SpriteLayer::Draw(chaos::GLProgramVariableProvider * uniform_provider)
 {
-	sprite_manager->Display(uniform_provider);
+	if (visible)
+		sprite_manager->Display(uniform_provider);
 }
 
 // ======================================================================================
@@ -221,17 +229,39 @@ bool Game::Initialize(glm::vec2 const & in_world_size, boost::filesystem::path c
 {
 	world_size = in_world_size;
 
-	boost::filesystem::path object_path = path / "objects";
+	boost::filesystem::path object_path = path / "objects" / "objects.json";
 
-	if (!LoadObjectDefinition(object_path / "objects.json"))
+	// Load the file
+	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, true);
+	if (buf == nullptr)
+		return false;
+
+	try
+	{
+		nlohmann::json json_entry = nlohmann::json::parse(buf.data);
+		return DoInitialize(path, object_path, json_entry);
+	}
+	catch(...)
+	{
+
+	}
+
+	return false;
+}
+
+bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json_entry)
+{
+	if (!LoadObjectDefinition(json_entry))
 		return false;
 	if (!GenerateAtlas(object_path))
 		return false;
 	if (!GenerateSpriteLayers())
 		return false;
+	if (!LoadSpriteLayerInfo(json_entry))
+		return false;
 	if (!InitializeGamepadManager())
 		return false;
-	if (!GenerateBackgroundResources(path))
+	if (!GenerateBackgroundResources(resource_path))
 		return false;
 
 	return true;
@@ -271,6 +301,22 @@ SpriteLayer const * Game::FindSpriteLayer(int layer) const
 		if (sprite_layers[i].layer == layer)
 			return &sprite_layers[i];
 	return nullptr;
+}
+
+bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
+{
+	nlohmann::json layers = json_entry["layers"];
+
+	for (auto const & json_layer : layers)
+	{
+		int id = json_layer.value("layer", -100);
+		int visible = json_layer.value("start_visible", 1);
+
+		SpriteLayer * layer = FindSpriteLayer(id);
+		if (layer != nullptr)
+			layer->SetVisible(visible > 0);
+	}
+	return true;
 }
 
 bool Game::GenerateSpriteLayers()
@@ -381,24 +427,6 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	return true;
 }
 
-bool Game::LoadObjectDefinition(boost::filesystem::path const & path)
-{
-	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(path, true);
-	if (buf == nullptr)
-		return false;
-
-	try
-	{
-		nlohmann::json json_entry = nlohmann::json::parse(buf.data);
-		return LoadObjectDefinition(json_entry);
-	}
-	catch(...)
-	{
-
-	}
-	return false;
-}
-
 ObjectDefinition const * Game::FindObjectDefinition(int id) const
 {
 	for (ObjectDefinition const & def : object_definitions)
@@ -411,13 +439,14 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 {
 	nlohmann::json objects = json_entry["objects"];
 
-	for (auto const & obj : objects)
+	for (auto const & json_obj : objects)
 	{
 		ObjectDefinition def;
-		if (!def.LoadFromJSON(obj))
+		if (!def.LoadFromJSON(json_obj))
 			continue;
 		object_definitions.push_back(std::move(def));
 	}
+
 	return true;
 }
 

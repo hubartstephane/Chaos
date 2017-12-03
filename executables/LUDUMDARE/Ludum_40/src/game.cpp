@@ -27,6 +27,24 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
 
+// ======================================================================================
+
+// +---------------+----------------------+---------------+
+// |               |                      |               |
+// |   ZONE A      |       ZONE B         |   ZONE C      |
+// |               |                      |               |
+// |               |                      |               |
+// +---------------+----------------------+---------------+
+// |               |                      |               |
+// |  ZONE D       |    SCREEN            |  ZONE E       |
+// |               |        world_size    |               |
+// |               |                      | world_padding |
+// +---------------+----------------------+---------------+
+//
+// particles are to be spawned in any of the zone A, B, C, D, E
+// propability of theses zones dependant on their surface
+//
+//
 
 // ======================================================================================
 
@@ -43,14 +61,43 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
 	gamepad_manager->Tick((float)delta_time);
 
+
+	
+	chaos::box2 b1 = GetWorldBBox(false);
+	chaos::box2 b2 = GetWorldBBox(true);
+
 	if (game_started && !game_paused)
+	{
+		UpdateWorldDisplacement((float)delta_time);
 		UpdatePlayerDisplacement((float)delta_time);
+	}
 
 	GameInfo game_info(*this);
 	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
 		sprite_layers[i].Tick(delta_time, game_info, clip_rect);		
 
 	ResetPlayerCachedInputs();
+}
+
+chaos::box2 Game::GetWorldBBox(bool use_padding) const
+{
+	if (use_padding)
+	{
+		if (world_padding_ratio.x > 0.0f && world_padding_ratio.y > 0.0f)
+		{
+			float min_x = world_position.x - (0.5f * world_size.x) - (world_size.x * world_padding_ratio.x); 
+			float max_x = world_position.x + (0.5f * world_size.x) + (world_size.x * world_padding_ratio.x); 
+		
+			float min_y = world_position.y - (0.5f * world_size.y);
+			float max_y = world_position.y + (0.5f * world_size.y) + (world_size.y * world_padding_ratio.y); 
+
+			glm::vec2 bottom_left = glm::vec2(min_x, min_y);
+			glm::vec2 top_right   = glm::vec2(max_x, max_y);
+
+			return chaos::box2(std::make_pair(bottom_left, top_right));		
+		}	
+	}
+	return chaos::box2(world_position, 0.5f * world_size);;
 }
 
 void Game::ResetPlayerCachedInputs()
@@ -60,10 +107,13 @@ void Game::ResetPlayerCachedInputs()
 
 void Game::UpdatePlayerDisplacement(float delta_time)
 {
+	glm::vec2 stick_to_apply = glm::vec2(0.0f, 0.0f);
+
 	if (stick_position.x != 0.0f || stick_position.y != 0.0f)
 	{
 		glm::vec2 invert_y_stick = glm::vec2(1.0f, -1.0f);
-		ApplyStickDisplacement(delta_time, stick_position * invert_y_stick);
+
+		stick_to_apply = stick_position * invert_y_stick;
 	}
 	else
 	{
@@ -79,9 +129,14 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
 			simulated_stick.y += 1.0f;
 	
-		if (simulated_stick.x != 0.0f || simulated_stick.y != 0.0f)
-			ApplyStickDisplacement(delta_time, simulated_stick);	
+		stick_to_apply = simulated_stick;
 	}
+
+	ApplyStickDisplacement(delta_time, stick_to_apply);
+}
+void Game::UpdateWorldDisplacement(float delta_time)
+{
+	world_position += world_speed * delta_time;
 }
 
 void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
@@ -90,27 +145,20 @@ void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
 	if (player_particle == nullptr)
 		return;
 
-	player_particle->position = player_particle->position + delta_time * player_speed * direction;
+	player_screen_position = player_screen_position + delta_time * player_speed * direction;
 
-	
 	chaos::box2 world_bbox  = chaos::box2(glm::vec2(0.0f, 0.0f), world_size * 0.5f);
-	chaos::box2 player_bbox = chaos::box2(player_particle->position, player_particle->half_size);
-
+	chaos::box2 player_bbox = chaos::box2(player_screen_position, player_particle->half_size);
 	chaos::RestrictToInside(world_bbox, player_bbox, false);
 
-	player_particle->position = player_bbox.position;
+	player_screen_position = player_bbox.position;
+
+	player_particle->position = player_screen_position + world_position;
+
+	
 
 
-	//chaos::RestrictToInside(world_size, player_bbox, false);
-
-
-	//template<typename T, int dimension>
-	//bool RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
-
-
-
-
-
+	
 
 
 
@@ -378,7 +426,6 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	}
 
 	// set the data for program
-
 	chaos::GLProgramData const & program_data = background_program->GetProgramData();
 
 	chaos::GLProgramVariableProviderChain uniform_provider;
@@ -394,10 +441,10 @@ void Game::DisplaySprites(glm::ivec2 viewport_size)
 {
 	chaos::GLProgramVariableProviderChain uniform_provider;
 
-	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f); // XXX : no translation, (0, 0) is center of the screen
-	glm::vec3 tr    = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
+	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f);
+	glm::mat4 local_to_cam =  glm::scale(scale) * glm::translate(tr);
 
-	glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
 	for (int i = sprite_layers.size() - 1 ; i >= 0; --i)
@@ -463,6 +510,8 @@ bool Game::OnKeyEvent(int key, int action)
 
 void Game::ResetWorld()
 {
+	world_position = glm::vec2(0.0f, 0.0f);
+
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
 	{
@@ -471,7 +520,8 @@ void Game::ResetWorld()
 		layer.InitialPopulateSprites(game_info);	
 	}
 
-	SetPlayerPosition(GetPlayerInitialPosition());
+	player_screen_position = GetPlayerInitialScreenPosition();
+	SetPlayerPosition(world_position + player_screen_position);
 }
 
 void Game::StartGame()
@@ -544,7 +594,7 @@ void Game::SetPlayerPosition(glm::vec2 const & in_position)
 		player_particle->position = in_position;
 }
 
-glm::vec2 Game::GetPlayerInitialPosition() const
+glm::vec2 Game::GetPlayerInitialScreenPosition() const
 {
 	Particle const * player_particle = GetPlayerParticle();
 	if (player_particle != nullptr)

@@ -115,7 +115,7 @@ protected:
 
 	glm::vec2 GetPlayerPosition() const;
 
-	glm::vec2 GetPlayerInitialPosition() const;
+	glm::vec2 GetPlayerInitialScreenPosition() const;
 
 	void SetPlayerPosition(glm::vec2 const & in_position);
 
@@ -127,9 +127,14 @@ protected:
 
 	void UpdatePlayerDisplacement(float delta_time);
 
+	void UpdateWorldDisplacement(float delta_time);
+
 	void ResetPlayerCachedInputs();
 
 	void ApplyStickDisplacement(float delta_time, glm::vec2 const & direction);
+
+
+	chaos::box2 GetWorldBBox(bool use_padding) const; 
 
 protected:
 
@@ -146,6 +151,14 @@ protected:
 	bool game_started = false;
 
 	glm::vec2 world_size;
+
+	glm::vec2 world_padding_ratio = glm::vec2(1.0f, 2.0f); // world_padding is relative to the world size
+
+	glm::vec2 player_screen_position = glm::vec2(0.0f, 0.0f);
+
+	glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
+
+	glm::vec2 world_speed = glm::vec2(0.0f, 30.0f);
 
 	float player_speed = 500.0f;
 	

@@ -63,7 +63,7 @@ class Game : public chaos::ReferencedObject
 
 public:
 
-	void Tick(double delta_time, chaos::box2 const * clip_rect);
+	void Tick(double delta_time);
 
 	bool Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path);
 
@@ -80,6 +80,8 @@ public:
 	bool OnKeyEvent(int key, int action);
 
 protected:
+
+	void UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos);
 
 
 
@@ -115,11 +117,13 @@ protected:
 
 	class SpriteLayer const * FindSpriteLayer(int layer) const;
 
-	glm::vec2 GetPlayerPosition() const;
+	glm::vec2 GetPlayerScreenPosition() const;
 
 	glm::vec2 GetPlayerInitialScreenPosition() const;
 
-	void SetPlayerPosition(glm::vec2 const & in_position);
+	glm::vec2 GetWorldInitialPosition() const;
+
+	void SetPlayerScreenPosition(glm::vec2 const & in_position);
 
 	class ObjectDefinition const * FindObjectDefinition(int id) const;
 
@@ -129,7 +133,7 @@ protected:
 
 	void UpdatePlayerDisplacement(float delta_time);
 
-	void UpdateWorldDisplacement(float delta_time);
+	void UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & direction);
 
 	bool FindPlayerCollision();
 
@@ -137,10 +141,10 @@ protected:
 
 	void ResetPlayerCachedInputs();
 
-	void ApplyStickDisplacement(float delta_time, glm::vec2 const & direction);
+	
 
 
-	chaos::box2 GetWorldBBox(bool use_padding) const; 
+	chaos::box2 GetWorldBox(bool use_padding) const; 
 
 protected:
 
@@ -152,33 +156,25 @@ protected:
 
 	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
 
-
-
+	// screen information
 	glm::vec2 world_size;
 
 	glm::vec2 world_padding_ratio = glm::vec2(1.0f, 2.0f); // world_padding is relative to the world size
 
-	glm::vec2 player_screen_position = glm::vec2(0.0f, 0.0f);
-
-	glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
-
-	float world_speed = 30.0f;
-
-	float player_speed = 500.0f;
-	
-	// some in game values
-
+	// game values
+	float player_screen_speed = 0.0f;   
+	float player_absolute_speed = 0.0f; 
+	glm::vec2 world_position  = glm::vec2(0.0f, 0.0f); 
 
 	// initial values
-	float player_initial_speed = 500.0f;
-
-	float world_initial_speed = 30.0f;
-
-	float delta_speed = 7.0f;
+	float initial_player_screen_speed = 500.0f;   // speed at which the player may move on screen
+	float initial_player_absolute_speed = 50.0f; // speed at which the player is push forward by its engine
+	float delta_speed = 7.0f;                    // the 'absolute_speed' increase that is applyed when power up is taken
+	
+	glm::vec2 screen_safe_aera = glm::vec2(0.5f, 0.9f);
 
 	// game state
-	bool game_paused = false;
-
+	bool game_paused  = false;
 	bool game_started = false;
 
 	/** the window in GLFW library */

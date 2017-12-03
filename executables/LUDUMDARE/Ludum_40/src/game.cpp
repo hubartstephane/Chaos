@@ -58,13 +58,12 @@ bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_g
 
 // ======================================================================================
 
-void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
+void Game::Tick(double delta_time)
 {
 	gamepad_manager->Tick((float)delta_time);
 
 	if (game_started && !game_paused)
 	{
-		UpdateWorldDisplacement((float)delta_time);
 		UpdatePlayerDisplacement((float)delta_time);
 		FindPlayerCollision();
 	}
@@ -76,7 +75,7 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 	ResetPlayerCachedInputs();
 }
 
-chaos::box2 Game::GetWorldBBox(bool use_padding) const
+chaos::box2 Game::GetWorldBox(bool use_padding) const
 {
 	if (use_padding)
 	{
@@ -129,28 +128,45 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 		stick_to_apply = simulated_stick;
 	}
 
-	ApplyStickDisplacement(delta_time, stick_to_apply);
-}
-void Game::UpdateWorldDisplacement(float delta_time)
-{
-	world_position.y += world_speed * delta_time;
+	UpdateWorldAndPlayerPosition(delta_time, stick_to_apply);
 }
 
-void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
+void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & direction)
 {
 	Particle * player_particle = GetPlayerParticle();
 	if (player_particle == nullptr)
 		return;
 
-	player_screen_position = player_screen_position + delta_time * player_speed * direction;
+	glm::vec2 wp1 = world_position;
 
-	chaos::box2 world_bbox  = chaos::box2(glm::vec2(0.0f, 0.0f), world_size * 0.5f);
-	chaos::box2 player_bbox = chaos::box2(player_screen_position, player_particle->half_size);
-	chaos::RestrictToInside(world_bbox, player_bbox, false);
+	// take camera box, recenter to SCREEN SPACE and SCALE DOWN
+	chaos::box2 world_box = GetWorldBox(false);
+	world_box.position = glm::vec2(0.0f, 0.0f);
+	world_box.half_size *= screen_safe_aera;
+		
+	// apply joystick displacement
+	glm::vec2 player_screen_position = player_particle->position; 
+	player_screen_position += (delta_time * player_screen_speed * direction);
 
-	player_screen_position = player_bbox.position;
+	// restrict the player displacement
+	chaos::box2 player_box = chaos::box2(player_screen_position, player_particle->half_size);
+	
+	float p1 = 0.0f;
+	float p2 = 0.0f;
 
-	player_particle->position = player_screen_position + world_position;
+	p1 = player_box.position.x;
+	chaos::RestrictToInside(world_box, player_box, false); // PLAYER is being recentered into safe screen aera => camera is compensenting
+	p2 = player_box.position.x;
+
+	player_screen_position = player_box.position;
+	player_particle->position = player_screen_position;
+
+	// displace the world due to player engine
+	world_position += glm::vec2(-(p2 - p1), delta_time * player_absolute_speed);
+
+	// update all screen space position particles
+	glm::vec2 wp2 = world_position;
+	UpdateParticlesPosition(0.0f, -(wp2 - wp1));
 }
 
 bool Game::FindPlayerCollision()
@@ -200,8 +216,6 @@ bool Game::FindPlayerCollision()
 
 bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 {
-
-
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
 		
@@ -214,11 +228,8 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_SPEEDUP)
 	{
-		world_speed += delta_speed;
-
+		player_absolute_speed += delta_speed;
 	}
-
-
 	return true;
 }
 
@@ -491,13 +502,30 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	background_mesh->Render(program_data, nullptr, 0, 0);
 }
 
+void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
+{
+	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
+	{
+		SpriteLayer & layer = sprite_layers[i];
+		if (layer.relative_speed <= 0.0f)
+			continue;
+
+		for (size_t j = 0 ; j < layer.particles.size() ; ++j)
+		{
+			Particle & p = layer.particles[j];
+			p.position += delta_pos * layer.relative_speed;
+		}
+	}
+}
+
 void Game::DisplaySprites(glm::ivec2 viewport_size)
 {
 	chaos::GLProgramVariableProviderChain uniform_provider;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
-	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f);
-	glm::mat4 local_to_cam =  glm::scale(scale) * glm::translate(tr);
+	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 
+
+	glm::mat4 local_to_cam =  glm::scale(scale) /* * glm::translate(tr)*/; // SCREEN SPACE particles, no TRANSATION
 
 	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
@@ -564,10 +592,11 @@ bool Game::OnKeyEvent(int key, int action)
 
 void Game::ResetWorld()
 {
-	world_position = glm::vec2(0.0f, 0.0f);
-	player_speed   = player_initial_speed;
-	world_speed    = world_initial_speed;
+	world_position = GetWorldInitialPosition();
 
+	player_screen_speed = initial_player_screen_speed;
+	player_absolute_speed = initial_player_absolute_speed;
+	
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
 	{
@@ -576,8 +605,10 @@ void Game::ResetWorld()
 		layer.InitialPopulateSprites(game_info);	
 	}
 
-	player_screen_position = GetPlayerInitialScreenPosition();
-	SetPlayerPosition(world_position + player_screen_position);
+	glm::vec2 screen_space_position = GetPlayerInitialScreenPosition();
+
+	glm::vec2 player_position = world_position + screen_space_position; 
+	SetPlayerScreenPosition(screen_space_position);
 }
 
 void Game::StartGame()
@@ -635,7 +666,7 @@ Particle * Game::GetPlayerParticle()
 	return nullptr;
 }
 
-glm::vec2 Game::GetPlayerPosition() const
+glm::vec2 Game::GetPlayerScreenPosition() const
 {
 	Particle const * player_particle = GetPlayerParticle();
 	if (player_particle != nullptr)
@@ -643,11 +674,16 @@ glm::vec2 Game::GetPlayerPosition() const
 	return glm::vec2(0.0f, 0.0f);
 }
 
-void Game::SetPlayerPosition(glm::vec2 const & in_position)
+void Game::SetPlayerScreenPosition(glm::vec2 const & in_position)
 {
 	Particle * player_particle = GetPlayerParticle();
 	if (player_particle != nullptr)
 		player_particle->position = in_position;
+}
+
+glm::vec2 Game::GetWorldInitialPosition() const
+{
+	return glm::vec2(500.0f, 0.0f);
 }
 
 glm::vec2 Game::GetPlayerInitialScreenPosition() const

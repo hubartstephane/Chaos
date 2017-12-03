@@ -30,6 +30,8 @@
 
 #include "sprite_layer.h"
 
+// Particles position stored relative to camera
+
 // ======================================================================================
 
 bool SpriteLayer::LoadFromJSON(nlohmann::json const & json_entry)
@@ -67,8 +69,8 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 GameInfo::GameInfo(class Game const & game):
 	texture_atlas(game.texture_atlas),
 	object_definitions(game.object_definitions),
-	world_box(game.GetWorldBBox(false)),
-	world_box_padding(game.GetWorldBBox(true))
+	world_box(game.GetWorldBox(false)),
+	world_box_padding(game.GetWorldBox(true))
 {}
 
 // ======================================================================================
@@ -80,7 +82,7 @@ void SpriteLayer::Tick(double delta_time, GameInfo game_info)
 		return;
 	UpdateParticleLifetime(delta_time);
 	UpdateParticleVelocity(delta_time);
-	DestroyParticleByClipRect(game_info.world_box_padding);
+	DestroyParticleByClipRect(game_info);
 	UpdateGPUBuffer(game_info);	
 }
 
@@ -117,8 +119,11 @@ void SpriteLayer::UpdateParticleVelocity(double delta_time)
 		particles[i].position += particles[i].velocity * dt;
 }
 
-void SpriteLayer::DestroyParticleByClipRect(chaos::box2 const & clip_rect)
+void SpriteLayer::DestroyParticleByClipRect(GameInfo game_info)
 {
+	chaos::box2 clip_rect = game_info.world_box_padding; // set clip in screen space
+	clip_rect.position -= game_info.world_box.position;
+
 	size_t i = 0;
 	while (i < particles.size())
 	{
@@ -174,12 +179,12 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 		{
 			for (int i = 0 ; i < def.initial_particle_count ; ++i)
 			{
-				p.position = game_info.world_box.position;				
+				p.position = glm::vec2(0.0f, 0.0f);				 // screen space particle at center
 
 				particles.push_back(p);
 			}			
 		}
-		else if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN)
+		else if (true || def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN)
 		{
 			// compute the 5 spawn zone probabilities => compute their relative surface
 			chaos::box2 world_box         = game_info.world_box;
@@ -250,8 +255,10 @@ void SpriteLayer::InitialPopulateSprites(GameInfo game_info)
 
 				glm::vec2 random = 2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f);  // random numbers between -1 and +1
 
-				p.position = zones[surface_index].position + zones[surface_index].half_size * random;
-				
+				p.position = 
+					zones[surface_index].position + 
+					zones[surface_index].half_size * random - world_box.position; // screen space position
+
 				particles.push_back(p);
 			}		
 		}

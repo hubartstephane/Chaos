@@ -174,6 +174,7 @@ protected:
 
 	float world_initial_speed = 30.0f;
 
+	float delta_speed = 7.0f;
 
 	// game state
 	bool game_paused = false;

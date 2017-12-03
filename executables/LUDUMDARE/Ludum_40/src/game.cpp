@@ -161,7 +161,8 @@ bool Game::FindPlayerCollision()
 	if (player_particle == nullptr)
 		return result;
 
-	chaos::box2 player_bbox = chaos::box2(player_particle->position, player_particle->half_size);
+	chaos::box2    player_box    = chaos::box2(player_particle->position, player_particle->half_size);
+	chaos::sphere2 player_sphere = chaos::GetInnerCircle(player_box);
 
 	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
@@ -169,19 +170,29 @@ bool Game::FindPlayerCollision()
 		if (layer.collision_type == SpriteLayer::NO_COLLISION)
 			continue;
 
-		size_t count = layer.particles.size();
-		for (size_t j = 0 ; j < count ; ++j)
+		size_t j = 0;
+		while (j < layer.particles.size())
 		{
 			Particle & p = layer.particles[j];
 
-			chaos::box2 particle_bbox = chaos::box2(p.position, p.half_size);
-		
-			if (chaos::Collide(player_bbox, particle_bbox)) // raw collision detection
+			chaos::box2 particle_box = chaos::box2(p.position, p.half_size);
+
+			if (chaos::Collide(player_box, particle_box)) // raw collision detection
 			{				
-				result = OnCollision(p, j, layer);			
-				if (result)
-					return result;
-			}
+				chaos::sphere2 particle_sphere = chaos::GetInnerCircle(particle_box);
+
+				if (chaos::Collide(player_sphere, particle_sphere)) // more precise
+				{
+					if (OnCollision(p, j, layer))
+					{
+						result = true;
+						layer.particles[j] = layer.particles.back();
+						layer.particles.pop_back();
+						continue;				
+					}				
+				}
+			}				
+			++j;
 		}
 	}
 	return result;
@@ -189,9 +200,12 @@ bool Game::FindPlayerCollision()
 
 bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 {
+
+
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
-		index = index;
+		
+		
 
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
@@ -200,11 +214,12 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_SPEEDUP)
 	{
-		index = index;
+		world_speed += delta_speed;
+
 	}
 
 
-	return false;
+	return true;
 }
 
 

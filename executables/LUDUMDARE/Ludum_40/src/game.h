@@ -107,7 +107,7 @@ protected:
 
 	bool InitializeGamepadManager();
 
-
+	void GameOver();
 
 	void OnGameStarted();
 
@@ -162,11 +162,15 @@ protected:
 	glm::vec2 world_padding_ratio = glm::vec2(1.0f, 2.0f); // world_padding is relative to the world size
 
 	// game values
+	int   life  = 0;
+	int   level = 0;
 	float player_screen_speed = 0.0f;   
 	float player_absolute_speed = 0.0f; 
-	glm::vec2 world_position  = glm::vec2(0.0f, 0.0f); 
-
+	glm::vec2 world_position = glm::vec2(0.0f, 0.0f); 
+	
 	// initial values
+	int   initial_life  = 5;
+	int   initial_level = 0;
 	float initial_player_screen_speed = 500.0f;   // speed at which the player may move on screen
 	float initial_player_absolute_speed = 50.0f; // speed at which the player is push forward by its engine
 	float delta_speed = 7.0f;                    // the 'absolute_speed' increase that is applyed when power up is taken
@@ -176,6 +180,8 @@ protected:
 	// game state
 	bool game_paused  = false;
 	bool game_started = false;
+	bool pending_gameover = false;
+	bool pending_restart_game = false; // we don't want to restart the game during a complicated call stack => wait for next tick
 
 	/** the window in GLFW library */
 	GLFWwindow * glfw_window = nullptr;

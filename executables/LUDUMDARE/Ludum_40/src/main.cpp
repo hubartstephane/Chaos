@@ -126,8 +126,8 @@ protected:
 
 	virtual bool Tick(double delta_time) override
 	{
-		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			RequireWindowClosure();
+		//if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		//	RequireWindowClosure();
 
 		game->Tick(delta_time);
 

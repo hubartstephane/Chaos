@@ -60,19 +60,26 @@ bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_g
 
 void Game::Tick(double delta_time)
 {
-	gamepad_manager->Tick((float)delta_time);
-
-	if (game_started && !game_paused)
+	if (pending_gameover || pending_restart_game)
 	{
-		UpdatePlayerDisplacement((float)delta_time);
-		FindPlayerCollision();
+		GameOver();
+	}		
+	else
+	{
+		gamepad_manager->Tick((float)delta_time);
+
+		if (game_started && !game_paused)
+		{
+			UpdatePlayerDisplacement((float)delta_time);
+			FindPlayerCollision();
+		}
+
+		GameInfo game_info(*this);
+		for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
+			sprite_layers[i].Tick(delta_time, game_info);		
+
+		ResetPlayerCachedInputs();
 	}
-
-	GameInfo game_info(*this);
-	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
-		sprite_layers[i].Tick(delta_time, game_info);		
-
-	ResetPlayerCachedInputs();
 }
 
 chaos::box2 Game::GetWorldBox(bool use_padding) const
@@ -218,13 +225,12 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 {
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
-		
-		
-
+		if (--life < 0)
+			pending_gameover = true;
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{
-		index = index;
+		++level;
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_SPEEDUP)
 	{
@@ -581,6 +587,15 @@ bool Game::OnKeyEvent(int key, int action)
 			return true;
 		}	
 	}
+	else
+	{
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		{
+			pending_restart_game = true;
+			return true;
+		}		
+	}
+
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
 		SetPause(!game_paused);
@@ -590,12 +605,27 @@ bool Game::OnKeyEvent(int key, int action)
 	return false;
 }
 
+void Game::GameOver()
+{
+	SetLayerVisibility(PAUSED_OBJECT_LAYER, false);
+	SetLayerVisibility(TITLE_OBJECT_LAYER, true);
+
+	game_started = false;
+	game_paused  = false;
+
+	ResetWorld();
+}
+
 void Game::ResetWorld()
 {
+	pending_restart_game = pending_gameover = false;
+
 	world_position = GetWorldInitialPosition();
 
 	player_screen_speed = initial_player_screen_speed;
 	player_absolute_speed = initial_player_absolute_speed;
+	life  = initial_life;
+	level = initial_level;
 	
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)

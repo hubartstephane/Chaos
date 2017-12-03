@@ -56,17 +56,10 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 void Game::ResetPlayerCachedInputs()
 {
 	stick_position = glm::vec2(0.0f, 0.0f);
-
-	key_up_pressed = false;
-	key_down_pressed = false;
-	key_left_pressed = false;
-	key_right_pressed = false;
 }
 
 void Game::UpdatePlayerDisplacement(float delta_time)
 {
-	
-
 	if (stick_position.x != 0.0f || stick_position.y != 0.0f)
 	{
 		glm::vec2 invert_y_stick = glm::vec2(1.0f, -1.0f);
@@ -76,14 +69,14 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 	{
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (key_left_pressed)
+		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
 			simulated_stick.x -= 1.0f;
-		if (key_right_pressed)
+		if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (key_down_pressed)
+		if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
 			simulated_stick.y -= 1.0f;
-		if (key_up_pressed)
+		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
 			simulated_stick.y += 1.0f;
 	
 		if (simulated_stick.x != 0.0f || simulated_stick.y != 0.0f)
@@ -104,8 +97,10 @@ void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
 		delta_time * speed * direction;
 }
 
-bool Game::Initialize(glm::vec2 const & in_world_size, boost::filesystem::path const & path)
+bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path)
 {
+	glfw_window = in_glfw_window;
+
 	world_size = in_world_size;
 
 	boost::filesystem::path object_path = path / "objects" / "objects.json";
@@ -440,19 +435,6 @@ bool Game::OnKeyEvent(int key, int action)
 		SetPause(!game_paused);
 		return true;
 	}
-
-	if (key == GLFW_KEY_LEFT)
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			key_left_pressed = true;
-	if (key == GLFW_KEY_RIGHT)
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			key_right_pressed = true;
-	if (key == GLFW_KEY_UP)
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			key_up_pressed = true;
-	if (key == GLFW_KEY_DOWN)
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			key_down_pressed = true;
 
 	return false;
 }

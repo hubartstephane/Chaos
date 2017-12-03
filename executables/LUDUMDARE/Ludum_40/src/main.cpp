@@ -113,7 +113,7 @@ protected:
 
 		float WORLD_X = 1000.0f;
 		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		if (!game->Initialize(world_size, resources_path))
+		if (!game->Initialize(glfw_window, world_size, resources_path))
 			return false;
 
 		return true;

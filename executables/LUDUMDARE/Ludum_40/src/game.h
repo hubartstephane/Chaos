@@ -65,7 +65,7 @@ public:
 
 	void Tick(double delta_time, chaos::box2 const * clip_rect);
 
-	bool Initialize(glm::vec2 const & in_world_size, boost::filesystem::path const & path);
+	bool Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path);
 
 	void Finalize();
 
@@ -148,14 +148,11 @@ protected:
 	glm::vec2 world_size;
 
 	
+	/** the window in GLFW library */
+	GLFWwindow * glfw_window = nullptr;
 
-	// keyboard data
+	// stick position
 	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
-
-	bool key_up_pressed = false;
-	bool key_down_pressed = false;
-	bool key_left_pressed = false;
-	bool key_right_pressed = false;
 
 	// background data
 	boost::intrusive_ptr<chaos::GLProgram>  background_program;

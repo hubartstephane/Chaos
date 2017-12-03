@@ -28,6 +28,10 @@
 #include <chaos/SpriteManager.h>
 
 
+#include "sprite_layer.h"
+
+// ======================================================================================
+
 class MyGamepadManager : public chaos::MyGLFW::GamepadManager
 {
 public:
@@ -41,87 +45,6 @@ protected:
 protected:
 
 	class Game * game = nullptr;
-};
-
-// ======================================================================================
-
-class Particle
-{
-public:
-
-	glm::vec2 position;
-	glm::vec2 half_size;
-	glm::vec2 velocity;
-	float life_time;
-	int   id;
-};
-
-
-// ======================================================================================
-
-class ObjectDefinition
-{
-
-public:
-
-	bool LoadFromJSON(nlohmann::json const & json_entry);
-
-public:
-
-	int id = 0;
-	int layer = 0;
-	int initial_particle_count = 0;
-	float size = 1.0f;
-	float min_lifetime = 0.0f;
-	float max_lifetime = 0.0f;
-	
-	boost::filesystem::path bitmap_path;
-};
-
-// ======================================================================================
-
-class GameInfo
-{
-public:
-
-	GameInfo(class Game const & game);
-
-	chaos::BitmapAtlas::TextureArrayAtlas const & texture_atlas;
-	std::vector<ObjectDefinition> const & object_definitions;
-};
-
-// ======================================================================================
-
-class SpriteLayer
-{
-public:
-
-	void Draw(chaos::GLProgramVariableProvider * uniform_provider);
-
-	void Tick(double delta_time, GameInfo game_info, chaos::box2 const * clip_rect);
-
-	void DestroyAllParticles();
-
-	void InitialPopulateSprites(GameInfo game_info);
-
-	void SetVisible(bool in_visible);
-
-protected:
-
-	void UpdateParticleLifetime(double delta_time);
-	void UpdateParticleVelocity(double delta_time);
-	void DestroyParticleByClipRect(chaos::box2 const * clip_rect);
-	void UpdateGPUBuffer(GameInfo game_info);
-
-public:
-
-	boost::intrusive_ptr<chaos::SpriteManager> sprite_manager;
-
-	std::vector<Particle> particles;
-
-	int layer;
-
-	bool visible = true;
 };
 
 // ======================================================================================
@@ -186,9 +109,9 @@ protected:
 
 	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
-	SpriteLayer * FindSpriteLayer(int layer);
+	class SpriteLayer * FindSpriteLayer(int layer);
 
-	SpriteLayer const * FindSpriteLayer(int layer) const;
+	class SpriteLayer const * FindSpriteLayer(int layer) const;
 
 	glm::vec2 GetPlayerPosition() const;
 
@@ -196,11 +119,11 @@ protected:
 
 	void SetPlayerPosition(glm::vec2 const & in_position);
 
-	ObjectDefinition const * FindObjectDefinition(int id) const;
+	class ObjectDefinition const * FindObjectDefinition(int id) const;
 
-	Particle const * GetPlayerParticle() const;
+	class Particle const * GetPlayerParticle() const;
 
-	Particle * GetPlayerParticle();
+	class Particle * GetPlayerParticle();
 
 protected:
 

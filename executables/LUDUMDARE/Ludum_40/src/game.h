@@ -125,6 +125,12 @@ protected:
 
 	class Particle * GetPlayerParticle();
 
+	void UpdatePlayerDisplacement(float delta_time);
+
+	void ResetPlayerCachedInputs();
+
+	void ApplyStickDisplacement(float delta_time, glm::vec2 const & direction);
+
 protected:
 
 	std::vector<SpriteLayer> sprite_layers;
@@ -140,6 +146,16 @@ protected:
 	bool game_started = false;
 
 	glm::vec2 world_size;
+
+	
+
+	// keyboard data
+	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
+
+	bool key_up_pressed = false;
+	bool key_down_pressed = false;
+	bool key_left_pressed = false;
+	bool key_right_pressed = false;
 
 	// background data
 	boost::intrusive_ptr<chaos::GLProgram>  background_program;

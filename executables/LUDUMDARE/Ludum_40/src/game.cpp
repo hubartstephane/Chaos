@@ -43,12 +43,65 @@ void Game::Tick(double delta_time, chaos::box2 const * clip_rect)
 {
 	gamepad_manager->Tick((float)delta_time);
 
-	if (game_paused)
-		return;
+	if (game_started && !game_paused)
+		UpdatePlayerDisplacement((float)delta_time);
 
 	GameInfo game_info(*this);
 	for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
-		sprite_layers[i].Tick(delta_time, game_info, clip_rect);
+		sprite_layers[i].Tick(delta_time, game_info, clip_rect);		
+
+	ResetPlayerCachedInputs();
+}
+
+void Game::ResetPlayerCachedInputs()
+{
+	stick_position = glm::vec2(0.0f, 0.0f);
+
+	key_up_pressed = false;
+	key_down_pressed = false;
+	key_left_pressed = false;
+	key_right_pressed = false;
+}
+
+void Game::UpdatePlayerDisplacement(float delta_time)
+{
+	
+
+	if (stick_position.x != 0.0f || stick_position.y != 0.0f)
+	{
+		glm::vec2 invert_y_stick = glm::vec2(1.0f, -1.0f);
+		ApplyStickDisplacement(delta_time, stick_position * invert_y_stick);
+	}
+	else
+	{
+		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
+
+		if (key_left_pressed)
+			simulated_stick.x -= 1.0f;
+		if (key_right_pressed)
+			simulated_stick.x += 1.0f;
+
+		if (key_down_pressed)
+			simulated_stick.y -= 1.0f;
+		if (key_up_pressed)
+			simulated_stick.y += 1.0f;
+	
+		if (simulated_stick.x != 0.0f || simulated_stick.y != 0.0f)
+			ApplyStickDisplacement(delta_time, simulated_stick);	
+	}
+}
+
+void Game::ApplyStickDisplacement(float delta_time, glm::vec2 const & direction)
+{
+	Particle * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return;
+
+	float speed = 500.0f;
+
+	player_particle->position = 
+		player_particle->position +  
+		delta_time * speed * direction;
 }
 
 bool Game::Initialize(glm::vec2 const & in_world_size, boost::filesystem::path const & path)
@@ -140,7 +193,12 @@ bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
 		int id = json_layer.value("layer", -100);
 		int visible = json_layer.value("start_visible", 1);
 
-		SetLayerVisibility(id, visible > 0);
+		SpriteLayer * sprite_layer = FindSpriteLayer(id);
+		if (sprite_layer != nullptr)
+		{
+			sprite_layer->initial_visible = (visible > 0);
+			sprite_layer->SetVisible(sprite_layer->initial_visible);					
+		}	
 	}
 	return true;
 }
@@ -357,6 +415,15 @@ bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_game
 			(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
 			SetPause(!game_paused);		
 	}		
+
+	glm::vec2 left_stick_position  = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
+	glm::vec2 right_stick_position = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+
+	if (left_stick_position.x != 0.0f || left_stick_position.y != 0.0f)
+		stick_position = left_stick_position;
+	else if (right_stick_position.length() > 0.0f) 
+		stick_position = right_stick_position;
+
 	return true;
 }
 
@@ -374,6 +441,19 @@ bool Game::OnKeyEvent(int key, int action)
 		return true;
 	}
 
+	if (key == GLFW_KEY_LEFT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			key_left_pressed = true;
+	if (key == GLFW_KEY_RIGHT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			key_right_pressed = true;
+	if (key == GLFW_KEY_UP)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			key_up_pressed = true;
+	if (key == GLFW_KEY_DOWN)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			key_down_pressed = true;
+
 	return false;
 }
 
@@ -382,6 +462,7 @@ void Game::ResetWorld()
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
 	{
+		layer.SetVisible(layer.initial_visible);
 		layer.DestroyAllParticles();
 		layer.InitialPopulateSprites(game_info);	
 	}

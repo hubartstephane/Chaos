@@ -412,7 +412,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 	if (background_texture == nullptr)
 		return false;
 	// generate the control texture
-	control_texture = chaos::GLTextureTools::GenTextureObject((path / "background.png").string().c_str());
+	control_texture = chaos::GLTextureTools::GenTextureObject((path / "controls.png").string().c_str());
 	if (control_texture == nullptr)
 		return false;
 
@@ -551,7 +551,7 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
-	uniform_provider.AddVariableValue("level", level_ratio);
+	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
 	program_data.BindUniforms(&uniform_provider);
 	

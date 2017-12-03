@@ -243,6 +243,8 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 	p.velocity = glm::vec2(0.0f, 0.0f);
 	p.half_size = 0.5f * glm::vec2(def.size, def.size * ratio);
 
+	float world_distance_2 = glm::length2(2.0f * game_info.world_box.half_size);
+
 	if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_CENTER)
 	{
 		while (count > 0)
@@ -336,14 +338,22 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 
 			--count; // decrement even if the particle is refused
 
+			bool add_particle = true;
 			if (def.spawn_type == ObjectDefinition::SPAWN_TYPE_OUTASCREEN_TESTCOLLISION) // search any other object that is less than one screen away
 			{
-			
-			
-			
+				for (size_t i = 0 ; i < particles.size() ; ++i)
+				{
+					float particles_distance_2 = glm::length2(p.position - particles[i].position);
+					if (particles_distance_2 < world_distance_2)
+					{
+						add_particle = false;
+						break;
+					}				
+				}									
 			}
 
-			particles.push_back(p);
+			if (add_particle)
+				particles.push_back(p);
 		}		
 	}
 }

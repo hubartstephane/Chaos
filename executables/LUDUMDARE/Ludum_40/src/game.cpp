@@ -253,7 +253,13 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
 		if (--life < 0)
+		{
+			life = 0; // cheat mode en debug, but want life to be visually visible
+#if !_DEBUG
 			pending_gameover = true;
+#endif
+		}
+			
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{
@@ -331,6 +337,7 @@ void Game::Finalize()
 	background_program = nullptr;
 	background_mesh = nullptr;
 	background_texture = nullptr;
+	control_texture = nullptr;
 
 	gamepad_manager = nullptr;
 }
@@ -401,8 +408,12 @@ bool Game::InitializeSpriteManagers()
 bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
 	// generate the background texture
-	background_texture = chaos::GLTextureTools::GenTextureObject((path / "background.jpg").string().c_str());
+	background_texture = chaos::GLTextureTools::GenTextureObject((path / "background.png").string().c_str());
 	if (background_texture == nullptr)
+		return false;
+	// generate the control texture
+	control_texture = chaos::GLTextureTools::GenTextureObject((path / "background.png").string().c_str());
+	if (control_texture == nullptr)
 		return false;
 
 	// generate the background program
@@ -536,6 +547,7 @@ void Game::DisplayBackground(glm::ivec2 viewport_size)
 
 	chaos::GLProgramVariableProviderChain uniform_provider;
 	uniform_provider.AddVariableTexture("material", background_texture);
+	uniform_provider.AddVariableTexture("control", control_texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);

@@ -194,4 +194,5 @@ protected:
 	boost::intrusive_ptr<chaos::GLProgram>  background_program;
 	boost::intrusive_ptr<chaos::SimpleMesh> background_mesh;
 	boost::intrusive_ptr<chaos::Texture>    background_texture;
+	boost::intrusive_ptr<chaos::Texture>    control_texture;
 };

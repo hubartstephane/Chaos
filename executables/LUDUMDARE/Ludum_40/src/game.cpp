@@ -26,6 +26,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
+#include <chaos/SoundManager.h>
 
 // ======================================================================================
 
@@ -60,6 +61,8 @@ bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_g
 
 void Game::Tick(double delta_time)
 {
+	sound_manager->Tick((float)delta_time);
+
 	if (pending_gameover || pending_restart_game)
 	{
 		GameOver();
@@ -255,18 +258,27 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 		if (--life < 0)
 		{
 			life = 0; // cheat mode en debug, but want life to be visually visible
-#if !_DEBUG
+//#if !_DEBUG
 			pending_gameover = true;
-#endif
+//#endif
+		}
+		else
+		{
+			if (collision_source != nullptr)
+				collision_source->PlaySound(chaos::PlaySoundDesc());		
 		}
 			
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{
+		if (bonus1_source != nullptr)
+			bonus1_source->PlaySound(chaos::PlaySoundDesc());
 		++level;
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_SPEEDUP)
 	{
+		if (bonus2_source != nullptr)
+			bonus2_source->PlaySound(chaos::PlaySoundDesc());
 		player_absolute_speed += delta_speed;
 	}
 	return true;
@@ -300,8 +312,33 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_si
 	return false;
 }
 
+bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
+{
+	sound_manager = new chaos::SoundManager;
+	if (sound_manager == nullptr)
+		return false;
+	if (!sound_manager->StartManager())
+		return false;
+
+	chaos::PlaySoundDesc desc;
+	desc.looping = true;
+
+	music_source = sound_manager->AddSource((resource_path / "Sounds" / "music.ogg").string().c_str());
+	if (music_source != nullptr)
+		music_source->PlaySound(desc);
+
+	gameover_source = sound_manager->AddSource((resource_path / "Sounds" / "gameover.ogg").string().c_str());
+	bonus1_source = sound_manager->AddSource((resource_path / "Sounds" / "bonus1.ogg").string().c_str());
+	bonus2_source = sound_manager->AddSource((resource_path / "Sounds" / "bonus2.ogg").string().c_str());
+	collision_source = sound_manager->AddSource((resource_path / "Sounds" / "collision.ogg").string().c_str());
+		
+	return true;
+}
+
 bool Game::DoInitialize(boost::filesystem::path const & resource_path, boost::filesystem::path const & object_path, nlohmann::json const & json_entry)
 {
+	if (!InitializeSounds(resource_path))
+		return false;
 	if (!LoadSpriteLayerInfo(json_entry))
 		return false;
 	if (!LoadObjectDefinition(json_entry))
@@ -343,6 +380,18 @@ void Game::Finalize()
 	control_texture = nullptr;
 	
 	gamepad_manager = nullptr;
+
+	music_source = nullptr;
+	gameover_source = nullptr;
+	collision_source = nullptr;
+	bonus1_source = nullptr;
+	bonus2_source = nullptr;
+
+	if (sound_manager != nullptr)
+	{
+		sound_manager->StopManager();
+		sound_manager = nullptr;
+	}
 }
 
 SpriteLayer * Game::FindSpriteLayer(int layer)
@@ -683,6 +732,9 @@ bool Game::OnKeyEvent(int key, int action)
 
 void Game::GameOver()
 {
+	if (pending_gameover && gameover_source != nullptr)
+		gameover_source->PlaySound(chaos::PlaySoundDesc());
+
 	bool old_pending_gameover = pending_gameover;
 	bool old_pending_restart_game = pending_restart_game;
 	

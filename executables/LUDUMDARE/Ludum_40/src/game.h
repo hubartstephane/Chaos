@@ -142,6 +142,7 @@ protected:
 
 	void ResetPlayerCachedInputs();
 
+	bool InitializeSounds(boost::filesystem::path const & resource_path);
 	
 
 
@@ -199,5 +200,13 @@ protected:
 	boost::intrusive_ptr<chaos::Texture>    background_texture;
 	boost::intrusive_ptr<chaos::GLProgram>  control_program;
 	boost::intrusive_ptr<chaos::Texture>    control_texture;
+
+	// sounds
+	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
+	boost::intrusive_ptr<chaos::SoundSource> music_source;
+	boost::intrusive_ptr<chaos::SoundSource> gameover_source;
+	boost::intrusive_ptr<chaos::SoundSource> collision_source;
+	boost::intrusive_ptr<chaos::SoundSource> bonus1_source;
+	boost::intrusive_ptr<chaos::SoundSource> bonus2_source;
 	
 };

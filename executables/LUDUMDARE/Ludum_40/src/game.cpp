@@ -204,6 +204,10 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 	// update all screen space position particles
 	glm::vec2 wp2 = world_position;
 	UpdateParticlesPosition(0.0f, -(wp2 - wp1));
+
+	// FIX !!! we only use screen space coordinate, the having a world that is still at 0 position is not a bad idea 
+	//         to avoid float issues
+	world_position = glm::vec2(0.0f, 0.0f); 
 }
 
 bool Game::FindPlayerCollision()

@@ -258,9 +258,12 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 		if (--life < 0)
 		{
 			life = 0; // cheat mode en debug, but want life to be visually visible
-//#if !_DEBUG
+#if !_DEBUG
 			pending_gameover = true;
-//#endif
+#else
+			if (collision_source != nullptr)
+				collision_source->PlaySound(chaos::PlaySoundDesc());	
+#endif
 		}
 		else
 		{
@@ -331,6 +334,8 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	bonus1_source = sound_manager->AddSource((resource_path / "Sounds" / "bonus1.ogg").string().c_str());
 	bonus2_source = sound_manager->AddSource((resource_path / "Sounds" / "bonus2.ogg").string().c_str());
 	collision_source = sound_manager->AddSource((resource_path / "Sounds" / "collision.ogg").string().c_str());
+	start_source = sound_manager->AddSource((resource_path / "Sounds" / "start.ogg").string().c_str());
+	pause_source = sound_manager->AddSource((resource_path / "Sounds" / "pause.ogg").string().c_str());
 		
 	return true;
 }
@@ -386,6 +391,8 @@ void Game::Finalize()
 	collision_source = nullptr;
 	bonus1_source = nullptr;
 	bonus2_source = nullptr;
+	start_source = nullptr;
+	pause_source = nullptr;
 
 	if (sound_manager != nullptr)
 	{
@@ -799,10 +806,16 @@ void Game::SetPause(bool in_paused)
 	game_paused = in_paused;
 
 	SetLayerVisibility(PAUSED_OBJECT_LAYER, game_paused);
+
+	if (pause_source != nullptr)
+		pause_source->PlaySound(chaos::PlaySoundDesc());
 }
 
 void Game::OnGameStarted()
 {
+	if (start_source != nullptr)
+		start_source->PlaySound(chaos::PlaySoundDesc());
+
 	game_started = true;
 	game_paused  = false;
 

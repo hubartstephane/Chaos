@@ -208,5 +208,6 @@ protected:
 	boost::intrusive_ptr<chaos::SoundSource> collision_source;
 	boost::intrusive_ptr<chaos::SoundSource> bonus1_source;
 	boost::intrusive_ptr<chaos::SoundSource> bonus2_source;
-	
+	boost::intrusive_ptr<chaos::SoundSource> start_source;
+	boost::intrusive_ptr<chaos::SoundSource> pause_source;
 };

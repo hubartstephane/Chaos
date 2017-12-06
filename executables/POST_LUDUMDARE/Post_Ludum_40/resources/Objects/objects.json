@@ -193,28 +193,28 @@
       "id": 11,
       "layer": 3,
       "size": 500.0,
-      "bitmap": "planete4.png",
+      "bitmap": "planet4.png",
       "spawn_type": 2
     },
     {
       "id": 12,
       "layer": 5,
       "size": 50.0,
-      "bitmap": "planete5.png",
+      "bitmap": "planet5.png",
       "spawn_type": 2
     },    
     {
       "id": 13,
       "layer": 4,
       "size": 150.0,
-      "bitmap": "planete6.png",
+      "bitmap": "planet6.png",
       "spawn_type": 2
     },
     {
       "id": 14,
       "layer": 5,
       "size": 100.0,
-      "bitmap": "planete7.png",
+      "bitmap": "planet7.png",
       "spawn_type": 2
     }    
     

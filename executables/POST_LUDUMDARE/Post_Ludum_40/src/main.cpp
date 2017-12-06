@@ -158,8 +158,8 @@ int _tmain(int argc, char ** argv, char ** env)
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor       = nullptr;
-	params.width         = 700;
-	params.height        = 700;
+	params.width         = 800;
+	params.height        = 800;
 	params.monitor_index = 0;
 	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
 

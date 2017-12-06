@@ -198,8 +198,8 @@
     },
     {
       "id": 12,
-      "layer": 5,
-      "size": 50.0,
+      "layer": 3,
+      "size": 400.0,
       "bitmap": "planet5.png",
       "spawn_type": 2
     },    

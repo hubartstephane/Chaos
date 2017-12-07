@@ -239,6 +239,12 @@ public:
     return CastAndDiv<float>(rand(), RAND_MAX);
   }
 
+  /** returns a random float between X and Y */
+  static float RandFloat(float min_value, float max_value)
+  {
+    return min_value + RandFloat() * (max_value - min_value);
+  }
+
   /** a function to detect if an entry is power of 2 */
   template<typename T>
   static bool IsPowerOf2(T src)

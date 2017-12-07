@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ClockManager.h>
+#include <chaos/SoundManager.h>
 
 namespace chaos
 {
@@ -21,41 +22,41 @@ namespace chaos
     public:
 
       /** true if we use an opengl debug context */
-      int debug_context{ 1 };
+      int debug_context = 1;
       /** the major version of opengl */
-      int major_version{ 4 };
+      int major_version = 4;
       /** the major version of opengl */
-      int minor_version{ 4 };
+      int minor_version = 4;
       /** the refresh rate (only usefull in fullscreen mode) */
-      int refresh_rate{ 60 };
+      int refresh_rate = 60;
       /** the opengl profile */
-      int opengl_profile{ GLFW_OPENGL_CORE_PROFILE };
+      int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
       /** true if the window can be resized */
-      int resizable{ 1 };
+      int resizable = 1;
       /** true if the window starts visible */
-      int start_visible{ 1 };
+      int start_visible = 1;
       /** true if the window has some decoration */
-      int decorated{ 1 };
+      int decorated = 1;
       /** true if the window is toplevel */
-      int toplevel{ 0 };
+      int toplevel = 0;
       /** number of samples in multisamples (0 for none) */
-      int samples{ 0 };
+      int samples = 0;
       /** self description */
-      int double_buffer{ 1 };
+      int double_buffer = 1;
       /** self description */
-      int depth_bits{ 24 };
+      int depth_bits = 24;
       /** self description */
-      int stencil_bits{ 8 };
+      int stencil_bits = 8;
       /** self description */
-      int red_bits{ 8 };
+      int red_bits = 8;
       /** self description */
-      int green_bits{ 8 };
+      int green_bits = 8;
       /** self description */
-      int blue_bits{ 8 };
+      int blue_bits = 8;
       /** self description */
-      int alpha_bits{ 8 };
+      int alpha_bits = 8;
       /** self description */
-      int focused{ 0 };
+      int focused = 0;
     };
 
     /**
@@ -67,15 +68,15 @@ namespace chaos
     public:
 
       /** the title */
-      char const * title{ nullptr };
+      char const * title = nullptr;
       /** the wanted monitor */
-      GLFWmonitor * monitor{ nullptr };
+      GLFWmonitor * monitor = nullptr;
       /** the monitor index */
-      int monitor_index{ 0 };
+      int monitor_index = 0;
       /** window width */
-      int width{ 0 };
+      int width = 0;
       /** window height */
-      int height{ 0 };
+      int height = 0;
       /** the hints */
       WindowHints hints;
     };
@@ -115,6 +116,14 @@ namespace chaos
       Clock * GetMainClock() { return main_clock.get(); }
       /** gets the main clock */
       Clock const * GetMainClock() const { return main_clock.get(); }
+
+      /** load a configuration file */
+      nlohmann::json LoadConfigurationFile();
+
+      /** gets the sound manager */
+      SoundManager * GetSoundManager() { return sound_manager.get(); }
+      /** gets the sound manager */
+      SoundManager const * GetSoundManager() const { return sound_manager.get(); }
 
     protected:
 
@@ -159,6 +168,9 @@ namespace chaos
       /** called to require the window to refresh */
       void RequireWindowRefresh();
 
+      /** tweak the application params */
+      void TweakApplicationParamsFromConfiguration(nlohmann::json configuration, SingleWindowApplicationParams & params);
+
     private:
 
       /** binding function with GLFW library */
@@ -186,12 +198,14 @@ namespace chaos
 
       /** the main clock of the manager */
       boost::intrusive_ptr<Clock> main_clock;
+      /** the sound manager */
+      boost::intrusive_ptr<SoundManager> sound_manager;
       /** the window in GLFW library */
-      GLFWwindow * glfw_window{ nullptr };
+      GLFWwindow * glfw_window = nullptr;
       /** is a refresh required */
-      bool refresh_required{ false };
+      bool refresh_required = false;
       /** is the window with double buffer */
-      bool double_buffer{ true };
+      bool double_buffer = true;
     };
 
   }; // namespace MyGLFW

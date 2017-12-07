@@ -1,6 +1,10 @@
 #include <chaos/MyGLFWWindow.h>
 #include <chaos/LogTools.h>
 #include <chaos/GLTools.h>
+#include <chaos/Application.h>
+#include <chaos/FileTools.h>
+#include <chaos/Buffer.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -173,6 +177,52 @@ namespace chaos
       LogTools::Log("Window(...) [%d] failure : %s", code, msg);
     }
 
+    nlohmann::json Window::LoadConfigurationFile()
+    {
+      Application * application = Application::GetInstance();
+      if (application != nullptr)
+      {
+        boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
+        
+        Buffer<char> buffer = FileTools::LoadFile(configuration_path, true);
+        if (buffer != nullptr)
+          return JSONTools::Parse(buffer.data);
+      }
+      return nlohmann::json();
+    }
+
+    void Window::TweakApplicationParamsFromConfiguration(nlohmann::json configuration, SingleWindowApplicationParams & params)
+    {
+
+      JSONTools::GetAttribute(configuration, "width", params.width);
+      JSONTools::GetAttribute(configuration, "height", params.height);
+
+
+     // XMLTools::ReadAttribute(configuration["height"], params.height)
+#undef MYGLFWINDOW_READATTRIBUTE
+
+#if 0
+      params.debug_context = XMLTools::ReadAttribute(configuration["debug_context"], params.debug_context);
+      params.major_version = XMLTools::ReadAttribute(configuration["major_version"], params.major_version);
+      params.minor_version = XMLTools::ReadAttribute(configuration["minor_version"], params.minor_version);
+      params.refresh_rate = XMLTools::ReadAttribute(configuration["refresh_rate"], params.refresh_rate);
+      params.opengl_profile = XMLTools::ReadAttribute(configuration["opengl_profile"], params.opengl_profile);
+      params.resizable = XMLTools::ReadAttribute(configuration["resizable"], params.resizable);
+      params.start_visible = XMLTools::ReadAttribute(configuration["start_visible"], params.start_visible);
+      params.decorated = XMLTools::ReadAttribute(configuration["decorated"], params.decorated);
+      params.toplevel = XMLTools::ReadAttribute(configuration["toplevel"], params.toplevel);
+      samples = XMLTools::ReadAttribute(configuration["samples"], params.samples);
+      double_buffer = XMLTools::ReadAttribute(configuration["double_buffer"], params.double_buffer);
+      depth_bits = XMLTools::ReadAttribute(configuration["depth_bits"], depth_bits);
+      stencil_bits = XMLTools::ReadAttribute(configuration["stencil_bits"], stencil_bits);
+      red_bits = XMLTools::ReadAttribute(configuration["red_bits"], red_bits);
+      green_bits = XMLTools::ReadAttribute(configuration["green_bits"], green_bits);
+      blue_bits = XMLTools::ReadAttribute(configuration["blue_bits"], blue_bits);
+      alpha_bits = XMLTools::ReadAttribute(configuration["alpha_bits"], alpha_bits);
+      focused = XMLTools::ReadAttribute(configuration["focused"], focused);
+#endif
+    }
+
     bool Window::DoRunSingleWindowApplication(SingleWindowApplicationParams params)
     {
       bool result = false;
@@ -180,6 +230,20 @@ namespace chaos
       // set an error callback
       glfwSetErrorCallback(OnError);
 
+      // load the configuration file
+      nlohmann::json configuration_json = LoadConfigurationFile();
+
+      // try to tweak the parameters with the configuration file
+      TweakApplicationParamsFromConfiguration(configuration_json["Window"], params);
+
+      // generate some singletons
+      main_clock = new Clock();
+      if (main_clock != nullptr)
+        main_clock->InitializeFromConfiguration(configuration_json["ClockManager"]);
+      // initialize the sound manager
+      sound_manager = new SoundManager();
+      if (sound_manager != nullptr)
+        sound_manager->InitializeFromConfiguration(configuration_json["SoundManager"]);
 
       bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
 
@@ -256,10 +320,6 @@ namespace chaos
           // the loop
           double_buffer = params.hints.double_buffer ? true : false;
           BindGLFWWindow(glfw_window);
-
-          // initialize the clock
-          main_clock = new Clock();
-
 
           result = Initialize();
           if (result)

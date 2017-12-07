@@ -447,6 +447,9 @@ namespace chaos
     /** the tick function of the manager */
     void Tick(float delta_time);
 
+    /** initialization of the manager from configuration file */
+    virtual void InitializeFromConfiguration(nlohmann::json configuration);
+
   protected:
 
     /** add a category internal method. If parent_category is not null, this means we want a temp object for fadeout and kill purpose */

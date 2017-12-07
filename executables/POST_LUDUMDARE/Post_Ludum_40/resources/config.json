@@ -1,7 +1,7 @@
 {
-	"Window" : [
-		"width":900,
-		"height":"truc"
-	
-	]
+  "Window": {
+
+    "width": 1200,
+    "height": 600
+  }
 }

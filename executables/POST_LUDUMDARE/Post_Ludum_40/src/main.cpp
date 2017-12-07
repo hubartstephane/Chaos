@@ -1,4 +1,5 @@
 #include <chaos/StandardHeaders.h> 
+#include <chaos/CollisionFramework.h> 
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
@@ -152,6 +153,23 @@ float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+  chaos::box2 b = chaos::box2(glm::vec2(100.0f, 0.0), glm::vec2(50.0f, 50.0f));
+  chaos::sphere2 s = chaos::sphere2(glm::vec2(0.0f, 0.0f), 40.0f);
+
+  bool col = chaos::Collide(b, s);
+
+
+
+
+
+
+
+
+
+
+
+
+
 	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
 
 	chaos::WinTools::AllocConsoleAndRedirectStdOutput();

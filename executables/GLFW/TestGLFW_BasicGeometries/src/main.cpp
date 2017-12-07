@@ -8,6 +8,8 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GLProgramLoader.h>
 #include <chaos/Application.h>
+#include <chaos/GeometryFramework.h>
+#include <chaos/CollisionFramework.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
@@ -50,8 +52,10 @@ static int const RESTRICT_BOX_OUTSIDE_TEST     = 18;
 static int const RESTRICT_SPHERE_OUTSIDE_TEST  = 19;
 static int const POINT_INSIDE_BOX_TEST         = 20;
 static int const POINT_INSIDE_SPHERE_TEST      = 21;
+static int const COLLISION_SHERE2_BOX2_TEST    = 22;
 
-static int const TEST_COUNT = 22;
+
+static int const TEST_COUNT = 23;
 
 class RenderingContext
 {
@@ -133,6 +137,7 @@ protected:
     if (example == RESTRICT_SPHERE_OUTSIDE_TEST)  return "restrict sphere displacement to outside";
     if (example == POINT_INSIDE_BOX_TEST)         return "point inside box";
     if (example == POINT_INSIDE_SPHERE_TEST)      return "point inside sphere";
+    if (example == COLLISION_SHERE2_BOX2_TEST)    return "collision sphere2/box2";
       
     return nullptr;
   }
@@ -207,21 +212,14 @@ protected:
     );
   }
 
-  void DrawPrimitive(RenderingContext const & ctx, chaos::box2 b, glm::vec4 const & color, bool is_translucent)
+  void DrawPrimitive(RenderingContext const & ctx, chaos::sphere2 s, glm::vec4 const & color, bool is_translucent)
   {
-    if (b.IsEmpty())
+    if (s.IsEmpty())
       return;
-
-    glm::mat4 local_to_world = glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) * glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
-
-    DrawPrimitiveImpl(
-      ctx,
-      get_pointer(mesh_rect),
-      get_pointer(program_rect),
-      color,
-      local_to_world,
-      is_translucent
-    );
+    chaos::sphere3 s3;
+    s3.position = glm::vec3(s.position.x, 0.0f, s.position.y);
+    s3.radius = s.radius;
+    DrawPrimitive(ctx, s3, color, is_translucent);
   }
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color, bool is_translucent)
@@ -241,11 +239,32 @@ protected:
     );
   }
 
+  void DrawPrimitive(RenderingContext const & ctx, chaos::box2 b, glm::vec4 const & color, bool is_translucent)
+  {
+    if (b.IsEmpty())
+      return;
+    chaos::box3 b3;
+    b3.position = glm::vec3(b.position.x, 0.0f, b.position.y);
+    b3.half_size = glm::vec3(b.half_size.x, 0.5f, b.half_size.y);
+    DrawPrimitive(ctx, b3, color, is_translucent);
+  }
+
   void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color)
   {
     glm::vec3 half_point_size(0.125f);
     DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, false);  
   }
+
+
+
+
+
+
+
+
+
+
+
 
   void BeginTranslucency()
   {
@@ -342,6 +361,29 @@ protected:
     DrawPrimitive(ctx, p1, blue, collision);
     DrawPrimitive(ctx, p2, red, collision);
   }
+
+  void Draw2DCollision(RenderingContext const & ctx)
+  {
+    double realtime = clock->GetClockTime();
+
+    chaos::box2 b2;
+    b2.position.x = 20.0f * (float)chaos::MathTools::Cos(0.8 * realtime * M_2_PI);
+    b2.position.y = 0.0;
+    b2.half_size = glm::vec2(3.0f, 2.0f);
+
+    chaos::sphere2 s2;
+    s2.position.x = 10.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+    s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
+    s2.radius = 3.0f;
+
+    bool collision = chaos::Collide(b2, s2);
+    DrawPrimitive(ctx, b2, blue, true);
+    DrawPrimitive(ctx, s2, red, collision);
+  }
+
+
+
+
 
   template<typename T>
   void DrawPointInside(RenderingContext const & ctx, T p)
@@ -518,6 +560,9 @@ protected:
     if (display_example == POINT_INSIDE_SPHERE_TEST)
       DrawPointInside(ctx, bigger_sphere);
 
+    // 2D collision
+    if (display_example == COLLISION_SHERE2_BOX2_TEST)
+      Draw2DCollision(ctx);
 
   }
 

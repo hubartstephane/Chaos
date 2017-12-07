@@ -204,7 +204,7 @@ namespace chaos
 			JSONTools::GetAttribute(configuration, "minor_version", hints.minor_version);
 			JSONTools::GetAttribute(configuration, "refresh_rate", hints.refresh_rate);
 			JSONTools::GetAttribute(configuration, "opengl_profile", hints.opengl_profile);
-#if 1
+#if 0 // probably no reason why this should be in config file
 			JSONTools::GetAttribute(configuration, "resizable", hints.resizable);
 			JSONTools::GetAttribute(configuration, "start_visible", hints.start_visible);
 			JSONTools::GetAttribute(configuration, "decorated", hints.decorated);
@@ -319,7 +319,7 @@ namespace chaos
 					double_buffer = params.hints.double_buffer ? true : false;
 					BindGLFWWindow(glfw_window);
 
-					result = Initialize();
+					result = Initialize(configuration_json);
 					if (result)
 					{
 						// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that

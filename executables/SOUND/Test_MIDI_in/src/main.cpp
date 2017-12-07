@@ -117,7 +117,7 @@ protected:
 		return true;
 	}
 
-	virtual bool Initialize() override
+	virtual bool Initialize(nlohmann::json configuration) override
 	{
 		if (!InitializeMIDIIn())
 			return false;

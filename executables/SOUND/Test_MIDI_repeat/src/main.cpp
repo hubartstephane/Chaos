@@ -223,7 +223,7 @@ protected:
 		return true;
 	}
 
-	virtual bool Initialize() override
+	virtual bool Initialize(nlohmann::json configuration) override
 	{	
 		// create child clocks (BEFORE !!)
 		track_clock = GetMainClock()->CreateChildClock(0);

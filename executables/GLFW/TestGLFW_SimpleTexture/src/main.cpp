@@ -294,7 +294,7 @@ protected:
 		texture = nullptr;
 	}
 
-	virtual bool Initialize() override
+	virtual bool Initialize(nlohmann::json configuration) override
 	{   
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)

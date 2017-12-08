@@ -926,7 +926,7 @@ namespace chaos
     irrklang_engine->setListenerPosition(ToIrrklangVector(position), ToIrrklangVector(lookdir), ToIrrklangVector(speed), ToIrrklangVector(up));
   }
 
-  void SoundManager::InitializeFromConfiguration(nlohmann::json configuration)
+  void SoundManager::InitializeFromConfiguration(nlohmann::json const & configuration)
   {
 
 

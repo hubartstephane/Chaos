@@ -500,7 +500,7 @@ namespace chaos
 		return false;
 	}
 	
-  void Clock::InitializeFromConfiguration(nlohmann::json configuration)
+  void Clock::InitializeFromConfiguration(nlohmann::json const & configuration)
   {
 
 

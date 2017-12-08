@@ -10,6 +10,73 @@ namespace chaos
 {
 	namespace MyGLFW
 	{
+    /**
+    * Tools
+    */
+
+    std::vector<GLFWmonitor *> Tools::GetSortedMonitors()
+    {
+      std::vector<GLFWmonitor *> result;
+
+      int monitor_count = 0;
+      GLFWmonitor ** monitors = glfwGetMonitors(&monitor_count);
+
+      if (monitor_count > 0 && monitors != nullptr)
+      {
+        result.reserve((size_t)monitor_count);
+
+        // fill that array with pairs : (monitors, X position)
+        for (int i = 0; i < monitor_count; ++i)
+          result.push_back(monitors[i]);
+
+        // sort the array by X position of the monitor    
+        auto b = result.begin();
+        auto e = result.end();
+
+        std::sort(b, e, [](GLFWmonitor * src1, GLFWmonitor * src2) {
+          int x1 = 0;
+          int y1 = 0;
+          int x2 = 0;
+          int y2 = 0;
+          glfwGetMonitorPos(src1, &x1, &y1);
+          glfwGetMonitorPos(src2, &x2, &y2);
+          return (x1 < x2) ? true : false;
+        });
+      }
+      return result;
+    }
+
+    GLFWmonitor * Tools::GetMonitorByIndex(int monitor_index)
+    {
+      GLFWmonitor * result = glfwGetPrimaryMonitor();
+      if (monitor_index != 0)
+      {
+        std::vector<GLFWmonitor *> monitors = GetSortedMonitors();
+
+        // search the primary monitor inside
+        auto b = monitors.begin();
+        auto e = monitors.end();
+        auto it = std::find(b, e, result);
+
+        // primary index
+        int primary_index = (int)(it - b); // we want to offset it with positive or negative values (cast it into signed)
+
+                                           // compute the index of the monitor we are interested in (and clamp)
+        int result_index = primary_index + monitor_index;
+        if (result_index < 0)
+          result_index = 0;
+        else if (result_index >= (int)monitors.size())
+          result_index = (int)monitors.size() - 1;
+
+        result = monitors[(size_t)result_index];
+      }
+      return result;
+    }
+
+    /**
+    * WindowHints
+    */
+
 		void WindowHints::ApplyHints()
 		{
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, debug_context);
@@ -31,6 +98,32 @@ namespace chaos
 			glfwWindowHint(GLFW_ALPHA_BITS, alpha_bits);
 			glfwWindowHint(GLFW_FOCUSED, focused);
 		}
+
+    /**
+    * Window
+    */
+
+    GLFWwindow * Window::GetGLFWHandler()
+    {
+      return glfw_window;
+    }
+    
+    bool Window::ShouldClose()
+    {
+      return (glfwWindowShouldClose(glfw_window) != 0);
+    }
+
+    void Window::MainTick(double delta_time)
+    {
+      if (Tick(delta_time))
+        RequireWindowRefresh();
+
+      if (refresh_required)
+      {
+        DoOnDraw(glfw_window);
+        refresh_required = false;
+      }
+    }
 
 		void Window::BindGLFWWindow(GLFWwindow * in_glfw_window)
 		{
@@ -150,7 +243,7 @@ namespace chaos
 				InvalidateRect(hWnd, NULL, false); // this cause flickering
 		}
 
-		void Window::TweakSingleWindowApplicationHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
+		void Window::TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
 		{
 			// retrieve the mode of the monitor to deduce pixel format
 			GLFWvidmode const * mode = glfwGetVideoMode(monitor);
@@ -172,274 +265,269 @@ namespace chaos
 			}
 		}
 
-		void Window::OnError(int code, const char* msg)
-		{
-			LogTools::Log("Window(...) [%d] failure : %s", code, msg);
-		}
+    bool Window::PrepareWindow(GLFWwindow * in_glfw_window, bool in_double_buffer, nlohmann::json const & in_configuration)
+    {
+      BindGLFWWindow(in_glfw_window);
+      double_buffer = in_double_buffer;     
+      return Initialize(in_configuration);
+    }
 
-		nlohmann::json Window::LoadConfigurationFile()
-		{
-			Application * application = Application::GetInstance();
-			if (application != nullptr)
-			{
-				boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
+    // 
+    // SingleWindowApplication
+    //
 
-				Buffer<char> buffer = FileTools::LoadFile(configuration_path, true);
-				if (buffer != nullptr)
-					return JSONTools::Parse(buffer.data);
-			}
-			return nlohmann::json();
-		}
+    SingleWindowApplication::SingleWindowApplication(SingleWindowApplicationParams const & in_window_params) :
+      window_params(in_window_params) 
+    {
+    }
 
-		void Window::TweakApplicationParamsFromConfiguration(nlohmann::json configuration, SingleWindowApplicationParams & params)
-		{
-			JSONTools::GetAttribute(configuration, "monitor_index", params.monitor_index);
-			JSONTools::GetAttribute(configuration, "width", params.width);
-			JSONTools::GetAttribute(configuration, "height", params.height);
+    void SingleWindowApplication::TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config)
+    {
+      JSONTools::GetAttribute(in_config, "monitor_index", params.monitor_index);
+      JSONTools::GetAttribute(in_config, "width", params.width);
+      JSONTools::GetAttribute(in_config, "height", params.height);
 
-			WindowHints & hints = params.hints;
+      WindowHints & hints = params.hints;
 
-			JSONTools::GetAttribute(configuration, "debug_context", hints.debug_context);
-			JSONTools::GetAttribute(configuration, "major_version", hints.major_version);
-			JSONTools::GetAttribute(configuration, "minor_version", hints.minor_version);
-			JSONTools::GetAttribute(configuration, "refresh_rate", hints.refresh_rate);
-			JSONTools::GetAttribute(configuration, "opengl_profile", hints.opengl_profile);
+      JSONTools::GetAttribute(in_config, "debug_context", hints.debug_context);
+      JSONTools::GetAttribute(in_config, "major_version", hints.major_version);
+      JSONTools::GetAttribute(in_config, "minor_version", hints.minor_version);
+      JSONTools::GetAttribute(in_config, "refresh_rate", hints.refresh_rate);
+      JSONTools::GetAttribute(in_config, "opengl_profile", hints.opengl_profile);
 #if 0 // probably no reason why this should be in config file
-			JSONTools::GetAttribute(configuration, "resizable", hints.resizable);
-			JSONTools::GetAttribute(configuration, "start_visible", hints.start_visible);
-			JSONTools::GetAttribute(configuration, "decorated", hints.decorated);
-			JSONTools::GetAttribute(configuration, "toplevel", hints.toplevel);
-			JSONTools::GetAttribute(configuration, "samples", hints.samples);
-			JSONTools::GetAttribute(configuration, "double_buffer", hints.double_buffer);
-			JSONTools::GetAttribute(configuration, "depth_bits", hints.depth_bits);
-			JSONTools::GetAttribute(configuration, "stencil_bits", hints.stencil_bits);
-			JSONTools::GetAttribute(configuration, "red_bits", hints.red_bits);
-			JSONTools::GetAttribute(configuration, "green_bits", hints.green_bits);
-			JSONTools::GetAttribute(configuration, "blue_bits", hints.blue_bits);
-			JSONTools::GetAttribute(configuration, "alpha_bits", hints.alpha_bits);
-			JSONTools::GetAttribute(configuration, "focused", hints.focused);
+      JSONTools::GetAttribute(in_config, "resizable", hints.resizable);
+      JSONTools::GetAttribute(in_config, "start_visible", hints.start_visible);
+      JSONTools::GetAttribute(in_config, "decorated", hints.decorated);
+      JSONTools::GetAttribute(in_config, "toplevel", hints.toplevel);
+      JSONTools::GetAttribute(in_config, "samples", hints.samples);
+      JSONTools::GetAttribute(in_config, "double_buffer", hints.double_buffer);
+      JSONTools::GetAttribute(in_config, "depth_bits", hints.depth_bits);
+      JSONTools::GetAttribute(in_config, "stencil_bits", hints.stencil_bits);
+      JSONTools::GetAttribute(in_config, "red_bits", hints.red_bits);
+      JSONTools::GetAttribute(in_config, "green_bits", hints.green_bits);
+      JSONTools::GetAttribute(in_config, "blue_bits", hints.blue_bits);
+      JSONTools::GetAttribute(in_config, "alpha_bits", hints.alpha_bits);
+      JSONTools::GetAttribute(in_config, "focused", hints.focused);
 #endif
-		}
+    }
 
-		bool Window::DoRunSingleWindowApplication(SingleWindowApplicationParams params)
-		{
-			bool result = false;
+    bool SingleWindowApplication::MessageLoop()
+    {
+      GLFWwindow * glfw_window = window->GetGLFWHandler();
 
-			// set an error callback
-			glfwSetErrorCallback(OnError);
+      double t1 = glfwGetTime();
 
-			// load the configuration file
-			nlohmann::json configuration_json = LoadConfigurationFile();
+      while (!window->ShouldClose())
+      {
+        glfwPollEvents();
 
-			// try to tweak the parameters with the configuration file
-			TweakApplicationParamsFromConfiguration(configuration_json["Window"], params);
+        double t2 = glfwGetTime();
+        double delta_time = t2 - t1;
+        // tick the manager
+        TickManagers(delta_time);
+        // tick the window
+        window->MainTick(delta_time);
+        // update time
+        t1 = t2;
+      }
+      return true;
+    }
 
-			// generate some singletons
-			main_clock = new Clock();
-			if (main_clock != nullptr)
-				main_clock->InitializeFromConfiguration(configuration_json["ClockManager"]);
-			// initialize the sound manager
-			sound_manager = new SoundManager();
-			if (sound_manager != nullptr)
-				sound_manager->InitializeFromConfiguration(configuration_json["SoundManager"]);
+    Window * SingleWindowApplication::GenerateWindow()
+    {
+      return new Window;
+    }
 
-			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
+    bool SingleWindowApplication::Main()
+    {
+      bool result = false;
 
-			// compute the monitor upon which the window will be : use it for pixel format
-			if (params.monitor == nullptr)
-				params.monitor = GetMonitorByIndex(params.monitor_index);
+      SingleWindowApplicationParams params = window_params; // work on a copy of the params
 
-			// retrieve the position of the monitor
-			int monitor_x = 0;
-			int monitor_y = 0;
-			glfwGetMonitorPos(params.monitor, &monitor_x, &monitor_y);
+      // set an error callback
+      glfwSetErrorCallback(OnGLFWError);
 
-			// retrieve the mode of the monitor to deduce pixel format
-			GLFWvidmode const * mode = glfwGetVideoMode(params.monitor);
+      bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
 
-			// compute the position and size of the window 
-			int x = 0;
-			int y = 0;
-			if (pseudo_fullscreen) // full-screen, the window use the full-size
-			{
-				params.width = mode->width;
-				params.height = mode->height;
-				x = monitor_x;
-				y = monitor_y;
-			}
-			else
-			{
-				if (params.width <= 0)
-					params.width = mode->width;
-				else
-					params.width = min(mode->width, params.width);
+      // compute the monitor upon which the window will be : use it for pixel format
+      if (params.monitor == nullptr)
+        params.monitor = Tools::GetMonitorByIndex(params.monitor_index);
 
-				if (params.height <= 0)
-					params.height = mode->height;
-				else
-					params.height = min(mode->height, params.height);
+      // retrieve the position of the monitor
+      int monitor_x = 0;
+      int monitor_y = 0;
+      glfwGetMonitorPos(params.monitor, &monitor_x, &monitor_y);
 
-				x = monitor_x + (mode->width - params.width) / 2;
-				y = monitor_y + (mode->height - params.height) / 2;
-			}
+      // retrieve the mode of the monitor to deduce pixel format
+      GLFWvidmode const * mode = glfwGetVideoMode(params.monitor);
 
-			// prepare window creation
-			TweakSingleWindowApplicationHints(params.hints, params.monitor, pseudo_fullscreen);
-			params.hints.ApplyHints();
+      // compute the position and size of the window 
+      int x = 0;
+      int y = 0;
+      if (pseudo_fullscreen) // full-screen, the window use the full-size
+      {
+        params.width = mode->width;
+        params.height = mode->height;
+        x = monitor_x;
+        y = monitor_y;
+      }
+      else
+      {
+        if (params.width <= 0)
+          params.width = mode->width;
+        else
+          params.width = min(mode->width, params.width);
 
-			// create window
-			if (params.title == nullptr) // title cannot be null
-				params.title = "";
+        if (params.height <= 0)
+          params.height = mode->height;
+        else
+          params.height = min(mode->height, params.height);
 
-			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-			GLFWwindow * glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
+        x = monitor_x + (mode->width - params.width) / 2;
+        y = monitor_y + (mode->height - params.height) / 2;
+      }
 
-			// main loop
-			if (glfw_window != nullptr)
-			{
-				glfwMakeContextCurrent(glfw_window);
+      // prepare window creation
+      window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
+      TweakHintsFromConfiguration(params, configuration["window"]);
+      params.hints.ApplyHints();
 
-				// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
-				//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
-				glewExperimental = GL_TRUE;
-				// create the context
-				GLenum err = glewInit();
-				if (err != GLEW_OK)
-				{
-					LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
-				}
-				else
-				{
-					// set the debug log hander
-					GLTools::SetDebugMessageHandler();
-					// some generic information
-					GLTools::DisplayGenericInformation();
+      // create window
+      if (params.title == nullptr) // title cannot be null
+        params.title = "";
 
-					// the loop
-					double_buffer = params.hints.double_buffer ? true : false;
-					BindGLFWWindow(glfw_window);
+      // we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
+      GLFWwindow * glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
 
-					result = Initialize(configuration_json);
-					if (result)
-					{
-						// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
-						int left, top, right, bottom;
-						glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-						if (left != 0 || top != 0 || right != 0 || bottom != 0)
-						{
-							x += left;
-							y += top;
-							params.width = params.width - left - right;
-							params.height = params.height - top - bottom;
-							glfwSetWindowSize(glfw_window, params.width, params.height);
-						}
+      // main loop
+      if (glfw_window != nullptr)
+      {
+        glfwMakeContextCurrent(glfw_window);
 
-						glfwSetWindowPos(glfw_window, x, y);
-						glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-						// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-						//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        // XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
+        //       see https://www.opengl.org/wiki/OpenGL_Loading_Library
+        glewExperimental = GL_TRUE;
+        // create the context
+        GLenum err = glewInit();
+        if (err != GLEW_OK)
+        {
+          LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
+        }
+        else
+        {
+          // set the debug log hander
+          GLTools::SetDebugMessageHandler();
+          // some generic information
+          GLTools::DisplayGenericInformation();
 
-						glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
+          // the loop
+          bool double_buffer = params.hints.double_buffer ? true : false;
+          result = window->PrepareWindow(glfw_window, double_buffer, configuration);
+          if (result)
+          {
+            // x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
+            int left, top, right, bottom;
+            glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
+            if (left != 0 || top != 0 || right != 0 || bottom != 0)
+            {
+              x += left;
+              y += top;
+              params.width = params.width - left - right;
+              params.height = params.height - top - bottom;
+              glfwSetWindowSize(glfw_window, params.width, params.height);
+            }
 
-						// now that the window is fully placed ... we can show it
-						if (params.hints.start_visible)
-							glfwShowWindow(glfw_window);
+            glfwSetWindowPos(glfw_window, x, y);
+            glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            // glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            //  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-						// the main loop
-						DoRunSingleWindowMainLoop(glfw_window);
-					}
-					Finalize();
-				}
-				glfwDestroyWindow(glfw_window);
-			}
+            glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
 
-			return result;
-		}
+            // now that the window is fully placed ... we can show it
+            if (params.hints.start_visible)
+              glfwShowWindow(glfw_window);
 
-		void Window::DoRunSingleWindowMainLoop(GLFWwindow * glfw_window)
-		{
-			double t1 = glfwGetTime();
+            // the main loop
+            MessageLoop();
+          }
+          window->Finalize();
+        }
+        glfwDestroyWindow(glfw_window);
+      }
 
-			while (!glfwWindowShouldClose(glfw_window))
-			{
-				glfwPollEvents();
+      return result;
+    }
 
-				double t2 = glfwGetTime();
-				double delta_time = t2 - t1;
+    void SingleWindowApplication::TickManagers(double delta_time)
+    {
+      if (main_clock != nullptr)
+        main_clock->TickClock(delta_time);
+      if (sound_manager != nullptr)
+        sound_manager->Tick((float)delta_time);
+    }
 
-				if (main_clock != nullptr)
-					main_clock->TickClock(delta_time);
+    void SingleWindowApplication::OnGLFWError(int code, const char* msg)
+    {
+      LogTools::Log("Window(...) [%d] failure : %s", code, msg);
+    }
 
-				if (Tick(delta_time))
-					RequireWindowRefresh();
+    bool SingleWindowApplication::Initialize()
+    {
+      if (!Application::Initialize())
+        return false;
+      // initialize the clock
+      main_clock = new Clock();
+      if (main_clock != nullptr)
+       main_clock->InitializeFromConfiguration(configuration["ClockManager"]);
+      // initialize the sound manager
+      sound_manager = new SoundManager();
+      if (sound_manager != nullptr)
+        sound_manager->InitializeFromConfiguration(configuration["SoundManager"]);
+      // create the window
+      window = GenerateWindow();
+      if (window == nullptr)
+        return false;
+      // success
+      return true;
+    }
 
-				if (refresh_required)
-				{
-					DoOnDraw(glfw_window);
-					refresh_required = false;
-				}
-				t1 = t2;
-			}
-		}
+    bool SingleWindowApplication::Finalize()
+    {
+      if (window != nullptr)
+      {
+        delete(window);
+        window = nullptr;
+      }
+      main_clock = nullptr;
+      sound_manager = nullptr;
+      Application::Finalize();
+      return true;
+    }
 
-		std::vector<GLFWmonitor *> Window::GetSortedMonitors()
-		{
-			std::vector<GLFWmonitor *> result;
+    void SingleWindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
+    {
 
-			int monitor_count = 0;
-			GLFWmonitor ** monitors = glfwGetMonitors(&monitor_count);
+    }
 
-			if (monitor_count > 0 && monitors != nullptr)
-			{
-				result.reserve((size_t)monitor_count);
+    bool SingleWindowApplication::InitializeStandardLibraries()
+    {
+      if (!Application::InitializeStandardLibraries())
+        return false;
+      FreeImage_Initialise(); // glew will be initialized 
+      FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
+      glfwInit();
+      return true;
+    }
 
-				// fill that array with pairs : (monitors, X position)
-				for (int i = 0; i < monitor_count; ++i)
-					result.push_back(monitors[i]);
+    bool SingleWindowApplication::FinalizeStandardLibraries()
+    {
+      glfwTerminate();
+      FreeImage_DeInitialise();
+      Application::FinalizeStandardLibraries();
+      return true;
+    }
 
-				// sort the array by X position of the monitor    
-				auto b = result.begin();
-				auto e = result.end();
-
-				std::sort(b, e, [](GLFWmonitor * src1, GLFWmonitor * src2) {
-					int x1 = 0;
-					int y1 = 0;
-					int x2 = 0;
-					int y2 = 0;
-					glfwGetMonitorPos(src1, &x1, &y1);
-					glfwGetMonitorPos(src2, &x2, &y2);
-					return (x1 < x2) ? true : false;
-				});
-			}
-			return result;
-		}
-
-		GLFWmonitor * Window::GetMonitorByIndex(int monitor_index)
-		{
-			GLFWmonitor * result = glfwGetPrimaryMonitor();
-			if (monitor_index != 0)
-			{
-				std::vector<GLFWmonitor *> monitors = GetSortedMonitors();
-
-				// search the primary monitor inside
-				auto b = monitors.begin();
-				auto e = monitors.end();
-				auto it = std::find(b, e, result);
-
-				// primary index
-				int primary_index = (int)(it - b); // we want to offset it with positive or negative values (cast it into signed)
-
-												   // compute the index of the monitor we are interested in (and clamp)
-				int result_index = primary_index + monitor_index;
-				if (result_index < 0)
-					result_index = 0;
-				else if (result_index >= (int)monitors.size())
-					result_index = (int)monitors.size() - 1;
-
-				result = monitors[(size_t)result_index];
-			}
-			return result;
-		}
 
 	}; // namespace MyGLFW
 

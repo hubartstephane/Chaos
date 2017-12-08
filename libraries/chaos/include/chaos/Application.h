@@ -12,33 +12,18 @@ class Application
 {
 public:
 
+  /** constructor */
+  Application();
   /** destructor */
-  virtual ~Application() = default;
+  virtual ~Application();
 
-  /** a generic function for initializing */
-  template<typename T>
-  static bool Initialize(int argc, char ** argv, char ** env)
-  {
-    assert(singleton_instance == nullptr);
-    InitializeStandardLibraries();
-    singleton_instance = new T;
-    singleton_instance->StoreParameters(argc, argv, env);
-    return singleton_instance->DoInitialize(argc, argv, env);
-  }
-
-  /** a generic function for initializing with default Application as class */
-  static bool Initialize(int argc, char ** argv, char ** env)
-  {
-    return Initialize<Application>(argc, argv, env);
-  }
-
-  /** finalization method */
-  static void Finalize();
+  /** the user main method */
+  bool Run(int argc, char ** argv, char ** env);
 
   /** getter of the singleton instance */
-  static inline Application * GetInstance(){ return singleton_instance; }
+  static inline Application * GetInstance() { return singleton_instance; }
   /** getter of the singleton instance */
-  static inline Application const * GetConstInstance(){ return singleton_instance; }
+  static inline Application const * GetConstInstance() { return singleton_instance; }
 
   /** get an environment value */
   char const * GetEnvironment(char const * key) const;
@@ -54,22 +39,26 @@ public:
   /** get the application local path for execution data */
   inline boost::filesystem::path const & GetUserLocalPath() const { return userlocal_path; }
 
+  /** get the configuration */
+  nlohmann::json const & GetConfiguration() const { return configuration;}
+
 protected:
 
-  /** Initialize the application with the main data */
-  virtual bool DoInitialize(int argc, char ** argv, char ** env);
+  /** the method that should be override */
+  virtual bool Main();
   /** store the application parameters */
   virtual void StoreParameters(int argc, char ** argv, char ** env);
+  /** Initialize the application with the main data */
+  virtual bool Initialize();
   /** Finalization method */
-  virtual void DoFinalize();
-
+  virtual bool Finalize();
   /** standard library initialization */
-  static void InitializeStandardLibraries();
+  virtual bool InitializeStandardLibraries();
   /** standard library finalization */
-  static void FinalizeStandardLibraries();
+  virtual bool FinalizeStandardLibraries();
 
-  /** a debugging function to output some message from FreeImage */
-  static void FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg);
+  /** loading the configuration file */
+  nlohmann::json LoadConfigurationFile();
 
 protected:
 
@@ -88,6 +77,9 @@ protected:
   boost::filesystem::path resources_path;
   /** path of the application to store user data */
   boost::filesystem::path userlocal_path;
+
+  /** the JSON configuration file if existing */
+  nlohmann::json configuration;
 };
 
 }; // namespace chaos

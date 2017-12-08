@@ -12,7 +12,7 @@ class MyGLFWWindowTest : public chaos::MyGLFW::Window
 protected:
 
   virtual bool OnDraw(glm::ivec2 size) override
-  {    
+  {
     glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -23,43 +23,37 @@ protected:
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_ESCAPE && action ==  GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       RequireWindowClosure();
   }
 
-  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+  virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
-    chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+    chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel  = 1;
+    hints.toplevel = 1;
     hints.decorated = 1;
   }
 
   virtual void OnIconifiedStateChange(bool iconified)
   {
     std::cout << "OnIconifiedStateChange : " << iconified << std::endl;
-  }  
+  }
 
   virtual void OnFocusStateChange(bool gain_focus)
   {
     std::cout << "OnFocusStateChange : " << gain_focus << std::endl;
-  }  
+  }
 };
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
   chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor       = nullptr;
-  params.width         = 500;
-  params.height        = 500;
+  params.monitor = nullptr;
+  params.width = 500;
+  params.height = 500;
   params.monitor_index = 0;
-  chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowTest>(params);
-
-  chaos::Application::Finalize();
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowTest>(argc, argv, env, params);
 
   return 0;
 }

@@ -618,7 +618,7 @@ protected:
 
   virtual bool Initialize(nlohmann::json configuration) override
   {
-    chaos::Application * application = chaos::Application::GetInstance();
+    chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
     if (application == nullptr)
       return false;
 
@@ -653,7 +653,7 @@ protected:
       return false;
 
     // create a timer
-    clock = GetMainClock()->CreateChildClock(-1);
+    clock = application->GetMainClock()->CreateChildClock(-1);
 
     // create meshes
     chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -676,9 +676,9 @@ protected:
     return true;
   }
 
-  virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+  virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
-    chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+    chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
     hints.toplevel  = 0;
     hints.decorated = 1;
@@ -700,7 +700,9 @@ protected:
   {
     if (key == GLFW_KEY_T && action == GLFW_RELEASE)
     {
-      GetMainClock()->Toggle();
+      chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+      if (application != nullptr)
+        application->GetMainClock()->Toggle();
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
@@ -764,18 +766,12 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width  = 1200;
-  params.height = 600;
+  params.width = 500;
+  params.height = 500;
   params.monitor_index = 0;
-  chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
-
-  chaos::Application::Finalize();
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
   return 0;
 }

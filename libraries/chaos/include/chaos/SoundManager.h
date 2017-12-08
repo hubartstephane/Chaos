@@ -448,7 +448,7 @@ namespace chaos
     void Tick(float delta_time);
 
     /** initialization of the manager from configuration file */
-    virtual void InitializeFromConfiguration(nlohmann::json configuration);
+    virtual void InitializeFromConfiguration(nlohmann::json const & configuration);
 
   protected:
 

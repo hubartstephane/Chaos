@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/Application.h>
 #include <chaos/ClockManager.h>
 #include <chaos/SoundManager.h>
 
@@ -8,6 +9,19 @@ namespace chaos
 {
   namespace MyGLFW
   {
+    /**
+    * Tools : some usefull tools for GLFW
+    */
+
+    class Tools
+    {
+    public:
+      /** Get a list of all monitors sorted left to right */
+      static std::vector<GLFWmonitor *> GetSortedMonitors();
+      /** Get monitor by its index (negative for LEFT, positive for RIGHT, 0 for primary */
+      static GLFWmonitor * GetMonitorByIndex(int monitor_index);
+    };
+
     /**
     * WindowHints : this represents hint for GLFWwindow creation
     */
@@ -87,58 +101,34 @@ namespace chaos
 
     class Window
     {
+      friend class SingleWindowApplication;
+
     public:
 
-      /** create and run single screen application (if width == height == 0 use pseudo fullscreen mode) */
-      template<typename WINDOW_TYPE>
-      static bool RunSingleWindowApplication(SingleWindowApplicationParams const & params)
-      {
-        bool result = false;
-
-        WINDOW_TYPE * my_window = new WINDOW_TYPE();
-        if (my_window != nullptr)
-        {
-          result = my_window->DoRunSingleWindowApplication(params);
-          delete(my_window);
-        }
-        return result;
-      }
-
-      /** get the hints for new GLFW window */
-      virtual void TweakSingleWindowApplicationHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const;
-
-      /** Get a list of all monitors sorted left to right */
-      static std::vector<GLFWmonitor *> GetSortedMonitors();
-      /** Get monitor by its index (negative for LEFT, positive for RIGHT, 0 for primary */
-      static GLFWmonitor * GetMonitorByIndex(int monitor_index);
-
-      /** gets the main clock */
-      Clock * GetMainClock() { return main_clock.get(); }
-      /** gets the main clock */
-      Clock const * GetMainClock() const { return main_clock.get(); }
-
-      /** load a configuration file */
-      nlohmann::json LoadConfigurationFile();
-
-      /** gets the sound manager */
-      SoundManager * GetSoundManager() { return sound_manager.get(); }
-      /** gets the sound manager */
-      SoundManager const * GetSoundManager() const { return sound_manager.get(); }
+      /** entry point from Application */
+      void MainTick(double delta_time);
+      /** called to require the window to close */
+      void RequireWindowClosure();
+      /** called to require the window to refresh */
+      void RequireWindowRefresh();
+      /** getter on the handler */
+      GLFWwindow * GetGLFWHandler();
+      /** returns whether the window has a pending GLFW close message */
+      bool ShouldClose();
 
     protected:
 
-      /** an error callback */
-      static void OnError(int code, const char* msg);
-      /** the main function for single window application */
-      virtual bool DoRunSingleWindowApplication(SingleWindowApplicationParams params);
-      /** the main loop for single window application */
-      virtual void DoRunSingleWindowMainLoop(GLFWwindow * glfw_window);
+      /** final intializations called from the application */
+      bool PrepareWindow(GLFWwindow * in_glfw_window, bool in_double_buffer, nlohmann::json const & in_configuration);
+
+      /** get the hints for new GLFW window */
+      virtual void TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const;
       /** bind Window with GLFW */
       virtual void BindGLFWWindow(GLFWwindow * in_glfw_window);
       /** called every Tick (returns true whenever we want to redraw the window) */
       virtual bool Tick(double delta_time) { return true; }
       /** called at window creation (returns false if the window must be killed) */
-      virtual bool Initialize(nlohmann::json configuration){ return true; }
+      virtual bool Initialize(nlohmann::json configuration) { return true; }
       /** called at window destruction */
       virtual void Finalize() { }
 
@@ -162,14 +152,6 @@ namespace chaos
       virtual void OnIconifiedStateChange(bool iconified) {}
       /** called whenever the window gain or loose focus */
       virtual void OnFocusStateChange(bool gain_focus) {}
-
-      /** called to require the window to close */
-      void RequireWindowClosure();
-      /** called to require the window to refresh */
-      void RequireWindowRefresh();
-
-      /** tweak the application params */
-      void TweakApplicationParamsFromConfiguration(nlohmann::json configuration, SingleWindowApplicationParams & params);
 
     private:
 
@@ -196,10 +178,6 @@ namespace chaos
 
     protected:
 
-      /** the main clock of the manager */
-      boost::intrusive_ptr<Clock> main_clock;
-      /** the sound manager */
-      boost::intrusive_ptr<SoundManager> sound_manager;
       /** the window in GLFW library */
       GLFWwindow * glfw_window = nullptr;
       /** is a refresh required */
@@ -207,6 +185,101 @@ namespace chaos
       /** is the window with double buffer */
       bool double_buffer = true;
     };
+
+    /**
+    * SingleWindowApplication
+    */
+
+    class SingleWindowApplication : public Application
+    {
+
+    public:
+
+      /** constructor */
+      SingleWindowApplication(SingleWindowApplicationParams const & in_window_params);
+
+      /** getter of the singleton instance */
+      static inline SingleWindowApplication * GetGLFWApplicationInstance() { return (SingleWindowApplication*)(singleton_instance); }
+      /** getter of the singleton instance */
+      static inline SingleWindowApplication const * GetGLFWApplicationConstInstance() { return (SingleWindowApplication const*)(singleton_instance); }
+
+      /** gets the main clock */
+      Clock * GetMainClock() { return main_clock.get(); }
+      /** gets the main clock */
+      Clock const * GetMainClock() const { return main_clock.get(); }
+      /** gets the sound manager */
+      SoundManager * GetSoundManager() { return sound_manager.get(); }
+      /** gets the sound manager */
+      SoundManager const * GetSoundManager() const { return sound_manager.get(); }
+
+    protected:
+
+      /** Main method */
+      virtual bool Main() override;
+
+      /** Window Loop */
+      bool MessageLoop();
+
+      /** an error callback */
+      static void OnGLFWError(int code, const char* msg);
+      /** a debugging function to output some message from FreeImage */
+      static void FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg);
+      /** initializing standard libraries */
+      virtual bool InitializeStandardLibraries() override;
+      /** Finalizalizing standard libraries */
+      virtual bool FinalizeStandardLibraries() override;
+      /** initialize the application */
+      virtual bool Initialize() override;
+      /** finalize the application */
+      virtual bool Finalize() override;
+
+      /** the method to override for window generation */
+      virtual Window * GenerateWindow();
+      /** tick all the managers */
+      virtual void TickManagers(double delta_time);
+
+      /** Tweak window hints from configuration */
+      void TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config);
+
+    protected:
+
+      /** the main clock of the manager */
+      boost::intrusive_ptr<Clock> main_clock;
+      /** the sound manager */
+      boost::intrusive_ptr<SoundManager> sound_manager;
+
+      /** the initial_window param */
+      SingleWindowApplicationParams window_params;
+      /** the window created */
+      Window * window = nullptr;
+    };
+
+    /**
+    * RunWindowApplication : utility template function to run an application only from a class
+    */
+
+    template<typename WINDOW_TYPE>
+    bool RunWindowApplication(int argc, char ** argv, char ** env, SingleWindowApplicationParams const & in_window_params)
+    {
+      class MyApplication : public SingleWindowApplication
+      {
+      public:
+        MyApplication(SingleWindowApplicationParams const & in_window_params) :
+          SingleWindowApplication(in_window_params) {}
+      protected:
+        Window * GenerateWindow() override { return new WINDOW_TYPE; }
+      };
+
+      bool result = false;
+
+      MyApplication * application = new MyApplication(in_window_params);
+      if (application != nullptr)
+      {
+        result = application->Run(argc, argv, env);
+        delete(application);
+      }
+      return result;
+    }
 
   }; // namespace MyGLFW
 

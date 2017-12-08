@@ -3,46 +3,78 @@
 #include <chaos/FileTools.h>
 #include <chaos/Buffer.h>
 #include <chaos/WinTools.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
   Application * Application::singleton_instance = nullptr;
 
-  void Application::DoFinalize()
+  Application::Application()
   {
-
+    assert(singleton_instance == nullptr);
+    singleton_instance = this; // well this should be a singleton
   }
 
-  void Application::Finalize()
+  Application::~Application()
   {
-    if (singleton_instance != nullptr)
+    assert(singleton_instance == this);
+    singleton_instance = nullptr;
+  }
+
+  nlohmann::json Application::LoadConfigurationFile()
+  {
+    boost::filesystem::path configuration_path = GetResourcesPath() / "config.json";
+
+    Buffer<char> buffer = FileTools::LoadFile(configuration_path, true);
+    if (buffer != nullptr)
+      return JSONTools::Parse(buffer.data);
+
+    return nlohmann::json();
+  }
+
+  bool Application::Initialize()
+  {
+    chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+    return true;
+  }
+
+  bool Application::Finalize()
+  {
+    return true;
+  }
+
+  bool Application::Main()
+  {
+    return true;
+  }
+
+  bool Application::Run(int argc, char ** argv, char ** env)
+  {
+    bool result = false;
+    if (InitializeStandardLibraries())
     {
-      singleton_instance->DoFinalize();
-      delete(singleton_instance);
-      singleton_instance = nullptr;
+      // store a copy of the parameters
+      StoreParameters(argc, argv, env);
+
+      // load the configuration file
+      configuration = LoadConfigurationFile();
+
+      // initialize, run, and finalize the application
+      if (Initialize())
+        result = Main();
+      // finalization (even if initialization failed)
+      Finalize();
       FinalizeStandardLibraries();
     }
+    return result;
   }
 
-  void Application::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
+  bool Application::InitializeStandardLibraries()
   {
-
+    return true;
   }
 
-  void Application::InitializeStandardLibraries()
-  {
-    FreeImage_Initialise(); // glew will be initialized 
-    FreeImage_SetOutputMessage(&FreeImageOutputMessageFunc);
-    glfwInit();
-  }
-
-  void Application::FinalizeStandardLibraries()
-  {
-    glfwTerminate();
-    FreeImage_DeInitialise();
-  }
-
-  bool Application::DoInitialize(int argc, char ** argv, char ** env)
+  bool Application::FinalizeStandardLibraries()
   {
     return true;
   }
@@ -52,18 +84,18 @@ namespace chaos
     assert(argc > 0); // should at least contains the fullpath of the application
 
     if (argv != nullptr)
-      for (int i = 0 ; i < argc ; ++i)
+      for (int i = 0; i < argc; ++i)
         arguments.push_back(argv[i]);
 
     if (env != nullptr)
     {
-      for (int i = 0 ; env[i] != nullptr ; ++i)
+      for (int i = 0; env[i] != nullptr; ++i)
       {
         char const * separator = strchr(env[i], '=');
         if (separator != nullptr)
         {
-          std::string key   = std::string(env[i], separator - env[i]);
-          std::string value = std::string(separator + 1);                    
+          std::string key = std::string(env[i], separator - env[i]);
+          std::string value = std::string(separator + 1);
           environments.push_back(std::make_pair(key, value));
         }
       }
@@ -73,10 +105,10 @@ namespace chaos
     p.normalize();
     p.make_preferred();
 
-    application_path     = p.parent_path();
-    application_filename = p.filename(); 
-    resources_path       = application_path / "resources";
-    userlocal_path       = WinTools::GetUserLocalPath() / application_filename;
+    application_path = p.parent_path();
+    application_filename = p.filename();
+    resources_path = application_path / "resources";
+    userlocal_path = WinTools::GetUserLocalPath() / application_filename;
     userlocal_path.replace_extension();
   }
 
@@ -84,8 +116,8 @@ namespace chaos
   {
     assert(key != nullptr);
     for (auto e : environments)
-    if (_stricmp(e.first.c_str(), key) == 0)
-      return e.second.c_str();
+      if (_stricmp(e.first.c_str(), key) == 0)
+        return e.second.c_str();
     return nullptr;
   }
 

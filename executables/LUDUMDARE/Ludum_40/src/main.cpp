@@ -152,18 +152,12 @@ float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	chaos::MyGLFW::SingleWindowApplicationParams params;
-	params.monitor       = nullptr;
-	params.width         = 700;
-	params.height        = 700;
-	params.monitor_index = 0;
-	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
-
-	chaos::Application::Finalize();
+  chaos::MyGLFW::SingleWindowApplicationParams params;
+  params.monitor = nullptr;
+  params.width = 700;
+  params.height = 700;
+  params.monitor_index = 0;
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
 	return 0;
 }

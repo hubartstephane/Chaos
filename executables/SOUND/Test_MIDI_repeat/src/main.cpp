@@ -225,11 +225,15 @@ protected:
 
 	virtual bool Initialize(nlohmann::json const & configuration) override
 	{	
+    chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+    if (application == nullptr)
+      return false;
+
 		// create child clocks (BEFORE !!)
-		track_clock = GetMainClock()->CreateChildClock(0);
+		track_clock = application->GetMainClock()->CreateChildClock(0);
 		if (track_clock == nullptr)
 			return false;
-		management_clock = GetMainClock()->CreateChildClock(0);
+		management_clock = application->GetMainClock()->CreateChildClock(0);
 		if (management_clock == nullptr)
 			return false;
 		// initialize MIDI's
@@ -333,16 +337,12 @@ chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData con
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	chaos::MyGLFW::SingleWindowApplicationParams params;
-	params.monitor = nullptr;
-	params.width = 500;
-	params.height = 500;
-	params.monitor_index = 0;
-	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
+  chaos::MyGLFW::SingleWindowApplicationParams params;
+  params.monitor = nullptr;
+  params.width = 500;
+  params.height = 500;
+  params.monitor_index = 0;
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
 	return 0;
 }

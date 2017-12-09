@@ -73,7 +73,10 @@ protected:
 			return false;
 
 		chaos::ClockEventInfo event_info = chaos::ClockEventInfo(0.0, 0.0, chaos::ClockEventRepetitionInfo::InfiniteRepetition(0.5));
-		GetMainClock()->AddPendingEvent(new MIDIPlaySoundEvent(this), event_info, false);
+
+    chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+    if (application != nullptr)
+		  application->GetMainClock()->AddPendingEvent(new MIDIPlaySoundEvent(this), event_info, false);
 
 		return true;
 	}
@@ -139,16 +142,12 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	chaos::MyGLFW::SingleWindowApplicationParams params;
-	params.monitor = nullptr;
-	params.width = 500;
-	params.height = 500;
-	params.monitor_index = 0;
-	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
+  chaos::MyGLFW::SingleWindowApplicationParams params;
+  params.monitor = nullptr;
+  params.width = 500;
+  params.height = 500;
+  params.monitor_index = 0;
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
 	return 0;
 }

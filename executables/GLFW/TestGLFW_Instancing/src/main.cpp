@@ -28,13 +28,13 @@ protected:
 
     glViewport(0, 0, size.x, size.y);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);   
-   
+    glEnable(GL_CULL_FACE);
+
     glUseProgram(program->GetResourceID());
 
     // XXX : the scaling is used to avoid the near plane clipping      
-    static float FOV =  60.0f;
-    glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
+    static float FOV = 60.0f;
+    glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
 
     glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
 
@@ -44,18 +44,22 @@ protected:
 
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
-    double realtime = GetMainClock()->GetClockTime();
+    double realtime = 0.0;
+
+    chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+    if (application != nullptr)
+      application->GetMainClock()->GetClockTime();
 
     chaos::GLProgramVariableProviderChain uniform_provider;
-    uniform_provider.AddVariableValue("projection",         projection_matrix);
-    uniform_provider.AddVariableValue("local_to_world",     local_to_world_matrix);
-    uniform_provider.AddVariableValue("world_to_camera",    world_to_camera_matrix);
+    uniform_provider.AddVariableValue("projection", projection_matrix);
+    uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
+    uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
     uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
-    uniform_provider.AddVariableValue("realtime",           realtime);
+    uniform_provider.AddVariableValue("realtime", realtime);
     program_data.BindUniforms(&uniform_provider);
 
     int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-    int base_instance  = 0;
+    int base_instance = 0;
     mesh->Render(program_data, nullptr, instance_count, base_instance);
 
     return true;
@@ -64,11 +68,11 @@ protected:
   virtual void Finalize() override
   {
     program = nullptr;
-    mesh    = nullptr;
+    mesh = nullptr;
   }
 
   virtual bool Initialize(nlohmann::json const & configuration) override
-  {   
+  {
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;
@@ -77,21 +81,21 @@ protected:
 
     chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    mesh = chaos::CubeMeshGenerator(b).GenerateMesh(); 
+    mesh = chaos::CubeMeshGenerator(b).GenerateMesh();
     if (mesh == nullptr)
       return false;
 
-	  // create shader
+    // create shader
     chaos::GLProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
-    
+    loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
+
     program = loader.GenerateProgramObject();
     if (program == nullptr)
       return false;
 
     fps_view_controller.fps_controller.position.z = 100.0f;
-   
+
     return true;
   }
 
@@ -99,7 +103,7 @@ protected:
   {
     chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
-    hints.toplevel  = 1;
+    hints.toplevel = 1;
     hints.decorated = 0;
   }
 
@@ -116,7 +120,7 @@ protected:
 protected:
 
   boost::intrusive_ptr<chaos::GLProgram> program;
-  
+
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 
   chaos::FPSViewInputController fps_view_controller;
@@ -124,19 +128,12 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-    
   chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor       = nullptr;
-  params.monitor_index = -1;
-  params.width         = 800;
-  params.height        = 800;
+  params.monitor = nullptr;
+  params.width = 800;
+  params.height = 800;
   params.monitor_index = 0;
-  chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowOpenGLTest1>(params);
-
-  chaos::Application::Finalize();
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
   return 0;
 }

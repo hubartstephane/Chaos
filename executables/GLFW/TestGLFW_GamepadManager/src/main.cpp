@@ -178,18 +178,12 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	chaos::MyGLFW::SingleWindowApplicationParams params;
-	params.monitor       = nullptr;
-	params.width         = 700;
-	params.height        = 700;
-	params.monitor_index = 0;
-	chaos::MyGLFW::Window::RunSingleWindowApplication<MyGLFWWindowGamepadTest>(params);
-
-	chaos::Application::Finalize();
+  chaos::MyGLFW::SingleWindowApplicationParams params;
+  params.monitor = nullptr;
+  params.width = 700;
+  params.height = 700;
+  params.monitor_index = 0;
+  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowGamepadTest>(argc, argv, env, params);
 
 	return 0;
 }

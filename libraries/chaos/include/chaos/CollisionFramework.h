@@ -242,20 +242,24 @@ namespace chaos
     }
 
     // 4 : test distance of sphere center and the edges
+    //     the distance si given by
+    //     length(cross(normalized_edge, e))
+    //
+    //     we can use a simplified version of cross product while in 2D
+    //     => the cross will give a vector so that (X = 0, Y = 0)
     for (int i = 0; i < 4; ++i)
     {
       vec_type const & e1 = V[i];
       vec_type const & e2 = V[(i + 1) % 4];
 
       vec_type e1_S = s.position - e1;
-      vec_type edge = glm::normalize(e2 - e1);
+      vec_type normalized_edge = glm::normalize(e2 - e1);
 
-      float d2 = (e1_S.x * edge.y) - (e1_S.y * edge.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
-      if (d2 < r2)
-        return true;
+      float d = (normalized_edge.x * e1_S.y) - (normalized_edge.y * e1_S.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
+      if (d > s.radius)
+        return false;
     }
-
-    return false;
+    return true;
   }
 
 

@@ -154,7 +154,7 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
+  void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale)
   {
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
@@ -165,6 +165,7 @@ protected:
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
     uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
     uniform_provider.AddVariableValue("color", prim_ctx.color);
+    uniform_provider.AddVariableValue("Y_Scale", Y_Scale);
     program_data.BindUniforms(&uniform_provider);
   }
 
@@ -174,7 +175,9 @@ protected:
     chaos::GLProgram  * program,
     glm::vec4 const & color, 
     glm::mat4 const & local_to_world, 
-    bool is_translucent)
+    bool is_translucent,
+    float Y_Scale
+    )
   {
     glm::vec4 final_color = color;
     if (is_translucent)
@@ -187,7 +190,7 @@ protected:
     prim_ctx.local_to_world = local_to_world;
     prim_ctx.color          = final_color;
 
-    PrepareObjectProgram(program, ctx, prim_ctx);
+    PrepareObjectProgram(program, ctx, prim_ctx, Y_Scale);
 
     mesh->Render(program->GetProgramData(), nullptr, 0, 0);
 
@@ -200,7 +203,9 @@ protected:
     if (s.IsEmpty())
       return;
 
-    glm::mat4 local_to_world = glm::translate(s.position) * glm::scale(glm::vec3(s.radius, s.radius, s.radius));
+    glm::mat4 local_to_world = 
+      glm::translate(s.position) * 
+      glm::scale(glm::vec3(s.radius, s.radius, s.radius));
 
     DrawPrimitiveImpl(
       ctx,
@@ -208,7 +213,8 @@ protected:
       get_pointer(program_sphere),
       color,
       local_to_world,
-      is_translucent
+      is_translucent,
+      1.0f
     );
   }
 
@@ -216,10 +222,20 @@ protected:
   {
     if (s.IsEmpty())
       return;
-    chaos::sphere3 s3;
-    s3.position = glm::vec3(s.position.x, 0.0f, s.position.y);
-    s3.radius = s.radius;
-    DrawPrimitive(ctx, s3, color, is_translucent);
+
+    glm::mat4 local_to_world =
+      glm::translate(glm::vec3(s.position.x, 0.0f, s.position.y)) *
+      glm::scale(glm::vec3(s.radius, s.radius, s.radius));
+
+    DrawPrimitiveImpl(
+      ctx,
+      get_pointer(mesh_sphere),
+      get_pointer(program_sphere),
+      color,
+      local_to_world,
+      is_translucent,
+      0.0f
+    );
   }
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color, bool is_translucent)
@@ -227,7 +243,9 @@ protected:
     if (b.IsEmpty())
       return;
 
-    glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
+    glm::mat4 local_to_world = 
+      glm::translate(b.position) * 
+      glm::scale(b.half_size);
 
     DrawPrimitiveImpl(
       ctx,
@@ -235,7 +253,8 @@ protected:
       get_pointer(program_box),
       color,
       local_to_world,
-      is_translucent
+      is_translucent,
+      1.0f
     );
   }
 
@@ -243,10 +262,20 @@ protected:
   {
     if (b.IsEmpty())
       return;
-    chaos::box3 b3;
-    b3.position = glm::vec3(b.position.x, 0.0f, b.position.y);
-    b3.half_size = glm::vec3(b.half_size.x, 0.5f, b.half_size.y);
-    DrawPrimitive(ctx, b3, color, is_translucent);
+
+    glm::mat4 local_to_world = 
+      glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
+      glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
+
+    DrawPrimitiveImpl(
+      ctx,
+      get_pointer(mesh_box),
+      get_pointer(program_box),
+      color,
+      local_to_world,
+      is_translucent,
+      0.0f
+    );
   }
 
   void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color)
@@ -254,17 +283,6 @@ protected:
     glm::vec3 half_point_size(0.125f);
     DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, false);  
   }
-
-
-
-
-
-
-
-
-
-
-
 
   void BeginTranslucency()
   {
@@ -367,9 +385,9 @@ protected:
     double realtime = clock->GetClockTime();
 
     chaos::box2 b2;
-    b2.position.x = 20.0f * (float)chaos::MathTools::Cos(0.8 * realtime * M_2_PI);
-    b2.position.y = 0.0;
-    b2.half_size = glm::vec2(3.0f, 2.0f);
+    b2.position.x = 0.0;
+    b2.position.y = 20.0f * (float)chaos::MathTools::Cos(0.8 * realtime * M_2_PI);
+    b2.half_size = glm::vec2(5.0f, 7.0f);
 
     chaos::sphere2 s2;
     s2.position.x = 10.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
@@ -377,7 +395,7 @@ protected:
     s2.radius = 3.0f;
 
     bool collision = chaos::Collide(b2, s2);
-    DrawPrimitive(ctx, b2, blue, true);
+    DrawPrimitive(ctx, b2, blue, collision);
     DrawPrimitive(ctx, s2, red, collision);
   }
 
@@ -604,7 +622,8 @@ protected:
 
     debug_display.Finalize();
 
-    clock->RemoveFromParent();
+    if (clock != nullptr)
+      clock->RemoveFromParent();
   }
 
   boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)

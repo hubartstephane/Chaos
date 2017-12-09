@@ -80,7 +80,7 @@ protected:
 		sound_manager = nullptr;
 	}
 
-	virtual bool Initialize(nlohmann::json configuration) override
+	virtual bool Initialize(nlohmann::json const & configuration) override
 	{   
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
@@ -117,9 +117,9 @@ protected:
 		return true;
 	}
 
-	virtual void TweakSingleWindowApplicationHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakSingleWindowApplicationHints(hints, monitor, pseudo_fullscreen);
+		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
 #if !_DEBUG
 		hints.toplevel  = 1;

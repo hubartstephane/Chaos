@@ -616,7 +616,7 @@ protected:
     return loader.GenerateProgramObject();
   }
 
-  virtual bool Initialize(nlohmann::json configuration) override
+  virtual bool Initialize(nlohmann::json const & configuration) override
   {
     chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
     if (application == nullptr)

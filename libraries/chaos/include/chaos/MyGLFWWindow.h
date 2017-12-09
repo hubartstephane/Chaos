@@ -128,7 +128,7 @@ namespace chaos
       /** called every Tick (returns true whenever we want to redraw the window) */
       virtual bool Tick(double delta_time) { return true; }
       /** called at window creation (returns false if the window must be killed) */
-      virtual bool Initialize(nlohmann::json configuration) { return true; }
+      virtual bool Initialize(nlohmann::json const & configuration) { return true; }
       /** called at window destruction */
       virtual void Finalize() { }
 

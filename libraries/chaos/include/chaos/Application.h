@@ -82,4 +82,18 @@ protected:
   nlohmann::json configuration;
 };
 
+template<typename APPLICATION_TYPE>
+bool RunApplication(int argc, char ** argv, char ** env)
+{
+  bool result = false;
+
+  APPLICATION_TYPE * application = new APPLICATION_TYPE();
+  if (application != nullptr)
+  {
+    result = application->Run(argc, argv, env);
+    delete(application);
+  }
+  return result;
+}
+
 }; // namespace chaos

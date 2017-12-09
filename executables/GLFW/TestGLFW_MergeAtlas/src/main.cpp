@@ -216,35 +216,39 @@ void ReleaseBitmaps(std::vector<FIBITMAP*> & atlas_bitmaps)
 	atlas_bitmaps.clear();
 }
 
+class MyApplication : public chaos::Application
+{
+protected:
+
+  virtual bool Main() override
+  {
+    // load the images
+    std::vector<FIBITMAP*> atlas_bitmaps;
+    LoadBitmaps(atlas_bitmaps);
+
+    // the tests
+    boost::filesystem::path dst_p;
+    if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
+    {
+      for (int i = chaos::PixelFormat::FORMAT_GRAY; i <= chaos::PixelFormat::FORMAT_RGBA_FLOAT; ++i)
+      {
+        chaos::PixelFormat pixel_format = chaos::PixelFormat(i);
+
+        TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p);
+      }
+      chaos::WinTools::ShowFile(dst_p.string().c_str());
+    }
+
+    // release the images
+    ReleaseBitmaps(atlas_bitmaps);
+
+    return true;
+  }
+};
+
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	// load the images
-	std::vector<FIBITMAP*> atlas_bitmaps;
-	LoadBitmaps(atlas_bitmaps);
-
-	// the tests
-	boost::filesystem::path dst_p;
-	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
-	{
-		for (int i = chaos::PixelFormat::FORMAT_GRAY ; i <= chaos::PixelFormat::FORMAT_RGBA_FLOAT ; ++i)
-		{
-			chaos::PixelFormat pixel_format = chaos::PixelFormat(i);
-
-			TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p);		
-		}
-		chaos::WinTools::ShowFile(dst_p.string().c_str());
-	}
-
-	// release the images
-	ReleaseBitmaps(atlas_bitmaps);
-
-	// then the application
-	chaos::Application::Finalize();
-
+  chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;
 }
 

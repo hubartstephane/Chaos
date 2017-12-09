@@ -612,13 +612,13 @@ protected:
 
   virtual void Finalize() override
   {
-    mesh_box    = nullptr;
-    mesh_rect   = nullptr;
-    mesh_sphere = nullptr;
+    mesh_box      = nullptr;
+    mesh_triangle = nullptr;
+    mesh_sphere   = nullptr;
 
-    program_box    = nullptr;
-    program_rect   = nullptr;
-    program_sphere = nullptr;
+    program_box      = nullptr;
+    program_triangle = nullptr;
+    program_sphere   = nullptr;
 
     debug_display.Finalize();
 
@@ -663,10 +663,10 @@ protected:
     if (program_box == nullptr)
       return false;
 
-    program_rect = LoadProgram(resources_path, "pixel_shader_rect.txt", "vertex_shader_rect.txt");
-    if (program_rect == nullptr)
+    program_triangle = LoadProgram(resources_path, "pixel_shader_triangle.txt", "vertex_shader_triangle.txt");
+    if (program_box == nullptr)
       return false;
-
+    
     program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt");
     if (program_sphere == nullptr)
       return false;
@@ -675,12 +675,14 @@ protected:
     clock = application->GetMainClock()->CreateChildClock(-1);
 
     // create meshes
-    chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    chaos::sphere3 s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+    chaos::triangle3 t; // data will be initialized in vertex shader as uniform
+    chaos::box3      b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
     chaos::MultiMeshGenerator generators;    
     generators.AddGenerator(new chaos::SphereMeshGenerator(s, 10), mesh_sphere);
     generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
+    generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
 
     if (!generators.GenerateMeshes())
       return false;
@@ -760,9 +762,9 @@ protected:
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
   boost::intrusive_ptr<chaos::GLProgram>  program_box;
 
-  // rendering for the rect
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh_rect;
-  boost::intrusive_ptr<chaos::GLProgram>  program_rect;
+  // rendering for the triangle  
+  boost::intrusive_ptr<chaos::SimpleMesh> mesh_triangle;
+  boost::intrusive_ptr<chaos::GLProgram>  program_triangle;
 
   // rendering for the rect
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;

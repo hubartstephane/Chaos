@@ -12,7 +12,7 @@ void main()
 {
   vec3 p = position;
   p.y *= Y_Scale;
- 
+
   vs_normal = normal;
 
   vec4 tmp = vec4(p, 1.0);

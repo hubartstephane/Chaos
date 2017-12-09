@@ -148,6 +148,34 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
   return result;
 }
 
+MeshGenerationRequirement TriangleMeshGenerator::GetRequirement() const
+{
+  MeshGenerationRequirement result;
+  result.vertex_size = sizeof(glm::vec3);
+  result.vertices_count = 3;
+  result.indices_count = 0;
+  return result;
+}
+
+void TriangleMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+{
+  declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+}
+
+void TriangleMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+{
+  // the primitives
+  MeshPrimitive mesh_primitive;
+  mesh_primitive.count = 1;
+  mesh_primitive.indexed = false;
+  mesh_primitive.primitive_type = GL_TRIANGLES;
+  mesh_primitive.start = 0;
+  mesh_primitive.base_vertex_index = 0;
+  primitives.push_back(mesh_primitive);
+
+  vertices_writer << primitive;
+}
+
 MeshGenerationRequirement QuadMeshGenerator::GetRequirement() const
 {
   MeshGenerationRequirement result;

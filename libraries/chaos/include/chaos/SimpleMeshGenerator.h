@@ -85,6 +85,32 @@ protected:
 };
 
 /**
+* TriangleMeshGenerator : help defines mesh as simple traingle
+*/
+
+class TriangleMeshGenerator : public SimpleMeshGenerator
+{
+
+public:
+
+  /** constructor */
+  TriangleMeshGenerator(triangle3 const & in_primitive) :
+    primitive(in_primitive) {}
+
+  /** get requirement */
+  virtual MeshGenerationRequirement GetRequirement() const override;
+  /** get the vertex declaration */
+  virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
+  /** get the mesh data */
+  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+
+protected:
+
+  /** the box to generate */
+  triangle3 primitive;
+};
+
+/**
  * CubeMeshGenerator : help defines cube mesh 
  */
 

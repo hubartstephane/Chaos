@@ -219,11 +219,11 @@ namespace chaos
       return true;
 
     // 3 : test distance from the sphere center to the 4 corners of the box
-    T r2 = s.radius * s.radius;
+    auto r2 = s.radius * s.radius;
 
     auto corners = b.GetCorners();
-    vec_type const & A = corners.first;
-    vec_type const & C = corners.second;
+    auto const & A = corners.first;
+    auto const & C = corners.second;
 
     vec_type V[4] = 
     {
@@ -258,19 +258,29 @@ namespace chaos
     return Collide(t, s);
   }
 
+  // ensure the orientation of the triangle is correct for further collision detection
+  template<typename T>
+  type_triangle<T, 2> PrepareTriangleForCollision(type_triangle<T, 2> const & t)
+  {
+    auto e1 = t.b - t.a;
+    auto e2 = t.c - t.b;
+
+    if ((e2.x * e1.y) - (e2.y * e1.x) >= 0)
+      return t;
+
+    return type_triangle<T, 2>(t.a, t.c, t.b);
+  }
+
   template<typename T>
   bool Collide(type_triangle<T, 2> const & t, type_sphere<T, 2> const & s)
   {
-    using triangle_type = type_triangle<T, 2>;
-    using vec_type = triangle_type::vec2_type;
-
     // 1 : test whether any entry is null (sphere is faster call, first)
     if (s.IsEmpty())
       return false;
     if (t.IsEmpty())
       return false;
 
-    T r2 = s.radius * s.radius;
+    auto r2 = s.radius * s.radius;
 
     // 2 : test whether any of the 3 vertices is inside the sphere
     if (glm::length2(t.a - s.position) <= r2)
@@ -286,16 +296,16 @@ namespace chaos
     //
     //     we can use a simplified version of cross product while in 2D
     //     => the cross will give a vector so that (X = 0, Y = 0)
-    vec_type const * V = &t.a;
+    auto const * V = &t.a;
     for (int i = 0; i < 3; ++i)
     {
-      vec_type const & e1 = V[i];
-      vec_type const & e2 = V[(i + 1) % 3];
+      auto const & e1 = V[i];
+      auto const & e2 = V[(i + 1) % 3];
 
-      vec_type e1_S = s.position - e1;
-      vec_type normalized_edge = glm::normalize(e2 - e1);
+      auto e1_S = s.position - e1;
+      auto normalized_edge = glm::normalize(e2 - e1);
 
-      float d = (normalized_edge.x * e1_S.y) - (normalized_edge.y * e1_S.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
+      auto d = (normalized_edge.x * e1_S.y) - (normalized_edge.y * e1_S.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
       if (d > s.radius)
         return false;
     }

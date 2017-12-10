@@ -438,14 +438,15 @@ protected:
 
     chaos::triangle2 t2;
     t2.a = glm::vec2(5.0f, -15.0f);
-    t2.b = glm::vec2(-5.0f, -5.0f);
-    t2.c = glm::vec2(0.0f, +15.0f);
+    t2.c = glm::vec2(-5.0f, -5.0f);
+    t2.b = glm::vec2(0.0f, +15.0f);
+    t2 = chaos::PrepareTriangleForCollision(t2); // ensure the triangle order is good for collision function
 
     chaos::sphere2 s2;
     s2.position.x = 10.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
     s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
     s2.radius = 3.0f;
-    
+
     bool collision = chaos::Collide(t2, s2);
     DrawPrimitive(ctx, t2, blue, collision);
     DrawPrimitive(ctx, s2, red, collision);

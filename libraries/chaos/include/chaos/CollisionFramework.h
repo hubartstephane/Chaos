@@ -240,24 +240,15 @@ namespace chaos
         return true;
     }
 
-    // 4 : test distance of sphere center and the edges
-    //     the distance si given by
-    //     length(cross(normalized_edge, e))
-    //
-    //     we can use a simplified version of cross product while in 2D
-    //     => the cross will give a vector so that (X = 0, Y = 0)
-    for (int i = 0; i < 4; ++i)
-    {
-      vec_type const & e1 = V[i];
-      vec_type const & e2 = V[(i + 1) % 4];
-
-      vec_type e1_S = s.position - e1;
-      vec_type normalized_edge = glm::normalize(e2 - e1);
-
-      float d = (normalized_edge.x * e1_S.y) - (normalized_edge.y * e1_S.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
-      if (d > s.radius)
-        return false;
-    }
+    // 4 : test whether sphere center is too far from any edge
+    if (s.position.x > b.position.x + b.half_size.x + s.radius)
+      return false;
+    if (s.position.x < b.position.x - b.half_size.x - s.radius)
+      return false;
+    if (s.position.y > b.position.y + b.half_size.y + s.radius)
+      return false;
+    if (s.position.y < b.position.y - b.half_size.y - s.radius)
+      return false;
     return true;
   }
 
@@ -290,6 +281,11 @@ namespace chaos
       return true;
 
     // 3 : test whether the sphere center is too far from one side of any edge
+    //     the distance si given by
+    //     length(cross(normalized_edge, e))
+    //
+    //     we can use a simplified version of cross product while in 2D
+    //     => the cross will give a vector so that (X = 0, Y = 0)
     vec_type const * V = &t.a;
     for (int i = 0; i < 3; ++i)
     {

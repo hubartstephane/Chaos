@@ -206,7 +206,6 @@ namespace chaos
   bool Collide(type_box<T, 2> const & b, type_sphere<T, 2> const & s)
   {
     using box_type = type_box<T, 2>;
-    using sphere_type = type_sphere<T, 2>;
     using vec_type = box_type::vec2_type;
 
     // 1 : test whether any entry is null (sphere is faster call, first)
@@ -262,8 +261,50 @@ namespace chaos
     return true;
   }
 
+  template<typename T>
+  bool Collide(type_sphere<T, 2> const & s, type_triangle<T, 2> const & t)
+  {
+    return Collide(t, s);
+  }
 
+  template<typename T>
+  bool Collide(type_triangle<T, 2> const & t, type_sphere<T, 2> const & s)
+  {
+    using triangle_type = type_triangle<T, 2>;
+    using vec_type = triangle_type::vec2_type;
 
+    // 1 : test whether any entry is null (sphere is faster call, first)
+    if (s.IsEmpty())
+      return false;
+    if (t.IsEmpty())
+      return false;
+
+    T r2 = s.radius * s.radius;
+
+    // 2 : test whether any of the 3 vertices is inside the sphere
+    if (glm::length2(t.a - s.position) <= r2)
+      return true;
+    if (glm::length2(t.b - s.position) <= r2) // do not use sphere::Contains(...) to avoid multiple computation of R * R
+      return true;
+    if (glm::length2(t.c - s.position) <= r2)
+      return true;
+
+    // 3 : test whether the sphere center is too far from one side of any edge
+    vec_type const * V = &t.a;
+    for (int i = 0; i < 3; ++i)
+    {
+      vec_type const & e1 = V[i];
+      vec_type const & e2 = V[(i + 1) % 3];
+
+      vec_type e1_S = s.position - e1;
+      vec_type normalized_edge = glm::normalize(e2 - e1);
+
+      float d = (normalized_edge.x * e1_S.y) - (normalized_edge.y * e1_S.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
+      if (d > s.radius)
+        return false;
+    }
+    return true;
+  }
 
 }; // namespace chaos
 

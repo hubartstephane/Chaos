@@ -6,6 +6,9 @@ uniform vec4 color;
 
 void main()
 {
+	output_color = color;
+
+/*
   vec3  light = normalize(vec3(1.0, 2.0, 3.0));
   float modif = dot(light, normalize(vs_normal));           
 
@@ -14,5 +17,5 @@ void main()
   output_color =  color * (0.5 + 0.5 * modif * modif);
 
   output_color.w = color.w; // keep alpha from incomming color
-
+  */
 }

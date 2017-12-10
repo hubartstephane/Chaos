@@ -446,13 +446,10 @@ protected:
     s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
     s2.radius = 3.0f;
     
-    bool collision = false;// chaos::Collide(b2, s2);
+    bool collision = chaos::Collide(t2, s2);
     DrawPrimitive(ctx, t2, blue, collision);
     DrawPrimitive(ctx, s2, red, collision);
-
   }
-
-
 
   template<typename T>
   void DrawPointInside(RenderingContext const & ctx, T p)
@@ -730,11 +727,6 @@ protected:
 
     // create meshes
     chaos::triangle3 t; // data will be initialized in vertex shader as uniform
-
-    t.a = glm::vec3( 5.0f, 0.0f, -5.0f);
-    t.b = glm::vec3(-5.0f, 0.0f, -5.0f);
-    t.c = glm::vec3( 0.0f, 0.0f, +5.0f);
-
     chaos::box3      b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 

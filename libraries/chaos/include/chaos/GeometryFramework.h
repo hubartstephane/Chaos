@@ -351,6 +351,14 @@ public:
   /** constructor from points */
   type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
 
+  /** returns true whether the triangle is empty */
+  bool IsEmpty() const
+  {
+    if (a == b || a == c || b == c)
+      return true;
+    return false;
+  }
+
 public:
 
   /** first point of the triangle */

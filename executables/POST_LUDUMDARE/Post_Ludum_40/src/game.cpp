@@ -219,8 +219,17 @@ bool Game::FindPlayerCollision()
 	if (player_particle == nullptr)
 		return result;
 
-	chaos::box2    player_box    = chaos::box2(player_particle->position, player_particle->half_size);
+  glm::vec2 pp  = player_particle->position;
+  glm::vec2 phs = player_particle->half_size;
+
+	chaos::box2    player_box    = chaos::box2(pp, phs);
 	chaos::sphere2 player_sphere = chaos::GetInnerCircle(player_box);
+
+  chaos::triangle2 player_triangle;
+  player_triangle.a = glm::vec2(pp.x, pp.y + phs.y);
+  player_triangle.b = glm::vec2(pp.x + phs.x, pp.y - phs.y);
+  player_triangle.c = glm::vec2(pp.x - phs.x, pp.y - phs.y);
+  player_triangle = chaos::PrepareTriangleForCollision(player_triangle);
 
 	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
@@ -239,7 +248,7 @@ bool Game::FindPlayerCollision()
 			{				
 				chaos::sphere2 particle_sphere = chaos::GetInnerCircle(particle_box);
 
-				if (chaos::Collide(player_sphere, particle_sphere)) // more precise
+				if (chaos::Collide(player_triangle, particle_sphere)) // more precise
 				{
 					if (OnCollision(p, j, layer))
 					{

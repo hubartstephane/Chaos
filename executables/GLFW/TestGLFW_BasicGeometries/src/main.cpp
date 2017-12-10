@@ -53,9 +53,10 @@ static int const RESTRICT_SPHERE_OUTSIDE_TEST  = 19;
 static int const POINT_INSIDE_BOX_TEST         = 20;
 static int const POINT_INSIDE_SPHERE_TEST      = 21;
 static int const COLLISION_SHERE2_BOX2_TEST    = 22;
+static int const COLLISION_SHERE2_TRIANGLE_TEST = 23;
 
 
-static int const TEST_COUNT = 23;
+static int const TEST_COUNT = 24;
 
 class RenderingContext
 {
@@ -115,30 +116,31 @@ protected:
 
   char const * GetExampleTitle(int example)
   {
-    if (example == RECTANGLE_DISPLAY_TEST)        return "boxes touch each others";
-    if (example == RECTANGLE_CORNERS_TEST)        return "box.GetCorner(...)";
-    if (example == CORNERS_TO_RECTANGLE_TEST)     return "construct box from corners";
-    if (example == BOX_INTERSECTION_TEST)         return "box intersection";
-    if (example == BOX_UNION_TEST)                return "box union";
-    if (example == RESTRICT_BOX_INSIDE_1_TEST)    return "restrict box displacement to inside : move bigger";
-    if (example == RESTRICT_BOX_INSIDE_2_TEST)    return "restrict box displacement to inside : move smaller";
-    if (example == RESTRICT_SPHERE_INSIDE_1_TEST) return "restrict sphere displacement to inside : move bigger";
-    if (example == RESTRICT_SPHERE_INSIDE_2_TEST) return "restrict sphere displacement to inside : move smaller";
-    if (example == SPHERE_DISPLAY_TEST)           return "sphere touch each others";
-    if (example == SPHERE_INTERSECTION_TEST)      return "sphere intersection";
-    if (example == SPHERE_UNION_TEST)             return "sphere union";
-    if (example == INNER_SPHERE_TEST)             return "inner sphere";
-    if (example == BOUNDING_SPHERE_TEST)          return "bounding sphere";
-    if (example == BOUNDING_BOX_TEST)             return "bounding box";
-    if (example == SPLIT_BOX_TEST)                return "split box";
-    if (example == BOX_COLLISION_TEST)            return "box collision";
-    if (example == SPHERE_COLLISION_TEST)         return "sphere collision";
-    if (example == RESTRICT_BOX_OUTSIDE_TEST)     return "restrict box displacement to outside";
-    if (example == RESTRICT_SPHERE_OUTSIDE_TEST)  return "restrict sphere displacement to outside";
-    if (example == POINT_INSIDE_BOX_TEST)         return "point inside box";
-    if (example == POINT_INSIDE_SPHERE_TEST)      return "point inside sphere";
-    if (example == COLLISION_SHERE2_BOX2_TEST)    return "collision sphere2/box2";
-      
+    if (example == RECTANGLE_DISPLAY_TEST)         return "boxes touch each others";
+    if (example == RECTANGLE_CORNERS_TEST)         return "box.GetCorner(...)";
+    if (example == CORNERS_TO_RECTANGLE_TEST)      return "construct box from corners";
+    if (example == BOX_INTERSECTION_TEST)          return "box intersection";
+    if (example == BOX_UNION_TEST)                 return "box union";
+    if (example == RESTRICT_BOX_INSIDE_1_TEST)     return "restrict box displacement to inside : move bigger";
+    if (example == RESTRICT_BOX_INSIDE_2_TEST)     return "restrict box displacement to inside : move smaller";
+    if (example == RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
+    if (example == RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
+    if (example == SPHERE_DISPLAY_TEST)            return "sphere touch each others";
+    if (example == SPHERE_INTERSECTION_TEST)       return "sphere intersection";
+    if (example == SPHERE_UNION_TEST)              return "sphere union";
+    if (example == INNER_SPHERE_TEST)              return "inner sphere";
+    if (example == BOUNDING_SPHERE_TEST)           return "bounding sphere";
+    if (example == BOUNDING_BOX_TEST)              return "bounding box";
+    if (example == SPLIT_BOX_TEST)                 return "split box";
+    if (example == BOX_COLLISION_TEST)             return "box collision";
+    if (example == SPHERE_COLLISION_TEST)          return "sphere collision";
+    if (example == RESTRICT_BOX_OUTSIDE_TEST)      return "restrict box displacement to outside";
+    if (example == RESTRICT_SPHERE_OUTSIDE_TEST)   return "restrict sphere displacement to outside";
+    if (example == POINT_INSIDE_BOX_TEST)          return "point inside box";
+    if (example == POINT_INSIDE_SPHERE_TEST)       return "point inside sphere";
+    if (example == COLLISION_SHERE2_BOX2_TEST)     return "collision sphere2/box2";
+    if (example == COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
+
     return nullptr;
   }
 
@@ -154,13 +156,13 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale)
+  void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GLProgramVariableProviderChain * next_provider = nullptr)
   {
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
     glUseProgram(program->GetResourceID());
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GLProgramVariableProviderChain uniform_provider(next_provider);
     uniform_provider.AddVariableValue("projection", ctx.projection);
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
     uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
@@ -176,7 +178,8 @@ protected:
     glm::vec4 const & color, 
     glm::mat4 const & local_to_world, 
     bool is_translucent,
-    float Y_Scale
+    float Y_Scale, 
+    chaos::GLProgramVariableProviderChain * next_provider = nullptr
     )
   {
     glm::vec4 final_color = color;
@@ -190,12 +193,42 @@ protected:
     prim_ctx.local_to_world = local_to_world;
     prim_ctx.color          = final_color;
 
-    PrepareObjectProgram(program, ctx, prim_ctx, Y_Scale);
+    PrepareObjectProgram(program, ctx, prim_ctx, Y_Scale, next_provider);
 
     mesh->Render(program->GetProgramData(), nullptr, 0, 0);
 
     if (is_translucent)
       EndTranslucency();
+  }
+
+  void DrawPrimitive(RenderingContext const & ctx, chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent)
+  {
+    glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    chaos::GLProgramVariableProviderChain uniform_provider(nullptr);
+    uniform_provider.AddVariableValue("p1", t.a);
+    uniform_provider.AddVariableValue("p2", t.b);
+    uniform_provider.AddVariableValue("p3", t.c);
+
+    DrawPrimitiveImpl(
+      ctx,
+      get_pointer(mesh_triangle),
+      get_pointer(program_triangle),
+      color,
+      local_to_world,
+      is_translucent,
+      1.0f,
+      &uniform_provider
+    );
+  }
+
+  void DrawPrimitive(RenderingContext const & ctx, chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent)
+  {
+    chaos::triangle3 t3;
+    t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
+    t3.b = glm::vec3(t.b.x, 0.0f, t.b.y);
+    t3.c = glm::vec3(t.c.x, 0.0f, t.c.y);
+    DrawPrimitive(ctx, t3, color, is_translucent);
   }
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent)
@@ -380,7 +413,7 @@ protected:
     DrawPrimitive(ctx, p2, red, collision);
   }
 
-  void Draw2DCollision(RenderingContext const & ctx)
+  void DrawSphereBox2Collision(RenderingContext const & ctx)
   {
     double realtime = clock->GetClockTime();
 
@@ -399,7 +432,25 @@ protected:
     DrawPrimitive(ctx, s2, red, collision);
   }
 
+  void DrawTriangleBox2Collision(RenderingContext const & ctx)
+  {
+    double realtime = clock->GetClockTime();
 
+    chaos::triangle2 t2;
+    t2.a = glm::vec2(5.0f, -15.0f);
+    t2.b = glm::vec2(-5.0f, -5.0f);
+    t2.c = glm::vec2(0.0f, +15.0f);
+
+    chaos::sphere2 s2;
+    s2.position.x = 10.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+    s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
+    s2.radius = 3.0f;
+    
+    bool collision = false;// chaos::Collide(b2, s2);
+    DrawPrimitive(ctx, t2, blue, collision);
+    DrawPrimitive(ctx, s2, red, collision);
+
+  }
 
 
 
@@ -580,13 +631,16 @@ protected:
 
     // 2D collision
     if (display_example == COLLISION_SHERE2_BOX2_TEST)
-      Draw2DCollision(ctx);
+      DrawSphereBox2Collision(ctx);
+
+    if (display_example == COLLISION_SHERE2_TRIANGLE_TEST)
+      DrawTriangleBox2Collision(ctx);
 
   }
 
   virtual bool OnDraw(glm::ivec2 size) override
   {
-    glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
     float far_plane = 1000.0f;
@@ -664,7 +718,7 @@ protected:
       return false;
 
     program_triangle = LoadProgram(resources_path, "pixel_shader_triangle.txt", "vertex_shader_triangle.txt");
-    if (program_box == nullptr)
+    if (program_triangle == nullptr)
       return false;
     
     program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt");
@@ -676,6 +730,11 @@ protected:
 
     // create meshes
     chaos::triangle3 t; // data will be initialized in vertex shader as uniform
+
+    t.a = glm::vec3( 5.0f, 0.0f, -5.0f);
+    t.b = glm::vec3(-5.0f, 0.0f, -5.0f);
+    t.c = glm::vec3( 0.0f, 0.0f, +5.0f);
+
     chaos::box3      b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
@@ -683,6 +742,7 @@ protected:
     generators.AddGenerator(new chaos::SphereMeshGenerator(s, 10), mesh_sphere);
     generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
     generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
+    
 
     if (!generators.GenerateMeshes())
       return false;

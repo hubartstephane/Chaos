@@ -1,6 +1,9 @@
-in vec3 position;
+in vec3 position; // fully ignore this
 in vec3 normal;
 
+uniform vec3 p1;
+uniform vec3 p2;
+uniform vec3 p3;
 uniform mat4 projection;
 uniform mat4 local_to_world;
 uniform mat4 world_to_camera;
@@ -10,7 +13,14 @@ out vec3 vs_normal;
 
 void main() 
 {
-  vec3 p = position;
+  vec3 p;
+  if (gl_VertexID == 0)
+	p = p1;
+  else if (gl_VertexID == 1)
+	p = p2;
+  else
+	p = p3;
+
   p.y *= Y_Scale;
 
   vs_normal = normal;

@@ -166,14 +166,16 @@ void TriangleMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primit
 {
   // the primitives
   MeshPrimitive mesh_primitive;
-  mesh_primitive.count = 1;
+  mesh_primitive.count = 3;
   mesh_primitive.indexed = false;
   mesh_primitive.primitive_type = GL_TRIANGLES;
   mesh_primitive.start = 0;
   mesh_primitive.base_vertex_index = 0;
   primitives.push_back(mesh_primitive);
 
-  vertices_writer << primitive;
+  vertices_writer << primitive.a;
+  vertices_writer << primitive.b;  
+  vertices_writer << primitive.c;
 }
 
 MeshGenerationRequirement QuadMeshGenerator::GetRequirement() const

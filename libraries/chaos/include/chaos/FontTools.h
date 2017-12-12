@@ -31,10 +31,10 @@ namespace chaos
         bitmap_top(in_bitmap_glyph->top) {}
 
       FT_Vector advance{ 0, 0 };
-      int       width{ 0 };
-      int       height{ 0 };
-      int       bitmap_left{ 0 };
-      int       bitmap_top{ 0 };
+      int       width = 0;
+      int       height = 0;
+      int       bitmap_left = 0;
+      int       bitmap_top = 0;
     };
 
     /** Bitmap + Metrics of a character */
@@ -69,5 +69,10 @@ namespace chaos
     static FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
     /** generate a cache with all glyph required for a string */
     static std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const * str);
+
+  protected:
+
+    /** for an image representing a glyph, ensure alpha is equal to R (should be equal to G and B too) */
+    static void MakeAlphaChannelConsistent(ImageDescription & desc);
   };
 };

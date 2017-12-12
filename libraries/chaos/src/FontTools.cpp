@@ -82,6 +82,35 @@ namespace chaos
 		return result;
 	}
 
+  void FontTools::MakeAlphaChannelConsistent(ImageDescription & desc)
+  {
+    // correction of alpha channel
+    if (desc.pixel_format == PixelFormat::FORMAT_RGBA_FLOAT)
+    {
+      int w = desc.width;
+      int h = desc.height;
+
+      for (int j = 0; j < h; ++j)
+      {
+        PixelRGBAFloat * d = ImageTools::GetPixelAddress<PixelRGBAFloat>(desc, 0, j);
+        for (int i = 0; i < w; ++i)
+          d[i].A = d[i].R;
+      }
+    }
+    else if (desc.pixel_format == PixelFormat::FORMAT_RGBA)
+    {
+      int w = desc.width;
+      int h = desc.height;
+
+      for (int j = 0; j < h; ++j)
+      {
+        PixelBGRA * d = ImageTools::GetPixelAddress<PixelBGRA>(desc, 0, j);
+        for (int i = 0; i < w; ++i)
+          d[i].A = d[i].R;
+      }
+    }
+  }
+
 	FIBITMAP * FontTools::GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format)
 	{
 		if (!pixel_format.IsValid())
@@ -103,6 +132,7 @@ namespace chaos
 			FillFontImageMetaFunc fill_func_map(dst_desc, src_desc);
 
 			boost::mpl::for_each<PixelTypes>(fill_func_map);
+      MakeAlphaChannelConsistent(dst_desc);
 		}
 
 		return result;

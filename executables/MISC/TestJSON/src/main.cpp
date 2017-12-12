@@ -182,28 +182,34 @@ void Test3(boost::filesystem::path const & filename, boost::filesystem::path con
   }
 }
 
+class MyApplication : public chaos::Application
+{
+protected:
+
+	virtual bool Main() override
+	{
+		boost::filesystem::path const & p = GetResourcesPath();
+
+		boost::filesystem::path dst_p;
+		if (chaos::FileTools::CreateTemporaryDirectory("TestJSON", dst_p))
+		{
+			Test1(p / "test.json", dst_p);
+			Test2(dst_p);
+			Test3(p / "test.json", dst_p);
+
+			chaos::WinTools::ShowFile(dst_p.string().c_str());
+		}
+
+		chaos::WinTools::PressToContinue();
+
+		return true;
+	}
+};
+
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize(argc, argv, env);
-
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-  boost::filesystem::path const & p = chaos::Application::GetInstance()->GetResourcesPath();
-
-  boost::filesystem::path dst_p;
-  if (chaos::FileTools::CreateTemporaryDirectory("TestJSON", dst_p))
-  {
-    Test1(p / "test.json", dst_p);
-    Test2(dst_p);
-    Test3(p / "test.json", dst_p);
-
-    chaos::WinTools::ShowFile(dst_p.string().c_str());
-  }
-
-  chaos::WinTools::PressToContinue();
-
-  chaos::Application::Finalize();
+  chaos::RunApplication<MyApplication>(argc, argv, env);
 
   return 0;
 }

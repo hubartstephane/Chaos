@@ -336,31 +336,36 @@ void CutDirectionnaryWords(char const * filename)
 	}
 }
 
+class MyApplication : public chaos::Application
+{
+protected:
+
+	virtual bool Main() override
+	{
+		TestCutWord("bonjour");
+		TestCutWord("peuple");
+		TestCutWord("trottinette");
+		TestCutWord("lance-pierre");
+		TestCutWord("aqueuse");
+		TestCutWord("autour");
+		TestCutWord("absent");
+		TestCutWord("ancien");
+		TestCutWord("comptable");
+		TestCutWord("aigres-douces");
+
+
+		CutDirectionnaryWords("french_dictionnary.txt");
+		CutDirectionnaryWords("english_dictionnary.txt");
+
+		chaos::WinTools::PressToContinue();
+
+		return true;
+	}
+};
+
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	TestCutWord("bonjour");
-	TestCutWord("peuple");
-	TestCutWord("trottinette");
-	TestCutWord("lance-pierre");
-	TestCutWord("aqueuse");
-	TestCutWord("autour");
-	TestCutWord("absent");
-	TestCutWord("ancien");
-	TestCutWord("comptable");
-	TestCutWord("aigres-douces");
-
-
-	CutDirectionnaryWords("french_dictionnary.txt");
-	CutDirectionnaryWords("english_dictionnary.txt");
-
-	chaos::WinTools::PressToContinue();
-
-	chaos::Application::Finalize();
-
+	chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;
 }
 

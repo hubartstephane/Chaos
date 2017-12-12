@@ -133,37 +133,50 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 
 
+
+
+
+
+class MyApplication : public chaos::Application
+{
+protected:
+
+	virtual bool Main() override
+	{
+		chaos::MathTools::ResetRandSeed();
+
+		boost::filesystem::path dst_p;
+		if (chaos::FileTools::CreateTemporaryDirectory("TestAtlas", dst_p))
+		{
+			boost::filesystem::path const & rp = GetResourcesPath();
+
+			TestAtlasDebugMode(dst_p / "TestAtlasDebugMode");
+			TestAtlasNormalMode(dst_p / "TestAtlasNormalMode", rp / "Images");
+			TestAtlasNormalMode(dst_p / "TestAtlasGrayOnly", rp / "GrayOnlyImages");
+			TestAtlasNormalMode(dst_p / "TestAtlasMixed24", rp / "MixedImages24"); // there is a 8bpp GRAY + 24bpp => 24 bpp atlas
+			TestAtlasNormalMode(dst_p / "TestAtlasMixed32", rp / "MixedImages32"); // there is a 8bpp NON-GRAY picture that will be converted to 32 bpp => causing a 32bpp atlas
+
+
+			chaos::PixelFormatMergeParams no_luminance_merge_params;
+			no_luminance_merge_params.accept_luminance = false;
+			TestAtlasNormalMode(dst_p / "TestAtlasNoLuminance", rp / "GrayOnlyImages", no_luminance_merge_params);
+
+			TestAtlasFont(dst_p, rp);
+
+			chaos::WinTools::ShowFile(dst_p.string().c_str());
+		}
+
+		return true;
+	}
+};
+
+
+
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-	chaos::MathTools::ResetRandSeed();
-
-	boost::filesystem::path dst_p;
-	if (chaos::FileTools::CreateTemporaryDirectory("TestAtlas", dst_p))
-	{
-		boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-
-		TestAtlasDebugMode(dst_p / "TestAtlasDebugMode");
-		TestAtlasNormalMode(dst_p / "TestAtlasNormalMode", resources_path / "Images");
-		TestAtlasNormalMode(dst_p / "TestAtlasGrayOnly", resources_path / "GrayOnlyImages");
-		TestAtlasNormalMode(dst_p / "TestAtlasMixed24", resources_path / "MixedImages24"); // there is a 8bpp GRAY + 24bpp => 24 bpp atlas
-		TestAtlasNormalMode(dst_p / "TestAtlasMixed32", resources_path / "MixedImages32"); // there is a 8bpp NON-GRAY picture that will be converted to 32 bpp => causing a 32bpp atlas
-
-
-		chaos::PixelFormatMergeParams no_luminance_merge_params;
-		no_luminance_merge_params.accept_luminance = false;
-		TestAtlasNormalMode(dst_p / "TestAtlasNoLuminance", resources_path / "GrayOnlyImages", no_luminance_merge_params);
-
-		TestAtlasFont(dst_p, resources_path);
-
-		chaos::WinTools::ShowFile(dst_p.string().c_str());
-	}
-
-	chaos::Application::Finalize();
-
+	chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;
 }
 

@@ -16,11 +16,11 @@
 
 template<typename T1, typename T2>
 using A = boost::mpl::inherit_linearly<
-	boost::mpl::vector<T1, T2>,
-	boost::mpl::inherit< 
-		boost::mpl::_1, 
-		boost::mpl::identity<boost::mpl::_2> 
-	> 
+boost::mpl::vector<T1, T2>,
+boost::mpl::inherit< 
+boost::mpl::_1, 
+boost::mpl::identity<boost::mpl::_2> 
+> 
 >;
 
 */
@@ -41,31 +41,31 @@ bool IsTrue(boost::mpl::false_)
 
 
 using MyTransf = boost::mpl::vector<
-  chaos::add_logger<boost::mpl::_1>,
-  chaos::add_logger<boost::mpl::_1>
+	chaos::add_logger<boost::mpl::_1>,
+	chaos::add_logger<boost::mpl::_1>
 >;
 
 
 
 template<typename BEGIN, typename END, typename BASE>
 class MyClassImpl : public MyClassImpl <
-  typename boost::mpl::next<BEGIN>::type,
-  END,
-  typename boost::mpl::apply<
-  typename boost::mpl::deref<BEGIN>::type,
-    BASE
-  >::type
+	typename boost::mpl::next<BEGIN>::type,
+	END,
+	typename boost::mpl::apply<
+	typename boost::mpl::deref<BEGIN>::type,
+	BASE
+	>::type
 > {};
-  
+
 
 template<typename IT, typename BASE>
 class MyClassImpl < IT, IT, BASE > : public BASE {};
 
 template<typename SEQ, typename BASE = chaos::EmptyClass>
 using MyClass = MyClassImpl<
-  typename boost::mpl::template begin<SEQ>::type,
-  typename boost::mpl::template end<SEQ>::type,
-  BASE>;
+	typename boost::mpl::template begin<SEQ>::type,
+	typename boost::mpl::template end<SEQ>::type,
+	BASE>;
 
 
 class T : public chaos::BaseClass<chaos::logger> {};
@@ -84,14 +84,20 @@ class A : public chaos::NamedObject
 
 };
 
+class MyApplication : public chaos::Application
+{
+protected:
+
+	virtual bool Main() override
+	{
+
+		return true;
+	}
+};
+
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-  chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-
-
-	chaos::Application::Finalize();
+	chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;
 }
 

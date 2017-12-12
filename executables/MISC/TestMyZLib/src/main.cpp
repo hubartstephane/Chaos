@@ -76,37 +76,44 @@ void TestCompression(chaos::Buffer<char> initial_buffer, char const * title)
 
 void TestFromFile()
 {
-  chaos::Application * application = chaos::Application::GetInstance();
-  if (application == nullptr)
-    return;
+	chaos::Application * application = chaos::Application::GetInstance();
+	if (application == nullptr)
+		return;
 
-  boost::filesystem::path const & resource_path = application->GetResourcesPath();
+	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-  chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip", false);
-  if (buffer != nullptr)
-  {
-    chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);
+	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(resource_path / "Ipsum.zip", false);
+	if (buffer != nullptr)
+	{
+		chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);
 
-    chaos::LogTools::Log("Uncompress Zip file      : %d", uncompressed.bufsize > 0);
-  }
+		chaos::LogTools::Log("Uncompress Zip file      : %d", uncompressed.bufsize > 0);
+	}
 }
+
+class MyApplication : public chaos::Application
+{
+protected:
+
+	virtual bool Main() override
+	{
+		chaos::MathTools::ResetRandSeed();
+
+		TestCompression(GenerateRandomBuffer(), "Random text");
+
+		TestCompression(GetIpsumBuffer(), "Ipsum text");
+
+		TestFromFile();
+
+		chaos::WinTools::PressToContinue();
+
+		return true;
+	}
+};
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-	chaos::WinTools::AllocConsoleAndRedirectStdOutput();
-	
-	chaos::MathTools::ResetRandSeed();
-
-	TestCompression(GenerateRandomBuffer(), "Random text");
-
-	TestCompression(GetIpsumBuffer(), "Ipsum text");
-
-  TestFromFile();
-
-	chaos::WinTools::PressToContinue();
-
+	chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;
 }
 

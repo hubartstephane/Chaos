@@ -8,72 +8,72 @@ class MyWindow : public chaos::SimpleWin32Window
 {
 public:
 
-  virtual LRESULT OnLButtonDown(int x, int y, int buttonStates)
-  {
-    //::ShowWindow(GetHwnd(), SW_HIDE);
+	virtual LRESULT OnLButtonDown(int x, int y, int buttonStates)
+	{
+		//::ShowWindow(GetHwnd(), SW_HIDE);
 
-    FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(GetHwnd());
-    if (bitmap != NULL)
-    {
-      std::string path = chaos::StringTools::Printf("c:\\temp\\capture_shu.png");
+		FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(GetHwnd());
+		if (bitmap != NULL)
+		{
+			std::string path = chaos::StringTools::Printf("c:\\temp\\capture_shu.png");
 
-      FreeImage_Save(FIF_PNG, bitmap, path.c_str());  
-      FreeImage_Unload(bitmap);
-    }
+			FreeImage_Save(FIF_PNG, bitmap, path.c_str());  
+			FreeImage_Unload(bitmap);
+		}
 
-    //::ShowWindow(GetHwnd(), SW_SHOW);
+		//::ShowWindow(GetHwnd(), SW_SHOW);
 
-    return 0;
-  }
+		return 0;
+	}
 
-  virtual LRESULT OnWindowSize(int width, int height) override
-  {
-    InvalidateRect(GetHwnd(), nullptr, true);
-    return SimpleWin32Window::OnWindowSize(width, height);
-  }
+	virtual LRESULT OnWindowSize(int width, int height) override
+	{
+		InvalidateRect(GetHwnd(), nullptr, true);
+		return SimpleWin32Window::OnWindowSize(width, height);
+	}
 
-  virtual LRESULT OnPaint() override
-  {
-    PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(hWnd, &ps);
+	virtual LRESULT OnPaint() override
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hWnd, &ps);
 
-    int division = 100;
+		int division = 100;
 
-    for (int i = 0 ; i < division ; ++i)
-    {
-      float r = 255.0f * ((float) i) / (float)(division - 1);
-        
-      COLORREF color = RGB((INT)r, 0, 0);
+		for (int i = 0 ; i < division ; ++i)
+		{
+			float r = 255.0f * ((float) i) / (float)(division - 1);
 
-      HBRUSH hBrush = CreateSolidBrush(color);
-      if (hBrush != NULL)
-      {
-        
-        float division_size = (float)(ps.rcPaint.bottom - ps.rcPaint.top) / (float)division;
+			COLORREF color = RGB((INT)r, 0, 0);
 
-        float top    = division_size * (float)i;
-        float bottom = division_size * (float)(i + 1);
+			HBRUSH hBrush = CreateSolidBrush(color);
+			if (hBrush != NULL)
+			{
 
-        RECT rect;        
-        rect.left   = ps.rcPaint.left;
-        rect.right  = ps.rcPaint.right;
-        rect.top    = (LONG)top;
-        rect.bottom = (LONG)bottom;
+				float division_size = (float)(ps.rcPaint.bottom - ps.rcPaint.top) / (float)division;
 
-        FillRect(hdc, &rect, hBrush);
-        DeleteObject(hBrush);
-      }
-    }
+				float top    = division_size * (float)i;
+				float bottom = division_size * (float)(i + 1);
+
+				RECT rect;        
+				rect.left   = ps.rcPaint.left;
+				rect.right  = ps.rcPaint.right;
+				rect.top    = (LONG)top;
+				rect.bottom = (LONG)bottom;
+
+				FillRect(hdc, &rect, hBrush);
+				DeleteObject(hBrush);
+			}
+		}
 
 
-    EndPaint(hWnd, &ps);
-    return 0;
-  }
+		EndPaint(hWnd, &ps);
+		return 0;
+	}
 
-  virtual LRESULT OnEraseBackground(HDC hDC) override
-  {
-    return 1;
-  }
+	virtual LRESULT OnEraseBackground(HDC hDC) override
+	{
+		return 1;
+	}
 
 };
 
@@ -88,25 +88,30 @@ public:
 //
 //  la capture retourne un ecran noir
 
+class MyApplication : public chaos::Application
+{
+protected:
+
+	virtual bool Main() override
+	{
+		chaos::SimpleWin32CreateParam create_params;
+		create_params.x         = 10;
+		create_params.y         = 10;
+		create_params.nWidth    = 300;
+		create_params.nHeight   = 2000;
+		create_params.dwExStyle = 0;
+		//  create_params.dwStyle   = WS_POPUP;
+
+		chaos::SimpleWin32Class<MyWindow> c("class1");
+		c.CreateWindowHinstance(NULL, "my_window", create_params);
+		chaos::SimpleWin32Window::SimpleMessageLoop();		return true;
+	}
+};
+
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::Application::Initialize<chaos::Application>(argc, argv, env);
-
-  chaos::SimpleWin32CreateParam create_params;
-  create_params.x         = 10;
-  create_params.y         = 10;
-  create_params.nWidth    = 300;
-  create_params.nHeight   = 2000;
-  create_params.dwExStyle = 0;
-//  create_params.dwStyle   = WS_POPUP;
-
-  chaos::SimpleWin32Class<MyWindow> c("class1");
-  c.CreateWindowHinstance(NULL, "my_window", create_params);
-  chaos::SimpleWin32Window::SimpleMessageLoop();
-
-  chaos::Application::Finalize();
-
-  return 0;
+	chaos::RunApplication<MyApplication>(argc, argv, env);
+	return 0;
 }
 
 

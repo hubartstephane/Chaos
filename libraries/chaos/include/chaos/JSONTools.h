@@ -26,6 +26,22 @@ namespace chaos
       }
       return true;
     }
+    /** reading an attribute (catch exceptions) with default value */
+    template<typename T, typename Y>
+    static bool GetAttribute(nlohmann::json entry, char const * name, T & result, Y default_value)
+    {
+      assert(name != nullptr);
+      try
+      {
+        result = entry.value(name, result, default_value);
+      }
+      catch (...)
+      {
+        result = default_value;
+        return false;
+      }
+      return true;
+    }
   };
 
 }; // namespace chaos

@@ -29,6 +29,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
+#include <chaos/JSONTools.h>
 
 #include "sprite_layer.h"
 
@@ -38,6 +39,15 @@
 
 bool SpriteLayer::LoadFromJSON(nlohmann::json const & json_entry)
 {
+  /*
+  chaos::JSONTools::GetAttribute(json_entry, "name", name, "noname");
+  chaos::JSONTools::GetAttribute(json_entry, "layer", layer, 0);
+  chaos::JSONTools::GetAttribute(json_entry, "relative_speed", relative_speed, 1.0f);
+  chaos::JSONTools::GetAttribute(json_entry, "start_visible", start_visible, true);
+  chaos::JSONTools::GetAttribute(json_entry, "collision_type", collision_type, 1);
+  chaos::JSONTools::GetAttribute(json_entry, "min_particle_count", min_particle_count, 0);
+  chaos::JSONTools::GetAttribute(json_entry, "max_particle_count", max_particle_count, 0);
+  */
 	name = json_entry.value("name", "noname");
 	layer = json_entry.value("layer", 0);
 	relative_speed = json_entry.value("relative_speed", 1.0f);

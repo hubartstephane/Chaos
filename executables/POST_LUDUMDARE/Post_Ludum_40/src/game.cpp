@@ -28,6 +28,8 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
 #include <chaos/SoundManager.h>
+#include <chaos/JSONTools.h>
+
 
 // ======================================================================================
 
@@ -62,8 +64,6 @@ bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_g
 
 void Game::Tick(double delta_time)
 {
-	sound_manager->Tick((float)delta_time);
-
 	if (pending_gameover || pending_restart_game)
 	{
 		GameOver();
@@ -316,27 +316,23 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_si
 	if (buf == nullptr)
 		return false;
 
-	try
-	{
-		nlohmann::json json_entry = nlohmann::json::parse(buf.data);
-		return DoInitialize(path, object_path, json_entry);
-	}
-	catch(...)
-	{
-
-	}
+  // parse JSON structures
+  nlohmann::json json_entry = chaos::JSONTools::Parse(buf);
+  return DoInitialize(path, object_path, json_entry);
 
 	return false;
 }
 
 bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 {
-	sound_manager = new chaos::SoundManager;
-	if (sound_manager == nullptr)
-		return false;
-	if (!sound_manager->StartManager())
-		return false;
+  chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+  if (application == nullptr)
+    return false;
 
+  sound_manager = application->GetSoundManager(); // copy shared reference to the manager
+  if (sound_manager == nullptr)
+    return false;
+    
 	chaos::PlaySoundDesc desc;
 	desc.looping = true;
 
@@ -408,11 +404,7 @@ void Game::Finalize()
 	start_source = nullptr;
 	pause_source = nullptr;
 
-	if (sound_manager != nullptr)
-	{
-		sound_manager->StopManager();
-		sound_manager = nullptr;
-	}
+  sound_manager = nullptr;
 }
 
 SpriteLayer * Game::FindSpriteLayer(int layer)

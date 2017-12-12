@@ -27,15 +27,15 @@ namespace chaos
     {
     public:
       /** the atlas in which it is stored in result */
-      int bitmap_index{ -1 };
+      int bitmap_index = -1;
       /** the top-left corner of the bitmap */
-      int x{ 0 };
+      int x = 0;
       /** the top-left corner of the bitmap */
-      int y{ 0 };
+      int y = 0;
       /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
-      int width{ 0 };
+      int width = 0;
       /** the size of the bitmap (beware, 2 x padding must be add for correct result) */
-      int height{ 0 };
+      int height = 0;
     };
 
     /**
@@ -46,8 +46,8 @@ namespace chaos
     {
     public:
       FT_Vector advance{ 0, 0 };
-      int       bitmap_left{ 0 }; // from 'CharacterMetrics' class
-      int       bitmap_top{ 0 };
+      int       bitmap_left = 0; // from 'CharacterMetrics' class
+      int       bitmap_top = 0;
     };
 
     /**
@@ -85,15 +85,15 @@ namespace chaos
       CharacterEntry const * GetEntry(TagType tag) const;
 
       /** the max bitmap size in the set */
-      int max_character_width{ 0 };
+      int max_character_width = 0;
       /** the max bitmap size in the set */
-      int max_character_height{ 0 };
+      int max_character_height = 0;
       /** the face ascender */
-      int ascender{ 0 };
+      int ascender = 0;
       /** the face descender */
-      int descender{ 0 };
+      int descender = 0;
       /** the maximum height of a glyph */
-      int face_height{ 0 };
+      int face_height = 0;
       /** the glyph contained in the character set */
       std::vector<CharacterEntry> elements;
     };
@@ -197,9 +197,9 @@ namespace chaos
     protected:
 
       /** atlas count */
-      int atlas_count{ 0 };
+      int atlas_count = 0;
       /** atlas dimension */
-      glm::ivec2 dimension{ 0,0 };
+      glm::ivec2 dimension = glm::ivec2(0, 0);
       /** the bitmap sets contained in the atlas */
       std::vector<std::unique_ptr<BitmapSet>> bitmap_sets;
       /** the character sets contained in the atlas */

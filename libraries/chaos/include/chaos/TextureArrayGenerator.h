@@ -19,7 +19,7 @@ namespace chaos
     /** the image description */
     ImageDescription description;
     /** a user data that may be used later for memory releasing */
-    void * user_data{ nullptr };
+    void * user_data = nullptr;
   };
 
   /**
@@ -97,9 +97,9 @@ namespace chaos
 	  /** path of the resource file */
 	  boost::filesystem::path image_path;
 	  /** the image */
-	  FIBITMAP * image{ nullptr };
+	  FIBITMAP * image = nullptr;
 	  /** whether the image has to be released */
-	  bool release_image{ false };  
+	  bool release_image = false;  
   };
 
   /**
@@ -115,9 +115,9 @@ namespace chaos
     public:
 
       /** first slice allocated for the generator */
-      int first_slice{ 0 };
+      int first_slice = 0;
       /** number of slice used by the generator */
-      int slice_count{ 0 };
+      int slice_count = 0;
     };
 
     class GeneratorEntry

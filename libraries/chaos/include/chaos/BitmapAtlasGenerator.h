@@ -22,11 +22,11 @@ namespace chaos
 			/** the description of the bitmap */
 			ImageDescription description;
 			/** the bitmap */
-			FIBITMAP    * bitmap{ nullptr };
+			FIBITMAP    * bitmap = nullptr;
 			/** whether the bitmap is to be destroyed at the end */
-			bool          release_bitmap{ true };
+			bool          release_bitmap = true;
 			/** a pointer on the destination entry associated */
-			BitmapEntry * output_entry{ nullptr };
+			BitmapEntry * output_entry = nullptr;
 		};
 
 		/**
@@ -37,8 +37,8 @@ namespace chaos
 		{
 		public:
 			FT_Vector advance{ 0, 0 };
-			int       bitmap_left{ 0 }; // from 'CharacterMetrics' class
-			int       bitmap_top{ 0 };
+			int       bitmap_left = 0; // from 'CharacterMetrics' class
+			int       bitmap_top = 0;
 		};
 
 		/**
@@ -83,9 +83,9 @@ namespace chaos
 		public:
 
 			/** width of the glyph */
-			int max_character_width{ 32 };
+			int max_character_width = 32;
 			/** height of the glyph */
-			int max_character_height{ 32 };
+			int max_character_height = 32;
 		};
 
 		/**
@@ -107,23 +107,23 @@ namespace chaos
 		protected:
 
 			/** the Freetype library if appropriate */
-			FT_Library library{ nullptr };
+			FT_Library library = nullptr;
 			/** the Freetype face if appropriate */
-			FT_Face    face{ nullptr };
+			FT_Face    face = nullptr;
 			/** should the library be released at destruction */
-			bool release_library{ true };
+      bool release_library = true;
 			/** should the face be released at destruction */
-			bool release_face{ true };
+			bool release_face = true;
 			/** the glyph width */
-			int  max_character_width{ 0 };
+			int  max_character_width = 0;
 			/** the glyph height */
-			int  max_character_height{ 0 };
+			int  max_character_height = 0;
 			/** the face ascender */
-			int  ascender{ 0 };
+			int  ascender = 0;
 			/** the face descender */
-			int  descender{ 0 };
+			int  descender = 0;
 			/** the maximum size of a character */
-			int  face_height{ 0 };
+			int  face_height = 0;
 			/** the bitmaps composing the set */
 			std::vector<CharacterEntryInput> elements;
 		};
@@ -199,19 +199,19 @@ namespace chaos
 				merge_params(in_merge_params) {}
 
 			/** whether we have to use power of 2 values */
-			bool force_power_of_2{ true };
+			bool force_power_of_2 = true;
 			/** whether we have to use square bitmap */
-			bool force_square{ true };
+			bool force_square = true;
 			/** the width of an atlas bitmap */
-			int atlas_width{ 0 };
+			int atlas_width = 0;
 			/** the height of an atlas bitmap */
-			int atlas_height{ 0 };
+			int atlas_height = 0;
 			/** the max width of an atlas bitmap (if resized). 0 = no limit */
-			int atlas_max_width{ 0 };
+			int atlas_max_width = 0;
 			/** the max height of an atlas bitmap (if resized). 0 = no limit */
-			int atlas_max_height{ 0 };
+			int atlas_max_height = 0;
 			/** some padding for the bitmap : should be even */
-			int atlas_padding{ 0 };
+			int atlas_padding = 0;
 			/** the background color */
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 			/** parameters for merging different pixel format */
@@ -327,9 +327,9 @@ namespace chaos
 			/** the params for generation */
 			AtlasGeneratorParams params;
 			/** the input files */
-			AtlasInput  * input{ nullptr };
+			AtlasInput  * input = nullptr;
 			/** the result */
-			Atlas       * output{ nullptr };
+			Atlas       * output = nullptr;
 			/** all definitions */
 			std::vector<AtlasDefinition> atlas_definitions;
 		};

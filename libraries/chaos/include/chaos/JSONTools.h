@@ -13,7 +13,7 @@ namespace chaos
 
 		/** reading an attribute (catch exceptions) */
 		template<typename T>
-		static bool GetAttribute(nlohmann::json entry, char const * name, T & result)
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result)
 		{
 			assert(name != nullptr);
 			try
@@ -26,7 +26,7 @@ namespace chaos
 			}
 			return true;
 		}
-		static bool GetAttribute(nlohmann::json entry, char const * name, bool & result) // sepcialization for bool
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result) // sepcialization for bool
 		{
 			assert(name != nullptr);
 			try
@@ -41,7 +41,7 @@ namespace chaos
 		}
 		/** reading an attribute (catch exceptions) with default value */
 		template<typename T, typename Y>
-		static bool GetAttribute(nlohmann::json entry, char const * name, T & result, Y default_value)
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result, Y default_value)
 		{
 			assert(name != nullptr);
 			try
@@ -55,7 +55,7 @@ namespace chaos
 			}
 			return true;
 		}
-		static bool GetAttribute(nlohmann::json entry, char const * name, bool & result, bool default_value) // specialization for bool
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result, bool default_value) // specialization for bool
 		{
 			result = default_value;
 			assert(name != nullptr);
@@ -68,6 +68,31 @@ namespace chaos
 				return false;
 			}
 			return true;
+		}
+
+		static nlohmann::json GetStructure(nlohmann::json const & entry, char const * name)
+		{
+			nlohmann::json result;
+			try
+			{
+				if (entry.is_structured())
+				{
+					auto it = entry.find(name);
+					if (it != entry.end())
+						return *it;
+				
+				}
+					
+					
+					//&& entry.find)
+				//entry["name"];
+				//result = entry["name"];
+			}
+			catch (...)
+			{
+				name = name;
+			}
+			return result;				
 		}
 	};
 

@@ -4,7 +4,7 @@
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
 #include <chaos/LogTools.h>
-
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -135,8 +135,8 @@ namespace chaos
 
 		void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry)
 		{
-			entry.name = json_entry.value("name", std::string());
-			entry.tag = json_entry.value("tag", 0);
+			JSONTools::GetAttribute(json_entry, "name", entry.name, "");
+			JSONTools::GetAttribute(json_entry, "tag", entry.tag, 0);
 		}
 
 		void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry)
@@ -156,11 +156,12 @@ namespace chaos
 			NamedObject & named_entry = entry;
 			LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-			entry.bitmap_index = json_entry.value("bitmap_index", 0);
-			entry.x = json_entry.value("x", 0);
-			entry.y = json_entry.value("y", 0);
-			entry.width = json_entry.value("width", 0);
-			entry.height = json_entry.value("height", 0);
+
+			JSONTools::GetAttribute(json_entry, "bitmap_index", entry.bitmap_index, 0);
+			JSONTools::GetAttribute(json_entry, "x", entry.x, 0);
+			JSONTools::GetAttribute(json_entry, "y", entry.y, 0);
+			JSONTools::GetAttribute(json_entry, "width", entry.width, 0);
+			JSONTools::GetAttribute(json_entry, "height", entry.height, 0);
 		}
 
 		void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry)
@@ -179,10 +180,10 @@ namespace chaos
 			BitmapEntry & bitmap_entry = entry;
 			LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
 
-			entry.advance.x = json_entry.value("advance_x", 0);
-			entry.advance.y = json_entry.value("advance_y", 0);
-			entry.bitmap_left = json_entry.value("bitmap_left", 0);
-			entry.bitmap_top = json_entry.value("bitmap_top", 0);
+			JSONTools::GetAttribute(json_entry, "advance_x", entry.advance.x, 0);
+			JSONTools::GetAttribute(json_entry, "advance_y", entry.advance.y, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_left", entry.bitmap_left, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_top", entry.bitmap_top, 0);
 		}
 
 		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry)
@@ -221,11 +222,12 @@ namespace chaos
 			NamedObject & named_entry = entry;
 			LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-			entry.max_character_width = json_entry.value("max_character_width", 0);
-			entry.max_character_height = json_entry.value("max_character_height", 0);
-			entry.ascender = json_entry.value("ascender", 0);
-			entry.descender = json_entry.value("descender", 0);
-			entry.face_height = json_entry.value("face_height", 0);
+			JSONTools::GetAttribute(json_entry, "max_character_width", entry.max_character_width, 0);
+			JSONTools::GetAttribute(json_entry, "max_character_height", entry.max_character_height, 0);
+			JSONTools::GetAttribute(json_entry, "ascender", entry.ascender, 0);
+			JSONTools::GetAttribute(json_entry, "descender", entry.descender, 0);
+			JSONTools::GetAttribute(json_entry, "face_height", entry.face_height, 0);
+
 			LoadFromJSON(entry.elements, json_entry["elements"]);
 		}
 
@@ -543,17 +545,8 @@ namespace chaos
 				return false;
 
 			// parse JSON file
-			bool result = false;
-			try
-			{
-				nlohmann::json j = nlohmann::json::parse(buf.data);
-				result = LoadAtlas(j, target_dir);
-			}
-			catch (std::exception & e)
-			{
-				LogTools::Error("AtlasBase::LoadAtlas(...) : error while parsing JSON file [%s] : %s", index_filename.string().c_str(), e.what());
-			}
-			return result;
+			nlohmann::json j = JSONTools::Parse(buf.data);
+			return LoadAtlas(j, target_dir);
 		}
 
 		bool Atlas::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & target_dir)
@@ -563,45 +556,50 @@ namespace chaos
 			// clean the object
 			Clear();
 
-			try
+			// load the files
+			nlohmann::json const & json_files = JSONTools::GetStructure(j, "bitmapsd");
+			for (auto const json_filename : json_files)
 			{
-				// load the files
-				nlohmann::json const & json_files = j["bitmaps"];
-				for (auto const json_filename : json_files)
-				{
-					std::string const & filename = json_filename;
+				std::string const & filename = json_filename;
 
-					FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
-					if (bitmap == nullptr)
+				FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
+				if (bitmap == nullptr)
+				{
+					result = false;
+					break;
+				}
+
+				int width = (int)FreeImage_GetWidth(bitmap);
+				int height = (int)FreeImage_GetHeight(bitmap);
+				if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
+				{
+					dimension.x = width;
+					dimension.y = height;
+				}
+				else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
+				{
+					if (dimension.x != width || dimension.y != height)
 					{
 						result = false;
 						break;
 					}
+				}
+				bitmaps.push_back(std::move(unique_bitmap_ptr(bitmap)));
+			}
+			// load the entries
+			if (result)
+			{
+				LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
+				LoadFromJSON(character_sets, j["character_sets"]);
+				atlas_count = bitmaps.size();
+			}
 
-					int width = (int)FreeImage_GetWidth(bitmap);
-					int height = (int)FreeImage_GetHeight(bitmap);
-					if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
-					{
-						dimension.x = width;
-						dimension.y = height;
-					}
-					else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
-					{
-						if (dimension.x != width || dimension.y != height)
-						{
-							result = false;
-							break;
-						}
-					}
-					bitmaps.push_back(std::move(unique_bitmap_ptr(bitmap)));
-				}
-				// load the entries
-				if (result)
-				{
-					LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
-					LoadFromJSON(character_sets, j["character_sets"]);
-					atlas_count = bitmaps.size();
-				}
+
+
+
+			try
+			{
+	
 			}
 			catch (std::exception & e)
 			{

@@ -39,22 +39,13 @@
 
 bool SpriteLayer::LoadFromJSON(nlohmann::json const & json_entry)
 {
-  /*
-  chaos::JSONTools::GetAttribute(json_entry, "name", name, "noname");
-  chaos::JSONTools::GetAttribute(json_entry, "layer", layer, 0);
-  chaos::JSONTools::GetAttribute(json_entry, "relative_speed", relative_speed, 1.0f);
-  chaos::JSONTools::GetAttribute(json_entry, "start_visible", start_visible, true);
-  chaos::JSONTools::GetAttribute(json_entry, "collision_type", collision_type, 1);
-  chaos::JSONTools::GetAttribute(json_entry, "min_particle_count", min_particle_count, 0);
-  chaos::JSONTools::GetAttribute(json_entry, "max_particle_count", max_particle_count, 0);
-  */
-	name = json_entry.value("name", "noname");
-	layer = json_entry.value("layer", 0);
-	relative_speed = json_entry.value("relative_speed", 1.0f);
-	start_visible = json_entry.value("start_visible", 1) > 0;
-	collision_type = json_entry.value("collision_type", 1);
-	min_particle_count = json_entry.value("min_particle_count", 0);
-	max_particle_count = json_entry.value("max_particle_count", 0);
+	chaos::JSONTools::GetAttribute(json_entry, "name", name, "noname");
+	chaos::JSONTools::GetAttribute(json_entry, "layer", layer, 0);
+	chaos::JSONTools::GetAttribute(json_entry, "relative_speed", relative_speed, 1.0f);
+	chaos::JSONTools::GetAttribute(json_entry, "start_visible", start_visible, true);
+	chaos::JSONTools::GetAttribute(json_entry, "collision_type", collision_type, 1);
+	chaos::JSONTools::GetAttribute(json_entry, "min_particle_count", min_particle_count, 0);
+	chaos::JSONTools::GetAttribute(json_entry, "max_particle_count", max_particle_count, 0);
 
 	return true;
 }
@@ -63,15 +54,13 @@ bool SpriteLayer::LoadFromJSON(nlohmann::json const & json_entry)
 
 bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 {
-	id = json_entry.value("id", 0);
-	layer = json_entry.value("layer", 0);
-	size = json_entry.value("size", 1.0f);
-	bitmap_path = json_entry.value("bitmap", "");
-
-	min_lifetime = json_entry.value("min_lifetime", 0.0f);
-	max_lifetime = json_entry.value("max_lifetime", 0.0f);
-
-	spawn_type = json_entry.value("spawn_type", SPAWN_TYPE_CENTER);
+	chaos::JSONTools::GetAttribute(json_entry, "id", id, 0);
+	chaos::JSONTools::GetAttribute(json_entry, "layer", layer, 0);
+	chaos::JSONTools::GetAttribute(json_entry, "size", size, 1.0f);
+	chaos::JSONTools::GetAttribute(json_entry, "bitmap", bitmap_path, "");
+	chaos::JSONTools::GetAttribute(json_entry, "min_lifetime", min_lifetime, 0.0f);
+	chaos::JSONTools::GetAttribute(json_entry, "max_lifetime", max_lifetime, 0.0f);
+	chaos::JSONTools::GetAttribute(json_entry, "spawn_type", spawn_type, SPAWN_TYPE_CENTER);
 
 	return true;
 }
@@ -374,9 +363,9 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 {	
 	sprite_manager->ClearSprites(); // remove all GPU buffer data
 
-	// the buffer stores particles that share the layer value, but not the 'type'
-	// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
-	// This algo uses another approch to avoid that
+									// the buffer stores particles that share the layer value, but not the 'type'
+									// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
+									// This algo uses another approch to avoid that
 
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)

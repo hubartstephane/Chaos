@@ -60,7 +60,7 @@ protected:
 
 		float world_x = 1000.0f;
 		float world_y = world_x / VIEWPORT_WANTED_ASPECT;
-		
+
 		if (game != nullptr)
 			game->Display(glm::vec2(world_x, world_y));
 
@@ -153,12 +153,12 @@ float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor = nullptr;
-  params.width = 500;
-  params.height = 500;
-  params.monitor_index = 0;
-  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
+	chaos::MyGLFW::SingleWindowApplicationParams params;
+	params.monitor = nullptr;
+	params.width = 500;
+	params.height = 500;
+	params.monitor_index = 0;
+	chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
 	return 0;
 }

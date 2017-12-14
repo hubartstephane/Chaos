@@ -303,8 +303,10 @@ bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
 
 
 
-bool Game::Initialize(GLFWwindow * in_glfw_window, glm::vec2 const & in_world_size, boost::filesystem::path const & path)
+bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & configuration, glm::vec2 const & in_world_size, boost::filesystem::path const & path)
 {
+  InitializeFromConfiguration(configuration);
+
 	glfw_window = in_glfw_window;
 
 	world_size = in_world_size;
@@ -879,4 +881,15 @@ glm::vec2 Game::GetPlayerInitialScreenPosition() const
 		);		
 	}
 	return glm::vec2(0.0f, 0.0f);	
+}
+
+void Game::InitializeFromConfiguration(nlohmann::json const & configuration)
+{
+  chaos::JSONTools::GetAttribute(configuration, "level_particle_increment", level_particle_increment, 10);
+  chaos::JSONTools::GetAttribute(configuration, "max_particles_per_frame", max_particles_per_frame, 100);
+  chaos::JSONTools::GetAttribute(configuration, "initial_life", initial_life, 50);
+  chaos::JSONTools::GetAttribute(configuration, "initial_level", initial_level, 0);
+  chaos::JSONTools::GetAttribute(configuration, "initial_player_screen_speed", initial_player_screen_speed, 500.0f);
+  chaos::JSONTools::GetAttribute(configuration, "initial_player_absolute_speed", initial_player_absolute_speed, 50.0f);
+  chaos::JSONTools::GetAttribute(configuration, "delta_speed", delta_speed, 7.0f);
 }

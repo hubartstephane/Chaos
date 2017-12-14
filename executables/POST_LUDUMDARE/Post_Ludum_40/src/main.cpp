@@ -24,6 +24,8 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SpriteManager.h>
+#include <chaos/JSONTools.h>
+
 #include "game.h"
 
 
@@ -52,7 +54,6 @@ protected:
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		float aspect = (16.0f / 9.0f) * 0.0f;
 		chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
 
 		glEnable(GL_DEPTH_TEST);
@@ -111,7 +112,7 @@ protected:
 
 		float WORLD_X = 1000.0f;
 		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		if (!game->Initialize(glfw_window, world_size, resources_path))
+		if (!game->Initialize(glfw_window, chaos::JSONTools::GetStructure(configuration, "game"), world_size, resources_path))
 			return false;
 
 		return true;

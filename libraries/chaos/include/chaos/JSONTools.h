@@ -26,7 +26,7 @@ namespace chaos
 			}
 			return true;
 		}
-		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result) // sepcialization for bool
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result) // specialization for bool
 		{
 			assert(name != nullptr);
 			try
@@ -79,18 +79,12 @@ namespace chaos
 				{
 					auto it = entry.find(name);
 					if (it != entry.end())
-						return *it;
-				
+						return *it;				
 				}
-					
-					
-					//&& entry.find)
-				//entry["name"];
-				//result = entry["name"];
 			}
 			catch (...)
 			{
-				name = name;
+
 			}
 			return result;				
 		}

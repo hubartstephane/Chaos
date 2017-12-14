@@ -389,7 +389,7 @@ namespace chaos
 
       // prepare window creation
       window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
-      TweakHintsFromConfiguration(params, configuration["window"]);
+      TweakHintsFromConfiguration(params, JSONTools::GetStructure(configuration, "window"));
       params.hints.ApplyHints();
 
       // create window
@@ -479,13 +479,13 @@ namespace chaos
       // initialize the clock
       main_clock = new Clock();
       if (main_clock != nullptr)
-        main_clock->InitializeFromConfiguration(configuration["ClockManager"]);
+        main_clock->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "ClockManager"));
       // initialize the sound manager
       sound_manager = new SoundManager();
       if (sound_manager != nullptr)
       {
         sound_manager->StartManager();
-        sound_manager->InitializeFromConfiguration(configuration["SoundManager"]);
+        sound_manager->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "SoundManager"));
       }
       // create the window
       window = GenerateWindow();

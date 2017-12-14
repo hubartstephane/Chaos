@@ -557,7 +557,7 @@ namespace chaos
 			Clear();
 
 			// load the files
-			nlohmann::json const & json_files = JSONTools::GetStructure(j, "bitmapsd");
+			nlohmann::json const & json_files = JSONTools::GetStructure(j, "bitmaps");
 			for (auto const json_filename : json_files)
 			{
 				std::string const & filename = json_filename;
@@ -589,21 +589,9 @@ namespace chaos
 			// load the entries
 			if (result)
 			{
-				LoadFromJSON(bitmap_sets, j["bitmap_sets"]);
-				LoadFromJSON(character_sets, j["character_sets"]);
+        LoadFromJSON(bitmap_sets, JSONTools::GetStructure(j, "bitmap_sets"));
+        LoadFromJSON(character_sets, JSONTools::GetStructure(j, "character_sets"));
 				atlas_count = bitmaps.size();
-			}
-
-
-
-
-			try
-			{
-	
-			}
-			catch (std::exception & e)
-			{
-				LogTools::Error("AtlasBase::LoadAtlas(...) : error while parsing JSON file : %s", e.what());
 			}
 
 			// in case of failure, reset the whole atlas once more

@@ -127,9 +127,6 @@ namespace chaos
 		/** returns the arity of the vector whether the enum is a (int) vector type */
 		static int GetEnumVectorArityUnsignedInt(GLenum type);
 
-
-
-
 		/** default template for enum vector arity */
 		template<typename T>
 		static int GetTypedEnumVectorArity(GLenum type){ return 0; }

@@ -83,7 +83,7 @@ namespace chaos
   public:
 
     /** the number of the sampler in the program */
-    GLuint sampler_index{0};
+    GLuint sampler_index = 0;
   };
 
   /**
@@ -138,6 +138,8 @@ public:
   }
   /** try to bind all uniforms */
   void BindUniforms(class GLProgramVariableProvider const * provider) const;
+  /** try to bind all uniforms using multiples provider */
+  void BindUniforms(GLProgramVariableProvider const * const * providers, int count) const;
 
 	/** clear the program data object */
 	void Clear();

@@ -289,10 +289,25 @@ namespace chaos
 
 	void GLProgramData::BindUniforms(GLProgramVariableProvider const * provider) const
 	{
-		if (provider != nullptr)
-		  for (GLUniformInfo const & uniform : uniforms)
-			  provider->BindUniform(uniform);
+    BindUniforms(&provider, 1);
 	}
+
+  void GLProgramData::BindUniforms(GLProgramVariableProvider const * const * providers, int count) const
+  {
+    if (providers == nullptr)
+      return;
+    for (GLUniformInfo const & uniform : uniforms)
+    {
+      for (int i = 0; i < count; ++i)
+      {
+        GLProgramVariableProvider const * provider = providers[i];
+        if (provider == nullptr)
+          continue;
+        if (provider->BindUniform(uniform))
+          break;
+      }
+    }
+  }
 
 	GLUniformInfo * GLProgramData::FindUniform(char const * name)
 	{
@@ -545,7 +560,6 @@ namespace chaos
 			}
 
 			// bind the attribute
-			bool   normalize = false;
 			int    entry_size = entry->GetEntrySize();
 			int    count = entry->GetComponentCount();
 			GLenum type = entry->GetComponentType();

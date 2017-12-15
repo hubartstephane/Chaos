@@ -6,6 +6,15 @@
 
 namespace chaos
 {
+
+
+
+
+
+
+
+
+
 	char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
     in vec2 position;
     in vec3 texcoord;

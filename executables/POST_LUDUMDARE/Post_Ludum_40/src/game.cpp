@@ -184,7 +184,56 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 		
 	// apply joystick displacement
 	glm::vec2 player_screen_position = player_particle->position; 
-	player_screen_position += (delta_time * player_screen_speed * direction);
+
+
+#if 0
+
+  glm::vec2 acceleration = acceleration_factor * direction;
+  
+  acceleration += -player_speed * 0.9f;
+  
+
+
+
+
+
+
+
+  if (direction == glm::vec2(0.0f, 0.0f))
+  {
+    float speed2 = glm::length2(player_speed);
+    if (speed2 > 0.0f)
+    {
+      float speed = chaos::MathTools::Sqrt(speed2);
+      speed = chaos::MathTools::Maximum(0.0f, speed - slowdown_factor * delta_time);
+      player_speed = speed * glm::normalize(player_speed);
+    }
+  }
+  else
+  {
+
+    
+    player_speed += direction * acceleration_factor * delta_time;
+    
+    float speed2 = glm::length2(player_speed);
+    if (speed2 > max_speed * max_speed)
+    {
+      player_speed = max_speed * glm::normalize(player_speed);
+    }
+    
+
+  //  player_speed = glm::normalize(direction) * max_speed;
+  //  player_speed = direction * max_speed;
+
+  }
+#endif
+
+  player_speed = direction * max_speed;
+
+
+
+
+	player_screen_position += (delta_time * player_speed);
 
 	// restrict the player displacement
 	chaos::box2 player_box = chaos::box2(player_screen_position, player_particle->half_size);
@@ -773,6 +822,7 @@ void Game::ResetWorld()
 	player_absolute_speed = initial_player_absolute_speed;
 	life  = initial_life;
 	level = initial_level;
+  player_speed = glm::vec2(0.0f, 0.0f);
 	
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
@@ -892,4 +942,9 @@ void Game::InitializeFromConfiguration(nlohmann::json const & configuration)
   chaos::JSONTools::GetAttribute(configuration, "initial_player_screen_speed", initial_player_screen_speed, 500.0f);
   chaos::JSONTools::GetAttribute(configuration, "initial_player_absolute_speed", initial_player_absolute_speed, 50.0f);
   chaos::JSONTools::GetAttribute(configuration, "delta_speed", delta_speed, 7.0f);
+  chaos::JSONTools::GetAttribute(configuration, "max_speed", max_speed, 500.0f);
+  chaos::JSONTools::GetAttribute(configuration, "slowdown_factor", slowdown_factor, 500.0f);
+  chaos::JSONTools::GetAttribute(configuration, "acceleration_factor", acceleration_factor, 500.0f);
+
+  
 }

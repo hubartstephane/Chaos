@@ -33,7 +33,7 @@ namespace chaos
   public:
 
     /** the texture atlas */
-    BitmapAtlas::TextureArrayAtlas * atlas{nullptr};
+    BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
     /** the replacement program */
     boost::intrusive_ptr<GLProgram> program;
   };
@@ -60,11 +60,11 @@ namespace chaos
     /** Display the sprites */
     void Display(GLProgramVariableProvider * uniform_provider);
     /** get the number of sprites in the buffer */
-    int GetSpriteCount() const { return sprites.size() / 6;}
-	/** remove the sprites (GPU buffer will be clean at next UpdateGPUVertexBuffer)*/
-	void ClearSprites();
-	/** get the program */
-	GLProgram * GetProgram(){ return program.get(); }
+    int GetSpriteCount() const { return sprites.size() / 6; }
+    /** remove the sprites (GPU buffer will be clean at next UpdateGPUVertexBuffer)*/
+    void ClearSprites();
+    /** get the program */
+    GLProgram * GetProgram() { return program.get(); }
 
   protected:
 
@@ -86,7 +86,7 @@ namespace chaos
     /** the declaration of the vertex buffer */
     VertexDeclaration declaration;
     /** the texture atlas */
-    BitmapAtlas::TextureArrayAtlas * atlas{nullptr};
+    BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
     /** the sprites */
     std::vector<SpriteVertex> sprites;
   };

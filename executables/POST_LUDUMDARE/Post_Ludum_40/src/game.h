@@ -170,7 +170,11 @@ protected:
 	int   level = 0;
 	float player_screen_speed = 0.0f;   
 	float player_absolute_speed = 0.0f; 
+  float max_speed = 500.0f;
+  float acceleration_factor = 500.0f;
+  float slowdown_factor = 500.0f;
 	glm::vec2 world_position = glm::vec2(0.0f, 0.0f); 
+  glm::vec2 player_speed = glm::vec2(0.0f, 0.0f);
 	
 	// initial values
 	int   level_particle_increment = 10;

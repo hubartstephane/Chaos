@@ -13,6 +13,9 @@
 	"initial_level":0,
 	"initial_player_screen_speed":500,
 	"initial_player_absolute_speed":50,
-	"delta_speed":7
+	"delta_speed":7,
+	"acceleration_factor":1000.0,
+	"slowdown_factor":1000.0,
+	"max_speed":500
   }
 }

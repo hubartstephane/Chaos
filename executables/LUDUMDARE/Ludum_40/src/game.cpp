@@ -661,17 +661,17 @@ void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
 
 void Game::DisplaySprites(glm::ivec2 viewport_size)
 {
-	chaos::GLProgramVariableProviderChain uniform_provider;
+  boost::intrusive_ptr<chaos::GLProgramVariableProviderChain> uniform_provider = new chaos::GLProgramVariableProviderChain;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
 	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 
 
 	glm::mat4 local_to_cam =  glm::scale(scale) /* * glm::translate(tr)*/; // SCREEN SPACE particles, no TRANSATION
 
-	uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
+	uniform_provider->AddVariableValue("local_to_cam", local_to_cam);
 
 	for (int i = sprite_layers.size() - 1 ; i >= 0; --i)
-		sprite_layers[i].Draw(&uniform_provider);
+		sprite_layers[i].Draw(uniform_provider.get());
 }
 
 void Game::Display(glm::ivec2 viewport_size)

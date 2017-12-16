@@ -118,11 +118,12 @@ protected:
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
-		MyProvider dynamic_provider;
-		chaos::GLProgramVariableProviderChain uniform_provider(&dynamic_provider);
-		uniform_provider.AddVariableValue("translate_mat", glm::translate(tr));
-		uniform_provider.AddVariableValue("scale_mat", glm::scale(scale));
-		uniform_provider.AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
+    boost::intrusive_ptr<MyProvider> dynamic_provider = new MyProvider;
+    boost::intrusive_ptr<chaos::GLProgramVariableProviderChain> uniform_provider = new chaos::GLProgramVariableProviderChain;
+		uniform_provider->AddVariableValue("translate_mat", glm::translate(tr));
+		uniform_provider->AddVariableValue("scale_mat", glm::scale(scale));
+		uniform_provider->AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
+    uniform_provider->AddVariableProvider(dynamic_provider.get());
 
 		glm::mat4 m1;
 		glm::dmat4 m2;
@@ -140,24 +141,24 @@ protected:
 		glm::tvec3<GLint> v6;
 		glm::tvec4<GLint> v7;
 
-		bool b1 = uniform_provider.GetValue("local_to_cam", m1);
-		bool b2 = uniform_provider.GetValue("local_to_cam", m2);
-		bool b3 = uniform_provider.GetValue("local_to_cam", m3);
-		bool b4 = uniform_provider.GetValue("local_to_cam", m4);
-		bool b5 = uniform_provider.GetValue("local_to_cam", v1);
+		bool b1 = uniform_provider->GetValue("local_to_cam", m1);
+		bool b2 = uniform_provider->GetValue("local_to_cam", m2);
+		bool b3 = uniform_provider->GetValue("local_to_cam", m3);
+		bool b4 = uniform_provider->GetValue("local_to_cam", m4);
+		bool b5 = uniform_provider->GetValue("local_to_cam", v1);
 
-		bool b6 = uniform_provider.GetValue("toto", m5);
-		bool b7 = uniform_provider.GetValue("toto", m6);
-		bool b8 = uniform_provider.GetValue("toto", m7);
-		bool b9 = uniform_provider.GetValue("toto", m8);
-		bool b10 = uniform_provider.GetValue("toto", v2);
-		bool b11 = uniform_provider.GetValue("toto", v3);
-		bool b12 = uniform_provider.GetValue("toto", v4);
-		bool b13 = uniform_provider.GetValue("toto", v5);
-		bool b14 = uniform_provider.GetValue("toto", v6);
-		bool b15 = uniform_provider.GetValue("toto", v7);
+		bool b6 = uniform_provider->GetValue("toto", m5);
+		bool b7 = uniform_provider->GetValue("toto", m6);
+		bool b8 = uniform_provider->GetValue("toto", m7);
+		bool b9 = uniform_provider->GetValue("toto", m8);
+		bool b10 = uniform_provider->GetValue("toto", v2);
+		bool b11 = uniform_provider->GetValue("toto", v3);
+		bool b12 = uniform_provider->GetValue("toto", v4);
+		bool b13 = uniform_provider->GetValue("toto", v5);
+		bool b14 = uniform_provider->GetValue("toto", v6);
+		bool b15 = uniform_provider->GetValue("toto", v7);
 
-		sprite_manager.Display(&uniform_provider);
+		sprite_manager.Display(uniform_provider.get());
 
 		return true;
 	}

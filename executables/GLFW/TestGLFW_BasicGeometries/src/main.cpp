@@ -162,12 +162,16 @@ protected:
 
     glUseProgram(program->GetResourceID());
 
-    chaos::GLProgramVariableProviderChain uniform_provider(next_provider);
+    chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("projection", ctx.projection);
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
     uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
     uniform_provider.AddVariableValue("color", prim_ctx.color);
     uniform_provider.AddVariableValue("Y_Scale", Y_Scale);
+    
+    if (next_provider != nullptr)
+      uniform_provider.AddVariableProvider(next_provider);
+
     program_data.BindUniforms(&uniform_provider);
   }
 
@@ -205,11 +209,13 @@ protected:
   {
     glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
-    chaos::GLProgramVariableProviderChain uniform_provider(nullptr);
-    uniform_provider.AddVariableValue("p1", t.a);
-    uniform_provider.AddVariableValue("p2", t.b);
-    uniform_provider.AddVariableValue("p3", t.c);
 
+    // cannot be on the stack. due to reference count
+    boost::intrusive_ptr<chaos::GLProgramVariableProviderChain> uniform_provider = new chaos::GLProgramVariableProviderChain;
+    uniform_provider->AddVariableValue("p1", t.a);
+    uniform_provider->AddVariableValue("p2", t.b);
+    uniform_provider->AddVariableValue("p3", t.c);
+    
     DrawPrimitiveImpl(
       ctx,
       get_pointer(mesh_triangle),
@@ -218,7 +224,7 @@ protected:
       local_to_world,
       is_translucent,
       1.0f,
-      &uniform_provider
+      uniform_provider.get()
     );
   }
 

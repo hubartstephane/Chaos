@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GLProgramData.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/GLTools.h>
 #include <chaos/Texture.h>
 #include <chaos/GLMTools.h>
@@ -113,7 +114,7 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableSetUniformAction : action used to initialize an uniform
+  * GLProgramVariableSetUniformAction : action used to initialize an attribute with a default value
   */
 
   class GLProgramVariableSetAttributeAction : public GLProgramVariableAction
@@ -166,7 +167,7 @@ namespace chaos
 
     virtual bool DoProcess(char const * name, Texture const * value) override { return false; } // texture not implemented
 
-                                                                                                /** the generic conversions methods */
+    /** the generic conversions methods */
     template<typename U>
     bool ConvertAndGet(U const & value)
     {
@@ -182,7 +183,7 @@ namespace chaos
     bool DoConvertAndGetVector(U const & value, B1 b1, B2 b2) { return false; }
 
     template<typename U>
-    bool DoConvertAndGetVector(U const & value, boost::mpl::true_, boost::mpl::true_)
+    bool DoConvertAndGetVector(U const & value, boost::mpl::true_, boost::mpl::true_) // the type expected, and the type of the incomming value are both vector !!
     {
       result = GLMTools::RecastVector<T>(value);
       return true;
@@ -193,7 +194,7 @@ namespace chaos
     bool DoConvertAndGetMatrix(U const & value, B1 b1, B2 b2) { return false; }
 
     template<typename U>
-    bool DoConvertAndGetMatrix(U const & value, boost::mpl::true_, boost::mpl::true_)
+    bool DoConvertAndGetMatrix(U const & value, boost::mpl::true_, boost::mpl::true_) // the type expected, and the type of the incomming value are both matrix !!
     {
       result = T(value);
       return true;
@@ -205,11 +206,27 @@ namespace chaos
     T & result;
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /**
   * GLProgramVariableProvider : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
   */
 
-  class GLProgramVariableProvider : public ClassTools::Aligned16
+  class GLProgramVariableProvider : public ReferencedObject
   {
     friend class GLProgramVariableProviderChain; // WTF : GLProgramVariableProviderChain could not call DoProcessAction(...) an another instance without that !!
 
@@ -314,8 +331,8 @@ namespace chaos
   public:
 
     /** constructor */
-    GLProgramVariableProviderChain(GLProgramVariableProvider * in_next_provider = nullptr) :
-      next_provider(in_next_provider) {}
+    GLProgramVariableProviderChain() = default;
+
     /** remove all uniforms for binding */
     void Clear()
     {
@@ -335,10 +352,9 @@ namespace chaos
     /** register a generic uniform */
     void AddVariableProvider(GLProgramVariableProvider * provider)
     {
-      children_providers.push_back(std::move(std::unique_ptr<GLProgramVariableProvider>(provider)));
+      if (provider != nullptr)
+        children_providers.push_back(provider);
     }
-    /** change the next */
-    void SetNextProvider(GLProgramVariableProvider * in_next_provider) { next_provider = in_next_provider; }
 
   protected:
 
@@ -347,10 +363,8 @@ namespace chaos
 
   protected:
 
-    /** responsability chain for providers */
-    GLProgramVariableProvider * next_provider;
     /** the uniforms to be set */
-    std::vector<std::unique_ptr<GLProgramVariableProvider>> children_providers;
+    std::vector<boost::intrusive_ptr<GLProgramVariableProvider>> children_providers;
   };
 
 }; // namespace chaos

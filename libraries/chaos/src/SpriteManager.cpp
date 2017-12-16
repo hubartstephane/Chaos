@@ -203,8 +203,10 @@ namespace chaos
 		GLProgramData const & program_data = program->GetProgramData();
 		program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
-		GLProgramVariableProviderChain main_uniform_provider(uniform_provider);
+		GLProgramVariableProviderChain main_uniform_provider;
 		main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
+    if (uniform_provider != nullptr)
+      main_uniform_provider.AddVariableProvider(uniform_provider);
 
 		program_data.BindUniforms(&main_uniform_provider);
 

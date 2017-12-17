@@ -194,21 +194,18 @@ namespace chaos
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
-		// GPU-Program
-		glUseProgram(program->GetResourceID());
-
 		// Initialize the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 
 		GLProgramData const & program_data = program->GetProgramData();
-		program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 		GLProgramVariableProviderChain main_uniform_provider;
 		main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
     if (uniform_provider != nullptr)
       main_uniform_provider.AddVariableProvider(uniform_provider);
 
-		program_data.BindUniforms(&main_uniform_provider);
+    program->UseProgram(&main_uniform_provider, nullptr);
+    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 		// The drawing   
 		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());

@@ -93,8 +93,6 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);   // when viewer is inside the cube
 
-		glUseProgram(program->GetResourceID());
-
 		// XXX : the scaling is used to avoid the near plane clipping      
 		static float FOV =  60.0f;
 		glm::mat4 projection_matrix      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f,(float)size.x, (float)size.y, 1.0f, far_plane);
@@ -111,8 +109,7 @@ protected:
 
 		uniform_provider.AddVariableTexture("material", texture);
 
-		program_data.BindUniforms(&uniform_provider);
-
+    program->UseProgram(&uniform_provider, nullptr);
 		mesh->Render(program_data, nullptr, 0, 0);
 
 		debug_display.Display(size.x, size.y);    

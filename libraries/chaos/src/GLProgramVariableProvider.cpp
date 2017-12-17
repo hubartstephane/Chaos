@@ -11,6 +11,17 @@ namespace chaos
     return action.Process(name, value.get());
   }
 
+  void GLProgramVariableProviderChain::Clear()
+  {
+    children_providers.clear();
+  }
+
+  void GLProgramVariableProviderChain::AddVariableProvider(GLProgramVariableProvider * provider)
+  {
+    if (provider != nullptr)
+      children_providers.push_back(provider);
+  }
+
   bool GLProgramVariableProviderChain::DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const
   {
     // handle children providers

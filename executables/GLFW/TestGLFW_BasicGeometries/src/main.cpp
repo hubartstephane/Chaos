@@ -160,8 +160,6 @@ protected:
   {
     chaos::GLProgramData const & program_data = program->GetProgramData();
 
-    glUseProgram(program->GetResourceID());
-
     chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("projection", ctx.projection);
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
@@ -172,7 +170,7 @@ protected:
     if (next_provider != nullptr)
       uniform_provider.AddVariableProvider(next_provider);
 
-    program_data.BindUniforms(&uniform_provider);
+    program->UseProgram(&uniform_provider, nullptr);
   }
 
   void DrawPrimitiveImpl(

@@ -649,8 +649,6 @@ void Game::DisplayControls(glm::ivec2 viewport_size)
 
 void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GLProgram> program)
 {
-	glUseProgram(program->GetResourceID());
-
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
 
@@ -690,8 +688,7 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
 	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
-	program_data.BindUniforms(&uniform_provider);
-	
+  program->UseProgram(&uniform_provider, nullptr);
 	fullscreen_mesh->Render(program_data, nullptr, 0, 0);
 }
 

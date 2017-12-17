@@ -18,6 +18,7 @@ namespace chaos
   {
   public:
 
+    /** indicates that the classes in this hierarchy will have a virtual destructor */
     virtual ~GLProgramVariableAction() = default;
 
     /** processing base scalar types */
@@ -206,22 +207,6 @@ namespace chaos
     T & result;
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   /**
   * GLProgramVariableProvider : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
   */
@@ -232,8 +217,6 @@ namespace chaos
 
   public:
 
-    /** destructor */
-    virtual ~GLProgramVariableProvider() = default;
     /** the main method : returns try whether tha action has been handled (even if failed) */
     bool ProcessAction(char const * name, GLProgramVariableAction & action) const
     {
@@ -322,22 +305,14 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableProviderChain : used to fill GLProgram binding for multiple uniforms / uniforms
+  * GLProgramVariableProviderChainBase : a base class to have multiple providers
   */
 
-  class GLProgramVariableProviderChain : public GLProgramVariableProvider
+  class GLProgramVariableProviderChainBase : public GLProgramVariableProvider
   {
 
   public:
 
-    /** constructor */
-    GLProgramVariableProviderChain() = default;
-
-    /** remove all uniforms for binding */
-    void Clear()
-    {
-      children_providers.clear();
-    }
     /** register a uniform value */
     template<typename T>
     void AddVariableValue(char const * name, T const & value)
@@ -350,11 +325,24 @@ namespace chaos
       AddVariableProvider(new GLProgramVariableProviderTexture(name, texture));
     }
     /** register a generic uniform */
-    void AddVariableProvider(GLProgramVariableProvider * provider)
-    {
-      if (provider != nullptr)
-        children_providers.push_back(provider);
-    }
+    virtual void AddVariableProvider(GLProgramVariableProvider * provider) = 0;
+    /** remove all uniforms for binding */
+    virtual void Clear() = 0;
+  };
+
+  /**
+  * GLProgramVariableProviderChain : used to fill GLProgram binding for multiple uniforms / uniforms
+  */
+
+  class GLProgramVariableProviderChain : public GLProgramVariableProviderChainBase
+  {
+
+  public:
+
+    /** remove all uniforms for binding */
+    virtual void Clear() override;
+    /** register a generic uniform */
+    virtual void AddVariableProvider(GLProgramVariableProvider * provider) override;
 
   protected:
 

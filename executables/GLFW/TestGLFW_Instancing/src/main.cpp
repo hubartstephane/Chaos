@@ -30,8 +30,6 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    glUseProgram(program->GetResourceID());
-
     // XXX : the scaling is used to avoid the near plane clipping      
     static float FOV = 60.0f;
     glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
@@ -56,7 +54,8 @@ protected:
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
     uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
     uniform_provider.AddVariableValue("realtime", realtime);
-    program_data.BindUniforms(&uniform_provider);
+
+    program->UseProgram(&uniform_provider, nullptr);
 
     int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
     int base_instance = 0;

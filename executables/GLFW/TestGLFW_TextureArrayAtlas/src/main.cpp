@@ -90,8 +90,6 @@ protected:
 
     chaos::GLProgramData const & program_data = program_box->GetProgramData();
 
-    glUseProgram(program_box->GetResourceID());
-
     chaos::GLProgramVariableProviderChain uniform_provider;
 
     uniform_provider.AddVariableValue("projection",      projection);
@@ -110,8 +108,7 @@ protected:
     uniform_provider.AddVariableValue("entry_start", entry_start / atlas_dimension);
     uniform_provider.AddVariableValue("entry_end", entry_end / atlas_dimension);
 
-    program_data.BindUniforms(&uniform_provider);
-
+    program_box->UseProgram(&uniform_provider, nullptr);
     mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
     debug_display.Display(size.x, size.y);

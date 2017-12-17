@@ -48,8 +48,6 @@ protected:
 
 		chaos::GLProgramData const & program_data = program_box->GetProgramData();
 
-		glUseProgram(program_box->GetResourceID());
-
 		chaos::GLProgramVariableProviderChain uniform_provider;
 
 		uniform_provider.AddVariableValue("projection",      projection);
@@ -58,8 +56,7 @@ protected:
 		uniform_provider.AddVariableValue("texture_slice",   (float)texture_slice);
 		uniform_provider.AddVariableTexture("material", texture);
 
-		program_data.BindUniforms(&uniform_provider);
-
+    program_box->UseProgram(&uniform_provider, nullptr);
 		mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
 
 		debug_display.Display(size.x, size.y);

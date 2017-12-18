@@ -21,14 +21,14 @@ namespace chaos
     virtual void Release();
 
     /** prepare the rendering */
-    void SelectMaterial();
+    void UseMaterial(GLProgramVariableProvider * uniform_provider);
 
   protected:
 
     /** the program */
     boost::intrusive_ptr<GLProgram> program;
     /** some rendering states */
-    GLProgramVariableProvider variable_provider;
+    boost::intrusive_ptr<GLProgramVariableProvider> variable_provider;
     /** parent material */
     boost::intrusive_ptr<RenderMaterial> parent_material;
   };

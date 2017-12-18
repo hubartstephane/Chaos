@@ -25,15 +25,12 @@ namespace chaos
     }  
   }
 
-  bool GLProgram::UseProgram(class GLProgramVariableProvider * uniform_provider, class GLProgramVariableProvider * attribute_provider)
+  bool GLProgram::UseProgram(class GLProgramVariableProvider const * uniform_provider, class GLProgramVariableProvider * attribute_provider)
   {
     if (!IsValid())
       return false;
-
     glUseProgram(program_id);
-
     program_data.BindUniforms(uniform_provider);
-
     return true;
   }
 

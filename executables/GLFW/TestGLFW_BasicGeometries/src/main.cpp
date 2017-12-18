@@ -156,11 +156,8 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(chaos::GLProgram * program, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GLProgramVariableProviderChain * next_provider = nullptr)
+  void PrepareObjectProgram(chaos::GLProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GLProgramVariableProviderChain * next_provider = nullptr)
   {
-    chaos::GLProgramData const & program_data = program->GetProgramData();
-
-    chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("projection", ctx.projection);
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
     uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
@@ -169,8 +166,6 @@ protected:
     
     if (next_provider != nullptr)
       uniform_provider.AddVariableProvider(next_provider);
-
-    program->UseProgram(&uniform_provider, nullptr);
   }
 
   void DrawPrimitiveImpl(
@@ -195,9 +190,10 @@ protected:
     prim_ctx.local_to_world = local_to_world;
     prim_ctx.color          = final_color;
 
-    PrepareObjectProgram(program, ctx, prim_ctx, Y_Scale, next_provider);
+    chaos::GLProgramVariableProviderChain uniform_provider;
+    PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
 
-    mesh->Render(program->GetProgramData(), nullptr, 0, 0);
+    mesh->Render(program, &uniform_provider, 0, 0);
 
     if (is_translucent)
       EndTranslucency();

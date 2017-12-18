@@ -26,7 +26,7 @@ protected:
 
   virtual bool OnDraw(glm::ivec2 size) override
   {
-    glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec4 clear_color(0.7f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
     float far_plane = 1000.0f;
@@ -39,10 +39,7 @@ protected:
     chaos::GLProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableTexture("material", texture);
 
-    chaos::GLProgramData const & program_data = program->GetProgramData();
-
-    program->UseProgram(&uniform_provider, nullptr);
-    mesh->Render(program_data, nullptr, 0, 0);
+    mesh->Render(program.get(), &uniform_provider, 0, 0);
 
     return true;
   }

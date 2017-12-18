@@ -40,8 +40,6 @@ protected:
 
     int instance_cube_size = 20;
 
-    chaos::GLProgramData const & program_data = program->GetProgramData();
-
     double realtime = 0.0;
 
     chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
@@ -55,11 +53,9 @@ protected:
     uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
     uniform_provider.AddVariableValue("realtime", realtime);
 
-    program->UseProgram(&uniform_provider, nullptr);
-
     int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
     int base_instance = 0;
-    mesh->Render(program_data, nullptr, instance_count, base_instance);
+    mesh->Render(program.get(), &uniform_provider, instance_count, base_instance);
 
     return true;
   }

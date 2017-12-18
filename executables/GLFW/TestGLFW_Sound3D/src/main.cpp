@@ -48,18 +48,12 @@ protected:
     glm::mat4 local_to_world_matrix  = glm::translate(GetBoxPosition());
     glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
       
-    chaos::GLProgramData const & program_data = program->GetProgramData();
-
     chaos::GLProgramVariableProviderChain uniform_provider;
-
     uniform_provider.AddVariableValue("projection",      projection_matrix);
     uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 
-    program->UseProgram(&uniform_provider, nullptr);
-    program_data.BindUniforms(&uniform_provider);
-
-    mesh->Render(program_data, nullptr, 0, 0);
+    mesh->Render(program.get(), &uniform_provider, 0, 0);
 
     debug_display.Display(size.x, size.y);    
 

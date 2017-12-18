@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramData.h>
+#include <chaos/GLProgram.h>
 #include <chaos/GLProgramVariableProvider.h>
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
@@ -47,6 +48,16 @@ namespace chaos
   class SimpleMesh : public ReferencedObject
   {
 
+  protected:
+
+    class VertexArrayBindingInfo
+    {
+    public:
+
+      boost::intrusive_ptr<GLProgram> program;
+      boost::intrusive_ptr<VertexArray> vertex_array;
+    };
+
   public:
 
     /** constructor */
@@ -57,12 +68,19 @@ namespace chaos
     /** clear the mesh */
     void Clear();
     /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-    void Render(GLProgramData const & data, GLProgramVariableProvider const * provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+    void Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
     /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
     void FinalizeBindings(GLintptr vertex_buffer_offset = 0);
     /** offset the index or vertex position */
     void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
     
+
+    //void Render(GLProgram * program, GLProgramVariableProvider const * provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+
+  protected:
+
+
+
   public:
 
     /** self descriptive */
@@ -76,6 +94,12 @@ namespace chaos
     boost::intrusive_ptr<VertexBuffer> vertex_buffer;
     /** self descriptive */
     boost::intrusive_ptr<IndexBuffer> index_buffer;
+
+  protected:
+
+    /** the vertex binding depends on the program that is used. This is a map that make relation between program / vertex array */
+    std::vector<VertexArrayBindingInfo> vertex_array_bindings;
+
   };
 
 }; // namespace chaos

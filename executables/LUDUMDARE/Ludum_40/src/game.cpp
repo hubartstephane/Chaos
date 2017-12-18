@@ -629,8 +629,6 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	if (level_ratio > 1.0f)
 		level_ratio = 1.0f;
 
-	chaos::GLProgramData const & program_data = program->GetProgramData();
-
 	chaos::GLProgramVariableProviderChain uniform_provider;
 	uniform_provider.AddVariableTexture("material", texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
@@ -638,9 +636,7 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
 	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
-	program_data.BindUniforms(&uniform_provider);
-	
-	fullscreen_mesh->Render(program_data, nullptr, 0, 0);
+	fullscreen_mesh->Render(program.get(), &uniform_provider, 0, 0);
 }
 
 void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)

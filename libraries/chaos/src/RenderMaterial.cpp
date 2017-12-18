@@ -12,12 +12,13 @@ namespace chaos
   void RenderMaterial::Release()
   {
     program = nullptr;
-
+    variable_provider = nullptr;
+    parent_material = nullptr;
   }
 
-  void RenderMaterial::SelectMaterial()
+  void RenderMaterial::UseMaterial(GLProgramVariableProvider * uniform_provider)
   {
-    glUseProgram(program->GetResourceID());
+   // glUseProgram(program->GetResourceID());
 
 
   }

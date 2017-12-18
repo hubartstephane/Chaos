@@ -525,7 +525,7 @@ namespace chaos
     return -1;
   }
 
-  void GLProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GLProgramVariableProvider const * provider) const
+  void GLProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GLProgramVariableProvider const * attribute_provider) const
   {
     int vertex_size = declaration.GetVertexSize();
 
@@ -537,8 +537,8 @@ namespace chaos
 
       if (attrib.semantic < 0) // this entry does not have a well known semantic, try to find a global default-attribute from the name
       {
-        if (provider != nullptr)
-          if (!provider->BindAttribute(attrib))
+        if (attribute_provider != nullptr)
+          if (!attribute_provider->BindAttribute(attrib))
             LogTools::Log("BindAttributes [%s] failure. Semantic [%d]. SemanticIndex [%d]. Location [%d]", attrib.name.c_str(), attrib.semantic, attrib.semantic_index, attrib.location);
         glDisableVertexArrayAttrib(vertex_array, location);
         continue;
@@ -551,8 +551,8 @@ namespace chaos
         entry = declaration.GetEntry(attrib.semantic, -1); // even if semantic_index must be ignored
         if (entry == nullptr)
         {
-          if (provider != nullptr)
-            if (!provider->BindAttribute(attrib))
+          if (attribute_provider != nullptr)
+            if (!attribute_provider->BindAttribute(attrib))
               LogTools::Log("BindAttributes [%s] failure. Semantic [%d]. SemanticIndex [%d]. Location [%d]", attrib.name.c_str(), attrib.semantic, attrib.semantic_index, attrib.location);
           glDisableVertexArrayAttrib(vertex_array, location);
           continue;

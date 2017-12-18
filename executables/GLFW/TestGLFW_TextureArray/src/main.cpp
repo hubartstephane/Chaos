@@ -46,18 +46,14 @@ protected:
 		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
 		glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
-		chaos::GLProgramData const & program_data = program_box->GetProgramData();
-
 		chaos::GLProgramVariableProviderChain uniform_provider;
-
 		uniform_provider.AddVariableValue("projection",      projection);
 		uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
 		uniform_provider.AddVariableValue("local_to_world",  local_to_world);
 		uniform_provider.AddVariableValue("texture_slice",   (float)texture_slice);
 		uniform_provider.AddVariableTexture("material", texture);
 
-    program_box->UseProgram(&uniform_provider, nullptr);
-		mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
+		mesh_box->Render(program_box.get(), &uniform_provider, 0, 0);
 
 		debug_display.Display(size.x, size.y);
 

@@ -118,7 +118,7 @@ public:
   GLint GetLocation(int semantic, int semantic_index) const;
 
   /** bind the attributes */
-  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GLProgramVariableProvider const * provider = nullptr) const;
+  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GLProgramVariableProvider const * attribute_provider = nullptr) const;
 
   /** find a uniform */
   GLUniformInfo * FindUniform(char const * name);

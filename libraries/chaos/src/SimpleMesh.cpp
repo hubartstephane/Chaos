@@ -97,15 +97,19 @@ namespace chaos
     primitives.clear();
   }
 
-  void SimpleMesh::Render(GLProgramData const & data, GLProgramVariableProvider const * provider, int instance_count, int base_instance) const
+  void SimpleMesh::Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider, int instance_count, int base_instance) const
   {
+    assert(program != nullptr);
     assert(vertex_array != nullptr);
 
-    GLuint va = vertex_array->GetResourceID();
+    // use program and bind uniforms
+    program->UseProgram(uniform_provider, nullptr);
 
-    // bind what needs to be
-    glBindVertexArray(va);      
-    data.BindAttributes(va, declaration, provider);
+    // prpare and use vertex array 
+    GLuint va = vertex_array->GetResourceID();
+    glBindVertexArray(va);
+    GLProgramData const & data = program->GetProgramData();
+    data.BindAttributes(va, declaration, nullptr);
 
     // render the primitives
     for (auto const & primitive : primitives)

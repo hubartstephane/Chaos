@@ -89,13 +89,10 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		chaos::GLProgramData const & program_data = program->GetProgramData();
-
 		chaos::GLProgramVariableProviderChain uniform_provider;
 		uniform_provider.AddVariableTexture("material", texture);
 
-    program->UseProgram(&uniform_provider, nullptr);
-		mesh->Render(program_data, nullptr, 0, 0);
+		mesh->Render(program.get(), &uniform_provider, 0, 0);
 
 		return true;
 	}

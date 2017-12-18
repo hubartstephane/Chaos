@@ -88,8 +88,6 @@ protected:
     glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
-    chaos::GLProgramData const & program_data = program_box->GetProgramData();
-
     chaos::GLProgramVariableProviderChain uniform_provider;
 
     uniform_provider.AddVariableValue("projection",      projection);
@@ -108,8 +106,7 @@ protected:
     uniform_provider.AddVariableValue("entry_start", entry_start / atlas_dimension);
     uniform_provider.AddVariableValue("entry_end", entry_end / atlas_dimension);
 
-    program_box->UseProgram(&uniform_provider, nullptr);
-    mesh_box->Render(program_box->GetProgramData(), nullptr, 0, 0);
+    mesh_box->Render(program_box.get(), &uniform_provider, 0, 0);
 
     debug_display.Display(size.x, size.y);
 

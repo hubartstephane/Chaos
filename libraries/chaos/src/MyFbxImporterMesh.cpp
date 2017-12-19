@@ -527,7 +527,7 @@ SimpleMesh * MyFbxImporter::DoCreateMesh(VertexDeclaration const & vertex_declar
       primitive.base_vertex_index = 0;
       result->primitives.push_back(primitive); 
 
-      result->vertex_array  = new VertexArray(va);
+      //result->vertex_array  = new VertexArray(va);
       result->vertex_buffer = new VertexBuffer(vb);
       result->index_buffer  = new IndexBuffer(ib);
 

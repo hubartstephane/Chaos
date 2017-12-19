@@ -89,7 +89,6 @@ namespace chaos
 
   void SimpleMesh::Clear()
   {
-    vertex_array  = nullptr;    
     vertex_buffer = nullptr;    
     index_buffer  = nullptr;    
     
@@ -157,7 +156,7 @@ namespace chaos
       primitive.Render(instance_count, base_instance);
   }
 
-  void SimpleMesh::FinalizeBindings(GLintptr in_vertex_buffer_offset)
+  void SimpleMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)
   {
     vertex_buffer_offset = in_vertex_buffer_offset;
   }

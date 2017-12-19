@@ -736,7 +736,6 @@ protected:
     generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
     generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
     
-
     if (!generators.GenerateMeshes())
       return false;
 

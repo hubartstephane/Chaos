@@ -70,7 +70,7 @@ namespace chaos
     /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
     void Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
     /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
-    void FinalizeBindings(GLintptr vertex_buffer_offset);
+    void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
     /** offset the index or vertex position */
     void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
     
@@ -86,8 +86,6 @@ namespace chaos
     /** the primitives to render */
     std::vector<MeshPrimitive> primitives;
 
-    /** self descriptive */
-    boost::intrusive_ptr<VertexArray> vertex_array;
     /** self descriptive */
     boost::intrusive_ptr<VertexBuffer> vertex_buffer;
     /** self descriptive */

@@ -107,9 +107,9 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
       boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &mesh->vertex_buffer : nullptr;
       boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &mesh->index_buffer : nullptr;
 
-      if (GLTools::GenerateVertexAndIndexBuffersObject(&mesh->vertex_array, vb_ptr, ib_ptr))
+      if (GLTools::GenerateVertexAndIndexBuffersObject(nullptr, vb_ptr, ib_ptr))
       {
-        GLuint vb = (requirement.vertices_count > 0) ? mesh->vertex_array->GetResourceID() : 0;
+        GLuint vb = (requirement.vertices_count > 0) ? mesh->vertex_buffer->GetResourceID() : 0;
         GLuint ib = (requirement.indices_count  > 0) ? mesh->index_buffer->GetResourceID() : 0;
 
         int vb_size = requirement.vertices_count * requirement.vertex_size;
@@ -132,7 +132,7 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
           assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
 
           // initialize the vertex array and validate
-          mesh->FinalizeBindings(0);
+          mesh->SetVertexBufferOffset(0);
           result = mesh;
 
           // transfert data to GPU and free memory

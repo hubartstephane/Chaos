@@ -70,16 +70,14 @@ namespace chaos
     /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
     void Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
     /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
-    void FinalizeBindings(GLintptr vertex_buffer_offset = 0);
+    void FinalizeBindings(GLintptr vertex_buffer_offset);
     /** offset the index or vertex position */
     void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
     
-
-    //void Render(GLProgram * program, GLProgramVariableProvider const * provider = nullptr, int instance_count = 0, int base_instance = 0) const;
-
   protected:
 
-
+    /** find or create a vertex array for a given program */
+    VertexArray const * GetVertexArrayForProgram(GLProgram * program) const;
 
   public:
 
@@ -94,11 +92,13 @@ namespace chaos
     boost::intrusive_ptr<VertexBuffer> vertex_buffer;
     /** self descriptive */
     boost::intrusive_ptr<IndexBuffer> index_buffer;
+    /** in the vertex buffer (that may be shared by other simpled mesh), the offset from the begining given to it */
+    GLintptr vertex_buffer_offset;
 
   protected:
 
     /** the vertex binding depends on the program that is used. This is a map that make relation between program / vertex array */
-    std::vector<VertexArrayBindingInfo> vertex_array_bindings;
+    mutable std::vector<VertexArrayBindingInfo> vertex_array_bindings;
 
   };
 

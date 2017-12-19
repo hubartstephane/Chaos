@@ -95,41 +95,71 @@ namespace chaos
     
     declaration.Clear();
     primitives.clear();
+
+    vertex_array_bindings.clear();
+  }
+
+  VertexArray const * SimpleMesh::GetVertexArrayForProgram(GLProgram * program) const
+  {
+    GLuint program_id = program->GetResourceID();
+
+    // search wether a vertex_array for that program exists
+    size_t i = 0;
+    size_t count = vertex_array_bindings.size();
+    for (; i < count; ++i)
+      if (vertex_array_bindings[i].program->GetResourceID() == program_id)
+        break;
+
+    // create a new vertex array if necessary or bind an existing one
+    if (i == count)
+    {
+      VertexArrayBindingInfo binding_info;
+      if (!GLTools::GenerateVertexAndIndexBuffersObject(&binding_info.vertex_array, nullptr, nullptr))
+        return nullptr;
+
+      binding_info.program = program;
+      vertex_array_bindings.push_back(binding_info);
+
+      GLProgramData const & data = program->GetProgramData();
+
+      GLuint va = vertex_array_bindings[i].vertex_array->GetResourceID();
+      data.BindAttributes(va, declaration, nullptr);
+
+      if (index_buffer != nullptr)
+        glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
+
+      if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
+      {
+        GLuint binding_index = 0;
+        glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), vertex_buffer_offset, declaration.GetVertexSize());
+      }
+    }
+    return vertex_array_bindings[i].vertex_array.get();
   }
 
   void SimpleMesh::Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider, int instance_count, int base_instance) const
   {
     assert(program != nullptr);
-    assert(vertex_array != nullptr);
+
+    // find the vertex array to use
+    VertexArray const * vertex_array = GetVertexArrayForProgram(program);
+    if (vertex_array == nullptr)
+      return;
 
     // use program and bind uniforms
     program->UseProgram(uniform_provider, nullptr);
 
-    // prpare and use vertex array 
-    GLuint va = vertex_array->GetResourceID();
-    glBindVertexArray(va);
-    GLProgramData const & data = program->GetProgramData();
-    data.BindAttributes(va, declaration, nullptr);
+    // bind the vertex array
+    glBindVertexArray(vertex_array->GetResourceID());
 
     // render the primitives
     for (auto const & primitive : primitives)
       primitive.Render(instance_count, base_instance);
   }
 
-  void SimpleMesh::FinalizeBindings(GLintptr vertex_buffer_offset)
+  void SimpleMesh::FinalizeBindings(GLintptr in_vertex_buffer_offset)
   {
-    assert(vertex_array != nullptr);
-
-    GLuint va = vertex_array->GetResourceID();
-      
-    if (index_buffer != nullptr)    
-      glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
-
-    if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
-    {
-      GLuint binding_index = 0;
-      glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), vertex_buffer_offset, declaration.GetVertexSize());
-    }
+    vertex_buffer_offset = in_vertex_buffer_offset;
   }
 
 }; // namespace chaos

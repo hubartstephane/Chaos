@@ -132,7 +132,7 @@ boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
           assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
 
           // initialize the vertex array and validate
-          mesh->FinalizeBindings();
+          mesh->FinalizeBindings(0);
           result = mesh;
 
           // transfert data to GPU and free memory

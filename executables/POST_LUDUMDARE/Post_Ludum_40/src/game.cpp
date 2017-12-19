@@ -679,8 +679,6 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	if (level_ratio > 1.0f)
 		level_ratio = 1.0f;
 
-	chaos::GLProgramData const & program_data = program->GetProgramData();
-
 	chaos::GLProgramVariableProviderChain uniform_provider;
 	uniform_provider.AddVariableTexture("material", texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);

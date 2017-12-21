@@ -9,6 +9,7 @@
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
 #include <chaos/MyGLFWGamepadManager.h> 
+#include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
 #include <chaos/GLProgramLoader.h>

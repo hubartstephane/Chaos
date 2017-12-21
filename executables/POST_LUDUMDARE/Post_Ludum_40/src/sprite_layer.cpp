@@ -3,13 +3,13 @@
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/CollisionFramework.h>
-#include <chaos/CollisionFramework.h>
 #include <chaos/MathTools.h> 
 #include <chaos/FileTools.h> 
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/MyGLFWGamepadManager.h> 
+#include <chaos/MyGLFWGamepadManager.h>
+#include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
 #include <chaos/GLProgramLoader.h>

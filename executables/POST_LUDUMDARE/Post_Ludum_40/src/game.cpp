@@ -824,7 +824,7 @@ void Game::ResetWorld()
 	{
 		layer.SetVisible(layer.start_visible);
 		layer.DestroyAllParticles();
-		layer.PopulateSprites(game_info, layer.max_particle_count);	
+		layer.PopulateSprites(game_info, layer.min_particle_count);	
 	}
 
 	glm::vec2 screen_space_position = GetPlayerInitialScreenPosition();

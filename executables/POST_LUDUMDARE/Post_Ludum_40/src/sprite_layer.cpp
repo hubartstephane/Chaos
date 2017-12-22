@@ -203,8 +203,6 @@ std::vector<std::pair<int, size_t>> SpriteLayer::GetSpritePopulationStats(GameIn
 
 void SpriteLayer::PopulateSprites(GameInfo game_info, int count)
 {
-
-
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
 		return;

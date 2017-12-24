@@ -139,7 +139,9 @@ public:
   /** try to bind all uniforms */
   void BindUniforms(class GLProgramVariableProvider const * provider) const;
   /** try to bind all uniforms using multiples provider */
-  void BindUniforms(GLProgramVariableProvider const * const * providers, int count) const;
+  void BindUniforms(class GLProgramVariableProvider const * const * providers, int count) const;
+  /** try to bind all uniforms through a whole chain of material */
+  void BindUniforms(class RenderMaterial const * render_material, class GLProgramVariableProvider const * provider) const;
 
 	/** clear the program data object */
 	void Clear();

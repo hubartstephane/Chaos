@@ -13,6 +13,8 @@ namespace chaos
 
   class RenderMaterial : public GraphicResource
   {
+    friend class GLProgramData;
+
   public:
 
     /** destructor */
@@ -21,14 +23,14 @@ namespace chaos
     virtual void Release();
 
     /** prepare the rendering */
-    void UseMaterial(GLProgramVariableProvider * uniform_provider);
+    void UseMaterial(GLProgramVariableProvider const * in_uniform_provider) const;
 
   protected:
 
     /** the program */
     boost::intrusive_ptr<GLProgram> program;
     /** some rendering states */
-    boost::intrusive_ptr<GLProgramVariableProvider> variable_provider;
+    boost::intrusive_ptr<GLProgramVariableProvider> uniform_provider;
     /** parent material */
     boost::intrusive_ptr<RenderMaterial> parent_material;
   };

@@ -297,6 +297,7 @@ namespace chaos
   {
     if (render_material == nullptr)
       return;
+
     for (GLUniformInfo const & uniform : uniforms)
     {
       bool uniform_bound = false;

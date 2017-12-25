@@ -29,7 +29,7 @@ namespace chaos
     rm->program->UseProgram(nullptr, nullptr);
 
     GLProgramData const & program_data = rm->program->GetProgramData();
-    program_data.BindUniforms(rm, in_uniform_provider);
+    program_data.BindUniforms(this, in_uniform_provider);
   }
   
 }; // namespace chaos

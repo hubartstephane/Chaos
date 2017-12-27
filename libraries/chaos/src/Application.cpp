@@ -35,11 +35,14 @@ namespace chaos
   bool Application::Initialize()
   {
     chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+    if (!InitializeManagers())
+      return false;
     return true;
   }
 
   bool Application::Finalize()
   {
+    FinalizeManagers();
     return true;
   }
 
@@ -75,6 +78,16 @@ namespace chaos
   }
 
   bool Application::FinalizeStandardLibraries()
+  {
+    return true;
+  }
+
+  bool Application::InitializeManagers()
+  {
+    return true;
+  }
+
+  bool Application::FinalizeManagers()
   {
     return true;
   }

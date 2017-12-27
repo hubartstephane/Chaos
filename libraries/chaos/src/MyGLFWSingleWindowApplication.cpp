@@ -210,10 +210,11 @@ namespace chaos
       LogTools::Log("Window(...) [%d] failure : %s", code, msg);
     }
 
-    bool SingleWindowApplication::Initialize()
+    bool SingleWindowApplication::InitializeManagers()
     {
-      if (!Application::Initialize())
+      if (!Application::InitializeManagers())
         return false;
+
       // initialize the clock
       main_clock = new Clock();
       if (main_clock != nullptr)
@@ -225,6 +226,27 @@ namespace chaos
         sound_manager->StartManager();
         sound_manager->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "SoundManager"));
       }
+      return true;
+    }
+
+    bool SingleWindowApplication::FinalizeManagers()
+    {
+      // stop the clock
+      main_clock = nullptr;
+      // stop the sound manager
+      if (sound_manager != nullptr)
+      {
+        sound_manager->StopManager();
+        sound_manager = nullptr;
+      }
+      Application::FinalizeManagers();
+      return true;
+    }
+
+    bool SingleWindowApplication::Initialize()
+    {
+      if (!Application::Initialize())
+        return false;
       // create the window
       window = GenerateWindow();
       if (window == nullptr)
@@ -235,14 +257,6 @@ namespace chaos
 
     bool SingleWindowApplication::Finalize()
     {
-      // stop the clock
-      main_clock = nullptr;
-      // stop the sound manager
-      if (sound_manager != nullptr)
-      {
-        sound_manager->StopManager();
-        sound_manager = nullptr;
-      }      
       // stop the window
       if (window != nullptr)
       {

@@ -57,6 +57,11 @@ protected:
   /** standard library finalization */
   virtual bool FinalizeStandardLibraries();
 
+  /** initialize the managers */
+  virtual bool InitializeManagers();
+  /** finalize the managers */
+  virtual bool FinalizeManagers();
+
   /** loading the configuration file */
   nlohmann::json LoadConfigurationFile();
 

@@ -17,7 +17,16 @@ public:
 
 };
 
+boost::filesystem::path FileManager::ResolvePath(char const * filename)
+{
+  return ResolvePath(boost::filesystem::path(filename));
+}
 
+boost::filesystem::path FileManager::ResolvePath(boost::filesystem::path const & filename)
+{
+
+  return boost::filesystem::path();
+}
 
 
 class DataSource : public chaos::ReferencedObject

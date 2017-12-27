@@ -79,6 +79,10 @@ namespace chaos
       virtual bool Initialize() override;
       /** finalize the application */
       virtual bool Finalize() override;
+      /** initialize the managers */
+      virtual bool InitializeManagers() override;
+      /** finalize the managers */
+      virtual bool FinalizeManagers() override;
 
       /** the method to override for window generation */
       virtual Window * GenerateWindow();

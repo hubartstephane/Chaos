@@ -217,15 +217,17 @@ namespace chaos
 
       // initialize the clock
       main_clock = new Clock();
-      if (main_clock != nullptr)
-        main_clock->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "ClockManager"));
+      if (main_clock == nullptr)
+        return false;        
+      main_clock->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "ClockManager"));
+
       // initialize the sound manager
       sound_manager = new SoundManager();
-      if (sound_manager != nullptr)
-      {
-        sound_manager->StartManager();
-        sound_manager->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "SoundManager"));
-      }
+      if (sound_manager == nullptr)
+        return false;
+      sound_manager->StartManager();
+      sound_manager->InitializeFromConfiguration(JSONTools::GetStructure(configuration, "SoundManager"));
+
       return true;
     }
 

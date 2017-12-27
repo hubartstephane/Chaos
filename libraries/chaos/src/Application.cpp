@@ -84,11 +84,17 @@ namespace chaos
 
   bool Application::InitializeManagers()
   {
+    // generate the file manager
+    file_manager = new FileManager;
+    if (file_manager == nullptr)
+      return false;
+
     return true;
   }
 
   bool Application::FinalizeManagers()
   {
+    file_manager = nullptr;
     return true;
   }
 

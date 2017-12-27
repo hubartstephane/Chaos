@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/FilePathManager.h>
+#include <chaos/FileManager.h>
 
 namespace chaos
 {
@@ -85,6 +85,9 @@ protected:
 
   /** the JSON configuration file if existing */
   nlohmann::json configuration;
+
+  /** the file manager */
+  boost::intrusive_ptr<FileManager> file_manager;
 };
 
 template<typename APPLICATION_TYPE>

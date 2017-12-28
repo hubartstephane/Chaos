@@ -215,6 +215,11 @@ namespace chaos
       if (!Application::InitializeManagers())
         return false;
 
+	  // initialize the graphic resource
+	  graphic_resource_manager = new GraphicResourceManager;
+	  if (graphic_resource_manager == nullptr)
+		  return false;
+
       // initialize the clock
       main_clock = new Clock();
       if (main_clock == nullptr)
@@ -241,6 +246,9 @@ namespace chaos
         sound_manager->StopManager();
         sound_manager = nullptr;
       }
+	  // the resource manager
+	  graphic_resource_manager = nullptr;
+	  // super method
       Application::FinalizeManagers();
       return true;
     }

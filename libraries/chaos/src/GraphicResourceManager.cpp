@@ -12,9 +12,26 @@ namespace chaos
   void GraphicResourceManager::Release()
   {
     textures.clear();
-    vertex_arrays.clear();
-    vertex_buffers.clear();
-    index_buffers.clear();
-    //skeleton_defs.clear();
+	programs.clear();
+	render_materials.clear();
   }
+
+  Texture * GraphicResourceManager::LoadTexture(boost::filesystem::path path)
+  {
+
+	  return nullptr;
+  }
+
+  GLProgram * GraphicResourceManager::LoadProgram(boost::filesystem::path path)
+  {
+  
+	  return nullptr;
+  }
+
+  RenderMaterial * GraphicResourceManager::LoadRenderMaterial(boost::filesystem::path path)
+  {
+  
+	  return nullptr;
+  }
+
 }; // namespace chaos

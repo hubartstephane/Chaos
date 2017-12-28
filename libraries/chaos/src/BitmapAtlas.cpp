@@ -488,7 +488,7 @@ namespace chaos
 				FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
 
 				boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(image_format, bitmap_filename, i);
-					
+
 				result = (FreeImage_Save(image_format, image, dst_filename.string().c_str(), 0) != 0);
 
 			}
@@ -589,8 +589,8 @@ namespace chaos
 			// load the entries
 			if (result)
 			{
-        LoadFromJSON(bitmap_sets, JSONTools::GetStructure(j, "bitmap_sets"));
-        LoadFromJSON(character_sets, JSONTools::GetStructure(j, "character_sets"));
+				LoadFromJSON(bitmap_sets, JSONTools::GetStructure(j, "bitmap_sets"));
+				LoadFromJSON(character_sets, JSONTools::GetStructure(j, "character_sets"));
 				atlas_count = bitmaps.size();
 			}
 

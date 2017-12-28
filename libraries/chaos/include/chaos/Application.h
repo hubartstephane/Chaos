@@ -39,6 +39,11 @@ public:
   /** get the application local path for execution data */
   inline boost::filesystem::path const & GetUserLocalPath() const { return userlocal_path; }
 
+  /** gets the file manager */
+  FileManager * GetFileManager() { return file_manager.get(); }
+  /** gets the file manager */
+  FileManager const * GetFileManager() const { return file_manager.get(); }
+
   /** get the configuration */
   nlohmann::json const & GetConfiguration() const { return configuration;}
 

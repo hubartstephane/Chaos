@@ -5,6 +5,7 @@
 #include <chaos/Application.h>
 #include <chaos/ClockManager.h>
 #include <chaos/SoundManager.h>
+#include <chaos/GraphicResourceManager.h>
 
 namespace chaos
 {
@@ -54,10 +55,16 @@ namespace chaos
       Clock * GetMainClock() { return main_clock.get(); }
       /** gets the main clock */
       Clock const * GetMainClock() const { return main_clock.get(); }
+
       /** gets the sound manager */
       SoundManager * GetSoundManager() { return sound_manager.get(); }
       /** gets the sound manager */
       SoundManager const * GetSoundManager() const { return sound_manager.get(); }
+
+	  /** gets the graphic resource manager */
+	  GraphicResourceManager * GetGraphicResourceManager() { return graphic_resource_manager.get(); }
+	  /** gets the graphic resource manager */
+	  GraphicResourceManager const * GetGraphicResourceManager() const { return graphic_resource_manager.get(); }
 
     protected:
 
@@ -98,6 +105,8 @@ namespace chaos
       boost::intrusive_ptr<Clock> main_clock;
       /** the sound manager */
       boost::intrusive_ptr<SoundManager> sound_manager;
+	  /** the graphic resource manager */
+	  boost::intrusive_ptr<GraphicResourceManager> graphic_resource_manager;
 
       /** the initial_window param */
       SingleWindowApplicationParams window_params;

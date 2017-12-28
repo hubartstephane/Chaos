@@ -5,28 +5,8 @@
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/FileManager.h>
 
-class FileManager : public chaos::ReferencedObject
-{
-public:
-
-  boost::filesystem::path ResolvePath(char const * filename);
-
-  boost::filesystem::path ResolvePath(boost::filesystem::path const & filename);
-
-
-};
-
-boost::filesystem::path FileManager::ResolvePath(char const * filename)
-{
-  return ResolvePath(boost::filesystem::path(filename));
-}
-
-boost::filesystem::path FileManager::ResolvePath(boost::filesystem::path const & filename)
-{
-
-  return boost::filesystem::path();
-}
 
 
 class DataSource : public chaos::ReferencedObject
@@ -137,6 +117,15 @@ protected:
     boost::filesystem::path p2 = "Toto";
 
     bool b1 = (p1 == p2);
+
+
+
+    file_manager->AddDirectory(GetResourcesPath(), true);
+
+
+
+
+
 
 
 

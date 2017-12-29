@@ -19,6 +19,7 @@
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GLQuery.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -132,6 +133,19 @@ protected:
 
   virtual bool OnDraw(glm::ivec2 size) override
   {
+    if (query->IsEnded())
+    {
+      bool available = query->IsResultAvailable();
+
+      GLint result = query->GetResult(true);
+
+      GLint64 result64 = query->GetResult64(true);
+
+      size = size;
+    }
+
+    query->BeginQuery();
+
     glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -158,7 +172,9 @@ protected:
 
     mesh->Render(program.get(), &uniform_provider, 0, 0);
 
-    debug_display.Display(size.x, size.y);    
+    debug_display.Display(size.x, size.y);  
+
+    query->EndQuery();
 
     return true;
   }
@@ -168,6 +184,7 @@ protected:
     program = nullptr;
     mesh    = nullptr;
     texture = nullptr;
+    query   = nullptr;
 
     debug_display.Finalize();
   }
@@ -213,6 +230,10 @@ protected:
     if (mesh == nullptr)
       return false;
    
+    query = new chaos::GLSamplesPassedQuery();
+    if (query == nullptr)
+      return false;
+
     return true;
   }
 
@@ -247,6 +268,8 @@ protected:
   boost::intrusive_ptr<chaos::GLProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
+
+  boost::intrusive_ptr<chaos::GLQuery> query;
  
   chaos::FPSViewInputController fps_view_controller;
 

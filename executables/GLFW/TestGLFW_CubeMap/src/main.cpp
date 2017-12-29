@@ -140,11 +140,7 @@ protected:
       GLint result = query->GetResult(true);
 
       GLint64 result64 = query->GetResult64(true);
-
-      size = size;
     }
-
-    query->BeginQuery();
 
     glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -170,11 +166,17 @@ protected:
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
     uniform_provider.AddVariableTexture("material", texture);
 
+    // XXX : conditional rendering may fail if all conditions are not meet
+    //       the rendering will be processed has normal
+    query->BeginConditionalRendering(true);
+    debug_display.Display(size.x, size.y);
+    query->EndConditionalRendering();
+
+    query->BeginQuery();
     mesh->Render(program.get(), &uniform_provider, 0, 0);
-
-    debug_display.Display(size.x, size.y);  
-
     query->EndQuery();
+
+
 
     return true;
   }

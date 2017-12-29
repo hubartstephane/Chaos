@@ -34,40 +34,52 @@ namespace chaos
   void GLQuery::Release()
   {
     assert(!query_started);
+    assert(!conditional_rendering_started);  // do not release resource, if something has been started (and would never been stopped)  
     if (query_id != 0)
     {			
       glDeleteQueries(1, &query_id);
       query_id = 0;
       query_started = false;
       query_ended = false;
+      conditional_rendering_started = false;
     }  
   }
 
-  void GLQuery::BeginQuery()
+  bool GLQuery::BeginQuery()
   {
     if (query_id == 0)
-      return;
-    assert(!query_started);
+      return false;
+    if (query_started) // do not start query ...
+      return false;
+    if (conditional_rendering_started) // ... if something is already started
+      return false;
+
     query_started = true;
     query_ended = false;
     glBeginQuery(query_target, query_id);
+    return true;
   }
 
-  void GLQuery::EndQuery()
+  bool GLQuery::EndQuery()
   {
     if (query_id == 0)
-      return;
-    assert(query_started);
+      return false;
+    if (!query_started) // query must have been started before
+      return false;
+    assert(!conditional_rendering_started); // logical error
+
     query_started = false;
     query_ended = true;
     glEndQuery(query_target);
+    return true;
   }
 
   bool GLQuery::IsResultAvailable()
   {
     if (query_id == 0)
       return false;
-    assert(query_ended);
+    if (!query_ended) // never been started/stopped => nothing to get
+      return false;
 
     GLint result = 0;
     glGetQueryObjectiv(query_id, GL_QUERY_RESULT_AVAILABLE, &result);
@@ -78,7 +90,8 @@ namespace chaos
   {
     if (query_id == 0)
       return 0;
-    assert(query_ended);
+    if (!query_ended) // never been started/stopped => nothing to get
+      return 0;
 
     GLint result = 0;
     glGetQueryObjectiv(query_id, wait? GL_QUERY_RESULT : GL_QUERY_RESULT_NO_WAIT, &result);
@@ -89,11 +102,41 @@ namespace chaos
   {
     if (query_id == 0)
       return 0;
-    assert(query_ended);
+    if (!query_ended) // never been started/stopped => nothing to get
+      return 0;
 
     GLint64 result = 0;
     glGetQueryObjecti64v(query_id, wait ? GL_QUERY_RESULT : GL_QUERY_RESULT_NO_WAIT, &result);
     return result;
   }
+
+  bool GLQuery::BeginConditionalRendering(bool query_wait)
+  {
+    if (query_id == 0)
+      return false;
+    if (conditional_rendering_started) // some conditional rendering in progress => ignore
+      return false;
+    if (query_started) // some query record in progress => ignore
+      return false;
+    if (!query_ended) // query must at least has been started/stopped once
+      return false;
+
+    conditional_rendering_started = true;
+    glBeginConditionalRender(query_id, query_wait? GL_QUERY_WAIT : GL_QUERY_NO_WAIT);
+    return true;
+  }
+
+  bool GLQuery::EndConditionalRendering()
+  {
+    if (query_id == 0)
+      return false;
+    if (!conditional_rendering_started) // condtional rendering must have been started once
+      return false;
+    assert(!query_started); // logical error
+
+    conditional_rendering_started = false;
+    glEndConditionalRender();
+    return true;
+  }  
 
 }; // namespace chaos

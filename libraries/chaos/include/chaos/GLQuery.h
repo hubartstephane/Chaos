@@ -27,14 +27,16 @@ public:
   bool IsValid() const { return glIsQuery(query_id) == GL_TRUE;}
 
   /** start the query */
-  void BeginQuery();
+  bool BeginQuery();
   /** end the query */
-  void EndQuery();
+  bool EndQuery();
 
   /** returns true whether the query is started */
   bool IsStarted() const { return query_started; }
   /** returns true whether the query is started */
   bool IsEnded() const { return query_ended; }
+  /** returns true whether a conditional rendering is beeing started */
+  bool IsConditionalRenderingStarted() const { return conditional_rendering_started; }
 
   /** returns true whether the result is availabled */
   bool IsResultAvailable();
@@ -42,6 +44,11 @@ public:
   GLint GetResult(bool wait);
   /** returns the result of the query */
   GLint64 GetResult64(bool wait);
+
+  /** start conditional rendering */
+  bool BeginConditionalRendering(bool query_wait);
+  /** end conditional rendering */
+  bool EndConditionalRendering();
 
 protected:
 
@@ -51,6 +58,8 @@ protected:
   bool query_started = false;
   /** indicates whether the query has been already been begun/ended */
   bool query_ended = false;
+  /** indicates whether a condtional rendering is being started */
+  bool conditional_rendering_started = false;
   /** the target of the query */
   GLenum query_target = GL_NONE;
 };

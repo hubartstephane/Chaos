@@ -1,15 +1,21 @@
 #include <chaos/FileManager.h>
+#include <chaos/FileTools.h>
 
 namespace chaos
 {
 
-  boost::filesystem::path FileManager::ResolvePath(char const * path) const
+  LoadFileResult::operator Buffer<char> ()
   {
-    assert(path != nullptr);
-    return ResolvePath(boost::filesystem::path(path));
+    return buffer;
   }
 
-  boost::filesystem::path FileManager::ResolvePath(boost::filesystem::path const & path) const
+  boost::filesystem::path FileManager::ResolvePath(char const * path, boost::filesystem::path const & context_path) const
+  {
+    assert(path != nullptr);
+    return ResolvePath(boost::filesystem::path(path), context_path);
+  }
+
+  boost::filesystem::path FileManager::ResolvePath(boost::filesystem::path const & path, boost::filesystem::path const & context_path) const
   {
     // nothing to do if the path is complete
     if (path.is_absolute())
@@ -22,6 +28,20 @@ namespace chaos
 
 
     return boost::filesystem::path();
+  }
+
+  LoadFileResult FileManager::LoadFile(char const * path, bool ascii, boost::filesystem::path const & context_path) const
+  {
+    return LoadFile(boost::filesystem::path(path), ascii, context_path);
+  }
+
+  LoadFileResult FileManager::LoadFile(boost::filesystem::path const & path, bool ascii, boost::filesystem::path const & context_path) const
+  {
+    LoadFileResult result;
+    result.path = ResolvePath(path, context_path);
+    if (!result.path.empty())
+      result.buffer = FileTools::LoadFile(result.path, ascii);
+    return result;
   }
 
   void FileManager::AddDirectory(boost::filesystem::path const & path, bool recursive)

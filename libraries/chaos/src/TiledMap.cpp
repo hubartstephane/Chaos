@@ -817,10 +817,12 @@ namespace chaos
 			TileInfo result;
 			if (gid <= 0)
 			{
-				int count = tilesets.size();
-				for (int i = count - 1; i >= 0; --i)
+				size_t count = tilesets.size();
+				for (size_t i = count ; i > 0; --i)
 				{
-					TileSetData & data = tilesets[i];
+          size_t index = i - 1;
+
+					TileSetData & data = tilesets[index];
 					if (gid >= data.first_gid)
 					{
 						result.gid = 1 + (gid - data.first_gid);
@@ -837,10 +839,12 @@ namespace chaos
 			TileInfo result;
 			if (gid <= 0)
 			{
-				int count = tilesets.size();
-				for (int i = count - 1; i >= 0; --i)
+        size_t count = tilesets.size();
+				for (size_t i = count ; i > 0; --i)
 				{
-					TileSetData const & data = tilesets[i];
+          size_t index = i - 1;
+
+					TileSetData const & data = tilesets[index];
 					if (gid >= data.first_gid)
 					{
 						result.gid = 1 + (gid - data.first_gid);

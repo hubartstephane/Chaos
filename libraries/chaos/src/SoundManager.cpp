@@ -673,9 +673,11 @@ namespace chaos
   void SoundManager::Tick(float delta_time)
   {
     // tick all categories
-    for (int i = categories.size() - 1; i >= 0; --i)
+    for (size_t i = categories.size() ; i > 0; --i)
     {
-      SoundCategory * category = categories[i].get();
+      size_t index = i - 1;
+
+      SoundCategory * category = categories[index].get();
       if (category == nullptr)
         continue;
       category->Tick(delta_time);
@@ -684,14 +686,16 @@ namespace chaos
       {
         if (category->callbacks != nullptr)
           category->callbacks->OnFinished(category);
-        RemoveSoundCategory(i);
+        RemoveSoundCategory(index);
       }
     }
 
     // tick all sounds
-    for (int i = sounds.size() - 1; i >= 0; --i)
+    for (size_t i = sounds.size() ; i > 0; --i)
     {
-      Sound * sound = sounds[i].get();
+      size_t index = i - 1;
+
+      Sound * sound = sounds[index].get();
       if (sound == nullptr)
         continue;
       sound->Tick(delta_time);
@@ -700,7 +704,7 @@ namespace chaos
       {
         if (sound->callbacks != nullptr)
           sound->callbacks->OnFinished(sound);
-        RemoveSound(i);
+        RemoveSound(index);
       }
     }
   }
@@ -760,7 +764,7 @@ namespace chaos
 
     // create the source on irrklang side
     // XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-    irrklang::ISoundSource * irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, buffer.bufsize, in_filename, true);
+    irrklang::ISoundSource * irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_filename, true);
     if (irrklang_source == nullptr)
       return nullptr;
 
@@ -823,8 +827,8 @@ namespace chaos
 
   void SoundManager::ReplaceSoundCategory(SoundCategory * new_category, SoundCategory * old_category)
   {
-    int count = sounds.size();
-    for (int i = 0; i < count; ++i)
+    size_t count = sounds.size();
+    for (size_t i = 0; i < count; ++i)
     {
       Sound * sound = sounds[i].get();
       if (sound == nullptr)
@@ -838,14 +842,16 @@ namespace chaos
   {
     assert(category != nullptr);
 
-    for (int i = sounds.size() - 1; i >= 0; --i) // from back to beginning because we are about to suppress elements
+    for (size_t i = sounds.size() ; i > 0; --i) // from back to beginning because we are about to suppress elements
     {
-      Sound * sound = sounds[i].get();
+      size_t index = i - 1;
+
+      Sound * sound = sounds[index].get();
       if (sound == nullptr)
         continue;
       if (sound->category != category)
         continue;
-      RemoveSound(i);
+      RemoveSound(index);
     }
   }
 
@@ -853,26 +859,28 @@ namespace chaos
   {
     assert(source != nullptr);
 
-    for (int i = sounds.size() - 1; i >= 0; --i) // from back to beginning because we are about to suppress elements
+    for (size_t i = sounds.size() ; i > 0; --i) // from back to beginning because we are about to suppress elements
     {
-      Sound * sound = sounds[i].get();
+      size_t index = i - 1;
+
+      Sound * sound = sounds[index].get();
       if (sound == nullptr)
         continue;
       if (sound->source != source)
         continue;
-      RemoveSound(i);
+      RemoveSound(index);
     }
   }
 
   template<typename T, typename U>
-  static int GetObjectIndexInVector(T * object, U const & vector)
+  static size_t GetObjectIndexInVector(T * object, U const & vector)
   {
     assert(object != nullptr);
-    int count = vector.size();
-    for (int i = 0; i < count; ++i)
+    size_t count = vector.size();
+    for (size_t i = 0; i < count; ++i)
       if (vector[i].get() == object)
         return i;
-    return -1;
+    return count;
   }
 
   void SoundManager::RemoveSoundCategory(SoundCategory * sound_category)
@@ -880,7 +888,7 @@ namespace chaos
     RemoveSoundCategory(GetObjectIndexInVector(sound_category, categories));
   }
 
-  void SoundManager::RemoveSoundCategory(int index)
+  void SoundManager::RemoveSoundCategory(size_t index)
   {
     DoRemoveSoundObject(index, categories);
   }
@@ -890,7 +898,7 @@ namespace chaos
     RemoveSound(GetObjectIndexInVector(sound, sounds));
   }
 
-  void SoundManager::RemoveSound(int index)
+  void SoundManager::RemoveSound(size_t index)
   {
     DoRemoveSoundObject(index, sounds);
   }
@@ -900,7 +908,7 @@ namespace chaos
     RemoveSoundSource(GetObjectIndexInVector(source, sources));
   }
 
-  void SoundManager::RemoveSoundSource(int index)
+  void SoundManager::RemoveSoundSource(size_t index)
   {
     DoRemoveSoundObject(index, sources);
   }

@@ -504,22 +504,24 @@ namespace chaos
     void RemoveSoundSource(SoundSource * source);
 
     /** remove a category from the list */
-    void RemoveSoundCategory(int index);
+    void RemoveSoundCategory(size_t index);
     /** remove a sound from the list */
-    void RemoveSound(int index);
+    void RemoveSound(size_t index);
     /** remove a sound source from the list */
-    void RemoveSoundSource(int index);
+    void RemoveSoundSource(size_t index);
 
     /** utility function to remove a sound object from a list */
     template<typename T>
-    void DoRemoveSoundObject(int index, T & vector)
+    void DoRemoveSoundObject(size_t index, T & vector)
     {
-      assert(index >= 0 && index < (int)vector.size());
+      size_t count = vector.size();
+      if (index >= count)
+        return;
 
       vector[index]->DetachFromManager(); // order is important because next operation could destroy the object
 
-      if (index != vector.size() - 1)
-        vector[index] = vector[vector.size() - 1];
+      if (index != count - 1)
+        vector[index] = vector[count - 1];
       vector.pop_back();
     }
     /** an utility conversion method */

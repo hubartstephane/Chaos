@@ -213,7 +213,7 @@ namespace chaos
 		{
 			// initialize the storage
 			int level_count = GLTextureTools::GetMipmapLevelCount(width, height);
-			glTextureStorage3D(result.texture_id, level_count, gl_pixel_format.internal_format, width, height, slice_count);
+			glTextureStorage3D(result.texture_id, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
 
 			// fill each slices into GPU
 			for (size_t i = 0; i < slice_count; ++i)
@@ -230,7 +230,7 @@ namespace chaos
 					int type = (effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 					GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
-					glTextureSubImage3D(result.texture_id, 0, 0, 0, i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);		
+					glTextureSubImage3D(result.texture_id, 0, 0, 0, (GLsizei)i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);		
 				}
 			}
 
@@ -238,7 +238,7 @@ namespace chaos
 			result.texture_description.type = array_target;
 			result.texture_description.width = width;
 			result.texture_description.height = height;
-			result.texture_description.depth = slice_count;
+			result.texture_description.depth = (int)slice_count;
 			result.texture_description.internal_format = gl_pixel_format.internal_format;
 
 			GLTextureTools::GenTextureApplyParameters(result, parameters);

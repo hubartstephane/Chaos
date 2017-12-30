@@ -110,7 +110,7 @@ namespace chaos
     return result;
   }
 
-  bool GLQuery::BeginConditionalRendering(bool query_wait)
+  bool GLQuery::BeginConditionalRendering(bool query_wait, bool inverted)
   {
     if (query_id == 0)
       return false;
@@ -122,7 +122,14 @@ namespace chaos
       return false;
 
     conditional_rendering_started = true;
-    glBeginConditionalRender(query_id, query_wait? GL_QUERY_WAIT : GL_QUERY_NO_WAIT);
+
+    GLenum query_mode = GL_NONE;
+    if (!inverted)
+      query_mode = query_wait ? GL_QUERY_WAIT : GL_QUERY_NO_WAIT;
+    else
+      query_mode = query_wait ? GL_QUERY_WAIT_INVERTED : GL_QUERY_NO_WAIT_INVERTED;
+
+    glBeginConditionalRender(query_id, query_mode);
     return true;
   }
 

@@ -46,7 +46,7 @@ public:
   GLint64 GetResult64(bool wait);
 
   /** start conditional rendering */
-  bool BeginConditionalRendering(bool query_wait);
+  bool BeginConditionalRendering(bool query_wait, bool inverted = false);
   /** end conditional rendering */
   bool EndConditionalRendering();
 

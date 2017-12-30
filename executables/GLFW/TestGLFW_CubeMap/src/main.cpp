@@ -168,9 +168,32 @@ protected:
 
     // XXX : conditional rendering may fail if all conditions are not meet
     //       the rendering will be processed has normal
+    glEnable(GL_STENCIL_TEST);
+
+    GLint ref = 1;
+    GLuint mask = 0xFF;
+    glStencilFunc(GL_ALWAYS, ref, mask); // always pass stencil
+
+    GLenum stencil_fail = GL_KEEP;
+    GLenum depth_fail = GL_KEEP;
+    GLenum depth_pass = GL_REPLACE;
+    glStencilOp(stencil_fail, depth_fail, depth_pass); // as soon as a pixel is rendered, REPLACE the stencil buffer by REF = 1
+
+    // XXX : the stencil is here to ensure that the debug strings is not erased by the sky box
+    //       (debug string needs to be rendered first so it can use the conditional rendering from previous frame)
     query->BeginConditionalRendering(true);
     debug_display.Display(size.x, size.y);
     query->EndConditionalRendering();
+
+    // XXX : render the skybox. Use previous frame query for conditinal rendering
+    ref = 0;
+    mask = 0xFF;
+    glStencilFunc(GL_EQUAL, ref, mask); // stencil must be 0 to render a pixel (debug string is not on the screen)
+
+    stencil_fail = GL_KEEP;
+    depth_fail = GL_KEEP;
+    depth_pass = GL_KEEP;
+    glStencilOp(stencil_fail, depth_fail, depth_pass); // do not modify the stencil anymore
 
     query->BeginQuery();
     mesh->Render(program.get(), &uniform_provider, 0, 0);
@@ -213,6 +236,8 @@ protected:
       return false;
 
     debug_display.AddLine("Press +/- to change skybox");
+    debug_display.AddLine("If the skybox has no pixel on screen, ");
+    debug_display.AddLine("this text will disappear (conditional rendering)");
 
     texture = GenerateSkyBox(0);
     if (texture == nullptr)
@@ -242,7 +267,7 @@ protected:
   virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
   {
     chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
-
+    
     hints.toplevel  = 1;
     hints.decorated = 1;
   }
@@ -284,7 +309,7 @@ int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
-  params.width = 700;
+  params.width = 1200;
   params.height = 700;
   params.monitor_index = 0;
   chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);

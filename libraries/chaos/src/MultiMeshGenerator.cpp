@@ -70,8 +70,8 @@ namespace chaos
         {
           MeshGenerationRequirement requirement = it.first->GetRequirement();
 
-          int written_vertices_count = vertices_writer.GetWrittenCount();
-          int written_indices_count = indices_writer.GetWrittenCount();
+          size_t written_vertices_count = vertices_writer.GetWrittenCount();
+          size_t written_indices_count = indices_writer.GetWrittenCount();
 
           boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh; // generate the mesh
           if (mesh != nullptr)
@@ -86,7 +86,7 @@ namespace chaos
 
             assert(requirement.vertex_size == mesh->declaration.GetVertexSize());
 
-            mesh->ShiftPrimitivesIndexAndVertexPosition(0, written_indices_count / sizeof(GLuint));  // shift the position of vertices/indices for this mesh
+            mesh->ShiftPrimitivesIndexAndVertexPosition(0, (int)(written_indices_count / sizeof(GLuint)));  // shift the position of vertices/indices for this mesh
 
             mesh->SetVertexBufferOffset(written_vertices_count);
 

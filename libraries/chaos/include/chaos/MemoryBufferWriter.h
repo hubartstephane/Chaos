@@ -56,7 +56,7 @@ namespace chaos
     }
 
     /** returns the number of bytes written */
-    int GetWrittenCount() const
+    size_t GetWrittenCount() const
     {
       return (char*)position - (char*)buffer;
     }

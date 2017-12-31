@@ -303,7 +303,7 @@ namespace chaos
 			Rectangle atlas_rectangle = GetAtlasRectangle();
 
 			// individual tests
-			int bitmap_count = atlas_definitions.size(); // output->bitmaps not generated yet
+			size_t bitmap_count = atlas_definitions.size(); // output->bitmaps not generated yet
 			for (BitmapEntryInput const * entry_input : entries)
 			{
 				BitmapEntry const * entry = entry_input->output_entry;
@@ -330,10 +330,10 @@ namespace chaos
 			}
 
 			// test whether a collision exists between 2 elements
-			int count = entries.size();
-			for (int i = 0; i < count - 1; ++i)
+      size_t count = entries.size();
+			for (size_t i = 0; i < count - 1; ++i)
 			{
-				for (int j = i + 1; j < count; ++j)
+				for (size_t j = i + 1; j < count; ++j)
 				{
 					BitmapEntry const * entry1 = entries[i]->output_entry;
 					BitmapEntry const * entry2 = entries[j]->output_entry;
@@ -376,8 +376,8 @@ namespace chaos
 			std::vector<unique_bitmap_ptr> result;
 
 			// generate the bitmaps
-			int bitmap_count = atlas_definitions.size();
-			for (int i = 0; i < bitmap_count; ++i)
+      size_t bitmap_count = atlas_definitions.size();
+			for (size_t i = 0; i < bitmap_count; ++i)
 			{			
 				unique_bitmap_ptr bitmap = unique_bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
 				if (bitmap != nullptr)
@@ -560,7 +560,7 @@ namespace chaos
 				if (EnsureValidResults(entries))
 				{
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
-					output->atlas_count = output->bitmaps.size();
+					output->atlas_count = (int)output->bitmaps.size();
 					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
 #if _DEBUG
 					output->OutputAtlasSpaceOccupation(std::cout);
@@ -597,7 +597,7 @@ namespace chaos
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				int entry_index = textures_indirection_table[i];
+        size_t entry_index = textures_indirection_table[i];
 
 				BitmapEntryInput const * input_entry = entries[entry_index];
 
@@ -619,7 +619,7 @@ namespace chaos
 						best_score = score;
 						best_x = x;
 						best_y = y;
-						best_atlas_index = j;
+						best_atlas_index = (int)j;
 					}
 
 					if (score == 0.0f) // no need to search any more in any atlases
@@ -634,7 +634,7 @@ namespace chaos
 					def.split_y.push_back(0);
 					def.split_y.push_back(params.atlas_height + 2 * params.atlas_padding);
 
-					best_atlas_index = atlas_definitions.size();
+					best_atlas_index = (int)atlas_definitions.size();
 					best_x = 0;
 					best_y = 0;
 
@@ -719,7 +719,7 @@ namespace chaos
 						break;
 					r.y = py + params.atlas_padding;
 
-					bool collision = HasIntersectingEntry(entries, &atlas_def - &atlas_definitions[0], r);
+					bool collision = HasIntersectingEntry(entries, (int)(&atlas_def - &atlas_definitions[0]), r);
 					any_value |= !collision;
 
 					if (!collision)
@@ -775,7 +775,7 @@ namespace chaos
 
 		void AtlasGenerator::InsertBitmapInAtlas(BitmapEntry & entry, AtlasDefinition & atlas_def, int x, int y)
 		{
-			entry.bitmap_index = &atlas_def - &atlas_definitions[0];
+			entry.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
 			entry.x = x + params.atlas_padding;
 			entry.y = y + params.atlas_padding;
 

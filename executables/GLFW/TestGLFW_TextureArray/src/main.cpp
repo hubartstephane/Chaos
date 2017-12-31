@@ -174,7 +174,7 @@ protected:
 
 		boost::intrusive_ptr<chaos::Texture> result = generator.GenerateTexture(merge_params);  
 		if (result != nullptr)
-			texture_slice_count = bitmaps.size();
+			texture_slice_count = (int)bitmaps.size();
 
 		return result;
 	}

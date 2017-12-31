@@ -185,7 +185,7 @@ protected:
 		// generate the skybox
 		for (size_t i = 0; i < skybox_bitmaps.size() ; ++i)
 		{
-			skybox.SetImage(i, skybox_bitmaps[i], false);
+			skybox.SetImage((int)i, skybox_bitmaps[i], false);
 		}
 		return true;
 	}

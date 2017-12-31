@@ -168,7 +168,7 @@ void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat 
 		{
 			std::string name = chaos::StringTools::Printf("Bitmap_%02d", i);
 
-			bitmap_set->AddBitmap(name.c_str(), atlas_bitmaps[i], false, i);
+			bitmap_set->AddBitmap(name.c_str(), atlas_bitmaps[i], false, (int)i);
 		}
 
 		params.merge_params.pixel_format = pixel_format;

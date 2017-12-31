@@ -44,7 +44,7 @@ protected:
         if (bitmap_index - count < (int)bitmap_set->elements.size())
           return &bitmap_set->elements[bitmap_index - count];
 
-        count += bitmap_set->elements.size();
+        count += (int)bitmap_set->elements.size();
         result = &bitmap_set->elements.back(); // in case of there is not enough entry after, keep a reference on the last
       }
       // go throught all character sets
@@ -54,7 +54,7 @@ protected:
         if (bitmap_index - count < (int)character_set->elements.size())
           return &character_set->elements[bitmap_index - count];
 
-        count += character_set->elements.size();
+        count += (int)character_set->elements.size();
         result = &character_set->elements.back(); // in case of there is not enough entry after, keep a reference on the last
       }
 

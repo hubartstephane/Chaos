@@ -707,7 +707,7 @@ namespace chaos
 		if (b % 4 != 0)
 			return nullptr;  // cannot find a correct offset to meet wanted alignment after 4 iterations, this will never happen
 
-		skip_pixel = (((uintptr_t)desc.data) - b) / pixel_size;
+		skip_pixel = (int)(((uintptr_t)desc.data) - b) / pixel_size;
 		result = (char*)b;
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);

@@ -93,7 +93,7 @@ namespace chaos
 				break;
 
 			// replace incomming byte by its index and pack it
-			char_array_4[tmp++] = strchr(base64_chars, c) - base64_chars;
+			char_array_4[tmp++] = (unsigned char)(strchr(base64_chars, c) - base64_chars);
 			if (tmp == 4) 
 			{
 				DecodeBuffer(char_array_4, char_array_3);

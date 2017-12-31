@@ -410,7 +410,7 @@ namespace chaos
 		{
 			size_t count = atlas_count;
 			for (size_t i = 0; i < count; ++i)
-				OutputAtlasSpaceOccupation(i, stream);
+				OutputAtlasSpaceOccupation((int)i, stream);
 		}
 
 		void AtlasBase::OutputAtlasSpaceOccupation(int bitmap_index, std::ostream & stream) const
@@ -487,7 +487,7 @@ namespace chaos
 
 				FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
 
-				boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(image_format, bitmap_filename, i);
+				boost::filesystem::path dst_filename = target_dir / GetBitmapFilename(image_format, bitmap_filename, (int)i);
 
 				result = (FreeImage_Save(image_format, image, dst_filename.string().c_str(), 0) != 0);
 
@@ -518,7 +518,7 @@ namespace chaos
 
 					FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
 
-					j["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, i).string());
+					j["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, (int)i).string());
 				}
 				// insert the entries
 				j["bitmap_sets"] = nlohmann::json::array();
@@ -591,7 +591,7 @@ namespace chaos
 			{
 				LoadFromJSON(bitmap_sets, JSONTools::GetStructure(j, "bitmap_sets"));
 				LoadFromJSON(character_sets, JSONTools::GetStructure(j, "character_sets"));
-				atlas_count = bitmaps.size();
+				atlas_count = (int)bitmaps.size();
 			}
 
 			// in case of failure, reset the whole atlas once more

@@ -562,7 +562,7 @@ namespace chaos
         if (physical_gamepad == nullptr)
           continue;
 
-        bool is_present = (glfwJoystickPresent(i) > 0);
+        bool is_present = (glfwJoystickPresent((int)i) > 0);
         bool was_present = physical_gamepad->IsPresent();
 
         physical_gamepad->is_present = is_present; // update presence flag

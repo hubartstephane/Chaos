@@ -103,7 +103,7 @@ void Game::SpawnExtraParticles(GameInfo game_info, float delta_time)
 		if (count > layer.max_particle_count) 
 			count = layer.max_particle_count;
 
-		int particles_to_spawn = (count - layer.particles.size());
+		int particles_to_spawn = (count - (int)layer.particles.size());
 
 		if (particles_to_spawn > max_particles_per_frame)
 			particles_to_spawn = max_particles_per_frame;
@@ -300,7 +300,7 @@ bool Game::FindPlayerCollision()
 
 				if (chaos::Collide(player_triangle, particle_sphere)) // more precise
 				{
-					if (OnCollision(p, j, layer))
+					if (OnCollision(p, layer))
 					{
 						result = true;
 						layer.particles[j] = layer.particles.back();
@@ -315,7 +315,7 @@ bool Game::FindPlayerCollision()
 	return result;
 }
 
-bool Game::OnCollision(Particle & p, int index, SpriteLayer & layer)
+bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 {
 	if (layer.collision_type == SpriteLayer::COLLISION_DEATH)
 	{
@@ -717,8 +717,12 @@ void Game::DisplaySprites(glm::ivec2 viewport_size)
 
 	uniform_provider->AddVariableValue("local_to_cam", local_to_cam);
 
-	for (int i = sprite_layers.size() - 1 ; i >= 0; --i)
-		sprite_layers[i].Draw(uniform_provider.get());
+
+  for (size_t i = sprite_layers.size(); i > 0; --i)
+  {
+    size_t index = i - 1;
+    sprite_layers[index].Draw(uniform_provider.get());
+  }
 }
 
 void Game::Display(glm::ivec2 viewport_size)

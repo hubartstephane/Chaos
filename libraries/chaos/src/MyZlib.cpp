@@ -20,7 +20,7 @@ namespace chaos
 		{		
 			unsigned char chunk[CHUNK_SIZE];
 			
-			strm.avail_in = src.bufsize;
+			strm.avail_in = (uInt)src.bufsize;
 			strm.next_in  = (unsigned char*)src.data; // prepare input
 
 			do
@@ -65,7 +65,7 @@ namespace chaos
 		{		
 			unsigned char chunk[CHUNK_SIZE];
 
-			strm.avail_in = src.bufsize;
+			strm.avail_in = (uInt)src.bufsize;
 			strm.next_in  = (unsigned char*)src.data; // prepare input
 
 			do

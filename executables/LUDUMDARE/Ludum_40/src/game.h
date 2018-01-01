@@ -139,7 +139,7 @@ protected:
 
 	bool FindPlayerCollision();
 
-	bool OnCollision(Particle & p, int index, SpriteLayer & layer);
+	bool OnCollision(Particle & p, SpriteLayer & layer);
 
 	void ResetPlayerCachedInputs();
 

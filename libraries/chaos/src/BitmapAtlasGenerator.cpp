@@ -315,7 +315,7 @@ namespace chaos
 					result = false;
 				}
 				// test whether all entry's bitmap_index are valid
-				else if (entry->bitmap_index >= bitmap_count)
+				else if (entry->bitmap_index >= (int)bitmap_count)
 				{
 					stream << "Entry encoutered with invalid bitmap_index : [" << entry->name << " , " << entry->tag << "]" << std::endl;
 					result = false;

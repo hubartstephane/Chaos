@@ -33,7 +33,7 @@ MYPROJECTS = {}
 
 DISPLAY_ROOT_ENVIRONMENT = false
 DISPLAY_ENVIRONMENT      = true
-DISPLAY_DEPENDENCIES     = true
+DISPLAY_DEPENDENCIES     = false
 
 DEBUG   = "DEBUG"
 RELEASE = "RELEASE"
@@ -316,7 +316,6 @@ function DeclareExternalLib(external_name, inc_path, lib_path, libname, tocopy)
   result.name        = string.upper(external_name)
   result.proj_type   = TYPE_EXTERNAL_LIBRARY
   result.root_path   = EXTERNAL_PATH
-
   result.includedirs      = PrefixPathArray(GetPlatConfArray(inc_path), EXTERNAL_PATH)   
   result.targetdir        = PrefixPathArray(GetPlatConfArray(lib_path), EXTERNAL_PATH)
   result.libname          = GetPlatConfArray(libname)

@@ -323,5 +323,5 @@ local FFMPEG_LIB_PATH = {
   x32 = path.join(FFMPEG_PATH, "win32", "lib"),
   x64 = path.join(FFMPEG_PATH, "win64", "lib")
 } 
-DeclareExternalLib("FFMPEG", FFMPEG_INC_PATH, FFMPEG_LIB_PATH, {"avcodec.lib", "avdevice.lib", "avfilter.lib", "avformat.lib", "avutil.lib", "postproc.lib", "swresample.lib", "swscale.lib"}) 
+--DeclareExternalLib("FFMPEG", FFMPEG_INC_PATH, FFMPEG_LIB_PATH, {"avcodec.lib", "avdevice.lib", "avfilter.lib", "avformat.lib", "avutil.lib", "postproc.lib", "swresample.lib", "swscale.lib"}) 
   

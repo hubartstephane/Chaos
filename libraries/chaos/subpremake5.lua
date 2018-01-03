@@ -20,7 +20,7 @@
   DependOnLib("FREETYPE2")
   DependOnLib("JSON")
   DependOnLib("ZLIB")
-  DependOnLib("FFMPEG")      
+  --DependOnLib("FFMPEG")      
       
         
   --DependOnLib("FMODSTUDIO")  

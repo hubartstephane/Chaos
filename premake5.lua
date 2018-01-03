@@ -33,7 +33,7 @@ MYPROJECTS = {}
 
 DISPLAY_ROOT_ENVIRONMENT = false
 DISPLAY_ENVIRONMENT      = true
-DISPLAY_DEPENDENCIES     = false
+DISPLAY_DEPENDENCIES     = true
 
 DEBUG   = "DEBUG"
 RELEASE = "RELEASE"
@@ -836,7 +836,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
     if (inc_dir) then    
       includedirs(inc_dir)
       if (DISPLAY_DEPENDENCIES) then
-        Output("ResolveDependency includedirs [" .. inc_dir .. "] for " .. plat .. " " .. conf)
+        Output("ResolveDependency [" .. proj.name .. "] xincludedirs [" .. inc_dir .. "] for " .. plat .. " " .. conf)
       end          
     end
     
@@ -844,7 +844,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
     if (target_dir) then                
       libdirs(target_dir)
       if (DISPLAY_DEPENDENCIES) then        
-        Output("ResolveDependency libdirs     [" .. target_dir .. "] for " .. plat .. " " .. conf)
+        Output("ResolveDependency [" .. proj.name .. "] libdirs     [" .. target_dir .. "] for " .. plat .. " " .. conf)
       end                  
     end
     
@@ -862,13 +862,13 @@ function ResolveDependency(proj, other_proj, plat, conf)
         for i in pairs(libname) do
           links(libname[i])
           if (DISPLAY_DEPENDENCIES) then        
-            Output("ResolveDependency links       [" .. libname[i] .. "] for " .. plat .. " " .. conf)
+            Output("ResolveDependency [" .. proj.name .. "] links       [" .. libname[i] .. "] for " .. plat .. " " .. conf)
           end
         end
       else
         links(libname)
         if (DISPLAY_DEPENDENCIES) then        
-          Output("ResolveDependency links       [" .. libname .. "] for " .. plat .. " " .. conf)
+          Output("ResolveDependency [" .. proj.name .. "] links       [" .. libname .. "] for " .. plat .. " " .. conf)
         end     
       end
                                        

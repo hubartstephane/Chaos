@@ -15,10 +15,6 @@
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLProgramVariableProvider.h>
 
-#include <libavutil/imgutils.h>
-#include <libavutil/parseutils.h>
-#include <libswscale/swscale.h>
-
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
@@ -73,13 +69,6 @@ protected:
 
   virtual bool Initialize(nlohmann::json const & configuration) override
   {
-    int w = 0;
-    int h = 0;
-    av_parse_video_size(&w, &h, "toto");
-
-
-
-
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;

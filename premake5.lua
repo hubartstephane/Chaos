@@ -33,7 +33,7 @@ MYPROJECTS = {}
 
 DISPLAY_ROOT_ENVIRONMENT = false
 DISPLAY_ENVIRONMENT      = true
-DISPLAY_DEPENDENCIES     = false
+DISPLAY_DEPENDENCIES     = true
 
 DEBUG   = "DEBUG"
 RELEASE = "RELEASE"
@@ -565,10 +565,17 @@ end
 function DependOnStandardLib(libname)
 
   local proj = FindProject()
-  table.insert(proj.additionnal_libs[x32][DEBUG],   libname)   
-  table.insert(proj.additionnal_libs[x32][RELEASE], libname) 
-  table.insert(proj.additionnal_libs[x64][DEBUG],   libname)    
-  table.insert(proj.additionnal_libs[x64][RELEASE], libname)
+  
+  if (IsTable(libname)) then
+    for i in pairs(libname) do
+      DependOnStandardLib(libname[i])
+    end
+  else  
+    table.insert(proj.additionnal_libs[x32][DEBUG],   libname)   
+    table.insert(proj.additionnal_libs[x32][RELEASE], libname) 
+    table.insert(proj.additionnal_libs[x64][DEBUG],   libname)    
+    table.insert(proj.additionnal_libs[x64][RELEASE], libname)
+  end
 end
 
 -- =============================================================================
@@ -576,8 +583,14 @@ end
 -- =============================================================================
 
 function DependOnLib(libname)
-  libname = libname string.upper(libname)
-  table.insert(FindProject().dependencies, libname)
+  if (IsTable(libname)) then
+    for i in pairs(libname) do
+      DependOnLib(libname[i])
+    end
+  else 
+    libname = libname string.upper(libname)
+    table.insert(FindProject().dependencies, libname)
+  end
 end
 
 -- =============================================================================
@@ -820,31 +833,46 @@ function ResolveDependency(proj, other_proj, plat, conf)
   if (other_proj.proj_type == TYPE_LIBRARY or other_proj.proj_type == TYPE_EXTERNAL_LIBRARY) then -- only resolve dependencies with libraries
     filter { "configurations:" .. conf, "platforms:" .. plat}
     
-    if (other_proj.includedirs[plat][conf]) then    
-      includedirs(other_proj.includedirs[plat][conf])
+    local inc_dir = other_proj.includedirs[plat][conf]
+    if (inc_dir) then    
+      includedirs(inc_dir)
       if (DISPLAY_DEPENDENCIES) then
-        Output("ResolveDependency includedirs [" .. other_proj.includedirs[plat][conf] .. "] for " .. plat .. " " .. conf)
+        Output("ResolveDependency includedirs [" .. inc_dir .. "] for " .. plat .. " " .. conf)
       end          
     end
     
-    if (other_proj.targetdir[plat][conf]) then                
-      libdirs(other_proj.targetdir[plat][conf])
+    local target_dir = other_proj.targetdir[plat][conf] 
+    if (target_dir) then                
+      libdirs(target_dir)
       if (DISPLAY_DEPENDENCIES) then        
-        Output("ResolveDependency libdirs     [" .. other_proj.targetdir[plat][conf] .. "] for " .. plat .. " " .. conf)
+        Output("ResolveDependency libdirs     [" .. target_dir .. "] for " .. plat .. " " .. conf)
       end                  
     end
     
-    if (other_proj.additionnal_libs[plat][conf]) then
-      for i in pairs(other_proj.additionnal_libs[plat][conf]) do                  
-        links(other_proj.additionnal_libs[plat][conf][i])
+    local additionnal_libs = other_proj.additionnal_libs[plat][conf] 
+    if (additionnal_libs) then
+      for i in pairs(additionnal_libs) do                  
+        links(additionnal_libs[i])
       end               
     end
         
-    if (other_proj.libname[plat][conf]) then              
-      links(other_proj.libname[plat][conf])
-      if (DISPLAY_DEPENDENCIES) then        
-        Output("ResolveDependency links       [" .. other_proj.libname[plat][conf] .. "] for " .. plat .. " " .. conf)
-      end                  
+    local libname = other_proj.libname[plat][conf] 
+    if (libname) then
+
+      if (IsTable(libname)) then
+        for i in pairs(libname) do
+          links(libname[i])
+          if (DISPLAY_DEPENDENCIES) then        
+            Output("ResolveDependency links       [" .. libname[i] .. "] for " .. plat .. " " .. conf)
+          end
+        end
+      else
+        links(libname)
+        if (DISPLAY_DEPENDENCIES) then        
+          Output("ResolveDependency links       [" .. libname .. "] for " .. plat .. " " .. conf)
+        end     
+      end
+                                       
     end
             
     CopyResourceFiles(proj, other_proj, plat, conf, false) -- resources from dependancies cannot be visible

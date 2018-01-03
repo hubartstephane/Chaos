@@ -19,7 +19,8 @@
   DependOnLib("TRISTRIPPER")
   DependOnLib("FREETYPE2")
   DependOnLib("JSON")
-  DependOnLib("ZLIB")  
+  DependOnLib("ZLIB")
+  DependOnLib("FFMPEG")      
       
         
   --DependOnLib("FMODSTUDIO")  

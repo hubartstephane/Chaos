@@ -13,91 +13,91 @@
 namespace chaos
 {
 
-  /**
-   * MeshPrimitive : a draw call
-   */
+	/**
+	* MeshPrimitive : a draw call
+	*/
 
-  class MeshPrimitive
-  {
-  public:
+	class MeshPrimitive
+	{
+	public:
 
-    /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-    void Render(int instance_count = 0, int base_instance = 0) const;
+		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
+		void Render(int instance_count = 0, int base_instance = 0) const;
 
-    /** offset the index or vertex position */
-    void ShiftIndexAndVertexPosition(int vb_offset, int ib_offset);
+		/** offset the index or vertex position */
+		void ShiftIndexAndVertexPosition(int vb_offset, int ib_offset);
 
-  public:
+	public:
 
-    /** self descriptive */
+		/** self descriptive */
 		GLenum primitive_type = GL_TRIANGLES;
-    /** is this an indexed rendering */
+		/** is this an indexed rendering */
 		bool   indexed = false;
-    /** number of vertex or index to use */
+		/** number of vertex or index to use */
 		int    count = 0;
-    /** beginning in vertex or index buffer (if indexed rendering or not is used) */
-    int    start = 0;
-    /** for indexed rendering, this is an offset applyed to each index */
-    int    base_vertex_index = 0;
-  };
+		/** beginning in vertex or index buffer (if indexed rendering or not is used) */
+		int    start = 0;
+		/** for indexed rendering, this is an offset applyed to each index */
+		int    base_vertex_index = 0;
+	};
 
-  /**
-  * SimpleMesh : how it says
-  */
+	/**
+	* SimpleMesh : how it says
+	*/
 
-  class SimpleMesh : public ReferencedObject
-  {
+	class SimpleMesh : public ReferencedObject
+	{
 
-  protected:
+	protected:
 
-    class VertexArrayBindingInfo
-    {
-    public:
+		class VertexArrayBindingInfo
+		{
+		public:
 
-      boost::intrusive_ptr<GLProgram> program;
-      boost::intrusive_ptr<VertexArray> vertex_array;
-    };
+			boost::intrusive_ptr<GLProgram> program;
+			boost::intrusive_ptr<VertexArray> vertex_array;
+		};
 
-  public:
+	public:
 
-    /** constructor */
-    SimpleMesh() = default;
-    /** destructor */
-    ~SimpleMesh();
+		/** constructor */
+		SimpleMesh() = default;
+		/** destructor */
+		~SimpleMesh();
 
-    /** clear the mesh */
-    void Clear();
-    /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-    void Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
-    /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
-    void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
-    /** offset the index or vertex position */
-    void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
-    
-  protected:
+		/** clear the mesh */
+		void Clear();
+		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
+		void Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
+		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
+		/** offset the index or vertex position */
+		void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
 
-    /** find or create a vertex array for a given program */
-    VertexArray const * GetVertexArrayForProgram(GLProgram * program) const;
+	protected:
 
-  public:
+		/** find or create a vertex array for a given program */
+		VertexArray const * GetVertexArrayForProgram(GLProgram * program) const;
 
-    /** self descriptive */
-    VertexDeclaration declaration;
-    /** the primitives to render */
-    std::vector<MeshPrimitive> primitives;
+	public:
 
-    /** self descriptive */
-    boost::intrusive_ptr<VertexBuffer> vertex_buffer;
-    /** self descriptive */
-    boost::intrusive_ptr<IndexBuffer> index_buffer;
-    /** in the vertex buffer (that may be shared by other simpled mesh), the offset from the begining given to it */
-    GLintptr vertex_buffer_offset;
+		/** self descriptive */
+		VertexDeclaration declaration;
+		/** the primitives to render */
+		std::vector<MeshPrimitive> primitives;
 
-  protected:
+		/** self descriptive */
+		boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+		/** self descriptive */
+		boost::intrusive_ptr<IndexBuffer> index_buffer;
+		/** in the vertex buffer (that may be shared by other simpled mesh), the offset from the begining given to it */
+		GLintptr vertex_buffer_offset;
 
-    /** the vertex binding depends on the program that is used. This is a map that make relation between program / vertex array */
-    mutable std::vector<VertexArrayBindingInfo> vertex_array_bindings;
+	protected:
 
-  };
+		/** the vertex binding depends on the program that is used. This is a map that make relation between program / vertex array */
+		mutable std::vector<VertexArrayBindingInfo> vertex_array_bindings;
+
+	};
 
 }; // namespace chaos

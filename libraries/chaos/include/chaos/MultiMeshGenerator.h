@@ -5,31 +5,31 @@
 
 namespace chaos
 {
-  /**
-   * MultiMeshGenerator : this class is used to generator multiple mesh in a row, shared vertex and index buffer
-   */
+	/**
+	* MultiMeshGenerator : this class is used to generator multiple mesh in a row, shared vertex and index buffer
+	*/
 
-class MultiMeshGenerator
-{
-public:
+	class MultiMeshGenerator
+	{
+	public:
 
-  /** constructor */
-  MultiMeshGenerator();
-  /** destructor */
-  virtual ~MultiMeshGenerator();
+		/** constructor */
+		MultiMeshGenerator();
+		/** destructor */
+		virtual ~MultiMeshGenerator();
 
-  /** the insertion method */
-  void AddGenerator(SimpleMeshGenerator * generator, boost::intrusive_ptr<SimpleMesh> & target_ptr);
-  /** clean all generators */
-  void Clean();
-  /** generate all meshes */
-  bool GenerateMeshes() const;
+		/** the insertion method */
+		void AddGenerator(SimpleMeshGenerator * generator, boost::intrusive_ptr<SimpleMesh> & target_ptr);
+		/** clean all generators */
+		void Clean();
+		/** generate all meshes */
+		bool GenerateMeshes() const;
 
-protected:
+	protected:
 
-  /** the registered element to generate */
-  std::vector<std::pair<boost::intrusive_ptr<SimpleMeshGenerator>, boost::intrusive_ptr<SimpleMesh> *>> generators;
-};
+		/** the registered element to generate */
+		std::vector<std::pair<boost::intrusive_ptr<SimpleMeshGenerator>, boost::intrusive_ptr<SimpleMesh> *>> generators;
+	};
 
 
 }; // namespace chaos

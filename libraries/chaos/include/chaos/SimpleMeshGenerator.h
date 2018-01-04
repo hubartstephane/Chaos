@@ -10,170 +10,170 @@
 namespace chaos
 {
 
-  /**
-   * A class to describe requirement for a mesh
-   */
+	/**
+	* A class to describe requirement for a mesh
+	*/
 
-class MeshGenerationRequirement
-{
-public:
+	class MeshGenerationRequirement
+	{
+	public:
 
-  /** test whether the requirement is valid */
-  bool IsValid() const;
+		/** test whether the requirement is valid */
+		bool IsValid() const;
 
-public: 
+	public: 
 
-  /** size of a vertex */
-	int vertex_size{0};
-  /** number of vertices required */
-  int vertices_count{0};
-  /** number of indices required */
-  int indices_count{0};
-};
+		/** size of a vertex */
+		int vertex_size = 0;
+		/** number of vertices required */
+		int vertices_count = 0;
+		/** number of indices required */
+		int indices_count = 0;
+	};
 
-  /**
-   * SimpleMeshGenerator : an object that is responsible for generating the mesh data
-   */
+	/**
+	* SimpleMeshGenerator : an object that is responsible for generating the mesh data
+	*/
 
-class SimpleMeshGenerator : public ReferencedObject
-{
-public:
+	class SimpleMeshGenerator : public ReferencedObject
+	{
+	public:
 
-  /** the destructor */
-  virtual ~SimpleMeshGenerator() = default;
+		/** the destructor */
+		virtual ~SimpleMeshGenerator() = default;
 
-  /** get requirement */
-  virtual MeshGenerationRequirement GetRequirement() const = 0;
-  /** get the vertex declaration */
-  virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const = 0;
-  /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
+		/** get requirement */
+		virtual MeshGenerationRequirement GetRequirement() const = 0;
+		/** get the vertex declaration */
+		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const = 0;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
 
-  /** generation function */
-  boost::intrusive_ptr<SimpleMesh> GenerateMesh() const;
-};
+		/** generation function */
+		boost::intrusive_ptr<SimpleMesh> GenerateMesh() const;
+	};
 
-/**
- * QuadMeshGenerator : help defines mesh as simple quad
- */
+	/**
+	* QuadMeshGenerator : help defines mesh as simple quad
+	*/
 
-class QuadMeshGenerator : public SimpleMeshGenerator
-{
+	class QuadMeshGenerator : public SimpleMeshGenerator
+	{
 
-public:
+	public:
 
-  /** constructor */
-  QuadMeshGenerator(box2 const & in_primitive): 
-    primitive(in_primitive) {}
+		/** constructor */
+		QuadMeshGenerator(box2 const & in_primitive): 
+			primitive(in_primitive) {}
 
-  /** get requirement */
-  virtual MeshGenerationRequirement GetRequirement() const override;
-  /** get the vertex declaration */
-  virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
-  /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
- 
-protected:
+		/** get requirement */
+		virtual MeshGenerationRequirement GetRequirement() const override;
+		/** get the vertex declaration */
+		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
-  /** the box to generate */
-  box2 primitive;
+	protected:
 
-  /** the vertices defining a face facing planes inside [-1, +1] */
-  static glm::vec3 const vertices[4];
-  /** the triangles indices defining a face facing planes */
-  static GLuint const triangles[6];
-};
+		/** the box to generate */
+		box2 primitive;
 
-/**
-* TriangleMeshGenerator : help defines mesh as simple traingle
-*/
+		/** the vertices defining a face facing planes inside [-1, +1] */
+		static glm::vec3 const vertices[4];
+		/** the triangles indices defining a face facing planes */
+		static GLuint const triangles[6];
+	};
 
-class TriangleMeshGenerator : public SimpleMeshGenerator
-{
+	/**
+	* TriangleMeshGenerator : help defines mesh as simple traingle
+	*/
 
-public:
+	class TriangleMeshGenerator : public SimpleMeshGenerator
+	{
 
-  /** constructor */
-  TriangleMeshGenerator(triangle3 const & in_primitive) :
-    primitive(in_primitive) {}
+	public:
 
-  /** get requirement */
-  virtual MeshGenerationRequirement GetRequirement() const override;
-  /** get the vertex declaration */
-  virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
-  /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		/** constructor */
+		TriangleMeshGenerator(triangle3 const & in_primitive) :
+			primitive(in_primitive) {}
 
-protected:
+		/** get requirement */
+		virtual MeshGenerationRequirement GetRequirement() const override;
+		/** get the vertex declaration */
+		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
-  /** the box to generate */
-  triangle3 primitive;
-};
+	protected:
 
-/**
- * CubeMeshGenerator : help defines cube mesh 
- */
+		/** the box to generate */
+		triangle3 primitive;
+	};
 
-class CubeMeshGenerator : public SimpleMeshGenerator
-{
+	/**
+	* CubeMeshGenerator : help defines cube mesh 
+	*/
 
-public:
+	class CubeMeshGenerator : public SimpleMeshGenerator
+	{
 
-  /** constructor */
-  CubeMeshGenerator(box3 const & in_primitive):
-    primitive(in_primitive){}
+	public:
 
-  /** get requirement */
-  virtual MeshGenerationRequirement GetRequirement() const override;
-  /** get the vertex declaration */
-  virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
-  /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		/** constructor */
+		CubeMeshGenerator(box3 const & in_primitive):
+			primitive(in_primitive){}
 
-protected:
+		/** get requirement */
+		virtual MeshGenerationRequirement GetRequirement() const override;
+		/** get the vertex declaration */
+		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
-  /** the box to generate */
-  box3 primitive;
+	protected:
 
-  /** the vertices defining a cube */
-  static glm::vec3 const vertices[24 * 2];
-  /** the triangles defining a cube */
-  static GLuint const triangles[36];
-};
+		/** the box to generate */
+		box3 primitive;
 
-/**
-* SphereMeshGenerator : help defines mesh as simple sphere
-*/
+		/** the vertices defining a cube */
+		static glm::vec3 const vertices[24 * 2];
+		/** the triangles defining a cube */
+		static GLuint const triangles[36];
+	};
 
-class SphereMeshGenerator : public SimpleMeshGenerator
-{
+	/**
+	* SphereMeshGenerator : help defines mesh as simple sphere
+	*/
 
-public:
+	class SphereMeshGenerator : public SimpleMeshGenerator
+	{
 
-  /** constructor */
-  SphereMeshGenerator(sphere3 const & in_primitive, int in_subdivisions) :
-    primitive(in_primitive),
-    subdivisions(in_subdivisions){}
+	public:
 
-  /** get requirement */
-  virtual MeshGenerationRequirement GetRequirement() const override;
-  /** get the vertex declaration */
-  virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
-  /** get the mesh data */
-  virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		/** constructor */
+		SphereMeshGenerator(sphere3 const & in_primitive, int in_subdivisions) :
+			primitive(in_primitive),
+			subdivisions(in_subdivisions){}
 
-protected:
+		/** get requirement */
+		virtual MeshGenerationRequirement GetRequirement() const override;
+		/** get the vertex declaration */
+		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
-  /** get a vertex on the sphere from polar angle */
-  void InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const;
+	protected:
 
-protected:
+		/** get a vertex on the sphere from polar angle */
+		void InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const;
 
-  /** the sphere to generate */
-  sphere3 primitive;
-  /** number of subdivisions */
-  int subdivisions;
-};
+	protected:
+
+		/** the sphere to generate */
+		sphere3 primitive;
+		/** number of subdivisions */
+		int subdivisions;
+	};
 
 }; // namespace chaos
 

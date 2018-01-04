@@ -94,58 +94,72 @@ bool MeshGenerationRequirement::IsValid() const
   return true;
 }
 
-boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
+bool SimpleMeshGenerator::FillMeshData(SimpleMesh * mesh) const
 {
-  boost::intrusive_ptr<SimpleMesh> result;
+  assert(mesh != nullptr);
 
   MeshGenerationRequirement requirement = GetRequirement();
   if (requirement.IsValid())
   {
-    boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh();
-    if (mesh != nullptr)
+    boost::intrusive_ptr<VertexBuffer> vb_object;
+    boost::intrusive_ptr<IndexBuffer>  ib_object;
+
+    boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
+    boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
+
+    if (GLTools::GenerateVertexAndIndexBuffersObject(nullptr, vb_ptr, ib_ptr))
     {
-      boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &mesh->vertex_buffer : nullptr;
-      boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &mesh->index_buffer : nullptr;
+      GLuint vb = (requirement.vertices_count > 0) ? vb_object->GetResourceID() : 0;
+      GLuint ib = (requirement.indices_count  > 0) ? ib_object->GetResourceID() : 0;
 
-      if (GLTools::GenerateVertexAndIndexBuffersObject(nullptr, vb_ptr, ib_ptr))
+      int vb_size = requirement.vertices_count * requirement.vertex_size;
+      int ib_size = requirement.indices_count * sizeof(GLuint);
+
+      // allocate buffer for vertices and indices
+      std::pair<char *, GLuint *> mapping;
+      if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
       {
-        GLuint vb = (requirement.vertices_count > 0) ? mesh->vertex_buffer->GetResourceID() : 0;
-        GLuint ib = (requirement.indices_count  > 0) ? mesh->index_buffer->GetResourceID() : 0;
+        // prepare the mesh
+        mesh->Clear();
+        mesh->vertex_buffer = vb_object;
+        mesh->index_buffer = ib_object;
 
-        int vb_size = requirement.vertices_count * requirement.vertex_size;
-        int ib_size = requirement.indices_count * sizeof(GLuint);
+        // generate the indices and the vertices
+        MemoryBufferWriter vertices_writer(mapping.first, vb_size);
+        MemoryBufferWriter indices_writer(mapping.second, ib_size);
+        GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
 
-        // allocate buffer for vertices and indices
-        std::pair<char *, GLuint *> mapping;
-        if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
-        {
-          // generate the indices and the vertices
-          MemoryBufferWriter vertices_writer(mapping.first, vb_size);
-          MemoryBufferWriter indices_writer(mapping.second, ib_size);
-          GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
+        assert(vertices_writer.GetRemainingBufferSize() == 0);
+        assert(indices_writer.GetRemainingBufferSize() == 0);
 
-          assert(vertices_writer.GetRemainingBufferSize() == 0);
-          assert(indices_writer.GetRemainingBufferSize() == 0);
+        // get the vertex declaration
+        GenerateVertexDeclaration(mesh->declaration);
+        assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
 
-          // get the vertex declaration
-          GenerateVertexDeclaration(mesh->declaration);
-          assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
+        // initialize the vertex array and validate
+        mesh->SetVertexBufferOffset(0);
+        // transfert data to GPU and free memory
+        if (vb != 0)
+          glUnmapNamedBuffer(vb);
+        if (ib != 0)
+          glUnmapNamedBuffer(ib);
 
-          // initialize the vertex array and validate
-          mesh->SetVertexBufferOffset(0);
-          result = mesh;
-
-          // transfert data to GPU and free memory
-          if (vb != 0)
-            glUnmapNamedBuffer(vb);
-          if (ib != 0)
-            glUnmapNamedBuffer(ib);
-        }
+        return true;
       }
     }
   }
+  return false;
+}
 
-  return result;
+boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
+{
+  boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh();
+  if (mesh != nullptr)
+  {
+    if (!FillMeshData(mesh.get())) // automatic destruction in case of failure
+      return nullptr;
+  }
+  return mesh;
 }
 
 MeshGenerationRequirement TriangleMeshGenerator::GetRequirement() const

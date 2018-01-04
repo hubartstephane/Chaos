@@ -51,6 +51,8 @@ namespace chaos
 
 		/** generation function */
 		boost::intrusive_ptr<SimpleMesh> GenerateMesh() const;
+    /** population function */
+    bool FillMeshData(SimpleMesh * mesh) const;
 	};
 
 	/**

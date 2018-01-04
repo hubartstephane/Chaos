@@ -73,7 +73,12 @@ namespace chaos
 					size_t written_vertices_count = vertices_writer.GetWrittenCount();
 					size_t written_indices_count = indices_writer.GetWrittenCount();
 
-					boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh; // generate the mesh
+          boost::intrusive_ptr<SimpleMesh> mesh = (*it.second);
+          if (mesh == nullptr)
+            mesh = new SimpleMesh; // generate the mesh
+          else
+            mesh->Clear(); // reuse existing mesh
+
 					if (mesh != nullptr)
 					{
 						if (requirement.vertices_count > 0)

@@ -23,6 +23,11 @@ namespace chaos
 		/** returns true whether the resource is valid */
 		bool IsValid() const { return glIsBuffer(resource_id) == GL_TRUE;}
 
+		/** update the data of the buffer */
+		bool SetBufferData(char const * buffer, size_t size);
+		/** get the size of the buffer */
+		GLint GetBufferSize() const;
+
 	protected:
 
 		/** the resource id */

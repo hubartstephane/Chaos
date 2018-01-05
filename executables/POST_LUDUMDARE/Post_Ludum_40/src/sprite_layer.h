@@ -10,16 +10,16 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -94,7 +94,7 @@ public:
 	static const int COLLISION_LEVELUP = 2;
 	static const int COLLISION_SPEEDUP = 3;
 
-	void Draw(chaos::GLProgramVariableProvider * uniform_provider);
+	void Draw(chaos::GPUProgramVariableProvider * uniform_provider);
 
 	void Tick(double delta_time, GameInfo game_info);
 

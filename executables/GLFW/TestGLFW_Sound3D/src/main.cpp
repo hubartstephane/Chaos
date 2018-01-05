@@ -7,18 +7,18 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -49,7 +49,7 @@ protected:
     glm::mat4 local_to_world_matrix  = glm::translate(GetBoxPosition());
     glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
       
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("projection",      projection_matrix);
     uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
@@ -113,7 +113,7 @@ protected:
 
     sound = sound_source->Play3DSound(desc);
 
-    chaos::GLProgramLoader loader;
+    chaos::GPUProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
     
@@ -190,7 +190,7 @@ protected:
   boost::intrusive_ptr<chaos::SoundSource> sound_source;
   boost::intrusive_ptr<chaos::Sound> sound;
   
-  boost::intrusive_ptr<chaos::GLProgram>  program;
+  boost::intrusive_ptr<chaos::GPUProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
  
   chaos::FPSViewInputController fps_view_controller;

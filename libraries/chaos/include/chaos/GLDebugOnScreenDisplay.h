@@ -2,8 +2,8 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
@@ -74,7 +74,7 @@ protected:
   mutable int screen_width{-1};
 
   /** the program to run */
-  boost::intrusive_ptr<GLProgram> program;
+  boost::intrusive_ptr<GPUProgram> program;
   /** the texture */
   boost::intrusive_ptr<Texture> texture;
   /** the vertex array */

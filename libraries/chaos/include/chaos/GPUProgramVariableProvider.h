@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUProgramData.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GLTools.h>
 #include <chaos/Texture.h>
@@ -11,15 +11,15 @@
 namespace chaos
 {
   /**
-  * GLProgramVariableAction : base class action to be applyed to Providers
+  * GPUProgramVariableAction : base class action to be applyed to Providers
   */
 
-  class GLProgramVariableAction
+  class GPUProgramVariableAction
   {
   public:
 
     /** indicates that the classes in this hierarchy will have a virtual destructor */
-    virtual ~GLProgramVariableAction() = default;
+    virtual ~GPUProgramVariableAction() = default;
 
     /** processing base scalar types */
     bool Process(char const * name, GLfloat value) { return Process(name, glm::tvec1<GLfloat>(value)); }
@@ -86,19 +86,19 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableSetUniformAction : action used to initialize an uniform
+  * GPUProgramVariableSetUniformAction : action used to initialize an uniform
   */
 
-  class GLProgramVariableSetUniformAction : public GLProgramVariableAction
+  class GPUProgramVariableSetUniformAction : public GPUProgramVariableAction
   {
   public:
 
     /** constructor */
-    GLProgramVariableSetUniformAction(GLUniformInfo const & in_uniform) : uniform(in_uniform) {}
+    GPUProgramVariableSetUniformAction(GLUniformInfo const & in_uniform) : uniform(in_uniform) {}
 
   protected:
 
-    /** the GLProgramVariableAction interface */
+    /** the GPUProgramVariableAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
@@ -115,19 +115,19 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableSetUniformAction : action used to initialize an attribute with a default value
+  * GPUProgramVariableSetUniformAction : action used to initialize an attribute with a default value
   */
 
-  class GLProgramVariableSetAttributeAction : public GLProgramVariableAction
+  class GPUProgramVariableSetAttributeAction : public GPUProgramVariableAction
   {
   public:
 
     /** constructor */
-    GLProgramVariableSetAttributeAction(GLAttributeInfo const & in_attribute) : attribute(in_attribute) {}
+    GPUProgramVariableSetAttributeAction(GLAttributeInfo const & in_attribute) : attribute(in_attribute) {}
 
   protected:
 
-    /** the GLProgramVariableAction interface */
+    /** the GPUProgramVariableAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
@@ -144,16 +144,16 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableGetValueAction : action used to get value for an uniform
+  * GPUProgramVariableGetValueAction : action used to get value for an uniform
   */
 
   template<typename T>
-  class GLProgramVariableGetValueAction : public GLProgramVariableAction
+  class GPUProgramVariableGetValueAction : public GPUProgramVariableAction
   {
   public:
 
     /** constructor */
-    GLProgramVariableGetValueAction(T & in_result) : result(in_result) {}
+    GPUProgramVariableGetValueAction(T & in_result) : result(in_result) {}
 
   protected:
 
@@ -208,17 +208,17 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableProvider : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
+  * GPUProgramVariableProvider : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
   */
 
-  class GLProgramVariableProvider : public ReferencedObject
+  class GPUProgramVariableProvider : public ReferencedObject
   {
-    friend class GLProgramVariableProviderChain; // WTF : GLProgramVariableProviderChain could not call DoProcessAction(...) an another instance without that !!
+    friend class GPUProgramVariableProviderChain; // WTF : GPUProgramVariableProviderChain could not call DoProcessAction(...) an another instance without that !!
 
   public:
 
     /** the main method : returns try whether tha action has been handled (even if failed) */
-    bool ProcessAction(char const * name, GLProgramVariableAction & action) const
+    bool ProcessAction(char const * name, GPUProgramVariableAction & action) const
     {
       return DoProcessAction(name, action, this);
     }
@@ -226,45 +226,45 @@ namespace chaos
     /** utility function that deserve to set uniform */
     bool BindUniform(GLUniformInfo const & uniform) const
     {
-      return ProcessAction(uniform.name.c_str(), GLProgramVariableSetUniformAction(uniform));
+      return ProcessAction(uniform.name.c_str(), GPUProgramVariableSetUniformAction(uniform));
     }
 
     /** utility function that deserve to set attribute */
     bool BindAttribute(GLAttributeInfo const & attribute) const
     {
-      return ProcessAction(attribute.name.c_str(), GLProgramVariableSetAttributeAction(attribute));
+      return ProcessAction(attribute.name.c_str(), GPUProgramVariableSetAttributeAction(attribute));
     }
 
     /** get a value for the uniform / attribute */
     template<typename T>
     bool GetValue(char const * name, T & result) const
     {
-      return ProcessAction(name, GLProgramVariableGetValueAction<T>(result));
+      return ProcessAction(name, GPUProgramVariableGetValueAction<T>(result));
     }
 
   protected:
 
     /** the main method : returns true whether that action has been successfully handled */
-    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const { return false; }
+    virtual bool DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const { return false; }
   };
 
   /**
-  * GLProgramVariableProviderValue : used to fill GLProgram binding for uniforms / attribute with simple values
+  * GPUProgramVariableProviderValue : used to fill GPUProgram binding for uniforms / attribute with simple values
   */
 
   template<typename T>
-  class GLProgramVariableProviderValue : public GLProgramVariableProvider
+  class GPUProgramVariableProviderValue : public GPUProgramVariableProvider
   {
   public:
 
     /** constructor */
-    GLProgramVariableProviderValue(char const * in_name, T const & in_value) :
+    GPUProgramVariableProviderValue(char const * in_name, T const & in_value) :
       handled_name(in_name), value(in_value) {}
 
   protected:
 
     /** the main method */
-    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const override
+    virtual bool DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const override
     {
       if (handled_name != name)
         return false;
@@ -280,21 +280,21 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableProviderTexture : used to fill GLProgram binding for a texture
+  * GPUProgramVariableProviderTexture : used to fill GPUProgram binding for a texture
   */
 
-  class GLProgramVariableProviderTexture : public GLProgramVariableProvider
+  class GPUProgramVariableProviderTexture : public GPUProgramVariableProvider
   {
   public:
 
     /** constructor */
-    GLProgramVariableProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
+    GPUProgramVariableProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
       handled_name(in_name), value(in_value) {}
 
   protected:
 
     /** the main method */
-    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const override;
+    virtual bool DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const override;
 
   protected:
 
@@ -305,10 +305,10 @@ namespace chaos
   };
 
   /**
-  * GLProgramVariableProviderChainBase : a base class to have multiple providers
+  * GPUProgramVariableProviderChainBase : a base class to have multiple providers
   */
 
-  class GLProgramVariableProviderChainBase : public GLProgramVariableProvider
+  class GPUProgramVariableProviderChainBase : public GPUProgramVariableProvider
   {
 
   public:
@@ -317,24 +317,24 @@ namespace chaos
     template<typename T>
     void AddVariableValue(char const * name, T const & value)
     {
-      AddVariableProvider(new GLProgramVariableProviderValue<T>(name, value));
+      AddVariableProvider(new GPUProgramVariableProviderValue<T>(name, value));
     }
     /** register a uniform texture */
     void AddVariableTexture(char const * name, boost::intrusive_ptr<class Texture> texture)
     {
-      AddVariableProvider(new GLProgramVariableProviderTexture(name, texture));
+      AddVariableProvider(new GPUProgramVariableProviderTexture(name, texture));
     }
     /** register a generic uniform */
-    virtual void AddVariableProvider(GLProgramVariableProvider * provider) = 0;
+    virtual void AddVariableProvider(GPUProgramVariableProvider * provider) = 0;
     /** remove all uniforms for binding */
     virtual void Clear() = 0;
   };
 
   /**
-  * GLProgramVariableProviderChain : used to fill GLProgram binding for multiple uniforms / uniforms
+  * GPUProgramVariableProviderChain : used to fill GPUProgram binding for multiple uniforms / uniforms
   */
 
-  class GLProgramVariableProviderChain : public GLProgramVariableProviderChainBase
+  class GPUProgramVariableProviderChain : public GPUProgramVariableProviderChainBase
   {
 
   public:
@@ -342,17 +342,17 @@ namespace chaos
     /** remove all uniforms for binding */
     virtual void Clear() override;
     /** register a generic uniform */
-    virtual void AddVariableProvider(GLProgramVariableProvider * provider) override;
+    virtual void AddVariableProvider(GPUProgramVariableProvider * provider) override;
 
   protected:
 
     /** the main method */
-    virtual bool DoProcessAction(char const * name, GLProgramVariableAction & action, GLProgramVariableProvider const * top_provider) const override;
+    virtual bool DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const override;
 
   protected:
 
     /** the uniforms to be set */
-    std::vector<boost::intrusive_ptr<GLProgramVariableProvider>> children_providers;
+    std::vector<boost::intrusive_ptr<GPUProgramVariableProvider>> children_providers;
   };
 
 }; // namespace chaos

@@ -1,15 +1,15 @@
-﻿#include <chaos/GLQuery.h>
+﻿#include <chaos/GPUQuery.h>
  
 namespace chaos
 {
 
-  GLQuery::GLQuery(GLuint in_id, GLenum in_target) : 
+  GPUQuery::GPUQuery(GLuint in_id, GLenum in_target) : 
     query_id(in_id), 
     query_target(in_target)
   {
   }
 
-  GLQuery::GLQuery(GLenum in_target)
+  GPUQuery::GPUQuery(GLenum in_target)
   {
     assert(
       (in_target == GL_SAMPLES_PASSED) ||
@@ -26,12 +26,12 @@ namespace chaos
       query_target = in_target;
   }
 
-  GLQuery::~GLQuery()
+  GPUQuery::~GPUQuery()
   {
     Release();
   }
 
-  void GLQuery::Release()
+  void GPUQuery::Release()
   {
     assert(!query_started);
     assert(!conditional_rendering_started);  // do not release resource, if something has been started (and would never been stopped)  
@@ -45,7 +45,7 @@ namespace chaos
     }  
   }
 
-  bool GLQuery::BeginQuery()
+  bool GPUQuery::BeginQuery()
   {
     if (query_id == 0)
       return false;
@@ -60,7 +60,7 @@ namespace chaos
     return true;
   }
 
-  bool GLQuery::EndQuery()
+  bool GPUQuery::EndQuery()
   {
     if (query_id == 0)
       return false;
@@ -74,7 +74,7 @@ namespace chaos
     return true;
   }
 
-  bool GLQuery::IsResultAvailable()
+  bool GPUQuery::IsResultAvailable()
   {
     if (query_id == 0)
       return false;
@@ -86,7 +86,7 @@ namespace chaos
     return (result > 0);
   }
 
-  GLint GLQuery::GetResult(bool wait)
+  GLint GPUQuery::GetResult(bool wait)
   {
     if (query_id == 0)
       return 0;
@@ -98,7 +98,7 @@ namespace chaos
     return result;
   }
 
-  GLint64 GLQuery::GetResult64(bool wait)
+  GLint64 GPUQuery::GetResult64(bool wait)
   {
     if (query_id == 0)
       return 0;
@@ -110,7 +110,7 @@ namespace chaos
     return result;
   }
 
-  bool GLQuery::BeginConditionalRendering(bool query_wait, bool inverted)
+  bool GPUQuery::BeginConditionalRendering(bool query_wait, bool inverted)
   {
     if (query_id == 0)
       return false;
@@ -133,7 +133,7 @@ namespace chaos
     return true;
   }
 
-  bool GLQuery::EndConditionalRendering()
+  bool GPUQuery::EndConditionalRendering()
   {
     if (query_id == 0)
       return false;

@@ -7,7 +7,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
@@ -15,10 +15,10 @@
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 
 class MyGLFWWindowOpenGLTest1;
 
@@ -93,7 +93,7 @@ protected:
 		debug_display.AddLine("Press T to pause");
 	}
 
-	void PrepareObjectProgram(chaos::GLProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
+	void PrepareObjectProgram(chaos::GPUProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
 	{
 		uniform_provider.AddVariableValue("projection", ctx.projection);
 		uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
@@ -101,7 +101,7 @@ protected:
 		uniform_provider.AddVariableValue("color", prim_ctx.color);
 	}
 
-	void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::SimpleMesh * mesh, chaos::GLProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
+	void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::SimpleMesh * mesh, chaos::GPUProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
 	{
 		glm::vec4 final_color = color;
 
@@ -109,7 +109,7 @@ protected:
 		prim_ctx.local_to_world = local_to_world;
 		prim_ctx.color = final_color;
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramVariableProviderChain uniform_provider;
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
 		mesh->Render(program, &uniform_provider, 0, 0);
@@ -195,9 +195,9 @@ protected:
 		clock3 = nullptr;
 	}
 
-	boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
-		chaos::GLProgramLoader loader;
+		chaos::GPUProgramLoader loader;
 		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
 		loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
@@ -363,7 +363,7 @@ protected:
 
 	// rendering for the box  
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-	boost::intrusive_ptr<chaos::GLProgram>  program_box;
+	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
 
 	boost::intrusive_ptr<chaos::Clock> clock1;
 	boost::intrusive_ptr<chaos::Clock> clock2;

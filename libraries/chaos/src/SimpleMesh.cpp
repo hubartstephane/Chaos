@@ -98,7 +98,7 @@ namespace chaos
     vertex_array_bindings.clear();
   }
 
-  VertexArray const * SimpleMesh::GetVertexArrayForProgram(GLProgram * program) const
+  VertexArray const * SimpleMesh::GetVertexArrayForProgram(GPUProgram * program) const
   {
     GLuint program_id = program->GetResourceID();
 
@@ -119,7 +119,7 @@ namespace chaos
       binding_info.program = program;
       vertex_array_bindings.push_back(binding_info);
 
-      GLProgramData const & data = program->GetProgramData();
+      GPUProgramData const & data = program->GetProgramData();
 
       GLuint va = vertex_array_bindings[i].vertex_array->GetResourceID();
       data.BindAttributes(va, declaration, nullptr);
@@ -136,7 +136,7 @@ namespace chaos
     return vertex_array_bindings[i].vertex_array.get();
   }
 
-  void SimpleMesh::Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider, int instance_count, int base_instance) const
+  void SimpleMesh::Render(GPUProgram * program, GPUProgramVariableProvider const * uniform_provider, int instance_count, int base_instance) const
   {
     assert(program != nullptr);
 

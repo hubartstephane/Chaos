@@ -7,7 +7,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
@@ -17,10 +17,10 @@
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 
 
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -157,7 +157,7 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(chaos::GLProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GLProgramVariableProviderChain * next_provider = nullptr)
+  void PrepareObjectProgram(chaos::GPUProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramVariableProviderChain * next_provider = nullptr)
   {
     uniform_provider.AddVariableValue("projection", ctx.projection);
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
@@ -172,12 +172,12 @@ protected:
   void DrawPrimitiveImpl(
     RenderingContext const & ctx,
     chaos::SimpleMesh * mesh,
-    chaos::GLProgram  * program,
+    chaos::GPUProgram  * program,
     glm::vec4 const & color, 
     glm::mat4 const & local_to_world, 
     bool is_translucent,
     float Y_Scale, 
-    chaos::GLProgramVariableProviderChain * next_provider = nullptr
+    chaos::GPUProgramVariableProviderChain * next_provider = nullptr
     )
   {
     glm::vec4 final_color = color;
@@ -191,7 +191,7 @@ protected:
     prim_ctx.local_to_world = local_to_world;
     prim_ctx.color          = final_color;
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramVariableProviderChain uniform_provider;
     PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
 
     mesh->Render(program, &uniform_provider, 0, 0);
@@ -206,7 +206,7 @@ protected:
 
 
     // cannot be on the stack. due to reference count
-    boost::intrusive_ptr<chaos::GLProgramVariableProviderChain> uniform_provider = new chaos::GLProgramVariableProviderChain;
+    boost::intrusive_ptr<chaos::GPUProgramVariableProviderChain> uniform_provider = new chaos::GPUProgramVariableProviderChain;
     uniform_provider->AddVariableValue("p1", t.a);
     uniform_provider->AddVariableValue("p2", t.b);
     uniform_provider->AddVariableValue("p3", t.c);
@@ -679,9 +679,9 @@ protected:
       clock->RemoveFromParent();
   }
 
-  boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+  boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
   {
-    chaos::GLProgramLoader loader;
+    chaos::GPUProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
 
@@ -813,15 +813,15 @@ protected:
 
   // rendering for the box  
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-  boost::intrusive_ptr<chaos::GLProgram>  program_box;
+  boost::intrusive_ptr<chaos::GPUProgram>  program_box;
 
   // rendering for the triangle  
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_triangle;
-  boost::intrusive_ptr<chaos::GLProgram>  program_triangle;
+  boost::intrusive_ptr<chaos::GPUProgram>  program_triangle;
 
   // rendering for the rect
   boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
-  boost::intrusive_ptr<chaos::GLProgram>  program_sphere;
+  boost::intrusive_ptr<chaos::GPUProgram>  program_sphere;
 
   chaos::Clock * clock{ nullptr };
 

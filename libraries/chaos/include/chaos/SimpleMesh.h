@@ -3,9 +3,9 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/IndexBuffer.h>
@@ -54,7 +54,7 @@ namespace chaos
 		{
 		public:
 
-			boost::intrusive_ptr<GLProgram> program;
+			boost::intrusive_ptr<GPUProgram> program;
 			boost::intrusive_ptr<VertexArray> vertex_array;
 		};
 
@@ -68,7 +68,7 @@ namespace chaos
 		/** clear the mesh */
 		void Clear();
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GLProgram * program, GLProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+		void Render(GPUProgram * program, GPUProgramVariableProvider const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
 		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
 		/** offset the index or vertex position */
@@ -77,7 +77,7 @@ namespace chaos
 	protected:
 
 		/** find or create a vertex array for a given program */
-		VertexArray const * GetVertexArrayForProgram(GLProgram * program) const;
+		VertexArray const * GetVertexArrayForProgram(GPUProgram * program) const;
 
 	public:
 

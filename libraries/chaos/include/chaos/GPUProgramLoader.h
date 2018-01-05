@@ -2,22 +2,22 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Buffer.h>
-#include <chaos/GLProgramSourceGenerator.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramSourceGenerator.h>
+#include <chaos/GPUProgram.h>
 
 namespace chaos
 {
 
   /**
-   * GLProgramLoaderCacheOptions : this class is used to define how cache sytem can be used
+   * GPUProgramLoaderCacheOptions : this class is used to define how cache sytem can be used
    */
 
-class GLProgramLoaderCacheOptions
+class GPUProgramLoaderCacheOptions
 {
 public:
 
   /** constructor */
-  GLProgramLoaderCacheOptions();
+  GPUProgramLoaderCacheOptions();
 
   /** whether we can use the cache as an input */
   bool read_from_cache;
@@ -27,29 +27,29 @@ public:
 };
 
   /**
-   * GLProgramLoader : this class deserves to generate GPU programs from sources. 
+   * GPUProgramLoader : this class deserves to generate GPU programs from sources. 
    *                   It is possible to use cache system and to add some definitions so we can generate multiple programs with small macro differences.
    */
 
-class GLProgramLoader
+class GPUProgramLoader
 {
 public:
 
-  typedef std::vector<boost::intrusive_ptr<GLProgramSourceGenerator>> GeneratorSet;
+  typedef std::vector<boost::intrusive_ptr<GPUProgramSourceGenerator>> GeneratorSet;
 
   typedef std::map<std::string, int> DefinitionSet;
 
   /** destructor */
-  virtual ~GLProgramLoader() = default;
+  virtual ~GPUProgramLoader() = default;
   /** reset the content */
   void Reset();
   /** generate a program from the sources */
-  GLuint GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
+  GLuint GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
   /** generate a program from the sources */
-  boost::intrusive_ptr<GLProgram> GenerateProgramObject(DefinitionSet const & definitions = DefinitionSet(), GLProgramLoaderCacheOptions & cache_options = GLProgramLoaderCacheOptions()) const;
+  boost::intrusive_ptr<GPUProgram> GenerateProgramObject(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
 
   /** add a generator a given shader */
-  bool AddSourceGenerator(GLenum shader_type, GLProgramSourceGenerator * generator);
+  bool AddSourceGenerator(GLenum shader_type, GPUProgramSourceGenerator * generator);
 
   /** add a source for a given shader */
   bool AddShaderSource(GLenum shader_type, Buffer<char> buffer);

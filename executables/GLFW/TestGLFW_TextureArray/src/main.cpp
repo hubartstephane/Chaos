@@ -7,7 +7,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
@@ -15,12 +15,12 @@
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayGenerator.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -47,7 +47,7 @@ protected:
 		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
 		glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
-		chaos::GLProgramVariableProviderChain uniform_provider;
+		chaos::GPUProgramVariableProviderChain uniform_provider;
 		uniform_provider.AddVariableValue("projection",      projection);
 		uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
 		uniform_provider.AddVariableValue("local_to_world",  local_to_world);
@@ -72,9 +72,9 @@ protected:
 		debug_display.Finalize();
 	}
 
-	boost::intrusive_ptr<chaos::GLProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
-		chaos::GLProgramLoader loader;
+		chaos::GPUProgramLoader loader;
 		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
 		loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
@@ -247,7 +247,7 @@ protected:
 
 	// rendering for the box  
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-	boost::intrusive_ptr<chaos::GLProgram>  program_box;
+	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
 	boost::intrusive_ptr<chaos::Texture>    texture;
 
 	int texture_slice{0};

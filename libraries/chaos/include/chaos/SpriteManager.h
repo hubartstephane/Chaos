@@ -2,14 +2,14 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/SpriteManager.h>
 
@@ -55,7 +55,7 @@ namespace chaos
     /** the texture atlas */
     BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
     /** the replacement program */
-    boost::intrusive_ptr<GLProgram> program;
+    boost::intrusive_ptr<GPUProgram> program;
   };
 
 
@@ -78,13 +78,13 @@ namespace chaos
     /** add a sprite to be rendered */
     void AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
     /** Display the sprites */
-    void Display(GLProgramVariableProvider * uniform_provider);
+    void Display(GPUProgramVariableProvider * uniform_provider);
     /** get the number of sprites in the buffer */
     size_t GetSpriteCount() const { return sprites.size() / 6; }
     /** remove the sprites (GPU buffer will be clean at next UpdateGPUVertexBuffer)*/
     void ClearSprites();
     /** get the program */
-    GLProgram * GetProgram() { return program.get(); }
+    GPUProgram * GetProgram() { return program.get(); }
 
   protected:
 
@@ -98,7 +98,7 @@ namespace chaos
   protected:
 
     /** the program to run */
-    boost::intrusive_ptr<GLProgram> program;
+    boost::intrusive_ptr<GPUProgram> program;
     /** the vertex array */
     boost::intrusive_ptr<VertexArray> vertex_array;
     /** the vertex buffer */

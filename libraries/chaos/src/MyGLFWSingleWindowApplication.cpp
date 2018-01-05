@@ -216,7 +216,7 @@ namespace chaos
         return false;
 
 	  // initialize the graphic resource
-	  graphic_resource_manager = new GraphicResourceManager;
+	  graphic_resource_manager = new GPUResourceManager;
 	  if (graphic_resource_manager == nullptr)
 		  return false;
 

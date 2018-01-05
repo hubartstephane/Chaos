@@ -5,11 +5,11 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/MyFbxImporter.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUProgramData.h>
 #include <chaos/SimpleMesh.h>
 
 
@@ -119,11 +119,11 @@ protected:
     boost::filesystem::path resources_path = application->GetResourcesPath();
 
     // create shader
-    chaos::GLProgramLoader loader;
+    chaos::GPUProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
 
-    chaos::GLProgramLoader::DefinitionSet definitions;
+    chaos::GPUProgramLoader::DefinitionSet definitions;
     definitions["SKELETAL_BONE_COUNT"] = SKELETAL_BONE_COUNT;   
 
     for (int i = 0 ; i < MAX_BONE_COUNT ; ++i)
@@ -134,7 +134,7 @@ protected:
       if (program[i] == 0)
         return false;
     
-      program_data[i] = chaos::GLProgramData::GetData(program[i]);
+      program_data[i] = chaos::GPUProgramData::GetData(program[i]);
     }
 
     // Load the model
@@ -183,7 +183,7 @@ protected:
 
   GLuint program[MAX_BONE_COUNT];
 
-  chaos::GLProgramData program_data[MAX_BONE_COUNT];
+  chaos::GPUProgramData program_data[MAX_BONE_COUNT];
   
   chaos::FPSViewInputController fps_view_controller;
 

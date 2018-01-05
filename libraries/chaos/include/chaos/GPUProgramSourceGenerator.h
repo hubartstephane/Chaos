@@ -8,15 +8,15 @@
 namespace chaos
 {
   /**
-   * GLProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
+   * GPUProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
    */
   
-  class GLProgramSourceGenerator : public ReferencedObject
+  class GPUProgramSourceGenerator : public ReferencedObject
   {
   public:
 
     /** destructor */
-    virtual ~GLProgramSourceGenerator() = default;
+    virtual ~GPUProgramSourceGenerator() = default;
 
     /** returns generated code */
     virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions)
@@ -25,15 +25,15 @@ namespace chaos
     }  
   };
 
-  class GLProgramStringSourceGenerator : public GLProgramSourceGenerator
+  class GPUProgramStringSourceGenerator : public GPUProgramSourceGenerator
   {
 
   public:
 
     /** constructor */
-    GLProgramStringSourceGenerator(char const * src);
+    GPUProgramStringSourceGenerator(char const * src);
     /** constructor */
-    GLProgramStringSourceGenerator(Buffer<char> in_buffer);
+    GPUProgramStringSourceGenerator(Buffer<char> in_buffer);
   
     /** returns generated code */
     virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
@@ -47,14 +47,14 @@ namespace chaos
     Buffer<char> buffer;
   };
 
-  class GLProgramFileSourceGenerator : public GLProgramSourceGenerator
+  class GPUProgramFileSourceGenerator : public GPUProgramSourceGenerator
   {
   public:
 
     /** constructor */
-    GLProgramFileSourceGenerator(char const * filename);
+    GPUProgramFileSourceGenerator(char const * filename);
     /** constructor */
-    GLProgramFileSourceGenerator(boost::filesystem::path const & path);
+    GPUProgramFileSourceGenerator(boost::filesystem::path const & path);
 
     /** returns generated code */
     virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override

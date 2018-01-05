@@ -1,40 +1,40 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GraphicResource.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUResource.h>
+#include <chaos/GPUProgramData.h>
 
 namespace chaos
 {
 
-class GLProgram : public GraphicResource
+class GPUProgram : public GPUResource
 {
 public:
 
   /** constructor */
-  GLProgram(GLuint in_id = 0);
+  GPUProgram(GLuint in_id = 0);
   /** destructor */
-  virtual ~GLProgram();
+  virtual ~GPUProgram();
 
   /** cleaning the object */
   virtual void Release() override;
 
   /** use the program */
-  bool UseProgram(class GLProgramVariableProvider const * uniform_provider, class GLProgramVariableProvider * attribute_provider);
+  bool UseProgram(class GPUProgramVariableProvider const * uniform_provider, class GPUProgramVariableProvider * attribute_provider);
 
   /** returns the GL name of the resource */
   GLuint GetResourceID() const { return program_id; }
   /** returns true whether the resource is valid */
   bool IsValid() const { return glIsProgram(program_id) == GL_TRUE;}
   /** get the program data */
-  GLProgramData const & GetProgramData() const { return program_data; }
+  GPUProgramData const & GetProgramData() const { return program_data; }
 
 protected:
 
   /** the resource id */
   GLuint program_id;
   /** the program data */
-  GLProgramData program_data;
+  GPUProgramData program_data;
 };
 
 }; // namespace chaos

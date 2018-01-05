@@ -1,4 +1,4 @@
-﻿#include <chaos/GLProgramSourceGenerator.h>
+﻿#include <chaos/GPUProgramSourceGenerator.h>
 #include <chaos/FileTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/Buffer.h>
@@ -6,7 +6,7 @@
 
 namespace chaos
 {
-  GLProgramStringSourceGenerator::GLProgramStringSourceGenerator(char const * src)
+  GPUProgramStringSourceGenerator::GPUProgramStringSourceGenerator(char const * src)
   {
     size_t len = strlen(src);
     if (len > 0)
@@ -17,17 +17,17 @@ namespace chaos
     }
   }
   
-  GLProgramStringSourceGenerator::GLProgramStringSourceGenerator(Buffer<char> in_buffer) : buffer(in_buffer)
+  GPUProgramStringSourceGenerator::GPUProgramStringSourceGenerator(Buffer<char> in_buffer) : buffer(in_buffer)
   {
 
   }
 
-  GLProgramFileSourceGenerator::GLProgramFileSourceGenerator(char const * filename)
+  GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(char const * filename)
   {  
     buffer = FileTools::LoadFile(filename, true);
   }
 
-  GLProgramFileSourceGenerator::GLProgramFileSourceGenerator(boost::filesystem::path const & path)
+  GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(boost::filesystem::path const & path)
   {
     buffer = FileTools::LoadFile(path, true);  
   }

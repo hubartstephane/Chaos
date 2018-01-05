@@ -7,15 +7,15 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
@@ -116,7 +116,7 @@ protected:
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
     sprite_manager.Display(&uniform_provider);

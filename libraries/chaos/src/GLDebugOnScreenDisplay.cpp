@@ -1,11 +1,11 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/BitmapFontTextMeshBuilder.h>
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 
 namespace chaos
 {	
@@ -80,7 +80,7 @@ namespace chaos
     // Initialize the vertex array
     glBindVertexArray(vertex_array->GetResourceID()); 
 
-    GLProgramData const & program_data = program->GetProgramData();
+    GPUProgramData const & program_data = program->GetProgramData();
     
     program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
@@ -92,7 +92,7 @@ namespace chaos
                                                                                               // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
                                                                                               // see BitmapFontTextMeshBuilder
 
-	GLProgramVariableProviderChain uniform_provider;
+	GPUProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("position_factor", glm::vec2(factor_x, factor_y));
     uniform_provider.AddVariableTexture("material", texture);
     program_data.BindUniforms(&uniform_provider);
@@ -181,7 +181,7 @@ namespace chaos
       return false;
 
     // create GPU-Program
-    GLProgramLoader loader;
+    GPUProgramLoader loader;
     loader.AddShaderSource(GL_VERTEX_SHADER,   vertex_shader_source);
     loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 

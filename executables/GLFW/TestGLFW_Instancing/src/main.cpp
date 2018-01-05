@@ -5,15 +5,15 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Application.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/MyFbxImporter.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUProgramData.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/SimpleMeshGenerator.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -47,7 +47,7 @@ protected:
     if (application != nullptr)
       application->GetMainClock()->GetClockTime();
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("projection", projection_matrix);
     uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
@@ -82,7 +82,7 @@ protected:
       return false;
 
     // create shader
-    chaos::GLProgramLoader loader;
+    chaos::GPUProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
 
@@ -115,7 +115,7 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<chaos::GLProgram> program;
+  boost::intrusive_ptr<chaos::GPUProgram> program;
 
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 

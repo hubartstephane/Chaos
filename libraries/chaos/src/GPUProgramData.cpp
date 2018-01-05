@@ -1,8 +1,8 @@
-﻿#include <chaos/GLProgramData.h>
+﻿#include <chaos/GPUProgramData.h>
 #include <chaos/LogTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLMTools.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/RenderMaterial.h>
 
 namespace chaos
@@ -282,18 +282,18 @@ namespace chaos
     return true;
   }
 
-  void GLProgramData::Clear()
+  void GPUProgramData::Clear()
   {
     uniforms.clear();
     attributes.clear();
   }
 
-  void GLProgramData::BindUniforms(GLProgramVariableProvider const * provider) const
+  void GPUProgramData::BindUniforms(GPUProgramVariableProvider const * provider) const
   {
     BindUniforms(&provider, 1);
   }
 
-  void GLProgramData::BindUniforms(RenderMaterial const * render_material, GLProgramVariableProvider const * provider) const
+  void GPUProgramData::BindUniforms(RenderMaterial const * render_material, GPUProgramVariableProvider const * provider) const
   {
     if (render_material == nullptr)
       return;
@@ -316,7 +316,7 @@ namespace chaos
     }
   }
 
-  void GLProgramData::BindUniforms(GLProgramVariableProvider const * const * providers, int count) const
+  void GPUProgramData::BindUniforms(GPUProgramVariableProvider const * const * providers, int count) const
   {
     if (providers == nullptr)
       return;
@@ -324,7 +324,7 @@ namespace chaos
     {
       for (int i = 0; i < count; ++i)
       {
-        GLProgramVariableProvider const * provider = providers[i];
+        GPUProgramVariableProvider const * provider = providers[i];
         if (provider == nullptr)
           continue;
         if (provider->BindUniform(uniform))
@@ -333,7 +333,7 @@ namespace chaos
     }
   }
 
-  GLUniformInfo * GLProgramData::FindUniform(char const * name)
+  GLUniformInfo * GPUProgramData::FindUniform(char const * name)
   {
     assert(name != nullptr);
     for (GLUniformInfo & uniform : uniforms)
@@ -342,7 +342,7 @@ namespace chaos
     return nullptr;
   }
 
-  GLUniformInfo const * GLProgramData::FindUniform(char const * name) const
+  GLUniformInfo const * GPUProgramData::FindUniform(char const * name) const
   {
     assert(name != nullptr);
     for (GLUniformInfo const & uniform : uniforms)
@@ -351,7 +351,7 @@ namespace chaos
     return nullptr;
   }
 
-  std::string GLProgramData::ExtractVariableName(char const * name, bool & is_array)
+  std::string GPUProgramData::ExtractVariableName(char const * name, bool & is_array)
   {
     char const * n = strchr(name, '[');
     if (n == nullptr)
@@ -366,7 +366,7 @@ namespace chaos
     }
   }
 
-  std::string GLProgramData::ExtractSemanticDataAndName(char const * attrib_name, std::pair<int, int> & semantic_data, bool & is_array)
+  std::string GPUProgramData::ExtractSemanticDataAndName(char const * attrib_name, std::pair<int, int> & semantic_data, bool & is_array)
   {
     static std::pair<char const *, int> const names[] = // should be a prefix for name
     {
@@ -415,9 +415,9 @@ namespace chaos
     return "";
   }
 
-  GLProgramData GLProgramData::GetData(GLuint program)
+  GPUProgramData GPUProgramData::GetData(GLuint program)
   {
-    GLProgramData result;
+    GPUProgramData result;
 
     // compute the length of a buffer to hold the longest name string 
     GLint max_attrib_length = 0;
@@ -526,7 +526,7 @@ namespace chaos
     return result;
   }
 
-  void GLProgramData::DisplayProgramDiagnostic() const
+  void GPUProgramData::DisplayProgramDiagnostic() const
   {
     for (size_t i = 0; i < attributes.size(); ++i)
     {
@@ -541,7 +541,7 @@ namespace chaos
     }
   }
 
-  GLint GLProgramData::GetLocation(int semantic, int semantic_index) const
+  GLint GPUProgramData::GetLocation(int semantic, int semantic_index) const
   {
     for (auto const & attrib : attributes)
       if (attrib.semantic == semantic && attrib.semantic_index == semantic_index)
@@ -549,7 +549,7 @@ namespace chaos
     return -1;
   }
 
-  void GLProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GLProgramVariableProvider const * attribute_provider) const
+  void GPUProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GPUProgramVariableProvider const * attribute_provider) const
   {
     int vertex_size = declaration.GetVertexSize();
 

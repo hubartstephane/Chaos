@@ -1,6 +1,6 @@
 #include <chaos/SpriteManager.h>
 #include <chaos/MathTools.h>
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/GLTools.h>
 
 
@@ -79,7 +79,7 @@ namespace chaos
 			program = params.program;
 		else
 		{
-			GLProgramLoader loader;
+			GPUProgramLoader loader;
 			loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
 			loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
@@ -172,7 +172,7 @@ namespace chaos
 	}
 
 
-	void SpriteManager::Display(GLProgramVariableProvider * uniform_provider)
+	void SpriteManager::Display(GPUProgramVariableProvider * uniform_provider)
 	{
 		if (sprites.size() == 0)
 			return;
@@ -188,9 +188,9 @@ namespace chaos
 		// Initialize the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 
-		GLProgramData const & program_data = program->GetProgramData();
+		GPUProgramData const & program_data = program->GetProgramData();
 
-		GLProgramVariableProviderChain main_uniform_provider;
+		GPUProgramVariableProviderChain main_uniform_provider;
 		main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		if (uniform_provider != nullptr)
 			main_uniform_provider.AddVariableProvider(uniform_provider);

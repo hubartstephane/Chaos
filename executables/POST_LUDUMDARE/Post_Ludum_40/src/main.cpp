@@ -8,16 +8,16 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -166,7 +166,7 @@ protected:
 
 	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
-	boost::intrusive_ptr<chaos::GLProgram>  program;
+	boost::intrusive_ptr<chaos::GPUProgram>  program;
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 	boost::intrusive_ptr<chaos::Texture>    texture;
 

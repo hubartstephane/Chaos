@@ -6,11 +6,11 @@
 namespace chaos
 {
 
-  class GraphicResource : public ReferencedObject
+  class GPUResource : public ReferencedObject
   {
   public:
     /** destructor */
-    virtual ~GraphicResource() = default;
+    virtual ~GPUResource() = default;
     /** cleaning the resource */
     virtual void Release(){}
   };

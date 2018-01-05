@@ -7,15 +7,15 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
@@ -97,11 +97,11 @@ protected:
 		float h = (float)size.y;
 		GenerateSprite(w, h);
 
-		class MyProvider : public chaos::GLProgramVariableProvider
+		class MyProvider : public chaos::GPUProgramVariableProvider
 		{
 		protected: 
 
-			virtual bool DoProcessAction(char const * name, chaos::GLProgramVariableAction & action, chaos::GLProgramVariableProvider const * top_level) const override
+			virtual bool DoProcessAction(char const * name, chaos::GPUProgramVariableAction & action, chaos::GPUProgramVariableProvider const * top_level) const override
 			{
 				if (strcmp("local_to_cam", name) == 0)
 				{
@@ -120,7 +120,7 @@ protected:
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
     boost::intrusive_ptr<MyProvider> dynamic_provider = new MyProvider;
-    boost::intrusive_ptr<chaos::GLProgramVariableProviderChain> uniform_provider = new chaos::GLProgramVariableProviderChain;
+    boost::intrusive_ptr<chaos::GPUProgramVariableProviderChain> uniform_provider = new chaos::GPUProgramVariableProviderChain;
 		uniform_provider->AddVariableValue("translate_mat", glm::translate(tr));
 		uniform_provider->AddVariableValue("scale_mat", glm::scale(scale));
 		uniform_provider->AddVariableValue("toto", glm::vec2(5.0f, 6.0f));

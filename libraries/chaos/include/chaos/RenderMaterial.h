@@ -3,17 +3,17 @@
 #include <chaos/StandardHeaders.h>
 
 #include <chaos/ReferencedObject.h>
-#include <chaos/GLProgram.h>
-#include <chaos/GLProgramVariableProvider.h>
-#include <chaos/GraphicResource.h>
+#include <chaos/GPUProgram.h>
+#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUResource.h>
 
 
 namespace chaos
 {
 
-  class RenderMaterial : public GraphicResource
+  class RenderMaterial : public GPUResource
   {
-    friend class GLProgramData;
+    friend class GPUProgramData;
 
   public:
 
@@ -23,14 +23,14 @@ namespace chaos
     virtual void Release();
 
     /** prepare the rendering */
-    void UseMaterial(GLProgramVariableProvider const * in_uniform_provider) const;
+    void UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const;
 
   protected:
 
     /** the program */
-    boost::intrusive_ptr<GLProgram> program;
+    boost::intrusive_ptr<GPUProgram> program;
     /** some rendering states */
-    boost::intrusive_ptr<GLProgramVariableProvider> uniform_provider;
+    boost::intrusive_ptr<GPUProgramVariableProvider> uniform_provider;
     /** parent material */
     boost::intrusive_ptr<RenderMaterial> parent_material;
   };

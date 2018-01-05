@@ -1,6 +1,6 @@
 ﻿#include <chaos/GLShaderTools.h>
 #include <chaos/LogTools.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUProgramData.h>
 #include <chaos/Buffer.h>
 
   
@@ -48,10 +48,10 @@ GLuint GLShaderTools::GetProgramFromBinary(Buffer<char> const & buffer)
   return result;
 }
 
-boost::intrusive_ptr<GLProgram> GLShaderTools::GetProgramObjectFromBinary(Buffer<char> const & buffer)
+boost::intrusive_ptr<GPUProgram> GLShaderTools::GetProgramObjectFromBinary(Buffer<char> const & buffer)
 {
   GLuint program_id = GetProgramFromBinary(buffer);
-  return (program_id == 0)? nullptr : new GLProgram(program_id);
+  return (program_id == 0)? nullptr : new GPUProgram(program_id);
 }
 
 GLint GLShaderTools::CheckProgramStatus(GLuint program, GLenum status, char const * format)
@@ -77,7 +77,7 @@ GLint GLShaderTools::CheckProgramStatus(GLuint program, GLenum status, char cons
 
 void GLShaderTools::DisplayProgramDiagnostic(GLuint program)
 {
-  GLProgramData::GetData(program).DisplayProgramDiagnostic();
+  GPUProgramData::GetData(program).DisplayProgramDiagnostic();
 }
 
 }; // namespace chaos

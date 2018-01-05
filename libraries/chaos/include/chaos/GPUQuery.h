@@ -1,22 +1,22 @@
 ﻿#pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GraphicResource.h>
+#include <chaos/GPUResource.h>
 
 namespace chaos
 {
 
-class GLQuery : public GraphicResource
+class GPUQuery : public GPUResource
 {
 public:
 
   /** constructor */
-  GLQuery(GLuint in_id, GLenum in_target);
+  GPUQuery(GLuint in_id, GLenum in_target);
   /** constructor (generate the query itself) */
-  GLQuery(GLenum target);
+  GPUQuery(GLenum target);
 
   /** destructor */
-  virtual ~GLQuery();
+  virtual ~GPUQuery();
 
   /** cleaning the object */
   virtual void Release() override;
@@ -66,11 +66,11 @@ protected:
 
 
 template<GLenum QUERY_TARGET>
-class GLTypedQuery : public GLQuery
+class GLTypedQuery : public GPUQuery
 {
 public:
 
-  GLTypedQuery() : GLQuery(QUERY_TARGET) {}
+  GLTypedQuery() : GPUQuery(QUERY_TARGET) {}
 };
 
 using GLSamplesPassedQuery = GLTypedQuery<GL_SAMPLES_PASSED>;

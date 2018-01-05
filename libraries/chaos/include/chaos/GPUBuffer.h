@@ -1,11 +1,11 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GraphicResource.h>
+#include <chaos/GPUResource.h>
 
 namespace chaos
 {
-	class GPUBuffer : public GraphicResource
+	class GPUBuffer : public GPUResource
 	{
 	public:
 

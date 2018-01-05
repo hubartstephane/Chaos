@@ -7,16 +7,16 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramData.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/FontTools.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 
 static int const TESTS_PER_FONT = 4;
 
@@ -37,7 +37,7 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    chaos::GLProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableTexture("material", texture);
 
     mesh->Render(program.get(), &uniform_provider, 0, 0);
@@ -331,7 +331,7 @@ protected:
     if (texture == nullptr)
       return false;
 
-    chaos::GLProgramLoader loader;
+    chaos::GPUProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER, vertex_shader_path);
 
@@ -358,7 +358,7 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<chaos::GLProgram>  program;
+  boost::intrusive_ptr<chaos::GPUProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
   boost::intrusive_ptr<chaos::Texture>    texture;
 

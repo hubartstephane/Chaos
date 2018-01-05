@@ -16,7 +16,7 @@ namespace chaos
     parent_material = nullptr;
   }
 
-  void RenderMaterial::UseMaterial(GLProgramVariableProvider const * in_uniform_provider) const
+  void RenderMaterial::UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const
   {
     // go through the hierarchy until we get the program
     RenderMaterial const * rm = this;
@@ -28,7 +28,7 @@ namespace chaos
     // use the program
     rm->program->UseProgram(nullptr, nullptr);
 
-    GLProgramData const & program_data = rm->program->GetProgramData();
+    GPUProgramData const & program_data = rm->program->GetProgramData();
     program_data.BindUniforms(this, in_uniform_provider);
   }
   

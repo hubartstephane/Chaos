@@ -101,15 +101,15 @@ public:
 };
 
   /**
-   * GLProgramData : used to register attributes, uniforms in a given program
+   * GPUProgramData : used to register attributes, uniforms in a given program
    */
 
-class GLProgramData
+class GPUProgramData
 {
 public:
 
   /** generate the program data from a program */
-  static GLProgramData GetData(GLuint program);
+  static GPUProgramData GetData(GLuint program);
 
   /** display information on program */
   void DisplayProgramDiagnostic() const;
@@ -118,7 +118,7 @@ public:
   GLint GetLocation(int semantic, int semantic_index) const;
 
   /** bind the attributes */
-  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GLProgramVariableProvider const * attribute_provider = nullptr) const;
+  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GPUProgramVariableProvider const * attribute_provider = nullptr) const;
 
   /** find a uniform */
   GLUniformInfo * FindUniform(char const * name);
@@ -137,11 +137,11 @@ public:
     return true;  
   }
   /** try to bind all uniforms */
-  void BindUniforms(class GLProgramVariableProvider const * provider) const;
+  void BindUniforms(class GPUProgramVariableProvider const * provider) const;
   /** try to bind all uniforms using multiples provider */
-  void BindUniforms(class GLProgramVariableProvider const * const * providers, int count) const;
+  void BindUniforms(class GPUProgramVariableProvider const * const * providers, int count) const;
   /** try to bind all uniforms through a whole chain of material */
-  void BindUniforms(class RenderMaterial const * render_material, class GLProgramVariableProvider const * provider) const;
+  void BindUniforms(class RenderMaterial const * render_material, class GPUProgramVariableProvider const * provider) const;
 
 	/** clear the program data object */
 	void Clear();

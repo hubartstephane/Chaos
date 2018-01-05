@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Buffer.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgram.h>
 
 
 namespace chaos
@@ -21,7 +21,7 @@ public:
   /** create a program from its binary format */
   static GLuint GetProgramFromBinary(Buffer<char> const & buffer);
   /** create a program from its binary format */
-  static boost::intrusive_ptr<GLProgram> GetProgramObjectFromBinary(Buffer<char> const & buffer);
+  static boost::intrusive_ptr<GPUProgram> GetProgramObjectFromBinary(Buffer<char> const & buffer);
   /** a utility function to display some diagnostic */
   static void DisplayProgramDiagnostic(GLuint program);
   /** a utility function to check some status for a program and display error logs */

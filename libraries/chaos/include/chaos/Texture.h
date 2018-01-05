@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GraphicResource.h>
+#include <chaos/GPUResource.h>
 
 namespace chaos
 {
@@ -25,7 +25,7 @@ namespace chaos
     int    depth{0};
   };
 
-  class Texture : public GraphicResource
+  class Texture : public GPUResource
   {
   public:
 

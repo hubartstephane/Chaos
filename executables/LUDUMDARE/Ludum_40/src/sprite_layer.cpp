@@ -12,16 +12,16 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -394,7 +394,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 	}
 }
 
-void SpriteLayer::Draw(chaos::GLProgramVariableProvider * uniform_provider)
+void SpriteLayer::Draw(chaos::GPUProgramVariableProvider * uniform_provider)
 {
 	if (visible)
 		sprite_manager->Display(uniform_provider);

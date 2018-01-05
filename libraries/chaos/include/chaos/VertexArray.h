@@ -1,12 +1,12 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GraphicResource.h>
+#include <chaos/GPUResource.h>
 
 namespace chaos
 {
 
-  class VertexArray : public GraphicResource
+  class VertexArray : public GPUResource
   {
   public:
 

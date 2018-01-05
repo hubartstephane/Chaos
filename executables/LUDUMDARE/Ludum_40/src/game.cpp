@@ -11,16 +11,16 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GLProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/GLProgramData.h>
-#include <chaos/GLProgram.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GLProgramVariableProvider.h>
+#include <chaos/GPUProgramVariableProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -482,7 +482,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the background program
-	chaos::GLProgramLoader background_loader;
+	chaos::GPUProgramLoader background_loader;
 	background_loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
 	background_loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
 
@@ -491,7 +491,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the controls program
-	chaos::GLProgramLoader control_loader;
+	chaos::GPUProgramLoader control_loader;
 	control_loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "control_vertex_shader.txt");
 	control_loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "control_pixel_shader.txt");
 
@@ -596,7 +596,7 @@ void Game::DisplayControls(glm::ivec2 viewport_size)
 	DisplayFullscreen(viewport_size, control_texture, control_program);	
 }
 
-void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GLProgram> program)
+void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GPUProgram> program)
 {
 	glUseProgram(program->GetResourceID());
 
@@ -630,7 +630,7 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	if (level_ratio > 1.0f)
 		level_ratio = 1.0f;
 
-	chaos::GLProgramVariableProviderChain uniform_provider;
+	chaos::GPUProgramVariableProviderChain uniform_provider;
 	uniform_provider.AddVariableTexture("material", texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
@@ -658,7 +658,7 @@ void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
 
 void Game::DisplaySprites(glm::ivec2 viewport_size)
 {
-  boost::intrusive_ptr<chaos::GLProgramVariableProviderChain> uniform_provider = new chaos::GLProgramVariableProviderChain;
+  boost::intrusive_ptr<chaos::GPUProgramVariableProviderChain> uniform_provider = new chaos::GPUProgramVariableProviderChain;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
 	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 

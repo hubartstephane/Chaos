@@ -1,21 +1,21 @@
-﻿#include <chaos/GLProgramLoader.h>
+﻿#include <chaos/GPUProgramLoader.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLShaderTools.h>
 #include <chaos/LogTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/Buffer.h>
-#include <chaos/GLProgramData.h>
+#include <chaos/GPUProgramData.h>
 
 namespace chaos
 {
 
-GLProgramLoaderCacheOptions::GLProgramLoaderCacheOptions():
+GPUProgramLoaderCacheOptions::GPUProgramLoaderCacheOptions():
   read_from_cache(true),
   write_into_cache(true){}
 
 
-GLuint GLProgramLoader::GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
+GLuint GPUProgramLoader::GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
 {
   GLuint result = glCreateShader(shader_type); // create a shader
   if (result != 0)
@@ -110,19 +110,19 @@ GLuint GLProgramLoader::GenerateShader(GLenum shader_type, GeneratorSet const & 
   return result;
 }
 
-bool GLProgramLoader::PreLinkProgram(GLuint program) const
+bool GPUProgramLoader::PreLinkProgram(GLuint program) const
 {
   // frag data location
   GLuint color_number = 0;
   glBindFragDataLocation(program, color_number, "output_color");
 
   // XXX : we could force attribute location with glBindAttribLocation(.. name ..) before the link
-  //       but we cannot use introspection methods in GLProgramData::GetData(...) before link
+  //       but we cannot use introspection methods in GPUProgramData::GetData(...) before link
   //       => 2 possibilities :
   //              - we guess the name to give to glBindAttribLocation(...)
   //              - we use a double linkage method
 #if 0
-  GLProgramData data = GLProgramData::GetData(program);
+  GPUProgramData data = GPUProgramData::GetData(program);
   for (auto & attrib : data.attributes)
   {
     GLint location = GLTools::GetDefaultAttribLocationByName(attrib.name.c_str());
@@ -133,7 +133,7 @@ bool GLProgramLoader::PreLinkProgram(GLuint program) const
   return true;
 }
 
-std::string GLProgramLoader::DefinitionsToString(DefinitionSet const & definitions)
+std::string GPUProgramLoader::DefinitionsToString(DefinitionSet const & definitions)
 {
   std::string result;
 
@@ -150,7 +150,7 @@ std::string GLProgramLoader::DefinitionsToString(DefinitionSet const & definitio
   return result;
 }
 
-GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
+GLuint GPUProgramLoader::GenerateProgram(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
 {
   GLuint result = glCreateProgram();
   if (result != 0)
@@ -209,18 +209,18 @@ GLuint GLProgramLoader::GenerateProgram(DefinitionSet const & definitions, GLPro
   return result;
 }
 
-boost::intrusive_ptr<GLProgram> GLProgramLoader::GenerateProgramObject(DefinitionSet const & definitions, GLProgramLoaderCacheOptions & cache_options) const
+boost::intrusive_ptr<GPUProgram> GPUProgramLoader::GenerateProgramObject(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
 {
   GLuint program_id = GenerateProgram(definitions, cache_options);
-  return (program_id == 0) ? nullptr : new GLProgram(program_id);
+  return (program_id == 0) ? nullptr : new GPUProgram(program_id);
 }
 
-void GLProgramLoader::Reset()
+void GPUProgramLoader::Reset()
 {
   shaders.clear();
 }
 
-bool GLProgramLoader::IsShaderTypeValid(GLenum shader_type)
+bool GPUProgramLoader::IsShaderTypeValid(GLenum shader_type)
 {
   return 
     (shader_type == GL_NONE)                   ||  // this is a special value that serves as a joker
@@ -232,7 +232,7 @@ bool GLProgramLoader::IsShaderTypeValid(GLenum shader_type)
     (shader_type == GL_COMPUTE_SHADER);
 }
 
-bool GLProgramLoader::AddSourceGenerator(GLenum shader_type, GLProgramSourceGenerator * generator)
+bool GPUProgramLoader::AddSourceGenerator(GLenum shader_type, GPUProgramSourceGenerator * generator)
 {
   assert(generator != nullptr);
   if (!IsShaderTypeValid(shader_type))
@@ -241,32 +241,32 @@ bool GLProgramLoader::AddSourceGenerator(GLenum shader_type, GLProgramSourceGene
   return true;
 }
 
-bool GLProgramLoader::AddShaderSource(GLenum shader_type, Buffer<char> buffer)
+bool GPUProgramLoader::AddShaderSource(GLenum shader_type, Buffer<char> buffer)
 {
   if (!IsShaderTypeValid(shader_type))
     return false;
-  return AddSourceGenerator(shader_type, new GLProgramStringSourceGenerator(buffer));
+  return AddSourceGenerator(shader_type, new GPUProgramStringSourceGenerator(buffer));
 }
 
-bool GLProgramLoader::AddShaderSource(GLenum shader_type, char const * src)
+bool GPUProgramLoader::AddShaderSource(GLenum shader_type, char const * src)
 {
   if (!IsShaderTypeValid(shader_type))
     return false;
-  return AddSourceGenerator(shader_type, new GLProgramStringSourceGenerator(src));
+  return AddSourceGenerator(shader_type, new GPUProgramStringSourceGenerator(src));
 }
 
-bool GLProgramLoader::AddShaderSourceFile(GLenum shader_type, char const * filename)
+bool GPUProgramLoader::AddShaderSourceFile(GLenum shader_type, char const * filename)
 {
   if (!IsShaderTypeValid(shader_type))
     return false;
-  return AddSourceGenerator(shader_type, new GLProgramFileSourceGenerator(filename));
+  return AddSourceGenerator(shader_type, new GPUProgramFileSourceGenerator(filename));
 }
 
-bool GLProgramLoader::AddShaderSourceFile(GLenum shader_type, boost::filesystem::path const & path)
+bool GPUProgramLoader::AddShaderSourceFile(GLenum shader_type, boost::filesystem::path const & path)
 {
   if (!IsShaderTypeValid(shader_type))
     return false;
-  return AddSourceGenerator(shader_type, new GLProgramFileSourceGenerator(path));
+  return AddSourceGenerator(shader_type, new GPUProgramFileSourceGenerator(path));
 }
 
 }; // namespace chaos

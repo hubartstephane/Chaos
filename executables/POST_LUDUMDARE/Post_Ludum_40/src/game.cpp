@@ -525,7 +525,7 @@ bool Game::InitializeSpriteManagers()
 bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
 	// generate the background texture
-	background_texture = chaos::GLTextureTools::GenTextureObject((path / "background.png").string().c_str());
+	background_texture = chaos::GLTextureTools::GenTextureObject((path / "backgrounds" / "background1.png").string().c_str());
 	if (background_texture == nullptr)
 		return false;
 	// generate the control texture

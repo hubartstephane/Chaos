@@ -654,33 +654,22 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
 
 
+  chaos::box2 texture_box = chaos::box2(std::make_pair(
+    glm::vec2(0.0f, 0.0f),
+    glm::vec2((float)texture_description.width, (float)texture_description.height)
+  ));
 
+  float world_aspect = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
 
+  // get a box that fit the texture size and wanted aspect
+  chaos::box2 shrinked_texture_box = chaos::ShrinkBoxToAspect(texture_box, world_aspect);
 
+  glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
+  glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
 
-
-
-
-
-
-
-	float texture_aspect = chaos::MathTools::CastAndDiv<float>(texture_description.width, texture_description.height);
-	float world_aspect   = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);
-
-	glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
-	glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
-	if (texture_aspect > world_aspect) // texture too large
-	{
-		float DX = 0.5f * world_aspect;
-		min_texture_coord.x = 0.5f - DX;
-		max_texture_coord.x = 0.5f + DX;	
-	}
-	else if (texture_aspect < world_aspect) // texture too high
-	{
-		float DY = 0.5f * (1.0f / world_aspect);
-		min_texture_coord.y = 0.5f - DY;
-		max_texture_coord.y = 0.5f + DY;	
-	}
+  auto texture_corners = shrinked_texture_box.GetCorners();
+  min_texture_coord = texture_corners.first  / (2.0f * texture_box.half_size);
+  max_texture_coord = texture_corners.second / (2.0f * texture_box.half_size);
 
 	// set the data for program
 	float life_ratio = chaos::MathTools::CastAndDiv<float>(life, initial_life);

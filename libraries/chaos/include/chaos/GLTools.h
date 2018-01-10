@@ -4,6 +4,7 @@
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/IndexBuffer.h>
+#include <chaos/GeometryFramework.h>
 
 namespace chaos
 {
@@ -18,6 +19,18 @@ namespace chaos
 
 		/** Set the viewport with an aspect */
 		static void SetViewportWithAspect(glm::ivec2 const & size, float aspect);
+
+    /** set the viewport */
+    template<typename T>
+    static void SetViewport(type_box2<T> const & viewport)
+    {
+      auto corners = viewport.GetCorners();
+      glViewport(
+        (GLint)corners.first.x, 
+        (GLint)corners.first.y, 
+        2 * (GLsizei)(viewport.half_size.x), 
+        2 * (GLsizei)(viewport.half_size.y));
+    }
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

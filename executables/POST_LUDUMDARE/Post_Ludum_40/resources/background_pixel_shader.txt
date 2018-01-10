@@ -22,7 +22,7 @@ void main()
 	vec4 background = texture(material, texcoord);
 
 	// add effect on background
-	background.x *= 1.0 - life_ratio;
+//	background.x *= 1.0 - life_ratio;
 	
 	// combine colors
 	output_color = background;

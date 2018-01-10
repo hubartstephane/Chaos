@@ -14,11 +14,7 @@ namespace chaos
 			GLMTools::RecastVector<glm::vec2>(size)		
 		));
 
-		viewport = ShrinkBoxToAspect(viewport, aspect);
-
-		std::pair<glm::vec2, glm::vec2> corners = viewport.GetCorners();
-		
-		glViewport((GLint)corners.first.x, (GLint)corners.first.y, (GLsizei)(viewport.half_size.x * 2.0f), (GLsizei)(viewport.half_size.y * 2.0f));
+    SetViewport(ShrinkBoxToAspect(viewport, aspect));
 	}
 
 	bool GLTools::IsMatrixType(GLenum type)

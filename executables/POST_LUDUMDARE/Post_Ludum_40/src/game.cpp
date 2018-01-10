@@ -525,7 +525,7 @@ bool Game::InitializeSpriteManagers()
 bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
 	// generate the background texture
-	background_texture = chaos::GLTextureTools::GenTextureObject((path / "backgrounds" / "background1.png").string().c_str());
+	background_texture = chaos::GLTextureTools::GenTextureObject((path / "backgrounds" / "background4.png").string().c_str());
 	if (background_texture == nullptr)
 		return false;
 	// generate the control texture
@@ -652,6 +652,17 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 {
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
+
+
+
+
+
+
+
+
+
+
+
 
 	float texture_aspect = chaos::MathTools::CastAndDiv<float>(texture_description.width, texture_description.height);
 	float world_aspect   = chaos::MathTools::CastAndDiv<float>(world_size.x, world_size.y);

@@ -2,7 +2,6 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GLMTools.h>
-#include <chaos/MathTools.h>
 
 namespace chaos
 {
@@ -639,6 +638,10 @@ type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, cons
     s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
     ((b - a) / static_cast<T>(2)) * distance);
 }
+
+/** reduce a rectangle with an aspect */
+box2 ShrinkBoxToAspect(box2 src, float aspect);
+
 
 }; // namespace chaos
 

@@ -17,7 +17,7 @@ namespace chaos
 	public:
 
 		/** Set the viewport with an aspect */
-		static void SetViewportWithAspect(glm::ivec2 & size, float aspect);
+		static void SetViewportWithAspect(glm::ivec2 const & size, float aspect);
 
 		/** display generic information on the OpenGL driver */
 		static void DisplayGenericInformation();

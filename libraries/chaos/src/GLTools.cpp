@@ -2,33 +2,23 @@
 #include <chaos/LogTools.h>
 #include <chaos/DebugTools.h>
 #include <chaos/MathTools.h>
+#include <chaos/GLMTools.h>
+#include <chaos/GeometryFramework.h>
 
 namespace chaos
 {
-	void GLTools::SetViewportWithAspect(glm::ivec2 & size, float aspect)
+	void GLTools::SetViewportWithAspect(glm::ivec2 const & size, float aspect)
 	{
-		if (size.x <= 0.0f || size.y <= 0.0f)
-			return;
+		box2 viewport = box2(std::make_pair(
+			glm::vec2(0.0f, 0.0f),
+			GLMTools::RecastVector<glm::vec2>(size)		
+		));
 
-		int x = 0;
-		int y = 0;
-		if (aspect > 0.0f)
-		{
-			float effective_aspect = ((float)size.x) / ((float)size.y);
-						
-			glm::ivec2 ori_size = size;
-			if (effective_aspect > aspect) // width too large
-			{				
-				size.x = (int)(aspect * (float)size.y);			
-				x      = (ori_size.x - size.x) / 2;				
-			}
-			else if (effective_aspect < aspect) // height too large
-			{
-				size.y = (int)(((float)size.x) / aspect);			
-				y      = (ori_size.y - size.y) / 2;
-			}	
-		}
-		glViewport(x, y, size.x, size.y);
+		viewport = ShrinkBoxToAspect(viewport, aspect);
+
+		std::pair<glm::vec2, glm::vec2> corners = viewport.GetCorners();
+		
+		glViewport((GLint)corners.first.x, (GLint)corners.first.y, (GLsizei)(viewport.half_size.x * 2.0f), (GLsizei)(viewport.half_size.y * 2.0f));
 	}
 
 	bool GLTools::IsMatrixType(GLenum type)

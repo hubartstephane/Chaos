@@ -147,7 +147,7 @@ protected:
 
 	bool InitializeSounds(boost::filesystem::path const & resource_path);
 	
-
+  bool LoadBackgroundTexture(size_t index);
 
 	chaos::box2 GetWorldBox(bool use_padding) const; 
 
@@ -207,6 +207,9 @@ protected:
 	boost::intrusive_ptr<chaos::Texture>    background_texture;
 	boost::intrusive_ptr<chaos::GPUProgram>  control_program;
 	boost::intrusive_ptr<chaos::Texture>    control_texture;
+
+  std::vector<boost::filesystem::path> background_paths;
+  size_t background_index = 0;
 
 	// sounds
 	boost::intrusive_ptr<chaos::SoundManager> sound_manager;

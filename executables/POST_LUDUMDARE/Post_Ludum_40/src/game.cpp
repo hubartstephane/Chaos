@@ -521,13 +521,34 @@ bool Game::InitializeSpriteManagers()
 	return true;
 }
 
+bool Game::LoadBackgroundTexture(size_t index)
+{
+  if (background_paths.size() == 0)
+    return false;
+
+  index = index % background_paths.size();
+
+  boost::intrusive_ptr<chaos::Texture> new_background = chaos::GLTextureTools::GenTextureObject(background_paths[index].string().c_str());
+  if (new_background == nullptr)
+    return false;
+  background_texture = new_background;
+  background_index   = index;
+  return true;
+}
 
 bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
+  // get the different background paths
+  boost::filesystem::directory_iterator end;
+  for (boost::filesystem::directory_iterator it(path / "backgrounds"); it != end; ++it)
+    background_paths.push_back(*it);
+
 	// generate the background texture
-	background_texture = chaos::GLTextureTools::GenTextureObject((path / "backgrounds" / "background4.png").string().c_str());
+  if (!Game::LoadBackgroundTexture(0))
+    return false;
 	if (background_texture == nullptr)
 		return false;
+
 	// generate the control texture
 	control_texture = chaos::GLTextureTools::GenTextureObject((path / "controls.png").string().c_str());
 	if (control_texture == nullptr)
@@ -809,6 +830,8 @@ void Game::GameOver()
 	SetLayerVisibility(PAUSED_OBJECT_LAYER, false);
 	SetLayerVisibility(GAMEOVER_OBJECT_LAYER, old_pending_gameover);
 	SetLayerVisibility(TITLE_OBJECT_LAYER, old_pending_restart_game);
+
+  LoadBackgroundTexture(background_index + 1);
 }
 
 void Game::ResetWorld()

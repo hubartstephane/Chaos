@@ -8,6 +8,8 @@
 namespace chaos
 {
 
+
+
   /**
   * SoundObjectCallbacks : an object to store some callbacks
   */
@@ -59,6 +61,16 @@ namespace chaos
     /** the callbacks */
     boost::intrusive_ptr<SoundObjectCallbacks> callbacks;
   };
+
+
+
+
+
+
+
+
+
+
 
   /**
   * SoundVolumeObject : base class for sound objects that have a volume. the volume may be blended in or out

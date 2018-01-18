@@ -127,6 +127,107 @@ protected:
   
 };
 
+// ================================================================
+
+namespace chaos
+{
+  namespace SoundWork
+  {
+
+    // any object in a sound manager that have a name
+    class SoundObjectBase
+    {
+
+
+    protected:
+
+      std::string name;
+
+      SoundManager * manager = nullptr;
+    };
+
+    // any object that have a volume
+    class SoundVolumeObject : public SoundObjectBase
+    {
+
+
+    };
+
+    // this is just a container for sound
+    class SoundCategory : public SoundVolumeObject
+    {
+
+
+    };
+
+    // 
+    class SoundSourceBase : public SoundVolumeObject
+    {
+    public:
+
+      virtual SoundBase * PlaySound();
+
+
+    };
+
+    class RandomSoundSource : public SoundSourceBase
+    {
+    public:
+
+
+
+
+    };
+
+    class SequenceSoundSource : public SoundSourceBase
+    {
+
+
+
+    };
+
+    //
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  };
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ================================================================
+
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::MyGLFW::SingleWindowApplicationParams params;

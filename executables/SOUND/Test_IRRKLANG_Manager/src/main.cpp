@@ -138,17 +138,39 @@ namespace chaos
     {
     public:
 
+      /** whether the sound must start paused */
+      bool start_paused = false;
+      /** whether the sound must loop */
+      bool looping = false;
+
+    public:
+
       bool IsSound3D() const { return false; }
 
       
     };
 
+
+
     class SoundFinishedCallback : public chaos::ReferencedObject
     {
     public:
 
-      virtual void OnFinished(SoundBase * source);
+      virtual void OnFinished(SoundBase * sound);
     };
+
+    class SoundStopEventReceiver : public irrklang::ISoundStopEventReceiver
+    {
+    public:
+
+      virtual void OnSoundStopped(ISound * sound, E_STOP_EVENT_CAUSE reason, void * userData) override
+      {
+
+      }
+
+
+    };
+
 
     class SoundBase
     {
@@ -212,6 +234,10 @@ namespace chaos
             sound_effect);
         }
 
+        irrklang::ISoundStopEventReceiver receiver;
+        receiver.OnSoundStopped()
+
+        irrklang_sound->setSoundStopEventReceiver()
 
       }
 

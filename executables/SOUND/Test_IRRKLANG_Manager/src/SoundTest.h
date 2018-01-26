@@ -13,7 +13,7 @@ class SoundCallbacks : public chaos::ReferencedObject
 protected:
 
   /** called whenever a sound is finished */
-  virtual void OnSoundFinished(SoundBase * sound) {}
+  virtual void OnSoundFinished(SoundBase * sound);
 
 public:
 
@@ -45,20 +45,38 @@ class SoundBase : public chaos::ReferencedObject
 
 protected:
 
-  /** the accessibility function */
-  virtual void OnSoundFinished(SoundCallbacks * callbacks) 
-  {
-    assert(callbacks != nullptr);
-    callbacks->OnSoundFinished(this);
-  }
+  /** accessibility function */
+  virtual void OnSoundFinished(SoundCallbacks * callbacks);
 
   /** the sound method */
-  virtual void PlaySound(PlaySoundDesc const & desc) {}
+  virtual void PlaySound(PlaySoundDesc const & desc);
 
 public:
 
 
+protected:
 
+  /** the callbacks that are being called at the end of the sound */
+  boost::intrusive_ptr<SoundCallbacks> callbacks;
+};
+
+                /* ---------------- */
+
+class SoundSimple : public SoundBase
+{
+  friend class SoundSourceSimple;
+
+protected:
+
+  /** protected constructor */
+  SoundSimple(class SoundSourceSimple * in_source);
+  /** the sound method */
+  virtual void PlaySound(PlaySoundDesc const & desc) override;
+ 
+protected:
+
+  /** the source that generated this object */
+  boost::intrusive_ptr<SoundSourceSimple> source;
 };
 
 
@@ -70,15 +88,12 @@ public:
 class SoundSourceBase : public chaos::ReferencedObject
 {
   /** the accessibility function */
-  virtual void PlaySound(SoundBase * sound, PlaySoundDesc const & desc) 
-  {
-    assert(sound != nullptr);
-    sound->PlaySound(desc);
-  }
+  virtual void PlaySound(SoundBase * sound, PlaySoundDesc const & desc);
 
 public:
 
-  virtual SoundBase * GenerateSound() { return nullptr; }
+  /** the sound generation method */
+  virtual SoundBase * GenerateSound();
    
 
 
@@ -90,6 +105,7 @@ class SoundSourceSimple : public SoundSourceBase
 {
 public:
 
+  /** generating a source object */
   virtual SoundBase * GenerateSound() override;
 
 protected:

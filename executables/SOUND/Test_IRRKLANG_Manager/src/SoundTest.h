@@ -1,6 +1,44 @@
 #pragma once
 
-#include "chaos/ReferencedObject.h"
+#include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
+#include <chaos/IrrklangTools.h>
+
+
+
+
+// ==============================================================
+// DESC
+// ==============================================================
+
+class PlaySoundDesc
+{
+public:
+
+  /** returns whether the sound is in 3D dimension */
+  bool IsSound3D() const;
+  /** set o runset the 3D flag */
+  void Enable3D(bool enable);
+
+  /** set the position of the sound (this enables the 3D feature) */
+  void SetPosition(glm::vec3 const & in_position);
+  /** set the velocity of the sound (this enables the 3D feature) */
+  void SetVelocity(glm::vec3 const & in_velocity);
+
+public:
+
+  /** whether the sound is paused at the beginning */
+  bool start_paused = false;
+  /** whether the sound is looping */
+  bool looping = false;
+
+  /** returns true whether the sound is in 3D */
+  bool is_3D_sound = false;
+  /** the position of the sound in 3D */
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the velocity of the sound in 3D */
+  glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+};
 
 // ==============================================================
 // CALLBACKS
@@ -22,24 +60,51 @@ public:
 };
 
 // ==============================================================
-// DESC
+// MANAGER
 // ==============================================================
 
-class PlaySoundDesc
+class SoundManager : public chaos::ReferencedObject
 {
 public:
 
-  /** whether the sound is paused at the beginning */
-  bool start_paused = false;
-  /** whether the sound is looping */
-  bool looping = false;
+  /** getter on the irrklang engine */
+  irrklang::ISoundEngine * GetIrrklangEngine();
+
+protected:
+
+  /** the irrklank engine */
+  boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
 };
+
+// ==============================================================
+// MANAGED OBJECT
+// ==============================================================
+
+class SoundManagedObject : public chaos::ReferencedObject
+{
+public:
+
+  /** getter on the irrklang engine */
+  irrklang::ISoundEngine * GetIrrklangEngine();
+
+  /** getter on the manager object */
+  SoundManager * GetManager();
+  /** getter on the manager object */
+  SoundManager const * GetManager() const;
+
+protected:
+
+  /** the irrklank engine */
+  boost::intrusive_ptr<SoundManager> sound_manager;
+};
+
+
 
 // ==============================================================
 // SOUND
 // ==============================================================
 
-class SoundBase : public chaos::ReferencedObject
+class SoundBase : public SoundManagedObject
 {
   friend class SoundSourceBase;
 
@@ -75,6 +140,8 @@ protected:
  
 protected:
 
+  /** the irrklang sound */
+  boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
   /** the source that generated this object */
   boost::intrusive_ptr<SoundSourceSimple> source;
 };
@@ -85,8 +152,11 @@ protected:
 // SOURCES
 // ==============================================================
 
-class SoundSourceBase : public chaos::ReferencedObject
+class SoundSourceBase : public SoundManagedObject
 {
+
+protected:
+
   /** the accessibility function */
   virtual void PlaySound(SoundBase * sound, PlaySoundDesc const & desc);
 
@@ -103,6 +173,8 @@ public:
 
 class SoundSourceSimple : public SoundSourceBase
 {
+  friend class SoundSimple;
+
 public:
 
   /** generating a source object */

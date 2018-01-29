@@ -43,6 +43,11 @@ SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_soun
   assert(in_callbacks != nullptr);
 }
 
+SoundCallbackIrrklangWrapper::~SoundCallbackIrrklangWrapper()
+{
+  assert(0);
+}
+
 void SoundCallbackIrrklangWrapper::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
 {
   callbacks->OnSoundFinished(sound.get());
@@ -93,7 +98,6 @@ void SoundBase::OnSoundFinished(SoundCallbacks * callbacks)
   if (callbacks != nullptr)
     callbacks->OnSoundFinished(this);
 }
-
 
 bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 {
@@ -160,6 +164,33 @@ bool SoundSimple::IsSound3D() const
 {
   return is_3D_sound;
 }
+
+                        /* ---------------- */
+
+
+
+
+
+  
+SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
+  source(in_source)
+{
+  assert(in_source != nullptr);
+}
+
+bool SoundSequence::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+{
+  if (source == nullptr)
+    return false;
+
+
+
+
+  return true;
+}
+
+
+
 
 // ==============================================================
 // SOURCES

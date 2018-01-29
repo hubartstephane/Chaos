@@ -67,6 +67,10 @@ protected:
 
 public:
 
+  /** the destructor */
+  virtual ~SoundCallbackIrrklangWrapper();
+
+  /** the method to override */
   virtual void OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData) override;
 
 protected:
@@ -171,6 +175,27 @@ protected:
   boost::intrusive_ptr<SoundSourceSimple> source;
 };
 
+                    /* ---------------- */
+
+class SoundSequence : public SoundBase
+{
+  friend SoundSourceSequence;
+
+protected:
+
+  /** protected constructor */
+  SoundSequence(class SoundSourceSequence * in_source);
+  /** the sound method (returns true whether it is immediatly finished) */
+  virtual bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr) override;
+
+protected:
+
+  /** the index of next element to play */
+  size_t index = 0;
+  /** the source sequence thzat generated this object */
+  boost::intrusive_ptr<SoundSourceSequence> source;
+};
+
 
 
 // ==============================================================
@@ -230,6 +255,8 @@ class SoundSourceSequence : public SoundSourceComposite
 {
 public:
 
+  /** generating a source object */
+  virtual SoundBase * GenerateSound() override;
 };
 
                 /* ---------------- */

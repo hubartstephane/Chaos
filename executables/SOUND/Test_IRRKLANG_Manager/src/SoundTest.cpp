@@ -35,6 +35,26 @@ void SoundCallbacks::OnSoundFinished(SoundBase * sound)
   assert(sound != nullptr);
 }
 
+SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_sound, SoundCallbacks * in_callbacks):
+  sound(in_sound),
+  callbacks(in_callbacks)
+{
+  assert(in_sound != nullptr);
+  assert(in_callbacks != nullptr);
+}
+
+void SoundCallbackIrrklangWrapper::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
+{
+  callbacks->OnSoundFinished(sound.get());
+}
+
+
+#if 0
+
+virtual void setSoundStopEventReceiver(ISoundStopEventReceiver* reciever, void* userData = 0) = 0;
+
+#endif
+
 // ==============================================================
 // MANAGER
 // ==============================================================
@@ -70,14 +90,14 @@ irrklang::ISoundEngine * SoundManagedObject::GetIrrklangEngine()
 
 void SoundBase::OnSoundFinished(SoundCallbacks * callbacks)
 {
-  assert(callbacks != nullptr);
-  callbacks->OnSoundFinished(this);
+  if (callbacks != nullptr)
+    callbacks->OnSoundFinished(this);
 }
 
 
-void SoundBase::PlaySound(PlaySoundDesc const & desc)
+bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 {
-
+  return true; // immediatly finished
 }
 
                 /* ---------------- */
@@ -88,96 +108,67 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
   assert(in_source != nullptr);
 }
 
-void SoundSimple::PlaySound(PlaySoundDesc const & desc)
+bool SoundSimple::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 {
-  if (desc.IsSound3D())
-  {
+  // test whether the sound may be played
+  // error => immediatly finished
+  if (source == nullptr || source->irrklang_source == nullptr)
+    return true;
 
-    /*
-    irrklang::ISound * result = sound_manager->irrklang_engine->play3D(
-      irrklang_source.get(),
-      SoundManager::ToIrrklangVector(desc.position),
+  irrklang::ISoundEngine * irrklang_engine = GetIrrklangEngine();
+  if (irrklang_engine == nullptr)
+    return true; 
+
+  // play sound
+  bool looping = desc.looping;
+  bool paused = desc.start_paused;
+  bool track = true;
+  bool sound_effect = true;
+
+  is_3D_sound = desc.IsSound3D();
+
+  if (is_3D_sound)
+  {
+    irrklang_sound = irrklang_engine->play3D(
+      source->irrklang_source.get(),
+      chaos::IrrklangTools::ToIrrklangVector(desc.position),
       looping,
       paused,
       track,
       sound_effect);
 
-    if (result != nullptr)
-      result->setVelocity(SoundManager::ToIrrklangVector(desc.speed));
-
-    */
-
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(desc.velocity));
   }
   else
-  {
-
+  {      
+    irrklang_sound = irrklang_engine->play2D(
+      source->irrklang_source.get(),
+      looping,
+      paused,
+      track,
+      sound_effect);
   }
 
+  if (in_callbacks != nullptr && irrklang_sound != nullptr)
+    irrklang_sound->setSoundStopEventReceiver(new SoundCallbackIrrklangWrapper(this, in_callbacks), nullptr);
 
+  return (irrklang_sound == nullptr); // error => immediatly finished
 }
 
-#if 0
-
-  assert(IsAttachedToManager()); // should never be called elsewhere
-
-  bool looping = in_looping;
-  bool paused = in_paused;
-  bool track = true;
-  bool sound_effect = true;
-
-  return sound_manager->irrklang_engine->play2D(
-    irrklang_source.get(),
-    looping,
-    paused,
-    track,
-    sound_effect);
-}
-
-irrklang::ISound * SoundSource::DoPlayIrrklangSound(Play3DSoundDesc const & desc, bool in_looping, bool in_paused)
+bool SoundSimple::IsSound3D() const
 {
-  assert(IsAttachedToManager()); // should never be called elsewhere
-
-  bool looping = in_looping;
-  bool paused = in_paused;
-  bool track = true;
-  bool sound_effect = true;
-
-  irrklang::ISound * result = sound_manager->irrklang_engine->play3D(
-    irrklang_source.get(),
-    SoundManager::ToIrrklangVector(desc.position),
-    looping,
-    paused,
-    track,
-    sound_effect);
-
-  if (result != nullptr)
-    result->setVelocity(SoundManager::ToIrrklangVector(desc.speed));
-
-  return result;
-
+  return is_3D_sound;
 }
-
-irrklang::ISound * result = sound_manager->irrklang_engine->play3D(
-  irrklang_source.get(),
-  SoundManager::ToIrrklangVector(desc.position),
-  looping,
-  paused,
-  track,
-  sound_effect);
-
-if (result != nullptr)
-result->setVelocity(SoundManager::ToIrrklangVector(desc.speed));
-
-#endif
 
 // ==============================================================
 // SOURCES
 // ==============================================================
 
-void SoundSourceBase::PlaySound(SoundBase * sound, PlaySoundDesc const & desc)
+bool SoundSourceBase::PlaySound(SoundBase * sound, PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 {
   assert(sound != nullptr);
-  sound->PlaySound(desc);
+  return sound->PlaySound(desc, in_callbacks);
 }
 
 SoundBase * SoundSourceBase::GenerateSound() 

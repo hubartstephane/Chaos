@@ -47,16 +47,34 @@ public:
 class SoundCallbacks : public chaos::ReferencedObject
 {
   friend class SoundBase;
+  friend class SoundSimple;
+  friend class SoundCallbackIrrklangWrapper;
 
 protected:
 
   /** called whenever a sound is finished */
   virtual void OnSoundFinished(SoundBase * sound);
+};
+
+class SoundCallbackIrrklangWrapper : public irrklang::ISoundStopEventReceiver
+{
+  friend class SoundSimple;
+
+protected:
+
+  /** protected constructor */
+  SoundCallbackIrrklangWrapper(SoundSimple * in_sound, SoundCallbacks * in_callbacks);
 
 public:
 
+  virtual void OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData) override;
 
+protected:
 
+  /** the sound object concerned */
+  boost::intrusive_ptr<SoundSimple> sound;
+  /** the callback object */
+  boost::intrusive_ptr<SoundCallbacks> callbacks;
 };
 
 // ==============================================================
@@ -113,8 +131,8 @@ protected:
   /** accessibility function */
   virtual void OnSoundFinished(SoundCallbacks * callbacks);
 
-  /** the sound method */
-  virtual void PlaySound(PlaySoundDesc const & desc);
+  /** the sound method (returns true whether it is immediatly finished) */
+  virtual bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 public:
 
@@ -135,11 +153,18 @@ protected:
 
   /** protected constructor */
   SoundSimple(class SoundSourceSimple * in_source);
-  /** the sound method */
-  virtual void PlaySound(PlaySoundDesc const & desc) override;
+  /** the sound method (returns true whether it is immediatly finished) */
+  virtual bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr) override;
  
+public:
+
+  /** returns whether the sound is in 3D dimension */
+  bool IsSound3D() const;
+
 protected:
 
+  /** returns true whether the sound is in 3D */
+  bool is_3D_sound = false;
   /** the irrklang sound */
   boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
   /** the source that generated this object */
@@ -158,7 +183,7 @@ class SoundSourceBase : public SoundManagedObject
 protected:
 
   /** the accessibility function */
-  virtual void PlaySound(SoundBase * sound, PlaySoundDesc const & desc);
+  virtual bool PlaySound(SoundBase * sound, PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 public:
 

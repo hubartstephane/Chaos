@@ -28,16 +28,18 @@ public:
 public:
 
   /** whether the sound is paused at the beginning */
-  bool start_paused = false;
+  bool paused = false;
   /** whether the sound is looping */
   bool looping = false;
-
-  /** returns true whether the sound is in 3D */
-  bool is_3D_sound = false;
   /** the position of the sound in 3D */
   glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
   /** the velocity of the sound in 3D */
   glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+
+protected:
+
+  /** returns true whether the sound is in 3D */
+  bool is_3D_sound = false;
 };
 
 // ==============================================================
@@ -129,19 +131,54 @@ protected:
 class SoundBase : public SoundManagedObject
 {
   friend class SoundSourceBase;
+  friend class SoundSequence;
+  friend class SoundSourceRandom;
+
+public:
+
+  /** set the position of the sound (this enables the 3D feature) */
+  virtual void SetPosition(glm::vec3 const & in_position);
+  /** set the velocity of the sound (this enables the 3D feature) */
+  virtual void SetVelocity(glm::vec3 const & in_velocity);
+  /** pause the sound */
+  virtual void Pause();
+  /** resume the sound */
+  virtual void Resume();
+  /** stop the sound */
+  virtual void Stop();
+
+  /** get the position of the sound */
+  glm::vec3 GetPosition() const;
+  /** get the velocity of the sound */
+  glm::vec3 GetVelocity() const;
+  /** get whether the sound is paused */
+  bool IsPaused() const;
+  /** get whether the sound is looping */
+  bool IsLooping() const;
 
 protected:
 
   /** accessibility function */
-  virtual void OnSoundFinished(SoundCallbacks * callbacks);
+  virtual void OnSoundFinished();
 
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+  virtual bool DoPlaySound(PlaySoundDesc const & desc);
 
-public:
-
+  /** the method being called from exterior */
+  bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 protected:
+
+  /** returns true whether the sound is in 3D */
+  bool is_3D_sound = false;
+  /** the position of the sound in 3D */
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the velocity of the sound in 3D */
+  glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** whether the sound is paused */
+  bool paused = false;
+  /** whether the sound is looping */
+  bool looping = false;
 
   /** the callbacks that are being called at the end of the sound */
   boost::intrusive_ptr<SoundCallbacks> callbacks;
@@ -158,12 +195,18 @@ protected:
   /** protected constructor */
   SoundSimple(class SoundSourceSimple * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr) override;
+  virtual bool DoPlaySound(PlaySoundDesc const & desc) override;
  
 public:
 
   /** returns whether the sound is in 3D dimension */
   bool IsSound3D() const;
+  /** overriding some methods */
+  virtual void SetPosition(glm::vec3 const & in_position) override;
+  virtual void SetVelocity(glm::vec3 const & in_velocity) override;
+  virtual void Pause() override;
+  virtual void Resume() override;
+  virtual void Stop() override;
 
 protected:
 
@@ -179,21 +222,32 @@ protected:
 
 class SoundSequence : public SoundBase
 {
-  friend SoundSourceSequence;
+  friend class SoundSourceSequence;
 
 protected:
 
   /** protected constructor */
   SoundSequence(class SoundSourceSequence * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr) override;
+  virtual bool DoPlaySound(PlaySoundDesc const & desc) override;
+
+public:
+
+  /** overriding some methods */
+  virtual void SetPosition(glm::vec3 const & in_position) override;
+  virtual void SetVelocity(glm::vec3 const & in_velocity) override;
+  virtual void Pause() override;
+  virtual void Resume() override;
+  virtual void Stop() override;
 
 protected:
 
   /** the index of next element to play */
   size_t index = 0;
-  /** the source sequence thzat generated this object */
+  /** the source sequence that generated this object */
   boost::intrusive_ptr<SoundSourceSequence> source;
+  /** the sound that is currently being played */
+  boost::intrusive_ptr<SoundBase> current_sound;
 };
 
 
@@ -253,6 +307,8 @@ protected:
 
 class SoundSourceSequence : public SoundSourceComposite
 {
+  friend class SoundSequence;
+
 public:
 
   /** generating a source object */

@@ -43,22 +43,15 @@ SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_soun
   assert(in_callbacks != nullptr);
 }
 
-SoundCallbackIrrklangWrapper::~SoundCallbackIrrklangWrapper()
-{
-  assert(0);
-}
-
 void SoundCallbackIrrklangWrapper::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
 {
   callbacks->OnSoundFinished(sound.get());
 }
 
-
-#if 0
-
-virtual void setSoundStopEventReceiver(ISoundStopEventReceiver* reciever, void* userData = 0) = 0;
-
-#endif
+SoundCallbackIrrklangWrapper::~SoundCallbackIrrklangWrapper()
+{
+  assert(0);
+}
 
 // ==============================================================
 // MANAGER
@@ -93,15 +86,82 @@ irrklang::ISoundEngine * SoundManagedObject::GetIrrklangEngine()
 // SOUND
 // ==============================================================
 
-void SoundBase::OnSoundFinished(SoundCallbacks * callbacks)
+void SoundBase::OnSoundFinished()
 {
   if (callbacks != nullptr)
     callbacks->OnSoundFinished(this);
 }
 
-bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+bool SoundBase::DoPlaySound(PlaySoundDesc const & desc)
 {
   return true; // immediatly finished
+}
+
+bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+{
+  // copy the data
+  is_3D_sound = desc.IsSound3D();
+  position    = desc.position;
+  velocity    = desc.velocity;
+  paused      = desc.paused;
+  looping     = desc.looping;
+
+  callbacks = in_callbacks;
+
+  // start the sound
+  bool completed = DoPlaySound(desc);
+  // raise the 'completion event' if necessary
+  if (completed)
+    OnSoundFinished();
+  // returns
+  return completed;
+}
+
+glm::vec3 SoundBase::GetPosition() const
+{
+  return position;
+}
+
+glm::vec3 SoundBase::GetVelocity() const
+{
+  return velocity;
+}
+
+bool SoundBase::IsPaused() const
+{
+  return paused;
+}
+
+bool SoundBase::IsLooping() const
+{
+  return looping;
+}
+
+void SoundBase::SetPosition(glm::vec3 const & in_position)
+{
+  is_3D_sound = true;
+  position = in_position;
+}
+
+void SoundBase::SetVelocity(glm::vec3 const & in_velocity)
+{
+  is_3D_sound = true;
+  velocity = in_velocity;
+}
+
+void SoundBase::Pause()
+{
+  paused = true;
+}
+
+void SoundBase::Resume()
+{
+  paused = false;
+}
+
+void SoundBase::Stop()
+{
+
 }
 
                 /* ---------------- */
@@ -112,7 +172,7 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
   assert(in_source != nullptr);
 }
 
-bool SoundSimple::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+bool SoundSimple::DoPlaySound(PlaySoundDesc const & desc)
 {
   // test whether the sound may be played
   // error => immediatly finished
@@ -124,12 +184,8 @@ bool SoundSimple::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_call
     return true; 
 
   // play sound
-  bool looping = desc.looping;
-  bool paused = desc.start_paused;
   bool track = true;
   bool sound_effect = true;
-
-  is_3D_sound = desc.IsSound3D();
 
   if (is_3D_sound)
   {
@@ -154,8 +210,8 @@ bool SoundSimple::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_call
       sound_effect);
   }
 
-  if (in_callbacks != nullptr && irrklang_sound != nullptr)
-    irrklang_sound->setSoundStopEventReceiver(new SoundCallbackIrrklangWrapper(this, in_callbacks), nullptr);
+  if (callbacks != nullptr && irrklang_sound != nullptr)
+    irrklang_sound->setSoundStopEventReceiver(new SoundCallbackIrrklangWrapper(this, callbacks.get()), nullptr);
 
   return (irrklang_sound == nullptr); // error => immediatly finished
 }
@@ -165,23 +221,80 @@ bool SoundSimple::IsSound3D() const
   return is_3D_sound;
 }
 
+void SoundSimple::SetPosition(glm::vec3 const & in_position)
+{
+  SoundBase::SetPosition(in_position);
+  if (irrklang_sound != nullptr && is_3D_sound)
+    irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
+}
+
+void SoundSimple::SetVelocity(glm::vec3 const & in_velocity)
+{
+  SoundBase::SetVelocity(in_velocity);
+  if (irrklang_sound != nullptr && is_3D_sound)
+    irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
+}
+
+void SoundSimple::Pause()
+{
+  SoundBase::Pause();
+  if (irrklang_sound != nullptr)
+    irrklang_sound->setIsPaused(true);
+}
+
+void SoundSimple::Resume()
+{
+  SoundBase::Resume();
+  if (irrklang_sound != nullptr)
+    irrklang_sound->setIsPaused(false);
+}
+
+void SoundSimple::Stop()
+{
+  SoundBase::Stop();
+  if (irrklang_sound != nullptr)
+    irrklang_sound->stop();
+}
+
                         /* ---------------- */
 
-
-
-
-
-  
 SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
   source(in_source)
 {
   assert(in_source != nullptr);
 }
 
-bool SoundSequence::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+bool SoundSequence::DoPlaySound(PlaySoundDesc const & desc)
 {
   if (source == nullptr)
     return false;
+
+  for (; index < source->child_sources.size(); ++index)  
+  {
+    SoundSourceBase * child_source = source->child_sources[index].get();
+    if (child_source == nullptr)
+      continue;
+
+    current_sound = child_source->GenerateSound();
+    if (current_sound == nullptr)
+      continue;
+
+    PlaySoundDesc other_desc = sound_desc;
+    other_desc.looping = false;
+    other_desc.paused  = false;
+
+    if (!current_sound->PlaySound(other_desc))
+      continue;
+
+  }
+
+ // if (index >= source->child_sources.size())
+ //   return true; // finished
+
+  
+
+  //source->child_sources
+
 
 
 
@@ -189,7 +302,40 @@ bool SoundSequence::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_ca
   return true;
 }
 
+void SoundSequence::SetPosition(glm::vec3 const & in_position)
+{
+  SoundBase::SetPosition(in_position);
+  if (current_sound != nullptr)
+    current_sound->SetPosition(in_position);
+}
 
+void SoundSequence::SetVelocity(glm::vec3 const & in_velocity)
+{
+  SoundBase::SetVelocity(in_velocity);
+  if (current_sound != nullptr)
+    current_sound->SetVelocity(in_velocity);
+}
+
+void SoundSequence::Pause()
+{
+  SoundBase::Pause();
+  if (current_sound != nullptr)
+    current_sound->Pause();
+}
+
+void SoundSequence::Resume()
+{
+  SoundBase::Resume();
+  if (current_sound != nullptr)
+    current_sound->Resume();
+}
+
+void SoundSequence::Stop()
+{
+  SoundBase::Stop();
+  if (current_sound != nullptr)
+    current_sound->Stop();
+}
 
 
 // ==============================================================
@@ -214,3 +360,9 @@ SoundBase * SoundSourceSimple::GenerateSound()
   return new SoundSimple(this);
 }
 
+                /* ---------------- */
+
+SoundBase * SoundSourceSequence::GenerateSound()
+{
+  return new SoundSequence(this);
+}

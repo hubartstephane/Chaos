@@ -21,9 +21,9 @@ public:
   void Enable3D(bool enable);
 
   /** set the position of the sound (this enables the 3D feature) */
-  void SetPosition(glm::vec3 const & in_position);
+  void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true);
   /** set the velocity of the sound (this enables the 3D feature) */
-  void SetVelocity(glm::vec3 const & in_velocity);
+  void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true);
 
 public:
 
@@ -137,9 +137,9 @@ class SoundBase : public SoundManagedObject
 public:
 
   /** set the position of the sound (this enables the 3D feature) */
-  virtual void SetPosition(glm::vec3 const & in_position);
+  virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true);
   /** set the velocity of the sound (this enables the 3D feature) */
-  virtual void SetVelocity(glm::vec3 const & in_velocity);
+  virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true);
   /** pause the sound */
   virtual void Pause();
   /** resume the sound */
@@ -162,10 +162,10 @@ protected:
   virtual void OnSoundFinished();
 
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound(PlaySoundDesc const & desc);
+  virtual bool DoPlaySound(bool enable_callbacks);
 
   /** the method being called from exterior */
-  bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+  bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
 
 protected:
 
@@ -195,15 +195,15 @@ protected:
   /** protected constructor */
   SoundSimple(class SoundSourceSimple * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound(PlaySoundDesc const & desc) override;
+  virtual bool DoPlaySound(bool enable_callbacks) override;
  
 public:
 
   /** returns whether the sound is in 3D dimension */
   bool IsSound3D() const;
   /** overriding some methods */
-  virtual void SetPosition(glm::vec3 const & in_position) override;
-  virtual void SetVelocity(glm::vec3 const & in_velocity) override;
+  virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true) override;
+  virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true) override;
   virtual void Pause() override;
   virtual void Resume() override;
   virtual void Stop() override;
@@ -220,7 +220,55 @@ protected:
 
                     /* ---------------- */
 
-class SoundSequence : public SoundBase
+class SoundComposite : public SoundBase
+{
+  friend class SoundSourceSequence;
+  friend class SoundCompositeCallbacks;
+
+public:
+
+  /** overriding some methods */
+  virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true) override;
+  virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true) override;
+  virtual void Pause() override;
+  virtual void Resume() override;
+  virtual void Stop() override;
+
+protected:
+
+  /** protected constructor */
+  SoundComposite(class SoundSourceComposite * in_source);
+  /** called whenever a child element is finished (returns true when completed) */
+  virtual bool DoPlayNextSound(bool enable_callbacks);
+
+protected:
+
+  /** the sound that is currently being played */
+  boost::intrusive_ptr<SoundBase> current_sound;
+  /** the source composite that generated this object */
+  boost::intrusive_ptr<SoundSourceComposite> source;
+};
+
+class SoundCompositeCallbacks : public SoundCallbacks
+{
+  friend class SoundComposite;
+
+protected:
+
+  /** protected constructor */
+  SoundCompositeCallbacks(SoundComposite * in_sound);
+  /** called whenever a sound is finished */
+  virtual void OnSoundFinished(SoundBase * sound) override;
+
+protected:
+
+  /** the composite */
+  boost::intrusive_ptr<SoundComposite> sound_composite;
+};
+
+                    /* ---------------- */
+
+class SoundSequence : public SoundComposite
 {
   friend class SoundSourceSequence;
 
@@ -229,25 +277,14 @@ protected:
   /** protected constructor */
   SoundSequence(class SoundSourceSequence * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound(PlaySoundDesc const & desc) override;
-
-public:
-
-  /** overriding some methods */
-  virtual void SetPosition(glm::vec3 const & in_position) override;
-  virtual void SetVelocity(glm::vec3 const & in_velocity) override;
-  virtual void Pause() override;
-  virtual void Resume() override;
-  virtual void Stop() override;
+  virtual bool DoPlaySound(bool enable_callbacks) override;
+  /** called whenever a child element is finished (returns true when completed) */
+  virtual bool DoPlayNextSound(bool enable_callbacks) override;
 
 protected:
 
   /** the index of next element to play */
   size_t index = 0;
-  /** the source sequence that generated this object */
-  boost::intrusive_ptr<SoundSourceSequence> source;
-  /** the sound that is currently being played */
-  boost::intrusive_ptr<SoundBase> current_sound;
 };
 
 
@@ -295,6 +332,8 @@ protected:
 
 class SoundSourceComposite : public SoundSourceBase
 {
+  friend class SoundSequence;
+
 public:
 
 protected:
@@ -302,6 +341,8 @@ protected:
   /** child sources */
   std::vector<boost::intrusive_ptr<SoundSourceBase>> child_sources;
 };
+
+
 
                 /* ---------------- */
 
@@ -314,6 +355,8 @@ public:
   /** generating a source object */
   virtual SoundBase * GenerateSound() override;
 };
+
+
 
                 /* ---------------- */
 

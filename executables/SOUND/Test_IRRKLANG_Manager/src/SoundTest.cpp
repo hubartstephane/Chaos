@@ -14,16 +14,18 @@ void PlaySoundDesc::Enable3D(bool enable)
   is_3D_sound = enable;
 }
 
-void PlaySoundDesc::SetPosition(glm::vec3 const & in_position)
+void PlaySoundDesc::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
-  is_3D_sound = true;
   position = in_position;
+  if (set_3D_sound)
+    is_3D_sound = true;  
 }
 
-void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity)
+void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
-  is_3D_sound = true;
   velocity = in_velocity;
+  if (set_3D_sound)
+    is_3D_sound = true;
 }
 
 // ==============================================================
@@ -92,12 +94,12 @@ void SoundBase::OnSoundFinished()
     callbacks->OnSoundFinished(this);
 }
 
-bool SoundBase::DoPlaySound(PlaySoundDesc const & desc)
+bool SoundBase::DoPlaySound(bool enable_callbacks)
 {
   return true; // immediatly finished
 }
 
-bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
 {
   // copy the data
   is_3D_sound = desc.IsSound3D();
@@ -109,9 +111,9 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
   callbacks = in_callbacks;
 
   // start the sound
-  bool completed = DoPlaySound(desc);
+  bool completed = DoPlaySound(enable_callbacks);
   // raise the 'completion event' if necessary
-  if (completed)
+  if (completed && enable_callbacks)
     OnSoundFinished();
   // returns
   return completed;
@@ -137,16 +139,18 @@ bool SoundBase::IsLooping() const
   return looping;
 }
 
-void SoundBase::SetPosition(glm::vec3 const & in_position)
+void SoundBase::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
-  is_3D_sound = true;
   position = in_position;
+  if (set_3D_sound)
+    is_3D_sound = true;
 }
 
-void SoundBase::SetVelocity(glm::vec3 const & in_velocity)
+void SoundBase::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
-  is_3D_sound = true;
   velocity = in_velocity;
+  if (set_3D_sound)
+    is_3D_sound = true;
 }
 
 void SoundBase::Pause()
@@ -163,7 +167,6 @@ void SoundBase::Stop()
 {
 
 }
-
                 /* ---------------- */
 
 SoundSimple::SoundSimple(class SoundSourceSimple * in_source) : 
@@ -172,7 +175,7 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
   assert(in_source != nullptr);
 }
 
-bool SoundSimple::DoPlaySound(PlaySoundDesc const & desc)
+bool SoundSimple::DoPlaySound(bool enable_callbacks)
 {
   // test whether the sound may be played
   // error => immediatly finished
@@ -191,14 +194,14 @@ bool SoundSimple::DoPlaySound(PlaySoundDesc const & desc)
   {
     irrklang_sound = irrklang_engine->play3D(
       source->irrklang_source.get(),
-      chaos::IrrklangTools::ToIrrklangVector(desc.position),
+      chaos::IrrklangTools::ToIrrklangVector(position),
       looping,
       paused,
       track,
       sound_effect);
 
     if (irrklang_sound != nullptr)
-      irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(desc.velocity));
+      irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(velocity));
   }
   else
   {      
@@ -221,16 +224,16 @@ bool SoundSimple::IsSound3D() const
   return is_3D_sound;
 }
 
-void SoundSimple::SetPosition(glm::vec3 const & in_position)
+void SoundSimple::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
-  SoundBase::SetPosition(in_position);
+  SoundBase::SetPosition(in_position, set_3D_sound);
   if (irrklang_sound != nullptr && is_3D_sound)
     irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
 }
 
-void SoundSimple::SetVelocity(glm::vec3 const & in_velocity)
+void SoundSimple::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
-  SoundBase::SetVelocity(in_velocity);
+  SoundBase::SetVelocity(in_velocity, set_3D_sound);
   if (irrklang_sound != nullptr && is_3D_sound)
     irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
 }
@@ -255,87 +258,125 @@ void SoundSimple::Stop()
   if (irrklang_sound != nullptr)
     irrklang_sound->stop();
 }
-
                         /* ---------------- */
 
-SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
+SoundComposite::SoundComposite(class SoundSourceComposite * in_source) :
   source(in_source)
 {
   assert(in_source != nullptr);
 }
 
-bool SoundSequence::DoPlaySound(PlaySoundDesc const & desc)
+bool SoundComposite::DoPlayNextSound(bool enable_callbacks)
 {
-  if (source == nullptr)
-    return false;
-
-  for (; index < source->child_sources.size(); ++index)  
-  {
-    SoundSourceBase * child_source = source->child_sources[index].get();
-    if (child_source == nullptr)
-      continue;
-
-    current_sound = child_source->GenerateSound();
-    if (current_sound == nullptr)
-      continue;
-
-    PlaySoundDesc other_desc = sound_desc;
-    other_desc.looping = false;
-    other_desc.paused  = false;
-
-    if (!current_sound->PlaySound(other_desc))
-      continue;
-
-  }
-
- // if (index >= source->child_sources.size())
- //   return true; // finished
-
-  
-
-  //source->child_sources
-
-
-
-
-
-  return true;
+  return true; // finished
 }
 
-void SoundSequence::SetPosition(glm::vec3 const & in_position)
+void SoundComposite::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
-  SoundBase::SetPosition(in_position);
+  SoundBase::SetPosition(in_position, set_3D_sound);
   if (current_sound != nullptr)
-    current_sound->SetPosition(in_position);
+    current_sound->SetPosition(in_position, set_3D_sound);
 }
 
-void SoundSequence::SetVelocity(glm::vec3 const & in_velocity)
+void SoundComposite::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
-  SoundBase::SetVelocity(in_velocity);
+  SoundBase::SetVelocity(in_velocity, set_3D_sound);
   if (current_sound != nullptr)
-    current_sound->SetVelocity(in_velocity);
+    current_sound->SetVelocity(in_velocity, set_3D_sound);
 }
 
-void SoundSequence::Pause()
+void SoundComposite::Pause()
 {
   SoundBase::Pause();
   if (current_sound != nullptr)
     current_sound->Pause();
 }
 
-void SoundSequence::Resume()
+void SoundComposite::Resume()
 {
   SoundBase::Resume();
   if (current_sound != nullptr)
     current_sound->Resume();
 }
 
-void SoundSequence::Stop()
+void SoundComposite::Stop()
 {
   SoundBase::Stop();
   if (current_sound != nullptr)
     current_sound->Stop();
 }
+
+                        /* ---------------- */
+
+SoundCompositeCallbacks::SoundCompositeCallbacks(SoundComposite * in_sound_composite):
+  sound_composite(in_sound_composite)
+{
+  assert(in_sound_composite != nullptr);
+}
+
+void SoundCompositeCallbacks::OnSoundFinished(SoundBase * sound)
+{
+  sound_composite->DoPlayNextSound(true);
+}
+
+                        /* ---------------- */
+
+SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
+  SoundComposite(in_source)
+{
+
+}
+
+bool SoundSequence::DoPlaySound(bool enable_callbacks)
+{
+  if (source == nullptr)
+    return false;
+
+  return DoPlayNextSound(enable_callbacks);
+}
+
+bool SoundSequence::DoPlayNextSound(bool enable_callbacks)
+{
+  if (source == nullptr) // if no source, cannot do anything more
+    return true;
+
+  size_t child_source_count = source->child_sources.size();
+
+  for (size_t count = 0 ; count < child_source_count ; ++count) // at most, one try per child source
+  {
+    // end is reached ?
+    if (index == child_source_count)
+    {
+      if (!looping)
+        return true;
+      else
+        index = 0;
+    }
+    // generate a sound
+    current_sound = source->child_sources[index]->GenerateSound();
+    if (current_sound == nullptr)
+      continue;
+    // play the sound
+    PlaySoundDesc desc;
+    desc.looping = false;
+    desc.paused  = paused;
+    desc.SetPosition(position, false);
+    desc.SetVelocity(velocity, false);
+    desc.Enable3D(is_3D_sound);
+
+    if (!current_sound->PlaySound(desc, nullptr, enable_callbacks))
+      return false;
+    else
+      ++index;
+
+
+  }
+
+  return true; // finished
+}
+
+
+                        /* ---------------- */
 
 
 // ==============================================================

@@ -37,17 +37,15 @@ void SoundCallbacks::OnSoundFinished(SoundBase * sound)
   assert(sound != nullptr);
 }
 
-SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_sound, SoundCallbacks * in_callbacks):
-  sound(in_sound),
-  callbacks(in_callbacks)
+SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_sound):
+  sound(in_sound)
 {
   assert(in_sound != nullptr);
-  assert(in_callbacks != nullptr);
 }
 
 void SoundCallbackIrrklangWrapper::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
 {
-  callbacks->OnSoundFinished(sound.get());
+  sound->OnSoundFinished();
 }
 
 SoundCallbackIrrklangWrapper::~SoundCallbackIrrklangWrapper()
@@ -117,6 +115,11 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
     OnSoundFinished();
   // returns
   return completed;
+}
+
+bool SoundBase::IsSound3D() const
+{
+  return is_3D_sound;
 }
 
 glm::vec3 SoundBase::GetPosition() const
@@ -214,7 +217,7 @@ bool SoundSimple::DoPlaySound(bool enable_callbacks)
   }
 
   if (callbacks != nullptr && irrklang_sound != nullptr)
-    irrklang_sound->setSoundStopEventReceiver(new SoundCallbackIrrklangWrapper(this, callbacks.get()), nullptr);
+    irrklang_sound->setSoundStopEventReceiver(new SoundCallbackIrrklangWrapper(this), nullptr);
 
   return (irrklang_sound == nullptr); // error => immediatly finished
 }
@@ -329,9 +332,6 @@ SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
 
 bool SoundSequence::DoPlaySound(bool enable_callbacks)
 {
-  if (source == nullptr)
-    return false;
-
   return DoPlayNextSound(enable_callbacks);
 }
 
@@ -352,26 +352,18 @@ bool SoundSequence::DoPlayNextSound(bool enable_callbacks)
       else
         index = 0;
     }
-    // generate a sound
-    current_sound = source->child_sources[index]->GenerateSound();
-    if (current_sound == nullptr)
-      continue;
-    // play the sound
+    // play the child sound
     PlaySoundDesc desc;
     desc.looping = false;
-    desc.paused  = paused;
+    desc.paused = paused;
     desc.SetPosition(position, false);
     desc.SetVelocity(velocity, false);
     desc.Enable3D(is_3D_sound);
 
-    if (!current_sound->PlaySound(desc, nullptr, enable_callbacks))
-      return false;
-    else
-      ++index;
-
-
+    current_sound = source->child_sources[index++]->PlaySound(desc, new SoundCompositeCallbacks(this), enable_callbacks);
+    if (current_sound != nullptr)
+      return false; // un finished yet
   }
-
   return true; // finished
 }
 
@@ -383,15 +375,24 @@ bool SoundSequence::DoPlayNextSound(bool enable_callbacks)
 // SOURCES
 // ==============================================================
 
-bool SoundSourceBase::PlaySound(SoundBase * sound, PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
-{
-  assert(sound != nullptr);
-  return sound->PlaySound(desc, in_callbacks);
-}
-
 SoundBase * SoundSourceBase::GenerateSound() 
 { 
   return nullptr; 
+}
+
+SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
+{
+  SoundBase * result = GenerateSound();
+  if (result != nullptr)
+  {
+    bool completed = result->PlaySound(desc, in_callbacks, enable_callbacks);
+    if (completed)
+    {
+      delete (result); // if finished, no need to return the sound object
+      return nullptr;
+    }
+  }
+  return result;
 }
 
                 /* ---------------- */

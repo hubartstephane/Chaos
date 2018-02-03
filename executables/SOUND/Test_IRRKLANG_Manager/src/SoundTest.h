@@ -17,7 +17,7 @@ public:
 
   /** returns whether the sound is in 3D dimension */
   bool IsSound3D() const;
-  /** set o runset the 3D flag */
+  /** set the 3D flag */
   void Enable3D(bool enable);
 
   /** set the position of the sound (this enables the 3D feature) */
@@ -65,7 +65,7 @@ class SoundCallbackIrrklangWrapper : public irrklang::ISoundStopEventReceiver
 protected:
 
   /** protected constructor */
-  SoundCallbackIrrklangWrapper(SoundSimple * in_sound, SoundCallbacks * in_callbacks);
+  SoundCallbackIrrklangWrapper(SoundSimple * in_sound);
 
 public:
 
@@ -79,8 +79,6 @@ protected:
 
   /** the sound object concerned */
   boost::intrusive_ptr<SoundSimple> sound;
-  /** the callback object */
-  boost::intrusive_ptr<SoundCallbacks> callbacks;
 };
 
 // ==============================================================
@@ -133,6 +131,7 @@ class SoundBase : public SoundManagedObject
   friend class SoundSourceBase;
   friend class SoundSequence;
   friend class SoundSourceRandom;
+  friend class SoundCallbackIrrklangWrapper;
 
 public:
 
@@ -147,6 +146,8 @@ public:
   /** stop the sound */
   virtual void Stop();
 
+  /** returns whether the sound is in 3D dimension */
+  bool IsSound3D() const;
   /** get the position of the sound */
   glm::vec3 GetPosition() const;
   /** get the velocity of the sound */
@@ -252,7 +253,8 @@ protected:
 class SoundCompositeCallbacks : public SoundCallbacks
 {
   friend class SoundComposite;
-
+  friend class SoundSequence;
+  
 protected:
 
   /** protected constructor */
@@ -298,16 +300,13 @@ class SoundSourceBase : public SoundManagedObject
 
 protected:
 
-  /** the accessibility function */
-  virtual bool PlaySound(SoundBase * sound, PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+  /** the sound generation method */
+  virtual SoundBase * GenerateSound();
 
 public:
 
-  /** the sound generation method */
-  virtual SoundBase * GenerateSound();
-   
-
-
+  /** generating and playing a sound */
+  SoundBase * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
 };
 
                 /* ---------------- */
@@ -316,7 +315,7 @@ class SoundSourceSimple : public SoundSourceBase
 {
   friend class SoundSimple;
 
-public:
+protected:
 
   /** generating a source object */
   virtual SoundBase * GenerateSound() override;
@@ -334,8 +333,6 @@ class SoundSourceComposite : public SoundSourceBase
 {
   friend class SoundSequence;
 
-public:
-
 protected:
 
   /** child sources */
@@ -350,7 +347,7 @@ class SoundSourceSequence : public SoundSourceComposite
 {
   friend class SoundSequence;
 
-public:
+protected:
 
   /** generating a source object */
   virtual SoundBase * GenerateSound() override;
@@ -362,6 +359,6 @@ public:
 
 class SoundSourceRandom : public SoundSourceComposite
 {
-public:
+protected:
 
 };

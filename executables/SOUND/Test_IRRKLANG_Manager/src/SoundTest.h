@@ -92,10 +92,38 @@ public:
   /** getter on the irrklang engine */
   irrklang::ISoundEngine * GetIrrklangEngine();
 
+  /** start the manager */
+  bool StartManager();
+  /** stop the manager */
+  bool StopManager();
+  /** returns whether the manager is correctly started */
+  bool IsManagerStarted() const;
+
+  /** find a sound by its name */
+  class SoundBase * FindSound(char const * name);
+  /** find a category by its name */
+  class SoundCategory * FindSoundCategory(char const * name);
+  /** find a source by its name */
+  class SoundSourceBase * FindSoundSource(char const * name);
+
+  /** load and add a simple source inside the manager */
+  class SoundSourceSimple * AddSourceSimple(char const * in_filename, char const * in_name);
+  /** add a source inside the manager */
+  bool AddSource(class SoundSourceBase * in_source);
+
 protected:
 
+  /** all detected devices */
+  boost::intrusive_ptr<irrklang::ISoundDeviceList> irrklang_devices;
   /** the irrklank engine */
   boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
+
+  /** the categories */
+  std::vector<boost::intrusive_ptr<class SoundCategory>> categories;
+  /** the sounds */
+  std::vector<boost::intrusive_ptr<class SoundBase>> sounds;
+  /** the sources */
+  std::vector<boost::intrusive_ptr<class SoundSourceBase>> sources;
 };
 
 // ==============================================================
@@ -114,19 +142,55 @@ public:
   /** getter on the manager object */
   SoundManager const * GetManager() const;
 
+  /** returns whether the object is attached to a manager */
+  bool IsAttachedToManager() const;
+
+  /** get the name of the object */
+  char const * GetName() const { return name.c_str(); }
+
 protected:
 
+  /* the name */
+  std::string name;
   /** the irrklank engine */
   boost::intrusive_ptr<SoundManager> sound_manager;
 };
 
+// ==============================================================
+// VOLUME
+// ==============================================================
 
+class SoundManagedVolumeObject : public SoundManagedObject
+{
+
+public:
+
+  /** get the own object volume */
+  float GetVolume() const;
+  /** get the final volume for the sound (category and blendings taken into account) */
+  virtual float GetEffectiveVolume() const;
+
+protected:
+
+  /** the volume */
+  float volume;
+};
+
+// ==============================================================
+// CATEGORY
+// ==============================================================
+
+class SoundCategory : public SoundManagedVolumeObject
+{
+
+
+};
 
 // ==============================================================
 // SOUND
 // ==============================================================
 
-class SoundBase : public SoundManagedObject
+class SoundBase : public SoundManagedVolumeObject
 {
   friend class SoundSourceBase;
   friend class SoundSequence;
@@ -161,10 +225,8 @@ protected:
 
   /** accessibility function */
   virtual void OnSoundFinished();
-
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound(bool enable_callbacks);
-
+  virtual bool DoPlaySound();
   /** the method being called from exterior */
   bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
 
@@ -196,7 +258,7 @@ protected:
   /** protected constructor */
   SoundSimple(class SoundSourceSimple * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound(bool enable_callbacks) override;
+  virtual bool DoPlaySound() override;
  
 public:
 
@@ -240,7 +302,7 @@ protected:
   /** protected constructor */
   SoundComposite(class SoundSourceComposite * in_source);
   /** called whenever a child element is finished (returns true when completed) */
-  virtual bool DoPlayNextSound(bool enable_callbacks);
+  virtual bool DoPlayNextSound();
 
 protected:
 
@@ -279,9 +341,9 @@ protected:
   /** protected constructor */
   SoundSequence(class SoundSourceSequence * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound(bool enable_callbacks) override;
+  virtual bool DoPlaySound() override;
   /** called whenever a child element is finished (returns true when completed) */
-  virtual bool DoPlayNextSound(bool enable_callbacks) override;
+  virtual bool DoPlayNextSound() override;
 
 protected:
 
@@ -332,6 +394,11 @@ protected:
 class SoundSourceComposite : public SoundSourceBase
 {
   friend class SoundSequence;
+
+public:
+
+  /** add some source */
+  void AddChildSource(SoundSourceBase * in_source);
 
 protected:
 

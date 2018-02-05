@@ -1,5 +1,8 @@
 #include "SoundTest.h"
 
+#include <chaos/FileTools.h>
+#include <chaos/Buffer.h>
+
 // ==============================================================
 // DESC
 // ==============================================================
@@ -62,6 +65,164 @@ irrklang::ISoundEngine * SoundManager::GetIrrklangEngine()
   return irrklang_engine.get();
 }
 
+bool SoundManager::IsManagerStarted() const
+{
+  return (irrklang_engine != nullptr);
+}
+
+/** a generic function to find an object in a list by its name */
+template<typename T>
+static T * FindSoundObject(char const * name, std::vector<boost::intrusive_ptr<T>> & objects)
+{
+  if (name == nullptr)
+    return nullptr;
+
+  size_t count = objects.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    T * object = objects[i].get();
+    if (object == nullptr)
+      continue;
+    if (object->GetName() == name)
+      return object;
+  }
+  return nullptr;
+}
+
+SoundBase * SoundManager::FindSound(char const * name)
+{
+  return FindSoundObject<SoundBase>(name, sounds);
+}
+
+SoundCategory * SoundManager::FindSoundCategory(char const * name)
+{
+  return FindSoundObject<SoundCategory>(name, categories);
+}
+
+SoundSourceBase * SoundManager::FindSoundSource(char const * name)
+{
+  return FindSoundObject<SoundSourceBase>(name, sources);
+}
+
+bool SoundManager::StartManager()
+{
+  // exit if manager is already started
+  if (IsManagerStarted())
+    return true;
+
+  // get the list of all devices
+  irrklang_devices = irrklang::createSoundDeviceList();
+  if (irrklang_devices == nullptr)
+    return false;
+  irrklang_devices->drop();
+
+  // create the engine
+  irrklang_engine = irrklang::createIrrKlangDevice();
+  if (irrklang_engine == nullptr)
+    return false;
+  irrklang_engine->drop(); // suppress the extra reference
+
+  return true;
+}
+
+bool SoundManager::StopManager()
+{
+#if 0
+  DetachAllObjectsFromList(sounds); // destroy sounds first to make other list destructions faster
+  sounds.clear();
+
+  DetachAllObjectsFromList(categories);
+  categories.clear();
+
+  DetachAllObjectsFromList(sources);
+  sources.clear();
+#endif
+
+  irrklang_devices = nullptr;
+  irrklang_engine = nullptr;
+
+  return true;
+}
+
+bool SoundManager::AddSource(SoundSourceBase * in_source)
+{
+  assert(in_source != nullptr);
+
+  // manager initialized ?
+  if (!IsManagerStarted())
+    return false;
+  // already attached to a manager
+  if (in_source->IsAttachedToManager())
+    return false;
+
+  // insert and the new source
+  sources.push_back(in_source);
+
+  return true;
+}
+
+
+SoundSourceSimple * SoundManager::AddSourceSimple(char const * in_filename, char const * in_name)
+{
+  assert(in_filename != nullptr);
+
+  // not initialized engine ?
+  if (!IsManagerStarted())
+    return nullptr;
+
+  // by default the name of a source is its filepath
+  if (in_name == nullptr) 
+    in_name = in_filename;
+
+  // name already existing ?
+  if (FindSoundSource(in_name) != nullptr) 
+    return nullptr;
+
+  // load the file
+  chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(in_filename, false); 
+  if (buffer == nullptr)
+    return nullptr;
+
+
+  // create the source on irrklang side
+  // XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
+  irrklang::ISoundSource * irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_filename, true);
+  if (irrklang_source == nullptr)
+    return nullptr;
+
+  SoundSourceSimple * result = new SoundSourceSimple();
+  if (result == nullptr)
+    return nullptr;
+
+
+
+#if 0
+  SoundSource * result = new SoundSource(this);
+
+
+  if (in_name != nullptr)
+    result->name = in_name;
+  result->irrklang_source = irrklang_source;
+
+  result->loop_info_ext = result->GetClampedLoopInfoExt(in_loop_info); // clamp the loop info
+
+  // XXX : for unknown reasons, irrklang sound_source must not be drop() 
+  //       (except for additionnal reference counter)
+  //       see comments in headers
+  //
+  // irrklang_source->drop(); 
+
+  sources.push_back(result);
+
+  return result;
+
+#endif
+
+  return nullptr;
+}
+
+
+
 // ==============================================================
 // MANAGED OBJECT
 // ==============================================================
@@ -75,11 +236,32 @@ SoundManager const * SoundManagedObject::GetManager() const
   return sound_manager.get();
 }
 
+bool SoundManagedObject::IsAttachedToManager() const
+{
+  return (sound_manager != nullptr);
+}
+
 irrklang::ISoundEngine * SoundManagedObject::GetIrrklangEngine()
 {
   if (sound_manager != nullptr)
     return sound_manager->GetIrrklangEngine();
   return nullptr;
+}
+
+// ==============================================================
+// VOLUME
+// ==============================================================
+
+float SoundManagedVolumeObject::GetVolume() const
+{
+  if (!IsAttachedToManager())
+    return 0.0f;
+  return volume;
+}
+
+float SoundManagedVolumeObject::GetEffectiveVolume() const
+{
+  return GetVolume();
 }
 
 // ==============================================================
@@ -92,7 +274,7 @@ void SoundBase::OnSoundFinished()
     callbacks->OnSoundFinished(this);
 }
 
-bool SoundBase::DoPlaySound(bool enable_callbacks)
+bool SoundBase::DoPlaySound()
 {
   return true; // immediatly finished
 }
@@ -109,7 +291,7 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
   callbacks = in_callbacks;
 
   // start the sound
-  bool completed = DoPlaySound(enable_callbacks);
+  bool completed = DoPlaySound();
   // raise the 'completion event' if necessary
   if (completed && enable_callbacks)
     OnSoundFinished();
@@ -178,7 +360,7 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
   assert(in_source != nullptr);
 }
 
-bool SoundSimple::DoPlaySound(bool enable_callbacks)
+bool SoundSimple::DoPlaySound()
 {
   // test whether the sound may be played
   // error => immediatly finished
@@ -269,7 +451,7 @@ SoundComposite::SoundComposite(class SoundSourceComposite * in_source) :
   assert(in_source != nullptr);
 }
 
-bool SoundComposite::DoPlayNextSound(bool enable_callbacks)
+bool SoundComposite::DoPlayNextSound()
 {
   return true; // finished
 }
@@ -319,7 +501,7 @@ SoundCompositeCallbacks::SoundCompositeCallbacks(SoundComposite * in_sound_compo
 
 void SoundCompositeCallbacks::OnSoundFinished(SoundBase * sound)
 {
-  sound_composite->DoPlayNextSound(true);
+  sound_composite->DoPlayNextSound();
 }
 
                         /* ---------------- */
@@ -330,12 +512,12 @@ SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
 
 }
 
-bool SoundSequence::DoPlaySound(bool enable_callbacks)
+bool SoundSequence::DoPlaySound()
 {
-  return DoPlayNextSound(enable_callbacks);
+  return DoPlayNextSound();
 }
 
-bool SoundSequence::DoPlayNextSound(bool enable_callbacks)
+bool SoundSequence::DoPlayNextSound()
 {
   if (source == nullptr) // if no source, cannot do anything more
     return true;
@@ -360,7 +542,9 @@ bool SoundSequence::DoPlayNextSound(bool enable_callbacks)
     desc.SetVelocity(velocity, false);
     desc.Enable3D(is_3D_sound);
 
-    current_sound = source->child_sources[index++]->PlaySound(desc, new SoundCompositeCallbacks(this), enable_callbacks);
+    bool enable_child_callbacks = false;
+
+    current_sound = source->child_sources[index++]->PlaySound(desc, new SoundCompositeCallbacks(this), enable_child_callbacks);
     if (current_sound != nullptr)
       return false; // un finished yet
   }

@@ -106,10 +106,43 @@ public:
   /** find a source by its name */
   class SoundSourceBase * FindSoundSource(char const * name);
 
+  /** find a sound by its name */
+  class SoundBase const * FindSound(char const * name) const;
+  /** find a category by its name */
+  class SoundCategory const * FindSoundCategory(char const * name) const;
+  /** find a source by its name */
+  class SoundSourceBase const * FindSoundSource(char const * name) const;
+
+  /** find a simple source by its path */
+  class SoundSourceSimple * FindSimpleSource(boost::filesystem::path const & in_path);
+  /** find a simple source by its path */
+  class SoundSourceSimple const * FindSimpleSource(boost::filesystem::path const & in_path) const;
+
+  /** load and add a simple source inside the manager (name is a copy of filename) */
+  SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path);
   /** load and add a simple source inside the manager */
-  class SoundSourceSimple * AddSourceSimple(char const * in_filename, char const * in_name);
-  /** add a source inside the manager */
-  bool AddSource(class SoundSourceBase * in_source);
+  class SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path, char const * in_name);
+  /** add a sequence inside the manager */
+  class SoundSourceSequence * AddSourceSequence(char const * in_name);
+  /** add a random inside the manager */
+  class SoundSourceRandom * AddSourceRandom(char const * in_name);
+
+protected:
+
+  /** test whether a source with given name could be inserted in the manager */
+  bool CanAddSource(char const * in_name) const;
+  /** simple method to initialize and insert a source */
+  template<typename T> 
+  T * DoAddSources(T * in_source, char const * in_name)
+  {
+    if (in_source == nullptr)
+      return nullptr;
+    if (in_name != nullptr)
+      in_source->name = in_name;
+    in_source->sound_manager = this;
+    sources.push_back(in_source);
+    return in_source;
+  }
 
 protected:
 
@@ -132,6 +165,8 @@ protected:
 
 class SoundManagedObject : public chaos::ReferencedObject
 {
+  friend class SoundManager;
+
 public:
 
   /** getter on the irrklang engine */
@@ -376,6 +411,12 @@ public:
 class SoundSourceSimple : public SoundSourceBase
 {
   friend class SoundSimple;
+  friend class SoundManager;
+
+public:
+
+  /** get the path of the resource */
+  boost::filesystem::path const & GetPath() const { return path; }
 
 protected:
 
@@ -386,6 +427,8 @@ protected:
 
   /** the irrklang source */
   boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
+  /** the resource path */
+  boost::filesystem::path path;
 };
 
 

@@ -71,8 +71,8 @@ bool SoundManager::IsManagerStarted() const
 }
 
 /** a generic function to find an object in a list by its name */
-template<typename T>
-static T * FindSoundObject(char const * name, std::vector<boost::intrusive_ptr<T>> & objects)
+template<typename T, typename U>
+static T * FindSoundObject(char const * name, U & objects)
 {
   if (name == nullptr)
     return nullptr;
@@ -104,18 +104,59 @@ SoundSourceBase * SoundManager::FindSoundSource(char const * name)
   return FindSoundObject<SoundSourceBase>(name, sources);
 }
 
+SoundBase const * SoundManager::FindSound(char const * name) const
+{
+  return FindSoundObject<SoundBase>(name, sounds);
+}
+
+SoundCategory const * SoundManager::FindSoundCategory(char const * name) const
+{
+  return FindSoundObject<SoundCategory>(name, categories);
+}
+
+SoundSourceBase const * SoundManager::FindSoundSource(char const * name) const
+{
+  return FindSoundObject<SoundSourceBase>(name, sources);
+}
+
+SoundSourceSimple * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path)
+{
+  size_t count = sources.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    SoundSourceSimple * source_simple = dynamic_cast<SoundSourceSimple *>(sources[i].get());
+    if (source_simple == nullptr)
+      continue;
+    if (source_simple->GetPath() == in_path)
+      return source_simple;
+  }
+  return nullptr;
+}
+
+SoundSourceSimple const * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path) const
+{
+  size_t count = sources.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    SoundSourceSimple const * source_simple = dynamic_cast<SoundSourceSimple const *>(sources[i].get());
+    if (source_simple == nullptr)
+      continue;
+    if (source_simple->GetPath() == in_path)
+      return source_simple;
+  }
+  return nullptr;
+}
+
 bool SoundManager::StartManager()
 {
   // exit if manager is already started
   if (IsManagerStarted())
     return true;
-
   // get the list of all devices
   irrklang_devices = irrklang::createSoundDeviceList();
   if (irrklang_devices == nullptr)
     return false;
   irrklang_devices->drop();
-
   // create the engine
   irrklang_engine = irrklang::createIrrKlangDevice();
   if (irrklang_engine == nullptr)
@@ -144,81 +185,66 @@ bool SoundManager::StopManager()
   return true;
 }
 
-bool SoundManager::AddSource(SoundSourceBase * in_source)
+bool SoundManager::CanAddSource(char const * in_name) const
 {
-  assert(in_source != nullptr);
-
   // manager initialized ?
   if (!IsManagerStarted())
     return false;
-  // already attached to a manager
-  if (in_source->IsAttachedToManager())
+  // name already existing ?
+  if (FindSoundSource(in_name) != nullptr)
     return false;
-
-  // insert and the new source
-  sources.push_back(in_source);
-
   return true;
 }
 
-
-SoundSourceSimple * SoundManager::AddSourceSimple(char const * in_filename, char const * in_name)
+SoundSourceSequence * SoundManager::AddSourceSequence(char const * in_name)
 {
-  assert(in_filename != nullptr);
-
-  // not initialized engine ?
-  if (!IsManagerStarted())
+  // test whether a source with the given name could be inserted
+  if (!CanAddSource(in_name))
     return nullptr;
+  // create the source
+  return DoAddSources(new SoundSourceSequence(), in_name);
+}
 
-  // by default the name of a source is its filepath
-  if (in_name == nullptr) 
-    in_name = in_filename;
-
-  // name already existing ?
-  if (FindSoundSource(in_name) != nullptr) 
+SoundSourceRandom * SoundManager::AddSourceRandom(char const * in_name)
+{
+  // test whether a source with the given name could be inserted
+  if (!CanAddSource(in_name))
     return nullptr;
+  // create the source
+  return DoAddSources(new SoundSourceRandom(), in_name);
+}
 
+SoundSourceSimple * SoundManager::AddSourceSimple(boost::filesystem::path const & in_path)
+{
+  return AddSourceSimple(in_path, in_path.string().c_str());
+}
+
+SoundSourceSimple * SoundManager::AddSourceSimple(boost::filesystem::path const & in_path, char const * in_name)
+{
+  // test whether a source with the given name could be inserted
+  if (!CanAddSource(in_name))
+    return nullptr;
+  // find a simple source with the given path
+  if (FindSimpleSource(in_path) != nullptr)
+    return nullptr;
   // load the file
-  chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(in_filename, false); 
+  chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(in_path, false);
   if (buffer == nullptr)
     return nullptr;
-
-
   // create the source on irrklang side
   // XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-  irrklang::ISoundSource * irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_filename, true);
+  irrklang::ISoundSource * irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_path.string().c_str(), true);
   if (irrklang_source == nullptr)
     return nullptr;
-
-  SoundSourceSimple * result = new SoundSourceSimple();
+  // insert the result
+  SoundSourceSimple * result = DoAddSources(new SoundSourceSimple(), in_name);
   if (result == nullptr)
     return nullptr;
-
-
-
-#if 0
-  SoundSource * result = new SoundSource(this);
-
-
-  if (in_name != nullptr)
-    result->name = in_name;
+  // last initializations
   result->irrklang_source = irrklang_source;
-
-  result->loop_info_ext = result->GetClampedLoopInfoExt(in_loop_info); // clamp the loop info
-
-  // XXX : for unknown reasons, irrklang sound_source must not be drop() 
-  //       (except for additionnal reference counter)
-  //       see comments in headers
-  //
-  // irrklang_source->drop(); 
-
-  sources.push_back(result);
+  result->path = in_path;
 
   return result;
-
-#endif
-
-  return nullptr;
 }
 
 

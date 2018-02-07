@@ -161,10 +161,18 @@ protected:
 
 // ================================================================
 
-
+void truc()
+{}
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+  std::function<void()> f = []() { std::cout << "Hello" << std::endl; };
+
+  f();
+
+  f = &truc;
+
+
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;

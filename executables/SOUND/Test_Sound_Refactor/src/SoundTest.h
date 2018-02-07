@@ -58,6 +58,40 @@ protected:
   virtual void OnSoundFinished(SoundBase * sound);
 };
 
+class SoundCallbacksBind : public SoundCallbacks
+{
+
+protected:
+
+  /** protected constructor */
+  SoundCallbacksBind(std::function<void(SoundBase *)> in_func);
+
+  /** called whenever a sound is finished */
+  virtual void OnSoundFinished(SoundBase * sound);
+
+protected:
+
+  /** the callback function */
+  std::function<void(SoundBase *)> func;
+};
+
+class SoundCallbacksBindNoArg : public SoundCallbacks
+{
+
+protected:
+
+  /** protected constructor */
+  SoundCallbacksBindNoArg(std::function<void()> in_func);
+
+  /** called whenever a sound is finished */
+  virtual void OnSoundFinished(SoundBase * sound);
+
+protected:
+
+  /** the callback function */
+  std::function<void()> func;
+};
+
 class SoundCallbackIrrklangWrapper : public irrklang::ISoundStopEventReceiver
 {
   friend class SoundSimple;

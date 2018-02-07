@@ -40,6 +40,34 @@ void SoundCallbacks::OnSoundFinished(SoundBase * sound)
   assert(sound != nullptr);
 }
 
+                  /* ---------------- */
+
+SoundCallbacksBind::SoundCallbacksBind(std::function<void(SoundBase *)> in_func) :
+  func(in_func)
+{
+}
+
+void SoundCallbacksBind::OnSoundFinished(SoundBase * sound)
+{
+  assert(sound != nullptr);
+  func(sound);
+}
+
+                  /* ---------------- */
+
+SoundCallbacksBindNoArg::SoundCallbacksBindNoArg(std::function<void()> in_func):
+  func(in_func)
+{
+}
+
+void SoundCallbacksBindNoArg::OnSoundFinished(SoundBase * sound)
+{
+  assert(sound != nullptr);
+  func();
+}
+
+                  /* ---------------- */
+
 SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_sound):
   sound(in_sound)
 {

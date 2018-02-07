@@ -592,9 +592,16 @@ SoundBase * SoundSourceBase::GenerateSound()
 
 SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
 {
+  if (!IsAttachedToManager())
+    return nullptr;
+
   SoundBase * result = GenerateSound();
   if (result != nullptr)
   {
+    // initialize the newly created object
+    result->sound_manager = sound_manager;
+
+    // play the sound
     bool completed = result->PlaySound(desc, in_callbacks, enable_callbacks);
     if (completed)
     {

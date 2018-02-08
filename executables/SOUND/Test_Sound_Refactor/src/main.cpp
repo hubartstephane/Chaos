@@ -51,8 +51,24 @@ protected:
     if (button == 0 && action == GLFW_PRESS)
     {
       PlaySoundDesc desc;
+      /*
+      sound1 = source1->PlaySound(desc, 
+        [this]() {
+        sound1 = nullptr; 
+      });
+      */
+
       sound1 = source1->PlaySound(desc);
 
+    }
+
+    if (button == 1 && action == GLFW_PRESS)
+    {
+      if (sound1 != nullptr)
+      {
+        sound1->Stop();
+        sound1 = nullptr;
+      }
     }
 
 #if 0

@@ -60,6 +60,7 @@ protected:
 
 class SoundCallbacksBind : public SoundCallbacks
 {
+  friend class SoundSourceBase;
 
 protected:
 
@@ -77,6 +78,7 @@ protected:
 
 class SoundCallbacksBindNoArg : public SoundCallbacks
 {
+  friend class SoundSourceBase;
 
 protected:
 
@@ -324,6 +326,8 @@ class SoundSimple : public SoundBase
 
 protected:
 
+  virtual ~SoundSimple();
+
   /** protected constructor */
   SoundSimple(class SoundSourceSimple * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
@@ -438,6 +442,11 @@ public:
 
   /** generating and playing a sound */
   SoundBase * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
+  /** generating and playing a sound */
+  SoundBase * PlaySound(PlaySoundDesc const & desc, std::function<void()> func, bool enable_callbacks = true);
+  /** generating and playing a sound */
+  SoundBase * PlaySound(PlaySoundDesc const & desc, std::function<void(SoundBase *)> func, bool enable_callbacks = true);
+
 };
 
                 /* ---------------- */

@@ -414,6 +414,11 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
   assert(in_source != nullptr);
 }
 
+SoundSimple::~SoundSimple()
+{
+
+}
+
 bool SoundSimple::DoPlaySound()
 {
   // test whether the sound may be played
@@ -618,6 +623,15 @@ SoundBase * SoundSourceBase::GenerateSound()
   return nullptr; 
 }
 
+SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, std::function<void()> func, bool enable_callbacks)
+{
+  return PlaySound(desc, new SoundCallbacksBindNoArg(func), enable_callbacks);
+}
+
+SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, std::function<void(SoundBase *)> func, bool enable_callbacks)
+{
+  return PlaySound(desc, new SoundCallbacksBind(func), enable_callbacks);
+}
 SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
 {
   if (!IsAttachedToManager())

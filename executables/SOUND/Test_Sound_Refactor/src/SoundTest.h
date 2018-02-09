@@ -50,7 +50,6 @@ class SoundCallbacks : public chaos::ReferencedObject
 {
   friend class SoundBase;
   friend class SoundSimple;
-  friend class SoundCallbackIrrklangWrapper;
 
 protected:
 
@@ -94,28 +93,7 @@ protected:
   std::function<void()> func;
 };
 
-class SoundCallbackIrrklangWrapper : public irrklang::ISoundStopEventReceiver
-{
-  friend class SoundSimple;
 
-protected:
-
-  /** protected constructor */
-  SoundCallbackIrrklangWrapper(SoundSimple * in_sound);
-
-public:
-
-  /** the destructor */
-  virtual ~SoundCallbackIrrklangWrapper();
-
-  /** the method to override */
-  virtual void OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData) override;
-
-protected:
-
-  /** the sound object concerned */
-  boost::intrusive_ptr<SoundSimple> sound;
-};
 
 // ==============================================================
 // MANAGER
@@ -244,7 +222,7 @@ public:
 protected:
 
   /** the volume */
-  float volume;
+  float volume = 1.0f;
 };
 
 // ==============================================================
@@ -266,7 +244,7 @@ class SoundBase : public SoundManagedVolumeObject
   friend class SoundSourceBase;
   friend class SoundSequence;
   friend class SoundSourceRandom;
-  friend class SoundCallbackIrrklangWrapper;
+  friend class SoundSimpleStopEventReceiver;
 
 public:
 
@@ -291,11 +269,13 @@ public:
   bool IsPaused() const;
   /** get whether the sound is looping */
   bool IsLooping() const;
+  /** get whether the sound is finished */
+  bool IsFinished() const;
 
 protected:
 
   /** accessibility function */
-  virtual void OnSoundFinished();
+  virtual void OnSoundFinished(bool enable_callbacks);
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound();
   /** the method being called from exterior */
@@ -314,11 +294,26 @@ protected:
   /** whether the sound is looping */
   bool looping = false;
 
+  /** whether the sound is finished */
+  bool finished = false;
+
   /** the callbacks that are being called at the end of the sound */
   boost::intrusive_ptr<SoundCallbacks> callbacks;
 };
 
                 /* ---------------- */
+
+class SoundSimpleStopEventReceiver : public irrklang::ISoundStopEventReceiver
+{
+  friend class SoundSimple;
+
+protected:
+
+  /** protected constructor */
+  SoundSimpleStopEventReceiver() = default;
+  /** the method to override */
+  virtual void OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData) override;
+};
 
 class SoundSimple : public SoundBase
 {
@@ -352,6 +347,8 @@ protected:
   boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
   /** the source that generated this object */
   boost::intrusive_ptr<SoundSourceSimple> source;
+  /** the irrklang callback */
+  SoundSimpleStopEventReceiver stop_event;
 };
 
                     /* ---------------- */

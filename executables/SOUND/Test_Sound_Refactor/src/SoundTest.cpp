@@ -66,24 +66,6 @@ void SoundCallbacksBindNoArg::OnSoundFinished(SoundBase * sound)
   func();
 }
 
-                  /* ---------------- */
-
-SoundCallbackIrrklangWrapper::SoundCallbackIrrklangWrapper(SoundSimple * in_sound):
-  sound(in_sound)
-{
-  assert(in_sound != nullptr);
-}
-
-void SoundCallbackIrrklangWrapper::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
-{
-  sound->OnSoundFinished();
-}
-
-SoundCallbackIrrklangWrapper::~SoundCallbackIrrklangWrapper()
-{
-  assert(0);
-}
-
 // ==============================================================
 // MANAGER
 // ==============================================================
@@ -147,32 +129,30 @@ SoundSourceBase const * SoundManager::FindSoundSource(char const * name) const
   return FindSoundObject<SoundSourceBase>(name, sources);
 }
 
-SoundSourceSimple * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path)
+/** a generic function to find an object in a list by its path */
+template<typename T, typename U>
+static T * FindSoundObjectByPath(boost::filesystem::path const & in_path, U & objects)
 {
-  size_t count = sources.size();
+  size_t count = objects.size();
   for (size_t i = 0; i < count; ++i)
   {
-    SoundSourceSimple * source_simple = dynamic_cast<SoundSourceSimple *>(sources[i].get());
-    if (source_simple == nullptr)
+    T * obj = dynamic_cast<SoundSourceSimple *>(objects[i].get());
+    if (obj == nullptr)
       continue;
-    if (source_simple->GetPath() == in_path)
-      return source_simple;
+    if (obj->GetPath() == in_path)
+      return obj;
   }
   return nullptr;
 }
 
+SoundSourceSimple * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path)
+{
+  return FindSoundObjectByPath<SoundSourceSimple>(in_path, sources);
+}
+
 SoundSourceSimple const * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path) const
 {
-  size_t count = sources.size();
-  for (size_t i = 0; i < count; ++i)
-  {
-    SoundSourceSimple const * source_simple = dynamic_cast<SoundSourceSimple const *>(sources[i].get());
-    if (source_simple == nullptr)
-      continue;
-    if (source_simple->GetPath() == in_path)
-      return source_simple;
-  }
-  return nullptr;
+  return FindSoundObjectByPath<SoundSourceSimple>(in_path, sources);
 }
 
 bool SoundManager::StartManager()
@@ -322,9 +302,10 @@ float SoundManagedVolumeObject::GetEffectiveVolume() const
 // SOUND
 // ==============================================================
 
-void SoundBase::OnSoundFinished()
+void SoundBase::OnSoundFinished(bool enable_callbacks)
 {
-  if (callbacks != nullptr)
+  finished = true;
+  if (enable_callbacks && callbacks != nullptr)
     callbacks->OnSoundFinished(this);
 }
 
@@ -347,8 +328,8 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
   // start the sound
   bool completed = DoPlaySound();
   // raise the 'completion event' if necessary
-  if (completed && enable_callbacks)
-    OnSoundFinished();
+  if (completed)
+    OnSoundFinished(enable_callbacks);
   // returns
   return completed;
 }
@@ -376,6 +357,11 @@ bool SoundBase::IsPaused() const
 bool SoundBase::IsLooping() const
 {
   return looping;
+}
+
+bool SoundBase::IsFinished() const
+{
+  return finished;
 }
 
 void SoundBase::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
@@ -406,6 +392,18 @@ void SoundBase::Stop()
 {
 
 }
+                /* ---------------- */
+
+void SoundSimpleStopEventReceiver::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
+{
+  SoundSimple * sound = (SoundSimple*)userData;
+  if (sound != nullptr)
+  {
+    sound->OnSoundFinished(true);
+    sound->SubReference();
+  }
+}
+
                 /* ---------------- */
 
 SoundSimple::SoundSimple(class SoundSourceSimple * in_source) : 
@@ -457,9 +455,11 @@ bool SoundSimple::DoPlaySound()
       sound_effect);
   }
 
-  if (callbacks != nullptr && irrklang_sound != nullptr)
-    irrklang_sound->setSoundStopEventReceiver(new SoundCallbackIrrklangWrapper(this), nullptr);
-
+  if (irrklang_sound != nullptr)
+  {
+    AddReference();
+    irrklang_sound->setSoundStopEventReceiver(&stop_event, this);
+  }
   return (irrklang_sound == nullptr); // error => immediatly finished
 }
 

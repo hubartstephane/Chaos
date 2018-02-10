@@ -35,9 +35,14 @@ void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound
 // CALLBACKS
 // ==============================================================
   
-void SoundCallbacks::OnSoundFinished(SoundBase * sound) 
+void SoundCallbacks::OnSoundFinished(SoundBase * in_sound)
 {
-  assert(sound != nullptr);
+  assert(in_sound != nullptr);
+}
+
+void SoundCallbacks::OnRemovedFromManager(SoundBase * in_sound)
+{
+  assert(in_sound != nullptr);
 }
 
                   /* ---------------- */
@@ -176,15 +181,12 @@ bool SoundManager::StartManager()
 
 bool SoundManager::StopManager()
 {
+  // empty the managed objects list
   DetachAllObjectsFromList(sounds); // destroy sounds first to make other list destructions faster
-  sounds.clear();
-
   DetachAllObjectsFromList(categories);
-  categories.clear();
-
   DetachAllObjectsFromList(sources);
-  sources.clear();
 
+  // clean irrklang resources
   irrklang_devices = nullptr;
   irrklang_engine = nullptr;
 
@@ -194,6 +196,12 @@ bool SoundManager::StopManager()
 void SoundManager::Tick(float delta_time)
 {
   assert(IsManagerStarted());
+
+
+
+
+
+
 
 
 }
@@ -246,7 +254,7 @@ SoundSourceSimple * SoundManager::AddSourceSimple(boost::filesystem::path const 
     return nullptr;
   // create the source on irrklang side
   // XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-  irrklang::ISoundSource * irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_path.string().c_str(), true);
+  boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source = irrklang_engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_path.string().c_str(), true);
   if (irrklang_source == nullptr)
     return nullptr;
   // insert the result
@@ -271,9 +279,9 @@ static size_t GetObjectIndexInVector(T * object, U const & vector)
   return count;
 }
 
-void SoundManager::RemoveSoundCategory(SoundCategory * sound_category)
+void SoundManager::RemoveSoundCategory(SoundCategory * in_category)
 {
-  RemoveSoundCategory(GetObjectIndexInVector(sound_category, categories));
+  RemoveSoundCategory(GetObjectIndexInVector(in_category, categories));
 }
 
 void SoundManager::RemoveSoundCategory(size_t index)
@@ -281,9 +289,9 @@ void SoundManager::RemoveSoundCategory(size_t index)
   DoRemoveSoundObject(index, categories);
 }
 
-void SoundManager::RemoveSound(SoundBase * sound)
+void SoundManager::RemoveSound(SoundBase * in_sound)
 {
-  RemoveSound(GetObjectIndexInVector(sound, sounds));
+  RemoveSound(GetObjectIndexInVector(in_sound, sounds));
 }
 
 void SoundManager::RemoveSound(size_t index)
@@ -291,17 +299,15 @@ void SoundManager::RemoveSound(size_t index)
   DoRemoveSoundObject(index, sounds);
 }
 
-void SoundManager::RemoveSoundSource(SoundSourceBase * source)
+void SoundManager::RemoveSoundSource(SoundSourceBase * in_source)
 {
-  RemoveSoundSource(GetObjectIndexInVector(source, sources));
+  RemoveSoundSource(GetObjectIndexInVector(in_source, sources));
 }
 
 void SoundManager::RemoveSoundSource(size_t index)
 {
   DoRemoveSoundObject(index, sources);
 }
-
-
 
 // ==============================================================
 // MANAGED OBJECT
@@ -334,6 +340,14 @@ void SoundManagedObject::DetachFromManager()
   sound_manager = nullptr;
 }
 
+void SoundManagedObject::RemoveFromManager()
+{
+}
+
+void SoundManagedObject::Tick(float delta_time)
+{
+}
+
 // ==============================================================
 // VOLUME
 // ==============================================================
@@ -350,6 +364,18 @@ float SoundManagedVolumeObject::GetEffectiveVolume() const
   return GetVolume();
 }
 
+void SoundManagedVolumeObject::Tick(float delta_time)
+{
+  SoundManagedObject::Tick(delta_time);
+
+
+
+
+
+
+
+}
+
 // ==============================================================
 // SOUND
 // ==============================================================
@@ -357,7 +383,7 @@ float SoundManagedVolumeObject::GetEffectiveVolume() const
 void SoundCategory::DetachFromManager()
 {
  // sound_manager->DestroyAllSoundPerCategory(this);
-  SoundManagedObject::DetachFromManager();
+  SoundManagedVolumeObject::DetachFromManager();
 }
 
 void SoundCategory::RemoveFromManager()
@@ -366,6 +392,14 @@ void SoundCategory::RemoveFromManager()
   sound_manager->RemoveSoundCategory(this);
 }
 
+void SoundCategory::Tick(float delta_time)
+{
+  SoundManagedVolumeObject::Tick(delta_time);
+
+
+
+
+}
 
 // ==============================================================
 // SOUND
@@ -376,6 +410,18 @@ void SoundBase::OnSoundFinished(bool enable_callbacks)
   finished = true;
   if (enable_callbacks && callbacks != nullptr)
     callbacks->OnSoundFinished(this);
+}
+
+void SoundBase::Tick(float delta_time)
+{
+  SoundManagedVolumeObject::Tick(delta_time);
+
+
+
+
+
+
+
 }
 
 bool SoundBase::DoPlaySound()

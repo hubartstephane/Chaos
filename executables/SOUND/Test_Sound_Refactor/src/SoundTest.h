@@ -53,7 +53,7 @@ protected:
   /** called whenever a sound is finished */
   virtual void OnSoundFinished(SoundBase * in_sound);
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromManager(class SoundBase * in_sound) {}
+  virtual void OnRemovedFromManager(class SoundBase * in_sound);
 };
 
 class SoundCallbacksBind : public SoundCallbacks
@@ -163,11 +163,11 @@ protected:
   }
 
   /** remove a category from the list */
-  void RemoveSoundCategory(class SoundCategory * sound_category);
+  void RemoveSoundCategory(class SoundCategory * in_category);
   /** remove a sound from the list */
-  void RemoveSound(class SoundBase * sound);
+  void RemoveSound(class SoundBase * in_sound);
   /** remove a sound source from the list */
-  void RemoveSoundSource(class SoundSourceBase * source);
+  void RemoveSoundSource(class SoundSourceBase * in_source);
 
   /** remove a category from the list */
   void RemoveSoundCategory(size_t index);
@@ -250,7 +250,9 @@ protected:
   /** unbind from manager */
   virtual void DetachFromManager();
   /** remove element from manager list and detach it */
-  virtual void RemoveFromManager() {};
+  virtual void RemoveFromManager();
+  /** tick the sounds */
+  virtual void Tick(float delta_time);
 
 protected:
 
@@ -266,6 +268,7 @@ protected:
 
 class SoundManagedVolumeObject : public SoundManagedObject
 {
+  friend class SoundManager;
 
 public:
 
@@ -273,6 +276,11 @@ public:
   float GetVolume() const;
   /** get the final volume for the sound (category and blendings taken into account) */
   virtual float GetEffectiveVolume() const;
+
+protected:
+
+  /** tick the sounds */
+  virtual void Tick(float delta_time) override;
 
 protected:
 
@@ -294,6 +302,8 @@ protected:
   virtual void DetachFromManager() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager() override;
+  /** tick the sounds */
+  virtual void Tick(float delta_time) override;
 };
 
 // ==============================================================
@@ -302,11 +312,12 @@ protected:
 
 class SoundBase : public SoundManagedVolumeObject
 {
-  friend class SoundManager;
+
   friend class SoundSourceBase;
   friend class SoundSequence;
   friend class SoundSourceRandom;
   friend class SoundSimpleStopEventReceiver;
+  friend class SoundManager;
 
 public:
 
@@ -344,6 +355,8 @@ protected:
   virtual void DetachFromManager() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager() override;
+  /** tick the sounds */
+  virtual void Tick(float delta_time) override;
   /** the method being called from exterior */
   bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
 
@@ -502,7 +515,6 @@ protected:
 
 class SoundSourceBase : public SoundManagedObject
 {
-
   friend class SoundManager;
 
 protected:

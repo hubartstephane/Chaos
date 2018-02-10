@@ -4,9 +4,6 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/IrrklangTools.h>
 
-
-
-
 // ==============================================================
 // DESC
 // ==============================================================
@@ -54,7 +51,9 @@ class SoundCallbacks : public chaos::ReferencedObject
 protected:
 
   /** called whenever a sound is finished */
-  virtual void OnSoundFinished(SoundBase * sound);
+  virtual void OnSoundFinished(SoundBase * in_sound);
+  /** called whenever an object is removed from manager */
+  virtual void OnRemovedFromManager(class SoundBase * in_sound) {}
 };
 
 class SoundCallbacksBind : public SoundCallbacks
@@ -65,7 +64,6 @@ protected:
 
   /** protected constructor */
   SoundCallbacksBind(std::function<void(SoundBase *)> in_func);
-
   /** called whenever a sound is finished */
   virtual void OnSoundFinished(SoundBase * sound);
 
@@ -83,7 +81,6 @@ protected:
 
   /** protected constructor */
   SoundCallbacksBindNoArg(std::function<void()> in_func);
-
   /** called whenever a sound is finished */
   virtual void OnSoundFinished(SoundBase * sound);
 
@@ -101,6 +98,10 @@ protected:
 
 class SoundManager : public chaos::ReferencedObject
 {
+  friend class SoundBase;
+  friend class SoundSourceBase;
+  friend class SoundCategory;
+
 public:
 
   /** getter on the irrklang engine */
@@ -112,6 +113,9 @@ public:
   bool StopManager();
   /** returns whether the manager is correctly started */
   bool IsManagerStarted() const;
+
+  /** tick the manager */
+  virtual void Tick(float delta_time);
 
   /** find a sound by its name */
   class SoundBase * FindSound(char const * name);
@@ -158,6 +162,50 @@ protected:
     return in_source;
   }
 
+  /** remove a category from the list */
+  void RemoveSoundCategory(class SoundCategory * sound_category);
+  /** remove a sound from the list */
+  void RemoveSound(class SoundBase * sound);
+  /** remove a sound source from the list */
+  void RemoveSoundSource(class SoundSourceBase * source);
+
+  /** remove a category from the list */
+  void RemoveSoundCategory(size_t index);
+  /** remove a sound from the list */
+  void RemoveSound(size_t index);
+  /** remove a sound source from the list */
+  void RemoveSoundSource(size_t index);
+
+  /** utility function to remove a sound object from a list */
+  template<typename T>
+  void DoRemoveSoundObject(size_t index, T & vector)
+  {
+    size_t count = vector.size();
+    if (index >= count)
+      return;
+
+    vector[index]->DetachFromManager(); // order is important because next operation could destroy the object
+
+    if (index != count - 1)
+      vector[index] = vector[count - 1];
+    vector.pop_back();
+  }
+
+  /** detach all elements from a list */
+  template<typename T>
+  void DetachAllObjectsFromList(T & v)
+  {
+    size_t count = v.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      auto obj = v[i].get();
+      if (obj == nullptr)
+        continue;
+      obj->DetachFromManager();
+    }
+    v.clear();
+  }
+
 protected:
 
   /** all detected devices */
@@ -199,6 +247,13 @@ public:
 
 protected:
 
+  /** unbind from manager */
+  virtual void DetachFromManager();
+  /** remove element from manager list and detach it */
+  virtual void RemoveFromManager() {};
+
+protected:
+
   /* the name */
   std::string name;
   /** the irrklank engine */
@@ -231,8 +286,14 @@ protected:
 
 class SoundCategory : public SoundManagedVolumeObject
 {
+  friend class SoundManager;
 
+protected:
 
+  /** unbind from manager */
+  virtual void DetachFromManager() override;
+  /** remove element from manager list and detach it */
+  virtual void RemoveFromManager() override;
 };
 
 // ==============================================================
@@ -241,6 +302,7 @@ class SoundCategory : public SoundManagedVolumeObject
 
 class SoundBase : public SoundManagedVolumeObject
 {
+  friend class SoundManager;
   friend class SoundSourceBase;
   friend class SoundSequence;
   friend class SoundSourceRandom;
@@ -278,6 +340,10 @@ protected:
   virtual void OnSoundFinished(bool enable_callbacks);
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound();
+  /** unbind from manager */
+  virtual void DetachFromManager() override;
+  /** remove element from manager list and detach it */
+  virtual void RemoveFromManager() override;
   /** the method being called from exterior */
   bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
 
@@ -310,9 +376,14 @@ class SoundSimpleStopEventReceiver : public irrklang::ISoundStopEventReceiver
 protected:
 
   /** protected constructor */
-  SoundSimpleStopEventReceiver() = default;
+  SoundSimpleStopEventReceiver(SoundSimple * in_sound);
   /** the method to override */
   virtual void OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData) override;
+
+protected:
+
+  /** pointer on the sound concerned */
+  SoundSimple * sound = nullptr;
 };
 
 class SoundSimple : public SoundBase
@@ -325,6 +396,8 @@ protected:
 
   /** protected constructor */
   SoundSimple(class SoundSourceSimple * in_source);
+  /** unbind from manager */
+  virtual void DetachFromManager() override;
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound() override;
  
@@ -348,7 +421,7 @@ protected:
   /** the source that generated this object */
   boost::intrusive_ptr<SoundSourceSimple> source;
   /** the irrklang callback */
-  SoundSimpleStopEventReceiver stop_event;
+  SoundSimpleStopEventReceiver * stop_event = nullptr;
 };
 
                     /* ---------------- */
@@ -430,6 +503,8 @@ protected:
 class SoundSourceBase : public SoundManagedObject
 {
 
+  friend class SoundManager;
+
 protected:
 
   /** the sound generation method */
@@ -443,6 +518,13 @@ public:
   SoundBase * PlaySound(PlaySoundDesc const & desc, std::function<void()> func, bool enable_callbacks = true);
   /** generating and playing a sound */
   SoundBase * PlaySound(PlaySoundDesc const & desc, std::function<void(SoundBase *)> func, bool enable_callbacks = true);
+
+protected:
+
+  /** unbind from manager */
+  virtual void DetachFromManager() override;
+  /** remove element from manager list and detach it */
+  virtual void RemoveFromManager() override;
 
 };
 
@@ -462,6 +544,8 @@ protected:
 
   /** generating a source object */
   virtual SoundBase * GenerateSound() override;
+  /** unbind from manager */
+  virtual void DetachFromManager() override;
 
 protected:
 

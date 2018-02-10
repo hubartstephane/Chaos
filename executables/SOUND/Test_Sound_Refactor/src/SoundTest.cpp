@@ -176,7 +176,6 @@ bool SoundManager::StartManager()
 
 bool SoundManager::StopManager()
 {
-#if 0
   DetachAllObjectsFromList(sounds); // destroy sounds first to make other list destructions faster
   sounds.clear();
 
@@ -185,12 +184,18 @@ bool SoundManager::StopManager()
 
   DetachAllObjectsFromList(sources);
   sources.clear();
-#endif
 
   irrklang_devices = nullptr;
   irrklang_engine = nullptr;
 
   return true;
+}
+
+void SoundManager::Tick(float delta_time)
+{
+  assert(IsManagerStarted());
+
+
 }
 
 bool SoundManager::CanAddSource(char const * in_name) const
@@ -255,6 +260,47 @@ SoundSourceSimple * SoundManager::AddSourceSimple(boost::filesystem::path const 
   return result;
 }
 
+template<typename T, typename U>
+static size_t GetObjectIndexInVector(T * object, U const & vector)
+{
+  assert(object != nullptr);
+  size_t count = vector.size();
+  for (size_t i = 0; i < count; ++i)
+    if (vector[i].get() == object)
+      return i;
+  return count;
+}
+
+void SoundManager::RemoveSoundCategory(SoundCategory * sound_category)
+{
+  RemoveSoundCategory(GetObjectIndexInVector(sound_category, categories));
+}
+
+void SoundManager::RemoveSoundCategory(size_t index)
+{
+  DoRemoveSoundObject(index, categories);
+}
+
+void SoundManager::RemoveSound(SoundBase * sound)
+{
+  RemoveSound(GetObjectIndexInVector(sound, sounds));
+}
+
+void SoundManager::RemoveSound(size_t index)
+{
+  DoRemoveSoundObject(index, sounds);
+}
+
+void SoundManager::RemoveSoundSource(SoundSourceBase * source)
+{
+  RemoveSoundSource(GetObjectIndexInVector(source, sources));
+}
+
+void SoundManager::RemoveSoundSource(size_t index)
+{
+  DoRemoveSoundObject(index, sources);
+}
+
 
 
 // ==============================================================
@@ -282,6 +328,12 @@ irrklang::ISoundEngine * SoundManagedObject::GetIrrklangEngine()
   return nullptr;
 }
 
+void SoundManagedObject::DetachFromManager()
+{
+  assert(IsAttachedToManager());
+  sound_manager = nullptr;
+}
+
 // ==============================================================
 // VOLUME
 // ==============================================================
@@ -297,6 +349,23 @@ float SoundManagedVolumeObject::GetEffectiveVolume() const
 {
   return GetVolume();
 }
+
+// ==============================================================
+// SOUND
+// ==============================================================
+
+void SoundCategory::DetachFromManager()
+{
+ // sound_manager->DestroyAllSoundPerCategory(this);
+  SoundManagedObject::DetachFromManager();
+}
+
+void SoundCategory::RemoveFromManager()
+{
+  assert(IsAttachedToManager());
+  sound_manager->RemoveSoundCategory(this);
+}
+
 
 // ==============================================================
 // SOUND
@@ -332,6 +401,20 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
     OnSoundFinished(enable_callbacks);
   // returns
   return completed;
+}
+
+void SoundBase::RemoveFromManager()
+{
+  assert(IsAttachedToManager());
+  sound_manager->RemoveSound(this);
+}
+
+void SoundBase::DetachFromManager()
+{
+  assert(IsAttachedToManager());
+  if (callbacks != nullptr)
+    callbacks->OnRemovedFromManager(this);
+  SoundManagedObject::DetachFromManager();
 }
 
 bool SoundBase::IsSound3D() const
@@ -394,13 +477,19 @@ void SoundBase::Stop()
 }
                 /* ---------------- */
 
+SoundSimpleStopEventReceiver::SoundSimpleStopEventReceiver(SoundSimple * in_sound) :
+  sound(in_sound)
+{
+  assert(in_sound != nullptr);
+}
+
 void SoundSimpleStopEventReceiver::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
 {
-  SoundSimple * sound = (SoundSimple*)userData;
   if (sound != nullptr)
   {
     sound->OnSoundFinished(true);
-    sound->SubReference();
+    sound = nullptr;
+    delete(this);
   }
 }
 
@@ -414,7 +503,8 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
 
 SoundSimple::~SoundSimple()
 {
-
+  if (stop_event != nullptr)
+    stop_event->sound = nullptr;
 }
 
 bool SoundSimple::DoPlaySound()
@@ -457,8 +547,9 @@ bool SoundSimple::DoPlaySound()
 
   if (irrklang_sound != nullptr)
   {
-    AddReference();
-    irrklang_sound->setSoundStopEventReceiver(&stop_event, this);
+    stop_event = new SoundSimpleStopEventReceiver(this);
+    if (stop_event != nullptr)
+      irrklang_sound->setSoundStopEventReceiver(stop_event, nullptr);
   }
   return (irrklang_sound == nullptr); // error => immediatly finished
 }
@@ -501,6 +592,16 @@ void SoundSimple::Stop()
   SoundBase::Stop();
   if (irrklang_sound != nullptr)
     irrklang_sound->stop();
+}
+
+void SoundSimple::DetachFromManager()
+{
+  if (irrklang_sound != nullptr) // destroy the sound
+  {
+    irrklang_sound->stop();
+    irrklang_sound = nullptr;
+  }
+  SoundBase::DetachFromManager();
 }
                         /* ---------------- */
 
@@ -654,11 +755,39 @@ SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, SoundCallback
   return result;
 }
 
+void SoundSourceBase::DetachFromManager()
+{
+ // sound_manager->DestroyAllSoundPerSource(this);
+
+  SoundManagedObject::DetachFromManager();
+}
+
+void SoundSourceBase::RemoveFromManager()
+{
+  assert(IsAttachedToManager());
+  sound_manager->RemoveSoundSource(this);
+}
+
                 /* ---------------- */
 
 SoundBase * SoundSourceSimple::GenerateSound()
 {
   return new SoundSimple(this);
+}
+
+void SoundSourceSimple::DetachFromManager()
+{
+  // sound_manager->DestroyAllSoundPerSource(this);
+
+  if (irrklang_source != nullptr)
+  {
+    irrklang::ISoundEngine * irrklang_engine = GetIrrklangEngine();
+    if (irrklang_engine != nullptr)
+      irrklang_engine->removeSoundSource(irrklang_source.get());
+    irrklang_source = nullptr;
+  }
+
+  SoundSourceBase::DetachFromManager();
 }
 
                 /* ---------------- */

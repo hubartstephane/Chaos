@@ -275,6 +275,8 @@ protected:
   virtual void DetachFromManager();
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager();
+  /** get whether the sound is finished */
+  bool IsFinished() const;
   /** tick the sounds */
   virtual void Tick(float delta_time);
 
@@ -284,6 +286,8 @@ protected:
   std::string name;
   /** the irrklank engine */
   boost::intrusive_ptr<SoundManager> sound_manager;
+  /** whether the sound is finished */
+  bool finished = false;
 };
 
 // ==============================================================
@@ -365,8 +369,6 @@ public:
   bool IsPaused() const;
   /** get whether the sound is looping */
   bool IsLooping() const;
-  /** get whether the sound is finished */
-  bool IsFinished() const;
 
 protected:
 
@@ -395,9 +397,6 @@ protected:
   bool paused = false;
   /** whether the sound is looping */
   bool looping = false;
-
-  /** whether the sound is finished */
-  bool finished = false;
 
   /** the callbacks that are being called at the end of the sound */
   boost::intrusive_ptr<SoundCallbacks> callbacks;

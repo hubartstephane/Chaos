@@ -172,7 +172,7 @@ void SoundManager::Tick(float delta_time)
   if (!IsManagerStarted())
     return;
 
-#if 0
+#if 1
 
   // tick all categories
   for (size_t i = categories.size(); i > 0; --i)
@@ -191,6 +191,9 @@ void SoundManager::Tick(float delta_time)
       RemoveSoundCategory(index);
     }
   }
+
+#endif
+#if 0
 
   // tick all sounds
   for (size_t i = sounds.size(); i > 0; --i)
@@ -400,6 +403,12 @@ void SoundManagedObject::Tick(float delta_time)
 {
 }
 
+bool SoundManagedObject::IsFinished() const
+{
+  return finished;
+}
+
+
 // ==============================================================
 // VOLUME
 // ==============================================================
@@ -541,11 +550,6 @@ bool Sound::IsPaused() const
 bool Sound::IsLooping() const
 {
   return looping;
-}
-
-bool Sound::IsFinished() const
-{
-  return finished;
 }
 
 void Sound::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)

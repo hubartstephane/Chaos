@@ -39,10 +39,7 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-#if 0
     sound_manager->Tick((float)delta_time);
-#endif
-
     return false; // no redraw
   }
 
@@ -158,7 +155,7 @@ protected:
 
   boost::intrusive_ptr<SoundSourceSimple> source3;
 
-  boost::intrusive_ptr<SoundBase> sound1;
+  boost::intrusive_ptr<Sound> sound1;
 #if 0
   boost::intrusive_ptr<chaos::SoundCategory> category1;
 #endif
@@ -180,8 +177,28 @@ protected:
 void truc()
 {}
 
+//void set(std::function<void()> && h, )
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
+  std::string ss1;
+  std::string ss2;
+
+  char const * aa1 = ss1.c_str();
+  char const * aa2 = ss2.c_str();
+
+
+  std::function<void()> gg;
+
+  gg = &truc;
+  gg();  
+  gg = nullptr;
+  if (gg)
+    gg();
+
+
+
   std::function<void()> f = []() { std::cout << "Hello" << std::endl; };
 
   f();

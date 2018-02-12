@@ -32,11 +32,27 @@ public:
   glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
   /** the velocity of the sound in 3D */
   glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the name of the sound object to create */
+  std::string sound_name;
+  /** the name of the category ... */
+  std::string category_name;
+  /** ... or a pointer on the category */
+  class SoundCategory * category = nullptr;
 
 protected:
 
   /** returns true whether the sound is in 3D */
   bool is_3D_sound = false;
+};
+
+class TickDesc
+{
+public:
+
+  /** the delta time */
+  float delta_time = 0.0f;
+  /** the cumulated volume */
+
 };
 
 // ==============================================================
@@ -45,52 +61,53 @@ protected:
 
 class SoundCallbacks : public chaos::ReferencedObject
 {
-  friend class SoundBase;
+  friend class Sound;
   friend class SoundSimple;
 
 protected:
 
   /** called whenever a sound is finished */
-  virtual void OnSoundFinished(SoundBase * in_sound);
+  virtual void OnSoundFinished(Sound * in_sound);
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromManager(class SoundBase * in_sound);
+  virtual void OnRemovedFromManager(Sound * in_sound);
 };
 
-class SoundCallbacksBind : public SoundCallbacks
+class SoundAutoCallbacks : public SoundCallbacks
 {
-  friend class SoundSourceBase;
+public:
+
+  /** default constructor */
+  SoundAutoCallbacks() = default;
+  /** assignation constructor */
+  template<typename U, typename V>
+  SoundAutoCallbacks(U & in_finished, V & in_removed) :
+    sound_finished_func(in_finished),
+    removed_from_manager_func(in_removed)
+  {
+  }
 
 protected:
 
-  /** protected constructor */
-  SoundCallbacksBind(std::function<void(SoundBase *)> in_func);
   /** called whenever a sound is finished */
-  virtual void OnSoundFinished(SoundBase * sound);
+  virtual void OnSoundFinished(Sound * in_sound) override
+  {
+    if (sound_finished_func)
+      sound_finished_func(in_sound);
+  }
+  /** called whenever an object is removed from manager */
+  virtual void OnRemovedFromManager(Sound * in_sound) override
+  {
+    if (removed_from_manager_func)
+      removed_from_manager_func(in_sound);
+  }
 
-protected:
+public:
 
-  /** the callback function */
-  std::function<void(SoundBase *)> func;
+  /** the callbacks function */
+  std::function<void(Sound *)> sound_finished_func;
+  /** the callbacks function */
+  std::function<void(Sound *)> removed_from_manager_func;
 };
-
-class SoundCallbacksBindNoArg : public SoundCallbacks
-{
-  friend class SoundSourceBase;
-
-protected:
-
-  /** protected constructor */
-  SoundCallbacksBindNoArg(std::function<void()> in_func);
-  /** called whenever a sound is finished */
-  virtual void OnSoundFinished(SoundBase * sound);
-
-protected:
-
-  /** the callback function */
-  std::function<void()> func;
-};
-
-
 
 // ==============================================================
 // MANAGER
@@ -98,8 +115,8 @@ protected:
 
 class SoundManager : public chaos::ReferencedObject
 {
-  friend class SoundBase;
-  friend class SoundSourceBase;
+  friend class Sound;
+  friend class SoundSource;
   friend class SoundCategory;
 
 public:
@@ -118,23 +135,23 @@ public:
   virtual void Tick(float delta_time);
 
   /** find a sound by its name */
-  class SoundBase * FindSound(char const * name);
+  class Sound * FindSound(char const * name);
   /** find a category by its name */
   class SoundCategory * FindSoundCategory(char const * name);
   /** find a source by its name */
-  class SoundSourceBase * FindSoundSource(char const * name);
+  class SoundSource * FindSoundSource(char const * name);
 
   /** find a sound by its name */
-  class SoundBase const * FindSound(char const * name) const;
+  class Sound const * FindSound(char const * name) const;
   /** find a category by its name */
   class SoundCategory const * FindSoundCategory(char const * name) const;
   /** find a source by its name */
-  class SoundSourceBase const * FindSoundSource(char const * name) const;
+  class SoundSource const * FindSoundSource(char const * name) const;
 
   /** find a simple source by its path */
-  class SoundSourceSimple * FindSimpleSource(boost::filesystem::path const & in_path);
+  class SoundSourceSimple * FindSourceSimple(boost::filesystem::path const & in_path);
   /** find a simple source by its path */
-  class SoundSourceSimple const * FindSimpleSource(boost::filesystem::path const & in_path) const;
+  class SoundSourceSimple const * FindSourceSimple(boost::filesystem::path const & in_path) const;
 
   /** load and add a simple source inside the manager (name is a copy of filename) */
   SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path);
@@ -145,10 +162,17 @@ public:
   /** add a random inside the manager */
   class SoundSourceRandom * AddSourceRandom(char const * in_name);
 
+  /** add a category inside the manager */
+  class SoundCategory * AddSourceCategory(char const * in_name);
+
 protected:
 
+  /** test whether a sound with given name could be inserted in the manager */
+  bool CanAddSound(char const * in_name) const;
   /** test whether a source with given name could be inserted in the manager */
   bool CanAddSource(char const * in_name) const;
+  /** test whether a category with given name could be inserted in the manager */
+  bool CanAddCategory(char const * in_name) const;
   /** simple method to initialize and insert a source */
   template<typename T> 
   T * DoAddSources(T * in_source, char const * in_name)
@@ -165,9 +189,9 @@ protected:
   /** remove a category from the list */
   void RemoveSoundCategory(class SoundCategory * in_category);
   /** remove a sound from the list */
-  void RemoveSound(class SoundBase * in_sound);
+  void RemoveSound(class Sound * in_sound);
   /** remove a sound source from the list */
-  void RemoveSoundSource(class SoundSourceBase * in_source);
+  void RemoveSoundSource(class SoundSource * in_source);
 
   /** remove a category from the list */
   void RemoveSoundCategory(size_t index);
@@ -216,9 +240,9 @@ protected:
   /** the categories */
   std::vector<boost::intrusive_ptr<class SoundCategory>> categories;
   /** the sounds */
-  std::vector<boost::intrusive_ptr<class SoundBase>> sounds;
+  std::vector<boost::intrusive_ptr<class Sound>> sounds;
   /** the sources */
-  std::vector<boost::intrusive_ptr<class SoundSourceBase>> sources;
+  std::vector<boost::intrusive_ptr<class SoundSource>> sources;
 };
 
 // ==============================================================
@@ -310,13 +334,12 @@ protected:
 // SOUND
 // ==============================================================
 
-class SoundBase : public SoundManagedVolumeObject
+class Sound : public SoundManagedVolumeObject
 {
 
-  friend class SoundSourceBase;
+  friend class SoundSource;
   friend class SoundSequence;
   friend class SoundSourceRandom;
-  friend class SoundSimpleStopEventReceiver;
   friend class SoundManager;
 
 public:
@@ -378,28 +401,14 @@ protected:
 
   /** the callbacks that are being called at the end of the sound */
   boost::intrusive_ptr<SoundCallbacks> callbacks;
+
+  /** the category of the sound */
+  class SoundCategory * category = nullptr;
 };
 
                 /* ---------------- */
 
-class SoundSimpleStopEventReceiver : public irrklang::ISoundStopEventReceiver
-{
-  friend class SoundSimple;
-
-protected:
-
-  /** protected constructor */
-  SoundSimpleStopEventReceiver(SoundSimple * in_sound);
-  /** the method to override */
-  virtual void OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData) override;
-
-protected:
-
-  /** pointer on the sound concerned */
-  SoundSimple * sound = nullptr;
-};
-
-class SoundSimple : public SoundBase
+class SoundSimple : public Sound
 {
   friend class SoundSourceSimple;
 
@@ -433,13 +442,11 @@ protected:
   boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
   /** the source that generated this object */
   boost::intrusive_ptr<SoundSourceSimple> source;
-  /** the irrklang callback */
-  SoundSimpleStopEventReceiver * stop_event = nullptr;
 };
 
                     /* ---------------- */
 
-class SoundComposite : public SoundBase
+class SoundComposite : public Sound
 {
   friend class SoundSourceSequence;
   friend class SoundCompositeCallbacks;
@@ -463,7 +470,7 @@ protected:
 protected:
 
   /** the sound that is currently being played */
-  boost::intrusive_ptr<SoundBase> current_sound;
+  boost::intrusive_ptr<Sound> current_sound;
   /** the source composite that generated this object */
   boost::intrusive_ptr<SoundSourceComposite> source;
 };
@@ -478,7 +485,7 @@ protected:
   /** protected constructor */
   SoundCompositeCallbacks(SoundComposite * in_sound);
   /** called whenever a sound is finished */
-  virtual void OnSoundFinished(SoundBase * sound) override;
+  virtual void OnSoundFinished(Sound * sound) override;
 
 protected:
 
@@ -513,23 +520,19 @@ protected:
 // SOURCES
 // ==============================================================
 
-class SoundSourceBase : public SoundManagedObject
+class SoundSource : public SoundManagedObject
 {
   friend class SoundManager;
 
 protected:
 
   /** the sound generation method */
-  virtual SoundBase * GenerateSound();
+  virtual Sound * GenerateSound();
 
 public:
 
   /** generating and playing a sound */
-  SoundBase * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
-  /** generating and playing a sound */
-  SoundBase * PlaySound(PlaySoundDesc const & desc, std::function<void()> func, bool enable_callbacks = true);
-  /** generating and playing a sound */
-  SoundBase * PlaySound(PlaySoundDesc const & desc, std::function<void(SoundBase *)> func, bool enable_callbacks = true);
+  Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
 
 protected:
 
@@ -542,7 +545,7 @@ protected:
 
                 /* ---------------- */
 
-class SoundSourceSimple : public SoundSourceBase
+class SoundSourceSimple : public SoundSource
 {
   friend class SoundSimple;
   friend class SoundManager;
@@ -555,7 +558,7 @@ public:
 protected:
 
   /** generating a source object */
-  virtual SoundBase * GenerateSound() override;
+  virtual Sound * GenerateSound() override;
   /** unbind from manager */
   virtual void DetachFromManager() override;
 
@@ -570,19 +573,19 @@ protected:
 
                 /* ---------------- */
 
-class SoundSourceComposite : public SoundSourceBase
+class SoundSourceComposite : public SoundSource
 {
   friend class SoundSequence;
 
 public:
 
   /** add some source */
-  void AddChildSource(SoundSourceBase * in_source);
+  void AddChildSource(SoundSource * in_source);
 
 protected:
 
   /** child sources */
-  std::vector<boost::intrusive_ptr<SoundSourceBase>> child_sources;
+  std::vector<boost::intrusive_ptr<SoundSource>> child_sources;
 };
 
 
@@ -596,7 +599,7 @@ class SoundSourceSequence : public SoundSourceComposite
 protected:
 
   /** generating a source object */
-  virtual SoundBase * GenerateSound() override;
+  virtual Sound * GenerateSound() override;
 };
 
 

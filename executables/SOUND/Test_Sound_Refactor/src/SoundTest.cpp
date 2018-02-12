@@ -35,40 +35,14 @@ void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound
 // CALLBACKS
 // ==============================================================
   
-void SoundCallbacks::OnSoundFinished(SoundBase * in_sound)
+void SoundCallbacks::OnSoundFinished(Sound * in_sound)
 {
   assert(in_sound != nullptr);
 }
 
-void SoundCallbacks::OnRemovedFromManager(SoundBase * in_sound)
+void SoundCallbacks::OnRemovedFromManager(Sound * in_sound)
 {
   assert(in_sound != nullptr);
-}
-
-                  /* ---------------- */
-
-SoundCallbacksBind::SoundCallbacksBind(std::function<void(SoundBase *)> in_func) :
-  func(in_func)
-{
-}
-
-void SoundCallbacksBind::OnSoundFinished(SoundBase * sound)
-{
-  assert(sound != nullptr);
-  func(sound);
-}
-
-                  /* ---------------- */
-
-SoundCallbacksBindNoArg::SoundCallbacksBindNoArg(std::function<void()> in_func):
-  func(in_func)
-{
-}
-
-void SoundCallbacksBindNoArg::OnSoundFinished(SoundBase * sound)
-{
-  assert(sound != nullptr);
-  func();
 }
 
 // ==============================================================
@@ -104,9 +78,9 @@ static T * FindSoundObject(char const * name, U & objects)
   return nullptr;
 }
 
-SoundBase * SoundManager::FindSound(char const * name)
+Sound * SoundManager::FindSound(char const * name)
 {
-  return FindSoundObject<SoundBase>(name, sounds);
+  return FindSoundObject<Sound>(name, sounds);
 }
 
 SoundCategory * SoundManager::FindSoundCategory(char const * name)
@@ -114,14 +88,14 @@ SoundCategory * SoundManager::FindSoundCategory(char const * name)
   return FindSoundObject<SoundCategory>(name, categories);
 }
 
-SoundSourceBase * SoundManager::FindSoundSource(char const * name)
+SoundSource * SoundManager::FindSoundSource(char const * name)
 {
-  return FindSoundObject<SoundSourceBase>(name, sources);
+  return FindSoundObject<SoundSource>(name, sources);
 }
 
-SoundBase const * SoundManager::FindSound(char const * name) const
+Sound const * SoundManager::FindSound(char const * name) const
 {
-  return FindSoundObject<SoundBase>(name, sounds);
+  return FindSoundObject<Sound>(name, sounds);
 }
 
 SoundCategory const * SoundManager::FindSoundCategory(char const * name) const
@@ -129,9 +103,9 @@ SoundCategory const * SoundManager::FindSoundCategory(char const * name) const
   return FindSoundObject<SoundCategory>(name, categories);
 }
 
-SoundSourceBase const * SoundManager::FindSoundSource(char const * name) const
+SoundSource const * SoundManager::FindSoundSource(char const * name) const
 {
-  return FindSoundObject<SoundSourceBase>(name, sources);
+  return FindSoundObject<SoundSource>(name, sources);
 }
 
 /** a generic function to find an object in a list by its path */
@@ -150,12 +124,12 @@ static T * FindSoundObjectByPath(boost::filesystem::path const & in_path, U & ob
   return nullptr;
 }
 
-SoundSourceSimple * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path)
+SoundSourceSimple * SoundManager::FindSourceSimple(boost::filesystem::path const & in_path)
 {
   return FindSoundObjectByPath<SoundSourceSimple>(in_path, sources);
 }
 
-SoundSourceSimple const * SoundManager::FindSimpleSource(boost::filesystem::path const & in_path) const
+SoundSourceSimple const * SoundManager::FindSourceSimple(boost::filesystem::path const & in_path) const
 {
   return FindSoundObjectByPath<SoundSourceSimple>(in_path, sources);
 }
@@ -195,7 +169,48 @@ bool SoundManager::StopManager()
 
 void SoundManager::Tick(float delta_time)
 {
-  assert(IsManagerStarted());
+  if (!IsManagerStarted())
+    return;
+
+#if 0
+
+  // tick all categories
+  for (size_t i = categories.size(); i > 0; --i)
+  {
+    size_t index = i - 1;
+
+    SoundCategory * category = categories[index].get();
+    if (category == nullptr)
+      continue;
+    category->Tick(delta_time);
+
+    if (category->IsFinished())
+    {
+      if (category->callbacks != nullptr)
+        category->callbacks->OnFinished(category);
+      RemoveSoundCategory(index);
+    }
+  }
+
+  // tick all sounds
+  for (size_t i = sounds.size(); i > 0; --i)
+  {
+    size_t index = i - 1;
+
+    Sound * sound = sounds[index].get();
+    if (sound == nullptr)
+      continue;
+    sound->Tick(delta_time);
+
+    if (sound->IsFinished())
+    {
+      if (sound->callbacks != nullptr)
+        sound->callbacks->OnFinished(sound);
+      RemoveSound(index);
+    }
+  }
+
+#endif
 
 
 
@@ -206,13 +221,35 @@ void SoundManager::Tick(float delta_time)
 
 }
 
+bool SoundManager::CanAddSound(char const * in_name) const
+{
+  // manager initialized ?
+  if (!IsManagerStarted())
+    return false;
+  // name already existing ?
+  if (in_name != nullptr && FindSound(in_name) != nullptr)
+    return false;
+  return true;
+}
+
+bool SoundManager::CanAddCategory(char const * in_name) const
+{
+  // manager initialized ?
+  if (!IsManagerStarted())
+    return false;
+  // name already existing ?
+  if (in_name != nullptr && FindSoundCategory(in_name) != nullptr)
+    return false;
+  return true;
+}
+
 bool SoundManager::CanAddSource(char const * in_name) const
 {
   // manager initialized ?
   if (!IsManagerStarted())
     return false;
   // name already existing ?
-  if (FindSoundSource(in_name) != nullptr)
+  if (in_name != nullptr && FindSoundSource(in_name) != nullptr)
     return false;
   return true;
 }
@@ -246,7 +283,7 @@ SoundSourceSimple * SoundManager::AddSourceSimple(boost::filesystem::path const 
   if (!CanAddSource(in_name))
     return nullptr;
   // find a simple source with the given path
-  if (FindSimpleSource(in_path) != nullptr)
+  if (FindSourceSimple(in_path) != nullptr)
     return nullptr;
   // load the file
   chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(in_path, false);
@@ -267,6 +304,21 @@ SoundSourceSimple * SoundManager::AddSourceSimple(boost::filesystem::path const 
 
   return result;
 }
+
+class SoundCategory * SoundManager::AddSourceCategory(char const * in_name)
+{
+
+
+  return nullptr;
+}
+
+
+
+
+
+
+
+
 
 template<typename T, typename U>
 static size_t GetObjectIndexInVector(T * object, U const & vector)
@@ -289,7 +341,7 @@ void SoundManager::RemoveSoundCategory(size_t index)
   DoRemoveSoundObject(index, categories);
 }
 
-void SoundManager::RemoveSound(SoundBase * in_sound)
+void SoundManager::RemoveSound(Sound * in_sound)
 {
   RemoveSound(GetObjectIndexInVector(in_sound, sounds));
 }
@@ -299,7 +351,7 @@ void SoundManager::RemoveSound(size_t index)
   DoRemoveSoundObject(index, sounds);
 }
 
-void SoundManager::RemoveSoundSource(SoundSourceBase * in_source)
+void SoundManager::RemoveSoundSource(SoundSource * in_source)
 {
   RemoveSoundSource(GetObjectIndexInVector(in_source, sources));
 }
@@ -405,14 +457,14 @@ void SoundCategory::Tick(float delta_time)
 // SOUND
 // ==============================================================
 
-void SoundBase::OnSoundFinished(bool enable_callbacks)
+void Sound::OnSoundFinished(bool enable_callbacks)
 {
   finished = true;
   if (enable_callbacks && callbacks != nullptr)
     callbacks->OnSoundFinished(this);
 }
 
-void SoundBase::Tick(float delta_time)
+void Sound::Tick(float delta_time)
 {
   SoundManagedVolumeObject::Tick(delta_time);
 
@@ -424,12 +476,12 @@ void SoundBase::Tick(float delta_time)
 
 }
 
-bool SoundBase::DoPlaySound()
+bool Sound::DoPlaySound()
 {
   return true; // immediatly finished
 }
 
-bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
+bool Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
 {
   // copy the data
   is_3D_sound = desc.IsSound3D();
@@ -437,6 +489,9 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
   velocity    = desc.velocity;
   paused      = desc.paused;
   looping     = desc.looping;
+
+  if (desc.sound_name.length() > 0)
+    name = desc.sound_name;
 
   callbacks = in_callbacks;
 
@@ -449,13 +504,13 @@ bool SoundBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callba
   return completed;
 }
 
-void SoundBase::RemoveFromManager()
+void Sound::RemoveFromManager()
 {
   assert(IsAttachedToManager());
   sound_manager->RemoveSound(this);
 }
 
-void SoundBase::DetachFromManager()
+void Sound::DetachFromManager()
 {
   assert(IsAttachedToManager());
   if (callbacks != nullptr)
@@ -463,80 +518,63 @@ void SoundBase::DetachFromManager()
   SoundManagedObject::DetachFromManager();
 }
 
-bool SoundBase::IsSound3D() const
+bool Sound::IsSound3D() const
 {
   return is_3D_sound;
 }
 
-glm::vec3 SoundBase::GetPosition() const
+glm::vec3 Sound::GetPosition() const
 {
   return position;
 }
 
-glm::vec3 SoundBase::GetVelocity() const
+glm::vec3 Sound::GetVelocity() const
 {
   return velocity;
 }
 
-bool SoundBase::IsPaused() const
+bool Sound::IsPaused() const
 {
   return paused;
 }
 
-bool SoundBase::IsLooping() const
+bool Sound::IsLooping() const
 {
   return looping;
 }
 
-bool SoundBase::IsFinished() const
+bool Sound::IsFinished() const
 {
   return finished;
 }
 
-void SoundBase::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
+void Sound::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
   position = in_position;
   if (set_3D_sound)
     is_3D_sound = true;
 }
 
-void SoundBase::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
+void Sound::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
   velocity = in_velocity;
   if (set_3D_sound)
     is_3D_sound = true;
 }
 
-void SoundBase::Pause()
+void Sound::Pause()
 {
   paused = true;
 }
 
-void SoundBase::Resume()
+void Sound::Resume()
 {
   paused = false;
 }
 
-void SoundBase::Stop()
+void Sound::Stop()
 {
 
-}
-                /* ---------------- */
-
-SoundSimpleStopEventReceiver::SoundSimpleStopEventReceiver(SoundSimple * in_sound) :
-  sound(in_sound)
-{
-  assert(in_sound != nullptr);
-}
-
-void SoundSimpleStopEventReceiver::OnSoundStopped(irrklang::ISound* irrklang_sound, irrklang::E_STOP_EVENT_CAUSE reason, void* userData)
-{
-  if (sound != nullptr)
-  {
-    sound->OnSoundFinished(true);
-    sound = nullptr;
-    delete(this);
-  }
 }
 
                 /* ---------------- */
@@ -549,9 +587,14 @@ SoundSimple::SoundSimple(class SoundSourceSimple * in_source) :
 
 SoundSimple::~SoundSimple()
 {
-  if (stop_event != nullptr)
-    stop_event->sound = nullptr;
+
 }
+
+// XXX : Do not use 
+//         irrklang_sound->setSoundStopEventReceiver(...)
+//       The callback is called in another thread !!!
+//       Instead use the Tick(...) fuction.
+//       Less complication.
 
 bool SoundSimple::DoPlaySound()
 {
@@ -590,13 +633,6 @@ bool SoundSimple::DoPlaySound()
       track,
       sound_effect);
   }
-
-  if (irrklang_sound != nullptr)
-  {
-    stop_event = new SoundSimpleStopEventReceiver(this);
-    if (stop_event != nullptr)
-      irrklang_sound->setSoundStopEventReceiver(stop_event, nullptr);
-  }
   return (irrklang_sound == nullptr); // error => immediatly finished
 }
 
@@ -607,35 +643,35 @@ bool SoundSimple::IsSound3D() const
 
 void SoundSimple::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
-  SoundBase::SetPosition(in_position, set_3D_sound);
+  Sound::SetPosition(in_position, set_3D_sound);
   if (irrklang_sound != nullptr && is_3D_sound)
     irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
 }
 
 void SoundSimple::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
-  SoundBase::SetVelocity(in_velocity, set_3D_sound);
+  Sound::SetVelocity(in_velocity, set_3D_sound);
   if (irrklang_sound != nullptr && is_3D_sound)
     irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
 }
 
 void SoundSimple::Pause()
 {
-  SoundBase::Pause();
+  Sound::Pause();
   if (irrklang_sound != nullptr)
     irrklang_sound->setIsPaused(true);
 }
 
 void SoundSimple::Resume()
 {
-  SoundBase::Resume();
+  Sound::Resume();
   if (irrklang_sound != nullptr)
     irrklang_sound->setIsPaused(false);
 }
 
 void SoundSimple::Stop()
 {
-  SoundBase::Stop();
+  Sound::Stop();
   if (irrklang_sound != nullptr)
     irrklang_sound->stop();
 }
@@ -647,7 +683,7 @@ void SoundSimple::DetachFromManager()
     irrklang_sound->stop();
     irrklang_sound = nullptr;
   }
-  SoundBase::DetachFromManager();
+  Sound::DetachFromManager();
 }
                         /* ---------------- */
 
@@ -664,35 +700,35 @@ bool SoundComposite::DoPlayNextSound()
 
 void SoundComposite::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
-  SoundBase::SetPosition(in_position, set_3D_sound);
+  Sound::SetPosition(in_position, set_3D_sound);
   if (current_sound != nullptr)
     current_sound->SetPosition(in_position, set_3D_sound);
 }
 
 void SoundComposite::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
 {
-  SoundBase::SetVelocity(in_velocity, set_3D_sound);
+  Sound::SetVelocity(in_velocity, set_3D_sound);
   if (current_sound != nullptr)
     current_sound->SetVelocity(in_velocity, set_3D_sound);
 }
 
 void SoundComposite::Pause()
 {
-  SoundBase::Pause();
+  Sound::Pause();
   if (current_sound != nullptr)
     current_sound->Pause();
 }
 
 void SoundComposite::Resume()
 {
-  SoundBase::Resume();
+  Sound::Resume();
   if (current_sound != nullptr)
     current_sound->Resume();
 }
 
 void SoundComposite::Stop()
 {
-  SoundBase::Stop();
+  Sound::Stop();
   if (current_sound != nullptr)
     current_sound->Stop();
 }
@@ -705,7 +741,7 @@ SoundCompositeCallbacks::SoundCompositeCallbacks(SoundComposite * in_sound_compo
   assert(in_sound_composite != nullptr);
 }
 
-void SoundCompositeCallbacks::OnSoundFinished(SoundBase * sound)
+void SoundCompositeCallbacks::OnSoundFinished(Sound * sound)
 {
   sound_composite->DoPlayNextSound();
 }
@@ -765,50 +801,55 @@ bool SoundSequence::DoPlayNextSound()
 // SOURCES
 // ==============================================================
 
-SoundBase * SoundSourceBase::GenerateSound() 
+Sound * SoundSource::GenerateSound()
 { 
   return nullptr; 
 }
 
-SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, std::function<void()> func, bool enable_callbacks)
+Sound * SoundSource::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
 {
-  return PlaySound(desc, new SoundCallbacksBindNoArg(func), enable_callbacks);
-}
-
-SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, std::function<void(SoundBase *)> func, bool enable_callbacks)
-{
-  return PlaySound(desc, new SoundCallbacksBind(func), enable_callbacks);
-}
-SoundBase * SoundSourceBase::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks, bool enable_callbacks)
-{
+  // ensure we have access to manager
   if (!IsAttachedToManager())
     return nullptr;
 
-  SoundBase * result = GenerateSound();
+  // ensure there are no name collision
+  if (!sound_manager->CanAddSound((desc.sound_name.length() > 0)? desc.sound_name.c_str() : nullptr))
+    return nullptr;
+
+  // ensure (if a category is required) that is correct
+  SoundCategory * sound_category = desc.category;
+  if (sound_category == nullptr && desc.category_name.length() > 0)
+  {
+    sound_category = sound_manager->FindSoundCategory(desc.category_name.c_str());
+    if (sound_category == nullptr) // there is a category requirement by name that does not exist
+      return nullptr;
+  }
+
+  // a category is required and it does not belong to the same valid manager => failure
+  if (sound_category != nullptr && sound_category->GetManager() != sound_manager)
+    return nullptr;
+   
+  Sound * result = GenerateSound();
   if (result != nullptr)
   {
-    // initialize the newly created object
-    result->sound_manager = sound_manager;
-
+    // initialize the newly created object (other values will be initialized in Sound::PlaySound(...)
+    result->category = sound_category; 
+    result->sound_manager = sound_manager;    
+    sound_manager->sounds.push_back(result);
     // play the sound
-    bool completed = result->PlaySound(desc, in_callbacks, enable_callbacks);
-    if (completed)
-    {
-      delete (result); // if finished, no need to return the sound object
-      return nullptr;
-    }
+    result->PlaySound(desc, in_callbacks, enable_callbacks);
   }
   return result;
 }
 
-void SoundSourceBase::DetachFromManager()
+void SoundSource::DetachFromManager()
 {
  // sound_manager->DestroyAllSoundPerSource(this);
 
   SoundManagedObject::DetachFromManager();
 }
 
-void SoundSourceBase::RemoveFromManager()
+void SoundSource::RemoveFromManager()
 {
   assert(IsAttachedToManager());
   sound_manager->RemoveSoundSource(this);
@@ -816,7 +857,7 @@ void SoundSourceBase::RemoveFromManager()
 
                 /* ---------------- */
 
-SoundBase * SoundSourceSimple::GenerateSound()
+Sound * SoundSourceSimple::GenerateSound()
 {
   return new SoundSimple(this);
 }
@@ -833,12 +874,12 @@ void SoundSourceSimple::DetachFromManager()
     irrklang_source = nullptr;
   }
 
-  SoundSourceBase::DetachFromManager();
+  SoundSource::DetachFromManager();
 }
 
                 /* ---------------- */
 
-SoundBase * SoundSourceSequence::GenerateSound()
+Sound * SoundSourceSequence::GenerateSound()
 {
   return new SoundSequence(this);
 }

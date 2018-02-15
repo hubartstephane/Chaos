@@ -35,14 +35,25 @@ void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound
 // CALLBACKS
 // ==============================================================
   
-void SoundCallbacks::OnSoundFinished(Sound * in_sound)
+void SoundCallbacks::OnFinished(class SoundManagedObject * in_object)
 {
-  assert(in_sound != nullptr);
+  assert(in_object != nullptr);
 }
 
-void SoundCallbacks::OnRemovedFromManager(Sound * in_sound)
+void SoundCallbacks::OnRemovedFromManager(class SoundManagedObject * in_object)
 {
-  assert(in_sound != nullptr);
+  assert(in_object != nullptr);
+}
+
+void SoundAutoCallbacks::OnFinished(class SoundManagedObject * in_object)
+{
+  if (finished_func)
+    finished_func(in_object);
+}
+void SoundAutoCallbacks::OnRemovedFromManager(class SoundManagedObject * in_object)
+{
+  if (removed_func)
+    removed_func(in_object);
 }
 
 // ==============================================================
@@ -408,6 +419,17 @@ bool SoundManagedObject::IsFinished() const
   return finished;
 }
 
+void SoundManagedObject::SetCallbacks(SoundCallbacks * in_callbacks)
+{
+  callbacks = in_callbacks;
+}
+
+void SoundManagedObject::OnFinished(bool enable_callbacks)
+{
+  finished = true;
+  if (enable_callbacks && callbacks != nullptr)
+    callbacks->OnFinished(this);
+}
 
 // ==============================================================
 // VOLUME
@@ -466,13 +488,6 @@ void SoundCategory::Tick(float delta_time)
 // SOUND
 // ==============================================================
 
-void Sound::OnSoundFinished(bool enable_callbacks)
-{
-  finished = true;
-  if (enable_callbacks && callbacks != nullptr)
-    callbacks->OnSoundFinished(this);
-}
-
 void Sound::Tick(float delta_time)
 {
   SoundManagedVolumeObject::Tick(delta_time);
@@ -508,7 +523,7 @@ bool Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks,
   bool completed = DoPlaySound();
   // raise the 'completion event' if necessary
   if (completed)
-    OnSoundFinished(enable_callbacks);
+    OnFinished(enable_callbacks);
   // returns
   return completed;
 }
@@ -739,19 +754,6 @@ void SoundComposite::Stop()
 
                         /* ---------------- */
 
-SoundCompositeCallbacks::SoundCompositeCallbacks(SoundComposite * in_sound_composite):
-  sound_composite(in_sound_composite)
-{
-  assert(in_sound_composite != nullptr);
-}
-
-void SoundCompositeCallbacks::OnSoundFinished(Sound * sound)
-{
-  sound_composite->DoPlayNextSound();
-}
-
-                        /* ---------------- */
-
 SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
   SoundComposite(in_source)
 {
@@ -790,7 +792,7 @@ bool SoundSequence::DoPlayNextSound()
 
     bool enable_child_callbacks = false;
 
-    current_sound = source->child_sources[index++]->PlaySound(desc, new SoundCompositeCallbacks(this), enable_child_callbacks);
+    current_sound = source->child_sources[index++]->PlaySound(desc, nullptr, enable_child_callbacks);
     if (current_sound != nullptr)
       return false; // un finished yet
   }

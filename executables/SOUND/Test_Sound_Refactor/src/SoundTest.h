@@ -63,13 +63,15 @@ class SoundCallbacks : public chaos::ReferencedObject
 {
   friend class Sound;
   friend class SoundSimple;
+  friend class SoundManager;
+  friend class SoundManagedObject;
 
 protected:
 
-  /** called whenever a sound is finished */
-  virtual void OnSoundFinished(Sound * in_sound);
+  /** called whenever an object is finished */
+  virtual void OnFinished(class SoundManagedObject * in_object);
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromManager(Sound * in_sound);
+  virtual void OnRemovedFromManager(class SoundManagedObject * in_object);
 };
 
 class SoundAutoCallbacks : public SoundCallbacks
@@ -81,32 +83,24 @@ public:
   /** assignation constructor */
   template<typename U, typename V>
   SoundAutoCallbacks(U & in_finished, V & in_removed) :
-    sound_finished_func(in_finished),
-    removed_from_manager_func(in_removed)
+    finished_func(in_finished),
+    removed_func(in_removed)
   {
   }
 
 protected:
 
   /** called whenever a sound is finished */
-  virtual void OnSoundFinished(Sound * in_sound) override
-  {
-    if (sound_finished_func)
-      sound_finished_func(in_sound);
-  }
+  virtual void OnFinished(class SoundManagedObject * in_object) override;
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromManager(Sound * in_sound) override
-  {
-    if (removed_from_manager_func)
-      removed_from_manager_func(in_sound);
-  }
+  virtual void OnRemovedFromManager(class SoundManagedObject * in_object) override;
 
 public:
 
   /** the callbacks function */
-  std::function<void(Sound *)> sound_finished_func;
+  std::function<void(SoundManagedObject *)> finished_func;
   /** the callbacks function */
-  std::function<void(Sound *)> removed_from_manager_func;
+  std::function<void(SoundManagedObject *)> removed_func;
 };
 
 // ==============================================================
@@ -252,6 +246,7 @@ protected:
 class SoundManagedObject : public chaos::ReferencedObject
 {
   friend class SoundManager;
+  friend class SoundCallbacks;
 
 public:
 
@@ -269,6 +264,9 @@ public:
   /** get the name of the object */
   char const * GetName() const { return name.c_str(); }
 
+  /** change the callbacks associated to this object */
+  void SetCallbacks(SoundCallbacks * in_callbacks);
+
 protected:
 
   /** unbind from manager */
@@ -279,15 +277,19 @@ protected:
   bool IsFinished() const;
   /** tick the sounds */
   virtual void Tick(float delta_time);
+  /** accessibility function */
+  void OnFinished(bool enable_callbacks);
 
 protected:
 
   /* the name */
   std::string name;
-  /** the irrklank engine */
-  boost::intrusive_ptr<SoundManager> sound_manager;
   /** whether the sound is finished */
   bool finished = false;
+  /** the irrklank engine */
+  boost::intrusive_ptr<SoundManager> sound_manager;
+  /** the callbacks that are being called at the end of the object */
+  boost::intrusive_ptr<SoundCallbacks> callbacks;
 };
 
 // ==============================================================
@@ -372,8 +374,6 @@ public:
 
 protected:
 
-  /** accessibility function */
-  virtual void OnSoundFinished(bool enable_callbacks);
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound();
   /** unbind from manager */
@@ -397,9 +397,6 @@ protected:
   bool paused = false;
   /** whether the sound is looping */
   bool looping = false;
-
-  /** the callbacks that are being called at the end of the sound */
-  boost::intrusive_ptr<SoundCallbacks> callbacks;
 
   /** the category of the sound */
   class SoundCategory * category = nullptr;
@@ -448,7 +445,6 @@ protected:
 class SoundComposite : public Sound
 {
   friend class SoundSourceSequence;
-  friend class SoundCompositeCallbacks;
 
 public:
 
@@ -472,24 +468,6 @@ protected:
   boost::intrusive_ptr<Sound> current_sound;
   /** the source composite that generated this object */
   boost::intrusive_ptr<SoundSourceComposite> source;
-};
-
-class SoundCompositeCallbacks : public SoundCallbacks
-{
-  friend class SoundComposite;
-  friend class SoundSequence;
-  
-protected:
-
-  /** protected constructor */
-  SoundCompositeCallbacks(SoundComposite * in_sound);
-  /** called whenever a sound is finished */
-  virtual void OnSoundFinished(Sound * sound) override;
-
-protected:
-
-  /** the composite */
-  boost::intrusive_ptr<SoundComposite> sound_composite;
 };
 
                     /* ---------------- */

@@ -215,36 +215,79 @@ protected:
   template<typename T>
   void DoRemoveObject(size_t index, T & vector)
   {
+    // ensure the index is valid
     size_t count = vector.size();
     if (index >= count)
       return;
-
-    vector[index]->OnRemovedFromManager(); // order is important because next operation could destroy the object
-
+    // copy the intrusive_ptr to prevent the destruction
+    auto object = vector[index]; 
+    // remove the object from the array
     if (index != count - 1)
       vector[index] = vector[count - 1];
     vector.pop_back();
+    // callback then let the unreferencement manage the object lifetime
+    object->OnRemovedFromManager();
   }
 
   /** detach all elements from a list */
   template<typename T>
-  void DetachAllObjectsFromList(T & v)
+  void DetachAllObjectsFromList(T & vector)
   {
-    size_t count = v.size();
-    for (size_t i = 0; i < count; ++i)
+    while (vector.size() > 0)
     {
-      auto obj = v[i].get();
-      if (obj == nullptr)
-        continue;
-      obj->OnRemovedFromManager();
+      // copy the intrusive_ptr to prevent the destruction
+      auto object = vector.back();
+      // remove the object from the array
+      vector.pop_back();
+      // callback then let the unreferencement manage the object lifetime
+      object->OnRemovedFromManager();
     }
-    v.clear();
   }
 
   /** destroy all sounds in a category */
   void DestroyAllSoundPerCategory(SoundCategory * category);
   /** destroy all sounds with a given source */
   void DestroyAllSoundPerSource(SoundSource * source);
+
+  /** tick sub category of objects */
+  template<typename T>
+  void DoTick(float delta_time, T & vector, void (SoundManager::*remove_func)(size_t))
+  {
+    for (size_t i = vector.size(); i > 0; --i)
+    {
+      size_t index = i - 1;
+
+      auto * object = vector[index].get();
+      if (object == nullptr)
+        continue;
+
+      // test whether object was already finished before ticking
+      bool finished = object->IsFinished();
+      bool paused = false; // object->IsPaused();
+
+
+      // XXX : isPaused for the category
+
+
+
+
+
+
+
+
+
+
+      // call tick if required 
+      if (!finished && !paused)
+        object->Tick(delta_time);
+      // finish the object if needed
+      if (finished || (!paused && object->IsFinished())) // was finished before, or has been ticked and became finished
+      {
+        object->OnFinished();
+        (this->*remove_func)(index);
+      }
+    }
+  }
 
 protected:
 
@@ -365,6 +408,7 @@ protected:
 class Sound : public SoundManagedVolumeObject
 {
   friend class SoundSource;
+  friend class SoundComposite;
   friend class SoundSequence;
   friend class SoundSourceRandom;
   friend class SoundManager;
@@ -404,7 +448,7 @@ protected:
   /** tick the sounds */
   virtual void Tick(float delta_time) override;
   /** the method being called from exterior */
-  bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+  void PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 protected:
 
@@ -480,6 +524,8 @@ protected:
 
   /** protected constructor */
   SoundComposite(class SoundSourceComposite * in_source);
+  /** tick the sounds */
+  virtual void Tick(float delta_time) override;
   /** called whenever a child element is finished (returns true when completed) */
   virtual bool DoPlayNextSound();
 

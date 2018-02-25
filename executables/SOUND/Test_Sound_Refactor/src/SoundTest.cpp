@@ -3,6 +3,18 @@
 #include <chaos/FileTools.h>
 #include <chaos/Buffer.h>
 
+
+// XXX: RemoveFromManager useless ??
+
+
+
+
+
+
+
+
+
+
 // ==============================================================
 // DESC
 // ==============================================================
@@ -186,40 +198,10 @@ void SoundManager::Tick(float delta_time)
 {
   if (!IsManagerStarted())
     return;
-
   // tick all categories
-  for (size_t i = categories.size(); i > 0; --i)
-  {
-    size_t index = i - 1;
-
-    SoundCategory * category = categories[index].get();
-    if (category == nullptr)
-      continue;
-    category->Tick(delta_time);
-
-    if (category->IsFinished())
-    {
-      category->OnFinished();
-      RemoveSoundCategory(index);
-    }
-  }
-
+  DoTick(delta_time, categories, &SoundManager::RemoveSoundCategory);
   // tick all sounds
-  for (size_t i = sounds.size(); i > 0; --i)
-  {
-    size_t index = i - 1;
-
-    Sound * sound = sounds[index].get();
-    if (sound == nullptr)
-      continue;
-    sound->Tick(delta_time);
-
-    if (sound->IsFinished())
-    {
-      sound->OnFinished();
-      RemoveSound(index);
-    }
-  }
+  DoTick(delta_time, sounds, &SoundManager::RemoveSound);
 }
 
 bool SoundManager::CanAddSound(char const * in_name) const
@@ -536,7 +518,7 @@ bool Sound::DoPlaySound()
   return true; // immediatly finished
 }
 
-bool Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+void Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 {
   // copy the data
   is_3D_sound = desc.IsSound3D();
@@ -552,12 +534,6 @@ bool Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 
   // start the sound
   DoPlaySound();
-  // raise the 'completion event' if necessary
-  bool finished = IsFinished();
-  if (finished)
-    OnFinished();
-  // returns
-  return finished;
 }
 
 void Sound::RemoveFromManager()
@@ -634,8 +610,6 @@ void SoundSimple::Tick(float delta_time)
 {
   // update the volume
   Sound::Tick(delta_time); 
-  if (IsFinished())
-    return;
   // whatever happens next, we cannot due anything with that sound ?
   if (irrklang_sound == nullptr || source == nullptr) 
     return;
@@ -761,10 +735,7 @@ SoundComposite::SoundComposite(class SoundSourceComposite * in_source) :
   assert(in_source != nullptr);
 }
 
-bool SoundComposite::DoPlayNextSound()
-{
-  return true; // finished
-}
+
 
 void SoundComposite::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
 {
@@ -799,6 +770,20 @@ void SoundComposite::Stop()
   Sound::Stop();
   if (current_sound != nullptr)
     current_sound->Stop();
+}
+
+void SoundComposite::Tick(float delta_time)
+{
+  Sound::Tick(delta_time);
+  if (current_sound != nullptr)
+    current_sound->Tick(delta_time);
+
+
+}
+
+bool SoundComposite::DoPlayNextSound()
+{
+  return true; // finished
 }
 
                         /* ---------------- */
@@ -917,6 +902,7 @@ Sound * SoundSourceSimple::GenerateSound()
 
 void SoundSourceSimple::OnRemovedFromManager()
 {
+  // destroy irrklang resource
   if (irrklang_source != nullptr)
   {
     irrklang::ISoundEngine * irrklang_engine = GetIrrklangEngine();
@@ -924,7 +910,7 @@ void SoundSourceSimple::OnRemovedFromManager()
       irrklang_engine->removeSoundSource(irrklang_source.get());
     irrklang_source = nullptr;
   }
-
+  // parent call
   SoundSource::OnRemovedFromManager();
 }
 

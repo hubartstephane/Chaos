@@ -45,16 +45,6 @@ protected:
   bool is_3D_sound = false;
 };
 
-class TickDesc
-{
-public:
-
-  /** the delta time */
-  float delta_time = 0.0f;
-  /** the cumulated volume */
-
-};
-
 // ==============================================================
 // CALLBACKS
 // ==============================================================
@@ -102,6 +92,17 @@ public:
   /** the callbacks function */
   std::function<void(SoundManagedObject *)> removed_func;
 };
+
+
+
+
+
+
+
+
+
+
+
 
 // ==============================================================
 // MANAGER
@@ -159,6 +160,9 @@ public:
   /** add a category inside the manager */
   class SoundCategory * AddSourceCategory(char const * in_name);
 
+  /** update the listener position */
+  bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
+
 protected:
 
   /** test whether a sound with given name could be inserted in the manager */
@@ -167,6 +171,19 @@ protected:
   bool CanAddSource(char const * in_name) const;
   /** test whether a category with given name could be inserted in the manager */
   bool CanAddCategory(char const * in_name) const;
+  /** utility function to test whether an object can be inserted */
+  template<typename T>
+  bool CanAddObject(char const * in_name, T const * (SoundManager::*find_func)(char const *) const) const
+  {
+    // manager initialized ?
+    if (!IsManagerStarted())
+      return false;
+    // name already existing ?
+     if (in_name != nullptr && (this->*find_func)(in_name) != nullptr)
+      return false;
+    return true;
+  }
+
   /** simple method to initialize and insert a source */
   template<typename T> 
   T * DoAddSources(T * in_source, char const * in_name)
@@ -196,13 +213,13 @@ protected:
 
   /** utility function to remove a sound object from a list */
   template<typename T>
-  void DoRemoveSoundObject(size_t index, T & vector)
+  void DoRemoveObject(size_t index, T & vector)
   {
     size_t count = vector.size();
     if (index >= count)
       return;
 
-    vector[index]->DetachFromManager(); // order is important because next operation could destroy the object
+    vector[index]->OnRemovedFromManager(); // order is important because next operation could destroy the object
 
     if (index != count - 1)
       vector[index] = vector[count - 1];
@@ -219,10 +236,15 @@ protected:
       auto obj = v[i].get();
       if (obj == nullptr)
         continue;
-      obj->DetachFromManager();
+      obj->OnRemovedFromManager();
     }
     v.clear();
   }
+
+  /** destroy all sounds in a category */
+  void DestroyAllSoundPerCategory(SoundCategory * category);
+  /** destroy all sounds with a given source */
+  void DestroyAllSoundPerSource(SoundSource * source);
 
 protected:
 
@@ -270,22 +292,20 @@ public:
 protected:
 
   /** unbind from manager */
-  virtual void DetachFromManager();
+  virtual void OnRemovedFromManager();
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager();
   /** get whether the sound is finished */
-  bool IsFinished() const;
+  virtual bool IsFinished() const;
   /** tick the sounds */
   virtual void Tick(float delta_time);
   /** accessibility function */
-  void OnFinished(bool enable_callbacks);
+  void OnFinished();
 
 protected:
 
   /* the name */
   std::string name;
-  /** whether the sound is finished */
-  bool finished = false;
   /** the irrklank engine */
   boost::intrusive_ptr<SoundManager> sound_manager;
   /** the callbacks that are being called at the end of the object */
@@ -306,6 +326,8 @@ public:
   float GetVolume() const;
   /** get the final volume for the sound (category and blendings taken into account) */
   virtual float GetEffectiveVolume() const;
+  /** get whether the sound is finished */
+  virtual bool IsFinished() const override;
 
 protected:
 
@@ -329,7 +351,7 @@ class SoundCategory : public SoundManagedVolumeObject
 protected:
 
   /** unbind from manager */
-  virtual void DetachFromManager() override;
+  virtual void OnRemovedFromManager() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager() override;
   /** tick the sounds */
@@ -342,7 +364,6 @@ protected:
 
 class Sound : public SoundManagedVolumeObject
 {
-
   friend class SoundSource;
   friend class SoundSequence;
   friend class SoundSourceRandom;
@@ -377,13 +398,13 @@ protected:
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound();
   /** unbind from manager */
-  virtual void DetachFromManager() override;
+  virtual void OnRemovedFromManager() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager() override;
   /** tick the sounds */
   virtual void Tick(float delta_time) override;
   /** the method being called from exterior */
-  bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
+  bool PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 protected:
 
@@ -400,6 +421,8 @@ protected:
 
   /** the category of the sound */
   class SoundCategory * category = nullptr;
+  /** the source that generated this object */
+  class SoundSource * source = nullptr;
 };
 
                 /* ---------------- */
@@ -410,14 +433,14 @@ class SoundSimple : public Sound
 
 protected:
 
-  virtual ~SoundSimple();
-
-  /** protected constructor */
-  SoundSimple(class SoundSourceSimple * in_source);
   /** unbind from manager */
-  virtual void DetachFromManager() override;
+  virtual void OnRemovedFromManager() override;
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound() override;
+  /** tick the object */
+  virtual void Tick(float delta_time);
+  /** get whether the sound is finished */
+  virtual bool IsFinished() const;
  
 public:
 
@@ -436,8 +459,6 @@ protected:
   bool is_3D_sound = false;
   /** the irrklang sound */
   boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
-  /** the source that generated this object */
-  boost::intrusive_ptr<SoundSourceSimple> source;
 };
 
                     /* ---------------- */
@@ -509,12 +530,12 @@ protected:
 public:
 
   /** generating and playing a sound */
-  Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr, bool enable_callbacks = true);
+  Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 protected:
 
   /** unbind from manager */
-  virtual void DetachFromManager() override;
+  virtual void OnRemovedFromManager() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromManager() override;
 
@@ -537,7 +558,7 @@ protected:
   /** generating a source object */
   virtual Sound * GenerateSound() override;
   /** unbind from manager */
-  virtual void DetachFromManager() override;
+  virtual void OnRemovedFromManager() override;
 
 protected:
 

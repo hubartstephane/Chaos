@@ -17,6 +17,33 @@
 namespace chaos
 {
 
+#if 0
+
+  class ParticleManager
+  {
+    Layer * AddParticleLayer();
+
+
+  };
+
+  class ParticleLayer
+  {
+  public:
+
+    void SetRenderMaterial(RenderMaterial * material);
+
+    void SetRenderOrder(int in_order);
+
+
+  protected:
+
+    int render_order = -1;
+
+  };
+
+
+#endif
+
 
 
   template<typename PARTICLE_TYPE, typename PARTICLE_VERTEX_TYPE>

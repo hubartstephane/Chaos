@@ -448,6 +448,28 @@ void SoundManagedObject::OnFinished()
 // VOLUME
 // ==============================================================
 
+void SoundManagedVolumeObject::Pause()
+{
+  paused = true;
+}
+
+void SoundManagedVolumeObject::Resume()
+{
+  paused = false;
+}
+
+bool SoundManagedVolumeObject::IsPaused() const
+{
+  if (!IsAttachedToManager())
+    return false;
+  return paused;
+}
+
+bool SoundManagedVolumeObject::IsEffectivePaused() const
+{
+  return IsPaused();
+}
+
 float SoundManagedVolumeObject::GetVolume() const
 {
   if (!IsAttachedToManager())
@@ -513,6 +535,21 @@ void Sound::Tick(float delta_time)
   SoundManagedVolumeObject::Tick(delta_time); // update the volume
 }
 
+float Sound::GetEffectiveVolume() const
+{
+  float result = SoundManagedVolumeObject::GetEffectiveVolume();
+  if (category != nullptr)
+    result *= category->GetEffectiveVolume();
+  return result;
+}
+
+bool Sound::IsEffectivePaused() const
+{
+  if (category != nullptr && category->IsEffectivePaused())
+    return true;
+  return SoundManagedVolumeObject::IsEffectivePaused();
+}
+
 bool Sound::DoPlaySound()
 {
   return true; // immediatly finished
@@ -565,11 +602,6 @@ glm::vec3 Sound::GetVelocity() const
   return velocity;
 }
 
-bool Sound::IsPaused() const
-{
-  return paused;
-}
-
 bool Sound::IsLooping() const
 {
   return looping;
@@ -589,18 +621,13 @@ void Sound::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
     is_3D_sound = true;
 }
 
-void Sound::Pause()
-{
-  paused = true;
-}
-
-void Sound::Resume()
-{
-  paused = false;
-}
-
 void Sound::Stop()
 {
+
+  // XXX :
+
+
+
 
 }
 

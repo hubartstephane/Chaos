@@ -263,20 +263,7 @@ protected:
 
       // test whether object was already finished before ticking
       bool finished = object->IsFinished();
-      bool paused = false; // object->IsPaused();
-
-
-      // XXX : isPaused for the category
-
-
-
-
-
-
-
-
-
-
+      bool paused = object->IsEffectivePaused();
       // call tick if required 
       if (!finished && !paused)
         object->Tick(delta_time);
@@ -365,10 +352,21 @@ class SoundManagedVolumeObject : public SoundManagedObject
 
 public:
 
+  /** pause the object */
+  virtual void Pause();
+  /** resume the object */
+  virtual void Resume();
+
+  /** get whether the object is paused */
+  bool IsPaused() const;
+  /** get the final pause status for the object */
+  virtual bool IsEffectivePaused() const;
+
   /** get the own object volume */
   float GetVolume() const;
   /** get the final volume for the sound (category and blendings taken into account) */
   virtual float GetEffectiveVolume() const;
+
   /** get whether the sound is finished */
   virtual bool IsFinished() const override;
 
@@ -379,6 +377,8 @@ protected:
 
 protected:
 
+  /** whether the sound is paused */
+  bool paused = false;
   /** the volume */
   float volume = 1.0f;
 };
@@ -419,12 +419,13 @@ public:
   virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true);
   /** set the velocity of the sound (this enables the 3D feature) */
   virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true);
-  /** pause the sound */
-  virtual void Pause();
-  /** resume the sound */
-  virtual void Resume();
   /** stop the sound */
   virtual void Stop();
+
+  /** returns whether the sound is effectively paused */
+  virtual bool IsEffectivePaused() const override;
+  /** returns the effective volume of the sound */
+  virtual float GetEffectiveVolume() const override;
 
   /** returns whether the sound is in 3D dimension */
   bool IsSound3D() const;
@@ -432,8 +433,7 @@ public:
   glm::vec3 GetPosition() const;
   /** get the velocity of the sound */
   glm::vec3 GetVelocity() const;
-  /** get whether the sound is paused */
-  bool IsPaused() const;
+
   /** get whether the sound is looping */
   bool IsLooping() const;
 
@@ -458,8 +458,6 @@ protected:
   glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
   /** the velocity of the sound in 3D */
   glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-  /** whether the sound is paused */
-  bool paused = false;
   /** whether the sound is looping */
   bool looping = false;
 

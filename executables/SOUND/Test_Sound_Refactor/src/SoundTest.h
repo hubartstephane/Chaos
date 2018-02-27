@@ -5,6 +5,21 @@
 #include <chaos/IrrklangTools.h>
 
 // ==============================================================
+// FORWARD DECLARATION / FRIENDSHIP MACROS
+// ==============================================================
+
+// all classes in this file
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundObjectOwner) (SoundComposite) (SoundSource) (SoundSourceSimple) (SoundSourceComposite) (SoundSourceSequence) (SoundSourceRandom) (SoundCategory) (SoundSimple) (SoundComposite) (SoundSequence) (SoundRandom) (SoundManagedObject)
+
+// forward declaration
+#define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
+BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
+
+// friendship macro
+#define CHAOS_SOUND_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_SOUND_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FRIEND_DECL, _, CHAOS_SOUND_CLASSES)
+
+// ==============================================================
 // DESC
 // ==============================================================
 
@@ -51,21 +66,20 @@ protected:
 
 class SoundCallbacks : public chaos::ReferencedObject
 {
-  friend class Sound;
-  friend class SoundSimple;
-  friend class SoundManager;
-  friend class SoundManagedObject;
+  CHAOS_SOUND_ALL_FRIENDS
 
 protected:
 
   /** called whenever an object is finished */
   virtual void OnFinished(class SoundManagedObject * in_object);
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromManager(class SoundManagedObject * in_object);
+  virtual void OnRemovedFromOwner(class SoundManagedObject * in_object);
 };
 
 class SoundAutoCallbacks : public SoundCallbacks
 {
+  CHAOS_SOUND_ALL_FRIENDS
+
 public:
 
   /** default constructor */
@@ -83,7 +97,7 @@ protected:
   /** called whenever a sound is finished */
   virtual void OnFinished(class SoundManagedObject * in_object) override;
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromManager(class SoundManagedObject * in_object) override;
+  virtual void OnRemovedFromOwner(class SoundManagedObject * in_object) override;
 
 public:
 
@@ -93,65 +107,68 @@ public:
   std::function<void(SoundManagedObject *)> removed_func;
 };
 
-
-
-
-
-
-
-
-
-
-
-
 // ==============================================================
-// MANAGER
+// SOUND OBJECT
 // ==============================================================
 
-class SoundManager : public chaos::ReferencedObject
+class SoundObject : public chaos::ReferencedObject
 {
-  friend class Sound;
-  friend class SoundSource;
-  friend class SoundCategory;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
   /** getter on the irrklang engine */
   irrklang::ISoundEngine * GetIrrklangEngine();
 
-  /** start the manager */
-  bool StartManager();
-  /** stop the manager */
-  bool StopManager();
-  /** returns whether the manager is correctly started */
-  bool IsManagerStarted() const;
+  /** getter on the manager object */
+  virtual SoundManager * GetManager();
+  /** getter on the manager object */
+  virtual SoundManager const * GetManager() const;
 
-  /** tick the manager */
+  /** returns whether the object is attached to a manager */
+  bool IsAttachedToManager() const;
+
+  /** tick the object */
   virtual void Tick(float delta_time);
 
-  /** find a sound by its name */
-  class Sound * FindSound(char const * name);
-  /** find a category by its name */
-  class SoundCategory * FindSoundCategory(char const * name);
+
+};
+
+
+// ==============================================================
+// SOUND SOURCE OWNER
+// ==============================================================
+
+class SoundObjectOwner : public SoundObject
+{
+  CHAOS_SOUND_ALL_FRIENDS
+
+public:
+
   /** find a source by its name */
   class SoundSource * FindSoundSource(char const * name);
-
-  /** find a sound by its name */
-  class Sound const * FindSound(char const * name) const;
-  /** find a category by its name */
-  class SoundCategory const * FindSoundCategory(char const * name) const;
   /** find a source by its name */
   class SoundSource const * FindSoundSource(char const * name) const;
-
   /** find a simple source by its path */
   class SoundSourceSimple * FindSourceSimple(boost::filesystem::path const & in_path);
   /** find a simple source by its path */
   class SoundSourceSimple const * FindSourceSimple(boost::filesystem::path const & in_path) const;
 
+  /** find a sound by its name */
+  class Sound * FindSound(char const * name);
+  /** find a sound by its name */
+  class Sound const * FindSound(char const * name) const;
+
+  /** find a category by its name */
+  class SoundCategory * FindSoundCategory(char const * name);
+  /** find a category by its name */
+  class SoundCategory const * FindSoundCategory(char const * name) const;
+
   /** load and add a simple source inside the manager (name is a copy of filename) */
   SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path);
   /** load and add a simple source inside the manager */
   class SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path, char const * in_name);
+
   /** add a sequence inside the manager */
   class SoundSourceSequence * AddSourceSequence(char const * in_name);
   /** add a random inside the manager */
@@ -160,15 +177,12 @@ public:
   /** add a category inside the manager */
   class SoundCategory * AddSourceCategory(char const * in_name);
 
-  /** update the listener position */
-  bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
-
 protected:
 
-  /** test whether a sound with given name could be inserted in the manager */
-  bool CanAddSound(char const * in_name) const;
   /** test whether a source with given name could be inserted in the manager */
   bool CanAddSource(char const * in_name) const;
+  /** test whether a sound with given name could be inserted in the manager */
+  bool CanAddSound(char const * in_name) const;
   /** test whether a category with given name could be inserted in the manager */
   bool CanAddCategory(char const * in_name) const;
   /** utility function to test whether an object can be inserted */
@@ -176,26 +190,70 @@ protected:
   bool CanAddObject(char const * in_name, T const * (SoundManager::*find_func)(char const *) const) const
   {
     // manager initialized ?
-    if (!IsManagerStarted())
+    SoundManager * manager = GetManager();
+    if (manager == nullptr || !manager->IsManagerStarted())
       return false;
     // name already existing ?
-     if (in_name != nullptr && (this->*find_func)(in_name) != nullptr)
+    if (in_name != nullptr && (this->*find_func)(in_name) != nullptr)
       return false;
     return true;
   }
 
   /** simple method to initialize and insert a source */
-  template<typename T> 
+  template<typename T>
   T * DoAddSources(T * in_source, char const * in_name)
   {
     if (in_source == nullptr)
       return nullptr;
     if (in_name != nullptr)
       in_source->name = in_name;
-    in_source->sound_manager = this;
+    in_source->owner = this;
     sources.push_back(in_source);
     return in_source;
   }
+
+protected:
+
+  /** the sources */
+  std::vector<boost::intrusive_ptr<class SoundSource>> sources;
+  /** the categories */
+  std::vector<boost::intrusive_ptr<class SoundCategory>> categories;
+  /** the sounds */
+  std::vector<boost::intrusive_ptr<class Sound>> sounds;
+};
+
+
+
+
+// ==============================================================
+// MANAGER
+// ==============================================================
+
+class SoundManager : public SoundObjectOwner
+{
+  CHAOS_SOUND_ALL_FRIENDS
+
+public:
+
+  /** start the manager */
+  bool StartManager();
+  /** stop the manager */
+  bool StopManager();
+  /** returns whether the manager is correctly started */
+  bool IsManagerStarted() const;
+
+  /** getter on the manager object */
+  virtual SoundManager * GetManager() override;
+  /** getter on the manager object */
+  virtual SoundManager const * GetManager() const override;
+
+  /** tick the manager */
+  virtual void Tick(float delta_time) override;
+
+  /** update the listener position */
+  bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
+
+protected:
 
   /** remove a category from the list */
   void RemoveSoundCategory(class SoundCategory * in_category);
@@ -226,7 +284,7 @@ protected:
       vector[index] = vector[count - 1];
     vector.pop_back();
     // callback then let the unreferencement manage the object lifetime
-    object->OnRemovedFromManager();
+    object->OnRemovedFromOwner();
   }
 
   /** detach all elements from a list */
@@ -240,7 +298,7 @@ protected:
       // remove the object from the array
       vector.pop_back();
       // callback then let the unreferencement manage the object lifetime
-      object->OnRemovedFromManager();
+      object->OnRemovedFromOwner();
     }
   }
 
@@ -282,36 +340,31 @@ protected:
   boost::intrusive_ptr<irrklang::ISoundDeviceList> irrklang_devices;
   /** the irrklank engine */
   boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
-
-  /** the categories */
-  std::vector<boost::intrusive_ptr<class SoundCategory>> categories;
-  /** the sounds */
-  std::vector<boost::intrusive_ptr<class Sound>> sounds;
-  /** the sources */
-  std::vector<boost::intrusive_ptr<class SoundSource>> sources;
 };
+
+
+
+
+
+
+
 
 // ==============================================================
 // MANAGED OBJECT
 // ==============================================================
 
-class SoundManagedObject : public chaos::ReferencedObject
+class SoundManagedObject : public SoundObject
 {
-  friend class SoundManager;
-  friend class SoundCallbacks;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
-  /** getter on the irrklang engine */
-  irrklang::ISoundEngine * GetIrrklangEngine();
-
   /** getter on the manager object */
-  SoundManager * GetManager();
+  virtual SoundManager * GetManager() override;
   /** getter on the manager object */
-  SoundManager const * GetManager() const;
+  virtual SoundManager const * GetManager() const override;
 
-  /** returns whether the object is attached to a manager */
-  bool IsAttachedToManager() const;
+
 
   /** get the name of the object */
   char const * GetName() const { return name.c_str(); }
@@ -322,13 +375,13 @@ public:
 protected:
 
   /** unbind from manager */
-  virtual void OnRemovedFromManager();
+  virtual void OnRemovedFromOwner();
   /** remove element from manager list and detach it */
-  virtual void RemoveFromManager();
+  virtual void RemoveFromOwner();
   /** get whether the sound is finished */
   virtual bool IsFinished() const;
   /** tick the sounds */
-  virtual void Tick(float delta_time);
+  virtual void Tick(float delta_time) override;
   /** accessibility function */
   void OnFinished();
 
@@ -337,10 +390,17 @@ protected:
   /* the name */
   std::string name;
   /** the irrklank engine */
-  boost::intrusive_ptr<SoundManager> sound_manager;
+  boost::intrusive_ptr<SoundObjectOwner> owner;
   /** the callbacks that are being called at the end of the object */
   boost::intrusive_ptr<SoundCallbacks> callbacks;
 };
+
+
+
+
+
+
+
 
 // ==============================================================
 // VOLUME
@@ -348,7 +408,7 @@ protected:
 
 class SoundManagedVolumeObject : public SoundManagedObject
 {
-  friend class SoundManager;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
@@ -389,14 +449,14 @@ protected:
 
 class SoundCategory : public SoundManagedVolumeObject
 {
-  friend class SoundManager;
+  CHAOS_SOUND_ALL_FRIENDS
 
 protected:
 
   /** unbind from manager */
-  virtual void OnRemovedFromManager() override;
+  virtual void OnRemovedFromOwner() override;
   /** remove element from manager list and detach it */
-  virtual void RemoveFromManager() override;
+  virtual void RemoveFromOwner() override;
   /** tick the sounds */
   virtual void Tick(float delta_time) override;
 };
@@ -407,11 +467,7 @@ protected:
 
 class Sound : public SoundManagedVolumeObject
 {
-  friend class SoundSource;
-  friend class SoundComposite;
-  friend class SoundSequence;
-  friend class SoundSourceRandom;
-  friend class SoundManager;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
@@ -442,9 +498,9 @@ protected:
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound();
   /** unbind from manager */
-  virtual void OnRemovedFromManager() override;
+  virtual void OnRemovedFromOwner() override;
   /** remove element from manager list and detach it */
-  virtual void RemoveFromManager() override;
+  virtual void RemoveFromOwner() override;
   /** tick the sounds */
   virtual void Tick(float delta_time) override;
   /** the method being called from exterior */
@@ -471,12 +527,12 @@ protected:
 
 class SoundSimple : public Sound
 {
-  friend class SoundSourceSimple;
+  CHAOS_SOUND_ALL_FRIENDS
 
 protected:
 
   /** unbind from manager */
-  virtual void OnRemovedFromManager() override;
+  virtual void OnRemovedFromOwner() override;
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound() override;
   /** tick the object */
@@ -507,7 +563,7 @@ protected:
 
 class SoundComposite : public Sound
 {
-  friend class SoundSourceSequence;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
@@ -539,7 +595,7 @@ protected:
 
 class SoundSequence : public SoundComposite
 {
-  friend class SoundSourceSequence;
+  CHAOS_SOUND_ALL_FRIENDS
 
 protected:
 
@@ -564,7 +620,7 @@ protected:
 
 class SoundSource : public SoundManagedObject
 {
-  friend class SoundManager;
+  CHAOS_SOUND_ALL_FRIENDS
 
 protected:
 
@@ -579,9 +635,9 @@ public:
 protected:
 
   /** unbind from manager */
-  virtual void OnRemovedFromManager() override;
+  virtual void OnRemovedFromOwner() override;
   /** remove element from manager list and detach it */
-  virtual void RemoveFromManager() override;
+  virtual void RemoveFromOwner() override;
 
 };
 
@@ -589,8 +645,7 @@ protected:
 
 class SoundSourceSimple : public SoundSource
 {
-  friend class SoundSimple;
-  friend class SoundManager;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
@@ -602,7 +657,7 @@ protected:
   /** generating a source object */
   virtual Sound * GenerateSound() override;
   /** unbind from manager */
-  virtual void OnRemovedFromManager() override;
+  virtual void OnRemovedFromOwner() override;
 
 protected:
 
@@ -617,7 +672,7 @@ protected:
 
 class SoundSourceComposite : public SoundSource
 {
-  friend class SoundSequence;
+  CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
@@ -636,7 +691,7 @@ protected:
 
 class SoundSourceSequence : public SoundSourceComposite
 {
-  friend class SoundSequence;
+  CHAOS_SOUND_ALL_FRIENDS
 
 protected:
 
@@ -650,6 +705,8 @@ protected:
 
 class SoundSourceRandom : public SoundSourceComposite
 {
+  CHAOS_SOUND_ALL_FRIENDS
+
 protected:
 
 };

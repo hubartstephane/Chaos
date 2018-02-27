@@ -112,6 +112,8 @@ T max(T a, T b)
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> 

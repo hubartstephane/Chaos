@@ -47,22 +47,22 @@ void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_so
 // CALLBACKS
 // ==============================================================
   
-void SoundCallbacks::OnFinished(class SoundManagedObject * in_object)
+void SoundCallbacks::OnFinished(SoundManagedObject * in_object)
 {
   assert(in_object != nullptr);
 }
 
-void SoundCallbacks::OnRemovedFromOwner(class SoundManagedObject * in_object)
+void SoundCallbacks::OnRemovedFromOwner(SoundManagedObject * in_object)
 {
   assert(in_object != nullptr);
 }
 
-void SoundAutoCallbacks::OnFinished(class SoundManagedObject * in_object)
+void SoundAutoCallbacks::OnFinished(SoundManagedObject * in_object)
 {
   if (finished_func)
     finished_func(in_object);
 }
-void SoundAutoCallbacks::OnRemovedFromOwner(class SoundManagedObject * in_object)
+void SoundAutoCallbacks::OnRemovedFromOwner(SoundManagedObject * in_object)
 {
   if (removed_func)
     removed_func(in_object);
@@ -154,16 +154,6 @@ Sound const * SoundObjectOwner::FindSound(char const * name) const
   return FindObject<Sound>(name, sounds);
 }
 
-SoundCategory * SoundObjectOwner::FindCategory(char const * name)
-{
-  return FindObject<SoundCategory>(name, categories);
-}
-
-SoundCategory const * SoundObjectOwner::FindCategory(char const * name) const
-{
-  return FindObject<SoundCategory>(name, categories);
-}
-
 
 
 
@@ -210,11 +200,6 @@ bool SoundObjectOwner::CanAddSource(char const * in_name) const
 bool SoundObjectOwner::CanAddSound(char const * in_name) const
 {
   return CanAddObject<Sound>(in_name, &SoundManager::FindSound);
-}
-
-bool SoundObjectOwner::CanAddCategory(char const * in_name) const
-{
-  return CanAddObject<SoundCategory>(in_name, &SoundManager::FindCategory);
 }
 
 SoundSourceSequence * SoundObjectOwner::AddSourceSequence(char const * in_name)
@@ -272,7 +257,25 @@ SoundSourceSimple * SoundObjectOwner::AddSourceSimple(boost::filesystem::path co
   return result;
 }
 
-class SoundCategory * SoundObjectOwner::AddSourceCategory(char const * in_name)
+
+#if 0
+
+SoundCategory * SoundObjectOwner::FindCategory(char const * name)
+{
+  return FindObject<SoundCategory>(name, categories);
+}
+
+SoundCategory const * SoundObjectOwner::FindCategory(char const * name) const
+{
+  return FindObject<SoundCategory>(name, categories);
+}
+
+bool SoundObjectOwner::CanAddCategory(char const * in_name) const
+{
+  return CanAddObject<SoundCategory>(in_name, &SoundManager::FindCategory);
+}
+
+SoundCategory * SoundObjectOwner::AddSourceCategory(char const * in_name)
 {
   // test whether a category with the given name could be inserted
   if (!CanAddCategory(in_name))
@@ -290,6 +293,7 @@ class SoundCategory * SoundObjectOwner::AddSourceCategory(char const * in_name)
   return result;
 }
 
+#endif
 
 
 
@@ -323,14 +327,6 @@ bool SoundManager::IsManagerStarted() const
 {
   return (irrklang_engine != nullptr);
 }
-
-
-
-
-
-
-
-
 
 bool SoundManager::StartManager()
 {
@@ -379,7 +375,7 @@ void SoundManager::TickObject(float delta_time)
   if (!IsManagerStarted())
     return;
   // tick all categories
-  DoTickObjects(delta_time, categories, &SoundManager::RemoveSoundCategory);
+  DoTickObjects(delta_time, categories, &SoundManager::RemoveCategory);
   // tick all sounds
   DoTickObjects(delta_time, sounds, &SoundManager::RemoveSound);
 }
@@ -400,12 +396,12 @@ static size_t GetObjectIndexInVector(T * object, U const & vector)
   return count;
 }
 
-void SoundManager::RemoveSoundCategory(SoundCategory * in_category)
+void SoundManager::RemoveCategory(SoundCategory * in_category)
 {
-  RemoveSoundCategory(GetObjectIndexInVector(in_category, categories));
+  RemoveCategory(GetObjectIndexInVector(in_category, categories));
 }
 
-void SoundManager::RemoveSoundCategory(size_t index)
+void SoundManager::RemoveCategory(size_t index)
 {
   DoRemoveObject(index, categories);
 }
@@ -420,12 +416,12 @@ void SoundManager::RemoveSound(size_t index)
   DoRemoveObject(index, sounds);
 }
 
-void SoundManager::RemoveSoundSource(SoundSource * in_source)
+void SoundManager::RemoveSource(SoundSource * in_source)
 {
-  RemoveSoundSource(GetObjectIndexInVector(in_source, sources));
+  RemoveSource(GetObjectIndexInVector(in_source, sources));
 }
 
-void SoundManager::RemoveSoundSource(size_t index)
+void SoundManager::RemoveSource(size_t index)
 {
   DoRemoveObject(index, sources);
 }
@@ -526,14 +522,16 @@ void SoundManagedObject::TickObject(float delta_time)
 {
 }
 
-bool SoundManagedObject::IsFinished() const
+bool SoundManagedObject::UpdateFinishedState()
 {
+  if (!is_finished)
+    is_finished = ComputeFinishedState();
   return is_finished;
 }
 
-bool SoundManagedObject::ComputeFinished()
+bool SoundManagedObject::ComputeFinishedState()
 {
-  return true;
+  return false;
 }
 
 void SoundManagedObject::SetCallbacks(SoundCallbacks * in_callbacks)
@@ -598,7 +596,7 @@ void SoundManagedVolumeObject::TickObject(float delta_time)
 
 }
 
-bool SoundManagedVolumeObject::ComputeFinished()
+bool SoundManagedVolumeObject::ComputeFinishedState()
 {
 
 
@@ -618,7 +616,7 @@ void SoundCategory::OnRemovedFromOwner()
 void SoundCategory::RemoveFromOwner()
 {
   assert(IsAttachedToManager());
-  owner->RemoveSoundCategory(this);
+  owner->RemoveCategory(this);
 }
 
 void SoundCategory::TickObject(float delta_time)
@@ -749,11 +747,11 @@ void SoundSimple::TickObject(float delta_time)
   irrklang_sound->setVolume((irrklang::ik_f32)current_volume);
 }
 
-bool SoundSimple::ComputeFinished()
+bool SoundSimple::ComputeFinishedState()
 {
   if (irrklang_sound == nullptr)
     return true;
-  if (Sound::ComputeFinished()) // parent call
+  if (Sound::ComputeFinishedState()) // parent call
     return true;
   if (IsLooping()) // a looping sound is never finished
     return false;
@@ -860,7 +858,7 @@ void SoundSimple::OnRemovedFromOwner()
 }
                         /* ---------------- */
 
-SoundComposite::SoundComposite(class SoundSourceComposite * in_source) :
+SoundComposite::SoundComposite(SoundSourceComposite * in_source) :
   source(in_source)
 {
   assert(in_source != nullptr);
@@ -919,7 +917,7 @@ bool SoundComposite::DoPlayNextSound()
 
                         /* ---------------- */
 
-SoundSequence::SoundSequence(class SoundSourceSequence * in_source) :
+SoundSequence::SoundSequence(SoundSourceSequence * in_source) :
   SoundComposite(in_source)
 {
 
@@ -1021,7 +1019,7 @@ void SoundSource::OnRemovedFromOwner()
 void SoundSource::RemoveFromOwner()
 {
   assert(IsAttachedToManager());
-  owner->RemoveSoundSource(this);
+  owner->RemoveSource(this);
 }
 
                 /* ---------------- */

@@ -9,7 +9,7 @@
 // ==============================================================
 
 // all classes in this file
-#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundObjectOwner) (SoundComposite) (SoundSource) (SoundSourceSimple) (SoundSourceComposite) (SoundSourceSequence) (SoundSourceRandom) (SoundCategory) (SoundSimple) (SoundComposite) (SoundSequence) (SoundRandom) (SoundManagedObject)
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundObjectOwner) (SoundComposite) (SoundSource) (SoundSourceSimple) (SoundSourceComposite) (SoundSourceSequence) (SoundSourceRandom) (SoundCategory) (SoundSimple) (SoundComposite) (SoundSequence) (SoundRandom) (SoundManagedObject)
 
 // forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
@@ -54,7 +54,7 @@ public:
   /** the name of the category ... */
   std::string category_name;
   /** ... or a pointer on the category */
-  class SoundCategory * category = nullptr;
+  SoundCategory * category = nullptr;
 
 protected:
 
@@ -73,9 +73,9 @@ class SoundCallbacks : public chaos::ReferencedObject
 protected:
 
   /** called whenever an object is finished */
-  virtual void OnFinished(class SoundManagedObject * in_object);
+  virtual void OnFinished(SoundManagedObject * in_object);
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromOwner(class SoundManagedObject * in_object);
+  virtual void OnRemovedFromOwner(SoundManagedObject * in_object);
 };
 
 class SoundAutoCallbacks : public SoundCallbacks
@@ -97,9 +97,9 @@ public:
 protected:
 
   /** called whenever a sound is finished */
-  virtual void OnFinished(class SoundManagedObject * in_object) override;
+  virtual void OnFinished(SoundManagedObject * in_object) override;
   /** called whenever an object is removed from manager */
-  virtual void OnRemovedFromOwner(class SoundManagedObject * in_object) override;
+  virtual void OnRemovedFromOwner(SoundManagedObject * in_object) override;
 
 public:
 
@@ -142,14 +142,29 @@ protected:
 
 
 
+#if 0
+public:
+
+/** find a category by its name */
+SoundCategory * FindCategory(char const * name);
+/** find a category by its name */
+SoundCategory const * FindCategory(char const * name) const;
 
 
+/** add a category inside the manager */
+SoundCategory * AddSourceCategory(char const * in_name);
 
+protected:
 
+/** test whether a category with given name could be inserted in the manager */
+bool CanAddCategory(char const * in_name) const;
 
+protected:
 
+/** the categories */
+std::vector<boost::intrusive_ptr<SoundCategory>> categories;
 
-
+#endif
 
 // ==============================================================
 // SOUND SOURCE OWNER
@@ -162,36 +177,29 @@ class SoundObjectOwner : public SoundObject
 public:
 
   /** find a source by its name */
-  class SoundSource * FindSource(char const * name);
+  SoundSource * FindSource(char const * name);
   /** find a source by its name */
-  class SoundSource const * FindSource(char const * name) const;
+  SoundSource const * FindSource(char const * name) const;
+
   /** find a simple source by its path */
-  class SoundSourceSimple * FindSourceSimple(boost::filesystem::path const & in_path);
+  SoundSourceSimple * FindSourceSimple(boost::filesystem::path const & in_path);
   /** find a simple source by its path */
-  class SoundSourceSimple const * FindSourceSimple(boost::filesystem::path const & in_path) const;
+  SoundSourceSimple const * FindSourceSimple(boost::filesystem::path const & in_path) const;
 
   /** find a sound by its name */
-  class Sound * FindSound(char const * name);
+  Sound * FindSound(char const * name);
   /** find a sound by its name */
-  class Sound const * FindSound(char const * name) const;
-
-  /** find a category by its name */
-  class SoundCategory * FindCategory(char const * name);
-  /** find a category by its name */
-  class SoundCategory const * FindCategory(char const * name) const;
+  Sound const * FindSound(char const * name) const;
 
   /** load and add a simple source inside the manager (name is a copy of filename) */
   SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path);
   /** load and add a simple source inside the manager */
-  class SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path, char const * in_name);
+  SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path, char const * in_name);
 
   /** add a sequence inside the manager */
-  class SoundSourceSequence * AddSourceSequence(char const * in_name);
+  SoundSourceSequence * AddSourceSequence(char const * in_name);
   /** add a random inside the manager */
-  class SoundSourceRandom * AddSourceRandom(char const * in_name);
-
-  /** add a category inside the manager */
-  class SoundCategory * AddSourceCategory(char const * in_name);
+  SoundSourceRandom * AddSourceRandom(char const * in_name);
 
 protected:
 
@@ -199,8 +207,7 @@ protected:
   bool CanAddSource(char const * in_name) const;
   /** test whether a sound with given name could be inserted in the manager */
   bool CanAddSound(char const * in_name) const;
-  /** test whether a category with given name could be inserted in the manager */
-  bool CanAddCategory(char const * in_name) const;
+
   /** utility function to test whether an object can be inserted */
   template<typename T>
   bool CanAddObject(char const * in_name, T const * (SoundManager::*find_func)(char const *) const) const
@@ -231,12 +238,17 @@ protected:
 protected:
 
   /** the sources */
-  std::vector<boost::intrusive_ptr<class SoundSource>> sources;
-  /** the categories */
-  std::vector<boost::intrusive_ptr<class SoundCategory>> categories;
+  std::vector<boost::intrusive_ptr<SoundSource>> sources;
   /** the sounds */
-  std::vector<boost::intrusive_ptr<class Sound>> sounds;
+  std::vector<boost::intrusive_ptr<Sound>> sounds;
 };
+
+
+
+
+
+
+
 
 
 
@@ -279,18 +291,18 @@ protected:
   virtual void TickObject(float delta_time) override;
 
   /** remove a category from the list */
-  void RemoveSoundCategory(class SoundCategory * in_category);
+  void RemoveCategory(SoundCategory * in_category);
   /** remove a sound from the list */
-  void RemoveSound(class Sound * in_sound);
+  void RemoveSound(Sound * in_sound);
   /** remove a sound source from the list */
-  void RemoveSoundSource(class SoundSource * in_source);
+  void RemoveSource(SoundSource * in_source);
 
   /** remove a category from the list */
-  void RemoveSoundCategory(size_t index);
+  void RemoveCategory(size_t index);
   /** remove a sound from the list */
   void RemoveSound(size_t index);
   /** remove a sound source from the list */
-  void RemoveSoundSource(size_t index);
+  void RemoveSource(size_t index);
 
   /** utility function to remove a sound object from a list */
   template<typename T>
@@ -343,13 +355,18 @@ protected:
         continue;
 
       // test whether object was already finished before ticking
-      bool finished = object->ComputeFinished();
+      bool finished = object->IsFinished();
       bool paused = object->IsEffectivePaused();
+      bool should_remove = finished;
+
       // call tick if required 
       if (!finished && !paused)
+      {
         object->TickObject(delta_time);
-      // finish the object if needed
-      if (finished || (!paused && object->ComputeFinished())) // was finished before, or has been ticked and became finished
+        should_remove = object->UpdateFinishedState();
+      }
+      // remove the object if needed
+      if (should_remove)
       {
         object->OnFinished();
         (this->*remove_func)(index);
@@ -395,7 +412,7 @@ public:
   void SetCallbacks(SoundCallbacks * in_callbacks);
 
   /** get whether the sound is finished */
-  bool IsFinished() const;
+  bool IsFinished() const { return is_finished; }
 
 protected:
 
@@ -404,11 +421,15 @@ protected:
   /** remove element from manager list and detach it */
   virtual void RemoveFromOwner();
   /** get whether the sound is finished */
-  virtual bool ComputeFinished();
+  virtual bool ComputeFinishedState();
+
   /** internal tick the sounds */
   virtual void TickObject(float delta_time) override;
-  /** accessibility function */
+
+  /** called at terminaison of the object */
   void OnFinished();
+  /** update the flag finished and return it */
+  bool UpdateFinishedState();
 
 protected:
 
@@ -455,7 +476,7 @@ public:
   virtual float GetEffectiveVolume() const;
 
   /** get whether the sound is finished */
-  virtual bool ComputeFinished() override;
+  virtual bool ComputeFinishedState() override;
 
 protected:
 
@@ -554,9 +575,9 @@ protected:
   bool looping = false;
 
   /** the category of the sound */
-  class SoundCategory * category = nullptr;
+  SoundCategory * category = nullptr;
   /** the source that generated this object */
-  class SoundSource * source = nullptr;
+  SoundSource * source = nullptr;
 };
 
                 /* ---------------- */
@@ -574,7 +595,7 @@ protected:
   /** internal tick the object */
   virtual void TickObject(float delta_time);
   /** get whether the sound is finished */
-  virtual bool ComputeFinished();
+  virtual bool ComputeFinishedState();
  
 public:
 
@@ -613,7 +634,7 @@ public:
 protected:
 
   /** protected constructor */
-  SoundComposite(class SoundSourceComposite * in_source);
+  SoundComposite(SoundSourceComposite * in_source);
   /** internal tick the sounds */
   virtual void TickObject(float delta_time) override;
   /** called whenever a child element is finished (returns true when completed) */
@@ -636,7 +657,7 @@ class SoundSequence : public SoundComposite
 protected:
 
   /** protected constructor */
-  SoundSequence(class SoundSourceSequence * in_source);
+  SoundSequence(SoundSourceSequence * in_source);
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound() override;
   /** called whenever a child element is finished (returns true when completed) */

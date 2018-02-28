@@ -29,17 +29,17 @@ void PlaySoundDesc::Enable3D(bool enable)
   is_3D_sound = enable;
 }
 
-void PlaySoundDesc::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
+void PlaySoundDesc::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
 {
   position = in_position;
-  if (set_3D_sound)
+  if (update_3D_sound)
     is_3D_sound = true;  
 }
 
-void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
+void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
 {
   velocity = in_velocity;
-  if (set_3D_sound)
+  if (update_3D_sound)
     is_3D_sound = true;
 }
 
@@ -90,7 +90,7 @@ SoundManager const * SoundObject::GetManager() const
   return nullptr;
 }
 
-void SoundObject::Tick(float delta_time)
+void SoundObject::TickObject(float delta_time)
 {
 
 }
@@ -100,13 +100,25 @@ bool SoundObject::IsAttachedToManager() const
   return (GetManager() != nullptr);
 }
 
+//---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 // ==============================================================
 // SOUND SOURCE OWNER
 // ==============================================================
 
 /** a generic function to find an object in a list by its name */
 template<typename T, typename U>
-static T * FindSoundObject(char const * name, U & objects)
+static T * FindObject(char const * name, U & objects)
 {
   if (name == nullptr)
     return nullptr;
@@ -123,33 +135,33 @@ static T * FindSoundObject(char const * name, U & objects)
   return nullptr;
 }
 
-SoundSource * SoundObjectOwner::FindSoundSource(char const * name)
+SoundSource * SoundObjectOwner::FindSource(char const * name)
 {
-  return FindSoundObject<SoundSource>(name, sources);
+  return FindObject<SoundSource>(name, sources);
 }
-SoundSource const * SoundObjectOwner::FindSoundSource(char const * name) const
+SoundSource const * SoundObjectOwner::FindSource(char const * name) const
 {
-  return FindSoundObject<SoundSource>(name, sources);
+  return FindObject<SoundSource>(name, sources);
 }
 
 Sound * SoundObjectOwner::FindSound(char const * name)
 {
-  return FindSoundObject<Sound>(name, sounds);
+  return FindObject<Sound>(name, sounds);
 }
 
 Sound const * SoundObjectOwner::FindSound(char const * name) const
 {
-  return FindSoundObject<Sound>(name, sounds);
+  return FindObject<Sound>(name, sounds);
 }
 
-SoundCategory * SoundObjectOwner::FindSoundCategory(char const * name)
+SoundCategory * SoundObjectOwner::FindCategory(char const * name)
 {
-  return FindSoundObject<SoundCategory>(name, categories);
+  return FindObject<SoundCategory>(name, categories);
 }
 
-SoundCategory const * SoundObjectOwner::FindSoundCategory(char const * name) const
+SoundCategory const * SoundObjectOwner::FindCategory(char const * name) const
 {
-  return FindSoundObject<SoundCategory>(name, categories);
+  return FindObject<SoundCategory>(name, categories);
 }
 
 
@@ -166,7 +178,7 @@ SoundCategory const * SoundObjectOwner::FindSoundCategory(char const * name) con
 
 /** a generic function to find an object in a list by its path */
 template<typename T, typename U>
-static T * FindSoundObjectByPath(boost::filesystem::path const & in_path, U & objects)
+static T * FindObjectByPath(boost::filesystem::path const & in_path, U & objects)
 {
   size_t count = objects.size();
   for (size_t i = 0; i < count; ++i)
@@ -182,17 +194,17 @@ static T * FindSoundObjectByPath(boost::filesystem::path const & in_path, U & ob
 
 SoundSourceSimple * SoundObjectOwner::FindSourceSimple(boost::filesystem::path const & in_path)
 {
-  return FindSoundObjectByPath<SoundSourceSimple>(in_path, sources);
+  return FindObjectByPath<SoundSourceSimple>(in_path, sources);
 }
 
 SoundSourceSimple const * SoundObjectOwner::FindSourceSimple(boost::filesystem::path const & in_path) const
 {
-  return FindSoundObjectByPath<SoundSourceSimple>(in_path, sources);
+  return FindObjectByPath<SoundSourceSimple>(in_path, sources);
 }
 
 bool SoundObjectOwner::CanAddSource(char const * in_name) const
 {
-  return CanAddObject<SoundSource>(in_name, &SoundObjectOwner::FindSoundSource);
+  return CanAddObject<SoundSource>(in_name, &SoundObjectOwner::FindSource);
 }
 
 bool SoundObjectOwner::CanAddSound(char const * in_name) const
@@ -202,7 +214,7 @@ bool SoundObjectOwner::CanAddSound(char const * in_name) const
 
 bool SoundObjectOwner::CanAddCategory(char const * in_name) const
 {
-  return CanAddObject<SoundCategory>(in_name, &SoundManager::FindSoundCategory);
+  return CanAddObject<SoundCategory>(in_name, &SoundManager::FindCategory);
 }
 
 SoundSourceSequence * SoundObjectOwner::AddSourceSequence(char const * in_name)
@@ -359,12 +371,17 @@ bool SoundManager::StopManager()
 
 void SoundManager::Tick(float delta_time)
 {
+  TickObject(delta_time);
+}
+
+void SoundManager::TickObject(float delta_time)
+{
   if (!IsManagerStarted())
     return;
   // tick all categories
-  DoTick(delta_time, categories, &SoundManager::RemoveSoundCategory);
+  DoTickObjects(delta_time, categories, &SoundManager::RemoveSoundCategory);
   // tick all sounds
-  DoTick(delta_time, sounds, &SoundManager::RemoveSound);
+  DoTickObjects(delta_time, sounds, &SoundManager::RemoveSound);
 }
 
 
@@ -505,11 +522,16 @@ void SoundManagedObject::RemoveFromOwner()
 {
 }
 
-void SoundManagedObject::Tick(float delta_time)
+void SoundManagedObject::TickObject(float delta_time)
 {
 }
 
 bool SoundManagedObject::IsFinished() const
+{
+  return is_finished;
+}
+
+bool SoundManagedObject::ComputeFinished()
 {
   return true;
 }
@@ -564,9 +586,9 @@ float SoundManagedVolumeObject::GetEffectiveVolume() const
   return GetVolume();
 }
 
-void SoundManagedVolumeObject::Tick(float delta_time)
+void SoundManagedVolumeObject::TickObject(float delta_time)
 {
-  SoundManagedObject::Tick(delta_time);
+  SoundManagedObject::TickObject(delta_time);
 
 
 
@@ -576,7 +598,7 @@ void SoundManagedVolumeObject::Tick(float delta_time)
 
 }
 
-bool SoundManagedVolumeObject::IsFinished() const
+bool SoundManagedVolumeObject::ComputeFinished()
 {
 
 
@@ -599,9 +621,9 @@ void SoundCategory::RemoveFromOwner()
   owner->RemoveSoundCategory(this);
 }
 
-void SoundCategory::Tick(float delta_time)
+void SoundCategory::TickObject(float delta_time)
 {
-  SoundManagedVolumeObject::Tick(delta_time);
+  SoundManagedVolumeObject::TickObject(delta_time);
 
 
 
@@ -612,9 +634,9 @@ void SoundCategory::Tick(float delta_time)
 // SOUND
 // ==============================================================
 
-void Sound::Tick(float delta_time)
+void Sound::TickObject(float delta_time)
 {
-  SoundManagedVolumeObject::Tick(delta_time); // update the volume
+  SoundManagedVolumeObject::TickObject(delta_time); // update the volume
 }
 
 float Sound::GetEffectiveVolume() const
@@ -689,17 +711,17 @@ bool Sound::IsLooping() const
   return looping;
 }
 
-void Sound::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
+void Sound::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
 {
   position = in_position;
-  if (set_3D_sound)
+  if (update_3D_sound)
     is_3D_sound = true;
 }
 
-void Sound::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
+void Sound::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
 {
   velocity = in_velocity;
-  if (set_3D_sound)
+  if (update_3D_sound)
     is_3D_sound = true;
 }
 
@@ -715,10 +737,10 @@ void Sound::Stop()
 
                 /* ---------------- */
 
-void SoundSimple::Tick(float delta_time)
+void SoundSimple::TickObject(float delta_time)
 {
   // update the volume
-  Sound::Tick(delta_time); 
+  Sound::TickObject(delta_time);
   // whatever happens next, we cannot due anything with that sound ?
   if (irrklang_sound == nullptr || source == nullptr) 
     return;
@@ -727,11 +749,11 @@ void SoundSimple::Tick(float delta_time)
   irrklang_sound->setVolume((irrklang::ik_f32)current_volume);
 }
 
-bool SoundSimple::IsFinished() const
+bool SoundSimple::ComputeFinished()
 {
   if (irrklang_sound == nullptr)
     return true;
-  if (Sound::IsFinished()) // parent call
+  if (Sound::ComputeFinished()) // parent call
     return true;
   if (IsLooping()) // a looping sound is never finished
     return false;
@@ -792,16 +814,16 @@ bool SoundSimple::IsSound3D() const
   return is_3D_sound;
 }
 
-void SoundSimple::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
+void SoundSimple::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
 {
-  Sound::SetPosition(in_position, set_3D_sound);
+  Sound::SetPosition(in_position, update_3D_sound);
   if (irrklang_sound != nullptr && is_3D_sound)
     irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
 }
 
-void SoundSimple::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
+void SoundSimple::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
 {
-  Sound::SetVelocity(in_velocity, set_3D_sound);
+  Sound::SetVelocity(in_velocity, update_3D_sound);
   if (irrklang_sound != nullptr && is_3D_sound)
     irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
 }
@@ -846,18 +868,18 @@ SoundComposite::SoundComposite(class SoundSourceComposite * in_source) :
 
 
 
-void SoundComposite::SetPosition(glm::vec3 const & in_position, bool set_3D_sound)
+void SoundComposite::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
 {
-  Sound::SetPosition(in_position, set_3D_sound);
+  Sound::SetPosition(in_position, update_3D_sound);
   if (current_sound != nullptr)
-    current_sound->SetPosition(in_position, set_3D_sound);
+    current_sound->SetPosition(in_position, update_3D_sound);
 }
 
-void SoundComposite::SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound)
+void SoundComposite::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
 {
-  Sound::SetVelocity(in_velocity, set_3D_sound);
+  Sound::SetVelocity(in_velocity, update_3D_sound);
   if (current_sound != nullptr)
-    current_sound->SetVelocity(in_velocity, set_3D_sound);
+    current_sound->SetVelocity(in_velocity, update_3D_sound);
 }
 
 void SoundComposite::Pause()
@@ -881,11 +903,11 @@ void SoundComposite::Stop()
     current_sound->Stop();
 }
 
-void SoundComposite::Tick(float delta_time)
+void SoundComposite::TickObject(float delta_time)
 {
-  Sound::Tick(delta_time);
+  Sound::TickObject(delta_time);
   if (current_sound != nullptr)
-    current_sound->Tick(delta_time);
+    current_sound->TickObject(delta_time);
 
 
 }
@@ -967,7 +989,7 @@ Sound * SoundSource::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_c
   SoundCategory * sound_category = desc.category;
   if (sound_category == nullptr && desc.category_name.length() > 0)
   {
-    sound_category = owner->FindSoundCategory(desc.category_name.c_str());
+    sound_category = owner->FindCategory(desc.category_name.c_str());
     if (sound_category == nullptr) // there is a category requirement by name that does not exist
       return nullptr;
   }

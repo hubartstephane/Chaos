@@ -33,9 +33,9 @@ public:
   void Enable3D(bool enable);
 
   /** set the position of the sound (this enables the 3D feature) */
-  void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true);
+  void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
   /** set the velocity of the sound (this enables the 3D feature) */
-  void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true);
+  void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
 
 public:
 
@@ -43,10 +43,12 @@ public:
   bool paused = false;
   /** whether the sound is looping */
   bool looping = false;
+
   /** the position of the sound in 3D */
   glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
   /** the velocity of the sound in 3D */
   glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+
   /** the name of the sound object to create */
   std::string sound_name;
   /** the name of the category ... */
@@ -128,11 +130,25 @@ public:
   /** returns whether the object is attached to a manager */
   bool IsAttachedToManager() const;
 
-  /** tick the object */
-  virtual void Tick(float delta_time);
+protected:
 
-
+  /** internal tick the object */
+  virtual void TickObject(float delta_time);
 };
+
+
+
+//---------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 // ==============================================================
@@ -146,9 +162,9 @@ class SoundObjectOwner : public SoundObject
 public:
 
   /** find a source by its name */
-  class SoundSource * FindSoundSource(char const * name);
+  class SoundSource * FindSource(char const * name);
   /** find a source by its name */
-  class SoundSource const * FindSoundSource(char const * name) const;
+  class SoundSource const * FindSource(char const * name) const;
   /** find a simple source by its path */
   class SoundSourceSimple * FindSourceSimple(boost::filesystem::path const & in_path);
   /** find a simple source by its path */
@@ -160,9 +176,9 @@ public:
   class Sound const * FindSound(char const * name) const;
 
   /** find a category by its name */
-  class SoundCategory * FindSoundCategory(char const * name);
+  class SoundCategory * FindCategory(char const * name);
   /** find a category by its name */
-  class SoundCategory const * FindSoundCategory(char const * name) const;
+  class SoundCategory const * FindCategory(char const * name) const;
 
   /** load and add a simple source inside the manager (name is a copy of filename) */
   SoundSourceSimple * AddSourceSimple(boost::filesystem::path const & in_path);
@@ -225,6 +241,10 @@ protected:
 
 
 
+
+
+
+
 // ==============================================================
 // MANAGER
 // ==============================================================
@@ -247,13 +267,16 @@ public:
   /** getter on the manager object */
   virtual SoundManager const * GetManager() const override;
 
-  /** tick the manager */
-  virtual void Tick(float delta_time) override;
+  /** public method to tick the manager */
+  void Tick(float delta_time);
 
   /** update the listener position */
   bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
 
 protected:
+
+  /** internal tick the manager */
+  virtual void TickObject(float delta_time) override;
 
   /** remove a category from the list */
   void RemoveSoundCategory(class SoundCategory * in_category);
@@ -307,9 +330,9 @@ protected:
   /** destroy all sounds with a given source */
   void DestroyAllSoundPerSource(SoundSource * source);
 
-  /** tick sub category of objects */
+  /** internal tick list of objects */
   template<typename T>
-  void DoTick(float delta_time, T & vector, void (SoundManager::*remove_func)(size_t))
+  void DoTickObjects(float delta_time, T & vector, void (SoundManager::*remove_func)(size_t))
   {
     for (size_t i = vector.size(); i > 0; --i)
     {
@@ -320,13 +343,13 @@ protected:
         continue;
 
       // test whether object was already finished before ticking
-      bool finished = object->IsFinished();
+      bool finished = object->ComputeFinished();
       bool paused = object->IsEffectivePaused();
       // call tick if required 
       if (!finished && !paused)
-        object->Tick(delta_time);
+        object->TickObject(delta_time);
       // finish the object if needed
-      if (finished || (!paused && object->IsFinished())) // was finished before, or has been ticked and became finished
+      if (finished || (!paused && object->ComputeFinished())) // was finished before, or has been ticked and became finished
       {
         object->OnFinished();
         (this->*remove_func)(index);
@@ -341,6 +364,7 @@ protected:
   /** the irrklank engine */
   boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
 };
+
 
 
 
@@ -364,13 +388,14 @@ public:
   /** getter on the manager object */
   virtual SoundManager const * GetManager() const override;
 
-
-
   /** get the name of the object */
   char const * GetName() const { return name.c_str(); }
 
   /** change the callbacks associated to this object */
   void SetCallbacks(SoundCallbacks * in_callbacks);
+
+  /** get whether the sound is finished */
+  bool IsFinished() const;
 
 protected:
 
@@ -379,16 +404,18 @@ protected:
   /** remove element from manager list and detach it */
   virtual void RemoveFromOwner();
   /** get whether the sound is finished */
-  virtual bool IsFinished() const;
-  /** tick the sounds */
-  virtual void Tick(float delta_time) override;
+  virtual bool ComputeFinished();
+  /** internal tick the sounds */
+  virtual void TickObject(float delta_time) override;
   /** accessibility function */
   void OnFinished();
 
 protected:
 
-  /* the name */
+  /** the name */
   std::string name;
+  /** whether the object is finished */
+  bool is_finished = false;
   /** the irrklank engine */
   boost::intrusive_ptr<SoundObjectOwner> owner;
   /** the callbacks that are being called at the end of the object */
@@ -428,12 +455,12 @@ public:
   virtual float GetEffectiveVolume() const;
 
   /** get whether the sound is finished */
-  virtual bool IsFinished() const override;
+  virtual bool ComputeFinished() override;
 
 protected:
 
-  /** tick the sounds */
-  virtual void Tick(float delta_time) override;
+  /** internal tick the sounds */
+  virtual void TickObject(float delta_time) override;
 
 protected:
 
@@ -457,9 +484,18 @@ protected:
   virtual void OnRemovedFromOwner() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromOwner() override;
-  /** tick the sounds */
-  virtual void Tick(float delta_time) override;
+  /** internal tick the sounds */
+  virtual void TickObject(float delta_time) override;
 };
+
+
+
+
+
+
+
+
+
 
 // ==============================================================
 // SOUND
@@ -472,9 +508,9 @@ class Sound : public SoundManagedVolumeObject
 public:
 
   /** set the position of the sound (this enables the 3D feature) */
-  virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true);
+  virtual void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
   /** set the velocity of the sound (this enables the 3D feature) */
-  virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true);
+  virtual void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
   /** stop the sound */
   virtual void Stop();
 
@@ -501,8 +537,8 @@ protected:
   virtual void OnRemovedFromOwner() override;
   /** remove element from manager list and detach it */
   virtual void RemoveFromOwner() override;
-  /** tick the sounds */
-  virtual void Tick(float delta_time) override;
+  /** internal tick the sounds */
+  virtual void TickObject(float delta_time) override;
   /** the method being called from exterior */
   void PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
@@ -535,18 +571,18 @@ protected:
   virtual void OnRemovedFromOwner() override;
   /** the sound method (returns true whether it is immediatly finished) */
   virtual bool DoPlaySound() override;
-  /** tick the object */
-  virtual void Tick(float delta_time);
+  /** internal tick the object */
+  virtual void TickObject(float delta_time);
   /** get whether the sound is finished */
-  virtual bool IsFinished() const;
+  virtual bool ComputeFinished();
  
 public:
 
   /** returns whether the sound is in 3D dimension */
   bool IsSound3D() const;
   /** overriding some methods */
-  virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true) override;
-  virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true) override;
+  virtual void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true) override;
+  virtual void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true) override;
   virtual void Pause() override;
   virtual void Resume() override;
   virtual void Stop() override;
@@ -568,8 +604,8 @@ class SoundComposite : public Sound
 public:
 
   /** overriding some methods */
-  virtual void SetPosition(glm::vec3 const & in_position, bool set_3D_sound = true) override;
-  virtual void SetVelocity(glm::vec3 const & in_velocity, bool set_3D_sound = true) override;
+  virtual void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true) override;
+  virtual void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true) override;
   virtual void Pause() override;
   virtual void Resume() override;
   virtual void Stop() override;
@@ -578,8 +614,8 @@ protected:
 
   /** protected constructor */
   SoundComposite(class SoundSourceComposite * in_source);
-  /** tick the sounds */
-  virtual void Tick(float delta_time) override;
+  /** internal tick the sounds */
+  virtual void TickObject(float delta_time) override;
   /** called whenever a child element is finished (returns true when completed) */
   virtual bool DoPlayNextSound();
 
@@ -710,3 +746,13 @@ class SoundSourceRandom : public SoundSourceComposite
 protected:
 
 };
+
+
+
+
+// undefine macros
+#undef CHAOS_SOUND_CLASSES
+#undef CHAOS_SOUND_FORWARD_DECL
+#undef CHAOS_SOUND_FRIEND_DECL
+#undef CHAOS_SOUND_ALL_FRIENDS
+

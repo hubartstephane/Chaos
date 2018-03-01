@@ -1,6 +1,7 @@
 #include "SoundTest.h"
 
 #include <chaos/FileTools.h>
+#include <chaos/MathTools.h>
 #include <chaos/Buffer.h>
 
 // ==============================================================
@@ -50,6 +51,7 @@ void SoundAutoCallbacks::OnFinished(SoundObject * in_object)
   if (finished_func)
     finished_func(in_object);
 }
+
 void SoundAutoCallbacks::OnRemovedFromManager(SoundObject * in_object)
 {
   if (removed_func)
@@ -91,14 +93,12 @@ bool SoundObject::IsAttachedToManager() const
 void SoundObject::OnRemovedFromManager()
 {
   assert(IsAttachedToManager());
+  if (callbacks != nullptr)
+    callbacks->OnRemovedFromManager(this);
   sound_manager = nullptr;
 }
 
 void SoundObject::RemoveFromManager()
-{
-}
-
-void SoundObject::TickObject(float delta_time)
 {
 }
 
@@ -141,7 +141,7 @@ Sound * SoundSource::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_c
     return nullptr;
 
   // ensure there are no name collision
-  if (!sound_manager->CanAddSound((desc.sound_name.length() > 0) ? desc.sound_name.c_str() : nullptr))
+  if (!sound_manager->CanAddSound((desc.sound_name.length() > 0)? desc.sound_name.c_str() : nullptr))
     return nullptr;
 
   // ensure (if a category is required) that is correct
@@ -155,10 +155,8 @@ Sound * SoundSource::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_c
         return nullptr;
     }
   }
-  // a category is required and it does not belong to the same valid manager => failure
-  if (sound_category != nullptr && sound_category->sound_manager != sound_manager)
-    return nullptr;
 
+  // create the sound and initialize it
   Sound * result = GenerateSound();
   if (result != nullptr)
   {
@@ -195,18 +193,66 @@ void SoundSource::OnRemovedFromManager()
   SoundObject::OnRemovedFromManager();
 }
 
+// ==============================================================
+// VOLUME
+// ==============================================================
+
+void SoundVolumeObject::Pause()
+{
+  paused = true;
+}
+
+void SoundVolumeObject::Resume()
+{
+  paused = false;
+}
+
+bool SoundVolumeObject::IsPaused() const
+{
+  if (!IsAttachedToManager())
+    return false;
+  return paused;
+}
+
+bool SoundVolumeObject::IsEffectivePaused() const
+{
+  return IsPaused();
+}
+
+float SoundVolumeObject::GetVolume() const
+{
+  if (!IsAttachedToManager())
+    return 0.0f;
+  return volume;
+}
+
+float SoundVolumeObject::GetEffectiveVolume() const
+{
+  return GetVolume();
+}
+
+
+void SoundVolumeObject::TickObject(float delta_time)
+{
+  SoundObject::TickObject(delta_time);
 
 
 
 
+}
+
+bool SoundVolumeObject::ComputeFinishedState()
+{
 
 
 
+  return SoundObject::ComputeFinishedState();
+}
 
-
-
-
-
+void SoundVolumeObject::SetVolume(float in_volume)
+{
+  volume = chaos::MathTools::Clamp(in_volume, 0.0f, 1.0f);
+}
 
 // ==============================================================
 // CATEGORY
@@ -224,23 +270,193 @@ void SoundCategory::RemoveFromManager()
   sound_manager->RemoveCategory(this);
 }
 
+// ==============================================================
+// SOUND
+// ==============================================================
 
+bool Sound::IsSound3D() const
+{
+  return is_3D_sound;
+}
 
+glm::vec3 Sound::GetPosition() const
+{
+  return position;
+}
 
+glm::vec3 Sound::GetVelocity() const
+{
+  return velocity;
+}
 
+bool Sound::IsLooping() const
+{
+  return looping;
+}
 
+void Sound::SetPosition(glm::vec3 const & in_position)
+{
+  position = in_position;
+  if (is_3D_sound && irrklang_sound != nullptr)
+    irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
+}
 
+void Sound::SetVelocity(glm::vec3 const & in_velocity)
+{
+  velocity = in_velocity;
+  if (is_3D_sound && irrklang_sound != nullptr)
+    irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
+}
 
+float Sound::GetEffectiveVolume() const
+{
+  float result = SoundVolumeObject::GetEffectiveVolume();
+  if (category != nullptr)
+    result *= category->GetEffectiveVolume();
+  return result;
+}
 
+bool Sound::IsEffectivePaused() const
+{
+  if (SoundVolumeObject::IsEffectivePaused())
+    return true;
+  if (category != nullptr && category->IsEffectivePaused())
+    return true;
+  return false;
+}
 
+void Sound::Pause() 
+{
+  if (!IsEffectivePaused())
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setIsPaused(true);
+  SoundVolumeObject::Pause();
+}
 
+void Sound::Resume()
+{
+  if (IsEffectivePaused())
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setIsPaused(false);
+  SoundVolumeObject::Resume();
+}
 
+void Sound::Stop()
+{
+  if (!IsAttachedToManager()) // irrklang resource will be destroyed later
+    RemoveFromManager();
+}
 
+bool Sound::ComputeFinishedState()
+{
+  if (irrklang_sound == nullptr)
+    return true;
+  if (SoundVolumeObject::ComputeFinishedState()) // parent call
+    return true;
+  if (IsLooping()) // a looping sound is never finished
+    return false;
+  return irrklang_sound->isFinished();
+}
 
+void Sound::SetVolume(float in_volume)
+{
+  SoundVolumeObject::SetVolume(in_volume);
+  if (irrklang_sound != nullptr)
+    irrklang_sound->setVolume((irrklang::ik_f32)GetEffectiveVolume()); // XXX : cannot wait for next tick because sound could be paused just before volume change
+}
+
+void Sound::RemoveFromManager()
+{
+  assert(IsAttachedToManager());
+  sound_manager->RemoveSound(this);
+}
+
+void Sound::OnRemovedFromManager()
+{
+  assert(IsAttachedToManager());
+  if (irrklang_sound != nullptr)
+  {
+    irrklang_sound->stop();
+    irrklang_sound = nullptr;
+  }
+  SoundVolumeObject::OnRemovedFromManager();
+}
+
+void Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+{
+  // copy the data
+  is_3D_sound = desc.IsSound3D();
+  position = desc.position;
+  velocity = desc.velocity;
+  paused = desc.paused;
+  looping = desc.looping;
+
+  if (desc.sound_name.length() > 0)
+    name = desc.sound_name;
+
+  callbacks = in_callbacks;
+
+  // start the sound
+  DoPlaySound();
+}
+
+bool Sound::DoPlaySound()
+{
+  // test whether the sound may be played
+  // error => immediatly finished
+  if (source == nullptr || source->irrklang_source == nullptr)
+    return true;
+
+  irrklang::ISoundEngine * irrklang_engine = GetIrrklangEngine();
+  if (irrklang_engine == nullptr)
+    return true;
+
+  // play sound
+  bool track = true;
+  bool sound_effect = true;
+
+  if (is_3D_sound)
+  {
+    irrklang_sound = irrklang_engine->play3D(
+      source->irrklang_source.get(),
+      chaos::IrrklangTools::ToIrrklangVector(position),
+      looping,
+      paused,
+      track,
+      sound_effect);
+
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(velocity));
+  }
+  else
+  {
+    irrklang_sound = irrklang_engine->play2D(
+      source->irrklang_source.get(),
+      looping,
+      paused,
+      track,
+      sound_effect);
+  }
+  return (irrklang_sound == nullptr); 
+}
+
+void Sound::TickObject(float delta_time)
+{
+  // update the volume
+  SoundVolumeObject::TickObject(delta_time);
+  // apply volume on the irrklang object
+  if (irrklang_sound == nullptr)
+    irrklang_sound->setVolume((irrklang::ik_f32)GetEffectiveVolume());
+}
 
 // ==============================================================
 // MANAGER
 // ==============================================================
+
+irrklang::ISoundEngine * SoundManager::GetIrrklangEngine()
+{
+  return irrklang_engine.get();
+}
 
 bool SoundManager::IsManagerStarted() const
 {
@@ -507,7 +723,7 @@ SoundSource * SoundManager::AddSource(boost::filesystem::path const & in_path, c
   if (FindSourceByPath(in_path) != nullptr)
     return nullptr;
   // get the irrklang engine
-  irrklang::ISoundEngine * engine = SoundObject::GetIrrklangEngine();
+  irrklang::ISoundEngine * engine = GetIrrklangEngine();
   if (engine == nullptr)
     return nullptr;
   // load the file
@@ -529,368 +745,3 @@ SoundSource * SoundManager::AddSource(boost::filesystem::path const & in_path, c
 
   return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ==============================================================
-// VOLUME
-// ==============================================================
-
-void SoundManagedVolumeObject::Pause()
-{
-  paused = true;
-}
-
-void SoundManagedVolumeObject::Resume()
-{
-  paused = false;
-}
-
-bool SoundManagedVolumeObject::IsPaused() const
-{
-  if (!IsAttachedToManager())
-    return false;
-  return paused;
-}
-
-bool SoundManagedVolumeObject::IsEffectivePaused() const
-{
-  return IsPaused();
-}
-
-float SoundManagedVolumeObject::GetVolume() const
-{
-  if (!IsAttachedToManager())
-    return 0.0f;
-  return volume;
-}
-
-float SoundManagedVolumeObject::GetEffectiveVolume() const
-{
-  return GetVolume();
-}
-
-void SoundManagedVolumeObject::TickObject(float delta_time)
-{
-  SoundManagedObject::TickObject(delta_time);
-
-
-
-
-
-
-
-}
-
-bool SoundManagedVolumeObject::ComputeFinishedState()
-{
-
-
-  return false;
-}
-
-
-
-
-
-
-
-// ==============================================================
-// SOUND
-// ==============================================================
-
-void Sound::TickObject(float delta_time)
-{
-  SoundManagedVolumeObject::TickObject(delta_time); // update the volume
-}
-
-float Sound::GetEffectiveVolume() const
-{
-  float result = SoundManagedVolumeObject::GetEffectiveVolume();
-  if (category != nullptr)
-    result *= category->GetEffectiveVolume();
-  return result;
-}
-
-bool Sound::IsEffectivePaused() const
-{
-  if (category != nullptr && category->IsEffectivePaused())
-    return true;
-  return SoundManagedVolumeObject::IsEffectivePaused();
-}
-
-bool Sound::DoPlaySound()
-{
-  return true; // immediatly finished
-}
-
-void Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
-{
-  // copy the data
-  is_3D_sound = desc.IsSound3D();
-  position    = desc.position;
-  velocity    = desc.velocity;
-  paused      = desc.paused;
-  looping     = desc.looping;
-
-  if (desc.sound_name.length() > 0)
-    name = desc.sound_name;
-
-  callbacks = in_callbacks;
-
-  // start the sound
-  DoPlaySound();
-}
-
-void Sound::RemoveFromManager()
-{
-  assert(IsAttachedToManager());
-  owner->RemoveSound(this);
-}
-
-void Sound::OnRemovedFromManager()
-{
-  assert(IsAttachedToManager());
-  if (callbacks != nullptr)
-    callbacks->OnRemovedFromManager(this);
-  SoundManagedObject::OnRemovedFromManager();
-}
-
-bool Sound::IsSound3D() const
-{
-  return is_3D_sound;
-}
-
-glm::vec3 Sound::GetPosition() const
-{
-  return position;
-}
-
-glm::vec3 Sound::GetVelocity() const
-{
-  return velocity;
-}
-
-bool Sound::IsLooping() const
-{
-  return looping;
-}
-
-void Sound::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
-{
-  position = in_position;
-  if (update_3D_sound)
-    is_3D_sound = true;
-}
-
-void Sound::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
-{
-  velocity = in_velocity;
-  if (update_3D_sound)
-    is_3D_sound = true;
-}
-
-void Sound::Stop()
-{
-
-  // XXX :
-
-
-
-
-}
-
-                /* ---------------- */
-
-void SoundSimple::TickObject(float delta_time)
-{
-  // update the volume
-  Sound::TickObject(delta_time);
-  // whatever happens next, we cannot due anything with that sound ?
-  if (irrklang_sound == nullptr || source == nullptr) 
-    return;
-  // apply volume on the irrklang object
-  float current_volume = GetEffectiveVolume();
-  irrklang_sound->setVolume((irrklang::ik_f32)current_volume);
-}
-
-bool SoundSimple::ComputeFinishedState()
-{
-  if (irrklang_sound == nullptr)
-    return true;
-  if (Sound::ComputeFinishedState()) // parent call
-    return true;
-  if (IsLooping()) // a looping sound is never finished
-    return false;
-  return irrklang_sound->isFinished();
-}
-
-
-// XXX : Do not use 
-//         irrklang_sound->setSoundStopEventReceiver(...)
-//       The callback is called in another thread !!!
-//       Instead use the Tick(...) fuction.
-//       Less complication.
-
-bool SoundSimple::DoPlaySound()
-{
-  SoundSource * source_simple = dynamic_cast<SoundSource*>(source);
-
-  // test whether the sound may be played
-  // error => immediatly finished
-  if (source_simple == nullptr || source_simple->irrklang_source == nullptr)
-    return true;
-
-  irrklang::ISoundEngine * irrklang_engine = GetIrrklangEngine();
-  if (irrklang_engine == nullptr)
-    return true; 
-
-  // play sound
-  bool track = true;
-  bool sound_effect = true;
-
-  if (is_3D_sound)
-  {
-    irrklang_sound = irrklang_engine->play3D(
-      source_simple->irrklang_source.get(),
-      chaos::IrrklangTools::ToIrrklangVector(position),
-      looping,
-      paused,
-      track,
-      sound_effect);
-
-    if (irrklang_sound != nullptr)
-      irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(velocity));
-  }
-  else
-  {      
-    irrklang_sound = irrklang_engine->play2D(
-      source_simple->irrklang_source.get(),
-      looping,
-      paused,
-      track,
-      sound_effect);
-  }
-  return (irrklang_sound == nullptr); // error => immediatly finished
-}
-
-bool SoundSimple::IsSound3D() const
-{
-  return is_3D_sound;
-}
-
-void SoundSimple::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
-{
-  Sound::SetPosition(in_position, update_3D_sound);
-  if (irrklang_sound != nullptr && is_3D_sound)
-    irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
-}
-
-void SoundSimple::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
-{
-  Sound::SetVelocity(in_velocity, update_3D_sound);
-  if (irrklang_sound != nullptr && is_3D_sound)
-    irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
-}
-
-void SoundSimple::Pause()
-{
-  Sound::Pause();
-  if (irrklang_sound != nullptr)
-    irrklang_sound->setIsPaused(true);
-}
-
-void SoundSimple::Resume()
-{
-  Sound::Resume();
-  if (irrklang_sound != nullptr)
-    irrklang_sound->setIsPaused(false);
-}
-
-void SoundSimple::Stop()
-{
-  Sound::Stop();
-  if (irrklang_sound != nullptr)
-    irrklang_sound->stop();
-}
-
-void SoundSimple::OnRemovedFromManager()
-{
-  if (irrklang_sound != nullptr) // destroy the sound
-  {
-    irrklang_sound->stop();
-    irrklang_sound = nullptr;
-  }
-  Sound::OnRemovedFromManager();
-}
-                        /* ---------------- */
-
-SoundComposite::SoundComposite(SoundSourceComposite * in_source) :
-  source(in_source)
-{
-  assert(in_source != nullptr);
-}
-
-
-
-void SoundComposite::SetPosition(glm::vec3 const & in_position, bool update_3D_sound)
-{
-  Sound::SetPosition(in_position, update_3D_sound);
-  if (current_sound != nullptr)
-    current_sound->SetPosition(in_position, update_3D_sound);
-}
-
-void SoundComposite::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
-{
-  Sound::SetVelocity(in_velocity, update_3D_sound);
-  if (current_sound != nullptr)
-    current_sound->SetVelocity(in_velocity, update_3D_sound);
-}
-
-void SoundComposite::Pause()
-{
-  Sound::Pause();
-  if (current_sound != nullptr)
-    current_sound->Pause();
-}
-
-void SoundComposite::Resume()
-{
-  Sound::Resume();
-  if (current_sound != nullptr)
-    current_sound->Resume();
-}
-
-void SoundComposite::Stop()
-{
-  Sound::Stop();
-  if (current_sound != nullptr)
-    current_sound->Stop();
-}
-
-void SoundComposite::TickObject(float delta_time)
-{
-  Sound::TickObject(delta_time);
-  if (current_sound != nullptr)
-    current_sound->TickObject(delta_time);
-
-
-}
-
-bool SoundComposite::DoPlayNextSound()
-{
-  return true; // finished
-}
-

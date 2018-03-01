@@ -121,9 +121,9 @@ protected:
     boost::filesystem::path src1_path = resources_path / "70_Stir_RideBell.wav";
     boost::filesystem::path src2_path = resources_path / "70_Stir_SnareOff3.wav";
 
-    source1 = sound_manager->AddSourceSimple(src1_path, nullptr);
-    source2 = sound_manager->AddSourceSimple(src2_path, nullptr);
-    source3 = sound_manager->AddSourceSimple(src2_path, nullptr);
+    source1 = sound_manager->AddSource(src1_path, nullptr);
+    source2 = sound_manager->AddSource(src2_path, nullptr);
+    source3 = sound_manager->AddSource(src2_path, nullptr);
 
 #if 0
     chaos::SoundLoopInfo loop_info;
@@ -149,11 +149,11 @@ protected:
 
   boost::intrusive_ptr<SoundManager> sound_manager;
 
-  boost::intrusive_ptr<SoundSourceSimple> source1;
+  boost::intrusive_ptr<SoundSource> source1;
 
-  boost::intrusive_ptr<SoundSourceSimple> source2;
+  boost::intrusive_ptr<SoundSource> source2;
 
-  boost::intrusive_ptr<SoundSourceSimple> source3;
+  boost::intrusive_ptr<SoundSource> source3;
 
   boost::intrusive_ptr<Sound> sound1;
 #if 0

@@ -9,7 +9,7 @@
 // ==============================================================
 
 // all classes in this file
-#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory)
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundVolumeObject) (SoundSource) (SoundCategory)
 
 // forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
@@ -109,16 +109,6 @@ public:
   std::function<void(SoundObject *)> removed_func;
 };
 
-
-
-
-
-
-
-
-
-
-
 // ==============================================================
 // SOUND OBJECT
 // ==============================================================
@@ -156,9 +146,6 @@ protected:
   virtual void RemoveFromManager();
   /** get whether the sound is finished */
   virtual bool ComputeFinishedState();
-
-  /** internal tick the sounds */
-  virtual void TickObject(float delta_time) override;
 
   /** called at terminaison of the object */
   void OnFinished();
@@ -209,9 +196,6 @@ protected:
   boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
 };
 
-
-
-
 // ==============================================================
 // VOLUME
 // ==============================================================
@@ -232,18 +216,19 @@ public:
   /** get the final pause status for the object */
   virtual bool IsEffectivePaused() const;
 
+  /** change the object volume */
+  virtual void SetVolume(float in_volume);
   /** get the own object volume */
   float GetVolume() const;
   /** get the final volume for the sound (category and blendings taken into account) */
   virtual float GetEffectiveVolume() const;
 
-  /** get whether the sound is finished */
-  virtual bool ComputeFinishedState() override;
-
 protected:
 
   /** internal tick the sounds */
   virtual void TickObject(float delta_time) override;
+  /** get whether the sound is finished */
+  virtual bool ComputeFinishedState() override;
 
 protected:
 
@@ -269,36 +254,81 @@ protected:
   virtual void RemoveFromManager() override;
 };
 
+// ==============================================================
+// SOUND
+// ==============================================================
 
+class Sound : public SoundVolumeObject
+{
+  CHAOS_SOUND_ALL_FRIENDS
 
+public:
 
+  /** set the position of the sound */
+  void SetPosition(glm::vec3 const & in_position);
+  /** set the velocity of the sound */
+  void SetVelocity(glm::vec3 const & in_velocity);
 
+  /** pause the object */
+  virtual void Pause() override;
+  /** resume the object */
+  virtual void Resume() override;
+  /** change the object volume */
+  virtual void SetVolume(float in_volume);
 
+  /** stop the sound */
+  void Stop();
 
+  /** returns whether the sound is effectively paused */
+  virtual bool IsEffectivePaused() const override;
+  /** returns the effective volume of the sound */
+  virtual float GetEffectiveVolume() const override;
 
+  /** returns whether the sound is in 3D dimension */
+  bool IsSound3D() const;
+  /** get the position of the sound */
+  glm::vec3 GetPosition() const;
+  /** get the velocity of the sound */
+  glm::vec3 GetVelocity() const;
+  /** get whether the sound is looping */
+  bool IsLooping() const;
 
+protected:
 
+  /** the sound method (returns true whether it is immediatly finished) */
+  virtual bool DoPlaySound();
+  /** unbind from manager */
+  virtual void OnRemovedFromManager() override;
+  /** remove element from manager list and detach it */
+  virtual void RemoveFromManager() override;
+  /** internal tick the sounds */
+  virtual void TickObject(float delta_time) override;
+  /** the method being called from exterior */
+  void PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
+  /** get whether the sound is finished */
+  virtual bool ComputeFinishedState() override;
 
+protected:
 
+  /** returns true whether the sound is in 3D */
+  bool is_3D_sound = false;
+  /** whether the sound is looping */
+  bool looping = false;
 
+  /** the position of the sound in 3D */
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the velocity of the sound in 3D */
+  glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 
+  /** the category of the sound */
+  SoundCategory * category = nullptr;
+  /** the source that generated this object */
+  SoundSource * source = nullptr;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  /** the irrklang sound */
+  boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
+};
 
 // ==============================================================
 // MANAGER
@@ -309,6 +339,9 @@ class SoundManager : public chaos::ReferencedObject
   CHAOS_SOUND_ALL_FRIENDS
 
 public:
+
+  /** getter on the irrklang engine */
+  irrklang::ISoundEngine * GetIrrklangEngine();
 
   /** start the manager */
   bool StartManager();
@@ -449,8 +482,7 @@ protected:
   bool CanAddObject(char const * in_name, T const * (SoundManager::*find_func)(char const *) const) const
   {
     // manager initialized ?
-    SoundManager * manager = GetManager();
-    if (manager == nullptr || !manager->IsManagerStarted())
+    if (!IsManagerStarted())
       return false;
     // name already existing ?
     if (in_name != nullptr && (this->*find_func)(in_name) != nullptr)
@@ -485,102 +517,6 @@ protected:
   /** the categories */
   std::vector<boost::intrusive_ptr<SoundCategory>> categories;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ==============================================================
-// SOUND
-// ==============================================================
-
-class Sound : public SoundVolumeObject
-{
-  CHAOS_SOUND_ALL_FRIENDS
-
-public:
-
-  /** set the position of the sound (this enables the 3D feature) */
-  virtual void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
-  /** set the velocity of the sound (this enables the 3D feature) */
-  virtual void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
-  /** stop the sound */
-  virtual void Stop();
-
-  /** returns whether the sound is effectively paused */
-  virtual bool IsEffectivePaused() const override;
-  /** returns the effective volume of the sound */
-  virtual float GetEffectiveVolume() const override;
-
-  /** returns whether the sound is in 3D dimension */
-  bool IsSound3D() const;
-  /** get the position of the sound */
-  glm::vec3 GetPosition() const;
-  /** get the velocity of the sound */
-  glm::vec3 GetVelocity() const;
-
-  /** get whether the sound is looping */
-  bool IsLooping() const;
-
-protected:
-
-  /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound();
-  /** unbind from manager */
-  virtual void OnRemovedFromManager() override;
-  /** remove element from manager list and detach it */
-  virtual void RemoveFromManager() override;
-  /** internal tick the sounds */
-  virtual void TickObject(float delta_time) override;
-  /** the method being called from exterior */
-  void PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
-
-protected:
-
-  /** returns true whether the sound is in 3D */
-  bool is_3D_sound = false;
-  /** whether the sound is looping */
-  bool looping = false;
-
-  /** the position of the sound in 3D */
-  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-  /** the velocity of the sound in 3D */
-  glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-
-  /** the category of the sound */
-  SoundCategory * category = nullptr;
-  /** the source that generated this object */
-  SoundSource * source = nullptr;
-
-  /** the irrklang sound */
-  boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
-};
-
-           
-
-
-
-
-
-
-
-
 
 // undefine macros
 #undef CHAOS_SOUND_CLASSES

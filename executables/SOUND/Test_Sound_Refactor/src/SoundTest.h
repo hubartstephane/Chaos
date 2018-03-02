@@ -72,6 +72,8 @@ class SoundCallbacks : public chaos::ReferencedObject
 
 protected:
 
+  virtual ~SoundCallbacks();
+
   /** called whenever an object is finished */
   virtual void OnFinished(SoundObject * in_object);
   /** called whenever an object is removed from manager */
@@ -138,6 +140,13 @@ public:
 
 protected:
 
+
+
+
+
+
+
+
   /** internal tick the object */
   virtual void TickObject(float delta_time);
   /** unbind from manager */
@@ -174,6 +183,8 @@ class SoundSource : public SoundObject
 
 public:
 
+  virtual ~SoundSource();
+
   /** generating and playing a sound */
   Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
   /** get the path of the resource */
@@ -207,9 +218,7 @@ class SoundVolumeObject : public SoundObject
 public:
 
   /** pause the object */
-  virtual void Pause();
-  /** resume the object */
-  virtual void Resume();
+  virtual void Pause(bool in_pause = true);
 
   /** get whether the object is paused */
   bool IsPaused() const;
@@ -246,6 +255,8 @@ class SoundCategory : public SoundVolumeObject
 {
   CHAOS_SOUND_ALL_FRIENDS
 
+    virtual ~SoundCategory();
+
 protected:
 
   /** unbind from manager */
@@ -262,6 +273,8 @@ class Sound : public SoundVolumeObject
 {
   CHAOS_SOUND_ALL_FRIENDS
 
+    virtual ~Sound();
+
 public:
 
   /** set the position of the sound */
@@ -270,9 +283,8 @@ public:
   void SetVelocity(glm::vec3 const & in_velocity);
 
   /** pause the object */
-  virtual void Pause() override;
-  /** resume the object */
-  virtual void Resume() override;
+  virtual void Pause(bool in_pause = true) override;
+
   /** change the object volume */
   virtual void SetVolume(float in_volume);
 

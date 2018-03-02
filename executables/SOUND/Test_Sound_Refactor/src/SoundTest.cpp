@@ -4,6 +4,34 @@
 #include <chaos/MathTools.h>
 #include <chaos/Buffer.h>
 
+
+
+
+Sound::~Sound()
+{
+  int i = 0;
+  ++i;
+}
+
+SoundCategory::~SoundCategory()
+{
+  int i = 0;
+  ++i;
+}
+
+SoundSource::~SoundSource()
+{
+  int i = 0;
+  ++i;
+}
+
+SoundCallbacks::~SoundCallbacks()
+{
+  int i = 0;
+  ++i;
+}
+
+
 // ==============================================================
 // DESC
 // ==============================================================
@@ -156,6 +184,10 @@ Sound * SoundSource::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_c
     }
   }
 
+  // test whether the category has the same manager as the source
+  if (sound_category != nullptr && sound_category->sound_manager != sound_manager)
+    return nullptr;
+
   // create the sound and initialize it
   Sound * result = GenerateSound();
   if (result != nullptr)
@@ -197,14 +229,9 @@ void SoundSource::OnRemovedFromManager()
 // VOLUME
 // ==============================================================
 
-void SoundVolumeObject::Pause()
+void SoundVolumeObject::Pause(bool in_pause)
 {
-  paused = true;
-}
-
-void SoundVolumeObject::Resume()
-{
-  paused = false;
+  paused = in_pause;
 }
 
 bool SoundVolumeObject::IsPaused() const
@@ -230,7 +257,6 @@ float SoundVolumeObject::GetEffectiveVolume() const
 {
   return GetVolume();
 }
-
 
 void SoundVolumeObject::TickObject(float delta_time)
 {
@@ -325,25 +351,17 @@ bool Sound::IsEffectivePaused() const
   return false;
 }
 
-void Sound::Pause() 
+void Sound::Pause(bool in_pause)
 {
-  if (!IsEffectivePaused())
-    if (irrklang_sound != nullptr)
-      irrklang_sound->setIsPaused(true);
-  SoundVolumeObject::Pause();
-}
-
-void Sound::Resume()
-{
-  if (IsEffectivePaused())
-    if (irrklang_sound != nullptr)
-      irrklang_sound->setIsPaused(false);
-  SoundVolumeObject::Resume();
+  if (irrklang_sound != nullptr)
+    if (IsEffectivePaused() != in_pause)
+      irrklang_sound->setIsPaused(in_pause);
+  SoundVolumeObject::Pause(in_pause);
 }
 
 void Sound::Stop()
 {
-  if (!IsAttachedToManager()) // irrklang resource will be destroyed later
+  if (IsAttachedToManager()) // irrklang resource will be destroyed later
     RemoveFromManager();
 }
 
@@ -353,8 +371,6 @@ bool Sound::ComputeFinishedState()
     return true;
   if (SoundVolumeObject::ComputeFinishedState()) // parent call
     return true;
-  if (IsLooping()) // a looping sound is never finished
-    return false;
   return irrklang_sound->isFinished();
 }
 
@@ -445,7 +461,7 @@ void Sound::TickObject(float delta_time)
   // update the volume
   SoundVolumeObject::TickObject(delta_time);
   // apply volume on the irrklang object
-  if (irrklang_sound == nullptr)
+  if (irrklang_sound != nullptr)
     irrklang_sound->setVolume((irrklang::ik_f32)GetEffectiveVolume());
 }
 
@@ -504,6 +520,8 @@ void SoundManager::Tick(float delta_time)
 {
   if (!IsManagerStarted())
     return;
+  // tick all sources
+  //DoTickObjects(delta_time, sources, &SoundManager::RemoveSource);
   // tick all categories
   DoTickObjects(delta_time, categories, &SoundManager::RemoveCategory);
   // tick all sounds

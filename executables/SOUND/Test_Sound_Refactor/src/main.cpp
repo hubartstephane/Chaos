@@ -26,9 +26,11 @@ protected:
 
   virtual void Finalize() override
   {   
-   // sound1    = nullptr;
-   // category1 = nullptr;
-   // source1   = nullptr;
+    sound1    = nullptr;
+    category1 = nullptr;
+    source1   = nullptr;
+    source2   = nullptr;
+    source3   = nullptr;
 
     if (sound_manager != nullptr)
     {
@@ -48,23 +50,29 @@ protected:
     if (button == 0 && action == GLFW_PRESS)
     {
       PlaySoundDesc desc;
-      /*
-      sound1 = source1->PlaySound(desc, 
-        [this]() {
-        sound1 = nullptr; 
-      });
-      */
+      desc.looping = false;
+      desc.paused = true;
 
-      sound1 = source1->PlaySound(desc);
+      SoundAutoCallbacks * cb = new SoundAutoCallbacks;
+      cb->finished_func = [](SoundObject * ob)
+      {
+        ob = ob;
+      };
+      cb->removed_func = [](SoundObject * ob)
+      {
+        ob = ob;
+      };
 
+      sound1 = source1->PlaySound(desc, cb);
     }
 
     if (button == 1 && action == GLFW_PRESS)
     {
       if (sound1 != nullptr)
       {
-        sound1->Stop();
-        sound1 = nullptr;
+        sound1->Pause(!sound1->IsPaused());
+       // sound1->Stop();
+       // sound1 = nullptr;
       }
     }
 
@@ -125,16 +133,8 @@ protected:
     source2 = sound_manager->AddSource(src2_path, nullptr);
     source3 = sound_manager->AddSource(src2_path, nullptr);
 
-#if 0
-    chaos::SoundLoopInfo loop_info;
-    loop_info.start = 3.0f;
-    loop_info.end   = 6.0f;
-    loop_info.blend_time = 1.0f;
+    category1 = sound_manager->AddCategory(nullptr);
 
-    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr, loop_info);
-
-    category1 = sound_manager->AddCategory();
-#endif
     return true;
   }
 
@@ -156,56 +156,12 @@ protected:
   boost::intrusive_ptr<SoundSource> source3;
 
   boost::intrusive_ptr<Sound> sound1;
-#if 0
-  boost::intrusive_ptr<chaos::SoundCategory> category1;
-#endif
+
+  boost::intrusive_ptr<SoundCategory> category1;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-// ================================================================
-
-void truc()
-{}
-
-//void set(std::function<void()> && h, )
-
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  std::string ss1;
-  std::string ss2;
-
-  char const * aa1 = ss1.c_str();
-  char const * aa2 = ss2.c_str();
-
-
-  std::function<void()> gg;
-
-  gg = &truc;
-  gg();  
-  gg = nullptr;
-  if (gg)
-    gg();
-
-
-
-  std::function<void()> f = []() { std::cout << "Hello" << std::endl; };
-
-  f();
-
-  f = &truc;
-
-
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;

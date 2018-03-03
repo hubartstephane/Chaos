@@ -23,8 +23,23 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
 // DESC
 // ==============================================================
 
+class BlendSoundDesc
+{
+public:
+
+
+
+};
+
+
+// ==============================================================
+// DESC
+// ==============================================================
+
 class PlaySoundDesc
 {
+  CHAOS_SOUND_ALL_FRIENDS
+
 public:
 
   /** returns whether the sound is in 3D dimension */
@@ -422,6 +437,51 @@ protected:
       // callback then let the unreferencement manage the object lifetime
       object->OnRemovedFromManager();
     }
+  }
+
+  template<typename T, typename U>
+  static size_t FindObjectIndexInVector(T * object, U const & vector)
+  {
+    assert(object != nullptr);
+    size_t count = vector.size();
+    for (size_t i = 0; i < count; ++i)
+      if (vector[i].get() == object)
+        return i;
+    return count;
+  }
+  /** a generic function to find an object in a list by its name */
+  template<typename T, typename U>
+  static T * FindObjectByName(char const * name, U & objects)
+  {
+    if (name == nullptr)
+      return nullptr;
+
+    size_t count = objects.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      T * object = objects[i].get();
+      if (object == nullptr)
+        continue;
+      if (object->name == name)
+        return object;
+    }
+    return nullptr;
+  }
+
+  /** a generic function to find an object in a list by its path */
+  template<typename T, typename U>
+  static T * FindObjectByPath(boost::filesystem::path const & in_path, U & objects)
+  {
+    size_t count = objects.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      T * obj = objects[i].get();
+      if (obj == nullptr)
+        continue;
+      if (obj->GetPath() == in_path)
+        return obj;
+    }
+    return nullptr;
   }
 
   /** destroy all sounds in a category */

@@ -539,51 +539,6 @@ void SoundManager::Tick(float delta_time)
   DoTickObjects(delta_time, sounds, &SoundManager::RemoveSound);
 }
 
-template<typename T, typename U>
-static size_t FindObjectIndexInVector(T * object, U const & vector)
-{
-  assert(object != nullptr);
-  size_t count = vector.size();
-  for (size_t i = 0; i < count; ++i)
-    if (vector[i].get() == object)
-      return i;
-  return count;
-}
-/** a generic function to find an object in a list by its name */
-template<typename T, typename U>
-static T * FindObjectByName(char const * name, U & objects)
-{
-  if (name == nullptr)
-    return nullptr;
-
-  size_t count = objects.size();
-  for (size_t i = 0; i < count; ++i)
-  {
-    T * object = objects[i].get();
-    if (object == nullptr)
-      continue;
-    if (object->GetName() == name)
-      return object;
-  }
-  return nullptr;
-}
-
-/** a generic function to find an object in a list by its path */
-template<typename T, typename U>
-static T * FindObjectByPath(boost::filesystem::path const & in_path, U & objects)
-{
-  size_t count = objects.size();
-  for (size_t i = 0; i < count; ++i)
-  {
-    T * obj = objects[i].get();
-    if (obj == nullptr)
-      continue;
-    if (obj->GetPath() == in_path)
-      return obj;
-  }
-  return nullptr;
-}
-
 void SoundManager::RemoveCategory(SoundCategory * in_category)
 {
   RemoveCategory(FindObjectIndexInVector(in_category, categories));

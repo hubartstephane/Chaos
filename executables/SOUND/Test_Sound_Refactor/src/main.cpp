@@ -53,6 +53,7 @@ protected:
       desc.looping = false;
       desc.paused = false;
       desc.category = category1.get();
+      desc.sound_name = "toto";
 
       SoundAutoCallbacks * cb = new SoundAutoCallbacks;
       cb->finished_func = [](SoundObject * ob)
@@ -69,6 +70,10 @@ protected:
 
     if (button == 1 && action == GLFW_PRESS)
     {
+      Sound * s = sound_manager->FindSound("toto");
+      if (s != nullptr)
+        s->Stop();
+
     //  if (category1 != nullptr)
     //    category1->SetVolume(category1->GetVolume() * 0.5f);
 
@@ -80,9 +85,11 @@ protected:
       //if (source1 != nullptr)
       //  source1->Pause(!source1->IsPaused());
 
+     // sound_manager->StopManager();
+
       if (source1 != nullptr)
       {
-        source1->Stop();
+       // source1->Stop();
 
         auto x = category1.get();
         x = x;

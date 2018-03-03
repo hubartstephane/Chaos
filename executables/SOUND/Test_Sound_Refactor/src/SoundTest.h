@@ -9,7 +9,7 @@
 // ==============================================================
 
 // all classes in this file
-#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundVolumeObject) (SoundSource) (SoundCategory)
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory)
 
 // forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
@@ -72,8 +72,6 @@ class SoundCallbacks : public chaos::ReferencedObject
 
 protected:
 
-  virtual ~SoundCallbacks();
-
   /** called whenever an object is finished */
   virtual void OnFinished(SoundObject * in_object);
   /** called whenever an object is removed from manager */
@@ -129,6 +127,9 @@ public:
   /** getter on the manager object */
   SoundManager const * GetManager() const;
 
+  /** stop the object */
+  void Stop();
+
   /** returns whether the object is attached to a manager */
   bool IsAttachedToManager() const;
   /** get the name of the object */
@@ -138,14 +139,21 @@ public:
   /** get whether the sound is finished */
   bool IsFinished() const { return is_finished; }
 
+  /** pause the object */
+  virtual void Pause(bool in_pause = true);
+  /** get the final pause status for the object */
+  virtual bool IsEffectivePaused() const;
+  /** get whether the object is paused */
+  bool IsPaused() const;
+
+  /** change the object volume */
+  virtual void SetVolume(float in_volume);
+  /** get the final volume for the sound (category and blendings taken into account) */
+  virtual float GetEffectiveVolume() const;
+  /** get the own object volume */
+  float GetVolume() const;
+
 protected:
-
-
-
-
-
-
-
 
   /** internal tick the object */
   virtual void TickObject(float delta_time);
@@ -163,10 +171,14 @@ protected:
 
 protected:
 
-  /* the name */
-  std::string name;
   /** whether the object is finished */
   bool is_finished = false;
+  /** whether the sound is paused */
+  bool paused = false;
+  /** the volume */
+  float volume = 1.0f;
+  /* the name */
+  std::string name;
   /** the manager */
   SoundManager * sound_manager = nullptr;
   /** the callbacks */
@@ -183,12 +195,15 @@ class SoundSource : public SoundObject
 
 public:
 
-  virtual ~SoundSource();
-
   /** generating and playing a sound */
   Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
   /** get the path of the resource */
   boost::filesystem::path const & GetPath() const { return path; }
+
+  /** pause the object */
+  virtual void Pause(bool in_pause = true) override;
+  /** change the object volume */
+  virtual void SetVolume(float in_volume) override;
 
 protected:
 
@@ -208,54 +223,19 @@ protected:
 };
 
 // ==============================================================
-// VOLUME
+// CATEGORY
 // ==============================================================
 
-class SoundVolumeObject : public SoundObject
+class SoundCategory : public SoundObject
 {
   CHAOS_SOUND_ALL_FRIENDS
 
 public:
 
   /** pause the object */
-  virtual void Pause(bool in_pause = true);
-
-  /** get whether the object is paused */
-  bool IsPaused() const;
-  /** get the final pause status for the object */
-  virtual bool IsEffectivePaused() const;
-
+  virtual void Pause(bool in_pause = true) override;
   /** change the object volume */
-  virtual void SetVolume(float in_volume);
-  /** get the own object volume */
-  float GetVolume() const;
-  /** get the final volume for the sound (category and blendings taken into account) */
-  virtual float GetEffectiveVolume() const;
-
-protected:
-
-  /** internal tick the sounds */
-  virtual void TickObject(float delta_time) override;
-  /** get whether the sound is finished */
-  virtual bool ComputeFinishedState() override;
-
-protected:
-
-  /** whether the sound is paused */
-  bool paused = false;
-  /** the volume */
-  float volume = 1.0f;
-};
-
-// ==============================================================
-// CATEGORY
-// ==============================================================
-
-class SoundCategory : public SoundVolumeObject
-{
-  CHAOS_SOUND_ALL_FRIENDS
-
-    virtual ~SoundCategory();
+  virtual void SetVolume(float in_volume) override;
 
 protected:
 
@@ -269,11 +249,9 @@ protected:
 // SOUND
 // ==============================================================
 
-class Sound : public SoundVolumeObject
+class Sound : public SoundObject
 {
   CHAOS_SOUND_ALL_FRIENDS
-
-    virtual ~Sound();
 
 public:
 
@@ -284,12 +262,8 @@ public:
 
   /** pause the object */
   virtual void Pause(bool in_pause = true) override;
-
   /** change the object volume */
-  virtual void SetVolume(float in_volume);
-
-  /** stop the sound */
-  void Stop();
+  virtual void SetVolume(float in_volume) override;
 
   /** returns whether the sound is effectively paused */
   virtual bool IsEffectivePaused() const override;
@@ -320,6 +294,11 @@ protected:
 
   /** get whether the sound is finished */
   virtual bool ComputeFinishedState() override;
+
+  /** internal method to force the sound to update its volume */
+  void DoUpdateVolume();
+  /** internal method to force the sound to update its pause state */
+  void DoUpdatePause();
 
 protected:
 
@@ -458,12 +437,12 @@ protected:
     {
       size_t index = i - 1;
 
-      auto * object = vector[index].get();
+      auto object = vector[index]; // copy the intrusive_ptr to prevent the destruction 
       if (object == nullptr)
         continue;
 
       // test whether object was already finished before ticking
-      bool finished = object->IsFinished();
+      bool finished = object->IsFinished();  
       bool paused = object->IsEffectivePaused();
       bool should_remove = finished;
 
@@ -514,6 +493,15 @@ protected:
     sources.push_back(in_source);
     return in_source;
   }
+
+  /** update all sounds pause per category */
+  void UpdateAllSoundPausePerCategory(SoundCategory * category);
+  /** update all sounds volume per category */
+  void UpdateAllSoundVolumePerCategory(SoundCategory * category);
+  /** update all sounds pause per source */
+  void UpdateAllSoundPausePerSource(SoundSource * source);
+  /** update all sounds volume per source */
+  void UpdateAllSoundVolumePerSource(SoundSource * source);
 
 protected:
 

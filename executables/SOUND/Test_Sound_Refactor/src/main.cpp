@@ -51,7 +51,8 @@ protected:
     {
       PlaySoundDesc desc;
       desc.looping = false;
-      desc.paused = true;
+      desc.paused = false;
+      desc.category = category1.get();
 
       SoundAutoCallbacks * cb = new SoundAutoCallbacks;
       cb->finished_func = [](SoundObject * ob)
@@ -68,9 +69,29 @@ protected:
 
     if (button == 1 && action == GLFW_PRESS)
     {
+    //  if (category1 != nullptr)
+    //    category1->SetVolume(category1->GetVolume() * 0.5f);
+
+      //if (source1 != nullptr)
+      //  source1->SetVolume(source1->GetVolume() * 0.5f);
+
+      //if (category1 != nullptr)
+      //  category1->Pause(!category1->IsPaused());
+      //if (source1 != nullptr)
+      //  source1->Pause(!source1->IsPaused());
+
+      if (source1 != nullptr)
+      {
+        source1->Stop();
+
+        auto x = category1.get();
+        x = x;
+      }
+
+
       if (sound1 != nullptr)
       {
-        sound1->Pause(!sound1->IsPaused());
+        //sound1->Pause(!sound1->IsPaused());
        // sound1->Stop();
        // sound1 = nullptr;
       }

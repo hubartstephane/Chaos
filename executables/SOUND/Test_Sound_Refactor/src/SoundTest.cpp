@@ -4,34 +4,6 @@
 #include <chaos/MathTools.h>
 #include <chaos/Buffer.h>
 
-
-
-
-Sound::~Sound()
-{
-  int i = 0;
-  ++i;
-}
-
-SoundCategory::~SoundCategory()
-{
-  int i = 0;
-  ++i;
-}
-
-SoundSource::~SoundSource()
-{
-  int i = 0;
-  ++i;
-}
-
-SoundCallbacks::~SoundCallbacks()
-{
-  int i = 0;
-  ++i;
-}
-
-
 // ==============================================================
 // DESC
 // ==============================================================
@@ -153,6 +125,46 @@ void SoundObject::OnFinished()
     callbacks->OnFinished(this);
 }
 
+void SoundObject::Pause(bool in_pause)
+{
+  paused = in_pause;
+}
+
+bool SoundObject::IsPaused() const
+{
+  if (!IsAttachedToManager())
+    return false;
+  return paused;
+}
+
+bool SoundObject::IsEffectivePaused() const
+{
+  return IsPaused();
+}
+
+float SoundObject::GetVolume() const
+{
+  if (!IsAttachedToManager())
+    return 0.0f;
+  return volume;
+}
+
+float SoundObject::GetEffectiveVolume() const
+{
+  return GetVolume();
+}
+
+void SoundObject::SetVolume(float in_volume)
+{
+  volume = chaos::MathTools::Clamp(in_volume, 0.0f, 1.0f);
+}
+
+void SoundObject::Stop()
+{
+  if (IsAttachedToManager()) // irrklang resources will be destroyed later
+    RemoveFromManager();
+}
+
 // ==============================================================
 // SOURCES
 // ==============================================================
@@ -225,59 +237,22 @@ void SoundSource::OnRemovedFromManager()
   SoundObject::OnRemovedFromManager();
 }
 
-// ==============================================================
-// VOLUME
-// ==============================================================
-
-void SoundVolumeObject::Pause(bool in_pause)
+void SoundSource::Pause(bool in_pause)
 {
-  paused = in_pause;
+  if (IsPaused() == in_pause)
+    return;
+  SoundObject::Pause(in_pause);
+  if (IsAttachedToManager())
+    GetManager()->UpdateAllSoundPausePerSource(this);
 }
 
-bool SoundVolumeObject::IsPaused() const
+void SoundSource::SetVolume(float in_volume)
 {
-  if (!IsAttachedToManager())
-    return false;
-  return paused;
-}
-
-bool SoundVolumeObject::IsEffectivePaused() const
-{
-  return IsPaused();
-}
-
-float SoundVolumeObject::GetVolume() const
-{
-  if (!IsAttachedToManager())
-    return 0.0f;
-  return volume;
-}
-
-float SoundVolumeObject::GetEffectiveVolume() const
-{
-  return GetVolume();
-}
-
-void SoundVolumeObject::TickObject(float delta_time)
-{
-  SoundObject::TickObject(delta_time);
-
-
-
-
-}
-
-bool SoundVolumeObject::ComputeFinishedState()
-{
-
-
-
-  return SoundObject::ComputeFinishedState();
-}
-
-void SoundVolumeObject::SetVolume(float in_volume)
-{
-  volume = chaos::MathTools::Clamp(in_volume, 0.0f, 1.0f);
+  if (GetVolume() == in_volume)
+    return;
+  SoundObject::SetVolume(in_volume);
+  if (IsAttachedToManager())
+    GetManager()->UpdateAllSoundVolumePerSource(this);
 }
 
 // ==============================================================
@@ -287,13 +262,31 @@ void SoundVolumeObject::SetVolume(float in_volume)
 void SoundCategory::OnRemovedFromManager()
 {
   sound_manager->DestroyAllSoundPerCategory(this);
-  SoundVolumeObject::OnRemovedFromManager();
+  SoundObject::OnRemovedFromManager();
 }
 
 void SoundCategory::RemoveFromManager()
 {
   assert(IsAttachedToManager());
   sound_manager->RemoveCategory(this);
+}
+
+void SoundCategory::Pause(bool in_pause)
+{
+  if (IsPaused() == in_pause)
+    return;
+  SoundObject::Pause(in_pause);
+  if (IsAttachedToManager())
+    GetManager()->UpdateAllSoundPausePerCategory(this);
+}
+
+void SoundCategory::SetVolume(float in_volume)
+{
+  if (GetVolume() == in_volume)
+    return;
+  SoundObject::SetVolume(in_volume);
+  if (IsAttachedToManager())
+    GetManager()->UpdateAllSoundVolumePerCategory(this);
 }
 
 // ==============================================================
@@ -323,62 +316,47 @@ bool Sound::IsLooping() const
 void Sound::SetPosition(glm::vec3 const & in_position)
 {
   position = in_position;
-  if (is_3D_sound && irrklang_sound != nullptr)
-    irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
+  if (is_3D_sound)
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setPosition(chaos::IrrklangTools::ToIrrklangVector(in_position));
 }
 
 void Sound::SetVelocity(glm::vec3 const & in_velocity)
 {
   velocity = in_velocity;
-  if (is_3D_sound && irrklang_sound != nullptr)
-    irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
+  if (is_3D_sound)
+    if (irrklang_sound != nullptr)
+      irrklang_sound->setVelocity(chaos::IrrklangTools::ToIrrklangVector(in_velocity));
 }
 
 float Sound::GetEffectiveVolume() const
 {
-  float result = SoundVolumeObject::GetEffectiveVolume();
+  float result = SoundObject::GetEffectiveVolume();
   if (category != nullptr)
     result *= category->GetEffectiveVolume();
+  if (source != nullptr)
+    result *= source->GetEffectiveVolume();
   return result;
 }
 
 bool Sound::IsEffectivePaused() const
 {
-  if (SoundVolumeObject::IsEffectivePaused())
+  if (SoundObject::IsEffectivePaused())
     return true;
   if (category != nullptr && category->IsEffectivePaused())
     return true;
+  if (source != nullptr && source->IsEffectivePaused())
+    return true;
   return false;
-}
-
-void Sound::Pause(bool in_pause)
-{
-  if (irrklang_sound != nullptr)
-    if (IsEffectivePaused() != in_pause)
-      irrklang_sound->setIsPaused(in_pause);
-  SoundVolumeObject::Pause(in_pause);
-}
-
-void Sound::Stop()
-{
-  if (IsAttachedToManager()) // irrklang resource will be destroyed later
-    RemoveFromManager();
 }
 
 bool Sound::ComputeFinishedState()
 {
   if (irrklang_sound == nullptr)
     return true;
-  if (SoundVolumeObject::ComputeFinishedState()) // parent call
+  if (SoundObject::ComputeFinishedState()) // parent call
     return true;
   return irrklang_sound->isFinished();
-}
-
-void Sound::SetVolume(float in_volume)
-{
-  SoundVolumeObject::SetVolume(in_volume);
-  if (irrklang_sound != nullptr)
-    irrklang_sound->setVolume((irrklang::ik_f32)GetEffectiveVolume()); // XXX : cannot wait for next tick because sound could be paused just before volume change
 }
 
 void Sound::RemoveFromManager()
@@ -395,7 +373,7 @@ void Sound::OnRemovedFromManager()
     irrklang_sound->stop();
     irrklang_sound = nullptr;
   }
-  SoundVolumeObject::OnRemovedFromManager();
+  SoundObject::OnRemovedFromManager();
 }
 
 void Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
@@ -437,7 +415,7 @@ bool Sound::DoPlaySound()
       source->irrklang_source.get(),
       chaos::IrrklangTools::ToIrrklangVector(position),
       looping,
-      paused,
+      IsEffectivePaused(),
       track,
       sound_effect);
 
@@ -449,20 +427,53 @@ bool Sound::DoPlaySound()
     irrklang_sound = irrklang_engine->play2D(
       source->irrklang_source.get(),
       looping,
-      paused,
+      IsEffectivePaused(),
       track,
       sound_effect);
   }
+
+  DoUpdateVolume();
+
   return (irrklang_sound == nullptr); 
 }
 
 void Sound::TickObject(float delta_time)
 {
   // update the volume
-  SoundVolumeObject::TickObject(delta_time);
+  SoundObject::TickObject(delta_time);
+  // early exit
+  if (!IsAttachedToManager())
+    return;
   // apply volume on the irrklang object
+  DoUpdateVolume();
+}
+
+void Sound::SetVolume(float in_volume)
+{
+  if (GetVolume() == in_volume)
+    return;
+  SoundObject::SetVolume(in_volume);
+  DoUpdateVolume();
+}
+
+void Sound::Pause(bool in_pause)
+{
+  if (IsPaused() == in_pause)
+    return;
+  SoundObject::Pause(in_pause);
+  DoUpdatePause();
+}
+
+void Sound::DoUpdateVolume()
+{
   if (irrklang_sound != nullptr)
     irrklang_sound->setVolume((irrklang::ik_f32)GetEffectiveVolume());
+}
+
+void Sound::DoUpdatePause()
+{
+  if (irrklang_sound != nullptr)
+    irrklang_sound->setIsPaused(IsEffectivePaused());
 }
 
 // ==============================================================
@@ -521,7 +532,7 @@ void SoundManager::Tick(float delta_time)
   if (!IsManagerStarted())
     return;
   // tick all sources
-  //DoTickObjects(delta_time, sources, &SoundManager::RemoveSource);
+  DoTickObjects(delta_time, sources, &SoundManager::RemoveSource);
   // tick all categories
   DoTickObjects(delta_time, categories, &SoundManager::RemoveCategory);
   // tick all sounds
@@ -762,4 +773,60 @@ SoundSource * SoundManager::AddSource(boost::filesystem::path const & in_path, c
   result->path = in_path;
 
   return result;
+}
+
+void SoundManager::UpdateAllSoundPausePerCategory(SoundCategory * category)
+{
+  size_t count = sounds.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    Sound * sound = sounds[i].get();
+    if (sound == nullptr)
+      continue;
+    if (category != nullptr && category != sound->category)
+      continue;
+    sound->DoUpdatePause();
+  }
+}
+
+void SoundManager::UpdateAllSoundVolumePerCategory(SoundCategory * category)
+{
+  size_t count = sounds.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    Sound * sound = sounds[i].get();
+    if (sound == nullptr)
+      continue;
+    if (category != nullptr && category != sound->category)
+      continue;
+    sound->DoUpdateVolume();
+  }
+}
+
+void SoundManager::UpdateAllSoundPausePerSource(SoundSource * source)
+{
+  size_t count = sounds.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    Sound * sound = sounds[i].get();
+    if (sound == nullptr)
+      continue;
+    if (source != nullptr && source != sound->source)
+      continue;
+    sound->DoUpdatePause();
+  }
+}
+
+void SoundManager::UpdateAllSoundVolumePerSource(SoundSource * source)
+{
+  size_t count = sounds.size();
+  for (size_t i = 0; i < count; ++i)
+  {
+    Sound * sound = sounds[i].get();
+    if (sound == nullptr)
+      continue;
+    if (source != nullptr && source != sound->source)
+      continue;
+    sound->DoUpdateVolume();
+  }
 }

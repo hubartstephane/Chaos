@@ -4,494 +4,487 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/IrrklangTools.h>
 
+// ==============================================================
+// FORWARD DECLARATION / FRIENDSHIP MACROS
+// ==============================================================
 
 namespace chaos
 {
 
+// all classes in this file
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory)
 
+// forward declaration
+#define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
+BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
 
-  /**
-  * SoundObjectCallbacks : an object to store some callbacks
-  */
+// friendship macro
+#define CHAOS_SOUND_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_SOUND_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FRIEND_DECL, _, CHAOS_SOUND_CLASSES)
 
-  class SoundObjectCallbacks : public ReferencedObject
+  // ==============================================================
+  // CALLBACKS
+  // ==============================================================
+
+  class SoundCallbacks : public ReferencedObject
   {
-  public:
+    CHAOS_SOUND_ALL_FRIENDS
 
-    /** destructor */
-    virtual ~SoundObjectCallbacks() = default;
+  protected:
+
     /** called whenever an object is finished */
-    virtual void OnFinished(class SoundBaseObject * sound_object) {}
+    virtual void OnFinished(SoundObject * in_object);
     /** called whenever an object is removed from manager */
-    virtual void OnRemovedFromManager(class SoundBaseObject * sound_object) {}
+    virtual void OnRemovedFromManager(SoundObject * in_object);
   };
 
-  /**
-   * SoundBaseObject : base class for sound objects. They are object with a name that helps accessing them
-   */
-
-  class SoundBaseObject : public ReferencedObject
+  class SoundAutoCallbacks : public SoundCallbacks
   {
-    friend class SoundManager;
-
-  protected:
-
-    /** protected constructor */
-    SoundBaseObject(class SoundManager * in_sound_manager);
-    /** unbind from manager */
-    virtual void DetachFromManager();
-    /** returns whether the object is attached to a manager */
-    bool IsAttachedToManager() const;
-    /** remove the object from the manager */
-    virtual void RemoveFromManager() {}
+    CHAOS_SOUND_ALL_FRIENDS
 
   public:
 
-    /** get the name of the object */
-    char const * GetName() const { return name.c_str(); }
-    /** give a callback object to the gamepad */
-    void SetCallbacks(SoundObjectCallbacks * in_callbacks);
+    /** default constructor */
+    SoundAutoCallbacks() = default;
+    /** assignation constructor */
+    template<typename U, typename V>
+    SoundAutoCallbacks(U & in_finished, V & in_removed) :
+      finished_func(in_finished),
+      removed_func(in_removed)
+    {
+    }
 
   protected:
 
-    /* the name */
-    std::string name;
-    /** the manager */
-    class SoundManager * sound_manager = nullptr;
-    /** the callbacks */
-    boost::intrusive_ptr<SoundObjectCallbacks> callbacks;
-  };
-
-
-
-
-
-
-
-
-
-
-
-  /**
-  * SoundVolumeObject : base class for sound objects that have a volume. the volume may be blended in or out
-  */
-
-  static int const BLEND_VOLUME_NONE = 0;
-  static int const BLEND_VOLUME_IN   = 1;
-  static int const BLEND_VOLUME_OUT  = 2;
-
-  class SoundVolumeObject : public SoundBaseObject
-  {
-    friend class SoundManager;
-
-  protected:
-
-    /** protected constructor */
-    SoundVolumeObject(class SoundManager * in_sound_manager);
-
-    /** get the final volume for the object (category and blendings taken into account) */
-    virtual float GetEffectiveVolume() const;
+    /** called whenever a sound is finished */
+    virtual void OnFinished(SoundObject * in_object) override;
+    /** called whenever an object is removed from manager */
+    virtual void OnRemovedFromManager(SoundObject * in_object) override;
 
   public:
 
-    /** returns true whether there is a pending kill */
-    bool IsPendingKill() const;
-    /** get the own object volume */
-    float GetVolume() const;
-    /** change the volume of the object */
-    void SetVolume(float in_volume);
-    /** start a blend effect to 1.0f */
-    bool StartBlendIn(float in_blend_volume_time, bool in_fullrange_blend_volume_time = true);
-    /** start a blend effect to 0.0f */
-    bool StartBlendOut(float in_blend_volume_time, bool in_fullrange_blend_volume_time = true);
-    /** require the stop (destroy the object) with or without a blend time */
-    bool StopAndKill(float in_blendout_time, bool in_fullrange_blend_volume_time);
-
-  protected:
-
-    /** tick the object */
-    virtual void Tick(float delta_time);
-    /** whether the object is finished */
-    virtual bool IsFinished() const;
-    /** internal method to update the blend factor */
-    void UpdateBlendFactor(float delta_time);
-
-  protected:
-
-    /** the volume */
-    float volume = 1.0f;
-    /** the blend factor (whether the object is blending) */
-    int   blend_volume_type = BLEND_VOLUME_NONE;
-    float blend_volume_factor = 1.0f;
-    float blend_volume_time = 0.0f;
-    /** whether the object is to be killed */
-    bool pending_kill = false;
+    /** the callbacks function */
+    std::function<void(SoundObject *)> finished_func;
+    /** the callbacks function */
+    std::function<void(SoundObject *)> removed_func;
   };
 
-  /**
-  * SoundCategory : an object used to share some volume settings 
-  */
+  // ==============================================================
+  // BLEND VOLUME DESC
+  // ==============================================================
 
-  class SoundCategory : public SoundVolumeObject
+  class BlendVolumeDesc
   {
-    friend class Sound;
-    friend class SoundSource;
-    friend class SoundManager;
-
-  protected:
-
-    /** constructor is protected */
-    SoundCategory(class SoundManager * in_sound_manager);
-    /** destructor too */
-    virtual ~SoundCategory();
-    /** unbind from manager */
-    virtual void DetachFromManager() override;
-    /** remove the object from the manager */
-    virtual void RemoveFromManager() override;
-
   public:
 
-    /** a category may be cloned and faded out (returns the cloned temp category) */
-    SoundCategory * CloneCategoryAndStop(float in_blend_volume_time, bool in_fullrange_blend_volume_time = true);
+    static int const BLEND_NONE = 0;
+    static int const BLEND_IN = 1;
+    static int const BLEND_OUT = 2;
 
+    /** the kind of blending */
+    int   blend_type = BLEND_NONE;
+    /** the time to blend from [0 to 1] or [1 to 0] => if current blend value is between, the time is renormalized */
+    float blend_time = 1.0f;
+    /** whether the object should be paused at the end of blend */
+    bool  pause_at_end = false;
+    /** whether the object should be killed at the end of blend */
+    bool  kill_at_end = false;
+    /** some callbacks */
+    boost::intrusive_ptr<SoundCallbacks> callbacks;
   };
 
-  /**
-   * PlaySoundDesc : used as parameters for playing 2D sounds
-   */
+  // ==============================================================
+  // PLAY SOUND DESC
+  // =============================================================
 
   class PlaySoundDesc
   {
+    CHAOS_SOUND_ALL_FRIENDS
+
   public:
 
-    /** the name of the sound object to create*/
+    /** returns whether the sound is in 3D dimension */
+    bool IsSound3D() const;
+    /** set the 3D flag */
+    void Enable3D(bool enable);
+
+    /** set the position of the sound (this enables the 3D feature) */
+    void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
+    /** set the velocity of the sound (this enables the 3D feature) */
+    void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
+
+  public:
+
+    /** whether the sound is paused at the beginning */
+    bool paused = false;
+    /** whether the sound is looping */
+    bool looping = false;
+
+    /** the initial volume of the object */
+    float volume = 1.0f;
+    /** the blend in time of the object */
+    float blend_in_time = 0.0f;
+
+    /** the position of the sound in 3D */
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+    /** the velocity of the sound in 3D */
+    glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+    /** true whether the sound is in 3D */
+    bool is_3D_sound = false;
+
+    /** the name of the sound object to create */
     std::string sound_name;
     /** the name of the category ... */
     std::string category_name;
     /** ... or a pointer on the category */
     SoundCategory * category = nullptr;
-    /** whether we want to loop */
-    bool looping = false;
   };
 
-  /**
-  * Play3DSoundDesc : used as parameters for playing 3D sounds
-  */
+  // ==============================================================
+  // SOUND OBJECT
+  // ==============================================================
 
-  class Play3DSoundDesc : public PlaySoundDesc
+  class SoundObject : public ReferencedObject
   {
+    CHAOS_SOUND_ALL_FRIENDS
+
   public:
 
-    /** the position of the sound */
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-    /** the speed of the sound */
-    glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
-  };
+    /** getter on the irrklang engine */
+    irrklang::ISoundEngine * GetIrrklangEngine();
 
-  /**
-   * SoundLoopInfo : use to describe how looping source should be handled
-   */
+    /** getter on the manager object */
+    SoundManager * GetManager();
+    /** getter on the manager object */
+    SoundManager const * GetManager() const;
 
-  class SoundLoopInfo
-  {
-  public:
-    /** when the loop starts on the time line (negative for the very beginning of the sound) */
-    float start = -1.0f;
-    /** when the loop ends on the time line (negative for the very end of the sound) */
-    float end = -1.0f;
-    /** the time for blending (0 => no blend, < 0 => blend before start, > 0 => blend after end) */
-    float blend_time = -1.0f;
-  };
+    /** blend the volume */
+    bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
 
-  /**
-  * SoundLoopInfoExt : SoundLoopInfo enriched with the track length
-  */
+    /** stop the object */
+    void Stop();
 
-  class SoundLoopInfoExt : public SoundLoopInfo
-  {
-  public:
-    /** the length of the source */
-    float play_length = -1.0f;
-  };
+    /** returns whether the object is attached to a manager */
+    bool IsAttachedToManager() const;
+    /** get the name of the object */
+    char const * GetName() const { return name.c_str(); }
+    /** change the callbacks associated to this object */
+    void SetCallbacks(SoundCallbacks * in_callbacks);
+    /** get whether the sound is finished */
+    bool IsFinished() const { return is_finished; }
 
-  /**
-   * SoundSource : used to describe some source of sound for irrklang
-   */
+    /** pause the object */
+    virtual void Pause(bool in_pause = true);
+    /** get the final pause status for the object */
+    virtual bool IsEffectivePaused() const;
+    /** get whether the object is paused */
+    bool IsPaused() const;
 
-  class SoundSource : public SoundBaseObject
-  {
-    friend class Sound;
-    friend class SoundCategory;
-    friend class SoundManager;
+    /** change the object volume */
+    virtual void SetVolume(float in_volume);
+    /** get the final volume for the sound (category and blendings taken into account) */
+    virtual float GetEffectiveVolume() const;
+    /** get the own object volume */
+    float GetVolume() const;
+
+    /** returns true whether there is a blendout and waiting stop */
+    bool IsPendingKill() const;
+    /** returns true whether there is a blending */
+    bool HasVolumeBlending() const;
 
   protected:
 
-    /** constructor is protected */
-    SoundSource(class SoundManager * in_sound_manager);
-    /** destructor too */
-    virtual ~SoundSource();
+    /** internal tick the object */
+    virtual void TickObject(float delta_time);
     /** unbind from manager */
-    virtual void DetachFromManager() override;
-    /** remove the object from the manager */
-    virtual void RemoveFromManager() override;
+    virtual void OnRemovedFromManager();
+    /** remove element from manager list and detach it */
+    virtual void RemoveFromManager();
+    /** get whether the sound is finished */
+    virtual bool ComputeFinishedState();
+
+    /** called at terminaison of the object */
+    void OnObjectFinished();
+    /** update the flag finished and return it */
+    bool UpdateFinishedState();
+    /** called at blend terminaison */
+    void OnBlendFinished();
+
+  protected:
+
+    /** whether the object is finished */
+    bool is_finished = false;
+    /** whether the sound is paused */
+    bool paused = false;
+    /** the volume */
+    float volume = 1.0f;
+    /* the name */
+    std::string name;
+    /** the manager */
+    SoundManager * sound_manager = nullptr;
+    /** the blending description */
+    BlendVolumeDesc blend_desc;
+    /** the blend value */
+    float           blend_value = 1.0f;
+    /** the callbacks */
+    boost::intrusive_ptr<SoundCallbacks> callbacks;
+  };
+
+  // ==============================================================
+  // SOURCE
+  // ==============================================================
+
+  class SoundSource : public SoundObject
+  {
+    CHAOS_SOUND_ALL_FRIENDS
 
   public:
 
-    /** play a sound */
-    Sound * PlaySound(PlaySoundDesc const & desc);
-    /** play a 3D sound */
-    Sound * Play3DSound(Play3DSoundDesc const & desc);
+    /** generating and playing a sound */
+    Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+    /** get the path of the resource */
+    boost::filesystem::path const & GetPath() const { return path; }
 
-    /** get the length in seconds of the source */
-    float GetPlayLength() const;
-
-  protected:
-
-    /** returns true whether the source require a non conventionnal loop */
-    static bool IsManualLoopRequired(SoundLoopInfoExt const & in_loop_info);
-    /** get the length in seconds of the source (uncached value) */
-    float DoGetPlayLength() const;
-    /** Get clamped SoundLoopInfoExt */
-    SoundLoopInfoExt GetClampedLoopInfoExt(SoundLoopInfo const & in_loop_info) const;
-
-    /** generate irrklang sound for a 2D sound */
-    irrklang::ISound * DoPlayIrrklangSound(PlaySoundDesc const & desc, bool in_looping, bool in_paused);
-    /** generate irrklang sound for a 3D sound */
-    irrklang::ISound * DoPlayIrrklangSound(Play3DSoundDesc const & desc, bool in_looping, bool in_paused);
-
-    /** generate pair of sounds (for manual looping) */
-    template<typename T>
-    std::pair<irrklang::ISound *, irrklang::ISound *> DoPlayIrrklangSoundPair(T const & desc)
-    {
-      assert(IsAttachedToManager());
-
-      std::pair<irrklang::ISound *, irrklang::ISound *> result;
-      result.first = result.second = nullptr;
-
-      bool manual_looping = desc.looping && IsManualLoopRequired(loop_info_ext);
-
-      irrklang::ISound * first = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, false); // generate first sound
-      if (first != nullptr)
-      {
-        if (manual_looping && loop_info_ext.blend_time != 0.0f) // use blending => require a second track
-        {
-          irrklang::ISound * second = DoPlayIrrklangSound(desc, desc.looping && !manual_looping, true); // generate second sound if required (paused at beginning)
-          if (second == nullptr)
-          {
-            first->drop(); // in case of failure of this second creation, destroy the first => failure of the whole function
-            return result;
-          }
-          result.second = second;
-        }
-        result.first = first;
-      }
-      return result;
-    }
-
-    /** general function to play a sound */
-    template<typename T>
-    Sound * DoPlaySound(T const & desc)
-    {
-      assert(IsAttachedToManager());
-
-      // get the engine
-      irrklang::ISoundEngine * irrklang_engine = sound_manager->irrklang_engine.get();
-      if (irrklang_engine == nullptr)
-        return nullptr;
-
-      // search the category
-      SoundCategory * category = desc.category;
-      if (category == nullptr)
-        category = sound_manager->FindSoundCategory(desc.category_name.c_str());
-
-      // generate the irrklang sound
-      std::pair<irrklang::ISound *, irrklang::ISound *> irrklang_sound_pair = DoPlayIrrklangSoundPair(desc);
-      if (irrklang_sound_pair.first == nullptr) // if the call fails, both first and second are garanted to be null
-        return nullptr;
-
-      // create the chaos side object
-      Sound * result = new Sound(sound_manager);
-      if (result != nullptr)
-      {
-        result->name = desc.sound_name;
-        result->category = category;
-        result->source = this;
-        result->looping = desc.looping;
-        result->irrklang_sound = irrklang_sound_pair.first; // keep our own reference on irrklang objects
-        result->irrklang_loop_sound = irrklang_sound_pair.second;
-
-        sound_manager->sounds.push_back(result);
-      }
-
-      // independant of success of failure, we have a copy of irrklang interface or we don't need them anymore
-      // destroy the reference
-      irrklang_sound_pair.first->drop();
-      if (irrklang_sound_pair.second != nullptr)
-        irrklang_sound_pair.second->drop();
-
-      return result;
-    }
+    /** pause the object */
+    virtual void Pause(bool in_pause = true) override;
+    /** change the object volume */
+    virtual void SetVolume(float in_volume) override;
 
   protected:
 
+    /** unbind from manager */
+    virtual void OnRemovedFromManager() override;
+    /** remove element from manager list and detach it */
+    virtual void RemoveFromManager() override;
+    /** the sound generation method */
+    virtual Sound * GenerateSound();
+
+  protected:
+
+    /** the resource path */
+    boost::filesystem::path path;
     /** the irrklang source */
     boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
-    /** the loop information */
-    SoundLoopInfoExt loop_info_ext;
   };
 
-  /**
-   * Sound : a sound (may use several irrklang objects for looping) 
-   */
+  // ==============================================================
+  // CATEGORY
+  // ==============================================================
 
-  class Sound : public SoundVolumeObject
+  class SoundCategory : public SoundObject
   {
-    friend class SoundCategory;
-    friend class SoundSource;
-    friend class SoundManager;
-
-  protected:
-
-    /** constructor is protected */
-    Sound(class SoundManager * in_sound_manager);
-    /** destructor too */
-    virtual ~Sound();
-    /** unbind from manager */
-    virtual void DetachFromManager() override;
-    /** remove the object from the manager */
-    virtual void RemoveFromManager() override;
-    /** get the final volume for the sound (category and blendings taken into account) */
-    virtual float GetEffectiveVolume() const override;
-    /** tick the sounds */
-    virtual void Tick(float delta_time) override;
-    /** returns true if the sound is finished */
-    virtual bool IsFinished() const override;
-
-    /** internal method to tick a sound with no blending but with manual loop (returns volume of track 1) */
-    float DoTickManualLoopNoBlend(float delta_time);
-    /** internal method to tick a sound with blending and a manual loop (returns volume of track 1) */
-    float DoTickManualLoopWithBlend(float delta_time);
+    CHAOS_SOUND_ALL_FRIENDS
 
   public:
 
-    /** change the position */
-    void SetPosition(glm::vec3 const & in_position);
-    /** get the position */
-    glm::vec3 GetPosition() const;
-    /** change the speed */
-    void SetSpeed(glm::vec3 const & in_speed);
-    /** get the speed */
-    glm::vec3 GetSpeed() const;
-
-    /** get the category of the sound */
-    SoundCategory const * GetCategory() const { return category; }
-    /** get the category of the sound */
-    SoundCategory * GetCategory(){ return category; }
-
-    /** get the source of the sound */
-    SoundSource const * GetSource() const { return source; }
-    /** get the source of the sound */
-    SoundSource * GetSource() { return source; }
-
-    /** returns true whether the sound is in 3D */
-    bool Is3DSound() const;
-    /** returns true whether the sound is looping */
-    bool IsLooping() const;
-
-    /** get the position in seconds of the source */
-    float GetPlayPosition() const;
+    /** pause the object */
+    virtual void Pause(bool in_pause = true) override;
+    /** change the object volume */
+    virtual void SetVolume(float in_volume) override;
 
   protected:
 
-    /** the category */
-    SoundCategory * category = nullptr;
-
-    /** position */
-    bool is_3D_sound = false;
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 speed = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    /** whether we want to loop */
-    bool looping = false;
-
-    /** the sound */
-    boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
-    boost::intrusive_ptr<irrklang::ISound> irrklang_loop_sound; // for looping special sound
-    /** the source */
-    SoundSource * source = nullptr;
+    /** unbind from manager */
+    virtual void OnRemovedFromManager() override;
+    /** remove element from manager list and detach it */
+    virtual void RemoveFromManager() override;
   };
 
-  /**
-   * SoundManager : the main class to handle sound
-   */
+  // ==============================================================
+  // SOUND
+  // ==============================================================
+
+  class Sound : public SoundObject
+  {
+    CHAOS_SOUND_ALL_FRIENDS
+
+  public:
+
+    /** set the position of the sound */
+    void SetPosition(glm::vec3 const & in_position);
+    /** set the velocity of the sound */
+    void SetVelocity(glm::vec3 const & in_velocity);
+
+    /** pause the object */
+    virtual void Pause(bool in_pause = true) override;
+    /** change the object volume */
+    virtual void SetVolume(float in_volume) override;
+
+    /** returns whether the sound is effectively paused */
+    virtual bool IsEffectivePaused() const override;
+    /** returns the effective volume of the sound */
+    virtual float GetEffectiveVolume() const override;
+
+    /** returns whether the sound is in 3D dimension */
+    bool IsSound3D() const;
+    /** get the position of the sound */
+    glm::vec3 GetPosition() const;
+    /** get the velocity of the sound */
+    glm::vec3 GetVelocity() const;
+    /** get whether the sound is looping */
+    bool IsLooping() const;
+
+  protected:
+
+    /** the sound method (returns true whether it is immediatly finished) */
+    virtual bool DoPlaySound(PlaySoundDesc const & desc);
+    /** unbind from manager */
+    virtual void OnRemovedFromManager() override;
+    /** remove element from manager list and detach it */
+    virtual void RemoveFromManager() override;
+    /** internal tick the sounds */
+    virtual void TickObject(float delta_time) override;
+    /** the method being called from exterior */
+    void PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+
+    /** get whether the sound is finished */
+    virtual bool ComputeFinishedState() override;
+
+    /** internal method to force the sound to update its volume */
+    void DoUpdateVolume();
+    /** internal method to force the sound to update its pause state */
+    void DoUpdatePause();
+
+  protected:
+
+    /** returns true whether the sound is in 3D */
+    bool is_3D_sound = false;
+    /** whether the sound is looping */
+    bool looping = false;
+
+    /** the position of the sound in 3D */
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+    /** the velocity of the sound in 3D */
+    glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    /** the category of the sound */
+    SoundCategory * category = nullptr;
+    /** the source that generated this object */
+    SoundSource * source = nullptr;
+
+    /** the irrklang sound */
+    boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
+  };
+
+  // ==============================================================
+  // MANAGER
+  // ==============================================================
 
   class SoundManager : public ReferencedObject
   {
-    friend class Sound;
-    friend class SoundCategory;
-    friend class SoundSource;
+    CHAOS_SOUND_ALL_FRIENDS
 
   public:
 
-    /** destructor */
-    virtual ~SoundManager();
+    /** getter on the irrklang engine */
+    irrklang::ISoundEngine * GetIrrklangEngine();
 
     /** start the manager */
     bool StartManager();
     /** stop the manager */
     bool StopManager();
+    /** returns whether the manager is correctly started */
+    bool IsManagerStarted() const;
+
+    /** public method to tick the manager */
+    void Tick(float delta_time);
+
+    /** find a source by its name */
+    SoundSource * FindSource(char const * name);
+    /** find a source by its name */
+    SoundSource const * FindSource(char const * name) const;
+
+    /** find a simple source by its path */
+    SoundSource * FindSourceByPath(boost::filesystem::path const & in_path);
+    /** find a simple source by its path */
+    SoundSource const * FindSourceByPath(boost::filesystem::path const & in_path) const;
+
+    /** find a category by its name */
+    SoundCategory * FindCategory(char const * name);
+    /** find a category by its name */
+    SoundCategory const * FindCategory(char const * name) const;
 
     /** find a sound by its name */
     Sound * FindSound(char const * name);
-    /** find a category by its name */
-    SoundCategory * FindSoundCategory(char const * name);
-    /** find a source by its name */
-    SoundSource * FindSoundSource(char const * name);
+    /** find a sound by its name */
+    Sound const * FindSound(char const * name) const;
 
-    /** add a source */
-    SoundSource * AddSource(char const * in_filename, char const * in_name = nullptr, SoundLoopInfo in_loop_info = SoundLoopInfo());
-    /** add a category */
-    SoundCategory * AddCategory(char const * in_name = nullptr);
+    /** add a category inside the manager */
+    SoundCategory * AddCategory(char const * in_name);
+
+    /** load and add a simple source inside the manager (name is a copy of filename) */
+    SoundSource * AddSource(boost::filesystem::path const & in_path);
+    /** load and add a simple source inside the manager */
+    SoundSource * AddSource(boost::filesystem::path const & in_path, char const * in_name);
 
     /** update the listener position */
-    void SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
+    bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
 
-    /** the tick function of the manager */
-    void Tick(float delta_time);
-
-    /** initialization of the manager from configuration file */
-    virtual void InitializeFromConfiguration(nlohmann::json const & configuration);
+    /** initialize the manager from a configuration file */
+    bool InitializeFromConfiguration(nlohmann::json const & configuration);
 
   protected:
 
-    /** add a category internal method. If parent_category is not null, this means we want a temp object for fadeout and kill purpose */
-    SoundCategory * DoAddCategory(char const * in_name, SoundCategory * parent_category);
+    /** remove a category from the list */
+    void RemoveCategory(SoundCategory * in_category);
+    /** remove a sound from the list */
+    void RemoveSound(Sound * in_sound);
+    /** remove a sound source from the list */
+    void RemoveSource(SoundSource * in_source);
+
+    /** remove a category from the list */
+    void RemoveCategory(size_t index);
+    /** remove a sound from the list */
+    void RemoveSound(size_t index);
+    /** remove a sound source from the list */
+    void RemoveSource(size_t index);
+
+    /** utility function to remove a sound object from a list */
+    template<typename T>
+    void DoRemoveObject(size_t index, T & vector)
+    {
+      // ensure the index is valid
+      size_t count = vector.size();
+      if (index >= count)
+        return;
+      // copy the intrusive_ptr to prevent the destruction
+      auto object = vector[index];
+      // remove the object from the array
+      if (index != count - 1)
+        vector[index] = vector[count - 1];
+      vector.pop_back();
+      // callback then let the unreferencement manage the object lifetime
+      object->OnRemovedFromManager();
+    }
 
     /** detach all elements from a list */
     template<typename T>
-    void DetachAllObjectsFromList(T & v)
+    void DetachAllObjectsFromList(T & vector)
     {
-      size_t count = v.size();
-      for (size_t i = 0; i < count; ++i)
+      while (vector.size() > 0)
       {
-        auto obj = v[i].get();
-        if (obj == nullptr)
-          continue;
-        obj->DetachFromManager();
+        // copy the intrusive_ptr to prevent the destruction
+        auto object = vector.back();
+        // remove the object from the array
+        vector.pop_back();
+        // callback then let the unreferencement manage the object lifetime
+        object->OnRemovedFromManager();
       }
-      v.clear();
     }
 
-    /** destroy all sounds in a category */
-    void DestroyAllSoundPerCategory(SoundCategory * category);
-    /** destroy all sounds with a given source */
-    void DestroyAllSoundPerSource(SoundSource * source);
-    /** replace some category by another in sound */
-    void ReplaceSoundCategory(SoundCategory * new_category, SoundCategory * old_category);
-
+    template<typename T, typename U>
+    static size_t FindObjectIndexInVector(T * object, U const & vector)
+    {
+      assert(object != nullptr);
+      size_t count = vector.size();
+      for (size_t i = 0; i < count; ++i)
+        if (vector[i].get() == object)
+          return i;
+      return count;
+    }
     /** a generic function to find an object in a list by its name */
-    template<typename T>
-    T * FindSoundObject(char const * name, std::vector<boost::intrusive_ptr<T>> & objects)
+    template<typename T, typename U>
+    static T * FindObjectByName(char const * name, U & objects)
     {
       if (name == nullptr)
         return nullptr;
@@ -508,36 +501,100 @@ namespace chaos
       return nullptr;
     }
 
-    /** remove a category from the list */
-    void RemoveSoundCategory(SoundCategory * sound_category);
-    /** remove a sound from the list */
-    void RemoveSound(Sound * sound);
-    /** remove a sound source from the list */
-    void RemoveSoundSource(SoundSource * source);
-
-    /** remove a category from the list */
-    void RemoveSoundCategory(size_t index);
-    /** remove a sound from the list */
-    void RemoveSound(size_t index);
-    /** remove a sound source from the list */
-    void RemoveSoundSource(size_t index);
-
-    /** utility function to remove a sound object from a list */
-    template<typename T>
-    void DoRemoveSoundObject(size_t index, T & vector)
+    /** a generic function to find an object in a list by its path */
+    template<typename T, typename U>
+    static T * FindObjectByPath(boost::filesystem::path const & in_path, U & objects)
     {
-      size_t count = vector.size();
-      if (index >= count)
-        return;
-
-      vector[index]->DetachFromManager(); // order is important because next operation could destroy the object
-
-      if (index != count - 1)
-        vector[index] = vector[count - 1];
-      vector.pop_back();
+      size_t count = objects.size();
+      for (size_t i = 0; i < count; ++i)
+      {
+        T * obj = objects[i].get();
+        if (obj == nullptr)
+          continue;
+        if (obj->GetPath() == in_path)
+          return obj;
+      }
+      return nullptr;
     }
-    /** an utility conversion method */
-    static irrklang::vec3df ToIrrklangVector(glm::vec3 const & src);
+
+    /** destroy all sounds in a category */
+    void DestroyAllSoundPerCategory(SoundCategory * category);
+    /** destroy all sounds with a given source */
+    void DestroyAllSoundPerSource(SoundSource * source);
+
+    /** internal tick list of objects */
+    template<typename T>
+    void DoTickObjects(float delta_time, T & vector, void (SoundManager::*remove_func)(size_t))
+    {
+      for (size_t i = vector.size(); i > 0; --i) // in reverse order
+      {
+        size_t index = i - 1;
+
+        auto object = vector[index]; // copy the intrusive_ptr to prevent the destruction 
+        if (object == nullptr)
+          continue;
+
+        // test whether object was already finished before ticking
+        bool finished = object->IsFinished();
+        bool paused = object->IsEffectivePaused();
+        bool should_remove = finished;
+
+        // call tick if required 
+        if (!finished && !paused)
+        {
+          object->TickObject(delta_time);
+          should_remove = object->UpdateFinishedState();
+        }
+        // remove the object if needed
+        if (should_remove)
+        {
+          object->OnObjectFinished();
+          (this->*remove_func)(index);
+        }
+      }
+    }
+
+    /** test whether a category with given name could be inserted in the manager */
+    bool CanAddCategory(char const * in_name) const;
+    /** test whether a source with given name could be inserted in the manager */
+    bool CanAddSource(char const * in_name) const;
+    /** test whether a sound with given name could be inserted in the manager */
+    bool CanAddSound(char const * in_name) const;
+
+    /** utility function to test whether an object can be inserted */
+    template<typename T>
+    bool CanAddObject(char const * in_name, T const * (SoundManager::*find_func)(char const *) const) const
+    {
+      // manager initialized ?
+      if (!IsManagerStarted())
+        return false;
+      // name already existing ?
+      if (in_name != nullptr && (this->*find_func)(in_name) != nullptr)
+        return false;
+      return true;
+    }
+
+    /** simple method to initialize and insert a source */
+    template<typename T>
+    T * DoAddSource(T * in_source, char const * in_name)
+    {
+      if (in_source == nullptr)
+        return nullptr;
+      if (in_name != nullptr)
+        in_source->name = in_name;
+      in_source->sound_manager = this;
+      sources.push_back(in_source);
+      return in_source;
+    }
+
+    /** update all sounds pause per category */
+    void UpdateAllSoundPausePerCategory(SoundCategory * category);
+    /** update all sounds volume per category */
+    void UpdateAllSoundVolumePerCategory(SoundCategory * category);
+    /** update all sounds pause per source */
+    void UpdateAllSoundPausePerSource(SoundSource * source);
+    /** update all sounds volume per source */
+    void UpdateAllSoundVolumePerSource(SoundSource * source);
 
   protected:
 
@@ -546,12 +603,19 @@ namespace chaos
     /** the irrklank engine */
     boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
 
-    /** the categories */
-    std::vector<boost::intrusive_ptr<SoundCategory>> categories;
-    /** the sounds */
-    std::vector<boost::intrusive_ptr<Sound>> sounds;
     /** the sources */
     std::vector<boost::intrusive_ptr<SoundSource>> sources;
+    /** the sounds */
+    std::vector<boost::intrusive_ptr<Sound>> sounds;
+    /** the categories */
+    std::vector<boost::intrusive_ptr<SoundCategory>> categories;
   };
 
 }; // namespace chaos
+
+// undefine macros
+#undef CHAOS_SOUND_CLASSES
+#undef CHAOS_SOUND_FORWARD_DECL
+#undef CHAOS_SOUND_FRIEND_DECL
+#undef CHAOS_SOUND_ALL_FRIENDS
+

@@ -55,24 +55,23 @@ protected:
     else if (button == 1 && action == GLFW_PRESS)
     {
       if (sound1 != nullptr)
-        sound1->StopAndKill(2.0f, true);
+      {
+        chaos::BlendVolumeDesc desc;
+        desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+        desc.blend_time = 2.0f;
+        desc.kill_at_end = true;
+        sound1->StartBlend(desc, true);   
+      }
     }
     else if (button == 2 && action == GLFW_PRESS)
     {
       if (category1 != nullptr)
       {
-        if ((modifier & GLFW_MOD_SHIFT) != 0)
-        {
-          category1->CloneCategoryAndStop(3.0f, true);
-
-          chaos::PlaySoundDesc desc;
-          desc.category = category1.get();
-          desc.looping = true;
-          sound1 = source1->PlaySound(desc);
-        }
-        else
-          category1->StopAndKill(2.0f, true);
-
+        chaos::BlendVolumeDesc desc;
+        desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+        desc.blend_time = 2.0f;
+        desc.kill_at_end = true;
+        category1->StartBlend(desc, true);
       }
     }
   }
@@ -94,14 +93,9 @@ protected:
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
     boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
 
-    chaos::SoundLoopInfo loop_info;
-    loop_info.start = 3.0f;
-    loop_info.end   = 6.0f;
-    loop_info.blend_time = 1.0f;
+    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr);
 
-    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr, loop_info);
-
-    category1 = sound_manager->AddCategory();
+    category1 = sound_manager->AddCategory(nullptr);
 
     return true;
   }

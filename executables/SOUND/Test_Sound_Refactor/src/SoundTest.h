@@ -20,64 +20,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
 #define CHAOS_SOUND_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FRIEND_DECL, _, CHAOS_SOUND_CLASSES)
 
 // ==============================================================
-// DESC
-// ==============================================================
-
-class BlendSoundDesc
-{
-public:
-
-
-
-};
-
-
-// ==============================================================
-// DESC
-// ==============================================================
-
-class PlaySoundDesc
-{
-  CHAOS_SOUND_ALL_FRIENDS
-
-public:
-
-  /** returns whether the sound is in 3D dimension */
-  bool IsSound3D() const;
-  /** set the 3D flag */
-  void Enable3D(bool enable);
-
-  /** set the position of the sound (this enables the 3D feature) */
-  void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
-  /** set the velocity of the sound (this enables the 3D feature) */
-  void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
-
-public:
-
-  /** whether the sound is paused at the beginning */
-  bool paused = false;
-  /** whether the sound is looping */
-  bool looping = false;
-
-  /** the position of the sound in 3D */
-  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-  /** the velocity of the sound in 3D */
-  glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-
-  /** the name of the sound object to create */
-  std::string sound_name;
-  /** the name of the category ... */
-  std::string category_name;
-  /** ... or a pointer on the category */
-  SoundCategory * category = nullptr;
-
-protected:
-
-  /** returns true whether the sound is in 3D */
-  bool is_3D_sound = false;
-};
-
-// ==============================================================
 // CALLBACKS
 // ==============================================================
 
@@ -125,6 +67,77 @@ public:
 };
 
 // ==============================================================
+// BLEND VOLUME DESC
+// ==============================================================
+
+class BlendVolumeDesc
+{
+public:
+
+  static int const BLEND_NONE = 0;
+  static int const BLEND_IN   = 1;
+  static int const BLEND_OUT  = 2;
+
+  /** the kind of blending */
+  int   blend_type = BLEND_NONE;
+  /** the time to blend from [0 to 1] or [1 to 0] => if current blend value is between, the time is renormalized */
+  float blend_time = 1.0f;
+  /** whether the object should be paused at the end of blend */
+  bool  pause_at_end = false;
+  /** whether the object should be killed at the end of blend */
+  bool  kill_at_end = false;
+  /** some callbacks */
+  boost::intrusive_ptr<SoundCallbacks> callbacks;
+};
+
+// ==============================================================
+// PLAY SOUND DESC
+// =============================================================
+
+class PlaySoundDesc
+{
+  CHAOS_SOUND_ALL_FRIENDS
+
+public:
+
+  /** returns whether the sound is in 3D dimension */
+  bool IsSound3D() const;
+  /** set the 3D flag */
+  void Enable3D(bool enable);
+
+  /** set the position of the sound (this enables the 3D feature) */
+  void SetPosition(glm::vec3 const & in_position, bool update_3D_sound = true);
+  /** set the velocity of the sound (this enables the 3D feature) */
+  void SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound = true);
+
+public:
+
+  /** whether the sound is paused at the beginning */
+  bool paused = false;
+  /** whether the sound is looping */
+  bool looping = false;
+
+  /** the initial volume of the object */
+  float volume = 1.0f;
+  /** the blend in time of the object */
+  float blend_in_time = 0.0f;
+
+  /** the position of the sound in 3D */
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** the velocity of the sound in 3D */
+  glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+  /** true whether the sound is in 3D */
+  bool is_3D_sound = false;
+
+  /** the name of the sound object to create */
+  std::string sound_name;
+  /** the name of the category ... */
+  std::string category_name;
+  /** ... or a pointer on the category */
+  SoundCategory * category = nullptr;
+};
+
+// ==============================================================
 // SOUND OBJECT
 // ==============================================================
 
@@ -141,6 +154,9 @@ public:
   SoundManager * GetManager();
   /** getter on the manager object */
   SoundManager const * GetManager() const;
+
+  /** blend the volume */
+  bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
 
   /** stop the object */
   void Stop();
@@ -168,6 +184,11 @@ public:
   /** get the own object volume */
   float GetVolume() const;
 
+  /** returns true whether there is a blendout and waiting stop */
+  bool IsPendingKill() const;
+  /** returns true whether there is a blending */
+  bool HasVolumeBlending() const;
+  
 protected:
 
   /** internal tick the object */
@@ -180,9 +201,11 @@ protected:
   virtual bool ComputeFinishedState();
 
   /** called at terminaison of the object */
-  void OnFinished();
+  void OnObjectFinished();
   /** update the flag finished and return it */
   bool UpdateFinishedState();
+  /** called at blend terminaison */
+  void OnBlendFinished();
 
 protected:
 
@@ -196,12 +219,16 @@ protected:
   std::string name;
   /** the manager */
   SoundManager * sound_manager = nullptr;
+  /** the blending description */
+  BlendVolumeDesc blend_desc;
+  /** the blend value */
+  float           blend_value = 1.0f;
   /** the callbacks */
   boost::intrusive_ptr<SoundCallbacks> callbacks;
 };
 
 // ==============================================================
-// SOURCES
+// SOURCE
 // ==============================================================
 
 class SoundSource : public SoundObject
@@ -297,7 +324,7 @@ public:
 protected:
 
   /** the sound method (returns true whether it is immediatly finished) */
-  virtual bool DoPlaySound();
+  virtual bool DoPlaySound(PlaySoundDesc const & desc);
   /** unbind from manager */
   virtual void OnRemovedFromManager() override;
   /** remove element from manager list and detach it */
@@ -515,7 +542,7 @@ protected:
       // remove the object if needed
       if (should_remove)
       {
-        object->OnFinished();
+        object->OnObjectFinished();
         (this->*remove_func)(index);
       }
     }

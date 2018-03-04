@@ -72,7 +72,14 @@ protected:
     {
       Sound * s = sound_manager->FindSound("toto");
       if (s != nullptr)
-        s->Stop();
+      {
+        BlendVolumeDesc desc;
+        desc.blend_type = BlendVolumeDesc::BLEND_OUT;
+        desc.kill_at_end = true;
+        desc.blend_time = 2.0f;
+        s->StartBlend(desc);
+      }
+        //s->Stop();
 
     //  if (category1 != nullptr)
     //    category1->SetVolume(category1->GetVolume() * 0.5f);

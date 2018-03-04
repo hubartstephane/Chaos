@@ -5,7 +5,7 @@
 #include <chaos/Buffer.h>
 
 // ==============================================================
-// DESC
+// PLAY SOUND DESC
 // ==============================================================
 
 bool PlaySoundDesc::IsSound3D() const
@@ -22,7 +22,7 @@ void PlaySoundDesc::SetPosition(glm::vec3 const & in_position, bool update_3D_so
 {
   position = in_position;
   if (update_3D_sound)
-    is_3D_sound = true;  
+    is_3D_sound = true;
 }
 
 void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_sound)
@@ -35,7 +35,7 @@ void PlaySoundDesc::SetVelocity(glm::vec3 const & in_velocity, bool update_3D_so
 // ==============================================================
 // CALLBACKS
 // ==============================================================
-  
+
 void SoundCallbacks::OnFinished(SoundObject * in_object)
 {
   assert(in_object != nullptr);
@@ -82,8 +82,41 @@ SoundManager const * SoundObject::GetManager() const
 
 void SoundObject::TickObject(float delta_time)
 {
+  if (HasVolumeBlending())
+  {
+    float speed = 1.0f / blend_desc.blend_time;
+    float delta_blend = delta_time * speed;
 
+    if (blend_desc.blend_type == BlendVolumeDesc::BLEND_IN)
+    {
+      blend_value = chaos::MathTools::Clamp(blend_value + delta_blend, 0.0f, 1.0f);
+      if (blend_value >= 1.0f)
+        OnBlendFinished();
+    }
+    else if (blend_desc.blend_type == BlendVolumeDesc::BLEND_OUT)
+    {
+      blend_value = chaos::MathTools::Clamp(blend_value - delta_blend, 0.0f, 1.0f);
+      if (blend_value <= 0.0f)
+        OnBlendFinished();
+    }
+  }
 }
+
+void SoundObject::OnBlendFinished()
+{
+  // capture the blending
+  BlendVolumeDesc old_blend_desc = blend_desc;
+  blend_desc = BlendVolumeDesc();
+  // call the callbacks
+  if (old_blend_desc.callbacks != nullptr)
+    old_blend_desc.callbacks->OnFinished(this);
+  // stop or pause the object
+  if (old_blend_desc.kill_at_end)
+    Stop();
+  else if (old_blend_desc.pause_at_end)
+    Pause();
+}
+
 
 bool SoundObject::IsAttachedToManager() const
 {
@@ -93,8 +126,13 @@ bool SoundObject::IsAttachedToManager() const
 void SoundObject::OnRemovedFromManager()
 {
   assert(IsAttachedToManager());
+  // the callbacks
   if (callbacks != nullptr)
     callbacks->OnRemovedFromManager(this);
+  if (blend_desc.callbacks)
+    blend_desc.callbacks->OnRemovedFromManager(this);
+  // reset some data
+  blend_desc = BlendVolumeDesc();
   sound_manager = nullptr;
 }
 
@@ -119,7 +157,7 @@ void SoundObject::SetCallbacks(SoundCallbacks * in_callbacks)
   callbacks = in_callbacks;
 }
 
-void SoundObject::OnFinished()
+void SoundObject::OnObjectFinished()
 {
   if (callbacks != nullptr)
     callbacks->OnFinished(this);
@@ -151,7 +189,9 @@ float SoundObject::GetVolume() const
 
 float SoundObject::GetEffectiveVolume() const
 {
-  return GetVolume();
+  float result = SoundObject::GetVolume();
+  result *= blend_value;
+  return result;
 }
 
 void SoundObject::SetVolume(float in_volume)
@@ -165,8 +205,49 @@ void SoundObject::Stop()
     RemoveFromManager();
 }
 
+bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older)
+{
+  // only if attached
+  if (!IsAttachedToManager())
+    return false;
+  // do not start a blend if there is a blend
+  if (HasVolumeBlending() && !replace_older) 
+    return false;
+  // ensure validity
+  if (desc.blend_time < 0.0f)
+    return false;
+  if (desc.blend_type != BlendVolumeDesc::BLEND_IN && desc.blend_type != BlendVolumeDesc::BLEND_OUT)
+    return false;
+  // immediate blending (special case)
+  if (desc.blend_time == 0.0f)
+  {
+    if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
+      blend_value = 1.0f;
+    else if (desc.blend_type == BlendVolumeDesc::BLEND_OUT)
+      blend_value = 0.0f;
+    if (desc.callbacks)
+      desc.callbacks->OnFinished(this);
+  }
+  else
+    blend_desc = desc;
+
+  return true;
+}
+
+bool SoundObject::IsPendingKill() const
+{
+  if (HasVolumeBlending())
+    return blend_desc.kill_at_end;
+  return false;
+}
+
+bool SoundObject::HasVolumeBlending() const
+{
+  return (blend_desc.blend_type != BlendVolumeDesc::BLEND_NONE);
+}
+
 // ==============================================================
-// SOURCES
+// SOURCE
 // ==============================================================
 
 Sound * SoundSource::GenerateSound()
@@ -391,10 +472,10 @@ void Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
   callbacks = in_callbacks;
 
   // start the sound
-  DoPlaySound();
+  DoPlaySound(desc);
 }
 
-bool Sound::DoPlaySound()
+bool Sound::DoPlaySound(PlaySoundDesc const & desc)
 {
   // test whether the sound may be played
   // error => immediatly finished
@@ -432,6 +513,14 @@ bool Sound::DoPlaySound()
       sound_effect);
   }
 
+  if (desc.blend_in_time > 0.0f)
+  {
+    BlendVolumeDesc blend_desc;
+    blend_desc.blend_type = BlendVolumeDesc::BLEND_IN;
+    blend_desc.blend_time = desc.blend_in_time;
+    blend_value = 0.0f;
+    StartBlend(blend_desc);
+  }
   DoUpdateVolume();
 
   return (irrklang_sound == nullptr); 

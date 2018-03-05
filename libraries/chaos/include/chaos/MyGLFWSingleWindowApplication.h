@@ -61,10 +61,10 @@ namespace chaos
       /** gets the sound manager */
       SoundManager const * GetSoundManager() const { return sound_manager.get(); }
 
-	  /** gets the graphic resource manager */
-	  GPUResourceManager * GetGPUResourceManager() { return graphic_resource_manager.get(); }
-	  /** gets the graphic resource manager */
-	  GPUResourceManager const * GetGPUResourceManager() const { return graphic_resource_manager.get(); }
+      /** gets the graphic resource manager */
+      GPUResourceManager * GetGPUResourceManager() { return graphic_resource_manager.get(); }
+      /** gets the graphic resource manager */
+      GPUResourceManager const * GetGPUResourceManager() const { return graphic_resource_manager.get(); }
 
     protected:
 
@@ -105,8 +105,8 @@ namespace chaos
       boost::intrusive_ptr<Clock> main_clock;
       /** the sound manager */
       boost::intrusive_ptr<SoundManager> sound_manager;
-	  /** the graphic resource manager */
-	  boost::intrusive_ptr<GPUResourceManager> graphic_resource_manager;
+      /** the graphic resource manager */
+      boost::intrusive_ptr<GPUResourceManager> graphic_resource_manager;
 
       /** the initial_window param */
       SingleWindowApplicationParams window_params;

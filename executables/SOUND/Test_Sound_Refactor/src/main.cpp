@@ -197,6 +197,10 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+  SpriteLayer<ParticleLayerDescExample> sl;
+
+
+
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;

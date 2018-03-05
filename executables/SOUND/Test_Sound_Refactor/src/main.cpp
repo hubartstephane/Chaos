@@ -49,18 +49,18 @@ protected:
   {
     if (button == 0 && action == GLFW_PRESS)
     {
-      PlaySoundDesc desc;
+      chaos::PlaySoundDesc desc;
       desc.looping = false;
       desc.paused = false;
       desc.category = category1.get();
       desc.sound_name = "toto";
 
-      SoundAutoCallbacks * cb = new SoundAutoCallbacks;
-      cb->finished_func = [](SoundObject * ob)
+	  chaos::SoundAutoCallbacks * cb = new chaos::SoundAutoCallbacks;
+      cb->finished_func = [](chaos::SoundObject * ob)
       {
         ob = ob;
       };
-      cb->removed_func = [](SoundObject * ob)
+      cb->removed_func = [](chaos::SoundObject * ob)
       {
         ob = ob;
       };
@@ -70,11 +70,11 @@ protected:
 
     if (button == 1 && action == GLFW_PRESS)
     {
-      Sound * s = sound_manager->FindSound("toto");
+      chaos::Sound * s = sound_manager->FindSound("toto");
       if (s != nullptr)
       {
-        BlendVolumeDesc desc;
-        desc.blend_type = BlendVolumeDesc::BLEND_OUT;
+        chaos::BlendVolumeDesc desc;
+        desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
         desc.kill_at_end = true;
         desc.blend_time = 2.0f;
         s->StartBlend(desc);
@@ -153,7 +153,7 @@ protected:
       return false;
 
     // create the sound manager
-    sound_manager = new SoundManager;
+    sound_manager = new chaos::SoundManager;
     if (sound_manager == nullptr)
       return false;
 
@@ -182,17 +182,17 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<SoundManager> sound_manager;
+  boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
-  boost::intrusive_ptr<SoundSource> source1;
+  boost::intrusive_ptr<chaos::SoundSource> source1;
 
-  boost::intrusive_ptr<SoundSource> source2;
+  boost::intrusive_ptr<chaos::SoundSource> source2;
 
-  boost::intrusive_ptr<SoundSource> source3;
+  boost::intrusive_ptr<chaos::SoundSource> source3;
 
-  boost::intrusive_ptr<Sound> sound1;
+  boost::intrusive_ptr<chaos::Sound> sound1;
 
-  boost::intrusive_ptr<SoundCategory> category1;
+  boost::intrusive_ptr<chaos::SoundCategory> category1;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

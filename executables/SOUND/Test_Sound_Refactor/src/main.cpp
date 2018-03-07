@@ -197,9 +197,26 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  SpriteLayer<ParticleLayerDescExample> sl;
+  ParticleLayer<ParticleLayerDescExample> sl;
+
+  std::vector<int> iii = { 10, 20, 30, 40, 50, 60 };
+
+  //auto it = std::lower_bound(iii.begin(), iii.end(), 35);
+
+  auto it = std::lower_bound(iii.begin(), iii.end(), 35, [](int k, int u) {return (k < u); });
+
+  int h = *it;
+
+  iii.insert(it, 35);
 
 
+ // auto it = std::remove_if(iii.begin(), iii.end(), [](int k) {return (k % 2) == 1; });
+
+//  iii.erase(it, iii.end());
+
+  //auto it2 = std::binary_search((iii.begin(), iii.end(), [](int k) {return (k == 3); });
+
+  //int u = *it2;
 
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;

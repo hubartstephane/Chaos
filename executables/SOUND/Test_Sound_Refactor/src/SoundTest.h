@@ -63,19 +63,24 @@ protected:
 	ParticleLayerBase * layer = nullptr;
 	/** the index of the range in its array */
 	size_t range_index = std::numeric_limits<size_t>::max();
+	/** whether the particles existence in linked to the allocation lifetime */
+	bool particles_owner = true;
 };
 
 // ==============================================================
 // PARTICLE LAYER BASE
 // ==============================================================
 
-class ParticleLayerBase
+class ParticleLayerBase : public chaos::ReferencedObject
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
 
 public:
 
 	static size_t const DESTROY_PARTICLE_MARK = std::numeric_limits<size_t>::max();
+
+	/** destructor */
+	virtual ~ParticleLayerBase();
 
 	/** get the total number of particles */
 	size_t GetParticleCount() const;
@@ -86,24 +91,69 @@ public:
 	/** get the particles */
 	void const * GetParticleBuffer(ParticleRange range) const;
 
-
-
-
 	/** ticking the particle system */
 	virtual void TickParticles(float delta_time);
 	/** spawn a given number of particles */
-	ParticleRange SpawnParticles(size_t count, boost::intrusive_ptr<ParticleRangeAllocation> * allocation = nullptr);
+	ParticleRange SpawnParticles(size_t count);
+	/** spawn a given number of particles and keep a range */
+	ParticleRangeAllocation *SpawnParticlesAndKeepRange(size_t count, bool particles_owner = true);
+
 	/** mark any particle as to be destroyed next tick */
 	void MarkParticlesToDestroy(size_t start, size_t count);
 
-
-
 protected:
 
+	/** unlink all particles allocations */
+	void DetachAllParticleAllocations();
 	/** internal method to remove a range from the layer */
 	void RemoveParticleAllocation(ParticleRangeAllocation * allocation);
-	/** internal particle allocation method */
-	virtual ParticleRange DoSpawnParticles(size_t count);
+	/** internal method to update the particles */
+	virtual void UpdateParticles(float delta_time);
+	/** internal method to test whether particles should be destroyed */
+	virtual void DestroyObsoletParticles();
+	/** internal method fix the ranges after particles destruction */
+	virtual void UpdateParticleRanges();
+
+	template<typename T>
+	void DoUpdateParticles(float delta_time, T & obj)
+	{
+		size_t particle_count = GetParticleCount();
+		if (particle_count > 0)
+		{
+			T::particle_type * p = (T::particle_type *)(&particles[0]);
+			for (size_t i = 0; i < particle_count; ++i)
+				obj.UpdateParticle(delta_time, &p[i]);
+		}
+	}
+
+	template<typename T>
+	void DoDestroyObsoletParticles(T & obj)
+	{
+		size_t particle_count = GetParticleCount();
+		if (particle_count > 0)
+		{
+			T::particle_type * p = (T::particle_type *)(&particles[0]);
+
+			size_t i = 0;
+			size_t j = 0;
+			while (i < particle_count)
+			{
+				if (suppression_vector[i] != DESTROY_PARTICLE_MARK && !obj.MustDestroyParticle(&p[i])) // particle is OK
+				{
+					if (i != j)
+						p[j] = p[i]; // keep the particle by copying it 
+					suppression_vector[i] = (i - j);
+					++j;
+				}
+				else
+					suppression_vector[i] = (i - j);
+				++i;
+			}
+
+			particles.resize(j * particle_size);
+			suppression_vector.resize(j);
+		}
+	}
 
 protected:
 
@@ -122,7 +172,7 @@ protected:
 	/** particles ranges */
 	std::vector<ParticleRange> particles_ranges;
 	/** ranges reservations */
-	std::vector<boost::intrusive_ptr<ParticleRangeAllocation>> range_allocations;
+	std::vector<ParticleRangeAllocation*> range_allocations;
 
 };
 
@@ -147,81 +197,23 @@ public:
 	{
 	}
 
-	/** the ticking method */
-	virtual void TickParticles(float delta_time) override
-	{
-		// update the particles themselves
-		DoUpdateParticles(delta_time);
-		// destroy the particles that are to be destroyed
-		DoDestroyParticles(delta_time);
-	}
 
 protected:
 
-
-
-	void DoUpdateParticles(float delta_time)
+	virtual void UpdateParticles(float delta_time) override
 	{
-		// early exit
-		size_t count = particles.size();
-		if (count == 0)
-			return;
-		// update all particles
-		for (size_t i = 0; i < count; ++i)
-			particle_desc.UpdateParticle(delta_time, &particles[i]);
+		DoUpdateParticles(delta_time, particle_desc);
 	}
 
-	void DoDestroyParticles(float delta_time)
+	virtual void DestroyObsoletParticles() override
 	{
-		// early exit
-		size_t count = particles.size();
-		if (count == 0)
-			return;
-		// remove the particles and update the suppression vector
-		size_t i = 0;
-		size_t j = 0;
-		while (i < count)
-		{
-			if (suppression_vector[i] != DESTROY_PARTICLE_MARK && !particle_desc.MustDestroyParticle(&particles[i])) // particle is OK
-			{
-				if (i != j)
-					particles[j] = particles[i]; // keep the particle by copying it 
-				suppression_vector[i] = (i - j);
-				++j;
-			}
-			else
-				suppression_vector[i] = (i - j);
-			++i;
-		}
-		particles.resize(j);
-		suppression_vector.resize(j);
-		// update the ranges (code is useless from one TICK to the next. the only important value is NUMERIC LIMIT)
-		size_t range_count = particles_ranges.size();
-		for (size_t i = 0; i < range_count; ++i)
-		{
-			// read the range
-			size_t start = particles_ranges[i].start;
-			size_t end   = start + particles_ranges[i].count;
-			// apply the suppression count
-			start -= suppression_vector[start]; 
-			end   -= suppression_vector[end];
-			// update the structure
-			particles_ranges[i].start = start; 
-			particles_ranges[i].count = end - start;
-		}
-		// reset the suppression vector
-#if 1
-		for (size_t i = 0; i < j; ++i)
-			suppression_vector[i] = 0;
-#endif 
+		DoDestroyObsoletParticles(particle_desc);
 	}
 
 protected:
 
 	/** the particle behavior description */
 	particle_desc_type particle_desc;
-	/** the array containing the particles */
-	std::vector<particle_type> particles;
 };
 
 // ==============================================================

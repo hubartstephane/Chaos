@@ -255,14 +255,7 @@ bool GPUProgramLoader::AddShaderSource(GLenum shader_type, char const * src)
   return AddSourceGenerator(shader_type, new GPUProgramStringSourceGenerator(src));
 }
 
-bool GPUProgramLoader::AddShaderSourceFile(GLenum shader_type, char const * filename)
-{
-  if (!IsShaderTypeValid(shader_type))
-    return false;
-  return AddSourceGenerator(shader_type, new GPUProgramFileSourceGenerator(filename));
-}
-
-bool GPUProgramLoader::AddShaderSourceFile(GLenum shader_type, boost::filesystem::path const & path)
+bool GPUProgramLoader::AddShaderSourceFile(GLenum shader_type, FilePath const & path)
 {
   if (!IsShaderTypeValid(shader_type))
     return false;

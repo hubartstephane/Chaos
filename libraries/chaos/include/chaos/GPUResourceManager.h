@@ -5,6 +5,7 @@
 #include <chaos/Texture.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/RenderMaterial.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -18,11 +19,11 @@ namespace chaos
 	virtual void Release();
 
 	/** load a texture */
-	Texture * LoadTexture(boost::filesystem::path path);
+	Texture * LoadTexture(FilePath const & path);
 	/** load a program */
-	GPUProgram * LoadProgram(boost::filesystem::path path);
+	GPUProgram * LoadProgram(FilePath const & path);
 	/** load a material */
-	RenderMaterial * LoadRenderMaterial(boost::filesystem::path path);
+	RenderMaterial * LoadRenderMaterial(FilePath const & path);
 
   public:
 

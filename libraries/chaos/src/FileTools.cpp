@@ -37,18 +37,11 @@ namespace chaos
     return false;
   }
 
-  Buffer<char> FileTools::LoadFile(boost::filesystem::path const & filename, bool ascii)
+  Buffer<char> FileTools::LoadFile(FilePath const & path, bool ascii)
   {
-    return LoadFile(filename.string().c_str(), ascii);
-  }
-
-  Buffer<char> FileTools::LoadFile(char const * filename, bool ascii)
-  {
-    assert(filename != nullptr);
-
     Buffer<char> result;
 
-    std::ifstream file(filename, std::ifstream::binary); // never want to format data
+    std::ifstream file(path.path.string().c_str(), std::ifstream::binary); // never want to format data
     if (file)
     {
       std::streampos start = file.tellg();
@@ -88,11 +81,11 @@ namespace chaos
     return false;
   }
 
-  std::vector<std::string> FileTools::ReadFileLines(char const * filename)
+  std::vector<std::string> FileTools::ReadFileLines(FilePath const & path)
   {
     std::vector<std::string> result;
 
-    std::ifstream file(filename);
+    std::ifstream file(path.path.string().c_str());
     if (file)
     {
       std::copy(std::istream_iterator<std::string>(file),

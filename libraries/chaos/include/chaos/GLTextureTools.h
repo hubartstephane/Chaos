@@ -4,6 +4,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/Texture.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -95,7 +96,7 @@ namespace chaos
 		static GLenum ToFlatTextureType(GLenum type);
 
 		/** Generate a 1D/2D/rectangle texture from an file */
-		static GenTextureResult GenTexture(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
+		static GenTextureResult GenTexture(FilePath const & path, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */
 		static GenTextureResult GenTexture(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */
@@ -126,7 +127,7 @@ namespace chaos
 		}
 
 		/** Generate a 1D/2D/rectangle texture from an file */
-		static boost::intrusive_ptr<Texture> GenTextureObject(char const * filename, GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(FilePath const & path, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */
 		static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */

@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/IrrklangTools.h>
+#include <chaos/FilePath.h>
 
 // ==============================================================
 // FORWARD DECLARATION / FRIENDSHIP MACROS
@@ -413,9 +414,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
     SoundCategory * AddCategory(char const * in_name);
 
     /** load and add a simple source inside the manager (name is a copy of filename) */
-    SoundSource * AddSource(boost::filesystem::path const & in_path);
+    SoundSource * AddSource(FilePath const & in_path);
     /** load and add a simple source inside the manager */
-    SoundSource * AddSource(boost::filesystem::path const & in_path, char const * in_name);
+    SoundSource * AddSource(FilePath const & in_path, char const * in_name);
 
     /** update the listener position */
     bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));

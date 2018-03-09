@@ -199,24 +199,14 @@ int _tmain(int argc, char ** argv, char ** env)
 {
   ParticleLayer<ParticleLayerDescExample> sl;
 
-  std::vector<int> iii = { 10, 20, 30, 40, 50, 60 };
+  ParticleRange r = sl.SpawnParticles(17);
 
-  //auto it = std::lower_bound(iii.begin(), iii.end(), 35);
+  boost::intrusive_ptr<ParticleRangeAllocation> p1 = sl.SpawnParticlesAndKeepRange(5);
+  boost::intrusive_ptr<ParticleRangeAllocation> p2 = sl.SpawnParticlesAndKeepRange(10);
+  boost::intrusive_ptr<ParticleRangeAllocation> p3 = sl.SpawnParticlesAndKeepRange(20);
 
-  auto it = std::lower_bound(iii.begin(), iii.end(), 35, [](int k, int u) {return (k < u); });
-
-  int h = *it;
-
-  iii.insert(it, 35);
-
-
- // auto it = std::remove_if(iii.begin(), iii.end(), [](int k) {return (k % 2) == 1; });
-
-//  iii.erase(it, iii.end());
-
-  //auto it2 = std::binary_search((iii.begin(), iii.end(), [](int k) {return (k == 3); });
-
-  //int u = *it2;
+  p2 = nullptr;
+  sl.TickParticles(0.0f);
 
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;

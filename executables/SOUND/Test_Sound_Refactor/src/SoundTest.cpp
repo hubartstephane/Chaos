@@ -90,9 +90,10 @@ void ParticleLayerBase::TickParticles(float delta_time)
 	// update the particles themselves
 	UpdateParticles(delta_time);
 	// destroy the particles that are to be destroyed
-	DestroyObsoletParticles();
+	size_t new_particle_count = DestroyObsoletParticles();
 	// finalization of the particle destruction
-	UpdateParticleRanges();
+  if (new_particle_count != GetParticleCount())
+	  UpdateParticleRanges(new_particle_count);
 }
 
 ParticleRangeAllocation * ParticleLayerBase::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
@@ -126,7 +127,7 @@ ParticleRange ParticleLayerBase::SpawnParticles(size_t count)
 		// create the particles and the suppression corresponding data
 		size_t new_count = current_particle_count + count;
 		particles.resize(new_count * particle_size, 0);
-		suppression_vector.resize(new_count, 0);	
+		deletion_vector.resize(new_count, 0);	
 	}
 	return result;
 }
@@ -134,13 +135,13 @@ ParticleRange ParticleLayerBase::SpawnParticles(size_t count)
 void ParticleLayerBase::MarkParticlesToDestroy(size_t start, size_t count) 
 {
 	// clamp the range
-	size_t suppression_count = suppression_vector.size();
+	size_t suppression_count = deletion_vector.size();
 	if (start >= suppression_count)
 		return;
 	size_t end = min(start + count, suppression_count);
 	// mark the particles to destroy    
 	while (start != end)
-		suppression_vector[start++] = DESTROY_PARTICLE_MARK; 
+    deletion_vector[start++] = DESTROY_PARTICLE_MARK;
 }
 
 void ParticleLayerBase::RemoveParticleAllocation(ParticleRangeAllocation * allocation)
@@ -172,31 +173,36 @@ void ParticleLayerBase::UpdateParticles(float delta_time)
 
 }
 
-void ParticleLayerBase::DestroyObsoletParticles()
+size_t ParticleLayerBase::DestroyObsoletParticles()
 {
-
+  return deletion_vector.size();
 }
 
-void ParticleLayerBase::UpdateParticleRanges()
+void ParticleLayerBase::UpdateParticleRanges(size_t new_particle_count)
 {
 	// update the ranges (code is useless from one TICK to the next. the only important value is NUMERIC LIMIT)
 	size_t range_count = particles_ranges.size();
 	for (size_t i = 0; i < range_count; ++i)
 	{
+    ParticleRange & range = particles_ranges[i];
+    if (range.count == 0)
+      continue;
 		// read the range
-		size_t start = particles_ranges[i].start;
-		size_t end   = start + particles_ranges[i].count;
+		size_t start = range.start;
+		size_t end   = start + range.count - 1;
 		// apply the suppression count
-		start -= suppression_vector[start]; 
-		end   -= suppression_vector[end];
+		start -= deletion_vector[start];
+		end   -= deletion_vector[end];
 		// update the structure
-		particles_ranges[i].start = start; 
-		particles_ranges[i].count = end - start;
+    range.start = start;
+    range.count = end - start + 1;
 	}
+  // resize some vectors
+  particles.resize(new_particle_count * particle_size);
+  deletion_vector.resize(new_particle_count);
 	// reset the suppression vector
-	size_t suppression_count = suppression_vector.size();
-	for (size_t i = 0; i < suppression_count; ++i)
-		suppression_vector[i] = 0;
+	for (size_t i = 0; i < new_particle_count; ++i)
+    deletion_vector[i] = 0;
 }
 
 

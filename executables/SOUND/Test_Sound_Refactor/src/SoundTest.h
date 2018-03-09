@@ -109,10 +109,10 @@ protected:
 	void RemoveParticleAllocation(ParticleRangeAllocation * allocation);
 	/** internal method to update the particles */
 	virtual void UpdateParticles(float delta_time);
-	/** internal method to test whether particles should be destroyed */
-	virtual void DestroyObsoletParticles();
+	/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
+	virtual size_t DestroyObsoletParticles();
 	/** internal method fix the ranges after particles destruction */
-	virtual void UpdateParticleRanges();
+	virtual void UpdateParticleRanges(size_t new_particle_count);
 
 	template<typename T>
 	void DoUpdateParticles(float delta_time, T & obj)
@@ -127,7 +127,7 @@ protected:
 	}
 
 	template<typename T>
-	void DoDestroyObsoletParticles(T & obj)
+	size_t DoDestroyObsoletParticles(T & obj)
 	{
 		size_t particle_count = GetParticleCount();
 		if (particle_count > 0)
@@ -138,21 +138,20 @@ protected:
 			size_t j = 0;
 			while (i < particle_count)
 			{
-				if (suppression_vector[i] != DESTROY_PARTICLE_MARK && !obj.MustDestroyParticle(&p[i])) // particle is OK
+				if (deletion_vector[i] != DESTROY_PARTICLE_MARK && !obj.MustDestroyParticle(&p[i])) // particle is OK
 				{
 					if (i != j)
 						p[j] = p[i]; // keep the particle by copying it 
-					suppression_vector[i] = (i - j);
+          deletion_vector[i] = (i - j);
 					++j;
 				}
 				else
-					suppression_vector[i] = (i - j);
+          deletion_vector[i] = (i - j);
 				++i;
 			}
-
-			particles.resize(j * particle_size);
-			suppression_vector.resize(j);
+      return j;
 		}
+    return deletion_vector.size();
 	}
 
 protected:
@@ -168,7 +167,7 @@ protected:
 	/** the array containing the particles */
 	std::vector<char> particles;
 	/** a utility vector that is used to mark particles to destroy, then as an internal utility vector */
-	std::vector<size_t> suppression_vector;
+	std::vector<size_t> deletion_vector;
 	/** particles ranges */
 	std::vector<ParticleRange> particles_ranges;
 	/** ranges reservations */
@@ -195,8 +194,8 @@ public:
 	ParticleLayer(particle_desc_type in_desc = particle_desc_type()) :
 		particle_desc(in_desc) 
 	{
+    particle_size = sizeof(particle_type);
 	}
-
 
 protected:
 
@@ -205,9 +204,9 @@ protected:
 		DoUpdateParticles(delta_time, particle_desc);
 	}
 
-	virtual void DestroyObsoletParticles() override
+	virtual size_t DestroyObsoletParticles() override
 	{
-		DoDestroyObsoletParticles(particle_desc);
+		return DoDestroyObsoletParticles(particle_desc);
 	}
 
 protected:
@@ -264,6 +263,7 @@ class ParticleManager : public chaos::ReferencedObject
 
 class ParticleExample
 {
+  glm::vec3 position;
 
 };
 

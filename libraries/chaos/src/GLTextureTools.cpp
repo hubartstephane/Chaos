@@ -300,11 +300,11 @@ namespace chaos
 		return GenTexture(ImageTools::GetImageDescription(image), parameters);
 	}
 
-	GenTextureResult GLTextureTools::GenTexture(FilePath const & path, GenTextureParameters const & parameters)
+	GenTextureResult GLTextureTools::GenTexture(char const * filename, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result;
 
-		FIBITMAP * image = ImageTools::LoadImageFromFile(path);
+		FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
 		if (image != nullptr)
 		{
 			result = GenTexture(image, parameters);
@@ -572,9 +572,9 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePath const & path, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(char const * filename, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result = GenTexture(path, parameters);
+		GenTextureResult result = GenTexture(filename, parameters);
 		if (result.texture_id > 0)
 			return new Texture(result.texture_id, result.texture_description);
 		return nullptr;

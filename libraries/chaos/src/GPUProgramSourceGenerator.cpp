@@ -22,9 +22,14 @@ namespace chaos
 
   }
 
-  GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(FilePath const & path)
+  GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(char const * filename)
   {  
-    buffer = FileTools::LoadFile(path, true);
+    buffer = FileTools::LoadFile(filename, true);
+  }
+
+  GPUProgramFileSourceGenerator::GPUProgramFileSourceGenerator(boost::filesystem::path const & path)
+  {
+    buffer = FileTools::LoadFile(path, true);  
   }
 
 }; // namespace chaos

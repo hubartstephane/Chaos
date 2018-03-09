@@ -4,7 +4,6 @@
 #include <chaos/Buffer.h>
 #include <chaos/GPUProgramSourceGenerator.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -57,7 +56,9 @@ public:
   /** add a source for a given shader */
   bool AddShaderSource(GLenum shader_type, char const * src);
   /** add a source file for a given shader */
-  bool AddShaderSourceFile(GLenum shader_type, FilePath const & path);
+  bool AddShaderSourceFile(GLenum shader_type, char const * filename);
+  /** add a source file for a given shader */
+  bool AddShaderSourceFile(GLenum shader_type, boost::filesystem::path const & path);
 
   /** generate a string for all definitions */
   static std::string DefinitionsToString(DefinitionSet const & definitions);

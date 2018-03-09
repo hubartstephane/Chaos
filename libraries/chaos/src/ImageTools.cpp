@@ -545,16 +545,19 @@ namespace chaos
 		return result;	
 	}
 
-	FIBITMAP * ImageTools::LoadImageFromFile(FilePath const & path)
+	FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
 	{
-		return LoadImageFromBuffer(FileTools::LoadFile(path, false));
+		assert(filename != nullptr);
+		return LoadImageFromBuffer(FileTools::LoadFile(filename, false));
 	}
 
-	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePath const & path)
+	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(char const * filename)
 	{
+		assert(filename != nullptr);
+
 		FIMULTIBITMAP * result = nullptr;
 
-		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		Buffer<char> buffer = FileTools::LoadFile(filename, false);
 		if (buffer != nullptr)
 		{
 			FIMEMORY * memory = FreeImage_OpenMemory((BYTE*)buffer.data, (DWORD)buffer.bufsize);

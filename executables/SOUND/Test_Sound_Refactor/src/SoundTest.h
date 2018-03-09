@@ -17,6 +17,10 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FORWARD_DECL, _, CHAOS_PARTICLE_CLASSES)
 #define CHAOS_PARTICLE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_PARTICLE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FRIEND_DECL, _, CHAOS_PARTICLE_CLASSES)
 
+// ==============================================================
+// PARTICLE RANGE
+// ==============================================================
+
 class ParticleRange
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
@@ -29,6 +33,10 @@ public:
 	size_t count = 0;
 };
 
+// ==============================================================
+// PARTICLE RANGE ALLOCATION
+// ==============================================================
+
 class ParticleRangeAllocation : public chaos::ReferencedObject
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
@@ -40,6 +48,15 @@ public:
 	/** remove the allocation from its layer */
 	void RemoveFromLayer();
 
+	/** get the range of concern */
+	ParticleRange GetParticleRange() const;
+	/** get the number of particles */
+	size_t GetParticleCount() const;
+	/** get the particles */
+	void * GetParticleBuffer();
+	/** get the particles */
+	void const * GetParticleBuffer() const;
+
 protected:
 
 	/** the particle layer that contains the range */
@@ -47,6 +64,10 @@ protected:
 	/** the index of the range in its array */
 	size_t range_index = std::numeric_limits<size_t>::max();
 };
+
+// ==============================================================
+// PARTICLE LAYER BASE
+// ==============================================================
 
 class ParticleLayerBase
 {
@@ -56,12 +77,26 @@ public:
 
 	static size_t const DESTROY_PARTICLE_MARK = std::numeric_limits<size_t>::max();
 
+	/** get the total number of particles */
+	size_t GetParticleCount() const;
+	/** get the number of particles */
+	size_t GetParticleCount(ParticleRange range) const;
+	/** get the particles */
+	void * GetParticleBuffer(ParticleRange range);
+	/** get the particles */
+	void const * GetParticleBuffer(ParticleRange range) const;
+
+
+
+
 	/** ticking the particle system */
 	virtual void TickParticles(float delta_time);
 	/** spawn a given number of particles */
 	ParticleRange SpawnParticles(size_t count, boost::intrusive_ptr<ParticleRangeAllocation> * allocation = nullptr);
 	/** mark any particle as to be destroyed next tick */
 	void MarkParticlesToDestroy(size_t start, size_t count);
+
+
 
 protected:
 
@@ -72,19 +107,28 @@ protected:
 
 protected:
 
+	/** the size of one particle */
+	size_t particle_size = 0;
+	/** the size of one vertex */
+	size_t vertex_size = 0;
 	/** the order of the layer in the manager */
-	int order = 0;
+	int render_order = 0;
 	/** the material used to render the layer */
 	boost::intrusive_ptr<chaos::RenderMaterial> render_material;
+	/** the array containing the particles */
+	std::vector<char> particles;
+	/** a utility vector that is used to mark particles to destroy, then as an internal utility vector */
+	std::vector<size_t> suppression_vector;
 	/** particles ranges */
 	std::vector<ParticleRange> particles_ranges;
 	/** ranges reservations */
 	std::vector<boost::intrusive_ptr<ParticleRangeAllocation>> range_allocations;
-	/** a utility vector that is used to mark particles to destroy, then as an internal utility vector */
-	std::vector<size_t> suppression_vector;
+
 };
 
-// -----------------------------------------------------------------
+// ==============================================================
+// CALLBACKS
+// ==============================================================
 
 template<typename PARTICLE_DESC_TYPE>
 class ParticleLayer : public ParticleLayerBase
@@ -114,21 +158,7 @@ public:
 
 protected:
 
-	virtual ParticleRange DoSpawnParticles(size_t count) override
-	{
-		size_t current_particle_count = particles.size();
 
-		// initialize the result
-		ParticleRange result;
-		result.start = current_particle_count;
-		result.count = count;
-		// create the particles and the suppression corresponding data
-		size_t new_count = current_particle_count + count;
-		particles.resize(new_count, particle_type());
-		suppression_vector.resize(new_count, 0);
-	
-		return result;
-	}
 
 	void DoUpdateParticles(float delta_time)
 	{
@@ -194,7 +224,9 @@ protected:
 	std::vector<particle_type> particles;
 };
 
-// -----------------------------------------------------------------
+// ==============================================================
+// CALLBACKS
+// ==============================================================
 
 template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
 class ParticleLayerDescBase
@@ -218,7 +250,9 @@ public:
 };
 
 
-// -----------------------------------------------------------------
+// ==============================================================
+// CALLBACKS
+// ==============================================================
 
 class ParticleManager : public chaos::ReferencedObject
 {
@@ -232,7 +266,9 @@ class ParticleManager : public chaos::ReferencedObject
 
 
 
-// -----------------------------------------------------------------
+// ==============================================================
+// CALLBACKS
+// ==============================================================
 
 class ParticleExample
 {

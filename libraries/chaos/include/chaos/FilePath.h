@@ -16,6 +16,9 @@ namespace chaos
 		/** constructor */
 		FilePath(boost::filesystem::path const & in_filename, FilePath const * in_parent_path = nullptr);
 
+		/** returns true whether the argument matches */
+		bool MatchPath(boost::filesystem::path const & other_path) const;
+
 	public:
 
 		/** the path */

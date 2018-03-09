@@ -23,4 +23,10 @@ namespace chaos
 	{
 	}
 
+	bool FilePath::MatchPath(boost::filesystem::path const & other_path) const
+	{
+	
+		return false;
+	}
+
 }; // namespace chaos

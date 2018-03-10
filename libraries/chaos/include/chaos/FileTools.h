@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Buffer.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -13,15 +14,14 @@ namespace chaos
 	class FileTools
 	{
 	public:
-
+     
 		/** returns a sub pointer on the extension of the file */
 		static char const * GetFilenameExtension(char const * filename);
 		/** returns true if the extension of a file correspond to a string */
 		static bool IsTypedFile(char const * filename, char const * expected_ext);
 		/** loading a whole file into memory */
-		static Buffer<char> LoadFile(char const * filename, bool ascii);
-		/** loading a whole file into memory */
-		static Buffer<char> LoadFile(boost::filesystem::path const & filename, bool ascii);
+		static Buffer<char> LoadFile(FilePath && path, bool ascii);
+
 		/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);
 

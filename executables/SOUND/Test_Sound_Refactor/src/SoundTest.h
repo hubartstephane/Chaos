@@ -91,6 +91,16 @@ public:
 	/** get the particles */
 	void const * GetParticleBuffer(ParticleRange range) const;
 
+  /** pause/resume the layer */
+  void Pause(bool in_paused = true);
+  /** returns whether the layer is paused */
+  bool IsPaused() const;
+
+  /** show/hide the layer */
+  void Show(bool in_visible = true);
+  /** returns whether the layer is visible */
+  bool IsVisible() const;
+
 	/** ticking the particle system */
 	virtual void TickParticles(float delta_time);
 	/** spawn a given number of particles */
@@ -102,6 +112,11 @@ public:
 	void MarkParticlesToDestroy(size_t start, size_t count);
 
 protected:
+
+  /** returns whether it is necessary to tick particles (not necessary for static elements) */
+  virtual bool AreParticlesDynamic() const;
+  /** returns whether particles may have a limited lifetime */
+  virtual bool AreParticlesMortal() const;
 
 	/** unlink all particles allocations */
 	void DetachAllParticleAllocations();
@@ -138,7 +153,7 @@ protected:
 			size_t j = 0;
 			while (i < particle_count)
 			{
-				if (deletion_vector[i] != DESTROY_PARTICLE_MARK && !obj.MustDestroyParticle(&p[i])) // particle is OK
+				if (deletion_vector[i] != DESTROY_PARTICLE_MARK && !obj.MustDestroyParticle(&p[i])) // particle is still alive ?
 				{
 					if (i != j)
 						p[j] = p[i]; // keep the particle by copying it 
@@ -162,6 +177,14 @@ protected:
 	size_t vertex_size = 0;
 	/** the order of the layer in the manager */
 	int render_order = 0;
+  /** whether the layer is paused */
+  bool paused = false;
+  /** whether the layer is visible */
+  bool visible = true;
+  /** number of particles waiting for a destruction */
+  size_t pending_kill_particles = 0;
+  /** whether there was changes in particles, and a vertex array need to be recomputed */
+  bool require_GPU_update = false;
 	/** the material used to render the layer */
 	boost::intrusive_ptr<chaos::RenderMaterial> render_material;
 	/** the array containing the particles */
@@ -172,7 +195,6 @@ protected:
 	std::vector<ParticleRange> particles_ranges;
 	/** ranges reservations */
 	std::vector<ParticleRangeAllocation*> range_allocations;
-
 };
 
 // ==============================================================
@@ -209,6 +231,16 @@ protected:
 		return DoDestroyObsoletParticles(particle_desc);
 	}
 
+  virtual bool AreParticlesDynamic() const override
+  {
+    return particle_desc.AreParticlesDynamic();
+  }
+
+  virtual bool AreParticlesMortal() const override
+  {
+    return particle_desc.AreParticlesMortal();
+  }
+
 protected:
 
 	/** the particle behavior description */
@@ -229,15 +261,13 @@ public:
 	using particle_type = typename PARTICLE_TYPE;
 	using vertex_type = typename VERTEX_TYPE;
 
-	inline bool MustDestroyParticle(particle_type const * p)
-	{
-		return false;
-	}
+	inline bool MustDestroyParticle(particle_type const * p){ return false;}
 
-	inline void UpdateParticle(float delta_time, particle_type * p)
-	{
+  inline void UpdateParticle(float delta_time, particle_type * p) {}
 
-	}
+  inline bool AreParticlesDynamic() const { return false; }
+
+  inline bool AreParticlesMortal() const { return false; }
 };
 
 

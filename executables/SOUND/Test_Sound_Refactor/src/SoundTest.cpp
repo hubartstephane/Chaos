@@ -85,15 +85,59 @@ void const * ParticleLayerBase::GetParticleBuffer(ParticleRange range) const
 	return &particles[range.start * particle_size];
 }
 
+void ParticleLayerBase::Pause(bool in_paused)
+{
+  paused = in_paused;
+}
+
+bool ParticleLayerBase::IsPaused() const
+{
+  return paused;
+}
+
+void ParticleLayerBase::Show(bool in_visible)
+{
+  visible = in_visible;
+}
+
+bool ParticleLayerBase::IsVisible() const
+{
+  return visible;
+}
+
+bool ParticleLayerBase::AreParticlesDynamic() const
+{
+  return true;
+}
+
+bool ParticleLayerBase::AreParticlesMortal() const
+{
+  return true;
+}
+
 void ParticleLayerBase::TickParticles(float delta_time)
-{	
+{
+  // early exit
+  if (IsPaused())
+    return;
+
 	// update the particles themselves
-	UpdateParticles(delta_time);
+  if (AreParticlesDynamic())
+  {
+    UpdateParticles(delta_time);
+    require_GPU_update = true;
+  }
 	// destroy the particles that are to be destroyed
-	size_t new_particle_count = DestroyObsoletParticles();
-	// finalization of the particle destruction
-  if (new_particle_count != GetParticleCount())
-	  UpdateParticleRanges(new_particle_count);
+  if (pending_kill_particles > 0 || AreParticlesMortal())
+  {
+    size_t new_particle_count = DestroyObsoletParticles();
+    if (new_particle_count != GetParticleCount())
+    {
+      UpdateParticleRanges(new_particle_count);
+      require_GPU_update = true;
+    }
+    pending_kill_particles = 0;
+  }
 }
 
 ParticleRangeAllocation * ParticleLayerBase::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
@@ -142,6 +186,8 @@ void ParticleLayerBase::MarkParticlesToDestroy(size_t start, size_t count)
 	// mark the particles to destroy    
 	while (start != end)
     deletion_vector[start++] = DESTROY_PARTICLE_MARK;
+  // count the number of particles to destroy
+  pending_kill_particles += count;
 }
 
 void ParticleLayerBase::RemoveParticleAllocation(ParticleRangeAllocation * allocation)

@@ -127,6 +127,16 @@ void const * ParticleLayer::GetParticleBuffer(ParticleRange range) const
 	return &particles[range.start * particle_size];
 }
 
+bool ParticleLayer::HasParticleLimitedLifeTime() const
+{
+  return layer_desc->HasParticleLimitedLifeTime();
+}
+
+bool ParticleLayer::AreParticlesDynamic() const
+{
+  return layer_desc->AreParticlesDynamic();
+}
+
 void ParticleLayer::Pause(bool in_paused)
 {
 	paused = in_paused;
@@ -157,13 +167,13 @@ void ParticleLayer::TickParticles(float delta_time)
 	if (IsPaused())
 		return;
 	// update the particles themselves
-	if (layer_desc->AreParticlesDynamic())
+	if (AreParticlesDynamic())
 	{
 		UpdateParticles(delta_time);
 		require_GPU_update = true;
 	}
 	// destroy the particles that are to be destroyed
-	if (pending_kill_particles > 0 || layer_desc->HasParticleLimitedLifeTime())
+	if (pending_kill_particles > 0 || HasParticleLimitedLifeTime())
 	{
 		size_t new_particle_count = DestroyObsoletParticles();
 		if (new_particle_count != particle_count)

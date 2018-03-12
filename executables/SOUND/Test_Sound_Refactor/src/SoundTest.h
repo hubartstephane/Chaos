@@ -67,9 +67,8 @@ protected:
 	bool particles_owner = true;
 };
 
-
 // ==============================================================
-// PARTICLE LAYER BASE
+// PARTICLE LAYER DESC
 // ==============================================================
 
 class ParticleLayerDesc : public chaos::ReferencedObject
@@ -87,56 +86,12 @@ public:
 	/** returns true whether particles need to be updated */
 	virtual bool AreParticlesDynamic() const;
 
-
-
 protected:
 
 	/** update all particles */
 	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count);
 	/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
 	virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector);
-
-
-	template<typename T>
-	void DoUpdateParticles(float delta_time, T * particles, size_t particle_count)
-	{
-		size_t particle_count = GetParticleCount();
-		if (particle_count > 0)
-		{
-			T::particle_type * p = (T::particle_type *)(&particles[0]);
-			for (size_t i = 0; i < particle_count; ++i)
-				obj.UpdateParticle(delta_time, &p[i]);
-		}
-	}
-
-	template<typename T>
-	size_t DoDestroyObsoletParticles(T & obj)
-	{
-		size_t particle_count = GetParticleCount();
-		if (particle_count > 0)
-		{
-			T::particle_type * p = (T::particle_type *)(&particles[0]);
-
-			size_t i = 0;
-			size_t j = 0;
-			while (i < particle_count)
-			{
-				if (deletion_vector[i] != DESTROY_PARTICLE_MARK && !obj.MustDestroyParticle(&p[i])) // particle is still alive ?
-				{
-					if (i != j)
-						p[j] = p[i]; // keep the particle by copying it 
-					deletion_vector[i] = (i - j);
-					++j;
-				}
-				else
-					deletion_vector[i] = (i - j);
-				++i;
-			}
-			return j;
-		}
-		return deletion_vector.size();
-	}
-
 };
 
 // ==============================================================
@@ -169,6 +124,10 @@ public:
 	size_t GetParticleSize() const { return particle_size;}
 	/** returns the size in memory of a vertex */
 	size_t GetVertexSize() const { return vertex_size;}
+  /** returns true whether particles may destroyed themselves */
+  bool HasParticleLimitedLifeTime() const;
+  /** returns true whether particles need to be updated */
+  bool AreParticlesDynamic() const;
 
 	/** pause/resume the layer */
 	void Pause(bool in_paused = true);
@@ -234,33 +193,44 @@ protected:
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // ==============================================================
-// CALLBACKS
+// TParticleLayerDesc
 // ==============================================================
 
-template<typename PARTICLE_DESC_TYPE>
+template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
+class ParticleLayerTrait
+{
+public:
+
+  using particle_type = PARTICLE_TYPE;
+
+  using vertex_type = VERTEX_TYPE;
+
+  bool lifetime_particles = false;
+
+  bool dynamic_particles = false;
+};
+
+// ==============================================================
+// TParticleLayerDesc
+// ==============================================================
+
+template<typename LAYER_TRAIT>
 class TParticleLayerDesc : public ParticleLayerDesc
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
 
 public:
 
-	using particle_type = typename PARTICLE_DESC_TYPE::particle_type;
-	using vertex_type = typename PARTICLE_DESC_TYPE::vertex_type;
-
+  using trait_type    = LAYER_TRAIT;
+	using particle_type = typename trait_type::particle_type;
+	using vertex_type   = typename trait_type::vertex_type;
+  
 public:
+
+  /** constructor */
+  TParticleLayerDesc(trait_type const & in_trait = trait_type()):
+    trait(in_trait){}
 
 	/** returns the size in memory of a particle */
 	virtual size_t GetParticleSize() const override
@@ -272,57 +242,56 @@ public:
 	{
 		return sizeof(vertex_type);
 	}
+  /** returns true whether particles have a limited lifetime */
+  virtual bool HasParticleLimitedLifeTime() const
+  {
+    return trait.lifetime_particles;
+  }
+  /** returns true whether particles need to be updated */
+  virtual bool AreParticlesDynamic() const
+  {
+    return trait.dynamic_particles;
+  }
 
+  /** loop for updating the particles */
+  virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count) override
+  {
+    particle_type * p = (particle_type*)particles;
+    for (size_t i = 0; i < particle_count; ++i)
+      trait.UpdateParticle(delta_time, &p[i]);
+  }
+  /** loop for destroying the particles */
+  virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
+  {
+    if (particle_count > 0)
+    {
+      particle_type * p = (particle_type*)particles;
 
-#if 0
-	virtual void UpdateParticles(float delta_time) override
-	{
-		DoUpdateParticles(delta_time, particle_desc);
-	}
+      size_t i = 0;
+      size_t j = 0;
+      while (i < particle_count)
+      {
+        if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK && !trait.IsParticleObsolet(&p[i])) // particle is still alive ?
+        {
+          if (i != j)
+            p[j] = p[i]; // keep the particle by copying it 
+          deletion_vector[i] = (i - j);
+          ++j;
+        }
+        else
+          deletion_vector[i] = (i - j);
+        ++i;
+      }
+      return j;
+    }
+    return particle_count; // no destruction
+  }
 
-	virtual size_t DestroyObsoletParticles() override
-	{
-		return DoDestroyObsoletParticles(particle_desc);
-	}
+protected:
 
-	virtual bool AreParticlesDynamic() const override
-	{
-		return particle_desc.AreParticlesDynamic();
-	}
-
-	virtual bool AreParticlesMortal() const override
-	{
-		return particle_desc.AreParticlesMortal();
-	}
-
-#endif
+  /** internal description */
+  trait_type trait;
 };
-
-
-#if 0
-// ==============================================================
-// CALLBACKS
-// ==============================================================
-
-template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
-class ParticleLayerDescBase : public ParticleLayerDesc
-{
-	CHAOS_PARTICLE_ALL_FRIENDS
-
-public:
-
-	using particle_type = typename PARTICLE_TYPE;
-	using vertex_type = typename VERTEX_TYPE;
-
-	inline bool MustDestroyParticle(particle_type const * p){ return false;}
-
-	inline void UpdateParticle(float delta_time, particle_type * p) {}
-
-	inline bool AreParticlesDynamic() const { return false; }
-
-	inline bool AreParticlesMortal() const { return false; }
-};
-#endif
 
 // ==============================================================
 // CALLBACKS
@@ -355,7 +324,30 @@ class VertexExample
 
 };
 
-class ParticleLayerDescExample : public TParticleLayerDesc<ParticleExample, VertexExample>
+class ParticleExampleTrait : public ParticleLayerTrait<ParticleExample, VertexExample>
+{
+public:
+
+  ParticleExampleTrait()
+  {
+    lifetime_particles = true;
+    dynamic_particles = true;
+  }
+
+  bool IsParticleObsolet(ParticleExample * p)
+  {
+    return false;
+  }
+  void UpdateParticle(float delta_time, ParticleExample * particle)
+  {
+    particle = particle;
+
+  }
+};
+
+
+
+class ParticleLayerDescExample : public TParticleLayerDesc<ParticleExampleTrait>
 {
 
 

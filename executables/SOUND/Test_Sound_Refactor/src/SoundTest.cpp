@@ -43,104 +43,149 @@ void const * ParticleRangeAllocation::GetParticleBuffer() const
 }
 
 // ==============================================================
-// CALLBACKS
+// PARTICLE LAYER DESC
 // ==============================================================
 
-ParticleLayerBase::~ParticleLayerBase()
+size_t ParticleLayerDesc::GetParticleSize() const
+{
+	return 0;
+}
+
+size_t ParticleLayerDesc::GetVertexSize() const
+{
+	return 0;
+}
+
+void ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count)
+{
+
+}
+
+size_t ParticleLayerDesc::DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector)
+{
+	return 0;
+}
+
+bool ParticleLayerDesc::HasParticleLimitedLifeTime() const
+{
+	return false;
+}
+
+bool ParticleLayerDesc::AreParticlesDynamic() const
+{
+	return false;
+}
+
+// ==============================================================
+// PARTICLE LAYER
+// ==============================================================
+
+ParticleLayer::ParticleLayer(ParticleLayerDesc * in_layer_desc)
+	: layer_desc(in_layer_desc)
+{
+	assert(in_layer_desc != nullptr);
+	particle_size = layer_desc->GetParticleSize();
+	vertex_size  = layer_desc->GetVertexSize();
+}
+
+ParticleLayer::~ParticleLayer()
 {
 	DetachAllParticleAllocations();
 }
 
-void ParticleLayerBase::DetachAllParticleAllocations()
+void ParticleLayer::DetachAllParticleAllocations()
 {
 	while (range_allocations.size())
 		RemoveParticleAllocation(range_allocations[range_allocations.size() - 1]);
 }
 
-size_t ParticleLayerBase::GetParticleCount() const
+size_t ParticleLayer::GetParticleCount() const
 {
 	if (particle_size == 0)
 		return 0;
 	return particles.size() / particle_size;
 }
 
-size_t ParticleLayerBase::GetParticleCount(ParticleRange range) const
+size_t ParticleLayer::GetParticleCount(ParticleRange range) const
 {
 	if (particle_size == 0)
 		return 0;
 	return range.count / particle_size;
 }
 
-void * ParticleLayerBase::GetParticleBuffer(ParticleRange range)
+void * ParticleLayer::GetParticleBuffer(ParticleRange range)
 {
 	if (particle_size == 0)
 		return nullptr;
 	return &particles[range.start * particle_size];
 }
 
-void const * ParticleLayerBase::GetParticleBuffer(ParticleRange range) const
+void const * ParticleLayer::GetParticleBuffer(ParticleRange range) const
 {
 	if (particle_size == 0)
 		return nullptr;
 	return &particles[range.start * particle_size];
 }
 
-void ParticleLayerBase::Pause(bool in_paused)
+void ParticleLayer::Pause(bool in_paused)
 {
-  paused = in_paused;
+	paused = in_paused;
 }
 
-bool ParticleLayerBase::IsPaused() const
+bool ParticleLayer::IsPaused() const
 {
-  return paused;
+	return paused;
 }
 
-void ParticleLayerBase::Show(bool in_visible)
+void ParticleLayer::Show(bool in_visible)
 {
-  visible = in_visible;
+	visible = in_visible;
 }
 
-bool ParticleLayerBase::IsVisible() const
+bool ParticleLayer::IsVisible() const
 {
-  return visible;
+	return visible;
 }
 
-bool ParticleLayerBase::AreParticlesDynamic() const
+void ParticleLayer::TickParticles(float delta_time)
 {
-  return true;
-}
-
-bool ParticleLayerBase::AreParticlesMortal() const
-{
-  return true;
-}
-
-void ParticleLayerBase::TickParticles(float delta_time)
-{
-  // early exit
-  if (IsPaused())
-    return;
-
+	// no particles, nothing to do
+	size_t particle_count = GetParticleCount();
+	if (particle_count == 0)
+		return;
+	// early exit
+	if (IsPaused())
+		return;
 	// update the particles themselves
-  if (AreParticlesDynamic())
-  {
-    UpdateParticles(delta_time);
-    require_GPU_update = true;
-  }
+	if (layer_desc->AreParticlesDynamic())
+	{
+		UpdateParticles(delta_time);
+		require_GPU_update = true;
+	}
 	// destroy the particles that are to be destroyed
-  if (pending_kill_particles > 0 || AreParticlesMortal())
-  {
-    size_t new_particle_count = DestroyObsoletParticles();
-    if (new_particle_count != GetParticleCount())
-    {
-      UpdateParticleRanges(new_particle_count);
-      require_GPU_update = true;
-    }
-    pending_kill_particles = 0;
-  }
+	if (pending_kill_particles > 0 || layer_desc->HasParticleLimitedLifeTime())
+	{
+		size_t new_particle_count = DestroyObsoletParticles();
+		if (new_particle_count != particle_count)
+		{
+			UpdateParticleRanges(new_particle_count);
+			require_GPU_update = true;
+		}
+		pending_kill_particles = 0;
+	}
 }
 
-ParticleRangeAllocation * ParticleLayerBase::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
+void ParticleLayer::UpdateParticles(float delta_time)
+{
+	layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount());
+}
+
+size_t ParticleLayer::DestroyObsoletParticles()
+{
+	return layer_desc->DestroyObsoletParticles(&particles[0], GetParticleCount(), &deletion_vector[0]);
+}
+
+ParticleRangeAllocation * ParticleLayer::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
 {
 	ParticleRange range = SpawnParticles(count);
 	if (range.count == 0)
@@ -158,7 +203,7 @@ ParticleRangeAllocation * ParticleLayerBase::SpawnParticlesAndKeepRange(size_t c
 	return result;
 }
 
-ParticleRange ParticleLayerBase::SpawnParticles(size_t count)
+ParticleRange ParticleLayer::SpawnParticles(size_t count)
 {
 	ParticleRange result;
 	if (count > 0 && particle_size > 0)
@@ -176,7 +221,7 @@ ParticleRange ParticleLayerBase::SpawnParticles(size_t count)
 	return result;
 }
 
-void ParticleLayerBase::MarkParticlesToDestroy(size_t start, size_t count) 
+void ParticleLayer::MarkParticlesToDestroy(size_t start, size_t count) 
 {
 	// clamp the range
 	size_t suppression_count = deletion_vector.size();
@@ -185,12 +230,12 @@ void ParticleLayerBase::MarkParticlesToDestroy(size_t start, size_t count)
 	size_t end = min(start + count, suppression_count);
 	// mark the particles to destroy    
 	while (start != end)
-    deletion_vector[start++] = DESTROY_PARTICLE_MARK;
-  // count the number of particles to destroy
-  pending_kill_particles += count;
+		deletion_vector[start++] = DESTROY_PARTICLE_MARK;
+	// count the number of particles to destroy
+	pending_kill_particles += count;
 }
 
-void ParticleLayerBase::RemoveParticleAllocation(ParticleRangeAllocation * allocation)
+void ParticleLayer::RemoveParticleAllocation(ParticleRangeAllocation * allocation)
 {
 	assert(allocation != nullptr);
 
@@ -214,25 +259,15 @@ void ParticleLayerBase::RemoveParticleAllocation(ParticleRangeAllocation * alloc
 	*allocation = ParticleRangeAllocation();
 }
 
-void ParticleLayerBase::UpdateParticles(float delta_time)
-{
-
-}
-
-size_t ParticleLayerBase::DestroyObsoletParticles()
-{
-  return deletion_vector.size();
-}
-
-void ParticleLayerBase::UpdateParticleRanges(size_t new_particle_count)
+void ParticleLayer::UpdateParticleRanges(size_t new_particle_count)
 {
 	// update the ranges (code is useless from one TICK to the next. the only important value is NUMERIC LIMIT)
 	size_t range_count = particles_ranges.size();
 	for (size_t i = 0; i < range_count; ++i)
 	{
-    ParticleRange & range = particles_ranges[i];
-    if (range.count == 0)
-      continue;
+		ParticleRange & range = particles_ranges[i];
+		if (range.count == 0)
+			continue;
 		// read the range
 		size_t start = range.start;
 		size_t end   = start + range.count - 1;
@@ -240,21 +275,13 @@ void ParticleLayerBase::UpdateParticleRanges(size_t new_particle_count)
 		start -= deletion_vector[start];
 		end   -= deletion_vector[end];
 		// update the structure
-    range.start = start;
-    range.count = end - start + 1;
+		range.start = start;
+		range.count = end - start + 1;
 	}
-  // resize some vectors
-  particles.resize(new_particle_count * particle_size);
-  deletion_vector.resize(new_particle_count);
+	// resize some vectors
+	particles.resize(new_particle_count * particle_size);
+	deletion_vector.resize(new_particle_count);
 	// reset the suppression vector
 	for (size_t i = 0; i < new_particle_count; ++i)
-    deletion_vector[i] = 0;
+		deletion_vector[i] = 0;
 }
-
-
-
-
-// ==============================================================
-// CALLBACKS
-// ==============================================================
-

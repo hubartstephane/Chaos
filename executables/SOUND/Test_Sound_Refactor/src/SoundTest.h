@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------
 
 // all classes in this file
-#define CHAOS_PARTICLE_CLASSES (ParticleRange) (ParticleRangeAllocation) (ParticleLayerBase) (ParticleManager)
+#define CHAOS_PARTICLE_CLASSES (ParticleRange) (ParticleRangeAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc)
 
 // forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;
@@ -60,77 +60,45 @@ public:
 protected:
 
 	/** the particle layer that contains the range */
-	ParticleLayerBase * layer = nullptr;
+	ParticleLayer * layer = nullptr;
 	/** the index of the range in its array */
 	size_t range_index = std::numeric_limits<size_t>::max();
 	/** whether the particles existence in linked to the allocation lifetime */
 	bool particles_owner = true;
 };
 
+
 // ==============================================================
 // PARTICLE LAYER BASE
 // ==============================================================
 
-class ParticleLayerBase : public chaos::ReferencedObject
+class ParticleLayerDesc : public chaos::ReferencedObject
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
 
 public:
 
-	static size_t const DESTROY_PARTICLE_MARK = std::numeric_limits<size_t>::max();
+	/** returns the size in memory of a particle */
+	virtual size_t GetParticleSize() const;
+	/** returns the size in memory of a vertex */
+	virtual size_t GetVertexSize() const;
+	/** returns true whether particles may destroyed themselves */
+	virtual bool HasParticleLimitedLifeTime() const;
+	/** returns true whether particles need to be updated */
+	virtual bool AreParticlesDynamic() const;
 
-	/** destructor */
-	virtual ~ParticleLayerBase();
 
-	/** get the total number of particles */
-	size_t GetParticleCount() const;
-	/** get the number of particles */
-	size_t GetParticleCount(ParticleRange range) const;
-	/** get the particles */
-	void * GetParticleBuffer(ParticleRange range);
-	/** get the particles */
-	void const * GetParticleBuffer(ParticleRange range) const;
-
-  /** pause/resume the layer */
-  void Pause(bool in_paused = true);
-  /** returns whether the layer is paused */
-  bool IsPaused() const;
-
-  /** show/hide the layer */
-  void Show(bool in_visible = true);
-  /** returns whether the layer is visible */
-  bool IsVisible() const;
-
-	/** ticking the particle system */
-	virtual void TickParticles(float delta_time);
-	/** spawn a given number of particles */
-	ParticleRange SpawnParticles(size_t count);
-	/** spawn a given number of particles and keep a range */
-	ParticleRangeAllocation *SpawnParticlesAndKeepRange(size_t count, bool particles_owner = true);
-
-	/** mark any particle as to be destroyed next tick */
-	void MarkParticlesToDestroy(size_t start, size_t count);
 
 protected:
 
-  /** returns whether it is necessary to tick particles (not necessary for static elements) */
-  virtual bool AreParticlesDynamic() const;
-  /** returns whether particles may have a limited lifetime */
-  virtual bool AreParticlesMortal() const;
+	/** update all particles */
+	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count);
+	/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
+	virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 
-	/** unlink all particles allocations */
-	void DetachAllParticleAllocations();
-	/** internal method to remove a range from the layer */
-	void RemoveParticleAllocation(ParticleRangeAllocation * allocation);
-	/** internal method to update the particles */
-	virtual void UpdateParticles(float delta_time);
-	/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
-	virtual size_t DestroyObsoletParticles();
-	/** internal method fix the ranges after particles destruction */
-	virtual void UpdateParticleRanges(size_t new_particle_count);
 
 	template<typename T>
-	void DoUpdateParticles(float delta_time, T & obj)
+	void DoUpdateParticles(float delta_time, T * particles, size_t particle_count)
 	{
 		size_t particle_count = GetParticleCount();
 		if (particle_count > 0)
@@ -157,17 +125,83 @@ protected:
 				{
 					if (i != j)
 						p[j] = p[i]; // keep the particle by copying it 
-          deletion_vector[i] = (i - j);
+					deletion_vector[i] = (i - j);
 					++j;
 				}
 				else
-          deletion_vector[i] = (i - j);
+					deletion_vector[i] = (i - j);
 				++i;
 			}
-      return j;
+			return j;
 		}
-    return deletion_vector.size();
+		return deletion_vector.size();
 	}
+
+};
+
+// ==============================================================
+// PARTICLE LAYER 
+// ==============================================================
+
+class ParticleLayer : public chaos::ReferencedObject
+{
+	CHAOS_PARTICLE_ALL_FRIENDS
+
+public:
+
+	static size_t const DESTROY_PARTICLE_MARK = std::numeric_limits<size_t>::max();
+
+	/** constructor */
+	ParticleLayer(ParticleLayerDesc * in_layer_desc);
+	/** destructor */
+	virtual ~ParticleLayer();
+
+	/** get the total number of particles */
+	size_t GetParticleCount() const;
+	/** get the number of particles */
+	size_t GetParticleCount(ParticleRange range) const;
+	/** get the particles */
+	void * GetParticleBuffer(ParticleRange range);
+	/** get the particles */
+	void const * GetParticleBuffer(ParticleRange range) const;
+
+	/** returns the size in memory of a particle */
+	size_t GetParticleSize() const { return particle_size;}
+	/** returns the size in memory of a vertex */
+	size_t GetVertexSize() const { return vertex_size;}
+
+	/** pause/resume the layer */
+	void Pause(bool in_paused = true);
+	/** returns whether the layer is paused */
+	bool IsPaused() const;
+
+	/** show/hide the layer */
+	void Show(bool in_visible = true);
+	/** returns whether the layer is visible */
+	bool IsVisible() const;
+
+	/** ticking the particle system */
+	virtual void TickParticles(float delta_time);
+	/** spawn a given number of particles */
+	ParticleRange SpawnParticles(size_t count);
+	/** spawn a given number of particles and keep a range */
+	ParticleRangeAllocation *SpawnParticlesAndKeepRange(size_t count, bool particles_owner = true);
+
+	/** mark any particle as to be destroyed next tick */
+	void MarkParticlesToDestroy(size_t start, size_t count);
+
+protected:
+
+	/** unlink all particles allocations */
+	void DetachAllParticleAllocations();
+	/** internal method to remove a range from the layer */
+	void RemoveParticleAllocation(ParticleRangeAllocation * allocation);
+	/** internal method fix the ranges after particles destruction */
+	void UpdateParticleRanges(size_t new_particle_count);
+	/** internal method to update particles */
+	void UpdateParticles(float delta_time);
+	/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
+	size_t DestroyObsoletParticles();
 
 protected:
 
@@ -177,14 +211,14 @@ protected:
 	size_t vertex_size = 0;
 	/** the order of the layer in the manager */
 	int render_order = 0;
-  /** whether the layer is paused */
-  bool paused = false;
-  /** whether the layer is visible */
-  bool visible = true;
-  /** number of particles waiting for a destruction */
-  size_t pending_kill_particles = 0;
-  /** whether there was changes in particles, and a vertex array need to be recomputed */
-  bool require_GPU_update = false;
+	/** whether the layer is paused */
+	bool paused = false;
+	/** whether the layer is visible */
+	bool visible = true;
+	/** number of particles waiting for a destruction */
+	size_t pending_kill_particles = 0;
+	/** whether there was changes in particles, and a vertex array need to be recomputed */
+	bool require_GPU_update = false;
 	/** the material used to render the layer */
 	boost::intrusive_ptr<chaos::RenderMaterial> render_material;
 	/** the array containing the particles */
@@ -195,32 +229,52 @@ protected:
 	std::vector<ParticleRange> particles_ranges;
 	/** ranges reservations */
 	std::vector<ParticleRangeAllocation*> range_allocations;
+	/** the behavior description */
+	boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ==============================================================
 // CALLBACKS
 // ==============================================================
 
 template<typename PARTICLE_DESC_TYPE>
-class ParticleLayer : public ParticleLayerBase
+class TParticleLayerDesc : public ParticleLayerDesc
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
 
 public:
 
-	using particle_desc_type = PARTICLE_DESC_TYPE;
 	using particle_type = typename PARTICLE_DESC_TYPE::particle_type;
 	using vertex_type = typename PARTICLE_DESC_TYPE::vertex_type;
 
-	/** constructor */
-	ParticleLayer(particle_desc_type in_desc = particle_desc_type()) :
-		particle_desc(in_desc) 
+public:
+
+	/** returns the size in memory of a particle */
+	virtual size_t GetParticleSize() const override
 	{
-    particle_size = sizeof(particle_type);
+		return sizeof(particle_type);
+	}
+	/** returns the size in memory of a vertex */
+	virtual size_t GetVertexSize() const override
+	{
+		return sizeof(vertex_type);
 	}
 
-protected:
 
+#if 0
 	virtual void UpdateParticles(float delta_time) override
 	{
 		DoUpdateParticles(delta_time, particle_desc);
@@ -231,28 +285,27 @@ protected:
 		return DoDestroyObsoletParticles(particle_desc);
 	}
 
-  virtual bool AreParticlesDynamic() const override
-  {
-    return particle_desc.AreParticlesDynamic();
-  }
+	virtual bool AreParticlesDynamic() const override
+	{
+		return particle_desc.AreParticlesDynamic();
+	}
 
-  virtual bool AreParticlesMortal() const override
-  {
-    return particle_desc.AreParticlesMortal();
-  }
+	virtual bool AreParticlesMortal() const override
+	{
+		return particle_desc.AreParticlesMortal();
+	}
 
-protected:
-
-	/** the particle behavior description */
-	particle_desc_type particle_desc;
+#endif
 };
 
+
+#if 0
 // ==============================================================
 // CALLBACKS
 // ==============================================================
 
 template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
-class ParticleLayerDescBase
+class ParticleLayerDescBase : public ParticleLayerDesc
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -263,13 +316,13 @@ public:
 
 	inline bool MustDestroyParticle(particle_type const * p){ return false;}
 
-  inline void UpdateParticle(float delta_time, particle_type * p) {}
+	inline void UpdateParticle(float delta_time, particle_type * p) {}
 
-  inline bool AreParticlesDynamic() const { return false; }
+	inline bool AreParticlesDynamic() const { return false; }
 
-  inline bool AreParticlesMortal() const { return false; }
+	inline bool AreParticlesMortal() const { return false; }
 };
-
+#endif
 
 // ==============================================================
 // CALLBACKS
@@ -293,7 +346,7 @@ class ParticleManager : public chaos::ReferencedObject
 
 class ParticleExample
 {
-  glm::vec3 position;
+	glm::vec3 position;
 
 };
 
@@ -302,7 +355,7 @@ class VertexExample
 
 };
 
-class ParticleLayerDescExample : public ParticleLayerDescBase<ParticleExample, VertexExample>
+class ParticleLayerDescExample : public TParticleLayerDesc<ParticleExample, VertexExample>
 {
 
 

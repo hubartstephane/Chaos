@@ -197,7 +197,7 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  ParticleLayer<ParticleLayerDescExample> sl;
+  ParticleLayer sl(new ParticleLayerDescExample());
 
   ParticleRange r = sl.SpawnParticles(17);
 

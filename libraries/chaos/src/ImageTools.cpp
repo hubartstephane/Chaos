@@ -3,6 +3,7 @@
 #include <chaos/FileTools.h>
 
 
+
 namespace chaos
 {
 	class FillImageMetaFunc
@@ -545,19 +546,16 @@ namespace chaos
 		return result;	
 	}
 
-	FIBITMAP * ImageTools::LoadImageFromFile(char const * filename)
+	FIBITMAP * ImageTools::LoadImageFromFile(FilePath const & path)
 	{
-		assert(filename != nullptr);
-		return LoadImageFromBuffer(FileTools::LoadFile(filename, false));
+		return LoadImageFromBuffer(FileTools::LoadFile(path, false));
 	}
 
-	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(char const * filename)
+	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePath const & path)
 	{
-		assert(filename != nullptr);
-
 		FIMULTIBITMAP * result = nullptr;
 
-		Buffer<char> buffer = FileTools::LoadFile(filename, false);
+		Buffer<char> buffer = FileTools::LoadFile(path, false);
 		if (buffer != nullptr)
 		{
 			FIMEMORY * memory = FreeImage_OpenMemory((BYTE*)buffer.data, (DWORD)buffer.bufsize);

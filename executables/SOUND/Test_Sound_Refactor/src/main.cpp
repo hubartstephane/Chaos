@@ -114,7 +114,7 @@ void G(PARAM const & p)
 
 
 
-void TT(chaos::FilePathParam const & p)
+void TT(chaos::FilePath const & p)
 {
 	chaos::FileTools::LoadFile(p, true);
 }
@@ -128,9 +128,9 @@ void TT(chaos::FilePathParam const & p)
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	TT("truc");
-	TT(std::string("truc"));
-	TT(boost::filesystem::path("truc"));
+	//TT("truc");
+	//TT(std::string("truc"));
+	//TT(boost::filesystem::path("truc"));
 
 	chaos::FilePath pp;
 	TT(pp);

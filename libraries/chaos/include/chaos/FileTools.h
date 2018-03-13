@@ -22,10 +22,7 @@ namespace chaos
 		/** loading a whole file into memory */
 		static Buffer<char> LoadFile(FilePath const & path, bool ascii);
 
-		/** resolving the path */
-		static boost::filesystem::path ResolvePath(FilePath const & path);
-
-		/** create a temporary directory */
+  	/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);
 
 		/** read file as a vector of strings */

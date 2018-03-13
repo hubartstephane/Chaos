@@ -36,24 +36,6 @@ namespace chaos
 		return (_stricmp(expected_ext, GetFilenameExtension(path)) == 0);
 	}
 
-	boost::filesystem::path FileTools::ResolvePath(FilePath const & path)
-	{
-		if (path.resolved_path.empty())
-		{
-		
-		}
-
-		boost::filesystem::path result;
-
-		if (path.basic_path != nullptr)
-			result = path.basic_path;
-		else if (path.string_path != nullptr)
-			result = path.string_path->c_str();
-		else if (path.filesystem_path != nullptr)
-			result = *path.filesystem_path;
-
-		return result;
-	}
 
 
 	Buffer<char> FileTools::LoadFile(FilePath const & path, bool ascii)
@@ -61,7 +43,7 @@ namespace chaos
 		Buffer<char> result;
 
 		// resolve the path
-		boost::filesystem::path resolved_path = ResolvePath(path);
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 		// load the content
 		std::ifstream file(resolved_path.string().c_str(), std::ifstream::binary);
@@ -84,10 +66,6 @@ namespace chaos
 				else if (ascii)
 					result.data[file_size] = 0;
 			}
-
-			// in case of success try to give the path back to callers
-			if (path.file_path != nullptr)
-				path.file_path->resolved_path = std::move(resolved_path);
 		}
 		return result;
 	}
@@ -112,7 +90,7 @@ namespace chaos
 	{
 		std::vector<std::string> result;
 
-		boost::filesystem::path resolved_path = ResolvePath(path);
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 		std::ifstream file(resolved_path.string().c_str());
 		if (file)
@@ -121,16 +99,13 @@ namespace chaos
 			std::copy(std::istream_iterator<std::string>(file),
 				std::istream_iterator<std::string>(),
 				std::back_inserter(result));
-			// in case of success try to give the path back to callers
-			if (path.file_path != nullptr)
-				path.file_path->resolved_path = std::move(resolved_path);
 		}
 		return result;
 	}
 
 	bool FileTools::WriteFileLines(FilePath const & path, std::vector<std::string> const & lines)
 	{
-		boost::filesystem::path resolved_path = ResolvePath(path);
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 		std::ofstream file(resolved_path.string().c_str());
 		if (file)
@@ -138,9 +113,6 @@ namespace chaos
 			// write the lines
 			for (std::string const & str : lines)
 				file << str << std::endl;
-			// in case of success try to give the path back to callers
-			if (path.file_path != nullptr)
-				path.file_path->resolved_path = std::move(resolved_path);
 			return true;
 		}
 		return false;

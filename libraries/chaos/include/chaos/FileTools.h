@@ -20,7 +20,10 @@ namespace chaos
 		/** returns true if the extension of a file correspond to a string */
 		static bool IsTypedFile(char const * filename, char const * expected_ext);
 		/** loading a whole file into memory */
-		static Buffer<char> LoadFile(FilePath && path, bool ascii);
+		static Buffer<char> LoadFile(FilePathParam const & path, bool ascii);
+
+		/** resolving the path */
+		static boost::filesystem::path ResolvePath(FilePathParam const & path);
 
 		/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);

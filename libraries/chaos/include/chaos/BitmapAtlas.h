@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/NamedObject.h>
 
 namespace chaos
@@ -126,7 +127,7 @@ namespace chaos
     * AtlasBase : base class for Atlas and TextureArrayAtlas
     */
 
-    class AtlasBase
+    class AtlasBase : public ReferencedObject
     {
 
       friend class AtlasGenerator;

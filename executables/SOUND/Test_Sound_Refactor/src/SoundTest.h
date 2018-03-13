@@ -127,10 +127,10 @@ public:
 	size_t GetParticleSize() const { return particle_size;}
 	/** returns the size in memory of a vertex */
 	size_t GetVertexSize() const { return vertex_size;}
-  /** returns true whether particles may destroyed themselves */
-  bool HasParticleLimitedLifeTime() const;
-  /** returns true whether particles need to be updated */
-  bool AreParticlesDynamic() const;
+	/** returns true whether particles may destroyed themselves */
+	bool HasParticleLimitedLifeTime() const;
+	/** returns true whether particles need to be updated */
+	bool AreParticlesDynamic() const;
 
 	/** pause/resume the layer */
 	void Pause(bool in_paused = true);
@@ -142,13 +142,13 @@ public:
 	/** returns whether the layer is visible */
 	bool IsVisible() const;
 
-  /** get the render order */
-  int GetRenderOrder() const { return render_order; }
-  /** set the render order */
-  void SetRenderOrder(int in_render_order) { render_order = in_render_order; }
+	/** get the render order */
+	int GetRenderOrder() const { return render_order; }
+	/** set the render order */
+	void SetRenderOrder(int in_render_order) { render_order = in_render_order; }
 
-  /** change the material */
-  void SetRenderMaterial(chaos::RenderMaterial * in_render_material) { render_material = in_render_material;}
+	/** change the material */
+	void SetRenderMaterial(chaos::RenderMaterial * in_render_material) { render_material = in_render_material;}
 
 	/** ticking the particle system */
 	virtual void TickParticles(float delta_time);
@@ -213,13 +213,13 @@ class ParticleLayerTrait
 {
 public:
 
-  using particle_type = PARTICLE_TYPE;
+	using particle_type = PARTICLE_TYPE;
 
-  using vertex_type = VERTEX_TYPE;
+	using vertex_type = VERTEX_TYPE;
 
-  bool lifetime_particles = false;
+	bool lifetime_particles = false;
 
-  bool dynamic_particles = false;
+	bool dynamic_particles = false;
 };
 
 // ==============================================================
@@ -233,15 +233,15 @@ class TParticleLayerDesc : public ParticleLayerDesc
 
 public:
 
-  using trait_type    = LAYER_TRAIT;
+	using trait_type    = LAYER_TRAIT;
 	using particle_type = typename trait_type::particle_type;
 	using vertex_type   = typename trait_type::vertex_type;
-  
+
 public:
 
-  /** constructor */
-  TParticleLayerDesc(trait_type const & in_trait = trait_type()):
-    trait(in_trait){}
+	/** constructor */
+	TParticleLayerDesc(trait_type const & in_trait = trait_type()):
+		trait(in_trait){}
 
 	/** returns the size in memory of a particle */
 	virtual size_t GetParticleSize() const override
@@ -253,55 +253,55 @@ public:
 	{
 		return sizeof(vertex_type);
 	}
-  /** returns true whether particles have a limited lifetime */
-  virtual bool HasParticleLimitedLifeTime() const
-  {
-    return trait.lifetime_particles;
-  }
-  /** returns true whether particles need to be updated */
-  virtual bool AreParticlesDynamic() const
-  {
-    return trait.dynamic_particles;
-  }
+	/** returns true whether particles have a limited lifetime */
+	virtual bool HasParticleLimitedLifeTime() const
+	{
+		return trait.lifetime_particles;
+	}
+	/** returns true whether particles need to be updated */
+	virtual bool AreParticlesDynamic() const
+	{
+		return trait.dynamic_particles;
+	}
 
-  /** loop for updating the particles */
-  virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count) override
-  {
-    particle_type * p = (particle_type*)particles;
-    for (size_t i = 0; i < particle_count; ++i)
-      trait.UpdateParticle(delta_time, &p[i]);
-  }
-  /** loop for destroying the particles */
-  virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
-  {
-    if (particle_count > 0)
-    {
-      particle_type * p = (particle_type*)particles;
+	/** loop for updating the particles */
+	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count) override
+	{
+		particle_type * p = (particle_type*)particles;
+		for (size_t i = 0; i < particle_count; ++i)
+			trait.UpdateParticle(delta_time, &p[i]);
+	}
+	/** loop for destroying the particles */
+	virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
+	{
+		if (particle_count > 0)
+		{
+			particle_type * p = (particle_type*)particles;
 
-      size_t i = 0;
-      size_t j = 0;
-      while (i < particle_count)
-      {
-        if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK && !trait.IsParticleObsolet(&p[i])) // particle is still alive ?
-        {
-          if (i != j)
-            p[j] = p[i]; // keep the particle by copying it 
-          deletion_vector[i] = (i - j);
-          ++j;
-        }
-        else
-          deletion_vector[i] = (i - j);
-        ++i;
-      }
-      return j;
-    }
-    return particle_count; // no destruction
-  }
+			size_t i = 0;
+			size_t j = 0;
+			while (i < particle_count)
+			{
+				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK && !trait.IsParticleObsolet(&p[i])) // particle is still alive ?
+				{
+					if (i != j)
+						p[j] = p[i]; // keep the particle by copying it 
+					deletion_vector[i] = (i - j);
+					++j;
+				}
+				else
+					deletion_vector[i] = (i - j);
+				++i;
+			}
+			return j;
+		}
+		return particle_count; // no destruction
+	}
 
 protected:
 
-  /** internal description */
-  trait_type trait;
+	/** internal description */
+	trait_type trait;
 };
 
 // ==============================================================
@@ -314,17 +314,17 @@ class ParticleManager : public chaos::ReferencedObject
 
 public:
 
-
-  /** change the bitmap atlas */
-  void SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas);
-
-  /** display all the particles */
-  void Display(chaos::GPUProgramVariableProvider * uniform_provider);
+	/** change the bitmap atlas */
+	void SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas);
+	/** display all the particles */
+	void Display(chaos::GPUProgramVariableProvider * uniform_provider);
 
 protected:
 
-    /** the texture atlas */
-    chaos::BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
+protected:
+
+	/** the texture atlas */
+	chaos::BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
 };
 
 
@@ -351,21 +351,21 @@ class ParticleExampleTrait : public ParticleLayerTrait<ParticleExample, VertexEx
 {
 public:
 
-  ParticleExampleTrait()
-  {
-    lifetime_particles = true;
-    dynamic_particles = true;
-  }
+	ParticleExampleTrait()
+	{
+		lifetime_particles = true;
+		dynamic_particles = true;
+	}
 
-  bool IsParticleObsolet(ParticleExample * p)
-  {
-    return false;
-  }
-  void UpdateParticle(float delta_time, ParticleExample * particle)
-  {
-    particle = particle;
+	bool IsParticleObsolet(ParticleExample * p)
+	{
+		return false;
+	}
+	void UpdateParticle(float delta_time, ParticleExample * particle)
+	{
+		particle = particle;
 
-  }
+	}
 };
 
 

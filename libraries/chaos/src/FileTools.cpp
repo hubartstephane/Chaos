@@ -37,11 +37,30 @@ namespace chaos
     return false;
   }
 
-  Buffer<char> FileTools::LoadFile(FilePath && path, bool ascii)
+  boost::filesystem::path FileTools::ResolvePath(FilePathParam const & path)
+  {
+	  boost::filesystem::path result;
+  
+	  if (path.basic_path != nullptr)
+		  result = path.basic_path;
+	  else if (path.string_path != nullptr)
+		  result = path.string_path->c_str();
+	  else if (path.filesystem_path != nullptr)
+		  result = *path.filesystem_path;
+
+	  return result;
+  }
+
+
+  Buffer<char> FileTools::LoadFile(FilePathParam const & path, bool ascii)
   {
     Buffer<char> result;
 
-    std::ifstream file(path.path.string().c_str(), std::ifstream::binary); // never want to format data
+	// resolve the path
+	boost::filesystem::path resolved_path = ResolvePath(path);
+
+	// load the content
+	std::ifstream file(resolved_path.string().c_str(), std::ifstream::binary);
     if (file)
     {
       std::streampos start = file.tellg();
@@ -61,9 +80,11 @@ namespace chaos
         else if (ascii)
           result.data[file_size] = 0;
       }
-    }
-    path.path = "toto";
 
+	  // in case of success try to give the path back to callers
+	  if (path.file_path != nullptr)
+		  path.file_path->resolved_path = std::move(resolved_path);
+    }
     return result;
   }
   bool FileTools::CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result)

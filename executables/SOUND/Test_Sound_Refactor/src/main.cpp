@@ -26,124 +26,20 @@ protected:
 
   virtual void Finalize() override
   {   
-    sound1    = nullptr;
-    category1 = nullptr;
-    source1   = nullptr;
-    source2   = nullptr;
-    source3   = nullptr;
 
-    if (sound_manager != nullptr)
-    {
-      sound_manager->StopManager();
-      sound_manager = nullptr;
-    }
   }
 
   virtual bool Tick(double delta_time) override
   {
-    sound_manager->Tick((float)delta_time);
+
     return false; // no redraw
   }
 
   virtual void OnMouseButton(int button, int action, int modifier) override
   {
-    if (button == 0 && action == GLFW_PRESS)
-    {
-      chaos::PlaySoundDesc desc;
-      desc.looping = false;
-      desc.paused = false;
-      desc.category = category1.get();
-      desc.sound_name = "toto";
-
-	  chaos::SoundAutoCallbacks * cb = new chaos::SoundAutoCallbacks;
-      cb->finished_func = [](chaos::SoundObject * ob)
-      {
-        ob = ob;
-      };
-      cb->removed_func = [](chaos::SoundObject * ob)
-      {
-        ob = ob;
-      };
-
-      sound1 = source1->PlaySound(desc, cb);
-    }
-
-    if (button == 1 && action == GLFW_PRESS)
-    {
-      chaos::Sound * s = sound_manager->FindSound("toto");
-      if (s != nullptr)
-      {
-        chaos::BlendVolumeDesc desc;
-        desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
-        desc.kill_at_end = true;
-        desc.blend_time = 2.0f;
-        s->StartBlend(desc);
-      }
-        //s->Stop();
-
-    //  if (category1 != nullptr)
-    //    category1->SetVolume(category1->GetVolume() * 0.5f);
-
-      //if (source1 != nullptr)
-      //  source1->SetVolume(source1->GetVolume() * 0.5f);
-
-      //if (category1 != nullptr)
-      //  category1->Pause(!category1->IsPaused());
-      //if (source1 != nullptr)
-      //  source1->Pause(!source1->IsPaused());
-
-     // sound_manager->StopManager();
-
-      if (source1 != nullptr)
-      {
-       // source1->Stop();
-
-        auto x = category1.get();
-        x = x;
-      }
 
 
-      if (sound1 != nullptr)
-      {
-        //sound1->Pause(!sound1->IsPaused());
-       // sound1->Stop();
-       // sound1 = nullptr;
-      }
-    }
 
-#if 0
-    if (button == 0 && action == GLFW_PRESS)
-    {
-      chaos::PlaySoundDesc desc;
-      desc.category = category1.get();
-      desc.looping = true;
-      sound1 = source1->PlaySound(desc);
-
-    }
-    else if (button == 1 && action == GLFW_PRESS)
-    {
-      if (sound1 != nullptr)
-        sound1->StopAndKill(2.0f, true);
-    }
-    else if (button == 2 && action == GLFW_PRESS)
-    {
-      if (category1 != nullptr)
-      {
-        if ((modifier & GLFW_MOD_SHIFT) != 0)
-        {
-          category1->CloneCategoryAndStop(3.0f, true);
-
-          chaos::PlaySoundDesc desc;
-          desc.category = category1.get();
-          desc.looping = true;
-          sound1 = source1->PlaySound(desc);
-        }
-        else
-          category1->StopAndKill(2.0f, true);
-
-      }
-    }
-#endif
   }
 
   virtual bool Initialize(nlohmann::json const & configuration) override
@@ -152,23 +48,6 @@ protected:
     if (application == nullptr)
       return false;
 
-    // create the sound manager
-    sound_manager = new chaos::SoundManager;
-    if (sound_manager == nullptr)
-      return false;
-
-    sound_manager->StartManager();
-
-    // create the sound
-    boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
-    boost::filesystem::path src1_path = resources_path / "70_Stir_RideBell.wav";
-    boost::filesystem::path src2_path = resources_path / "70_Stir_SnareOff3.wav";
-
-    source1 = sound_manager->AddSource(src1_path, nullptr);
-    source2 = sound_manager->AddSource(src2_path, nullptr);
-    source3 = sound_manager->AddSource(src2_path, nullptr);
-
-    category1 = sound_manager->AddCategory(nullptr);
 
     return true;
   }
@@ -182,21 +61,85 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<chaos::SoundManager> sound_manager;
 
-  boost::intrusive_ptr<chaos::SoundSource> source1;
-
-  boost::intrusive_ptr<chaos::SoundSource> source2;
-
-  boost::intrusive_ptr<chaos::SoundSource> source3;
-
-  boost::intrusive_ptr<chaos::Sound> sound1;
-
-  boost::intrusive_ptr<chaos::SoundCategory> category1;
 };
+
+// ===============================================
+
+class A
+{
+public:
+
+	A(int i):value(i)
+	{
+		p = new int(5);	
+	}
+
+	int value = 0;
+
+	int * p = nullptr;
+
+	void F() const
+	{
+		*p = 667;
+	}
+};
+
+class PARAM
+{
+public:
+
+	PARAM(int u){}
+
+	PARAM(A & in_a) : a(&in_a){}
+
+	A * a = nullptr;
+};
+
+
+
+void F(PARAM const & p)
+{
+	if (p.a != nullptr)
+		p.a->F();
+
+
+}
+
+void G(PARAM const & p)
+{
+	F(p);
+
+}
+
+
+
+void TT(chaos::FilePathParam const & p)
+{
+	chaos::FileTools::LoadFile(p, true);
+}
+
+
+
+
+
+// ===============================================
+
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+	TT("truc");
+	TT(std::string("truc"));
+	TT(boost::filesystem::path("truc"));
+
+	chaos::FilePath pp;
+	TT(pp);
+
+	G(5);
+
+	A a(6);
+	G(a);
+
   ParticleLayer sl(new ParticleLayerDescExample());
 
   ParticleRange r = sl.SpawnParticles(17);

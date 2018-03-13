@@ -295,3 +295,18 @@ void ParticleLayer::UpdateParticleRanges(size_t new_particle_count)
 	for (size_t i = 0; i < new_particle_count; ++i)
 		deletion_vector[i] = 0;
 }
+
+
+// ==============================================================
+// PARTICLE MANAGER
+// ==============================================================
+
+void ParticleManager::SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas)
+{
+  atlas = in_atlas;
+}
+
+void ParticleManager::Display(chaos::GPUProgramVariableProvider * uniform_provider)
+{
+
+}

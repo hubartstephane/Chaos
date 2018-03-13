@@ -3,6 +3,9 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/RenderMaterial.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/GPUProgramVariableProvider.h>
+
 
 // -----------------------------------------------------------------
 
@@ -138,6 +141,14 @@ public:
 	void Show(bool in_visible = true);
 	/** returns whether the layer is visible */
 	bool IsVisible() const;
+
+  /** get the render order */
+  int GetRenderOrder() const { return render_order; }
+  /** set the render order */
+  void SetRenderOrder(int in_render_order) { render_order = in_render_order; }
+
+  /** change the material */
+  void SetRenderMaterial(chaos::RenderMaterial * in_render_material) { render_material = in_render_material;}
 
 	/** ticking the particle system */
 	virtual void TickParticles(float delta_time);
@@ -301,7 +312,19 @@ class ParticleManager : public chaos::ReferencedObject
 {
 	CHAOS_PARTICLE_ALL_FRIENDS
 
+public:
 
+
+  /** change the bitmap atlas */
+  void SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas);
+
+  /** display all the particles */
+  void Display(chaos::GPUProgramVariableProvider * uniform_provider);
+
+protected:
+
+    /** the texture atlas */
+    chaos::BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
 };
 
 

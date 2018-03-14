@@ -7,32 +7,44 @@ namespace chaos
 	// FILE PATH
 	// ==============================================================
 
-	FilePath::FilePath()
-	{
+  FilePathParam::FilePathParam(char const * in_basic_path) :
+    basic_path(in_basic_path)
+  {
 
-	}
+  }
 
-	FilePath::FilePath(char const * in_basic_path, boost::filesystem::path const * in_reference_path):
+  FilePathParam::FilePathParam(std::string const & in_string_path) :
+    string_path(&in_string_path)
+  {
+
+  }
+
+  FilePathParam::FilePathParam(boost::filesystem::path const & in_filesystem_path) :
+    filesystem_path(&in_filesystem_path)
+  {
+  }
+
+	FilePathParam::FilePathParam(char const * in_basic_path, boost::filesystem::path const & in_reference_path):
 		basic_path(in_basic_path),
-		reference_path(in_reference_path)
+		reference_path(&in_reference_path)
 	{
 
 	}
 
-	FilePath::FilePath(std::string const & in_string_path, boost::filesystem::path const * in_reference_path):
+	FilePathParam::FilePathParam(std::string const & in_string_path, boost::filesystem::path const & in_reference_path):
 		string_path(&in_string_path),
-		reference_path(in_reference_path)
+		reference_path(&in_reference_path)
 	{
 
 	}
 
-	FilePath::FilePath(boost::filesystem::path const & in_filesystem_path, boost::filesystem::path const * in_reference_path):
+	FilePathParam::FilePathParam(boost::filesystem::path const & in_filesystem_path, boost::filesystem::path const & in_reference_path):
 		filesystem_path(&in_filesystem_path),
-		reference_path(in_reference_path)
+		reference_path(&in_reference_path)
 	{
 	}
 
-	boost::filesystem::path const & FilePath::GetResolvedPath() const
+	boost::filesystem::path const & FilePathParam::GetResolvedPath() const
 	{
 		if (resolved_path.empty()) // compute the path or use cache result
 		{

@@ -546,12 +546,12 @@ namespace chaos
 		return result;	
 	}
 
-	FIBITMAP * ImageTools::LoadImageFromFile(FilePath const & path)
+	FIBITMAP * ImageTools::LoadImageFromFile(FilePathParam const & path)
 	{
 		return LoadImageFromBuffer(FileTools::LoadFile(path, false));
 	}
 
-	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePath const & path)
+	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePathParam const & path)
 	{
 		FIMULTIBITMAP * result = nullptr;
 

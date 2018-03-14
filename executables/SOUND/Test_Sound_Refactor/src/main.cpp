@@ -114,7 +114,7 @@ void G(PARAM const & p)
 
 
 
-void TT(chaos::FilePath const & p)
+void TT(chaos::FilePathParam const & p)
 {
 	chaos::FileTools::LoadFile(p, true);
 }
@@ -130,13 +130,13 @@ int _tmain(int argc, char ** argv, char ** env)
 {
 	boost::filesystem::path ref = "mareference/bidule/fichier.txt";
 
-	chaos::FilePath P1("truc1.xxx.yyy");
-	chaos::FilePath P2(std::string("truc2.yyy"));
-	chaos::FilePath P3(boost::filesystem::path("truc3.zzz"));
+	chaos::FilePathParam P1("truc1.xxx.yyy");
+	chaos::FilePathParam P2(std::string("truc2.yyy"));
+	chaos::FilePathParam P3(boost::filesystem::path("truc3.zzz"));
 
-	chaos::FilePath P4("truc1.xxx.yyy", &ref);
-	chaos::FilePath P5(std::string("truc2.yyy"), &ref);
-	chaos::FilePath P6(boost::filesystem::path("truc3.zzz"), &ref);
+	chaos::FilePathParam P4("truc1.xxx.yyy", ref);
+	chaos::FilePathParam P5(std::string("truc2.yyy"), ref);
+	chaos::FilePathParam P6(boost::filesystem::path("truc3.zzz"), ref);
 
 
 
@@ -151,17 +151,6 @@ int _tmain(int argc, char ** argv, char ** env)
 	auto R5 = P5.GetResolvedPath();
 	auto R6 = P6.GetResolvedPath();
 
-	//TT("truc");
-	//TT(std::string("truc"));
-	//TT(boost::filesystem::path("truc"));
-
-	chaos::FilePath pp;
-	TT(pp);
-
-	G(5);
-
-	A a(6);
-	G(a);
 
   ParticleLayer sl(new ParticleLayerDescExample());
 

@@ -19,7 +19,7 @@ namespace chaos
 		return 0;
 	}
 
-	bool LuaTools::IsLuaFile(FilePath const & path)
+	bool LuaTools::IsLuaFile(FilePathParam const & path)
 	{
 		return FileTools::IsTypedFile(path, "lua");
 	}
@@ -85,7 +85,7 @@ namespace chaos
 		return result;
 	}
 
-	int LuaTools::ExecFile(lua_State * state, FilePath const & path, bool compiled, char const * chunkname, ErrorFunction error_func)
+	int LuaTools::ExecFile(lua_State * state, FilePathParam const & path, bool compiled, char const * chunkname, ErrorFunction error_func)
 	{
 		int result = -1;
 

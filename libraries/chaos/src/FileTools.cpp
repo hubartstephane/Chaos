@@ -31,13 +31,13 @@ namespace chaos
 		return (_stricmp(expected_ext, extension) == 0);
 	}
 
-	bool FileTools::IsTypedFile(FilePath const & path, char const * expected_ext)
+	bool FileTools::IsTypedFile(FilePathParam const & path, char const * expected_ext)
 	{
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();		
 		return DoIsTypedFile(resolved_path.string().c_str(), expected_ext); // use an utility function because path to string give a volatile object
 	}
 
-	Buffer<char> FileTools::LoadFile(FilePath const & path, bool ascii)
+	Buffer<char> FileTools::LoadFile(FilePathParam const & path, bool ascii)
 	{
 		Buffer<char> result;
 
@@ -85,7 +85,7 @@ namespace chaos
 		return false;
 	}
 
-	std::vector<std::string> FileTools::ReadFileLines(FilePath const & path)
+	std::vector<std::string> FileTools::ReadFileLines(FilePathParam const & path)
 	{
 		std::vector<std::string> result;
 
@@ -102,7 +102,7 @@ namespace chaos
 		return result;
 	}
 
-	bool FileTools::WriteFileLines(FilePath const & path, std::vector<std::string> const & lines)
+	bool FileTools::WriteFileLines(FilePathParam const & path, std::vector<std::string> const & lines)
 	{
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 

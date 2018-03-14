@@ -16,17 +16,17 @@ namespace chaos
 	public:
 
 		/** returns true if the extension of a file correspond to a string */
-		static bool IsTypedFile(FilePath const & path, char const * expected_ext);
+		static bool IsTypedFile(FilePathParam const & path, char const * expected_ext);
 		/** loading a whole file into memory */
-		static Buffer<char> LoadFile(FilePath const & path, bool ascii);
+		static Buffer<char> LoadFile(FilePathParam const & path, bool ascii);
 
 		/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);
 
 		/** read file as a vector of strings */
-		static std::vector<std::string> ReadFileLines(FilePath const & path);
+		static std::vector<std::string> ReadFileLines(FilePathParam const & path);
 		/** write a file with a vector of strings */
-		static bool WriteFileLines(FilePath const & path, std::vector<std::string> const & lines);
+		static bool WriteFileLines(FilePathParam const & path, std::vector<std::string> const & lines);
 
 	protected:
 

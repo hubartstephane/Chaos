@@ -108,7 +108,8 @@ namespace chaos
 				result = ExecBuffer(state, buffer, compiled, chunkname, error_func);
 			else
 			{
-			
+				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+				result = ExecBuffer(state, buffer, compiled, resolved_path.string().c_str(), error_func);			
 			}
 		}
 

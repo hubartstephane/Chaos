@@ -6,37 +6,36 @@
 namespace chaos
 {
 
-	char const * FileTools::GetFilenameExtension(FilePath const & path)
+	bool FileTools::DoIsTypedFile(char const * filename, char const * expected_ext)
 	{
-		return nullptr;
-#if 0
+		assert(filename != nullptr);
+		assert(expected_ext != nullptr);
+		// find the extension
+		char const * extension = strchr(filename, '.');
+		if (extension == nullptr)
+			return false;
 
-		char const * result = strchr(filename, '.');
-		while (result != nullptr)
+		while (extension != nullptr)
 		{
-			char const * next_result = strchr(result + 1, '.');
-			if (next_result == nullptr)
+			char const * next_extension = strchr(extension + 1, '.');
+			if (next_extension == nullptr)
 				break;
-			result = next_result;
+			extension = next_extension;
 		}
-		if (result != nullptr)
-		{
-			if (result[0] == '.') // do not include separator
-				++result;
-			if (result[0] == 0) // empty extension is considered has no extension
-				result = nullptr;
-		}
-		return result;
-#endif
+		if (expected_ext[0] == '.') // do not include separator
+			++expected_ext;
+		if (extension[0] == '.') // do not include separator
+			++extension;
+
+		// compare the extension
+		return (_stricmp(expected_ext, extension) == 0);
 	}
 
 	bool FileTools::IsTypedFile(FilePath const & path, char const * expected_ext)
 	{
-		assert(expected_ext != nullptr);
-		return (_stricmp(expected_ext, GetFilenameExtension(path)) == 0);
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();		
+		return DoIsTypedFile(resolved_path.string().c_str(), expected_ext); // use an utility function because path to string give a volatile object
 	}
-
-
 
 	Buffer<char> FileTools::LoadFile(FilePath const & path, bool ascii)
 	{

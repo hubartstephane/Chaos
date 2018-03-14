@@ -128,6 +128,29 @@ void TT(chaos::FilePath const & p)
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+	boost::filesystem::path ref = "mareference/bidule/fichier.txt";
+
+	chaos::FilePath P1("truc1.xxx.yyy");
+	chaos::FilePath P2(std::string("truc2.yyy"));
+	chaos::FilePath P3(boost::filesystem::path("truc3.zzz"));
+
+	chaos::FilePath P4("truc1.xxx.yyy", &ref);
+	chaos::FilePath P5(std::string("truc2.yyy"), &ref);
+	chaos::FilePath P6(boost::filesystem::path("truc3.zzz"), &ref);
+
+
+
+
+	auto b1 = chaos::FileTools::IsTypedFile(P1, ".xxx");
+	auto b2 = chaos::FileTools::IsTypedFile(P1, ".yyy");
+
+	auto R1 = P1.GetResolvedPath();
+	auto R2 = P2.GetResolvedPath();
+	auto R3 = P3.GetResolvedPath();
+	auto R4 = P4.GetResolvedPath();
+	auto R5 = P5.GetResolvedPath();
+	auto R6 = P6.GetResolvedPath();
+
 	//TT("truc");
 	//TT(std::string("truc"));
 	//TT(boost::filesystem::path("truc"));

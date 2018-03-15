@@ -1,1 +1,0 @@
-libraries.7z is a copy of chaos library when 'Ludum 40' was released

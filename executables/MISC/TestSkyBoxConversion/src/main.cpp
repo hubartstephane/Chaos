@@ -17,13 +17,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 	boost::filesystem::path top_image    = p / "posy.jpg";
 	boost::filesystem::path bottom_image = p / "negy.jpg";
 
-	chaos::SkyBoxImages multiple_sky_box = chaos::SkyBoxTools::LoadMultipleSkyBox(
-		left_image.string().c_str(), 
-		right_image.string().c_str(), 
-		top_image.string().c_str(), 
-		bottom_image.string().c_str(), 
-		front_image.string().c_str(), 
-		back_image.string().c_str());
+	chaos::SkyBoxImages multiple_sky_box = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
 	if (multiple_sky_box.IsMultipleImage())
 	{
 		static glm::vec4 back_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f); 

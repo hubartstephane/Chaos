@@ -157,10 +157,6 @@ namespace chaos
     ShellExecuteA(nullptr, "open", filename, nullptr, nullptr, SW_SHOWNORMAL);     // XXX: require CoInitialize(nullptr);
   }
 
-
-  
-    
-
   boost::filesystem::path WinTools::GetUserLocalPath()
   {
     return GetKnownFolderPath(FOLDERID_LocalAppData); // FOLDERID_RoamingAppData

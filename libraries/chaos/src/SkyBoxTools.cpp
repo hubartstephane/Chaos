@@ -451,14 +451,14 @@ namespace chaos
 		return false;
 	}
 
-	SkyBoxImages SkyBoxTools::LoadSingleSkyBox(char const * filename)
+	SkyBoxImages SkyBoxTools::LoadSingleSkyBox(FilePathParam const & path)
 	{  
 		SkyBoxImages result;
-		DoLoadMultipleSkyBox_OneImage(result, filename, SkyBoxImages::IMAGE_SINGLE);
+		DoLoadMultipleSkyBox_OneImage(result, path, SkyBoxImages::IMAGE_SINGLE);
 		return result;
 	}
 
-	SkyBoxImages SkyBoxTools::LoadMultipleSkyBox(char const * left_image, char const * right_image, char const * top_image, char const * bottom_image, char const * front_image, char const * back_image)
+	SkyBoxImages SkyBoxTools::LoadMultipleSkyBox(FilePathParam const & left_image, FilePathParam const & right_image, FilePathParam const & top_image, FilePathParam const & bottom_image, FilePathParam const & front_image, FilePathParam const & back_image)
 	{
 		SkyBoxImages result;
 		if (
@@ -473,20 +473,17 @@ namespace chaos
 		return result;
 	}
 
-	bool SkyBoxTools::DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, char const * filename, int image_index)
+	bool SkyBoxTools::DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, int image_index)
 	{
-		if (filename != nullptr) 
-		{
-			FIBITMAP * image = ImageTools::LoadImageFromFile(filename);
-			if (image == nullptr)
-				return false;
+    FIBITMAP * image = ImageTools::LoadImageFromFile(path);
+    if (image == nullptr)
+      return false;
 
-			if (!skybox.SetImage(image_index, image, false))
-			{
-				FreeImage_Unload(image);
-				return false;
-			}
-		}
+    if (!skybox.SetImage(image_index, image, false))
+    {
+      FreeImage_Unload(image);
+      return false;
+    }
 		return true;
 	}
 };

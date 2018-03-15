@@ -6,6 +6,7 @@
 #include <chaos/FontTools.h>
 #include <chaos/ImageDescription.h>
 #include <chaos/PixelFormat.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -62,9 +63,7 @@ namespace chaos
 			/** insert multiple bitmap before computation */
 			bool AddBitmapFilesFromDirectory(boost::filesystem::path const & path);
 			/** insert a bitmap before computation */
-			bool AddBitmapFile(boost::filesystem::path const & path, char const * name, int tag);
-			/** insert a bitmap before computation */
-			bool AddBitmapFile(char const * filename, char const * name, int tag);
+			bool AddBitmapFile(FilePathParam const & path, char const * name, int tag);
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
 

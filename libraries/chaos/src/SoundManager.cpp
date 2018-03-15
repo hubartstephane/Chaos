@@ -679,12 +679,12 @@ namespace chaos
     return FindObjectByName<Sound>(name, sounds);
   }
 
-  SoundSource * SoundManager::FindSourceByPath(boost::filesystem::path const & in_path)
+  SoundSource * SoundManager::FindSourceByPath(FilePathParam const & in_path)
   {
     return FindObjectByPath<SoundSource>(in_path, sources);
   }
 
-  SoundSource const * SoundManager::FindSourceByPath(boost::filesystem::path const & in_path) const
+  SoundSource const * SoundManager::FindSourceByPath(FilePathParam const & in_path) const
   {
     return FindObjectByPath<SoundSource>(in_path, sources);
   }
@@ -784,12 +784,14 @@ namespace chaos
     return result;
   }
 
-  SoundSource * SoundManager::AddSource(boost::filesystem::path const & in_path)
+  SoundSource * SoundManager::AddSource(FilePathParam const & in_path)
   {
-    return AddSource(in_path, in_path.string().c_str());
+    boost::filesystem::path const resolved_path = in_path.GetResolvedPath();
+
+    return AddSource(in_path, resolved_path.string().c_str());
   }
 
-  SoundSource * SoundManager::AddSource(boost::filesystem::path const & in_path, char const * in_name)
+  SoundSource * SoundManager::AddSource(FilePathParam const & in_path, char const * in_name)
   {
     // test whether a source with the given name could be inserted
     if (!CanAddSource(in_name))
@@ -807,7 +809,9 @@ namespace chaos
       return nullptr;
     // create the source on irrklang side
     // XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-    boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, in_path.string().c_str(), true);
+    boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
+
+    boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
     if (irrklang_source == nullptr)
       return nullptr;
     // insert the result
@@ -816,7 +820,7 @@ namespace chaos
       return nullptr;
     // last initializations
     result->irrklang_source = irrklang_source;
-    result->path = in_path;
+    result->path = resolved_path;
 
     return result;
   }

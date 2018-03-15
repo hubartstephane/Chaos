@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/Buffer.h>
-
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -52,9 +52,7 @@ namespace chaos
   public:
 
     /** constructor */
-    GPUProgramFileSourceGenerator(char const * filename);
-    /** constructor */
-    GPUProgramFileSourceGenerator(boost::filesystem::path const & path);
+    GPUProgramFileSourceGenerator(FilePathParam const & path);
 
     /** returns generated code */
     virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override

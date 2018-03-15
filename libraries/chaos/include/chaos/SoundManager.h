@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/IrrklangTools.h>
+#include <chaos/FilePath.h>
 
 // ==============================================================
 // FORWARD DECLARATION / FRIENDSHIP MACROS
@@ -395,9 +396,9 @@ namespace chaos
     SoundSource const * FindSource(char const * name) const;
 
     /** find a simple source by its path */
-    SoundSource * FindSourceByPath(boost::filesystem::path const & in_path);
+    SoundSource * FindSourceByPath(FilePathParam const & in_path);
     /** find a simple source by its path */
-    SoundSource const * FindSourceByPath(boost::filesystem::path const & in_path) const;
+    SoundSource const * FindSourceByPath(FilePathParam const & in_path) const;
 
     /** find a category by its name */
     SoundCategory * FindCategory(char const * name);
@@ -413,9 +414,9 @@ namespace chaos
     SoundCategory * AddCategory(char const * in_name);
 
     /** load and add a simple source inside the manager (name is a copy of filename) */
-    SoundSource * AddSource(boost::filesystem::path const & in_path);
+    SoundSource * AddSource(FilePathParam const & in_path);
     /** load and add a simple source inside the manager */
-    SoundSource * AddSource(boost::filesystem::path const & in_path, char const * in_name);
+    SoundSource * AddSource(FilePathParam const & in_path, char const * in_name);
 
     /** update the listener position */
     bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
@@ -503,15 +504,17 @@ namespace chaos
 
     /** a generic function to find an object in a list by its path */
     template<typename T, typename U>
-    static T * FindObjectByPath(boost::filesystem::path const & in_path, U & objects)
+    static T * FindObjectByPath(FilePathParam const & in_path, U & objects)
     {
+      boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
+
       size_t count = objects.size();
       for (size_t i = 0; i < count; ++i)
       {
         T * obj = objects[i].get();
         if (obj == nullptr)
           continue;
-        if (obj->GetPath() == in_path)
+        if (obj->GetPath() == resolved_path)
           return obj;
       }
       return nullptr;

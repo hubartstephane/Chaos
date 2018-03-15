@@ -162,24 +162,17 @@ namespace chaos
 			return true;
 		}
 
-		bool BitmapSetInput::AddBitmapFile(boost::filesystem::path const & path, char const * name, int tag)
+		bool BitmapSetInput::AddBitmapFile(FilePathParam const & path, char const * name, int tag)
 		{
-			if (boost::filesystem::is_regular_file(path))
-				return AddBitmapFile(path.string().c_str(), name, tag);
-			return false;
-		}
-
-		bool BitmapSetInput::AddBitmapFile(char const * filename, char const * name, int tag)
-		{
-			assert(filename != nullptr);
-
 			bool result = false;
 
-			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(filename);
+			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
 			if (bitmap != nullptr)
 			{
+        boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
 				result = AddBitmap(
-					(name != nullptr) ? name : boost::filesystem::path(filename).filename().string().c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+					(name != nullptr) ? name : resolved_path.filename().string().c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
 					bitmap, true, tag);
 				if (!result)
 					FreeImage_Unload(bitmap);

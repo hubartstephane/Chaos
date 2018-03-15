@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ImageTools.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -131,14 +132,14 @@ namespace chaos
 	public:
 
 		/** load a skybox from a single file */
-		static SkyBoxImages LoadSingleSkyBox(char const * filename);
+		static SkyBoxImages LoadSingleSkyBox(FilePathParam const & path);
 		/** load a skybox from a multiple files */
-		static SkyBoxImages LoadMultipleSkyBox(char const * left_image, char const * right_image, char const * top_image, char const * bottom_image, char const * front_image, char const * back_image);
+		static SkyBoxImages LoadMultipleSkyBox(FilePathParam const & left_image, FilePathParam const & right_image, FilePathParam const & top_image, FilePathParam const & bottom_image, FilePathParam const & front_image, FilePathParam const & back_image);
 
 	protected:
 
 		/** utility function to load a file into one image. Incrementaly test for compatibility with previsous image */
-		static bool DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, char const * filename, int image_index);
+		static bool DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, int image_index);
 	};
 
 }; // namespace chaos

@@ -170,7 +170,7 @@ namespace chaos
   bool GLDebugOnScreenDisplay::DoInitialize(GLDebugOnScreenDisplay::Params const & params)
   {
     // load image
-    FIBITMAP * image = ImageTools::LoadImageFromFile(params.texture_path.string().c_str());
+    FIBITMAP * image = ImageTools::LoadImageFromFile(params.texture_path);
     if (image == nullptr)
       return false;
 

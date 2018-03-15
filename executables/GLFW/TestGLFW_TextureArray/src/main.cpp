@@ -221,7 +221,7 @@ protected:
 		boost::filesystem::directory_iterator end;
 		for (boost::filesystem::directory_iterator it(resources_path / "images"); it != end; ++it)
 		{
-			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(it->path().string().c_str());
+			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(it->path());
 			if (bitmap == nullptr)
 				continue;
 			bitmaps.push_back(bitmap);		

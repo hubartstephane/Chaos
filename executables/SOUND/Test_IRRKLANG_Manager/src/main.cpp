@@ -93,7 +93,7 @@ protected:
     boost::filesystem::path resources_path = application->GetApplicationPath() / "resources";
     boost::filesystem::path src1_path = resources_path / "The Pretender.ogg";
 
-    source1 = sound_manager->AddSource(src1_path.string().c_str(), nullptr);
+    source1 = sound_manager->AddSource(src1_path, nullptr);
 
     category1 = sound_manager->AddCategory(nullptr);
 

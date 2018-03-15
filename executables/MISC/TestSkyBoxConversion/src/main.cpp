@@ -43,7 +43,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 
 void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, char const * dst_filename)
 {
-	chaos::SkyBoxImages single_sky_box = chaos::SkyBoxTools::LoadSingleSkyBox(p.string().c_str());
+	chaos::SkyBoxImages single_sky_box = chaos::SkyBoxTools::LoadSingleSkyBox(p);
 	if (single_sky_box.IsSingleImage())
 	{
 		chaos::SkyBoxImages multiple_sky_box = single_sky_box.ToMultipleImages();
@@ -90,7 +90,7 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 
 void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesystem::path const & p, char const * dst_filename)
 {
-	chaos::SkyBoxImages single_image = chaos::SkyBoxTools::LoadSingleSkyBox(p.string().c_str());
+	chaos::SkyBoxImages single_image = chaos::SkyBoxTools::LoadSingleSkyBox(p);
 	if (single_image.IsSingleImage())
 	{
 		bool horizontal = single_image.IsSingleImageHorizontal();

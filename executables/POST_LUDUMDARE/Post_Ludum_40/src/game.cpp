@@ -388,16 +388,16 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	chaos::PlaySoundDesc desc;
 	desc.looping = true;
 
-	music_source = sound_manager->AddSource((resource_path / "Sounds" / "music.ogg").string().c_str());
+	music_source = sound_manager->AddSource(resource_path / "Sounds" / "music.ogg");
 	if (music_source != nullptr)
 		music_source->PlaySound(desc);
 
-	gameover_source = sound_manager->AddSource((resource_path / "Sounds" / "gameover.ogg").string().c_str());
-	bonus1_source = sound_manager->AddSource((resource_path / "Sounds" / "bonus1.ogg").string().c_str());
-	bonus2_source = sound_manager->AddSource((resource_path / "Sounds" / "bonus2.ogg").string().c_str());
-	collision_source = sound_manager->AddSource((resource_path / "Sounds" / "collision.ogg").string().c_str());
-	start_source = sound_manager->AddSource((resource_path / "Sounds" / "start.ogg").string().c_str());
-	pause_source = sound_manager->AddSource((resource_path / "Sounds" / "pause.ogg").string().c_str());
+	gameover_source = sound_manager->AddSource(resource_path / "Sounds" / "gameover.ogg");
+	bonus1_source = sound_manager->AddSource(resource_path / "Sounds" / "bonus1.ogg");
+	bonus2_source = sound_manager->AddSource(resource_path / "Sounds" / "bonus2.ogg");
+	collision_source = sound_manager->AddSource(resource_path / "Sounds" / "collision.ogg");
+	start_source = sound_manager->AddSource(resource_path / "Sounds" / "start.ogg");
+	pause_source = sound_manager->AddSource(resource_path / "Sounds" / "pause.ogg");
 		
 	return true;
 }
@@ -528,7 +528,7 @@ bool Game::LoadBackgroundTexture(size_t index)
 
   index = index % background_paths.size();
 
-  boost::intrusive_ptr<chaos::Texture> new_background = chaos::GLTextureTools::GenTextureObject(background_paths[index].string().c_str());
+  boost::intrusive_ptr<chaos::Texture> new_background = chaos::GLTextureTools::GenTextureObject(background_paths[index]);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -550,7 +550,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the control texture
-	control_texture = chaos::GLTextureTools::GenTextureObject((path / "controls.png").string().c_str());
+	control_texture = chaos::GLTextureTools::GenTextureObject(path / "controls.png");
 	if (control_texture == nullptr)
 		return false;
 
@@ -614,7 +614,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
 	{
 		atlas.SaveAtlas(dst_p / "LudumAtlas");
-		chaos::WinTools::ShowFile(dst_p.string().c_str());
+		chaos::WinTools::ShowFile(dst_p);
 	}
 #endif
 

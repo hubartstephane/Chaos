@@ -787,7 +787,6 @@ namespace chaos
   SoundSource * SoundManager::AddSource(FilePathParam const & in_path)
   {
     boost::filesystem::path const resolved_path = in_path.GetResolvedPath();
-
     return AddSource(in_path, resolved_path.string().c_str());
   }
 

@@ -163,7 +163,7 @@ protected:
 
 			TestAtlasFont(dst_p, rp);
 
-			chaos::WinTools::ShowFile(dst_p.string().c_str());
+			chaos::WinTools::ShowFile(dst_p);
 		}
 
 		return true;

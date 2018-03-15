@@ -132,7 +132,7 @@ protected:
 			TestDoubleConversion(dst_p, rp / "violentdays_large.jpg", "DoubleConversionViolent.png");
 			TestDoubleConversion(dst_p, rp / "originalcubecross.png", "DoubleConversionOriginalCube.png");
 
-			chaos::WinTools::ShowFile(dst_p.string().c_str());
+			chaos::WinTools::ShowFile(dst_p);
 		}
 
 		return true;

@@ -197,7 +197,7 @@ protected:
 			Test2(dst_p);
 			Test3(p / "test.json", dst_p);
 
-			chaos::WinTools::ShowFile(dst_p.string().c_str());
+			chaos::WinTools::ShowFile(dst_p);
 		}
 
 		chaos::WinTools::PressToContinue();

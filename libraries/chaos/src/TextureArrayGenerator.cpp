@@ -56,7 +56,7 @@ namespace chaos
 	{
 		if (image == nullptr)
 		{
-			image = ImageTools::LoadImageFromFile(image_path.string().c_str());
+			image = ImageTools::LoadImageFromFile(image_path);
 			if (image == nullptr)
 				return false;
 			release_image = true;

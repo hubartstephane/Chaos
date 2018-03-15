@@ -236,7 +236,7 @@ protected:
 
         TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p);
       }
-      chaos::WinTools::ShowFile(dst_p.string().c_str());
+      chaos::WinTools::ShowFile(dst_p);
     }
 
     // release the images

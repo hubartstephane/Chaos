@@ -93,7 +93,7 @@ protected:
 				CaptureAndSaveMonitor(dst_p, monitors[i].szDevice, chaos::StringTools::Printf("Monitor%d.png", i).c_str());
 			CaptureAndSaveMonitor(dst_p, "DISPLAY", "MainMonitor.png");
 
-			chaos::WinTools::ShowFile(dst_p.string().c_str());
+			chaos::WinTools::ShowFile(dst_p);
 		}
 
 		return true;

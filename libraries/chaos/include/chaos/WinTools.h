@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/buffer.h>
+#include <chaos/FilePath.h>
 
 
 namespace chaos
@@ -27,10 +28,7 @@ namespace chaos
     static std::string WinTools::GetErrorString(DWORD errCode);
 
     /** use the windows register to "open" a file */
-    static void ShowFile(boost::filesystem::path const & path);
-
-    /** use the windows register to "open" a file */
-    static void ShowFile(char const * filename);
+    static void ShowFile(FilePathParam const & path);
 
     /** returns the current user Document path */
     static boost::filesystem::path GetUserDocumentPath();

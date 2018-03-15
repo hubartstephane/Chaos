@@ -146,15 +146,10 @@ namespace chaos
     return result;
   }
 
-  void WinTools::ShowFile(boost::filesystem::path const & path)
+  void WinTools::ShowFile(FilePathParam const & path) 
   {
-    ShowFile(path.string().c_str());
-  }
-
-  void WinTools::ShowFile(char const * filename) 
-  {
-    assert(filename != nullptr);
-    ShellExecuteA(nullptr, "open", filename, nullptr, nullptr, SW_SHOWNORMAL);     // XXX: require CoInitialize(nullptr);
+    boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+    ShellExecuteA(nullptr, "open", resolved_path.string().c_str(), nullptr, nullptr, SW_SHOWNORMAL);     // XXX: require CoInitialize(nullptr);
   }
 
   boost::filesystem::path WinTools::GetUserLocalPath()

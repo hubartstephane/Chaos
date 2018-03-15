@@ -57,7 +57,7 @@ protected:
 
 #if 1
 
-    FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(texture_paths[texture_index].string().c_str());
+    FIBITMAP * image = chaos::ImageTools::LoadImageFromFile(texture_paths[texture_index]);
     if (image != nullptr)
     {
       int k = 5 * texture_offset + texture_offset;
@@ -72,7 +72,7 @@ protected:
     }
 
 #else
-		result = chaos::GLTextureTools::GenTextureObject(texture_paths[index].string().c_str());
+		result = chaos::GLTextureTools::GenTextureObject(texture_paths[index]);
 #endif
 
 		return result;

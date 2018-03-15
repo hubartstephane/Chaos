@@ -57,11 +57,11 @@ protected:
     chaos::SkyBoxImages skybox;
     if (index == 0)
     {
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg").string().c_str());
+      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "violentdays_large.jpg"));
     }
     else if (index == 1)
     {
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png").string().c_str());
+      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "originalcubecross.png"));
     }
     else if (index == 2)
     {
@@ -74,13 +74,7 @@ protected:
       boost::filesystem::path top_image    = p / "posy.jpg";
       boost::filesystem::path bottom_image = p / "negy.jpg";
 
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(),
-        right_image.string().c_str(),
-        top_image.string().c_str(),
-        bottom_image.string().c_str(),
-        front_image.string().c_str(),
-        back_image.string().c_str());
+      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
     }
     else if (index == 3)
     {
@@ -93,13 +87,7 @@ protected:
       boost::filesystem::path top_image = p / "py.jpg";
       boost::filesystem::path bottom_image = p / "ny.jpg";
 
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(),
-        right_image.string().c_str(),
-        top_image.string().c_str(),
-        bottom_image.string().c_str(),
-        front_image.string().c_str(),
-        back_image.string().c_str());
+      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(left_image, right_image, top_image, bottom_image, front_image, back_image);
     }
     else if (index == 4)
     {
@@ -112,17 +100,11 @@ protected:
       boost::filesystem::path top_image = p / "dark-s_py.jpg";
       boost::filesystem::path bottom_image = p / "dark-s_ny.jpg";
 
-      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox(
-        left_image.string().c_str(),
-        right_image.string().c_str(),
-        top_image.string().c_str(),
-        bottom_image.string().c_str(),
-        front_image.string().c_str(),
-        back_image.string().c_str());
+      skybox = chaos::SkyBoxTools::LoadMultipleSkyBox( left_image, right_image, top_image, bottom_image, front_image, back_image);
     }
     else if (index == 5)
     {
-      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "space.png").string().c_str());
+      skybox = chaos::SkyBoxTools::LoadSingleSkyBox((resources_path / "space.png"));
     }
 
     if (!skybox.IsEmpty())

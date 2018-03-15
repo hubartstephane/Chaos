@@ -25,7 +25,7 @@ protected:
 		boost::filesystem::create_directories(p3);
 
 
-		chaos::WinTools::ShowFile(p3.string().c_str());
+		chaos::WinTools::ShowFile(p3);
 
 
 		boost::filesystem::path p = p3 / "myfile.txt";

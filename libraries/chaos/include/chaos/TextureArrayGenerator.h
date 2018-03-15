@@ -4,6 +4,7 @@
 #include <chaos/Texture.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/ImageTools.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -72,10 +73,8 @@ namespace chaos
   public:
   
 	  /** constructor */
-	  TextureArraySliceGenerator_Image(boost::filesystem::path const & in_image_path) :
-		  image_path(in_image_path),
-		  image(nullptr),
-		  release_image(false) {} 
+	  TextureArraySliceGenerator_Image(FilePathParam const & in_image_path) :
+		  image_path(in_image_path.GetResolvedPath()){} 
 
 	  TextureArraySliceGenerator_Image(FIBITMAP * in_image, bool in_release_image) :
 		  image(in_image),

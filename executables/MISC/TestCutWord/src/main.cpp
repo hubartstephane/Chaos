@@ -331,7 +331,7 @@ void CutDirectionnaryWords(char const * filename)
 		{
 			boost::filesystem::path dst_file = dst_p / "cut_words.txt";
 			chaos::FileTools::WriteFileLines(dst_file.string().c_str(), dictionnary);
-			chaos::WinTools::ShowFile(dst_file.string().c_str());
+			chaos::WinTools::ShowFile(dst_file);
 		}
 	}
 }

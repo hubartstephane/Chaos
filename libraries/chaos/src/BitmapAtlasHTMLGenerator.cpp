@@ -17,21 +17,16 @@ namespace chaos
       return result;
     }
 
-    bool AtlasHTMLGenerator::OutputToHTMLFile(Atlas const & atlas, boost::filesystem::path const & path, AtlasHTMLOutputParams params)
+    bool AtlasHTMLGenerator::OutputToHTMLFile(Atlas const & atlas, FilePathParam const & path, AtlasHTMLOutputParams params)
     {
-      return OutputToHTMLFile(atlas, path.string().c_str());
-    }
-
-    bool AtlasHTMLGenerator::OutputToHTMLFile(Atlas const & atlas, char const * filename, AtlasHTMLOutputParams params)
-    {
-      assert(filename != nullptr);
-
       bool result = false;
 
       tinyxml2::XMLDocument * doc = OutputToHTMLDocument(atlas, params);
       if (doc != nullptr)
       {
-        result = (doc->SaveFile(filename) == tinyxml2::XML_SUCCESS);
+        boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+        result = (doc->SaveFile(resolved_path.string().c_str()) == tinyxml2::XML_SUCCESS);
         delete(doc);
       }
       return result;

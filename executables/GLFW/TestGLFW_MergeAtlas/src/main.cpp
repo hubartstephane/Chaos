@@ -26,7 +26,7 @@ void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, boost::fil
 	html_params.texture_scale = 3.0f;
 	html_params.auto_refresh = false;
 
-	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p.string().c_str(), html_params);
+	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
 }
 
 bool AddFakeBitmap(chaos::BitmapAtlas::BitmapSetInput * bitmap_set, char const * name)

@@ -10,11 +10,12 @@
 #include <chaos/FileTools.h>
 #include <chaos/FontTools.h>
 #include <chaos/ImageTools.h>
+#include <chaos/FilePath.h>
 
 static int ATLAS_BPP = 0;
 static int ATLAS_PADDING = 10;
 
-void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, boost::filesystem::path const & dest_p, boost::filesystem::path const & html_dest_p)
+void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, chaos::FilePathParam const & dest_p, chaos::FilePathParam const & html_dest_p)
 {
 	atlas.SaveAtlas(dest_p);
 
@@ -24,7 +25,7 @@ void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, boost::fil
 	html_params.texture_scale = 3.0f;
 	html_params.auto_refresh = false;
 
-	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p.string().c_str(), html_params);
+	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
 }
 
 bool AddFakeBitmap(chaos::BitmapAtlas::BitmapSetInput * bitmap_set, char const * name)

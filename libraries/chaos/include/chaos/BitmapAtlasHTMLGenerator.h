@@ -43,9 +43,7 @@ namespace chaos
       /** create an XML document and output debug information */
       static void OutputToHTMLDocument(Atlas const & atlas, tinyxml2::XMLDocument * doc, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
       /** output the atlas trees in HTML format */
-      static bool OutputToHTMLFile(Atlas const & atlas, boost::filesystem::path const & path, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
-      /** output the atlas trees in HTML format */
-      static bool OutputToHTMLFile(Atlas const & atlas, char const * filename, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
+      static bool OutputToHTMLFile(Atlas const & atlas, FilePathParam const & path, AtlasHTMLOutputParams params = AtlasHTMLOutputParams());
 
     protected:
 

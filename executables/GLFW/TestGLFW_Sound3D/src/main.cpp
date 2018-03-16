@@ -99,19 +99,15 @@ protected:
     if (!sound_manager->StartManager())
       return false;
 
-    chaos::SoundLoopInfo loop_info;
-    loop_info.end = 0.5f;
-  //  loop_info.blend_time = 0.1f;
-
-    sound_source = sound_manager->AddSource((resources_path / "Tom.wav").string().c_str(), nullptr, loop_info);
+    sound_source = sound_manager->AddSource(resources_path / "Tom.wav");
     if (sound_source == nullptr)
       return false;
 
-    chaos::Play3DSoundDesc desc;
+    chaos::PlaySoundDesc desc;
     desc.looping = true;
-    desc.position = GetBoxPosition();
+    desc.SetPosition(GetBoxPosition());
 
-    sound = sound_source->Play3DSound(desc);
+    sound = sound_source->PlaySound(desc);
 
     chaos::GPUProgramLoader loader;
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");

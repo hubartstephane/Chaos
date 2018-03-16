@@ -312,7 +312,7 @@ void TestCutWord(char const * str)
 void CutDirectionnaryWords(char const * filename)
 {
 	boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
-	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines((resources_path / filename).string().c_str());
+	std::vector<std::string> dictionnary = chaos::FileTools::ReadFileLines(resources_path / filename);
 
 	if (dictionnary.size() > 0)
 	{
@@ -330,7 +330,7 @@ void CutDirectionnaryWords(char const * filename)
 		if (chaos::FileTools::CreateTemporaryDirectory("TestCutWords", dst_p))
 		{
 			boost::filesystem::path dst_file = dst_p / "cut_words.txt";
-			chaos::FileTools::WriteFileLines(dst_file.string().c_str(), dictionnary);
+			chaos::FileTools::WriteFileLines(dst_file, dictionnary);
 			chaos::WinTools::ShowFile(dst_file);
 		}
 	}

@@ -16,7 +16,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
     boost::timer::cpu_timer timer;
 
-    char const * filename = test_path.string().c_str();
+    char const * filename = test_path.string().c_str(); // AIE !!!!
 
     bool bUseOpen = (argc > 1);
 

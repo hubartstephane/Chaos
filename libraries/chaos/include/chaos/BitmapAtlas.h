@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/NamedObject.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -224,9 +225,9 @@ namespace chaos
       size_t GetBitmapCount() const { return bitmaps.size(); }
 
       /** load an atlas from an index file */
-      bool LoadAtlas(boost::filesystem::path const & filename);
+      bool LoadAtlas(FilePathParam const & path);
       /** function to save the results */
-      bool SaveAtlas(boost::filesystem::path const & filename) const;
+      bool SaveAtlas(FilePathParam const & path) const;
 
       /** returns the bitmaps contained in the atlas */
       std::vector<unique_bitmap_ptr> const & GetBitmaps() const { return bitmaps; }
@@ -240,7 +241,7 @@ namespace chaos
       /** function to save contents */
       bool SaveAtlasIndex(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
       /** split a filename into DIRECTORY, INDEX_FILENAME and BITMAP prefix path */
-      void SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const;
+      void SplitFilename(FilePathParam const & path, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const;
       /** get the name of a bitmap */
       boost::filesystem::path GetBitmapFilename(FREE_IMAGE_FORMAT image_format, boost::filesystem::path bitmap_filename, int index) const;
 

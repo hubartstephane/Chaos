@@ -61,7 +61,7 @@ namespace chaos
 		public:
 
 			/** insert multiple bitmap before computation */
-			bool AddBitmapFilesFromDirectory(boost::filesystem::path const & path);
+			bool AddBitmapFilesFromDirectory(FilePathParam const & path);
 			/** insert a bitmap before computation */
 			bool AddBitmapFile(FilePathParam const & path, char const * name, int tag);
 			/** insert an image inside the atlas */
@@ -272,7 +272,7 @@ namespace chaos
 			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
 			std::vector<unique_bitmap_ptr> GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const;
 			/** create an atlas from a directory into another directory */
-			static bool CreateAtlasFromDirectory(boost::filesystem::path const & src_dir, boost::filesystem::path const & filename, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+			static bool CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 
 		protected:
 

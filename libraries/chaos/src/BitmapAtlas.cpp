@@ -453,13 +453,13 @@ namespace chaos
 			bitmaps.clear();
 		}
 
-		bool Atlas::SaveAtlas(boost::filesystem::path const & filename) const
+		bool Atlas::SaveAtlas(FilePathParam const & path) const
 		{
 			// decompose the filename
 			boost::filesystem::path target_dir;
 			boost::filesystem::path index_filename;
 			boost::filesystem::path bitmap_filename;
-			SplitFilename(filename, target_dir, index_filename, bitmap_filename);
+			SplitFilename(path, target_dir, index_filename, bitmap_filename);
 
 			// create a target directory if necessary   
 			if (!boost::filesystem::is_directory(target_dir))
@@ -532,14 +532,14 @@ namespace chaos
 			return false;
 		}
 
-		bool Atlas::LoadAtlas(boost::filesystem::path const & filename)
+		bool Atlas::LoadAtlas(FilePathParam const & path)
 		{
 			// decompose the filename
 			boost::filesystem::path target_dir;
 			boost::filesystem::path index_filename;
 			boost::filesystem::path bitmap_filename;
-			SplitFilename(filename, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
-																				  // load the file into memory
+			SplitFilename(path, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
+      // load the file into memory
 			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
 			if (buf == nullptr)
 				return false;
@@ -562,7 +562,7 @@ namespace chaos
 			{
 				std::string const & filename = json_filename;
 
-				FIBITMAP * bitmap = ImageTools::LoadImageFromFile((target_dir / filename).string().c_str());
+				FIBITMAP * bitmap = ImageTools::LoadImageFromFile(target_dir / filename);
 				if (bitmap == nullptr)
 				{
 					result = false;
@@ -614,12 +614,14 @@ namespace chaos
 			return bitmap_filename.concat(buffer);
 		}
 
-		void Atlas::SplitFilename(boost::filesystem::path const & filename, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const
+		void Atlas::SplitFilename(FilePathParam const & path, boost::filesystem::path & target_dir, boost::filesystem::path & index_filename, boost::filesystem::path & bitmap_filename) const
 		{
+      boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
 			// decompose INDEX and BITMAPS filename
-			target_dir = filename.parent_path();
-			index_filename = filename;
-			bitmap_filename = filename.filename();
+			target_dir = resolved_path.parent_path();
+			index_filename = resolved_path;
+			bitmap_filename = resolved_path.filename();
 
 			if (!index_filename.has_extension())
 				index_filename.replace_extension(".json");    // by default, INDEX file has extension JSON

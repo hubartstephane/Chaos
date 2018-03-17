@@ -16,12 +16,10 @@ int _tmain(int argc, char ** argv, char ** env)
 
     boost::timer::cpu_timer timer;
 
-    char const * filename = test_path.string().c_str(); // AIE !!!!
-
     bool bUseOpen = (argc > 1);
 
 
-    HANDLE hFile = CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFileA(test_path.string().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if (hFile != INVALID_HANDLE_VALUE)
     {

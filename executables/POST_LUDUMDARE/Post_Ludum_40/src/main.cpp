@@ -72,14 +72,6 @@ protected:
 	virtual void Finalize() override
 	{
 		game = nullptr;
-
-		program = nullptr;
-		mesh    = nullptr;
-		texture = nullptr;
-
-		debug_display.Finalize();
-
-		sound_manager = nullptr;
 	}
 
 	virtual bool Initialize(nlohmann::json const & configuration) override
@@ -89,23 +81,6 @@ protected:
 			return false;
 
 		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path image_path     = resources_path / "font.png";
-
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path               = image_path;
-		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line   = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width            = 20;
-		debug_params.spacing                    = glm::ivec2( 0, 0);
-		debug_params.crop_texture               = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(debug_params))
-			return false;
-
-		sound_manager = new chaos::SoundManager;
-		if (sound_manager == nullptr)
-			return false;
 
 		game = new Game;
 		if (game == nullptr)
@@ -155,22 +130,12 @@ protected:
 
 		game->Tick(delta_time);
 
-		debug_display.Tick(delta_time);
-
 		return true; // refresh
 	}
 
 protected:
 
 	boost::intrusive_ptr<Game> game;
-
-	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
-
-	boost::intrusive_ptr<chaos::GPUProgram>  program;
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-	boost::intrusive_ptr<chaos::Texture>    texture;
-
-	chaos::GLDebugOnScreenDisplay debug_display;
 };
 
 float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);

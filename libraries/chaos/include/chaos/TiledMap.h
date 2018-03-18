@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/Buffer.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {

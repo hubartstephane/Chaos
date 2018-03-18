@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -10,6 +11,9 @@ namespace chaos
 
 		/** parsing a JSON file (catch exceptions) */
 		static nlohmann::json Parse(char const * buffer);
+
+    /** Load a JSON file in a recursive whay */
+    nlohmann::json LoadJSONFileRecursive(FilePathParam const & path);
 
 		/** reading an attribute (catch exceptions) */
 		template<typename T>

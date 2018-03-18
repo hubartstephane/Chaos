@@ -186,53 +186,7 @@ void Game::UpdateWorldAndPlayerPosition(float delta_time, glm::vec2 const & dire
 	// apply joystick displacement
 	glm::vec2 player_screen_position = player_particle->position; 
 
-
-#if 0
-
-  glm::vec2 acceleration = acceleration_factor * direction;
-  
-  acceleration += -player_speed * 0.9f;
-  
-
-
-
-
-
-
-
-  if (direction == glm::vec2(0.0f, 0.0f))
-  {
-    float speed2 = glm::length2(player_speed);
-    if (speed2 > 0.0f)
-    {
-      float speed = chaos::MathTools::Sqrt(speed2);
-      speed = chaos::MathTools::Maximum(0.0f, speed - slowdown_factor * delta_time);
-      player_speed = speed * glm::normalize(player_speed);
-    }
-  }
-  else
-  {
-
-    
-    player_speed += direction * acceleration_factor * delta_time;
-    
-    float speed2 = glm::length2(player_speed);
-    if (speed2 > max_speed * max_speed)
-    {
-      player_speed = max_speed * glm::normalize(player_speed);
-    }
-    
-
-  //  player_speed = glm::normalize(direction) * max_speed;
-  //  player_speed = direction * max_speed;
-
-  }
-#endif
-
   player_speed = direction * max_speed;
-
-
-
 
 	player_screen_position += (delta_time * player_speed);
 
@@ -353,15 +307,24 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 
 
 
-bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & configuration, glm::vec2 const & in_world_size, boost::filesystem::path const & path)
+bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & configuration, glm::vec2 const & in_world_size)
 {
+  chaos::Application * application = chaos::Application::GetInstance();
+  if (application == nullptr)
+    return false;
+
+  boost::filesystem::path const & resources_path = application->GetResourcesPath();
+
+
+
+
   InitializeFromConfiguration(configuration);
 
 	glfw_window = in_glfw_window;
 
 	world_size = in_world_size;
 
-	boost::filesystem::path object_path = path / "objects" / "objects.json";
+	boost::filesystem::path object_path = resources_path / "objects" / "objects.json";
 
 	// Load the file
 	chaos::Buffer<char> buf = chaos::FileTools::LoadFile(object_path, true);
@@ -370,7 +333,7 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & config
 
   // parse JSON structures
   nlohmann::json json_entry = chaos::JSONTools::Parse(buf);
-  return DoInitialize(path, object_path, json_entry);
+  return DoInitialize(resources_path, object_path, json_entry);
 
 	return false;
 }

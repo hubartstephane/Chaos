@@ -65,7 +65,7 @@ public:
 
 	void Tick(double delta_time);
 
-	bool Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & configuration, glm::vec2 const & in_world_size, boost::filesystem::path const & path);
+	bool Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & configuration, glm::vec2 const & in_world_size);
 
 	void Finalize();
 

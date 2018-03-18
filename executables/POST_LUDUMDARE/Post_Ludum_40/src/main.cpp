@@ -29,9 +29,7 @@
 
 #include "game.h"
 
-
 // ======================================================================================
-
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -76,19 +74,13 @@ protected:
 
 	virtual bool Initialize(nlohmann::json const & configuration) override
 	{   
-		chaos::Application * application = chaos::Application::GetInstance();
-		if (application == nullptr)
-			return false;
-
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-
 		game = new Game;
 		if (game == nullptr)
 			return false;
 
 		float WORLD_X = 1000.0f;
 		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		if (!game->Initialize(glfw_window, chaos::JSONTools::GetStructure(configuration, "game"), world_size, resources_path))
+		if (!game->Initialize(glfw_window, chaos::JSONTools::GetStructure(configuration, "game"), world_size))
 			return false;
 
 		return true;
@@ -106,28 +98,6 @@ protected:
 
 	virtual bool Tick(double delta_time) override
 	{
-#if 0
-    GLuint framebuffer = 0;
-    glGenFramebuffers(1, &framebuffer);
-
-    GLuint depth_renderbuffer = 0;
-    glGenRenderbuffers(1, &depth_renderbuffer);
-
-    glNamedRenderbufferStorage(depth_renderbuffer, GL_DEPTH24_STENCIL8, 512, 512);
-
-    GLuint color_renderbuffer = 0;
-    glGenRenderbuffers(1, &color_renderbuffer);
-    glNamedRenderbufferStorage(color_renderbuffer, GL_RGBA, 512, 512);
-
-    glNamedFramebufferRenderbuffer(framebuffer, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_renderbuffer);
-
-
-    glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, texture_id, texture_level);
-
-    glCheckNamedFramebufferStatus(framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
-
-#endif
-
 		game->Tick(delta_time);
 
 		return true; // refresh

@@ -129,12 +129,12 @@ void const * ParticleLayer::GetParticleBuffer(ParticleRange range) const
 
 bool ParticleLayer::HasParticleLimitedLifeTime() const
 {
-  return layer_desc->HasParticleLimitedLifeTime();
+	return layer_desc->HasParticleLimitedLifeTime();
 }
 
 bool ParticleLayer::AreParticlesDynamic() const
 {
-  return layer_desc->AreParticlesDynamic();
+	return layer_desc->AreParticlesDynamic();
 }
 
 void ParticleLayer::Pause(bool in_paused)
@@ -303,7 +303,7 @@ void ParticleLayer::UpdateParticleRanges(size_t new_particle_count)
 
 void ParticleManager::SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas)
 {
-  atlas = in_atlas;
+	atlas = in_atlas;
 }
 
 void ParticleManager::Display(chaos::GPUProgramVariableProvider * uniform_provider)

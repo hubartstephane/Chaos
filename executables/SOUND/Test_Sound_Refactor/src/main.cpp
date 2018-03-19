@@ -10,6 +10,10 @@
 #include <chaos/MathTools.h>
 #include <chaos/SoundManager.h>
 
+#include <rapidjson/StringBuffer.h>
+#include <rapidjson/Writer.h>
+
+
 #include "SoundTest.h"
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -40,6 +44,84 @@ protected:
 
 
 
+
+  }
+
+
+  void HandleNodeArray(rapidjson::Document::ConstValueIterator it)
+  {
+	  rapidjson::Type type = it->GetType();
+
+
+	  type = type;
+  }
+
+  void HandleNodeObject(rapidjson::Document::ConstMemberIterator it)
+  {
+#if 1
+	  int i= 0;
+
+	  std::string n = it->name.GetString();
+	  rapidjson::Type type = it->value.GetType();
+
+	  if (type == rapidjson::Type::kStringType)
+	  {
+		  std::string v = it->value.GetString();
+		  ++i;
+	  }
+
+	  else if (type == rapidjson::Type::kObjectType)
+	  {
+		  rapidjson::Document::ConstObject o = it->value.GetObject();
+		  for (auto it = o.begin() ; it != o.end() ; ++it)
+			  HandleNodeObject(it);
+		  ++i;
+	  }
+	  else if (type == rapidjson::Type::kArrayType)
+	  {
+		  rapidjson::Document::ConstArray a = it->value.GetArray();
+		  for (auto it = a.begin() ; it != a.end() ; ++it)
+			  HandleNodeArray(it);
+
+		  ++i;
+	  }
+	  else if (type == rapidjson::Type::kTrueType)
+	  {
+		  bool b = it->value.GetBool();
+		  ++i;
+	  }
+	  else if (type == rapidjson::Type::kFalseType)
+	  {
+		  bool b = it->value.GetBool();
+		  ++i;
+	  }
+	  else if (type == rapidjson::Type::kNullType)
+	  {
+		  
+		  ++i;
+	  }
+	  else if (type == rapidjson::Type::kNumberType)
+	  {
+		  if (it->value.IsDouble() || it->value.IsFloat())
+		  {
+			  float f = it->value.GetFloat();
+			  f =f;
+		  
+		  }
+		  if (it->value.IsInt())
+		  {
+			  int   num = it->value.GetInt();
+			  num = num;
+		  
+		  }
+
+		  
+		  
+		  //std::string v = it.value.GetString(); // exception !!
+		  ++i;
+	  }
+#endif
+  
   }
 
   virtual bool Initialize(nlohmann::json const & configuration) override
@@ -47,6 +129,57 @@ protected:
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;
+
+
+	boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
+	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(configuration_path, true);
+	if (buffer != nullptr)
+	{
+		rapidjson::Document doc;
+		doc.Parse(buffer.data);
+
+		if (doc.IsObject())
+		{
+			rapidjson::Document::Object & o = doc.GetObject();
+
+			for (auto it = o.begin() ; it != o.end() ; ++it)
+				HandleNodeObject(it);
+
+
+		}
+
+		int i = 0;
+		if (doc.IsArray())
+		{
+			rapidjson::Document::Array & o = doc.GetArray();
+			for (auto it = o.begin() ; it != o.end() ; ++it)
+				HandleNodeArray(it);	
+		}
+		if (doc.IsInt())
+			++i;
+
+		rapidjson::StringBuffer b;
+		b.Clear();
+		rapidjson::Writer<rapidjson::StringBuffer> writer(b);
+		doc.Accept(writer);
+
+		char const * bb = strdup( b.GetString() );
+
+		
+
+
+
+
+		++i;
+	}
+
+
+
+
+
+
+
+
 
 
     return true;
@@ -129,9 +262,6 @@ void TT(chaos::FilePathParam const & p)
 int _tmain(int argc, char ** argv, char ** env)
 {
 
-
-  rapidjson::Document doc;
-  doc.Parse("truc");
 
 
 

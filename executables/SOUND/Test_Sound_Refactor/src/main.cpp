@@ -151,12 +151,54 @@ protected:
 		rapidjson::Document doc;
 		doc.Parse(buffer.data);
 
+    size_t erro = doc.GetErrorOffset();
+
+    rapidjson::ParseErrorCode errcode = doc.GetParseError();
+    if (errcode == rapidjson::ParseErrorCode::kParseErrorNone)
+    {
+
+
+    }
+
 		if (doc.IsObject())
 		{
 			rapidjson::Document::Object & o = doc.GetObject();
 			for (auto it = o.begin() ; it != o.end() ; ++it)
 				HandleNodeObject(o, it);
 
+      rapidjson::Document::MemberIterator it1 = o.FindMember("ccc");
+      if (it1 != o.end())
+      {
+        int i = 0;
+
+
+        ++i;
+      }
+
+      rapidjson::Document::MemberIterator it2 = o.FindMember("value_true");
+      if (it2 != o.end())
+      {
+        
+
+        rapidjson::Value val(rapidjson::kNumberType);
+        val.SetInt(1234);
+
+
+
+        //rapidjson::Value myob(rapidjson::kObjectType);
+        //myob.AddMember("XXX", val, doc.GetAllocator());
+
+        rapidjson::Value & cc = it2->value.SetObject();
+
+        cc.AddMember("XXX", val, doc.GetAllocator());
+
+       // rapidjson::Document::Object & new_ob = 
+      //  new_ob.AddMember("xxxxx")
+
+
+        int i = 0;
+        ++i;
+      }
 
 		}
 

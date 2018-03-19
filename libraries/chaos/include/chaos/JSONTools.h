@@ -9,6 +9,30 @@ namespace chaos
 	{
 	public:
 
+
+#if 0
+
+    static bool Parse(char const * buffer, rapidjson::Document & doc);
+
+    static bool LoadJSONFileRecursive(FilePathParam const & path, rapidjson::Document & doc);
+
+    static bool GetAttribute(rapidjson::Document::Object const & obj, char const * name, bool & result, bool default_value = false);
+
+    static bool GetAttribute(rapidjson::Document::Object const & obj, char const * name, float & result, float default_value = 0.0f);
+
+    static bool GetAttribute(rapidjson::Document::Object const & obj, char const * name, double & result, double default_value = 0.0);
+
+    static bool GetAttribute(rapidjson::Document::Object const & obj, char const * name, int & result, int default_value = 0);
+
+    static bool GetAttribute(rapidjson::Document::Object const & obj, char const * name, std::string & result);
+
+#endif
+
+
+
+
+
+
 		/** parsing a JSON file (catch exceptions) */
 		static nlohmann::json Parse(char const * buffer);
 

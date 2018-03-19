@@ -48,7 +48,7 @@ protected:
   }
 
 
-  void HandleNodeArray(rapidjson::Document::ConstValueIterator it)
+  void HandleNodeArray(rapidjson::Document::Array & a, rapidjson::Document::ValueIterator it)
   {
 	  rapidjson::Type type = it->GetType();
 
@@ -56,7 +56,7 @@ protected:
 	  type = type;
   }
 
-  void HandleNodeObject(rapidjson::Document::ConstMemberIterator it)
+  void HandleNodeObject(rapidjson::Document::Object & o, rapidjson::Document::MemberIterator it)
   {
 #if 1
 	  int i= 0;
@@ -64,24 +64,37 @@ protected:
 	  std::string n = it->name.GetString();
 	  rapidjson::Type type = it->value.GetType();
 
+	 
 	  if (type == rapidjson::Type::kStringType)
 	  {
 		  std::string v = it->value.GetString();
+
+
+		  if (v == "@filename")
+		  {
+			  ++i;
+		  
+		  
+		  }
+
+
+
+
 		  ++i;
 	  }
 
 	  else if (type == rapidjson::Type::kObjectType)
 	  {
-		  rapidjson::Document::ConstObject o = it->value.GetObject();
-		  for (auto it = o.begin() ; it != o.end() ; ++it)
-			  HandleNodeObject(it);
+		  rapidjson::Document::Object child = it->value.GetObject();
+		  for (auto it = child.begin() ; it != child.end() ; ++it)
+			  HandleNodeObject(child, it);
 		  ++i;
 	  }
 	  else if (type == rapidjson::Type::kArrayType)
 	  {
-		  rapidjson::Document::ConstArray a = it->value.GetArray();
+		  rapidjson::Document::Array a = it->value.GetArray();
 		  for (auto it = a.begin() ; it != a.end() ; ++it)
-			  HandleNodeArray(it);
+			  HandleNodeArray(a, it);
 
 		  ++i;
 	  }
@@ -141,9 +154,8 @@ protected:
 		if (doc.IsObject())
 		{
 			rapidjson::Document::Object & o = doc.GetObject();
-
 			for (auto it = o.begin() ; it != o.end() ; ++it)
-				HandleNodeObject(it);
+				HandleNodeObject(o, it);
 
 
 		}
@@ -151,9 +163,9 @@ protected:
 		int i = 0;
 		if (doc.IsArray())
 		{
-			rapidjson::Document::Array & o = doc.GetArray();
-			for (auto it = o.begin() ; it != o.end() ; ++it)
-				HandleNodeArray(it);	
+			rapidjson::Document::Array & a = doc.GetArray();
+			for (auto it = a.begin() ; it != a.end() ; ++it)
+				HandleNodeArray(a, it);	
 		}
 		if (doc.IsInt())
 			++i;

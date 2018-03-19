@@ -128,6 +128,20 @@ void TT(chaos::FilePathParam const & p)
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+
+
+  rapidjson::Document doc;
+  doc.Parse("truc");
+
+
+
+
+
+
+
+
+
+
 	boost::filesystem::path ref = "mareference/bidule/fichier.txt";
 
 	chaos::FilePathParam P1("truc1.xxx.yyy");

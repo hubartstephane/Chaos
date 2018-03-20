@@ -313,12 +313,6 @@ local JSON_INC_PATH = path.join(JSON_PATH, "src")
 
 DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 
-  -- RAPIDJSON
-local RAPIDJSON_PATH     = "rapidjson-master"
-local RAPIDJSON_INC_PATH = path.join(RAPIDJSON_PATH, "include")  
-
-DeclareExternalLib("RAPIDJSON", RAPIDJSON_INC_PATH, nil, nil)
-
   -- FFMPEG
 local FFMPEG_PATH     = "ffmpeg"
 local FFMPEG_INC_PATH = {

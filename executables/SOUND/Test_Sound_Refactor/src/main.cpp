@@ -9,9 +9,8 @@
 #include <chaos/IrrklangTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/SoundManager.h>
-
-#include <rapidjson/StringBuffer.h>
-#include <rapidjson/Writer.h>
+#include <chaos/JSONTools.h>
+#include <chaos/FileTools.h>
 
 
 #include "SoundTest.h"
@@ -29,7 +28,7 @@ protected:
   }
 
   virtual void Finalize() override
-  {   
+  {
 
   }
 
@@ -47,95 +46,64 @@ protected:
 
   }
 
-
-  void HandleNodeArray(rapidjson::Document::Array & a, rapidjson::Document::ValueIterator it)
+  void Test1()
   {
-	  rapidjson::Type type = it->GetType();
+    int i = 0;
 
+    chaos::Application * application = chaos::Application::GetInstance();
+    if (application == nullptr)
+      return;
 
-	  type = type;
+    boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
+
+    nlohmann::json c1 = chaos::JSONTools::LoadJSONFileRecursive(configuration_path);
+    nlohmann::json c2 = chaos::JSONTools::LoadJSONFileRecursive(configuration_path);
+
+    for (nlohmann::json::const_iterator it = c1.begin(); it != c1.end(); ++it)
+    {
+      std::string c = it.key();
+      if (it->is_boolean())
+      {
+        bool b = it->get<bool>();
+        b = b;
+      }
+      if (it->is_number_integer())
+      {
+        int i = it->get<int>();
+        i = i;
+      }
+      if (it->is_number_float())
+      {
+        float f = it->get<float>();
+        f = f;
+      }
+
+      if (it->is_string())
+      {
+        std::string s = it->get<std::string>();
+        s = s;
+      }
+      ++i;
+    }
+
+    c1["MONCHOIX"] = c2;
+
+    boost::filesystem::path result_dir;
+    if (chaos::FileTools::CreateTemporaryDirectory("MON_REP_%d", result_dir))
+    {
+      std::ofstream stream((result_dir / "mon_fichier.json").string().c_str());
+      stream << c1.dump(4);
+
+      chaos::WinTools::ShowFile(result_dir);
+    }
+
+    application = application;
   }
 
-  void HandleNodeObject(rapidjson::Document::Object & o, rapidjson::Document::MemberIterator it)
-  {
-#if 1
-	  int i= 0;
-
-	  std::string n = it->name.GetString();
-	  rapidjson::Type type = it->value.GetType();
-
-	 
-	  if (type == rapidjson::Type::kStringType)
-	  {
-		  std::string v = it->value.GetString();
-
-
-		  if (v == "@filename")
-		  {
-			  ++i;
-		  
-		  
-		  }
 
 
 
 
-		  ++i;
-	  }
-
-	  else if (type == rapidjson::Type::kObjectType)
-	  {
-		  rapidjson::Document::Object child = it->value.GetObject();
-		  for (auto it = child.begin() ; it != child.end() ; ++it)
-			  HandleNodeObject(child, it);
-		  ++i;
-	  }
-	  else if (type == rapidjson::Type::kArrayType)
-	  {
-		  rapidjson::Document::Array a = it->value.GetArray();
-		  for (auto it = a.begin() ; it != a.end() ; ++it)
-			  HandleNodeArray(a, it);
-
-		  ++i;
-	  }
-	  else if (type == rapidjson::Type::kTrueType)
-	  {
-		  bool b = it->value.GetBool();
-		  ++i;
-	  }
-	  else if (type == rapidjson::Type::kFalseType)
-	  {
-		  bool b = it->value.GetBool();
-		  ++i;
-	  }
-	  else if (type == rapidjson::Type::kNullType)
-	  {
-		  
-		  ++i;
-	  }
-	  else if (type == rapidjson::Type::kNumberType)
-	  {
-		  if (it->value.IsDouble() || it->value.IsFloat())
-		  {
-			  float f = it->value.GetFloat();
-			  f =f;
-		  
-		  }
-		  if (it->value.IsInt())
-		  {
-			  int   num = it->value.GetInt();
-			  num = num;
-		  
-		  }
-
-		  
-		  
-		  //std::string v = it.value.GetString(); // exception !!
-		  ++i;
-	  }
-#endif
-  
-  }
 
   virtual bool Initialize(nlohmann::json const & configuration) override
   {
@@ -143,98 +111,7 @@ protected:
     if (application == nullptr)
       return false;
 
-
-	boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
-	chaos::Buffer<char> buffer = chaos::FileTools::LoadFile(configuration_path, true);
-	if (buffer != nullptr)
-	{
-		rapidjson::Document doc;
-		doc.Parse(buffer.data);
-
-    size_t erro = doc.GetErrorOffset();
-
-    rapidjson::ParseErrorCode errcode = doc.GetParseError();
-    if (errcode == rapidjson::ParseErrorCode::kParseErrorNone)
-    {
-
-
-    }
-
-		if (doc.IsObject())
-		{
-			rapidjson::Document::Object & o = doc.GetObject();
-			for (auto it = o.begin() ; it != o.end() ; ++it)
-				HandleNodeObject(o, it);
-
-      rapidjson::Document::MemberIterator it1 = o.FindMember("ccc");
-      if (it1 != o.end())
-      {
-        int i = 0;
-
-
-        ++i;
-      }
-
-      rapidjson::Document::MemberIterator it2 = o.FindMember("value_true");
-      if (it2 != o.end())
-      {
-        
-
-        rapidjson::Value val(rapidjson::kNumberType);
-        val.SetInt(1234);
-
-
-
-        //rapidjson::Value myob(rapidjson::kObjectType);
-        //myob.AddMember("XXX", val, doc.GetAllocator());
-
-        rapidjson::Value & cc = it2->value.SetObject();
-
-        cc.AddMember("XXX", val, doc.GetAllocator());
-
-       // rapidjson::Document::Object & new_ob = 
-      //  new_ob.AddMember("xxxxx")
-
-
-        int i = 0;
-        ++i;
-      }
-
-		}
-
-		int i = 0;
-		if (doc.IsArray())
-		{
-			rapidjson::Document::Array & a = doc.GetArray();
-			for (auto it = a.begin() ; it != a.end() ; ++it)
-				HandleNodeArray(a, it);	
-		}
-		if (doc.IsInt())
-			++i;
-
-		rapidjson::StringBuffer b;
-		b.Clear();
-		rapidjson::Writer<rapidjson::StringBuffer> writer(b);
-		doc.Accept(writer);
-
-		char const * bb = strdup( b.GetString() );
-
-		
-
-
-
-
-		++i;
-	}
-
-
-
-
-
-
-
-
-
+    Test1();
 
     return true;
   }
@@ -253,58 +130,8 @@ protected:
 
 // ===============================================
 
-class A
-{
-public:
-
-	A(int i):value(i)
-	{
-		p = new int(5);	
-	}
-
-	int value = 0;
-
-	int * p = nullptr;
-
-	void F() const
-	{
-		*p = 667;
-	}
-};
-
-class PARAM
-{
-public:
-
-	PARAM(int u){}
-
-	PARAM(A & in_a) : a(&in_a){}
-
-	A * a = nullptr;
-};
 
 
-
-void F(PARAM const & p)
-{
-	if (p.a != nullptr)
-		p.a->F();
-
-
-}
-
-void G(PARAM const & p)
-{
-	F(p);
-
-}
-
-
-
-void TT(chaos::FilePathParam const & p)
-{
-	chaos::FileTools::LoadFile(p, true);
-}
 
 
 
@@ -326,28 +153,28 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 
-	boost::filesystem::path ref = "mareference/bidule/fichier.txt";
+  boost::filesystem::path ref = "mareference/bidule/fichier.txt";
 
-	chaos::FilePathParam P1("truc1.xxx.yyy");
-	chaos::FilePathParam P2(std::string("truc2.yyy"));
-	chaos::FilePathParam P3(boost::filesystem::path("truc3.zzz"));
+  chaos::FilePathParam P1("truc1.xxx.yyy");
+  chaos::FilePathParam P2(std::string("truc2.yyy"));
+  chaos::FilePathParam P3(boost::filesystem::path("truc3.zzz"));
 
-	chaos::FilePathParam P4("truc1.xxx.yyy", ref);
-	chaos::FilePathParam P5(std::string("truc2.yyy"), ref);
-	chaos::FilePathParam P6(boost::filesystem::path("truc3.zzz"), ref);
-
-
+  chaos::FilePathParam P4("truc1.xxx.yyy", ref);
+  chaos::FilePathParam P5(std::string("truc2.yyy"), ref);
+  chaos::FilePathParam P6(boost::filesystem::path("truc3.zzz"), ref);
 
 
-	auto b1 = chaos::FileTools::IsTypedFile(P1, ".xxx");
-	auto b2 = chaos::FileTools::IsTypedFile(P1, ".yyy");
 
-	auto R1 = P1.GetResolvedPath();
-	auto R2 = P2.GetResolvedPath();
-	auto R3 = P3.GetResolvedPath();
-	auto R4 = P4.GetResolvedPath();
-	auto R5 = P5.GetResolvedPath();
-	auto R6 = P6.GetResolvedPath();
+
+  auto b1 = chaos::FileTools::IsTypedFile(P1, ".xxx");
+  auto b2 = chaos::FileTools::IsTypedFile(P1, ".yyy");
+
+  auto R1 = P1.GetResolvedPath();
+  auto R2 = P2.GetResolvedPath();
+  auto R3 = P3.GetResolvedPath();
+  auto R4 = P4.GetResolvedPath();
+  auto R5 = P5.GetResolvedPath();
+  auto R6 = P6.GetResolvedPath();
 
 
   ParticleLayer sl(new ParticleLayerDescExample());

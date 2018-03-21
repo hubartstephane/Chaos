@@ -54,8 +54,8 @@ protected:
 
     boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
 
-    nlohmann::json c1 = chaos::JSONTools::LoadJSONFileRecursive(configuration_path);
-    nlohmann::json c2 = chaos::JSONTools::LoadJSONFileRecursive(configuration_path);
+    nlohmann::json c1 = chaos::JSONTools::LoadJSONFile(configuration_path, false);
+    nlohmann::json c2 = chaos::JSONTools::LoadJSONFile(configuration_path, false);
 
     for (nlohmann::json::const_iterator it = c1.begin(); it != c1.end(); ++it)
     {

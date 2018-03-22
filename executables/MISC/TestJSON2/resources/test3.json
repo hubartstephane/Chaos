@@ -1,3 +1,9 @@
 {
-  "Hello":"Test3"
+	"Hello":"Test3",
+	"test_infinite_recursion":{
+        "@filename":"test1.json"  
+	},    
+	"test_loading_error":{
+        "@filename":"test_error.json"  
+	}   
 }

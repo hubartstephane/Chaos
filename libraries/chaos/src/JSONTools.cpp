@@ -20,11 +20,9 @@ namespace chaos
 
   class JSONRecursiveLoader
   {
-
     class LoaderEntry
     {
     public:
-
       /** the path corresponding to this object */
       boost::filesystem::path path;
       /** the resulting node */
@@ -33,11 +31,9 @@ namespace chaos
       std::vector<nlohmann::json*> to_replaced_nodes;
     };
 
-    static size_t const INVALID_INDEX = std::numeric_limits<size_t>::max();
-
   public:
 
-    nlohmann::json RecursiveLoad(FilePathParam const & path)
+    nlohmann::json LoadJSONFile(FilePathParam const & path)
     {
       nlohmann::json result;
       ComputeSubstitutionChain(path);
@@ -56,8 +52,10 @@ namespace chaos
     {
       LoaderEntry * entry = CreateEntry(path);
       if (entry == nullptr)
-        return;     
+        return;
+      stacked_entries.push_back(entry);
       DoComputeSubstitutionChain(entry, entry->json);
+      stacked_entries.pop_back();
     }
 
     void DoComputeSubstitutionChain(LoaderEntry * entry, nlohmann::json & root)
@@ -78,11 +76,28 @@ namespace chaos
 
               boost::filesystem::path const & resolved_path = replacement_path.GetResolvedPath();
 
-              LoaderEntry * new_entry = FindOrCreateEntry(replacement_path);
-              if (new_entry != nullptr)
+              bool infinite_recursion = false;
+              LoaderEntry * new_entry = FindOrCreateEntry(replacement_path, infinite_recursion);
+              if (infinite_recursion)
               {
+#if _DEBUG
+                root["INFINITE_RECURSION"] = true;
+#endif
+              }
+              else if (new_entry != nullptr)
+              {
+                // insert a substitution
                 new_entry->to_replaced_nodes.push_back(&root);
+                // recurse to new file
+                stacked_entries.push_back(new_entry);
                 DoComputeSubstitutionChain(new_entry, new_entry->json);
+                stacked_entries.pop_back();
+              }
+              else
+              {
+#if _DEBUG
+                root["LOADING_ERROR"] = true;
+#endif
               }
               return;
             }
@@ -100,31 +115,32 @@ namespace chaos
       for (size_t i = 0; i < count; ++i)
         delete(entries[i]);
       entries.clear();
-      stack_states = 0;
-    }
-
-    size_t FindEntryIndex(FilePathParam const & path)
-    {
-      boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-      for (size_t i = 0; i < entries.size(); ++i)
-        if (entries[i]->path == resolved_path)
-          return i;
-      return INVALID_INDEX;
+      stacked_entries.clear();
     }
 
     LoaderEntry * FindEntry(FilePathParam const & path)
     {
-      size_t index = FindEntryIndex(path);
-      if (index == INVALID_INDEX)
-        return nullptr;
-      return entries[index];
+      boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+      for (size_t i = 0; i < entries.size(); ++i)
+        if (entries[i]->path == resolved_path)
+          return entries[i];
+      return nullptr;
     }
 
-    LoaderEntry * FindOrCreateEntry(FilePathParam const & path)
+    LoaderEntry * FindOrCreateEntry(FilePathParam const & path, bool & infinite_recursion)
     {
+      infinite_recursion = false;
+
       LoaderEntry * result = FindEntry(path);
       if (result != nullptr)
+      {
+        if (std::find(stacked_entries.begin(), stacked_entries.end(), result) != stacked_entries.end())
+        {
+          infinite_recursion = true;
+          return nullptr; // infinite recursion detected !
+        }
         return result;
+      }
       return CreateEntry(path);
     }
 
@@ -163,8 +179,8 @@ namespace chaos
 
     /** all the entries implied in the recursive loading */
     std::vector<LoaderEntry*> entries;
-    /** a utility value to detect for infinite recursion */
-    size_t stack_states = 0;
+    /** a value to detect for infinite recursion */
+    std::vector<LoaderEntry*> stacked_entries;
   };
 
 	nlohmann::json JSONTools::LoadJSONFile(FilePathParam const & path, bool recursive)
@@ -174,11 +190,12 @@ namespace chaos
       Buffer<char> buffer = FileTools::LoadFile(path, true);
       if (buffer != nullptr)
         return JSONTools::Parse(buffer.data);
+      return nlohmann::json(); // loading failure
     }
     else
     {
       JSONRecursiveLoader loader;
-      return loader.RecursiveLoad(path);
+      return loader.LoadJSONFile(path);
     }
 	}
 }; // namespace chaos

@@ -1,0 +1,17 @@
+{
+  "Hello":"Test2",
+  "value2":"mon text",
+  "value3":66.6,
+  
+  "un_tableau":[
+    1,2,3, "encore une chaine", 
+    {
+      "test3":{
+        "@filename":"test3.json"  
+      }    
+    }
+  
+  ]
+  
+
+}

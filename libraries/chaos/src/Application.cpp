@@ -25,7 +25,7 @@ namespace chaos
   {
     boost::filesystem::path configuration_path = GetResourcesPath() / "config.json";
 
-    return JSONTools::LoadJSONFile(configuration_path, true);
+    return JSONTools::LoadJSONFile(configuration_path, false);
   }
 
   bool Application::Initialize()

@@ -1,0 +1,17 @@
+{
+  "Hello":"Test1",
+  "value_s": "une chaine",
+  "value_i": 666,
+  "value_f": 667.7,
+  "value_true": true,
+  "value_false": false,
+  "value_null": null,
+  "value_array": [ 1, 2, 3 ],
+  
+  "test2":{
+    "@filename":"test2.json"  
+  },  
+  "test3":{
+    "@filename":"test3.json"  
+  } 
+}

@@ -52,7 +52,7 @@ protected:
     if (application == nullptr)
       return;
 
-    boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
+    boost::filesystem::path configuration_path = application->GetResourcesPath() / "test1.json";
 
     nlohmann::json c1 = chaos::JSONTools::LoadJSONFile(configuration_path, true);
 
@@ -101,10 +101,12 @@ protected:
     boost::filesystem::path result_dir;
     if (chaos::FileTools::CreateTemporaryDirectory("MON_REP_%d", result_dir))
     {
-      std::ofstream stream((result_dir / "mon_fichier.json").string().c_str());
+      boost::filesystem::path filename = result_dir / "mon_fichier.txt";
+
+      std::ofstream stream(filename.string().c_str());
       stream << c1.dump(4);
 
-      chaos::WinTools::ShowFile(result_dir);
+      chaos::WinTools::ShowFile(filename);
     }
 
     application = application;

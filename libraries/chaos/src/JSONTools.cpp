@@ -18,8 +18,6 @@ namespace chaos
 		return nlohmann::json();
 	}
 
-
-
   class JSONRecursiveLoader
   {
 
@@ -58,8 +56,7 @@ namespace chaos
     {
       LoaderEntry * entry = CreateEntry(path);
       if (entry == nullptr)
-        return;
-     
+        return;     
       DoComputeSubstitutionChain(entry, entry->json);
     }
 
@@ -85,6 +82,7 @@ namespace chaos
               if (new_entry != nullptr)
               {
                 new_entry->to_replaced_nodes.push_back(&root);
+                DoComputeSubstitutionChain(new_entry, new_entry->json);
               }
               return;
             }

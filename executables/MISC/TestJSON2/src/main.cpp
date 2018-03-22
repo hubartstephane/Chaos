@@ -54,7 +54,17 @@ protected:
 
     boost::filesystem::path configuration_path = application->GetResourcesPath() / "config.json";
 
-    nlohmann::json c1 = chaos::JSONTools::LoadJSONFile(configuration_path, false);
+    nlohmann::json c1 = chaos::JSONTools::LoadJSONFile(configuration_path, true);
+
+
+
+
+
+
+
+
+
+#if 0
     nlohmann::json c2 = chaos::JSONTools::LoadJSONFile(configuration_path, false);
 
     for (nlohmann::json::const_iterator it = c1.begin(); it != c1.end(); ++it)
@@ -87,7 +97,7 @@ protected:
     c1["INCORPORATION_C2"] = c2; // deep copy ?
 	
 	c2["APRES_INSERTION_DANS_C1"] = 123456; // won't be visible in the generated file => means previous line is a deep copy
-
+#endif
     boost::filesystem::path result_dir;
     if (chaos::FileTools::CreateTemporaryDirectory("MON_REP_%d", result_dir))
     {

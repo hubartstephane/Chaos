@@ -13,7 +13,7 @@ namespace chaos
 		static nlohmann::json Parse(char const * buffer);
 
 		/** Load a JSON file in a recursive whay */
-		static nlohmann::json LoadJSONFile(FilePathParam const & path, bool recursive = true);
+		static nlohmann::json LoadJSONFile(FilePathParam const & path, bool recursive = false);
 
 		/** reading an attribute (catch exceptions) */
 		template<typename T>

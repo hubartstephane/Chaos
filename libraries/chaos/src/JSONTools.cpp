@@ -20,101 +20,167 @@ namespace chaos
 
 
 
-
-
-  static nlohmann::json * LoadAndMakeRecursiveSubstitution(
-    FilePathParam const & path,
-    std::vector<std::pair<boost::filesystem::path, nlohmann::json*>> & json_map,
-    std::vector<size_t> & used_json)
+  class JSONRecursiveLoader
   {
-    size_t const INVALID_INDEX = std::numeric_limits<size_t>::max();
 
-    boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-    // search whether the wanted path is already in the maps
-    // detect infinite loop
-    size_t path_index = INVALID_INDEX;
-    for (size_t i = 0; (i < json_map.size()) && (path_index == INVALID_INDEX) ; ++i)
+    class LoaderEntry
     {
-      if (json_map[i].first == resolved_path) // path already handled
+    public:
+
+      /** the path corresponding to this object */
+      boost::filesystem::path path;
+      /** the resulting node */
+      nlohmann::json json;
+      /** the list of all nodes wanted to be replaced by the content of this file */
+      std::vector<nlohmann::json*> to_replaced_nodes;
+    };
+
+    static size_t const INVALID_INDEX = std::numeric_limits<size_t>::max();
+
+  public:
+
+    nlohmann::json RecursiveLoad(FilePathParam const & path)
+    {
+      nlohmann::json result;
+      ComputeSubstitutionChain(path);
+      if (entries.size() > 0)
       {
-        if (std::find(used_json.begin(), used_json.end(), i) != used_json.end()) // infinite recursion detected
-          return nullptr;
-        path_index = i;
-      }   
+        MakeSubstitutions();
+        result = std::move(entries[0]->json);
+        Clear();
+      }
+      return result;
     }
-    // do we have the node in cache ?
-    if (path_index != INVALID_INDEX)
-      return json_map[path_index].second;
-    // no => we need to make a recursive loading
 
+  protected:
 
-
-
-
-    return nullptr;
-  }
-
-  // XXX : current_file_index, because json_map can be resized
-  //
-  static void MakeRecursiveSubstitution(
-    nlohmann::json * root,
-    size_t current_file_index,
-    std::vector<std::pair<boost::filesystem::path, nlohmann::json*>> & json_map,
-    std::vector<size_t> & used_json)
-  {
-    if (root == nullptr)
-      return;
-
-    if (root->is_object() || root->is_array())
+    void ComputeSubstitutionChain(FilePathParam const & path)
     {
-      if (root->is_object())
-      {
-        nlohmann::json::iterator filename_it = root->find("@filename");
-        if (filename_it != root->end())
-        {
-          if (filename_it->is_string())
-          {
-            boost::filesystem::path const & current_path = json_map[current_file_index].first;
+      LoaderEntry * entry = CreateEntry(path);
+      if (entry == nullptr)
+        return;
+     
+      DoComputeSubstitutionChain(entry, entry->json);
+    }
 
-            nlohmann::json * substitution = LoadAndMakeRecursiveSubstitution(
-              FilePathParam(filename_it->get<std::string>(), current_path),
-              json_map,
-              used_json
-            );
-            std::swap(*root, *substitution);
-            return;
+    void DoComputeSubstitutionChain(LoaderEntry * entry, nlohmann::json & root)
+    {
+      assert(entry != nullptr);
+      if (root.is_object() || root.is_array())
+      {
+        if (root.is_object())
+        {
+          nlohmann::json::iterator filename_it = root.find("@filename"); // replace any object that contains "@filename" = "..."
+          if (filename_it != root.end())
+          {
+            if (filename_it->is_string())
+            {
+              FilePathParam replacement_path(
+                filename_it->get<std::string>(), 
+                entry->path);
+
+              boost::filesystem::path const & resolved_path = replacement_path.GetResolvedPath();
+
+              LoaderEntry * new_entry = FindOrCreateEntry(replacement_path);
+              if (new_entry != nullptr)
+              {
+                new_entry->to_replaced_nodes.push_back(&root);
+              }
+              return;
+            }
           }
         }
+        // recursive part for array and objects
+        for (nlohmann::json::iterator it = root.begin(); it != root.end(); ++it)
+          DoComputeSubstitutionChain(entry, *it);
       }
-      // recursive part for array and objects
-      for (nlohmann::json::iterator it = root->begin(); it != root->end(); ++it)
-        MakeRecursiveSubstitution(&*it, current_file_index, json_map, used_json);
     }
-  }
+
+    void Clear()
+    {
+      size_t count = entries.size();
+      for (size_t i = 0; i < count; ++i)
+        delete(entries[i]);
+      entries.clear();
+      stack_states = 0;
+    }
+
+    size_t FindEntryIndex(FilePathParam const & path)
+    {
+      boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+      for (size_t i = 0; i < entries.size(); ++i)
+        if (entries[i]->path == resolved_path)
+          return i;
+      return INVALID_INDEX;
+    }
+
+    LoaderEntry * FindEntry(FilePathParam const & path)
+    {
+      size_t index = FindEntryIndex(path);
+      if (index == INVALID_INDEX)
+        return nullptr;
+      return entries[index];
+    }
+
+    LoaderEntry * FindOrCreateEntry(FilePathParam const & path)
+    {
+      LoaderEntry * result = FindEntry(path);
+      if (result != nullptr)
+        return result;
+      return CreateEntry(path);
+    }
+
+    LoaderEntry * CreateEntry(FilePathParam const & path)
+    {
+      nlohmann::json new_json = JSONTools::LoadJSONFile(path, false);
+      if (new_json.empty())
+        return nullptr;
+      LoaderEntry * new_entry = new LoaderEntry();
+      if (new_entry == nullptr)
+        return nullptr;
+      new_entry->json = std::move(new_json);
+      new_entry->path = path.GetResolvedPath();
+      entries.push_back(new_entry);
+      return new_entry;
+    }
+
+    void MakeSubstitutions()
+    {
+      for (size_t i = entries.size(); i > 0; --i) // substitutions are done in reverse order to ensure dependancy management
+      {
+        LoaderEntry * entry = entries[i - 1];
+
+        for (size_t j = 0; j < entry->to_replaced_nodes.size(); ++j)
+        {
+          if (j == entry->to_replaced_nodes.size() - 1) // make a MOVE operation for the last substitution
+            *entry->to_replaced_nodes[j] = std::move(entry->json);
+          else // make a COPY operation for every other substitution
+            *entry->to_replaced_nodes[j] = entry->json;
+        }
+      }
+    }
+
+
+  protected:
+
+    /** all the entries implied in the recursive loading */
+    std::vector<LoaderEntry*> entries;
+    /** a utility value to detect for infinite recursion */
+    size_t stack_states = 0;
+  };
 
 	nlohmann::json JSONTools::LoadJSONFile(FilePathParam const & path, bool recursive)
 	{
-		nlohmann::json result;
-		Buffer<char> buffer = FileTools::LoadFile(path, true);
-		if (buffer != nullptr)
-			result = JSONTools::Parse(buffer.data);
-    
-    if (0 && recursive)
+    if (!recursive)
     {
-      std::vector<std::pair<boost::filesystem::path, nlohmann::json*>> json_map; // a mapping between a path and a already parsed JSON content
-      std::vector<size_t> used_json; // due to recursive nature of the substition, we use a 'stack' to detect/avoid infinite recursion
-
-      // make recursive substitution
-      size_t current_file_index = json_map.size();
-      json_map.push_back(std::make_pair(path.GetResolvedPath(), &result));
-      used_json.push_back(current_file_index);
-      MakeRecursiveSubstitution(&result, current_file_index, json_map, used_json);
-      // delete temporary JSON objects
-      for (size_t i = 1; i < json_map.size(); ++i) // we start at 1, because the very first element is allocated on the STACK, not the HEAP
-        delete(json_map[i].second);
+      Buffer<char> buffer = FileTools::LoadFile(path, true);
+      if (buffer != nullptr)
+        return JSONTools::Parse(buffer.data);
     }
-
-    return result;
+    else
+    {
+      JSONRecursiveLoader loader;
+      return loader.RecursiveLoad(path);
+    }
 	}
 }; // namespace chaos

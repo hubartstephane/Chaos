@@ -70,7 +70,7 @@ namespace chaos
 			if (entry.is_object())
 			{
 				auto it = entry.find(name);
-				if (it != entry.end() && it->is_object())
+				if (it != entry.end() && it->is_structured())
 					return &*it;					
 			}
 		}

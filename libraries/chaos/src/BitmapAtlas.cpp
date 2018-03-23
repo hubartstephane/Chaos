@@ -62,7 +62,7 @@ namespace chaos
 			{
 				auto json_entry = nlohmann::json();
 				SaveIntoJSON(element, json_entry);
-				json_entries.push_back(json_entry);
+				json_entries.push_back(std::move(json_entry));
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace chaos
 			{
 				auto json_entry = nlohmann::json();
 				SaveIntoJSON(*element.get(), json_entry);
-				json_entries.push_back(json_entry);
+				json_entries.push_back(std::move(json_entry));
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace chaos
 					continue;
 				auto json_entry = nlohmann::json();
 				SaveIntoJSON(*element, json_entry);
-				json_entries.push_back(json_entry);
+				json_entries.push_back(std::move(json_entry));
 			}
 		}
 
@@ -156,7 +156,6 @@ namespace chaos
 			NamedObject & named_entry = entry;
 			LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-
 			JSONTools::GetAttribute(json_entry, "bitmap_index", entry.bitmap_index, 0);
 			JSONTools::GetAttribute(json_entry, "x", entry.x, 0);
 			JSONTools::GetAttribute(json_entry, "y", entry.y, 0);
@@ -200,7 +199,9 @@ namespace chaos
 			NamedObject & named_entry = entry;
 			LoadFromJSON(named_entry, json_entry); // call 'super' method
 
-			LoadFromJSON(entry.elements, json_entry["elements"]);
+			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
+			if (json_elements != nullptr)
+				LoadFromJSON(entry.elements, *json_elements);
 		}
 
 		void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry)
@@ -228,9 +229,9 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "descender", entry.descender, 0);
 			JSONTools::GetAttribute(json_entry, "face_height", entry.face_height, 0);
 
-
-
-			LoadFromJSON(entry.elements, json_entry["elements"]);
+			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
+			if (json_elements != nullptr)
+				LoadFromJSON(entry.elements, *json_elements);
 		}
 
 		// ========================================================================
@@ -596,7 +597,7 @@ namespace chaos
 					nlohmann::json const * json_bitmap_sets = JSONTools::GetStructure(json, "bitmap_sets");
 					if (json_bitmap_sets != nullptr)
 						LoadFromJSON(bitmap_sets, *json_bitmap_sets);
-					nlohmann::json const * json_character_sets = JSONTools::GetStructure(j, "character_sets");
+					nlohmann::json const * json_character_sets = JSONTools::GetStructure(json, "character_sets");
 					if (json_character_sets != nullptr)
 						LoadFromJSON(character_sets, *json_character_sets);
 					atlas_count = (int)bitmaps.size();

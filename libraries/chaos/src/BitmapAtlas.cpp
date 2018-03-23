@@ -504,9 +504,9 @@ namespace chaos
 			std::ofstream stream(index_filename.string().c_str());
 			if (stream)
 			{
-				nlohmann::json j;
+				nlohmann::json json;
 				// insert the files
-				j["bitmaps"] = nlohmann::json::array();
+				json["bitmaps"] = nlohmann::json::array();
 
 				size_t count = bitmaps.size();
 				for (size_t i = 0; i < count ; ++i)
@@ -521,15 +521,15 @@ namespace chaos
 
 					FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
 
-					j["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, (int)i).string());
+					json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, (int)i).string());
 				}
 				// insert the entries
-				j["bitmap_sets"] = nlohmann::json::array();
-				SaveIntoJSON(bitmap_sets, j["bitmap_sets"]);
-				j["character_sets"] = nlohmann::json::array();
-				SaveIntoJSON(character_sets, j["character_sets"]);
+				json["bitmap_sets"] = nlohmann::json::array();
+				SaveIntoJSON(bitmap_sets, json["bitmap_sets"]);
+				json["character_sets"] = nlohmann::json::array();
+				SaveIntoJSON(character_sets, json["character_sets"]);
 				// format the JSON into string and insert it into stream
-				stream << j.dump(4);
+				stream << json.dump(4);
 				return true;
 			}
 			return false;
@@ -548,8 +548,8 @@ namespace chaos
 				return false;
 
 			// parse JSON file
-			nlohmann::json j = JSONTools::Parse(buf.data);
-			return LoadAtlas(j, target_dir);
+			nlohmann::json json = JSONTools::Parse(buf.data);
+			return LoadAtlas(json, target_dir);
 		}
 
 		bool Atlas::LoadAtlas(nlohmann::json const & json, boost::filesystem::path const & target_dir)

@@ -235,7 +235,7 @@ namespace chaos
     protected:
 
       /** load an atlas from a json object */
-      bool LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & src_dir);
+      bool LoadAtlas(nlohmann::json const & json, boost::filesystem::path const & src_dir);
       /** function to save bitmaps */
       bool SaveAtlasBitmaps(boost::filesystem::path const & target_dir, boost::filesystem::path const & index_filename, boost::filesystem::path const & bitmap_filename) const;
       /** function to save contents */

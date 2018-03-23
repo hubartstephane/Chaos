@@ -228,6 +228,8 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "descender", entry.descender, 0);
 			JSONTools::GetAttribute(json_entry, "face_height", entry.face_height, 0);
 
+
+
 			LoadFromJSON(entry.elements, json_entry["elements"]);
 		}
 
@@ -549,7 +551,7 @@ namespace chaos
 			return LoadAtlas(j, target_dir);
 		}
 
-		bool Atlas::LoadAtlas(nlohmann::json const & j, boost::filesystem::path const & target_dir)
+		bool Atlas::LoadAtlas(nlohmann::json const & json, boost::filesystem::path const & target_dir)
 		{
 			bool result = true;
 
@@ -557,43 +559,49 @@ namespace chaos
 			Clear();
 
 			// load the files
-			nlohmann::json const & json_files = JSONTools::GetStructure(j, "bitmaps");
-			for (auto const json_filename : json_files)
+			nlohmann::json const * json_files = JSONTools::GetStructure(json, "bitmaps");
+			if (json_files != nullptr)
 			{
-				std::string const & filename = json_filename;
+				for (auto const json_filename : *json_files)
+				{
+					std::string const & filename = json_filename;
 
-				FIBITMAP * bitmap = ImageTools::LoadImageFromFile(target_dir / filename);
-				if (bitmap == nullptr)
-				{
-					result = false;
-					break;
-				}
-
-				int width = (int)FreeImage_GetWidth(bitmap);
-				int height = (int)FreeImage_GetHeight(bitmap);
-				if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
-				{
-					dimension.x = width;
-					dimension.y = height;
-				}
-				else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
-				{
-					if (dimension.x != width || dimension.y != height)
+					FIBITMAP * bitmap = ImageTools::LoadImageFromFile(target_dir / filename);
+					if (bitmap == nullptr)
 					{
 						result = false;
 						break;
 					}
-				}
-				bitmaps.push_back(std::move(unique_bitmap_ptr(bitmap)));
-			}
-			// load the entries
-			if (result)
-			{
-				LoadFromJSON(bitmap_sets, JSONTools::GetStructure(j, "bitmap_sets"));
-				LoadFromJSON(character_sets, JSONTools::GetStructure(j, "character_sets"));
-				atlas_count = (int)bitmaps.size();
-			}
 
+					int width = (int)FreeImage_GetWidth(bitmap);
+					int height = (int)FreeImage_GetHeight(bitmap);
+					if (bitmaps.size() == 0) // when reading the very first bitmap store the dimension
+					{
+						dimension.x = width;
+						dimension.y = height;
+					}
+					else if (bitmaps.size() >= 1)  // for additional bitmaps ensure dimensions match the previous
+					{
+						if (dimension.x != width || dimension.y != height)
+						{
+							result = false;
+							break;
+						}
+					}
+					bitmaps.push_back(std::move(unique_bitmap_ptr(bitmap)));
+				}
+				// load the entries
+				if (result)
+				{
+					nlohmann::json const * json_bitmap_sets = JSONTools::GetStructure(json, "bitmap_sets");
+					if (json_bitmap_sets != nullptr)
+						LoadFromJSON(bitmap_sets, *json_bitmap_sets);
+					nlohmann::json const * json_character_sets = JSONTools::GetStructure(j, "character_sets");
+					if (json_character_sets != nullptr)
+						LoadFromJSON(character_sets, *json_character_sets);
+					atlas_count = (int)bitmaps.size();
+				}			
+			}
 			// in case of failure, reset the whole atlas once more
 			if (!result)
 				Clear();

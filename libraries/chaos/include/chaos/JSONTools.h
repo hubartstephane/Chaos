@@ -55,7 +55,9 @@ namespace chaos
 		}
 
 		/** get a sub object from an object */
-		static nlohmann::json GetStructure(nlohmann::json const & entry, char const * name);
+		static nlohmann::json * GetStructure(nlohmann::json & entry, char const * name);
+		/** get a sub object from an object */
+		static nlohmann::json const * GetStructure(nlohmann::json const & entry, char const * name);
 	};
 
 }; // namespace chaos

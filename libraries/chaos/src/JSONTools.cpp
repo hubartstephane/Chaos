@@ -46,23 +46,38 @@ namespace chaos
 		return false;
 	}
 
-	nlohmann::json JSONTools::GetStructure(nlohmann::json const & entry, char const * name)
+	nlohmann::json * JSONTools::GetStructure(nlohmann::json & entry, char const * name)
 	{
-		nlohmann::json result;
 		try
 		{
-			if (entry.is_structured())
+			if (entry.is_object())
 			{
 				auto it = entry.find(name);
-				if (it != entry.end())
-					return *it;				
+				if (it != entry.end() && it->is_object())
+					return &*it;				
 			}
 		}
 		catch (...)
 		{
-
 		}
-		return result;				
+		return nullptr;				
+	}
+
+	nlohmann::json const * JSONTools::GetStructure(nlohmann::json const & entry, char const * name)
+	{
+		try
+		{
+			if (entry.is_object())
+			{
+				auto it = entry.find(name);
+				if (it != entry.end() && it->is_object())
+					return &*it;					
+			}
+		}
+		catch (...)
+		{
+		}
+		return nullptr;				
 	}
 
 	class JSONRecursiveLoader

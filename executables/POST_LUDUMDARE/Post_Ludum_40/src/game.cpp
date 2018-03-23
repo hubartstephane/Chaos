@@ -307,7 +307,7 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 
 
 
-bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & configuration, glm::vec2 const & in_world_size)
+bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * configuration, glm::vec2 const & in_world_size)
 {
   chaos::Application * application = chaos::Application::GetInstance();
   if (application == nullptr)
@@ -317,8 +317,8 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const & config
 
 
 
-
-  InitializeFromConfiguration(configuration);
+  if (configuration != nullptr)
+	InitializeFromConfiguration(*configuration);
 
 	glfw_window = in_glfw_window;
 
@@ -440,18 +440,18 @@ SpriteLayer const * Game::FindSpriteLayer(int layer) const
 
 bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
 {
-	nlohmann::json layers = chaos::JSONTools::GetStructure(json_entry, "layers");
-
-	for (auto const & json_layer : layers)
+	nlohmann::json const * layers = chaos::JSONTools::GetStructure(json_entry, "layers"); 
+	if (layers != nullptr)
 	{
-		SpriteLayer sprite_layer;
-		if (!sprite_layer.LoadFromJSON(json_layer))
-			continue;			
-
-		if (FindSpriteLayer(sprite_layer.layer) != nullptr) // already existing
-			continue;				
-
-		sprite_layers.push_back(sprite_layer);
+		for (auto const & json_layer : *layers)
+		{
+			SpriteLayer sprite_layer;
+			if (!sprite_layer.LoadFromJSON(json_layer))
+				continue;			
+			if (FindSpriteLayer(sprite_layer.layer) != nullptr) // already existing
+				continue;				
+			sprite_layers.push_back(sprite_layer);
+		}
 	}
 	return true;
 }
@@ -598,20 +598,19 @@ ObjectDefinition const * Game::FindObjectDefinition(int id) const
 
 bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 {
-	nlohmann::json objects = chaos::JSONTools::GetStructure(json_entry, "objects");
-
-	for (auto const & json_obj : objects)
+	nlohmann::json const * objects = chaos::JSONTools::GetStructure(json_entry, "objects");
+	if (objects != nullptr)
 	{
-		ObjectDefinition def;
-		if (!def.LoadFromJSON(json_obj))
-			continue;
-
-		if (FindSpriteLayer(def.layer) == nullptr) // layer not existing
-			continue;
-
-		object_definitions.push_back(std::move(def));
+		for (auto const & json_obj : *objects)
+		{
+			ObjectDefinition def;
+			if (!def.LoadFromJSON(json_obj))
+				continue;
+			if (FindSpriteLayer(def.layer) == nullptr) // layer not existing
+				continue;
+			object_definitions.push_back(std::move(def));
+		}	
 	}
-
 	return true;
 }
 

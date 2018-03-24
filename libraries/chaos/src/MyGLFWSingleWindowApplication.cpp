@@ -128,9 +128,9 @@ namespace chaos
       // prepare window creation
       window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
 
-	  nlohmann::json const * window_configuration = JSONTools::GetStructure(configuration, "window");
-	  if (window_configuration != nullptr)
-		TweakHintsFromConfiguration(params, *window_configuration);
+      nlohmann::json const * window_configuration = JSONTools::GetStructure(configuration, "window");
+      if (window_configuration != nullptr)
+        TweakHintsFromConfiguration(params, *window_configuration);
       params.hints.ApplyHints();
 
       // create window
@@ -227,18 +227,18 @@ namespace chaos
       main_clock = new Clock();
       if (main_clock == nullptr)
         return false;
-	  nlohmann::json const * clock_configuration = JSONTools::GetStructure(configuration, "ClockManager");
-	  if (clock_configuration != nullptr)
-		main_clock->InitializeFromConfiguration(*clock_configuration);
+      nlohmann::json const * clock_configuration = JSONTools::GetStructure(configuration, "clock_manager");
+      if (clock_configuration != nullptr)
+        main_clock->InitializeFromConfiguration(*clock_configuration);
 
       // initialize the sound manager
       sound_manager = new SoundManager();
       if (sound_manager == nullptr)
         return false;
       sound_manager->StartManager();
-	  nlohmann::json const * sound_configuration = JSONTools::GetStructure(configuration, "SoundManager");
-	  if (sound_configuration != nullptr)
-		sound_manager->InitializeFromConfiguration(*sound_configuration);
+      nlohmann::json const * sound_configuration = JSONTools::GetStructure(configuration, "sound_manager");
+      if (sound_configuration != nullptr)
+        sound_manager->InitializeFromConfiguration(*sound_configuration);
 
       return true;
     }

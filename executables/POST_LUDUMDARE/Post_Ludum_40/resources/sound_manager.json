@@ -1,0 +1,15 @@
+{
+	"categories":{
+	
+		"cat1":{},
+		"cat2":{
+			"volume:0.5
+		},
+		"cat3":{
+			"name":"mycategory3"
+		
+		}
+
+	}
+
+}

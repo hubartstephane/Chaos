@@ -351,16 +351,16 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	chaos::PlaySoundDesc desc;
 	desc.looping = true;
 
-	music_source = sound_manager->AddSource(resource_path / "Sounds" / "music.ogg");
+	music_source = sound_manager->FindSource("music");
 	if (music_source != nullptr)
 		music_source->PlaySound(desc);
 
-	gameover_source = sound_manager->AddSource(resource_path / "Sounds" / "gameover.ogg");
-	bonus1_source = sound_manager->AddSource(resource_path / "Sounds" / "bonus1.ogg");
-	bonus2_source = sound_manager->AddSource(resource_path / "Sounds" / "bonus2.ogg");
-	collision_source = sound_manager->AddSource(resource_path / "Sounds" / "collision.ogg");
-	start_source = sound_manager->AddSource(resource_path / "Sounds" / "start.ogg");
-	pause_source = sound_manager->AddSource(resource_path / "Sounds" / "pause.ogg");
+	gameover_source = sound_manager->FindSource("gameover");
+	bonus1_source = sound_manager->FindSource("bonus1");
+	bonus2_source = sound_manager->FindSource("bonus2");
+	collision_source = sound_manager->FindSource("collision");
+	start_source = sound_manager->FindSource("start");
+	pause_source = sound_manager->FindSource("pause");
 		
 	return true;
 }

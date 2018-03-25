@@ -1,15 +1,24 @@
 {
 	"categories":{
 	
-		"cat1":{},
-		"cat2":{
+		"@cat1":{},
+		"@cat2":{
 			"volume":0.5
 		},
 		"cat3":{
 			"name":"mycategory3"
 		
 		}
+	},
 
+	"sources":
+	{
+		"music":{"path":"sounds/music.ogg"},
+		"gameover":{"path":"sounds/gameover.ogg"},
+		"bonus1":{"path":"sounds/bonus1.ogg"},
+		"bonus2":{"path":"sounds/bonus2.ogg"},
+		"start":{"path":"sounds/start.ogg"},
+		"pause":{"path":"sounds/pause.ogg"},
+		"collision":{"path":"sounds/collision.ogg"}
 	}
-
 }

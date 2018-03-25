@@ -793,13 +793,20 @@ namespace chaos
     return result;
   }
 
+  // name policy
+  //
+  // If, when creating a source, no name is specified, the manager will use the resource path to generate an automatic path
+  // This is the filename with extension removed
+  //
+  //   "mydir/myfile.ogg" => "myfile"
+
   SoundSource * SoundManager::AddSource(FilePathParam const & in_path)
   {
     boost::filesystem::path const resolved_path = in_path.GetResolvedPath();
-    return AddSource(in_path, resolved_path.string().c_str());
+    return AddSource(in_path, resolved_path.filename().stem().string().c_str());
   }
 
-  SoundSource * SoundManager::AddSource(FilePathParam const & in_path, char const * in_name)
+  SoundSource * SoundManager::AddSource(FilePathParam const & in_path, char const * in_name) // It is valid to have an anonymous source
   {
     // test whether a source with the given name could be inserted
     if (!CanAddSource(in_name))
@@ -889,15 +896,21 @@ namespace chaos
     }
   }
 
+  // JSON name policy
+  //
+  // "key": {}                  => anonymous object = error
+  // "key": {"name":"myname"}   => name given by the member 'name'
+  // "@key" : {}                => the key begins with @ => the name is the key (with @removed)
+
   SoundCategory * SoundManager::AddJSONCategory(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    nlohmann::json::const_iterator name_json_it = json.find("name");
+    nlohmann::json::const_iterator name_json_it = json.find("name"); 
     // cannot create a category without a name
     SoundCategory * category = nullptr;
     if (name_json_it != json.end() && name_json_it->is_string())
       category = AddCategory(name_json_it->get<std::string>().c_str());
-    else if (keyname != nullptr)
-      category = AddCategory(keyname);
+    else if (keyname != nullptr && keyname[0] == '@')
+      category = AddCategory(keyname + 1);
     else 
       return nullptr;
     // initialize the new object
@@ -906,24 +919,28 @@ namespace chaos
     return category;
   }
 
+  // JSON name policy
+  //
+  // same as below except that a name can be generated automatically from the resource filename
+
   SoundSource * SoundManager::AddJSONSource(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    nlohmann::json::const_iterator name_json_it = json.find("name");
-    // cannot create a category without a name
-    SoundSource * source = nullptr;
-
-#if 0
-
-    if (name_json_it != json.end() && name_json_it->is_string())
-      source = AddSource(name_json_it->get<std::string>().c_str());
-    else if (keyname != nullptr)
-      source = AddSource(keyname);
-    else
-    {
+    // get the path of concern 
+    std::string source_path;
+    if (!JSONTools::GetAttribute(json, "path", source_path))
       return nullptr;
-    }
-#endif
 
+    nlohmann::json::const_iterator name_json_it = json.find("name");
+    // create the source
+    FilePathParam path(source_path, config_path);
+
+    SoundSource * source = nullptr;
+    if (name_json_it != json.end() && name_json_it->is_string()) // name given by a member called "name"
+      source = AddSource(path, name_json_it->get<std::string>().c_str());
+    else if (keyname != nullptr && keyname[0] == '@') // name given by the key for this object
+      source = AddSource(path, keyname + 1);
+    else
+      source = AddSource(path); // name deduced from the filename
     // initialize the new object
     if (source != nullptr)
       source->InitializeFromJSON(json, config_path);

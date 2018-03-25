@@ -27,7 +27,7 @@ namespace chaos
     // CALLBACKS
     // ==============================================================
 
-    class SoundCallbacks : public ReferencedObject
+  class SoundCallbacks : public ReferencedObject
   {
     CHAOS_SOUND_ALL_FRIENDS
 
@@ -192,6 +192,9 @@ namespace chaos
     bool IsPendingKill() const;
     /** returns true whether there is a blending */
     bool HasVolumeBlending() const;
+
+    /** loading from a JSON object */
+    virtual bool InitializeFromJSON(nlohmann::json const & json);
 
   protected:
 
@@ -598,6 +601,9 @@ namespace chaos
     void UpdateAllSoundPausePerSource(SoundSource * source);
     /** update all sounds volume per source */
     void UpdateAllSoundVolumePerSource(SoundSource * source);
+
+    /** add a category from a JSON object */
+    SoundCategory * AddJSONCategory(char const * keyname, nlohmann::json const & json);
 
   protected:
 

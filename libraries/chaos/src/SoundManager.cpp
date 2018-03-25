@@ -2,6 +2,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -246,6 +247,16 @@ namespace chaos
   bool SoundObject::HasVolumeBlending() const
   {
     return (blend_desc.blend_type != BlendVolumeDesc::BLEND_NONE);
+  }
+
+  bool SoundObject::InitializeFromJSON(nlohmann::json const & json)
+  {
+    float json_volume = 0.0f;
+    JSONTools::GetAttribute(json, "volume", json_volume);
+    SetVolume(json_volume);
+
+
+    return true;
   }
 
   // ==============================================================
@@ -880,8 +891,45 @@ namespace chaos
     }
   }
 
+  SoundCategory * SoundManager::AddJSONCategory(char const * keyname, nlohmann::json const & json)
+  {
+    nlohmann::json::const_iterator name_json_it = json.find("name");
+    // cannot create a category without a name
+    SoundCategory * category = nullptr;
+    if (name_json_it != json.end() && name_json_it->is_string())
+      category = AddCategory(name_json_it->get<std::string>().c_str());
+    else if (keyname != nullptr)
+      category = AddCategory(keyname);
+    else 
+      return nullptr;
+    // initialize the new object
+    if (category != nullptr)
+      category->InitializeFromJSON(json);
+    return category;
+  }
+
   bool SoundManager::InitializeFromConfiguration(nlohmann::json const & configuration)
   {
+    nlohmann::json const * categories_json = JSONTools::GetStructure(configuration, "categories");
+    if (categories_json != nullptr)
+    {
+      for (nlohmann::json::const_iterator it = categories_json->begin(); it != categories_json->end(); ++it)
+      {
+        if (categories_json->is_array())
+        {
+          AddJSONCategory(nullptr, *it);
+        }
+        else if (categories_json->is_object())
+        {
+          AddJSONCategory(it.key().c_str(), *it);
+        }
+      }
+
+
+
+
+    }
+
 
     return true;
   }

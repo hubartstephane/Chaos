@@ -7,5 +7,5 @@
 
   "game":{ "@filename":"game.json"},
 
-  "sound_manager":{ "@filename":"sound_managerc.json"}
+  "sound_manager":{ "@filename":"sound_manager.json"}
 }

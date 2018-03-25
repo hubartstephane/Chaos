@@ -249,13 +249,11 @@ namespace chaos
     return (blend_desc.blend_type != BlendVolumeDesc::BLEND_NONE);
   }
 
-  bool SoundObject::InitializeFromJSON(nlohmann::json const & json)
+  bool SoundObject::InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    float json_volume = 0.0f;
-    JSONTools::GetAttribute(json, "volume", json_volume);
+    float json_volume = 1.0f;
+    JSONTools::GetAttribute(json, "volume", json_volume, 1.0f);
     SetVolume(json_volume);
-
-
     return true;
   }
 
@@ -891,7 +889,7 @@ namespace chaos
     }
   }
 
-  SoundCategory * SoundManager::AddJSONCategory(char const * keyname, nlohmann::json const & json)
+  SoundCategory * SoundManager::AddJSONCategory(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
     nlohmann::json::const_iterator name_json_it = json.find("name");
     // cannot create a category without a name
@@ -904,33 +902,75 @@ namespace chaos
       return nullptr;
     // initialize the new object
     if (category != nullptr)
-      category->InitializeFromJSON(json);
+      category->InitializeFromJSON(json, config_path);
     return category;
   }
 
-  bool SoundManager::InitializeFromConfiguration(nlohmann::json const & configuration)
+  SoundSource * SoundManager::AddJSONSource(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    nlohmann::json const * categories_json = JSONTools::GetStructure(configuration, "categories");
+    nlohmann::json::const_iterator name_json_it = json.find("name");
+    // cannot create a category without a name
+    SoundSource * source = nullptr;
+
+#if 0
+
+    if (name_json_it != json.end() && name_json_it->is_string())
+      source = AddSource(name_json_it->get<std::string>().c_str());
+    else if (keyname != nullptr)
+      source = AddSource(keyname);
+    else
+    {
+      return nullptr;
+    }
+#endif
+
+    // initialize the new object
+    if (source != nullptr)
+      source->InitializeFromJSON(json, config_path);
+    return source;
+  }
+
+
+
+
+
+
+
+  bool SoundManager::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+  {
+    // initialize the categories
+    nlohmann::json const * categories_json = JSONTools::GetStructure(config, "categories");
     if (categories_json != nullptr)
     {
       for (nlohmann::json::const_iterator it = categories_json->begin(); it != categories_json->end(); ++it)
       {
         if (categories_json->is_array())
         {
-          AddJSONCategory(nullptr, *it);
+          AddJSONCategory(nullptr, *it, config_path);
         }
         else if (categories_json->is_object())
         {
-          AddJSONCategory(it.key().c_str(), *it);
+          AddJSONCategory(it.key().c_str(), *it, config_path);
         }
       }
 
-
-
-
+      // Initialize the sources
+      nlohmann::json const * sources_json = JSONTools::GetStructure(config, "sources");
+      if (sources_json != nullptr)
+      {
+        for (nlohmann::json::const_iterator it = sources_json->begin(); it != sources_json->end(); ++it)
+        {
+          if (sources_json->is_array())
+          {
+            AddJSONSource(nullptr, *it, config_path);
+          }
+          else if (sources_json->is_object())
+          {
+            AddJSONSource(it.key().c_str(), *it, config_path);
+          }
+        }
+      }
     }
-
-
     return true;
   }
 

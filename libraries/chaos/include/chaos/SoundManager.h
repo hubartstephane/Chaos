@@ -194,7 +194,7 @@ namespace chaos
     bool HasVolumeBlending() const;
 
     /** loading from a JSON object */
-    virtual bool InitializeFromJSON(nlohmann::json const & json);
+    virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
   protected:
 
@@ -425,7 +425,7 @@ namespace chaos
     bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
 
     /** initialize the manager from a configuration file */
-    bool InitializeFromConfiguration(nlohmann::json const & configuration);
+    bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
   protected:
 
@@ -603,7 +603,9 @@ namespace chaos
     void UpdateAllSoundVolumePerSource(SoundSource * source);
 
     /** add a category from a JSON object */
-    SoundCategory * AddJSONCategory(char const * keyname, nlohmann::json const & json);
+    SoundCategory * AddJSONCategory(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path);
+    /** add a source from a JSON object */
+    SoundSource * AddJSONSource(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path);
 
   protected:
 

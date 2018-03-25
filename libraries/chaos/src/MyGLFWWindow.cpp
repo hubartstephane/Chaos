@@ -197,11 +197,11 @@ namespace chaos
       }
     }
 
-    bool Window::PrepareWindow(GLFWwindow * in_glfw_window, bool in_double_buffer, nlohmann::json const & in_configuration)
+    bool Window::PrepareWindow(GLFWwindow * in_glfw_window, bool in_double_buffer, nlohmann::json const & config, boost::filesystem::path const & config_path)
     {
       BindGLFWWindow(in_glfw_window);
       double_buffer = in_double_buffer;
-      return Initialize(in_configuration);
+      return Initialize(config, config_path);
     }
 
   }; // namespace MyGLFW

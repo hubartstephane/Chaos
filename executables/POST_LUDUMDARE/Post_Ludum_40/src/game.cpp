@@ -307,7 +307,7 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 
 
 
-bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * configuration, glm::vec2 const & in_world_size)
+bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size)
 {
   chaos::Application * application = chaos::Application::GetInstance();
   if (application == nullptr)
@@ -317,8 +317,8 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config
 
 
 
-  if (configuration != nullptr)
-	InitializeFromConfiguration(*configuration);
+  if (config != nullptr)
+	  InitializeFromConfiguration(*config, config_path);
 
 	glfw_window = in_glfw_window;
 
@@ -917,18 +917,18 @@ glm::vec2 Game::GetPlayerInitialScreenPosition() const
 	return glm::vec2(0.0f, 0.0f);	
 }
 
-void Game::InitializeFromConfiguration(nlohmann::json const & configuration)
+void Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-  chaos::JSONTools::GetAttribute(configuration, "level_particle_increment", level_particle_increment, 10);
-  chaos::JSONTools::GetAttribute(configuration, "max_particles_per_frame", max_particles_per_frame, 100);
-  chaos::JSONTools::GetAttribute(configuration, "initial_life", initial_life, 50);
-  chaos::JSONTools::GetAttribute(configuration, "initial_level", initial_level, 0);
-  chaos::JSONTools::GetAttribute(configuration, "initial_player_screen_speed", initial_player_screen_speed, 500.0f);
-  chaos::JSONTools::GetAttribute(configuration, "initial_player_absolute_speed", initial_player_absolute_speed, 50.0f);
-  chaos::JSONTools::GetAttribute(configuration, "delta_speed", delta_speed, 7.0f);
-  chaos::JSONTools::GetAttribute(configuration, "max_speed", max_speed, 500.0f);
-  chaos::JSONTools::GetAttribute(configuration, "slowdown_factor", slowdown_factor, 500.0f);
-  chaos::JSONTools::GetAttribute(configuration, "acceleration_factor", acceleration_factor, 500.0f);
+  chaos::JSONTools::GetAttribute(config, "level_particle_increment", level_particle_increment, 10);
+  chaos::JSONTools::GetAttribute(config, "max_particles_per_frame", max_particles_per_frame, 100);
+  chaos::JSONTools::GetAttribute(config, "initial_life", initial_life, 50);
+  chaos::JSONTools::GetAttribute(config, "initial_level", initial_level, 0);
+  chaos::JSONTools::GetAttribute(config, "initial_player_screen_speed", initial_player_screen_speed, 500.0f);
+  chaos::JSONTools::GetAttribute(config, "initial_player_absolute_speed", initial_player_absolute_speed, 50.0f);
+  chaos::JSONTools::GetAttribute(config, "delta_speed", delta_speed, 7.0f);
+  chaos::JSONTools::GetAttribute(config, "max_speed", max_speed, 500.0f);
+  chaos::JSONTools::GetAttribute(config, "slowdown_factor", slowdown_factor, 500.0f);
+  chaos::JSONTools::GetAttribute(config, "acceleration_factor", acceleration_factor, 500.0f);
 
   
 }

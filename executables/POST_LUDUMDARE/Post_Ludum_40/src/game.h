@@ -65,7 +65,7 @@ public:
 
 	void Tick(double delta_time);
 
-	bool Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * configuration, glm::vec2 const & in_world_size);
+	bool Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size);
 
 	void Finalize();
 
@@ -81,7 +81,7 @@ public:
 
 protected:
 
-  void InitializeFromConfiguration(nlohmann::json const & configuration);
+  void InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	void UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos);
 

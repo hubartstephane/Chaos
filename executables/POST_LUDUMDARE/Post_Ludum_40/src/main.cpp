@@ -72,7 +72,7 @@ protected:
 		game = nullptr;
 	}
 
-	virtual bool Initialize(nlohmann::json const & configuration) override
+	virtual bool Initialize(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{   
 		game = new Game;
 		if (game == nullptr)
@@ -80,7 +80,7 @@ protected:
 
 		float WORLD_X = 1000.0f;
 		glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-		if (!game->Initialize(glfw_window, chaos::JSONTools::GetStructure(configuration, "game"), world_size))
+		if (!game->Initialize(glfw_window, chaos::JSONTools::GetStructure(config, "game"), config_path, world_size))
 			return false;
 
 		return true;

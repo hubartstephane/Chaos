@@ -163,7 +163,7 @@ namespace chaos
 
           // the loop
           bool double_buffer = params.hints.double_buffer ? true : false;
-          result = window->PrepareWindow(glfw_window, double_buffer, configuration);
+          result = window->PrepareWindow(glfw_window, double_buffer, configuration, configuration_path);
           if (result)
           {
             // x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
@@ -227,18 +227,18 @@ namespace chaos
       main_clock = new Clock();
       if (main_clock == nullptr)
         return false;
-      nlohmann::json const * clock_configuration = JSONTools::GetStructure(configuration, "clock_manager");
-      if (clock_configuration != nullptr)
-        main_clock->InitializeFromConfiguration(*clock_configuration);
+      nlohmann::json const * clock_config = JSONTools::GetStructure(configuration, "clocks");
+      if (clock_config != nullptr)
+        main_clock->InitializeFromConfiguration(*clock_config, configuration_path);
 
       // initialize the sound manager
       sound_manager = new SoundManager();
       if (sound_manager == nullptr)
         return false;
       sound_manager->StartManager();
-      nlohmann::json const * sound_configuration = JSONTools::GetStructure(configuration, "sound_manager");
-      if (sound_configuration != nullptr)
-        sound_manager->InitializeFromConfiguration(*sound_configuration);
+      nlohmann::json const * sound_config = JSONTools::GetStructure(configuration, "sounds");
+      if (sound_config != nullptr)
+        sound_manager->InitializeFromConfiguration(*sound_config, configuration_path);
 
       return true;
     }

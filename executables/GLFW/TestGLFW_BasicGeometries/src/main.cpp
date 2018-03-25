@@ -688,7 +688,7 @@ protected:
     return loader.GenerateProgramObject();
   }
 
-  virtual bool Initialize(nlohmann::json const & configuration) override
+  virtual bool Initialize(nlohmann::json const & config, boost::filesystem::path const & config_path) override
   {
     chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
     if (application == nullptr)

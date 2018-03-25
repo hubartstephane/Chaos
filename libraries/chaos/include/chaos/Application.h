@@ -68,7 +68,7 @@ protected:
   virtual bool FinalizeManagers();
 
   /** loading the configuration file */
-  nlohmann::json LoadConfigurationFile();
+  void LoadConfigurationFile();
 
 protected:
 
@@ -90,6 +90,8 @@ protected:
 
   /** the JSON configuration file if existing */
   nlohmann::json configuration;
+  /** the path where the configuration file is */
+  boost::filesystem::path configuration_path;
 
   /** the file manager */
   boost::intrusive_ptr<FileManager> file_manager;

@@ -193,9 +193,6 @@ namespace chaos
     /** returns true whether there is a blending */
     bool HasVolumeBlending() const;
 
-    /** loading from a JSON object */
-    virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
-
   protected:
 
     /** internal tick the object */
@@ -213,6 +210,9 @@ namespace chaos
     bool UpdateFinishedState();
     /** called at blend terminaison */
     void OnBlendFinished();
+
+    /** loading from a JSON object */
+    virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
   protected:
 
@@ -254,6 +254,14 @@ namespace chaos
     /** change the object volume */
     virtual void SetVolume(float in_volume) override;
 
+    /** get the category */
+    SoundCategory * GetDefaultCategory() { return default_category; }
+    /** get the category */
+    SoundCategory const * GetDefaultCategory() const { return default_category; }
+
+    /** set the category */
+    bool SetDefaultCategory(SoundCategory * in_category);
+
   protected:
 
     /** unbind from manager */
@@ -263,12 +271,17 @@ namespace chaos
     /** the sound generation method */
     virtual Sound * GenerateSound();
 
+    /** loading from a JSON object */
+    virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+
   protected:
 
     /** the resource path */
     boost::filesystem::path path;
     /** the irrklang source */
     boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
+    /** the default category */
+    SoundCategory * default_category = nullptr;
   };
 
   // ==============================================================
@@ -527,6 +540,8 @@ namespace chaos
     void DestroyAllSoundPerCategory(SoundCategory * category);
     /** destroy all sounds with a given source */
     void DestroyAllSoundPerSource(SoundSource * source);
+    /** remove the category of all sources using given argument */
+    void UpdateAllSourcesPerCategory(SoundCategory * category);
 
     /** internal tick list of objects */
     template<typename T>

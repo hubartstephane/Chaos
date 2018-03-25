@@ -361,7 +361,6 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 	collision_source = sound_manager->FindSource("collision");
 	start_source = sound_manager->FindSource("start");
 	pause_source = sound_manager->FindSource("pause");
-		
 	return true;
 }
 

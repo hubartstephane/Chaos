@@ -251,6 +251,7 @@ namespace chaos
 
   bool SoundObject::InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
+    assert(IsAttachedToManager());
     float json_volume = 1.0f;
     JSONTools::GetAttribute(json, "volume", json_volume, 1.0f);
     SetVolume(json_volume);
@@ -286,6 +287,8 @@ namespace chaos
         if (sound_category == nullptr) // there is a category requirement by name that does not exist
           return nullptr;
       }
+      else
+        sound_category = default_category;
     }
 
     // test whether the category has the same manager as the source
@@ -347,6 +350,38 @@ namespace chaos
       GetManager()->UpdateAllSoundVolumePerSource(this);
   }
 
+  bool SoundSource::SetDefaultCategory(SoundCategory * in_category)
+  {
+    // a detached source cannot have a category
+    if (!IsAttachedToManager())
+      return false;
+    // a detached category cannot be used
+    if (in_category != nullptr)
+    {
+      if (!in_category->IsAttachedToManager())
+        return false;
+      if (sound_manager != in_category->sound_manager) // source and category must have the same manager
+        return false;
+    }
+    default_category = in_category;
+    return true;
+  }
+
+  bool SoundSource::InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+    if (!SoundObject::InitializeFromJSON(json, config_path))
+      return false;
+    // update the default category
+    std::string category_name;
+    if (JSONTools::GetAttribute(json, "category", category_name))
+    {
+      SoundCategory * category = sound_manager->FindCategory(category_name.c_str());
+      if (category != nullptr)
+        SetDefaultCategory(category);
+    }
+    return true;
+  }
+
   // ==============================================================
   // CATEGORY
   // ==============================================================
@@ -354,6 +389,7 @@ namespace chaos
   void SoundCategory::OnRemovedFromManager()
   {
     sound_manager->DestroyAllSoundPerCategory(this);
+    sound_manager->UpdateAllSourcesPerCategory(this);
     SoundObject::OnRemovedFromManager();
   }
 
@@ -723,6 +759,21 @@ namespace chaos
     return CanAddObject<Sound>(in_name, &SoundManager::FindSound);
   }
 
+  void SoundManager::UpdateAllSourcesPerCategory(SoundCategory * category)
+  {
+    assert(category != nullptr);
+
+    size_t count = sources.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+      SoundSource * source = sources[i].get();
+      if (source == nullptr)
+        continue;
+      if (source->default_category == category) // notify the source that its default category is being destroyed
+        source->default_category = nullptr;
+    }
+  }
+
   void SoundManager::DestroyAllSoundPerCategory(SoundCategory * category)
   {
     assert(category != nullptr);
@@ -946,12 +997,6 @@ namespace chaos
       source->InitializeFromJSON(json, config_path);
     return source;
   }
-
-
-
-
-
-
 
   bool SoundManager::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
   {

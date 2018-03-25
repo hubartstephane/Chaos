@@ -12,7 +12,7 @@
 	},
 
 	"sources":[
-		{"path":"sounds/music.ogg"},
+		{"path":"sounds/music.ogg", "category":"cat2"},
 		{"path":"sounds/gameover.ogg"},
 		{"path":"sounds/bonus1.ogg"},
 		{"path":"sounds/bonus2.ogg"},		

@@ -533,9 +533,9 @@ namespace chaos
     void UpdateAllSoundVolumePerSource(SoundSource * source);
 
     /** add a category from a JSON object */
-    SoundCategory * AddJSONCategory(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path);
+    SoundCategory * AddJSONCategory(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
     /** add a source from a JSON object */
-    SoundSource * AddJSONSource(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path);
+    SoundSource * AddJSONSource(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 
     /** load the categories from configuration */
     bool InitializeCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);

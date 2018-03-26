@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/Manager.h>
 #include <chaos/Texture.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/RenderMaterial.h>
@@ -9,7 +10,7 @@
 
 namespace chaos
 {
-  class GPUResourceManager : public ReferencedObject
+  class GPUResourceManager : public Manager
   {
   public:
 
@@ -36,6 +37,13 @@ namespace chaos
     bool InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
     /** load the materials from configuration */
     bool InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+
+    /** add a texture from a JSON object */
+    Texture * AddJSONTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+    /** add a program from a JSON object */
+    GPUProgram * AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+    /** add a material from a JSON object */
+    RenderMaterial * AddJSONMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 
   protected:
 

@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/FilePath.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -20,6 +21,37 @@ namespace chaos
     virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
   protected:
+
+    /** an utility method to initialize a single object in an JSON array/object */
+    template<typename FUNC>
+    void InitializeOneObjectFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC add_func)
+    {
+      nlohmann::json::const_iterator name_json_it = json.find("name"); 
+      if (name_json_it != json.end() && name_json_it->is_string())             // 1 - try to find a member 'name'
+        add_func(name_json_it->get<std::string>().c_str(), json, config_path);
+      else if (keyname != nullptr && keyname[0] == '@')                        // 2 - try to use the key
+        add_func(keyname + 1, json, config_path);
+      else
+        add_func(nullptr, json, config_path);                                  // 3 - try to add an anonymous object
+    }
+
+    /** an utility method to initialize a list of objects from a JSON object or array */
+    template<typename FUNC>
+    bool InitializeObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC add_func)
+    {
+      nlohmann::json const * objects_json = JSONTools::GetStructure(json, object_names);
+      if (objects_json != nullptr)
+      {
+        for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
+        {
+          if (objects_json->is_array())
+            InitializeOneObjectFromConfiguration(nullptr, *it, config_path, add_func);
+          else if (objects_json->is_object())
+            InitializeOneObjectFromConfiguration(it.key().c_str(), *it, config_path, add_func);
+        }
+      }
+      return true;
+    }
 
     /** utility function to remove an object from a list */
     template<typename T, typename FUNC>

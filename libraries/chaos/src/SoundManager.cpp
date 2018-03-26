@@ -971,17 +971,13 @@ namespace chaos
   // "key": {"name":"myname"}   => name given by the member 'name'
   // "@key" : {}                => the key begins with @ => the name is the key (with @removed)
 
-  SoundCategory * SoundManager::AddJSONCategory(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path)
+  SoundCategory * SoundManager::AddJSONCategory(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    nlohmann::json::const_iterator name_json_it = json.find("name"); 
-    // cannot create a category without a name
-    SoundCategory * category = nullptr;
-    if (name_json_it != json.end() && name_json_it->is_string())
-      category = AddCategory(name_json_it->get<std::string>().c_str());
-    else if (keyname != nullptr && keyname[0] == '@')
-      category = AddCategory(keyname + 1);
-    else 
+    // no anonymous category
+    if (name == nullptr)
       return nullptr;
+    // create the object
+    SoundCategory * category = AddCategory(name);
     // initialize the new object
     if (category != nullptr)
       category->InitializeFromJSON(json, config_path);
@@ -992,22 +988,17 @@ namespace chaos
   //
   // same as below except that a name can be generated automatically from the resource filename
 
-  SoundSource * SoundManager::AddJSONSource(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path)
+  SoundSource * SoundManager::AddJSONSource(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
     // get the path of concern 
     std::string source_path;
     if (!JSONTools::GetAttribute(json, "path", source_path))
       return nullptr;
-
-    nlohmann::json::const_iterator name_json_it = json.find("name");
     // create the source
     FilePathParam path(source_path, config_path);
-
     SoundSource * source = nullptr;
-    if (name_json_it != json.end() && name_json_it->is_string()) // name given by a member called "name"
-      source = AddSource(path, name_json_it->get<std::string>().c_str());
-    else if (keyname != nullptr && keyname[0] == '@') // name given by the key for this object
-      source = AddSource(path, keyname + 1);
+    if (name != nullptr) // name given by a member called "name"
+      source = AddSource(path, name);
     else
       source = AddSource(path); // name deduced from the filename
     // initialize the new object
@@ -1029,34 +1020,28 @@ namespace chaos
 
   bool SoundManager::InitializeCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    nlohmann::json const * categories_json = JSONTools::GetStructure(json, "categories");
-    if (categories_json != nullptr)
-    {
-      for (nlohmann::json::const_iterator it = categories_json->begin(); it != categories_json->end(); ++it)
+    return InitializeObjectsFromConfiguration(
+      "categories", 
+      json, 
+      config_path, 
+      [this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
       {
-        if (categories_json->is_array())
-          AddJSONCategory(nullptr, *it, config_path);
-        else if (categories_json->is_object())
-          AddJSONCategory(it.key().c_str(), *it, config_path);
+        AddJSONCategory(name, obj_json, path);
       }
-    }
-    return true;
+    );
   }
 
   bool SoundManager::InitializeSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    nlohmann::json const * sources_json = JSONTools::GetStructure(json, "sources");
-    if (sources_json != nullptr)
-    {
-      for (nlohmann::json::const_iterator it = sources_json->begin(); it != sources_json->end(); ++it)
+    return InitializeObjectsFromConfiguration(
+      "sources",
+      json,
+      config_path,
+      [this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
       {
-        if (sources_json->is_array())
-          AddJSONSource(nullptr, *it, config_path);
-        else if (sources_json->is_object())
-          AddJSONSource(it.key().c_str(), *it, config_path);
+        AddJSONSource(name, obj_json, path);
       }
-    }
-    return true;
+    );
   }
 
 }; // namespace chaos

@@ -51,20 +51,63 @@ namespace chaos
 
   bool GPUResourceManager::InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-
+    return InitializeObjectsFromConfiguration(
+      "textures", 
+      json, 
+      config_path, 
+      [this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
+      {
+        AddJSONTexture(name, obj_json, path);
+      }
+    );
     return true;
   }
 
   bool GPUResourceManager::InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-
+    return InitializeObjectsFromConfiguration(
+      "programs", 
+      json, 
+      config_path, 
+      [this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
+      {
+        AddJSONProgram(name, obj_json, path);
+      }
+    );
     return true;
   }
 
   bool GPUResourceManager::InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-
+    return InitializeObjectsFromConfiguration(
+      "materials", 
+      json, 
+      config_path, 
+      [this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
+      {
+        AddJSONMaterial(name, obj_json, path);
+      }
+    );
     return true;
   }
+
+  Texture * GPUResourceManager::AddJSONTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+
+    return nullptr;
+  }
+
+  GPUProgram * GPUResourceManager::AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+
+    return nullptr;
+  }
+
+  RenderMaterial * GPUResourceManager::AddJSONMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+
+    return nullptr;
+  }
+
 
 }; // namespace chaos

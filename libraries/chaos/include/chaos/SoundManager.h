@@ -4,6 +4,8 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/IrrklangTools.h>
 #include <chaos/FilePath.h>
+#include <chaos/Manager.h>
+
 
 // ==============================================================
 // FORWARD DECLARATION / FRIENDSHIP MACROS
@@ -387,7 +389,7 @@ namespace chaos
   // MANAGER
   // ==============================================================
 
-  class SoundManager : public ReferencedObject
+  class SoundManager : public Manager
   {
     CHAOS_SOUND_ALL_FRIENDS
 
@@ -438,7 +440,7 @@ namespace chaos
     bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
 
     /** initialize the manager from a configuration file */
-    bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+    virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
   protected:
 
@@ -457,87 +459,7 @@ namespace chaos
     void RemoveSource(size_t index);
 
     /** called whenever an object is being removed */
-    virtual void OnObjectRemovedFromManager(SoundObject * object);
-
-    /** utility function to remove a sound object from a list */
-    template<typename T>
-    void DoRemoveObject(size_t index, T & vector)
-    {
-      // ensure the index is valid
-      size_t count = vector.size();
-      if (index >= count)
-        return;
-      // copy the intrusive_ptr to prevent the destruction
-      auto object = vector[index];
-      // remove the object from the array
-      if (index != count - 1)
-        vector[index] = vector[count - 1];
-      vector.pop_back();
-      // callback then let the unreferencement manage the object lifetime
-      OnObjectRemovedFromManager(object.get());
-    }
-
-    /** detach all elements from a list */
-    template<typename T>
-    void DetachAllObjectsFromList(T & vector)
-    {
-      while (vector.size() > 0)
-      {
-        // copy the intrusive_ptr to prevent the destruction
-        auto object = vector.back();
-        // remove the object from the array
-        vector.pop_back();
-        // callback then let the unreferencement manage the object lifetime
-        OnObjectRemovedFromManager(object.get());
-      }
-    }
-
-    template<typename T, typename U>
-    static size_t FindObjectIndexInVector(T * object, U const & vector)
-    {
-      assert(object != nullptr);
-      size_t count = vector.size();
-      for (size_t i = 0; i < count; ++i)
-        if (vector[i].get() == object)
-          return i;
-      return count;
-    }
-    /** a generic function to find an object in a list by its name */
-    template<typename T, typename U>
-    static T * FindObjectByName(char const * name, U & objects)
-    {
-      if (name == nullptr)
-        return nullptr;
-
-      size_t count = objects.size();
-      for (size_t i = 0; i < count; ++i)
-      {
-        T * object = objects[i].get();
-        if (object == nullptr)
-          continue;
-        if (object->name == name)
-          return object;
-      }
-      return nullptr;
-    }
-
-    /** a generic function to find an object in a list by its path */
-    template<typename T, typename U>
-    static T * FindObjectByPath(FilePathParam const & in_path, U & objects)
-    {
-      boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
-
-      size_t count = objects.size();
-      for (size_t i = 0; i < count; ++i)
-      {
-        T * obj = objects[i].get();
-        if (obj == nullptr)
-          continue;
-        if (obj->GetPath() == resolved_path)
-          return obj;
-      }
-      return nullptr;
-    }
+    static void OnObjectRemovedFromManager(SoundObject * object);
 
     /** destroy all sounds in a category */
     void DestroyAllSoundPerCategory(SoundCategory * category);
@@ -599,17 +521,7 @@ namespace chaos
     }
 
     /** simple method to initialize and insert a source */
-    template<typename T>
-    T * DoAddSource(T * in_source, char const * in_name)
-    {
-      if (in_source == nullptr)
-        return nullptr;
-      if (in_name != nullptr)
-        in_source->name = in_name;
-      in_source->sound_manager = this;
-      sources.push_back(in_source);
-      return in_source;
-    }
+    SoundSource * DoAddSource(SoundSource * in_source, char const * in_name);
 
     /** update all sounds pause per category */
     void UpdateAllSoundPausePerCategory(SoundCategory * category);

@@ -653,9 +653,9 @@ namespace chaos
       return false;
 
     // empty the managed objects list
-    DetachAllObjectsFromList(sounds); // destroy sounds first to make other list destructions faster
-    DetachAllObjectsFromList(categories);
-    DetachAllObjectsFromList(sources);
+    RemoveAllObjectsFromList(sounds, &SoundManager::OnObjectRemovedFromManager); // destroy sounds first to make other list destructions faster
+    RemoveAllObjectsFromList(categories, &SoundManager::OnObjectRemovedFromManager);
+    RemoveAllObjectsFromList(sources, &SoundManager::OnObjectRemovedFromManager);
 
     // clean irrklang resources
     irrklang_devices = nullptr;
@@ -689,7 +689,7 @@ namespace chaos
 
   void SoundManager::RemoveCategory(size_t index)
   {
-    DoRemoveObject(index, categories);
+    DoRemoveObject(index, categories, &SoundManager::OnObjectRemovedFromManager);
   }
 
   void SoundManager::RemoveSound(Sound * in_sound)
@@ -699,7 +699,7 @@ namespace chaos
 
   void SoundManager::RemoveSound(size_t index)
   {
-    DoRemoveObject(index, sounds);
+    DoRemoveObject(index, sounds, &SoundManager::OnObjectRemovedFromManager);
   }
 
   void SoundManager::RemoveSource(SoundSource * in_source)
@@ -709,7 +709,7 @@ namespace chaos
 
   void SoundManager::RemoveSource(size_t index)
   {
-    DoRemoveObject(index, sources);
+    DoRemoveObject(index, sources, &SoundManager::OnObjectRemovedFromManager);
   }
 
   SoundSource * SoundManager::FindSource(char const * name)
@@ -857,6 +857,17 @@ namespace chaos
   // This is the filename with extension removed
   //
   //   "mydir/myfile.ogg" => "myfile"
+
+  SoundSource * SoundManager::DoAddSource(SoundSource * in_source, char const * in_name)
+  {
+    if (in_source == nullptr)
+      return nullptr;
+    if (in_name != nullptr)
+      in_source->name = in_name;
+    in_source->sound_manager = this;
+    sources.push_back(in_source);
+    return in_source;
+  }
 
   SoundSource * SoundManager::AddSource(FilePathParam const & in_path)
   {

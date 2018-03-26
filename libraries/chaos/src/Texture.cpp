@@ -8,7 +8,8 @@ namespace chaos
 		texture_id(in_id), 
 		texture_description(in_texture_description)
 	{
-
+		if (in_name != nullptr)
+			name = in_name;
 	}
 
 	Texture::~Texture()

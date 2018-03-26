@@ -86,11 +86,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 
-
-
-
-
-
+#if 0
 
   boost::filesystem::path ref = "mareference/bidule/fichier.txt";
 
@@ -133,7 +129,7 @@ int _tmain(int argc, char ** argv, char ** env)
   params.height = 500;
   params.monitor_index = 0;
   chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
-
+#endif
   return 0;
 }
 

@@ -3,6 +3,7 @@
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
 #include <chaos/JSONTools.h>
+#include <chaos/BoostTools.h>
 
 namespace chaos
 {
@@ -854,7 +855,7 @@ namespace chaos
   SoundSource * SoundManager::AddSource(FilePathParam const & in_path)
   {
     boost::filesystem::path const resolved_path = in_path.GetResolvedPath();
-    return AddSource(in_path, resolved_path.filename().stem().string().c_str());
+    return AddSource(in_path, BoostTools::PathToName(resolved_path).c_str());
   }
 
   SoundSource * SoundManager::AddSource(FilePathParam const & in_path, char const * in_name) // It is valid to have an anonymous source

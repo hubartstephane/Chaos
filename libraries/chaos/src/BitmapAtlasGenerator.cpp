@@ -2,6 +2,7 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/ImageTools.h>
 #include <chaos/MathTools.h>
+#include <chaos/BoostTools.h>
 
 namespace chaos
 {
@@ -155,7 +156,7 @@ namespace chaos
 
 		bool BitmapSetInput::AddBitmapFilesFromDirectory(FilePathParam const & path)
 		{
-      boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 			// enumerate the source directory
 			boost::filesystem::directory_iterator end;
 			for (boost::filesystem::directory_iterator it(resolved_path); it != end; ++it)
@@ -170,10 +171,10 @@ namespace chaos
 			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
 			if (bitmap != nullptr)
 			{
-        boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 				result = AddBitmap(
-					(name != nullptr) ? name : resolved_path.filename().string().c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
 					bitmap, true, tag);
 				if (!result)
 					FreeImage_Unload(bitmap);
@@ -324,7 +325,7 @@ namespace chaos
 			}
 
 			// test whether a collision exists between 2 elements
-      size_t count = entries.size();
+			size_t count = entries.size();
 			for (size_t i = 0; i < count - 1; ++i)
 			{
 				for (size_t j = i + 1; j < count; ++j)
@@ -370,7 +371,7 @@ namespace chaos
 			std::vector<unique_bitmap_ptr> result;
 
 			// generate the bitmaps
-      size_t bitmap_count = atlas_definitions.size();
+			size_t bitmap_count = atlas_definitions.size();
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{			
 				unique_bitmap_ptr bitmap = unique_bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
@@ -591,7 +592,7 @@ namespace chaos
 
 			for (size_t i = 0; i < count; ++i)
 			{
-        size_t entry_index = textures_indirection_table[i];
+				size_t entry_index = textures_indirection_table[i];
 
 				BitmapEntryInput const * input_entry = entries[entry_index];
 

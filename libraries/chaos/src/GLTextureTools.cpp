@@ -1,6 +1,6 @@
 ﻿#include <chaos/GLTextureTools.h>
 #include <chaos/MathTools.h>
-
+#include <chaos/BoostTools.h>
 
 //
 // Some reminders for OpenGL:
@@ -548,7 +548,7 @@ namespace chaos
 		return result;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters, char const * name)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, char const * name, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result = GenTexture(image, parameters);
 		if (result.texture_id > 0)
@@ -556,7 +556,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters, char const * name)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, char const * name, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result = GenTexture(image, parameters);
 		if (result.texture_id > 0)
@@ -564,7 +564,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters, char const * name)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, char const * name, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result = GenTexture(skybox, merge_params, parameters);
 		if (result.texture_id > 0)
@@ -572,7 +572,13 @@ namespace chaos
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters, char const * name)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
+	{
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+		return GenTextureObject(path, BoostTools::PathToName(resolved_path).c_str(), parameters);
+	}
+
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, char const * name, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result = GenTexture(path, parameters);
 		if (result.texture_id > 0)

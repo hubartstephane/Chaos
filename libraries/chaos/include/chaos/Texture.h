@@ -37,14 +37,13 @@ namespace chaos
     /** cleaning the object */
 	virtual void Release() override;
 
-    /** returns the GL name of the resource */
-    GLuint GetResourceID() const { return texture_id; }
-
-    /** returns true whether the resource is valid */
-    bool IsValid() const { return glIsTexture(texture_id) == GL_TRUE;}
-
+	/** get the description of the texture */
     TextureDescription const & GetTextureDescription() const { return texture_description;  }
-
+	/** returns true whether the resource is valid */
+	bool IsValid() const { return glIsTexture(texture_id) == GL_TRUE;}
+	/** returns the GL name of the resource */
+	GLuint GetResourceID() const { return texture_id; }
+	/** get the name of the texture */
 	char const * GetName() const { return name.c_str();}
 
   protected:

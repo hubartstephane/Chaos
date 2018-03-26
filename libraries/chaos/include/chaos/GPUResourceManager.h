@@ -28,7 +28,16 @@ namespace chaos
     /** loading from a JSON object */
     virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
-  public:
+  protected:
+
+    /** load the textures from configuration */
+    bool InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+    /** load the programs from configuration */
+    bool InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+    /** load the materials from configuration */
+    bool InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+
+  protected:
 
     /** the textures */
     std::vector<boost::intrusive_ptr<Texture>> textures;

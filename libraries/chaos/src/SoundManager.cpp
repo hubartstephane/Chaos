@@ -1016,39 +1016,44 @@ namespace chaos
     return source;
   }
 
-  bool SoundManager::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+  bool SoundManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
     // initialize the categories
-    nlohmann::json const * categories_json = JSONTools::GetStructure(config, "categories");
+    if (!InitializeCategoriesFromConfiguration(json, config_path))
+      return false;
+      // Initialize the sources
+    if (!InitializeSourcesFromConfiguration(json, config_path))
+      return false;
+    return true;
+  }
+
+  bool SoundManager::InitializeCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+    nlohmann::json const * categories_json = JSONTools::GetStructure(json, "categories");
     if (categories_json != nullptr)
     {
       for (nlohmann::json::const_iterator it = categories_json->begin(); it != categories_json->end(); ++it)
       {
         if (categories_json->is_array())
-        {
           AddJSONCategory(nullptr, *it, config_path);
-        }
         else if (categories_json->is_object())
-        {
           AddJSONCategory(it.key().c_str(), *it, config_path);
-        }
       }
+    }
+    return true;
+  }
 
-      // Initialize the sources
-      nlohmann::json const * sources_json = JSONTools::GetStructure(config, "sources");
-      if (sources_json != nullptr)
+  bool SoundManager::InitializeSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+    nlohmann::json const * sources_json = JSONTools::GetStructure(json, "sources");
+    if (sources_json != nullptr)
+    {
+      for (nlohmann::json::const_iterator it = sources_json->begin(); it != sources_json->end(); ++it)
       {
-        for (nlohmann::json::const_iterator it = sources_json->begin(); it != sources_json->end(); ++it)
-        {
-          if (sources_json->is_array())
-          {
-            AddJSONSource(nullptr, *it, config_path);
-          }
-          else if (sources_json->is_object())
-          {
-            AddJSONSource(it.key().c_str(), *it, config_path);
-          }
-        }
+        if (sources_json->is_array())
+          AddJSONSource(nullptr, *it, config_path);
+        else if (sources_json->is_object())
+          AddJSONSource(it.key().c_str(), *it, config_path);
       }
     }
     return true;

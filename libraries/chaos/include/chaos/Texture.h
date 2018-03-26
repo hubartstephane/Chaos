@@ -14,15 +14,15 @@ namespace chaos
   public:
 
     /** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
-    GLenum type{GL_NONE};
+    GLenum type = GL_NONE;
     /** the format of the texture (RGB / RGBA) */
-    GLenum internal_format{GL_NONE};
+    GLenum internal_format = GL_NONE;
     /** the image width */
-    int    width{0};
+    int    width = 0;
     /** the image height */
-    int    height{0};
+    int    height = 0;
     /** the image depth */
-    int    depth{0};
+    int    depth = 0;
   };
 
   class Texture : public GPUResource
@@ -30,7 +30,7 @@ namespace chaos
   public:
 
     /** constructor */
-    Texture(GLuint in_id = 0, TextureDescription const & in_texture_description = TextureDescription());
+    Texture(GLuint in_id = 0, TextureDescription const & in_texture_description = TextureDescription(), char const * in_name = nullptr);
     /** destructor */
     virtual ~Texture();
 
@@ -45,12 +45,16 @@ namespace chaos
 
     TextureDescription const & GetTextureDescription() const { return texture_description;  }
 
+	char const * GetName() const { return name.c_str();}
+
   protected:
 
     /** the resource id */
     GLuint texture_id;
     /** the description of the texture */
     TextureDescription texture_description;
+	/** the name of the object */
+	std::string name;
   };
 
 }; // namespace chaos

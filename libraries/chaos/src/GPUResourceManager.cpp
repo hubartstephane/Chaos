@@ -34,4 +34,10 @@ namespace chaos
     return nullptr;
   }
 
+  bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+  {
+  
+	  return true;
+  }
+
 }; // namespace chaos

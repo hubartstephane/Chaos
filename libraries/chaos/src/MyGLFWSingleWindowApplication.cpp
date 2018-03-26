@@ -218,11 +218,6 @@ namespace chaos
       if (!Application::InitializeManagers())
         return false;
 
-      // initialize the graphic resource
-      graphic_resource_manager = new GPUResourceManager;
-      if (graphic_resource_manager == nullptr)
-        return false;
-
       // initialize the clock
       main_clock = new Clock();
       if (main_clock == nullptr)
@@ -240,6 +235,21 @@ namespace chaos
       if (sound_config != nullptr)
         sound_manager->InitializeFromConfiguration(*sound_config, configuration_path);
 
+	  // initialize the GPU manager
+	  gpu_manager = new GPUResourceManager;
+	  if (gpu_manager == nullptr)
+		  return false;
+	  nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "graphics");
+	  if (cpu_config != nullptr)
+		  gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
+
+
+
+
+
+
+
+
       return true;
     }
 
@@ -254,7 +264,7 @@ namespace chaos
         sound_manager = nullptr;
       }
       // the resource manager
-      graphic_resource_manager = nullptr;
+	  gpu_manager = nullptr;
       // super method
       Application::FinalizeManagers();
       return true;

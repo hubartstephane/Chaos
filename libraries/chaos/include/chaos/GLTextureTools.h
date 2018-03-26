@@ -120,28 +120,27 @@ namespace chaos
 				ImageDescription desc = ImageTools::GetImageDescriptionForAlignedTexture(pixel_format, width, height, buffer);
 				generator(desc);
 				result = GenTexture(desc, parameters);			
-
 				delete [](buffer);
 			}
 			return result;
 		}
 
 		/** Generate a 1D/2D/rectangle texture from an file */
-		static boost::intrusive_ptr<Texture> GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters(), char const * name = nullptr);
 		/** Generate a 1D/2D/rectangle texture from an image */
-		static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters(), char const * name = nullptr);
 		/** Generate a 1D/2D/rectangle texture from an image */
-		static boost::intrusive_ptr<Texture> GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters(), char const * name = nullptr);
 		/** Generate a cube texture from a skybox */
-		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
+		static boost::intrusive_ptr<Texture> GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters(), char const * name = nullptr);
 
 		/** Generate a texture from lambda */
 		template<typename T, typename GENERATOR>
-		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
+		static boost::intrusive_ptr<Texture> GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters(), char const * name = nullptr)
 		{
 			GenTextureResult result = GenTexture<T>(width, height, generator, parameters);
 			if (result.texture_id > 0)
-				return new Texture(result.texture_id, result.texture_description);
+				return new Texture(result.texture_id, result.texture_description, name);
 			return nullptr;
 		}
 

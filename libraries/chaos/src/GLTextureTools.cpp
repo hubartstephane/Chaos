@@ -548,35 +548,35 @@ namespace chaos
 		return result;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters, char const * name)
 	{
 		GenTextureResult result = GenTexture(image, parameters);
 		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
+			return new Texture(result.texture_id, result.texture_description, name);
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters, char const * name)
 	{
 		GenTextureResult result = GenTexture(image, parameters);
 		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
+			return new Texture(result.texture_id, result.texture_description, name);
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters, char const * name)
 	{
 		GenTextureResult result = GenTexture(skybox, merge_params, parameters);
 		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
+			return new Texture(result.texture_id, result.texture_description, name);
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters, char const * name)
 	{
 		GenTextureResult result = GenTexture(path, parameters);
 		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description);
+			return new Texture(result.texture_id, result.texture_description, name);
 		return nullptr;
 	}
 

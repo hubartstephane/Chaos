@@ -25,6 +25,9 @@ namespace chaos
     /** load a material */
     RenderMaterial * LoadRenderMaterial(FilePathParam const & path);
 
+	/** loading from a JSON object */
+	virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+
   public:
 
     /** the textures */

@@ -1,20 +1,10 @@
 {
   "window": {
-
     "width": 1200,
     "height": 600
   },
 
-  "value_s": "une chaine",
-  "value_i": 666,
-  "value_f": 667.7,
-  "value_true": true,
-  "value_false": false,
-  "value_null": null,
-  "value_array": [ 1, 2, 3 ],
+  "gpu":{"@filename":"gpu.json"},
 
-
-  "game":{
-    "@filename":"game.json"  
-  }
+  "game":{"@filename":"game.json"}
 }

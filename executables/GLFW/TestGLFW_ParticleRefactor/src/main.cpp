@@ -52,6 +52,10 @@ protected:
     if (application == nullptr)
       return false;
 
+
+    chaos::JSONTools::ShowConfigFile(config);
+
+
     return true;
   }
 
@@ -122,14 +126,14 @@ int _tmain(int argc, char ** argv, char ** env)
 
   p2 = nullptr;
   sl.TickParticles(0.0f);
-
+#endif
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;
   params.height = 500;
   params.monitor_index = 0;
   chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
-#endif
+
   return 0;
 }
 

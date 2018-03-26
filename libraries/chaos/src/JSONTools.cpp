@@ -1,5 +1,6 @@
 ﻿#include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
+#include <chaos/WinTools.h>
 
 namespace chaos
 {
@@ -260,4 +261,24 @@ namespace chaos
 			return loader.LoadJSONFile(path);
 		}
 	}
+  bool JSONTools::ShowConfigFile(nlohmann::json const & json, char const * filename)
+  {
+    if (filename == nullptr)
+      return false;
+
+    boost::filesystem::path result_dir;
+    if (FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result_dir))
+    {
+      boost::filesystem::path path = result_dir / filename;
+
+      std::ofstream stream(path.string().c_str());
+      stream << json.dump(4);
+
+      WinTools::ShowFile(result_dir);
+      return true;
+    }
+    return false;
+  }
+
+
 }; // namespace chaos

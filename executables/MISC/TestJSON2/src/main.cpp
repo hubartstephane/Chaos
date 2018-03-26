@@ -98,17 +98,8 @@ protected:
 	
 	c2["APRES_INSERTION_DANS_C1"] = 123456; // won't be visible in the generated file => means previous line is a deep copy
 #endif
-    boost::filesystem::path result_dir;
-    if (chaos::FileTools::CreateTemporaryDirectory("MON_REP_%d", result_dir))
-    {
-      boost::filesystem::path filename = result_dir / "mon_fichier.txt";
 
-      std::ofstream stream(filename.string().c_str());
-      stream << c1.dump(4);
-
-      chaos::WinTools::ShowFile(filename);
-    }
-
+    chaos::JSONTools::ShowConfigFile(c1);
     application = application;
   }
 

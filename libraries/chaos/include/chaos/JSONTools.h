@@ -58,6 +58,9 @@ namespace chaos
 		static nlohmann::json * GetStructure(nlohmann::json & entry, char const * name);
 		/** get a sub object from an object */
 		static nlohmann::json const * GetStructure(nlohmann::json const & entry, char const * name);
+
+    /** create a temporary directory to hold the configuration */
+    static bool ShowConfigFile(nlohmann::json const & json, char const * filename = "myjson.json");
 	};
 
 }; // namespace chaos

@@ -72,7 +72,7 @@ protected:
 		game = nullptr;
 	}
 
-	virtual bool Initialize(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{   
 		game = new Game;
 		if (game == nullptr)

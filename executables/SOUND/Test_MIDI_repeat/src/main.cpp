@@ -224,7 +224,7 @@ protected:
 		return true;
 	}
 
-	virtual bool Initialize(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{	
     chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
     if (application == nullptr)

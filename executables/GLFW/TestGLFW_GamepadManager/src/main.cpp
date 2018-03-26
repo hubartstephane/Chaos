@@ -97,7 +97,7 @@ protected:
 		debug_display.Finalize();
 	}
 
-	virtual bool Initialize(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)

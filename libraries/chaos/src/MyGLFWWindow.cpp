@@ -201,7 +201,7 @@ namespace chaos
     {
       BindGLFWWindow(in_glfw_window);
       double_buffer = in_double_buffer;
-      return Initialize(config, config_path);
+      return InitializeFromConfiguration(config, config_path);
     }
 
   }; // namespace MyGLFW

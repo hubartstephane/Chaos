@@ -52,9 +52,7 @@ protected:
     if (application == nullptr)
       return false;
 
-
     chaos::JSONTools::ShowConfigFile(config);
-
 
     return true;
   }

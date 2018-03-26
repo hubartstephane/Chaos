@@ -19,14 +19,14 @@ namespace chaos
     virtual void Release();
 
     /** load a texture */
-    Texture * LoadTexture(FilePathParam const & path);
+    Texture * LoadTexture(FilePathParam const & path, char const * name = nullptr);
     /** load a program */
-    GPUProgram * LoadProgram(FilePathParam const & path);
+    GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr);
     /** load a material */
-    RenderMaterial * LoadRenderMaterial(FilePathParam const & path);
+    RenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
 
-	/** loading from a JSON object */
-	virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+    /** loading from a JSON object */
+    virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
   public:
 

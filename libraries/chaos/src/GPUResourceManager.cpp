@@ -16,19 +16,22 @@ namespace chaos
     render_materials.clear();
   }
 
-  Texture * GPUResourceManager::LoadTexture(FilePathParam const & path)
+  Texture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name)
+  {
+
+
+
+
+    return nullptr;
+  }
+
+  GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name)
   {
 
     return nullptr;
   }
 
-  GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path)
-  {
-
-    return nullptr;
-  }
-
-  RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path)
+  RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
   {
 
     return nullptr;

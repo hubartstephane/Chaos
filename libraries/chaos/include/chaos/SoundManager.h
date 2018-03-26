@@ -456,6 +456,9 @@ namespace chaos
     /** remove a sound source from the list */
     void RemoveSource(size_t index);
 
+    /** called whenever an object is being removed */
+    virtual void OnObjectRemovedFromManager(SoundObject * object);
+
     /** utility function to remove a sound object from a list */
     template<typename T>
     void DoRemoveObject(size_t index, T & vector)
@@ -471,7 +474,7 @@ namespace chaos
         vector[index] = vector[count - 1];
       vector.pop_back();
       // callback then let the unreferencement manage the object lifetime
-      object->OnRemovedFromManager();
+      OnObjectRemovedFromManager(object.get());
     }
 
     /** detach all elements from a list */
@@ -485,7 +488,7 @@ namespace chaos
         // remove the object from the array
         vector.pop_back();
         // callback then let the unreferencement manage the object lifetime
-        object->OnRemovedFromManager();
+        OnObjectRemovedFromManager(object.get());
       }
     }
 

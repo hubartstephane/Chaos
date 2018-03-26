@@ -676,6 +676,12 @@ namespace chaos
     DoTickObjects(delta_time, sounds, &SoundManager::RemoveSound);
   }
 
+  void SoundManager::OnObjectRemovedFromManager(SoundObject * object)
+  {
+    assert(object != nullptr);
+    object->OnRemovedFromManager();
+  }
+
   void SoundManager::RemoveCategory(SoundCategory * in_category)
   {
     RemoveCategory(FindObjectIndexInVector(in_category, categories));

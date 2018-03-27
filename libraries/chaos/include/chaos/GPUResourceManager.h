@@ -19,12 +19,23 @@ namespace chaos
     /** release the resources */
     virtual void Release();
 
+    /** load a texture (named deduced from path) */
+    Texture * LoadTexture(FilePathParam const & path);
     /** load a texture */
-    Texture * LoadTexture(FilePathParam const & path, char const * name = nullptr);
+    Texture * LoadTexture(FilePathParam const & path, char const * name);
+    /** load a program (named deduced from path) */
+    GPUProgram * LoadProgram(FilePathParam const & path);
     /** load a program */
-    GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr);
+    GPUProgram * LoadProgram(FilePathParam const & path, char const * name);
+    /** load a material (named deduced from path) */
+    RenderMaterial * LoadRenderMaterial(FilePathParam const & path);
     /** load a material */
-    RenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
+    RenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name);
+
+
+
+
+
 
 
     /** find a texture by its name */
@@ -32,27 +43,27 @@ namespace chaos
     /** find a texture by its name */
     Texture const * FindTexture(char const * name) const;
     /** find a texture by its path */
-    Texture * FindTextureByPath(FilePathParam const & in_path);
+    Texture * FindTextureByPath(FilePathParam const & path);
     /** find a texture by its path */
-    Texture const * FindTextureByPath(FilePathParam const & in_path) const;
+    Texture const * FindTextureByPath(FilePathParam const & path) const;
 
     /** find a program by its name */
     GPUProgram * FindProgram(char const * name);
     /** find a program by its name */
     GPUProgram const * FindProgram(char const * name) const;
     /** find a program by its path */
-    GPUProgram * FindProgramByPath(FilePathParam const & in_path);
+    GPUProgram * FindProgramByPath(FilePathParam const & path);
     /** find a program by its path */
-    GPUProgram const * FindProgramByPath(FilePathParam const & in_path) const;
+    GPUProgram const * FindProgramByPath(FilePathParam const & path) const;
 
     /** find a render material by its name */
     RenderMaterial * FindRenderMaterial(char const * name);
     /** find a render material by its name */
     RenderMaterial const * FindRenderMaterial(char const * name) const;
     /** find a render material by its path */
-    RenderMaterial * FindRenderMaterialByPath(FilePathParam const & in_path);
+    RenderMaterial * FindRenderMaterialByPath(FilePathParam const & path);
     /** find a render material by its path */
-    RenderMaterial const * FindRenderMaterialByPath(FilePathParam const & in_path) const;
+    RenderMaterial const * FindRenderMaterialByPath(FilePathParam const & path) const;
 
     /** loading from a JSON object */
     virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);

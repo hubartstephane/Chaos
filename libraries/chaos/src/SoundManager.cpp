@@ -725,14 +725,14 @@ namespace chaos
     return FindObjectByName<Sound>(name, sounds);
   }
 
-  SoundSource * SoundManager::FindSourceByPath(FilePathParam const & in_path)
+  SoundSource * SoundManager::FindSourceByPath(FilePathParam const & path)
   {
-    return FindObjectByPath<SoundSource>(in_path, sources);
+    return FindObjectByPath<SoundSource>(path, sources);
   }
 
-  SoundSource const * SoundManager::FindSourceByPath(FilePathParam const & in_path) const
+  SoundSource const * SoundManager::FindSourceByPath(FilePathParam const & path) const
   {
-    return FindObjectByPath<SoundSource>(in_path, sources);
+    return FindObjectByPath<SoundSource>(path, sources);
   }
 
   SoundCategory * SoundManager::FindCategory(char const * name)
@@ -863,31 +863,31 @@ namespace chaos
     return in_source;
   }
 
-  SoundSource * SoundManager::AddSource(FilePathParam const & in_path)
+  SoundSource * SoundManager::AddSource(FilePathParam const & path)
   {
-    boost::filesystem::path const resolved_path = in_path.GetResolvedPath();
-    return AddSource(in_path, BoostTools::PathToName(resolved_path).c_str());
+    boost::filesystem::path const resolved_path = path.GetResolvedPath();
+    return AddSource(path, BoostTools::PathToName(resolved_path).c_str());
   }
 
-  SoundSource * SoundManager::AddSource(FilePathParam const & in_path, char const * in_name) // It is valid to have an anonymous source
+  SoundSource * SoundManager::AddSource(FilePathParam const & path, char const * in_name) // It is valid to have an anonymous source
   {
     // test whether a source with the given name could be inserted
     if (!CanAddSource(in_name))
       return nullptr;
     // find a simple source with the given path
-    if (FindSourceByPath(in_path) != nullptr)
+    if (FindSourceByPath(path) != nullptr)
       return nullptr;
     // get the irrklang engine
     irrklang::ISoundEngine * engine = GetIrrklangEngine();
     if (engine == nullptr)
       return nullptr;
     // load the file
-    Buffer<char> buffer = FileTools::LoadFile(in_path, false);
+    Buffer<char> buffer = FileTools::LoadFile(path, false);
     if (buffer == nullptr)
       return nullptr;
     // create the source on irrklang side
     // XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-    boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
+    boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
     boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
     if (irrklang_source == nullptr)

@@ -407,9 +407,9 @@ namespace chaos
     SoundSource const * FindSource(char const * name) const;
 
     /** find a simple source by its path */
-    SoundSource * FindSourceByPath(FilePathParam const & in_path);
+    SoundSource * FindSourceByPath(FilePathParam const & path);
     /** find a simple source by its path */
-    SoundSource const * FindSourceByPath(FilePathParam const & in_path) const;
+    SoundSource const * FindSourceByPath(FilePathParam const & path) const;
 
     /** find a category by its name */
     SoundCategory * FindCategory(char const * name);
@@ -425,9 +425,9 @@ namespace chaos
     SoundCategory * AddCategory(char const * in_name);
 
     /** load and add a simple source inside the manager (name is a copy of filename) */
-    SoundSource * AddSource(FilePathParam const & in_path);
+    SoundSource * AddSource(FilePathParam const & path);
     /** load and add a simple source inside the manager */
-    SoundSource * AddSource(FilePathParam const & in_path, char const * in_name);
+    SoundSource * AddSource(FilePathParam const & path, char const * in_name);
 
     /** update the listener position */
     bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));

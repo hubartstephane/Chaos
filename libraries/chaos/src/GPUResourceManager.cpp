@@ -1,5 +1,5 @@
 ﻿#include <chaos/GPUResourceManager.h>
-
+#include <chaos/BoostTools.h>
 
 namespace chaos
 {
@@ -26,14 +26,14 @@ namespace chaos
     return FindObjectByName<Texture>(name, textures);
   }
 
-  Texture * GPUResourceManager::FindTextureByPath(FilePathParam const & in_path)
+  Texture * GPUResourceManager::FindTextureByPath(FilePathParam const & path)
   {
-    return FindObjectByPath<Texture>(in_path, textures);
+    return FindObjectByPath<Texture>(path, textures);
   }
 
-  Texture const * GPUResourceManager::FindTextureByPath(FilePathParam const & in_path) const
+  Texture const * GPUResourceManager::FindTextureByPath(FilePathParam const & path) const
   {
-    return FindObjectByPath<Texture>(in_path, textures);
+    return FindObjectByPath<Texture>(path, textures);
   }
 
   GPUProgram * GPUResourceManager::FindProgram(char const * name)
@@ -44,13 +44,13 @@ namespace chaos
   {
     return FindObjectByName<GPUProgram>(name, programs);
   }
-  GPUProgram * GPUResourceManager::FindProgramByPath(FilePathParam const & in_path)
+  GPUProgram * GPUResourceManager::FindProgramByPath(FilePathParam const & path)
   {
-    return FindObjectByPath<GPUProgram>(in_path, programs);
+    return FindObjectByPath<GPUProgram>(path, programs);
   }
-  GPUProgram const * GPUResourceManager::FindProgramByPath(FilePathParam const & in_path) const
+  GPUProgram const * GPUResourceManager::FindProgramByPath(FilePathParam const & path) const
   {
-    return FindObjectByPath<GPUProgram>(in_path, programs);
+    return FindObjectByPath<GPUProgram>(path, programs);
   }
 
   RenderMaterial * GPUResourceManager::FindRenderMaterial(char const * name)
@@ -63,22 +63,21 @@ namespace chaos
     return FindObjectByName<RenderMaterial>(name, render_materials);
   }
 
-  RenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & in_path)
+  RenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path)
   {
-    return FindObjectByPath<RenderMaterial>(in_path, render_materials);
+    return FindObjectByPath<RenderMaterial>(path, render_materials);
   }
 
-  RenderMaterial const * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & in_path) const
+  RenderMaterial const * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path) const
   {
-    return FindObjectByPath<RenderMaterial>(in_path, render_materials);
+    return FindObjectByPath<RenderMaterial>(path, render_materials);
   }
 
-
-
-
-
-
-
+  Texture * GPUResourceManager::LoadTexture(FilePathParam const & path)
+  {
+    boost::filesystem::path const resolved_path = path.GetResolvedPath();
+    return LoadTexture(path, BoostTools::PathToName(resolved_path).c_str());
+  }
 
   Texture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name)
   {
@@ -108,15 +107,35 @@ namespace chaos
     return nullptr;
   }
 
+  GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path)
+  {
+    boost::filesystem::path const resolved_path = path.GetResolvedPath();
+    return LoadProgram(path, BoostTools::PathToName(resolved_path).c_str());
+  }
+
   GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name)
   {
+
+
+
+
 
 
     return nullptr;
   }
 
+  RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path)
+  {
+    boost::filesystem::path const resolved_path = path.GetResolvedPath();
+    return LoadRenderMaterial(path, BoostTools::PathToName(resolved_path).c_str());
+  }
+
   RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
   {
+
+
+
+
 
     return nullptr;
   }

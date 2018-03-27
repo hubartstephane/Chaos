@@ -40,26 +40,26 @@ namespace chaos
   // CALLBACKS
   // ==============================================================
 
-  void SoundCallbacks::OnFinished(SoundObject * in_object)
+  void SoundCallbacks::OnFinished(SoundObject * object)
   {
-    assert(in_object != nullptr);
+    assert(object != nullptr);
   }
 
-  void SoundCallbacks::OnRemovedFromManager(SoundObject * in_object)
+  void SoundCallbacks::OnRemovedFromManager(SoundObject * object)
   {
-    assert(in_object != nullptr);
+    assert(object != nullptr);
   }
 
-  void SoundAutoCallbacks::OnFinished(SoundObject * in_object)
+  void SoundAutoCallbacks::OnFinished(SoundObject * object)
   {
     if (finished_func)
-      finished_func(in_object);
+      finished_func(object);
   }
 
-  void SoundAutoCallbacks::OnRemovedFromManager(SoundObject * in_object)
+  void SoundAutoCallbacks::OnRemovedFromManager(SoundObject * object)
   {
     if (removed_func)
-      removed_func(in_object);
+      removed_func(object);
   }
 
   // ==============================================================
@@ -351,20 +351,20 @@ namespace chaos
       GetManager()->UpdateAllSoundVolumePerSource(this);
   }
 
-  bool SoundSource::SetDefaultCategory(SoundCategory * in_category)
+  bool SoundSource::SetDefaultCategory(SoundCategory * category)
   {
     // a detached source cannot have a category
     if (!IsAttachedToManager())
       return false;
     // a detached category cannot be used
-    if (in_category != nullptr)
+    if (category != nullptr)
     {
-      if (!in_category->IsAttachedToManager())
+      if (!category->IsAttachedToManager())
         return false;
-      if (sound_manager != in_category->sound_manager) // source and category must have the same manager
+      if (sound_manager != category->sound_manager) // source and category must have the same manager
         return false;
     }
-    default_category = in_category;
+    default_category = category;
     return true;
   }
 
@@ -676,9 +676,9 @@ namespace chaos
     object->OnRemovedFromManager();
   }
 
-  void SoundManager::RemoveCategory(SoundCategory * in_category)
+  void SoundManager::RemoveCategory(SoundCategory * category)
   {
-    RemoveCategory(FindObjectIndexInVector(in_category, categories));
+    RemoveCategory(FindObjectIndexInVector(category, categories));
   }
 
   void SoundManager::RemoveCategory(size_t index)
@@ -686,9 +686,9 @@ namespace chaos
     DoRemoveObject(index, categories, &SoundManager::OnObjectRemovedFromManager);
   }
 
-  void SoundManager::RemoveSound(Sound * in_sound)
+  void SoundManager::RemoveSound(Sound * sound)
   {
-    RemoveSound(FindObjectIndexInVector(in_sound, sounds));
+    RemoveSound(FindObjectIndexInVector(sound, sounds));
   }
 
   void SoundManager::RemoveSound(size_t index)
@@ -696,9 +696,9 @@ namespace chaos
     DoRemoveObject(index, sounds, &SoundManager::OnObjectRemovedFromManager);
   }
 
-  void SoundManager::RemoveSource(SoundSource * in_source)
+  void SoundManager::RemoveSource(SoundSource * source)
   {
-    RemoveSource(FindObjectIndexInVector(in_source, sources));
+    RemoveSource(FindObjectIndexInVector(source, sources));
   }
 
   void SoundManager::RemoveSource(size_t index)
@@ -745,19 +745,19 @@ namespace chaos
     return FindObjectByName<SoundCategory>(name, categories);
   }
 
-  bool SoundManager::CanAddCategory(char const * in_name) const
+  bool SoundManager::CanAddCategory(char const * name) const
   {
-    return CanAddObject<SoundCategory>(in_name, &SoundManager::FindCategory);
+    return CanAddObject(name, [this](char const * n){return FindCategory(n);} );
   }
 
-  bool SoundManager::CanAddSource(char const * in_name) const
+  bool SoundManager::CanAddSource(char const * name) const
   {
-    return CanAddObject<SoundSource>(in_name, &SoundManager::FindSource);
+    return CanAddObject(name, [this](char const * n) {return FindSource(n); } );
   }
 
-  bool SoundManager::CanAddSound(char const * in_name) const
+  bool SoundManager::CanAddSound(char const * name) const
   {
-    return CanAddObject<Sound>(in_name, &SoundManager::FindSound);
+    return CanAddObject(name, [this](char const * n) {return FindSound(n); } );
   }
 
   void SoundManager::UpdateAllSourcesPerCategory(SoundCategory * category)
@@ -827,10 +827,10 @@ namespace chaos
     return true;
   }
 
-  SoundCategory * SoundManager::AddCategory(char const * in_name)
+  SoundCategory * SoundManager::AddCategory(char const * name)
   {
     // test whether a category with the given name could be inserted
-    if (!CanAddCategory(in_name))
+    if (!CanAddCategory(name))
       return nullptr;
     // create the category
     SoundCategory * result = new SoundCategory();
@@ -838,8 +838,8 @@ namespace chaos
       return nullptr;
     // initialize the object
     result->sound_manager = this;
-    if (in_name != nullptr)
-      result->name = in_name;
+    if (name != nullptr)
+      result->name = name;
     categories.push_back(result);
 
     return result;
@@ -852,15 +852,15 @@ namespace chaos
   //
   //   "mydir/myfile.ogg" => "myfile"
 
-  SoundSource * SoundManager::DoAddSource(SoundSource * in_source, char const * in_name)
+  SoundSource * SoundManager::DoAddSource(SoundSource * source, char const * name)
   {
-    if (in_source == nullptr)
+    if (source == nullptr)
       return nullptr;
-    if (in_name != nullptr)
-      in_source->name = in_name;
-    in_source->sound_manager = this;
-    sources.push_back(in_source);
-    return in_source;
+    if (name != nullptr)
+      source->name = name;
+    source->sound_manager = this;
+    sources.push_back(source);
+    return source;
   }
 
   SoundSource * SoundManager::AddSource(FilePathParam const & path)
@@ -869,10 +869,10 @@ namespace chaos
     return AddSource(path, BoostTools::PathToName(resolved_path).c_str());
   }
 
-  SoundSource * SoundManager::AddSource(FilePathParam const & path, char const * in_name) // It is valid to have an anonymous source
+  SoundSource * SoundManager::AddSource(FilePathParam const & path, char const * name) // It is valid to have an anonymous source
   {
     // test whether a source with the given name could be inserted
-    if (!CanAddSource(in_name))
+    if (!CanAddSource(name))
       return nullptr;
     // find a simple source with the given path
     if (FindSourceByPath(path) != nullptr)
@@ -893,7 +893,7 @@ namespace chaos
     if (irrklang_source == nullptr)
       return nullptr;
     // insert the result
-    SoundSource * result = DoAddSource(new SoundSource(), in_name);
+    SoundSource * result = DoAddSource(new SoundSource(), name);
     if (result == nullptr)
       return nullptr;
     // last initializations

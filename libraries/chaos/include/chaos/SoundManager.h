@@ -36,9 +36,9 @@ namespace chaos
   protected:
 
     /** called whenever an object is finished */
-    virtual void OnFinished(SoundObject * in_object);
+    virtual void OnFinished(SoundObject * object);
     /** called whenever an object is removed from manager */
-    virtual void OnRemovedFromManager(SoundObject * in_object);
+    virtual void OnRemovedFromManager(SoundObject * object);
   };
 
   class SoundAutoCallbacks : public SoundCallbacks
@@ -60,9 +60,9 @@ namespace chaos
   protected:
 
     /** called whenever a sound is finished */
-    virtual void OnFinished(SoundObject * in_object) override;
+    virtual void OnFinished(SoundObject * object) override;
     /** called whenever an object is removed from manager */
-    virtual void OnRemovedFromManager(SoundObject * in_object) override;
+    virtual void OnRemovedFromManager(SoundObject * object) override;
 
   public:
 
@@ -262,7 +262,7 @@ namespace chaos
     SoundCategory const * GetDefaultCategory() const { return default_category; }
 
     /** set the category */
-    bool SetDefaultCategory(SoundCategory * in_category);
+    bool SetDefaultCategory(SoundCategory * category);
 
   protected:
 
@@ -422,12 +422,12 @@ namespace chaos
     Sound const * FindSound(char const * name) const;
 
     /** add a category inside the manager */
-    SoundCategory * AddCategory(char const * in_name);
+    SoundCategory * AddCategory(char const * name);
 
     /** load and add a simple source inside the manager (name is a copy of filename) */
     SoundSource * AddSource(FilePathParam const & path);
     /** load and add a simple source inside the manager */
-    SoundSource * AddSource(FilePathParam const & path, char const * in_name);
+    SoundSource * AddSource(FilePathParam const & path, char const * name);
 
     /** update the listener position */
     bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
@@ -443,11 +443,11 @@ namespace chaos
     virtual bool DoStopManager() override;
 
     /** remove a category from the list */
-    void RemoveCategory(SoundCategory * in_category);
+    void RemoveCategory(SoundCategory * category);
     /** remove a sound from the list */
-    void RemoveSound(Sound * in_sound);
+    void RemoveSound(Sound * sound);
     /** remove a sound source from the list */
-    void RemoveSource(SoundSource * in_source);
+    void RemoveSource(SoundSource * source);
 
     /** remove a category from the list */
     void RemoveCategory(size_t index);
@@ -499,27 +499,14 @@ namespace chaos
     }
 
     /** test whether a category with given name could be inserted in the manager */
-    bool CanAddCategory(char const * in_name) const;
+    bool CanAddCategory(char const * name) const;
     /** test whether a source with given name could be inserted in the manager */
-    bool CanAddSource(char const * in_name) const;
+    bool CanAddSource(char const * name) const;
     /** test whether a sound with given name could be inserted in the manager */
-    bool CanAddSound(char const * in_name) const;
-
-    /** utility function to test whether an object can be inserted */
-    template<typename T>
-    bool CanAddObject(char const * in_name, T const * (SoundManager::*find_func)(char const *) const) const
-    {
-      // manager initialized ?
-      if (!IsManagerStarted())
-        return false;
-      // name already existing ?
-      if (in_name != nullptr && (this->*find_func)(in_name) != nullptr)
-        return false;
-      return true;
-    }
+    bool CanAddSound(char const * name) const;
 
     /** simple method to initialize and insert a source */
-    SoundSource * DoAddSource(SoundSource * in_source, char const * in_name);
+    SoundSource * DoAddSource(SoundSource * source, char const * name);
 
     /** update all sounds pause per category */
     void UpdateAllSoundPausePerCategory(SoundCategory * category);

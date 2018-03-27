@@ -32,12 +32,6 @@ namespace chaos
     /** load a material */
     RenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name);
 
-
-
-
-
-
-
     /** find a texture by its name */
     Texture * FindTexture(char const * name);
     /** find a texture by its name */
@@ -69,6 +63,13 @@ namespace chaos
     virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
   protected:
+
+    /** returns whether a texture with given name can be inserted */
+    bool CanAddTexture(char const * name) const;
+    /** returns whether a program with given name can be inserted */
+    bool CanAddProgram(char const * name) const;
+    /** returns whether a render material with given name can be inserted */
+    bool CanAddRenderMaterial(char const * name) const;
 
     /** load the textures from configuration */
     bool InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);

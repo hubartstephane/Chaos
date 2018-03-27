@@ -147,6 +147,19 @@ namespace chaos
       return nullptr;
     }
 
+    /** utility function to test whether an object can be inserted */
+    template<typename FUNC>
+    bool CanAddObject(char const * name, FUNC find_func) const
+    {
+      // manager initialized ?
+      if (!IsManagerStarted())
+        return false;
+      // name already existing ?
+      if (name != nullptr && find_func(name) != nullptr)
+        return false;
+      return true;
+    }
+
   protected:
 
     /** whether the manager is started */

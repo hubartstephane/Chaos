@@ -81,6 +81,8 @@ namespace chaos
 
   Texture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name)
   {
+    if (!CanAddTexture(name))
+      return nullptr;
 
 #if 0
     if (name != nullptr)
@@ -115,7 +117,8 @@ namespace chaos
 
   GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name)
   {
-
+    if (!CanAddProgram(name))
+      return nullptr;
 
 
 
@@ -132,12 +135,28 @@ namespace chaos
 
   RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
   {
-
+    if (!CanAddRenderMaterial(name))
+      return nullptr;
 
 
 
 
     return nullptr;
+  }
+
+  bool GPUResourceManager::CanAddTexture(char const * name) const
+  {
+    return CanAddObject(name, [this](char const * n) {return FindTexture(n); } );
+  }
+
+  bool GPUResourceManager::CanAddProgram(char const * name) const
+  {
+    return CanAddObject(name, [this](char const * n) {return FindProgram(n); } );
+  }
+
+  bool GPUResourceManager::CanAddRenderMaterial(char const * name) const
+  {
+    return CanAddObject(name, [this](char const * n) {return FindRenderMaterial(n); } );
   }
 
   bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)

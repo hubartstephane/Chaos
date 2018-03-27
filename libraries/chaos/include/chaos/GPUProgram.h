@@ -1,18 +1,18 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GPUResource.h>
+#include <chaos/GPUFileResource.h>
 #include <chaos/GPUProgramData.h>
 
 namespace chaos
 {
 
-class GPUProgram : public GPUResource
+class GPUProgram : public GPUFileResource
 {
 public:
 
   /** constructor */
-  GPUProgram(GLuint in_id = 0);
+  GPUProgram(GLuint in_id = 0, char const * in_name = nullptr);
   /** destructor */
   virtual ~GPUProgram();
 

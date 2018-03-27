@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GPUResource.h>
+#include <chaos/GPUFileResource.h>
 
 namespace chaos
 {
@@ -25,7 +25,7 @@ namespace chaos
     int    depth = 0;
   };
 
-  class Texture : public GPUResource
+  class Texture : public GPUFileResource
   {
   public:
 
@@ -35,16 +35,14 @@ namespace chaos
     virtual ~Texture();
 
     /** cleaning the object */
-	virtual void Release() override;
+    virtual void Release() override;
 
-	/** get the description of the texture */
-    TextureDescription const & GetTextureDescription() const { return texture_description;  }
-	/** returns true whether the resource is valid */
-	bool IsValid() const { return glIsTexture(texture_id) == GL_TRUE;}
-	/** returns the GL name of the resource */
-	GLuint GetResourceID() const { return texture_id; }
-	/** get the name of the texture */
-	char const * GetName() const { return name.c_str();}
+    /** get the description of the texture */
+    TextureDescription const & GetTextureDescription() const { return texture_description; }
+    /** returns true whether the resource is valid */
+    bool IsValid() const { return glIsTexture(texture_id) == GL_TRUE; }
+    /** returns the GL name of the resource */
+    GLuint GetResourceID() const { return texture_id; }
 
   protected:
 
@@ -52,8 +50,6 @@ namespace chaos
     GLuint texture_id;
     /** the description of the texture */
     TextureDescription texture_description;
-	/** the name of the object */
-	std::string name;
   };
 
 }; // namespace chaos

@@ -5,17 +5,20 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramVariableProvider.h>
-#include <chaos/GPUResource.h>
+#include <chaos/GPUFileResource.h>
 
 
 namespace chaos
 {
 
-  class RenderMaterial : public GPUResource
+  class RenderMaterial : public GPUFileResource
   {
     friend class GPUProgramData;
 
   public:
+
+    /** constructor */
+    RenderMaterial(char const * in_name = nullptr);
 
     /** destructor */
     virtual ~RenderMaterial();

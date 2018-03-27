@@ -15,5 +15,4 @@ namespace chaos
     virtual void Release(){}
   };
 
-
 }; // namespace chaos

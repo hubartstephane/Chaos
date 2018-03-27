@@ -4,12 +4,11 @@
 namespace chaos
 {
 
-	Texture::Texture(GLuint in_id, TextureDescription const & in_texture_description, char const * in_name): 
+	Texture::Texture(GLuint in_id, TextureDescription const & in_texture_description, char const * in_name):
+    GPUFileResource(in_name),
 		texture_id(in_id), 
 		texture_description(in_texture_description)
 	{
-		if (in_name != nullptr)
-			name = in_name;
 	}
 
 	Texture::~Texture()

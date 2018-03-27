@@ -26,6 +26,36 @@ namespace chaos
     /** load a material */
     RenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
 
+
+    /** find a texture by its name */
+    Texture * FindTexture(char const * name);
+    /** find a texture by its name */
+    Texture const * FindTexture(char const * name) const;
+    /** find a texture by its path */
+    Texture * FindTextureByPath(FilePathParam const & in_path);
+    /** find a texture by its path */
+    Texture const * FindTextureByPath(FilePathParam const & in_path) const;
+
+    /** find a program by its name */
+    GPUProgram * FindProgram(char const * name);
+    /** find a program by its name */
+    GPUProgram const * FindProgram(char const * name) const;
+    /** find a program by its path */
+    GPUProgram * FindProgramByPath(FilePathParam const & in_path);
+    /** find a program by its path */
+    GPUProgram const * FindProgramByPath(FilePathParam const & in_path) const;
+
+    /** find a render material by its name */
+    RenderMaterial * FindRenderMaterial(char const * name);
+    /** find a render material by its name */
+    RenderMaterial const * FindRenderMaterial(char const * name) const;
+    /** find a render material by its path */
+    RenderMaterial * FindRenderMaterialByPath(FilePathParam const & in_path);
+    /** find a render material by its path */
+    RenderMaterial const * FindRenderMaterialByPath(FilePathParam const & in_path) const;
+
+
+
     /** loading from a JSON object */
     virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 

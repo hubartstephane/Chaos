@@ -3,6 +3,11 @@
 
 namespace chaos
 {
+  RenderMaterial::RenderMaterial(char const * in_name) :
+    GPUFileResource(in_name)
+  {
+
+  }
 
   RenderMaterial::~RenderMaterial()
   {

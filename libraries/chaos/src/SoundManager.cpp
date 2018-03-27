@@ -622,16 +622,11 @@ namespace chaos
     return irrklang_engine.get();
   }
 
-  bool SoundManager::IsManagerStarted() const
+  bool SoundManager::DoStartManager()
   {
-    return (irrklang_engine != nullptr);
-  }
-
-  bool SoundManager::StartManager()
-  {
-    // exit if manager is already started
-    if (IsManagerStarted())
-      return true;
+    // super method
+    if (!Manager::DoStartManager())
+      return false;
     // get the list of all devices
     irrklang_devices = irrklang::createSoundDeviceList();
     if (irrklang_devices == nullptr)
@@ -646,11 +641,10 @@ namespace chaos
     return true;
   }
 
-  bool SoundManager::StopManager()
+  bool SoundManager::DoStopManager()
   {
-    // exit if manager is already stopped
-    if (!IsManagerStarted())
-      return false;
+    // super method
+    Manager::DoStopManager();
 
     // empty the managed objects list
     RemoveAllObjectsFromList(sounds, &SoundManager::OnObjectRemovedFromManager); // destroy sounds first to make other list destructions faster

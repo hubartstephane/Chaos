@@ -54,8 +54,6 @@ namespace chaos
     /** find a render material by its path */
     RenderMaterial const * FindRenderMaterialByPath(FilePathParam const & in_path) const;
 
-
-
     /** loading from a JSON object */
     virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 

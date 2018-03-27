@@ -235,20 +235,14 @@ namespace chaos
       if (sound_config != nullptr)
         sound_manager->InitializeFromConfiguration(*sound_config, configuration_path);
 
-	  // initialize the GPU manager
-	  gpu_manager = new GPUResourceManager;
-	  if (gpu_manager == nullptr)
-		  return false;
-	  nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "graphics");
-	  if (cpu_config != nullptr)
-		  gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
-
-
-
-
-
-
-
+      // initialize the GPU manager
+      gpu_manager = new GPUResourceManager;
+      if (gpu_manager == nullptr)
+        return false;
+      gpu_manager->StartManager();
+      nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "graphics");
+      if (cpu_config != nullptr)
+        gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
 
       return true;
     }
@@ -263,8 +257,12 @@ namespace chaos
         sound_manager->StopManager();
         sound_manager = nullptr;
       }
-      // the resource manager
-	  gpu_manager = nullptr;
+      // stop the resource manager
+      if (gpu_manager != nullptr)
+      {
+        gpu_manager->StopManager();
+        gpu_manager = nullptr;
+      }
       // super method
       Application::FinalizeManagers();
       return true;

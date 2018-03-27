@@ -398,13 +398,6 @@ namespace chaos
     /** getter on the irrklang engine */
     irrklang::ISoundEngine * GetIrrklangEngine();
 
-    /** start the manager */
-    bool StartManager();
-    /** stop the manager */
-    bool StopManager();
-    /** returns whether the manager is correctly started */
-    bool IsManagerStarted() const;
-
     /** public method to tick the manager */
     void Tick(float delta_time);
 
@@ -443,6 +436,11 @@ namespace chaos
     virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
   protected:
+
+    /** internally start the manager */
+    virtual bool DoStartManager() override;
+    /** internally stop the manager */
+    virtual bool DoStopManager() override;
 
     /** remove a category from the list */
     void RemoveCategory(SoundCategory * in_category);

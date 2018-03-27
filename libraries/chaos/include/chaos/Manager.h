@@ -17,16 +17,30 @@ namespace chaos
 
   public:
 
+    /** start the manager */
+    bool StartManager();
+    /** stop the manager */
+    bool StopManager();
+
+    /** whether the manager is started */
+    bool IsManagerStarted() const;
+
     /** initialize the manager from a configuration file */
     virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
   protected:
 
+    /** internally starts the manager */
+    virtual bool DoStartManager();
+    /** internally stops the manager */
+    virtual bool DoStopManager();
+
+
     /** an utility method to initialize a single object in an JSON array/object */
     template<typename FUNC>
     void InitializeOneObjectFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC add_func)
     {
-      nlohmann::json::const_iterator name_json_it = json.find("name"); 
+      nlohmann::json::const_iterator name_json_it = json.find("name");
       if (name_json_it != json.end() && name_json_it->is_string())             // 1 - try to find a member 'name'
         add_func(name_json_it->get<std::string>().c_str(), json, config_path);
       else if (keyname != nullptr && keyname[0] == '@')                        // 2 - try to use the key
@@ -132,6 +146,11 @@ namespace chaos
       }
       return nullptr;
     }
+
+  protected:
+
+    /** whether the manager is started */
+    bool manager_started = false;
   };
 
 }; // namespace chaos

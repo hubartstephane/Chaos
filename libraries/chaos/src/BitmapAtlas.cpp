@@ -548,8 +548,10 @@ namespace chaos
 				return false;
 
 			// parse JSON file
-			nlohmann::json json = JSONTools::Parse(buf.data);
-			return LoadAtlas(json, target_dir);
+      nlohmann::json json;
+      if (JSONTools::Parse(buf.data, json))
+			  return LoadAtlas(json, target_dir);
+      return false;
 		}
 
 		bool Atlas::LoadAtlas(nlohmann::json const & json, boost::filesystem::path const & target_dir)

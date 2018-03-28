@@ -240,7 +240,7 @@ namespace chaos
       if (gpu_manager == nullptr)
         return false;
       gpu_manager->StartManager();
-      nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "graphics");
+      nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "gpu");
       if (cpu_config != nullptr)
         gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
 

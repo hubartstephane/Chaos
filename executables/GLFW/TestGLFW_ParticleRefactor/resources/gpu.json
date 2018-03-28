@@ -1,3 +1,14 @@
 {
-	
+	"textures":
+	{
+		"@tex1":"bidon"
+	},
+	"programs":
+	{
+		"@prog1":"bidon"
+	},
+	"materials":
+	{
+		"@mat1":"bidon"
+	}
 }

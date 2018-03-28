@@ -5,17 +5,18 @@
 namespace chaos
 {
 
-	nlohmann::json JSONTools::Parse(char const * buffer)
+	bool JSONTools::Parse(char const * buffer, nlohmann::json & result)
 	{
 		assert(buffer != nullptr);
 		try
 		{
-			return nlohmann::json::parse(buffer);
+			result = nlohmann::json::parse(buffer);
+      return true;
 		} 
 		catch (...)
 		{
 		}
-		return nlohmann::json();
+    return false;
 	}
 
 	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result)
@@ -96,17 +97,17 @@ namespace chaos
 
 	public:
 
-		nlohmann::json LoadJSONFile(FilePathParam const & path)
+		bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result)
 		{
-			nlohmann::json result;
 			ComputeSubstitutionChain(path);
 			if (entries.size() > 0)
 			{
 				MakeSubstitutions();
 				result = std::move(entries[0]->json);
 				Clear();
+        return true;
 			}
-			return result;
+			return false;
 		}
 
 	protected:
@@ -209,8 +210,8 @@ namespace chaos
 
 		LoaderEntry * CreateEntry(FilePathParam const & path)
 		{
-			nlohmann::json new_json = JSONTools::LoadJSONFile(path, false);
-			if (new_json.empty())
+      nlohmann::json new_json;
+			if (!JSONTools::LoadJSONFile(path, new_json, false))
 				return nullptr;
 			LoaderEntry * new_entry = new LoaderEntry();
 			if (new_entry == nullptr)
@@ -246,19 +247,19 @@ namespace chaos
 		std::vector<LoaderEntry*> stacked_entries;
 	};
 
-	nlohmann::json JSONTools::LoadJSONFile(FilePathParam const & path, bool recursive)
+	bool JSONTools::LoadJSONFile(FilePathParam const & path, nlohmann::json & result, bool recursive)
 	{
 		if (!recursive)
 		{
 			Buffer<char> buffer = FileTools::LoadFile(path, true);
 			if (buffer != nullptr)
-				return JSONTools::Parse(buffer.data);
-			return nlohmann::json(); // loading failure
+				return JSONTools::Parse(buffer.data, result);
+			return false; // loading failure
 		}
 		else
 		{
 			JSONRecursiveLoader loader;
-			return loader.LoadJSONFile(path);
+			return loader.LoadJSONFile(path, result);
 		}
 	}
   bool JSONTools::ShowConfigFile(nlohmann::json const & json, char const * filename)

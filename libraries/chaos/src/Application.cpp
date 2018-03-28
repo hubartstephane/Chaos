@@ -25,8 +25,8 @@ namespace chaos
   {
     FilePathParam path = GetResourcesPath() / "config.json";
 
-    configuration = JSONTools::LoadJSONFile(path, true);
-    configuration_path = path.GetResolvedPath();
+    if (JSONTools::LoadJSONFile(path, configuration, true))
+      configuration_path = path.GetResolvedPath();
   }
 
   bool Application::Initialize()

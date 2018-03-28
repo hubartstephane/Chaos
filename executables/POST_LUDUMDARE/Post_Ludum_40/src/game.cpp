@@ -332,9 +332,9 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config
 		return false;
 
   // parse JSON structures
-  nlohmann::json json_entry = chaos::JSONTools::Parse(buf);
-  return DoInitialize(resources_path, object_path, json_entry);
-
+  nlohmann::json json_entry; 
+  if (chaos::JSONTools::Parse(buf, json_entry))
+    return DoInitialize(resources_path, object_path, json_entry);
 	return false;
 }
 

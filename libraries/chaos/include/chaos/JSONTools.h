@@ -10,10 +10,10 @@ namespace chaos
 	public:
 
 		/** parsing a JSON file (catch exceptions) */
-		static nlohmann::json Parse(char const * buffer);
+		static bool Parse(char const * buffer, nlohmann::json & result);
 
 		/** Load a JSON file in a recursive whay */
-		static nlohmann::json LoadJSONFile(FilePathParam const & path, bool recursive = false);
+		static bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result, bool recursive = false);
 
 		/** specialization for bool */
 		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result);

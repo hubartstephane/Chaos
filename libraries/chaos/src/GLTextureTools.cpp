@@ -550,25 +550,46 @@ namespace chaos
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, char const * name, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result = GenTexture(image, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description, name);
+		GenTextureResult texture_result = GenTexture(image, parameters);
+		if (texture_result.texture_id > 0)
+		{
+			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
+			if (texture != nullptr)
+			{
+				SetResourceName(texture, name);
+				return texture;			
+			}		
+		}			
 		return nullptr;
 	}
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, char const * name, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result = GenTexture(image, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description, name);
+		GenTextureResult texture_result = GenTexture(image, parameters);
+		if (texture_result.texture_id > 0)
+		{
+			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
+			if (texture != nullptr)
+			{
+				SetResourceName(texture, name);
+				return texture;			
+			}	
+		}			
 		return nullptr;
 	}
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, char const * name, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result = GenTexture(skybox, merge_params, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description, name);
+		GenTextureResult texture_result = GenTexture(skybox, merge_params, parameters);
+		if (texture_result.texture_id > 0)
+		{
+			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
+			if (texture != nullptr)
+			{
+				SetResourceName(texture, name);
+				return texture;			
+			}		
+		}
 		return nullptr;
 	}
 
@@ -580,9 +601,14 @@ namespace chaos
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, char const * name, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result = GenTexture(path, parameters);
-		if (result.texture_id > 0)
-			return new Texture(result.texture_id, result.texture_description, name);
+		GenTextureResult texture_result = GenTexture(path, parameters);
+		Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
+		if (texture != nullptr)
+		{
+			SetResourceName(texture, name);
+			SetResourcePath(texture, path.GetResolvedPath());
+			return texture;			
+		}	
 		return nullptr;
 	}
 

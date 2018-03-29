@@ -18,7 +18,7 @@ namespace chaos
   public:
 
     /** constructor */
-    RenderMaterial(char const * in_name = nullptr);
+    RenderMaterial();
 
     /** destructor */
     virtual ~RenderMaterial();

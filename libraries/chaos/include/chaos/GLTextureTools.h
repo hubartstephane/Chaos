@@ -4,6 +4,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/Texture.h>
+#include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
 
 namespace chaos
@@ -52,23 +53,23 @@ namespace chaos
 	public:
 
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_s{ GL_REPEAT };
+		GLenum wrap_s =  GL_REPEAT;
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_t{ GL_REPEAT };
+		GLenum wrap_t = GL_REPEAT;
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_r{ GL_REPEAT };
+		GLenum wrap_r = GL_REPEAT;
 		/** parameters for glTexParameteri(...) */
-		GLenum mag_filter{ GL_LINEAR };
+		GLenum mag_filter = GL_LINEAR;
 		/** parameters for glTexParameteri(...) */
-		GLenum min_filter{ GL_LINEAR_MIPMAP_LINEAR };
+		GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR;
 		/** parameters for glTexImageXX(...) */
-		GLint  level{ 0 };
+		GLint  level = 0;
 		/** parameters for glTexImageXX(...) */
-		GLint  border{ 0 };
+		GLint  border = 0;
 		/** enable build mipmaps */
-		bool build_mipmaps{ true };
+		bool build_mipmaps = true;
 		/** enable the texture to be used has rectangular instead of GL_TEXTURE_1D or GL_TEXTURE_2D */
-		bool rectangle_texture{ false };
+		bool rectangle_texture = false;
 	};
 
 
@@ -76,7 +77,7 @@ namespace chaos
 	* GLTextureTools : used to have some generic functions for OpenGL
 	**/
 
-	class GLTextureTools
+	class GLTextureTools : protected GPUFileResourceFriend  // give the hability to change path and names to the resource
 	{
 	public:
 

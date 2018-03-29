@@ -4,8 +4,7 @@
 namespace chaos
 {
 
-	Texture::Texture(GLuint in_id, TextureDescription const & in_texture_description, char const * in_name):
-    GPUFileResource(in_name),
+	Texture::Texture(GLuint in_id, TextureDescription const & in_texture_description):
 		texture_id(in_id), 
 		texture_description(in_texture_description)
 	{

@@ -30,7 +30,7 @@ namespace chaos
   public:
 
     /** constructor */
-    Texture(GLuint in_id = 0, TextureDescription const & in_texture_description = TextureDescription(), char const * in_name = nullptr);
+    Texture(GLuint in_id = 0, TextureDescription const & in_texture_description = TextureDescription());
     /** destructor */
     virtual ~Texture();
 

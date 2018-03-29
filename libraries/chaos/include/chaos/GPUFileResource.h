@@ -5,29 +5,40 @@
 
 namespace chaos
 {
-  class GPUFileResource : public GPUResource
-  {
-  public:
+	class GPUFileResource : public GPUResource
+	{
+		friend class GPUFileResourceFriend;
 
-    /** constructor */
-    GPUFileResource(char const * in_name = nullptr)
-    {
-      if (in_name != nullptr)
-        name = in_name;
-    }
+	public:
 
-    /** get the name of the object */
-    char const * GetName() const { return name.c_str(); }
-    /** get the path of the object */
-    boost::filesystem::path const & GetPath() const { return path; }
+		/** get the name of the object */
+		char const * GetName() const { return name.c_str(); }
+		/** get the path of the object */
+		boost::filesystem::path const & GetPath() const { return path; }
 
-  protected:
+	protected:
 
-    /** the name of the object */
-    std::string name;
-    /** the path of the object */
-    boost::filesystem::path path;
-  };
+		/** Set the name method (for friends only) */
+		void SetName(char const * in_name);
+		/** Set the path method (for friends only) */
+		void SetPath(boost::filesystem::path const & in_path);
 
+	protected:
+
+		/** the name of the object */
+		std::string name;
+		/** the path of the object */
+		boost::filesystem::path path;
+	};
+
+	class GPUFileResourceFriend
+	{
+	protected:
+
+		/** Set the name method (for friends only) */
+		static void SetResourceName(GPUFileResource * resource, char const * in_name);
+		/** Set the path method (for friends only) */
+		static void SetResourcePath(GPUFileResource * resource, boost::filesystem::path const & in_path);
+	};
 
 }; // namespace chaos

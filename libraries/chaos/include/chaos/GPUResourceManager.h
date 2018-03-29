@@ -6,11 +6,12 @@
 #include <chaos/Texture.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/RenderMaterial.h>
+#include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
 
 namespace chaos
 {
-  class GPUResourceManager : public Manager
+  class GPUResourceManager : public Manager, protected GPUFileResourceFriend
   {
   public:
 

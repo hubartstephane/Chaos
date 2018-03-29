@@ -12,7 +12,7 @@ class GPUProgram : public GPUFileResource
 public:
 
   /** constructor */
-  GPUProgram(GLuint in_id = 0, char const * in_name = nullptr);
+  GPUProgram(GLuint in_id = 0);
   /** destructor */
   virtual ~GPUProgram();
 

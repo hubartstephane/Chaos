@@ -4,9 +4,8 @@
 namespace chaos
 {
 
-	GPUProgram::GPUProgram(GLuint in_id, char const * in_name) : 
-    GPUFileResource(in_name), 
-    program_id(in_id)
+	GPUProgram::GPUProgram(GLuint in_id): 
+		program_id(in_id)
 	{
 		if (in_id != 0)
 			program_data = GPUProgramData::GetData(in_id);

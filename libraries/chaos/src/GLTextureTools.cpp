@@ -366,7 +366,7 @@ namespace chaos
 					if (single_image)
 					{
 						FilePathParam single_path(single, config_path);
-						skybox = SkyBoxTools::LoadSingleSkyBox(single);
+						skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
 					}
 					else if (multiple_image)
 					{
@@ -390,7 +390,7 @@ namespace chaos
 	{
 		GenTextureResult result;
 
-		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		Buffer<char> buffer = FileTools::LoadFile(path, true); // ascii mode for JSON 
 		if (buffer != nullptr)
 		{
 			FIBITMAP * image = ImageTools::LoadImageFromBuffer(buffer);

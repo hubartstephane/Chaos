@@ -1,28 +1,10 @@
 {
-	"textures":
-	{
-		"@tex1":
-		{
-			"path":"textures/texture1.bmp"			
-		},
-		"@tex2":
-		{
-			"faces":[
-				"textures/nx.jpg",
-				"textures/px.jpg",
-				"textures/ny.jpg",
-				"textures/py.jpg",
-				"textures/nz.jpg",
-				"textures/pz.jpg",
-			]
-		}
-	},
-	"programs":
-	{
-		"@prog1":"bidon"
-	},
-	"materials":
-	{
-		"@mat1":"bidon"
+	"faces":{
+		"left":"nx.jpg",
+		"right":"px.jpg",
+		"top":"ny.jpg",
+		"bottom":"py.jpg",
+		"front":"nz.jpg",
+		"back":"pz.jpg"
 	}
 }

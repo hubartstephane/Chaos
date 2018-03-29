@@ -34,8 +34,12 @@ namespace chaos
 			{
 				if (entry.is_object())
 				{
-					result = entry.value(name, result);
-					return true;
+          nlohmann::json::const_iterator it = entry.find(name);
+          if (it != entry.end())
+          {
+            result = it->get<T>();
+            return true;
+          }
 				}
 			}
 			catch (...)
@@ -71,8 +75,12 @@ namespace chaos
 			{
 				if (entry.is_object())
 				{
-					result = entry.value(name, default_value);
-					return true;
+          nlohmann::json::const_iterator it = entry.find(name);
+          if (it != entry.end())
+          {
+            result = it->get<T>();
+            return true;
+          }
 				}
 			}
 			catch (...)

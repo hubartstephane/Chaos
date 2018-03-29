@@ -11,6 +11,7 @@
 #include <chaos/SoundManager.h>
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
+#include <chaos/GLTextureTools.h>
 
 
 #include "ParticleManagerRefactor.h"
@@ -29,7 +30,12 @@ protected:
 
   virtual void Finalize() override
   {
-
+    texture1 = nullptr;
+    texture2 = nullptr;
+    texture3 = nullptr;
+    texture4 = nullptr;
+    texture5 = nullptr;
+    texture6 = nullptr;
   }
 
   virtual bool Tick(double delta_time) override
@@ -54,6 +60,15 @@ protected:
 
     chaos::JSONTools::ShowConfigFile(config);
 
+    boost::filesystem::path const & resource_path = application->GetResourcesPath();
+
+    texture1 = chaos::GLTextureTools::GenTextureObject(resource_path / "textures" / "texture1.json");
+    texture2 = chaos::GLTextureTools::GenTextureObject(resource_path / "textures" / "texture2.json");
+    texture3 = chaos::GLTextureTools::GenTextureObject(resource_path / "textures" / "texture3.json");
+    texture4 = chaos::GLTextureTools::GenTextureObject(resource_path / "textures" / "texture4.json");
+    texture5 = chaos::GLTextureTools::GenTextureObject(resource_path / "textures" / "texture5.json");
+    texture6 = chaos::GLTextureTools::GenTextureObject(resource_path / "textures" / "space.png");
+
     return true;
   }
 
@@ -65,6 +80,13 @@ protected:
   }
 
 protected:
+
+  boost::intrusive_ptr<chaos::Texture> texture1;
+  boost::intrusive_ptr<chaos::Texture> texture2;
+  boost::intrusive_ptr<chaos::Texture> texture3;
+  boost::intrusive_ptr<chaos::Texture> texture4;
+  boost::intrusive_ptr<chaos::Texture> texture5;
+  boost::intrusive_ptr<chaos::Texture> texture6;
 
 
 };

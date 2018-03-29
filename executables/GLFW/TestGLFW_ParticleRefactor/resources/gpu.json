@@ -3,18 +3,45 @@
 	{
 		"@tex1":
 		{
-			"path":"textures/texture1.bmp"			
+			"path":"texture1.bmp"			
 		},
 		"@tex2":
 		{
-			"faces":[
-				"textures/nx.jpg",
-				"textures/px.jpg",
-				"textures/ny.jpg",
-				"textures/py.jpg",
-				"textures/nz.jpg",
-				"textures/pz.jpg"
+			"faces":
+			[
+				"nx.jpg",
+				"px.jpg",
+				"ny.jpg",
+				"py.jpg",
+				"nz.jpg",
+				"pz.jpg"
 			]
+		},
+		"@tex3":
+		{
+			"faces":
+			[
+				"space.png"
+			]			
+		},
+		"@tex4":
+		{
+			"faces":
+			{
+				"left":"nx.jpg",
+				"right":"px.jpg",
+				"top":"ny.jpg",
+				"bottom":"py.jpg",
+				"front":"nz.jpg",
+				"back":"pz.jpg"
+			}			
+		},
+		"@tex5":
+		{
+			"faces":
+			{
+				"single":"space.png"
+			}			
 		}
 	},
 	"programs":

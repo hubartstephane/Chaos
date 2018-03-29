@@ -390,10 +390,16 @@ namespace chaos
 	{
 		GenTextureResult result;
 
-		Buffer<char> buffer = FileTools::LoadFile(path, true); // ascii mode for JSON 
-		if (buffer != nullptr)
+		Buffer<char> ascii_buffer = FileTools::LoadFile(path, true); // ascii mode for JSON 
+		if (ascii_buffer != nullptr)
 		{
-			FIBITMAP * image = ImageTools::LoadImageFromBuffer(buffer);
+      // while i am not sure an additionnal 0 in buffer wont be treated as a corruption by Free_Image
+      // i work with a clamped buffer without this ascii 0 terminal
+      Buffer<char> noascii_buffer;
+      noascii_buffer.data = ascii_buffer.data;
+      noascii_buffer.bufsize = ascii_buffer.bufsize - 1; 
+      
+			FIBITMAP * image = ImageTools::LoadImageFromBuffer(noascii_buffer);
 			if (image != nullptr)
 			{
 				result = GenTexture(image, parameters);
@@ -402,7 +408,7 @@ namespace chaos
 			else
 			{
 				nlohmann::json json;
-				if (JSONTools::Parse(buffer, json))
+				if (JSONTools::Parse(ascii_buffer, json))
 					result = GenTexture(json, path.GetResolvedPath(), parameters);
 			}
 		}

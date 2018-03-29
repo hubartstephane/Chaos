@@ -55,13 +55,27 @@ protected:
     boost::filesystem::path configuration_path = application->GetResourcesPath() / "test1.json";
 
     nlohmann::json c1;
-    chaos::JSONTools::LoadJSONFile(configuration_path, c1, true)
+    chaos::JSONTools::LoadJSONFile(configuration_path, c1, true);
+
+	nlohmann::json const * ar = chaos::JSONTools::GetStructure(c1, "value_array");
+
+	if (ar != nullptr)
+	{
+		int a,b;
+		chaos::JSONTools::GetAttributeByIndex(*ar, 0, a);
+		chaos::JSONTools::GetAttributeByIndex(*ar, 1, b);
+
+		nlohmann::json const * ar2 = chaos::JSONTools::GetStructureByIndex(*ar, 3);
+	
+		bool c;
+		chaos::JSONTools::GetAttributeByIndex(*ar, 4, c);
+
+		ar2 = ar2;
+	}
 
 
 
-
-
-
+	ar =ar;
 
 
 

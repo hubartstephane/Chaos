@@ -20,6 +20,11 @@ namespace chaos
 		/** specialization for bool */
 		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result, bool default_value); 
 
+		/** specialization for bool */
+		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result);
+		/** specialization for bool */
+		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result, bool default_value); 
+
 		/** reading an attribute (catch exceptions) */
 		template<typename T>
 		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result)
@@ -27,8 +32,29 @@ namespace chaos
 			assert(name != nullptr);
 			try
 			{
-				result = entry.value(name, result);
-				return true;
+				if (entry.is_object())
+				{
+					result = entry.value(name, result);
+					return true;
+				}
+			}
+			catch (...)
+			{				
+			}
+			return false;			
+		}
+
+		/** reading an attribute (catch exceptions) */
+		template<typename T>
+		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result)
+		{
+			try
+			{
+				if (entry.is_array() && index < entry.size())
+				{
+					result = entry[index].get<T>();
+					return true;
+				}
 			}
 			catch (...)
 			{				
@@ -43,8 +69,31 @@ namespace chaos
 			assert(name != nullptr);
 			try
 			{
-				result = entry.value(name, default_value);
-				return true;
+				if (entry.is_object())
+				{
+					result = entry.value(name, default_value);
+					return true;
+				}
+			}
+			catch (...)
+			{
+
+			}
+			result = default_value;
+			return false;			
+		}
+		/** reading an attribute (catch exceptions) with default value */
+		template<typename T, typename Y>
+		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result, Y default_value)
+		{
+			assert(name != nullptr);
+			try
+			{
+				if (entry.is_array() && index < entry.size())
+				{
+					result = entry[index].get<T>();
+					return true;
+				}
 			}
 			catch (...)
 			{
@@ -59,8 +108,13 @@ namespace chaos
 		/** get a sub object from an object */
 		static nlohmann::json const * GetStructure(nlohmann::json const & entry, char const * name);
 
-    /** create a temporary directory to hold the configuration */
-    static bool ShowConfigFile(nlohmann::json const & json, char const * filename = "myjson.json");
+		/** get a sub object from an object */
+		static nlohmann::json * GetStructureByIndex(nlohmann::json & entry, size_t index);
+		/** get a sub object from an object */
+		static nlohmann::json const * GetStructureByIndex(nlohmann::json const & entry, size_t index);
+
+		/** create a temporary directory to hold the configuration */
+		static bool ShowConfigFile(nlohmann::json const & json, char const * filename = "myjson.json");
 	};
 
 }; // namespace chaos

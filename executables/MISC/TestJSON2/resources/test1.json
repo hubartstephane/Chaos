@@ -6,7 +6,13 @@
   "value_true": true,
   "value_false": false,
   "value_null": null,
-  "value_array": [ 1, 2, 3 ],
+  "value_array": [
+    3,
+    7,
+    8,
+    [ 5, 3, 2 ],
+    true
+  ],
   
   "test2":{
     "@filename":"test2.json"  

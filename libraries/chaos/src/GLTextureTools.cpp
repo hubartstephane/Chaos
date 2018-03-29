@@ -305,11 +305,62 @@ namespace chaos
 	GenTextureResult GLTextureTools::GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result;
-	
+
+		// the entry has a reference to another file => recursive call
+		std::string p;
+		if (JSONTools::GetAttribute(json, "path", p)) 
+		{
+			FilePathParam path(p, config_path);
+			return GenTexture(path, parameters);
+		}
+#if 0
+		// skybox descriptions ?
+		nlohmann::json const * faces = JSONTools::GetStructure(json, "faces");
+		if (faces != nullptr)
+		{
+			if (faces->is_array() || faces->is_object())
+			{
+				std::string left;
+				std::string right;
+				std::string top;
+				std::string bottom;
+				std::string front;
+				std::string back;
+
+				std::string single;
+
+				bool single_image   = false;
+				bool multiple_image = false;
+
+				SkyBoxImages skybox;
+				if (faces->is_array())
+				{
+					if (faces->size() == 1)
+					{
+						single_image |= JSONTools::GetAttributeByIndex(faces, 0, single);
+					}
+					else
+					{
+						multiple_image |= JSONTools::GetAttributeByIndex(faces, 0, left);
+						multiple_image |= JSONTools::GetAttributeByIndex(faces, 1, right);
+						multiple_image |= JSONTools::GetAttributeByIndex(faces, 2, top);
+						multiple_image |= JSONTools::GetAttributeByIndex(faces, 3, bottom);
+						multiple_image |= JSONTools::GetAttributeByIndex(faces, 4, front);
+						multiple_image |= JSONTools::GetAttributeByIndex(faces, 5, back);
+					}				
+				}
+
+				if (single_image)
+					skybox = SkyBoxTools::LoadSingleSkyBox(single);
+
+
+			}
 
 
 
 
+		}	
+#endif
 		return result;
 	}
 

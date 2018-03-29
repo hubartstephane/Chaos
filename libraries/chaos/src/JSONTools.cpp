@@ -11,12 +11,12 @@ namespace chaos
 		try
 		{
 			result = nlohmann::json::parse(buffer);
-      return true;
+			return true;
 		} 
 		catch (...)
 		{
 		}
-    return false;
+		return false;
 	}
 
 	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result)
@@ -24,8 +24,11 @@ namespace chaos
 		assert(name != nullptr);
 		try
 		{
-			result = (entry.value(name, 0) > 0);
-			return true;
+			if (entry.is_object())
+			{
+				result = (entry.value(name, 0) > 0);
+				return true;
+			}
 		}
 		catch (...)
 		{				
@@ -38,8 +41,44 @@ namespace chaos
 		assert(name != nullptr);
 		try
 		{
-			result = (entry.value(name, 0) > 0);
-			return true;
+			if (entry.is_object())
+			{
+				result = (entry.value(name, 0) > 0);
+				return true;
+			}
+		}
+		catch (...)
+		{
+		}
+		result = default_value;
+		return false;
+	}
+
+	bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result)
+	{
+		try
+		{
+			if (entry.is_array() && index < entry.size())
+			{
+				result = entry[index].get<bool>();
+				return true;
+			}
+		}
+		catch (...)
+		{				
+		}
+		return false;			
+	}
+
+	bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result, bool default_value) // specialization for bool
+	{			
+		try
+		{
+			if (entry.is_array() && index < entry.size())
+			{
+				result = entry[index].get<bool>();
+				return true;
+			}
 		}
 		catch (...)
 		{
@@ -55,7 +94,7 @@ namespace chaos
 			if (entry.is_object())
 			{
 				auto it = entry.find(name);
-				if (it != entry.end() && it->is_object())
+				if (it != entry.end() && it->is_structured())
 					return &*it;				
 			}
 		}
@@ -74,6 +113,40 @@ namespace chaos
 				auto it = entry.find(name);
 				if (it != entry.end() && it->is_structured())
 					return &*it;					
+			}
+		}
+		catch (...)
+		{
+		}
+		return nullptr;				
+	}
+
+	nlohmann::json * JSONTools::GetStructureByIndex(nlohmann::json & entry, size_t index)
+	{
+		try
+		{
+			if (entry.is_array() && index < entry.size())
+			{
+				nlohmann::json & result = entry[index];
+				if (result.is_structured())
+					return &result;			
+			}
+		}
+		catch (...)
+		{
+		}
+		return nullptr;				
+	}
+
+	nlohmann::json const * JSONTools::GetStructureByIndex(nlohmann::json const & entry, size_t index)
+	{
+		try
+		{
+			if (entry.is_array() && index < entry.size())
+			{
+				nlohmann::json const & result = entry[index];
+				if (result.is_structured())
+					return &result;			
 			}
 		}
 		catch (...)
@@ -105,7 +178,7 @@ namespace chaos
 				MakeSubstitutions();
 				result = std::move(entries[0]->json);
 				Clear();
-        return true;
+				return true;
 			}
 			return false;
 		}
@@ -210,7 +283,7 @@ namespace chaos
 
 		LoaderEntry * CreateEntry(FilePathParam const & path)
 		{
-      nlohmann::json new_json;
+			nlohmann::json new_json;
 			if (!JSONTools::LoadJSONFile(path, new_json, false))
 				return nullptr;
 			LoaderEntry * new_entry = new LoaderEntry();
@@ -262,24 +335,24 @@ namespace chaos
 			return loader.LoadJSONFile(path, result);
 		}
 	}
-  bool JSONTools::ShowConfigFile(nlohmann::json const & json, char const * filename)
-  {
-    if (filename == nullptr)
-      return false;
+	bool JSONTools::ShowConfigFile(nlohmann::json const & json, char const * filename)
+	{
+		if (filename == nullptr)
+			return false;
 
-    boost::filesystem::path result_dir;
-    if (FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result_dir))
-    {
-      boost::filesystem::path path = result_dir / filename;
+		boost::filesystem::path result_dir;
+		if (FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result_dir))
+		{
+			boost::filesystem::path path = result_dir / filename;
 
-      std::ofstream stream(path.string().c_str());
-      stream << json.dump(4);
+			std::ofstream stream(path.string().c_str());
+			stream << json.dump(4);
 
-      WinTools::ShowFile(result_dir);
-      return true;
-    }
-    return false;
-  }
+			WinTools::ShowFile(result_dir);
+			return true;
+		}
+		return false;
+	}
 
 
 }; // namespace chaos

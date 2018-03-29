@@ -335,29 +335,29 @@ namespace chaos
 				{
 					if (faces->size() == 1)
 					{
-						single_image |= JSONTools::GetAttributeByIndex(faces, 0, single);
+						single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single);
 					}
 					else
 					{
-						multiple_image |= JSONTools::GetAttributeByIndex(faces, 0, left);
-						multiple_image |= JSONTools::GetAttributeByIndex(faces, 1, right);
-						multiple_image |= JSONTools::GetAttributeByIndex(faces, 2, top);
-						multiple_image |= JSONTools::GetAttributeByIndex(faces, 3, bottom);
-						multiple_image |= JSONTools::GetAttributeByIndex(faces, 4, front);
-						multiple_image |= JSONTools::GetAttributeByIndex(faces, 5, back);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front);
+						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back);
 					}				
 				}
 				else
 				{
-					single_image |= JSONTools::GetAttribute(faces, "single", single);
+					single_image |= JSONTools::GetAttribute(*faces, "single", single);
 					if (!single_image)
 					{
-						multiple_image |= JSONTools::GetAttribute(faces, "left", left);
-						multiple_image |= JSONTools::GetAttribute(faces, "right", right);
-						multiple_image |= JSONTools::GetAttribute(faces, "top", top);
-						multiple_image |= JSONTools::GetAttribute(faces, "bottom", bottom);
-						multiple_image |= JSONTools::GetAttribute(faces, "front", front);
-						multiple_image |= JSONTools::GetAttribute(faces, "back", back);
+						multiple_image |= JSONTools::GetAttribute(*faces, "left", left);
+						multiple_image |= JSONTools::GetAttribute(*faces, "right", right);
+						multiple_image |= JSONTools::GetAttribute(*faces, "top", top);
+						multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom);
+						multiple_image |= JSONTools::GetAttribute(*faces, "front", front);
+						multiple_image |= JSONTools::GetAttribute(*faces, "back", back);
 					}
 				}
 

@@ -571,82 +571,43 @@ namespace chaos
 		return result;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, char const * name, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
 	{
 		GenTextureResult texture_result = GenTexture(json, config_path, parameters);
 		if (texture_result.texture_id > 0)
-		{
-			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
-			if (texture != nullptr)
-			{													
-				SetResourceName(texture, name);
-				return texture;			
-			}		
-		}			
+			return new Texture(texture_result.texture_id, texture_result.texture_description);
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, char const * name, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
 	{
 		GenTextureResult texture_result = GenTexture(image, parameters);
 		if (texture_result.texture_id > 0)
-		{
-			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
-			if (texture != nullptr)
-			{
-				SetResourceName(texture, name);
-				return texture;			
-			}		
-		}			
+			return new Texture(texture_result.texture_id, texture_result.texture_description);
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, char const * name, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
 	{
 		GenTextureResult texture_result = GenTexture(image, parameters);
 		if (texture_result.texture_id > 0)
-		{
-			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
-			if (texture != nullptr)
-			{
-				SetResourceName(texture, name);
-				return texture;			
-			}	
-		}			
+			return new Texture(texture_result.texture_id, texture_result.texture_description);
 		return nullptr;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, char const * name, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		GenTextureResult texture_result = GenTexture(skybox, merge_params, parameters);
 		if (texture_result.texture_id > 0)
-		{
-			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
-			if (texture != nullptr)
-			{
-				SetResourceName(texture, name);
-				return texture;			
-			}		
-		}
+			return new Texture(texture_result.texture_id, texture_result.texture_description);
 		return nullptr;
 	}
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
 	{
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-		return GenTextureObject(path, BoostTools::PathToName(resolved_path).c_str(), parameters);
-	}
-
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, char const * name, GenTextureParameters const & parameters)
-	{
 		GenTextureResult texture_result = GenTexture(path, parameters);
-		Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
-		if (texture != nullptr)
-		{
-			SetResourceName(texture, name);
-			SetResourcePath(texture, path.GetResolvedPath());
-			return texture;			
-		}	
+		if (texture_result.texture_id > 0)
+			return new Texture(texture_result.texture_id, texture_result.texture_description);
 		return nullptr;
 	}
 

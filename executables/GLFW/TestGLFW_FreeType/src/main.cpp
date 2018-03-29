@@ -293,7 +293,7 @@ protected:
 
 #endif
 
-    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, nullptr, parameters);
+    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
 
     glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 

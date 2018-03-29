@@ -67,7 +67,7 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::GLTextureTools::GenTextureObject(&skybox, nullptr, merge_params);
+		return chaos::GLTextureTools::GenTextureObject(&skybox, merge_params);
 
 #else
 		

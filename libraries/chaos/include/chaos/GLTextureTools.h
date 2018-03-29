@@ -25,9 +25,9 @@ namespace chaos
 	public:
 
 		/** how the data should be stored in CPU side */
-		GLenum format{GL_NONE};
+		GLenum format = GL_NONE;
 		/** how the data should be stored in GPU side */
-		GLenum internal_format{GL_NONE};
+		GLenum internal_format = GL_NONE;
 	};
 
 	/**
@@ -39,7 +39,7 @@ namespace chaos
 	public:
 
 		/** the id of the texture */
-		GLuint             texture_id{ 0 };
+		GLuint             texture_id = 0;
 		/** the GL handler for the texture */
 		TextureDescription texture_description;
 	};
@@ -96,6 +96,8 @@ namespace chaos
 		/** transform a texture type into a flat type */
 		static GLenum ToFlatTextureType(GLenum type);
 
+		/** Generate a texture from a json content */
+		static GenTextureResult GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an file */
 		static GenTextureResult GenTexture(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an image */
@@ -126,6 +128,8 @@ namespace chaos
 			return result;
 		}
 
+		/** Generate a texture from a json content */
+		static boost::intrusive_ptr<Texture> GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, char const * name, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an file */
 		static boost::intrusive_ptr<Texture> GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an file */

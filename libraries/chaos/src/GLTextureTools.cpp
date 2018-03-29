@@ -1,6 +1,8 @@
 ﻿#include <chaos/GLTextureTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
+#include <chaos/FileTools.h>
+#include <chaos/JSONTools.h>
 
 //
 // Some reminders for OpenGL:
@@ -300,15 +302,36 @@ namespace chaos
 		return GenTexture(ImageTools::GetImageDescription(image), parameters);
 	}
 
+	GenTextureResult GLTextureTools::GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
+	{
+		GenTextureResult result;
+	
+
+
+
+
+		return result;
+	}
+
 	GenTextureResult GLTextureTools::GenTexture(FilePathParam const & path, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result;
 
-		FIBITMAP * image = ImageTools::LoadImageFromFile(path);
-		if (image != nullptr)
+		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		if (buffer != nullptr)
 		{
-			result = GenTexture(image, parameters);
-			FreeImage_Unload(image);  
+			FIBITMAP * image = ImageTools::LoadImageFromBuffer(buffer);
+			if (image != nullptr)
+			{
+				result = GenTexture(image, parameters);
+				FreeImage_Unload(image); 
+			}
+			else
+			{
+				nlohmann::json json;
+				if (JSONTools::Parse(buffer, json))
+					result = GenTexture(json, path.GetResolvedPath(), parameters);
+			}
 		}
 		return result;
 	}
@@ -546,6 +569,21 @@ namespace chaos
 			delete[](conversion_buffer);
 
 		return result;
+	}
+
+	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, char const * name, GenTextureParameters const & parameters)
+	{
+		GenTextureResult texture_result = GenTexture(json, config_path, parameters);
+		if (texture_result.texture_id > 0)
+		{
+			Texture * texture = new Texture(texture_result.texture_id, texture_result.texture_description);
+			if (texture != nullptr)
+			{													
+				SetResourceName(texture, name);
+				return texture;			
+			}		
+		}			
+		return nullptr;
 	}
 
 	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, char const * name, GenTextureParameters const & parameters)

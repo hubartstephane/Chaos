@@ -31,7 +31,7 @@ namespace chaos
 
   bool Application::Initialize()
   {
-    chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+    WinTools::AllocConsoleAndRedirectStdOutput();
     if (!InitializeManagers())
       return false;
     return true;

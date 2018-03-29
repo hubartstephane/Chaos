@@ -304,8 +304,6 @@ namespace chaos
 
 	GenTextureResult GLTextureTools::GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result;
-
 		// the entry has a reference to another file => recursive call
 		std::string p;
 		if (JSONTools::GetAttribute(json, "path", p)) 
@@ -313,7 +311,7 @@ namespace chaos
 			FilePathParam path(p, config_path);
 			return GenTexture(path, parameters);
 		}
-#if 0
+
 		// skybox descriptions ?
 		nlohmann::json const * faces = JSONTools::GetStructure(json, "faces");
 		if (faces != nullptr)
@@ -349,19 +347,43 @@ namespace chaos
 						multiple_image |= JSONTools::GetAttributeByIndex(faces, 5, back);
 					}				
 				}
+				else
+				{
+					single_image |= JSONTools::GetAttribute(faces, "single", single);
+					if (!single_image)
+					{
+						multiple_image |= JSONTools::GetAttribute(faces, "left", left);
+						multiple_image |= JSONTools::GetAttribute(faces, "right", right);
+						multiple_image |= JSONTools::GetAttribute(faces, "top", top);
+						multiple_image |= JSONTools::GetAttribute(faces, "bottom", bottom);
+						multiple_image |= JSONTools::GetAttribute(faces, "front", front);
+						multiple_image |= JSONTools::GetAttribute(faces, "back", back);
+					}
+				}
 
-				if (single_image)
-					skybox = SkyBoxTools::LoadSingleSkyBox(single);
-
-
+				if (single_image || multiple_image)
+				{
+					if (single_image)
+					{
+						FilePathParam single_path(single, config_path);
+						skybox = SkyBoxTools::LoadSingleSkyBox(single);
+					}
+					else if (multiple_image)
+					{
+						FilePathParam left_path(left, config_path);
+						FilePathParam right_path(right, config_path);
+						FilePathParam top_path(top, config_path);
+						FilePathParam bottom_path(bottom, config_path);
+						FilePathParam front_path(front, config_path);
+						FilePathParam back_path(back, config_path);
+						skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);					
+					}								
+					return GenTexture(&skybox, PixelFormatMergeParams(), parameters);
+				}
 			}
-
-
-
-
 		}	
-#endif
-		return result;
+
+		return GenTextureResult();
 	}
 
 	GenTextureResult GLTextureTools::GenTexture(FilePathParam const & path, GenTextureParameters const & parameters)
@@ -489,12 +511,13 @@ namespace chaos
 		return -1;
 	}
 
-	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, chaos::PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		assert(skybox != nullptr);
-		assert(!skybox->IsEmpty());
 
 		GenTextureResult result;
+		if (skybox->IsEmpty())
+			return result;
 
 		PixelFormat final_pixel_format = skybox->GetMergedPixelFormat(merge_params);
 

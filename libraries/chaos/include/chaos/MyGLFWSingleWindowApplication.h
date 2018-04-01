@@ -90,6 +90,10 @@ namespace chaos
       virtual bool InitializeManagers() override;
       /** finalize the managers */
       virtual bool FinalizeManagers() override;
+      /** the GPU manager must be initialized after the OpenGL context is OK. */
+      virtual bool InitializeGPUManager();
+      /** finalize the GPU manager */
+      virtual bool FinalizeGPUManager();
 
       /** the method to override for window generation */
       virtual Window * GenerateWindow();

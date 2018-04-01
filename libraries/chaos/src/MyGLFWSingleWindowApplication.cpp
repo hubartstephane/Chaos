@@ -190,7 +190,9 @@ namespace chaos
               glfwShowWindow(glfw_window);
 
             // the main loop
+            InitializeGPUManager();
             MessageLoop();
+            FinalizeGPUManager();
           }
           window->Finalize();
         }
@@ -211,6 +213,29 @@ namespace chaos
     void SingleWindowApplication::OnGLFWError(int code, const char* msg)
     {
       LogTools::Log("Window(...) [%d] failure : %s", code, msg);
+    }
+
+    bool SingleWindowApplication::InitializeGPUManager()
+    {
+      // initialize the GPU manager
+      gpu_manager = new GPUResourceManager;
+      if (gpu_manager == nullptr)
+        return false;
+      gpu_manager->StartManager();
+      nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "gpu");
+      if (cpu_config != nullptr)
+        gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
+    }
+
+    bool SingleWindowApplication::FinalizeGPUManager()
+    {
+      // stop the resource manager
+      if (gpu_manager != nullptr)
+      {
+        gpu_manager->StopManager();
+        gpu_manager = nullptr;
+      }
+      return true;
     }
 
     bool SingleWindowApplication::InitializeManagers()
@@ -234,15 +259,6 @@ namespace chaos
       nlohmann::json const * sound_config = JSONTools::GetStructure(configuration, "sounds");
       if (sound_config != nullptr)
         sound_manager->InitializeFromConfiguration(*sound_config, configuration_path);
-
-      // initialize the GPU manager
-      gpu_manager = new GPUResourceManager;
-      if (gpu_manager == nullptr)
-        return false;
-      gpu_manager->StartManager();
-      nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "gpu");
-      if (cpu_config != nullptr)
-        gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
 
       return true;
     }

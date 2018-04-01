@@ -263,7 +263,7 @@ namespace chaos
     }
 
     // generate the program
-//    boost::intrusive_ptr<GPUProgram> program = loader.GenerateProgramObject();
+    boost::intrusive_ptr<GPUProgram> program = loader.GenerateProgramObject();
 
 
 

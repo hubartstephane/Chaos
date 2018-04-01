@@ -1,3 +1,10 @@
 {
-
+	"pixel_shader_sources":
+	[
+		"pixel_shader1.json"
+	],
+	"vertex_shader_sources":
+	[
+		"pixel_shader1.json"
+	]
 }

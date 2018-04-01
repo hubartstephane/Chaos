@@ -46,7 +46,7 @@
 	},
 	"programs":
 	{
-		"@prog1":"bidon"
+		"@prog1":{"@filename":"programs/program1.json"}
 	},
 	"materials":
 	{

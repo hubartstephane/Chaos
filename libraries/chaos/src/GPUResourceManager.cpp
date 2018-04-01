@@ -1,5 +1,7 @@
 ﻿#include <chaos/GPUResourceManager.h>
 #include <chaos/BoostTools.h>
+#include <chaos/GLTextureTools.h>
+#include <chaos/GPUProgramLoader.h>
 
 namespace chaos
 {
@@ -83,30 +85,16 @@ namespace chaos
   {
     if (!CanAddTexture(name))
       return nullptr;
+    if (FindTextureByPath(path) != nullptr)
+      return nullptr;
 
-#if 0
-    if (name != nullptr)
-    {
-      Texture * texture = FindTexture(name);
-      if (texture != nullptr)
-      {
-        if (path.GetResolvedPath() == texture->GetPath())
-          return texture;
-
-      }
-
-
-    }
-    
-
-
-    if (FindTextureByPath(path))
-      retu
-
-
-#endif
-
-    return nullptr;
+    boost::intrusive_ptr<Texture> texture = GLTextureTools::GenTextureObject(path);
+    if (texture == nullptr)
+      return nullptr;
+    SetResourceName(texture.get(), name);
+    SetResourcePath(texture.get(), path.GetResolvedPath());
+    textures.push_back(texture);
+    return texture.get();
   }
 
   GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path)
@@ -119,6 +107,8 @@ namespace chaos
   {
     if (!CanAddProgram(name))
       return nullptr;
+    if (FindProgramByPath(path) != nullptr)
+      return false;
 
 
 
@@ -220,6 +210,70 @@ namespace chaos
 
   GPUProgram * GPUResourceManager::AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
+    // the possible types of shaders
+    static GLenum const shader_types[] = 
+    { 
+      GL_FRAGMENT_SHADER, 
+      GL_VERTEX_SHADER,
+      GL_GEOMETRY_SHADER,
+      GL_TESS_EVALUATION_SHADER,
+      GL_TESS_CONTROL_SHADER
+    };
+
+    // the attribute names associated
+    static char const * shader_json_names[] =
+    {
+      "pixel_sources",
+      "vertex_sources",
+      "geometry_sources",
+      "tesselation_evaluation_sources",
+      "tesselation_control_sources"
+    };
+
+    size_t shader_type_count = sizeof(shader_types) / sizeof(shader_types[0]);
+    size_t shader_name_count = sizeof(shader_json_names) / sizeof(shader_json_names[0]);
+    assert(shader_type_count == shader_name_count);
+
+    if (!CanAddProgram(name))
+      return nullptr;
+
+
+
+    GPUProgramLoader loader;
+    // iterate over every shader types
+    for (size_t i = 0; i < shader_type_count; ++i)
+    {
+      nlohmann::json const * sources = JSONTools::GetStructure(json, shader_json_names[i]);
+      if (sources == nullptr)
+        continue;
+      if (!sources->is_array())
+        continue;
+
+      // iterate over all sources for the given shader type
+      for (size_t j = 0; j < sources->size(); ++j)
+      {
+        std::string source_path;
+        if (!JSONTools::GetAttributeByIndex(*sources, j, source_path))
+          continue;
+
+        FilePathParam path(source_path, config_path);
+        loader.AddShaderSourceFile(shader_types[i], path);
+        j = j;
+      }
+    }
+
+    // generate the program
+//    boost::intrusive_ptr<GPUProgram> program = loader.GenerateProgramObject();
+
+
+
+
+
+
+
+
+
+
 
     return nullptr;
   }

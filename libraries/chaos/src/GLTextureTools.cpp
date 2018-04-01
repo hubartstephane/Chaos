@@ -242,6 +242,8 @@ namespace chaos
 		return GLPixelFormat(GL_NONE, GL_NONE);
 	}
 
+  // ===================================================
+
 	GenTextureResult GLTextureTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
 	{
 		GenTextureResult result;
@@ -296,95 +298,31 @@ namespace chaos
 		return result;
 	}
 
+  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
+  {
+    GenTextureResult texture_result = GenTexture(image, parameters);
+    if (texture_result.texture_id > 0)
+      return new Texture(texture_result.texture_id, texture_result.texture_description);
+    return nullptr;
+  }
+
+  // ===================================================
+
 	GenTextureResult GLTextureTools::GenTexture(FIBITMAP * image, GenTextureParameters const & parameters)
 	{
 		assert(image != nullptr);
 		return GenTexture(ImageTools::GetImageDescription(image), parameters);
 	}
 
-	GenTextureResult GLTextureTools::GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
-	{
-		// the entry has a reference to another file => recursive call
-		std::string p;
-		if (JSONTools::GetAttribute(json, "path", p)) 
-		{
-			FilePathParam path(p, config_path);
-			return GenTexture(path, parameters);
-		}
+  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
+  {
+    GenTextureResult texture_result = GenTexture(image, parameters);
+    if (texture_result.texture_id > 0)
+      return new Texture(texture_result.texture_id, texture_result.texture_description);
+    return nullptr;
+  }
 
-		// skybox descriptions ?
-		nlohmann::json const * faces = JSONTools::GetStructure(json, "faces");
-		if (faces != nullptr)
-		{
-			if (faces->is_array() || faces->is_object())
-			{
-				std::string left;
-				std::string right;
-				std::string top;
-				std::string bottom;
-				std::string front;
-				std::string back;
-
-				std::string single;
-
-				bool single_image   = false;
-				bool multiple_image = false;
-
-				SkyBoxImages skybox;
-				if (faces->is_array())
-				{
-					if (faces->size() == 1)
-					{
-						single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single);
-					}
-					else
-					{
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front);
-						multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back);
-					}				
-				}
-				else
-				{
-					single_image |= JSONTools::GetAttribute(*faces, "single", single);
-					if (!single_image)
-					{
-						multiple_image |= JSONTools::GetAttribute(*faces, "left", left);
-						multiple_image |= JSONTools::GetAttribute(*faces, "right", right);
-						multiple_image |= JSONTools::GetAttribute(*faces, "top", top);
-						multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom);
-						multiple_image |= JSONTools::GetAttribute(*faces, "front", front);
-						multiple_image |= JSONTools::GetAttribute(*faces, "back", back);
-					}
-				}
-
-				if (single_image || multiple_image)
-				{
-					if (single_image)
-					{
-						FilePathParam single_path(single, config_path);
-						skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
-					}
-					else if (multiple_image)
-					{
-						FilePathParam left_path(left, config_path);
-						FilePathParam right_path(right, config_path);
-						FilePathParam top_path(top, config_path);
-						FilePathParam bottom_path(bottom, config_path);
-						FilePathParam front_path(front, config_path);
-						FilePathParam back_path(back, config_path);
-						skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);					
-					}								
-					return GenTexture(&skybox, PixelFormatMergeParams(), parameters);
-				}
-			}
-		}	
-
-		return GenTextureResult();
-	}
+  // ===================================================
 
 	GenTextureResult GLTextureTools::GenTexture(FilePathParam const & path, GenTextureParameters const & parameters)
 	{
@@ -414,6 +352,17 @@ namespace chaos
 		}
 		return result;
 	}
+
+  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
+  {
+    GenTextureResult texture_result = GenTexture(path, parameters);
+    if (texture_result.texture_id > 0)
+      return new Texture(texture_result.texture_id, texture_result.texture_description);
+    return nullptr;
+  }
+
+  // ===================================================
+
 
 	// There are lots of very uncleared referenced for faces orientation
 	// Most of pictures found one GoogleImage do not correspond to OpenGL but DirectX
@@ -651,45 +600,138 @@ namespace chaos
 		return result;
 	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
-	{
-		GenTextureResult texture_result = GenTexture(json, config_path, parameters);
-		if (texture_result.texture_id > 0)
-			return new Texture(texture_result.texture_id, texture_result.texture_description);
-		return nullptr;
-	}
+  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+  {
+    GenTextureResult texture_result = GenTexture(skybox, merge_params, parameters);
+    if (texture_result.texture_id > 0)
+      return new Texture(texture_result.texture_id, texture_result.texture_description);
+    return nullptr;
+  }
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
-	{
-		GenTextureResult texture_result = GenTexture(image, parameters);
-		if (texture_result.texture_id > 0)
-			return new Texture(texture_result.texture_id, texture_result.texture_description);
-		return nullptr;
-	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
-	{
-		GenTextureResult texture_result = GenTexture(image, parameters);
-		if (texture_result.texture_id > 0)
-			return new Texture(texture_result.texture_id, texture_result.texture_description);
-		return nullptr;
-	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
-	{
-		GenTextureResult texture_result = GenTexture(skybox, merge_params, parameters);
-		if (texture_result.texture_id > 0)
-			return new Texture(texture_result.texture_id, texture_result.texture_description);
-		return nullptr;
-	}
 
-	boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
-	{
-		GenTextureResult texture_result = GenTexture(path, parameters);
-		if (texture_result.texture_id > 0)
-			return new Texture(texture_result.texture_id, texture_result.texture_description);
-		return nullptr;
-	}
+
+
+
+
+  // ===================================================
+
+
+  GenTextureResult GLTextureTools::GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
+  {
+    // the entry has a reference to another file => recursive call
+    std::string p;
+    if (JSONTools::GetAttribute(json, "path", p))
+    {
+      FilePathParam path(p, config_path);
+      return GenTexture(path, parameters);
+    }
+
+    // skybox descriptions ?
+    nlohmann::json const * faces = JSONTools::GetStructure(json, "faces");
+    if (faces != nullptr)
+    {
+      if (faces->is_array() || faces->is_object())
+      {
+        std::string left;
+        std::string right;
+        std::string top;
+        std::string bottom;
+        std::string front;
+        std::string back;
+
+        std::string single;
+
+        bool single_image = false;
+        bool multiple_image = false;
+
+        SkyBoxImages skybox;
+        if (faces->is_array())
+        {
+          if (faces->size() == 1)
+          {
+            single_image |= JSONTools::GetAttributeByIndex(*faces, 0, single);
+          }
+          else
+          {
+            multiple_image |= JSONTools::GetAttributeByIndex(*faces, 0, left);
+            multiple_image |= JSONTools::GetAttributeByIndex(*faces, 1, right);
+            multiple_image |= JSONTools::GetAttributeByIndex(*faces, 2, top);
+            multiple_image |= JSONTools::GetAttributeByIndex(*faces, 3, bottom);
+            multiple_image |= JSONTools::GetAttributeByIndex(*faces, 4, front);
+            multiple_image |= JSONTools::GetAttributeByIndex(*faces, 5, back);
+          }
+        }
+        else
+        {
+          single_image |= JSONTools::GetAttribute(*faces, "single", single);
+          if (!single_image)
+          {
+            multiple_image |= JSONTools::GetAttribute(*faces, "left", left);
+            multiple_image |= JSONTools::GetAttribute(*faces, "right", right);
+            multiple_image |= JSONTools::GetAttribute(*faces, "top", top);
+            multiple_image |= JSONTools::GetAttribute(*faces, "bottom", bottom);
+            multiple_image |= JSONTools::GetAttribute(*faces, "front", front);
+            multiple_image |= JSONTools::GetAttribute(*faces, "back", back);
+          }
+        }
+
+        if (single_image || multiple_image)
+        {
+          if (single_image)
+          {
+            FilePathParam single_path(single, config_path);
+            skybox = SkyBoxTools::LoadSingleSkyBox(single_path);
+          }
+          else if (multiple_image)
+          {
+            FilePathParam left_path(left, config_path);
+            FilePathParam right_path(right, config_path);
+            FilePathParam top_path(top, config_path);
+            FilePathParam bottom_path(bottom, config_path);
+            FilePathParam front_path(front, config_path);
+            FilePathParam back_path(back, config_path);
+            skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
+          }
+          return GenTexture(&skybox, PixelFormatMergeParams(), parameters);
+        }
+      }
+    }
+
+    return GenTextureResult();
+  }
+
+  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
+  {
+    GenTextureResult texture_result = GenTexture(json, config_path, parameters);
+    if (texture_result.texture_id > 0)
+      return new Texture(texture_result.texture_id, texture_result.texture_description);
+    return nullptr;
+  }
+
+
+
+
+
+
+
+  // ===================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	void GLTextureTools::GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters)
 	{

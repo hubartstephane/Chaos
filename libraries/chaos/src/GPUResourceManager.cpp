@@ -258,7 +258,6 @@ namespace chaos
 
         FilePathParam path(source_path, config_path);
         loader.AddShaderSourceFile(shader_types[i], path);
-        j = j;
       }
     }
 

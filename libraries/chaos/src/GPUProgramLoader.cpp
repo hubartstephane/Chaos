@@ -10,10 +10,6 @@
 namespace chaos
 {
 
-GPUProgramLoaderCacheOptions::GPUProgramLoaderCacheOptions():
-  read_from_cache(true),
-  write_into_cache(true){}
-
 
 GLuint GPUProgramLoader::GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
 {
@@ -209,7 +205,7 @@ GLuint GPUProgramLoader::GenerateProgram(DefinitionSet const & definitions, GPUP
   return result;
 }
 
-boost::intrusive_ptr<GPUProgram> GPUProgramLoader::GenerateProgramObject(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
+GPUProgram * GPUProgramLoader::GenerateProgramObject(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
 {
   GLuint program_id = GenerateProgram(definitions, cache_options);
   return (program_id == 0) ? nullptr : new GPUProgram(program_id);

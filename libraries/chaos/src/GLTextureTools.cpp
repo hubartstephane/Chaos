@@ -298,7 +298,7 @@ namespace chaos
 		return result;
 	}
 
-  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
+  Texture * GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
   {
     GenTextureResult texture_result = GenTexture(image, parameters);
     if (texture_result.texture_id > 0)
@@ -314,7 +314,7 @@ namespace chaos
 		return GenTexture(ImageTools::GetImageDescription(image), parameters);
 	}
 
-  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
+  Texture * GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
   {
     GenTextureResult texture_result = GenTexture(image, parameters);
     if (texture_result.texture_id > 0)
@@ -353,7 +353,7 @@ namespace chaos
 		return result;
 	}
 
-  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
+  Texture * GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
   {
     GenTextureResult texture_result = GenTexture(path, parameters);
     if (texture_result.texture_id > 0)
@@ -600,7 +600,7 @@ namespace chaos
 		return result;
 	}
 
-  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+  Texture * GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
   {
     GenTextureResult texture_result = GenTexture(skybox, merge_params, parameters);
     if (texture_result.texture_id > 0)
@@ -702,7 +702,7 @@ namespace chaos
     return GenTextureResult();
   }
 
-  boost::intrusive_ptr<Texture> GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
+  Texture * GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
   {
     GenTextureResult texture_result = GenTexture(json, config_path, parameters);
     if (texture_result.texture_id > 0)

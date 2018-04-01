@@ -48,7 +48,7 @@ GLuint GLShaderTools::GetProgramFromBinary(Buffer<char> const & buffer)
   return result;
 }
 
-boost::intrusive_ptr<GPUProgram> GLShaderTools::GetProgramObjectFromBinary(Buffer<char> const & buffer)
+GPUProgram * GLShaderTools::GetProgramObjectFromBinary(Buffer<char> const & buffer)
 {
   GLuint program_id = GetProgramFromBinary(buffer);
   return (program_id == 0)? nullptr : new GPUProgram(program_id);

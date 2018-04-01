@@ -17,14 +17,10 @@ class GPUProgramLoaderCacheOptions
 {
 public:
 
-  /** constructor */
-  GPUProgramLoaderCacheOptions();
-
   /** whether we can use the cache as an input */
-  bool read_from_cache;
+  bool read_from_cache = true;
   /** whether we can use the cache as an output */
-  bool write_into_cache;
-
+  bool write_into_cache = true;
 };
 
   /**
@@ -47,7 +43,7 @@ public:
   /** generate a program from the sources */
   GLuint GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
   /** generate a program from the sources */
-  boost::intrusive_ptr<GPUProgram> GenerateProgramObject(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
+  GPUProgram * GenerateProgramObject(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
 
   /** add a generator a given shader */
   bool AddSourceGenerator(GLenum shader_type, GPUProgramSourceGenerator * generator);

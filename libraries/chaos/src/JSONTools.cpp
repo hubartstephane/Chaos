@@ -13,6 +13,11 @@ namespace chaos
 			result = nlohmann::json::parse(buffer);
 			return true;
 		} 
+    catch (std::exception & error)
+    {
+      char const * error_string = error.what();
+      return false;
+    }
 		catch (...)
 		{
 		}
@@ -155,6 +160,15 @@ namespace chaos
 		return nullptr;				
 	}
 
+  //
+  // Note on recursive substitution.
+  //
+  // -any object {"@filename", "XXX"} is replaced by the content of the JSON file XXX
+  //
+  // -any string (excluding keys for objects)   "@@XXX" is escaped into "XXX"
+  //
+  // -any string (excluding keys for objects)   "@XXX" is replaced into "PATH_OF_CURRENT_SUBJSON_FILE/XXX"
+
 	class JSONRecursiveLoader
 	{
 		class LoaderEntry
@@ -195,10 +209,39 @@ namespace chaos
 			stacked_entries.pop_back();
 		}
 
+    bool DoMakeStringSubstitution(LoaderEntry * entry, std::string & result)
+    {
+      if (result[0] == '@') // may be a path ?
+      {
+        if (result[1] == '@') // escaped characters ?
+        {
+          result = result.c_str() + 2; // skip the 2 escaped characters
+        }
+        else
+        {
+          FilePathParam replacement_path(result.c_str() + 1, entry->path);
+          result = replacement_path.GetResolvedPath().string().c_str();
+        }
+        return true;
+      }
+      return false;
+    }
+
+    void MakeStringSubstitution(LoaderEntry * entry, nlohmann::json & root)
+    {
+      std::string str = root.get<std::string>();
+      if (DoMakeStringSubstitution(entry, str))
+        root = str;
+    }
+
 		void DoComputeSubstitutionChain(LoaderEntry * entry, nlohmann::json & root)
 		{
 			assert(entry != nullptr);
-			if (root.is_object() || root.is_array())
+      if (root.is_string())
+      {
+        MakeStringSubstitution(entry, root);
+      }
+			else if (root.is_object() || root.is_array())
 			{
 				if (root.is_object())
 				{
@@ -207,9 +250,9 @@ namespace chaos
 					{
 						if (filename_it->is_string())
 						{
-							FilePathParam replacement_path(
-								filename_it->get<std::string>(), 
-								entry->path);
+              std::string str = filename_it->get<std::string>();
+              DoMakeStringSubstitution(entry, str);
+							FilePathParam replacement_path(str, entry->path);
 
 							boost::filesystem::path const & resolved_path = replacement_path.GetResolvedPath();
 

@@ -4,7 +4,11 @@
     "height": 600
   },
 
-  "gpu":{"@filename":"gpu.json"},
+  "gpu":{"@filename":"@gpu.json"},
 
-  "game":{"@filename":"game.json"}
+  "game":{"@filename":"@game.json"},
+
+  "verify_caracter_escape":"@@escaped",
+
+  "verify_path_concatenation":"@one_path.txt"
 }

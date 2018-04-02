@@ -8,7 +8,7 @@
 #include <chaos/GPUProgramVariableProvider.h>
 
 namespace chaos
-{	
+{
   char const * GLDebugOnScreenDisplay::vertex_shader_source = R"SHADERCODE(
     in vec2 position;
     in vec2 texcoord;
@@ -24,7 +24,7 @@ namespace chaos
 
   // XXX : discarding pixels => the texture we use is WRITTEN in BLACK on a WHITE background
   //       any pixel that is 'TOO' white is beeing discarded
-	char const * GLDebugOnScreenDisplay::pixel_shader_source = R"SHADERCODE(
+  char const * GLDebugOnScreenDisplay::pixel_shader_source = R"SHADERCODE(
     out vec4 output_color;
     in vec2 tex_coord;
     uniform sampler2D material;
@@ -41,13 +41,13 @@ namespace chaos
   bool GLDebugOnScreenDisplay::Tick(double delta_time)
   {
     int count = (int)lines.size();
-    for (int i = count - 1 ; i >= 0 ; --i)
+    for (int i = count - 1; i >= 0; --i)
     {
       auto & l = lines[i];
       if (l.second >= 0.0f) // if lines is timed
       {
         l.second -= (float)delta_time; // decrement time
-        if (l.second <= 0)     
+        if (l.second <= 0)
           lines.erase(lines.begin() + i); // erase the line at this position if it is timed out
       }
     }
@@ -66,7 +66,7 @@ namespace chaos
     {
       BuildVertexBuffer(width, height);
       rebuild_required = false;
-      screen_width     = width;
+      screen_width = width;
     }
 
     // context states
@@ -78,23 +78,20 @@ namespace chaos
     glUseProgram(program->GetResourceID());
 
     // Initialize the vertex array
-    glBindVertexArray(vertex_array->GetResourceID()); 
+    glBindVertexArray(vertex_array->GetResourceID());
 
-    GPUProgramData const & program_data = program->GetProgramData();
-    
-    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
-
-    float character_width  = (float)mesh_builder_params.character_width;
+    float character_width = (float)mesh_builder_params.character_width;
     float character_height = (float)mesh_builder_params.character_width;
 
     float factor_x = (character_width  * 2.0f / ((float)width));   // screen coordinates are [-1, +1]
     float factor_y = (character_height * 2.0f / ((float)height));  // for [width, height] pixels
-                                                                                              // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
-                                                                                              // see BitmapFontTextMeshBuilder
-
-	GPUProgramVariableProviderChain uniform_provider;
+                                                                   // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
+                                                                   // see BitmapFontTextMeshBuilder
+    GPUProgramVariableProviderChain uniform_provider;
     uniform_provider.AddVariableValue("position_factor", glm::vec2(factor_x, factor_y));
     uniform_provider.AddVariableTexture("material", texture);
+
+    GPUProgramData const & program_data = program->GetProgramData();
     program_data.BindUniforms(&uniform_provider);
 
     // The drawing   
@@ -106,13 +103,13 @@ namespace chaos
   }
 
   bool GLDebugOnScreenDisplay::BuildVertexBuffer(int width, int height) const
-  {   
+  {
     int cpl = mesh_builder_params.font_characters_per_line;
 
     int csw = mesh_builder_params.character_width;
     int csh = mesh_builder_params.character_width;
-    int sx  = mesh_builder_params.spacing.x;
-    int sy  = mesh_builder_params.spacing.y;
+    int sx = mesh_builder_params.spacing.x;
+    int sy = mesh_builder_params.spacing.y;
 
     int tw = texture->GetTextureDescription().width;
     int th = texture->GetTextureDescription().height;
@@ -120,13 +117,13 @@ namespace chaos
     int cy = mesh_builder_params.crop_texture.y;
 
     BitmapFontTextMeshBuilder::Params params;
-    params.font_characters            = mesh_builder_params.font_characters.c_str();
-    params.font_characters_per_line   = cpl;
+    params.font_characters = mesh_builder_params.font_characters.c_str();
+    params.font_characters_per_line = cpl;
     params.font_characters_line_count = mesh_builder_params.font_characters_line_count;
-    params.line_limit                 = max(width / (csw + sx), 1);
-    params.character_size             = glm::vec2(1.0f, 1.0f);    
-    params.spacing                    = glm::vec2( ((float)sx) / ((float)csw), ((float)sy) / ((float)csh));
-    params.crop_texture               = glm::vec2( ((float)cx) / ((float)tw),  ((float)cy) / ((float)th));
+    params.line_limit = max(width / (csw + sx), 1);
+    params.character_size = glm::vec2(1.0f, 1.0f);
+    params.spacing = glm::vec2(((float)sx) / ((float)csw), ((float)sy) / ((float)csh));
+    params.crop_texture = glm::vec2(((float)cx) / ((float)tw), ((float)cy) / ((float)th));
 
     // generate vertex buffer data
     std::vector<float> vertices;
@@ -148,7 +145,7 @@ namespace chaos
 
     GLuint binding_index = 0;
     glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
-    
+
     return true;
   }
 
@@ -182,7 +179,7 @@ namespace chaos
 
     // create GPU-Program
     GPUProgramLoader loader;
-    loader.AddShaderSource(GL_VERTEX_SHADER,   vertex_shader_source);
+    loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
     loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
     program = loader.GenerateProgramObject();
@@ -197,6 +194,9 @@ namespace chaos
     if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
       return false;
 
+    GPUProgramData const & program_data = program->GetProgramData();
+    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
+
     // keep a copy of initialization params
     mesh_builder_params = params;
 
@@ -205,9 +205,9 @@ namespace chaos
 
   void GLDebugOnScreenDisplay::Finalize()
   {
-    program       = nullptr;
-    texture       = nullptr;
-    vertex_array  = nullptr;
+    program = nullptr;
+    texture = nullptr;
+    vertex_array = nullptr;
     vertex_buffer = nullptr;
 
     declaration.Clear();

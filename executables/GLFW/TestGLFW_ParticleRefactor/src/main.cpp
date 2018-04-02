@@ -123,6 +123,8 @@ int _tmain(int argc, char ** argv, char ** env)
   p2 = nullptr;
   sl.TickParticles(0.0f);
 
+  return 0;
+
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;

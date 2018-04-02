@@ -256,11 +256,13 @@ void ParticleLayer::RemoveParticleAllocation(ParticleRangeAllocation * allocatio
 		MarkParticlesToDestroy(range.start, range.count);
 	}
 	// displace range and allocation
-	size_t last_index = range_allocations.size() - 1;
+	size_t last_index  = range_allocations.size() - 1;
+  size_t range_index = allocation->range_index;
 	if (allocation->range_index < last_index)
 	{
-		range_allocations[allocation->range_index] = range_allocations[last_index]; // replace the allocation
-		particles_ranges[allocation->range_index]  = particles_ranges[last_index];	
+		range_allocations[range_index] = range_allocations[last_index]; // replace the allocation
+		particles_ranges[range_index]  = particles_ranges[last_index];	
+    range_allocations[range_index]->range_index = range_index;
 	}
 	range_allocations.pop_back();
 	particles_ranges.pop_back();

@@ -242,18 +242,18 @@ namespace chaos
 		return GLPixelFormat(GL_NONE, GL_NONE);
 	}
 
-  // ===================================================
-
-	GenTextureResult GLTextureTools::GenTexture(ImageDescription const & image, GenTextureParameters const & parameters)
+	Texture * GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result;
+    Texture * result = nullptr;
+
 		if (!image.IsValid() || image.IsEmpty())
 			return result;
 
 		GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
 
-		glCreateTextures(target, 1, &result.texture_id);
-		if (result.texture_id > 0)
+    GenTextureResult gen_result;
+		glCreateTextures(target, 1, &gen_result.texture_id);
+		if (gen_result.texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
 			GLPixelFormat gl_formats = GetGLPixelFormat(image.pixel_format);
@@ -270,63 +270,43 @@ namespace chaos
 				if (target == GL_TEXTURE_1D)
 				{
 					int level_count = GetMipmapLevelCount(image.width);
-					glTextureStorage1D(result.texture_id, level_count, internal_format, image.width);
-					glTextureSubImage1D(result.texture_id, 0, 0, image.width, format, type, texture_buffer);
+					glTextureStorage1D(gen_result.texture_id, level_count, internal_format, image.width);
+					glTextureSubImage1D(gen_result.texture_id, 0, 0, image.width, format, type, texture_buffer);
 				}
 				else
 				{
 					int level_count = GetMipmapLevelCount(image.width, image.height);
-					glTextureStorage2D(result.texture_id, level_count, internal_format, image.width, image.height);
-					glTextureSubImage2D(result.texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
+					glTextureStorage2D(gen_result.texture_id, level_count, internal_format, image.width, image.height);
+					glTextureSubImage2D(gen_result.texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
 				}
 
-				result.texture_description.type            = target;
-				result.texture_description.internal_format = internal_format;
-				result.texture_description.width           = image.width;
-				result.texture_description.height          = image.height;
-				result.texture_description.depth           = 1;
+        gen_result.texture_description.type            = target;
+        gen_result.texture_description.internal_format = internal_format;
+        gen_result.texture_description.width           = image.width;
+        gen_result.texture_description.height          = image.height;
+        gen_result.texture_description.depth           = 1;
 
 				// apply parameters
-				GenTextureApplyParameters(result, parameters);
+				GenTextureApplyParameters(gen_result, parameters);
+        result = new Texture(gen_result.texture_id, gen_result.texture_description);
 			}
 			else
 			{
-				glDeleteTextures(1, &result.texture_id);
-				result = GenTextureResult();
+				glDeleteTextures(1, &gen_result.texture_id);
 			}
 		}
 		return result;
 	}
 
-  Texture * GLTextureTools::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters)
-  {
-    GenTextureResult texture_result = GenTexture(image, parameters);
-    if (texture_result.texture_id > 0)
-      return new Texture(texture_result.texture_id, texture_result.texture_description);
-    return nullptr;
-  }
-
-  // ===================================================
-
-	GenTextureResult GLTextureTools::GenTexture(FIBITMAP * image, GenTextureParameters const & parameters)
-	{
-		assert(image != nullptr);
-		return GenTexture(ImageTools::GetImageDescription(image), parameters);
-	}
-
   Texture * GLTextureTools::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters)
   {
-    GenTextureResult texture_result = GenTexture(image, parameters);
-    if (texture_result.texture_id > 0)
-      return new Texture(texture_result.texture_id, texture_result.texture_description);
-    return nullptr;
+    assert(image != nullptr);
+    return GenTextureObject(ImageTools::GetImageDescription(image), parameters);
   }
 
-  // ===================================================
-
-	GenTextureResult GLTextureTools::GenTexture(FilePathParam const & path, GenTextureParameters const & parameters)
+	Texture * GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
 	{
-		GenTextureResult result;
+    Texture * result = nullptr;
 
 		Buffer<char> ascii_buffer = FileTools::LoadFile(path, true); // ascii mode for JSON 
 		if (ascii_buffer != nullptr)
@@ -340,29 +320,18 @@ namespace chaos
 			FIBITMAP * image = ImageTools::LoadImageFromBuffer(noascii_buffer);
 			if (image != nullptr)
 			{
-				result = GenTexture(image, parameters);
+				result = GenTextureObject(image, parameters);
 				FreeImage_Unload(image); 
 			}
 			else
 			{
 				nlohmann::json json;
 				if (JSONTools::Parse(ascii_buffer, json))
-					result = GenTexture(json, path.GetResolvedPath(), parameters);
+					result = GenTextureObject(json, path.GetResolvedPath(), parameters);
 			}
 		}
 		return result;
 	}
-
-  Texture * GLTextureTools::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters)
-  {
-    GenTextureResult texture_result = GenTexture(path, parameters);
-    if (texture_result.texture_id > 0)
-      return new Texture(texture_result.texture_id, texture_result.texture_description);
-    return nullptr;
-  }
-
-  // ===================================================
-
 
 	// There are lots of very uncleared referenced for faces orientation
 	// Most of pictures found one GoogleImage do not correspond to OpenGL but DirectX
@@ -466,11 +435,12 @@ namespace chaos
 		return -1;
 	}
 
-	GenTextureResult GLTextureTools::GenTexture(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	Texture * GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		assert(skybox != nullptr);
 
-		GenTextureResult result;
+    Texture * result = nullptr;
+
 		if (skybox->IsEmpty())
 			return result;
 
@@ -532,14 +502,15 @@ namespace chaos
 		}
 
 		// GPU-allocate the texture
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &result.texture_id);
-		if (result.texture_id > 0)
+    GenTextureResult gen_result;
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &gen_result.texture_id);
+		if (gen_result.texture_id > 0)
 		{
 			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
 
 			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
 			int level_count = GetMipmapLevelCount(size, size);
-			glTextureStorage2D(result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
+			glTextureStorage2D(gen_result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of SkyBox
 			for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
@@ -567,7 +538,7 @@ namespace chaos
 					GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
 
 					glTextureSubImage3D(
-						result.texture_id,
+            gen_result.texture_id,
 						0,
 						0, 0, depth,
 						size, size, 1,
@@ -579,18 +550,20 @@ namespace chaos
 			}
 
 			// finalize the result information
-			result.texture_description.type = GL_TEXTURE_CUBE_MAP;
-			result.texture_description.internal_format = gl_final_pixel_format.internal_format;
-			result.texture_description.width = size;
-			result.texture_description.height = size;
-			result.texture_description.depth = 1;
+      gen_result.texture_description.type = GL_TEXTURE_CUBE_MAP;
+      gen_result.texture_description.internal_format = gl_final_pixel_format.internal_format;
+      gen_result.texture_description.width = size;
+      gen_result.texture_description.height = size;
+      gen_result.texture_description.depth = 1;
 
 			// this is smoother to clamp at edges
 			GenTextureParameters tmp = parameters;
 			tmp.wrap_s = GL_CLAMP_TO_EDGE;
 			tmp.wrap_r = GL_CLAMP_TO_EDGE;
 			tmp.wrap_t = GL_CLAMP_TO_EDGE;
-			GenTextureApplyParameters(result, tmp);
+
+			GenTextureApplyParameters(gen_result, tmp);
+      result = new Texture(gen_result.texture_id, gen_result.texture_description);
 		}
 
 		// release the buffer
@@ -600,32 +573,14 @@ namespace chaos
 		return result;
 	}
 
-  Texture * GLTextureTools::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
-  {
-    GenTextureResult texture_result = GenTexture(skybox, merge_params, parameters);
-    if (texture_result.texture_id > 0)
-      return new Texture(texture_result.texture_id, texture_result.texture_description);
-    return nullptr;
-  }
-
-
-
-
-
-
-
-
-  // ===================================================
-
-
-  GenTextureResult GLTextureTools::GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
+  Texture * GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
   {
     // the entry has a reference to another file => recursive call
     std::string p;
     if (JSONTools::GetAttribute(json, "path", p))
     {
       FilePathParam path(p, config_path);
-      return GenTexture(path, parameters);
+      return GenTextureObject(path, parameters);
     }
 
     // skybox descriptions ?
@@ -694,44 +649,13 @@ namespace chaos
             FilePathParam back_path(back, config_path);
             skybox = SkyBoxTools::LoadMultipleSkyBox(left_path, right_path, top_path, bottom_path, front_path, back_path);
           }
-          return GenTexture(&skybox, PixelFormatMergeParams(), parameters);
+          return GenTextureObject(&skybox, PixelFormatMergeParams(), parameters);
         }
       }
     }
 
-    return GenTextureResult();
-  }
-
-  Texture * GLTextureTools::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters)
-  {
-    GenTextureResult texture_result = GenTexture(json, config_path, parameters);
-    if (texture_result.texture_id > 0)
-      return new Texture(texture_result.texture_id, texture_result.texture_description);
     return nullptr;
   }
-
-
-
-
-
-
-
-  // ===================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	void GLTextureTools::GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters)
 	{

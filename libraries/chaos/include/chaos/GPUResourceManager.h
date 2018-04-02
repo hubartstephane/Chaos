@@ -11,6 +11,91 @@
 
 namespace chaos
 {
+
+#if 0
+
+  //
+  // GPUManagedResource : a wrapper with a name and a path
+  //
+  template<typename T>
+  class GPUManagedResource : public GPUFileResource
+  {
+
+  public:
+
+    virtual void Release() override
+    {
+      resource = nullptr;
+    }
+
+  protected:
+
+    /** the internal resource */
+    boost::intrusive_ptr<T> resource;
+  };
+
+  class ManagedTexture : public GPUManagedResource<Texture>
+  {
+  public:
+    /** get the description of the texture */
+    TextureDescription const & GetTextureDescription() const 
+    {
+      if (resource == nullptr)
+        return TextureDescription();
+      return resource->GetTextureDescription();
+    }
+    /** returns true whether the resource is valid */
+    bool IsValid() const 
+    { 
+      if (resource == nullptr)
+        return false();
+      return resource->IsValid();
+    }      
+
+    /** returns the GL name of the resource */
+    GLuint GetResourceID() const
+    {
+      if (resource == nullptr)
+        return 0;
+      return resource->GetResourceID();
+    }
+  };
+
+
+
+
+
+
+
+  using ManagedTexture = ManagedResource<Texture>;
+
+  using ManagedProgram = ManagedResource<GPUProgram>;
+
+  using ManagedRenderMaterial = ManagedResource<RenderMaterial>;
+
+
+
+  /** prepare the rendering */
+  void UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const;
+
+
+
+
+
+
+  /** use the program */
+  bool UseProgram(class GPUProgramVariableProvider const * uniform_provider, class GPUProgramVariableProvider * attribute_provider);
+
+  /** returns the GL name of the resource */
+  GLuint GetResourceID() const { return program_id; }
+  /** returns true whether the resource is valid */
+  bool IsValid() const { return glIsProgram(program_id) == GL_TRUE; }
+  /** get the program data */
+  GPUProgramData const & GetProgramData() const { return program_data; }
+
+#endif
+
+
   class GPUResourceManager : public Manager, protected GPUFileResourceFriend
   {
   public:

@@ -97,38 +97,6 @@ namespace chaos
 		static GLenum ToFlatTextureType(GLenum type);
 
 		/** Generate a texture from a json content */
-		static GenTextureResult GenTexture(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters());
-		/** Generate a 1D/2D/rectangle texture from an file */
-		static GenTextureResult GenTexture(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters());
-		/** Generate a 1D/2D/rectangle texture from an image */
-		static GenTextureResult GenTexture(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters());
-		/** Generate a 1D/2D/rectangle texture from an image */
-		static GenTextureResult GenTexture(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters());
-		/** Generate a cube texture from a skybox */
-		static GenTextureResult GenTexture(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
-
-		/** Generate a texture from lambda */
-		template<typename T, typename GENERATOR>
-		static GenTextureResult GenTexture(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
-		{
-			GenTextureResult result;
-
-			PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
-
-			int buffer_size = ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, width, height);
-
-			char * buffer = new char[buffer_size];
-			if (buffer != nullptr)
-			{
-				ImageDescription desc = ImageTools::GetImageDescriptionForAlignedTexture(pixel_format, width, height, buffer);
-				generator(desc);
-				result = GenTexture(desc, parameters);			
-				delete [](buffer);
-			}
-			return result;
-		}
-
-		/** Generate a texture from a json content */
 		static Texture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters());
 		/** Generate a 1D/2D/rectangle texture from an file */
 		static Texture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters());
@@ -139,15 +107,26 @@ namespace chaos
 		/** Generate a cube texture from a skybox */
 		static Texture * GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
 
-		/** Generate a texture from lambda */
-		template<typename T, typename GENERATOR>
-		static Texture * GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
-		{
-			GenTextureResult result = GenTexture<T>(width, height, generator, parameters);
-			if (result.texture_id > 0)
-				return new Texture(result.texture_id, result.texture_description);
-			return nullptr;
-		}
+    /** Generate a texture from lambda */
+    template<typename T, typename GENERATOR>
+    static Texture * GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters())
+    {
+      Texture * result = nullptr;
+
+      PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
+
+      int buffer_size = ImageTools::GetMemoryRequirementForAlignedTexture(pixel_format, width, height);
+
+      char * buffer = new char[buffer_size];
+      if (buffer != nullptr)
+      {
+        ImageDescription desc = ImageTools::GetImageDescriptionForAlignedTexture(pixel_format, width, height, buffer);
+        generator(desc);
+        result = GenTextureObject(desc, parameters);
+        delete[](buffer);
+      }
+      return result;
+    }
 
 		/** returns the maximum number of mipmap */
 		static int GetMipmapLevelCount(int width, int height);

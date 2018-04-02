@@ -20,6 +20,27 @@ namespace chaos
     parent_material = nullptr;
   }
 
+
+  void RenderMaterial::SetProgram(GPUProgram * in_program)
+  {
+    program = in_program;
+  }
+
+  void RenderMaterial::SetParentMaterial(RenderMaterial * in_parent)
+  {
+    parent_material = in_parent;
+
+#if _DEBUG
+    // ensure no cycle parenting
+    RenderMaterial * rm = in_parent;
+    while (rm != nullptr)
+    {
+      assert(rm != this);
+      rm = rm->parent_material.get(); 
+    }
+#endif
+  }
+
   void RenderMaterial::UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const
   {
     // go through the hierarchy until we get the program

@@ -28,6 +28,11 @@ namespace chaos
     /** prepare the rendering */
     void UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const;
 
+    /** set the program */
+    void SetProgram(GPUProgram * in_program);
+    /** set the parent material */
+    void SetParentMaterial(RenderMaterial * in_parent);
+
   protected:
 
     /** the program */

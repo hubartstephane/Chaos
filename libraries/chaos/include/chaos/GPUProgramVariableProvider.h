@@ -305,10 +305,10 @@ namespace chaos
   };
 
   /**
-  * GPUProgramVariableProviderChainBase : a base class to have multiple providers
+  * GPUProgramVariableProviderChain : used to fill GPUProgram binding for multiple uniforms / uniforms
   */
 
-  class GPUProgramVariableProviderChainBase : public GPUProgramVariableProvider
+  class GPUProgramVariableProviderChain : public GPUProgramVariableProvider
   {
 
   public:
@@ -325,24 +325,9 @@ namespace chaos
       AddVariableProvider(new GPUProgramVariableProviderTexture(name, texture));
     }
     /** register a generic uniform */
-    virtual void AddVariableProvider(GPUProgramVariableProvider * provider) = 0;
+    virtual void AddVariableProvider(GPUProgramVariableProvider * provider);
     /** remove all uniforms for binding */
-    virtual void Clear() = 0;
-  };
-
-  /**
-  * GPUProgramVariableProviderChain : used to fill GPUProgram binding for multiple uniforms / uniforms
-  */
-
-  class GPUProgramVariableProviderChain : public GPUProgramVariableProviderChainBase
-  {
-
-  public:
-
-    /** remove all uniforms for binding */
-    virtual void Clear() override;
-    /** register a generic uniform */
-    virtual void AddVariableProvider(GPUProgramVariableProvider * provider) override;
+    virtual void Clear();
 
   protected:
 

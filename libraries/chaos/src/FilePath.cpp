@@ -71,9 +71,9 @@ namespace chaos
     }
     // resolve the path
     else
-    {
-      resolved_path = (reference_path->parent_path() / *p).normalize(); // resolve
-    }
+      resolved_path = (reference_path->parent_path() / *p); 
+    // make the path under a 'normalized' representation
+    resolved_path = resolved_path.lexically_normal().make_preferred();
   }
 
   boost::filesystem::path const & FilePathParam::GetResolvedPath() const

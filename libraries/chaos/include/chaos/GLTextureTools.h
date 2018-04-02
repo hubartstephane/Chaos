@@ -31,20 +31,6 @@ namespace chaos
 	};
 
 	/**
-	* GenTextureResult : result for gen texture methods
-	**/
-
-	class GenTextureResult
-	{
-	public:
-
-		/** the id of the texture */
-		GLuint             texture_id = 0;
-		/** the GL handler for the texture */
-		TextureDescription texture_description;
-	};
-
-	/**
 	* GenTextureParameters : some parameters to load textures
 	**/
 
@@ -143,7 +129,7 @@ namespace chaos
 		static char * PrepareGLTextureTransfert(ImageDescription const & desc);
 
 		/** utility function for texture loading */
-		static void GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters);
+		static void GenTextureApplyParameters(GLuint texture_id, TextureDescription const & texture_description, GenTextureParameters const & parameters);
 	};
 
 }; // namespace chaos

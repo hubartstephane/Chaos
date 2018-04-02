@@ -34,7 +34,7 @@ namespace chaos
 				generator.AddGenerator(new TextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
 
 			// generate the texture array
-			texture = generator.GenerateTexture();
+			texture = generator.GenTextureObject();
 			if (texture == nullptr)
 			{
 				Clear();

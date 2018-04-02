@@ -251,9 +251,9 @@ namespace chaos
 
 		GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
 
-    GenTextureResult gen_result;
-		glCreateTextures(target, 1, &gen_result.texture_id);
-		if (gen_result.texture_id > 0)
+    GLuint texture_id = 0;
+		glCreateTextures(target, 1, &texture_id);
+		if (texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
 			GLPixelFormat gl_formats = GetGLPixelFormat(image.pixel_format);
@@ -270,29 +270,30 @@ namespace chaos
 				if (target == GL_TEXTURE_1D)
 				{
 					int level_count = GetMipmapLevelCount(image.width);
-					glTextureStorage1D(gen_result.texture_id, level_count, internal_format, image.width);
-					glTextureSubImage1D(gen_result.texture_id, 0, 0, image.width, format, type, texture_buffer);
+					glTextureStorage1D(texture_id, level_count, internal_format, image.width);
+					glTextureSubImage1D(texture_id, 0, 0, image.width, format, type, texture_buffer);
 				}
 				else
 				{
 					int level_count = GetMipmapLevelCount(image.width, image.height);
-					glTextureStorage2D(gen_result.texture_id, level_count, internal_format, image.width, image.height);
-					glTextureSubImage2D(gen_result.texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
+					glTextureStorage2D(texture_id, level_count, internal_format, image.width, image.height);
+					glTextureSubImage2D(texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
 				}
 
-        gen_result.texture_description.type            = target;
-        gen_result.texture_description.internal_format = internal_format;
-        gen_result.texture_description.width           = image.width;
-        gen_result.texture_description.height          = image.height;
-        gen_result.texture_description.depth           = 1;
+        TextureDescription texture_description;
+        texture_description.type            = target;
+        texture_description.internal_format = internal_format;
+        texture_description.width           = image.width;
+        texture_description.height          = image.height;
+        texture_description.depth           = 1;
 
 				// apply parameters
-				GenTextureApplyParameters(gen_result, parameters);
-        result = new Texture(gen_result.texture_id, gen_result.texture_description);
+				GenTextureApplyParameters(texture_id, texture_description, parameters);
+        result = new Texture(texture_id, texture_description);
 			}
 			else
 			{
-				glDeleteTextures(1, &gen_result.texture_id);
+				glDeleteTextures(1, &texture_id);
 			}
 		}
 		return result;
@@ -502,15 +503,15 @@ namespace chaos
 		}
 
 		// GPU-allocate the texture
-    GenTextureResult gen_result;
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &gen_result.texture_id);
-		if (gen_result.texture_id > 0)
+    GLuint texture_id = 0;
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture_id);
+		if (texture_id > 0)
 		{
 			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
 
 			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
 			int level_count = GetMipmapLevelCount(size, size);
-			glTextureStorage2D(gen_result.texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
+			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of SkyBox
 			for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
@@ -538,7 +539,7 @@ namespace chaos
 					GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
 
 					glTextureSubImage3D(
-            gen_result.texture_id,
+            texture_id,
 						0,
 						0, 0, depth,
 						size, size, 1,
@@ -550,11 +551,12 @@ namespace chaos
 			}
 
 			// finalize the result information
-      gen_result.texture_description.type = GL_TEXTURE_CUBE_MAP;
-      gen_result.texture_description.internal_format = gl_final_pixel_format.internal_format;
-      gen_result.texture_description.width = size;
-      gen_result.texture_description.height = size;
-      gen_result.texture_description.depth = 1;
+      TextureDescription texture_description;
+      texture_description.type = GL_TEXTURE_CUBE_MAP;
+      texture_description.internal_format = gl_final_pixel_format.internal_format;
+      texture_description.width = size;
+      texture_description.height = size;
+      texture_description.depth = 1;
 
 			// this is smoother to clamp at edges
 			GenTextureParameters tmp = parameters;
@@ -562,8 +564,8 @@ namespace chaos
 			tmp.wrap_r = GL_CLAMP_TO_EDGE;
 			tmp.wrap_t = GL_CLAMP_TO_EDGE;
 
-			GenTextureApplyParameters(gen_result, tmp);
-      result = new Texture(gen_result.texture_id, gen_result.texture_description);
+			GenTextureApplyParameters(texture_id, texture_description, tmp);
+      result = new Texture(texture_id, texture_description);
 		}
 
 		// release the buffer
@@ -657,29 +659,29 @@ namespace chaos
     return nullptr;
   }
 
-	void GLTextureTools::GenTextureApplyParameters(GenTextureResult const & result, GenTextureParameters const & parameters)
+	void GLTextureTools::GenTextureApplyParameters(GLuint texture_id, TextureDescription const & texture_description, GenTextureParameters const & parameters)
 	{
 		// there are to set of functions
 		//   - glTexParameteri(TARGET ...)
 		// and
 		//   - glTextureParameteri(TEXTURE_ID ...)
-		glTextureParameteri(result.texture_id, GL_TEXTURE_WRAP_S, parameters.wrap_s);
-		glTextureParameteri(result.texture_id, GL_TEXTURE_WRAP_T, parameters.wrap_t);
-		glTextureParameteri(result.texture_id, GL_TEXTURE_WRAP_R, parameters.wrap_r);
-		glTextureParameteri(result.texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
-		glTextureParameteri(result.texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
+		glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, parameters.wrap_s);
+		glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, parameters.wrap_t);
+		glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, parameters.wrap_r);
+		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
+		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
 
-		if (result.texture_description.internal_format == GL_R8 || result.texture_description.internal_format == GL_R32F)
+		if (texture_description.internal_format == GL_R8 || texture_description.internal_format == GL_R32F)
 		{
-			glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_R, GL_RED);
-			glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_G, GL_RED);
-			glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_B, GL_RED);
-			glTextureParameteri(result.texture_id, GL_TEXTURE_SWIZZLE_A, GL_ONE);
+			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_B, GL_RED);
+			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_A, GL_ONE);
 		}
 
 		if (parameters.build_mipmaps)
-			if (result.texture_description.type != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
-				glGenerateTextureMipmap(result.texture_id);
+			if (texture_description.type != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
+				glGenerateTextureMipmap(texture_id);
 	}
 
 	GLenum GLTextureTools::GetTextureTargetFromSize(int width, int height, bool rectangle_texture)

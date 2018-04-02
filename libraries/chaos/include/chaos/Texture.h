@@ -47,7 +47,7 @@ namespace chaos
   protected:
 
     /** the resource id */
-    GLuint texture_id;
+    GLuint texture_id = 0;
     /** the description of the texture */
     TextureDescription texture_description;
   };

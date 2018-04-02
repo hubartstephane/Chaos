@@ -172,7 +172,7 @@ protected:
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;
 
-		boost::intrusive_ptr<chaos::Texture> result = generator.GenerateTexture(merge_params);  
+		boost::intrusive_ptr<chaos::Texture> result = generator.GenTextureObject(merge_params);
 		if (result != nullptr)
 			texture_slice_count = (int)bitmaps.size();
 

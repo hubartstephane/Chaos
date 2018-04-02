@@ -138,12 +138,12 @@ namespace chaos
     /** clean all generators */
     void Clean();
     /** generate the texture array */
-    Texture * GenerateTexture(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
+    Texture * GenTextureObject(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
 
   protected:
 
     /** internal method to generate the texture array */
-    Texture * GenerateTexture(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
+    Texture * GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
 
   protected:
 

@@ -110,31 +110,6 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 
-#if 0
-
-  boost::filesystem::path ref = "mareference/bidule/fichier.txt";
-
-  chaos::FilePathParam P1("truc1.xxx.yyy");
-  chaos::FilePathParam P2(std::string("truc2.yyy"));
-  chaos::FilePathParam P3(boost::filesystem::path("truc3.zzz"));
-
-  chaos::FilePathParam P4("truc1.xxx.yyy", ref);
-  chaos::FilePathParam P5(std::string("truc2.yyy"), ref);
-  chaos::FilePathParam P6(boost::filesystem::path("truc3.zzz"), ref);
-
-
-
-
-  auto b1 = chaos::FileTools::IsTypedFile(P1, ".xxx");
-  auto b2 = chaos::FileTools::IsTypedFile(P1, ".yyy");
-
-  auto R1 = P1.GetResolvedPath();
-  auto R2 = P2.GetResolvedPath();
-  auto R3 = P3.GetResolvedPath();
-  auto R4 = P4.GetResolvedPath();
-  auto R5 = P5.GetResolvedPath();
-  auto R6 = P6.GetResolvedPath();
-
 
   ParticleLayer sl(new ParticleLayerDescExample());
 
@@ -144,9 +119,10 @@ int _tmain(int argc, char ** argv, char ** env)
   boost::intrusive_ptr<ParticleRangeAllocation> p2 = sl.SpawnParticlesAndKeepRange(10);
   boost::intrusive_ptr<ParticleRangeAllocation> p3 = sl.SpawnParticlesAndKeepRange(20);
 
+
   p2 = nullptr;
   sl.TickParticles(0.0f);
-#endif
+
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 500;

@@ -95,7 +95,7 @@ namespace chaos
 		generators.clear(); // destroy the intrusive_ptr
 	}
 
-	boost::intrusive_ptr<Texture> TextureArrayGenerator::GenerateTexture(PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	Texture * TextureArrayGenerator::GenerateTexture(PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		TextureArraySliceRegistry  slice_registry;
 		std::vector<size_t> slice_counts;
@@ -139,16 +139,14 @@ namespace chaos
 		if (width <= 0 || height <= 0)
 			return nullptr;
 
-		PixelFormat pixel_format = pixel_format_merger.GetResult();
+		PixelFormat pixel_format = pixel_format_merger.GetResult(); 
 		if (!pixel_format.IsValid())
 			return nullptr;
 
 		// create the texture and fill the slices
-		GenTextureResult texture_result = GenerateTexture(slice_registry, pixel_format, width, height, parameters);
-		if (texture_result.texture_id <= 0)
+    Texture * result = GenerateTexture(slice_registry, pixel_format, width, height, parameters);
+		if (result == nullptr)
 			return nullptr;
-
-		boost::intrusive_ptr<Texture> result = new Texture(texture_result.texture_id, texture_result.texture_description);
 
 		// release slices
 		size_t start = 0;
@@ -164,24 +162,24 @@ namespace chaos
 		return result;
 	}
 
-	GenTextureResult TextureArrayGenerator::GenerateTexture(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
+	Texture * TextureArrayGenerator::GenerateTexture(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
-		GenTextureResult result;
+    Texture * result = nullptr;
 
 		// compute the 'flat' texture target
 		GLenum flat_target = GLTextureTools::GetTextureTargetFromSize(width, height, false);
 		if (flat_target == GL_NONE)
-			return result;
+			return nullptr;
 
 		// convert to 'array' target 
 		GLenum array_target = GLTextureTools::ToArrayTextureType(flat_target);
 		if (array_target == GL_NONE)
-			return result;
+			return nullptr;
 
 		// choose format and internal format
 		GLPixelFormat gl_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
 		if (!gl_pixel_format.IsValid())
-			return result;
+			return nullptr;
 
 		// the number of slices
 		size_t slice_count = slice_registry.slices.size();
@@ -203,17 +201,18 @@ namespace chaos
 			{
 				conversion_buffer = new char[required_allocation];
 				if (conversion_buffer == nullptr)
-					return result;
+					return nullptr;
 			}
 		}
 
 		// generate the texture
-		glCreateTextures(array_target, 1, &result.texture_id);
-		if (result.texture_id > 0)
+    GenTextureResult gen_result;
+		glCreateTextures(array_target, 1, &gen_result.texture_id);
+		if (gen_result.texture_id > 0)
 		{
 			// initialize the storage
 			int level_count = GLTextureTools::GetMipmapLevelCount(width, height);
-			glTextureStorage3D(result.texture_id, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
+			glTextureStorage3D(gen_result.texture_id, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
 
 			// fill each slices into GPU
 			for (size_t i = 0; i < slice_count; ++i)
@@ -230,18 +229,19 @@ namespace chaos
 					int type = (effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 					GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
-					glTextureSubImage3D(result.texture_id, 0, 0, 0, (GLsizei)i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);		
+					glTextureSubImage3D(gen_result.texture_id, 0, 0, 0, (GLsizei)i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);
 				}
 			}
 
 			// finalize the result data
-			result.texture_description.type = array_target;
-			result.texture_description.width = width;
-			result.texture_description.height = height;
-			result.texture_description.depth = (int)slice_count;
-			result.texture_description.internal_format = gl_pixel_format.internal_format;
+      gen_result.texture_description.type = array_target;
+      gen_result.texture_description.width = width;
+      gen_result.texture_description.height = height;
+      gen_result.texture_description.depth = (int)slice_count;
+      gen_result.texture_description.internal_format = gl_pixel_format.internal_format;
 
-			GLTextureTools::GenTextureApplyParameters(result, parameters);
+			GLTextureTools::GenTextureApplyParameters(gen_result, parameters);
+      result = new Texture(gen_result.texture_id, gen_result.texture_description);
 		}
 
 		// release the conversion buffer if necessary

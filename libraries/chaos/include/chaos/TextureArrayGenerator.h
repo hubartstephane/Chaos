@@ -138,12 +138,12 @@ namespace chaos
     /** clean all generators */
     void Clean();
     /** generate the texture array */
-    boost::intrusive_ptr<Texture> GenerateTexture(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
+    Texture * GenerateTexture(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
 
   protected:
 
     /** internal method to generate the texture array */
-    GenTextureResult GenerateTexture(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
+    Texture * GenerateTexture(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
 
   protected:
 

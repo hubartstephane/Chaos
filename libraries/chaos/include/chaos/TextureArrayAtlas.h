@@ -20,7 +20,7 @@ namespace chaos
       bool LoadFromBitmapAtlas(Atlas const & atlas);
 
       /* get the array texture */
-      boost::intrusive_ptr<Texture> GetTexture() { return texture; }
+      Texture * GetTexture() { return texture.get(); }
 
     protected:
 

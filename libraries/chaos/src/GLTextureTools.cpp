@@ -247,7 +247,7 @@ namespace chaos
     Texture * result = nullptr;
 
 		if (!image.IsValid() || image.IsEmpty())
-			return result;
+			return nullptr;
 
 		GLenum target = GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
 
@@ -442,7 +442,7 @@ namespace chaos
     Texture * result = nullptr;
 
 		if (skybox->IsEmpty())
-			return result;
+			return nullptr;
 
 		PixelFormat final_pixel_format = skybox->GetMergedPixelFormat(merge_params);
 
@@ -498,7 +498,7 @@ namespace chaos
 		{
 			conversion_buffer = new char[required_allocation];
 			if (conversion_buffer == nullptr)
-				return result;
+				return nullptr;
 		}
 
 		// GPU-allocate the texture

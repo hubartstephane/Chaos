@@ -3,6 +3,21 @@
 
 namespace chaos
 {
+  bool GPUProgramVariableRenderMaterialProviderChain::DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const
+  {
+    if (GPUProgramVariableProviderChain::DoProcessAction(name, action, top_provider))
+      return true;
+
+    RenderMaterial const * rm = render_material;
+    while (rm != nullptr)
+    {
+
+
+      rm = rm->parent_material.get();
+    }
+    return false;
+  }
+
   RenderMaterial::RenderMaterial()
   {
 
@@ -21,40 +36,49 @@ namespace chaos
   }
 
 
-  void RenderMaterial::SetProgram(GPUProgram * in_program)
+  bool RenderMaterial::SetProgram(GPUProgram * in_program)
   {
     program = in_program;
+    return true;
   }
 
-  void RenderMaterial::SetParentMaterial(RenderMaterial * in_parent)
+  bool RenderMaterial::SetParentMaterial(RenderMaterial * in_parent)
   {
-    parent_material = in_parent;
-
-#if _DEBUG
     // ensure no cycle parenting
     RenderMaterial * rm = in_parent;
     while (rm != nullptr)
     {
-      assert(rm != this);
-      rm = rm->parent_material.get(); 
+      if (rm == this)
+        return false; // cycle detected
+      rm = rm->parent_material.get();
     }
-#endif
+    parent_material = in_parent;
+    return true;
   }
 
-  void RenderMaterial::UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const
+  GPUProgram const * RenderMaterial::GetEffectiveProgram() const
   {
     // go through the hierarchy until we get the program
     RenderMaterial const * rm = this;
     while (rm != nullptr && rm->program == nullptr)
       rm = rm->parent_material.get();
     if (rm == nullptr)
-      return;
+      return nullptr;
+    return rm->program.get();
+  }
+
+  bool RenderMaterial::UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const
+  {
+    // go through the hierarchy until we get the program
+    GPUProgram const * effective_program = GetEffectiveProgram();
+    if (effective_program == nullptr)
+      return false;
 
     // use the program
-    rm->program->UseProgram(nullptr, nullptr);
+    GPUProgramVariableRenderMaterialProviderChain provider(this);
+    effective_program->UseProgram(&provider, nullptr);
 
-    GPUProgramData const & program_data = rm->program->GetProgramData();
-    program_data.BindUniforms(this, in_uniform_provider);
+    return true;
   }
   
 }; // namespace chaos

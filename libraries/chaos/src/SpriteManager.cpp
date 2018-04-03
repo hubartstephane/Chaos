@@ -97,6 +97,9 @@ namespace chaos
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
 			return false;
 
+    GPUProgramData const & program_data = program->GetProgramData();
+    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
+
 		return true;
 	}
 
@@ -188,15 +191,12 @@ namespace chaos
 		// Initialize the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 
-		GPUProgramData const & program_data = program->GetProgramData();
-
 		GPUProgramVariableProviderChain main_uniform_provider;
 		main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		if (uniform_provider != nullptr)
 			main_uniform_provider.AddVariableProvider(uniform_provider);
 
 		program->UseProgram(&main_uniform_provider, nullptr);
-		program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 		// The drawing   
 		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());

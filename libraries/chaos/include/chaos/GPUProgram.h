@@ -20,7 +20,7 @@ public:
   virtual void Release() override;
 
   /** use the program */
-  bool UseProgram(class GPUProgramVariableProvider const * uniform_provider, class GPUProgramVariableProvider * attribute_provider);
+  bool UseProgram(class GPUProgramVariableProvider const * uniform_provider, class GPUProgramVariableProvider * attribute_provider) const;
 
   /** returns the GL name of the resource */
   GLuint GetResourceID() const { return program_id; }

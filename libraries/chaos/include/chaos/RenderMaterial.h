@@ -20,8 +20,10 @@ namespace chaos
   public:
 
     /** constructor */
-    GPUProgramVariableRenderMaterialProviderChain(RenderMaterial const * in_render_material) :
-      render_material(in_render_material){}
+    GPUProgramVariableRenderMaterialProviderChain(RenderMaterial const * in_render_material, GPUProgramVariableProvider const * in_other_provider) :
+      render_material(in_render_material),
+      other_provider(in_other_provider)
+    {}
 
   protected:
 
@@ -32,6 +34,8 @@ namespace chaos
 
     /** the render material as base for the chain */
     RenderMaterial const * render_material = nullptr;
+    /** another provider (use a non intrusive reference !!!) */
+    GPUProgramVariableProvider const * other_provider;
   };
 
   /**

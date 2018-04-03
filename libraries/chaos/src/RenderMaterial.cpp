@@ -5,14 +5,19 @@ namespace chaos
 {
   bool GPUProgramVariableRenderMaterialProviderChain::DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const
   {
+    if (other_provider != nullptr)
+      if (other_provider->DoProcessAction(name, action, other_provider))
+        return true;
+
     if (GPUProgramVariableProviderChain::DoProcessAction(name, action, top_provider))
       return true;
 
     RenderMaterial const * rm = render_material;
     while (rm != nullptr)
     {
-
-
+      if (rm->uniform_provider != nullptr)
+        if (rm->uniform_provider->DoProcessAction(name, action, top_provider))
+          return true;
       rm = rm->parent_material.get();
     }
     return false;
@@ -75,7 +80,7 @@ namespace chaos
       return false;
 
     // use the program
-    GPUProgramVariableRenderMaterialProviderChain provider(this);
+    GPUProgramVariableRenderMaterialProviderChain provider(this, in_uniform_provider);
     effective_program->UseProgram(&provider, nullptr);
 
     return true;

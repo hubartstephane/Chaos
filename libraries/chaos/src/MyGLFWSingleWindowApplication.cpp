@@ -225,6 +225,7 @@ namespace chaos
       nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "gpu");
       if (cpu_config != nullptr)
         gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
+      return true;
     }
 
     bool SingleWindowApplication::FinalizeGPUManager()

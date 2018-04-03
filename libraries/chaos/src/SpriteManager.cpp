@@ -196,7 +196,7 @@ namespace chaos
 		if (uniform_provider != nullptr)
 			main_uniform_provider.AddVariableProvider(uniform_provider);
 
-		program->UseProgram(&main_uniform_provider, nullptr);
+		program->UseProgram(&main_uniform_provider);
 
 		// The drawing   
 		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)sprites.size());

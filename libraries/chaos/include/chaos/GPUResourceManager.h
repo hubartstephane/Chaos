@@ -84,7 +84,7 @@ namespace chaos
 
 
   /** use the program */
-  bool UseProgram(class GPUProgramProviderBase const * uniform_provider, class GPUProgramProviderBase * attribute_provider);
+  bool UseProgram(class GPUProgramProviderBase const * uniform_provider);
 
   /** returns the GL name of the resource */
   GLuint GetResourceID() const { return program_id; }

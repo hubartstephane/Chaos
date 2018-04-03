@@ -144,14 +144,13 @@ namespace chaos
     if (vertex_array == nullptr)
       return;
     // use program and bind uniforms
-    program->UseProgram(uniform_provider, nullptr);
+    program->UseProgram(uniform_provider);
     // bind the vertex array
     glBindVertexArray(vertex_array->GetResourceID());
     // render the primitives
     for (auto const & primitive : primitives)
       primitive.Render(instance_count, base_instance);
   }
-
 
   void SimpleMesh::Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const
   {

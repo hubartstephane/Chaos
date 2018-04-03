@@ -83,7 +83,7 @@ namespace chaos
 
     // use the program
     GPUProgramRenderMaterialProvider provider(this, in_uniform_provider);
-    effective_program->UseProgram(&provider, nullptr);
+    effective_program->UseProgram(&provider);
 
     return true;
   }

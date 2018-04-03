@@ -13,7 +13,7 @@
 #include <chaos/GPUProgramData.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/SimpleMeshGenerator.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -47,7 +47,7 @@ protected:
     if (application != nullptr)
       application->GetMainClock()->GetClockTime();
 
-    chaos::GPUProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramProvider uniform_provider;
     uniform_provider.AddVariableValue("projection", projection_matrix);
     uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);

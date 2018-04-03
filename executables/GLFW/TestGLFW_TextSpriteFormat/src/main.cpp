@@ -97,11 +97,11 @@ protected:
 		float h = (float)size.y;
 		GenerateSprite(w, h);
 
-		class MyProvider : public chaos::GPUProgramVariableProvider
+		class MyProvider : public chaos::GPUProgramProviderBase
 		{
 		protected: 
 
-			virtual bool DoProcessAction(char const * name, chaos::GPUProgramVariableAction & action, chaos::GPUProgramVariableProvider const * top_level) const override
+			virtual bool DoProcessAction(char const * name, chaos::GPUProgramAction & action, chaos::GPUProgramProviderBase const * top_level) const override
 			{
 				if (strcmp("local_to_cam", name) == 0)
 				{
@@ -120,7 +120,7 @@ protected:
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
     boost::intrusive_ptr<MyProvider> dynamic_provider = new MyProvider;
-    boost::intrusive_ptr<chaos::GPUProgramVariableProviderChain> uniform_provider = new chaos::GPUProgramVariableProviderChain;
+    boost::intrusive_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 		uniform_provider->AddVariableValue("translate_mat", glm::translate(tr));
 		uniform_provider->AddVariableValue("scale_mat", glm::scale(scale));
 		uniform_provider->AddVariableValue("toto", glm::vec2(5.0f, 6.0f));

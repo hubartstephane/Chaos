@@ -76,7 +76,7 @@ namespace chaos
 
 
   /** prepare the rendering */
-  void UseMaterial(GPUProgramVariableProvider const * in_uniform_provider) const;
+  void UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const;
 
 
 
@@ -84,7 +84,7 @@ namespace chaos
 
 
   /** use the program */
-  bool UseProgram(class GPUProgramVariableProvider const * uniform_provider, class GPUProgramVariableProvider * attribute_provider);
+  bool UseProgram(class GPUProgramProviderBase const * uniform_provider, class GPUProgramProviderBase * attribute_provider);
 
   /** returns the GL name of the resource */
   GLuint GetResourceID() const { return program_id; }

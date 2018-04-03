@@ -19,7 +19,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -94,7 +94,7 @@ public:
 	static const int COLLISION_LEVELUP = 2;
 	static const int COLLISION_SPEEDUP = 3;
 
-	void Draw(chaos::GPUProgramVariableProvider * uniform_provider);
+	void Draw(chaos::GPUProgramProviderBase * uniform_provider);
 
 	void Tick(double delta_time, GameInfo game_info);
 

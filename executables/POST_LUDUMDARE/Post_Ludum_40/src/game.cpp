@@ -20,7 +20,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -662,7 +662,7 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	if (level_ratio > 1.0f)
 		level_ratio = 1.0f;
 
-	chaos::GPUProgramVariableProviderChain uniform_provider;
+	chaos::GPUProgramProvider uniform_provider;
 	uniform_provider.AddVariableTexture("material", texture);
 	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
 	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
@@ -690,7 +690,7 @@ void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
 
 void Game::DisplaySprites(glm::ivec2 viewport_size)
 {
-  boost::intrusive_ptr<chaos::GPUProgramVariableProviderChain> uniform_provider = new chaos::GPUProgramVariableProviderChain;
+  boost::intrusive_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
 	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 

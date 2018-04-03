@@ -21,7 +21,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
 #include <chaos/BoostTools.h>
@@ -391,7 +391,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 	}
 }
 
-void SpriteLayer::Draw(chaos::GPUProgramVariableProvider * uniform_provider)
+void SpriteLayer::Draw(chaos::GPUProgramProviderBase * uniform_provider)
 {
 	if (visible)
 		sprite_manager->Display(uniform_provider);

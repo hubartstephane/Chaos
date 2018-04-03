@@ -18,7 +18,7 @@
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 class MyGLFWWindowOpenGLTest1;
 
@@ -93,7 +93,7 @@ protected:
 		debug_display.AddLine("Press T to pause");
 	}
 
-	void PrepareObjectProgram(chaos::GPUProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
+	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx)
 	{
 		uniform_provider.AddVariableValue("projection", ctx.projection);
 		uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
@@ -109,7 +109,7 @@ protected:
 		prim_ctx.local_to_world = local_to_world;
 		prim_ctx.color = final_color;
 
-    chaos::GPUProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramProvider uniform_provider;
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
 		mesh->Render(program, &uniform_provider, 0, 0);

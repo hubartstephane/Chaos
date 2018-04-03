@@ -20,7 +20,7 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -89,7 +89,7 @@ protected:
     glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
-    chaos::GPUProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramProvider uniform_provider;
 
     uniform_provider.AddVariableValue("projection",      projection);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera);

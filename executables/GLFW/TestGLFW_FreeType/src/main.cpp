@@ -16,7 +16,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/FontTools.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 static int const TESTS_PER_FONT = 4;
 
@@ -37,7 +37,7 @@ protected:
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    chaos::GPUProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramProvider uniform_provider;
     uniform_provider.AddVariableTexture("material", texture);
 
     mesh->Render(program.get(), &uniform_provider, 0, 0);

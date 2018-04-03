@@ -1,28 +1,28 @@
-﻿#include <chaos/GPUProgramVariableProvider.h>
+﻿#include <chaos/GPUProgramProvider.h>
 #include <chaos/GLTools.h>
 
 namespace chaos
 {
 
-  bool GPUProgramVariableProviderTexture::DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const
+  bool GPUProgramProviderTexture::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
   {
     if (handled_name != name)
       return false;
     return action.Process(name, value.get());
   }
 
-  void GPUProgramVariableProviderChain::Clear()
+  void GPUProgramProvider::Clear()
   {
     children_providers.clear();
   }
 
-  void GPUProgramVariableProviderChain::AddVariableProvider(GPUProgramVariableProvider * provider)
+  void GPUProgramProvider::AddVariableProvider(GPUProgramProviderBase * provider)
   {
     if (provider != nullptr)
       children_providers.push_back(provider);
   }
 
-  bool GPUProgramVariableProviderChain::DoProcessAction(char const * name, GPUProgramVariableAction & action, GPUProgramVariableProvider const * top_provider) const
+  bool GPUProgramProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
   {
     // handle children providers
     size_t count = children_providers.size();

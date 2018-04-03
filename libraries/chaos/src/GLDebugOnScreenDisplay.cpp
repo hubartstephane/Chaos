@@ -5,7 +5,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 namespace chaos
 {
@@ -87,7 +87,7 @@ namespace chaos
     float factor_y = (character_height * 2.0f / ((float)height));  // for [width, height] pixels
                                                                    // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
                                                                    // see BitmapFontTextMeshBuilder
-    GPUProgramVariableProviderChain uniform_provider;
+    GPUProgramProvider uniform_provider;
     uniform_provider.AddVariableValue("position_factor", glm::vec2(factor_x, factor_y));
     uniform_provider.AddVariableTexture("material", texture);
 

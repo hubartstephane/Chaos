@@ -118,7 +118,7 @@ public:
   GLint GetLocation(int semantic, int semantic_index) const;
 
   /** bind the attributes */
-  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GPUProgramVariableProvider const * attribute_provider = nullptr) const;
+  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GPUProgramProviderBase const * attribute_provider = nullptr) const;
 
   /** find a uniform */
   GLUniformInfo * FindUniform(char const * name);
@@ -137,11 +137,11 @@ public:
     return true;  
   }
   /** try to bind all uniforms */
-  void BindUniforms(class GPUProgramVariableProvider const * provider) const;
+  void BindUniforms(class GPUProgramProviderBase const * provider) const;
   /** try to bind all uniforms using multiples provider */
-  void BindUniforms(class GPUProgramVariableProvider const * const * providers, int count) const;
+  void BindUniforms(class GPUProgramProviderBase const * const * providers, int count) const;
   /** try to bind all uniforms through a whole chain of material */
-  void BindUniforms(class RenderMaterial const * render_material, class GPUProgramVariableProvider const * provider) const;
+  void BindUniforms(class RenderMaterial const * render_material, class GPUProgramProviderBase const * provider) const;
 
 	/** clear the program data object */
 	void Clear();

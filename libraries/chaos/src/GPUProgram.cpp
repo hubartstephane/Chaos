@@ -1,5 +1,5 @@
 ﻿#include <chaos/GPUProgram.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 namespace chaos
 {
@@ -26,7 +26,7 @@ namespace chaos
 		}  
 	}
 
-	bool GPUProgram::UseProgram(class GPUProgramVariableProvider const * uniform_provider, class GPUProgramVariableProvider * attribute_provider) const
+	bool GPUProgram::UseProgram(class GPUProgramProviderBase const * uniform_provider, class GPUProgramProviderBase * attribute_provider) const
 	{
 		if (!IsValid())
 			return false;

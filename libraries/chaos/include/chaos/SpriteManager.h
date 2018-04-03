@@ -9,7 +9,7 @@
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/SpriteManager.h>
 
@@ -79,7 +79,7 @@ namespace chaos
     /** add a sprite to be rendered */
     void AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
     /** Display the sprites */
-    void Display(GPUProgramVariableProvider * uniform_provider);
+    void Display(GPUProgramProviderBase * uniform_provider);
     /** get the number of sprites in the buffer */
     size_t GetSpriteCount() const { return sprites.size() / 6; }
     /** remove the sprites (GPU buffer will be clean at next UpdateGPUVertexBuffer)*/

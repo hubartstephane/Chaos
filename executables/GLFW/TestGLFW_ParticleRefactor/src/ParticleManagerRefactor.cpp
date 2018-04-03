@@ -308,7 +308,7 @@ void ParticleManager::SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in
 	atlas = in_atlas;
 }
 
-void ParticleManager::Display(chaos::GPUProgramVariableProvider * uniform_provider)
+void ParticleManager::Display(chaos::GPUProgramProviderBase * uniform_provider)
 {
 
 }

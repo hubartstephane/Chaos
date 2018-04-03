@@ -18,7 +18,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -49,7 +49,7 @@ protected:
     glm::mat4 local_to_world_matrix  = glm::translate(GetBoxPosition());
     glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
       
-    chaos::GPUProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramProvider uniform_provider;
     uniform_provider.AddVariableValue("projection",      projection_matrix);
     uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);

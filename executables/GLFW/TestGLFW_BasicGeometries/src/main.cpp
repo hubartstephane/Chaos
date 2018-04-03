@@ -20,7 +20,7 @@
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -157,7 +157,7 @@ protected:
     debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
   }
 
-  void PrepareObjectProgram(chaos::GPUProgramVariableProviderChain & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramVariableProviderChain * next_provider = nullptr)
+  void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr)
   {
     uniform_provider.AddVariableValue("projection", ctx.projection);
     uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
@@ -177,7 +177,7 @@ protected:
     glm::mat4 const & local_to_world, 
     bool is_translucent,
     float Y_Scale, 
-    chaos::GPUProgramVariableProviderChain * next_provider = nullptr
+    chaos::GPUProgramProvider * next_provider = nullptr
     )
   {
     glm::vec4 final_color = color;
@@ -191,7 +191,7 @@ protected:
     prim_ctx.local_to_world = local_to_world;
     prim_ctx.color          = final_color;
 
-    chaos::GPUProgramVariableProviderChain uniform_provider;
+    chaos::GPUProgramProvider uniform_provider;
     PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
 
     mesh->Render(program, &uniform_provider, 0, 0);
@@ -206,7 +206,7 @@ protected:
 
 
     // cannot be on the stack. due to reference count
-    boost::intrusive_ptr<chaos::GPUProgramVariableProviderChain> uniform_provider = new chaos::GPUProgramVariableProviderChain;
+    boost::intrusive_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
     uniform_provider->AddVariableValue("p1", t.a);
     uniform_provider->AddVariableValue("p2", t.b);
     uniform_provider->AddVariableValue("p3", t.c);

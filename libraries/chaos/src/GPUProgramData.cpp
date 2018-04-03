@@ -2,7 +2,7 @@
 #include <chaos/LogTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLMTools.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 #include <chaos/RenderMaterial.h>
 
 namespace chaos
@@ -288,12 +288,12 @@ namespace chaos
     attributes.clear();
   }
 
-  void GPUProgramData::BindUniforms(GPUProgramVariableProvider const * provider) const
+  void GPUProgramData::BindUniforms(GPUProgramProviderBase const * provider) const
   {
     BindUniforms(&provider, 1);
   }
 
-  void GPUProgramData::BindUniforms(RenderMaterial const * render_material, GPUProgramVariableProvider const * provider) const
+  void GPUProgramData::BindUniforms(RenderMaterial const * render_material, GPUProgramProviderBase const * provider) const
   {
     if (render_material == nullptr)
       return;
@@ -316,7 +316,7 @@ namespace chaos
     }
   }
 
-  void GPUProgramData::BindUniforms(GPUProgramVariableProvider const * const * providers, int count) const
+  void GPUProgramData::BindUniforms(GPUProgramProviderBase const * const * providers, int count) const
   {
     if (providers == nullptr)
       return;
@@ -324,7 +324,7 @@ namespace chaos
     {
       for (int i = 0; i < count; ++i)
       {
-        GPUProgramVariableProvider const * provider = providers[i];
+        GPUProgramProviderBase const * provider = providers[i];
         if (provider == nullptr)
           continue;
         if (provider->BindUniform(uniform))
@@ -549,7 +549,7 @@ namespace chaos
     return -1;
   }
 
-  void GPUProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GPUProgramVariableProvider const * attribute_provider) const
+  void GPUProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GPUProgramProviderBase const * attribute_provider) const
   {
     int vertex_size = declaration.GetVertexSize();
 

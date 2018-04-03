@@ -15,7 +15,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/Texture.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -90,7 +90,7 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		chaos::GPUProgramVariableProviderChain uniform_provider;
+		chaos::GPUProgramProvider uniform_provider;
 		uniform_provider.AddVariableTexture("material", texture);
 
 		mesh->Render(program.get(), &uniform_provider, 0, 0);

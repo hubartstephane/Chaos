@@ -4,7 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/RenderMaterial.h>
 #include <chaos/BitmapAtlas.h>
-#include <chaos/GPUProgramVariableProvider.h>
+#include <chaos/GPUProgramProvider.h>
 
 
 // -----------------------------------------------------------------
@@ -317,7 +317,7 @@ public:
 	/** change the bitmap atlas */
 	void SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas);
 	/** display all the particles */
-	void Display(chaos::GPUProgramVariableProvider * uniform_provider);
+	void Display(chaos::GPUProgramProviderBase * uniform_provider);
 
 protected:
 

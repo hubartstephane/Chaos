@@ -10,15 +10,15 @@
 namespace chaos
 {
   /**
-  * GPUProgramVariableAction : base class action to be applyed to Providers
+  * GPUProgramAction : base class action to be applyed to Providers
   */
 
-  class GPUProgramVariableAction
+  class GPUProgramAction
   {
   public:
 
     /** indicates that the classes in this hierarchy will have a virtual destructor */
-    virtual ~GPUProgramVariableAction() = default;
+    virtual ~GPUProgramAction() = default;
 
     /** processing base scalar types */
     bool Process(char const * name, GLfloat value) { return Process(name, glm::tvec1<GLfloat>(value)); }
@@ -85,20 +85,20 @@ namespace chaos
   };
 
   /**
-  * GPUProgramVariableSetUniformAction : action used to initialize an uniform
+  * GPUProgramSetUniformAction : action used to initialize an uniform
   */
 
-  class GPUProgramVariableSetUniformAction : public GPUProgramVariableAction
+  class GPUProgramSetUniformAction : public GPUProgramAction
   {
   public:
 
     /** constructor */
-    GPUProgramVariableSetUniformAction(GLUniformInfo const & in_uniform): 
+    GPUProgramSetUniformAction(GLUniformInfo const & in_uniform): 
       uniform(in_uniform){}
 
   protected:
 
-    /** the GPUProgramVariableAction interface */
+    /** the GPUProgramAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
@@ -115,20 +115,20 @@ namespace chaos
   };
 
   /**
-  * GPUProgramVariableSetUniformAction : action used to initialize an attribute with a default value
+  * GPUProgramSetUniformAction : action used to initialize an attribute with a default value
   */
 
-  class GPUProgramVariableSetAttributeAction : public GPUProgramVariableAction
+  class GPUProgramSetAttributeAction : public GPUProgramAction
   {
   public:
 
     /** constructor */
-    GPUProgramVariableSetAttributeAction(GLAttributeInfo const & in_attribute): 
+    GPUProgramSetAttributeAction(GLAttributeInfo const & in_attribute): 
       attribute(in_attribute){}
 
   protected:
 
-    /** the GPUProgramVariableAction interface */
+    /** the GPUProgramAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
@@ -145,16 +145,16 @@ namespace chaos
   };
 
   /**
-  * GPUProgramVariableGetValueAction : action used to get value for an uniform
+  * GPUProgramGetValueAction : action used to get value for an uniform
   */
 
   template<typename T>
-  class GPUProgramVariableGetValueAction : public GPUProgramVariableAction
+  class GPUProgramGetValueAction : public GPUProgramAction
   {
   public:
 
     /** constructor */
-    GPUProgramVariableGetValueAction(T & in_result) : 
+    GPUProgramGetValueAction(T & in_result) : 
       result(in_result){}
 
   protected:

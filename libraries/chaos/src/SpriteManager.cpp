@@ -175,7 +175,7 @@ namespace chaos
 	}
 
 
-	void SpriteManager::Display(GPUProgramVariableProvider * uniform_provider)
+	void SpriteManager::Display(GPUProgramProviderBase * uniform_provider)
 	{
 		if (sprites.size() == 0)
 			return;
@@ -191,7 +191,7 @@ namespace chaos
 		// Initialize the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 
-		GPUProgramVariableProviderChain main_uniform_provider;
+		GPUProgramProvider main_uniform_provider;
 		main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		if (uniform_provider != nullptr)
 			main_uniform_provider.AddVariableProvider(uniform_provider);

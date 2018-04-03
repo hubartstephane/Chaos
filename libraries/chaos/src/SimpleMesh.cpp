@@ -136,7 +136,7 @@ namespace chaos
     return vertex_array_bindings[i].vertex_array.get();
   }
 
-  void SimpleMesh::Render(GPUProgram * program, GPUProgramVariableProvider const * uniform_provider, int instance_count, int base_instance) const
+  void SimpleMesh::Render(GPUProgram * program, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const
   {
     assert(program != nullptr);
 

@@ -293,29 +293,6 @@ namespace chaos
     BindUniforms(&provider, 1);
   }
 
-  void GPUProgramData::BindUniforms(RenderMaterial const * render_material, GPUProgramProviderBase const * provider) const
-  {
-    if (render_material == nullptr)
-      return;
-
-    for (GLUniformInfo const & uniform : uniforms)
-    {
-      bool uniform_bound = false;
-
-      // loop through the hierachy of render materials
-      RenderMaterial const * rm = render_material;
-      while (rm != nullptr && !uniform_bound)
-      {
-        if (rm->uniform_provider != nullptr)
-          uniform_bound = rm->uniform_provider->BindUniform(uniform);
-        rm = rm->parent_material.get();
-      }
-      // backend uniform provider
-      if (!uniform_bound && provider != nullptr)
-        uniform_bound = provider->BindUniform(uniform);
-    }
-  }
-
   void GPUProgramData::BindUniforms(GPUProgramProviderBase const * const * providers, int count) const
   {
     if (providers == nullptr)

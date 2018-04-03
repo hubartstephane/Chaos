@@ -7,7 +7,6 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUFileResource.h>
 
-
 namespace chaos
 {
 
@@ -20,7 +19,7 @@ namespace chaos
   public:
 
     /** constructor */
-    GPUProgramRenderMaterialProvider(RenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider) :
+    GPUProgramRenderMaterialProvider(class RenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider) :
       render_material(in_render_material),
       other_provider(in_other_provider)
     {}

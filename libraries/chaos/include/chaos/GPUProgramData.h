@@ -140,8 +140,6 @@ public:
   void BindUniforms(class GPUProgramProviderBase const * provider) const;
   /** try to bind all uniforms using multiples provider */
   void BindUniforms(class GPUProgramProviderBase const * const * providers, int count) const;
-  /** try to bind all uniforms through a whole chain of material */
-  void BindUniforms(class RenderMaterial const * render_material, class GPUProgramProviderBase const * provider) const;
 
 	/** clear the program data object */
 	void Clear();

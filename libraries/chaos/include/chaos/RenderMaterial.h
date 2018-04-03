@@ -34,7 +34,7 @@ namespace chaos
     /** the render material as base for the chain */
     RenderMaterial const * render_material = nullptr;
     /** another provider (use a non intrusive reference !!!) */
-    GPUProgramProviderBase const * other_provider;
+    GPUProgramProviderBase const * other_provider = nullptr;
   };
 
   /**
@@ -66,14 +66,19 @@ namespace chaos
     /** go throw the hierary and search for the program */
     GPUProgram const * GetEffectiveProgram() const;
 
+    /** get the uniform provider */
+    GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
+    /** get the uniform provider */
+    GPUProgramProvider const & GetUniformProvider() const { return uniform_provider; }
+
   protected:
 
     /** the program */
     boost::intrusive_ptr<GPUProgram> program;
-    /** some rendering states */
-    boost::intrusive_ptr<GPUProgramProviderBase> uniform_provider;
     /** parent material */
     boost::intrusive_ptr<RenderMaterial> parent_material;
+    /** some rendering states */
+    GPUProgramProvider uniform_provider;
   };
 
 

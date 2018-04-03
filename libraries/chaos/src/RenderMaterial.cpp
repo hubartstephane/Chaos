@@ -5,19 +5,21 @@ namespace chaos
 {
   bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
   {
+    // use extra provider
     if (other_provider != nullptr)
       if (other_provider->DoProcessAction(name, action, other_provider))
         return true;
 
+    // use variables inside this provider
     if (GPUProgramProvider::DoProcessAction(name, action, top_provider))
       return true;
 
+    // use the provider of each materials
     RenderMaterial const * rm = render_material;
     while (rm != nullptr)
     {
-      if (rm->uniform_provider != nullptr)
-        if (rm->uniform_provider->DoProcessAction(name, action, top_provider))
-          return true;
+      if (rm->uniform_provider.DoProcessAction(name, action, top_provider))
+        return true;
       rm = rm->parent_material.get();
     }
     return false;
@@ -35,9 +37,9 @@ namespace chaos
 
   void RenderMaterial::Release()
   {
-    program = nullptr;
-    uniform_provider = nullptr;
+    program = nullptr;    
     parent_material = nullptr;
+    uniform_provider.Clear();
   }
 
 

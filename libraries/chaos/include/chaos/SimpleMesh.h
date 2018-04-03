@@ -9,6 +9,7 @@
 #include <chaos/VertexArray.h>
 #include <chaos/VertexBuffer.h>
 #include <chaos/IndexBuffer.h>
+#include <chaos/RenderMaterial.h>
 
 namespace chaos
 {
@@ -50,11 +51,13 @@ namespace chaos
 
 	protected:
 
-		class VertexArrayBindingInfo
+		class VertexArrayInfo
 		{
 		public:
 
-			boost::intrusive_ptr<GPUProgram> program;
+      /** the program we want to be notify of the releasing */
+      GPUProgram const * program = nullptr;
+      /** the vertex array for that program */
 			boost::intrusive_ptr<VertexArray> vertex_array;
 		};
 
@@ -68,8 +71,12 @@ namespace chaos
 		/** clear the mesh */
 		void Clear();
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPUProgram * program, GPUProgramProviderBase const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
-		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
+		void Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+    /** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
+    void Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+		
+    
+    /** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
 		/** offset the index or vertex position */
 		void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
@@ -77,8 +84,8 @@ namespace chaos
 	protected:
 
 		/** find or create a vertex array for a given program */
-		VertexArray const * GetVertexArrayForProgram(GPUProgram * program) const;
-
+		VertexArray const * GetOrCreateVertexArrayForProgram(GPUProgram const * program) const;
+    
 	public:
 
 		/** self descriptive */
@@ -96,7 +103,7 @@ namespace chaos
 	protected:
 
 		/** the vertex binding depends on the program that is used. This is a map that make relation between program / vertex array */
-		mutable std::vector<VertexArrayBindingInfo> vertex_array_bindings;
+		mutable std::vector<VertexArrayInfo> vertex_array_info;
 
 	};
 

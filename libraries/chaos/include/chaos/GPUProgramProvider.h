@@ -19,7 +19,7 @@ namespace chaos
   {
     friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
     friend class GPUProgramRenderMaterialProvider;
-
+   
   public:
 
     /** the main method : returns try whether tha action has been handled (even if failed) */
@@ -115,6 +115,7 @@ namespace chaos
 
   class GPUProgramProvider : public GPUProgramProviderBase
   {
+    friend class GPUProgramRenderMaterialProvider;
 
   public:
 

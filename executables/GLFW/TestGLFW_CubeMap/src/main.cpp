@@ -3,6 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
+#include <chaos/GLTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -108,7 +109,7 @@ protected:
     }
 
     if (!skybox.IsEmpty())
-      return chaos::GLTextureTools::GenTextureObject(&skybox);
+      return chaos::GLTextureLoader().GenTextureObject(&skybox);
 
     return nullptr;
   }
@@ -229,7 +230,7 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
     loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
     
-    program = loader.GenerateProgramObject();
+    program = loader.GenProgramObject();
     if (program == nullptr)
       return false;
 

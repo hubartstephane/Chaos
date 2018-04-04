@@ -41,9 +41,7 @@ namespace chaos
     /** reset the content */
     void Reset();
     /** generate a program from the sources */
-    GLuint GenerateProgram(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
-    /** generate a program from the sources */
-    GPUProgram * GenerateProgramObject(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
+    GPUProgram * GenProgramObject(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
 
     /** add a generator a given shader */
     bool AddSourceGenerator(GLenum shader_type, GPUProgramSourceGenerator * generator);
@@ -69,6 +67,8 @@ namespace chaos
     GLuint GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const;
     /** called just before linkage */
     virtual bool PreLinkProgram(GLuint program) const;
+    /** generate a program from the sources */
+    GLuint GenProgram(DefinitionSet const & definitions = DefinitionSet(), GPUProgramLoaderCacheOptions & cache_options = GPUProgramLoaderCacheOptions()) const;
 
   protected:
 

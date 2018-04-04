@@ -5,6 +5,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
+#include <chaos/GLTextureLoader.h>
 #include <chaos/GPUProgramProvider.h>
 
 namespace chaos
@@ -172,7 +173,7 @@ namespace chaos
       return false;
 
     // create texture
-    texture = GLTextureTools::GenTextureObject(image);
+    texture = GLTextureLoader().GenTextureObject(image);
     FreeImage_Unload(image);
     if (texture == nullptr)
       return false;
@@ -182,7 +183,7 @@ namespace chaos
     loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
     loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-    program = loader.GenerateProgramObject();
+    program = loader.GenProgramObject();
     if (program == nullptr)
       return false;
 

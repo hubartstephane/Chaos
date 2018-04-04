@@ -4,6 +4,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
+#include <chaos/GLTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -67,7 +68,7 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::GLTextureTools::GenTextureObject(&skybox, merge_params);
+		return chaos::GLTextureLoader().GenTextureObject(&skybox, merge_params);
 
 #else
 		
@@ -75,7 +76,7 @@ protected:
 		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_skybox.IsEmpty())
-			return chaos::GLTextureTools::GenTextureObject(&single_skybox);				
+			return chaos::GLTextureLoader().GenTextureObject(&single_skybox);				
 
 #endif
 
@@ -225,7 +226,7 @@ protected:
 		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
 		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
 
-		program = loader.GenerateProgramObject();
+		program = loader.GenProgramObject();
 		if (program == nullptr)
 			return false;
 

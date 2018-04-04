@@ -83,7 +83,7 @@ namespace chaos
 			loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
 			loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-			program = loader.GenerateProgramObject();
+			program = loader.GenProgramObject();
 			if (program == nullptr)
 				return false;
 		}

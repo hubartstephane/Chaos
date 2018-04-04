@@ -3,6 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h> 
+#include <chaos/GLTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -293,7 +294,7 @@ protected:
 
 #endif
 
-    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureTools::GenTextureObject(bm, parameters);
+    boost::intrusive_ptr<chaos::Texture> result = chaos::GLTextureLoader().GenTextureObject(bm, parameters);
 
     glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 
@@ -335,7 +336,7 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER, vertex_shader_path);
 
-    program = loader.GenerateProgramObject();
+    program = loader.GenProgramObject();
     if (program == nullptr)
       return false;
 

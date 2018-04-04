@@ -78,7 +78,7 @@ protected:
 		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
 		loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
-		return loader.GenerateProgramObject();
+		return loader.GenProgramObject();
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

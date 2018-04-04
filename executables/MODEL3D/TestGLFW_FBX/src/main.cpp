@@ -130,7 +130,7 @@ protected:
     {
       definitions["BONE_COUNT"] = i;   
 
-      program[i] = loader.GenerateProgram(definitions);
+      program[i] = loader.GenProgram(definitions);
       if (program[i] == 0)
         return false;
     

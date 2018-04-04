@@ -129,7 +129,7 @@ protected:
     loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
     loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
-    return loader.GenerateProgramObject();
+    return loader.GenProgramObject();
   }
 
 

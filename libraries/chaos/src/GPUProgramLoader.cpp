@@ -146,7 +146,7 @@ namespace chaos
     return result;
   }
 
-  GLuint GPUProgramLoader::GenerateProgram(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
+  GLuint GPUProgramLoader::GenProgram(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
   {
     GLuint result = glCreateProgram();
     if (result != 0)
@@ -205,9 +205,9 @@ namespace chaos
     return result;
   }
 
-  GPUProgram * GPUProgramLoader::GenerateProgramObject(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
+  GPUProgram * GPUProgramLoader::GenProgramObject(DefinitionSet const & definitions, GPUProgramLoaderCacheOptions & cache_options) const
   {
-    GLuint program_id = GenerateProgram(definitions, cache_options);
+    GLuint program_id = GenProgram(definitions, cache_options);
     return (program_id == 0) ? nullptr : new GPUProgram(program_id);
   }
 
@@ -257,5 +257,10 @@ namespace chaos
       return false;
     return AddSourceGenerator(shader_type, new GPUProgramFileSourceGenerator(path));
   }
+
+
+ // GPUProgram GPUProgramLoader::Gen
+
+
 
 }; // namespace chaos

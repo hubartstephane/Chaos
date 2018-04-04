@@ -3,6 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
+#include <chaos/GLTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -66,13 +67,13 @@ protected:
 
       chaos::ImageDescription sub_desc = desc.GetSubImageDescription(k, k, desc.width - 2 * k, desc.height - 2 * k);
 
-      result = chaos::GLTextureTools::GenTextureObject(sub_desc);
+      result = chaos::GLTextureLoader().GenTextureObject(sub_desc);
 
       FreeImage_Unload(image);
     }
 
 #else
-		result = chaos::GLTextureTools::GenTextureObject(texture_paths[index]);
+		result = chaos::GLTextureLoader().GenTextureObject(texture_paths[index]);
 #endif
 
 		return result;
@@ -130,7 +131,7 @@ protected:
 		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
 		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
 
-		program = loader.GenerateProgramObject();
+		program = loader.GenProgramObject();
 		if (program == nullptr)
 			return false;
 

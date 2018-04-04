@@ -1,6 +1,7 @@
 ﻿#include <chaos/GPUResourceManager.h>
 #include <chaos/BoostTools.h>
 #include <chaos/GLTextureTools.h>
+#include <chaos/GLTextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
 
 namespace chaos
@@ -88,7 +89,7 @@ namespace chaos
     if (FindTextureByPath(path) != nullptr)
       return nullptr;
 
-    boost::intrusive_ptr<Texture> texture = GLTextureTools::GenTextureObject(path);
+    boost::intrusive_ptr<Texture> texture = GLTextureLoader().GenTextureObject(path);
     if (texture == nullptr)
       return nullptr;
     SetResourceName(texture.get(), name);
@@ -262,7 +263,7 @@ namespace chaos
     }
 
     // generate the program
-    boost::intrusive_ptr<GPUProgram> program = loader.GenerateProgramObject();
+    boost::intrusive_ptr<GPUProgram> program = loader.GenProgramObject();
 
 
 

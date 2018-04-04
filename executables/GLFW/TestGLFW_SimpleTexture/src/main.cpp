@@ -3,12 +3,12 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLTextureLoader.h>
+#include <chaos/TextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
@@ -48,7 +48,7 @@ protected:
 			char * buffer = chaos::GLTextureTools::GetTextureImage(texture->GetResourceID(), 0, desc);
 			if (buffer != nullptr)
 			{
-				boost::intrusive_ptr<chaos::Texture> new_texture = chaos::GLTextureLoader().GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
+				boost::intrusive_ptr<chaos::Texture> new_texture = chaos::TextureLoader().GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
 				if (new_texture != nullptr)
 					texture = new_texture;
 			
@@ -76,7 +76,7 @@ protected:
 
 	bool GenerateTextureFromFilename(char const * filename)
 	{
-		boost::intrusive_ptr<chaos::Texture> new_texture = chaos::GLTextureLoader().GenTextureObject(filename);
+		boost::intrusive_ptr<chaos::Texture> new_texture = chaos::TextureLoader().GenTextureObject(filename);
 		if (new_texture == nullptr)
 			return false;
 		texture = new_texture;
@@ -102,7 +102,7 @@ protected:
 		// test GENERATION GRAY
 		if (index == GENERATE_GRAY)
 		{
-			result = chaos::GLTextureLoader().GenTextureObject<chaos::PixelGray>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
+			result = chaos::TextureLoader().GenTextureObject<chaos::PixelGray>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -116,7 +116,7 @@ protected:
 		// test GENERATION RGB
 		if (index == GENERATE_RGB)
 		{
-			result = chaos::GLTextureLoader().GenTextureObject<chaos::PixelBGR>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
+			result = chaos::TextureLoader().GenTextureObject<chaos::PixelBGR>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -134,7 +134,7 @@ protected:
 		// test GENERATION RGBA
 		if (index == GENERATE_RGBA)
 		{
-			result = chaos::GLTextureLoader().GenTextureObject<chaos::PixelBGRA>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
+			result = chaos::TextureLoader().GenTextureObject<chaos::PixelBGRA>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -153,7 +153,7 @@ protected:
 		// test GENERATION GRAY FLOAT
 		if (index == GENERATE_GRAY_FLOAT)
 		{
-			result = chaos::GLTextureLoader().GenTextureObject<chaos::PixelGrayFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
+			result = chaos::TextureLoader().GenTextureObject<chaos::PixelGrayFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -168,7 +168,7 @@ protected:
 		// test GENERATION RGB FLOAT
 		if (index == GENERATE_RGB_FLOAT)
 		{
-			result = chaos::GLTextureLoader().GenTextureObject<chaos::PixelRGBFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
+			result = chaos::TextureLoader().GenTextureObject<chaos::PixelRGBFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -187,7 +187,7 @@ protected:
 		// test GENERATION RGBA FLOAT
 		if (index == GENERATE_RGBA_FLOAT)
 		{
-			result = chaos::GLTextureLoader().GenTextureObject<chaos::PixelRGBAFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
+			result = chaos::TextureLoader().GenTextureObject<chaos::PixelRGBAFloat>(TEXTURE_SIZE, TEXTURE_SIZE, [](chaos::ImageDescription & desc)
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
@@ -214,7 +214,7 @@ protected:
 
 				chaos::ImageTools::FillImageBackground(image_description, glm::vec4(0.0f, 1.0f, 0.0f, 0.9f));
 
-				result = chaos::GLTextureLoader().GenTextureObject(image);
+				result = chaos::TextureLoader().GenTextureObject(image);
 				FreeImage_Unload(image);
 			}
 		}
@@ -228,7 +228,7 @@ protected:
 
 				chaos::ImageTools::FillImageBackground(image_description, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
 
-				result = chaos::GLTextureLoader().GenTextureObject(image);
+				result = chaos::TextureLoader().GenTextureObject(image);
 				FreeImage_Unload(image);
 			}
 		}
@@ -242,7 +242,7 @@ protected:
 
 				chaos::ImageTools::FillImageBackground(image_description, glm::vec4(1.0f, 0.0f, 0.0f, 0.9f));
 
-				result = chaos::GLTextureLoader().GenTextureObject(image);
+				result = chaos::TextureLoader().GenTextureObject(image);
 				FreeImage_Unload(image);
 			}
 		}
@@ -306,11 +306,11 @@ protected:
 		if (texture == nullptr)
 			return false;
 
-		chaos::GPUProgramLoader loader;
-		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
-		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
+		chaos::GPUProgramGenerator program_generator;
+		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
+		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
 
-		program = loader.GenProgramObject();
+		program = program_generator.GenProgramObject();
 		if (program == nullptr)
 			return false;
 

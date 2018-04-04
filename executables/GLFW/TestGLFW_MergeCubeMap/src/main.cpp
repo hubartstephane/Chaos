@@ -4,12 +4,12 @@
 #include <chaos/StringTools.h>
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLTextureLoader.h>
+#include <chaos/TextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
@@ -68,7 +68,7 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::GLTextureLoader().GenTextureObject(&skybox, merge_params);
+		return chaos::TextureLoader().GenTextureObject(&skybox, merge_params);
 
 #else
 		
@@ -76,7 +76,7 @@ protected:
 		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_skybox.IsEmpty())
-			return chaos::GLTextureLoader().GenTextureObject(&single_skybox);				
+			return chaos::TextureLoader().GenTextureObject(&single_skybox);				
 
 #endif
 
@@ -222,11 +222,11 @@ protected:
 		if (texture == nullptr)
 			return false;
 
-		chaos::GPUProgramLoader loader;
-		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
+		chaos::GPUProgramGenerator program_generator;
+		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
+		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
 
-		program = loader.GenProgramObject();
+		program = program_generator.GenProgramObject();
 		if (program == nullptr)
 			return false;
 

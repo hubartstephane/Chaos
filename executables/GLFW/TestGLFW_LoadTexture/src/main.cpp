@@ -3,12 +3,12 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLTextureLoader.h>
+#include <chaos/TextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
@@ -67,13 +67,13 @@ protected:
 
       chaos::ImageDescription sub_desc = desc.GetSubImageDescription(k, k, desc.width - 2 * k, desc.height - 2 * k);
 
-      result = chaos::GLTextureLoader().GenTextureObject(sub_desc);
+      result = chaos::TextureLoader().GenTextureObject(sub_desc);
 
       FreeImage_Unload(image);
     }
 
 #else
-		result = chaos::GLTextureLoader().GenTextureObject(texture_paths[index]);
+		result = chaos::TextureLoader().GenTextureObject(texture_paths[index]);
 #endif
 
 		return result;
@@ -127,11 +127,11 @@ protected:
 		if (texture == nullptr)
 			return false;
 
-		chaos::GPUProgramLoader loader;
-		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
-		loader.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
+		chaos::GPUProgramGenerator program_generator;
+		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, fragment_shader_path);
+		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   vertex_shader_path);
 
-		program = loader.GenProgramObject();
+		program = program_generator.GenProgramObject();
 		if (program == nullptr)
 			return false;
 

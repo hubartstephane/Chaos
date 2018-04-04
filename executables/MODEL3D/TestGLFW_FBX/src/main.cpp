@@ -5,7 +5,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/MyFbxImporter.h>
@@ -119,11 +119,11 @@ protected:
     boost::filesystem::path resources_path = application->GetResourcesPath();
 
     // create shader
-    chaos::GPUProgramLoader loader;
-    loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader.txt");
-    loader.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
+    chaos::GPUProgramGenerator program_generator;
+    program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader.txt");
+    program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / "vertex_shader.txt");
 
-    chaos::GPUProgramLoader::DefinitionSet definitions;
+    chaos::GPUProgramGenerator::DefinitionSet definitions;
     definitions["SKELETAL_BONE_COUNT"] = SKELETAL_BONE_COUNT;   
 
     for (int i = 0 ; i < MAX_BONE_COUNT ; ++i)

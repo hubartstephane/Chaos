@@ -7,7 +7,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLTextureLoader.h>
+#include <chaos/TextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -491,7 +491,7 @@ bool Game::LoadBackgroundTexture(size_t index)
 
   index = index % background_paths.size();
 
-  boost::intrusive_ptr<chaos::Texture> new_background = chaos::GLTextureLoader().GenTextureObject(background_paths[index]);
+  boost::intrusive_ptr<chaos::Texture> new_background = chaos::TextureLoader().GenTextureObject(background_paths[index]);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -513,25 +513,25 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the control texture
-	control_texture = chaos::GLTextureLoader().GenTextureObject(path / "controls.png");
+	control_texture = chaos::TextureLoader().GenTextureObject(path / "controls.png");
 	if (control_texture == nullptr)
 		return false;
 
 	// generate the background program
-	chaos::GPUProgramLoader background_loader;
-	background_loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
-	background_loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
+	chaos::GPUProgramGenerator background_program_generator;
+	background_program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, path / "background_vertex_shader.txt");
+	background_program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "background_pixel_shader.txt");
 
-	background_program = background_loader.GenProgramObject();
+	background_program = background_program_generator.GenProgramObject();
 	if (background_program == nullptr)
 		return false;
 
 	// generate the controls program
-	chaos::GPUProgramLoader control_loader;
-	control_loader.AddShaderSourceFile(GL_VERTEX_SHADER, path / "control_vertex_shader.txt");
-	control_loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "control_pixel_shader.txt");
+	chaos::GPUProgramGenerator control_program_generator;
+	control_program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, path / "control_vertex_shader.txt");
+	control_program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, path / "control_pixel_shader.txt");
 
-	control_program = control_loader.GenProgramObject();
+	control_program = control_program_generator.GenProgramObject();
 	if (control_program == nullptr)
 		return false;
 

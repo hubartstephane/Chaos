@@ -12,7 +12,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLTextureLoader.h>
+#include <chaos/TextureLoader.h>
 
 
 #include "ParticleManagerRefactor.h"
@@ -63,12 +63,12 @@ protected:
 
     boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-    texture1 = chaos::GLTextureLoader().GenTextureObject(resource_path / "textures" / "texture1.json");
-    texture2 = chaos::GLTextureLoader().GenTextureObject(resource_path / "textures" / "texture2.json");
-    texture3 = chaos::GLTextureLoader().GenTextureObject(resource_path / "textures" / "texture3.json");
-    texture4 = chaos::GLTextureLoader().GenTextureObject(resource_path / "textures" / "texture4.json");
-    texture5 = chaos::GLTextureLoader().GenTextureObject(resource_path / "textures" / "texture5.json");
-    texture6 = chaos::GLTextureLoader().GenTextureObject(resource_path / "textures" / "space.png");
+    texture1 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture1.json");
+    texture2 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture2.json");
+    texture3 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture3.json");
+    texture4 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture4.json");
+    texture5 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture5.json");
+    texture6 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "space.png");
 
     return true;
   }

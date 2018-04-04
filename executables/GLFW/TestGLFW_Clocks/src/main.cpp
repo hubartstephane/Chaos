@@ -7,7 +7,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
@@ -197,11 +197,11 @@ protected:
 
 	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
-		chaos::GPUProgramLoader loader;
-		loader.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-		loader.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
+		chaos::GPUProgramGenerator program_generator;
+		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
-		return loader.GenProgramObject();
+		return program_generator.GenProgramObject();
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

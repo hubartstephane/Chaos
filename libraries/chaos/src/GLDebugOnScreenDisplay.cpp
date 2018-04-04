@@ -1,11 +1,11 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/BitmapFontTextMeshBuilder.h>
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLTextureLoader.h>
+#include <chaos/TextureLoader.h>
 #include <chaos/GPUProgramProvider.h>
 
 namespace chaos
@@ -173,17 +173,17 @@ namespace chaos
       return false;
 
     // create texture
-    texture = GLTextureLoader().GenTextureObject(image);
+    texture = TextureLoader().GenTextureObject(image);
     FreeImage_Unload(image);
     if (texture == nullptr)
       return false;
 
     // create GPU-Program
-    GPUProgramLoader loader;
-    loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-    loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+    GPUProgramGenerator program_generator;
+	program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+	program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-    program = loader.GenProgramObject();
+    program = program_generator.GenProgramObject();
     if (program == nullptr)
       return false;
 

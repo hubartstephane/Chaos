@@ -1,6 +1,6 @@
 #include <chaos/SpriteManager.h>
 #include <chaos/MathTools.h>
-#include <chaos/GPUProgramLoader.h>
+#include <chaos/GPUProgramGenerator.h>
 #include <chaos/GLTools.h>
 
 
@@ -79,11 +79,11 @@ namespace chaos
 			program = params.program;
 		else
 		{
-			GPUProgramLoader loader;
-			loader.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-			loader.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+			GPUProgramGenerator program_generator;
+			program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+			program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 
-			program = loader.GenProgramObject();
+			program = program_generator.GenProgramObject();
 			if (program == nullptr)
 				return false;
 		}

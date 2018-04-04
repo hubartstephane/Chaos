@@ -5,6 +5,6 @@
 	],
 	"vertex_sources":
 	[
-		"@pixel_shader2.txt"
+		"@vertex_shader2.txt"
 	]
 }

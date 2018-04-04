@@ -211,59 +211,6 @@ namespace chaos
 
   GPUProgram * GPUResourceManager::AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
   {
-    // the possible types of shaders
-    static GLenum const shader_types[] = 
-    { 
-      GL_FRAGMENT_SHADER, 
-      GL_VERTEX_SHADER,
-      GL_GEOMETRY_SHADER,
-      GL_TESS_EVALUATION_SHADER,
-      GL_TESS_CONTROL_SHADER
-    };
-
-    // the attribute names associated
-    static char const * shader_json_names[] =
-    {
-      "pixel_sources",
-      "vertex_sources",
-      "geometry_sources",
-      "tesselation_evaluation_sources",
-      "tesselation_control_sources"
-    };
-
-    size_t shader_type_count = sizeof(shader_types) / sizeof(shader_types[0]);
-    size_t shader_name_count = sizeof(shader_json_names) / sizeof(shader_json_names[0]);
-    assert(shader_type_count == shader_name_count);
-
-    if (!CanAddProgram(name))
-      return nullptr;
-
-
-
-    GPUProgramGenerator program_generator;
-    // iterate over every shader types
-    for (size_t i = 0; i < shader_type_count; ++i)
-    {
-      nlohmann::json const * sources = JSONTools::GetStructure(json, shader_json_names[i]);
-      if (sources == nullptr)
-        continue;
-      if (!sources->is_array())
-        continue;
-
-      // iterate over all sources for the given shader type
-      for (size_t j = 0; j < sources->size(); ++j)
-      {
-        std::string source_path;
-        if (!JSONTools::GetAttributeByIndex(*sources, j, source_path))
-          continue;
-
-        FilePathParam path(source_path, config_path);
-        program_generator.AddShaderSourceFile(shader_types[i], path);
-      }
-    }
-
-    // generate the program
-    boost::intrusive_ptr<GPUProgram> program = program_generator.GenProgramObject();
 
 
 

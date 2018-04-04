@@ -13,6 +13,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureLoader.h>
+#include <chaos/GPUProgramLoader.h>
 
 
 #include "ParticleManagerRefactor.h"
@@ -70,6 +71,11 @@ protected:
     texture5 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture5.json");
     texture6 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "space.png");
 
+	program1 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program1.json");
+	program2 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program2.json");
+	program3 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program3.json");
+	program4 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program4.json");
+
     return true;
   }
 
@@ -88,6 +94,11 @@ protected:
   boost::intrusive_ptr<chaos::Texture> texture4;
   boost::intrusive_ptr<chaos::Texture> texture5;
   boost::intrusive_ptr<chaos::Texture> texture6;
+
+  boost::intrusive_ptr<chaos::GPUProgram> program1;
+  boost::intrusive_ptr<chaos::GPUProgram> program2;
+  boost::intrusive_ptr<chaos::GPUProgram> program3;
+  boost::intrusive_ptr<chaos::GPUProgram> program4;
 
 
 };
@@ -108,8 +119,16 @@ int _tmain(int argc, char ** argv, char ** env)
 {
 
 
+	
 
+	{
+		std::string s= "";
+		char * a = (char *)&s;
+		char * b = a + sizeof(std::string);
+		char * c = (char *)s.c_str();
 
+		c =c ;
+	}
 
 
   ParticleLayer sl(new ParticleLayerDescExample());

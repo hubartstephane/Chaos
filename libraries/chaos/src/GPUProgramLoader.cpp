@@ -99,9 +99,4 @@ namespace chaos
 		return nullptr;
 	}
 
-#if 0
-
-
-#endif
-
 }; // namespace chaos

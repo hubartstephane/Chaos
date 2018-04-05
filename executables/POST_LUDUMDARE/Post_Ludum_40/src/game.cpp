@@ -761,12 +761,8 @@ bool Game::OnKeyEvent(int key, int action)
 	else
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		{
-      
-      //if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-       // RequireWindowClosure();
-      //else
-			  pending_restart_game = true;
+		{    
+			pending_restart_game = true;
 			return true;
 		}		
 	}

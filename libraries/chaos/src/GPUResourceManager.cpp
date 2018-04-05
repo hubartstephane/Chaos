@@ -8,54 +8,67 @@
 namespace chaos
 {
 
+	/**
+	* GPUResourceManagerTextureLoader : a derived TextureLoader for GPUResourceManager private usage
+	**/
+
 	class GPUResourceManagerTextureLoader : public TextureLoader
 	{
 	public:
 
 		GPUResourceManagerTextureLoader(GPUResourceManager * in_resource_manager):
-			resource_manager(in_resource_manager){}
+			resource_manager(in_resource_manager)
+		{
+			assert(in_resource_manager != nullptr);
+		}
 
-    virtual Texture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const override
-    {
-      if (resource_manager->FindTextureByPath(path) != nullptr)
-        return nullptr;
-      Texture * result = TextureLoader::GenTextureObject(path, parameters);
-      if (result != nullptr)
-        SetResourcePath(result, path.GetResolvedPath());
-      return result;
-    }
+		virtual Texture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const override
+		{
+			if (resource_manager->FindTextureByPath(path) != nullptr)  // ensure the Manager does not already have a Texture with the same path
+				return nullptr;
+			Texture * result = TextureLoader::GenTextureObject(path, parameters);
+			if (result != nullptr)
+				SetResourcePath(result, path.GetResolvedPath()); // update the path
+			return result;
+		}
 
 	protected:
 
 		GPUResourceManager * resource_manager = nullptr;
 	};
+
+	/**
+	* GPUResourceManagerGPUProgramLoader : a derived GPUProgramLoader for GPUResourceManager private usage
+	**/
 
 	class GPUResourceManagerGPUProgramLoader : public GPUProgramLoader
 	{
 	public:
 
 		GPUResourceManagerGPUProgramLoader(GPUResourceManager * in_resource_manager):
-			resource_manager(in_resource_manager){}
+			resource_manager(in_resource_manager)
+		{
+			assert(in_resource_manager != nullptr);
+		}
 
-    virtual GPUProgram * GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const override
-    {
-      if (resource_manager->FindProgramByPath(path) != nullptr)
-        return nullptr;
-      GPUProgram * result = GPUProgramLoader::GenProgramObject(path, cache_options);
-      if (result != nullptr)
-        SetResourcePath(result, path.GetResolvedPath());
-      return result;
-    }
+		virtual GPUProgram * GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const override
+		{
+			if (resource_manager->FindProgramByPath(path) != nullptr) // ensure the Manager does not already have a Program with the same path
+				return nullptr;
+			GPUProgram * result = GPUProgramLoader::GenProgramObject(path, cache_options);
+			if (result != nullptr)
+				SetResourcePath(result, path.GetResolvedPath()); // update the path
+			return result;
+		}
 
 	protected:
 
 		GPUResourceManager * resource_manager = nullptr;
 	};
 
-
-
-
-
+	/**
+	* GPUResourceManager
+	**/
 
 	GPUResourceManager::~GPUResourceManager()
 	{
@@ -93,14 +106,17 @@ namespace chaos
 	{
 		return FindObjectByName<GPUProgram>(name, programs);
 	}
+
 	GPUProgram const * GPUResourceManager::FindProgram(char const * name) const
 	{
 		return FindObjectByName<GPUProgram>(name, programs);
 	}
+
 	GPUProgram * GPUResourceManager::FindProgramByPath(FilePathParam const & path)
 	{
 		return FindObjectByPath<GPUProgram>(path, programs);
 	}
+
 	GPUProgram const * GPUResourceManager::FindProgramByPath(FilePathParam const & path) const
 	{
 		return FindObjectByPath<GPUProgram>(path, programs);
@@ -206,6 +222,14 @@ namespace chaos
 		return CanAddObject(name, [this](char const * n) {return FindRenderMaterial(n); } );
 	}
 
+	bool GPUResourceManager::LoadManager(FilePathParam const & path)
+	{
+		nlohmann::json json;
+		if (!JSONTools::LoadJSONFile(path, json, true))
+			return true;
+		return InitializeFromConfiguration(json, path.GetResolvedPath());	
+	}
+
 	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		if (!InitializeTexturesFromConfiguration(json, config_path))
@@ -261,10 +285,10 @@ namespace chaos
 
 	Texture * GPUResourceManager::AddJSONTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-    // ensure no name collision
+		// ensure no name collision
 		if (!CanAddTexture(name)) 
 			return nullptr;
-    // XXX : well, while GenTextureObject( PATH ) is overriden, it seems that GenTextureObject( JSON ) is forbidden throw derived class !!
+		// XXX : well, while GenTextureObject( PATH ) is overriden, it seems that GenTextureObject( JSON ) is forbidden throw derived class !!
 		GPUResourceManagerTextureLoader loader(this);    
 		Texture * texture = ((TextureLoader *)&loader)->GenTextureObject(json, config_path);
 		if (texture != nullptr)
@@ -280,28 +304,28 @@ namespace chaos
 
 	GPUProgram * GPUResourceManager::AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-    // ensure no name collision
-    if (!CanAddProgram(name)) 
-      return nullptr;    
-    // XXX : well, while GenProgramObject( PATH ) is overriden, it seems that GenProgramObject( JSON ) is forbidden throw derived class !!
-    GPUResourceManagerGPUProgramLoader loader(this);
-    GPUProgram * program = ((GPUProgramLoader *)&loader)->GenProgramObject(json, config_path);
-    if (program != nullptr)
-    {
-      // set the name and the path
-      if (name != nullptr)
-        SetResourceName(program, name);
-      // keep a reference on the texture
-      programs.push_back(program);
-    }
-    return program;
+		// ensure no name collision
+		if (!CanAddProgram(name)) 
+			return nullptr;    
+		// XXX : well, while GenProgramObject( PATH ) is overriden, it seems that GenProgramObject( JSON ) is forbidden throw derived class !!
+		GPUResourceManagerGPUProgramLoader loader(this);
+		GPUProgram * program = ((GPUProgramLoader *)&loader)->GenProgramObject(json, config_path);
+		if (program != nullptr)
+		{
+			// set the name and the path
+			if (name != nullptr)
+				SetResourceName(program, name);
+			// keep a reference on the texture
+			programs.push_back(program);
+		}
+		return program;
 	}
 
 	RenderMaterial * GPUResourceManager::AddJSONMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-    // ensure no name collision
-    if (!CanAddRenderMaterial(name))
-      return nullptr;
+		// ensure no name collision
+		if (!CanAddRenderMaterial(name))
+			return nullptr;
 
 
 

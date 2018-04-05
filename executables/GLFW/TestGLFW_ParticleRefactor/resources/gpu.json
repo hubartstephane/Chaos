@@ -7,6 +7,10 @@
 		},
 		"@tex2":
 		{
+			"path":"@textures/texture1.json"			
+		},
+		"@toto":
+		{
 			"faces":
 			[
 				"@textures/nx.jpg",

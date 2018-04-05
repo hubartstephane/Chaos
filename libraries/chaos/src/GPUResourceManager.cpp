@@ -7,6 +7,15 @@
 
 namespace chaos
 {
+	// XXX : the path of a resource (texture/program ...) is given by the first time GenTextureObject( PATH ) is called
+	//       for example:
+	//
+	//          GenTextureObject ( PATH = "file1.json" )
+	//            -> load JSON file file1.json
+	//            -> decrypt PATH = "file2.xxx"
+	//               -> GenTextureObject ( PATH = "file2.xxx" )
+	//
+	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even its the final call)
 
 	/**
 	* GPUResourceManagerTextureLoader : a derived TextureLoader for GPUResourceManager private usage
@@ -26,7 +35,11 @@ namespace chaos
 		{
 			if (resource_manager->FindTextureByPath(path) != nullptr)  // ensure the Manager does not already have a Texture with the same path
 				return nullptr;
-			Texture * result = TextureLoader::GenTextureObject(path, parameters);
+			// we already have determined the PATH for this object
+			// and verified the resource is not already loaded
+			// we must not call "FindTextureByPath(...)" anymore
+			// the simpler/cleaner is just to use a new base instance of "TextureLoader"
+			Texture * result = TextureLoader().GenTextureObject(path, parameters); 
 			if (result != nullptr)
 				SetResourcePath(result, path.GetResolvedPath()); // update the path
 			return result;
@@ -55,7 +68,9 @@ namespace chaos
 		{
 			if (resource_manager->FindProgramByPath(path) != nullptr) // ensure the Manager does not already have a Program with the same path
 				return nullptr;
-			GPUProgram * result = GPUProgramLoader::GenProgramObject(path, cache_options);
+			// XXX : same remark than for Texture loading
+			//       use a new base instance of "GPUProgramLoader"
+			GPUProgram * result = GPUProgramLoader().GenProgramObject(path, cache_options);
 			if (result != nullptr)
 				SetResourcePath(result, path.GetResolvedPath()); // update the path
 			return result;

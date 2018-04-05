@@ -56,7 +56,7 @@ protected:
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
   {
-    chaos::Application * application = chaos::Application::GetInstance();
+	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();    
     if (application == nullptr)
       return false;
 
@@ -75,6 +75,18 @@ protected:
 	program2 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program2.json");
 	program3 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program3.json");
 	program4 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program4.json");
+
+
+	chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
+
+	boost::intrusive_ptr<chaos::Texture> failed_texture1 = gpu_manager->LoadTexture(resource_path / "textures" / "texture1.json");
+	boost::intrusive_ptr<chaos::Texture> failed_texture2 = gpu_manager->LoadTexture(resource_path / "textures" / "texture2.json");
+	boost::intrusive_ptr<chaos::Texture> failed_texture3 = gpu_manager->LoadTexture(resource_path / "textures" / "texture3.json");
+	boost::intrusive_ptr<chaos::Texture> failed_texture4 = gpu_manager->LoadTexture(resource_path / "textures" / "texture4.json");
+	boost::intrusive_ptr<chaos::Texture> failed_texture5 = gpu_manager->LoadTexture(resource_path / "textures" / "texture5.json");
+	boost::intrusive_ptr<chaos::Texture> failed_texture6 = gpu_manager->LoadTexture(resource_path / "textures" / "space.png");
+
+
 
     return true;
   }

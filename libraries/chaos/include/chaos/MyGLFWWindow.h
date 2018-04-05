@@ -81,13 +81,10 @@ namespace chaos
 
     protected:
 
-      /** final intializations called from the application */
-      bool PrepareWindow(GLFWwindow * in_glfw_window, bool in_double_buffer, nlohmann::json const & config, boost::filesystem::path const & config_path);
-
       /** get the hints for new GLFW window */
       virtual void TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const;
       /** bind Window with GLFW */
-      virtual void BindGLFWWindow(GLFWwindow * in_glfw_window);
+      virtual void BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer);
       /** called every Tick (returns true whenever we want to redraw the window) */
       virtual bool Tick(double delta_time) { return true; }
       /** called at window creation (returns false if the window must be killed) */

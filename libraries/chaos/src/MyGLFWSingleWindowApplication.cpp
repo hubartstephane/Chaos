@@ -161,9 +161,13 @@ namespace chaos
           // some generic information
           GLTools::DisplayGenericInformation();
 
-          // the loop
-          bool double_buffer = params.hints.double_buffer ? true : false;
-          result = window->PrepareWindow(glfw_window, double_buffer, configuration, configuration_path);
+		  // initialize the GPU resource Manager
+		  InitializeGPUManager();
+
+		  // bind the window
+		  window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);		 
+		  // prepare the window
+          result = window->InitializeFromConfiguration(configuration, configuration_path);
           if (result)
           {
             // x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
@@ -190,11 +194,10 @@ namespace chaos
               glfwShowWindow(glfw_window);
 
             // the main loop
-            InitializeGPUManager();
-            MessageLoop();
-            FinalizeGPUManager();
+            MessageLoop();            
           }
           window->Finalize();
+		  FinalizeGPUManager();
         }
         glfwDestroyWindow(glfw_window);
       }

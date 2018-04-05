@@ -57,7 +57,7 @@ namespace chaos
       }
     }
 
-    void Window::BindGLFWWindow(GLFWwindow * in_glfw_window)
+    void Window::BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer)
     {
       assert(glfw_window == nullptr); // ensure not already bound
       assert(in_glfw_window != nullptr);
@@ -76,6 +76,8 @@ namespace chaos
       glfwSetDropCallback(in_glfw_window, DoOnDropFile);
       glfwSetWindowFocusCallback(in_glfw_window, DoOnFocusStateChange);
       glfwSetWindowIconifyCallback(in_glfw_window, DoOnIconifiedStateChange);
+
+	  double_buffer = in_double_buffer;
     }
 
     void Window::DoOnIconifiedStateChange(GLFWwindow * in_glfw_window, int value)
@@ -195,13 +197,6 @@ namespace chaos
         hints.toplevel = 1;
         hints.focused = 1;
       }
-    }
-
-    bool Window::PrepareWindow(GLFWwindow * in_glfw_window, bool in_double_buffer, nlohmann::json const & config, boost::filesystem::path const & config_path)
-    {
-      BindGLFWWindow(in_glfw_window);
-      double_buffer = in_double_buffer;
-      return InitializeFromConfiguration(config, config_path);
     }
 
   }; // namespace MyGLFW

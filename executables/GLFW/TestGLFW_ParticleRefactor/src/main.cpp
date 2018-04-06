@@ -60,7 +60,7 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
 
-		chaos::JSONTools::ShowConfigFile(config);
+		//chaos::JSONTools::ShowConfigFile(config);
 
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
@@ -106,6 +106,17 @@ protected:
 		ProgramPtr program2 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program2.json");
 		ProgramPtr program3 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program3.json");
 		ProgramPtr program4 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program4.json");
+
+		program1->AddReleaseCallback(new chaos::GPUResourceAutoCallbacks(
+			[](chaos::GPUResource const * resource, bool destruction) {
+
+
+			return false;
+
+		}));
+
+		program1->Release();
+		program1->Release();
 
 		return true;
 	}

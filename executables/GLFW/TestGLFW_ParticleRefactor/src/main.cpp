@@ -60,7 +60,7 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
 
-		//chaos::JSONTools::ShowConfigFile(config);
+		chaos::JSONTools::ShowConfigFile(config);
 
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
@@ -111,7 +111,7 @@ protected:
 			[](chaos::GPUResource const * resource, bool destruction) {
 
 
-			return false;
+			return true;
 
 		}));
 

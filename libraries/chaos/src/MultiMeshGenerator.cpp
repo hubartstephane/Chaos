@@ -77,7 +77,7 @@ namespace chaos
           if (mesh == nullptr)
             mesh = new SimpleMesh; // generate the mesh
           else
-            mesh->Clear(); // reuse existing mesh
+            mesh->Release(); // reuse existing mesh
 
 					if (mesh != nullptr)
 					{

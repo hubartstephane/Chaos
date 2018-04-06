@@ -120,7 +120,7 @@ bool SimpleMeshGenerator::FillMeshData(SimpleMesh * mesh) const
       if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
       {
         // prepare the mesh
-        mesh->Clear();
+        mesh->Release();
         mesh->vertex_buffer = vb_object;
         mesh->index_buffer = ib_object;
 
@@ -176,16 +176,16 @@ void TriangleMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declar
   declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 }
 
-void TriangleMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void TriangleMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
-  MeshPrimitive mesh_primitive;
-  mesh_primitive.count = 3;
-  mesh_primitive.indexed = false;
-  mesh_primitive.primitive_type = GL_TRIANGLES;
-  mesh_primitive.start = 0;
-  mesh_primitive.base_vertex_index = 0;
-  primitives.push_back(mesh_primitive);
+  DrawPrimitive draw_primitive;
+  draw_primitive.count = 3;
+  draw_primitive.indexed = false;
+  draw_primitive.primitive_type = GL_TRIANGLES;
+  draw_primitive.start = 0;
+  draw_primitive.base_vertex_index = 0;
+  primitives.push_back(draw_primitive);
 
   vertices_writer << primitive.a;
   vertices_writer << primitive.b;  
@@ -206,16 +206,16 @@ void QuadMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaratio
   declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 }
 
-void QuadMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void QuadMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
-  MeshPrimitive mesh_primitive;
-  mesh_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
-  mesh_primitive.indexed = true;
-  mesh_primitive.primitive_type = GL_TRIANGLES;
-  mesh_primitive.start = 0;
-  mesh_primitive.base_vertex_index = 0;
-  primitives.push_back(mesh_primitive);
+  DrawPrimitive draw_primitive;
+  draw_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
+  draw_primitive.indexed = true;
+  draw_primitive.primitive_type = GL_TRIANGLES;
+  draw_primitive.start = 0;
+  draw_primitive.base_vertex_index = 0;
+  primitives.push_back(draw_primitive);
 
   // the indices
   indices_writer.Write(triangles, sizeof(triangles));
@@ -245,16 +245,16 @@ void CubeMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaratio
   declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 }
 
-void CubeMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void CubeMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   // the primitives
-  MeshPrimitive mesh_primitive;
-  mesh_primitive.count             = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
-  mesh_primitive.indexed           = true;
-  mesh_primitive.primitive_type    = GL_TRIANGLES;
-  mesh_primitive.start             = 0;
-  mesh_primitive.base_vertex_index = 0;
-  primitives.push_back(mesh_primitive);
+  DrawPrimitive draw_primitive;
+  draw_primitive.count             = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
+  draw_primitive.indexed           = true;
+  draw_primitive.primitive_type    = GL_TRIANGLES;
+  draw_primitive.start             = 0;
+  draw_primitive.base_vertex_index = 0;
+  primitives.push_back(draw_primitive);
 
   // the indices
   indices_writer.Write(triangles, sizeof(triangles));
@@ -292,7 +292,7 @@ void SphereMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declarat
   declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 }
 
-void SphereMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+void SphereMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 {
   int subdiv_beta  = max(subdivisions, 3);
   int subdiv_alpha = subdiv_beta * 2;
@@ -362,13 +362,13 @@ void SphereMeshGenerator::GenerateMeshData(std::vector<MeshPrimitive> & primitiv
     subdiv_alpha * (subdiv_beta - 1) * 6 +
     subdiv_alpha * 3;
 
-  MeshPrimitive mesh_primitive;
-  mesh_primitive.count             = indices_count;
-  mesh_primitive.indexed           = true;
-  mesh_primitive.primitive_type    = GL_TRIANGLES;
-  mesh_primitive.start             = 0;
-  mesh_primitive.base_vertex_index = 0;
-  primitives.push_back(mesh_primitive);
+  DrawPrimitive draw_primitive;
+  draw_primitive.count             = indices_count;
+  draw_primitive.indexed           = true;
+  draw_primitive.primitive_type    = GL_TRIANGLES;
+  draw_primitive.start             = 0;
+  draw_primitive.base_vertex_index = 0;
+  primitives.push_back(draw_primitive);
 }
 
 void SphereMeshGenerator::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const

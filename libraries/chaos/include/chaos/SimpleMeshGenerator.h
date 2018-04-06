@@ -5,7 +5,7 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/MemoryBufferWriter.h>
-
+#include <chaos/DrawPrimitive.h>
 
 namespace chaos
 {
@@ -21,7 +21,7 @@ namespace chaos
 		/** test whether the requirement is valid */
 		bool IsValid() const;
 
-	public: 
+	public:
 
 		/** size of a vertex */
 		int vertex_size = 0;
@@ -47,12 +47,12 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const = 0;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
+		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
 
 		/** generation function */
 		boost::intrusive_ptr<SimpleMesh> GenerateMesh() const;
-    /** population function */
-    bool FillMeshData(SimpleMesh * mesh) const;
+		/** population function */
+		bool FillMeshData(SimpleMesh * mesh) const;
 	};
 
 	/**
@@ -65,7 +65,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		QuadMeshGenerator(box2 const & in_primitive): 
+		QuadMeshGenerator(box2 const & in_primitive) :
 			primitive(in_primitive) {}
 
 		/** get requirement */
@@ -73,7 +73,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 
@@ -104,7 +104,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 
@@ -113,7 +113,7 @@ namespace chaos
 	};
 
 	/**
-	* CubeMeshGenerator : help defines cube mesh 
+	* CubeMeshGenerator : help defines cube mesh
 	*/
 
 	class CubeMeshGenerator : public SimpleMeshGenerator
@@ -122,15 +122,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		CubeMeshGenerator(box3 const & in_primitive):
-			primitive(in_primitive){}
+		CubeMeshGenerator(box3 const & in_primitive) :
+			primitive(in_primitive) {}
 
 		/** get requirement */
 		virtual MeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 
@@ -155,14 +155,14 @@ namespace chaos
 		/** constructor */
 		SphereMeshGenerator(sphere3 const & in_primitive, int in_subdivisions) :
 			primitive(in_primitive),
-			subdivisions(in_subdivisions){}
+			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
 		virtual MeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(VertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<MeshPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 

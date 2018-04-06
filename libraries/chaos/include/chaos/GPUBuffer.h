@@ -14,12 +14,8 @@ namespace chaos
 		/** destructor */
 		virtual ~GPUBuffer();
 
-		/** cleaning the object */
-		virtual void Release() override;
-
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return resource_id; }
-
 		/** returns true whether the resource is valid */
 		bool IsValid() const { return glIsBuffer(resource_id) == GL_TRUE;}
 
@@ -27,6 +23,11 @@ namespace chaos
 		bool SetBufferData(char const * buffer, size_t size);
 		/** get the size of the buffer */
 		GLint GetBufferSize() const;
+
+	protected:
+
+		/** cleaning the object */
+		virtual void DoRelease() override;
 
 	protected:
 

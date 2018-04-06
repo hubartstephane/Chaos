@@ -6,62 +6,71 @@
 namespace chaos
 {
 
-  // ==============================================================
-  // CALLBACKS
-  // ==============================================================
+	// ==============================================================
+	// CALLBACKS
+	// ==============================================================
 
-  class GPUResourceCallbacks : public ReferencedObject
-  {
-    friend class GPUResource;
+	class GPUResourceCallbacks : public ReferencedObject
+	{
+		friend class GPUResource;
 
-  protected:
+	protected:
 
-    /** called whenever the object is being released */
-    virtual void OnReleased(GPUResource const * object);
-  };
+		/** called whenever the object is being released */
+		virtual void OnResourceReleased(GPUResource const * object, bool destruction){}
+	};
 
-  class GPUResourceAutoCallbacks : public GPUResourceCallbacks
-  {
+	class GPUResourceAutoCallbacks : public GPUResourceCallbacks
+	{
 
-  public:
+	public:
 
-    /** default constructor */
-    GPUResourceAutoCallbacks() = default;
-    /** assignation constructor */
-    template<typename U>
-    GPUResourceAutoCallbacks(U & in_released_func) :
-      released_func(in_released_func)
-    {
-    }
+		/** default constructor */
+		GPUResourceAutoCallbacks() = default;
+		/** assignation constructor */
+		template<typename U>
+		GPUResourceAutoCallbacks(U & in_released_func) :
+			released_func(in_released_func)
+		{
+		}
 
-  protected:
+	protected:
 
-    /** called whenever a sound is finished */
-    virtual void OnReleased(GPUResource const * object) override;
+		/** called whenever a sound is finished */
+		virtual void OnResourceReleased(GPUResource const * object, bool destruction) override;
 
-  public:
+	public:
 
-    /** the callbacks function */
-    std::function<void(GPUResource const *)> released_func;
-  };
+		/** the callbacks function */
+		std::function<void(GPUResource const *, bool)> released_func;
+	};
 
-  // ==============================================================
-  // GPUResource
-  // ==============================================================
+	// ==============================================================
+	// GPUResource
+	// ==============================================================
 
-  class GPUResource : public ReferencedObject
-  {
-  public:
+	class GPUResource : public ReferencedObject
+	{
+	public:
 
-    /** destructor */
-    virtual ~GPUResource() = default;
-    /** cleaning the resource */
-    virtual void Release(){}
+		/** destructor */
+		virtual ~GPUResource();
+		/** cleaning the resource */
+		void Release();
 
-  protected:
+	protected:
 
-    
+		/** cleaning the resource (method to derive) */
+		virtual void DoRelease();
+		/** called whenever the resource is being destroyed / released */
+		void OnReleased(bool destruction);
 
-  };
+	protected:
+
+		/** the callbacks that are to be called when resource is being released */
+		std::vector<boost::intrusive_ptr<GPUResourceCallbacks>> callbacks;
+
+
+	};
 
 }; // namespace chaos

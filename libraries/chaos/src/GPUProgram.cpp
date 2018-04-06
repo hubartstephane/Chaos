@@ -13,10 +13,10 @@ namespace chaos
 
 	GPUProgram::~GPUProgram()
 	{
-		Release();
+		DoRelease();
 	}
 
-	void GPUProgram::Release()
+	void GPUProgram::DoRelease()
 	{
 		if (program_id != 0)
 		{			

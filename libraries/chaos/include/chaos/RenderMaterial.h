@@ -53,8 +53,6 @@ namespace chaos
 
     /** destructor */
     virtual ~RenderMaterial();
-    /** cleaning the resource */
-    virtual void Release();
 
     /** prepare the rendering */
     bool UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const;
@@ -70,6 +68,11 @@ namespace chaos
     GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
     /** get the uniform provider */
     GPUProgramProvider const & GetUniformProvider() const { return uniform_provider; }
+
+	protected:
+
+		/** cleaning the resource */
+		virtual void DoRelease() override;
 
   protected:
 

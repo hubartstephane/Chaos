@@ -55,7 +55,7 @@ namespace chaos
 	protected:
 
 		/** the resource id */
-		GLuint query_id;
+		GLuint query_id = 0;
 		/** indicates whether the query has been already started */
 		bool query_started = false;
 		/** indicates whether the query has been already been begun/ended */

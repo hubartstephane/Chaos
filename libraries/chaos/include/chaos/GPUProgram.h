@@ -34,7 +34,7 @@ namespace chaos
 	protected:
 
 		/** the resource id */
-		GLuint program_id;
+		GLuint program_id = 0;
 		/** the program data */
 		GPUProgramData program_data;
 	};

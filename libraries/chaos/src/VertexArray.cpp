@@ -4,7 +4,8 @@
 namespace chaos
 {
 
-	VertexArray::VertexArray(GLuint in_id) : vertex_array_id(in_id)
+	VertexArray::VertexArray(GLuint in_id) : 
+		vertex_array_id(in_id)
 	{
 
 	}
@@ -19,7 +20,7 @@ namespace chaos
 		if (vertex_array_id != 0)
 		{
 			glDeleteVertexArrays(1, &vertex_array_id);
-			vertex_array_id = 0;    
-		}  
+			vertex_array_id = 0;
+		}
 	}
 }; // namespace chaos

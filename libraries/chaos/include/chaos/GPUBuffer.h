@@ -32,7 +32,7 @@ namespace chaos
 	protected:
 
 		/** the resource id */
-		GLuint resource_id;
+		GLuint resource_id = 0;
 	};
 
 }; // namespace chaos

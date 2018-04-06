@@ -50,7 +50,7 @@ namespace chaos
 	protected:
 
 		/** cleaning the object */
-		virtual void DoRelease() override;
+		virtual bool DoRelease() override;
 
 	protected:
 

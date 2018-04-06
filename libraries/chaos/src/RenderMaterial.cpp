@@ -35,11 +35,12 @@ namespace chaos
 		DoRelease();
 	}
 
-	void RenderMaterial::DoRelease()
+	bool RenderMaterial::DoRelease()
 	{
 		program = nullptr;
 		parent_material = nullptr;
 		uniform_provider.Clear();
+		return true;
 	}
 
 

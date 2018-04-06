@@ -15,12 +15,12 @@ namespace chaos
 		DoRelease();
 	}
 
-	void VertexArray::DoRelease()
+	bool VertexArray::DoRelease()
 	{
-		if (vertex_array_id != 0)
-		{
-			glDeleteVertexArrays(1, &vertex_array_id);
-			vertex_array_id = 0;
-		}
+		if (vertex_array_id == 0)
+			return false;
+		glDeleteVertexArrays(1, &vertex_array_id);
+		vertex_array_id = 0;
+		return true;
 	}
 }; // namespace chaos

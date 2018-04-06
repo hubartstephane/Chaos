@@ -72,7 +72,7 @@ namespace chaos
 	protected:
 
 		/** cleaning the resource */
-		virtual void DoRelease() override;
+		virtual bool DoRelease() override;
 
   protected:
 

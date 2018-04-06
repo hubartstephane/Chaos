@@ -23,13 +23,13 @@ namespace chaos
 
 	void GPUResource::Release()
 	{
-		DoRelease();
-		TriggerReleaseCallbacks(false);
+		if (DoRelease())
+			TriggerReleaseCallbacks(false);
 	}
 
-	void GPUResource::DoRelease()
+	bool GPUResource::DoRelease()
 	{
-
+		return false;
 	}
 
 	void GPUResource::TriggerReleaseCallbacks(bool destruction)

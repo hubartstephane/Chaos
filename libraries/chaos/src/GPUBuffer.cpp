@@ -13,13 +13,13 @@ namespace chaos
 		DoRelease();
 	}
 
-	void GPUBuffer::DoRelease()
+	bool GPUBuffer::DoRelease()
 	{
-		if (resource_id != 0)
-		{
-			glDeleteBuffers(1, &resource_id);
-			resource_id = 0;    
-		}  
+		if (resource_id == 0)
+			return false;
+		glDeleteBuffers(1, &resource_id);
+		resource_id = 0;
+		return true;
 	}
 
 	bool GPUBuffer::SetBufferData(char const * buffer, size_t size)

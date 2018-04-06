@@ -66,7 +66,7 @@ namespace chaos
 	protected:
 
 		/** cleaning the resource (method to derive) */
-		virtual void DoRelease();
+		virtual bool DoRelease();
 		/** called whenever the resource is being destroyed / released. Call pending callbacks */
 		void TriggerReleaseCallbacks(bool destruction);
 

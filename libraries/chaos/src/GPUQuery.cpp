@@ -31,18 +31,19 @@ namespace chaos
 		DoRelease();
 	}
 
-	void GPUQuery::DoRelease()
+	bool GPUQuery::DoRelease()
 	{
 		assert(!query_started);
 		assert(!conditional_rendering_started);  // do not release resource, if something has been started (and would never been stopped)  
-		if (query_id != 0)
-		{			
-			glDeleteQueries(1, &query_id);
-			query_id = 0;
-			query_started = false;
-			query_ended = false;
-			conditional_rendering_started = false;
-		}
+
+		if (query_id == 0)
+			return false;
+		glDeleteQueries(1, &query_id);
+		query_id = 0;
+		query_started = false;
+		query_ended = false;
+		conditional_rendering_started = false;
+		return true;
 	}
 
 	bool GPUQuery::BeginQuery()

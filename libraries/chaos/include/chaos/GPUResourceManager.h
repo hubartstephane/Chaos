@@ -18,6 +18,8 @@ namespace chaos
 
 	class GPUResourceManager : public Manager, protected GPUFileResourceFriend
 	{
+		friend class RenderMaterialLoader;
+
 	public:
 
 		/** destructor */

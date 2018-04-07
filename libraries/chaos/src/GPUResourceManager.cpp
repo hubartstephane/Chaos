@@ -3,6 +3,7 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
+#include <chaos/RenderMaterialLoader.h>
 #include <chaos/GPUProgramGenerator.h>
 
 namespace chaos
@@ -215,11 +216,18 @@ namespace chaos
 	{
 		if (!CanAddRenderMaterial(name))
 			return nullptr;
-
-
-
-
-		return nullptr;
+	
+		RenderMaterialLoader loader(this);
+		RenderMaterial * render_material = loader.GenRenderMaterialObject(path);
+		if (render_material != nullptr)
+		{
+			// set the name and the path
+			if (name != nullptr)
+				SetResourceName(render_material, name);
+			// keep a reference on the render material
+			render_materials.push_back(render_material);
+		}
+		return render_material;
 	}
 
 	bool GPUResourceManager::CanAddTexture(char const * name) const
@@ -342,47 +350,17 @@ namespace chaos
 		if (!CanAddRenderMaterial(name))
 			return nullptr;
 
-		std::string material_path;
-		if (JSONTools::GetAttribute(json, "path", material_path))
+		RenderMaterialLoader loader(this);
+		RenderMaterial * render_material = loader.GenRenderMaterialObject(json, config_path);
+		if (render_material != nullptr)
 		{
-
-			material_path = material_path;
+			// set the name and the path
+			if (name != nullptr)
+				SetResourceName(render_material, name);
+			// keep a reference on the render material
+			render_materials.push_back(render_material);
 		}
-
-		nlohmann::json const * program = JSONTools::GetStructure(json, "program");
-		if (program != nullptr)
-		{
-
-			program = program;
-		}
-
-		std::string parent_material;
-		if (JSONTools::GetAttribute(json, "parent_material", parent_material))
-		{
-
-			parent_material = parent_material;
-		}
-
-		nlohmann::json const * textures = JSONTools::GetStructure(json, "textures");
-		if (textures != nullptr)
-		{
-
-			textures = textures;
-		}
-
-		nlohmann::json const * uniforms = JSONTools::GetStructure(json, "uniforms");
-		if (uniforms != nullptr)
-		{
-
-
-			uniforms = uniforms;
-		}
-
-
-
-
-
-		return nullptr;
+		return render_material;
 	}
 
 

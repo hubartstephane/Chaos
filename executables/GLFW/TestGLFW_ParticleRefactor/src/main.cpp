@@ -60,10 +60,10 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
 
-		chaos::JSONTools::ShowConfigFile(config);
 
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
+		boost::filesystem::path const & user_local = application->GetUserLocalPath();
 
 		// ==========================================================
 
@@ -118,6 +118,9 @@ protected:
 		program1->Release();
 		program1->Release();
 
+
+		boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
+		chaos::WinTools::ShowFile(dir_path);
 		return true;
 	}
 

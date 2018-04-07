@@ -81,7 +81,6 @@ namespace chaos
 			result = std::move(uniq_path);
 			return true;
 		}
-
 		return false;
 	}
 

@@ -115,8 +115,8 @@ protected:
 	c2["APRES_INSERTION_DANS_C1"] = 123456; // won't be visible in the generated file => means previous line is a deep copy
 #endif
 
-    chaos::JSONTools::ShowConfigFile(c1);
-    application = application;
+    boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(c1);
+		chaos::WinTools::ShowFile(dir_path);
   }
 
 

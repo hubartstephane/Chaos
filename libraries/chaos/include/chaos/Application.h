@@ -25,6 +25,9 @@ public:
   /** getter of the singleton instance */
   static inline Application const * GetConstInstance() { return singleton_instance; }
 
+	/** get the name of the application */
+	char const * GetApplicationName() const { return application_name.c_str(); }
+
   /** get an environment value */
   char const * GetEnvironment(char const * key) const;
 
@@ -38,6 +41,8 @@ public:
   inline boost::filesystem::path const & GetApplicationFilename() const { return application_filename; }
   /** get the application local path for execution data */
   inline boost::filesystem::path const & GetUserLocalPath() const { return userlocal_path; }
+	/** get the application local temp path for execution data */
+	inline boost::filesystem::path const & GetUserLocalTempPath() const { return userlocal_temp_path; }
 
   /** gets the file manager */
   FileManager * GetFileManager() { return file_manager.get(); }
@@ -46,6 +51,11 @@ public:
 
   /** get the configuration */
   nlohmann::json const & GetConfiguration() const { return configuration;}
+
+	/** open the temp local user directory (for debugging purpose) */
+	boost::filesystem::path const & ShowUserLocalTempDirectory() const;	
+	/** create the use local temp directory */
+	boost::filesystem::path const & CreateUserLocalTempDirectory() const;
 
 protected:
 
@@ -75,6 +85,8 @@ protected:
     /** the single application instance */
   static Application * singleton_instance;
 
+	/** the name of the application */
+	std::string application_name;
   /** the application parameters */
   std::vector<std::string> arguments;
   /** the application environments */
@@ -87,6 +99,8 @@ protected:
   boost::filesystem::path resources_path;
   /** path of the application to store user data */
   boost::filesystem::path userlocal_path;
+	/** path of the application to store user temp data */
+	boost::filesystem::path userlocal_temp_path;
 
   /** the JSON configuration file if existing */
   nlohmann::json configuration;

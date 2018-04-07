@@ -287,7 +287,7 @@ namespace chaos
 	bool GPUResourceManager::InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		return InitializeObjectsFromConfiguration(
-			"materials", 
+			"rendermaterials", 
 			json, 
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)

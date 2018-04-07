@@ -38,7 +38,7 @@ namespace chaos
 
     /** an utility method to initialize a single object in an JSON array/object */
     template<typename FUNC>
-    void InitializeOneObjectFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC add_func)
+    void InitializeOneObjectFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
     {
       nlohmann::json::const_iterator name_json_it = json.find("name");
       if (name_json_it != json.end() && name_json_it->is_string())             // 1 - try to find a member 'name'
@@ -51,7 +51,7 @@ namespace chaos
 
     /** an utility method to initialize a list of objects from a JSON object or array */
     template<typename FUNC>
-    bool InitializeObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC add_func)
+    bool InitializeObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
     {
       nlohmann::json const * objects_json = JSONTools::GetStructure(json, object_names);
       if (objects_json != nullptr)

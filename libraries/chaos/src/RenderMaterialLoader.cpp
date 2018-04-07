@@ -12,18 +12,18 @@ namespace chaos
 		assert(in_resource_manager != nullptr);
 	}
 
-	RenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	RenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
 	{
 		material_path_resolved = false;
-		return DoGenRenderMaterialObject(json, config_path);
+		return DoGenRenderMaterialObject(json, config_path, parent_name);
 	}
 
-	RenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path) const
+	RenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
 	{
 		if (resource_manager->FindRenderMaterialByPath(path) != nullptr)  // ensure the Manager does not already have a RenderMaterial with the same path
 			return nullptr;
 		material_path_resolved = false;
-		return DoGenRenderMaterialObject(path);
+		return DoGenRenderMaterialObject(path, parent_name);
 	}
 
 
@@ -32,14 +32,14 @@ namespace chaos
 
 
 
-	RenderMaterial * RenderMaterialLoader::DoGenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	RenderMaterial * RenderMaterialLoader::DoGenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
 	{
 		// the entry has a reference to another file => recursive call
 		std::string p;
 		if (JSONTools::GetAttribute(json, "path", p))
 		{
 			FilePathParam path(p, config_path);
-			return DoGenRenderMaterialObject(path);
+			return DoGenRenderMaterialObject(path, parent_name);
 		}
 
 
@@ -118,7 +118,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	RenderMaterial * RenderMaterialLoader::DoGenRenderMaterialObject(FilePathParam const & path) const
+	RenderMaterial * RenderMaterialLoader::DoGenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
 	{
 		if (resource_manager->FindRenderMaterialByPath(path) != nullptr)  // ensure the Manager does not already have a RenderMaterial with the same path
 			return nullptr;
@@ -128,28 +128,11 @@ namespace chaos
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
 		{
-			result = DoGenRenderMaterialObject(json, path.GetResolvedPath());
+			result = DoGenRenderMaterialObject(json, path.GetResolvedPath(), parent_name);
 			if (result != nullptr)
 				SetResourcePath(result, path.GetResolvedPath()); // update the path
 		}
 		return result;
 	}
-
-
-#if 0
-
-
-	std::string material_path;
-	if (JSONTools::GetAttribute(json, "path", material_path))
-	{
-
-		material_path = material_path;
-	}
-
-
-
-
-
-#endif
 
 }; // namespace chaos

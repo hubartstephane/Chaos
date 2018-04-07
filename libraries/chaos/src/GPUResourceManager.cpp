@@ -217,10 +217,15 @@ namespace chaos
 		if (!CanAddRenderMaterial(name))
 			return nullptr;
 	
+		std::string parent_name;
+
 		RenderMaterialLoader loader(this);
-		RenderMaterial * render_material = loader.GenRenderMaterialObject(path);
+		RenderMaterial * render_material = loader.GenRenderMaterialObject(path, parent_name);
 		if (render_material != nullptr)
 		{
+			// search the parent (before inserting into manager to avoid recursive parency)
+			SetRenderMaterialParent(render_material, parent_name);
+
 			// set the name and the path
 			if (name != nullptr)
 				SetResourceName(render_material, name);
@@ -339,14 +344,14 @@ namespace chaos
 		return program;
 	}
 
-	RenderMaterial * GPUResourceManager::AddJSONMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+	RenderMaterial * GPUResourceManager::AddJSONRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
 	{
 		// ensure no name collision
 		if (!CanAddRenderMaterial(name))
 			return nullptr;
 
 		RenderMaterialLoader loader(this);
-		RenderMaterial * render_material = loader.GenRenderMaterialObject(json, config_path);
+		RenderMaterial * render_material = loader.GenRenderMaterialObject(json, config_path, parent_name);
 		if (render_material != nullptr)
 		{
 			// set the name and the path
@@ -358,11 +363,20 @@ namespace chaos
 		return render_material;
 	}
 
+	void GPUResourceManager::SetRenderMaterialParent(RenderMaterial * render_material, std::string const & parent_name)
+	{
+		assert(render_material != nullptr);
+		if (parent_name.empty())
+			return;
 
+		RenderMaterial * parent = FindRenderMaterial(parent_name.c_str());
+		if (parent != nullptr)
+			render_material->SetParentMaterial(parent); // some recursive verification here
+	}
 
-
-
-
+	/**
+	* RenderMaterialFromConfigLoader
+	**/
 
 	RenderMaterialFromConfigLoader::RenderMaterialFromConfigLoader(GPUResourceManager * in_resource_manager) :
 		resource_manager(in_resource_manager)
@@ -372,12 +386,18 @@ namespace chaos
 
 	void RenderMaterialFromConfigLoader::operator ()(char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 	{
-		resource_manager->AddJSONMaterial(name, obj_json, path);
+		std::string parent_name;
+
+		RenderMaterial * material = resource_manager->AddJSONRenderMaterial(name, obj_json, path, parent_name);
+		if (material != nullptr && !parent_name.empty())
+			parenting_map[material] = std::move(parent_name); // save the name of the parent for further parenting
 	}
 
 	void RenderMaterialFromConfigLoader::FinalizeRenderMaterialParenting()
 	{
-
+		for (auto it : parenting_map)
+			resource_manager->SetRenderMaterialParent(it.first, it.second);
+		parenting_map.clear();
 	}
 
 }; // namespace chaos

@@ -23,21 +23,16 @@ namespace chaos
 		virtual ~RenderMaterialLoader() = default;
 
 		/** Generate a render material from a json content */
-		virtual RenderMaterial * GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		virtual RenderMaterial * GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const;
 		/** Generate a render material from an file */
-		virtual RenderMaterial * GenRenderMaterialObject(FilePathParam const & path) const;
+		virtual RenderMaterial * GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const;
 
 	protected:
 
 		/** internal generate a render material from a json content */
-		virtual RenderMaterial * DoGenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		virtual RenderMaterial * DoGenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const;
 		/** internal generate a render material from an file */
-		virtual RenderMaterial * DoGenRenderMaterialObject(FilePathParam const & path) const;
-
-		/** resolve the parenting */
-		void ResolveMaterialParenting();
-		/** prepare the loader for the next loading */
-		void Reset();
+		virtual RenderMaterial * DoGenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const;
 
 	protected:
 
@@ -45,8 +40,6 @@ namespace chaos
 		GPUResourceManager * resource_manager = nullptr;
 		/** indicates whether the resource path is already detected */
 		mutable bool material_path_resolved = false;
-		/** material parenting is done after */
-		std::map<RenderMaterial *, std::string> parenting_map;
 	};
 
 }; // namespace chaos

@@ -93,8 +93,11 @@ namespace chaos
 		Texture * AddJSONTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** add a program from a JSON object */
 		GPUProgram * AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
-		/** add a material from a JSON object */
-		RenderMaterial * AddJSONMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+		/** add a material from a JSON object (return the name of the parent material if any) */
+		RenderMaterial * AddJSONRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
+
+		/** search (if necessary the parent of the material) */
+		void SetRenderMaterialParent(RenderMaterial * render_material, std::string const & parent_name);
 
 	protected:
 
@@ -127,6 +130,9 @@ namespace chaos
 
 		/** the resource manager concerned */
 		GPUResourceManager * resource_manager = nullptr;
+
+		/** material parenting is done after */
+		std::map<RenderMaterial *, std::string> parenting_map;
 	};
 
 }; // namespace chaos

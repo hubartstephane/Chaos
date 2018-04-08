@@ -1,0 +1,89 @@
+#pragma once
+
+#include <chaos/StandardHeaders.h>
+#include <chaos/JSONTools.h>
+#include <chaos/FilePath.h>
+
+namespace chaos
+{
+	// XXX : the path of a resource (texture/program ...) is given by the first time GenTextureObject( PATH ) is called
+	//       for example:
+	//
+	//          GenTextureObject ( PATH = "file1.json" )
+	//            -> load JSON file file1.json
+	//            -> decrypt PATH = "file2.xxx"
+	//               -> GenTextureObject ( PATH = "file2.xxx" )
+	//
+	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even its the final call)
+
+	/**
+	* ManagerResourceLoader
+	**/
+
+	template<typename T, typename MANAGER_TYPE>
+	class ManagerResourceLoader : public T
+	{
+	public:
+
+		ManagerResourceLoader(MANAGER_TYPE * in_manager) :
+			manager(in_manager)
+		{
+			assert(in_manager != nullptr);
+		}
+
+	protected:
+
+		/** search whether the path is already in used in the manager */
+		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const { return false; }
+		/** search whether the name is already in used in the manager */
+		virtual bool IsNameAlreadyUsedInManager(std::string const & name) const { return false; }
+
+		/** set the path of currently loaded resource if not already set, and if no collision detected */
+		bool CheckResourcePath(FilePathParam const & path) const
+		{
+			// path already known, nothing to do
+			if (!resolved_path.empty())
+				return true;
+			// path already exising in manager : failure
+			if (IsPathAlreadyUsedInManager(path))
+				return false;
+			// the currently loaded resource has now a path
+			resolved_path = path.GetResolvedPath();
+			return true;
+		}
+		/** set the name of currently loaded resource if not already set, and if no collision detected */
+		bool CheckResourceName(std::string const & name) const
+		{
+			// name already known, nothing to do
+			if (!resource_name.empty())
+				return true;
+			// name already exising in manager : failure
+			if (IsNameAlreadyUsedInManager(name))
+				return false;
+			// the currently loaded resource has now a name
+			resource_name = name;
+			return true;
+		}
+		/** set the name of currently loaded resource if not already set, and if no collision detected */
+		bool CheckResourceName(nlohmann::json const & json) const
+		{
+			if (resource_name.empty()) // name still unknown
+			{
+				std::string name;
+				if (JSONTools::GetAttribute(json, "name", name))
+					return CheckResourceName(name);
+			}
+			return true;
+		}
+
+	public:
+
+		/** the resource manager of interest */
+		MANAGER_TYPE * manager = nullptr;
+		/** the name of currently loaded resource (the very first name encoutered in loading call chain is the good) */
+		mutable std::string resource_name;
+		/** the path of currently loaded resource (the very first path encoutered in loading call chain is the good) */
+		mutable boost::filesystem::path resolved_path;
+	};
+
+}; // namespace chaos

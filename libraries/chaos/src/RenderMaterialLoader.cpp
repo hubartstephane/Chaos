@@ -42,7 +42,7 @@ namespace chaos
 			return DoGenRenderMaterialObject(path, parent_name);
 		}
 
-
+		JSONTools::GetAttribute(json, "parent_material", parent_name);
 
 #if 0
 

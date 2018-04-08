@@ -38,15 +38,21 @@ namespace chaos
 
     /** an utility method to initialize a single object in an JSON array/object */
     template<typename FUNC>
-    void InitializeOneObjectFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
+    auto InitializeOneObjectFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
     {
-      nlohmann::json::const_iterator name_json_it = json.find("name");
-      if (name_json_it != json.end() && name_json_it->is_string())             // 1 - try to find a member 'name'
-        add_func(name_json_it->get<std::string>().c_str(), json, config_path);
-      else if (keyname != nullptr && keyname[0] == '@')                        // 2 - try to use the key
-        add_func(keyname + 1, json, config_path);
-      else
-        add_func(nullptr, json, config_path);                                  // 3 - try to add an anonymous object
+			// 1 - we receive a key and its is valid (starts with '@')
+			if (keyname != nullptr && keyname[0] == '@' && keyname[1] != 0)
+				return add_func(keyname + 1, json, config_path);
+			// 2 - try to find a member 'name'
+			nlohmann::json::const_iterator name_json_it = json.find("name");			
+			if (name_json_it != json.end() && name_json_it->is_string())
+			{
+				std::string name = name_json_it->get<std::string>();
+				if (!name.empty())
+					return add_func(name.c_str(), json, config_path);
+			}
+			// 3 - anonymous object
+			return add_func(nullptr, json, config_path);
     }
 
     /** an utility method to initialize a list of objects from a JSON object or array */

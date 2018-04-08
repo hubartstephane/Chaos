@@ -108,31 +108,4 @@ namespace chaos
 		/** the render materials */
 		std::vector<boost::intrusive_ptr<RenderMaterial>> render_materials;
 	};
-
-	/**
-	* RenderMaterialFromConfigLoader :
-	*			when loading a configuration file, we cannot ensure the order in which RenderMaterial are inserted
-	*			so we have to find a way to ensure parenting is correctly
-	**/
-
-	class RenderMaterialFromConfigLoader
-	{
-	public:
-
-		/** constructor */
-		RenderMaterialFromConfigLoader(GPUResourceManager * in_resource_manager);
-		/** the inserting system */
-		void operator ()(char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path);
-		/** Finalizing the parenting */
-		void FinalizeRenderMaterialParenting();
-
-	protected:
-
-		/** the resource manager concerned */
-		GPUResourceManager * resource_manager = nullptr;
-
-		/** material parenting is done after */
-		std::map<RenderMaterial *, std::string> parenting_map;
-	};
-
 }; // namespace chaos

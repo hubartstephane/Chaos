@@ -155,31 +155,22 @@ namespace chaos
 		if (FindRenderMaterialByPath(path) != nullptr)
 			return nullptr;
 
+		// prepare the loader
+		//  - give it the name and the path, so that at the end it can update result members
+		RenderMaterialLoader loader(this);
+		loader.SetResultPath(path.GetResolvedPath());
+		loader.SetResultName(name);
 
-
-
-#if 0
-		if (!CanAddRenderMaterial(name))
-			return nullptr;
-	
+		// load data
 		std::string parent_name;
 
-		RenderMaterialLoader loader(this);
-		RenderMaterial * render_material = loader.GenRenderMaterialObject(path, parent_name);
-		if (render_material != nullptr)
+		RenderMaterial * result = loader.GenRenderMaterialObject(path, parent_name);
+		if (result != nullptr)
 		{
-			// search the parent (before inserting into manager to avoid recursive parency)
-			SetRenderMaterialParent(render_material, parent_name);
-
-			// set the name and the path
-			if (name != nullptr)
-				SetResourceName(render_material, name);
-			// keep a reference on the render material
-			render_materials.push_back(render_material);
-		}
-		return render_material;
-#endif
-		return nullptr;
+			SetRenderMaterialParent(result, parent_name);
+			render_materials.push_back(result);
+		}			
+		return result;
 	}
 
 	bool GPUResourceManager::CanAddTexture(char const * name) const
@@ -252,15 +243,12 @@ namespace chaos
 			json,
 			config_path,
 			[this, &parenting_map](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
-			{			 		
+			{
+				std::string parent_name;
 
-
-
-
-#if 0
-
-				//RenderMaterial * render_material = AddJSONRenderMaterial(name, obj_json, path);
-#endif
+				RenderMaterial * render_material = AddJSONRenderMaterial(name, obj_json, path, parent_name);
+				if (render_material != nullptr && !parent_name.empty())
+					parenting_map[render_material] = std::move(parent_name);
 			}
 		);
 		// resolve the parenting
@@ -306,32 +294,18 @@ namespace chaos
 
 	RenderMaterial * GPUResourceManager::AddJSONRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
 	{
-
-
-
-
-
-
-
-#if 0
 		// ensure no name collision
 		if (!CanAddRenderMaterial(name))
 			return nullptr;
-
+		// initialize the loader, so te name will be given to result at the end
 		RenderMaterialLoader loader(this);
+		loader.SetResultName(name);
+
+		// load the resource
 		RenderMaterial * render_material = loader.GenRenderMaterialObject(json, config_path, parent_name);
 		if (render_material != nullptr)
-		{
-			// set the name and the path
-			if (name != nullptr)
-				SetResourceName(render_material, name);
-			// keep a reference on the render material
 			render_materials.push_back(render_material);
-		}
 		return render_material;
-#endif
-
-		return nullptr;
 	}
 
 	void GPUResourceManager::SetRenderMaterialParent(RenderMaterial * render_material, std::string const & parent_name)

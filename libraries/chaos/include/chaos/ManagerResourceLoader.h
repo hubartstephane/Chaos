@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/JSONTools.h>
 #include <chaos/FilePath.h>
+#include <chaos/GPUFileResource.h>
 
 namespace chaos
 {
@@ -87,6 +88,40 @@ namespace chaos
 					return CheckResourceName(name);
 			}
 			return true;
+		}
+
+		/** apply the name to resource */
+		void ApplyNameToLoadedResource(GPUFileResource * resource) const
+		{
+			if (resource == nullptr)
+				return;			
+			// should we update the path of the object ?
+			if (resource_name.empty())
+				return;
+			// apply the name
+			char const * name = resource->GetName();
+			if (name == nullptr || name[0] == 0)
+				SetResourceName(resource, resource_name.c_str());
+		}
+		/** apply the path to resource */
+		void ApplyPathToLoadedResource(GPUFileResource * resource) const
+		{
+			if (resource == nullptr)
+				return;
+			// should we update the path of the object ?
+			if (resolved_path.empty())
+				return;
+			// should we update the path of the object ?
+			if (resource->GetPath().empty())
+				SetResourcePath(resource, resolved_path);
+		}
+		/** apply name/path to resource then clean loader */
+		void FinalizeLoadedResource(GPUFileResource * resource) const
+		{
+			ApplyNameToLoadedResource(resource);
+			ApplyPathToLoadedResource(resource);
+			resource_name = std::string();
+			resolved_path = boost::filesystem::path(); // ready for next call
 		}
 
 	protected:

@@ -12,15 +12,7 @@ namespace chaos
 		// load the texture
 		Texture * texture = TextureLoader::GenTextureObject(json, config_path, parameters);
 		if (texture != nullptr)
-		{
-			// should we update the path of the object ?
-			if (!resource_name.empty())
-			{
-				char const * name = texture->GetName();
-				if (name == nullptr || name[0] == 0)
-					SetResourceName(texture, resource_name.c_str());
-			}
-		}
+			FinalizeLoadedResource(texture);
 		return texture;
 	}
 
@@ -31,11 +23,7 @@ namespace chaos
 		// load the texture
 		Texture * texture = TextureLoader::GenTextureObject(path, parameters);
 		if (texture != nullptr)
-		{
-			// should we update the path of the object ?
-			if (!resolved_path.empty() && texture->GetPath().empty())
-				SetResourcePath(texture, resolved_path);
-		}
+			FinalizeLoadedResource(texture);
 		return texture;
 	}
 

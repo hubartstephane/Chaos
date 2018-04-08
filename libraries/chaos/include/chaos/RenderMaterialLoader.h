@@ -27,6 +27,21 @@ namespace chaos
 
 	protected:
 
+		/** initialize the program from its name */
+		bool InitializeProgramFromName(RenderMaterial * render_material, char const * program_name) const;
+		/** initialize the program from its path */
+		bool InitializeProgramFromPath(RenderMaterial * render_material, FilePathParam const & path) const;
+
+		/** add a uniform in the render material */
+		bool AddUniformToRenderMaterial(RenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json) const;
+
+		/** get the program from JSON */
+		bool InitializeProgramFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		/** get the textures from JSON */
+		bool InitializeTexturesFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		/** get the uniforms from JSON */
+		bool InitializeUniformsFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
 		/** search whether the name is already in used in the manager */

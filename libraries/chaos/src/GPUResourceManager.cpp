@@ -104,12 +104,8 @@ namespace chaos
 		// prepare the loader
 		//  - give it the name and the path, so that at the end it can update result members
 		GPUResourceManagerTextureLoader loader(this);
-
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-		if (!resolved_path.empty())
-			loader.resolved_path = resolved_path;
-		if (name != nullptr)
-			loader.resource_name = name;
+		loader.SetResultPath(path.GetResolvedPath());
+		loader.SetResultName(name);
 
 		// load data
 		Texture * result = loader.GenTextureObject(path, GenTextureParameters());
@@ -135,12 +131,8 @@ namespace chaos
 		// prepare the loader
 		//  - give it the name and the path, so that at the end it can update result members
 		GPUResourceManagerProgramLoader loader(this);
-
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-		if (!resolved_path.empty())
-			loader.resolved_path = resolved_path;
-		if (name != nullptr)
-			loader.resource_name = name;
+		loader.SetResultPath(path.GetResolvedPath());
+		loader.SetResultName(name);
 
 		// load data
 		GPUProgram * result = loader.GenProgramObject(path, GPUProgramLoaderCacheOptions());
@@ -157,7 +149,11 @@ namespace chaos
 
 	RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
-
+		// object already existing ?
+		if (!CanAddRenderMaterial(name))
+			return nullptr;
+		if (FindRenderMaterialByPath(path) != nullptr)
+			return nullptr;
 
 
 
@@ -283,8 +279,8 @@ namespace chaos
 			return nullptr;
 		// initialize the loader, so te name will be given to result at the end
 		GPUResourceManagerTextureLoader loader(this);
-		if (name != nullptr)
-			loader.resource_name = name;
+		loader.SetResultName(name);
+
 		// load the resource
 		Texture * result = loader.GenTextureObject(json, config_path, GenTextureParameters());
 		if (result != nullptr)
@@ -299,8 +295,8 @@ namespace chaos
 			return nullptr;
 		// initialize the loader, so te name will be given to result at the end
 		GPUResourceManagerProgramLoader loader(this);
-		if (name != nullptr)
-			loader.resource_name = name;
+		loader.SetResultName(name);
+
 		// load the resource
 		GPUProgram * program = loader.GenProgramObject(json, config_path, GPUProgramLoaderCacheOptions());
 		if (program != nullptr)

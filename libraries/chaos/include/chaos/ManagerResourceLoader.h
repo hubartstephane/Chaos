@@ -31,6 +31,19 @@ namespace chaos
 			assert(in_manager != nullptr);
 		}
 
+		/** set the resolved path (so that it can be given to the result at the end of loading) */
+		void SetResultPath(boost::filesystem::path const & path)
+		{
+			if (!path.empty())
+				resolved_path = path;
+		}
+		/** set the name (so that it can be given to the result at the end of loading) */
+		void SetResultName(char const * name)
+		{
+			if (name != nullptr)
+				resource_name = name;
+		}
+
 	protected:
 
 		/** search whether the path is already in used in the manager */
@@ -76,7 +89,7 @@ namespace chaos
 			return true;
 		}
 
-	public:
+	protected:
 
 		/** the resource manager of interest */
 		MANAGER_TYPE * manager = nullptr;

@@ -90,14 +90,10 @@ namespace chaos
 	template<typename VECTOR_TYPE>
 	static bool DoAddUniformVectorToRenderMaterial(RenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json, VECTOR_TYPE & value)
 	{
-		render_material->GetUniformProvider().AddVariableValue("uniform_name", glm::bvec2());
-		render_material->GetUniformProvider().AddVariableValue("uniform_name", glm::bvec3());
-		render_material->GetUniformProvider().AddVariableValue("uniform_name", glm::bvec4());
-
 		size_t count = json.size();
 		for (size_t i = 0; i < count; ++i)
 			value[i] = json[i].get<VECTOR_TYPE::value_type>();
-	//	render_material->GetUniformProvider().AddVariableValue(uniform_name, value);
+		render_material->GetUniformProvider().AddVariableValue(uniform_name, value);
 		return true;
 	}
 
@@ -130,12 +126,6 @@ namespace chaos
 
 	bool RenderMaterialLoader::AddUniformToRenderMaterial(RenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json) const
 	{
-		// is the uniform a boolean ?
-		if (json.is_boolean())
-		{
-			render_material->GetUniformProvider().AddVariableValue(uniform_name, json.get<bool>());
-			return true;
-		}
 		// is the uniform a integer ?
 		if (json.is_number_integer())
 		{
@@ -158,21 +148,18 @@ namespace chaos
 			if (count > 4) // only vectors for moment
 				return false;
 
-			bool boolean_array = false;
 			bool integer_array = false;
 			bool real_array    = false;
 			for (size_t i = 0; i < count; ++i)
 			{
 				// detect variable types
-				bool boolean = json[i].is_boolean();
 				bool integer = json[i].is_number_integer();
 				bool real    = json[i].is_number_float();
-				if (!boolean && !integer && !real) // only types accepted
+				if (!integer && !real) // only types accepted
 					return false;
 				// promotion
 				real_array    |= real;
 				integer_array |= integer;
-				boolean_array |= boolean;
 			}
 
 			// create the array
@@ -180,8 +167,6 @@ namespace chaos
 				return AddUniformVectorToRenderMaterial<float>(render_material, uniform_name, json);
 			if (integer_array)
 				return AddUniformVectorToRenderMaterial<int>(render_material, uniform_name, json);
-			if (boolean_array)
-				return AddUniformVectorToRenderMaterial<bool>(render_material, uniform_name, json);
 		}
 		return false;
 	}

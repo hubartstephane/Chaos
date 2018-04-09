@@ -160,10 +160,6 @@ namespace chaos
 		template<>
 		static int GetTypedEnumVectorArity<GLuint>(GLenum type) { return GetEnumVectorArityUnsignedInt(type); }
 
-		/** returns the arity of the vector enum if it is boolean, 0 elsewhere */
-		template<>
-		static int GetTypedEnumVectorArity<GLboolean>(GLenum type) { return GetEnumVectorArityBool(type); }
-
 	protected:
 
 		/** compare value to 4 other enum value, returns the 'index' of the result */

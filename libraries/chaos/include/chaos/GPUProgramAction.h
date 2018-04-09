@@ -23,7 +23,6 @@ namespace chaos
     /** processing base scalar types */
     bool Process(char const * name, GLfloat value) { return Process(name, glm::tvec1<GLfloat>(value)); }
     bool Process(char const * name, GLdouble value) { return Process(name, glm::tvec1<GLdouble>(value)); }
-    bool Process(char const * name, GLboolean value) { return Process(name, glm::tvec1<GLboolean>(value)); }
     bool Process(char const * name, GLint value) { return Process(name, glm::tvec1<GLint>(value)); }
     bool Process(char const * name, GLuint value) { return Process(name, glm::tvec1<GLuint>(value)); }
 
@@ -74,7 +73,6 @@ namespace chaos
     /** the virtual methods to override */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) { return false; }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) { return false; }
 
@@ -101,7 +99,6 @@ namespace chaos
     /** the GPUProgramAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return uniform.SetUniform(value); }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return uniform.SetUniform(value); }
@@ -131,7 +128,6 @@ namespace chaos
     /** the GPUProgramAction interface */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return false; }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return false; }
@@ -162,7 +158,6 @@ namespace chaos
     /** main methods */
     virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return ConvertAndGet(value); }
-    virtual bool DoProcess(char const * name, glm::tvec4<GLboolean> const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return ConvertAndGet(value); }

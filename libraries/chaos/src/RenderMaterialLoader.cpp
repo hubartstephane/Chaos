@@ -82,6 +82,17 @@ namespace chaos
 		{
 			std::string texture_name = it.key();
 
+
+
+
+
+
+
+
+
+
+
+
 			render_material = render_material;
 		}
 		return true;

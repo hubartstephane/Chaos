@@ -1,0 +1,10 @@
+{
+  "@textures1":
+  {
+    "path":"@textures/texture1.json
+  }
+  "@textures2":
+  {
+    "path":"@textures/texture2.json
+  }
+}

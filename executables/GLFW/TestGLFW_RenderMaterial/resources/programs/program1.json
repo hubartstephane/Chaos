@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@pixel_shader1.txt"
+	],
+	"vertex_sources":
+	[
+		"@vertex_shader1.txt"
+	]
+}

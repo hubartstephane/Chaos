@@ -2,12 +2,13 @@
   "name":"material1",
   "uniforms":
   {
-    "color":[0.1, 0.2, 0.3],
+    "color":[1.0, 0.0, 0.0],
     "fade":1.0			
   },
   "textures":
   {
     "cube_texture":{"name":"texture1"},
     "cube_texture":{"path":"@textures/texture2.json"}
-  }
+  },
+	"program":"prog1"
 }

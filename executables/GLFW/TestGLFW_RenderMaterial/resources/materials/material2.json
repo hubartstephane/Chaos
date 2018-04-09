@@ -1,5 +1,4 @@
 {
     "name":"material2",
-    "parent_material":"material1",
-    "program":"program1"
+    "parent_material":"mat1"
 }

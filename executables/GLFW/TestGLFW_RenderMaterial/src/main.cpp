@@ -23,7 +23,7 @@ protected:
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
 
-#if 0
+
 
 		float     far_plane = 1000.0f;
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -59,16 +59,16 @@ protected:
 
 		int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		int base_instance = 0;
-		mesh->Render(program.get(), &uniform_provider, instance_count, base_instance);
 
-#endif
+		mesh->Render(render_material2.get(), &uniform_provider, instance_count, base_instance);
+
 
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
-		program = nullptr;
+		render_material2 = nullptr;
 		mesh = nullptr;
 	}
 
@@ -78,45 +78,25 @@ protected:
 		if (application == nullptr)
 			return false;
 
-
-		// create shader
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-
-		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
-
-		program = program_generator.GenProgramObject();
-		if (program == nullptr)
+		chaos::GPUResourceManager * resource_manager = application->GetGPUResourceManager();
+		if (resource_manager == nullptr)
 			return false;
 
-#if 0
-
-		
-
+		// create the mesh
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 		mesh = chaos::CubeMeshGenerator(b).GenerateMesh();
 		if (mesh == nullptr)
 			return false;
 
-		// create shader
-		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");
-		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
-
-		program = program_generator.GenProgramObject();
-		if (program == nullptr)
-			return false;
-
-
-#endif
+		// get the material
+		render_material2 = resource_manager->FindRenderMaterial("mat2");
 
 		boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
 		chaos::WinTools::ShowFile(dir_path);
 
 
-		chaos::GPUResourceManager * resource_manager = application->GetGPUResourceManager();
+		
 
 		fps_view_controller.fps_controller.position.z = 100.0f;
 
@@ -143,7 +123,7 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<chaos::GPUProgram> program;
+	boost::intrusive_ptr<chaos::RenderMaterial> render_material2;
 
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 

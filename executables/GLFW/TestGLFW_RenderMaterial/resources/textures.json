@@ -1,9 +1,9 @@
 {
-  "@textures1":
+  "@texture1":
   {
     "path":"@textures/texture1.json"
   },
-  "@textures2":
+  "@texture2":
   {
     "path":"@textures/texture2.json"
   }

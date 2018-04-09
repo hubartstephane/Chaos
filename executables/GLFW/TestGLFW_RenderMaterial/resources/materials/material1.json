@@ -7,8 +7,8 @@
   },
   "textures":
   {
-    "cube_texture":{"name":"texture1"},
-    "cube_texture":{"path":"@textures/texture2.json"}
+    "noise_texture":{"name":"texture1"},
+    "cube_texture":{"path":"@../textures/texture2.json"}
   },
 	"program":"prog1"
 }

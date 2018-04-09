@@ -26,7 +26,7 @@ protected:
 
 
 		float     far_plane = 1000.0f;
-		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
+		glm::vec4 clear_color(0.2f, 0.2f, 0.2f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
@@ -42,7 +42,7 @@ protected:
 
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
-		int instance_cube_size = 20;
+		int instance_cube_size = 1;
 
 		double realtime = 0.0;
 

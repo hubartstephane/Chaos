@@ -58,17 +58,38 @@ namespace chaos
 		if (JSONTools::GetAttribute(*json_program, "path", program_path))
 		{
 			FilePathParam path(program_path, config_path);
-			return InitializeProgramFromPath(render_material, path);
+			if (InitializeProgramFromPath(render_material, path))
+				return true;
 		}
 
 		// inplace declared program 
 		GPUProgram * program = manager->LoadProgram(*json_program, program_name.c_str());
-		if (program != nullptr)
-		{
-			render_material->SetProgram(program);
-			return true;
-		}
-		return false;
+		if (program == nullptr)
+			return false;
+		render_material->SetProgram(program);
+		return true;
+	}
+
+	bool RenderMaterialLoader::InitializeTextureFromName(RenderMaterial * render_material, char const * uniform_name, char const * texture_name) const
+	{
+		Texture * texture = manager->FindTexture(texture_name);
+		if (texture == nullptr)
+			return false;
+		render_material->GetUniformProvider().AddVariableTexture(uniform_name, texture);
+		return true;
+	}
+
+	bool RenderMaterialLoader::InitializeTextureFromPath(RenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const
+	{
+		// take already loaded texture, or try load it
+		Texture * texture = manager->FindTextureByPath(path.GetResolvedPath());
+		if (texture == nullptr)
+			texture = manager->LoadTexture(path);
+		// set the texture
+		if (texture == nullptr)
+			return false;
+		render_material->GetUniformProvider().AddVariableTexture(uniform_name, texture);
+		return true;
 	}
 
 	bool RenderMaterialLoader::InitializeTexturesFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
@@ -80,20 +101,47 @@ namespace chaos
 		// enumerate all textures
 		for (nlohmann::json::const_iterator it = json_textures->begin(); it != json_textures->end(); ++it)
 		{
-			std::string texture_name = it.key();
+			// get the name of the uniform
+			std::string texture_uniform_name = it.key();
+			if (texture_uniform_name.empty())
+				continue;
 
+			// is it directly a name "texture_uniform_name":"texture_name" ?
+			if (it->is_string())
+			{
+				std::string texture_name = it->get<std::string>();
+				if (!texture_name.empty())
+					if (InitializeTextureFromName(render_material, texture_uniform_name.c_str(), texture_name.c_str()))
+						continue;
+			}
+			
+			// to continue, we have to work with an object
+			if (!it->is_object())
+				continue;
 
+			// does the object have a "Name" => try to find already loaded texture ?
+			std::string texture_name;
+			if (JSONTools::GetAttribute(*it, "name", texture_name))
+			{
+				if (!texture_name.empty())
+					if (InitializeTextureFromName(render_material, texture_uniform_name.c_str(), texture_name.c_str()))
+						continue;
+			}
 
+			// does the object have a "Path" => try to find already loaded texture or load the texture
+			std::string texture_path;
+			if (JSONTools::GetAttribute(*it, "path", texture_path))
+			{
+				FilePathParam path(texture_path, config_path);
+				if (InitializeTextureFromPath(render_material, texture_uniform_name.c_str(), texture_path.c_str()))
+					continue;
+			}
 
-
-
-
-
-
-
-
-
-			render_material = render_material;
+			// inplace declared texture 
+			Texture * texture = manager->LoadTexture(*it, texture_name.c_str());
+			if (texture == nullptr)
+				continue;
+			render_material->GetUniformProvider().AddVariableTexture(texture_uniform_name.c_str(), texture);
 		}
 		return true;
 	}

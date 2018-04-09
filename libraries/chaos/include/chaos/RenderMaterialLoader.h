@@ -27,6 +27,12 @@ namespace chaos
 
 	protected:
 
+		/** initialize a texture from its name */
+		bool InitializeTextureFromName(RenderMaterial * render_material, char const * uniform_name, char const * texture_name) const;
+		/** initialize a texture from its path */
+		bool InitializeTextureFromPath(RenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const;
+
+
 		/** initialize the program from its name */
 		bool InitializeProgramFromName(RenderMaterial * render_material, char const * program_name) const;
 		/** initialize the program from its path */

@@ -1,10 +1,6 @@
 -- =============================================================================
--- ROOT_PATH/executables/POST_LUDUM/POST_LUDUM_40
+-- ROOT_PATH/executables/LUDUMDARE
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")
-  DeclareResource("resources")    
-    
-
-                       
+ProcessSubPremake("Ludum40")
+ProcessSubPremake("Ludum41")

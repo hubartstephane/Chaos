@@ -21,5 +21,18 @@
 				]	 
 		 }
   },
-	"program":"prog1"
+	"program_hidden1":{"name":"prog1"},
+	"program_hidden2":{"path":"@../programs/program1.json"},
+	"program_hidden3":"prog1",
+	"program":
+	{
+		"pixel_sources":
+		[
+			"@../programs/pixel_shader1.txt"
+		],
+		"vertex_sources":
+		[
+			"@../programs/vertex_shader1.txt"
+		]	
+	}
 }

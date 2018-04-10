@@ -98,7 +98,7 @@ protected:
 
 		
 
-		fps_view_controller.fps_controller.position.z = 100.0f;
+		fps_view_controller.fps_controller.position.z = 30.0f;
 
 		return true;
 	}

@@ -63,7 +63,7 @@ namespace chaos
 		}
 
 		// inplace declared program 
-		GPUProgram * program = manager->LoadProgram(*json_program, program_name.c_str());
+		GPUProgram * program = manager->LoadProgram(nullptr, *json_program, program_name.c_str());
 		if (program == nullptr)
 			return false;
 		render_material->SetProgram(program);
@@ -138,7 +138,7 @@ namespace chaos
 			}
 
 			// inplace declared texture 
-			Texture * texture = manager->LoadTexture(*it, texture_name.c_str());
+			Texture * texture = manager->LoadTexture(nullptr, *it, texture_name.c_str());
 			if (texture == nullptr)
 				continue;
 			render_material->GetUniformProvider().AddVariableTexture(texture_uniform_name.c_str(), texture);

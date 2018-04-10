@@ -215,7 +215,7 @@ namespace chaos
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 			{
-				AddJSONTexture(name, obj_json, path);
+				LoadTexture(name, obj_json, path);
 			}
 		);
 		return true;
@@ -229,7 +229,7 @@ namespace chaos
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 			{
-				AddJSONProgram(name, obj_json, path);
+				LoadProgram(name, obj_json, path);
 			}
 		);
 	}
@@ -246,7 +246,7 @@ namespace chaos
 			{
 				std::string parent_name;
 
-				RenderMaterial * render_material = AddJSONRenderMaterial(name, obj_json, path, parent_name);
+				RenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
 				if (render_material != nullptr && !parent_name.empty())
 					parenting_map[render_material] = std::move(parent_name);
 			}
@@ -260,7 +260,7 @@ namespace chaos
 		return result;
 	}
 
-	Texture * GPUResourceManager::AddJSONTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+	Texture * GPUResourceManager::LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		// ensure no name collision
 		if (!CanAddTexture(name))
@@ -276,7 +276,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUProgram * GPUResourceManager::AddJSONProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+	GPUProgram * GPUResourceManager::LoadProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		// ensure no name collision
 		if (!CanAddProgram(name))
@@ -292,7 +292,7 @@ namespace chaos
 		return program;
 	}
 
-	RenderMaterial * GPUResourceManager::AddJSONRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
+	RenderMaterial * GPUResourceManager::LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
 	{
 		// ensure no name collision
 		if (!CanAddRenderMaterial(name))

@@ -8,7 +8,18 @@
   "textures":
   {
     "noise_texture":{"name":"texture1"},
-    "cube_texture":{"path":"@../textures/texture2.json"}
+    "cube_texture":{"path":"@../textures/texture2.json"},
+		"cube_texture_inplace":
+		 {
+				"faces":[
+					"@../textures/nx.jpg",
+					"@../textures/px.jpg",
+					"@../textures/py.jpg",
+					"@../textures/ny.jpg",
+					"@../textures/pz.jpg",
+					"@../textures/nz.jpg"
+				]	 
+		 }
   },
 	"program":"prog1"
 }

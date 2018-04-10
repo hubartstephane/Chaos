@@ -1,4 +1,4 @@
 {
-		"@prog1":{"@filename":"@programs/program1.json"},
-		"@prog2":{"@filename":"@programs/program2.json"}
+		"@prog1":{"path":"@programs/program1.json"},
+		"@prog2":{"path":"@programs/program2.json"}
 }

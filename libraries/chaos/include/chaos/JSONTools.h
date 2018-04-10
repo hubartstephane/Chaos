@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/FilePath.h>
+#include <chaos/Buffer.h>
 
 namespace chaos
 {
@@ -11,6 +12,8 @@ namespace chaos
 
 		/** parsing a JSON file (catch exceptions) */
 		static bool Parse(char const * buffer, nlohmann::json & result);
+		/** parsing a JSON file from a buffer (load any dependant files) */
+		static bool ParseRecursive(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result);
 
 		/** Load a JSON file in a recursive whay */
 		static bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result, bool recursive = false);

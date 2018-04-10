@@ -92,7 +92,7 @@ namespace chaos
 			else
 			{
 				nlohmann::json json;
-				if (JSONTools::Parse(ascii_buffer, json))
+				if (JSONTools::ParseRecursive(ascii_buffer, path.GetResolvedPath(), json))
 					result = GenTextureObject(json, path.GetResolvedPath(), parameters);
 			}
 		}

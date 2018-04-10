@@ -1,10 +1,10 @@
 {
 	"faces":[
-		"nx.jpg",
-		"px.jpg",
-		"py.jpg",
-		"ny.jpg",
-		"pz.jpg",
-		"nz.jpg"
+		"@nx.jpg",
+		"@px.jpg",
+		"@py.jpg",
+		"@ny.jpg",
+		"@pz.jpg",
+		"@nz.jpg"
 	]
 }

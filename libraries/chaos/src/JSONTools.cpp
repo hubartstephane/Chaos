@@ -6,25 +6,6 @@
 namespace chaos
 {
 
-	bool JSONTools::Parse(char const * buffer, nlohmann::json & result)
-	{
-		assert(buffer != nullptr);
-		try
-		{
-			result = nlohmann::json::parse(buffer);
-			return true;
-		} 
-    catch (std::exception & error)
-    {
-      char const * error_string = error.what();
-      return false;
-    }
-		catch (...)
-		{
-		}
-		return false;
-	}
-
 	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result)
 	{
 		assert(name != nullptr);
@@ -188,6 +169,19 @@ namespace chaos
 		bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result)
 		{
 			ComputeSubstitutionChain(path);
+			return FinalizeSubstitutions(result);
+		}
+
+		bool ParseJSONFile(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result)
+		{
+			ComputeSubstitutionChain(buffer, config_path);
+			return FinalizeSubstitutions(result);
+		}
+
+	protected:
+
+		bool FinalizeSubstitutions(nlohmann::json & result)
+		{
 			if (entries.size() > 0)
 			{
 				MakeSubstitutions();
@@ -198,11 +192,18 @@ namespace chaos
 			return false;
 		}
 
-	protected:
+		void ComputeSubstitutionChain(char const * buffer, boost::filesystem::path const & config_path)
+		{
+			ComputeSubstitutionChainHelper(CreateEntry(buffer, config_path));
+		}
 
 		void ComputeSubstitutionChain(FilePathParam const & path)
 		{
-			LoaderEntry * entry = CreateEntry(path);
+			ComputeSubstitutionChainHelper(CreateEntry(path));
+		}
+
+		void ComputeSubstitutionChainHelper(LoaderEntry * entry)
+		{
 			if (entry == nullptr)
 				return;
 			stacked_entries.push_back(entry);
@@ -330,11 +331,24 @@ namespace chaos
 			nlohmann::json new_json;
 			if (!JSONTools::LoadJSONFile(path, new_json, false))
 				return nullptr;
+			return DoCreateEntry(new_json, path.GetResolvedPath());
+		}
+
+		LoaderEntry * CreateEntry(char const * buffer, boost::filesystem::path const & config_path)
+		{
+			nlohmann::json new_json;
+			if (!JSONTools::Parse(buffer, new_json))
+				return nullptr;
+			return DoCreateEntry(new_json, config_path);
+		}
+
+		LoaderEntry * DoCreateEntry(nlohmann::json & new_json, boost::filesystem::path const & config_path)
+		{
 			LoaderEntry * new_entry = new LoaderEntry();
 			if (new_entry == nullptr)
 				return nullptr;
 			new_entry->json = std::move(new_json);
-			new_entry->path = path.GetResolvedPath();
+			new_entry->path = config_path;
 			entries.push_back(new_entry);
 			return new_entry;
 		}
@@ -364,6 +378,39 @@ namespace chaos
 		std::vector<LoaderEntry*> stacked_entries;
 	};
 
+
+
+
+
+
+
+
+	bool JSONTools::Parse(char const * buffer, nlohmann::json & result)
+	{
+		assert(buffer != nullptr);
+		try
+		{
+			result = nlohmann::json::parse(buffer);
+			return true;
+		}
+		catch (std::exception & error)
+		{
+			char const * error_string = error.what();
+			return false;
+		}
+		catch (...)
+		{
+		}
+		return false;
+	}
+
+	bool JSONTools::ParseRecursive(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result)
+	{
+		assert(buffer != nullptr);
+		JSONRecursiveLoader loader;
+		return loader.ParseJSONFile(buffer, config_path, result);
+	}
+
 	bool JSONTools::LoadJSONFile(FilePathParam const & path, nlohmann::json & result, bool recursive)
 	{
 		if (!recursive)
@@ -379,6 +426,7 @@ namespace chaos
 			return loader.LoadJSONFile(path, result);
 		}
 	}
+
 	boost::filesystem::path JSONTools::DumpConfigFile(nlohmann::json const & json, char const * filename)
 	{
 		boost::filesystem::path result;

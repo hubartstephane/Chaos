@@ -1,0 +1,4 @@
+{
+		"@mat1":{"path":"@materials/material1.json"},
+		"@mat2":{"path":"@materials/material2.json"}
+}

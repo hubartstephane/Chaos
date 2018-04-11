@@ -91,7 +91,8 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 void LudumGame::ResetPlayerCachedInputs()
 {
-	stick_position = glm::vec2(0.0f, 0.0f);
+	left_stick_position  = glm::vec2(0.0f, 0.0f);
+	right_stick_position = glm::vec2(0.0f, 0.0f);
 }
 
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
@@ -110,13 +111,22 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 			SetPause(!game_paused);
 	}
 
-	glm::vec2 left_stick_position = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
-	glm::vec2 right_stick_position = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+
 
 	if (left_stick_position.x != 0.0f || left_stick_position.y != 0.0f)
 		stick_position = left_stick_position;
 	else if (right_stick_position.length() > 0.0f)
 		stick_position = right_stick_position;
 #endif
+
+	// cache the stick position
+	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
+	if (glm::length2(lsp) > 0.0f)
+		left_stick_position = lsp;
+
+	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+	if (glm::length2(rsp) > 0.0f)
+		right_stick_position = rsp;
+
 	return true;
 }

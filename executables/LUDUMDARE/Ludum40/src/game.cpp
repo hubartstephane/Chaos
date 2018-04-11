@@ -739,9 +739,9 @@ bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_game
 	glm::vec2 left_stick_position  = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 	glm::vec2 right_stick_position = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 
-	if (left_stick_position.x != 0.0f || left_stick_position.y != 0.0f)
+	if (glm::length2(left_stick_position) > 0.0f)
 		stick_position = left_stick_position;
-	else if (right_stick_position.length() > 0.0f) 
+	else if (glm::length2(right_stick_position) > 0.0f)
 		stick_position = right_stick_position;
 
 	return true;

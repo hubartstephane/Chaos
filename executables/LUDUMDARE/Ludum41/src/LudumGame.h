@@ -44,7 +44,8 @@ protected:
 	bool pending_restart_game = false; 
 
 	/** the current stick position */
-	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
+	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
+	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
 
 	/** the current gamepad manager */
 	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;

@@ -53,11 +53,11 @@ namespace chaos
 		static int const XBOX_LEFT_AXIS_X = 0;
 		/** index in axis of LEFT Y for XBOX like pad */
 		static int const XBOX_LEFT_AXIS_Y = 1; // STICK DOWN = positive values
-											   /** index in axis for the trigger for XBOX like pad */
+		/** index in axis for the trigger for XBOX like pad */
 		static int const XBOX_TRIGGER = 2; // LEFT TRIGGER = positive values,  RIGHT TRIGGER = negative values
-										   /** index in axis of RIGHT Y for XBOX like pad */
+		/** index in axis of RIGHT Y for XBOX like pad */
 		static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
-												 /** index in axis of RIGHT X for XBOX like pad */
+		/** index in axis of RIGHT X for XBOX like pad */
 		static int const XBOX_RIGHT_AXIS_X = 4;
 
 		/** returns the direction of left stick (beware the low level interface only knows for axis) */
@@ -80,15 +80,15 @@ namespace chaos
 			virtual ~GamepadCallbacks() = default;
 
 			/** called to determin if a physical gamepad is a good candidate for binding */
-			virtual bool AcceptPhysicalDevice(class PhysicalGamepad * ) { return true; }
+			virtual bool AcceptPhysicalDevice(class PhysicalGamepad *) { return true; }
 			/** called whenever a gamepad is disconnected */
 			virtual bool OnGamepadDisconnected(class Gamepad *) { return true; }
 			/** called whenever a gamepad is "connected" (a new ID is given to it) */
 			virtual bool OnGamepadConnected(class Gamepad *) { return true; }
 			/** called whenever the manager is destroyed before the gamepad */
 			virtual bool OnManagerDestroyed(class Gamepad *) { return true; }
-      /** called to add some filters on inputs */
-      virtual void OnGamepadDataUpdated(class GamepadData &) {}
+			/** called to add some filters on inputs */
+			virtual void OnGamepadDataUpdated(class GamepadData &) {}
 		};
 
 		/**
@@ -116,57 +116,57 @@ namespace chaos
 			float final_value = 0.0f;
 		};
 
-    /**
-     * GamepadData : the data contained in the device
-     */
+		/**
+		* GamepadData : the data contained in the device
+		*/
 
-    class GamepadData
-    {
-      friend class PhysicalGamepad;
+		class GamepadData
+		{
+			friend class PhysicalGamepad;
 
-    public:
+		public:
 
-      /* returns a status giving the change of button relative to previous frame */
-      int GetButtonChanges(size_t button_index) const;
-      /** returns the button state */
-      bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
-      /** returns the button state */
-      float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
-      /** returns true whether there is any pressed button */
-      bool IsAnyButtonPressed(bool previous_frame = false) const;
-      /** returns true whether there is any axis in use */
-      bool IsAnyAxisAction(bool previous_frame = false) const;
-      /** returns true whenever a buttons is pressed or an axis is in action */
-      bool IsAnyAction(bool previous_frame = false) const;
-      /** returns the direction of one stick (a combinaison of 2 axis) */
-      glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
-      /** returns the number of buttons */
-      size_t GetButtonCount() const;
-      /** returns the number of axis */
-      size_t GetAxisCount() const;
+			/* returns a status giving the change of button relative to previous frame */
+			int GetButtonChanges(size_t button_index) const;
+			/** returns the button state */
+			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+			/** returns the button state */
+			float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+			/** returns true whether there is any pressed button */
+			bool IsAnyButtonPressed(bool previous_frame = false) const;
+			/** returns true whether there is any axis in use */
+			bool IsAnyAxisAction(bool previous_frame = false) const;
+			/** returns true whenever a buttons is pressed or an axis is in action */
+			bool IsAnyAction(bool previous_frame = false) const;
+			/** returns the direction of one stick (a combinaison of 2 axis) */
+			glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
+			/** returns the number of buttons */
+			size_t GetButtonCount() const;
+			/** returns the number of axis */
+			size_t GetAxisCount() const;
 
-    protected:
+		protected:
 
-      /** update all the values for the axis and buttons */
-      void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);
-      /** reset the content of the object */
-      void Clear();
+			/** update all the values for the axis and buttons */
+			void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);
+			/** reset the content of the object */
+			void Clear();
 
-    protected:
+		protected:
 
-      /** the value for axis */
-      std::vector<AxisData> axis;
-      /** the value for buttons */
-      std::vector<int> buttons;
-    };
+			/** the value for axis */
+			std::vector<AxisData> axis;
+			/** the value for buttons */
+			std::vector<int> buttons;
+		};
 
 		/**
 		* PhysicalGamepad : the physical device. Client do not directly use it
 		*/
 		class PhysicalGamepad
 		{
-      friend class GamepadManager;
-      friend class Gamepad;
+			friend class GamepadManager;
+			friend class Gamepad;
 
 		public:
 
@@ -190,8 +190,8 @@ namespace chaos
 			/** returns the number of axis */
 			size_t GetAxisCount() const;
 
-      /** returns the stick index */
-      inline int GetGamepadIndex() const { return stick_index; }
+			/** returns the stick index */
+			inline int GetGamepadIndex() const { return stick_index; }
 			/** returns whether the gamepad is allocated for a user */
 			inline bool IsAllocated() const { return (user_gamepad != nullptr); }
 			/** returns true whether the gamepad is connected */
@@ -203,7 +203,7 @@ namespace chaos
 			PhysicalGamepad(int in_stick_index);
 			/** update all the values for the axis and buttons */
 			void UpdateAxisAndButtons(float delta_time, float dead_zone);
-			/** called at unconnection to be sure input cannot be consulted anymore */      
+			/** called at unconnection to be sure input cannot be consulted anymore */
 			void ClearInputs();
 
 		protected:
@@ -214,8 +214,8 @@ namespace chaos
 			bool is_present = false;
 			/** indicates whether the stick is allocated to a client */
 			class Gamepad * user_gamepad = nullptr;
-      /** the device data */
-      GamepadData gamepad_data;
+			/** the device data */
+			GamepadData gamepad_data;
 		};
 
 
@@ -256,8 +256,8 @@ namespace chaos
 			/** returns the number of axis */
 			size_t GetAxisCount() const;
 
-      /** returns the stick index */
-      int GetGamepadIndex() const;
+			/** returns the stick index */
+			int GetGamepadIndex() const;
 			/** returns true whether the gamepad is connected */
 			bool IsPresent() const;
 			/** returns whether the gamepad has already been connected once */
@@ -310,9 +310,9 @@ namespace chaos
 			/** find a gamepad that is used by nobody */
 			PhysicalGamepad * FindUnallocatedPhysicalGamepad(GamepadCallbacks * in_callbacks);
 			/** update the physical devices and detect unconnections */
-			void UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unconnected_present_physical_device_count);
+			void UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unallocated_present_physical_device_count);
 			/** try to give a physical device to all unconnected logical device */
-			void GiveGamepadPhysicalDevices(int & unconnected_present_physical_device_count);
+			void GiveGamepadPhysicalDevices(int & unallocated_present_physical_device_count);
 			/** returns false if no more logical device to bound with */
 			bool DoGiveGamepadPhysicalDevice(PhysicalGamepad * physical_gamepad);
 			/** find the best gamepad that can be bound */
@@ -320,17 +320,17 @@ namespace chaos
 			/** called whenever a gamepad is destroyed */
 			bool OnGamepadDestroyed(Gamepad * gamepad);
 			/** called to pool inputs on unbound connected physical device */
-			void PoolInputs(int & unconnected_present_physical_device_count);
-			
+			void PoolInputs(int & unallocated_present_physical_device_count);
+
 		protected:
 
 			/** the pool method to override */
 			virtual bool DoPoolGamepad(PhysicalGamepad * physical_gamepad);
-			
+
 		protected:
 
 			/** the default dead zone value */
-			float dead_zone;
+			float dead_zone = 0.2f;
 			/** the logical gamepads */
 			std::vector<Gamepad *> user_gamepads;
 			/** the physical gamepads */

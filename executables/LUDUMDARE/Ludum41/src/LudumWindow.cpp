@@ -1,5 +1,41 @@
 #include "LudumWindow.h"
 
+
+#if 0
+#include <chaos/CollisionFramework.h> 
+#include <chaos/FileTools.h> 
+#include <chaos/LogTools.h> 
+#include <chaos/GLTools.h> 
+#include <chaos/GLTextureTools.h>
+#include <chaos/MyGLFWGamepadManager.h> 
+
+#include <chaos/WinTools.h> 
+#include <chaos/GPUProgramGenerator.h>
+
+#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GLDebugOnScreenDisplay.h>
+#include <chaos/SimpleMesh.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
+#include <chaos/Texture.h>
+#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUProgramProvider.h>
+#include <chaos/SoundManager.h>
+#include <json.hpp>
+#include <chaos/BoostTools.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/TextureArrayAtlas.h>
+#include <chaos/SpriteManager.h>
+#include <chaos/JSONTools.h>
+#endif
+
+
+
+
+
+
+
 float const LudumWindow::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 void LudumWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
@@ -22,24 +58,9 @@ void LudumWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 
 bool LudumWindow::OnDraw(glm::ivec2 size) 
 {
-#if 0
-	glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
-	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-	float far_plane = 1000.0f;
-	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-	chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
-
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);   // when viewer is inside the cube
-
-	float world_x = 1000.0f;
-	float world_y = world_x / VIEWPORT_WANTED_ASPECT;
-
+	chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
 	if (game != nullptr)
-		game->Display(glm::vec2(world_x, world_y));
-#endif
+		game->Display(viewport);
 	return true;
 }
 
@@ -55,19 +76,16 @@ bool LudumWindow::InitializeFromConfiguration(nlohmann::json const & config, boo
 	if (game == nullptr)
 		return false;
 
+	// basic initialization of the game */
+	if (!game->InitializeGame(glfw_window))
+		return false;
+	
 	// initialize the game
 	nlohmann::json const * game_config = chaos::JSONTools::GetStructure(config, "game");
 	if (game_config != nullptr)
 		if (!game->InitializeFromConfiguration(*game_config, config_path))
 			return false;
-	
 
-#if 0
-	float WORLD_X = 1000.0f;
-	glm::vec2 world_size = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-	if (!game->Initialize(glfw_window, chaos::JSONTools::GetStructure(config, "game"), config_path, world_size))
-		return false;
-#endif
 	return true;
 }
 

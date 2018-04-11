@@ -7,14 +7,16 @@
 
 namespace chaos
 {
-	void GLTools::SetViewportWithAspect(glm::ivec2 const & size, float aspect)
+	box2 GLTools::SetViewportWithAspect(glm::ivec2 const & size, float aspect)
 	{
 		box2 viewport = box2(std::make_pair(
 			glm::vec2(0.0f, 0.0f),
 			GLMTools::RecastVector<glm::vec2>(size)		
 		));
 
-    SetViewport(ShrinkBoxToAspect(viewport, aspect));
+		viewport = ShrinkBoxToAspect(viewport, aspect);
+    SetViewport(viewport);
+		return viewport;
 	}
 
 	bool GLTools::IsMatrixType(GLenum type)

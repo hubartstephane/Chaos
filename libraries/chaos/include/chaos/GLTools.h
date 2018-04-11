@@ -18,7 +18,7 @@ namespace chaos
 	public:
 
 		/** Set the viewport with an aspect */
-		static void SetViewportWithAspect(glm::ivec2 const & size, float aspect);
+		static box2 SetViewportWithAspect(glm::ivec2 const & size, float aspect);
 
     /** set the viewport */
     template<typename T>

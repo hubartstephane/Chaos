@@ -111,7 +111,7 @@ bool LudumGame::RequireGamePauseOrResume()
 
 		return true;
 	}
-	else if (game_state == STATE_PAUSE_MENU)
+	else if (game_state == STATE_PAUSE)
 	{
 
 
@@ -122,7 +122,7 @@ bool LudumGame::RequireGamePauseOrResume()
 
 bool LudumGame::RequireReturnToMainMenu()
 {
-	if (game_state != STATE_PLAYING)
+	if (game_state != STATE_PLAYING || game_state != STATE_PAUSE)
 		return false;
 
 
@@ -133,7 +133,7 @@ bool LudumGame::RequireReturnToMainMenu()
 
 bool LudumGame::RequireGameStart()
 {
-	if (game_state != STATE_MAIN_MENU)
+	if (game_state != STATE_MAINMENU)
 		return false;
 
 

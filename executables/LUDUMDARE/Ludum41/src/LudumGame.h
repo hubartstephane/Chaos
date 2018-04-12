@@ -12,9 +12,17 @@
 
 class LudumGame : public chaos::ReferencedObject
 {
-	static int const STATE_MAIN_MENU  = 0;
-	static int const STATE_PAUSE_MENU = 1;
-	static int const STATE_PLAYING    = 2;
+	// the possible states
+	static int const STATE_MAINMENU = 0;
+	static int const STATE_PAUSE    = 1;
+	static int const STATE_PLAYING  = 2;
+
+	// the possible transition-states
+	static int const STATE_TRANSITION_MAINMENU_TO_PLAYING = 3;
+	static int const STATE_TRANSITION_PLAYING_TO_PAUSE    = 4;
+	static int const STATE_TRANSITION_PAUSE_TO_PLAYING    = 5;
+
+	
 
 public:
 
@@ -62,7 +70,7 @@ protected:
 	GLFWwindow * glfw_window = nullptr;
 
 	/** some states */
-	int game_state = STATE_MAIN_MENU;
+	int game_state = STATE_MAINMENU;
 
 	bool game_paused = false;
 	bool game_started = false;

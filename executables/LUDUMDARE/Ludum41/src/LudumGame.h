@@ -33,8 +33,16 @@ public:
 
 protected:
 
+	/** internal method to update the state of the game */
+	void UpdateGameState(double delta_time);
+
+	/** internal methods to generate the atlas for sprites */
+	bool GenerateAtlas();
+
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
+	/** internal method to test for keys and update stick position */
+	void HandleKeyboardInputs();
 
 	/** require a pause or resume */
 	bool RequireGamePauseOrResume();
@@ -46,8 +54,6 @@ protected:
 
 	/** require a gameover */
 	bool RequireGameOver();
-
-
 
 protected:
 

@@ -1,4 +1,5 @@
 #include "LudumGame.h"
+#include <chaos/JSONTools.h>
 
 bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
@@ -7,22 +8,68 @@ bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physica
 	return true;
 }
 
+bool LudumGame::GenerateAtlas()
+{
+
+	return true;
+}
+
+
+
 #if 0
 
-if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
-simulated_stick.x -= 1.0f;
-if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
-simulated_stick.x += 1.0f;
 
-if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
-simulated_stick.y -= 1.0f;
-if (glfwGetKey(glfw_window, GLFW_KEY_UP))
-simulated_stick.y += 1.0f;
 
-stick_to_apply = simulated_stick;
+bool Game::GenerateAtlas(boost::filesystem::path const & path)
+{
+	// Fill Atlas generation Input
+	int ATLAS_SIZE = 1024;
+	int ATLAS_PADDING = 10;
+	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+
+	chaos::BitmapAtlas::AtlasInput input;
+
+	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
+	if (bitmap_set == nullptr)
+		return false;
+
+	for (ObjectDefinition const & def : object_definitions)
+	{
+		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(path, def.bitmap_path); // make the image path relative to resource path
+		if (!bitmap_set->AddBitmapFile(image_path, nullptr, def.id))
+			return false;
+	}
+
+	// generate STD Atlas
+	chaos::BitmapAtlas::Atlas          atlas;
+	chaos::BitmapAtlas::AtlasGenerator generator;
+	if (!generator.ComputeResult(input, atlas, params))
+		return false;
+
+	// Display debug Atlas
+#if 0
+	boost::filesystem::path dst_p;
+	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
+	{
+		atlas.SaveAtlas(dst_p / "LudumAtlas");
+		chaos::WinTools::ShowFile(dst_p);
+	}
+#endif
+
+	// generate texture Atlas
+	if (!texture_atlas.LoadFromBitmapAtlas(atlas))
+		return false;
+
+	return true;
+}
 
 #endif
 
+void LudumGame::EnterPause()
+{
+	
+
+}
 
 bool LudumGame::RequireGamePauseOrResume()
 {
@@ -72,11 +119,27 @@ bool LudumGame::RequireGameOver()
 
 }
 
-void LudumGame::Tick(double delta_time)
+void LudumGame::HandleKeyboardInputs()
 {
-	// catch all stick inputs
-	gamepad_manager->Tick((float)delta_time); 
+	// test whether the stick position can be overriden
+	glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
+	if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
+		simulated_stick.x -= 1.0f;
+	if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
+		simulated_stick.x += 1.0f;
+
+	if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
+		simulated_stick.y -= 1.0f;
+	if (glfwGetKey(glfw_window, GLFW_KEY_UP))
+		simulated_stick.y += 1.0f;
+
+	if (glm::length2(simulated_stick) > 0)
+		left_stick_position = simulated_stick;
+}
+
+void LudumGame::UpdateGameState(double delta_time)
+{
 	if (pending_gameover)
 	{
 
@@ -87,12 +150,22 @@ void LudumGame::Tick(double delta_time)
 	}
 	else
 	{
-		
 
 
-		
+
+
 	}
 
+}
+
+void LudumGame::Tick(double delta_time)
+{
+	// catch all stick inputs
+	gamepad_manager->Tick((float)delta_time);
+	// handle keyboard inputs
+	HandleKeyboardInputs();
+	// update the game state
+	UpdateGameState(delta_time);
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
 }
@@ -151,6 +224,13 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
+	// get the directory where the sprites are
+	std::string sprite_directory;
+	chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
+
+	// get the path of the font
+	std::string font_path;
+	chaos::JSONTools::GetAttribute(config, "font_path", font_path);
 
 
 

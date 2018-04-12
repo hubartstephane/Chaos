@@ -1,12 +1,4 @@
 {
-	"level_particle_increment":10,
-	"max_particles_per_frame":100,
-	"initial_life":50,
-	"initial_level":0,
-	"initial_player_screen_speed":500,
-	"initial_player_absolute_speed":50,
-	"delta_speed":7,
-	"acceleration_factor":1000.0,
-	"slowdown_factor":1000.0,
-	"max_speed":500
+  "sprite_directory":"dir1",
+  "font_path":"fp1"
 }

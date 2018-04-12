@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/MyGLFWGamepadManager.h>
+#include <chaos/TextureArrayAtlas.h>
 
 // =================================================
 // LudumGame
@@ -37,7 +38,7 @@ protected:
 	void UpdateGameState(double delta_time);
 
 	/** internal methods to generate the atlas for sprites */
-	bool GenerateAtlas();
+	bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
@@ -74,6 +75,9 @@ protected:
 
 	/** the current gamepad manager */
 	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
+
+	/** the texture atlas */
+	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
 };
 
 // =================================================

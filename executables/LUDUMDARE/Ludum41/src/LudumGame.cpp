@@ -1,5 +1,47 @@
 #include "LudumGame.h"
 #include <chaos/JSONTools.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/TextureArrayAtlas.h>
+#include <chaos/FileTools.h>
+#include <chaos/WinTools.h>
+#include <chaos/Application.h>
+
+
+
+
+
+#if 0
+#include <chaos/CollisionFramework.h> 
+#include <chaos/FileTools.h> 
+#include <chaos/LogTools.h> 
+#include <chaos/GLTools.h> 
+#include <chaos/GLTextureTools.h>
+#include <chaos/MyGLFWGamepadManager.h> 
+
+#include <chaos/WinTools.h> 
+#include <chaos/GPUProgramGenerator.h>
+
+#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GLDebugOnScreenDisplay.h>
+#include <chaos/SimpleMesh.h>
+#include <chaos/GPUProgramData.h>
+#include <chaos/GPUProgram.h>
+#include <chaos/Texture.h>
+#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUProgramProvider.h>
+#include <chaos/SoundManager.h>
+#include <json.hpp>
+#include <chaos/BoostTools.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/TextureArrayAtlas.h>
+#include <chaos/SpriteManager.h>
+#include <chaos/JSONTools.h>
+#endif
+
+
+
 
 bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
@@ -8,68 +50,59 @@ bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physica
 	return true;
 }
 
-bool LudumGame::GenerateAtlas()
+bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-
-	return true;
-}
-
-
-
-#if 0
-
-
-
-bool Game::GenerateAtlas(boost::filesystem::path const & path)
-{
-	// Fill Atlas generation Input
-	int ATLAS_SIZE = 1024;
-	int ATLAS_PADDING = 10;
-	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
-
 	chaos::BitmapAtlas::AtlasInput input;
 
+	// get the directory where the sprites are
+	std::string sprite_directory;
+	chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
+
+	// get the path of the font
+	std::string font_path;
+	chaos::JSONTools::GetAttribute(config, "font_path", font_path);
+
+	// Add sprites
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
 	if (bitmap_set == nullptr)
 		return false;
 
-	for (ObjectDefinition const & def : object_definitions)
-	{
-		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(path, def.bitmap_path); // make the image path relative to resource path
-		if (!bitmap_set->AddBitmapFile(image_path, nullptr, def.id))
-			return false;
-	}
+	bitmap_set->AddBitmapFilesFromDirectory(sprite_directory);
 
-	// generate STD Atlas
+	// Add the font
+	chaos::BitmapAtlas::CharacterSetInput * character_set1 =
+		input.AddCharacterSet("character_set", nullptr, font_path.c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+
+	// generate the atlas
+	int ATLAS_SIZE = 1024;
+	int ATLAS_PADDING = 10;
+	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+
 	chaos::BitmapAtlas::Atlas          atlas;
 	chaos::BitmapAtlas::AtlasGenerator generator;
 	if (!generator.ComputeResult(input, atlas, params))
 		return false;
 
-	// Display debug Atlas
-#if 0
-	boost::filesystem::path dst_p;
-	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
-	{
-		atlas.SaveAtlas(dst_p / "LudumAtlas");
-		chaos::WinTools::ShowFile(dst_p);
-	}
-#endif
-
 	// generate texture Atlas
 	if (!texture_atlas.LoadFromBitmapAtlas(atlas))
 		return false;
 
+	// dump the atlas
+#if _DEBUG
+	chaos::Application * application = chaos::Application::GetInstance();
+	atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
+#endif
+
 	return true;
 }
 
-#endif
-
+/*
 void LudumGame::EnterPause()
 {
 	
 
 }
+*/
 
 bool LudumGame::RequireGamePauseOrResume()
 {
@@ -224,15 +257,7 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	// get the directory where the sprites are
-	std::string sprite_directory;
-	chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
-
-	// get the path of the font
-	std::string font_path;
-	chaos::JSONTools::GetAttribute(config, "font_path", font_path);
-
-
+	GenerateAtlas(config, config_path);
 
 
 

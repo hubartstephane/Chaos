@@ -197,8 +197,7 @@ namespace chaos
 		}
 		else
 		{
-			boost::filesystem::path result_dir;
-			FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result_dir);
+			FileTools::CreateTemporaryDirectory("MyTempDirectory_%d", result);
 		}
 
 		if (!result.empty())

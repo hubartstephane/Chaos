@@ -66,13 +66,15 @@ bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_g
 
 void Game::Tick(double delta_time)
 {
+	gamepad_manager->Tick((float)delta_time);
+
 	if (pending_gameover || pending_restart_game)
 	{
 		GameOver();
 	}		
 	else
 	{
-		gamepad_manager->Tick((float)delta_time);
+		
 
 		GameInfo game_info(*this);
 		if (game_started && !game_paused)
@@ -85,8 +87,9 @@ void Game::Tick(double delta_time)
 		for(size_t i = 0 ; i < sprite_layers.size() ; ++i)
 			sprite_layers[i].Tick(delta_time, game_info);		
 
-		ResetPlayerCachedInputs();
+		
 	}
+	ResetPlayerCachedInputs();
 }
 
 void Game::SpawnExtraParticles(GameInfo game_info, float delta_time)

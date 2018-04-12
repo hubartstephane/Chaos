@@ -11,6 +11,10 @@
 
 class LudumGame : public chaos::ReferencedObject
 {
+	static int const STATE_MAIN_MENU  = 0;
+	static int const STATE_PAUSE_MENU = 1;
+	static int const STATE_PLAYING    = 2;
+
 public:
 
 	/** the tick method */
@@ -32,12 +36,27 @@ protected:
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
 
+	/** require a pause or resume */
+	bool RequireGamePauseOrResume();
+	/** require a return to main menu */
+	bool RequireReturnToMainMenu();
+	/** require a game Start */
+	bool RequireGameStart();
+
+
+	/** require a gameover */
+	bool RequireGameOver();
+
+
+
 protected:
 
 	/** the window in GLFW library */
 	GLFWwindow * glfw_window = nullptr;
 
 	/** some states */
+	int game_state = STATE_MAIN_MENU;
+
 	bool game_paused = false;
 	bool game_started = false;
 	bool pending_gameover = false;

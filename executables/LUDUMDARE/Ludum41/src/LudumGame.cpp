@@ -7,6 +7,71 @@ bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physica
 	return true;
 }
 
+#if 0
+
+if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
+simulated_stick.x -= 1.0f;
+if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
+simulated_stick.x += 1.0f;
+
+if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
+simulated_stick.y -= 1.0f;
+if (glfwGetKey(glfw_window, GLFW_KEY_UP))
+simulated_stick.y += 1.0f;
+
+stick_to_apply = simulated_stick;
+
+#endif
+
+
+bool LudumGame::RequireGamePauseOrResume()
+{
+	if (game_state == STATE_PLAYING)
+	{
+
+		return true;
+	}
+	else if (game_state == STATE_PAUSE_MENU)
+	{
+
+
+		return true;
+	}
+	return false;
+}
+
+bool LudumGame::RequireReturnToMainMenu()
+{
+	if (game_state != STATE_PLAYING)
+		return false;
+
+
+
+
+	return true;
+}
+
+bool LudumGame::RequireGameStart()
+{
+	if (game_state != STATE_MAIN_MENU)
+		return false;
+
+
+
+	return true;
+}
+
+bool LudumGame::RequireGameOver()
+{
+	if (game_state != STATE_PLAYING)
+		return false;
+
+
+
+	return true;
+
+}
+
 void LudumGame::Tick(double delta_time)
 {
 	// catch all stick inputs
@@ -14,7 +79,7 @@ void LudumGame::Tick(double delta_time)
 
 	if (pending_gameover)
 	{
-		//GameOver();
+
 	}
 	else if (pending_restart_game)
 	{
@@ -34,16 +99,22 @@ void LudumGame::Tick(double delta_time)
 
 bool LudumGame::OnKeyEvent(int key, int action)
 {
+	// MAIN MENU to PLAYING
+	if (action == GLFW_PRESS)
+		if (RequireGameStart())
+			return true;
 
+	// PLAYING to PAUSE
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+		if (RequireGamePauseOrResume())
+			return true;
 
+	// QUIT GAME
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		if (RequireReturnToMainMenu())
+			return true;
 
-
-
-
-
-
-
-	return true;
+	return false;
 }
 
 void LudumGame::Display(chaos::box2 const & viewport)
@@ -97,28 +168,6 @@ void LudumGame::ResetPlayerCachedInputs()
 
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
-#if 0
-
-	if (!game_started)
-	{
-		if (physical_gamepad->IsAnyButtonPressed())
-			StartGame();
-	}
-	else
-	{
-		if ((physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-			(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
-			SetPause(!game_paused);
-	}
-
-
-
-	if (left_stick_position.x != 0.0f || left_stick_position.y != 0.0f)
-		stick_position = left_stick_position;
-	else if (right_stick_position.length() > 0.0f)
-		stick_position = right_stick_position;
-#endif
-
 	// cache the stick position
 	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 	if (glm::length2(lsp) > 0.0f)
@@ -127,6 +176,21 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 	if (glm::length2(rsp) > 0.0f)
 		right_stick_position = rsp;
+
+	// maybe a start game
+	if (physical_gamepad->IsAnyButtonPressed())
+		if (RequireGameStart())
+			return true;
+
+	// maybe a game/pause resume
+
+	if (
+		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
+		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+	{
+		if (RequireGamePauseOrResume())
+			return true;
+	}
 
 	return true;
 }

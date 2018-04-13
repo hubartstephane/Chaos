@@ -1,5 +1,7 @@
 #pragma once
 
+#include "LudumStateMachine.h"
+
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
 #include <chaos/GeometryFramework.h>
@@ -68,6 +70,9 @@ protected:
 
 	/** the window in GLFW library */
 	GLFWwindow * glfw_window = nullptr;
+
+	/** the automata corresponding to the game */
+	boost::intrusive_ptr<LudumAutomata> game_automata;
 
 	/** some states */
 	int game_state = STATE_MAINMENU;

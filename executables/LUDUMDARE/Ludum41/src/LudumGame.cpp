@@ -247,6 +247,11 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 	assert(in_glfw_window != nullptr);
 	glfw_window = in_glfw_window;
 
+	// create the game automata
+	game_automata = new LudumAutomata(this);
+	if (game_automata == nullptr)
+		return false;
+
 	// initialize the gamepad manager
 	gamepad_manager = new LudumGamepadManager(this);
 	if (gamepad_manager == nullptr)

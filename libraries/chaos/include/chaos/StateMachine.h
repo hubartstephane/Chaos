@@ -36,17 +36,31 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 		public:
 
+			/** constructor */
+			State(Automata * in_automata);
 			/** destructor */
-			virtual ~State() = default;
+			virtual ~State();
 
-			/** called whenever we enter in this state */
+		protected: 
+
+			/** FRAMEWORK : called whenever we enter in this state */
 			virtual bool OnEnter(State * from_state);
-			/** called at each tick. Returns true if outgoing transition can be tested */
+			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
 			virtual bool Tick(double delta_time);
-			/** called whenever we leave this state */
+			/** FRAMEWORK : called whenever we leave this state */
 			virtual bool OnLeave(State * to_state);
 
+			/** USER IMPLEMENTATION : called whenever we enter in this state */
+			virtual bool OnEnterImpl(State * from_state);
+			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
+			virtual bool TickImpl(double delta_time);
+			/** USER IMPLEMENTATION : called whenever we leave this state */
+			virtual bool OnLeaveImpl(State * to_state);
+
 		protected:
+
+			/** the automata this instance belongs to */
+			Automata * automata = nullptr;
 
 			/** the list of outgoing transitions */
 			std::vector<Transition *> outgoing_transitions;
@@ -67,9 +81,20 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** constructor */
 			Transition(State * in_from_state, State * in_to_state);
 
-			/** trigger the state change */
+			/** force trigger the state change */
 			bool TriggerTransition();
 
+		protected:
+
+			/** user implementable method to know whether the transition can trigger itself */
+			virtual bool CheckTransitionConditions();
+
+			/** FRAMEWORK : called whenever we enter in this state */
+			virtual bool OnEnter(State * from_state) override;
+			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
+			virtual bool Tick(double delta_time) override;
+			/** FRAMEWORK : called whenever we leave this state */
+			virtual bool OnLeave(State * to_state) override;
 
 		protected:
 
@@ -95,6 +120,11 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 			/** the tick method */
 			bool Tick(double delta_time, int max_transition_changes = 0);
+
+		protected:
+
+			/** internal method to change state */
+			void ChangeState(State * new_state);
 
 		protected:
 

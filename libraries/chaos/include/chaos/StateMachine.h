@@ -82,7 +82,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			Transition(State * in_from_state, State * in_to_state);
 
 			/** force trigger the state change */
-			bool TriggerTransition();
+			bool TriggerTransition(bool force = true);
 
 		protected:
 
@@ -125,11 +125,15 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 			/** internal method to change state */
 			void ChangeState(State * new_state);
+			/** set the initial state */
+			void SetInitialState(State * in_state);
 
 		protected:
 
 			/** the current state of the automata */
 			State * current_state = nullptr;
+			/** the initial state of the automata */
+			State * initial_state = nullptr;
 		};
 
 		// undefine macros

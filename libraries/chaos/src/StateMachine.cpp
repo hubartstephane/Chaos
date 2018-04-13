@@ -21,11 +21,6 @@ namespace chaos
 		
 		}
 
-		bool State::OnEnter(State * from_state)
-		{		
-			return OnEnterImpl(from_state);
-		}
-
 		bool State::Tick(double delta_time)
 		{			
 			bool result = TickImpl(delta_time);
@@ -41,6 +36,11 @@ namespace chaos
 				}					
 			}
 			return result;
+		}
+
+		bool State::OnEnter(State * from_state)
+		{		
+			return OnEnterImpl(from_state);
 		}
 
 		bool State::OnLeave(State * to_state)
@@ -90,15 +90,18 @@ namespace chaos
 			in_to_state->incomming_transitions.push_back(this);
 		}
 
-		bool Transition::TriggerTransition()
+		bool Transition::TriggerTransition(bool force)
 		{
 			// triggering the transition is only possible if the automata is in start state
 			if (automata->current_state != from_state)
 				return false;
 
+			// test for conditions if required
+			if (!force && !CheckTransitionConditions())
+				return false;
 
-
-		
+			//change the state
+			automata->ChangeState(to_state);
 		
 			return true;
 		}
@@ -174,6 +177,11 @@ namespace chaos
 			{
 				current_state->OnEnter(old_state);
 			}					
+		}
+
+		void Automata::SetInitialState(State * in_state)
+		{
+			initial_state = in_state;	
 		}
 
 	}; // namespace chaos

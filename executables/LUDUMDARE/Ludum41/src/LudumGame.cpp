@@ -173,6 +173,8 @@ void LudumGame::HandleKeyboardInputs()
 
 void LudumGame::UpdateGameState(double delta_time)
 {
+	game_automata->Tick(delta_time);
+
 	if (pending_gameover)
 	{
 

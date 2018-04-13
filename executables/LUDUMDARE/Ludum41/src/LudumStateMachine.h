@@ -113,16 +113,18 @@ public:
 
 class LudumAutomata : public chaos::StateMachine::Automata
 {
+	friend class LudumGame;
+
 public:
 
 	/** constructor */
-	LudumAutomata(class LudumGame * in_game);
+	LudumAutomata(LudumGame * in_game);
 
 
 protected:
 
 	/** the game */
-	class LudumGame * game = nullptr;
+	LudumGame * game = nullptr;
 
 	/** the states */
 	chaos::StateMachine::State * main_menu_state = nullptr;
@@ -130,10 +132,10 @@ protected:
 	chaos::StateMachine::State * pause_state     = nullptr;
 	chaos::StateMachine::State * gameover_state  = nullptr;
 
-	chaos::StateMachine::State * main_menu_to_playing  = nullptr;
-	chaos::StateMachine::State * playing_to_main_menu  = nullptr;
-	chaos::StateMachine::State * playing_to_pause      = nullptr;
-	chaos::StateMachine::State * pause_to_playing      = nullptr;
-	chaos::StateMachine::State * playing_to_gameover   = nullptr;
-	chaos::StateMachine::State * gameover_to_main_menu = nullptr;
+	chaos::StateMachine::Transition * main_menu_to_playing  = nullptr;
+	chaos::StateMachine::Transition * playing_to_main_menu  = nullptr;
+	chaos::StateMachine::Transition * playing_to_pause      = nullptr;
+	chaos::StateMachine::Transition * pause_to_playing      = nullptr;
+	chaos::StateMachine::Transition * playing_to_gameover   = nullptr;
+	chaos::StateMachine::Transition * gameover_to_main_menu = nullptr;
 };

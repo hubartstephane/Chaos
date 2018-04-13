@@ -209,6 +209,29 @@ bool LudumGame::OnKeyEvent(int key, int action)
 {
 	// MAIN MENU to PLAYING
 	if (action == GLFW_PRESS)
+		if (game_automata->main_menu_to_playing->TriggerTransition(true))
+			return true;
+
+	// PLAYING to PAUSE
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		if (game_automata->playing_to_pause->TriggerTransition(true))
+			return true;	
+		if (game_automata->pause_to_playing->TriggerTransition(true))
+			return true;		
+	}
+
+	// QUIT GAME
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		if (game_automata->playing_to_main_menu->TriggerTransition(true))
+			return true;		
+	}
+
+
+#if 0
+	// MAIN MENU to PLAYING
+	if (action == GLFW_PRESS)
 		if (RequireGameStart())
 			return true;
 
@@ -221,7 +244,7 @@ bool LudumGame::OnKeyEvent(int key, int action)
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		if (RequireReturnToMainMenu())
 			return true;
-
+#endif
 	return false;
 }
 

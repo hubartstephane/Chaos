@@ -96,62 +96,6 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 	return true;
 }
 
-/*
-void LudumGame::EnterPause()
-{
-	
-
-}
-*/
-
-bool LudumGame::RequireGamePauseOrResume()
-{
-	if (game_state == STATE_PLAYING)
-	{
-
-		return true;
-	}
-	else if (game_state == STATE_PAUSE)
-	{
-
-
-		return true;
-	}
-	return false;
-}
-
-bool LudumGame::RequireReturnToMainMenu()
-{
-	if (game_state != STATE_PLAYING || game_state != STATE_PAUSE)
-		return false;
-
-
-
-
-	return true;
-}
-
-bool LudumGame::RequireGameStart()
-{
-	if (game_state != STATE_MAINMENU)
-		return false;
-
-
-
-	return true;
-}
-
-bool LudumGame::RequireGameOver()
-{
-	if (game_state != STATE_PLAYING)
-		return false;
-
-
-
-	return true;
-
-}
-
 void LudumGame::HandleKeyboardInputs()
 {
 	// test whether the stick position can be overriden
@@ -175,21 +119,7 @@ void LudumGame::UpdateGameState(double delta_time)
 {
 	game_automata->Tick(delta_time);
 
-	if (pending_gameover)
-	{
 
-	}
-	else if (pending_restart_game)
-	{
-
-	}
-	else
-	{
-
-
-
-
-	}
 
 }
 
@@ -205,46 +135,59 @@ void LudumGame::Tick(double delta_time)
 	ResetPlayerCachedInputs();
 }
 
+bool LudumGame::RequireGameOver()
+{
+	if (game_automata->playing_to_gameover->TriggerTransition(true))
+		return true;
+	return false;
+}
+
+bool LudumGame::RequireTogglePause()
+{
+	if (game_automata->playing_to_pause->TriggerTransition(true))
+		return true;
+	if (game_automata->pause_to_playing->TriggerTransition(true))
+		return true;
+	return false;
+}
+
+bool LudumGame::RequireExitGame()
+{
+	if (game_automata->playing_to_main_menu->TriggerTransition(true))
+		return true;
+	return false;
+}
+
+bool LudumGame::RequireStartGame()
+{
+	if (game_automata->main_menu_to_playing->TriggerTransition(true))
+		return true;
+	return false;
+}
+
 bool LudumGame::OnKeyEvent(int key, int action)
 {
 	// MAIN MENU to PLAYING
 	if (action == GLFW_PRESS)
-		if (game_automata->main_menu_to_playing->TriggerTransition(true))
+		if (RequireStartGame())
 			return true;
 
 	// PLAYING to PAUSE
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-	{
-		if (game_automata->playing_to_pause->TriggerTransition(true))
-			return true;	
-		if (game_automata->pause_to_playing->TriggerTransition(true))
-			return true;		
-	}
-
-	// QUIT GAME
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		if (game_automata->playing_to_main_menu->TriggerTransition(true))
-			return true;		
-	}
-
-
-#if 0
-	// MAIN MENU to PLAYING
-	if (action == GLFW_PRESS)
-		if (RequireGameStart())
-			return true;
-
-	// PLAYING to PAUSE
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-		if (RequireGamePauseOrResume())
+		if (RequireTogglePause())
 			return true;
 
 	// QUIT GAME
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		if (RequireReturnToMainMenu())
+		if (RequireExitGame())
+			return true;
+
+#if _DEBUG
+	if (key == GLFW_KEY_G && action == GLFW_PRESS)
+		if (RequireGameOver())
 			return true;
 #endif
+
 	return false;
 }
 
@@ -314,16 +257,15 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 
 	// maybe a start game
 	if (physical_gamepad->IsAnyButtonPressed())
-		if (RequireGameStart())
+		if (game_automata->main_menu_to_playing->TriggerTransition(true))
 			return true;
 
 	// maybe a game/pause resume
-
 	if (
 		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
 		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
 	{
-		if (RequireGamePauseOrResume())
+		if (RequireTogglePause())
 			return true;
 	}
 

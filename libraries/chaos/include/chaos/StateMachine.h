@@ -41,14 +41,19 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** destructor */
 			virtual ~State();
 
+			/** change the ID */
+			void SetStateID(int new_id) { id = new_id; }
+			/** get the ID */
+			int GetStateID() const { return id; }
+
 		protected: 
 
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual bool OnEnter(State * from_state);
+			virtual void OnEnter(State * from_state);
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool Tick(double delta_time);
+			virtual void Tick(double delta_time);
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual bool OnLeave(State * to_state);
+			virtual void OnLeave(State * to_state);
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
 			virtual bool OnEnterImpl(State * from_state);
@@ -62,6 +67,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** the automata this instance belongs to */
 			Automata * automata = nullptr;
 
+			/** an ID for the state */
+			int id = 0;
 			/** the list of outgoing transitions */
 			std::vector<Transition *> outgoing_transitions;
 			/** the list of incomming transitions */
@@ -90,11 +97,11 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			virtual bool CheckTransitionConditions();
 
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual bool OnEnter(State * from_state) override;
+			virtual void OnEnter(State * from_state) override;
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool Tick(double delta_time) override;
+			virtual void Tick(double delta_time) override;
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual bool OnLeave(State * to_state) override;
+			virtual void OnLeave(State * to_state) override;
 
 		protected:
 
@@ -121,6 +128,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** the tick method */
 			bool Tick(double delta_time, int max_transition_changes = 0);
 
+			/** restart the automata */
+			void Restart();
+
+			/** get the current state */
+			State * GetCurrentState() { return current_state; }
+			/** get the current state */
+			State const * GetCurrentState() const { return current_state; }
+
 		protected:
 
 			/** internal method to change state */
@@ -130,10 +145,13 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 		protected:
 
-			/** the current state of the automata */
-			State * current_state = nullptr;
 			/** the initial state of the automata */
 			State * initial_state = nullptr;
+
+			/** the current state of the automata */
+			State * current_state = nullptr;
+
+			
 		};
 
 		// undefine macros

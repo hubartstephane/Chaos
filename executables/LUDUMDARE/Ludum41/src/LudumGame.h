@@ -14,17 +14,6 @@
 
 class LudumGame : public chaos::ReferencedObject
 {
-	// the possible states
-	static int const STATE_MAINMENU = 0;
-	static int const STATE_PAUSE    = 1;
-	static int const STATE_PLAYING  = 2;
-
-	// the possible transition-states
-	static int const STATE_TRANSITION_MAINMENU_TO_PLAYING = 3;
-	static int const STATE_TRANSITION_PLAYING_TO_PAUSE    = 4;
-	static int const STATE_TRANSITION_PAUSE_TO_PLAYING    = 5;
-
-	
 
 public:
 
@@ -56,14 +45,12 @@ protected:
 	void HandleKeyboardInputs();
 
 	/** require a pause or resume */
-	bool RequireGamePauseOrResume();
-	/** require a return to main menu */
-	bool RequireReturnToMainMenu();
+	bool RequireTogglePause();
 	/** require a game Start */
-	bool RequireGameStart();
-
-
-	/** require a gameover */
+	bool RequireStartGame();
+	/** require a game exit */
+	bool RequireExitGame();
+	/** require a game over */
 	bool RequireGameOver();
 
 protected:
@@ -73,14 +60,6 @@ protected:
 
 	/** the automata corresponding to the game */
 	boost::intrusive_ptr<LudumAutomata> game_automata;
-
-	/** some states */
-	int game_state = STATE_MAINMENU;
-
-	bool game_paused = false;
-	bool game_started = false;
-	bool pending_gameover = false;
-	bool pending_restart_game = false; 
 
 	/** the current stick position */
 	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);

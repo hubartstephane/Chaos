@@ -117,6 +117,17 @@ class LudumAutomata : public chaos::StateMachine::Automata
 
 public:
 
+	// the possible states
+	static int const STATE_MAINMENU = 0;
+	static int const STATE_PAUSE = 1;
+	static int const STATE_PLAYING = 2;
+	static int const STATE_GAMEOVER = 3;
+
+	// the possible transition-states
+	static int const STATE_TRANSITION_MAINMENU_TO_PLAYING = 3;
+	static int const STATE_TRANSITION_PLAYING_TO_PAUSE = 4;
+	static int const STATE_TRANSITION_PAUSE_TO_PLAYING = 5;
+
 	/** constructor */
 	LudumAutomata(LudumGame * in_game);
 

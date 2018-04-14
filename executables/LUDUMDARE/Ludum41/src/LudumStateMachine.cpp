@@ -7,25 +7,25 @@
 MainMenuState::MainMenuState(chaos::StateMachine::Automata * in_automata):
 	chaos::StateMachine::State(in_automata)
 {
-
+	SetStateID(LudumAutomata::STATE_MAINMENU);
 }
 
 PlayingState::PlayingState(chaos::StateMachine::Automata * in_automata):
 	chaos::StateMachine::State(in_automata)
 {
-
+	SetStateID(LudumAutomata::STATE_PLAYING);
 }
 
 PauseState::PauseState(chaos::StateMachine::Automata * in_automata):
 	chaos::StateMachine::State(in_automata)
 {
-
+	SetStateID(LudumAutomata::STATE_PAUSE);
 }
 
 GameOverState::GameOverState(chaos::StateMachine::Automata * in_automata):
 	chaos::StateMachine::State(in_automata)
 {
-
+	SetStateID(LudumAutomata::STATE_GAMEOVER);
 }
 
 // =========================================================

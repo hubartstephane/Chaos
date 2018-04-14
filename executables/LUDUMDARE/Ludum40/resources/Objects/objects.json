@@ -120,7 +120,7 @@
     {
       "id": 0,
       "layer": -1,
-      "size": 50.0,
+      "size": 40.0,
       "bitmap": "spaceship.png",
       "spawn_type": 0
     },

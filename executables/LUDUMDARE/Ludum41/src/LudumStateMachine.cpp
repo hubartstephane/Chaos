@@ -18,6 +18,8 @@ LudumGame * LudumState::GetGame()
 	return ludum_automata->GetGame();
 }
 
+						// ---------------------------------
+
 MainMenuState::MainMenuState(chaos::StateMachine::Automata * in_automata):
 	LudumState(in_automata)
 {
@@ -36,8 +38,7 @@ bool MainMenuState::OnEnterImpl(chaos::StateMachine::State * from)
 	return true;
 }
 
-
-
+						// ---------------------------------
 
 PlayingState::PlayingState(chaos::StateMachine::Automata * in_automata):
 	LudumState(in_automata)
@@ -46,12 +47,16 @@ PlayingState::PlayingState(chaos::StateMachine::Automata * in_automata):
 	SetName("Playing");
 }
 
+						// ---------------------------------
+
 PauseState::PauseState(chaos::StateMachine::Automata * in_automata):
 	LudumState(in_automata)
 {
 	SetStateID(LudumAutomata::STATE_PAUSE);
 	SetName("Pause");
 }
+
+						// ---------------------------------
 
 GameOverState::GameOverState(chaos::StateMachine::Automata * in_automata):
 	LudumState(in_automata)
@@ -77,30 +82,111 @@ LudumGame * LudumTransition::GetGame()
 	return ludum_automata->GetGame();
 }
 
+						// ---------------------------------
+
 MainMenuToPlayingTransition::MainMenuToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
 	LudumTransition(in_from_state, in_to_state)
 {
 }
+
+bool MainMenuToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->OnEnterGame();
+}
+
+bool MainMenuToPlayingTransition::TickImpl(double delta_time)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->IsGameEnterComplete();
+}
+
+
+
+
+						// ---------------------------------
 
 PlayingToMainMenuTransition::PlayingToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
 	LudumTransition(in_from_state, in_to_state)
 {
 }
 
+bool PlayingToMainMenuTransition::OnEnterImpl(chaos::StateMachine::State * from)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->OnLeaveGame();
+}
+
+bool PlayingToMainMenuTransition::TickImpl(double delta_time)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->IsGameLeaveComplete();
+}
+
+
+						// ---------------------------------
+
 PlayingToPauseTransition::PlayingToPauseTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
 	LudumTransition(in_from_state, in_to_state)
 {
 }
+
+
+bool PlayingToPauseTransition::OnEnterImpl(chaos::StateMachine::State * from)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->OnEnterPause();
+}
+
+bool PlayingToPauseTransition::TickImpl(double delta_time)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->IsPauseEnterComplete();
+}
+
+						// ---------------------------------
 
 PauseToPlayingTransition::PauseToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
 	LudumTransition(in_from_state, in_to_state)
 {
 }
 
+bool PauseToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->OnLeavePause();
+}
+
+bool PauseToPlayingTransition::TickImpl(double delta_time)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	return game->IsPauseLeaveComplete();
+}
+
+						// ---------------------------------
+
 PlayingToGameOverTransition::PlayingToGameOverTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
 	LudumTransition(in_from_state, in_to_state)
 {
 }
+
+						// ---------------------------------
 
 GameOverToMainMenuTransition::GameOverToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
 	LudumTransition(in_from_state, in_to_state)

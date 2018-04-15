@@ -18,6 +18,10 @@ class LudumGame : public chaos::ReferencedObject
 {
 	friend class LudumAutomata;
 	friend class MainMenuState;
+	friend class PlayingToPauseTransition;
+	friend class PauseToPlayingTransition;
+	friend class MainMenuToPlayingTransition;
+	friend class PlayingToMainMenuTransition;
 
 public:
 
@@ -62,9 +66,41 @@ protected:
 	/** require a game over */
 	bool RequireGameOver();
 
+	/** create the music used in the game */
+	void CreateAllMusics();
+	/** create one music */
+	chaos::Sound * CreateMusic(char const * name);
+	/** blend out a music */
+	void BlendMusic(chaos::Sound * music, bool blend_in);
+	/** start music[0], stop all others */
+	void ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first);
+
 
 	/** called on the very first time the game is started */
 	void OnStartGame();
+
+
+
+	/** called whenever we enter in pause mode */
+	bool OnEnterPause();
+	/** called whenever we leave pause mode */
+	bool OnLeavePause();
+
+	/** called whenever we enter in game mode */
+	bool OnEnterGame();
+	/** called whenever we leave game mode */
+	bool OnLeaveGame();
+
+	/** returns true if the pause if fully set */
+	bool IsPauseEnterComplete();
+	/** returns true if the game if fully restored from pause */
+	bool IsPauseLeaveComplete();
+
+	/** returns true if the game enter if fully set */
+	bool IsGameEnterComplete();
+	/** returns true if the game leave is fully completed */
+	bool IsGameLeaveComplete();
+
 
 	/** change the game music */
 	void StartMainMenuMusic();

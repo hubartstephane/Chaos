@@ -74,7 +74,12 @@ public:
 	/** constructor */
 	MainMenuToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
 
+protected:
 
+	/** overriding */
+	virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+	/** overriding */
+	virtual bool TickImpl(double delta_time) override;
 };
 
 class PlayingToMainMenuTransition : public LudumTransition
@@ -85,6 +90,12 @@ public:
 	/** constructor */
 	PlayingToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
 
+protected:
+
+	/** overriding */
+	virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+	/** overriding */
+	virtual bool TickImpl(double delta_time) override;
 };
 
 class PlayingToPauseTransition : public LudumTransition
@@ -95,6 +106,12 @@ public:
 	/** constructor */
 	PlayingToPauseTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
 
+protected:
+
+	/** overriding */
+	virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+	/** overriding */
+	virtual bool TickImpl(double delta_time) override;
 };
 
 
@@ -106,6 +123,12 @@ public:
 	/** constructor */
 	PauseToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
 
+protected:
+
+	/** overriding */
+	virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+	/** overriding */
+	virtual bool TickImpl(double delta_time) override;
 };
 
 class PlayingToGameOverTransition : public LudumTransition

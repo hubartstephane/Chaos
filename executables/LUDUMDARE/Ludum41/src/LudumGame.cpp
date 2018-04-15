@@ -63,53 +63,187 @@ chaos::SoundManager * LudumGame::GetSoundManager()
 	return application->GetSoundManager();
 }
 
+void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
+{
+	if (music == nullptr)
+		return;
+
+	chaos::BlendVolumeDesc blend_desc;
+	blend_desc.blend_type   = (blend_in)? 
+		chaos::BlendVolumeDesc::BLEND_IN: 
+		chaos::BlendVolumeDesc::BLEND_OUT;
+	blend_desc.kill_at_end  = false;
+	blend_desc.pause_at_end = !blend_in;
+
+	music->StartBlend(blend_desc, true);
+}
+
+chaos::Sound * LudumGame::CreateMusic(char const * name)
+{
+	chaos::SoundManager * sound_manager = GetSoundManager();
+	if (sound_manager == nullptr)
+		return nullptr;
+
+	chaos::SoundSource * source = sound_manager->FindSource(name);
+	if (source == nullptr)
+		return nullptr;
+
+	chaos::PlaySoundDesc play_desc;
+	play_desc.paused  = true;
+	play_desc.looping = true;
+	return source->PlaySound(play_desc);
+}
+
+void LudumGame::CreateAllMusics()
+{
+	if (menu_music == nullptr)
+		menu_music = CreateMusic("menu_music");
+	if (pause_music == nullptr)
+		pause_music = CreateMusic("pause_music");
+	if (game_music == nullptr)
+		game_music = CreateMusic("game_music");
+}
+
+void LudumGame::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first)
+{
+	if (musics == nullptr || count == 0)
+		return;
+
+	// restore the main music
+	chaos::Sound * music1 = musics[0];
+	if (music1 != nullptr)
+	{
+		music1->Pause(false);		
+		BlendMusic(music1, true);
+	}
+
+	// pause all other musics
+	for (size_t i = 1; i < count; ++i)
+	{
+		chaos::Sound * music = musics[i];
+		if (music == nullptr)
+			continue;
+		BlendMusic(music, false);
+	}
+}
+
+void LudumGame::StartMainMenuMusic()
+{
+	chaos::Sound * musics[] = {
+		menu_music.get(),
+		pause_music.get(),
+		game_music.get()
+	};
+	ChangeMusic(musics, 3, true);
+}
+
+void LudumGame::StartGameMusic()
+{
+	chaos::Sound * musics[] = {
+		game_music.get(),
+		pause_music.get(),
+		menu_music.get()
+	};
+	ChangeMusic(musics, 3, false);
+}
+
+void LudumGame::StartPauseMusic()
+{
+	chaos::Sound * musics[] = {
+		pause_music.get(),
+		menu_music.get(),
+		game_music.get()
+	};
+	ChangeMusic(musics, 3, false);
+}
+
+
+
+
+
+
+
 void LudumGame::OnStartGame()
 {
+
+
 	StartMainMenuMusic();
 
 
 }
 
-void LudumGame::StartMainMenuMusic()
+
+
+
+
+bool LudumGame::OnEnterPause()
 {
-	if (menu_music != nullptr)
-		return;
-	
-	chaos::SoundManager * sound_manager = GetSoundManager();
-	if (sound_manager == nullptr)
-		return;
+	StartPauseMusic();
 
-	chaos::SoundSource * source = sound_manager->FindSource("menu_music");
-	if (source == nullptr)
-		return;
 
-	chaos::PlaySoundDesc play_desc;
-	play_desc.looping = true;
-	menu_music = source->PlaySound(play_desc);
 
-	chaos::BlendVolumeDesc blend_desc;
-	blend_desc.blend_type  = chaos::BlendVolumeDesc::BLEND_OUT;
-	blend_desc.kill_at_end = true;
 
-	if (pause_music != nullptr)
-		pause_music->StartBlend(blend_desc);
-	if (game_music != nullptr)
-		game_music->StartBlend(blend_desc);
 
-	
-
+	return true;
 }
 
-void LudumGame::StartGameMusic()
+bool LudumGame::OnLeavePause()
 {
-	if (game_music != nullptr)
-		return;
+	StartGameMusic();
+
+
+
+	return true;
 }
 
-void LudumGame::StartPauseMusic()
+bool LudumGame::OnEnterGame()
 {
-	if (pause_music != nullptr)
-		return;
+	StartGameMusic();
+
+
+
+
+
+	return true;
+}
+
+bool LudumGame::OnLeaveGame()
+{
+	StartMainMenuMusic();
+
+
+
+	return true;
+}
+
+
+bool LudumGame::IsPauseEnterComplete()
+{
+	if (pause_music == nullptr)
+		return true;
+	return !pause_music->HasVolumeBlending();
+}
+
+bool LudumGame::IsPauseLeaveComplete()
+{
+	if (game_music == nullptr)
+		return true;
+	return !game_music->HasVolumeBlending();
+}
+
+
+bool LudumGame::IsGameEnterComplete()
+{
+	if (game_music == nullptr)
+		return true;
+	return !game_music->HasVolumeBlending();
+}
+
+bool LudumGame::IsGameLeaveComplete()
+{
+	if (game_music == nullptr)
+		return true;
+	return !game_music->HasVolumeBlending();
 }
 
 bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -286,6 +420,9 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 	gamepad_manager = new LudumGamepadManager(this);
 	if (gamepad_manager == nullptr)
 		return false;
+
+	// create the musics
+	CreateAllMusics();
 
 	return true;
 }

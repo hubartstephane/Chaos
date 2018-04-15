@@ -7,6 +7,8 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/TextureArrayAtlas.h>
+#include <chaos/SoundManager.h>
+#include <chaos/MyGLFWSingleWindowApplication.h>
 
 // =================================================
 // LudumGame
@@ -14,6 +16,8 @@
 
 class LudumGame : public chaos::ReferencedObject
 {
+	friend class LudumAutomata;
+	friend class MainMenuState;
 
 public:
 
@@ -32,6 +36,11 @@ public:
 	bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 protected:
+
+	/** getter on the application */
+	chaos::MyGLFW::SingleWindowApplication * GetApplication();
+	/** getter on the sound manager */
+	chaos::SoundManager * GetSoundManager();
 
 	/** internal method to update the state of the game */
 	void UpdateGameState(double delta_time);
@@ -53,6 +62,15 @@ protected:
 	/** require a game over */
 	bool RequireGameOver();
 
+
+	/** called on the very first time the game is started */
+	void OnStartGame();
+
+	/** change the game music */
+	void StartMainMenuMusic();
+	void StartGameMusic();
+	void StartPauseMusic();
+
 protected:
 
 	/** the window in GLFW library */
@@ -64,6 +82,11 @@ protected:
 	/** the current stick position */
 	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
 	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
+
+	/** the sounds being played */
+	boost::intrusive_ptr<chaos::Sound> menu_music;
+	boost::intrusive_ptr<chaos::Sound> game_music;
+	boost::intrusive_ptr<chaos::Sound> pause_music;
 
 	/** the current gamepad manager */
 	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;

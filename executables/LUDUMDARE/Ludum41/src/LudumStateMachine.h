@@ -7,17 +7,28 @@
 // States
 // =========================================================
 
-class MainMenuState : public chaos::StateMachine::State
+class LudumState : public chaos::StateMachine::State
+{
+public:
+
+	/** constructor */
+	LudumState(chaos::StateMachine::Automata * in_automata);
+	/** get the game */
+	class LudumGame * GetGame();
+};
+
+class MainMenuState : public LudumState
 {
 public:
 
 	/** constructor */
 	MainMenuState(chaos::StateMachine::Automata * in_automata);
-
+	/** override */
+	virtual bool OnEnterImpl(chaos::StateMachine::State * state) override;
 
 };
 
-class PlayingState : public chaos::StateMachine::State
+class PlayingState : public LudumState
 {
 public:
 
@@ -26,7 +37,7 @@ public:
 
 };
 
-class PauseState : public chaos::StateMachine::State
+class PauseState : public LudumState
 {
 public:
 
@@ -34,7 +45,7 @@ public:
 	PauseState(chaos::StateMachine::Automata * in_automata);
 };
 
-class GameOverState : public chaos::StateMachine::State
+class GameOverState : public LudumState
 {
 public:
 
@@ -46,7 +57,17 @@ public:
 // Transitions
 // =========================================================
 
-class MainMenuToPlayingTransition : public chaos::StateMachine::Transition
+class LudumTransition : public chaos::StateMachine::Transition
+{
+public:
+
+	/** constructor */
+	LudumTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
+	/** get the game */
+	class LudumGame * GetGame();
+};
+
+class MainMenuToPlayingTransition : public LudumTransition
 {
 public:
 
@@ -56,7 +77,7 @@ public:
 
 };
 
-class PlayingToMainMenuTransition : public chaos::StateMachine::Transition
+class PlayingToMainMenuTransition : public LudumTransition
 {
 
 public:
@@ -66,7 +87,7 @@ public:
 
 };
 
-class PlayingToPauseTransition : public chaos::StateMachine::Transition
+class PlayingToPauseTransition : public LudumTransition
 {
 
 public:
@@ -77,7 +98,7 @@ public:
 };
 
 
-class PauseToPlayingTransition : public chaos::StateMachine::Transition
+class PauseToPlayingTransition : public LudumTransition
 {
 
 public:
@@ -87,7 +108,7 @@ public:
 
 };
 
-class PlayingToGameOverTransition : public chaos::StateMachine::Transition
+class PlayingToGameOverTransition : public LudumTransition
 {
 
 public:
@@ -97,7 +118,7 @@ public:
 
 };
 
-class GameOverToMainMenuTransition : public chaos::StateMachine::Transition
+class GameOverToMainMenuTransition : public LudumTransition
 {
 
 public:
@@ -131,6 +152,10 @@ public:
 	/** constructor */
 	LudumAutomata(LudumGame * in_game);
 
+	/** get the game */
+	LudumGame * GetGame() { return game; }
+	/** get the game */
+	LudumGame const * GetGame() const { return game; }
 
 protected:
 

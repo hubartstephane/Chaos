@@ -50,6 +50,68 @@ bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physica
 	return true;
 }
 
+chaos::MyGLFW::SingleWindowApplication * LudumGame::GetApplication()
+{
+	return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+}
+
+chaos::SoundManager * LudumGame::GetSoundManager()
+{
+	chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
+	if (application == nullptr)
+		return nullptr;
+	return application->GetSoundManager();
+}
+
+void LudumGame::OnStartGame()
+{
+	StartMainMenuMusic();
+
+
+}
+
+void LudumGame::StartMainMenuMusic()
+{
+	if (menu_music != nullptr)
+		return;
+	
+	chaos::SoundManager * sound_manager = GetSoundManager();
+	if (sound_manager == nullptr)
+		return;
+
+	chaos::SoundSource * source = sound_manager->FindSource("menu_music");
+	if (source == nullptr)
+		return;
+
+	chaos::PlaySoundDesc play_desc;
+	play_desc.looping = true;
+	menu_music = source->PlaySound(play_desc);
+
+	chaos::BlendVolumeDesc blend_desc;
+	blend_desc.blend_type  = chaos::BlendVolumeDesc::BLEND_OUT;
+	blend_desc.kill_at_end = true;
+
+	if (pause_music != nullptr)
+		pause_music->StartBlend(blend_desc);
+	if (game_music != nullptr)
+		game_music->StartBlend(blend_desc);
+
+	
+
+}
+
+void LudumGame::StartGameMusic()
+{
+	if (game_music != nullptr)
+		return;
+}
+
+void LudumGame::StartPauseMusic()
+{
+	if (pause_music != nullptr)
+		return;
+}
+
 bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	chaos::BitmapAtlas::AtlasInput input;

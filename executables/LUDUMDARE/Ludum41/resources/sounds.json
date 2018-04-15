@@ -12,7 +12,7 @@
 	},
 
   "sources": [
-    { "path": "sounds/menu_music.ogg" },
+    { "path": "sounds/menu_music.ogg"},
     { "path": "sounds/game_music.ogg"},
     { "path": "sounds/gameover.ogg" },
     { "path": "sounds/bonus1.ogg" },

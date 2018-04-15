@@ -1,32 +1,60 @@
 #include "LudumStateMachine.h"
+#include "LudumGame.h"
 
 // =========================================================
 // States
 // =========================================================
 
-MainMenuState::MainMenuState(chaos::StateMachine::Automata * in_automata):
+LudumState::LudumState(chaos::StateMachine::Automata * in_automata) :
 	chaos::StateMachine::State(in_automata)
+{
+}
+
+LudumGame * LudumState::GetGame()
+{
+	LudumAutomata * ludum_automata = (LudumAutomata *)automata;
+	if (ludum_automata == nullptr)
+		return nullptr;
+	return ludum_automata->GetGame();
+}
+
+MainMenuState::MainMenuState(chaos::StateMachine::Automata * in_automata):
+	LudumState(in_automata)
 {
 	SetStateID(LudumAutomata::STATE_MAINMENU);
 	SetName("MainMenu");
 }
 
+bool MainMenuState::OnEnterImpl(chaos::StateMachine::State * from)
+{
+	if (from == nullptr)
+	{
+		LudumGame * game = GetGame();
+		if (game != nullptr)
+			game->OnStartGame();
+	}
+	return true;
+}
+
+
+
+
 PlayingState::PlayingState(chaos::StateMachine::Automata * in_automata):
-	chaos::StateMachine::State(in_automata)
+	LudumState(in_automata)
 {
 	SetStateID(LudumAutomata::STATE_PLAYING);
 	SetName("Playing");
 }
 
 PauseState::PauseState(chaos::StateMachine::Automata * in_automata):
-	chaos::StateMachine::State(in_automata)
+	LudumState(in_automata)
 {
 	SetStateID(LudumAutomata::STATE_PAUSE);
 	SetName("Pause");
 }
 
 GameOverState::GameOverState(chaos::StateMachine::Automata * in_automata):
-	chaos::StateMachine::State(in_automata)
+	LudumState(in_automata)
 {
 	SetStateID(LudumAutomata::STATE_GAMEOVER);
 	SetName("GameOver");
@@ -36,36 +64,48 @@ GameOverState::GameOverState(chaos::StateMachine::Automata * in_automata):
 // Transitions
 // =========================================================
 
-MainMenuToPlayingTransition::MainMenuToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
+LudumTransition::LudumTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state) :
 	chaos::StateMachine::Transition(in_from_state, in_to_state)
+{
+}
+
+LudumGame * LudumTransition::GetGame()
+{
+	LudumAutomata * ludum_automata = (LudumAutomata *)automata;
+	if (ludum_automata == nullptr)
+		return nullptr;
+	return ludum_automata->GetGame();
+}
+
+MainMenuToPlayingTransition::MainMenuToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
+	LudumTransition(in_from_state, in_to_state)
 {
 }
 
 PlayingToMainMenuTransition::PlayingToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
-	chaos::StateMachine::Transition(in_from_state, in_to_state)
+	LudumTransition(in_from_state, in_to_state)
 {
 }
 
 PlayingToPauseTransition::PlayingToPauseTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
-	chaos::StateMachine::Transition(in_from_state, in_to_state)
+	LudumTransition(in_from_state, in_to_state)
 {
 }
 
 PauseToPlayingTransition::PauseToPlayingTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
-	chaos::StateMachine::Transition(in_from_state, in_to_state)
+	LudumTransition(in_from_state, in_to_state)
 {
 }
 
 PlayingToGameOverTransition::PlayingToGameOverTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
-	chaos::StateMachine::Transition(in_from_state, in_to_state)
+	LudumTransition(in_from_state, in_to_state)
 {
 }
 
 GameOverToMainMenuTransition::GameOverToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
-	chaos::StateMachine::Transition(in_from_state, in_to_state)
+	LudumTransition(in_from_state, in_to_state)
 {
 }
-
 
 // =========================================================
 // Automata

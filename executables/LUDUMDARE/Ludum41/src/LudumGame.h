@@ -22,6 +22,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PauseToPlayingTransition;
 	friend class MainMenuToPlayingTransition;
 	friend class PlayingToMainMenuTransition;
+	friend class PlayingState;
 
 public:
 
@@ -101,11 +102,13 @@ protected:
 	/** returns true if the game leave is fully completed */
 	bool IsGameLeaveComplete();
 
+	/** the game main loop */
+	void TickGameLoop(double delta_time);
 
 	/** change the game music */
-	void StartMainMenuMusic();
-	void StartGameMusic();
-	void StartPauseMusic();
+	void StartMainMenuMusic(bool restart_first);
+	void StartGameMusic(bool restart_first);
+	void StartPauseMusic(bool restart_first);
 
 	/** get current state ID */
 	int GetCurrentStateID() const;

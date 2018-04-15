@@ -130,34 +130,34 @@ void LudumGame::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_f
 	}
 }
 
-void LudumGame::StartMainMenuMusic()
+void LudumGame::StartMainMenuMusic(bool restart_first)
 {
 	chaos::Sound * musics[] = {
 		menu_music.get(),
 		pause_music.get(),
 		game_music.get()
 	};
-	ChangeMusic(musics, 3, true);
+	ChangeMusic(musics, 3, restart_first);
 }
 
-void LudumGame::StartGameMusic()
+void LudumGame::StartGameMusic(bool restart_first)
 {
 	chaos::Sound * musics[] = {
 		game_music.get(),
 		pause_music.get(),
 		menu_music.get()
 	};
-	ChangeMusic(musics, 3, false);
+	ChangeMusic(musics, 3, restart_first);
 }
 
-void LudumGame::StartPauseMusic()
+void LudumGame::StartPauseMusic(bool restart_first)
 {
 	chaos::Sound * musics[] = {
 		pause_music.get(),
 		menu_music.get(),
 		game_music.get()
 	};
-	ChangeMusic(musics, 3, false);
+	ChangeMusic(musics, 3, restart_first);
 }
 
 
@@ -170,7 +170,7 @@ void LudumGame::OnStartGame()
 {
 
 
-	StartMainMenuMusic();
+	StartMainMenuMusic(true);
 
 
 }
@@ -181,7 +181,7 @@ void LudumGame::OnStartGame()
 
 bool LudumGame::OnEnterPause()
 {
-	StartPauseMusic();
+	StartPauseMusic(true);
 
 
 
@@ -192,7 +192,7 @@ bool LudumGame::OnEnterPause()
 
 bool LudumGame::OnLeavePause()
 {
-	StartGameMusic();
+	StartGameMusic(false);
 
 
 
@@ -201,7 +201,7 @@ bool LudumGame::OnLeavePause()
 
 bool LudumGame::OnEnterGame()
 {
-	StartGameMusic();
+	StartGameMusic(true);
 
 
 
@@ -212,13 +212,14 @@ bool LudumGame::OnEnterGame()
 
 bool LudumGame::OnLeaveGame()
 {
-	StartMainMenuMusic();
+	StartMainMenuMusic(true);
+
+
 
 
 
 	return true;
 }
-
 
 bool LudumGame::IsPauseEnterComplete()
 {
@@ -233,7 +234,6 @@ bool LudumGame::IsPauseLeaveComplete()
 		return true;
 	return !game_music->HasVolumeBlending();
 }
-
 
 bool LudumGame::IsGameEnterComplete()
 {
@@ -317,9 +317,6 @@ void LudumGame::HandleKeyboardInputs()
 void LudumGame::UpdateGameState(double delta_time)
 {
 	game_automata->Tick(delta_time);
-
-
-
 }
 
 void LudumGame::Tick(double delta_time)
@@ -495,4 +492,9 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	}
 
 	return true;
+}
+
+void LudumGame::TickGameLoop(double delta_time)
+{
+
 }

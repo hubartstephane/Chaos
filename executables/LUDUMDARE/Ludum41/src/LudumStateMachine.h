@@ -34,7 +34,8 @@ public:
 
 	/** constructor */
 	PlayingState(chaos::StateMachine::Automata * in_automata);
-
+	/** override */
+	virtual bool TickImpl(double delta_time) override;
 };
 
 class PauseState : public LudumState

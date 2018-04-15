@@ -47,6 +47,14 @@ PlayingState::PlayingState(chaos::StateMachine::Automata * in_automata):
 	SetName("Playing");
 }
 
+bool PlayingState::TickImpl(double delta_time)
+{
+	LudumGame * game = GetGame();
+	if (game != nullptr)
+		game->TickGameLoop(delta_time);
+	return true;
+}
+
 						// ---------------------------------
 
 PauseState::PauseState(chaos::StateMachine::Automata * in_automata):

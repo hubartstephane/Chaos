@@ -92,7 +92,7 @@ public:
 protected:
 
 	/** update all particles */
-	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count);
+	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector);
 	/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
 	virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 };
@@ -265,11 +265,12 @@ public:
 	}
 
 	/** loop for updating the particles */
-	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count) override
+	virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector) override
 	{
 		particle_type * p = (particle_type*)particles;
 		for (size_t i = 0; i < particle_count; ++i)
-			trait.UpdateParticle(delta_time, &p[i]);
+			if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK)
+				trait.UpdateParticle(delta_time, &p[i]);
 	}
 	/** loop for destroying the particles */
 	virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector) override

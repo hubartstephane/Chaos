@@ -56,7 +56,7 @@ size_t ParticleLayerDesc::GetVertexSize() const
 	return 0;
 }
 
-void ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count)
+void ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector)
 {
 
 }
@@ -110,7 +110,7 @@ size_t ParticleLayer::GetParticleCount(ParticleRange range) const
 {
 	if (particle_size == 0)
 		return 0;
-	return range.count / particle_size;
+	return range.count;
 }
 
 void * ParticleLayer::GetParticleBuffer(ParticleRange range)
@@ -187,7 +187,7 @@ void ParticleLayer::TickParticles(float delta_time)
 
 void ParticleLayer::UpdateParticles(float delta_time)
 {
-	layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount());
+	layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount(), &deletion_vector[0]);
 }
 
 size_t ParticleLayer::DestroyObsoletParticles()

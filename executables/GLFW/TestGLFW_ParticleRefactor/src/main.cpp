@@ -147,6 +147,9 @@ int _tmain(int argc, char ** argv, char ** env)
 	boost::intrusive_ptr<ParticleRangeAllocation> p2 = sl.SpawnParticlesAndKeepRange(10);
 	boost::intrusive_ptr<ParticleRangeAllocation> p3 = sl.SpawnParticlesAndKeepRange(20);
 
+	auto c1 = p1->GetParticleCount();
+	auto c2 = p2->GetParticleCount();
+	auto c3 = p3->GetParticleCount();
 
 	p2 = nullptr;
 	sl.TickParticles(0.0f);

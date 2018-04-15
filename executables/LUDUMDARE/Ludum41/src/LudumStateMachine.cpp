@@ -35,7 +35,7 @@ bool MainMenuState::OnEnterImpl(chaos::StateMachine::State * from)
 		if (game != nullptr)
 			game->OnStartGame();
 	}
-	return true;
+	return false;
 }
 
 						// ---------------------------------
@@ -94,7 +94,8 @@ bool MainMenuToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	LudumGame * game = GetGame();
 	if (game == nullptr)
 		return true;
-	return game->OnEnterGame();
+	game->OnEnterGame();
+	return false;
 }
 
 bool MainMenuToPlayingTransition::TickImpl(double delta_time)
@@ -120,7 +121,8 @@ bool PlayingToMainMenuTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	LudumGame * game = GetGame();
 	if (game == nullptr)
 		return true;
-	return game->OnLeaveGame();
+	game->OnLeaveGame();
+	return false;
 }
 
 bool PlayingToMainMenuTransition::TickImpl(double delta_time)
@@ -145,7 +147,8 @@ bool PlayingToPauseTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	LudumGame * game = GetGame();
 	if (game == nullptr)
 		return true;
-	return game->OnEnterPause();
+	game->OnEnterPause();
+	return false;
 }
 
 bool PlayingToPauseTransition::TickImpl(double delta_time)
@@ -168,7 +171,8 @@ bool PauseToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	LudumGame * game = GetGame();
 	if (game == nullptr)
 		return true;
-	return game->OnLeavePause();
+	game->OnLeavePause();
+	return false;
 }
 
 bool PauseToPlayingTransition::TickImpl(double delta_time)

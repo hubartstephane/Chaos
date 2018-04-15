@@ -127,7 +127,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
     /** the initial volume of the object */
     float volume = 1.0f;
     /** the blend in time of the object */
-    float blend_in_time = 0.0f;
+    float blend_time = 0.0f;
 
     /** the position of the sound in 3D */
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -163,7 +163,12 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
     SoundManager const * GetManager() const;
 
     /** blend the volume */
-    bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
+    bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false, bool change_blend_value = false);
+
+		/** change the blend value */
+		void SetBlendValue(float value) { blend_value = value; }
+		/** get the blend value */
+		float GetBlendValue() const { return blend_value; }
 
     /** stop the object */
     void Stop();
@@ -343,6 +348,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
     glm::vec3 GetVelocity() const;
     /** get whether the sound is looping */
     bool IsLooping() const;
+
+		/** change the position of the sound track */
+		void SetSoundTrackPosition(int position);
 
   protected:
 

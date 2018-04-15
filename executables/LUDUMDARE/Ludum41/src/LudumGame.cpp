@@ -72,10 +72,11 @@ void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
 	blend_desc.blend_type   = (blend_in)? 
 		chaos::BlendVolumeDesc::BLEND_IN: 
 		chaos::BlendVolumeDesc::BLEND_OUT;
+	blend_desc.blend_time   = 1.0f,
 	blend_desc.kill_at_end  = false;
 	blend_desc.pause_at_end = !blend_in;
 
-	music->StartBlend(blend_desc, true);
+	music->StartBlend(blend_desc, true, true);
 }
 
 chaos::Sound * LudumGame::CreateMusic(char const * name)
@@ -114,6 +115,8 @@ void LudumGame::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_f
 	if (music1 != nullptr)
 	{
 		music1->Pause(false);		
+		if (restart_first)
+			music1->SetSoundTrackPosition(0);
 		BlendMusic(music1, true);
 	}
 
@@ -241,9 +244,9 @@ bool LudumGame::IsGameEnterComplete()
 
 bool LudumGame::IsGameLeaveComplete()
 {
-	if (game_music == nullptr)
+	if (menu_music == nullptr)
 		return true;
-	return !game_music->HasVolumeBlending();
+	return !menu_music->HasVolumeBlending();
 }
 
 bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -387,12 +390,35 @@ bool LudumGame::OnKeyEvent(int key, int action)
 	return false;
 }
 
+int LudumGame::GetCurrentStateID() const
+{
+	if (game_automata == nullptr)
+		return -1;
+
+	chaos::StateMachine::State const * current_state = game_automata->GetCurrentState();
+	if (current_state == nullptr)
+		return -1;
+
+	return current_state->GetStateID();
+}
+
 void LudumGame::Display(chaos::box2 const & viewport)
 {
-	// clear the buffers
-	glm::vec4 clear_color(1.0f, 0.0f, 0.0f, 0.0f);
+	// clear the color buffers
+	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	int state_id = GetCurrentStateID();
+	if (state_id == LudumAutomata::STATE_MAINMENU)
+		clear_color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	else if (state_id == LudumAutomata::STATE_PAUSE)
+		clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	else if (state_id == LudumAutomata::STATE_PLAYING)
+		clear_color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+	else if (state_id == LudumAutomata::STATE_GAMEOVER)
+		clear_color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
+	// clear the depth buffers
 	float far_plane = 1000.0f;
 	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 

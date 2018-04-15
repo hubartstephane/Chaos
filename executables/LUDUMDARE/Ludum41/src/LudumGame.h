@@ -107,6 +107,9 @@ protected:
 	void StartGameMusic();
 	void StartPauseMusic();
 
+	/** get current state ID */
+	int GetCurrentStateID() const;
+
 protected:
 
 	/** the window in GLFW library */

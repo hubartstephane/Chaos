@@ -209,7 +209,7 @@ namespace chaos
       RemoveFromManager();
   }
 
-  bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older)
+  bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older, bool change_blend_value)
   {
     // only if attached
     if (!IsAttachedToManager())
@@ -232,8 +232,17 @@ namespace chaos
       if (desc.callbacks)
         desc.callbacks->OnFinished(this);
     }
-    else
-      blend_desc = desc;
+		else
+		{
+			blend_desc = desc;
+			if (change_blend_value)
+			{
+				if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
+					blend_value = 0.0f;
+				else if (desc.blend_type != BlendVolumeDesc::BLEND_OUT)
+					blend_value = 1.0f;
+			}
+		}
 
     return true;
   }
@@ -561,11 +570,11 @@ namespace chaos
         sound_effect);
     }
 
-    if (desc.blend_in_time > 0.0f)
+    if (desc.blend_time > 0.0f)
     {
       BlendVolumeDesc blend_desc;
       blend_desc.blend_type = BlendVolumeDesc::BLEND_IN;
-      blend_desc.blend_time = desc.blend_in_time;
+      blend_desc.blend_time = desc.blend_time;
       blend_value = 0.0f;
       StartBlend(blend_desc);
     }
@@ -612,6 +621,12 @@ namespace chaos
     if (irrklang_sound != nullptr)
       irrklang_sound->setIsPaused(IsEffectivePaused());
   }
+
+	void Sound::SetSoundTrackPosition(int position)
+	{
+		if (irrklang_sound != nullptr)
+			irrklang_sound->setPlayPosition((irrklang::ik_u32)position);
+	}
 
   // ==============================================================
   // MANAGER

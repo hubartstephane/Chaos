@@ -21,6 +21,14 @@ namespace chaos
 		
 		}
 
+		void State::SetName(char const * in_name)
+		{
+			if (in_name == nullptr)
+				name.clear();
+			else
+				name = in_name;
+		}
+
 		void State::Tick(double delta_time)
 		{
 			if (TickImpl(delta_time))
@@ -86,8 +94,8 @@ namespace chaos
 			// test for conditions if required
 			if (!force && !CheckTransitionConditions())
 				return false;
-			//change the state
-			automata->ChangeState(to_state);		
+			// change the state
+			automata->ChangeState(this);		
 			return true;
 		}
 
@@ -115,6 +123,22 @@ namespace chaos
 		void Transition::OnLeave(State * to_state)
 		{
 			OnLeaveImpl(to_state);
+		}
+
+
+		bool Transition::OnEnterImpl(State * from_state)
+		{
+			return true; // pass throught transition (no tick)
+		}
+
+		bool Transition::TickImpl(double delta_time)
+		{
+			return true;
+		}
+
+		bool Transition::OnLeaveImpl(State * to_state)
+		{
+			return true;
 		}
 
 		// ==================================================

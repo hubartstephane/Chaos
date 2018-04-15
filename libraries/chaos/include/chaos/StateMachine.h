@@ -46,6 +46,11 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** get the ID */
 			int GetStateID() const { return id; }
 
+			/** change the name */
+			void SetName(char const * in_name);
+			/** get the name */
+			char const * GetName() const { return name.c_str(); }
+
 		protected: 
 
 			/** FRAMEWORK : called whenever we enter in this state */
@@ -69,6 +74,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 
 			/** an ID for the state */
 			int id = 0;
+			/** the name of the state */
+			std::string name;
+
 			/** the list of outgoing transitions */
 			std::vector<Transition *> outgoing_transitions;
 			/** the list of incomming transitions */
@@ -102,6 +110,13 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			virtual void Tick(double delta_time) override;
 			/** FRAMEWORK : called whenever we leave this state */
 			virtual void OnLeave(State * to_state) override;
+
+			/** USER IMPLEMENTATION : called whenever we enter in this state */
+			virtual bool OnEnterImpl(State * from_state) override;
+			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
+			virtual bool TickImpl(double delta_time) override;
+			/** USER IMPLEMENTATION : called whenever we leave this state */
+			virtual bool OnLeaveImpl(State * to_state) override;
 
 		protected:
 

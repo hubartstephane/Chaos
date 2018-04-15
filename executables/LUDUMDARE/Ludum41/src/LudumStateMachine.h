@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/StateMachine.h>
+#include <chaos/SoundManager.h>
 
 // =========================================================
 // States
@@ -44,14 +45,6 @@ public:
 
 	/** constructor */
 	PauseState(chaos::StateMachine::Automata * in_automata);
-};
-
-class GameOverState : public LudumState
-{
-public:
-
-	/** constructor */
-	GameOverState(chaos::StateMachine::Automata * in_automata);
 };
 
 // =========================================================
@@ -140,16 +133,17 @@ public:
 	/** constructor */
 	PlayingToGameOverTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
 
-};
+	/** overriding */
+	virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+	/** overriding */
+	virtual bool OnLeaveImpl(chaos::StateMachine::State * to) override;
+	/** overriding */
+	virtual bool TickImpl(double delta_time) override;
 
-class GameOverToMainMenuTransition : public LudumTransition
-{
+protected:
 
-public:
-
-	/** constructor */
-	GameOverToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state);
-
+	/** the sound being played */
+	boost::intrusive_ptr<chaos::Sound> gameover_sound;
 };
 
 // =========================================================
@@ -166,7 +160,6 @@ public:
 	static int const STATE_MAINMENU = 1;
 	static int const STATE_PAUSE = 2;
 	static int const STATE_PLAYING = 3;
-	static int const STATE_GAMEOVER = 4;
 
 	// the possible transition-states
 	static int const STATE_TRANSITION_MAINMENU_TO_PLAYING = 5;
@@ -190,12 +183,10 @@ protected:
 	chaos::StateMachine::State * main_menu_state = nullptr;
 	chaos::StateMachine::State * playing_state   = nullptr;
 	chaos::StateMachine::State * pause_state     = nullptr;
-	chaos::StateMachine::State * gameover_state  = nullptr;
 
 	chaos::StateMachine::Transition * main_menu_to_playing  = nullptr;
 	chaos::StateMachine::Transition * playing_to_main_menu  = nullptr;
 	chaos::StateMachine::Transition * playing_to_pause      = nullptr;
 	chaos::StateMachine::Transition * pause_to_playing      = nullptr;
 	chaos::StateMachine::Transition * playing_to_gameover   = nullptr;
-	chaos::StateMachine::Transition * gameover_to_main_menu = nullptr;
 };

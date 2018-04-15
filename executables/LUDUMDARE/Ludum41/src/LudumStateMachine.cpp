@@ -28,13 +28,10 @@ MainMenuState::MainMenuState(chaos::StateMachine::Automata * in_automata):
 }
 
 bool MainMenuState::OnEnterImpl(chaos::StateMachine::State * from)
-{
-	if (from == nullptr)
-	{
-		LudumGame * game = GetGame();
-		if (game != nullptr)
-			game->OnStartGame();
-	}
+{	
+	LudumGame * game = GetGame();
+	if (game != nullptr)
+		game->OnStartGame(from == nullptr); // very first game ?
 	return false;
 }
 
@@ -62,15 +59,6 @@ PauseState::PauseState(chaos::StateMachine::Automata * in_automata):
 {
 	SetStateID(LudumAutomata::STATE_PAUSE);
 	SetName("Pause");
-}
-
-						// ---------------------------------
-
-GameOverState::GameOverState(chaos::StateMachine::Automata * in_automata):
-	LudumState(in_automata)
-{
-	SetStateID(LudumAutomata::STATE_GAMEOVER);
-	SetName("GameOver");
 }
 
 // =========================================================
@@ -113,10 +101,6 @@ bool MainMenuToPlayingTransition::TickImpl(double delta_time)
 		return true;
 	return game->IsGameEnterComplete();
 }
-
-
-
-
 						// ---------------------------------
 
 PlayingToMainMenuTransition::PlayingToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
@@ -198,11 +182,40 @@ PlayingToGameOverTransition::PlayingToGameOverTransition(chaos::StateMachine::St
 {
 }
 
-						// ---------------------------------
-
-GameOverToMainMenuTransition::GameOverToMainMenuTransition(chaos::StateMachine::State * in_from_state, chaos::StateMachine::State * in_to_state):
-	LudumTransition(in_from_state, in_to_state)
+bool PlayingToGameOverTransition::OnEnterImpl(chaos::StateMachine::State * from)
 {
+	LudumGame * game = GetGame();
+	if (game != nullptr)
+	{
+		gameover_sound = game->PlaySound("gameover", false, false);
+		game->OnLeaveGame();
+	}
+	return false;
+}
+
+bool PlayingToGameOverTransition::OnLeaveImpl(chaos::StateMachine::State * to)
+{
+	// notify the game that it is finished
+	LudumGame * game = GetGame();
+	if (game != nullptr)
+		game->OnGameOver();
+	// destroy the sound object
+	gameover_sound = nullptr;
+
+	return true;
+}
+
+bool PlayingToGameOverTransition::TickImpl(double delta_time)
+{
+	// wait until game over sound is finished
+	if (gameover_sound != nullptr)
+		if (!gameover_sound->IsFinished())
+			return false;
+	// wait until the music is blend correctly
+	LudumGame * game = GetGame();
+	if (game != nullptr)
+		return game->IsGameLeaveComplete();
+	return true;
 }
 
 // =========================================================
@@ -217,14 +230,12 @@ LudumAutomata::LudumAutomata(class LudumGame * in_game):
 	main_menu_state = new MainMenuState(this);
 	playing_state   = new PlayingState(this);
 	pause_state     = new PauseState(this);
-	gameover_state  = new GameOverState(this);
 
 	main_menu_to_playing  = new MainMenuToPlayingTransition(main_menu_state, playing_state);
 	playing_to_main_menu  = new PlayingToMainMenuTransition(playing_state, main_menu_state);
 	playing_to_pause      = new PlayingToPauseTransition(playing_state, pause_state);
 	pause_to_playing      = new PauseToPlayingTransition(pause_state, playing_state);
-	playing_to_gameover   = new PlayingToGameOverTransition(playing_state, gameover_state);
-	gameover_to_main_menu = new GameOverToMainMenuTransition(gameover_state, main_menu_state);
+	playing_to_gameover   = new PlayingToGameOverTransition(playing_state, main_menu_state);
 
 	SetInitialState(main_menu_state);
 }

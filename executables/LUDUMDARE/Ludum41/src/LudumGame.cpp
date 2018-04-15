@@ -79,7 +79,7 @@ void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
 	music->StartBlend(blend_desc, true, true);
 }
 
-chaos::Sound * LudumGame::CreateMusic(char const * name)
+chaos::Sound * LudumGame::PlaySound(char const * name, bool paused, bool looping)
 {
 	chaos::SoundManager * sound_manager = GetSoundManager();
 	if (sound_manager == nullptr)
@@ -90,19 +90,19 @@ chaos::Sound * LudumGame::CreateMusic(char const * name)
 		return nullptr;
 
 	chaos::PlaySoundDesc play_desc;
-	play_desc.paused  = true;
-	play_desc.looping = true;
+	play_desc.paused  = paused;
+	play_desc.looping = looping;
 	return source->PlaySound(play_desc);
 }
 
 void LudumGame::CreateAllMusics()
 {
 	if (menu_music == nullptr)
-		menu_music = CreateMusic("menu_music");
+		menu_music = PlaySound("menu_music", true, true);
 	if (pause_music == nullptr)
-		pause_music = CreateMusic("pause_music");
+		pause_music = PlaySound("pause_music", true, true);
 	if (game_music == nullptr)
-		game_music = CreateMusic("game_music");
+		game_music = PlaySound("game_music", true, true);
 }
 
 void LudumGame::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first)
@@ -160,24 +160,13 @@ void LudumGame::StartPauseMusic(bool restart_first)
 	ChangeMusic(musics, 3, restart_first);
 }
 
-
-
-
-
-
-
-void LudumGame::OnStartGame()
+void LudumGame::OnStartGame(bool very_first)
 {
-
-
-	StartMainMenuMusic(true);
+	if (very_first)
+		StartMainMenuMusic(true);
 
 
 }
-
-
-
-
 
 bool LudumGame::OnEnterPause()
 {
@@ -399,35 +388,6 @@ int LudumGame::GetCurrentStateID() const
 	return current_state->GetStateID();
 }
 
-void LudumGame::Display(chaos::box2 const & viewport)
-{
-	// clear the color buffers
-	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	int state_id = GetCurrentStateID();
-	if (state_id == LudumAutomata::STATE_MAINMENU)
-		clear_color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-	else if (state_id == LudumAutomata::STATE_PAUSE)
-		clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	else if (state_id == LudumAutomata::STATE_PLAYING)
-		clear_color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-	else if (state_id == LudumAutomata::STATE_GAMEOVER)
-		clear_color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-	// clear the depth buffers
-	float far_plane = 1000.0f;
-	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-	// some states
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE); 
-
-
-
-
-}
-
 bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 {
 	// initialize the window
@@ -492,6 +452,39 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	}
 
 	return true;
+}
+
+void LudumGame::Display(chaos::box2 const & viewport)
+{
+	// clear the color buffers
+	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	int state_id = GetCurrentStateID();
+	if (state_id == LudumAutomata::STATE_MAINMENU)
+		clear_color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	else if (state_id == LudumAutomata::STATE_PAUSE)
+		clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	else if (state_id == LudumAutomata::STATE_PLAYING)
+		clear_color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+	// clear the depth buffers
+	float far_plane = 1000.0f;
+	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+
+	// some states
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
+
+
+
+}
+
+void LudumGame::OnGameOver()
+{
+
+
 }
 
 void LudumGame::TickGameLoop(double delta_time)

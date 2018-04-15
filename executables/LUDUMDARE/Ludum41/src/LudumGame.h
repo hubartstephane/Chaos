@@ -23,6 +23,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class MainMenuToPlayingTransition;
 	friend class PlayingToMainMenuTransition;
 	friend class PlayingState;
+	friend class PlayingToGameOverTransition;
 
 public:
 
@@ -69,8 +70,8 @@ protected:
 
 	/** create the music used in the game */
 	void CreateAllMusics();
-	/** create one music */
-	chaos::Sound * CreateMusic(char const * name);
+	/** create one sound */
+	chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
 	/** blend out a music */
 	void BlendMusic(chaos::Sound * music, bool blend_in);
 	/** start music[0], stop all others */
@@ -78,10 +79,9 @@ protected:
 
 
 	/** called on the very first time the game is started */
-	void OnStartGame();
-
-
-
+	void OnStartGame(bool very_first);
+	/** called whenever the game is lost */
+	void OnGameOver();
 	/** called whenever we enter in pause mode */
 	bool OnEnterPause();
 	/** called whenever we leave pause mode */

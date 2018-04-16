@@ -97,8 +97,8 @@ namespace chaos
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
 			return false;
 
-    GPUProgramData const & program_data = program->GetProgramData();
-    program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
+		GPUProgramData const & program_data = program->GetProgramData();
+		program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 		return true;
 	}
@@ -209,15 +209,28 @@ namespace chaos
 
 	void SpriteManager::UpdateGPUVertexBuffer()
 	{
+		// fill GPU buffer
+		size_t count = sprites.size();
+		if (count > 0)
+		{
+			GLuint binding_index = 0;
+			glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);
+			glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
+		}
+	}
+
+
+};
+
 #if 0
 
-		glCreateTransformFeedbacks GLEW_GET_FUN(__glewCreateTransformFeedbacks)
+glCreateTransformFeedbacks GLEW_GET_FUN(__glewCreateTransformFeedbacks)
 #define glGetTransformFeedbacki64_v GLEW_GET_FUN(__glewGetTransformFeedbacki64_v)
 #define glGetTransformFeedbacki_v GLEW_GET_FUN(__glewGetTransformFeedbacki_v)
 #define glGetTransformFeedbackiv GLEW_GET_FUN(__glewGetTransformFeedbackiv)
 #define glTransformFeedbackBufferBase GLEW_GET_FUN(__glewTransformFeedbackBufferBase)
 #define glTransformFeedbackBufferRange GLEW_GET_FUN(__glewTransformFeedbackBufferRange)
-			glFeedbackBuffer(GLsizei size, GLenum type, GLfloat *buffer);
+glFeedbackBuffer(GLsizei size, GLenum type, GLfloat *buffer);
 
 #define glBindTransformFeedback GLEW_GET_FUN(__glewBindTransformFeedback)
 #define glDeleteTransformFeedbacks GLEW_GET_FUN(__glewDeleteTransformFeedbacks)
@@ -227,7 +240,7 @@ namespace chaos
 #define glPauseTransformFeedback GLEW_GET_FUN(__glewPauseTransformFeedback)
 #define glResumeTransformFeedback GLEW_GET_FUN(__glewResumeTransformFeedback)
 
-		GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN
+GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN
 
 #define glBeginQuery GLEW_GET_FUN(__glewBeginQuery)
 #define glEndQuery GLEW_GET_FUN(__glewEndQuery)
@@ -235,7 +248,7 @@ namespace chaos
 #define glGetQueryObjectuiv GLEW_GET_FUN(__glewGetQueryObjectuiv)
 #define glGetQueryiv GLEW_GET_FUN(__glewGetQueryiv)
 
-			glDrawTransformFeedbackStream
+glDrawTransformFeedbackStream
 #define glDrawTransformFeedbackInstanced GLEW_GET_FUN(__glewDrawTransformFeedbackInstanced)
 #define glDrawTransformFeedbackStreamInstanced GLEW_GET_FUN(__glewDrawTransformFeedbackStreamInstanced)
 
@@ -254,16 +267,3 @@ namespace chaos
 #define glNamedBufferStorage GLEW_GET_FUN(__glewNamedBufferStorage)
 #define glNamedBufferSubData GLEW_GET_FUN(__glewNamedBufferSubData)
 #endif
-
-			// fill GPU buffer
-			size_t count = sprites.size();
-		if (count > 0)
-		{
-			GLuint binding_index = 0;
-			glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(SpriteVertex), &sprites[0], GL_STATIC_DRAW);		
-			glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());		
-		}
-	}
-
-
-};

@@ -93,6 +93,19 @@ ParticleLayer::~ParticleLayer()
 	DetachAllParticleAllocations();
 }
 
+void ParticleLayer::SetLayerName(char const * in_name)
+{
+	if (in_name == nullptr)
+		name.clear();
+	else
+		name = in_name;
+}
+
+void ParticleLayer::SetLayerID(int in_id)
+{
+	id = in_id;
+}
+
 void ParticleLayer::DetachAllParticleAllocations()
 {
 	while (range_allocations.size())
@@ -298,6 +311,15 @@ void ParticleLayer::UpdateParticleRanges(size_t new_particle_count)
 		deletion_vector[i] = 0;
 }
 
+void ParticleLayer::Display(chaos::RenderMaterial * material_override, chaos::GPUProgramProviderBase * uniform_provider) const
+{
+	if (render_material == nullptr && material_override == nullptr)
+		return;
+
+
+
+
+}
 
 // ==============================================================
 // PARTICLE MANAGER
@@ -308,12 +330,190 @@ void ParticleManager::SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in
 	atlas = in_atlas;
 }
 
-void ParticleManager::Display(chaos::GPUProgramProviderBase * uniform_provider)
+ParticleLayer * ParticleManager::FindLayer(char const * name)
 {
+	if (name == nullptr)
+		return nullptr;
+	size_t count = layers.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		ParticleLayer * layer = layers[i].get();
+		if (strcmp(layer->GetName(), name) == 0)
+			return layer;
+	}
+	return nullptr;
+}
 
+ParticleLayer const * ParticleManager::FindLayer(char const * name) const
+{
+	if (name == nullptr)
+		return nullptr;
+	size_t count = layers.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		ParticleLayer const * layer = layers[i].get();
+		if (strcmp(layer->GetName(), name) == 0)
+			return layer;
+	}
+	return nullptr;
+}
+
+ParticleLayer * ParticleManager::FindLayer(int id)
+{
+	size_t count = layers.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		ParticleLayer * layer = layers[i].get();
+		if (layer->GetLayerID() == id)
+			return layer;
+	}
+	return nullptr;
+}
+
+ParticleLayer const * ParticleManager::FindLayer(int id) const
+{
+	size_t count = layers.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		ParticleLayer const * layer = layers[i].get();
+		if (layer->GetLayerID() == id)
+			return layer;
+	}
+	return nullptr;
+}
+
+size_t ParticleManager::FindLayerIndex(ParticleLayer * layer) const
+{
+	size_t count = layers.size();
+	for (size_t i = 0; i < count; ++i)
+		if (layers[i].get() == layer)
+			return i;
+	return std::numeric_limits<size_t>::max();
+}
+
+void ParticleManager::AddLayer(ParticleLayer * layer)
+{
+	if (layer == nullptr)
+		return;
+	// search whether the layer is not already in the manager
+	size_t index = FindLayerIndex(layer);
+	if (index < layers.size())
+		return;
+	// insert the layer at the end
+	layers.push_back(layer);
+}
+
+void ParticleManager::RemoveLayer(ParticleLayer * layer)
+{
+	if (layer == nullptr)
+		return;
+	// search whether the layer is in the manager
+	size_t index = FindLayerIndex(layer);
+	if (index >= layers.size())
+		return;
+	// remove the layer from the manager
+	layers.erase(layers.begin() + index);
+}
+
+bool ParticleManager::AreLayersSorted(bool test_program_id) const
+{
+	size_t count = layers.size();
+
+	for (size_t i = 1; i < count; ++i)
+	{
+		ParticleLayer const * L1 = layers[i - 1].get();
+		ParticleLayer const * L2 = layers[i].get();
+		// test for render order
+		int RenderOrder1 = L1->GetRenderOrder();
+		int RenderOrder2 = L2->GetRenderOrder();
+		if (RenderOrder1 > RenderOrder2)
+			return false;
+		// test for program ID
+		if (test_program_id && RenderOrder1 == RenderOrder2)
+		{
+			chaos::RenderMaterial const * M1 = L1->GetRenderMaterial();
+			if (M1 == nullptr)
+				continue;
+			chaos::RenderMaterial const * M2 = L2->GetRenderMaterial();
+			if (M2 == nullptr)
+				continue;
+			if (M1 == M2)
+				continue; // same material => order is good
+
+			chaos::GPUProgram const * P1 = M1->GetEffectiveProgram();
+			if (P1 == nullptr)
+				continue;
+			chaos::GPUProgram const * P2 = M2->GetEffectiveProgram();
+			if (P2 == nullptr)
+				continue;
+			if (P1 == P2)
+				continue; // same program => order is good
+
+			GLuint PID1 = P1->GetResourceID();
+			GLuint PID2 = P2->GetResourceID();
+			if (PID1 > PID2)
+				return false;
+		}
+	}
+	return true;
 }
 
 
+void ParticleManager::SortLayers(bool test_program_id) const
+{
+	using arg_type = boost::intrusive_ptr<ParticleLayer>;
+	std::sort(layers.begin(), layers.end(), [test_program_id](arg_type & V1, arg_type & V2)
+	{
+		ParticleLayer const * L1 = V1.get();
+		ParticleLayer const * L2 = V2.get();
+		// test for render order
+		int RenderOrder1 = L1->GetRenderOrder();
+		int RenderOrder2 = L2->GetRenderOrder();
+		if (RenderOrder1 != RenderOrder2)
+			return (RenderOrder1 - RenderOrder2);
+		return 0;
+
+#if 0
+		// test for program ID
+		if (test_program_id && RenderOrder1 == RenderOrder2)
+		{
+			chaos::RenderMaterial const * M1 = L1->GetRenderMaterial();
+			if (M1 == nullptr)
+				continue;
+			chaos::RenderMaterial const * M2 = L2->GetRenderMaterial();
+			if (M2 == nullptr)
+				continue;
+			if (M1 == M2)
+				continue; // same material => order is good
+
+			chaos::GPUProgram const * P1 = M1->GetEffectiveProgram();
+			if (P1 == nullptr)
+				continue;
+			chaos::GPUProgram const * P2 = M2->GetEffectiveProgram();
+			if (P2 == nullptr)
+				continue;
+			if (P1 == P2)
+				continue; // same program => order is good
+
+			GLuint PID1 = P1->GetResourceID();
+			GLuint PID2 = P2->GetResourceID();
+			if (PID1 > PID2)
+				return false;
+#endif
+	});
+}
+
+void ParticleManager::Display(chaos::GPUProgramProviderBase * uniform_provider) const
+{
+	// sort the layer if necessary (Z order + material)
+	bool test_program_id = true;
+	if (!AreLayersSorted(test_program_id))
+		SortLayers(test_program_id);
+	// draw all the layers
+	size_t count = layers.size();
+	for (size_t i = 0; i < count; ++i)
+		layers[i]->Display(nullptr, uniform_provider);
+}
 
 
 

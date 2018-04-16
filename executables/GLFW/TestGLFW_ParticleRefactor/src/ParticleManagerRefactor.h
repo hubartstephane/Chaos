@@ -114,6 +114,16 @@ public:
 	/** destructor */
 	virtual ~ParticleLayer();
 
+	/** get the name of the object */
+	char const * GetName() const { return name.c_str(); }
+	/** get the ID of the object */
+	int GetLayerID() const { return id; }
+
+	/** Set the name method */
+	void SetLayerName(char const * in_name);
+	/** Set the id method */
+	void SetLayerID(int in_id);
+
 	/** get the total number of particles */
 	size_t GetParticleCount() const;
 	/** get the number of particles */
@@ -149,6 +159,10 @@ public:
 
 	/** change the material */
 	void SetRenderMaterial(chaos::RenderMaterial * in_render_material) { render_material = in_render_material;}
+	/** get the material */
+	chaos::RenderMaterial * GetRenderMaterial() { return render_material.get(); }
+	/** get the material const method */
+	chaos::RenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
 
 	/** ticking the particle system */
 	virtual void TickParticles(float delta_time);
@@ -159,6 +173,9 @@ public:
 
 	/** mark any particle as to be destroyed next tick */
 	void MarkParticlesToDestroy(size_t start, size_t count);
+
+	/** draw the layer */
+	void Display(chaos::RenderMaterial * material_override, chaos::GPUProgramProviderBase * uniform_provider) const;
 
 protected:
 
@@ -174,6 +191,11 @@ protected:
 	size_t DestroyObsoletParticles();
 
 protected:
+
+	/** the name of the layer */
+	std::string name;
+	/** the ID of the layer */
+	int id = 0;
 
 	/** the size of one particle */
 	size_t particle_size = 0;
@@ -213,12 +235,23 @@ class ParticleLayerTrait
 {
 public:
 
+	/** the type for one particle */
 	using particle_type = PARTICLE_TYPE;
-
+	/** the type for one vertex */
 	using vertex_type = VERTEX_TYPE;
 
-	bool lifetime_particles = false;
+	/** constructor */
+	ParticleLayerTrait(bool in_lifetime_particles = true, bool in_dynamic_particles = true) :
+		lifetime_particles(in_lifetime_particles),
+		dynamic_particles(in_dynamic_particles)
+	{
+	}
 
+public:
+	
+	/** whether the particles have a limited lifetime */
+	bool lifetime_particles = false;
+	/** whether the particles are dynamic */
 	bool dynamic_particles = false;
 };
 
@@ -318,16 +351,40 @@ public:
 	/** change the bitmap atlas */
 	void SetTextureAtlas(chaos::BitmapAtlas::TextureArrayAtlas * in_atlas);
 	/** display all the particles */
-	void Display(chaos::GPUProgramProviderBase * uniform_provider);
+	void Display(chaos::GPUProgramProviderBase * uniform_provider) const;
+
+	/** Search a layer by its name */
+	ParticleLayer * FindLayer(char const * name);
+	/** Search a layer by its name */
+	ParticleLayer const * FindLayer(char const * name) const;
+	/** Search a layer by its id */
+	ParticleLayer * FindLayer(int id);
+	/** Search a layer by its id */
+	ParticleLayer const * FindLayer(int id) const;
+
+	/** add a layer in the manager */
+	void AddLayer(ParticleLayer * layer);
+	/** remove a layer from the manager */
+	void RemoveLayer(ParticleLayer * layer);
 
 protected:
+
+	/** find the index of a layer */
+	size_t FindLayerIndex(ParticleLayer * layer) const;
+	/** sort the layers by rendering order */
+	void SortLayers(bool test_program_id) const;
+	/** test whether the layers are sort correctly */
+	bool AreLayersSorted(bool test_program_id) const;
 
 protected:
 
 	/** the texture atlas */
 	chaos::BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
-};
+	/** the layers */
+	mutable std::vector<boost::intrusive_ptr<ParticleLayer>> layers;
 
+
+};
 
 
 
@@ -351,12 +408,6 @@ class VertexExample
 class ParticleExampleTrait : public ParticleLayerTrait<ParticleExample, VertexExample>
 {
 public:
-
-	ParticleExampleTrait()
-	{
-		lifetime_particles = true;
-		dynamic_particles = true;
-	}
 
 	bool IsParticleObsolet(ParticleExample * p)
 	{

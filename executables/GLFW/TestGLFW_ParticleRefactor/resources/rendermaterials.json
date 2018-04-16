@@ -1,29 +1,5 @@
 {
 		"@mat1":{"path":"@materials/material1.json"},
 		"@mat2":{"path":"@materials/material2.json"},
-		"@mat3":{"path":"@materials/material3.json"},
-
-		"mat4":
-		{
-			"name":"material4",
-			"parent_material":"mat1",
-			"uniforms":
-			{
-				"color":[0.1, 0.2, 0.3],
-				"fade":1.0			
-			},
-			"textures":
-			{
-				"back_texture":{"name":"tex2"},
-				"front_texture":{"path":"@textures/texture1.bmp"}						
-			}
-		},
-		"mat5":
-		{
-			"name":"material5",
-			"parent_material":"material4",
-			"program":{"name":"prog1"}
-			
-		
-		}
+		"@mat3":{"path":"@materials/material3.json"}
 }

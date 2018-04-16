@@ -1,3 +1,13 @@
 {
-
+	"program":{"name":"prog1"},
+	"uniforms":
+	{
+		"color":[0.1, 0.2, 0.3],
+		"fade":1.0			
+	},
+	"textures":
+	{
+		"back_texture":{"name":"tex2"},
+		"front_texture":{"path":"@../textures/texture1.json"}						
+	}
 }

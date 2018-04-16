@@ -415,10 +415,16 @@ void ParticleManager::RemoveLayer(ParticleLayer * layer)
 	layers.erase(layers.begin() + index);
 }
 
+void ParticleManager::Tick(float delta_time)
+{
+	size_t count = layers.size();
+	for (size_t i = 1; i < count; ++i)
+		layers[i]->TickParticles(delta_time);
+}
+
 bool ParticleManager::AreLayersSorted(bool test_program_id) const
 {
 	size_t count = layers.size();
-
 	for (size_t i = 1; i < count; ++i)
 	{
 		ParticleLayer const * L1 = layers[i - 1].get();
@@ -469,37 +475,35 @@ void ParticleManager::SortLayers(bool test_program_id) const
 		// test for render order
 		int RenderOrder1 = L1->GetRenderOrder();
 		int RenderOrder2 = L2->GetRenderOrder();
-		if (RenderOrder1 != RenderOrder2)
-			return (RenderOrder1 - RenderOrder2);
-		return 0;
-
-#if 0
-		// test for program ID
+		if (RenderOrder2 > RenderOrder1)
+			return 1;
+		// test for material ordering
 		if (test_program_id && RenderOrder1 == RenderOrder2)
 		{
 			chaos::RenderMaterial const * M1 = L1->GetRenderMaterial();
 			if (M1 == nullptr)
-				continue;
+				return 0;
 			chaos::RenderMaterial const * M2 = L2->GetRenderMaterial();
 			if (M2 == nullptr)
-				continue;
+				return 0;
 			if (M1 == M2)
-				continue; // same material => order is good
+				return 0; // same material => order is good
 
 			chaos::GPUProgram const * P1 = M1->GetEffectiveProgram();
 			if (P1 == nullptr)
-				continue;
+				return 0;
 			chaos::GPUProgram const * P2 = M2->GetEffectiveProgram();
 			if (P2 == nullptr)
-				continue;
+				return 0;
 			if (P1 == P2)
-				continue; // same program => order is good
+				return 0; // same program => order is good
 
 			GLuint PID1 = P1->GetResourceID();
 			GLuint PID2 = P2->GetResourceID();
-			if (PID1 > PID2)
-				return false;
-#endif
+			if (PID2 > PID1)
+				return 1;
+		}
+		return 0;
 	});
 }
 

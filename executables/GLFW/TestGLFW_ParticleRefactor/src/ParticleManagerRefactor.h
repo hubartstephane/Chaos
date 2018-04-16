@@ -367,6 +367,9 @@ public:
 	/** remove a layer from the manager */
 	void RemoveLayer(ParticleLayer * layer);
 
+	/** tick the manager */
+	void Tick(float delta_time);
+
 protected:
 
 	/** find the index of a layer */
@@ -389,44 +392,6 @@ protected:
 
 
 
-
-// ==============================================================
-// CALLBACKS
-// ==============================================================
-
-class ParticleExample
-{
-	glm::vec3 position;
-
-};
-
-class VertexExample
-{
-
-};
-
-class ParticleExampleTrait : public ParticleLayerTrait<ParticleExample, VertexExample>
-{
-public:
-
-	bool IsParticleObsolet(ParticleExample * p)
-	{
-		return false;
-	}
-	void UpdateParticle(float delta_time, ParticleExample * particle)
-	{
-		particle = particle;
-
-	}
-};
-
-
-
-class ParticleLayerDescExample : public TParticleLayerDesc<ParticleExampleTrait>
-{
-
-
-};
 
 
 // undefine macros

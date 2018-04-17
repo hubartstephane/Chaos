@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/RenderMaterial.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/VertexBuffer.h>
 #include <chaos/GPUProgramProvider.h>
 
 
@@ -84,6 +85,9 @@ public:
 	virtual size_t GetParticleSize() const;
 	/** returns the size in memory of a vertex */
 	virtual size_t GetVertexSize() const;
+	/** returns the number of vertices required for each particles */
+	virtual size_t GetVerticesCountPerParticles() const;
+
 	/** returns true whether particles may destroyed themselves */
 	virtual bool HasParticleLimitedLifeTime() const;
 	/** returns true whether particles need to be updated */
@@ -137,6 +141,8 @@ public:
 	size_t GetParticleSize() const { return particle_size;}
 	/** returns the size in memory of a vertex */
 	size_t GetVertexSize() const { return vertex_size;}
+	/** returns the number of vertices required for each particles */
+	size_t GetVerticesCountPerParticles() const { return vertices_count_per_particles; }
 	/** returns true whether particles may destroyed themselves */
 	bool HasParticleLimitedLifeTime() const;
 	/** returns true whether particles need to be updated */
@@ -189,6 +195,8 @@ protected:
 	void UpdateParticles(float delta_time);
 	/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
 	size_t DestroyObsoletParticles();
+	/** update the GPU buffers */
+	void UpdateGPUBuffers() const;
 
 protected:
 
@@ -201,16 +209,21 @@ protected:
 	size_t particle_size = 0;
 	/** the size of one vertex */
 	size_t vertex_size = 0;
+	/** the number of vertices required to render one particle */
+	size_t vertices_count_per_particles = 0;
+
 	/** the order of the layer in the manager */
 	int render_order = 0;
 	/** whether the layer is paused */
 	bool paused = false;
 	/** whether the layer is visible */
 	bool visible = true;
+
 	/** number of particles waiting for a destruction */
 	size_t pending_kill_particles = 0;
 	/** whether there was changes in particles, and a vertex array need to be recomputed */
-	bool require_GPU_update = false;
+	mutable bool require_GPU_update = false;
+
 	/** the material used to render the layer */
 	boost::intrusive_ptr<chaos::RenderMaterial> render_material;
 	/** the array containing the particles */
@@ -223,6 +236,9 @@ protected:
 	std::vector<ParticleRangeAllocation*> range_allocations;
 	/** the behavior description */
 	boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
+
+	/** the vertex buffer for the rendering */
+	mutable boost::intrusive_ptr<chaos::VertexBuffer> vertex_buffer;
 };
 
 

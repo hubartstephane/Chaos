@@ -1,4 +1,5 @@
 #include "ParticleManagerRefactor.h"
+#include <chaos/GLTools.h>
 
 // ==============================================================
 // PARTICLE RANGE ALLOCATION
@@ -51,6 +52,11 @@ size_t ParticleLayerDesc::GetParticleSize() const
 	return 0;
 }
 
+size_t ParticleLayerDesc::GetVerticesCountPerParticles() const
+{
+	return 2 * 3; // 2 triangles per particles to have a square
+}
+
 size_t ParticleLayerDesc::GetVertexSize() const
 {
 	return 0;
@@ -86,6 +92,7 @@ ParticleLayer::ParticleLayer(ParticleLayerDesc * in_layer_desc)
 	assert(in_layer_desc != nullptr);
 	particle_size = layer_desc->GetParticleSize();
 	vertex_size  = layer_desc->GetVertexSize();
+	vertices_count_per_particles = layer_desc->GetVerticesCountPerParticles();
 }
 
 ParticleLayer::~ParticleLayer()
@@ -240,6 +247,8 @@ ParticleRange ParticleLayer::SpawnParticles(size_t count)
 		size_t new_count = current_particle_count + count;
 		particles.resize(new_count * particle_size, 0);
 		deletion_vector.resize(new_count, 0);	
+		// indicates that GPU needs to be rebuild
+		require_GPU_update = true;
 	}
 	return result;
 }
@@ -313,12 +322,56 @@ void ParticleLayer::UpdateParticleRanges(size_t new_particle_count)
 
 void ParticleLayer::Display(chaos::RenderMaterial * material_override, chaos::GPUProgramProviderBase * uniform_provider) const
 {
+	// early exit
 	if (render_material == nullptr && material_override == nullptr)
 		return;
+	if (GetParticleCount() == 0)
+		return;
+	if (!IsVisible())
+		return;
+	// Update GPU buffers	
+	UpdateGPUBuffers();
 
 
 
 
+}
+
+void ParticleLayer::UpdateGPUBuffers() const
+{
+	if (!require_GPU_update)
+		return;
+
+	// create the vertex buffer if necessary
+	if (vertex_buffer == nullptr)
+	{
+		chaos::GLTools::GenerateVertexAndIndexBuffersObject(nullptr, &vertex_buffer, nullptr);
+		if (vertex_buffer == nullptr)
+			return;
+	}
+
+	// reserve memory
+	size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * GetParticleCount();
+	if (vertex_buffer_size == 0)
+		return;
+
+	GLuint buffer_id = vertex_buffer->GetResourceID();
+	GLenum map_type = (AreParticlesDynamic()) ?
+		GL_STREAM_DRAW :
+		GL_STATIC_DRAW;
+	glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
+
+	// map the vertex buffer
+	char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+	if (buffer == nullptr)
+		return;
+	// update the buffer
+
+
+	// unmap the buffer
+	glUnmapNamedBuffer(buffer_id);
+
+	require_GPU_update = false;
 }
 
 // ==============================================================

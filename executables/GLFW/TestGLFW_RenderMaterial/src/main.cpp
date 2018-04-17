@@ -25,6 +25,13 @@ protected:
 		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 			current_material = 1 - current_material;
 
+		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+			render_material1 = nullptr;
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+			render_material2 = nullptr;
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+			mesh = nullptr;
+
 	}
 
 	virtual bool OnDraw(glm::ivec2 size) override

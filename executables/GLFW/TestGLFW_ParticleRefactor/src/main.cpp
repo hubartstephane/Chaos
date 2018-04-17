@@ -16,7 +16,7 @@
 #include <chaos/GPUProgramLoader.h>
 
 
-#include "ParticleManagerRefactor.h"
+#include <chaos/ParticleManager.h>
 
 
 // ==============================================================
@@ -34,7 +34,7 @@ class VertexExample
 
 };
 
-class ParticleExampleTrait : public ParticleLayerTrait<ParticleExample, VertexExample>
+class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 {
 public:
 
@@ -51,7 +51,7 @@ public:
 
 
 
-class ParticleLayerDescExample : public TParticleLayerDesc<ParticleExampleTrait>
+class ParticleLayerDescExample : public chaos::TParticleLayerDesc<ParticleExampleTrait>
 {
 
 
@@ -113,14 +113,13 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
 
-
 		chaos::RenderMaterial * RM1 = gpu_manager->FindRenderMaterial("mat1");
 		chaos::RenderMaterial * RM2 = gpu_manager->FindRenderMaterial("mat2");
 		chaos::RenderMaterial * RM3 = gpu_manager->FindRenderMaterial("mat3");
 
 		chaos::RenderMaterial * materials[] = { RM1, RM2, RM3 };
 
-		particle_manager = new ParticleManager;
+		particle_manager = new chaos::ParticleManager;
 
 		int const LAYER_COUNT    = 5;
 		int const MATERIAL_COUNT = 5;
@@ -128,18 +127,16 @@ protected:
 		{
 			for (int j = 0; j < MATERIAL_COUNT; ++j)
 			{
-				ParticleLayer * particle_layer = new ParticleLayer(new ParticleLayerDescExample());
+				chaos::ParticleLayer * particle_layer = new chaos::ParticleLayer(new ParticleLayerDescExample());
 				particle_layer->SetRenderOrder(i);
 				particle_layer->SetLayerID(j + i * MATERIAL_COUNT);
 
 				int material_index = rand() % 3;
+				int particle_count = rand() % 50;
 
 				particle_layer->SetRenderMaterial(materials[material_index]);
 
-
-				int particle_count = rand() % 50;
-
-				ParticleRangeAllocation * range = particle_layer->SpawnParticlesAndKeepRange(particle_count);
+				chaos::ParticleRangeAllocation * range = particle_layer->SpawnParticlesAndKeepRange(particle_count);
 				range_allocations.push_back(range);
 
 				particle_manager->AddLayer(particle_layer);
@@ -157,10 +154,10 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<ParticleManager> particle_manager;
+	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 
-	std::vector<boost::intrusive_ptr<ParticleLayer>> particle_layers;
-	std::vector<boost::intrusive_ptr<ParticleRangeAllocation>> range_allocations;
+	std::vector<boost::intrusive_ptr<chaos::ParticleLayer>> particle_layers;
+	std::vector<boost::intrusive_ptr<chaos::ParticleRangeAllocation>> range_allocations;
 };
 
 

@@ -323,7 +323,7 @@ namespace chaos
 			deletion_vector[i] = 0;
 	}
 
-	void ParticleLayer::Display(RenderMaterial * material_override, GPUProgramProviderBase * uniform_provider) const
+	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider) const
 	{
 		// early exit
 		if (render_material == nullptr && material_override == nullptr)
@@ -563,7 +563,7 @@ namespace chaos
 		});
 	}
 
-	void ParticleManager::Display(GPUProgramProviderBase * uniform_provider) const
+	void ParticleManager::Display(GPUProgramProviderBase const * uniform_provider) const
 	{
 		// sort the layer if necessary (Z order + material)
 		bool test_program_id = true;

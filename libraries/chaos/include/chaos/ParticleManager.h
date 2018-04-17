@@ -169,8 +169,6 @@ namespace chaos
 
 		/** change the material */
 		void SetRenderMaterial(RenderMaterial * in_render_material) { render_material = in_render_material; }
-		/** get the material */
-		RenderMaterial * GetRenderMaterial() { return render_material.get(); }
 		/** get the material const method */
 		RenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
 
@@ -185,7 +183,7 @@ namespace chaos
 		void MarkParticlesToDestroy(size_t start, size_t count);
 
 		/** draw the layer */
-		void Display(RenderMaterial * material_override, GPUProgramProviderBase * uniform_provider) const;
+		void Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider) const;
 
 	protected:
 
@@ -371,7 +369,7 @@ namespace chaos
 		/** change the bitmap atlas */
 		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
 		/** display all the particles */
-		void Display(GPUProgramProviderBase * uniform_provider) const;
+		void Display(GPUProgramProviderBase const * uniform_provider) const;
 
 		/** Search a layer by its name */
 		ParticleLayer * FindLayer(char const * name);

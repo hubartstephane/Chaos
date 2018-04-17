@@ -17,7 +17,7 @@ namespace chaos
 	protected:
 
 		/** called whenever the object is being released (returns true whether the callback must be removed from the list) */
-		virtual bool OnResourceReleased(GPUResource const * object, bool destruction);
+		virtual bool OnResourceReleased(GPUResource * object, bool destruction);
 	};
 
 	class GPUResourceAutoCallbacks : public GPUResourceCallbacks
@@ -37,12 +37,12 @@ namespace chaos
 	protected:
 
 		/** called whenever a sound is finished */
-		virtual bool OnResourceReleased(GPUResource const * object, bool destruction) override;
+		virtual bool OnResourceReleased(GPUResource * object, bool destruction) override;
 
 	public:
 
 		/** the callbacks function */
-		std::function<bool(GPUResource const *, bool)> released_func;
+		std::function<bool(GPUResource *, bool)> released_func;
 	};
 
 	// ==============================================================

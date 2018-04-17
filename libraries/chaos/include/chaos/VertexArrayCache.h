@@ -5,6 +5,10 @@
 #include <chaos/VertexArray.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUResource.h>
+#include <chaos/VertexBuffer.h>
+#include <chaos/VertexDeclaration.h>
+#include <chaos/IndexBuffer.h>
+
 
 namespace chaos
 {
@@ -47,6 +51,8 @@ namespace chaos
 
 		/** find vertex array for the program */
 		VertexArray * FindVertexArray(GPUProgram * program);
+		/** create or return exisiting vertex array for a given program */
+		VertexArray * FindOrCreateVertexArray(GPUProgram * program, VertexBuffer * vertex_buffer, IndexBuffer * index_buffer, VertexDeclaration & declaration);
 
 	protected:
 
@@ -67,12 +73,13 @@ namespace chaos
 	class GPUProgramToVertexArrayCacheCallbacks : public GPUResourceCallbacks
 	{
 
+		friend class VertexArrayCache;
 		friend class VertexArrayCacheEntry;
 
 	protected:
 
 		/** called whenever the object is being released (returns true whether the callback must be removed from the list) */
-		virtual bool OnResourceReleased(GPUResource const * object, bool destruction) override;
+		virtual bool OnResourceReleased(GPUResource * object, bool destruction) override;
 
 	protected:
 

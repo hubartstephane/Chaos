@@ -2,13 +2,13 @@
 
 namespace chaos
 {
-	bool GPUResourceCallbacks::OnResourceReleased(GPUResource const * object, bool destruction)
+	bool GPUResourceCallbacks::OnResourceReleased(GPUResource * object, bool destruction)
 	{
 		assert(object != nullptr);
 		return true;
 	}
 
-	bool GPUResourceAutoCallbacks::OnResourceReleased(GPUResource const * object, bool destruction)
+	bool GPUResourceAutoCallbacks::OnResourceReleased(GPUResource * object, bool destruction)
 	{
 		assert(object != nullptr);
 		if (released_func)

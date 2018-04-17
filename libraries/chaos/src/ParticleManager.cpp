@@ -85,6 +85,17 @@ namespace chaos
 		return false;
 	}
 
+	VertexDeclaration ParticleLayerDesc::GetVertexDeclaration() const
+	{
+		return VertexDeclaration();
+	}
+		
+	void ParticleLayerDesc::ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const
+	{
+		assert(particles != nullptr);
+		assert(vertices != nullptr);
+	}
+	
 	// ==============================================================
 	// PARTICLE LAYER
 	// ==============================================================
@@ -332,12 +343,23 @@ namespace chaos
 			return;
 		if (!IsVisible())
 			return;
+		// update the vertex declaration
+		UpdateVertexDeclaration();
 		// Update GPU buffers	
 		UpdateGPUBuffers();
 
 
 
 
+	}
+
+	void ParticleLayer::UpdateVertexDeclaration() const
+	{
+		// is the vertex declaration already filled
+		if (vertex_declaration.entries.size() > 0)
+			return;
+		// fill the vertex declaration
+		vertex_declaration = layer_desc->GetVertexDeclaration();
 	}
 
 	void ParticleLayer::UpdateGPUBuffers() const
@@ -369,8 +391,7 @@ namespace chaos
 		if (buffer == nullptr)
 			return;
 		// update the buffer
-
-
+		layer_desc->ParticlesToVertices(&particles[0], particles.size(), buffer, vertex_buffer_size);
 		// unmap the buffer
 		glUnmapNamedBuffer(buffer_id);
 

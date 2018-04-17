@@ -14,6 +14,7 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
+#include <chaos/VertexDeclaration.h>
 
 
 #include <chaos/ParticleManager.h>
@@ -42,20 +43,27 @@ public:
 	{
 		return false;
 	}
+
 	void UpdateParticle(float delta_time, ParticleExample * particle)
 	{
 		particle = particle;
 
 	}
+
+	void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const
+	{
+
+	}
+
+	chaos::VertexDeclaration GetVertexDeclaration() const
+	{
+		chaos::VertexDeclaration result;
+
+		return result;
+	}
 };
 
-
-
-class ParticleLayerDescExample : public chaos::TParticleLayerDesc<ParticleExampleTrait>
-{
-
-
-};
+using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>;
 
 
 

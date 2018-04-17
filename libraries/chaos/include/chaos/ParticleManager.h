@@ -5,6 +5,8 @@
 #include <chaos/RenderMaterial.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/VertexBuffer.h>
+#include <chaos/VertexDeclaration.h>
+#include <chaos/VertexArrayCache.h>
 #include <chaos/GPUProgramProvider.h>
 
 namespace chaos
@@ -96,6 +98,12 @@ namespace chaos
 		virtual bool HasParticleLimitedLifeTime() const;
 		/** returns true whether particles need to be updated */
 		virtual bool AreParticlesDynamic() const;
+
+		/** get the vertex declaration for that layer */
+		virtual VertexDeclaration GetVertexDeclaration() const;
+
+		/** transform the particles into vertices */
+		virtual void ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const;
 
 	protected:
 
@@ -199,6 +207,8 @@ namespace chaos
 		size_t DestroyObsoletParticles();
 		/** update the GPU buffers */
 		void UpdateGPUBuffers() const;
+		/** update the vertex declaration */
+		void UpdateVertexDeclaration() const;
 
 	protected:
 
@@ -239,8 +249,12 @@ namespace chaos
 		/** the behavior description */
 		boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
 
+		/** the vertex declaration */
+		mutable VertexDeclaration vertex_declaration;
 		/** the vertex buffer for the rendering */
 		mutable boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+		/** the cache for vertex array */
+		mutable VertexArrayCache vertex_array_cache;
 	};
 
 
@@ -350,6 +364,28 @@ namespace chaos
 			return particle_count; // no destruction
 		}
 
+		/** get the vertex declaration */
+		virtual VertexDeclaration GetVertexDeclaration() const override
+		{
+			return trait.GetVertexDeclaration();
+		}
+		/** convert particles in vertices */
+		virtual void ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const override
+		{
+			size_t particle_size = GetParticleSize();
+			size_t vertex_size = GetVertexSize();
+			size_t vertices_per_particle = GetVerticesCountPerParticles();
+
+			size_t particles_count = particles_buffer_size / particle_size;
+			size_t vertices_count = vertices_buffer_size / vertex_size;
+
+			particle_type const * p = (particle_type const *)particles;
+			vertex_type * v = (vertex_type *)vertices;
+
+			for (size_t i = 0; i < particles_count; ++i)
+				trait.ParticleToVertex(&p[i], &v[i * vertices_per_particle]);
+		}
+
 	protected:
 
 		/** internal description */
@@ -404,6 +440,40 @@ namespace chaos
 		/** the layers */
 		mutable std::vector<boost::intrusive_ptr<ParticleLayer>> layers;
 	};
+
+	// ==============================================================
+	// Example of Trait usage
+	// ==============================================================
+
+#if 0
+
+	class ParticleExample
+	{
+		...
+	};
+
+	class VertexExample
+	{
+		...
+	};
+
+	class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
+	{
+	public:
+
+		bool IsParticleObsolet(ParticleExample * p);
+
+		void UpdateParticle(float delta_time, ParticleExample * particle);
+
+		void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const;
+
+		chaos::VertexDeclaration GetVertexDeclaration() const;
+	};
+
+	using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>;
+
+#endif
+
 
 	// undefine macros
 #undef CHAOS_PARTICLE_CLASSES

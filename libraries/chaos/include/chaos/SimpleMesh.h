@@ -12,6 +12,7 @@
 #include <chaos/RenderMaterial.h>
 #include <chaos/GPUResource.h>
 #include <chaos/DrawPrimitive.h>
+#include <chaos/VertexArrayCache.h>
 
 namespace chaos
 {
@@ -22,19 +23,6 @@ namespace chaos
 
 	class SimpleMesh : public GPUResource
 	{
-
-	protected:
-
-		class VertexArrayInfo
-		{
-		public:
-
-			/** the program we want to be notify of the releasing */
-			GPUProgram const * program = nullptr;
-			/** the vertex array for that program */
-			boost::intrusive_ptr<VertexArray> vertex_array;
-		};
-
 	public:
 
 		/** constructor */
@@ -64,7 +52,7 @@ namespace chaos
 	public:
 
 		/** self descriptive */
-		VertexDeclaration declaration;
+		VertexDeclaration vertex_declaration;
 		/** the primitives to render */
 		std::vector<DrawPrimitive> primitives;
 
@@ -77,9 +65,8 @@ namespace chaos
 
 	protected:
 
-		/** the vertex binding depends on the program that is used. This is a map that make relation between program / vertex array */
-		mutable std::vector<VertexArrayInfo> vertex_array_info;
-
+		/** the cache for all vertex arrays */
+		mutable VertexArrayCache vertex_array_cache;
 	};
 
 }; // namespace chaos

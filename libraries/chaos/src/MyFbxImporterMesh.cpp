@@ -518,7 +518,7 @@ namespace chaos
 
 				if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
 				{
-					result->declaration = vertex_declaration;
+					result->vertex_declaration = vertex_declaration;
 
 					DrawPrimitive primitive;
 					primitive.count = (int)index_buffer.size();

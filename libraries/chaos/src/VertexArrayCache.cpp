@@ -18,7 +18,7 @@ namespace chaos
 		}	
 	}
 
-	VertexArray * VertexArrayCache::FindVertexArray(GPUProgram * program)
+	VertexArray const * VertexArrayCache::FindVertexArray(GPUProgram const * program) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -35,14 +35,14 @@ namespace chaos
 		return nullptr;
 	}
 
-	VertexArray * VertexArrayCache::FindOrCreateVertexArray(GPUProgram * program, VertexBuffer * vertex_buffer, IndexBuffer * index_buffer, VertexDeclaration & declaration)
+	VertexArray const * VertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration)
 	{
 		// early exit
 		if (program == nullptr)
 			return nullptr;
 
 		// find exisiting data
-		VertexArray * result = FindVertexArray(program);
+		VertexArray const * result = FindVertexArray(program);
 		if (result != nullptr)
 			return result;
 
@@ -113,7 +113,12 @@ namespace chaos
 		}	
 	}
 
-	bool GPUProgramToVertexArrayCacheCallbacks::OnResourceReleased(GPUResource * object, bool destruction)
+	void VertexArrayCache::Clear()
+	{
+		entries.clear();
+	}
+
+	bool GPUProgramToVertexArrayCacheCallbacks::OnResourceReleased(GPUResource const * object, bool destruction)
 	{
 		VertexArrayCacheEntry * entry = cache_entry;
 		if (entry != nullptr)
@@ -129,7 +134,5 @@ namespace chaos
 		}
 		return true; // this destruction callback is to be removed
 	}
-
-
 
 }; // namespace chaos

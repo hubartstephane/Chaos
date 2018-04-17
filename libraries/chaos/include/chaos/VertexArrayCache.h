@@ -31,7 +31,7 @@ namespace chaos
 		/** the cache containing the entry */
 		VertexArrayCache * cache = nullptr;
 		/** the id of the program concerned */
-		GPUProgram * program = nullptr;
+		GPUProgram const * program = nullptr;
 		/** a pointer on the destruction callback associated */
 		GPUProgramToVertexArrayCacheCallbacks * program_destruction_callback = nullptr;	
 
@@ -50,9 +50,11 @@ namespace chaos
 	public:
 
 		/** find vertex array for the program */
-		VertexArray * FindVertexArray(GPUProgram * program);
+		VertexArray const * FindVertexArray(GPUProgram const * program) const;
 		/** create or return exisiting vertex array for a given program */
-		VertexArray * FindOrCreateVertexArray(GPUProgram * program, VertexBuffer * vertex_buffer, IndexBuffer * index_buffer, VertexDeclaration & declaration);
+		VertexArray const * FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration);
+		/** reset the whole object */
+		void Clear();
 
 	protected:
 
@@ -79,12 +81,12 @@ namespace chaos
 	protected:
 
 		/** called whenever the object is being released (returns true whether the callback must be removed from the list) */
-		virtual bool OnResourceReleased(GPUResource * object, bool destruction) override;
+		virtual bool OnResourceReleased(GPUResource const * object, bool destruction) override;
 
 	protected:
 
 		/** a raw pointer on the program */
-		GPUProgram * program = nullptr;
+		GPUProgram const * program = nullptr;
 		/** a raw pointer on a cache entry */
 		VertexArrayCacheEntry * cache_entry = nullptr;	
 	};

@@ -20,49 +20,16 @@ namespace chaos
 		vertex_buffer = nullptr;
 		index_buffer = nullptr;
 
-		declaration.Clear();
+		vertex_declaration.Clear();
 		primitives.clear();
 
-		vertex_array_info.clear();
+		vertex_array_cache.Clear();
 		return true;
 	}
 
 	VertexArray const * SimpleMesh::GetOrCreateVertexArrayForProgram(GPUProgram const * program) const
 	{
-		GLuint program_id = program->GetResourceID();
-
-		// search wether a vertex_array for that program exists
-		size_t i = 0;
-		size_t count = vertex_array_info.size();
-		for (; i < count; ++i)
-			if (vertex_array_info[i].program->GetResourceID() == program_id)
-				break;
-
-		// create a new vertex array if necessary or bind an existing one
-		if (i == count)
-		{
-			VertexArrayInfo info;
-			if (!GLTools::GenerateVertexAndIndexBuffersObject(&info.vertex_array, nullptr, nullptr))
-				return nullptr;
-
-			info.program = program;
-			vertex_array_info.push_back(info);
-
-			GPUProgramData const & data = program->GetProgramData();
-
-			GLuint va = vertex_array_info[i].vertex_array->GetResourceID();
-			data.BindAttributes(va, declaration, nullptr);
-
-			if (index_buffer != nullptr)
-				glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
-
-			if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
-			{
-				GLuint binding_index = 0;
-				glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), vertex_buffer_offset, declaration.GetVertexSize());
-			}
-		}
-		return vertex_array_info[i].vertex_array.get();
+		return vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration);
 	}
 
 	void SimpleMesh::Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const

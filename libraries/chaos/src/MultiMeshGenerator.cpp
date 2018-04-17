@@ -87,9 +87,9 @@ namespace chaos
 							mesh->index_buffer = index_buffer;
 
 						it.first->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer); // generate the buffers and primitives and declaration
-						it.first->GenerateVertexDeclaration(mesh->declaration);
+						it.first->GenerateVertexDeclaration(mesh->vertex_declaration);
 
-						assert(requirement.vertex_size == mesh->declaration.GetVertexSize());
+						assert(requirement.vertex_size == mesh->vertex_declaration.GetVertexSize());
 
 						mesh->ShiftPrimitivesIndexAndVertexPosition(0, (int)(written_indices_count / sizeof(GLuint)));  // shift the position of vertices/indices for this mesh
 

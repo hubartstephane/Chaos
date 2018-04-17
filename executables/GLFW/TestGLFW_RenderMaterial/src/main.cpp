@@ -20,6 +20,13 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
+	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	{
+		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+			current_material = 1 - current_material;
+
+	}
+
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
 
@@ -60,7 +67,14 @@ protected:
 		int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		int base_instance = 0;
 
-		mesh->Render(render_material2.get(), &uniform_provider, instance_count, base_instance);
+		chaos::RenderMaterial * materials[] = { render_material1.get(), render_material2.get() };
+
+		chaos::RenderMaterial * rm = materials[current_material];
+		if (rm == nullptr)
+			rm = materials[1 - current_material];
+
+		if (rm != nullptr)
+			mesh->Render(rm, &uniform_provider, instance_count, base_instance);
 
 
 		return true;
@@ -68,6 +82,7 @@ protected:
 
 	virtual void Finalize() override
 	{
+		render_material1 = nullptr;
 		render_material2 = nullptr;
 		mesh = nullptr;
 	}
@@ -90,6 +105,8 @@ protected:
 			return false;
 
 		// get the material
+		render_material1 = resource_manager->FindRenderMaterial("mat1");
+
 		render_material2 = resource_manager->FindRenderMaterial("mat2");
 
 		boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
@@ -123,6 +140,9 @@ protected:
 
 protected:
 
+	int current_material = 0;
+
+	boost::intrusive_ptr<chaos::RenderMaterial> render_material1;
 	boost::intrusive_ptr<chaos::RenderMaterial> render_material2;
 
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;

@@ -1,4 +1,15 @@
 {
     "name":"material2",
-    "parent_material":"mat1"
+    "parent_material":"mat1",
+		"program":
+		{
+			"pixel_sources":
+			[
+				"@../programs/pixel_shader2.txt"
+			],
+			"vertex_sources":
+			[
+				"@../programs/vertex_shader2.txt"
+			]	
+		}
 }

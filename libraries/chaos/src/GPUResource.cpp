@@ -2,13 +2,13 @@
 
 namespace chaos
 {
-	bool GPUResourceCallbacks::OnResourceReleased(GPUResource * object, bool destruction)
+	bool GPUResourceCallbacks::OnResourceReleased(GPUResource const * object, bool destruction)
 	{
 		assert(object != nullptr);
 		return true;
 	}
 
-	bool GPUResourceAutoCallbacks::OnResourceReleased(GPUResource * object, bool destruction)
+	bool GPUResourceAutoCallbacks::OnResourceReleased(GPUResource const * object, bool destruction)
 	{
 		assert(object != nullptr);
 		if (released_func)
@@ -32,7 +32,7 @@ namespace chaos
 		return false;
 	}
 
-	void GPUResource::TriggerReleaseCallbacks(bool destruction)
+	void GPUResource::TriggerReleaseCallbacks(bool destruction) const
 	{
 		for (size_t i = callbacks.size(); i != 0; --i)
 		{
@@ -46,13 +46,13 @@ namespace chaos
 		}
 	}
 
-	void GPUResource::AddReleaseCallback(GPUResourceCallbacks * callback)
+	void GPUResource::AddReleaseCallback(GPUResourceCallbacks * callback) const
 	{
 		assert(callback != nullptr);
 		callbacks.push_back(callback);
 	}
 
-	void GPUResource::RemoveReleaseCallback(GPUResourceCallbacks * callback)
+	void GPUResource::RemoveReleaseCallback(GPUResourceCallbacks * callback) const
 	{
 		assert(callback != nullptr);
 

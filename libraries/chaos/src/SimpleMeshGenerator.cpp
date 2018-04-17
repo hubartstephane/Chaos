@@ -133,8 +133,8 @@ namespace chaos
 					assert(indices_writer.GetRemainingBufferSize() == 0);
 
 					// get the vertex declaration
-					GenerateVertexDeclaration(mesh->declaration);
-					assert(mesh->declaration.GetVertexSize() == requirement.vertex_size);
+					GenerateVertexDeclaration(mesh->vertex_declaration);
+					assert(mesh->vertex_declaration.GetVertexSize() == requirement.vertex_size);
 
 					// initialize the vertex array and validate
 					mesh->SetVertexBufferOffset(0);

@@ -238,6 +238,24 @@ namespace chaos
 		// Atlas functions
 		// ========================================================================
 
+		BitmapTexcoords AtlasBase::GetBitmapTexcoords(BitmapEntry const & entry) const
+		{
+			// XXX : for OpenGL, texture 0, 0 is top-level
+			//       in image space (0, 0) is bottom-left
+			//       => explains why (1. - Y)
+			//
+
+			glm::vec2 atlas_size = GetAtlasDimension();
+
+			BitmapTexcoords result;
+			result.bottomleft_texcoord.x = MathTools::CastAndDiv<float>(entry.x, atlas_size.x);
+			result.bottomleft_texcoord.y = 1.0f - MathTools::CastAndDiv<float>(entry.y + entry.height, atlas_size.y);
+			result.topright_texcoord.x   = MathTools::CastAndDiv<float>(entry.x + entry.width, atlas_size.x);
+			result.topright_texcoord.y   = 1.0f - MathTools::CastAndDiv<float>(entry.y, atlas_size.y);
+			result.bitmap_index          = (float)entry.bitmap_index;
+			return result;
+		}
+
 		void AtlasBase::Clear()
 		{
 			// reset members

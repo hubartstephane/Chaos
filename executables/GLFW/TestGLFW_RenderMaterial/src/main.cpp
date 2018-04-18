@@ -84,7 +84,7 @@ protected:
 			rm = materials[1 - current_material];
 
 		if (rm != nullptr)
-			mesh->Render(rm, &uniform_provider,instancing);
+			mesh->Render(rm, &uniform_provider, instancing);
 
 
 		return true;

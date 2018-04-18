@@ -35,7 +35,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	VertexArray const * VertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration)
+	VertexArray const * VertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration, GLintptr offset)
 	{
 		// early exit
 		if (program == nullptr)
@@ -60,8 +60,7 @@ namespace chaos
 		// set the vertex buffer
 		if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
 		{
-			GLuint   binding_index = 0;
-			GLintptr offset = 0;
+			GLuint binding_index = 0;
 			glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), offset, declaration.GetVertexSize());
 		}
 

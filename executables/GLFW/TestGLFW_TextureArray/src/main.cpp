@@ -54,7 +54,7 @@ protected:
 		uniform_provider.AddVariableValue("texture_slice",   (float)texture_slice);
 		uniform_provider.AddVariableTexture("material", texture);
 
-		mesh_box->Render(program_box.get(), &uniform_provider, 0, 0);
+		mesh_box->Render(program_box.get(), &uniform_provider);
 
 		debug_display.Display(size.x, size.y);
 

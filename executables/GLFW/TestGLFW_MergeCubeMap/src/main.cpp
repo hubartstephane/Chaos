@@ -107,7 +107,7 @@ protected:
 		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 		uniform_provider.AddVariableTexture("material", texture);
 
-		mesh->Render(program.get(), &uniform_provider, 0, 0);
+		mesh->Render(program.get(), &uniform_provider);
 
 		debug_display.Display(size.x, size.y);    
 

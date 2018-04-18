@@ -52,6 +52,20 @@ namespace chaos
       int       bitmap_top = 0;
     };
 
+		/**
+		* BitmapTexcoords : an object usefull for getting the texture coordinates of a sprite
+		*/
+
+		class BitmapTexcoords
+		{
+		public:
+			glm::vec2 bottomleft_texcoord;
+			glm::vec2 topright_texcoord;
+			float     bitmap_index;
+		};
+
+
+
     /**
     * BitmapSet : this is a named group of Bitmaps (BitmapEntry)
     */
@@ -141,6 +155,10 @@ namespace chaos
       virtual ~AtlasBase() = default;
       /** the clearing method */
       virtual void Clear();
+
+			/** a usefull function to get data (texture coords) for rendering */
+			BitmapTexcoords GetBitmapTexcoords(BitmapEntry const & entry) const;
+
       /** Get a bitmap set */
       BitmapSet const * GetBitmapSet(char const * name) const;
       /** Get a bitmap set */

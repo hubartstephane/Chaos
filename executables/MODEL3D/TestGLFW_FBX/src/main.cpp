@@ -95,7 +95,7 @@ protected:
 
       float color = (float)(&mesh - &imported_data.meshes[0]) / (float)imported_data.meshes.size();
       program_data[bone_count].SetUniform("mesh_color", color);
-      mesh->Render(program_data[bone_count], nullptr, 0, 0);  
+      mesh->Render(program_data[bone_count], nullptr);  
     }
 
     return true;

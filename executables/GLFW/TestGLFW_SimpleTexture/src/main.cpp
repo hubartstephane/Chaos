@@ -279,7 +279,7 @@ protected:
 		uniform_provider.AddVariableTexture("material", texture);
 		uniform_provider.AddVariableValue("screen_size", glm::vec2((float)size.x, (float)size.y));
 		
-		mesh->Render(program.get(), &uniform_provider, 0, 0);
+		mesh->Render(program.get(), &uniform_provider);
 
 		return true;
 	}

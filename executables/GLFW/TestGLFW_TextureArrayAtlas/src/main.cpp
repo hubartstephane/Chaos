@@ -107,7 +107,7 @@ protected:
     uniform_provider.AddVariableValue("entry_start", entry_start / atlas_dimension);
     uniform_provider.AddVariableValue("entry_end", entry_end / atlas_dimension);
 
-    mesh_box->Render(program_box.get(), &uniform_provider, 0, 0);
+    mesh_box->Render(program_box.get(), &uniform_provider);
 
     debug_display.Display(size.x, size.y);
 

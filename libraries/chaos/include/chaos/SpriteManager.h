@@ -16,28 +16,6 @@
 
 namespace chaos
 {
-
-
-
-
-  template<typename PARTICLE_TYPE, typename PARTICLE_VERTEX_TYPE>
-  class SimpleMeshParticleGenerator
-  {
-  public:
-
-
-
-  };
-
-
-
-
-
-
-
-
-
-
   /** the sprite structure */
   class SpriteVertex
   {

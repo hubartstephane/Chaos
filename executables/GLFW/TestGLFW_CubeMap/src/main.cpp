@@ -179,7 +179,7 @@ protected:
     glStencilOp(stencil_fail, depth_fail, depth_pass); // do not modify the stencil anymore
 
     query->BeginQuery();
-    mesh->Render(program.get(), &uniform_provider, 0, 0);
+    mesh->Render(program.get(), &uniform_provider);
     query->EndQuery();
 
 

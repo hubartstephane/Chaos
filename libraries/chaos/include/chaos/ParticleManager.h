@@ -435,6 +435,8 @@ namespace chaos
 		void SortLayers(bool test_program_id) const;
 		/** test whether the layers are sort correctly */
 		bool AreLayersSorted(bool test_program_id) const;
+		/** change the GL rendering state */
+		virtual void UpdateRenderingStates(bool begin) const;
 
 	protected:
 

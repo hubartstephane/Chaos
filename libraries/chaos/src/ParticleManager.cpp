@@ -361,7 +361,7 @@ namespace chaos
 	void ParticleLayer::DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// get the vertex array
-		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration);
+		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
 		if (vertex_array == nullptr)
 			return;
 		// use the material
@@ -614,16 +614,39 @@ namespace chaos
 
 	void ParticleManager::Display(GPUProgramProviderBase const * uniform_provider) const
 	{
+		// early exit
+		size_t count = layers.size();
+		if (count == 0)
+			return;
 		// sort the layer if necessary (Z order + material)
 		bool test_program_id = true;
 		if (!AreLayersSorted(test_program_id))
 			SortLayers(test_program_id);
-		// draw all the layers
-		size_t count = layers.size();
+		// update the states
+		UpdateRenderingStates(true);
+		// draw all the layers		
 		for (size_t i = 0; i < count; ++i)
 			layers[i]->Display(nullptr, uniform_provider);
+		// update the states
+		UpdateRenderingStates(false);
 	}
 
+	void ParticleManager::UpdateRenderingStates(bool begin) const
+	{
+		if (begin)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+		}
+	}
 
 #if 0
 	GLuint framebuffer = 0;

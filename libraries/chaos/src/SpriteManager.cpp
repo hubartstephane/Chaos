@@ -119,50 +119,39 @@ namespace chaos
 	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
 	{
 		glm::vec2 topright_position = bottomleft_position + size;
-		glm::vec2 atlas_size = atlas->GetAtlasDimension();
 
-		// XXX : for OpenGL, texture 0, 0 is top-level
-		//       in image space (0, 0) is bottom-left
-		//       => explains why (1. - Y)
-		//
-
-		float tex_x1 = MathTools::CastAndDiv<float>(entry->x, atlas_size.x);
-		float tex_y1 = 1.0f - MathTools::CastAndDiv<float>(entry->y + entry->height, atlas_size.y);
-		float tex_x2 = MathTools::CastAndDiv<float>(entry->x + entry->width, atlas_size.x);
-		float tex_y2 = 1.0f - MathTools::CastAndDiv<float>(entry->y, atlas_size.y);
-
-		float bitmap_index = (float)entry->bitmap_index;
+		chaos::BitmapAtlas::BitmapTexcoords texcoords = atlas->GetBitmapTexcoords(*entry);
 
 		SpriteVertex bl;
 		bl.position.x = bottomleft_position.x;
 		bl.position.y = bottomleft_position.y;
-		bl.texcoord.x = tex_x1;
-		bl.texcoord.y = tex_y1;
-		bl.texcoord.z = bitmap_index;
+		bl.texcoord.x = texcoords.bottomleft_texcoord.x;
+		bl.texcoord.y = texcoords.bottomleft_texcoord.y;
+		bl.texcoord.z = texcoords.bitmap_index;
 		bl.color = color;
 
 		SpriteVertex tr;
 		tr.position.x = topright_position.x;
 		tr.position.y = topright_position.y;
-		tr.texcoord.x = tex_x2;
-		tr.texcoord.y = tex_y2;
-		tr.texcoord.z = bitmap_index;
+		tr.texcoord.x = texcoords.topright_texcoord.x;
+		tr.texcoord.y = texcoords.topright_texcoord.y;
+		tr.texcoord.z = texcoords.bitmap_index;
 		tr.color = color;
 
 		SpriteVertex tl;
 		tl.position.x = bottomleft_position.x;
 		tl.position.y = topright_position.y;
-		tl.texcoord.x = tex_x1;
-		tl.texcoord.y = tex_y2;
-		tl.texcoord.z = bitmap_index;
+		tl.texcoord.x = texcoords.bottomleft_texcoord.x;
+		tl.texcoord.y = texcoords.topright_texcoord.y;
+		tl.texcoord.z = texcoords.bitmap_index;
 		tl.color = color;
 
 		SpriteVertex br;
 		br.position.x = topright_position.x;
 		br.position.y = bottomleft_position.y;
-		br.texcoord.x = tex_x2;
-		br.texcoord.y = tex_y1;
-		br.texcoord.z = bitmap_index;
+		br.texcoord.x = texcoords.topright_texcoord.x;
+		br.texcoord.y = texcoords.bottomleft_texcoord.y;
+		br.texcoord.z = texcoords.bitmap_index;
 		br.color = color;
 
 		sprites.push_back(bl);

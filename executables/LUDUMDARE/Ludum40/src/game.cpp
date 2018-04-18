@@ -31,6 +31,7 @@
 #include <chaos/SpriteManager.h>
 #include <chaos/SoundManager.h>
 #include <chaos/JSONTools.h>
+#include <chaos/DrawPrimitive.h>
 
 
 // ======================================================================================
@@ -673,7 +674,7 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chao
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
 	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
-	fullscreen_mesh->Render(program.get(), &uniform_provider, 0, 0);
+	fullscreen_mesh->Render(program.get(), &uniform_provider);
 }
 
 void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)

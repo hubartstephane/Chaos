@@ -52,7 +52,7 @@ namespace chaos
 		/** find vertex array for the program */
 		VertexArray const * FindVertexArray(GPUProgram const * program) const;
 		/** create or return exisiting vertex array for a given program */
-		VertexArray const * FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration);
+		VertexArray const * FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration, GLintptr offset = 0);
 		/** reset the whole object */
 		void Clear();
 

@@ -41,7 +41,7 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
     uniform_provider.AddVariableTexture("material", texture);
 
-    mesh->Render(program.get(), &uniform_provider, 0, 0);
+    mesh->Render(program.get(), &uniform_provider);
 
     return true;
   }

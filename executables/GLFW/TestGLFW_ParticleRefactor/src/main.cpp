@@ -26,13 +26,24 @@
 
 class ParticleExample
 {
-	glm::vec3 position;
+public:
+
+	glm::vec2 position;
+	glm::vec2 size;
+	glm::vec3 color;
+	glm::vec2 min_texcoord;
+	glm::vec2 max_texcoord;
+	float texture_atlas_slice;
 
 };
 
 class VertexExample
 {
+public:
 
+	glm::vec2 position;
+	glm::vec3 texcoord;
+	glm::vec4 color;
 };
 
 class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
@@ -58,7 +69,9 @@ public:
 	chaos::VertexDeclaration GetVertexDeclaration() const
 	{
 		chaos::VertexDeclaration result;
-
+		result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+		result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+		result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT3);
 		return result;
 	}
 };
@@ -140,17 +153,35 @@ protected:
 				particle_layer->SetLayerID(j + i * MATERIAL_COUNT);
 
 				int material_index = rand() % 3;
-				int particle_count = rand() % 50;
+				int particle_count = rand() % 50 + 5;
 
 				particle_layer->SetRenderMaterial(materials[material_index]);
 
 				chaos::ParticleRangeAllocation * range = particle_layer->SpawnParticlesAndKeepRange(particle_count);
 				range_allocations.push_back(range);
 
+				size_t pc = particle_layer->GetParticleCount(range->GetParticleRange());
+				
+				ParticleExample * particles = (ParticleExample*)particle_layer->GetParticleBuffer(range->GetParticleRange());
+				if (particles)
+					InitializeParticles(particles, pc);
+
 				particle_manager->AddLayer(particle_layer);
 			}
 		}
 		return true;
+	}
+
+	void InitializeParticles(ParticleExample * particles, size_t count)
+	{
+		for (size_t i = 0; i < count; ++i)
+		{
+			particles[i].position = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		}
+		
+
+
 	}
 
 	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override

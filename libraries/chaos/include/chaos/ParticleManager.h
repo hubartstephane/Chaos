@@ -14,7 +14,7 @@ namespace chaos
 	// ==============================================================
 	// FORWARD DECLARATION / FRIENDSHIP MACROS
 	// ==============================================================
-	
+
 
 	// all classes in this file
 #define CHAOS_PARTICLE_CLASSES (ParticleRange) (ParticleRangeAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc)
@@ -31,7 +31,7 @@ namespace chaos
 		// PARTICLE RANGE
 		// ==============================================================
 
-		class ParticleRange
+	class ParticleRange
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -209,6 +209,8 @@ namespace chaos
 		void UpdateGPUBuffers() const;
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
+		/** the effective rendering */
+		void DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider) const;
 
 	protected:
 

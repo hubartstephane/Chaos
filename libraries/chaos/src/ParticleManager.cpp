@@ -1,5 +1,6 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/GLTools.h>
+#include <chaos/DrawPrimitive.h>
 
 namespace chaos
 {
@@ -337,20 +338,46 @@ namespace chaos
 	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider) const
 	{
 		// early exit
-		if (render_material == nullptr && material_override == nullptr)
-			return;
 		if (GetParticleCount() == 0)
 			return;
 		if (!IsVisible())
 			return;
+		// search the material
+		RenderMaterial const * final_material = material_override;
+		if (final_material == nullptr)
+		{
+			final_material = render_material.get();
+			if (final_material == nullptr)
+				return;
+		}
 		// update the vertex declaration
 		UpdateVertexDeclaration();
 		// Update GPU buffers	
 		UpdateGPUBuffers();
+		// do the rendering
+		DoDisplay(final_material, uniform_provider);
+	}
+
+	void ParticleLayer::DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider) const
+	{
 
 
 
 
+		// compute the number of vertices
+		size_t vertices_count = GetVerticesCountPerParticles() * GetParticleCount();
+
+		// the draw call
+		DrawPrimitive primitive;
+		primitive.primitive_type = GL_TRIANGLES;
+		primitive.indexed = false;
+		primitive.count = vertices_count;
+		primitive.start = 0;
+		primitive.base_vertex_index = 0;
+
+		int instance_count = 0;
+		int base_instance  = 0;
+		primitive.Render(instance_count, base_instance);
 	}
 
 	void ParticleLayer::UpdateVertexDeclaration() const

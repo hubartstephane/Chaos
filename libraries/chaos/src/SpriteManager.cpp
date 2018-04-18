@@ -2,7 +2,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GLTools.h>
-
+#include <chaos/ParticleTools.h>
 
 namespace chaos
 {
@@ -105,62 +105,31 @@ namespace chaos
 
 	void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
 	{
-		glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
-		AddSpriteImpl(entry, bottom_left_position, size, color);
+		ParticleCorners corners = ParticleTools::GetParticleCorners(position, size, hotpoint_type);
+		AddSpriteImpl(entry, corners, color);
 	}
 
 	void SpriteManager::AddSpriteBitmap(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
 	{
 		static glm::vec3 const color(1.0f, 1.0f, 1.0f);
-		glm::vec2 bottom_left_position = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
-		AddSpriteImpl(entry, bottom_left_position, size, color);
+
+		ParticleCorners corners = ParticleTools::GetParticleCorners(position, size, hotpoint_type);
+		AddSpriteImpl(entry, corners, color);
 	}
 
-	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color)
+	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, ParticleCorners const & corners, glm::vec3 const & color)
 	{
-		glm::vec2 topright_position = bottomleft_position + size;
-
 		chaos::BitmapAtlas::BitmapTexcoords texcoords = atlas->GetBitmapTexcoords(*entry);
 
-		SpriteVertex bl;
-		bl.position.x = bottomleft_position.x;
-		bl.position.y = bottomleft_position.y;
-		bl.texcoord.x = texcoords.bottomleft_texcoord.x;
-		bl.texcoord.y = texcoords.bottomleft_texcoord.y;
-		bl.texcoord.z = texcoords.bitmap_index;
-		bl.color = color;
-
-		SpriteVertex tr;
-		tr.position.x = topright_position.x;
-		tr.position.y = topright_position.y;
-		tr.texcoord.x = texcoords.topright_texcoord.x;
-		tr.texcoord.y = texcoords.topright_texcoord.y;
-		tr.texcoord.z = texcoords.bitmap_index;
-		tr.color = color;
-
-		SpriteVertex tl;
-		tl.position.x = bottomleft_position.x;
-		tl.position.y = topright_position.y;
-		tl.texcoord.x = texcoords.bottomleft_texcoord.x;
-		tl.texcoord.y = texcoords.topright_texcoord.y;
-		tl.texcoord.z = texcoords.bitmap_index;
-		tl.color = color;
-
-		SpriteVertex br;
-		br.position.x = topright_position.x;
-		br.position.y = bottomleft_position.y;
-		br.texcoord.x = texcoords.topright_texcoord.x;
-		br.texcoord.y = texcoords.bottomleft_texcoord.y;
-		br.texcoord.z = texcoords.bitmap_index;
-		br.color = color;
-
-		sprites.push_back(bl);
-		sprites.push_back(br);
-		sprites.push_back(tr);
-
-		sprites.push_back(bl);
-		sprites.push_back(tr);
-		sprites.push_back(tl);
+		// extend the array
+		size_t count = sprites.size();
+		sprites.insert(sprites.end(), 6, SpriteVertex());
+		SpriteVertex * new_vertices = &sprites[count];
+		// fill the particles position and textures
+		ParticleTools::GenerateBoxParticle(corners, texcoords, new_vertices);
+		// fix the colour
+		for (size_t i = 0; i < 6; ++i)
+			new_vertices[i].color = color;
 	}
 
 

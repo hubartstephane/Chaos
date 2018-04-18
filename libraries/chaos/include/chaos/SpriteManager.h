@@ -11,7 +11,7 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/Hotpoint.h>
-#include <chaos/SpriteManager.h>
+#include <chaos/ParticleTools.h>
 
 
 namespace chaos
@@ -72,7 +72,7 @@ namespace chaos
     /** internal method to send data to GPU */
     void UpdateGPUVertexBuffer();
     /** internal method to insert a sprite in the buffer */
-    void AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & bottomleft_position, glm::vec2 const & size, glm::vec3 const & color);
+    void AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, ParticleCorners const & corners, glm::vec3 const & color);
 
   protected:
 

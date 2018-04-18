@@ -4,7 +4,6 @@
 
 namespace chaos
 {
-
   /** this class is used to handle hotpoint and there conversions */
   class Hotpoint
   {

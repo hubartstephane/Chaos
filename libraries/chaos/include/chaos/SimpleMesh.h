@@ -44,8 +44,6 @@ namespace chaos
 
 		/** cleaning the object */
 		virtual bool DoRelease() override;
-		/** find or create a vertex array for a given program */
-		VertexArray const * GetOrCreateVertexArrayForProgram(GPUProgram const * program) const;
 		/** rendering internal method */
 		void DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 

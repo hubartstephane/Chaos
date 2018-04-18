@@ -27,11 +27,6 @@ namespace chaos
 		return true;
 	}
 
-	VertexArray const * SimpleMesh::GetOrCreateVertexArrayForProgram(GPUProgram const * program) const
-	{
-		return vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration);
-	}
-
 	void SimpleMesh::Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider,InstancingInfo const & instancing) const
 	{
 		// early exit
@@ -62,7 +57,7 @@ namespace chaos
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
-		VertexArray const * vertex_array = GetOrCreateVertexArrayForProgram(program);
+		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration);
 		if (vertex_array == nullptr)
 			return;
 		// bind the vertex array

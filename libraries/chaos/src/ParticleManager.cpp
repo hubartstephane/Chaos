@@ -360,14 +360,17 @@ namespace chaos
 
 	void ParticleLayer::DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
-
-
-
-
+		// get the vertex array
+		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration);
+		if (vertex_array == nullptr)
+			return;
+		// use the material
+		final_material->UseMaterial(uniform_provider);
+		// bind the vertex array
+		glBindVertexArray(vertex_array->GetResourceID());
 		// compute the number of vertices
 		size_t vertices_count = GetVerticesCountPerParticles() * GetParticleCount();
-
-		// the draw call
+		// one draw call for the whole buffer
 		DrawPrimitive primitive;
 		primitive.primitive_type = GL_TRIANGLES;
 		primitive.indexed = false;

@@ -32,7 +32,7 @@ namespace chaos
 		return vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration);
 	}
 
-	void SimpleMesh::Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const
+	void SimpleMesh::Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider,InstancingInfo const & instancing) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -40,10 +40,10 @@ namespace chaos
 		// use program
 		program->UseProgram(uniform_provider);
 		// do the rendering
-		DoRender(program, uniform_provider, instance_count, base_instance);
+		DoRender(program, uniform_provider, instancing);
 	}
 
-	void SimpleMesh::Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const
+	void SimpleMesh::Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// early exit
 		if (material == nullptr)
@@ -55,10 +55,10 @@ namespace chaos
 		// use material and bind uniforms
 		material->UseMaterial(uniform_provider);
 		// do the rendering
-		DoRender(program, uniform_provider, instance_count, base_instance);
+		DoRender(program, uniform_provider, instancing);
 	}
 
-	void SimpleMesh::DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const
+	void SimpleMesh::DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
@@ -69,7 +69,7 @@ namespace chaos
 		glBindVertexArray(vertex_array->GetResourceID());
 		// render the primitives
 		for (auto const & primitive : primitives)
-			primitive.Render(instance_count, base_instance);
+			primitive.Render(instancing);
 	}
 
 	void SimpleMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)

@@ -31,9 +31,9 @@ namespace chaos
 		~SimpleMesh();
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+		void Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, int instance_count = 0, int base_instance = 0) const;
+		void Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
 
 		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
@@ -47,7 +47,7 @@ namespace chaos
 		/** find or create a vertex array for a given program */
 		VertexArray const * GetOrCreateVertexArrayForProgram(GPUProgram const * program) const;
 		/** rendering internal method */
-		void DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, int instance_count, int base_instance) const;
+		void DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 	public:
 

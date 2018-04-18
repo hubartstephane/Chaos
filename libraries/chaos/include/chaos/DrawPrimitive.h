@@ -4,6 +4,25 @@
 
 namespace chaos
 {
+	/**
+	* InstancingInfo
+	*/
+
+	class InstancingInfo
+	{
+	public:
+
+		/** constructor */
+		InstancingInfo(int in_instance_count = 0, int in_base_instance = 0):
+			instance_count(in_instance_count),
+			base_instance(in_base_instance)
+		{}
+
+		/** number of instance */
+		int instance_count = 0;
+		/** the starting index of instance */
+		int base_instance = 0;
+	};
 
 	/**
 	* DrawPrimitive : a draw call
@@ -14,7 +33,7 @@ namespace chaos
 	public:
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(int instance_count = 0, int base_instance = 0) const;
+		void Render(InstancingInfo const & instancing = InstancingInfo()) const;
 
 		/** offset the index or vertex position */
 		void ShiftIndexAndVertexPosition(int vb_offset, int ib_offset);

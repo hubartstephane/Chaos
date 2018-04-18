@@ -8,6 +8,7 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/VertexArrayCache.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/DrawPrimitive.h>
 
 namespace chaos
 {
@@ -191,7 +192,7 @@ namespace chaos
 		void MarkParticlesToDestroy(size_t start, size_t count);
 
 		/** draw the layer */
-		void Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider) const;
+		void Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing = InstancingInfo()) const;
 
 	protected:
 
@@ -210,7 +211,7 @@ namespace chaos
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		void DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider) const;
+		void DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 	protected:
 

@@ -26,7 +26,7 @@ namespace chaos
 		}
 	}
 
-	void DrawPrimitive::Render(int instance_count, int base_instance) const
+	void DrawPrimitive::Render(InstancingInfo const & instancing) const
 	{
 		// This function is able to render : 
 		//   -normal primitives
@@ -42,22 +42,22 @@ namespace chaos
 
 		if (!indexed)
 		{
-			if (instance_count <= 1)
+			if (instancing.instance_count <= 1)
 			{
 				glDrawArrays(primitive_type, start, count);
 			}
 			else
 			{
-				if (base_instance == 0)
-					glDrawArraysInstanced(primitive_type, start, count, instance_count);
+				if (instancing.base_instance == 0)
+					glDrawArraysInstanced(primitive_type, start, count, instancing.instance_count);
 				else
-					glDrawArraysInstancedBaseInstance(primitive_type, start, count, instance_count, base_instance);
+					glDrawArraysInstancedBaseInstance(primitive_type, start, count, instancing.instance_count, instancing.base_instance);
 			}
 		}
 		else
 		{
 			GLvoid * offset = ((int32_t*)nullptr) + start;
-			if (instance_count <= 1)
+			if (instancing.instance_count <= 1)
 			{
 				if (base_vertex_index == 0)
 					glDrawElements(primitive_type, count, GL_UNSIGNED_INT, offset);
@@ -67,9 +67,9 @@ namespace chaos
 			else
 			{
 				if (base_vertex_index == 0)
-					glDrawElementsInstanced(primitive_type, count, GL_UNSIGNED_INT, offset, instance_count);
+					glDrawElementsInstanced(primitive_type, count, GL_UNSIGNED_INT, offset, instancing.instance_count);
 				else
-					glDrawElementsInstancedBaseVertexBaseInstance(primitive_type, count, GL_UNSIGNED_INT, offset, instance_count, base_vertex_index, base_instance);
+					glDrawElementsInstancedBaseVertexBaseInstance(primitive_type, count, GL_UNSIGNED_INT, offset, instancing.instance_count, base_vertex_index, instancing.base_instance);
 			}
 		}
 	}

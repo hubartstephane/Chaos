@@ -335,7 +335,7 @@ namespace chaos
 			deletion_vector[i] = 0;
 	}
 
-	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider) const
+	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// early exit
 		if (GetParticleCount() == 0)
@@ -355,10 +355,10 @@ namespace chaos
 		// Update GPU buffers	
 		UpdateGPUBuffers();
 		// do the rendering
-		DoDisplay(final_material, uniform_provider);
+		DoDisplay(final_material, uniform_provider, instancing);
 	}
 
-	void ParticleLayer::DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider) const
+	void ParticleLayer::DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 
 
@@ -375,9 +375,7 @@ namespace chaos
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
 
-		int instance_count = 0;
-		int base_instance  = 0;
-		primitive.Render(instance_count, base_instance);
+		primitive.Render(instancing);
 	}
 
 	void ParticleLayer::UpdateVertexDeclaration() const

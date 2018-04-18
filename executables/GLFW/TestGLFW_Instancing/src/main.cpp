@@ -14,6 +14,8 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/DrawPrimitive.h>
+
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -54,9 +56,10 @@ protected:
     uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
     uniform_provider.AddVariableValue("realtime", realtime);
 
-    int instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-    int base_instance = 0;
-    mesh->Render(program.get(), &uniform_provider, instance_count, base_instance);
+	chaos::InstancingInfo instancing;
+    instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
+    instancing.base_instance = 0;
+    mesh->Render(program.get(), &uniform_provider, instancing);
 
     return true;
   }

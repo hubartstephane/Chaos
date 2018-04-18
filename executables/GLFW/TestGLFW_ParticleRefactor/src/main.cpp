@@ -15,7 +15,8 @@
 #include <chaos/TextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
 #include <chaos/VertexDeclaration.h>
-
+#include <chaos/ParticleTools.h>
+#include <chaos/Hotpoint.h>
 
 #include <chaos/ParticleManager.h>
 
@@ -30,11 +31,7 @@ public:
 
 	glm::vec2 position;
 	glm::vec2 size;
-	glm::vec3 color;
-	glm::vec2 min_texcoord;
-	glm::vec2 max_texcoord;
-	float texture_atlas_slice;
-
+	chaos::BitmapAtlas::BitmapTexcoords texcoords;
 };
 
 class VertexExample
@@ -63,7 +60,9 @@ public:
 
 	void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const
 	{
+		chaos::ParticleCorners corners = chaos::ParticleTools::GetParticleCorners(particle->position, particle->size, chaos::Hotpoint::CENTER);
 
+		chaos::ParticleTools::GenerateBoxParticle(corners, particle->texcoords, vertices);
 	}
 
 	chaos::VertexDeclaration GetVertexDeclaration() const

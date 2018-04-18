@@ -18,6 +18,7 @@ namespace chaos
   class GPUProgramProviderBase : public ReferencedObject
   {
     friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
+		friend class GPUProgramProviderChain;
     friend class GPUProgramRenderMaterialProvider;
    
   public:
@@ -145,5 +146,30 @@ namespace chaos
     /** the uniforms to be set */
     std::vector<boost::intrusive_ptr<GPUProgramProviderBase>> children_providers;
   };
+
+	/**
+	* GPUProgramProviderChain : an utility class used to enrich an existing provider with additionnal data
+	*                           the reference count of this object is disabled. It deserves to be used on the stack
+	*/
+
+	class GPUProgramProviderChain : public DisableLastReferenceLost<GPUProgramProvider>
+	{
+	public:
+
+		/** constructor */
+		GPUProgramProviderChain(GPUProgramProviderBase const * in_other_provider) :
+			other_provider(in_other_provider)
+		{}
+
+	protected:
+
+		/** apply the actions */
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
+
+	protected:
+
+		/** another provider (use a non intrusive reference !!!) */
+		GPUProgramProviderBase const * other_provider = nullptr;
+	};
 
 }; // namespace chaos

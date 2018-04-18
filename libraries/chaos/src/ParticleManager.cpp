@@ -612,7 +612,7 @@ namespace chaos
 		});
 	}
 
-	void ParticleManager::Display(GPUProgramProviderBase const * uniform_provider) const
+	void ParticleManager::Display(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// early exit
 		size_t count = layers.size();
@@ -624,9 +624,13 @@ namespace chaos
 			SortLayers(test_program_id);
 		// update the states
 		UpdateRenderingStates(true);
+		// create an uniform provider to enrich the input
+		GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		if (atlas != nullptr)
+			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		// draw all the layers		
 		for (size_t i = 0; i < count; ++i)
-			layers[i]->Display(nullptr, uniform_provider);
+			layers[i]->Display(nullptr, (atlas != nullptr)? &main_uniform_provider : uniform_provider, instancing);
 		// update the states
 		UpdateRenderingStates(false);
 	}

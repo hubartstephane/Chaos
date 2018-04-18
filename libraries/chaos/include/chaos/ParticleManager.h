@@ -9,6 +9,7 @@
 #include <chaos/VertexArrayCache.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/DrawPrimitive.h>
+#include <chaos/TextureArrayAtlas.h>
 
 namespace chaos
 {
@@ -408,7 +409,7 @@ namespace chaos
 		/** change the bitmap atlas */
 		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
 		/** display all the particles */
-		void Display(GPUProgramProviderBase const * uniform_provider) const;
+		void Display(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing = InstancingInfo()) const;
 
 		/** Search a layer by its name */
 		ParticleLayer * FindLayer(char const * name);

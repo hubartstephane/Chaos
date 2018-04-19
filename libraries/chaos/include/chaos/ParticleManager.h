@@ -112,7 +112,7 @@ namespace chaos
 		/** update all particles */
 		virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector);
 		/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
-		virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector);
+		virtual size_t DestroyOutdatedParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 	};
 
 	// ==============================================================
@@ -206,7 +206,7 @@ namespace chaos
 		/** internal method to update particles */
 		void UpdateParticles(float delta_time);
 		/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
-		size_t DestroyObsoletParticles();
+		size_t DestroyOutdatedParticles();
 		/** update the GPU buffers */
 		void UpdateGPUBuffers() const;
 		/** update the vertex declaration */
@@ -342,30 +342,27 @@ namespace chaos
 					trait.UpdateParticle(delta_time, &p[i]);
 		}
 		/** loop for destroying the particles */
-		virtual size_t DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
+		virtual size_t DestroyOutdatedParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
 		{
+			size_t i = 0;
+			size_t j = 0;
 			if (particle_count > 0)
 			{
 				particle_type * p = (particle_type*)particles;
 
-				size_t i = 0;
-				size_t j = 0;
 				while (i < particle_count)
-				{
-					if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK && !trait.IsParticleObsolet(&p[i])) // particle is still alive ?
+				{			
+					if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK && !trait.IsParticleOutdated(&p[i])) // particle is still alive ?
 					{
+						deletion_vector[i] = j; // the position of particle 'i' is now 'j'
 						if (i != j)
 							p[j] = p[i]; // keep the particle by copying it 
-						deletion_vector[i] = (i - j);
 						++j;
 					}
-					else
-						deletion_vector[i] = (i - j);
 					++i;
 				}
-				return j;
 			}
-			return particle_count; // no destruction
+			return particle_count + (j - i);
 		}
 
 		/** get the vertex declaration */
@@ -467,7 +464,7 @@ namespace chaos
 	{
 	public:
 
-		bool IsParticleObsolet(ParticleExample * p);
+		bool IsParticleOutdated(ParticleExample * p);
 
 		void UpdateParticle(float delta_time, ParticleExample * particle);
 

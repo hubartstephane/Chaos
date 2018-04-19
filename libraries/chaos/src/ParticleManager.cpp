@@ -71,9 +71,9 @@ namespace chaos
 
 	}
 
-	size_t ParticleLayerDesc::DestroyObsoletParticles(void * particles, size_t particle_count, size_t * deletion_vector)
+	size_t ParticleLayerDesc::DestroyOutdatedParticles(void * particles, size_t particle_count, size_t * deletion_vector)
 	{
-		return 0;
+		return particle_count; // no particle destruction.
 	}
 
 	bool ParticleLayerDesc::HasParticleLimitedLifeTime() const
@@ -210,7 +210,7 @@ namespace chaos
 		// destroy the particles that are to be destroyed
 		if (pending_kill_particles > 0 || HasParticleLimitedLifeTime())
 		{
-			size_t new_particle_count = DestroyObsoletParticles();
+			size_t new_particle_count = DestroyOutdatedParticles();
 			if (new_particle_count != particle_count)
 			{
 				UpdateParticleRanges(new_particle_count);
@@ -225,9 +225,9 @@ namespace chaos
 		layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount(), &deletion_vector[0]);
 	}
 
-	size_t ParticleLayer::DestroyObsoletParticles()
+	size_t ParticleLayer::DestroyOutdatedParticles()
 	{
-		return layer_desc->DestroyObsoletParticles(&particles[0], GetParticleCount(), &deletion_vector[0]);
+		return layer_desc->DestroyOutdatedParticles(&particles[0], GetParticleCount(), &deletion_vector[0]);
 	}
 
 	ParticleRangeAllocation * ParticleLayer::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
@@ -317,15 +317,22 @@ namespace chaos
 			ParticleRange & range = particles_ranges[i];
 			if (range.count == 0)
 				continue;
-			// read the range
-			size_t start = range.start;
-			size_t end = start + range.count - 1;
-			// apply the suppression count
-			start -= deletion_vector[start];
-			end -= deletion_vector[end];
-			// update the structure
-			range.start = start;
-			range.count = end - start + 1;
+
+			size_t start = std::numeric_limits<size_t>::max();
+			size_t end   = std::numeric_limits<size_t>::max();
+			
+			for (size_t i = 0 ; i < range.count ; ++i) // search the index of the extrem particles
+			{
+				if (!deletion_vector[i + range.start] != ParticleLayer::DESTROY_PARTICLE_MARK)
+				{
+					if (start == std::numeric_limits<size_t>::max())
+						start = i;
+					end = i;
+				}
+			}
+
+			if (start == std::numeric_limits<size_t>::max())
+				range.start = range.count = 0;
 		}
 		// resize some vectors
 		particles.resize(new_particle_count * particle_size);

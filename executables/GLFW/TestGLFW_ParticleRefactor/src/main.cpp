@@ -50,7 +50,7 @@ class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, V
 {
 public:
 
-	bool IsParticleObsolet(ParticleExample * p)
+	bool IsParticleOutdated(ParticleExample * p)
 	{
 		return (p->remaining_time <= 0.0f);
 	}
@@ -256,7 +256,7 @@ int _tmain(int argc, char ** argv, char ** env)
 	params.monitor = nullptr;
 	params.width = 500;
 	params.height = 500;
-	params.monitor_index = 0;
+	params.monitor_index = -1;
 	chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
 	return 0;

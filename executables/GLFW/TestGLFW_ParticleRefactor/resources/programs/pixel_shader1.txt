@@ -1,5 +1,5 @@
     in vec3 vs_texcoord;
-    in vec3 vs_color;
+    in vec4 vs_color;
 
     out vec4 output_color;
 
@@ -11,6 +11,6 @@
       //output_color.xyz = color.xyz * vs_color;
 	  //output_color.a   = color.a;
 
-	  output_color = vec4(1.0, 0.0, 0.0, 1.0);
+	  output_color = vs_color; //vec4(1.0, 0.0, 0.0, 1.0);
 
     };

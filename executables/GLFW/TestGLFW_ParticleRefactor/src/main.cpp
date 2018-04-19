@@ -34,6 +34,7 @@ public:
 	glm::vec2 size;
 	chaos::ParticleTexcoords texcoords;
 	float lifetime;
+	float remaining_time;
 };
 
 class VertexExample
@@ -42,7 +43,7 @@ public:
 
 	glm::vec2 position;
 	glm::vec3 texcoord;
-	glm::vec3 color;
+	glm::vec4 color;
 };
 
 class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
@@ -51,13 +52,13 @@ public:
 
 	bool IsParticleObsolet(ParticleExample * p)
 	{
-		return (p->lifetime <= 0.0f);
+		return (p->remaining_time <= 0.0f);
 	}
 
 	void UpdateParticle(float delta_time, ParticleExample * particle)
 	{
 		particle->position += particle->velocity * delta_time;
-		particle->lifetime -= delta_time;
+		particle->remaining_time -= delta_time;
 	}
 
 	void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const
@@ -65,6 +66,10 @@ public:
 		chaos::ParticleCorners corners = chaos::ParticleTools::GetParticleCorners(particle->position, particle->size, chaos::Hotpoint::CENTER);
 
 		chaos::ParticleTools::GenerateBoxParticle(corners, particle->texcoords, vertices);
+
+		float alpha = particle->remaining_time / particle->lifetime;
+		for (size_t i = 0 ; i < 6 ; ++i)
+			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
 	}
 
 	chaos::VertexDeclaration GetVertexDeclaration() const
@@ -72,7 +77,7 @@ public:
 		chaos::VertexDeclaration result;
 		result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 		result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-		result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT3);
+		result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT4);
 		return result;
 	}
 };
@@ -218,6 +223,7 @@ protected:
 				speed * chaos::MathTools::Sin(alpha));
 			particles[i].size = glm::vec2(size, size);
 			particles[i].lifetime = lifetime;
+			particles[i].remaining_time = lifetime;			
 		}
 		
 

@@ -1,8 +1,15 @@
-out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+    in vec3 vs_texcoord;
+    in vec3 vs_color;
 
-uniform vec4 color;
+    out vec4 output_color;
 
-void main()
-{
-	output_color = color;
-}
+    uniform sampler2DArray material;
+
+    void main()
+    {
+      //vec4 color = texture(material, vs_texcoord);
+      //output_color.xyz = color.xyz * vs_color;
+	  //output_color.a   = color.a;
+
+	  output_color = vec4(1.0, 0.0, 0.0, 1.0);
+    };

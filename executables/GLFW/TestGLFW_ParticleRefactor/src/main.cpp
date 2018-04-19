@@ -40,7 +40,7 @@ public:
 
 	glm::vec2 position;
 	glm::vec3 texcoord;
-	glm::vec4 color;
+	glm::vec3 color;
 };
 
 class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
@@ -89,16 +89,44 @@ using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
+	
 
 protected:
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
-		glClearColor(0.0f, 0.0, 0.0, 0.0);
+		float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
+
+		// clear the buffers
+		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		float far_plane = 1000.0f;
+		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+		
+		// change  the viewport 
+		chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
 
-		particle_manager->Display(nullptr);
+		//
+		chaos::DisableLastReferenceLost<chaos::GPUProgramProvider> uniform_provider;
+
+
+		float WORLD_X = 1000.0f;
+		glm::vec2 world_size     = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
+		glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
+
+		glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
+		glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 
+
+		glm::mat4 local_to_cam =  glm::scale(scale) * glm::translate(tr);
+
+		uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
+
+
+
+
+		// draw
+		particle_manager->Display(&uniform_provider);
 
 		return true;
 	}
@@ -173,9 +201,12 @@ protected:
 
 	void InitializeParticles(ParticleExample * particles, size_t count)
 	{
+		float SIZE = 1000.0f * 9.0f / 16.0f;
+
 		for (size_t i = 0; i < count; ++i)
 		{
 			particles[i].position = glm::vec3(0.0f, 0.0f, 0.0f);
+			particles[i].size = glm::vec2(SIZE, SIZE);
 
 		}
 		

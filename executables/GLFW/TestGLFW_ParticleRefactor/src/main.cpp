@@ -31,7 +31,7 @@ public:
 
 	glm::vec2 position;
 	glm::vec2 size;
-	chaos::BitmapAtlas::BitmapTexcoords texcoords;
+	chaos::ParticleTexcoords texcoords;
 };
 
 class VertexExample

@@ -13,8 +13,21 @@ namespace chaos
 	{
 	public:
 
-		glm::vec2 bottomleft_position;
-		glm::vec2 topright_position;
+		glm::vec2 bottomleft;
+		glm::vec2 topright;
+	};
+
+
+	/**
+	* ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
+	*/
+
+	class ParticleTexcoords
+	{
+	public:
+		glm::vec2 bottomleft;
+		glm::vec2 topright;
+		float     bitmap_index;
 	};
 
 	/**
@@ -28,36 +41,39 @@ namespace chaos
 		/** returns the 2 corners of a particle according to a given position, a size and an hotpoint */
 		static ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
 
+		/** returns the texture coordinates of a particle */
+		static ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size);
+
 		/** fill the vertices array with 6 vertices corresponding to 3 triangles */
 		template<class VERTEX_TYPE>
-		static void GenerateBoxParticle(ParticleCorners const & corners, BitmapAtlas::BitmapTexcoords const & texcoords, VERTEX_TYPE * vertices)
+		static void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)
 		{
 			VERTEX_TYPE bl;
-			bl.position.x = corners.bottomleft_position.x;
-			bl.position.y = corners.bottomleft_position.y;
-			bl.texcoord.x = texcoords.bottomleft_texcoord.x;
-			bl.texcoord.y = texcoords.bottomleft_texcoord.y;
+			bl.position.x = corners.bottomleft.x;
+			bl.position.y = corners.bottomleft.y;
+			bl.texcoord.x = texcoords.bottomleft.x;
+			bl.texcoord.y = texcoords.bottomleft.y;
 			bl.texcoord.z = texcoords.bitmap_index;
 
 			VERTEX_TYPE tr;
-			tr.position.x = corners.topright_position.x;
-			tr.position.y = corners.topright_position.y;
-			tr.texcoord.x = texcoords.topright_texcoord.x;
-			tr.texcoord.y = texcoords.topright_texcoord.y;
+			tr.position.x = corners.topright.x;
+			tr.position.y = corners.topright.y;
+			tr.texcoord.x = texcoords.topright.x;
+			tr.texcoord.y = texcoords.topright.y;
 			tr.texcoord.z = texcoords.bitmap_index;
 
 			VERTEX_TYPE tl;
-			tl.position.x = corners.bottomleft_position.x;
-			tl.position.y = corners.topright_position.y;
-			tl.texcoord.x = texcoords.bottomleft_texcoord.x;
-			tl.texcoord.y = texcoords.topright_texcoord.y;
+			tl.position.x = corners.bottomleft.x;
+			tl.position.y = corners.topright.y;
+			tl.texcoord.x = texcoords.bottomleft.x;
+			tl.texcoord.y = texcoords.topright.y;
 			tl.texcoord.z = texcoords.bitmap_index;
 
 			VERTEX_TYPE br;
-			br.position.x = corners.topright_position.x;
-			br.position.y = corners.bottomleft_position.y;
-			br.texcoord.x = texcoords.topright_texcoord.x;
-			br.texcoord.y = texcoords.bottomleft_texcoord.y;
+			br.position.x = corners.topright.x;
+			br.position.y = corners.bottomleft.y;
+			br.texcoord.x = texcoords.topright.x;
+			br.texcoord.y = texcoords.bottomleft.y;
 			br.texcoord.z = texcoords.bitmap_index;
 
 			vertices[0] = bl;

@@ -30,8 +30,10 @@ class ParticleExample
 public:
 
 	glm::vec2 position;
+	glm::vec2 velocity;
 	glm::vec2 size;
 	chaos::ParticleTexcoords texcoords;
+	float lifetime;
 };
 
 class VertexExample
@@ -49,13 +51,13 @@ public:
 
 	bool IsParticleObsolet(ParticleExample * p)
 	{
-		return false;
+		return (p->lifetime <= 0.0f);
 	}
 
 	void UpdateParticle(float delta_time, ParticleExample * particle)
 	{
-		particle = particle;
-
+		particle->position += particle->velocity * delta_time;
+		particle->lifetime -= delta_time;
 	}
 
 	void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const
@@ -140,7 +142,7 @@ protected:
 
 	virtual bool Tick(double delta_time) override
 	{
-		particle_manager->Tick(0.0f);
+		particle_manager->Tick((float)delta_time);
 
 		return true; // no redraw
 	}
@@ -201,13 +203,21 @@ protected:
 
 	void InitializeParticles(ParticleExample * particles, size_t count)
 	{
-		float SIZE = 1000.0f * 9.0f / 16.0f;
+		float WORLD_SIZE = 1000.0f * 9.0f / 16.0f;
 
 		for (size_t i = 0; i < count; ++i)
-		{
-			particles[i].position = glm::vec3(0.0f, 0.0f, 0.0f);
-			particles[i].size = glm::vec2(SIZE, SIZE);
+		{		
+			float size  = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.04f;
+			float alpha = chaos::MathTools::RandFloat() * 6.28f;
+			float speed = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.05f;
+			float lifetime = 3.0f + chaos::MathTools::RandFloat() * 3.0f;
 
+			particles[i].position = glm::vec2(0.0f, 0.0f);
+			particles[i].velocity = glm::vec2(
+				speed * chaos::MathTools::Cos(alpha),
+				speed * chaos::MathTools::Sin(alpha));
+			particles[i].size = glm::vec2(size, size);
+			particles[i].lifetime = lifetime;
 		}
 		
 

@@ -321,18 +321,24 @@ namespace chaos
 			size_t start = std::numeric_limits<size_t>::max();
 			size_t end   = std::numeric_limits<size_t>::max();
 			
-			for (size_t i = 0 ; i < range.count ; ++i) // search the index of the extrem particles
+			for (size_t j = 0 ; j < range.count ; ++j) // search the index of the extrem particles
 			{
-				if (!deletion_vector[i + range.start] != ParticleLayer::DESTROY_PARTICLE_MARK)
+				size_t deletion_value = deletion_vector[j + range.start];
+				if (deletion_value != ParticleLayer::DESTROY_PARTICLE_MARK)
 				{
 					if (start == std::numeric_limits<size_t>::max())
-						start = i;
-					end = i;
+						start = deletion_value;
+					end = deletion_value;
 				}
 			}
 
-			if (start == std::numeric_limits<size_t>::max())
+			if (start == std::numeric_limits<size_t>::max()) // no particles found
 				range.start = range.count = 0;
+			else
+			{
+				range.start = start;
+				range.count = end - start + 1;
+			}
 		}
 		// resize some vectors
 		particles.resize(new_particle_count * particle_size);
@@ -530,7 +536,7 @@ namespace chaos
 	void ParticleManager::Tick(float delta_time)
 	{
 		size_t count = layers.size();
-		for (size_t i = 1; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 			layers[i]->TickParticles(delta_time);
 	}
 

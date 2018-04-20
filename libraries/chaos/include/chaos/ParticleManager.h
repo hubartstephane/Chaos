@@ -346,21 +346,26 @@ namespace chaos
 		{
 			size_t i = 0;
 			size_t j = 0;
-			if (particle_count > 0)
-			{
-				particle_type * p = (particle_type*)particles;
 
-				while (i < particle_count)
-				{			
-					if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK && !trait.IsParticleOutdated(&p[i])) // particle is still alive ?
+			particle_type * p = (particle_type*)particles;
+
+			while (i < particle_count)
+			{
+				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK) // already destroyed ?
+				{
+					if (trait.IsParticleOutdated(&p[i]))
+					{
+						deletion_vector[i] = ParticleLayer::DESTROY_PARTICLE_MARK;
+					}
+					else
 					{
 						deletion_vector[i] = j; // the position of particle 'i' is now 'j'
 						if (i != j)
 							p[j] = p[i]; // keep the particle by copying it 
 						++j;
 					}
-					++i;
 				}
+				++i;
 			}
 			return particle_count + (j - i);
 		}

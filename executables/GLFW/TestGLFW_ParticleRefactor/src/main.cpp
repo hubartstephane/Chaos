@@ -214,8 +214,8 @@ protected:
 		{		
 			float size  = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.04f;
 			float alpha = chaos::MathTools::RandFloat() * 6.28f;
-			float speed = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.05f;
-			float lifetime = 3.0f + chaos::MathTools::RandFloat() * 3.0f;
+			float speed = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.1f;
+			float lifetime = 2.0f + chaos::MathTools::RandFloat() * 2.0f;
 
 			particles[i].position = glm::vec2(0.0f, 0.0f);
 			particles[i].velocity = glm::vec2(

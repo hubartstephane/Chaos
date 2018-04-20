@@ -50,15 +50,11 @@ class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, V
 {
 public:
 
-	bool IsParticleOutdated(ParticleExample * p)
-	{
-		return (p->remaining_time <= 0.0f);
-	}
-
-	void UpdateParticle(float delta_time, ParticleExample * particle)
+	bool UpdateParticle(float delta_time, ParticleExample * particle)
 	{
 		particle->position += particle->velocity * delta_time;
 		particle->remaining_time -= delta_time;
+		return (particle->remaining_time <= 0.0f);
 	}
 
 	void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const

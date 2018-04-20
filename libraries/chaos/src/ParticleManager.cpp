@@ -66,19 +66,14 @@ namespace chaos
 		return 0;
 	}
 
-	void ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector)
+	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector)
 	{
-
+		return 0;
 	}
 
-	size_t ParticleLayerDesc::DestroyOutdatedParticles(void * particles, size_t particle_count, size_t * deletion_vector)
+	size_t ParticleLayerDesc::CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector)
 	{
 		return particle_count; // no particle destruction.
-	}
-
-	bool ParticleLayerDesc::HasParticleLimitedLifeTime() const
-	{
-		return false;
 	}
 
 	bool ParticleLayerDesc::AreParticlesDynamic() const
@@ -162,11 +157,6 @@ namespace chaos
 		return &particles[range.start * particle_size];
 	}
 
-	bool ParticleLayer::HasParticleLimitedLifeTime() const
-	{
-		return layer_desc->HasParticleLimitedLifeTime();
-	}
-
 	bool ParticleLayer::AreParticlesDynamic() const
 	{
 		return layer_desc->AreParticlesDynamic();
@@ -204,13 +194,13 @@ namespace chaos
 		// update the particles themselves
 		if (AreParticlesDynamic())
 		{
-			UpdateParticles(delta_time);
+			pending_kill_particles += UpdateParticles(delta_time);
 			require_GPU_update = true;
 		}
 		// destroy the particles that are to be destroyed
-		if (pending_kill_particles > 0 || HasParticleLimitedLifeTime())
+		if (pending_kill_particles > 0)
 		{
-			size_t new_particle_count = DestroyOutdatedParticles();
+			size_t new_particle_count = CleanDestroyedParticles();
 			if (new_particle_count != particle_count)
 			{
 				UpdateParticleRanges(new_particle_count);
@@ -220,14 +210,14 @@ namespace chaos
 		}
 	}
 
-	void ParticleLayer::UpdateParticles(float delta_time)
+	size_t ParticleLayer::UpdateParticles(float delta_time)
 	{
-		layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount(), &deletion_vector[0]);
+		return layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount(), &deletion_vector[0]);
 	}
 
-	size_t ParticleLayer::DestroyOutdatedParticles()
+	size_t ParticleLayer::CleanDestroyedParticles()
 	{
-		return layer_desc->DestroyOutdatedParticles(&particles[0], GetParticleCount(), &deletion_vector[0]);
+		return layer_desc->CleanDestroyedParticles(&particles[0], GetParticleCount(), &deletion_vector[0]);
 	}
 
 	ParticleRangeAllocation * ParticleLayer::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)

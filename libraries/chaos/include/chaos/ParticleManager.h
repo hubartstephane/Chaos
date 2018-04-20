@@ -96,8 +96,6 @@ namespace chaos
 		/** returns the number of vertices required for each particles */
 		virtual size_t GetVerticesCountPerParticles() const;
 
-		/** returns true whether particles may destroyed themselves */
-		virtual bool HasParticleLimitedLifeTime() const;
 		/** returns true whether particles need to be updated */
 		virtual bool AreParticlesDynamic() const;
 
@@ -110,9 +108,9 @@ namespace chaos
 	protected:
 
 		/** update all particles */
-		virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector);
+		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector);
 		/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
-		virtual size_t DestroyOutdatedParticles(void * particles, size_t particle_count, size_t * deletion_vector);
+		virtual size_t CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 	};
 
 	// ==============================================================
@@ -157,8 +155,6 @@ namespace chaos
 		size_t GetVertexSize() const { return vertex_size; }
 		/** returns the number of vertices required for each particles */
 		size_t GetVerticesCountPerParticles() const { return vertices_count_per_particles; }
-		/** returns true whether particles may destroyed themselves */
-		bool HasParticleLimitedLifeTime() const;
 		/** returns true whether particles need to be updated */
 		bool AreParticlesDynamic() const;
 
@@ -204,9 +200,9 @@ namespace chaos
 		/** internal method fix the ranges after particles destruction */
 		void UpdateParticleRanges(size_t new_particle_count);
 		/** internal method to update particles */
-		void UpdateParticles(float delta_time);
+		size_t UpdateParticles(float delta_time);
 		/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
-		size_t DestroyOutdatedParticles();
+		size_t CleanDestroyedParticles();
 		/** update the GPU buffers */
 		void UpdateGPUBuffers() const;
 		/** update the vertex declaration */
@@ -277,16 +273,13 @@ namespace chaos
 		using vertex_type = VERTEX_TYPE;
 
 		/** constructor */
-		ParticleLayerTrait(bool in_lifetime_particles = true, bool in_dynamic_particles = true) :
-			lifetime_particles(in_lifetime_particles),
+		ParticleLayerTrait(bool in_dynamic_particles = true) :
 			dynamic_particles(in_dynamic_particles)
 		{
 		}
 
 	public:
 
-		/** whether the particles have a limited lifetime */
-		bool lifetime_particles = false;
 		/** whether the particles are dynamic */
 		bool dynamic_particles = false;
 	};
@@ -322,27 +315,33 @@ namespace chaos
 		{
 			return sizeof(vertex_type);
 		}
-		/** returns true whether particles have a limited lifetime */
-		virtual bool HasParticleLimitedLifeTime() const
-		{
-			return trait.lifetime_particles;
-		}
 		/** returns true whether particles need to be updated */
 		virtual bool AreParticlesDynamic() const
 		{
 			return trait.dynamic_particles;
 		}
 
-		/** loop for updating the particles */
-		virtual void UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector) override
+		/** loop for updating the particles (returns the number of particles destroyed) */
+		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector) override
 		{
+			size_t result = 0;
+
 			particle_type * p = (particle_type*)particles;
 			for (size_t i = 0; i < particle_count; ++i)
+			{
 				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK)
-					trait.UpdateParticle(delta_time, &p[i]);
+				{
+					if (trait.UpdateParticle(delta_time, &p[i])) // update the particle and test whether it is destroyed
+					{
+						deletion_vector[i] = ParticleLayer::DESTROY_PARTICLE_MARK;
+						++result;
+					}
+				}
+			}
+			return result;
 		}
 		/** loop for destroying the particles */
-		virtual size_t DestroyOutdatedParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
+		virtual size_t CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
 		{
 			size_t i = 0;
 			size_t j = 0;
@@ -353,17 +352,10 @@ namespace chaos
 			{
 				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK) // already destroyed ?
 				{
-					if (trait.IsParticleOutdated(&p[i]))
-					{
-						deletion_vector[i] = ParticleLayer::DESTROY_PARTICLE_MARK;
-					}
-					else
-					{
-						deletion_vector[i] = j; // the position of particle 'i' is now 'j'
-						if (i != j)
-							p[j] = p[i]; // keep the particle by copying it 
-						++j;
-					}
+					deletion_vector[i] = j; // the position of particle 'i' is now 'j'
+					if (i != j)
+						p[j] = p[i]; // keep the particle by copying it 
+					++j;
 				}
 				++i;
 			}
@@ -455,30 +447,30 @@ namespace chaos
 
 #if 0
 
+	/** class for particles */
 	class ParticleExample
 	{
 		...
 	};
 
+	/** class for vertices (only GPU usable data) */
 	class VertexExample
 	{
 		...
 	};
 
+	/** the traits */
 	class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 	{
 	public:
 
-		bool IsParticleOutdated(ParticleExample * p);
-
-		void UpdateParticle(float delta_time, ParticleExample * particle);
-
+		/** updates the particle. returns true whether the particle is to be destroyed */
+		bool UpdateParticle(float delta_time, ParticleExample * particle);
+		/** take one particle and transforms it into several vertices (usually 6 for 2 triangles */
 		void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const;
-
+		/** the the vertex declaration */
 		chaos::VertexDeclaration GetVertexDeclaration() const;
 	};
-
-	using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>;
 
 #endif
 

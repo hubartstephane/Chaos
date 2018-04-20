@@ -150,14 +150,14 @@ namespace chaos
 
 		public:
 			/** constructor */
-			GeneratorData(BitmapAtlas::AtlasBase const & in_atlas, GeneratorResult & in_result):
-				atlas(in_atlas),
-				result(in_result)
+			GeneratorData(GeneratorResult & in_result, GeneratorParams const & in_params, BitmapAtlas::AtlasBase const & in_atlas):				
+				result(in_result),
+				params(in_params),
+				atlas(in_atlas)
 			{
 			}
 
 		public:
-
 
 			/** duplicate the last stack element */
 			Style & PushDuplicate();
@@ -165,14 +165,32 @@ namespace chaos
 			Style & PushCharacterSet(BitmapAtlas::CharacterSet const * character_set);
 			/** add an element on generator stack : keep character_set, but change current color */
 			Style & PushColor(glm::vec3 const & color);
+			/** get a character set from its name */
+			BitmapAtlas::CharacterSet const * GetCharacterSetFromName(char const * character_set_name) const;
+
+
+			/** start the markup */
+			bool StartMarkup(char const * text, int & i, class Generator & generator);
+			/** utility method to emit characters */
+			void EmitCharacters(char c, int count);
+			/** utility method to emit character */
+			void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set);
+			/** emit a bitmap */
+			void EmitBitmap(BitmapAtlas::BitmapEntry const * entry);
+			/** end the current line */
+			void EndCurrentLine();
+			/** insert a token */
+			void InsertTokenInLine(Token & token);
 
 		public:
 		
-
-			/** the atlas in use */
-			BitmapAtlas::AtlasBase const & atlas;
 			/** the result */
 			GeneratorResult & result;
+			/** the parameters from user */
+			GeneratorParams const & params;
+			/** the atlas in use */
+			BitmapAtlas::AtlasBase const & atlas;
+
 			/** the stack used for parsing */
 			std::vector<Style> style_stack;
 		};
@@ -181,33 +199,8 @@ namespace chaos
 #if 0
 		class GeneratorData
 		{
-		public:
 
-			/** the constructor */
-			GeneratorData(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
-
-			/** start the markup */
-			bool StartMarkup(char const * text, int & i, class Generator & generator, GeneratorParams const & params);
-			/** utility method to emit characters */
-			void EmitCharacters(char c, int count, GeneratorParams const & params);
-			/** utility method to emit character */
-			void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, GeneratorParams const & params);
-			/** emit a bitmap */
-			void EmitBitmap(BitmapAtlas::BitmapEntry const * entry, GeneratorParams const & params);
-			/** end the current line */
-			void EndCurrentLine(GeneratorParams const & params);
-			/** insert a token */
 			void InsertTokenInLine(SpriteToken & token, GeneratorParams const & params);
-
-			/** duplicate the last stack element */
-			void PushDuplicate();
-			/** add an element on generator stack : keep color, but change current character_set */
-			void PushCharacterSet(BitmapAtlas::CharacterSet const * character_set);
-			/** add an element on generator stack : keep character_set, but change current color */
-			void PushColor(glm::vec3 const & color);
-
-			/** get a character set from its name */
-			BitmapAtlas::CharacterSet const * GetCharacterSetFromName(char const * character_set_name) const;
 
 		public:
 
@@ -264,147 +257,10 @@ namespace chaos
 
 		protected:
 
-			/** get a color by its name */
-			glm::vec3 const * GetColor(char const * name) const;
-			/** get a bitmap by its name */
-			BitmapAtlas::BitmapEntry const * GetBitmap(char const * name) const;
-			/** get a character set by its name */
-			BitmapAtlas::CharacterSet const * GetCharacterSet(char const * name) const;
-			/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
-			bool IsNameValid(char const * name) const;
-
-
-
-#if 0
-
+			/** the generation internal method */
+			bool DoGenerate(char const * text, GeneratorData & generator_data);
 			/** generate the lines, without cutting them */
-			bool GenerateLines(char const * text, GeneratorParams const & params, GeneratorData & generator_data);
-			/** cut the line when necessary */
-			bool BreakLines(GeneratorParams const & params, GeneratorData & generator_data);
-			/** utility method to cut one line an insert it into a new result */
-			void BreakOneLine(float & y, TokenLine const & line, GeneratorResult & result_lines, GeneratorParams const & params, GeneratorData & generator_data);
-			/** update lines according to justification */
-			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data);
-			/** apply offset for hotpoint */
-			bool MoveSpritesToHotpoint(GeneratorParams const & params, GeneratorData & generator_data);
-
-			/** generate the sprites */
-			bool GenerateSprites(SpriteManager * sprite_manager, GeneratorParams const & params, GeneratorData & generator_data);
-
-			/** compute the bounding box for all sprite generated */
-			bool GetBoundingBox(GeneratorResult const & generator_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
-			/** compute the bounding box for a single line */
-			bool GetBoundingBox(TokenLine const & generator_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
-			/** move all sprites in a line */
-			void MoveSprites(TokenLine & generator_line, glm::vec2 const & offset);
-			/** move all sprites */
-			void MoveSprites(GeneratorResult & generator_result, glm::vec2 const & offset);
-
-
-			//void BreakLineIntoWords(TokenLine const & line, std::vector<LexicalTokenGroup> & result);
-
-#endif
-
-		public:
-
-			/** the colors to use, indexed by a joker name */
-			std::map<std::string, glm::vec3, StringTools::ci_less> colors;
-			/** the bitmaps to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::BitmapEntry const *, StringTools::ci_less> bitmaps;
-			/** the character_set to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::CharacterSet const *, StringTools::ci_less> character_sets;
-			/** the atlas where to find entries */
-			BitmapAtlas::AtlasBase const & atlas;
-		};
-
-
-
-	
-	}; // namespace ParticleTextGenerator
-
-
-
-
-
-
-
-#if 0
-
-
-	namespace SpriteText
-	{
-
-		
-
-
-		/** the of a line of parsing */
-		using TokenLine = std::vector<SpriteToken>;
-		/** the result of parsing */
-		using GeneratorResult = std::vector<TokenLine>;
-
-		/** an utility structure used to contains data during parsing */
-		class GeneratorData
-		{
-		public:
-
-			/** the constructor */
-			GeneratorData(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
-
-			/** start the markup */
-			bool StartMarkup(char const * text, int & i, class Generator & generator, GeneratorParams const & params);
-			/** utility method to emit characters */
-			void EmitCharacters(char c, int count, GeneratorParams const & params);
-			/** utility method to emit character */
-			void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, GeneratorParams const & params);
-			/** emit a bitmap */
-			void EmitBitmap(BitmapAtlas::BitmapEntry const * entry, GeneratorParams const & params);
-			/** end the current line */
-			void EndCurrentLine(GeneratorParams const & params);
-			/** insert a token */
-			void InsertTokenInLine(SpriteToken & token, GeneratorParams const & params);
-
-
-			/** get a character set from its name */
-			BitmapAtlas::CharacterSet const * GetCharacterSetFromName(char const * character_set_name) const;
-
-		public:
-
-			/** the atlas in used */
-			BitmapAtlas::AtlasBase const & atlas;
-			/** current line position for a bitmap (below scanline, at descender level) */
-			glm::vec2 bitmap_position = glm::vec2(0.0f, 0.0f);
-			/** current line position for a character (below scanline, at descender level) */
-			glm::vec2 character_position = glm::vec2(0.0f, 0.0f);
-			/** the result */
-			GeneratorResult generator_result;
-			/** the stack used for parsing */
-			std::vector<StyleDefinition> style_stack;
-		};
-
-		/** the text generator */
-		class Generator
-		{
-			friend class GeneratorData;
-
-		public:
-
-			/** constructor with atlas initialization */
-			Generator(BitmapAtlas::AtlasBase const & in_atlas) : atlas(in_atlas) {}
-
-			/** add a named color in the generator */
-			bool AddColor(char const * name, glm::vec3 const & color);
-			/** add a named bitmap in the generator */
-			bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
-			/** add a named bitmap in the generator */
-			bool AddBitmap(char const * name, BitmapAtlas::BitmapEntry const * entry);
-
-			/** add a named character set in the generator */
-			bool AddCharacterSet(char const * name, char const * font_name);
-			/** add a named character set in the generator */
-			bool AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set);
-
-			/** the main method to generator a text */
-			bool GenerateSprites(char const * text, SpriteManager * sprite_manager = nullptr, GeneratorResult * generator_result = nullptr, GeneratorParams const & params = GeneratorParams());
+			bool DoGenerateLines(char const * text, GeneratorData & generator_data);
 
 		protected:
 
@@ -417,8 +273,11 @@ namespace chaos
 			/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
 			bool IsNameValid(char const * name) const;
 
-			/** generate the lines, without cutting them */
-			bool GenerateLines(char const * text, GeneratorParams const & params, GeneratorData & generator_data);
+
+
+#if 0
+
+
 			/** cut the line when necessary */
 			bool BreakLines(GeneratorParams const & params, GeneratorData & generator_data);
 			/** utility method to cut one line an insert it into a new result */
@@ -443,6 +302,8 @@ namespace chaos
 
 			//void BreakLineIntoWords(TokenLine const & line, std::vector<LexicalTokenGroup> & result);
 
+#endif
+
 		public:
 
 			/** the colors to use, indexed by a joker name */
@@ -451,12 +312,14 @@ namespace chaos
 			std::map<std::string, BitmapAtlas::BitmapEntry const *, StringTools::ci_less> bitmaps;
 			/** the character_set to use, indexed by a joker name */
 			std::map<std::string, BitmapAtlas::CharacterSet const *, StringTools::ci_less> character_sets;
+
 			/** the atlas where to find entries */
 			BitmapAtlas::AtlasBase const & atlas;
 		};
 
-	}; // namespace SpriteText
 
-#endif
+
+	
+	}; // namespace ParticleTextGenerator
 
 };

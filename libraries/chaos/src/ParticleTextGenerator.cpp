@@ -26,17 +26,16 @@ namespace chaos
 		// GeneratorData methods
 		// ============================================================
 
-
 		Style & GeneratorData::PushDuplicate()
 		{
-			Style style_def = style_stack.back();
-			style_stack.push_back(style_def); // push a duplicate of previous style_def
+			Style style = style_stack.back();
+			style_stack.push_back(style); // push a duplicate of previous style
 			return style_stack[style_stack.size() - 1];
 		}
 
 		Style & GeneratorData::PushCharacterSet(BitmapAtlas::CharacterSet const * character_set)
 		{
-			// push a copy of previous style_def, except the character set
+			// push a copy of previous style, except the character set
 			Style & result = PushDuplicate();
 			if (character_set != nullptr)
 				result.character_set = character_set;
@@ -45,11 +44,226 @@ namespace chaos
 
 		Style & GeneratorData::PushColor(glm::vec3 const & color)
 		{
-			// push a copy of previous style_def, except the color
+			// push a copy of previous style, except the color
 			Style & result = PushDuplicate();
 			result.color = color;
 			return result;
 		}
+
+		BitmapAtlas::CharacterSet const * GeneratorData::GetCharacterSetFromName(char const * character_set_name) const
+		{
+			BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
+			if (result == nullptr)
+			{
+				// for convenience, if we cannot find the character set, try to use the one on the top of the stack
+				if (style_stack.size() > 0)
+					result = style_stack.back().character_set;
+				// if we still have no character set, take the very first available
+				if (result == nullptr)
+				{
+					auto const & character_sets = atlas.GetCharacterSets();
+					if (character_sets.size() > 0)
+						result = character_sets[0].get();
+				}
+			}
+			return result;
+		}
+
+		void GeneratorData::EmitCharacters(char c, int count)
+		{
+			// get current character set
+			BitmapAtlas::CharacterSet const * character_set = style_stack.back().character_set;
+			if (character_set == nullptr)
+				return;
+
+			// get entry corresponding to the glyph
+			BitmapAtlas::CharacterEntry const * entry = character_set->GetEntry(c);
+			if (entry == nullptr)
+				return;
+
+			// emit the characters
+			for (int i = 0; i < count; ++i)
+				EmitCharacter(c, entry, character_set);
+		}
+
+		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set)
+		{
+			Token token;
+			token.character = c;
+			token.character_entry = entry;
+			token.character_set = character_set;
+			token.color = style_stack.back().color;
+			InsertTokenInLine(token);
+		}
+
+		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry)
+		{
+			Token token;
+			token.bitmap_entry = entry;
+			InsertTokenInLine(token);
+		}
+
+
+		void GeneratorData::InsertTokenInLine(Token & token)
+		{
+#if 0
+
+			// if there was no line, insert the very first one ...
+			if (generator_result.size() == 0)
+				generator_result.push_back(TokenLine());
+
+			// insert the token
+			if (token.bitmap_entry != nullptr)
+			{
+				// restrict the bitmap to the size of the line
+				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_entry->height);
+
+				token.position = bitmap_position + params.bitmap_padding;
+
+				token.size.x = factor * (float)token.bitmap_entry->width;
+				token.size.y = params.line_height - 2 * params.bitmap_padding.y;
+
+				bitmap_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
+				character_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
+			}
+			else if (token.character_entry != nullptr)
+			{
+				// get the descender 
+				StyleDefinition const & context = style_stack.back();
+				float descender = (context.character_set == nullptr) ? 0.0f : context.character_set->descender;
+
+				// scale the character back to the size of the scanline
+				float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+
+				token.position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
+					factor * glm::vec2(
+					(float)(token.character_entry->bitmap_left),
+						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
+					);
+
+				token.size.x = factor * (float)token.character_entry->width;
+				token.size.y = factor * (float)token.character_entry->height;
+
+				// XXX : Some fonts are in italic. The 'advance' cause some 'overide' in character bounding box.
+				//       That's great for characters that are near one another
+				//       But with bitmap that causes real overide.
+				//       => that's why we are using two position : 'bitmap_position' & 'character_position'
+				bitmap_position.x = token.position.x + params.character_spacing + token.size.x;
+				character_position.x = token.position.x + params.character_spacing + factor * (float)(token.character_entry->advance.x);
+			}
+			generator_result.back().push_back(token);
+#endif
+		}
+
+
+
+
+
+
+
+
+		void GeneratorData::EndCurrentLine()
+		{
+	
+		}
+
+		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator)
+		{
+
+
+
+
+
+
+
+			return false; // markup started, but not finished : ill-formed
+		}
+
+
+
+#if 0
+
+
+
+
+
+
+
+
+
+		void GeneratorData::EndCurrentLine(GeneratorParams const & params)
+		{
+			// update position
+			float delta_y = params.line_height + params.line_spacing;
+
+			bitmap_position.x = 0.0f;
+			bitmap_position.y -= delta_y;
+			character_position.x = 0.0f;
+			character_position.y -= delta_y;
+			// if there was no line, insert the very first one ...
+			if (generator_result.size() == 0)
+				generator_result.push_back(TokenLine());
+			// ... then you can add a new line
+			generator_result.push_back(TokenLine());
+		}
+
+		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator, GeneratorParams const & params)
+		{
+			int j = i;
+			while (text[i] != 0)
+			{
+				char c = text[i];
+
+				if (!StringTools::IsVariableCharacter(c)) // searched string is contained in  [j .. i-1]
+				{
+					// no character : skip
+					if (i - j < 1)
+						return false; // ill-formed string								  
+									  // the markup
+					std::string markup = std::string(&text[j], &text[i]);
+					// markup correspond to a bitmap, the current character MUST be ']'
+					auto bitmap = generator.GetBitmap(markup.c_str());
+					if (bitmap != nullptr)
+					{
+						if (c == ']')
+						{
+							EmitBitmap(bitmap, params);
+							return true;
+						}
+						return false; // ill-formed string
+					}
+					// if ']' is found, do nothing because, we are about to push a color/character set on the stack that is to be immediatly popped
+					if (c == ']')
+						return true;
+					// color markup found
+					auto color = generator.GetColor(markup.c_str());
+					if (color != nullptr)
+					{
+						PushColor(*color);
+						return true;
+					}
+					// character set markup found
+					auto character_set = generator.GetCharacterSet(markup.c_str());
+					if (character_set != nullptr)
+					{
+						PushCharacterSet(character_set);
+						return true;
+					}
+					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack 
+					// because we expect a markup closure later
+					PushDuplicate();
+					return true;
+				}
+				++i;
+			}
+			return false; // markup started, but not finished : ill-formed
+		}
+
+
+
+
+#endif
+
 
 		// ============================================================
 		// Generator methods
@@ -158,9 +372,93 @@ namespace chaos
 
 			// clear the result
 			result.Clear();
-		
-		
-		
+
+			// initialize parse params stack with a default style that defines current color and fonts
+			GeneratorData generator_data(result, params, atlas);
+
+			Style style;
+			style.color = params.default_color;
+			style.character_set = generator_data.GetCharacterSetFromName(params.character_set_name.c_str());
+			generator_data.style_stack.push_back(style);
+
+			// start the generation
+			return DoGenerate(text, generator_data);
+		}
+
+		bool Generator::DoGenerate(char const * text, GeneratorData & generator_data)
+		{
+			// all steps to properly generate the result
+			if (!DoGenerateLines(text, generator_data))
+				return false;
+
+
+
+
+			return true;
+		}
+
+		bool Generator::DoGenerateLines(char const * text, GeneratorData & generator_data)
+		{
+			// iterate over all characters
+			bool escape_character = false;
+			for (int i = 0; text[i] != 0; ++i)
+			{
+				char c = text[i];
+
+				bool new_escape_character = (c == '\\');
+
+				// ignore chariot return (UNIX/WINDOWS differences) : no different handling if previous character was an escape character
+				if (c == '\r')
+				{
+
+				}
+				// next line  : no different handling if previous character was an escape character
+				else if (c == '\n')
+				{
+					generator_data.EndCurrentLine();
+				}
+				// tabulation : no different handling if previous character was an escape character
+				else if (c == '\t')
+				{
+					int tab_size = min(generator_data.params.tab_size, 1);
+					generator_data.EmitCharacters(' ', tab_size);
+				}
+				// if escape is set, simply display the incoming character no matter what it is (except \n \r \t)
+				else if (escape_character)
+				{
+					generator_data.EmitCharacters(c, 1);
+				}
+				// start an escape
+				else if (new_escape_character)
+				{
+
+				}
+				// close previously started markup 
+				else if (c == ']')
+				{
+					if (generator_data.style_stack.size() <= 1) // the very first style is manually inserted. It should never be popped
+						return false;
+					generator_data.style_stack.pop_back();
+				}
+				// start a new markup
+				else if (c == '[')
+				{
+					if (!generator_data.StartMarkup(text, ++i, *this)) // ill-formed markup
+						return false;
+				}
+				// finally, this is not a special character  		
+				else
+				{
+					generator_data.EmitCharacters(c, 1);
+				}
+
+				escape_character = !escape_character && new_escape_character;
+			}
+
+			// all markups should be correctly closed (except the very first we have manually inserted)
+			if (generator_data.style_stack.size() != 1) 
+				return false;
+
 			return true;
 		}
 
@@ -184,65 +482,7 @@ namespace chaos
 
 		bool Generator::GenerateLines(char const * text, GeneratorParams const & params, GeneratorData & generator_data)
 		{
-			// iterate over all characters
-			bool escape_character = false;
-			for (int i = 0; text[i] != 0; ++i)
-			{
-				char c = text[i];
 
-				bool new_escape_character = (c == '\\');
-
-				// ignore chariot return (UNIX/WINDOWS differences) : no different handling if previous character was an escape character
-				if (c == '\r')
-				{
-
-				}
-				// next line  : no different handling if previous character was an escape character
-				else if (c == '\n')
-				{
-					generator_data.EndCurrentLine(params);
-				}
-				// tabulation : no different handling if previous character was an escape character
-				else if (c == '\t')
-				{
-					generator_data.EmitCharacters(' ', (params.tab_size < 1) ? 1 : params.tab_size, params);
-				}
-				// if escape is set, simply display the incoming character no matter what it is (except \n \r \t)
-				else if (escape_character)
-				{
-					generator_data.EmitCharacters(c, 1, params);
-				}
-				// start an escape
-				else if (new_escape_character)
-				{
-
-				}
-				// close previously started markup 
-				else if (c == ']')
-				{
-					if (generator_data.style_stack.size() <= 1) // the very first style_def is manually inserted. It should never be popped
-						return false;
-					generator_data.style_stack.pop_back();
-				}
-				// start a new markup
-				else if (c == '[')
-				{
-					if (!generator_data.StartMarkup(text, ++i, *this, params)) // ill-formed markup
-						return false;
-				}
-				// finally, this is not a special character  		
-				else
-				{
-					generator_data.EmitCharacters(c, 1, params);
-				}
-
-				escape_character = !escape_character && new_escape_character;
-			}
-
-			if (generator_data.style_stack.size() != 1) // all markups should be correctly closed (except the very first we have manually inserted)
-				return false;
-
-			return true;
 		}
 
 		bool Generator::GetBoundingBox(TokenLine const & generator_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const
@@ -321,13 +561,13 @@ namespace chaos
 		{
 			assert(text != nullptr);
 
-			// initialize parse params stack with a default style_def that defines current color and fonts
+			// initialize parse params stack with a default style that defines current color and fonts
 			GeneratorData generator_data(atlas);
 
-			StyleDefinition style_def;
-			style_def.color = params.default_color;
-			style_def.character_set = generator_data.GetCharacterSetFromName(params.character_set_name.c_str());
-			generator_data.style_stack.push_back(style_def);
+			StyleDefinition style;
+			style.color = params.default_color;
+			style.character_set = generator_data.GetCharacterSetFromName(params.character_set_name.c_str());
+			generator_data.style_stack.push_back(style);
 
 			// all steps to properly generate the result
 			if (!GenerateLines(text, params, generator_data))
@@ -547,176 +787,9 @@ namespace chaos
 		// GeneratorData methods
 		// ============================================================
 
-		BitmapAtlas::CharacterSet const * GeneratorData::GetCharacterSetFromName(char const * character_set_name) const
-		{
-			BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
-			if (result == nullptr)
-			{
-				// for convenience, if we cannot find the character set, try to use the one on the top of the stack
-				if (style_stack.size() > 0)
-					result = style_stack.back().character_set;
-				// if we still have no character set, take the very first available
-				if (result == nullptr)
-				{
-					auto const & character_sets = atlas.GetCharacterSets();
-					if (character_sets.size() > 0)
-						result = character_sets[0].get();
-				}
-			}
-			return result;
-		}
 
 
-		void GeneratorData::EmitCharacters(char c, int count, GeneratorParams const & params)
-		{
-			// get current character set
-			BitmapAtlas::CharacterSet const * character_set = style_stack.back().character_set;
-			if (character_set == nullptr)
-				return;
 
-			// get entry corresponding to the glyph
-			BitmapAtlas::CharacterEntry const * entry = character_set->GetEntry(c);
-			if (entry == nullptr)
-				return;
-
-			// emit the characters
-			for (int i = 0; i < count; ++i)
-				EmitCharacter(c, entry, character_set, params);
-		}
-
-
-		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set, GeneratorParams const & params)
-		{
-			SpriteToken token;
-			token.character = c;
-			token.character_entry = entry;
-			token.character_set = character_set;
-			token.color = style_stack.back().color;
-			InsertTokenInLine(token, params);
-		}
-
-		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry, GeneratorParams const & params)
-		{
-			SpriteToken token;
-			token.bitmap_entry = entry;
-			InsertTokenInLine(token, params);
-		}
-
-		void GeneratorData::InsertTokenInLine(SpriteToken & token, GeneratorParams const & params)
-		{
-			// if there was no line, insert the very first one ...
-			if (generator_result.size() == 0)
-				generator_result.push_back(TokenLine());
-
-			// insert the token
-			if (token.bitmap_entry != nullptr)
-			{
-				// restrict the bitmap to the size of the line
-				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_entry->height);
-
-				token.position = bitmap_position + params.bitmap_padding;
-
-				token.size.x = factor * (float)token.bitmap_entry->width;
-				token.size.y = params.line_height - 2 * params.bitmap_padding.y;
-
-				bitmap_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
-				character_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
-			}
-			else if (token.character_entry != nullptr)
-			{
-				// get the descender 
-				StyleDefinition const & context = style_stack.back();
-				float descender = (context.character_set == nullptr) ? 0.0f : context.character_set->descender;
-
-				// scale the character back to the size of the scanline
-				float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
-
-				token.position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
-					factor * glm::vec2(
-					(float)(token.character_entry->bitmap_left),
-					(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
-					);
-
-				token.size.x = factor * (float)token.character_entry->width;
-				token.size.y = factor * (float)token.character_entry->height;
-
-				// XXX : Some fonts are in italic. The 'advance' cause some 'overide' in character bounding box.
-				//       That's great for characters that are near one another
-				//       But with bitmap that causes real overide.
-				//       => that's why we are using two position : 'bitmap_position' & 'character_position'
-				bitmap_position.x = token.position.x + params.character_spacing + token.size.x;
-				character_position.x = token.position.x + params.character_spacing + factor * (float)(token.character_entry->advance.x);
-			}
-			generator_result.back().push_back(token);
-		}
-
-		void GeneratorData::EndCurrentLine(GeneratorParams const & params)
-		{
-			// update position
-			float delta_y = params.line_height + params.line_spacing;
-
-			bitmap_position.x = 0.0f;
-			bitmap_position.y -= delta_y;
-			character_position.x = 0.0f;
-			character_position.y -= delta_y;
-			// if there was no line, insert the very first one ...
-			if (generator_result.size() == 0)
-				generator_result.push_back(TokenLine());
-			// ... then you can add a new line
-			generator_result.push_back(TokenLine());
-		}
-
-		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator, GeneratorParams const & params)
-		{
-			int j = i;
-			while (text[i] != 0)
-			{
-				char c = text[i];
-
-				if (!StringTools::IsVariableCharacter(c)) // searched string is contained in  [j .. i-1]
-				{
-					// no character : skip
-					if (i - j < 1)
-						return false; // ill-formed string								  
-													// the markup
-					std::string markup = std::string(&text[j], &text[i]);
-					// markup correspond to a bitmap, the current character MUST be ']'
-					auto bitmap = generator.GetBitmap(markup.c_str());
-					if (bitmap != nullptr)
-					{
-						if (c == ']')
-						{
-							EmitBitmap(bitmap, params);
-							return true;
-						}
-						return false; // ill-formed string
-					}
-					// if ']' is found, do nothing because, we are about to push a color/character set on the stack that is to be immediatly popped
-					if (c == ']')
-						return true;
-					// color markup found
-					auto color = generator.GetColor(markup.c_str());
-					if (color != nullptr)
-					{
-						PushColor(*color);
-						return true;
-					}
-					// character set markup found
-					auto character_set = generator.GetCharacterSet(markup.c_str());
-					if (character_set != nullptr)
-					{
-						PushCharacterSet(character_set);
-						return true;
-					}
-					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack 
-					// because we expect a markup closure later
-					PushDuplicate();
-					return true;
-				}
-				++i;
-			}
-			return false; // markup started, but not finished : ill-formed
-		}
 
 
 

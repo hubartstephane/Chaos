@@ -21,32 +21,32 @@ namespace chaos
 			static const int ALIGN_JUSTIFY = 3;
 
 			/** the size to use for the line */
-			float line_height{ 32.0f };
+			float line_height = 32.0f;
 			/** spacing between lines */
-			float line_spacing{ 5.0f };
+			float line_spacing = 5.0f;
 			/** spacing between characters */
-			float character_spacing{ 5.0f };
+			float character_spacing = 5.0f;
 			/** padding for bitmaps */
-			glm::vec2 bitmap_padding{ 5.0f, 5.0f };
+			glm::vec2 bitmap_padding = glm::vec2(5.0f, 5.0f);
 			/** the text limits */
-			float max_text_width{ 0.0f };
+			float max_text_width = 0.0f;
 			/** word wrap enabled */
-			bool word_wrap{ true };
+			bool word_wrap = true;
 			/** the maximum factor for space to apply when lines are to be justified. if a greater value should be applyed, ignore justification */
-			float justify_space_factor{ 2.0f };
+			float justify_space_factor = 2.0f;
 			/** the line alignment */
-			int alignment{ ALIGN_LEFT };
+			int alignment = ALIGN_LEFT;
 			/** the color to use by default */
-			glm::vec3 default_color{ 1.0f, 1.0f, 1.0f };
+			glm::vec3 default_color = glm::vec3(1.0f, 1.0f, 1.0f);
 			/** the font to use by default */
 			std::string character_set_name;
 			/** tab size */
-			int tab_size{ 2 };
+			int tab_size = 2;
 
 			/** the position */
-			glm::vec2 position{ 0.0f , 0.0f };
+			glm::vec2 position = glm::vec2(0.0f, 0.0f);
 			/** the hotpoint */
-			int hotpoint_type{ Hotpoint::BOTTOM_LEFT };
+			int hotpoint_type = Hotpoint::BOTTOM_LEFT;
 		};
 		
 		/** during parsing, some 'commands' are put on the stack for text formating, StyleDefinition is such a command */
@@ -57,7 +57,7 @@ namespace chaos
 			/** the color to use */
 			glm::vec3 color;
 			/** the character set selected */
-			BitmapAtlas::CharacterSet const * character_set{ nullptr };
+			BitmapAtlas::CharacterSet const * character_set = nullptr;
 		};
 
 		/** a token generated during parsing */
@@ -78,19 +78,19 @@ namespace chaos
 		public:
 
 			/** the character */
-			char character{ 0 };
+			char character = 0;
 			/** the position of the generated image (BOTTOM LEFT) */
-			glm::vec2 position{ 0.0f, 0.0f };
+			glm::vec2 position = glm::vec2(0.0f, 0.0f);
 			/** the size of the generated image */
-			glm::vec2 size{ 0.0f, 0.0f };
+			glm::vec2 size = glm::vec2(0.0f, 0.0f);
 			/** the color of the token */
-			glm::vec3 color{ 1.0f, 1.0f, 1.0f };
+			glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 			/** the corresponding bitmap (if valid) */
-			BitmapAtlas::BitmapEntry const * bitmap_entry{ nullptr };
+			BitmapAtlas::BitmapEntry const * bitmap_entry = nullptr;
 			/** the corresponding character (if valid) */
-			BitmapAtlas::CharacterEntry const * character_entry{ nullptr };
+			BitmapAtlas::CharacterEntry const * character_entry = nullptr;
 			/** the corresponding character set (if valid) */
-			BitmapAtlas::CharacterSet const * character_set{ nullptr };
+			BitmapAtlas::CharacterSet const * character_set = nullptr;
 		};
 
 		/** the of a line of parsing */
@@ -134,9 +134,9 @@ namespace chaos
 			/** the atlas in used */
 			BitmapAtlas::AtlasBase const & atlas;
 			/** current line position for a bitmap (below scanline, at descender level) */
-			glm::vec2 bitmap_position{ 0.0f, 0.0f };
+			glm::vec2 bitmap_position = glm::vec2(0.0f, 0.0f);
 			/** current line position for a character (below scanline, at descender level) */
-			glm::vec2 character_position{ 0.0f, 0.0f };
+			glm::vec2 character_position = glm::vec2(0.0f, 0.0f);
 			/** the result */
 			GeneratorResult generator_result;
 			/** the stack used for parsing */

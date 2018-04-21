@@ -240,9 +240,14 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	// the atlas
-	GenerateAtlas(config, config_path);
+	if (!GenerateAtlas(config, config_path))
+		return false;
 	// the dictionnary
-	InitializeDictionnary(config, config_path);
+	if (!InitializeDictionnary(config, config_path))
+		return false;
+	// initialize the button map
+	if (!InitializeGamepadButtonInfo())
+		return false;
 
 
 
@@ -335,6 +340,22 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 		}
 		it->second.push_back(std::move(word));	
 	}
+
+	return true;
+}
+
+bool LudumGame::InitializeGamepadButtonInfo()
+{
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_A] = "xboxControllerButtonA";
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_B] = "xboxControllerButtonB";
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_X] = "xboxControllerButtonX";
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_Y] = "xboxControllerButtonY";
+
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTBUT]  = "xboxControllerLeftShoulder";
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTBUT] = "xboxControllerRightShoulder";
+
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER]  = "xboxControllerLeftTrigger";
+	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER] = "xboxControllerRightTrigger";
 
 	return true;
 }

@@ -124,6 +124,12 @@ protected:
 	/** called whenever the input mode changes */
 	void OnInputModeChanged(int new_mode, int old_mode);
 
+	/** initialize the mapping between button index and resource name */
+	bool InitializeGamepadButtonInfo();
+
+	/** test whether a button is being pressed and whether it correspond to the current challenge */
+	void SendGamepadButtonAction(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+
 protected:
 
 	/** the window in GLFW library */
@@ -152,6 +158,10 @@ protected:
 	/** the min and max size */
 	int min_word_size = 0;
 	int max_word_size = 0;
+
+
+	/** a mapping between the button index and its resource name */
+	std::map<int, std::string> gamepad_button_map;
 };
 
 // =================================================

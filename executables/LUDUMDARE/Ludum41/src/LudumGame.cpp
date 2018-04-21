@@ -412,7 +412,10 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
+	// the atlas
 	GenerateAtlas(config, config_path);
+	// the dictionnary
+	InitializeDictionnary(config, config_path);
 
 
 
@@ -479,6 +482,95 @@ void LudumGame::Display(chaos::box2 const & viewport)
 
 
 
+}
+
+bool LudumGame::IsWordValid(std::string const & word) const 
+{
+	char const * valid_letters = "abcdefghijklmnopqrstuvwxyz";
+
+	size_t len = word.length();
+
+	for (size_t i = 0 ; i < len ; ++i)
+		if (strchr(valid_letters, word[i]) == nullptr)
+			return false;
+	return true;
+}
+
+void LudumGame::ReplaceSpecialLetters(std::string & word) const 
+{
+	size_t len = word.length();
+
+	for (size_t i = 0 ; i < len ; ++i)
+	{
+		char & c = word[i];
+		if (c == 'é' || c == 'è' || c == 'ê')
+			c = 'e';
+		else if (c == 'à' || c == 'â')
+			c = 'a';
+		else if (c == 'î')
+			c = 'i';	
+		else if (c == 'ù')
+			c = 'u';	
+	}
+}
+
+bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
+	// detect whether the language is french
+
+#if 1
+	LCID lcid = GetUserDefaultLCID();
+	LANGID language = LANGIDFROMLCID(lcid);
+#else
+	LANGID language = GetUserDefaultUILanguage();
+#endif
+	WORD   primary_language = PRIMARYLANGID(language);
+	WORD   subg_language    = SUBLANGID(language);
+
+	bool french_dictionnary = (primary_language == LANG_FRENCH);
+
+	// read the min and max words
+	chaos::JSONTools::GetAttribute(config, "min_word_size", min_word_size, 1);
+	chaos::JSONTools::GetAttribute(config, "max_word_size", max_word_size, 10);
+	if (min_word_size > max_word_size)
+		std::swap(min_word_size, max_word_size);
+
+	// read the dictionnary file
+	std::string dictionnary_path;
+	if (!chaos::JSONTools::GetAttribute(config, (french_dictionnary)? "french_dictionnary" : "english_dictionnary", dictionnary_path))
+		return false;
+
+	std::vector<std::string> words = chaos::FileTools::ReadFileLines(dictionnary_path);
+	if (words.size() < 100)
+		return false;
+	
+	// transform the vector into a map (by word length)
+
+	for (std::string & word : words)
+	{
+		// test word length
+		size_t len = word.length();
+		if (len < (size_t)min_word_size) 
+			continue;
+		if (len > (size_t)max_word_size) 
+			continue;
+		// replace accents (not all special characters handled)
+		ReplaceSpecialLetters(word);
+		// keep words with only simple characters 
+		if (!IsWordValid(word))
+			continue;
+		// add the word into the map
+
+		auto it = dictionnary.find(len);
+		if (it == dictionnary.end())
+		{
+			auto x = dictionnary.insert(std::make_pair(len,std::vector<std::string>()));
+			it = dictionnary.find(len);
+		}
+		it->second.push_back(std::move(word));	
+	}
+
+	return true;
 }
 
 void LudumGame::OnGameOver()

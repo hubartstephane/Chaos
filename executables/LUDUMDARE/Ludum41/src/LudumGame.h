@@ -113,6 +113,13 @@ protected:
 	/** get current state ID */
 	int GetCurrentStateID() const;
 
+	/** initialize the dictionnary */
+	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	/** replace some special */
+	void ReplaceSpecialLetters(std::string & word) const;
+	/** test whether a word only has the common letters (no accent) */
+	bool IsWordValid(std::string const & word) const;
+
 protected:
 
 	/** the window in GLFW library */
@@ -135,6 +142,12 @@ protected:
 
 	/** the texture atlas */
 	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
+
+	/** the dictionnary */
+	std::map<size_t, std::vector<std::string>> dictionnary;
+	/** the min and max size */
+	int min_word_size = 0;
+	int max_word_size = 0;
 };
 
 // =================================================

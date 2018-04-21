@@ -5,7 +5,7 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/ParticleTools.h>
-
+#include <chaos/ReferencedObject.h>
 
 namespace chaos
 {
@@ -201,7 +201,7 @@ namespace chaos
 		* Generator : the text generator
 		*/
 
-		class Generator
+		class Generator : public ReferencedObject
 		{
 			friend class GeneratorData;
 

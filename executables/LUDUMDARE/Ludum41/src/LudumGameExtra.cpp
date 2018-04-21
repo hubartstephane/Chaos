@@ -256,7 +256,10 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	// initialize the particle manager
 	if (!InitializeParticleManager())
 		return false;
-
+	// initialize the particle text generator manager
+	if (!InitializeParticleTextGenerator())
+		return false;
+	
 	
 
 
@@ -410,6 +413,30 @@ void LudumGame::FillBackgroundLayer()
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+bool LudumGame::InitializeParticleTextGenerator()
+{
+	// create the generator
+	particle_text_generator = new chaos::ParticleTextGenerator::Generator(*texture_atlas);
+	if (particle_text_generator == nullptr)
+		return false;
+
+	// for each bitmap, that correspond to a button, register a [NAME] in the generator	
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
+	if (bitmap_set != nullptr)
+	{
+		for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
+		{
+			std::string const & bitmap_name = it->second;
+			chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name.c_str());
+			if (entry == nullptr)
+				continue;
+			particle_text_generator->AddBitmap(bitmap_name.c_str(), entry);	
+		}		
+	}
+
+	return true;
+}
+
 #if 0
 
 chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * text)
@@ -466,15 +493,31 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * tex
 }
 #endif
 
+std::string LudumGame::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
+{
+	std::string result;
+
+	for (size_t i = 0 ; i < gamepad_challenge.size() ; ++i)
+	{
+		int button_index = gamepad_challenge[i];
+		
+		auto const it = gamepad_button_map.find(button_index);
+		if (it == gamepad_button_map.end())
+			continue;
+		result = result + "[" + it->second + "]";	
+	}
+	return result;
+}
+
 
 chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceChallenge * challenge)
 {
+	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	bool keyboard   = chaos::InputMode::IsPCMode(input_mode);
+
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(CHALLENGE_LAYER_ID);
 	if (layer == nullptr)
 		return nullptr;
-
-
-	chaos::ParticleTextGenerator::Generator generator(*texture_atlas);
 
 	chaos::ParticleTextGenerator::GeneratorResult result;
 	chaos::ParticleTextGenerator::GeneratorParams params;
@@ -484,7 +527,15 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 	params.position.x = 0.0f;
 	params.position.y = -200.0f;
 
-	generator.Generate(challenge->keyboard_challenge.c_str(), result, params);
+	if (keyboard)
+	{
+		particle_text_generator->Generate(challenge->keyboard_challenge.c_str(), result, params);
+	}
+	else
+	{
+		std::string gamepad_string = GenerateGamepadChallengeString(challenge->gamepad_challenge);
+		particle_text_generator->Generate(gamepad_string.c_str(), result, params);	
+	}
 
 	// count the number of particle to draw
 	size_t count = 0;
@@ -592,12 +643,10 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 	// create the challenge
 	LudumSequenceChallenge * result = new LudumSequenceChallenge;
 	if (result != nullptr)
-	{
+	{	
 		result->gamepad_challenge  = std::move(gamepad_challenge);
 		result->keyboard_challenge = std::move(keyboard_challenge);
 		result->game = this;	
-
-
 		result->particle_range = CreateChallengeText(result);
 	}
 	return result;

@@ -239,7 +239,8 @@ void LudumGame::Display(chaos::box2 const & viewport)
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 {
-
+	if (sequence_challenge != nullptr)
+		sequence_challenge->particle_range = CreateChallengeText(sequence_challenge.get());	
 }
 
 void LudumGame::OnGameOver()

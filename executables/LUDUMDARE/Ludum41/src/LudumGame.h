@@ -11,7 +11,7 @@
 #include <chaos/SoundManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleManager.h>
-
+#include <chaos/ParticleTextGenerator.h>
 
 // =================================================
 // LudumGame
@@ -131,6 +131,8 @@ protected:
 	bool InitializeGamepadButtonInfo();
 	/** initialize the particle manager */
 	bool InitializeParticleManager();
+	/** initialize the particle text generator */
+	bool InitializeParticleTextGenerator();
 
 	/** called whenever the input mode changes */
 	void OnInputModeChanged(int new_mode, int old_mode);
@@ -166,6 +168,9 @@ protected:
 	void FillBackgroundLayer();
 	/** create a text for the challenge */
 	chaos::ParticleRangeAllocation * CreateChallengeText(LudumSequenceChallenge * challenge);
+
+	/** create a string for a gamepad challenge */
+	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
 
 protected:
 
@@ -205,6 +210,9 @@ protected:
 
 	/** the particle manager */
 	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+
+	/** the text generator */
+	boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 };
 
 // =================================================

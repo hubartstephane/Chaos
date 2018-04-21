@@ -381,7 +381,7 @@ namespace chaos
 			vertex_type * v = (vertex_type *)vertices;
 
 			for (size_t i = 0; i < particles_count; ++i)
-				trait.ParticleToVertex(&p[i], &v[i * vertices_per_particle]);
+				trait.ParticleToVertex(&p[i], &v[i * vertices_per_particle], vertices_per_particle);
 		}
 
 	protected:
@@ -467,7 +467,7 @@ namespace chaos
 		/** updates the particle. returns true whether the particle is to be destroyed */
 		bool UpdateParticle(float delta_time, ParticleExample * particle);
 		/** take one particle and transforms it into several vertices (usually 6 for 2 triangles */
-		void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const;
+		size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particles) const;
 		/** the the vertex declaration */
 		chaos::VertexDeclaration GetVertexDeclaration() const;
 	};

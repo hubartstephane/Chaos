@@ -1,4 +1,10 @@
 {
-  "program":"background_program"
+  "program": "background_program",
+
+  "textures": {
+    
+    "background": { "name": "background1" }
+
+  }
 
 }

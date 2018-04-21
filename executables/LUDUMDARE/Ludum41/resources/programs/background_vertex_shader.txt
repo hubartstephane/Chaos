@@ -1,19 +1,18 @@
-in vec3 position;
+in vec2 position;
+in vec2 texcoord;
+in vec4 color;
 
-uniform mat4 projection;
-uniform mat4 local_to_world;
-uniform mat4 world_to_camera;
-
-out vec3 vs_position;
+out vec2 vs_position;
+out vec2 vs_texcoord;
+out vec4 vs_color;
 
 void main() 
 {
-  vec3 p = vs_position = position;
+  vs_position = position;
+  vs_texcoord = texcoord;
+  vs_color    = color;
 
-  vec4 tmp = vec4(p, 1.0);
-  tmp = local_to_world  * tmp;
-  tmp = world_to_camera * tmp;
-  tmp = projection      * tmp;
-
-  gl_Position = tmp;
+  gl_Position.xy = position;
+  gl_Position.z  = 0.0;
+  gl_Position.w  = 1.0;
 }

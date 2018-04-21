@@ -57,7 +57,7 @@ public:
 		return (particle->remaining_time <= 0.0f);
 	}
 
-	void ParticleToVertex(ParticleExample const * particle, VertexExample * vertices) const
+	size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle) const
 	{
 		chaos::ParticleCorners corners = chaos::ParticleTools::GetParticleCorners(particle->position, particle->size, chaos::Hotpoint::CENTER);
 
@@ -66,6 +66,8 @@ public:
 		float alpha = particle->remaining_time / particle->lifetime;
 		for (size_t i = 0 ; i < 6 ; ++i)
 			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
+		
+		return vertices_per_particle;
 	}
 
 	chaos::VertexDeclaration GetVertexDeclaration() const

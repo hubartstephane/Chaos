@@ -393,6 +393,23 @@ chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayer * laye
 	return layer;
 }
 
+void LudumGame::FillBackgroundLayer()
+{
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(BACKGROUND_LAYER_ID);
+	if (layer == nullptr)
+		return;
+
+	chaos::ParticleRange range = layer->SpawnParticles(1);
+	if (range.count == 0)
+		return;
+	
+	ParticleBackground * particle = (ParticleBackground*)layer->GetParticleBuffer(range);
+	if (particle == nullptr)
+		return;
+
+	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 bool LudumGame::InitializeParticleManager()
 {
 	// create the manager
@@ -410,7 +427,8 @@ bool LudumGame::InitializeParticleManager()
 
 
 
-
+	// fill the background
+	FillBackgroundLayer();
 
 
 	return true;

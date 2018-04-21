@@ -372,19 +372,26 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	return true;
 }
 
-
-template<typename TRAIT_TYPE>
-chaos::ParticleLayer * AddParticleLayer(chaos::ParticleManager * particle_manager, int render_order)
+chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayer * layer, int render_order, int layer_id, char const * material_name)
 {
-	chaos::ParticleLayer * result = new chaos::ParticleLayer(
-		new chaos::TParticleLayerDesc<TRAIT_TYPE>	
-	);
-	
+	if (layer == nullptr)
+		return nullptr;
 
-
-	return result;
+	// give the layer to the manager
+	particle_manager->AddLayer(layer);
+	// change layer render order / ID
+	layer->SetLayerID(layer_id);
+	layer->SetRenderOrder(render_order);
+	// set the material
+	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+	if (application != nullptr)
+	{
+		chaos::GPUResourceManager * manager = application->GetGPUResourceManager();
+		if (manager != nullptr)
+			layer->SetRenderMaterial(manager->FindRenderMaterial(material_name));	
+	}
+	return layer;
 }
-
 
 bool LudumGame::InitializeParticleManager()
 {
@@ -397,17 +404,7 @@ bool LudumGame::InitializeParticleManager()
 	int render_order = 0;
 
 	// create layers
-	AddParticleLayer<ParticleChallengeTrait>(particle_manager.get(), ++render_order);
-
-
-	/*
-	// initialize the Challenge layer
-	chaos::ParticleLayer * particle_layer = new ParticleLay(new ParticleLayerDescExample());
-	particle_layer->SetRenderOrder(i);
-	particle_layer->SetLayerID(j + i * MATERIAL_COUNT);
-	*/
-
-
+	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 
 
 

@@ -148,6 +148,19 @@ protected:
 	/** called whenever a challenge is completed */
 	void OnChallengeCompleted(LudumSequenceChallenge * challenge);
 
+	/** templated method to add a layer */
+	template<typename TRAIT_TYPE>
+	chaos::ParticleLayer * AddParticleLayer(int render_order, int layer_id, char const * material_name)
+	{
+		chaos::ParticleLayer * result = new chaos::ParticleLayer(
+			new chaos::TParticleLayerDesc<TRAIT_TYPE>	
+		);
+		return DoAddParticleLayer(result, render_order, layer_id, material_name);
+	}
+
+	/** the method to effectively fill a layer data */
+	chaos::ParticleLayer * DoAddParticleLayer(chaos::ParticleLayer * layer, int render_order, int layer_id, char const * material_name);
+
 protected:
 
 	/** the window in GLFW library */

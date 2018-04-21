@@ -4,6 +4,16 @@
 #include <chaos/ParticleTools.h> 
 #include <chaos/ParticleManager.h> 
 
+// ===========================================================================
+// the ID of the layers
+// ===========================================================================
+
+static int const CHALLENGE_LAYER_ID = 0;
+
+// ===========================================================================
+// Challenge particle system
+// ===========================================================================
+
 class ParticleChallenge
 {
 public:
@@ -28,7 +38,6 @@ public:
 class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexChallenge>
 {
 public:
-
 
 	bool UpdateParticle(float delta_time, ParticleChallenge * particle)
 	{
@@ -61,7 +70,6 @@ public:
 	}
 };
 
-using ParticleLayerDescChallenge = chaos::TParticleLayerDesc<ParticleChallengeTrait>;
 
 
 

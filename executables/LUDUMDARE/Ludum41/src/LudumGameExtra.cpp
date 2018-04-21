@@ -404,6 +404,7 @@ bool LudumGame::InitializeParticleManager()
 	int render_order = 0;
 
 	// create layers
+	AddParticleLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 
 

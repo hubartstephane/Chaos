@@ -8,40 +8,6 @@
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
 
-
-
-
-#if 0
-#include <chaos/CollisionFramework.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/GLTextureTools.h>
-#include <chaos/MyGLFWGamepadManager.h> 
-
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-
-#include <chaos/SimpleMeshGenerator.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/SimpleMesh.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
-#include <chaos/VertexDeclaration.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/SoundManager.h>
-#include <json.hpp>
-#include <chaos/BoostTools.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/SpriteManager.h>
-#include <chaos/JSONTools.h>
-#endif
-
-
-
 void LudumGame::OnStartGame(bool very_first)
 {
 	if (very_first)
@@ -262,8 +228,12 @@ void LudumGame::Display(chaos::box2 const & viewport)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
+	// a variable provider
+	chaos::GPUProgramProvider main_uniform_provider;
+	main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
 
-
+	if (particle_manager != nullptr)
+		particle_manager->Display(&main_uniform_provider);
 
 }
 
@@ -280,7 +250,8 @@ void LudumGame::OnGameOver()
 
 void LudumGame::TickGameLoop(double delta_time)
 {
-
+	if (particle_manager != nullptr)
+		particle_manager->Tick((float)delta_time);
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)

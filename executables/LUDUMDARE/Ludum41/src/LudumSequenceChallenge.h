@@ -4,6 +4,17 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
 
+class LudumSequenceChallengeCallbacks : public chaos::ReferencedObject
+{
+public:
+
+	/** called whenever the challenge is completed */
+	virtual void OnChallengeCompleted(class LudumSequenceChallenge * challenge){}
+	/** called whenever the challenge is failed */
+	virtual void OnChallengeFailed(class LudumSequenceChallenge * challenge){}
+};
+
+
 class LudumSequenceChallenge : public chaos::ReferencedObject
 {
 	friend class LudumGame;
@@ -32,6 +43,9 @@ protected:
 	/** the position in the challenge */
 	size_t challenge_position = 0;
 
-
+	/** the game */
 	class LudumGame * game = nullptr;
+
+	/** some callbacks */
+	boost::intrusive_ptr<LudumSequenceChallengeCallbacks> callbacks;
 };

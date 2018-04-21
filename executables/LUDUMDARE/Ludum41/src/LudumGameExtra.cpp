@@ -9,7 +9,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
-
+#include <chaos/ParticleTextGenerator.h>
 
 
 
@@ -410,6 +410,61 @@ void LudumGame::FillBackgroundLayer()
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * text)
+{
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(CHALLENGE_LAYER_ID);
+	if (layer == nullptr)
+		return nullptr;
+
+
+	chaos::ParticleTextGenerator::Generator generator(*texture_atlas);
+
+	chaos::ParticleTextGenerator::GeneratorResult result;
+	chaos::ParticleTextGenerator::GeneratorParams params;
+
+	params.line_height = 100.0f;
+	params.hotpoint_type = chaos::Hotpoint::CENTER;
+
+	generator.Generate(text, result, params);
+
+	// count the number of particle to draw
+	size_t count = 0;
+	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+	{
+		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
+		count += line.size();	
+	}
+
+	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	if (allocation == nullptr)
+		return nullptr;
+
+	ParticleChallenge * particle = (ParticleChallenge *)allocation->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
+
+	size_t k = 0;
+	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+	{
+		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
+		for (size_t j = 0 ; j < line.size() ; ++j)
+		{
+			chaos::ParticleTextGenerator::Token const & token = line[j];
+
+			particle[k].corners   = token.corners;
+			particle[k].texcoords = token.texcoords;
+			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+			++k;
+		}
+	}
+
+
+	
+
+	return nullptr;
+
+}
+
 bool LudumGame::InitializeParticleManager()
 {
 	// create the manager
@@ -424,11 +479,11 @@ bool LudumGame::InitializeParticleManager()
 	AddParticleLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 
-
-
-
 	// fill the background
 	FillBackgroundLayer();
+
+	// create a text for challenge
+	CreateChallengeText("toto");
 
 
 	return true;

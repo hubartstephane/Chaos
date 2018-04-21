@@ -164,7 +164,7 @@ namespace chaos
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_entry, atlas.GetAtlasDimension());
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.character_entry, atlas.GetAtlasDimension());
 
 				// XXX : Some fonts are in italic. The 'advance' cause some 'override' in character bounding box.
 				//       That's great for characters that are near one another
@@ -527,6 +527,10 @@ namespace chaos
 				Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, generator_data.params.hotpoint_type);
 
 			MoveParticles(generator_data.result, offset);
+			
+			// keep trace of the bounding box
+			generator_data.result.bounding_box.bottomleft = min_position - offset;
+			generator_data.result.bounding_box.topright   = max_position - offset;
 
 			return true;
 		}

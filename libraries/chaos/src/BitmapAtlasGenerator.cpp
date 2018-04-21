@@ -557,13 +557,13 @@ namespace chaos
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
 					output->atlas_count = (int)output->bitmaps.size();
 					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
-#if _DEBUG
+#if 0 && _DEBUG
 					output->OutputAtlasSpaceOccupation(std::cout);
 					output->OutputInfo(std::cout);
 #endif
 					return true;
 				}
-#if _DEBUG
+#if 0 && _DEBUG
 				else
 					output->OutputInfo(std::cout);
 #endif

@@ -1,8 +1,8 @@
 {
   "sprite_directory":"@sprites",
   "font_path": "@fonts/unispace.ttf",
-  "french_dictionnary": "@dictionnary/french.txt",
-  "english_dictionnary": "@dictionnary/english.txt",
+  "french_dictionnary": "@dictionnary/small_french.txt",
+  "english_dictionnary": "@dictionnary/small_english.txt",
   "max_word_size": "10",
   "initial_life":10
 

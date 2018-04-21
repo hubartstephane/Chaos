@@ -1,0 +1,25 @@
+{
+	"categories":{
+	
+		"@cat1":{},
+		"@cat2":{
+			"volume":0.5
+		},
+		"cat3":{
+			"name":"mycategory3"
+		
+		}
+	},
+
+  "sources": [
+    { "path": "sounds/menu_music.ogg"},
+		{ "path": "sounds/pause_music.ogg"},
+    { "path": "sounds/game_music.ogg"},
+    { "path": "sounds/gameover.ogg" },
+    { "path": "sounds/bonus1.ogg" },
+    { "path": "sounds/bonus2.ogg" },
+    { "path": "sounds/start.ogg" },
+    { "path": "sounds/pause.ogg" },
+    { "path": "sounds/collision.ogg" }
+  ]
+}

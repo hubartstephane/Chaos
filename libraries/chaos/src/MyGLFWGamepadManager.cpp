@@ -66,6 +66,18 @@ namespace chaos
 
 		bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
 		{
+			// simulated buttons
+			if (button_index == XBOX_BUTTON_LEFTTRIGGER || button_index == XBOX_BUTTON_RIGHTTRIGGER)
+			{
+				float trigger_value = GetAxisValue(XBOX_TRIGGER, previous_frame);
+				if (trigger_value > 0 && button_index == XBOX_BUTTON_LEFTTRIGGER)
+					return true;
+				if (trigger_value < 0 && button_index == XBOX_BUTTON_RIGHTTRIGGER)
+					return true;
+				return false;
+			}
+
+			// standard input
 			size_t count = GetButtonCount();
 			if (button_index >= count)
 				return false;

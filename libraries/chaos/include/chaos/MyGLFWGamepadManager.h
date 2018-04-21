@@ -49,6 +49,13 @@ namespace chaos
 		/** index in buttons of RIGHT for XBOX like pad */
 		static int const XBOX_BUTTON_RIGHT = 11;
 
+
+		/** index in buttons of LEFT TRIGGER for XBOX like pad (this is a simulate button, while the physical left trigger is an axis) */
+		static int const XBOX_BUTTON_LEFTTRIGGER = 101;
+		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
+		static int const XBOX_BUTTON_RIGHTTRIGGER = 102;
+
+
 		/** index in axis of LEFT X for XBOX like pad */
 		static int const XBOX_LEFT_AXIS_X = 0;
 		/** index in axis of LEFT Y for XBOX like pad */

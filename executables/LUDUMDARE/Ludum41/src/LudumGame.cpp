@@ -198,11 +198,11 @@ void LudumGame::ResetPlayerCachedInputs()
 
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
-	if (physical_gamepad->IsAnyAction())
-		physical_gamepad = physical_gamepad;
-	else
-		physical_gamepad = physical_gamepad;
+	// ignore invalid gamepad : should never happen
+	if (!physical_gamepad->IsAnyAction())
+		return true;
 
+	// change the application mode
 	chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
 
 	// cache the stick position
@@ -213,6 +213,28 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 	if (glm::length2(rsp) > 0.0f)
 		right_stick_position = rsp;
+
+
+	float Trigger = physical_gamepad->GetAxisValue(chaos::MyGLFW::XBOX_TRIGGER);
+
+	if (Trigger > 0)
+		Trigger = Trigger;
+	else if (Trigger < 0)
+		Trigger = Trigger;
+
+	int b1 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_A) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+	int b2 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_B) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+	int b3 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_X) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+	int b4 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_Y) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+	int b5 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_LEFTBUT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+	int b6 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_RIGHTBUT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+
+	int b7 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+	int b8 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
+
+	if (b1 || b2 || b3 || b4 || b5 || b6 || b7 | b8)
+		b1 = b1;
+
 
 	// maybe a start game
 	if (physical_gamepad->IsAnyButtonPressed())

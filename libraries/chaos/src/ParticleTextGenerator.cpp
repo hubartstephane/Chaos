@@ -1,5 +1,7 @@
 #include <chaos/ParticleTextGenerator.h>
 #include <chaos/MathTools.h>
+#include <chaos/StringTools.h>
+#include <chaos/ParticleTools.h>
 
 namespace chaos
 {
@@ -16,7 +18,7 @@ namespace chaos
 
 		void GeneratorResult::Clear()
 		{
-			tokens.clear();
+			token_lines.clear();
 
 			bounding_box.bottomleft = glm::vec2(0.0f, 0.0f);
 			bounding_box.topright = glm::vec2(0.0f, 0.0f);
@@ -103,14 +105,11 @@ namespace chaos
 			InsertTokenInLine(token);
 		}
 
-
 		void GeneratorData::InsertTokenInLine(Token & token)
 		{
-#if 0
-
 			// if there was no line, insert the very first one ...
-			if (generator_result.size() == 0)
-				generator_result.push_back(TokenLine());
+			if (result.token_lines.size() == 0)
+				result.token_lines.push_back(TokenLine());
 
 			// insert the token
 			if (token.bitmap_entry != nullptr)
@@ -118,80 +117,68 @@ namespace chaos
 				// restrict the bitmap to the size of the line
 				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_entry->height);
 
-				token.position = bitmap_position + params.bitmap_padding;
+				glm::vec2 bottomleft_position = bitmap_position + params.bitmap_padding;
 
-				token.size.x = factor * (float)token.bitmap_entry->width;
-				token.size.y = params.line_height - 2 * params.bitmap_padding.y;
+				glm::vec2 token_size;
+				token_size.x = factor * (float)token.bitmap_entry->width;
+				token_size.y = params.line_height - 2 * params.bitmap_padding.y;
 
-				bitmap_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
-				character_position.x += token.size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
+				// compute the particle data
+				token.corners.bottomleft = bottomleft_position; 
+				token.corners.topright   = bottomleft_position + token_size; 
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_entry, atlas.GetAtlasDimension());
+
+				// next bitmap/character data
+				bitmap_position.x    += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
+				character_position.x += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 			}
 			else if (token.character_entry != nullptr)
 			{
 				// get the descender 
-				StyleDefinition const & context = style_stack.back();
-				float descender = (context.character_set == nullptr) ? 0.0f : context.character_set->descender;
+				Style const & style = style_stack.back();
+				float descender = (style.character_set == nullptr) ? 0.0f : style.character_set->descender;
 
 				// scale the character back to the size of the scanline
 				float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
 
-				token.position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
+#if 0
+				glm::vec2 bottomleft_position;
+					bottomleft_position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-					(float)(token.character_entry->bitmap_left),
+						(float)(token.character_entry->bitmap_left),
+						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
+					);
+#endif
+
+				glm::vec2 bottomleft_position;
+					bottomleft_position = character_position - glm::vec2(0.0f, descender * factor) + // character_position.y is BELOW the scanline (at the descender level)
+					factor * glm::vec2(
+						(float)(token.character_entry->bitmap_left),
 						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
 					);
 
-				token.size.x = factor * (float)token.character_entry->width;
-				token.size.y = factor * (float)token.character_entry->height;
+				glm::vec2 token_size;
+				token_size.x = factor * (float)token.character_entry->width;
+				token_size.y = factor * (float)token.character_entry->height;
 
-				// XXX : Some fonts are in italic. The 'advance' cause some 'overide' in character bounding box.
+				// compute the particle data
+				token.corners.bottomleft = bottomleft_position; 
+				token.corners.topright   = bottomleft_position + token_size; 
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_entry, atlas.GetAtlasDimension());
+
+				// XXX : Some fonts are in italic. The 'advance' cause some 'override' in character bounding box.
 				//       That's great for characters that are near one another
 				//       But with bitmap that causes real overide.
 				//       => that's why we are using two position : 'bitmap_position' & 'character_position'
-				bitmap_position.x = token.position.x + params.character_spacing + token.size.x;
-				character_position.x = token.position.x + params.character_spacing + factor * (float)(token.character_entry->advance.x);
+				bitmap_position.x = bottomleft_position.x + params.character_spacing + token_size.x;
+				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_entry->advance.x);
+
 			}
-			generator_result.back().push_back(token);
-#endif
+			result.token_lines.back().push_back(token); // insert the token in the last line
+
 		}
-
-
-
-
-
-
-
 
 		void GeneratorData::EndCurrentLine()
-		{
-	
-		}
-
-		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator)
-		{
-
-
-
-
-
-
-
-			return false; // markup started, but not finished : ill-formed
-		}
-
-
-
-#if 0
-
-
-
-
-
-
-
-
-
-		void GeneratorData::EndCurrentLine(GeneratorParams const & params)
 		{
 			// update position
 			float delta_y = params.line_height + params.line_spacing;
@@ -201,13 +188,13 @@ namespace chaos
 			character_position.x = 0.0f;
 			character_position.y -= delta_y;
 			// if there was no line, insert the very first one ...
-			if (generator_result.size() == 0)
-				generator_result.push_back(TokenLine());
+			if (result.token_lines.size() == 0)
+				result.token_lines.push_back(TokenLine());
 			// ... then you can add a new line
-			generator_result.push_back(TokenLine());
+			result.token_lines.push_back(TokenLine());	
 		}
 
-		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator, GeneratorParams const & params)
+		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator)
 		{
 			int j = i;
 			while (text[i] != 0)
@@ -227,7 +214,7 @@ namespace chaos
 					{
 						if (c == ']')
 						{
-							EmitBitmap(bitmap, params);
+							EmitBitmap(bitmap);
 							return true;
 						}
 						return false; // ill-formed string
@@ -258,12 +245,6 @@ namespace chaos
 			}
 			return false; // markup started, but not finished : ill-formed
 		}
-
-
-
-
-#endif
-
 
 		// ============================================================
 		// Generator methods
@@ -393,6 +374,9 @@ namespace chaos
 
 
 
+			// finally, recenter the whole sprites
+			if (!MoveParticlesToHotpoint(generator_data))
+				return false;
 
 			return true;
 		}
@@ -463,7 +447,89 @@ namespace chaos
 		}
 
 
+		bool Generator::GetBoundingBox(TokenLine const & line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const
+		{
+			min_line_position.x = min_line_position.y = std::numeric_limits<float>::max();
+			max_line_position.x = max_line_position.y = -std::numeric_limits<float>::max();
 
+			if (line.size() == 0)
+				return false;
+
+			for (Token const & token : line)
+			{
+				min_line_position = glm::min(min_line_position, token.corners.bottomleft);
+				max_line_position = glm::max(max_line_position, token.corners.topright);
+			}
+			return true;
+		}
+
+		bool Generator::GetBoundingBox(std::vector<TokenLine> const & token_lines, glm::vec2 & min_position, glm::vec2 & max_position) const
+		{
+			bool result = false;
+			if (token_lines.size() > 0)
+			{
+				min_position.x = min_position.y = std::numeric_limits<float>::max();
+				max_position.x = max_position.y = -std::numeric_limits<float>::max();
+
+				for (TokenLine const & line : token_lines)
+				{
+					glm::vec2 min_line_position;
+					glm::vec2 max_line_position;
+					if (GetBoundingBox(line, min_line_position, max_line_position))
+					{
+						min_position = glm::min(min_position, min_line_position);
+						max_position = glm::max(max_position, max_line_position);
+						result = true;
+					}
+				}
+			}
+			return result;
+		}
+
+		void Generator::MoveParticles(TokenLine & line, glm::vec2 const & offset)
+		{
+			if (offset.x != 0.0f || offset.y != 0.0f)
+			{
+				for (Token & token : line)
+				{
+					token.corners.bottomleft += offset;	
+					token.corners.topright += offset;	
+				}	
+			}
+		}
+
+		void Generator::MoveParticles(GeneratorResult & result, glm::vec2 const & offset)
+		{
+			if (offset.x != 0.0f || offset.y != 0.0f)
+			{
+				for (TokenLine & line : result.token_lines)
+				{
+					for (Token & token : line)
+					{
+						token.corners.bottomleft += offset;	
+						token.corners.topright += offset;	
+					}						
+				}		
+			}				
+		}
+
+		bool Generator::MoveParticlesToHotpoint(GeneratorData & generator_data)
+		{
+			// compute the min/max bounding box
+			glm::vec2 min_position;
+			glm::vec2 max_position;
+			if (!GetBoundingBox(generator_data.result.token_lines, min_position, max_position)) // no sprite, nothing to do
+				return true;
+
+			// displace all the sprites to match the position
+			glm::vec2 offset =
+				generator_data.params.position -
+				Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, generator_data.params.hotpoint_type);
+
+			MoveParticles(generator_data.result, offset);
+
+			return true;
+		}
 
 
 
@@ -480,82 +546,9 @@ namespace chaos
 #if 0
 
 
-		bool Generator::GenerateLines(char const * text, GeneratorParams const & params, GeneratorData & generator_data)
-		{
 
-		}
 
-		bool Generator::GetBoundingBox(TokenLine const & generator_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const
-		{
-			min_line_position.x = min_line_position.y = std::numeric_limits<float>::max();
-			max_line_position.x = max_line_position.y = -std::numeric_limits<float>::max();
-
-			if (generator_line.size() == 0)
-				return false;
-
-			for (SpriteToken const & token : generator_line)
-			{
-				min_line_position = glm::min(min_line_position, token.position);
-				max_line_position = glm::max(max_line_position, token.position + token.size);
-			}
-			return true;
-		}
-
-		bool Generator::GetBoundingBox(GeneratorResult const & generator_result, glm::vec2 & min_position, glm::vec2 & max_position) const
-		{
-			bool result = false;
-			if (generator_result.size() > 0)
-			{
-				min_position.x = min_position.y = std::numeric_limits<float>::max();
-				max_position.x = max_position.y = -std::numeric_limits<float>::max();
-
-				for (auto const & line : generator_result)
-				{
-					glm::vec2 min_line_position;
-					glm::vec2 max_line_position;
-					if (GetBoundingBox(line, min_line_position, max_line_position))
-					{
-						min_position = glm::min(min_position, min_line_position);
-						max_position = glm::max(max_position, max_line_position);
-						result = true;
-					}
-				}
-			}
-			return result;
-		}
-
-		void Generator::MoveSprites(TokenLine & generator_line, glm::vec2 const & offset)
-		{
-			if (offset.x != 0.0f || offset.y != 0.0f)
-				for (SpriteToken & token : generator_line)
-					token.position += offset;
-		}
-
-		void Generator::MoveSprites(GeneratorResult & generator_result, glm::vec2 const & offset)
-		{
-			if (offset.x != 0.0f || offset.y != 0.0f)
-				for (auto & line : generator_result)
-					for (SpriteToken & token : line)
-						token.position += offset;
-		}
-
-		bool Generator::MoveSpritesToHotpoint(GeneratorParams const & params, GeneratorData & generator_data)
-		{
-			// compute the min/max bounding box
-			glm::vec2 min_position;
-			glm::vec2 max_position;
-			if (!GetBoundingBox(generator_data.generator_result, min_position, max_position)) // no sprite, nothing to do
-				return true;
-
-			// displace all the sprites to match the position
-			glm::vec2 offset =
-				params.position -
-				Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, params.hotpoint_type);
-
-			MoveSprites(generator_data.generator_result, offset);
-
-			return true;
-		}
+	
 
 		bool Generator::GenerateSprites(char const * text, SpriteManager * sprite_manager, GeneratorResult * generator_result, GeneratorParams const & params)
 		{
@@ -766,34 +759,4 @@ namespace chaos
 	
 	
 	}; // namespace ParticleTextGenerator
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-	namespace SpriteText
-	{
-
-		// ============================================================
-		// GeneratorData methods
-		// ============================================================
-
-
-
-
-
-
-
-	}; // namespace SpriteText
-
-#endif
 };

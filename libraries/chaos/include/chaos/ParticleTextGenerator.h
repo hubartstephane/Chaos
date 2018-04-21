@@ -55,11 +55,6 @@ namespace chaos
 			int hotpoint_type = Hotpoint::BOTTOM_LEFT;
 		};
 	
-
-
-
-
-
 		/**
 		 * Particle : a base particle class
 		 */
@@ -106,6 +101,8 @@ namespace chaos
 			BitmapAtlas::CharacterSet const * character_set = nullptr;		
 		};
 
+		using TokenLine = std::vector<Token>;
+
 		/**
 		 * GeneratorResult : the result of the parsing
 		 */
@@ -121,8 +118,8 @@ namespace chaos
 
 		public:
 
-			/** the token generator */
-			std::vector<Token> tokens;
+			/** the line generated */
+			std::vector< TokenLine > token_lines;
 			/** the bounding box */
 			ParticleCorners bounding_box;
 		};
@@ -193,38 +190,12 @@ namespace chaos
 
 			/** the stack used for parsing */
 			std::vector<Style> style_stack;
-		};
 
-
-#if 0
-		class GeneratorData
-		{
-
-			void InsertTokenInLine(SpriteToken & token, GeneratorParams const & params);
-
-		public:
-
-			/** the atlas in used */
-			BitmapAtlas::AtlasBase const & atlas;
 			/** current line position for a bitmap (below scanline, at descender level) */
 			glm::vec2 bitmap_position = glm::vec2(0.0f, 0.0f);
 			/** current line position for a character (below scanline, at descender level) */
 			glm::vec2 character_position = glm::vec2(0.0f, 0.0f);
-			/** the result */
-			GeneratorResult generator_result;
-			/** the stack used for parsing */
-			std::vector<StyleDefinition> style_stack;
 		};
-#endif
-
-
-
-
-
-
-
-
-
 
 		/**
 		* Generator : the text generator
@@ -262,8 +233,6 @@ namespace chaos
 			/** generate the lines, without cutting them */
 			bool DoGenerateLines(char const * text, GeneratorData & generator_data);
 
-		protected:
-
 			/** get a color by its name */
 			glm::vec3 const * GetColor(char const * name) const;
 			/** get a bitmap by its name */
@@ -273,6 +242,18 @@ namespace chaos
 			/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
 			bool IsNameValid(char const * name) const;
 
+			/** compute the bounding box for all sprite generated */
+			bool GetBoundingBox(std::vector<TokenLine> const & result, glm::vec2 & min_position, glm::vec2 & max_position) const;
+			/** compute the bounding box for a single line */
+			bool GetBoundingBox(TokenLine const & line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
+
+
+			/** move all sprites in a line */
+			void MoveParticles(TokenLine & line, glm::vec2 const & offset);
+			/** move all sprites */
+			void MoveParticles(GeneratorResult & result, glm::vec2 const & offset);
+			/** apply offset for hotpoint */
+			bool MoveParticlesToHotpoint(GeneratorData & generator_data);
 
 
 #if 0
@@ -284,20 +265,12 @@ namespace chaos
 			void BreakOneLine(float & y, TokenLine const & line, GeneratorResult & result_lines, GeneratorParams const & params, GeneratorData & generator_data);
 			/** update lines according to justification */
 			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data);
-			/** apply offset for hotpoint */
-			bool MoveSpritesToHotpoint(GeneratorParams const & params, GeneratorData & generator_data);
+
 
 			/** generate the sprites */
 			bool GenerateSprites(SpriteManager * sprite_manager, GeneratorParams const & params, GeneratorData & generator_data);
 
-			/** compute the bounding box for all sprite generated */
-			bool GetBoundingBox(GeneratorResult const & generator_result, glm::vec2 & min_position, glm::vec2 & max_position) const;
-			/** compute the bounding box for a single line */
-			bool GetBoundingBox(TokenLine const & generator_line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
-			/** move all sprites in a line */
-			void MoveSprites(TokenLine & generator_line, glm::vec2 const & offset);
-			/** move all sprites */
-			void MoveSprites(GeneratorResult & generator_result, glm::vec2 const & offset);
+
 
 
 			//void BreakLineIntoWords(TokenLine const & line, std::vector<LexicalTokenGroup> & result);

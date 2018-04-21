@@ -1,4 +1,6 @@
 #include "LudumGame.h"
+#include "LudumParticles.h"
+
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
@@ -191,7 +193,10 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 		return false;
 
 	// generate texture Atlas
-	if (!texture_atlas.LoadFromBitmapAtlas(atlas))
+	texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+	if (texture_atlas == nullptr)
+		return false;
+	if (!texture_atlas->LoadFromBitmapAtlas(atlas))
 		return false;
 
 	// dump the atlas
@@ -248,7 +253,11 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	// initialize the button map
 	if (!InitializeGamepadButtonInfo())
 		return false;
+	// initialize the particle manager
+	if (!InitializeParticleManager())
+		return false;
 
+	
 
 
 
@@ -359,6 +368,52 @@ bool LudumGame::InitializeGamepadButtonInfo()
 
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER]  = "xboxControllerLeftTrigger";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER] = "xboxControllerRightTrigger";
+
+	return true;
+}
+
+
+template<typename TRAIT_TYPE>
+chaos::ParticleLayer * AddParticleLayer(chaos::ParticleManager * particle_manager, int render_order)
+{
+	chaos::ParticleLayer * result = new chaos::ParticleLayer(
+		new chaos::TParticleLayerDesc<TRAIT_TYPE>	
+	);
+	
+
+
+	return result;
+}
+
+
+bool LudumGame::InitializeParticleManager()
+{
+	// create the manager
+	particle_manager = new chaos::ParticleManager();
+	if (particle_manager == nullptr)
+		return false;
+	particle_manager->SetTextureAtlas(texture_atlas.get());
+
+	int render_order = 0;
+
+	// create layers
+	AddParticleLayer<ParticleChallengeTrait>(particle_manager.get(), ++render_order);
+
+
+	/*
+	// initialize the Challenge layer
+	chaos::ParticleLayer * particle_layer = new ParticleLay(new ParticleLayerDescExample());
+	particle_layer->SetRenderOrder(i);
+	particle_layer->SetLayerID(j + i * MATERIAL_COUNT);
+	*/
+
+
+
+
+
+
+
+
 
 	return true;
 }

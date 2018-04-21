@@ -10,6 +10,7 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SoundManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
+#include <chaos/ParticleManager.h>
 
 
 // =================================================
@@ -126,11 +127,15 @@ protected:
 	/** test whether a word only has the common letters (no accent) */
 	bool IsWordValid(std::string const & word) const;
 
+	/** initialize the mapping between button index and resource name */
+	bool InitializeGamepadButtonInfo();
+	/** initialize the particle manager */
+	bool InitializeParticleManager();
+
 	/** called whenever the input mode changes */
 	void OnInputModeChanged(int new_mode, int old_mode);
 
-	/** initialize the mapping between button index and resource name */
-	bool InitializeGamepadButtonInfo();
+	
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
 	void SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
@@ -164,7 +169,7 @@ protected:
 	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 
 	/** the texture atlas */
-	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
+	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 
 	/** the dictionnary */
 	std::map<size_t, std::vector<std::string>> dictionnary;
@@ -178,6 +183,9 @@ protected:
 
 	/** a mapping between the button index and its resource name */
 	std::map<int, std::string> gamepad_button_map;
+
+	/** the particle manager */
+	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 };
 
 // =================================================

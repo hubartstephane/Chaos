@@ -1,4 +1,4 @@
 {
-		"@background": {"path":"@materials/background.json"},
-		"@challenge" : {"path":"@materials/challenge.json"}
+		"@background": {"path":"@materials/background_material.json"},
+		"@challenge" : {"path":"@materials/challenge_material.json"}
 }

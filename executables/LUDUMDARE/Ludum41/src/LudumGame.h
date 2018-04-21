@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LudumStateMachine.h"
+#include "LudumSequenceChallenge.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -10,12 +11,14 @@
 #include <chaos/SoundManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 
+
 // =================================================
 // LudumGame
 // =================================================
 
 class LudumGame : public chaos::ReferencedObject
 {
+	friend class LudumSequenceChallenge;
 	friend class LudumWindow;
 	friend class LudumAutomata;
 	friend class MainMenuState;
@@ -32,6 +35,8 @@ public:
 	void Tick(double delta_time);
 	/** whenever a key event is received */
 	bool OnKeyEvent(int key, int action);
+	/** whenever a mouse event is received */
+	void OnMouseButton(int button, int action, int modifier);
 	/** the rendering method */
 	void Display(chaos::box2 const & viewport);
 	/** called whenever a gamepad input is comming */
@@ -128,7 +133,15 @@ protected:
 	bool InitializeGamepadButtonInfo();
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonAction(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+	void SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+	/** test whether a key is being pressed and whether it correspond to the current challenge */
+	void SendKeyboardButtonToChallenge(int key);
+
+	/** create a challenge for a given name */
+	LudumSequenceChallenge * CreateSequenceChallenge(size_t len);
+
+	/** called whenever a challenge is completed */
+	void OnChallengeCompleted(LudumSequenceChallenge * challenge);
 
 protected:
 
@@ -159,6 +172,9 @@ protected:
 	int min_word_size = 0;
 	int max_word_size = 0;
 
+
+	/** the challenge */
+	boost::intrusive_ptr<LudumSequenceChallenge> sequence_challenge;
 
 	/** a mapping between the button index and its resource name */
 	std::map<int, std::string> gamepad_button_map;

@@ -14,6 +14,8 @@ class LudumWindow : public chaos::MyGLFW::Window
 
 protected:
 
+	virtual void OnMouseButton(int button, int action, int modifier) override;
+
 	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 
 	virtual bool OnDraw(glm::ivec2 size) override;

@@ -31,6 +31,14 @@ void LudumWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 			return;
 }
 
+
+void LudumWindow::OnMouseButton(int button, int action, int modifier)
+{
+	if (game != nullptr)
+		game->OnMouseButton(button, action, modifier);
+}
+
+
 bool LudumWindow::OnDraw(glm::ivec2 size) 
 {
 	chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);

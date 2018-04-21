@@ -166,7 +166,7 @@ bool LudumGame::OnKeyEvent(int key, int action)
 			return true;
 
 	// PLAYING to PAUSE
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	if (key == GLFW_KEY_KP_ENTER && action == GLFW_PRESS)
 		if (RequireTogglePause())
 			return true;
 
@@ -175,11 +175,16 @@ bool LudumGame::OnKeyEvent(int key, int action)
 		if (RequireExitGame())
 			return true;
 
+	// FORCE GAMEOVER
 #if _DEBUG
-	if (key == GLFW_KEY_G && action == GLFW_PRESS)
+	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
 		if (RequireGameOver())
 			return true;
 #endif
+
+	// CHALLENGE
+	if (key >= GLFW_KEY_A && key <= GLFW_KEY_Z && action == GLFW_PRESS)
+		SendKeyboardButtonToChallenge(key);
 
 	return false;
 }
@@ -216,7 +221,7 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 
 
 	// maybe this correspond to current challenge
-	SendGamepadButtonAction(physical_gamepad);
+	SendGamepadButtonToChallenge(physical_gamepad);
 
 	// maybe a start game
 	if (physical_gamepad->IsAnyButtonPressed())
@@ -278,35 +283,28 @@ void LudumGame::TickGameLoop(double delta_time)
 
 }
 
-void LudumGame::SendGamepadButtonAction(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+void LudumGame::SendKeyboardButtonToChallenge(int key)
 {
-
-
-
+	if (sequence_challenge != nullptr)
+		sequence_challenge->OnKeyboardButtonReceived('a' + key - GLFW_KEY_A);
 }
 
-#if 0
-void LudumGameSendGamepadButtonAction
+void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+{
+	if (sequence_challenge != nullptr)
+		sequence_challenge->OnGamepadButtonReceived(physical_gamepad);
+}
 
-SendGamepadButtonAction(physical_gamepad);
-void SendGamepadButtonAction(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
-float Trigger = physical_gamepad->GetAxisValue(chaos::MyGLFW::XBOX_TRIGGER);
+void LudumGame::OnMouseButton(int button, int action, int modifier)
+{
+	if (button == 0 && action == GLFW_PRESS)
+	{
+		int len = min_word_size + rand() % (max_word_size - min_word_size);
+		sequence_challenge = CreateSequenceChallenge((size_t)len);
+	}
+}
 
-if (Trigger > 0)
-Trigger = Trigger;
-else if (Trigger < 0)
-	Trigger = Trigger;
-
-int b1 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_A) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-int b2 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_B) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-int b3 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_X) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-int b4 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_Y) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-int b5 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_LEFTBUT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-int b6 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_RIGHTBUT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-
-int b7 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-int b8 = (physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER) == chaos::MyGLFW::BUTTON_BECOME_PRESSED);
-
-if (b1 || b2 || b3 || b4 || b5 || b6 || b7 | b8)
-b1 = b1;
-#endif
+void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge)
+{
+	sequence_challenge = nullptr;
+}

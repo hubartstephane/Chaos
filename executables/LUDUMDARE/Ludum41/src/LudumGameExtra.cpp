@@ -341,6 +341,9 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 		it->second.push_back(std::move(word));	
 	}
 
+	if (dictionnary.size() == 0)
+		return false;
+		
 	return true;
 }
 
@@ -358,4 +361,62 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER] = "xboxControllerRightTrigger";
 
 	return true;
+}
+
+LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len) 
+{
+	auto it = dictionnary.find(len);
+
+	// no word of this size (search a word with the lengh the more near the request) 
+	if (it == dictionnary.end())
+	{
+		auto better_it = dictionnary.begin();
+
+		int min_distance = std::numeric_limits<int>::max();
+		for (it = dictionnary.begin() ; it != dictionnary.end() ; ++it)
+		{
+			int distance = abs((int)len - (int)it->first);
+			if (distance < min_distance)
+			{
+				min_distance = distance;
+				better_it = it;			
+			}		
+		}	
+		if (it == dictionnary.end()) // should never happen
+			return nullptr;
+	}
+
+	// get the list of words with given length
+	std::vector<std::string> const & words = it->second;
+	if (words.size() == 0)
+		return nullptr;
+
+	// search a word in the list
+	size_t index = (size_t)(rand() % words.size());
+	if (index >= words.size())
+		index = words.size() - 1; // should never happen
+
+	std::string keyboard_challenge = words[index];
+	len = keyboard_challenge.size();
+
+	// compose a gamepad combinaison of the same length
+	std::vector<int> gamepad_challenge;
+
+	for (size_t i = 0 ; i < len ; ++i)
+	{
+		size_t key_index = (size_t)(rand() % gamepad_button_map.size());
+		if (key_index >= gamepad_button_map.size())
+			key_index = gamepad_button_map.size() - 1;
+		gamepad_challenge.push_back(key_index);	
+	}
+
+	// create the challenge
+	LudumSequenceChallenge * result = new LudumSequenceChallenge;
+	if (result != nullptr)
+	{
+		result->gamepad_challenge  = std::move(gamepad_challenge);
+		result->keyboard_challenge = std::move(keyboard_challenge);
+		result->game = this;	
+	}
+	return result;
 }

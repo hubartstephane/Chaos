@@ -73,7 +73,10 @@ size_t ParticleChallengeTrait::ParticleToVertex(ParticleChallenge const * partic
 
 	glm::vec4 color = particle->color;
 	if (particle->index < challenge_position)
-		color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	else
+		color = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = color;
 

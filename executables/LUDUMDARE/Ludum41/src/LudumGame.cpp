@@ -92,6 +92,9 @@ void LudumGame::Tick(double delta_time)
 	UpdateGameState(delta_time);
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
+	// tick the particle manager
+	if (particle_manager != nullptr)
+		particle_manager->Tick((float)delta_time);
 }
 
 bool LudumGame::RequireGameOver()
@@ -251,8 +254,7 @@ void LudumGame::OnGameOver()
 
 void LudumGame::TickGameLoop(double delta_time)
 {
-	if (particle_manager != nullptr)
-		particle_manager->Tick((float)delta_time);
+
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)
@@ -269,10 +271,15 @@ void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * ph
 
 void LudumGame::OnMouseButton(int button, int action, int modifier)
 {
-	if (button == 0 && action == GLFW_PRESS)
+	chaos::StateMachine::State const * state = game_automata->GetCurrentState();
+
+	if (state != nullptr && state->GetStateID() == LudumAutomata::STATE_PLAYING)
 	{
-		int len = min_word_size + rand() % (max_word_size - min_word_size);
-		sequence_challenge = CreateSequenceChallenge((size_t)len);
+		if (button == 0 && action == GLFW_PRESS)
+		{
+			int len = min_word_size + rand() % (max_word_size - min_word_size);
+			sequence_challenge = CreateSequenceChallenge((size_t)len);
+		}	
 	}
 }
 

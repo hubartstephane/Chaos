@@ -134,6 +134,10 @@ protected:
 	/** initialize the particle text generator */
 	bool InitializeParticleTextGenerator();
 
+
+	/** get a random button in existing list */
+	int GetRandomButtonID() const;
+
 	/** called whenever the input mode changes */
 	void OnInputModeChanged(int new_mode, int old_mode);
 
@@ -207,6 +211,8 @@ protected:
 
 	/** a mapping between the button index and its resource name */
 	std::map<int, std::string> gamepad_button_map;
+	/** all the existing button */
+	std::vector<int> gamepad_buttons;
 
 	/** the particle manager */
 	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;

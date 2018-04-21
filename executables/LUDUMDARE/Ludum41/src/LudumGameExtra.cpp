@@ -361,6 +361,7 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 
 bool LudumGame::InitializeGamepadButtonInfo()
 {
+	// the map [button ID] => [bitmap name]
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_A] = "xboxControllerButtonA";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_B] = "xboxControllerButtonB";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_X] = "xboxControllerButtonX";
@@ -371,6 +372,10 @@ bool LudumGame::InitializeGamepadButtonInfo()
 
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER]  = "xboxControllerLeftTrigger";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER] = "xboxControllerRightTrigger";
+
+	// list of all buttons ID
+	for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
+		gamepad_buttons.push_back(it->first);
 
 	return true;
 }
@@ -593,6 +598,15 @@ bool LudumGame::InitializeParticleManager()
 	return true;
 }
 
+int LudumGame::GetRandomButtonID() const
+{
+	size_t key_index = (size_t)(rand() % gamepad_buttons.size());
+	if (key_index >= gamepad_buttons.size())
+		key_index = gamepad_buttons.size() - 1;
+	return gamepad_buttons[key_index];
+}
+
+
 LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len) 
 {
 	auto it = dictionnary.find(len);
@@ -631,14 +645,8 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 
 	// compose a gamepad combinaison of the same length
 	std::vector<int> gamepad_challenge;
-
-	for (size_t i = 0 ; i < len ; ++i)
-	{
-		size_t key_index = (size_t)(rand() % gamepad_button_map.size());
-		if (key_index >= gamepad_button_map.size())
-			key_index = gamepad_button_map.size() - 1;
-		gamepad_challenge.push_back(key_index);	
-	}
+	for (size_t i = 0 ; i < len ; ++i)	
+		gamepad_challenge.push_back(GetRandomButtonID());	
 
 	// create the challenge
 	LudumSequenceChallenge * result = new LudumSequenceChallenge;

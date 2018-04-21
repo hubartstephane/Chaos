@@ -23,12 +23,12 @@ void LudumSequenceChallenge::OnGamepadButtonReceived(chaos::MyGLFW::PhysicalGame
 	else
 	{
 		// search if a bad button is pressed
-		for (auto const & it : game->gamepad_button_map)
+		for (auto it = game->gamepad_button_map.begin() ; it != game->gamepad_button_map.end() ; ++it)
 		{
-			if (it.first == expected_key) 
+			if (it->first == expected_key) 
 				continue;
 		
-			if (physical_gamepad->GetButtonChanges(it.first) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
+			if (physical_gamepad->GetButtonChanges(it->first) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
 			{
 				OnChallengeError();
 				return;

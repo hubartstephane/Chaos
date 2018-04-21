@@ -1,10 +1,10 @@
 {
 	"pixel_sources":
 	[
-		"@pixel_shader2.txt"
+		"@challenge_pixel_shader.txt"
 	],
 	"vertex_sources":
 	[
-		"@vertex_shader2.txt"
+		"@challenge_vertex_shader.txt"
 	]
 }

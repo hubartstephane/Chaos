@@ -1,10 +1,5 @@
 {
-  "@texturex1":
-  {
-    "path":"@textures/texture1.json"
-  },
-  "@texturex2":
-  {
-    "path":"@textures/texture2.json"
-  }
+  "@background1" : { "path": "@textures/background1.json" },
+  "@background2" : { "path": "@textures/background2.json" },
+  "@background3" : { "path": "@textures/background3.json" }
 }

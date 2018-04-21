@@ -1,4 +1,5 @@
 {
-		"@prog1":{"path":"@programs/program1.json"},
-		"@prog2":{"path":"@programs/program2.json"}
+  "@background_program" : { "path": "@programs/background_program.json" },
+  "@challenge_program"  : { "path": "@programs/challenge_program.json" }
+
 }

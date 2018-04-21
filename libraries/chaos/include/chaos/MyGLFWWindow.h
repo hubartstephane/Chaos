@@ -113,6 +113,9 @@ namespace chaos
       /** called whenever the window gain or loose focus */
       virtual void OnFocusStateChange(bool gain_focus) {}
 
+	  /** called by application when the input mode changes */
+	  virtual void OnInputModeChanged(int new_mode, int old_mode){}
+
     private:
 
       /** binding function with GLFW library */

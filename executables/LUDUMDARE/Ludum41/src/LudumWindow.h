@@ -26,6 +26,8 @@ protected:
 
 	virtual bool Tick(double delta_time) override;
 
+	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+
 protected:
 
 	boost::intrusive_ptr<LudumGame> game;

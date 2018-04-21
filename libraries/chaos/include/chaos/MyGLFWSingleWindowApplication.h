@@ -103,6 +103,9 @@ namespace chaos
       /** Tweak window hints from configuration */
       void TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config);
 
+	  /** the user callback called when current input mode changes */
+	  virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+
     protected:
 
       /** the main clock of the manager */

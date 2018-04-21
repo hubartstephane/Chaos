@@ -16,6 +16,7 @@
 
 class LudumGame : public chaos::ReferencedObject
 {
+	friend class LudumWindow;
 	friend class LudumAutomata;
 	friend class MainMenuState;
 	friend class PlayingToPauseTransition;
@@ -119,6 +120,9 @@ protected:
 	void ReplaceSpecialLetters(std::string & word) const;
 	/** test whether a word only has the common letters (no accent) */
 	bool IsWordValid(std::string const & word) const;
+
+	/** called whenever the input mode changes */
+	void OnInputModeChanged(int new_mode, int old_mode);
 
 protected:
 

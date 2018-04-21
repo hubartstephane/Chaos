@@ -6,7 +6,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/WinTools.h>
 #include <chaos/Application.h>
-
+#include <chaos/InputMode.h>
 
 
 
@@ -431,6 +431,13 @@ void LudumGame::ResetPlayerCachedInputs()
 
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
+	if (physical_gamepad->IsAnyAction())
+		physical_gamepad = physical_gamepad;
+	else
+		physical_gamepad = physical_gamepad;
+
+	chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
+
 	// cache the stick position
 	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 	if (glm::length2(lsp) > 0.0f)
@@ -483,6 +490,32 @@ void LudumGame::Display(chaos::box2 const & viewport)
 
 
 }
+
+void f()
+{
+	char const * names[] = 
+	{		
+		"xboxControllerButtonA",
+		"xboxControllerButtonB",
+		"xboxControllerButtonX",
+		"xboxControllerButtonY",
+		"xboxControllerLeftShoulder",
+		"xboxControllerLeftThumbstick",
+		"xboxControllerLeftTrigger",
+		"xboxControllerRightShoulder",
+		"xboxControllerRightThumbstick",
+		"xboxControllerRightTrigger",
+		//"xboxControllerButtonGuide",
+		//"xboxControllerBack",
+		//"xboxControllerDPad",
+		//"xboxControllerStart"
+	};
+}
+
+
+
+
+
 
 bool LudumGame::IsWordValid(std::string const & word) const 
 {
@@ -571,6 +604,11 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 	}
 
 	return true;
+}
+
+void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
+{
+
 }
 
 void LudumGame::OnGameOver()

@@ -2,8 +2,16 @@
 
 #include <chaos/WinTools.h>
 #include <chaos/Application.h>
+#include <chaos/InputMode.h>
+
 
 float const LudumWindow::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
+
+void LudumWindow::OnInputModeChanged(int new_mode, int old_mode)
+{
+	if (game != nullptr)
+		game->OnInputModeChanged(new_mode, old_mode);
+}
 
 void LudumWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 {

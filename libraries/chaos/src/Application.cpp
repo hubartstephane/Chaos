@@ -154,4 +154,29 @@ namespace chaos
 		return result;
 	}
 
+	int Application::GetApplicationInputMode()
+	{
+		Application const * application = Application::GetConstInstance();
+		if (application != nullptr)
+			return application->GetCurrentInputMode();	
+		return InputMode::Keyboard;
+	}
+
+	void Application::SetApplicationInputMode(int new_mode)
+	{
+		Application * application = Application::GetInstance();
+		if (application != nullptr)
+			application->SetCurrentInputMode(new_mode);	
+	}
+
+	void Application::SetCurrentInputMode(int new_mode)
+	{
+		if (new_mode == current_input_mode)
+			return;
+
+		int old_mode = current_input_mode;
+		current_input_mode = new_mode;
+		OnInputModeChanged(new_mode, old_mode);
+	}
+
 }; // namespace chaos

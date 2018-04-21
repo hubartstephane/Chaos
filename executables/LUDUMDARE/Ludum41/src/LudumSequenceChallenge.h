@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
+#include <chaos/ParticleManager.h>
 
 class LudumSequenceChallengeCallbacks : public chaos::ReferencedObject
 {
@@ -26,6 +27,9 @@ public:
 	/** try to catch keyboard input */
 	void OnKeyboardButtonReceived(char c);
 
+	/** returns the position inside the challenge */
+	size_t GetChallengePosition() const { return challenge_position; }
+
 protected:
 
 	/** the challenge progress */
@@ -48,4 +52,7 @@ protected:
 
 	/** some callbacks */
 	boost::intrusive_ptr<LudumSequenceChallengeCallbacks> callbacks;
+
+	/** the visible hud */
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> particle_range;
 };

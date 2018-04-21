@@ -410,6 +410,8 @@ void LudumGame::FillBackgroundLayer()
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+#if 0
+
 chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * text)
 {
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(CHALLENGE_LAYER_ID);
@@ -424,6 +426,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * tex
 
 	params.line_height = 100.0f;
 	params.hotpoint_type = chaos::Hotpoint::CENTER;
+	params.position.x = 0.0f;
+	params.position.y = -200.0f;
 
 	generator.Generate(text, result, params);
 
@@ -458,11 +462,64 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * tex
 		}
 	}
 
+	return allocation;
+}
+#endif
 
-	
 
-	return nullptr;
+chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceChallenge * challenge)
+{
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(CHALLENGE_LAYER_ID);
+	if (layer == nullptr)
+		return nullptr;
 
+
+	chaos::ParticleTextGenerator::Generator generator(*texture_atlas);
+
+	chaos::ParticleTextGenerator::GeneratorResult result;
+	chaos::ParticleTextGenerator::GeneratorParams params;
+
+	params.line_height = 100.0f;
+	params.hotpoint_type = chaos::Hotpoint::CENTER;
+	params.position.x = 0.0f;
+	params.position.y = -200.0f;
+
+	generator.Generate(challenge->keyboard_challenge.c_str(), result, params);
+
+	// count the number of particle to draw
+	size_t count = 0;
+	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+	{
+		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
+		count += line.size();	
+	}
+
+	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	if (allocation == nullptr)
+		return nullptr;
+
+	ParticleChallenge * particle = (ParticleChallenge *)allocation->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
+
+	size_t k = 0;
+	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+	{
+		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
+		for (size_t j = 0 ; j < line.size() ; ++j)
+		{
+			chaos::ParticleTextGenerator::Token const & token = line[j];
+
+			particle[k].corners   = token.corners;
+			particle[k].texcoords = token.texcoords;
+			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+			particle[k].challenge = challenge;
+			particle[k].index     = k;
+			++k;
+		}
+	}
+
+	return allocation;
 }
 
 bool LudumGame::InitializeParticleManager()
@@ -481,10 +538,6 @@ bool LudumGame::InitializeParticleManager()
 
 	// fill the background
 	FillBackgroundLayer();
-
-	// create a text for challenge
-	CreateChallengeText("toto");
-
 
 	return true;
 }
@@ -543,6 +596,9 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 		result->gamepad_challenge  = std::move(gamepad_challenge);
 		result->keyboard_challenge = std::move(keyboard_challenge);
 		result->game = this;	
+
+
+		result->particle_range = CreateChallengeText(result);
 	}
 	return result;
 }

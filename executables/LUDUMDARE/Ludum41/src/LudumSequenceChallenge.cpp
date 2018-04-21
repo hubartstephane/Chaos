@@ -43,10 +43,11 @@ void LudumSequenceChallenge::AdvanceChallenge()
 {
 	++challenge_position;
 	if (challenge_position == gamepad_challenge.size())
-	{	
-		game->OnChallengeCompleted(this); // remove the challenge from pending list
+	{			
 		if (callbacks != nullptr)
 			callbacks->OnChallengeCompleted(this);
+
+		game->OnChallengeCompleted(this); // remove the challenge from pending list
 	}
 }
 

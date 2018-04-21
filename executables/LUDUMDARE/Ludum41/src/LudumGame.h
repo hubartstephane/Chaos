@@ -165,7 +165,7 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 	/** create a text for the challenge */
-	chaos::ParticleRangeAllocation * CreateChallengeText(char const * text);
+	chaos::ParticleRangeAllocation * CreateChallengeText(LudumSequenceChallenge * challenge);
 
 protected:
 

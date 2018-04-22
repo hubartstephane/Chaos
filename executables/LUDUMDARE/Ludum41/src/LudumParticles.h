@@ -11,8 +11,9 @@
 static int const BACKGROUND_LAYER_ID             = 0;
 static int const BACKGROUND_GAMEOBJECT_LAYER_ID  = 1;
 static int const GAMEOBJECT_LAYER_ID             = 2;
-static int const TEXT_LAYER_ID                   = 3;
-static int const CHALLENGE_LAYER_ID              = 4;
+static int const BALL_LAYER_ID                   = 3;
+static int const TEXT_LAYER_ID                   = 4;
+static int const CHALLENGE_LAYER_ID              = 5;
 
 // ===========================================================================
 // Base Vertex class
@@ -88,6 +89,9 @@ public:
 	bool UpdateParticle(float delta_time, ParticleMovableObject * particle);
 
 	size_t ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+
+
+	class LudumGame * game = nullptr;
 };
 
 // ===========================================================================

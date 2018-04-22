@@ -188,11 +188,11 @@ protected:
 	void OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success);
 
 	/** templated method to add a layer */
-	template<typename TRAIT_TYPE>
-	chaos::ParticleLayer * AddParticleLayer(int render_order, int layer_id, char const * material_name)
+	template<typename TRAIT_TYPE, typename ...PARAMS>
+	chaos::ParticleLayer * AddParticleLayer(int render_order, int layer_id, char const * material_name, PARAMS... params)
 	{
 		chaos::ParticleLayer * result = new chaos::ParticleLayer(
-			new chaos::TParticleLayerDesc<TRAIT_TYPE>	
+			new chaos::TParticleLayerDesc<TRAIT_TYPE>(params...)	
 		);
 		return DoAddParticleLayer(result, render_order, layer_id, material_name);
 	}

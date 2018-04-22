@@ -89,10 +89,6 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 }
 
 
-
-
-
-
 // ===========================================================================
 // Challenge particle system
 // ===========================================================================

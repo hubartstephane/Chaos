@@ -87,6 +87,10 @@ size_t ParticleMovableObjectTrait::ParticleToVertex(ParticleMovableObject const 
 
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle)
 {
+	// do not update particles during pause
+	if (!game->IsPlaying())
+		return false;
+
 	// delay before moving the particle
 	if (particle->delay_before_move > 0.0f)
 	{
@@ -95,10 +99,45 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 			return false;
 	}
 
+	// update the velocity of the ball
+	particle->velocity = glm::normalize(particle->velocity) * game->ball_speed;
+
 	// moving the particle
 	particle->corners.bottomleft += particle->velocity * delta_time * game->ball_time_dilation;
 	particle->corners.topright   += particle->velocity * delta_time * game->ball_time_dilation;
 
+	glm::vec2 position = (particle->corners.bottomleft + particle->corners.topright) * 0.5f;
+	// ball bouncing
+	chaos::box2 world = game->GetWorldBox();
+
+	std::pair<glm::vec2, glm::vec2> world_corners = world.GetCorners();
+
+	
+
+	if (particle->corners.bottomleft.x < world_corners.first.x && particle->velocity.x < 0.0f)
+	{
+		particle->velocity.x = -particle->velocity.x;	
+	}
+
+	if (particle->corners.bottomleft.y < world_corners.first.y && particle->velocity.y < 0.0f)
+	{
+		particle->velocity.y = -particle->velocity.y;	
+	}
+
+
+
+
+
+
+	if (particle->corners.topright.x > world_corners.second.x && particle->velocity.x > 0.0f)
+	{
+		particle->velocity.x = -particle->velocity.x;	
+	}
+
+	if (particle->corners.topright.y > world_corners.second.y && particle->velocity.y > 0.0f)
+	{
+		particle->velocity.y = -particle->velocity.y;	
+	}
 
 
 

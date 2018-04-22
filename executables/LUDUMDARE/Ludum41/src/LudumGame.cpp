@@ -13,6 +13,13 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
+bool LudumGame::IsPlaying() const
+{
+	if (game_automata->GetCurrentState()->GetStateID() != LudumAutomata::STATE_PLAYING)
+		return false;
+	return true;
+}
+
 void LudumGame::CreateGameTitle()
 {
 	CreateTitle("AsciiPaouf II");
@@ -336,12 +343,16 @@ void LudumGame::TickGameLoop(double delta_time)
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)
 {
+	if (!IsPlaying())
+		return;
 	if (sequence_challenge != nullptr)
 		sequence_challenge->OnKeyboardButtonReceived('a' + key - GLFW_KEY_A);
 }
 
 void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
+	if (!IsPlaying())
+		return;
 	if (sequence_challenge != nullptr)
 		sequence_challenge->OnGamepadButtonReceived(physical_gamepad);
 }
@@ -641,7 +652,12 @@ void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks *
 
 void LudumGame::OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success)
 {
+	if (success)
+		ball_speed = ball_speed - ball_speed_increment;
+	else
+		ball_speed = ball_speed + ball_speed_increment;
 
+	ball_speed = chaos::MathTools::Clamp(ball_speed, ball_initial_speed, ball_max_speed);
 }
 
 void LudumGame::OnExtraBallChallenge(class LudumSequenceChallenge_ExtraBallCallbacks * challenge, bool success)

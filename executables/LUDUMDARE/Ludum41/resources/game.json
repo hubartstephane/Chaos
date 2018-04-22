@@ -15,9 +15,9 @@
   "player_length_increment": 50.0,  
   "player_length_decrement": 50.0,
   
-  "ball_max_speed": 800.0,
+  "ball_max_speed": 1200.0,
   "ball_initial_speed": 200.0,
-  "ball_speed_increment": 100.0,
+  "ball_speed_increment": 200.0,
 
 
   "delay_before_ball_move" :  2.0,

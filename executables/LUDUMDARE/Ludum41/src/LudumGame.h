@@ -301,6 +301,15 @@ protected:
 	/** create a challenge */
 	class LudumSequenceChallengeCallbacks * CreateSequenceChallengeCallbacks();
 
+
+
+
+
+
+
+	/** returns true whether we are playing */
+	bool IsPlaying() const;
+
 protected:
 
 	/** the window in GLFW library */

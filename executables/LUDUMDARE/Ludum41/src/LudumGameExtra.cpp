@@ -695,6 +695,8 @@ LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
 		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
 	if (challenge == 2)	
 		return new LudumSequenceChallenge_ExtraBallCallbacks();
-#endif		
+
 	return new LudumSequenceChallenge_LongBarBallCallbacks();
+#endif		
+	return new LudumSequenceChallenge_SpeedDownBallCallbacks();
 }

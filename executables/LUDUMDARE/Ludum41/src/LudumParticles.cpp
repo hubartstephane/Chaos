@@ -107,42 +107,52 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	particle->corners.topright   += particle->velocity * delta_time * game->ball_time_dilation;
 
 	glm::vec2 position = (particle->corners.bottomleft + particle->corners.topright) * 0.5f;
+
+	glm::vec2 particle_half_size = chaos::ParticleCornersToBox(particle->corners).half_size;
+
 	// ball bouncing
 	chaos::box2 world = game->GetWorldBox();
 
 	std::pair<glm::vec2, glm::vec2> world_corners = world.GetCorners();
 
 	
+	// bounce against the world borders
+	glm::vec2 new_position = position;
 
-	if (particle->corners.bottomleft.x < world_corners.first.x && particle->velocity.x < 0.0f)
+	if ((particle->corners.topright.x < world_corners.first.x) ||
+		(particle->corners.bottomleft.x < world_corners.first.x && particle->velocity.x < 0.0f))
 	{
+		new_position.x = world_corners.first.x + particle_half_size.x;
 		particle->velocity.x = -particle->velocity.x;	
 	}
 
-	if (particle->corners.bottomleft.y < world_corners.first.y && particle->velocity.y < 0.0f)
+	if ((particle->corners.topright.y < world_corners.first.y) ||
+		(particle->corners.bottomleft.y < world_corners.first.y && particle->velocity.y < 0.0f))
 	{
+		new_position.y = world_corners.first.y + particle_half_size.y;
 		particle->velocity.y = -particle->velocity.y;	
 	}
 
-
-
-
-
-
-	if (particle->corners.topright.x > world_corners.second.x && particle->velocity.x > 0.0f)
+	if ((particle->corners.bottomleft.x > world_corners.second.x) ||
+		(particle->corners.topright.x > world_corners.second.x && particle->velocity.x > 0.0f))
 	{
+		new_position.x = world_corners.second.x - particle_half_size.x;
 		particle->velocity.x = -particle->velocity.x;	
 	}
 
-	if (particle->corners.topright.y > world_corners.second.y && particle->velocity.y > 0.0f)
+	if ((particle->corners.bottomleft.y > world_corners.second.y) ||
+		(particle->corners.topright.y > world_corners.second.y && particle->velocity.y > 0.0f))
 	{
+		new_position.y = world_corners.second.y - particle_half_size.y;
 		particle->velocity.y = -particle->velocity.y;	
 	}
+	// bounce against player
 
 
 
-
-
+	// recenter the particle
+	particle->corners.bottomleft = new_position - particle_half_size;
+	particle->corners.topright   = new_position + particle_half_size;
 
 	return false; 
 }

@@ -20,7 +20,7 @@
   "ball_speed_increment": 200.0,
 
 
-  "delay_before_ball_move" :  2.0,
+  "delay_before_ball_move" :  0.5,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 20.0,
   "challenge_time_dilation": 0.5

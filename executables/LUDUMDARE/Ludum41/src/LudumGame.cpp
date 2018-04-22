@@ -438,7 +438,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 glm::vec2 LudumGame::GenerateBallRandomDirection() const
 {
 	// direction upward
-	float angle = 3.14f * 0.5f + chaos::MathTools::RandFloat(-3.14f * 0.25f, 3.14f * 0.25f);
+	float angle = 3.14f * 0.5f + chaos::MathTools::RandFloat(-3.14f * 0.33f, 3.14f * 0.33f);
 
 	return glm::vec2(
 		chaos::MathTools::Cos(angle),

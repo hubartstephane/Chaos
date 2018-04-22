@@ -42,7 +42,7 @@ void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
 	blend_desc.blend_type   = (blend_in)? 
 		chaos::BlendVolumeDesc::BLEND_IN: 
 		chaos::BlendVolumeDesc::BLEND_OUT;
-	blend_desc.blend_time   = 1.0f,
+	blend_desc.blend_time   = 0.4f,
 	blend_desc.kill_at_end  = false;
 	blend_desc.pause_at_end = !blend_in;
 

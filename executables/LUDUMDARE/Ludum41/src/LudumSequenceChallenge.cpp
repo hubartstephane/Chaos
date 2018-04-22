@@ -103,6 +103,10 @@ void LudumSequenceChallenge::Tick(double delta_time)
 
 
 
+LudumSequenceChallenge::~LudumSequenceChallenge()
+{
+	game->ball_time_dilation = 1.0;
+}
 
 
 

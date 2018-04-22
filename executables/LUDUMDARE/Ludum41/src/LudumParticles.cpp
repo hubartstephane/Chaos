@@ -1,6 +1,8 @@
 #pragma once
 
+
 #include "LudumParticles.h"
+#include "LudumGame.h"
 #include "LudumSequenceChallenge.h"
 
 chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
@@ -62,7 +64,7 @@ size_t ParticleObjectTrait::ParticleToVertex(ParticleObject const * particle, Ve
 	return vertices_per_particle;
 }
 
-bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particles)
+bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle)
 { 
 	return false; 
 }
@@ -83,8 +85,19 @@ size_t ParticleMovableObjectTrait::ParticleToVertex(ParticleMovableObject const 
 	return vertices_per_particle;
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particles)
-{ 
+bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle)
+{
+	// delay before moving the particle
+	if (particle->delay_before_move > 0.0f)
+	{
+		particle->delay_before_move -=delta_time;
+		if (particle->delay_before_move > 0.0f)
+			return false;
+	}
+
+	// moving the particle
+	particle->corners.bottomleft += particle->velocity * delta_time * game->ball_time_dilation;
+	particle->corners.topright   += particle->velocity * delta_time * game->ball_time_dilation;
 
 
 

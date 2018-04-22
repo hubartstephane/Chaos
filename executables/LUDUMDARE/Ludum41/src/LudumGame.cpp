@@ -67,7 +67,7 @@ bool LudumGame::OnEnterGame()
 	StartGameMusic(true);
 	DestroyTitle();
 	ResetGameVariables();
-	CreateGameObjects(0);
+	CreateAllGameObjects(0);
 	return true;
 }
 
@@ -305,6 +305,7 @@ void LudumGame::ResetGameVariables()
 	current_life  = initial_life;
 	player_length = player_initial_length;
 	ball_speed    = ball_initial_speed;
+	ball_time_dilation = 1.0f;
 }
 void LudumGame::OnGameOver()
 {
@@ -374,6 +375,7 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success)
 {
 	sequence_challenge = nullptr;
+	ball_time_dilation = 1.0f;
 }
 
 void LudumGame::DestroyGameObjects()
@@ -387,10 +389,10 @@ void LudumGame::DestroyGameObjects()
 
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name, size_t count)
+chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
 {
 	// find layer of concern
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(GAMEOBJECT_LAYER_ID);
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
 	if (layer == nullptr)
 		return nullptr;
 
@@ -422,12 +424,21 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 
 
 
+glm::vec2 LudumGame::GenerateBallRandomDirection() const
+{
+	// direction upward
+	float angle = 3.14f * 0.5f + chaos::MathTools::RandFloat(-3.14f * 0.25f, 3.14f * 0.25f);
+
+	return glm::vec2(
+		chaos::MathTools::Cos(angle),
+		chaos::MathTools::Sin(angle));
+}
 
 chaos::ParticleRangeAllocation * LudumGame::CreateBall()
 {
 
 	// create the object
-	chaos::ParticleRangeAllocation * result = CreateGameObjects("ball", 1);
+	chaos::ParticleRangeAllocation * result = CreateGameObjects("ball", 1, BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -440,6 +451,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBall()
 
 	particle->corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
 
+	particle->delay_before_move = delay_before_ball_move;
+	particle->velocity = ball_speed * GenerateBallRandomDirection();
 
 	//particle->corners.bottomleft = glm::vec2(0.0f, 0.0f);
 	//particle->corners.topright   = glm::vec2(0.0f, 0.0f);
@@ -604,7 +617,7 @@ void LudumGame::SetPlayerLength(float length)
 
 
 
-void LudumGame::CreateGameObjects(int level)
+void LudumGame::CreateAllGameObjects(int level)
 {
 	if (player_allocations == nullptr)
 	{

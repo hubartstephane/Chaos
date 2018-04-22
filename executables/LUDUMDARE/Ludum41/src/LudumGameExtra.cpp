@@ -256,8 +256,11 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(player_length_decrement);	
 	LUDUMGAME_JSON_ATTRIBUTE(ball_max_speed);
 	LUDUMGAME_JSON_ATTRIBUTE(ball_initial_speed);
+	LUDUMGAME_JSON_ATTRIBUTE(ball_speed_increment);
 	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
 	LUDUMGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
+	LUDUMGAME_JSON_ATTRIBUTE(challenge_time_dilation);	
+	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);		
 #undef LUDUMGAME_JSON_ATTRIBUTE
 
 	return true;
@@ -675,6 +678,8 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 
 		result->callbacks = CreateSequenceChallengeCallbacks();
 		result->SetTimeout(5.0f);
+
+		ball_time_dilation = challenge_time_dilation;
 	}
 	return result;
 }

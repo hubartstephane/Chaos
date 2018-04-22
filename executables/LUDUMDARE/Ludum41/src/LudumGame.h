@@ -36,6 +36,8 @@ class LudumGame : public chaos::ReferencedObject
 	friend class LudumSequenceChallenge_LifeBallCallbacks;
 	friend class LudumSequenceChallenge_SpeedDownBallCallbacks;
 
+	friend class ParticleMovableObjectTrait;
+
 protected:
 
 	/** some aspect constant */
@@ -96,7 +98,7 @@ protected:
 	bool RequireGameOver();
 
 	/** creating all object in the game */
-	void CreateGameObjects(int level);
+	void CreateAllGameObjects(int level);
 	/** destroying game objects*/
 	void DestroyGameObjects();
 
@@ -213,7 +215,7 @@ protected:
 	chaos::ParticleRangeAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
 
 	/** create a number of game object */
-	chaos::ParticleRangeAllocation * CreateGameObjects(char const * name, size_t count);
+	chaos::ParticleRangeAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
 	/** create the player */
 	chaos::ParticleRangeAllocation * CreatePlayer();
 
@@ -280,8 +282,8 @@ protected:
 	void RestrictedPlayerToScreen();
 
 
-
-
+	/** generate a direction updward random for the ball */
+	glm::vec2 GenerateBallRandomDirection() const;
 
 	/** move the player */
 	void DisplacePlayer(double delta_time);
@@ -358,18 +360,23 @@ protected:
 
 	float ball_size          = 25.0f;
 
+	float ball_speed         = 5.0f;
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;
+	float ball_speed_increment = 0.5f;
 	
 	float mouse_sensitivity   = 1.0f;
 	float gamepad_sensitivity = 1.0f;
 
+	float challenge_time_dilation = 0.5f;
+
+	float delay_before_ball_move = 2.0f;
 
 	/** current game values */
 	int   current_life  = 3;
 	float player_length = 70.0f;
-	float ball_speed    = 1.0f;
 	
+	float ball_time_dilation = 1.0f;
 
 
 	/** some sprites */

@@ -59,6 +59,9 @@ class LudumSequenceChallenge : public chaos::ReferencedObject
 
 public:
 
+	/** destructor */
+	virtual ~LudumSequenceChallenge();
+
 	/** try to catch button input */
 	void OnGamepadButtonReceived(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 	/** try to catch keyboard input */

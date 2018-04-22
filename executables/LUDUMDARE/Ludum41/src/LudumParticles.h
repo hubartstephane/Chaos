@@ -79,6 +79,7 @@ class ParticleMovableObject : public ParticleObject
 {
 public:
 
+	float delay_before_move;
 	glm::vec2 velocity;
 };
 

@@ -197,7 +197,8 @@ bool PlayingToGameOverTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	if (game != nullptr)
 	{
 		gameover_sound = game->PlaySound("gameover", false, false);
-		game->OnLeaveGame();
+		game->CreateTitle("Game Over");
+		game->OnLeaveGame();		
 	}
 	return false;
 }
@@ -207,7 +208,10 @@ bool PlayingToGameOverTransition::OnLeaveImpl(chaos::StateMachine::State * to)
 	// notify the game that it is finished
 	LudumGame * game = GetGame();
 	if (game != nullptr)
+	{
 		game->OnGameOver();
+		game->CreateTitle("AsciiPaouf II");
+	}
 	// destroy the sound object
 	gameover_sound = nullptr;
 

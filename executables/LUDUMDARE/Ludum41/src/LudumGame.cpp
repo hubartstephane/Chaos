@@ -11,39 +11,35 @@
 #include <chaos/InputMode.h>
 
 
+
+void LudumGame::CreateTitle(char const * title)
+{
+	chaos::ParticleTextGenerator::GeneratorParams params;
+	params.line_height = TITLE_SIZE;
+	params.hotpoint_type = chaos::Hotpoint::CENTER;
+	params.position.y = TITLE_PLACEMENT_Y;
+
+	text_allocations = CreateTextParticles(title, params);
+}
+
+void LudumGame::DestroyTitle()
+{
+	text_allocations = nullptr;
+}
+
 void LudumGame::OnStartGame(bool very_first)
 {
 	if (very_first)
 	{
 		StartMainMenuMusic(true);
-
-
+		CreateTitle("AsciiPaouf II");
 	}
-	else
-		very_first = very_first;
-
-
-#if 0
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
-
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;
-
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> lifes_allocations;
-
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
-
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
-#endif
-
 }
 
 bool LudumGame::OnEnterPause()
 {
 	StartPauseMusic(true);
-
-
-
-
+	CreateTitle("Pause");
 
 	return true;
 }
@@ -51,8 +47,7 @@ bool LudumGame::OnEnterPause()
 bool LudumGame::OnLeavePause()
 {
 	StartGameMusic(false);
-
-
+	DestroyTitle();
 
 	return true;
 }
@@ -60,11 +55,9 @@ bool LudumGame::OnLeavePause()
 bool LudumGame::OnEnterGame()
 {
 	StartGameMusic(true);
-
-
-
-
-
+	DestroyTitle();
+	ResetGameVariables();
+	CreateGameObjects(0);
 	return true;
 }
 
@@ -280,10 +273,16 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 		sequence_challenge->particle_range = CreateChallengeText(sequence_challenge.get());	
 }
 
+
+void LudumGame::ResetGameVariables()
+{
+	current_life  = initial_life;
+	player_length = player_initial_length;
+	ball_speed    = ball_initial_speed;
+}
 void LudumGame::OnGameOver()
 {
 	DestroyGameObjects();
-
 
 
 
@@ -339,6 +338,7 @@ void LudumGame::DestroyGameObjects()
 void LudumGame::CreateGameObjects(int level)
 {
 
-
 }
+
+
 

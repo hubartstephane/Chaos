@@ -30,6 +30,16 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
+protected:
+
+	/** some aspect constant */
+	float CHALLENGE_SIZE = 100.0f;
+	float CHALLENGE_PLACEMENT_Y = 350;
+
+	float TITLE_SIZE = 150.0f;
+	float TITLE_PLACEMENT_Y = 0;
+
+
 public:
 
 	/** the tick method */
@@ -189,6 +199,15 @@ protected:
 
 	/** create particles in the text layer */
 	chaos::ParticleRangeAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
+
+
+	/** create the title */
+	void CreateTitle(char const * title);
+	/** create the title */
+	void DestroyTitle();
+
+	/** reset the game variables */
+	void ResetGameVariables();
 
 protected:
 

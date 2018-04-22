@@ -491,18 +491,37 @@ chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * tex
 
 	particle_text_generator->Generate(text, result, params);
 
-	// transform the tokens in particles
+	// count the number of particle to draw
+	size_t count = result.GetTokenCount();
 
+	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	if (allocation == nullptr)
+		return nullptr;
 
-	return nullptr;
+	ParticleObject * particle = (ParticleObject *)allocation->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
+
+	size_t k = 0;
+	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+	{
+		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
+		for (size_t j = 0 ; j < line.size() ; ++j)
+		{
+			chaos::ParticleTextGenerator::Token const & token = line[j];
+
+			particle[k].corners   = token.corners;
+			particle[k].texcoords = token.texcoords;
+			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+			++k;
+		}
+	}
+	return allocation;
 }
 
 
 chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceChallenge * challenge)
 {
-	static float TEXT_SIZE = 100.0f;
-	static float TEXT_PLACEMENT_Y = 350;
-
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard   = chaos::InputMode::IsPCMode(input_mode);
 
@@ -513,10 +532,10 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 	chaos::ParticleTextGenerator::GeneratorResult result;
 	chaos::ParticleTextGenerator::GeneratorParams params;
 
-	params.line_height = TEXT_SIZE;
+	params.line_height = CHALLENGE_SIZE;
 	params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
 	params.position.x = 0.0f;
-	params.position.y = TEXT_PLACEMENT_Y;
+	params.position.y = CHALLENGE_PLACEMENT_Y;
 
 	if (keyboard)
 	{
@@ -559,17 +578,6 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 	return allocation;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 bool LudumGame::InitializeParticleManager()
 {
 	// create the manager
@@ -582,6 +590,9 @@ bool LudumGame::InitializeParticleManager()
 
 	// create layers
 	AddParticleLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
+	AddParticleLayer<ParticleObjectTrait>(++render_order, BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
+	AddParticleLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
+	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 
 	// fill the background

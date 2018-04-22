@@ -248,6 +248,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(initial_life);
 	LUDUMGAME_JSON_ATTRIBUTE(max_life);
 	LUDUMGAME_JSON_ATTRIBUTE(max_ball_count);
+	LUDUMGAME_JSON_ATTRIBUTE(ball_size);	
 	LUDUMGAME_JSON_ATTRIBUTE(player_max_length);
 	LUDUMGAME_JSON_ATTRIBUTE(player_min_length);
 	LUDUMGAME_JSON_ATTRIBUTE(player_initial_length);
@@ -598,7 +599,6 @@ bool LudumGame::InitializeParticleManager()
 	AddParticleLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
 	AddParticleLayer<ParticleObjectTrait>(++render_order, BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
 	AddParticleLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
-
 
 	ParticleMovableObjectTrait movable_trait;
 	movable_trait.game = this;

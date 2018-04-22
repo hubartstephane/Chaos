@@ -85,6 +85,13 @@ size_t ParticleMovableObjectTrait::ParticleToVertex(ParticleMovableObject const 
 
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particles)
 { 
+
+
+
+
+
+
+
 	return false; 
 }
 

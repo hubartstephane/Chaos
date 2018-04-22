@@ -8,6 +8,7 @@
   "initial_life": 3,
   "max_life": 10,
   "max_ball_count": 3,
+  "ball_size": 30.0,
   "player_max_length": 500.0,
   "player_min_length": 50.0,
   "player_initial_length": 150.0,

@@ -400,7 +400,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 		return nullptr;
 
 	// find bitmap entry
-	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry("player");
+	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(name);
 	if (entry == nullptr)
 		return nullptr;
 
@@ -418,6 +418,40 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 
 	return allocation;
 }
+
+
+
+
+
+chaos::ParticleRangeAllocation * LudumGame::CreateBall()
+{
+
+	// create the object
+	chaos::ParticleRangeAllocation * result = CreateGameObjects("ball", 1);
+	if (result == nullptr)
+		return nullptr;
+
+	// set the color
+	ParticleMovableObject * particle = (ParticleMovableObject *)result->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
+	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+	particle->corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
+
+
+	//particle->corners.bottomleft = glm::vec2(0.0f, 0.0f);
+	//particle->corners.topright   = glm::vec2(0.0f, 0.0f);
+
+	return result;
+}
+
+
+
+
+
+
 
 
 chaos::ParticleRangeAllocation * LudumGame::CreatePlayer()
@@ -577,6 +611,11 @@ void LudumGame::CreateGameObjects(int level)
 		player_allocations = CreatePlayer();
 		SetPlayerLength(player_length);
 		SetPlayerPosition(0.0f);
+	}
+
+	if (balls_allocations == nullptr)
+	{
+		balls_allocations = CreateBall();	
 	}
 
 

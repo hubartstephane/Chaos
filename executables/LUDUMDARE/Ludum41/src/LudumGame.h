@@ -217,6 +217,9 @@ protected:
 	/** create the player */
 	chaos::ParticleRangeAllocation * CreatePlayer();
 
+	/** create the player */
+	chaos::ParticleRangeAllocation * CreateBall();
+
 	/** create the title of the game */
 	void CreateGameTitle();
 	/** create the title */
@@ -352,6 +355,8 @@ protected:
 	float player_initial_length   = 100.0f; 
 	float player_length_increment = 50.0f; 
 	float player_length_decrement = 50.0f;
+
+	float ball_size          = 25.0f;
 
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;

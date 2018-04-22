@@ -9,8 +9,8 @@
   "max_life": 10,
   "max_ball_count": 3,
   "ball_size": 30.0,
-  "player_max_length": 500.0,
-  "player_min_length": 50.0,
+  "player_max_length": 400.0,
+  "player_min_length": 100.0,
   "player_initial_length": 150.0,
   "player_length_increment": 50.0,  
   "player_length_decrement": 50.0,
@@ -23,9 +23,9 @@
   "delay_before_ball_move" :  0.5,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 20.0,
-  "challenge_time_dilation": 0.5,
-  "challenge_frequency": 10.0,
+  "challenge_time_dilation": 0.65,
+  "challenge_frequency": 5.0,
 
   "min_brick_life": 1,
-  "max_brick_life": 5
+  "max_brick_life": 4
 }

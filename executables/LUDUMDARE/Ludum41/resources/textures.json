@@ -1,5 +1,3 @@
 {
-  "@background1" : { "path": "@textures/background1.jpg" },
-  "@background2" : { "path": "@textures/background2.jpg" },
-  "@background3" : { "path": "@textures/background3.jpg" }
+  "@background1": { "path": "@textures/background1.png" }
 }

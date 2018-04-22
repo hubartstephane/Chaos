@@ -163,6 +163,8 @@ protected:
 
 	/** get the size of the world */
 	glm::vec2 GetWorldSize() const;
+	/** get the box world */
+	chaos::box2 GetWorldBox() const;
 
 	/** called whenever the input mode changes */
 	void OnInputModeChanged(int new_mode, int old_mode);
@@ -262,10 +264,12 @@ protected:
 
 
 	/** change an object position */
-	void SetObjectPosition(chaos::ParticleRangeAllocation * allocations, size_t index, glm::vec2 const & position);
+	void SetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index, glm::vec2 const & position);
 
 	/** ensure object is inside the world */
-	chaos::ParticleCorners GetRestrictedObject(chaos::ParticleCorners const & src);
+	void RestrictedObjectToScreen(chaos::ParticleRangeAllocation * allocation, size_t index);
+	/** ensure player is inside the world */
+	void RestrictedPlayerToScreen();
 
 
 

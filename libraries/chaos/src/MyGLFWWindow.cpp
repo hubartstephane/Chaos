@@ -37,6 +37,11 @@ namespace chaos
 		* Window
 		*/
 
+		Window::Window()
+		{
+			mouse_position.x = mouse_position.y = std::numeric_limits<float>::max();		
+		}
+
 		GLFWwindow * Window::GetGLFWHandler()
 		{
 			return glfw_window;
@@ -57,6 +62,22 @@ namespace chaos
 				DoOnDraw(glfw_window);
 				refresh_required = false;
 			}
+		}
+
+		bool Window::IsMousePositionValid() const
+		{
+			if (mouse_position.x == std::numeric_limits<float>::max())
+				return false;
+			if (mouse_position.y == std::numeric_limits<float>::max())
+				return false;
+			return true;
+		}
+
+		glm::vec2 Window::GetMousePosition() const
+		{
+			if (!IsMousePositionValid())
+				return glm::vec2(0.0f, 0.0f);
+			return mouse_position;		
 		}
 
 		void Window::BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer)
@@ -137,7 +158,15 @@ namespace chaos
 
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
-				my_window->OnMouseMove(x, y);
+			{
+				if (!my_window->IsMousePositionValid())
+					my_window->OnMouseMove(0.0, 0.0);
+				else
+					my_window->OnMouseMove(x - my_window->mouse_position.x, y - my_window->mouse_position.y);
+						
+				my_window->mouse_position.x = (float)x;
+				my_window->mouse_position.y = (float)y;
+			}				
 		}
 
 		void Window::DoOnMouseButton(GLFWwindow * in_glfw_window, int button, int action, int modifier)

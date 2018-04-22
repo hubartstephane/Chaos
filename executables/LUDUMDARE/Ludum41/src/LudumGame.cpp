@@ -10,6 +10,8 @@
 #include <chaos/WinTools.h>
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
+#include <chaos/GeometryFramework.h>
+#include <chaos/CollisionFramework.h>
 
 void LudumGame::CreateGameTitle()
 {
@@ -201,11 +203,17 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 	if (glm::length2(lsp) > 0.0f)
 		left_stick_position = gamepad_sensitivity * lsp;
+	else
+	{
+		if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT))
+			left_stick_position.x = -gamepad_sensitivity * 1.0f;
+		else if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT))
+			left_stick_position.x =  gamepad_sensitivity * 1.0f;
+	}
 
 	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 	if (glm::length2(rsp) > 0.0f)
 		right_stick_position = gamepad_sensitivity * rsp;
-
 
 	// maybe this correspond to current challenge
 	SendGamepadButtonToChallenge(physical_gamepad);
@@ -232,6 +240,14 @@ glm::vec2 LudumGame::GetWorldSize() const
 	glm::vec2 result;
 	result.x = 1600.0f;
 	result.y = result.x / LudumWindow::GetViewportAspect();
+	return result;
+}
+
+chaos::box2 LudumGame::GetWorldBox() const
+{
+	chaos::box2 result;
+	result.position  = glm::vec2(0.0f, 0.0f);
+	result.half_size = GetWorldSize() * 0.5f;
 	return result;
 }
 
@@ -297,11 +313,12 @@ void LudumGame::OnGameOver()
 
 void LudumGame::DisplacePlayer(double delta_time)
 {
-	if (glm::length2(left_stick_position) == 0.0f)
-		return;
+	float value = left_stick_position.x;
+	if (abs(right_stick_position.x) > abs(left_stick_position.x))
+		value = right_stick_position.x;
 
 	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position.x + left_stick_position.x);
+	SetPlayerPosition(position.x + value);
 }
 
 void LudumGame::TickGameLoop(double delta_time)
@@ -331,14 +348,21 @@ void LudumGame::OnMouseMove(double x, double y)
 void LudumGame::OnMouseButton(int button, int action, int modifier)
 {
 	chaos::StateMachine::State const * state = game_automata->GetCurrentState();
-
-	if (state != nullptr && state->GetStateID() == LudumAutomata::STATE_PLAYING)
+	if (state != nullptr)
 	{
-		if (button == 0 && action == GLFW_PRESS)
+		if (state->GetStateID() == LudumAutomata::STATE_PLAYING)
 		{
-			int len = min_word_size + rand() % (max_word_size - min_word_size);
-			sequence_challenge = CreateSequenceChallenge((size_t)len);
-		}	
+			if (button == 0 && action == GLFW_PRESS)
+			{
+				int len = min_word_size + rand() % (max_word_size - min_word_size);
+				sequence_challenge = CreateSequenceChallenge((size_t)len);
+			}	
+		}
+		else if (state->GetStateID() == LudumAutomata::STATE_MAINMENU)
+		{
+			if (action == GLFW_PRESS)
+				RequireStartGame();
+		}		
 	}
 }
 
@@ -503,10 +527,28 @@ void LudumGame::SetObjectPosition(chaos::ParticleRangeAllocation * allocation, s
 void LudumGame::SetPlayerPosition(float position)
 {
 	SetObjectPosition(player_allocations.get(), 0, glm::vec2(position, PLAYER_Y));
+	RestrictedPlayerToScreen();
+}
+
+
+void LudumGame::RestrictedObjectToScreen(chaos::ParticleRangeAllocation * allocation, size_t index)
+{
+	ParticleObject * particle = GetObjectParticle(allocation, index);
+	if (particle == nullptr)
+		return;
+
+	chaos::box2 box   = chaos::ParticleCornersToBox(particle->corners);
+	chaos::box2 world = GetWorldBox();
+	chaos::RestrictToInside(world, box, false);
+	SetObjectPosition(allocation, index, box.position);
 }
 
 
 
+void LudumGame::RestrictedPlayerToScreen()
+{
+	RestrictedObjectToScreen(player_allocations.get(), 0);
+}
 
 
 
@@ -523,12 +565,6 @@ void LudumGame::SetPlayerLength(float length)
 	SetPlayerBox(box);
 }
 
-chaos::ParticleCorners LudumGame::GetRestrictedObject(chaos::ParticleCorners const & src)
-{
-
-
-	return src;
-}
 
 
 void LudumGame::CreateGameObjects(int level)

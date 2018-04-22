@@ -14,6 +14,6 @@
   "player_length_increment": 100.0,  
   "ball_max_speed": 5.0,
   "ball_initial_speed": 1.0,
-  "mouse_sensitivity": 1.0,
+  "mouse_sensitivity": 0.1,
   "gamepad_sensitivity":20.0
 }

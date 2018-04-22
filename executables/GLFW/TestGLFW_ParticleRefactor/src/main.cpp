@@ -46,6 +46,15 @@ public:
 	glm::vec4 color;
 };
 
+chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
+{
+	chaos::VertexDeclaration result;
+	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+	result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT4);
+	return result;
+}
+
 class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 {
 public:
@@ -70,14 +79,7 @@ public:
 		return vertices_per_particle;
 	}
 
-	chaos::VertexDeclaration GetVertexDeclaration() const
-	{
-		chaos::VertexDeclaration result;
-		result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-		result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-		result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT4);
-		return result;
-	}
+
 };
 
 using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>;

@@ -15,6 +15,21 @@ static int const TEXT_LAYER_ID                   = 3;
 static int const CHALLENGE_LAYER_ID              = 4;
 
 // ===========================================================================
+// Base Vertex class
+// ===========================================================================
+
+class VertexBase
+{
+public:
+
+	glm::vec2 position;
+	glm::vec3 texcoord;
+	glm::vec4 color;
+};
+
+extern chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+
+// ===========================================================================
 // Background particle system
 // ===========================================================================
 
@@ -25,24 +40,15 @@ public:
 	glm::vec4 color;
 };
 
-class VertexBackground
-{
-public:
 
-	glm::vec2 position;
-	glm::vec2 texcoord;
-	glm::vec4 color;
-};
 
-class ParticleBackgroundTrait : public chaos::ParticleLayerTrait<ParticleBackground, VertexBackground>
+class ParticleBackgroundTrait : public chaos::ParticleLayerTrait<ParticleBackground, VertexBase>
 {
 public:
 
 	bool UpdateParticle(float delta_time, ParticleBackground * particle);
 
-	size_t ParticleToVertex(ParticleBackground const * particle, VertexBackground * vertices, size_t vertices_per_particle) const;
-
-	chaos::VertexDeclaration GetVertexDeclaration() const;
+	size_t ParticleToVertex(ParticleBackground const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
 
 
@@ -61,24 +67,13 @@ public:
 	size_t index = 0;
 };
 
-class VertexChallenge
-{
-public:
-
-	glm::vec2 position;
-	glm::vec3 texcoord;
-	glm::vec4 color;
-};
-
-class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexChallenge>
+class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexBase>
 {
 public:
 
 	bool UpdateParticle(float delta_time, ParticleChallenge * particle);
 
-	size_t ParticleToVertex(ParticleChallenge const * particle, VertexChallenge * vertices, size_t vertices_per_particle) const;
-
-	chaos::VertexDeclaration GetVertexDeclaration() const;
+	size_t ParticleToVertex(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
 
 

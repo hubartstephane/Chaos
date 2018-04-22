@@ -10,6 +10,7 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/TextureArrayAtlas.h>
+#include <chaos/ParticleTools.h>
 
 namespace chaos
 {
@@ -365,8 +366,9 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual VertexDeclaration GetVertexDeclaration() const override
 		{
-			return trait.GetVertexDeclaration();
+			return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>());
 		}
+
 		/** convert particles in vertices */
 		virtual void ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const override
 		{
@@ -459,6 +461,8 @@ namespace chaos
 		...
 	};
 
+	VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>) const { .... }
+
 	/** the traits */
 	class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 	{
@@ -468,8 +472,6 @@ namespace chaos
 		bool UpdateParticle(float delta_time, ParticleExample * particle);
 		/** take one particle and transforms it into several vertices (usually 6 for 2 triangles */
 		size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particles) const;
-		/** the the vertex declaration */
-		chaos::VertexDeclaration GetVertexDeclaration() const;
 	};
 
 #endif

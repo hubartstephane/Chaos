@@ -2,6 +2,8 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/VertexDeclaration.h>
+
 
 namespace chaos
 {
@@ -34,19 +36,17 @@ namespace chaos
 	 * ParticleTools : an utility class that deserve to bring some services for particles system
 	 */
 
-	class ParticleTools
+	namespace ParticleTools
 	{
-	public:
-
 		/** returns the 2 corners of a particle according to a given position, a size and an hotpoint */
-		static ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
+		ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
 
 		/** returns the texture coordinates of a particle */
-		static ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size);
+		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size);
 
 		/** fill the vertices array with 6 vertices corresponding to 3 triangles */
 		template<class VERTEX_TYPE>
-		static void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)
+		void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)
 		{
 			VERTEX_TYPE bl;
 			bl.position.x = corners.bottomleft.x;
@@ -84,7 +84,8 @@ namespace chaos
 			vertices[4] = tr;
 			vertices[5] = tl;
 		}
-	};
+
+	}; // namespace ParticleTools
 
 }; // namespace chaos
 

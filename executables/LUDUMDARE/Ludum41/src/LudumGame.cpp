@@ -314,6 +314,7 @@ void LudumGame::ResetGameVariables()
 	ball_speed    = ball_initial_speed;
 	ball_time_dilation = 1.0f;
 	challenge_timer    = challenge_frequency;
+	pending_split_count = 0;
 }
 void LudumGame::OnGameOver()
 {
@@ -334,10 +335,32 @@ void LudumGame::DisplacePlayer(double delta_time)
 	SetPlayerPosition(position.x + value);
 }
 
-void LudumGame::TickGameLoop(double delta_time)
-{
-	DisplacePlayer(delta_time);
 
+size_t LudumGame::CanStartChallengeBallIndex() const
+{
+	size_t ball_count = GetBallCount();
+	if (ball_count > 0)
+	{			
+		ParticleMovableObject const * balls = GetBallParticles();
+		if (balls != nullptr)
+		{
+			glm::vec2 world_size = GetWorldSize();
+
+			for (size_t i = 0; i < ball_count ; ++i)
+			{
+				if (balls->velocity.y <= 0.0f) // going up
+					continue;					
+				if (balls->corners.bottomleft.y > -world_size.y * 0.5f * 0.75f) // wait until particle is high enough on screen
+					return i;
+			}
+		}			
+	}
+	return std::numeric_limits<size_t>::max();
+}
+
+
+void LudumGame::TickChallenge(double delta_time)
+{
 	if (sequence_challenge != nullptr)
 	{
 		sequence_challenge->Tick(delta_time);
@@ -347,29 +370,50 @@ void LudumGame::TickGameLoop(double delta_time)
 		// start a challenge (only if one ball is going upward)
 		challenge_timer = max(0.0f, challenge_timer - (float)delta_time);
 		if(challenge_timer <= 0.0f)
-		{
-			size_t ball_count = GetBallCount();
-			if (ball_count > 0)
-			{			
-				ParticleMovableObject const * balls = GetBallParticles();
-				if (balls != nullptr)
-				{
-					glm::vec2 world_size = GetWorldSize();
-
-					size_t i = 0;
-					for (; i < ball_count ; ++i)
-					{
-						if (balls->velocity.y <= 0.0f) // going up
-							continue;					
-						if (balls->corners.bottomleft.y > -world_size.y * 0.5f * 0.75f) // wait until particle is high enough on screen
-							break;
-					}
-					if (i != ball_count)
-						sequence_challenge = CreateSequenceChallenge(0);				
-				}			
-			}
-		}		
+			if (CanStartChallengeBallIndex() != std::numeric_limits<size_t>::max())
+				sequence_challenge = CreateSequenceChallenge(0);	
 	}
+}
+
+
+void LudumGame::TickBallSplit(double delta_time)
+{
+	if (pending_split_count <= 0)
+		return;
+
+	size_t ball_count = GetBallCount();
+	if (ball_count < (size_t)max_ball_count)
+	{
+		size_t ball_candidate = CanStartChallengeBallIndex();
+		if (ball_candidate != std::numeric_limits<size_t>::max())
+		{
+
+
+
+			pending_split_count--;
+		}	
+	}
+}
+
+void LudumGame::TickGameOverDetection(double delta_time)
+{
+	size_t ball_count = GetBallCount();
+	if (ball_count == 0)
+	{
+		--current_life;
+		if (current_life <= 0)
+			RequireGameOver();
+		else
+			balls_allocations = CreateBall();	
+	}
+}
+
+void LudumGame::TickGameLoop(double delta_time)
+{
+	DisplacePlayer(delta_time);
+	TickChallenge(delta_time);
+	TickBallSplit(delta_time);
+	TickGameOverDetection(delta_time);
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)
@@ -824,6 +868,15 @@ void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks *
 				p.starting_life = p.life;		
 		}
 	}
+}
+
+
+void LudumGame::OnSplitBallChallenge(class LudumSequenceChallenge_SplitBallCallbacks * challenge, bool success)
+{
+	if (!success)
+		OnLifeChallenge(nullptr, false);
+	else
+		pending_split_count++;
 }
 
 void LudumGame::OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success)

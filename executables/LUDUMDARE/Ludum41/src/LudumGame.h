@@ -35,6 +35,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class LudumSequenceChallenge_LongBarBallCallbacks;
 	friend class LudumSequenceChallenge_LifeBallCallbacks;
 	friend class LudumSequenceChallenge_SpeedDownBallCallbacks;
+	friend class LudumSequenceChallenge_SplitBallCallbacks;
 
 	friend class ParticleMovableObjectTrait;
 
@@ -138,6 +139,12 @@ protected:
 
 	/** the game main loop */
 	void TickGameLoop(double delta_time);
+
+	void TickChallenge(double delta_time);
+
+	void TickBallSplit(double delta_time);
+
+	void TickGameOverDetection(double delta_time);
 
 	/** change the game music */
 	void StartMainMenuMusic(bool restart_first);
@@ -269,6 +276,10 @@ protected:
 	size_t GetBrickCount() const;
 
 
+	/** returns true whether we can start a challenge (returns index of a valid ball) */
+	size_t CanStartChallengeBallIndex() const;
+
+
 
 	/** get the box for a given object */
 	chaos::box2 GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const;
@@ -312,6 +323,8 @@ protected:
 	void OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success);
 	/** some challenges */
 	void OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success);
+	/** some challenges */
+	void OnSplitBallChallenge(class LudumSequenceChallenge_SplitBallCallbacks * challenge, bool success);
 	/** some challenges */
 	void OnExtraBallChallenge(class LudumSequenceChallenge_ExtraBallCallbacks * challenge, bool success);
 	/** some challenges */
@@ -403,6 +416,8 @@ protected:
 
 	int min_brick_life = 1;
 	int max_brick_life = 5;
+
+	int pending_split_count = 0;
 
 	/** current game values */
 	int   current_life  = 3;

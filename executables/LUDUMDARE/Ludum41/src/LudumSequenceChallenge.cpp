@@ -168,4 +168,19 @@ void LudumSequenceChallenge_SpeedDownBallCallbacks::OnChallengeFailed(class Ludu
 
 
 
+void LudumSequenceChallenge_SplitBallCallbacks::OnChallengeCompleted(class LudumGame * game, class LudumSequenceChallenge * challenge)
+{
+	if (game != nullptr)
+		game->OnSplitBallChallenge(this, true);
+}
+
+void LudumSequenceChallenge_SplitBallCallbacks::OnChallengeFailed(class LudumGame * game, class LudumSequenceChallenge * challenge)
+{
+	if (game != nullptr)
+		game->OnSplitBallChallenge(this, false);
+}
+
+
+
+
 

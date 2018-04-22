@@ -53,6 +53,21 @@ public:
 };
 
 
+class LudumSequenceChallenge_SplitBallCallbacks : public LudumSequenceChallengeCallbacks
+{
+public:
+	/** called whenever the challenge is completed */
+	virtual void OnChallengeCompleted(class LudumGame * game, class LudumSequenceChallenge * challenge);
+	/** called whenever the challenge is failed */
+	virtual void OnChallengeFailed(class LudumGame * game, class LudumSequenceChallenge * challenge);
+};
+
+
+
+
+
+
+
 class LudumSequenceChallenge : public chaos::ReferencedObject
 {
 	friend class LudumGame;

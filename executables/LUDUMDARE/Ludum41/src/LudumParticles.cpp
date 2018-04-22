@@ -160,8 +160,16 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	chaos::box2 new_ball_box = ball_box;
 	if (chaos::RestrictToInside(world_box, new_ball_box, false))
 	{
+		glm::vec2 old_velocity = particle->velocity;
+
 		UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
 		ball_box.position = new_ball_box.position;
+
+		if (old_velocity.y < 0.0f && particle->velocity.y > 0.0f)
+		{
+		
+			return true; // ball lost
+		}
 	}
 
 	// bounce against player

@@ -694,7 +694,7 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 
 LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
 {
-	int challenge = rand() % 3;
+	int challenge = rand() % 4;
 
 	
 
@@ -702,15 +702,16 @@ LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
 		return new LudumSequenceChallenge_LongBarBallCallbacks();
 	if (challenge == 1)	
 		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
+	if (challenge == 2)	
+		return new LudumSequenceChallenge_SplitBallCallbacks();
 
+
+	
 	return new LudumSequenceChallenge_LifeBallCallbacks();
 #if 0
-	if (challenge == 0)
-		return new LudumSequenceChallenge_LifeBallCallbacks();
+
 
 	if (challenge == 2)	
 		return new LudumSequenceChallenge_ExtraBallCallbacks();
-
-	return new LudumSequenceChallenge_LongBarBallCallbacks();
 #endif
 }

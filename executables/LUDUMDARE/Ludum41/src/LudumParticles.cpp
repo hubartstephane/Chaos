@@ -69,6 +69,31 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 
 
 // ===========================================================================
+// Object Movable particle system
+// ===========================================================================
+
+size_t ParticleMovableObjectTrait::ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+{
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0 ; i < 6 ; ++i)
+		vertices[i].color = particle->color;
+
+	return vertices_per_particle;
+}
+
+bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particles)
+{ 
+	return false; 
+}
+
+
+
+
+
+
+// ===========================================================================
 // Challenge particle system
 // ===========================================================================
 

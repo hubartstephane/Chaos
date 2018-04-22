@@ -69,6 +69,27 @@ public:
 	size_t ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
 
+
+// ===========================================================================
+// Movable particle system
+// ===========================================================================
+
+class ParticleMovableObject : public ParticleObject
+{
+public:
+
+	glm::vec2 velocity;
+};
+
+class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMovableObject, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleMovableObject * particle);
+
+	size_t ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+};
+
 // ===========================================================================
 // Challenge particle system
 // ===========================================================================
@@ -77,9 +98,6 @@ class ParticleChallenge : public ParticleObject
 {
 public:
 
-	chaos::ParticleCorners corners;
-	chaos::ParticleTexcoords texcoords;
-	glm::vec4 color;
 	class LudumSequenceChallenge * challenge = nullptr;
 	size_t index = 0;
 };

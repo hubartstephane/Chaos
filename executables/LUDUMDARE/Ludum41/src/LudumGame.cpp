@@ -37,6 +37,8 @@ void LudumGame::OnStartGame(bool very_first)
 {
 	if (very_first)
 	{
+		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 		StartMainMenuMusic(true);
 		CreateGameTitle();
 	}
@@ -256,7 +258,7 @@ void LudumGame::Display(chaos::box2 const & viewport)
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-#if 1
+#if 0
 	int state_id = GetCurrentStateID();
 	if (state_id == LudumAutomata::STATE_MAINMENU)
 		clear_color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);

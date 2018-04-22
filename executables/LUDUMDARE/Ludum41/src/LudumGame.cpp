@@ -350,15 +350,19 @@ void LudumGame::TickGameLoop(double delta_time)
 		{
 			size_t ball_count = GetBallCount();
 			if (ball_count > 0)
-			{
+			{			
 				ParticleMovableObject const * balls = GetBallParticles();
 				if (balls != nullptr)
 				{
+					glm::vec2 world_size = GetWorldSize();
+
 					size_t i = 0;
 					for (; i < ball_count ; ++i)
 					{
-						if (balls->velocity.y > 0.0f)
-							break;					
+						if (balls->velocity.y <= 0.0f) // going up
+							continue;					
+						if (balls->corners.bottomleft.y > -world_size.y * 0.5f * 0.75f) // wait until particle is high enough on screen
+							break;
 					}
 					if (i != ball_count)
 						sequence_challenge = CreateSequenceChallenge(0);				

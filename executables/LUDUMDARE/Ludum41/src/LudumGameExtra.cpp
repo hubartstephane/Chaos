@@ -442,62 +442,6 @@ bool LudumGame::InitializeParticleTextGenerator()
 	return true;
 }
 
-#if 0
-
-chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(char const * text)
-{
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(CHALLENGE_LAYER_ID);
-	if (layer == nullptr)
-		return nullptr;
-
-
-	chaos::ParticleTextGenerator::Generator generator(*texture_atlas);
-
-	chaos::ParticleTextGenerator::GeneratorResult result;
-	chaos::ParticleTextGenerator::GeneratorParams params;
-
-	params.line_height = 100.0f;
-	params.hotpoint_type = chaos::Hotpoint::CENTER;
-	params.position.x = 0.0f;
-	params.position.y = -200.0f;
-
-	generator.Generate(text, result, params);
-
-	// count the number of particle to draw
-	size_t count = 0;
-	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
-	{
-		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
-		count += line.size();	
-	}
-
-	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
-	if (allocation == nullptr)
-		return nullptr;
-
-	ParticleChallenge * particle = (ParticleChallenge *)allocation->GetParticleBuffer();
-	if (particle == nullptr)
-		return nullptr;
-
-	size_t k = 0;
-	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
-	{
-		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
-		for (size_t j = 0 ; j < line.size() ; ++j)
-		{
-			chaos::ParticleTextGenerator::Token const & token = line[j];
-
-			particle[k].corners   = token.corners;
-			particle[k].texcoords = token.texcoords;
-			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-			++k;
-		}
-	}
-
-	return allocation;
-}
-#endif
-
 std::string LudumGame::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
 {
 	std::string result;
@@ -527,10 +471,12 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 	chaos::ParticleTextGenerator::GeneratorResult result;
 	chaos::ParticleTextGenerator::GeneratorParams params;
 
+	static float Y = 0.0f;
+
 	params.line_height = 100.0f;
-	params.hotpoint_type = chaos::Hotpoint::CENTER;
+	params.hotpoint_type = chaos::Hotpoint::BOTTOM | chaos::Hotpoint::HMIDDLE;
 	params.position.x = 0.0f;
-	params.position.y = -200.0f;
+	params.position.y = -350;
 
 	if (keyboard)
 	{

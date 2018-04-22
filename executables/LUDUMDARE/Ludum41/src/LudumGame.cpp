@@ -235,9 +235,14 @@ void LudumGame::Display(chaos::box2 const & viewport)
 	chaos::GPUProgramProvider main_uniform_provider;
 	main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
 
+	glm::vec2 world_size;
+	world_size.x = 1600.0f;
+	world_size.y = world_size.x * (viewport.half_size.y / viewport.half_size.x);
+	main_uniform_provider.AddVariableValue("world_size", world_size);
+
+	// draw particle system
 	if (particle_manager != nullptr)
 		particle_manager->Display(&main_uniform_provider);
-
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

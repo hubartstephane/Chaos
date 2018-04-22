@@ -4,9 +4,8 @@ in vec2 vs_position;
 in vec3 vs_texcoord;
 in vec4 vs_color;
 
-
 uniform sampler2DArray material;
-uniform vec2 viewport_size;
+
 
 void main()
 {

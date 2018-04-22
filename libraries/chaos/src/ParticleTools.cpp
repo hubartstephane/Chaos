@@ -4,6 +4,22 @@
 
 namespace chaos
 {
+	box2 ParticleCornersToBox(ParticleCorners const & corners)
+	{
+		return box2(std::make_pair(corners.bottomleft, corners.topright));	
+	}
+	
+	ParticleCorners BoxToParticleCorners(box2 const & box)
+	{	
+		std::pair<glm::vec2, glm::vec2> tmp = box.GetCorners();
+	
+		ParticleCorners result;
+		result.bottomleft = tmp.first;
+		result.topright   = tmp.second;
+		return result;
+	}
+
+
 	ParticleCorners ParticleTools::GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
 	{
 		ParticleCorners result;

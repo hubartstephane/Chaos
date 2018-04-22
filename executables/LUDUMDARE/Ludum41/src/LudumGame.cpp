@@ -377,63 +377,163 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 
 chaos::ParticleRangeAllocation * LudumGame::CreatePlayer()
 {
+	// create the object
 	chaos::ParticleRangeAllocation * result = CreateGameObjects("player", 1);
 	if (result == nullptr)
 		return nullptr;
 
+	// set the color
 	ParticleObject * particle = (ParticleObject *)result->GetParticleBuffer();
 	if (particle == nullptr)
 		return nullptr;
+	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	particle->corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), chaos::Hotpoint::CENTER);
-
+	particle->corners.bottomleft = glm::vec2(0.0f, 0.0f);
+	particle->corners.topright   = glm::vec2(0.0f, 0.0f);
+	
 	return result;
 }
+
+
+ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index) const
+{
+	if (allocation == nullptr)
+		return nullptr;
+	if (index >= allocation->GetParticleCount())
+		return nullptr;
+
+	ParticleObject const * p = (ParticleObject const*)player_allocations->GetParticleBuffer();
+	if (p == nullptr)
+		return nullptr;
+
+	return &p[index];
+}
+
+ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index)
+{
+	if (allocation == nullptr)
+		return nullptr;
+	if (index >= allocation->GetParticleCount())
+		return nullptr;
+
+	ParticleObject * p = (ParticleObject *)player_allocations->GetParticleBuffer();
+	if (p == nullptr)
+		return nullptr;
+
+	return &p[index];
+}
+
+ParticleObject * LudumGame::GetPlayerParticle()
+{
+	return GetObjectParticle(player_allocations.get(), 0);
+}
+
+ParticleObject const * LudumGame::GetPlayerParticle() const
+{
+	return GetObjectParticle(player_allocations.get(), 0);
+}
+
+
+
+
+chaos::box2 LudumGame::GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const
+{
+	ParticleObject const * object = GetObjectParticle(allocation, index);
+	if (object == nullptr)
+		return chaos::box2();
+	return chaos::ParticleCornersToBox(object->corners);
+}
+
+chaos::box2 LudumGame::GetPlayerBox() const
+{
+	return GetObjectBox(player_allocations.get(), 0);
+}
+
+
+void LudumGame::SetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index, chaos::box2 const & box) 
+{
+	ParticleObject * object = GetObjectParticle(allocation, index);
+	if (object == nullptr)
+		return;
+	object->corners = chaos::BoxToParticleCorners(box);
+}
+
+void LudumGame::SetPlayerBox(chaos::box2 const & box)
+{
+	return SetObjectBox(player_allocations.get(), 0, box);
+}
+
+glm::vec2 LudumGame::GetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index) const
+{
+	return GetObjectBox(allocation, index).position;
+}
+
+glm::vec2 LudumGame::GetPlayerPosition() const
+{
+	return GetPlayerBox().position;
+}
+
+void LudumGame::SetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index, glm::vec2 const & position)
+{
+	ParticleObject * particle = GetObjectParticle(allocation, index);
+	if (particle == nullptr)
+		return;
+
+	chaos::box2 box = chaos::ParticleCornersToBox(particle->corners);
+	box.position = position;
+	particle->corners = chaos::BoxToParticleCorners(box);
+}
+
+void LudumGame::SetPlayerPosition(float position)
+{
+	SetObjectPosition(player_allocations.get(), 0, glm::vec2(position, PLAYER_Y));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+void LudumGame::SetPlayerLength(float length)
+{
+	chaos::box2 box = GetPlayerBox();
+	box.half_size = glm::vec2(length * 0.5f, PLAYER_HEIGHT * 0.5f);
+	SetPlayerBox(box);
+}
+
+chaos::ParticleCorners LudumGame::GetRestrictedObject(chaos::ParticleCorners const & src)
+{
+
+
+	return src;
+}
+
 
 void LudumGame::CreateGameObjects(int level)
 {
 	if (player_allocations == nullptr)
-		player_allocations = CreatePlayer();
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-// generate the tokens
-chaos::ParticleTextGenerator::GeneratorResult result;
-
-particle_text_generator->Generate(text, result, params);
-
-// count the number of particle to draw
-size_t count = result.GetTokenCount();
-
-
-
-size_t k = 0;
-for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
-{
-	chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
-	for (size_t j = 0 ; j < line.size() ; ++j)
 	{
-		chaos::ParticleTextGenerator::Token const & token = line[j];
-
-		particle[k].corners   = token.corners;
-		particle[k].texcoords = token.texcoords;
-		particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-		++k;
+		player_allocations = CreatePlayer();
+		SetPlayerLength(player_length);
+		SetPlayerPosition(0.0f);
 	}
+
+
 }
 
-#endif 
+
+
+
+
+
+
+
+
+
+

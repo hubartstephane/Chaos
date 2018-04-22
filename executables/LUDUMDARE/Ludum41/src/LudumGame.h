@@ -2,6 +2,7 @@
 
 #include "LudumStateMachine.h"
 #include "LudumSequenceChallenge.h"
+#include "LudumParticles.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -39,6 +40,8 @@ protected:
 	float TITLE_SIZE = 150.0f;
 	float TITLE_PLACEMENT_Y = 0;
 
+	float PLAYER_Y = -400.0f;
+	float PLAYER_HEIGHT = 35.0f;
 
 public:
 
@@ -215,6 +218,53 @@ protected:
 	/** reset the game variables */
 	void ResetGameVariables();
 
+
+	/** change the player position */
+	void SetPlayerPosition(float position);
+	/** change the length */
+	void SetPlayerLength(float length);
+
+
+
+
+	/** get an object particle */
+	ParticleObject * GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index);
+	/** get an object particle */
+	ParticleObject const * GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index) const;
+
+	/** get the player particle */
+	ParticleObject * GetPlayerParticle();
+	/** get the player particle */
+	ParticleObject const * GetPlayerParticle() const;
+
+	/** get the box for a given object */
+	chaos::box2 GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const;
+	/** get the box for player */
+	chaos::box2 GetPlayerBox() const;
+
+	/** change one object box */
+	void SetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index, chaos::box2 const & box);
+	/** change player box */
+	void SetPlayerBox(chaos::box2 const & box);
+
+	/** get the position for given object */
+	glm::vec2 GetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index) const;
+	/** get the player position */
+	glm::vec2 GetPlayerPosition() const;
+
+
+
+
+
+
+
+
+	/** change an object position */
+	void SetObjectPosition(chaos::ParticleRangeAllocation * allocations, size_t index, glm::vec2 const & position);
+
+	/** ensure object is inside the world */
+	chaos::ParticleCorners GetRestrictedObject(chaos::ParticleCorners const & src);
+
 protected:
 
 	/** the window in GLFW library */
@@ -266,9 +316,10 @@ protected:
 
 	int max_ball_count = 3;
 
-	float player_max_length     = 200.0f; 
-	float player_min_length     = 70.0f; 
-	float player_initial_length = 100.0f; 
+	float player_max_length       = 200.0f; 
+	float player_min_length       = 70.0f; 
+	float player_initial_length   = 100.0f; 
+	float player_length_increment = 50.0f; 	
 
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;

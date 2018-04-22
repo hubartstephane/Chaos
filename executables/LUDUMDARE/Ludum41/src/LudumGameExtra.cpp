@@ -251,6 +251,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(player_max_length);
 	LUDUMGAME_JSON_ATTRIBUTE(player_min_length);
 	LUDUMGAME_JSON_ATTRIBUTE(player_initial_length);
+	LUDUMGAME_JSON_ATTRIBUTE(player_length_increment);
 	LUDUMGAME_JSON_ATTRIBUTE(ball_max_speed);
 	LUDUMGAME_JSON_ATTRIBUTE(ball_initial_speed);
 	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
@@ -388,12 +389,13 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_X] = "xboxControllerButtonX";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_Y] = "xboxControllerButtonY";
 
+#if 0
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTBUT]  = "xboxControllerLeftShoulder";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTBUT] = "xboxControllerRightShoulder";
 
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER]  = "xboxControllerLeftTrigger";
 	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER] = "xboxControllerRightTrigger";
-
+#endif
 	// list of all buttons ID
 	for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
 		gamepad_buttons.push_back(it->first);
@@ -417,7 +419,10 @@ chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayer * laye
 	{
 		chaos::GPUResourceManager * manager = application->GetGPUResourceManager();
 		if (manager != nullptr)
-			layer->SetRenderMaterial(manager->FindRenderMaterial(material_name));	
+		{
+			chaos::RenderMaterial * material = manager->FindRenderMaterial(material_name);
+			layer->SetRenderMaterial(material);	
+		}
 	}
 	return layer;
 }

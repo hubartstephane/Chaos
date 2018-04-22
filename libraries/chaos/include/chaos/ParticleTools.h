@@ -2,7 +2,8 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GeometryFramework.h>
+
 
 
 namespace chaos
@@ -19,17 +20,20 @@ namespace chaos
 		glm::vec2 topright;
 	};
 
+	/** conversion methods */
+	box2 ParticleCornersToBox(ParticleCorners const & corners);
+	/** conversion methods */
+	ParticleCorners BoxToParticleCorners(box2 const & box);
 
 	/**
 	* ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
 	*/
 
-	class ParticleTexcoords
+	class ParticleTexcoords : public ParticleCorners
 	{
 	public:
-		glm::vec2 bottomleft;
-		glm::vec2 topright;
-		float     bitmap_index;
+
+		float bitmap_index;
 	};
 
 	/**

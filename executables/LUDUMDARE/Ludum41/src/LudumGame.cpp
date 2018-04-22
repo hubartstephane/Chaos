@@ -395,7 +395,7 @@ void LudumGame::TickBallSplit(double delta_time)
 	}
 }
 
-void LudumGame::TickGameOverDetection(double delta_time)
+bool LudumGame::TickGameOverDetection(double delta_time)
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count == 0)
@@ -405,15 +405,32 @@ void LudumGame::TickGameOverDetection(double delta_time)
 			RequireGameOver();
 		else
 			balls_allocations = CreateBall();	
+		return false;
+	}
+	return true;
+}
+
+void LudumGame::TickLevelCompleted(double delta_time)
+{
+	size_t brick_count = GetBrickCount();
+	if (brick_count == 0)
+	{
+		if (CanStartChallengeBallIndex() != std::numeric_limits<size_t>::max())
+			bricks_allocations = CreateBricks();			
 	}
 }
 
 void LudumGame::TickGameLoop(double delta_time)
 {
 	DisplacePlayer(delta_time);
-	TickChallenge(delta_time);
-	TickBallSplit(delta_time);
-	TickGameOverDetection(delta_time);
+
+	if (TickGameOverDetection(delta_time))
+	{
+		TickLevelCompleted(delta_time);
+		TickChallenge(delta_time);
+		TickBallSplit(delta_time);
+		TickGameOverDetection(delta_time);	
+	}
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)
@@ -530,8 +547,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks()
 {
 	float BRICK_ASPECT = 16.0f / 9.0f;
 
-	size_t line_count =  7;
-	size_t element_per_line = 20;
+	size_t line_count =  brick_line_count;
+	size_t element_per_line = brick_per_line;
 	size_t brick_count = line_count * element_per_line;
 
 	glm::vec2 world_size = GetWorldSize();

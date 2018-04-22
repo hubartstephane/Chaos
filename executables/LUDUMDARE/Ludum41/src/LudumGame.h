@@ -140,11 +140,13 @@ protected:
 	/** the game main loop */
 	void TickGameLoop(double delta_time);
 
+	void TickLevelCompleted(double delta_time);
+
 	void TickChallenge(double delta_time);
 
 	void TickBallSplit(double delta_time);
 
-	void TickGameOverDetection(double delta_time);
+	bool TickGameOverDetection(double delta_time);
 
 	/** change the game music */
 	void StartMainMenuMusic(bool restart_first);
@@ -418,6 +420,9 @@ protected:
 	int max_brick_life = 5;
 
 	int pending_split_count = 0;
+
+	int brick_per_line   = 5;
+	int brick_line_count = 5;
 
 	/** current game values */
 	int   current_life  = 3;

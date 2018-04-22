@@ -264,6 +264,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);		
 	LUDUMGAME_JSON_ATTRIBUTE(min_brick_life);		
 	LUDUMGAME_JSON_ATTRIBUTE(max_brick_life);		
+	LUDUMGAME_JSON_ATTRIBUTE(brick_per_line);		
+	LUDUMGAME_JSON_ATTRIBUTE(brick_line_count);		
 #undef LUDUMGAME_JSON_ATTRIBUTE
 
 	return true;

@@ -15,6 +15,35 @@ public:
 	virtual void OnChallengeFailed(class LudumSequenceChallenge * challenge){}
 };
 
+class LudumSequenceChallenge_ExtraBallCallbacks : public LudumSequenceChallengeCallbacks
+{
+public:
+	/** called whenever the challenge is completed */
+	virtual void OnChallengeCompleted(class LudumSequenceChallenge * challenge);
+};
+
+class LudumSequenceChallenge_LongBarBallCallbacks : public LudumSequenceChallengeCallbacks
+{
+public:
+	/** called whenever the challenge is completed */
+	virtual void OnChallengeCompleted(class LudumSequenceChallenge * challenge);
+};
+
+
+class LudumSequenceChallenge_LifeBallCallbacks : public LudumSequenceChallengeCallbacks
+{
+public:
+	/** called whenever the challenge is completed */
+	virtual void OnChallengeCompleted(class LudumSequenceChallenge * challenge);
+};
+
+class LudumSequenceChallenge_SpeedDownBallCallbacks : public LudumSequenceChallengeCallbacks
+{
+public:
+	/** called whenever the challenge is completed */
+	virtual void OnChallengeCompleted(class LudumSequenceChallenge * challenge);
+};
+
 
 class LudumSequenceChallenge : public chaos::ReferencedObject
 {

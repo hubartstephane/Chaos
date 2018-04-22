@@ -1,4 +1,6 @@
 #include "LudumGame.h"
+#include "LudumWindow.h"
+
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
@@ -7,6 +9,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
+
 
 void LudumGame::OnStartGame(bool very_first)
 {
@@ -207,6 +210,14 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	}
 
 	return true;
+}
+
+glm::vec2 LudumGame::GetWorldSize() const
+{
+	glm::vec2 result;
+	result.x = 1600.0f;
+	result.y = result.x / LudumWindow::GetViewportAspect();
+	return result;
 }
 
 void LudumGame::Display(chaos::box2 const & viewport)

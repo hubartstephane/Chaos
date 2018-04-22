@@ -242,6 +242,24 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 	return true;
 }
 
+bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
+#define LUDUMGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
+	LUDUMGAME_JSON_ATTRIBUTE(initial_life);
+	LUDUMGAME_JSON_ATTRIBUTE(max_life);
+	LUDUMGAME_JSON_ATTRIBUTE(max_ball_count);
+	LUDUMGAME_JSON_ATTRIBUTE(player_max_length);
+	LUDUMGAME_JSON_ATTRIBUTE(player_min_length);
+	LUDUMGAME_JSON_ATTRIBUTE(player_initial_length);
+	LUDUMGAME_JSON_ATTRIBUTE(ball_max_speed);
+	LUDUMGAME_JSON_ATTRIBUTE(ball_initial_speed);
+	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
+	LUDUMGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
+#undef LUDUMGAME_JSON_ATTRIBUTE
+
+	return true;
+}
+
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	// the atlas
@@ -258,6 +276,9 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 		return false;
 	// initialize the particle text generator manager
 	if (!InitializeParticleTextGenerator())
+		return false;
+	// initialize game values
+	if (!InitializeGameValues(config, config_path))
 		return false;
 	
 	
@@ -458,9 +479,30 @@ std::string LudumGame::GenerateGamepadChallengeString(std::vector<int> const & g
 	return result;
 }
 
+chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params)
+{
+	// find layer of concern
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(TEXT_LAYER_ID);
+	if (layer == nullptr)
+		return nullptr;
+
+	// generate the tokens
+	chaos::ParticleTextGenerator::GeneratorResult result;
+
+	particle_text_generator->Generate(text, result, params);
+
+	// transform the tokens in particles
+
+
+	return nullptr;
+}
+
 
 chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceChallenge * challenge)
 {
+	static float TEXT_SIZE = 100.0f;
+	static float TEXT_PLACEMENT_Y = 350;
+
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard   = chaos::InputMode::IsPCMode(input_mode);
 
@@ -471,12 +513,10 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 	chaos::ParticleTextGenerator::GeneratorResult result;
 	chaos::ParticleTextGenerator::GeneratorParams params;
 
-	static float Y = 0.0f;
-
-	params.line_height = 100.0f;
-	params.hotpoint_type = chaos::Hotpoint::BOTTOM | chaos::Hotpoint::HMIDDLE;
+	params.line_height = TEXT_SIZE;
+	params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
 	params.position.x = 0.0f;
-	params.position.y = -350;
+	params.position.y = TEXT_PLACEMENT_Y;
 
 	if (keyboard)
 	{
@@ -489,12 +529,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 	}
 
 	// count the number of particle to draw
-	size_t count = 0;
-	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
-	{
-		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
-		count += line.size();	
-	}
+	size_t count = result.GetTokenCount();
 
 	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
 	if (allocation == nullptr)
@@ -523,6 +558,17 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 
 	return allocation;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 bool LudumGame::InitializeParticleManager()
 {

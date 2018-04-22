@@ -133,10 +133,16 @@ protected:
 	bool InitializeParticleManager();
 	/** initialize the particle text generator */
 	bool InitializeParticleTextGenerator();
+	/** initialize the game variables */
+	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 
 	/** get a random button in existing list */
 	int GetRandomButtonID() const;
+
+
+	/** get the size of the world */
+	glm::vec2 GetWorldSize() const;
 
 	/** called whenever the input mode changes */
 	void OnInputModeChanged(int new_mode, int old_mode);
@@ -175,6 +181,9 @@ protected:
 
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
+
+	/** create particles in the text layer */
+	chaos::ParticleRangeAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
 
 protected:
 
@@ -219,6 +228,47 @@ protected:
 
 	/** the text generator */
 	boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+
+	/** initial game values */
+	int initial_life = 3;
+	int max_life = 10;
+
+	int max_ball_count = 3;
+
+	float player_max_length     = 200.0f; 
+	float player_min_length     = 70.0f; 
+	float player_initial_length = 100.0f; 
+
+	float ball_max_speed     = 5.0f;
+	float ball_initial_speed = 1.0f;
+	
+	float mouse_sensitivity   = 1.0f;
+	float gamepad_sensitivity = 1.0f;
+
+
+	/** current game values */
+	int   current_life  = 3;
+	float player_length = 70.0f;
+	float ball_speed    = 1.0f;
+	
+
+
+	/** some sprites */
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> lifes_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
+
+
+
+
+
+
+
 };
 
 // =================================================

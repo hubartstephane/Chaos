@@ -12,6 +12,10 @@ class LudumWindow : public chaos::MyGLFW::Window
 {
 	static float const VIEWPORT_WANTED_ASPECT;
 
+public:
+
+	static float GetViewportAspect(){ return VIEWPORT_WANTED_ASPECT; }
+
 protected:
 
 	virtual void OnMouseButton(int button, int action, int modifier) override;
@@ -29,6 +33,7 @@ protected:
 	virtual bool Tick(double delta_time) override;
 
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+
 
 protected:
 

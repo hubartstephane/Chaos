@@ -8,8 +8,11 @@
 // the ID of the layers
 // ===========================================================================
 
-static int const BACKGROUND_LAYER_ID = 0;
-static int const CHALLENGE_LAYER_ID  = 1;
+static int const BACKGROUND_LAYER_ID             = 0;
+static int const BACKGROUND_GAMEOBJECT_LAYER_ID  = 1;
+static int const GAMEOBJECT_LAYER_ID             = 2;
+static int const TEXT_LAYER_ID                   = 3;
+static int const CHALLENGE_LAYER_ID              = 4;
 
 // ===========================================================================
 // Background particle system

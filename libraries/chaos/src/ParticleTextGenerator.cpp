@@ -24,6 +24,14 @@ namespace chaos
 			bounding_box.topright = glm::vec2(0.0f, 0.0f);
 		}
 
+		size_t GeneratorResult::GetTokenCount() const
+		{
+			size_t result = 0;
+			for (size_t i = 0 ; i < token_lines.size() ; ++i)
+				result += token_lines[i].size();	
+			return result;
+		}
+
 		// ============================================================
 		// GeneratorData methods
 		// ============================================================

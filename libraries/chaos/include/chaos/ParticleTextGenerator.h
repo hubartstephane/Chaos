@@ -115,6 +115,8 @@ namespace chaos
 			GeneratorResult();
 			/** Clearing the result */
 			void Clear();
+			/** get the number of token */
+			size_t GetTokenCount() const;
 
 		public:
 

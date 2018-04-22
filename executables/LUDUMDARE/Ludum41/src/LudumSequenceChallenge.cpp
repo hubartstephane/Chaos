@@ -37,8 +37,6 @@ void LudumSequenceChallenge::OnGamepadButtonReceived(chaos::MyGLFW::PhysicalGame
 	}
 }
 
-
-
 void LudumSequenceChallenge::AdvanceChallenge()
 {
 	++challenge_position;
@@ -55,3 +53,27 @@ void LudumSequenceChallenge::OnChallengeError()
 {
 
 }
+
+void LudumSequenceChallenge_ExtraBallCallbacks::OnChallengeCompleted(class LudumSequenceChallenge * challenge)
+{
+
+}
+
+void LudumSequenceChallenge_LongBarBallCallbacks::OnChallengeCompleted(class LudumSequenceChallenge * challenge)
+{
+
+}
+
+void LudumSequenceChallenge_LifeBallCallbacks::OnChallengeCompleted(class LudumSequenceChallenge * challenge)
+{
+
+}
+
+void LudumSequenceChallenge_SpeedDownBallCallbacks::OnChallengeCompleted(class LudumSequenceChallenge * challenge)
+{
+
+}
+
+
+
+

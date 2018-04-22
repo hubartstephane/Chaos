@@ -3,8 +3,16 @@
   "font_path": "@fonts/unispace.ttf",
   "french_dictionnary": "@dictionnary/small_french.txt",
   "english_dictionnary": "@dictionnary/small_english.txt",
-  "max_word_size": "10",
-  "initial_life":10
+  "max_word_size": 10,
 
-
+  "initial_life": 3,
+  "max_life": 10,
+  "max_ball_count": 3,
+  "player_max_length": 200.0,
+  "player_min_length": 70.0,
+  "player_initial_length": 100.0,
+  "ball_max_speed": 5.0,
+  "ball_initial_speed": 1.0,
+  "mouse_sensitivity": 1.0,
+  "gamepad_sensitivity":1.0
 }

@@ -11,9 +11,10 @@
 static int const BACKGROUND_LAYER_ID             = 0;
 static int const BACKGROUND_GAMEOBJECT_LAYER_ID  = 1;
 static int const GAMEOBJECT_LAYER_ID             = 2;
-static int const BALL_LAYER_ID                   = 3;
-static int const TEXT_LAYER_ID                   = 4;
-static int const CHALLENGE_LAYER_ID              = 5;
+static int const BRICK_LAYER_ID                  = 3;
+static int const BALL_LAYER_ID                   = 4;
+static int const TEXT_LAYER_ID                   = 5;
+static int const CHALLENGE_LAYER_ID              = 6;
 
 // ===========================================================================
 // Base Vertex class
@@ -71,6 +72,31 @@ public:
 };
 
 
+
+
+// ===========================================================================
+// Brick particle system
+// ===========================================================================
+
+class ParticleBrick : public ParticleObject
+{
+public:
+
+	int starting_life = 0;
+	int life          = 0;
+};
+
+class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleBrick * particle);
+
+	size_t ParticleToVertex(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+};
+
+
+
 // ===========================================================================
 // Movable particle system
 // ===========================================================================
@@ -94,6 +120,14 @@ public:
 
 	class LudumGame * game = nullptr;
 };
+
+
+
+
+
+
+
+
 
 // ===========================================================================
 // Challenge particle system

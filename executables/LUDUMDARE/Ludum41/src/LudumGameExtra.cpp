@@ -262,6 +262,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_time_dilation);	
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_frequency);	
 	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);		
+	LUDUMGAME_JSON_ATTRIBUTE(min_brick_life);		
+	LUDUMGAME_JSON_ATTRIBUTE(max_brick_life);		
 #undef LUDUMGAME_JSON_ATTRIBUTE
 
 	return true;
@@ -608,6 +610,8 @@ bool LudumGame::InitializeParticleManager()
 	movable_trait.game = this;
 	AddParticleLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
 
+	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
+
 	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 
@@ -690,12 +694,16 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 
 LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
 {
-	int challenge = rand() % 2;
+	int challenge = rand() % 3;
+
+	
 
 	if (challenge == 0)	
 		return new LudumSequenceChallenge_LongBarBallCallbacks();
-	//if (challenge == 1)	
+	if (challenge == 1)	
 		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
+
+	return new LudumSequenceChallenge_LifeBallCallbacks();
 #if 0
 	if (challenge == 0)
 		return new LudumSequenceChallenge_LifeBallCallbacks();

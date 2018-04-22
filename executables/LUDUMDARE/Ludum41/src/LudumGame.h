@@ -219,8 +219,10 @@ protected:
 	/** create the player */
 	chaos::ParticleRangeAllocation * CreatePlayer();
 
-	/** create the player */
+	/** create the ball */
 	chaos::ParticleRangeAllocation * CreateBall();
+	/** create the bricks */
+	chaos::ParticleRangeAllocation * CreateBricks();
 
 	/** create the title of the game */
 	void CreateGameTitle();
@@ -388,6 +390,9 @@ protected:
 	float challenge_frequency = 10.0f;
 
 	float delay_before_ball_move = 2.0f;
+
+	int min_brick_life = 1;
+	int max_brick_life = 5;
 
 	/** current game values */
 	int   current_life  = 3;

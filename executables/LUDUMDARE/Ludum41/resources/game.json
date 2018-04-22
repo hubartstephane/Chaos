@@ -24,5 +24,8 @@
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 20.0,
   "challenge_time_dilation": 0.5,
-  "challenge_frequency": 10.0
+  "challenge_frequency": 10.0,
+
+  "min_brick_life": 1,
+  "max_brick_life": 5
 }

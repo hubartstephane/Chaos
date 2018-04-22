@@ -71,6 +71,33 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 	return false; 
 }
 
+// ===========================================================================
+// Brick particle system
+// ===========================================================================
+
+bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle)
+{
+	if (particle->life < 0)
+		return true;
+
+	return false;
+}
+
+size_t ParticleBrickTrait::ParticleToVertex(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+{
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+
+	glm::vec4 color = particle->color;
+	color.a = ((float)particle->life) / ((float)(1 + particle->starting_life));
+
+	// copy the color in all triangles vertex
+	for (size_t i = 0 ; i < 6 ; ++i)
+		vertices[i].color = color;
+
+	return vertices_per_particle;
+}
+
 
 // ===========================================================================
 // Object Movable particle system

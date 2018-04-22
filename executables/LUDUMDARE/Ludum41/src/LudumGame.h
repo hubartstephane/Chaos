@@ -51,6 +51,8 @@ public:
 	bool OnKeyEvent(int key, int action);
 	/** whenever a mouse event is received */
 	void OnMouseButton(int button, int action, int modifier);
+	/** whenever mouse is displaced */
+	void OnMouseMove(double x, double y);
 	/** the rendering method */
 	void Display(chaos::box2 const & viewport);
 	/** called whenever a gamepad input is comming */
@@ -264,6 +266,13 @@ protected:
 
 	/** ensure object is inside the world */
 	chaos::ParticleCorners GetRestrictedObject(chaos::ParticleCorners const & src);
+
+
+
+
+
+	/** move the player */
+	void DisplacePlayer(double delta_time);
 
 protected:
 

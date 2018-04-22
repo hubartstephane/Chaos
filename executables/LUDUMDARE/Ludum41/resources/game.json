@@ -15,5 +15,5 @@
   "ball_max_speed": 5.0,
   "ball_initial_speed": 1.0,
   "mouse_sensitivity": 1.0,
-  "gamepad_sensitivity":1.0
+  "gamepad_sensitivity":20.0
 }

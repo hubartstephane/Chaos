@@ -92,7 +92,7 @@ void LudumGame::HandleKeyboardInputs()
 		simulated_stick.y += 1.0f;
 
 	if (glm::length2(simulated_stick) > 0)
-		left_stick_position = simulated_stick;
+		left_stick_position = gamepad_sensitivity * simulated_stick;
 }
 
 void LudumGame::UpdateGameState(double delta_time)
@@ -200,11 +200,11 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	// cache the stick position
 	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 	if (glm::length2(lsp) > 0.0f)
-		left_stick_position = lsp;
+		left_stick_position = gamepad_sensitivity * lsp;
 
 	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 	if (glm::length2(rsp) > 0.0f)
-		right_stick_position = rsp;
+		right_stick_position = gamepad_sensitivity * rsp;
 
 
 	// maybe this correspond to current challenge
@@ -295,8 +295,19 @@ void LudumGame::OnGameOver()
 
 }
 
+void LudumGame::DisplacePlayer(double delta_time)
+{
+	if (glm::length2(left_stick_position) == 0.0f)
+		return;
+
+	glm::vec2 position = GetPlayerPosition();
+	SetPlayerPosition(position.x + left_stick_position.x);
+}
+
 void LudumGame::TickGameLoop(double delta_time)
 {
+	DisplacePlayer(delta_time);
+
 
 }
 
@@ -310,6 +321,11 @@ void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * ph
 {
 	if (sequence_challenge != nullptr)
 		sequence_challenge->OnGamepadButtonReceived(physical_gamepad);
+}
+
+void LudumGame::OnMouseMove(double x, double y)
+{
+	left_stick_position.x = mouse_sensitivity * (float)x;
 }
 
 void LudumGame::OnMouseButton(int button, int action, int modifier)

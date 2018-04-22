@@ -20,6 +20,8 @@ protected:
 
 	virtual void OnMouseButton(int button, int action, int modifier) override;
 
+	virtual void OnMouseMove(double x, double y) override;
+
 	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 
 	virtual bool OnDraw(glm::ivec2 size) override;

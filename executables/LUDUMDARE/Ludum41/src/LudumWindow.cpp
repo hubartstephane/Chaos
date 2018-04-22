@@ -38,6 +38,11 @@ void LudumWindow::OnMouseButton(int button, int action, int modifier)
 		game->OnMouseButton(button, action, modifier);
 }
 
+void LudumWindow::OnMouseMove(double x, double y)
+{
+	if (game != nullptr)
+		game->OnMouseMove(x, y);
+}
 
 bool LudumWindow::OnDraw(glm::ivec2 size) 
 {

@@ -1,5 +1,5 @@
 {
-  "@background_program" : { "path": "@programs/background_program.json" },
-  "@challenge_program"  : { "path": "@programs/challenge_program.json" }
+  "@background_program" : { "path": "@programs/background/background_program.json" },
+  "@challenge_program"  : { "path": "@programs/challenge/challenge_program.json" }
 
 }

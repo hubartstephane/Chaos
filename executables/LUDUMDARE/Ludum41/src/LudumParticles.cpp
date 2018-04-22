@@ -16,7 +16,6 @@ bool ParticleBackgroundTrait::UpdateParticle(float delta_time, ParticleBackgroun
 
 size_t ParticleBackgroundTrait::ParticleToVertex(ParticleBackground const * particle, VertexBackground * vertices, size_t vertices_per_particle) const
 {
-	//
 	vertices[0].position.x = -1.0;
 	vertices[0].position.y = -1.0;
 

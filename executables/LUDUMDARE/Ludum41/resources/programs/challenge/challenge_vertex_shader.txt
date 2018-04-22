@@ -12,9 +12,7 @@ uniform vec2 viewport_size;
 
 void main() 
 {
-
-
-  vs_position = position / (viewport_size * vec2(0.5, 0.5));
+  vs_position = position;
   vs_texcoord = texcoord;
   vs_color    = color;
 

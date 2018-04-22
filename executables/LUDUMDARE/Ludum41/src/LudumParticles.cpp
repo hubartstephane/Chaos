@@ -5,6 +5,8 @@
 #include "LudumGame.h"
 #include "LudumSequenceChallenge.h"
 
+#include <chaos/CollisionFramework.h>
+
 chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
 	chaos::VertexDeclaration result;
@@ -125,6 +127,12 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		new_position.x = world_corners.first.x + particle_half_size.x;
 		particle->velocity.x = -particle->velocity.x;	
 	}
+	else if ((particle->corners.bottomleft.x > world_corners.second.x) ||
+		(particle->corners.topright.x > world_corners.second.x && particle->velocity.x > 0.0f))
+	{
+		new_position.x = world_corners.second.x - particle_half_size.x;
+		particle->velocity.x = -particle->velocity.x;	
+	}
 
 	if ((particle->corners.topright.y < world_corners.first.y) ||
 		(particle->corners.bottomleft.y < world_corners.first.y && particle->velocity.y < 0.0f))
@@ -132,21 +140,57 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		new_position.y = world_corners.first.y + particle_half_size.y;
 		particle->velocity.y = -particle->velocity.y;	
 	}
-
-	if ((particle->corners.bottomleft.x > world_corners.second.x) ||
-		(particle->corners.topright.x > world_corners.second.x && particle->velocity.x > 0.0f))
-	{
-		new_position.x = world_corners.second.x - particle_half_size.x;
-		particle->velocity.x = -particle->velocity.x;	
-	}
-
-	if ((particle->corners.bottomleft.y > world_corners.second.y) ||
+	else if ((particle->corners.bottomleft.y > world_corners.second.y) ||
 		(particle->corners.topright.y > world_corners.second.y && particle->velocity.y > 0.0f))
 	{
 		new_position.y = world_corners.second.y - particle_half_size.y;
 		particle->velocity.y = -particle->velocity.y;	
 	}
+	// update particle
+	particle->corners.bottomleft = new_position - particle_half_size;
+	particle->corners.topright   = new_position + particle_half_size;
+
 	// bounce against player
+
+	ParticleObject * player = game->GetPlayerParticle();
+	if (player != nullptr)
+	{
+		chaos::box2 player_box = chaos::ParticleCornersToBox(player->corners);
+		chaos::box2 ball_box   = chaos::box2(new_position, particle_half_size);
+
+		if (chaos::Collide(player_box, ball_box))
+		{
+			std::pair<glm::vec2, glm::vec2> player_corners = player_box.GetCorners();
+
+			if (particle->corners.bottomleft.x < player_corners.second.x && particle->velocity.x < 0.0f)
+			{
+				new_position.x = player_corners.second.x + particle_half_size.x;
+				particle->velocity.x = -particle->velocity.x;	
+			}
+			else if (particle->corners.topright.x > player_corners.first.x && particle->velocity.x > 0.0f)
+			{
+				new_position.x = player_corners.first.x - particle_half_size.x;
+				particle->velocity.x = -particle->velocity.x;	
+			}	
+
+
+
+			if (particle->corners.bottomleft.y < player_corners.second.y && particle->velocity.y < 0.0f)
+			{
+				new_position.y = player_corners.second.y + particle_half_size.y;
+				particle->velocity.y = -particle->velocity.y;	
+			}
+			else if (particle->corners.topright.y > player_corners.first.y && particle->velocity.y > 0.0f)
+			{
+				new_position.y = player_corners.first.y - particle_half_size.y;
+				particle->velocity.y = -particle->velocity.y;	
+			}
+		}	
+	}
+
+
+
+
 
 
 

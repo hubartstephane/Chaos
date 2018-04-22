@@ -113,7 +113,7 @@ bool PlayingToMainMenuTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	LudumGame * game = GetGame();
 	if (game == nullptr)
 		return true;
-	game->OnLeaveGame();
+	game->OnLeaveGame();	
 	return false;
 }
 
@@ -131,6 +131,7 @@ bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::StateMachine::State * to)
 	if (game == nullptr)
 		return true;
 	game->DestroyGameObjects();
+	game->CreateGameTitle();
 	return false;
 }
 
@@ -210,7 +211,7 @@ bool PlayingToGameOverTransition::OnLeaveImpl(chaos::StateMachine::State * to)
 	if (game != nullptr)
 	{
 		game->OnGameOver();
-		game->CreateTitle("AsciiPaouf II");
+		game->CreateGameTitle();
 	}
 	// destroy the sound object
 	gameover_sound = nullptr;

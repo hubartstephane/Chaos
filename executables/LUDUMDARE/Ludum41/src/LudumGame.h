@@ -200,7 +200,13 @@ protected:
 	/** create particles in the text layer */
 	chaos::ParticleRangeAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
 
+	/** create a number of game object */
+	chaos::ParticleRangeAllocation * CreateGameObjects(char const * name, size_t count);
+	/** create the player */
+	chaos::ParticleRangeAllocation * CreatePlayer();
 
+	/** create the title of the game */
+	void CreateGameTitle();
 	/** create the title */
 	void CreateTitle(char const * title);
 	/** create the title */
@@ -288,12 +294,6 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
-
-
-
-
-
-
 
 };
 

@@ -1,5 +1,6 @@
 #include "LudumGame.h"
 #include "LudumWindow.h"
+#include "LudumParticles.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -10,7 +11,10 @@
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
 
-
+void LudumGame::CreateGameTitle()
+{
+	CreateTitle("AsciiPaouf II");
+}
 
 void LudumGame::CreateTitle(char const * title)
 {
@@ -32,7 +36,7 @@ void LudumGame::OnStartGame(bool very_first)
 	if (very_first)
 	{
 		StartMainMenuMusic(true);
-		CreateTitle("AsciiPaouf II");
+		CreateGameTitle();
 	}
 }
 
@@ -236,6 +240,7 @@ void LudumGame::Display(chaos::box2 const & viewport)
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
+#if 1
 	int state_id = GetCurrentStateID();
 	if (state_id == LudumAutomata::STATE_MAINMENU)
 		clear_color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
@@ -243,6 +248,7 @@ void LudumGame::Display(chaos::box2 const & viewport)
 		clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	else if (state_id == LudumAutomata::STATE_PLAYING)
 		clear_color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+#endif
 	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 	// clear the depth buffers
@@ -332,13 +338,102 @@ void LudumGame::DestroyGameObjects()
 	lifes_allocations = nullptr;
 	balls_allocations = nullptr;
 
+	sequence_challenge = nullptr;
+
 }
 
+chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name, size_t count)
+{
+	// find layer of concern
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(GAMEOBJECT_LAYER_ID);
+	if (layer == nullptr)
+		return nullptr;
+
+	// find bitmap set
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
+	if (bitmap_set == nullptr)
+		return nullptr;
+
+	// find bitmap entry
+	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry("player");
+	if (entry == nullptr)
+		return nullptr;
+
+	// allocate the objects
+	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	if (allocation == nullptr)
+		return nullptr;
+
+	ParticleObject * particle = (ParticleObject *)allocation->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
+
+	for (size_t i = 0 ; i < count ; ++i)
+		particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+
+	return allocation;
+}
+
+
+chaos::ParticleRangeAllocation * LudumGame::CreatePlayer()
+{
+	chaos::ParticleRangeAllocation * result = CreateGameObjects("player", 1);
+	if (result == nullptr)
+		return nullptr;
+
+	ParticleObject * particle = (ParticleObject *)result->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
+
+	particle->corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), chaos::Hotpoint::CENTER);
+
+	return result;
+}
 
 void LudumGame::CreateGameObjects(int level)
 {
+	if (player_allocations == nullptr)
+		player_allocations = CreatePlayer();
+
 
 }
 
 
 
+
+
+
+
+
+
+
+
+#if 0
+
+
+// generate the tokens
+chaos::ParticleTextGenerator::GeneratorResult result;
+
+particle_text_generator->Generate(text, result, params);
+
+// count the number of particle to draw
+size_t count = result.GetTokenCount();
+
+
+
+size_t k = 0;
+for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+{
+	chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
+	for (size_t j = 0 ; j < line.size() ; ++j)
+	{
+		chaos::ParticleTextGenerator::Token const & token = line[j];
+
+		particle[k].corners   = token.corners;
+		particle[k].texcoords = token.texcoords;
+		particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+		++k;
+	}
+}
+
+#endif 

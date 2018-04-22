@@ -454,13 +454,18 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 	if (allocation == nullptr)
 		return nullptr;
 
-	ParticleObject * particle = (ParticleObject *)allocation->GetParticleBuffer();
-	if (particle == nullptr)
+	size_t particle_size = layer->GetParticleSize();
+
+	char * buffer = (char *)allocation->GetParticleBuffer();
+	if (buffer == nullptr)
 		return nullptr;
 
 	for (size_t i = 0 ; i < count ; ++i)
+	{
+		ParticleObject * particle = (ParticleObject*)(&buffer[i * particle_size]);		
 		particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
-
+	}
+		
 	return allocation;
 }
 
@@ -531,19 +536,10 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks()
 		int line   = i / element_per_line;
 		
 		glm::vec2 position;
-		//position.x = -world_size.x * 0.5f + particle_size.x * (float)column;
-		//position.y = -world_size.y * 0.5f + particle_size.y * (float)line;
+		position.x = -world_size.x * 0.5f + particle_size.x * (float)column;
+		position.y =  world_size.y * 0.5f - particle_size.y * (float)line;
 
-		//position.x = -world_size.x * 0.25f + 10.0f * ((float)column);
-		//position.y = -world_size.y * 0.25f + 10.0f * ((float)line);
-
-
-		position.x = 10.0f * ((float)column);
-		position.y = 10.0f * ((float)line);
-			
-		particle[i].corners = chaos::ParticleTools::GetParticleCorners(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT);	
-
-		//particle[i].corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
+		particle[i].corners = chaos::ParticleTools::GetParticleCorners(position, particle_size, chaos::Hotpoint::TOP_LEFT);	
 	}
 
 	return result;
@@ -770,16 +766,46 @@ void LudumGame::CreateAllGameObjects(int level)
 
 }
 
-void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success)
+size_t LudumGame::GetBrickCount() const
 {
 	if (bricks_allocations == nullptr)
-		return;
+		return 0;
+	return bricks_allocations->GetParticleCount();
+}
+
+ParticleBrick * LudumGame::GetBricks()
+{
+	if (bricks_allocations == nullptr)
+		return nullptr;
 
 	size_t brick_count = bricks_allocations->GetParticleCount();
 	if (brick_count == 0)
+		return nullptr;
+
+	return (ParticleBrick*)bricks_allocations->GetParticleBuffer();
+}
+
+ParticleBrick const * LudumGame::GetBricks() const 
+{
+	if (bricks_allocations == nullptr)
+		return nullptr;
+
+	size_t brick_count = bricks_allocations->GetParticleCount();
+	if (brick_count == 0)
+		return nullptr;
+
+	return (ParticleBrick const *)bricks_allocations->GetParticleBuffer();
+}
+
+
+
+void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success)
+{
+	size_t brick_count = GetBrickCount();
+	if (brick_count == 0)
 		return;
 
-	ParticleBrick * bricks = (ParticleBrick * )bricks_allocations->GetParticleBuffer();
+	ParticleBrick * bricks = GetBricks();
 	if (bricks == nullptr)
 		return;
 
@@ -791,7 +817,7 @@ void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks *
 		{
 			--p.life;
 		}
-		else if (p.life < max_brick_life)
+		else if (p.life < max_brick_life && p.life > 0)
 		{
 			++p.life;
 			if (p.life > p.starting_life)

@@ -77,7 +77,7 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 
 bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle)
 {
-	if (particle->life < 0)
+	if (particle->life <= 0)
 		return true;
 
 	return false;
@@ -114,6 +114,21 @@ size_t ParticleMovableObjectTrait::ParticleToVertex(ParticleMovableObject const 
 	return vertices_per_particle;
 }
 
+
+void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity)
+{
+	if (ball_box.position.x > new_ball_box.position.x)
+		velocity.x = -abs(velocity.x);				
+	else if (ball_box.position.x < new_ball_box.position.x)
+		velocity.x = abs(velocity.x);
+
+	if (ball_box.position.y > new_ball_box.position.y)
+		velocity.y = -abs(velocity.y);				
+	else if (ball_box.position.y < new_ball_box.position.y)
+		velocity.y = abs(velocity.y);
+
+}
+
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle)
 {
 	// do not update particles during pause
@@ -145,16 +160,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	chaos::box2 new_ball_box = ball_box;
 	if (chaos::RestrictToInside(world_box, new_ball_box, false))
 	{
-		if (ball_box.position.x > new_ball_box.position.x)
-			particle->velocity.x = -abs(particle->velocity.x);				
-		else if (ball_box.position.x < new_ball_box.position.x)
-			particle->velocity.x = abs(particle->velocity.x);
-
-		if (ball_box.position.y > new_ball_box.position.y)
-			particle->velocity.y = -abs(particle->velocity.y);				
-		else if (ball_box.position.y < new_ball_box.position.y)
-			particle->velocity.y = abs(particle->velocity.y);
-
+		UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
 		ball_box.position = new_ball_box.position;
 	}
 
@@ -167,25 +173,30 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
 		{
-			if (ball_box.position.x > new_ball_box.position.x)
-				particle->velocity.x = -abs(particle->velocity.x);				
-			else if (ball_box.position.x < new_ball_box.position.x)
-				particle->velocity.x = abs(particle->velocity.x);
-
-			if (ball_box.position.y > new_ball_box.position.y)
-				particle->velocity.y = -abs(particle->velocity.y);				
-			else if (ball_box.position.y < new_ball_box.position.y)
-				particle->velocity.y = abs(particle->velocity.y);
-
+			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
 			ball_box.position = new_ball_box.position;
 		}
 	}
 
+	// bounce against bricks
+	ParticleBrick * bricks = game->GetBricks();
+	size_t brick_count     = game->GetBrickCount();
 
+	if (bricks != nullptr && brick_count > 0)
+	{
+		for (size_t i = 0 ; i < brick_count ; ++i)
+		{
+			chaos::box2 brick_box = chaos::ParticleCornersToBox(bricks[i].corners);
+		
+			if (chaos::RestrictToOutside(brick_box, new_ball_box))
+			{
+				UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
+				ball_box.position = new_ball_box.position;
 
-
-
-
+				--bricks[i].life;
+			}				
+		}	
+	}
 
 	// recenter the particle
 	particle->corners = chaos::BoxToParticleCorners(ball_box);

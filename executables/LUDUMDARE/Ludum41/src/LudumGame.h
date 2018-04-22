@@ -42,7 +42,7 @@ protected:
 
 	/** some aspect constant */
 	float CHALLENGE_SIZE = 100.0f;
-	float CHALLENGE_PLACEMENT_Y = 350;
+	float CHALLENGE_PLACEMENT_Y = 0;
 
 	float TITLE_SIZE = 150.0f;
 	float TITLE_PLACEMENT_Y = 0;
@@ -259,6 +259,16 @@ protected:
 	ParticleMovableObject const * GetBallParticles() const;
 	/** get the number of balls */	
 	size_t GetBallCount() const;
+
+	/** get the bricks */
+	ParticleBrick * GetBricks();
+	/** get the bricks */
+	ParticleBrick const * GetBricks() const;
+
+	/** get the number of bricks */
+	size_t GetBrickCount() const;
+
+
 
 	/** get the box for a given object */
 	chaos::box2 GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const;

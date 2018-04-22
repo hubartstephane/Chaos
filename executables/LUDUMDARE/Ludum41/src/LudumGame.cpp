@@ -37,6 +37,8 @@ void LudumGame::OnStartGame(bool very_first)
 {
 	if (very_first)
 	{
+		chaos::MathTools::ResetRandSeed();
+
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		StartMainMenuMusic(true);
@@ -327,7 +329,8 @@ void LudumGame::TickGameLoop(double delta_time)
 {
 	DisplacePlayer(delta_time);
 
-
+	if (sequence_challenge != nullptr)
+		sequence_challenge->Tick(delta_time);
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)
@@ -368,7 +371,7 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 	}
 }
 
-void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge)
+void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success)
 {
 	sequence_challenge = nullptr;
 }
@@ -552,19 +555,17 @@ void LudumGame::RestrictedPlayerToScreen()
 	RestrictedObjectToScreen(player_allocations.get(), 0);
 }
 
-
-
-
-
-
-
-
-
 void LudumGame::SetPlayerLength(float length)
 {
+
+	length = chaos::MathTools::Clamp(length, player_min_length, player_max_length);
+
 	chaos::box2 box = GetPlayerBox();
 	box.half_size = glm::vec2(length * 0.5f, PLAYER_HEIGHT * 0.5f);
 	SetPlayerBox(box);
+
+	player_length = length;
+	RestrictedPlayerToScreen();
 }
 
 
@@ -580,6 +581,33 @@ void LudumGame::CreateGameObjects(int level)
 
 
 }
+
+void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success)
+{
+
+}
+
+void LudumGame::OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success)
+{
+
+}
+
+void LudumGame::OnExtraBallChallenge(class LudumSequenceChallenge_ExtraBallCallbacks * challenge, bool success)
+{
+
+}
+
+void LudumGame::OnLongBarChallenge(class LudumSequenceChallenge_LongBarBallCallbacks * challenge, bool success)
+{
+	if (success)
+		SetPlayerLength(player_length + player_length_increment);
+	else
+		SetPlayerLength(player_length - player_length_decrement);
+
+}
+
+
+
 
 
 

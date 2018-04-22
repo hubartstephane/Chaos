@@ -31,6 +31,11 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
+	friend class LudumSequenceChallenge_ExtraBallCallbacks;
+	friend class LudumSequenceChallenge_LongBarBallCallbacks;
+	friend class LudumSequenceChallenge_LifeBallCallbacks;
+	friend class LudumSequenceChallenge_SpeedDownBallCallbacks;
+
 protected:
 
 	/** some aspect constant */
@@ -180,7 +185,7 @@ protected:
 	LudumSequenceChallenge * CreateSequenceChallenge(size_t len);
 
 	/** called whenever a challenge is completed */
-	void OnChallengeCompleted(LudumSequenceChallenge * challenge);
+	void OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success);
 
 	/** templated method to add a layer */
 	template<typename TRAIT_TYPE>
@@ -278,6 +283,19 @@ protected:
 	/** move the player */
 	void DisplacePlayer(double delta_time);
 
+
+	/** some challenges */
+	void OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success);
+	/** some challenges */
+	void OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success);
+	/** some challenges */
+	void OnExtraBallChallenge(class LudumSequenceChallenge_ExtraBallCallbacks * challenge, bool success);
+	/** some challenges */
+	void OnLongBarChallenge(class LudumSequenceChallenge_LongBarBallCallbacks * challenge, bool success);
+
+	/** create a challenge */
+	class LudumSequenceChallengeCallbacks * CreateSequenceChallengeCallbacks();
+
 protected:
 
 	/** the window in GLFW library */
@@ -332,7 +350,8 @@ protected:
 	float player_max_length       = 200.0f; 
 	float player_min_length       = 70.0f; 
 	float player_initial_length   = 100.0f; 
-	float player_length_increment = 50.0f; 	
+	float player_length_increment = 50.0f; 
+	float player_length_decrement = 50.0f;
 
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;

@@ -252,6 +252,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(player_min_length);
 	LUDUMGAME_JSON_ATTRIBUTE(player_initial_length);
 	LUDUMGAME_JSON_ATTRIBUTE(player_length_increment);
+	LUDUMGAME_JSON_ATTRIBUTE(player_length_decrement);	
 	LUDUMGAME_JSON_ATTRIBUTE(ball_max_speed);
 	LUDUMGAME_JSON_ATTRIBUTE(ball_initial_speed);
 	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
@@ -664,6 +665,25 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 		result->keyboard_challenge = std::move(keyboard_challenge);
 		result->game = this;	
 		result->particle_range = CreateChallengeText(result);
+
+
+		result->callbacks = CreateSequenceChallengeCallbacks();
+		result->SetTimeout(5.0f);
 	}
 	return result;
+}
+
+LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
+{
+	int challenge = rand() % 4;
+
+#if 0
+	if (challenge == 0)
+		return new LudumSequenceChallenge_LifeBallCallbacks();
+	if (challenge == 1)	
+		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
+	if (challenge == 2)	
+		return new LudumSequenceChallenge_ExtraBallCallbacks();
+#endif		
+	return new LudumSequenceChallenge_LongBarBallCallbacks();
 }

@@ -125,6 +125,15 @@ bool PlayingToMainMenuTransition::TickImpl(double delta_time)
 	return game->IsGameLeaveComplete();
 }
 
+bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::StateMachine::State * to)
+{
+	LudumGame * game = GetGame();
+	if (game == nullptr)
+		return true;
+	game->DestroyGameObjects();
+	return false;
+}
+
 
 						// ---------------------------------
 

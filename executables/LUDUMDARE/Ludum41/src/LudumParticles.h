@@ -40,23 +40,40 @@ public:
 	glm::vec4 color;
 };
 
-
-
 class ParticleBackgroundTrait : public chaos::ParticleLayerTrait<ParticleBackground, VertexBase>
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleBackground * particle);
-
 	size_t ParticleToVertex(ParticleBackground const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
 
+// ===========================================================================
+// Object particle system
+// ===========================================================================
+
+class ParticleObject
+{
+public:
+
+	chaos::ParticleCorners corners;
+	chaos::ParticleTexcoords texcoords;
+	glm::vec4 color;
+};
+
+class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleObject * particle);
+
+	size_t ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+};
 
 // ===========================================================================
 // Challenge particle system
 // ===========================================================================
 
-class ParticleChallenge
+class ParticleChallenge : public ParticleObject
 {
 public:
 
@@ -70,8 +87,6 @@ public:
 class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexBase>
 {
 public:
-
-	bool UpdateParticle(float delta_time, ParticleChallenge * particle);
 
 	size_t ParticleToVertex(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };

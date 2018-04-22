@@ -14,8 +14,26 @@
 void LudumGame::OnStartGame(bool very_first)
 {
 	if (very_first)
+	{
 		StartMainMenuMusic(true);
 
+
+	}
+	else
+		very_first = very_first;
+
+
+#if 0
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> lifes_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
+#endif
 
 }
 
@@ -138,7 +156,7 @@ bool LudumGame::OnKeyEvent(int key, int action)
 			return true;
 
 	// PLAYING to PAUSE
-	if (key == GLFW_KEY_KP_ENTER && action == GLFW_PRESS)
+	if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER) && action == GLFW_PRESS)
 		if (RequireTogglePause())
 			return true;
 
@@ -264,6 +282,10 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 
 void LudumGame::OnGameOver()
 {
+	DestroyGameObjects();
+
+
+
 
 
 }
@@ -303,3 +325,20 @@ void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge)
 {
 	sequence_challenge = nullptr;
 }
+
+void LudumGame::DestroyGameObjects()
+{
+	player_allocations = nullptr;
+	bricks_allocations = nullptr;
+	lifes_allocations = nullptr;
+	balls_allocations = nullptr;
+
+}
+
+
+void LudumGame::CreateGameObjects(int level)
+{
+
+
+}
+

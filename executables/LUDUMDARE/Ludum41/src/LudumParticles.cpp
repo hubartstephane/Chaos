@@ -16,12 +16,6 @@ chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBa
 // Background particle system
 // ===========================================================================
 
-bool ParticleBackgroundTrait::UpdateParticle(float delta_time, ParticleBackground * particle)
-{
-
-	return false;
-}
-
 size_t ParticleBackgroundTrait::ParticleToVertex(ParticleBackground const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	vertices[0].position.x = -1.0;
@@ -54,19 +48,34 @@ size_t ParticleBackgroundTrait::ParticleToVertex(ParticleBackground const * part
 }
 
 // ===========================================================================
+// Object particle system
+// ===========================================================================
+
+size_t ParticleObjectTrait::ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+{
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0 ; i < 6 ; ++i)
+		vertices[i].color = particle->color;
+
+	return vertices_per_particle;
+}
+
+bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particles)
+{ 
+	return false; 
+}
+
+
+// ===========================================================================
 // Challenge particle system
 // ===========================================================================
 
-bool ParticleChallengeTrait::UpdateParticle(float delta_time, ParticleChallenge * particle)
-{
-
-	return false;
-}
 
 size_t ParticleChallengeTrait::ParticleToVertex(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	size_t challenge_position = particle->challenge->GetChallengePosition();
-
 
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);

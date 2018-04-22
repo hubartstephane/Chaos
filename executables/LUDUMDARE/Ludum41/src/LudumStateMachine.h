@@ -89,6 +89,8 @@ protected:
 	/** overriding */
 	virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
 	/** overriding */
+	virtual bool OnLeaveImpl(chaos::StateMachine::State * to) override;
+	/** overriding */
 	virtual bool TickImpl(double delta_time) override;
 };
 

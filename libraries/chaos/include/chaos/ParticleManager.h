@@ -279,6 +279,9 @@ namespace chaos
 		{
 		}
 
+		/** by default, update do nothing */
+		bool UpdateParticle(float delta_time, particle_type * particle){ return false; }
+
 	public:
 
 		/** whether the particles are dynamic */

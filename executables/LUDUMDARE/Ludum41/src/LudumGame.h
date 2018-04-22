@@ -75,6 +75,11 @@ protected:
 	/** require a game over */
 	bool RequireGameOver();
 
+	/** creating all object in the game */
+	void CreateGameObjects(int level);
+	/** destroying game objects*/
+	void DestroyGameObjects();
+
 	/** create the music used in the game */
 	void CreateAllMusics();
 	/** create one sound */
@@ -262,6 +267,8 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> lifes_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
 
 
 

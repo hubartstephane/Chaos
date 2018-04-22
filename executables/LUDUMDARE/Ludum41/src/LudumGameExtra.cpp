@@ -260,6 +260,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
 	LUDUMGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_time_dilation);	
+	LUDUMGAME_JSON_ATTRIBUTE(challenge_frequency);	
 	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);		
 #undef LUDUMGAME_JSON_ATTRIBUTE
 
@@ -627,6 +628,9 @@ int LudumGame::GetRandomButtonID() const
 
 LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len) 
 {
+	if (len == 0)
+		len = min_word_size + rand() % (max_word_size - min_word_size);
+
 	auto it = dictionnary.find(len);
 
 	// no word of this size (search a word with the lengh the more near the request) 
@@ -686,17 +690,19 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 
 LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
 {
-	int challenge = rand() % 4;
+	int challenge = rand() % 2;
 
+	if (challenge == 0)	
+		return new LudumSequenceChallenge_LongBarBallCallbacks();
+	//if (challenge == 1)	
+		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
 #if 0
 	if (challenge == 0)
 		return new LudumSequenceChallenge_LifeBallCallbacks();
-	if (challenge == 1)	
-		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
+
 	if (challenge == 2)	
 		return new LudumSequenceChallenge_ExtraBallCallbacks();
 
 	return new LudumSequenceChallenge_LongBarBallCallbacks();
-#endif		
-	return new LudumSequenceChallenge_SpeedDownBallCallbacks();
+#endif
 }

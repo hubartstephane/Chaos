@@ -251,6 +251,13 @@ protected:
 	/** get the player particle */
 	ParticleObject const * GetPlayerParticle() const;
 
+	/** get the balls */
+	ParticleMovableObject * GetBallParticles();
+	/** get the balls */
+	ParticleMovableObject const * GetBallParticles() const;
+	/** get the number of balls */	
+	size_t GetBallCount() const;
+
 	/** get the box for a given object */
 	chaos::box2 GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const;
 	/** get the box for player */
@@ -378,6 +385,7 @@ protected:
 	float gamepad_sensitivity = 1.0f;
 
 	float challenge_time_dilation = 0.5f;
+	float challenge_frequency = 10.0f;
 
 	float delay_before_ball_move = 2.0f;
 
@@ -386,6 +394,8 @@ protected:
 	float player_length = 70.0f;
 	
 	float ball_time_dilation = 1.0f;
+	float challenge_timer = 0.0f;
+
 
 
 	/** some sprites */

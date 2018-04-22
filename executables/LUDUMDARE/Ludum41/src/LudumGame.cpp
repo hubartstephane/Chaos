@@ -313,6 +313,7 @@ void LudumGame::ResetGameVariables()
 	player_length = player_initial_length;
 	ball_speed    = ball_initial_speed;
 	ball_time_dilation = 1.0f;
+	challenge_timer    = challenge_frequency;
 }
 void LudumGame::OnGameOver()
 {
@@ -338,7 +339,33 @@ void LudumGame::TickGameLoop(double delta_time)
 	DisplacePlayer(delta_time);
 
 	if (sequence_challenge != nullptr)
+	{
 		sequence_challenge->Tick(delta_time);
+	}
+	else
+	{
+		// start a challenge (only if one ball is going upward)
+		challenge_timer = max(0.0f, challenge_timer - (float)delta_time);
+		if(challenge_timer <= 0.0f)
+		{
+			size_t ball_count = GetBallCount();
+			if (ball_count > 0)
+			{
+				ParticleMovableObject const * balls = GetBallParticles();
+				if (balls != nullptr)
+				{
+					size_t i = 0;
+					for (; i < ball_count ; ++i)
+					{
+						if (balls->velocity.y > 0.0f)
+							break;					
+					}
+					if (i != ball_count)
+						sequence_challenge = CreateSequenceChallenge(0);				
+				}			
+			}
+		}		
+	}
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(int key)
@@ -371,10 +398,7 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 		if (state->GetStateID() == LudumAutomata::STATE_PLAYING)
 		{
 			if (button == 0 && action == GLFW_PRESS)
-			{
-				int len = min_word_size + rand() % (max_word_size - min_word_size);
-				sequence_challenge = CreateSequenceChallenge((size_t)len);
-			}	
+				sequence_challenge = CreateSequenceChallenge(0);
 		}
 		else 
 #endif			
@@ -390,6 +414,7 @@ void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge, bool su
 {
 	sequence_challenge = nullptr;
 	ball_time_dilation = 1.0f;
+	challenge_timer    = challenge_frequency;
 }
 
 void LudumGame::DestroyGameObjects()
@@ -515,6 +540,28 @@ ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocati
 	return &p[index];
 }
 
+
+ParticleMovableObject * LudumGame::GetBallParticles()
+{
+	if (balls_allocations == nullptr)
+		return nullptr;	
+	return (ParticleMovableObject *)balls_allocations->GetParticleBuffer();
+}
+
+ParticleMovableObject const * LudumGame::GetBallParticles() const
+{
+	if (balls_allocations == nullptr)
+		return nullptr;
+	return (ParticleMovableObject const *)balls_allocations->GetParticleBuffer();
+}
+
+size_t LudumGame::GetBallCount() const
+{
+	if (balls_allocations == nullptr)
+		return 0;	
+	return balls_allocations->GetParticleCount();
+}
+
 ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index)
 {
 	if (allocation == nullptr)
@@ -528,6 +575,12 @@ ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocation * a
 
 	return &p[index];
 }
+
+
+
+
+
+
 
 ParticleObject * LudumGame::GetPlayerParticle()
 {

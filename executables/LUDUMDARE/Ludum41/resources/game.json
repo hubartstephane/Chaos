@@ -30,5 +30,5 @@
   "max_brick_life": 4,
 
 	"brick_per_line":20,
-	"brick_line_count": 1
+	"brick_line_count": 8
 }

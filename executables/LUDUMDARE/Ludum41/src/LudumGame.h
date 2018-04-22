@@ -279,7 +279,7 @@ protected:
 
 
 	/** returns true whether we can start a challenge (returns index of a valid ball) */
-	size_t CanStartChallengeBallIndex() const;
+	size_t CanStartChallengeBallIndex(bool reverse = false) const;
 
 
 

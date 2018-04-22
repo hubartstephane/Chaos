@@ -336,7 +336,7 @@ void LudumGame::DisplacePlayer(double delta_time)
 }
 
 
-size_t LudumGame::CanStartChallengeBallIndex() const
+size_t LudumGame::CanStartChallengeBallIndex(bool reverse) const
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count > 0)
@@ -348,9 +348,9 @@ size_t LudumGame::CanStartChallengeBallIndex() const
 
 			for (size_t i = 0; i < ball_count ; ++i)
 			{
-				if (balls->velocity.y <= 0.0f) // going up
+				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
 					continue;					
-				if (balls->corners.bottomleft.y > -world_size.y * 0.5f * 0.75f) // wait until particle is high enough on screen
+				if (reverse ^ (balls->corners.bottomleft.y > -world_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
 					return i;
 			}
 		}			
@@ -415,7 +415,7 @@ void LudumGame::TickLevelCompleted(double delta_time)
 	size_t brick_count = GetBrickCount();
 	if (brick_count == 0)
 	{
-		if (CanStartChallengeBallIndex() != std::numeric_limits<size_t>::max())
+		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
 			bricks_allocations = CreateBricks();			
 	}
 }

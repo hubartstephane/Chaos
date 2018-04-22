@@ -108,59 +108,34 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	particle->corners.bottomleft += particle->velocity * delta_time * game->ball_time_dilation;
 	particle->corners.topright   += particle->velocity * delta_time * game->ball_time_dilation;
 
-	glm::vec2 position = (particle->corners.bottomleft + particle->corners.topright) * 0.5f;
+	// ball bouncing against world
 
-	glm::vec2 particle_half_size = chaos::ParticleCornersToBox(particle->corners).half_size;
+	chaos::box2 world_box = game->GetWorldBox();
+	chaos::box2 ball_box  = chaos::ParticleCornersToBox(particle->corners);
+		
 
-	// ball bouncing
-	chaos::box2 world = game->GetWorldBox();
-
-	std::pair<glm::vec2, glm::vec2> world_corners = world.GetCorners();
-
-	
 	// bounce against the world borders
-	glm::vec2 new_position = position;
+	chaos::box2 new_ball_box = ball_box;
+	if (chaos::RestrictToInside(world_box, new_ball_box, false))
+	{
+		if (ball_box.position.x > new_ball_box.position.x)
+			particle->velocity.x = -abs(particle->velocity.x);				
+		else if (ball_box.position.x < new_ball_box.position.x)
+			particle->velocity.x = abs(particle->velocity.x);
 
-	if ((particle->corners.topright.x < world_corners.first.x) ||
-		(particle->corners.bottomleft.x < world_corners.first.x && particle->velocity.x < 0.0f))
-	{
-		new_position.x = world_corners.first.x + particle_half_size.x;
-		particle->velocity.x = -particle->velocity.x;	
-	}
-	else if ((particle->corners.bottomleft.x > world_corners.second.x) ||
-		(particle->corners.topright.x > world_corners.second.x && particle->velocity.x > 0.0f))
-	{
-		new_position.x = world_corners.second.x - particle_half_size.x;
-		particle->velocity.x = -particle->velocity.x;	
-	}
+		if (ball_box.position.y > new_ball_box.position.y)
+			particle->velocity.y = -abs(particle->velocity.y);				
+		else if (ball_box.position.y < new_ball_box.position.y)
+			particle->velocity.y = abs(particle->velocity.y);
 
-	if ((particle->corners.topright.y < world_corners.first.y) ||
-		(particle->corners.bottomleft.y < world_corners.first.y && particle->velocity.y < 0.0f))
-	{
-		new_position.y = world_corners.first.y + particle_half_size.y;
-		particle->velocity.y = -particle->velocity.y;	
+		ball_box.position = new_ball_box.position;
 	}
-	else if ((particle->corners.bottomleft.y > world_corners.second.y) ||
-		(particle->corners.topright.y > world_corners.second.y && particle->velocity.y > 0.0f))
-	{
-		new_position.y = world_corners.second.y - particle_half_size.y;
-		particle->velocity.y = -particle->velocity.y;	
-	}
-	// update particle
-	particle->corners.bottomleft = new_position - particle_half_size;
-	particle->corners.topright   = new_position + particle_half_size;
 
 	// bounce against player
-
 	ParticleObject * player = game->GetPlayerParticle();
 	if (player != nullptr)
 	{
 		chaos::box2 player_box = chaos::ParticleCornersToBox(player->corners);
-		chaos::box2 ball_box   = chaos::box2(new_position, particle_half_size);
-
-
-
-
 
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
@@ -174,7 +149,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 				particle->velocity.y = -abs(particle->velocity.y);				
 			else if (ball_box.position.y < new_ball_box.position.y)
 				particle->velocity.y = abs(particle->velocity.y);
-			new_position = new_ball_box.position;
+
+			ball_box.position = new_ball_box.position;
 		}
 	}
 
@@ -185,8 +161,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 
 	// recenter the particle
-	particle->corners.bottomleft = new_position - particle_half_size;
-	particle->corners.topright   = new_position + particle_half_size;
+	particle->corners = chaos::BoxToParticleCorners(ball_box);
 
 	return false; 
 }

@@ -367,6 +367,7 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 	chaos::StateMachine::State const * state = game_automata->GetCurrentState();
 	if (state != nullptr)
 	{
+#if _DEBUG
 		if (state->GetStateID() == LudumAutomata::STATE_PLAYING)
 		{
 			if (button == 0 && action == GLFW_PRESS)
@@ -375,7 +376,9 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 				sequence_challenge = CreateSequenceChallenge((size_t)len);
 			}	
 		}
-		else if (state->GetStateID() == LudumAutomata::STATE_MAINMENU)
+		else 
+#endif			
+		if (state->GetStateID() == LudumAutomata::STATE_MAINMENU)
 		{
 			if (action == GLFW_PRESS)
 				RequireStartGame();

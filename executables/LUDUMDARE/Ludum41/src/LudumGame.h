@@ -47,11 +47,8 @@ protected:
 	float TITLE_SIZE = 150.0f;
 	float TITLE_PLACEMENT_Y = 0;
 
-	//float PLAYER_Y = -400.0f;
-
-	float PLAYER_Y = 0.0f;
-
-	float PLAYER_HEIGHT = 200.0f; //35.0f;
+	float PLAYER_Y = -400.0f;
+	float PLAYER_HEIGHT = 35.0f;
 
 public:
 

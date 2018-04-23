@@ -1,6 +1,6 @@
 {
   "sprite_directory":"@sprites",
-  "font_path": "@fonts/unispace.ttf",
+  "font_path": "@fonts/gomarice_katamari_serif.ttf",
   "french_dictionnary": "@dictionnary/french.txt",
   "english_dictionnary": "@dictionnary/english.txt",
 

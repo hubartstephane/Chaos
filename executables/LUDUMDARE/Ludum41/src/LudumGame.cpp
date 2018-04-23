@@ -22,7 +22,7 @@ bool LudumGame::IsPlaying() const
 
 void LudumGame::CreateGameTitle()
 {
-	CreateTitle("AsciiPaouf II");
+	CreateTitle("AsciiPaouf 2");
 }
 
 void LudumGame::CreateTitle(char const * title)

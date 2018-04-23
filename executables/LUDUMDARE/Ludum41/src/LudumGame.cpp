@@ -57,7 +57,6 @@ bool LudumGame::OnEnterPause()
 {
 	StartPauseMusic(true);
 	CreateTitle("Pause");
-
 	return true;
 }
 

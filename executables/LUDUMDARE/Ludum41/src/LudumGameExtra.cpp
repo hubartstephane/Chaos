@@ -617,9 +617,9 @@ bool LudumGame::InitializeParticleManager()
 	AddParticleLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
 
 	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
-
-	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
+	
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
+	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
 	// fill the background
 	FillBackgroundLayer();

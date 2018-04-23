@@ -1,8 +1,8 @@
 {
   "sprite_directory":"@sprites",
   "font_path": "@fonts/gomarice_katamari_serif.ttf",
-  "french_dictionnary": "@dictionnary/french.txt",
-  "english_dictionnary": "@dictionnary/english.txt",
+  "french_dictionnary": "@dictionnary/small_french.txt",
+  "english_dictionnary": "@dictionnary/small_english.txt",
 
   
   "min_word_size": 4,

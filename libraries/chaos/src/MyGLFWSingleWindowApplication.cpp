@@ -82,10 +82,8 @@ namespace chaos
 
 			SingleWindowApplicationParams params = window_params; // work on a copy of the params
 
-																														// set an error callback
+			// set an error callback
 			glfwSetErrorCallback(OnGLFWError);
-
-			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
 
 			// compute the monitor upon which the window will be : use it for pixel format
 			if (params.monitor == nullptr)
@@ -99,13 +97,21 @@ namespace chaos
 			// retrieve the mode of the monitor to deduce pixel format
 			GLFWvidmode const * mode = glfwGetVideoMode(params.monitor);
 
-			// compute the position and size of the window 
+			nlohmann::json const * window_configuration = JSONTools::GetStructure(configuration, "window");
+			if (window_configuration != nullptr)
+				TweakHintsFromConfiguration(params, *window_configuration);
+			params.hints.ApplyHints();
+
+			// compute the position and size of the window
+			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
+
 			int x = 0;
 			int y = 0;
 			if (pseudo_fullscreen) // full-screen, the window use the full-size
 			{
 				params.width = mode->width;
 				params.height = mode->height;
+
 				x = monitor_x;
 				y = monitor_y;
 			}
@@ -127,11 +133,6 @@ namespace chaos
 
 			// prepare window creation
 			window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
-
-			nlohmann::json const * window_configuration = JSONTools::GetStructure(configuration, "window");
-			if (window_configuration != nullptr)
-				TweakHintsFromConfiguration(params, *window_configuration);
-			params.hints.ApplyHints();
 
 			// create window
 			if (params.title == nullptr) // title cannot be null

@@ -88,8 +88,11 @@ size_t ParticleBrickTrait::ParticleToVertex(ParticleBrick const * particle, Vert
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
 
-	glm::vec4 color = particle->color;
-	color.a = ((float)particle->life) / ((float)(1 + particle->starting_life));
+	int   extra = 2;
+	float ratio = ((float)(extra + particle->life)) / ((float)(extra + particle->starting_life));
+
+	glm::vec4 color = ratio * particle->color;
+
 
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
@@ -223,6 +226,10 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 size_t ParticleChallengeTrait::ParticleToVertex(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
+	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
+
+
 	size_t challenge_position = particle->challenge->GetChallengePosition();
 
 	// generate particle corners and texcoords
@@ -231,10 +238,23 @@ size_t ParticleChallengeTrait::ParticleToVertex(ParticleChallenge const * partic
 	// copy the color in all triangles vertex
 
 	glm::vec4 color = particle->color;
-	if (particle->index < challenge_position)
-		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	if (keyboard)
+	{
+		if (particle->index < challenge_position)
+			color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 	else
-		color = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+	{
+		if (particle->index < challenge_position)
+			color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		else
+			color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
+	}
+
+
 
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = color;

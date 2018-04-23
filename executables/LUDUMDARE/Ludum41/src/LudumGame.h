@@ -418,7 +418,8 @@ protected:
 
 	float challenge_time_dilation = 0.5f;
 	float challenge_frequency = 10.0f;
-
+	float challenge_duration   = 5.0f;
+	
 	float delay_before_ball_move = 2.0f;
 
 	int min_brick_life = 1;

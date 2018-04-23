@@ -261,6 +261,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_time_dilation);	
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_frequency);	
+	LUDUMGAME_JSON_ATTRIBUTE(challenge_duration);
 	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);		
 	LUDUMGAME_JSON_ATTRIBUTE(min_brick_life);		
 	LUDUMGAME_JSON_ATTRIBUTE(max_brick_life);		
@@ -690,7 +691,7 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 
 
 		result->callbacks = CreateSequenceChallengeCallbacks();
-		result->SetTimeout(5.0f);
+		result->SetTimeout(challenge_duration);
 
 		ball_time_dilation = challenge_time_dilation;
 	}

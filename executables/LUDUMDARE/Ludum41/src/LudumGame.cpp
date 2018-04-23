@@ -576,8 +576,13 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 
 glm::vec2 LudumGame::GenerateBallRandomDirection() const
 {
+	float direction = (rand() % 2) ? 1.0f : -1.0f;
+
 	// direction upward
-	float angle = 3.14f * 0.5f + chaos::MathTools::RandFloat(-3.14f * 0.33f, 3.14f * 0.33f);
+	float angle = 
+		3.14f * 0.5f +									// up
+		direction * 3.14f * 0.125f +    // small base angle to the left or the right
+		direction * chaos::MathTools::RandFloat(0, 3.14f * 0.125f); // final adjustement
 
 	return glm::vec2(
 		chaos::MathTools::Cos(angle),
@@ -611,11 +616,11 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks()
 	glm::vec4 const colors[] = {	
 		glm::vec4(0.7f, 0.0f, 0.0f, 1.0f),
 		glm::vec4(0.0f, 0.7f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.0f, 0.7f, 1.0f),
-		glm::vec4(0.7f, 0.7f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.7f, 0.7f, 1.0f),
-		glm::vec4(0.7f, 0.0f, 0.7f, 1.0f),
-		glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)	
+		glm::vec4(0.0f, 0.0f, 0.7f, 1.0f)
+		//glm::vec4(0.7f, 0.7f, 0.0f, 1.0f),
+		//glm::vec4(0.0f, 0.7f, 0.7f, 1.0f),
+		//glm::vec4(0.7f, 0.0f, 0.7f, 1.0f),
+		//glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)	
 	};
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);

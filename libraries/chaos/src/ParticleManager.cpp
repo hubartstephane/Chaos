@@ -47,17 +47,6 @@ namespace chaos
 		return layer->GetParticleBuffer(layer->particles_ranges[range_index]);
 	}
 
-	void ParticleRangeAllocation::Resize(size_t new_size)
-	{
-		if (new_size == GetParticleCount())
-			return;
-
-		//layer->
-	
-	
-	
-	}
-
 	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================

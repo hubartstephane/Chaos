@@ -315,6 +315,7 @@ void LudumGame::ResetGameVariables()
 	ball_time_dilation = 1.0f;
 	challenge_timer    = challenge_frequency;
 	pending_split_count = 0;
+	ball_collision_speed = 0.0f;
 }
 void LudumGame::OnGameOver()
 {
@@ -375,10 +376,27 @@ void LudumGame::TickChallenge(double delta_time)
 	}
 }
 
+static void RotateVelocity(glm::vec2 & src, float angle)
+{
+	src *= 1.2f;
+
+	
+
+//	src = glm::rotate((angle, src);
+}
+
 
 void LudumGame::TickBallSplit(double delta_time)
 {
+
+#if 0
+	pending_split_count = 1;
+
 	if (pending_split_count <= 0)
+		return;
+
+	ParticleMovableObject * balls = GetBallParticles();
+	if (balls == nullptr)
 		return;
 
 	size_t ball_count = GetBallCount();
@@ -387,12 +405,25 @@ void LudumGame::TickBallSplit(double delta_time)
 		size_t ball_candidate = CanStartChallengeBallIndex();
 		if (ball_candidate != std::numeric_limits<size_t>::max())
 		{
+			boost::intrusive_ptr<chaos::ParticleRangeAllocation> new_balls_allocations = CreateBalls(ball_count + 1, false);
 
+			ParticleMovableObject * new_balls = (ParticleMovableObject*)new_balls_allocations->GetParticleBuffer();
+			if (new_balls != nullptr)
+			{
+				for (size_t i = 0 ; i < ball_count ; ++i)
+					new_balls[i] = balls[i];
 
+				new_balls[ball_count] = balls[ball_candidate];
 
+				RotateVelocity(new_balls[ball_candidate].velocity, 0.1f);
+				RotateVelocity(new_balls[ball_count].velocity, -0.1f);
+
+				balls_allocations = new_balls_allocations; // erase old buffer							
+			}
 			pending_split_count--;
 		}	
 	}
+#endif
 }
 
 bool LudumGame::TickGameOverDetection(double delta_time)
@@ -404,10 +435,20 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 		if (current_life <= 0)
 			RequireGameOver();
 		else
-			balls_allocations = CreateBall();	
+		{
+			ball_collision_speed = 0.0f;
+			balls_allocations = CreateBalls(1, true);	
+		}
 		return false;
 	}
 	return true;
+}
+
+void LudumGame::OnBallCollide()
+{
+	PlaySound("ball", false, false);
+
+	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ball_collision_speed_increment);
 }
 
 void LudumGame::TickLevelCompleted(double delta_time)
@@ -606,7 +647,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks()
 	return result;
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateBall()
+chaos::ParticleRangeAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 {
 
 	// create the object
@@ -618,15 +659,18 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBall()
 	ParticleMovableObject * particle = (ParticleMovableObject *)result->GetParticleBuffer();
 	if (particle == nullptr)
 		return nullptr;
-	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	for (size_t i = 0 ; i < count ; ++i)
+	{	
+		particle[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		particle[i].corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
 
-	particle->corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
-
-	particle->delay_before_move = delay_before_ball_move;
-	particle->velocity = ball_speed * GenerateBallRandomDirection();
-
-
+		if (full_init)
+		{
+			particle[i].delay_before_move = delay_before_ball_move;
+			particle[i].velocity = ball_speed * GenerateBallRandomDirection();		
+		}
+	}
 	return result;
 }
 
@@ -819,7 +863,7 @@ void LudumGame::CreateAllGameObjects(int level)
 	}
 
 	if (balls_allocations == nullptr)
-		balls_allocations = CreateBall();	
+		balls_allocations = CreateBalls(1, true);	
 
 	if (bricks_allocations == nullptr)
 		bricks_allocations = CreateBricks();	

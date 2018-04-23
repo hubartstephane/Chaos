@@ -144,7 +144,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// update the velocity of the ball
-	particle->velocity = glm::normalize(particle->velocity) * game->ball_speed;
+	particle->velocity = glm::normalize(particle->velocity) * (game->ball_collision_speed + game->ball_speed);
 
 	// moving the particle
 	particle->corners.bottomleft += particle->velocity * delta_time * game->ball_time_dilation;
@@ -183,6 +183,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		{
 			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
 			ball_box.position = new_ball_box.position;
+			game->OnBallCollide();			
 		}
 	}
 
@@ -202,6 +203,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 				ball_box.position = new_ball_box.position;
 
 				--bricks[i].life;
+
+				game->OnBallCollide();				
 			}				
 		}	
 	}

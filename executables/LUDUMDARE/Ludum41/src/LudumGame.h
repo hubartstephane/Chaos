@@ -229,7 +229,7 @@ protected:
 	chaos::ParticleRangeAllocation * CreatePlayer();
 
 	/** create the ball */
-	chaos::ParticleRangeAllocation * CreateBall();
+	chaos::ParticleRangeAllocation * CreateBalls(size_t count, bool full_init);
 	/** create the bricks */
 	chaos::ParticleRangeAllocation * CreateBricks();
 
@@ -243,7 +243,8 @@ protected:
 	/** reset the game variables */
 	void ResetGameVariables();
 
-
+	/** called whenever a ball collide */
+	void OnBallCollide();
 	/** change the player position */
 	void SetPlayerPosition(float position);
 	/** change the length */
@@ -407,6 +408,10 @@ protected:
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;
 	float ball_speed_increment = 0.5f;
+
+	float ball_collision_speed    = 0.5f;
+	float ball_collision_speed_increment = 0.5f;
+	float ball_collision_max_speed = 0.5f;
 	
 	float mouse_sensitivity   = 1.0f;
 	float gamepad_sensitivity = 1.0f;

@@ -3,6 +3,9 @@
   "font_path": "@fonts/unispace.ttf",
   "french_dictionnary": "@dictionnary/small_french.txt",
   "english_dictionnary": "@dictionnary/small_english.txt",
+
+  
+  "min_word_size": 4,
   "max_word_size": 10,
 
   "initial_life": 3,
@@ -18,7 +21,10 @@
   "ball_max_speed": 1200.0,
   "ball_initial_speed": 200.0,
   "ball_speed_increment": 200.0,
-  
+
+  "ball_collision_speed_increment": 20,
+  "ball_collision_max_speed":600,
+
 
   "delay_before_ball_move" :  0.5,
   "mouse_sensitivity": 1.0,

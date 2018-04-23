@@ -69,8 +69,6 @@ namespace chaos
 		void * GetParticleBuffer();
 		/** get the particles */
 		void const * GetParticleBuffer() const;
-		/** require more or less particle */
-		void Resize(size_t new_size);
 
 	protected:
 

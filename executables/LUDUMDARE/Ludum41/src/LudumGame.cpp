@@ -22,15 +22,17 @@ bool LudumGame::IsPlaying() const
 
 void LudumGame::CreateGameTitle()
 {
-	CreateTitle("AsciiPaouf 2");
+	CreateTitle("AsciiPaouf 2", false);
 }
 
-void LudumGame::CreateTitle(char const * title)
+void LudumGame::CreateTitle(char const * title, bool normal)
 {
 	chaos::ParticleTextGenerator::GeneratorParams params;
 	params.line_height = TITLE_SIZE;
 	params.hotpoint_type = chaos::Hotpoint::CENTER;
 	params.position.y = TITLE_PLACEMENT_Y;
+
+	params.character_set_name = (normal) ? "normal" : "title";
 
 	text_allocations = CreateTextParticles(title, params);
 }
@@ -56,7 +58,7 @@ void LudumGame::OnStartGame(bool very_first)
 bool LudumGame::OnEnterPause()
 {
 	StartPauseMusic(true);
-	CreateTitle("Pause");
+	CreateTitle("Pause", true);
 	return true;
 }
 

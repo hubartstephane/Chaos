@@ -236,7 +236,7 @@ protected:
 	/** create the title of the game */
 	void CreateGameTitle();
 	/** create the title */
-	void CreateTitle(char const * title);
+	void CreateTitle(char const * title, bool normal);
 	/** create the title */
 	void DestroyTitle();
 

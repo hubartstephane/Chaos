@@ -198,7 +198,7 @@ bool PlayingToGameOverTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	if (game != nullptr)
 	{
 		gameover_sound = game->PlaySound("gameover", false, false);
-		game->CreateTitle("Game Over");
+		game->CreateTitle("Game Over", true);
 		game->OnLeaveGame();		
 	}
 	return false;

@@ -171,6 +171,9 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 	std::string font_path;
 	chaos::JSONTools::GetAttribute(config, "font_path", font_path);
 
+	std::string title_font_path;
+	chaos::JSONTools::GetAttribute(config, "title_font_path", title_font_path);
+
 	// Add sprites
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
 	if (bitmap_set == nullptr)
@@ -179,9 +182,15 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 	bitmap_set->AddBitmapFilesFromDirectory(sprite_directory);
 
 	// Add the font
-	chaos::BitmapAtlas::CharacterSetInput * character_set1 =
-		input.AddCharacterSet("character_set", nullptr, font_path.c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+	chaos::BitmapAtlas::CharacterSetInputParams font_params;
+	font_params.max_character_width = 64;
+	font_params.max_character_height = 64;
 
+	chaos::BitmapAtlas::CharacterSetInput * character_set1 =
+		input.AddCharacterSet("normal", nullptr, font_path.c_str(), nullptr, true, font_params);
+
+	chaos::BitmapAtlas::CharacterSetInput * character_set2 =
+		input.AddCharacterSet("title", nullptr, title_font_path.c_str(), nullptr, true, font_params);
 	// generate the atlas
 	int ATLAS_SIZE = 1024;
 	int ATLAS_PADDING = 10;

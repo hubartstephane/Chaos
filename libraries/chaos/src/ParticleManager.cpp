@@ -47,6 +47,42 @@ namespace chaos
 		return layer->GetParticleBuffer(layer->particles_ranges[range_index]);
 	}
 
+	bool ParticleRangeAllocation::IsAttachedToLayer() const
+	{
+		return (layer != nullptr);
+	}
+
+
+	void ParticleRangeAllocation::Resize(size_t new_count)
+	{
+
+	}
+
+	void ParticleRangeAllocation::Pause(bool in_paused)
+	{
+		paused = in_paused;
+	}
+
+	bool ParticleRangeAllocation::IsPaused() const
+	{
+		return paused;
+	}
+
+	void ParticleRangeAllocation::Show(bool in_visible)
+	{
+		if (visible != in_visible)
+		{
+			if (layer != nullptr)
+				layer->require_GPU_update = true;  // the GPU buffer is about to be changed
+			visible = in_visible;
+		}		
+	}
+
+	bool ParticleRangeAllocation::IsVisible() const
+	{
+		return visible;
+	}
+
 	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================
@@ -125,6 +161,7 @@ namespace chaos
 
 	void ParticleLayer::DetachAllParticleAllocations()
 	{
+		// faster to do that from end to begin
 		while (range_allocations.size())
 			RemoveParticleAllocation(range_allocations[range_allocations.size() - 1]);
 	}
@@ -283,17 +320,18 @@ namespace chaos
 			MarkParticlesToDestroy(range.start, range.count);
 		}
 		// displace range and allocation
-		size_t last_index = range_allocations.size() - 1;
-		size_t range_index = allocation->range_index;
-		if (allocation->range_index < last_index)
+		size_t count = range_allocations.size();
+		for (size_t i = allocation->range_index; i < count - 1; ++i)
 		{
-			range_allocations[range_index] = range_allocations[last_index]; // replace the allocation
-			particles_ranges[range_index] = particles_ranges[last_index];
-			range_allocations[range_index]->range_index = range_index;
+			range_allocations[i] = range_allocations[i + 1]; // replace the allocation
+			particles_ranges[i] = particles_ranges[i + 1];
+
+			range_allocations[i]->range_index = i;
 		}
+
+		// remove the last element of both arrays (useless now)
 		range_allocations.pop_back();
 		particles_ranges.pop_back();
-
 		// reset the object
 		*allocation = ParticleRangeAllocation();
 	}

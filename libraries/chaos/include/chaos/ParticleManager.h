@@ -70,6 +70,25 @@ namespace chaos
 		/** get the particles */
 		void const * GetParticleBuffer() const;
 
+		/** resize the particles */
+		void Resize(size_t new_count);
+
+		/** returns true whether the allocation is attached to a layer */
+		bool IsAttachedToLayer() const;
+
+
+
+
+		/** pause/resume the layer */
+		void Pause(bool in_paused = true);
+		/** returns whether the layer is paused */
+		bool IsPaused() const;
+
+		/** show/hide the layer */
+		void Show(bool in_visible = true);
+		/** returns whether the layer is visible */
+		bool IsVisible() const;
+
 	protected:
 
 		/** the particle layer that contains the range */
@@ -78,6 +97,11 @@ namespace chaos
 		size_t range_index = std::numeric_limits<size_t>::max();
 		/** whether the particles existence in linked to the allocation lifetime */
 		bool particles_owner = true;
+
+		/** whether the allocation is paused */
+		bool paused = false;
+		/** whether the allocation is visible */
+		bool visible = true;
 	};
 
 	// ==============================================================
@@ -285,7 +309,7 @@ namespace chaos
 	public:
 
 		/** whether the particles are dynamic */
-		bool dynamic_particles = false;
+		bool dynamic_particles = true;
 	};
 
 	// ==============================================================

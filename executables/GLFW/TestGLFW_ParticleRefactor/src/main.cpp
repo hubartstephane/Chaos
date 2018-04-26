@@ -17,6 +17,8 @@
 #include <chaos/VertexDeclaration.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/Hotpoint.h>
+#include <chaos/GLMTools.h>
+
 
 #include <chaos/ParticleManager.h>
 
@@ -96,14 +98,16 @@ using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
-	
+	int const LAYER_COUNT = 5;
+	int const MATERIAL_COUNT = 3;
+
+	float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
+	float WORLD_X = 1000.0f;
 
 protected:
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
-		float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
-
 		// clear the buffers
 		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -117,8 +121,6 @@ protected:
 		//
 		chaos::DisableLastReferenceLost<chaos::GPUProgramProvider> uniform_provider;
 
-
-		float WORLD_X = 1000.0f;
 		glm::vec2 world_size     = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
 		glm::vec2 world_position = glm::vec2(0.0f, 0.0f);
 
@@ -154,6 +156,49 @@ protected:
 
 	virtual void OnMouseButton(int button, int action, int modifier) override
 	{
+		if (action != GLFW_PRESS)
+			return;
+
+		if (button == 0)
+		{
+			int layer_index    = rand() % LAYER_COUNT;
+			int material_index = rand() % MATERIAL_COUNT;
+
+			chaos::ParticleLayer * particle_layer = particle_manager->FindLayer(material_index + layer_index * MATERIAL_COUNT);
+			if (particle_layer != nullptr)
+			{
+				int particle_count = rand() % 50 + 5;
+				chaos::ParticleRangeAllocation * range = particle_layer->SpawnParticlesAndKeepRange(particle_count);
+				range_allocations.push_back(range);
+
+				size_t pc = particle_layer->GetParticleCount(range->GetParticleRange());
+
+				ParticleExample * particles = (ParticleExample*)particle_layer->GetParticleBuffer(range->GetParticleRange());
+
+				
+
+				if (particles != nullptr)
+				{
+					glm::vec2 center = 
+						(2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
+					InitializeParticles(particles, pc, center);
+				}
+			}
+		}
+		else
+		{
+			size_t count = range_allocations.size();
+			if (count > 0)
+			{
+				size_t r = (rand() % count);
+				range_allocations[r] = range_allocations.back();
+				range_allocations.pop_back();
+
+
+			}
+
+
+		}
 
 
 
@@ -173,11 +218,10 @@ protected:
 		chaos::RenderMaterial * RM3 = gpu_manager->FindRenderMaterial("mat3");
 
 		chaos::RenderMaterial * materials[] = { RM1, RM2, RM3 };
+		assert(MATERIAL_COUNT == 3);
 
 		particle_manager = new chaos::ParticleManager;
 
-		int const LAYER_COUNT    = 5;
-		int const MATERIAL_COUNT = 5;
 		for (int i = 0; i < LAYER_COUNT; ++i)
 		{
 			for (int j = 0; j < MATERIAL_COUNT; ++j)
@@ -186,38 +230,26 @@ protected:
 				particle_layer->SetRenderOrder(i);
 				particle_layer->SetLayerID(j + i * MATERIAL_COUNT);
 
-				int material_index = rand() % 3;
-				int particle_count = rand() % 50 + 5;
-
-				particle_layer->SetRenderMaterial(materials[material_index]);
-
-				chaos::ParticleRangeAllocation * range = particle_layer->SpawnParticlesAndKeepRange(particle_count);
-				range_allocations.push_back(range);
-
-				size_t pc = particle_layer->GetParticleCount(range->GetParticleRange());
-				
-				ParticleExample * particles = (ParticleExample*)particle_layer->GetParticleBuffer(range->GetParticleRange());
-				if (particles)
-					InitializeParticles(particles, pc);
-
+				particle_layer->SetRenderMaterial(materials[j]);
 				particle_manager->AddLayer(particle_layer);
 			}
 		}
 		return true;
 	}
 
-	void InitializeParticles(ParticleExample * particles, size_t count)
+	void InitializeParticles(ParticleExample * particles, size_t count, glm::vec2 const & center)
 	{
-		float WORLD_SIZE = 1000.0f * 9.0f / 16.0f;
+		
+		float WORLD_HEIGHT = WORLD_X / VIEWPORT_WANTED_ASPECT;
 
 		for (size_t i = 0; i < count; ++i)
 		{		
-			float size  = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.04f;
+			float size  = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.04f;
 			float alpha = chaos::MathTools::RandFloat() * 6.28f;
-			float speed = WORLD_SIZE * chaos::MathTools::RandFloat() * 0.1f;
+			float speed = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.1f;
 			float lifetime = 2.0f + chaos::MathTools::RandFloat() * 2.0f;
 
-			particles[i].position = glm::vec2(0.0f, 0.0f);
+			particles[i].position = center;
 			particles[i].velocity = glm::vec2(
 				speed * chaos::MathTools::Cos(alpha),
 				speed * chaos::MathTools::Sin(alpha));

@@ -4,4 +4,3 @@
 
 ProcessSubPremake("Ludum40")
 ProcessSubPremake("Ludum41")
-ProcessSubPremake("LudumTemplate")

@@ -70,14 +70,8 @@ namespace chaos
 		/** get the particles */
 		void const * GetParticleBuffer() const;
 
-		/** resize the particles */
-		void Resize(size_t new_count);
-
 		/** returns true whether the allocation is attached to a layer */
 		bool IsAttachedToLayer() const;
-
-
-
 
 		/** pause/resume the layer */
 		void Pause(bool in_paused = true);
@@ -89,7 +83,13 @@ namespace chaos
 		/** returns whether the layer is visible */
 		bool IsVisible() const;
 
+		/** resize the particles */
+		bool Resize(size_t new_count);
+
 	protected:
+
+		/** get a pointer on the range in layer */
+		ParticleRange * GetParticleRangeReference();
 
 		/** the particle layer that contains the range */
 		ParticleLayer * layer = nullptr;
@@ -173,6 +173,11 @@ namespace chaos
 		void * GetParticleBuffer(ParticleRange range);
 		/** get the particles */
 		void const * GetParticleBuffer(ParticleRange range) const;
+
+		/** get the particle by its index */
+		void * GetParticle(size_t index);
+		/** get the particle by its index */
+		void const * GetParticle(size_t index) const;
 
 		/** returns the size in memory of a particle */
 		size_t GetParticleSize() const { return particle_size; }

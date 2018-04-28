@@ -28,6 +28,13 @@ namespace chaos
 		return layer->particles_ranges[range_index];
 	}
 
+	ParticleRange * ParticleRangeAllocation::GetParticleRangeReference()
+	{
+		if (layer == nullptr)
+			return nullptr;
+		return &layer->particles_ranges[range_index];
+	}
+
 	size_t ParticleRangeAllocation::GetParticleCount() const
 	{
 		return GetParticleRange().count;
@@ -50,12 +57,6 @@ namespace chaos
 	bool ParticleRangeAllocation::IsAttachedToLayer() const
 	{
 		return (layer != nullptr);
-	}
-
-
-	void ParticleRangeAllocation::Resize(size_t new_count)
-	{
-
 	}
 
 	void ParticleRangeAllocation::Pause(bool in_paused)
@@ -81,6 +82,69 @@ namespace chaos
 	bool ParticleRangeAllocation::IsVisible() const
 	{
 		return visible;
+	}
+
+
+
+	void ConstructParticles(void * dst, size_t count)
+	{
+
+	}
+
+	void MoveParticles(void const * src, void * dst, size_t count)
+	{
+
+	}
+
+	bool ParticleRangeAllocation::Resize(size_t new_count)
+	{
+		// can only resize if attached to manager
+		ParticleRange * range = GetParticleRangeReference();
+		if (range != nullptr)
+			return false;
+
+		size_t old_count = range->count;
+		// nothing to do
+		if (new_count == old_count)
+			return true;
+
+		// downsize the range
+		if (new_count < old_count)
+		{
+			layer->MarkParticlesToDestroy(range->start + new_count, old_count - new_count);
+			range->count = new_count;
+			return true;
+		}
+
+		// increase the range
+		size_t p1     = range->start;
+		size_t p2     = p1 + range->count;
+		size_t psize  = layer->particle_size;
+		size_t pcount = layer->particles.size() / psize;
+		
+
+		layer->particles.insert(layer->particles.end(), psize * (new_count - old_count), 0); // add particles at the end of the buffer
+
+		if (p2 == pcount) // the range points the very last particles of the layer
+		{                 // can grow without any questions
+
+			char * first_new_particle = &layer->particles[0] + psize * (p1 + old_count);
+			ConstructParticles(first_new_particle, new_count - old_count);
+		}
+		else
+		{
+			size_t particule_to_move1 = pcount - p2; // insert in place
+			size_t particule_to_move2 = new_count;   // insert a copy at the end
+
+
+		}
+
+		// udpate the value
+		range->count = new_count;
+
+
+
+		return true;
 	}
 
 	// ==============================================================
@@ -173,6 +237,26 @@ namespace chaos
 		return particles.size() / particle_size;
 	}
 
+	void * ParticleLayer::GetParticle(size_t index)
+	{
+		if (particle_size == 0)
+			return nullptr;
+		size_t particle_count = particles.size() / particle_size;
+		if (index >= particle_count)
+			return nullptr;
+		return &particles[0] + index * particle_size;
+	}
+
+	void const * ParticleLayer::GetParticle(size_t index) const
+	{
+		if (particle_size == 0)
+			return nullptr;
+		size_t particle_count = particles.size() / particle_size;
+		if (index >= particle_count)
+			return nullptr;
+		return &particles[0] + index * particle_size;
+	}
+
 	size_t ParticleLayer::GetParticleCount(ParticleRange range) const
 	{
 		if (particle_size == 0)
@@ -249,7 +333,43 @@ namespace chaos
 
 	size_t ParticleLayer::UpdateParticles(float delta_time)
 	{
+		size_t particle_index = 0;
+		size_t range_index    = 0;
+		size_t particle_count = GetParticleCount();
+		size_t range_count    = range_allocations.size();
+
+		size_t result = 0;
+		while (particle_index < particle_count)
+		{
+			void * p = GetParticle(particle_index);
+			if (range_index < range_count)
+			{
+				ParticleRange const & range = particles_ranges[range_index];
+
+				if (particle_index == range.start) // current particle is in a range
+				{
+					if (!range_allocations[range_index]->IsPaused())
+						result += layer_desc->UpdateParticles(delta_time, p, range.count, &deletion_vector[particle_index]);
+					particle_index += range.count;
+					range_index += 1;
+				}
+				else
+				{
+					result += layer_desc->UpdateParticles(delta_time, p, range.start - particle_index, &deletion_vector[particle_index]);
+					particle_index = range.start;
+				}
+			}
+			else
+			{
+				result += layer_desc->UpdateParticles(delta_time, p, particle_count - particle_index, &deletion_vector[particle_index]);
+				particle_index = particle_count;
+			}
+		}
+		return result;
+
+#if 0
 		return layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount(), &deletion_vector[0]);
+#endif
 	}
 
 	size_t ParticleLayer::CleanDestroyedParticles()

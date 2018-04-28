@@ -174,9 +174,6 @@ protected:
 				size_t pc = particle_layer->GetParticleCount(range->GetParticleRange());
 
 				ParticleExample * particles = (ParticleExample*)particle_layer->GetParticleBuffer(range->GetParticleRange());
-
-				
-
 				if (particles != nullptr)
 				{
 					glm::vec2 center = 
@@ -191,18 +188,18 @@ protected:
 			if (count > 0)
 			{
 				size_t r = (rand() % count);
-				range_allocations[r] = range_allocations.back();
-				range_allocations.pop_back();
 
-
+				if (button == 1)
+				{
+					range_allocations[r] = range_allocations.back();
+					range_allocations.pop_back();
+				}
+				else
+				{
+					range_allocations[r]->Pause(!range_allocations[r]->IsPaused());
+				}
 			}
-
-
 		}
-
-
-
-
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

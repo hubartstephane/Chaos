@@ -186,10 +186,11 @@ namespace chaos
 		return VertexDeclaration();
 	}
 		
-	void ParticleLayerDesc::ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const
+	size_t ParticleLayerDesc::ParticlesToVertices(char const * particles, size_t particles_count, char * vertices) const
 	{
 		assert(particles != nullptr);
 		assert(vertices != nullptr);
+		return 0;
 	}
 	
 	// ==============================================================
@@ -366,10 +367,6 @@ namespace chaos
 			}
 		}
 		return result;
-
-#if 0
-		return layer_desc->UpdateParticles(delta_time, &particles[0], GetParticleCount(), &deletion_vector[0]);
-#endif
 	}
 
 	size_t ParticleLayer::CleanDestroyedParticles()
@@ -424,9 +421,14 @@ namespace chaos
 		size_t end = min(start + count, suppression_count);
 		// mark the particles to destroy    
 		while (start != end)
-			deletion_vector[start++] = DESTROY_PARTICLE_MARK;
-		// count the number of particles to destroy
-		pending_kill_particles += count;
+		{
+			if (deletion_vector[start] != DESTROY_PARTICLE_MARK)
+			{
+				deletion_vector[start] = DESTROY_PARTICLE_MARK;
+				++pending_kill_particles;
+			}
+			++start;
+		}
 	}
 
 	void ParticleLayer::RemoveParticleAllocation(ParticleRangeAllocation * allocation)
@@ -514,13 +516,16 @@ namespace chaos
 		// update the vertex declaration
 		UpdateVertexDeclaration();
 		// Update GPU buffers	
-		UpdateGPUBuffers();
+		size_t vcount = UpdateGPUBuffers();
 		// do the rendering
-		DoDisplay(final_material, uniform_provider, instancing);
+		DoDisplay(vcount, final_material, uniform_provider, instancing);
 	}
 
-	void ParticleLayer::DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void ParticleLayer::DoDisplay(size_t vcount, RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
+		// no vertices, no rendering
+		if (vcount == 0)
+			return;
 		// get the vertex array
 		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
 		if (vertex_array == nullptr)
@@ -529,13 +534,11 @@ namespace chaos
 		final_material->UseMaterial(uniform_provider);
 		// bind the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
-		// compute the number of vertices
-		size_t vertices_count = GetVerticesCountPerParticles() * GetParticleCount();
 		// one draw call for the whole buffer
 		DrawPrimitive primitive;
 		primitive.primitive_type = GL_TRIANGLES;
 		primitive.indexed = false;
-		primitive.count = vertices_count;
+		primitive.count = vcount;
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
 
@@ -551,23 +554,24 @@ namespace chaos
 		vertex_declaration = layer_desc->GetVertexDeclaration();
 	}
 
-	void ParticleLayer::UpdateGPUBuffers() const
+	size_t ParticleLayer::UpdateGPUBuffers() const
 	{
-		if (!require_GPU_update)
-			return;
+		size_t result = 0;
 
+		// return the number of vertices from the previous call
+		if (!require_GPU_update)
+			return vertices_count; 
 		// create the vertex buffer if necessary
 		if (vertex_buffer == nullptr)
 		{
 			GLTools::GenerateVertexAndIndexBuffersObject(nullptr, &vertex_buffer, nullptr);
 			if (vertex_buffer == nullptr)
-				return;
+				return 0;
 		}
-
-		// reserve memory
+		// reserve memory (for the maximum number of vertices possible)
 		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * GetParticleCount();
 		if (vertex_buffer_size == 0)
-			return;
+			return 0;
 
 		GLuint buffer_id = vertex_buffer->GetResourceID();
 		GLenum map_type = (AreParticlesDynamic()) ?
@@ -578,13 +582,62 @@ namespace chaos
 		// map the vertex buffer
 		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
 		if (buffer == nullptr)
-			return;
+			return 0;
 		// update the buffer
-		layer_desc->ParticlesToVertices(&particles[0], particles.size(), buffer, vertex_buffer_size);
+		result = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
 		// unmap the buffer
 		glUnmapNamedBuffer(buffer_id);
 
+		// no more update required
 		require_GPU_update = false;
+		// cache the nnumber of particles inserted
+		vertices_count = result;
+
+		return result;
+	}
+
+
+	size_t ParticleLayer::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
+	{
+		size_t result = 0;
+
+		size_t particle_index = 0;
+		size_t range_index = 0;
+		size_t particle_count = GetParticleCount();
+		size_t range_count = range_allocations.size();
+
+		while (particle_index < particle_count)
+		{
+			size_t display_vertices = 0;
+
+			void const * p = GetParticle(particle_index);
+			if (range_index < range_count)
+			{
+				ParticleRange const & range = particles_ranges[range_index];
+
+				if (particle_index == range.start) // current particle is in a range
+				{
+					if (range_allocations[range_index]->IsVisible())
+						display_vertices = layer_desc->ParticlesToVertices((char const *)p, range.count, buffer);
+					particle_index += range.count;
+					range_index += 1;
+				}
+				else
+				{
+					display_vertices = layer_desc->ParticlesToVertices((char const *)p, range.start - particle_index, buffer);
+					particle_index = range.start;
+				}
+			}
+			else
+			{
+				display_vertices = layer_desc->ParticlesToVertices((char const *)p, particle_count - particle_index, buffer);
+				particle_index = particle_count;
+			}
+
+			result += display_vertices;
+			buffer += display_vertices * vertex_size;
+		}
+		return result;
 	}
 
 	// ==============================================================

@@ -128,7 +128,7 @@ namespace chaos
 		virtual VertexDeclaration GetVertexDeclaration() const;
 
 		/** transform the particles into vertices */
-		virtual void ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const;
+		virtual size_t ParticlesToVertices(char const * particles, size_t particles_count, char * vertices) const;
 
 	protected:
 
@@ -233,12 +233,15 @@ namespace chaos
 		size_t UpdateParticles(float delta_time);
 		/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
 		size_t CleanDestroyedParticles();
-		/** update the GPU buffers */
-		void UpdateGPUBuffers() const;
+		/** update the GPU buffers (returns the number of vertices inserted) */
+		size_t UpdateGPUBuffers() const;
+		/** internal method to update the GPU buffers */
+		size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const;
+
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		void DoDisplay(RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		void DoDisplay(size_t vcount, RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 	protected:
 
@@ -285,6 +288,9 @@ namespace chaos
 		mutable boost::intrusive_ptr<VertexBuffer> vertex_buffer;
 		/** the cache for vertex array */
 		mutable VertexArrayCache vertex_array_cache;
+
+		/** number of used vertices in the vertex buffer */
+		mutable size_t vertices_count = 0;
 	};
 
 
@@ -402,20 +408,23 @@ namespace chaos
 		}
 
 		/** convert particles in vertices */
-		virtual void ParticlesToVertices(char const * particles, size_t particles_buffer_size, char * vertices, size_t vertices_buffer_size) const override
+		virtual size_t ParticlesToVertices(char const * particles, size_t particles_count, char * vertices) const override
 		{
-			size_t particle_size = GetParticleSize();
 			size_t vertex_size = GetVertexSize();
 			size_t vertices_per_particle = GetVerticesCountPerParticles();
-
-			size_t particles_count = particles_buffer_size / particle_size;
-			size_t vertices_count = vertices_buffer_size / vertex_size;
 
 			particle_type const * p = (particle_type const *)particles;
 			vertex_type * v = (vertex_type *)vertices;
 
+			size_t result = 0;
 			for (size_t i = 0; i < particles_count; ++i)
-				trait.ParticleToVertex(&p[i], &v[i * vertices_per_particle], vertices_per_particle);
+			{
+				size_t new_vertices = trait.ParticleToVertex(&p[i], v, vertices_per_particle);
+				assert(new_vertices <= vertices_per_particle);				
+				result += new_vertices;
+				v += new_vertices;
+			}
+			return result;
 		}
 
 	protected:

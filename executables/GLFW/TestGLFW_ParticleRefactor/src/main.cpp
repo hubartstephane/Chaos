@@ -77,6 +77,10 @@ public:
 		float alpha = particle->remaining_time / particle->lifetime;
 		for (size_t i = 0 ; i < 6 ; ++i)
 			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
+
+
+		if (rand() % 5 == 0) // flickering particles (not always rendered)
+			return 0;
 		
 		return vertices_per_particle;
 	}
@@ -159,6 +163,10 @@ protected:
 		if (action != GLFW_PRESS)
 			return;
 
+		double mouse_x = 0.0;
+		double mouse_y = 0.0;
+		glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
+
 		if (button == 0)
 		{
 			int layer_index    = rand() % LAYER_COUNT;
@@ -178,6 +186,11 @@ protected:
 				{
 					glm::vec2 center = 
 						(2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
+					
+				//	glm::vec2 center;
+				//	center.x = (float)mouse_x;
+				//	center.y = (float)mouse_y;
+					
 					InitializeParticles(particles, pc, center);
 				}
 			}
@@ -196,7 +209,8 @@ protected:
 				}
 				else
 				{
-					range_allocations[r]->Pause(!range_allocations[r]->IsPaused());
+					range_allocations[r]->Show(!range_allocations[r]->IsVisible());
+					//range_allocations[r]->Pause(!range_allocations[r]->IsPaused());
 				}
 			}
 		}

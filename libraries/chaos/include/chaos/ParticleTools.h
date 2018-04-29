@@ -89,6 +89,51 @@ namespace chaos
 			vertices[5] = tl;
 		}
 
+		template<class VERTEX_TYPE>
+		void GenerateBoxParticle(chaos::box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)
+		{
+			std::pair<glm::vec2, glm::vec2> corners = box.GetCorners();
+
+			glm::vec2 const & bottomleft = corners.first;
+			glm::vec2 const & topright = corners.second;
+
+			VERTEX_TYPE bl;
+			bl.position.x = bottomleft.x;
+			bl.position.y = bottomleft.y;
+			bl.texcoord.x = texcoords.bottomleft.x;
+			bl.texcoord.y = texcoords.bottomleft.y;
+			bl.texcoord.z = texcoords.bitmap_index;
+
+			VERTEX_TYPE tr;
+			tr.position.x = topright.x;
+			tr.position.y = topright.y;
+			tr.texcoord.x = texcoords.topright.x;
+			tr.texcoord.y = texcoords.topright.y;
+			tr.texcoord.z = texcoords.bitmap_index;
+
+			VERTEX_TYPE tl;
+			tl.position.x = bottomleft.x;
+			tl.position.y = topright.y;
+			tl.texcoord.x = texcoords.bottomleft.x;
+			tl.texcoord.y = texcoords.topright.y;
+			tl.texcoord.z = texcoords.bitmap_index;
+
+			VERTEX_TYPE br;
+			br.position.x = topright.x;
+			br.position.y = bottomleft.y;
+			br.texcoord.x = texcoords.topright.x;
+			br.texcoord.y = texcoords.bottomleft.y;
+			br.texcoord.z = texcoords.bitmap_index;
+
+			vertices[0] = bl;
+			vertices[1] = br;
+			vertices[2] = tr;
+
+			vertices[3] = bl;
+			vertices[4] = tr;
+			vertices[5] = tl;
+		}
+
 	}; // namespace ParticleTools
 
 }; // namespace chaos

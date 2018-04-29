@@ -31,9 +31,8 @@ class ParticleExample
 {
 public:
 
-	glm::vec2 position;
+	chaos::box2 box;
 	glm::vec2 velocity;
-	glm::vec2 size;
 	chaos::ParticleTexcoords texcoords;
 	float lifetime;
 	float remaining_time;
@@ -63,21 +62,18 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleExample * particle)
 	{
-		particle->position += particle->velocity * delta_time;
+		particle->box.position += particle->velocity * delta_time;
 		particle->remaining_time -= delta_time;
 		return (particle->remaining_time <= 0.0f);
 	}
 
 	size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle) const
 	{
-		chaos::ParticleCorners corners = chaos::ParticleTools::GetParticleCorners(particle->position, particle->size, chaos::Hotpoint::CENTER);
-
-		chaos::ParticleTools::GenerateBoxParticle(corners, particle->texcoords, vertices);
+		chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 
 		float alpha = particle->remaining_time / particle->lifetime;
 		for (size_t i = 0 ; i < 6 ; ++i)
 			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
-
 
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return 0;
@@ -89,12 +85,6 @@ public:
 };
 
 using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>;
-
-
-
-
-
-
 
 // ==============================================================
 // Application 
@@ -134,9 +124,6 @@ protected:
 		glm::mat4 local_to_cam =  glm::scale(scale) * glm::translate(tr);
 
 		uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
-
-
-
 
 		// draw
 		particle_manager->Display(&uniform_provider);
@@ -260,16 +247,14 @@ protected:
 			float speed = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.1f;
 			float lifetime = 2.0f + chaos::MathTools::RandFloat() * 2.0f;
 
-			particles[i].position = center;
+			particles[i].box.position = center;
+			particles[i].box.half_size = 0.5f * glm::vec2(size, size);
 			particles[i].velocity = glm::vec2(
 				speed * chaos::MathTools::Cos(alpha),
-				speed * chaos::MathTools::Sin(alpha));
-			particles[i].size = glm::vec2(size, size);
+				speed * chaos::MathTools::Sin(alpha));			
 			particles[i].lifetime = lifetime;
 			particles[i].remaining_time = lifetime;			
 		}
-		
-
 
 	}
 
@@ -288,10 +273,7 @@ protected:
 	std::vector<boost::intrusive_ptr<chaos::ParticleRangeAllocation>> range_allocations;
 };
 
-
-
 // ===============================================
-
 
 int _tmain(int argc, char ** argv, char ** env)
 {

@@ -538,7 +538,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * tex
 		{
 			chaos::ParticleTextGenerator::Token const & token = line[j];
 
-			particle[k].corners   = token.corners;
+			particle[k].box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			//particle[k].corners   = token.corners;
 			particle[k].texcoords = token.texcoords;
 			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 			++k;
@@ -594,7 +595,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceCha
 		{
 			chaos::ParticleTextGenerator::Token const & token = line[j];
 
-			particle[k].corners   = token.corners;
+			particle[k].box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			//particle[k].corners   = token.corners;
 			particle[k].texcoords = token.texcoords;
 			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 			particle[k].challenge = challenge;

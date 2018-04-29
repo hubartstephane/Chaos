@@ -58,7 +58,7 @@ size_t ParticleBackgroundTrait::ParticleToVertex(ParticleBackground const * part
 size_t ParticleObjectTrait::ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = particle->color;
@@ -86,7 +86,7 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 size_t ParticleBrickTrait::ParticleToVertex(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 
 	int   extra = 2;
 	float ratio = ((float)(extra + particle->life)) / ((float)(extra + particle->starting_life));
@@ -109,7 +109,7 @@ size_t ParticleBrickTrait::ParticleToVertex(ParticleBrick const * particle, Vert
 size_t ParticleMovableObjectTrait::ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = particle->color;
@@ -150,13 +150,12 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	particle->velocity = glm::normalize(particle->velocity) * (game->ball_collision_speed + game->ball_speed);
 
 	// moving the particle
-	particle->corners.bottomleft += particle->velocity * delta_time * game->ball_time_dilation;
-	particle->corners.topright   += particle->velocity * delta_time * game->ball_time_dilation;
+	particle->box.position += particle->velocity * delta_time * game->ball_time_dilation;
 
 	// ball bouncing against world
 
 	chaos::box2 world_box = game->GetWorldBox();
-	chaos::box2 ball_box  = chaos::ParticleCornersToBox(particle->corners);
+	chaos::box2 ball_box  = particle->box;
 		
 
 	// bounce against the world borders
@@ -179,7 +178,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	ParticleObject * player = game->GetPlayerParticle();
 	if (player != nullptr)
 	{
-		chaos::box2 player_box = chaos::ParticleCornersToBox(player->corners);
+		chaos::box2 player_box = player->box;
 
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
@@ -198,7 +197,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	{
 		for (size_t i = 0 ; i < brick_count ; ++i)
 		{
-			chaos::box2 brick_box = chaos::ParticleCornersToBox(bricks[i].corners);
+			chaos::box2 brick_box = bricks[i].box;
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
@@ -206,14 +205,13 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 				ball_box.position = new_ball_box.position;
 
 				--bricks[i].life;
-
 				game->OnBallCollide();				
 			}				
 		}	
 	}
 
 	// recenter the particle
-	particle->corners = chaos::BoxToParticleCorners(ball_box);
+	particle->box = ball_box;
 
 	return false; 
 }
@@ -233,7 +231,7 @@ size_t ParticleChallengeTrait::ParticleToVertex(ParticleChallenge const * partic
 	size_t challenge_position = particle->challenge->GetChallengePosition();
 
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->corners, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 
 	// copy the color in all triangles vertex
 

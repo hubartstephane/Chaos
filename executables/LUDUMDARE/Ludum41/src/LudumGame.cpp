@@ -352,7 +352,7 @@ size_t LudumGame::CanStartChallengeBallIndex(bool reverse) const
 			{
 				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
 					continue;					
-				if (reverse ^ (balls->corners.bottomleft.y > -world_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
+				if (reverse ^ (balls->box.position.y > -world_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
 					return i;
 			}
 		}			
@@ -647,7 +647,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks()
 		position.x = -world_size.x * 0.5f + particle_size.x * (float)column;
 		position.y =  world_size.y * 0.5f - particle_size.y * (float)line;
 
-		particle[i].corners = chaos::ParticleTools::GetParticleCorners(position, particle_size, chaos::Hotpoint::TOP_LEFT);	
+		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+		particle[i].box.half_size = 0.5f * particle_size;
 	}
 
 	return result;
@@ -668,8 +669,12 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBalls(size_t count, bool full_
 
 	for (size_t i = 0 ; i < count ; ++i)
 	{	
-		particle[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle[i].corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
+		particle[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		particle[i].box.position  = glm::vec2(0.0f, 0.0f);
+		particle[i].box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
+		
+		
+		//particle[i].corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
 
 		if (full_init)
 		{
@@ -694,8 +699,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreatePlayer()
 		return nullptr;
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	particle->corners.bottomleft = glm::vec2(0.0f, 0.0f);
-	particle->corners.topright   = glm::vec2(0.0f, 0.0f);
+	particle->box.position  = glm::vec2(0.0f, 0.0f);
+	particle->box.half_size = glm::vec2(0.0f, 0.0f);
 	
 	return result;
 }
@@ -775,7 +780,7 @@ chaos::box2 LudumGame::GetObjectBox(chaos::ParticleRangeAllocation * allocation,
 	ParticleObject const * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
 		return chaos::box2();
-	return chaos::ParticleCornersToBox(object->corners);
+	return object->box;
 }
 
 chaos::box2 LudumGame::GetPlayerBox() const
@@ -789,7 +794,7 @@ void LudumGame::SetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t
 	ParticleObject * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
 		return;
-	object->corners = chaos::BoxToParticleCorners(box);
+	object->box = box;
 }
 
 void LudumGame::SetPlayerBox(chaos::box2 const & box)
@@ -812,10 +817,7 @@ void LudumGame::SetObjectPosition(chaos::ParticleRangeAllocation * allocation, s
 	ParticleObject * particle = GetObjectParticle(allocation, index);
 	if (particle == nullptr)
 		return;
-
-	chaos::box2 box = chaos::ParticleCornersToBox(particle->corners);
-	box.position = position;
-	particle->corners = chaos::BoxToParticleCorners(box);
+	particle->box.position = position;
 }
 
 void LudumGame::SetPlayerPosition(float position)
@@ -831,7 +833,7 @@ void LudumGame::RestrictedObjectToScreen(chaos::ParticleRangeAllocation * alloca
 	if (particle == nullptr)
 		return;
 
-	chaos::box2 box   = chaos::ParticleCornersToBox(particle->corners);
+	chaos::box2 box = particle->box;
 	chaos::box2 world = GetWorldBox();
 	chaos::RestrictToInside(world, box, false);
 	SetObjectPosition(allocation, index, box.position);

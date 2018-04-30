@@ -94,6 +94,9 @@ namespace chaos
 			glfwSetScrollCallback(in_glfw_window, DoOnMouseWheel);
 			glfwSetWindowSizeCallback(in_glfw_window, DoOnWindowResize);
 			glfwSetKeyCallback(in_glfw_window, DoOnKeyEvent);
+
+			glfwSetCharCallback(in_glfw_window, DoOnCharEvent);
+
 			glfwSetWindowCloseCallback(in_glfw_window, DoOnWindowClosed);
 			glfwSetWindowRefreshCallback(in_glfw_window, DoOnDraw);
 			glfwSetDropCallback(in_glfw_window, DoOnDropFile);
@@ -194,6 +197,15 @@ namespace chaos
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
 				my_window->OnKeyEvent(key, scan_code, action, modifier);
+		}
+
+		void Window::DoOnCharEvent(GLFWwindow * in_glfw_window, unsigned int c)
+		{
+			Application::SetApplicationInputMode(InputMode::Keyboard);
+
+			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
+			if (my_window != nullptr)
+				my_window->OnCharEvent(c);
 		}
 
 		void Window::DoOnDropFile(GLFWwindow * in_glfw_window, int count, char const ** paths)

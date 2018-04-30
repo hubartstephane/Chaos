@@ -13,6 +13,14 @@ void LudumWindow::OnInputModeChanged(int new_mode, int old_mode)
 		game->OnInputModeChanged(new_mode, old_mode);
 }
 
+void LudumWindow::OnCharEvent(unsigned int c)
+{
+	// give inputs to the game
+	if (game != nullptr)
+		if (game->OnCharEvent(c))
+			return;
+}
+
 void LudumWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 {
 	// kill the window
@@ -24,7 +32,6 @@ void LudumWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 			return;
 		}						
 	}
-
 	// give inputs to the game
 	if (game != nullptr)
 		if (game->OnKeyEvent(key, action))

@@ -109,6 +109,8 @@ namespace chaos
 			virtual void OnMouseWheel(double scroll_x, double scroll_y) {}
 			/** called whenever a key is pressed */
 			virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) {}
+			/** called whenever a char is generated */
+			virtual void OnCharEvent(unsigned int c) {}
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}
 			/** called whenever the window becomes iconified or is restored */
@@ -140,6 +142,8 @@ namespace chaos
 			static void DoOnMouseWheel(GLFWwindow * in_glfw_window, double scroll_x, double scroll_y);
 			/** binding function with GLFW library */
 			static void DoOnKeyEvent(GLFWwindow * in_glfw_window, int key, int scan_code, int action, int modifier);
+			/** binding function with GLFW library */
+			static void DoOnCharEvent(GLFWwindow * in_glfw_window, unsigned int c);
 			/** binding function with GLFW library */
 			static void DoOnDropFile(GLFWwindow * in_glfw_window, int count, char const ** paths);
 			/** binding function with GLFW library */

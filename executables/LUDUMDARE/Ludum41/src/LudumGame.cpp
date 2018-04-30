@@ -159,6 +159,16 @@ bool LudumGame::RequireStartGame()
 	return false;
 }
 
+bool LudumGame::OnCharEvent(unsigned int c)
+{
+	// CHALLENGE
+	if (c >= 'a' && c <= 'z')
+		SendKeyboardButtonToChallenge((char)c);
+	else if (c >= 'A' && c <= 'Z')
+		SendKeyboardButtonToChallenge((char)(c - 'A' + 'a'));
+	return true;
+}
+
 bool LudumGame::OnKeyEvent(int key, int action)
 {
 	// MAIN MENU to PLAYING
@@ -182,10 +192,6 @@ bool LudumGame::OnKeyEvent(int key, int action)
 		if (RequireGameOver())
 			return true;
 #endif
-
-	// CHALLENGE
-	if (key >= GLFW_KEY_A && key <= GLFW_KEY_Z && action == GLFW_PRESS)
-		SendKeyboardButtonToChallenge(key);
 
 	return false;
 }
@@ -475,12 +481,12 @@ void LudumGame::TickGameLoop(double delta_time)
 	}
 }
 
-void LudumGame::SendKeyboardButtonToChallenge(int key)
+void LudumGame::SendKeyboardButtonToChallenge(unsigned int c)
 {
 	if (!IsPlaying())
 		return;
 	if (sequence_challenge != nullptr)
-		sequence_challenge->OnKeyboardButtonReceived('a' + key - GLFW_KEY_A);
+		sequence_challenge->OnKeyboardButtonReceived((char)c);
 }
 
 void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)

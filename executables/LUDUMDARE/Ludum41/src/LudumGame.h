@@ -57,6 +57,8 @@ public:
 	void Tick(double delta_time);
 	/** whenever a key event is received */
 	bool OnKeyEvent(int key, int action);
+	/** whenever a char event is received */
+	bool OnCharEvent(unsigned int c);
 	/** whenever a mouse event is received */
 	void OnMouseButton(int button, int action, int modifier);
 	/** whenever mouse is displaced */
@@ -190,7 +192,7 @@ protected:
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
 	void SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 	/** test whether a key is being pressed and whether it correspond to the current challenge */
-	void SendKeyboardButtonToChallenge(int key);
+	void SendKeyboardButtonToChallenge(unsigned int C);
 
 	/** create a challenge for a given name */
 	LudumSequenceChallenge * CreateSequenceChallenge(size_t len);

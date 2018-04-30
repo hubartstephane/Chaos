@@ -66,7 +66,7 @@ size_t ParticleObjectTrait::ParticleToVertex(ParticleObject const * particle, Ve
 	return vertices_per_particle;
 }
 
-bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle)
+bool ParticleObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<ParticleObject> & data)
 { 
 	return false; 
 }
@@ -75,9 +75,9 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Brick particle system
 // ===========================================================================
 
-bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle)
+bool ParticleBrickTrait::UpdateParticle(chaos::TypedUpdateParticleData<ParticleBrick> & data)
 {
-	if (particle->life <= 0)
+	if (data.particle->life <= 0)
 		return true;
 
 	return false;
@@ -132,11 +132,14 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2
 
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle)
+bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<ParticleMovableObject> & data)
 {
 	// do not update particles during pause
 	if (!game->IsPlaying())
 		return false;
+
+	ParticleMovableObject * particle = data.particle;
+	float delta_time = data.delta_time;
 
 	// delay before moving the particle
 	if (particle->delay_before_move > 0.0f)

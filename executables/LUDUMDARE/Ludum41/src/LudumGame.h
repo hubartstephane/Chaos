@@ -208,7 +208,7 @@ protected:
 	chaos::ParticleLayer * AddParticleLayer(int render_order, int layer_id, char const * material_name, PARAMS... params)
 	{
 		chaos::ParticleLayer * result = new chaos::ParticleLayer(
-			new chaos::TParticleLayerDesc<TRAIT_TYPE>(params...)	
+			new chaos::TypedParticleLayerDesc<TRAIT_TYPE>(params...)
 		);
 		return DoAddParticleLayer(result, render_order, layer_id, material_name);
 	}

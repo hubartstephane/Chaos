@@ -166,7 +166,7 @@ namespace chaos
 		return 0;
 	}
 
-	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector)
+	size_t ParticleLayerDesc::UpdateParticles(UpdateParticleData & data)
 	{
 		return 0;
 	}
@@ -332,6 +332,14 @@ namespace chaos
 		}
 	}
 
+	class UpdateParticleTickData
+	{
+	public:
+
+		float delta_time = 0.0f;
+
+	};
+
 	size_t ParticleLayer::UpdateParticles(float delta_time)
 	{
 		size_t particle_index = 0;
@@ -339,10 +347,16 @@ namespace chaos
 		size_t particle_count = GetParticleCount();
 		size_t range_count    = range_allocations.size();
 
+		UpdateParticleData data;
+		data.delta_time = delta_time;
+		data.layer = this;
+
 		size_t result = 0;
 		while (particle_index < particle_count)
 		{
-			void * p = GetParticle(particle_index);
+			data.first_particle  = GetParticle(particle_index);
+			data.deletion_vector = &deletion_vector[particle_index];
+
 			if (range_index < range_count)
 			{
 				ParticleRange const & range = particles_ranges[range_index];
@@ -350,19 +364,24 @@ namespace chaos
 				if (particle_index == range.start) // current particle is in a range
 				{
 					if (!range_allocations[range_index]->IsPaused())
-						result += layer_desc->UpdateParticles(delta_time, p, range.count, &deletion_vector[particle_index]);
+					{						
+						data.particle_count  = range.count;					
+						result += layer_desc->UpdateParticles(data);
+					}
 					particle_index += range.count;
 					range_index += 1;
 				}
 				else
 				{
-					result += layer_desc->UpdateParticles(delta_time, p, range.start - particle_index, &deletion_vector[particle_index]);
+					data.particle_count = range.start - particle_index;
+					result += layer_desc->UpdateParticles(data);
 					particle_index = range.start;
 				}
 			}
 			else
 			{
-				result += layer_desc->UpdateParticles(delta_time, p, particle_count - particle_index, &deletion_vector[particle_index]);
+				data.particle_count = particle_count - particle_index;
+				result += layer_desc->UpdateParticles(data);
 				particle_index = particle_count;
 			}
 		}

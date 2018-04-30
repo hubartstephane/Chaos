@@ -105,6 +105,60 @@ namespace chaos
 	};
 
 	// ==============================================================
+	// UpdateParticleData
+	// ==============================================================
+
+	class UpdateParticleData
+	{
+
+	public:
+
+		/** delta time for the tick */
+		float  delta_time = 0.0;
+
+		/** first particle in this batch */
+		void * first_particle = nullptr;
+
+		/** number of particle in this batch */
+		size_t particle_count = 0;
+		/** the deletion vector */
+		size_t * deletion_vector = nullptr;
+
+		/** current layer */
+		ParticleLayer * layer = nullptr;
+	};
+
+	// ==============================================================
+	// TypedUpdateParticleData
+	// ==============================================================
+
+	template<typename PARTICLE_TYPE>
+	class TypedUpdateParticleData
+	{
+		using particle_type = PARTICLE_TYPE;
+
+	public:
+
+		/** delta time for the tick */
+		float  delta_time = 0.0;
+
+		/** current particle */
+		particle_type * particle = nullptr;
+		/** first particle in this batch */
+		particle_type * first_particle = nullptr;
+
+		/** the index of the current particle in the array */
+		size_t particle_index = 0;
+		/** number of particle in this batch */
+		size_t particle_count = 0;
+		/** the deletion vector */
+		size_t * deletion_vector = nullptr;
+
+		/** current layer */
+		ParticleLayer * layer = nullptr;
+	};
+
+	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================
 
@@ -133,7 +187,7 @@ namespace chaos
 	protected:
 
 		/** update all particles */
-		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector);
+		virtual size_t UpdateParticles(UpdateParticleData & data);
 		/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
 		virtual size_t CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 	};
@@ -295,7 +349,7 @@ namespace chaos
 
 
 	// ==============================================================
-	// TParticleLayerDesc
+	// TypedParticleLayerDesc
 	// ==============================================================
 
 	template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
@@ -315,7 +369,7 @@ namespace chaos
 		}
 
 		/** by default, update do nothing */
-		bool UpdateParticle(float delta_time, particle_type * particle){ return false; }
+		bool UpdateParticle(TypedUpdateParticleData<particle_type> & data){ return false; }
 
 	public:
 
@@ -324,11 +378,11 @@ namespace chaos
 	};
 
 	// ==============================================================
-	// TParticleLayerDesc
+	// TypedParticleLayerDesc
 	// ==============================================================
 
 	template<typename LAYER_TRAIT>
-	class TParticleLayerDesc : public ParticleLayerDesc
+	class TypedParticleLayerDesc : public ParticleLayerDesc
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -341,7 +395,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		TParticleLayerDesc(trait_type const & in_trait = trait_type()) :
+		TypedParticleLayerDesc(trait_type const & in_trait = trait_type()) :
 			trait(in_trait) {}
 
 		/** returns the size in memory of a particle */
@@ -361,18 +415,27 @@ namespace chaos
 		}
 
 		/** loop for updating the particles (returns the number of particles destroyed) */
-		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, size_t * deletion_vector) override
+		virtual size_t UpdateParticles(UpdateParticleData & data) override
 		{
 			size_t result = 0;
 
-			particle_type * p = (particle_type*)particles;
-			for (size_t i = 0; i < particle_count; ++i)
+			TypedUpdateParticleData<particle_type> typed_data;
+			typed_data.delta_time = data.delta_time;
+			typed_data.first_particle = (particle_type*)data.first_particle;
+			typed_data.particle_count = data.particle_count;
+			typed_data.layer = data.layer;
+			typed_data.deletion_vector = data.deletion_vector;
+
+			for (size_t i = 0; i < typed_data.particle_count; ++i)
 			{
-				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK)
+				if (typed_data.deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK)
 				{
-					if (trait.UpdateParticle(delta_time, &p[i])) // update the particle and test whether it is destroyed
+					typed_data.particle = &typed_data.first_particle[i];
+					typed_data.particle_index = i;
+
+					if (trait.UpdateParticle(typed_data)) // update the particle and test whether it is destroyed
 					{
-						deletion_vector[i] = ParticleLayer::DESTROY_PARTICLE_MARK;
+						typed_data.deletion_vector[i] = ParticleLayer::DESTROY_PARTICLE_MARK;
 						++result;
 					}
 				}
@@ -510,7 +573,7 @@ namespace chaos
 	public:
 
 		/** updates the particle. returns true whether the particle is to be destroyed */
-		bool UpdateParticle(float delta_time, ParticleExample * particle);
+		bool UpdateParticle(TypedUpdateParticleData<ParticleExample> & data);
 		/** take one particle and transforms it into several vertices (usually 6 for 2 triangles */
 		size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particles) const;
 	};

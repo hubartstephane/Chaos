@@ -60,11 +60,12 @@ class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, V
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleExample * particle)
+	//bool UpdateParticle(float delta_time, ParticleExample * particle)
+	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleExample> & data)
 	{
-		particle->box.position += particle->velocity * delta_time;
-		particle->remaining_time -= delta_time;
-		return (particle->remaining_time <= 0.0f);
+		data.particle->box.position += data.particle->velocity * data.delta_time;
+		data.particle->remaining_time -= data.delta_time;
+		return (data.particle->remaining_time <= 0.0f);
 	}
 
 	size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle) const
@@ -84,7 +85,7 @@ public:
 
 };
 
-using ParticleLayerDescExample = chaos::TParticleLayerDesc<ParticleExampleTrait>;
+using ParticleLayerDescExample = chaos::TypedParticleLayerDesc<ParticleExampleTrait>;
 
 // ==============================================================
 // Application 

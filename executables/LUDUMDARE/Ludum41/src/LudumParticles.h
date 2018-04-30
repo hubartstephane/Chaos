@@ -66,7 +66,7 @@ class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, Ver
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleObject * particle);
+	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleObject> & data);
 
 	size_t ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
@@ -90,7 +90,7 @@ class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, Verte
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleBrick * particle);
+	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleBrick> & data);
 
 	size_t ParticleToVertex(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
@@ -113,7 +113,7 @@ class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMova
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleMovableObject * particle);
+	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleMovableObject> & data);
 
 	size_t ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 

@@ -365,8 +365,13 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 
 	// read the dictionnary file
 	std::string dictionnary_path;
+#if _DEBUG
+	if (!chaos::JSONTools::GetAttribute(config, (french_dictionnary)? "small_french_dictionnary" : "small_english_dictionnary", dictionnary_path))
+		return false;
+#else
 	if (!chaos::JSONTools::GetAttribute(config, (french_dictionnary)? "french_dictionnary" : "english_dictionnary", dictionnary_path))
 		return false;
+#endif
 
 	std::vector<std::string> words = chaos::FileTools::ReadFileLines(dictionnary_path);
 	if (words.size() < 100)

@@ -40,11 +40,15 @@ void LudumGame::CreateScore()
 	if (!should_update_score)
 		return;
 
+	chaos::box2 world = GetWorldBox();
+	
+	std::pair<glm::vec2, glm::vec2> corners = world.GetCorners();
+
 	chaos::ParticleTextGenerator::GeneratorParams params;
 	params.line_height = 30;
-	params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
-	params.position.x = 20.0f;
-	params.position.y = 20.0f;
+	params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
+	params.position.x = corners.first.x  + 20.0f;
+	params.position.y = corners.second.y - 20.0f;
 
 	params.character_set_name = "normal";
 
@@ -350,11 +354,13 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 {
 	if (sequence_challenge != nullptr)
 	{
-		sequence_challenge->particle_range = CreateChallengeText(sequence_challenge.get());	
-		sequence_challenge->Show(IsPlaying());
+		if (chaos::InputMode::IsPlatformChanged(new_mode, old_mode))
+		{
+			sequence_challenge->particle_range = CreateChallengeParticles(sequence_challenge.get());
+			sequence_challenge->Show(IsPlaying());
+		}
 	}
 }
-
 
 void LudumGame::ResetGameVariables()
 {
@@ -489,6 +495,7 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 			RequireGameOver();
 		else
 		{
+			combo_multiplier = 1;
 			ball_collision_speed = 0.0f;
 			balls_allocations = CreateBalls(1, true);	
 		}

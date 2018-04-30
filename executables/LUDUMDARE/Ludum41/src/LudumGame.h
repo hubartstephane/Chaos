@@ -217,7 +217,7 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 	/** create a text for the challenge */
-	chaos::ParticleRangeAllocation * CreateChallengeText(LudumSequenceChallenge * challenge);
+	chaos::ParticleRangeAllocation * CreateChallengeParticles(LudumSequenceChallenge * challenge);
 
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);

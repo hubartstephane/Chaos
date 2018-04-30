@@ -295,7 +295,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	if (!InitializeDictionnary(config, config_path))
 		return false;
 	// initialize the button map
-	if (!InitializeGamepadButtonInfo())
+ 	if (!InitializeGamepadButtonInfo())
 		return false;
 	// initialize the particle manager
 	if (!InitializeParticleManager())
@@ -556,7 +556,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * tex
 }
 
 
-chaos::ParticleRangeAllocation * LudumGame::CreateChallengeText(LudumSequenceChallenge * challenge)
+chaos::ParticleRangeAllocation * LudumGame::CreateChallengeParticles(LudumSequenceChallenge * challenge)
 {
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard   = chaos::InputMode::IsPCMode(input_mode);
@@ -705,7 +705,7 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 		result->gamepad_challenge  = std::move(gamepad_challenge);
 		result->keyboard_challenge = std::move(keyboard_challenge);
 		result->game = this;	
-		result->particle_range = CreateChallengeText(result);
+		result->particle_range = CreateChallengeParticles(result);
 		result->Show(IsPlaying());
 
 

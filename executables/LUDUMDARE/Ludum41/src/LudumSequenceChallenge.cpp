@@ -78,13 +78,20 @@ void LudumSequenceChallenge::SetTimeout(float in_timeout)
 
 int LudumSequenceChallenge::GetTimeSoundIndex(float t) const
 {
-	float times[4] = {0.25f, 0.5f, 0.75f, 1.0f};
+	float times[] = {0.25f, 0.5f, 0.75f, 1.0f};
 
-	for (int i = 0 ; i < 4 ; ++i)
+	int count = sizeof(times) / sizeof(times[0]);
+
+	// greater values give 0, 1 .. 
+	if (t > times[count - 1])
+		return (int)t;
+
+	// lower values gives -1, -2 ...
+	for (int i = 0 ; i < count; ++i)
 		if (t < times[i])
-			return i;
+			return -1 - i;
 
-	return (int)(t + 4.0f);
+	return 0; // should never happen
 }
 
 void LudumSequenceChallenge::Tick(double delta_time)

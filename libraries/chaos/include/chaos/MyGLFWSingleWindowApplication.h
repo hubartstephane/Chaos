@@ -119,6 +119,9 @@ namespace chaos
       SingleWindowApplicationParams window_params;
       /** the window created */
       Window * window = nullptr;
+
+			/** maximum time slice for tick */
+			double max_tick_duration = 0.0;
     };
 
     /**

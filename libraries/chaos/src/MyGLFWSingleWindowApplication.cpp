@@ -61,6 +61,8 @@ namespace chaos
 
 				double t2 = glfwGetTime();
 				double delta_time = t2 - t1;
+				if (max_tick_duration > 0.0)
+					delta_time = min(delta_time, max_tick_duration);
 				// tick the manager
 				TickManagers(delta_time);
 				// tick the window
@@ -247,6 +249,9 @@ namespace chaos
 		{
 			if (!Application::InitializeManagers())
 				return false;
+
+			// update some internals
+			JSONTools::GetAttribute(configuration, "max_tick_duration", max_tick_duration);
 
 			// initialize the clock
 			main_clock = new Clock();

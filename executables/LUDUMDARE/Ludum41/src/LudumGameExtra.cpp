@@ -706,6 +706,7 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 		result->keyboard_challenge = std::move(keyboard_challenge);
 		result->game = this;	
 		result->particle_range = CreateChallengeText(result);
+		result->Show(IsPlaying());
 
 
 		result->callbacks = CreateSequenceChallengeCallbacks();

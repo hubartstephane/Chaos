@@ -21,6 +21,10 @@ void LudumGame::IncrementScore(int delta)
 
 bool LudumGame::IsPlaying() const
 {
+	if (game_automata == nullptr)
+		return false;
+	if (game_automata->GetCurrentState() == nullptr)
+		return false;
 	if (game_automata->GetCurrentState()->GetStateID() != LudumAutomata::STATE_PLAYING)
 		return false;
 	return true;
@@ -29,6 +33,26 @@ bool LudumGame::IsPlaying() const
 void LudumGame::CreateGameTitle()
 {
 	CreateTitle("AsciiPaouf 2", false);
+}
+
+void LudumGame::CreateScore()
+{
+	if (!should_update_score)
+		return;
+
+	chaos::ParticleTextGenerator::GeneratorParams params;
+	params.line_height = 30;
+	params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
+	params.position.x = 20.0f;
+	params.position.y = 20.0f;
+
+	params.character_set_name = "normal";
+
+	std::string str = chaos::StringTools::Printf("Score : %d", current_score);
+
+	score_allocations = CreateTextParticles(str.c_str(), params);
+
+	should_update_score = false;
 }
 
 void LudumGame::CreateTitle(char const * title, bool normal)
@@ -137,6 +161,8 @@ void LudumGame::Tick(double delta_time)
 	UpdateGameState(delta_time);
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
+	// create the score text
+	CreateScore();
 	// tick the particle manager
 	if (particle_manager != nullptr)
 		particle_manager->Tick((float)delta_time);
@@ -568,6 +594,7 @@ void LudumGame::DestroyGameObjects()
 	bricks_allocations = nullptr;
 	lifes_allocations = nullptr;
 	balls_allocations = nullptr;
+	score_allocations = nullptr;
 
 	sequence_challenge = nullptr;
 

@@ -350,6 +350,9 @@ protected:
 	/** returns true whether we are playing */
 	bool IsPlaying() const;
 
+	/** create the score allocation */
+	void CreateScore();
+
 protected:
 
 	/** the window in GLFW library */
@@ -462,6 +465,8 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;
 
 };
 

@@ -12,6 +12,12 @@ void LudumSequenceChallenge::OnKeyboardButtonReceived(char c)
 		OnChallengeError(false);
 }
 
+void LudumSequenceChallenge::Show(bool visible)
+{
+	if (particle_range != nullptr)
+		particle_range->Show(visible);
+}
+
 void LudumSequenceChallenge::OnGamepadButtonReceived(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
 	int expected_key = gamepad_challenge[challenge_position];
@@ -47,7 +53,7 @@ void LudumSequenceChallenge::AdvanceChallenge()
 		if (callbacks != nullptr)
 			callbacks->OnChallengeCompleted(game, this);
 
-		game->OnChallengeCompleted(this, true); // remove the challenge from pending list
+		game->OnChallengeCompleted(this, true,  gamepad_challenge.size()); // remove the challenge from pending list
 	}
 }
 
@@ -61,7 +67,7 @@ void LudumSequenceChallenge::OnChallengeError(bool out_of_time)
 	if (callbacks != nullptr)
 		callbacks->OnChallengeFailed(game, this);
 
-	game->OnChallengeCompleted(this, false); // remove the challenge from pending list
+	game->OnChallengeCompleted(this, false, gamepad_challenge.size()); // remove the challenge from pending list
 }
 
 void LudumSequenceChallenge::SetTimeout(float in_timeout)
@@ -78,7 +84,7 @@ int LudumSequenceChallenge::GetTimeSoundIndex(float t) const
 		if (t < times[i])
 			return i;
 
-	return (int)(t + 1.0f);
+	return (int)(t + 4.0f);
 }
 
 void LudumSequenceChallenge::Tick(double delta_time)

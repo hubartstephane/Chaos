@@ -198,7 +198,7 @@ protected:
 	LudumSequenceChallenge * CreateSequenceChallenge(size_t len);
 
 	/** called whenever a challenge is completed */
-	void OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success);
+	void OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success, size_t challenge_size);
 
 	/** templated method to add a layer */
 	template<typename TRAIT_TYPE, typename ...PARAMS>
@@ -242,11 +242,14 @@ protected:
 	/** create the title */
 	void DestroyTitle();
 
+	/** update the score */
+	void IncrementScore(int delta);
+
 	/** reset the game variables */
 	void ResetGameVariables();
 
 	/** called whenever a ball collide */
-	void OnBallCollide();
+	void OnBallCollide(bool collide_brick);
 	/** change the player position */
 	void SetPlayerPosition(float position);
 	/** change the length */
@@ -432,6 +435,9 @@ protected:
 	int brick_per_line   = 5;
 	int brick_line_count = 5;
 
+	int points_per_brick = 1;
+	int points_per_challenge = 10;
+
 	/** current game values */
 	int   current_life  = 3;
 	float player_length = 70.0f;
@@ -439,6 +445,11 @@ protected:
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
 
+	int current_score = 0;
+	int combo_multiplier = 0;
+	int best_score = 0;
+
+	bool should_update_score = false;
 
 
 	/** some sprites */

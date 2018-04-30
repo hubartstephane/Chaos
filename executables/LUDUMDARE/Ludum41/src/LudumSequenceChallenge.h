@@ -91,6 +91,9 @@ public:
 	/** a timeout can be given */
 	void SetTimeout(float in_timeout);
 
+	/** show / hide */
+	void Show(bool visible);
+
 protected:
 
 	/** the challenge progress */

@@ -13,6 +13,12 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
+void LudumGame::IncrementScore(int delta)
+{
+	current_score += points_per_brick * (1 + combo_multiplier);
+	should_update_score = true;
+}
+
 bool LudumGame::IsPlaying() const
 {
 	if (game_automata->GetCurrentState()->GetStateID() != LudumAutomata::STATE_PLAYING)
@@ -59,6 +65,10 @@ bool LudumGame::OnEnterPause()
 {
 	StartPauseMusic(true);
 	CreateTitle("Pause", true);
+
+	if (sequence_challenge != nullptr)
+		sequence_challenge->Show(false);
+
 	return true;
 }
 
@@ -66,6 +76,9 @@ bool LudumGame::OnLeavePause()
 {
 	StartGameMusic(false);
 	DestroyTitle();
+
+	if (sequence_challenge != nullptr)
+		sequence_challenge->Show(true);
 
 	return true;
 }
@@ -310,7 +323,10 @@ void LudumGame::Display(chaos::box2 const & viewport)
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 {
 	if (sequence_challenge != nullptr)
+	{
 		sequence_challenge->particle_range = CreateChallengeText(sequence_challenge.get());	
+		sequence_challenge->Show(IsPlaying());
+	}
 }
 
 
@@ -323,14 +339,18 @@ void LudumGame::ResetGameVariables()
 	challenge_timer    = challenge_frequency;
 	pending_split_count = 0;
 	ball_collision_speed = 0.0f;
+
+	current_score = 0;
+	combo_multiplier = 0;
+
+	should_update_score = true;
 }
+
 void LudumGame::OnGameOver()
 {
+	best_score = current_score;
+
 	DestroyGameObjects();
-
-
-
-
 }
 
 void LudumGame::DisplacePlayer(double delta_time)
@@ -451,11 +471,14 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 	return true;
 }
 
-void LudumGame::OnBallCollide()
+void LudumGame::OnBallCollide(bool collide_brick)
 {
 	PlaySound("ball", false, false);
 
 	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ball_collision_speed_increment);
+
+	if (collide_brick)
+		IncrementScore(points_per_brick * (1 + combo_multiplier));
 }
 
 void LudumGame::TickLevelCompleted(double delta_time)
@@ -523,11 +546,20 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 	}
 }
 
-void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success)
+void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success, size_t challenge_size)
 {
 	sequence_challenge = nullptr;
 	ball_time_dilation = 1.0f;
 	challenge_timer    = challenge_frequency;
+
+
+	if (success)
+	{
+		IncrementScore(points_per_challenge * challenge_size * (1 + combo_multiplier));
+		++combo_multiplier;
+	}
+	else
+		combo_multiplier = 0;
 }
 
 void LudumGame::DestroyGameObjects()

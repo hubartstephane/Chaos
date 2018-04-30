@@ -278,6 +278,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(brick_line_count);		
 	LUDUMGAME_JSON_ATTRIBUTE(ball_collision_speed_increment);		
 	LUDUMGAME_JSON_ATTRIBUTE(ball_collision_max_speed);		
+	LUDUMGAME_JSON_ATTRIBUTE(points_per_brick);		
+	LUDUMGAME_JSON_ATTRIBUTE(points_per_challenge);		
 
 #undef LUDUMGAME_JSON_ATTRIBUTE
 

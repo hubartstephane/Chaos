@@ -185,7 +185,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		{
 			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
 			ball_box.position = new_ball_box.position;
-			game->OnBallCollide();			
+			game->OnBallCollide(false);			
 		}
 	}
 
@@ -205,7 +205,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 				ball_box.position = new_ball_box.position;
 
 				--bricks[i].life;
-				game->OnBallCollide();				
+				game->OnBallCollide(true);				
 			}				
 		}	
 	}

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "LudumStateMachine.h"
-#include "LudumSequenceChallenge.h"
+#include "LudumChallenge.h"
 #include "LudumParticles.h"
+#include "LudumChallengeRewardPunishment.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -14,13 +15,15 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
 
+
+
 // =================================================
 // LudumGame
 // =================================================
 
 class LudumGame : public chaos::ReferencedObject
 {
-	friend class LudumSequenceChallenge;
+	friend class LudumChallenge;
 	friend class LudumWindow;
 	friend class LudumAutomata;
 	friend class MainMenuState;
@@ -31,11 +34,11 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
-	friend class LudumSequenceChallenge_ExtraBallCallbacks;
-	friend class LudumSequenceChallenge_LongBarBallCallbacks;
-	friend class LudumSequenceChallenge_LifeBallCallbacks;
-	friend class LudumSequenceChallenge_SpeedDownBallCallbacks;
-	friend class LudumSequenceChallenge_SplitBallCallbacks;
+	friend class LudumChallengeRewardPunishment_ExtraBall;
+	friend class LudumChallengeRewardPunishment_LongBarBall;
+	friend class LudumChallengeRewardPunishment_LifeBall;
+	friend class LudumChallengeRewardPunishment_SpeedDownBall;
+	friend class LudumChallengeRewardPunishment_SplitBall;
 
 	friend class ParticleMovableObjectTrait;
 
@@ -173,8 +176,8 @@ protected:
 	bool InitializeParticleTextGenerator();
 	/** initialize the game variables */
 	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
-
-
+	/** fullfill the lists of rewards an punishments */
+	bool InitializeRewardsAndPunishments();
 	/** get a random button in existing list */
 	int GetRandomButtonID() const;
 
@@ -195,10 +198,10 @@ protected:
 	void SendKeyboardButtonToChallenge(unsigned int C);
 
 	/** create a challenge for a given name */
-	LudumSequenceChallenge * CreateSequenceChallenge(size_t len);
+	LudumChallenge * CreateSequenceChallenge(size_t len);
 
 	/** called whenever a challenge is completed */
-	void OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success, size_t challenge_size);
+	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
 
 	/** templated method to add a layer */
 	template<typename TRAIT_TYPE, typename ...PARAMS>
@@ -217,7 +220,7 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 	/** create a text for the challenge */
-	chaos::ParticleRangeAllocation * CreateChallengeParticles(LudumSequenceChallenge * challenge);
+	chaos::ParticleRangeAllocation * CreateChallengeParticles(LudumChallenge * challenge);
 
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
@@ -328,24 +331,15 @@ protected:
 
 
 	/** some challenges */
-	void OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success);
+	void OnLifeChallenge(bool success);
 	/** some challenges */
-	void OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success);
+	void OnBallSpeedChallenge(bool success);
 	/** some challenges */
-	void OnSplitBallChallenge(class LudumSequenceChallenge_SplitBallCallbacks * challenge, bool success);
+	void OnSplitBallChallenge(bool success);
 	/** some challenges */
-	void OnExtraBallChallenge(class LudumSequenceChallenge_ExtraBallCallbacks * challenge, bool success);
+	void OnExtraBallChallenge(bool success);
 	/** some challenges */
-	void OnLongBarChallenge(class LudumSequenceChallenge_LongBarBallCallbacks * challenge, bool success);
-
-	/** create a challenge */
-	class LudumSequenceChallengeCallbacks * CreateSequenceChallengeCallbacks();
-
-
-
-
-
-
+	void OnLongBarChallenge(bool success);
 
 	/** returns true whether we are playing */
 	bool IsPlaying() const;
@@ -384,7 +378,7 @@ protected:
 
 
 	/** the challenge */
-	boost::intrusive_ptr<LudumSequenceChallenge> sequence_challenge;
+	boost::intrusive_ptr<LudumChallenge> sequence_challenge;
 
 	/** a mapping between the button index and its resource name */
 	std::map<int, std::string> gamepad_button_map;
@@ -467,6 +461,11 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;
+
+	/** the possible rewards */
+	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;
+	/** the possible punishment */
+	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> punishments;
 
 };
 

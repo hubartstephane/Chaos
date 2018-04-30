@@ -3,7 +3,7 @@
 
 #include "LudumParticles.h"
 #include "LudumGame.h"
-#include "LudumSequenceChallenge.h"
+#include "LudumChallenge.h"
 
 #include <chaos/CollisionFramework.h>
 

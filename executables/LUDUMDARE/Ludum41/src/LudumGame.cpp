@@ -579,13 +579,24 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 	}
 }
 
-void LudumGame::OnChallengeCompleted(LudumSequenceChallenge * challenge, bool success, size_t challenge_size)
+void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)
 {
+	// rewards/punishment
+	auto const & rewards_punishments = (success) ? rewards : punishments;
+	
+	int count = (int)rewards_punishments.size();
+	if (count > 0)
+	{
+		int index = rand() % count;
+		rewards_punishments[index]->OnRewardPunishment(this, success);
+	}
+
+	// reset some values
 	sequence_challenge = nullptr;
 	ball_time_dilation = 1.0f;
 	challenge_timer    = challenge_frequency;
 
-
+	// update the score
 	if (success)
 	{
 		IncrementScore(points_per_challenge * challenge_size * (1 + combo_multiplier));
@@ -982,9 +993,7 @@ ParticleBrick const * LudumGame::GetBricks() const
 	return (ParticleBrick const *)bricks_allocations->GetParticleBuffer();
 }
 
-
-
-void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks * challenge, bool success)
+void LudumGame::OnLifeChallenge(bool success)
 {
 	size_t brick_count = GetBrickCount();
 	if (brick_count == 0)
@@ -1012,15 +1021,15 @@ void LudumGame::OnLifeChallenge(class LudumSequenceChallenge_LifeBallCallbacks *
 }
 
 
-void LudumGame::OnSplitBallChallenge(class LudumSequenceChallenge_SplitBallCallbacks * challenge, bool success)
+void LudumGame::OnSplitBallChallenge(bool success)
 {
 	if (!success)
-		OnLifeChallenge(nullptr, false);
+		OnLifeChallenge(false);
 	else
 		pending_split_count++;
 }
 
-void LudumGame::OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallCallbacks * challenge, bool success)
+void LudumGame::OnBallSpeedChallenge(bool success)
 {
 	if (success)
 		ball_speed = ball_speed - ball_speed_increment;
@@ -1030,12 +1039,12 @@ void LudumGame::OnBallSpeedChallenge(class LudumSequenceChallenge_SpeedDownBallC
 	ball_speed = chaos::MathTools::Clamp(ball_speed, ball_initial_speed, ball_max_speed);
 }
 
-void LudumGame::OnExtraBallChallenge(class LudumSequenceChallenge_ExtraBallCallbacks * challenge, bool success)
+void LudumGame::OnExtraBallChallenge(bool success)
 {
 
 }
 
-void LudumGame::OnLongBarChallenge(class LudumSequenceChallenge_LongBarBallCallbacks * challenge, bool success)
+void LudumGame::OnLongBarChallenge(bool success)
 {
 	if (success)
 		SetPlayerLength(player_length + player_length_increment);

@@ -306,6 +306,9 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	// initialize game values
 	if (!InitializeGameValues(config, config_path))
 		return false;
+	// build the rewards/punishment values
+	if (!InitializeRewardsAndPunishments())
+		return false;
 	
 	
 
@@ -498,6 +501,23 @@ bool LudumGame::InitializeParticleTextGenerator()
 	return true;
 }
 
+bool LudumGame::InitializeRewardsAndPunishments()
+{
+	rewards.push_back(new LudumChallengeRewardPunishment_LongBarBall);
+	rewards.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
+	//rewards.push_back(new LudumChallengeRewardPunishment_SplitBall);
+	rewards.push_back(new LudumChallengeRewardPunishment_LifeBall);
+	//rewards.push_back(new LudumChallengeRewardPunishment_ExtraBall);
+
+	punishments.push_back(new LudumChallengeRewardPunishment_LongBarBall);
+	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
+	//punishments.push_back(new LudumChallengeRewardPunishment_SplitBall);
+	punishments.push_back(new LudumChallengeRewardPunishment_LifeBall);
+	//punishments.push_back(new LudumChallengeRewardPunishment_ExtraBall);
+
+	return true;
+}
+
 std::string LudumGame::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
 {
 	std::string result;
@@ -556,7 +576,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * tex
 }
 
 
-chaos::ParticleRangeAllocation * LudumGame::CreateChallengeParticles(LudumSequenceChallenge * challenge)
+chaos::ParticleRangeAllocation * LudumGame::CreateChallengeParticles(LudumChallenge * challenge)
 {
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard   = chaos::InputMode::IsPCMode(input_mode);
@@ -645,6 +665,7 @@ bool LudumGame::InitializeParticleManager()
 	return true;
 }
 
+
 int LudumGame::GetRandomButtonID() const
 {
 	size_t key_index = (size_t)(rand() % gamepad_buttons.size());
@@ -654,7 +675,7 @@ int LudumGame::GetRandomButtonID() const
 }
 
 
-LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len) 
+LudumChallenge * LudumGame::CreateSequenceChallenge(size_t len) 
 {
 	if (len == 0)
 		len = min_word_size + rand() % (max_word_size - min_word_size);
@@ -699,7 +720,7 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 		gamepad_challenge.push_back(GetRandomButtonID());	
 
 	// create the challenge
-	LudumSequenceChallenge * result = new LudumSequenceChallenge;
+	LudumChallenge * result = new LudumChallenge;
 	if (result != nullptr)
 	{	
 		result->gamepad_challenge  = std::move(gamepad_challenge);
@@ -708,8 +729,6 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 		result->particle_range = CreateChallengeParticles(result);
 		result->Show(IsPlaying());
 
-
-		result->callbacks = CreateSequenceChallengeCallbacks();
 		result->SetTimeout(challenge_duration);
 
 		ball_time_dilation = challenge_time_dilation;
@@ -717,26 +736,3 @@ LudumSequenceChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 	return result;
 }
 
-LudumSequenceChallengeCallbacks * LudumGame::CreateSequenceChallengeCallbacks()
-{
-	int challenge = rand() % 4;
-
-	
-
-	if (challenge == 0)	
-		return new LudumSequenceChallenge_LongBarBallCallbacks();
-	if (challenge == 1)	
-		return new LudumSequenceChallenge_SpeedDownBallCallbacks();
-	if (challenge == 2)	
-		return new LudumSequenceChallenge_SplitBallCallbacks();
-
-
-	
-	return new LudumSequenceChallenge_LifeBallCallbacks();
-#if 0
-
-
-	if (challenge == 2)	
-		return new LudumSequenceChallenge_ExtraBallCallbacks();
-#endif
-}

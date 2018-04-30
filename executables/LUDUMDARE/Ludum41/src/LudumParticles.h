@@ -139,7 +139,7 @@ class ParticleChallenge : public ParticleObject
 {
 public:
 
-	class LudumSequenceChallenge * challenge = nullptr;
+	class LudumChallenge * challenge = nullptr;
 	size_t index = 0;
 };
 

@@ -48,7 +48,9 @@ void LudumGame::SerializeBestScore(bool save)
 
 void LudumGame::IncrementScore(int delta)
 {
-	current_score += points_per_brick * (1 + combo_multiplier);
+	if (delta <= 0)
+		return;
+	current_score += points_per_brick * combo_multiplier;
 	should_update_score = true;
 }
 
@@ -82,28 +84,50 @@ void LudumGame::CreateGameTitle()
 	}
 }
 
-void LudumGame::CreateScoreParticles()
+chaos::ParticleRangeAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
 {
-	if (!should_update_score)
-		return;
+	// test flag
+	if (!update_flag)
+		return nullptr;
+	update_flag = false;
 
+	// get world size
 	chaos::box2 world = GetWorldBox();
-	
+
 	std::pair<glm::vec2, glm::vec2> corners = world.GetCorners();
 
+	// set the values
 	chaos::ParticleTextGenerator::GeneratorParams params;
 	params.line_height = 30;
 	params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
-	params.position.x = corners.first.x  + 20.0f;
-	params.position.y = corners.second.y - 20.0f;
-
+	params.position.x = corners.first.x + 20.0f;
+	params.position.y = corners.second.y - Y;
 	params.character_set_name = "normal";
 
-	std::string str = chaos::StringTools::Printf("Score : %d", current_score);
+	// format text and create particles
+	std::string str = chaos::StringTools::Printf(format, value);
+	return CreateTextParticles(str.c_str(), params);	
+}
 
-	score_allocations = CreateTextParticles(str.c_str(), params);
+void LudumGame::UpdateComboParticles()
+{
+	// destroy combo multiplier if non necessary
+	if (combo_multiplier <= 1)
+	{
+		combo_allocations = nullptr;
+		return;
+	}
+	// test whether the combo has changed
+	chaos::ParticleRangeAllocation * allocation = CreateScoringParticles(should_update_combo, "Combo : %d x", combo_multiplier, 60.0f);
+	if (allocation != nullptr)
+		combo_allocations = allocation;
+}
 
-	should_update_score = false;
+void LudumGame::UpdateScoreParticles()
+{
+	chaos::ParticleRangeAllocation * allocation = CreateScoringParticles(should_update_score, "Score : %d", current_score, 20.0f);
+	if (allocation != nullptr)
+		score_allocations = allocation;
 }
 
 void LudumGame::CreateTitle(char const * title, bool normal)
@@ -214,7 +238,9 @@ void LudumGame::Tick(double delta_time)
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
 	// create the score text
-	CreateScoreParticles();
+	UpdateScoreParticles();
+	// create the combo text
+	UpdateComboParticles();
 	// tick the particle manager
 	if (particle_manager != nullptr)
 		particle_manager->Tick((float)delta_time);
@@ -421,9 +447,10 @@ void LudumGame::ResetGameVariables()
 	ball_collision_speed = 0.0f;
 
 	current_score = 0;
-	combo_multiplier = 0;
+	combo_multiplier = 1;
 
 	should_update_score = true;
+	should_update_combo = true;
 }
 
 void LudumGame::OnGameOver()
@@ -547,6 +574,7 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 		else
 		{
 			combo_multiplier = 1;
+			should_update_combo = true;
 			ball_collision_speed = 0.0f;
 			balls_allocations = CreateBalls(1, true);	
 		}
@@ -562,7 +590,7 @@ void LudumGame::OnBallCollide(bool collide_brick)
 	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ball_collision_speed_increment);
 
 	if (collide_brick)
-		IncrementScore(points_per_brick * (1 + combo_multiplier));
+		IncrementScore(points_per_brick * combo_multiplier);
 }
 
 void LudumGame::TickLevelCompleted(double delta_time)
@@ -650,11 +678,14 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 	// update the score
 	if (success)
 	{
-		IncrementScore(points_per_challenge * challenge_size * (1 + combo_multiplier));
+		IncrementScore(points_per_challenge * challenge_size * combo_multiplier);
 		++combo_multiplier;
 	}
 	else
-		combo_multiplier = 0;
+	{
+		combo_multiplier = 1;
+	}
+	should_update_combo = true;
 }
 
 void LudumGame::DestroyGameObjects()
@@ -664,6 +695,7 @@ void LudumGame::DestroyGameObjects()
 	lifes_allocations = nullptr;
 	balls_allocations = nullptr;
 	score_allocations = nullptr;
+	combo_allocations = nullptr;
 	best_score_allocations = nullptr;
 
 	sequence_challenge = nullptr;
@@ -1069,7 +1101,7 @@ void LudumGame::OnLifeChallenge(bool success)
 				--p.life;
 			}			
 		}
-		IncrementScore(destroyed_count * points_per_brick * (1 + combo_multiplier));
+		IncrementScore(destroyed_count * points_per_brick * combo_multiplier);
 	}
 	else
 	{

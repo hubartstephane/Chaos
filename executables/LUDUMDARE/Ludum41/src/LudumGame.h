@@ -348,7 +348,12 @@ protected:
 	bool IsPlaying() const;
 
 	/** create the score allocation */
-	void CreateScoreParticles();
+	void UpdateScoreParticles();
+	/** create the combo allocation */
+	void UpdateComboParticles();
+
+	/** internal method to create score/combo */
+	chaos::ParticleRangeAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
 
 	/** Save the best score */
 	void SerializeBestScore(bool save);
@@ -449,10 +454,12 @@ protected:
 	float challenge_timer = 0.0f;
 
 	int current_score = 0;
-	int combo_multiplier = 0;
+	int combo_multiplier = 1;
 	int best_score = 0;
 
 	bool should_update_score = false;
+
+	bool should_update_combo = false;
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
@@ -466,6 +473,8 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> combo_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> best_score_allocations;
 

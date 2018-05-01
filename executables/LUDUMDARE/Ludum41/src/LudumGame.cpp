@@ -50,7 +50,7 @@ void LudumGame::IncrementScore(int delta)
 {
 	if (delta <= 0)
 		return;
-	current_score += points_per_brick * combo_multiplier;
+	current_score += delta * combo_multiplier;
 	should_update_score = true;
 }
 
@@ -590,7 +590,7 @@ void LudumGame::OnBallCollide(bool collide_brick)
 	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ball_collision_speed_increment);
 
 	if (collide_brick)
-		IncrementScore(points_per_brick * combo_multiplier);
+		IncrementScore(points_per_brick);
 }
 
 void LudumGame::TickLevelCompleted(double delta_time)
@@ -678,7 +678,7 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 	// update the score
 	if (success)
 	{
-		IncrementScore(points_per_challenge * challenge_size * combo_multiplier);
+		IncrementScore(points_per_challenge * challenge_size);
 		++combo_multiplier;
 	}
 	else
@@ -1101,7 +1101,7 @@ void LudumGame::OnLifeChallenge(bool success)
 				--p.life;
 			}			
 		}
-		IncrementScore(destroyed_count * points_per_brick * combo_multiplier);
+		IncrementScore(destroyed_count * points_per_brick);
 	}
 	else
 	{

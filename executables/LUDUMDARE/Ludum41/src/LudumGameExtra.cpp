@@ -440,6 +440,8 @@ chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayerDesc * 
 		return nullptr;
 	// create the layer
 	chaos::ParticleLayer * layer = particle_manager->AddLayer(layer_desc);
+	if (layer == nullptr)
+		return nullptr;
 	// change layer render order / ID
 	layer->SetLayerID(layer_id);
 	layer->SetRenderOrder(render_order);

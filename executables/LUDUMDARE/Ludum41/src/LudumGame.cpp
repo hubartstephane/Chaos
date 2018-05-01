@@ -840,9 +840,6 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBalls(size_t count, bool full_
 		particle[i].box.position  = glm::vec2(0.0f, 0.0f);
 		particle[i].box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
 		
-		
-		//particle[i].corners = chaos::ParticleTools::GetParticleCorners(glm::vec2(0.0f, 0.0f), glm::vec2(ball_size, ball_size), chaos::Hotpoint::CENTER);
-
 		if (full_init)
 		{
 			particle[i].delay_before_move = delay_before_ball_move;

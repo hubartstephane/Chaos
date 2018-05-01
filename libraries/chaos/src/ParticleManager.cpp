@@ -151,6 +151,11 @@ namespace chaos
 	// PARTICLE LAYER DESC
 	// ==============================================================
 
+	ParticleRangeAllocation * ParticleLayerDesc::NewRangeAllocation()
+	{
+		return new ParticleRangeAllocation;
+	}
+
 	size_t ParticleLayerDesc::GetParticleSize() const
 	{
 		return 0;
@@ -166,7 +171,7 @@ namespace chaos
 		return 0;
 	}
 
-	size_t ParticleLayerDesc::UpdateParticles(UpdateParticleData & data)
+	size_t ParticleLayerDesc::UpdateParticles(UpdateParticleData & data, ParticleRangeAllocation * allocation)
 	{
 		return 0;
 	}
@@ -332,14 +337,6 @@ namespace chaos
 		}
 	}
 
-	class UpdateParticleTickData
-	{
-	public:
-
-		float delta_time = 0.0f;
-
-	};
-
 	size_t ParticleLayer::UpdateParticles(float delta_time)
 	{
 		size_t particle_index = 0;
@@ -366,7 +363,7 @@ namespace chaos
 					if (!range_allocations[range_index]->IsPaused())
 					{						
 						data.particle_count  = range.count;					
-						result += layer_desc->UpdateParticles(data);
+						result += layer_desc->UpdateParticles(data, range_allocations[range_index]);
 					}
 					particle_index += range.count;
 					range_index += 1;
@@ -374,14 +371,14 @@ namespace chaos
 				else
 				{
 					data.particle_count = range.start - particle_index;
-					result += layer_desc->UpdateParticles(data);
+					result += layer_desc->UpdateParticles(data, nullptr);
 					particle_index = range.start;
 				}
 			}
 			else
 			{
 				data.particle_count = particle_count - particle_index;
-				result += layer_desc->UpdateParticles(data);
+				result += layer_desc->UpdateParticles(data, nullptr);
 				particle_index = particle_count;
 			}
 		}
@@ -399,14 +396,20 @@ namespace chaos
 		if (range.count == 0)
 			return nullptr;
 
-		ParticleRangeAllocation * result = new ParticleRangeAllocation;
+		ParticleRangeAllocation * result = layer_desc->NewRangeAllocation();
+		if (result != nullptr)
+		{
+			result->layer = this;
+			result->range_index = particles_ranges.size();
+			result->particles_owner = particles_owner;
 
-		result->layer = this;
-		result->range_index = particles_ranges.size();
-		result->particles_owner = particles_owner;
-
-		particles_ranges.push_back(range);
-		range_allocations.push_back(result);
+			particles_ranges.push_back(range);
+			range_allocations.push_back(result);
+		}
+		else
+		{
+			MarkParticlesToDestroy(range.start, range.count);
+		}
 
 		return result;
 	}

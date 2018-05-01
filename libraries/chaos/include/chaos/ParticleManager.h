@@ -156,6 +156,8 @@ namespace chaos
 
 		/** current layer */
 		ParticleLayer * layer = nullptr;
+		/** current allocation */
+		ParticleRangeAllocation * allocation = nullptr;
 	};
 
 	// ==============================================================
@@ -186,8 +188,11 @@ namespace chaos
 
 	protected:
 
+		/** create an allocation */
+		virtual ParticleRangeAllocation * NewRangeAllocation();
+
 		/** update all particles */
-		virtual size_t UpdateParticles(UpdateParticleData & data);
+		virtual size_t UpdateParticles(UpdateParticleData & data, ParticleRangeAllocation * allocation);
 		/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
 		virtual size_t CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 	};
@@ -415,7 +420,7 @@ namespace chaos
 		}
 
 		/** loop for updating the particles (returns the number of particles destroyed) */
-		virtual size_t UpdateParticles(UpdateParticleData & data) override
+		virtual size_t UpdateParticles(UpdateParticleData & data, ParticleRangeAllocation * allocation) override
 		{
 			size_t result = 0;
 
@@ -425,6 +430,7 @@ namespace chaos
 			typed_data.particle_count = data.particle_count;
 			typed_data.layer = data.layer;
 			typed_data.deletion_vector = data.deletion_vector;
+			typed_data.allocation = allocation;
 
 			for (size_t i = 0; i < typed_data.particle_count; ++i)
 			{

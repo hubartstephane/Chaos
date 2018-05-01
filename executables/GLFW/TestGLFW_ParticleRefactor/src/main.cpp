@@ -239,7 +239,7 @@ protected:
 	void InitializeParticles(ParticleExample * particles, size_t count, glm::vec2 const & center)
 	{
 		
-		float WORLD_HEIGHT = WORLD_X / VIEWPORT_WANTED_ASPECT;
+		float WORLD_HEIGHT = 0.5f * WORLD_X / VIEWPORT_WANTED_ASPECT;
 
 		for (size_t i = 0; i < count; ++i)
 		{		

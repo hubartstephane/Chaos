@@ -86,6 +86,14 @@ namespace chaos
 
 
 
+
+
+
+
+
+
+
+
 	void ConstructParticles(void * dst, size_t count)
 	{
 
@@ -98,6 +106,8 @@ namespace chaos
 
 	bool ParticleRangeAllocation::Resize(size_t new_count)
 	{
+
+#if 0
 		// can only resize if attached to manager
 		ParticleRange * range = GetParticleRangeReference();
 		if (range != nullptr)
@@ -142,7 +152,7 @@ namespace chaos
 		// udpate the value
 		range->count = new_count;
 
-
+#endif
 
 		return true;
 	}
@@ -181,11 +191,6 @@ namespace chaos
 		return 0;
 	}
 
-	size_t ParticleLayerDesc::CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector)
-	{
-		return particle_count; // no particle destruction.
-	}
-
 	bool ParticleLayerDesc::AreParticlesDynamic() const
 	{
 		return false;
@@ -211,9 +216,6 @@ namespace chaos
 		: layer_desc(in_layer_desc)
 	{
 		assert(in_layer_desc != nullptr);
-		particle_size = layer_desc->GetParticleSize();
-		vertex_size = layer_desc->GetVertexSize();
-		vertices_count_per_particles = layer_desc->GetVerticesCountPerParticles();
 	}
 
 	ParticleLayer::~ParticleLayer()
@@ -241,52 +243,34 @@ namespace chaos
 			RemoveParticleAllocation(range_allocations[range_allocations.size() - 1]);
 	}
 
+	size_t ParticleLayer::GetParticleCount(ParticleRange range) const
+	{
+		return range.count;
+	}
+
 	size_t ParticleLayer::GetParticleCount() const
 	{
-		if (particle_size == 0)
-			return 0;
-		return particles.size() / particle_size;
+		return 0;
 	}
 
 	void * ParticleLayer::GetParticle(size_t index)
 	{
-		if (particle_size == 0)
-			return nullptr;
-		size_t particle_count = particles.size() / particle_size;
-		if (index >= particle_count)
-			return nullptr;
-		return &particles[0] + index * particle_size;
+		return nullptr;
 	}
 
 	void const * ParticleLayer::GetParticle(size_t index) const
 	{
-		if (particle_size == 0)
-			return nullptr;
-		size_t particle_count = particles.size() / particle_size;
-		if (index >= particle_count)
-			return nullptr;
-		return &particles[0] + index * particle_size;
-	}
-
-	size_t ParticleLayer::GetParticleCount(ParticleRange range) const
-	{
-		if (particle_size == 0)
-			return 0;
-		return range.count;
+		return nullptr;
 	}
 
 	void * ParticleLayer::GetParticleBuffer(ParticleRange range)
 	{
-		if (particle_size == 0)
-			return nullptr;
-		return &particles[range.start * particle_size];
+		return nullptr;
 	}
 
 	void const * ParticleLayer::GetParticleBuffer(ParticleRange range) const
 	{
-		if (particle_size == 0)
-			return nullptr;
-		return &particles[range.start * particle_size];
+		return nullptr;
 	}
 
 	bool ParticleLayer::AreParticlesDynamic() const
@@ -316,12 +300,12 @@ namespace chaos
 
 	void ParticleLayer::TickParticles(float delta_time)
 	{
+		// early exit
+		if (IsPaused())
+			return;
 		// no particles, nothing to do
 		size_t particle_count = GetParticleCount();
 		if (particle_count == 0)
-			return;
-		// early exit
-		if (IsPaused())
 			return;
 		// update the particles themselves
 		if (AreParticlesDynamic())
@@ -332,10 +316,10 @@ namespace chaos
 		// destroy the particles that are to be destroyed
 		if (pending_kill_particles > 0)
 		{
-			size_t new_particle_count = CleanDestroyedParticles();
-			if (new_particle_count != particle_count)
+			size_t destroyed_count = CleanDestroyedParticles();
+			if (destroyed_count > 0)
 			{
-				UpdateParticleRanges(new_particle_count);
+				UpdateParticleRanges(particle_count - destroyed_count);
 				require_GPU_update = true;
 			}
 			pending_kill_particles = 0;
@@ -392,7 +376,11 @@ namespace chaos
 
 	size_t ParticleLayer::CleanDestroyedParticles()
 	{
-		return layer_desc->CleanDestroyedParticles(&particles[0], GetParticleCount(), &deletion_vector[0]);
+		return 0;
+	}
+
+	void ParticleLayer::DoResizeParticles(size_t new_count)
+	{
 	}
 
 	ParticleRangeAllocation * ParticleLayer::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
@@ -422,7 +410,7 @@ namespace chaos
 	ParticleRange ParticleLayer::SpawnParticles(size_t count)
 	{
 		ParticleRange result;
-		if (count > 0 && particle_size > 0)
+		if (count > 0)
 		{
 			size_t current_particle_count = GetParticleCount();
 
@@ -431,7 +419,7 @@ namespace chaos
 			result.count = count;
 			// create the particles and the suppression corresponding data
 			size_t new_count = current_particle_count + count;
-			particles.resize(new_count * particle_size, 0);
+			DoSpawnParticles(count);
 			deletion_vector.resize(new_count, 0);
 			// indicates that GPU needs to be rebuild
 			require_GPU_update = true;
@@ -518,7 +506,7 @@ namespace chaos
 			}
 		}
 		// resize some vectors
-		particles.resize(new_particle_count * particle_size);
+		DoResizeParticles(new_particle_count);
 		deletion_vector.resize(new_particle_count);
 		// reset the suppression vector
 		for (size_t i = 0; i < new_particle_count; ++i)
@@ -629,9 +617,10 @@ namespace chaos
 		size_t result = 0;
 
 		size_t particle_index = 0;
-		size_t range_index = 0;
+		size_t range_index    = 0;
+		size_t vertex_size    = GetVertexSize();
 		size_t particle_count = GetParticleCount();
-		size_t range_count = range_allocations.size();
+		size_t range_count    = range_allocations.size();
 
 		while (particle_index < particle_count)
 		{

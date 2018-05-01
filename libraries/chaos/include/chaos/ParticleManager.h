@@ -195,8 +195,6 @@ namespace chaos
 
 		/** update all particles */
 		virtual size_t UpdateParticles(UpdateParticleData & data, ParticleRangeAllocation * allocation);
-		/** Test particle life. Destroy particles (move particles on deleted previous ones). returns the number of remaining particles */
-		virtual size_t CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector);
 	};
 
 	// ==============================================================
@@ -227,25 +225,27 @@ namespace chaos
 		void SetLayerID(int in_id);
 
 		/** get the total number of particles */
-		size_t GetParticleCount() const;
+		virtual size_t GetParticleCount() const;
+		/** get the particles */
+		virtual void * GetParticleBuffer(ParticleRange range);
+		/** get the particles */
+		virtual void const * GetParticleBuffer(ParticleRange range) const;
+
+		/** get the particle by its index */
+		virtual void * GetParticle(size_t index);
+		/** get the particle by its index */
+		virtual void const * GetParticle(size_t index) const;
+
 		/** get the number of particles */
 		size_t GetParticleCount(ParticleRange range) const;
-		/** get the particles */
-		void * GetParticleBuffer(ParticleRange range);
-		/** get the particles */
-		void const * GetParticleBuffer(ParticleRange range) const;
-
-		/** get the particle by its index */
-		void * GetParticle(size_t index);
-		/** get the particle by its index */
-		void const * GetParticle(size_t index) const;
 
 		/** returns the size in memory of a particle */
-		size_t GetParticleSize() const { return particle_size; }
+		size_t GetParticleSize() const { return layer_desc->GetParticleSize(); }
 		/** returns the size in memory of a vertex */
-		size_t GetVertexSize() const { return vertex_size; }
+		size_t GetVertexSize() const { return layer_desc->GetVertexSize(); }
 		/** returns the number of vertices required for each particles */
-		size_t GetVerticesCountPerParticles() const { return vertices_count_per_particles; }
+		size_t GetVerticesCountPerParticles() const { return layer_desc->GetVerticesCountPerParticles(); }
+
 		/** returns true whether particles need to be updated */
 		bool AreParticlesDynamic() const;
 
@@ -284,6 +284,13 @@ namespace chaos
 
 	protected:
 
+		/** spawn some particles at the end of the buffer */
+		virtual void DoSpawnParticles(size_t count){}
+		/** internal method to test whether particles should be destroyed (returns the number of particles destroyed) */
+		virtual size_t CleanDestroyedParticles();
+		/** resize the particle buffer */
+		virtual void DoResizeParticles(size_t new_count);
+
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
 		/** internal method to remove a range from the layer */
@@ -292,8 +299,7 @@ namespace chaos
 		void UpdateParticleRanges(size_t new_particle_count);
 		/** internal method to update particles */
 		size_t UpdateParticles(float delta_time);
-		/** internal method to test whether particles should be destroyed (returns the number of particles still in the layer) */
-		size_t CleanDestroyedParticles();
+
 		/** update the GPU buffers (returns the number of vertices inserted) */
 		size_t UpdateGPUBuffers() const;
 		/** internal method to update the GPU buffers */
@@ -311,13 +317,6 @@ namespace chaos
 		/** the ID of the layer */
 		int id = 0;
 
-		/** the size of one particle */
-		size_t particle_size = 0;
-		/** the size of one vertex */
-		size_t vertex_size = 0;
-		/** the number of vertices required to render one particle */
-		size_t vertices_count_per_particles = 0;
-
 		/** the order of the layer in the manager */
 		int render_order = 0;
 		/** whether the layer is paused */
@@ -332,8 +331,7 @@ namespace chaos
 
 		/** the material used to render the layer */
 		boost::intrusive_ptr<RenderMaterial> render_material;
-		/** the array containing the particles */
-		std::vector<char> particles;
+
 		/** a utility vector that is used to mark particles to destroy, then as an internal utility vector */
 		std::vector<size_t> deletion_vector;
 		/** particles ranges */
@@ -354,6 +352,96 @@ namespace chaos
 		mutable size_t vertices_count = 0;
 	};
 
+	// ==============================================================
+	// TypedParticleLayer
+	// ==============================================================
+
+	template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
+	class TypedParticleLayer : public ParticleLayer
+	{
+
+	public:
+
+		/** the type for one particle */
+		using particle_type = PARTICLE_TYPE;
+		/** the type for one vertex */
+		using vertex_type = VERTEX_TYPE;
+
+		/** constructor */
+		TypedParticleLayer(ParticleLayerDesc * in_layer_desc) :
+			ParticleLayer(in_layer_desc) {}
+
+		/** override */
+		virtual void * GetParticleBuffer(ParticleRange range) override
+		{
+			return &particles[range.start];
+		}
+		/** override */
+		virtual void const * GetParticleBuffer(ParticleRange range) const override
+		{
+			return &particles[range.start];
+		}
+		/** override */
+		virtual size_t GetParticleCount() const override
+		{
+			return particles.size();
+		}
+		/** override */
+		virtual void * GetParticle(size_t index) override
+		{
+			if (index >= particles.size())
+				return nullptr;
+			return &particles[index];
+		}
+		/** override */
+		virtual void const * GetParticle(size_t index) const override
+		{
+			if (index >= particles.size())
+				return nullptr;
+			return &particles[index];
+		}
+
+		/** override */
+		virtual void DoSpawnParticles(size_t count) override
+		{
+			particles.resize(count + particles.size());
+		}
+		/** override */
+		virtual void DoResizeParticles(size_t new_count) override
+		{
+			particles.resize(new_count);
+		}
+
+		/** override */
+		virtual size_t CleanDestroyedParticles() override
+		{
+			size_t particle_count = particles.size();
+			if (particle_count == 0)
+				return 0;
+
+			size_t i = 0;
+			size_t j = 0;
+
+			particle_type * p = &particles[0];
+			while (i < particle_count)
+			{
+				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK) // already destroyed ?
+				{
+					deletion_vector[i] = j; // the position of particle 'i' is now 'j'
+					if (i != j)
+						p[j] = p[i]; // keep the particle by copying it 
+					++j;
+				}
+				++i;
+			}
+			return (i - j);
+		}
+		
+	protected:
+
+		/** the array containing the particles */
+		std::vector<particle_type> particles;
+	};
 
 	// ==============================================================
 	// TypedParticleLayerDesc
@@ -450,27 +538,6 @@ namespace chaos
 			}
 			return result;
 		}
-		/** loop for destroying the particles */
-		virtual size_t CleanDestroyedParticles(void * particles, size_t particle_count, size_t * deletion_vector) override
-		{
-			size_t i = 0;
-			size_t j = 0;
-
-			particle_type * p = (particle_type*)particles;
-
-			while (i < particle_count)
-			{
-				if (deletion_vector[i] != ParticleLayer::DESTROY_PARTICLE_MARK) // already destroyed ?
-				{
-					deletion_vector[i] = j; // the position of particle 'i' is now 'j'
-					if (i != j)
-						p[j] = p[i]; // keep the particle by copying it 
-					++j;
-				}
-				++i;
-			}
-			return particle_count + (j - i);
-		}
 
 		/** get the vertex declaration */
 		virtual VertexDeclaration GetVertexDeclaration() const override
@@ -496,6 +563,14 @@ namespace chaos
 				v += new_vertices;
 			}
 			return result;
+		}
+
+	protected:
+
+		/** create a layer */
+		virtual ParticleLayer * NewLayer() override
+		{
+			return new TypedParticleLayer<particle_type, vertex_type>(this);
 		}
 
 	protected:

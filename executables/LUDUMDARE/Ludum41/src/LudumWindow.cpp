@@ -67,17 +67,18 @@ void LudumWindow::Finalize()
 bool LudumWindow::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) 
 {   
 	// open user temp directory and dump the config file
-#if _DEBUG
-
 	chaos::Application * application = chaos::Application::GetInstance();
 	if (application != nullptr)
 	{
-		boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory();
+		boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
+
+#if 1 || _DEBUG
 		chaos::WinTools::ShowFile(user_temp);
+#endif
 	}
 
+#if _DEBUG
 	chaos::JSONTools::DumpConfigFile(config);
-
 #endif
 
 	// create the game

@@ -454,9 +454,6 @@ protected:
 
 	bool should_update_score = false;
 
-	bool require_save_best_score = false;
-
-
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
 
@@ -469,6 +466,8 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
 
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;
+
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> best_score_allocations;
 
 	/** the possible rewards */
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;

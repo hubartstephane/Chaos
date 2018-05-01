@@ -13,6 +13,37 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
+LudumGame::~LudumGame()
+{
+	if (require_save_best_score)
+		SerializeBestScore(true);
+}
+
+void LudumGame::SerializeBestScore(bool save)
+{
+	chaos::Application * application = chaos::Application::GetInstance();
+	if (application == nullptr)
+		return;
+
+	boost::filesystem::path filepath = application->GetUserLocalTempPath() / "best_score.txt";
+
+	if (save)
+	{
+		std::ofstream file(filepath.string().c_str(), std::ofstream::binary);
+		if (!file)
+			return;
+		file << best_score;
+	}
+	else
+	{
+		std::ifstream file(filepath.string().c_str(), std::ofstream::binary);
+		if (!file)
+			return;
+		file >> best_score;
+	}
+}
+
+
 void LudumGame::IncrementScore(int delta)
 {
 	current_score += points_per_brick * (1 + combo_multiplier);
@@ -35,7 +66,7 @@ void LudumGame::CreateGameTitle()
 	CreateTitle("AsciiPaouf 2", false);
 }
 
-void LudumGame::CreateScore()
+void LudumGame::CreateScoreParticles()
 {
 	if (!should_update_score)
 		return;
@@ -166,7 +197,7 @@ void LudumGame::Tick(double delta_time)
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
 	// create the score text
-	CreateScore();
+	CreateScoreParticles();
 	// tick the particle manager
 	if (particle_manager != nullptr)
 		particle_manager->Tick((float)delta_time);
@@ -380,8 +411,11 @@ void LudumGame::ResetGameVariables()
 
 void LudumGame::OnGameOver()
 {
-	best_score = current_score;
-
+	if (best_score < current_score)
+	{
+		best_score = current_score;
+		require_save_best_score = true;
+	}
 	DestroyGameObjects();
 }
 

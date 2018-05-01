@@ -56,6 +56,9 @@ protected:
 
 public:
 
+	/** destructor */
+	~LudumGame();
+
 	/** the tick method */
 	void Tick(double delta_time);
 	/** whenever a key event is received */
@@ -345,7 +348,10 @@ protected:
 	bool IsPlaying() const;
 
 	/** create the score allocation */
-	void CreateScore();
+	void CreateScoreParticles();
+
+	/** Save the best score */
+	void SerializeBestScore(bool save);
 
 protected:
 
@@ -447,6 +453,8 @@ protected:
 	int best_score = 0;
 
 	bool should_update_score = false;
+
+	bool require_save_best_score = false;
 
 
 	/** some sprites */

@@ -66,6 +66,20 @@ bool LudumGame::IsPlaying() const
 void LudumGame::CreateGameTitle()
 {
 	CreateTitle("AsciiPaouf 2", false);
+
+	if (best_score > 0)
+	{
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 50;
+		params.hotpoint_type = chaos::Hotpoint::CENTER;
+		params.position.x = 0.0f;
+		params.position.y = -130.0f;
+
+		params.character_set_name = "normal";
+
+		std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
+		best_score_allocations = CreateTextParticles(str.c_str(), params);
+	}
 }
 
 void LudumGame::CreateScoreParticles()
@@ -107,6 +121,7 @@ void LudumGame::CreateTitle(char const * title, bool normal)
 void LudumGame::DestroyTitle()
 {
 	text_allocations = nullptr;
+	best_score_allocations = nullptr;
 }
 
 void LudumGame::OnStartGame(bool very_first)
@@ -649,6 +664,7 @@ void LudumGame::DestroyGameObjects()
 	lifes_allocations = nullptr;
 	balls_allocations = nullptr;
 	score_allocations = nullptr;
+	best_score_allocations = nullptr;
 
 	sequence_challenge = nullptr;
 

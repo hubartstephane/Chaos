@@ -188,6 +188,8 @@ namespace chaos
 
 	protected:
 
+		/** create a layer */
+		virtual ParticleLayer * NewLayer();
 		/** create an allocation */
 		virtual ParticleRangeAllocation * NewRangeAllocation();
 
@@ -526,8 +528,9 @@ namespace chaos
 		/** Search a layer by its id */
 		ParticleLayer const * FindLayer(int id) const;
 
-		/** add a layer in the manager */
-		void AddLayer(ParticleLayer * layer);
+
+		/** create a layer and add it to the manager */
+		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc);
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayer * layer);
 

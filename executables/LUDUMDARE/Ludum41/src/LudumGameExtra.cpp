@@ -433,13 +433,13 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	return true;
 }
 
-chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayer * layer, int render_order, int layer_id, char const * material_name)
+chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name)
 {
-	if (layer == nullptr)
+	// check entry
+	if (layer_desc == nullptr)
 		return nullptr;
-
-	// give the layer to the manager
-	particle_manager->AddLayer(layer);
+	// create the layer
+	chaos::ParticleLayer * layer = particle_manager->AddLayer(layer_desc);
 	// change layer render order / ID
 	layer->SetLayerID(layer_id);
 	layer->SetRenderOrder(render_order);

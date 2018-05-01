@@ -151,6 +151,11 @@ namespace chaos
 	// PARTICLE LAYER DESC
 	// ==============================================================
 
+	ParticleLayer * ParticleLayerDesc::NewLayer()
+	{
+		return new ParticleLayer(this);
+	}
+
 	ParticleRangeAllocation * ParticleLayerDesc::NewRangeAllocation()
 	{
 		return new ParticleRangeAllocation;
@@ -732,16 +737,18 @@ namespace chaos
 		return std::numeric_limits<size_t>::max();
 	}
 
-	void ParticleManager::AddLayer(ParticleLayer * layer)
+	ParticleLayer * ParticleManager::AddLayer(ParticleLayerDesc * layer_desc)
 	{
-		if (layer == nullptr)
-			return;
-		// search whether the layer is not already in the manager
-		size_t index = FindLayerIndex(layer);
-		if (index < layers.size())
-			return;
+		// test entry
+		if (layer_desc == nullptr)
+			return nullptr;
+		// create the layer
+		ParticleLayer * result = layer_desc->NewLayer();
+		if (result == nullptr)
+			return nullptr;
 		// insert the layer at the end
-		layers.push_back(layer);
+		layers.push_back(result);
+		return result;
 	}
 
 	void ParticleManager::RemoveLayer(ParticleLayer * layer)

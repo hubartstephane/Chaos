@@ -210,14 +210,14 @@ protected:
 	template<typename TRAIT_TYPE, typename ...PARAMS>
 	chaos::ParticleLayer * AddParticleLayer(int render_order, int layer_id, char const * material_name, PARAMS... params)
 	{
-		chaos::ParticleLayer * result = new chaos::ParticleLayer(
-			new chaos::TypedParticleLayerDesc<TRAIT_TYPE>(params...)
-		);
-		return DoAddParticleLayer(result, render_order, layer_id, material_name);
+		chaos::ParticleLayerDesc * layer_desc = new chaos::TypedParticleLayerDesc<TRAIT_TYPE>(params...);
+		if (layer_desc == nullptr)
+			return nullptr;
+		return DoAddParticleLayer(layer_desc, render_order, layer_id, material_name);
 	}
 
 	/** the method to effectively fill a layer data */
-	chaos::ParticleLayer * DoAddParticleLayer(chaos::ParticleLayer * layer, int render_order, int layer_id, char const * material_name);
+	chaos::ParticleLayer * DoAddParticleLayer(chaos::ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name);
 
 
 	/** create one particle for the background */

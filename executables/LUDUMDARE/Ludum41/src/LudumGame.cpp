@@ -1055,6 +1055,39 @@ void LudumGame::OnLifeChallenge(bool success)
 	if (bricks == nullptr)
 		return;
 
+	if (success)
+	{
+		// decrease all particles life
+		int destroyed_count = 0;
+
+		for (size_t i = 0; i < brick_count; ++i)
+		{
+			ParticleBrick & p = bricks[i];			
+			if (p.life > 0)
+			{
+				++destroyed_count;
+				--p.life;
+			}			
+		}
+		IncrementScore(destroyed_count * points_per_brick * (1 + combo_multiplier));
+	}
+	else
+	{
+		// increase all particles life
+		for (size_t i = 0; i < brick_count; ++i)
+		{
+			ParticleBrick & p = bricks[i];
+			if (p.life < max_brick_life && p.life > 0)
+			{
+				++p.life;
+				if (p.life > p.starting_life)
+					p.starting_life = p.life;
+			}
+		}
+
+	}
+
+
 	for (size_t i = 0 ; i < brick_count ; ++i)
 	{
 		ParticleBrick & p = bricks[i];
@@ -1070,6 +1103,9 @@ void LudumGame::OnLifeChallenge(bool success)
 				p.starting_life = p.life;		
 		}
 	}
+
+
+	
 }
 
 

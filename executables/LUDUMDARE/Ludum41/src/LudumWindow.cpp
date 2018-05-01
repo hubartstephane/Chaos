@@ -72,7 +72,7 @@ bool LudumWindow::InitializeFromConfiguration(nlohmann::json const & config, boo
 	{
 		boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
 
-#if 1 || _DEBUG
+#if _DEBUG
 		chaos::WinTools::ShowFile(user_temp);
 #endif
 	}

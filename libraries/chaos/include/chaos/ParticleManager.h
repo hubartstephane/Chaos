@@ -290,6 +290,8 @@ namespace chaos
 		virtual size_t CleanDestroyedParticles();
 		/** resize the particle buffer */
 		virtual void DoResizeParticles(size_t new_count);
+		/** insert some particles inside the buffer */
+		virtual void DoInsertParticleAfter(size_t position, size_t count);
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
@@ -410,6 +412,12 @@ namespace chaos
 		virtual void DoResizeParticles(size_t new_count) override
 		{
 			particles.resize(new_count);
+		}
+
+		/** override */
+		virtual void DoInsertParticleAfter(size_t position, size_t count) override
+		{
+			particles.insert(particles.begin() + position, count, particle_type());
 		}
 
 		/** override */

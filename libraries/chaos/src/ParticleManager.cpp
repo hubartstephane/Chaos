@@ -84,30 +84,8 @@ namespace chaos
 		return visible;
 	}
 
-
-
-
-
-
-
-
-
-
-
-	void ConstructParticles(void * dst, size_t count)
-	{
-
-	}
-
-	void MoveParticles(void const * src, void * dst, size_t count)
-	{
-
-	}
-
 	bool ParticleRangeAllocation::Resize(size_t new_count)
 	{
-
-#if 0
 		// can only resize if attached to manager
 		ParticleRange * range = GetParticleRangeReference();
 		if (range != nullptr)
@@ -126,34 +104,33 @@ namespace chaos
 			return true;
 		}
 
+		assert(new_count > old_count);
+
 		// increase the range
-		size_t p1     = range->start;
-		size_t p2     = p1 + range->count;
-		size_t psize  = layer->particle_size;
-		size_t pcount = layer->particles.size() / psize;
-		
+		size_t p1 = range->start;
+		size_t p2 = p1 + range->count;
+		size_t pcount = layer->GetParticleCount();
 
-		layer->particles.insert(layer->particles.end(), psize * (new_count - old_count), 0); // add particles at the end of the buffer
-
-		if (p2 == pcount) // the range points the very last particles of the layer
-		{                 // can grow without any questions
-
-			char * first_new_particle = &layer->particles[0] + psize * (p1 + old_count);
-			ConstructParticles(first_new_particle, new_count - old_count);
+		// the new particles (+deletion data) to add are at the end of the buffer 
+		size_t delta_count = new_count - old_count;
+		if (p2 == pcount)
+		{
+			layer->DoResizeParticles(delta_count);
+			layer->deletion_vector.resize(delta_count);
 		}
+		// insert particles (+deletion data) in the middle of the buffer
 		else
 		{
-			size_t particule_to_move1 = pcount - p2; // insert in place
-			size_t particule_to_move2 = new_count;   // insert a copy at the end
+			layer->DoInsertParticleAfter(p2, delta_count);
+			layer->deletion_vector.insert(layer->deletion_vector.begin() + p2, delta_count, 0);
 
-
+			// update the ranges after this one
+			size_t range_count = layer->range_allocations.size();
+			for (size_t i = range_index + 1; i < range_count; ++i)
+				layer->particles_ranges[i].start += delta_count;
 		}
 
-		// udpate the value
 		range->count = new_count;
-
-#endif
-
 		return true;
 	}
 
@@ -380,6 +357,10 @@ namespace chaos
 	}
 
 	void ParticleLayer::DoResizeParticles(size_t new_count)
+	{
+	}
+
+	void ParticleLayer::DoInsertParticleAfter(size_t position, size_t count)
 	{
 	}
 

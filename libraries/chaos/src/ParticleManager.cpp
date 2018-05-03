@@ -84,6 +84,26 @@ namespace chaos
 		return visible;
 	}
 
+	void ParticleRangeAllocation::MarkParticlesToDestroy(size_t start, size_t count)
+	{
+		// valid number of particles
+		if (count == 0)
+			return;
+		// is the range attached to a layer
+		if (!IsAttachedToLayer())
+			return;
+
+		// clamp the range
+		ParticleRange range = GetParticleRange();
+		if (start > range.count)
+			return;
+
+		// compute the extrems index in the full buffer point of view
+		size_t s = range.start + start;
+		size_t e = min(s + count, range.start + range.count);
+		layer->MarkParticlesToDestroy(s, e - s);
+	}
+
 	bool ParticleRangeAllocation::Resize(size_t new_count)
 	{
 		// can only resize if attached to manager

@@ -653,6 +653,7 @@ bool LudumGame::InitializeParticleManager()
 
 	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
 	
+	AddParticleLayer<ParticleObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject");
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 

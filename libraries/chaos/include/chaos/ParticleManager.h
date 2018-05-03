@@ -86,6 +86,14 @@ namespace chaos
 		/** resize the particles */
 		bool Resize(size_t new_count);
 
+		/** get the layer for this allocation */
+		ParticleLayer * GetLayer() { return layer; }
+		/** get the layer for this allocation */
+		ParticleLayer const * GetLayer() const { return layer; }
+
+		/** Mark some particles for destruction */
+		void MarkParticlesToDestroy(size_t start, size_t count);
+
 	protected:
 
 		/** get a pointer on the range in layer */

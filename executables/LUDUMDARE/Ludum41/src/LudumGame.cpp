@@ -111,7 +111,54 @@ chaos::ParticleRangeAllocation * LudumGame::CreateScoringParticles(bool & update
 
 void LudumGame::UpdateLifeParticles()
 {
+	// get the number of particles already existing
+	size_t life_particles = 0;
+	if (life_allocations != nullptr)
+		life_particles = life_allocations->GetParticleCount();
 
+	// no changes ?
+	if (life_particles == current_life)
+		return;
+
+	// some life lost (destroy particles)
+	if ((size_t)current_life < life_particles)
+	{
+		life_allocations->MarkParticlesToDestroy(current_life, life_particles - current_life);
+		return;
+	}
+
+	// some life gained
+	assert(life_particles < (size_t)current_life);
+	
+	//if (life_allocations == nullptr)
+		
+	life_allocations = CreateGameObjects("life", current_life, LIFE_LAYER_ID);
+	if (life_allocations == nullptr)
+		return;
+
+	// set the color
+	ParticleObject * particle = (ParticleObject *)life_allocations->GetParticleBuffer();
+	if (particle == nullptr)
+		return;
+
+	glm::vec2 world_size = GetWorldSize();
+
+	glm::vec2 particle_size;
+	particle_size.x = 50.0f;
+	particle_size.y = 50.0f;
+
+	for (size_t i = 0; i < (size_t)current_life; ++i)
+	{
+		glm::vec2 position;
+	//	position.x = -world_size.x * 0.5f + particle_size.x * (float)i;
+//		position.y = -world_size.y * 0.5f - particle_size.y;
+
+		position.x = 0.0f;
+		position.y = 0.0f;
+
+		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+		particle[i].box.half_size = 0.5f * particle_size;
+	}
 }
 
 void LudumGame::UpdateComboParticles()
@@ -227,10 +274,6 @@ void LudumGame::HandleKeyboardInputs()
 		left_stick_position = gamepad_sensitivity * simulated_stick;
 }
 
-void LudumGame::UpdateGameState(double delta_time)
-{
-	game_automata->Tick(delta_time);
-}
 
 void LudumGame::Tick(double delta_time)
 {
@@ -238,14 +281,10 @@ void LudumGame::Tick(double delta_time)
 	gamepad_manager->Tick((float)delta_time);
 	// handle keyboard inputs
 	HandleKeyboardInputs();
-	// update the game state
-	UpdateGameState(delta_time);
+	// update the game automata
+	game_automata->Tick(delta_time); 
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
-	// create the score text
-	UpdateScoreParticles();
-	// create the combo text
-	UpdateComboParticles();
 	// tick the particle manager
 	if (particle_manager != nullptr)
 		particle_manager->Tick((float)delta_time);
@@ -572,12 +611,7 @@ void LudumGame::ChangeLife(int delta_life)
 {
 	if (delta_life == 0)
 		return;
-	int new_life = chaos::MathTools::Clamp(current_life + delta_life, 0, max_life);
-	if (current_life != new_life)
-	{ 
-		current_life = new_life;
-		UpdateLifeParticles();
-	}
+	current_life = chaos::MathTools::Clamp(current_life + delta_life, 0, max_life);
 }
 
 bool LudumGame::TickGameOverDetection(double delta_time)
@@ -626,6 +660,13 @@ void LudumGame::TickGameLoop(double delta_time)
 
 	if (TickGameOverDetection(delta_time))
 	{
+		// create the score text
+		UpdateScoreParticles();
+		// create the combo text
+		UpdateComboParticles();
+		// create the life 
+		UpdateLifeParticles();
+		// some other calls
 		TickLevelCompleted(delta_time);
 		TickChallenge(delta_time);
 		TickBallSplit(delta_time);
@@ -722,14 +763,13 @@ void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
 	bricks_allocations = nullptr;
-	lifes_allocations = nullptr;
+	life_allocations = nullptr;
 	balls_allocations = nullptr;
 	score_allocations = nullptr;
 	combo_allocations = nullptr;
 	best_score_allocations = nullptr;
 
 	sequence_challenge = nullptr;
-
 }
 
 chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)

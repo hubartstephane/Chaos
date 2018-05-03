@@ -86,9 +86,6 @@ protected:
 	/** getter on the sound manager */
 	chaos::SoundManager * GetSoundManager();
 
-	/** internal method to update the state of the game */
-	void UpdateGameState(double delta_time);
-
 	/** internal methods to generate the atlas for sprites */
 	bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -469,10 +466,11 @@ protected:
 	bool should_update_score = false;
 
 	bool should_update_combo = false;
+
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> lifes_allocations;
+	boost::intrusive_ptr<chaos::ParticleRangeAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;

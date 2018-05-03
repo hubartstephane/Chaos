@@ -144,19 +144,16 @@ void LudumGame::UpdateLifeParticles()
 	glm::vec2 world_size = GetWorldSize();
 
 	glm::vec2 particle_size;
-	particle_size.x = 50.0f;
-	particle_size.y = 50.0f;
+	particle_size.x = 35.0f;
+	particle_size.y = 20.0f;
 
 	for (size_t i = 0; i < (size_t)current_life; ++i)
 	{
 		glm::vec2 position;
-	//	position.x = -world_size.x * 0.5f + particle_size.x * (float)i;
-//		position.y = -world_size.y * 0.5f - particle_size.y;
+		position.x = -world_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
+		position.y = -world_size.y * 0.5f + 15.0f;
 
-		position.x = 0.0f;
-		position.y = 0.0f;
-
-		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 		particle[i].box.half_size = 0.5f * particle_size;
 
 		particle[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

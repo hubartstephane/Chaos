@@ -36,7 +36,7 @@ class LudumGame : public chaos::ReferencedObject
 
 	friend class LudumChallengeRewardPunishment_ExtraBall;
 	friend class LudumChallengeRewardPunishment_LongBarBall;
-	friend class LudumChallengeRewardPunishment_LifeBall;
+	friend class LudumChallengeRewardPunishment_BrickLife;
 	friend class LudumChallengeRewardPunishment_SpeedDownBall;
 	friend class LudumChallengeRewardPunishment_SplitBall;
 
@@ -334,15 +334,20 @@ protected:
 
 
 	/** some challenges */
-	void OnLifeChallenge(bool success);
+	void OnBrickLifeChallenge(bool success);
+	bool IsBrickLifeChallengeValid(bool success);
 	/** some challenges */
 	void OnBallSpeedChallenge(bool success);
+	bool IsBallSpeedChallengeValid(bool success);
 	/** some challenges */
 	void OnSplitBallChallenge(bool success);
+	bool IsSplitBallChallengeValid(bool success);
 	/** some challenges */
 	void OnExtraBallChallenge(bool success);
+	bool IsExtraBallChallengeValid(bool success);
 	/** some challenges */
 	void OnLongBarChallenge(bool success);
+	bool IsLongBarChallengeValid(bool success);
 
 	/** returns true whether we are playing */
 	bool IsPlaying() const;
@@ -351,6 +356,10 @@ protected:
 	void UpdateScoreParticles();
 	/** create the combo allocation */
 	void UpdateComboParticles();
+	/** create the life allocation */
+	void UpdateLifeParticles();
+
+	void ChangeLife(int delta_life);
 
 	/** internal method to create score/combo */
 	chaos::ParticleRangeAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
@@ -460,22 +469,14 @@ protected:
 	bool should_update_score = false;
 
 	bool should_update_combo = false;
-
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> lifes_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> combo_allocations;
-
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> best_score_allocations;
 
 	/** the possible rewards */

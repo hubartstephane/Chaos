@@ -505,13 +505,13 @@ bool LudumGame::InitializeRewardsAndPunishments()
 	rewards.push_back(new LudumChallengeRewardPunishment_LongBarBall);
 	rewards.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	//rewards.push_back(new LudumChallengeRewardPunishment_SplitBall);
-	rewards.push_back(new LudumChallengeRewardPunishment_LifeBall);
+	rewards.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	//rewards.push_back(new LudumChallengeRewardPunishment_ExtraBall);
 
 	punishments.push_back(new LudumChallengeRewardPunishment_LongBarBall);
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	//punishments.push_back(new LudumChallengeRewardPunishment_SplitBall);
-	punishments.push_back(new LudumChallengeRewardPunishment_LifeBall);
+	punishments.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	//punishments.push_back(new LudumChallengeRewardPunishment_ExtraBall);
 
 	return true;

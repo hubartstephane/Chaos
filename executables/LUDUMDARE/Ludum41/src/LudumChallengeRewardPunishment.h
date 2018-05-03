@@ -42,10 +42,9 @@ public:
 
 
 
-class LudumChallengeRewardPunishment_LifeBall : public LudumChallengeRewardPunishment
+class LudumChallengeRewardPunishment_BrickLife : public LudumChallengeRewardPunishment
 {
 public:
-
 
 	/** called to know whether the reward / punishment is valid */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;

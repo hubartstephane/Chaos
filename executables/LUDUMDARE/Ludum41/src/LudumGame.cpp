@@ -109,6 +109,11 @@ chaos::ParticleRangeAllocation * LudumGame::CreateScoringParticles(bool & update
 	return CreateTextParticles(str.c_str(), params);	
 }
 
+void LudumGame::UpdateLifeParticles()
+{
+
+}
+
 void LudumGame::UpdateComboParticles()
 {
 	// destroy combo multiplier if non necessary
@@ -563,12 +568,24 @@ void LudumGame::TickBallSplit(double delta_time)
 #endif
 }
 
+void LudumGame::ChangeLife(int delta_life)
+{
+	if (delta_life == 0)
+		return;
+	int new_life = chaos::MathTools::Clamp(current_life + delta_life, 0, max_life);
+	if (current_life != new_life)
+	{ 
+		current_life = new_life;
+		UpdateLifeParticles();
+	}
+}
+
 bool LudumGame::TickGameOverDetection(double delta_time)
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count == 0)
 	{
-		--current_life;
+		ChangeLife(-1);
 		if (current_life <= 0)
 			RequireGameOver();
 		else
@@ -665,7 +682,7 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 	
 	LudumChallengeRewardPunishment * selected_rp = nullptr;
 
-	int count = (int)rewards_punishments.size();
+	size_t count = rewards_punishments.size();
 	if (count > 0)
 	{
 		size_t index = (size_t)rand();
@@ -1087,7 +1104,13 @@ ParticleBrick const * LudumGame::GetBricks() const
 	return (ParticleBrick const *)bricks_allocations->GetParticleBuffer();
 }
 
-void LudumGame::OnLifeChallenge(bool success)
+bool LudumGame::IsBrickLifeChallengeValid(bool success)
+{
+	size_t brick_count = GetBrickCount();
+	return (brick_count > 0);
+}
+
+void LudumGame::OnBrickLifeChallenge(bool success)
 {
 	size_t brick_count = GetBrickCount();
 	if (brick_count == 0)
@@ -1126,37 +1149,48 @@ void LudumGame::OnLifeChallenge(bool success)
 					p.starting_life = p.life;
 			}
 		}
-
 	}
-
-
-	for (size_t i = 0 ; i < brick_count ; ++i)
-	{
-		ParticleBrick & p = bricks[i];
-
-		if (success)
-		{
-			--p.life;
-		}
-		else if (p.life < max_brick_life && p.life > 0)
-		{
-			++p.life;
-			if (p.life > p.starting_life)
-				p.starting_life = p.life;		
-		}
-	}
-
-
-	
 }
+
+
+
+
+
+
+
+
+
+bool LudumGame::IsSplitBallChallengeValid(bool success)
+{
+
+
+
+
+	return true;
+}
+
+
+
+
 
 
 void LudumGame::OnSplitBallChallenge(bool success)
 {
 	if (!success)
-		OnLifeChallenge(false);
+		return;
+		
+	
+	
+	
+	pending_split_count++;
+}
+
+bool LudumGame::IsBallSpeedChallengeValid(bool success)
+{
+	if (success)
+		return (ball_speed > ball_initial_speed); // can still decrease speed ?
 	else
-		pending_split_count++;
+		return (ball_speed < ball_max_speed); // can still increase speed ?
 }
 
 void LudumGame::OnBallSpeedChallenge(bool success)
@@ -1169,9 +1203,25 @@ void LudumGame::OnBallSpeedChallenge(bool success)
 	ball_speed = chaos::MathTools::Clamp(ball_speed, ball_initial_speed, ball_max_speed);
 }
 
+bool LudumGame::IsExtraBallChallengeValid(bool success)
+{
+	if (success)
+		return current_life < max_life; // do not add life is already max
+	else
+		return current_life > 1; // do not remove life if last
+}
+
 void LudumGame::OnExtraBallChallenge(bool success)
 {
+	ChangeLife(success ? +1 : -1);
+}
 
+bool LudumGame::IsLongBarChallengeValid(bool success)
+{
+	if (success)
+		return (player_length < player_max_length); // can only increment if bar is not at max already
+	else
+		return (player_length > player_min_length); // can only decrement if bar is not at min already
 }
 
 void LudumGame::OnLongBarChallenge(bool success)
@@ -1180,7 +1230,6 @@ void LudumGame::OnLongBarChallenge(bool success)
 		SetPlayerLength(player_length + player_length_increment);
 	else
 		SetPlayerLength(player_length - player_length_decrement);
-
 }
 
 

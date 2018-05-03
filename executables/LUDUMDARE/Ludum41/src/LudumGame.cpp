@@ -158,6 +158,8 @@ void LudumGame::UpdateLifeParticles()
 
 		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
 		particle[i].box.half_size = 0.5f * particle_size;
+
+		particle[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }
 

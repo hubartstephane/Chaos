@@ -663,11 +663,24 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 	// rewards/punishment
 	auto const & rewards_punishments = (success) ? rewards : punishments;
 	
+	LudumChallengeRewardPunishment * selected_rp = nullptr;
+
 	int count = (int)rewards_punishments.size();
 	if (count > 0)
 	{
-		int index = rand() % count;
-		rewards_punishments[index]->OnRewardPunishment(this, success);
+		size_t index = (size_t)rand();
+		for (size_t i = 0 ; (i < count) && (selected_rp == nullptr) ; ++i)
+		{
+			LudumChallengeRewardPunishment * rp = rewards_punishments[(i + index) % count].get();
+			if (rp != nullptr && rp->IsRewardPunishmentValid(this, success))
+				selected_rp = rp;
+		}
+
+		if (selected_rp != nullptr)
+		{
+			if (selected_rp->CheckRewardPunishmentCondition(this, success))
+				selected_rp->OnRewardPunishment(this, success);			
+		}		
 	}
 
 	// reset some values

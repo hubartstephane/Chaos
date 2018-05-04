@@ -23,6 +23,7 @@
     { "path": "sounds/start.ogg" },
     { "path": "sounds/pause.ogg" },
     { "path": "sounds/collision.ogg" },
-    { "path": "sounds/heartbeat.ogg" }
+    { "path": "sounds/heartbeat.ogg" },
+    { "path": "sounds/balllost.ogg" }
   ]
 }

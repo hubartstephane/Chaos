@@ -5,6 +5,14 @@
 
 // =========================================================
 
+char const * LudumChallengeRewardPunishment_ExtraBall::GetTitleName(class LudumGame * game, bool reward) const 
+{
+	if (reward)
+		return "Extra Life";
+	else
+		return "Life Lost";
+}
+
 bool LudumChallengeRewardPunishment_ExtraBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
 {
 	assert(game != nullptr);
@@ -19,19 +27,35 @@ void LudumChallengeRewardPunishment_ExtraBall::OnRewardPunishment(class LudumGam
 
 // =========================================================
 
-bool LudumChallengeRewardPunishment_LongBarBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_BarSize::GetTitleName(class LudumGame * game, bool reward) const 
+{
+	if (reward)
+		return "Extend Bar";
+	else
+		return "Reduce Bar";
+}
+
+bool LudumChallengeRewardPunishment_BarSize::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
 {
 	assert(game != nullptr);
 	return game->IsLongBarChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_LongBarBall::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_BarSize::OnRewardPunishment(class LudumGame * game, bool reward)
 {
 	assert(game != nullptr);	
 	game->OnLongBarChallenge(reward);
 }
 
 // =========================================================
+
+char const * LudumChallengeRewardPunishment_BrickLife::GetTitleName(class LudumGame * game, bool reward) const 
+{
+	if (reward)
+		return "Hurt Bricks";
+	else
+		return "Heal Bricks";
+}
 
 bool LudumChallengeRewardPunishment_BrickLife::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
 {
@@ -47,6 +71,14 @@ void LudumChallengeRewardPunishment_BrickLife::OnRewardPunishment(class LudumGam
 
 // =========================================================
 
+char const * LudumChallengeRewardPunishment_SpeedDownBall::GetTitleName(class LudumGame * game, bool reward) const 
+{
+	if (reward)
+		return "Speed Down";
+	else
+		return "Speed Up";
+}
+
 bool LudumChallengeRewardPunishment_SpeedDownBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
 {
 	assert(game != nullptr);
@@ -60,6 +92,13 @@ void LudumChallengeRewardPunishment_SpeedDownBall::OnRewardPunishment(class Ludu
 }
 
 // =========================================================
+
+char const * LudumChallengeRewardPunishment_SplitBall::GetTitleName(class LudumGame * game, bool reward) const 
+{
+	if (reward)
+		return "Multi Ball";
+	return nullptr;
+}
 
 bool LudumChallengeRewardPunishment_SplitBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
 {

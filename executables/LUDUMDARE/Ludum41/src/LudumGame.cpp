@@ -623,6 +623,7 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 			RequireGameOver();
 		else
 		{
+			PlaySound("balllost", false, false);
 			combo_multiplier = 1;
 			should_update_combo = true;
 			ball_collision_speed = 0.0f;

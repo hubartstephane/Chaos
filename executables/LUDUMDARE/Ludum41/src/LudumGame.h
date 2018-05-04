@@ -35,7 +35,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PlayingToGameOverTransition;
 
 	friend class LudumChallengeRewardPunishment_ExtraBall;
-	friend class LudumChallengeRewardPunishment_LongBarBall;
+	friend class LudumChallengeRewardPunishment_BarSize;
 	friend class LudumChallengeRewardPunishment_BrickLife;
 	friend class LudumChallengeRewardPunishment_SpeedDownBall;
 	friend class LudumChallengeRewardPunishment_SplitBall;

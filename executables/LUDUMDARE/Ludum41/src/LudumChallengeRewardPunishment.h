@@ -7,6 +7,8 @@ class LudumChallengeRewardPunishment : public chaos::ReferencedObject
 {
 public:
 
+	/** get the name of the reward/punishment */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const { return nullptr;}
 	/** called to know whether the reward / punishment is valid */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const { return true; }
 	/** called to know whether the reward punishment must wait for an in game condition */
@@ -19,22 +21,26 @@ class LudumChallengeRewardPunishment_ExtraBall : public LudumChallengeRewardPuni
 {
 public:
 
-	/** called to know whether the reward / punishment is valid */
+	/** override */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	/** override */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
-	/** called whenever the challenge is completed */
+	/** override */
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
 };
 
 
 
 
-class LudumChallengeRewardPunishment_LongBarBall : public LudumChallengeRewardPunishment
+class LudumChallengeRewardPunishment_BarSize : public LudumChallengeRewardPunishment
 {
 public:
 
-	/** called to know whether the reward / punishment is valid */
+	/** override */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	/** override */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
-	/** called whenever the challenge is completed */
+	/** override */
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
 };
 
@@ -46,9 +52,11 @@ class LudumChallengeRewardPunishment_BrickLife : public LudumChallengeRewardPuni
 {
 public:
 
-	/** called to know whether the reward / punishment is valid */
+	/** override */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	/** override */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
-	/** called whenever the challenge is completed */
+	/** override */
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
 };
 
@@ -60,9 +68,11 @@ class LudumChallengeRewardPunishment_SpeedDownBall : public LudumChallengeReward
 {
 public:
 
-	/** called to know whether the reward / punishment is valid */
+	/** override */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	/** override */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
-	/** called whenever the challenge is completed */
+	/** override */
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
 };
 
@@ -74,8 +84,10 @@ class LudumChallengeRewardPunishment_SplitBall : public LudumChallengeRewardPuni
 {
 public:
 
-	/** called to know whether the reward / punishment is valid */
+	/** override */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	/** override */
 	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
-	/** called whenever the challenge is completed */
+	/** override */
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
 };

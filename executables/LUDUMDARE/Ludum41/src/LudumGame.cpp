@@ -347,7 +347,7 @@ bool LudumGame::OnKeyEvent(int key, int action)
 			return true;
 
 	// FORCE GAMEOVER
-#if _DEBUG
+#if 0
 	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
 		if (RequireGameOver())
 			return true;
@@ -654,6 +654,25 @@ void LudumGame::TickLevelCompleted(double delta_time)
 	}
 }
 
+void LudumGame::TickHeartWarning(double delta_time)
+{
+	if (current_life == 1)
+	{
+		heart_warning -= 2.0f * (float)delta_time;
+		if (heart_warning <= 0.0f)
+		{
+			PlaySound("heartbeat", false, false);
+
+			float fractionnal_part, integer_part;
+			fractionnal_part = modf(heart_warning, &integer_part);
+
+			heart_warning = (1.0f + fractionnal_part);
+		}
+	}
+}
+
+
+
 void LudumGame::TickGameLoop(double delta_time)
 {
 	DisplacePlayer(delta_time);
@@ -670,7 +689,7 @@ void LudumGame::TickGameLoop(double delta_time)
 		TickLevelCompleted(delta_time);
 		TickChallenge(delta_time);
 		TickBallSplit(delta_time);
-		TickGameOverDetection(delta_time);	
+		TickHeartWarning(delta_time);
 	}
 }
 
@@ -700,7 +719,7 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 	chaos::StateMachine::State const * state = game_automata->GetCurrentState();
 	if (state != nullptr)
 	{
-#if _DEBUG
+#if 0
 		if (state->GetStateID() == LudumAutomata::STATE_PLAYING)
 		{
 			if (button == 0 && action == GLFW_PRESS)

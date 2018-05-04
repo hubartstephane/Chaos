@@ -12,7 +12,7 @@
   "min_word_size": 4,
   "max_word_size": 10,
 
-  "initial_life": 5,
+  "initial_life": 1,
   "max_life": 10,
   "max_ball_count": 3,
   "ball_size": 30.0,

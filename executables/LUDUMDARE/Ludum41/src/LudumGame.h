@@ -151,6 +151,8 @@ protected:
 
 	void TickBallSplit(double delta_time);
 
+	void TickHeartWarning(double delta_time);
+
 	bool TickGameOverDetection(double delta_time);
 
 	/** change the game music */
@@ -466,6 +468,8 @@ protected:
 	bool should_update_score = false;
 
 	bool should_update_combo = false;
+
+	float heart_warning = 0.0f;
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;

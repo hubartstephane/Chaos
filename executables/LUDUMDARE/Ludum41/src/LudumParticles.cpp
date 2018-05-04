@@ -72,6 +72,28 @@ bool ParticleObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<Particle
 }
 
 // ===========================================================================
+// Life particle system
+// ===========================================================================
+
+
+size_t ParticleLifeObjectTrait::ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+{
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
+	
+	// create pulsating effect
+	glm::vec4 color = particle->color;
+	if (game->heart_warning < 0.5f)
+		color.a = 0.4f + 0.6f * game->heart_warning / 0.5f;
+	
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = color;
+
+	return vertices_per_particle;
+}
+
+// ===========================================================================
 // Brick particle system
 // ===========================================================================
 

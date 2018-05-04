@@ -41,6 +41,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class LudumChallengeRewardPunishment_SplitBall;
 
 	friend class ParticleMovableObjectTrait;
+	friend class ParticleLifeObjectTrait;
 
 protected:
 
@@ -442,6 +443,8 @@ protected:
 	float challenge_duration   = 5.0f;
 	
 	float delay_before_ball_move = 2.0f;
+
+	float heart_beat_speed = 2.0f;
 
 	int min_brick_life = 1;
 	int max_brick_life = 5;

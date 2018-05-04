@@ -73,6 +73,21 @@ public:
 };
 
 
+// ===========================================================================
+// Life particle system
+// ===========================================================================
+
+class ParticleLifeObjectTrait : public ParticleObjectTrait
+{
+public:
+
+	size_t ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+
+	class LudumGame * game = nullptr;
+};
+
+
+
 
 
 // ===========================================================================
@@ -119,7 +134,6 @@ public:
 	size_t ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 	void UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity);
-
 
 	class LudumGame * game = nullptr;
 };

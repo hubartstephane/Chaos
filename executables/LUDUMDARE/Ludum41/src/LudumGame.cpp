@@ -488,6 +488,7 @@ void LudumGame::ResetGameVariables()
 	challenge_timer    = challenge_frequency;
 	pending_split_count = 0;
 	ball_collision_speed = 0.0f;
+	heart_warning = 1.0f;
 
 	current_score = 0;
 	combo_multiplier = 1;
@@ -658,7 +659,7 @@ void LudumGame::TickHeartWarning(double delta_time)
 {
 	if (current_life == 1)
 	{
-		heart_warning -= 2.0f * (float)delta_time;
+		heart_warning -= heart_beat_speed * (float)delta_time;
 		if (heart_warning <= 0.0f)
 		{
 			PlaySound("heartbeat", false, false);
@@ -669,6 +670,8 @@ void LudumGame::TickHeartWarning(double delta_time)
 			heart_warning = (1.0f + fractionnal_part);
 		}
 	}
+	else
+		heart_warning = 1.0f;
 }
 
 

@@ -272,6 +272,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_frequency);	
 	LUDUMGAME_JSON_ATTRIBUTE(challenge_duration);
 	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);		
+	LUDUMGAME_JSON_ATTRIBUTE(heart_beat_speed);
 	LUDUMGAME_JSON_ATTRIBUTE(min_brick_life);		
 	LUDUMGAME_JSON_ATTRIBUTE(max_brick_life);		
 	LUDUMGAME_JSON_ATTRIBUTE(brick_per_line);		
@@ -652,8 +653,11 @@ bool LudumGame::InitializeParticleManager()
 	AddParticleLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
 
 	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
-	
-	AddParticleLayer<ParticleObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject");
+
+	ParticleLifeObjectTrait life_trait;
+	life_trait.game = this;
+	AddParticleLayer<ParticleLifeObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject", life_trait);
+
 	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
 	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 

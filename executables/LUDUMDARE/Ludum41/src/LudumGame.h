@@ -15,6 +15,19 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
 
+// =================================================
+// Levels
+// =================================================
+
+class LudumLevel : public chaos::ReferencedObject
+{
+public:
+
+	/** the number of the level */
+	int level_index = 0;
+	/** the brick types */
+	std::vector<std::vector<int>> bricks;
+};
 
 
 // =================================================
@@ -181,6 +194,12 @@ protected:
 	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
 	/** fullfill the lists of rewards an punishments */
 	bool InitializeRewardsAndPunishments();
+	
+	/** loading the levels */
+	bool LoadLevels();
+
+
+	
 	/** get a random button in existing list */
 	int GetRandomButtonID() const;
 
@@ -493,6 +512,9 @@ protected:
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;
 	/** the possible punishment */
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> punishments;
+
+	/** the levels */
+	std::vector<boost::intrusive_ptr<LudumLevel>> levels;
 
 };
 

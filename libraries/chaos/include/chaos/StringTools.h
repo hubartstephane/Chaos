@@ -11,7 +11,8 @@ namespace chaos
 
 namespace StringTools
 {
-
+	/** skip non numerics characters and call atoi */
+	int SkipAndAtoi(char const * c);
   /** returns true whether the character is valid for a variable name */
   bool IsVariableCharacter(char c);
   /** returns true whether the name is a standard variable name */

@@ -93,10 +93,16 @@ namespace chaos
 		std::ifstream file(resolved_path.string().c_str());
 		if (file)
 		{
+			std::string str;
+			while (std::getline(file, str))
+				result.push_back(std::move(str));
+
+#if 0
 			// read the lines
 			std::copy(std::istream_iterator<std::string>(file),
 				std::istream_iterator<std::string>(),
 				std::back_inserter(result));
+#endif
 		}
 		return result;
 	}

@@ -10,6 +10,7 @@
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
 #include <chaos/ParticleTextGenerator.h>
+#include <chaos/StringTools.h>
 
 
 
@@ -290,6 +291,36 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
+bool LudumGame::LoadLevels()
+{
+	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+	if (application == nullptr)
+		return false;
+
+	// compute resource path
+	boost::filesystem::path resources_path = application->GetResourcesPath();
+	boost::filesystem::path levels_path = resources_path / "levels";
+
+	boost::filesystem::directory_iterator end;
+	for (boost::filesystem::directory_iterator it(levels_path); it != end; ++it)
+	{
+		std::vector<std::string> level = chaos::FileTools::ReadFileLines(it->path());
+
+		int level_number = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
+
+
+
+
+
+		int levelx = 0;
+
+		levelx = levelx;
+	}
+
+	return true;
+}
+
+
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	// the atlas
@@ -312,6 +343,9 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 		return false;
 	// build the rewards/punishment values
 	if (!InitializeRewardsAndPunishments())
+		return false;
+	// load exisiting levels
+	if (!LoadLevels())
 		return false;
 	// load the best score if any
 	SerializeBestScore(false);

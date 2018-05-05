@@ -5,6 +5,13 @@ namespace chaos
 {
 	namespace StringTools
 	{
+		int SkipAndAtoi(char const * c)
+		{
+			while (*c != 0 && (*c < '0' || *c > '9'))
+				++c;
+			return atoi(c);
+		}
+
 		bool IsVariableCharacter(char c)
 		{
 			return (std::isalnum(c) || c == '_');

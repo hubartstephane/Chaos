@@ -24,7 +24,7 @@
 
   "points_per_challenge": 12,
   "points_per_brick": 5,
-	"split_angle":0.1,
+	"split_angle":0.4,
 	"ball_angle_limit":0.4,
   
   "ball_max_speed": 1200.0,

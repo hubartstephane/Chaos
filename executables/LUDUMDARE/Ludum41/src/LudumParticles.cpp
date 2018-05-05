@@ -172,10 +172,12 @@ bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<P
 	}
 
 	// update the velocity of the ball
-	particle->velocity = glm::normalize(particle->velocity) * (game->ball_collision_speed + game->ball_speed);
-
+	glm::vec2 velocity = glm::normalize(particle->velocity);
+	
 	// moving the particle
-	particle->box.position += particle->velocity * delta_time * game->ball_time_dilation;
+	particle->box.position += velocity * 
+		(game->ball_collision_speed + game->ball_speed) * 
+		(delta_time * game->ball_time_dilation);
 
 	// ball bouncing against world
 
@@ -187,12 +189,12 @@ bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<P
 	chaos::box2 new_ball_box = ball_box;
 	if (chaos::RestrictToInside(world_box, new_ball_box, false))
 	{
-		glm::vec2 old_velocity = particle->velocity;
+		glm::vec2 old_velocity = velocity;
 
-		UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
+		UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
 		ball_box.position = new_ball_box.position;
 
-		if (old_velocity.y < 0.0f && particle->velocity.y > 0.0f)
+		if (old_velocity.y < 0.0f && velocity.y > 0.0f)
 		{
 		
 			return true; // ball lost
@@ -208,7 +210,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<P
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
 		{
-			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
+			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
 			ball_box.position = new_ball_box.position;
 			game->OnBallCollide(false);			
 		}
@@ -226,7 +228,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<P
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
-				UpdateParticleVelocityFromCollision(ball_box, new_ball_box, particle->velocity);
+				UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
 				ball_box.position = new_ball_box.position;
 
 				--bricks[i].life;
@@ -236,11 +238,39 @@ bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<P
 	}
 
 	// recenter the particle
+	particle->velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity));
 	particle->box = ball_box;
 
 	return false; 
 }
 
+glm::vec2 MakeVelocityFromAngle(float angle)
+{
+	return glm::vec2(cosf(angle), sinf(angle));
+}
+
+glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v)
+{
+	float ball_angle_limit = game->ball_angle_limit;
+	if (ball_angle_limit <= 0.0f)
+		return v;
+
+	float angle = atan2(v.y, v.x);
+
+	if (angle > (float)M_PI - ball_angle_limit)
+		return MakeVelocityFromAngle((float)M_PI - ball_angle_limit);
+
+	if (angle < -(float)M_PI + ball_angle_limit)
+		return MakeVelocityFromAngle(-(float)M_PI + ball_angle_limit);
+
+	if (angle >= 0.0f && angle < ball_angle_limit)
+		return MakeVelocityFromAngle(ball_angle_limit);	
+
+	if (angle < 0.0f && angle >= -ball_angle_limit)
+		return MakeVelocityFromAngle(-ball_angle_limit);
+
+	return v;
+}
 
 // ===========================================================================
 // Challenge particle system

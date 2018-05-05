@@ -135,6 +135,8 @@ public:
 
 	void UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity);
 
+	glm::vec2 RestrictParticleVelocityToAngle(glm::vec2 const & v);
+
 	class LudumGame * game = nullptr;
 };
 

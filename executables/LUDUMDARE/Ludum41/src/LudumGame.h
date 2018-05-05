@@ -34,7 +34,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
-	friend class LudumChallengeRewardPunishment_ExtraBall;
+	friend class LudumChallengeRewardPunishment_ExtraLife;
 	friend class LudumChallengeRewardPunishment_BarSize;
 	friend class LudumChallengeRewardPunishment_BrickLife;
 	friend class LudumChallengeRewardPunishment_SpeedDownBall;
@@ -457,12 +457,17 @@ protected:
 	int points_per_brick = 1;
 	int points_per_challenge = 10;
 
+	float split_angle = 0.1f;
+	float ball_angle_limit = 0.1f;
+
 	/** current game values */
 	int   current_life  = 3;
 	float player_length = 70.0f;
 	
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
+
+	
 
 	int current_score = 0;
 	int combo_multiplier = 1;

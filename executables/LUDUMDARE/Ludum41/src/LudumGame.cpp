@@ -559,52 +559,40 @@ void LudumGame::TickChallenge(double delta_time)
 
 static void RotateVelocity(glm::vec2 & src, float angle)
 {
-	src *= 1.2f;
+	glm::mat4x4 rot = glm::rotate(angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
-	
-
-//	src = glm::rotate((angle, src);
+	glm::vec4 v(src.x, src.y, 0.0f, 1.0f);
+	v = rot * v;
+	src.x = v.x;
+	src.y = v.y;
 }
 
 
 void LudumGame::TickBallSplit(double delta_time)
 {
-
-#if 0
-	pending_split_count = 1;
-
 	if (pending_split_count <= 0)
 		return;
 
-	ParticleMovableObject * balls = GetBallParticles();
-	if (balls == nullptr)
+	size_t ball_count = GetBallCount();
+	if (ball_count > (size_t)max_ball_count || ball_count == 0)
 		return;
 
-	size_t ball_count = GetBallCount();
-	if (ball_count < (size_t)max_ball_count)
-	{
-		size_t ball_candidate = CanStartChallengeBallIndex();
-		if (ball_candidate != std::numeric_limits<size_t>::max())
-		{
-			boost::intrusive_ptr<chaos::ParticleRangeAllocation> new_balls_allocations = CreateBalls(ball_count + 1, false);
+	size_t ball_candidate = CanStartChallengeBallIndex();
+	if (ball_candidate == std::numeric_limits<size_t>::max())
+		return;
 
-			ParticleMovableObject * new_balls = (ParticleMovableObject*)new_balls_allocations->GetParticleBuffer();
-			if (new_balls != nullptr)
-			{
-				for (size_t i = 0 ; i < ball_count ; ++i)
-					new_balls[i] = balls[i];
+	balls_allocations->Resize(ball_count + 1);
 
-				new_balls[ball_count] = balls[ball_candidate];
+	ParticleMovableObject * balls = GetBallParticles();
 
-				RotateVelocity(new_balls[ball_candidate].velocity, 0.1f);
-				RotateVelocity(new_balls[ball_count].velocity, -0.1f);
+	ParticleMovableObject * parent_ball = &balls[ball_candidate];
+	ParticleMovableObject * new_ball = &balls[ball_count];
+	*new_ball = *parent_ball;
 
-				balls_allocations = new_balls_allocations; // erase old buffer							
-			}
-			pending_split_count--;
-		}	
-	}
-#endif
+	RotateVelocity(parent_ball->velocity, split_angle);
+	RotateVelocity(new_ball->velocity, -split_angle);
+
+	pending_split_count = 0;
 }
 
 void LudumGame::ChangeLife(int delta_life)
@@ -1224,26 +1212,14 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 
 bool LudumGame::IsSplitBallChallengeValid(bool success)
 {
-
-
-
-
-	return true;
+	int ball_count = GetBallCount();
+	return (ball_count < max_ball_count);
 }
-
-
-
-
-
 
 void LudumGame::OnSplitBallChallenge(bool success)
 {
 	if (!success)
 		return;
-		
-	
-	
-	
 	pending_split_count++;
 }
 

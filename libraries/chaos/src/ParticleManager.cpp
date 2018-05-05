@@ -108,7 +108,7 @@ namespace chaos
 	{
 		// can only resize if attached to manager
 		ParticleRange * range = GetParticleRangeReference();
-		if (range != nullptr)
+		if (range == nullptr)
 			return false;
 
 		size_t old_count = range->count;
@@ -135,8 +135,8 @@ namespace chaos
 		size_t delta_count = new_count - old_count;
 		if (p2 == pcount)
 		{
-			layer->DoResizeParticles(delta_count);
-			layer->deletion_vector.resize(delta_count);
+			layer->DoResizeParticles(new_count);
+			layer->deletion_vector.resize(new_count);
 		}
 		// insert particles (+deletion data) in the middle of the buffer
 		else

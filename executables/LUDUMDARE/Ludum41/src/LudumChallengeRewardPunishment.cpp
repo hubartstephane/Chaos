@@ -5,7 +5,7 @@
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_ExtraBall::GetTitleName(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_ExtraLife::GetTitleName(class LudumGame * game, bool reward) const 
 {
 	if (reward)
 		return "Extra Life";
@@ -13,13 +13,13 @@ char const * LudumChallengeRewardPunishment_ExtraBall::GetTitleName(class LudumG
 		return "Life Lost";
 }
 
-bool LudumChallengeRewardPunishment_ExtraBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
+bool LudumChallengeRewardPunishment_ExtraLife::IsRewardPunishmentValid(class LudumGame * game, bool reward) const
 {
 	assert(game != nullptr);
 	return game->IsExtraBallChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_ExtraBall::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_ExtraLife::OnRewardPunishment(class LudumGame * game, bool reward)
 {
 	assert(game != nullptr);
 	game->OnExtraBallChallenge(reward);

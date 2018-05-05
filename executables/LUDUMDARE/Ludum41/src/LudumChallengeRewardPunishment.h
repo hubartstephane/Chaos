@@ -17,7 +17,7 @@ public:
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) {}
 };
 
-class LudumChallengeRewardPunishment_ExtraBall : public LudumChallengeRewardPunishment
+class LudumChallengeRewardPunishment_ExtraLife : public LudumChallengeRewardPunishment
 {
 public:
 

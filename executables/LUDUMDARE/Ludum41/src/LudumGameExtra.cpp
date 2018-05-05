@@ -280,7 +280,10 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(ball_collision_speed_increment);		
 	LUDUMGAME_JSON_ATTRIBUTE(ball_collision_max_speed);		
 	LUDUMGAME_JSON_ATTRIBUTE(points_per_brick);		
-	LUDUMGAME_JSON_ATTRIBUTE(points_per_challenge);		
+	LUDUMGAME_JSON_ATTRIBUTE(points_per_challenge);
+	LUDUMGAME_JSON_ATTRIBUTE(split_angle);
+	LUDUMGAME_JSON_ATTRIBUTE(ball_angle_limit);
+	
 
 #undef LUDUMGAME_JSON_ATTRIBUTE
 
@@ -505,15 +508,14 @@ bool LudumGame::InitializeRewardsAndPunishments()
 {
 	rewards.push_back(new LudumChallengeRewardPunishment_BarSize);
 	rewards.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
-	//rewards.push_back(new LudumChallengeRewardPunishment_SplitBall);
+	rewards.push_back(new LudumChallengeRewardPunishment_SplitBall);
 	rewards.push_back(new LudumChallengeRewardPunishment_BrickLife);
-	rewards.push_back(new LudumChallengeRewardPunishment_ExtraBall);
+	rewards.push_back(new LudumChallengeRewardPunishment_ExtraLife);
 
 	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
-	//punishments.push_back(new LudumChallengeRewardPunishment_SplitBall);
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickLife);
-	punishments.push_back(new LudumChallengeRewardPunishment_ExtraBall);
+	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
 
 	return true;
 }

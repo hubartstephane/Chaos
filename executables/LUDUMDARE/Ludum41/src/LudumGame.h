@@ -24,7 +24,9 @@ class LudumLevel : public chaos::ReferencedObject
 public:
 
 	/** the number of the level */
-	int level_index = 0;
+	int level_number = 0;
+	/** indestructible brick count */
+	size_t indestructible_brick_count = 0;
 	/** the brick types */
 	std::vector<std::vector<int>> bricks;
 };
@@ -197,6 +199,8 @@ protected:
 	
 	/** loading the levels */
 	bool LoadLevels();
+	/** load one level */
+	bool DoLoadLevel(int level_number, std::vector<std::string> & level_content);
 
 
 	
@@ -258,7 +262,7 @@ protected:
 	/** create the ball */
 	chaos::ParticleRangeAllocation * CreateBalls(size_t count, bool full_init);
 	/** create the bricks */
-	chaos::ParticleRangeAllocation * CreateBricks();
+	chaos::ParticleRangeAllocation * CreateBricks(int level_number);
 
 	/** create the title of the game */
 	void CreateGameTitle();
@@ -383,6 +387,17 @@ protected:
 	/** internal method to create score/combo */
 	chaos::ParticleRangeAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
 
+
+	/** get currently played level */
+	LudumLevel * GetCurrentLevel();
+	/** get currently played level */
+	LudumLevel const * GetCurrentLevel() const;
+
+	/** get currently played level */
+	LudumLevel * GetLevel(int level_number);
+	/** get currently played level */
+	LudumLevel const * GetLevel(int level_number) const;
+
 	/** Save the best score */
 	void SerializeBestScore(bool save);
 
@@ -491,6 +506,7 @@ protected:
 	int current_score = 0;
 	int combo_multiplier = 1;
 	int best_score = 0;
+	int current_level = 0;
 
 	bool should_update_score = false;
 

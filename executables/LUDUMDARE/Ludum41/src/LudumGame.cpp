@@ -492,6 +492,7 @@ void LudumGame::ResetGameVariables()
 
 	current_score = 0;
 	combo_multiplier = 1;
+	current_level = 0;
 
 	should_update_score = true;
 	should_update_combo = true;
@@ -633,13 +634,43 @@ void LudumGame::OnBallCollide(bool collide_brick)
 		IncrementScore(points_per_brick);
 }
 
+
+LudumLevel * LudumGame::GetCurrentLevel()
+{
+	return GetLevel(current_level);
+}
+
+LudumLevel const * LudumGame::GetCurrentLevel() const
+{
+	return GetLevel(current_level);
+}
+
+LudumLevel * LudumGame::GetLevel(int level_number)
+{
+	if (levels.size() == 0)
+		return nullptr;
+	return levels[level_number % (int)levels.size()].get();
+}
+
+LudumLevel const * LudumGame::GetLevel(int level_number) const
+{
+	if (levels.size() == 0)
+		return nullptr;
+	return levels[level_number % (int)levels.size()].get();
+}
+
 void LudumGame::TickLevelCompleted(double delta_time)
 {
+	LudumLevel const * level = GetCurrentLevel();
+	if (level == nullptr)
+		return;
+
 	size_t brick_count = GetBrickCount();
-	if (brick_count == 0)
+	if (brick_count == level->indestructible_brick_count) // no more destructible
 	{
+		current_level = (current_level + 1) % (int)levels.size();
 		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
-			bricks_allocations = CreateBricks();			
+			bricks_allocations = CreateBricks(current_level);
 	}
 }
 
@@ -837,8 +868,18 @@ glm::vec2 LudumGame::GenerateBallRandomDirection() const
 		chaos::MathTools::Sin(angle));
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateBricks()
+chaos::ParticleRangeAllocation * LudumGame::CreateBricks(int level_number)
 {
+	LudumLevel * level = GetLevel(level_number);
+	if (level == nullptr)
+		return false;
+
+
+
+
+
+
+
 	float BRICK_ASPECT = 16.0f / 9.0f;
 
 	size_t line_count =  brick_line_count;
@@ -1118,9 +1159,7 @@ void LudumGame::CreateAllGameObjects(int level)
 		balls_allocations = CreateBalls(1, true);	
 
 	if (bricks_allocations == nullptr)
-		bricks_allocations = CreateBricks();	
-
-
+		bricks_allocations = CreateBricks(current_level);	
 }
 
 size_t LudumGame::GetBrickCount() const
@@ -1156,8 +1195,12 @@ ParticleBrick const * LudumGame::GetBricks() const
 
 bool LudumGame::IsBrickLifeChallengeValid(bool success)
 {
+	LudumLevel const * level = GetCurrentLevel();
+	if (level == nullptr)
+		return false;
+
 	size_t brick_count = GetBrickCount();
-	return (brick_count > 0);
+	return (brick_count > level->indestructible_brick_count);
 }
 
 void LudumGame::OnBrickLifeChallenge(bool success)
@@ -1178,7 +1221,7 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];			
-			if (p.life > 0)
+			if (p.life > 0 && p.destructible)
 			{
 				++destroyed_count;
 				--p.life;
@@ -1192,7 +1235,7 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];
-			if (p.life < max_brick_life && p.life > 0)
+			if (p.destructible && p.life < max_brick_life && p.life > 0)
 			{
 				++p.life;
 				if (p.life > p.starting_life)

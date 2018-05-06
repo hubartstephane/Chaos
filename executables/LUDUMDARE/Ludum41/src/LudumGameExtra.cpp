@@ -309,11 +309,21 @@ bool LudumGame::DoLoadLevel(int level_number, std::vector<std::string> & level_c
 		for (size_t j = 0; l[j] != 0; ++j)
 		{
 			char c = l[j];
-			if (c < '0' || c > '9')
+
+			// indestructible
+			if (c == 'B')
 			{
-				line.push_back(-1); // skip brick
+				line.push_back(LudumLevel::INDESTRUCTIBLE);
+				level->indestructible_brick_count++;
 				continue;
 			}
+			// separator
+			if (c < '0' || c > '9')
+			{
+				line.push_back(LudumLevel::NONE);
+				continue;
+			}
+			// life
 			int brick_type = (int)(c - '0');
 			line.push_back(brick_type);
 		}

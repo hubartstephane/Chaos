@@ -13,6 +13,21 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
+
+size_t LudumLevel::GetBrickCount() const
+{
+	size_t result = 0;
+	for (size_t i = 0; i < bricks.size(); ++i)
+	{
+		std::vector<int> const & line = bricks[i];
+		for (int b : line)
+			if (b != LudumLevel::NONE)
+				++result;
+	}
+	return result;
+}
+
+
 LudumGame::~LudumGame()
 {		
 	SerializeBestScore(true);
@@ -667,10 +682,12 @@ void LudumGame::TickLevelCompleted(double delta_time)
 
 	size_t brick_count = GetBrickCount();
 	if (brick_count == level->indestructible_brick_count) // no more destructible
-	{
-		current_level = (current_level + 1) % (int)levels.size();
+	{		
 		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
+		{
+			current_level = (current_level + 1) % (int)levels.size();
 			bricks_allocations = CreateBricks(current_level);
+		}
 	}
 }
 
@@ -870,32 +887,108 @@ glm::vec2 LudumGame::GenerateBallRandomDirection() const
 
 chaos::ParticleRangeAllocation * LudumGame::CreateBricks(int level_number)
 {
+	glm::vec4 const indestructible_color = glm::vec4(1.0f, 0.4f, 0.0f, 1.0f);
+
+	glm::vec4 const colors[] = {
+		glm::vec4(0.7f, 0.0f, 0.0f, 1.0f),
+		glm::vec4(0.0f, 0.7f, 0.0f, 1.0f),
+		glm::vec4(0.0f, 0.0f, 0.7f, 1.0f)
+	};
+
+	size_t color_count = sizeof(colors) / sizeof(colors[0]);
+
+	// get the level
 	LudumLevel * level = GetLevel(level_number);
 	if (level == nullptr)
 		return false;
 
+	// create the bricks resource
+	size_t brick_count = level->GetBrickCount();
+	chaos::ParticleRangeAllocation * result = CreateGameObjects("brick", brick_count, BRICK_LAYER_ID);
+	if (result == nullptr)
+		return nullptr;
 
+	ParticleBrick * particle = (ParticleBrick *)result->GetParticleBuffer();
+	if (particle == nullptr)
+		return nullptr;
 
-
-
-
-
+	// compute the brick size
 	float BRICK_ASPECT = 16.0f / 9.0f;
+
+	glm::vec2 world_size = GetWorldSize();
+
+	glm::vec2 particle_size;
+	particle_size.x = world_size.x / (float)brick_per_line;
+	particle_size.y = particle_size.x / BRICK_ASPECT;
+
+	// fill the brick
+	size_t k = 0;
+	for (size_t i = 0; i < level->bricks.size(); ++i)
+	{
+		std::vector<int> const & line = level->bricks[i];
+		for (size_t j = 0; j < line.size(); ++j)
+		{
+			int b = line[j];
+			if (b == LudumLevel::NONE)
+				continue;
+			if (b < 0 && b != LudumLevel::INDESTRUCTIBLE)
+				continue;
+
+			// compute color / indestructible / life
+			size_t life = 1;
+
+			if (b == LudumLevel::INDESTRUCTIBLE)
+			{
+				particle[k].color = indestructible_color;
+				particle[k].indestructible = true;
+				particle[k].life = 1;
+			}
+			else 
+			{
+				particle[k].indestructible = false;
+
+				size_t color_index = min((size_t)b, color_count - 1);
+				particle[k].color = colors[color_index];
+				particle[k].life = (size_t)b;
+			}
+
+			particle[k].starting_life = particle[k].life;
+
+			// position
+			glm::vec2 position;
+			position.x = -world_size.x * 0.5f + particle_size.x * (float)j;
+			position.y =  world_size.y * 0.5f - particle_size.y * (float)i;
+
+			particle[k].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+			particle[k].box.half_size = 0.5f * particle_size;
+
+			++k;
+		}
+	}
+
+
+
+
+
+
+
+
+
+#if 0
+
+
 
 	size_t line_count =  brick_line_count;
 	size_t element_per_line = brick_per_line;
 	size_t brick_count = line_count * element_per_line;
 
-	glm::vec2 world_size = GetWorldSize();
 
-	glm::vec2 particle_size;
-	particle_size.x = world_size.x / (float)element_per_line;
-	particle_size.y = particle_size.x / BRICK_ASPECT;
 	
-	// create the object
-	chaos::ParticleRangeAllocation * result = CreateGameObjects("brick", brick_count, BRICK_LAYER_ID);
-	if (result == nullptr)
-		return nullptr;
+
+
+
+
+
 
 	// set the color
 	ParticleBrick * particle = (ParticleBrick *)result->GetParticleBuffer();
@@ -938,6 +1031,8 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks(int level_number)
 		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
 		particle[i].box.half_size = 0.5f * particle_size;
 	}
+
+#endif
 
 	return result;
 }
@@ -1221,7 +1316,7 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];			
-			if (p.life > 0 && p.destructible)
+			if (p.life > 0 && !p.indestructible)
 			{
 				++destroyed_count;
 				--p.life;
@@ -1235,7 +1330,7 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];
-			if (p.destructible && p.life < max_brick_life && p.life > 0)
+			if (!p.indestructible && p.life < max_brick_life && p.life > 0)
 			{
 				++p.life;
 				if (p.life > p.starting_life)

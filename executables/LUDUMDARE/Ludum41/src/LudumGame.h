@@ -21,6 +21,15 @@
 
 class LudumLevel : public chaos::ReferencedObject
 {
+
+public:
+
+	static int const NONE = -1;
+	static int const INDESTRUCTIBLE = -2;
+
+	/** get the number of brick in the level */
+	size_t GetBrickCount() const;
+
 public:
 
 	/** the number of the level */

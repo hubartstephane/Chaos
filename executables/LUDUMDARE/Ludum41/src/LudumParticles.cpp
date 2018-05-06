@@ -231,7 +231,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(chaos::TypedUpdateParticleData<P
 				UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
 				ball_box.position = new_ball_box.position;
 
-				if (bricks[i].destructible)
+				if (!bricks[i].indestructible)
 					--bricks[i].life;
 				game->OnBallCollide(true);				
 			}				

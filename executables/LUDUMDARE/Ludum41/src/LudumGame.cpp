@@ -362,10 +362,9 @@ bool LudumGame::OnKeyEvent(int key, int action)
 			return true;
 
 	// FORCE GAMEOVER
-#if 0
+#if _DEBUG
 	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-		if (RequireGameOver())
-			return true;
+			cheat_next_level = true;
 #endif
 
 	return false;
@@ -681,12 +680,20 @@ void LudumGame::TickLevelCompleted(double delta_time)
 		return;
 
 	size_t brick_count = GetBrickCount();
-	if (brick_count == level->indestructible_brick_count) // no more destructible
+	if (
+#if _DEBUG
+		cheat_next_level ||
+#endif
+		brick_count == level->indestructible_brick_count
+		) // no more destructible
 	{		
 		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
 		{
 			current_level = (current_level + 1) % (int)levels.size();
 			bricks_allocations = CreateBricks(current_level);
+#if _DEBUG
+			cheat_next_level = false;
+#endif
 		}
 	}
 }

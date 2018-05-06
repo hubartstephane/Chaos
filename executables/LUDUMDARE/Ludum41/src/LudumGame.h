@@ -523,6 +523,10 @@ protected:
 
 	float heart_warning = 0.0f;
 
+#if _DEBUG
+	bool cheat_next_level = false;
+#endif
+
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
 	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;

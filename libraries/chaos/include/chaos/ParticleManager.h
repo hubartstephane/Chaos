@@ -30,6 +30,48 @@ namespace chaos
 #define CHAOS_PARTICLE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_PARTICLE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FRIEND_DECL, _, CHAOS_PARTICLE_CLASSES)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	class ParticleAllocation : public ReferencedObject
+	{
+
+
+	};
+
+	template<typename PARTICLE_TYPE>
+	class TypedParticleAllocation : public ParticleAllocation
+	{
+	public:
+
+		using particle_type = PARTICLE_TYPE;
+
+
+	protected:
+
+		std::vector<particle_type> particles;
+	};
+
+
+
+
+
+
+
+
+
 		// ==============================================================
 		// PARTICLE RANGE
 		// ==============================================================

@@ -4,154 +4,116 @@
 
 namespace chaos
 {
-
 	// ==============================================================
-	// PARTICLE RANGE ALLOCATION
+	// ParticleAllocation
 	// ==============================================================
 
-	ParticleRangeAllocation::~ParticleRangeAllocation()
+	ParticleAllocation::ParticleAllocation(ParticleLayer * in_layer):
+		layer(in_layer)
+	{
+		assert(in_layer != nullptr);
+	}
+
+	ParticleAllocation::~ParticleAllocation()
 	{
 		RemoveFromLayer();
 	}
 
-	void ParticleRangeAllocation::RemoveFromLayer()
+	void ParticleAllocation::RemoveFromLayer()
 	{
 		if (layer == nullptr)
 			return;
 		layer->RemoveParticleAllocation(this);
 	}
 
-	ParticleRange ParticleRangeAllocation::GetParticleRange() const
+	void ParticleAllocation::OnRemoveFromLayer()
 	{
-		if (layer == nullptr)
-			return ParticleRange();
-		return layer->particles_ranges[range_index];
+		layer->particle_count -= GetParticleCount();
+		deletion_vector.clear();
+		layer = nullptr;
 	}
 
-	ParticleRange * ParticleRangeAllocation::GetParticleRangeReference()
-	{
-		if (layer == nullptr)
-			return nullptr;
-		return &layer->particles_ranges[range_index];
-	}
-
-	size_t ParticleRangeAllocation::GetParticleCount() const
-	{
-		return GetParticleRange().count;
-	}
-
-	void * ParticleRangeAllocation::GetParticleBuffer()
-	{
-		if (layer == nullptr)
-			return nullptr;
-		return layer->GetParticleBuffer(layer->particles_ranges[range_index]);
-	}
-
-	void const * ParticleRangeAllocation::GetParticleBuffer() const
-	{
-		if (layer == nullptr)
-			return nullptr;
-		return layer->GetParticleBuffer(layer->particles_ranges[range_index]);
-	}
-
-	bool ParticleRangeAllocation::IsAttachedToLayer() const
+	bool ParticleAllocation::IsAttachedToLayer() const
 	{
 		return (layer != nullptr);
 	}
 
-	void ParticleRangeAllocation::Pause(bool in_paused)
+	void ParticleAllocation::Pause(bool in_paused)
 	{
 		paused = in_paused;
 	}
 
-	bool ParticleRangeAllocation::IsPaused() const
+	bool ParticleAllocation::IsPaused() const
 	{
 		return paused;
 	}
 
-	void ParticleRangeAllocation::Show(bool in_visible)
+	void ParticleAllocation::Show(bool in_visible)
 	{
 		if (visible != in_visible)
 		{
 			if (layer != nullptr)
 				layer->require_GPU_update = true;  // the GPU buffer is about to be changed
 			visible = in_visible;
-		}		
+		}
 	}
 
-	bool ParticleRangeAllocation::IsVisible() const
+	bool ParticleAllocation::IsVisible() const
 	{
 		return visible;
 	}
 
-	void ParticleRangeAllocation::MarkParticlesToDestroy(size_t start, size_t count)
+	size_t ParticleAllocation::GetParticleCount() const
 	{
+		return 0;
+	}
+
+	void * ParticleAllocation::GetParticleBuffer()
+	{
+		return nullptr;
+	}
+
+	void const * ParticleAllocation::GetParticleBuffer() const
+	{
+		return nullptr;
+	}
+
+	bool ParticleAllocation::Resize(size_t new_count)
+	{
+		if (!IsAttachedToLayer())
+			return false;
+		layer->particle_count += (new_count - GetParticleCount());
+		deletion_vector.resize(new_count);
+		return true;
+	}
+
+	void ParticleAllocation::MarkParticlesToDestroy(size_t start, size_t count)
+	{
+		// early exit, all particles are already destroyed whenever the allocation is removed from the manager
+		if (!IsAttachedToLayer())
+			return;
 		// valid number of particles
 		if (count == 0)
 			return;
-		// is the range attached to a layer
-		if (!IsAttachedToLayer())
-			return;
-
-		// clamp the range
-		ParticleRange range = GetParticleRange();
-		if (start > range.count)
+		// valid start
+		size_t particle_count = GetParticleCount(); 
+		if (start >= particle_count)
 			return;
 
 		// compute the extrems index in the full buffer point of view
-		size_t s = range.start + start;
-		size_t e = min(s + count, range.start + range.count);
-		layer->MarkParticlesToDestroy(s, e - s);
-	}
+		bool changed = false;
 
-	bool ParticleRangeAllocation::Resize(size_t new_count)
-	{
-		// can only resize if attached to manager
-		ParticleRange * range = GetParticleRangeReference();
-		if (range == nullptr)
-			return false;
-
-		size_t old_count = range->count;
-		// nothing to do
-		if (new_count == old_count)
-			return true;
-
-		// downsize the range
-		if (new_count < old_count)
+		size_t s = start;
+		size_t e = min(s + count, GetParticleCount());
+		for (size_t i = s; i != e; ++i)
 		{
-			layer->MarkParticlesToDestroy(range->start + new_count, old_count - new_count);
-			range->count = new_count;
-			return true;
+			changed |= !deletion_vector[i];
+			deletion_vector[i] = true;
 		}
 
-		assert(new_count > old_count);
-
-		// increase the range
-		size_t p1 = range->start;
-		size_t p2 = p1 + range->count;
-		size_t pcount = layer->GetParticleCount();
-
-		// the new particles (+deletion data) to add are at the end of the buffer 
-		size_t delta_count = new_count - old_count;
-		if (p2 == pcount)
-		{
-			layer->DoResizeParticles(new_count);
-			layer->deletion_vector.resize(new_count);
-		}
-		// insert particles (+deletion data) in the middle of the buffer
-		else
-		{
-			layer->DoInsertParticleAfter(p2, delta_count);
-			layer->deletion_vector.insert(layer->deletion_vector.begin() + p2, delta_count, 0);
-
-			// update the ranges after this one
-			size_t range_count = layer->range_allocations.size();
-			for (size_t i = range_index + 1; i < range_count; ++i)
-				layer->particles_ranges[i].start += delta_count;
-		}
-
-		range->count = new_count;
-		return true;
+		// notify the layer that the representation has changed
+		if (changed && visible && layer != nullptr)
+			layer->require_GPU_update = true;
 	}
 
 	// ==============================================================
@@ -163,9 +125,9 @@ namespace chaos
 		return new ParticleLayer(this);
 	}
 
-	ParticleRangeAllocation * ParticleLayerDesc::NewRangeAllocation()
+	ParticleAllocation * ParticleLayerDesc::NewAllocation(ParticleLayer * in_layer)
 	{
-		return new ParticleRangeAllocation;
+		return new ParticleAllocation(in_layer);
 	}
 
 	size_t ParticleLayerDesc::GetParticleSize() const
@@ -183,9 +145,9 @@ namespace chaos
 		return 0;
 	}
 
-	size_t ParticleLayerDesc::UpdateParticles(UpdateParticleData & data, ParticleRangeAllocation * allocation)
+	void ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, std::vector<bool> & deletion_vector, ParticleLayer * layer)
 	{
-		return 0;
+
 	}
 
 	bool ParticleLayerDesc::AreParticlesDynamic() const
@@ -197,14 +159,14 @@ namespace chaos
 	{
 		return VertexDeclaration();
 	}
-		
-	size_t ParticleLayerDesc::ParticlesToVertices(char const * particles, size_t particles_count, char * vertices) const
+
+	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleLayer * layer) const
 	{
 		assert(particles != nullptr);
 		assert(vertices != nullptr);
 		return 0;
 	}
-	
+
 	// ==============================================================
 	// PARTICLE LAYER
 	// ==============================================================
@@ -236,43 +198,25 @@ namespace chaos
 	void ParticleLayer::DetachAllParticleAllocations()
 	{
 		// faster to do that from end to begin
-		while (range_allocations.size())
-			RemoveParticleAllocation(range_allocations[range_allocations.size() - 1]);
+		while (particles_allocations.size())
+			RemoveParticleAllocation(particles_allocations[particles_allocations.size() - 1].get());
 	}
 
-	size_t ParticleLayer::GetParticleCount(ParticleRange range) const
+	void ParticleLayer::RemoveParticleAllocation(ParticleAllocation * allocation)
 	{
-		return range.count;
-	}
+		assert(allocation != nullptr);
+		assert(allocation->layer == this);
 
-	size_t ParticleLayer::GetParticleCount() const
-	{
-		return 0;
-	}
-
-	void * ParticleLayer::GetParticle(size_t index)
-	{
-		return nullptr;
-	}
-
-	void const * ParticleLayer::GetParticle(size_t index) const
-	{
-		return nullptr;
-	}
-
-	void * ParticleLayer::GetParticleBuffer(ParticleRange range)
-	{
-		return nullptr;
-	}
-
-	void const * ParticleLayer::GetParticleBuffer(ParticleRange range) const
-	{
-		return nullptr;
-	}
-
-	bool ParticleLayer::AreParticlesDynamic() const
-	{
-		return layer_desc->AreParticlesDynamic();
+		for (size_t i = particles_allocations.size(); i > 0; ++i)
+		{
+			size_t index = i - 1;
+			if (particles_allocations[index] == allocation)
+			{
+				particles_allocations.erase(particles_allocations.begin() + index);
+				allocation->OnRemoveFromLayer();
+				return;
+			}
+		}
 	}
 
 	void ParticleLayer::Pause(bool in_paused)
@@ -300,218 +244,44 @@ namespace chaos
 		// early exit
 		if (IsPaused())
 			return;
-		// no particles, nothing to do
-		size_t particle_count = GetParticleCount();
-		if (particle_count == 0)
-			return;
 		// update the particles themselves
 		if (AreParticlesDynamic())
 		{
-			pending_kill_particles += UpdateParticles(delta_time);
+			UpdateParticles(delta_time);
 			require_GPU_update = true;
 		}
-		// destroy the particles that are to be destroyed
-		if (pending_kill_particles > 0)
-		{
-			size_t destroyed_count = CleanDestroyedParticles();
-			if (destroyed_count > 0)
-			{
-				UpdateParticleRanges(particle_count - destroyed_count);
-				require_GPU_update = true;
-			}
-			pending_kill_particles = 0;
-		}
 	}
 
-	size_t ParticleLayer::UpdateParticles(float delta_time)
+	void ParticleLayer::UpdateParticles(float delta_time)
 	{
-		size_t particle_index = 0;
-		size_t range_index    = 0;
-		size_t particle_count = GetParticleCount();
-		size_t range_count    = range_allocations.size();
-
-		UpdateParticleData data;
-		data.delta_time = delta_time;
-		data.layer = this;
-
-		size_t result = 0;
-		while (particle_index < particle_count)
+		size_t count = particles_allocations.size();
+		for (size_t i = 0; i < count; ++i)
 		{
-			data.first_particle  = GetParticle(particle_index);
-			data.deletion_vector = &deletion_vector[particle_index];
+			ParticleAllocation * allocation = particles_allocations[i].get();
 
-			if (range_index < range_count)
-			{
-				ParticleRange const & range = particles_ranges[range_index];
-
-				if (particle_index == range.start) // current particle is in a range
-				{
-					if (!range_allocations[range_index]->IsPaused())
-					{						
-						data.particle_count  = range.count;					
-						result += layer_desc->UpdateParticles(data, range_allocations[range_index]);
-					}
-					particle_index += range.count;
-					range_index += 1;
-				}
-				else
-				{
-					data.particle_count = range.start - particle_index;
-					result += layer_desc->UpdateParticles(data, nullptr);
-					particle_index = range.start;
-				}
-			}
-			else
-			{
-				data.particle_count = particle_count - particle_index;
-				result += layer_desc->UpdateParticles(data, nullptr);
-				particle_index = particle_count;
-			}
-		}
-		return result;
-	}
-
-	size_t ParticleLayer::CleanDestroyedParticles()
-	{
-		return 0;
-	}
-
-	void ParticleLayer::DoResizeParticles(size_t new_count)
-	{
-	}
-
-	void ParticleLayer::DoInsertParticleAfter(size_t position, size_t count)
-	{
-	}
-
-	ParticleRangeAllocation * ParticleLayer::SpawnParticlesAndKeepRange(size_t count, bool particles_owner)
-	{
-		ParticleRange range = SpawnParticles(count);
-		if (range.count == 0)
-			return nullptr;
-
-		ParticleRangeAllocation * result = layer_desc->NewRangeAllocation();
-		if (result != nullptr)
-		{
-			result->layer = this;
-			result->range_index = particles_ranges.size();
-			result->particles_owner = particles_owner;
-
-			particles_ranges.push_back(range);
-			range_allocations.push_back(result);
-		}
-		else
-		{
-			MarkParticlesToDestroy(range.start, range.count);
-		}
-
-		return result;
-	}
-
-	ParticleRange ParticleLayer::SpawnParticles(size_t count)
-	{
-		ParticleRange result;
-		if (count > 0)
-		{
-			size_t current_particle_count = GetParticleCount();
-
-			// initialize the result
-			result.start = current_particle_count;
-			result.count = count;
-			// create the particles and the suppression corresponding data
-			size_t new_count = current_particle_count + count;
-			DoSpawnParticles(count);
-			deletion_vector.resize(new_count, 0);
-			// indicates that GPU needs to be rebuild
-			require_GPU_update = true;
-		}
-		return result;
-	}
-
-	void ParticleLayer::MarkParticlesToDestroy(size_t start, size_t count)
-	{
-		// clamp the range
-		size_t suppression_count = deletion_vector.size();
-		if (start >= suppression_count)
-			return;
-		size_t end = min(start + count, suppression_count);
-		// mark the particles to destroy    
-		while (start != end)
-		{
-			if (deletion_vector[start] != DESTROY_PARTICLE_MARK)
-			{
-				deletion_vector[start] = DESTROY_PARTICLE_MARK;
-				++pending_kill_particles;
-			}
-			++start;
-		}
-	}
-
-	void ParticleLayer::RemoveParticleAllocation(ParticleRangeAllocation * allocation)
-	{
-		assert(allocation != nullptr);
-
-		// mark the range to be destroyed
-		if (allocation->particles_owner)
-		{
-			ParticleRange range = allocation->GetParticleRange();
-			MarkParticlesToDestroy(range.start, range.count);
-		}
-		// displace range and allocation
-		size_t count = range_allocations.size();
-		for (size_t i = allocation->range_index; i < count - 1; ++i)
-		{
-			range_allocations[i] = range_allocations[i + 1]; // replace the allocation
-			particles_ranges[i] = particles_ranges[i + 1];
-
-			range_allocations[i]->range_index = i;
-		}
-
-		// remove the last element of both arrays (useless now)
-		range_allocations.pop_back();
-		particles_ranges.pop_back();
-		// reset the object
-		*allocation = ParticleRangeAllocation();
-	}
-
-	void ParticleLayer::UpdateParticleRanges(size_t new_particle_count)
-	{
-		// update the ranges (code is useless from one TICK to the next. the only important value is NUMERIC LIMIT)
-		size_t range_count = particles_ranges.size();
-		for (size_t i = 0; i < range_count; ++i)
-		{
-			ParticleRange & range = particles_ranges[i];
-			if (range.count == 0)
+			size_t particle_count = allocation->GetParticleCount();
+			if (particle_count == 0)
 				continue;
 
-			size_t start = std::numeric_limits<size_t>::max();
-			size_t end   = std::numeric_limits<size_t>::max();
-			
-			for (size_t j = 0 ; j < range.count ; ++j) // search the index of the extrem particles
-			{
-				size_t deletion_value = deletion_vector[j + range.start];
-				if (deletion_value != ParticleLayer::DESTROY_PARTICLE_MARK)
-				{
-					if (start == std::numeric_limits<size_t>::max())
-						start = deletion_value;
-					end = deletion_value;
-				}
-			}
+			void * particles = allocation->GetParticleBuffer();
+			if (particles == nullptr)
+				continue;
 
-			if (start == std::numeric_limits<size_t>::max()) // no particles found
-				range.start = range.count = 0;
-			else
-			{
-				range.start = start;
-				range.count = end - start + 1;
-			}
+			layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation->deletion_vector, this);
 		}
-		// resize some vectors
-		DoResizeParticles(new_particle_count);
-		deletion_vector.resize(new_particle_count);
-		// reset the suppression vector
-		for (size_t i = 0; i < new_particle_count; ++i)
-			deletion_vector[i] = 0;
+	}
+
+	ParticleAllocation * ParticleLayer::SpawnParticles(size_t count)
+	{
+		// create an allocation
+		ParticleAllocation * result = layer_desc->NewAllocation(this);
+		if (result == nullptr)
+			return nullptr;
+		// increase the particle count for that allocation
+		result->Resize(count);
+		// register the allocation
+		particles_allocations.push_back(result);
+		return result;
 	}
 
 	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
@@ -613,8 +383,10 @@ namespace chaos
 	}
 
 
+
 	size_t ParticleLayer::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
 	{
+#if 0
 		size_t result = 0;
 
 		size_t particle_index = 0;
@@ -655,7 +427,25 @@ namespace chaos
 			buffer += display_vertices * vertex_size;
 		}
 		return result;
+#endif
+		return 0;
 	}
+
+
+
+
+#if 0
+
+	size_t ParticleLayer::UpdateParticles(float delta_time)
+	{
+		size_t count = particles_allocations.size();
+		for (size_t i = 0; i < count; ++i)
+			particles_allocations[i]->UpdateParticles(delta_time);
+	}
+
+
+#endif
+
 
 	// ==============================================================
 	// PARTICLE MANAGER
@@ -884,27 +674,5 @@ namespace chaos
 			glEnable(GL_CULL_FACE);
 		}
 	}
-
-#if 0
-	GLuint framebuffer = 0;
-	glGenFramebuffers(1, &framebuffer);
-
-	GLuint depth_renderbuffer = 0;
-	glGenRenderbuffers(1, &depth_renderbuffer);
-
-	glNamedRenderbufferStorage(depth_renderbuffer, GL_DEPTH24_STENCIL8, 512, 512);
-
-	GLuint color_renderbuffer = 0;
-	glGenRenderbuffers(1, &color_renderbuffer);
-	glNamedRenderbufferStorage(color_renderbuffer, GL_RGBA, 512, 512);
-
-	glNamedFramebufferRenderbuffer(framebuffer, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_renderbuffer);
-	glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, texture_id, texture_level);
-	glCheckNamedFramebufferStatus(framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
-
-#endif
-
-
-
 }; // namespace chaos
 

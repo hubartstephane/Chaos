@@ -61,11 +61,11 @@ class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, V
 public:
 
 	//bool UpdateParticle(float delta_time, ParticleExample * particle)
-	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleExample> & data)
+	bool UpdateParticle(float delta_time, ParticleExample * particle, chaos::ParticleLayer * layer)
 	{
-		data.particle->box.position += data.particle->velocity * data.delta_time;
-		data.particle->remaining_time -= data.delta_time;
-		return (data.particle->remaining_time <= 0.0f);
+		particle->box.position += particle->velocity * delta_time;
+		particle->remaining_time -= delta_time;
+		return (particle->remaining_time <= 0.0f);
 	}
 
 	size_t ParticleToVertex(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle) const
@@ -136,7 +136,7 @@ protected:
 	{
 		particle_manager = nullptr;
 		particle_layers.clear();
-		range_allocations.clear();
+		particle_allocations.clear();
 	}
 
 	virtual bool Tick(double delta_time) override
@@ -164,12 +164,12 @@ protected:
 			if (particle_layer != nullptr)
 			{
 				int particle_count = rand() % 50 + 5;
-				chaos::ParticleRangeAllocation * range = particle_layer->SpawnParticlesAndKeepRange(particle_count);
-				range_allocations.push_back(range);
+				chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(particle_count);
+				particle_allocations.push_back(allocation);
 
-				size_t pc = particle_layer->GetParticleCount(range->GetParticleRange());
+				size_t pc = allocation->GetParticleCount();
 
-				ParticleExample * particles = (ParticleExample*)particle_layer->GetParticleBuffer(range->GetParticleRange());
+				ParticleExample * particles = (ParticleExample*)allocation->GetParticleBuffer();
 				if (particles != nullptr)
 				{
 					glm::vec2 center = 
@@ -185,20 +185,20 @@ protected:
 		}
 		else
 		{
-			size_t count = range_allocations.size();
+			size_t count = particle_allocations.size();
 			if (count > 0)
 			{
 				size_t r = (rand() % count);
 
 				if (button == 1)
 				{
-					range_allocations[r] = range_allocations.back();
-					range_allocations.pop_back();
+					particle_allocations[r] = particle_allocations.back();
+					particle_allocations.pop_back();
 				}
 				else
 				{
-					range_allocations[r]->Show(!range_allocations[r]->IsVisible());
-					//range_allocations[r]->Pause(!range_allocations[r]->IsPaused());
+					particle_allocations[r]->Show(!particle_allocations[r]->IsVisible());
+					//particle_allocations[r]->Pause(!particle_allocations[r]->IsPaused());
 				}
 			}
 		}
@@ -271,7 +271,7 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 
 	std::vector<boost::intrusive_ptr<chaos::ParticleLayer>> particle_layers;
-	std::vector<boost::intrusive_ptr<chaos::ParticleRangeAllocation>> range_allocations;
+	std::vector<boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
 };
 
 // ===============================================

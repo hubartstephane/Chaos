@@ -16,7 +16,7 @@ namespace chaos
 
 	ParticleAllocation::~ParticleAllocation()
 	{
-		RemoveFromLayer();
+		assert(layer == nullptr);
 	}
 
 	void ParticleAllocation::RemoveFromLayer()
@@ -27,9 +27,20 @@ namespace chaos
 	}
 
 	void ParticleAllocation::OnRemovedFromLayer()
-	{
-		layer->particle_count -= GetParticleCount();
+	{		
+		ConditionalRequireGPUUpdate(false, false);
 		layer = nullptr;
+	}
+
+	void ParticleAllocation::ConditionalRequireGPUUpdate(bool ignore_visibility, bool ignore_particle_count)
+	{
+		if (layer == nullptr)
+			return;
+		if (!ignore_visibility && !IsVisible())
+			return;
+		if (!ignore_particle_count && GetParticleCount() == 0)
+			return;			
+		layer->require_GPU_update = true;
 	}
 
 	bool ParticleAllocation::IsAttachedToLayer() const
@@ -51,9 +62,8 @@ namespace chaos
 	{
 		if (visible != in_visible)
 		{
-			if (layer != nullptr)
-				layer->require_GPU_update = true;  // the GPU buffer is about to be changed
 			visible = in_visible;
+			ConditionalRequireGPUUpdate(false, false); // the GPU buffer is about to be changed
 		}
 	}
 
@@ -79,9 +89,6 @@ namespace chaos
 
 	bool ParticleAllocation::Resize(size_t new_count)
 	{
-		if (!IsAttachedToLayer())
-			return false;
-		layer->particle_count += (new_count - GetParticleCount());
 		return true;
 	}
 
@@ -163,7 +170,7 @@ namespace chaos
 	{
 		// faster to do that from end to begin
 		while (particles_allocations.size())
-			RemoveParticleAllocation(particles_allocations[particles_allocations.size() - 1].get());
+			RemoveParticleAllocation(particles_allocations[particles_allocations.size() - 1]);
 	}
 
 	void ParticleLayer::RemoveParticleAllocation(ParticleAllocation * allocation)
@@ -171,7 +178,7 @@ namespace chaos
 		assert(allocation != nullptr);
 		assert(allocation->layer == this);
 
-		for (size_t i = particles_allocations.size(); i > 0; ++i)
+		for (size_t i = particles_allocations.size(); i > 0; --i)
 		{
 			size_t index = i - 1;
 			if (particles_allocations[index] == allocation)
@@ -220,7 +227,10 @@ namespace chaos
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			ParticleAllocation * allocation = particles_allocations[i].get();
+			ParticleAllocation * allocation = particles_allocations[i];
+			// early exit
+			if (allocation->IsPaused())
+				continue;
 			// get the number of particles
 			size_t particle_count = allocation->GetParticleCount();
 			if (particle_count == 0)
@@ -323,7 +333,7 @@ namespace chaos
 				return 0;
 		}
 		// reserve memory (for the maximum number of vertices possible)
-		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * GetParticleCount();
+		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
 		if (vertex_buffer_size == 0)
 			return 0;
 
@@ -354,11 +364,13 @@ namespace chaos
 	{
 		size_t result = 0;
 
+		size_t vertex_size = GetVertexSize();
+
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)
 		{
 			// get the allocation, ignore if invisible
-			ParticleAllocation * allocation = particles_allocations[i].get();
+			ParticleAllocation * allocation = particles_allocations[i];
 			if (!allocation->IsVisible())
 				continue;
 			// ignore empty allocations
@@ -370,9 +382,33 @@ namespace chaos
 			if (particles == nullptr)
 				continue;
 			// transform particles into vertices
-			result = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation);
+			size_t new_vertices = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation);
+			// shift buffer
+			buffer += new_vertices * vertex_size;
+			result += new_vertices;
 		}
 
+		return result;
+	}
+
+	size_t ParticleLayer::ComputeMaxParticleCount() const
+	{
+		size_t result = 0;
+
+		size_t count = particles_allocations.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			// get the allocation, ignore if invisible
+			ParticleAllocation * allocation = particles_allocations[i];
+			if (!allocation->IsVisible())
+				continue;
+			// ignore empty allocations
+			size_t particle_count = allocation->GetParticleCount();
+			if (particle_count == 0)
+				continue;
+
+			result += allocation->GetParticleCount();
+		}
 		return result;
 	}
 

@@ -78,6 +78,8 @@ namespace chaos
 
 		/** called whenever the allocation is removed from the layer */
 		virtual void OnRemovedFromLayer();
+		/** require the layer to update the GPU buffer */
+		void ConditionalRequireGPUUpdate(bool ignore_visibility, bool ignore_particle_count);
 
 	protected:
 
@@ -105,6 +107,11 @@ namespace chaos
 			ParticleAllocation(in_layer)
 		{
 		}
+		/** destructor */
+		virtual ~TypedParticleAllocation()
+		{
+			RemoveFromLayer(); // this call is not in ParticleAllocation::~ParticleAllocation(), because when destructor is incomming, the number of particles becomes invalid (0)
+		}
 		/** override */
 		virtual size_t GetParticleCount() const override
 		{
@@ -127,9 +134,16 @@ namespace chaos
 		/** override */
 		virtual bool Resize(size_t new_count) override
 		{
-			if (!ParticleAllocation::Resize(new_count))
+			// test whether this is valid
+			if (!IsAttachedToLayer())
 				return false;
+			// early exit
+			if (new_count == particles.size())
+				return true;
+			// increment the number of particles
 			particles.resize(new_count);
+			// notify the layer
+			ConditionalRequireGPUUpdate(false, true);
 			return true;
 		}
 
@@ -139,7 +153,7 @@ namespace chaos
 		virtual void OnRemovedFromLayer() override
 		{
 			ParticleAllocation::OnRemovedFromLayer();
-			particles.clear();			
+			particles.clear();						
 		}
 
 	protected:
@@ -300,7 +314,7 @@ namespace chaos
 		void SetLayerID(int in_id);
 
 		/** returns the number of particle count */
-		size_t GetParticleCount() const { return particle_count; }
+		size_t ComputeMaxParticleCount() const;
 		/** returns the size in memory of a particle */
 		size_t GetParticleSize() const { return layer_desc->GetParticleSize(); }
 		/** returns the size in memory of a vertex */
@@ -379,7 +393,7 @@ namespace chaos
 		boost::intrusive_ptr<RenderMaterial> render_material;
 
 		/** particles allocations */
-		std::vector<boost::intrusive_ptr<ParticleAllocation>> particles_allocations;
+		std::vector<ParticleAllocation*> particles_allocations;
 		/** the behavior description */
 		boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
 
@@ -392,9 +406,6 @@ namespace chaos
 
 		/** number of used vertices in the vertex buffer */
 		mutable size_t vertices_count = 0;
-
-		/** get the number of particles in all allocations */
-		size_t particle_count = 0;
 	};
 
 	// ==============================================================

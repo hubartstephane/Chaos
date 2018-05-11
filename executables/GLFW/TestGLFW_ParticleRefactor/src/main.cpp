@@ -196,8 +196,8 @@ protected:
 				}
 				else
 				{
-					particle_allocations[r]->Show(!particle_allocations[r]->IsVisible());
-					//particle_allocations[r]->Pause(!particle_allocations[r]->IsPaused());
+					//particle_allocations[r]->Show(!particle_allocations[r]->IsVisible());
+					particle_allocations[r]->Pause(!particle_allocations[r]->IsPaused());
 				}
 			}
 		}

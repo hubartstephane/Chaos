@@ -26,10 +26,9 @@ namespace chaos
 		layer->RemoveParticleAllocation(this);
 	}
 
-	void ParticleAllocation::OnRemoveFromLayer()
+	void ParticleAllocation::OnRemovedFromLayer()
 	{
 		layer->particle_count -= GetParticleCount();
-		deletion_vector.clear();
 		layer = nullptr;
 	}
 
@@ -83,47 +82,12 @@ namespace chaos
 		if (!IsAttachedToLayer())
 			return false;
 		layer->particle_count += (new_count - GetParticleCount());
-		deletion_vector.resize(new_count);
 		return true;
-	}
-
-	void ParticleAllocation::MarkParticlesToDestroy(size_t start, size_t count)
-	{
-		// early exit, all particles are already destroyed whenever the allocation is removed from the manager
-		if (!IsAttachedToLayer())
-			return;
-		// valid number of particles
-		if (count == 0)
-			return;
-		// valid start
-		size_t particle_count = GetParticleCount(); 
-		if (start >= particle_count)
-			return;
-
-		// compute the extrems index in the full buffer point of view
-		bool changed = false;
-
-		size_t s = start;
-		size_t e = min(s + count, GetParticleCount());
-		for (size_t i = s; i != e; ++i)
-		{
-			changed |= !deletion_vector[i];
-			deletion_vector[i] = true;
-		}
-
-		// notify the layer that the representation has changed
-		if (changed && visible && layer != nullptr)
-			layer->require_GPU_update = true;
 	}
 
 	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================
-
-	ParticleLayer * ParticleLayerDesc::NewLayer()
-	{
-		return new ParticleLayer(this);
-	}
 
 	ParticleAllocation * ParticleLayerDesc::NewAllocation(ParticleLayer * in_layer)
 	{
@@ -145,11 +109,6 @@ namespace chaos
 		return 0;
 	}
 
-	void ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, std::vector<bool> & deletion_vector, ParticleLayer * layer)
-	{
-
-	}
-
 	bool ParticleLayerDesc::AreParticlesDynamic() const
 	{
 		return false;
@@ -160,11 +119,16 @@ namespace chaos
 		return VertexDeclaration();
 	}
 
-	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleLayer * layer) const
+	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation)
+	{
+		return particle_count; // no particles destroyed
+	}
+
+	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const
 	{
 		assert(particles != nullptr);
 		assert(vertices != nullptr);
-		return 0;
+		return 0; // no vertex inserted
 	}
 
 	// ==============================================================
@@ -213,7 +177,7 @@ namespace chaos
 			if (particles_allocations[index] == allocation)
 			{
 				particles_allocations.erase(particles_allocations.begin() + index);
-				allocation->OnRemoveFromLayer();
+				allocation->OnRemovedFromLayer();
 				return;
 			}
 		}
@@ -246,29 +210,34 @@ namespace chaos
 			return;
 		// update the particles themselves
 		if (AreParticlesDynamic())
-		{
-			UpdateParticles(delta_time);
-			require_GPU_update = true;
-		}
+			require_GPU_update |= UpdateParticles(delta_time);
 	}
 
-	void ParticleLayer::UpdateParticles(float delta_time)
+	bool ParticleLayer::UpdateParticles(float delta_time)
 	{
+		bool result = false;
+
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)
 		{
 			ParticleAllocation * allocation = particles_allocations[i].get();
-
+			// get the number of particles
 			size_t particle_count = allocation->GetParticleCount();
 			if (particle_count == 0)
 				continue;
-
+			// get the particle (void) buffer
 			void * particles = allocation->GetParticleBuffer();
 			if (particles == nullptr)
 				continue;
-
-			layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation->deletion_vector, this);
+			// update all particles
+			size_t remaining_particles = layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation);
+			// clean buffer of all particles that have bean destroyed
+			if (remaining_particles != particle_count)
+				allocation->Resize(remaining_particles);
+			// particles have changed ... so must it be for vertices
+			result = true;
 		}
+		return result;
 	}
 
 	ParticleAllocation * ParticleLayer::SpawnParticles(size_t count)
@@ -286,11 +255,14 @@ namespace chaos
 
 	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
-		// early exit
-		if (GetParticleCount() == 0)
-			return;
 		if (!IsVisible())
 			return;
+		// Update GPU buffers	
+		size_t vcount = UpdateGPUBuffers();
+		if (vcount == 0)
+			return;
+		// update the vertex declaration
+		UpdateVertexDeclaration();
 		// search the material
 		RenderMaterial const * final_material = material_override;
 		if (final_material == nullptr)
@@ -299,10 +271,6 @@ namespace chaos
 			if (final_material == nullptr)
 				return;
 		}
-		// update the vertex declaration
-		UpdateVertexDeclaration();
-		// Update GPU buffers	
-		size_t vcount = UpdateGPUBuffers();
 		// do the rendering
 		DoDisplay(vcount, final_material, uniform_provider, instancing);
 	}
@@ -376,76 +344,37 @@ namespace chaos
 
 		// no more update required
 		require_GPU_update = false;
-		// cache the nnumber of particles inserted
+		// cache the number of particles inserted
 		vertices_count = result;
 
 		return result;
 	}
 
-
-
 	size_t ParticleLayer::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
 	{
-#if 0
 		size_t result = 0;
 
-		size_t particle_index = 0;
-		size_t range_index    = 0;
-		size_t vertex_size    = GetVertexSize();
-		size_t particle_count = GetParticleCount();
-		size_t range_count    = range_allocations.size();
-
-		while (particle_index < particle_count)
-		{
-			size_t display_vertices = 0;
-
-			void const * p = GetParticle(particle_index);
-			if (range_index < range_count)
-			{
-				ParticleRange const & range = particles_ranges[range_index];
-
-				if (particle_index == range.start) // current particle is in a range
-				{
-					if (range_allocations[range_index]->IsVisible())
-						display_vertices = layer_desc->ParticlesToVertices((char const *)p, range.count, buffer);
-					particle_index += range.count;
-					range_index += 1;
-				}
-				else
-				{
-					display_vertices = layer_desc->ParticlesToVertices((char const *)p, range.start - particle_index, buffer);
-					particle_index = range.start;
-				}
-			}
-			else
-			{
-				display_vertices = layer_desc->ParticlesToVertices((char const *)p, particle_count - particle_index, buffer);
-				particle_index = particle_count;
-			}
-
-			result += display_vertices;
-			buffer += display_vertices * vertex_size;
-		}
-		return result;
-#endif
-		return 0;
-	}
-
-
-
-
-#if 0
-
-	size_t ParticleLayer::UpdateParticles(float delta_time)
-	{
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)
-			particles_allocations[i]->UpdateParticles(delta_time);
+		{
+			// get the allocation, ignore if invisible
+			ParticleAllocation * allocation = particles_allocations[i].get();
+			if (!allocation->IsVisible())
+				continue;
+			// ignore empty allocations
+			size_t particle_count = allocation->GetParticleCount();
+			if (particle_count == 0)
+				continue;
+			// get the buffer
+			void * particles = allocation->GetParticleBuffer();
+			if (particles == nullptr)
+				continue;
+			// transform particles into vertices
+			result = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation);
+		}
+
+		return result;
 	}
-
-
-#endif
-
 
 	// ==============================================================
 	// PARTICLE MANAGER
@@ -523,7 +452,7 @@ namespace chaos
 		if (layer_desc == nullptr)
 			return nullptr;
 		// create the layer
-		ParticleLayer * result = layer_desc->NewLayer();
+		ParticleLayer * result = new ParticleLayer(layer_desc);
 		if (result == nullptr)
 			return nullptr;
 		// insert the layer at the end

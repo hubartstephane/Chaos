@@ -548,11 +548,11 @@ void LudumGame::FillBackgroundLayer()
 	if (layer == nullptr)
 		return;
 
-	chaos::ParticleRange range = layer->SpawnParticles(1);
-	if (range.count == 0)
+	background_allocations = layer->SpawnParticles(1);
+	if (background_allocations == nullptr)
 		return;
 	
-	ParticleBackground * particle = (ParticleBackground*)layer->GetParticleBuffer(range);
+	ParticleBackground * particle = (ParticleBackground*)background_allocations->GetParticleBuffer();
 	if (particle == nullptr)
 		return;
 
@@ -615,7 +615,7 @@ std::string LudumGame::GenerateGamepadChallengeString(std::vector<int> const & g
 	return result;
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params)
+chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params)
 {
 	// find layer of concern
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(TEXT_LAYER_ID);
@@ -630,7 +630,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * tex
 	// count the number of particle to draw
 	size_t count = result.GetTokenCount();
 
-	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
 	if (allocation == nullptr)
 		return nullptr;
 
@@ -656,7 +656,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateTextParticles(char const * tex
 }
 
 
-chaos::ParticleRangeAllocation * LudumGame::CreateChallengeParticles(LudumChallenge * challenge)
+chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge * challenge)
 {
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard   = chaos::InputMode::IsPCMode(input_mode);
@@ -686,7 +686,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateChallengeParticles(LudumChalle
 	// count the number of particle to draw
 	size_t count = result.GetTokenCount();
 
-	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
 	if (allocation == nullptr)
 		return nullptr;
 

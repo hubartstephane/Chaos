@@ -47,7 +47,7 @@ class ParticleBackgroundTrait : public chaos::ParticleLayerTrait<ParticleBackgro
 {
 public:
 
-	size_t ParticleToVertex(ParticleBackground const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleBackground const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 };
 
 // ===========================================================================
@@ -67,9 +67,9 @@ class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, Ver
 {
 public:
 
-	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleObject> & data);
+	bool UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation);
 
-	size_t ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 };
 
 
@@ -81,7 +81,7 @@ class ParticleLifeObjectTrait : public ParticleObjectTrait
 {
 public:
 
-	size_t ParticleToVertex(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
 	class LudumGame * game = nullptr;
 };
@@ -108,9 +108,9 @@ class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, Verte
 {
 public:
 
-	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleBrick> & data);
+	bool UpdateParticle(float delta_time, ParticleBrick * particle, chaos::ParticleAllocation * allocation);
 
-	size_t ParticleToVertex(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 };
 
 
@@ -131,9 +131,9 @@ class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMova
 {
 public:
 
-	bool UpdateParticle(chaos::TypedUpdateParticleData<ParticleMovableObject> & data);
+	bool UpdateParticle(float delta_time, ParticleMovableObject * particle, chaos::ParticleAllocation * allocation);
 
-	size_t ParticleToVertex(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
 	void UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity);
 
@@ -166,7 +166,7 @@ class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChalleng
 {
 public:
 
-	size_t ParticleToVertex(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 };
 
 

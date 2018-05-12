@@ -58,5 +58,5 @@ protected:
 	class LudumGame * game = nullptr;
 
 	/** the visible hud */
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> particle_range;
+	boost::intrusive_ptr<chaos::ParticleAllocation> particle_range;
 };

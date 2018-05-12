@@ -255,23 +255,23 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 	/** create a text for the challenge */
-	chaos::ParticleRangeAllocation * CreateChallengeParticles(LudumChallenge * challenge);
+	chaos::ParticleAllocation * CreateChallengeParticles(LudumChallenge * challenge);
 
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
 
 	/** create particles in the text layer */
-	chaos::ParticleRangeAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
+	chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
 
 	/** create a number of game object */
-	chaos::ParticleRangeAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
 	/** create the player */
-	chaos::ParticleRangeAllocation * CreatePlayer();
+	chaos::ParticleAllocation * CreatePlayer();
 
 	/** create the ball */
-	chaos::ParticleRangeAllocation * CreateBalls(size_t count, bool full_init);
+	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
 	/** create the bricks */
-	chaos::ParticleRangeAllocation * CreateBricks(int level_number);
+	chaos::ParticleAllocation * CreateBricks(int level_number);
 
 	/** create the title of the game */
 	void CreateGameTitle();
@@ -297,9 +297,9 @@ protected:
 
 
 	/** get an object particle */
-	ParticleObject * GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index);
+	ParticleObject * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
 	/** get an object particle */
-	ParticleObject const * GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index) const;
+	ParticleObject const * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index) const;
 
 	/** get the player particle */
 	ParticleObject * GetPlayerParticle();
@@ -328,17 +328,17 @@ protected:
 
 
 	/** get the box for a given object */
-	chaos::box2 GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const;
+	chaos::box2 GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const;
 	/** get the box for player */
 	chaos::box2 GetPlayerBox() const;
 
 	/** change one object box */
-	void SetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index, chaos::box2 const & box);
+	void SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
 	/** change player box */
 	void SetPlayerBox(chaos::box2 const & box);
 
 	/** get the position for given object */
-	glm::vec2 GetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index) const;
+	glm::vec2 GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const;
 	/** get the player position */
 	glm::vec2 GetPlayerPosition() const;
 
@@ -350,10 +350,10 @@ protected:
 
 
 	/** change an object position */
-	void SetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index, glm::vec2 const & position);
+	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
 
 	/** ensure object is inside the world */
-	void RestrictedObjectToScreen(chaos::ParticleRangeAllocation * allocation, size_t index);
+	void RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index);
 	/** ensure player is inside the world */
 	void RestrictedPlayerToScreen();
 
@@ -394,7 +394,7 @@ protected:
 	void ChangeLife(int delta_life);
 
 	/** internal method to create score/combo */
-	chaos::ParticleRangeAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
+	chaos::ParticleAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
 
 
 	/** get currently played level */
@@ -528,14 +528,15 @@ protected:
 #endif
 
 	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> player_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> bricks_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> life_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> balls_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> text_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> score_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> combo_allocations;
-	boost::intrusive_ptr<chaos::ParticleRangeAllocation> best_score_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> text_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> best_score_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 
 	/** the possible rewards */
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;

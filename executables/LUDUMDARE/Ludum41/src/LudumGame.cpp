@@ -99,7 +99,7 @@ void LudumGame::CreateGameTitle()
 	}
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
+chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
 {
 	// test flag
 	if (!update_flag)
@@ -138,7 +138,7 @@ void LudumGame::UpdateLifeParticles()
 	// some life lost (destroy particles)
 	if ((size_t)current_life < life_particles)
 	{
-		life_allocations->MarkParticlesToDestroy(current_life, life_particles - current_life);
+		life_allocations->Resize(current_life);
 		return;
 	}
 
@@ -184,14 +184,14 @@ void LudumGame::UpdateComboParticles()
 		return;
 	}
 	// test whether the combo has changed
-	chaos::ParticleRangeAllocation * allocation = CreateScoringParticles(should_update_combo, "Combo : %d x", combo_multiplier, 60.0f);
+	chaos::ParticleAllocation * allocation = CreateScoringParticles(should_update_combo, "Combo : %d x", combo_multiplier, 60.0f);
 	if (allocation != nullptr)
 		combo_allocations = allocation;
 }
 
 void LudumGame::UpdateScoreParticles()
 {
-	chaos::ParticleRangeAllocation * allocation = CreateScoringParticles(should_update_score, "Score : %d", current_score, 20.0f);
+	chaos::ParticleAllocation * allocation = CreateScoringParticles(should_update_score, "Score : %d", current_score, 20.0f);
 	if (allocation != nullptr)
 		score_allocations = allocation;
 }
@@ -837,7 +837,7 @@ void LudumGame::DestroyGameObjects()
 	sequence_challenge = nullptr;
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
+chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
 {
 	// find layer of concern
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
@@ -855,7 +855,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateGameObjects(char const * name,
 		return nullptr;
 
 	// allocate the objects
-	chaos::ParticleRangeAllocation * allocation = layer->SpawnParticlesAndKeepRange(count);
+	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
 	if (allocation == nullptr)
 		return nullptr;
 
@@ -892,7 +892,7 @@ glm::vec2 LudumGame::GenerateBallRandomDirection() const
 		chaos::MathTools::Sin(angle));
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateBricks(int level_number)
+chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 {
 	glm::vec4 const indestructible_color = glm::vec4(1.0f, 0.4f, 0.0f, 1.0f);
 
@@ -911,7 +911,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks(int level_number)
 
 	// create the bricks resource
 	size_t brick_count = level->GetBrickCount();
-	chaos::ParticleRangeAllocation * result = CreateGameObjects("brick", brick_count, BRICK_LAYER_ID);
+	chaos::ParticleAllocation * result = CreateGameObjects("brick", brick_count, BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -1044,11 +1044,11 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBricks(int level_number)
 	return result;
 }
 
-chaos::ParticleRangeAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
+chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 {
 
 	// create the object
-	chaos::ParticleRangeAllocation * result = CreateGameObjects("ball", 1, BALL_LAYER_ID);
+	chaos::ParticleAllocation * result = CreateGameObjects("ball", 1, BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -1073,10 +1073,10 @@ chaos::ParticleRangeAllocation * LudumGame::CreateBalls(size_t count, bool full_
 }
 
 
-chaos::ParticleRangeAllocation * LudumGame::CreatePlayer()
+chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
-	chaos::ParticleRangeAllocation * result = CreateGameObjects("player", 1);
+	chaos::ParticleAllocation * result = CreateGameObjects("player", 1);
 	if (result == nullptr)
 		return nullptr;
 
@@ -1093,7 +1093,7 @@ chaos::ParticleRangeAllocation * LudumGame::CreatePlayer()
 }
 
 
-ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index) const
+ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index) const
 {
 	if (allocation == nullptr)
 		return nullptr;
@@ -1129,7 +1129,7 @@ size_t LudumGame::GetBallCount() const
 	return balls_allocations->GetParticleCount();
 }
 
-ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleRangeAllocation * allocation, size_t index)
+ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index)
 {
 	if (allocation == nullptr)
 		return nullptr;
@@ -1162,7 +1162,7 @@ ParticleObject const * LudumGame::GetPlayerParticle() const
 
 
 
-chaos::box2 LudumGame::GetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index) const
+chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const
 {
 	ParticleObject const * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
@@ -1176,7 +1176,7 @@ chaos::box2 LudumGame::GetPlayerBox() const
 }
 
 
-void LudumGame::SetObjectBox(chaos::ParticleRangeAllocation * allocation, size_t index, chaos::box2 const & box) 
+void LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box) 
 {
 	ParticleObject * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
@@ -1189,7 +1189,7 @@ void LudumGame::SetPlayerBox(chaos::box2 const & box)
 	return SetObjectBox(player_allocations.get(), 0, box);
 }
 
-glm::vec2 LudumGame::GetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index) const
+glm::vec2 LudumGame::GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const
 {
 	return GetObjectBox(allocation, index).position;
 }
@@ -1199,7 +1199,7 @@ glm::vec2 LudumGame::GetPlayerPosition() const
 	return GetPlayerBox().position;
 }
 
-void LudumGame::SetObjectPosition(chaos::ParticleRangeAllocation * allocation, size_t index, glm::vec2 const & position)
+void LudumGame::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
 {
 	ParticleObject * particle = GetObjectParticle(allocation, index);
 	if (particle == nullptr)
@@ -1214,7 +1214,7 @@ void LudumGame::SetPlayerPosition(float position)
 }
 
 
-void LudumGame::RestrictedObjectToScreen(chaos::ParticleRangeAllocation * allocation, size_t index)
+void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index)
 {
 	ParticleObject * particle = GetObjectParticle(allocation, index);
 	if (particle == nullptr)

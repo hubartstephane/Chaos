@@ -60,7 +60,7 @@ class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, V
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleExample * particle, chaos::ParticleAllocation * allocation)
+	bool UpdateParticle(float delta_time, ParticleExample * particle, chaos::ParticleAllocation * allocation) const
 	{
 		particle->box.position += particle->velocity * delta_time;
 		particle->remaining_time -= delta_time;

@@ -429,9 +429,15 @@ namespace chaos
 		}
 
 		/** by default, update do nothing */
-		bool UpdateParticle(float delta_time, particle_type * particle, ParticleAllocation * allocation){ return false; }
+		bool UpdateParticle(float delta_time, particle_type * particle, ParticleAllocation * allocation) const
+		{ 
+			return false; 
+		}
 		/** by default, particle to vertex do nothing */
-		size_t ParticleToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, ParticleAllocation * allocation) { return 0; }
+		size_t ParticleToVertices(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particles, ParticleAllocation * allocation) const
+		{ 
+			return 0; 
+		}
 
 	public:
 

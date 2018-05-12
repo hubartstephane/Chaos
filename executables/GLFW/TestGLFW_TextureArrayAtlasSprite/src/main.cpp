@@ -21,11 +21,38 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
 #include <chaos/GLMTools.h>
-
 #include <chaos/SpriteTextParser.h>
 #include <chaos/SpriteManager.h>
 #include <chaos/Hotpoint.h>
+#include <chaos/ParticleManager.h>
+#include <chaos/RenderMaterial.h>
 
+
+
+
+class MyParticle
+{
+
+};
+
+class MyVertex
+{
+
+};
+
+class MyParticleTrait : public chaos::ParticleLayerTrait<MyParticle, MyVertex>
+{
+
+};
+
+chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<MyVertex>)
+{
+	chaos::VertexDeclaration result;
+	//result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	//result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+	//result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	return result;
+}
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -43,7 +70,7 @@ protected:
     int SPRITE_COUNT = 100;
 
     // add characters
-    auto const & character_sets = atlas.GetCharacterSets();
+    auto const & character_sets = atlas->GetCharacterSets();
     if (character_sets.size() > 0)
     {
       chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
@@ -66,7 +93,7 @@ protected:
     }
 
     // add bitmap
-    auto const & bitmap_sets = atlas.GetBitmapSets();
+    auto const & bitmap_sets = atlas->GetBitmapSets();
     if (bitmap_sets.size() > 0)
     {
       chaos::BitmapAtlas::BitmapSet const * bitmap_set = bitmap_sets.at(0).get();
@@ -116,29 +143,62 @@ protected:
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::GPUProgramProvider uniform_provider;
+    chaos::DisableLastReferenceLost<chaos::GPUProgramProvider> uniform_provider;
     uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
     sprite_manager.Display(&uniform_provider);
+
+
+		particle_manager->Display(&uniform_provider);
 
     return true;
   }
 
   virtual void Finalize() override
   {
+		material = nullptr;
+		atlas = nullptr;
+		particle_manager = nullptr;
+
     sprite_manager.Finalize();
-    atlas.Clear();
   }
 
   bool LoadAtlas(boost::filesystem::path const & resources_path)
   {
-    return atlas.LoadAtlas(resources_path / "MyAtlas.json");
+		atlas = new chaos::BitmapAtlas::TextureArrayAtlas();
+		if (atlas == nullptr)
+			return false;
+
+    return atlas->LoadAtlas(resources_path / "MyAtlas.json");
   }
 
-  bool InitializeSpriteManager()
+  bool InitializeParticleManager()
   {
+		// create the material
+		material = new chaos::RenderMaterial;
+		if (material == nullptr)
+			return false;
+
+		// create the particle manager
+		particle_manager = new chaos::ParticleManager;
+		if (particle_manager == nullptr)
+			return false;
+		particle_manager->SetTextureAtlas(atlas.get());
+		// create the layer
+		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<MyParticleTrait>());
+		if (layer == nullptr)
+			return false;
+		layer->SetLayerID(0);
+		layer->SetRenderMaterial(material.get());
+
+
+		// set the atlas
+		
+
+
+
     chaos::SpriteManagerInitParams params;
-    params.atlas = &atlas;
+    params.atlas = atlas.get();
 
     if (!sprite_manager.Initialize(params))
       return false;
@@ -160,7 +220,7 @@ protected:
       return false;
 
     // initialize the sprite manager
-    if (!InitializeSpriteManager())
+    if (!InitializeParticleManager())
       return false;
 
     // place camera
@@ -183,7 +243,8 @@ protected:
     if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       RequireWindowClosure();
 
-    fps_view_controller.Tick(glfw_window, delta_time);
+		particle_manager->Tick((float)delta_time);
+    fps_view_controller.Tick(glfw_window, delta_time);		
 
     return true; // refresh
   }
@@ -196,10 +257,15 @@ protected:
 
 protected:
 
+	// the particle manager
+	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+	/** the texture atlas */
+	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
+	/** the material */
+	boost::intrusive_ptr<chaos::RenderMaterial> material;
+
   // the sprite manager
   chaos::SpriteManager sprite_manager;
-  // the atlas
-  chaos::BitmapAtlas::TextureArrayAtlas atlas;
   // the camera
   chaos::FPSViewInputController fps_view_controller;
 };

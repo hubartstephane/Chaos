@@ -66,7 +66,7 @@ size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, 
 	return vertices_per_particle;
 }
 
-bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation)
+bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation) const
 { 
 	return false; 
 }
@@ -97,7 +97,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 // Brick particle system
 // ===========================================================================
 
-bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle, chaos::ParticleAllocation * allocation)
+bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle, chaos::ParticleAllocation * allocation) const
 {
 	if (particle->life <= 0)
 		return true;
@@ -140,7 +140,7 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 }
 
 
-void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity)
+void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity) const
 {
 	if (ball_box.position.x > new_ball_box.position.x)
 		velocity.x = -abs(velocity.x);				
@@ -154,7 +154,7 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2
 
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, chaos::ParticleAllocation * allocation)
+bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, chaos::ParticleAllocation * allocation) const
 {
 	// do not update particles during pause
 	if (!game->IsPlaying())
@@ -247,7 +247,7 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 	return glm::vec2(cosf(angle), sinf(angle));
 }
 
-glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v)
+glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v) const
 {
 	float ball_angle_limit = game->ball_angle_limit;
 	if (ball_angle_limit <= 0.0f)

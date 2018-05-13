@@ -20,44 +20,11 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
-
+#include <chaos/ParticleManager.h>
+#include <chaos/RenderMaterial.h>
+#include <chaos/ParticleDefault.h>
 #include <chaos/SpriteTextGenerator.h>
 #include <chaos/SpriteManager.h>
-
-
-#if 0
-int operator ()(std::string const & a, std::string const & b) const
-{
-	char const * s1 = a.c_str();
-	char const * s2 = b.c_str();
-
-	if (s1 == nullptr)
-		return (s2 == nullptr) ? 0 : -1;
-	if (s2 == nullptr)
-		return +1;
-
-	int  i = 0;
-	char c1 = toupper(s1[i]);
-	char c2 = toupper(s2[i]);
-	while (c1 != 0 && c2 != 0)
-	{
-		if (c1 != c2)
-			return (c1 > c2) ? +1 : -1;
-		++i;
-		c1 = toupper(s1[i]);
-		c2 = toupper(s2[i]);
-	}
-
-	if (c1 == c2)
-		return 0;
-	return (c1 > c2) ? +1 : -1;
-}
-#endif
-
-
-
-
-
 
 // --------------------------------------------------------------------
 
@@ -65,13 +32,6 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
 protected:
-
-	void GenerateSprite(float w, float h)
-	{
-		if (sprite_manager.GetSpriteCount() > 0)
-			return;
-
-	}
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
@@ -85,17 +45,13 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
-								  // XXX : the scaling is used to avoid the near plane clipping
+		// XXX : the scaling is used to avoid the near plane clipping
 		chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 		static float FOV = 60.0f;
 		glm::mat4 projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
 		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
 		glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
-
-		float w = (float)size.x;
-		float h = (float)size.y;
-		GenerateSprite(w, h);
 
 		class MyProvider : public chaos::GPUProgramProviderBase
 		{
@@ -116,6 +72,8 @@ protected:
 			}
 		};
 
+		float w = (float)size.x;
+		float h = (float)size.y;
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
@@ -161,33 +119,83 @@ protected:
 
 		sprite_manager.Display(uniform_provider.get());
 
+
+
+
+		particle_manager->Display(uniform_provider.get());
+
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
+		particle_manager = nullptr;
+		atlas = nullptr;
+		material = nullptr;
+		program = nullptr;
+		particles_allocation = nullptr;
+
 		sprite_manager.Finalize();
-		atlas.Clear();
 	}
 
 	bool LoadAtlas(boost::filesystem::path const & resources_path)
 	{
-		return atlas.LoadAtlas(resources_path / "MyAtlas.json");
+		atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+		if (atlas == nullptr)
+			return false;
+		return atlas->LoadAtlas(resources_path / "MyAtlas.json");
 	}
 
-	bool InitializeSpriteManager()
+	bool InitializeParticleManager(boost::filesystem::path const & resources_path)
 	{
+
+		// create the program
+		program = chaos::ParticleDefault::GenDefautParticleProgram();
+		if (program == nullptr)
+			return false;
+
+		// create the material
+		material = new chaos::RenderMaterial;
+		if (material == nullptr)
+			return false;
+		material->SetProgram(program.get());
+
+		// create the particle manager
+		particle_manager = new chaos::ParticleManager;
+		if (particle_manager == nullptr)
+			return false;
+		particle_manager->SetTextureAtlas(atlas.get());
+		// create the layer
+		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>());
+		if (layer == nullptr)
+			return false;
+		layer->SetLayerID(0);
+		layer->SetRenderMaterial(material.get());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		chaos::SpriteManagerInitParams params;
-		params.atlas = &atlas;
+		params.atlas = atlas.get();
 
 		if (!sprite_manager.Initialize(params))
 			return false;
 
-		chaos::SpriteText::Generator generator(atlas);
+		chaos::SpriteText::Generator generator(*atlas);
 		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
-		generator.AddBitmap("BUTTON", atlas.GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
-		generator.AddCharacterSet("C1", atlas.GetCharacterSet("character_set1"));
-		generator.AddCharacterSet("C2", atlas.GetCharacterSet("character_set2"));
+		generator.AddBitmap("BUTTON", atlas->GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
+		generator.AddCharacterSet("C1", atlas->GetCharacterSet("character_set1"));
+		generator.AddCharacterSet("C2", atlas->GetCharacterSet("character_set2"));
 
 
 		chaos::SpriteText::GeneratorParams generator_params;
@@ -234,7 +242,7 @@ protected:
 			return false;
 
 		// initialize the sprite manager
-		if (!InitializeSpriteManager())
+		if (!InitializeParticleManager(resources_path))
 			return false;
 
 		// place camera
@@ -257,22 +265,30 @@ protected:
 		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			RequireWindowClosure();
 
+		particle_manager->Tick((float)delta_time);
 		fps_view_controller.Tick(glfw_window, delta_time);
 
 		return true; // refresh
 	}
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
-	{
-
-	}
-
 protected:
+
+	// the particle manager
+	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+	/** the texture atlas */
+	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
+	/** the material */
+	boost::intrusive_ptr<chaos::RenderMaterial> material;
+	/** the program */
+	boost::intrusive_ptr<chaos::GPUProgram> program;
+	/** allocation */
+	boost::intrusive_ptr<chaos::ParticleAllocation> particles_allocation;
+
+
+
 
 	// the sprite manager
 	chaos::SpriteManager sprite_manager;
-	// the atlas
-	chaos::BitmapAtlas::TextureArrayAtlas atlas;
 	// the camera
 	chaos::FPSViewInputController fps_view_controller;
 };

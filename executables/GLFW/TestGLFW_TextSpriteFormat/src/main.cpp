@@ -214,7 +214,7 @@ protected:
 
 				particles[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
 				particles[k].texcoords = token.texcoords;
-				particles[k].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+				particles[k].color =  glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 				++k;
 			}
 		}

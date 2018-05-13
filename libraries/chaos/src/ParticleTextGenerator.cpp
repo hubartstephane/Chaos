@@ -110,6 +110,7 @@ namespace chaos
 		{
 			Token token;
 			token.bitmap_entry = entry;
+			token.color = glm::vec3(1.0f, 1.0f, 1.0f);
 			InsertTokenInLine(token);
 		}
 

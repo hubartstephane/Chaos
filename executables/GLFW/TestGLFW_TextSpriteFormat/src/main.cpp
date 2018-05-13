@@ -23,8 +23,8 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/RenderMaterial.h>
 #include <chaos/ParticleDefault.h>
-#include <chaos/SpriteTextGenerator.h>
-#include <chaos/SpriteManager.h>
+#include <chaos/ParticleTextGenerator.h>
+
 
 // --------------------------------------------------------------------
 
@@ -84,6 +84,7 @@ protected:
 		uniform_provider->AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
     uniform_provider->AddVariableProvider(dynamic_provider.get());
 
+#if 0
 		glm::mat4 m1;
 		glm::dmat4 m2;
 		glm::mat3x2 m3;
@@ -116,11 +117,7 @@ protected:
 		bool b13 = uniform_provider->GetValue("toto", v5);
 		bool b14 = uniform_provider->GetValue("toto", v6);
 		bool b15 = uniform_provider->GetValue("toto", v7);
-
-		sprite_manager.Display(uniform_provider.get());
-
-
-
+#endif
 
 		particle_manager->Display(uniform_provider.get());
 
@@ -134,8 +131,6 @@ protected:
 		material = nullptr;
 		program = nullptr;
 		particles_allocation = nullptr;
-
-		sprite_manager.Finalize();
 	}
 
 	bool LoadAtlas(boost::filesystem::path const & resources_path)
@@ -172,33 +167,14 @@ protected:
 		layer->SetLayerID(0);
 		layer->SetRenderMaterial(material.get());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-		chaos::SpriteManagerInitParams params;
-		params.atlas = atlas.get();
-
-		if (!sprite_manager.Initialize(params))
-			return false;
-
-		chaos::SpriteText::Generator generator(*atlas);
+		// parse the text
+		chaos::ParticleTextGenerator::Generator generator(*atlas);
 		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
 		generator.AddBitmap("BUTTON", atlas->GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
 		generator.AddCharacterSet("C1", atlas->GetCharacterSet("character_set1"));
 		generator.AddCharacterSet("C2", atlas->GetCharacterSet("character_set2"));
 
-
-		chaos::SpriteText::GeneratorParams generator_params;
+		chaos::ParticleTextGenerator::GeneratorParams generator_params;
 		generator_params.line_height = 50;
 		generator_params.character_set_name = "character_set1"; // the default character set
 		generator_params.position = glm::vec2(0.0f, 0.0f);
@@ -207,22 +183,41 @@ protected:
 		generator_params.line_spacing = 0.0f;
 		generator_params.bitmap_padding.x = 10.0f;
 		generator_params.bitmap_padding.y = 5.0f;
-		//generator_params.alignment = chaos::SpriteText::GeneratorParams::ALIGN_JUSTIFY;
-		generator_params.alignment = chaos::SpriteText::GeneratorParams::ALIGN_LEFT;
+		generator_params.alignment = chaos::ParticleTextGenerator::GeneratorParams::ALIGN_LEFT;
 		generator_params.justify_space_factor = 8.0f;
 		generator_params.max_text_width = 200.0f;
 		generator_params.word_wrap = true;
 
-			//chaos::SpriteTextGeneratorParams::ALIGN_RIGHT;
+		chaos::ParticleTextGenerator::GeneratorResult generator_result;
+		generator.Generate(
+			"Hi [RED Ben]\nHere is a first example\nof my own stuff with [button][button][button] embedded",
+			generator_result,
+			generator_params);
 
-		chaos::SpriteText::GeneratorResult generator_result;
+		// create a text allocation
+		particles_allocation = layer->SpawnParticles(generator_result.GetTokenCount());
+		if (particles_allocation == nullptr)
+			return false;
 
-		//generator.GenerateSprites("bonjour tout [RED le monde]\nIci c'est bien\ntru much [button]\nbidon bidon bidon[button]bidon", &sprite_manager, &generator_result, generator_params);
+		chaos::ParticleDefault::Particle * particles = (chaos::ParticleDefault::Particle*)particles_allocation->GetParticleBuffer();
+		if (particles == nullptr)
+			return false;
 
-		generator.GenerateSprites("Hi [RED Ben]\nHere is a first example\nof my own stuff with [button][button][button] embedded", &sprite_manager, &generator_result, generator_params);
+		// convert the text
+		size_t k = 0;
+		for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
+		{
+			chaos::ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
+			for (size_t j = 0; j < line.size(); ++j)
+			{
+				chaos::ParticleTextGenerator::Token const & token = line[j];
 
-
-		//generator.GenerateSprites("He llo[button]aaBLyYjg[RED world\n    to[button]to]\n[C2 Change[button]Charset 2\n[C1 Change[button]Charset 1]]\nRetour   Charset[button]normal", &sprite_manager, &generator_result, generator_params);
+				particles[k].particle_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+				particles[k].texcoords = token.texcoords;
+				particles[k].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); // glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+				++k;
+			}
+		}
 
 		return true;
 	}
@@ -284,11 +279,6 @@ protected:
 	/** allocation */
 	boost::intrusive_ptr<chaos::ParticleAllocation> particles_allocation;
 
-
-
-
-	// the sprite manager
-	chaos::SpriteManager sprite_manager;
 	// the camera
 	chaos::FPSViewInputController fps_view_controller;
 };

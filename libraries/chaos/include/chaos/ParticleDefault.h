@@ -15,7 +15,7 @@ namespace chaos
 		{
 		public:
 
-			chaos::box2 particle_box;
+			chaos::box2 bounding_box;
 			chaos::ParticleTexcoords texcoords;
 			glm::vec4 color;
 		};

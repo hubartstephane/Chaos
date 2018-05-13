@@ -81,8 +81,8 @@ protected:
 					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
 					glm::vec3 color = chaos::GLMTools::RandVec3();
 
-					particles->particle_box.position  = position;
-					particles->particle_box.half_size = size * 0.5f;
+					particles->bounding_box.position  = position;
+					particles->bounding_box.half_size = size * 0.5f;
 					particles->color.r = color.r;
 					particles->color.g = color.g;
 					particles->color.b = color.b;
@@ -109,14 +109,10 @@ protected:
 
 					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
 					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-					glm::vec3 color = chaos::GLMTools::RandVec3();
 
-					particles->particle_box.position = position;
-					particles->particle_box.half_size = size * 0.5f;
-					particles->color.r = color.r;
-					particles->color.g = color.g;
-					particles->color.b = color.b;
-					particles->color.a = 1.0f;
+					particles->bounding_box.position = position;
+					particles->bounding_box.half_size = size * 0.5f;
+					particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, atlas->GetAtlasDimension());
 					++particles;

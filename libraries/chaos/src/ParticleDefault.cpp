@@ -7,7 +7,7 @@ namespace chaos
 	size_t ParticleDefault::ParticleTrait::ParticleToVertices(Particle const * particle, Vertex * vertices, size_t vertices_per_particle, ParticleAllocation * allocation) const
 	{
 		// generate particle corners and texcoords
-		chaos::ParticleTools::GenerateBoxParticle(particle->particle_box, particle->texcoords, vertices);
+		chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 		// copy the color in all triangles vertex
 		for (size_t i = 0; i < 6; ++i)
 			vertices[i].color = particle->color;

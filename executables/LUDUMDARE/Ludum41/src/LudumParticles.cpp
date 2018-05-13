@@ -58,7 +58,7 @@ size_t ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const * pa
 size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = particle->color;
@@ -79,7 +79,7 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	
 	// create pulsating effect
 	glm::vec4 color = particle->color;
@@ -108,7 +108,7 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 
 	int   extra = 2;
 	float ratio = ((float)(extra + particle->life)) / ((float)(extra + particle->starting_life));
@@ -131,7 +131,7 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = particle->color;
@@ -172,14 +172,14 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	glm::vec2 velocity = glm::normalize(particle->velocity);
 	
 	// moving the particle
-	particle->box.position += velocity * 
+	particle->bounding_box.position += velocity *
 		(game->ball_collision_speed + game->ball_speed) * 
 		(delta_time * game->ball_time_dilation);
 
 	// ball bouncing against world
 
 	chaos::box2 world_box = game->GetWorldBox();
-	chaos::box2 ball_box  = particle->box;
+	chaos::box2 ball_box  = particle->bounding_box;
 		
 
 	// bounce against the world borders
@@ -202,7 +202,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	ParticleObject * player = game->GetPlayerParticle();
 	if (player != nullptr)
 	{
-		chaos::box2 player_box = player->box;
+		chaos::box2 player_box = player->bounding_box;
 
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
@@ -221,7 +221,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	{
 		for (size_t i = 0 ; i < brick_count ; ++i)
 		{
-			chaos::box2 brick_box = bricks[i].box;
+			chaos::box2 brick_box = bricks[i].bounding_box;
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
@@ -237,7 +237,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 	// recenter the particle
 	particle->velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity));
-	particle->box = ball_box;
+	particle->bounding_box = ball_box;
 
 	return false; 
 }
@@ -284,7 +284,7 @@ size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * part
 	size_t challenge_position = particle->challenge->GetChallengePosition();
 
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 
 	// copy the color in all triangles vertex
 

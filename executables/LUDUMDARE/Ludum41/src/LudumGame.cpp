@@ -168,8 +168,8 @@ void LudumGame::UpdateLifeParticles()
 		position.x = -world_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
 		position.y = -world_size.y * 0.5f + 15.0f;
 
-		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-		particle[i].box.half_size = 0.5f * particle_size;
+		particle[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+		particle[i].bounding_box.half_size = 0.5f * particle_size;
 
 		particle[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
@@ -547,7 +547,7 @@ size_t LudumGame::CanStartChallengeBallIndex(bool reverse) const
 			{
 				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
 					continue;					
-				if (reverse ^ (balls->box.position.y > -world_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
+				if (reverse ^ (balls->bounding_box.position.y > -world_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
 					return i;
 			}
 		}			
@@ -966,8 +966,8 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 			position.x = -world_size.x * 0.5f + particle_size.x * (float)j;
 			position.y =  world_size.y * 0.5f - particle_size.y * (float)i;
 
-			particle[k].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
-			particle[k].box.half_size = 0.5f * particle_size;
+			particle[k].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+			particle[k].bounding_box.half_size = 0.5f * particle_size;
 
 			++k;
 		}
@@ -1060,8 +1060,8 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 	for (size_t i = 0 ; i < count ; ++i)
 	{	
 		particle[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle[i].box.position  = glm::vec2(0.0f, 0.0f);
-		particle[i].box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
+		particle[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
+		particle[i].bounding_box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
 		
 		if (full_init)
 		{
@@ -1086,8 +1086,8 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 		return nullptr;
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	particle->box.position  = glm::vec2(0.0f, 0.0f);
-	particle->box.half_size = glm::vec2(0.0f, 0.0f);
+	particle->bounding_box.position  = glm::vec2(0.0f, 0.0f);
+	particle->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 	
 	return result;
 }
@@ -1167,7 +1167,7 @@ chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation * allocation, size
 	ParticleObject const * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
 		return chaos::box2();
-	return object->box;
+	return object->bounding_box;
 }
 
 chaos::box2 LudumGame::GetPlayerBox() const
@@ -1181,7 +1181,7 @@ void LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t inde
 	ParticleObject * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
 		return;
-	object->box = box;
+	object->bounding_box = box;
 }
 
 void LudumGame::SetPlayerBox(chaos::box2 const & box)
@@ -1204,7 +1204,7 @@ void LudumGame::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t
 	ParticleObject * particle = GetObjectParticle(allocation, index);
 	if (particle == nullptr)
 		return;
-	particle->box.position = position;
+	particle->bounding_box.position = position;
 }
 
 void LudumGame::SetPlayerPosition(float position)
@@ -1220,7 +1220,7 @@ void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation,
 	if (particle == nullptr)
 		return;
 
-	chaos::box2 box = particle->box;
+	chaos::box2 box = particle->bounding_box;
 	chaos::box2 world = GetWorldBox();
 	chaos::RestrictToInside(world, box, false);
 	SetObjectPosition(allocation, index, box.position);

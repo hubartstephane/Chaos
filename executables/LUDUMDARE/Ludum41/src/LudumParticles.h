@@ -58,7 +58,7 @@ class ParticleObject
 {
 public:
 
-	chaos::box2 box;
+	chaos::box2 bounding_box;
 	chaos::ParticleTexcoords texcoords;
 	glm::vec4 color;
 };

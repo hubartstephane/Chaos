@@ -646,7 +646,7 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 		{
 			chaos::ParticleTextGenerator::Token const & token = line[j];
 
-			particle[k].box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			particle[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
 			particle[k].texcoords = token.texcoords;
 			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 			++k;
@@ -702,7 +702,7 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 		{
 			chaos::ParticleTextGenerator::Token const & token = line[j];
 
-			particle[k].box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			particle[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
 			particle[k].texcoords = token.texcoords;
 			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 			particle[k].challenge = challenge;

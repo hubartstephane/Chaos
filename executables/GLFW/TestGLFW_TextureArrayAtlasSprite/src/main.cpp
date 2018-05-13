@@ -21,36 +21,65 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
 #include <chaos/GLMTools.h>
-#include <chaos/SpriteTextParser.h>
-#include <chaos/SpriteManager.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/RenderMaterial.h>
+#include <chaos/ParticleTools.h>
 
 
 
 
 class MyParticle
 {
+public:
 
+	chaos::box2 particle_box;
+	chaos::ParticleTexcoords texcoords;
+	glm::vec4 color;
 };
 
 class MyVertex
 {
+public:
 
+	glm::vec2 position;
+	glm::vec3 texcoord;
+	glm::vec4 color;
 };
 
 class MyParticleTrait : public chaos::ParticleLayerTrait<MyParticle, MyVertex>
 {
+public:
 
+	MyParticleTrait()
+	{
+		dynamic_particles = false;
+	}
+
+	/** by default, update do nothing */
+	bool UpdateParticle(float delta_time, MyParticle * particle, chaos::ParticleAllocation * allocation) const
+	{
+		return false;
+	}
+	/** by default, particle to vertex do nothing */
+	size_t ParticleToVertices(MyParticle const * particle, MyVertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+	{
+		// generate particle corners and texcoords
+		chaos::ParticleTools::GenerateBoxParticle(particle->particle_box, particle->texcoords, vertices);
+		// copy the color in all triangles vertex
+		for (size_t i = 0; i < 6; ++i)
+			vertices[i].color = particle->color;
+
+		return vertices_per_particle;
+	}
 };
 
 chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<MyVertex>)
 {
 	chaos::VertexDeclaration result;
-	//result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	//result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-	//result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
 	return result;
 }
 
@@ -59,59 +88,87 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-  void GenerateSprite(float w, float h)
+  void GenerateParticles(float w, float h)
   {
-    if (sprite_manager.GetSpriteCount() > 0)
-      return;
+		static int PARTICLE_COUNT = 100;
 
-    glm::vec2 screen_size = glm::vec2(w, h);
-    float     sprite_size = max(w, h);
+		if (particles_allocation != nullptr)
+			return;
 
-    int SPRITE_COUNT = 100;
+		chaos::ParticleLayer * layer = particle_manager->FindLayer(0);
+		if (layer == nullptr)
+			return;
 
-    // add characters
-    auto const & character_sets = atlas->GetCharacterSets();
-    if (character_sets.size() > 0)
-    {
-      chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
+		particles_allocation = layer->SpawnParticles(PARTICLE_COUNT * 2);
+		if (particles_allocation == nullptr)
+			return;
+		
+		MyParticle * particles = (MyParticle*)particles_allocation->GetParticleBuffer();
+		if (particles == nullptr)
+			return;
 
-      size_t element_count = character_set->elements.size();
-      if (element_count > 0)
-      {
-        for (int i = 0; i < SPRITE_COUNT; ++i)
-        {
-          chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
+		glm::vec2 screen_size = glm::vec2(w, h);
+		float     particle_size = max(w, h);
 
-          glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
-          glm::vec2 size = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-          glm::vec3 color = chaos::GLMTools::RandVec3();
+		// add characters
+		auto const & character_sets = atlas->GetCharacterSets();
+		if (character_sets.size() > 0)
+		{
+			chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
 
-          sprite_manager.AddSpriteCharacter(entry, position, size, chaos::Hotpoint::CENTER, color);
-        }
+			size_t element_count = character_set->elements.size();
+			if (element_count > 0)
+			{
+				for (int i = 0; i < PARTICLE_COUNT; ++i)
+				{
+					chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
 
-      }
-    }
+					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
+					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
+					glm::vec3 color = chaos::GLMTools::RandVec3();
 
-    // add bitmap
-    auto const & bitmap_sets = atlas->GetBitmapSets();
-    if (bitmap_sets.size() > 0)
-    {
-      chaos::BitmapAtlas::BitmapSet const * bitmap_set = bitmap_sets.at(0).get();
+					particles->particle_box.position  = position;
+					particles->particle_box.half_size = size * 0.5f;
+					particles->color.r = color.r;
+					particles->color.g = color.g;
+					particles->color.b = color.b;
+					particles->color.a = 1.0f;
 
-      size_t element_count = bitmap_set->elements.size();
-      if (element_count > 0)
-      {
-        for (int i = 0; i < SPRITE_COUNT; ++i)
-        {
-          chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
+					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, atlas->GetAtlasDimension());					
+					++particles;
+				}
+			}
+		}
 
-          glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
-          glm::vec2 size     = glm::vec2(sprite_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
+		// add bitmap
+		auto const & bitmap_sets = atlas->GetBitmapSets();
+		if (bitmap_sets.size() > 0)
+		{
+			chaos::BitmapAtlas::BitmapSet const * bitmap_set = bitmap_sets.at(0).get();
 
-          sprite_manager.AddSpriteBitmap(entry, position, size, chaos::Hotpoint::CENTER);
-        }
-      }
-    }
+			size_t element_count = bitmap_set->elements.size();
+			if (element_count > 0)
+			{
+				for (int i = 0; i < PARTICLE_COUNT; ++i)
+				{
+					chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
+
+					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
+					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
+					glm::vec3 color = chaos::GLMTools::RandVec3();
+
+					particles->particle_box.position = position;
+					particles->particle_box.half_size = size * 0.5f;
+					particles->color.r = color.r;
+					particles->color.g = color.g;
+					particles->color.b = color.b;
+					particles->color.a = 1.0f;
+
+					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, atlas->GetAtlasDimension());
+					++particles;
+				}
+			}
+		}
   }
 
   virtual bool OnDraw(glm::ivec2 size) override
@@ -136,7 +193,7 @@ protected:
 
     float w = (float)size.x;
     float h = (float)size.y;
-    GenerateSprite(w, h);
+		GenerateParticles(w, h);
 
     glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
     glm::vec3 tr    = glm::vec3(-1.0f, -1.0f, 0.0f);
@@ -145,9 +202,6 @@ protected:
 
     chaos::DisableLastReferenceLost<chaos::GPUProgramProvider> uniform_provider;
     uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
-
-    sprite_manager.Display(&uniform_provider);
-
 
 		particle_manager->Display(&uniform_provider);
 
@@ -158,9 +212,8 @@ protected:
   {
 		material = nullptr;
 		atlas = nullptr;
+		program = nullptr;
 		particle_manager = nullptr;
-
-    sprite_manager.Finalize();
   }
 
   bool LoadAtlas(boost::filesystem::path const & resources_path)
@@ -172,12 +225,21 @@ protected:
     return atlas->LoadAtlas(resources_path / "MyAtlas.json");
   }
 
-  bool InitializeParticleManager()
+  bool InitializeParticleManager(boost::filesystem::path const & resources_path)
   {
+		// create the program
+		chaos::GPUProgramGenerator generator;
+		generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader.txt");
+		generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
+		program = generator.GenProgramObject();
+		if (program == nullptr)
+			return false;
+
 		// create the material
 		material = new chaos::RenderMaterial;
 		if (material == nullptr)
-			return false;
+			return false;		
+		material->SetProgram(program.get());
 
 		// create the particle manager
 		particle_manager = new chaos::ParticleManager;
@@ -190,18 +252,6 @@ protected:
 			return false;
 		layer->SetLayerID(0);
 		layer->SetRenderMaterial(material.get());
-
-
-		// set the atlas
-		
-
-
-
-    chaos::SpriteManagerInitParams params;
-    params.atlas = atlas.get();
-
-    if (!sprite_manager.Initialize(params))
-      return false;
 
     return true;
   }
@@ -219,8 +269,8 @@ protected:
     if (!LoadAtlas(resources_path))
       return false;
 
-    // initialize the sprite manager
-    if (!InitializeParticleManager())
+    // initialize the particle manager
+    if (!InitializeParticleManager(resources_path))
       return false;
 
     // place camera
@@ -263,9 +313,10 @@ protected:
 	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
 	/** the material */
 	boost::intrusive_ptr<chaos::RenderMaterial> material;
-
-  // the sprite manager
-  chaos::SpriteManager sprite_manager;
+	/** the program */
+	boost::intrusive_ptr<chaos::GPUProgram> program;
+	/** allocation */
+	boost::intrusive_ptr<chaos::ParticleAllocation> particles_allocation;
   // the camera
   chaos::FPSViewInputController fps_view_controller;
 };

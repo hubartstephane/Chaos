@@ -4,8 +4,6 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
 
-
-
 namespace chaos
 {
 	/**
@@ -19,11 +17,6 @@ namespace chaos
 		glm::vec2 bottomleft;
 		glm::vec2 topright;
 	};
-
-	/** conversion methods */
-	box2 ParticleCornersToBox(ParticleCorners const & corners);
-	/** conversion methods */
-	ParticleCorners BoxToParticleCorners(box2 const & box);
 
 	/**
 	* ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
@@ -42,9 +35,12 @@ namespace chaos
 
 	namespace ParticleTools
 	{
+		/** conversion methods */
+		box2 ParticleCornersToBox(ParticleCorners const & corners);
+		/** conversion methods */
+		ParticleCorners BoxToParticleCorners(box2 const & box);
 		/** returns the 2 corners of a particle according to a given position, a size and an hotpoint */
 		ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
-
 		/** returns the texture coordinates of a particle */
 		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size);
 

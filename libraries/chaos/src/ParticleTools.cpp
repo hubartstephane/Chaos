@@ -4,12 +4,13 @@
 
 namespace chaos
 {
-	box2 ParticleCornersToBox(ParticleCorners const & corners)
+
+	box2 ParticleTools::ParticleCornersToBox(ParticleCorners const & corners)
 	{
 		return box2(std::make_pair(corners.bottomleft, corners.topright));	
 	}
 	
-	ParticleCorners BoxToParticleCorners(box2 const & box)
+	ParticleCorners ParticleTools::BoxToParticleCorners(box2 const & box)
 	{	
 		std::pair<glm::vec2, glm::vec2> tmp = box.GetCorners();
 	
@@ -19,7 +20,6 @@ namespace chaos
 		return result;
 	}
 
-
 	ParticleCorners ParticleTools::GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
 	{
 		ParticleCorners result;
@@ -27,7 +27,6 @@ namespace chaos
 		result.topright   = result.bottomleft + size;
 		return result;
 	}
-
 
 	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size)
 	{
@@ -44,9 +43,6 @@ namespace chaos
 		result.bitmap_index  = (float)entry.bitmap_index;
 		return result;
 	}
-
-
-
 
 }; // namespace chaos
 

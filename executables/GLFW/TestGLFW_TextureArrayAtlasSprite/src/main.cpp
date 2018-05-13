@@ -25,29 +25,9 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/RenderMaterial.h>
 #include <chaos/ParticleTools.h>
+#include <chaos/ParticleDefault.h>
 
-
-
-
-class MyParticle
-{
-public:
-
-	chaos::box2 particle_box;
-	chaos::ParticleTexcoords texcoords;
-	glm::vec4 color;
-};
-
-class MyVertex
-{
-public:
-
-	glm::vec2 position;
-	glm::vec3 texcoord;
-	glm::vec4 color;
-};
-
-class MyParticleTrait : public chaos::ParticleLayerTrait<MyParticle, MyVertex>
+class MyParticleTrait : public chaos::ParticleDefault::ParticleTrait
 {
 public:
 
@@ -55,33 +35,7 @@ public:
 	{
 		dynamic_particles = false;
 	}
-
-	/** by default, update do nothing */
-	bool UpdateParticle(float delta_time, MyParticle * particle, chaos::ParticleAllocation * allocation) const
-	{
-		return false;
-	}
-	/** by default, particle to vertex do nothing */
-	size_t ParticleToVertices(MyParticle const * particle, MyVertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
-	{
-		// generate particle corners and texcoords
-		chaos::ParticleTools::GenerateBoxParticle(particle->particle_box, particle->texcoords, vertices);
-		// copy the color in all triangles vertex
-		for (size_t i = 0; i < 6; ++i)
-			vertices[i].color = particle->color;
-
-		return vertices_per_particle;
-	}
 };
-
-chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<MyVertex>)
-{
-	chaos::VertexDeclaration result;
-	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-	return result;
-}
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -103,7 +57,7 @@ protected:
 		if (particles_allocation == nullptr)
 			return;
 		
-		MyParticle * particles = (MyParticle*)particles_allocation->GetParticleBuffer();
+		chaos::ParticleDefault::Particle * particles = (chaos::ParticleDefault::Particle*)particles_allocation->GetParticleBuffer();
 		if (particles == nullptr)
 			return;
 
@@ -228,10 +182,7 @@ protected:
   bool InitializeParticleManager(boost::filesystem::path const & resources_path)
   {
 		// create the program
-		chaos::GPUProgramGenerator generator;
-		generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader.txt");
-		generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / "vertex_shader.txt");
-		program = generator.GenProgramObject();
+		program = chaos::ParticleDefault::GenDefautParticleProgram();
 		if (program == nullptr)
 			return false;
 
@@ -247,7 +198,7 @@ protected:
 			return false;
 		particle_manager->SetTextureAtlas(atlas.get());
 		// create the layer
-		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<MyParticleTrait>());
+		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>());
 		if (layer == nullptr)
 			return false;
 		layer->SetLayerID(0);

@@ -7,10 +7,15 @@ namespace chaos
 {
 	namespace ClassTools
 	{
+		/** GetClassID : returns a unique ID given a class */
+		template<typename T>
+		uintptr_t GetClassID()
+		{
+			static T * fake_pointer = nullptr;
+			return (uintptr_t)&fake_pointer;
+		};
 
-		/**
-		 * Aligned16 : base class for children that want to be 16 aligned
-		 */
+		/** Aligned16 : base class for children that want to be 16 aligned */
 		class Aligned16
 		{
 		public:

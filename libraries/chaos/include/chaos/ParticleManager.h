@@ -11,6 +11,7 @@
 #include <chaos/DrawPrimitive.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/ParticleTools.h>
+#include <chaos/ClassTools.h>
 
 namespace chaos
 {
@@ -60,6 +61,9 @@ namespace chaos
 		/** returns whether the layer is visible */
 		bool IsVisible() const;
 
+		/** returns the ID representing the class of the particle */
+		virtual uintptr_t GetParticleID() const { return 0; }
+
 		/** get the number of particles */
 		virtual size_t GetParticleCount() const;
 		/** get the particles */
@@ -68,6 +72,21 @@ namespace chaos
 		virtual void const * GetParticleBuffer() const;
 		/** resize the particles */
 		virtual bool Resize(size_t new_count);
+
+		/** returns a pointer on the first particle with strict class checking */
+		template<typename T>
+		T * GetParticleCheckedBuffer()
+		{
+			assert(GetParticleID() == ClassTools::GetClassID<T>());
+			return (T*)GetParticleBuffer();
+		}
+		/** returns a pointer on the first particle with strict class checking */
+		template<typename T>
+		T const * GetParticleCheckedBuffer() const
+		{
+			assert(GetParticleID() == ClassTools::GetClassID<T>());
+			return (T const*)GetParticleBuffer();
+		}
 
 		/** get the layer for this allocation */
 		ParticleLayer * GetLayer() { return layer; }
@@ -111,6 +130,11 @@ namespace chaos
 		virtual ~TypedParticleAllocation()
 		{
 			RemoveFromLayer(); // this call is not in ParticleAllocation::~ParticleAllocation(), because when destructor is incomming, the number of particles becomes invalid (0)
+		}
+		/** override */
+		virtual uintptr_t GetParticleID() const override
+		{ 
+			return ClassTools::GetClassID<particle_type>();
 		}
 		/** override */
 		virtual size_t GetParticleCount() const override

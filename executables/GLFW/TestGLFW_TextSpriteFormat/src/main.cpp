@@ -24,7 +24,7 @@
 #include <chaos/RenderMaterial.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/ParticleTextGenerator.h>
-
+#include <chaos/ClassTools.h>
 
 // --------------------------------------------------------------------
 
@@ -199,7 +199,7 @@ protected:
 		if (particles_allocation == nullptr)
 			return false;
 
-		chaos::ParticleDefault::Particle * particles = (chaos::ParticleDefault::Particle*)particles_allocation->GetParticleBuffer();
+		chaos::ParticleDefault::Particle * particles = particles_allocation->GetParticleCheckedBuffer<chaos::ParticleDefault::Particle>();
 		if (particles == nullptr)
 			return false;
 

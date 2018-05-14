@@ -168,7 +168,7 @@ protected:
 
 				size_t pc = allocation->GetParticleCount();
 
-				ParticleExample * particles = (ParticleExample*)allocation->GetParticleBuffer();
+				ParticleExample * particles = allocation->GetParticleCheckedBuffer<ParticleExample>();
 				if (particles != nullptr)
 				{
 					glm::vec2 center = 

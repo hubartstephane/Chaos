@@ -57,7 +57,7 @@ protected:
 		if (particles_allocation == nullptr)
 			return;
 		
-		chaos::ParticleDefault::Particle * particles = (chaos::ParticleDefault::Particle*)particles_allocation->GetParticleBuffer();
+		chaos::ParticleDefault::Particle * particles = particles_allocation->GetParticleCheckedBuffer<chaos::ParticleDefault::Particle>();
 		if (particles == nullptr)
 			return;
 

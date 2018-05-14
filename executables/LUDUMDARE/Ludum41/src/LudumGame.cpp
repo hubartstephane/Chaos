@@ -152,7 +152,7 @@ void LudumGame::UpdateLifeParticles()
 		return;
 
 	// set the color
-	ParticleObject * particle = (ParticleObject *)life_allocations->GetParticleBuffer();
+	ParticleObject * particle = life_allocations->GetParticleCheckedBuffer<ParticleObject>();
 	if (particle == nullptr)
 		return;
 
@@ -915,7 +915,7 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 	if (result == nullptr)
 		return nullptr;
 
-	ParticleBrick * particle = (ParticleBrick *)result->GetParticleBuffer();
+	ParticleBrick * particle = result->GetParticleCheckedBuffer<ParticleBrick>();
 	if (particle == nullptr)
 		return nullptr;
 
@@ -973,74 +973,6 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 		}
 	}
 
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-	size_t line_count =  brick_line_count;
-	size_t element_per_line = brick_per_line;
-	size_t brick_count = line_count * element_per_line;
-
-
-	
-
-
-
-
-
-
-	// set the color
-	ParticleBrick * particle = (ParticleBrick *)result->GetParticleBuffer();
-	if (particle == nullptr)
-		return nullptr;
-
-	glm::vec4 const colors[] = {	
-		glm::vec4(0.7f, 0.0f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.7f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.0f, 0.7f, 1.0f)
-		//glm::vec4(0.7f, 0.7f, 0.0f, 1.0f),
-		//glm::vec4(0.0f, 0.7f, 0.7f, 1.0f),
-		//glm::vec4(0.7f, 0.0f, 0.7f, 1.0f),
-		//glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)	
-	};
-
-	size_t color_count = sizeof(colors) / sizeof(colors[0]);
-
-	for (size_t i = 0 ; i < brick_count ; ++i)
-	{
-		// particle color
-		size_t color_index = (rand() % color_count);
-		particle[i].color = colors[color_index];
-
-		// particle life
-		size_t life = (min_brick_life >= max_brick_life)?
-			min_brick_life:
-			min_brick_life + (rand() % (max_brick_life - min_brick_life));
-						
-		particle[i].life = particle[i].starting_life = life;
-	
-		// position
-		int column = i % element_per_line;
-		int line   = i / element_per_line;
-		
-		glm::vec2 position;
-		position.x = -world_size.x * 0.5f + particle_size.x * (float)column;
-		position.y =  world_size.y * 0.5f - particle_size.y * (float)line;
-
-		particle[i].box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
-		particle[i].box.half_size = 0.5f * particle_size;
-	}
-
-#endif
-
 	return result;
 }
 
@@ -1053,7 +985,7 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 		return nullptr;
 
 	// set the color
-	ParticleMovableObject * particle = (ParticleMovableObject *)result->GetParticleBuffer();
+	ParticleMovableObject * particle = result->GetParticleCheckedBuffer<ParticleMovableObject>();
 	if (particle == nullptr)
 		return nullptr;
 
@@ -1081,7 +1013,7 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 		return nullptr;
 
 	// set the color
-	ParticleObject * particle = (ParticleObject *)result->GetParticleBuffer();
+	ParticleObject * particle = result->GetParticleCheckedBuffer<ParticleObject>();
 	if (particle == nullptr)
 		return nullptr;
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1100,7 +1032,7 @@ ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleAllocation * 
 	if (index >= allocation->GetParticleCount())
 		return nullptr;
 
-	ParticleObject const * p = (ParticleObject const*)player_allocations->GetParticleBuffer();
+	ParticleObject const * p = player_allocations->GetParticleCheckedBuffer<ParticleObject>();
 	if (p == nullptr)
 		return nullptr;
 
@@ -1112,14 +1044,14 @@ ParticleMovableObject * LudumGame::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
 		return nullptr;	
-	return (ParticleMovableObject *)balls_allocations->GetParticleBuffer();
+	return balls_allocations->GetParticleCheckedBuffer<ParticleMovableObject>();
 }
 
 ParticleMovableObject const * LudumGame::GetBallParticles() const
 {
 	if (balls_allocations == nullptr)
 		return nullptr;
-	return (ParticleMovableObject const *)balls_allocations->GetParticleBuffer();
+	return balls_allocations->GetParticleCheckedBuffer<ParticleMovableObject>();
 }
 
 size_t LudumGame::GetBallCount() const
@@ -1136,18 +1068,12 @@ ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleAllocation * alloca
 	if (index >= allocation->GetParticleCount())
 		return nullptr;
 
-	ParticleObject * p = (ParticleObject *)player_allocations->GetParticleBuffer();
+	ParticleObject * p = player_allocations->GetParticleCheckedBuffer<ParticleObject>();
 	if (p == nullptr)
 		return nullptr;
 
 	return &p[index];
 }
-
-
-
-
-
-
 
 ParticleObject * LudumGame::GetPlayerParticle()
 {
@@ -1158,9 +1084,6 @@ ParticleObject const * LudumGame::GetPlayerParticle() const
 {
 	return GetObjectParticle(player_allocations.get(), 0);
 }
-
-
-
 
 chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const
 {
@@ -1280,7 +1203,7 @@ ParticleBrick * LudumGame::GetBricks()
 	if (brick_count == 0)
 		return nullptr;
 
-	return (ParticleBrick*)bricks_allocations->GetParticleBuffer();
+	return bricks_allocations->GetParticleCheckedBuffer<ParticleBrick>();
 }
 
 ParticleBrick const * LudumGame::GetBricks() const 
@@ -1292,7 +1215,7 @@ ParticleBrick const * LudumGame::GetBricks() const
 	if (brick_count == 0)
 		return nullptr;
 
-	return (ParticleBrick const *)bricks_allocations->GetParticleBuffer();
+	return bricks_allocations->GetParticleCheckedBuffer<ParticleBrick>();
 }
 
 bool LudumGame::IsBrickLifeChallengeValid(bool success)

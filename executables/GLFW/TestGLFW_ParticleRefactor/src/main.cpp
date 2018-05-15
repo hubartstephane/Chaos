@@ -19,6 +19,8 @@
 #include <chaos/Hotpoint.h>
 #include <chaos/GLMTools.h>
 #include <chaos/InheritanceIntrospection.h>
+#include <chaos/ClassTools.h>
+
 
 #include <chaos/ParticleManager.h>
 
@@ -275,18 +277,6 @@ protected:
 
 // ===============================================
 
-class Test
-{
-public:
-
-	template<typename T>
-	static void * GetTypeKey()
-	{
-		return chaos::InheritanceIntrospection::FuntionPtrToVoidPtr(&GetTypeKey<T>);
-	}
-
-
-};
 
 class A
 {
@@ -298,14 +288,12 @@ class B : public A
 
 };
 
+
+
 int _tmain(int argc, char ** argv, char ** env)
 {
-	auto p1 = Test::GetTypeKey<int>();
-	auto p2 = Test::GetTypeKey<float>();
-	auto p3 = Test::GetTypeKey<A>();
-	auto p4 = Test::GetTypeKey<B>();
-	auto p5 = Test::GetTypeKey<int>();
-
+	auto a = chaos::ClassTools::GetClassID<A>();
+	auto b = chaos::ClassTools::GetClassID<A const>();
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

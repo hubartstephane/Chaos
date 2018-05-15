@@ -60,26 +60,6 @@ public:
     }
     return false;
   }
-
-  /** function can be used to provide an ID for a class */
-  // the address of this function can serve has an ID for a class, while unique
-  // XXX : do not use it for serialization while it can change from one compilation to another
-  template<typename T>
-  static void FakeFunction(){}
-
-  /** a function that helps converting a pointer of function into a void pointer */
-  template<typename FUNC_PTR>
-  static void * FuntionPtrToVoidPtr(FUNC_PTR func_ptr)
-  {
-    union 
-    {
-      FUNC_PTR    func_ptr;
-      void      * ptr;
-    } result;
-
-    result.func_ptr = func_ptr;
-    return result.ptr;
-  }
 };
 
 }; // namespace chaos

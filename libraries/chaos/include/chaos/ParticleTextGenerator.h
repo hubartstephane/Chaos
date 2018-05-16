@@ -6,6 +6,7 @@
 #include <chaos/Hotpoint.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/ParticleManager.h>
 
 namespace chaos
 {
@@ -292,6 +293,9 @@ namespace chaos
 			BitmapAtlas::AtlasBase const & atlas;
 		};
 
+
+		/** generate an allocation for a generated text */
+		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & result);
 
 
 	

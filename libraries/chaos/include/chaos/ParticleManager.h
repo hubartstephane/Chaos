@@ -10,7 +10,6 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/ParticleTools.h>
 #include <chaos/ClassTools.h>
 
 namespace chaos
@@ -209,6 +208,9 @@ namespace chaos
 		/** get the vertex declaration for that layer */
 		virtual VertexDeclaration GetVertexDeclaration() const;
 
+		/** returns the class ID for spawn particles */
+		virtual uintptr_t GetParticleID() const { return 0; }
+
 	protected:
 
 		/** create an allocation */
@@ -306,6 +308,12 @@ namespace chaos
 			return result;
 		}
 
+		/** override */
+		virtual uintptr_t GetParticleID() const override
+		{
+			return trait.GetParticleID();
+		}
+
 	protected:
 
 		/** internal description */
@@ -357,6 +365,16 @@ namespace chaos
 		void Show(bool in_visible = true);
 		/** returns whether the layer is visible */
 		bool IsVisible() const;
+
+		/** get the particle ID for this system */
+		uintptr_t GetParticleID() const;
+
+		/** returns true whether the particle type is the one given as template parameter */
+		template<typename T>
+		bool IsParticleType() const
+		{
+			return (GetParticleID() == ClassTools::GetClassID<T>());
+		}
 
 		/** get the render order */
 		int GetRenderOrder() const { return render_order; }
@@ -461,6 +479,12 @@ namespace chaos
 		size_t ParticleToVertices(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particles, ParticleAllocation * allocation) const
 		{ 
 			return 0; 
+		}
+
+		/** returns the class ID for spawn particles */
+		uintptr_t GetParticleID() const
+		{
+			return ClassTools::GetClassID<particle_type>();
 		}
 
 	public:

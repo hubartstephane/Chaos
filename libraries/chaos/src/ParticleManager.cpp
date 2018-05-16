@@ -210,6 +210,11 @@ namespace chaos
 		return visible;
 	}
 
+	uintptr_t ParticleLayer::GetParticleID() const
+	{
+		return layer_desc->GetParticleID();
+	}
+
 	void ParticleLayer::TickParticles(float delta_time)
 	{
 		// early exit

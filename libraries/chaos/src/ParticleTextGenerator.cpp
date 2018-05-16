@@ -2,6 +2,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/ParticleTools.h>
+#include <chaos/ParticleDefault.h>
 
 namespace chaos
 {
@@ -764,12 +765,16 @@ namespace chaos
 
 
 
+		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & result)
+		{
+			assert(layer != nullptr);
+			assert(layer->IsParticleType<ParticleDefault::Particle>());
 
 
+		
+			return nullptr;
+		}
 
-
-
-	
 	
 	}; // namespace ParticleTextGenerator
 };

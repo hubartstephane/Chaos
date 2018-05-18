@@ -195,29 +195,7 @@ protected:
 			generator_params);
 
 		// create a text allocation
-		particles_allocation = layer->SpawnParticles(generator_result.GetTokenCount());
-		if (particles_allocation == nullptr)
-			return false;
-
-		chaos::ParticleDefault::Particle * particles = particles_allocation->GetParticleCheckedBuffer<chaos::ParticleDefault::Particle>();
-		if (particles == nullptr)
-			return false;
-
-		// convert the text
-		size_t k = 0;
-		for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
-		{
-			chaos::ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
-			for (size_t j = 0; j < line.size(); ++j)
-			{
-				chaos::ParticleTextGenerator::Token const & token = line[j];
-
-				particles[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-				particles[k].texcoords = token.texcoords;
-				particles[k].color =  glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-				++k;
-			}
-		}
+		particles_allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, generator_result);
 
 		return true;
 	}

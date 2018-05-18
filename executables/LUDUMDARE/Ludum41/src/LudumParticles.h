@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ParticleTools.h> 
 #include <chaos/ParticleManager.h> 
+#include <chaos/ParticleDefault.h> 
 
 // ===========================================================================
 // the ID of the layers
@@ -54,6 +55,9 @@ public:
 // Object particle system
 // ===========================================================================
 
+using ParticleObject = chaos::ParticleDefault::Particle;
+
+#if 0
 class ParticleObject
 {
 public:
@@ -62,7 +66,7 @@ public:
 	chaos::ParticleTexcoords texcoords;
 	glm::vec4 color;
 };
-
+#endif
 class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
 {
 public:

@@ -627,6 +627,10 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 
 	particle_text_generator->Generate(text, result, params);
 
+#if 0
+	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
+#else
+
 	// count the number of particle to draw
 	size_t count = result.GetTokenCount();
 
@@ -652,6 +656,7 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 			++k;
 		}
 	}
+#endif
 	return allocation;
 }
 
@@ -683,6 +688,11 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 		particle_text_generator->Generate(gamepad_string.c_str(), result, params);	
 	}
 
+#if 0
+	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
+
+#else
+
 	// count the number of particle to draw
 	size_t count = result.GetTokenCount();
 
@@ -710,7 +720,7 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 			++k;
 		}
 	}
-
+#endif
 	return allocation;
 }
 

@@ -749,30 +749,40 @@ namespace chaos
 
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & result)
+		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result)
 		{
 			assert(layer != nullptr);
 			assert(layer->IsParticleType<ParticleDefault::Particle>());
 
+			// create the allocation
+			ParticleAllocation * result = layer->SpawnParticles(generator_result.GetTokenCount());
+			if (result == nullptr)
+				return nullptr;
 
-		
-			return nullptr;
+			// spawn the particles
+			ParticleDefault::Particle * particles = result->GetParticleCheckedBuffer<ParticleDefault::Particle>();
+			if (particles == nullptr)
+			{
+				result->SubReference(); // error => destroy the allocation
+				return nullptr;
+			}
+				
+			// convert the text
+			size_t token_index = 0;
+			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
+			{
+				ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
+				for (size_t j = 0; j < line.size(); ++j)
+				{
+					ParticleTextGenerator::Token const & token = line[j];
+
+					particles[token_index].bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+					particles[token_index].texcoords = token.texcoords;
+					particles[token_index].color = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+					++token_index;
+				}
+			}
+			return result;
 		}
 
 	

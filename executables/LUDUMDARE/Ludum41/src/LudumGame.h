@@ -64,9 +64,11 @@ class LudumGame : public chaos::ReferencedObject
 	friend class LudumChallengeRewardPunishment_SpeedDownBall;
 	friend class LudumChallengeRewardPunishment_SplitBall;
 	friend class LudumChallengeRewardPunishment_BallPower;
+	friend class LudumChallengeRewardPunishment_BrickOffset;
 
 	friend class ParticleMovableObjectTrait;
 	friend class ParticleLifeObjectTrait;
+	friend class ParticleBrickTrait;
 
 protected:
 
@@ -170,6 +172,8 @@ protected:
 
 	/** the game main loop */
 	void TickGameLoop(double delta_time);
+	
+	void TickBrickOffset(double delta_time);
 
 	void TickLevelCompleted(double delta_time);
 
@@ -373,6 +377,9 @@ protected:
 	void OnBallSpeedChallenge(bool success);
 	bool IsBallSpeedChallengeValid(bool success);
 	/** some challenges */
+	void OnBrickOffsetChallenge(bool success);
+	bool IsBrickOffsetChallengeValid(bool success);
+	/** some challenges */
 	void OnBallPowerChallenge(bool success);
 	bool IsBallPowerChallengeValid(bool success);
 	/** some challenges */
@@ -464,6 +471,12 @@ protected:
 	int max_life = 10;
 
 	int max_ball_count = 3;
+
+	float brick_offset = 0.0f;
+	float target_brick_offset = 0.0f;
+	float max_brick_offset = 0.0f;
+	float brick_offset_speed = 0.0f;
+	float brick_offset_increment = 0.0f;
 
 	float player_max_length       = 200.0f; 
 	float player_min_length       = 70.0f; 

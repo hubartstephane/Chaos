@@ -134,6 +134,27 @@ void LudumChallengeRewardPunishment_BallPower::OnRewardPunishment(class LudumGam
 	game->OnBallPowerChallenge(reward);
 }
 
+// =========================================================
+
+char const * LudumChallengeRewardPunishment_BrickOffset::GetTitleName(class LudumGame * game, bool reward) const
+{
+	if (reward)
+		return "Bricks Go Up";
+	else
+		return "Bricks Go Down";
+}
+
+bool LudumChallengeRewardPunishment_BrickOffset::IsRewardPunishmentValid(class LudumGame * game, bool reward) const
+{
+	assert(game != nullptr);
+	return game->IsBrickOffsetChallengeValid(reward);
+}
+
+void LudumChallengeRewardPunishment_BrickOffset::OnRewardPunishment(class LudumGame * game, bool reward)
+{
+	assert(game != nullptr);
+	game->OnBrickOffsetChallenge(reward);
+}
 
 
 

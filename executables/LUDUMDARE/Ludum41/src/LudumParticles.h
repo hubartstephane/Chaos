@@ -115,6 +115,8 @@ public:
 	bool UpdateParticle(float delta_time, ParticleBrick * particle, chaos::ParticleAllocation * allocation) const;
 
 	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+	class LudumGame * game = nullptr;
 };
 
 

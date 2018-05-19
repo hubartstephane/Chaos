@@ -26,6 +26,10 @@
   "points_per_brick": 5,
 	"split_angle":0.4,
 	"ball_angle_limit":0.4,
+
+	"max_brick_offset":200.0,
+	"brick_offset_speed":50.0,
+	"brick_offset_increment":50.0,
   
   "ball_max_speed": 1200.0,
   "ball_initial_speed": 200.0,

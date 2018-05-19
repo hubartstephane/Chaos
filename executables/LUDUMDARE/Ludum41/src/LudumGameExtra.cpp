@@ -285,6 +285,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	LUDUMGAME_JSON_ATTRIBUTE(split_angle);
 	LUDUMGAME_JSON_ATTRIBUTE(ball_angle_limit);
 	
+	LUDUMGAME_JSON_ATTRIBUTE(max_brick_offset);
+	LUDUMGAME_JSON_ATTRIBUTE(brick_offset_speed);
+	LUDUMGAME_JSON_ATTRIBUTE(brick_offset_increment);
 
 #undef LUDUMGAME_JSON_ATTRIBUTE
 
@@ -586,6 +589,7 @@ bool LudumGame::InitializeParticleTextGenerator()
 bool LudumGame::InitializeRewardsAndPunishments()
 {
 #if 1
+	rewards.push_back(new LudumChallengeRewardPunishment_BrickOffset);
 	rewards.push_back(new LudumChallengeRewardPunishment_BallPower);
 	rewards.push_back(new LudumChallengeRewardPunishment_BarSize); 
 	rewards.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
@@ -595,6 +599,7 @@ bool LudumGame::InitializeRewardsAndPunishments()
 #endif
 
 #if 1
+	punishments.push_back(new LudumChallengeRewardPunishment_BrickOffset);
 	punishments.push_back(new LudumChallengeRewardPunishment_BallPower);
 	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);	
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
@@ -748,7 +753,11 @@ bool LudumGame::InitializeParticleManager()
 	movable_trait.game = this;
 	AddParticleLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
 
-	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
+//	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
+
+	ParticleBrickTrait brick_trait;
+	brick_trait.game = this;
+	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject", brick_trait);
 
 	ParticleLifeObjectTrait life_trait;
 	life_trait.game = this;

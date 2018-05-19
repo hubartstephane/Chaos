@@ -495,6 +495,9 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 
 void LudumGame::ResetGameVariables()
 {
+	target_brick_offset = 0.0f;
+	brick_offset = 0.0f;
+
 	current_life  = initial_life;
 	player_length = player_initial_length;
 	ball_power    = 1.0f;
@@ -694,6 +697,8 @@ void LudumGame::TickLevelCompleted(double delta_time)
 		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
 		{
 			current_level = (current_level + 1) % (int)levels.size();
+			target_brick_offset = 0.0f;
+			brick_offset = 0.0f;
 			bricks_allocations = CreateBricks(current_level);
 #if _DEBUG
 			cheat_next_level = false;
@@ -721,7 +726,21 @@ void LudumGame::TickHeartWarning(double delta_time)
 		heart_warning = 1.0f;
 }
 
-
+void LudumGame::TickBrickOffset(double delta_time)
+{
+	if (target_brick_offset > brick_offset)
+	{
+		brick_offset = brick_offset + (float)delta_time * brick_offset_speed;
+		if (brick_offset > target_brick_offset)
+			brick_offset = target_brick_offset;
+	}
+	else if (target_brick_offset < brick_offset)
+	{
+		brick_offset = brick_offset - (float)delta_time * brick_offset_speed;
+		if (brick_offset < target_brick_offset)
+			brick_offset = target_brick_offset;
+	}
+}
 
 void LudumGame::TickGameLoop(double delta_time)
 {
@@ -736,6 +755,7 @@ void LudumGame::TickGameLoop(double delta_time)
 		// create the life 
 		UpdateLifeParticles();
 		// some other calls
+		TickBrickOffset(delta_time);
 		TickLevelCompleted(delta_time);
 		TickChallenge(delta_time);
 		TickBallSplit(delta_time);
@@ -1313,12 +1333,23 @@ void LudumGame::OnBallSpeedChallenge(bool success)
 	ball_speed = chaos::MathTools::Clamp(ball_speed, ball_initial_speed, ball_max_speed);
 }
 
+void LudumGame::OnBrickOffsetChallenge(bool success)
+{
+	if (success)
+		target_brick_offset -= brick_offset_increment;
+	else
+		target_brick_offset += brick_offset_increment;
 
+	target_brick_offset = chaos::MathTools::Clamp(target_brick_offset, 0.0f, max_brick_offset);
+}
 
-
-
-
-
+bool LudumGame::IsBrickOffsetChallengeValid(bool success)
+{
+	if (success)
+		return (target_brick_offset > 0.0f);
+	else
+		return (target_brick_offset < max_brick_offset);
+}
 
 bool LudumGame::IsBallPowerChallengeValid(bool success)
 {

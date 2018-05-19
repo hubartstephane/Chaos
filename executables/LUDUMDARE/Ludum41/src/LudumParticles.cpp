@@ -108,7 +108,10 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
+	chaos::box2 bounding_box = particle->bounding_box;
+	bounding_box.position.y -= game->brick_offset;
+
+	chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle->texcoords, vertices);
 
 	float extra = 2;
 	float ratio = (extra + particle->life) / (extra + particle->starting_life);
@@ -231,6 +234,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		for (size_t i = 0 ; i < brick_count ; ++i)
 		{
 			chaos::box2 brick_box = bricks[i].bounding_box;
+			brick_box.position.y -= game->brick_offset;
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{

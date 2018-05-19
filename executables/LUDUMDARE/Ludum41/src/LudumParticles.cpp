@@ -133,8 +133,15 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
+
+	glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	if (game->ball_power == 2)
+		power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
+	else if (game->ball_power == 3)
+		power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
 	for (size_t i = 0 ; i < 6 ; ++i)
-		vertices[i].color = particle->color;
+		vertices[i].color = particle->color * power_color;
 
 	return vertices_per_particle;
 }
@@ -225,12 +232,16 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
-				UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
-				ball_box.position = new_ball_box.position;
+				if (bricks[i].indestructible || bricks[i].life >= game->ball_power)
+				{
+					UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
+					ball_box.position = new_ball_box.position;					
+				}
 
 				if (!bricks[i].indestructible)
-					--bricks[i].life;
-				game->OnBallCollide(true);				
+					bricks[i].life -= game->ball_power;
+				game->OnBallCollide(true);
+			
 			}				
 		}	
 	}

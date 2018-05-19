@@ -63,6 +63,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class LudumChallengeRewardPunishment_BrickLife;
 	friend class LudumChallengeRewardPunishment_SpeedDownBall;
 	friend class LudumChallengeRewardPunishment_SplitBall;
+	friend class LudumChallengeRewardPunishment_BallPower;
 
 	friend class ParticleMovableObjectTrait;
 	friend class ParticleLifeObjectTrait;
@@ -372,6 +373,9 @@ protected:
 	void OnBallSpeedChallenge(bool success);
 	bool IsBallSpeedChallengeValid(bool success);
 	/** some challenges */
+	void OnBallPowerChallenge(bool success);
+	bool IsBallPowerChallengeValid(bool success);
+	/** some challenges */
 	void OnSplitBallChallenge(bool success);
 	bool IsSplitBallChallengeValid(bool success);
 	/** some challenges */
@@ -469,6 +473,7 @@ protected:
 
 	float ball_size          = 25.0f;
 
+	int   ball_power         = 1;
 	float ball_speed         = 5.0f;
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;

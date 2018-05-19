@@ -91,3 +91,16 @@ public:
 	/** override */
 	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
 };
+
+
+class LudumChallengeRewardPunishment_BallPower : public LudumChallengeRewardPunishment
+{
+public:
+
+	/** override */
+	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	/** override */
+	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	/** override */
+	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+};

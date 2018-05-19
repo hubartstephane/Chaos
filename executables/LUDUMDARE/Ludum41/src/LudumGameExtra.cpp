@@ -585,17 +585,22 @@ bool LudumGame::InitializeParticleTextGenerator()
 
 bool LudumGame::InitializeRewardsAndPunishments()
 {
-	rewards.push_back(new LudumChallengeRewardPunishment_BarSize);
+#if 1
+	rewards.push_back(new LudumChallengeRewardPunishment_BarSize); 
 	rewards.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	rewards.push_back(new LudumChallengeRewardPunishment_SplitBall);
 	rewards.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	rewards.push_back(new LudumChallengeRewardPunishment_ExtraLife);
+	rewards.push_back(new LudumChallengeRewardPunishment_BallPower);
+#endif
 
-	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);
+#if 1
+	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);	
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
-
+	punishments.push_back(new LudumChallengeRewardPunishment_BallPower);
+#endif
 	return true;
 }
 

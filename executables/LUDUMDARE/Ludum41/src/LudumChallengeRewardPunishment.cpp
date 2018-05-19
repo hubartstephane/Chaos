@@ -112,7 +112,27 @@ void LudumChallengeRewardPunishment_SplitBall::OnRewardPunishment(class LudumGam
 	game->OnSplitBallChallenge(reward);
 }
 
+// =========================================================
 
+char const * LudumChallengeRewardPunishment_BallPower::GetTitleName(class LudumGame * game, bool reward) const
+{
+	if (reward)
+		return "Power Up"; 
+	else
+		return "Power Down";		
+}
+
+bool LudumChallengeRewardPunishment_BallPower::IsRewardPunishmentValid(class LudumGame * game, bool reward) const
+{
+	assert(game != nullptr);
+	return game->IsBallPowerChallengeValid(reward);
+}
+
+void LudumChallengeRewardPunishment_BallPower::OnRewardPunishment(class LudumGame * game, bool reward)
+{
+	assert(game != nullptr);
+	game->OnBallPowerChallenge(reward);
+}
 
 
 

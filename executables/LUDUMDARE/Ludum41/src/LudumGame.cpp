@@ -497,6 +497,7 @@ void LudumGame::ResetGameVariables()
 {
 	current_life  = initial_life;
 	player_length = player_initial_length;
+	ball_power    = 1;
 	ball_speed    = ball_initial_speed;
 	ball_time_dilation = 1.0f;
 	challenge_timer    = challenge_frequency;
@@ -631,6 +632,9 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 			combo_multiplier = 1;
 			should_update_combo = true;
 			ball_collision_speed = 0.0f;
+			ball_power = 1;
+			ball_speed = ball_initial_speed;
+			SetPlayerLength(player_initial_length);
 			balls_allocations = CreateBalls(1, true);	
 		}
 		return false;
@@ -1308,6 +1312,41 @@ void LudumGame::OnBallSpeedChallenge(bool success)
 
 	ball_speed = chaos::MathTools::Clamp(ball_speed, ball_initial_speed, ball_max_speed);
 }
+
+
+
+
+
+
+
+
+bool LudumGame::IsBallPowerChallengeValid(bool success)
+{
+	if (success)
+		return (ball_power < 3); // can still increase power ?
+	else
+		return (ball_power > 1); // can still decrease power ?
+}
+
+void LudumGame::OnBallPowerChallenge(bool success)
+{
+	if (success)
+		++ball_power;
+	else
+		--ball_power;
+
+	ball_power = chaos::MathTools::Clamp(ball_power, 1, 3);
+}
+
+
+
+
+
+
+
+
+
+
 
 bool LudumGame::IsExtraBallChallengeValid(bool success)
 {

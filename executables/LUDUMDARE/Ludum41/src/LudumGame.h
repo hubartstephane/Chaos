@@ -473,7 +473,7 @@ protected:
 
 	float ball_size          = 25.0f;
 
-	int   ball_power         = 1;
+	float ball_power         = 1.0f;
 	float ball_speed         = 5.0f;
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;
@@ -495,7 +495,7 @@ protected:
 	float heart_beat_speed = 2.0f;
 
 	int min_brick_life = 1;
-	int max_brick_life = 5;
+	float max_brick_life = 5.0f;
 
 	int pending_split_count = 0;
 

@@ -110,8 +110,8 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 
-	int   extra = 2;
-	float ratio = ((float)(extra + particle->life)) / ((float)(extra + particle->starting_life));
+	float extra = 2;
+	float ratio = (extra + particle->life) / (extra + particle->starting_life);
 
 	glm::vec4 color = ratio * particle->color;
 
@@ -135,9 +135,11 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 	// copy the color in all triangles vertex
 
 	glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	if (game->ball_power == 2)
+	if (game->ball_power == 0.5f)
+		power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
+	else if (game->ball_power == 2.0f)
 		power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
-	else if (game->ball_power == 3)
+	else if (game->ball_power == 3.0f)
 		power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	for (size_t i = 0 ; i < 6 ; ++i)

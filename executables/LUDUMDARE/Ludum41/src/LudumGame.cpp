@@ -497,7 +497,7 @@ void LudumGame::ResetGameVariables()
 {
 	current_life  = initial_life;
 	player_length = player_initial_length;
-	ball_power    = 1;
+	ball_power    = 1.0f;
 	ball_speed    = ball_initial_speed;
 	ball_time_dilation = 1.0f;
 	challenge_timer    = challenge_frequency;
@@ -632,7 +632,7 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 			combo_multiplier = 1;
 			should_update_combo = true;
 			ball_collision_speed = 0.0f;
-			ball_power = 1;
+			ball_power = 1.0f;
 			ball_speed = ball_initial_speed;
 			SetPlayerLength(player_initial_length);
 			balls_allocations = CreateBalls(1, true);	
@@ -952,7 +952,7 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 			{
 				particle[k].color = indestructible_color;
 				particle[k].indestructible = true;
-				particle[k].life = 1;
+				particle[k].life = 1.0f;
 			}
 			else 
 			{
@@ -960,7 +960,7 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 
 				size_t color_index = min((size_t)b, color_count - 1);
 				particle[k].color = colors[color_index];
-				particle[k].life = (size_t)b;
+				particle[k].life = (float)b;
 			}
 
 			particle[k].starting_life = particle[k].life;
@@ -1250,10 +1250,10 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];			
-			if (p.life > 0 && !p.indestructible)
+			if (p.life > 0.0f && !p.indestructible)
 			{
 				++destroyed_count;
-				--p.life;
+				p.life -= 1.0f;
 			}			
 		}
 		IncrementScore(destroyed_count * points_per_brick);
@@ -1264,9 +1264,9 @@ void LudumGame::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];
-			if (!p.indestructible && p.life < max_brick_life && p.life > 0)
+			if (!p.indestructible && p.life < max_brick_life && p.life > 0.0f)
 			{
-				++p.life;
+				p.life += 1.0f;
 				if (p.life > p.starting_life)
 					p.starting_life = p.life;
 			}
@@ -1325,17 +1325,16 @@ bool LudumGame::IsBallPowerChallengeValid(bool success)
 	if (success)
 		return (ball_power < 3); // can still increase power ?
 	else
-		return (ball_power > 1); // can still decrease power ?
+		return (ball_power > 0.5f); // can still decrease power ?
 }
 
 void LudumGame::OnBallPowerChallenge(bool success)
 {
 	if (success)
-		++ball_power;
+		ball_power = (ball_power == 0.5f) ? 1.0f : (ball_power + 1.0f);
 	else
-		--ball_power;
-
-	ball_power = chaos::MathTools::Clamp(ball_power, 1, 3);
+		ball_power = (ball_power == 1.0f) ? 0.5f : (ball_power - 1.0f);
+	ball_power = chaos::MathTools::Clamp(ball_power, 0.5f, 3.0f);
 }
 
 

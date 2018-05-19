@@ -102,10 +102,10 @@ class ParticleBrick : public ParticleObject
 {
 public:
 
-	int  starting_life  = 0;
-	int  life           = 0;
-	bool indestructible = false;
-	int  special_type   = 0;
+	float starting_life  = 0.0f;
+	float life           = 0.0f;
+	bool  indestructible = false;
+	int   special_type   = 0;
 };
 
 class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, VertexBase>

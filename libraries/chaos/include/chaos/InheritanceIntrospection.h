@@ -13,6 +13,37 @@ namespace chaos
 class InheritanceIntrospection
 {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /** this does correspond to ClassRuntimeID whose const modifier has been removed (useful in DeclareInheritance(...) )*/
   typedef std::pair<void *, void *> * ModifiableClassRuntimeID;
 

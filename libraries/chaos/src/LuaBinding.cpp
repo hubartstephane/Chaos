@@ -4,6 +4,9 @@
 namespace chaos
 {
 
+
+#if 0
+
 char const * LuaBinding::TOMT_KEY = "LuaBinding::TOMT";
 
 char const * LuaBinding::ID_KEY   = "ID";
@@ -110,9 +113,6 @@ InheritanceIntrospection::ClassRuntimeID LuaBinding::GetClassRuntimeID(int index
 };
 
 
-
-
-
-
+#endif
 
 }; // namespace chaos

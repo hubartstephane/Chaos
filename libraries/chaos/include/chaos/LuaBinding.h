@@ -149,6 +149,8 @@
 namespace chaos
 {
 
+#if 0
+
 /** 
  * LuaBinding a class to help generate binding between C++ and LUA
  */
@@ -224,6 +226,8 @@ protected:
 
 
 };
+
+#endif
 
 }; // namespace chaos
 

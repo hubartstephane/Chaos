@@ -18,7 +18,6 @@
 #include <chaos/ParticleTools.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/GLMTools.h>
-#include <chaos/InheritanceIntrospection.h>
 #include <chaos/ClassTools.h>
 #include <typeinfo> 
 #include <boost/convert/detail/has_member.hpp>

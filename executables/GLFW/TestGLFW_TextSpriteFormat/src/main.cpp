@@ -261,80 +261,15 @@ protected:
 	chaos::FPSViewInputController fps_view_controller;
 };
 
-class A {};
-
-class B : public A {};
-
-class C {};
-
-
-class ClassRegistration
-{
-public:
-
-	/** the parent of the class */
-	ClassRegistration * parent = nullptr;
-	/** whether the class has been registered */
-	bool registered = false;
-};
-
-class NoParent
-{
-
-};
-
-template<typename T>
-ClassRegistration * GetClassRegistration()
-{
-	static ClassRegistration registration;
-	return &registration;
-}
-
-template<typename PARENT>
-void InitializeRegistration(ClassRegistration * registration, boost::mpl::identity<PARENT>)
-{
-	registration->parent = GetClassRegistration<PARENT>();
-	registration->registered = true;
-}
-
-void InitializeRegistration(ClassRegistration * registration, boost::mpl::identity<NoParent>)
-{
-	registration->registered = true;
-}
-
-template<typename T, typename PARENT = NoParent>
-int DeclareClass()
-{
-	ClassRegistration * registration = GetClassRegistration<T>();
-	assert(!registration->registered);
-	InitializeRegistration(registration, boost::mpl::identity<PARENT>());
-	return 0;
-}
 
 
 
-template<typename T>
-bool IsClassDeclared()
-{
-	ClassRegistration * registration = GetClassRegistration<T>();
-	return registration->registered;
-}
 
 
 
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	DeclareClass<A>();
-	DeclareClass<B, A>();
-
-	bool a = IsClassDeclared<A>();
-	bool b = IsClassDeclared<B>();
-	bool c = IsClassDeclared<C>();
-
-
-
-
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;
   params.width = 1200;

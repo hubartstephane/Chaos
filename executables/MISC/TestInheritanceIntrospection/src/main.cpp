@@ -1,36 +1,36 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
-#include <chaos/InheritanceIntrospection.h>
+#include <chaos/ClassTools.h>
 
 class A {};
-class B {};
-class C {};
 
-template<typename BASE, typename PARENT>
-void TestInheritance(char const * base_name, char const * parent_name)
-{
-  chaos::InheritanceIntrospection::ClassRuntimeID base   = chaos::InheritanceIntrospection::GetClassRuntimeID<BASE>();
-  chaos::InheritanceIntrospection::ClassRuntimeID parent = chaos::InheritanceIntrospection::GetClassRuntimeID<PARENT>();
+class B : public A {};
 
-  bool inherits = chaos::InheritanceIntrospection::InheritsFrom(base, parent);
+class C : public B {};
 
-  std::cout << base_name << " inherits from " << parent_name << " ?  ==> " << inherits << std::endl;
-}
+class D {};
 
 int _tmain(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-  chaos::InheritanceIntrospection::DeclareInheritance<A, B>();
-  chaos::InheritanceIntrospection::DeclareInheritance<B, C>();
+	chaos::ClassTools::DeclareClass<A>();
+	//chaos::ClassTools::DeclareClass<B, A>();
+	chaos::ClassTools::DeclareClass<C, B>();
 
-  TestInheritance<A, B>("a", "b");
-  TestInheritance<A, C>("a", "c");
-  TestInheritance<B, C>("b", "c");
+	bool a = chaos::ClassTools::IsClassDeclared<A>();
+	bool b = chaos::ClassTools::IsClassDeclared<B>();
+	bool c = chaos::ClassTools::IsClassDeclared<C>();
+	bool d = chaos::ClassTools::IsClassDeclared<D>();
 
-  TestInheritance<B, A>("b", "a");
-  TestInheritance<C, A>("c", "a");
-  TestInheritance<C, B>("c", "b");
+	int i1 = chaos::ClassTools::InheritsFrom<A, A>();
+	int i2 = chaos::ClassTools::InheritsFrom<A, B>();
+	int i3 = chaos::ClassTools::InheritsFrom<B, A>();
+	int i4 = chaos::ClassTools::InheritsFrom<C, B>();
+	int i5 = chaos::ClassTools::InheritsFrom<C, A>();
+	int i6 = chaos::ClassTools::InheritsFrom<A, C>();
+	int i7 = chaos::ClassTools::InheritsFrom<A, D>();
+	int i8 = chaos::ClassTools::InheritsFrom<D, A>();
 
   chaos::WinTools::PressToContinue();
 

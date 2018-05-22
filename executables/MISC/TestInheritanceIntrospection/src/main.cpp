@@ -15,7 +15,7 @@ int _tmain(int argc, char ** argv, char ** env)
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
 	chaos::ClassTools::DeclareClass<A>();
-	//chaos::ClassTools::DeclareClass<B, A>();
+	chaos::ClassTools::DeclareClass<B, A>();
 	chaos::ClassTools::DeclareClass<C, B>();
 
 	bool a = chaos::ClassTools::IsClassDeclared<A>();

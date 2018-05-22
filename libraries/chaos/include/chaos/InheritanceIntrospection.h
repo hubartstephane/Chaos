@@ -5,6 +5,8 @@
 namespace chaos
 {
 
+#if 0
+
 /**
  * InheritanceIntrospection : a class to handle chain of inheritance 
  * XXX : beware, this is not RTTI, we can only gets informations we have declared before
@@ -12,6 +14,9 @@ namespace chaos
 
 class InheritanceIntrospection
 {
+
+
+
 
   /** this does correspond to ClassRuntimeID whose const modifier has been removed (useful in DeclareInheritance(...) )*/
   typedef std::pair<void *, void *> * ModifiableClassRuntimeID;
@@ -61,6 +66,8 @@ public:
     return false;
   }
 };
+
+#endif
 
 }; // namespace chaos
 

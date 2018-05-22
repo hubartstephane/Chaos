@@ -14,28 +14,37 @@ namespace chaos
 		static int const INHERITANCE_NO = 0;
 		static int const INHERITANCE_YES = 1;
 
-	protected:
-
 		/** a registration block for one class */
 		class ClassRegistration
 		{
-		public:
+			friend class chaos::ClassTools;
+
+		protected:
 
 			/** the parent of the class */
-			ClassRegistration * parent = nullptr;
+			ClassRegistration const * parent = nullptr;
 			/** whether the class has been registered */
 			bool registered = false;
 		};
+
+	protected:
 
 		/** a fake class to declare that a class has no parent */
 		class NoParent {};
 
 		/** internal method to have the registration instance for a given class */
 		template<typename T>
-		static ClassRegistration * GetClassRegistration()
+		static ClassRegistration * GetClassRegistrationInstanceHelper()
 		{
 			static ClassRegistration registration;
 			return &registration;
+		}
+
+		/** internal method to have the registration instance for a given class */
+		template<typename T>
+		static ClassRegistration * GetClassRegistrationInstance()
+		{
+			return GetClassRegistrationInstanceHelper<boost::remove_const<T>::type>();
 		}
 
 		/** initialize a class registration when no parent */
@@ -54,11 +63,18 @@ namespace chaos
 
 	public:
 
+		/** internal method to have the registration instance for a given class */
+		template<typename T>
+		static ClassRegistration const * GetClassRegistration()
+		{
+			return GetClassRegistrationInstance<T>();
+		}
+
 		/** declare a class and its parent */
 		template<typename T, typename PARENT = NoParent>
 		static int DeclareClass()
 		{
-			ClassRegistration * registration = GetClassRegistration<T>();
+			ClassRegistration * registration = GetClassRegistrationInstance<T>();
 			assert(!registration->registered);
 			InitializeRegistration(registration, boost::mpl::identity<PARENT>());
 			return 0;
@@ -68,7 +84,7 @@ namespace chaos
 		template<typename T>
 		static bool IsClassDeclared()
 		{
-			ClassRegistration * registration = GetClassRegistration<T>();
+			ClassRegistration const * registration = GetClassRegistration<T>();
 			return registration->registered;
 		}
 
@@ -76,11 +92,23 @@ namespace chaos
 		template<typename T, typename PARENT>
 		static int InheritsFrom(bool accept_equal = false)
 		{
-			ClassRegistration * class_registration = GetClassRegistration<T>(); // class not registered, cannot known
+			return InheritsFrom(
+				GetClassRegistration<T>(), 
+				GetClassRegistration<PARENT>(), 
+				accept_equal);
+		}
+
+		/** returns whether 2 classes are known to be parents of one another */
+		static int InheritsFrom(ClassRegistration const * class_registration, ClassRegistration const * parent_registration, bool accept_equal = false)
+		{
+			assert(class_registration != nullptr);
+			assert(parent_registration != nullptr);
+
+			// class not registered, cannot known result
 			if (!class_registration->registered)
 				return INHERITANCE_UNKNOWN;
 
-			ClassRegistration * parent_registration = GetClassRegistration<PARENT>(); // class not registered, cannot known
+			// class not registered, cannot known result
 			if (!parent_registration->registered)
 				return INHERITANCE_UNKNOWN;
 

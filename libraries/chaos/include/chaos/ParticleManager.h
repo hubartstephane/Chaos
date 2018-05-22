@@ -61,7 +61,7 @@ namespace chaos
 		bool IsVisible() const;
 
 		/** returns the ID representing the class of the particle */
-		virtual uintptr_t GetParticleID() const { return 0; }
+		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
 
 		/** get the number of particles */
 		virtual size_t GetParticleCount() const;
@@ -76,14 +76,14 @@ namespace chaos
 		template<typename T>
 		T * GetParticleCheckedBuffer()
 		{
-			assert(GetParticleID() == ClassTools::GetClassID<T>());
+			assert(GetParticleClass() == ClassTools::GetClassRegistration<T>());
 			return (T*)GetParticleBuffer();
 		}
 		/** returns a pointer on the first particle with strict class checking */
 		template<typename T>
 		T const * GetParticleCheckedBuffer() const
 		{
-			assert(GetParticleID() == ClassTools::GetClassID<T>());
+			assert(GetParticleClass() == ClassTools::GetClassRegistration<T>());
 			return (T const*)GetParticleBuffer();
 		}
 
@@ -131,9 +131,9 @@ namespace chaos
 			RemoveFromLayer(); // this call is not in ParticleAllocation::~ParticleAllocation(), because when destructor is incomming, the number of particles becomes invalid (0)
 		}
 		/** override */
-		virtual uintptr_t GetParticleID() const override
+		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{ 
-			return ClassTools::GetClassID<particle_type>();
+			return ClassTools::GetClassRegistration<particle_type>();
 		}
 		/** override */
 		virtual size_t GetParticleCount() const override
@@ -209,7 +209,7 @@ namespace chaos
 		virtual VertexDeclaration GetVertexDeclaration() const;
 
 		/** returns the class ID for spawn particles */
-		virtual uintptr_t GetParticleID() const { return 0; }
+		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
 
 	protected:
 
@@ -309,9 +309,9 @@ namespace chaos
 		}
 
 		/** override */
-		virtual uintptr_t GetParticleID() const override
+		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{
-			return trait.GetParticleID();
+			return trait.GetParticleClass();
 		}
 
 	protected:
@@ -367,13 +367,13 @@ namespace chaos
 		bool IsVisible() const;
 
 		/** get the particle ID for this system */
-		uintptr_t GetParticleID() const;
+		ClassTools::ClassRegistration const * GetParticleClass() const;
 
 		/** returns true whether the particle type is the one given as template parameter */
 		template<typename T>
 		bool IsParticleType() const
 		{
-			return (GetParticleID() == ClassTools::GetClassID<T>());
+			return (GetParticleClass() == ClassTools::GetClassRegistration<T>());
 		}
 
 		/** get the render order */
@@ -482,9 +482,9 @@ namespace chaos
 		}
 
 		/** returns the class ID for spawn particles */
-		uintptr_t GetParticleID() const
+		ClassTools::ClassRegistration const * GetParticleClass() const
 		{
-			return ClassTools::GetClassID<particle_type>();
+			return ClassTools::GetClassRegistration<particle_type>();
 		}
 
 	public:

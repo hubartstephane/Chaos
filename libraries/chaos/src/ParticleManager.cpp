@@ -210,9 +210,9 @@ namespace chaos
 		return visible;
 	}
 
-	uintptr_t ParticleLayer::GetParticleID() const
+	ClassTools::ClassRegistration const * ParticleLayer::GetParticleClass() const
 	{
-		return layer_desc->GetParticleID();
+		return layer_desc->GetParticleClass();
 	}
 
 	void ParticleLayer::TickParticles(float delta_time)

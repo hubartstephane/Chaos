@@ -63,6 +63,8 @@ namespace chaos
 		/** returns the ID representing the class of the particle */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
 
+		/** get the size of one particle */
+		virtual size_t GetParticleSize() const;
 		/** get the number of particles */
 		virtual size_t GetParticleCount() const;
 		/** get the particles */
@@ -76,14 +78,14 @@ namespace chaos
 		template<typename T>
 		T * GetParticleCheckedBuffer()
 		{
-			assert(GetParticleClass() == ClassTools::GetClassRegistration<T>());
+			assert(IsParticleClassCompatible<T>(false));
 			return (T*)GetParticleBuffer();
 		}
 		/** returns a pointer on the first particle with strict class checking */
 		template<typename T>
 		T const * GetParticleCheckedBuffer() const
 		{
-			assert(GetParticleClass() == ClassTools::GetClassRegistration<T>());
+			assert(IsParticleClassCompatible<T>(false));
 			return (T const*)GetParticleBuffer();
 		}
 
@@ -93,6 +95,30 @@ namespace chaos
 		ParticleLayer const * GetLayer() const { return layer; }
 
 	protected:
+
+		/** returns true whether the particle can be casted into a given class */
+		template<typename T>
+		bool IsParticleClassCompatible(bool accept_bigger_particle) const
+		{
+			ClassTools::ClassRegistration const * particle_class = GetParticleClass();
+			ClassTools::ClassRegistration const * wanted_class   = ClassTools::GetClassRegistration<T>();
+
+			// strict equality
+			if (particle_class == wanted_class)
+				return true;
+			// smaller size => failure
+			size_t particle_size = GetParticleSize();
+			if (particle_size < sizeof(T))
+				return false;
+			// bigger size => success only if accepted
+			if (particle_size > sizeof(T) && !accept_bigger_particle)
+				return false;
+			// ensure we have not declared class as incompatible
+			if (ClassTools::InheritsFrom(wanted_class, particle_class) == ClassTools::INHERITANCE_NO)
+				return false;
+			// success
+			return true;
+		}
 
 		/** called whenever the allocation is removed from the layer */
 		virtual void OnRemovedFromLayer();
@@ -139,6 +165,11 @@ namespace chaos
 		virtual size_t GetParticleCount() const override
 		{
 			return particles.size();
+		}
+		/** override */
+		virtual size_t GetParticleSize() const override
+		{
+			return sizeof(particle_type);
 		}
 		/** override */
 		virtual void * GetParticleBuffer() override

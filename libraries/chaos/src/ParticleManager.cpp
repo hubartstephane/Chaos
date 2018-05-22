@@ -72,6 +72,11 @@ namespace chaos
 		return visible;
 	}
 
+	size_t ParticleAllocation::GetParticleSize() const
+	{
+		return 0;
+	}
+
 	size_t ParticleAllocation::GetParticleCount() const
 	{
 		return 0;

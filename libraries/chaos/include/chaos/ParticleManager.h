@@ -31,6 +31,57 @@ namespace chaos
 #define CHAOS_PARTICLE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FRIEND_DECL, _, CHAOS_PARTICLE_CLASSES)
 
 		// ==============================================================
+		// ParticleAccessorBase
+		// ==============================================================
+
+	template<typename PARTICLE_TYPE, typename BUFFER_TYPE>
+	class ParticleAccessorBase
+	{
+	public:
+		/** constructor */
+		ParticleAccessorBase(BUFFER_TYPE in_buffer, size_t in_count, size_t in_particle_size) :
+			buffer(in_buffer), count(in_count), particle_size(in_particle_size)
+		{
+			assert((count > 0) ^ (buffer == nullptr));				
+		}
+
+		PARTICLE_TYPE & operator * () const
+		{
+			assert(count > 0);
+			return *((PARTICLE_TYPE*)buffer);
+		}
+
+		PARTICLE_TYPE * operator -> () const
+		{
+			if (count == 0)
+				return nullptr;
+
+			return nullptr;
+		}
+
+
+	protected:
+
+		/** the start of the buffer */
+		BUFFER_TYPE buffer = nullptr;
+		/** the number of particles in that buffer */
+		size_t count = 0;
+		/** the real particle size (not PARTICLE_TYPE) */
+		size_t particle_size = 0;
+	};
+
+
+		// ==============================================================
+		// ParticleAccessor / ParticleConstAccessor
+		// ==============================================================
+
+	template<typename PARTICLE_TYPE>
+	using ParticleAccessor = ParticleAccessorBase<PARTICLE_TYPE, void *>;
+
+	template<typename PARTICLE_TYPE>
+	using ParticleConstAccessor = ParticleAccessorBase<PARTICLE_TYPE const, void const *>;
+
+		// ==============================================================
 		// ParticleAllocation
 		// ==============================================================
 
@@ -73,20 +124,43 @@ namespace chaos
 		virtual void const * GetParticleBuffer() const;
 		/** resize the particles */
 		virtual bool Resize(size_t new_count);
+		
+		/** get an accessor for the particles */
+		template<typename PARTICLE_TYPE>
+		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor()
+		{
+			assert(IsParticleClassCompatible<PARTICLE_TYPE>(true));
+			return ParticleAccessor<PARTICLE_TYPE>(GetParticleBuffer(), GetParticleCount(), GetParticleSize());
+		}
+
+		/** get an accessor for the particles */
+		template<typename PARTICLE_TYPE>
+		ParticleConstAccessor<PARTICLE_TYPE> GetParticleConstAccessor() const
+		{
+			assert(IsParticleClassCompatible<PARTICLE_TYPE>(true));
+			return ParticleConstAccessor<PARTICLE_TYPE>(GetParticleBuffer(), GetParticleCount(), GetParticleSize());
+		}
+
+		/** get an accessor for the particles */
+		template<typename PARTICLE_TYPE>
+		ParticleConstAccessor<PARTICLE_TYPE> GetParticleAccessor() const
+		{
+			return GetParticleConstAccessor<PARTICLE_TYPE>();
+		}
 
 		/** returns a pointer on the first particle with strict class checking */
-		template<typename T>
-		T * GetParticleCheckedBuffer()
+		template<typename PARTICLE_TYPE>
+		PARTICLE_TYPE * GetParticleCheckedBuffer()
 		{
-			assert(IsParticleClassCompatible<T>(false));
-			return (T*)GetParticleBuffer();
+			assert(IsParticleClassCompatible<PARTICLE_TYPE>(false));
+			return (PARTICLE_TYPE*)GetParticleBuffer();
 		}
 		/** returns a pointer on the first particle with strict class checking */
-		template<typename T>
-		T const * GetParticleCheckedBuffer() const
+		template<typename PARTICLE_TYPE>
+		PARTICLE_TYPE const * GetParticleCheckedBuffer() const
 		{
-			assert(IsParticleClassCompatible<T>(false));
-			return (T const*)GetParticleBuffer();
+			assert(IsParticleClassCompatible<PARTICLE_TYPE>(false));
+			return (PARTICLE_TYPE const*)GetParticleBuffer();
 		}
 
 		/** get the layer for this allocation */
@@ -97,21 +171,21 @@ namespace chaos
 	protected:
 
 		/** returns true whether the particle can be casted into a given class */
-		template<typename T>
+		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(bool accept_bigger_particle) const
 		{
 			ClassTools::ClassRegistration const * particle_class = GetParticleClass();
-			ClassTools::ClassRegistration const * wanted_class   = ClassTools::GetClassRegistration<T>();
+			ClassTools::ClassRegistration const * wanted_class   = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
 
 			// strict equality
 			if (particle_class == wanted_class)
 				return true;
 			// smaller size => failure
 			size_t particle_size = GetParticleSize();
-			if (particle_size < sizeof(T))
+			if (particle_size < sizeof(PARTICLE_TYPE))
 				return false;
 			// bigger size => success only if accepted
-			if (particle_size > sizeof(T) && !accept_bigger_particle)
+			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
 				return false;
 			// ensure we have not declared class as incompatible
 			if (ClassTools::InheritsFrom(wanted_class, particle_class) == ClassTools::INHERITANCE_NO)

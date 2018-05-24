@@ -291,6 +291,24 @@ void LudumGame::HandleKeyboardInputs()
 
 void LudumGame::Tick(double delta_time)
 {
+	if (balls_allocations != nullptr)
+	{
+		chaos::ParticleAccessor<ParticleMovableObject> accessor1 = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+
+		chaos::ParticleConstAccessor<ParticleMovableObject> accessor2 = balls_allocations->GetParticleConstAccessor<ParticleMovableObject>();
+
+		ParticleMovableObject const & r1 = *accessor1;
+		ParticleMovableObject const & r2 = *accessor2;
+
+		delta_time = delta_time;
+	}
+
+	
+
+
+
+
+
 	// catch all stick inputs
 	gamepad_manager->Tick((float)delta_time);
 	// handle keyboard inputs

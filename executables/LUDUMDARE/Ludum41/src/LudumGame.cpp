@@ -288,6 +288,18 @@ void LudumGame::HandleKeyboardInputs()
 		left_stick_position = gamepad_sensitivity * simulated_stick;
 }
 
+void f1(chaos::ParticleAccessor<ParticleMovableObject> & a)
+{
+}
+
+void f2(chaos::ParticleConstAccessor<ParticleMovableObject> const & a)
+{
+}
+
+void f3(int i)
+{
+	i = i;
+}
 
 void LudumGame::Tick(double delta_time)
 {
@@ -296,6 +308,17 @@ void LudumGame::Tick(double delta_time)
 		chaos::ParticleAccessor<ParticleMovableObject> accessor1 = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
 
 		chaos::ParticleConstAccessor<ParticleMovableObject> accessor2 = balls_allocations->GetParticleConstAccessor<ParticleMovableObject>();
+
+		auto & bb1 = accessor1->bounding_box;
+		bb1.position.x += 1.0f;
+
+		auto & bb2 = accessor2->bounding_box;
+		//bb2.position.x += 1.0f;
+
+		f1(accessor1);		
+		f2(accessor1);
+		f2(accessor2);
+
 
 		ParticleMovableObject const & r1 = *accessor1;
 		ParticleMovableObject const & r2 = *accessor2;

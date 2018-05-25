@@ -152,8 +152,8 @@ void LudumGame::UpdateLifeParticles()
 		return;
 
 	// set the color
-	ParticleObject * particle = life_allocations->GetParticleCheckedBuffer<ParticleObject>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleObject> particle = life_allocations->GetParticleAccessor<ParticleObject>();
+	if (particle.GetCount() == 0)
 		return;
 
 	glm::vec2 world_size = GetWorldSize();
@@ -288,50 +288,8 @@ void LudumGame::HandleKeyboardInputs()
 		left_stick_position = gamepad_sensitivity * simulated_stick;
 }
 
-void f1(chaos::ParticleAccessor<ParticleMovableObject> & a)
-{
-}
-
-void f2(chaos::ParticleConstAccessor<ParticleMovableObject> const & a)
-{
-}
-
-void f3(int i)
-{
-	i = i;
-}
-
 void LudumGame::Tick(double delta_time)
 {
-	if (balls_allocations != nullptr)
-	{
-		chaos::ParticleAccessor<ParticleMovableObject> accessor1 = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
-
-		chaos::ParticleConstAccessor<ParticleMovableObject> accessor2 = balls_allocations->GetParticleConstAccessor<ParticleMovableObject>();
-
-		auto & bb1 = accessor1->bounding_box;
-		bb1.position.x += 1.0f;
-
-		auto & bb2 = accessor2->bounding_box;
-		//bb2.position.x += 1.0f;
-
-		f1(accessor1);		
-		f2(accessor1);
-		f2(accessor2);
-
-
-		ParticleMovableObject const & r1 = *accessor1;
-		ParticleMovableObject const & r2 = *accessor2;
-
-		delta_time = delta_time;
-	}
-
-	
-
-
-
-
-
 	// catch all stick inputs
 	gamepad_manager->Tick((float)delta_time);
 	// handle keyboard inputs
@@ -980,8 +938,8 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 	if (result == nullptr)
 		return nullptr;
 
-	ParticleBrick * particle = result->GetParticleCheckedBuffer<ParticleBrick>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleBrick> particle = result->GetParticleAccessor<ParticleBrick>();
+	if (particle.GetCount() == 0)
 		return nullptr;
 
 	// compute the brick size
@@ -1050,8 +1008,8 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 		return nullptr;
 
 	// set the color
-	ParticleMovableObject * particle = result->GetParticleCheckedBuffer<ParticleMovableObject>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleMovableObject> particle = result->GetParticleAccessor<ParticleMovableObject>();
+	if (particle.GetCount() == 0)
 		return nullptr;
 
 	for (size_t i = 0 ; i < count ; ++i)
@@ -1078,9 +1036,10 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 		return nullptr;
 
 	// set the color
-	ParticleObject * particle = result->GetParticleCheckedBuffer<ParticleObject>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleObject> particle = result->GetParticleAccessor<ParticleObject>();
+	if (particle.GetCount() == 0)
 		return nullptr;
+
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	particle->bounding_box.position  = glm::vec2(0.0f, 0.0f);
@@ -1097,8 +1056,8 @@ ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleAllocation * 
 	if (index >= allocation->GetParticleCount())
 		return nullptr;
 
-	ParticleObject const * p = player_allocations->GetParticleCheckedBuffer<ParticleObject>();
-	if (p == nullptr)
+	chaos::ParticleConstAccessor<ParticleObject> p = player_allocations->GetParticleConstAccessor<ParticleObject>();
+	if (p.GetCount() == 0)
 		return nullptr;
 
 	return &p[index];
@@ -1109,14 +1068,22 @@ ParticleMovableObject * LudumGame::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
 		return nullptr;	
-	return balls_allocations->GetParticleCheckedBuffer<ParticleMovableObject>();
+	chaos::ParticleAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	if (p.GetCount() == 0)
+		return nullptr;
+
+	return &p[0];
 }
 
 ParticleMovableObject const * LudumGame::GetBallParticles() const
 {
 	if (balls_allocations == nullptr)
 		return nullptr;
-	return balls_allocations->GetParticleCheckedBuffer<ParticleMovableObject>();
+	chaos::ParticleConstAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	if (p.GetCount() == 0)
+		return nullptr;
+
+	return &p[0];
 }
 
 size_t LudumGame::GetBallCount() const
@@ -1133,8 +1100,8 @@ ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleAllocation * alloca
 	if (index >= allocation->GetParticleCount())
 		return nullptr;
 
-	ParticleObject * p = player_allocations->GetParticleCheckedBuffer<ParticleObject>();
-	if (p == nullptr)
+	chaos::ParticleAccessor<ParticleObject> p = player_allocations->GetParticleAccessor<ParticleObject>();
+	if (p.GetCount() == 0)
 		return nullptr;
 
 	return &p[index];
@@ -1264,11 +1231,17 @@ ParticleBrick * LudumGame::GetBricks()
 	if (bricks_allocations == nullptr)
 		return nullptr;
 
-	size_t brick_count = bricks_allocations->GetParticleCount();
-	if (brick_count == 0)
+//	size_t brick_count = bricks_allocations->GetParticleCount();
+//	if (brick_count == 0)
+//		return nullptr;
+
+	chaos::ParticleAccessor<ParticleBrick> p = bricks_allocations->GetParticleAccessor<ParticleBrick>();
+	if (p.GetCount() == 0)
 		return nullptr;
 
-	return bricks_allocations->GetParticleCheckedBuffer<ParticleBrick>();
+
+
+	return &p[0];
 }
 
 ParticleBrick const * LudumGame::GetBricks() const 
@@ -1276,11 +1249,14 @@ ParticleBrick const * LudumGame::GetBricks() const
 	if (bricks_allocations == nullptr)
 		return nullptr;
 
-	size_t brick_count = bricks_allocations->GetParticleCount();
-	if (brick_count == 0)
-		return nullptr;
+//	size_t brick_count = bricks_allocations->GetParticleCount();
+//	if (brick_count == 0)
+//		return nullptr;
 
-	return bricks_allocations->GetParticleCheckedBuffer<ParticleBrick>();
+	chaos::ParticleConstAccessor<ParticleBrick> p = bricks_allocations->GetParticleConstAccessor<ParticleBrick>();
+	if (p.GetCount() == 0)
+		return nullptr;
+	return &p[0];
 }
 
 bool LudumGame::IsBrickLifeChallengeValid(bool success)

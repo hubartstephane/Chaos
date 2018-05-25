@@ -555,8 +555,8 @@ void LudumGame::FillBackgroundLayer()
 	if (background_allocations == nullptr)
 		return;
 	
-	ParticleBackground * particle = background_allocations->GetParticleCheckedBuffer<ParticleBackground>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleBackground> particle = background_allocations->GetParticleAccessor<ParticleBackground>();
+	if (particle.GetCount() == 0)
 		return;
 
 	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -648,8 +648,8 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 	if (allocation == nullptr)
 		return nullptr;
 
-	ParticleObject * particle = allocation->GetParticleCheckedBuffer<ParticleObject>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleObject> particle = allocation->GetParticleAccessor<ParticleObject>();
+	if (particle.GetCount() == 0)
 		return nullptr;
 
 	size_t k = 0;
@@ -710,8 +710,8 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 	if (allocation == nullptr)
 		return nullptr;
 
-	ParticleChallenge * particle = allocation->GetParticleCheckedBuffer<ParticleChallenge>();
-	if (particle == nullptr)
+	chaos::ParticleAccessor<ParticleChallenge> particle = allocation->GetParticleAccessor<ParticleChallenge>();
+	if (particle.GetCount() == 0)
 		return nullptr;
 
 	size_t k = 0;

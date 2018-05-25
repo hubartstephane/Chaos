@@ -39,6 +39,9 @@ namespace chaos
 	{
 	public:
 
+		/** default constructor */
+		ParticleAccessorBase(){}
+
 		/** constructor */
 		ParticleAccessorBase(BUFFER_TYPE * in_buffer, size_t in_count, size_t in_particle_size) :
 			buffer(in_buffer), count(in_count), particle_size(in_particle_size)
@@ -63,7 +66,7 @@ namespace chaos
 		{
 			assert(index < count);
 			char * b = (char*)buffer;
-			return (PARTICLE_TYPE*)(b + index * particle_size);
+			return *((PARTICLE_TYPE*)(b + index * particle_size));
 		}
 
 		/** get the number of particle */
@@ -87,17 +90,6 @@ namespace chaos
 		size_t particle_size = 0;
 	};
 
-
-
-
-
-
-
-
-
-
-
-
 		// ==============================================================
 		// ParticleAccessor / ParticleConstAccessor
 		// ==============================================================
@@ -107,6 +99,8 @@ namespace chaos
 	{
 	public:
 
+		/** default constructor */
+		ParticleConstAccessor() {}
 		/** constructor */
 		ParticleConstAccessor(void const * in_buffer, size_t in_count, size_t in_particle_size) :
 			ParticleAccessorBase<PARTICLE_TYPE const, void const>(in_buffer, in_count, in_particle_size)
@@ -119,6 +113,8 @@ namespace chaos
 	{
 	public:
 
+		/** default constructor */
+		ParticleAccessor() {}
 		/** constructor */
 		ParticleAccessor(void * in_buffer, size_t in_count, size_t in_particle_size) :
 			ParticleAccessorBase<PARTICLE_TYPE, void>(in_buffer, in_count, in_particle_size)

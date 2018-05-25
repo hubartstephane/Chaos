@@ -175,6 +175,6 @@ public:
 	size_t ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 };
 
-
+extern void DeclareParticleClasses();
 
 

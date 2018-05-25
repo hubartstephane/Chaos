@@ -249,6 +249,9 @@ bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
 	// create the musics
 	CreateAllMusics();
 
+	// initialize particle classes
+	DeclareParticleClasses();
+
 	return true;
 }
 
@@ -555,11 +558,11 @@ void LudumGame::FillBackgroundLayer()
 	if (background_allocations == nullptr)
 		return;
 	
-	chaos::ParticleAccessor<ParticleBackground> particle = background_allocations->GetParticleAccessor<ParticleBackground>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleBackground> particles = background_allocations->GetParticleAccessor<ParticleBackground>();
+	if (particles.GetCount() == 0)
 		return;
 
-	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool LudumGame::InitializeParticleTextGenerator()
@@ -648,8 +651,8 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 	if (allocation == nullptr)
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleObject> particle = allocation->GetParticleAccessor<ParticleObject>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
+	if (particles.GetCount() == 0)
 		return nullptr;
 
 	size_t k = 0;
@@ -660,9 +663,9 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 		{
 			chaos::ParticleTextGenerator::Token const & token = line[j];
 
-			particle[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-			particle[k].texcoords = token.texcoords;
-			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+			particles[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			particles[k].texcoords = token.texcoords;
+			particles[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 			++k;
 		}
 	}
@@ -710,8 +713,8 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 	if (allocation == nullptr)
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleChallenge> particle = allocation->GetParticleAccessor<ParticleChallenge>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
+	if (particles.GetCount() == 0)
 		return nullptr;
 
 	size_t k = 0;
@@ -722,11 +725,11 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 		{
 			chaos::ParticleTextGenerator::Token const & token = line[j];
 
-			particle[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-			particle[k].texcoords = token.texcoords;
-			particle[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-			particle[k].challenge = challenge;
-			particle[k].index     = k;
+			particles[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			particles[k].texcoords = token.texcoords;
+			particles[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+			particles[k].challenge = challenge;
+			particles[k].index     = k;
 			++k;
 		}
 	}
@@ -752,8 +755,6 @@ bool LudumGame::InitializeParticleManager()
 	ParticleMovableObjectTrait movable_trait;
 	movable_trait.game = this;
 	AddParticleLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
-
-//	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject");
 
 	ParticleBrickTrait brick_trait;
 	brick_trait.game = this;

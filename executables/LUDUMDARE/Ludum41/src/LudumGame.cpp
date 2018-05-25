@@ -152,8 +152,8 @@ void LudumGame::UpdateLifeParticles()
 		return;
 
 	// set the color
-	chaos::ParticleAccessor<ParticleObject> particle = life_allocations->GetParticleAccessor<ParticleObject>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleObject> particles = life_allocations->GetParticleAccessor<ParticleObject>();
+	if (particles.GetCount() == 0)
 		return;
 
 	glm::vec2 world_size = GetWorldSize();
@@ -168,10 +168,10 @@ void LudumGame::UpdateLifeParticles()
 		position.x = -world_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
 		position.y = -world_size.y * 0.5f + 15.0f;
 
-		particle[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-		particle[i].bounding_box.half_size = 0.5f * particle_size;
+		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+		particles[i].bounding_box.half_size = 0.5f * particle_size;
 
-		particle[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }
 
@@ -882,23 +882,16 @@ chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size
 	if (allocation == nullptr)
 		return nullptr;
 
-	size_t particle_size = layer->GetParticleSize();
-
-	char * buffer = (char *)allocation->GetParticleBuffer();
-	if (buffer == nullptr)
-		return nullptr;
+	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
 
 	for (size_t i = 0 ; i < count ; ++i)
 	{
-		ParticleObject * particle = (ParticleObject*)(&buffer[i * particle_size]);		
-		particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+		ParticleObject & particle = particles[i];
+		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
 	}
 		
 	return allocation;
 }
-
-
-
 
 glm::vec2 LudumGame::GenerateBallRandomDirection() const
 {
@@ -938,8 +931,8 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 	if (result == nullptr)
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleBrick> particle = result->GetParticleAccessor<ParticleBrick>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleBrick> particles = result->GetParticleAccessor<ParticleBrick>();
+	if (particles.GetCount() == 0)
 		return nullptr;
 
 	// compute the brick size
@@ -969,28 +962,28 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 
 			if (b == LudumLevel::INDESTRUCTIBLE)
 			{
-				particle[k].color = indestructible_color;
-				particle[k].indestructible = true;
-				particle[k].life = 1.0f;
+				particles[k].color = indestructible_color;
+				particles[k].indestructible = true;
+				particles[k].life = 1.0f;
 			}
 			else 
 			{
-				particle[k].indestructible = false;
+				particles[k].indestructible = false;
 
 				size_t color_index = min((size_t)b, color_count - 1);
-				particle[k].color = colors[color_index];
-				particle[k].life = (float)b;
+				particles[k].color = colors[color_index];
+				particles[k].life = (float)b;
 			}
 
-			particle[k].starting_life = particle[k].life;
+			particles[k].starting_life = particles[k].life;
 
 			// position
 			glm::vec2 position;
 			position.x = -world_size.x * 0.5f + particle_size.x * (float)j;
 			position.y =  world_size.y * 0.5f - particle_size.y * (float)i;
 
-			particle[k].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
-			particle[k].bounding_box.half_size = 0.5f * particle_size;
+			particles[k].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+			particles[k].bounding_box.half_size = 0.5f * particle_size;
 
 			++k;
 		}
@@ -1008,20 +1001,20 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 		return nullptr;
 
 	// set the color
-	chaos::ParticleAccessor<ParticleMovableObject> particle = result->GetParticleAccessor<ParticleMovableObject>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleMovableObject> particles = result->GetParticleAccessor<ParticleMovableObject>();
+	if (particles.GetCount() == 0)
 		return nullptr;
 
 	for (size_t i = 0 ; i < count ; ++i)
 	{	
-		particle[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
-		particle[i].bounding_box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
+		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		particles[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
+		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
 		
 		if (full_init)
 		{
-			particle[i].delay_before_move = delay_before_ball_move;
-			particle[i].velocity = ball_speed * GenerateBallRandomDirection();		
+			particles[i].delay_before_move = delay_before_ball_move;
+			particles[i].velocity = ball_speed * GenerateBallRandomDirection();
 		}
 	}
 	return result;
@@ -1036,14 +1029,14 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 		return nullptr;
 
 	// set the color
-	chaos::ParticleAccessor<ParticleObject> particle = result->GetParticleAccessor<ParticleObject>();
-	if (particle.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleObject> particles = result->GetParticleAccessor<ParticleObject>();
+	if (particles.GetCount() == 0)
 		return nullptr;
 
-	particle->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	particle->bounding_box.position  = glm::vec2(0.0f, 0.0f);
-	particle->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
+	particles->bounding_box.position  = glm::vec2(0.0f, 0.0f);
+	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 	
 	return result;
 }
@@ -1068,11 +1061,10 @@ ParticleMovableObject * LudumGame::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
 		return nullptr;	
-	chaos::ParticleAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
-	if (p.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	if (particles.GetCount() == 0)
 		return nullptr;
-
-	return &p[0];
+	return &particles[0];
 }
 
 ParticleMovableObject const * LudumGame::GetBallParticles() const
@@ -1100,11 +1092,10 @@ ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleAllocation * alloca
 	if (index >= allocation->GetParticleCount())
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleObject> p = player_allocations->GetParticleAccessor<ParticleObject>();
-	if (p.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleObject> particles = player_allocations->GetParticleAccessor<ParticleObject>();
+	if (particles.GetCount() == 0)
 		return nullptr;
-
-	return &p[index];
+	return &particles[index];
 }
 
 ParticleObject * LudumGame::GetPlayerParticle()
@@ -1231,17 +1222,11 @@ ParticleBrick * LudumGame::GetBricks()
 	if (bricks_allocations == nullptr)
 		return nullptr;
 
-//	size_t brick_count = bricks_allocations->GetParticleCount();
-//	if (brick_count == 0)
-//		return nullptr;
-
-	chaos::ParticleAccessor<ParticleBrick> p = bricks_allocations->GetParticleAccessor<ParticleBrick>();
-	if (p.GetCount() == 0)
+	chaos::ParticleAccessor<ParticleBrick> particles = bricks_allocations->GetParticleAccessor<ParticleBrick>();
+	if (particles.GetCount() == 0)
 		return nullptr;
 
-
-
-	return &p[0];
+	return &particles[0];
 }
 
 ParticleBrick const * LudumGame::GetBricks() const 

@@ -6,6 +6,25 @@
 #include "LudumChallenge.h"
 
 #include <chaos/CollisionFramework.h>
+#include <chaos/ClassTools.h>
+
+class AAA
+{
+public:
+
+	int xxx[200]
+		;
+};
+
+void DeclareParticleClasses()
+{
+	chaos::ClassTools::DeclareClass<ParticleObject>();
+	chaos::ClassTools::DeclareClass<ParticleBackground>();
+	chaos::ClassTools::DeclareClass<ParticleBrick, ParticleObject>();
+	//chaos::ClassTools::DeclareClass<ParticleBrick, AAA>();
+	chaos::ClassTools::DeclareClass<ParticleMovableObject, ParticleObject>();
+	chaos::ClassTools::DeclareClass<ParticleChallenge, ParticleObject>();
+}
 
 chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {

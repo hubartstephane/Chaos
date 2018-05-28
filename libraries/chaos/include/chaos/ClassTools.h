@@ -25,6 +25,8 @@ namespace chaos
 			ClassRegistration const * parent = nullptr;
 			/** whether the class has been registered */
 			bool registered = false;
+			/** the optional name of the class */
+			std::string class_name;
 		};
 
 	protected:
@@ -48,17 +50,21 @@ namespace chaos
 		}
 
 		/** initialize a class registration when no parent */
-		static void InitializeRegistration(ClassRegistration * registration, boost::mpl::identity<NoParent>)
+		static void InitializeRegistration(ClassRegistration * registration, char const * in_class_name, boost::mpl::identity<NoParent>)
 		{
 			registration->registered = true;
+			if (in_class_name != nullptr)
+				registration->class_name = in_class_name;
 		}
 
 		/** initialize a class registration when one parent */
 		template<typename PARENT>
-		static void InitializeRegistration(ClassRegistration * registration, boost::mpl::identity<PARENT>)
+		static void InitializeRegistration(ClassRegistration * registration, char const * in_class_name, boost::mpl::identity<PARENT>)
 		{
 			registration->parent = GetClassRegistration<PARENT>();
 			registration->registered = true;
+			if (in_class_name != nullptr)
+				registration->class_name = in_class_name;
 		}
 
 	public:
@@ -72,11 +78,11 @@ namespace chaos
 
 		/** declare a class and its parent */
 		template<typename T, typename PARENT = NoParent>
-		static int DeclareClass()
+		static int DeclareClass(char const * in_class_name = nullptr)
 		{
 			ClassRegistration * registration = GetClassRegistrationInstance<T>();
 			assert(!registration->registered);
-			InitializeRegistration(registration, boost::mpl::identity<PARENT>());
+			InitializeRegistration(registration, in_class_name, boost::mpl::identity<PARENT>());
 			return 0;
 		}
 
@@ -99,13 +105,13 @@ namespace chaos
 		}
 
 		/** returns whether 2 classes are known to be parents of one another */
-		static int InheritsFrom(ClassRegistration const * class_registration, ClassRegistration const * parent_registration, bool accept_equal = false)
+		static int InheritsFrom(ClassRegistration const * child_registration, ClassRegistration const * parent_registration, bool accept_equal = false)
 		{
-			assert(class_registration != nullptr);
+			assert(child_registration != nullptr);
 			assert(parent_registration != nullptr);
 
 			// class not registered, cannot known result
-			if (!class_registration->registered)
+			if (!child_registration->registered)
 				return INHERITANCE_UNKNOWN;
 
 			// class not registered, cannot known result
@@ -113,17 +119,21 @@ namespace chaos
 				return INHERITANCE_UNKNOWN;
 
 			// returns no if classes are same and we don't accept that as a valid result
-			if (class_registration == parent_registration && !accept_equal)
-				return INHERITANCE_NO;
-
+			if (child_registration == parent_registration)
+			{
+				if (!accept_equal)
+					return INHERITANCE_NO;
+				else
+					return INHERITANCE_YES;
+			}
 			// from top to root in the hierarchy
-			for (class_registration = class_registration->parent; class_registration != nullptr; class_registration = class_registration->parent)
+			for (child_registration = child_registration->parent; child_registration != nullptr; child_registration = child_registration->parent)
 			{
 				// found the searched parent
-				if (class_registration == parent_registration)
+				if (child_registration == parent_registration)
 					return INHERITANCE_YES;
 				// unintialized class
-				if (!class_registration->registered)
+				if (!child_registration->registered)
 					return INHERITANCE_UNKNOWN;
 			}
 			return INHERITANCE_NO;

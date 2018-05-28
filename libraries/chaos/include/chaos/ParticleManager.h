@@ -234,7 +234,7 @@ namespace chaos
 			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
 				return false;
 			// ensure we have not declared class as incompatible
-			if (ClassTools::InheritsFrom(wanted_class, particle_class) == ClassTools::INHERITANCE_NO)
+			if (ClassTools::InheritsFrom(particle_class, wanted_class) == ClassTools::INHERITANCE_NO)
 				return false;
 			// success
 			return true;

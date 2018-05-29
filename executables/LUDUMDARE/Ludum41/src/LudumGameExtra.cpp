@@ -640,36 +640,8 @@ chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, ch
 
 	particle_text_generator->Generate(text, result, params);
 
-#if 0
 	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
-#else
 
-	// count the number of particle to draw
-	size_t count = result.GetTokenCount();
-
-	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
-	if (allocation == nullptr)
-		return nullptr;
-
-	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-
-	size_t k = 0;
-	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
-	{
-		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
-		for (size_t j = 0 ; j < line.size() ; ++j)
-		{
-			chaos::ParticleTextGenerator::Token const & token = line[j];
-
-			particles[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-			particles[k].texcoords = token.texcoords;
-			particles[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-			++k;
-		}
-	}
-#endif
 	return allocation;
 }
 
@@ -701,39 +673,20 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 		particle_text_generator->Generate(gamepad_string.c_str(), result, params);	
 	}
 
-#if 0
+	// create the text
 	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
-
-#else
-
-	// count the number of particle to draw
-	size_t count = result.GetTokenCount();
-
-	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
-	if (allocation == nullptr)
-		return nullptr;
-
-	chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-
-	size_t k = 0;
-	for (size_t i = 0 ; i < result.token_lines.size() ; ++i)
+	// and initialize additionnal data
+	if (allocation != nullptr)
 	{
-		chaos::ParticleTextGenerator::TokenLine const & line = result.token_lines[i];
-		for (size_t j = 0 ; j < line.size() ; ++j)
+		chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
+		for (size_t i = 0; i < particles.GetCount(); ++i)
 		{
-			chaos::ParticleTextGenerator::Token const & token = line[j];
-
-			particles[k].bounding_box = chaos::box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-			particles[k].texcoords = token.texcoords;
-			particles[k].color     = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-			particles[k].challenge = challenge;
-			particles[k].index     = k;
-			++k;
+			ParticleChallenge & p = particles[i];
+			p.challenge = challenge;
+			p.index = i;
 		}
 	}
-#endif
+
 	return allocation;
 }
 

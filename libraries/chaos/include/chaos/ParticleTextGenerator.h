@@ -296,8 +296,6 @@ namespace chaos
 
 		/** generate an allocation for a generated text */
 		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result);
-
-
 	
 	}; // namespace ParticleTextGenerator
 

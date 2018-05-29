@@ -752,7 +752,7 @@ namespace chaos
 		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result)
 		{
 			assert(layer != nullptr);
-			assert(layer->IsParticleType<ParticleDefault::Particle>());
+			assert(layer->IsParticleClassCompatible<ParticleDefault::Particle>(true));
 
 			// create the allocation
 			ParticleAllocation * result = layer->SpawnParticles(generator_result.GetTokenCount());
@@ -760,8 +760,8 @@ namespace chaos
 				return nullptr;
 
 			// spawn the particles
-			ParticleDefault::Particle * particles = result->GetParticleCheckedBuffer<ParticleDefault::Particle>();
-			if (particles == nullptr)
+			ParticleAccessor<ParticleDefault::Particle> particles = result->GetParticleAccessor<ParticleDefault::Particle>();
+			if (particles.GetCount() == 0)
 			{
 				result->SubReference(); // error => destroy the allocation
 				return nullptr;
@@ -776,15 +776,16 @@ namespace chaos
 				{
 					ParticleTextGenerator::Token const & token = line[j];
 
-					particles[token_index].bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-					particles[token_index].texcoords = token.texcoords;
-					particles[token_index].color = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+					ParticleDefault::Particle & p = particles[token_index];
+
+					p.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+					p.texcoords = token.texcoords;
+					p.color = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
 					++token_index;
 				}
 			}
 			return result;
 		}
-
 	
 	}; // namespace ParticleTextGenerator
 };

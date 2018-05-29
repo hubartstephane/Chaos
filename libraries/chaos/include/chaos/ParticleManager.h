@@ -171,6 +171,13 @@ namespace chaos
 		/** resize the particles */
 		virtual bool Resize(size_t new_count);
 		
+		/** returns true whether the class required is compatible with the one store in the buffer */
+		template<typename PARTICLE_TYPE>
+		bool IsParticleClassCompatible(bool accept_bigger_particle) const
+		{
+			return ParticleManager::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+		}
+
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>
 		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor()
@@ -215,30 +222,6 @@ namespace chaos
 		ParticleLayer const * GetLayer() const { return layer; }
 
 	protected:
-
-		/** returns true whether the particle can be casted into a given class */
-		template<typename PARTICLE_TYPE>
-		bool IsParticleClassCompatible(bool accept_bigger_particle) const
-		{
-			ClassTools::ClassRegistration const * particle_class = GetParticleClass();
-			ClassTools::ClassRegistration const * wanted_class   = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
-
-			// strict equality
-			if (particle_class == wanted_class)
-				return true;
-			// smaller size => failure
-			size_t particle_size = GetParticleSize();
-			if (particle_size < sizeof(PARTICLE_TYPE))
-				return false;
-			// bigger size => success only if accepted
-			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
-				return false;
-			// ensure we have not declared class as incompatible
-			if (ClassTools::InheritsFrom(particle_class, wanted_class) == ClassTools::INHERITANCE_NO)
-				return false;
-			// success
-			return true;
-		}
 
 		/** called whenever the allocation is removed from the layer */
 		virtual void OnRemovedFromLayer();
@@ -496,6 +479,13 @@ namespace chaos
 		/** Set the id method */
 		void SetLayerID(int in_id);
 
+		/** returns true whether the class required is compatible with the one store in the buffer */
+		template<typename PARTICLE_TYPE>
+		bool IsParticleClassCompatible(bool accept_bigger_particle) const
+		{
+			return ParticleManager::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+		}
+
 		/** returns the number of particle count */
 		size_t ComputeMaxParticleCount() const;
 		/** returns the size in memory of a particle */
@@ -677,6 +667,28 @@ namespace chaos
 
 		/** tick the manager */
 		void Tick(float delta_time);
+
+		/** returns true whether the particle can be casted into a given class */
+		template<typename PARTICLE_TYPE>
+		static bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
+		{
+			ClassTools::ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
+
+			// strict equality
+			if (particle_class == wanted_class)
+				return true;
+			// smaller size => failure
+			if (particle_size < sizeof(PARTICLE_TYPE))
+				return false;
+			// bigger size => success only if accepted
+			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
+				return false;
+			// ensure we have not declared class as incompatible
+			if (ClassTools::InheritsFrom(particle_class, wanted_class) == ClassTools::INHERITANCE_NO)
+				return false;
+			// success
+			return true;
+		}
 
 	protected:
 

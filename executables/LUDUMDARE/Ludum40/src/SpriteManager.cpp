@@ -1,4 +1,5 @@
-#include <chaos/SpriteManager.h>
+#include "SpriteManager.h"
+
 #include <chaos/MathTools.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GLTools.h>

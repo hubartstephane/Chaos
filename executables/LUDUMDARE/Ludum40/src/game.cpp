@@ -28,10 +28,11 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/SpriteManager.h>
 #include <chaos/SoundManager.h>
 #include <chaos/JSONTools.h>
 #include <chaos/DrawPrimitive.h>
+
+#include "SpriteManager.h"
 
 
 // ======================================================================================

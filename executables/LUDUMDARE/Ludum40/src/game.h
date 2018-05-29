@@ -26,9 +26,8 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/SpriteManager.h>
 
-
+#include "SpriteManager.h"
 #include "sprite_layer.h"
 
 // ======================================================================================

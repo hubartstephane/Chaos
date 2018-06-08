@@ -500,7 +500,7 @@ namespace chaos
       float probability = 1.0f;
 
 			/** object information */
-			boost::filesystem::path image_source;
+			boost::filesystem::path image_path;
 			/** object information */
 			glm::vec2 image_size = glm::vec2(0.0f, 0.0f);
     };
@@ -730,6 +730,9 @@ namespace chaos
 			int               image_spacing = 0;
 			/** object information */
 			glm::vec4         transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+			/** for tileset embedded in map */
+			Map * map = nullptr;
 
 			/** the data for the tiles */
 			std::vector<boost::intrusive_ptr<TileData>> tiles;

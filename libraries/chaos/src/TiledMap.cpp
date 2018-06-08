@@ -354,7 +354,7 @@ namespace chaos
 			tinyxml2::XMLElement const * image_element = element->FirstChildElement("image");
 			if (image_element != nullptr)
 			{
-				if (!XMLTools::ReadAttribute(image_element, "source", image_source))
+				if (!XMLTools::ReadAttribute(image_element, "source", image_path))
 					return false;
 				if (!XMLTools::ReadAttribute(image_element, "width", image_size.x))
 					return false;
@@ -656,7 +656,24 @@ namespace chaos
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
 		{
-			return DoLoadObjectListHelper(element, tiles, "tile", nullptr);
+			// load the tiles
+			if (!DoLoadObjectListHelper(element, tiles, "tile", nullptr))
+				return false;
+			// complete the path of the tiles
+			size_t count = tiles.size();
+			for (size_t i = 0 ; i < count ; ++i)
+			{
+				TileData * tile = tiles[i].get();
+				if (tile == nullptr)
+					continue;
+				if (tile->image_path.empty())
+					continue;
+				if (map != nullptr)
+					tile->image_path = BoostTools::FindAbsolutePath(map->GetPath(), tile->image_path); // embedded tileset
+				else
+					tile->image_path = BoostTools::FindAbsolutePath(GetPath(), tile->image_path); // external tileset
+			}
+			return true;
 		}
 
 		bool TileSet::DoLoadMembers(tinyxml2::XMLElement const * element)
@@ -805,7 +822,6 @@ namespace chaos
 					tileset = manager->LoadTileSet(tileset_path);
 					if (tileset == nullptr)
 						return false;
-
 				}
 				// embedded titleset
 				else
@@ -813,6 +829,7 @@ namespace chaos
 					tileset = new TileSet(manager, boost::filesystem::path());
 					if (tileset == nullptr)
 						return false;
+					tileset->map = this;
 
 					if (!tileset->DoLoad(tileset_element))
 					{

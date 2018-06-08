@@ -772,22 +772,41 @@ namespace chaos
 		{
 			assert(element != nullptr);
 
-			tinyxml2::XMLElement const * tileset = element->FirstChildElement("tileset");
-			for (; tileset != nullptr; tileset = tileset->NextSiblingElement("tileset"))
+			tinyxml2::XMLElement const * tileset_element = element->FirstChildElement("tileset");
+			for (; tileset_element != nullptr; tileset_element = tileset_element->NextSiblingElement("tileset"))
 			{
 				int first_gid = 0;
 				std::string source;
 
-				if (!XMLTools::ReadAttribute(tileset, "firstgid", first_gid)) // firstgid is mandatory (map would be incomplete)
-					return false;
-				if (!XMLTools::ReadAttribute(tileset, "source", source)) // source is mandatory (map would be incomplete)
+				if (!XMLTools::ReadAttribute(tileset_element, "firstgid", first_gid)) // firstgid is mandatory (map would be incomplete)
 					return false;
 
-				boost::filesystem::path tileset_path = BoostTools::FindAbsolutePath(path, source); // compute the path of the tileset relative to this
+				// external tileset
+				TileSet * tileset = nullptr;
 
-				TileSet * tileset = manager->LoadTileSet(tileset_path);
-				if (tileset == nullptr)
-					return false;
+				if (XMLTools::ReadAttribute(tileset_element, "source", source)) // source is mandatory (map would be incomplete)
+				{
+					boost::filesystem::path tileset_path = BoostTools::FindAbsolutePath(path, source); // compute the path of the tileset relative to this
+
+					tileset = manager->LoadTileSet(tileset_path);
+					if (tileset == nullptr)
+						return false;
+
+				}
+				// embedded titleset
+				else
+				{
+					tileset = new TileSet(manager, boost::filesystem::path());
+					if (tileset == nullptr)
+						return false;
+
+					if (!tileset->DoLoad(tileset_element))
+					{
+						delete(tileset);
+						return false;
+					}
+					manager->tile_sets.push_back(tileset);
+				}
 
 				TileSetData data;
 				data.first_gid = first_gid;

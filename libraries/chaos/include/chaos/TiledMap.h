@@ -681,6 +681,7 @@ namespace chaos
 			static int const ORIENTATION_ISOMETRIC  = 1;
 
 			friend class Manager;
+			friend class Map;
 
 		protected:
 
@@ -840,6 +841,9 @@ namespace chaos
 
 		class Manager
 		{
+			friend class Map;
+			friend class TileSet;
+
 		public:
 
 			/** load a tiled map set */

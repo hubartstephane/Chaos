@@ -22,28 +22,34 @@
 void LoadTileMap(chaos::TiledMap::Manager & manager)
 {
 
-
-
 	chaos::Application * application = chaos::Application::GetInstance();
 	if (application == nullptr)
 		return;
 
 	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-	boost::filesystem::path set_path = resource_path / "Example1" / "tile set 1.tsx";
-	boost::filesystem::path map_path = resource_path / "Example1" / "tiled_map.tmx";
 
 	chaos::TiledMap::TileSet * map_set = nullptr;
 	chaos::TiledMap::Map * map = nullptr;
 
-	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path.string().c_str(), false);
+#if 0
+
+	boost::filesystem::path set_path = resource_path / "Example1" / "tile set 1.tsx";
+	boost::filesystem::path map_path = resource_path / "Example1" / "tiled_map.tmx";
+
+	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path, false);
 	if (buffer1 != nullptr)
 		map_set = manager.LoadTileSet(set_path.string().c_str(), buffer1);
 
-	
-	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path.string().c_str(), false);
+#else
+
+	boost::filesystem::path map_path = resource_path / "Example2" / "map.tmx";
+
+#endif
+
+	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path, false);
 	if (buffer2 != nullptr)
-		map = manager.LoadMap(map_path.string().c_str(), buffer2);
+		map = manager.LoadMap(map_path, buffer2);
 }
 
 class MyApplication : public chaos::Application

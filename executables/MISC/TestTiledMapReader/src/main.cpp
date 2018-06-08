@@ -19,12 +19,12 @@
 // in a tile_set
 //    top-left = 1
 
-void LoadTileMap(chaos::TiledMap::Manager & manager)
+bool LoadTileMap(chaos::TiledMap::Manager & manager)
 {
 
 	chaos::Application * application = chaos::Application::GetInstance();
 	if (application == nullptr)
-		return;
+		return false;
 
 	boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
@@ -32,14 +32,14 @@ void LoadTileMap(chaos::TiledMap::Manager & manager)
 	chaos::TiledMap::TileSet * map_set = nullptr;
 	chaos::TiledMap::Map * map = nullptr;
 
-#if 0
+#if 1
 
 	boost::filesystem::path set_path = resource_path / "Example1" / "tile set 1.tsx";
 	boost::filesystem::path map_path = resource_path / "Example1" / "tiled_map.tmx";
 
 	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(set_path, false);
 	if (buffer1 != nullptr)
-		map_set = manager.LoadTileSet(set_path.string().c_str(), buffer1);
+		map_set = manager.LoadTileSet(set_path, buffer1);
 
 #else
 
@@ -50,6 +50,8 @@ void LoadTileMap(chaos::TiledMap::Manager & manager)
 	chaos::Buffer<char> buffer2 = chaos::FileTools::LoadFile(map_path, false);
 	if (buffer2 != nullptr)
 		map = manager.LoadMap(map_path, buffer2);
+
+	return (map != nullptr);
 }
 
 class MyApplication : public chaos::Application

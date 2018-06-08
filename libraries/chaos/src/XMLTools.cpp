@@ -115,6 +115,16 @@ namespace chaos
       return true;
     }
 
+		bool XMLTools::ReadAttribute(tinyxml2::XMLAttribute const * attribute, boost::filesystem::path & result)
+		{
+			std::string tmp;
+			if (!ReadAttribute(attribute, tmp))
+				return false;
+			result = tmp;
+			return true;
+		}
+
+
     bool XMLTools::ReadAttribute(tinyxml2::XMLElement const * element, char const * attribute_name, int & result)
     {
       tinyxml2::XMLAttribute const * attribute = element->FindAttribute(attribute_name);
@@ -162,6 +172,14 @@ namespace chaos
         return false;
       return ReadAttribute(attribute, result);
     }
+
+		bool XMLTools::ReadAttribute(tinyxml2::XMLElement const * element, char const * attribute_name, boost::filesystem::path & result)
+		{
+			tinyxml2::XMLAttribute const * attribute = element->FindAttribute(attribute_name);
+			if (attribute == nullptr)
+				return false;
+			return ReadAttribute(attribute, result);
+		}
 
     bool XMLTools::ReadEnumAttribute(tinyxml2::XMLElement const * element, char const * name, std::pair<char const *, int> const * values, int & result_value)
     {

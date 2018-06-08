@@ -498,6 +498,11 @@ namespace chaos
       std::string type;
       /** object information */
       float probability = 1.0f;
+
+			/** object information */
+			boost::filesystem::path image_source;
+			/** object information */
+			glm::vec2 image_size = glm::vec2(0.0f, 0.0f);
     };
 
 

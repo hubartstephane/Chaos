@@ -344,9 +344,23 @@ namespace chaos
 		{
 			if (!PropertyOwner::DoLoad(element))
 				return false;
+
 			XMLTools::ReadAttribute(element, "id", id);
 			XMLTools::ReadAttribute(element, "type", type);
 			XMLTools::ReadAttribute(element, "probability", probability);
+
+			// some tilesets have a single image (representing an atlas with elements in a grid cells)
+			// some tilesets have individual images per tiles
+			tinyxml2::XMLElement const * image_element = element->FirstChildElement("image");
+			if (image_element != nullptr)
+			{
+				if (!XMLTools::ReadAttribute(image_element, "source", image_source))
+					return false;
+				if (!XMLTools::ReadAttribute(image_element, "width", image_size.x))
+					return false;
+				if (!XMLTools::ReadAttribute(image_element, "height", image_size.y))
+					return false;
+			}
 			return true;
 		}
 
@@ -423,9 +437,9 @@ namespace chaos
 				XMLTools::ReadAttribute(image_source, "width", size.x);
 				XMLTools::ReadAttribute(image_source, "height", size.y);
 
-				std::string source;
+				boost::filesystem::path source;
 				XMLTools::ReadAttribute(image_source, "source", source);
-				image_path = BoostTools::FindAbsolutePath(map->GetPath(), boost::filesystem::path(source));
+				image_path = BoostTools::FindAbsolutePath(map->GetPath(), source);
 			}
 			return true;
 		}
@@ -673,9 +687,9 @@ namespace chaos
 			tinyxml2::XMLElement const * image_element = element->FirstChildElement("image");
 			if (image_element != nullptr)
 			{
-				std::string source;
+				boost::filesystem::path source;
 				XMLTools::ReadAttribute(image_element, "source", source);
-				image_path = BoostTools::FindAbsolutePath(GetPath(), boost::filesystem::path(source));
+				image_path = BoostTools::FindAbsolutePath(GetPath(), source);
 
 				ReadXMLColor(image_element, "trans", transparent_color);
 

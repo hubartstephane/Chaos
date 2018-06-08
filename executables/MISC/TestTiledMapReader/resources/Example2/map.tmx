@@ -2,7 +2,10 @@
 <map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="32" infinite="0" nextobjectid="1">
  <tileset firstgid="1" name="tileset2" tilewidth="96" tileheight="96" tilecount="2" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
-  <tile id="2">
+  <tile id="2" type="test">
+   <properties>
+    <property name="unepropriete" type="int" value="33"/>
+   </properties>
    <image width="96" height="96" source="grass.jpg"/>
   </tile>
   <tile id="3">

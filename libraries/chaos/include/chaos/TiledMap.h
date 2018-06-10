@@ -9,35 +9,77 @@ namespace chaos
 {
 	namespace TiledMap
 	{
-    class BaseObject : public ReferencedObject
-    {
-    protected:
+		class BaseObject : public ReferencedObject
+		{
+		public:
 
-      /** utility function to load a layer */
-      template<typename T, typename ...PARAMS>
-      static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
-      {
-        if (container_name != nullptr) // is there an intermediate node to contain all objects
-        {
-          element = element->FirstChildElement(container_name);
-          if (element == nullptr)
-            return true;
-        }
+			/** get the path */
+			boost::filesystem::path GetOwnerPath() const;
 
-        tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
-        for (; e != nullptr; e = e->NextSiblingElement(element_name))
-        {
-          T * object = new T(params...);
-          if (object == nullptr)
-            break;
-          if (!object->DoLoad(e))
-            delete(object);
-          else
-            result.push_back(object);
-        }
-        return true;
-      }
-    };
+			/** get a parent in the hierarchy by class */
+			template<typename T> 
+			T * GetOwner(bool recursive = true)
+			{
+				BaseObject * object = this;
+				T * result = dynamic_cast<T *>(object);
+				while (result == nullptr && object->owner != nullptr && recursive)
+				{
+					object = object->owner;
+					result = dynamic_cast<T *>(object);
+				}
+				return result;
+			}
+
+			/** get a parent in the hierarchy by class */
+			template<typename T>
+			T const * GetOwner(bool recursive = true) const
+			{
+				BaseObject const * object = this;
+				T const * result = dynamic_cast<T const *>(object);
+				while (result == nullptr && object->owner != nullptr && recursive)
+				{
+					object = object->owner;
+					result = dynamic_cast<T const *>(object);
+				}
+				return result;
+			}
+
+		protected:
+
+			/** constructor */
+			BaseObject(BaseObject * in_owner) :
+				owner(in_owner) {}
+
+			/** utility function to load a layer */
+			template<typename T, typename ...PARAMS>
+			static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
+			{
+				if (container_name != nullptr) // is there an intermediate node to contain all objects
+				{
+					element = element->FirstChildElement(container_name);
+					if (element == nullptr)
+						return true;
+				}
+
+				tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
+				for (; e != nullptr; e = e->NextSiblingElement(element_name))
+				{
+					T * object = new T(params...);
+					if (object == nullptr)
+						break;
+					if (!object->DoLoad(e))
+						delete(object);
+					else
+						result.push_back(object);
+				}
+				return true;
+			}
+
+		protected:
+
+			/** owning object */
+			BaseObject * owner = nullptr;
+		};
 
 		//
 		// Property : base class for some properties
@@ -48,6 +90,10 @@ namespace chaos
 			friend class PropertyOwner;
 
 		public:
+
+			/** constructor */
+			Property(BaseObject * in_owner) :
+				BaseObject(in_owner) {}
 
 			/** returns a pointer on the int property */
 			virtual int * GetIntProperty() { return nullptr; }
@@ -62,14 +108,14 @@ namespace chaos
 			virtual std::string * GetStringProperty() { return nullptr; }
 			virtual std::string const * GetStringProperty() const { return nullptr; }
 
-      /** returns whether the property is of type int */
-      bool IsIntProperty() const { return GetIntProperty() != nullptr; }
-      /** returns whether the property is of type float */
-      bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
-      /** returns whether the property is of type bool */
-      bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
-      /** returns whether the property is of type string */
-      bool IsStringProperty() const { return GetStringProperty() != nullptr; }
+			/** returns whether the property is of type int */
+			bool IsIntProperty() const { return GetIntProperty() != nullptr; }
+			/** returns whether the property is of type float */
+			bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
+			/** returns whether the property is of type bool */
+			bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
+			/** returns whether the property is of type string */
+			bool IsStringProperty() const { return GetStringProperty() != nullptr; }
 
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }
@@ -89,6 +135,10 @@ namespace chaos
 		{
 		public:
 
+			/** constructor */
+			PropertyTemplate(BaseObject * in_owner) :
+				Property(in_owner) {}
+
 			/** the type of the property */
 			typedef T property_type;
 
@@ -105,8 +155,8 @@ namespace chaos
 			virtual std::string * GetStringProperty() { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
 			virtual std::string const * GetStringProperty() const { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
 
-      /** returns the value of the property */
-      T GetValue() { return value; }
+			/** returns the value of the property */
+			T GetValue() { return value; }
 
 		protected:
 
@@ -145,6 +195,10 @@ namespace chaos
 
 		public:
 
+			/** constructor */
+			PropertyOwner(BaseObject * in_owner) :
+				BaseObject(in_owner) {}
+
 			/** find property by name */
 			Property * FindProperty(char const * name);
 			/** find property by name */
@@ -170,340 +224,364 @@ namespace chaos
 			std::vector<boost::intrusive_ptr<Property>> properties;
 		};
 
-    //
-    // GeometricObject
-    //
-
-    class GeometricObject : public PropertyOwner
-    {
-      friend class Manager;
-      friend class BaseObject;
-      friend class TileSet;
-      friend class ObjectLayer;
-
-    public:
-
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectPoint * GetObjectPoint() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectPoint const * GetObjectPoint() const { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectRectangle * GetObjectRectangle() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectRectangle const * GetObjectRectangle() const { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectEllipse * GetObjectEllipse() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectEllipse const * GetObjectEllipse() const { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectPolygon * GetObjectPolygon() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectPolygon const * GetObjectPolygon() const { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectPolyline * GetObjectPolyline() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectPolyline const * GetObjectPolyline() const { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectText * GetObjectText() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectText const * GetObjectText() const { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectTile * GetObjectTile() { return nullptr; }
-      /** cast method into iyts subtype */
-      virtual class GeometricObjectTile const * GetObjectTile() const { return nullptr; }
-
-    protected:
-
-      /** protected constructor */
-      GeometricObject() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-      /** loading method from XML */
-      std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
-
-    public:
-
-      /** object information */
-      int id = 0;
-      /** object information */
-      std::string name;
-      /** object information */
-      std::string type;
-      /** object information */
-      bool visible = true;
-      /** object information */
-      glm::vec2 position = glm::vec2(0.0f, 0.0f);
-      /** object information */
-      float rotation = 0.0f; // clockwise rotation in degree
-    };
-
-    //
-    // GeometricObjectPoint
-    //
-
-    class GeometricObjectPoint : public GeometricObject
-    {
-      friend class ObjectLayer;
-
-    public:
-
-      virtual GeometricObjectPoint * GetObjectPoint() override { return this; }
-      virtual GeometricObjectPoint const * GetObjectPoint() const override { return this; }
-
-    protected:
-
-      /** protected constructor */
-      GeometricObjectPoint() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-    };
-
-    // 
-    // GeometricObjectSurface
-    //
-
-    class GeometricObjectSurface : public GeometricObject
-    {
-      friend class ObjectLayer;
-
-    protected:
-
-      /** protected constructor */
-      GeometricObjectSurface() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		//
+		// GeometricObject
+		//
+
+		class GeometricObject : public PropertyOwner
+		{
+			friend class Manager;
+			friend class BaseObject;
+			friend class TileSet;
+			friend class ObjectLayer;
+
+		public:
+
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectPoint * GetObjectPoint() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectPoint const * GetObjectPoint() const { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectRectangle * GetObjectRectangle() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectRectangle const * GetObjectRectangle() const { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectEllipse * GetObjectEllipse() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectEllipse const * GetObjectEllipse() const { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectPolygon * GetObjectPolygon() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectPolygon const * GetObjectPolygon() const { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectPolyline * GetObjectPolyline() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectPolyline const * GetObjectPolyline() const { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectText * GetObjectText() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectText const * GetObjectText() const { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectTile * GetObjectTile() { return nullptr; }
+			/** cast method into iyts subtype */
+			virtual class GeometricObjectTile const * GetObjectTile() const { return nullptr; }
+
+		protected:
+
+			/** constructor */
+			GeometricObject(BaseObject * in_owner) :
+				PropertyOwner(in_owner) {}
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** loading method from XML */
+			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
+
+		public:
+
+			/** object information */
+			int id = 0;
+			/** object information */
+			std::string name;
+			/** object information */
+			std::string type;
+			/** object information */
+			bool visible = true;
+			/** object information */
+			glm::vec2 position = glm::vec2(0.0f, 0.0f);
+			/** object information */
+			float rotation = 0.0f; // clockwise rotation in degree
+		};
+
+		//
+		// GeometricObjectPoint
+		//
+
+		class GeometricObjectPoint : public GeometricObject
+		{
+			friend class ObjectLayer;
+
+		public:
+
+			virtual GeometricObjectPoint * GetObjectPoint() override { return this; }
+			virtual GeometricObjectPoint const * GetObjectPoint() const override { return this; }
+
+		protected:
+
+			/** constructor */
+			GeometricObjectPoint(BaseObject * in_owner) :
+				GeometricObject(in_owner) {}
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		};
+
+		// 
+		// GeometricObjectSurface
+		//
+
+		class GeometricObjectSurface : public GeometricObject
+		{
+			friend class ObjectLayer;
+
+
+		protected:
+
+			/** constructor */
+			GeometricObjectSurface(BaseObject * in_owner) :
+				GeometricObject(in_owner) {}
 
-    public:
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-      /** object information */
-      glm::vec2 size = glm::vec2(0.0f, 0.0f);
-    };
+		public:
 
-    // 
-    // GeometricObjectRectangle
-    //
+			/** object information */
+			glm::vec2 size = glm::vec2(0.0f, 0.0f);
+		};
 
-    class GeometricObjectRectangle : public GeometricObjectSurface
-    {
-      friend class ObjectLayer;
+		// 
+		// GeometricObjectRectangle
+		//
 
-    public:
+		class GeometricObjectRectangle : public GeometricObjectSurface
+		{
+			friend class ObjectLayer;
 
-      virtual GeometricObjectRectangle * GetObjectRectangle() override { return this; }
-      virtual GeometricObjectRectangle const * GetObjectRectangle() const override { return this; }
+		public:
 
-    protected:
+			virtual GeometricObjectRectangle * GetObjectRectangle() override { return this; }
+			virtual GeometricObjectRectangle const * GetObjectRectangle() const override { return this; }
 
-      /** protected constructor */
-      GeometricObjectRectangle() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-    };
+		protected:
 
-    // 
-    // GeometricObjectEllipse
-    //
+			/** constructor */
+			GeometricObjectRectangle(BaseObject * in_owner) :
+				GeometricObjectSurface(in_owner) {}
 
-    class GeometricObjectEllipse : public GeometricObjectSurface
-    {
-      friend class ObjectLayer;
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		};
 
-    public:
+		// 
+		// GeometricObjectEllipse
+		//
 
-      virtual GeometricObjectEllipse * GetObjectEllipse() override { return this; }
-      virtual GeometricObjectEllipse const * GetObjectEllipse() const override { return this; }
+		class GeometricObjectEllipse : public GeometricObjectSurface
+		{
+			friend class ObjectLayer;
 
-    protected:
+		public:
 
-      /** protected constructor */
-      GeometricObjectEllipse() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-    };
+			virtual GeometricObjectEllipse * GetObjectEllipse() override { return this; }
+			virtual GeometricObjectEllipse const * GetObjectEllipse() const override { return this; }
 
-    // 
-    // GeometricObjectPolygon
-    //
+		protected:
 
-    class GeometricObjectPolygon : public GeometricObject
-    {
-      friend class ObjectLayer;
+			/** constructor */
+			GeometricObjectEllipse(BaseObject * in_owner) :
+				GeometricObjectSurface(in_owner) {}
 
-    public:
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		};
 
-      virtual GeometricObjectPolygon * GetObjectPolygon() override { return this; }
-      virtual GeometricObjectPolygon const * GetObjectPolygon() const override { return this; }
+		// 
+		// GeometricObjectPolygon
+		//
 
-    protected:
+		class GeometricObjectPolygon : public GeometricObject
+		{
+			friend class ObjectLayer;
 
-      /** protected constructor */
-      GeometricObjectPolygon() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		public:
 
-    public:
+			virtual GeometricObjectPolygon * GetObjectPolygon() override { return this; }
+			virtual GeometricObjectPolygon const * GetObjectPolygon() const override { return this; }
 
-      /** object information */
-      std::vector<glm::vec2> points;
-    };
+		protected:
 
-    // 
-    // GeometricObjectPolyline
-    //
+			/** constructor */
+			GeometricObjectPolygon(BaseObject * in_owner) :
+				GeometricObject(in_owner) {}
 
-    class GeometricObjectPolyline : public GeometricObject
-    {
-      friend class ObjectLayer;
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-    public:
+		public:
 
-      virtual GeometricObjectPolyline * GetObjectPolyline() override { return this; }
-      virtual GeometricObjectPolyline const * GetObjectPolyline() const override { return this; }
+			/** object information */
+			std::vector<glm::vec2> points;
+		};
 
-    protected:
+		// 
+		// GeometricObjectPolyline
+		//
 
-      /** protected constructor */
-      GeometricObjectPolyline() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		class GeometricObjectPolyline : public GeometricObject
+		{
+			friend class ObjectLayer;
 
-    public:
+		public:
 
-      /** object information */
-      std::vector<glm::vec2> points;
-    };
+			virtual GeometricObjectPolyline * GetObjectPolyline() override { return this; }
+			virtual GeometricObjectPolyline const * GetObjectPolyline() const override { return this; }
 
-    // 
-    // GeometricObjectText
-    //
+		protected:
 
-    class GeometricObjectText : public GeometricObjectSurface
-    {
-      friend class ObjectLayer;
+			/** constructor */
+			GeometricObjectPolyline(BaseObject * in_owner) :
+				GeometricObject(in_owner) {}
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-    public:
+		public:
 
-      static int const HALIGN_LEFT = 0;
-      static int const HALIGN_CENTER = 1;
-      static int const HALIGN_RIGHT = 2;
-      static int const HALIGN_JUSTIFY = 3;
+			/** object information */
+			std::vector<glm::vec2> points;
+		};
 
-      static int const VALIGN_TOP = 0;
-      static int const VALIGN_CENTER = 1;
-      static int const VALIGN_BOTTOM = 2;
+		// 
+		// GeometricObjectText
+		//
 
-    public:
+		class GeometricObjectText : public GeometricObjectSurface
+		{
+			friend class ObjectLayer;
 
-      virtual GeometricObjectText * GetObjectText() override { return this; }
-      virtual GeometricObjectText const * GetObjectText() const override { return this; }
+		public:
 
-    protected:
+			static int const HALIGN_LEFT = 0;
+			static int const HALIGN_CENTER = 1;
+			static int const HALIGN_RIGHT = 2;
+			static int const HALIGN_JUSTIFY = 3;
 
-      /** protected constructor */
-      GeometricObjectText() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			static int const VALIGN_TOP = 0;
+			static int const VALIGN_CENTER = 1;
+			static int const VALIGN_BOTTOM = 2;
 
-    public:
+		public:
 
-      /** object information */
-      int halign = HALIGN_LEFT;
-      /** object information */
-      int valign = VALIGN_TOP;
-      /** object information */
-      std::string fontfamily;
-      /** object information */
-      std::string text;
-      /** object information */
-      int pixelsize = 0;
-      /** object information */
-      int wrap = 0;
-      /** object information */
-      glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    };
+			virtual GeometricObjectText * GetObjectText() override { return this; }
+			virtual GeometricObjectText const * GetObjectText() const override { return this; }
 
-    // 
-    // GeometricObjectTile
-    //
+		protected:
 
-    class GeometricObjectTile : public GeometricObjectSurface
-    {
-    public:
+			/** constructor */
+			GeometricObjectText(BaseObject * in_owner) :
+				GeometricObjectSurface(in_owner) {}
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-      virtual GeometricObjectTile * GetObjectTile() override { return this; }
-      virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
+		public:
 
-      /** protected constructor */
-      GeometricObjectTile() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** object information */
+			int halign = HALIGN_LEFT;
+			/** object information */
+			int valign = VALIGN_TOP;
+			/** object information */
+			std::string fontfamily;
+			/** object information */
+			std::string text;
+			/** object information */
+			int pixelsize = 0;
+			/** object information */
+			int wrap = 0;
+			/** object information */
+			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		};
 
-    public:
+		// 
+		// GeometricObjectTile
+		//
 
-      /** object information */
-      int gid = 0;
-      /** object information */
-      bool horizontal_flip = false;
-      /** object information */
-      bool vertical_flip = false;
-    };
+		class GeometricObjectTile : public GeometricObjectSurface
+		{
+			friend class ObjectLayer;
 
-    //
-    // GroundData
-    //
+		public:
 
-    class GroundData : public PropertyOwner
-    {
-      friend class Manager;
-      friend class BaseObject;
-      friend class TileSet;
+			virtual GeometricObjectTile * GetObjectTile() override { return this; }
+			virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
 
-    protected:
+		protected:
 
-      /** protected constructor */
-      GroundData() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** constructor */
+			GeometricObjectTile(BaseObject * in_owner) :
+				GeometricObjectSurface(in_owner) {}
 
-    public:
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-      /** object information */
-      int tile_index = 0;
-      /** object information */
-      std::string name;
-    };
+		public:
 
-    //
-    // TileData
-    //
+			/** object information */
+			int gid = 0;
+			/** object information */
+			bool horizontal_flip = false;
+			/** object information */
+			bool vertical_flip = false;
+		};
 
-    class TileData : public PropertyOwner
-    {
-      friend class Manager;
-      friend class BaseObject;
-      friend class TileSet;
+		//
+		// GroundData
+		//
 
-    protected:
+		class GroundData : public PropertyOwner
+		{
+			friend class Manager;
+			friend class BaseObject;
+			friend class TileSet;
 
-      /** protected constructor */
-      TileData() = default;
-      /** loading method from XML */
-      virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+		protected:
 
-    public:
+			/** constructor */
+			GroundData(BaseObject * in_owner) :
+				PropertyOwner(in_owner) {}
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-      /** object information */
-      int id = 0;
-      /** object information */
-      std::string type;
-      /** object information */
-      float probability = 1.0f;
+		public:
+
+			/** object information */
+			int tile_index = 0;
+			/** object information */
+			std::string name;
+		};
+
+		//
+		// TileData
+		//
+
+		class TileData : public PropertyOwner
+		{
+			friend class Manager;
+			friend class BaseObject;
+			friend class TileSet;
+
+		protected:
+
+			/** constructor */
+			TileData(BaseObject * in_owner) :
+				PropertyOwner(in_owner) {}
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+		public:
+
+			/** object information */
+			int id = 0;
+			/** object information */
+			std::string type;
+			/** object information */
+			float probability = 1.0f;
 
 			/** object information */
 			boost::filesystem::path image_path;
 			/** object information */
 			glm::vec2 image_size = glm::vec2(0.0f, 0.0f);
-    };
+
+			/** the layers composing the map */
+			std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
+		};
 
 
 		//
@@ -517,18 +595,12 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			LayerBase(class Map * in_map) : 
-				map(in_map) { assert(map != nullptr); }
-
+			LayerBase(BaseObject * in_owner) :
+				PropertyOwner(in_owner) {}
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element);
 
-		protected:
-
-			/** the owner of the object */
-			class Map * map = nullptr;
-
-    public:
+		public:
 
 			/** the name of the layer */
 			std::string name;
@@ -549,14 +621,13 @@ namespace chaos
 		class ImageLayer : public LayerBase
 		{
 			friend class Map;
-      friend class BaseObject;
+			friend class BaseObject;
 
 		protected:
 
 			/** constructor */
-			ImageLayer(class Map * in_map) :
-				LayerBase(in_map) {  }
-
+			ImageLayer(BaseObject * in_owner) :
+				LayerBase(in_owner) {}
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
@@ -577,50 +648,50 @@ namespace chaos
 		class ObjectLayer : public LayerBase
 		{
 			friend class Map;
-      friend class BaseObject;
+			friend class BaseObject;
 
-			static int const DRAW_ORDER_MANUAL  = 0;
+			static int const DRAW_ORDER_MANUAL = 0;
 			static int const DRAW_ORDER_TOPDOWN = 1;
 
 		protected:
 
 			/** constructor */
-			ObjectLayer(class Map * in_map) :
-				LayerBase(in_map) {  }
+			ObjectLayer(BaseObject * in_owner) :
+				LayerBase(in_owner) {}
 
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** the loading method */
 			bool DoLoadObjects(tinyxml2::XMLElement const * element);
-      /** the loading method */
-      GeometricObject * DoLoadOneObject(tinyxml2::XMLElement const * element);
+			/** the loading method */
+			GeometricObject * DoLoadOneObject(tinyxml2::XMLElement const * element);
 
 		public:
 
 			/** object information */
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */
-      int       draw_order = DRAW_ORDER_MANUAL;
+			int       draw_order = DRAW_ORDER_MANUAL;
 
-      /** the properties of the object */
-      std::vector<boost::intrusive_ptr<GeometricObject>> geometric_objects;
+			/** the properties of the object */
+			std::vector<boost::intrusive_ptr<GeometricObject>> geometric_objects;
 		};
 
-    //
-    // TileLayer
-    //
+		//
+		// TileLayer
+		//
 
 		class TileLayer : public LayerBase
 		{
 
 			friend class Map;
-      friend class BaseObject;
-      
+			friend class BaseObject;
+
 		protected:
 
 			/** constructor */
-			TileLayer(class Map * in_map) :
-				LayerBase(in_map) {  }
+			TileLayer(BaseObject * in_owner) :
+				LayerBase(in_owner) {}
 
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -655,7 +726,7 @@ namespace chaos
 		protected:
 
 			/** the constructor */
-			ManagerObject(class Manager * in_manager, boost::filesystem::path in_path);
+			ManagerObject(BaseObject * in_owner, boost::filesystem::path in_path);
 			/** loading method from XML */
 			virtual bool DoLoadDocument(tinyxml2::XMLDocument const * doc);
 			/** the method to override */
@@ -665,12 +736,7 @@ namespace chaos
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const { return nullptr; }
 
-		protected:
-
-			/** the manager */
-			Manager * manager = nullptr;
-
-    public:
+		public:
 
 			/** the filename */
 			boost::filesystem::path path;
@@ -683,7 +749,7 @@ namespace chaos
 		class TileSet : public ManagerObject
 		{
 			static int const ORIENTATION_ORTHOGONAL = 0;
-			static int const ORIENTATION_ISOMETRIC  = 1;
+			static int const ORIENTATION_ISOMETRIC = 1;
 
 			friend class Manager;
 			friend class Map;
@@ -691,15 +757,15 @@ namespace chaos
 		protected:
 
 			/** the constructor */
-			TileSet(class Manager * in_manager, boost::filesystem::path in_path);
+			TileSet(BaseObject * in_owner, boost::filesystem::path in_path);
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** loading method from XML */
 			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
 			/** loading method from XML */
 			bool DoLoadTiles(tinyxml2::XMLElement const * element);
-      /** loading method from XML */
-      bool DoLoadGrounds(tinyxml2::XMLElement const * element);
+			/** loading method from XML */
+			bool DoLoadGrounds(tinyxml2::XMLElement const * element);
 
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const override { return "tileset"; }
@@ -731,13 +797,10 @@ namespace chaos
 			/** object information */
 			glm::vec4         transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-			/** for tileset embedded in map */
-			Map * map = nullptr;
-
 			/** the data for the tiles */
 			std::vector<boost::intrusive_ptr<TileData>> tiles;
-      /** the data for the tiles */
-      std::vector<boost::intrusive_ptr<GroundData>> grounds;
+			/** the data for the tiles */
+			std::vector<boost::intrusive_ptr<GroundData>> grounds;
 		};
 
 		//
@@ -754,41 +817,41 @@ namespace chaos
 			boost::intrusive_ptr<TileSet> tileset;
 		};
 
-    class TileInfo
-    {
-    public:
+		class TileInfo
+		{
+		public:
 
-      /** the final gid of the search tile */
-      int gid = 0;
-      /** the tileset considered */
-      TileSet * tileset = nullptr;
-    };
+			/** the final gid of the search tile */
+			int gid = 0;
+			/** the tileset considered */
+			TileSet * tileset = nullptr;
+		};
 
 		class Map : public ManagerObject
 		{
 			friend class Manager;
-      friend class TileSet;
+			friend class TileSet;
 
 			static int const ORIENTATION_ORTHOGONAL = 0;
-			static int const ORIENTATION_ISOMETRIC  = 1;
-			static int const ORIENTATION_STAGGERED  = 2;
-			static int const ORIENTATION_HEXAGONAL  = 3;
+			static int const ORIENTATION_ISOMETRIC = 1;
+			static int const ORIENTATION_STAGGERED = 2;
+			static int const ORIENTATION_HEXAGONAL = 3;
 
 			static int const STAGGERED_AXIS_X = 0;
 			static int const STAGGERED_AXIS_Y = 1;
 
-			static int const STAGGERED_INDEX_ODD  = 0;
+			static int const STAGGERED_INDEX_ODD = 0;
 			static int const STAGGERED_INDEX_EVEN = 1;
 
-			static int const RENDER_ORDER_RIGHT_UP   = 0;
+			static int const RENDER_ORDER_RIGHT_UP = 0;
 			static int const RENDER_ORDER_RIGHT_DOWN = 1;
-			static int const RENDER_ORDER_LEFT_UP    = 2;
-			static int const RENDER_ORDER_LEFT_DOWN  = 3;
+			static int const RENDER_ORDER_LEFT_UP = 2;
+			static int const RENDER_ORDER_LEFT_DOWN = 3;
 
 		protected:
 
 			/** the constructor */
-			Map(class Manager * in_manager, boost::filesystem::path in_path);
+			Map(BaseObject * in_owner, boost::filesystem::path in_path);
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** get the name of the expected markup */
@@ -805,10 +868,10 @@ namespace chaos
 			/** load the object groups */
 			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
 
-      /** find tileset data for a given gid */
-      TileInfo FindTileInfo(int gid);
-      /** find tileset data for a given gid */
-      TileInfo const FindTileInfo(int gid) const;
+			/** find tileset data for a given gid */
+			TileInfo FindTileInfo(int gid);
+			/** find tileset data for a given gid */
+			TileInfo const FindTileInfo(int gid) const;
 
 		public:
 
@@ -847,12 +910,15 @@ namespace chaos
 		// Manager : container for maps and tileset
 		//
 
-		class Manager
+		class Manager : public BaseObject
 		{
 			friend class Map;
 			friend class TileSet;
 
 		public:
+
+			/** constructor */
+			Manager() : BaseObject(nullptr) {}
 
 			/** load a tiled map set */
 			Map * LoadMap(boost::filesystem::path path);
@@ -898,7 +964,6 @@ namespace chaos
 			/** the assets */
 			std::vector<boost::intrusive_ptr<TileSet>> tile_sets;
 		};
-
 
 	}; // namespace TiledMap
 

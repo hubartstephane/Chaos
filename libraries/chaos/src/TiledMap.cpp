@@ -53,6 +53,27 @@ namespace chaos
 		}
 
 		//
+		// BaseObject methods
+		//
+
+		boost::filesystem::path BaseObject::GetOwnerPath() const
+		{
+			// XXX : order is important, because some tilesets are embedded inside a Map directly
+			//       and so their real path is given by MAP->GetPath()
+
+			// try to get the map
+			Map const * map = GetOwner<Map>();
+			if (map != nullptr)
+				return map->GetPath();
+			// try to get the tileset
+			TileSet const * tileset = GetOwner<TileSet>();
+			if (tileset != nullptr)
+				return tileset->GetPath();
+			// default path
+			return boost::filesystem::path();
+		}
+
+		//
 		// PropertyOwner methods
 		//
 
@@ -123,7 +144,7 @@ namespace chaos
 
 		PropertyInt * PropertyOwner::DoInsertProperty(char const * name, int value)
 		{
-			PropertyInt * result = new PropertyInt;
+			PropertyInt * result = new PropertyInt(this);
 			if (result != nullptr)
 			{
 				result->name = name;
@@ -135,7 +156,7 @@ namespace chaos
 
 		PropertyFloat * PropertyOwner::DoInsertProperty(char const * name, float value)
 		{
-			PropertyFloat * result = new PropertyFloat;
+			PropertyFloat * result = new PropertyFloat(this);
 			if (result != nullptr)
 			{
 				result->name = name;
@@ -147,7 +168,7 @@ namespace chaos
 
 		PropertyBool * PropertyOwner::DoInsertProperty(char const * name, bool value)
 		{
-			PropertyBool * result = new PropertyBool;
+			PropertyBool * result = new PropertyBool(this);
 			if (result != nullptr)
 			{
 				result->name = name;
@@ -159,7 +180,7 @@ namespace chaos
 
 		PropertyString * PropertyOwner::DoInsertProperty(char const * name, char const * value)
 		{
-			PropertyString * result = new PropertyString;
+			PropertyString * result = new PropertyString(this);
 			if (result != nullptr)
 			{
 				result->name = name;
@@ -360,7 +381,12 @@ namespace chaos
 					return false;
 				if (!XMLTools::ReadAttribute(image_element, "height", image_size.y))
 					return false;
+
+				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
 			}
+
+			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
+
 			return true;
 		}
 
@@ -368,11 +394,11 @@ namespace chaos
 		// ManagerObject methods
 		//
 
-		ManagerObject::ManagerObject(class Manager * in_manager, boost::filesystem::path in_path) :
-			manager(in_manager),
+		ManagerObject::ManagerObject(BaseObject * in_owner, boost::filesystem::path in_path) :
+			PropertyOwner(in_owner),
 			path(std::move(in_path))
 		{
-			assert(in_manager != nullptr);
+			
 		}
 
 		bool ManagerObject::IsMatchingName(boost::filesystem::path const & in_path) const
@@ -437,9 +463,8 @@ namespace chaos
 				XMLTools::ReadAttribute(image_source, "width", size.x);
 				XMLTools::ReadAttribute(image_source, "height", size.y);
 
-				boost::filesystem::path source;
-				XMLTools::ReadAttribute(image_source, "source", source);
-				image_path = BoostTools::FindAbsolutePath(map->GetPath(), source);
+				XMLTools::ReadAttribute(image_source, "source", image_path);
+				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
 			}
 			return true;
 		}
@@ -472,35 +497,35 @@ namespace chaos
 			// tile ?
 			int pseudo_gid = 0;
 			if (XMLTools::ReadAttribute(element, "gid", pseudo_gid)) // this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
-				return new GeometricObjectTile;
+				return new GeometricObjectTile(this);
 
 			// ellipse ?
 			tinyxml2::XMLElement const * ellipse_element = element->FirstChildElement("ellipse");
 			if (ellipse_element != nullptr)
-				return new GeometricObjectEllipse;
+				return new GeometricObjectEllipse(this);
 
 			// text ?
 			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
 			if (text_element != nullptr)
-				return new GeometricObjectText;
+				return new GeometricObjectText(this);
 
 			// polygon ?
 			tinyxml2::XMLElement const * polygon_element = element->FirstChildElement("polygon");
 			if (polygon_element != nullptr)
-				return new GeometricObjectPolygon;
+				return new GeometricObjectPolygon(this);
 
 			// polyline ?
 			tinyxml2::XMLElement const * polyline_element = element->FirstChildElement("polyline");
 			if (polyline_element != nullptr)
-				return new GeometricObjectPolyline;
+				return new GeometricObjectPolyline(this);
 
 			// point ?
 			tinyxml2::XMLElement const * point_element = element->FirstChildElement("point");
 			if (point_element != nullptr)      
-				return new GeometricObjectPoint;
+				return new GeometricObjectPoint(this);
 
 			// rectangle ?
-			return new GeometricObjectRectangle;
+			return new GeometricObjectRectangle(this);
 		}
 
 		bool ObjectLayer::DoLoadObjects(tinyxml2::XMLElement const * element)
@@ -578,13 +603,7 @@ namespace chaos
 				if (compression == "gzip")
 				{
 
-
-
-
-
-
-
-
+					// TODO
 
 				}
 				else if (compression == "zlib")
@@ -643,36 +662,22 @@ namespace chaos
 		// TileSet methods
 		//
 
-		TileSet::TileSet(class Manager * in_manager, boost::filesystem::path in_path) :
-			ManagerObject(in_manager, in_path)
+		TileSet::TileSet(BaseObject * in_owner, boost::filesystem::path in_path) :
+			ManagerObject(in_owner, in_path)
 		{
 
 		}
 
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
-			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes");
+			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes", this);
 		}
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
 		{
 			// load the tiles
-			if (!DoLoadObjectListHelper(element, tiles, "tile", nullptr))
+			if (!DoLoadObjectListHelper(element, tiles, "tile", nullptr, this))
 				return false;
-			// complete the path of the tiles
-			size_t count = tiles.size();
-			for (size_t i = 0 ; i < count ; ++i)
-			{
-				TileData * tile = tiles[i].get();
-				if (tile == nullptr)
-					continue;
-				if (tile->image_path.empty())
-					continue;
-				if (map != nullptr)
-					tile->image_path = BoostTools::FindAbsolutePath(map->GetPath(), tile->image_path); // embedded tileset
-				else
-					tile->image_path = BoostTools::FindAbsolutePath(GetPath(), tile->image_path); // external tileset
-			}
 			return true;
 		}
 
@@ -704,9 +709,8 @@ namespace chaos
 			tinyxml2::XMLElement const * image_element = element->FirstChildElement("image");
 			if (image_element != nullptr)
 			{
-				boost::filesystem::path source;
-				XMLTools::ReadAttribute(image_element, "source", source);
-				image_path = BoostTools::FindAbsolutePath(GetPath(), source);
+				XMLTools::ReadAttribute(image_element, "source", image_path);
+				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
 
 				ReadXMLColor(image_element, "trans", transparent_color);
 
@@ -732,8 +736,8 @@ namespace chaos
 		// Map methods
 		//
 
-		Map::Map(class Manager * in_manager, boost::filesystem::path in_path) :
-			ManagerObject(in_manager, in_path)
+		Map::Map(BaseObject * in_owner, boost::filesystem::path in_path) :
+			ManagerObject(in_owner, in_path)
 		{
 
 		}
@@ -803,6 +807,11 @@ namespace chaos
 		{
 			assert(element != nullptr);
 
+			// get the manager
+			Manager * manager = GetOwner<Manager>();
+			if (manager == nullptr)
+				return false;
+
 			tinyxml2::XMLElement const * tileset_element = element->FirstChildElement("tileset");
 			for (; tileset_element != nullptr; tileset_element = tileset_element->NextSiblingElement("tileset"))
 			{
@@ -826,10 +835,9 @@ namespace chaos
 				// embedded titleset
 				else
 				{
-					tileset = new TileSet(manager, boost::filesystem::path());
+					tileset = new TileSet(this, boost::filesystem::path());
 					if (tileset == nullptr)
 						return false;
-					tileset->map = this;
 
 					if (!tileset->DoLoad(tileset_element))
 					{

@@ -32,7 +32,7 @@ bool LoadTileMap(chaos::TiledMap::Manager & manager)
 	chaos::TiledMap::TileSet * map_set = nullptr;
 	chaos::TiledMap::Map * map = nullptr;
 
-#if 0
+#if 1
 
 	boost::filesystem::path set_path = resource_path / "Example1" / "tile set 1.tsx";
 	boost::filesystem::path map_path = resource_path / "Example1" / "tiled_map.tmx";

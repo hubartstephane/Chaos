@@ -370,6 +370,11 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "type", type);
 			XMLTools::ReadAttribute(element, "probability", probability);
 
+			std::string terrain;
+			if (XMLTools::ReadAttribute(element, "terrain", terrain))
+				if (!ComputeTerrainIndices(terrain.c_str()))
+					return false;
+
 			// some tilesets have a single image (representing an atlas with elements in a grid cells)
 			// some tilesets have individual images per tiles
 			tinyxml2::XMLElement const * image_element = element->FirstChildElement("image");
@@ -387,6 +392,41 @@ namespace chaos
 
 			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
 
+			return true;
+		}
+
+		// "0,,," => top left
+		// ",0,," => top right
+		// ",,0," => bottom left
+		// ",,,0" => bottom right
+		bool TileData::ComputeTerrainIndices(char const * str)
+		{
+			assert(str != nullptr);
+
+			// by default initialization
+			for (size_t index = 0; index < 4; ++index)
+				terrain_indices[index] = -1;
+
+			// parse the string
+			size_t index = 0;
+
+			size_t i = 0;
+			while (str[i] != 0)
+			{
+				if (str[i] >= '0' && str[i] <= '9')
+				{
+					terrain_indices[index] = atoi(&str[i]);
+					i = StringTools::SkipNumber(&str[i]) - str;
+					if (index == 4)
+						break;
+				}
+				else
+				{
+					if (str[i] == ',')
+						++index;
+					++i;
+				}
+			}
 			return true;
 		}
 

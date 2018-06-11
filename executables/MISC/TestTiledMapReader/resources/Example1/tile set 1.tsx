@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="tile_1" tilewidth="32" tileheight="32" spacing="6" margin="5" tilecount="43" columns="5" backgroundcolor="#010000">
+<tileset name="tile_1" tilewidth="32" tileheight="32" spacing="6" margin="5" tilecount="41" columns="5" backgroundcolor="#010000">
  <grid orientation="orthogonal" width="32" height="33"/>
  <image source="brick.jpg" trans="e278ff" width="225" height="225"/>
  <terraintypes>
-  <terrain name="groud1" tile="21">
-   <properties>
-    <property name="toto" type="int" value="15"/>
-   </properties>
-  </terrain>
+  <terrain name="terrain1" tile="23"/>
+  <terrain name="terrain2" tile="4"/>
+  <terrain name="terrain3" tile="13"/>
  </terraintypes>
- <tile id="21" terrain="0,0,,0">
+ <tile id="21">
   <objectgroup draworder="index" opacity="0.5">
    <object id="4" x="0.0795455" y="-4.5625" width="29.4375" height="31.4034">
     <ellipse/>
@@ -19,6 +17,8 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="22" terrain="0,2,0,0"/>
+ <tile id="23" terrain=",1,,1"/>
  <tile id="24">
   <objectgroup draworder="index">
    <object id="2" x="12" y="-2.36364">

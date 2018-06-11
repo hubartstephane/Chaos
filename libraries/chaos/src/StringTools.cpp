@@ -5,6 +5,17 @@ namespace chaos
 {
 	namespace StringTools
 	{
+		char const * SkipNumber(char const * c, bool inverted)
+		{
+			while (*c != 0)
+			{
+				if ((*c < '0' || *c > '9') ^ inverted) // all characters already skipped
+					break;
+				++c;
+			}
+			return c;
+		}
+
 		int SkipAndAtoi(char const * c)
 		{
 			while (*c != 0 && (*c < '0' || *c > '9'))

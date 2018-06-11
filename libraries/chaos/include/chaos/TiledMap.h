@@ -564,6 +564,8 @@ namespace chaos
 				PropertyOwner(in_owner) {}
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** initialize terrain indices from string */
+			bool ComputeTerrainIndices(char const * str);
 
 		public:
 
@@ -573,6 +575,9 @@ namespace chaos
 			std::string type;
 			/** object information */
 			float probability = 1.0f;
+
+			/** terrain index */
+			int terrain_indices[4] = { -1, -1, -1, -1 };
 
 			/** object information */
 			boost::filesystem::path image_path;

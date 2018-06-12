@@ -11,6 +11,9 @@
 #include <chaos/XMLTools.h>
 #include <chaos/TiledMap.h>
 #include <chaos/BoostTools.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/TextureArrayAtlas.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -36,6 +39,7 @@ protected:
 	virtual void Finalize() override
 	{
 		manager = nullptr;
+		texture_atlas = nullptr;
 
 
 	}
@@ -51,21 +55,94 @@ protected:
 
 	bool InitializeTiledMapManager()
 	{
+		// get the application
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 
-		boost::filesystem::path const & resource_path = application->GetResourcesPath();
+		// create and open a temp directory
+			boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
+#if _DEBUG
+			chaos::WinTools::ShowFile(user_temp);
+#endif
 
-		// create a tiled map
+		// create the manager
 		manager = new chaos::TiledMap::Manager;
 		if (manager == nullptr)
 			return false;
 
+		// load a tiled map
+		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-		chaos::TiledMap::Map * map = manager->LoadMap(resource_path / "Map" / "map.tmx");
+		map = manager->LoadMap(resource_path / "Map" / "map.tmx");
+		if (map == nullptr)
+			return false;
+
+		// generate the atlas
+		chaos::BitmapAtlas::AtlasInput input;
+
+		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
+		if (bitmap_set == nullptr)
+			return false;
+
+		// insert all images in any referenced TiledSet
+		for (size_t i = 0; i < map->image_layers.size(); ++i)
+		{
+			chaos::TiledMap::TileSet tile_set
 
 
+		}
+
+		// generate the atlas
+		int ATLAS_SIZE = 1024;
+		int ATLAS_PADDING = 10;
+		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+
+		chaos::BitmapAtlas::Atlas          atlas;
+		chaos::BitmapAtlas::AtlasGenerator generator;
+		if (!generator.ComputeResult(input, atlas, params))
+			return false;
+
+		// generate texture Atlas
+		texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+		if (texture_atlas == nullptr)
+			return false;
+		if (!texture_atlas->LoadFromBitmapAtlas(atlas))
+			return false;
+
+		// dump the atlas
+#if _DEBUG
+		atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
+#endif
+
+#if 0
+
+		// get the directory where the sprites are
+		std::string sprite_directory;
+		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
+
+		// get the path of the font
+		std::string font_path;
+		chaos::JSONTools::GetAttribute(config, "font_path", font_path);
+
+		std::string title_font_path;
+		chaos::JSONTools::GetAttribute(config, "title_font_path", title_font_path);
+
+		// Add sprites
+		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
+		if (bitmap_set == nullptr)
+			return false;
+
+		bitmap_set->AddBitmapFilesFromDirectory(sprite_directory);
+
+
+		chaos::BitmapAtlas
+
+		// enumerate all layers
+
+
+		map->object_layers.
+#endif
 
 #if 0
 		
@@ -87,6 +164,10 @@ protected:
 protected:
 
 	boost::intrusive_ptr<chaos::TiledMap::Manager> manager;
+
+	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+
+	chaos::TiledMap::Map * map = nullptr;
 };
 
 

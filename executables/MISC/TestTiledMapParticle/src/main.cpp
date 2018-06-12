@@ -55,15 +55,20 @@ protected:
 		if (application == nullptr)
 			return false;
 
+		boost::filesystem::path const & resource_path = application->GetResourcesPath();
+
 		// create a tiled map
 		manager = new chaos::TiledMap::Manager;
 		if (manager == nullptr)
 			return false;
 
 
+		chaos::TiledMap::Map * map = manager->LoadMap(resource_path / "Map" / "map.tmx");
+
+
 
 #if 0
-		boost::filesystem::path const & resource_path = application->GetResourcesPath();
+		
 
 
 		chaos::TiledMap::Map * map = nullptr;

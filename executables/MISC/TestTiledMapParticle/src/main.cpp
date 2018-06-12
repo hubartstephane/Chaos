@@ -13,37 +13,6 @@
 #include <chaos/BoostTools.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
-
-// tiled_map : it use tile set that are ordered
-//             each tile as a number that correspond to 
-//             - a tileset.
-//             - a tile in the tileset
-// in a tile_set
-//    top-left = 1
-
-bool LoadTileMap(chaos::TiledMap::Manager & manager)
-{
-
-	chaos::Application * application = chaos::Application::GetInstance();
-	if (application == nullptr)
-		return false;
-
-	boost::filesystem::path const & resource_path = application->GetResourcesPath();
-
-
-	chaos::TiledMap::Map * map = nullptr;
-
-	boost::filesystem::path map_path = resource_path / "Map" / "map.tmx";
-
-
-
-	chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(map_path, false);
-	if (buffer1 != nullptr)
-		map = manager.LoadMap(map_path, buffer1);
-
-	return (map != nullptr);
-}
-
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
@@ -66,28 +35,53 @@ protected:
 
 	virtual void Finalize() override
 	{
+		manager = nullptr;
 
 
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		if (!InitializeTiledMapManager())
+			return false;
+
 
 		return true;
 	}
+
+	bool InitializeTiledMapManager()
+	{
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return false;
+
+		// create a tiled map
+		manager = new chaos::TiledMap::Manager;
+		if (manager == nullptr)
+			return false;
+
+
 
 #if 0
+		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-	virtual bool Main() override
-	{
-		chaos::TiledMap::Manager manager;
-		LoadTileMap(manager);
 
-		chaos::WinTools::PressToContinue();
+		chaos::TiledMap::Map * map = nullptr;
 
+		boost::filesystem::path map_path = resource_path / "Map" / "map.tmx";
+
+
+
+		chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(map_path, false);
+		if (buffer1 != nullptr)
+			map = manager.LoadMap(map_path, buffer1);
+#endif
 		return true;
 	}
-#endif
+
+protected:
+
+	boost::intrusive_ptr<chaos::TiledMap::Manager> manager;
 };
 
 

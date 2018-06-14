@@ -25,17 +25,77 @@ namespace chaos
 			character_sets.clear();
 		}
 
+		BitmapSetInput * AtlasInput::FindBitmapSetInput(char const * name)
+		{
+			size_t count = bitmap_sets.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				BitmapSetInput * input = bitmap_sets[i];
+				if (input == nullptr)
+					continue;
+				if (input->name == name)
+					return input;
+			}
+			return nullptr;
+		}
+
+		BitmapSetInput const * AtlasInput::FindBitmapSetInput(char const * name) const
+		{
+			size_t count = bitmap_sets.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				BitmapSetInput const * input = bitmap_sets[i];
+				if (input == nullptr)
+					continue;
+				if (input->name == name)
+					return input;
+			}
+			return nullptr;
+		}
+
 		BitmapSetInput * AtlasInput::AddBitmapSet(char const * name)
 		{
 			assert(name != nullptr);
 
-			BitmapSetInput * result = new BitmapSetInput;
-			if (result != nullptr)
+			BitmapSetInput * result = FindBitmapSetInput(name);
+			if (result == nullptr)
 			{
-				result->name = name;
-				bitmap_sets.push_back(result);
+				result = new BitmapSetInput;
+				if (result != nullptr)
+				{
+					result->name = name;
+					bitmap_sets.push_back(result);
+				}
 			}
 			return result;
+		}
+
+		CharacterSetInput * AtlasInput::FindCharacterSetInput(char const * name)
+		{
+			size_t count = character_sets.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				CharacterSetInput * input = character_sets[i];
+				if (input == nullptr)
+					continue;
+				if (input->name == name)
+					return input;
+			}
+			return nullptr;
+		}
+
+		CharacterSetInput const * AtlasInput::FindCharacterSetInput(char const * name) const
+		{
+			size_t count = character_sets.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				CharacterSetInput const * input = character_sets[i];
+				if (input == nullptr)
+					continue;
+				if (input->name == name)
+					return input;
+			}
+			return nullptr;
 		}
 
 		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, FT_Library library, char const * font_name, char const * characters, bool release_library, CharacterSetInputParams const & params)
@@ -77,67 +137,71 @@ namespace chaos
 			// if user does not provide a list of charset for the fonts, use this hard coded one
 			static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
 
-			CharacterSetInput * result = new CharacterSetInput;
-			if (result != nullptr)
+			CharacterSetInput * result = FindCharacterSetInput(name);
+			if (result == nullptr)
 			{
-				// set font size
-				// XXX : order is important. Face.size.metrics will not be initialized elsewhere
-				FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
-				if (error != 0)
+				result = new CharacterSetInput;
+				if (result != nullptr)
 				{
-					delete(result);
-					return nullptr;
-				}
-
-				// new character set input
-				result->name = name;
-				result->library = library;
-				result->face = face;
-				result->release_library = release_library;
-				result->release_face = release_face;
-				result->max_character_width = params.max_character_width;
-				result->max_character_height = params.max_character_height;
-				result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
-				result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
-				result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
-
-																		  // generate glyph cache
-				if (characters == nullptr || strlen(characters) == 0)
-					characters = DEFAULT_CHARACTERS;
-
-				std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
-
-				// transforms each entry of the glyph map into a bitmap
-				for (auto & glyph : glyph_cache)
-				{
-					int w = glyph.second.bitmap_glyph->bitmap.width;
-					int h = glyph.second.bitmap_glyph->bitmap.rows;
-
-					FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::FORMAT_RGBA);
-					if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The entry is still interesting                                          
+					// set font size
+					// XXX : order is important. Face.size.metrics will not be initialized elsewhere
+					FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
+					if (error != 0)
 					{
-						char name[] = " ";
-						sprintf_s(name, 2, "%c", glyph.first);
-
-						CharacterEntryInput entry;
-						entry.name = name;
-						entry.tag = glyph.first;
-						if (bitmap != nullptr)
-							entry.description = ImageTools::GetImageDescription(bitmap);
-						entry.bitmap = bitmap;
-						entry.release_bitmap = true;
-						entry.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
-						entry.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
-						entry.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
-						result->elements.push_back(entry);
+						delete(result);
+						return nullptr;
 					}
+
+					// new character set input
+					result->name = name;
+					result->library = library;
+					result->face = face;
+					result->release_library = release_library;
+					result->release_face = release_face;
+					result->max_character_width = params.max_character_width;
+					result->max_character_height = params.max_character_height;
+					result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
+					result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
+					result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
+
+																																		// generate glyph cache
+					if (characters == nullptr || strlen(characters) == 0)
+						characters = DEFAULT_CHARACTERS;
+
+					std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
+
+					// transforms each entry of the glyph map into a bitmap
+					for (auto & glyph : glyph_cache)
+					{
+						int w = glyph.second.bitmap_glyph->bitmap.width;
+						int h = glyph.second.bitmap_glyph->bitmap.rows;
+
+						FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::FORMAT_RGBA);
+						if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The entry is still interesting                                          
+						{
+							char name[] = " ";
+							sprintf_s(name, 2, "%c", glyph.first);
+
+							CharacterEntryInput entry;
+							entry.name = name;
+							entry.tag = glyph.first;
+							if (bitmap != nullptr)
+								entry.description = ImageTools::GetImageDescription(bitmap);
+							entry.bitmap = bitmap;
+							entry.release_bitmap = true;
+							entry.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
+							entry.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
+							entry.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
+							result->elements.push_back(entry);
+						}
+					}
+
+					// release the glyph cache 
+					for (auto & glyph : glyph_cache)
+						FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
+
+					character_sets.push_back(result);
 				}
-
-				// release the glyph cache 
-				for (auto & glyph : glyph_cache)
-					FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
-
-				character_sets.push_back(result);
 			}
 			return result;
 		}

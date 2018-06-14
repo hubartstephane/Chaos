@@ -146,6 +146,16 @@ namespace chaos
 			/** insert a Bitmap set inside the input */
 			BitmapSetInput * AddBitmapSet(char const * name);
 
+			/** find a bitmap set from its name */
+			BitmapSetInput * FindBitmapSetInput(char const * name);
+			/** find a bitmap set from its name */
+			BitmapSetInput const * FindBitmapSetInput(char const * name) const;
+
+			/** find a character set from its name */
+			CharacterSetInput * FindCharacterSetInput(char const * name);
+			/** find a character set from its name */
+			CharacterSetInput const * FindCharacterSetInput(char const * name) const;
+
 			/** Add a character set */
 			CharacterSetInput * AddCharacterSet(
 				char const * name,

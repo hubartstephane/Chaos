@@ -53,6 +53,56 @@ protected:
 		return true;
 	}
 
+	bool InitializeAtlasInput(chaos::TiledMap::Manager * const manager, chaos::BitmapAtlas::AtlasInput & input, char const * set_name = "sprites")
+	{
+		assert(set_name != nullptr);
+
+		// create the BitmapSetInput (if not already existing)
+		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet(set_name);
+		if (bitmap_set == nullptr)
+			return false;
+
+		// insert all images in any referenced in TiledSet
+		size_t tile_set_count = manager->tile_sets.size();
+		for (size_t i = 0; i < tile_set_count; ++i)
+		{
+			chaos::TiledMap::TileSet const * tile_set = manager->tile_sets[i].get();
+			if (tile_set == nullptr)
+				continue;
+
+			// the 'single' image for the whole tile set
+			if (tile_set->image_path.size() > 0)
+				bitmap_set->AddBitmapFile(tile_set->image_path, nullptr, 0);
+
+			// enumerate all TileData
+			size_t tile_count = tile_set->tiles.size();
+			for (size_t j = 0; j < tile_count; ++j)
+			{
+				chaos::TiledMap::TileData const * tile_data = tile_set->tiles[j].get();
+				if (tile_data == nullptr)
+					continue;
+				if (tile_data->image_path.size() > 0)
+					bitmap_set->AddBitmapFile(tile_data->image_path, nullptr, 0);
+			}
+		}
+
+		// images in the map
+		size_t image_layer = map->image_layers.size();
+		for (size_t i = 0; i < image_layer; ++i)
+		{
+			chaos::TiledMap::ImageLayer const * image_layer = map->image_layers[i].get();
+			if (image_layer != nullptr)
+				continue;
+			if (image_layer->image_path.size() > 0)
+				bitmap_set->AddBitmapFile(image_layer->image_path, nullptr, 0);
+		}
+		return true;
+	}
+
+
+
+
+
 	bool InitializeTiledMapManager()
 	{
 		// get the application
@@ -80,39 +130,8 @@ protected:
 
 		// generate the atlas
 		chaos::BitmapAtlas::AtlasInput input;
-
-		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
-		if (bitmap_set == nullptr)
+		if (!InitializeAtlasInput(manager.get(), input, "sprites"))
 			return false;
-
-		// insert all images in any referenced TiledSet
-		size_t tile_set_count = manager->tile_sets.size();
-		for (size_t i = 0; i < tile_set_count; ++i)
-		{
-			chaos::TiledMap::TileSet const * tile_set = manager->tile_sets[i].get();
-			if (tile_set == nullptr)
-				continue;
-
-			size_t tile_count = tile_set->tiles.size();
-			for (size_t j = 0; j < tile_count; ++j)
-			{
-				chaos::TiledMap::TileData * tile_data = tile_set->tiles[j].get();
-				if (tile_data == nullptr)
-					continue;
-				if (tile_data->image_path.size() > 0)
-					bitmap_set->AddBitmapFile(tile_data->image_path, nullptr, 0);
-			}
-		}
-
-		size_t image_layer = map->image_layers.size();
-		for (size_t i = 0; i < image_layer ; ++i)
-		{
-			chaos::TiledMap::ImageLayer * image_layer = map->image_layers[i].get();
-			if (image_layer != nullptr)
-				continue;
-			if (image_layer->image_path.size() > 0)
-				bitmap_set->AddBitmapFile(image_layer->image_path, nullptr, 0);
-		}
 
 		// generate the atlas
 		int ATLAS_SIZE = 1024;
@@ -136,49 +155,6 @@ protected:
 		atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
 #endif
 
-#if 0
-
-		// get the directory where the sprites are
-		std::string sprite_directory;
-		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
-
-		// get the path of the font
-		std::string font_path;
-		chaos::JSONTools::GetAttribute(config, "font_path", font_path);
-
-		std::string title_font_path;
-		chaos::JSONTools::GetAttribute(config, "title_font_path", title_font_path);
-
-		// Add sprites
-		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
-		if (bitmap_set == nullptr)
-			return false;
-
-		bitmap_set->AddBitmapFilesFromDirectory(sprite_directory);
-
-
-		chaos::BitmapAtlas
-
-		// enumerate all layers
-
-
-		map->object_layers.
-#endif
-
-#if 0
-		
-
-
-		chaos::TiledMap::Map * map = nullptr;
-
-		boost::filesystem::path map_path = resource_path / "Map" / "map.tmx";
-
-
-
-		chaos::Buffer<char> buffer1 = chaos::FileTools::LoadFile(map_path, false);
-		if (buffer1 != nullptr)
-			map = manager.LoadMap(map_path, buffer1);
-#endif
 		return true;
 	}
 

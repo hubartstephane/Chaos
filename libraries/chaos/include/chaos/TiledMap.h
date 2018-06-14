@@ -962,7 +962,7 @@ namespace chaos
 			/** internal method to load a tiled map (with no search for exisiting items) */
 			TileSet * DoLoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
 
-		protected:
+		public:
 
 			/** the maps */
 			std::vector<boost::intrusive_ptr<Map>> maps;

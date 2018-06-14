@@ -86,11 +86,32 @@ protected:
 			return false;
 
 		// insert all images in any referenced TiledSet
-		for (size_t i = 0; i < map->image_layers.size(); ++i)
+		size_t tile_set_count = manager->tile_sets.size();
+		for (size_t i = 0; i < tile_set_count; ++i)
 		{
-			chaos::TiledMap::TileSet tile_set
+			chaos::TiledMap::TileSet const * tile_set = manager->tile_sets[i].get();
+			if (tile_set == nullptr)
+				continue;
 
+			size_t tile_count = tile_set->tiles.size();
+			for (size_t j = 0; j < tile_count; ++j)
+			{
+				chaos::TiledMap::TileData * tile_data = tile_set->tiles[j].get();
+				if (tile_data == nullptr)
+					continue;
+				if (tile_data->image_path.size() > 0)
+					bitmap_set->AddBitmapFile(tile_data->image_path, nullptr, 0);
+			}
+		}
 
+		size_t image_layer = map->image_layers.size();
+		for (size_t i = 0; i < image_layer ; ++i)
+		{
+			chaos::TiledMap::ImageLayer * image_layer = map->image_layers[i].get();
+			if (image_layer != nullptr)
+				continue;
+			if (image_layer->image_path.size() > 0)
+				bitmap_set->AddBitmapFile(image_layer->image_path, nullptr, 0);
 		}
 
 		// generate the atlas

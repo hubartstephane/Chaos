@@ -71,9 +71,9 @@ namespace chaos
 	public:
 
 		/** the type of the components */
-		int component_type{ TYPE_UNKNOWN };
+		int component_type = TYPE_UNKNOWN;
 		/** the number of components for each pixels */
-		int component_count{ 0 };		
+		int component_count = 0;		
 	};
 
 	/**
@@ -88,11 +88,11 @@ namespace chaos
 		/** if valid, the resulting pixel format should be set to this */
 		PixelFormat pixel_format;
 		/** if false the pixel_format cannot be 'upgraded' with incomming format */
-		bool upgrade_pixel_format{false};
+		bool upgrade_pixel_format = false;
 		/** if set to false, all luminances formats will become RGB */
-		bool accept_luminance{true};
+		bool accept_luminance = true;
 		/** if set to false, all float formats will become unsigned char */
-		bool accept_float{true};	
+		bool accept_float = true;	
 	};
 
 	/**
@@ -119,7 +119,7 @@ namespace chaos
 		/** the result */
 		PixelFormat result;
 		/** whether a valid result is available */
-		bool result_is_available{false};
+		bool result_is_available = false;
 		/** the parameter for the merge */
 		PixelFormatMergeParams params;
 	};

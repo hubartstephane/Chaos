@@ -278,7 +278,7 @@ namespace chaos
 			/** make destructor virtual */
 			virtual ~AtlasGenerator() = default;
 			/** compute all BitmapEntry positions */
-			bool ComputeResult(AtlasInput & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+			bool ComputeResult(AtlasInput const & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
 			std::vector<unique_bitmap_ptr> GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const;
 			/** create an atlas from a directory into another directory */
@@ -336,7 +336,7 @@ namespace chaos
 			/** the params for generation */
 			AtlasGeneratorParams params;
 			/** the input files */
-			AtlasInput  * input = nullptr;
+			AtlasInput const * input = nullptr;
 			/** the result */
 			Atlas       * output = nullptr;
 			/** all definitions */

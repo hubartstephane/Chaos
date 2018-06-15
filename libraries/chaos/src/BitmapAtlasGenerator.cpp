@@ -548,7 +548,7 @@ namespace chaos
 			}
 		}
 
-		bool AtlasGenerator::ComputeResult(AtlasInput & in_input, Atlas & in_output, AtlasGeneratorParams const & in_params)
+		bool AtlasGenerator::ComputeResult(AtlasInput const & in_input, Atlas & in_output, AtlasGeneratorParams const & in_params)
 		{
 			// clear generator from previous usage
 			Clear();

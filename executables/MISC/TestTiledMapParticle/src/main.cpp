@@ -56,11 +56,6 @@ protected:
 
 	chaos::BitmapAtlas::TextureArrayAtlas * GenerateTextureAtlas(chaos::TiledMap::Manager * const manager)
 	{
-		// get the application
-		chaos::Application * application = chaos::Application::GetInstance();
-		if (application == nullptr)
-			return nullptr;
-
 		// fill the input
 		chaos::BitmapAtlas::AtlasInput input;
 		if (!chaos::TiledMapTools::GenerateAtlasInput(manager, input, "sprites"))
@@ -71,24 +66,12 @@ protected:
 		int ATLAS_PADDING = 10;
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
-		chaos::BitmapAtlas::Atlas          atlas;
-		chaos::BitmapAtlas::AtlasGenerator generator;
-		if (!generator.ComputeResult(input, atlas, params))
-			return nullptr;
-
-		// generate texture Atlas
-		chaos::BitmapAtlas::TextureArrayAtlas * result = new chaos::BitmapAtlas::TextureArrayAtlas;
-		if (result == nullptr)
-			return nullptr;
-		if (!result->LoadFromBitmapAtlas(atlas))
-			return false;
-
-		// dump the atlas
 #if _DEBUG
-		atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
+		params.debug_dump_atlas_dirname = "Atlas";
 #endif
 
-		return result;
+		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+		return generator.ComputeResult(input, params);
 	}
 
 	bool InitializeTiledMapManager()
@@ -119,10 +102,6 @@ protected:
 		texture_atlas = GenerateTextureAtlas(manager.get());
 		if (texture_atlas == nullptr)
 			return false;
-
-
-
-
 
 		return true;
 	}

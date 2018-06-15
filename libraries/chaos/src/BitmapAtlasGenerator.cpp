@@ -3,6 +3,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
+#include <chaos/Application.h>
 
 namespace chaos
 {
@@ -621,9 +622,17 @@ namespace chaos
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
 					output->atlas_count = (int)output->bitmaps.size();
 					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
-#if 0 && _DEBUG
+#if _DEBUG
+#if 0
 					output->OutputAtlasSpaceOccupation(std::cout);
 					output->OutputInfo(std::cout);
+#endif
+					if (params.debug_dump_atlas_dirname.size() > 0) // dump the atlas
+					{
+						Application * application = Application::GetInstance();
+						if (application != nullptr)
+							in_output.SaveAtlas(application->GetUserLocalTempPath() / params.debug_dump_atlas_dirname.c_str());
+					}
 #endif
 					return true;
 				}
@@ -858,6 +867,32 @@ namespace chaos
 				return atlas.SaveAtlas(path);
 			return false;
 		}
-	};
-};
+
+		// ========================================================================
+		// TextureArrayAtlasGenerator implementation
+		// ========================================================================
+
+		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
+		{
+			// generate a standard atlas to be converted
+			chaos::BitmapAtlas::Atlas          atlas;
+			chaos::BitmapAtlas::AtlasGenerator generator;
+			if (!generator.ComputeResult(in_input, atlas, in_params))
+				return nullptr;
+
+			// generate texture Atlas
+			chaos::BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;
+			if (result == nullptr)
+				return nullptr;
+			if (!result->LoadFromBitmapAtlas(atlas))
+			{
+				delete(result);
+				return nullptr;
+			}
+			return result;
+		}
+
+	}; // namespace BitmapAtlas
+
+}; // namespace chaos
 

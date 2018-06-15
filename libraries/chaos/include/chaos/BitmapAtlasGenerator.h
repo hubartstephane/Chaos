@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/TextureArrayAtlas.h>
 #include <chaos/NamedObject.h>
 #include <chaos/FontTools.h>
 #include <chaos/ImageDescription.h>
@@ -225,6 +226,11 @@ namespace chaos
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 			/** parameters for merging different pixel format */
 			PixelFormatMergeParams merge_params;
+
+#if _DEBUG
+			/** when generating an atlas, this may dump into a file */
+			std::string debug_dump_atlas_dirname;
+#endif
 		};
 
 		/**
@@ -338,9 +344,26 @@ namespace chaos
 			/** the input files */
 			AtlasInput const * input = nullptr;
 			/** the result */
-			Atlas       * output = nullptr;
+			Atlas * output = nullptr;
 			/** all definitions */
 			std::vector<AtlasDefinition> atlas_definitions;
 		};
-	};
-};
+
+		/**
+		* TextureArrayAtlasGenerator 
+		*/
+
+		class TextureArrayAtlasGenerator
+		{
+
+		public:
+
+			/** make destructor virtual */
+			virtual ~TextureArrayAtlasGenerator() = default;
+			/** compute all BitmapEntry positions */
+			TextureArrayAtlas * ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+		};
+
+	}; // namespace BitmapAtlas
+
+}; // namespace chaos

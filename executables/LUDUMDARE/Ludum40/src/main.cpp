@@ -83,6 +83,16 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{   
+		// open user temp directory and dump the config file
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application != nullptr)
+		{
+			boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory();
+#if _DEBUG
+			chaos::WinTools::ShowFile(user_temp);
+#endif
+		}
+
 		game = new Game;
 		if (game == nullptr)
 			return false;

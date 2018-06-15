@@ -404,7 +404,7 @@ void Game::Finalize()
 {
 	sprite_layers.clear();
 	object_definitions.clear();
-	texture_atlas.Clear();
+	texture_atlas = nullptr;
 
 	fullscreen_mesh = nullptr;
 
@@ -464,7 +464,7 @@ bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
 bool Game::InitializeSpriteManagers()
 {
 	chaos::SpriteManagerInitParams sprite_params;
-	sprite_params.atlas = &texture_atlas;
+	sprite_params.atlas = texture_atlas.get();
 
 	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
@@ -557,6 +557,10 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	int ATLAS_PADDING = 10;
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
+#if _DEBUG
+	params.debug_dump_atlas_dirname = "LudumAtlas";
+#endif
+
 	chaos::BitmapAtlas::AtlasInput input;
 
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
@@ -571,23 +575,9 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	}
 
 	// generate STD Atlas
-	chaos::BitmapAtlas::Atlas          atlas;
-	chaos::BitmapAtlas::AtlasGenerator generator;
-	if (!generator.ComputeResult(input, atlas, params))
-		return false;
-
-	// Display debug Atlas
-#if 0
-	boost::filesystem::path dst_p;
-	if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
-	{
-		atlas.SaveAtlas(dst_p / "LudumAtlas");
-		chaos::WinTools::ShowFile(dst_p);
-	}
-#endif
-
-	// generate texture Atlas
-	if (!texture_atlas.LoadFromBitmapAtlas(atlas))
+	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+	texture_atlas = generator.ComputeResult(input, params);
+	if (texture_atlas == nullptr)
 		return false;
 
 	return true;

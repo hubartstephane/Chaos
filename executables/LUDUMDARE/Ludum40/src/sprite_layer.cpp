@@ -68,7 +68,7 @@ bool ObjectDefinition::LoadFromJSON(nlohmann::json const & json_entry)
 // ======================================================================================
 
 GameInfo::GameInfo(class Game const & game):
-	texture_atlas(game.texture_atlas),
+	texture_atlas(game.texture_atlas.get()),
 	object_definitions(game.object_definitions),
 	world_box(game.GetWorldBox(false)),
 	world_box_padding(game.GetWorldBox(true))
@@ -203,7 +203,7 @@ std::vector<std::pair<int, size_t>> SpriteLayer::GetSpritePopulationStats(GameIn
 
 void SpriteLayer::PopulateSprites(GameInfo game_info, int count)
 {
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas->GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
 		return;
 
@@ -222,7 +222,7 @@ void SpriteLayer::PopulateSprites(GameInfo game_info, int count)
 
 void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, ObjectDefinition const & def)
 {
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas->GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
 		return;
 
@@ -365,7 +365,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 									// When we want to add data in GPU buffer, we have to Find texture data (may be costly)
 									// This algo uses another approch to avoid that
 
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas.GetBitmapSet("sprites");
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = game_info.texture_atlas->GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
 		return;
 

@@ -154,7 +154,7 @@ protected:
 
 	std::vector<SpriteLayer> sprite_layers;
 
-	chaos::BitmapAtlas::TextureArrayAtlas texture_atlas;
+	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 
 	std::vector<ObjectDefinition> object_definitions;
 

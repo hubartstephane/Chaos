@@ -14,6 +14,7 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
+#include <chaos/TiledMapTools.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -53,55 +54,42 @@ protected:
 		return true;
 	}
 
-	bool InitializeAtlasInput(chaos::TiledMap::Manager * const manager, chaos::BitmapAtlas::AtlasInput & input, char const * set_name = "sprites")
+	chaos::BitmapAtlas::TextureArrayAtlas * GenerateTextureAtlas(chaos::TiledMap::Manager * const manager)
 	{
-		assert(set_name != nullptr);
+		// get the application
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return nullptr;
 
-		// create the BitmapSetInput (if not already existing)
-		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet(set_name);
-		if (bitmap_set == nullptr)
+		// fill the input
+		chaos::BitmapAtlas::AtlasInput input;
+		if (!chaos::TiledMapTools::GenerateAtlasInput(manager, input, "sprites"))
+			return nullptr;
+
+		// generate the atlas
+		int ATLAS_SIZE = 1024;
+		int ATLAS_PADDING = 10;
+		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+
+		chaos::BitmapAtlas::Atlas          atlas;
+		chaos::BitmapAtlas::AtlasGenerator generator;
+		if (!generator.ComputeResult(input, atlas, params))
+			return nullptr;
+
+		// generate texture Atlas
+		chaos::BitmapAtlas::TextureArrayAtlas * result = new chaos::BitmapAtlas::TextureArrayAtlas;
+		if (result == nullptr)
+			return nullptr;
+		if (!result->LoadFromBitmapAtlas(atlas))
 			return false;
 
-		// insert all images in any referenced in TiledSet
-		size_t tile_set_count = manager->tile_sets.size();
-		for (size_t i = 0; i < tile_set_count; ++i)
-		{
-			chaos::TiledMap::TileSet const * tile_set = manager->tile_sets[i].get();
-			if (tile_set == nullptr)
-				continue;
+		// dump the atlas
+#if _DEBUG
+		atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
+#endif
 
-			// the 'single' image for the whole tile set
-			if (tile_set->image_path.size() > 0)
-				bitmap_set->AddBitmapFile(tile_set->image_path, nullptr, 0);
-
-			// enumerate all TileData
-			size_t tile_count = tile_set->tiles.size();
-			for (size_t j = 0; j < tile_count; ++j)
-			{
-				chaos::TiledMap::TileData const * tile_data = tile_set->tiles[j].get();
-				if (tile_data == nullptr)
-					continue;
-				if (tile_data->image_path.size() > 0)
-					bitmap_set->AddBitmapFile(tile_data->image_path, nullptr, 0);
-			}
-		}
-
-		// images in the map
-		size_t image_layer = map->image_layers.size();
-		for (size_t i = 0; i < image_layer; ++i)
-		{
-			chaos::TiledMap::ImageLayer const * image_layer = map->image_layers[i].get();
-			if (image_layer != nullptr)
-				continue;
-			if (image_layer->image_path.size() > 0)
-				bitmap_set->AddBitmapFile(image_layer->image_path, nullptr, 0);
-		}
-		return true;
+		return result;
 	}
-
-
-
-
 
 	bool InitializeTiledMapManager()
 	{
@@ -111,9 +99,9 @@ protected:
 			return false;
 
 		// create and open a temp directory
-			boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
+		boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
 #if _DEBUG
-			chaos::WinTools::ShowFile(user_temp);
+		chaos::WinTools::ShowFile(user_temp);
 #endif
 
 		// create the manager
@@ -128,32 +116,13 @@ protected:
 		if (map == nullptr)
 			return false;
 
-		// generate the atlas
-		chaos::BitmapAtlas::AtlasInput input;
-		if (!InitializeAtlasInput(manager.get(), input, "sprites"))
-			return false;
-
-		// generate the atlas
-		int ATLAS_SIZE = 1024;
-		int ATLAS_PADDING = 10;
-		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
-
-		chaos::BitmapAtlas::Atlas          atlas;
-		chaos::BitmapAtlas::AtlasGenerator generator;
-		if (!generator.ComputeResult(input, atlas, params))
-			return false;
-
-		// generate texture Atlas
-		texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+		texture_atlas = GenerateTextureAtlas(manager.get());
 		if (texture_atlas == nullptr)
 			return false;
-		if (!texture_atlas->LoadFromBitmapAtlas(atlas))
-			return false;
 
-		// dump the atlas
-#if _DEBUG
-		atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
-#endif
+
+
+
 
 		return true;
 	}

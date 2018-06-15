@@ -11,13 +11,13 @@ namespace chaos
 			texture = nullptr;
 		}
 
-		bool TextureArrayAtlas::LoadAtlas(boost::filesystem::path const & filename)
+		bool TextureArrayAtlas::LoadAtlas(FilePathParam const & path)
 		{
 			Clear();
 
 			// use a temporary standard atlas to load everything necessary from file
 			Atlas atlas;
-			if (!atlas.LoadAtlas(filename))
+			if (!atlas.LoadAtlas(path))
 				return false;
 			return LoadFromBitmapAtlas(atlas);
 		}

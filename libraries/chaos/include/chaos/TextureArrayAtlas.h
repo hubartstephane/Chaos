@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/Texture.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -15,7 +16,7 @@ namespace chaos
       /** the clearing method */
       virtual void Clear() override;
       /** load an atlas from an index file */
-      bool LoadAtlas(boost::filesystem::path const & filename);
+      bool LoadAtlas(FilePathParam const & path);
       /** generate a texture atlas from a standard atlas */
       bool LoadFromBitmapAtlas(Atlas const & atlas);
 

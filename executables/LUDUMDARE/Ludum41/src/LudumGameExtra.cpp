@@ -197,23 +197,14 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 	int ATLAS_PADDING = 10;
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
-	chaos::BitmapAtlas::Atlas          atlas;
-	chaos::BitmapAtlas::AtlasGenerator generator;
-	if (!generator.ComputeResult(input, atlas, params))
-		return false;
+#if _DEBUG
+	params.debug_dump_atlas_dirname = "LudumAtlas";
+#endif
 
-	// generate texture Atlas
-	texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+	texture_atlas = generator.ComputeResult(input, params);
 	if (texture_atlas == nullptr)
 		return false;
-	if (!texture_atlas->LoadFromBitmapAtlas(atlas))
-		return false;
-
-	// dump the atlas
-#if _DEBUG
-	chaos::Application * application = chaos::Application::GetInstance();
-	atlas.SaveAtlas(application->GetUserLocalTempPath() / "LudumAtlas");
-#endif
 
 	return true;
 }

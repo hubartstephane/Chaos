@@ -913,7 +913,7 @@ namespace chaos
 		TileInfo Map::FindTileInfo(int gid)
 		{
 			TileInfo result;
-			if (gid <= 0)
+			if (gid >= 0)
 			{
 				size_t count = tilesets.size();
 				for (size_t i = count ; i > 0; --i)
@@ -935,7 +935,7 @@ namespace chaos
 		TileInfo const Map::FindTileInfo(int gid) const
 		{
 			TileInfo result;
-			if (gid <= 0)
+			if (gid >= 0)
 			{
         size_t count = tilesets.size();
 				for (size_t i = count ; i > 0; --i)

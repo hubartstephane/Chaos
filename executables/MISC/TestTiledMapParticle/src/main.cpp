@@ -15,6 +15,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/TiledMapTools.h> 
+#include <chaos/ParticleManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -39,8 +40,10 @@ protected:
 
 	virtual void Finalize() override
 	{
-		manager = nullptr;
+		particle_manager = nullptr;
+		tiledmap_manager = nullptr;
 		texture_atlas = nullptr;
+		tiled_map = nullptr;
 
 
 	}
@@ -88,31 +91,78 @@ protected:
 #endif
 
 		// create the manager
-		manager = new chaos::TiledMap::Manager;
-		if (manager == nullptr)
+		tiledmap_manager = new chaos::TiledMap::Manager;
+		if (tiledmap_manager == nullptr)
 			return false;
 
 		// load a tiled map
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
-		map = manager->LoadMap(resource_path / "Map" / "map.tmx");
-		if (map == nullptr)
+		tiled_map = tiledmap_manager->LoadMap(resource_path / "Map" / "map.tmx");
+		if (tiled_map == nullptr)
 			return false;
 
-		texture_atlas = GenerateTextureAtlas(manager.get());
+		texture_atlas = GenerateTextureAtlas(tiledmap_manager.get());
 		if (texture_atlas == nullptr)
 			return false;
+
+
+
+		for (size_t i = 0; tiled_map->tile_layers.size(); ++i)
+		{
+			chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
+			if (tile_layer == nullptr)
+				continue;
+
+			glm::ivec2 size = tile_layer->size;
+
+			std::vector<int> tmp;
+
+			for (size_t j = 0; j < tile_layer->tile_indices.size(); ++j)
+			{
+				int tile_indice = tile_layer->tile_indices[j];
+				if (tile_indice == 0)
+					continue;
+
+				if (std::find(tmp.begin(), tmp.end(), tile_indice) != tmp.end())
+					continue;
+				tmp.push_back(tile_indice);
+
+
+				int x = j % size.x;
+				int y = j / size.x;
+
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
+
+
+				
+
+
+
+
+				tile_indice = tile_indice;
+			}
+			 
+		
+		}
+
+
+
+
+
 
 		return true;
 	}
 
 protected:
 
-	boost::intrusive_ptr<chaos::TiledMap::Manager> manager;
+	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+
+	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
 	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 
-	chaos::TiledMap::Map * map = nullptr;
+	chaos::TiledMap::Map * tiled_map = nullptr;
 };
 
 

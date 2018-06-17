@@ -873,6 +873,8 @@ namespace chaos
 			/** load the object groups */
 			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
 
+		public:
+
 			/** find tileset data for a given gid */
 			TileInfo FindTileInfo(int gid);
 			/** find tileset data for a given gid */

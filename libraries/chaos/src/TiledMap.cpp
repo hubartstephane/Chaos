@@ -925,6 +925,9 @@ namespace chaos
 					{
 						result.gid = 1 + (gid - data.first_gid);
 						result.tileset = data.tileset.get();
+						if (result.gid <= result.tileset->tiles.size())
+							result.tiledata = result.tileset->tiles[result.gid - 1].get();
+
 						return result;
 					}
 				}
@@ -947,6 +950,8 @@ namespace chaos
 					{
 						result.gid = 1 + (gid - data.first_gid);
 						result.tileset = data.tileset.get();
+						if (result.gid <= result.tileset->tiles.size())
+							result.tiledata = result.tileset->tiles[result.gid - 1].get();
 						return result;
 					}
 				}

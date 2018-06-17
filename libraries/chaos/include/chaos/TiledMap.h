@@ -830,6 +830,8 @@ namespace chaos
 			int gid = 0;
 			/** the tileset considered */
 			TileSet * tileset = nullptr;
+			/** the tiledata in the tileset considered */
+			TileData * tiledata = nullptr;
 		};
 
 		class Map : public ManagerObject

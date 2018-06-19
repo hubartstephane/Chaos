@@ -108,7 +108,7 @@ protected:
 
 
 
-		for (size_t i = 0; tiled_map->tile_layers.size(); ++i)
+		for (size_t i = 0; i < tiled_map->tile_layers.size(); ++i)
 		{
 			chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
 			if (tile_layer == nullptr)

@@ -777,6 +777,13 @@ namespace chaos
 
 		public:
 
+			/** find TileData from its id */
+			TileData * FindTileData(int gid);
+			/** find TileData from its id */
+			TileData const * FindTileData(int gid) const;
+
+		public:
+
 			/** object information */
 			std::string name;
 			/** object information */

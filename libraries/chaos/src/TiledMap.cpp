@@ -708,6 +708,34 @@ namespace chaos
 
 		}
 
+		TileData * TileSet::FindTileData(int gid)
+		{
+			size_t count = tiles.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				TileData * tile_data = tiles[i].get();
+				if (tile_data == nullptr)
+					continue;
+				if (tile_data->id == gid)
+					return tile_data;
+			}
+			return nullptr;
+		}
+
+		TileData const * TileSet::FindTileData(int gid) const
+		{
+			size_t count = tiles.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				TileData const * tile_data = tiles[i].get();
+				if (tile_data == nullptr)
+					continue;
+				if (tile_data->id == gid)
+					return tile_data;
+			}
+			return nullptr;
+		}
+
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
 			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes", this);
@@ -923,12 +951,14 @@ namespace chaos
 					TileSetData & data = tilesets[index];
 					if (gid >= data.first_gid)
 					{
-						result.gid = 1 + (gid - data.first_gid);
-						result.tileset = data.tileset.get();
-						if (result.gid <= result.tileset->tiles.size())
-							result.tiledata = result.tileset->tiles[result.gid - 1].get();
-
-						return result;
+						TileData * tiledata = data.tileset->FindTileData(gid - data.first_gid);
+						if (tiledata != nullptr)
+						{
+							result.gid     = (gid - data.first_gid);
+							result.tileset = data.tileset.get();
+							result.tiledata = tiledata;
+							return result;
+						}
 					}
 				}
 			}
@@ -948,11 +978,14 @@ namespace chaos
 					TileSetData const & data = tilesets[index];
 					if (gid >= data.first_gid)
 					{
-						result.gid = 1 + (gid - data.first_gid);
-						result.tileset = data.tileset.get();
-						if (result.gid <= result.tileset->tiles.size())
-							result.tiledata = result.tileset->tiles[result.gid - 1].get();
-						return result;
+						TileData * tiledata = data.tileset->FindTileData(gid - data.first_gid);
+						if (tiledata != nullptr)
+						{
+							result.gid = (gid - data.first_gid);
+							result.tileset = data.tileset.get();
+							result.tiledata = tiledata;
+							return result;
+						}
 					}
 				}
 			}

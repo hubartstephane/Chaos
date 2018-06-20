@@ -243,20 +243,6 @@ protected:
 	/** called whenever a challenge is completed */
 	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
 
-	/** templated method to add a layer */
-	template<typename TRAIT_TYPE, typename ...PARAMS>
-	chaos::ParticleLayer * AddParticleLayer(int render_order, int layer_id, char const * material_name, PARAMS... params)
-	{
-		chaos::ParticleLayerDesc * layer_desc = new chaos::TypedParticleLayerDesc<TRAIT_TYPE>(params...);
-		if (layer_desc == nullptr)
-			return nullptr;
-		return DoAddParticleLayer(layer_desc, render_order, layer_id, material_name);
-	}
-
-	/** the method to effectively fill a layer data */
-	chaos::ParticleLayer * DoAddParticleLayer(chaos::ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name);
-
-
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 	/** create a text for the challenge */

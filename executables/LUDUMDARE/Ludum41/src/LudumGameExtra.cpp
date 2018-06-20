@@ -513,32 +513,6 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	return true;
 }
 
-chaos::ParticleLayer * LudumGame::DoAddParticleLayer(chaos::ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name)
-{
-	// check entry
-	if (layer_desc == nullptr)
-		return nullptr;
-	// create the layer
-	chaos::ParticleLayer * layer = particle_manager->AddLayer(layer_desc);
-	if (layer == nullptr)
-		return nullptr;
-	// change layer render order / ID
-	layer->SetLayerID(layer_id);
-	layer->SetRenderOrder(render_order);
-	// set the material
-	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-	if (application != nullptr)
-	{
-		chaos::GPUResourceManager * manager = application->GetGPUResourceManager();
-		if (manager != nullptr)
-		{
-			chaos::RenderMaterial * material = manager->FindRenderMaterial(material_name);
-			layer->SetRenderMaterial(material);	
-		}
-	}
-	return layer;
-}
-
 void LudumGame::FillBackgroundLayer()
 {
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(BACKGROUND_LAYER_ID);
@@ -692,24 +666,24 @@ bool LudumGame::InitializeParticleManager()
 	int render_order = 0;
 
 	// create layers
-	AddParticleLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
-	AddParticleLayer<ParticleObjectTrait>(++render_order, BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
-	AddParticleLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
 
 	ParticleMovableObjectTrait movable_trait;
 	movable_trait.game = this;
-	AddParticleLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
+	particle_manager->AddLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
 
 	ParticleBrickTrait brick_trait;
 	brick_trait.game = this;
-	AddParticleLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject", brick_trait);
+	particle_manager->AddLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject", brick_trait);
 
 	ParticleLifeObjectTrait life_trait;
 	life_trait.game = this;
-	AddParticleLayer<ParticleLifeObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject", life_trait);
+	particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject", life_trait);
 
-	AddParticleLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
-	AddParticleLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
 	// fill the background
 	FillBackgroundLayer();

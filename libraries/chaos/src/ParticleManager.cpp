@@ -1,6 +1,8 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/GLTools.h>
 #include <chaos/DrawPrimitive.h>
+#include <chaos/GPUResourceManager.h>
+#include <chaos/MyGLFWSingleWindowApplication.h>
 
 namespace chaos
 {
@@ -505,6 +507,40 @@ namespace chaos
 		layers.push_back(result);
 		return result;
 	}
+
+	ParticleLayer * ParticleManager::AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name)
+	{
+		// find the optional RenderMaterial
+		RenderMaterial * render_material = nullptr;
+		if (material_name != nullptr)
+		{
+			MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+			if (application == nullptr)
+				return nullptr;
+			GPUResourceManager * resource_manager = application->GetGPUResourceManager();
+			if (resource_manager == nullptr)
+				return nullptr;
+			render_material = resource_manager->FindRenderMaterial(material_name);
+			if (render_material == nullptr)
+				return nullptr;
+		}
+		return AddLayer(layer_desc, render_order, layer_id, render_material);
+	}
+
+	ParticleLayer * ParticleManager::AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, RenderMaterial * render_material)
+	{
+		ParticleLayer * result = AddLayer(layer_desc);
+		if (result != nullptr)
+		{
+			// change layer render order / ID
+			result->SetLayerID(layer_id);
+			result->SetRenderOrder(render_order);
+			// change the material
+			result->SetRenderMaterial(render_material);
+		}
+		return result;
+	}
+
 
 	void ParticleManager::RemoveLayer(ParticleLayer * layer)
 	{

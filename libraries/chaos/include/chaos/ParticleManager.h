@@ -662,6 +662,32 @@ namespace chaos
 
 		/** create a layer and add it to the manager */
 		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc);
+
+		/** templated method to add a layer and set some values */
+		template<typename TRAIT_TYPE, typename ...PARAMS>
+		ParticleLayer * AddLayer(int render_order, int layer_id, char const * material_name, PARAMS... params)
+		{
+			ParticleLayerDesc * layer_desc = new TypedParticleLayerDesc<TRAIT_TYPE>(params...);
+			if (layer_desc == nullptr)
+				return nullptr;
+			return AddLayer(layer_desc, render_order, layer_id, material_name);
+		}
+
+		/** templated method to add a layer and set some values */
+		template<typename TRAIT_TYPE, typename ...PARAMS>
+		ParticleLayer * AddLayer(int render_order, int layer_id, RenderMaterial * render_material, PARAMS... params)
+		{
+			ParticleLayerDesc * layer_desc = new TypedParticleLayerDesc<TRAIT_TYPE>(params...);
+			if (layer_desc == nullptr)
+				return nullptr;
+			return AddLayer(layer_desc, render_order, layer_id, render_material);
+		}
+
+		/** templated method to add a layer and set some values */
+		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name);
+		/** templated method to add a layer and set some values */
+		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, RenderMaterial * render_material);
+
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayer * layer);
 

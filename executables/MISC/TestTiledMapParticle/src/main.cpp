@@ -53,8 +53,25 @@ protected:
 		if (!InitializeTiledMapManager())
 			return false;
 
+		if (!InitializeParticleManager())
+			return false;
+
+		if (!InitializeParticleMap())
+			return false;
+
 
 		return true;
+	}
+
+	bool InitializeParticleManager()
+	{
+		// create the manager
+		particle_manager = new chaos::ParticleManager();
+		if (particle_manager == nullptr)
+			return false;
+		particle_manager->SetTextureAtlas(texture_atlas.get());
+
+		return false;
 	}
 
 	chaos::BitmapAtlas::TextureArrayAtlas * GenerateTextureAtlas(chaos::TiledMap::Manager * const manager)
@@ -106,13 +123,18 @@ protected:
 		if (texture_atlas == nullptr)
 			return false;
 
+		return true;
+	}
 
-
+	bool InitializeParticleMap()
+	{
 		for (size_t i = 0; i < tiled_map->tile_layers.size(); ++i)
 		{
 			chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
 			if (tile_layer == nullptr)
 				continue;
+
+			chaos::ParticleLayer * particle_layer = nullptr;
 
 			glm::ivec2 size = tile_layer->size;
 
@@ -124,15 +146,17 @@ protected:
 				if (tile_indice == 0)
 					continue;
 
-				if (std::find(tmp.begin(), tmp.end(), tile_indice) != tmp.end())
-					continue;
-				tmp.push_back(tile_indice);
-
-
 				int x = j % size.x;
 				int y = j / size.x;
 
 				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
+				if (tile_info.tiledata != nullptr)
+				{
+
+
+
+
+				}
 
 
 				

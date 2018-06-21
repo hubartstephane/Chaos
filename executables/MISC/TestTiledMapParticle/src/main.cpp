@@ -16,6 +16,7 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/TiledMapTools.h> 
 #include <chaos/ParticleManager.h> 
+#include <chaos/ParticleDefault.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -69,9 +70,10 @@ protected:
 		particle_manager = new chaos::ParticleManager();
 		if (particle_manager == nullptr)
 			return false;
+		// set the atlas
 		particle_manager->SetTextureAtlas(texture_atlas.get());
 
-		return false;
+		return true;
 	}
 
 	chaos::BitmapAtlas::TextureArrayAtlas * GenerateTextureAtlas(chaos::TiledMap::Manager * const manager)
@@ -152,6 +154,15 @@ protected:
 				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 				if (tile_info.tiledata != nullptr)
 				{
+					if (particle_layer == nullptr)
+					{
+						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(0, 0, "base_rm");
+						if (particle_layer == nullptr)
+							return false;
+						chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(0);
+						if (allocation == nullptr)
+							return false;
+					}
 
 
 

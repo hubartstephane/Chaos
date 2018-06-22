@@ -165,7 +165,7 @@ protected:
 			// find corresponding material
 			chaos::RenderMaterial * material = gpu_manager->FindRenderMaterial(render_material_name);
 
-			material = material;
+
 
 
 
@@ -174,9 +174,6 @@ protected:
 			chaos::ParticleLayer * particle_layer = nullptr;
 
 			glm::ivec2 size = tile_layer->size;
-
-			std::vector<int> tmp;
-
 			for (size_t j = 0; j < tile_layer->tile_indices.size(); ++j)
 			{
 				int tile_indice = tile_layer->tile_indices[j];
@@ -191,7 +188,9 @@ protected:
 				{
 					if (particle_layer == nullptr)
 					{
-						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(0, 0, material);
+						int render_order = 0;
+						int layer_id = 0;
+						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, layer_id, material);
 						if (particle_layer == nullptr)
 							return false;
 						chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(0);

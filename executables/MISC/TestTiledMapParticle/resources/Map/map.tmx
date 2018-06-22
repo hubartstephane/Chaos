@@ -82,6 +82,9 @@
 </data>
  </layer>
  <layer name="characters" width="30" height="30">
+  <properties>
+   <property name="RenderMaterial" value="tile"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

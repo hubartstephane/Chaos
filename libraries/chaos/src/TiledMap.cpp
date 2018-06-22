@@ -81,7 +81,7 @@ namespace chaos
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (property->GetName() == name)
+				if (strcmp(property->GetName(), name) == 0)
 					return property.get();
 			return nullptr;
 		}
@@ -90,7 +90,7 @@ namespace chaos
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (property->GetName() == name)
+				if (strcmp(property->GetName(), name) == 0)
 					return property.get();
 			return nullptr;
 		}

@@ -19,6 +19,8 @@
 #include <chaos/ParticleDefault.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
+#define DUMP_DEBUG_DATA 0 // _DEBUG
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
@@ -88,7 +90,7 @@ protected:
 		int ATLAS_PADDING = 10;
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
-#if _DEBUG
+#if DUMP_DEBUG_DATA
 		params.debug_dump_atlas_dirname = "Atlas";
 #endif
 
@@ -105,7 +107,7 @@ protected:
 
 		// create and open a temp directory
 		boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
-#if _DEBUG
+#if DUMP_DEBUG_DATA
 		chaos::WinTools::ShowFile(user_temp);
 #endif
 
@@ -130,11 +132,44 @@ protected:
 
 	bool InitializeParticleMap()
 	{
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		if (application == nullptr)
+			return false;
+
+		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
+		if (gpu_manager == nullptr)
+			return false;
+
+		
+
+
+
+
 		for (size_t i = 0; i < tiled_map->tile_layers.size(); ++i)
 		{
 			chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
 			if (tile_layer == nullptr)
 				continue;
+
+			char const * render_material_name = "tile";
+
+			// find the rendermaterial name
+			chaos::TiledMap::Property const * render_material_property = tile_layer->FindProperty("RenderMaterial");
+			if (render_material_property != nullptr)
+			{
+				std::string const * property_value = render_material_property->GetStringProperty();
+				if (property_value != nullptr)
+					render_material_name = property_value->c_str();
+			}
+
+			// find corresponding material
+			chaos::RenderMaterial * material = gpu_manager->FindRenderMaterial(render_material_name);
+
+			material = material;
+
+
+
+
 
 			chaos::ParticleLayer * particle_layer = nullptr;
 
@@ -156,7 +191,7 @@ protected:
 				{
 					if (particle_layer == nullptr)
 					{
-						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(0, 0, "base_rm");
+						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(0, 0, material);
 						if (particle_layer == nullptr)
 							return false;
 						chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(0);

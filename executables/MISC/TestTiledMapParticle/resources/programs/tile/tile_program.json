@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@tile_pixel_shader.txt"
+	],
+	"vertex_sources":
+	[
+		"@tile_vertex_shader.txt"
+	]
+}

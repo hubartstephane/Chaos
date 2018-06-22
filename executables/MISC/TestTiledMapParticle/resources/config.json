@@ -1,0 +1,7 @@
+{
+  "window": {
+    "width": 1200,
+    "height": 600
+  },
+  "gpu":{"@filename":"@gpu.json"}
+}

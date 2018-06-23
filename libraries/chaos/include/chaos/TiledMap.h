@@ -91,6 +91,13 @@ namespace chaos
 
 		public:
 
+			/** types of particle */
+			static int const PROPERTY_TYPEID_ANY    = 0;
+			static int const PROPERTY_TYPEID_INT    = 1;
+			static int const PROPERTY_TYPEID_FLOAT  = 2;
+			static int const PROPERTY_TYPEID_BOOL   = 3;
+			static int const PROPERTY_TYPEID_STRING = 4;
+
 			/** constructor */
 			Property(BaseObject * in_owner) :
 				BaseObject(in_owner) {}
@@ -119,25 +126,32 @@ namespace chaos
 
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }
+			/** returns the property type */
+			int GetPropertyTypeID() const { return property_type_id; }
 
 		protected:
 
 			/** the name of the property */
 			std::string name;
+			/** the type of the property */
+			int property_type_id = PROPERTY_TYPEID_ANY;
 		};
 
 		//
 		// PropertyTemplate : templated specialization for properties
 		//
 
-		template<typename T>
+		template<typename T, int TYPE_ID>
 		class PropertyTemplate : public Property
 		{
 		public:
 
 			/** constructor */
 			PropertyTemplate(BaseObject * in_owner) :
-				Property(in_owner) {}
+				Property(in_owner)
+			{
+				property_type_id = TYPE_ID;
+			}
 
 			/** the type of the property */
 			typedef T property_type;
@@ -156,7 +170,7 @@ namespace chaos
 			virtual std::string const * GetStringProperty() const { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
 
 			/** returns the value of the property */
-			T GetValue() { return value; }
+			property_type GetValue() { return value; }
 
 		protected:
 
@@ -173,17 +187,17 @@ namespace chaos
 		public:
 
 			/** the value of the property */
-			T value;
+			property_type value;
 		};
 
 		//
 		// Specialization of properties
 		//
 
-		using PropertyInt = PropertyTemplate<int>;
-		using PropertyFloat = PropertyTemplate<float>;
-		using PropertyBool = PropertyTemplate<bool>;
-		using PropertyString = PropertyTemplate<std::string>;
+		using PropertyInt = PropertyTemplate<int, Property::PROPERTY_TYPEID_INT>;
+		using PropertyFloat = PropertyTemplate<float, Property::PROPERTY_TYPEID_FLOAT>;
+		using PropertyBool = PropertyTemplate<bool, Property::PROPERTY_TYPEID_BOOL>;
+		using PropertyString = PropertyTemplate<std::string, Property::PROPERTY_TYPEID_STRING>;
 
 		//
 		// PropertyOwner : some objects that have dynamic properties
@@ -200,9 +214,29 @@ namespace chaos
 				BaseObject(in_owner) {}
 
 			/** find property by name */
-			Property * FindProperty(char const * name);
+			Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
 			/** find property by name */
-			Property * FindProperty(char const * name) const;
+			Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
+
+			/** find a property of type int */
+			int * FindPropertyInt(char const * name);
+			/** find a property of type int */
+			int const * FindPropertyInt(char const * name) const;
+
+			/** find a property of type float */
+			float * FindPropertyFloat(char const * name);
+			/** find a property of type float */
+			float const * FindPropertyFloat(char const * name) const;
+
+			/** find a property of type bool */
+			bool * FindPropertyBool(char const * name);
+			/** find a property of type bool */
+			bool const * FindPropertyBool(char const * name) const;
+
+			/** find a property of type string */
+			std::string * FindPropertyString(char const * name);
+			/** find a property of type string */
+			std::string const * FindPropertyString(char const * name) const;
 
 		protected:
 

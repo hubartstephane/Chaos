@@ -151,16 +151,31 @@ protected:
 			if (tile_layer == nullptr)
 				continue;
 
+			
+
+			// find the render material name
 			char const * render_material_name = "tile";
 
-			// find the rendermaterial name
-			chaos::TiledMap::Property const * render_material_property = tile_layer->FindProperty("RenderMaterial");
+			std::string const * render_material_property = tile_layer->FindPropertyString("RenderMaterial");
 			if (render_material_property != nullptr)
-			{
-				std::string const * property_value = render_material_property->GetStringProperty();
-				if (property_value != nullptr)
-					render_material_name = property_value->c_str();
-			}
+				render_material_name = render_material_property->c_str();
+
+			// find the particle class
+			char const * particle_class_name = nullptr;
+
+			std::string const * particle_class_property = tile_layer->FindPropertyString("ParticleClass");
+			if (particle_class_property != nullptr)
+				particle_class_name = particle_class_property->c_str();
+
+			// find whether the layer is visible
+			bool visible = tile_layer->visible;
+
+			// find rendering order
+			int rendering_order = (int)i;
+
+			int const * rendering_order_property = tile_layer->FindPropertyInt("RenderingOrder");
+			if (rendering_order_property != nullptr)
+				rendering_order = *rendering_order_property;
 
 			// find corresponding material
 			chaos::RenderMaterial * material = gpu_manager->FindRenderMaterial(render_material_name);
@@ -188,14 +203,14 @@ protected:
 				{
 					if (particle_layer == nullptr)
 					{
-						int render_order = 0;
 						int layer_id = 0;
-						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, layer_id, material);
+						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(rendering_order, layer_id, material);
 						if (particle_layer == nullptr)
 							return false;
 						chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(0);
 						if (allocation == nullptr)
 							return false;
+						allocation->Show(visible);
 					}
 
 

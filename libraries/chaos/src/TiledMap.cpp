@@ -77,22 +77,88 @@ namespace chaos
 		// PropertyOwner methods
 		//
 
-		Property * PropertyOwner::FindProperty(char const * name)
+		Property * PropertyOwner::FindProperty(char const * name, int type_id)
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (strcmp(property->GetName(), name) == 0)
-					return property.get();
+				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
+					if (strcmp(property->GetName(), name) == 0)
+						return property.get();
 			return nullptr;
 		}
 
-		Property * PropertyOwner::FindProperty(char const * name) const
+		Property const * PropertyOwner::FindProperty(char const * name, int type_id) const
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (strcmp(property->GetName(), name) == 0)
-					return property.get();
+				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
+					if (strcmp(property->GetName(), name) == 0)
+						return property.get();
 			return nullptr;
+		}
+
+		int * PropertyOwner::FindPropertyInt(char const * name)
+		{
+			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_INT);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetIntProperty();
+		}
+
+		int const * PropertyOwner::FindPropertyInt(char const * name) const
+		{
+			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_INT);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetIntProperty();
+		}
+
+		float * PropertyOwner::FindPropertyFloat(char const * name)
+		{
+			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_FLOAT);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetFloatProperty();
+		}
+
+		float const * PropertyOwner::FindPropertyFloat(char const * name) const
+		{
+			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_FLOAT);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetFloatProperty();
+		}
+
+		bool * PropertyOwner::FindPropertyBool(char const * name)
+		{
+			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_BOOL);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetBoolProperty();
+		}
+
+		bool const * PropertyOwner::FindPropertyBool(char const * name) const
+		{
+			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_BOOL);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetBoolProperty();
+		}
+
+		std::string * PropertyOwner::FindPropertyString(char const * name)
+		{
+			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_STRING);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetStringProperty();
+		}
+
+		std::string const * PropertyOwner::FindPropertyString(char const * name) const
+		{
+			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_STRING);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetStringProperty();
 		}
 
 		bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)

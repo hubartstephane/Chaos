@@ -217,6 +217,9 @@ T max(T a, T b)
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
 
+// for forcefeedback
+//#	include "xinput.h"
+//# pragma comment(lib, "xinput.lib")
 
 #ifdef _MSC_VER
 #  pragma warning(pop)

@@ -25,6 +25,29 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
 
+	virtual bool Tick(double delta_time) override
+	{
+#if 0
+		// XINPUT1_4.dll
+
+		int gamepad = 0;
+
+		XINPUT_STATE xs;
+		if (XInputGetState(gamepad, &xs) == 0)
+		{
+			int left = 1;
+			int right = 1;
+
+			XINPUT_VIBRATION vib;
+			ZeroMemory(&vib, sizeof(vib));
+			vib.wLeftMotorSpeed = (WORD)(left * 65535);
+			vib.wRightMotorSpeed = (WORD)(right * 65535);
+			XInputSetState(gamepad, &vib);
+		}
+#endif
+		return false;
+	}
+
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);

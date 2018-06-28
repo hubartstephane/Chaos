@@ -15,7 +15,7 @@ namespace chaos
 		));
 
 		viewport = ShrinkBoxToAspect(viewport, aspect);
-    SetViewport(viewport);
+		SetViewport(viewport);
 		return viewport;
 	}
 

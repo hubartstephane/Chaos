@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/Texture.h>
 #include <chaos/GPUResource.h>
 
 namespace chaos
@@ -60,8 +61,26 @@ namespace chaos
 	};
 
 
+
+
 	class GPUFramebufferGenerator
 	{
+	public:
+
+		class AttachmentInfo
+		{
+		public:
+
+			/** the point of attachment */
+			GLenum attachment_point = GL_NONE;
+			/** the mipmap of concern */
+			int texture_mipmap = 0;
+			/** the texture of concern */
+			boost::intrusive_ptr<Texture> texture;
+			/** the texture of concern */
+			boost::intrusive_ptr<GPURenderbuffer> renderbuffer;
+		};
+
 	public:
 
 		/** generate the framebuffer */
@@ -70,10 +89,30 @@ namespace chaos
 		/** Clear the generator */
 		void Clear();
 
+		/** attachment */
+		bool AddColorAttachment(int color_index, GPURenderbuffer * render_buffer);
+		bool AddColorAttachment(int color_index, Texture * texture, int mipmap = 0);
+
+		bool AddDepthStencilAttachment(GPURenderbuffer * render_buffer);		
+		bool AddDepthStencilAttachment(Texture * texture, int mipmap = 0);
 
 
+		/** get the dimension of the framebuffer that will be generated */
+		glm::ivec2 GetSize() const;
 
+	protected:
 
+		/** test whether the color attachment is valid */
+		bool IsColorAttachmentValid(int color_index) const;
+		/** test whether the color attachment is used */
+		bool IsColorAttachmentInUse(int color_index) const;
+
+	protected:
+
+		/** the cached number of color attachments */
+		mutable GLint max_color_attachment = -1;
+		/** the stored attachment info */
+		std::vector<AttachmentInfo> attachment_info;
 	};
 
 

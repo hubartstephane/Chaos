@@ -23,6 +23,11 @@ namespace chaos
 		int    height = 0;
 		/** the image depth */
 		int    depth = 0;
+
+	public:
+
+		/** get the size of the texture */
+		glm::ivec2 GetSize(int mipmap = 0) const;
 	};
 
 	class Texture : public GPUFileResource

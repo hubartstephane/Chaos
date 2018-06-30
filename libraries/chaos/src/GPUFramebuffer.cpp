@@ -58,11 +58,14 @@ namespace chaos
 	{
 		GPUFramebuffer * result = nullptr;
 
+		GLuint framebuffer = 0;
+		glGenFramebuffers(1, &framebuffer);
+
+		if (framebuffer != 0)
+		{
 
 
-		
-
-
+		}
 		return result;
 	}
 
@@ -74,6 +77,15 @@ namespace chaos
 	glm::ivec2 GPUFramebufferGenerator::GetSize() const
 	{
 		glm::ivec2 result = glm::ivec2(-1, -1);
+		for (AttachmentInfo const & attachment : attachment_info)
+		{
+			if (attachment.texture != nullptr)
+				return attachment.texture->GetTextureDescription().GetSize(attachment.texture_mipmap);
+
+			
+
+
+		}
 
 
 		return result;
@@ -126,25 +138,18 @@ namespace chaos
 		glm::ivec2 size = GetSize();
 		if (size.x >= 0 && size.y > 0)
 		{
-			TextureDescription texture_description = texture->GetTextureDescription();
-
-			glm::ivec2 texture_size = glm::ivec2(
-				texture_description.width >> mipmap,
-				texture_description.height >> mipmap);			
+			glm::ivec2 texture_size = texture->GetTextureDescription().GetSize(mipmap);		
 			if (texture_size != size)
 				return false;
 		}
 
-		
+		// add an attachment
+		AttachmentInfo attachment;
+		attachment.attachment_point = color_index + GL_COLOR_ATTACHMENT0;
+		attachment.texture = texture;
+		attachment.texture_mipmap = mipmap;
 
-	
-	
-
-
-
-
-
-
+		attachment_info.push_back(attachment);
 
 		return true;
 	}
@@ -152,6 +157,10 @@ namespace chaos
 	bool GPUFramebufferGenerator::AddDepthStencilAttachment(GPURenderbuffer * render_buffer)
 	{
 		assert(render_buffer != nullptr);
+
+
+
+
 
 		return true;
 	}

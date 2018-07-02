@@ -23,9 +23,9 @@ namespace chaos
 
 	bool TextureArraySliceRegistry::IsImageSliceValid(ImageDescription const & description) const
 	{
-		if (!description.IsValid())
+		if (!description.IsValid(false))
 			return false;
-		if (description.IsEmpty())
+		if (description.IsEmpty(false))
 			return false;
 		return true;
 	}

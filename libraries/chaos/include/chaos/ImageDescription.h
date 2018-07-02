@@ -20,9 +20,9 @@ namespace chaos
 		ImageDescription(void * in_data, int in_width, int in_height, PixelFormat const & in_pixel_format, int in_padding = 0);
 
 		/** returns true whether the description is valid */
-		bool IsValid() const;
+		bool IsValid(bool accept_uninitialized_content) const;
 		/** returns true whether the image is empty */
-		bool IsEmpty() const;
+		bool IsEmpty(bool accept_uninitialized_content) const;
 		/** get the image information for a sub image */
 		ImageDescription GetSubImageDescription(int x, int y, int wanted_width, int wanted_height) const;
 

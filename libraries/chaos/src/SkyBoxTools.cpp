@@ -183,7 +183,7 @@ namespace chaos
 
 		// get the single image description
 		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[IMAGE_SINGLE]);
-		if (!src_image_desc.IsValid())
+		if (!src_image_desc.IsValid(false))
 			return result;
 
 		// the wanted size for every face
@@ -399,7 +399,7 @@ namespace chaos
 
 		// test whether the pixel format is supported
 		ImageDescription description = ImageTools::GetImageDescription(image);
-		if (!description.IsValid())
+		if (!description.IsValid(false))
 			return false;
 
 		if (image_type == IMAGE_SINGLE)

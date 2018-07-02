@@ -485,7 +485,7 @@ namespace chaos
 					continue;
 
 				ImageDescription image_desc = ImageTools::GetImageDescription(image);
-				if (!image_desc.IsValid())
+				if (!image_desc.IsValid(false))
 					continue;
 
 				FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);
@@ -516,7 +516,7 @@ namespace chaos
 						continue;
 
 					ImageDescription image_desc = ImageTools::GetImageDescription(image);
-					if (!image_desc.IsValid())
+					if (!image_desc.IsValid(false))
 						continue;
 
 					FREE_IMAGE_FORMAT image_format = ImageTools::GetFreeImageFormat(image_desc.pixel_format);

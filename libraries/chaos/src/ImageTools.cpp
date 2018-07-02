@@ -16,8 +16,8 @@ namespace chaos
 			dst_desc(in_dst_desc),
 			color(in_color)
 		{
-			assert(dst_desc.IsValid());
-			assert(!dst_desc.IsEmpty());
+			assert(dst_desc.IsValid(false));
+			assert(!dst_desc.IsEmpty(false));
 		}
 
 		/// the dispatch function
@@ -72,7 +72,7 @@ namespace chaos
 
 	void ImageTools::FillImageBackground(ImageDescription & image_description, glm::vec4 const & color)
 	{
-		if (!image_description.IsEmpty())
+		if (!image_description.IsEmpty(false))
 		{
 			FillImageMetaFunc fill_func_map(image_description, color);
 
@@ -238,7 +238,7 @@ namespace chaos
 			result.data         = FreeImage_GetBits(image);
 
 			// test whether the result is valid (line_size & pitch come from FreeImage ... just in case ... helps ensure ::IsValid() implementation is correct)
-			if (result.IsValid())
+			if (result.IsValid(false))
 				return result;				
 		}			
 		return ImageDescription();
@@ -272,8 +272,8 @@ namespace chaos
 			width(in_width), height(in_height),
 			central_symetry(in_central_symetry)
 		{
-			assert(src_desc.IsValid());
-			assert(dst_desc.IsValid());
+			assert(src_desc.IsValid(false));
+			assert(dst_desc.IsValid(false));
 
 			assert(width >= 0);
 			assert(height >= 0);
@@ -423,7 +423,7 @@ namespace chaos
 	{
 		ImageDescription result = GetImageDescriptionForAlignedTexture(final_pixel_format, src_desc.width, src_desc.height, conversion_buffer);
 
-		assert(result.IsValid());
+		assert(result.IsValid(false));
 
 		ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, central_symetry); // do the conversion + symmetry
 

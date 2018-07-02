@@ -11,7 +11,7 @@ namespace chaos
 	{
 		Texture * result = nullptr;
 
-		if (!image.IsValid() || image.IsEmpty())
+		if (!image.IsValid(true) || image.IsEmpty(true))
 			return nullptr;
 
 		GLenum target = GLTextureTools::GetTextureTargetFromSize(image.width, image.height, parameters.rectangle_texture);  // compute the format
@@ -26,40 +26,41 @@ namespace chaos
 
 			GLenum format          = gl_formats.format;
 			GLenum internal_format = gl_formats.internal_format;
-			GLenum type            = (image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? GL_UNSIGNED_BYTE : GL_FLOAT;
+			GLenum type            = (image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? 
+				GL_UNSIGNED_BYTE : 
+				GL_FLOAT;
 
-			char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(image);
-			if (texture_buffer != nullptr)
-			{			
-				// store the pixels
-				if (target == GL_TEXTURE_1D)
-				{
-					int level_count = GLTextureTools::GetMipmapLevelCount(image.width);
-					glTextureStorage1D(texture_id, level_count, internal_format, image.width);
+			// get the buffer for the pixels
+			char * texture_buffer = (image.data == nullptr)?
+				nullptr:
+				GLTextureTools::PrepareGLTextureTransfert(image);
+
+			// create the texture
+			if (target == GL_TEXTURE_1D)
+			{
+				int level_count = GLTextureTools::GetMipmapLevelCount(image.width);
+				glTextureStorage1D(texture_id, level_count, internal_format, image.width);
+				if (texture_buffer != nullptr)
 					glTextureSubImage1D(texture_id, 0, 0, image.width, format, type, texture_buffer);
-				}
-				else
-				{
-					int level_count = GLTextureTools::GetMipmapLevelCount(image.width, image.height);
-					glTextureStorage2D(texture_id, level_count, internal_format, image.width, image.height);
-					glTextureSubImage2D(texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
-				}
-
-				TextureDescription texture_description;
-				texture_description.type            = target;
-				texture_description.internal_format = internal_format;
-				texture_description.width           = image.width;
-				texture_description.height          = image.height;
-				texture_description.depth           = 1;
-
-				// apply parameters
-				GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
-				result = new Texture(texture_id, texture_description);
 			}
 			else
 			{
-				glDeleteTextures(1, &texture_id);
+				int level_count = GLTextureTools::GetMipmapLevelCount(image.width, image.height);
+				glTextureStorage2D(texture_id, level_count, internal_format, image.width, image.height);
+				if (texture_buffer != nullptr)
+					glTextureSubImage2D(texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
 			}
+
+			TextureDescription texture_description;
+			texture_description.type = target;
+			texture_description.internal_format = internal_format;
+			texture_description.width = image.width;
+			texture_description.height = image.height;
+			texture_description.depth = 1;
+
+			// apply parameters
+			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
+			result = new Texture(texture_id, texture_description);
 		}
 		return result;
 	}

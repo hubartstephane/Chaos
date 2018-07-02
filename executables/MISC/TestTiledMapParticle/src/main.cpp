@@ -17,6 +17,8 @@
 #include <chaos/TiledMapTools.h> 
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
+#include <chaos/GLTextureTools.h> 
+#include <chaos/TextureLoader.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
 #define DUMP_DEBUG_DATA 0 // _DEBUG
@@ -76,6 +78,15 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		chaos::ImageDescription desc;
+		desc.pixel_format = chaos::PixelFormat::GetPixelFormat<chaos::PixelRGBAFloat>();
+		desc.width = 512;
+		desc.height = 512;
+
+		chaos::TextureLoader texture_loader;
+
+		chaos::Texture * texture = texture_loader.GenTextureObject(desc);
+
 		if (!InitializeTiledMapManager())
 			return false;
 

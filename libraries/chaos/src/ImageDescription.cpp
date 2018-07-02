@@ -12,15 +12,19 @@ namespace chaos
 		line_size  = width * pixel_format.GetPixelSize();
 		pitch_size = line_size + padding_size;  
 
-		assert(IsValid());
+		assert(IsValid(true));
 	}
 
-	bool ImageDescription::IsEmpty() const 
+	bool ImageDescription::IsEmpty(bool accept_uninitialized_content) const
 	{ 
-		return (width == 0 || height == 0 || data == nullptr); 
+		if (width == 0 || height == 0)
+			return true;
+		if (data == nullptr && !accept_uninitialized_content)
+			return true;
+		return false;
 	}
 
-	bool ImageDescription::IsValid() const
+	bool ImageDescription::IsValid(bool accept_uninitialized_content) const
 	{
 		// size cannot be negative
 		if (width < 0 || height < 0)
@@ -32,18 +36,21 @@ namespace chaos
 		// if image is empty, image size should be 0
 		if (data == nullptr)
 			if (width != 0 || height != 0)
-				return false;
+				if (!accept_uninitialized_content)
+					return false;
 		// the format should be well known
 		if (!pixel_format.IsValid())
 			return false;
-		// test data consistency
-		if (line_size != width * pixel_format.GetPixelSize())
-			return false;
-		if (pitch_size < 0 || padding_size < 0)
-			return false;
-		if (pitch_size != padding_size + line_size)
-			return false;
-
+		// test data consistency (only if there is a buffer)
+		if (data != nullptr)
+		{
+			if (line_size != width * pixel_format.GetPixelSize())
+				return false;
+			if (pitch_size < 0 || padding_size < 0)
+				return false;
+			if (pitch_size != padding_size + line_size)
+				return false;
+		}
 		return true;		
 	}
 
@@ -52,7 +59,7 @@ namespace chaos
 		ImageDescription result;
 
 		// test whether we are a valid description
-		if (!IsValid())
+		if (!IsValid(false))
 			return result;
 		// want empty image : return null image 
 		if (wanted_width < 0 || wanted_height < 0)
@@ -72,7 +79,7 @@ namespace chaos
 		result.line_size    = wanted_width * pixel_size;
 		result.padding_size = result.pitch_size - result.line_size;
 
-		if (wanted_width != 0 && wanted_height != 0 && !IsEmpty())
+		if (wanted_width != 0 && wanted_height != 0 && !IsEmpty(false))
 		{
 			int offset = 0;    
 			offset += (x * pixel_size);

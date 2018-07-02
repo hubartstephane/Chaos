@@ -107,6 +107,9 @@ namespace chaos
 		/** test whether the color attachment is used */
 		bool IsColorAttachmentInUse(int color_index) const;
 
+		/** initialize the framebuffer content */
+		bool InitializeFramebuffer(GPUFramebuffer * framebuffer);
+
 	protected:
 
 		/** the cached number of color attachments */

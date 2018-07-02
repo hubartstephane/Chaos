@@ -63,10 +63,23 @@ namespace chaos
 
 		if (framebuffer != 0)
 		{
-
-
+			result = new GPUFramebuffer(framebuffer);
+			if (!InitializeFramebuffer(result))
+			{
+				delete(result);
+				result = nullptr;
+			}
 		}
 		return result;
+	}
+
+	bool GPUFramebufferGenerator::InitializeFramebuffer(GPUFramebuffer * framebuffer)
+	{
+		for (AttachmentInfo const & info : attachment_info)
+		{
+
+		}
+		return true;
 	}
 
 	void GPUFramebufferGenerator::Clear()
@@ -129,6 +142,7 @@ namespace chaos
 	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, Texture * texture, int mipmap)
 	{
 		assert(texture != nullptr);
+
 		if (!IsColorAttachmentValid(color_index))
 			return false;
 		if (IsColorAttachmentInUse(color_index))

@@ -1,13 +1,7 @@
 ﻿#include <chaos/Texture.h>
 
-
 namespace chaos
 {
-	glm::ivec2 TextureDescription::GetSize(int mipmap) const
-	{
-		return glm::ivec2(width >> mipmap, height >> mipmap);
-	}
-
 	Texture::Texture(GLuint in_id, TextureDescription const & in_texture_description) :
 		texture_id(in_id),
 		texture_description(in_texture_description)

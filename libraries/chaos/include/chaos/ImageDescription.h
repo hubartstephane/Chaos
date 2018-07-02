@@ -29,19 +29,19 @@ namespace chaos
 	public:
 
 		/** the buffer */
-		void * data{ nullptr };
+		void * data = nullptr;
 		/** the image width */
-		int    width{ 0 };
+		int    width = 0;
 		/** the image height */
-		int    height{ 0 };	
+		int    height = 0;	
 		/** the pixel format */
 		PixelFormat pixel_format;
 		/** size of line in bytes (exclude padding) : width * pixel_size */
-		int    line_size{ 0 };
+		int    line_size = 0;
 		/** size of line in bytes (including padding) : padding + line_size */
-		int    pitch_size{ 0 };
+		int    pitch_size = 0;
 		/** padding a the end of a line in bytes */
-		int    padding_size{ 0 };
+		int    padding_size = 0;
 	};
 
 }; // namespace chaos

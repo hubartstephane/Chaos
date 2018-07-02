@@ -6,28 +6,10 @@
 #include <chaos/Texture.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
+#include <chaos/GLPixelFormat.h>
 
 namespace chaos
 {
-
-	class GLPixelFormat
-	{
-	public:
-
-		/** constructor */
-		GLPixelFormat() = default;
-    /** constructor */
-		GLPixelFormat(GLenum in_format, GLenum in_internal_format);
-		/** returns true whether the pixel format is supported */
-		bool IsValid() const;
-
-	public:
-
-		/** how the data should be stored in CPU side */
-		GLenum format = GL_NONE;
-		/** how the data should be stored in GPU side */
-		GLenum internal_format = GL_NONE;
-	};
 
 	/**
 	* GenTextureParameters : some parameters to load textures
@@ -38,7 +20,7 @@ namespace chaos
 	public:
 
 		/** parameters for glTexParameteri(...) */
-		GLenum wrap_s =  GL_REPEAT;
+		GLenum wrap_s = GL_REPEAT;
 		/** parameters for glTexParameteri(...) */
 		GLenum wrap_t = GL_REPEAT;
 		/** parameters for glTexParameteri(...) */

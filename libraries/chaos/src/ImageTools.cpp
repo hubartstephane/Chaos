@@ -2,8 +2,6 @@
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
 
-
-
 namespace chaos
 {
 	class FillImageMetaFunc
@@ -186,6 +184,10 @@ namespace chaos
 				return FIT_RGBF;
 			if (pixel_format.component_count == 4)
 				return FIT_RGBAF;
+		}
+		else if (pixel_format.component_type == PixelFormat::TYPE_DEPTH_STENCIL)
+		{
+			assert(0);
 		}
 		return FIT_UNKNOWN;
 	}
@@ -445,6 +447,13 @@ namespace chaos
 		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
 		if (!pixel_format.IsValid())
 			return false;
+
+		// should never happens ..
+		if (pixel_format.IsDepthStencilPixel())
+		{
+			assert(0);
+			return false;
+		}
 
 		// multiple components => not grayscale
 		if (pixel_format.component_count != 1)

@@ -17,15 +17,17 @@ namespace chaos
 		static int const TYPE_UNKNOWN = 0;
 		static int const TYPE_UNSIGNED_CHAR = 1;
 		static int const TYPE_FLOAT = 2;
+		static int const TYPE_DEPTH_STENCIL = 3;
 
 		/** the well known formats */
-		static int const FORMAT_UNKNOWN    = 0;
-		static int const FORMAT_GRAY       = 1;
-		static int const FORMAT_RGB        = 2;
-		static int const FORMAT_RGBA       = 3;
-		static int const FORMAT_GRAY_FLOAT = 4;
-		static int const FORMAT_RGB_FLOAT  = 5;
-		static int const FORMAT_RGBA_FLOAT = 6;
+		static int const FORMAT_UNKNOWN       = 0;
+		static int const FORMAT_GRAY          = 1;
+		static int const FORMAT_RGB           = 2;
+		static int const FORMAT_RGBA          = 3;
+		static int const FORMAT_GRAY_FLOAT    = 4;
+		static int const FORMAT_RGB_FLOAT     = 5;
+		static int const FORMAT_RGBA_FLOAT    = 6;
+		static int const FORMAT_DEPTH_STENCIL = 7;
 
 	public:
 
@@ -46,6 +48,11 @@ namespace chaos
 		int GetFormat() const;
 		/** returns true whether the pixel format is handled */
 		bool IsValid() const;
+		/** returns true whether the pixel is a standard 'color' pixel */
+		bool IsColorPixel() const;
+		/** returns true whether the pixel is a special 'depth stencil' pixel */
+		bool IsDepthStencilPixel() const;
+
 		/** returns true whether the pixel format are same */
 		bool operator == (PixelFormat const & other) const;
 		/** returns true whether the pixel format are different */
@@ -67,6 +74,8 @@ namespace chaos
 		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return PixelFormat(TYPE_FLOAT, 3);}
 		template<>
 		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return PixelFormat(TYPE_FLOAT, 4);}
+		template<>
+		static PixelFormat GetPixelFormat<PixelDepthStencil>() { return PixelFormat(TYPE_DEPTH_STENCIL, 1); }
 
 	public:
 

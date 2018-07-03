@@ -9,6 +9,9 @@ namespace chaos
 
 	bool GLPixelFormat::IsValid() const
 	{
+		if (internal_format == GL_DEPTH24_STENCIL8)
+			return (format == GL_NONE);
+
 		if (
 			format != GL_RED &&
 			format != GL_BGR &&

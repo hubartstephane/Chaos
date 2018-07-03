@@ -79,13 +79,16 @@ protected:
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
 		chaos::ImageDescription desc;
-		desc.pixel_format = chaos::PixelFormat::GetPixelFormat<chaos::PixelRGBAFloat>();
+		desc.pixel_format = chaos::PixelFormat::GetPixelFormat<chaos::PixelDepthStencil>();
 		desc.width = 512;
 		desc.height = 512;
 
 		chaos::TextureLoader texture_loader;
 
 		chaos::Texture * texture = texture_loader.GenTextureObject(desc);
+
+		chaos::PixelFormat format = chaos::GLTextureTools::GetTexturePixelFormat(texture->GetResourceID(), 0);
+
 
 		if (!InitializeTiledMapManager())
 			return false;

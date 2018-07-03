@@ -78,6 +78,8 @@ namespace chaos
 				return PixelFormat(PixelFormat::TYPE_FLOAT, 3);
 			if (internal_format == GL_RGBA32F)
 				return PixelFormat(PixelFormat::TYPE_FLOAT, 4);
+			if (internal_format == GL_DEPTH24_STENCIL8)
+				return PixelFormat(PixelFormat::TYPE_DEPTH_STENCIL, 1);
 		}
 		return PixelFormat();
 	}
@@ -212,6 +214,10 @@ namespace chaos
 				return GLPixelFormat(GL_RGB, GL_RGB32F);
 			if (pixel_format.component_count == 4)
 				return GLPixelFormat(GL_RGBA, GL_RGBA32F);
+		}
+		else if (pixel_format.component_type == PixelFormat::TYPE_DEPTH_STENCIL)
+		{
+			return GLPixelFormat(GL_NONE, GL_DEPTH24_STENCIL8);
 		}
 		return GLPixelFormat(GL_NONE, GL_NONE);
 	}

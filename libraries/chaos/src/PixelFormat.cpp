@@ -38,6 +38,11 @@ namespace chaos
 			component_type = TYPE_FLOAT;
 			component_count = 4;
 		}
+		else if (in_format == FORMAT_DEPTH_STENCIL)
+		{
+			component_type = TYPE_DEPTH_STENCIL;
+			component_count = 1;
+		}
 	}
 
 	int PixelFormat::GetFormat() const
@@ -60,6 +65,10 @@ namespace chaos
 			if (component_count == 4)
 				return FORMAT_RGBA_FLOAT;
 		}
+		else if (component_type == TYPE_DEPTH_STENCIL)
+		{
+			return FORMAT_DEPTH_STENCIL;
+		}
 		return FORMAT_UNKNOWN;
 	}
 
@@ -71,17 +80,31 @@ namespace chaos
 				return component_count * sizeof(unsigned char);
 			if (component_type == TYPE_FLOAT)
 				return component_count * sizeof(float);
+			if (component_type == TYPE_DEPTH_STENCIL)
+				return sizeof(PixelDepthStencil);
 		}
 		return 0;	
 	}
 
 	bool PixelFormat::IsValid() const
 	{
+		return IsColorPixel() || IsDepthStencilPixel();
+	}
+
+	bool PixelFormat::IsColorPixel() const
+	{
 		if (component_type != TYPE_UNSIGNED_CHAR && component_type != TYPE_FLOAT)
 			return false;
 		if (component_count != 1 && component_count != 3 && component_count != 4)
 			return false;
 		return true;
+	}
+
+	bool PixelFormat::IsDepthStencilPixel() const
+	{
+		if (component_type == TYPE_DEPTH_STENCIL)
+			return true;
+		return false;
 	}
 
 	bool PixelFormat::operator == (PixelFormat const & other) const
@@ -117,6 +140,7 @@ namespace chaos
 	void PixelFormatMerger::Merge(PixelFormat src)
 	{
 		assert(src.IsValid());
+		assert(!src.IsDepthStencilPixel());
 
 		if (!params.accept_luminance && src.component_count == 1) // transform luminance into RGB
 			src.component_count = 3;

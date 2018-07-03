@@ -164,10 +164,29 @@ namespace chaos
 	};
 
 	/**
+	* PixelDepthStencil : a structure that helps depth24+stencil8 pixels
+	**/
+
+	class PixelDepthStencil // FreeImage produce RGBA pixels by default (for float) !!!
+	{
+	public:
+
+		/** constructor */
+		PixelDepthStencil() = default;
+		/** copy constructor */
+		PixelDepthStencil(PixelDepthStencil const & src) = default;
+
+		unsigned char special1;
+		unsigned char special2;
+		unsigned char special3;
+		unsigned char special4;
+	};
+
+	/**
 	 * PixelTypes : the list of all supported pixel classes (XXX : order matters)
 	 */
 
-	using PixelTypes = boost::mpl::vector<PixelGray, PixelBGR, PixelBGRA, PixelGrayFloat, PixelRGBFloat, PixelRGBAFloat>;
+	using PixelTypes = boost::mpl::vector<PixelGray, PixelBGR, PixelBGRA, PixelGrayFloat, PixelRGBFloat, PixelRGBAFloat, PixelDepthStencil>;
 
 	/**
 	 * Class to make basic pixel component conversions
@@ -213,7 +232,7 @@ namespace chaos
 		
 		/// nop 'conversion' method
 		template<typename T>
-		static inline void Convert(T & dst, T const & src){ dst = src;}
+		static inline void Convert(T & dst, T const & src) { dst = src; }
 
 		/// conversion to 'PixelGray' methods
 		static inline void Convert(PixelGray & dst, PixelGrayFloat const & src)
@@ -236,6 +255,10 @@ namespace chaos
 		{
 			dst = PixelComponentConverter::Convert<unsigned char>((src.R + src.G + src.B) / 3.0f);
 		}
+		static inline void Convert(PixelGray & dst, PixelDepthStencil const & src)
+		{
+			assert(0);
+		}
 
 		/// conversion to 'PixelGrayFloat' methods
 		static inline void Convert(PixelGrayFloat & dst, PixelGray const & src)
@@ -257,6 +280,10 @@ namespace chaos
 		static inline void Convert(PixelGrayFloat & dst, PixelRGBAFloat const & src)
 		{
 			dst = PixelComponentConverter::Convert<float>((src.R + src.G + src.B) / 3.0f);
+		}
+		static inline void Convert(PixelGrayFloat & dst, PixelDepthStencil const & src)
+		{
+			assert(0);
 		}
 
 		/// conversion to 'PixelBGR' methods
@@ -285,6 +312,10 @@ namespace chaos
 			dst.B = PixelComponentConverter::Convert<unsigned char>(src.B);
 			dst.G = PixelComponentConverter::Convert<unsigned char>(src.G);
 			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
+		}
+		static inline void Convert(PixelBGR & dst, PixelDepthStencil const & src)
+		{
+			assert(0);
 		}
 
 		/// conversion to 'PixelBGRA' methods
@@ -319,6 +350,10 @@ namespace chaos
 			dst.R = PixelComponentConverter::Convert<unsigned char>(src.R);
 			dst.A = PixelComponentConverter::Convert<unsigned char>(src.A);
 		}
+		static inline void Convert(PixelBGRA & dst, PixelDepthStencil const & src)
+		{
+			assert(0);
+		}
 
 		/// conversion to 'PixelRGBFloat' methods
 		static inline void Convert(PixelRGBFloat & dst, PixelGray const & src)
@@ -346,6 +381,10 @@ namespace chaos
 			dst.R = PixelComponentConverter::Convert<float>(src.R);
 			dst.G = PixelComponentConverter::Convert<float>(src.G);
 			dst.B = PixelComponentConverter::Convert<float>(src.B);
+		}
+		static inline void Convert(PixelRGBFloat & dst, PixelDepthStencil const & src)
+		{
+			assert(0);
 		}
 
 		/// conversion to 'PixelRGBAFloat' methods
@@ -379,6 +418,32 @@ namespace chaos
 			dst.G = PixelComponentConverter::Convert<float>(src.G);
 			dst.B = PixelComponentConverter::Convert<float>(src.B);
 			dst.A = 1.0f;
+		}
+		static inline void Convert(PixelRGBAFloat & dst, PixelDepthStencil const & src)
+		{
+			assert(0);
+		}
+
+		/// conversion to 'PixelDepthStencil' methods
+		static inline void Convert(PixelDepthStencil & dst, PixelGrayFloat const & src)
+		{
+			assert(0);
+		}
+		static inline void Convert(PixelDepthStencil & dst, PixelBGR const & src)
+		{
+			assert(0);
+		}
+		static inline void Convert(PixelDepthStencil & dst, PixelBGRA const & src)
+		{
+			assert(0);
+		}
+		static inline void Convert(PixelDepthStencil & dst, PixelRGBFloat const & src)
+		{
+			assert(0);
+		}
+		static inline void Convert(PixelDepthStencil & dst, PixelRGBAFloat const & src)
+		{
+			assert(0);
 		}
 	};
 

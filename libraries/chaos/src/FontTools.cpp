@@ -268,6 +268,11 @@ namespace chaos
 			dst.B = max(dst.B, src.B);
 			dst.A = max(dst.A, src.A);
 		}
+		/// utility fonctions for blending pixels
+		static void BlendPixel(PixelDepthStencil & dst, PixelDepthStencil const & src)
+		{
+			assert(0); // should never happens
+		}
 
 		/// the dispatch function
 		template<typename DST_TYPE>

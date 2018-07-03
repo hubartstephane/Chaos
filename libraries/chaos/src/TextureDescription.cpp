@@ -1,4 +1,5 @@
 ﻿#include <chaos/TextureDescription.h>
+#include <chaos/GLTextureTools.h>
 
 namespace chaos
 {
@@ -7,15 +8,9 @@ namespace chaos
 		return glm::ivec2(width >> mipmap, height >> mipmap);
 	}
 
-#if 0
-	GLPixelFormat TextureDescription::GetPixelFormat() const
+	PixelFormat TextureDescription::GetPixelFormat() const
 	{
-
-
-
-
-		return GLPixelFormat();
+		return GLTextureTools::GetPixelFormat(internal_format);
 	}
-#endif
 
 }; // namespace chaos

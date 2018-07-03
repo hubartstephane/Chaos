@@ -106,6 +106,8 @@ namespace chaos
 		bool IsColorAttachmentValid(int color_index) const;
 		/** test whether the color attachment is used */
 		bool IsColorAttachmentInUse(int color_index) const;
+		/** test whether there already is a depth stencil attachment */
+		bool HasDepthStencilAttachment() const;
 
 		/** initialize the framebuffer content */
 		bool InitializeFramebuffer(GPUFramebuffer * framebuffer);

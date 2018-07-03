@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/PixelFormat.h>
 
 namespace chaos
 {
@@ -25,10 +26,8 @@ namespace chaos
 
 	public:
 
-#if 0
 		/** get the pixel format of the description */
-		GLPixelFormat GetPixelFormat() const;
-#endif
+		PixelFormat GetPixelFormat() const;
 		/** get the size of the texture */
 		glm::ivec2 GetSize(int mipmap = 0) const;
 	};

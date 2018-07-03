@@ -122,6 +122,14 @@ namespace chaos
 		return true;
 	}
 
+	bool GPUFramebufferGenerator::HasDepthStencilAttachment() const
+	{
+		for (AttachmentInfo const & attachment : attachment_info)
+			if (attachment.attachment_point == GL_DEPTH_STENCIL_ATTACHMENT)
+				return true;
+		return true;
+	}
+
 	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, GPURenderbuffer * render_buffer)
 	{
 		assert(render_buffer != nullptr);
@@ -142,6 +150,7 @@ namespace chaos
 	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, Texture * texture, int mipmap)
 	{
 		assert(texture != nullptr);
+		assert(texture->GetTextureDescription().GetPixelFormat().IsColorPixel());
 
 		if (!IsColorAttachmentValid(color_index))
 			return false;
@@ -182,8 +191,28 @@ namespace chaos
 	bool GPUFramebufferGenerator::AddDepthStencilAttachment(Texture * texture, int mipmap)
 	{
 		assert(texture != nullptr);
-	
-	
+		assert(texture->GetTextureDescription().GetPixelFormat().IsDepthStencilPixel());
+
+		if (HasDepthStencilAttachment())
+			return false;
+
+		// test size compatibility
+		glm::ivec2 size = GetSize();
+		if (size.x >= 0 && size.y > 0)
+		{
+			glm::ivec2 texture_size = texture->GetTextureDescription().GetSize(mipmap);
+			if (texture_size != size)
+				return false;
+		}
+
+		// add an attachment
+		AttachmentInfo attachment;
+		attachment.attachment_point = GL_DEPTH24_STENCIL8;
+		attachment.texture = texture;
+		attachment.texture_mipmap = mipmap;
+
+		attachment_info.push_back(attachment);
+
 		return true;
 	}
 

@@ -58,6 +58,24 @@
 
 namespace chaos
 {
+	PixelFormat GLTextureTools::GetPixelFormat(GLenum internal_format)
+	{
+		if (internal_format == GL_R8)
+			return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 1);
+		if (internal_format == GL_RGB8)
+			return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 3);
+		if (internal_format == GL_RGBA8)
+			return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 4);
+		if (internal_format == GL_R32F)
+			return PixelFormat(PixelFormat::TYPE_FLOAT, 1);
+		if (internal_format == GL_RGB32F)
+			return PixelFormat(PixelFormat::TYPE_FLOAT, 3);
+		if (internal_format == GL_RGBA32F)
+			return PixelFormat(PixelFormat::TYPE_FLOAT, 4);
+		if (internal_format == GL_DEPTH24_STENCIL8)
+			return PixelFormat(PixelFormat::TYPE_DEPTH_STENCIL, 1);
+		return PixelFormat();
+	}
 
 	PixelFormat GLTextureTools::GetTexturePixelFormat(GLuint texture_id, GLint level)
 	{
@@ -65,21 +83,7 @@ namespace chaos
 		{
 			GLint internal_format = 0;
 			glGetTextureLevelParameteriv(texture_id, level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);	
-
-			if (internal_format == GL_R8)
-				return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 1);
-			if (internal_format == GL_RGB8)
-				return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 3);
-			if (internal_format == GL_RGBA8)
-				return PixelFormat(PixelFormat::TYPE_UNSIGNED_CHAR, 4);
-			if (internal_format == GL_R32F)
-				return PixelFormat(PixelFormat::TYPE_FLOAT, 1);
-			if (internal_format == GL_RGB32F)
-				return PixelFormat(PixelFormat::TYPE_FLOAT, 3);
-			if (internal_format == GL_RGBA32F)
-				return PixelFormat(PixelFormat::TYPE_FLOAT, 4);
-			if (internal_format == GL_DEPTH24_STENCIL8)
-				return PixelFormat(PixelFormat::TYPE_DEPTH_STENCIL, 1);
+			return GetPixelFormat(internal_format);
 		}
 		return PixelFormat();
 	}

@@ -52,6 +52,8 @@ namespace chaos
 		static char * GetTextureImage(GLuint texture_id, GLint level, ImageDescription & desc);
 		/** get the pixel format of the texture */
 		static PixelFormat GetTexturePixelFormat(GLuint texture_id, GLint level);
+		/** get the pixel format from an internal format */
+		static PixelFormat GetPixelFormat(GLenum internal_format);
 
 		/** returns true whether type is an array texture type */
 		static bool IsArrayTextureType(GLenum type);

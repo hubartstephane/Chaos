@@ -3,11 +3,12 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/TextureDescription.h>
+#include <chaos/GPUSurface.h>
 
 namespace chaos
 {
 
-	class GPUTexture : public GPUFileResource
+	class GPUTexture : public GPUSurface
 	{
 	public:
 
@@ -16,6 +17,8 @@ namespace chaos
 		/** destructor */
 		virtual ~GPUTexture();
 
+		/** inherited */
+		virtual SurfaceDescription const & GetSurfaceDescription() const override { return GetTextureDescription(); }
 		/** get the description of the texture */
 		TextureDescription const & GetTextureDescription() const { return texture_description; }
 		/** returns true whether the resource is valid */

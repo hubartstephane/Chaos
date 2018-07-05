@@ -1,6 +1,6 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 
 namespace chaos
 {
@@ -15,9 +15,9 @@ namespace chaos
 		return vertices_per_particle;
 	}
 
-	VertexDeclaration ParticleDefault::GetTypedVertexDeclaration(boost::mpl::identity<ParticleDefault::Vertex>)
+	GPUVertexDeclaration ParticleDefault::GetTypedVertexDeclaration(boost::mpl::identity<ParticleDefault::Vertex>)
 	{
-		chaos::VertexDeclaration result;
+		chaos::GPUVertexDeclaration result;
 		result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 		result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 		result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);

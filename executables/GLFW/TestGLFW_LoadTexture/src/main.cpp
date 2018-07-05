@@ -15,7 +15,7 @@
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GPUProgramProvider.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -37,7 +37,7 @@ protected:
 
 	void ChangeTexture(int index)
 	{
-		boost::intrusive_ptr<chaos::Texture> new_texture = GenerateTexture(index);
+		boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateTexture(index);
 		if (new_texture != nullptr)
 		{
 			texture_index = index;
@@ -45,9 +45,9 @@ protected:
 		}
 	}
 
-	boost::intrusive_ptr<chaos::Texture> GenerateTexture(int index)
+	boost::intrusive_ptr<chaos::GPUTexture> GenerateTexture(int index)
 	{
-		boost::intrusive_ptr<chaos::Texture> result;
+		boost::intrusive_ptr<chaos::GPUTexture> result;
 
     int texture_index  = index / 4;
     int texture_offset = index % 4;
@@ -158,7 +158,7 @@ protected:
 
 	boost::intrusive_ptr<chaos::GPUProgram>  program;
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-	boost::intrusive_ptr<chaos::Texture>    texture;
+	boost::intrusive_ptr<chaos::GPUTexture>    texture;
 
 	int mipmap_level{ 0 };
 	int texture_index{ 0 };

@@ -19,8 +19,8 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUTexture.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>

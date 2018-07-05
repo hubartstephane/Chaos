@@ -27,24 +27,24 @@ namespace chaos
 		render_materials.clear();
 	}
 
-	Texture * GPUResourceManager::FindTexture(char const * name)
+	GPUTexture * GPUResourceManager::FindTexture(char const * name)
 	{
-		return FindObjectByName<Texture>(name, textures);
+		return FindObjectByName<GPUTexture>(name, textures);
 	}
 
-	Texture const * GPUResourceManager::FindTexture(char const * name) const
+	GPUTexture const * GPUResourceManager::FindTexture(char const * name) const
 	{
-		return FindObjectByName<Texture>(name, textures);
+		return FindObjectByName<GPUTexture>(name, textures);
 	}
 
-	Texture * GPUResourceManager::FindTextureByPath(FilePathParam const & path)
+	GPUTexture * GPUResourceManager::FindTextureByPath(FilePathParam const & path)
 	{
-		return FindObjectByPath<Texture>(path, textures);
+		return FindObjectByPath<GPUTexture>(path, textures);
 	}
 
-	Texture const * GPUResourceManager::FindTextureByPath(FilePathParam const & path) const
+	GPUTexture const * GPUResourceManager::FindTextureByPath(FilePathParam const & path) const
 	{
-		return FindObjectByPath<Texture>(path, textures);
+		return FindObjectByPath<GPUTexture>(path, textures);
 	}
 
 	GPUProgram * GPUResourceManager::FindProgram(char const * name)
@@ -67,33 +67,33 @@ namespace chaos
 		return FindObjectByPath<GPUProgram>(path, programs);
 	}
 
-	RenderMaterial * GPUResourceManager::FindRenderMaterial(char const * name)
+	GPURenderMaterial * GPUResourceManager::FindRenderMaterial(char const * name)
 	{
-		return FindObjectByName<RenderMaterial>(name, render_materials);
+		return FindObjectByName<GPURenderMaterial>(name, render_materials);
 	}
 
-	RenderMaterial const * GPUResourceManager::FindRenderMaterial(char const * name) const
+	GPURenderMaterial const * GPUResourceManager::FindRenderMaterial(char const * name) const
 	{
-		return FindObjectByName<RenderMaterial>(name, render_materials);
+		return FindObjectByName<GPURenderMaterial>(name, render_materials);
 	}
 
-	RenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path)
+	GPURenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path)
 	{
-		return FindObjectByPath<RenderMaterial>(path, render_materials);
+		return FindObjectByPath<GPURenderMaterial>(path, render_materials);
 	}
 
-	RenderMaterial const * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path) const
+	GPURenderMaterial const * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path) const
 	{
-		return FindObjectByPath<RenderMaterial>(path, render_materials);
+		return FindObjectByPath<GPURenderMaterial>(path, render_materials);
 	}
 
-	Texture * GPUResourceManager::LoadTexture(FilePathParam const & path)
+	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path)
 	{
 		boost::filesystem::path const resolved_path = path.GetResolvedPath();
 		return LoadTexture(path, BoostTools::PathToName(resolved_path).c_str());
 	}
 
-	Texture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name)
+	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name)
 	{
 		// object already existing ?
 		if (!CanAddTexture(name))
@@ -108,7 +108,7 @@ namespace chaos
 		loader.SetResultName(name);
 
 		// load data
-		Texture * result = loader.GenTextureObject(path, GenTextureParameters());
+		GPUTexture * result = loader.GenTextureObject(path, GenTextureParameters());
 		if (result != nullptr)
 			textures.push_back(result);
 		return result;
@@ -141,13 +141,13 @@ namespace chaos
 		return result;
 	}
 
-	RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path)
+	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path)
 	{
 		boost::filesystem::path const resolved_path = path.GetResolvedPath();
 		return LoadRenderMaterial(path, BoostTools::PathToName(resolved_path).c_str());
 	}
 
-	RenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
+	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
 		// object already existing ?
 		if (!CanAddRenderMaterial(name))
@@ -164,7 +164,7 @@ namespace chaos
 		// load data
 		std::string parent_name;
 
-		RenderMaterial * result = loader.GenRenderMaterialObject(path, parent_name);
+		GPURenderMaterial * result = loader.GenRenderMaterialObject(path, parent_name);
 		if (result != nullptr)
 		{
 			SetRenderMaterialParent(result, parent_name);
@@ -236,7 +236,7 @@ namespace chaos
 
 	bool GPUResourceManager::InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		std::map<RenderMaterial *, std::string> parenting_map;
+		std::map<GPURenderMaterial *, std::string> parenting_map;
 
 		bool result = InitializeObjectsFromConfiguration(
 			"rendermaterials",
@@ -246,7 +246,7 @@ namespace chaos
 			{
 				std::string parent_name;
 
-				RenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
+				GPURenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
 				if (render_material != nullptr && !parent_name.empty())
 					parenting_map[render_material] = std::move(parent_name);
 			}
@@ -260,7 +260,7 @@ namespace chaos
 		return result;
 	}
 
-	Texture * GPUResourceManager::LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+	GPUTexture * GPUResourceManager::LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		// ensure no name collision
 		if (!CanAddTexture(name))
@@ -270,7 +270,7 @@ namespace chaos
 		loader.SetResultName(name);
 
 		// load the resource
-		Texture * result = loader.GenTextureObject(json, config_path, GenTextureParameters());
+		GPUTexture * result = loader.GenTextureObject(json, config_path, GenTextureParameters());
 		if (result != nullptr)
 			textures.push_back(result);
 		return result;
@@ -292,7 +292,7 @@ namespace chaos
 		return program;
 	}
 
-	RenderMaterial * GPUResourceManager::LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
+	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
 	{
 		// ensure no name collision
 		if (!CanAddRenderMaterial(name))
@@ -302,19 +302,19 @@ namespace chaos
 		loader.SetResultName(name);
 
 		// load the resource
-		RenderMaterial * render_material = loader.GenRenderMaterialObject(json, config_path, parent_name);
+		GPURenderMaterial * render_material = loader.GenRenderMaterialObject(json, config_path, parent_name);
 		if (render_material != nullptr)
 			render_materials.push_back(render_material);
 		return render_material;
 	}
 
-	void GPUResourceManager::SetRenderMaterialParent(RenderMaterial * render_material, std::string const & parent_name)
+	void GPUResourceManager::SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name)
 	{
 		assert(render_material != nullptr);
 
 		if (parent_name.empty())
 			return;
-		RenderMaterial * parent = FindRenderMaterial(parent_name.c_str());
+		GPURenderMaterial * parent = FindRenderMaterial(parent_name.c_str());
 		if (parent != nullptr)
 			render_material->SetParentMaterial(parent); // some recursive verification here
 	}

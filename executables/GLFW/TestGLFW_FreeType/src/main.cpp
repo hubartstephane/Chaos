@@ -15,7 +15,7 @@
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/FontTools.h>
 #include <chaos/GPUProgramProvider.h>
 
@@ -71,7 +71,7 @@ protected:
 
   void ChangeFont(int index)
   {
-    boost::intrusive_ptr<chaos::Texture> new_font = LoadFont(index);
+    boost::intrusive_ptr<chaos::GPUTexture> new_font = LoadFont(index);
     if (new_font != nullptr)
     {
       font_index = index;
@@ -79,7 +79,7 @@ protected:
     }
   }
 
-  boost::intrusive_ptr<chaos::Texture> ReleaseResourceImpl(FT_Library * library, FT_Face * face)
+  boost::intrusive_ptr<chaos::GPUTexture> ReleaseResourceImpl(FT_Library * library, FT_Face * face)
   {
     if (face != nullptr)
       FT_Done_Face(*face);
@@ -223,7 +223,7 @@ protected:
     bt = -bt;
   }
 
-  boost::intrusive_ptr<chaos::Texture> LoadFont(int index)
+  boost::intrusive_ptr<chaos::GPUTexture> LoadFont(int index)
   {
     FT_Error Err;
 
@@ -294,7 +294,7 @@ protected:
 
 #endif
 
-    boost::intrusive_ptr<chaos::Texture> result = chaos::TextureLoader().GenTextureObject(bm, parameters);
+    boost::intrusive_ptr<chaos::GPUTexture> result = chaos::TextureLoader().GenTextureObject(bm, parameters);
 
     glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 
@@ -361,7 +361,7 @@ protected:
 
   boost::intrusive_ptr<chaos::GPUProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-  boost::intrusive_ptr<chaos::Texture>    texture;
+  boost::intrusive_ptr<chaos::GPUTexture>    texture;
 
   int font_index{ 0 };
 };

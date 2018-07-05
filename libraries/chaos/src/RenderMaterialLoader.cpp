@@ -12,7 +12,7 @@ namespace chaos
 
 	}
 
-	bool RenderMaterialLoader::InitializeProgramFromName(RenderMaterial * render_material, char const * program_name) const
+	bool RenderMaterialLoader::InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const
 	{
 		GPUProgram * program = manager->FindProgram(program_name);
 		if (program == nullptr)
@@ -21,7 +21,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeProgramFromPath(RenderMaterial * render_material, FilePathParam const & path) const
+	bool RenderMaterialLoader::InitializeProgramFromPath(GPURenderMaterial * render_material, FilePathParam const & path) const
 	{
 		// take already loaded program, or try load it
 		GPUProgram * program = manager->FindProgramByPath(path.GetResolvedPath());
@@ -36,7 +36,7 @@ namespace chaos
 		return false;
 	}
 
-	bool RenderMaterialLoader::InitializeProgramFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool RenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// does the JSON have a "program" string ?
 		std::string program_name;
@@ -70,19 +70,19 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeTextureFromName(RenderMaterial * render_material, char const * uniform_name, char const * texture_name) const
+	bool RenderMaterialLoader::InitializeTextureFromName(GPURenderMaterial * render_material, char const * uniform_name, char const * texture_name) const
 	{
-		Texture * texture = manager->FindTexture(texture_name);
+		GPUTexture * texture = manager->FindTexture(texture_name);
 		if (texture == nullptr)
 			return false;
 		render_material->GetUniformProvider().AddVariableTexture(uniform_name, texture);
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeTextureFromPath(RenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const
+	bool RenderMaterialLoader::InitializeTextureFromPath(GPURenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const
 	{
 		// take already loaded texture, or try load it
-		Texture * texture = manager->FindTextureByPath(path.GetResolvedPath());
+		GPUTexture * texture = manager->FindTextureByPath(path.GetResolvedPath());
 		if (texture == nullptr)
 			texture = manager->LoadTexture(path);
 		// set the texture
@@ -92,7 +92,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeTexturesFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool RenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the texture object
 		nlohmann::json const * json_textures = JSONTools::GetStructure(json, "textures");
@@ -138,7 +138,7 @@ namespace chaos
 			}
 
 			// inplace declared texture 
-			Texture * texture = manager->LoadTexture(nullptr, *it, texture_name.c_str());
+			GPUTexture * texture = manager->LoadTexture(nullptr, *it, texture_name.c_str());
 			if (texture == nullptr)
 				continue;
 			render_material->GetUniformProvider().AddVariableTexture(texture_uniform_name.c_str(), texture);
@@ -147,7 +147,7 @@ namespace chaos
 	}
 
 	template<typename VECTOR_TYPE>
-	static bool DoAddUniformVectorToRenderMaterial(RenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json, VECTOR_TYPE & value)
+	static bool DoAddUniformVectorToRenderMaterial(GPURenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json, VECTOR_TYPE & value)
 	{
 		size_t count = json.size();
 		for (size_t i = 0; i < count; ++i)
@@ -157,7 +157,7 @@ namespace chaos
 	}
 
 	template<typename SCALAR_TYPE>
-	static bool AddUniformVectorToRenderMaterial(RenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json)
+	static bool AddUniformVectorToRenderMaterial(GPURenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json)
 	{
 		size_t count = json.size();
 		if (count == 1)
@@ -183,7 +183,7 @@ namespace chaos
 		return false;
 	}
 
-	bool RenderMaterialLoader::AddUniformToRenderMaterial(RenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json) const
+	bool RenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json) const
 	{
 		// is the uniform a integer ?
 		if (json.is_number_integer())
@@ -230,7 +230,7 @@ namespace chaos
 		return false;
 	}
 	
-	bool RenderMaterialLoader::InitializeUniformsFromJSON(RenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool RenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the uniform object
 		nlohmann::json const * json_uniforms = JSONTools::GetStructure(json, "uniforms");
@@ -246,7 +246,7 @@ namespace chaos
 		return true;
 	}
 
-	RenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
+	GPURenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
 	{
 		// get the name, ensure no name collision
 		if (!CheckResourceName(json))
@@ -258,7 +258,7 @@ namespace chaos
 			return GenRenderMaterialObject(path, parent_name);
 
 		// create a new material
-		RenderMaterial * result = new RenderMaterial;
+		GPURenderMaterial * result = new GPURenderMaterial;
 		if (result == nullptr)
 			return nullptr;
 
@@ -278,7 +278,7 @@ namespace chaos
 		return result;
 	}
 
-	RenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
+	GPURenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
 	{
 		if (!CheckResourcePath(path))
 			return nullptr;

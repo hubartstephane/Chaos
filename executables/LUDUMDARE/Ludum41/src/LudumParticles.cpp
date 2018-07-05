@@ -17,9 +17,9 @@ void DeclareParticleClasses()
 	chaos::ClassTools::DeclareClass<ParticleChallenge, ParticleObject>("ParticleChallenge");
 }
 
-chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
+chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
-	chaos::VertexDeclaration result;
+	chaos::GPUVertexDeclaration result;
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT4);

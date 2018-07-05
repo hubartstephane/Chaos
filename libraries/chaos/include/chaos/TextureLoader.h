@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ImageTools.h>
 #include <chaos/SkyBoxTools.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
 #include <chaos/GLTextureTools.h>
@@ -19,21 +19,21 @@ namespace chaos
 	public:
 
 		/** Generate a texture from a json content */
-		virtual Texture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;
+		virtual GPUTexture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;
 		/** Generate a 1D/2D/rectangle texture from an file */
-		virtual Texture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const;
+		virtual GPUTexture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const;
 		/** Generate a 1D/2D/rectangle texture from an image */
-		virtual Texture * GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters()) const;
+		virtual GPUTexture * GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters = GenTextureParameters()) const;
 		/** Generate a 1D/2D/rectangle texture from an image */
-		virtual Texture * GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters()) const;
+		virtual GPUTexture * GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters = GenTextureParameters()) const;
 		/** Generate a cube texture from a skybox */
-		virtual Texture * GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters()) const;
+		virtual GPUTexture * GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters()) const;
 
 		/** Generate a texture from lambda */
 		template<typename T, typename GENERATOR>
-		Texture * GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters()) const
+		GPUTexture * GenTextureObject(int width, int height, GENERATOR const & generator, GenTextureParameters const & parameters = GenTextureParameters()) const
 		{
-			Texture * result = nullptr;
+			GPUTexture * result = nullptr;
 
 			PixelFormat pixel_format = PixelFormat::GetPixelFormat<T>();
 

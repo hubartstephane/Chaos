@@ -19,7 +19,7 @@ namespace chaos
   public:
 
     /** constructor */
-    GPUProgramRenderMaterialProvider(class RenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider) :
+    GPUProgramRenderMaterialProvider(class GPURenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider) :
       render_material(in_render_material),
       other_provider(in_other_provider)
     {}
@@ -32,16 +32,16 @@ namespace chaos
   protected:
 
     /** the render material as base for the chain */
-    RenderMaterial const * render_material = nullptr;
+    GPURenderMaterial const * render_material = nullptr;
     /** another provider (use a non intrusive reference !!!) */
     GPUProgramProviderBase const * other_provider = nullptr;
   };
 
   /**
-  * RenderMaterial : this is the combinaison of some uniforms and a program
+  * GPURenderMaterial : this is the combinaison of some uniforms and a program
   */
 
-  class RenderMaterial : public GPUFileResource
+  class GPURenderMaterial : public GPUFileResource
   {
     friend class GPUProgramData;
     friend class GPUProgramRenderMaterialProvider;
@@ -49,10 +49,10 @@ namespace chaos
   public:
 
     /** constructor */
-    RenderMaterial();
+    GPURenderMaterial();
 
     /** destructor */
-    virtual ~RenderMaterial();
+    virtual ~GPURenderMaterial();
 
     /** prepare the rendering */
     bool UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const;
@@ -60,7 +60,7 @@ namespace chaos
     /** set the program */
     bool SetProgram(GPUProgram * in_program);
     /** set the parent material */
-    bool SetParentMaterial(RenderMaterial * in_parent);
+    bool SetParentMaterial(GPURenderMaterial * in_parent);
     /** go throw the hierary and search for the program */
     GPUProgram const * GetEffectiveProgram() const;
 
@@ -79,7 +79,7 @@ namespace chaos
     /** the program */
     boost::intrusive_ptr<GPUProgram> program;
     /** parent material */
-    boost::intrusive_ptr<RenderMaterial> parent_material;
+    boost::intrusive_ptr<GPURenderMaterial> parent_material;
     /** some rendering states */
     GPUProgramProvider uniform_provider;
   };

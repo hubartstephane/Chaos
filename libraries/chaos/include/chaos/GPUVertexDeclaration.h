@@ -83,7 +83,7 @@ namespace chaos
 	/**
 	* Declaration of a full vertex
 	*/
-	class VertexDeclaration
+	class GPUVertexDeclaration
 	{
 	public:
 

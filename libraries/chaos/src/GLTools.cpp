@@ -204,7 +204,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GLTools::GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<VertexArray> * vertex_array, boost::intrusive_ptr<VertexBuffer> * vertex_buffer, boost::intrusive_ptr<IndexBuffer> * index_buffer)
+	bool GLTools::GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer)
 	{
 		GLuint va = 0;
 		GLuint vb = 0;
@@ -217,11 +217,11 @@ namespace chaos
 		if (GenerateVertexAndIndexBuffers(va_ptr, vb_ptr, ib_ptr))
 		{
 			if (vertex_array != nullptr)
-				*vertex_array = new VertexArray(va);
+				*vertex_array = new GPUVertexArray(va);
 			if (vertex_buffer != nullptr)
-				*vertex_buffer = new VertexBuffer(vb);
+				*vertex_buffer = new GPUVertexBuffer(vb);
 			if (index_buffer != nullptr)
-				*index_buffer = new IndexBuffer(ib);
+				*index_buffer = new GPUIndexBuffer(ib);
 
 			return true;
 		}

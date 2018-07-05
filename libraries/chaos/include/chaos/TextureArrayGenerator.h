@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/ImageTools.h>
 #include <chaos/FilePath.h>
@@ -138,12 +138,12 @@ namespace chaos
     /** clean all generators */
     void Clean();
     /** generate the texture array */
-    Texture * GenTextureObject(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
+    GPUTexture * GenTextureObject(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
 
   protected:
 
     /** internal method to generate the texture array */
-    Texture * GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
+    GPUTexture * GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const;
 
   protected:
 

@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/Buffer.h>
 #include <chaos/SkeletonHierarchyDef.h>
 
@@ -147,7 +147,7 @@ protected:
   virtual bool DoImportLightNode(FbxLight * light, FbxNode * node, int level);
 
   /** internal method to create a mesh */
-  SimpleMesh * DoCreateMesh(VertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer);
+  SimpleMesh * DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer);
 
   /** get assoication table, CTRL_POINT => BONE INFO */
   static BoneTableType GetBoneData(FbxMesh * mesh);

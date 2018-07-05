@@ -1,4 +1,4 @@
-#include <chaos/VertexArrayCache.h>
+#include <chaos/GPUVertexArrayCache.h>
 #include <chaos/GLTools.h>
 
 
@@ -18,7 +18,7 @@ namespace chaos
 		}	
 	}
 
-	VertexArray const * VertexArrayCache::FindVertexArray(GPUProgram const * program) const
+	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPUProgram const * program) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -35,19 +35,19 @@ namespace chaos
 		return nullptr;
 	}
 
-	VertexArray const * VertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration, GLintptr offset)
+	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUVertexBuffer const * vertex_buffer, GPUIndexBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset)
 	{
 		// early exit
 		if (program == nullptr)
 			return nullptr;
 
 		// find exisiting data
-		VertexArray const * result = FindVertexArray(program);
+		GPUVertexArray const * result = FindVertexArray(program);
 		if (result != nullptr)
 			return result;
 
 		// create the vertex array
-		boost::intrusive_ptr<VertexArray> new_vertex_array;
+		boost::intrusive_ptr<GPUVertexArray> new_vertex_array;
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&new_vertex_array, nullptr, nullptr))
 			return nullptr;
 
@@ -96,7 +96,7 @@ namespace chaos
 		return new_vertex_array.get();
 	}
 
-	void VertexArrayCache::RemoveEntry(VertexArrayCacheEntry * entry)
+	void GPUVertexArrayCache::RemoveEntry(VertexArrayCacheEntry * entry)
 	{
 		assert(entry != nullptr);
 		size_t count = entries.size();
@@ -112,7 +112,7 @@ namespace chaos
 		}	
 	}
 
-	void VertexArrayCache::Clear()
+	void GPUVertexArrayCache::Clear()
 	{
 		entries.clear();
 	}

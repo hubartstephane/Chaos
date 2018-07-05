@@ -14,7 +14,7 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/GLMTools.h>
@@ -50,9 +50,9 @@ public:
 	glm::vec4 color;
 };
 
-chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
+chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
 {
-	chaos::VertexDeclaration result;
+	chaos::GPUVertexDeclaration result;
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT4);
@@ -214,11 +214,11 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
 
-		chaos::RenderMaterial * RM1 = gpu_manager->FindRenderMaterial("mat1");
-		chaos::RenderMaterial * RM2 = gpu_manager->FindRenderMaterial("mat2");
-		chaos::RenderMaterial * RM3 = gpu_manager->FindRenderMaterial("mat3");
+		chaos::GPURenderMaterial * RM1 = gpu_manager->FindRenderMaterial("mat1");
+		chaos::GPURenderMaterial * RM2 = gpu_manager->FindRenderMaterial("mat2");
+		chaos::GPURenderMaterial * RM3 = gpu_manager->FindRenderMaterial("mat3");
 
-		chaos::RenderMaterial * materials[] = { RM1, RM2, RM3 };
+		chaos::GPURenderMaterial * materials[] = { RM1, RM2, RM3 };
 		assert(MATERIAL_COUNT == 3);
 
 		particle_manager = new chaos::ParticleManager;

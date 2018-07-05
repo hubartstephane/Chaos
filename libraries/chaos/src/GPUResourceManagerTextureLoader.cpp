@@ -5,23 +5,23 @@
 namespace chaos
 {
 
-	Texture * GPUResourceManagerTextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUResourceManagerTextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
 		if (!CheckResourceName(json))
 			return nullptr;
 		// load the texture
-		Texture * texture = TextureLoader::GenTextureObject(json, config_path, parameters);
+		GPUTexture * texture = TextureLoader::GenTextureObject(json, config_path, parameters);
 		if (texture != nullptr)
 			FinalizeLoadedResource(texture);
 		return texture;
 	}
 
-	Texture * GPUResourceManagerTextureLoader::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUResourceManagerTextureLoader::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters) const
 	{
 		if (!CheckResourcePath(path))
 			return nullptr;
 		// load the texture
-		Texture * texture = TextureLoader::GenTextureObject(path, parameters);
+		GPUTexture * texture = TextureLoader::GenTextureObject(path, parameters);
 		if (texture != nullptr)
 			FinalizeLoadedResource(texture);
 		return texture;

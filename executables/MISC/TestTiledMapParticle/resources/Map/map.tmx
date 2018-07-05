@@ -84,7 +84,7 @@
  <layer name="characters" width="30" height="30">
   <properties>
    <property name="ParticleClass" value="MyParticleClass1"/>
-   <property name="RenderMaterial" value="tile"/>
+   <property name="GPURenderMaterial" value="tile"/>
    <property name="RenderingOrder" type="int" value="6"/>
   </properties>
   <data encoding="csv">

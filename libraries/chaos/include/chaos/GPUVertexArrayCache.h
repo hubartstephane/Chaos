@@ -2,12 +2,12 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
-#include <chaos/VertexArray.h>
+#include <chaos/GPUVertexArray.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUResource.h>
-#include <chaos/VertexBuffer.h>
-#include <chaos/VertexDeclaration.h>
-#include <chaos/IndexBuffer.h>
+#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUVertexDeclaration.h>
+#include <chaos/GPUIndexBuffer.h>
 
 
 namespace chaos
@@ -19,7 +19,7 @@ namespace chaos
 	class VertexArrayCacheEntry : public ReferencedObject
 	{
 		friend class GPUProgramToVertexArrayCacheCallbacks;
-		friend class VertexArrayCache;
+		friend class GPUVertexArrayCache;
 
 	public:
 
@@ -29,30 +29,30 @@ namespace chaos
 	public:
 
 		/** the cache containing the entry */
-		VertexArrayCache * cache = nullptr;
+		GPUVertexArrayCache * cache = nullptr;
 		/** the id of the program concerned */
 		GPUProgram const * program = nullptr;
 		/** a pointer on the destruction callback associated */
 		GPUProgramToVertexArrayCacheCallbacks * program_destruction_callback = nullptr;	
 
 		/** the vertex array */
-		boost::intrusive_ptr<VertexArray> vertex_array;
+		boost::intrusive_ptr<GPUVertexArray> vertex_array;
 	};
 
 	// =================================================================================================
-	// VertexArrayCache : a binding between GPUProgram/VertexArray that support destruction of both side
+	// GPUVertexArrayCache : a binding between GPUProgram/GPUVertexArray that support destruction of both side
 	// =================================================================================================
 
-	class VertexArrayCache : public ReferencedObject
+	class GPUVertexArrayCache : public ReferencedObject
 	{
 		friend class GPUProgramToVertexArrayCacheCallbacks;
 
 	public:
 
 		/** find vertex array for the program */
-		VertexArray const * FindVertexArray(GPUProgram const * program) const;
+		GPUVertexArray const * FindVertexArray(GPUProgram const * program) const;
 		/** create or return exisiting vertex array for a given program */
-		VertexArray const * FindOrCreateVertexArray(GPUProgram const * program, VertexBuffer const * vertex_buffer, IndexBuffer const * index_buffer, VertexDeclaration const & declaration, GLintptr offset = 0);
+		GPUVertexArray const * FindOrCreateVertexArray(GPUProgram const * program, GPUVertexBuffer const * vertex_buffer, GPUIndexBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset = 0);
 		/** reset the whole object */
 		void Clear();
 
@@ -75,7 +75,7 @@ namespace chaos
 	class GPUProgramToVertexArrayCacheCallbacks : public GPUResourceCallbacks
 	{
 
-		friend class VertexArrayCache;
+		friend class GPUVertexArrayCache;
 		friend class VertexArrayCacheEntry;
 
 	protected:

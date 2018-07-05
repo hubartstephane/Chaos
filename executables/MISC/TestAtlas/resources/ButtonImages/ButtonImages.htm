@@ -818,11 +818,11 @@ div.clsPlatSpec
 
     <p>Using the single button images is straightforward. The file name indicates which button can be found in which image.  You can use the provided "strip" image in the Sprite Font system. This allows you to use the images without managing indiviual <b>Texture2D</b> objects.</p>
 
-    <p>When you add xboxControllerSpriteFont.tga to your XNA Game Studio Express project, it defaults to using the Texture - XNA Framework content importer, and the Texture (Sprite, 32bpp) - XNA Framework content processor. (You can find these settings in the Visual Studio properties pane after selecting the font in Solution Explorer.) This default importer is fine, but you will need to change the processor to "Sprite Font Texture - XNA Framework". Build your project, and the <b>ContentManager</b> will be ready to load your custom <b>SpriteFont</b>.
+    <p>When you add xboxControllerSpriteFont.tga to your XNA Game Studio Express project, it defaults to using the GPUTexture - XNA Framework content importer, and the GPUTexture (Sprite, 32bpp) - XNA Framework content processor. (You can find these settings in the Visual Studio properties pane after selecting the font in Solution Explorer.) This default importer is fine, but you will need to change the processor to "Sprite Font GPUTexture - XNA Framework". Build your project, and the <b>ContentManager</b> will be ready to load your custom <b>SpriteFont</b>.
     </p>
 
     <p>
-      When you use the <b>SpriteFont</b> object, you need to specify the text that the font will draw.  The glyphs processed by the "Sprite Font Texture - XNA Framework" are associated with characters starting with <b>Space</b>, and incrementing from there.
+      When you use the <b>SpriteFont</b> object, you need to specify the text that the font will draw.  The glyphs processed by the "Sprite Font GPUTexture - XNA Framework" are associated with characters starting with <b>Space</b>, and incrementing from there.
     </p>
 
     <a name="ID2EBB"></a><h2 class="subHeading">Character Mapping</h2><div id="ID2EBB" class="hxnx2">

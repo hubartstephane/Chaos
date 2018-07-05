@@ -6,14 +6,14 @@
 namespace chaos
 {
 
-	class VertexArray : public GPUResource
+	class GPUVertexArray : public GPUResource
 	{
 	public:
 
 		/** constructor */
-		VertexArray(GLuint in_id = 0);
+		GPUVertexArray(GLuint in_id = 0);
 		/** destructor */
-		virtual ~VertexArray();
+		virtual ~GPUVertexArray();
 
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return vertex_array_id; }

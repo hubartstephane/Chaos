@@ -77,9 +77,9 @@ protected:
 		instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		instancing.base_instance = 0;
 
-		chaos::RenderMaterial * materials[] = { render_material1.get(), render_material2.get() };
+		chaos::GPURenderMaterial * materials[] = { render_material1.get(), render_material2.get() };
 
-		chaos::RenderMaterial * rm = materials[current_material];
+		chaos::GPURenderMaterial * rm = materials[current_material];
 		if (rm == nullptr)
 			rm = materials[1 - current_material];
 
@@ -152,8 +152,8 @@ protected:
 
 	int current_material = 0;
 
-	boost::intrusive_ptr<chaos::RenderMaterial> render_material1;
-	boost::intrusive_ptr<chaos::RenderMaterial> render_material2;
+	boost::intrusive_ptr<chaos::GPURenderMaterial> render_material1;
+	boost::intrusive_ptr<chaos::GPURenderMaterial> render_material2;
 
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
 

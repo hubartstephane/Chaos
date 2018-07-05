@@ -1,4 +1,4 @@
-﻿#include <chaos/RenderMaterial.h>
+﻿#include <chaos/GPURenderMaterial.h>
 
 
 namespace chaos
@@ -15,7 +15,7 @@ namespace chaos
 			return true;
 
 		// use the provider of each materials
-		RenderMaterial const * rm = render_material;
+		GPURenderMaterial const * rm = render_material;
 		while (rm != nullptr)
 		{
 			if (rm->uniform_provider.DoProcessAction(name, action, top_provider))
@@ -25,17 +25,17 @@ namespace chaos
 		return false;
 	}
 
-	RenderMaterial::RenderMaterial()
+	GPURenderMaterial::GPURenderMaterial()
 	{
 
 	}
 
-	RenderMaterial::~RenderMaterial()
+	GPURenderMaterial::~GPURenderMaterial()
 	{
 		DoRelease();
 	}
 
-	bool RenderMaterial::DoRelease()
+	bool GPURenderMaterial::DoRelease()
 	{
 		program = nullptr;
 		parent_material = nullptr;
@@ -44,16 +44,16 @@ namespace chaos
 	}
 
 
-	bool RenderMaterial::SetProgram(GPUProgram * in_program)
+	bool GPURenderMaterial::SetProgram(GPUProgram * in_program)
 	{
 		program = in_program;
 		return true;
 	}
 
-	bool RenderMaterial::SetParentMaterial(RenderMaterial * in_parent)
+	bool GPURenderMaterial::SetParentMaterial(GPURenderMaterial * in_parent)
 	{
 		// ensure no cycle parenting
-		RenderMaterial * rm = in_parent;
+		GPURenderMaterial * rm = in_parent;
 		while (rm != nullptr)
 		{
 			if (rm == this)
@@ -64,10 +64,10 @@ namespace chaos
 		return true;
 	}
 
-	GPUProgram const * RenderMaterial::GetEffectiveProgram() const
+	GPUProgram const * GPURenderMaterial::GetEffectiveProgram() const
 	{
 		// go through the hierarchy until we get the program
-		RenderMaterial const * rm = this;
+		GPURenderMaterial const * rm = this;
 		while (rm != nullptr && rm->program == nullptr)
 			rm = rm->parent_material.get();
 		if (rm == nullptr)
@@ -75,7 +75,7 @@ namespace chaos
 		return rm->program.get();
 	}
 
-	bool RenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const
+	bool GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const
 	{
 		// go through the hierarchy until we get the program
 		GPUProgram const * effective_program = GetEffectiveProgram();

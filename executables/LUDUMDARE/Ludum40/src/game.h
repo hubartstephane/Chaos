@@ -17,8 +17,8 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUTexture.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
@@ -90,7 +90,7 @@ protected:
 
 	void DisplayBackground(glm::ivec2 viewport_size);
 	void DisplayControls(glm::ivec2 viewport_size);
-	void DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GPUProgram> program);
+	void DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::GPUTexture> texture, boost::intrusive_ptr<chaos::GPUProgram> program);
 
 	void SetLayerVisibility(int layer, bool visible);
 
@@ -203,9 +203,9 @@ protected:
 	boost::intrusive_ptr<chaos::SimpleMesh> fullscreen_mesh;
 
 	boost::intrusive_ptr<chaos::GPUProgram>  background_program;	
-	boost::intrusive_ptr<chaos::Texture>    background_texture;
+	boost::intrusive_ptr<chaos::GPUTexture>    background_texture;
 	boost::intrusive_ptr<chaos::GPUProgram>  control_program;
-	boost::intrusive_ptr<chaos::Texture>    control_texture;
+	boost::intrusive_ptr<chaos::GPUTexture>    control_texture;
 
   std::vector<boost::filesystem::path> background_paths;
   size_t background_index = 0;

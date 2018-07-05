@@ -1,13 +1,13 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/BitmapAtlas.h>
-#include <chaos/VertexArray.h>
-#include <chaos/VertexBuffer.h>
+#include <chaos/GPUVertexArray.h>
+#include <chaos/GPUVertexBuffer.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/Hotpoint.h>
@@ -79,11 +79,11 @@ namespace chaos
     /** the program to run */
     boost::intrusive_ptr<GPUProgram> program;
     /** the vertex array */
-    boost::intrusive_ptr<VertexArray> vertex_array;
+    boost::intrusive_ptr<GPUVertexArray> vertex_array;
     /** the vertex buffer */
-    boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+    boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
     /** the declaration of the vertex buffer */
-    VertexDeclaration declaration;
+    GPUVertexDeclaration declaration;
     /** the texture atlas */
     BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
     /** the sprites */

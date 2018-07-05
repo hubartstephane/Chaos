@@ -17,7 +17,7 @@
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayGenerator.h>
 #include <chaos/GPUProgramProvider.h>
@@ -159,7 +159,7 @@ protected:
 		return true; // refresh
 	}
 
-	boost::intrusive_ptr<chaos::Texture> GenerateTextureArray(int current_pixel_format)
+	boost::intrusive_ptr<chaos::GPUTexture> GenerateTextureArray(int current_pixel_format)
 	{
 		chaos::PixelFormat pixel_format = chaos::PixelFormat(current_pixel_format);
 		if (!pixel_format.IsValid())
@@ -172,7 +172,7 @@ protected:
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;
 
-		boost::intrusive_ptr<chaos::Texture> result = generator.GenTextureObject(merge_params);
+		boost::intrusive_ptr<chaos::GPUTexture> result = generator.GenTextureObject(merge_params);
 		if (result != nullptr)
 			texture_slice_count = (int)bitmaps.size();
 
@@ -181,7 +181,7 @@ protected:
 
 	void ChangePixelFormat(int delta)
 	{
-		boost::intrusive_ptr<chaos::Texture> new_texture = GenerateTextureArray(current_pixel_format + delta);
+		boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(current_pixel_format + delta);
 		if (new_texture != nullptr)
 		{
 			texture = new_texture;
@@ -248,7 +248,7 @@ protected:
 	// rendering for the box  
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
 	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
-	boost::intrusive_ptr<chaos::Texture>    texture;
+	boost::intrusive_ptr<chaos::GPUTexture>    texture;
 
 	int texture_slice{0};
 	int texture_slice_count{0};

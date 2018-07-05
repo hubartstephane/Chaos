@@ -101,11 +101,11 @@ namespace chaos
 		MeshGenerationRequirement requirement = GetRequirement();
 		if (requirement.IsValid())
 		{
-			boost::intrusive_ptr<VertexBuffer> vb_object;
-			boost::intrusive_ptr<IndexBuffer>  ib_object;
+			boost::intrusive_ptr<GPUVertexBuffer> vb_object;
+			boost::intrusive_ptr<GPUIndexBuffer>  ib_object;
 
-			boost::intrusive_ptr<VertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
-			boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
+			boost::intrusive_ptr<GPUVertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
+			boost::intrusive_ptr<GPUIndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
 
 			if (GLTools::GenerateVertexAndIndexBuffersObject(nullptr, vb_ptr, ib_ptr))
 			{
@@ -171,7 +171,7 @@ namespace chaos
 		return result;
 	}
 
-	void TriangleMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+	void TriangleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 	}
@@ -201,7 +201,7 @@ namespace chaos
 		return result;
 	}
 
-	void QuadMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+	void QuadMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 	}
@@ -239,7 +239,7 @@ namespace chaos
 		return result;
 	}
 
-	void CubeMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+	void CubeMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
@@ -286,7 +286,7 @@ namespace chaos
 		return result;
 	}
 
-	void SphereMeshGenerator::GenerateVertexDeclaration(VertexDeclaration & declaration) const
+	void SphereMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);

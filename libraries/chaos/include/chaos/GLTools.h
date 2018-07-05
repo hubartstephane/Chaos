@@ -1,9 +1,9 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/VertexArray.h>
-#include <chaos/VertexBuffer.h>
-#include <chaos/IndexBuffer.h>
+#include <chaos/GPUVertexArray.h>
+#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUIndexBuffer.h>
 #include <chaos/GeometryFramework.h>
 
 namespace chaos
@@ -44,7 +44,7 @@ namespace chaos
 		/** generate multiple arrays/buffer with a single call */
 		static bool GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
 		/** generate multiple arrays/buffer with a single call */
-		static bool GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<VertexArray> * vertex_array, boost::intrusive_ptr<VertexBuffer> * vertex_buffer, boost::intrusive_ptr<IndexBuffer> * index_buffer);
+		static bool GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer);
 		/** free multiple arrays/buffer with a single call */
 		static void FreeVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
 

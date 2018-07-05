@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/FilePath.h>
 
 namespace chaos
@@ -21,12 +21,12 @@ namespace chaos
       bool LoadFromBitmapAtlas(Atlas const & atlas);
 
       /* get the array texture */
-      Texture * GetTexture() { return texture.get(); }
+      GPUTexture * GetTexture() { return texture.get(); }
 
     protected:
 
       /** the texture array that will be generated */
-      boost::intrusive_ptr<Texture> texture;
+      boost::intrusive_ptr<GPUTexture> texture;
     };
   };
 };

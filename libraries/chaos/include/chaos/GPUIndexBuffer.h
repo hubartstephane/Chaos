@@ -5,12 +5,12 @@
 
 namespace chaos
 {
-	class IndexBuffer : public GPUBuffer
+	class GPUIndexBuffer : public GPUBuffer
 	{
 	public:
 
 		/** constructor */
-		IndexBuffer(GLuint in_id = 0);
+		GPUIndexBuffer(GLuint in_id = 0);
 	};
 
 }; // namespace chaos

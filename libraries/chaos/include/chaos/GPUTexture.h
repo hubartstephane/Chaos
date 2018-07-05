@@ -7,14 +7,14 @@
 namespace chaos
 {
 
-	class Texture : public GPUFileResource
+	class GPUTexture : public GPUFileResource
 	{
 	public:
 
 		/** constructor */
-		Texture(GLuint in_id = 0, TextureDescription const & in_texture_description = TextureDescription());
+		GPUTexture(GLuint in_id = 0, TextureDescription const & in_texture_description = TextureDescription());
 		/** destructor */
-		virtual ~Texture();
+		virtual ~GPUTexture();
 
 		/** get the description of the texture */
 		TextureDescription const & GetTextureDescription() const { return texture_description; }

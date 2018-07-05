@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ManagerResourceLoader.h>
 #include <chaos/GPUResourceManager.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/TextureLoader.h>
 #include <chaos/JSONTools.h>
 #include <chaos/FilePath.h>
@@ -23,9 +23,9 @@ namespace chaos
 		}
 
 		/** texture loading from JSON */
-		virtual Texture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const override;
+		virtual GPUTexture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const override;
 		/** texture loading from path */
-		virtual Texture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const override;
+		virtual GPUTexture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const override;
 
 	protected:
 

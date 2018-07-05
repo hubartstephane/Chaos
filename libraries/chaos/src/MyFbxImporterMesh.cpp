@@ -2,7 +2,7 @@
 #include <chaos/LogTools.h>
 #include <chaos/SparseWriteBuffer.h>
 #include <chaos/SimpleMesh.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/Buffer.h>
 #include <chaos/GLTools.h>
 #include <chaos/DrawPrimitive.h>
@@ -142,7 +142,7 @@ namespace chaos
 
 		/** if element is valid, this function insert a new VertexDeclarationEntry in the declaration */
 		template<typename T>
-		static void UpdateVertexDeclarationWithGeometryElement(T const * element, VertexDeclaration & vertex_declaration, int semantic, int semantic_index, int type)
+		static void UpdateVertexDeclarationWithGeometryElement(T const * element, GPUVertexDeclaration & vertex_declaration, int semantic, int semantic_index, int type)
 		{
 			if (IsGeometryElementValid(element))
 				vertex_declaration.Push(semantic, semantic_index, type);
@@ -208,7 +208,7 @@ namespace chaos
 			//
 			// STEP 1 : compute vertex declaration (ignore data per edge and none)
 			//
-			VertexDeclaration vertex_declaration;
+			GPUVertexDeclaration vertex_declaration;
 
 			vertex_declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3); // always containing a position
 
@@ -507,7 +507,7 @@ namespace chaos
 			return true;
 		}
 
-		SimpleMesh * MyFbxImporter::DoCreateMesh(VertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer)
+		SimpleMesh * MyFbxImporter::DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer)
 		{
 			SimpleMesh * result = new SimpleMesh;
 			if (result != nullptr)
@@ -528,9 +528,9 @@ namespace chaos
 					primitive.base_vertex_index = 0;
 					result->primitives.push_back(primitive);
 
-					//result->vertex_array  = new VertexArray(va);
-					result->vertex_buffer = new VertexBuffer(vb);
-					result->index_buffer = new IndexBuffer(ib);
+					//result->vertex_array  = new GPUVertexArray(va);
+					result->vertex_buffer = new GPUVertexBuffer(vb);
+					result->index_buffer = new GPUIndexBuffer(ib);
 
 					// fill the buffers
 					glNamedBufferData(vb, vertices.bufsize, vertices.data, GL_STATIC_DRAW);

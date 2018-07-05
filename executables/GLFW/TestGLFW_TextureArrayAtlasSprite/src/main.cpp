@@ -16,14 +16,14 @@
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/MathTools.h>
 #include <chaos/GLMTools.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/ParticleManager.h>
-#include <chaos/RenderMaterial.h>
+#include <chaos/GPURenderMaterial.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/ParticleDefault.h>
 
@@ -183,7 +183,7 @@ protected:
 			return false;
 
 		// create the material
-		material = new chaos::RenderMaterial;
+		material = new chaos::GPURenderMaterial;
 		if (material == nullptr)
 			return false;		
 		material->SetProgram(program.get());
@@ -259,7 +259,7 @@ protected:
 	/** the texture atlas */
 	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
 	/** the material */
-	boost::intrusive_ptr<chaos::RenderMaterial> material;
+	boost::intrusive_ptr<chaos::GPURenderMaterial> material;
 	/** the program */
 	boost::intrusive_ptr<chaos::GPUProgram> program;
 	/** allocation */

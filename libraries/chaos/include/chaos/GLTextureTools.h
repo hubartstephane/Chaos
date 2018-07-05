@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ImageTools.h>
 #include <chaos/SkyBoxTools.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
 #include <chaos/GLPixelFormat.h>

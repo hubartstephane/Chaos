@@ -1,12 +1,12 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
-#include <chaos/VertexArray.h>
-#include <chaos/VertexBuffer.h>
+#include <chaos/GPUTexture.h>
+#include <chaos/GPUVertexArray.h>
+#include <chaos/GPUVertexBuffer.h>
 
 namespace chaos
 {
@@ -76,13 +76,13 @@ protected:
   /** the program to run */
   boost::intrusive_ptr<GPUProgram> program;
   /** the texture */
-  boost::intrusive_ptr<Texture> texture;
+  boost::intrusive_ptr<GPUTexture> texture;
   /** the vertex array */
-  boost::intrusive_ptr<VertexArray> vertex_array;
+  boost::intrusive_ptr<GPUVertexArray> vertex_array;
   /** the vertex buffer */
-  boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+  boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
   /** the declaration of the vertex buffer */
-  VertexDeclaration declaration;
+  GPUVertexDeclaration declaration;
 
   /** number of element to draw */
   mutable size_t draw_count{0};

@@ -2,11 +2,11 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
-#include <chaos/RenderMaterial.h>
+#include <chaos/GPURenderMaterial.h>
 #include <chaos/BitmapAtlas.h>
-#include <chaos/VertexBuffer.h>
-#include <chaos/VertexDeclaration.h>
-#include <chaos/VertexArrayCache.h>
+#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUVertexDeclaration.h>
+#include <chaos/GPUVertexArrayCache.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/TextureArrayAtlas.h>
@@ -340,7 +340,7 @@ namespace chaos
 		virtual bool AreParticlesDynamic() const;
 
 		/** get the vertex declaration for that layer */
-		virtual VertexDeclaration GetVertexDeclaration() const;
+		virtual GPUVertexDeclaration GetVertexDeclaration() const;
 
 		/** returns the class ID for spawn particles */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
@@ -393,7 +393,7 @@ namespace chaos
 			return trait.dynamic_particles;
 		}
 		/** override */
-		virtual VertexDeclaration GetVertexDeclaration() const override
+		virtual GPUVertexDeclaration GetVertexDeclaration() const override
 		{
 			return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>());
 		}
@@ -523,9 +523,9 @@ namespace chaos
 		void SetRenderOrder(int in_render_order) { render_order = in_render_order; }
 
 		/** change the material */
-		void SetRenderMaterial(RenderMaterial * in_render_material) { render_material = in_render_material; }
+		void SetRenderMaterial(GPURenderMaterial * in_render_material) { render_material = in_render_material; }
 		/** get the material const method */
-		RenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
+		GPURenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
 
 		/** spawn a given number of particles */
 		ParticleAllocation * SpawnParticles(size_t count);
@@ -533,7 +533,7 @@ namespace chaos
 		/** ticking the particle system */
 		virtual void TickParticles(float delta_time);
 		/** draw the layer */
-		void Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing = InstancingInfo()) const;
+		void Display(GPURenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing = InstancingInfo()) const;
 
 	protected:
 
@@ -550,7 +550,7 @@ namespace chaos
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		void DoDisplay(size_t vcount, RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		void DoDisplay(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool UpdateParticles(float delta_time);
@@ -573,7 +573,7 @@ namespace chaos
 		mutable bool require_GPU_update = false;
 
 		/** the material used to render the layer */
-		boost::intrusive_ptr<RenderMaterial> render_material;
+		boost::intrusive_ptr<GPURenderMaterial> render_material;
 
 		/** particles allocations */
 		std::vector<ParticleAllocation*> particles_allocations;
@@ -581,11 +581,11 @@ namespace chaos
 		boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
 
 		/** the vertex declaration */
-		mutable VertexDeclaration vertex_declaration;
+		mutable GPUVertexDeclaration vertex_declaration;
 		/** the vertex buffer for the rendering */
-		mutable boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+		mutable boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
 		/** the cache for vertex array */
-		mutable VertexArrayCache vertex_array_cache;
+		mutable GPUVertexArrayCache vertex_array_cache;
 
 		/** number of used vertices in the vertex buffer */
 		mutable size_t vertices_count = 0;
@@ -675,7 +675,7 @@ namespace chaos
 
 		/** templated method to add a layer and set some values */
 		template<typename TRAIT_TYPE, typename ...PARAMS>
-		ParticleLayer * AddLayer(int render_order, int layer_id, RenderMaterial * render_material, PARAMS... params)
+		ParticleLayer * AddLayer(int render_order, int layer_id, GPURenderMaterial * render_material, PARAMS... params)
 		{
 			ParticleLayerDesc * layer_desc = new TypedParticleLayerDesc<TRAIT_TYPE>(params...);
 			if (layer_desc == nullptr)
@@ -686,7 +686,7 @@ namespace chaos
 		/** templated method to add a layer and set some values */
 		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name);
 		/** templated method to add a layer and set some values */
-		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, RenderMaterial * render_material);
+		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, GPURenderMaterial * render_material);
 
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayer * layer);

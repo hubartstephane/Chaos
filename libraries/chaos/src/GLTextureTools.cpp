@@ -25,7 +25,7 @@
 //       +--------------+ 
 //       |     top      |
 //       |              |
-//       |    Texture   |  The OpenGL texture is oriented like this
+//       |    GPUTexture   |  The OpenGL texture is oriented like this
 //       |              |
 //       |              |
 //       |    bottom    |

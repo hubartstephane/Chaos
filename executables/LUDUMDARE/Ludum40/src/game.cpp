@@ -19,8 +19,8 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUTexture.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/SoundManager.h>
 #include <json.hpp>
@@ -496,7 +496,7 @@ bool Game::LoadBackgroundTexture(size_t index)
 
   index = index % background_paths.size();
 
-  boost::intrusive_ptr<chaos::Texture> new_background = chaos::TextureLoader().GenTextureObject(background_paths[index]);
+  boost::intrusive_ptr<chaos::GPUTexture> new_background = chaos::TextureLoader().GenTextureObject(background_paths[index]);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -626,7 +626,7 @@ void Game::DisplayControls(glm::ivec2 viewport_size)
 	DisplayFullscreen(viewport_size, control_texture, control_program);	
 }
 
-void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::Texture> texture, boost::intrusive_ptr<chaos::GPUProgram> program)
+void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::GPUTexture> texture, boost::intrusive_ptr<chaos::GPUProgram> program)
 {
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();

@@ -4,7 +4,7 @@
 #include <chaos/GPUProgramData.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GLTools.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GLMTools.h>
 #include <chaos/GPUProgramAction.h>
 
@@ -94,7 +94,7 @@ namespace chaos
   public:
 
     /** constructor */
-    GPUProgramProviderTexture(char const * in_name, boost::intrusive_ptr<Texture> in_value) :
+    GPUProgramProviderTexture(char const * in_name, boost::intrusive_ptr<GPUTexture> in_value) :
       handled_name(in_name), value(in_value) {}
 
   protected:
@@ -107,7 +107,7 @@ namespace chaos
     /** the name of the uniform handled */
     std::string handled_name;
     /** the value of the uniform */
-    boost::intrusive_ptr<Texture> value;
+    boost::intrusive_ptr<GPUTexture> value;
   };
 
   /**
@@ -127,7 +127,7 @@ namespace chaos
       AddVariableProvider(new GPUProgramProviderValue<T>(name, value));
     }
     /** register a uniform texture */
-    void AddVariableTexture(char const * name, boost::intrusive_ptr<class Texture> texture)
+    void AddVariableTexture(char const * name, boost::intrusive_ptr<class GPUTexture> texture)
     {
       AddVariableProvider(new GPUProgramProviderTexture(name, texture));
     }

@@ -1,21 +1,21 @@
-﻿#include <chaos/VertexArray.h>
+﻿#include <chaos/GPUVertexArray.h>
 
 
 namespace chaos
 {
 
-	VertexArray::VertexArray(GLuint in_id) : 
+	GPUVertexArray::GPUVertexArray(GLuint in_id) : 
 		vertex_array_id(in_id)
 	{
 
 	}
 
-	VertexArray::~VertexArray()
+	GPUVertexArray::~GPUVertexArray()
 	{
 		DoRelease();
 	}
 
-	bool VertexArray::DoRelease()
+	bool GPUVertexArray::DoRelease()
 	{
 		if (vertex_array_id == 0)
 			return false;

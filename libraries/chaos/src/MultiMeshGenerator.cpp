@@ -47,11 +47,11 @@ namespace chaos
 		}
 
 		// create a vertex buffer and an index buffer to be shared among all meshes
-		boost::intrusive_ptr<VertexBuffer> vertex_buffer;
-		boost::intrusive_ptr<IndexBuffer>  index_buffer;
+		boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
+		boost::intrusive_ptr<GPUIndexBuffer>  index_buffer;
 
-		boost::intrusive_ptr<VertexBuffer> * vb_ptr = (vb_size > 0) ? &vertex_buffer : nullptr;
-		boost::intrusive_ptr<IndexBuffer>  * ib_ptr = (ib_size > 0) ? &index_buffer : nullptr;
+		boost::intrusive_ptr<GPUVertexBuffer> * vb_ptr = (vb_size > 0) ? &vertex_buffer : nullptr;
+		boost::intrusive_ptr<GPUIndexBuffer>  * ib_ptr = (ib_size > 0) ? &index_buffer : nullptr;
 
 		if (GLTools::GenerateVertexAndIndexBuffersObject(nullptr, vb_ptr, ib_ptr))
 		{

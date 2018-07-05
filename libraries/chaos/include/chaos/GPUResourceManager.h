@@ -3,9 +3,9 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/Manager.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/RenderMaterial.h>
+#include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
 
@@ -29,26 +29,26 @@ namespace chaos
 		virtual void Release();
 
 		/** load a texture (named deduced from path) */
-		Texture * LoadTexture(FilePathParam const & path);
+		GPUTexture * LoadTexture(FilePathParam const & path);
 		/** load a texture */
-		Texture * LoadTexture(FilePathParam const & path, char const * name);
+		GPUTexture * LoadTexture(FilePathParam const & path, char const * name);
 		/** load a program (named deduced from path) */
 		GPUProgram * LoadProgram(FilePathParam const & path);
 		/** load a program */
 		GPUProgram * LoadProgram(FilePathParam const & path, char const * name);
 		/** load a material (named deduced from path) */
-		RenderMaterial * LoadRenderMaterial(FilePathParam const & path);
+		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path);
 		/** load a material */
-		RenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name);
+		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name);
 
 		/** find a texture by its name */
-		Texture * FindTexture(char const * name);
+		GPUTexture * FindTexture(char const * name);
 		/** find a texture by its name */
-		Texture const * FindTexture(char const * name) const;
+		GPUTexture const * FindTexture(char const * name) const;
 		/** find a texture by its path */
-		Texture * FindTextureByPath(FilePathParam const & path);
+		GPUTexture * FindTextureByPath(FilePathParam const & path);
 		/** find a texture by its path */
-		Texture const * FindTextureByPath(FilePathParam const & path) const;
+		GPUTexture const * FindTextureByPath(FilePathParam const & path) const;
 
 		/** find a program by its name */
 		GPUProgram * FindProgram(char const * name);
@@ -60,13 +60,13 @@ namespace chaos
 		GPUProgram const * FindProgramByPath(FilePathParam const & path) const;
 
 		/** find a render material by its name */
-		RenderMaterial * FindRenderMaterial(char const * name);
+		GPURenderMaterial * FindRenderMaterial(char const * name);
 		/** find a render material by its name */
-		RenderMaterial const * FindRenderMaterial(char const * name) const;
+		GPURenderMaterial const * FindRenderMaterial(char const * name) const;
 		/** find a render material by its path */
-		RenderMaterial * FindRenderMaterialByPath(FilePathParam const & path);
+		GPURenderMaterial * FindRenderMaterialByPath(FilePathParam const & path);
 		/** find a render material by its path */
-		RenderMaterial const * FindRenderMaterialByPath(FilePathParam const & path) const;
+		GPURenderMaterial const * FindRenderMaterialByPath(FilePathParam const & path) const;
 
 		/** initialize the manager from a file */
 		virtual bool LoadManager(FilePathParam const & path);
@@ -90,22 +90,22 @@ namespace chaos
 		bool InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 		/** add a texture from a JSON object */
-		Texture * LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+		GPUTexture * LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** add a program from a JSON object */
 		GPUProgram * LoadProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** add a material from a JSON object (return the name of the parent material if any) */
-		RenderMaterial * LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
+		GPURenderMaterial * LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
 
 		/** search (if necessary the parent of the material) */
-		void SetRenderMaterialParent(RenderMaterial * render_material, std::string const & parent_name);
+		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);
 
 	protected:
 
 		/** the textures */
-		std::vector<boost::intrusive_ptr<Texture>> textures;
+		std::vector<boost::intrusive_ptr<GPUTexture>> textures;
 		/** the programs */
 		std::vector<boost::intrusive_ptr<GPUProgram>> programs;
 		/** the render materials */
-		std::vector<boost::intrusive_ptr<RenderMaterial>> render_materials;
+		std::vector<boost::intrusive_ptr<GPURenderMaterial>> render_materials;
 	};
 }; // namespace chaos

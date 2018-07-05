@@ -4,7 +4,7 @@
 #include <chaos/GPUProgramData.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GLTools.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GLMTools.h>
 
 namespace chaos
@@ -66,7 +66,7 @@ namespace chaos
     bool Process(char const * name, glm::dmat4 const & value) { return DoProcess(name, glm::dmat4(value)); }
 
     /** processing texture */
-    bool Process(char const * name, Texture const * value) { return DoProcess(name, value); }
+    bool Process(char const * name, GPUTexture const * value) { return DoProcess(name, value); }
 
   protected:
 
@@ -79,7 +79,7 @@ namespace chaos
     virtual bool DoProcess(char const * name, glm::mat4 const & value) { return false; }
     virtual bool DoProcess(char const * name, glm::dmat4 const & value) { return false; }
 
-    virtual bool DoProcess(char const * name, Texture const * value) { return false; }
+    virtual bool DoProcess(char const * name, GPUTexture const * value) { return false; }
   };
 
   /**
@@ -103,7 +103,7 @@ namespace chaos
     virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return uniform.SetUniform(value); }
     virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return uniform.SetUniform(value); }
-    virtual bool DoProcess(char const * name, Texture const * value) override { return uniform.SetUniform(value); }
+    virtual bool DoProcess(char const * name, GPUTexture const * value) override { return uniform.SetUniform(value); }
 
   protected:
 
@@ -132,7 +132,7 @@ namespace chaos
     virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return false; }
     virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return false; }
-    virtual bool DoProcess(char const * name, Texture const * value) override { return false; }
+    virtual bool DoProcess(char const * name, GPUTexture const * value) override { return false; }
 
   protected:
 
@@ -163,7 +163,7 @@ namespace chaos
     virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return ConvertAndGet(value); }
     virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return ConvertAndGet(value); }
 
-    virtual bool DoProcess(char const * name, Texture const * value) override { return false; } // texture not implemented
+    virtual bool DoProcess(char const * name, GPUTexture const * value) override { return false; } // texture not implemented
 
     /** the generic conversions methods */
     template<typename U>

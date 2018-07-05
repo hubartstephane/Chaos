@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUTexture.h>
 #include <chaos/GPUResource.h>
 
 namespace chaos
@@ -80,7 +80,7 @@ namespace chaos
 			/** the mipmap of concern */
 			int texture_mipmap = 0;
 			/** the texture of concern */
-			boost::intrusive_ptr<Texture> texture;
+			boost::intrusive_ptr<GPUTexture> texture;
 			/** the texture of concern */
 			boost::intrusive_ptr<GPURenderbuffer> renderbuffer;
 		};
@@ -95,10 +95,10 @@ namespace chaos
 
 		/** attachment */
 		bool AddColorAttachment(int color_index, GPURenderbuffer * render_buffer);
-		bool AddColorAttachment(int color_index, Texture * texture, int mipmap = 0);
+		bool AddColorAttachment(int color_index, GPUTexture * texture, int mipmap = 0);
 
 		bool AddDepthStencilAttachment(GPURenderbuffer * render_buffer);		
-		bool AddDepthStencilAttachment(Texture * texture, int mipmap = 0);
+		bool AddDepthStencilAttachment(GPUTexture * texture, int mipmap = 0);
 
 
 		/** get the dimension of the framebuffer that will be generated */

@@ -1,4 +1,4 @@
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 
 namespace chaos
 {
@@ -46,7 +46,7 @@ int VertexDeclarationEntry::GetEntrySize() const
   return component_count * component_size; 
 }
 
-void VertexDeclaration::Push(int semantic, int semantic_index, int type)
+void GPUVertexDeclaration::Push(int semantic, int semantic_index, int type)
 {
   int offset = 0;
   if (entries.size() > 0)
@@ -63,7 +63,7 @@ void VertexDeclaration::Push(int semantic, int semantic_index, int type)
   entries.push_back(entry);
 }
 
-VertexDeclarationEntry * VertexDeclaration::GetEntry(int semantic, int semantic_index)
+VertexDeclarationEntry * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index)
 {
   for (auto & entry : entries)
     if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))
@@ -71,7 +71,7 @@ VertexDeclarationEntry * VertexDeclaration::GetEntry(int semantic, int semantic_
   return nullptr;
 }
 
-VertexDeclarationEntry const * VertexDeclaration::GetEntry(int semantic, int semantic_index) const
+VertexDeclarationEntry const * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index) const
 {
   for (auto const & entry : entries)
     if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))
@@ -79,7 +79,7 @@ VertexDeclarationEntry const * VertexDeclaration::GetEntry(int semantic, int sem
   return nullptr;
 }
 
-int VertexDeclaration::GetVertexSize() const
+int GPUVertexDeclaration::GetVertexSize() const
 {
   int result = 0;
   for (auto const & entry : entries)
@@ -87,7 +87,7 @@ int VertexDeclaration::GetVertexSize() const
   return result;
 }
 
-int VertexDeclaration::GetSemanticCount(int semantic) const
+int GPUVertexDeclaration::GetSemanticCount(int semantic) const
 {
   int result = -1;
   for (auto const & entry : entries)
@@ -96,22 +96,22 @@ int VertexDeclaration::GetSemanticCount(int semantic) const
   return result + 1;
 }
 
-int VertexDeclaration::GetPositionCount() const
+int GPUVertexDeclaration::GetPositionCount() const
 {
   return GetSemanticCount(SEMANTIC_POSITION);
 }
 
-int VertexDeclaration::GetColorCount() const
+int GPUVertexDeclaration::GetColorCount() const
 {
   return GetSemanticCount(SEMANTIC_COLOR);
 }
 
-int VertexDeclaration::GetTextureCount() const
+int GPUVertexDeclaration::GetTextureCount() const
 {
   return GetSemanticCount(SEMANTIC_TEXCOORD);
 }
 
-int VertexDeclaration::GetBoneCount() const
+int GPUVertexDeclaration::GetBoneCount() const
 {
   return min(GetSemanticCount(SEMANTIC_BONEINDEX), GetSemanticCount(SEMANTIC_BONEWEIGHT));
 }

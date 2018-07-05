@@ -3,7 +3,7 @@
 #include <chaos/GLTools.h>
 #include <chaos/GLMTools.h>
 #include <chaos/GPUProgramProvider.h>
-#include <chaos/RenderMaterial.h>
+#include <chaos/GPURenderMaterial.h>
 
 namespace chaos
 {
@@ -271,7 +271,7 @@ namespace chaos
     return SetUniformVectorImpl(*this, value);
   }
 
-  bool GLUniformInfo::SetUniform(Texture const * texture) const
+  bool GLUniformInfo::SetUniform(GPUTexture const * texture) const
   {
     if (!GLTools::IsSamplerType(type))
       return false;
@@ -526,7 +526,7 @@ namespace chaos
     return -1;
   }
 
-  void GPUProgramData::BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, GPUProgramProviderBase const * attribute_provider) const
+  void GPUProgramData::BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, GPUProgramProviderBase const * attribute_provider) const
   {
     int vertex_size = declaration.GetVertexSize();
 

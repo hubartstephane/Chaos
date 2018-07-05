@@ -85,7 +85,7 @@ protected:
 
 		chaos::TextureLoader texture_loader;
 
-		chaos::Texture * texture = texture_loader.GenTextureObject(desc);
+		chaos::GPUTexture * texture = texture_loader.GenTextureObject(desc);
 
 		chaos::PixelFormat format = chaos::GLTextureTools::GetTexturePixelFormat(texture->GetResourceID(), 0);
 
@@ -193,7 +193,7 @@ protected:
 			// find the render material name
 			char const * render_material_name = "tile";
 
-			std::string const * render_material_property = tile_layer->FindPropertyString("RenderMaterial");
+			std::string const * render_material_property = tile_layer->FindPropertyString("GPURenderMaterial");
 			if (render_material_property != nullptr)
 				render_material_name = render_material_property->c_str();
 
@@ -215,7 +215,7 @@ protected:
 				rendering_order = *rendering_order_property;
 
 			// find corresponding material
-			chaos::RenderMaterial * material = gpu_manager->FindRenderMaterial(render_material_name);
+			chaos::GPURenderMaterial * material = gpu_manager->FindRenderMaterial(render_material_name);
 
 
 

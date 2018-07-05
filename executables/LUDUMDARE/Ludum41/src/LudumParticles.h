@@ -31,7 +31,7 @@ public:
 	glm::vec4 color;
 };
 
-extern chaos::VertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+extern chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
 
 // ===========================================================================
 // Background particle system

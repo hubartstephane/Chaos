@@ -2,17 +2,17 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramProvider.h>
-#include <chaos/VertexArray.h>
-#include <chaos/VertexBuffer.h>
-#include <chaos/IndexBuffer.h>
-#include <chaos/RenderMaterial.h>
+#include <chaos/GPUVertexArray.h>
+#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUIndexBuffer.h>
+#include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUResource.h>
 #include <chaos/DrawPrimitive.h>
-#include <chaos/VertexArrayCache.h>
+#include <chaos/GPUVertexArrayCache.h>
 
 namespace chaos
 {
@@ -33,7 +33,7 @@ namespace chaos
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
 		void Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
+		void Render(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
 
 		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
@@ -50,21 +50,21 @@ namespace chaos
 	public:
 
 		/** self descriptive */
-		VertexDeclaration vertex_declaration;
+		GPUVertexDeclaration vertex_declaration;
 		/** the primitives to render */
 		std::vector<DrawPrimitive> primitives;
 
 		/** self descriptive */
-		boost::intrusive_ptr<VertexBuffer> vertex_buffer;
+		boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
 		/** self descriptive */
-		boost::intrusive_ptr<IndexBuffer> index_buffer;
+		boost::intrusive_ptr<GPUIndexBuffer> index_buffer;
 		/** in the vertex buffer (that may be shared by other simpled mesh), the offset from the begining given to it */
 		GLintptr vertex_buffer_offset = 0;
 
 	protected:
 
 		/** the cache for all vertex arrays */
-		mutable VertexArrayCache vertex_array_cache;
+		mutable GPUVertexArrayCache vertex_array_cache;
 	};
 
 }; // namespace chaos

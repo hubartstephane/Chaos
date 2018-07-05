@@ -1,8 +1,8 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/VertexDeclaration.h>
-#include <chaos/Texture.h>
+#include <chaos/GPUVertexDeclaration.h>
+#include <chaos/GPUTexture.h>
 
 namespace chaos
 {
@@ -78,7 +78,7 @@ namespace chaos
     bool SetUniform(GLint    value) const;
     bool SetUniform(GLuint   value) const;
 
-    bool SetUniform(Texture const * texture) const;
+    bool SetUniform(GPUTexture const * texture) const;
 
   public:
 
@@ -94,9 +94,9 @@ class GLAttributeInfo : public GLVariableInfo
 {
 public:
 
-  /** see VertexDeclaration */
+  /** see GPUVertexDeclaration */
   int semantic;
-  /** see VertexDeclaration */
+  /** see GPUVertexDeclaration */
   int semantic_index;
 };
 
@@ -118,7 +118,7 @@ public:
   GLint GetLocation(int semantic, int semantic_index) const;
 
   /** bind the attributes */
-  void BindAttributes(GLuint vertex_array, VertexDeclaration const & declaration, class GPUProgramProviderBase const * attribute_provider = nullptr) const;
+  void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, class GPUProgramProviderBase const * attribute_provider = nullptr) const;
 
   /** find a uniform */
   GLUniformInfo * FindUniform(char const * name);

@@ -95,7 +95,7 @@ namespace chaos
 		generators.clear(); // destroy the intrusive_ptr
 	}
 
-	Texture * TextureArrayGenerator::GenTextureObject(PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
+	GPUTexture * TextureArrayGenerator::GenTextureObject(PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters)
 	{
 		TextureArraySliceRegistry  slice_registry;
 		std::vector<size_t> slice_counts;
@@ -144,7 +144,7 @@ namespace chaos
 			return nullptr;
 
 		// create the texture and fill the slices
-    Texture * result = GenTextureObjectHelper(slice_registry, pixel_format, width, height, parameters);
+    GPUTexture * result = GenTextureObjectHelper(slice_registry, pixel_format, width, height, parameters);
 		if (result == nullptr)
 			return nullptr;
 
@@ -162,9 +162,9 @@ namespace chaos
 		return result;
 	}
 
-	Texture * TextureArrayGenerator::GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
+	GPUTexture * TextureArrayGenerator::GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
-    Texture * result = nullptr;
+    GPUTexture * result = nullptr;
 
 		// compute the 'flat' texture target
 		GLenum flat_target = GLTextureTools::GetTextureTargetFromSize(width, height, false);
@@ -242,7 +242,7 @@ namespace chaos
       texture_description.internal_format = gl_pixel_format.internal_format;
 
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
-      result = new Texture(texture_id, texture_description);
+      result = new GPUTexture(texture_id, texture_description);
 		}
 
 		// release the conversion buffer if necessary

@@ -17,8 +17,8 @@
 #include <chaos/SimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/Texture.h>
-#include <chaos/VertexDeclaration.h>
+#include <chaos/GPUTexture.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUQuery.h>
 
@@ -41,7 +41,7 @@ protected:
 
   void ChangeSkyBox(int index)
   {
-    boost::intrusive_ptr<chaos::Texture> new_texture = GenerateSkyBox(index);
+    boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateSkyBox(index);
     if (new_texture != nullptr)
     {
       skybox_index = index;
@@ -49,9 +49,9 @@ protected:
     }
   }
 
-  boost::intrusive_ptr<chaos::Texture> GenerateSkyBox(int index)
+  boost::intrusive_ptr<chaos::GPUTexture> GenerateSkyBox(int index)
   {
-    boost::intrusive_ptr<chaos::Texture> result;
+    boost::intrusive_ptr<chaos::GPUTexture> result;
 
     boost::filesystem::path resources_path = chaos::Application::GetInstance()->GetResourcesPath();
 
@@ -277,7 +277,7 @@ protected:
 
   boost::intrusive_ptr<chaos::GPUProgram>  program;
   boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-  boost::intrusive_ptr<chaos::Texture>    texture;
+  boost::intrusive_ptr<chaos::GPUTexture>    texture;
 
   boost::intrusive_ptr<chaos::GPUQuery> query;
  

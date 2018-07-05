@@ -128,9 +128,9 @@ namespace chaos
 		return false;
 	}
 
-	VertexDeclaration ParticleLayerDesc::GetVertexDeclaration() const
+	GPUVertexDeclaration ParticleLayerDesc::GetVertexDeclaration() const
 	{
-		return VertexDeclaration();
+		return GPUVertexDeclaration();
 	}
 
 	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation)
@@ -275,7 +275,7 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayer::Display(RenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void ParticleLayer::Display(GPURenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		if (!IsVisible())
 			return;
@@ -286,7 +286,7 @@ namespace chaos
 		// update the vertex declaration
 		UpdateVertexDeclaration();
 		// search the material
-		RenderMaterial const * final_material = material_override;
+		GPURenderMaterial const * final_material = material_override;
 		if (final_material == nullptr)
 		{
 			final_material = render_material.get();
@@ -297,13 +297,13 @@ namespace chaos
 		DoDisplay(vcount, final_material, uniform_provider, instancing);
 	}
 
-	void ParticleLayer::DoDisplay(size_t vcount, RenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void ParticleLayer::DoDisplay(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// no vertices, no rendering
 		if (vcount == 0)
 			return;
 		// get the vertex array
-		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
+		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
 		if (vertex_array == nullptr)
 			return;
 		// use the material
@@ -510,8 +510,8 @@ namespace chaos
 
 	ParticleLayer * ParticleManager::AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name)
 	{
-		// find the optional RenderMaterial
-		RenderMaterial * render_material = nullptr;
+		// find the optional GPURenderMaterial
+		GPURenderMaterial * render_material = nullptr;
 		if (material_name != nullptr)
 		{
 			MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
@@ -527,7 +527,7 @@ namespace chaos
 		return AddLayer(layer_desc, render_order, layer_id, render_material);
 	}
 
-	ParticleLayer * ParticleManager::AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, RenderMaterial * render_material)
+	ParticleLayer * ParticleManager::AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, GPURenderMaterial * render_material)
 	{
 		ParticleLayer * result = AddLayer(layer_desc);
 		if (result != nullptr)
@@ -576,10 +576,10 @@ namespace chaos
 			// test for program ID
 			if (test_program_id && RenderOrder1 == RenderOrder2)
 			{
-				RenderMaterial const * M1 = L1->GetRenderMaterial();
+				GPURenderMaterial const * M1 = L1->GetRenderMaterial();
 				if (M1 == nullptr)
 					continue;
-				RenderMaterial const * M2 = L2->GetRenderMaterial();
+				GPURenderMaterial const * M2 = L2->GetRenderMaterial();
 				if (M2 == nullptr)
 					continue;
 				if (M1 == M2)
@@ -619,10 +619,10 @@ namespace chaos
 			// test for material ordering
 			if (test_program_id && RenderOrder1 == RenderOrder2)
 			{
-				RenderMaterial const * M1 = L1->GetRenderMaterial();
+				GPURenderMaterial const * M1 = L1->GetRenderMaterial();
 				if (M1 == nullptr)
 					return 0;
-				RenderMaterial const * M2 = L2->GetRenderMaterial();
+				GPURenderMaterial const * M2 = L2->GetRenderMaterial();
 				if (M2 == nullptr)
 					return 0;
 				if (M1 == M2)

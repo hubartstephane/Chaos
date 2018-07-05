@@ -38,7 +38,7 @@ namespace chaos
 		DoRender(program, uniform_provider, instancing);
 	}
 
-	void SimpleMesh::Render(RenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void SimpleMesh::Render(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// early exit
 		if (material == nullptr)
@@ -57,7 +57,7 @@ namespace chaos
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
-		VertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration, vertex_buffer_offset);
+		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration, vertex_buffer_offset);
 		if (vertex_array == nullptr)
 			return;
 		// bind the vertex array

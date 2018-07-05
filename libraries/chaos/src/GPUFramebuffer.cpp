@@ -127,13 +127,13 @@ namespace chaos
 		return true;
 	}
 
-	void AddDepthStencilAttachment(Texture * texture, char const * name) {}
+	void AddDepthStencilAttachment(GPUTexture * texture, char const * name) {}
 
 	void AddDepthStencilAttachment(GPURenderbuffer * renderbuffer, char const * name) {}
 
 	void AddDepthStencilAttachment(glm::ivec2 const & size, char const * name){}
 
-	//void AddColorAttachment(Texture * texture)
+	//void AddColorAttachment(GPUTexture * texture)
 
 
 	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, GPURenderbuffer * render_buffer)
@@ -153,7 +153,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, Texture * texture, int mipmap)
+	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, GPUTexture * texture, int mipmap)
 	{
 		assert(texture != nullptr);
 		assert(texture->GetTextureDescription().GetPixelFormat().IsColorPixel());
@@ -194,7 +194,7 @@ namespace chaos
 		return true;
 	}
 	
-	bool GPUFramebufferGenerator::AddDepthStencilAttachment(Texture * texture, int mipmap)
+	bool GPUFramebufferGenerator::AddDepthStencilAttachment(GPUTexture * texture, int mipmap)
 	{
 		assert(texture != nullptr);
 		assert(texture->GetTextureDescription().GetPixelFormat().IsDepthStencilPixel());

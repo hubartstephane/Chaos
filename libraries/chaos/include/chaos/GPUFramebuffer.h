@@ -9,7 +9,23 @@ namespace chaos
 {
 	class GPUFramebuffer : public GPUResource
 	{
+		friend class GPUFramebufferGenerator;
+
 	public:
+
+		class AttachmentInfo
+		{
+		public:
+
+			/** the name of the attachment */
+			std::string name;
+			/** the type of attachment */
+			GLenum type = GL_NONE;
+			/** texture attachment */
+			boost::intrusive_ptr<GPUTexture> texture;
+			/** texture attachment */
+			boost::intrusive_ptr<GPURenderbuffer> renderbuffer;
+		};
 
 		/** constructor */
 		GPUFramebuffer(GLuint in_id = 0);
@@ -21,6 +37,15 @@ namespace chaos
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return framebuffer_id; }
 
+		/** find an attachment by its name */
+		AttachmentInfo const * GetAttachment(char const * name) const;
+		/** find an attachment by its type */
+		AttachmentInfo const * GetAttachment(GLenum type) const;
+		/** find the (unique) depth stencil attachment */
+		AttachmentInfo const * GetDepthStencilAttachment() const;
+		/** find the color attachment */
+		AttachmentInfo const * GetColorAttachment(int color_index) const;
+
 	protected:
 
 		/** cleaning the object */
@@ -31,7 +56,7 @@ namespace chaos
 		/** the resource id */
 		GLuint framebuffer_id = 0;
 		/** private and shared resources */
-		std::vector<boost::intrusive_ptr<GPUResource>> resources;
+		std::vector<AttachmentInfo> attachments;
 	};
 
 }; // namespace chaos

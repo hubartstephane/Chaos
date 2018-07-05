@@ -12,7 +12,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPURenderbuffer(GLuint in_id = 0);
+		GPURenderbuffer(GLuint in_id = 0, SurfaceDescription const & in_surface_description = SurfaceDescription());
 		/** destructor */
 		virtual ~GPURenderbuffer();
 
@@ -20,6 +20,8 @@ namespace chaos
 		bool IsValid() const { return glIsRenderbuffer(renderbuffer_id) == GL_TRUE; }
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return renderbuffer_id; }
+		/** get the description of the surface */
+		SurfaceDescription const & GetSurfaceDescription() const { return surface_description; }
 
 	protected:
 
@@ -30,6 +32,8 @@ namespace chaos
 
 		/** the resource id */
 		GLuint renderbuffer_id = 0;
+		/** the description of the framebuffer */
+		SurfaceDescription surface_description;
 	};
 
 

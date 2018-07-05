@@ -8,8 +8,9 @@ namespace chaos
 	// ==========================================================================
 
 
-	GPURenderbuffer::GPURenderbuffer(GLuint in_id) :
-		renderbuffer_id(in_id)
+	GPURenderbuffer::GPURenderbuffer(GLuint in_id, SurfaceDescription const & in_surface_description) :
+		renderbuffer_id(in_id),
+		surface_description(in_surface_description)
 	{
 	}
 
@@ -94,13 +95,9 @@ namespace chaos
 		{
 			if (attachment.texture != nullptr)
 				return attachment.texture->GetTextureDescription().GetSize(attachment.texture_mipmap);
-
-			
-
-
+			if (attachment.renderbuffer != nullptr)
+				return attachment.renderbuffer->GetSurfaceDescription().GetSize(0);
 		}
-
-
 		return result;
 	}
 
@@ -129,6 +126,15 @@ namespace chaos
 				return true;
 		return true;
 	}
+
+	void AddDepthStencilAttachment(Texture * texture, char const * name) {}
+
+	void AddDepthStencilAttachment(GPURenderbuffer * renderbuffer, char const * name) {}
+
+	void AddDepthStencilAttachment(glm::ivec2 const & size, char const * name){}
+
+	//void AddColorAttachment(Texture * texture)
+
 
 	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, GPURenderbuffer * render_buffer)
 	{

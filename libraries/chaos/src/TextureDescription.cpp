@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	glm::ivec2 TextureDescription::GetSize(int mipmap) const
+	glm::ivec2 SurfaceDescription::GetSize(int mipmap) const
 	{
 		return glm::ivec2(width >> mipmap, height >> mipmap);
 	}
 
-	PixelFormat TextureDescription::GetPixelFormat() const
+	PixelFormat SurfaceDescription::GetPixelFormat() const
 	{
 		return GLTextureTools::GetPixelFormat(internal_format);
 	}

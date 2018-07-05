@@ -6,16 +6,14 @@
 namespace chaos
 {
 	/**
-	* TextureDescription : used to describe an openGL texture
+	* SurfaceDescription : used to describe an openGL surface
 	*/
 
-	class TextureDescription
+	class SurfaceDescription
 	{
 	public:
 
-		/** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
-		GLenum type = GL_NONE;
-		/** the format of the texture (RGB / RGBA) */
+		/** the format of the surface (RGB / RGBA ...) */
 		GLenum internal_format = GL_NONE;
 		/** the image width */
 		int    width = 0;
@@ -30,6 +28,19 @@ namespace chaos
 		PixelFormat GetPixelFormat() const;
 		/** get the size of the texture */
 		glm::ivec2 GetSize(int mipmap = 0) const;
+	};
+
+
+	/**
+	* TextureDescription : used to describe an openGL texture
+	*/
+
+	class TextureDescription : public SurfaceDescription
+	{
+	public:
+
+		/** the type of the texture (1D/2D/3D/RECTANGLE/CUBE) */
+		GLenum type = GL_NONE;
 	};
 
 }; // namespace chaos

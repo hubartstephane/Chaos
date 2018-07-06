@@ -7,23 +7,19 @@
 
 namespace chaos
 {
-	class GPUFramebufferGenerator
+
+	class GPUFramebufferGeneratorAttachmentInfo : public GPUFramebufferAttachmentInfo
 	{
 	public:
 
-		class AttachmentInfo
-		{
-		public:
+		/** the format for the generation (valid if texture & renderbuffer are null) */
+		PixelFormat pixel_format;
+		/** the size for the generation (valid if texture & renderbuffer are null) */
+		glm::ivec2 size = glm::ivec2(0, 0);
+	};
 
-			/** the point of attachment */
-			GLenum attachment_point = GL_NONE;
-			/** the mipmap of concern */
-			int texture_mipmap = 0;
-			/** the texture of concern */
-			boost::intrusive_ptr<GPUTexture> texture;
-			/** the texture of concern */
-			boost::intrusive_ptr<GPURenderbuffer> renderbuffer;
-		};
+	class GPUFramebufferGenerator : public GPUAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>
+	{
 
 	public:
 
@@ -33,25 +29,39 @@ namespace chaos
 		/** Clear the generator */
 		void Clear();
 
-		/** attachment */
-		bool AddColorAttachment(int color_index, GPURenderbuffer * render_buffer);
-		bool AddColorAttachment(int color_index, GPUTexture * texture, int mipmap = 0);
+		/** depth stencil attachment method */
+		bool AddDepthStencilAttachment(GPUTexture * texture, int mipmap = 0, char const * name = nullptr);
+		/** depth stencil attachment method */
+		bool AddDepthStencilAttachment(GPURenderbuffer * renderbuffer, char const * name = nullptr);
+		/** depth stencil attachment method */
+		bool AddDepthStencilAttachment(glm::ivec2 const & in_size, char const * name = nullptr);
 
-		bool AddDepthStencilAttachment(GPURenderbuffer * render_buffer);		
-		bool AddDepthStencilAttachment(GPUTexture * texture, int mipmap = 0);
-
+		/** color attachment method */
+		bool AddColorAttachment(int color_index, GPUTexture * texture, int mipmap = 0, char const * name = nullptr);
+		/** color attachment method */
+		bool AddColorAttachment(int color_index, GPURenderbuffer * renderbuffer, char const * name = nullptr);
+		/** color attachment method */
+		bool AddColorAttachment(int color_index, PixelFormat const & pixel_format, glm::ivec2 const & in_size, char const * name = nullptr);
 
 		/** get the dimension of the framebuffer that will be generated */
 		glm::ivec2 GetSize() const;
 
 	protected:
 
+		/** test whether the size of the surface correspond to what is already stored */
+		bool IsSurfaceSizeCompatible(GPUSurface * surface, int mipmap = 0) const;
+		/** test whether the size of the surface correspond to what is already stored */
+		bool IsSurfaceSizeCompatible(glm::ivec2 const & in_size) const;
+
 		/** test whether the color attachment is valid */
 		bool IsColorAttachmentValid(int color_index) const;
-		/** test whether the color attachment is used */
-		bool IsColorAttachmentInUse(int color_index) const;
-		/** test whether there already is a depth stencil attachment */
-		bool HasDepthStencilAttachment() const;
+		/** test whether the color attachment is valid */
+		bool IsColorAttachmentValid(int color_index, char const * name) const;
+
+
+
+		/** insert a new attachment */
+		void CompleteAndInsertAttachment(GPUFramebufferGeneratorAttachmentInfo & info, char const * name);
 
 		/** initialize the framebuffer content */
 		bool InitializeFramebuffer(GPUFramebuffer * framebuffer);
@@ -60,8 +70,8 @@ namespace chaos
 
 		/** the cached number of color attachments */
 		mutable GLint max_color_attachment = -1;
-		/** the stored attachment info */
-		std::vector<AttachmentInfo> attachment_info;
+		/** the size of the future framebuffer */
+		glm::ivec2 size = glm::ivec2(0, 0);
 	};
 
 

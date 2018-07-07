@@ -19,6 +19,8 @@
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GLTextureTools.h> 
 #include <chaos/TextureLoader.h> 
+#include <chaos/GPUFramebuffer.h> 
+#include <chaos/GPUFramebufferGenerator.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
 #define DUMP_DEBUG_DATA 0 // _DEBUG
@@ -88,6 +90,28 @@ protected:
 		chaos::GPUTexture * texture = texture_loader.GenTextureObject(desc);
 
 		chaos::PixelFormat format = chaos::GLTextureTools::GetTexturePixelFormat(texture->GetResourceID(), 0);
+
+
+		glm::ivec2 null_size (0, 0);
+		glm::ivec2 final_size(1024, 1024);
+
+		chaos::GPUFramebufferGenerator framebuffer_generator;
+		framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), null_size, "truc");
+		framebuffer_generator.AddColorAttachment(1, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), null_size, "bidule");
+		framebuffer_generator.AddColorAttachment(2, chaos::PixelFormat::GetPixelFormat<chaos::PixelDepthStencil>(), null_size, "machin");
+
+
+
+
+
+
+		chaos::GPUFramebuffer * framebuffer = framebuffer_generator.GenerateFramebuffer(final_size);
+
+
+
+		framebuffer = framebuffer;
+
+
 
 
 		if (!InitializeTiledMapManager())

@@ -1,6 +1,7 @@
 ﻿#include <chaos/GPUFramebufferGenerator.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
+#include <chaos/GLRenderbufferTools.h>
 
 namespace chaos
 {
@@ -49,19 +50,27 @@ namespace chaos
 
 		for (GPUFramebufferGeneratorAttachmentInfo & info : attachment_info)
 		{
+			// dynamicly generated renderbuffer
+			if (info.texture == nullptr && info.renderbuffer == nullptr)
+				info.renderbuffer = GLRenderbufferTools::GenRenderbufferObject(info.pixel_format, final_size);
+
+			// texture provided
 			if (info.texture != nullptr)
 			{
 				glNamedFramebufferTexture(framebuffer_id, info.attachment_point, info.texture->GetResourceID(), info.texture_mipmap);
 			}
+			// renderbuffer provided
 			else if (info.renderbuffer != nullptr)
 			{
 				glNamedFramebufferRenderbuffer(framebuffer_id, info.attachment_point, GL_RENDERBUFFER, info.renderbuffer->GetResourceID());
 			}
+			// case of error
 			else
 			{
-
-
+				continue;
 			}
+
+			// add information into the framebuffer
 			framebuffer->attachment_info.push_back(std::move(info)); // automatic conversion
 		}
 		return true;
@@ -253,29 +262,5 @@ namespace chaos
 	{
 		return size;
 	}
-
-#if 0
-	GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT or GL_DEPTH_STENCIL_ATTACHMENT.
-	GL_MAX_COLOR_ATTACHMENTS
-
-
-		GLuint depth_renderbuffer = 0;
-		glGenRenderbuffers(1, &depth_renderbuffer);
-		glNamedRenderbufferStorage(depth_renderbuffer, GL_DEPTH24_STENCIL8, 512, 512);
-
-		GLuint color_renderbuffer = 0;
-		glGenRenderbuffers(1, &color_renderbuffer);
-		glNamedRenderbufferStorage(color_renderbuffer, GL_RGBA, 512, 512);
-
-		glNamedFramebufferRenderbuffer(framebuffer, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_renderbuffer);
-		glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, texture_id, texture_level);
-		glCheckNamedFramebufferStatus(framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
-		glNamedFramebufferTextureLayer
-		GL_DEPTH_STENCIL_ATTACHMENT
-
-			GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-
-#endif
-
 
 }; // namespace chaos

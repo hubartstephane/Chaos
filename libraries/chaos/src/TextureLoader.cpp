@@ -53,7 +53,7 @@ namespace chaos
 
 			TextureDescription texture_description;
 			texture_description.type = target;
-			texture_description.internal_format = internal_format;
+			texture_description.pixel_format = image.pixel_format;
 			texture_description.width = image.width;
 			texture_description.height = image.height;
 			texture_description.depth = 1;
@@ -319,7 +319,7 @@ namespace chaos
 			// finalize the result information
 			TextureDescription texture_description;
 			texture_description.type = GL_TEXTURE_CUBE_MAP;
-			texture_description.internal_format = gl_final_pixel_format.internal_format;
+			texture_description.pixel_format = final_pixel_format;
 			texture_description.width = size;
 			texture_description.height = size;
 			texture_description.depth = 1;

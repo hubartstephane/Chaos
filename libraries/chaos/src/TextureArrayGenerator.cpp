@@ -239,7 +239,7 @@ namespace chaos
       texture_description.width = width;
       texture_description.height = height;
       texture_description.depth = (int)slice_count;
-      texture_description.internal_format = gl_pixel_format.internal_format;
+      texture_description.pixel_format = final_pixel_format;
 
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
       result = new GPUTexture(texture_id, texture_description);

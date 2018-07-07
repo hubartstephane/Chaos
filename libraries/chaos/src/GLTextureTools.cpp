@@ -25,7 +25,7 @@
 //       +--------------+ 
 //       |     top      |
 //       |              |
-//       |    GPUTexture   |  The OpenGL texture is oriented like this
+//       |    Texture   |  The OpenGL texture is oriented like this
 //       |              |
 //       |              |
 //       |    bottom    |
@@ -228,6 +228,8 @@ namespace chaos
 
 	void GLTextureTools::GenTextureApplyParameters(GLuint texture_id, TextureDescription const & texture_description, GenTextureParameters const & parameters)
 	{
+		GLPixelFormat gl_formats = GetGLPixelFormat(texture_description.pixel_format);
+
 		// there are to set of functions
 		//   - glTexParameteri(TARGET ...)
 		// and
@@ -238,7 +240,7 @@ namespace chaos
 		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
 		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
 
-		if (texture_description.internal_format == GL_R8 || texture_description.internal_format == GL_R32F)
+		if (gl_formats.internal_format == GL_R8 || gl_formats.internal_format == GL_R32F)
 		{
 			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_R, GL_RED);
 			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_G, GL_RED);

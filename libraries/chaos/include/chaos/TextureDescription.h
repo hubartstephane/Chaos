@@ -14,7 +14,7 @@ namespace chaos
 	public:
 
 		/** the format of the surface (RGB / RGBA ...) */
-		GLenum internal_format = GL_NONE;
+		PixelFormat pixel_format;
 		/** the image width */
 		int    width = 0;
 		/** the image height */

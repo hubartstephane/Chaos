@@ -31,7 +31,7 @@ namespace chaos
 		description.height = size.y;
 		description.depth  = 1;
 
-		description.internal_format = gl_formats.internal_format;
+		description.pixel_format = pixel_format;
 
 		// create the renderbuffer
 		GPURenderbuffer * result = new GPURenderbuffer(renderbuffer_id, description);

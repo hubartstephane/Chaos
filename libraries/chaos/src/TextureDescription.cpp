@@ -10,7 +10,7 @@ namespace chaos
 
 	PixelFormat SurfaceDescription::GetPixelFormat() const
 	{
-		return GLTextureTools::GetPixelFormat(internal_format);
+		return pixel_format;
 	}
 
 }; // namespace chaos

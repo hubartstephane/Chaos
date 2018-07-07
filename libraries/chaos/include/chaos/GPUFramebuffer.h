@@ -56,9 +56,9 @@ namespace chaos
 			return GetAttachment(color_index + GL_COLOR_ATTACHMENT0);
 		}
 		/** get the depth stencil attachment */
-		ATTACHMENT_TYPE const * GetDepthStencilAttachment(int color_index) const
+		ATTACHMENT_TYPE const * GetDepthStencilAttachment() const
 		{
-			return (GetAttachment(GL_DEPTH_STENCIL_ATTACHMENT) != nullptr);
+			return GetAttachment(GL_DEPTH_STENCIL_ATTACHMENT);
 		}
 		/** returns whether the name is already in use in an attachment */
 		bool IsAttachmentNameInUse(char const * name) const
@@ -66,6 +66,19 @@ namespace chaos
 			if (name == nullptr)
 				return false;
 			return (GetAttachment(name) != nullptr);
+		}
+		/** returns whether the surface is already in use in an attachment */
+		bool IsSurfaceInUse(GPUSurface * surface) const
+		{
+			assert(surface != nullptr);
+			for (ATTACHMENT_TYPE const & attachment : attachment_info)
+			{
+				if (attachment.texture == surface)
+					return true;
+				if (attachment.renderbuffer == surface)
+					return true;
+			}
+			return false;
 		}
 		/** test whether the color attachment is used */
 		bool IsColorAttachmentInUse(int color_index) const

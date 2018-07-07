@@ -4,37 +4,65 @@
 
 namespace chaos
 {
-	GPUFramebuffer * GPUFramebufferGenerator::GenerateFramebuffer()
+	GPUFramebuffer * GPUFramebufferGenerator::GenerateFramebuffer(glm::ivec2 const & wanted_size)
 	{
 		GPUFramebuffer * result = nullptr;
 
+		// compute final size and test whether it is valid
+		glm::ivec2 null_size(0, 0);
+
+		glm::ivec2 final_size;
+		if (size == null_size) // content does not define any size .. use parameter
+		{
+			if (wanted_size == null_size) // cannot define any resolution
+				return nullptr;
+			final_size = wanted_size;
+		}
+		else
+		{
+			if (wanted_size != null_size && wanted_size != size) // the parameter does not match the size
+				return nullptr;
+			final_size = size;
+		}
+		// create the framebuffer
 		GLuint framebuffer = 0;
 		glGenFramebuffers(1, &framebuffer);
 
 		if (framebuffer != 0)
 		{
 			result = new GPUFramebuffer(framebuffer);
-			if (!InitializeFramebuffer(result))
+			if (!InitializeFramebuffer(result, final_size))
 			{
 				delete(result);
 				result = nullptr;
 			}
 		}
+		// clear the generator
+		Clear();
+
 		return result;
 	}
 
-	bool GPUFramebufferGenerator::InitializeFramebuffer(GPUFramebuffer * framebuffer)
+	bool GPUFramebufferGenerator::InitializeFramebuffer(GPUFramebuffer * framebuffer, glm::ivec2 const & final_size)
 	{
-		//for (AttachmentInfo const & info : attachment_info)
+		GLuint framebuffer_id = framebuffer->GetResourceID();
+
+		for (GPUFramebufferGeneratorAttachmentInfo & info : attachment_info)
 		{
+			if (info.texture != nullptr)
+			{
+				glNamedFramebufferTexture(framebuffer_id, info.attachment_point, info.texture->GetResourceID(), info.texture_mipmap);
+			}
+			else if (info.renderbuffer != nullptr)
+			{
+				glNamedFramebufferRenderbuffer(framebuffer_id, info.attachment_point, GL_RENDERBUFFER, info.renderbuffer->GetResourceID());
+			}
+			else
+			{
 
 
-
-
-
-
-
-
+			}
+			framebuffer->attachment_info.push_back(std::move(info)); // automatic conversion
 		}
 		return true;
 	}
@@ -74,11 +102,11 @@ namespace chaos
 
 	bool GPUFramebufferGenerator::IsColorAttachmentValid(int color_index, char const * name) const
 	{
-		if (IsAttachmentNameInUse(name))
+		if (!IsColorAttachmentValid(color_index))
 			return false;
 		if (IsColorAttachmentInUse(color_index))
 			return false;
-		if (!IsColorAttachmentValid(color_index))
+		if (IsAttachmentNameInUse(name))
 			return false;
 		return true;
 	}
@@ -115,9 +143,13 @@ namespace chaos
 			return false;
 		if (IsAttachmentNameInUse(name))
 			return false;
+		if (IsSurfaceInUse(texture))
+			return false;
+		if (HasDepthStencilAttachment())
+			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
-		info.attachment_point = GL_DEPTH24_STENCIL8;
+		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
 		info.texture = texture;
 		info.texture_mipmap = mipmap;
 		CompleteAndInsertAttachment(info, name);
@@ -132,9 +164,13 @@ namespace chaos
 			return false;
 		if (IsAttachmentNameInUse(name))
 			return false;
+		if (IsSurfaceInUse(renderbuffer))
+			return false;
+		if (HasDepthStencilAttachment())
+			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
-		info.attachment_point = GL_DEPTH24_STENCIL8;
+		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
 		info.renderbuffer = renderbuffer;
 		CompleteAndInsertAttachment(info, name);
 		return true;
@@ -146,15 +182,15 @@ namespace chaos
 			return false;
 		if (IsAttachmentNameInUse(name))
 			return false;
+		if (HasDepthStencilAttachment())
+			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
-		info.attachment_point = GL_DEPTH24_STENCIL8;
+		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
 		info.size = in_size;
 		CompleteAndInsertAttachment(info, name);
 		return true;
 	}
-
-
 
 	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, GPUTexture * texture, int mipmap, char const * name)
 	{
@@ -164,6 +200,8 @@ namespace chaos
 		if (!IsSurfaceSizeCompatible(texture, mipmap))
 			return false;
 		if (!IsColorAttachmentValid(color_index, name))
+			return false;
+		if (IsSurfaceInUse(texture))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -181,6 +219,8 @@ namespace chaos
 		if (!IsSurfaceSizeCompatible(renderbuffer))
 			return false;
 		if (!IsColorAttachmentValid(color_index, name))
+			return false;
+		if (IsSurfaceInUse(renderbuffer))
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -218,12 +258,9 @@ namespace chaos
 	GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT or GL_DEPTH_STENCIL_ATTACHMENT.
 	GL_MAX_COLOR_ATTACHMENTS
 
-		GLuint framebuffer = 0;
-		glGenFramebuffers(1, &framebuffer);
 
 		GLuint depth_renderbuffer = 0;
 		glGenRenderbuffers(1, &depth_renderbuffer);
-
 		glNamedRenderbufferStorage(depth_renderbuffer, GL_DEPTH24_STENCIL8, 512, 512);
 
 		GLuint color_renderbuffer = 0;
@@ -237,26 +274,7 @@ namespace chaos
 		GL_DEPTH_STENCIL_ATTACHMENT
 
 			GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-	/*
-#define GL_COLOR_ATTACHMENT0 0x8CE0
-#define GL_COLOR_ATTACHMENT1 0x8CE1
-#define GL_COLOR_ATTACHMENT2 0x8CE2
-#define GL_COLOR_ATTACHMENT3 0x8CE3
-#define GL_COLOR_ATTACHMENT4 0x8CE4
-#define GL_COLOR_ATTACHMENT5 0x8CE5
-#define GL_COLOR_ATTACHMENT6 0x8CE6
-#define GL_COLOR_ATTACHMENT7 0x8CE7
-#define GL_COLOR_ATTACHMENT8 0x8CE8
-#define GL_COLOR_ATTACHMENT9 0x8CE9
-#define GL_COLOR_ATTACHMENT10 0x8CEA
-#define GL_COLOR_ATTACHMENT11 0x8CEB
-#define GL_COLOR_ATTACHMENT12 0x8CEC
-#define GL_COLOR_ATTACHMENT13 0x8CED
-#define GL_COLOR_ATTACHMENT14 0x8CEE
-#define GL_COLOR_ATTACHMENT15 0x8CEF
-#define GL_DEPTH_ATTACHMENT 0x8D00
-#define GL_STENCIL_ATTACHMENT 0x8D20
-		*/
+
 #endif
 
 

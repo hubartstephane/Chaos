@@ -1,0 +1,44 @@
+layout (location = 0) in vec3 position;
+
+uniform mat4  projection;
+uniform mat4  local_to_world;
+uniform mat4  world_to_camera;
+
+uniform int instance_cube_size;
+
+uniform double realtime;
+
+out vec3 vertex_color;
+out vec3 vertex_position;
+
+void main() 
+{
+  vertex_position = position;
+
+  // dispose each instance on a cube
+  float R = 3.0;
+
+  int a = gl_InstanceID % (instance_cube_size * instance_cube_size);
+  int b = gl_InstanceID / (instance_cube_size * instance_cube_size);
+
+  float instance_x = float(a / instance_cube_size);
+  float instance_y = float(a % instance_cube_size);
+  float instance_z = float(b);
+
+  // compute the color of the vertex
+  vertex_color.x = (0.5 * (position.x + 1.0) / float(instance_cube_size)) + (instance_x / float(instance_cube_size));
+  vertex_color.y = (0.5 * (position.y + 1.0) / float(instance_cube_size)) + (instance_y / float(instance_cube_size));
+  vertex_color.z = (0.5 * (position.z + 1.0) / float(instance_cube_size)) + (instance_z / float(instance_cube_size));
+
+  // compute the position of the vertex
+  vec4 tmp = vec4(position, 1.0);
+
+  tmp.x = tmp.x + R * (instance_x - float(instance_cube_size) * 0.5);
+  tmp.y = tmp.y + R * (instance_y - float(instance_cube_size) * 0.5);
+  tmp.z = tmp.z + R * (instance_z - float(instance_cube_size) * 0.5);
+
+  tmp = local_to_world    * tmp;
+  tmp = world_to_camera   * tmp;
+  tmp = projection        * tmp;
+  gl_Position = tmp;
+}

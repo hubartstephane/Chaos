@@ -4,14 +4,14 @@
 #include <chaos/GPUResourceManager.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/FilePath.h>
-#include <chaos/ManagerResourceLoader.h>
+#include <chaos/GPUResourceManagerLoader.h>
 #include <chaos/EmptyClass.h>
 
 
 namespace chaos
 {
 
-	class GPURenderMaterialLoader : public ManagerResourceLoader<GPUFileResourceFriend, GPUResourceManager>
+	class GPURenderMaterialLoader : public GPUResourceManagerLoader<GPUFileResourceFriend, GPUResourceManager>
 	{
 	public:
 

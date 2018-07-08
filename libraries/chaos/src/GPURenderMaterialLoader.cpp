@@ -7,7 +7,7 @@
 namespace chaos
 {
 	GPURenderMaterialLoader::GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
-		ManagerResourceLoader<GPUFileResourceFriend, GPUResourceManager>(in_resource_manager)
+		GPUResourceManagerLoader<GPUFileResourceFriend, GPUResourceManager>(in_resource_manager)
 	{
 
 	}

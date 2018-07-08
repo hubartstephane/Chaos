@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ManagerResourceLoader.h>
+#include <chaos/GPUResourceManagerLoader.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramLoader.h>
@@ -11,13 +11,13 @@
 namespace chaos
 {
 
-	class GPUResourceManagerProgramLoader : public ManagerResourceLoader<GPUProgramLoader, GPUResourceManager>
+	class GPUResourceManagerProgramLoader : public GPUResourceManagerLoader<GPUProgramLoader, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUResourceManagerProgramLoader(GPUResourceManager * in_resource_manager) :
-			ManagerResourceLoader<GPUProgramLoader, GPUResourceManager>(in_resource_manager)
+			GPUResourceManagerLoader<GPUProgramLoader, GPUResourceManager>(in_resource_manager)
 		{
 
 		}

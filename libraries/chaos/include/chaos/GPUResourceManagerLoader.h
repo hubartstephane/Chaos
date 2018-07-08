@@ -18,15 +18,15 @@ namespace chaos
 	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even its the final call)
 
 	/**
-	* ManagerResourceLoader
+	* GPUResourceManagerLoader
 	**/
 
 	template<typename T, typename MANAGER_TYPE>
-	class ManagerResourceLoader : public T
+	class GPUResourceManagerLoader : public T
 	{
 	public:
 
-		ManagerResourceLoader(MANAGER_TYPE * in_manager) :
+		GPUResourceManagerLoader(MANAGER_TYPE * in_manager) :
 			manager(in_manager)
 		{
 			assert(in_manager != nullptr);

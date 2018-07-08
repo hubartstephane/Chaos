@@ -1,6 +1,6 @@
 ﻿#include <chaos/GPUResourceManagerTextureLoader.h>
 #include <chaos/GPUResourceManager.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 
 namespace chaos
 {
@@ -10,7 +10,7 @@ namespace chaos
 		if (!CheckResourceName(json))
 			return nullptr;
 		// load the texture
-		GPUTexture * texture = TextureLoader::GenTextureObject(json, config_path, parameters);
+		GPUTexture * texture = GPUTextureLoader::GenTextureObject(json, config_path, parameters);
 		if (texture != nullptr)
 			FinalizeLoadedResource(texture);
 		return texture;
@@ -21,7 +21,7 @@ namespace chaos
 		if (!CheckResourcePath(path))
 			return nullptr;
 		// load the texture
-		GPUTexture * texture = TextureLoader::GenTextureObject(path, parameters);
+		GPUTexture * texture = GPUTextureLoader::GenTextureObject(path, parameters);
 		if (texture != nullptr)
 			FinalizeLoadedResource(texture);
 		return texture;

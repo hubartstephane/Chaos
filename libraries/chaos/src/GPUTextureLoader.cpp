@@ -1,4 +1,4 @@
-﻿#include <chaos/TextureLoader.h>
+﻿#include <chaos/GPUTextureLoader.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/FileTools.h>
@@ -7,7 +7,7 @@
 namespace chaos
 {
 
-	GPUTexture * TextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const
 	{
 		GPUTexture * result = nullptr;
 
@@ -65,13 +65,13 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * TextureLoader::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(FIBITMAP * image, GenTextureParameters const & parameters) const
 	{
 		assert(image != nullptr);
 		return GenTextureObject(ImageTools::GetImageDescription(image), parameters);
 	}
 
-	GPUTexture * TextureLoader::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters) const
 	{
 		GPUTexture * result = nullptr;
 
@@ -159,7 +159,7 @@ namespace chaos
 	//  v
 	//
 
-	int TextureLoader::GetCubeMapLayerValueFromSkyBoxFace(int face, int level)
+	int GPUTextureLoader::GetCubeMapLayerValueFromSkyBoxFace(int face, int level)
 	{
 #if 0
 		// previous code was using GL_enum
@@ -202,7 +202,7 @@ namespace chaos
 		return -1;
 	}
 
-	GPUTexture * TextureLoader::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(SkyBoxImages const * skybox, PixelFormatMergeParams const & merge_params, GenTextureParameters const & parameters) const
 	{
 		assert(skybox != nullptr);
 
@@ -341,7 +341,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUTexture * TextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUTextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
 		// the entry has a reference to another file => recursive call
 		std::string p;

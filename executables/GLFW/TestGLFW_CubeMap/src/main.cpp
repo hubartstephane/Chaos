@@ -3,7 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -109,7 +109,7 @@ protected:
     }
 
     if (!skybox.IsEmpty())
-      return chaos::TextureLoader().GenTextureObject(&skybox);
+      return chaos::GPUTextureLoader().GenTextureObject(&skybox);
 
     return nullptr;
   }

@@ -18,7 +18,7 @@ namespace chaos
 
 	class GPUResourceManager : public Manager, protected GPUFileResourceFriend
 	{
-		friend class RenderMaterialLoader;
+		friend class GPURenderMaterialLoader;
 		friend class RenderMaterialFromConfigLoader;
 
 	public:

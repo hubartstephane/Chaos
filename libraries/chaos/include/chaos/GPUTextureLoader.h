@@ -11,10 +11,10 @@
 namespace chaos
 {
 	/**
-	* TextureLoader : used to have some loading texture functions for OpenGL
+	* GPUTextureLoader : used to have some loading texture functions for OpenGL
 	**/
 
-	class TextureLoader : protected GPUFileResourceFriend  // give the hability to change path and names to the resource
+	class GPUTextureLoader : protected GPUFileResourceFriend  // give the hability to change path and names to the resource
 	{
 	public:
 

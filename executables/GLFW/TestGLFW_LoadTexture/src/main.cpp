@@ -3,7 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -67,13 +67,13 @@ protected:
 
       chaos::ImageDescription sub_desc = desc.GetSubImageDescription(k, k, desc.width - 2 * k, desc.height - 2 * k);
 
-      result = chaos::TextureLoader().GenTextureObject(sub_desc);
+      result = chaos::GPUTextureLoader().GenTextureObject(sub_desc);
 
       FreeImage_Unload(image);
     }
 
 #else
-		result = chaos::TextureLoader().GenTextureObject(texture_paths[index]);
+		result = chaos::GPUTextureLoader().GenTextureObject(texture_paths[index]);
 #endif
 
 		return result;

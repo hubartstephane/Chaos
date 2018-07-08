@@ -12,7 +12,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/ParticleTools.h>

@@ -18,7 +18,7 @@
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GLTextureTools.h> 
-#include <chaos/TextureLoader.h> 
+#include <chaos/GPUTextureLoader.h> 
 #include <chaos/GPUFramebuffer.h> 
 #include <chaos/GPUFramebufferGenerator.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
@@ -85,7 +85,7 @@ protected:
 		desc.width = 512;
 		desc.height = 512;
 
-		chaos::TextureLoader texture_loader;
+		chaos::GPUTextureLoader texture_loader;
 
 		chaos::GPUTexture * texture = texture_loader.GenTextureObject(desc);
 

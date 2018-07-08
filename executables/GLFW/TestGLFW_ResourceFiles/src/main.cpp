@@ -12,7 +12,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
 
 
@@ -66,12 +66,12 @@ protected:
 		// ==========================================================
 
 		// independant loading (NOT GPUResourceManager) : always good
-		TexturePtr independant_texture1 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture1.json");
-		TexturePtr independant_texture2 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture2.json");
-		TexturePtr independant_texture3 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture3.json");
-		TexturePtr independant_texture4 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture4.json");
-		TexturePtr independant_texture5 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "texture5.json");
-		TexturePtr independant_texture6 = chaos::TextureLoader().GenTextureObject(resource_path / "textures" / "space.png");
+		TexturePtr independant_texture1 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture1.json");
+		TexturePtr independant_texture2 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture2.json");
+		TexturePtr independant_texture3 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture3.json");
+		TexturePtr independant_texture4 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture4.json");
+		TexturePtr independant_texture5 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "texture5.json");
+		TexturePtr independant_texture6 = chaos::GPUTextureLoader().GenTextureObject(resource_path / "textures" / "space.png");
 
 		// ==========================================================
 

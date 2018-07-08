@@ -1,9 +1,9 @@
 ﻿#include <chaos/GPUResourceManager.h>
 #include <chaos/BoostTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/GPUProgramLoader.h>
-#include <chaos/RenderMaterialLoader.h>
+#include <chaos/GPURenderMaterialLoader.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GPUResourceManagerTextureLoader.h>
 #include <chaos/GPUResourceManagerProgramLoader.h>
@@ -157,7 +157,7 @@ namespace chaos
 
 		// prepare the loader
 		//  - give it the name and the path, so that at the end it can update result members
-		RenderMaterialLoader loader(this);
+		GPURenderMaterialLoader loader(this);
 		loader.SetResultPath(path.GetResolvedPath());
 		loader.SetResultName(name);
 
@@ -298,7 +298,7 @@ namespace chaos
 		if (!CanAddRenderMaterial(name))
 			return nullptr;
 		// initialize the loader, so te name will be given to result at the end
-		RenderMaterialLoader loader(this);
+		GPURenderMaterialLoader loader(this);
 		loader.SetResultName(name);
 
 		// load the resource

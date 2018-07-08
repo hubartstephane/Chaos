@@ -4,20 +4,20 @@
 #include <chaos/ManagerResourceLoader.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/GPUTexture.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/JSONTools.h>
 #include <chaos/FilePath.h>
 
 namespace chaos
 {
 
-	class GPUResourceManagerTextureLoader : public ManagerResourceLoader<TextureLoader, GPUResourceManager>
+	class GPUResourceManagerTextureLoader : public ManagerResourceLoader<GPUTextureLoader, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUResourceManagerTextureLoader(GPUResourceManager * in_resource_manager) :
-			ManagerResourceLoader<TextureLoader, GPUResourceManager>(in_resource_manager)
+			ManagerResourceLoader<GPUTextureLoader, GPUResourceManager>(in_resource_manager)
 		{
 
 		}

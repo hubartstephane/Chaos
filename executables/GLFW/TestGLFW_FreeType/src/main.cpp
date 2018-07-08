@@ -3,7 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h> 
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -294,7 +294,7 @@ protected:
 
 #endif
 
-    boost::intrusive_ptr<chaos::GPUTexture> result = chaos::TextureLoader().GenTextureObject(bm, parameters);
+    boost::intrusive_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader().GenTextureObject(bm, parameters);
 
     glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 

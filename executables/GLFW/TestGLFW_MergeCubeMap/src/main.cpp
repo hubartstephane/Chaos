@@ -4,7 +4,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -68,7 +68,7 @@ protected:
 #if 0
 
 		// let OpenGL do the conversion
-		return chaos::TextureLoader().GenTextureObject(&skybox, merge_params);
+		return chaos::GPUTextureLoader().GenTextureObject(&skybox, merge_params);
 
 #else
 		
@@ -76,7 +76,7 @@ protected:
 		chaos::SkyBoxImages single_skybox = skybox.ToSingleImage(true, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), merge_params);
 
 		if (!single_skybox.IsEmpty())
-			return chaos::TextureLoader().GenTextureObject(&single_skybox);				
+			return chaos::GPUTextureLoader().GenTextureObject(&single_skybox);				
 
 #endif
 

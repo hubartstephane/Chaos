@@ -5,7 +5,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/GPUProgramProvider.h>
 
 namespace chaos
@@ -173,7 +173,7 @@ namespace chaos
       return false;
 
     // create texture
-    texture = TextureLoader().GenTextureObject(image);
+    texture = GPUTextureLoader().GenTextureObject(image);
     FreeImage_Unload(image);
     if (texture == nullptr)
       return false;

@@ -1,4 +1,4 @@
-﻿#include <chaos/RenderMaterialLoader.h>
+﻿#include <chaos/GPURenderMaterialLoader.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/FileTools.h>
@@ -6,13 +6,13 @@
 
 namespace chaos
 {
-	RenderMaterialLoader::RenderMaterialLoader(GPUResourceManager * in_resource_manager) :
+	GPURenderMaterialLoader::GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
 		ManagerResourceLoader<GPUFileResourceFriend, GPUResourceManager>(in_resource_manager)
 	{
 
 	}
 
-	bool RenderMaterialLoader::InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const
+	bool GPURenderMaterialLoader::InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const
 	{
 		GPUProgram * program = manager->FindProgram(program_name);
 		if (program == nullptr)
@@ -21,7 +21,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeProgramFromPath(GPURenderMaterial * render_material, FilePathParam const & path) const
+	bool GPURenderMaterialLoader::InitializeProgramFromPath(GPURenderMaterial * render_material, FilePathParam const & path) const
 	{
 		// take already loaded program, or try load it
 		GPUProgram * program = manager->FindProgramByPath(path.GetResolvedPath());
@@ -36,7 +36,7 @@ namespace chaos
 		return false;
 	}
 
-	bool RenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// does the JSON have a "program" string ?
 		std::string program_name;
@@ -70,7 +70,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeTextureFromName(GPURenderMaterial * render_material, char const * uniform_name, char const * texture_name) const
+	bool GPURenderMaterialLoader::InitializeTextureFromName(GPURenderMaterial * render_material, char const * uniform_name, char const * texture_name) const
 	{
 		GPUTexture * texture = manager->FindTexture(texture_name);
 		if (texture == nullptr)
@@ -79,7 +79,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeTextureFromPath(GPURenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const
+	bool GPURenderMaterialLoader::InitializeTextureFromPath(GPURenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const
 	{
 		// take already loaded texture, or try load it
 		GPUTexture * texture = manager->FindTextureByPath(path.GetResolvedPath());
@@ -92,7 +92,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the texture object
 		nlohmann::json const * json_textures = JSONTools::GetStructure(json, "textures");
@@ -183,7 +183,7 @@ namespace chaos
 		return false;
 	}
 
-	bool RenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterial * render_material, char const * uniform_name, nlohmann::json const & json) const
 	{
 		// is the uniform a integer ?
 		if (json.is_number_integer())
@@ -230,7 +230,7 @@ namespace chaos
 		return false;
 	}
 	
-	bool RenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the uniform object
 		nlohmann::json const * json_uniforms = JSONTools::GetStructure(json, "uniforms");
@@ -246,7 +246,7 @@ namespace chaos
 		return true;
 	}
 
-	GPURenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
+	GPURenderMaterial * GPURenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
 	{
 		// get the name, ensure no name collision
 		if (!CheckResourceName(json))
@@ -278,7 +278,7 @@ namespace chaos
 		return result;
 	}
 
-	GPURenderMaterial * RenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
+	GPURenderMaterial * GPURenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
 	{
 		if (!CheckResourcePath(path))
 			return nullptr;
@@ -289,12 +289,12 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool RenderMaterialLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
+	bool GPURenderMaterialLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
 		return (manager->FindRenderMaterialByPath(path) != nullptr);
 	}
 
-	bool RenderMaterialLoader::IsNameAlreadyUsedInManager(std::string const & in_name) const
+	bool GPURenderMaterialLoader::IsNameAlreadyUsedInManager(std::string const & in_name) const
 	{
 		return (manager->FindRenderMaterial(in_name.c_str()) != nullptr);
 	}

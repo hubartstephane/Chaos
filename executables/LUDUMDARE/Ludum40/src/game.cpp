@@ -7,7 +7,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/GLTextureTools.h>
-#include <chaos/TextureLoader.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -496,7 +496,7 @@ bool Game::LoadBackgroundTexture(size_t index)
 
   index = index % background_paths.size();
 
-  boost::intrusive_ptr<chaos::GPUTexture> new_background = chaos::TextureLoader().GenTextureObject(background_paths[index]);
+  boost::intrusive_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader().GenTextureObject(background_paths[index]);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -518,7 +518,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 		return false;
 
 	// generate the control texture
-	control_texture = chaos::TextureLoader().GenTextureObject(path / "controls.png");
+	control_texture = chaos::GPUTextureLoader().GenTextureObject(path / "controls.png");
 	if (control_texture == nullptr)
 		return false;
 

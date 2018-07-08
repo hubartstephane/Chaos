@@ -23,13 +23,31 @@ namespace chaos
 		return true;	
 	}
 
+	bool GPUFramebuffer::BeginRendering()
+	{
+		if (!IsValid())
+			return false;
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_id);
+		return true;
+	}
 
+	bool GPUFramebuffer::EndRendering()
+	{
+		if (!IsValid())
+			return false;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		return true;
+	}
 
-
-
-
-
-
-
+	bool GPUFramebuffer::CheckCompletionStatus() const
+	{
+		if (!IsValid())
+			return false;
+		// check the status 
+		GLenum status = glCheckNamedFramebufferStatus(framebuffer_id, GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE)
+			return false;
+		return true;
+	}
 
 }; // namespace chaos

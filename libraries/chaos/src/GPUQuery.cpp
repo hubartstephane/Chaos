@@ -21,7 +21,7 @@ namespace chaos
 			(in_target == GL_TIMESTAMP)
 		);
 
-		glGenQueries(1, &query_id);
+		glCreateQueries(in_target, 1, &query_id);
 		if (query_id != 0)
 			query_target = in_target;
 	}

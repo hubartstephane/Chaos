@@ -26,13 +26,15 @@ namespace chaos
 			final_size = size;
 		}
 		// create the framebuffer
-		GLuint framebuffer = 0;
-		glGenFramebuffers(1, &framebuffer);
+		GLuint framebuffer_id = 0;
+		glCreateFramebuffers(1, &framebuffer_id);
 
-		if (framebuffer != 0)
+		if (framebuffer_id != 0)
 		{
-			result = new GPUFramebuffer(framebuffer);
-			if (!InitializeFramebuffer(result, final_size))
+			result = new GPUFramebuffer(framebuffer_id);
+			if (result == nullptr)
+				glDeleteFramebuffers(1, &framebuffer_id);
+			else if (!InitializeFramebuffer(result, final_size))
 			{
 				delete(result);
 				result = nullptr;

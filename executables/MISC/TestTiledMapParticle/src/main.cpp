@@ -101,13 +101,13 @@ protected:
 		framebuffer_generator.AddColorAttachment(2, chaos::PixelFormat::GetPixelFormat<chaos::PixelDepthStencil>(), null_size, "machin");
 
 
-
+		
 
 
 
 		chaos::GPUFramebuffer * framebuffer = framebuffer_generator.GenerateFramebuffer(final_size);
 
-
+		bool completed = framebuffer->CheckCompletionStatus();
 
 		framebuffer = framebuffer;
 

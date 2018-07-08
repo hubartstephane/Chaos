@@ -15,7 +15,7 @@ namespace chaos
 
 		// create the OpenGL resource
 		GLuint renderbuffer_id = 0;
-		glGenRenderbuffers(1, &renderbuffer_id);
+		glCreateRenderbuffers(1, &renderbuffer_id);
 		if (renderbuffer_id == 0)
 			return nullptr;
 

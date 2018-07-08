@@ -113,6 +113,14 @@ namespace chaos
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return framebuffer_id; }
 
+		/** start rendering inside the framebuffer */
+		bool BeginRendering();
+		/** end rendering inside the framebuffer */
+		bool EndRendering();
+
+		/** get the completion status of the framebuffer */
+		bool CheckCompletionStatus() const;
+
 	protected:
 
 		/** cleaning the object */

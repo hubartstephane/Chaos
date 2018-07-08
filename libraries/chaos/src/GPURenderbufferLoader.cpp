@@ -1,11 +1,11 @@
-﻿#include <chaos/GLRenderbufferTools.h>
+﻿#include <chaos/GPURenderbufferLoader.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/GLPixelFormat.h>
 
 namespace chaos
 {
 
-	GPURenderbuffer * GLRenderbufferTools::GenRenderbufferObject(PixelFormat const & pixel_format, glm::ivec2 const & size)
+	GPURenderbuffer * GPURenderbufferLoader::GenRenderbufferObject(PixelFormat const & pixel_format, glm::ivec2 const & size)
 	{
 		// test arguments
 		if (!pixel_format.IsValid())

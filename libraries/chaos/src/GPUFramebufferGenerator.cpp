@@ -1,7 +1,7 @@
 ﻿#include <chaos/GPUFramebufferGenerator.h>
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
-#include <chaos/GLRenderbufferTools.h>
+#include <chaos/GPURenderbufferLoader.h>
 
 namespace chaos
 {
@@ -46,13 +46,15 @@ namespace chaos
 
 	bool GPUFramebufferGenerator::InitializeFramebuffer(GPUFramebuffer * framebuffer, glm::ivec2 const & final_size)
 	{
+		GPURenderbufferLoader loader;
+
 		GLuint framebuffer_id = framebuffer->GetResourceID();
 
 		for (GPUFramebufferGeneratorAttachmentInfo & info : attachment_info)
 		{
-			// dynamicly generated renderbuffer
+			// dynamically generated renderbuffer
 			if (info.texture == nullptr && info.renderbuffer == nullptr)
-				info.renderbuffer = GLRenderbufferTools::GenRenderbufferObject(info.pixel_format, final_size);
+				info.renderbuffer = loader.GenRenderbufferObject(info.pixel_format, final_size);
 
 			// texture provided
 			if (info.texture != nullptr)

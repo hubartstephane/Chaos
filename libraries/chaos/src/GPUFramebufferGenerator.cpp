@@ -2,6 +2,7 @@
 #include <chaos/GLTools.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/GPURenderbufferLoader.h>
+#include <chaos/GPUTextureLoader.h>
 
 namespace chaos
 {
@@ -48,15 +49,24 @@ namespace chaos
 
 	bool GPUFramebufferGenerator::InitializeFramebuffer(GPUFramebuffer * framebuffer, glm::ivec2 const & final_size)
 	{
-		GPURenderbufferLoader loader;
-
 		GLuint framebuffer_id = framebuffer->GetResourceID();
 
 		for (GPUFramebufferGeneratorAttachmentInfo & info : attachment_info)
 		{
 			// dynamically generated renderbuffer
 			if (info.texture == nullptr && info.renderbuffer == nullptr)
+			{
+#if 0
+				GPURenderbufferLoader loader;
 				info.renderbuffer = loader.GenRenderbufferObject(info.pixel_format, final_size);
+#else
+				ImageDescription image_description(nullptr, final_size.x, final_size.y, info.pixel_format);
+
+				GPUTextureLoader loader;
+				info.texture = loader.GenTextureObject(image_description);
+				info.texture_mipmap = 0;
+#endif
+			}
 
 			// texture provided
 			if (info.texture != nullptr)
@@ -160,6 +170,8 @@ namespace chaos
 			return false;
 		if (HasDepthStencilAttachment())
 			return false;
+		if (!texture->GetSurfaceDescription().GetPixelFormat().IsDepthStencilPixel())
+			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
 		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
@@ -181,6 +193,8 @@ namespace chaos
 			return false;
 		if (HasDepthStencilAttachment())
 			return false;
+		if (!renderbuffer->GetSurfaceDescription().GetPixelFormat().IsDepthStencilPixel())
+			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
 		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
@@ -200,6 +214,7 @@ namespace chaos
 
 		GPUFramebufferGeneratorAttachmentInfo info;
 		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
+		info.pixel_format = PixelFormat::GetPixelFormat<PixelDepthStencil>();
 		info.size = in_size;
 		CompleteAndInsertAttachment(info, name);
 		return true;
@@ -215,6 +230,8 @@ namespace chaos
 		if (!IsColorAttachmentValid(color_index, name))
 			return false;
 		if (IsSurfaceInUse(texture))
+			return false;
+		if (!texture->GetSurfaceDescription().GetPixelFormat().IsColorPixel())
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;
@@ -234,6 +251,8 @@ namespace chaos
 		if (!IsColorAttachmentValid(color_index, name))
 			return false;
 		if (IsSurfaceInUse(renderbuffer))
+			return false;
+		if (!renderbuffer->GetSurfaceDescription().GetPixelFormat().IsColorPixel())
 			return false;
 
 		GPUFramebufferGeneratorAttachmentInfo info;

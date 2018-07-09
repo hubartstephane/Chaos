@@ -35,39 +35,66 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		// XXX : the scaling is used to avoid the near plane clipping      
-		static float FOV = 60.0f;
-		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
+		for (int pass = 0; pass < 2; ++pass)
+		{
+			if (pass == 0)
+				framebuffer->BeginRendering();
 
-		glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
+			// XXX : the scaling is used to avoid the near plane clipping      
+			static float FOV = 60.0f;
+			glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
 
-		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
+			glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
 
-		int instance_cube_size = 20;
+			glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
-		double realtime = 0.0;
+			int instance_cube_size = 20;
 
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application != nullptr)
-			application->GetMainClock()->GetClockTime();
+			double realtime = 0.0;
 
-		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableValue("projection", projection_matrix);
-		uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
-		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
-		uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
-		uniform_provider.AddVariableValue("realtime", realtime);
+			chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+			if (application != nullptr)
+				application->GetMainClock()->GetClockTime();
 
-		chaos::InstancingInfo instancing;
-		instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-		instancing.base_instance = 0;
-		mesh->Render(program.get(), &uniform_provider, instancing);
+			chaos::GPUProgramProvider uniform_provider;
+			uniform_provider.AddVariableValue("projection", projection_matrix);
+			uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
+			uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
+			uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
+			uniform_provider.AddVariableValue("realtime", realtime);
+
+			if (pass == 1)
+			{
+				chaos::GPUFramebufferAttachmentInfo const * attachment = framebuffer->GetColorAttachment(0);
+				if (attachment != nullptr)
+				{
+					chaos::GPUTexture * texture = attachment->texture.get();
+					if (texture != nullptr)
+					{
+						texture = texture;
+
+					}
+				}
+			}
+
+			chaos::InstancingInfo instancing;
+			instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
+			instancing.base_instance = 0;
+			mesh->Render(program.get(), &uniform_provider, instancing);
+
+			if (pass == 0)
+				framebuffer->EndRendering();
+
+		}
+
+
 
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
+		framebuffer = nullptr;
 		program = nullptr;
 		mesh = nullptr;
 	}
@@ -101,6 +128,8 @@ protected:
 		framebuffer_generator.AddDepthStencilAttachment(glm::ivec2(0, 0));
 		framebuffer = framebuffer_generator.GenerateFramebuffer(glm::ivec2(1024, 1024));
 		if (framebuffer == nullptr)
+			return false;
+		if (!framebuffer->CheckCompletionStatus())
 			return false;
 
 		// set camera position

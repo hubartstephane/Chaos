@@ -26,17 +26,19 @@ protected:
 
 	virtual bool OnDraw(glm::ivec2 size) override
 	{
-		float     far_plane = 1000.0f;
-		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-		glViewport(0, 0, size.x, size.y);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
 
 		for (int pass = 0; pass < 2; ++pass)
 		{
+
+			float     far_plane = 1000.0f;
+			glm::vec4 clear_color(1.0f, 0.0f, 0.0f, 0.0f);
+			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+			glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+
+			glViewport(0, 0, size.x, size.y);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+
 			if (pass == 0)
 				framebuffer->BeginRendering();
 
@@ -62,6 +64,7 @@ protected:
 			uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 			uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
 			uniform_provider.AddVariableValue("realtime", realtime);
+			uniform_provider.AddVariableValue("pass_value", (float)pass);
 
 			if (pass == 1)
 			{
@@ -71,8 +74,7 @@ protected:
 					chaos::GPUTexture * texture = attachment->texture.get();
 					if (texture != nullptr)
 					{
-						texture = texture;
-
+						uniform_provider.AddVariableValue("scene_texture", texture);
 					}
 				}
 			}

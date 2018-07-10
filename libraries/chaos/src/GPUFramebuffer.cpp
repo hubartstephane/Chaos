@@ -31,10 +31,16 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUFramebuffer::EndRendering()
+	bool GPUFramebuffer::EndRendering(bool generate_mipmaps)
 	{
 		if (!IsValid())
 			return false;
+		if (generate_mipmaps)
+		{
+			for (GPUFramebufferAttachmentInfo & info : attachment_info)
+				if (info.texture != nullptr)
+					glGenerateTextureMipmap(info.texture->GetResourceID());
+		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return true;
 	}

@@ -116,7 +116,7 @@ namespace chaos
 		/** start rendering inside the framebuffer */
 		bool BeginRendering();
 		/** end rendering inside the framebuffer */
-		bool EndRendering();
+		bool EndRendering(bool generate_mipmaps = true);
 
 		/** get the completion status of the framebuffer */
 		bool CheckCompletionStatus() const;
@@ -130,6 +130,8 @@ namespace chaos
 
 		/** the resource id */
 		GLuint framebuffer_id = 0;
+		/** the size of the framebuffer */
+		glm::ivec2 size = glm::ivec2(0, 0);
 	};
 
 }; // namespace chaos

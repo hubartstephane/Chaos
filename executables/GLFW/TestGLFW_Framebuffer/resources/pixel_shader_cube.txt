@@ -1,11 +1,16 @@
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
+uniform sampler2D scene_texture;
+uniform float pass_value;
+
 in vec3 vertex_color;
 in vec3 vertex_position;
 
 void main()
 {
-  //output_color.xyz = vertex_position * 0.5 + vec3(0.5);
-  output_color.xyz = vertex_color;
+  vec4 texture_color = textureLod(scene_texture, vertex_position.xy, 0);
+
+  output_color.xyz = vertex_color * (1.0 - pass_value) + texture_color.xyz * pass_value;
+	//output_color.xyz = vertex_color;
   output_color.w   = 1.0;
 }

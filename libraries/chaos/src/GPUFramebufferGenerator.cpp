@@ -87,6 +87,7 @@ namespace chaos
 			// add information into the framebuffer
 			framebuffer->attachment_info.push_back(std::move(info)); // automatic conversion
 		}
+		framebuffer->size = final_size;
 		return true;
 	}
 

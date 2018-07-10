@@ -30,6 +30,9 @@ protected:
 		for (int pass = 0; pass < 2; ++pass)
 		{
 
+			if (pass == 0)
+				framebuffer->BeginRendering();
+
 			float     far_plane = 1000.0f;
 			glm::vec4 clear_color(1.0f, 0.0f, 0.0f, 0.0f);
 			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -39,8 +42,7 @@ protected:
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 
-			if (pass == 0)
-				framebuffer->BeginRendering();
+
 
 			// XXX : the scaling is used to avoid the near plane clipping      
 			static float FOV = 60.0f;

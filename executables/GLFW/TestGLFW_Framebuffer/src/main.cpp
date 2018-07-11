@@ -87,7 +87,7 @@ protected:
 			mesh->Render(program.get(), &uniform_provider, instancing);
 
 			if (pass == 0)
-				framebuffer->EndRendering();
+				framebuffer->EndRendering(true);
 		}
 		return true;
 	}
@@ -123,9 +123,13 @@ protected:
 			return false;
 
 		// create the framebuffer
+
+		static bool with_depth_stencil = true;
+
 		chaos::GPUFramebufferGenerator framebuffer_generator;
 		framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), glm::ivec2(0, 0), "scene");
-		//framebuffer_generator.AddDepthStencilAttachment(glm::ivec2(0, 0));
+		if (with_depth_stencil)
+			framebuffer_generator.AddDepthStencilAttachment(glm::ivec2(0, 0));
 		framebuffer = framebuffer_generator.GenerateFramebuffer(glm::ivec2(1024, 1024));
 		if (framebuffer == nullptr)
 			return false;
@@ -133,7 +137,7 @@ protected:
 			return false;
 
 		// set camera position
-		fps_view_controller.fps_controller.position.z = 100.0f;
+		fps_view_controller.fps_controller.position.z = 50.0f;
 
 		return true;
 	}

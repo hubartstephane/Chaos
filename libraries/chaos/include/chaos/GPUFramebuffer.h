@@ -121,6 +121,9 @@ namespace chaos
 		/** get the completion status of the framebuffer */
 		bool CheckCompletionStatus() const;
 
+		/** a getter on size */
+		glm::ivec2 const & GetSize() const { return size; }
+
 	protected:
 
 		/** cleaning the object */

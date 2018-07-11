@@ -24,16 +24,19 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(glm::ivec2 window_size) override
 	{
 
 		for (int pass = 0; pass < 2; ++pass)
 		{
+			glm::ivec2 size = (pass == 0) ?
+				framebuffer->GetSize():
+				window_size;
 
 			if (pass == 0)
 				framebuffer->BeginRendering();
 
-			float     far_plane = 1000.0f;
+			float far_plane = 1000.0f;
 			glm::vec4 clear_color = (pass == 0)? 
 				glm::vec4(0.0f, 0.0f, 0.0f, 0.0f):
 				glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);

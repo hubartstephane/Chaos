@@ -34,15 +34,15 @@ protected:
 				framebuffer->BeginRendering();
 
 			float     far_plane = 1000.0f;
-			glm::vec4 clear_color(1.0f, 0.0f, 0.0f, 0.0f);
+			glm::vec4 clear_color = (pass == 0)? 
+				glm::vec4(0.0f, 0.0f, 0.0f, 0.0f):
+				glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 			glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
 			glViewport(0, 0, size.x, size.y);
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
-
-
 
 			// XXX : the scaling is used to avoid the near plane clipping      
 			static float FOV = 60.0f;
@@ -52,7 +52,7 @@ protected:
 
 			glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
-			int instance_cube_size = 20;
+			int instance_cube_size = 5;
 
 			double realtime = 0.0;
 
@@ -88,11 +88,7 @@ protected:
 
 			if (pass == 0)
 				framebuffer->EndRendering();
-
 		}
-
-
-
 		return true;
 	}
 
@@ -129,7 +125,7 @@ protected:
 		// create the framebuffer
 		chaos::GPUFramebufferGenerator framebuffer_generator;
 		framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), glm::ivec2(0, 0), "scene");
-		framebuffer_generator.AddDepthStencilAttachment(glm::ivec2(0, 0));
+		//framebuffer_generator.AddDepthStencilAttachment(glm::ivec2(0, 0));
 		framebuffer = framebuffer_generator.GenerateFramebuffer(glm::ivec2(1024, 1024));
 		if (framebuffer == nullptr)
 			return false;

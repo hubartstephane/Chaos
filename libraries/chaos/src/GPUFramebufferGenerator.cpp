@@ -41,8 +41,6 @@ namespace chaos
 				result = nullptr;
 			}
 		}
-		// clear the generator
-		Clear();
 
 		return result;
 	}
@@ -53,30 +51,32 @@ namespace chaos
 
 		for (GPUFramebufferGeneratorAttachmentInfo & info : attachment_info)
 		{
+			GPUFramebufferAttachmentInfo target_info = info;
+
 			// dynamically generated renderbuffer
-			if (info.texture == nullptr && info.renderbuffer == nullptr)
+			if (target_info.texture == nullptr && target_info.renderbuffer == nullptr)
 			{
 #if 0
 				GPURenderbufferLoader loader;
-				info.renderbuffer = loader.GenRenderbufferObject(info.pixel_format, final_size);
+				target_info.renderbuffer = loader.GenRenderbufferObject(info.pixel_format, final_size);
 #else
 				ImageDescription image_description(nullptr, final_size.x, final_size.y, info.pixel_format);
 
 				GPUTextureLoader loader;
-				info.texture = loader.GenTextureObject(image_description);
-				info.texture_mipmap = 0;
+				target_info.texture = loader.GenTextureObject(image_description);
+				target_info.texture_mipmap = 0;
 #endif
 			}
 
 			// texture provided
-			if (info.texture != nullptr)
+			if (target_info.texture != nullptr)
 			{
-				glNamedFramebufferTexture(framebuffer_id, info.attachment_point, info.texture->GetResourceID(), info.texture_mipmap);
+				glNamedFramebufferTexture(framebuffer_id, target_info.attachment_point, target_info.texture->GetResourceID(), target_info.texture_mipmap);
 			}
 			// renderbuffer provided
-			else if (info.renderbuffer != nullptr)
+			else if (target_info.renderbuffer != nullptr)
 			{
-				glNamedFramebufferRenderbuffer(framebuffer_id, info.attachment_point, GL_RENDERBUFFER, info.renderbuffer->GetResourceID());
+				glNamedFramebufferRenderbuffer(framebuffer_id, target_info.attachment_point, GL_RENDERBUFFER, target_info.renderbuffer->GetResourceID());
 			}
 			// case of error
 			else
@@ -85,7 +85,7 @@ namespace chaos
 			}
 
 			// add information into the framebuffer
-			framebuffer->attachment_info.push_back(std::move(info)); // automatic conversion
+			framebuffer->attachment_info.push_back(std::move(target_info)); // automatic conversion
 		}
 		framebuffer->size = final_size;
 		return true;

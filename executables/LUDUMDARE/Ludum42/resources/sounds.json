@@ -1,0 +1,29 @@
+{
+	"categories":{
+	
+		"@music":{
+			"volume":0.3
+		}
+	},
+
+  "sources": [
+
+    { "path": "sounds/challenge_success.ogg"},
+		{ "path": "sounds/challenge_error.ogg"},
+    { "path": "sounds/challenge_timeout.ogg"},
+    { "path": "sounds/challenge_bip.ogg" },
+
+    { "path": "sounds/menu_music.ogg" , "category" :  "music" },
+    { "path": "sounds/pause_music.ogg" , "category" :  "music" },
+    { "path": "sounds/game_music.ogg" , "category" :  "music"},
+    { "path": "sounds/gameover.ogg" },
+    { "path": "sounds/ball.ogg" },
+    { "path": "sounds/bonus1.ogg" },
+    { "path": "sounds/bonus2.ogg" },
+    { "path": "sounds/start.ogg" },
+    { "path": "sounds/pause.ogg" },
+    { "path": "sounds/collision.ogg" },
+    { "path": "sounds/heartbeat.ogg" },
+    { "path": "sounds/balllost.ogg" }
+  ]
+}

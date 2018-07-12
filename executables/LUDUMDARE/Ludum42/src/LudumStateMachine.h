@@ -182,13 +182,13 @@ protected:
 	LudumGame * game = nullptr;
 
 	/** the states */
-	chaos::StateMachine::State * main_menu_state = nullptr;
-	chaos::StateMachine::State * playing_state   = nullptr;
-	chaos::StateMachine::State * pause_state     = nullptr;
+	boost::intrusive_ptr<chaos::StateMachine::State> main_menu_state;
+	boost::intrusive_ptr<chaos::StateMachine::State> playing_state;
+	boost::intrusive_ptr<chaos::StateMachine::State> pause_state;
 
-	chaos::StateMachine::Transition * main_menu_to_playing  = nullptr;
-	chaos::StateMachine::Transition * playing_to_main_menu  = nullptr;
-	chaos::StateMachine::Transition * playing_to_pause      = nullptr;
-	chaos::StateMachine::Transition * pause_to_playing      = nullptr;
-	chaos::StateMachine::Transition * playing_to_gameover   = nullptr;
+	boost::intrusive_ptr<chaos::StateMachine::Transition> main_menu_to_playing;
+	boost::intrusive_ptr<chaos::StateMachine::Transition> playing_to_main_menu;
+	boost::intrusive_ptr<chaos::StateMachine::Transition> playing_to_pause;
+	boost::intrusive_ptr<chaos::StateMachine::Transition> pause_to_playing;
+	boost::intrusive_ptr<chaos::StateMachine::Transition> playing_to_gameover;
 };

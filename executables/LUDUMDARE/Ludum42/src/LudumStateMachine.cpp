@@ -245,11 +245,11 @@ LudumAutomata::LudumAutomata(class LudumGame * in_game):
 	playing_state   = new PlayingState(this);
 	pause_state     = new PauseState(this);
 
-	main_menu_to_playing  = new MainMenuToPlayingTransition(main_menu_state, playing_state);
-	playing_to_main_menu  = new PlayingToMainMenuTransition(playing_state, main_menu_state);
-	playing_to_pause      = new PlayingToPauseTransition(playing_state, pause_state);
-	pause_to_playing      = new PauseToPlayingTransition(pause_state, playing_state);
-	playing_to_gameover   = new PlayingToGameOverTransition(playing_state, main_menu_state);
+	main_menu_to_playing  = new MainMenuToPlayingTransition(main_menu_state.get(), playing_state.get());
+	playing_to_main_menu  = new PlayingToMainMenuTransition(playing_state.get(), main_menu_state.get());
+	playing_to_pause      = new PlayingToPauseTransition(playing_state.get(), pause_state.get());
+	pause_to_playing      = new PauseToPlayingTransition(pause_state.get(), playing_state.get());
+	playing_to_gameover   = new PlayingToGameOverTransition(playing_state.get(), main_menu_state.get());
 
-	SetInitialState(main_menu_state);
+	SetInitialState(main_menu_state.get());
 }

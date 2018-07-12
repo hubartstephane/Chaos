@@ -1,9 +1,7 @@
 #pragma once
 
 #include "LudumStateMachine.h"
-#include "LudumChallenge.h"
 #include "LudumParticles.h"
-#include "LudumChallengeRewardPunishment.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -15,8 +13,11 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
 
+// =================================================
+// LudumGame
+// =================================================
 
-class LudumLevel
+class LudumLevel : public chaos::ReferencedObject
 {
 public:
 
@@ -40,9 +41,7 @@ class LudumGame : public chaos::ReferencedObject
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
-	friend class ParticleMovableObjectTrait;
-	friend class ParticleLifeObjectTrait;
-	friend class ParticleBrickTrait;
+
 
 protected:
 
@@ -155,16 +154,12 @@ protected:
 	/** get current state ID */
 	int GetCurrentStateID() const;
 
-	/** initialize the mapping between button index and resource name */
-	bool InitializeGamepadButtonInfo();
 	/** initialize the particle manager */
 	bool InitializeParticleManager();
 	/** initialize the particle text generator */
 	bool InitializeParticleTextGenerator();
 	/** initialize the game variables */
 	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
-	/** fullfill the lists of rewards an punishments */
-	bool InitializeRewardsAndPunishments();
 	
 	/** loading the levels */
 	bool LoadLevels();
@@ -344,21 +339,22 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 
 
-	/** game values */
-	int initial_life = 3;
+	/** game settings */
+	int   initial_life = 3;
 	float mouse_sensitivity = 1.0f;
 	float gamepad_sensitivity = 1.0f;
 	float heart_beat_speed = 2.0f;
 
-
 	/** current game values */
-	int   current_life  = 3;
-
-	int current_score = 0;
-	int combo_multiplier = 1;
-	int best_score = 0;
+	int current_life  = 3;
 	int current_level = 0;
+	int current_score = 0;
+	int current_combo_multiplier = 1;
 
+	/** the best score value */
+	int best_score = 0;
+
+	/** some data */
 	bool should_update_score = false;
 	bool should_update_combo = false;
 	float heart_warning = 0.0f;
@@ -369,19 +365,15 @@ protected:
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> text_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> best_score_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 
-
 	/** the levels */
 	std::vector<boost::intrusive_ptr<LudumLevel>> levels;
-
 };
 
 // =================================================

@@ -345,17 +345,7 @@ bool LudumGame::InitializeParticleTextGenerator()
 
 	// for each bitmap, that correspond to a button, register a [NAME] in the generator	
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
-	if (bitmap_set != nullptr)
-	{
-		for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
-		{
-			std::string const & bitmap_name = it->second;
-			chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name.c_str());
-			if (entry == nullptr)
-				continue;
-			particle_text_generator->AddBitmap(bitmap_name.c_str(), entry);	
-		}		
-	}
+
 
 	return true;
 }
@@ -389,25 +379,10 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
-	// create layers
-	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
 
-	ParticleMovableObjectTrait movable_trait;
-	movable_trait.game = this;
-	particle_manager->AddLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
 
-	ParticleBrickTrait brick_trait;
-	brick_trait.game = this;
-	particle_manager->AddLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject", brick_trait);
 
-	ParticleLifeObjectTrait life_trait;
-	life_trait.game = this;
-	particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject", life_trait);
 
-	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
 	// fill the background
 	FillBackgroundLayer();

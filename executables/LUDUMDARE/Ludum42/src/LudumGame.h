@@ -215,48 +215,10 @@ protected:
 	void ResetGameVariables();
 
 
-
-
-
-	/** get an object particle */
-	ParticleObject * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
-	/** get an object particle */
-	ParticleObject const * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index) const;
-
-	/** get the player particle */
-	ParticleObject * GetPlayerParticle();
-	/** get the player particle */
-	ParticleObject const * GetPlayerParticle() const;
-
-	/** get the balls */
-	ParticleMovableObject * GetBallParticles();
-	/** get the balls */
-	ParticleMovableObject const * GetBallParticles() const;
-	/** get the number of balls */	
-	size_t GetBallCount() const;
-
-	/** get the bricks */
-	ParticleBrick * GetBricks();
-	/** get the bricks */
-	ParticleBrick const * GetBricks() const;
-
-
-
-	/** get the box for a given object */
-	chaos::box2 GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const;
-	/** get the box for player */
-	chaos::box2 GetPlayerBox() const;
-
-	/** change one object box */
-	void SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
-	/** change player box */
-	void SetPlayerBox(chaos::box2 const & box);
-
-	/** get the position for given object */
-	glm::vec2 GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const;
+	/** get the position of the player */
+	void SetPlayerPosition(float position);
 	/** get the player position */
 	glm::vec2 GetPlayerPosition() const;
-
 
 
 

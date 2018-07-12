@@ -556,8 +556,6 @@ void LudumGame::TickGameLoop(double delta_time)
 	{
 		// create the score text
 		UpdateScoreParticles();
-		// create the combo text
-		UpdateComboParticles();
 		// create the life 
 		UpdateLifeParticles();
 		// some other calls
@@ -596,14 +594,10 @@ void LudumGame::OnMouseButton(int button, int action, int modifier)
 void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
-	bricks_allocations = nullptr;
 	life_allocations = nullptr;
-	balls_allocations = nullptr;
 	score_allocations = nullptr;
 	combo_allocations = nullptr;
 	best_score_allocations = nullptr;
-
-	sequence_challenge = nullptr;
 }
 
 chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
@@ -666,68 +660,30 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 
 
 
-chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const
-{
-	ParticleObject const * object = GetObjectParticle(allocation, index);
-	if (object == nullptr)
-		return chaos::box2();
-	return object->bounding_box;
-}
-
-chaos::box2 LudumGame::GetPlayerBox() const
-{
-	return GetObjectBox(player_allocations.get(), 0);
-}
-
-
-void LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box) 
-{
-	ParticleObject * object = GetObjectParticle(allocation, index);
-	if (object == nullptr)
-		return;
-	object->bounding_box = box;
-}
-
-void LudumGame::SetPlayerBox(chaos::box2 const & box)
-{
-	return SetObjectBox(player_allocations.get(), 0, box);
-}
-
-glm::vec2 LudumGame::GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const
-{
-	return GetObjectBox(allocation, index).position;
-}
 
 glm::vec2 LudumGame::GetPlayerPosition() const
 {
-	return GetPlayerBox().position;
-}
-
-void LudumGame::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
-{
-	ParticleObject * particle = GetObjectParticle(allocation, index);
-	if (particle == nullptr)
-		return;
-	particle->bounding_box.position = position;
+	return glm::vec2(0.0f, 0.0f);
 }
 
 void LudumGame::SetPlayerPosition(float position)
 {
-	SetObjectPosition(player_allocations.get(), 0, glm::vec2(position, PLAYER_Y));
+
 	RestrictedPlayerToScreen();
 }
 
 
 void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index)
 {
-	ParticleObject * particle = GetObjectParticle(allocation, index);
-	if (particle == nullptr)
-		return;
-
+#if 0
 	chaos::box2 box = particle->bounding_box;
 	chaos::box2 world = GetWorldBox();
 	chaos::RestrictToInside(world, box, false);
-	SetObjectPosition(allocation, index, box.position);
+#endif
+
+
+
+
 }
 
 void LudumGame::RestrictedPlayerToScreen()
@@ -742,14 +698,7 @@ void LudumGame::CreateAllGameObjects(int level)
 	if (player_allocations == nullptr)
 	{
 		player_allocations = CreatePlayer();
-		SetPlayerLength(player_length);
 		SetPlayerPosition(0.0f);
 	}
-
-	if (balls_allocations == nullptr)
-		balls_allocations = CreateBalls(1, true);	
-
-	if (bricks_allocations == nullptr)
-		bricks_allocations = CreateBricks(current_level);	
 }
 

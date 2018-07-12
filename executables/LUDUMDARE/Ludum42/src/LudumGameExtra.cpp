@@ -383,9 +383,6 @@ bool LudumGame::InitializeParticleManager()
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
-
-
-
 	// fill the background
 	FillBackgroundLayer();
 

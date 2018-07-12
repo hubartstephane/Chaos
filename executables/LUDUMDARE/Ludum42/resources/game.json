@@ -7,5 +7,5 @@
   "initial_life": 3,
 	"heart_beat_speed" : 1.0,
   "mouse_sensitivity": 1.0,
-  "gamepad_sensitivity": 20.0,
+  "gamepad_sensitivity": 20.0
 }

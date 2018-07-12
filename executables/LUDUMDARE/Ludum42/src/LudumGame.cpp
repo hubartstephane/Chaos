@@ -68,7 +68,7 @@ bool LudumGame::IsPlaying() const
 
 void LudumGame::CreateGameTitle()
 {
-	CreateTitle("AsciiPaouf 2", false);
+	CreateTitle("AsciiPaouf 3", false);
 
 	if (best_score > 0)
 	{

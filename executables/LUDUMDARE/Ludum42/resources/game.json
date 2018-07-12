@@ -2,55 +2,10 @@
   "sprite_directory":"@sprites",
   "font_path": "@fonts/gomarice_katamari_serif.ttf",
 	"title_font_path": "@fonts/unispace bold italic.ttf",
-  "small_french_dictionnary": "@dictionnary/small_french.txt",
-  "small_english_dictionnary": "@dictionnary/small_english.txt",
-  "french_dictionnary": "@dictionnary/french.txt",
-  "english_dictionnary": "@dictionnary/english.txt",
-
-
-  
-  "min_word_size": 4,
-  "max_word_size": 10,
+ 
 
   "initial_life": 3,
-  "max_life": 10,
-  "max_ball_count": 3,
-  "ball_size": 30.0,
-  "player_max_length": 400.0,
-  "player_min_length": 100.0,
-  "player_initial_length": 150.0,
-  "player_length_increment": 50.0,
-  "player_length_decrement": 50.0,
-
-  "points_per_challenge": 12,
-  "points_per_brick": 5,
-	"split_angle":0.4,
-	"ball_angle_limit":0.4,
-
-	"max_brick_offset":200.0,
-	"brick_offset_speed":50.0,
-	"brick_offset_increment":50.0,
-  
-  "ball_max_speed": 1200.0,
-  "ball_initial_speed": 200.0,
-  "ball_speed_increment": 200.0,
-
-  "ball_collision_speed_increment": 20,
-  "ball_collision_max_speed":600,
-
-
-  "delay_before_ball_move" :  0.5,
 	"heart_beat_speed" : 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 20.0,
-  "challenge_time_dilation": 0.35,
-  "challenge_frequency": 5.0,
-
-	"challenge_duration": 5.0,
-
-  "min_brick_life": 1,
-  "max_brick_life": 4,
-
-	"brick_per_line":20,
-	"brick_line_count": 6
 }

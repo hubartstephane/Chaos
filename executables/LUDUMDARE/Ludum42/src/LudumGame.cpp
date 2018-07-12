@@ -112,6 +112,8 @@ chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag
 
 void LudumGame::UpdateLifeParticles()
 {
+
+#if 0
 	// get the number of particles already existing
 	size_t life_particles = 0;
 	if (life_allocations != nullptr)
@@ -159,6 +161,7 @@ void LudumGame::UpdateLifeParticles()
 
 		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
+#endif
 }
 
 

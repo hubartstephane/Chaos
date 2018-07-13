@@ -12,6 +12,10 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/TiledMap.h>
+#include <chaos/TiledMapTools.h>
 
 // =================================================
 // LudumGame
@@ -23,6 +27,7 @@ public:
 
 	int level_number = 0;
 
+	boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
 };
 
 // =================================================
@@ -83,6 +88,9 @@ protected:
 
 	/** internal methods to generate the atlas for sprites */
 	bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
+
+	bool FillAtlasGenerationInputWithSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+	bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
@@ -164,7 +172,9 @@ protected:
 	/** loading the levels */
 	bool LoadLevels();
 	/** load one level */
-	bool DoLoadLevel(int level_number, std::vector<std::string> & level_content);
+	bool DoLoadLevel(int level_number, chaos::TiledMap::Map * tiled_map);
+	/** additionnal initialization when loading a level */
+	bool DoLoadLevelInitialize(LudumLevel * level);
 
 
 	
@@ -299,6 +309,9 @@ protected:
 
 	/** the text generator */
 	boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+	/** the tiled map manager */
+	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
 
 	/** game settings */

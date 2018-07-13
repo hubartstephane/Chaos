@@ -164,6 +164,37 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 {
 	chaos::BitmapAtlas::AtlasInput input;
 
+	// Fill Input for generation
+	if (!FillAtlasGenerationInputWithSprites(input, config, config_path))
+		return false;
+	if (!FillAtlasGenerationInputWithTileSets(input, config, config_path))
+		return false;
+
+	// generate the atlas
+	int ATLAS_SIZE = 1024;
+	int ATLAS_PADDING = 10;
+	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+
+#if _DEBUG
+	params.debug_dump_atlas_dirname = "LudumAtlas";
+#endif
+
+	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+	texture_atlas = generator.ComputeResult(input, params);
+	if (texture_atlas == nullptr)
+		return false;
+
+	return true;
+}
+
+bool LudumGame::FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
+	return chaos::TiledMapTools::GenerateAtlasInput(tiledmap_manager.get(), input, "sprites");
+}
+
+
+bool LudumGame::FillAtlasGenerationInputWithSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
 	// get the directory where the sprites are
 	std::string sprite_directory;
 	chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
@@ -192,19 +223,6 @@ bool LudumGame::GenerateAtlas(nlohmann::json const & config, boost::filesystem::
 
 	chaos::BitmapAtlas::CharacterSetInput * character_set2 =
 		input.AddCharacterSet("title", nullptr, title_font_path.c_str(), nullptr, true, font_params);
-	// generate the atlas
-	int ATLAS_SIZE = 1024;
-	int ATLAS_PADDING = 10;
-	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
-
-#if _DEBUG
-	params.debug_dump_atlas_dirname = "LudumAtlas";
-#endif
-
-	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
-	texture_atlas = generator.ComputeResult(input, params);
-	if (texture_atlas == nullptr)
-		return false;
 
 	return true;
 }
@@ -258,11 +276,31 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-
-bool LudumGame::DoLoadLevel(int level_number, std::vector<std::string> & level_content)
+bool LudumGame::DoLoadLevelInitialize(LudumLevel * level)
 {
 
 
+
+	return true;
+}
+
+
+bool LudumGame::DoLoadLevel(int level_number, chaos::TiledMap::Map * tiled_map)
+{
+	// allocate a level
+	LudumLevel * level = new LudumLevel;
+	if (level == nullptr)
+		return false;
+	// initialize level
+	level->level_number = level_number;
+	level->tiled_map = tiled_map;
+	// some additionnal computation
+	if (!DoLoadLevelInitialize(level))
+	{
+		delete(level);
+		return false;
+	}
+	levels.push_back(level);
 	return true;
 }
 
@@ -272,6 +310,12 @@ bool LudumGame::LoadLevels()
 	if (application == nullptr)
 		return false;
 
+	// create the manager
+	tiledmap_manager = new chaos::TiledMap::Manager;
+	if (tiledmap_manager == nullptr)
+		return false;
+
+
 	// compute resource path
 	boost::filesystem::path resources_path = application->GetResourcesPath();
 	boost::filesystem::path levels_path = resources_path / "levels";
@@ -280,11 +324,17 @@ bool LudumGame::LoadLevels()
 	boost::filesystem::directory_iterator end;
 	for (boost::filesystem::directory_iterator it(levels_path); it != end; ++it)
 	{
-		std::vector<std::string> level_content = chaos::FileTools::ReadFileLines(it->path());
-
 		int level_number = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
-		if (!DoLoadLevel(level_number, level_content))
+
+		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(it->path());
+		if (tiled_map == nullptr)
+			continue;
+
+		if (!DoLoadLevel(level_number, tiled_map))
+		{
+			delete(tiled_map);
 			return false;
+		}
 	}
 
 	// sort the levels
@@ -299,20 +349,20 @@ bool LudumGame::LoadLevels()
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
+	// initialize game values
+	if (!InitializeGameValues(config, config_path))
+		return false;
+	// load exisiting levels
+	if (!LoadLevels())
+		return false;
 	// the atlas
-	if (!GenerateAtlas(config, config_path))
+	if (!GenerateAtlas(config, config_path))  // require to have loaded level first
 		return false;
 	// initialize the particle manager
 	if (!InitializeParticleManager())
 		return false;
 	// initialize the particle text generator manager
 	if (!InitializeParticleTextGenerator())
-		return false;
-	// initialize game values
-	if (!InitializeGameValues(config, config_path))
-		return false;
-	// load exisiting levels
-	if (!LoadLevels())
 		return false;
 	// load the best score if any
 	SerializeBestScore(false);

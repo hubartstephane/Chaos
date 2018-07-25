@@ -74,6 +74,40 @@ public:
 
 protected:
 
+    static bool IsPolygonConvex(std::vector<glm::vec2> const & polygon_count, bool * reversed = nullptr)
+    {
+        assert(points.size() >= 3);
+
+        bool has_positive = false;
+        bool has_negative = false;
+
+        size_t polygon_count = polygon.size();
+        for (size_t i = 0 ; i < polygon_count ; ++i)
+        {
+            glm::vec2 const & A = polygon[i];
+            glm::vec2 const & B = polygon[(i + 1) % polygon_count];     
+            glm::vec2 const & C = polygon[(i + 2) % polygon_count];     
+
+            float value = Get2DCrossProductZ(B - A, C - B);
+
+            has_positive |= (value > 0.0f);
+            has_negative |= (value < 0.0f);
+
+            if (has_negative)
+            {
+                if (reversed == nullptr) // early exit : user only wants to know if Polygon is convex and positive
+                    return false;
+                if (has_positive) // early exit : we already have all information we wanted
+                    break;
+            }
+        }
+
+        if (reversed != nullptr)
+            *reversed = has_negative & !has_positive; // always negative direction (convex but in reverse order)
+            
+        return (has_negative ^ has_positive); // always in the same direction
+    }
+
     static bool HasSeparatingEdge(std::vector<glm::vec2> const & points, std::vector<glm::vec2> const & polygon)
     {
         size_t polygon_count = polygon.size();
@@ -85,16 +119,19 @@ protected:
 
             glm::vec2 AB = B - A;
 
-            for(size_t j = 0 ; j < points_count ; ++j)
+            size_t j = 0;
+            for(  ; j < points_count ; ++j)
             {
                 glm::vec2 const & P = points[i];
                 glm::vec2 AP = P - A;
 
                 if (Get2DCrossProductZ(AB, AP) < 0.0f)
-                    return false;
+                    break;
             }
+            if (j == points_count) // all points are outside relatively to current edge
+                return true;
         }
-        return true;
+        return false;
     }
 };
 
@@ -283,4 +320,4 @@ class ConvexPolygonSplitter
 
 #endif
 
-};
+}; // namespace chaos

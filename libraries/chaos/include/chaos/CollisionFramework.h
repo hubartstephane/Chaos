@@ -258,17 +258,30 @@ namespace chaos
     return Collide(t, s);
   }
 
+
+
+  // shuxxx TODO : test refactor with Get2DCrossProductZ
+
+
+
+  // check the orientation of the triangle for future collision detection
+  template<typename T>
+  bool IsTriangleReadyForCollision(type_triangle<T, 2> const & t)
+  {
+    auto e1 = t.b - t.a;
+    auto e2 = t.c - t.b;
+    if (GLMTools::Get2DCrossProductZ(e2, e1) >= 0)
+      return true;
+    return false;
+  }
+
   // ensure the orientation of the triangle is correct for further collision detection
   template<typename T>
   type_triangle<T, 2> PrepareTriangleForCollision(type_triangle<T, 2> const & t)
   {
-    auto e1 = t.b - t.a;
-    auto e2 = t.c - t.b;
-
-    if ((e2.x * e1.y) - (e2.y * e1.x) >= 0)
+    if (IsTriangleReadyForCollision(t))
       return t;
-
-    return type_triangle<T, 2>(t.a, t.c, t.b);
+    return t.GetInvertedTriangle();
   }
 
   template<typename T>
@@ -305,7 +318,7 @@ namespace chaos
       auto e1_S = s.position - e1;
       auto normalized_edge = glm::normalize(e2 - e1);
 
-      auto d = (normalized_edge.x * e1_S.y) - (normalized_edge.y * e1_S.x); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
+      auto d = GLMTools::Get2DCrossProductZ(normalized_edge, e1_S); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
       if (d > s.radius)
         return false;
     }

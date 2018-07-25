@@ -358,6 +358,48 @@ public:
     return false;
   }
 
+
+
+  // shuxxx TODO : test GetInvertedTriangle(...)
+
+  /** get the reversed triangle */
+  type_triangle<T, dimension> GetInvertedTriangle() const
+  {
+    return type_triangle<T, dimension>(a, c, b);
+  }
+
+
+
+
+
+
+
+  // shuxxx TODO : test triangle / with point containing function
+
+  /** returns true whether the point is contained in the triangle */
+  bool Contains(vec_type const & pt) const
+  {
+    // test whether the triangle is null
+    if (IsEmpty())
+      return false;
+
+    // test whether the point is inside the edges
+    vec_type const * V = &a;
+    for (int i = 0; i < 3; ++i)
+    {
+      vec_type const & e1 = V[i];
+      vec_type const & e2 = V[(i + 1) % 3];
+
+      vec_type e1_S = pt - e1;
+      vec_type normalized_edge = glm::normalize(e2 - e1);
+
+      auto d = GLMTools::Get2DCrossProductZ(normalized_edge, e1_S); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
+      if (d > 0.0f)
+        return false;
+    }
+    return true;    
+  }  
+
 public:
 
   /** first point of the triangle */

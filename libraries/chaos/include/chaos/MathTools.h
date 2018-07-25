@@ -115,6 +115,7 @@ public:
     return Minimum(x, static_cast<T>(1));
   }
 
+  /** compute a vector from polar coordinates */
   template<typename T> 
   static glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
   {

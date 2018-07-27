@@ -167,7 +167,7 @@ class ConvexPolygonSplitter
     }
 
     /** search whether there is an intersection between [A, B] and [C, D] */
-    static LineIntersectionResult GetIntersection(glm::vec2 const & A, glm::vec2 const & B, glm::vec2 const & C, glm::vec2 const & D, glm::vec2 & result, bool check_for_segment = true)
+    static LineIntersectionResult GetIntersection(glm::vec2 const & A, glm::vec2 const & B, glm::vec2 const & C, glm::vec2 const & D, bool check_for_segments = true)
     {
         LineIntersectionResult result;
 
@@ -176,7 +176,7 @@ class ConvexPolygonSplitter
         assert(C != D);
 
         // early exit for segments
-        if (check_for_segment)
+        if (check_for_segments)
         {
             if (ArePointsSameSide(A, B, C, D))
                 return result;
@@ -303,7 +303,36 @@ class ConvexPolygonSplitter
         return result;
     }
 
+    bool SplitPolygonNoIntersection(std::vector<glm::vec2> const & polygon, PolygonSet & result)
+    {
+        // For each edge of the polygon, search whether it intersects with another edge
+        size_t point_count = polygon.size();
+        for (size_t i = 0 ; i < point_count ; ++i)
+        {
+            glm::vec2 const & A = polygon[i];
+            glm::vec2 const & B = polygon[(i + 1) % point_count];
+
+            for (size_t j = 1 ; j < point_count ; ++j)
+            {
+                glm::vec2 const & C = polygon[(i + j) % point_count];
+                glm::vec2 const & D = polygon[(i + j + 1) % point_count];
+
+                LineIntersectionResult intersection = GetIntersection(A, B, C, D, true);
+                if (!intersection.has_solution)
+                    continue;
+
+
+
+            }
+        }
+
+
+        return true;
+    }
+
+
     bool SearchPointInsidePolygon(std::vector<glm::vec2> const & src, glm::vec2 & result)
+    {
     
 
 

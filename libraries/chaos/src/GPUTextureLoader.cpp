@@ -35,6 +35,15 @@ namespace chaos
 				nullptr:
 				GLTextureTools::PrepareGLTextureTransfert(image);
 
+
+
+
+
+			// shuxxx try to work with parameter.level and parameter.border
+
+
+
+
 			// create the texture
 			if (target == GL_TEXTURE_1D)
 			{

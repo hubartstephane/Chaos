@@ -363,9 +363,9 @@ public:
   // shuxxx TODO : test GetInvertedTriangle(...)
 
   /** get the reversed triangle */
-  type_triangle<T, dimension> GetInvertedTriangle() const
+  type_triangle GetInvertedTriangle() const
   {
-    return type_triangle<T, dimension>(a, c, b);
+    return type_triangle(a, c, b);
   }
 
 

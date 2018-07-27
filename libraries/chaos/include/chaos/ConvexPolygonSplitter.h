@@ -10,11 +10,6 @@ namespace chaos
 
 #if 1
 
-    /** Compute simplified cross for a 2d vector */
-    static float Get2DCrossProductZ(glm::vec2 const & A, glm::vec2 const & B)
-    {
-        return (A.x * B.y) - (A.y * B.x);
-    }
 
 
 
@@ -63,20 +58,9 @@ class ConvexPolygonCollision
 
 public:
 
-    static bool Collide(std::vector<glm::vec2> const & polygon1, std::vector<glm::vec2> const & polygon2)
+    static bool IsPolygonConvex(std::vector<glm::vec2> const & polygon, bool * reversed_convex = nullptr)
     {
-        if (HasSeparatingEdge(polygon1, polygon2))
-            return false;
-        if (HasSeparatingEdge(polygon2, polygon1))
-            return false;           
-        return true;
-    }
-
-protected:
-
-    static bool IsPolygonConvex(std::vector<glm::vec2> const & polygon_count, bool * reversed = nullptr)
-    {
-        assert(points.size() >= 3);
+        assert(polygon.size() >= 3);
 
         bool has_positive = false;
         bool has_negative = false;
@@ -88,25 +72,36 @@ protected:
             glm::vec2 const & B = polygon[(i + 1) % polygon_count];     
             glm::vec2 const & C = polygon[(i + 2) % polygon_count];     
 
-            float value = Get2DCrossProductZ(B - A, C - B);
+            float value = GLMTools::Get2DCrossProductZ(B - A, C - B);
 
             has_positive |= (value > 0.0f);
             has_negative |= (value < 0.0f);
 
             if (has_negative)
             {
-                if (reversed == nullptr) // early exit : user only wants to know if Polygon is convex and positive
+                if (reversed_convex == nullptr) // early exit : user only wants to know if Polygon is convex and positive
                     return false;
                 if (has_positive) // early exit : we already have all information we wanted
                     break;
             }
         }
 
-        if (reversed != nullptr)
-            *reversed = has_negative & !has_positive; // always negative direction (convex but in reverse order)
+        if (reversed_convex != nullptr)
+            *reversed_convex = has_negative & !has_positive; // always negative direction (convex but in reverse order)
             
         return (has_negative ^ has_positive); // always in the same direction
     }
+
+    static bool Collide(std::vector<glm::vec2> const & polygon1, std::vector<glm::vec2> const & polygon2)
+    {
+        if (HasSeparatingEdge(polygon1, polygon2))
+            return false;
+        if (HasSeparatingEdge(polygon2, polygon1))
+            return false;           
+        return true;
+    }
+
+protected:
 
     static bool HasSeparatingEdge(std::vector<glm::vec2> const & points, std::vector<glm::vec2> const & polygon)
     {
@@ -125,7 +120,7 @@ protected:
                 glm::vec2 const & P = points[i];
                 glm::vec2 AP = P - A;
 
-                if (Get2DCrossProductZ(AB, AP) < 0.0f)
+                if (GLMTools::Get2DCrossProductZ(AB, AP) < 0.0f)
                     break;
             }
             if (j == points_count) // all points are outside relatively to current edge
@@ -133,6 +128,11 @@ protected:
         }
         return false;
     }
+
+
+ 
+
+
 };
 
 
@@ -160,14 +160,14 @@ class ConvexPolygonSplitter
         glm::vec2 AC = C - A;
         glm::vec2 AD = D - A;
 
-        float Z1 = Get2DCrossProductZ(AB, AC);
-        float Z2 = Get2DCrossProductZ(AB, AD);
+        float Z1 = GLMTools::Get2DCrossProductZ(AB, AC);
+        float Z2 = GLMTools::Get2DCrossProductZ(AB, AD);
 
         return (Z1 * Z2 > 0.0f);
     }
 
     /** search whether there is an intersection between [A, B] and [C, D] */
-    static LineIntersectionResult GetIntersection(glm::vec2 const & A, glm::vec2 const & B, glm::vec2 const & C, glm::vec2 const & D, glm::vec2 & result)
+    static LineIntersectionResult GetIntersection(glm::vec2 const & A, glm::vec2 const & B, glm::vec2 const & C, glm::vec2 const & D, glm::vec2 & result, bool check_for_segment = true)
     {
         LineIntersectionResult result;
 
@@ -175,12 +175,14 @@ class ConvexPolygonSplitter
         assert(A != B);
         assert(C != D);
 
-#if 0
-        if (ArePointsSameSide(A, B, C, D))
-            return false;
-        if (ArePointsSameSide(C, D, A, B))
-            return false;            
-#endif            
+        // early exit for segments
+        if (check_for_segment)
+        {
+            if (ArePointsSameSide(A, B, C, D))
+                return result;
+            if (ArePointsSameSide(C, D, A, B))
+                return result;            
+        }
 
         // special case : lines are colinear
         //   infinity or 0 solutions
@@ -189,9 +191,9 @@ class ConvexPolygonSplitter
         glm::vec2 AB = B - A;
         glm::vec2 CD = D - C;
 
-        if (Get2DCrossProductZ(AB, CD) == 0.0f) // colinear
+        if (GLMTools::Get2DCrossProductZ(AB, CD) == 0.0f) // colinear
         {
-            if (Get2DCrossProductZ(AB, CA) == 0.0f) // four points are aligned
+            if (GLMTools::Get2DCrossProductZ(AB, CA) == 0.0f) // four points are aligned
             {
                 glm::vec2 AC = C - A;
                 glm::vec2 AD = D - A;
@@ -287,8 +289,15 @@ class ConvexPolygonSplitter
 
         result.has_solution = true;
         result.has_infinite_solutions = false;            
+
         result.t1 = t1;
         result.t2 = t2;
+
+        result.t1_infinite_min = t1;
+        result.t1_infinite_max = t1;
+        result.t2_infinite_min = t2;
+        result.t2_infinite_max = t2;
+
         result.intersection = A + t1 * AB;
 
         return result;

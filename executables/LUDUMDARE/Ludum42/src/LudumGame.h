@@ -273,6 +273,8 @@ protected:
 	LudumLevel * GetLevel(int level_number);
 	/** get currently played level */
 	LudumLevel const * GetLevel(int level_number) const;
+	/** returns whether current level is completed */
+	bool IsLevelCompleted();
 
 	/** Save the best score */
 	void SerializeBestScore(bool save);

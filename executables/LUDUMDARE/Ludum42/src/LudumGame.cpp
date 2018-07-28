@@ -46,7 +46,6 @@ void LudumGame::SerializeBestScore(bool save)
 	}
 }
 
-
 void LudumGame::IncrementScore(int delta)
 {
 	if (delta <= 0)
@@ -254,11 +253,13 @@ void LudumGame::HandleKeyboardInputs()
 void LudumGame::Tick(double delta_time)
 {
 	// catch all stick inputs
-	gamepad_manager->Tick((float)delta_time);
+	if (gamepad_manager != nullptr)	
+		gamepad_manager->Tick((float)delta_time);
 	// handle keyboard inputs
 	HandleKeyboardInputs();
 	// update the game automata
-	game_automata->Tick(delta_time); 
+	if (game_automata != nullptr)	
+		game_automata->Tick(delta_time); 
 	// clear the cached inputs
 	ResetPlayerCachedInputs();
 	// tick the particle manager
@@ -522,13 +523,31 @@ LudumLevel const * LudumGame::GetLevel(int level_number) const
 	return levels[level_number % (int)levels.size()].get();
 }
 
+
+bool LudumGame::IsLevelCompleted()
+{
+
+	return false;
+}
+
 void LudumGame::TickLevelCompleted(double delta_time)
 {
 	LudumLevel const * level = GetCurrentLevel();
 	if (level == nullptr)
 		return;
 
+#if _DEBUG
+	bool completed = cheat_next_level || IsLevelCompleted();
+#else
+	bool completed = IsLevelCompleted();
+#endif
 
+	if (completed)
+	{
+
+
+
+	}
 }
 
 void LudumGame::TickHeartWarning(double delta_time)

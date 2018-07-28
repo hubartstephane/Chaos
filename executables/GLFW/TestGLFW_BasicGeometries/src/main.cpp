@@ -21,6 +21,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/ConvexPolygonSplitter.h>
 
 
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -55,9 +56,9 @@ static int const POINT_INSIDE_BOX_TEST         = 20;
 static int const POINT_INSIDE_SPHERE_TEST      = 21;
 static int const COLLISION_SHERE2_BOX2_TEST    = 22;
 static int const COLLISION_SHERE2_TRIANGLE_TEST = 23;
+static int const COLLISION_POINT_TRIANGLE_TEST  = 24;
 
-
-static int const TEST_COUNT = 24;
+static int const TEST_COUNT = 25;
 
 class RenderingContext
 {
@@ -141,6 +142,7 @@ protected:
     if (example == POINT_INSIDE_SPHERE_TEST)       return "point inside sphere";
     if (example == COLLISION_SHERE2_BOX2_TEST)     return "collision sphere2/box2";
     if (example == COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
+		if (example == COLLISION_POINT_TRIANGLE_TEST)  return "collision point2/triangle2";
 
     return nullptr;
   }
@@ -312,10 +314,10 @@ protected:
     );
   }
 
-  void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color)
+	void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color, bool is_translucent)
   {
     glm::vec3 half_point_size(0.125f);
-    DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, false);  
+    DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, is_translucent);
   }
 
   void BeginTranslucency()
@@ -433,20 +435,40 @@ protected:
     DrawPrimitive(ctx, s2, red, collision);
   }
 
+	void DrawTrianglePointCollision(RenderingContext const & ctx)
+	{
+		double realtime = 0.2 * clock->GetClockTime();
+
+		chaos::triangle2 t2;
+		t2.a = glm::vec2(5.0f, 0.0f);
+		t2.c = glm::vec2(-5.0f, 0.0f);
+		t2.b = glm::vec2(0.0f, 5.0f);
+		t2 = chaos::PrepareTriangleForCollision(t2); // ensure the triangle order is good for collision function
+
+		glm::vec2 p = glm::vec2(0.0f, 0.0f);
+		p.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
+		p.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
+
+		bool collision = t2.Contains(p);
+		DrawPrimitive(ctx, t2, blue, collision);
+		DrawPoint(ctx, glm::vec3(p.x, 0.0f, p.y), white, collision);
+		
+	}
+
   void DrawTriangleBox2Collision(RenderingContext const & ctx)
   {
-    double realtime = clock->GetClockTime();
+    double realtime = 0.2 * clock->GetClockTime();
 
     chaos::triangle2 t2;
-    t2.a = glm::vec2(5.0f, -15.0f);
-    t2.c = glm::vec2(-5.0f, -5.0f);
-    t2.b = glm::vec2(0.0f, +15.0f);
+		t2.a = glm::vec2(5.0f, 0.0f);
+		t2.c = glm::vec2(-5.0f, 0.0f);
+		t2.b = glm::vec2(0.0f, 5.0f);
     t2 = chaos::PrepareTriangleForCollision(t2); // ensure the triangle order is good for collision function
 
     chaos::sphere2 s2;
-    s2.position.x = 10.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
-    s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
-    s2.radius = 3.0f;
+    s2.position.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
+    s2.position.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
+    s2.radius = 0.25f;
 
     bool collision = chaos::Collide(t2, s2);
     DrawPrimitive(ctx, t2, blue, collision);
@@ -463,7 +485,7 @@ protected:
     pos.y = 0.0f;
     pos.z = 0.0f;
 
-    DrawPoint(ctx, pos, white);
+    DrawPoint(ctx, pos, white, false);
     DrawPrimitive(ctx, p, red, p.Contains(pos));
   }
 
@@ -491,8 +513,8 @@ protected:
       DrawPrimitive(ctx, b, red, false);
 
       std::pair<glm::vec3, glm::vec3> corners = b.GetCorners();
-      DrawPoint(ctx, corners.first, white);
-      DrawPoint(ctx, corners.second, white);
+      DrawPoint(ctx, corners.first, white, false);
+      DrawPoint(ctx, corners.second, white, false);
     }
 
     // box construction from corners
@@ -504,8 +526,8 @@ protected:
       chaos::box3 b(std::make_pair(p1, p2));
 
       DrawPrimitive(ctx, b, red, false);
-      DrawPoint(ctx, p1, white);
-      DrawPoint(ctx, p2, white);
+      DrawPoint(ctx, p1, white, false);
+      DrawPoint(ctx, p2, white, false);
     }
 
     // box union or intersection
@@ -634,6 +656,10 @@ protected:
 
     if (display_example == COLLISION_SHERE2_TRIANGLE_TEST)
       DrawTriangleBox2Collision(ctx);
+
+
+		if (display_example == COLLISION_POINT_TRIANGLE_TEST)
+			DrawTrianglePointCollision(ctx);
 
   }
 

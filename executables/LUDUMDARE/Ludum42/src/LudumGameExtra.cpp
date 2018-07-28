@@ -349,7 +349,7 @@ bool LudumGame::LoadLevels()
 bool LudumGame::InitializeGamepadButtonInfo()
 {
 	// the map [button ID] => [bitmap name + text generator alias]
-#define LUDUMGAME_ADDTO_BUTTONMAP(x, y) gamepad_button_map[chaos::MyGLFW::x] = std::pair<std::string, std::string>("xboxController" ##y, ##y)
+#define LUDUMGAME_ADDTO_BUTTONMAP(x, y) gamepad_button_map[chaos::MyGLFW::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
 	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_A, ButtonA);
 	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_B, ButtonB);
 	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_X, ButtonX);

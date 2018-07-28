@@ -12,7 +12,6 @@ namespace chaos
 
 
 
-
 class LineIntersectionResult
 {
 public:
@@ -39,7 +38,7 @@ public:
     /** the index of the first point in the shared vector of points */
     size_t first = 0;
     /** the number of points in the polygon */
-    size_t count = 0
+		size_t count = 0;
 };
 
 class PolygonSet
@@ -205,10 +204,10 @@ class ConvexPolygonSplitter
                 float AB_length = glm::length(AB);
                 float CD_length = glm::length(CD);
 
-                float t1_1 = sign(glm::dot(AC, AB)) * glm::length(AC) / AB_length; 
-                float t1_2 = sign(glm::dot(AD, AB)) * glm::length(AD) / AB_length;  
-                float t2_1 = sign(glm::dot(CA, CD)) * glm::length(CA) / CD_length; 
-                float t2_2 = sign(glm::dot(CB, CD)) * glm::length(CB) / CD_length; 
+                float t1_1 = MathTools::GetSign(glm::dot(AC, AB)) * glm::length(AC) / AB_length; 
+                float t1_2 = MathTools::GetSign(glm::dot(AD, AB)) * glm::length(AD) / AB_length;
+                float t2_1 = MathTools::GetSign(glm::dot(CA, CD)) * glm::length(CA) / CD_length;
+                float t2_2 = MathTools::GetSign(glm::dot(CB, CD)) * glm::length(CB) / CD_length;
 
                 result.t1_infinite_min = MathTools::Minimum(t1_1, t1_2);
                 result.t1_infinite_max = MathTools::Maximum(t1_1, t1_2);
@@ -354,7 +353,7 @@ class ConvexPolygonSplitter
     }
 
     
-}
+};
 
 #endif
 

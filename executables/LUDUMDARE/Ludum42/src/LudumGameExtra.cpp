@@ -346,9 +346,27 @@ bool LudumGame::LoadLevels()
 	return true;
 }
 
+bool LudumGame::InitializeGamepadButtonInfo()
+{
+	// the map [button ID] => [bitmap name + text generator alias]
+#define LUDUMGAME_ADDTO_BUTTONMAP(x, y) gamepad_button_map[chaos::MyGLFW::x] = std::pair<std::string, std::string>("xboxController" ##y, ##y)
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_A, ButtonA);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_B, ButtonB);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_X, ButtonX);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_Y, ButtonY);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_LEFTBUT, LeftShoulder);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_RIGHTBUT, RightShoulder);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_LEFTTRIGGER, LeftTrigger);
+	LUDUMGAME_ADDTO_BUTTONMAP(XBOX_BUTTON_RIGHTTRIGGER, RightTrigger);
+#undef LUDUMGAME_ADDTO_BUTTONMAP
+	return true;
+}
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
+	// initialize the button map
+ 	if (!InitializeGamepadButtonInfo())
+		return false;
 	// initialize game values
 	if (!InitializeGameValues(config, config_path))
 		return false;
@@ -395,8 +413,18 @@ bool LudumGame::InitializeParticleTextGenerator()
 
 	// for each bitmap, that correspond to a button, register a [NAME] in the generator	
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
-
-
+	if (bitmap_set != nullptr)
+	{
+		for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
+		{
+			std::string const & bitmap_name = it->second.first;
+			chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name.c_str());
+			if (entry == nullptr)
+				continue;
+			std::string const & generator_alias = it->second.second;
+			particle_text_generator->AddBitmap(generator_alias.c_str(), entry);	
+		}		
+	}
 	return true;
 }
 

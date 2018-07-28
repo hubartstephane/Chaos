@@ -162,6 +162,8 @@ protected:
 	/** get current state ID */
 	int GetCurrentStateID() const;
 
+	/** initialize the mapping between button index and resource name */
+	bool InitializeGamepadButtonInfo();
 	/** initialize the particle manager */
 	bool InitializeParticleManager();
 	/** initialize the particle text generator */
@@ -175,12 +177,6 @@ protected:
 	bool DoLoadLevel(int level_number, chaos::TiledMap::Map * tiled_map);
 	/** additionnal initialization when loading a level */
 	bool DoLoadLevelInitialize(LudumLevel * level);
-
-
-	
-	/** get a random button in existing list */
-	int GetRandomButtonID() const;
-
 
 	/** get the size of the world */
 	glm::vec2 GetWorldSize() const;
@@ -298,6 +294,9 @@ protected:
 	boost::intrusive_ptr<chaos::Sound> game_music;
 	boost::intrusive_ptr<chaos::Sound> pause_music;
 
+	/** a mapping between the button index and its resource name + text generator alias */
+	std::map<int, std::pair<std::string, std::string>> gamepad_button_map;
+
 	/** the current gamepad manager */
 	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 
@@ -312,7 +311,6 @@ protected:
 
 	/** the tiled map manager */
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
-
 
 	/** game settings */
 	int   initial_life = 3;

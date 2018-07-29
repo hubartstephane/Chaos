@@ -15,6 +15,8 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
 
+#include <death/Game.h>
+
 // =================================================
 // Levels
 // =================================================
@@ -45,7 +47,7 @@ public:
 // LudumGame
 // =================================================
 
-class LudumGame : public chaos::ReferencedObject
+class LudumGame : public death::Game
 {
 	friend class LudumChallenge;
 	friend class LudumWindow;
@@ -99,11 +101,8 @@ public:
 	void OnMouseMove(double x, double y);
 	/** the rendering method */
 	void Display(chaos::box2 const & viewport);
-	/** called whenever a gamepad input is comming */
-	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
-	/** basic initialization */
-	bool InitializeGame(GLFWwindow * in_glfw_window);
+
 	/** initialization from the config file */
 	bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -136,8 +135,19 @@ protected:
 	/** destroying game objects*/
 	void DestroyGameObjects();
 
-	/** create the music used in the game */
-	void CreateAllMusics();
+	/** override */
+	virtual bool CreateGameAutomata() override;
+	/** override */
+	virtual bool CreateAllMusics() override;
+	/** override */
+	virtual bool DeclareParticleClasses() override;
+	/** override */
+	virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
+	/** override */
+	virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
+
+	
+
 	/** create one sound */
 	chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
 	/** blend out a music */
@@ -233,7 +243,7 @@ protected:
 	
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gamepad_data);
 	/** test whether a key is being pressed and whether it correspond to the current challenge */
 	void SendKeyboardButtonToChallenge(unsigned int C);
 
@@ -409,9 +419,6 @@ protected:
 
 protected:
 
-	/** the window in GLFW library */
-	GLFWwindow * glfw_window = nullptr;
-
 	/** the automata corresponding to the game */
 	boost::intrusive_ptr<LudumAutomata> game_automata;
 
@@ -423,9 +430,6 @@ protected:
 	boost::intrusive_ptr<chaos::Sound> menu_music;
 	boost::intrusive_ptr<chaos::Sound> game_music;
 	boost::intrusive_ptr<chaos::Sound> pause_music;
-
-	/** the current gamepad manager */
-	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 
 	/** the texture atlas */
 	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
@@ -552,24 +556,3 @@ protected:
 
 };
 
-// =================================================
-// LudumGamepadManager
-// =================================================
-
-class LudumGamepadManager : public chaos::MyGLFW::GamepadManager
-{
-public:
-
-	/** the constructor */
-	LudumGamepadManager(LudumGame * in_game) : game(in_game) {}
-
-protected:
-
-	/** the gamepad manager */
-	virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
-
-protected:
-
-	/** pointer on the game */
-	LudumGame * game = nullptr;
-};

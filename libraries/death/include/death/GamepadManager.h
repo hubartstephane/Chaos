@@ -14,7 +14,7 @@ namespace death
 		/** the constructor */
 		GamepadManager(Game * in_game) : game(in_game)
 		{
-			assert(nullptr);
+			assert(in_game != nullptr);
 		}
 
 	protected:

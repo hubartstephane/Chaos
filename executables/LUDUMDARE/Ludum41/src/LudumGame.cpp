@@ -381,50 +381,54 @@ void LudumGame::ResetPlayerCachedInputs()
 	right_stick_position = glm::vec2(0.0f, 0.0f);
 }
 
-bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
-	// ignore invalid gamepad : should never happen
-	if (!physical_gamepad->IsAnyAction())
-		return true;
-
-	// change the application mode
-	chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
-
 	// cache the stick position
-	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
+	glm::vec2 lsp = in_gamepad_data.GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 	if (glm::length2(lsp) > 0.0f)
 		left_stick_position = gamepad_sensitivity * lsp;
 	else
 	{
-		if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT))
+		if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT))
 			left_stick_position.x = -gamepad_sensitivity * 1.0f;
-		else if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT))
-			left_stick_position.x =  gamepad_sensitivity * 1.0f;
+		else if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT))
+			left_stick_position.x = gamepad_sensitivity * 1.0f;
 	}
 
-	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+	glm::vec2 rsp = in_gamepad_data.GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 	if (glm::length2(rsp) > 0.0f)
 		right_stick_position = gamepad_sensitivity * rsp;
+}
 
+void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+{
 	// maybe this correspond to current challenge
-	SendGamepadButtonToChallenge(physical_gamepad);
+	SendGamepadButtonToChallenge(&in_gamepad_data);
 
 	// maybe a start game
-	if (physical_gamepad->IsAnyButtonPressed())
+	if (in_gamepad_data.IsAnyButtonPressed())
 		if (game_automata->main_menu_to_playing->TriggerTransition(true))
-			return true;
+			return;
 
 	// maybe a game/pause resume
 	if (
-		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+		(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
+		(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
 	{
 		if (RequireTogglePause())
-			return true;
+			return;
 	}
-
-	return true;
 }
+
+
+
+
+
+
+
+
+
+
 
 glm::vec2 LudumGame::GetWorldSize() const
 {
@@ -770,12 +774,12 @@ void LudumGame::SendKeyboardButtonToChallenge(unsigned int c)
 		sequence_challenge->OnKeyboardButtonReceived((char)c);
 }
 
-void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gamepad_data)
 {
 	if (!IsPlaying())
 		return;
 	if (sequence_challenge != nullptr)
-		sequence_challenge->OnGamepadButtonReceived(physical_gamepad);
+		sequence_challenge->OnGamepadButtonReceived(in_gamepad_data);
 }
 
 void LudumGame::OnMouseMove(double x, double y)

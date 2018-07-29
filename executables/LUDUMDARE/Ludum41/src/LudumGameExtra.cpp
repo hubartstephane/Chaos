@@ -11,15 +11,8 @@
 #include <chaos/InputMode.h>
 #include <chaos/ParticleTextGenerator.h>
 #include <chaos/StringTools.h>
+#include <chaos/ClassTools.h>
 
-
-
-bool LudumGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
-{
-	if (game != nullptr)
-		return game->OnPhysicalGamepadInput(physical_gamepad);
-	return true;
-}
 
 chaos::MyGLFW::SingleWindowApplication * LudumGame::GetApplication()
 {
@@ -66,7 +59,7 @@ chaos::Sound * LudumGame::PlaySound(char const * name, bool paused, bool looping
 	return source->PlaySound(play_desc);
 }
 
-void LudumGame::CreateAllMusics()
+bool LudumGame::CreateAllMusics()
 {
 	if (menu_music == nullptr)
 		menu_music = PlaySound("menu_music", true, true);
@@ -74,6 +67,8 @@ void LudumGame::CreateAllMusics()
 		pause_music = PlaySound("pause_music", true, true);
 	if (game_music == nullptr)
 		game_music = PlaySound("game_music", true, true);
+
+	return true;
 }
 
 void LudumGame::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first)
@@ -221,30 +216,26 @@ int LudumGame::GetCurrentStateID() const
 	return current_state->GetStateID();
 }
 
-bool LudumGame::InitializeGame(GLFWwindow * in_glfw_window)
+bool LudumGame::CreateGameAutomata()
 {
-	// initialize the window
-	assert(in_glfw_window != nullptr);
-	glfw_window = in_glfw_window;
-
-	// create the game automata
 	game_automata = new LudumAutomata(this);
 	if (game_automata == nullptr)
 		return false;
+	return true;
+}
 
-	// initialize the gamepad manager
-	gamepad_manager = new LudumGamepadManager(this);
-	if (gamepad_manager == nullptr)
-		return false;
-
-	// create the musics
-	CreateAllMusics();
-
-	// initialize particle classes
-	DeclareParticleClasses();
+bool LudumGame::DeclareParticleClasses()
+{
+	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
+	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
+	chaos::ClassTools::DeclareClass<ParticleBrick, ParticleObject>("ParticleBrick");
+	chaos::ClassTools::DeclareClass<ParticleMovableObject, ParticleObject>("ParticleMovableObject");
+	chaos::ClassTools::DeclareClass<ParticleChallenge, ParticleObject>("ParticleChallenge");
 
 	return true;
 }
+
+
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {

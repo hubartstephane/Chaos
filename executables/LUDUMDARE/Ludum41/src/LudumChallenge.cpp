@@ -18,11 +18,11 @@ void LudumChallenge::Show(bool visible)
 		particle_range->Show(visible);
 }
 
-void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData * in_gamepad_data)
 {
 	int expected_key = gamepad_challenge[challenge_position];
 
-	if (physical_gamepad->GetButtonChanges(expected_key) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
+	if (in_gamepad_data->GetButtonChanges(expected_key) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
 	{
 		AdvanceChallenge();
 	}
@@ -34,7 +34,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::PhysicalGamepad * ph
 			if (it->first == expected_key) 
 				continue;
 		
-			if (physical_gamepad->GetButtonChanges(it->first) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
+			if (in_gamepad_data->GetButtonChanges(it->first) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
 			{
 				OnChallengeError(false);
 				return;

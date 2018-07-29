@@ -4,4 +4,5 @@
 
   WindowedApp()
   DependOnLib("CHAOS")
+  DependOnLib("DEATH")
   DeclareResource("resources")    

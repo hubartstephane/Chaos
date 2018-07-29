@@ -182,19 +182,12 @@ namespace chaos
 		}
 
 
-
-
-
-  		// shuxxx : TODO test Get2DCrossProductZ(...)
-
-  		/** Compute simplified cross for a 2d vector */
-  		template<typename T> 
-  		static T Get2DCrossProductZ(glm::tvec2<T> const & A, glm::tvec2<T> const & B)
-  		{
-     		return (A.x * B.y) - (A.y * B.x);
-  		}
-
-
+		/** Compute simplified cross for a 2d vector */
+		template<typename T>
+		static T Get2DCrossProductZ(glm::tvec2<T> const & A, glm::tvec2<T> const & B)
+		{
+			return (A.x * B.y) - (A.y * B.x);
+		}
 	};
 
 }; // namespace chaos

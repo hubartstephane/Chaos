@@ -1,5 +1,7 @@
 #include <chaos/StandardHeaders.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
+#include <chaos/MyGLFWSingleWindowApplication.h>
+
+#include <death/Death.h> 
 
 #include "LudumWindow.h"
 #include "LudumGame.h"

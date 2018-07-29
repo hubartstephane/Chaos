@@ -258,12 +258,6 @@ namespace chaos
     return Collide(t, s);
   }
 
-
-
-  // shuxxx TODO : test refactor with Get2DCrossProductZ
-
-
-
   // check the orientation of the triangle for future collision detection
   template<typename T>
   bool IsTriangleReadyForCollision(type_triangle<T, 2> const & t)

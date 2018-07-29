@@ -358,23 +358,11 @@ public:
     return false;
   }
 
-
-
-  // shuxxx TODO : test GetInvertedTriangle(...)
-
   /** get the reversed triangle */
   type_triangle GetInvertedTriangle() const
   {
     return type_triangle(a, c, b);
   }
-
-
-
-
-
-
-
-  // shuxxx TODO : test triangle / with point containing function
 
   /** returns true whether the point is contained in the triangle */
   bool Contains(vec_type const & pt) const

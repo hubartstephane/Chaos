@@ -110,6 +110,8 @@ namespace chaos
 			void UpdateValue(float in_raw_value, float dead_zone);
 			/** get the value */
 			inline float GetValue() const { return final_value; }
+			/** clear the input */
+			inline void Clear() { raw_value = final_value = 0.0f; }
 
 		protected:
 
@@ -157,7 +159,7 @@ namespace chaos
 			/** update all the values for the axis and buttons */
 			void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);
 			/** reset the content of the object */
-			void Clear();
+			void Clear(bool only_set_to_zero = false);
 
 		protected:
 
@@ -176,6 +178,9 @@ namespace chaos
 			friend class Gamepad;
 
 		public:
+
+			/** get a reference on the data */
+			GamepadData const & GetGamepadData() const { return gamepad_data; }
 
 			/* returns a status giving the change of button relative to previous frame */
 			int GetButtonChanges(size_t button_index) const;

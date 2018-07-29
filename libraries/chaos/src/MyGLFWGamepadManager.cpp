@@ -37,10 +37,20 @@ namespace chaos
 			}
 		}
 
-		void GamepadData::Clear()
+		void GamepadData::Clear(bool only_set_to_zero)
 		{
-			axis.clear();
-			buttons.clear();
+			if (only_set_to_zero)
+			{
+				for (int & b : buttons)
+					b = 0;
+				for (AxisData & a : axis)
+					a.Clear();
+			}
+			else
+			{
+				axis.clear();
+				buttons.clear();
+			}
 		}
 
 		size_t GamepadData::GetButtonCount() const

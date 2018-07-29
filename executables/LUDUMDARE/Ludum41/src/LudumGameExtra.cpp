@@ -14,18 +14,7 @@
 #include <chaos/ClassTools.h>
 
 
-chaos::MyGLFW::SingleWindowApplication * LudumGame::GetApplication()
-{
-	return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-}
 
-chaos::SoundManager * LudumGame::GetSoundManager()
-{
-	chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
-	if (application == nullptr)
-		return nullptr;
-	return application->GetSoundManager();
-}
 
 void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
 {
@@ -41,22 +30,6 @@ void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
 	blend_desc.pause_at_end = !blend_in;
 
 	music->StartBlend(blend_desc, true, true);
-}
-
-chaos::Sound * LudumGame::PlaySound(char const * name, bool paused, bool looping)
-{
-	chaos::SoundManager * sound_manager = GetSoundManager();
-	if (sound_manager == nullptr)
-		return nullptr;
-
-	chaos::SoundSource * source = sound_manager->FindSource(name);
-	if (source == nullptr)
-		return nullptr;
-
-	chaos::PlaySoundDesc play_desc;
-	play_desc.paused  = paused;
-	play_desc.looping = looping;
-	return source->PlaySound(play_desc);
 }
 
 bool LudumGame::CreateAllMusics()

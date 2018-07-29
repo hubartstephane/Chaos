@@ -1,11 +1,86 @@
 #include <death/Game.h>
 #include <death/GamepadManager.h>
 
-#include <chaos/Application.h>
 #include <chaos/InputMode.h>
 
 namespace death
 {
+	chaos::MyGLFW::SingleWindowApplication * Game::GetApplication()
+	{
+		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+	}
+
+	chaos::SoundManager * Game::GetSoundManager()
+	{
+		chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetSoundManager();
+	}
+
+	bool Game::LoadBestScore(std::ifstream & file)
+	{
+		return true;
+	}
+
+	bool Game::SaveBestScore(std::ofstream & file)
+	{
+		return true;
+	}
+
+	bool Game::SerializeBestScore(bool save)
+	{
+		// get application
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return false;
+		// get user temp directory
+		boost::filesystem::path filepath = application->GetUserLocalTempPath() / "best_score.txt";
+
+		// save the score
+		if (save)
+		{
+			std::ofstream file(filepath.string().c_str());
+			if (!file)
+				return false;
+			return SaveBestScore(file);
+		}
+		// load the score
+		else
+		{
+			std::ifstream file(filepath.string().c_str());
+			if (!file)
+				return false;
+			return LoadBestScore(file);
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+	chaos::Sound * Game::PlaySound(char const * name, bool paused, bool looping)
+	{
+		chaos::SoundManager * sound_manager = GetSoundManager();
+		if (sound_manager == nullptr)
+			return nullptr;
+
+		chaos::SoundSource * source = sound_manager->FindSource(name);
+		if (source == nullptr)
+			return nullptr;
+
+		chaos::PlaySoundDesc play_desc;
+		play_desc.paused = paused;
+		play_desc.looping = looping;
+		return source->PlaySound(play_desc);
+	}
+
 	bool Game::CreateAllMusics()
 	{
 		return true;

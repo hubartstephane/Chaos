@@ -4,6 +4,9 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWwindow.h>
 #include <chaos/MyGLFWGamepadManager.h>
+#include <chaos/Application.h>
+#include <chaos/MyGLFWSingleWindowApplication.h>
+#include <chaos/SoundManager.h>
 
 
 namespace death
@@ -17,8 +20,22 @@ namespace death
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
 
-
 	protected:
+
+		/** utility function to get the application */
+		chaos::MyGLFW::SingleWindowApplication * GetApplication();
+		/** utility function to get the sound manager */
+		chaos::SoundManager * GetSoundManager();
+
+		/** play some sound */
+		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
+
+		/** save the best score */
+		bool SerializeBestScore(bool save);
+		/** data internal method serialization */
+		virtual bool LoadBestScore(std::ifstream & file);
+		/** data internal method serialization */
+		virtual bool SaveBestScore(std::ofstream & file);
 
 		/** create all the music of the game */
 		virtual bool CreateAllMusics();

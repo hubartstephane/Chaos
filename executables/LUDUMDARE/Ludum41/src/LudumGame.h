@@ -108,11 +108,6 @@ public:
 
 protected:
 
-	/** getter on the application */
-	chaos::MyGLFW::SingleWindowApplication * GetApplication();
-	/** getter on the sound manager */
-	chaos::SoundManager * GetSoundManager();
-
 	/** internal methods to generate the atlas for sprites */
 	bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -148,8 +143,6 @@ protected:
 
 	
 
-	/** create one sound */
-	chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
 	/** blend out a music */
 	void BlendMusic(chaos::Sound * music, bool blend_in);
 	/** start music[0], stop all others */
@@ -414,8 +407,10 @@ protected:
 	/** get currently played level */
 	LudumLevel const * GetLevel(int level_number) const;
 
-	/** Save the best score */
-	void SerializeBestScore(bool save);
+	/** override */
+	virtual bool LoadBestScore(std::ifstream & file) override;
+	/** override */
+	virtual bool SaveBestScore(std::ofstream & file) override;
 
 protected:
 

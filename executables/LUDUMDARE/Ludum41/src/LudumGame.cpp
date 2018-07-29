@@ -33,33 +33,17 @@ LudumGame::~LudumGame()
 	SerializeBestScore(true);
 }
 
-void LudumGame::SerializeBestScore(bool save)
+bool LudumGame::LoadBestScore(std::ifstream & file)
 {
-	// get application
-	chaos::Application * application = chaos::Application::GetInstance();
-	if (application == nullptr)
-		return;
-	// get user temp directory
-	boost::filesystem::path filepath = application->GetUserLocalTempPath() / "best_score.txt";
-
-	// save the score
-	if (save)
-	{
-		std::ofstream file(filepath.string().c_str());
-		if (!file)
-			return;
-		file << best_score;
-	}
-	// load the score
-	else
-	{
-		std::ifstream file(filepath.string().c_str());
-		if (!file)
-			return;
-		file >> best_score;
-	}
+	file >> best_score;
+	return true;
 }
 
+bool LudumGame::SaveBestScore(std::ofstream & file)
+{
+	file << best_score;
+	return true;
+}
 
 void LudumGame::IncrementScore(int delta)
 {

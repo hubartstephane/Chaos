@@ -41,13 +41,74 @@ namespace death
 		
 
 	}
-	
-	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+
+	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		return true;
 	}
 
+	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		chaos::BitmapAtlas::AtlasInput input;
+		if (!FillAtlasGenerationInput(input, config, config_path))
+			return false;
 
+		// generate the atlas
+		int ATLAS_SIZE = 1024;
+		int ATLAS_PADDING = 10;
+		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+
+#if _DEBUG
+		params.debug_dump_atlas_dirname = "LudumAtlas";
+#endif
+
+		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+		texture_atlas = generator.ComputeResult(input, params);
+		if (texture_atlas == nullptr)
+			return false;
+
+		return true;
+	}
+
+	bool Game::LoadLevels()
+	{
+		return true;
+	}
+
+	bool Game::InitializeParticleManager()
+	{
+		// create the manager
+		particle_manager = new chaos::ParticleManager();
+		if (particle_manager == nullptr)
+			return false;
+		particle_manager->SetTextureAtlas(texture_atlas.get());
+		return true;
+	}
+	
+	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		// initialize the button map
+		if (!InitializeGamepadButtonInfo())
+			return false;
+		// initialize game values
+		if (!InitializeGameValues(config, config_path))
+			return false;
+		// load exisiting levels
+		if (!LoadLevels())
+			return false;
+		// the atlas
+		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
+			return false;
+		// initialize the particle manager
+		if (!InitializeParticleManager())
+			return false;
+		// initialize the particle text generator manager
+		if (!InitializeParticleTextGenerator())
+			return false;
+		// load the best score if any
+		SerializeBestScore(false);
+		return true;
+	}
 
 	chaos::MyGLFW::SingleWindowApplication * Game::GetApplication()
 	{
@@ -186,6 +247,52 @@ namespace death
 		return true;
 	}
 
+	bool Game::InitializeGamepadButtonInfo()
+	{
+		// the map [button ID] => [bitmap name + text generator alias]
+#define DEATHGAME_ADD_BUTTONMAP(x, y) gamepad_button_map[chaos::MyGLFW::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_A, ButtonA);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_B, ButtonB);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_X, ButtonX);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_Y, ButtonY);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_LEFTBUT, LeftShoulder);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_RIGHTBUT, RightShoulder);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_LEFTTRIGGER, LeftTrigger);
+		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_RIGHTTRIGGER, RightTrigger);
+#undef LUDUMGAME_ADDTO_BUTTONMAP
+
+		return true;
+	}
+
+	bool Game::InitializeParticleTextGenerator()
+	{
+		// create the generator
+		particle_text_generator = new chaos::ParticleTextGenerator::Generator(*texture_atlas);
+		if (particle_text_generator == nullptr)
+			return false;
+
+		// for each bitmap, that correspond to a button, register a [NAME] in the generator	
+		chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
+		if (bitmap_set != nullptr)
+		{
+			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
+			{
+				std::string const & bitmap_name = it->second.first;
+				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name.c_str());
+				if (entry == nullptr)
+					continue;
+				std::string const & generator_alias = it->second.second;
+				particle_text_generator->AddBitmap(generator_alias.c_str(), entry);
+			}
+		}
+
+		return true;
+	}
+
+	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		return true;
+	}
 
 }; // namespace death
 

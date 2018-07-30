@@ -329,32 +329,14 @@ bool LudumGame::LoadLevels()
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	// the atlas
-	if (!GenerateAtlas(config, config_path))
+	if (!death::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 	// the dictionnary
 	if (!InitializeDictionnary(config, config_path))
 		return false;
-	// initialize the button map
- 	if (!InitializeGamepadButtonInfo())
-		return false;
-	// initialize the particle manager
-	if (!InitializeParticleManager())
-		return false;
-	// initialize the particle text generator manager
-	if (!InitializeParticleTextGenerator())
-		return false;
-	// initialize game values
-	if (!InitializeGameValues(config, config_path))
-		return false;
 	// build the rewards/punishment values
 	if (!InitializeRewardsAndPunishments())
 		return false;
-	// load exisiting levels
-	if (!LoadLevels())
-		return false;
-	// load the best score if any
-	SerializeBestScore(false);
 	return true;
 }
 
@@ -457,22 +439,13 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 
 bool LudumGame::InitializeGamepadButtonInfo()
 {
-	// the map [button ID] => [bitmap name]
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_A] = "xboxControllerButtonA";
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_B] = "xboxControllerButtonB";
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_X] = "xboxControllerButtonX";
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_Y] = "xboxControllerButtonY";
+	if (!death::Game::InitializeGamepadButtonInfo())
+		return false;
 
-#if 0
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTBUT]  = "xboxControllerLeftShoulder";
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTBUT] = "xboxControllerRightShoulder";
-
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER]  = "xboxControllerLeftTrigger";
-	gamepad_button_map[chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER] = "xboxControllerRightTrigger";
-#endif
-	// list of all buttons ID
-	for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
-		gamepad_buttons.push_back(it->first);
+	gamepad_buttons.push_back(chaos::MyGLFW::XBOX_BUTTON_A);
+	gamepad_buttons.push_back(chaos::MyGLFW::XBOX_BUTTON_B);
+	gamepad_buttons.push_back(chaos::MyGLFW::XBOX_BUTTON_X);
+	gamepad_buttons.push_back(chaos::MyGLFW::XBOX_BUTTON_Y);
 
 	return true;
 }
@@ -492,30 +465,6 @@ void LudumGame::FillBackgroundLayer()
 		return;
 
 	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-}
-
-bool LudumGame::InitializeParticleTextGenerator()
-{
-	// create the generator
-	particle_text_generator = new chaos::ParticleTextGenerator::Generator(*texture_atlas);
-	if (particle_text_generator == nullptr)
-		return false;
-
-	// for each bitmap, that correspond to a button, register a [NAME] in the generator	
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
-	if (bitmap_set != nullptr)
-	{
-		for (auto it = gamepad_button_map.begin() ; it != gamepad_button_map.end() ; ++it)
-		{
-			std::string const & bitmap_name = it->second;
-			chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name.c_str());
-			if (entry == nullptr)
-				continue;
-			particle_text_generator->AddBitmap(bitmap_name.c_str(), entry);	
-		}		
-	}
-
-	return true;
 }
 
 bool LudumGame::InitializeRewardsAndPunishments()
@@ -552,7 +501,7 @@ std::string LudumGame::GenerateGamepadChallengeString(std::vector<int> const & g
 		auto const it = gamepad_button_map.find(button_index);
 		if (it == gamepad_button_map.end())
 			continue;
-		result = result + "[" + it->second + "]";	
+		result = result + "[" + it->second.second + "]";	
 	}
 	return result;
 }
@@ -621,11 +570,8 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 
 bool LudumGame::InitializeParticleManager()
 {
-	// create the manager
-	particle_manager = new chaos::ParticleManager();
-	if (particle_manager == nullptr)
+	if (!death::Game::InitializeParticleManager())
 		return false;
-	particle_manager->SetTextureAtlas(texture_atlas.get());
 
 	int render_order = 0;
 

@@ -202,18 +202,16 @@ protected:
 	bool IsWordValid(std::string const & word) const;
 
 	/** initialize the mapping between button index and resource name */
-	bool InitializeGamepadButtonInfo();
+	virtual bool InitializeGamepadButtonInfo() override;
 	/** initialize the particle manager */
-	bool InitializeParticleManager();
-	/** initialize the particle text generator */
-	bool InitializeParticleTextGenerator();
+	virtual bool InitializeParticleManager() override;
 	/** initialize the game variables */
-	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 	/** fullfill the lists of rewards an punishments */
 	bool InitializeRewardsAndPunishments();
 	
 	/** loading the levels */
-	bool LoadLevels();
+	virtual bool LoadLevels() override;
 	/** load one level */
 	bool DoLoadLevel(int level_number, std::vector<std::string> & level_content);
 
@@ -424,9 +422,6 @@ protected:
 	boost::intrusive_ptr<chaos::Sound> game_music;
 	boost::intrusive_ptr<chaos::Sound> pause_music;
 
-	/** the texture atlas */
-	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
-
 	/** the dictionnary */
 	std::map<size_t, std::vector<std::string>> dictionnary;
 	/** the min and max size */
@@ -437,16 +432,10 @@ protected:
 	/** the challenge */
 	boost::intrusive_ptr<LudumChallenge> sequence_challenge;
 
-	/** a mapping between the button index and its resource name */
-	std::map<int, std::string> gamepad_button_map;
 	/** all the existing button */
 	std::vector<int> gamepad_buttons;
 
-	/** the particle manager */
-	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 
-	/** the text generator */
-	boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 
 
 	/** initial game values */

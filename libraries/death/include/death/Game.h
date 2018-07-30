@@ -8,6 +8,11 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/SoundManager.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/TextureArrayAtlas.h>
+#include <chaos/ParticleManager.h>
+#include <chaos/ParticleTextGenerator.h>
+#include <chaos/BitmapAtlas.h>
+#include <chaos/BitmapAtlasGenerator.h>
 
 namespace death
 {
@@ -70,6 +75,24 @@ namespace death
 		/** called whenever the input mode changes */
 		virtual void OnInputModeChanged(int new_mode, int old_mode);
 
+		/** initialize the game data from configuration file */
+		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
+
+		/** initialize a mapping with button names / text generator joker */
+		virtual bool InitializeGamepadButtonInfo();
+		/** initialize the particle text generator */
+		virtual bool InitializeParticleTextGenerator();
+		/** initialize the particle manager */
+		virtual bool InitializeParticleManager();
+
+		/** generate the atlas for the whole game */
+		virtual bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		/** fill atlas generation input */
+		virtual bool FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+
+		/** load all the levels from the game (can be simple data) */
+		virtual bool LoadLevels();
+
 	protected:
 
 		/** the window in GLFW library */
@@ -79,6 +102,16 @@ namespace death
 		boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 		/** the gamepad data */
 		chaos::MyGLFW::GamepadData gamepad_data;
+
+		/** the texture atlas */
+		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+		/** the particle manager */
+		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+		/** the text generator */
+		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+		/** a mapping between the button index and its resource name + text generator alias */
+		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;
 
 		/** the wanted viewport aspect */
 		float viewport_wanted_aspect = (16.0f / 9.0f);

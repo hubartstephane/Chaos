@@ -100,7 +100,7 @@ public:
 	/** override */
 	virtual void OnMouseMove(double x, double y) override;
 	/** override */
-	virtual void Display(chaos::box2 const & viewport) override;
+	virtual void Display(glm::ivec2 const & size) override;
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 

@@ -1,13 +1,8 @@
 #include <chaos/StandardHeaders.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h>
 
 #include <death/Death.h> 
 
-#include "LudumWindow.h"
 #include "LudumGame.h"
-
-// ======================================================================================
-
 
 int _tmain(int argc, char ** argv, char ** env)
 {
@@ -16,7 +11,7 @@ int _tmain(int argc, char ** argv, char ** env)
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
-	chaos::MyGLFW::RunWindowApplication<LudumWindow>(argc, argv, env, params);
+	death::RunGame<LudumGame>(argc, argv, env, params);
 	return 0;
 }
 

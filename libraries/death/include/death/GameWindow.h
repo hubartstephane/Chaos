@@ -45,7 +45,7 @@ namespace death
 
 
 	template<typename GAME_TYPE>
-	class TypedGameWindow
+	class TypedGameWindow : public GameWindow
 	{
 	protected:
 

@@ -1,5 +1,4 @@
 #include "LudumGame.h"
-#include "LudumWindow.h"
 #include "LudumParticles.h"
 
 #include <chaos/JSONTools.h>
@@ -418,7 +417,7 @@ glm::vec2 LudumGame::GetWorldSize() const
 {
 	glm::vec2 result;
 	result.x = 1600.0f;
-	result.y = result.x / LudumWindow::GetViewportAspect();
+	result.y = result.x / viewport_wanted_aspect;
 	return result;
 }
 
@@ -430,8 +429,10 @@ chaos::box2 LudumGame::GetWorldBox() const
 	return result;
 }
 
-void LudumGame::Display(chaos::box2 const & viewport)
+void LudumGame::Display(glm::ivec2 const & size)
 {
+	chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
+
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 

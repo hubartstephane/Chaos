@@ -52,12 +52,8 @@ namespace death
 
 	bool GameWindow::OnDraw(glm::ivec2 size)
 	{
-#if 0
-		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
 		if (game != nullptr)
-			game->Display(viewport);
-
-#endif
+			game->Display(size);
 		return true;
 	}
 

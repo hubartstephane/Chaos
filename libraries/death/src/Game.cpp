@@ -36,8 +36,9 @@ namespace death
 
 	}
 	
-	void Game::Display(chaos::box2 const & viewport)
+	void Game::Display(glm::ivec2 const & size)
 	{
+		
 
 	}
 	

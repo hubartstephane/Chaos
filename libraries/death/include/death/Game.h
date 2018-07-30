@@ -34,7 +34,7 @@ namespace death
 		/** whenever mouse is displaced */
 		virtual void OnMouseMove(double x, double y);
 		/** the rendering method */
-		virtual void Display(chaos::box2 const & viewport);
+		virtual void Display(glm::ivec2 const & size);
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -79,6 +79,9 @@ namespace death
 		boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 		/** the gamepad data */
 		chaos::MyGLFW::GamepadData gamepad_data;
+
+		/** the wanted viewport aspect */
+		float viewport_wanted_aspect = (16.0f / 9.0f);
 	};
 
 }; // namespace death

@@ -44,7 +44,53 @@ namespace death
 
 	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		if (!FillAtlasGenerationInputSprites(input, config, config_path))
+			return false;
+		if (!FillAtlasGenerationInputFonts(input, config, config_path))
+			return false;
 		return true;
+	}
+
+	bool Game::FillAtlasGenerationInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		// get the directory where the sprites are
+		std::string sprite_directory;
+		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
+
+		// Add sprites
+		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
+		if (bitmap_set == nullptr)
+			return false;
+
+		bitmap_set->AddBitmapFilesFromDirectory(sprite_directory);
+
+		return true;
+	}
+
+	bool Game::FillAtlasGenerationInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		if (!FillAtlasGenerationInputOneFont("font_path", "normal", input, config, config_path))
+			return false;
+		if (!FillAtlasGenerationInputOneFont("title_font_path", "title", input, config, config_path))
+			return false;
+		return true;
+	}
+
+	bool Game::FillAtlasGenerationInputOneFont(char const * font_config_name, char const * font_name, chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		// get the path of the font
+		std::string font_path;
+		chaos::JSONTools::GetAttribute(config, font_config_name, font_path);
+
+		// Add the font
+		chaos::BitmapAtlas::CharacterSetInputParams font_params;
+		font_params.max_character_width = 64;
+		font_params.max_character_height = 64;
+
+		chaos::BitmapAtlas::CharacterSetInput * character_set1 =
+			input.AddCharacterSet(font_name, nullptr, font_path.c_str(), nullptr, true, font_params);
+
+		return (character_set1 != nullptr);
 	}
 
 	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)

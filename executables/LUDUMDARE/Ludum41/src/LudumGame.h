@@ -106,9 +106,6 @@ public:
 
 protected:
 
-	/** internal methods to generate the atlas for sprites */
-	bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
-
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
 	/** internal method to test for keys and update stick position */

@@ -89,22 +89,20 @@ public:
 	/** destructor */
 	~LudumGame();
 
-	/** the tick method */
-	void Tick(double delta_time);
-	/** whenever a key event is received */
-	bool OnKeyEvent(int key, int action);
-	/** whenever a char event is received */
-	bool OnCharEvent(unsigned int c);
-	/** whenever a mouse event is received */
-	void OnMouseButton(int button, int action, int modifier);
-	/** whenever mouse is displaced */
-	void OnMouseMove(double x, double y);
-	/** the rendering method */
-	void Display(chaos::box2 const & viewport);
-
-
-	/** initialization from the config file */
-	bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	/** override */
+	virtual void Tick(double delta_time) override;
+	/** override */
+	virtual bool OnKeyEvent(int key, int action) override;
+	/** override */
+	virtual bool OnCharEvent(unsigned int c) override;
+	/** override */
+	virtual void OnMouseButton(int button, int action, int modifier) override;
+	/** override */
+	virtual void OnMouseMove(double x, double y) override;
+	/** override */
+	virtual void Display(chaos::box2 const & viewport) override;
+	/** override */
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
 protected:
 
@@ -230,8 +228,8 @@ protected:
 	/** get the box world */
 	chaos::box2 GetWorldBox() const;
 
-	/** called whenever the input mode changes */
-	void OnInputModeChanged(int new_mode, int old_mode);
+	/** override */
+	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
 	
 

@@ -5,6 +5,49 @@
 
 namespace death
 {
+
+	void Game::OnInputModeChanged(int new_mode, int old_mode)
+	{
+
+	}
+	
+	void Game::Tick(double delta_time)
+	{
+
+	}
+	
+	bool Game::OnKeyEvent(int key, int action)
+	{
+		return false;
+	}
+	
+	bool Game::OnCharEvent(unsigned int c)
+	{
+		return true;
+	}
+	
+	void Game::OnMouseButton(int button, int action, int modifier)
+	{
+
+	}
+	
+	void Game::OnMouseMove(double x, double y)
+	{
+
+	}
+	
+	void Game::Display(chaos::box2 const & viewport)
+	{
+
+	}
+	
+	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		return true;
+	}
+
+
+
 	chaos::MyGLFW::SingleWindowApplication * Game::GetApplication()
 	{
 		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
@@ -54,16 +97,6 @@ namespace death
 			return LoadBestScore(file);
 		}
 	}
-
-
-
-
-
-
-
-
-
-
 
 	chaos::Sound * Game::PlaySound(char const * name, bool paused, bool looping)
 	{
@@ -148,7 +181,6 @@ namespace death
 
 		// special action on gamepad input
 		OnGamepadInput(gamepad_data);
-
 
 		return true;
 	}

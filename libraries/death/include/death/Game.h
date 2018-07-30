@@ -7,13 +7,14 @@
 #include <chaos/Application.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/SoundManager.h>
-
+#include <chaos/GeometryFramework.h>
 
 namespace death
 {
 	class Game : public chaos::ReferencedObject
 	{
 		friend class GamepadManager;
+		friend class GameWindow;
 
 	public:
 
@@ -21,6 +22,21 @@ namespace death
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
 
 	protected:
+
+		/** the tick method */
+		virtual void Tick(double delta_time);
+		/** whenever a key event is received */
+		virtual bool OnKeyEvent(int key, int action);
+		/** whenever a char event is received */
+		virtual bool OnCharEvent(unsigned int c);
+		/** whenever a mouse event is received */
+		virtual void OnMouseButton(int button, int action, int modifier);
+		/** whenever mouse is displaced */
+		virtual void OnMouseMove(double x, double y);
+		/** the rendering method */
+		virtual void Display(chaos::box2 const & viewport);
+		/** initialization from the config file */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** utility function to get the application */
 		chaos::MyGLFW::SingleWindowApplication * GetApplication();
@@ -48,10 +64,11 @@ namespace death
 		/** special action on gamepad input reception */
 		virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
 
-		
-
 		/** called whenever a gamepad input is comming */
 		virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+
+		/** called whenever the input mode changes */
+		virtual void OnInputModeChanged(int new_mode, int old_mode);
 
 	protected:
 

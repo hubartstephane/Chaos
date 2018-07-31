@@ -17,6 +17,8 @@
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
 
+#include <death/Game.h>
+
 // =================================================
 // LudumGame
 // =================================================
@@ -34,7 +36,7 @@ public:
 // LudumGame
 // =================================================
 
-class LudumGame : public chaos::ReferencedObject
+class LudumGame : public death::Game
 {
 	friend class LudumWindow;
 	friend class LudumAutomata;
@@ -59,38 +61,41 @@ public:
 	/** destructor */
 	~LudumGame();
 
-	/** the tick method */
-	void Tick(double delta_time);
-	/** whenever a key event is received */
-	bool OnKeyEvent(int key, int action);
-	/** whenever a char event is received */
-	bool OnCharEvent(unsigned int c);
-	/** whenever a mouse event is received */
-	void OnMouseButton(int button, int action, int modifier);
-	/** whenever mouse is displaced */
-	void OnMouseMove(double x, double y);
-	/** the rendering method */
-	void Display(chaos::box2 const & viewport);
+
+	/** override */
+	virtual void Tick(double delta_time) override;
+	/** override */
+	virtual bool OnKeyEvent(int key, int action) override;
+	/** override */
+	virtual bool OnCharEvent(unsigned int c) override;
+	/** override */
+	virtual void OnMouseButton(int button, int action, int modifier) override;
+	/** override */
+	virtual void OnMouseMove(double x, double y) override;
+	/** override */
+	virtual void Display(glm::ivec2 const & size) override;
+	/** override */
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
+
+
+
+
+
+
+
 	/** called whenever a gamepad input is comming */
 	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
-	/** basic initialization */
-	bool InitializeGame(GLFWwindow * in_glfw_window);
-	/** initialization from the config file */
-	bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
-
 protected:
 
-	/** getter on the application */
-	chaos::MyGLFW::SingleWindowApplication * GetApplication();
-	/** getter on the sound manager */
-	chaos::SoundManager * GetSoundManager();
-
 	/** internal methods to generate the atlas for sprites */
-	bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	virtual bool FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path) override;
+	virtual bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
-	bool FillAtlasGenerationInputWithSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-	bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+	/** override */
+	virtual bool LoadBestScore(std::ifstream & file) override;
+	/** override */
+	virtual bool SaveBestScore(std::ofstream & file) override;
 
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
@@ -112,14 +117,7 @@ protected:
 	void DestroyGameObjects();
 
 	/** create the music used in the game */
-	void CreateAllMusics();
-	/** create one sound */
-	chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
-	/** blend out a music */
-	void BlendMusic(chaos::Sound * music, bool blend_in);
-	/** start music[0], stop all others */
-	void ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first);
-
+	virtual bool CreateAllMusics() override;
 
 	/** called on the very first time the game is started */
 	void OnStartGame(bool very_first);
@@ -162,17 +160,13 @@ protected:
 	/** get current state ID */
 	int GetCurrentStateID() const;
 
-	/** initialize the mapping between button index and resource name */
-	bool InitializeGamepadButtonInfo();
 	/** initialize the particle manager */
-	bool InitializeParticleManager();
-	/** initialize the particle text generator */
-	bool InitializeParticleTextGenerator();
+	virtual bool InitializeParticleManager() override;
 	/** initialize the game variables */
-	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
+	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 	
 	/** loading the levels */
-	bool LoadLevels();
+	virtual bool LoadLevels() override;
 	/** load one level */
 	bool DoLoadLevel(int level_number, chaos::TiledMap::Map * tiled_map);
 	/** additionnal initialization when loading a level */
@@ -184,7 +178,7 @@ protected:
 	chaos::box2 GetWorldBox() const;
 
 	/** called whenever the input mode changes */
-	void OnInputModeChanged(int new_mode, int old_mode);
+	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
 	
 
@@ -276,13 +270,9 @@ protected:
 	/** returns whether current level is completed */
 	bool IsLevelCompleted();
 
-	/** Save the best score */
-	void SerializeBestScore(bool save);
+
 
 protected:
-
-	/** the window in GLFW library */
-	GLFWwindow * glfw_window = nullptr;
 
 	/** the automata corresponding to the game */
 	boost::intrusive_ptr<LudumAutomata> game_automata;
@@ -295,21 +285,6 @@ protected:
 	boost::intrusive_ptr<chaos::Sound> menu_music;
 	boost::intrusive_ptr<chaos::Sound> game_music;
 	boost::intrusive_ptr<chaos::Sound> pause_music;
-
-	/** a mapping between the button index and its resource name + text generator alias */
-	std::map<int, std::pair<std::string, std::string>> gamepad_button_map;
-
-	/** the current gamepad manager */
-	boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
-
-	/** the texture atlas */
-	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
-
-	/** the particle manager */
-	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
-
-	/** the text generator */
-	boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 
 	/** the tiled map manager */
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
@@ -349,26 +324,4 @@ protected:
 
 	/** the levels */
 	std::vector<boost::intrusive_ptr<LudumLevel>> levels;
-};
-
-// =================================================
-// LudumGamepadManager
-// =================================================
-
-class LudumGamepadManager : public chaos::MyGLFW::GamepadManager
-{
-public:
-
-	/** the constructor */
-	LudumGamepadManager(LudumGame * in_game) : game(in_game) {}
-
-protected:
-
-	/** the gamepad manager */
-	virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
-
-protected:
-
-	/** pointer on the game */
-	LudumGame * game = nullptr;
 };

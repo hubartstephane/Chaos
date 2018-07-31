@@ -13,25 +13,6 @@
 #include <chaos/StringTools.h>
 #include <chaos/ClassTools.h>
 
-
-
-
-void LudumGame::BlendMusic(chaos::Sound * music, bool blend_in)
-{
-	if (music == nullptr)
-		return;
-
-	chaos::BlendVolumeDesc blend_desc;
-	blend_desc.blend_type   = (blend_in)? 
-		chaos::BlendVolumeDesc::BLEND_IN: 
-		chaos::BlendVolumeDesc::BLEND_OUT;
-	blend_desc.blend_time   = 0.4f,
-	blend_desc.kill_at_end  = false;
-	blend_desc.pause_at_end = !blend_in;
-
-	music->StartBlend(blend_desc, true, true);
-}
-
 bool LudumGame::CreateAllMusics()
 {
 	if (menu_music == nullptr)
@@ -42,31 +23,6 @@ bool LudumGame::CreateAllMusics()
 		game_music = PlaySound("game_music", true, true);
 
 	return true;
-}
-
-void LudumGame::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first)
-{
-	if (musics == nullptr || count == 0)
-		return;
-
-	// restore the main music
-	chaos::Sound * music1 = musics[0];
-	if (music1 != nullptr)
-	{
-		music1->Pause(false);		
-		if (restart_first)
-			music1->SetSoundTrackPosition(0);
-		BlendMusic(music1, true);
-	}
-
-	// pause all other musics
-	for (size_t i = 1; i < count; ++i)
-	{
-		chaos::Sound * music = musics[i];
-		if (music == nullptr)
-			continue;
-		BlendMusic(music, false);
-	}
 }
 
 void LudumGame::StartMainMenuMusic(bool restart_first)

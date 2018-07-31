@@ -50,6 +50,10 @@ namespace death
 
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
+		/** blend out a music */
+		void BlendMusic(chaos::Sound * music, bool blend_in);
+		/** start music[0], stop all others */
+		void ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first);
 
 		/** save the best score */
 		bool SerializeBestScore(bool save);
@@ -93,10 +97,8 @@ namespace death
 		virtual bool FillAtlasGenerationInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input (fonts) */
 		virtual bool FillAtlasGenerationInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-
+		/** fill atlas generation input (one font from configuration file) */
 		virtual bool FillAtlasGenerationInputOneFont(char const * font_config_name, char const * font_name, chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-
-		
 
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();

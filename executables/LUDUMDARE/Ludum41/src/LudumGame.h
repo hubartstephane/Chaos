@@ -137,13 +137,6 @@ protected:
 	virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 
 	
-
-	/** blend out a music */
-	void BlendMusic(chaos::Sound * music, bool blend_in);
-	/** start music[0], stop all others */
-	void ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first);
-
-
 	/** called on the very first time the game is started */
 	void OnStartGame(bool very_first);
 	/** called whenever the game is lost */

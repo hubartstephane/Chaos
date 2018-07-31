@@ -1,5 +1,5 @@
-#include "LudumGame.h"
-#include "LudumParticles.h"
+#include "Ludum41Game.h"
+#include "Ludum41Particles.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LudumStateMachine.h"
-#include "LudumParticles.h"
+#include "Ludum42StateMachine.h"
+#include "Ludum42Particles.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>

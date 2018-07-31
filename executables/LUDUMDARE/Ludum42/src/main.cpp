@@ -2,7 +2,7 @@
 
 #include <death/Death.h> 
 
-#include "LudumGame.h"
+#include "Ludum42Game.h"
 
 
 int _tmain(int argc, char ** argv, char ** env)

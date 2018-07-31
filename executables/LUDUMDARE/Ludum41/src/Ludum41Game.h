@@ -1,9 +1,9 @@
 #pragma once
 
-#include "LudumStateMachine.h"
-#include "LudumChallenge.h"
-#include "LudumParticles.h"
-#include "LudumChallengeRewardPunishment.h"
+#include "Ludum41StateMachine.h"
+#include "Ludum41Challenge.h"
+#include "Ludum41Particles.h"
+#include "Ludum41ChallengeRewardPunishment.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>

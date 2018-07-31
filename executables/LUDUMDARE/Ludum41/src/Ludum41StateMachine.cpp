@@ -1,5 +1,5 @@
-#include "LudumStateMachine.h"
-#include "LudumGame.h"
+#include "Ludum41StateMachine.h"
+#include "Ludum41Game.h"
 
 // =========================================================
 // States

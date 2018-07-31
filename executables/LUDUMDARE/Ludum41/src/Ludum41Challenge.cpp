@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LudumChallenge.h"
-#include "LudumGame.h"
+#include "Ludum41Challenge.h"
+#include "Ludum41Game.h"
 
 
 void LudumChallenge::OnKeyboardButtonReceived(char c)

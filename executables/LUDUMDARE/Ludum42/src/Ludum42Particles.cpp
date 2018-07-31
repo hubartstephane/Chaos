@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "LudumParticles.h"
-#include "LudumGame.h"
+#include "Ludum42Particles.h"
+#include "Ludum42Game.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LudumChallengeRewardPunishment.h"
-#include "LudumGame.h"
+#include "Ludum41ChallengeRewardPunishment.h"
+#include "Ludum41Game.h"
 
 // =========================================================
 

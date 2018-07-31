@@ -96,6 +96,10 @@ protected:
 	virtual bool LoadBestScore(std::ifstream & file) override;
 	/** override */
 	virtual bool SaveBestScore(std::ofstream & file) override;
+	/** override */
+	virtual bool CreateGameAutomata() override;
+	/** override */
+	virtual bool DeclareParticleClasses() override;
 
 	/** internal method called to reset cached inputs */
 	void ResetPlayerCachedInputs();
@@ -273,6 +277,7 @@ protected:
 
 
 protected:
+
 
 	/** the automata corresponding to the game */
 	boost::intrusive_ptr<LudumAutomata> game_automata;

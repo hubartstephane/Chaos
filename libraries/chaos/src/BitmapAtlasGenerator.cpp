@@ -193,7 +193,7 @@ namespace chaos
 							entry.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
 							entry.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
 							entry.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
-							result->elements.push_back(entry);
+							result->elements.push_back(std::move(entry));
 						}
 					}
 
@@ -498,7 +498,7 @@ namespace chaos
 					entry.y = 0;
 					entry.width = entry_input.description.width;
 					entry.height = entry_input.description.height;
-					bitmap_set->elements.push_back(entry);
+					bitmap_set->elements.push_back(std::move(entry));
 				}
 				// once we are sure that Atlas.BitmapSet.Entry vector does not resize anymore, we can store pointers         
 				for (size_t i = 0; i < count; ++i)
@@ -538,7 +538,7 @@ namespace chaos
 					entry.advance = entry_input.advance;
 					entry.bitmap_left = entry_input.bitmap_left;
 					entry.bitmap_top = entry_input.bitmap_top;
-					character_set->elements.push_back(entry);
+					character_set->elements.push_back(std::move(entry));
 				}
 				// once we are sure that Atlas.CharacterSet.Entry vector does not resize anymore, we can store pointers         
 				for (size_t i = 0; i < count; ++i)
@@ -706,7 +706,7 @@ namespace chaos
 					best_x = 0;
 					best_y = 0;
 
-					atlas_definitions.push_back(def);
+					atlas_definitions.push_back(std::move(def));
 				}
 				InsertBitmapInAtlas(*entries[entry_index]->output_entry, atlas_definitions[best_atlas_index], best_x, best_y);
 			}
@@ -760,6 +760,15 @@ namespace chaos
 		{
 			float result = -1.0f;
 
+			// not enought surface remaining. Early exit
+			unsigned int max_surface = (unsigned int)(params.atlas_width * params.atlas_height);
+			unsigned int entry_surface = (unsigned int)
+				((entry.description.width + 2 * params.atlas_padding) *
+				(entry.description.height + 2 * params.atlas_padding));
+
+			if (atlas_def.surface_sum + entry_surface > max_surface)
+				return -1.0f;
+
 			size_t  x_count = atlas_def.split_x.size();
 			size_t  y_count = atlas_def.split_y.size();
 			size_t count = x_count * y_count;
@@ -767,7 +776,7 @@ namespace chaos
 			std::vector<int> collision_table;
 			collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
 
-																	   // find collision table
+			// find collision table
 			Rectangle r;
 			r.width = entry.description.width;
 			r.height = entry.description.height;
@@ -852,6 +861,10 @@ namespace chaos
 
 			InsertOrdered(atlas_def.split_y, y);
 			InsertOrdered(atlas_def.split_y, y + entry.height + 2 * params.atlas_padding);
+
+			atlas_def.surface_sum += (unsigned int)
+				((entry.width + 2 * params.atlas_padding) *
+				(entry.height + 2 * params.atlas_padding));
 		}
 
 		bool AtlasGenerator::CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, AtlasGeneratorParams const & in_params)

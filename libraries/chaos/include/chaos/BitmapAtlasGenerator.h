@@ -272,6 +272,7 @@ namespace chaos
 			class AtlasDefinition
 			{
 			public:
+				unsigned int surface_sum = 0;
 				std::vector<int> split_x;
 				std::vector<int> split_y;
 			};

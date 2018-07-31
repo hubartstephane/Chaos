@@ -51,14 +51,6 @@ class LudumGame : public death::Game
 {
 	friend class LudumChallenge;
 	friend class LudumWindow;
-	friend class LudumAutomata;
-	friend class MainMenuState;
-	friend class PlayingToPauseTransition;
-	friend class PauseToPlayingTransition;
-	friend class MainMenuToPlayingTransition;
-	friend class PlayingToMainMenuTransition;
-	friend class PlayingState;
-	friend class PlayingToGameOverTransition;
 
 	friend class LudumChallengeRewardPunishment_ExtraLife;
 	friend class LudumChallengeRewardPunishment_BarSize;
@@ -137,32 +129,37 @@ protected:
 	virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 
 	
-	/** called on the very first time the game is started */
-	void OnStartGame(bool very_first);
-	/** called whenever the game is lost */
-	void OnGameOver();
-	/** called whenever we enter in pause mode */
-	bool OnEnterPause();
-	/** called whenever we leave pause mode */
-	bool OnLeavePause();
 
-	/** called whenever we enter in game mode */
-	bool OnEnterGame();
-	/** called whenever we leave game mode */
-	bool OnLeaveGame();
 
-	/** returns true if the pause if fully set */
-	bool IsPauseEnterComplete();
-	/** returns true if the game if fully restored from pause */
-	bool IsPauseLeaveComplete();
 
-	/** returns true if the game enter if fully set */
-	bool IsGameEnterComplete();
-	/** returns true if the game leave is fully completed */
-	bool IsGameLeaveComplete();
+	/** override */
+	virtual void OnStartGame(bool very_first) override;
+	/** override */
+	virtual void OnGameOver() override;
+	/** override */
+	virtual bool OnEnterPause() override;
+	/** override */
+	virtual bool OnLeavePause() override;
 
-	/** the game main loop */
-	void TickGameLoop(double delta_time);
+	/** override */
+	virtual bool OnEnterGame() override;
+	/** override */
+	virtual bool OnLeaveGame() override;
+
+	/** override */
+	virtual bool IsPauseEnterComplete() override;
+	/** override */
+	virtual bool IsPauseLeaveComplete() override;
+
+	/** override */
+	virtual bool IsGameEnterComplete() override;
+	/** override */
+	virtual bool IsGameLeaveComplete() override;
+	/** override */
+	virtual void TickGameLoop(double delta_time) override;
+
+	
+	
 	
 	void TickBrickOffset(double delta_time);
 

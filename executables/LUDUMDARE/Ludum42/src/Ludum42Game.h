@@ -278,10 +278,6 @@ protected:
 
 protected:
 
-
-	/** the automata corresponding to the game */
-	boost::intrusive_ptr<LudumAutomata> game_automata;
-
 	/** the current stick position */
 	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
 	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);

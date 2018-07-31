@@ -21,6 +21,21 @@ namespace death
 		friend class GamepadManager;
 		friend class GameWindow;
 
+		friend class GameAutomata;
+		friend class GameState;
+		friend class GameTransition;
+
+		friend class MainMenuState;
+		friend class PlayingState;
+		friend class PauseState;
+
+		friend class PlayingToPauseTransition;
+		friend class PauseToPlayingTransition;
+		friend class MainMenuToPlayingTransition;
+		friend class PlayingToMainMenuTransition;
+		friend class PlayingState;
+		friend class PlayingToGameOverTransition;
+
 	public:
 
 		/** initialization of the game */
@@ -103,6 +118,39 @@ namespace death
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();
 
+
+		/** the game main loop */
+		virtual void TickGameLoop(double delta_time);
+		/** called on the very first time the game is started */
+		virtual void OnStartGame(bool very_first);
+		/** called whenever the game is lost */
+		virtual void OnGameOver();
+		/** called whenever we enter in pause mode */
+		virtual bool OnEnterPause();
+		/** called whenever we leave pause mode */
+		virtual bool OnLeavePause();
+
+		/** called whenever we enter in game mode */
+		virtual bool OnEnterGame();
+		/** called whenever we leave game mode */
+		virtual bool OnLeaveGame();
+
+		/** returns true if the pause if fully set */
+		virtual bool IsPauseEnterComplete();
+		/** returns true if the game if fully restored from pause */
+		virtual bool IsPauseLeaveComplete();
+
+		/** returns true if the game enter if fully set */
+		virtual bool IsGameEnterComplete();
+		/** returns true if the game leave is fully completed */
+		virtual bool IsGameLeaveComplete();
+
+
+
+
+
+
+
 	protected:
 
 		/** the window in GLFW library */
@@ -119,6 +167,9 @@ namespace death
 		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 		/** the text generator */
 		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+		/** pointer on the automata */
+		boost::intrusive_ptr<class GameAutomata> game_automata;
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;

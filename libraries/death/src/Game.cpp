@@ -381,5 +381,61 @@ namespace death
 		return true;
 	}
 
+
+	void Game::OnStartGame(bool very_first)
+	{
+
+	}
+
+	void Game::OnGameOver()
+	{
+
+	}
+
+	bool Game::OnEnterPause()
+	{
+		return true;
+	}
+
+	bool Game::OnLeavePause()
+	{
+		return true;
+	}
+
+	bool Game::OnEnterGame()
+	{
+		return true;
+	}
+
+	bool Game::OnLeaveGame()
+	{
+		return true;
+	}
+
+	bool Game::IsPauseEnterComplete()
+	{
+		return true;
+	}
+
+	bool Game::IsPauseLeaveComplete()
+	{
+		return true;
+	}
+
+	bool Game::IsGameEnterComplete()
+	{
+		return true;
+	}
+
+	bool Game::IsGameLeaveComplete()
+	{
+		return true;
+	}
+
+	void Game::TickGameLoop(double delta_time)
+	{
+
+	}
+
 }; // namespace death
 

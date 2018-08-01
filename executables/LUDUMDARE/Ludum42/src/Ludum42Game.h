@@ -238,10 +238,6 @@ protected:
 
 
 
-
-	/** returns true whether we are playing */
-	bool IsPlaying() const;
-
 	/** create the score allocation */
 	void UpdateScoreParticles();
 	/** create the combo allocation */
@@ -280,8 +276,6 @@ protected:
 
 	/** game settings */
 	int   initial_life = 3;
-	float mouse_sensitivity = 1.0f;
-	float gamepad_sensitivity = 1.0f;
 	float heart_beat_speed = 2.0f;
 
 	/** current game values */

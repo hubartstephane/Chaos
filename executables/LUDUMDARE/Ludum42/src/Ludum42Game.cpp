@@ -38,17 +38,6 @@ void LudumGame::IncrementScore(int delta)
 	should_update_score = true;
 }
 
-bool LudumGame::IsPlaying() const
-{
-	if (game_automata == nullptr)
-		return false;
-	if (game_automata->GetCurrentState() == nullptr)
-		return false;
-	if (game_automata->GetCurrentState()->GetStateID() != LudumAutomata::STATE_PLAYING)
-		return false;
-	return true;
-}
-
 void LudumGame::CreateGameTitle()
 {
 	CreateTitle("AsciiPaouf 3", false);
@@ -747,13 +736,10 @@ bool LudumGame::DeclareParticleClasses()
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-#define LUDUMGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
-	LUDUMGAME_JSON_ATTRIBUTE(initial_life);
-	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
-	LUDUMGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
-	LUDUMGAME_JSON_ATTRIBUTE(heart_beat_speed);
-#undef LUDUMGAME_JSON_ATTRIBUTE
-
+	if (!death::Game::InitializeGameValues(config, config_path))
+		return false;
+	DEATHGAME_JSON_ATTRIBUTE(initial_life);
+	DEATHGAME_JSON_ATTRIBUTE(heart_beat_speed);
 	return true;
 }
 

@@ -16,6 +16,8 @@
 
 namespace death
 {
+#define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
+
 	class Game : public chaos::ReferencedObject
 	{
 		friend class GamepadManager;
@@ -77,6 +79,8 @@ namespace death
 
 		/** get current state ID */
 		int GetCurrentStateID() const;
+		/** returns whether were are in playing state */
+		bool IsPlaying() const;
 
 
 		/** save the best score */
@@ -222,6 +226,10 @@ namespace death
 
 		/** the wanted viewport aspect */
 		float viewport_wanted_aspect = (16.0f / 9.0f);
+
+		/** game settings */
+		float mouse_sensitivity = 1.0f;
+		float gamepad_sensitivity = 1.0f;
 	};
 
 }; // namespace death

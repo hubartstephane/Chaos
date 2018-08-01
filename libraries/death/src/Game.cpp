@@ -14,7 +14,25 @@ namespace death
 	
 	void Game::Tick(double delta_time)
 	{
+		// catch all stick inputs
+		if (gamepad_manager != nullptr)
+			gamepad_manager->Tick((float)delta_time);
+		// handle keyboard inputs
 
+
+
+		//HandleKeyboardInputs();
+		// update the game automata
+		if (game_automata != nullptr)
+			game_automata->Tick(delta_time);
+		// clear the cached inputs
+
+
+
+		//ResetPlayerCachedInputs();
+		// tick the particle manager
+		if (particle_manager != nullptr)
+			particle_manager->Tick((float)delta_time);
 	}
 	
 	bool Game::OnKeyEvent(int key, int action)
@@ -387,6 +405,8 @@ namespace death
 
 	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		DEATHGAME_JSON_ATTRIBUTE(mouse_sensitivity);
+		DEATHGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
 		return true;
 	}
 
@@ -498,6 +518,15 @@ namespace death
 			return -1;
 		return current_state->GetStateID();
 	}
+
+	bool Game::IsPlaying() const
+	{
+		if (GetCurrentStateID() == GameAutomata::STATE_PLAYING)
+			return true;
+		return false;
+	}
+
+
 
 
 #if 0

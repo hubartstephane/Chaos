@@ -347,9 +347,6 @@ protected:
 	void OnLongBarChallenge(bool success);
 	bool IsLongBarChallengeValid(bool success);
 
-	/** returns true whether we are playing */
-	bool IsPlaying() const;
-
 	/** create the score allocation */
 	void UpdateScoreParticles();
 	/** create the combo allocation */
@@ -429,9 +426,6 @@ protected:
 	float ball_collision_speed    = 0.5f;
 	float ball_collision_speed_increment = 0.5f;
 	float ball_collision_max_speed = 0.5f;
-	
-	float mouse_sensitivity   = 1.0f;
-	float gamepad_sensitivity = 1.0f;
 
 	float challenge_time_dilation = 0.5f;
 	float challenge_frequency = 10.0f;

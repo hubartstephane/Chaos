@@ -26,7 +26,6 @@ size_t LudumLevel::GetBrickCount() const
 	return result;
 }
 
-
 LudumGame::~LudumGame()
 {		
 	SerializeBestScore(true);
@@ -50,17 +49,6 @@ void LudumGame::IncrementScore(int delta)
 		return;
 	current_score += delta * combo_multiplier;
 	should_update_score = true;
-}
-
-bool LudumGame::IsPlaying() const
-{
-	if (game_automata == nullptr)
-		return false;
-	if (game_automata->GetCurrentState() == nullptr)
-		return false;
-	if (game_automata->GetCurrentState()->GetStateID() != LudumAutomata::STATE_PLAYING)
-		return false;
-	return true;
 }
 
 void LudumGame::CreateGameTitle()
@@ -1424,42 +1412,40 @@ bool LudumGame::DeclareParticleClasses()
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-#define LUDUMGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
-	LUDUMGAME_JSON_ATTRIBUTE(initial_life);
-	LUDUMGAME_JSON_ATTRIBUTE(max_life);
-	LUDUMGAME_JSON_ATTRIBUTE(max_ball_count);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_size);
-	LUDUMGAME_JSON_ATTRIBUTE(player_max_length);
-	LUDUMGAME_JSON_ATTRIBUTE(player_min_length);
-	LUDUMGAME_JSON_ATTRIBUTE(player_initial_length);
-	LUDUMGAME_JSON_ATTRIBUTE(player_length_increment);
-	LUDUMGAME_JSON_ATTRIBUTE(player_length_decrement);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_max_speed);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_initial_speed);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_speed_increment);
-	LUDUMGAME_JSON_ATTRIBUTE(mouse_sensitivity);
-	LUDUMGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
-	LUDUMGAME_JSON_ATTRIBUTE(challenge_time_dilation);
-	LUDUMGAME_JSON_ATTRIBUTE(challenge_frequency);
-	LUDUMGAME_JSON_ATTRIBUTE(challenge_duration);
-	LUDUMGAME_JSON_ATTRIBUTE(delay_before_ball_move);
-	LUDUMGAME_JSON_ATTRIBUTE(heart_beat_speed);
-	LUDUMGAME_JSON_ATTRIBUTE(min_brick_life);
-	LUDUMGAME_JSON_ATTRIBUTE(max_brick_life);
-	LUDUMGAME_JSON_ATTRIBUTE(brick_per_line);
-	LUDUMGAME_JSON_ATTRIBUTE(brick_line_count);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_collision_speed_increment);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_collision_max_speed);
-	LUDUMGAME_JSON_ATTRIBUTE(points_per_brick);
-	LUDUMGAME_JSON_ATTRIBUTE(points_per_challenge);
-	LUDUMGAME_JSON_ATTRIBUTE(split_angle);
-	LUDUMGAME_JSON_ATTRIBUTE(ball_angle_limit);
+	if (!death::Game::InitializeGameValues(config, config_path))
+		return false;
 
-	LUDUMGAME_JSON_ATTRIBUTE(max_brick_offset);
-	LUDUMGAME_JSON_ATTRIBUTE(brick_offset_speed);
-	LUDUMGAME_JSON_ATTRIBUTE(brick_offset_increment);
+	DEATHGAME_JSON_ATTRIBUTE(initial_life);
+	DEATHGAME_JSON_ATTRIBUTE(max_life);
+	DEATHGAME_JSON_ATTRIBUTE(max_ball_count);
+	DEATHGAME_JSON_ATTRIBUTE(ball_size);
+	DEATHGAME_JSON_ATTRIBUTE(player_max_length);
+	DEATHGAME_JSON_ATTRIBUTE(player_min_length);
+	DEATHGAME_JSON_ATTRIBUTE(player_initial_length);
+	DEATHGAME_JSON_ATTRIBUTE(player_length_increment);
+	DEATHGAME_JSON_ATTRIBUTE(player_length_decrement);
+	DEATHGAME_JSON_ATTRIBUTE(ball_max_speed);
+	DEATHGAME_JSON_ATTRIBUTE(ball_initial_speed);
+	DEATHGAME_JSON_ATTRIBUTE(ball_speed_increment);
+	DEATHGAME_JSON_ATTRIBUTE(challenge_time_dilation);
+	DEATHGAME_JSON_ATTRIBUTE(challenge_frequency);
+	DEATHGAME_JSON_ATTRIBUTE(challenge_duration);
+	DEATHGAME_JSON_ATTRIBUTE(delay_before_ball_move);
+	DEATHGAME_JSON_ATTRIBUTE(heart_beat_speed);
+	DEATHGAME_JSON_ATTRIBUTE(min_brick_life);
+	DEATHGAME_JSON_ATTRIBUTE(max_brick_life);
+	DEATHGAME_JSON_ATTRIBUTE(brick_per_line);
+	DEATHGAME_JSON_ATTRIBUTE(brick_line_count);
+	DEATHGAME_JSON_ATTRIBUTE(ball_collision_speed_increment);
+	DEATHGAME_JSON_ATTRIBUTE(ball_collision_max_speed);
+	DEATHGAME_JSON_ATTRIBUTE(points_per_brick);
+	DEATHGAME_JSON_ATTRIBUTE(points_per_challenge);
+	DEATHGAME_JSON_ATTRIBUTE(split_angle);
+	DEATHGAME_JSON_ATTRIBUTE(ball_angle_limit);
 
-#undef LUDUMGAME_JSON_ATTRIBUTE
+	DEATHGAME_JSON_ATTRIBUTE(max_brick_offset);
+	DEATHGAME_JSON_ATTRIBUTE(brick_offset_speed);
+	DEATHGAME_JSON_ATTRIBUTE(brick_offset_increment);
 
 	return true;
 }

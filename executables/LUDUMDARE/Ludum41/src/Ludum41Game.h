@@ -82,8 +82,6 @@ public:
 	~LudumGame();
 
 	/** override */
-	virtual void Tick(double delta_time) override;
-	/** override */
 	virtual bool OnKeyEvent(int key, int action) override;
 	/** override */
 	virtual bool OnCharEvent(unsigned int c) override;
@@ -97,20 +95,6 @@ public:
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
 protected:
-
-	/** internal method called to reset cached inputs */
-	void ResetPlayerCachedInputs();
-	/** internal method to test for keys and update stick position */
-	void HandleKeyboardInputs();
-
-	/** require a pause or resume */
-	bool RequireTogglePause();
-	/** require a game Start */
-	bool RequireStartGame();
-	/** require a game exit */
-	bool RequireExitGame();
-	/** require a game over */
-	bool RequireGameOver();
 
 	/** creating all object in the game */
 	void CreateAllGameObjects(int level);
@@ -376,10 +360,6 @@ protected:
 	virtual bool SaveBestScore(std::ofstream & file) override;
 
 protected:
-
-	/** the current stick position */
-	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
-	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
 
 	/** the dictionnary */
 	std::map<size_t, std::vector<std::string>> dictionnary;

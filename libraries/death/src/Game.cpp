@@ -11,6 +11,31 @@ namespace death
 	{
 
 	}
+
+	void Game::HandleKeyboardInputs()
+	{
+		// test whether the stick position can be overriden
+		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
+
+		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
+			simulated_stick.x -= 1.0f;
+		if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
+			simulated_stick.x += 1.0f;
+
+		if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
+			simulated_stick.y -= 1.0f;
+		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
+			simulated_stick.y += 1.0f;
+
+		if (glm::length2(simulated_stick) > 0)
+			left_stick_position = gamepad_sensitivity * simulated_stick;
+	}
+
+	void Game::ResetPlayerCachedInputs()
+	{
+		left_stick_position = glm::vec2(0.0f, 0.0f);
+		right_stick_position = glm::vec2(0.0f, 0.0f);
+	}
 	
 	void Game::Tick(double delta_time)
 	{
@@ -18,18 +43,12 @@ namespace death
 		if (gamepad_manager != nullptr)
 			gamepad_manager->Tick((float)delta_time);
 		// handle keyboard inputs
-
-
-
-		//HandleKeyboardInputs();
+		HandleKeyboardInputs();
 		// update the game automata
 		if (game_automata != nullptr)
 			game_automata->Tick(delta_time);
 		// clear the cached inputs
-
-
-
-		//ResetPlayerCachedInputs();
+		ResetPlayerCachedInputs();
 		// tick the particle manager
 		if (particle_manager != nullptr)
 			particle_manager->Tick((float)delta_time);
@@ -527,6 +546,35 @@ namespace death
 	}
 
 
+	bool Game::RequireGameOver()
+	{
+		if (game_automata->playing_to_gameover->TriggerTransition(true))
+			return true;
+		return false;
+	}
+
+	bool Game::RequireTogglePause()
+	{
+		if (game_automata->playing_to_pause->TriggerTransition(true))
+			return true;
+		if (game_automata->pause_to_playing->TriggerTransition(true))
+			return true;
+		return false;
+	}
+
+	bool Game::RequireExitGame()
+	{
+		if (game_automata->playing_to_main_menu->TriggerTransition(true))
+			return true;
+		return false;
+	}
+
+	bool Game::RequireStartGame()
+	{
+		if (game_automata->main_menu_to_playing->TriggerTransition(true))
+			return true;
+		return false;
+	}
 
 
 #if 0

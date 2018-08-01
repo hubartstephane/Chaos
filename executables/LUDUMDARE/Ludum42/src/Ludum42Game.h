@@ -63,8 +63,6 @@ public:
 
 
 	/** override */
-	virtual void Tick(double delta_time) override;
-	/** override */
 	virtual bool OnKeyEvent(int key, int action) override;
 	/** override */
 	virtual bool OnCharEvent(unsigned int c) override;
@@ -100,20 +98,6 @@ protected:
 	virtual bool CreateGameAutomata() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
-
-	/** internal method called to reset cached inputs */
-	void ResetPlayerCachedInputs();
-	/** internal method to test for keys and update stick position */
-	void HandleKeyboardInputs();
-
-	/** require a pause or resume */
-	bool RequireTogglePause();
-	/** require a game Start */
-	bool RequireStartGame();
-	/** require a game exit */
-	bool RequireExitGame();
-	/** require a game over */
-	bool RequireGameOver();
 
 	/** creating all object in the game */
 	void CreateAllGameObjects(int level);
@@ -266,10 +250,6 @@ protected:
 
 
 protected:
-
-	/** the current stick position */
-	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
-	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
 
 	/** the tiled map manager */
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;

@@ -98,6 +98,11 @@ namespace death
 		virtual bool CreateGameAutomata();
 		/** handle the gamepad input */
 		virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
+		/** handle keyboards input */
+		virtual void HandleKeyboardInputs();
+		/** internal method called to reset cached inputs */
+		virtual void ResetPlayerCachedInputs();
+
 		/** special action on gamepad input reception */
 		virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
 
@@ -160,6 +165,15 @@ namespace death
 		/** returns true if the game leave is fully completed */
 		virtual bool IsGameLeaveComplete();
 
+		/** require a pause or resume */
+		virtual bool RequireTogglePause();
+		/** require a game Start */
+		virtual bool RequireStartGame();
+		/** require a game exit */
+		virtual bool RequireExitGame();
+		/** require a game over */
+		virtual bool RequireGameOver();
+
 
 #if 0
 		/** create the pause HUD */
@@ -195,6 +209,9 @@ namespace death
 		boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 		/** the gamepad data */
 		chaos::MyGLFW::GamepadData gamepad_data;
+		/** the current stick position */
+		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
 
 		/** the texture atlas */
 		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;

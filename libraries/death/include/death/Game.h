@@ -133,7 +133,9 @@ namespace death
 		/** called whenever we enter in game mode */
 		virtual bool OnEnterGame();
 		/** called whenever we leave game mode */
-		virtual bool OnLeaveGame();
+		virtual bool OnLeaveGame(bool gameover);
+		/** called whenever we are returning from game to main menu without gameover */
+		virtual bool OnAbordGame();
 
 		/** returns true if the pause if fully set */
 		virtual bool IsPauseEnterComplete();

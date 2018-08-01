@@ -144,7 +144,9 @@ protected:
 	/** override */
 	virtual bool OnEnterGame() override;
 	/** override */
-	virtual bool OnLeaveGame() override;
+	virtual bool OnLeaveGame(bool gameover) override;
+	/** override */
+	virtual bool OnAbordGame() override;
 
 	/** override */
 	virtual bool IsPauseEnterComplete() override;
@@ -396,9 +398,6 @@ protected:
 	virtual bool SaveBestScore(std::ofstream & file) override;
 
 protected:
-
-	/** the automata corresponding to the game */
-	boost::intrusive_ptr<LudumAutomata> game_automata;
 
 	/** the current stick position */
 	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);

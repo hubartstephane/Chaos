@@ -241,14 +241,18 @@ bool LudumGame::OnEnterGame()
 	return true;
 }
 
-bool LudumGame::OnLeaveGame()
+bool LudumGame::OnLeaveGame(bool gameover)
 {
+	if (gameover)
+		CreateTitle("Game Over", true);
 	StartMainMenuMusic(true);
+	return true;
+}
 
-
-
-
-
+bool LudumGame::OnAbordGame()
+{
+	DestroyGameObjects();
+	CreateGameTitle();
 	return true;
 }
 
@@ -506,6 +510,7 @@ void LudumGame::ResetGameVariables()
 
 void LudumGame::OnGameOver()
 {
+	CreateGameTitle();
 	if (best_score < current_score)
 	{
 		best_score = current_score;

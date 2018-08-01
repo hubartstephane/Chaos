@@ -3,9 +3,6 @@
 namespace death
 {
 
-#define ABCDE 1
-
-
 	// =========================================================
 	// GameState
 	// =========================================================
@@ -69,11 +66,9 @@ namespace death
 
 	bool MainMenuState::OnEnterImpl(chaos::StateMachine::State * from)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game != nullptr)
 			game->OnStartGame(from == nullptr); // very first game ?
-#endif
 		return false;
 	}
 
@@ -86,11 +81,9 @@ namespace death
 
 	bool PlayingState::TickImpl(double delta_time)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game != nullptr)
 			game->TickGameLoop(delta_time);
-#endif
 		return true;
 	}
 
@@ -112,24 +105,19 @@ namespace death
 
 	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		game->OnEnterGame();
-#endif
 		return false;
 	}
 
 	bool MainMenuToPlayingTransition::TickImpl(double delta_time)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		return game->IsGameEnterComplete();
-#endif
-		return true;
 	}
 
 	PlayingToMainMenuTransition::PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state) :
@@ -139,35 +127,27 @@ namespace death
 
 	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
-		game->OnLeaveGame();
-#endif
+		game->OnLeaveGame(false);
 		return false;
 	}
 
 	bool PlayingToMainMenuTransition::TickImpl(double delta_time)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		return game->IsGameLeaveComplete();
-#endif
-		return false;
 	}
 
 	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::StateMachine::State * to)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
-		game->DestroyGameObjects();
-		game->CreateGameTitle();
-#endif
+		game->OnAbordGame();
 		return false;
 	}
 
@@ -179,24 +159,19 @@ namespace death
 
 	bool PlayingToPauseTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		game->OnEnterPause();
-#endif
 		return false;
 	}
 
 	bool PlayingToPauseTransition::TickImpl(double delta_time)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		return game->IsPauseEnterComplete();
-#endif
-		return false;
 	}
 
 	PauseToPlayingTransition::PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state) :
@@ -206,24 +181,19 @@ namespace death
 
 	bool PauseToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		game->OnLeavePause();
-#endif
 		return false;
 	}
 
 	bool PauseToPlayingTransition::TickImpl(double delta_time)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game == nullptr)
 			return true;
 		return game->IsPauseLeaveComplete();
-#endif
-		return false;
 	}
 
 	PlayingToGameOverTransition::PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state) :
@@ -233,37 +203,28 @@ namespace death
 
 	bool PlayingToGameOverTransition::OnEnterImpl(chaos::StateMachine::State * from)
 	{
-#if ABCDE
 		Game * game = GetGame();
 		if (game != nullptr)
 		{
 			gameover_sound = game->PlaySound("gameover", false, false);
-			game->CreateTitle("Game Over", true);
-			game->OnLeaveGame();
+			game->OnLeaveGame(true);
 		}
-#endif
 		return false;
 	}
 
 	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::StateMachine::State * to)
 	{
-#if ABCDE
 		// notify the game that it is finished
 		Game * game = GetGame();
 		if (game != nullptr)
-		{
 			game->OnGameOver();
-			game->CreateGameTitle();
-		}
 		// destroy the sound object
 		gameover_sound = nullptr;
-#endif
 		return true;
 	}
 
 	bool PlayingToGameOverTransition::TickImpl(double delta_time)
 	{
-#if ABCDE
 		// wait until game over sound is finished
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
@@ -272,7 +233,6 @@ namespace death
 		Game * game = GetGame();
 		if (game != nullptr)
 			return game->IsGameLeaveComplete();
-#endif
 		return true;
 	}
 
@@ -284,7 +244,10 @@ namespace death
 		game(in_game)
 	{
 		assert(in_game != nullptr);
-#if ABCDE
+	}
+
+	bool GameAutomata::CreateAutomata()
+	{
 		main_menu_state = new MainMenuState(this);
 		playing_state = new PlayingState(this);
 		pause_state = new PauseState(this);
@@ -296,7 +259,8 @@ namespace death
 		playing_to_gameover = new PlayingToGameOverTransition(playing_state.get(), main_menu_state.get());
 
 		SetInitialState(main_menu_state.get());
-#endif
+
+		return true;
 	}
 
 }; // namespace death

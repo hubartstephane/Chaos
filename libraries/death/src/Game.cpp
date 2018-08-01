@@ -1,4 +1,5 @@
 #include <death/Game.h>
+#include <death/GameAutomata.h>
 #include <death/GamepadManager.h>
 
 #include <chaos/InputMode.h>
@@ -290,7 +291,9 @@ namespace death
 			return false;
 
 		// create game automata
-		if (!CreateGameAutomata())
+		if (!CreateGameAutomata())		
+			return false;
+		if (!game_automata->CreateAutomata())
 			return false;
 
 		// create the musics
@@ -407,7 +410,12 @@ namespace death
 		return true;
 	}
 
-	bool Game::OnLeaveGame()
+	bool Game::OnLeaveGame(bool gameover)
+	{
+		return true;
+	}
+
+	bool Game::OnAbordGame()
 	{
 		return true;
 	}

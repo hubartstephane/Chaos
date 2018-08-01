@@ -193,6 +193,11 @@ namespace death
 
 	protected:
 
+		/** create states and transitions */
+		virtual bool CreateAutomata();
+
+	protected:
+
 		/** the game */
 		Game * game = nullptr;
 

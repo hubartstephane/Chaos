@@ -120,49 +120,42 @@ protected:
 	/** destroying game objects*/
 	void DestroyGameObjects();
 
-	/** create the music used in the game */
-	virtual bool CreateAllMusics() override;
+	/** override */
+	virtual void OnEnterMainMenu(bool very_first) override;
+	/** override */
+	virtual void OnGameOver() override;
+	/** override */
+	virtual bool OnEnterPause() override;
+	/** override */
+	virtual bool OnLeavePause() override;
 
-	/** called on the very first time the game is started */
-	void OnStartGame(bool very_first);
-	/** called whenever the game is lost */
-	void OnGameOver();
-	/** called whenever we enter in pause mode */
-	bool OnEnterPause();
-	/** called whenever we leave pause mode */
-	bool OnLeavePause();
+	/** override */
+	virtual bool OnEnterGame() override;
+	/** override */
+	virtual bool OnLeaveGame(bool gameover) override;
+	/** override */
+	virtual bool OnAbordGame() override;
 
-	/** called whenever we enter in game mode */
-	bool OnEnterGame();
-	/** called whenever we leave game mode */
-	bool OnLeaveGame();
+	/** override */
+	virtual void TickGameLoop(double delta_time) override;
 
-	/** returns true if the pause if fully set */
-	bool IsPauseEnterComplete();
-	/** returns true if the game if fully restored from pause */
-	bool IsPauseLeaveComplete();
 
-	/** returns true if the game enter if fully set */
-	bool IsGameEnterComplete();
-	/** returns true if the game leave is fully completed */
-	bool IsGameLeaveComplete();
+
+
+
+
+
+
+
+
 
 	/** the game main loop */
-	void TickGameLoop(double delta_time);
 	
 	void TickLevelCompleted(double delta_time);
 
 	void TickHeartWarning(double delta_time);
 
 	bool TickGameOverDetection(double delta_time);
-
-	/** change the game music */
-	void StartMainMenuMusic(bool restart_first);
-	void StartGameMusic(bool restart_first);
-	void StartPauseMusic(bool restart_first);
-
-	/** get current state ID */
-	int GetCurrentStateID() const;
 
 	/** initialize the particle manager */
 	virtual bool InitializeParticleManager() override;
@@ -281,11 +274,6 @@ protected:
 	/** the current stick position */
 	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
 	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
-
-	/** the sounds being played */
-	boost::intrusive_ptr<chaos::Sound> menu_music;
-	boost::intrusive_ptr<chaos::Sound> game_music;
-	boost::intrusive_ptr<chaos::Sound> pause_music;
 
 	/** the tiled map manager */
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;

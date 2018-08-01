@@ -266,6 +266,12 @@ namespace death
 
 	bool Game::CreateAllMusics()
 	{
+		if (menu_music == nullptr)
+			menu_music = PlaySound("menu_music", true, true);
+		if (pause_music == nullptr)
+			pause_music = PlaySound("pause_music", true, true);
+		if (game_music == nullptr)
+			game_music = PlaySound("game_music", true, true);
 		return true;
 	}
 
@@ -385,7 +391,7 @@ namespace death
 	}
 
 
-	void Game::OnStartGame(bool very_first)
+	void Game::OnEnterMainMenu(bool very_first)
 	{
 
 	}
@@ -422,28 +428,96 @@ namespace death
 
 	bool Game::IsPauseEnterComplete()
 	{
-		return true;
+		if (pause_music == nullptr)
+			return true;
+		return !pause_music->HasVolumeBlending();
 	}
 
 	bool Game::IsPauseLeaveComplete()
 	{
-		return true;
+		if (game_music == nullptr)
+			return true;
+		return !game_music->HasVolumeBlending();
 	}
 
 	bool Game::IsGameEnterComplete()
 	{
-		return true;
+		if (game_music == nullptr)
+			return true;
+		return !game_music->HasVolumeBlending();
 	}
 
 	bool Game::IsGameLeaveComplete()
 	{
-		return true;
+		if (menu_music == nullptr)
+			return true;
+		return !menu_music->HasVolumeBlending();
 	}
 
 	void Game::TickGameLoop(double delta_time)
 	{
 
 	}
+
+	void Game::StartMainMenuMusic(bool restart_first)
+	{
+		chaos::Sound * musics[] = {
+			menu_music.get(),
+			pause_music.get(),
+			game_music.get()
+		};
+		ChangeMusic(musics, 3, restart_first);
+	}
+
+	void Game::StartGameMusic(bool restart_first)
+	{
+		chaos::Sound * musics[] = {
+			game_music.get(),
+			pause_music.get(),
+			menu_music.get()
+		};
+		ChangeMusic(musics, 3, restart_first);
+}
+
+	void Game::StartPauseMusic(bool restart_first)
+	{
+		chaos::Sound * musics[] = {
+			pause_music.get(),
+			menu_music.get(),
+			game_music.get()
+		};
+		ChangeMusic(musics, 3, restart_first);
+	}
+
+	int Game::GetCurrentStateID() const
+	{
+		if (game_automata == nullptr)
+			return -1;
+		chaos::StateMachine::State const * current_state = game_automata->GetCurrentState();
+		if (current_state == nullptr)
+			return -1;
+		return current_state->GetStateID();
+	}
+
+
+#if 0
+
+	GameHUD * CreatePauseHUD()
+	{
+
+	}
+
+	GameHUD * CreateMainMenuHUD()
+	{
+
+	}
+
+	GameHUD * CreateGameHUD()
+	{
+
+	}
+
+#endif
 
 }; // namespace death
 

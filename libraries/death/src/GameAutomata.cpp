@@ -68,7 +68,7 @@ namespace death
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
-			game->OnStartGame(from == nullptr); // very first game ?
+			game->OnEnterMainMenu(from == nullptr); // very first game ?
 		return false;
 	}
 

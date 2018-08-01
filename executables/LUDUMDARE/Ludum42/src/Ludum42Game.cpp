@@ -173,7 +173,13 @@ void LudumGame::DestroyTitle()
 	best_score_allocations = nullptr;
 }
 
-void LudumGame::OnStartGame(bool very_first)
+bool LudumGame::OnAbordGame()
+{
+
+	return true;
+}
+
+void LudumGame::OnEnterMainMenu(bool very_first)
 {
 	if (very_first)
 	{
@@ -209,7 +215,7 @@ bool LudumGame::OnEnterGame()
 	return true;
 }
 
-bool LudumGame::OnLeaveGame()
+bool LudumGame::OnLeaveGame(bool gameover)
 {
 	StartMainMenuMusic(true);
 	return true;
@@ -711,92 +717,6 @@ void LudumGame::CreateAllGameObjects(int level)
 	}
 }
 
-bool LudumGame::CreateAllMusics()
-{
-	if (menu_music == nullptr)
-		menu_music = PlaySound("menu_music", true, true);
-	if (pause_music == nullptr)
-		pause_music = PlaySound("pause_music", true, true);
-	if (game_music == nullptr)
-		game_music = PlaySound("game_music", true, true);
-	return true;
-}
-
-
-
-void LudumGame::StartMainMenuMusic(bool restart_first)
-{
-	chaos::Sound * musics[] = {
-		menu_music.get(),
-		pause_music.get(),
-		game_music.get()
-	};
-	ChangeMusic(musics, 3, restart_first);
-}
-
-void LudumGame::StartGameMusic(bool restart_first)
-{
-	chaos::Sound * musics[] = {
-		game_music.get(),
-		pause_music.get(),
-		menu_music.get()
-	};
-	ChangeMusic(musics, 3, restart_first);
-}
-
-void LudumGame::StartPauseMusic(bool restart_first)
-{
-	chaos::Sound * musics[] = {
-		pause_music.get(),
-		menu_music.get(),
-		game_music.get()
-	};
-	ChangeMusic(musics, 3, restart_first);
-}
-
-
-bool LudumGame::IsPauseEnterComplete()
-{
-	if (pause_music == nullptr)
-		return true;
-	return !pause_music->HasVolumeBlending();
-}
-
-bool LudumGame::IsPauseLeaveComplete()
-{
-	if (game_music == nullptr)
-		return true;
-	return !game_music->HasVolumeBlending();
-}
-
-bool LudumGame::IsGameEnterComplete()
-{
-	if (game_music == nullptr)
-		return true;
-	return !game_music->HasVolumeBlending();
-}
-
-bool LudumGame::IsGameLeaveComplete()
-{
-	if (menu_music == nullptr)
-		return true;
-	return !menu_music->HasVolumeBlending();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool LudumGame::FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	return chaos::TiledMapTools::GenerateAtlasInput(tiledmap_manager.get(), input, "sprites");
@@ -809,18 +729,6 @@ bool LudumGame::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input,
 	if (!FillAtlasGenerationInputWithTileSets(input, config, config_path))
 		return false;
 	return true;
-}
-
-int LudumGame::GetCurrentStateID() const
-{
-	if (game_automata == nullptr)
-		return -1;
-
-	chaos::StateMachine::State const * current_state = game_automata->GetCurrentState();
-	if (current_state == nullptr)
-		return -1;
-
-	return current_state->GetStateID();
 }
 
 bool LudumGame::CreateGameAutomata()

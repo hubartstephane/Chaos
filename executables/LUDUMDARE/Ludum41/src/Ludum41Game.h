@@ -120,8 +120,6 @@ protected:
 	/** override */
 	virtual bool CreateGameAutomata() override;
 	/** override */
-	virtual bool CreateAllMusics() override;
-	/** override */
 	virtual bool DeclareParticleClasses() override;
 	/** override */
 	virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
@@ -133,7 +131,7 @@ protected:
 
 
 	/** override */
-	virtual void OnStartGame(bool very_first) override;
+	virtual void OnEnterMainMenu(bool very_first) override;
 	/** override */
 	virtual void OnGameOver() override;
 	/** override */
@@ -148,15 +146,6 @@ protected:
 	/** override */
 	virtual bool OnAbordGame() override;
 
-	/** override */
-	virtual bool IsPauseEnterComplete() override;
-	/** override */
-	virtual bool IsPauseLeaveComplete() override;
-
-	/** override */
-	virtual bool IsGameEnterComplete() override;
-	/** override */
-	virtual bool IsGameLeaveComplete() override;
 	/** override */
 	virtual void TickGameLoop(double delta_time) override;
 
@@ -174,14 +163,6 @@ protected:
 	void TickHeartWarning(double delta_time);
 
 	bool TickGameOverDetection(double delta_time);
-
-	/** change the game music */
-	void StartMainMenuMusic(bool restart_first);
-	void StartGameMusic(bool restart_first);
-	void StartPauseMusic(bool restart_first);
-
-	/** get current state ID */
-	int GetCurrentStateID() const;
 
 	/** initialize the dictionnary */
 	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -402,11 +383,6 @@ protected:
 	/** the current stick position */
 	glm::vec2 left_stick_position  = glm::vec2(0.0f, 0.0f);
 	glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
-
-	/** the sounds being played */
-	boost::intrusive_ptr<chaos::Sound> menu_music;
-	boost::intrusive_ptr<chaos::Sound> game_music;
-	boost::intrusive_ptr<chaos::Sound> pause_music;
 
 	/** the dictionnary */
 	std::map<size_t, std::vector<std::string>> dictionnary;

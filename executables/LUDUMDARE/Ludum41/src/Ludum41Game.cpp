@@ -197,7 +197,7 @@ void LudumGame::DestroyTitle()
 	best_score_allocations = nullptr;
 }
 
-void LudumGame::OnStartGame(bool very_first)
+void LudumGame::OnEnterMainMenu(bool very_first)
 {
 	if (very_first)
 	{
@@ -1403,90 +1403,6 @@ void LudumGame::OnLongBarChallenge(bool success)
 		SetPlayerLength(player_length - player_length_decrement);
 }
 
-
-bool LudumGame::CreateAllMusics()
-{
-	if (menu_music == nullptr)
-		menu_music = PlaySound("menu_music", true, true);
-	if (pause_music == nullptr)
-		pause_music = PlaySound("pause_music", true, true);
-	if (game_music == nullptr)
-		game_music = PlaySound("game_music", true, true);
-
-	return true;
-}
-
-void LudumGame::StartMainMenuMusic(bool restart_first)
-{
-	chaos::Sound * musics[] = {
-		menu_music.get(),
-		pause_music.get(),
-		game_music.get()
-	};
-	ChangeMusic(musics, 3, restart_first);
-}
-
-void LudumGame::StartGameMusic(bool restart_first)
-{
-	chaos::Sound * musics[] = {
-		game_music.get(),
-		pause_music.get(),
-		menu_music.get()
-	};
-	ChangeMusic(musics, 3, restart_first);
-}
-
-void LudumGame::StartPauseMusic(bool restart_first)
-{
-	chaos::Sound * musics[] = {
-		pause_music.get(),
-		menu_music.get(),
-		game_music.get()
-	};
-	ChangeMusic(musics, 3, restart_first);
-}
-
-
-bool LudumGame::IsPauseEnterComplete()
-{
-	if (pause_music == nullptr)
-		return true;
-	return !pause_music->HasVolumeBlending();
-}
-
-bool LudumGame::IsPauseLeaveComplete()
-{
-	if (game_music == nullptr)
-		return true;
-	return !game_music->HasVolumeBlending();
-}
-
-bool LudumGame::IsGameEnterComplete()
-{
-	if (game_music == nullptr)
-		return true;
-	return !game_music->HasVolumeBlending();
-}
-
-bool LudumGame::IsGameLeaveComplete()
-{
-	if (menu_music == nullptr)
-		return true;
-	return !menu_music->HasVolumeBlending();
-}
-
-int LudumGame::GetCurrentStateID() const
-{
-	if (game_automata == nullptr)
-		return -1;
-
-	chaos::StateMachine::State const * current_state = game_automata->GetCurrentState();
-	if (current_state == nullptr)
-		return -1;
-
-	return current_state->GetStateID();
-}
-
 bool LudumGame::CreateGameAutomata()
 {
 	game_automata = new LudumAutomata(this);
@@ -1505,8 +1421,6 @@ bool LudumGame::DeclareParticleClasses()
 
 	return true;
 }
-
-
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {

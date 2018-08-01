@@ -70,6 +70,15 @@ namespace death
 		/** start music[0], stop all others */
 		void ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first);
 
+		/** change the game music */
+		void StartMainMenuMusic(bool restart_first);
+		void StartGameMusic(bool restart_first);
+		void StartPauseMusic(bool restart_first);
+
+		/** get current state ID */
+		int GetCurrentStateID() const;
+
+
 		/** save the best score */
 		bool SerializeBestScore(bool save);
 		/** data internal method serialization */
@@ -122,7 +131,7 @@ namespace death
 		/** the game main loop */
 		virtual void TickGameLoop(double delta_time);
 		/** called on the very first time the game is started */
-		virtual void OnStartGame(bool very_first);
+		virtual void OnEnterMainMenu(bool very_first);
 		/** called whenever the game is lost */
 		virtual void OnGameOver();
 		/** called whenever we enter in pause mode */
@@ -148,10 +157,30 @@ namespace death
 		virtual bool IsGameLeaveComplete();
 
 
+#if 0
+		/** create the pause HUD */
+		virtual GameHUD * CreatePauseHUD();
+		/** create the main menu HUD */
+		virtual GameHUD * CreateMainMenuHUD();
+		/** create the game HUD */
+		virtual GameHUD * CreateGameHUD();
 
 
 
 
+		void DestroyPauseHUD();
+
+		void DestroyMainMenuHUD();
+
+		void DestroyGameHUD();
+
+		void ShowPauseHUD();
+
+		void ShowMainMenuHUD();
+
+		void DestroyGameHUD();
+
+#endif
 
 	protected:
 
@@ -169,6 +198,21 @@ namespace death
 		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 		/** the text generator */
 		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+		/** the sounds being played */
+		boost::intrusive_ptr<chaos::Sound> menu_music;
+		boost::intrusive_ptr<chaos::Sound> game_music;
+		boost::intrusive_ptr<chaos::Sound> pause_music;
+
+#if 0
+		/** the main menu HUD */
+		boost::intrusive_ptr<chaos::GameHUD> main_menu_hud;
+		/** the pause HUD */
+		boost::intrusive_ptr<chaos::GameHUD> pause_hud;
+		/** the game HUD */
+		boost::intrusive_ptr<chaos::GameHUD> game_hud;
+#endif
+
 
 		/** pointer on the automata */
 		boost::intrusive_ptr<class GameAutomata> game_automata;

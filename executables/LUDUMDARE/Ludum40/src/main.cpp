@@ -26,8 +26,8 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/JSONTools.h>
 
-#include "SpriteManager.h"
-#include "game.h"
+#include "Ludum40SpriteManager.h"
+#include "Ludum40Game.h"
 
 // ======================================================================================
 

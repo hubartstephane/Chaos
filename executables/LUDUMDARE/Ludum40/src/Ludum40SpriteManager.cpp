@@ -1,4 +1,4 @@
-#include "SpriteManager.h"
+#include "Ludum40SpriteManager.h"
 
 #include <chaos/MathTools.h>
 #include <chaos/GPUProgramGenerator.h>

@@ -27,7 +27,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TextureArrayAtlas.h>
 
-#include "SpriteManager.h"
+#include "Ludum40SpriteManager.h"
 
 
 // ======================================================================================

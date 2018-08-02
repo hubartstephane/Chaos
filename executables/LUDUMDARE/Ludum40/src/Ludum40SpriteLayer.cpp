@@ -1,4 +1,4 @@
-#include "game.h"
+#include "Ludum40Game.h"
 
 
 #include <chaos/StandardHeaders.h> 
@@ -30,8 +30,8 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/JSONTools.h>
 
-#include "SpriteManager.h"
-#include "sprite_layer.h"
+#include "Ludum40SpriteManager.h"
+#include "Ludum40SpriteLayer.h"
 
 // Particles position stored relative to camera
 

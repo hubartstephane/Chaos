@@ -1,4 +1,4 @@
-#include "game.h"
+#include "Ludum40Game.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/CollisionFramework.h>
@@ -32,7 +32,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/DrawPrimitive.h>
 
-#include "SpriteManager.h"
+#include "Ludum40SpriteManager.h"
 
 
 // ======================================================================================

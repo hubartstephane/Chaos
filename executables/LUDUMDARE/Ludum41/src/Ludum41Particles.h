@@ -19,19 +19,12 @@ static int const TEXT_LAYER_ID                   = 6;
 static int const CHALLENGE_LAYER_ID              = 7;
 
 // ===========================================================================
-// Base Vertex class
+// VertexBase and Particle
 // ===========================================================================
 
-class VertexBase
-{
-public:
+using VertexBase = chaos::ParticleDefault::Vertex;
 
-	glm::vec2 position;
-	glm::vec3 texcoord;
-	glm::vec4 color;
-};
-
-extern chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+using ParticleObject = chaos::ParticleDefault::Particle;
 
 // ===========================================================================
 // Background particle system
@@ -55,18 +48,7 @@ public:
 // Object particle system
 // ===========================================================================
 
-using ParticleObject = chaos::ParticleDefault::Particle;
 
-#if 0
-class ParticleObject
-{
-public:
-
-	chaos::box2 bounding_box;
-	chaos::ParticleTexcoords texcoords;
-	glm::vec4 color;
-};
-#endif
 class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
 {
 public:

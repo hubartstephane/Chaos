@@ -53,7 +53,7 @@ void LudumGame::CreateGameTitle()
 		params.character_set_name = "normal";
 
 		std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-		best_score_allocations = CreateTextParticles(str.c_str(), params);
+		best_score_allocations = CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
 	}
 }
 
@@ -79,7 +79,7 @@ chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag
 
 	// format text and create particles
 	std::string str = chaos::StringTools::Printf(format, value);
-	return CreateTextParticles(str.c_str(), params);	
+	return CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
 }
 
 void LudumGame::UpdateLifeParticles()
@@ -153,7 +153,7 @@ void LudumGame::CreateTitle(char const * title, bool normal)
 
 	params.character_set_name = (normal) ? "normal" : "title";
 
-	text_allocations = CreateTextParticles(title, params);
+	text_allocations = CreateTextParticles(title, params, TEXT_LAYER_ID);
 }
 
 void LudumGame::DestroyTitle()
@@ -718,25 +718,6 @@ void LudumGame::FillBackgroundLayer()
 
 	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
-
-
-chaos::ParticleAllocation * LudumGame::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params)
-{
-	// find layer of concern
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(TEXT_LAYER_ID);
-	if (layer == nullptr)
-		return nullptr;
-
-	// generate the tokens
-	chaos::ParticleTextGenerator::GeneratorResult result;
-
-	particle_text_generator->Generate(text, result, params);
-
-	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
-
-	return allocation;
-}
-
 
 bool LudumGame::InitializeParticleManager()
 {

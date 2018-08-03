@@ -631,6 +631,23 @@ namespace death
 		return false;
 	}
 
+	chaos::ParticleAllocation * Game::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id)
+	{
+		// find layer of concern
+		chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
+		if (layer == nullptr)
+			return nullptr;
+
+		// generate the tokens
+		chaos::ParticleTextGenerator::GeneratorResult result;
+
+		particle_text_generator->Generate(text, result, params);
+
+		chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
+
+		return allocation;
+	}
+
 
 #if 0
 

@@ -174,6 +174,9 @@ namespace death
 		/** require a game over */
 		virtual bool RequireGameOver();
 
+		/** create a text particle system */
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id);
+
 
 #if 0
 		/** create the pause HUD */

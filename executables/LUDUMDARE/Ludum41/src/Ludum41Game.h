@@ -200,9 +200,6 @@ protected:
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
 
-	/** create particles in the text layer */
-	chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params);
-
 	/** create a number of game object */
 	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
 	/** create the player */

@@ -26,21 +26,9 @@ size_t LudumLevel::GetBrickCount() const
 	return result;
 }
 
-LudumGame::~LudumGame()
-{		
-	SerializeBestScore(true);
-}
-
-bool LudumGame::LoadBestScore(std::ifstream & file)
+LudumGame::LudumGame()
 {
-	file >> best_score;
-	return true;
-}
-
-bool LudumGame::SaveBestScore(std::ofstream & file)
-{
-	file << best_score;
-	return true;
+	game_name = "AsciiPaouf 2";
 }
 
 void LudumGame::IncrementScore(int delta)
@@ -51,25 +39,6 @@ void LudumGame::IncrementScore(int delta)
 	should_update_score = true;
 }
 
-void LudumGame::CreateGameTitle()
-{
-	CreateTitle("AsciiPaouf 2", false);
-
-	if (best_score > 0)
-	{
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 50;
-		params.hotpoint_type = chaos::Hotpoint::CENTER;
-		params.position.x = 0.0f;
-		params.position.y = -130.0f;
-
-		params.character_set_name = "normal";
-
-		std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-		best_score_allocations = CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
-	}
-}
-
 chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
 {
 	// test flag
@@ -77,10 +46,10 @@ chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag
 		return nullptr;
 	update_flag = false;
 
-	// get world size
-	chaos::box2 world = GetWorldBox();
+	// get view size
+	chaos::box2 view = GetViewBox();
 
-	std::pair<glm::vec2, glm::vec2> corners = world.GetCorners();
+	std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
 
 	// set the values
 	chaos::ParticleTextGenerator::GeneratorParams params;
@@ -127,7 +96,7 @@ void LudumGame::UpdateLifeParticles()
 	if (particles.GetCount() == 0)
 		return;
 
-	glm::vec2 world_size = GetWorldSize();
+	glm::vec2 view_size = GetViewSize();
 
 	glm::vec2 particle_size;
 	particle_size.x = 35.0f;
@@ -136,8 +105,8 @@ void LudumGame::UpdateLifeParticles()
 	for (size_t i = 0; i < (size_t)current_life; ++i)
 	{
 		glm::vec2 position;
-		position.x = -world_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
-		position.y = -world_size.y * 0.5f + 15.0f;
+		position.x = -view_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
+		position.y = -view_size.y * 0.5f + 15.0f;
 
 		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 		particles[i].bounding_box.half_size = 0.5f * particle_size;
@@ -167,44 +136,18 @@ void LudumGame::UpdateScoreParticles()
 		score_allocations = allocation;
 }
 
-void LudumGame::CreateTitle(char const * title, bool normal)
-{
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = TITLE_SIZE;
-	params.hotpoint_type = chaos::Hotpoint::CENTER;
-	params.position.y = TITLE_PLACEMENT_Y;
-
-	params.character_set_name = (normal) ? "normal" : "title";
-
-	text_allocations = CreateTextParticles(title, params, TEXT_LAYER_ID);
-}
-
-void LudumGame::DestroyTitle()
-{
-	text_allocations = nullptr;
-	best_score_allocations = nullptr;
-}
-
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
 	death::Game::OnEnterMainMenu(very_first);
 
 	chaos::MathTools::ResetRandSeed();
 	if (very_first)
-	{
-		
-
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-		CreateGameTitle();
-	}
 }
 
 bool LudumGame::OnEnterPause()
 {
 	death::Game::OnEnterPause();
-	CreateTitle("Pause", true);
-
 	if (sequence_challenge != nullptr)
 		sequence_challenge->Show(false);
 
@@ -214,8 +157,6 @@ bool LudumGame::OnEnterPause()
 bool LudumGame::OnLeavePause()
 {
 	death::Game::OnLeavePause();
-	DestroyTitle();
-
 	if (sequence_challenge != nullptr)
 		sequence_challenge->Show(true);
 
@@ -225,7 +166,6 @@ bool LudumGame::OnLeavePause()
 bool LudumGame::OnEnterGame()
 {
 	death::Game::OnEnterGame();	
-	DestroyTitle();
 	ResetGameVariables();
 	CreateAllGameObjects(0);
 	return true;
@@ -234,16 +174,14 @@ bool LudumGame::OnEnterGame()
 bool LudumGame::OnLeaveGame(bool gameover)
 {
 	death::Game::OnLeaveGame(gameover);
-
 	if (gameover)
-		CreateTitle("Game Over", true);
+		text_allocations = CreateTitle("Game Over", true);
 	return true;
 }
 
 bool LudumGame::OnAbordGame()
 {
 	DestroyGameObjects();
-	CreateGameTitle();
 	return true;
 }
 
@@ -279,7 +217,7 @@ void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	death::Game::OnGamepadInput(in_gamepad_data);
 }
 
-glm::vec2 LudumGame::GetWorldSize() const
+glm::vec2 LudumGame::GetViewSize() const
 {
 	glm::vec2 result;
 	result.x = 1600.0f;
@@ -287,11 +225,11 @@ glm::vec2 LudumGame::GetWorldSize() const
 	return result;
 }
 
-chaos::box2 LudumGame::GetWorldBox() const
+chaos::box2 LudumGame::GetViewBox() const
 {
 	chaos::box2 result;
 	result.position  = glm::vec2(0.0f, 0.0f);
-	result.half_size = GetWorldSize() * 0.5f;
+	result.half_size = GetViewSize() * 0.5f;
 	return result;
 }
 
@@ -325,10 +263,10 @@ void LudumGame::Display(glm::ivec2 const & size)
 	chaos::GPUProgramProvider main_uniform_provider;
 	main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
 
-	glm::vec2 world_size;
-	world_size.x = 1600.0f;
-	world_size.y = world_size.x * (viewport.half_size.y / viewport.half_size.x);
-	main_uniform_provider.AddVariableValue("world_size", world_size);
+	glm::vec2 view_size;
+	view_size.x = 1600.0f;
+	view_size.y = view_size.x * (viewport.half_size.y / viewport.half_size.x);
+	main_uniform_provider.AddVariableValue("view_size", view_size);
 
 	// draw particle system
 	if (particle_manager != nullptr)
@@ -372,12 +310,8 @@ void LudumGame::ResetGameVariables()
 
 void LudumGame::OnGameOver()
 {
-	CreateGameTitle();
-	if (best_score < current_score)
-	{
-		best_score = current_score;
-		SerializeBestScore(true);
-	}
+	death::Game::OnGameOver();
+	//CreateGameTitle();
 	DestroyGameObjects();
 }
 
@@ -400,13 +334,13 @@ size_t LudumGame::CanStartChallengeBallIndex(bool reverse) const
 		ParticleMovableObject const * balls = GetBallParticles();
 		if (balls != nullptr)
 		{
-			glm::vec2 world_size = GetWorldSize();
+			glm::vec2 view_size = GetViewSize();
 
 			for (size_t i = 0; i < ball_count ; ++i)
 			{
 				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
 					continue;					
-				if (reverse ^ (balls->bounding_box.position.y > -world_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
+				if (reverse ^ (balls->bounding_box.position.y > -view_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
 					return i;
 			}
 		}			
@@ -690,7 +624,6 @@ void LudumGame::DestroyGameObjects()
 	balls_allocations = nullptr;
 	score_allocations = nullptr;
 	combo_allocations = nullptr;
-	best_score_allocations = nullptr;
 
 	sequence_challenge = nullptr;
 }
@@ -773,10 +706,10 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 	// compute the brick size
 	float BRICK_ASPECT = 16.0f / 9.0f;
 
-	glm::vec2 world_size = GetWorldSize();
+	glm::vec2 view_size = GetViewSize();
 
 	glm::vec2 particle_size;
-	particle_size.x = world_size.x / (float)brick_per_line;
+	particle_size.x = view_size.x / (float)brick_per_line;
 	particle_size.y = particle_size.x / BRICK_ASPECT;
 
 	// fill the brick
@@ -814,8 +747,8 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 
 			// position
 			glm::vec2 position;
-			position.x = -world_size.x * 0.5f + particle_size.x * (float)j;
-			position.y =  world_size.y * 0.5f - particle_size.y * (float)i;
+			position.x = -view_size.x * 0.5f + particle_size.x * (float)j;
+			position.y = view_size.y * 0.5f - particle_size.y * (float)i;
 
 			particles[k].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
 			particles[k].bounding_box.half_size = 0.5f * particle_size;
@@ -1002,8 +935,8 @@ void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation,
 		return;
 
 	chaos::box2 box = particle->bounding_box;
-	chaos::box2 world = GetWorldBox();
-	chaos::RestrictToInside(world, box, false);
+	chaos::box2 view = GetViewBox();
+	chaos::RestrictToInside(view, box, false);
 	SetObjectPosition(allocation, index, box.position);
 }
 

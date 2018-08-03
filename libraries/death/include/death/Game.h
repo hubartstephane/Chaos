@@ -14,6 +14,8 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 
+#include <death/GameHUD.h>
+
 namespace death
 {
 #define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
@@ -39,6 +41,10 @@ namespace death
 		friend class PlayingToGameOverTransition;
 
 	public:
+
+		/** some ID for layers */
+		static int const TEXT_LAYER_ID = 0;
+		static int const LAST_LAYER_ID = 0;
 
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
@@ -83,6 +89,8 @@ namespace death
 		bool IsPlaying() const;
 
 
+		/** test whether the current score is higher than best score and save it */
+		void ConditionnalSaveBestScore();
 		/** save the best score */
 		bool SerializeBestScore(bool save);
 		/** data internal method serialization */
@@ -175,33 +183,30 @@ namespace death
 		virtual bool RequireGameOver();
 
 		/** create a text particle system */
-		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id);
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id = TEXT_LAYER_ID);
+		/** create a title */
+		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, int layer_id = TEXT_LAYER_ID);
 
-
-#if 0
 		/** create the pause HUD */
-		virtual GameHUD * CreatePauseHUD();
+		void CreatePauseMenuHUD();
 		/** create the main menu HUD */
-		virtual GameHUD * CreateMainMenuHUD();
+		void CreateMainMenuHUD();
 		/** create the game HUD */
-		virtual GameHUD * CreateGameHUD();
+		void CreatePlayingHUD();
 
-
-
-
-		void DestroyPauseHUD();
-
+		/** destroy the pause HUD */
+		void DestroyPauseMenuHUD();
+		/** destroy the main menu HUD */
 		void DestroyMainMenuHUD();
+		/** destroy the game HUD */
+		void DestroyPlayingHUD();
 
-		void DestroyGameHUD();
-
-		void ShowPauseHUD();
-
-		void ShowMainMenuHUD();
-
-		void DestroyGameHUD();
-
-#endif
+		/** user defined method to create the pause HUD */
+		virtual PauseMenuHUD * DoCreatePauseMenuHUD();
+		/** user defined method to create the main menu HUD */
+		virtual MainMenuHUD * DoCreateMainMenuHUD();
+		/** user defined method to create the game HUD */
+		virtual PlayingHUD * DoCreatePlayingHUD();
 
 	protected:
 
@@ -228,14 +233,12 @@ namespace death
 		boost::intrusive_ptr<chaos::Sound> game_music;
 		boost::intrusive_ptr<chaos::Sound> pause_music;
 
-#if 0
 		/** the main menu HUD */
-		boost::intrusive_ptr<chaos::GameHUD> main_menu_hud;
+		boost::intrusive_ptr<MainMenuHUD> main_menu_hud;
 		/** the pause HUD */
-		boost::intrusive_ptr<chaos::GameHUD> pause_hud;
+		boost::intrusive_ptr<PauseMenuHUD> pause_menu_hud;
 		/** the game HUD */
-		boost::intrusive_ptr<chaos::GameHUD> game_hud;
-#endif
+		boost::intrusive_ptr<PlayingHUD> playing_hud;
 
 
 		/** pointer on the automata */
@@ -244,12 +247,22 @@ namespace death
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;
 
-		/** the wanted viewport aspect */
-		float viewport_wanted_aspect = (16.0f / 9.0f);
+
+		/** score values */
+		int best_score = 0;
+		int current_score = 0;
 
 		/** game settings */
 		float mouse_sensitivity = 1.0f;
 		float gamepad_sensitivity = 1.0f;
+
+		/** the wanted viewport aspect */
+		float viewport_wanted_aspect = (16.0f / 9.0f);
+		/** some HUD settings */
+		float title_size = 150.0f;
+		float title_placement_y = 0;
+
+		char const * game_name = nullptr;
 	};
 
 }; // namespace death

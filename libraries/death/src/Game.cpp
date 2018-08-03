@@ -228,12 +228,23 @@ namespace death
 
 	bool Game::LoadBestScore(std::ifstream & file)
 	{
+		file >> best_score;
 		return true;
 	}
 
 	bool Game::SaveBestScore(std::ofstream & file)
 	{
+		file << best_score;
 		return true;
+	}
+
+	void Game::ConditionnalSaveBestScore()
+	{
+		if (best_score < current_score)
+		{
+			best_score = current_score;
+			SerializeBestScore(true);
+		}
 	}
 
 	bool Game::SerializeBestScore(bool save)
@@ -484,34 +495,40 @@ namespace death
 	{
 		if (very_first)
 			StartMainMenuMusic(true);
+		CreateMainMenuHUD();
 	}
 
 	void Game::OnGameOver()
 	{
-
+		ConditionnalSaveBestScore();
 	}
 
 	bool Game::OnEnterPause()
 	{
 		StartPauseMusic(true);
+		CreatePauseMenuHUD();
 		return true;
 	}
 
 	bool Game::OnLeavePause()
 	{
 		StartGameMusic(false);
+		DestroyPauseMenuHUD();
 		return true;
 	}
 
 	bool Game::OnEnterGame()
 	{
 		StartGameMusic(true);
+		DestroyMainMenuHUD();
+		CreatePlayingHUD();
 		return true;
 	}
 
 	bool Game::OnLeaveGame(bool gameover)
 	{
 		StartMainMenuMusic(true);
+		DestroyPlayingHUD();
 		return true;
 	}
 
@@ -648,25 +665,99 @@ namespace death
 		return allocation;
 	}
 
-
-#if 0
-
-	GameHUD * CreatePauseHUD()
+	chaos::ParticleAllocation * Game::CreateTitle(char const * title, bool normal, int layer_id)
 	{
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = title_size;
+		params.hotpoint_type = chaos::Hotpoint::CENTER;
+		params.position.y = title_placement_y;
 
+		params.character_set_name = (normal) ? "normal" : "title";
+
+		return CreateTextParticles(title, params, layer_id);
 	}
 
-	GameHUD * CreateMainMenuHUD()
-	{
 
+
+
+
+	void Game::CreatePauseMenuHUD()
+	{
+		pause_menu_hud = DoCreatePauseMenuHUD();
 	}
 
-	GameHUD * CreateGameHUD()
+	void Game::CreateMainMenuHUD()
 	{
-
+		main_menu_hud = DoCreateMainMenuHUD();
 	}
 
-#endif
+	void Game::CreatePlayingHUD()
+	{
+		playing_hud = DoCreatePlayingHUD();
+	}
+
+	void Game::DestroyPauseMenuHUD()
+	{
+		pause_menu_hud = nullptr;
+	}
+
+	void Game::DestroyMainMenuHUD()
+	{
+		main_menu_hud = nullptr;
+	}
+
+	void Game::DestroyPlayingHUD()
+	{
+		playing_hud = nullptr;
+	}
+
+	PauseMenuHUD * Game::DoCreatePauseMenuHUD()
+	{
+		PauseMenuHUD * result = new PauseMenuHUD;
+		if (result == nullptr)
+			return nullptr;
+		result->title_allocations = CreateTitle("Pause", true);
+		return result;
+	}
+
+	MainMenuHUD * Game::DoCreateMainMenuHUD()
+	{
+		MainMenuHUD * result = new MainMenuHUD;
+		if (result == nullptr)
+			return nullptr;
+
+		if (game_name != nullptr)
+			result->title_allocations = CreateTitle(game_name, false);
+		
+		if (best_score > 0)
+		{
+			chaos::ParticleTextGenerator::GeneratorParams params;
+			params.line_height = 50;
+			params.hotpoint_type = chaos::Hotpoint::CENTER;
+			params.position.x = 0.0f;
+			params.position.y = -130.0f;
+
+			params.character_set_name = "normal";
+
+			std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
+			result->best_score_allocations = CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
+		}
+		return result;
+	}
+
+	PlayingHUD * Game::DoCreatePlayingHUD()
+	{
+		PlayingHUD * result = new PlayingHUD;
+		if (result == nullptr)
+			return nullptr;
+
+
+
+
+		return result;
+	}
+
+
 
 }; // namespace death
 

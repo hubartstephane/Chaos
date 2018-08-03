@@ -28,9 +28,18 @@ namespace death
 
 	class PlayingHUD : public GameHUD
 	{
+
+	public:
+
+		void SetScoreValue(int new_score);
+
 	public:
 
 		boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
+
+	protected:
+
+		int cached_score_value = -1;
 	};
 
 }; // namespace death

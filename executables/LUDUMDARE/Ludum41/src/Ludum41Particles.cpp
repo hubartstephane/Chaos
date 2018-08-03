@@ -191,13 +191,13 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 	// ball bouncing against world
 
-	chaos::box2 world_box = game->GetWorldBox();
-	chaos::box2 ball_box  = particle->bounding_box;
+	chaos::box2 view_box = game->GetViewBox();
+	chaos::box2 ball_box = particle->bounding_box;
 		
 
 	// bounce against the world borders
 	chaos::box2 new_ball_box = ball_box;
-	if (chaos::RestrictToInside(world_box, new_ball_box, false))
+	if (chaos::RestrictToInside(view_box, new_ball_box, false))
 	{
 		glm::vec2 old_velocity = velocity;
 

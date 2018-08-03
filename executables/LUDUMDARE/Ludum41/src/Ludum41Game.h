@@ -64,22 +64,28 @@ class LudumGame : public death::Game
 	friend class ParticleLifeObjectTrait;
 	friend class ParticleBrickTrait;
 
+
+	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;
+	static int const BACKGROUND_GAMEOBJECT_LAYER_ID = 2;
+	static int const GAMEOBJECT_LAYER_ID = 3;
+	static int const BRICK_LAYER_ID = 4;
+	static int const LIFE_LAYER_ID = 5;
+	static int const BALL_LAYER_ID = 6;
+	static int const CHALLENGE_LAYER_ID = 7;
+
 protected:
 
 	/** some aspect constant */
 	float CHALLENGE_SIZE = 100.0f;
 	float CHALLENGE_PLACEMENT_Y = 0;
 
-	float TITLE_SIZE = 150.0f;
-	float TITLE_PLACEMENT_Y = 0;
-
 	float PLAYER_Y = -385.0f;
 	float PLAYER_HEIGHT = 35.0f;
 
 public:
 
-	/** destructor */
-	~LudumGame();
+	/** constructor */
+	LudumGame();
 
 	/** override */
 	virtual bool OnKeyEvent(int key, int action) override;
@@ -172,9 +178,9 @@ protected:
 
 
 	/** get the size of the world */
-	glm::vec2 GetWorldSize() const;
-	/** get the box world */
-	chaos::box2 GetWorldBox() const;
+	glm::vec2 GetViewSize() const;
+	/** get the view */
+	chaos::box2 GetViewBox() const;
 
 	/** override */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
@@ -209,13 +215,6 @@ protected:
 	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
 	/** create the bricks */
 	chaos::ParticleAllocation * CreateBricks(int level_number);
-
-	/** create the title of the game */
-	void CreateGameTitle();
-	/** create the title */
-	void CreateTitle(char const * title, bool normal);
-	/** create the title */
-	void DestroyTitle();
 
 	/** update the score */
 	void IncrementScore(int delta);
@@ -347,11 +346,6 @@ protected:
 	/** get currently played level */
 	LudumLevel const * GetLevel(int level_number) const;
 
-	/** override */
-	virtual bool LoadBestScore(std::ifstream & file) override;
-	/** override */
-	virtual bool SaveBestScore(std::ofstream & file) override;
-
 protected:
 
 	/** the dictionnary */
@@ -430,10 +424,8 @@ protected:
 	float challenge_timer = 0.0f;
 
 	
-
-	int current_score = 0;
 	int combo_multiplier = 1;
-	int best_score = 0;
+	
 	int current_level = 0;
 
 	bool should_update_score = false;
@@ -454,7 +446,6 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleAllocation> text_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> best_score_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 
 	/** the possible rewards */

@@ -170,34 +170,35 @@ bool LudumGame::OnAbordGame()
 
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
+	death::Game::OnEnterMainMenu(very_first);
+
+	chaos::MathTools::ResetRandSeed();
 	if (very_first)
 	{
-		chaos::MathTools::ResetRandSeed();
-
+	
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		StartMainMenuMusic(true);
 		CreateGameTitle();
 	}
 }
 
 bool LudumGame::OnEnterPause()
 {
-	StartPauseMusic(true);
+	death::Game::OnEnterPause();
 	CreateTitle("Pause", true);
 	return true;
 }
 
 bool LudumGame::OnLeavePause()
 {
-	StartGameMusic(false);
+	death::Game::OnLeavePause();
 	DestroyTitle();
 	return true;
 }
 
 bool LudumGame::OnEnterGame()
 {
-	StartGameMusic(true);
+	death::Game::OnEnterGame();
 	DestroyTitle();
 	ResetGameVariables();
 	CreateAllGameObjects(0);
@@ -206,7 +207,7 @@ bool LudumGame::OnEnterGame()
 
 bool LudumGame::OnLeaveGame(bool gameover)
 {
-	StartMainMenuMusic(true);
+	death::Game::OnLeaveGame(gameover);
 	return true;
 }
 
@@ -218,20 +219,8 @@ bool LudumGame::OnCharEvent(unsigned int c)
 
 bool LudumGame::OnKeyEvent(int key, int action)
 {
-	// MAIN MENU to PLAYING
-	if (action == GLFW_PRESS)
-		if (RequireStartGame())
-			return true;
-
-	// PLAYING to PAUSE
-	if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER) && action == GLFW_PRESS)
-		if (RequireTogglePause())
-			return true;
-
-	// QUIT GAME
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		if (RequireExitGame())
-			return true;
+	if (death::Game::OnKeyEvent(key, action))
+		return true;
 
 	// FORCE GAMEOVER
 #if _DEBUG
@@ -493,28 +482,6 @@ void LudumGame::TickGameLoop(double delta_time)
 void LudumGame::OnMouseMove(double x, double y)
 {
 	left_stick_position.x = mouse_sensitivity * (float)x;
-}
-
-void LudumGame::OnMouseButton(int button, int action, int modifier)
-{
-
-	chaos::StateMachine::State const * state = game_automata->GetCurrentState();
-	if (state != nullptr)
-	{
-#if 0
-		if (state->GetStateID() == LudumAutomata::STATE_PLAYING)
-		{
-			if (button == 0 && action == GLFW_PRESS)
-				sequence_challenge = CreateSequenceChallenge(0);
-		}
-		else 
-#endif			
-		if (state->GetStateID() == LudumAutomata::STATE_MAINMENU)
-		{
-			if (action == GLFW_PRESS)
-				RequireStartGame();
-		}		
-	}
 }
 
 void LudumGame::DestroyGameObjects()

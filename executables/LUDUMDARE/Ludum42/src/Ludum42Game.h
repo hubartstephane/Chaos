@@ -67,8 +67,6 @@ public:
 	/** override */
 	virtual bool OnCharEvent(unsigned int c) override;
 	/** override */
-	virtual void OnMouseButton(int button, int action, int modifier) override;
-	/** override */
 	virtual void OnMouseMove(double x, double y) override;
 	/** override */
 	virtual void Display(glm::ivec2 const & size) override;

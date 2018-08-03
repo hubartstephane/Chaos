@@ -187,20 +187,22 @@ void LudumGame::DestroyTitle()
 
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
+	death::Game::OnEnterMainMenu(very_first);
+
+	chaos::MathTools::ResetRandSeed();
 	if (very_first)
 	{
-		chaos::MathTools::ResetRandSeed();
+		
 
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		StartMainMenuMusic(true);
 		CreateGameTitle();
 	}
 }
 
 bool LudumGame::OnEnterPause()
 {
-	StartPauseMusic(true);
+	death::Game::OnEnterPause();
 	CreateTitle("Pause", true);
 
 	if (sequence_challenge != nullptr)
@@ -211,7 +213,7 @@ bool LudumGame::OnEnterPause()
 
 bool LudumGame::OnLeavePause()
 {
-	StartGameMusic(false);
+	death::Game::OnLeavePause();
 	DestroyTitle();
 
 	if (sequence_challenge != nullptr)
@@ -222,7 +224,7 @@ bool LudumGame::OnLeavePause()
 
 bool LudumGame::OnEnterGame()
 {
-	StartGameMusic(true);
+	death::Game::OnEnterGame();	
 	DestroyTitle();
 	ResetGameVariables();
 	CreateAllGameObjects(0);
@@ -231,9 +233,10 @@ bool LudumGame::OnEnterGame()
 
 bool LudumGame::OnLeaveGame(bool gameover)
 {
+	death::Game::OnLeaveGame(gameover);
+
 	if (gameover)
 		CreateTitle("Game Over", true);
-	StartMainMenuMusic(true);
 	return true;
 }
 
@@ -256,20 +259,8 @@ bool LudumGame::OnCharEvent(unsigned int c)
 
 bool LudumGame::OnKeyEvent(int key, int action)
 {
-	// MAIN MENU to PLAYING
-	if (action == GLFW_PRESS)
-		if (RequireStartGame())
-			return true;
-
-	// PLAYING to PAUSE
-	if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER) && action == GLFW_PRESS)
-		if (RequireTogglePause())
-			return true;
-
-	// QUIT GAME
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		if (RequireExitGame())
-			return true;
+	if (death::Game::OnKeyEvent(key, action))
+		return true;
 
 	// FORCE GAMEOVER
 #if _DEBUG
@@ -303,31 +294,9 @@ void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
 	// maybe this correspond to current challenge
 	SendGamepadButtonToChallenge(&in_gamepad_data);
-
-	// maybe a start game
-	if (in_gamepad_data.IsAnyButtonPressed())
-		if (game_automata->main_menu_to_playing->TriggerTransition(true))
-			return;
-
-	// maybe a game/pause resume
-	if (
-		(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-		(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
-	{
-		if (RequireTogglePause())
-			return;
-	}
+	// press start or go to pause
+	death::Game::OnGamepadInput(in_gamepad_data);
 }
-
-
-
-
-
-
-
-
-
-
 
 glm::vec2 LudumGame::GetWorldSize() const
 {
@@ -687,27 +656,6 @@ void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gam
 void LudumGame::OnMouseMove(double x, double y)
 {
 	left_stick_position.x = mouse_sensitivity * (float)x;
-}
-
-void LudumGame::OnMouseButton(int button, int action, int modifier)
-{
-	chaos::StateMachine::State const * state = game_automata->GetCurrentState();
-	if (state != nullptr)
-	{
-#if 0
-		if (state->GetStateID() == LudumAutomata::STATE_PLAYING)
-		{
-			if (button == 0 && action == GLFW_PRESS)
-				sequence_challenge = CreateSequenceChallenge(0);
-		}
-		else 
-#endif			
-		if (state->GetStateID() == LudumAutomata::STATE_MAINMENU)
-		{
-			if (action == GLFW_PRESS)
-				RequireStartGame();
-		}		
-	}
 }
 
 void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)
@@ -1366,7 +1314,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(points_per_challenge);
 	DEATHGAME_JSON_ATTRIBUTE(split_angle);
 	DEATHGAME_JSON_ATTRIBUTE(ball_angle_limit);
-
 	DEATHGAME_JSON_ATTRIBUTE(max_brick_offset);
 	DEATHGAME_JSON_ATTRIBUTE(brick_offset_speed);
 	DEATHGAME_JSON_ATTRIBUTE(brick_offset_increment);

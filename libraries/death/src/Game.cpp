@@ -56,6 +56,21 @@ namespace death
 	
 	bool Game::OnKeyEvent(int key, int action)
 	{
+		// MAIN MENU to PLAYING
+		if (action == GLFW_PRESS)
+			if (RequireStartGame())
+				return true;
+
+		// PLAYING to PAUSE
+		if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER) && action == GLFW_PRESS)
+			if (RequireTogglePause())
+				return true;
+
+		// QUIT GAME
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+			if (RequireExitGame())
+				return true;
+
 		return false;
 	}
 	
@@ -66,7 +81,11 @@ namespace death
 	
 	void Game::OnMouseButton(int button, int action, int modifier)
 	{
-
+		if (GetCurrentStateID() == GameAutomata::STATE_MAINMENU)
+		{
+			if (action == GLFW_PRESS)
+				RequireStartGame();
+		}
 	}
 	
 	void Game::OnMouseMove(double x, double y)
@@ -357,7 +376,19 @@ namespace death
 
 	void Game::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	{
+		// maybe a start game
+		if (in_gamepad_data.IsAnyButtonPressed())
+			if (game_automata->main_menu_to_playing->TriggerTransition(true))
+				return;
 
+		// maybe a game/pause resume
+		if (
+			(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
+			(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+		{
+			if (RequireTogglePause())
+				return;
+		}
 	}
 
 	bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
@@ -432,7 +463,8 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
-
+		if (very_first)
+			StartMainMenuMusic(true);
 	}
 
 	void Game::OnGameOver()
@@ -442,21 +474,25 @@ namespace death
 
 	bool Game::OnEnterPause()
 	{
+		StartPauseMusic(true);
 		return true;
 	}
 
 	bool Game::OnLeavePause()
 	{
+		StartGameMusic(false);
 		return true;
 	}
 
 	bool Game::OnEnterGame()
 	{
+		StartGameMusic(true);
 		return true;
 	}
 
 	bool Game::OnLeaveGame(bool gameover)
 	{
+		StartMainMenuMusic(true);
 		return true;
 	}
 

@@ -371,7 +371,26 @@ namespace death
 
 	void Game::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	{
+		// cache the stick position
+		glm::vec2 lsp = in_gamepad_data.GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
+		if (glm::length2(lsp) > 0.0f)
+			left_stick_position = gamepad_sensitivity * lsp;
+		else
+		{
+			if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT))
+				left_stick_position.x = -gamepad_sensitivity * 1.0f;
+			else if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT))
+				left_stick_position.x = gamepad_sensitivity * 1.0f;
 
+			if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_UP))
+				left_stick_position.y = -gamepad_sensitivity * 1.0f;
+			else if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN))
+				left_stick_position.y = gamepad_sensitivity * 1.0f;
+		}
+
+		glm::vec2 rsp = in_gamepad_data.GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+		if (glm::length2(rsp) > 0.0f)
+			right_stick_position = gamepad_sensitivity * rsp;
 	}
 
 	void Game::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)

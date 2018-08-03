@@ -174,8 +174,6 @@ bool LudumGame::OnEnterGame()
 bool LudumGame::OnLeaveGame(bool gameover)
 {
 	death::Game::OnLeaveGame(gameover);
-	if (gameover)
-		text_allocations = CreateTitle("Game Over", true);
 	return true;
 }
 
@@ -215,22 +213,6 @@ void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	SendGamepadButtonToChallenge(&in_gamepad_data);
 	// press start or go to pause
 	death::Game::OnGamepadInput(in_gamepad_data);
-}
-
-glm::vec2 LudumGame::GetViewSize() const
-{
-	glm::vec2 result;
-	result.x = 1600.0f;
-	result.y = result.x / viewport_wanted_aspect;
-	return result;
-}
-
-chaos::box2 LudumGame::GetViewBox() const
-{
-	chaos::box2 result;
-	result.position  = glm::vec2(0.0f, 0.0f);
-	result.half_size = GetViewSize() * 0.5f;
-	return result;
 }
 
 void LudumGame::Display(glm::ivec2 const & size)

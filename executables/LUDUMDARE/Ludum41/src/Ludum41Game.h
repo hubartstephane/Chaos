@@ -176,12 +176,6 @@ protected:
 	/** get a random button in existing list */
 	int GetRandomButtonID() const;
 
-
-	/** get the size of the world */
-	glm::vec2 GetViewSize() const;
-	/** get the view */
-	chaos::box2 GetViewBox() const;
-
 	/** override */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
@@ -354,7 +348,6 @@ protected:
 	int min_word_size = 0;
 	int max_word_size = 0;
 
-
 	/** the challenge */
 	boost::intrusive_ptr<LudumChallenge> sequence_challenge;
 
@@ -443,7 +436,6 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> text_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;

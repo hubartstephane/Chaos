@@ -26,6 +26,13 @@ namespace death
 		boost::intrusive_ptr<chaos::ParticleAllocation> title_allocations;
 	};
 
+	class GameOverHUD : public GameHUD
+	{
+	public:
+
+		boost::intrusive_ptr<chaos::ParticleAllocation> title_allocations;
+	};
+
 	class PlayingHUD : public GameHUD
 	{
 

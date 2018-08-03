@@ -496,11 +496,13 @@ namespace death
 		if (very_first)
 			StartMainMenuMusic(true);
 		CreateMainMenuHUD();
+		DestroyGameOverHUD();
 	}
 
 	void Game::OnGameOver()
 	{
 		ConditionnalSaveBestScore();
+		
 	}
 
 	bool Game::OnEnterPause()
@@ -529,6 +531,8 @@ namespace death
 	{
 		StartMainMenuMusic(true);
 		DestroyPlayingHUD();
+		if (gameover)
+			CreateGameOverHUD();
 		return true;
 	}
 
@@ -696,6 +700,11 @@ namespace death
 		playing_hud = DoCreatePlayingHUD();
 	}
 
+	void Game::CreateGameOverHUD()
+	{
+		gameover_hud = DoCreateGameOverHUD();
+	}
+
 	void Game::DestroyPauseMenuHUD()
 	{
 		pause_menu_hud = nullptr;
@@ -709,6 +718,11 @@ namespace death
 	void Game::DestroyPlayingHUD()
 	{
 		playing_hud = nullptr;
+	}
+
+	void Game::DestroyGameOverHUD()
+	{
+		gameover_hud = nullptr;
 	}
 
 	PauseMenuHUD * Game::DoCreatePauseMenuHUD()
@@ -757,7 +771,30 @@ namespace death
 		return result;
 	}
 
+	GameOverHUD * Game::DoCreateGameOverHUD()
+	{
+		GameOverHUD * result = new GameOverHUD;
+		if (result == nullptr)
+			return nullptr;
+		result->title_allocations = CreateTitle("Game Over", true);
+		return result;
+	}
 
+	glm::vec2 Game::GetViewSize() const
+	{
+		glm::vec2 result;
+		result.x = 1600.0f;
+		result.y = result.x / viewport_wanted_aspect;
+		return result;
+	}
+
+	chaos::box2 Game::GetViewBox() const
+	{
+		chaos::box2 result;
+		result.position = glm::vec2(0.0f, 0.0f);
+		result.half_size = GetViewSize() * 0.5f;
+		return result;
+	}
 
 }; // namespace death
 

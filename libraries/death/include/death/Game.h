@@ -71,6 +71,11 @@ namespace death
 		/** utility function to get the sound manager */
 		chaos::SoundManager * GetSoundManager();
 
+		/** get the size of the world */
+		virtual glm::vec2 GetViewSize() const;
+		/** get the view */
+		chaos::box2 GetViewBox() const;
+
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
 		/** blend out a music */
@@ -193,6 +198,8 @@ namespace death
 		void CreateMainMenuHUD();
 		/** create the game HUD */
 		void CreatePlayingHUD();
+		/** create the gameover HUD */
+		void CreateGameOverHUD();
 
 		/** destroy the pause HUD */
 		void DestroyPauseMenuHUD();
@@ -200,6 +207,8 @@ namespace death
 		void DestroyMainMenuHUD();
 		/** destroy the game HUD */
 		void DestroyPlayingHUD();
+		/** destroy the gameover HUD */
+		void DestroyGameOverHUD();
 
 		/** user defined method to create the pause HUD */
 		virtual PauseMenuHUD * DoCreatePauseMenuHUD();
@@ -207,6 +216,8 @@ namespace death
 		virtual MainMenuHUD * DoCreateMainMenuHUD();
 		/** user defined method to create the game HUD */
 		virtual PlayingHUD * DoCreatePlayingHUD();
+		/** user defined method to create the gameover HUD */
+		virtual GameOverHUD * DoCreateGameOverHUD();
 
 	protected:
 
@@ -233,13 +244,11 @@ namespace death
 		boost::intrusive_ptr<chaos::Sound> game_music;
 		boost::intrusive_ptr<chaos::Sound> pause_music;
 
-		/** the main menu HUD */
+		/** the HUDs */
 		boost::intrusive_ptr<MainMenuHUD> main_menu_hud;
-		/** the pause HUD */
 		boost::intrusive_ptr<PauseMenuHUD> pause_menu_hud;
-		/** the game HUD */
 		boost::intrusive_ptr<PlayingHUD> playing_hud;
-
+		boost::intrusive_ptr<GameOverHUD> gameover_hud;
 
 		/** pointer on the automata */
 		boost::intrusive_ptr<class GameAutomata> game_automata;

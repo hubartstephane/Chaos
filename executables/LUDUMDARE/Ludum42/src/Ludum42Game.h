@@ -49,18 +49,13 @@ class LudumGame : public death::Game
 	friend class PlayingToGameOverTransition;
 
 
-
-protected:
-
-	float TITLE_SIZE = 150.0f;
-	float TITLE_PLACEMENT_Y = 0;
-
-
 public:
 
-	/** destructor */
-	~LudumGame();
+	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;
+	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 2;
 
+	/** constructor */
+	LudumGame();
 
 	/** override */
 	virtual bool OnKeyEvent(int key, int action) override;
@@ -88,10 +83,6 @@ protected:
 	virtual bool FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 	virtual bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
-	/** override */
-	virtual bool LoadBestScore(std::ifstream & file) override;
-	/** override */
-	virtual bool SaveBestScore(std::ofstream & file) override;
 	/** override */
 	virtual bool CreateGameAutomata() override;
 	/** override */
@@ -151,10 +142,6 @@ protected:
 	/** additionnal initialization when loading a level */
 	bool DoLoadLevelInitialize(LudumLevel * level);
 
-	/** get the size of the world */
-	glm::vec2 GetWorldSize() const;
-	/** get the box world */
-	chaos::box2 GetWorldBox() const;
 
 	/** called whenever the input mode changes */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
@@ -174,16 +161,6 @@ protected:
 	/** create the ball */
 	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
 
-
-	/** create the title of the game */
-	void CreateGameTitle();
-	/** create the title */
-	void CreateTitle(char const * title, bool normal);
-	/** create the title */
-	void DestroyTitle();
-
-	/** update the score */
-	void IncrementScore(int delta);
 
 	/** reset the game variables */
 	void ResetGameVariables();
@@ -217,15 +194,10 @@ protected:
 
 	/** create the score allocation */
 	void UpdateScoreParticles();
-	/** create the combo allocation */
-	void UpdateComboParticles();
 	/** create the life allocation */
 	void UpdateLifeParticles();
 
 	void ChangeLife(int delta_life);
-
-	/** internal method to create score/combo */
-	chaos::ParticleAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
 
 
 	/** get currently played level */
@@ -254,15 +226,8 @@ protected:
 	/** current game values */
 	int current_life  = 3;
 	int current_level = 0;
-	int current_score = 0;
-	int current_combo_multiplier = 1;
-
-	/** the best score value */
-	int best_score = 0;
 
 	/** some data */
-	bool should_update_score = false;
-	bool should_update_combo = false;
 	float heart_warning = 0.0f;
 
 #if _DEBUG
@@ -272,10 +237,6 @@ protected:
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> text_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> best_score_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 
 	/** the levels */

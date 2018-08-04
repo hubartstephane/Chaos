@@ -6,27 +6,12 @@
 #include <chaos/ParticleDefault.h> 
 
 // ===========================================================================
-// the ID of the layers
+// VertexBase and Particle
 // ===========================================================================
 
-static int const BACKGROUND_LAYER_ID             = 0;
-static int const GAMEOBJECT_LAYER_ID             = 1;
-static int const TEXT_LAYER_ID                   = 2;
+using VertexBase = chaos::ParticleDefault::Vertex;
 
-// ===========================================================================
-// Base Vertex class
-// ===========================================================================
-
-class VertexBase
-{
-public:
-
-	glm::vec2 position;
-	glm::vec3 texcoord;
-	glm::vec4 color;
-};
-
-extern chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+using ParticleObject = chaos::ParticleDefault::Particle;
 
 // ===========================================================================
 // Background particle system
@@ -66,15 +51,5 @@ public:
 
 
 
-
-
-
-
-
-// ===========================================================================
-// Some functions
-// ===========================================================================
-
-extern void DeclareParticleClasses();
 
 

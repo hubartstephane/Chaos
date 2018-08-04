@@ -79,14 +79,13 @@ class LudumGame : public death::Game
 	friend class ParticleLifeObjectTrait;
 	friend class ParticleBrickTrait;
 
-
 	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;
-	static int const BACKGROUND_GAMEOBJECT_LAYER_ID = 2;
-	static int const GAMEOBJECT_LAYER_ID = 3;
-	static int const BRICK_LAYER_ID = 4;
-	static int const LIFE_LAYER_ID = 5;
-	static int const BALL_LAYER_ID = 6;
-	static int const CHALLENGE_LAYER_ID = 7;
+	static int const BACKGROUND_GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 2;
+	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 3;
+	static int const BRICK_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
+	static int const LIFE_LAYER_ID = death::Game::LAST_LAYER_ID + 5;
+	static int const BALL_LAYER_ID = death::Game::LAST_LAYER_ID + 6;
+	static int const CHALLENGE_LAYER_ID = death::Game::LAST_LAYER_ID + 7;
 
 protected:
 
@@ -166,7 +165,7 @@ protected:
 
 	void TickHeartWarning(double delta_time);
 
-	bool TickGameOverDetection(double delta_time);
+	virtual bool TickGameOverDetection(double delta_time);
 
 	/** initialize the dictionnary */
 	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -343,10 +342,6 @@ protected:
 	void UpdateLifeParticles();
 
 	void ChangeLife(int delta_life);
-
-	/** internal method to create score/combo */
-	chaos::ParticleAllocation * CreateScoringParticles(bool & update_flag, char const * format, int value, float Y);
-
 
 	/** get currently played level */
 	LudumLevel * GetCurrentLevel();

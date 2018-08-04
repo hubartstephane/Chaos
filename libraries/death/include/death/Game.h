@@ -151,7 +151,6 @@ namespace death
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();
 
-
 		/** the game main loop */
 		virtual void TickGameLoop(double delta_time);
 		/** called on the very first time the game is started */

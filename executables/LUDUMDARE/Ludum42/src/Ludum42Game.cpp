@@ -12,74 +12,9 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
-LudumGame::~LudumGame()
+LudumGame::LudumGame()
 {		
-	SerializeBestScore(true);
-}
-
-bool LudumGame::LoadBestScore(std::ifstream & file)
-{
-	file >> best_score;
-	return true;
-}
-
-bool LudumGame::SaveBestScore(std::ofstream & file)
-{
-	file << best_score;
-	return true;
-}
-
-
-void LudumGame::IncrementScore(int delta)
-{
-	if (delta <= 0)
-		return;
-	current_score += delta * current_combo_multiplier;
-	should_update_score = true;
-}
-
-void LudumGame::CreateGameTitle()
-{
-	CreateTitle("AsciiPaouf 3", false);
-
-	if (best_score > 0)
-	{
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 50;
-		params.hotpoint_type = chaos::Hotpoint::CENTER;
-		params.position.x = 0.0f;
-		params.position.y = -130.0f;
-
-		params.character_set_name = "normal";
-
-		std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-		best_score_allocations = CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
-	}
-}
-
-chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
-{
-	// test flag
-	if (!update_flag)
-		return nullptr;
-	update_flag = false;
-
-	// get world size
-	chaos::box2 world = GetWorldBox();
-
-	std::pair<glm::vec2, glm::vec2> corners = world.GetCorners();
-
-	// set the values
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = 30;
-	params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
-	params.position.x = corners.first.x + 20.0f;
-	params.position.y = corners.second.y - Y;
-	params.character_set_name = "normal";
-
-	// format text and create particles
-	std::string str = chaos::StringTools::Printf(format, value);
-	return CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
+	game_name = "AsciiPaouf 3";
 }
 
 void LudumGame::UpdateLifeParticles()
@@ -137,34 +72,9 @@ void LudumGame::UpdateLifeParticles()
 }
 
 
-void LudumGame::UpdateScoreParticles()
-{
-	chaos::ParticleAllocation * allocation = CreateScoringParticles(should_update_score, "Score : %d", current_score, 20.0f);
-	if (allocation != nullptr)
-		score_allocations = allocation;
-}
-
-void LudumGame::CreateTitle(char const * title, bool normal)
-{
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = TITLE_SIZE;
-	params.hotpoint_type = chaos::Hotpoint::CENTER;
-	params.position.y = TITLE_PLACEMENT_Y;
-
-	params.character_set_name = (normal) ? "normal" : "title";
-
-	text_allocations = CreateTextParticles(title, params, TEXT_LAYER_ID);
-}
-
-void LudumGame::DestroyTitle()
-{
-	text_allocations = nullptr;
-	best_score_allocations = nullptr;
-}
-
 bool LudumGame::OnAbordGame()
 {
-
+	DestroyGameObjects();
 	return true;
 }
 
@@ -172,34 +82,24 @@ void LudumGame::OnEnterMainMenu(bool very_first)
 {
 	death::Game::OnEnterMainMenu(very_first);
 
-	chaos::MathTools::ResetRandSeed();
-	if (very_first)
-	{
-	
-		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		CreateGameTitle();
-	}
 }
 
 bool LudumGame::OnEnterPause()
 {
 	death::Game::OnEnterPause();
-	CreateTitle("Pause", true);
 	return true;
 }
 
 bool LudumGame::OnLeavePause()
 {
 	death::Game::OnLeavePause();
-	DestroyTitle();
 	return true;
 }
 
 bool LudumGame::OnEnterGame()
 {
 	death::Game::OnEnterGame();
-	DestroyTitle();
 	ResetGameVariables();
 	CreateAllGameObjects(0);
 	return true;
@@ -273,22 +173,6 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	return true;
 }
 
-glm::vec2 LudumGame::GetWorldSize() const
-{
-	glm::vec2 result;
-	result.x = 1600.0f;
-	result.y = result.x / viewport_wanted_aspect;
-	return result;
-}
-
-chaos::box2 LudumGame::GetWorldBox() const
-{
-	chaos::box2 result;
-	result.position  = glm::vec2(0.0f, 0.0f);
-	result.half_size = GetWorldSize() * 0.5f;
-	return result;
-}
-
 void LudumGame::Display(glm::ivec2 const & size)
 {
 	chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
@@ -322,7 +206,7 @@ void LudumGame::Display(glm::ivec2 const & size)
 	glm::vec2 world_size;
 	world_size.x = 1600.0f;
 	world_size.y = world_size.x * (viewport.half_size.y / viewport.half_size.x);
-	main_uniform_provider.AddVariableValue("world_size", world_size);
+	main_uniform_provider.AddVariableValue("view_size", world_size);
 
 	// draw particle system
 	if (particle_manager != nullptr)
@@ -340,20 +224,12 @@ void LudumGame::ResetGameVariables()
 	heart_warning = 1.0f;
 
 	current_score = 0;
-	current_combo_multiplier  = 1;
 	current_level = 0;
-
-	should_update_score = true;
-	should_update_combo = true;
 }
 
 void LudumGame::OnGameOver()
 {
-	if (best_score < current_score)
-	{
-		best_score = current_score;
-		SerializeBestScore(true);
-	}
+	death::Game::OnGameOver();
 	DestroyGameObjects();
 }
 
@@ -464,6 +340,8 @@ void LudumGame::TickHeartWarning(double delta_time)
 
 void LudumGame::TickGameLoop(double delta_time)
 {
+
+#if 0
 	DisplacePlayer(delta_time);
 
 	if (TickGameOverDetection(delta_time))
@@ -476,6 +354,7 @@ void LudumGame::TickGameLoop(double delta_time)
 		TickLevelCompleted(delta_time);
 		TickHeartWarning(delta_time);
 	}
+#endif
 }
 
 
@@ -488,9 +367,6 @@ void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
 	life_allocations = nullptr;
-	score_allocations = nullptr;
-	combo_allocations = nullptr;
-	best_score_allocations = nullptr;
 }
 
 chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
@@ -619,7 +495,8 @@ bool LudumGame::CreateGameAutomata()
 
 bool LudumGame::DeclareParticleClasses()
 {
-
+	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
+	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
 	return true;
 }
 

@@ -56,31 +56,6 @@ void LudumGame::IncrementScore(int delta)
 	current_score += delta * combo_multiplier;
 }
 
-chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
-{
-	// test flag
-	if (!update_flag)
-		return nullptr;
-	update_flag = false;
-
-	// get view size
-	chaos::box2 view = GetViewBox();
-
-	std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
-
-	// set the values
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = 30;
-	params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
-	params.position.x = corners.first.x + 20.0f;
-	params.position.y = corners.second.y - Y;
-	params.character_set_name = "normal";
-
-	// format text and create particles
-	std::string str = chaos::StringTools::Printf(format, value);
-	return CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID);
-}
-
 void LudumGame::UpdateLifeParticles()
 {
 	// get the number of particles already existing
@@ -301,7 +276,6 @@ void LudumGame::ResetGameVariables()
 void LudumGame::OnGameOver()
 {
 	death::Game::OnGameOver();
-	//CreateGameTitle();
 	DestroyGameObjects();
 }
 

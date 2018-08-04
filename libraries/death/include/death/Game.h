@@ -152,7 +152,12 @@ namespace death
 		virtual bool LoadLevels();
 
 		/** the game main loop */
-		virtual void TickGameLoop(double delta_time);
+		virtual bool TickGameLoop(double delta_time);
+		/** test whether there is a game over */
+		virtual bool CheckGameOverCondition(double delta_time);
+		/** update the score particles if necessary */
+		void UpdateScoreParticles();
+
 		/** called on the very first time the game is started */
 		virtual void OnEnterMainMenu(bool very_first);
 		/** called whenever the game is lost */

@@ -115,13 +115,6 @@ void LudumGame::UpdateComboParticles()
 	hud->SetComboValue(this, combo_multiplier);
 }
 
-void LudumGame::UpdateScoreParticles()
-{
-	if (playing_hud == nullptr)
-		return;
-	playing_hud->SetScoreValue(this, current_score);
-}
-
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
 	death::Game::OnEnterMainMenu(very_first);
@@ -374,7 +367,7 @@ void LudumGame::ChangeLife(int delta_life)
 	current_life = chaos::MathTools::Clamp(current_life + delta_life, 0, max_life);
 }
 
-bool LudumGame::TickGameOverDetection(double delta_time)
+bool LudumGame::CheckGameOverCondition(double delta_time)
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count == 0)
@@ -392,9 +385,9 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 			SetPlayerLength(player_initial_length);
 			balls_allocations = CreateBalls(1, true);	
 		}
-		return false;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 void LudumGame::OnBallCollide(bool collide_brick)
@@ -494,25 +487,24 @@ void LudumGame::TickBrickOffset(double delta_time)
 	}
 }
 
-void LudumGame::TickGameLoop(double delta_time)
+bool LudumGame::TickGameLoop(double delta_time)
 {
-	DisplacePlayer(delta_time);
+	if (!death::Game::TickGameLoop(delta_time))
+		return false;
 
-	if (TickGameOverDetection(delta_time))
-	{
-		// create the score text
-		UpdateScoreParticles();
-		// create the combo text
-		UpdateComboParticles();
-		// create the life 
-		UpdateLifeParticles();
-		// some other calls
-		TickBrickOffset(delta_time);
-		TickLevelCompleted(delta_time);
-		TickChallenge(delta_time);
-		TickBallSplit(delta_time);
-		TickHeartWarning(delta_time);
-	}
+	// displace the player
+	DisplacePlayer(delta_time);
+	// create the combo text
+	UpdateComboParticles();
+	// create the life 
+	UpdateLifeParticles();
+	// some other calls
+	TickBrickOffset(delta_time);
+	TickLevelCompleted(delta_time);
+	TickChallenge(delta_time);
+	TickBallSplit(delta_time);
+	TickHeartWarning(delta_time);
+	return true;
 }
 
 void LudumGame::SendKeyboardButtonToChallenge(unsigned int c)

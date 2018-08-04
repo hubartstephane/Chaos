@@ -17,61 +17,6 @@ LudumGame::LudumGame()
 	game_name = "AsciiPaouf 3";
 }
 
-void LudumGame::UpdateLifeParticles()
-{
-
-#if 0
-	// get the number of particles already existing
-	size_t life_particles = 0;
-	if (life_allocations != nullptr)
-		life_particles = life_allocations->GetParticleCount();
-
-	// no changes ?
-	if (life_particles == current_life)
-		return;
-
-	// some life lost (destroy particles)
-	if ((size_t)current_life < life_particles)
-	{
-		life_allocations->Resize(current_life);
-		return;
-	}
-
-	// some life gained
-	assert(life_particles < (size_t)current_life);
-	
-	//if (life_allocations == nullptr)
-		
-	life_allocations = CreateGameObjects("life", current_life, LIFE_LAYER_ID);
-	if (life_allocations == nullptr)
-		return;
-
-	// set the color
-	chaos::ParticleAccessor<ParticleObject> particles = life_allocations->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return;
-
-	glm::vec2 world_size = GetWorldSize();
-
-	glm::vec2 particle_size;
-	particle_size.x = 35.0f;
-	particle_size.y = 20.0f;
-
-	for (size_t i = 0; i < (size_t)current_life; ++i)
-	{
-		glm::vec2 position;
-		position.x = -world_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
-		position.y = -world_size.y * 0.5f + 15.0f;
-
-		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-		particles[i].bounding_box.half_size = 0.5f * particle_size;
-
-		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-#endif
-}
-
-
 bool LudumGame::OnAbordGame()
 {
 	DestroyGameObjects();
@@ -221,8 +166,6 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 void LudumGame::ResetGameVariables()
 {
 	current_life  = initial_life;
-	heart_warning = 1.0f;
-
 	current_score = 0;
 	current_level = 0;
 }
@@ -256,14 +199,14 @@ void LudumGame::ChangeLife(int delta_life)
 	current_life = chaos::MathTools::Maximum(current_life + delta_life, 0);
 }
 
-bool LudumGame::TickGameOverDetection(double delta_time)
+bool LudumGame::CheckGameOverCondition(double delta_time)
 {
 	if (current_life <= 0)
 	{
 		RequireGameOver();
-		return false;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 
@@ -318,43 +261,15 @@ void LudumGame::TickLevelCompleted(double delta_time)
 	}
 }
 
-void LudumGame::TickHeartWarning(double delta_time)
+bool LudumGame::TickGameLoop(double delta_time)
 {
-	if (current_life == 1)
-	{
-		heart_warning -= heart_beat_speed * (float)delta_time;
-		if (heart_warning <= 0.0f)
-		{
-			PlaySound("heartbeat", false, false);
-
-			float fractionnal_part, integer_part;
-			fractionnal_part = modf(heart_warning, &integer_part);
-
-			heart_warning = (1.0f + fractionnal_part);
-		}
-	}
-	else
-		heart_warning = 1.0f;
-}
+	if (!death::Game::TickGameLoop(delta_time))
+		return false;
 
 
-void LudumGame::TickGameLoop(double delta_time)
-{
 
-#if 0
-	DisplacePlayer(delta_time);
 
-	if (TickGameOverDetection(delta_time))
-	{
-		// create the score text
-		UpdateScoreParticles();
-		// create the life 
-		UpdateLifeParticles();
-		// some other calls
-		TickLevelCompleted(delta_time);
-		TickHeartWarning(delta_time);
-	}
-#endif
+	return true;
 }
 
 
@@ -505,7 +420,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
-	DEATHGAME_JSON_ATTRIBUTE(heart_beat_speed);
 	return true;
 }
 

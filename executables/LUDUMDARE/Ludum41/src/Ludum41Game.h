@@ -150,7 +150,7 @@ protected:
 	virtual bool OnAbordGame() override;
 
 	/** override */
-	virtual void TickGameLoop(double delta_time) override;
+	virtual bool TickGameLoop(double delta_time) override;
 
 	
 	
@@ -165,7 +165,7 @@ protected:
 
 	void TickHeartWarning(double delta_time);
 
-	virtual bool TickGameOverDetection(double delta_time);
+	virtual bool CheckGameOverCondition(double delta_time) override;
 
 	/** initialize the dictionnary */
 	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -334,8 +334,6 @@ protected:
 	void OnLongBarChallenge(bool success);
 	bool IsLongBarChallengeValid(bool success);
 
-	/** create the score allocation */
-	void UpdateScoreParticles();
 	/** create the combo allocation */
 	void UpdateComboParticles();
 	/** create the life allocation */

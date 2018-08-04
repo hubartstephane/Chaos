@@ -567,9 +567,25 @@ namespace death
 		return !menu_music->HasVolumeBlending();
 	}
 
-	void Game::TickGameLoop(double delta_time)
+	bool Game::CheckGameOverCondition(double delta_time)
 	{
+		return false; // no game hover
+	}
 
+	bool Game::TickGameLoop(double delta_time)
+	{
+		if (CheckGameOverCondition(delta_time)) 
+			return false;
+		// create the score text
+		UpdateScoreParticles();
+		return true;
+	}
+
+	void Game::UpdateScoreParticles()
+	{
+		if (playing_hud == nullptr)
+			return;
+		playing_hud->SetScoreValue(this, current_score);
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)

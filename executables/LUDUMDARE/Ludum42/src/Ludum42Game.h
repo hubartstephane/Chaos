@@ -110,7 +110,7 @@ protected:
 	virtual bool OnAbordGame() override;
 
 	/** override */
-	virtual void TickGameLoop(double delta_time) override;
+	virtual bool TickGameLoop(double delta_time) override;
 
 
 
@@ -126,9 +126,7 @@ protected:
 	
 	void TickLevelCompleted(double delta_time);
 
-	void TickHeartWarning(double delta_time);
-
-	bool TickGameOverDetection(double delta_time);
+	virtual bool CheckGameOverCondition(double delta_time) override;
 
 	/** initialize the particle manager */
 	virtual bool InitializeParticleManager() override;
@@ -192,10 +190,6 @@ protected:
 
 
 
-	/** create the score allocation */
-	void UpdateScoreParticles();
-	/** create the life allocation */
-	void UpdateLifeParticles();
 
 	void ChangeLife(int delta_life);
 
@@ -221,14 +215,10 @@ protected:
 
 	/** game settings */
 	int   initial_life = 3;
-	float heart_beat_speed = 2.0f;
 
 	/** current game values */
 	int current_life  = 3;
 	int current_level = 0;
-
-	/** some data */
-	float heart_warning = 0.0f;
 
 #if _DEBUG
 	bool cheat_next_level = false;

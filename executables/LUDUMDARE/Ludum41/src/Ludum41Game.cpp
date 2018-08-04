@@ -12,6 +12,10 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
+void LudumPlayingHUD::SetComboValue(death::Game * game, int new_combo)
+{
+	CacheAndCreateScoreAllocation(game, new_combo, "Combo : %d x", 60.0f, cached_combo_value, combo_allocations);
+}
 
 size_t LudumLevel::GetBrickCount() const
 {
@@ -31,12 +35,19 @@ LudumGame::LudumGame()
 	game_name = "AsciiPaouf 2";
 }
 
+death::PlayingHUD * LudumGame::DoCreatePlayingHUD()
+{
+	LudumPlayingHUD * result = new LudumPlayingHUD;
+	if (result == nullptr)
+		return nullptr;
+	return result;
+}
+
 void LudumGame::IncrementScore(int delta)
 {
 	if (delta <= 0)
 		return;
 	current_score += delta * combo_multiplier;
-	should_update_score = true;
 }
 
 chaos::ParticleAllocation * LudumGame::CreateScoringParticles(bool & update_flag, char const * format, int value, float Y)
@@ -117,23 +128,17 @@ void LudumGame::UpdateLifeParticles()
 
 void LudumGame::UpdateComboParticles()
 {
-	// destroy combo multiplier if non necessary
-	if (combo_multiplier <= 1)
-	{
-		combo_allocations = nullptr;
+	LudumPlayingHUD * hud = dynamic_cast<LudumPlayingHUD *>(playing_hud.get());
+	if (hud == nullptr)
 		return;
-	}
-	// test whether the combo has changed
-	chaos::ParticleAllocation * allocation = CreateScoringParticles(should_update_combo, "Combo : %d x", combo_multiplier, 60.0f);
-	if (allocation != nullptr)
-		combo_allocations = allocation;
+	hud->SetComboValue(this, combo_multiplier);
 }
 
 void LudumGame::UpdateScoreParticles()
 {
-	chaos::ParticleAllocation * allocation = CreateScoringParticles(should_update_score, "Score : %d", current_score, 20.0f);
-	if (allocation != nullptr)
-		score_allocations = allocation;
+	if (playing_hud == nullptr)
+		return;
+	playing_hud->SetScoreValue(this, current_score);
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)
@@ -285,9 +290,6 @@ void LudumGame::ResetGameVariables()
 	current_score = 0;
 	combo_multiplier = 1;
 	current_level = 0;
-
-	should_update_score = true;
-	should_update_combo = true;
 }
 
 void LudumGame::OnGameOver()
@@ -404,7 +406,6 @@ bool LudumGame::TickGameOverDetection(double delta_time)
 		{
 			PlaySound("balllost", false, false);
 			combo_multiplier = 1;
-			should_update_combo = true;
 			ball_collision_speed = 0.0f;
 			ball_power = 1.0f;
 			ball_speed = ball_initial_speed;
@@ -595,7 +596,6 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 	{
 		combo_multiplier = 1;
 	}
-	should_update_combo = true;
 }
 
 void LudumGame::DestroyGameObjects()
@@ -604,8 +604,6 @@ void LudumGame::DestroyGameObjects()
 	bricks_allocations = nullptr;
 	life_allocations = nullptr;
 	balls_allocations = nullptr;
-	score_allocations = nullptr;
-	combo_allocations = nullptr;
 
 	sequence_challenge = nullptr;
 }

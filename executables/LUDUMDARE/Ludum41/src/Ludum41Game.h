@@ -16,6 +16,21 @@
 #include <chaos/ParticleTextGenerator.h>
 
 #include <death/Game.h>
+#include <death/GameHUD.h>
+
+class LudumPlayingHUD : public death::PlayingHUD
+{
+
+public:
+
+	void SetComboValue(death::Game * game, int new_combo);
+
+protected:
+
+	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
+
+	int cached_combo_value = -1;
+};
 
 // =================================================
 // Levels
@@ -99,6 +114,9 @@ public:
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
 protected:
+
+	/** override */
+	death::PlayingHUD * DoCreatePlayingHUD() override;
 
 	/** creating all object in the game */
 	void CreateAllGameObjects(int level);
@@ -421,10 +439,6 @@ protected:
 	
 	int current_level = 0;
 
-	bool should_update_score = false;
-
-	bool should_update_combo = false;
-
 	float heart_warning = 0.0f;
 
 #if _DEBUG
@@ -436,8 +450,6 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 
 	/** the possible rewards */

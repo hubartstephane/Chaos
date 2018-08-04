@@ -38,13 +38,15 @@ namespace death
 
 	public:
 
-		void SetScoreValue(int new_score);
-
-	public:
-
-		boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
+		void SetScoreValue(class Game * game, int new_score);
 
 	protected:
+
+		void CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y, int & cached_value, boost::intrusive_ptr<chaos::ParticleAllocation> & allocation);
+
+	protected:
+
+		boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
 
 		int cached_score_value = -1;
 	};

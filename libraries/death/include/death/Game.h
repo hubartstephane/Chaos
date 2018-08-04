@@ -40,6 +40,8 @@ namespace death
 		friend class PlayingState;
 		friend class PlayingToGameOverTransition;
 
+		friend class PlayingHUD;
+
 	public:
 
 		/** some ID for layers */
@@ -191,6 +193,8 @@ namespace death
 		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id = TEXT_LAYER_ID);
 		/** create a title */
 		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, int layer_id = TEXT_LAYER_ID);
+		/** create a score text at the top left corner */
+		chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, int layer_id = TEXT_LAYER_ID);
 
 		/** create the pause HUD */
 		void CreatePauseMenuHUD();

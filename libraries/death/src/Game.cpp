@@ -490,19 +490,18 @@ namespace death
 		return true;
 	}
 
-
 	void Game::OnEnterMainMenu(bool very_first)
 	{
 		if (very_first)
 			StartMainMenuMusic(true);
 		CreateMainMenuHUD();
 		DestroyGameOverHUD();
+		DestroyPlayingHUD();
 	}
 
 	void Game::OnGameOver()
 	{
-		ConditionnalSaveBestScore();
-		
+		ConditionnalSaveBestScore();		
 	}
 
 	bool Game::OnEnterPause()
@@ -530,7 +529,6 @@ namespace death
 	bool Game::OnLeaveGame(bool gameover)
 	{
 		StartMainMenuMusic(true);
-		DestroyPlayingHUD();
 		if (gameover)
 			CreateGameOverHUD();
 		return true;
@@ -681,9 +679,25 @@ namespace death
 		return CreateTextParticles(title, params, layer_id);
 	}
 
+	chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, int layer_id)
+	{
+		// get view size
+		chaos::box2 view = GetViewBox();
 
+		std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
 
+		// set the values
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 30;
+		params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
+		params.position.x = corners.first.x + 20.0f;
+		params.position.y = corners.second.y - Y;
+		params.character_set_name = "normal";
 
+		// format text and create particles
+		std::string str = chaos::StringTools::Printf(format, value);
+		return CreateTextParticles(str.c_str(), params, layer_id);
+	}
 
 	void Game::CreatePauseMenuHUD()
 	{
@@ -764,10 +778,6 @@ namespace death
 		PlayingHUD * result = new PlayingHUD;
 		if (result == nullptr)
 			return nullptr;
-
-
-
-
 		return result;
 	}
 

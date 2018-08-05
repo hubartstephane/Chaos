@@ -20,14 +20,13 @@
 
 class LudumPlayingHUD : public death::PlayingHUD
 {
+	static int const COMBO_VALUE = death::GameHUD::LAST_KEY + 1;
 
 public:
 
 	void SetComboValue(death::Game * game, int new_combo);
 
 protected:
-
-	boost::intrusive_ptr<chaos::ParticleAllocation> combo_allocations;
 
 	int cached_combo_value = -1;
 };

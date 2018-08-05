@@ -8,29 +8,40 @@ namespace death
 {
 	class GameHUD : public chaos::ReferencedObject
 	{
+	public:
 
+		static int const TITLE       = 0;
+		static int const BEST_SCORE  = 1;
+		static int const LAST_KEY    = 1;
+
+		/** insert some particles inside the HUD */
+		void AddParticles(int key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
+		/** remove some particles from the HUD */
+		void RemoveParticles(int key);
+		/** clear all particles from the HUD */
+		void Clear();
+
+	protected:
+
+		std::multimap<int, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
 	};
 
 	class MainMenuHUD : public GameHUD
 	{
 	public:
 
-		boost::intrusive_ptr<chaos::ParticleAllocation> title_allocations;
-		boost::intrusive_ptr<chaos::ParticleAllocation> best_score_allocations;
 	};
 
 	class PauseMenuHUD : public GameHUD
 	{
 	public:
 
-		boost::intrusive_ptr<chaos::ParticleAllocation> title_allocations;
 	};
 
 	class GameOverHUD : public GameHUD
 	{
 	public:
 
-		boost::intrusive_ptr<chaos::ParticleAllocation> title_allocations;
 	};
 
 	class PlayingHUD : public GameHUD
@@ -42,11 +53,9 @@ namespace death
 
 	protected:
 
-		void CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y, int & cached_value, boost::intrusive_ptr<chaos::ParticleAllocation> & allocation);
+		void CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y, int & cached_value, int key);
 
 	protected:
-
-		boost::intrusive_ptr<chaos::ParticleAllocation> score_allocations;
 
 		int cached_score_value = -1;
 	};

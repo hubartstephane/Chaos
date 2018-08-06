@@ -12,3 +12,8 @@ size_t LudumLevel::GetBrickCount() const
 	}
 	return result;
 }
+
+death::GameLevelInstance * LudumLevel::DoCreateLevelInstance()
+{
+	return new LudumLevelInstance;
+}

@@ -15,6 +15,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 
 #include <death/GameHUD.h>
+#include <death/GameLevel.h>
 
 namespace death
 {
@@ -150,6 +151,8 @@ namespace death
 
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();
+		/* load one level */
+		virtual class death::GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path);
 
 		/** the game main loop */
 		virtual bool TickGameLoop(double delta_time);
@@ -157,6 +160,8 @@ namespace death
 		virtual bool CheckGameOverCondition(double delta_time);
 		/** update the score particles if necessary */
 		void UpdateScoreParticles();
+
+		virtual void ResetGameVariables();
 
 		/** called on the very first time the game is started */
 		virtual void OnEnterMainMenu(bool very_first);
@@ -280,6 +285,9 @@ namespace death
 		float title_placement_y = 0;
 
 		char const * game_name = nullptr;
+
+		/** level data */
+		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
 	};
 
 }; // namespace death

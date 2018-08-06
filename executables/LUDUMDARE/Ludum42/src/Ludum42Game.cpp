@@ -165,8 +165,8 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 
 void LudumGame::ResetGameVariables()
 {
+	death::Game::ResetGameVariables();
 	current_life  = initial_life;
-	current_score = 0;
 	current_level = 0;
 }
 

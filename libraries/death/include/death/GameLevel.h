@@ -7,6 +7,8 @@ namespace death
 {
 	class GameLevel : public chaos::ReferencedObject
 	{
+		friend class Game;
+
 	public:
 
 		/** create a level instance for that level */

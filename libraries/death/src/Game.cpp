@@ -1,6 +1,7 @@
 #include <death/Game.h>
 #include <death/GameAutomata.h>
 #include <death/GamepadManager.h>
+#include <death/GameLevel.h>
 
 #include <chaos/InputMode.h>
 
@@ -191,8 +192,43 @@ namespace death
 		return true;
 	}
 
+	death::GameLevel * Game::DoLoadLevel(int level_index, chaos::FilePathParam const & path)
+	{
+		return nullptr;
+	}
+
 	bool Game::LoadLevels()
 	{
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		if (application == nullptr)
+			return false;
+
+		// compute resource path
+		boost::filesystem::path resources_path = application->GetResourcesPath();
+		boost::filesystem::path levels_path = resources_path / "levels";
+
+		// iterate the files and load the levels
+		boost::filesystem::directory_iterator end;
+		for (boost::filesystem::directory_iterator it(levels_path); it != end; ++it)
+		{
+			int level_index = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
+
+			// create the level
+			death::GameLevel * level = DoLoadLevel(level_index, it->path());
+			if (level == nullptr)
+				continue;
+			// initialize it
+			level->level_index = level_index;
+			// store it
+			levels.push_back(level);
+		}
+
+		// sort the levels
+		std::sort(levels.begin(), levels.end(),
+			[](boost::intrusive_ptr<GameLevel> l1, boost::intrusive_ptr<GameLevel> l2)
+		{
+			return (l1->level_index < l2->level_index);
+		});
 		return true;
 	}
 
@@ -541,6 +577,7 @@ namespace death
 		StartGameMusic(true);
 		DestroyMainMenuHUD();
 		CreatePlayingHUD();
+		ResetGameVariables();
 		return true;
 	}
 
@@ -597,6 +634,11 @@ namespace death
 		// create the score text
 		UpdateScoreParticles();
 		return true;
+	}
+
+	void Game::ResetGameVariables()
+	{
+		current_score = 0;
 	}
 
 	void Game::UpdateScoreParticles()

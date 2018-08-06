@@ -15,6 +15,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
+#include <chaos/FilePath.h>
 
 #include <death/Game.h>
 #include <death/GameHUD.h>
@@ -157,10 +158,8 @@ protected:
 	/** fullfill the lists of rewards an punishments */
 	bool InitializeRewardsAndPunishments();
 	
-	/** loading the levels */
-	virtual bool LoadLevels() override;
 	/** load one level */
-	bool DoLoadLevel(int level_number, std::vector<std::string> & level_content);
+	virtual death::GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path) override;
 
 
 	
@@ -205,7 +204,7 @@ protected:
 	void IncrementScore(int delta);
 
 	/** reset the game variables */
-	void ResetGameVariables();
+	virtual void ResetGameVariables() override;
 
 	/** called whenever a ball collide */
 	void OnBallCollide(bool collide_brick);
@@ -423,9 +422,5 @@ protected:
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;
 	/** the possible punishment */
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> punishments;
-
-	/** the levels */
-	std::vector<boost::intrusive_ptr<LudumLevel>> levels;
-
 };
 

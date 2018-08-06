@@ -161,7 +161,7 @@ protected:
 
 
 	/** reset the game variables */
-	void ResetGameVariables();
+	virtual void ResetGameVariables() override;
 
 
 	/** get the position of the player */

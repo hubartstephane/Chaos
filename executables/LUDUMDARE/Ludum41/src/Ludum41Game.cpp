@@ -132,7 +132,6 @@ bool LudumGame::OnLeavePause()
 bool LudumGame::OnEnterGame()
 {
 	death::Game::OnEnterGame();	
-	ResetGameVariables();
 	CreateAllGameObjects(0);
 	return true;
 }
@@ -235,6 +234,8 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 
 void LudumGame::ResetGameVariables()
 {
+	death::Game::ResetGameVariables();
+
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
 
@@ -248,7 +249,6 @@ void LudumGame::ResetGameVariables()
 	ball_collision_speed = 0.0f;
 	heart_warning = 1.0f;
 
-	current_score = 0;
 	combo_multiplier = 1;
 	current_level = 0;
 }
@@ -402,14 +402,14 @@ LudumLevel * LudumGame::GetLevel(int level_number)
 {
 	if (levels.size() == 0)
 		return nullptr;
-	return levels[level_number % (int)levels.size()].get();
+	return dynamic_cast<LudumLevel *>(levels[level_number % (int)levels.size()].get());
 }
 
 LudumLevel const * LudumGame::GetLevel(int level_number) const
 {
 	if (levels.size() == 0)
 		return nullptr;
-	return levels[level_number % (int)levels.size()].get();
+	return dynamic_cast<LudumLevel const *>(levels[level_number % (int)levels.size()].get());
 }
 
 void LudumGame::TickLevelCompleted(double delta_time)
@@ -1174,14 +1174,15 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-
-bool LudumGame::DoLoadLevel(int level_number, std::vector<std::string> & level_content)
+death::GameLevel * LudumGame::DoLoadLevel(int level_index, chaos::FilePathParam const & path)
 {
-	LudumLevel * level = new LudumLevel;
-	if (level == nullptr)
-		return false;
+	std::vector<std::string> level_content = chaos::FileTools::ReadFileLines(path);
+	if (level_content.size() == 0)
+		return nullptr;
 
-	level->level_number = level_number;
+	LudumLevel * result = new LudumLevel;
+	if (result == nullptr)
+		return nullptr;
 
 	std::vector<int> line;
 	for (size_t i = 0; i < level_content.size(); ++i)
@@ -1197,7 +1198,7 @@ bool LudumGame::DoLoadLevel(int level_number, std::vector<std::string> & level_c
 			if (c == 'B')
 			{
 				line.push_back(LudumLevel::INDESTRUCTIBLE);
-				level->indestructible_brick_count++;
+				result->indestructible_brick_count++;
 				continue;
 			}
 			// separator
@@ -1210,44 +1211,11 @@ bool LudumGame::DoLoadLevel(int level_number, std::vector<std::string> & level_c
 			int brick_type = (int)(c - '0');
 			line.push_back(brick_type);
 		}
-		level->bricks.push_back(std::move(line));
+		result->bricks.push_back(std::move(line));
 	}
 
-	levels.push_back(level);
-
-	return true;
+	return result;
 }
-
-bool LudumGame::LoadLevels()
-{
-	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-	if (application == nullptr)
-		return false;
-
-	// compute resource path
-	boost::filesystem::path resources_path = application->GetResourcesPath();
-	boost::filesystem::path levels_path = resources_path / "levels";
-
-	// iterate the files and load the levels
-	boost::filesystem::directory_iterator end;
-	for (boost::filesystem::directory_iterator it(levels_path); it != end; ++it)
-	{
-		std::vector<std::string> level_content = chaos::FileTools::ReadFileLines(it->path());
-
-		int level_number = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
-		if (!DoLoadLevel(level_number, level_content))
-			return false;
-	}
-
-	// sort the levels
-	std::sort(levels.begin(), levels.end(),
-		[](boost::intrusive_ptr<LudumLevel> l1, boost::intrusive_ptr<LudumLevel> l2)
-	{
-		return (l1->level_number < l2->level_number);
-	});
-	return true;
-}
-
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {

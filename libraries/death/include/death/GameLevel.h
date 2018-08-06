@@ -10,12 +10,20 @@ namespace death
 	public:
 
 		/** create a level instance for that level */
-		GameLevelInstance * CreateLevelInstance();
+		class GameLevelInstance * CreateLevelInstance();
+
+		/** the index of that level */
+		int GetLevelIndex() const { return level_index; }
 
 	protected:
 
 		/** create a level instance for that level user specified function */
-		virtual GameLevelInstance * DoCreateLevelInstance();
+		virtual class GameLevelInstance * DoCreateLevelInstance();
+
+	protected:
+
+		/** the index of the level (maybe a key or an ordered index) */
+		int level_index = 0;
 	};
 
 	class GameLevelInstance : public chaos::ReferencedObject
@@ -31,8 +39,8 @@ namespace death
 
 	protected:
 
+		/** a pointer on the level that generated this */
 		GameLevel * level = nullptr;
-
 	};
 
 }; // namespace death

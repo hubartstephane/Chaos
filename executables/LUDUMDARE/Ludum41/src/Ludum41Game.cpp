@@ -23,19 +23,6 @@ void LudumPlayingHUD::SetComboValue(death::Game * game, int new_combo)
 	CacheAndCreateScoreAllocation(game, new_combo, "Combo : %d x", 60.0f, cached_combo_value, COMBO_VALUE);
 }
 
-size_t LudumLevel::GetBrickCount() const
-{
-	size_t result = 0;
-	for (size_t i = 0; i < bricks.size(); ++i)
-	{
-		std::vector<int> const & line = bricks[i];
-		for (int b : line)
-			if (b != LudumLevel::NONE)
-				++result;
-	}
-	return result;
-}
-
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";

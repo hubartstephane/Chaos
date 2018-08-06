@@ -47,14 +47,18 @@ namespace chaos
 			// create the texture
 			if (target == GL_TEXTURE_1D)
 			{
-				int level_count = GLTextureTools::GetMipmapLevelCount(image.width);
+				int level_count = (parameters.reserve_mipmaps) ?
+					GLTextureTools::GetMipmapLevelCount(image.width) :
+					1;
 				glTextureStorage1D(texture_id, level_count, internal_format, image.width);
 				if (texture_buffer != nullptr)
 					glTextureSubImage1D(texture_id, 0, 0, image.width, format, type, texture_buffer);
 			}
 			else
 			{
-				int level_count = GLTextureTools::GetMipmapLevelCount(image.width, image.height);
+				int level_count = (parameters.reserve_mipmaps) ?
+					GLTextureTools::GetMipmapLevelCount(image.width, image.height) : 
+					1;
 				glTextureStorage2D(texture_id, level_count, internal_format, image.width, image.height);
 				if (texture_buffer != nullptr)
 					glTextureSubImage2D(texture_id, 0, 0, 0, image.width, image.height, format, type, texture_buffer);
@@ -285,7 +289,9 @@ namespace chaos
 			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);
 
 			// generate the cube-texture : select as internal format the one given by the MERGED PIXEL FORMAT
-			int level_count = GLTextureTools::GetMipmapLevelCount(size, size);
+			int level_count = (parameters.reserve_mipmaps) ?
+				GLTextureTools::GetMipmapLevelCount(size, size) :
+				1;
 			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of SkyBox

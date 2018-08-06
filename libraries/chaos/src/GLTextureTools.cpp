@@ -248,7 +248,7 @@ namespace chaos
 			glTextureParameteri(texture_id, GL_TEXTURE_SWIZZLE_A, GL_ONE);
 		}
 
-		if (parameters.build_mipmaps)
+		if (parameters.build_mipmaps && parameters.reserve_mipmaps)
 			if (texture_description.type != GL_TEXTURE_RECTANGLE) // not working with RECTANGLE (crash)
 				glGenerateTextureMipmap(texture_id);
 	}

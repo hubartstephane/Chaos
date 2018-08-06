@@ -63,7 +63,7 @@ namespace chaos
 				ImageDescription image_description(nullptr, final_size.x, final_size.y, info.pixel_format);
 
 				GPUTextureLoader loader;
-				target_info.texture = loader.GenTextureObject(image_description);
+				target_info.texture = loader.GenTextureObject(image_description, info.gen_texture_parameters);
 				target_info.texture_mipmap = 0;
 #endif
 			}
@@ -204,7 +204,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUFramebufferGenerator::AddDepthStencilAttachment(glm::ivec2 const & in_size, char const * name)
+	bool GPUFramebufferGenerator::AddDepthStencilAttachment(glm::ivec2 const & in_size, char const * name, GenTextureParameters const & gen_texture_parameters)
 	{
 		if (!IsSurfaceSizeCompatible(in_size))
 			return false;
@@ -217,6 +217,7 @@ namespace chaos
 		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
 		info.pixel_format = PixelFormat::GetPixelFormat<PixelDepthStencil>();
 		info.size = in_size;
+		info.gen_texture_parameters = gen_texture_parameters;
 		CompleteAndInsertAttachment(info, name);
 		return true;
 	}
@@ -263,7 +264,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, PixelFormat const & pixel_format, glm::ivec2 const & in_size, char const * name)
+	bool GPUFramebufferGenerator::AddColorAttachment(int color_index, PixelFormat const & pixel_format, glm::ivec2 const & in_size, char const * name, GenTextureParameters const & gen_texture_parameters)
 	{
 		if (!IsSurfaceSizeCompatible(in_size))
 			return false;
@@ -278,6 +279,7 @@ namespace chaos
 		info.attachment_point = GL_COLOR_ATTACHMENT0 + color_index;
 		info.pixel_format = pixel_format;
 		info.size = in_size;
+		info.gen_texture_parameters = gen_texture_parameters;
 		CompleteAndInsertAttachment(info, name);
 		return true;
 	}

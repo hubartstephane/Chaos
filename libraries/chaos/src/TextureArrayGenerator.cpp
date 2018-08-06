@@ -211,7 +211,9 @@ namespace chaos
 		if (texture_id > 0)
 		{
 			// initialize the storage
-			int level_count = GLTextureTools::GetMipmapLevelCount(width, height);
+			int level_count = (parameters.reserve_mipmaps) ?
+				GLTextureTools::GetMipmapLevelCount(width, height) :
+				1;
 			glTextureStorage3D(texture_id, level_count, gl_pixel_format.internal_format, width, height, (GLsizei)slice_count);
 
 			// fill each slices into GPU

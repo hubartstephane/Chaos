@@ -45,6 +45,8 @@ namespace chaos
 		GLint  level = 0;
 		/** parameters for glTexImageXX(...) */
 		GLint  border = 0;
+		/** whether at texture creation we want to have mipmaps */
+		bool reserve_mipmaps = true;
 		/** enable build mipmaps */
 		bool build_mipmaps = true;
 		/** enable the texture to be used has rectangular instead of GL_TEXTURE_1D or GL_TEXTURE_2D */

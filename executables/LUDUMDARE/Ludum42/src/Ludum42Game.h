@@ -2,6 +2,7 @@
 
 #include "Ludum42StateMachine.h"
 #include "Ludum42Particles.h"
+#include "Ludum42Level.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -18,19 +19,6 @@
 #include <chaos/TiledMapTools.h>
 
 #include <death/Game.h>
-
-// =================================================
-// LudumGame
-// =================================================
-
-class LudumLevel : public chaos::ReferencedObject
-{
-public:
-
-	int level_number = 0;
-
-	boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
-};
 
 // =================================================
 // LudumGame
@@ -136,7 +124,7 @@ protected:
 	/** loading the levels */
 	virtual bool LoadLevels() override;
 	/** load one level */
-	bool DoLoadLevel(int level_number, chaos::TiledMap::Map * tiled_map);
+	virtual death::GameLevel * DoLoadLevel(int level_number, chaos::FilePathParam const & path) override;
 	/** additionnal initialization when loading a level */
 	bool DoLoadLevelInitialize(LudumLevel * level);
 
@@ -214,7 +202,7 @@ protected:
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
 	/** game settings */
-	int   initial_life = 3;
+	int initial_life = 3;
 
 	/** current game values */
 	int current_life  = 3;
@@ -228,7 +216,4 @@ protected:
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
-
-	/** the levels */
-	std::vector<boost::intrusive_ptr<LudumLevel>> levels;
 };

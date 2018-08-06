@@ -224,14 +224,14 @@ LudumLevel * LudumGame::GetLevel(int level_number)
 {
 	if (levels.size() == 0)
 		return nullptr;
-	return levels[level_number % (int)levels.size()].get();
+	return dynamic_cast<LudumLevel*>(levels[level_number % (int)levels.size()].get());
 }
 
 LudumLevel const * LudumGame::GetLevel(int level_number) const
 {
 	if (levels.size() == 0)
 		return nullptr;
-	return levels[level_number % (int)levels.size()].get();
+	return dynamic_cast<LudumLevel const*>(levels[level_number % (int)levels.size()].get());
 }
 
 
@@ -432,65 +432,37 @@ bool LudumGame::DoLoadLevelInitialize(LudumLevel * level)
 }
 
 
-bool LudumGame::DoLoadLevel(int level_number, chaos::TiledMap::Map * tiled_map)
+death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam const & path)
 {
+	// load the resource
+	chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);
+	if (tiled_map == nullptr)
+		return false;
+
 	// allocate a level
-	LudumLevel * level = new LudumLevel;
-	if (level == nullptr)
+	LudumLevel * result = new LudumLevel;
+	if (result == nullptr)
 		return false;
 	// initialize level
-	level->level_number = level_number;
-	level->tiled_map = tiled_map;
+	result->tiled_map = tiled_map;
 	// some additionnal computation
-	if (!DoLoadLevelInitialize(level))
+	if (!DoLoadLevelInitialize(result))
 	{
-		delete(level);
-		return false;
+		delete(result);
+		return nullptr;
 	}
-	levels.push_back(level);
-	return true;
+
+	return result;
 }
 
 bool LudumGame::LoadLevels()
 {
-	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-	if (application == nullptr)
-		return false;
-
 	// create the manager
 	tiledmap_manager = new chaos::TiledMap::Manager;
 	if (tiledmap_manager == nullptr)
 		return false;
-
-
-	// compute resource path
-	boost::filesystem::path resources_path = application->GetResourcesPath();
-	boost::filesystem::path levels_path = resources_path / "levels";
-
-	// iterate the files and load the levels
-	boost::filesystem::directory_iterator end;
-	for (boost::filesystem::directory_iterator it(levels_path); it != end; ++it)
-	{
-		int level_number = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
-
-		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(it->path());
-		if (tiled_map == nullptr)
-			continue;
-
-		if (!DoLoadLevel(level_number, tiled_map))
-		{
-			delete(tiled_map);
-			return false;
-		}
-	}
-
-	// sort the levels
-	std::sort(levels.begin(), levels.end(),
-		[](boost::intrusive_ptr<LudumLevel> l1, boost::intrusive_ptr<LudumLevel> l2)
-	{
-		return (l1->level_number < l2->level_number);
-	});
-	return true;
+	// super call
+	return death::Game::LoadLevels();
 }
 
 void LudumGame::FillBackgroundLayer()

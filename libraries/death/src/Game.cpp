@@ -152,6 +152,24 @@ namespace death
 
 	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		// Try to load already computed data (in debug only)
+#if _DEBUG
+		chaos::BitmapAtlas::TextureArrayAtlas * tmp_texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+		if (tmp_texture_atlas != nullptr)
+		{
+			chaos::Application * application = chaos::Application::GetInstance();
+			if (application != nullptr)
+			{
+				if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / "LudumAtlas"))
+				{
+					texture_atlas = tmp_texture_atlas;
+					return true;
+				}
+				delete(tmp_texture_atlas);
+			}
+		}
+#endif
+
 		chaos::BitmapAtlas::AtlasInput input;
 		if (!FillAtlasGenerationInput(input, config, config_path))
 			return false;

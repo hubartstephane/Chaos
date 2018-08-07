@@ -1,4 +1,4 @@
-#include <death/Game.h>
+            #include <death/Game.h>
 #include <death/GameAutomata.h>
 #include <death/GamepadManager.h>
 #include <death/GameLevel.h>
@@ -555,6 +555,7 @@ namespace death
 
 	void Game::OnGameOver()
 	{
+		SetCurrentLevel(nullptr);
 		ConditionnalSaveBestScore();		
 	}
 
@@ -578,6 +579,7 @@ namespace death
 		DestroyMainMenuHUD();
 		CreatePlayingHUD();
 		ResetGameVariables();
+		SetNextLevel(true); // select the very first
 		return true;
 	}
 
@@ -591,6 +593,7 @@ namespace death
 
 	bool Game::OnAbordGame()
 	{
+		SetCurrentLevel(nullptr);
 		return true;
 	}
 
@@ -880,6 +883,116 @@ namespace death
 		result.position = glm::vec2(0.0f, 0.0f);
 		result.half_size = GetViewSize() * 0.5f;
 		return result;
+	}
+
+	GameLevel * Game::GetCurrentLevel()
+	{
+		GameLevelInstance * li = GetCurrentLevelInstance();
+		if (li == nullptr)
+			return nullptr;
+		return li->GetLevel();
+	}
+
+	GameLevel const * Game::GetCurrentLevel() const
+	{
+		GameLevelInstance const * li = GetCurrentLevelInstance();
+		if (li == nullptr)
+			return nullptr;
+		return li->GetLevel();
+	}
+
+	GameLevelInstance * Game::GetCurrentLevelInstance()
+	{
+		return current_level_instance.get();
+	}
+
+	GameLevelInstance const * Game::GetCurrentLevelInstance() const
+	{
+		return current_level_instance.get();
+	}
+
+	GameLevel * Game::GetLevel(int level_index)
+	{
+		size_t count = levels.size();
+		for (size_t i = 0; i < count; ++i)
+			if (levels[i]->GetLevelIndex() == level_index)
+				return levels[i].get();
+		return nullptr;
+	}
+
+	GameLevel const * Game::GetLevel(int level_index) const
+	{
+		size_t count = levels.size();
+		for (size_t i = 0; i < count; ++i)
+			if (levels[i]->GetLevelIndex() == level_index)
+				return levels[i].get();
+		return nullptr;
+	}
+
+	bool Game::SetNextLevel(bool looping_levels)
+	{
+		// existing any level
+		size_t count = levels.size();
+		if (count == 0)
+			return false;
+		// very first level
+		GameLevel * current_level = GetCurrentLevel();
+		if (current_level == nullptr)
+			return SetCurrentLevel(levels[0].get());
+		// search the current level
+		size_t i = 0;
+		for (; i < count; ++i)
+			if (levels[i].get() == current_level)
+				break;
+		// level not found ?
+		if (i == count)
+			return false;
+		// very last level
+		if (i == count - 1)
+		{
+			if (looping_levels)
+				return SetCurrentLevel(levels[0].get());
+			return false;
+		}
+		// default
+		return SetCurrentLevel(levels[i + 1].get());
+	}
+
+	bool Game::SetCurrentLevel(int level_index)
+	{
+		GameLevel * new_level = GetLevel(level_index); // we required a level_index, level should not be nullptr !
+		if (new_level == nullptr)
+			return false;
+		return SetCurrentLevel(new_level);
+	}
+
+	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
+	{	
+		boost::intrusive_ptr<GameLevelInstance> old_level_instance = current_level_instance; // copy and keep a reference
+		boost::intrusive_ptr<GameLevel> old_level = (old_level_instance != nullptr) ?
+			old_level_instance->GetLevel() :
+			nullptr;
+
+		// clear the level
+		if (new_level == nullptr)
+		{
+			current_level_instance = nullptr;
+			OnLevelChanged(nullptr, old_level.get(), nullptr, old_level_instance.get());
+			return true;
+		}
+		// change the level
+		boost::intrusive_ptr<GameLevelInstance> new_level_instance = new_level->CreateLevelInstance();
+		if (new_level_instance == nullptr)
+			return false;
+		current_level_instance = new_level_instance;
+		OnLevelChanged(new_level, old_level.get(), current_level_instance.get(), old_level_instance.get());
+		return true;
+	}
+
+	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance)
+	{
+
+
 	}
 
 }; // namespace death

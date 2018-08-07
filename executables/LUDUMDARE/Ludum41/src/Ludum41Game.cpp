@@ -138,12 +138,13 @@ bool LudumGame::OnEnterGame()
 
 bool LudumGame::OnLeaveGame(bool gameover)
 {
-	death::Game::OnLeaveGame(gameover);
+	death::Game::OnLeaveGame(gameover);	
 	return true;
 }
 
 bool LudumGame::OnAbordGame()
 {
+	death::Game::OnAbordGame();
 	DestroyGameObjects();
 	return true;
 }
@@ -387,34 +388,9 @@ void LudumGame::OnBallCollide(bool collide_brick)
 		IncrementScore(points_per_brick);
 }
 
-
-LudumLevel * LudumGame::GetCurrentLevel()
-{
-	return GetLevel(current_level);
-}
-
-LudumLevel const * LudumGame::GetCurrentLevel() const
-{
-	return GetLevel(current_level);
-}
-
-LudumLevel * LudumGame::GetLevel(int level_number)
-{
-	if (levels.size() == 0)
-		return nullptr;
-	return dynamic_cast<LudumLevel *>(levels[level_number % (int)levels.size()].get());
-}
-
-LudumLevel const * LudumGame::GetLevel(int level_number) const
-{
-	if (levels.size() == 0)
-		return nullptr;
-	return dynamic_cast<LudumLevel const *>(levels[level_number % (int)levels.size()].get());
-}
-
 void LudumGame::TickLevelCompleted(double delta_time)
 {
-	LudumLevel const * level = GetCurrentLevel();
+	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
 	if (level == nullptr)
 		return;
 
@@ -428,10 +404,7 @@ void LudumGame::TickLevelCompleted(double delta_time)
 	{		
 		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
 		{
-			current_level = (current_level + 1) % (int)levels.size();
-			target_brick_offset = 0.0f;
-			brick_offset = 0.0f;
-			bricks_allocations = CreateBricks(current_level);
+			SetNextLevel(true);
 #if _DEBUG
 			cheat_next_level = false;
 #endif
@@ -560,7 +533,7 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
-	bricks_allocations = nullptr;
+	//bricks_allocations = nullptr;
 	life_allocations = nullptr;
 	balls_allocations = nullptr;
 
@@ -615,8 +588,11 @@ glm::vec2 LudumGame::GenerateBallRandomDirection() const
 		chaos::MathTools::Sin(angle));
 }
 
-chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
+chaos::ParticleAllocation * LudumGame::CreateBricks(LudumLevel const * level)
 {
+	if (level == nullptr)
+		return nullptr;
+
 	glm::vec4 const indestructible_color = glm::vec4(1.0f, 0.4f, 0.0f, 1.0f);
 
 	glm::vec4 const colors[] = {
@@ -626,11 +602,6 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(int level_number)
 	};
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);
-
-	// get the level
-	LudumLevel * level = GetLevel(level_number);
-	if (level == nullptr)
-		return false;
 
 	// create the bricks resource
 	size_t brick_count = level->GetBrickCount();
@@ -912,9 +883,6 @@ void LudumGame::CreateAllGameObjects(int level)
 
 	if (balls_allocations == nullptr)
 		balls_allocations = CreateBalls(1, true);	
-
-	if (bricks_allocations == nullptr)
-		bricks_allocations = CreateBricks(current_level);	
 }
 
 size_t LudumGame::GetBrickCount() const
@@ -953,7 +921,7 @@ ParticleBrick const * LudumGame::GetBricks() const
 
 bool LudumGame::IsBrickLifeChallengeValid(bool success)
 {
-	LudumLevel const * level = GetCurrentLevel();
+	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
 	if (level == nullptr)
 		return false;
 
@@ -1544,6 +1512,15 @@ LudumChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 	return result;
 }
 
+void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
+{
+	bricks_allocations = nullptr;
+	target_brick_offset = 0.0f;
+	brick_offset = 0.0f;
+
+	if (new_level != nullptr)
+		bricks_allocations = CreateBricks(dynamic_cast<LudumLevel const*>(new_level));
+}
 
 
 

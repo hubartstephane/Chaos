@@ -198,7 +198,7 @@ protected:
 	/** create the ball */
 	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
 	/** create the bricks */
-	chaos::ParticleAllocation * CreateBricks(int level_number);
+	chaos::ParticleAllocation * CreateBricks(LudumLevel const * level);
 
 	/** update the score */
 	void IncrementScore(int delta);
@@ -314,15 +314,7 @@ protected:
 
 	void ChangeLife(int delta_life);
 
-	/** get currently played level */
-	LudumLevel * GetCurrentLevel();
-	/** get currently played level */
-	LudumLevel const * GetCurrentLevel() const;
-
-	/** get currently played level */
-	LudumLevel * GetLevel(int level_number);
-	/** get currently played level */
-	LudumLevel const * GetLevel(int level_number) const;
+	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
 protected:
 

@@ -232,6 +232,30 @@ namespace death
 		/** user defined method to create the gameover HUD */
 		virtual GameOverHUD * DoCreateGameOverHUD();
 
+		/** get currently played level */
+		GameLevel * GetCurrentLevel();
+		/** get currently played level */
+		GameLevel const * GetCurrentLevel() const;
+
+		/** get currently played level */
+		GameLevelInstance * GetCurrentLevelInstance();
+		/** get currently played level */
+		GameLevelInstance const * GetCurrentLevelInstance() const;
+
+		/** get currently played level */
+		GameLevel * GetLevel(int level_index);
+		/** get currently played level */
+		GameLevel const * GetLevel(int level_index) const;
+
+		/** change the current level */
+		bool SetCurrentLevel(GameLevel * new_level);
+		/** change the current level from its index */
+		bool SetCurrentLevel(int level_index);
+		/** change the current level for the next */
+		bool SetNextLevel(bool looping_levels);
+		/** reflex method whenever the level is changed */
+		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
+
 	protected:
 
 		/** the window in GLFW library */
@@ -288,6 +312,8 @@ namespace death
 
 		/** level data */
 		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
+		/** the current level instance */
+		boost::intrusive_ptr<GameLevelInstance> current_level_instance;
 	};
 
 }; // namespace death

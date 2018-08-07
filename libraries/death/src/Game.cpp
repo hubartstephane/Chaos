@@ -574,12 +574,12 @@ namespace death
 	}
 
 	bool Game::OnEnterGame()
-	{
-		StartGameMusic(true);
+	{		
 		DestroyMainMenuHUD();
 		CreatePlayingHUD();
 		ResetGameVariables();
 		SetNextLevel(true); // select the very first
+		StartGameMusic(true);
 		return true;
 	}
 

@@ -17,11 +17,7 @@ LudumGame::LudumGame()
 	game_name = "AsciiPaouf 3";
 }
 
-bool LudumGame::OnAbordGame()
-{
-	DestroyGameObjects();
-	return true;
-}
+
 
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
@@ -45,7 +41,6 @@ bool LudumGame::OnLeavePause()
 bool LudumGame::OnEnterGame()
 {
 	death::Game::OnEnterGame();
-	ResetGameVariables();
 	CreateAllGameObjects(0);
 	return true;
 }
@@ -53,6 +48,13 @@ bool LudumGame::OnEnterGame()
 bool LudumGame::OnLeaveGame(bool gameover)
 {
 	death::Game::OnLeaveGame(gameover);
+	return true;
+}
+
+bool LudumGame::OnAbordGame()
+{
+	death::Game::OnAbordGame();
+	DestroyGameObjects();
 	return true;
 }
 
@@ -209,32 +211,6 @@ bool LudumGame::CheckGameOverCondition(double delta_time)
 	return false;
 }
 
-
-LudumLevel * LudumGame::GetCurrentLevel()
-{
-	return GetLevel(current_level);
-}
-
-LudumLevel const * LudumGame::GetCurrentLevel() const
-{
-	return GetLevel(current_level);
-}
-
-LudumLevel * LudumGame::GetLevel(int level_number)
-{
-	if (levels.size() == 0)
-		return nullptr;
-	return dynamic_cast<LudumLevel*>(levels[level_number % (int)levels.size()].get());
-}
-
-LudumLevel const * LudumGame::GetLevel(int level_number) const
-{
-	if (levels.size() == 0)
-		return nullptr;
-	return dynamic_cast<LudumLevel const*>(levels[level_number % (int)levels.size()].get());
-}
-
-
 bool LudumGame::IsLevelCompleted()
 {
 
@@ -243,7 +219,7 @@ bool LudumGame::IsLevelCompleted()
 
 void LudumGame::TickLevelCompleted(double delta_time)
 {
-	LudumLevel const * level = GetCurrentLevel();
+	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
 	if (level == nullptr)
 		return;
 
@@ -507,5 +483,9 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	return true;
 }
 
+void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
+{
+
+}
 
 

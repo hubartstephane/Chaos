@@ -56,12 +56,6 @@ public:
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
-
-
-
-
-
-
 	/** called whenever a gamepad input is comming */
 	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
@@ -159,10 +153,6 @@ protected:
 
 
 
-
-
-
-
 	/** change an object position */
 	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
 
@@ -176,25 +166,13 @@ protected:
 	/** move the player */
 	void DisplacePlayer(double delta_time);
 
-
-
-
 	void ChangeLife(int delta_life);
 
+	/** override */
+	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
-	/** get currently played level */
-	LudumLevel * GetCurrentLevel();
-	/** get currently played level */
-	LudumLevel const * GetCurrentLevel() const;
-
-	/** get currently played level */
-	LudumLevel * GetLevel(int level_number);
-	/** get currently played level */
-	LudumLevel const * GetLevel(int level_number) const;
 	/** returns whether current level is completed */
 	bool IsLevelCompleted();
-
-
 
 protected:
 

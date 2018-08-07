@@ -533,7 +533,6 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
-	//bricks_allocations = nullptr;
 	life_allocations = nullptr;
 	balls_allocations = nullptr;
 

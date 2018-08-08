@@ -181,22 +181,11 @@ void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	death::Game::OnGamepadInput(in_gamepad_data);
 }
 
-void LudumGame::Display(glm::ivec2 const & size)
+void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & main_uniform_provider)
 {
-	chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
-
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-#if 0
-	int state_id = GetCurrentStateID();
-	if (state_id == LudumAutomata::STATE_MAINMENU)
-		clear_color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-	else if (state_id == LudumAutomata::STATE_PAUSE)
-		clear_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	else if (state_id == LudumAutomata::STATE_PLAYING)
-		clear_color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-#endif
 	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 	// clear the depth buffers
@@ -206,15 +195,6 @@ void LudumGame::Display(glm::ivec2 const & size)
 	// some states
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-
-	// a variable provider
-	chaos::GPUProgramProvider main_uniform_provider;
-	main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
-
-	glm::vec2 view_size;
-	view_size.x = 1600.0f;
-	view_size.y = view_size.x * (viewport.half_size.y / viewport.half_size.x);
-	main_uniform_provider.AddVariableValue("view_size", view_size);
 
 	// draw particle system
 	if (particle_manager != nullptr)

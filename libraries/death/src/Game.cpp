@@ -7,6 +7,40 @@
 
 namespace death
 {
+	
+	chaos::MyGLFW::SingleWindowApplication * Game::GetGLFWApplicationInstance()
+	{
+		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+	}
+
+	chaos::MyGLFW::SingleWindowApplication const * Game::GetGLFWApplicationInstance() const
+	{
+		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationConstInstance();
+	}
+
+	chaos::Clock * Game::GetMainClock()
+	{
+		chaos::MyGLFW::SingleWindowApplication * application = GetGLFWApplicationInstance();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetMainClock();
+	}
+
+	chaos::Clock const * Game::GetMainClock() const
+	{
+		chaos::MyGLFW::SingleWindowApplication const * application = GetGLFWApplicationInstance();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetMainClock();
+	}
+
+	double Game::GetMainClockTime() const
+	{
+		chaos::Clock const * clock = GetMainClock();
+		if (clock == nullptr)
+			return 0.0;
+		return clock->GetClockTime();
+	}
 
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
 	{
@@ -96,7 +130,26 @@ namespace death
 	
 	void Game::Display(glm::ivec2 const & size)
 	{
-		
+		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
+
+		// a variable provider
+		chaos::GPUProgramProvider main_uniform_provider;
+
+		// the related box
+		glm::vec2 view_size;
+		view_size.x = 1600.0f;
+		view_size.y = view_size.x / viewport_wanted_aspect;
+		main_uniform_provider.AddVariableValue("view_size", view_size);
+
+		// the time
+		double absolute_time = GetMainClockTime();
+		main_uniform_provider.AddVariableValue("absolute_time", absolute_time);
+
+		DoDisplay(viewport, main_uniform_provider);
+	}
+
+	void Game::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & main_uniform_provider)
+	{
 
 	}
 

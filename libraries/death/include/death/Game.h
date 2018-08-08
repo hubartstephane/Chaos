@@ -66,6 +66,8 @@ namespace death
 		virtual void OnMouseMove(double x, double y);
 		/** the rendering method */
 		virtual void Display(glm::ivec2 const & size);
+		/** the user defined rendering function */
+		virtual void DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & main_uniform_provider);
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -255,6 +257,17 @@ namespace death
 		bool SetNextLevel(bool looping_levels);
 		/** reflex method whenever the level is changed */
 		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
+
+		/** chaos getter */
+		chaos::MyGLFW::SingleWindowApplication * GetGLFWApplicationInstance();
+		/** chaos getter */
+		chaos::MyGLFW::SingleWindowApplication const * GetGLFWApplicationInstance() const;
+		/** chaos getter */
+		chaos::Clock * GetMainClock();
+		/** chaos getter */
+		chaos::Clock const * GetMainClock() const;
+		/** chaos getter */
+		double GetMainClockTime() const;
 
 	protected:
 

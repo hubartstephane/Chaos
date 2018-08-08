@@ -97,7 +97,8 @@ namespace death
 		int GetCurrentStateID() const;
 		/** returns whether were are in playing state */
 		bool IsPlaying() const;
-
+		/** returns whether were are in pause state */
+		bool IsPaused() const;
 
 		/** test whether the current score is higher than best score and save it */
 		void ConditionnalSaveBestScore();
@@ -269,6 +270,9 @@ namespace death
 		/** chaos getter */
 		double GetMainClockTime() const;
 
+		/** gets the time of the begining of the game (0.0 if not started) */
+		double GetStartGameTime() const;
+
 	protected:
 
 		/** the window in GLFW library */
@@ -310,6 +314,7 @@ namespace death
 		/** score values */
 		int best_score = 0;
 		int current_score = 0;
+		double start_game_time = 0.0;
 
 		/** game settings */
 		float mouse_sensitivity = 1.0f;

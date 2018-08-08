@@ -42,6 +42,13 @@ namespace death
 		return clock->GetClockTime();
 	}
 
+	double Game::GetStartGameTime() const
+	{
+		if (!IsPaused() && !IsPlaying())
+			return 0.0;
+		return start_game_time;
+	}
+
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
 	{
 
@@ -136,14 +143,15 @@ namespace death
 		chaos::GPUProgramProvider main_uniform_provider;
 
 		// the related box
-		glm::vec2 view_size;
-		view_size.x = 1600.0f;
-		view_size.y = view_size.x / viewport_wanted_aspect;
+		glm::vec2 view_size = GetViewSize();
 		main_uniform_provider.AddVariableValue("view_size", view_size);
 
 		// the time
 		double absolute_time = GetMainClockTime();
 		main_uniform_provider.AddVariableValue("absolute_time", absolute_time);
+
+		double start_time = GetStartGameTime();
+		main_uniform_provider.AddVariableValue("start_time", start_time);
 
 		DoDisplay(viewport, main_uniform_provider);
 	}
@@ -695,6 +703,7 @@ namespace death
 	void Game::ResetGameVariables()
 	{
 		current_score = 0;
+		start_game_time = GetMainClockTime();
 	}
 
 	void Game::UpdateScoreParticles()
@@ -747,6 +756,13 @@ namespace death
 	bool Game::IsPlaying() const
 	{
 		if (GetCurrentStateID() == GameAutomata::STATE_PLAYING)
+			return true;
+		return false;
+	}
+
+	bool Game::IsPaused() const
+	{
+		if (GetCurrentStateID() == GameAutomata::STATE_PAUSE)
 			return true;
 		return false;
 	}

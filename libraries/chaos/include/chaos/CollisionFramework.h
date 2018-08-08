@@ -17,12 +17,13 @@ namespace chaos
   {
     bool result = false;
 
-    assert(!bigger.IsEmpty() || smaller.IsEmpty());
-
+		// if one is empty, nothing to do
     if (bigger.IsEmpty() || smaller.IsEmpty())
-      return result;
+      return false;
 
-    assert(glm::all(glm::lessThanEqual(smaller.half_size, bigger.half_size)));
+		// ensure smaller and bigger are coherent
+		if (glm::any(glm::greaterThan(smaller.half_size, bigger.half_size)))
+			return false;
 
     auto big_corners = bigger.GetCorners();
     auto small_corners = smaller.GetCorners();
@@ -110,12 +111,13 @@ namespace chaos
   template<typename T, int dimension>
   bool RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
   {
-    assert(!bigger.IsEmpty() || smaller.IsEmpty());
+		// if one is empty, nothing to do
+		if (bigger.IsEmpty() || smaller.IsEmpty())
+			return false;
 
-    assert(smaller.radius <= bigger.radius);
-
-    if (bigger.IsEmpty() || smaller.IsEmpty())
-      return false;
+		// ensure smaller and bigger are coherent
+		if (smaller.radius > bigger.radius) 
+			return false;
 
     auto delta_pos = smaller.position - bigger.position;
     T    l = glm::length(delta_pos);

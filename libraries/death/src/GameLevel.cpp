@@ -16,5 +16,10 @@ namespace death
 		return new GameLevelInstance;
 	}
 
+	void GameLevelInstance::Tick(double delta_time)
+	{
+
+	}
+
 }; // namespace death
 

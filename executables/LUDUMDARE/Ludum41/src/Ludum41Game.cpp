@@ -181,7 +181,7 @@ void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	death::Game::OnGamepadInput(in_gamepad_data);
 }
 
-void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & main_uniform_provider)
+void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)
 {
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -198,7 +198,7 @@ void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvide
 
 	// draw particle system
 	if (particle_manager != nullptr)
-		particle_manager->Display(&main_uniform_provider);
+		particle_manager->Display(&uniform_provider);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

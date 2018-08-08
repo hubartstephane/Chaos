@@ -67,19 +67,58 @@ namespace death
 		/** the rendering method */
 		virtual void Display(glm::ivec2 const & size);
 		/** the user defined rendering function */
-		virtual void DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & main_uniform_provider);
+		virtual void DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider);
+
+		/** utility method to set a box uniform */
+		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b);
+
+
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** utility function to get the application */
 		chaos::MyGLFW::SingleWindowApplication * GetApplication();
+		/** utility function to get the application */
+		chaos::MyGLFW::SingleWindowApplication const * GetApplication() const;
 		/** utility function to get the sound manager */
 		chaos::SoundManager * GetSoundManager();
+		/** chaos getter */
+		chaos::Clock * GetMainClock();
+		/** chaos getter */
+		chaos::Clock const * GetMainClock() const;
+		/** chaos getter */
+		double GetMainClockTime() const;
+
+		/** gets the time of the begining of the game (0.0 if not started) */
+		double GetStartGameTime() const;
+
+
 
 		/** get the size of the world */
 		virtual glm::vec2 GetViewSize() const;
 		/** get the view */
 		chaos::box2 GetViewBox() const;
+
+		/** getting the world boxes */
+		virtual chaos::box2 GetWorldBox() const;
+		/** getting the camera box */
+		virtual chaos::box2 GetCameraBox() const;
+		/** getting the player box */
+		virtual chaos::box2 GetPlayerBox() const;
+
+		/** update the camera box */
+		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
+		/** update the player box */
+		virtual void SetPlayerBox(chaos::box2 const & in_player_box);
+
+
+
+
+
+
+
+		/** update the player and the camera position so that they remains inside the world */
+		void RestrictCameraAndPlayerToWorld();
 
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
@@ -259,24 +298,16 @@ namespace death
 		/** reflex method whenever the level is changed */
 		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
 
-		/** chaos getter */
-		chaos::MyGLFW::SingleWindowApplication * GetGLFWApplicationInstance();
-		/** chaos getter */
-		chaos::MyGLFW::SingleWindowApplication const * GetGLFWApplicationInstance() const;
-		/** chaos getter */
-		chaos::Clock * GetMainClock();
-		/** chaos getter */
-		chaos::Clock const * GetMainClock() const;
-		/** chaos getter */
-		double GetMainClockTime() const;
-
-		/** gets the time of the begining of the game (0.0 if not started) */
-		double GetStartGameTime() const;
-
 	protected:
 
 		/** the window in GLFW library */
 		GLFWwindow * glfw_window = nullptr;
+
+		/** the camera */
+		mutable chaos::box2 camera_box;
+		/** the safe zone of the camera */
+		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);
+
 
 		/** the current gamepad manager */
 		boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
@@ -326,6 +357,7 @@ namespace death
 		float title_size = 150.0f;
 		float title_placement_y = 0;
 
+		/** name of the game */
 		char const * game_name = nullptr;
 
 		/** level data */

@@ -1,53 +1,13 @@
-            #include <death/Game.h>
+#include <death/Game.h>
 #include <death/GameAutomata.h>
 #include <death/GamepadManager.h>
 #include <death/GameLevel.h>
 
 #include <chaos/InputMode.h>
+#include <chaos/CollisionFramework.h>
 
 namespace death
 {
-	
-	chaos::MyGLFW::SingleWindowApplication * Game::GetGLFWApplicationInstance()
-	{
-		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-	}
-
-	chaos::MyGLFW::SingleWindowApplication const * Game::GetGLFWApplicationInstance() const
-	{
-		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationConstInstance();
-	}
-
-	chaos::Clock * Game::GetMainClock()
-	{
-		chaos::MyGLFW::SingleWindowApplication * application = GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return nullptr;
-		return application->GetMainClock();
-	}
-
-	chaos::Clock const * Game::GetMainClock() const
-	{
-		chaos::MyGLFW::SingleWindowApplication const * application = GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return nullptr;
-		return application->GetMainClock();
-	}
-
-	double Game::GetMainClockTime() const
-	{
-		chaos::Clock const * clock = GetMainClock();
-		if (clock == nullptr)
-			return 0.0;
-		return clock->GetClockTime();
-	}
-
-	double Game::GetStartGameTime() const
-	{
-		if (!IsPaused() && !IsPlaying())
-			return 0.0;
-		return start_game_time;
-	}
 
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
 	{
@@ -134,6 +94,16 @@ namespace death
 	{
 
 	}
+
+	void Game::AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b)
+	{
+		glm::vec4 box_vec;
+		box_vec.x = b.position.x;
+		box_vec.y = b.position.y;
+		box_vec.z = b.half_size.x;
+		box_vec.w = b.half_size.y;
+		uniform_provider.AddVariableValue(variable_name, box_vec);
+	}
 	
 	void Game::Display(glm::ivec2 const & size)
 	{
@@ -146,6 +116,16 @@ namespace death
 		glm::vec2 view_size = GetViewSize();
 		main_uniform_provider.AddVariableValue("view_size", view_size);
 
+		// boxes
+		chaos::box2 player = GetPlayerBox();
+		AddBoxVariable(main_uniform_provider, "player_box", player);
+		chaos::box2 camera = GetCameraBox();
+		AddBoxVariable(main_uniform_provider, "camera_box", camera);
+		chaos::box2 world  = GetWorldBox();
+		AddBoxVariable(main_uniform_provider, "world_box", world);
+		chaos::box2 view   = GetViewBox();
+		AddBoxVariable(main_uniform_provider, "view_box", world);
+			 
 		// the time
 		double absolute_time = GetMainClockTime();
 		main_uniform_provider.AddVariableValue("absolute_time", absolute_time);
@@ -156,7 +136,7 @@ namespace death
 		DoDisplay(viewport, main_uniform_provider);
 	}
 
-	void Game::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & main_uniform_provider)
+	void Game::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)
 	{
 
 	}
@@ -333,12 +313,48 @@ namespace death
 		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
 	}
 
+	chaos::MyGLFW::SingleWindowApplication const * Game::GetApplication() const
+	{
+		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationConstInstance();
+	}
+
 	chaos::SoundManager * Game::GetSoundManager()
 	{
 		chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetSoundManager();
+	}
+
+	chaos::Clock * Game::GetMainClock()
+	{
+		chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetMainClock();
+	}
+
+	chaos::Clock const * Game::GetMainClock() const
+	{
+		chaos::MyGLFW::SingleWindowApplication const * application = GetApplication();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetMainClock();
+	}
+
+	double Game::GetMainClockTime() const
+	{
+		chaos::Clock const * clock = GetMainClock();
+		if (clock == nullptr)
+			return 0.0;
+		return clock->GetClockTime();
+	}
+
+	double Game::GetStartGameTime() const
+	{
+		if (!IsPaused() && !IsPlaying())
+			return 0.0;
+		return start_game_time;
 	}
 
 	bool Game::LoadBestScore(std::ifstream & file)
@@ -695,8 +711,13 @@ namespace death
 	{
 		if (CheckGameOverCondition(delta_time)) 
 			return false;
+		// tick the level
+		if (current_level_instance != nullptr)
+			current_level_instance->Tick(delta_time);
+		// keep camera, player inside the world
+		RestrictCameraAndPlayerToWorld();
 		// create the score text
-		UpdateScoreParticles();
+		UpdateScoreParticles();	
 		return true;
 	}
 
@@ -954,6 +975,42 @@ namespace death
 		return result;
 	}
 
+	chaos::box2 Game::GetWorldBox() const
+	{
+		// look at the level instance
+		if (current_level_instance != nullptr)
+		{
+			chaos::box2 result = current_level_instance->GetWorldBox();
+			if (!result.IsEmpty())
+				return result;
+		}
+		// by default, the world will be the same size than the camera
+		return GetCameraBox();
+	}
+
+	chaos::box2 Game::GetCameraBox() const
+	{
+		// default initialization of the camera if required
+		if (camera_box.IsEmpty())
+			camera_box = GetViewBox();
+		// stored value
+		return camera_box;
+	}
+
+	chaos::box2 Game::GetPlayerBox() const
+	{
+		return chaos::box2();
+	}
+
+	void Game::SetCameraBox(chaos::box2 const & in_camera_box)
+	{
+		camera_box = in_camera_box;
+	}
+
+	void Game::SetPlayerBox(chaos::box2 const & in_player_box)
+	{
+	}
+
 	GameLevel * Game::GetCurrentLevel()
 	{
 		GameLevelInstance * li = GetCurrentLevelInstance();
@@ -1062,6 +1119,39 @@ namespace death
 	{
 
 
+	}
+
+	void Game::RestrictCameraAndPlayerToWorld()
+	{
+		// nothing to do if player is empty
+		chaos::box2 player = GetPlayerBox();
+		if (player.IsEmpty())
+			return;
+
+		// try to keep the player in the world
+		chaos::box2 world = GetWorldBox();
+		if (!world.IsEmpty())
+			chaos::RestrictToInside(world, player, false);
+
+		// compute camera with safe zone
+		chaos::box2 camera = GetCameraBox();
+		chaos::box2 safe_camera = camera;
+		safe_camera.half_size *= camera_safe_zone;
+				
+		// displace camera with safe zone so player remains inside
+		if (!safe_camera.IsEmpty())
+		{
+			if (chaos::RestrictToInside(safe_camera, player, true))
+				camera.position = safe_camera.position;
+		}
+
+		// restrict the camera to the world
+		if (!world.IsEmpty())
+			chaos::RestrictToInside(world, camera, false);
+
+		// apply player and camera changes
+		SetCameraBox(camera);
+		SetPlayerBox(player);
 	}
 
 }; // namespace death

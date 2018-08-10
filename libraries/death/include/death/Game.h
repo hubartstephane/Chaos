@@ -118,7 +118,7 @@ namespace death
 
 
 		/** update the player and the camera position so that they remains inside the world */
-		void RestrictCameraAndPlayerToWorld();
+		void RestrictCameraToPlayerAndWorld();
 
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);

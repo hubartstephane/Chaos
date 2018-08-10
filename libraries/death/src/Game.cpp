@@ -109,6 +109,9 @@ namespace death
 	{
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
+		// keep camera, player inside the world (can be done at rendering time)
+		RestrictCameraToPlayerAndWorld();
+
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 
@@ -714,8 +717,6 @@ namespace death
 		// tick the level
 		if (current_level_instance != nullptr)
 			current_level_instance->Tick(delta_time);
-		// keep camera, player inside the world
-		RestrictCameraAndPlayerToWorld();
 		// create the score text
 		UpdateScoreParticles();	
 		return true;
@@ -1121,37 +1122,31 @@ namespace death
 
 	}
 
-	void Game::RestrictCameraAndPlayerToWorld()
+	void Game::RestrictCameraToPlayerAndWorld()
 	{
-		// nothing to do if player is empty
-		chaos::box2 player = GetPlayerBox();
-		if (player.IsEmpty())
+		// get camera, cannot continue if it is empty
+		chaos::box2 camera = GetCameraBox();
+		if (camera.IsEmpty())
 			return;
 
+		// keep player inside camera safe zone
+		chaos::box2 player = GetPlayerBox();
+		if (!player.IsEmpty())
+		{
+			chaos::box2 safe_camera = camera;
+			safe_camera.half_size *= camera_safe_zone;
+
+			if (chaos::RestrictToInside(safe_camera, player, true)) // apply the safe_zone displacement to the real camera
+				camera.position = safe_camera.position;
+		}
+			
 		// try to keep the player in the world
 		chaos::box2 world = GetWorldBox();
 		if (!world.IsEmpty())
-			chaos::RestrictToInside(world, player, false);
-
-		// compute camera with safe zone
-		chaos::box2 camera = GetCameraBox();
-		chaos::box2 safe_camera = camera;
-		safe_camera.half_size *= camera_safe_zone;
-				
-		// displace camera with safe zone so player remains inside
-		if (!safe_camera.IsEmpty())
-		{
-			if (chaos::RestrictToInside(safe_camera, player, true))
-				camera.position = safe_camera.position;
-		}
-
-		// restrict the camera to the world
-		if (!world.IsEmpty())
 			chaos::RestrictToInside(world, camera, false);
 
-		// apply player and camera changes
+		// apply camera changes
 		SetCameraBox(camera);
-		SetPlayerBox(player);
 	}
 
 }; // namespace death

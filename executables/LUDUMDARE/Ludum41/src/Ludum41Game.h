@@ -250,12 +250,12 @@ protected:
 	/** get the box for a given object */
 	chaos::box2 GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const;
 	/** get the box for player */
-	chaos::box2 GetPlayerBox() const;
+	virtual chaos::box2 GetPlayerBox() const override;
 
 	/** change one object box */
 	void SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
 	/** change player box */
-	void SetPlayerBox(chaos::box2 const & box);
+	virtual void SetPlayerBox(chaos::box2 const & box) override;
 
 	/** get the position for given object */
 	glm::vec2 GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const;

@@ -381,9 +381,9 @@ namespace chaos
 			// all steps to properly generate the result
 			if (!DoGenerateLines(text, generator_data))
 				return false;
-
-
-
+			// justification
+			if (!JustifyLines(generator_data.params, generator_data))
+				return false;
 			// finally, recenter the whole sprites
 			if (!MoveParticlesToHotpoint(generator_data))
 				return false;
@@ -545,7 +545,91 @@ namespace chaos
 			return true;
 		}
 
+		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data)
+		{
+			// left align : nothing to do
+			if (params.alignment == GeneratorParams::ALIGN_LEFT)
+				return true;
 
+			// justifaction : cannot increase line size if the factor is below 1.0
+			if (params.alignment == GeneratorParams::ALIGN_JUSTIFY && params.justify_space_factor <= 1.0f)
+				return true;
+
+			// compute the whole text bounding box
+			glm::vec2 min_position;
+			glm::vec2 max_position;
+			if (!GetBoundingBox(generator_data.result.token_lines, min_position, max_position)) // nothing to do for empty sprite
+				return true;
+
+			// apply the modifications
+			float W1 = max_position.x - min_position.x;
+			for (TokenLine & line : generator_data.result.token_lines)
+			{
+				glm::vec2 min_line_position;
+				glm::vec2 max_line_position;
+				if (GetBoundingBox(line, min_line_position, max_line_position))
+				{
+					float W2 = max_line_position.x - min_line_position.x;
+
+					// current line size is exactly the biggest line. No modification to do
+					if (W1 == W2)
+						continue;
+
+					// right align
+					if (params.alignment == GeneratorParams::ALIGN_RIGHT)
+					{
+						MoveParticles(line, glm::vec2(W1 - W2, 0.0f));
+					}
+					// center align
+					else if (params.alignment == GeneratorParams::ALIGN_CENTER)
+					{
+						MoveParticles(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
+					}
+					// justification
+					else if (params.alignment == GeneratorParams::ALIGN_JUSTIFY && W2 < W1) // cannot justify to decrease line size 
+					{
+						// count the total size of whitespace token						
+						float whitespace_width = 0.0f;
+						for (Token const & token : line)
+						{
+							if (token.IsWhitespaceCharacter())
+							{
+								float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+
+								whitespace_width += factor * token.character_entry->advance.x;
+							}
+						}
+
+						// no whitespace, we cannot redistribute extra size => next line
+						if (whitespace_width == 0.0f)
+							continue;
+
+						// compute the scale factor to apply to each whitespace : W1 = W2 + whitespace_width * whitespace_scale_factor
+
+						float whitespace_scale_factor = (W1 - W2) / whitespace_width;
+
+						// the scale factor to be applied is greater than what we want. Abandon fully the idea of justification
+						if (whitespace_scale_factor > params.justify_space_factor)
+							continue;
+
+						// redistribute extra space
+						float offset = 0.0f;
+						for (Token & token : line)
+						{
+							token.corners.bottomleft.x += offset;
+							token.corners.topright.x += offset;
+							if (token.IsWhitespaceCharacter())
+							{
+								float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+
+								offset += factor * token.character_entry->advance.x * whitespace_scale_factor;
+							}
+						}
+					}
+				}
+			}
+			return true;
+		}
 
 
 
@@ -647,90 +731,7 @@ namespace chaos
 				result_lines.push_back(line);
 		}
 
-		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data)
-		{
-			// left align : nothing to do
-			if (params.alignment == GeneratorParams::ALIGN_LEFT)
-				return true;
 
-			// justifaction : cannot increase line size if the factor is below 1.0
-			if (params.alignment == GeneratorParams::ALIGN_JUSTIFY && params.justify_space_factor <= 1.0f)
-				return true;
-
-			// compute the whole text bounding box
-			glm::vec2 min_position;
-			glm::vec2 max_position;
-			if (!GetBoundingBox(generator_data.generator_result, min_position, max_position)) // nothing to do for empty sprite
-				return true;
-
-			// apply the modifications
-			float W1 = max_position.x - min_position.x;
-			for (TokenLine & line : generator_data.generator_result)
-			{
-				glm::vec2 min_line_position;
-				glm::vec2 max_line_position;
-				if (GetBoundingBox(line, min_line_position, max_line_position))
-				{
-					float W2 = max_line_position.x - min_line_position.x;
-
-					// current line size is exactly the biggest line. No modification to do
-					if (W1 == W2)
-						continue;
-
-					// right align
-					if (params.alignment == GeneratorParams::ALIGN_RIGHT)
-					{
-						MoveSprites(line, glm::vec2(W1 - W2, 0.0f));
-					}
-					// center align
-					else if (params.alignment == GeneratorParams::ALIGN_CENTER)
-					{
-						MoveSprites(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
-					}
-					// justification
-					else if (params.alignment == GeneratorParams::ALIGN_JUSTIFY && W2 < W1) // cannot justify to decrease line size 
-					{
-						// count the total size of whitespace token						
-						float whitespace_width = 0.0f;
-						for (SpriteToken const & token : line)
-						{
-							if (token.IsWhitespaceCharacter())
-							{
-								float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
-
-								whitespace_width += factor * token.character_entry->advance.x;
-							}
-						}
-
-						// no whitespace, we cannot redistribute extra size => next line
-						if (whitespace_width == 0.0f)
-							continue;
-
-						// compute the scale factor to apply to each whitespace : W1 = W2 + whitespace_width * whitespace_scale_factor
-
-						float whitespace_scale_factor = (W1 - W2) / whitespace_width;
-
-						// the scale factor to be applied is greater than what we want. Abandon fully the idea of justification
-						if (whitespace_scale_factor > params.justify_space_factor)
-							continue;
-
-						// redistribute extra space
-						float offset = 0.0f;
-						for (SpriteToken & token : line)
-						{
-							token.position.x += offset;
-							if (token.IsWhitespaceCharacter())
-							{
-								float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
-
-								offset += factor * token.character_entry->advance.x * whitespace_scale_factor;
-							}
-						}
-					}
-				}
-			}
-			return true;
-		}
 
 		bool Generator::GenerateSprites(SpriteManager * sprite_manager, GeneratorParams const & params, GeneratorData & generator_data)
 		{

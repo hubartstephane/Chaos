@@ -258,6 +258,8 @@ namespace chaos
 			/** apply offset for hotpoint */
 			bool MoveParticlesToHotpoint(GeneratorData & generator_data);
 
+			/** update lines according to justification */
+			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data);
 
 #if 0
 
@@ -266,8 +268,7 @@ namespace chaos
 			bool BreakLines(GeneratorParams const & params, GeneratorData & generator_data);
 			/** utility method to cut one line an insert it into a new result */
 			void BreakOneLine(float & y, TokenLine const & line, GeneratorResult & result_lines, GeneratorParams const & params, GeneratorData & generator_data);
-			/** update lines according to justification */
-			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data);
+
 
 
 			/** generate the sprites */

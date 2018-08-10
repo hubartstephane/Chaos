@@ -169,7 +169,6 @@ protected:
 	/** override */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
-	
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
 	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gamepad_data);
@@ -273,9 +272,9 @@ protected:
 	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
 
 	/** ensure object is inside the world */
-	void RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index);
+	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
 	/** ensure player is inside the world */
-	void RestrictedPlayerToScreen();
+	void RestrictPlayerToWorld();
 
 
 	/** generate a direction updward random for the ball */

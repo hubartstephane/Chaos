@@ -813,27 +813,27 @@ void LudumGame::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t
 void LudumGame::SetPlayerPosition(float position)
 {
 	SetObjectPosition(player_allocations.get(), 0, glm::vec2(position, PLAYER_Y));
-	RestrictedPlayerToScreen();
+	RestrictPlayerToWorld();
 }
 
 
-void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index)
+void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
 	ParticleObject * particle = GetObjectParticle(allocation, index);
 	if (particle == nullptr)
 		return;
 
 	chaos::box2 box = particle->bounding_box;
-	chaos::box2 view = GetViewBox();
-	chaos::RestrictToInside(view, box, false);
+	chaos::box2 world = GetWorldBox();
+	chaos::RestrictToInside(world, box, false);
 	SetObjectPosition(allocation, index, box.position);
 }
 
 
 
-void LudumGame::RestrictedPlayerToScreen()
+void LudumGame::RestrictPlayerToWorld()
 {
-	RestrictedObjectToScreen(player_allocations.get(), 0);
+	RestrictObjectToWorld(player_allocations.get(), 0);
 }
 
 void LudumGame::SetPlayerLength(float length)
@@ -846,7 +846,7 @@ void LudumGame::SetPlayerLength(float length)
 	SetPlayerBox(box);
 
 	player_length = length;
-	RestrictedPlayerToScreen();
+	RestrictPlayerToWorld();
 }
 
 
@@ -1500,16 +1500,4 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	if (new_level != nullptr)
 		bricks_allocations = CreateBricks(dynamic_cast<LudumLevel const*>(new_level));
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

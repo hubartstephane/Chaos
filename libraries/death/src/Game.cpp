@@ -985,8 +985,8 @@ namespace death
 			if (!result.IsEmpty())
 				return result;
 		}
-		// by default, the world will be the same size than the camera
-		return GetCameraBox();
+		// by default, the world will be the same size than the screen
+		return GetViewBox();
 	}
 
 	chaos::box2 Game::GetCameraBox() const

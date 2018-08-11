@@ -764,6 +764,20 @@ namespace chaos
 			return (tile_indices.size() == count);
 		}
 
+		size_t TileLayer::GetNonEmptyTileCount() const
+		{
+			size_t result = 0;
+			for (size_t i = 0 ; i < tile_indices.size() ; ++i)
+				if (tile_indices[i] > 0)
+					++result;
+			return result;
+		}
+
+		glm::ivec2 TileLayer::GetTileCoordinate(int index) const
+		{
+			return glm::ivec2(index % size.x, index / size.x);		
+		}
+
 		//
 		// TileSet methods
 		//

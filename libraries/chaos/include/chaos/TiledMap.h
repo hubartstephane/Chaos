@@ -726,6 +726,13 @@ namespace chaos
 			friend class Map;
 			friend class BaseObject;
 
+		public:
+
+			/** get the number of tiles with something inside */
+			size_t GetNonEmptyTileCount() const;
+			/** get the position of the tile */
+			glm::ivec2 GetTileCoordinate(int index) const;
+
 		protected:
 
 			/** constructor */

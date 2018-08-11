@@ -36,6 +36,8 @@ class LudumGame : public death::Game
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
+	friend class LudumGameplayLevelInstance;
+	friend class LudumNarrativeLevelInstance;
 
 public:
 
@@ -120,7 +122,8 @@ protected:
 	/** load one level */
 	virtual death::GameLevel * DoLoadLevel(int level_number, chaos::FilePathParam const & path) override;
 	/** additionnal initialization when loading a level */
-	bool DoLoadLevelInitialize(LudumLevel * level);
+	bool DoLoadLevelInitialize(class LudumGameplayLevel * level, chaos::TiledMap::Map * tiled_map);
+	bool DoLoadLevelInitialize(class LudumNarrativeLevel * level, nlohmann::json const & json_level);
 
 
 	/** called whenever the input mode changes */

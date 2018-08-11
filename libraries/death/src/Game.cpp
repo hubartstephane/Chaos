@@ -1118,8 +1118,10 @@ namespace death
 
 	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance)
 	{
-
-
+		if (old_level_instance != nullptr)
+			old_level_instance->OnLevelEnded();
+		if (new_level_instance != nullptr)
+			new_level_instance->OnLevelStarted();
 	}
 
 	void Game::RestrictCameraToPlayerAndWorld()

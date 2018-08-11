@@ -52,6 +52,15 @@ namespace death
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
 
+		/** getter on the particle manager */
+		chaos::ParticleManager * GetParticleManager(){ return particle_manager.get(); }
+		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
+
+
+		/** getter on the texture atlas */
+		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }
+		chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
+
 	protected:
 
 		/** the tick method */

@@ -21,5 +21,13 @@ namespace death
 
 	}
 
+	void GameLevelInstance::OnLevelEnded()
+	{
+	}
+	
+	void GameLevelInstance::OnLevelStarted()
+	{
+	}
+
 }; // namespace death
 

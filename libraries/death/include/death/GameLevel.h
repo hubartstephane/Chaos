@@ -48,6 +48,12 @@ namespace death
 		/** set the world box */
 		void SetWorldBox(chaos::box2 const & in_world_box) { world_box = in_world_box; }
 
+
+		/** some callbacks */
+		virtual void OnLevelEnded();
+		/** some callbacks */
+		virtual void OnLevelStarted();
+
 	protected:
 
 		/** a pointer on the level that generated this */

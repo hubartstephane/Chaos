@@ -1,5 +1,6 @@
 #include "Ludum42Game.h"
 #include "Ludum42Particles.h"
+#include "Ludum42Level.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -11,6 +12,8 @@
 #include <chaos/InputMode.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
+
+
 
 LudumGame::LudumGame()
 {		
@@ -199,9 +202,9 @@ bool LudumGame::IsLevelCompleted()
 
 void LudumGame::TickLevelCompleted(double delta_time)
 {
-	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
-	if (level == nullptr)
-		return;
+	//LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
+	//if (level == nullptr)
+	//	return;
 
 #if _DEBUG
 	bool completed = cheat_next_level || IsLevelCompleted();
@@ -379,9 +382,18 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-bool LudumGame::DoLoadLevelInitialize(LudumLevel * level)
+bool LudumGame::DoLoadLevelInitialize(LudumNarrativeLevel * level, nlohmann::json const & json_level)
 {
 
+
+
+	return true;
+}
+
+bool LudumGame::DoLoadLevelInitialize(LudumGameplayLevel * level, chaos::TiledMap::Map * tiled_map)
+{
+	// initialize level
+	level->tiled_map = tiled_map;
 
 
 	return true;
@@ -390,25 +402,46 @@ bool LudumGame::DoLoadLevelInitialize(LudumLevel * level)
 
 death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam const & path)
 {
-	// load the resource
-	chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);
-	if (tiled_map == nullptr)
-		return false;
+	boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
-	// allocate a level
-	LudumLevel * result = new LudumLevel;
-	if (result == nullptr)
-		return false;
-	// initialize level
-	result->tiled_map = tiled_map;
-	// some additionnal computation
-	if (!DoLoadLevelInitialize(result))
+	if (chaos::FileTools::IsTypedFile(resolved_path, "json"))
 	{
-		delete(result);
-		return nullptr;
-	}
+		nlohmann::json json_level;
+		if (!chaos::JSONTools::LoadJSONFile(path, json_level, false))
+			return nullptr;
 
-	return result;
+		// allocate a level
+		LudumNarrativeLevel * ludum_result = new LudumNarrativeLevel(this);
+		if (ludum_result == nullptr)
+			return false;
+		// some additionnal computation
+		if (!DoLoadLevelInitialize(ludum_result, json_level))
+		{
+			delete(ludum_result);
+			return nullptr;
+		}	
+		return ludum_result;	
+	}
+	else if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
+	{
+		// load the resource
+		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);
+		if (tiled_map == nullptr)
+			return false;	
+	
+		// allocate a level
+		LudumGameplayLevel * ludum_result = new LudumGameplayLevel(this);
+		if (ludum_result == nullptr)
+			return false;
+		// some additionnal computation
+		if (!DoLoadLevelInitialize(ludum_result, tiled_map))
+		{
+			delete(ludum_result);
+			return nullptr;
+		}	
+		return ludum_result;
+	}
+	return nullptr;
 }
 
 bool LudumGame::LoadLevels()
@@ -465,6 +498,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
 {
+	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
 }
 

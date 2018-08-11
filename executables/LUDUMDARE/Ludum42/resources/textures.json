@@ -1,3 +1,3 @@
 {
-  "@background1": { "path": "@textures/background1.png" }
+  "@background": { "path": "@textures/background.png" }
 }

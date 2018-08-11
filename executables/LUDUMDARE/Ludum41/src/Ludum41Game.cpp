@@ -173,12 +173,15 @@ bool LudumGame::OnKeyEvent(int key, int action)
 	return false;
 }
 
-void LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
+	// press start or go to pause
+	if (death::Game::OnGamepadInput(in_gamepad_data))
+		return true;
 	// maybe this correspond to current challenge
 	SendGamepadButtonToChallenge(&in_gamepad_data);
-	// press start or go to pause
-	death::Game::OnGamepadInput(in_gamepad_data);
+
+	return false;
 }
 
 void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)

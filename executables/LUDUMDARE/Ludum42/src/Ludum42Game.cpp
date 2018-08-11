@@ -83,51 +83,22 @@ bool LudumGame::OnKeyEvent(int key, int action)
 
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
-	// ignore invalid gamepad : should never happen
-	if (!physical_gamepad->IsAnyAction())
-		return true;
-
-	// change the application mode
-	chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
-
-	// cache the stick position
-	glm::vec2 lsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
-	if (glm::length2(lsp) > 0.0f)
-		left_stick_position = gamepad_sensitivity * lsp;
-	else
-	{
-		if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT))
-			left_stick_position.x = -gamepad_sensitivity * 1.0f;
-		else if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT))
-			left_stick_position.x =  gamepad_sensitivity * 1.0f;
-	}
-
-	glm::vec2 rsp = physical_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
-	if (glm::length2(rsp) > 0.0f)
-		right_stick_position = gamepad_sensitivity * rsp;
-
-	// maybe a start game
-	if (physical_gamepad->IsAnyButtonPressed())
-		if (game_automata->main_menu_to_playing->TriggerTransition(true))
-			return true;
-
-	// maybe a game/pause resume
-	if (
-		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-		(physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
-	{
-		if (RequireTogglePause())
-			return true;
-	}
-
-	// fire
-	if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A))
-	{
-		PlayerThrowWater();
-		return true;
-	}
+	if (!death::Game::OnPhysicalGamepadInput(physical_gamepad))
+		return false;
 
 	return true;
+}
+
+bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+{
+	if (death::Game::OnGamepadInput(in_gamepad_data))
+		return true;
+	// fire
+	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A))
+	{
+		PlayerThrowWater();
+	}
+	return false;
 }
 
 void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)
@@ -159,7 +130,7 @@ void LudumGame::ResetGameVariables()
 {
 	death::Game::ResetGameVariables();
 	current_life  = initial_life;
-	current_cooldown  = initial_cooldown;
+	current_cooldown  = cooldown;
 }
 
 void LudumGame::OnGameOver()
@@ -376,10 +347,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
-	DEATHGAME_JSON_ATTRIBUTE(initial_cooldown);
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_speed);
-	DEATHGAME_JSON_ATTRIBUTE(initial_water_speed);
-	DEATHGAME_JSON_ATTRIBUTE(initial_water_lifetime);
+	DEATHGAME_JSON_ATTRIBUTE(cooldown);
+	DEATHGAME_JSON_ATTRIBUTE(water_speed);
+	DEATHGAME_JSON_ATTRIBUTE(water_lifetime);
 
 	return true;
 }
@@ -594,6 +564,7 @@ void LudumGame::TickLevelCompleted(double delta_time)
 	if (cheat_next_level)
 	{
 		SetNextLevel(false);
+		cheat_next_level = false;
 		return;
 	}
 #endif
@@ -618,7 +589,7 @@ void LudumGame::DisplacePlayer(double delta_time)
 		-left_stick_position.y;
 
 	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position + value * initial_player_speed * (float)delta_time);
+	SetPlayerPosition(position + value * (float)delta_time);
 }
 
 void LudumGame::PlayerThrowWater()
@@ -643,11 +614,12 @@ void LudumGame::PlayerThrowWater()
 	chaos::box2 player_box = GetPlayerBox();
 
 	ParticleWater & new_particle = particles[new_count - 1];
-	new_particle.current_life = initial_water_lifetime;
-	new_particle.initial_life = initial_water_lifetime;
+	new_particle.current_life = water_lifetime;
+	new_particle.initial_life = water_lifetime;
 	new_particle.bounding_box.position = player_box.position;
 	new_particle.bounding_box.half_size = player_box.half_size;
 	new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	new_particle.velocity = water_speed * glm::vec2(1.0f, 0.0f);
 
 
 
@@ -671,7 +643,7 @@ void LudumGame::PlayerThrowWater()
 
 
 
-	current_cooldown = initial_cooldown;
+	current_cooldown = cooldown;
 }
 
 void LudumGame::TickCooldown(double delta_time)

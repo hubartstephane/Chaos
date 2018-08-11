@@ -538,12 +538,12 @@ namespace death
 			right_stick_position = gamepad_sensitivity * rsp;
 	}
 
-	void Game::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+	bool Game::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	{
 		// maybe a start game
 		if (in_gamepad_data.IsAnyButtonPressed())
 			if (game_automata->main_menu_to_playing->TriggerTransition(true))
-				return;
+				return true;
 
 		// maybe a game/pause resume
 		if (
@@ -551,8 +551,9 @@ namespace death
 			(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
 		{
 			if (RequireTogglePause())
-				return;
+				return true;
 		}
+		return false;
 	}
 
 	bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)

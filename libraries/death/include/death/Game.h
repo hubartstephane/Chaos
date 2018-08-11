@@ -172,7 +172,7 @@ namespace death
 		virtual void ResetPlayerCachedInputs();
 
 		/** special action on gamepad input reception */
-		virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
+		virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
 
 		/** called whenever a gamepad input is comming */
 		virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);

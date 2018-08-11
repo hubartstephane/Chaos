@@ -121,6 +121,8 @@ size_t ParticleWaterTrait::ParticleToVertices(ParticleWater const * p, VertexBas
 
 bool ParticleWaterTrait::UpdateParticle(float delta_time, ParticleWater * particle, chaos::ParticleAllocation * allocation) const
 {
+	particle->bounding_box.position += particle->velocity * delta_time;
+
 	particle->current_life -= delta_time;
 	if (particle->current_life <= 0.0f)
 		return true;

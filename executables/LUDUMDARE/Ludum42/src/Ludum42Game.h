@@ -69,7 +69,9 @@ public:
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
 	/** called whenever a gamepad input is comming */
-	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+	virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
+
+	virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 
 protected:
 
@@ -219,10 +221,9 @@ protected:
 
 	/** game settings */
 	int initial_life = 3;
-	float initial_cooldown = 0.1f;
-	float initial_player_speed = 1.0f;
-	float initial_water_speed = 1.0f;
-	float initial_water_lifetime = 1.0f;
+	float cooldown = 0.1f;
+	float water_speed = 1.0f;
+	float water_lifetime = 1.0f;
 	
 
 	/** current game values */

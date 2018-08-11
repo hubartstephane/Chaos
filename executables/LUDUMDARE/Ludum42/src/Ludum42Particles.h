@@ -90,6 +90,7 @@ public:
 
 	float initial_life = 0.0f;
 	float current_life = 0.0f;
+	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
 };
 
 

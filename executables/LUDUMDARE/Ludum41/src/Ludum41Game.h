@@ -102,7 +102,7 @@ protected:
 	/** override */
 	virtual bool DeclareParticleClasses() override;
 	/** override */
-	virtual void OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
+	virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 
 	
 

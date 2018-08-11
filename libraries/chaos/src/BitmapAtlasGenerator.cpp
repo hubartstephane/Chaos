@@ -247,10 +247,45 @@ namespace chaos
 			return result;
 		}
 
+		BitmapEntryInput * BitmapSetInput::FindEntry(int tag)
+		{
+			for (BitmapEntryInput & element : elements)
+				if (element.tag == tag)
+					return &element;
+			return nullptr;
+		}
+
+		BitmapEntryInput const * BitmapSetInput::FindEntry(int tag) const 
+		{
+			for (BitmapEntryInput const & element : elements)
+				if (element.tag == tag)
+					return &element;
+			return nullptr;
+		}
+
+		BitmapEntryInput * BitmapSetInput::FindEntry(char const * name)
+		{
+			for (BitmapEntryInput & element : elements)
+				if (element.name == name)
+					return &element;
+			return nullptr;
+		}
+
+		BitmapEntryInput const * BitmapSetInput::FindEntry(char const * name) const 
+		{
+			for (BitmapEntryInput const & element : elements)
+				if (element.name == name)
+					return &element;
+			return nullptr;
+		}
+
 		bool BitmapSetInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
 		{
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
+
+			if (FindEntry(name) != nullptr)
+				return false;
 
 			BitmapEntryInput new_entry;
 

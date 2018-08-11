@@ -68,6 +68,15 @@ namespace chaos
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
 
+			/** finding an entry */
+			BitmapEntryInput * FindEntry(char const * name);
+			/** finding an entry */
+			BitmapEntryInput const * FindEntry(char const * name) const;
+			/** finding an entry */
+			BitmapEntryInput * FindEntry(int tag);
+			/** finding an entry */
+			BitmapEntryInput const * FindEntry(int tag) const;
+
 		protected:
 
 			/** the bitmaps composing the set */

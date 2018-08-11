@@ -220,11 +220,15 @@ protected:
 	/** game settings */
 	int initial_life = 3;
 	float initial_cooldown = 0.1f;
+	float initial_player_speed = 1.0f;
+	float initial_water_speed = 1.0f;
+	float initial_water_lifetime = 1.0f;
 	
 
 	/** current game values */
 	int current_life     = 3;
 	float current_cooldown = 0.1f;
+	
 
 #if _DEBUG
 	bool cheat_next_level = false;

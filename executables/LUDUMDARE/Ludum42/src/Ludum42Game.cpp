@@ -377,6 +377,10 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 		return false;
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
 	DEATHGAME_JSON_ATTRIBUTE(initial_cooldown);
+	DEATHGAME_JSON_ATTRIBUTE(initial_player_speed);
+	DEATHGAME_JSON_ATTRIBUTE(initial_water_speed);
+	DEATHGAME_JSON_ATTRIBUTE(initial_water_lifetime);
+
 	return true;
 }
 
@@ -614,7 +618,7 @@ void LudumGame::DisplacePlayer(double delta_time)
 		-left_stick_position.y;
 
 	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position + value);
+	SetPlayerPosition(position + value * initial_player_speed * (float)delta_time);
 }
 
 void LudumGame::PlayerThrowWater()
@@ -639,8 +643,8 @@ void LudumGame::PlayerThrowWater()
 	chaos::box2 player_box = GetPlayerBox();
 
 	ParticleWater & new_particle = particles[new_count - 1];
-	new_particle.current_life = 1.0f;
-	new_particle.initial_life = 1.0f;
+	new_particle.current_life = initial_water_lifetime;
+	new_particle.initial_life = initial_water_lifetime;
 	new_particle.bounding_box.position = player_box.position;
 	new_particle.bounding_box.half_size = player_box.half_size;
 	new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

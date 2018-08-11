@@ -5,7 +5,10 @@
 
 
   "initial_life": 3,
-  "initial_cooldown": 0.5,
+  "initial_cooldown": 0.1,
+  "initial_player_speed": 48.0,
+  "initial_water_speed":  256.0,
+  "initial_water_lifetime": 0.5,
 	"heart_beat_speed" : 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 20.0

@@ -447,7 +447,7 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
-	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
+	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "space_background");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GROUND_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, WALLS_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");

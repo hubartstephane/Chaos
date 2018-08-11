@@ -68,7 +68,8 @@ GLint GLShaderTools::CheckProgramStatus(GLuint program, GLenum status, char cons
         format = "%s";
 
       GLchar log_buffer[2048];
-      glGetProgramInfoLog(result, sizeof(log_buffer) - 1, nullptr, log_buffer);
+	  log_buffer[0] = 0;
+      glGetProgramInfoLog(program, sizeof(log_buffer) - 1, nullptr, log_buffer);
       LogTools::Error(format, log_buffer);
     }
   }

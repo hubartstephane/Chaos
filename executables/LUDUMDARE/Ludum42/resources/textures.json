@@ -1,5 +1,7 @@
 {
   "@background": { "path": "@textures/background.png" },
+  "@fire": { "path": "@textures/fire.png" },
+  "@perlin_noise": { "path": "@textures/perlin_noise.png" },
   "@cells": { "path": "@textures/cells.png" },
   "@corridor1": { "path": "@textures/corridor1.png" },
   "@corridor2": { "path": "@textures/corridor2.png" },

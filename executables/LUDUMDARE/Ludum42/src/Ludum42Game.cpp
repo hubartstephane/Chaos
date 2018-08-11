@@ -14,7 +14,7 @@
 
 LudumGame::LudumGame()
 {		
-	game_name = "AsciiPaouf 3";
+	game_name = "Escape Paouf 3";
 }
 
 

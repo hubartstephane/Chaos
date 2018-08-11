@@ -64,14 +64,59 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 }
 
 
-
-
-
-
-
+// ===========================================================================
+// Object particle system
+// ===========================================================================
 
 size_t ParticleObjectAtlasTrait::ParticleToVertices(ParticleObjectAtlas const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
+	// work on a copy
+	ParticleObjectAtlas particle = *p;
+
+	int image_id = 0;
+	if (particle.delta_image < 0)
+		image_id = 1 + (-particle.delta_image);	
+	else
+		image_id = particle.delta_image + (int)(game->GetMainClockTime() / particle.frequency);
+
+	// tweak particle coords considering that incomming sprite is the whole atlas (get sub-image coordinates)
+	particle.texcoords = chaos::ParticleTools::MakeParticleTexcoordsAtlas(particle.texcoords, particle.atlas_dimension, particle.skip_last, image_id);
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = particle.color;
+
+	return vertices_per_particle;
+}
+
+bool ParticleObjectAtlasTrait::UpdateParticle(float delta_time, ParticleObjectAtlas * particle, chaos::ParticleAllocation * allocation) const
+{
+	return false;
+}
+
+
+// ===========================================================================
+// ParticleWaterTrait
+// ===========================================================================
+
+size_t ParticleWaterTrait::ParticleToVertices(ParticleWater const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+{
+	// work on a copy
+	ParticleWater particle = *p;
+
+	// compute the image id
+	int image_id = 0;
+
+	// tweak particle coords considering that incomming sprite is the whole atlas (get sub-image coordinates)
+	particle.texcoords = chaos::ParticleTools::MakeParticleTexcoordsAtlas(particle.texcoords, atlas_dimension, 0, image_id);
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = particle.color;
+
+#if 0
 	// work on a copy
 	ParticleObjectAtlas particle = *p;
 
@@ -108,12 +153,22 @@ size_t ParticleObjectAtlasTrait::ParticleToVertices(ParticleObjectAtlas const * 
 	for (size_t i = 0; i < 6; ++i)
 		vertices[i].color = particle.color;
 
+#endif
 	return vertices_per_particle;
 }
 
-bool ParticleObjectAtlasTrait::UpdateParticle(float delta_time, ParticleObjectAtlas * particle, chaos::ParticleAllocation * allocation) const
+bool ParticleWaterTrait::UpdateParticle(float delta_time, ParticleWater * particle, chaos::ParticleAllocation * allocation) const
 {
+	particle->current_life -= delta_time;
+	if (particle->current_life <= 0.0f)
+		return true;
 	return false;
 }
+
+
+
+
+
+
 
 

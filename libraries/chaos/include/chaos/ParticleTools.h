@@ -44,6 +44,9 @@ namespace chaos
 		/** returns the texture coordinates of a particle */
 		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size);
 
+		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
+		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, int skip_last, int image_id);
+
 		/** fill the vertices array with 6 vertices corresponding to 3 triangles */
 		template<class VERTEX_TYPE>
 		void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)

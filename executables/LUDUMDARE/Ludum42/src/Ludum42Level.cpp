@@ -129,13 +129,15 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 		if (tile_layer == nullptr)
 			continue;
 
+		size_t tile_count = tile_layer->GetNonEmptyTileCount();
+		if (tile_count == 0)
+			continue;
+
 		chaos::ParticleLayer * particle_layer = LevelLayerToParticleLayer(tile_layer);
 		if (particle_layer == nullptr)
 			return;
 
-		size_t tile_count = tile_layer->GetNonEmptyTileCount();
-		if (tile_count == 0)
-			continue;
+
 
 		chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles((int)tile_count);
 		if (allocation == nullptr)

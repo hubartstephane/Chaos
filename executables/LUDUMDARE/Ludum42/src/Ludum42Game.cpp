@@ -120,6 +120,13 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 			return true;
 	}
 
+	// fire
+	if (physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A))
+	{
+		PlayerThrowWater();
+		return true;
+	}
+
 	return true;
 }
 
@@ -152,7 +159,7 @@ void LudumGame::ResetGameVariables()
 {
 	death::Game::ResetGameVariables();
 	current_life  = initial_life;
-	current_level = 0;
+	current_cooldown  = initial_cooldown;
 }
 
 void LudumGame::OnGameOver()
@@ -191,6 +198,8 @@ bool LudumGame::TickGameLoop(double delta_time)
 		return false;
 	// displace the player
 	DisplacePlayer(delta_time);
+	// cooldown
+	TickCooldown(delta_time);
 	// test whether current level is terminated
 	TickLevelCompleted(delta_time);
 
@@ -208,40 +217,54 @@ void LudumGame::OnMouseMove(double x, double y)
 void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
+	water_allocations = nullptr;
 	life_allocations = nullptr;
 }
 
 chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
 {
-	// find layer of concern
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
-	if (layer == nullptr)
+	// allocate the objects
+	chaos::ParticleAllocation * allocation = SpawnObjects(layer_id, count);
+	if (allocation == nullptr)
 		return nullptr;
 
+	if (!InitializeGameObjects(allocation, name, count))
+	{
+		delete(allocation);
+		return nullptr;
+	}
+	return allocation;
+}
+
+bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count)
+{
 	// find bitmap set
 	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
-		return nullptr;
+		return false;
 
 	// find bitmap entry
 	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(name);
 	if (entry == nullptr)
-		return nullptr;
-
-	// allocate the objects
-	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
-	if (allocation == nullptr)
-		return nullptr;
+		return false;
 
 	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
 
+	size_t particles_count = particles.GetCount();
+	size_t start = 0;
+
+	if (particles_count < count)
+		count = particles_count; 
+	else
+		start = particles_count - count;
+
 	for (size_t i = 0 ; i < count ; ++i)
 	{
-		ParticleObject & particle = particles[i];
+		ParticleObject & particle = particles[start + i];
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
 	}
 		
-	return allocation;
+	return true;
 }
 
 
@@ -343,6 +366,7 @@ bool LudumGame::DeclareParticleClasses()
 {
 	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
 	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
+	chaos::ClassTools::DeclareClass<ParticleWater, ParticleObject>("ParticleWater");
 	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
 	return true;
 }
@@ -352,6 +376,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
+	DEATHGAME_JSON_ATTRIBUTE(initial_cooldown);
 	return true;
 }
 
@@ -429,11 +454,7 @@ bool LudumGame::LoadLevels()
 
 void LudumGame::FillBackgroundLayer()
 {
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(BACKGROUND_LAYER_ID);
-	if (layer == nullptr)
-		return;
-
-	background_allocations = layer->SpawnParticles(1);
+	background_allocations = SpawnObjects(BACKGROUND_LAYER_ID, 1);
 	if (background_allocations == nullptr)
 		return;
 
@@ -462,6 +483,11 @@ bool LudumGame::InitializeParticleManager()
 	atlas_trait.game = this;
 	particle_manager->AddLayer<ParticleObjectAtlasTrait>(++render_order, FIRE_LAYER_ID, "gameobject", atlas_trait);
 
+	ParticleWaterTrait water_trait;
+	water_trait.game = this;
+	water_trait.atlas_dimension = glm::ivec2(7, 1);
+	particle_manager->AddLayer<ParticleWaterTrait>(++render_order, WATER_LAYER_ID, "gameobject", water_trait);
+
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
 	// fill the background
@@ -484,21 +510,30 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 }
 
+chaos::ParticleAllocation * LudumGame::SpawnObjects(int layer_id, size_t count)
+{
+	chaos::ParticleLayer * layer = GetParticleManager()->FindLayer(layer_id);
+	if (layer == nullptr)
+		return nullptr;
+	return layer->SpawnParticles(count);
+}
+
+
 bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 {
+	// spawn the player
 	if (player_allocations != nullptr) // already existing
 		return false;
 
-	chaos::ParticleLayer * layer = GetParticleManager()->FindLayer(LudumGame::PLAYER_LAYER_ID);
-	if (layer == nullptr)
-		return false;
-
-	player_allocations = layer->SpawnParticles(1);
+	player_allocations = SpawnObjects(LudumGame::PLAYER_LAYER_ID, 1);
 	if (player_allocations == nullptr)
 		return false;
 
 	chaos::ParticleAccessor<ParticleObject> particles = player_allocations->GetParticleAccessor<ParticleObject>();
 	particles[0] = particle_object;
+
+	// create the water allocation
+	water_allocations = SpawnObjects(LudumGame::WATER_LAYER_ID, 0);
 
 	return true;
 }
@@ -506,6 +541,7 @@ bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 void LudumGame::UnSpawnPlayer()
 {
 	player_allocations = nullptr;
+	water_allocations  = nullptr;
 }
 
 
@@ -579,4 +615,62 @@ void LudumGame::DisplacePlayer(double delta_time)
 
 	glm::vec2 position = GetPlayerPosition();
 	SetPlayerPosition(position + value);
+}
+
+void LudumGame::PlayerThrowWater()
+{
+	if (player_allocations == nullptr) // no player, nothing to do
+		return;
+	if (water_allocations == nullptr)
+		return;
+
+	if (current_cooldown > 0.0f)
+		return;
+
+	size_t new_count = water_allocations->GetParticleCount() + 1;
+	water_allocations->Resize(new_count);
+
+	InitializeGameObjects(water_allocations.get(), "water", 1);
+
+	chaos::ParticleAccessor<ParticleWater> particles = water_allocations->GetParticleAccessor<ParticleWater>();
+	if (particles.GetCount() < new_count)
+		return;
+
+	chaos::box2 player_box = GetPlayerBox();
+
+	ParticleWater & new_particle = particles[new_count - 1];
+	new_particle.current_life = 5.0f;
+	new_particle.initial_life = 5.0f;
+	new_particle.bounding_box.position = player_box.position;
+	new_particle.bounding_box.half_size = player_box.half_size;
+	new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+	current_cooldown = initial_cooldown;
+}
+
+void LudumGame::TickCooldown(double delta_time)
+{
+	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
 }

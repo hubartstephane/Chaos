@@ -47,6 +47,7 @@ public:
 	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
 	static int const PLAYER_LAYER_ID     = death::Game::LAST_LAYER_ID + 5;
 	static int const FIRE_LAYER_ID       = death::Game::LAST_LAYER_ID + 6;
+	static int const WATER_LAYER_ID      = death::Game::LAST_LAYER_ID + 7;
 	
 
 	static int const OBJECT_TYPE_PLAYER = 0;
@@ -105,6 +106,9 @@ protected:
 	/** override */
 	virtual bool TickGameLoop(double delta_time) override;
 
+	/** cooldown the weapon */
+	void TickCooldown(double delta_time);
+
 
 
 
@@ -147,6 +151,8 @@ protected:
 
 	/** create a number of game object */
 	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
+	/** fill game object texture coordinates (from the last of the array) */
+	bool InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count);
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
@@ -176,6 +182,8 @@ protected:
 	/** destroying player */
 	void UnSpawnPlayer();
 
+	chaos::ParticleAllocation * SpawnObjects(int layer_id, size_t count);
+
 	/** get the position of the player */
 	bool SetPlayerPosition(glm::vec2 const & position);
 	/** get the player position */
@@ -191,7 +199,7 @@ protected:
 	/** ensure player is inside the world */
 	void RestrictPlayerToWorld();
 
-
+	void PlayerThrowWater();
 
 	/** move the player */
 	void DisplacePlayer(double delta_time);
@@ -211,10 +219,12 @@ protected:
 
 	/** game settings */
 	int initial_life = 3;
+	float initial_cooldown = 0.1f;
+	
 
 	/** current game values */
-	int current_life  = 3;
-	int current_level = 0;
+	int current_life     = 3;
+	float current_cooldown = 0.1f;
 
 #if _DEBUG
 	bool cheat_next_level = false;
@@ -222,6 +232,8 @@ protected:
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> water_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 };
+

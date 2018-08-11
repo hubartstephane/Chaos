@@ -639,8 +639,8 @@ void LudumGame::PlayerThrowWater()
 	chaos::box2 player_box = GetPlayerBox();
 
 	ParticleWater & new_particle = particles[new_count - 1];
-	new_particle.current_life = 5.0f;
-	new_particle.initial_life = 5.0f;
+	new_particle.current_life = 1.0f;
+	new_particle.initial_life = 1.0f;
 	new_particle.bounding_box.position = player_box.position;
 	new_particle.bounding_box.half_size = player_box.half_size;
 	new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

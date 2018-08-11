@@ -106,7 +106,7 @@ size_t ParticleWaterTrait::ParticleToVertices(ParticleWater const * p, VertexBas
 	ParticleWater particle = *p;
 
 	// compute the image id
-	int image_id = 0;
+	int image_id = (int)((particle.initial_life - particle.current_life) / particle.initial_life * (float)atlas_dimension.x);
 
 	// tweak particle coords considering that incomming sprite is the whole atlas (get sub-image coordinates)
 	particle.texcoords = chaos::ParticleTools::MakeParticleTexcoordsAtlas(particle.texcoords, atlas_dimension, 0, image_id);
@@ -116,44 +116,6 @@ size_t ParticleWaterTrait::ParticleToVertices(ParticleWater const * p, VertexBas
 	for (size_t i = 0; i < 6; ++i)
 		vertices[i].color = particle.color;
 
-#if 0
-	// work on a copy
-	ParticleObjectAtlas particle = *p;
-
-	int image_id = 0;
-	if (particle.delta_image < 0)
-	{
-		image_id = 1 + (-particle.delta_image);	
-	}
-	else
-	{
-		image_id = particle.delta_image + (int)(game->GetMainClockTime() / particle.frequency);
-	}
-
-	// tweak particle texcoords to have a sub image
-	int image_count = (particle.atlas_dimension.x * particle.atlas_dimension.y) - particle.skip_last;
-	if (image_count > 0)
-	{
-		image_id = image_id % image_count;
-
-		glm::vec2 atlas_coord = glm::vec2(
-			(float)(image_id % particle.atlas_dimension.x),
-			(float)(image_id / particle.atlas_dimension.y)
-		);
-
-		glm::vec2 atlas_size = (particle.texcoords.topright - particle.texcoords.bottomleft) / chaos::GLMTools::RecastVector<glm::vec2>(particle.atlas_dimension);
-
-		particle.texcoords.bottomleft = particle.texcoords.bottomleft + atlas_coord * atlas_size;
-		particle.texcoords.topright = particle.texcoords.bottomleft + atlas_size;
-	}
-
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, vertices);
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = particle.color;
-
-#endif
 	return vertices_per_particle;
 }
 

@@ -54,7 +54,7 @@ namespace chaos
 
 			glm::vec2 atlas_coord = glm::vec2(
 				(float)(image_id % atlas_dimension.x),
-				(float)(image_id / atlas_dimension.y)
+				(float)(image_id / atlas_dimension.x)
 			);
 
 			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::GLMTools::RecastVector<glm::vec2>(atlas_dimension);

@@ -161,22 +161,6 @@ void LudumGame::OnGameOver()
 	DestroyGameObjects();
 }
 
-void LudumGame::DisplacePlayer(double delta_time)
-{
-	float value = left_stick_position.x;
-	if (abs(right_stick_position.x) > abs(left_stick_position.x))
-		value = right_stick_position.x;
-
-	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position.x + value);
-}
-
-
-
-
-
-
-
 void LudumGame::ChangeLife(int delta_life)
 {
 	if (delta_life == 0)
@@ -200,31 +184,15 @@ bool LudumGame::IsLevelCompleted()
 	return false;
 }
 
-void LudumGame::TickLevelCompleted(double delta_time)
-{
-	//LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
-	//if (level == nullptr)
-	//	return;
-
-#if _DEBUG
-	bool completed = cheat_next_level || IsLevelCompleted();
-#else
-	bool completed = IsLevelCompleted();
-#endif
-
-	if (completed)
-	{
-
-
-
-	}
-}
-
 bool LudumGame::TickGameLoop(double delta_time)
 {
+	// super call
 	if (!death::Game::TickGameLoop(delta_time))
 		return false;
-
+	// displace the player
+	DisplacePlayer(delta_time);
+	// test whether current level is terminated
+	TickLevelCompleted(delta_time);
 
 
 
@@ -306,13 +274,20 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 
 glm::vec2 LudumGame::GetPlayerPosition() const
 {
-	return glm::vec2(0.0f, 0.0f);
+	chaos::box2 b = GetPlayerBox();
+	return b.position;
 }
 
-void LudumGame::SetPlayerPosition(float position)
+bool LudumGame::SetPlayerPosition(glm::vec2 const & position)
 {
-
-	RestrictedPlayerToScreen();
+	chaos::box2 b = GetPlayerBox();
+	b.position = position;
+	if (SetPlayerBox(b))
+	{
+		RestrictedPlayerToScreen();
+		return true;
+	}
+	return false;
 }
 
 
@@ -537,8 +512,10 @@ chaos::box2 LudumGame::GetPlayerBox() const
 	return GetObjectBox(player_allocations.get(), 0);
 }
 
-void LudumGame::SetPlayerBox(chaos::box2 const & in_player_box)
+bool LudumGame::SetPlayerBox(chaos::box2 const & in_player_box)
 {
+
+	return SetObjectBox(player_allocations.get(), 0, in_player_box);
 }
 
 chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const
@@ -567,3 +544,37 @@ bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t inde
 	return true;
 }
 
+
+void LudumGame::TickLevelCompleted(double delta_time)
+{
+
+#if _DEBUG
+	if (cheat_next_level)
+	{
+		SetNextLevel(false);
+		return;
+	}
+#endif
+
+	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
+	if (level_instance == nullptr)
+		return;
+
+
+}
+
+void LudumGame::DisplacePlayer(double delta_time)
+{
+	glm::vec2 value;
+
+	value.x = (abs(right_stick_position.x) > abs(left_stick_position.x))?
+		right_stick_position.x:
+		left_stick_position.x;
+
+	value.y = (abs(right_stick_position.y) > abs(left_stick_position.y))?
+		-right_stick_position.y:
+		-left_stick_position.y;
+
+	glm::vec2 position = GetPlayerPosition();
+	SetPlayerPosition(position + value);
+}

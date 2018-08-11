@@ -118,7 +118,7 @@ namespace death
 		/** update the camera box */
 		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
 		/** update the player box */
-		virtual void SetPlayerBox(chaos::box2 const & in_player_box);
+		virtual bool SetPlayerBox(chaos::box2 const & in_player_box);
 
 
 

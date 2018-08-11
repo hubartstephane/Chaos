@@ -151,14 +151,15 @@ protected:
 	/** override */
 	virtual chaos::box2 GetPlayerBox() const override;
 	/** override */
-	virtual void SetPlayerBox(chaos::box2 const & in_player_box) override;
+	virtual bool SetPlayerBox(chaos::box2 const & in_player_box) override;
 
 
 
-	/** override */
+	/** utility method to move an object */
 	chaos::box2 GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const;
-	/** override */
+	/** utility method to move an object */
 	bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & b);
+
 	
 
 
@@ -172,7 +173,7 @@ protected:
 	void UnSpawnPlayer();
 
 	/** get the position of the player */
-	void SetPlayerPosition(float position);
+	bool SetPlayerPosition(glm::vec2 const & position);
 	/** get the player position */
 	glm::vec2 GetPlayerPosition() const;
 

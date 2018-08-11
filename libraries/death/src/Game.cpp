@@ -25,9 +25,9 @@ namespace death
 			simulated_stick.x += 1.0f;
 
 		if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
-			simulated_stick.y -= 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
 			simulated_stick.y += 1.0f;
+		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
+			simulated_stick.y -= 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
 			left_stick_position = gamepad_sensitivity * simulated_stick;
@@ -1008,8 +1008,9 @@ namespace death
 		camera_box = in_camera_box;
 	}
 
-	void Game::SetPlayerBox(chaos::box2 const & in_player_box)
+	bool Game::SetPlayerBox(chaos::box2 const & in_player_box)
 	{
+		return false;
 	}
 
 	GameLevel * Game::GetCurrentLevel()

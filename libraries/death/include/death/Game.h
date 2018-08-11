@@ -61,6 +61,11 @@ namespace death
 		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }
 		chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
 
+		/** chaos getter */
+		double GetMainClockTime() const;
+		/** gets the time of the begining of the game (0.0 if not started) */
+		double GetStartGameTime() const;
+
 	protected:
 
 		/** the tick method */
@@ -95,11 +100,7 @@ namespace death
 		chaos::Clock * GetMainClock();
 		/** chaos getter */
 		chaos::Clock const * GetMainClock() const;
-		/** chaos getter */
-		double GetMainClockTime() const;
 
-		/** gets the time of the begining of the game (0.0 if not started) */
-		double GetStartGameTime() const;
 
 
 

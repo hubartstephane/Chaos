@@ -18,6 +18,13 @@
   <image width="128" height="128" source="player.png"/>
  </tile>
  <tile id="3">
+  <properties>
+   <property name="ATLAS_FREQUENCY" type="float" value="0.1"/>
+   <property name="ATLAS_SIZE_X" type="int" value="3"/>
+   <property name="ATLAS_SIZE_Y" type="int" value="3"/>
+   <property name="ATLAS_SKIP_LAST" type="int" value="0"/>
+   <property name="OBJECT_TYPE" type="int" value="2"/>
+  </properties>
   <image width="128" height="128" source="flames.png"/>
  </tile>
 </tileset>

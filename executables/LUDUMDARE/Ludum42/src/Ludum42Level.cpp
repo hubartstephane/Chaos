@@ -167,6 +167,8 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+				
+				// special objects
 				int const * object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
 				if (object_type != nullptr)
 				{
@@ -174,6 +176,25 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 					{				
 						game->SpawnPlayer(new_particle);
 						continue;
+					}							
+					else if (allocation->IsParticleClassCompatible<ParticleObjectAtlas>(true))
+					{
+						int const * atlas_size_x = tile_info.tiledata->FindPropertyInt("ATLAS_SIZE_X");
+						int const * atlas_size_y = tile_info.tiledata->FindPropertyInt("ATLAS_SIZE_Y");
+						if (atlas_size_x != nullptr && atlas_size_y != nullptr)
+						{
+							ParticleObjectAtlas * atlas_particle = (ParticleObjectAtlas*)&particles[k];
+							atlas_particle->atlas_dimension.x = *atlas_size_x;
+							atlas_particle->atlas_dimension.y = *atlas_size_y;
+
+							float const * atlas_frequency = tile_info.tiledata->FindPropertyFloat("ATLAS_FREQUENCY");
+							if (atlas_frequency != nullptr)
+								atlas_particle->frequency = *atlas_frequency;
+							int const * skip_last      = tile_info.tiledata->FindPropertyInt("ATLAS_SKIP_LAST");
+							if (skip_last != nullptr)
+								atlas_particle->skip_last = *skip_last;
+						
+						}
 					}							
 				}
 

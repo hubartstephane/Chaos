@@ -51,7 +51,7 @@ public:
 
 	static int const OBJECT_TYPE_PLAYER = 0;
 	static int const OBJECT_TYPE_WALL   = 1;
-	static int const OBJECT_TYPE_FLAME  = 2;
+	static int const OBJECT_TYPE_FIRE   = 2;
 
 	/** constructor */
 	LudumGame();

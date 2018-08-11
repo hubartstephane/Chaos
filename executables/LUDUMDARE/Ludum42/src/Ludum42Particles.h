@@ -59,7 +59,7 @@ class ParticleObjectAtlas : public ParticleObject
 {
 public:
 
-	glm::ivec2 atlas_dimension;
+	glm::ivec2 atlas_dimension = glm::vec2(0, 0);
 	float frequency = 0.0f; 
 	int   skip_last = 0;
 };

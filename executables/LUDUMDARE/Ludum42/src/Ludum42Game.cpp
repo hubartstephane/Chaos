@@ -202,7 +202,7 @@ bool LudumGame::TickGameLoop(double delta_time)
 
 void LudumGame::OnMouseMove(double x, double y)
 {
-	left_stick_position.x = mouse_sensitivity * (float)x;
+	
 }
 
 void LudumGame::DestroyGameObjects()
@@ -284,29 +284,24 @@ bool LudumGame::SetPlayerPosition(glm::vec2 const & position)
 	b.position = position;
 	if (SetPlayerBox(b))
 	{
-		RestrictedPlayerToScreen();
+		RestrictPlayerToWorld();
 		return true;
 	}
 	return false;
 }
 
 
-void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index)
+void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
-#if 0
-	chaos::box2 box = particle->bounding_box;
+	chaos::box2 box   = GetObjectBox(allocation, index);
 	chaos::box2 world = GetWorldBox();
 	chaos::RestrictToInside(world, box, false);
-#endif
-
-
-
-
+	SetObjectBox(allocation, index, box);
 }
 
-void LudumGame::RestrictedPlayerToScreen()
+void LudumGame::RestrictPlayerToWorld()
 {
-	RestrictedObjectToScreen(player_allocations.get(), 0);
+	RestrictObjectToWorld(player_allocations.get(), 0);
 }
 
 

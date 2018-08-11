@@ -183,9 +183,9 @@ protected:
 	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
 
 	/** ensure object is inside the world */
-	void RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index);
+	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
 	/** ensure player is inside the world */
-	void RestrictedPlayerToScreen();
+	void RestrictPlayerToWorld();
 
 
 

@@ -779,15 +779,16 @@ chaos::box2 LudumGame::GetPlayerBox() const
 }
 
 
-void LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box) 
+bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box) 
 {
 	ParticleObject * object = GetObjectParticle(allocation, index);
 	if (object == nullptr)
-		return;
+		return false;
 	object->bounding_box = box;
+	return true;
 }
 
-void LudumGame::SetPlayerBox(chaos::box2 const & box)
+bool LudumGame::SetPlayerBox(chaos::box2 const & box)
 {
 	return SetObjectBox(player_allocations.get(), 0, box);
 }

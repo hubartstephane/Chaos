@@ -293,7 +293,7 @@ bool LudumGame::SetPlayerPosition(glm::vec2 const & position)
 
 void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
-	chaos::box2 box   = GetObjectBox(allocation, index);
+	chaos::box2 box    = GetObjectBox(allocation, index);
 	chaos::box2 world = GetWorldBox();
 	chaos::RestrictToInside(world, box, false);
 	SetObjectBox(allocation, index, box);
@@ -342,6 +342,7 @@ bool LudumGame::CreateGameAutomata()
 bool LudumGame::DeclareParticleClasses()
 {
 	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
+	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
 	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
 	return true;
 }
@@ -455,6 +456,12 @@ bool LudumGame::InitializeParticleManager()
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, WALLS_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, PLAYER_LAYER_ID, "gameobject");
+
+
+	ParticleObjectAtlasTrait atlas_trait;
+	atlas_trait.game = this;
+	particle_manager->AddLayer<ParticleObjectAtlasTrait>(++render_order, FIRE_LAYER_ID, "gameobject", atlas_trait);
+
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
 	// fill the background

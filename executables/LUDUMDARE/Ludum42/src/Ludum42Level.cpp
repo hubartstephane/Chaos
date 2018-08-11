@@ -82,12 +82,15 @@ chaos::ParticleLayer * LudumGameplayLevelInstance::LevelLayerToParticleLayer(cha
 
 	int layer_id = -1;
 
-	if (_strcmpi(particle_layer_name->c_str(), "GROUND") == 0)
+	char const * name = particle_layer_name->c_str();
+	if (_strcmpi(name, "GROUND") == 0)
 		layer_id = LudumGame::GROUND_LAYER_ID;
-	else if (_strcmpi(particle_layer_name->c_str(), "WALLS") == 0)
+	else if (_strcmpi(name, "WALLS") == 0)
 		layer_id = LudumGame::WALLS_LAYER_ID;
-	else if (_strcmpi(particle_layer_name->c_str(), "OBJECTS") == 0)
+	else if (_strcmpi(name, "OBJECTS") == 0)
 		layer_id = LudumGame::GAMEOBJECT_LAYER_ID;
+	else if (_strcmpi(name, "FIRE") == 0)
+		layer_id = LudumGame::FIRE_LAYER_ID;
 
 	if (layer_id > 0)
 		return game->GetParticleManager()->FindLayer(layer_id);

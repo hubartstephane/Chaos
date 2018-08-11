@@ -46,8 +46,12 @@ public:
 	static int const WALLS_LAYER_ID      = death::Game::LAST_LAYER_ID + 3;
 	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
 	static int const PLAYER_LAYER_ID     = death::Game::LAST_LAYER_ID + 5;
+	static int const FIRE_LAYER_ID       = death::Game::LAST_LAYER_ID + 6;
+	
 
 	static int const OBJECT_TYPE_PLAYER = 0;
+	static int const OBJECT_TYPE_WALL   = 1;
+	static int const OBJECT_TYPE_FLAME  = 2;
 
 	/** constructor */
 	LudumGame();

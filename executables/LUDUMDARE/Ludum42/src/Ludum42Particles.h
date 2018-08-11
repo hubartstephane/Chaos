@@ -31,6 +31,7 @@ public:
 	size_t ParticleToVertices(ParticleBackground const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 };
 
+
 // ===========================================================================
 // Object particle system
 // ===========================================================================
@@ -47,6 +48,35 @@ public:
 };
 
 
+
+
+
+// ===========================================================================
+// ParticleObjectAtlas
+// ===========================================================================
+
+class ParticleObjectAtlas : public ParticleObject
+{
+public:
+
+	glm::ivec2 atlas_dimension;
+	float frequency = 0.0f; 
+	int   skip_last = 0;
+};
+
+
+class ParticleObjectAtlasTrait : public chaos::ParticleLayerTrait<ParticleObjectAtlas, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleObjectAtlas * particle, chaos::ParticleAllocation * allocation) const;
+
+	size_t ParticleToVertices(ParticleObjectAtlas const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+public:
+
+	class LudumGame * game = nullptr;
+};
 
 
 

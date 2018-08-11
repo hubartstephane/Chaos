@@ -618,6 +618,9 @@ namespace chaos
 			/** object information */
 			glm::vec2 image_size = glm::vec2(0.0f, 0.0f);
 
+			/** deduced reduced image/path (can be used as a key in atlas) */
+			std::string atlas_key;
+
 			/** the layers composing the map */
 			std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
 		};

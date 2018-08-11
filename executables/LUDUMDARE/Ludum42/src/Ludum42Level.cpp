@@ -1,5 +1,6 @@
 #include "Ludum42Level.h"
 
+#include <chaos/GLMTools.h>
 
 death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance()
 {
@@ -90,15 +91,19 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	if (tiled_map == nullptr)
 		return;
 
-	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = game->GetTextureAtlas();
-	if (atlas == nullptr)
+	chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = game->GetTextureAtlas();
+	if (texture_atlas == nullptr)
 		return;
 
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = atlas->GetBitmapSet("sprites");
+	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
 	if (bitmap_set == nullptr)
 		return;
 
-	for (size_t i = 0 ; tiled_map->tile_layers.size(); ++i)
+	static float scale = 0.05f;
+
+	chaos::box2 wb; // compute the world box
+
+	for (size_t i = 0 ; i < tiled_map->tile_layers.size(); ++i)
 	{
 		chaos::TiledMap::TileLayer * tile_layer = tiled_map->tile_layers[i].get();
 		if (tile_layer == nullptr)
@@ -111,41 +116,43 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 		chaos::ParticleAllocation * allocation = layer->SpawnParticles((int)tile_count);
 		if (allocation == nullptr)
 			continue;
-
-
+	
 		size_t k = 0;
 		chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
 
-
-		
-
-
-		glm::ivec2 size = tile_layer->size;
+		glm::vec2 tile_size = chaos::GLMTools::RecastVector<glm::vec2>(tiled_map->tile_size);
 		for (size_t j = 0 ; j < tile_layer->tile_indices.size() ; ++j)
 		{
 			int tile_indice = tile_layer->tile_indices[j];
 			if (tile_indice <= 0)
 				continue;
 			
-			glm::ivec2 pos = tile_layer->GetTileCoordinate(j);
+			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j));
 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 			if (tile_info.tiledata != nullptr)
-			{
-				ParticleObject & object = particles[k++];
+			{			
+				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
+				if (entry == nullptr)
+					continue;
 
-				//bitmap_set->GetEntry(tile_info.tiledata->)
+				ParticleObject & particle = particles[k++];
 				
+				particle.bounding_box.position = scale * position * tile_size;
+				particle.bounding_box.half_size = scale * 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
 
+				particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+				particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-				tile_indice = tile_indice;
+				wb = wb | particle.bounding_box;
 			}
 		}
+
+		allocation->Resize(k);
+		allocations.push_back(allocation);
 	}
 
-
-	
-
+	world_box = wb;
 }
 
 // =============================================================

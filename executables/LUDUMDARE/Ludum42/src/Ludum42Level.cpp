@@ -193,6 +193,8 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 							int const * skip_last      = tile_info.tiledata->FindPropertyInt("ATLAS_SKIP_LAST");
 							if (skip_last != nullptr)
 								atlas_particle->skip_last = *skip_last;
+
+							atlas_particle->delta_image = abs(rand());
 						
 						}
 					}							

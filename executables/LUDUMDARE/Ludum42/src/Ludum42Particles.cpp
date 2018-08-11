@@ -76,13 +76,13 @@ size_t ParticleObjectAtlasTrait::ParticleToVertices(ParticleObjectAtlas const * 
 	ParticleObjectAtlas particle = *p;
 
 	int image_id = 0;
-	if (particle.skip_last < 0)
+	if (particle.delta_image < 0)
 	{
-		image_id = 1 + (-particle.skip_last);	
+		image_id = 1 + (-particle.delta_image);	
 	}
 	else
 	{
-		image_id = (int)(game->GetMainClockTime() / particle.frequency);
+		image_id = particle.delta_image + (int)(game->GetMainClockTime() / particle.frequency);
 	}
 
 	// tweak particle texcoords to have a sub image

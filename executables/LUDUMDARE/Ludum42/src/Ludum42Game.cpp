@@ -338,6 +338,7 @@ bool LudumGame::DeclareParticleClasses()
 	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
 	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
 	chaos::ClassTools::DeclareClass<ParticleWater, ParticleObject>("ParticleWater");
+	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleObject>("ParticlePlayer");
 	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
 	return true;
 }
@@ -450,7 +451,12 @@ bool LudumGame::InitializeParticleManager()
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GROUND_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, WALLS_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, PLAYER_LAYER_ID, "gameobject");
+
+
+	ParticlePlayerTrait player_trait;
+	player_trait.game = this;
+	player_trait.atlas_dimension = glm::ivec2(8, 8);
+	particle_manager->AddLayer<ParticlePlayerTrait>(++render_order, PLAYER_LAYER_ID, "gameobject", player_trait);
 
 
 	ParticleObjectAtlasTrait atlas_trait;
@@ -576,6 +582,36 @@ void LudumGame::TickLevelCompleted(double delta_time)
 
 }
 
+ParticlePlayer * LudumGame::GetPlayerParticle()
+{
+	if (player_allocations == nullptr)
+		return nullptr;
+	chaos::ParticleAccessor<ParticlePlayer> particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
+	if (particles.GetCount() == 0)
+		return nullptr;
+	return &particles[0];
+}
+
+static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_count)
+{
+	float angle = atan2(direction.y, direction.x);
+	if (angle < 0.0f)
+		angle += 2.0f * (float)M_PI;
+
+	float section = 2.0f * (float)M_PI / (float)section_count;
+
+	return (int)((angle + section / 2.0f) / section);
+}
+
+
+static glm::vec2 GetDirectionFromCircleSection(int quadran, int section_count)
+{
+	float section = 2.0f * (float)M_PI / (float)section_count;
+	float angle   = ((float)quadran) * section;
+
+	return glm::vec2(cos(angle), sin(-angle));
+}
+
 void LudumGame::DisplacePlayer(double delta_time)
 {
 	glm::vec2 value;
@@ -590,7 +626,19 @@ void LudumGame::DisplacePlayer(double delta_time)
 
 	glm::vec2 position = GetPlayerPosition();
 	SetPlayerPosition(position + value * (float)delta_time);
+
+
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle != nullptr)
+	{
+		if (glm::length2(left_stick_position) > 0.0f)
+		{
+			player_particle->image_id.y = GetCircleSectionFromDirection(left_stick_position, 8);
+		}
+	}
 }
+
+
 
 void LudumGame::PlayerThrowWater()
 {
@@ -611,38 +659,18 @@ void LudumGame::PlayerThrowWater()
 	if (particles.GetCount() < new_count)
 		return;
 
-	chaos::box2 player_box = GetPlayerBox();
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return;
 
 	ParticleWater & new_particle = particles[new_count - 1];
 	new_particle.current_life = water_lifetime;
 	new_particle.initial_life = water_lifetime;
-	new_particle.bounding_box.position = player_box.position;
-	new_particle.bounding_box.half_size = player_box.half_size;
+	new_particle.bounding_box.position = player_particle->bounding_box.position;
+	new_particle.bounding_box.half_size = player_particle->bounding_box.half_size;
 	new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	new_particle.velocity = water_speed * glm::vec2(1.0f, 0.0f);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
+	new_particle.velocity = water_speed * GetDirectionFromCircleSection(player_particle->image_id.y, 8);
+		
 	current_cooldown = cooldown;
 }
 

@@ -100,6 +100,10 @@ bool ParticleObjectAtlasTrait::UpdateParticle(float delta_time, ParticleObjectAt
 // ParticleWaterTrait
 // ===========================================================================
 
+// ===========================================================================
+// ParticleWaterTrait
+// ===========================================================================
+
 size_t ParticleWaterTrait::ParticleToVertices(ParticleWater const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	// work on a copy
@@ -129,6 +133,30 @@ bool ParticleWaterTrait::UpdateParticle(float delta_time, ParticleWater * partic
 	return false;
 }
 
+// ===========================================================================
+// ParticleWaterTrait
+// ===========================================================================
+
+size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+{
+	// work on a copy
+	ParticlePlayer particle = *p;
+
+	// tweak particle coords considering that incomming sprite is the whole atlas (get sub-image coordinates)
+	particle.texcoords = chaos::ParticleTools::MakeParticleTexcoordsAtlas(particle.texcoords, atlas_dimension, particle.image_id);
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = particle.color;
+
+	return vertices_per_particle;
+}
+
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const
+{
+	return false;
+}
 
 
 

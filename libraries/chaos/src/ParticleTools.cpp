@@ -65,6 +65,25 @@ namespace chaos
 		return texcoords;
 	}
 
+	ParticleTexcoords ParticleTools::MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, glm::ivec2 const & image_id)
+	{
+		// tweak particle texcoords to have a sub image
+		int image_count = (atlas_dimension.x * atlas_dimension.y);
+		if (image_count > 0)
+		{
+			glm::vec2 atlas_coord = glm::vec2(
+				(float)(image_id.x % atlas_dimension.x),
+				(float)(image_id.y % atlas_dimension.y)
+			);
+
+			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::GLMTools::RecastVector<glm::vec2>(atlas_dimension);
+
+			texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
+			texcoords.topright = texcoords.bottomleft + atlas_size;
+		}	
+		return texcoords;
+	}
+
 
 }; // namespace chaos
 

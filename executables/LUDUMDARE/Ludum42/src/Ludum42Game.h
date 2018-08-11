@@ -158,6 +158,7 @@ protected:
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
+	ParticlePlayer * GetPlayerParticle();
 
 
 	/** override */

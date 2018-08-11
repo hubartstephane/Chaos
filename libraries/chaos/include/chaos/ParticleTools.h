@@ -46,6 +46,8 @@ namespace chaos
 
 		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
 		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, int skip_last, int image_id);
+		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
+		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, glm::ivec2 const & image_id);
 
 		/** fill the vertices array with 6 vertices corresponding to 3 triangles */
 		template<class VERTEX_TYPE>

@@ -41,10 +41,12 @@ class LudumGame : public death::Game
 
 public:
 
-	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;	
-	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 2;
-	static int const GROUND_LAYER_ID     = death::Game::LAST_LAYER_ID + 3;
-	static int const WALLS_LAYER_ID      = death::Game::LAST_LAYER_ID + 4;
+	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;		
+	static int const GROUND_LAYER_ID     = death::Game::LAST_LAYER_ID + 2;
+	static int const WALLS_LAYER_ID      = death::Game::LAST_LAYER_ID + 3;
+	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
+
+	static int const OBJECT_TYPE_PLAYER = 0;
 
 	/** constructor */
 	LudumGame();
@@ -150,6 +152,11 @@ protected:
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
 
+
+	/** spawning player */
+	void SpawnPlayer();
+	/** destroying player */
+	void UnSpawnPlayer();
 
 	/** get the position of the player */
 	void SetPlayerPosition(float position);

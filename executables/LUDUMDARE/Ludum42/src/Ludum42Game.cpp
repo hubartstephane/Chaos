@@ -504,4 +504,14 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 }
 
+void LudumGame::SpawnPlayer()
+{
+	player_allocations = nullptr;
+
+}
+
+void LudumGame::UnSpawnPlayer()
+{
+	player_allocations = nullptr;
+}
 

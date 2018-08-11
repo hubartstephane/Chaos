@@ -71,7 +71,7 @@ LudumGameplayLevel const * LudumGameplayLevelInstance::GetLudumLevel() const
 void LudumGameplayLevelInstance::OnLevelEnded()
 {
 	allocations.clear();
-	game->player_allocations = nullptr;
+	game->UnSpawnPlayer();
 }
 
 chaos::ParticleLayer * LudumGameplayLevelInstance::LevelLayerToParticleLayer(chaos::TiledMap::TileLayer const * level_layer) const
@@ -149,10 +149,23 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				continue;
 			
 			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j) + tile_layer->offset);
+			position.y = -position.y;
 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 			if (tile_info.tiledata != nullptr)
-			{			
+			{	
+				int const * object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
+				if (object_type != nullptr)
+				{
+					if (*object_type == LudumGame::OBJECT_TYPE_PLAYER)
+					{
+						object_type = object_type;
+					
+					}
+				
+				
+				}
+
 				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
 				if (entry == nullptr)
 					continue;

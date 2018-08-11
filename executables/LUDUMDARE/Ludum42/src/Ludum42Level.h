@@ -87,6 +87,9 @@ protected:
 	virtual void OnLevelEnded() override;
 	virtual void OnLevelStarted() override;
 
+	/** get the particle layer from the level_layer */
+	chaos::ParticleLayer * LevelLayerToParticleLayer(chaos::TiledMap::TileLayer const * level_layer) const;
+
 protected:
 
 	std::vector<boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;

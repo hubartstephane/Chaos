@@ -71,8 +71,28 @@ LudumGameplayLevel const * LudumGameplayLevelInstance::GetLudumLevel() const
 void LudumGameplayLevelInstance::OnLevelEnded()
 {
 	allocations.clear();
+	game->player_allocations = nullptr;
+}
 
+chaos::ParticleLayer * LudumGameplayLevelInstance::LevelLayerToParticleLayer(chaos::TiledMap::TileLayer const * level_layer) const
+{
+	std::string const * particle_layer_name = level_layer->FindPropertyString("PARTICLE_LAYER");
+	if (particle_layer_name == nullptr || particle_layer_name->length() == 0)
+		return nullptr;
 
+	int layer_id = -1;
+
+	if (_strcmpi(particle_layer_name->c_str(), "GROUND") == 0)
+		layer_id = LudumGame::GROUND_LAYER_ID;
+	else if (_strcmpi(particle_layer_name->c_str(), "WALLS") == 0)
+		layer_id = LudumGame::WALLS_LAYER_ID;
+	else if (_strcmpi(particle_layer_name->c_str(), "OBJECTS") == 0)
+		layer_id = LudumGame::GAMEOBJECT_LAYER_ID;
+
+	if (layer_id > 0)
+		return game->GetParticleManager()->FindLayer(layer_id);
+
+	return nullptr;
 }
 
 void LudumGameplayLevelInstance::OnLevelStarted()
@@ -83,13 +103,10 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	if (ludum_level == nullptr)
 		return;
 
-	chaos::ParticleLayer * layer = game->GetParticleManager()->FindLayer(LudumGame::GAMEOBJECT_LAYER_ID);
-	if (layer == nullptr)
-		return;
-
 	chaos::TiledMap::Map const * tiled_map = ludum_level->tiled_map.get();
 	if (tiled_map == nullptr)
 		return;
+
 
 	chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = game->GetTextureAtlas();
 	if (texture_atlas == nullptr)
@@ -109,14 +126,18 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 		if (tile_layer == nullptr)
 			continue;
 
+		chaos::ParticleLayer * particle_layer = LevelLayerToParticleLayer(tile_layer);
+		if (particle_layer == nullptr)
+			return;
+
 		size_t tile_count = tile_layer->GetNonEmptyTileCount();
 		if (tile_count == 0)
 			continue;
 
-		chaos::ParticleAllocation * allocation = layer->SpawnParticles((int)tile_count);
+		chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles((int)tile_count);
 		if (allocation == nullptr)
 			continue;
-	
+
 		size_t k = 0;
 		chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
 
@@ -127,7 +148,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_indice <= 0)
 				continue;
 			
-			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j));
+			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j) + tile_layer->offset);
 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 			if (tile_info.tiledata != nullptr)

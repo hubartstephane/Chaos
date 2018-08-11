@@ -45,6 +45,7 @@ public:
 	static int const GROUND_LAYER_ID     = death::Game::LAST_LAYER_ID + 2;
 	static int const WALLS_LAYER_ID      = death::Game::LAST_LAYER_ID + 3;
 	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
+	static int const PLAYER_LAYER_ID     = death::Game::LAST_LAYER_ID + 5;
 
 	static int const OBJECT_TYPE_PLAYER = 0;
 
@@ -145,8 +146,20 @@ protected:
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
-	/** create the ball */
-	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
+
+
+	/** override */
+	virtual chaos::box2 GetPlayerBox() const override;
+	/** override */
+	virtual void SetPlayerBox(chaos::box2 const & in_player_box) override;
+
+
+
+	/** override */
+	chaos::box2 GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const;
+	/** override */
+	bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & b);
+	
 
 
 	/** reset the game variables */
@@ -154,7 +167,7 @@ protected:
 
 
 	/** spawning player */
-	void SpawnPlayer();
+	bool SpawnPlayer(ParticleObject const & particle_object);
 	/** destroying player */
 	void UnSpawnPlayer();
 

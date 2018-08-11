@@ -338,11 +338,13 @@ void LudumGame::RestrictedPlayerToScreen()
 
 void LudumGame::CreateAllGameObjects(int level)
 {
+#if 0
 	if (player_allocations == nullptr)
 	{
 		player_allocations = CreatePlayer();
 		SetPlayerPosition(0.0f);
 	}
+#endif
 }
 
 bool LudumGame::FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -482,6 +484,7 @@ bool LudumGame::InitializeParticleManager()
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GROUND_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, WALLS_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, PLAYER_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
 
 	// fill the background
@@ -504,14 +507,63 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 }
 
-void LudumGame::SpawnPlayer()
+bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 {
-	player_allocations = nullptr;
+	if (player_allocations != nullptr) // already existing
+		return false;
 
+	chaos::ParticleLayer * layer = GetParticleManager()->FindLayer(LudumGame::PLAYER_LAYER_ID);
+	if (layer == nullptr)
+		return false;
+
+	player_allocations = layer->SpawnParticles(1);
+	if (player_allocations == nullptr)
+		return false;
+
+	chaos::ParticleAccessor<ParticleObject> particles = player_allocations->GetParticleAccessor<ParticleObject>();
+	particles[0] = particle_object;
+
+	return true;
 }
 
 void LudumGame::UnSpawnPlayer()
 {
 	player_allocations = nullptr;
+}
+
+
+chaos::box2 LudumGame::GetPlayerBox() const
+{
+	return GetObjectBox(player_allocations.get(), 0);
+}
+
+void LudumGame::SetPlayerBox(chaos::box2 const & in_player_box)
+{
+}
+
+chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const
+{
+	if (allocation == nullptr)
+		return chaos::box2();
+
+	chaos::ParticleConstAccessor<ParticleObject> particles = allocation->GetParticleConstAccessor<ParticleObject>();
+	if (index >= particles.GetCount())
+		return chaos::box2();
+
+	return particles[index].bounding_box;
+}
+
+
+bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & b)
+{
+	if (allocation == nullptr)
+		return false;
+
+	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
+	if (index >= particles.GetCount())
+		return false;
+
+	particles[index].bounding_box = b;
+	return true;
 }
 

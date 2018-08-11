@@ -116,7 +116,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	if (bitmap_set == nullptr)
 		return;
 
-	static float scale = 0.05f;
+	static float scale = 1.0f;
 
 	chaos::box2 wb; // compute the world box
 
@@ -154,36 +154,41 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 			if (tile_info.tiledata != nullptr)
 			{	
-				int const * object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
-				if (object_type != nullptr)
-				{
-					if (*object_type == LudumGame::OBJECT_TYPE_PLAYER)
-					{
-						object_type = object_type;
-					
-					}
-				
-				
-				}
-
 				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
 				if (entry == nullptr)
 					continue;
 
-				ParticleObject & particle = particles[k++];
-				
-				particle.bounding_box.position = scale * position * tile_size;
-				particle.bounding_box.half_size = scale * 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
+				ParticleObject new_particle;
+				new_particle.bounding_box.position = scale * position * tile_size;
+				new_particle.bounding_box.half_size = scale * 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
+				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-				particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
-				particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+				int const * object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
+				if (object_type != nullptr)
+				{
+					if (*object_type == LudumGame::OBJECT_TYPE_PLAYER)
+					{				
+						game->SpawnPlayer(new_particle);
+						continue;
+					}							
+				}
 
-				wb = wb | particle.bounding_box;
+				particles[k++] = new_particle;
+
+				wb = wb | new_particle.bounding_box;
 			}
 		}
 
-		allocation->Resize(k);
-		allocations.push_back(allocation);
+		if (k == 0)
+		{
+			delete(allocation);
+		}
+		else
+		{
+			allocation->Resize(k);
+			allocations.push_back(allocation);
+		}
 	}
 
 	world_box = wb;

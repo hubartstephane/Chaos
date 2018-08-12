@@ -170,6 +170,9 @@ namespace chaos
 		virtual void const * GetParticleBuffer() const;
 		/** resize the particles */
 		virtual bool Resize(size_t new_count);
+
+		/** increment number of particles */
+		bool AddParticles(size_t extra_count);
 		
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>

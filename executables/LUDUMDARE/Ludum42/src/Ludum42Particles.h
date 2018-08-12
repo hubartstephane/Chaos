@@ -59,7 +59,7 @@ class ParticleObjectAtlas : public ParticleObject
 {
 public:
 
-	glm::ivec2 atlas_dimension = glm::vec2(0, 0);
+	glm::ivec2 atlas_dimension = glm::vec2(1, 1);
 	float frequency   = 0.0f; 
 	int   skip_last   = 0;
 	int   delta_image = 0;
@@ -93,6 +93,30 @@ public:
 	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
 };
 
+// ===========================================================================
+// ParticlePlayer
+// ===========================================================================
+
+class ParticlePlayer : public ParticleObjectAtlas
+{
+
+};
+
+class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const;
+
+	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+public:
+
+	class LudumGame * game = nullptr;
+};
+
+
+#if 0
 class ParticleWaterTrait : public chaos::ParticleLayerTrait<ParticleWater, VertexBase>
 {
 public:
@@ -107,29 +131,4 @@ public:
 
 	glm::ivec2 atlas_dimension = glm::ivec2(0, 0);
 };
-
-// ===========================================================================
-// ParticlePlayer
-// ===========================================================================
-
-class ParticlePlayer : public ParticleObject
-{
-public:
-
-	glm::ivec2 image_id = glm::ivec2(0, 0);
-};
-
-class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
-{
-public:
-
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const;
-
-	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
-
-public:
-
-	class LudumGame * game = nullptr;
-
-	glm::ivec2 atlas_dimension = glm::ivec2(0, 0);
-};
+#endif

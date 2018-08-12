@@ -99,6 +99,11 @@ namespace chaos
 		return true;
 	}
 
+	bool ParticleAllocation::AddParticles(size_t extra_count)
+	{
+		return Resize(extra_count + GetParticleCount());
+	}
+
 	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================

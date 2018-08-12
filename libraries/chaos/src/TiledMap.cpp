@@ -454,8 +454,7 @@ namespace chaos
 					return false;
 
 				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
-
-				atlas_key = image_path.filename().replace_extension().string();
+				atlas_key  = chaos::BoostTools::PathToName(image_path);
 			}
 
 			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);

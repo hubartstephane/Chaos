@@ -88,63 +88,12 @@ protected:
 	virtual void OnLevelStarted() override;
 
 	/** get the particle layer from the level_layer */
-	chaos::ParticleLayer * LevelLayerToParticleLayer(chaos::TiledMap::TileLayer const * level_layer) const;
+	chaos::ParticleLayer * ObjectToParticleLayer(int object_type) const;
+
+	/** create an allocation for the object type */
+	chaos::ParticleAllocation * FindOrAllocationForObjectType(int object_type);
 
 protected:
 
-	std::vector<boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;
-};
-
-
-
-
-
-
-// =================================================
-// Levels
-// =================================================
-
-class LudumNarrativeLevel : public LudumLevel
-{
-	friend class LudumGame;
-	friend class LudumNarrativeLevelInstance;
-
-public:
-
-	/** constructor */
-	LudumNarrativeLevel(class LudumGame * in_game);
-
-
-protected:
-
-	/** override */
-	virtual death::GameLevelInstance * DoCreateLevelInstance() override;
-
-protected:
-
-	
-
-
-
-};
-
-// =================================================
-// LevelInstance
-// =================================================
-
-class LudumNarrativeLevelInstance : public LudumLevelInstance
-{
-public:
-
-	/** constructor */
-	LudumNarrativeLevelInstance(class LudumGame * in_game);
-
-	/** get the typed level */
-	LudumNarrativeLevel * GetLudumLevel();
-	LudumNarrativeLevel const * GetLudumLevel() const;
-
-	/** overrides */
-	virtual void OnLevelEnded() override;
-	virtual void OnLevelStarted() override;
-
+	std::map<int, boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;
 };

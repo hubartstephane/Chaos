@@ -200,8 +200,6 @@ bool GetExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geom
 	return false;
 }
 
-
-
 bool FindExplicitWorldBounds(chaos::TiledMap::ObjectLayer const * object_layer, chaos::box2 & result)
 {
 	if (object_layer == nullptr)
@@ -306,6 +304,16 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	
 
 
+
+
+
+
+
+
+
+
+
+
 	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
 	{
 		chaos::TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
@@ -326,6 +334,10 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_info.tiledata == nullptr)
 				continue;
 
+			auto bb = object_tile->GetBoundingBox();
+
+
+			bb = bb;
 #if 0
 			chaos::box2 b;
 			b.half_size = object_tile->size * 0.5f;

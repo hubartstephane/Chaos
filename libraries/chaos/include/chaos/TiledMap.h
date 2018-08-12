@@ -390,7 +390,7 @@ namespace chaos
 			virtual class GeometricObjectSurface const * GetObjectSurface() const override { return this; }
 
 			/** get the bounding box */
-			box2 GetBoundingBox() const;
+			virtual box2 GetBoundingBox() const;
 
 		protected:
 
@@ -571,6 +571,8 @@ namespace chaos
 			virtual GeometricObjectTile * GetObjectTile() override { return this; }
 			virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
 
+			virtual box2 GetBoundingBox() const override;
+
 		protected:
 
 			/** constructor */
@@ -579,6 +581,8 @@ namespace chaos
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+			
 
 		public:
 

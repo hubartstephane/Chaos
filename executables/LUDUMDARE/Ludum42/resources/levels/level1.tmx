@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="29">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="45">
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <layer name="planets" width="100" height="100" offsetx="5.5" offsety="0">
   <properties>
@@ -221,6 +221,22 @@
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="1"/>
    </properties>
+  </object>
+  <object id="35" name="world_origin" x="5760" y="3712">
+   <point/>
+  </object>
+  <object id="39" name="myrect" x="48" y="40" width="1392" height="880"/>
+  <object id="40" name="myellipse" x="72" y="56" width="1456" height="1384">
+   <ellipse/>
+  </object>
+  <object id="41" name="mypolygone" x="112" y="104">
+   <polygon points="0,0 496,1704 1216,696"/>
+  </object>
+  <object id="42" name="mypolyline" x="80" y="80">
+   <polyline points="0,0 192,1432 856,2168 2248,2208"/>
+  </object>
+  <object id="43" name="mytext" x="27.5" y="54.5" width="2000" height="2000">
+   <text fontfamily="MS Shell Dlg 2" pixelsize="96" wrap="1">Exemple de texte</text>
   </object>
  </objectgroup>
 </map>

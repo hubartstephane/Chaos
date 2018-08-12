@@ -295,21 +295,6 @@ namespace chaos
 			}
 			return result;
 		}
-		// XXX : the position is BOTTOMLEFT ... (in the viewer point of view) 
-		//       but in TiledMap, the Y axis is directed DOWN
-		//       means BOTTOMLEFT.y is the greatest Y for the object
-		box2 GeometricObjectSurface::GetBoundingBox() const
-		{
-			// shuxxx
-			return box2(std::make_pair(position, position + size)); 
-#if 0
-			glm::vec2 p1 = position;
-			glm::vec2 p2 = position;
-			p2.x += size.x;
-			p2.y -= size.y; // axis Y is DOWN !!!
-			return box2(std::make_pair(p1, p2)); 
-#endif
-		}
 
 		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -424,6 +409,38 @@ namespace chaos
 
 			return true;
 		}
+
+		// XXX : the POSITION and SIZE signification may be different according to each object
+		//
+		//       
+		//	GeometricObjectSurface : abstract
+		//
+		//	GeometricObjectPoint : position = OBVIOUS
+		//
+		//	GeometricObjectRectangle : position = BOTTOMLEFT   SIZE is going down for positive Y
+		//	GeometricObjectEllipse
+		//	GeometricObjectText
+		//
+		//	GeometricObjectPolygon   : position = coordinates of very first point
+		//	GeometricObjectPolyline  : other points are given relative to the position
+		//
+		//	GeometricObjectTile : position = BOTTOMLEFT   SIZE is going UP for positive Y !!!! (the opposite of other objects)
+		//
+
+		box2 GeometricObjectSurface::GetBoundingBox() const
+		{
+			return box2(std::make_pair(position, position + size)); 
+		}
+
+		box2 GeometricObjectTile::GetBoundingBox() const
+		{
+			glm::vec2 p1 = position;
+			glm::vec2 p2 = position;
+			p2.x += size.x;
+			p2.y -= size.y; // axis Y is DOWN !!!
+			return box2(std::make_pair(p1, p2)); 
+		}
+
 
 		//
 		// GroundData methods

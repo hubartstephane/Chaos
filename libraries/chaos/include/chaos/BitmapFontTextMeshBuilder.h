@@ -51,26 +51,26 @@ namespace chaos
 			{}
 
 			/** the characters contained inside the font bitmap, in order */
-			char const * font_characters;
+			char const * font_characters = nullptr;
 			/** the number of characters on a line of the bitmap */
-			int          font_characters_per_line{0};
+			int          font_characters_per_line = 0;
 			/** the number of lines of characters in the bitmap */
-			int          font_characters_line_count{0};
+			int          font_characters_line_count = 0;
 			/** the size of a tab in 'SPACE' equivalent */
-			int          tab_size{2};
+			int          tab_size = 2;
 			/** the alignment for the vertices */
-			int          alignment_flags{ALIGN_TOPLEFT};
+			int          alignment_flags = ALIGN_TOPLEFT;
 			/** maximum number of characters on a line */
-			int          line_limit{0};
+			int          line_limit = 0;
 
 			/** the spot position */
-			glm::vec2 position{0.0f, 0.0f};
+			glm::vec2 position = glm::vec2(0.0f, 0.0f);
 			/** in the result buffer, the size of each quad */
-			glm::vec2 character_size{1.0f, 1.0f};
+			glm::vec2 character_size = glm::vec2(1.0f, 1.0f);
 			/** a space between characters or lines */
-			glm::vec2 spacing{0.0f, 0.0f};
+			glm::vec2 spacing = glm::vec2(0.0f, 0.0f);
 			/** some texture ratio to crop each character */
-			glm::vec2 crop_texture{0.0f, 0.0f};
+			glm::vec2 crop_texture = glm::vec2(0.0f, 0.0f);
 		};
 
 		/** the main function */

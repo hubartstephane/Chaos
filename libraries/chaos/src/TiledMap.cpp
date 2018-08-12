@@ -295,14 +295,20 @@ namespace chaos
 			}
 			return result;
 		}
-
+		// XXX : the position is BOTTOMLEFT ... (in the viewer point of view) 
+		//       but in TiledMap, the Y axis is directed DOWN
+		//       means BOTTOMLEFT.y is the greatest Y for the object
 		box2 GeometricObjectSurface::GetBoundingBox() const
 		{
+			// shuxxx
+			return box2(std::make_pair(position, position + size)); 
+#if 0
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = position;
 			p2.x += size.x;
-			p2.y -= size.y;
-			return box2(std::make_pair(p1, p2)); // XXX : the position is not the center of the object ! (TOPLEFT)
+			p2.y -= size.y; // axis Y is DOWN !!!
+			return box2(std::make_pair(p1, p2)); 
+#endif
 		}
 
 		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)

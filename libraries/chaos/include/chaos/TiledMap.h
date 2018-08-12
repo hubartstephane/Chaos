@@ -10,6 +10,28 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+		// TiledMap coordinate system
+		//
+		//
+		//        OBJECT
+		//  +-----------------+
+		//  |                 |
+		//  |                 |
+		// 0,0                |
+		//  +----+-------------------------------->
+		//  |tile|            |
+		//  | 0  |            |
+		//  o----+------------+
+		//  | \ 
+		//  |  \ 
+		//  |   +-> on object on tile (0, 0) has its bottom left corner here
+		//  |       (beware, this point is were Y is max)
+		//  |
+		//  v
+		//
+		// 
+
+
 		class BaseObject : public ReferencedObject
 		{
 		public:
@@ -326,8 +348,8 @@ namespace chaos
 			/** object information */
 			bool visible = true;
 			/** object information */
-			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : topleft !!!
-														/** object information */
+			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
+			/** object information */
 			float rotation = 0.0f; // clockwise rotation in degree
 		};
 
@@ -666,7 +688,7 @@ namespace chaos
 			/** the opacity */
 			float opacity = 1.0f;
 			/** the offset of the layer */
-			glm::ivec2 offset = glm::ivec2(0, 0);
+			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 		};
 
 		//

@@ -84,32 +84,111 @@ chaos::ParticleAllocation * LudumGameplayLevelInstance::FindOrAllocationForObjec
 	return allocation;
 }
 
-bool HasExplicitWorldBounds(chaos::TiledMap::GeometricObjectSurface const * object_surface)
+
+
+
+
+
+
+
+
+
+// returns false, if the object does not have the flag
+bool HasExplicitFlag(chaos::TiledMap::GeometricObject const * object_geometric, char const * name, char const * type, char const * property_name)
 {
 	// name is an indicator
-	if (object_surface->name == "world_bounds")
+	if (name != nullptr && object_geometric->name == name)
 		return true;
-	// property is another indicator
-	chaos::TiledMap::Property const * property = object_surface->FindProperty("WORLD_BOUNDS");
-	if (property == nullptr)
-		return false;
+	// type is an indicator
+	if (type != nullptr && object_geometric->type == type)
+		return true;
+	// search in properties
+	if (property_name != nullptr)
+	{
+		chaos::TiledMap::Property const * property = object_geometric->FindProperty(property_name);
+		if (property != nullptr)
+		{
+			bool const * property_bool = property->GetBoolProperty();
+			if (property_bool != nullptr)
+				return *property_bool;
 
-	bool const * property_bool = property->GetBoolProperty();
-	if (property_bool != nullptr)
-		return *property_bool;
-
-	int const * property_int = property->GetIntProperty();
-	if (property_int != nullptr)
-		return (*property_int > 0);
-
+			int const * property_int = property->GetIntProperty();
+			if (property_int != nullptr)
+				return (*property_int > 0);				
+		}
+	}
 	return false;
 }
 
-bool GetExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geometric, chaos::box2 & result)
+
+
+
+
+
+bool HasExplicitWorldOrigin(chaos::TiledMap::GeometricObject const * object_geometric)
+{
+	return HasExplicitFlag(object_geometric, "world_origin", "world_origin", "WORLD_ORIGIN");
+}
+
+bool GetExplicitWorldOrigin(chaos::TiledMap::GeometricObject const * object_geometric, glm::vec2 & result) // expressed in layer coordinates
 {
 	if (object_geometric == nullptr)
 		return false;
+	if (HasExplicitWorldOrigin(object_geometric))
+	{
+		result = object_geometric->position;
+		return true;
+	}
+	return false;
+}
 
+bool FindExplicitWorldOrigin(chaos::TiledMap::ObjectLayer const * object_layer, glm::vec2 & result)
+{
+	if (object_layer == nullptr)
+		return false;
+	for (size_t i = 0 ; i < object_layer->geometric_objects.size(); ++i)
+	{
+		chaos::TiledMap::GeometricObject const * object = object_layer->geometric_objects[i].get();
+		if (GetExplicitWorldOrigin(object, result))
+		{
+			result += object_layer->offset;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FindExplicitWorldOrigin(chaos::TiledMap::Map const * tiled_map, glm::vec2 & result) // expressed in map coordinates
+{
+	if (tiled_map == nullptr)
+		return false;
+	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
+	{
+		chaos::TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
+		if (FindExplicitWorldOrigin(object_layer, result))
+			return true;
+	}
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+bool HasExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geometric)
+{
+	return HasExplicitFlag(object_geometric, "world_bounds", "world_bounds", "WORLD_BOUNDS");
+}
+
+bool GetExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geometric, chaos::box2 & result)  // expressed in layer coordinates
+{
+	if (object_geometric == nullptr)
+		return false;
 	chaos::TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
 	if (object_surface == nullptr)
 		return false;
@@ -120,6 +199,81 @@ bool GetExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geom
 	}
 	return false;
 }
+
+
+
+bool FindExplicitWorldBounds(chaos::TiledMap::ObjectLayer const * object_layer, chaos::box2 & result)
+{
+	if (object_layer == nullptr)
+		return false;
+	for (size_t i = 0 ; i < object_layer->geometric_objects.size(); ++i)
+	{
+		chaos::TiledMap::GeometricObject const * object = object_layer->geometric_objects[i].get();
+		if (GetExplicitWorldBounds(object, result))
+		{
+			result.position += object_layer->offset;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FindExplicitWorldBounds(chaos::TiledMap::Map const * tiled_map, chaos::box2 & result) // expressed in map coordinates
+{
+	if (tiled_map == nullptr)
+		return false;
+	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
+	{
+		chaos::TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
+		if (FindExplicitWorldBounds(object_layer, result))
+			return true;
+	}
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void LudumGameplayLevelInstance::OnLevelStarted()
@@ -144,8 +298,12 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 		return;
 
 	// compute the new world
-	bool explicit_world_bounds = false;
 	chaos::box2 world_bounds; 
+	bool explicit_world_bounds = FindExplicitWorldBounds(tiled_map, world_bounds);
+
+	glm::vec2 world_origin; 
+	bool explicit_world_origin = FindExplicitWorldOrigin(tiled_map, world_origin);
+	
 
 
 	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
@@ -160,9 +318,6 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (object == nullptr)
 				continue;
 
-			if (!explicit_world_bounds)
-				explicit_world_bounds = GetExplicitWorldBounds(object, world_bounds);
-
 			chaos::TiledMap::GeometricObjectTile const * object_tile = object->GetObjectTile();
 			if (object_tile == nullptr)
 				continue;
@@ -171,6 +326,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_info.tiledata == nullptr)
 				continue;
 
+#if 0
 			chaos::box2 b;
 			b.half_size = object_tile->size * 0.5f;
 
@@ -183,6 +339,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 
 			object_tile = object_tile;
 			object = object;
+#endif
 		}
 	}
 
@@ -209,7 +366,42 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				if (entry == nullptr)
 					continue;
 
-				glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j) + tile_layer->offset);
+				glm::ivec2 tile_coord = 
+					tile_layer->GetTileCoordinate(j);
+
+				// the coordinate of a tile is the BOTTOMLEFT (greater Y, because Y axis is oriented UP)
+				glm::vec2 bottomleft = 
+					chaos::GLMTools::RecastVector<glm::vec2>(tile_coord) * tile_size +
+					glm::vec2(0.0f, tile_size.y);
+
+				glm::vec2 topright = bottomleft;
+				topright.x += tile_size.x;
+				topright.y -= tile_size.y; 
+			
+				// absolute coordinates of the object (apply the layer modification)
+				bottomleft += tile_layer->offset;
+				topright += tile_layer->offset;
+
+				// invert the Y axis (UP) so that the axis has same direction as the user
+
+				bottomleft.y = -bottomleft.y;
+				topright.y = -topright.y;
+
+				
+
+				// reorganise 
+				chaos::box2 ob1 = chaos::box2(std::make_pair(bottomleft, topright));
+				auto P1 = ob1.GetCorners();
+
+
+				P1 = P1;
+
+				
+
+
+				//tile_layer->offset
+
+				glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_coord);
 				position.y = -position.y;
 
 				ParticleObject new_particle;

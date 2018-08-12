@@ -30,17 +30,17 @@ namespace chaos
 
 	void ParticleAllocation::OnRemovedFromLayer()
 	{		
-		ConditionalRequireGPUUpdate(false, false);
+		ConditionalRequireGPUUpdate(true, true);
 		layer = nullptr;
 	}
 
-	void ParticleAllocation::ConditionalRequireGPUUpdate(bool ignore_visibility, bool ignore_particle_count)
+	void ParticleAllocation::ConditionalRequireGPUUpdate(bool skip_if_invisible, bool skip_if_empty)
 	{
 		if (layer == nullptr)
 			return;
-		if (!ignore_visibility && !IsVisible())
+		if (skip_if_invisible && !IsVisible())
 			return;
-		if (!ignore_particle_count && GetParticleCount() == 0)
+		if (skip_if_empty && GetParticleCount() == 0)
 			return;			
 		layer->require_GPU_update = true;
 	}
@@ -65,7 +65,7 @@ namespace chaos
 		if (visible != in_visible)
 		{
 			visible = in_visible;
-			ConditionalRequireGPUUpdate(false, false); // the GPU buffer is about to be changed
+			ConditionalRequireGPUUpdate(false, true); // the GPU buffer is about to be changed
 		}
 	}
 

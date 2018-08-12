@@ -229,7 +229,7 @@ namespace chaos
 		/** called whenever the allocation is removed from the layer */
 		virtual void OnRemovedFromLayer();
 		/** require the layer to update the GPU buffer */
-		void ConditionalRequireGPUUpdate(bool ignore_visibility, bool ignore_particle_count);
+		void ConditionalRequireGPUUpdate(bool skip_if_invisible, bool skip_if_empty);
 
 	protected:
 
@@ -303,7 +303,7 @@ namespace chaos
 			// increment the number of particles
 			particles.resize(new_count);
 			// notify the layer
-			ConditionalRequireGPUUpdate(false, true);
+			ConditionalRequireGPUUpdate(true, false);
 			return true;
 		}
 

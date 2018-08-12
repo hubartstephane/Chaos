@@ -32,10 +32,10 @@ namespace chaos
 		in vec4 color;
 
 		uniform mat4 local_to_cam;
-    
+
 		out vec3 vs_texcoord;
 		out vec4 vs_color;
-    
+
 		void main()
 	    {
 			vs_texcoord = texcoord;
@@ -56,7 +56,7 @@ namespace chaos
 		{
 			vec4 color = texture(material, vs_texcoord);
 			output_color = color * vs_color;
-			};
+		};
 		)SHADERCODE";
 
 		GPUProgramGenerator program_generator;

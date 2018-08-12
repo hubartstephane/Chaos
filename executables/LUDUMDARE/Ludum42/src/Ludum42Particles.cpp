@@ -69,7 +69,7 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Object particle system
 // ===========================================================================
 
-static size_t AtlasParticleToVertices(LudumGame * game, ParticleObjectAtlas const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation)
+static size_t AtlasParticleToVertices(LudumGame * game, ParticleObjectAtlas const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, float rotation = 0.0f)
 {
 	// work on a copy
 	ParticleObjectAtlas particle = *p;
@@ -83,7 +83,7 @@ static size_t AtlasParticleToVertices(LudumGame * game, ParticleObjectAtlas cons
 	// tweak particle coords considering that incomming sprite is the whole atlas (get sub-image coordinates)
 	particle.texcoords = chaos::ParticleTools::MakeParticleTexcoordsAtlas(particle.texcoords, particle.atlas_dimension, particle.skip_last, image_id);
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, vertices);
+	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, vertices, rotation);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
 		vertices[i].color = particle.color;
@@ -98,7 +98,7 @@ static size_t AtlasParticleToVertices(LudumGame * game, ParticleObjectAtlas cons
 
 size_t ParticleObjectAtlasTrait::ParticleToVertices(ParticleObjectAtlas const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
-	return AtlasParticleToVertices(game, p, vertices, vertices_per_particle, allocation);
+	return AtlasParticleToVertices(game, p, vertices, vertices_per_particle, allocation, 0.0f);
 }
 
 bool ParticleObjectAtlasTrait::UpdateParticle(float delta_time, ParticleObjectAtlas * particle, chaos::ParticleAllocation * allocation) const
@@ -112,7 +112,7 @@ bool ParticleObjectAtlasTrait::UpdateParticle(float delta_time, ParticleObjectAt
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
-	return AtlasParticleToVertices(game, p, vertices, vertices_per_particle, allocation);
+	return AtlasParticleToVertices(game, p, vertices, vertices_per_particle, allocation, 0.0f);
 }
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const

@@ -188,6 +188,18 @@ namespace chaos
 		{
 			return (A.x * B.y) - (A.y * B.x);
 		}
+
+		/** Rotation of a vector (with Cos and Sin already computed) */
+		static glm::vec2 Rotate(glm::vec2 const & src, float c, float s)
+		{
+			// copy form glm/gtx/rotate_vector.inl
+			// here we avoid multiple computation of cosinus and sinus
+
+			glm::vec2 result;
+			result.x = src.x * c - src.y * s;
+			result.y = src.x * s + src.y * c;			
+			return result;
+		}
 	};
 
 }; // namespace chaos

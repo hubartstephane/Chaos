@@ -51,7 +51,7 @@ namespace chaos
 
 		/** fill the vertices array with 6 vertices corresponding to 3 triangles */
 		template<class VERTEX_TYPE>
-		void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)
+		void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
 		{
 			VERTEX_TYPE bl;
 			bl.position.x = corners.bottomleft.x;
@@ -81,6 +81,17 @@ namespace chaos
 			br.texcoord.y = texcoords.bottomleft.y;
 			br.texcoord.z = texcoords.bitmap_index;
 
+			if (rotation != 0.0f)
+			{
+				float c = MathTools::Cos(rotation);
+				float s = MathTools::Sin(rotation);
+
+				bl.position = GLMTools::Rotate(bl.position - box.position, c, s) + box.position;
+				br.position = GLMTools::Rotate(br.position - box.position, c, s) + box.position;
+				tr.position = GLMTools::Rotate(tr.position - box.position, c, s) + box.position;
+				tl.position = GLMTools::Rotate(tl.position - box.position, c, s) + box.position;
+			}
+
 			vertices[0] = bl;
 			vertices[1] = br;
 			vertices[2] = tr;
@@ -91,7 +102,7 @@ namespace chaos
 		}
 
 		template<class VERTEX_TYPE>
-		void GenerateBoxParticle(chaos::box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices)
+		void GenerateBoxParticle(chaos::box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
 		{
 			std::pair<glm::vec2, glm::vec2> corners = box.GetCorners();
 
@@ -125,6 +136,17 @@ namespace chaos
 			br.texcoord.x = texcoords.topright.x;
 			br.texcoord.y = texcoords.bottomleft.y;
 			br.texcoord.z = texcoords.bitmap_index;
+
+			if (rotation != 0.0f)
+			{
+				float c = MathTools::Cos(rotation);
+				float s = MathTools::Sin(rotation);
+
+				bl.position = GLMTools::Rotate(bl.position - box.position, c, s) + box.position;
+				br.position = GLMTools::Rotate(br.position - box.position, c, s) + box.position;
+				tr.position = GLMTools::Rotate(tr.position - box.position, c, s) + box.position;
+				tl.position = GLMTools::Rotate(tl.position - box.position, c, s) + box.position;
+			}
 
 			vertices[0] = bl;
 			vertices[1] = br;

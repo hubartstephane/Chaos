@@ -44,6 +44,7 @@
    <property name="OBJECT_TYPE" type="int" value="1"/>
   </properties>
   <image width="640" height="640" source="../sprites/planet4.png"/>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="8">
   <properties>

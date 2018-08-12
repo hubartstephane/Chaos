@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="11">
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <layer name="planets" width="100" height="100">
+ <layer name="planets" width="100" height="100" visible="0">
   <properties>
    <property name="PARTICLE_LAYER" value="PLANETS"/>
   </properties>
@@ -108,7 +108,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="objects" width="100" height="100">
+ <layer name="objects" width="100" height="100" visible="0">
   <properties>
    <property name="PARTICLE_LAYER" value="OBJECTS"/>
   </properties>
@@ -215,4 +215,11 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup name="Calque d'objets 1">
+  <object id="1" gid="8" x="5312" y="5056" width="640" height="640"/>
+  <object id="2" gid="8" x="7696" y="5216" width="640" height="640"/>
+  <object id="3" gid="10" x="9030" y="7658" width="500" height="500"/>
+  <object id="9" gid="10" x="6502" y="6762" width="500" height="500"/>
+  <object id="10" gid="2147483658" x="6934" y="9066" width="500" height="500"/>
+ </objectgroup>
 </map>

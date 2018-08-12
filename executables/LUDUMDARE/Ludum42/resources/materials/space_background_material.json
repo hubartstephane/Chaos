@@ -4,7 +4,8 @@
   "textures": {
     
     "fire": { "name": "fire" },
-    "perlin_noise": { "name": "perlin_noise" }
+    "perlin_noise": { "name": "perlin_noise" },
+    "background": { "name": "background" }
 
   }
 

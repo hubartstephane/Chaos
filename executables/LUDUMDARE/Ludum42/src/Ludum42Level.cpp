@@ -333,25 +333,46 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(object_tile->gid);
 			if (tile_info.tiledata == nullptr)
 				continue;
+		
+			chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
+			if (entry == nullptr)
+				continue;
 
-			auto bb = object_tile->GetBoundingBox();
+			chaos::box2 bounding_box = object_tile->GetBoundingBox();
+
+			ParticleObject new_particle;
+			new_particle.bounding_box = bounding_box;
+			new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+			new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+			int object_type = 0;
+
+			int const * prop_object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
+			if (prop_object_type == nullptr)
+				continue;
+
+			object_type = *prop_object_type;
 
 
-			bb = bb;
-#if 0
-			chaos::box2 b;
-			b.half_size = object_tile->size * 0.5f;
+			// create an allocation
+			chaos::ParticleAllocation * allocation = FindOrAllocationForObjectType(object_type);
+			if (allocation == nullptr)
+				continue;
 
-			
-			chaos::box2 bbb = chaos::box2(std::make_pair(object_tile->position, object_tile->size));
-			
-			object_tile->rotation;
+			if (!allocation->AddParticles(1))
+				continue;
 
-			
+			if (!explicit_world_bounds)
+				world_bounds = world_bounds | new_particle.bounding_box;
 
-			object_tile = object_tile;
-			object = object;
-#endif
+			chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
+			new_particle.bounding_box.position.y = -new_particle.bounding_box.position.y;
+			particles[particles.GetCount() - 1] = new_particle;
+
+
+
+
+
 		}
 	}
 
@@ -367,11 +388,11 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 		glm::vec2 tile_size = chaos::GLMTools::RecastVector<glm::vec2>(tiled_map->tile_size);
 		for (size_t j = 0 ; j < tile_layer->tile_indices.size() ; ++j)
 		{
-			int tile_indice = tile_layer->tile_indices[j];
-			if (tile_indice <= 0)
+			int gid = tile_layer->tile_indices[j];
+			if (gid <= 0)
 				continue;
 
-			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
+			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata != nullptr)
 			{	
 				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
@@ -388,13 +409,30 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 
 				glm::vec2 topright = bottomleft;
 				topright.x += tile_info.tiledata->image_size.x;
-				topright.y -= tile_info.tiledata->image_size.y; 
+				topright.y -= tile_info.tiledata->image_size.y; // SHUXXX = not clear could be entry->size !!! (but with manual atlas, not a good idea)
 
 
 				ParticleObject new_particle;
 				new_particle.bounding_box = chaos::box2(std::make_pair(bottomleft, topright));
 				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+
+
+				
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 				int default_object_type = 0;

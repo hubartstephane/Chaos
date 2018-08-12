@@ -216,7 +216,7 @@
 </data>
  </layer>
  <objectgroup name="Calque d'objets 1">
-  <object id="2" name="grosse planete" gid="3221225480" x="0" y="0" width="10000" height="10000">
+  <object id="2" name="grosse planete" gid="3221225480" x="2840" y="6576" width="10000" height="10000">
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="0"/>
    </properties>

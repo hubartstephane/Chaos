@@ -84,6 +84,43 @@ chaos::ParticleAllocation * LudumGameplayLevelInstance::FindOrAllocationForObjec
 	return allocation;
 }
 
+bool HasExplicitWorldBounds(chaos::TiledMap::GeometricObjectSurface const * object_surface)
+{
+	// name is an indicator
+	if (object_surface->name == "world_bounds")
+		return true;
+	// property is another indicator
+	chaos::TiledMap::Property const * property = object_surface->FindProperty("WORLD_BOUNDS");
+	if (property == nullptr)
+		return false;
+
+	bool const * property_bool = property->GetBoolProperty();
+	if (property_bool != nullptr)
+		return *property_bool;
+
+	int const * property_int = property->GetIntProperty();
+	if (property_int != nullptr)
+		return (*property_int > 0);
+
+	return false;
+}
+
+bool GetExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geometric, chaos::box2 & result)
+{
+	if (object_geometric == nullptr)
+		return false;
+
+	chaos::TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
+	if (object_surface == nullptr)
+		return false;
+	if (HasExplicitWorldBounds(object_surface))
+	{
+		result = object_surface->GetBoundingBox();
+		return true;
+	}
+	return false;
+}
+
 
 void LudumGameplayLevelInstance::OnLevelStarted()
 {
@@ -107,12 +144,54 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 		return;
 
 	// compute the new world
-	chaos::box2 wb; 
+	bool explicit_world_bounds = false;
+	chaos::box2 world_bounds; 
 
+
+	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
+	{
+		chaos::TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
+		if (object_layer == nullptr)
+			continue;
+
+		for (size_t j = 0 ; j < object_layer->geometric_objects.size(); ++j)
+		{
+			chaos::TiledMap::GeometricObject const * object = object_layer->geometric_objects[j].get();
+			if (object == nullptr)
+				continue;
+
+			if (!explicit_world_bounds)
+				explicit_world_bounds = GetExplicitWorldBounds(object, world_bounds);
+
+			chaos::TiledMap::GeometricObjectTile const * object_tile = object->GetObjectTile();
+			if (object_tile == nullptr)
+				continue;
+
+			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(object_tile->gid);
+			if (tile_info.tiledata == nullptr)
+				continue;
+
+			chaos::box2 b;
+			b.half_size = object_tile->size * 0.5f;
+
+			
+			chaos::box2 bbb = chaos::box2(std::make_pair(object_tile->position, object_tile->size));
+			
+			object_tile->rotation;
+
+			
+
+			object_tile = object_tile;
+			object = object;
+		}
+	}
+
+
+	//
 
 	for (size_t i = 0 ; i < tiled_map->tile_layers.size(); ++i)
 	{
-		chaos::TiledMap::TileLayer * tile_layer = tiled_map->tile_layers[i].get();
+		chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
 		if (tile_layer == nullptr)
 			continue;
 
@@ -181,12 +260,13 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
 				particles[particles.GetCount() - 1] = new_particle;
 
-				wb = wb | new_particle.bounding_box;
+				if (!explicit_world_bounds)
+					world_bounds = world_bounds | new_particle.bounding_box;
 			}
 		}
 	}
 
-	world_box = wb;
+	world_box = world_bounds;
 }
 
 

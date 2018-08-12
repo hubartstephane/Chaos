@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/Buffer.h>
 #include <chaos/FilePath.h>
+#include <chaos/GeometryFramework.h>
 
 namespace chaos
 {
@@ -271,33 +272,37 @@ namespace chaos
 
 		public:
 
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectPoint * GetObjectPoint() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectPoint const * GetObjectPoint() const { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
+			virtual class GeometricObjectSurface * GetObjectSurface() { return nullptr; }
+			/** cast method into its subtype */
+			virtual class GeometricObjectSurface const * GetObjectSurface() const { return nullptr; }
+			/** cast method into its subtype */
 			virtual class GeometricObjectRectangle * GetObjectRectangle() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectRectangle const * GetObjectRectangle() const { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectEllipse * GetObjectEllipse() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectEllipse const * GetObjectEllipse() const { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectPolygon * GetObjectPolygon() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectPolygon const * GetObjectPolygon() const { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectPolyline * GetObjectPolyline() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectPolyline const * GetObjectPolyline() const { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectText * GetObjectText() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectText const * GetObjectText() const { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectTile * GetObjectTile() { return nullptr; }
-			/** cast method into iyts subtype */
+			/** cast method into its subtype */
 			virtual class GeometricObjectTile const * GetObjectTile() const { return nullptr; }
 
 		protected:
@@ -321,7 +326,7 @@ namespace chaos
 			/** object information */
 			bool visible = true;
 			/** object information */
-			glm::vec2 position = glm::vec2(0.0f, 0.0f);
+			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : topleft !!!
 			/** object information */
 			float rotation = 0.0f; // clockwise rotation in degree
 		};
@@ -356,6 +361,14 @@ namespace chaos
 		{
 			friend class ObjectLayer;
 
+
+		public:
+
+			virtual class GeometricObjectSurface * GetObjectSurface() override { return this; }
+			virtual class GeometricObjectSurface const * GetObjectSurface() const override { return this; }
+
+			/** get the bounding box */
+			box2 GetBoundingBox() const;
 
 		protected:
 

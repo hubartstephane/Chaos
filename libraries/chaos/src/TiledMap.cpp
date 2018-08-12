@@ -296,6 +296,15 @@ namespace chaos
 			return result;
 		}
 
+		box2 GeometricObjectSurface::GetBoundingBox() const
+		{
+			glm::vec2 p1 = position;
+			glm::vec2 p2 = position;
+			p2.x += size.x;
+			p2.y -= size.y;
+			return box2(std::make_pair(p1, p2)); // XXX : the position is not the center of the object ! (TOPLEFT)
+		}
+
 		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!GeometricObject::DoLoad(element))
@@ -505,7 +514,7 @@ namespace chaos
 			PropertyOwner(in_owner),
 			path(std::move(in_path))
 		{
-			
+
 		}
 
 		bool ManagerObject::IsMatchingName(boost::filesystem::path const & in_path) const
@@ -1027,7 +1036,7 @@ namespace chaos
 				size_t count = tilesets.size();
 				for (size_t i = count ; i > 0; --i)
 				{
-          size_t index = i - 1;
+					size_t index = i - 1;
 
 					TileSetData & data = tilesets[index];
 					if (gid >= data.first_gid)
@@ -1051,10 +1060,10 @@ namespace chaos
 			TileInfo result;
 			if (gid >= 0)
 			{
-        size_t count = tilesets.size();
+				size_t count = tilesets.size();
 				for (size_t i = count ; i > 0; --i)
 				{
-          size_t index = i - 1;
+					size_t index = i - 1;
 
 					TileSetData const & data = tilesets[index];
 					if (gid >= data.first_gid)

@@ -57,7 +57,7 @@ namespace chaos
 		/** the event */
 		boost::intrusive_ptr<class ClockEvent> clock_event;
 		/** the absolute (top level clock reference) time lapse before starting the event */
-		double abs_time_to_start{ 0.0 };
+		double abs_time_to_start = 0.0;
 	};
 
 	/**
@@ -104,9 +104,9 @@ namespace chaos
 	public:
 
 		/** the delay between repetitions */
-		double repetition_delay{0.0};
+		double repetition_delay = 0.0;
 		/** the number of repetitions (0 for no repetition, <0 for unlimited repetition, >0 for well known repetition count) */
-		int repetition_count{0};
+		int repetition_count = 0;
 	};
 
 	/**
@@ -160,9 +160,9 @@ namespace chaos
 	public:
 
 		/** the initial time */
-		double start_time{0.0};
+		double start_time = 0.0;
 		/** duration (0 for single tick event, <0 for unknown duration, >0 for a well known duration) */
-		double duration{0.0};
+		double duration = 0.0;
 	};
 
 	/**
@@ -211,9 +211,9 @@ namespace chaos
 	public:
 
 		/** whether event is completed */
-		bool completed{ true };
+		bool completed = true;
 		/** whether event can be repeated */
-		bool can_repeat{ true };
+		bool can_repeat = true;
 	};
 
 	/**
@@ -264,11 +264,11 @@ namespace chaos
 		/** the information for the event */
 		ClockEventInfo event_info;
 		/** the tick count for current execution */
-		int tick_count{ 0 };
+		int tick_count = 0;
 		/** the execution count (used for restarted event) */
-		int execution_count{ 0 };    
+		int execution_count = 0;    
 		/** the clock it belongs to */
-		class Clock * clock{nullptr};    
+		class Clock * clock = nullptr;    
 	};
 
 	/**
@@ -300,9 +300,9 @@ namespace chaos
 	public:
 
 		/** a time scale for the clock */
-		double time_scale{1.0};
+		double time_scale = 1.0;
 		/** whether the clock is paused or not */
-		bool   paused{false};  	
+		bool   paused = false;  	
 	};
 
 	/**
@@ -395,17 +395,17 @@ namespace chaos
 	protected:
 
 		/** the parent clock */
-		Clock * parent_clock{nullptr};
+		Clock * parent_clock = nullptr;
 		/** the time of the clock */
-		double clock_time{0.0};
+		double clock_time = 0.0;
 		/** a time scale for the clock */
-		double time_scale{1.0};
+		double time_scale = 1.0;
 		/** whether the clock is paused or not */
-		bool   paused{false};  
+		bool   paused = false;  
 		/** whether events should be ticked */
-		bool   tick_events{ true };
+		bool   tick_events = true;
 		/** the ID of the clock */
-		int    clock_id{0};
+		int    clock_id = 0;
 
 		/** the events */
 		std::vector<boost::intrusive_ptr<ClockEvent>> pending_events;

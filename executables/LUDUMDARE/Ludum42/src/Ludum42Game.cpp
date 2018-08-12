@@ -75,7 +75,7 @@ bool LudumGame::OnKeyEvent(int key, int action)
 	// FORCE GAMEOVER
 #if _DEBUG
 	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-			cheat_next_level = true;
+		cheat_next_level = true;
 #endif
 
 	return false;
@@ -177,7 +177,7 @@ bool LudumGame::TickGameLoop(double delta_time)
 
 void LudumGame::OnMouseMove(double x, double y)
 {
-	
+
 }
 
 void LudumGame::DestroyGameObjects()
@@ -228,7 +228,7 @@ bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, ch
 		ParticleObject & particle = particles[start + i];
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
 	}
-		
+
 	return true;
 }
 
@@ -249,7 +249,7 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 
 	particles->bounding_box.position  = glm::vec2(0.0f, 0.0f);
 	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
-	
+
 	return result;
 }
 
@@ -366,7 +366,7 @@ death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam
 		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);
 		if (tiled_map == nullptr)
 			return false;	
-	
+
 		// allocate a level
 		LudumGameplayLevel * ludum_result = new LudumGameplayLevel(this);
 		if (ludum_result == nullptr)

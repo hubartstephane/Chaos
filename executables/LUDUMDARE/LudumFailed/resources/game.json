@@ -1,0 +1,14 @@
+{
+  "sprite_directory":"@sprites",
+  "font_path": "@fonts/gomarice_katamari_serif.ttf",
+	"title_font_path": "@fonts/unispace bold italic.ttf",
+
+
+  "initial_life": 3,
+  "cooldown": 0.1,
+  "water_speed":  900.0,
+  "water_lifetime": 1.5,
+	"heart_beat_speed" : 1.0,
+  "mouse_sensitivity": 1.0,
+  "gamepad_sensitivity": 512.0
+}

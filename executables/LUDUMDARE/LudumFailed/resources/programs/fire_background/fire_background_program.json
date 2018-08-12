@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@fire_background_pixel_shader.txt"
+	],
+	"vertex_sources":
+	[
+		"@fire_background_vertex_shader.txt"
+	]
+}

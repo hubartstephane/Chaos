@@ -21,10 +21,16 @@ namespace chaos
 
 		protected:
 
+			/** constructor */
+			ClassRegistration(size_t in_size):
+				size(in_size){}
+
 			/** the parent of the class */
 			ClassRegistration const * parent = nullptr;
 			/** whether the class has been registered */
 			bool registered = false;
+			/** get class size */
+			size_t size = 0;
 			/** the optional name of the class */
 			std::string class_name;
 		};
@@ -38,7 +44,7 @@ namespace chaos
 		template<typename T>
 		static ClassRegistration * GetClassRegistrationInstanceHelper()
 		{
-			static ClassRegistration registration;
+			static ClassRegistration registration(sizeof(T));
 			return &registration;
 		}
 
@@ -80,6 +86,8 @@ namespace chaos
 		template<typename T, typename PARENT = NoParent>
 		static int DeclareClass(char const * in_class_name = nullptr)
 		{
+			assert(sizeof(T) >= sizeof(PARENT)); // NoParent is the sorted class as possible. This should work too
+
 			ClassRegistration * registration = GetClassRegistrationInstance<T>();
 			assert(!registration->registered);
 			InitializeRegistration(registration, in_class_name, boost::mpl::identity<PARENT>());
@@ -110,6 +118,10 @@ namespace chaos
 			assert(child_registration != nullptr);
 			assert(parent_registration != nullptr);
 
+			// fast test on the size
+			if (child_registration->size < parent_registration->size)
+				return INHERITANCE_NO;
+
 			// class not registered, cannot known result
 			if (!child_registration->registered)
 				return INHERITANCE_UNKNOWN;
@@ -129,6 +141,9 @@ namespace chaos
 			// from top to root in the hierarchy
 			for (child_registration = child_registration->parent; child_registration != nullptr; child_registration = child_registration->parent)
 			{
+				// fast test on the size
+				if (child_registration->size < parent_registration->size)
+					return INHERITANCE_NO;
 				// found the searched parent
 				if (child_registration == parent_registration)
 					return INHERITANCE_YES;

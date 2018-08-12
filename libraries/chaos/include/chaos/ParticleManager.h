@@ -34,7 +34,7 @@ namespace chaos
 		// ParticleAccessorBase
 		// ==============================================================
 
-		template<typename PARTICLE_TYPE, typename BUFFER_TYPE>
+	template<typename PARTICLE_TYPE, typename BUFFER_TYPE>
 	class ParticleAccessorBase
 	{
 	public:

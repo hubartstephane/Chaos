@@ -397,12 +397,16 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
+				int default_object_type = 0;
+				int object_type = 0;
 
-				int const * object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
-				if (object_type == nullptr)
+				int const * prop_object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
+				if (prop_object_type == nullptr)
 					continue;
 
-				if (*object_type == LudumGame::OBJECT_TYPE_PLAYER)
+				object_type = *prop_object_type;
+
+				if (object_type == LudumGame::OBJECT_TYPE_PLAYER)
 				{
 					ParticlePlayer player_particle;
 					(ParticleObject&)player_particle = new_particle;
@@ -431,7 +435,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 
 
 				// create an allocation
-				chaos::ParticleAllocation * allocation = FindOrAllocationForObjectType(*object_type);
+				chaos::ParticleAllocation * allocation = FindOrAllocationForObjectType(object_type);
 				if (allocation == nullptr)
 					continue;
 

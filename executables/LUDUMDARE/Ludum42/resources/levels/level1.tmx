@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="45">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="54">
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <layer name="planets" width="100" height="100" offsetx="5.5" offsety="0">
   <properties>
@@ -216,13 +216,20 @@
 </data>
  </layer>
  <objectgroup name="Calque d'objets 1">
-  <object id="2" name="grosse planete" gid="3221225480" x="0" y="0" width="10000" height="10000"/>
-  <object id="18" name="World_bounds" x="23" y="0" width="5088" height="-13265">
+  <object id="2" name="grosse planete" gid="3221225480" x="0" y="0" width="10000" height="10000">
+   <properties>
+    <property name="WORLD_BOUNDS" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="18" name="world_bounds_c" x="-1000" y="-1000" width="8000" height="8000">
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="1"/>
    </properties>
   </object>
-  <object id="35" name="world_origin" x="5760" y="3712">
+  <object id="35" name="world_origin_c" x="5760" y="3712">
+   <properties>
+    <property name="WORLD_ORIGIN" type="int" value="1"/>
+   </properties>
    <point/>
   </object>
   <object id="39" name="myrect" x="48" y="40" width="1392" height="880"/>

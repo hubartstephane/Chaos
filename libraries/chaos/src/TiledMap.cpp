@@ -410,22 +410,20 @@ namespace chaos
 			return true;
 		}
 
-		// XXX : the POSITION and SIZE signification may be different according to each object
+		// XXX : SIZE's signification may be different according to each object
 		//
-		//       
 		//	GeometricObjectSurface : abstract
 		//
 		//	GeometricObjectPoint : position = OBVIOUS
 		//
-		//	GeometricObjectRectangle : position = BOTTOMLEFT   SIZE is going down for positive Y
+		//	GeometricObjectRectangle : SIZE.Y is going DOWN for positive Y (according to the system)
 		//	GeometricObjectEllipse
 		//	GeometricObjectText
 		//
+		//	GeometricObjectTile : SIZE.Y is going UP for positive Y !!!! (the opposite of other objects)
+		//
 		//	GeometricObjectPolygon   : position = coordinates of very first point
 		//	GeometricObjectPolyline  : other points are given relative to the position
-		//
-		//	GeometricObjectTile : position = BOTTOMLEFT   SIZE is going UP for positive Y !!!! (the opposite of other objects)
-		//
 
 		box2 GeometricObjectSurface::GetBoundingBox() const
 		{

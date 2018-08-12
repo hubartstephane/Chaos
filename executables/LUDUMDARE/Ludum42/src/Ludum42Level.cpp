@@ -387,40 +387,16 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 					glm::vec2(0.0f, tile_size.y);
 
 				glm::vec2 topright = bottomleft;
-				topright.x += tile_size.x;
-				topright.y -= tile_size.y; 
-			
-				// absolute coordinates of the object (apply the layer modification)
-				bottomleft += tile_layer->offset;
-				topright += tile_layer->offset;
+				topright.x += tile_info.tiledata->image_size.x;
+				topright.y -= tile_info.tiledata->image_size.y; 
 
-				// invert the Y axis (UP) so that the axis has same direction as the user
-
-				bottomleft.y = -bottomleft.y;
-				topright.y = -topright.y;
-
-				
-
-				// reorganise 
-				chaos::box2 ob1 = chaos::box2(std::make_pair(bottomleft, topright));
-				auto P1 = ob1.GetCorners();
-
-
-				P1 = P1;
-
-				
-
-
-				//tile_layer->offset
-
-				glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_coord);
-				position.y = -position.y;
 
 				ParticleObject new_particle;
-				new_particle.bounding_box.position = position * tile_size;
-				new_particle.bounding_box.half_size = 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
+				new_particle.bounding_box = chaos::box2(std::make_pair(bottomleft, topright));
 				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
 
 				int const * object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
 				if (object_type == nullptr)
@@ -453,6 +429,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 					continue;
 				}
 
+
 				// create an allocation
 				chaos::ParticleAllocation * allocation = FindOrAllocationForObjectType(*object_type);
 				if (allocation == nullptr)
@@ -461,16 +438,19 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				if (!allocation->AddParticles(1))
 					continue;
 
-				chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-				particles[particles.GetCount() - 1] = new_particle;
-
 				if (!explicit_world_bounds)
 					world_bounds = world_bounds | new_particle.bounding_box;
+
+				chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
+				new_particle.bounding_box.position.y = -new_particle.bounding_box.position.y;
+				particles[particles.GetCount() - 1] = new_particle;
 			}
 		}
 	}
 
 	world_box = world_bounds;
+
+	world_box.position.y = -world_box.position.y;
 }
 
 

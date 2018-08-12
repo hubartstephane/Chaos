@@ -1,19 +1,5 @@
 {
   "@background": { "path": "@textures/background.png" },
   "@fire": { "path": "@textures/fire.png" },
-  "@perlin_noise": { "path": "@textures/perlin_noise.png" },
-  "@cells": { "path": "@textures/cells.png" },
-  "@corridor1": { "path": "@textures/corridor1.png" },
-  "@corridor2": { "path": "@textures/corridor2.png" },
-  "@hands": { "path": "@textures/hands.png" },
-  "@hospital": { "path": "@textures/hospital.png" },
-  "@old_prisonner1": { "path": "@textures/old_prisonner1.png" },
-  "@old_prisonner2": { "path": "@textures/old_prisonner2.png" },
-  "@perry": { "path": "@textures/perry.png" },
-  "@Prison": { "path": "@textures/Prison.png" },
-  "@prisonner": { "path": "@textures/prisonner.png" },
-  "@prohibition": { "path": "@textures/prohibition.png" },
-  "@raines": { "path": "@textures/raines.png" },
-  "@room": { "path": "@textures/room.png" },
-  "@speakeasy": { "path": "@textures/speakeasy.png" }
+  "@perlin_noise": { "path": "@textures/perlin_noise.png" }
 }

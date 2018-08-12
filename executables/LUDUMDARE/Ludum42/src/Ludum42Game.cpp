@@ -376,7 +376,7 @@ bool LudumGame::DoLoadLevelInitialize(LudumGameplayLevel * level, chaos::TiledMa
 death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam const & path)
 {
 	boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
+#if 0
 	if (chaos::FileTools::IsTypedFile(resolved_path, "json"))
 	{
 		nlohmann::json json_level;
@@ -395,7 +395,9 @@ death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam
 		}	
 		return ludum_result;	
 	}
-	else if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
+	else 
+#endif		
+		if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
 	{
 		// load the resource
 		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);
@@ -569,7 +571,7 @@ void LudumGame::TickLevelCompleted(double delta_time)
 #if _DEBUG
 	if (cheat_next_level)
 	{
-		SetNextLevel(false);
+		SetNextLevel(true);
 		cheat_next_level = false;
 		return;
 	}

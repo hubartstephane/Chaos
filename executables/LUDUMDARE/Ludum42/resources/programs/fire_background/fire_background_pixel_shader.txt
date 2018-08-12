@@ -11,18 +11,19 @@ uniform vec4 world_box;
 
 void main()
 {
-  vec2 p = camera_box.xy + camera_box.zw * vs_position;
+  float world_size = length(world_box.zw);
 
-  float l = length(p - world_box.xy);
+  vec2  pos   = camera_box.xy + camera_box.zw * vs_position;
+  vec2  delta = pos - world_box.xy;
+  float l = length(delta);
 
+  float factor = l / world_size;
+  factor = (factor - 0.7) / 0.3;  
+
+  float angle = atan(delta.y, delta.x);
+  angle = (angle / 3.141592653589) * 0.5 + 0.5;
   
- 
-  //output_color = vs_position;
-  //texture(fire, vs_texcoord);
-
-  output_color.xy = p; //vs_position * l;
-  output_color.x  = l / 1000.0;
-  output_color.y  = l / 1000.0;
-  output_color.z  = 0.0f;
-  output_color.w  = 1.0f;
+  vec2 tex = vec2(angle, factor);
+  output_color = texture(fire, tex);
+  output_color.xyz *= factor;
 }

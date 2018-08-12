@@ -33,7 +33,7 @@ namespace chaos
 			for (size_t i = 0; i < bitmaps.size(); ++i)
 				generator.AddGenerator(new TextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
 
-			// generate the texture array
+																									   // generate the texture array
 			texture = generator.GenTextureObject();
 			if (texture == nullptr)
 			{
@@ -64,6 +64,6 @@ namespace chaos
 			}
 			return true;
 		}
-	};
-};
+	}; // namespace BitmapAtlas
+}; // namespace chaos
 

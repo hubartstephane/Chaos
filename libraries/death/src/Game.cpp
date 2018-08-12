@@ -115,6 +115,9 @@ namespace death
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 
+		// the viewport
+		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
+
 		// the related box
 		glm::vec2 view_size = GetViewSize();
 		main_uniform_provider.AddVariableValue("view_size", view_size);

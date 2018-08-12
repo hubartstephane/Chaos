@@ -5,14 +5,14 @@
 namespace chaos
 {
 
-/**
- * MyAssimpImporter : a base class to import ASSIMP file
- */
+	/**
+	* MyAssimpImporter : a base class to import ASSIMP file
+	*/
 
-class MyAssimpImporter
-{
-public:
+	class MyAssimpImporter
+	{
+	public:
 
-};
+	};
 
 }; // namespace chaos

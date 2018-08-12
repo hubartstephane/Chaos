@@ -25,7 +25,7 @@ namespace chaos
 		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const & pixel_format, int * bpp = nullptr);
 		/** the free image prefered file format for a given PixelFormat */
 		static FREE_IMAGE_FORMAT GetFreeImageFormat(PixelFormat const & pixel_format);
-		
+
 		/** load an image from a buffer */
 		static FIBITMAP * LoadImageFromBuffer(Buffer<char> buffer);
 		/** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */
@@ -52,7 +52,7 @@ namespace chaos
 		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * buffer);
 		/** compute the memory requirement for a texture with DWORD aligned rows texture */
 		static int GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height);
-	
+
 		/** compute the address of a pixel (type T is usefull to know for pixel size/format) */
 		template<typename T> 
 		static inline T * GetPixelAddress(ImageDescription & desc, int x, int y)

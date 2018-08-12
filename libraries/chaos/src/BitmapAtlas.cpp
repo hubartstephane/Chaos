@@ -542,16 +542,16 @@ namespace chaos
 			boost::filesystem::path index_filename;
 			boost::filesystem::path bitmap_filename;
 			SplitFilename(path, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
-			// load the file into memory
+																			  // load the file into memory
 			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
 			if (buf == nullptr)
 				return false;
 
 			// parse JSON file
-      nlohmann::json json;
-      if (JSONTools::Parse(buf.data, json))
-			  return LoadAtlas(json, target_dir);
-      return false;
+			nlohmann::json json;
+			if (JSONTools::Parse(buf.data, json))
+				return LoadAtlas(json, target_dir);
+			return false;
 		}
 
 		bool Atlas::LoadAtlas(nlohmann::json const & json, boost::filesystem::path const & target_dir)
@@ -639,6 +639,6 @@ namespace chaos
 			else
 				bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
 		}
-	};
-};
+	}; // namespace BitmapAtlas
+}; // namespace chaos
 

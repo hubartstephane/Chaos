@@ -6,7 +6,7 @@ namespace chaos
 	Buffer<char> MyZLib::Encode(Buffer<char> const & src)
 	{
 		static const int CHUNK_SIZE = 1024 * 1;
-		
+
 		SparseWriteBuffer<> writer(CHUNK_SIZE);
 
 		z_stream strm;
@@ -19,7 +19,7 @@ namespace chaos
 		if (deflateInit(&strm, Z_DEFAULT_COMPRESSION) == Z_OK)
 		{		
 			unsigned char chunk[CHUNK_SIZE];
-			
+
 			strm.avail_in = (uInt)src.bufsize;
 			strm.next_in  = (unsigned char*)src.data; // prepare input
 
@@ -39,7 +39,7 @@ namespace chaos
 					writer.Write(chunk, data_to_copy);
 
 			} while (strm.avail_out == 0); // all data in inputs consummed ?
-		
+
 			deflateEnd(&strm);
 		}
 
@@ -75,7 +75,7 @@ namespace chaos
 
 				if (inflate(&strm, Z_NO_FLUSH) < 0) // the whole buffer is given so => Z_FINISH
 				{
-          char const * msg = strm.msg;
+					char const * msg = strm.msg;
 					inflateEnd(&strm);
 					return Buffer<char>();
 				}

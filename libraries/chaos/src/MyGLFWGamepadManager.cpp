@@ -540,7 +540,7 @@ namespace chaos
 			int unallocated_present_physical_device_count = 0;
 			UpdateAndUnconnectPhysicalGamepads(delta_time, unallocated_present_physical_device_count); // get the number of physical devices to bind
 
-			// try to give all logical device a physical device
+																									   // try to give all logical device a physical device
 			if (unallocated_present_physical_device_count > 0)
 				GiveGamepadPhysicalDevices(unallocated_present_physical_device_count);
 

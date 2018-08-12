@@ -9,11 +9,11 @@ namespace chaos
 	{
 		return box2(std::make_pair(corners.bottomleft, corners.topright));	
 	}
-	
+
 	ParticleCorners ParticleTools::BoxToParticleCorners(box2 const & box)
 	{	
 		std::pair<glm::vec2, glm::vec2> tmp = box.GetCorners();
-	
+
 		ParticleCorners result;
 		result.bottomleft = tmp.first;
 		result.topright   = tmp.second;

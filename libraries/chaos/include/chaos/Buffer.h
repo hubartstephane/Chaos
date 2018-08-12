@@ -7,270 +7,270 @@
 namespace chaos
 {
 
-class BufferBase;
-class BufferPolicyBase;
-template<typename T> class Buffer;
-template<typename T> class BufferPolicy;
+	class BufferBase;
+	class BufferPolicyBase;
+	template<typename T> class Buffer;
+	template<typename T> class BufferPolicy;
 
-/**
- * BufferPolicyBase : base class for the Policy 
- */
+	/**
+	* BufferPolicyBase : base class for the Policy 
+	*/
 
-class BufferPolicyBase
-{
+	class BufferPolicyBase
+	{
 
-  friend class BufferBase;
+		friend class BufferBase;
 
-public:
+	public:
 
-  /** destructor */
-  virtual ~BufferPolicyBase() = default;
+		/** destructor */
+		virtual ~BufferPolicyBase() = default;
 
-protected:
+	protected:
 
-  /** called whenever the buffer is destroyed */
-  virtual void DestroyBuffer(BufferBase * buf){}
-  /** called whenever we want to copy a buffer */
-  virtual void CopyBuffer(BufferBase * dst, BufferBase const * src){}
-};
+		/** called whenever the buffer is destroyed */
+		virtual void DestroyBuffer(BufferBase * buf){}
+		/** called whenever we want to copy a buffer */
+		virtual void CopyBuffer(BufferBase * dst, BufferBase const * src){}
+	};
 
-/**
- * SharedBufferPolicy : the policy for memory management is based on a counter. Policy and data are allocated in the same chunk of memory
- */
+	/**
+	* SharedBufferPolicy : the policy for memory management is based on a counter. Policy and data are allocated in the same chunk of memory
+	*/
 
-template<typename T> 
-class SharedBufferPolicy : public BufferPolicyBase
-{
+	template<typename T> 
+	class SharedBufferPolicy : public BufferPolicyBase
+	{
 
-public:
+	public:
 
-  /** constructor */
-  SharedBufferPolicy() : reference_count(1){}
+		/** constructor */
+		SharedBufferPolicy() : reference_count(1){}
 
-  /** generate the buffer */
-  static Buffer<T> NewBuffer(size_t count)
-  {
-    auto obj = AllocatorTools::SingleAllocMultipleObjects<SharedBufferPolicy<T>, T>(1, count); // optimized : all in a single allocation
-    Buffer<T> result(std::get<1>(obj), count);
-    result.SetPolicy(std::get<0>(obj));
-    return result;
-  }
+		/** generate the buffer */
+		static Buffer<T> NewBuffer(size_t count)
+		{
+			auto obj = AllocatorTools::SingleAllocMultipleObjects<SharedBufferPolicy<T>, T>(1, count); // optimized : all in a single allocation
+			Buffer<T> result(std::get<1>(obj), count);
+			result.SetPolicy(std::get<0>(obj));
+			return result;
+		}
 
-protected:
+	protected:
 
-  /** copy the buffer */
-  virtual void CopyBuffer(BufferBase * dst, BufferBase const * src) override
-  {
-    assert(dst != nullptr);
-    assert(src != nullptr);
-    assert(src->GetPolicy() == this);
+		/** copy the buffer */
+		virtual void CopyBuffer(BufferBase * dst, BufferBase const * src) override
+		{
+			assert(dst != nullptr);
+			assert(src != nullptr);
+			assert(src->GetPolicy() == this);
 
-    Buffer<T> * d = (Buffer<T>*)dst;
-    Buffer<T> * s = (Buffer<T>*)src;
+			Buffer<T> * d = (Buffer<T>*)dst;
+			Buffer<T> * s = (Buffer<T>*)src;
 
-    d->data    = s->data;
-    d->bufsize = s->bufsize;
-    d->SetPolicy(this);
-    ++reference_count;
-  }
+			d->data    = s->data;
+			d->bufsize = s->bufsize;
+			d->SetPolicy(this);
+			++reference_count;
+		}
 
-  /** destroy the buffer */
-  virtual void DestroyBuffer(BufferBase * buf) override
-  {
-    if (--reference_count == 0)
-    {
-      Buffer<T> * b = (Buffer<T>*)buf;
-      for (size_t i = 0 ; i < b->bufsize ; ++i)
-        b->data[i].~T();      
-      b->GetPolicy()->~BufferPolicyBase();
-      AllocatorTools::Aligned16Free(b->GetPolicy());           
-    }    
-  }
-  
-protected:
+		/** destroy the buffer */
+		virtual void DestroyBuffer(BufferBase * buf) override
+		{
+			if (--reference_count == 0)
+			{
+				Buffer<T> * b = (Buffer<T>*)buf;
+				for (size_t i = 0 ; i < b->bufsize ; ++i)
+					b->data[i].~T();      
+				b->GetPolicy()->~BufferPolicyBase();
+				AllocatorTools::Aligned16Free(b->GetPolicy());           
+			}    
+		}
 
-  /** count the reference on the buffer */
-  mutable boost::atomic<int> reference_count;
-};
+	protected:
 
-/**
- * SharedNonOptimzedBufferPolicy : same than SharedNonOptimzedBufferPolicy, but policy is in an independent memory than the data
- */
+		/** count the reference on the buffer */
+		mutable boost::atomic<int> reference_count;
+	};
 
-template<typename T> 
-class SharedNonOptimzedBufferPolicy : public SharedBufferPolicy<T>
-{
+	/**
+	* SharedNonOptimzedBufferPolicy : same than SharedNonOptimzedBufferPolicy, but policy is in an independent memory than the data
+	*/
 
-public:
+	template<typename T> 
+	class SharedNonOptimzedBufferPolicy : public SharedBufferPolicy<T>
+	{
 
-  /** generate the buffer */
-  static Buffer<T> NewBuffer(size_t count)
-  {
-    Buffer<T> result(new T[count], count);
-    result.SetPolicy(new SharedNonOptimzedBufferPolicy<T>);
-    return result;
-  }
+	public:
 
-protected:
+		/** generate the buffer */
+		static Buffer<T> NewBuffer(size_t count)
+		{
+			Buffer<T> result(new T[count], count);
+			result.SetPolicy(new SharedNonOptimzedBufferPolicy<T>);
+			return result;
+		}
 
-  /** destroy the buffer */
-  virtual void DestroyBuffer(BufferBase * buf) override
-  {
-    if (--reference_count == 0)
-    {
-      Buffer<T> * b = (Buffer<T>*)buf;
-      delete [] b->data;
-      delete(this);
-    }    
-  }
-};
+	protected:
 
-/**
- * BufferBase : base class for buffer
- */
+		/** destroy the buffer */
+		virtual void DestroyBuffer(BufferBase * buf) override
+		{
+			if (--reference_count == 0)
+			{
+				Buffer<T> * b = (Buffer<T>*)buf;
+				delete [] b->data;
+				delete(this);
+			}    
+		}
+	};
 
-class BufferBase
-{
-  friend class BufferPolicyBase;
+	/**
+	* BufferBase : base class for buffer
+	*/
 
-public:
+	class BufferBase
+	{
+		friend class BufferPolicyBase;
 
-  /** default constructor */
-	BufferBase() = default;
-  /** destructor */
-  ~BufferBase()
-  {
-    if (policy != nullptr)
-      policy->DestroyBuffer(this);
-  }
+	public:
 
-  /** XXX : use with caution : get the policy */
-  BufferPolicyBase * GetPolicy()
-  {
-    return policy;
-  }
-  /** XXX : use with caution : get the policy */
-  BufferPolicyBase const * GetPolicy() const
-  {
-    return policy;
-  }
-  /** XXX : use with caution : change the policy */
-  void SetPolicy(BufferPolicyBase * in_policy)
-  {
-    policy = in_policy;
-  }
+		/** default constructor */
+		BufferBase() = default;
+		/** destructor */
+		~BufferBase()
+		{
+			if (policy != nullptr)
+				policy->DestroyBuffer(this);
+		}
 
-protected:
+		/** XXX : use with caution : get the policy */
+		BufferPolicyBase * GetPolicy()
+		{
+			return policy;
+		}
+		/** XXX : use with caution : get the policy */
+		BufferPolicyBase const * GetPolicy() const
+		{
+			return policy;
+		}
+		/** XXX : use with caution : change the policy */
+		void SetPolicy(BufferPolicyBase * in_policy)
+		{
+			policy = in_policy;
+		}
 
-  /** an utility function for friendship */
-  void CopyFromBuffer(BufferBase const * src)
-  {
-    src->policy->CopyBuffer(this, src);
-  }
+	protected:
 
-protected:
-  
-  /** the policy */
-	BufferPolicyBase * policy{ nullptr };
-};
+		/** an utility function for friendship */
+		void CopyFromBuffer(BufferBase const * src)
+		{
+			src->policy->CopyBuffer(this, src);
+		}
+
+	protected:
+
+		/** the policy */
+		BufferPolicyBase * policy{ nullptr };
+	};
 
 
-/**
- * Buffer : a buffer with typed data inside
- */
+	/**
+	* Buffer : a buffer with typed data inside
+	*/
 
-template<typename TYPE = char>
-class Buffer : public BufferBase
-{
-  friend class BufferPolicyBase;
+	template<typename TYPE = char>
+	class Buffer : public BufferBase
+	{
+		friend class BufferPolicyBase;
 
-public:
+	public:
 
-  /** the type of the element in the buffer */
-  typedef TYPE type;
+		/** the type of the element in the buffer */
+		typedef TYPE type;
 
-  /** default constructor */    
-	Buffer() = default;
+		/** default constructor */    
+		Buffer() = default;
 
-  /** constructor with initialization */
-  Buffer(TYPE * in_data, size_t in_bufsize):
-    data(in_data),
-    bufsize(in_bufsize){}
+		/** constructor with initialization */
+		Buffer(TYPE * in_data, size_t in_bufsize):
+			data(in_data),
+			bufsize(in_bufsize){}
 
-  /** copy constructor (let the policy decide what to do) */
-  Buffer(Buffer<TYPE> const & other)
-  {
-    if (other.policy == nullptr) // buffer is unmanaged => simple copy
-    {
-      data    = other.data;
-      bufsize = other.bufsize; 
-    }
-    else
-    {
-      CopyFromBuffer(&other);
-    }   
-  }
+		/** copy constructor (let the policy decide what to do) */
+		Buffer(Buffer<TYPE> const & other)
+		{
+			if (other.policy == nullptr) // buffer is unmanaged => simple copy
+			{
+				data    = other.data;
+				bufsize = other.bufsize; 
+			}
+			else
+			{
+				CopyFromBuffer(&other);
+			}   
+		}
 
-  /** move constructor */
-  Buffer(Buffer<TYPE> && other)
-  {
-    std::swap(policy,  other.policy);
-    std::swap(data,    other.data);
-    std::swap(bufsize, other.bufsize);    
-  }
+		/** move constructor */
+		Buffer(Buffer<TYPE> && other)
+		{
+			std::swap(policy,  other.policy);
+			std::swap(data,    other.data);
+			std::swap(bufsize, other.bufsize);    
+		}
 
-  /** get the size */
-  size_t size() const
-  {
-    return bufsize;
-  }
+		/** get the size */
+		size_t size() const
+		{
+			return bufsize;
+		}
 
-  /** cast the buffer in a data pointer */
-  operator type const * () const
-  {
-    return data;
-  }
-  /** cast the buffer in a data pointer */
-  operator type * ()
-  {
-    return data;
-  }
+		/** cast the buffer in a data pointer */
+		operator type const * () const
+		{
+			return data;
+		}
+		/** cast the buffer in a data pointer */
+		operator type * ()
+		{
+			return data;
+		}
 
-  /** copy operator */
-  Buffer<TYPE> & operator = (Buffer<TYPE> const & other)
-  {
-    Buffer<TYPE> to_destroy(std::move(*this)); // to destroy at the end of call
-         
-    if (other.policy == nullptr)
-    {
-      data    = other.data;
-      bufsize = other.bufsize;
-      policy  = nullptr;
-    }
-    else
-    {
-      CopyFromBuffer(&other);
-    }
+		/** copy operator */
+		Buffer<TYPE> & operator = (Buffer<TYPE> const & other)
+		{
+			Buffer<TYPE> to_destroy(std::move(*this)); // to destroy at the end of call
 
-    return *this;
-  }
+			if (other.policy == nullptr)
+			{
+				data    = other.data;
+				bufsize = other.bufsize;
+				policy  = nullptr;
+			}
+			else
+			{
+				CopyFromBuffer(&other);
+			}
 
-  /** move operator */
-  Buffer<TYPE> & operator = (Buffer<TYPE> && other)
-  {
-    std::swap(policy,  other.policy);
-    std::swap(data,    other.data);
-    std::swap(bufsize, other.bufsize);
-    return *this;
-  }
+			return *this;
+		}
 
-public:
+		/** move operator */
+		Buffer<TYPE> & operator = (Buffer<TYPE> && other)
+		{
+			std::swap(policy,  other.policy);
+			std::swap(data,    other.data);
+			std::swap(bufsize, other.bufsize);
+			return *this;
+		}
 
-  /** the pointer on the data */
-	type * data{ nullptr };
-  /** the number of elements in the buffer */
-	size_t bufsize{ 0 };
-};
+	public:
+
+		/** the pointer on the data */
+		type * data{ nullptr };
+		/** the number of elements in the buffer */
+		size_t bufsize{ 0 };
+	};
 
 
 }; // namespace chaos

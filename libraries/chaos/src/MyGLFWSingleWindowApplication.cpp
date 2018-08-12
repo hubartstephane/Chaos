@@ -84,7 +84,7 @@ namespace chaos
 
 			SingleWindowApplicationParams params = window_params; // work on a copy of the params
 
-			// set an error callback
+																  // set an error callback
 			glfwSetErrorCallback(OnGLFWError);
 
 			// compute the monitor upon which the window will be : use it for pixel format
@@ -340,7 +340,7 @@ namespace chaos
 			Application::FinalizeStandardLibraries();
 			return true;
 		}
-	
+
 		void SingleWindowApplication::OnInputModeChanged(int new_mode, int old_mode)
 		{
 			if (window != nullptr)

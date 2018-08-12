@@ -65,7 +65,7 @@ namespace chaos
 
 		/** the cache content */
 		std::vector<boost::intrusive_ptr<VertexArrayCacheEntry>> entries;
-	
+
 	};
 
 	// ================================================================================================================

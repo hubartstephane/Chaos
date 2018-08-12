@@ -151,81 +151,81 @@ namespace chaos
 
 #if 0
 
-/** 
- * LuaBinding a class to help generate binding between C++ and LUA
- */
+	/** 
+	* LuaBinding a class to help generate binding between C++ and LUA
+	*/
 
-class LuaBinding : public LuaState
-{
+	class LuaBinding : public LuaState
+	{
 
-protected:
+	protected:
 
-  /** constant string of indexing the REGISTRY */
-  static char const * TOMT_KEY;
-  /** constant string of indexing the MT */
-  static char const * ID_KEY;
+		/** constant string of indexing the REGISTRY */
+		static char const * TOMT_KEY;
+		/** constant string of indexing the MT */
+		static char const * ID_KEY;
 
-public:
+	public:
 
-  /** initialization constructor */
-  LuaBinding(lua_State * in_state) : LuaState(in_state){ assert(in_state != nullptr); }
-  /** copy constructor */
-  LuaBinding(LuaBinding const & other) : LuaState(other.state){}
+		/** initialization constructor */
+		LuaBinding(lua_State * in_state) : LuaState(in_state){ assert(in_state != nullptr); }
+		/** copy constructor */
+		LuaBinding(LuaBinding const & other) : LuaState(other.state){}
 
-  /** create the binding for a given function and register it into the table with given index */
-  template<typename RET>
-  void AddFunction(char const * name, RET (*func)(), int index = 0)
-  {
-    lua_pushstring(state, name);
-    lua_pushcfunction(state, FunctionBinding(func));
-    lua_settable(state, index);
-  }
-
-
-
-
-  /*
-  template<typename BASE, typename PARENT>
-  ClassBinding AddClass(char const * name, int index)
-  {
-
-  }
-  */
+		/** create the binding for a given function and register it into the table with given index */
+		template<typename RET>
+		void AddFunction(char const * name, RET (*func)(), int index = 0)
+		{
+			lua_pushstring(state, name);
+			lua_pushcfunction(state, FunctionBinding(func));
+			lua_settable(state, index);
+		}
 
 
 
 
-protected:
+		/*
+		template<typename BASE, typename PARENT>
+		ClassBinding AddClass(char const * name, int index)
+		{
 
-  /** generate a binding function */
-  template<typename RET>
-  lua_CFunction FunctionBinding(RET (*func)())
-  {
-
-    return nullptr;
-  }
-
-protected:
-
-  /** create (if necessary) and get (result on the stack) the TOMT */
-  void GetTOMT();
-  /** create an empty MT and register it in the TOMT that is on the stack (result is put on the stack */
-  void CreateEmptyMT(InheritanceIntrospection::ClassRuntimeID ID, int tomt_index);
-  /** get the MT from a ClassID : result put on the stack */
-  void GetMT(InheritanceIntrospection::ClassRuntimeID ID);
-  /** return the ClassID of a MT on the stack */
-  InheritanceIntrospection::ClassRuntimeID GetClassRuntimeIDFromMT(int mt_index);
-  /** return the ClassID of a user data on the stack */
-  InheritanceIntrospection::ClassRuntimeID GetClassRuntimeID(int index);
+		}
+		*/
 
 
+
+
+	protected:
+
+		/** generate a binding function */
+		template<typename RET>
+		lua_CFunction FunctionBinding(RET (*func)())
+		{
+
+			return nullptr;
+		}
+
+	protected:
+
+		/** create (if necessary) and get (result on the stack) the TOMT */
+		void GetTOMT();
+		/** create an empty MT and register it in the TOMT that is on the stack (result is put on the stack */
+		void CreateEmptyMT(InheritanceIntrospection::ClassRuntimeID ID, int tomt_index);
+		/** get the MT from a ClassID : result put on the stack */
+		void GetMT(InheritanceIntrospection::ClassRuntimeID ID);
+		/** return the ClassID of a MT on the stack */
+		InheritanceIntrospection::ClassRuntimeID GetClassRuntimeIDFromMT(int mt_index);
+		/** return the ClassID of a user data on the stack */
+		InheritanceIntrospection::ClassRuntimeID GetClassRuntimeID(int index);
 
 
 
 
 
 
-};
+
+
+	};
 
 #endif
 

@@ -214,9 +214,9 @@ namespace chaos
 			json, 
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
-			{
-				LoadTexture(name, obj_json, path);
-			}
+		{
+			LoadTexture(name, obj_json, path);
+		}
 		);
 		return true;
 	}
@@ -228,9 +228,9 @@ namespace chaos
 			json, 
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
-			{
-				LoadProgram(name, obj_json, path);
-			}
+		{
+			LoadProgram(name, obj_json, path);
+		}
 		);
 	}
 
@@ -243,13 +243,13 @@ namespace chaos
 			json,
 			config_path,
 			[this, &parenting_map](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
-			{
-				std::string parent_name;
+		{
+			std::string parent_name;
 
-				GPURenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
-				if (render_material != nullptr && !parent_name.empty())
-					parenting_map[render_material] = std::move(parent_name);
-			}
+			GPURenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
+			if (render_material != nullptr && !parent_name.empty())
+				parenting_map[render_material] = std::move(parent_name);
+		}
 		);
 		// resolve the parenting
 		if (result)

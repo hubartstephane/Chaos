@@ -9,18 +9,18 @@ namespace chaos
 		else
 			name.clear();
 	}
-	
+
 	void GPUFileResource::SetPath(boost::filesystem::path const & in_path)
 	{
 		path = in_path;
 	}
-	
+
 	void GPUFileResourceFriend::SetResourceName(GPUFileResource * resource, char const * in_name)
 	{
 		assert(resource != nullptr);
 		resource->SetName(in_name);
 	}
-	
+
 	void GPUFileResourceFriend::SetResourcePath(GPUFileResource * resource, boost::filesystem::path const & in_path)
 	{
 		assert(resource != nullptr);

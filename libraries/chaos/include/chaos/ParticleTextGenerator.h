@@ -15,8 +15,8 @@ namespace chaos
 	namespace ParticleTextGenerator
 	{
 		/**
-		 * some parameters used during text parsing
-		 */
+		* some parameters used during text parsing
+		*/
 
 		class GeneratorParams
 		{
@@ -55,10 +55,10 @@ namespace chaos
 			/** the hotpoint */
 			int hotpoint_type = Hotpoint::BOTTOM_LEFT;
 		};
-	
+
 		/**
-		 * Particle : a base particle class
-		 */
+		* Particle : a base particle class
+		*/
 
 		class Particle
 		{
@@ -105,8 +105,8 @@ namespace chaos
 		using TokenLine = std::vector<Token>;
 
 		/**
-		 * GeneratorResult : the result of the parsing
-		 */
+		* GeneratorResult : the result of the parsing
+		*/
 
 		class GeneratorResult
 		{
@@ -128,8 +128,8 @@ namespace chaos
 		};
 
 		/**
-		 * Style : during parsing, some 'commands' are put on the stack for text formating, Style is such a command 
-		 */
+		* Style : during parsing, some 'commands' are put on the stack for text formating, Style is such a command 
+		*/
 
 		class Style
 		{
@@ -183,7 +183,7 @@ namespace chaos
 			void InsertTokenInLine(Token & token);
 
 		public:
-		
+
 			/** the result */
 			GeneratorResult & result;
 			/** the parameters from user */
@@ -297,7 +297,7 @@ namespace chaos
 
 		/** generate an allocation for a generated text */
 		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result);
-	
+
 	}; // namespace ParticleTextGenerator
 
-};
+}; // namespace chaos

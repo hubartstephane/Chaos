@@ -1,8 +1,8 @@
 #pragma once
 
 /**
- * Common "macros"
- */
+* Common "macros"
+*/
 
 #ifdef min
 #  undef min
@@ -16,18 +16,18 @@
 template<typename T>
 T min(T a, T b)
 {
-  return (a <= b)? a : b;
+	return (a <= b)? a : b;
 }
 
 template<typename T>
 T max(T a, T b)
 {
-  return (a >= b)? a : b;
+	return (a >= b)? a : b;
 }
 
 /**
- * This file only deserve to include most external common includes
- */
+* This file only deserve to include most external common includes
+*/
 
 #ifdef _MSC_VER
 #  pragma warning(push)

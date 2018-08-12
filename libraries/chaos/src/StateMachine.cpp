@@ -18,7 +18,7 @@ namespace chaos
 
 		State::~State()
 		{
-		
+
 		}
 
 		void State::SetName(char const * in_name)
@@ -53,7 +53,7 @@ namespace chaos
 		{		
 			OnLeaveImpl(to_state);
 		}
-	
+
 		bool State::OnEnterImpl(State * from_state)
 		{
 			return false; 
@@ -63,7 +63,7 @@ namespace chaos
 		{
 			return true;
 		}
-		
+
 		bool State::OnLeaveImpl(State * to_state)
 		{
 			return false;
@@ -101,7 +101,7 @@ namespace chaos
 
 		bool Transition::CheckTransitionConditions()
 		{
-		
+
 
 
 			return false; // refuse to automatically enter the transition
@@ -186,6 +186,6 @@ namespace chaos
 			ChangeState(initial_state);
 		}
 
-	}; // namespace chaos
+	}; // namespace StateMachine
 
 }; // namespace chaos

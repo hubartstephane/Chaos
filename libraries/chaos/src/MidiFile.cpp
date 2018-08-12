@@ -148,7 +148,7 @@ namespace chaos
 			return false;
 		// read the tracks
 		size_t track_found = 0;
-		
+
 		MidiChunk data_chunk = ReadChunk(reader);
 		while (data_chunk.data != nullptr)
 		{

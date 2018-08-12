@@ -6,7 +6,7 @@ namespace chaos
 	{
 		return (mode == Keyboard) || (mode == Mouse);
 	}
-	
+
 	bool InputMode::IsConsoleMode(int mode)
 	{
 		return (mode == Gamepad);

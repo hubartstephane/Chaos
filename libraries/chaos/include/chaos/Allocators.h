@@ -5,22 +5,22 @@
 namespace chaos
 {
 
-/**
- * a default class for Allocation of Array
- */
+	/**
+	* a default class for Allocation of Array
+	*/
 
-template<typename T>
-class ArrayAllocator
-{
-public:
+	template<typename T>
+	class ArrayAllocator
+	{
+	public:
 
-  /** the type of object to allocate */
-  typedef T type;   
+		/** the type of object to allocate */
+		typedef T type;   
 
-  /** a method to allocate a buffer of object */
-  type * Allocate(size_t count){ assert(count > 0); return new type[count]; }
-  /** a method to free a buffer of object */
-  void   Free(type * ptr){ assert(ptr != nullptr); delete [] ptr; }
-};
+		/** a method to allocate a buffer of object */
+		type * Allocate(size_t count){ assert(count > 0); return new type[count]; }
+		/** a method to free a buffer of object */
+		void   Free(type * ptr){ assert(ptr != nullptr); delete [] ptr; }
+	};
 
 }; // namespace chaos

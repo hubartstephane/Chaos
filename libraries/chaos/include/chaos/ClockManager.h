@@ -374,8 +374,8 @@ namespace chaos
 		/** get the value of ticking event */
 		bool GetTickEventsEnabled() const { return tick_events; }
 
-    /** initialization of the manager from configuration file */
-    virtual void InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		/** initialization of the manager from configuration file */
+		virtual void InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	protected:
 

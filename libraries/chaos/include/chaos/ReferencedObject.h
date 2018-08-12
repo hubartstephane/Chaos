@@ -68,6 +68,6 @@ namespace chaos
 		/** disable the reference lost deletion */
 		virtual void OnLastReferenceLost() override { }
 	};
-	
+
 }; // namespace chaos
 

@@ -20,17 +20,17 @@ namespace chaos
 
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;
-BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES)
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES)
 
 			// friendship macro
 #define CHAOS_STATEMACHINE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_STATEMACHINE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FRIEND_DECL, _, CHAOS_STATEMACHINE_CLASSES)
 
-		// ==================================================
-		// State
-		// ==================================================
+			// ==================================================
+			// State
+			// ==================================================
 
-		class State : public ReferencedObject
+			class State : public ReferencedObject
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -166,7 +166,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** the current state of the automata */
 			State * current_state = nullptr;
 
-			
+
 		};
 
 		// undefine macros
@@ -176,7 +176,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 #undef CHAOS_STATEMACHINE_ALL_FRIENDS
 
 
-	}; // namespace chaos
+	}; // namespace StateMachine
 
 }; // namespace chaos
 

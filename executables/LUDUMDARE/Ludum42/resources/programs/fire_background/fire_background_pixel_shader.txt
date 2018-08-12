@@ -9,9 +9,10 @@ in vec4 vs_color;
 
 uniform vec4 camera_box;
 uniform vec4 world_box;
-
+uniform vec2 viewport_size;
 void main()
 {
+
 	float world_size = length(world_box.zw);
 
 	vec2  pos   = camera_box.xy + camera_box.zw * vs_position;
@@ -29,10 +30,21 @@ void main()
 	fire_color.xyz *= factor;
 
 	output_color.xyz = fire_color.xyz;
-	/*
-	vec4 background_color = texture(background, vs_texcoord);
-
-	output_color.xyz = vec3(background_color * (1.0 - factor) + fire_color * factor);
-	*/
+	
+	//vec4 background_color = texture(background, vs_texcoord);
+	//output_color.xyz = vec3(background_color * (1.0 - factor) + fire_color * factor);
+	
 	output_color.w   = 1.0;
+
+
+
+
+
+
+/*
+	output_color.x = 0.0;
+	output_color.y = gl_FragCoord.y / 500.0; //viewport_size.y;
+	output_color.z = 0.0;
+	output_color.w = 1.0;
+	*/
 }

@@ -33,7 +33,7 @@ namespace chaos
 
 				PixelConverter::Convert(dst_color, rgba_color); // ... convert it into the wanted PixelType
 
-				// step 1 : fill line 1 (with standard assignement)
+																// step 1 : fill line 1 (with standard assignement)
 				DST_TYPE * d1 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, 0);
 				for (int c = 0; c < dst_desc.width; ++c)
 					d1[c] = dst_color;
@@ -164,7 +164,7 @@ namespace chaos
 	{
 		return (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? FIF_PNG : FIF_EXR;	
 	}
-	
+
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
 	{
 		if (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)
@@ -409,7 +409,7 @@ namespace chaos
 		int padding    = (pitch_size - line_size);
 
 		void * aligned_buffer = (void*)((((uintptr_t)buffer) + 3) & ~3);
-	
+
 		result.pixel_format = pixel_format;
 		result.width        = width;
 		result.height       = height;

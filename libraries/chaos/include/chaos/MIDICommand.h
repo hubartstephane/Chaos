@@ -152,7 +152,7 @@ namespace chaos
 		/** get number of bytes for the command */
 		static int GetCommandParamCount(unsigned char status);
 
-public:
+	public:
 
 		/** the command */
 		unsigned char status;

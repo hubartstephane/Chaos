@@ -27,35 +27,35 @@ namespace chaos
 	GPUProgram * ParticleDefault::GenDefautParticleProgram()
 	{
 		char const * vertex_shader_source = R"SHADERCODE(
-			in vec2 position;
-			in vec3 texcoord;
-	    in vec4 color;
+		in vec2 position;
+		in vec3 texcoord;
+		in vec4 color;
 
-		  uniform mat4 local_to_cam;
+		uniform mat4 local_to_cam;
     
-	    out vec3 vs_texcoord;
-			out vec4 vs_color;
+		out vec3 vs_texcoord;
+		out vec4 vs_color;
     
-		  void main()
+		void main()
 	    {
-				vs_texcoord = texcoord;
-			  vs_color    = color;
-		    gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
-	    };											
+			vs_texcoord = texcoord;
+			vs_color    = color;
+			gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
+		};											
 		)SHADERCODE";
 
 		char const * pixel_shader_source = R"SHADERCODE(
-			in vec3 vs_texcoord;
-			in vec4 vs_color;
+		in vec3 vs_texcoord;
+		in vec4 vs_color;
 
-			out vec4 output_color;
+		out vec4 output_color;
 
-			uniform sampler2DArray material;
+		uniform sampler2DArray material;
 
-			void main()
-			{
-				vec4 color = texture(material, vs_texcoord);
-				output_color = color * vs_color;
+		void main()
+		{
+			vec4 color = texture(material, vs_texcoord);
+			output_color = color * vs_color;
 			};
 		)SHADERCODE";
 

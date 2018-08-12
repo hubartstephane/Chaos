@@ -7,7 +7,7 @@ namespace chaos
 {
 	class TaskManager : public ReferencedObject
 	{
-	
+
 	};
 
 }; // namespace chaos

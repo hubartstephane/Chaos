@@ -153,17 +153,17 @@ namespace chaos
 
 #if 0
 				glm::vec2 bottomleft_position;
-					bottomleft_position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
+				bottomleft_position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-						(float)(token.character_entry->bitmap_left),
+					(float)(token.character_entry->bitmap_left),
 						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
 					);
 #endif
 
 				glm::vec2 bottomleft_position;
-					bottomleft_position = character_position - glm::vec2(0.0f, descender * factor) + // character_position.y is BELOW the scanline (at the descender level)
+				bottomleft_position = character_position - glm::vec2(0.0f, descender * factor) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-						(float)(token.character_entry->bitmap_left),
+					(float)(token.character_entry->bitmap_left),
 						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
 					);
 
@@ -537,7 +537,7 @@ namespace chaos
 				Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, generator_data.params.hotpoint_type);
 
 			MoveParticles(generator_data.result, offset);
-			
+
 			// keep trace of the bounding box
 			generator_data.result.bounding_box.bottomleft = min_position - offset;
 			generator_data.result.bounding_box.topright   = max_position - offset;
@@ -646,7 +646,7 @@ namespace chaos
 
 
 
-	
+
 
 		bool Generator::GenerateSprites(char const * text, SpriteManager * sprite_manager, GeneratorResult * generator_result, GeneratorParams const & params)
 		{
@@ -767,7 +767,7 @@ namespace chaos
 				result->SubReference(); // error => destroy the allocation
 				return nullptr;
 			}
-				
+
 			// convert the text
 			size_t token_index = 0;
 			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
@@ -787,6 +787,6 @@ namespace chaos
 			}
 			return result;
 		}
-	
+
 	}; // namespace ParticleTextGenerator
-};
+}; // namespace chaos

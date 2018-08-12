@@ -76,56 +76,56 @@ namespace chaos
 			return std::string().insert(0, count, ' ');
 		}	
 
-    char const * SkipHEXPrefix(char const * c)
-    {
-      if (c[0] == '0' && (c[1] == 'x' || c[1] == 'X')) // skip hexadecimal prefix if any
-        c += 2;
-      return c;
-    }
+		char const * SkipHEXPrefix(char const * c)
+		{
+			if (c[0] == '0' && (c[1] == 'x' || c[1] == 'X')) // skip hexadecimal prefix if any
+				c += 2;
+			return c;
+		}
 
-    unsigned int GetHexValueForChar(char c)
-    {
-      if (c >= '0' && c <= '9')
-        return (c - '0');
-      if (c >= 'a' && c <= 'f')
-        return (c - 'a') + 10;
-      if (c >= 'A' && c <= 'F')
-        return (c - 'A') + 10;
-      return std::numeric_limits<unsigned int>::max();
-    }
+		unsigned int GetHexValueForChar(char c)
+		{
+			if (c >= '0' && c <= '9')
+				return (c - '0');
+			if (c >= 'a' && c <= 'f')
+				return (c - 'a') + 10;
+			if (c >= 'A' && c <= 'F')
+				return (c - 'A') + 10;
+			return std::numeric_limits<unsigned int>::max();
+		}
 
-    unsigned int AtoiH(char const * str)
-    {
-      unsigned int result = 0;
+		unsigned int AtoiH(char const * str)
+		{
+			unsigned int result = 0;
 
-      str = SkipHEXPrefix(str);
+			str = SkipHEXPrefix(str);
 
-      int i = 0;
-      while (str[i] != 0)
-      {
-        unsigned int letter_value = GetHexValueForChar(str[i]);
-        if (letter_value >= 16)
-          break;
-        result = (result << 4) | letter_value;
-        ++i;
-      }
-      return result;
-    }
+			int i = 0;
+			while (str[i] != 0)
+			{
+				unsigned int letter_value = GetHexValueForChar(str[i]);
+				if (letter_value >= 16)
+					break;
+				result = (result << 4) | letter_value;
+				++i;
+			}
+			return result;
+		}
 
-    std::string TrimBase64String(char const * src)
-    {
-      assert(src != nullptr);
+		std::string TrimBase64String(char const * src)
+		{
+			assert(src != nullptr);
 
-      // escape the non 64 characters and extract the buffer to read
-      int i = 0;
-      while (src[i] != 0 && !MyBase64::IsBase64(src[i]))
-        ++i;
-      int j = i;
-      while (src[j] != 0 && MyBase64::IsBase64(src[j]))
-        ++j;
+			// escape the non 64 characters and extract the buffer to read
+			int i = 0;
+			while (src[i] != 0 && !MyBase64::IsBase64(src[i]))
+				++i;
+			int j = i;
+			while (src[j] != 0 && MyBase64::IsBase64(src[j]))
+				++j;
 
-      return std::string(&src[i], j - i);
-    }
+			return std::string(&src[i], j - i);
+		}
 
 
 

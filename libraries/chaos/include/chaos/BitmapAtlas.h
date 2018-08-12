@@ -252,5 +252,5 @@ namespace chaos
 			/** the bitmaps contained in the atlas */
 			std::vector<unique_bitmap_ptr> bitmaps;
 		};
-	};
-};
+	}; // namespace BitmapAtlas
+}; // namespace chaos

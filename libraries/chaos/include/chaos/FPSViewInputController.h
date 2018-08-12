@@ -6,117 +6,117 @@
 namespace chaos
 {
 
-  /**
-  * FPSViewMovementSpeed : a class that describes displacement speed for the FPS view
-  */
+	/**
+	* FPSViewMovementSpeed : a class that describes displacement speed for the FPS view
+	*/
 
-  class FPSViewMovementSpeed
-  {
-  public:
+	class FPSViewMovementSpeed
+	{
+	public:
 
-    /** mouse speed */
-    float mouse_sensibility{ 1.0f };
+		/** mouse speed */
+		float mouse_sensibility{ 1.0f };
 
-    /** some self descriptive speed */
-    float strafe{ 20.0f };
-    /** some self descriptive speed */
-    float forward{ 20.0f };
-    /** some self descriptive speed */
-    float back{ 20.0f };
-    /** some self descriptive speed */
-    float up{ 20.0f };
-    /** some self descriptive speed */
-    float down{ 20.0f };
+		/** some self descriptive speed */
+		float strafe{ 20.0f };
+		/** some self descriptive speed */
+		float forward{ 20.0f };
+		/** some self descriptive speed */
+		float back{ 20.0f };
+		/** some self descriptive speed */
+		float up{ 20.0f };
+		/** some self descriptive speed */
+		float down{ 20.0f };
 
-    /** some self descriptive speed */
-    float yaw{ 90.0f };
-    /** some self descriptive speed */
-    float pitch{ 90.0f };
-  };
+		/** some self descriptive speed */
+		float yaw{ 90.0f };
+		/** some self descriptive speed */
+		float pitch{ 90.0f };
+	};
 
-  class FPSViewMovementKeyboardConfiguration
-  {
-  public:
+	class FPSViewMovementKeyboardConfiguration
+	{
+	public:
 
-    /** self descriptive key */
-    int key_left = GLFW_KEY_LEFT;
-    /** self descriptive key */
-    int key_right = GLFW_KEY_RIGHT;
-    /** self descriptive key */
-    int key_forward = GLFW_KEY_UP;
-    /** self descriptive key */
-    int key_backward = GLFW_KEY_DOWN;
-    /** self descriptive key */
-    int key_up = GLFW_KEY_PAGE_DOWN;
-    /** self descriptive key */
-    int key_down = GLFW_KEY_PAGE_UP;
+		/** self descriptive key */
+		int key_left = GLFW_KEY_LEFT;
+		/** self descriptive key */
+		int key_right = GLFW_KEY_RIGHT;
+		/** self descriptive key */
+		int key_forward = GLFW_KEY_UP;
+		/** self descriptive key */
+		int key_backward = GLFW_KEY_DOWN;
+		/** self descriptive key */
+		int key_up = GLFW_KEY_PAGE_DOWN;
+		/** self descriptive key */
+		int key_down = GLFW_KEY_PAGE_UP;
 
-    /** self descriptive key */
-    int key_yaw_left = GLFW_KEY_KP_4;
-    /** self descriptive key */
-    int key_yaw_right = GLFW_KEY_KP_6;
-    /** self descriptive key */
-    int key_pitch_up = GLFW_KEY_KP_8;
-    /** self descriptive key */
-    int key_pitch_down = GLFW_KEY_KP_2;
-  };
+		/** self descriptive key */
+		int key_yaw_left = GLFW_KEY_KP_4;
+		/** self descriptive key */
+		int key_yaw_right = GLFW_KEY_KP_6;
+		/** self descriptive key */
+		int key_pitch_up = GLFW_KEY_KP_8;
+		/** self descriptive key */
+		int key_pitch_down = GLFW_KEY_KP_2;
+	};
 
-  /**
-  * FPSViewInputController : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
-  */
+	/**
+	* FPSViewInputController : an utility class to simply handle a FPS camera in a GLFW application. Handle keys ...
+	*/
 
-  class FPSViewInputController
-  {
-  public:
+	class FPSViewInputController
+	{
+	public:
 
-    /** the tick method */
-    virtual void Tick(GLFWwindow * glfw_window, double delta_time);
+		/** the tick method */
+		virtual void Tick(GLFWwindow * glfw_window, double delta_time);
 
-    /** matrix getter */
-    inline glm::mat4 GlobalToLocal() const { return fps_controller.GlobalToLocal(); }
-    /** matrix getter */
-    inline glm::mat4 LocalToGlobal() const { return fps_controller.LocalToGlobal(); }
-
-
-    /** returns true whether mouse capture is enabled */
-    bool IsMouseEnabled() const { return mouse_enabled; }
-    /** change the mouse capture policy */
-    void SetMouseEnabled(bool in_mouse_enabled);
-
-  protected:
-
-    /** handle the mouse displacement */
-    void HandleMouseInputs(GLFWwindow * glfw_window, double delta_time);
-    /** handle the keyboard inputs */
-    void HandleKeyboardInputs(GLFWwindow * glfw_window, double delta_time);
-
-    /** check whether keyboard input is down */
-    bool CheckKeyInput(GLFWwindow * glfw_window, int key) const;
+		/** matrix getter */
+		inline glm::mat4 GlobalToLocal() const { return fps_controller.GlobalToLocal(); }
+		/** matrix getter */
+		inline glm::mat4 LocalToGlobal() const { return fps_controller.LocalToGlobal(); }
 
 
-    static double const INVALID_MOUSE_VALUE;
+		/** returns true whether mouse capture is enabled */
+		bool IsMouseEnabled() const { return mouse_enabled; }
+		/** change the mouse capture policy */
+		void SetMouseEnabled(bool in_mouse_enabled);
 
-    /** whether the mouse is enabled or not */
-    bool mouse_enabled{ true };
-    /** whether the mouse has been captured */
-    bool mouse_captured{ false };
-    /** position of the mouse once captured */
-    double previous_mouse_x{ INVALID_MOUSE_VALUE };
-    /** position of the mouse once captured */
-    double previous_mouse_y{ INVALID_MOUSE_VALUE };
+	protected:
 
-  public:
+		/** handle the mouse displacement */
+		void HandleMouseInputs(GLFWwindow * glfw_window, double delta_time);
+		/** handle the keyboard inputs */
+		void HandleKeyboardInputs(GLFWwindow * glfw_window, double delta_time);
 
-    /** the fps matrix handler */
-    FPSViewController fps_controller;
-    /** the speed for the displacement */
-    FPSViewMovementSpeed movement_speed;
-    /** the mapping for the displacement */
-    FPSViewMovementKeyboardConfiguration keyboard_config;
+		/** check whether keyboard input is down */
+		bool CheckKeyInput(GLFWwindow * glfw_window, int key) const;
 
-    /** whether we need to capture to move the camera */
-    bool must_click_to_rotate{ true };
-  };
+
+		static double const INVALID_MOUSE_VALUE;
+
+		/** whether the mouse is enabled or not */
+		bool mouse_enabled{ true };
+		/** whether the mouse has been captured */
+		bool mouse_captured{ false };
+		/** position of the mouse once captured */
+		double previous_mouse_x{ INVALID_MOUSE_VALUE };
+		/** position of the mouse once captured */
+		double previous_mouse_y{ INVALID_MOUSE_VALUE };
+
+	public:
+
+		/** the fps matrix handler */
+		FPSViewController fps_controller;
+		/** the speed for the displacement */
+		FPSViewMovementSpeed movement_speed;
+		/** the mapping for the displacement */
+		FPSViewMovementKeyboardConfiguration keyboard_config;
+
+		/** whether we need to capture to move the camera */
+		bool must_click_to_rotate{ true };
+	};
 
 }; // namespace chaos
 

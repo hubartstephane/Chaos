@@ -475,16 +475,16 @@ namespace chaos
 
 	bool SkyBoxTools::DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, int image_index)
 	{
-    FIBITMAP * image = ImageTools::LoadImageFromFile(path);
-    if (image == nullptr)
-      return false;
+		FIBITMAP * image = ImageTools::LoadImageFromFile(path);
+		if (image == nullptr)
+			return false;
 
-    if (!skybox.SetImage(image_index, image, false))
-    {
-      FreeImage_Unload(image);
-      return false;
-    }
+		if (!skybox.SetImage(image_index, image, false))
+		{
+			FreeImage_Unload(image);
+			return false;
+		}
 		return true;
 	}
-};
+}; // namespace chaos
 

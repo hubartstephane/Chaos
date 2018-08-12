@@ -34,7 +34,7 @@ namespace chaos
 		// ParticleAccessorBase
 		// ==============================================================
 
-	template<typename PARTICLE_TYPE, typename BUFFER_TYPE>
+		template<typename PARTICLE_TYPE, typename BUFFER_TYPE>
 	class ParticleAccessorBase
 	{
 	public:
@@ -90,9 +90,9 @@ namespace chaos
 		size_t particle_size = 0;
 	};
 
-		// ==============================================================
-		// ParticleAccessor / ParticleConstAccessor
-		// ==============================================================
+	// ==============================================================
+	// ParticleAccessor / ParticleConstAccessor
+	// ==============================================================
 
 	template<typename PARTICLE_TYPE>
 	class ParticleConstAccessor : public ParticleAccessorBase<PARTICLE_TYPE const, void const>
@@ -127,9 +127,9 @@ namespace chaos
 		}
 	};
 
-		// ==============================================================
-		// ParticleAllocation
-		// ==============================================================
+	// ==============================================================
+	// ParticleAllocation
+	// ==============================================================
 
 	class ParticleAllocation : public ReferencedObject
 	{
@@ -173,7 +173,7 @@ namespace chaos
 
 		/** increment number of particles */
 		bool AddParticles(size_t extra_count);
-		
+
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(bool accept_bigger_particle) const
@@ -358,7 +358,7 @@ namespace chaos
 		/** update all particles */
 		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation);
 	};
-	
+
 	// ==============================================================
 	// TypedParticleLayerDesc
 	// ==============================================================

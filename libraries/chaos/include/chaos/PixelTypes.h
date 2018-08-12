@@ -26,21 +26,21 @@ namespace chaos
 	{
 	public:
 
-    /** constructor */
-    PixelBGR() = default;
-    /** copy constructor */
-    PixelBGR(PixelBGR const & src) = default;
-    /** conversion */
-    PixelBGR(unsigned int color) { operator = (color); }
+		/** constructor */
+		PixelBGR() = default;
+		/** copy constructor */
+		PixelBGR(PixelBGR const & src) = default;
+		/** conversion */
+		PixelBGR(unsigned int color) { operator = (color); }
 
-    /** assignation */
-    PixelBGR & operator = (unsigned int color)
-    {
-      B = (color >> 0) & 0xFF;
-      G = (color >> 8) & 0xFF;
-      R = (color >> 16) & 0xFF;
-      return *this;
-    }
+		/** assignation */
+		PixelBGR & operator = (unsigned int color)
+		{
+			B = (color >> 0) & 0xFF;
+			G = (color >> 8) & 0xFF;
+			R = (color >> 16) & 0xFF;
+			return *this;
+		}
 
 		unsigned char B;
 		unsigned char G;
@@ -55,22 +55,22 @@ namespace chaos
 	{
 	public:
 
-    /** constructor */
-    PixelBGRA() = default;
-    /** copy constructor */
-    PixelBGRA(PixelBGRA const & src) = default;
-    /** conversion */
-    PixelBGRA(unsigned int color){ operator = (color); }
+		/** constructor */
+		PixelBGRA() = default;
+		/** copy constructor */
+		PixelBGRA(PixelBGRA const & src) = default;
+		/** conversion */
+		PixelBGRA(unsigned int color){ operator = (color); }
 
-    /** assignation */
-    PixelBGRA & operator = (unsigned int color)
-    {
-      B = (color >> 0) & 0xFF;
-      G = (color >> 8) & 0xFF;
-      R = (color >> 16) & 0xFF;
-      A = (color >> 24) & 0xFF;
-      return *this;
-    }
+		/** assignation */
+		PixelBGRA & operator = (unsigned int color)
+		{
+			B = (color >> 0) & 0xFF;
+			G = (color >> 8) & 0xFF;
+			R = (color >> 16) & 0xFF;
+			A = (color >> 24) & 0xFF;
+			return *this;
+		}
 
 		unsigned char B;
 		unsigned char G;
@@ -92,30 +92,30 @@ namespace chaos
 	{
 	public:
 
-    /** constructor */
-    PixelRGBFloat() = default;
-    /** copy constructor */
-    PixelRGBFloat(PixelRGBFloat const & src) = default;
-    /** conversion */
-    PixelRGBFloat(glm::vec3 const & color) { operator = (color); }
+		/** constructor */
+		PixelRGBFloat() = default;
+		/** copy constructor */
+		PixelRGBFloat(PixelRGBFloat const & src) = default;
+		/** conversion */
+		PixelRGBFloat(glm::vec3 const & color) { operator = (color); }
 
-    /** assignation */
-    PixelRGBFloat & operator = (glm::vec3 const & color)
-    {
-      B = color.b;
-      G = color.g;
-      R = color.r;
-      return *this;
-    }
-    /** conversion */
-    operator glm::vec3() const
-    {
-      glm::vec3 result;
-      result.b = B;
-      result.g = G;
-      result.r = R;
-      return result;
-    }
+		/** assignation */
+		PixelRGBFloat & operator = (glm::vec3 const & color)
+		{
+			B = color.b;
+			G = color.g;
+			R = color.r;
+			return *this;
+		}
+		/** conversion */
+		operator glm::vec3() const
+		{
+			glm::vec3 result;
+			result.b = B;
+			result.g = G;
+			result.r = R;
+			return result;
+		}
 
 		float R;
 		float G;
@@ -130,32 +130,32 @@ namespace chaos
 	{
 	public:
 
-    /** constructor */
-    PixelRGBAFloat() = default;
-    /** copy constructor */
-    PixelRGBAFloat(PixelRGBAFloat const & src) = default;
-    /** conversion */
-    PixelRGBAFloat(glm::vec4 const & color) { operator = (color); }
+		/** constructor */
+		PixelRGBAFloat() = default;
+		/** copy constructor */
+		PixelRGBAFloat(PixelRGBAFloat const & src) = default;
+		/** conversion */
+		PixelRGBAFloat(glm::vec4 const & color) { operator = (color); }
 
-    /** automatic conversion */
-    PixelRGBAFloat & operator = (glm::vec4 const & color)
-    {
-      B = color.b;
-      G = color.g;
-      R = color.r;
-      A = color.a;
-      return *this;
-    }
+		/** automatic conversion */
+		PixelRGBAFloat & operator = (glm::vec4 const & color)
+		{
+			B = color.b;
+			G = color.g;
+			R = color.r;
+			A = color.a;
+			return *this;
+		}
 
-    operator glm::vec4() const
-    {
-      glm::vec4 result;
-      result.b = B;
-      result.g = G;
-      result.r = R;
-      result.a = A;
-      return result;
-    }
+		operator glm::vec4() const
+		{
+			glm::vec4 result;
+			result.b = B;
+			result.g = G;
+			result.r = R;
+			result.a = A;
+			return result;
+		}
 
 		float R;
 		float G;
@@ -183,14 +183,14 @@ namespace chaos
 	};
 
 	/**
-	 * PixelTypes : the list of all supported pixel classes (XXX : order matters)
-	 */
+	* PixelTypes : the list of all supported pixel classes (XXX : order matters)
+	*/
 
 	using PixelTypes = boost::mpl::vector<PixelGray, PixelBGR, PixelBGRA, PixelGrayFloat, PixelRGBFloat, PixelRGBAFloat, PixelDepthStencil>;
 
 	/**
-	 * Class to make basic pixel component conversions
-	 */
+	* Class to make basic pixel component conversions
+	*/
 
 	class PixelComponentConverter
 	{
@@ -215,7 +215,7 @@ namespace chaos
 		template<>
 		static inline float Convert<float>(unsigned char src){ return ((float)src) / 255.0f;}
 	};
-	
+
 	// 3 methods for grayscale conversion : www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale
 	//
 	//   lightness :   (max(R, G, B) + min(R, G, B)) / 2
@@ -229,7 +229,7 @@ namespace chaos
 	class PixelConverter
 	{
 	public:
-		
+
 		/// nop 'conversion' method
 		template<typename T>
 		static inline void Convert(T & dst, T const & src) { dst = src; }

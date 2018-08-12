@@ -177,4 +177,4 @@ namespace chaos
 			glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
 		}
 	}
-};
+}; // namespace chaos

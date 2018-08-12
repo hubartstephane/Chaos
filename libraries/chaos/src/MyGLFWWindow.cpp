@@ -1,3 +1,4 @@
+
 #include <chaos/MyGLFWWindow.h>
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
@@ -166,7 +167,7 @@ namespace chaos
 					my_window->OnMouseMove(0.0, 0.0);
 				else
 					my_window->OnMouseMove(x - my_window->mouse_position.x, y - my_window->mouse_position.y);
-						
+
 				my_window->mouse_position.x = (float)x;
 				my_window->mouse_position.y = (float)y;
 			}				
@@ -193,7 +194,7 @@ namespace chaos
 		void Window::DoOnKeyEvent(GLFWwindow * in_glfw_window, int key, int scan_code, int action, int modifier)
 		{
 			Application::SetApplicationInputMode(InputMode::Keyboard);
-			
+
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
 				my_window->OnKeyEvent(key, scan_code, action, modifier);

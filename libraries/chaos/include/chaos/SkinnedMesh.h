@@ -6,12 +6,12 @@
 namespace chaos
 {
 
-  class SkinnedMesh
-  {
+	class SkinnedMesh
+	{
 
 
 
-  };
+	};
 
 
 }; // namespace chaos

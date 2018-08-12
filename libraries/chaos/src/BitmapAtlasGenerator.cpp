@@ -165,7 +165,7 @@ namespace chaos
 					result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
 					result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
-																																		// generate glyph cache
+																			  // generate glyph cache
 					if (characters == nullptr || strlen(characters) == 0)
 						characters = DEFAULT_CHARACTERS;
 
@@ -811,7 +811,7 @@ namespace chaos
 			std::vector<int> collision_table;
 			collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
 
-			// find collision table
+																	   // find collision table
 			Rectangle r;
 			r.width = entry.description.width;
 			r.height = entry.description.height;

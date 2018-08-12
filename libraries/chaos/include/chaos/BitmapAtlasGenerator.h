@@ -120,7 +120,7 @@ namespace chaos
 			/** the Freetype face if appropriate */
 			FT_Face    face = nullptr;
 			/** should the library be released at destruction */
-      bool release_library = true;
+			bool release_library = true;
 			/** should the face be released at destruction */
 			bool release_face = true;
 			/** the glyph width */

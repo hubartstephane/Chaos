@@ -114,7 +114,7 @@ namespace chaos
 					if (InitializeTextureFromName(render_material, texture_uniform_name.c_str(), texture_name.c_str()))
 						continue;
 			}
-			
+
 			// to continue, we have to work with an object
 			if (!it->is_object())
 				continue;
@@ -229,7 +229,7 @@ namespace chaos
 		}
 		return false;
 	}
-	
+
 	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the uniform object

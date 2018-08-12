@@ -30,8 +30,8 @@ namespace chaos
 	};
 
 	/**
-	 * ParticleTools : an utility class that deserve to bring some services for particles system
-	 */
+	* ParticleTools : an utility class that deserve to bring some services for particles system
+	*/
 
 	namespace ParticleTools
 	{

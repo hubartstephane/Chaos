@@ -89,4 +89,4 @@ namespace chaos
     /** the sprites */
     std::vector<SpriteVertex> sprites;
   };
-};
+}; // namespace chaos

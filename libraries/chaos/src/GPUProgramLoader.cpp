@@ -90,7 +90,7 @@ namespace chaos
 		// generate the program
 		return program_generator.GenProgramObject();
 	}
-	
+
 	GPUProgram * GPUProgramLoader::GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options) const
 	{
 		nlohmann::json json;

@@ -5,11 +5,11 @@
 namespace chaos
 {
 
-class SkinnedMeshAnimation
-{
+	class SkinnedMeshAnimation
+	{
 
 
 
-};
+	};
 
 }; // namespace chaos

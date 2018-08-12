@@ -7,63 +7,63 @@
 
 namespace chaos
 {
-  /**
-   * GPUProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
-   */
-  
-  class GPUProgramSourceGenerator : public ReferencedObject
-  {
-  public:
+	/**
+	* GPUProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
+	*/
 
-    /** destructor */
-    virtual ~GPUProgramSourceGenerator() = default;
+	class GPUProgramSourceGenerator : public ReferencedObject
+	{
+	public:
 
-    /** returns generated code */
-    virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions)
-    { 
-      return Buffer<char>();
-    }  
-  };
+		/** destructor */
+		virtual ~GPUProgramSourceGenerator() = default;
 
-  class GPUProgramStringSourceGenerator : public GPUProgramSourceGenerator
-  {
+		/** returns generated code */
+		virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions)
+		{ 
+			return Buffer<char>();
+		}  
+	};
 
-  public:
+	class GPUProgramStringSourceGenerator : public GPUProgramSourceGenerator
+	{
 
-    /** constructor */
-    GPUProgramStringSourceGenerator(char const * src);
-    /** constructor */
-    GPUProgramStringSourceGenerator(Buffer<char> in_buffer);
-  
-    /** returns generated code */
-    virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
-    {
-      return buffer;    
-    }
+	public:
 
-  protected:
+		/** constructor */
+		GPUProgramStringSourceGenerator(char const * src);
+		/** constructor */
+		GPUProgramStringSourceGenerator(Buffer<char> in_buffer);
 
-    /** this is the cached source code */
-    Buffer<char> buffer;
-  };
+		/** returns generated code */
+		virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
+		{
+			return buffer;    
+		}
 
-  class GPUProgramFileSourceGenerator : public GPUProgramSourceGenerator
-  {
-  public:
+	protected:
 
-    /** constructor */
-    GPUProgramFileSourceGenerator(FilePathParam const & path);
+		/** this is the cached source code */
+		Buffer<char> buffer;
+	};
 
-    /** returns generated code */
-    virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
-    {
-      return buffer;    
-    }
+	class GPUProgramFileSourceGenerator : public GPUProgramSourceGenerator
+	{
+	public:
 
-  protected:
+		/** constructor */
+		GPUProgramFileSourceGenerator(FilePathParam const & path);
 
-    /** this is the cached source code */
-    Buffer<char> buffer;
-  };
+		/** returns generated code */
+		virtual Buffer<char> GenerateSource(std::map<std::string, int> const & definitions) override
+		{
+			return buffer;    
+		}
+
+	protected:
+
+		/** this is the cached source code */
+		Buffer<char> buffer;
+	};
 
 }; // namespace chaos

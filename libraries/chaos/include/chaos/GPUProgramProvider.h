@@ -11,141 +11,141 @@
 namespace chaos
 {
 
-  /**
-  * GPUProgramProviderBase : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
-  */
+	/**
+	* GPUProgramProviderBase : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
+	*/
 
-  class GPUProgramProviderBase : public ReferencedObject
-  {
-    friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
+	class GPUProgramProviderBase : public ReferencedObject
+	{
+		friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
 		friend class GPUProgramProviderChain;
-    friend class GPUProgramRenderMaterialProvider;
-   
-  public:
+		friend class GPUProgramRenderMaterialProvider;
 
-    /** the main method : returns try whether tha action has been handled (even if failed) */
-    bool ProcessAction(char const * name, GPUProgramAction & action) const
-    {
-      return DoProcessAction(name, action, this);
-    }
+	public:
 
-    /** utility function that deserve to set uniform */
-    bool BindUniform(GLUniformInfo const & uniform) const
-    {
-      return ProcessAction(uniform.name.c_str(), GPUProgramSetUniformAction(uniform));
-    }
+		/** the main method : returns try whether tha action has been handled (even if failed) */
+		bool ProcessAction(char const * name, GPUProgramAction & action) const
+		{
+			return DoProcessAction(name, action, this);
+		}
 
-    /** utility function that deserve to set attribute */
-    bool BindAttribute(GLAttributeInfo const & attribute) const
-    {
-      return ProcessAction(attribute.name.c_str(), GPUProgramSetAttributeAction(attribute));
-    }
+		/** utility function that deserve to set uniform */
+		bool BindUniform(GLUniformInfo const & uniform) const
+		{
+			return ProcessAction(uniform.name.c_str(), GPUProgramSetUniformAction(uniform));
+		}
 
-    /** get a value for the uniform / attribute */
-    template<typename T>
-    bool GetValue(char const * name, T & result) const
-    {
-      return ProcessAction(name, GPUProgramGetValueAction<T>(result));
-    }
+		/** utility function that deserve to set attribute */
+		bool BindAttribute(GLAttributeInfo const & attribute) const
+		{
+			return ProcessAction(attribute.name.c_str(), GPUProgramSetAttributeAction(attribute));
+		}
 
-  protected:
+		/** get a value for the uniform / attribute */
+		template<typename T>
+		bool GetValue(char const * name, T & result) const
+		{
+			return ProcessAction(name, GPUProgramGetValueAction<T>(result));
+		}
 
-    /** the main method : returns true whether that action has been successfully handled */
-    virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const { return false; }
-  };
+	protected:
 
-  /**
-  * GPUProgramProviderValue : used to fill GPUProgram binding for uniforms / attribute with simple values
-  */
+		/** the main method : returns true whether that action has been successfully handled */
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const { return false; }
+	};
 
-  template<typename T>
-  class GPUProgramProviderValue : public GPUProgramProviderBase
-  {
-  public:
+	/**
+	* GPUProgramProviderValue : used to fill GPUProgram binding for uniforms / attribute with simple values
+	*/
 
-    /** constructor */
-    GPUProgramProviderValue(char const * in_name, T const & in_value) :
-      handled_name(in_name), value(in_value) {}
+	template<typename T>
+	class GPUProgramProviderValue : public GPUProgramProviderBase
+	{
+	public:
 
-  protected:
+		/** constructor */
+		GPUProgramProviderValue(char const * in_name, T const & in_value) :
+			handled_name(in_name), value(in_value) {}
 
-    /** the main method */
-    virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override
-    {
-      if (handled_name != name)
-        return false;
-      return action.Process(name, value);
-    }
+	protected:
 
-  protected:
+		/** the main method */
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override
+		{
+			if (handled_name != name)
+				return false;
+			return action.Process(name, value);
+		}
 
-    /** the name of the uniform handled */
-    std::string handled_name;
-    /** the value of the uniform */
-    T value;
-  };
+	protected:
 
-  /**
-  * GPUProgramProviderTexture : used to fill GPUProgram binding for a texture
-  */
+		/** the name of the uniform handled */
+		std::string handled_name;
+		/** the value of the uniform */
+		T value;
+	};
 
-  class GPUProgramProviderTexture : public GPUProgramProviderBase
-  {
-  public:
+	/**
+	* GPUProgramProviderTexture : used to fill GPUProgram binding for a texture
+	*/
 
-    /** constructor */
-    GPUProgramProviderTexture(char const * in_name, boost::intrusive_ptr<GPUTexture> in_value) :
-      handled_name(in_name), value(in_value) {}
+	class GPUProgramProviderTexture : public GPUProgramProviderBase
+	{
+	public:
 
-  protected:
+		/** constructor */
+		GPUProgramProviderTexture(char const * in_name, boost::intrusive_ptr<GPUTexture> in_value) :
+			handled_name(in_name), value(in_value) {}
 
-    /** the main method */
-    virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
+	protected:
 
-  protected:
+		/** the main method */
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
 
-    /** the name of the uniform handled */
-    std::string handled_name;
-    /** the value of the uniform */
-    boost::intrusive_ptr<GPUTexture> value;
-  };
+	protected:
 
-  /**
-  * GPUProgramProvider : used to fill GPUProgram binding for multiple uniforms / uniforms
-  */
+		/** the name of the uniform handled */
+		std::string handled_name;
+		/** the value of the uniform */
+		boost::intrusive_ptr<GPUTexture> value;
+	};
 
-  class GPUProgramProvider : public GPUProgramProviderBase
-  {
-    friend class GPUProgramRenderMaterialProvider;
+	/**
+	* GPUProgramProvider : used to fill GPUProgram binding for multiple uniforms / uniforms
+	*/
 
-  public:
+	class GPUProgramProvider : public GPUProgramProviderBase
+	{
+		friend class GPUProgramRenderMaterialProvider;
 
-    /** register a uniform value */
-    template<typename T>
-    void AddVariableValue(char const * name, T const & value)
-    {
-      AddVariableProvider(new GPUProgramProviderValue<T>(name, value));
-    }
-    /** register a uniform texture */
-    void AddVariableTexture(char const * name, boost::intrusive_ptr<class GPUTexture> texture)
-    {
-      AddVariableProvider(new GPUProgramProviderTexture(name, texture));
-    }
-    /** register a generic uniform */
-    virtual void AddVariableProvider(GPUProgramProviderBase * provider);
-    /** remove all uniforms for binding */
-    virtual void Clear();
+	public:
 
-  protected:
+		/** register a uniform value */
+		template<typename T>
+		void AddVariableValue(char const * name, T const & value)
+		{
+			AddVariableProvider(new GPUProgramProviderValue<T>(name, value));
+		}
+		/** register a uniform texture */
+		void AddVariableTexture(char const * name, boost::intrusive_ptr<class GPUTexture> texture)
+		{
+			AddVariableProvider(new GPUProgramProviderTexture(name, texture));
+		}
+		/** register a generic uniform */
+		virtual void AddVariableProvider(GPUProgramProviderBase * provider);
+		/** remove all uniforms for binding */
+		virtual void Clear();
 
-    /** the main method */
-    virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
+	protected:
 
-  protected:
+		/** the main method */
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
 
-    /** the uniforms to be set */
-    std::vector<boost::intrusive_ptr<GPUProgramProviderBase>> children_providers;
-  };
+	protected:
+
+		/** the uniforms to be set */
+		std::vector<boost::intrusive_ptr<GPUProgramProviderBase>> children_providers;
+	};
 
 	/**
 	* GPUProgramProviderChain : an utility class used to enrich an existing provider with additionnal data

@@ -499,12 +499,12 @@ namespace chaos
 		}
 		return false;
 	}
-	
-  void Clock::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
-  {
+
+	void Clock::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
 
 
-  }
+	}
 
 
 

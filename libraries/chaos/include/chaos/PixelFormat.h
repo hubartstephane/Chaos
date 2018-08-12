@@ -33,7 +33,7 @@ namespace chaos
 
 		/** constructor */
 		PixelFormat() = default;
-		
+
 		PixelFormat(PixelFormat const & other) = default;
 
 		PixelFormat(int in_component_type, int in_component_count) : 
@@ -86,12 +86,12 @@ namespace chaos
 	};
 
 	/**
-	 * PixelFormatMergeParams
-	 */
+	* PixelFormatMergeParams
+	*/
 
 	class PixelFormatMergeParams
 	{
-	
+
 	public:
 
 		/** if valid, the resulting pixel format should be set to this */
@@ -110,7 +110,7 @@ namespace chaos
 
 	class PixelFormatMerger
 	{
-	
+
 	public:
 
 		/** constructor */

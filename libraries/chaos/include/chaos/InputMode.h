@@ -22,4 +22,4 @@ namespace chaos
 		/** returns true whether we change platform (PC to console or inverse) */
 		static bool IsPlatformChanged(int new_mode, int old_mode);
 	};
-};
+}; // namespace chaos

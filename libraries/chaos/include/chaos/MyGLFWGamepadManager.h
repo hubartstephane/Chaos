@@ -60,11 +60,11 @@ namespace chaos
 		static int const XBOX_LEFT_AXIS_X = 0;
 		/** index in axis of LEFT Y for XBOX like pad */
 		static int const XBOX_LEFT_AXIS_Y = 1; // STICK DOWN = positive values
-		/** index in axis for the trigger for XBOX like pad */
+											   /** index in axis for the trigger for XBOX like pad */
 		static int const XBOX_TRIGGER = 2; // LEFT TRIGGER = positive values,  RIGHT TRIGGER = negative values
-		/** index in axis of RIGHT Y for XBOX like pad */
+										   /** index in axis of RIGHT Y for XBOX like pad */
 		static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
-		/** index in axis of RIGHT X for XBOX like pad */
+												 /** index in axis of RIGHT X for XBOX like pad */
 		static int const XBOX_RIGHT_AXIS_X = 4;
 
 		/** returns the direction of left stick (beware the low level interface only knows for axis) */

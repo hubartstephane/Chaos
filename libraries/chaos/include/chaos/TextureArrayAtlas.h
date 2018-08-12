@@ -7,26 +7,26 @@
 
 namespace chaos
 {
-  namespace BitmapAtlas
-  {
-    class TextureArrayAtlas : public AtlasBase
-    {
-    public:
+	namespace BitmapAtlas
+	{
+		class TextureArrayAtlas : public AtlasBase
+		{
+		public:
 
-      /** the clearing method */
-      virtual void Clear() override;
-      /** load an atlas from an index file */
-      bool LoadAtlas(FilePathParam const & path);
-      /** generate a texture atlas from a standard atlas */
-      bool LoadFromBitmapAtlas(Atlas const & atlas);
+			/** the clearing method */
+			virtual void Clear() override;
+			/** load an atlas from an index file */
+			bool LoadAtlas(FilePathParam const & path);
+			/** generate a texture atlas from a standard atlas */
+			bool LoadFromBitmapAtlas(Atlas const & atlas);
 
-      /* get the array texture */
-      GPUTexture * GetTexture() { return texture.get(); }
+			/* get the array texture */
+			GPUTexture * GetTexture() { return texture.get(); }
 
-    protected:
+		protected:
 
-      /** the texture array that will be generated */
-      boost::intrusive_ptr<GPUTexture> texture;
-    };
-  };
-};
+			/** the texture array that will be generated */
+			boost::intrusive_ptr<GPUTexture> texture;
+		};
+	}; // namespace BitmapAtlas
+}; // namespace chaos

@@ -129,7 +129,7 @@ namespace chaos
 			// remove the entry from the cache
 			if (entry->cache != nullptr)
 				entry->cache->RemoveEntry(entry);
-			
+
 		}
 		return true; // this destruction callback is to be removed
 	}

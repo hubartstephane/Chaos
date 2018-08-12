@@ -5,11 +5,11 @@
 namespace chaos
 {
 
-template<typename T>
-class ZoneCamera
-{
+	template<typename T>
+	class ZoneCamera
+	{
 
 
-};
+	};
 
 }; // namespace chaos

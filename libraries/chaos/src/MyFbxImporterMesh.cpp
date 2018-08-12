@@ -270,7 +270,7 @@ namespace chaos
 			// vertices that share a control point have a chance to be identical
 			std::map<int, std::vector<int>> potential_equiv_vertices; // MAP[control_point_index] = {list of final vertices that may be identical}
 
-																																// triangulates the mesh
+																	  // triangulates the mesh
 			int vertex_count = 0;
 			for (int polygon_index = 0; polygon_index < polygon_count; ++polygon_index)
 			{
@@ -371,7 +371,7 @@ namespace chaos
 				for (int i = 0; i < vertex_count; ++i)
 					equiv_classes.push_back(i);  // one equivalence class per vertex
 
-																			 // compare vertices by pairs and compute the equivalence table
+												 // compare vertices by pairs and compute the equivalence table
 				for (auto & it = potential_equiv_vertices.begin(); it != potential_equiv_vertices.end(); ++it)
 				{
 					size_t count = it->second.size();

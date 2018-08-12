@@ -79,7 +79,7 @@ namespace chaos
 
 		boost::intrusive_ptr<TextureArraySliceGenerator> generator_ptr = generator; // want to ensure that if PreRegister(...) fails, the resource is released
 
-		// prepare the generator
+																					// prepare the generator
 		if (!generator->PreRegister())
 			return false;
 		// insert it into the list
@@ -144,7 +144,7 @@ namespace chaos
 			return nullptr;
 
 		// create the texture and fill the slices
-    GPUTexture * result = GenTextureObjectHelper(slice_registry, pixel_format, width, height, parameters);
+		GPUTexture * result = GenTextureObjectHelper(slice_registry, pixel_format, width, height, parameters);
 		if (result == nullptr)
 			return nullptr;
 
@@ -164,7 +164,7 @@ namespace chaos
 
 	GPUTexture * TextureArrayGenerator::GenTextureObjectHelper(TextureArraySliceRegistry & slice_registry, PixelFormat const & final_pixel_format, int width, int height, GenTextureParameters const & parameters) const
 	{
-    GPUTexture * result = nullptr;
+		GPUTexture * result = nullptr;
 
 		// compute the 'flat' texture target
 		GLenum flat_target = GLTextureTools::GetTextureTargetFromSize(width, height, false);
@@ -206,7 +206,7 @@ namespace chaos
 		}
 
 		// generate the texture
-    GLuint texture_id = 0;
+		GLuint texture_id = 0;
 		glCreateTextures(array_target, 1, &texture_id);
 		if (texture_id > 0)
 		{
@@ -236,15 +236,15 @@ namespace chaos
 			}
 
 			// finalize the result data
-      TextureDescription texture_description;
-      texture_description.type = array_target;
-      texture_description.width = width;
-      texture_description.height = height;
-      texture_description.depth = (int)slice_count;
-      texture_description.pixel_format = final_pixel_format;
+			TextureDescription texture_description;
+			texture_description.type = array_target;
+			texture_description.width = width;
+			texture_description.height = height;
+			texture_description.depth = (int)slice_count;
+			texture_description.pixel_format = final_pixel_format;
 
 			GLTextureTools::GenTextureApplyParameters(texture_id, texture_description, parameters);
-      result = new GPUTexture(texture_id, texture_description);
+			result = new GPUTexture(texture_id, texture_description);
 		}
 
 		// release the conversion buffer if necessary
@@ -254,4 +254,4 @@ namespace chaos
 		return result;
 	}
 
-};
+}; // namespace chaos

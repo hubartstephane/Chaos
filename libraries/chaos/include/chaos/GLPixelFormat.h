@@ -11,7 +11,7 @@ namespace chaos
 
 		/** constructor */
 		GLPixelFormat() = default;
-    /** constructor */
+		/** constructor */
 		GLPixelFormat(GLenum in_format, GLenum in_internal_format);
 		/** returns true whether the pixel format is supported */
 		bool IsValid() const;

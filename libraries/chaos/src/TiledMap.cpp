@@ -818,34 +818,32 @@ namespace chaos
 		{
 
 		}
-
-		TileData * TileSet::FindTileData(int gid)
-		{
-			size_t count = tiles.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				TileData * tile_data = tiles[i].get();
-				if (tile_data == nullptr)
-					continue;
-				if (tile_data->id == gid)
-					return tile_data;
-			}
-			return nullptr;
+#define CHAOS_EMPTY_TOKEN
+#define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constess)\
+		TileData constess * TileSet::func_name(arg_type arg_name) constess\
+		{\
+			size_t count = tiles.size();\
+			for (size_t i = 0; i < count; ++i)\
+			{\
+				TileData constess * tile_data = tiles[i].get();\
+				if (tile_data == nullptr)\
+					continue;\
+				if (tile_data->member_name == arg_name)\
+					return tile_data;\
+			}\
+			return nullptr;\
 		}
 
-		TileData const * TileSet::FindTileData(int gid) const
-		{
-			size_t count = tiles.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				TileData const * tile_data = tiles[i].get();
-				if (tile_data == nullptr)
-					continue;
-				if (tile_data->id == gid)
-					return tile_data;
-			}
-			return nullptr;
-		}
+CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, const)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, const)
+
+#undef CHAOS_IMPL_FIND_FILE_DATA
+#undef CHAOS_EMPTY_TOKEN
+
 
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
@@ -1051,7 +1049,6 @@ namespace chaos
 
 		TileInfo Map::FindTileInfo(int gid)
 		{
-			TileInfo result;
 			if (gid >= 0)
 			{
 				size_t count = tilesets.size();
@@ -1064,21 +1061,15 @@ namespace chaos
 					{
 						TileData * tiledata = data.tileset->FindTileData(gid - data.first_gid);
 						if (tiledata != nullptr)
-						{
-							result.gid     = (gid - data.first_gid);
-							result.tileset = data.tileset.get();
-							result.tiledata = tiledata;
-							return result;
-						}
+							return TileInfo((gid - data.first_gid), data.tileset.get(), tiledata);
 					}
 				}
 			}
-			return result;
+			return TileInfo();
 		}
 
 		TileInfo const Map::FindTileInfo(int gid) const
 		{
-			TileInfo result;
 			if (gid >= 0)
 			{
 				size_t count = tilesets.size();
@@ -1091,17 +1082,39 @@ namespace chaos
 					{
 						TileData * tiledata = data.tileset->FindTileData(gid - data.first_gid);
 						if (tiledata != nullptr)
-						{
-							result.gid = (gid - data.first_gid);
-							result.tileset = data.tileset.get();
-							result.tiledata = tiledata;
-							return result;
-						}
+							return TileInfo((gid - data.first_gid), data.tileset.get(), tiledata);
 					}
 				}
 			}
-			return result;
+			return TileInfo();
 		}
+
+#define CHAOS_EMPTY_TOKEN
+#define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constess)\
+		TileInfo constess Map::func_name(arg_type arg_name) constess\
+		{\
+			size_t count = tilesets.size();\
+			for (size_t i = 0 ; i < count; ++i)\
+			{\
+				TileSetData const & data = tilesets[i];\
+				if (data.tileset != nullptr)\
+				{\
+					TileData * tiledata = data.tileset->sub_funcname(arg_name);\
+					if (tiledata != nullptr)\
+						return TileInfo(-1, data.tileset.get(), tiledata);\
+				}\
+			}\
+			return TileInfo();\
+		}
+
+CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, const)
+CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, const)
+
+#undef CHAOS_IMPL_FIND_FILE_INFO
+#undef CHAOS_EMPTY_TOKEN
+
 
 		//
 		// Manager methods

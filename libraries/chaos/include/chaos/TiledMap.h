@@ -660,7 +660,7 @@ namespace chaos
 			/** deduced reduced image/path (can be used as a key in atlas) */
 			std::string atlas_key;
 
-			/** the layers composing the map */
+			/** the collision layer */
 			std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
 		};
 
@@ -865,6 +865,16 @@ namespace chaos
 			/** find TileData from its id */
 			TileData const * FindTileData(int gid) const;
 
+			/** find TileData from its type */
+			TileData * FindTileData(char const * type);
+			/** find TileData from its type */
+			TileData const * FindTileData(char const * type) const;
+
+			/** find TileData from its atlas key */
+			TileData * FindTileDataFromAtlasKey(char const * atlas_key);
+			/** find TileData from its atlas key */
+			TileData const * FindTileDataFromAtlasKey(char const * atlas_key) const;
+
 		public:
 
 			/** object information */
@@ -915,6 +925,12 @@ namespace chaos
 		class TileInfo
 		{
 		public:
+
+			/** default constructor */
+			TileInfo() = default;
+			/** other constuctor */
+			TileInfo(int in_gid, TileSet * in_tileset, TileData * in_tiledata):
+				gid(in_gid), tileset(in_tileset), tiledata(in_tiledata){}
 
 			/** the final gid of the search tile */
 			int gid = 0;
@@ -971,6 +987,16 @@ namespace chaos
 			TileInfo FindTileInfo(int gid);
 			/** find tileset data for a given gid */
 			TileInfo const FindTileInfo(int gid) const;
+
+			/** find tileset data from its type */
+			TileInfo FindTileInfo(char const * type);
+			/** find tileset data from its type */
+			TileInfo const FindTileInfo(char const * type) const;
+
+			/** find tileset data from its atlas key */
+			TileInfo FindTileInfoFromAtlasKey(char const * atlas_key);
+			/** find tileset data from its atlas key */
+			TileInfo const  FindTileInfoFromAtlasKey(char const * atlas_key) const;
 
 		public:
 

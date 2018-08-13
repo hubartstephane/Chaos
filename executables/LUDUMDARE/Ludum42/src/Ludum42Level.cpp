@@ -258,14 +258,64 @@ bool FindExplicitWorldBounds(chaos::TiledMap::Map const * tiled_map, chaos::box2
 
 
 
+#if 0
+
+class ParticleLayerOwner : public ReferencedObject
+{
+	void ParticleLayer * AddParticleLayer(float render_order)
+	{
+
+		return nullptr;
+	}
+};
+
+class ParticleLayer : public ParticleLayerOwner
+{
+	AddParticleGroup(ParticleGroup * group)
+
+};
+
+
+class ParticleGroup : public ReferencedObject
+{
+	ParticleAllocation * SpawnParticles(size_t count);
+
+	
+};
+
+
+
+class ParticleManager : public ParticleLayerOwner
+{
+
+
+};
+
+
+
+void InitializeParticleManager()
+{
+	ParticleManager * manager;
 
 
 
 
+};
 
 
+class Loader
+{
+public:
+
+	chaos::TiledMap::Map const * tiled_map = nullptr;
 
 
+	void OnTiled(chaos::TiledMap::GeometricObjectTile const * object_tile, chaos::TiledMap::TileInfo tile_info);
+	
+	entry
+
+};
+#endif
 
 
 

@@ -19,9 +19,20 @@ namespace chaos
 			bool LoadAtlas(FilePathParam const & path);
 			/** generate a texture atlas from a standard atlas */
 			bool LoadFromBitmapAtlas(Atlas const & atlas);
+			/** generate a texture atlas from a standard atlas */
+			bool LoadFromBitmapAtlas(Atlas && atlas);
 
 			/* get the array texture */
 			GPUTexture * GetTexture() { return texture.get(); }
+
+		protected:
+
+			/** generate a texture atlas from a standard atlas */
+			bool DoLoadFromBitmapAtlas(Atlas const & atlas);
+			/** generate a texture atlas from a standard atlas */
+			bool DoLoadFromBitmapAtlas(Atlas && atlas);
+			/** generate a texture array */
+			bool DoGenerateTextureArray(Atlas const & atlas);
 
 		protected:
 

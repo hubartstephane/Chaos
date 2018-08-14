@@ -932,7 +932,7 @@ namespace chaos
 			chaos::BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;
 			if (result == nullptr)
 				return nullptr;
-			if (!result->LoadFromBitmapAtlas(atlas))
+			if (!result->LoadFromBitmapAtlas(std::move(atlas)))
 			{
 				delete(result);
 				return nullptr;

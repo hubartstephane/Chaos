@@ -19,13 +19,33 @@ namespace chaos
 			Atlas atlas;
 			if (!atlas.LoadAtlas(path))
 				return false;
-			return LoadFromBitmapAtlas(atlas);
+			return LoadFromBitmapAtlas(std::move(atlas));
 		}
 
 		bool TextureArrayAtlas::LoadFromBitmapAtlas(Atlas const & atlas)
 		{
 			Clear();
+			if (!DoLoadFromBitmapAtlas(atlas))
+			{
+				Clear();
+				return false;			
+			}
+			return true;
+		}
 
+		bool TextureArrayAtlas::LoadFromBitmapAtlas(Atlas && atlas)
+		{
+			Clear();
+			if (!DoLoadFromBitmapAtlas(std::move(atlas)))
+			{
+				Clear();
+				return false;			
+			}
+			return true;
+		}
+
+		bool TextureArrayAtlas::DoGenerateTextureArray(Atlas const & atlas)
+		{
 			// create and fill a texture array generator
 			std::vector<unique_bitmap_ptr> const & bitmaps = atlas.GetBitmaps();
 
@@ -33,17 +53,34 @@ namespace chaos
 			for (size_t i = 0; i < bitmaps.size(); ++i)
 				generator.AddGenerator(new TextureArraySliceGenerator_Image(bitmaps[i].get(), false)); // do not release image, we have a unique_ptr on it
 
-																									   // generate the texture array
+			// generate the texture array
 			texture = generator.GenTextureObject();
 			if (texture == nullptr)
-			{
-				Clear();
 				return false;
-			}
+			return true;
+		}
 
-			// copy all data
+		bool TextureArrayAtlas::DoLoadFromBitmapAtlas(Atlas && atlas)
+		{
+			if (!DoGenerateTextureArray(atlas))
+				return false;
+		
+			// steal all data
 			atlas_count    = atlas.atlas_count;
 			dimension      = atlas.dimension;
+			bitmap_sets    = std::move(atlas.bitmap_sets);
+			character_sets = std::move(atlas.character_sets);
+			return true;		
+		}
+
+		bool TextureArrayAtlas::DoLoadFromBitmapAtlas(Atlas const & atlas)
+		{
+			if (!DoGenerateTextureArray(atlas))
+				return false;
+
+			// copy all data
+			atlas_count = atlas.atlas_count;
+			dimension   = atlas.dimension;
 
 			for (size_t i = 0 ; i < atlas.bitmap_sets.size() ; ++i)
 			{

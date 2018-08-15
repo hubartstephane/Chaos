@@ -83,13 +83,15 @@ namespace chaos
 
 			if (rotation != 0.0f)
 			{
+				glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
+
 				float c = MathTools::Cos(rotation);
 				float s = MathTools::Sin(rotation);
 
-				bl.position = GLMTools::Rotate(bl.position - box.position, c, s) + box.position;
-				br.position = GLMTools::Rotate(br.position - box.position, c, s) + box.position;
-				tr.position = GLMTools::Rotate(tr.position - box.position, c, s) + box.position;
-				tl.position = GLMTools::Rotate(tl.position - box.position, c, s) + box.position;
+				bl.position = GLMTools::Rotate(bl.position - center_position, c, s) + center_position;
+				br.position = GLMTools::Rotate(br.position - center_position, c, s) + center_position;
+				tr.position = GLMTools::Rotate(tr.position - center_position, c, s) + center_position;
+				tl.position = GLMTools::Rotate(tl.position - center_position, c, s) + center_position;
 			}
 
 			vertices[0] = bl;
@@ -106,55 +108,10 @@ namespace chaos
 		{
 			std::pair<glm::vec2, glm::vec2> corners = box.GetCorners();
 
-			glm::vec2 const & bottomleft = corners.first;
-			glm::vec2 const & topright = corners.second;
-
-			VERTEX_TYPE bl;
-			bl.position.x = bottomleft.x;
-			bl.position.y = bottomleft.y;
-			bl.texcoord.x = texcoords.bottomleft.x;
-			bl.texcoord.y = texcoords.bottomleft.y;
-			bl.texcoord.z = texcoords.bitmap_index;
-
-			VERTEX_TYPE tr;
-			tr.position.x = topright.x;
-			tr.position.y = topright.y;
-			tr.texcoord.x = texcoords.topright.x;
-			tr.texcoord.y = texcoords.topright.y;
-			tr.texcoord.z = texcoords.bitmap_index;
-
-			VERTEX_TYPE tl;
-			tl.position.x = bottomleft.x;
-			tl.position.y = topright.y;
-			tl.texcoord.x = texcoords.bottomleft.x;
-			tl.texcoord.y = texcoords.topright.y;
-			tl.texcoord.z = texcoords.bitmap_index;
-
-			VERTEX_TYPE br;
-			br.position.x = topright.x;
-			br.position.y = bottomleft.y;
-			br.texcoord.x = texcoords.topright.x;
-			br.texcoord.y = texcoords.bottomleft.y;
-			br.texcoord.z = texcoords.bitmap_index;
-
-			if (rotation != 0.0f)
-			{
-				float c = MathTools::Cos(rotation);
-				float s = MathTools::Sin(rotation);
-
-				bl.position = GLMTools::Rotate(bl.position - box.position, c, s) + box.position;
-				br.position = GLMTools::Rotate(br.position - box.position, c, s) + box.position;
-				tr.position = GLMTools::Rotate(tr.position - box.position, c, s) + box.position;
-				tl.position = GLMTools::Rotate(tl.position - box.position, c, s) + box.position;
-			}
-
-			vertices[0] = bl;
-			vertices[1] = br;
-			vertices[2] = tr;
-
-			vertices[3] = bl;
-			vertices[4] = tr;
-			vertices[5] = tl;
+			ParticleCorners particle_corners;
+			particle_corners.bottomleft = corners.first;
+			particle_corners.topright   = corners.second;
+			GenerateBoxParticle(particle_corners, texcoords, vertices, rotation);
 		}
 
 	}; // namespace ParticleTools

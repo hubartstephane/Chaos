@@ -94,10 +94,10 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 	chaos::BitmapAtlas::AtlasInput     input;
 
 	chaos::BitmapAtlas::CharacterSetInput * character_set1 =
-		input.AddCharacterSet("character_set1", nullptr, font_path1.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+		input.AddCharacterSet("character_set1", font_path1.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
 
 	chaos::BitmapAtlas::CharacterSetInput * character_set2 =
-		input.AddCharacterSet("character_set2", nullptr, font_path2.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
+		input.AddCharacterSet("character_set2", font_path2.string().c_str(), nullptr, true, chaos::BitmapAtlas::CharacterSetInputParams());
 
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set =
 		input.AddBitmapSet("bitmap_set1");

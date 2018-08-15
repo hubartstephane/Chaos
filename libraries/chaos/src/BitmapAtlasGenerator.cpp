@@ -99,7 +99,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, FT_Library library, char const * font_name, char const * characters, bool release_library, CharacterSetInputParams const & params)
+		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, char const * font_name, FT_Library library, bool release_library, CharacterSetInputParams const & params)
 		{
 			assert(font_name != nullptr);
 
@@ -122,21 +122,18 @@ namespace chaos
 				return nullptr;
 			}
 
-			return AddCharacterSetImpl(name, library, face, characters, release_library, true, params);
+			return AddCharacterSetImpl(name, library, face, release_library, true, params);
 		}
 
-		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, FT_Face face, char const * characters, bool release_face, CharacterSetInputParams const & params)
+		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, FT_Face face, bool release_face, CharacterSetInputParams const & params)
 		{
-			return AddCharacterSetImpl(name, nullptr, face, characters, false, release_face, params);
+			return AddCharacterSetImpl(name, nullptr, face, false, release_face, params);
 		}
 
-		CharacterSetInput * AtlasInput::AddCharacterSetImpl(char const * name, FT_Library library, FT_Face face, char const * characters, bool release_library, bool release_face, CharacterSetInputParams const & params)
+		CharacterSetInput * AtlasInput::AddCharacterSetImpl(char const * name, FT_Library library, FT_Face face, bool release_library, bool release_face, CharacterSetInputParams const & params)
 		{
 			assert(name != nullptr);
 			assert(face != nullptr);
-
-			// if user does not provide a list of charset for the fonts, use this hard coded one
-			static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
 
 			CharacterSetInput * result = FindCharacterSetInput(name);
 			if (result == nullptr)
@@ -165,9 +162,14 @@ namespace chaos
 					result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
 					result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
-																			  // generate glyph cache
-					if (characters == nullptr || strlen(characters) == 0)
-						characters = DEFAULT_CHARACTERS;
+					// generate glyph cache
+
+					// if user does not provide a list of charset for the fonts, use this hard coded one
+					static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
+
+					char const * characters = (params.characters.length() > 0) ?
+						params.characters.c_str() :
+						DEFAULT_CHARACTERS;
 
 					std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
 

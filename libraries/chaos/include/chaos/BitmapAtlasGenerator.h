@@ -95,6 +95,8 @@ namespace chaos
 			int max_character_width = 32;
 			/** height of the glyph */
 			int max_character_height = 32;
+			/** the characters to generate */
+			std::string characters;
 		};
 
 		/**
@@ -169,16 +171,14 @@ namespace chaos
 			/** Add a character set */
 			CharacterSetInput * AddCharacterSet(
 				char const * name,
-				FT_Library library,
 				char const * font_name,
-				char const * characters = nullptr,
+				FT_Library library,
 				bool release_library = true,
 				CharacterSetInputParams const & params = CharacterSetInputParams());
 			/** Add a character set */
 			CharacterSetInput * AddCharacterSet(
 				char const * name,
 				FT_Face face,
-				char const * characters = nullptr,
 				bool release_face = true,
 				CharacterSetInputParams const & params = CharacterSetInputParams());
 
@@ -189,7 +189,6 @@ namespace chaos
 				char const * name,
 				FT_Library library,
 				FT_Face face,
-				char const * characters,
 				bool release_library,
 				bool release_face,
 				CharacterSetInputParams const & params);

@@ -7,6 +7,36 @@
 
 namespace chaos
 {
+#if 0
+	class BitmapEntry
+	{
+		int bitmap_index = -1;
+		int x = 0;
+		int y = 0;
+		int width = 0;
+		int height = 0;
+	};
+
+	class BitmapGridAnimation
+	{
+		glm::ivec2 grid_size;
+
+
+	};
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
 	namespace BitmapAtlas
 	{
 

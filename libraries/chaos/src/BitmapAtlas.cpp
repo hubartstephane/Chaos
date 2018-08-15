@@ -542,7 +542,7 @@ namespace chaos
 			boost::filesystem::path index_filename;
 			boost::filesystem::path bitmap_filename;
 			SplitFilename(path, target_dir, index_filename, bitmap_filename); // will be ignored during loading, real name is read from .JSON index
-																			  // load the file into memory
+			// load the file into memory
 			Buffer<char> buf = FileTools::LoadFile(index_filename, true);
 			if (buf == nullptr)
 				return false;

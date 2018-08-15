@@ -193,7 +193,7 @@ namespace death
 		font_params.max_character_height = 64;
 
 		chaos::BitmapAtlas::CharacterSetInput * character_set1 =
-			input.AddCharacterSet(font_name, nullptr, font_path.c_str(), nullptr, true, font_params);
+			input.AddCharacterSet(font_name, font_path.c_str(), nullptr, true, font_params);
 
 		return (character_set1 != nullptr);
 	}

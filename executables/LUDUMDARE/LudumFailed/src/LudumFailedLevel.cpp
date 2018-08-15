@@ -153,7 +153,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_indice <= 0)
 				continue;
 			
-			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j) + tile_layer->offset);
+			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j)); // shuxxx +tile_layer->offset);
 			position.y = -position.y;
 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);

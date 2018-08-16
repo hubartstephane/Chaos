@@ -180,6 +180,8 @@ namespace death
 		/** called whenever the input mode changes */
 		virtual void OnInputModeChanged(int new_mode, int old_mode);
 
+		/** create some clocks */
+		virtual bool InitializeClocks();
 		/** initialize the game data from configuration file */
 		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
 

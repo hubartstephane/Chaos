@@ -751,7 +751,11 @@ protected:
       return false;
 
     // create a timer
-    clock = application->GetMainClock()->CreateChildClock(-1);
+    clock = application->GetMainClock()->CreateChildClock();
+
+		auto c1 = application->GetMainClock()->CreateChildClock();
+		auto c2 = application->GetMainClock()->CreateChildClock("truc");
+		auto c3 = application->GetMainClock()->CreateChildClock("truc");
 
     // create meshes
     chaos::triangle3 t; // data will be initialized in vertex shader as uniform

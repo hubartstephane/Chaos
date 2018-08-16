@@ -129,38 +129,44 @@ namespace chaos
 		return false;
 	}
 
-	Clock * Clock::GetChildClock(int id, bool recursive)
+	Clock const * Clock::FindChildClock(char const * in_name, bool recursive) const
 	{
-		Clock * result = nullptr;
-		if (id > 0)  // no clock with negative ID !
+		if (in_name == nullptr)
+			return nullptr;
+		size_t count = children_clocks.size();
+		for (size_t i = 0; i < count; ++i)
 		{
-			if (clock_id == id)
-				result = this;
-			else if (recursive)
+			Clock const * clock = children_clocks[i].get();
+			if (clock->name == in_name)
+				return clock;
+			if (recursive)
 			{
-				size_t count = children_clocks.size();
-				for (size_t i = 0; (i < count) && (result == nullptr); ++i)
-					result = children_clocks[i]->GetChildClock(id, recursive);
+				clock = clock->FindChildClock(in_name, recursive);
+				if (clock != nullptr)
+					return clock;
 			}
 		}
-		return result;
+		return nullptr;
 	}
 
-	Clock const * Clock::GetChildClock(int id, bool recursive) const
+	Clock * Clock::FindChildClock(char const * in_name, bool recursive)
 	{
-		Clock const * result = nullptr;
-		if (id > 0)  // no clock with negative ID !
+		if (in_name == nullptr)
+			return nullptr;
+		size_t count = children_clocks.size();
+		for (size_t i = 0; i < count; ++i)
 		{
-			if (clock_id == id)
-				result = this;
-			else if (recursive)
+			Clock * clock = children_clocks[i].get();
+			if (clock->name == in_name)
+				return clock;
+			if (recursive)
 			{
-				size_t count = children_clocks.size();
-				for (size_t i = 0; (i < count) && (result == nullptr); ++i)
-					result = children_clocks[i]->GetChildClock(id, recursive);
+				clock = clock->FindChildClock(in_name, recursive);
+				if (clock != nullptr)
+					return clock;
 			}
 		}
-		return result;
+		return nullptr;
 	}
 
 	Clock * Clock::GetTopLevelParent()
@@ -314,34 +320,23 @@ namespace chaos
 		return true;
 	}
 
-	Clock * Clock::CreateChildClock(int id, ClockCreateParams const & params)
+	Clock * Clock::CreateChildClock(char const * in_name, ClockCreateParams const & params)
 	{
-		// want an ID : automatic or user-defined
-		if (id != 0)
-		{
-			Clock * top_level_clock = GetTopLevelParent();
-			// user-defined
-			if (id > 0 && top_level_clock->GetChildClock(id, false) != nullptr) // cannot add a clock whose ID is already in use
-				return nullptr;
-			// generate a own ID if necessary
-			else
-			{
-				assert(id < 0);
-				id = top_level_clock->FindUnusedID(true);
-				if (id < 0)
-					return nullptr;
-			}
-		}
+		// cannot create a child clock with a name already in use (FindChildClock(...) ignores anonymous clocks)
+		Clock * child_clock = FindChildClock(in_name);
+		if (child_clock != nullptr)
+			return nullptr;
 
 		// allocate the clock
-		boost::intrusive_ptr<Clock> child_clock = boost::intrusive_ptr<Clock>(new Clock(params));
-		if (clock != nullptr)
+		Clock * result = new Clock(params);
+		if (result != nullptr)
 		{
-			child_clock->clock_id = id;
-			child_clock->parent_clock = this;
-			children_clocks.push_back(child_clock);
+			if (in_name != nullptr)
+				result->name = in_name;
+			result->parent_clock = this;
+			children_clocks.push_back(result);
 		}
-		return child_clock.get();
+		return result;
 	}
 
 	bool Clock::RemoveFromParent()
@@ -364,72 +359,6 @@ namespace chaos
 			}
 		}
 		return false;
-	}
-
-	void Clock::FindUnusedIDStep1(int & smaller_id, int & bigger_id, bool recursive) const // iteration over MIN & MAX ID's
-	{
-		size_t count = children_clocks.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			if (smaller_id == 1 && bigger_id == std::numeric_limits<int>::max()) // no need to continue STEP1 recursion, we can say that there
-				return;                                                            // will not be a fast answer, have to go STEP 2
-
-			Clock const * clock = children_clocks[i].get(); // ignore clock with "NO" id
-			if (clock->clock_id > 0)
-			{
-				smaller_id = min(smaller_id, clock->clock_id);
-				bigger_id = max(bigger_id, clock->clock_id);
-			}
-			if (recursive)
-			{
-				clock->FindUnusedIDStep1(smaller_id, bigger_id, recursive);
-			}
-		}
-	}
-
-	void Clock::FindUnusedIDStep2(std::vector<int> & IDs, bool recursive) const
-	{
-		size_t count = children_clocks.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			Clock const * clock = children_clocks[i].get();
-			if (clock->clock_id > 0)
-				IDs.push_back(clock->clock_id); // store only 'REAL' id's
-			if (recursive)
-				clock->FindUnusedIDStep2(IDs, recursive);
-		}
-	}
-
-	int Clock::FindUnusedID(bool recursive) const
-	{
-		// STEP 1 : fast answer, with no vector usage
-		//          search bigger and smaller ids (no memory allocation)
-		//          if max and min values found are not MAX/MIN INTEGER values, just use increment/decrement values
-		int smaller_id = (clock_id > 0) ? clock_id : std::numeric_limits<int>::max();
-		int bigger_id = (clock_id > 0) ? clock_id : 0;
-
-		FindUnusedIDStep1(smaller_id, bigger_id, recursive);
-		if (bigger_id < std::numeric_limits<int>::max())   // XXX : try BIGGER first because ID will increment : 1, 2, 3 ..
-			return bigger_id + 1;                            // if you try SMALLER first , you'll get MAX - 1 (that will later block BIGGER)
-		if (smaller_id > 1)
-			return smaller_id - 1;
-
-		// STEP 2 : store all ID's in a vector
-		//          sort the vector
-		//          detect a 'hole' inside the vector an use it
-		//          => require memory allocation
-		std::vector<int> IDs;
-		if (clock_id > 0)
-			IDs.push_back(clock_id);
-		FindUnusedIDStep2(IDs, recursive); // store all ID's
-		std::sort(IDs.begin(), IDs.end());
-
-		size_t count = IDs.size();
-		for (size_t i = 0; i < count - 1; ++i)
-			if (IDs[i] + 1 < IDs[i + 1]) // search for holes in the ID list
-				return IDs[i] + 1;
-
-		return -1;
 	}
 
 
@@ -505,7 +434,5 @@ namespace chaos
 
 
 	}
-
-
 
 }; // namespace chaos

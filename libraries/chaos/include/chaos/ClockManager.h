@@ -322,8 +322,8 @@ namespace chaos
 
 		/** returns the internal time */
 		double GetClockTime() const { return clock_time; }
-		/** returns the clock ID */
-		int GetClockID() const { return clock_id; }
+		/** returns the clock name */
+		char const * GetClockName() const { return name.c_str(); }
 		/** returns the parent clock */
 		Clock * GetParentClock(){ return parent_clock;}
 		/** returns the parent clock */
@@ -344,10 +344,11 @@ namespace chaos
 		void SetTimeScale(double new_scale) { time_scale = new_scale; }
 		/** returns the time scale */
 		double GetTimeScale() const { return time_scale; }
-		/** gets a clock by id */
-		Clock * GetChildClock(int id, bool recursive = true);
-		/** gets a clock by id */
-		Clock const * GetChildClock(int id, bool recursive = true) const;
+
+		/** gets a clock by name */
+		Clock * FindChildClock(char const * in_name, bool recursive = true);
+		/** gets a clock by name */
+		Clock const * FindChildClock(char const * in_name, bool recursive = true) const;
 
 		/** get the top level clock */
 		Clock * GetTopLevelParent();
@@ -358,7 +359,7 @@ namespace chaos
 		bool TickClock(double delta_time);
 
 		/** add a clock */
-		Clock * CreateChildClock(int id, ClockCreateParams const & params = ClockCreateParams());
+		Clock * CreateChildClock(char const * in_name = nullptr, ClockCreateParams const & params = ClockCreateParams());
 		/** remove a clock */
 		bool RemoveFromParent();
 
@@ -385,12 +386,6 @@ namespace chaos
 		void TriggerClockEvent(ClockEventTickRegistration & registered_event);
 		/** ensure given clock is a child of the hierarchy tree */
 		bool IsDescendantClock(Clock const * child_clock) const;
-		/** gets a free ID for a clock */
-		int FindUnusedID(bool recursive) const;
-		/** iterate over the children and get min and max ID's in use */
-		void FindUnusedIDStep1(int & smaller_id, int & bigger_id, bool recursive) const;
-		/** iterate over the children store all ID's in use */
-		void FindUnusedIDStep2(std::vector<int> & IDs, bool recursive) const;
 
 	protected:
 
@@ -404,8 +399,8 @@ namespace chaos
 		bool   paused = false;  
 		/** whether events should be ticked */
 		bool   tick_events = true;
-		/** the ID of the clock */
-		int    clock_id = 0;
+		/** the name of the clock */
+		std::string name;
 
 		/** the events */
 		std::vector<boost::intrusive_ptr<ClockEvent>> pending_events;

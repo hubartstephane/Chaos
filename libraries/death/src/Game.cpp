@@ -289,8 +289,22 @@ namespace death
 		return true;
 	}
 	
+	bool Game::InitializeClocks()
+	{
+		chaos::Clock * clock = GetMainClock();
+		if (clock == nullptr)
+			return false;
+		//clock->CreateChildClock(GAME_CLOCK);
+		//clock->CreateChildClock(PAUSE_CLOCK);
+
+		return true;
+	}
+
 	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		// initialize clocks
+		if (!InitializeClocks())
+			return false;
 		// initialize the button map
 		if (!InitializeGamepadButtonInfo())
 			return false;

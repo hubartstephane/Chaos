@@ -294,8 +294,18 @@ namespace death
 		chaos::Clock * clock = GetMainClock();
 		if (clock == nullptr)
 			return false;
-		//clock->CreateChildClock(GAME_CLOCK);
-		//clock->CreateChildClock(PAUSE_CLOCK);
+
+		chaos::ClockCreateParams pause_clock_params;
+		pause_clock_params.paused = true;
+		pause_clock = clock->CreateChildClock("pause_clock", pause_clock_params);
+		if (pause_clock == nullptr)
+			return false;
+
+		chaos::ClockCreateParams game_clock_params;
+		game_clock_params.paused = true;
+		game_clock = clock->CreateChildClock("game_clock", game_clock_params);
+		if (game_clock == nullptr)
+			return false;
 
 		return true;
 	}

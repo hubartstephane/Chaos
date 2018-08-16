@@ -93,11 +93,12 @@ namespace chaos
 	// Clock functions
 	// ============================================================
 
-	Clock::Clock(ClockCreateParams const & params) :
+	Clock::Clock(char const * in_name, ClockCreateParams const & params) :
 		time_scale(params.time_scale),
 		paused(params.paused)
 	{
-
+		if (in_name != nullptr)
+			name = in_name;
 	}
 
 	Clock::~Clock()
@@ -328,11 +329,9 @@ namespace chaos
 			return nullptr;
 
 		// allocate the clock
-		Clock * result = new Clock(params);
+		Clock * result = new Clock(in_name, params);
 		if (result != nullptr)
 		{
-			if (in_name != nullptr)
-				result->name = in_name;
 			result->parent_clock = this;
 			children_clocks.push_back(result);
 		}

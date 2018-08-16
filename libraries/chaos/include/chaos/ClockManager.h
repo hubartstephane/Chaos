@@ -316,7 +316,7 @@ namespace chaos
 	public:
 
 		/** the constructor */
-		Clock(ClockCreateParams const & params = ClockCreateParams());
+		Clock(char const * in_name = nullptr, ClockCreateParams const & params = ClockCreateParams());
 		/** the destructor */
 		virtual ~Clock();
 

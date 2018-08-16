@@ -753,10 +753,6 @@ protected:
     // create a timer
     clock = application->GetMainClock()->CreateChildClock();
 
-		auto c1 = application->GetMainClock()->CreateChildClock();
-		auto c2 = application->GetMainClock()->CreateChildClock("truc");
-		auto c3 = application->GetMainClock()->CreateChildClock("truc");
-
     // create meshes
     chaos::triangle3 t; // data will be initialized in vertex shader as uniform
     chaos::box3      b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));

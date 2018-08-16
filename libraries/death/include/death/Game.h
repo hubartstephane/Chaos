@@ -372,6 +372,10 @@ namespace death
 		/** name of the game */
 		char const * game_name = nullptr;
 
+		/** the clocks */
+		boost::intrusive_ptr<chaos::Clock> pause_clock;
+		boost::intrusive_ptr<chaos::Clock> game_clock;
+
 		/** level data */
 		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
 		/** the current level instance */

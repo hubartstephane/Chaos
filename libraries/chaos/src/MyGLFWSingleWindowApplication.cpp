@@ -254,7 +254,7 @@ namespace chaos
 			JSONTools::GetAttribute(configuration, "max_tick_duration", max_tick_duration);
 
 			// initialize the clock
-			main_clock = new Clock();
+			main_clock = new Clock("main_clock");
 			if (main_clock == nullptr)
 				return false;
 			nlohmann::json const * clock_config = JSONTools::GetStructure(configuration, "clocks");

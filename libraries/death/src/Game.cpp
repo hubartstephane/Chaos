@@ -292,29 +292,70 @@ namespace death
 		return true;
 	}
 	
+	bool Game::DestroyInGameClocks()
+	{
+		if (main_clock != nullptr)
+		{
+			main_clock->RemoveFromParent();
+			main_clock = nullptr;
+		}
+
+		if (game_clock != nullptr)
+		{
+			game_clock->RemoveFromParent();
+			game_clock = nullptr;
+		}
+
+		if (pause_clock != nullptr)
+		{
+			pause_clock->RemoveFromParent();
+			pause_clock = nullptr;
+		}
+		return true;
+	}
+
+	void Game::PauseInGameClocks(bool pause)
+	{
+		if (main_clock != nullptr)
+			main_clock->SetPause(pause);
+
+		if (game_clock != nullptr)
+			game_clock->SetPause(pause);
+
+		if (pause_clock != nullptr)
+			pause_clock->SetPause(pause);
+	}
+
+	bool Game::CreateInGameClocks()
+	{
+		if (root_clock == nullptr)
+			return false;	
+
+		main_clock = root_clock->CreateChildClock("main_clock"); 
+		if (main_clock == nullptr)
+			return false;
+
+		game_clock = root_clock->CreateChildClock("game_clock"); 
+		if (game_clock == nullptr)
+			return false;
+
+		chaos::ClockCreateParams pause_clock_params;
+		pause_clock_params.paused = true;
+		pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
+		if (pause_clock == nullptr)
+			return false;
+
+		return true;
+	}
+
 	bool Game::InitializeClocks()
 	{
 		chaos::Clock * application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
 			return false;
 
-		chaos::ClockCreateParams pending_clock_params;
-		pending_clock_params.paused = true;
-
 		root_clock = application_clock->CreateChildClock("root_clock");
 		if (root_clock == nullptr)
-			return false;
-
-		main_clock = application_clock->CreateChildClock("main_clock", pending_clock_params); // theses 3 clocks ...
-		if (main_clock == nullptr)
-			return false;
-
-		game_clock = application_clock->CreateChildClock("game_clock", pending_clock_params); // start paused ...
-		if (game_clock == nullptr)
-			return false;
-
-		pause_clock = application_clock->CreateChildClock("pause_clock", pending_clock_params); // they will be resumed at different stage of the game
-		if (pause_clock == nullptr)
 			return false;
 		return true;
 	}
@@ -684,6 +725,7 @@ namespace death
 		CreateMainMenuHUD();
 		DestroyGameOverHUD();
 		DestroyPlayingHUD();
+		DestroyInGameClocks();
 	}
 
 	void Game::OnGameOver()
@@ -693,10 +735,11 @@ namespace death
 	}
 	void Game::OnPauseStateUpdateClocks(bool enter_pause)
 	{
-		chaos::Clock * pause_clock = GetPauseClock();
 		if (pause_clock != nullptr)
+		{
 			pause_clock->SetPause(!enter_pause);
-		chaos::Clock * game_clock = GetGameClock();
+			pause_clock->Reset();
+		}
 		if (game_clock != nullptr)
 			game_clock->SetPause(enter_pause);
 	}
@@ -724,6 +767,7 @@ namespace death
 		ResetGameVariables();
 		SetNextLevel(true); // select the very first
 		StartGameMusic(true);
+		CreateInGameClocks();
 		return true;
 	}
 
@@ -732,6 +776,7 @@ namespace death
 		StartMainMenuMusic(true);
 		if (gameover)
 			CreateGameOverHUD();
+		PauseInGameClocks(true); // clocks will be destroyed when EnterMainMenu
 		return true;
 	}
 

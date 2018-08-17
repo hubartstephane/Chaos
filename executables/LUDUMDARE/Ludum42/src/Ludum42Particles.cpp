@@ -78,7 +78,7 @@ static size_t AtlasParticleToVertices(LudumGame * game, ParticleObjectAtlas cons
 	if (particle.delta_image < 0)
 		image_id = 1 + (-particle.delta_image);	
 	else
-		image_id = particle.delta_image + (int)(game->GetMainClockTime() / particle.frequency);
+		image_id = particle.delta_image + (int)(game->GetGameClockTime() / particle.frequency);
 
 	// tweak particle coords considering that incomming sprite is the whole atlas (get sub-image coordinates)
 	particle.texcoords = chaos::ParticleTools::MakeParticleTexcoordsAtlas(particle.texcoords, particle.atlas_dimension, particle.skip_last, image_id);

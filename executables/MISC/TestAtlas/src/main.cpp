@@ -101,7 +101,7 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 	chaos::BitmapAtlas::BitmapSetInput * bitmap_set =
 		input.AddBitmapSet("bitmap_set1");
 
-	bitmap_set->AddBitmapFilesFromDirectory(resources_path / "ButtonImages");
+	bitmap_set->AddBitmapFilesFromDirectory(resources_path / "ButtonImages", true);
 
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 	if (generator.ComputeResult(input, atlas, params))
@@ -129,7 +129,7 @@ void TestAtlasNormalMode(boost::filesystem::path const & dest_p, boost::filesyst
 
 	boost::filesystem::path result_path = dest_p / "MyAtlas.json";
 
-	chaos::BitmapAtlas::AtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, params);
+	chaos::BitmapAtlas::AtlasGenerator::CreateAtlasFromDirectory(resources_path, result_path, true, params);
 }
 
 
@@ -170,9 +170,6 @@ protected:
 		return true;
 	}
 };
-
-
-
 
 
 int _tmain(int argc, char ** argv, char ** env)

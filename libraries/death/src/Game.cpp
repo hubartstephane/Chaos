@@ -170,7 +170,7 @@ namespace death
 		if (bitmap_set == nullptr)
 			return false;
 
-		bitmap_set->AddBitmapFilesFromDirectory(sprite_directory);
+		bitmap_set->AddBitmapFilesFromDirectory(sprite_directory, true);
 
 		return true;
 	}

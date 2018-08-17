@@ -221,13 +221,24 @@ namespace chaos
 			elements.clear();
 		}
 
-		bool BitmapSetInput::AddBitmapFilesFromDirectory(FilePathParam const & path)
+		bool BitmapSetInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 			// enumerate the source directory
 			boost::filesystem::directory_iterator end;
 			for (boost::filesystem::directory_iterator it(resolved_path); it != end; ++it)
-				AddBitmapFile(it->path(), nullptr, 0);                           // this will reject files that are not images .. not an error
+			{
+				if (recursive)
+				{
+					if (boost::filesystem::is_directory(*it))
+					{
+						AddBitmapFilesFromDirectory(it->path(), recursive);
+						continue;
+					}
+				}
+				// this will reject files that are not images .. not an error
+				AddBitmapFile(it->path(), nullptr, 0);                           
+			}
 			return true;
 		}
 
@@ -904,12 +915,12 @@ namespace chaos
 				(entry.height + 2 * params.atlas_padding));
 		}
 
-		bool AtlasGenerator::CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, AtlasGeneratorParams const & in_params)
+		bool AtlasGenerator::CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, bool recursive, AtlasGeneratorParams const & in_params)
 		{
 			// fill the atlas
 			AtlasInput input;
 			BitmapSetInput * bitmap_set = input.AddBitmapSet("files");
-			bitmap_set->AddBitmapFilesFromDirectory(bitmaps_dir);
+			bitmap_set->AddBitmapFilesFromDirectory(bitmaps_dir, recursive);
 			// create the atlas files
 			Atlas          atlas;
 			AtlasGenerator generator;

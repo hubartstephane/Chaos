@@ -329,6 +329,8 @@ namespace chaos
 		/** returns the parent clock */
 		Clock const * GetParentClock() const { return parent_clock;}
 
+		/** change the pause state */
+		void SetPause(bool in_pause);
 		/** pause the clock */
 		void Pause() { paused = true; }
 		/** resume the clock */

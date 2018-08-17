@@ -133,11 +133,12 @@ namespace death
 		AddBoxVariable(main_uniform_provider, "view_box", world);
 			 
 		// the time
-		double absolute_time = GetMainClockTime();
-		main_uniform_provider.AddVariableValue("absolute_time", absolute_time);
-
-		double start_time = GetStartGameTime();
-		main_uniform_provider.AddVariableValue("start_time", start_time);
+		double main_time = GetMainClockTime();
+		main_uniform_provider.AddVariableValue("main_time", main_time);
+		double game_time = GetMainClockTime();
+		main_uniform_provider.AddVariableValue("game_time", game_time);
+		double pause_time = GetMainClockTime();
+		main_uniform_provider.AddVariableValue("pause_time", pause_time);
 
 		DoDisplay(viewport, main_uniform_provider);
 	}
@@ -372,6 +373,25 @@ namespace death
 		return application->GetMainClock();
 	}
 
+	chaos::Clock * Game::GetGameClock()
+	{
+		return game_clock.get();
+	}
+	chaos::Clock const * Game::GetGameClock() const
+	{
+		return game_clock.get();
+	}
+
+	chaos::Clock * Game::GetPauseClock()
+	{
+		return pause_clock.get();
+	}
+
+	chaos::Clock const * Game::GetPauseClock() const
+	{
+		return pause_clock.get();
+	}
+
 	double Game::GetMainClockTime() const
 	{
 		chaos::Clock const * clock = GetMainClock();
@@ -380,11 +400,20 @@ namespace death
 		return clock->GetClockTime();
 	}
 
-	double Game::GetStartGameTime() const
+	double Game::GetGameClockTime() const
 	{
-		if (!IsPaused() && !IsPlaying())
+		chaos::Clock const * clock = GetGameClock();
+		if (clock == nullptr)
 			return 0.0;
-		return start_game_time;
+		return clock->GetClockTime();
+	}
+
+	double Game::GetPauseClockTime() const
+	{
+		chaos::Clock const * clock = GetPauseClock();
+		if (clock == nullptr)
+			return 0.0;
+		return clock->GetClockTime();
 	}
 
 	bool Game::LoadBestScore(std::ifstream & file)
@@ -666,11 +695,21 @@ namespace death
 		SetCurrentLevel(nullptr);
 		ConditionnalSaveBestScore();		
 	}
+	void Game::OnPauseStateUpdateClocks(bool enter_pause)
+	{
+		chaos::Clock * pause_clock = GetPauseClock();
+		if (pause_clock != nullptr)
+			pause_clock->SetPause(!enter_pause);
+		chaos::Clock * game_clock = GetGameClock();
+		if (game_clock != nullptr)
+			game_clock->SetPause(enter_pause);
+	}
 
 	bool Game::OnEnterPause()
 	{
 		StartPauseMusic(true);
 		CreatePauseMenuHUD();
+		OnPauseStateUpdateClocks(true);
 		return true;
 	}
 
@@ -678,6 +717,7 @@ namespace death
 	{
 		StartGameMusic(false);
 		DestroyPauseMenuHUD();
+		OnPauseStateUpdateClocks(false);
 		return true;
 	}
 
@@ -753,7 +793,6 @@ namespace death
 	void Game::ResetGameVariables()
 	{
 		current_score = 0;
-		start_game_time = GetMainClockTime();
 	}
 
 	void Game::UpdateScoreParticles()

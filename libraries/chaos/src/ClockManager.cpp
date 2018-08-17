@@ -434,4 +434,13 @@ namespace chaos
 
 	}
 
+	void Clock::SetPause(bool in_pause)
+	{
+		if (in_pause)
+			Pause();
+		else
+			Resume();
+
+	}
+
 }; // namespace chaos

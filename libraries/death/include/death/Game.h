@@ -61,10 +61,12 @@ namespace death
 		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }
 		chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
 
-		/** chaos getter */
+		/** returns the main time */
 		double GetMainClockTime() const;
-		/** gets the time of the begining of the game (0.0 if not started) */
-		double GetStartGameTime() const;
+		/** returns the game time */
+		double GetGameClockTime() const;
+		/** returns the pause time */
+		double GetPauseClockTime() const;
 
 	protected:
 
@@ -96,13 +98,21 @@ namespace death
 		chaos::MyGLFW::SingleWindowApplication const * GetApplication() const;
 		/** utility function to get the sound manager */
 		chaos::SoundManager * GetSoundManager();
-		/** chaos getter */
+
+		/** returns main clock */
 		chaos::Clock * GetMainClock();
-		/** chaos getter */
+		/** returns main clock */
 		chaos::Clock const * GetMainClock() const;
 
+		/** returns game clock */
+		chaos::Clock * GetGameClock();
+		/** returns game clock */
+		chaos::Clock const * GetGameClock() const;
 
-
+		/** returns pause clock */
+		chaos::Clock * GetPauseClock();
+		/** returns pause clock */
+		chaos::Clock const * GetPauseClock() const;
 
 		/** get the size of the world */
 		virtual glm::vec2 GetViewSize() const;
@@ -252,6 +262,9 @@ namespace death
 		/** require a game over */
 		virtual bool RequireGameOver();
 
+		/** pause/resume pause/game clocks */
+		void OnPauseStateUpdateClocks(bool enter_pause);
+
 		/** create a text particle system */
 		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id = TEXT_LAYER_ID);
 		/** create a title */
@@ -357,7 +370,6 @@ namespace death
 		/** score values */
 		int best_score = 0;
 		int current_score = 0;
-		double start_game_time = 0.0;
 
 		/** game settings */
 		float mouse_sensitivity = 1.0f;

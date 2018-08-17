@@ -133,6 +133,8 @@ namespace death
 		AddBoxVariable(main_uniform_provider, "view_box", world);
 			 
 		// the time
+		double root_time = GetRootClockTime();
+		main_uniform_provider.AddVariableValue("root_time", root_time);
 		double main_time = GetMainClockTime();
 		main_uniform_provider.AddVariableValue("main_time", main_time);
 		double game_time = GetMainClockTime();
@@ -292,22 +294,28 @@ namespace death
 	
 	bool Game::InitializeClocks()
 	{
-		chaos::Clock * clock = GetMainClock();
-		if (clock == nullptr)
+		chaos::Clock * application_clock = GetApplicationClock();
+		if (application_clock == nullptr)
 			return false;
 
-		chaos::ClockCreateParams pause_clock_params;
-		pause_clock_params.paused = true;
-		pause_clock = clock->CreateChildClock("pause_clock", pause_clock_params);
-		if (pause_clock == nullptr)
+		chaos::ClockCreateParams pending_clock_params;
+		pending_clock_params.paused = true;
+
+		root_clock = application_clock->CreateChildClock("root_clock");
+		if (root_clock == nullptr)
 			return false;
 
-		chaos::ClockCreateParams game_clock_params;
-		game_clock_params.paused = true;
-		game_clock = clock->CreateChildClock("game_clock", game_clock_params);
+		main_clock = application_clock->CreateChildClock("main_clock", pending_clock_params); // theses 3 clocks ...
+		if (main_clock == nullptr)
+			return false;
+
+		game_clock = application_clock->CreateChildClock("game_clock", pending_clock_params); // start paused ...
 		if (game_clock == nullptr)
 			return false;
 
+		pause_clock = application_clock->CreateChildClock("pause_clock", pending_clock_params); // they will be resumed at different stage of the game
+		if (pause_clock == nullptr)
+			return false;
 		return true;
 	}
 
@@ -357,7 +365,7 @@ namespace death
 		return application->GetSoundManager();
 	}
 
-	chaos::Clock * Game::GetMainClock()
+	chaos::Clock * Game::GetApplicationClock()
 	{
 		chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
 		if (application == nullptr)
@@ -365,7 +373,7 @@ namespace death
 		return application->GetMainClock();
 	}
 
-	chaos::Clock const * Game::GetMainClock() const
+	chaos::Clock const * Game::GetApplicationClock() const
 	{
 		chaos::MyGLFW::SingleWindowApplication const * application = GetApplication();
 		if (application == nullptr)
@@ -373,48 +381,36 @@ namespace death
 		return application->GetMainClock();
 	}
 
-	chaos::Clock * Game::GetGameClock()
-	{
-		return game_clock.get();
+#define CHAOS_EMPTY_TOKEN
+#define CHAOS_IMPL_GET_CLOCK(func_name, member_name, constess)\
+	chaos::Clock constess * Game::func_name() constess\
+	{\
+		return member_name.get();\
 	}
-	chaos::Clock const * Game::GetGameClock() const
-	{
-		return game_clock.get();
-	}
+	CHAOS_IMPL_GET_CLOCK(GetRootClock, root_clock, CHAOS_EMPTY_TOKEN);
+	CHAOS_IMPL_GET_CLOCK(GetRootClock, root_clock, const);
+	CHAOS_IMPL_GET_CLOCK(GetMainClock, main_clock, CHAOS_EMPTY_TOKEN);
+	CHAOS_IMPL_GET_CLOCK(GetMainClock, main_clock, const);
+	CHAOS_IMPL_GET_CLOCK(GetGameClock, game_clock, CHAOS_EMPTY_TOKEN);
+	CHAOS_IMPL_GET_CLOCK(GetGameClock, game_clock, const);
+	CHAOS_IMPL_GET_CLOCK(GetPauseClock, pause_clock, CHAOS_EMPTY_TOKEN);
+	CHAOS_IMPL_GET_CLOCK(GetPauseClock, pause_clock, const);
+#undef CHAOS_IMPL_GET_CLOCK
 
-	chaos::Clock * Game::GetPauseClock()
-	{
-		return pause_clock.get();
+#define CHAOS_IMPL_GET_CLOCK_TIME(func_name, clock_func_name)\
+	double Game::func_name() const\
+	{\
+		chaos::Clock const * clock = clock_func_name();\
+		if (clock == nullptr)\
+			return 0.0;\
+		return clock->GetClockTime();\
 	}
-
-	chaos::Clock const * Game::GetPauseClock() const
-	{
-		return pause_clock.get();
-	}
-
-	double Game::GetMainClockTime() const
-	{
-		chaos::Clock const * clock = GetMainClock();
-		if (clock == nullptr)
-			return 0.0;
-		return clock->GetClockTime();
-	}
-
-	double Game::GetGameClockTime() const
-	{
-		chaos::Clock const * clock = GetGameClock();
-		if (clock == nullptr)
-			return 0.0;
-		return clock->GetClockTime();
-	}
-
-	double Game::GetPauseClockTime() const
-	{
-		chaos::Clock const * clock = GetPauseClock();
-		if (clock == nullptr)
-			return 0.0;
-		return clock->GetClockTime();
-	}
+	CHAOS_IMPL_GET_CLOCK_TIME(GetRootClockTime, GetRootClock);
+	CHAOS_IMPL_GET_CLOCK_TIME(GetMainClockTime, GetMainClock);
+	CHAOS_IMPL_GET_CLOCK_TIME(GetGameClockTime, GetGameClock);
+	CHAOS_IMPL_GET_CLOCK_TIME(GetPauseClockTime, GetPauseClock);
+#undef CHAOS_IMPL_GET_CLOCK_TIME
+#undef CHAOS_EMPTY_TOKEN
 
 	bool Game::LoadBestScore(std::ifstream & file)
 	{

@@ -61,6 +61,14 @@ namespace death
 		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }
 		chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
 
+		// The clocks: 
+		//   - root  clock : the top level clock. never reseted, never paused
+		//   - main  clock : reseted whenever a new game starts/ends. never paused
+		//   - game  clock : reseted whenever a new game starts/ends. paused in MainMenu and Pause
+		//   - pause clock : reseted whenever we enter/leave pause. only running during pause
+
+		/** returns the root time */
+		double GetRootClockTime() const;
 		/** returns the main time */
 		double GetMainClockTime() const;
 		/** returns the game time */
@@ -98,6 +106,16 @@ namespace death
 		chaos::MyGLFW::SingleWindowApplication const * GetApplication() const;
 		/** utility function to get the sound manager */
 		chaos::SoundManager * GetSoundManager();
+
+		/** returns application clock */
+		chaos::Clock * GetApplicationClock();
+		/** returns application clock */
+		chaos::Clock const * GetApplicationClock() const;
+
+		/** returns root clock */
+		chaos::Clock * GetRootClock();
+		/** returns root clock */
+		chaos::Clock const * GetRootClock() const;
 
 		/** returns main clock */
 		chaos::Clock * GetMainClock();
@@ -385,8 +403,11 @@ namespace death
 		char const * game_name = nullptr;
 
 		/** the clocks */
-		boost::intrusive_ptr<chaos::Clock> pause_clock;
+		boost::intrusive_ptr<chaos::Clock> root_clock;
+		boost::intrusive_ptr<chaos::Clock> main_clock;
 		boost::intrusive_ptr<chaos::Clock> game_clock;
+		boost::intrusive_ptr<chaos::Clock> pause_clock;
+		
 
 		/** level data */
 		std::vector<boost::intrusive_ptr<class GameLevel>> levels;

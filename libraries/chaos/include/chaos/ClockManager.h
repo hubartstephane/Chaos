@@ -339,8 +339,8 @@ namespace chaos
 		void Toggle() { paused = !paused; }
 		/** returns the status of the clock */
 		bool IsPaused() const { return paused; }
-		/** Reset the time to 0 */
-		void Reset(){ clock_time = 0.0; }
+		/** Reset the time to 0 and erase all pending events */
+		void Reset(bool remove_events = true);
 
 		/** change the time scale */
 		void SetTimeScale(double new_scale) { time_scale = new_scale; }

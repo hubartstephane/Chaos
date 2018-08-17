@@ -443,4 +443,14 @@ namespace chaos
 
 	}
 
+
+	void Clock::Reset(bool remove_events)
+	{
+		clock_time = 0.0;
+		if (remove_events)
+			RemoveAllPendingEvents();	
+	}
+
+
+
 }; // namespace chaos

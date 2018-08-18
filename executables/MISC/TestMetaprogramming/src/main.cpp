@@ -78,9 +78,33 @@ class T : public chaos::BaseClass<chaos::logger> {};
 //using TAGS = boost::mpl::vector<chaos::logger>;
 
 //class T : public chaos::cond_add_logger<chaos::has_logger_tag<TAGS>, chaos::EmptyClass> {};
+BOOST_DECLARE_HAS_MEMBER(has_xxx, xxx);
 
 class A : public chaos::NamedObject
 {
+
+};
+
+class B
+{
+public:
+
+	typedef int type;
+};
+
+class C
+{
+public:
+
+	void type() {}
+
+};
+
+class D
+{
+public:
+
+	int type;
 
 };
 
@@ -97,6 +121,28 @@ protected:
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+
+	auto a0 = boost::mpl::aux::has_type<int>::value;
+	auto a1 = boost::mpl::aux::has_type<A>::value;
+	auto a2 = boost::mpl::aux::has_type<B>::value;
+	auto a3 = boost::mpl::aux::has_type<C>::value;
+	auto a4 = boost::mpl::aux::has_type<D>::value;
+
+
+	auto b0 = boost::mpl::aux::has_type<int>::type();
+	auto b1 = boost::mpl::aux::has_type<A>::type();
+	auto b2 = boost::mpl::aux::has_type<B>::type();
+	auto b3 = boost::mpl::aux::has_type<C>::type();
+	auto b4 = boost::mpl::aux::has_type<D>::type();
+
+	auto c0 = chaos::meta::get_type<int>::type();
+	auto c1 = chaos::meta::get_type<A>::type();
+	auto c2 = chaos::meta::get_type<B>::type();
+	auto c3 = chaos::meta::get_type<C>::type();
+	auto c4 = chaos::meta::get_type<D>::type();
+
+
+
 	chaos::RunApplication<MyApplication>(argc, argv, env);
 	return 0;
 }

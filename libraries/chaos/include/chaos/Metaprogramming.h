@@ -55,6 +55,16 @@ namespace chaos
 			return src.get();
 		}
 
+		/** if T has a member type, returns (recursively) the type of type. returns T elsewhere */
+		template<typename T, typename HAS_TYPE = typename boost::mpl::aux::has_type<T>::type>
+		struct get_type;
+		/** specialisation get_type */
+		template<typename T>
+		struct get_type<T, boost::mpl::true_> : public get_type<typename T::type> {};
+		/** specialisation get_type */
+		template<typename T>
+		struct get_type<T, boost::mpl::false_> : public boost::mpl::identity<T> {};
+
 
 		/** remove all pointer */
 		template<typename T>

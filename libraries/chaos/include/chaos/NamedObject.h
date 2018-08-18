@@ -21,8 +21,8 @@ namespace chaos
 	public:
 
 		/** search element in a vector */
-		template<typename T, typename P>
-		static T * FindNamedObject(std::vector<P> & elements, TagType tag)
+		template<typename P>
+		static auto FindNamedObject(std::vector<P> & elements, TagType tag) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// maybe tag could math the position in the array
 			size_t count = elements.size();
@@ -38,8 +38,8 @@ namespace chaos
 			return nullptr;
 		}
 		/** search element in a vector */
-		template<typename T, typename P>
-		static T const * FindNamedObject(std::vector<P> const & elements, TagType tag)
+		template<typename P>
+		static auto FindNamedObject(std::vector<P> const & elements, TagType tag) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// maybe tag could math the position in the array
 			size_t count = elements.size();
@@ -55,8 +55,8 @@ namespace chaos
 			return nullptr;
 		}
 		/** search element in a vector */
-		template<typename T, typename P>
-		static T * FindNamedObject(std::vector<P> & elements, char const * in_name)
+		template<typename P>
+		static auto FindNamedObject(std::vector<P> & elements, char const * in_name) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// early exit
 			if (in_name == nullptr)
@@ -69,8 +69,8 @@ namespace chaos
 			return nullptr;
 		}
 		/** search element in a vector */
-		template<typename T, typename P>
-		static T const * FindNamedObject(std::vector<P> const & elements, char const * in_name)
+		template<typename P>
+		static auto FindNamedObject(std::vector<P> const & elements, char const * in_name) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// early exit
 			if (in_name == nullptr)

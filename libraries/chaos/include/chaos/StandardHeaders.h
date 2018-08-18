@@ -109,6 +109,8 @@ T max(T a, T b)
 #include <boost/mpl/apply_wrap.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/tti/has_member_data.hpp>
+#include <boost/convert/detail/has_member.hpp>
+#include <boost/mpl/aux_/has_type.hpp>
 
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>

@@ -18,12 +18,12 @@ namespace chaos
 
 		BitmapEntry const * BitmapSet::GetEntry(char const * name) const
 		{
-			return NamedObject::FindNamedObject<BitmapEntry>(elements, name);
+			return NamedObject::FindNamedObject(elements, name);
 		}
 
 		BitmapEntry const * BitmapSet::GetEntry(TagType tag) const
 		{
-			return NamedObject::FindNamedObject<BitmapEntry>(elements, tag);
+			return NamedObject::FindNamedObject(elements, tag);
 		}
 
 		// ========================================================================
@@ -32,12 +32,12 @@ namespace chaos
 
 		CharacterEntry const * CharacterSet::GetEntry(char const * name) const
 		{
-			return NamedObject::FindNamedObject<CharacterEntry>(elements, tag);
+			return NamedObject::FindNamedObject(elements, tag);
 		}
 
 		CharacterEntry const * CharacterSet::GetEntry(TagType tag) const
 		{
-			return NamedObject::FindNamedObject<CharacterEntry>(elements, tag);
+			return NamedObject::FindNamedObject(elements, tag);
 		}
 
 		// ========================================================================
@@ -240,22 +240,22 @@ namespace chaos
 
 		BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
 		{
-			return NamedObject::FindNamedObject<BitmapSet>(bitmap_sets, name);
+			return NamedObject::FindNamedObject(bitmap_sets, name);
 		}
 
 		BitmapSet const * AtlasBase::GetBitmapSet(TagType tag) const
 		{
-			return NamedObject::FindNamedObject<BitmapSet>(bitmap_sets, tag);
+			return NamedObject::FindNamedObject(bitmap_sets, tag);
 		}
 
 		CharacterSet const * AtlasBase::GetCharacterSet(char const * name) const
 		{
-			return NamedObject::FindNamedObject<CharacterSet>(character_sets, name);
+			return NamedObject::FindNamedObject(character_sets, name);
 		}
 
 		CharacterSet const * AtlasBase::GetCharacterSet(TagType tag) const
 		{
-			return NamedObject::FindNamedObject<CharacterSet>(character_sets, tag);
+			return NamedObject::FindNamedObject(character_sets, tag);
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const

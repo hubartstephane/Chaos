@@ -5,6 +5,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/LogTools.h>
 #include <chaos/JSONTools.h>
+#include <chaos/NamedObject.h>
 
 namespace chaos
 {
@@ -17,18 +18,12 @@ namespace chaos
 
 		BitmapEntry const * BitmapSet::GetEntry(char const * name) const
 		{
-			for (auto const & element : elements)
-				if (element.name == name)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject<BitmapEntry>(elements, name);
 		}
 
 		BitmapEntry const * BitmapSet::GetEntry(TagType tag) const
 		{
-			for (auto const & element : elements)
-				if (element.tag == tag)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject<BitmapEntry>(elements, tag);
 		}
 
 		// ========================================================================
@@ -37,18 +32,12 @@ namespace chaos
 
 		CharacterEntry const * CharacterSet::GetEntry(char const * name) const
 		{
-			for (auto const & element : elements)
-				if (element.name == name)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject<CharacterEntry>(elements, tag);
 		}
 
 		CharacterEntry const * CharacterSet::GetEntry(TagType tag) const
 		{
-			for (auto const & element : elements)
-				if (element.tag == tag)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject<CharacterEntry>(elements, tag);
 		}
 
 		// ========================================================================
@@ -251,46 +240,22 @@ namespace chaos
 
 		BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
 		{
-			for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
-				if (bitmap_set->name == name)
-					return bitmap_set;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject<BitmapSet>(bitmap_sets, name);
 		}
 
 		BitmapSet const * AtlasBase::GetBitmapSet(TagType tag) const
 		{
-			for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
-				if (bitmap_set->tag == tag)
-					return bitmap_set;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject<BitmapSet>(bitmap_sets, tag);
 		}
 
 		CharacterSet const * AtlasBase::GetCharacterSet(char const * name) const
 		{
-			for (auto & character_set_ptr : character_sets)
-			{
-				CharacterSet const * character_set = character_set_ptr.get();
-				if (character_set->name == name)
-					return character_set;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject<CharacterSet>(character_sets, name);
 		}
 
 		CharacterSet const * AtlasBase::GetCharacterSet(TagType tag) const
 		{
-			for (auto & character_set_ptr : character_sets)
-			{
-				CharacterSet const * character_set = character_set_ptr.get();
-				if (character_set->tag == tag)
-					return character_set;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject<CharacterSet>(character_sets, tag);
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const

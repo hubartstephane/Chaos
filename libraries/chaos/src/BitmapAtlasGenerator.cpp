@@ -192,22 +192,27 @@ namespace chaos
 			boost::filesystem::directory_iterator end;
 			for (boost::filesystem::directory_iterator it(resolved_path); it != end; ++it)
 			{
-				if (recursive)
+				if (recursive && boost::filesystem::is_directory(*it))
 				{
-					if (boost::filesystem::is_directory(*it))
-					{
-						AddBitmapFilesFromDirectory(it->path(), recursive);
-						continue;
-					}
+					AddBitmapFilesFromDirectory(it->path(), recursive);
+					continue;
 				}
 				// this will reject files that are not images .. not an error
-				AddBitmapFile(it->path(), nullptr, 0);                           
+				AddBitmap(it->path(), nullptr, 0);                           
 			}
 			return true;
 		}
 
-		bool BitmapSetInput::AddBitmapFile(FilePathParam const & path, char const * name, int tag)
+		bool BitmapSetInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
 		{
+			// shuxxx
+
+
+
+
+
+
+
 			bool result = false;
 
 			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);

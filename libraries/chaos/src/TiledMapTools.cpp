@@ -23,7 +23,7 @@ namespace chaos
 				if (image_layer != nullptr)
 					continue;
 				if (image_layer->image_path.size() > 0)
-					bitmap_set->AddBitmapFile(image_layer->image_path, nullptr, 0);
+					bitmap_set->AddBitmap(image_layer->image_path, nullptr, 0);
 			}
 			return true;
 		}
@@ -40,7 +40,7 @@ namespace chaos
 
 			// the 'single' image for the whole tile set
 			if (tile_set->image_path.size() > 0)
-				bitmap_set->AddBitmapFile(tile_set->image_path, nullptr, 0);
+				bitmap_set->AddBitmap(tile_set->image_path, nullptr, 0);
 
 			// enumerate all TileData
 			size_t tile_count = tile_set->tiles.size();
@@ -50,7 +50,7 @@ namespace chaos
 				if (tile_data == nullptr)
 					continue;
 				if (tile_data->image_path.size() > 0)
-					bitmap_set->AddBitmapFile(tile_data->image_path, nullptr, 0);
+					bitmap_set->AddBitmap(tile_data->image_path, nullptr, 0);
 			}
 			return true;
 		}

@@ -66,7 +66,7 @@ namespace chaos
 			/** insert multiple bitmap before computation */
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 			/** insert a bitmap before computation */
-			bool AddBitmapFile(FilePathParam const & path, char const * name, int tag);
+			bool AddBitmap(FilePathParam const & path, char const * name, int tag);
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
 			/** insert an image inside the atlas */

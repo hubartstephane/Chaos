@@ -570,7 +570,7 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	for (ObjectDefinition const & def : object_definitions)
 	{
 		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(path, def.bitmap_path); // make the image path relative to resource path
-		if (!bitmap_set->AddBitmapFile(image_path, nullptr, def.id))
+		if (!bitmap_set->AddBitmap(image_path, nullptr, def.id))
 			return false;
 	}
 

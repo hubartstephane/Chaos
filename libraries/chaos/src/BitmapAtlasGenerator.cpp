@@ -28,30 +28,12 @@ namespace chaos
 
 		BitmapSetInput * AtlasInput::FindBitmapSetInput(char const * name)
 		{
-			size_t count = bitmap_sets.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				BitmapSetInput * input = bitmap_sets[i];
-				if (input == nullptr)
-					continue;
-				if (input->name == name)
-					return input;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject(bitmap_sets, name);
 		}
 
 		BitmapSetInput const * AtlasInput::FindBitmapSetInput(char const * name) const
 		{
-			size_t count = bitmap_sets.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				BitmapSetInput const * input = bitmap_sets[i];
-				if (input == nullptr)
-					continue;
-				if (input->name == name)
-					return input;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject(bitmap_sets, name);
 		}
 
 		BitmapSetInput * AtlasInput::AddBitmapSet(char const * name)
@@ -73,30 +55,12 @@ namespace chaos
 
 		CharacterSetInput * AtlasInput::FindCharacterSetInput(char const * name)
 		{
-			size_t count = character_sets.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				CharacterSetInput * input = character_sets[i];
-				if (input == nullptr)
-					continue;
-				if (input->name == name)
-					return input;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject(character_sets, name);
 		}
 
 		CharacterSetInput const * AtlasInput::FindCharacterSetInput(char const * name) const
 		{
-			size_t count = character_sets.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				CharacterSetInput const * input = character_sets[i];
-				if (input == nullptr)
-					continue;
-				if (input->name == name)
-					return input;
-			}
-			return nullptr;
+			return NamedObject::FindNamedObject(character_sets, name);
 		}
 
 		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, char const * font_name, FT_Library library, bool release_library, CharacterSetInputParams const & params)
@@ -246,6 +210,37 @@ namespace chaos
 		{
 			bool result = false;
 
+			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+			if (animated_bitmap != nullptr)
+			{
+				int page_count = FreeImage_GetPageCount(animated_bitmap);
+				if (page_count == 1)
+				{
+					page_count = page_count;
+
+				}
+				else if (page_count > 1)
+				{
+					page_count = page_count;
+
+				}
+				else
+				{
+					page_count = page_count;
+
+				}
+
+
+				FreeImage_CloseMultiBitmap(animated_bitmap, 0);
+			}
+
+
+
+
+
+
+
+
 			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
 			if (bitmap != nullptr)
 			{
@@ -262,37 +257,47 @@ namespace chaos
 
 		BitmapEntryInput * BitmapSetInput::FindEntry(int tag)
 		{
-			for (BitmapEntryInput & element : elements)
-				if (element.tag == tag)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject(elements, tag);
 		}
 
 		BitmapEntryInput const * BitmapSetInput::FindEntry(int tag) const 
 		{
-			for (BitmapEntryInput const & element : elements)
-				if (element.tag == tag)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject(elements, tag);
 		}
 
 		BitmapEntryInput * BitmapSetInput::FindEntry(char const * name)
 		{
-			for (BitmapEntryInput & element : elements)
-				if (element.name == name)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject(elements, name);
 		}
 
 		BitmapEntryInput const * BitmapSetInput::FindEntry(char const * name) const 
 		{
-			for (BitmapEntryInput const & element : elements)
-				if (element.name == name)
-					return &element;
-			return nullptr;
+			return NamedObject::FindNamedObject(elements, name);
 		}
 
 		bool BitmapSetInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
+		{
+			BitmapGridAnimationInfo animation_info;
+			if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
+			{
+				animation_info = animation_info;
+			}
+
+
+
+
+			return AddBitmapImpl(name, bitmap, nullptr, release_bitmap, tag);
+		}
+
+		bool BitmapSetInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		{
+
+
+
+			return AddBitmapImpl(name, nullptr, animated_bitmap, release_bitmap, tag);
+		}
+
+		bool BitmapSetInput::AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
 		{
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
@@ -304,6 +309,7 @@ namespace chaos
 
 			new_entry.name = name;
 			new_entry.bitmap = bitmap;
+			new_entry.animated_bitmap = animated_bitmap;
 			new_entry.description = ImageTools::GetImageDescription(bitmap);
 			new_entry.release_bitmap = release_bitmap;
 			new_entry.tag            = tag;

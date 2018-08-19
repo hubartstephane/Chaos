@@ -13,6 +13,125 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 		// ========================================================================
+		// BitmapGridAnimationInfo functions
+		// ========================================================================
+
+		bool BitmapGridAnimationInfo::ParseDigitReverse(char const * str, int & start)
+		{
+			// buffer already consumned
+			if (start < 0)
+				return false;
+			// reverse parsing
+			int i = start;
+			while (i >= 0 && std::isdigit(str[i]))
+				--i;
+			// no figure found ?
+			if (start == i)
+				return false; 
+			start = i;
+			return true;
+		}
+
+		bool BitmapGridAnimationInfo::ParseFromNameReadGridX(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result)
+		{
+			// get a number
+			if (!ParseDigitReverse(name, i)) // k should be just before a number
+				return false;
+			if (i < 1 || name[i] != '_')
+				return false;
+
+			if (name_result != nullptr)
+				*name_result = std::string(name, i);
+
+			result.grid_size.x = i + 1;
+
+			// compute the result (parsing numbers)
+			assert(result.grid_size.x >= 0);
+			assert(result.grid_size.y >= 0);
+
+			result.grid_size.x = atoi(name + result.grid_size.x);
+			result.grid_size.y = atoi(name + result.grid_size.y);
+			if (result.skip_lasts >= 0)
+				result.skip_lasts = atoi(name + result.skip_lasts);
+			else
+				result.skip_lasts = 0;
+
+			return true;
+		}
+
+		bool BitmapGridAnimationInfo::ParseFromNameReadGridY(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result)
+		{
+			// get a number
+			if (!ParseDigitReverse(name, i)) // k should be just before a number
+				return false;
+			if (name[i] != 'x')
+				return false;
+			// store the index of the number
+			result.grid_size.y = i + 1;
+			// try to read x
+			return ParseFromNameReadGridX(name, i - 1, result, name_result);
+		}
+
+		bool BitmapGridAnimationInfo::ParseFromNameReadGridSkip(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result)
+		{
+			// get a number
+			if (!ParseDigitReverse(name, i)) 
+				return false;
+			// we were reading Y in fact
+			if (name[i] == 'x') 
+			{
+				result.grid_size.y = i + 1;
+				return ParseFromNameReadGridX(name, i - 1, result, name_result);
+			}
+			// is it really a skip ?
+			if (name[i] != 's')
+				return false;
+
+			result.skip_lasts = i + 1;
+			return ParseFromNameReadGridY(name, i - 1, result, name_result);
+		}
+
+		bool BitmapGridAnimationInfo::ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result)
+		{
+			// hack the structure to hold 'pointer' on the string that contains the values
+			result.grid_size.x = -1;
+			result.grid_size.y = -1;
+			result.skip_lasts  = -1;
+
+			// the format of an animated grid image can be
+			//   filename_1x4.png
+			//   filename_1x4
+			//   filename_1x4_s4.png
+			//   filename_1x4_s4
+			//
+			//   the minimum suffis size for an animated image is 4 characters (_1x4)
+
+			static int const MIN_PREFIX_SIZE = 4;
+
+			// get the length
+			int len = (int)strlen(name);
+			if (len < 1 + MIN_PREFIX_SIZE) // +1 for at least one character
+				return false;
+
+			// remove the extension if any
+			int i = len;
+			while (i >= 0 && name[i] != '.')
+				--i;
+			if (name[i] == '.') // prefix found => remove it
+			{
+				if (i < 1 + MIN_PREFIX_SIZE) // i is the size of the cut name
+					return false;
+				--i;
+			}
+			else
+			{
+				i = len - 1; // take the whole input
+			}
+			// parsing chain
+			return ParseFromNameReadGridSkip(name, i, result, name_result);
+		}
+
+		// ========================================================================
 		// BitmapSet functions
 		// ========================================================================
 

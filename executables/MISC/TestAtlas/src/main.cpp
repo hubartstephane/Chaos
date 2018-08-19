@@ -142,8 +142,73 @@ class MyApplication : public chaos::Application
 {
 protected:
 
+	void TestGIF()
+	{
+		boost::filesystem::path ip = GetResourcesPath() / "images";
+
+		FIMULTIBITMAP * a1 = chaos::ImageTools::LoadMultiImageFromFile(ip / "moving_gif.gif");
+		FIBITMAP      * b1 = chaos::ImageTools::LoadImageFromFile(ip / "moving_gif.gif");
+
+		FIMULTIBITMAP * a2 = chaos::ImageTools::LoadMultiImageFromFile(ip / "static_gif.gif");
+		FIBITMAP      * b2 = chaos::ImageTools::LoadImageFromFile(ip / "static_gif.gif");
+
+		FIMULTIBITMAP * a3 = chaos::ImageTools::LoadMultiImageFromFile(ip / "logo_jpg.jpg");
+		FIBITMAP      * b3 = chaos::ImageTools::LoadImageFromFile(ip / "logo_jpg.jpg");
+
+		a1 = a1;
+		a2 = a2;
+		a3 = a3;
+
+		b1 = b1;
+		b2 = b2;
+		b3 = b3;
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info1;
+		std::string s1;
+		bool i1 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("truc", info1, &s1);
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info2;
+		std::string s2;
+		bool i2 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("truc.png", info2, &s2);
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info3;
+		std::string s3;
+		bool i3 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("truc.", info3, &s3);
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info4;
+		std::string s4;
+		bool i4 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("_15x12.png", info4, &s4);
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info5;
+		std::string s5;
+		bool i5 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("_15x12s17.png", info5, &s5);
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info6;
+		std::string s6;
+		bool i6 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("o_15x12.png", info6, &s6);
+
+		chaos::BitmapAtlas::BitmapGridAnimationInfo info7;
+		std::string s7;
+		bool i7 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("o_15x12s17.png", info7, &s7);
+
+		i1 = i1;
+		i2 = i2;
+		i3 = i3;
+		i4 = i4;
+		i5 = i5;
+	}
+
 	virtual bool Main() override
 	{
+		TestGIF();
+		
+
+
+
+
+
+
+
 		chaos::MathTools::ResetRandSeed();
 
 		boost::filesystem::path dst_p;

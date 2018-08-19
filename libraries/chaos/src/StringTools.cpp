@@ -5,11 +5,11 @@ namespace chaos
 {
 	namespace StringTools
 	{
-		char const * SkipNumber(char const * c, bool inverted)
+		char const * SkipNumber(char const * c, bool reverse_condition)
 		{
 			while (*c != 0)
 			{
-				if ((*c < '0' || *c > '9') ^ inverted) // all characters already skipped
+				if (!std::isdigit(*c) ^ reverse_condition) // all characters already skipped
 					break;
 				++c;
 			}
@@ -18,7 +18,7 @@ namespace chaos
 
 		int SkipAndAtoi(char const * c)
 		{
-			while (*c != 0 && (*c < '0' || *c > '9'))
+			while (*c != 0 && !std::isdigit(*c))
 				++c;
 			return atoi(c);
 		}

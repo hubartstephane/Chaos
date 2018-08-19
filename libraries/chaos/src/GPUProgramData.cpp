@@ -368,7 +368,7 @@ namespace chaos
 
 			if (_strnicmp(attrib_name, names[i].first, l) == 0) // prefix match
 			{
-				if (attrib_name[l] == 0 || (attrib_name[l] >= '0' && attrib_name[l] <= '9')) // the prefix match
+				if (attrib_name[l] == 0 || std::isdigit(attrib_name[l])) // the prefix match
 				{
 					int semantic = names[i].second;
 					int semantic_index = atoi(attrib_name + l);

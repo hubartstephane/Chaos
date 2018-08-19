@@ -1153,7 +1153,7 @@ death::GameLevel * LudumGame::DoLoadLevel(int level_index, chaos::FilePathParam 
 				continue;
 			}
 			// separator
-			if (c < '0' || c > '9')
+			if (!std::isdigit(c))
 			{
 				line.push_back(LudumLevel::NONE);
 				continue;

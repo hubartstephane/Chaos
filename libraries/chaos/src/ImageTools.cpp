@@ -562,20 +562,24 @@ namespace chaos
 
 	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePathParam const & path)
 	{
-		FIMULTIBITMAP * result = nullptr;
-
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
 		if (buffer != nullptr)
+			return LoadMultiImageFromFile(buffer);
+		return nullptr;
+	}
+
+	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(Buffer<char> buffer)
+	{
+		FIMULTIBITMAP * result = nullptr;
+
+		FIMEMORY * memory = FreeImage_OpenMemory((BYTE*)buffer.data, (DWORD)buffer.bufsize);
+		if (memory != nullptr)
 		{
-			FIMEMORY * memory = FreeImage_OpenMemory((BYTE*)buffer.data, (DWORD)buffer.bufsize);
-			if (memory != nullptr)
-			{
-				FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
+			FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
 
-				result = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
+			result = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
 
-				FreeImage_CloseMemory(memory);
-			}
+			FreeImage_CloseMemory(memory);
 		}
 		return result;
 	}

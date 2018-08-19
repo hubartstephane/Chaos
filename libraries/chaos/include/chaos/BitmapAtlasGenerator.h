@@ -24,9 +24,11 @@ namespace chaos
 			/** the description of the bitmap */
 			ImageDescription description;
 			/** the bitmap */
-			FIBITMAP    * bitmap = nullptr;
+			FIBITMAP * bitmap = nullptr;
+			/** the animated bitmap */
+			FIMULTIBITMAP * animated_bitmap = nullptr;
 			/** whether the bitmap is to be destroyed at the end */
-			bool          release_bitmap = true;
+			bool release_bitmap = true;
 			/** a pointer on the destination entry associated */
 			BitmapEntry * output_entry = nullptr;
 		};
@@ -67,6 +69,8 @@ namespace chaos
 			bool AddBitmapFile(FilePathParam const & path, char const * name, int tag);
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
+			/** insert an image inside the atlas */
+			bool AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
 
 			/** finding an entry */
 			BitmapEntryInput * FindEntry(char const * name);
@@ -76,6 +80,11 @@ namespace chaos
 			BitmapEntryInput * FindEntry(int tag);
 			/** finding an entry */
 			BitmapEntryInput const * FindEntry(int tag) const;
+
+		protected:
+
+			/** internal method to add a bitmap or a multi bitmap */
+			bool AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
 
 		protected:
 

@@ -510,7 +510,7 @@ namespace chaos
 			size_t i = 0;
 			while (str[i] != 0)
 			{
-				if (str[i] >= '0' && str[i] <= '9')
+				if (std::isdigit(str[i]))
 				{
 					terrain_indices[index] = atoi(&str[i]);
 					i = StringTools::SkipNumber(&str[i]) - str;

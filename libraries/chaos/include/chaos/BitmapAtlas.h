@@ -7,23 +7,9 @@
 
 namespace chaos
 {
-#if 0
-	class BitmapEntry
-	{
-		int bitmap_index = -1;
-		int x = 0;
-		int y = 0;
-		int width = 0;
-		int height = 0;
-	};
-
-	class BitmapGridAnimation
-	{
-		glm::ivec2 grid_size;
 
 
-	};
-#endif
+
 
 
 
@@ -50,6 +36,33 @@ namespace chaos
 		};
 
 		using unique_bitmap_ptr = std::unique_ptr<FIBITMAP, FIBITMAPDeleter>;
+
+		/**
+		* BitmapGridAnimationInfo : some bitmaps represent a uniform grid of individual animation frames
+		*/
+
+		class BitmapGridAnimationInfo
+		{
+		public:
+
+			/** the size of the grid */
+			glm::ivec2 grid_size;
+			/** the last images that are not filled */
+			int skip_lasts = 0;
+
+		public:
+
+			/** parsing the the name to extract the grid numbers */
+			static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+			/** utility method */
+			static bool ParseFromNameReadGridX(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+			/** utility method */
+			static bool ParseFromNameReadGridY(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+			/** utility method */
+			static bool ParseFromNameReadGridSkip(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+			/** utility method */
+			static bool ParseDigitReverse(char const * str, int & start);
+		};
 
 		/**
 		* BitmapEntry : represents an Base Bitmap entry in the atlas. Contained in a BitmapSet
@@ -81,6 +94,7 @@ namespace chaos
 			int       bitmap_left = 0; // from 'CharacterMetrics' class
 			int       bitmap_top = 0;
 		};
+
 
 
 		/**

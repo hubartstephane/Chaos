@@ -47,7 +47,7 @@ namespace chaos
 		bool TextureArrayAtlas::DoGenerateTextureArray(Atlas const & atlas)
 		{
 			// create and fill a texture array generator
-			std::vector<unique_bitmap_ptr> const & bitmaps = atlas.GetBitmaps();
+			std::vector<bitmap_ptr> const & bitmaps = atlas.GetBitmaps();
 
 			TextureArrayGenerator generator;
 			for (size_t i = 0; i < bitmaps.size(); ++i)

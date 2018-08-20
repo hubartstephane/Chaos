@@ -4,39 +4,13 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/NamedObject.h>
 #include <chaos/FilePath.h>
+#include <chaos/ImageTools.h>
 
 namespace chaos
 {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	namespace BitmapAtlas
 	{
-
-		/**
-		* FIBITMAPDeleter : deleter for FIBITMAP
-		*/
-
-		struct FIBITMAPDeleter
-		{
-			void operator ()(FIBITMAP * bitmap) { FreeImage_Unload(bitmap); }
-		};
-
-		using unique_bitmap_ptr = std::unique_ptr<FIBITMAP, FIBITMAPDeleter>;
-
 		/**
 		* BitmapGridAnimationInfo : some bitmaps represent a uniform grid of individual animation frames
 		*/
@@ -276,7 +250,7 @@ namespace chaos
 			bool SaveAtlas(FilePathParam const & path) const;
 
 			/** returns the bitmaps contained in the atlas */
-			std::vector<unique_bitmap_ptr> const & GetBitmaps() const { return bitmaps; }
+			std::vector<bitmap_ptr> const & GetBitmaps() const { return bitmaps; }
 
 		protected:
 
@@ -294,7 +268,7 @@ namespace chaos
 		protected:
 
 			/** the bitmaps contained in the atlas */
-			std::vector<unique_bitmap_ptr> bitmaps;
+			std::vector<bitmap_ptr> bitmaps;
 		};
 	}; // namespace BitmapAtlas
 }; // namespace chaos

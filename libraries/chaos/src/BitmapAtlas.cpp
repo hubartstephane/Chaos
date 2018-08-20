@@ -675,7 +675,7 @@ namespace chaos
 							break;
 						}
 					}
-					bitmaps.push_back(std::move(unique_bitmap_ptr(bitmap)));
+					bitmaps.push_back(std::move(bitmap_ptr(bitmap)));
 				}
 				// load the entries
 				if (result)

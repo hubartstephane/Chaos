@@ -490,15 +490,15 @@ namespace chaos
 			return false;
 		}
 
-		std::vector<unique_bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const
+		std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const
 		{		
-			std::vector<unique_bitmap_ptr> result;
+			std::vector<bitmap_ptr> result;
 
 			// generate the bitmaps
 			size_t bitmap_count = atlas_definitions.size();
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{			
-				unique_bitmap_ptr bitmap = unique_bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
+				bitmap_ptr bitmap = bitmap_ptr(ImageTools::GenFreeImage(final_pixel_format, params.atlas_width, params.atlas_height));
 				if (bitmap != nullptr)
 				{
 					// set the background to black

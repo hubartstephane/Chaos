@@ -7,6 +7,59 @@
 
 namespace chaos
 {
+	/**
+	* FIBITMAPDeleter : deleter for FIBITMAP
+	*/
+
+	class FIBITMAPDeleter
+	{
+	public:
+
+		/** constructor */
+		FIBITMAPDeleter(bool in_release = true) :
+			release(in_release) {}
+		/** the destruction method */
+		void operator ()(FIBITMAP * bitmap)
+		{
+			if (release)
+				FreeImage_Unload(bitmap);
+		}
+	protected:
+
+		/** whether the resource is to be destroyed or not */
+		bool release = true;
+	};
+
+	using bitmap_ptr = std::unique_ptr<FIBITMAP, FIBITMAPDeleter>;
+
+	/**
+	* FIBITMAPDeleter : deleter for FIBITMAP
+	*/
+
+	class FIMULTIBITMAPDeleter
+	{
+	public:
+
+		/** constructor */
+		FIMULTIBITMAPDeleter(bool in_release = true) :
+			release(in_release) {}
+		/** the destruction method */
+		void operator ()(FIMULTIBITMAP * multi_bitmap)
+		{
+			if (release)
+				FreeImage_CloseMultiBitmap(multi_bitmap);
+		}
+	protected:
+
+		/** whether the resource is to be destroyed or not */
+		bool release = true;
+	};
+
+	using multibitmap_ptr = std::unique_ptr<FIMULTIBITMAP, FIMULTIBITMAPDeleter>;
+
+
+
+
 	/** 
 	* ImageTools : deserve to load some images
 	*/

@@ -205,7 +205,7 @@ namespace chaos
 			{
 				T element;
 				LoadFromJSON(element, json_entry);
-				elements.push_back(element);
+				elements.push_back(std::move(element));
 			}
 		}
 
@@ -227,11 +227,11 @@ namespace chaos
 		{
 			for (auto const & json_entry : json_entries)
 			{
-				std::unique_ptr<T> element(new T);
+				T * element(new T);
 				if (element == nullptr)
 					continue;
 				LoadFromJSON(*element, json_entry);
-				elements.push_back(element);
+				elements.push_back(std::move(element));
 			}
 		}
 

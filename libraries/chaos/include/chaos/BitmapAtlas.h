@@ -39,12 +39,22 @@ namespace chaos
 		};
 
 		/**
+		* ObjectBase : base object 
+		*/
+
+		class ObjectBase : public NamedObject
+		{
+
+		};
+
+		/**
 		* BitmapInfo : represents an Base Bitmap info in the atlas. Contained in a BitmapSet
 		*/
 
-		class BitmapInfo : public NamedObject
+		class BitmapInfo : public ObjectBase
 		{
 		public:
+
 			/** the atlas in which it is stored in result */
 			int bitmap_index = -1;
 			/** the top-left corner of the bitmap */
@@ -68,6 +78,49 @@ namespace chaos
 			int       bitmap_left = 0; // from 'CharacterMetrics' class
 			int       bitmap_top = 0;
 		};
+
+		/**
+		* FolderInfo : contains bitmpas, font and other folders
+		*/
+
+		class FolderInfo : public ObjectBase
+		{
+		public:
+
+			/** destroy the content of the folder */
+			void Clear();
+
+			/** gets a bitmap info by its name */
+			BitmapInfo const * GetBitmapInfo(char const * name) const;
+			/** gets a bitmap info by its tag */
+			BitmapInfo const * GetBitmapInfo(TagType tag) const;
+
+			/** gets a font info by its name */
+			FontInfo const * GetFontInfo(char const * name) const;
+			/** gets a font info by its tag */
+			FontInfo const * GetFontInfo(TagType tag) const;
+
+			/** gets a folder info by its name */
+			FolderInfo const * GetFolderInfo(char const * name) const;
+			/** gets a folder info by its tag */
+			FolderInfo const * GetFolderInfo(TagType tag) const;
+
+		public:
+
+			/** the sub folders contained in this folder */
+			std::vector<std::unique_ptr<FolderInfo>> folders;
+			/** the bitmaps contained in this folder */
+			std::vector<BitmapInfo> bitmaps;
+			/** the fonts contained in this folder */
+			std::vector<FontInfo> fonts;
+		};
+
+
+
+
+
+
+
 
 
 
@@ -161,14 +214,20 @@ namespace chaos
 			/** the clearing method */
 			virtual void Clear();
 
-			/** Get a bitmap set */
-			BitmapSet const * GetBitmapSet(char const * name) const;
-			/** Get a bitmap set */
-			BitmapSet const * GetBitmapSet(TagType tag) const;
-			/** Get a character set */
+			/** gets a bitmap info by its name */
+			BitmapInfo const * GetBitmapInfo(char const * name) const;
+			/** gets a bitmap info by its tag */
+			BitmapInfo const * GetBitmapInfo(TagType tag) const;
+
+			/** gets a font info by its name */
 			FontInfo const * GetFontInfo(char const * name) const;
-			/** Get a character set */
+			/** gets a font info by its tag */
 			FontInfo const * GetFontInfo(TagType tag) const;
+
+			/** gets a folder info by its name */
+			FolderInfo const * GetFolderInfo(char const * name) const;
+			/** gets a folder info by its tag */
+			FolderInfo const * GetFolderInfo(TagType tag) const;
 
 			/** get the number of bitmap to hold the atlas */
 			size_t GetBitmapCount() const { return atlas_count; }
@@ -222,10 +281,8 @@ namespace chaos
 			int atlas_count = 0;
 			/** atlas dimension */
 			glm::ivec2 dimension = glm::ivec2(0, 0);
-			/** the bitmap sets contained in the atlas */
-			std::vector<std::unique_ptr<BitmapSet>> bitmap_sets;
-			/** the character sets contained in the atlas */
-			std::vector<std::unique_ptr<FontInfo>> font_infos;
+			/** the root folder */
+			FolderInfo root_folder;
 		};
 
 		/**

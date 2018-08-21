@@ -132,6 +132,44 @@ namespace chaos
 		}
 
 		// ========================================================================
+		// FolderInfo functions
+		// ========================================================================
+
+		BitmapInfo const * FolderInfo::GetBitmapInfo(char const * name) const
+		{
+			return NamedObject::FindNamedObject(bitmaps, name);
+		}
+		BitmapInfo const * FolderInfo::GetBitmapInfo(TagType tag) const
+		{
+			return NamedObject::FindNamedObject(bitmaps, tag);
+		}
+
+		FontInfo const * FolderInfo::GetFontInfo(char const * name) const
+		{
+			return NamedObject::FindNamedObject(fonts, name);
+		}
+		FontInfo const * FolderInfo::GetFontInfo(TagType tag) const
+		{
+			return NamedObject::FindNamedObject(fonts, tag);
+		}
+
+		FolderInfo const * FolderInfo::GetFolderInfo(char const * name) const
+		{
+			return NamedObject::FindNamedObject(folders, name);
+		}
+		FolderInfo const * FolderInfo::GetFolderInfo(TagType tag) const
+		{
+			return NamedObject::FindNamedObject(folders, tag);
+		}
+
+		void FolderInfo::Clear()
+		{
+			bitmaps.clear();
+			fonts.clear();
+			folders.clear();
+		}
+
+		// ========================================================================
 		// BitmapSet functions
 		// ========================================================================
 
@@ -346,35 +384,45 @@ namespace chaos
 		// Atlas functions
 		// ========================================================================
 
+		BitmapInfo const * AtlasBase::GetBitmapInfo(char const * name) const
+		{
+			return root_folder.GetBitmapInfo(name);
+		}
+		BitmapInfo const * AtlasBase::GetBitmapInfo(TagType tag) const
+		{
+			return root_folder.GetBitmapInfo(tag);
+		}
+
+		FontInfo const * AtlasBase::GetFontInfo(char const * name) const
+		{
+			return root_folder.GetFontInfo(name);
+		}
+		FontInfo const * AtlasBase::GetFontInfo(TagType tag) const
+		{
+			return root_folder.GetFontInfo(tag);
+		}
+
+		FolderInfo const * AtlasBase::GetFolderInfo(char const * name) const
+		{
+			return root_folder.GetFolderInfo(name);
+		}
+		FolderInfo const * AtlasBase::GetFolderInfo(TagType tag) const
+		{
+			return root_folder.GetFolderInfo(tag);
+		}
+
+
+
+
+
+
 		void AtlasBase::Clear()
 		{
 			// reset members
 			atlas_count = 0;
 			dimension = glm::ivec2(0, 0);
-			// destroy the bitmap sets
-			bitmap_sets.clear();
-			// destroy the character sets
-			font_infos.clear();
-		}
-
-		BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
-		{
-			return NamedObject::FindNamedObject(bitmap_sets, name);
-		}
-
-		BitmapSet const * AtlasBase::GetBitmapSet(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(bitmap_sets, tag);
-		}
-
-		FontInfo const * AtlasBase::GetFontInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(font_infos, name);
-		}
-
-		FontInfo const * AtlasBase::GetFontInfo(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(font_infos, tag);
+			// destroy the root folder
+			root_folder.Clear();
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const

@@ -53,9 +53,9 @@ namespace chaos
     /** Finalize the manager */
     void Finalize();
     /** add a sprite to be rendered */
-    void AddSpriteBitmap(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
+    void AddSpriteBitmap(BitmapAtlas::BitmapInfo const * info, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
     /** add a sprite to be rendered */
-    void AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
+    void AddSpriteCharacter(BitmapAtlas::CharacterInfo const * info, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color);
     /** Display the sprites */
     void Display(GPUProgramProviderBase * uniform_provider);
     /** get the number of sprites in the buffer */
@@ -72,7 +72,7 @@ namespace chaos
     /** internal method to send data to GPU */
     void UpdateGPUVertexBuffer();
     /** internal method to insert a sprite in the buffer */
-    void AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, ParticleCorners const & corners, glm::vec3 const & color);
+    void AddSpriteImpl(BitmapAtlas::BitmapInfo const * info, ParticleCorners const & corners, glm::vec3 const & color);
 
   protected:
 

@@ -42,7 +42,7 @@ namespace chaos
 		/** returns the 2 corners of a particle according to a given position, a size and an hotpoint */
 		ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
 		/** returns the texture coordinates of a particle */
-		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size);
+		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapInfo const & info, glm::vec2 const & atlas_size);
 
 		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
 		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, int skip_last, int image_id);

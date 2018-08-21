@@ -65,17 +65,17 @@ protected:
 		float     particle_size = max(w, h);
 
 		// add characters
-		auto const & character_sets = atlas->GetCharacterSets();
-		if (character_sets.size() > 0)
+		auto const & font_infos = atlas->GetFontInfos();
+		if (font_infos.size() > 0)
 		{
-			chaos::BitmapAtlas::CharacterSet const * character_set = character_sets.at(0).get();
+			chaos::BitmapAtlas::FontInfo const * font_info = font_infos.at(0).get();
 
-			size_t element_count = character_set->elements.size();
+			size_t element_count = font_info->elements.size();
 			if (element_count > 0)
 			{
 				for (int i = 0; i < PARTICLE_COUNT; ++i)
 				{
-					chaos::BitmapAtlas::CharacterEntry const * entry = &character_set->elements[rand() % element_count];
+					chaos::BitmapAtlas::CharacterInfo const * info = &font_info->elements[rand() % element_count];
 
 					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
 					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
@@ -88,7 +88,7 @@ protected:
 					particles->color.b = color.b;
 					particles->color.a = 1.0f;
 
-					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, atlas->GetAtlasDimension());					
+					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, atlas->GetAtlasDimension());
 					++particles;
 				}
 			}
@@ -105,7 +105,7 @@ protected:
 			{
 				for (int i = 0; i < PARTICLE_COUNT; ++i)
 				{
-					chaos::BitmapAtlas::BitmapEntry const * entry = &bitmap_set->elements[rand() % element_count];
+					chaos::BitmapAtlas::BitmapInfo const * info = &bitmap_set->elements[rand() % element_count];
 
 					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
 					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
@@ -114,7 +114,7 @@ protected:
 					particles->bounding_box.half_size = size * 0.5f;
 					particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, atlas->GetAtlasDimension());
+					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, atlas->GetAtlasDimension());
 					++particles;
 				}
 			}

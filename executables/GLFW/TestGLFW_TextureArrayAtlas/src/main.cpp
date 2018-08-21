@@ -27,9 +27,9 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-  chaos::BitmapAtlas::BitmapEntry * ClampBitmapIndexAndGetEntry()
+  chaos::BitmapAtlas::BitmapInfo * ClampBitmapIndexAndGetEntry()
   {
-    chaos::BitmapAtlas::BitmapEntry * result = nullptr;
+    chaos::BitmapAtlas::BitmapInfo * result = nullptr;
 
     if (atlas.GetBitmapCount() != 0)
     {
@@ -45,20 +45,20 @@ protected:
           return &bitmap_set->elements[bitmap_index - count];
 
         count += (int)bitmap_set->elements.size();
-        result = &bitmap_set->elements.back(); // in case of there is not enough entry after, keep a reference on the last
+        result = &bitmap_set->elements.back(); // in case of there is not enough info after, keep a reference on the last
       }
       // go throught all character sets
-      auto const & character_sets = atlas.GetCharacterSets();
-      for (auto const & character_set : character_sets)
+      auto const & font_infos = atlas.GetFontInfos();
+      for (auto const & font_info : font_infos)
       {
-        if (bitmap_index - count < (int)character_set->elements.size())
-          return &character_set->elements[bitmap_index - count];
+        if (bitmap_index - count < (int)font_info->elements.size())
+          return &font_info->elements[bitmap_index - count];
 
-        count += (int)character_set->elements.size();
-        result = &character_set->elements.back(); // in case of there is not enough entry after, keep a reference on the last
+        count += (int)font_info->elements.size();
+        result = &font_info->elements.back(); // in case of there is not enough info after, keep a reference on the last
       }
 
-      // not enough entry : keep the last one (and clamp bitmap_index)
+      // not enough info : keep the last one (and clamp bitmap_index)
       bitmap_index = count;
     }
     return result;
@@ -73,8 +73,8 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    chaos::BitmapAtlas::BitmapEntry * entry = ClampBitmapIndexAndGetEntry();
-    if (entry == nullptr)
+    chaos::BitmapAtlas::BitmapInfo * info = ClampBitmapIndexAndGetEntry();
+    if (info == nullptr)
       return true;
 
     glViewport(0, 0, size.x, size.y);
@@ -94,14 +94,14 @@ protected:
     uniform_provider.AddVariableValue("projection",      projection);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
     uniform_provider.AddVariableValue("local_to_world",  local_to_world);
-    uniform_provider.AddVariableValue("texture_slice", (float)entry->bitmap_index);
+    uniform_provider.AddVariableValue("texture_slice", (float)info->bitmap_index);
 
     uniform_provider.AddVariableTexture("material", atlas.GetTexture());
 
     glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
 
-    glm::vec2 entry_start = glm::vec2((float)entry->x, (float)entry->y);
-    glm::vec2 entry_size  = glm::vec2((float)entry->width, (float)entry->height);
+    glm::vec2 entry_start = glm::vec2((float)info->x, (float)info->y);
+    glm::vec2 entry_size  = glm::vec2((float)info->width, (float)info->height);
     glm::vec2 entry_end   = entry_start + entry_size;
 
     uniform_provider.AddVariableValue("entry_start", entry_start / atlas_dimension);

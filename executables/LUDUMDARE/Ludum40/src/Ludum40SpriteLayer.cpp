@@ -226,14 +226,14 @@ void SpriteLayer::PopulateSpritesWithDef(GameInfo game_info, int & count, Object
 	if (bitmap_set == nullptr)
 		return;
 
-	chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = bitmap_set->GetEntry(def.id);  // texturing info required to get a ratio between width & height
-	if (bitmap_entry == nullptr)
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = bitmap_set->GetInfo(def.id);  // texturing info required to get a ratio between width & height
+	if (bitmap_info == nullptr)
 		return;
 
-	if (bitmap_entry->height <= 0.0f || bitmap_entry->width <= 0.0f) // "empty particles" => ignore
+	if (bitmap_info->height <= 0.0f || bitmap_info->width <= 0.0f) // "empty particles" => ignore
 		return;
 
-	float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_entry->height, bitmap_entry->width);
+	float ratio = chaos::MathTools::CastAndDiv<float>(bitmap_info->height, bitmap_info->width);
 
 	// generate the particles
 	Particle p;
@@ -376,8 +376,8 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 
 		int id = def.id;
 
-		chaos::BitmapAtlas::BitmapEntry const * bitmap_entry = bitmap_set->GetEntry(id); // search data corresponding the the model of this sprite
-		if (bitmap_entry == nullptr)
+		chaos::BitmapAtlas::BitmapInfo const * bitmap_info = bitmap_set->GetInfo(id); // search data corresponding the the model of this sprite
+		if (bitmap_info == nullptr)
 			continue;
 
 		size_t particle_count = particles.size();
@@ -386,7 +386,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 			Particle const & p = particles[j]; // only manage the particles corresponding to this model of sprite
 			if (p.id != id)
 				continue;
-			sprite_manager->AddSpriteBitmap(bitmap_entry, p.position, 2.0f * p.half_size, chaos::Hotpoint::CENTER);
+			sprite_manager->AddSpriteBitmap(bitmap_info, p.position, 2.0f * p.half_size, chaos::Hotpoint::CENTER);
 		}
 	}
 }

@@ -191,14 +191,14 @@ namespace death
 		chaos::JSONTools::GetAttribute(config, font_config_name, font_path);
 
 		// Add the font
-		chaos::BitmapAtlas::CharacterSetInputParams font_params;
+		chaos::BitmapAtlas::FontInfoInputParams font_params;
 		font_params.max_character_width = 64;
 		font_params.max_character_height = 64;
 
-		chaos::BitmapAtlas::CharacterSetInput * character_set1 =
-			input.AddCharacterSet(font_name, font_path.c_str(), nullptr, true, font_params);
+		chaos::BitmapAtlas::FontInfoInput * font_info1 =
+			input.AddFontInfo(font_name, font_path.c_str(), nullptr, true, font_params);
 
-		return (character_set1 != nullptr);
+		return (font_info1 != nullptr);
 	}
 
 	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -700,11 +700,11 @@ namespace death
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const & bitmap_name = it->second.first;
-				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name.c_str());
-				if (entry == nullptr)
+				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(bitmap_name.c_str());
+				if (info == nullptr)
 					continue;
 				std::string const & generator_alias = it->second.second;
-				particle_text_generator->AddBitmap(generator_alias.c_str(), entry);
+				particle_text_generator->AddBitmap(generator_alias.c_str(), info);
 			}
 		}
 
@@ -952,7 +952,7 @@ namespace death
 		params.hotpoint_type = chaos::Hotpoint::CENTER;
 		params.position.y = title_placement_y;
 
-		params.character_set_name = (normal) ? "normal" : "title";
+		params.font_info_name = (normal) ? "normal" : "title";
 
 		return CreateTextParticles(title, params, layer_id);
 	}
@@ -970,7 +970,7 @@ namespace death
 		params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
 		params.position.x = corners.first.x + 20.0f;
 		params.position.y = corners.second.y - Y;
-		params.character_set_name = "normal";
+		params.font_info_name = "normal";
 
 		// format text and create particles
 		std::string str = chaos::StringTools::Printf(format, value);
@@ -1043,7 +1043,7 @@ namespace death
 			params.position.x = 0.0f;
 			params.position.y = -130.0f;
 
-			params.character_set_name = "normal";
+			params.font_info_name = "normal";
 
 			std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
 			result->AddParticles(GameHUD::BEST_SCORE, CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID));

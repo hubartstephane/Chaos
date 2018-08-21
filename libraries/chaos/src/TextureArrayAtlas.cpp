@@ -69,7 +69,7 @@ namespace chaos
 			atlas_count    = atlas.atlas_count;
 			dimension      = atlas.dimension;
 			bitmap_sets    = std::move(atlas.bitmap_sets);
-			character_sets = std::move(atlas.character_sets);
+			font_infos = std::move(atlas.font_infos);
 			return true;		
 		}
 
@@ -91,13 +91,13 @@ namespace chaos
 				bitmap_sets.push_back(std::move(std::unique_ptr<BitmapSet>(bitmap_set)));
 			}
 
-			for (size_t i = 0 ; i < atlas.character_sets.size() ; ++i)
+			for (size_t i = 0 ; i < atlas.font_infos.size() ; ++i)
 			{
-				CharacterSet * character_set = new CharacterSet();
-				if (character_set == nullptr)
+				FontInfo * font_info = new FontInfo();
+				if (font_info == nullptr)
 					break;
-				*character_set = *atlas.character_sets[i];
-				character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
+				*font_info = *atlas.font_infos[i];
+				font_infos.push_back(std::move(std::unique_ptr<FontInfo>(font_info)));
 			}
 			return true;
 		}

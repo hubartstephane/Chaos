@@ -159,14 +159,14 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 			if (tile_info.tiledata != nullptr)
 			{	
-				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
-				if (entry == nullptr)
+				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(tile_info.tiledata->atlas_key.c_str());
+				if (info == nullptr)
 					continue;
 
 				ParticleObject new_particle;
 				new_particle.bounding_box.position = scale * position * tile_size;
 				new_particle.bounding_box.half_size = scale * 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
-				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 				

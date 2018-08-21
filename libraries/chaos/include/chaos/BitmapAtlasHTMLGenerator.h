@@ -47,15 +47,15 @@ namespace chaos
 
 		protected:
 
-			/** utility methods to iterate over BitmapSets or CharacterSets and display their entries informations into HTML */
+			/** utility methods to iterate over BitmapSets or FontInfos and display their entries informations into HTML */
 			template<typename T>
 			static void OutputElementsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count);
 
-			/** utility methods to iterate over BitmapSets or CharacterSets and display the texture rectangle into HTML */
+			/** utility methods to iterate over BitmapSets or FontInfos and display the texture rectangle into HTML */
 			template<typename T>
 			static void OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
 
-			/** utility methods to iterate over BitmapSets or CharacterSets and display the texture filename into HTML */
+			/** utility methods to iterate over BitmapSets or FontInfos and display the texture filename into HTML */
 			template<typename T>
 			static void OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
 		};

@@ -14,10 +14,10 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 		/**
-		* BitmapEntryInput : an entry in BitmapSetInput. Will produced a BitmapEntry in the final Atlas
+		* BitmapInfoInput : an info in BitmapSetInput. Will produced a BitmapInfo in the final Atlas
 		*/
 
-		class BitmapEntryInput : public NamedObject
+		class BitmapInfoInput : public NamedObject
 		{
 		public:
 
@@ -29,15 +29,15 @@ namespace chaos
 			FIMULTIBITMAP * animated_bitmap = nullptr;
 			/** whether the bitmap is to be destroyed at the end */
 			bool release_bitmap = true;
-			/** a pointer on the destination entry associated */
-			BitmapEntry * output_entry = nullptr;
+			/** a pointer on the destination info associated */
+			BitmapInfo * output_info = nullptr;
 		};
 
 		/**
-		* CharacterEntryInput : an entry in CharacterSetInput. Will produced a CharacterEntry in the final Atlas
+		* CharacterInfoInput : an info in FontInfoInput. Will produced a CharacterInfo in the final Atlas
 		*/
 
-		class CharacterEntryInput : public BitmapEntryInput
+		class CharacterInfoInput : public BitmapInfoInput
 		{
 		public:
 			FT_Vector advance{ 0, 0 };
@@ -46,7 +46,7 @@ namespace chaos
 		};
 
 		/**
-		* BitmapSetInput :  this entry will produced in the final Atlas a BitmapSet
+		* BitmapSetInput :  this info will produced in the final Atlas a BitmapSet
 		*/
 
 		class BitmapSetInput : public NamedObject
@@ -72,14 +72,14 @@ namespace chaos
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
 
-			/** finding an entry */
-			BitmapEntryInput * FindEntry(char const * name);
-			/** finding an entry */
-			BitmapEntryInput const * FindEntry(char const * name) const;
-			/** finding an entry */
-			BitmapEntryInput * FindEntry(int tag);
-			/** finding an entry */
-			BitmapEntryInput const * FindEntry(int tag) const;
+			/** finding an info */
+			BitmapInfoInput * FindInfo(char const * name);
+			/** finding an info */
+			BitmapInfoInput const * FindInfo(char const * name) const;
+			/** finding an info */
+			BitmapInfoInput * FindInfo(int tag);
+			/** finding an info */
+			BitmapInfoInput const * FindInfo(int tag) const;
 
 		protected:
 
@@ -89,14 +89,14 @@ namespace chaos
 		protected:
 
 			/** the bitmaps composing the set */
-			std::vector<BitmapEntryInput> elements;
+			std::vector<BitmapInfoInput> elements;
 		};
 
 		/**
-		* CharacterSetInputParams : when inserting CharacterSetInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
+		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
 
-		class CharacterSetInputParams
+		class FontInfoInputParams
 		{
 		public:
 
@@ -109,10 +109,10 @@ namespace chaos
 		};
 
 		/**
-		* CharacterSetInput : this entry will produced in the final Atlas a CharacterSet (a set of glyphs generated from FreeType)
+		* FontInfoInput : this info will produced in the final Atlas a FontInfo (a set of glyphs generated from FreeType)
 		*/
 
-		class CharacterSetInput : public NamedObject
+		class FontInfoInput : public NamedObject
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
@@ -120,9 +120,9 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			CharacterSetInput() = default;
+			FontInfoInput() = default;
 			/** destructor */
-			virtual ~CharacterSetInput();
+			virtual ~FontInfoInput();
 
 		protected:
 
@@ -145,7 +145,7 @@ namespace chaos
 			/** the maximum size of a character */
 			int  face_height = 0;
 			/** the bitmaps composing the set */
-			std::vector<CharacterEntryInput> elements;
+			std::vector<CharacterInfoInput> elements;
 		};
 
 		/**
@@ -173,41 +173,41 @@ namespace chaos
 			BitmapSetInput const * FindBitmapSetInput(char const * name) const;
 
 			/** find a character set from its name */
-			CharacterSetInput * FindCharacterSetInput(char const * name);
+			FontInfoInput * FindFontInfoInput(char const * name);
 			/** find a character set from its name */
-			CharacterSetInput const * FindCharacterSetInput(char const * name) const;
+			FontInfoInput const * FindFontInfoInput(char const * name) const;
 
 			/** Add a character set */
-			CharacterSetInput * AddCharacterSet(
+			FontInfoInput * AddFontInfo(
 				char const * name,
 				char const * font_name,
 				FT_Library library,
 				bool release_library = true,
-				CharacterSetInputParams const & params = CharacterSetInputParams());
+				FontInfoInputParams const & params = FontInfoInputParams());
 			/** Add a character set */
-			CharacterSetInput * AddCharacterSet(
+			FontInfoInput * AddFontInfo(
 				char const * name,
 				FT_Face face,
 				bool release_face = true,
-				CharacterSetInputParams const & params = CharacterSetInputParams());
+				FontInfoInputParams const & params = FontInfoInputParams());
 
 		protected:
 
 			/** internal method to add a character set */
-			CharacterSetInput * AddCharacterSetImpl(
+			FontInfoInput * AddFontInfoImpl(
 				char const * name,
 				FT_Library library,
 				FT_Face face,
 				bool release_library,
 				bool release_face,
-				CharacterSetInputParams const & params);
+				FontInfoInputParams const & params);
 
 		protected:
 
 			/** the bitmap sets */
 			std::vector<BitmapSetInput *> bitmap_sets;
 			/** the character sets */
-			std::vector<CharacterSetInput *> character_sets;
+			std::vector<FontInfoInput *> font_infos;
 		};
 
 		/**
@@ -278,7 +278,7 @@ namespace chaos
 
 		/**
 		* AtlasGenerator :
-		*   each time a BitmapEntry is inserted, the space is split along 4 axis
+		*   each time a BitmapInfo is inserted, the space is split along 4 axis
 		*   this creates a grid of points that serve to new positions for inserting next entries ...
 		*   it select the best position as the one that minimize space at left, right, top and bottom
 		*/
@@ -295,16 +295,16 @@ namespace chaos
 			};
 
 			/** an utility class used to reference all entries in input */
-			using BitmapEntryInputVector = std::vector<BitmapEntryInput *>;
+			using BitmapInfoInputVector = std::vector<BitmapInfoInput *>;
 
 		public:
 
 			/** make destructor virtual */
 			virtual ~AtlasGenerator() = default;
-			/** compute all BitmapEntry positions */
+			/** compute all BitmapInfo positions */
 			bool ComputeResult(AtlasInput const & in_input, Atlas & in_ouput, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 			/** returns a vector with all generated bitmaps (to be deallocated after usage) */
-			std::vector<bitmap_ptr> GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const;
+			std::vector<bitmap_ptr> GenerateBitmaps(BitmapInfoInputVector const & entries, PixelFormat const & final_pixel_format) const;
 			/** create an atlas from a directory into another directory */
 			static bool CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, bool recursive, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 
@@ -316,26 +316,26 @@ namespace chaos
 			Rectangle GetAtlasRectangle() const;
 			/** add padding to a rectangle */
 			Rectangle AddPadding(Rectangle const & r) const;
-			/** returns the rectangle corresponding to the BitmapEntry */
-			Rectangle GetRectangle(BitmapEntry const & entry) const;
+			/** returns the rectangle corresponding to the BitmapInfo */
+			Rectangle GetRectangle(BitmapInfo const & info) const;
 
 			/** fill the entries of the atlas from input (collect all input entries) */
-			void FillAtlasEntriesFromInput(BitmapEntryInputVector & result);
+			void FillAtlasEntriesFromInput(BitmapInfoInputVector & result);
 			/** test whether there is an intersection between each pair of Entries in an atlas */
-			bool EnsureValidResults(BitmapEntryInputVector const & result, std::ostream & stream = std::cout) const;
+			bool EnsureValidResults(BitmapInfoInputVector const & result, std::ostream & stream = std::cout) const;
 			/** test whether rectangle intersects with any of the entries */
-			bool HasIntersectingEntry(BitmapEntryInputVector const & entries, int bitmap_index, Rectangle const & r) const;
+			bool HasIntersectingInfo(BitmapInfoInputVector const & entries, int bitmap_index, Rectangle const & r) const;
 
 			/** the effective function to do the computation */
-			bool DoComputeResult(BitmapEntryInputVector const & entries);
+			bool DoComputeResult(BitmapInfoInputVector const & entries);
 			/** an utility function that gets a score for a rectangle */
-			float GetAdjacentSurface(BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
+			float GetAdjacentSurface(BitmapInfoInput const & info, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
 			/** returns the position (if any) in an atlas withe the best score */
-			float FindBestPositionInAtlas(BitmapEntryInputVector const & entries, BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, int & x, int & y) const;
+			float FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, int & x, int & y) const;
 			/** insert an integer in a vector. keep it ordered */
 			void InsertOrdered(std::vector<int> & v, int value);
 			/** insert a bitmap in an atlas definition */
-			void InsertBitmapInAtlas(BitmapEntry & entry, AtlasDefinition & atlas_def, int x, int y);
+			void InsertBitmapInAtlas(BitmapInfo & info, AtlasDefinition & atlas_def, int x, int y);
 
 			/** an utility function that returns an array with 0.. count - 1*/
 			static std::vector<size_t> CreateIndexTable(size_t count)
@@ -378,7 +378,7 @@ namespace chaos
 
 			/** make destructor virtual */
 			virtual ~TextureArrayAtlasGenerator() = default;
-			/** compute all BitmapEntry positions */
+			/** compute all BitmapInfo positions */
 			TextureArrayAtlas * ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
 		};
 

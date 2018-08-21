@@ -312,7 +312,7 @@ public:
 
 	void OnTiled(chaos::TiledMap::GeometricObjectTile const * object_tile, chaos::TiledMap::TileInfo tile_info);
 	
-	entry
+	info
 
 };
 #endif
@@ -384,15 +384,15 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_info.tiledata == nullptr)
 				continue;
 		
-			chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
-			if (entry == nullptr)
+			chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(tile_info.tiledata->atlas_key.c_str());
+			if (info == nullptr)
 				continue;
 
 			chaos::box2 bounding_box = object_tile->GetBoundingBox();
 
 			ParticleObject new_particle;
 			new_particle.bounding_box = bounding_box;
-			new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+			new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 			new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 			int object_type = 0;
@@ -445,8 +445,8 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata != nullptr)
 			{	
-				chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(tile_info.tiledata->atlas_key.c_str());
-				if (entry == nullptr)
+				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(tile_info.tiledata->atlas_key.c_str());
+				if (info == nullptr)
 					continue;
 
 				glm::ivec2 tile_coord = 
@@ -459,12 +459,12 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 
 				glm::vec2 topright = bottomleft;
 				topright.x += tile_info.tiledata->image_size.x;
-				topright.y -= tile_info.tiledata->image_size.y; // SHUXXX = not clear could be entry->size !!! (but with manual atlas, not a good idea)
+				topright.y -= tile_info.tiledata->image_size.y; // SHUXXX = not clear could be info->size !!! (but with manual atlas, not a good idea)
 
 
 				ParticleObject new_particle;
 				new_particle.bounding_box = chaos::box2(std::make_pair(bottomleft, topright));
-				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 

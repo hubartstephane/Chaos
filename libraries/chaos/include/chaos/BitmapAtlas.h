@@ -39,10 +39,10 @@ namespace chaos
 		};
 
 		/**
-		* BitmapEntry : represents an Base Bitmap entry in the atlas. Contained in a BitmapSet
+		* BitmapInfo : represents an Base Bitmap info in the atlas. Contained in a BitmapSet
 		*/
 
-		class BitmapEntry : public NamedObject
+		class BitmapInfo : public NamedObject
 		{
 		public:
 			/** the atlas in which it is stored in result */
@@ -58,10 +58,10 @@ namespace chaos
 		};
 
 		/**
-		* CharacterEntry : represents a Character entry in the atlas. Contained in a CharacterSet. It is a BitmapEntry with additionnal information
+		* CharacterInfo : represents a Character info in the atlas. Contained in a FontInfo. It is a BitmapInfo with additionnal information
 		*/
 
-		class CharacterEntry : public BitmapEntry
+		class CharacterInfo : public BitmapInfo
 		{
 		public:
 			FT_Vector advance{ 0, 0 };
@@ -72,7 +72,7 @@ namespace chaos
 
 
 		/**
-		* BitmapSet : this is a named group of Bitmaps (BitmapEntry)
+		* BitmapSet : this is a named group of Bitmaps (BitmapInfo)
 		*/
 
 		class BitmapSet : public NamedObject
@@ -81,29 +81,29 @@ namespace chaos
 
 		public:
 
-			/** gets an entry by its name */
-			BitmapEntry const * GetEntry(char const * name) const;
-			/** gets an entry by its tag */
-			BitmapEntry const * GetEntry(TagType tag) const;
+			/** gets an info by its name */
+			BitmapInfo const * GetInfo(char const * name) const;
+			/** gets an info by its tag */
+			BitmapInfo const * GetInfo(TagType tag) const;
 
 			/** the bitmap contained in the bitmap set */
-			std::vector<BitmapEntry> elements;
+			std::vector<BitmapInfo> elements;
 		};
 
 		/**
-		* CharacterSet : this is a named group of Characters (CharacterEntry)
+		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
 
-		class CharacterSet : public NamedObject
+		class FontInfo : public NamedObject
 		{
 			friend class AtlasBase;
 
 		public:
 
-			/** gets an entry by its name */
-			CharacterEntry const * GetEntry(char const * name) const;
-			/** gets an entry by its tag */
-			CharacterEntry const * GetEntry(TagType tag) const;
+			/** gets an info by its name */
+			CharacterInfo const * GetInfo(char const * name) const;
+			/** gets an info by its tag */
+			CharacterInfo const * GetInfo(TagType tag) const;
 
 			/** the max bitmap size in the set */
 			int max_character_width = 0;
@@ -116,32 +116,32 @@ namespace chaos
 			/** the maximum height of a glyph */
 			int face_height = 0;
 			/** the glyph contained in the character set */
-			std::vector<CharacterEntry> elements;
+			std::vector<CharacterInfo> elements;
 		};
 
 		/**
 		* Some JSON utility functions
 		*/
 
-		void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(CharacterEntry & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(BitmapSet const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(BitmapSet & info, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry);
+		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry);
+		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry);
 
 		/**
 		* AtlasBase : base class for Atlas and TextureArrayAtlas
@@ -166,9 +166,9 @@ namespace chaos
 			/** Get a bitmap set */
 			BitmapSet const * GetBitmapSet(TagType tag) const;
 			/** Get a character set */
-			CharacterSet const * GetCharacterSet(char const * name) const;
+			FontInfo const * GetFontInfo(char const * name) const;
 			/** Get a character set */
-			CharacterSet const * GetCharacterSet(TagType tag) const;
+			FontInfo const * GetFontInfo(TagType tag) const;
 
 			/** get the number of bitmap to hold the atlas */
 			size_t GetBitmapCount() const { return atlas_count; }
@@ -181,25 +181,25 @@ namespace chaos
 			/** display information */
 			void OutputInfo(std::ostream & stream) const;
 			/** display information about one named element */
-			static void OutputInfo(NamedObject const & entry, std::ostream & stream);
-			/** display information about one bitmap entry */
-			static void OutputInfo(BitmapEntry const & entry, std::ostream & stream);
-			/** display information about one character entry */
-			static void OutputInfo(CharacterEntry const & entry, std::ostream & stream);
+			static void OutputInfo(NamedObject const & info, std::ostream & stream);
+			/** display information about one bitmap info */
+			static void OutputInfo(BitmapInfo const & info, std::ostream & stream);
+			/** display information about one character info */
+			static void OutputInfo(CharacterInfo const & info, std::ostream & stream);
 
 			/** display information */
 			std::string GetInfoString() const;
 			/** display information about one named object */
-			static std::string GetInfoString(NamedObject const & entry);
-			/** display information about one bitmap entry */
-			static std::string GetInfoString(BitmapEntry const & entry);
-			/** display information about one character entry */
-			static std::string GetInfoString(CharacterEntry const & entry);
+			static std::string GetInfoString(NamedObject const & info);
+			/** display information about one bitmap info */
+			static std::string GetInfoString(BitmapInfo const & info);
+			/** display information about one character info */
+			static std::string GetInfoString(CharacterInfo const & info);
 
 			/** returns the bitmap sets contained in the atlas */
 			std::vector<std::unique_ptr<BitmapSet>> const & GetBitmapSets() const { return bitmap_sets; }
 			/** returns the character set contained in the atlas */
-			std::vector<std::unique_ptr<CharacterSet>> const & GetCharacterSets() const { return character_sets; }
+			std::vector<std::unique_ptr<FontInfo>> const & GetFontInfos() const { return font_infos; }
 
 		protected:
 
@@ -225,11 +225,11 @@ namespace chaos
 			/** the bitmap sets contained in the atlas */
 			std::vector<std::unique_ptr<BitmapSet>> bitmap_sets;
 			/** the character sets contained in the atlas */
-			std::vector<std::unique_ptr<CharacterSet>> character_sets;
+			std::vector<std::unique_ptr<FontInfo>> font_infos;
 		};
 
 		/**
-		* Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & CharacterSet)
+		* Atlas : a group of bitmap and characters, ordered in named set (BitmapSet & FontInfo)
 		*/
 
 		class Atlas : public AtlasBase

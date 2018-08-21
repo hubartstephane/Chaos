@@ -104,23 +104,23 @@ namespace chaos
 		return true;
 	}
 
-	void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
+	void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterInfo const * info, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type, glm::vec3 const & color)
 	{
 		ParticleCorners corners = ParticleTools::GetParticleCorners(position, size, hotpoint_type);
-		AddSpriteImpl(entry, corners, color);
+		AddSpriteImpl(info, corners, color);
 	}
 
-	void SpriteManager::AddSpriteBitmap(BitmapAtlas::BitmapEntry const * entry, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
+	void SpriteManager::AddSpriteBitmap(BitmapAtlas::BitmapInfo const * info, glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
 	{
 		static glm::vec3 const color(1.0f, 1.0f, 1.0f);
 
 		ParticleCorners corners = ParticleTools::GetParticleCorners(position, size, hotpoint_type);
-		AddSpriteImpl(entry, corners, color);
+		AddSpriteImpl(info, corners, color);
 	}
 
-	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapEntry const * entry, ParticleCorners const & corners, glm::vec3 const & color)
+	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapInfo const * info, ParticleCorners const & corners, glm::vec3 const & color)
 	{
-		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*entry, atlas->GetAtlasDimension());
+		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*info, atlas->GetAtlasDimension());
 
 		// extend the array
 		size_t count = sprites.size();

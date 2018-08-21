@@ -44,12 +44,12 @@ namespace chaos
 			return style_stack[style_stack.size() - 1];
 		}
 
-		Style & GeneratorData::PushCharacterSet(BitmapAtlas::CharacterSet const * character_set)
+		Style & GeneratorData::PushFontInfo(BitmapAtlas::FontInfo const * font_info)
 		{
 			// push a copy of previous style, except the character set
 			Style & result = PushDuplicate();
-			if (character_set != nullptr)
-				result.character_set = character_set;
+			if (font_info != nullptr)
+				result.font_info = font_info;
 			return result;
 		}
 
@@ -61,20 +61,20 @@ namespace chaos
 			return result;
 		}
 
-		BitmapAtlas::CharacterSet const * GeneratorData::GetCharacterSetFromName(char const * character_set_name) const
+		BitmapAtlas::FontInfo const * GeneratorData::GetFontInfoFromName(char const * font_info_name) const
 		{
-			BitmapAtlas::CharacterSet const * result = atlas.GetCharacterSet(character_set_name);
+			BitmapAtlas::FontInfo const * result = atlas.GetFontInfo(font_info_name);
 			if (result == nullptr)
 			{
 				// for convenience, if we cannot find the character set, try to use the one on the top of the stack
 				if (style_stack.size() > 0)
-					result = style_stack.back().character_set;
+					result = style_stack.back().font_info;
 				// if we still have no character set, take the very first available
 				if (result == nullptr)
 				{
-					auto const & character_sets = atlas.GetCharacterSets();
-					if (character_sets.size() > 0)
-						result = character_sets[0].get();
+					auto const & font_infos = atlas.GetFontInfos();
+					if (font_infos.size() > 0)
+						result = font_infos[0].get();
 				}
 			}
 			return result;
@@ -83,34 +83,34 @@ namespace chaos
 		void GeneratorData::EmitCharacters(char c, int count)
 		{
 			// get current character set
-			BitmapAtlas::CharacterSet const * character_set = style_stack.back().character_set;
-			if (character_set == nullptr)
+			BitmapAtlas::FontInfo const * font_info = style_stack.back().font_info;
+			if (font_info == nullptr)
 				return;
 
-			// get entry corresponding to the glyph
-			BitmapAtlas::CharacterEntry const * entry = character_set->GetEntry(c);
-			if (entry == nullptr)
+			// get info corresponding to the glyph
+			BitmapAtlas::CharacterInfo const * info = font_info->GetInfo(c);
+			if (info == nullptr)
 				return;
 
 			// emit the characters
 			for (int i = 0; i < count; ++i)
-				EmitCharacter(c, entry, character_set);
+				EmitCharacter(c, info, font_info);
 		}
 
-		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set)
+		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterInfo const * info, BitmapAtlas::FontInfo const * font_info)
 		{
 			Token token;
 			token.character = c;
-			token.character_entry = entry;
-			token.character_set = character_set;
+			token.character_info = info;
+			token.font_info = font_info;
 			token.color = style_stack.back().color;
 			InsertTokenInLine(token);
 		}
 
-		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapEntry const * entry)
+		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapInfo const * info)
 		{
 			Token token;
-			token.bitmap_entry = entry;
+			token.bitmap_info = info;
 			token.color = glm::vec3(1.0f, 1.0f, 1.0f);
 			InsertTokenInLine(token);
 		}
@@ -122,66 +122,66 @@ namespace chaos
 				result.token_lines.push_back(TokenLine());
 
 			// insert the token
-			if (token.bitmap_entry != nullptr)
+			if (token.bitmap_info != nullptr)
 			{
 				// restrict the bitmap to the size of the line
-				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_entry->height);
+				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_info->height);
 
 				glm::vec2 bottomleft_position = bitmap_position + params.bitmap_padding;
 
 				glm::vec2 token_size;
-				token_size.x = factor * (float)token.bitmap_entry->width;
+				token_size.x = factor * (float)token.bitmap_info->width;
 				token_size.y = params.line_height - 2 * params.bitmap_padding.y;
 
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_entry, atlas.GetAtlasDimension());
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_info, atlas.GetAtlasDimension());
 
 				// next bitmap/character data
 				bitmap_position.x    += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 				character_position.x += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 			}
-			else if (token.character_entry != nullptr)
+			else if (token.character_info != nullptr)
 			{
 				// get the descender 
 				Style const & style = style_stack.back();
-				float descender = (style.character_set == nullptr) ? 0.0f : style.character_set->descender;
+				float descender = (style.font_info == nullptr) ? 0.0f : style.font_info->descender;
 
 				// scale the character back to the size of the scanline
-				float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+				float factor = MathTools::CastAndDiv<float>(params.line_height, token.font_info->ascender - token.font_info->descender);
 
 #if 0
 				glm::vec2 bottomleft_position;
 				bottomleft_position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-					(float)(token.character_entry->bitmap_left),
-						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
+					(float)(token.character_info->bitmap_left),
+						(float)(token.character_info->bitmap_top - token.character_info->height) // XXX : -token.character_info->height => to have BOTTOM LEFT CORNER
 					);
 #endif
 
 				glm::vec2 bottomleft_position;
 				bottomleft_position = character_position - glm::vec2(0.0f, descender * factor) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-					(float)(token.character_entry->bitmap_left),
-						(float)(token.character_entry->bitmap_top - token.character_entry->height) // XXX : -token.character_entry->height => to have BOTTOM LEFT CORNER
+					(float)(token.character_info->bitmap_left),
+						(float)(token.character_info->bitmap_top - token.character_info->height) // XXX : -token.character_info->height => to have BOTTOM LEFT CORNER
 					);
 
 				glm::vec2 token_size;
-				token_size.x = factor * (float)token.character_entry->width;
-				token_size.y = factor * (float)token.character_entry->height;
+				token_size.x = factor * (float)token.character_info->width;
+				token_size.y = factor * (float)token.character_info->height;
 
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.character_entry, atlas.GetAtlasDimension());
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.character_info, atlas.GetAtlasDimension());
 
 				// XXX : Some fonts are in italic. The 'advance' cause some 'override' in character bounding box.
 				//       That's great for characters that are near one another
 				//       But with bitmap that causes real overide.
 				//       => that's why we are using two position : 'bitmap_position' & 'character_position'
 				bitmap_position.x = bottomleft_position.x + params.character_spacing + token_size.x;
-				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_entry->advance.x);
+				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_info->advance.x);
 
 			}
 			result.token_lines.back().push_back(token); // insert the token in the last line
@@ -240,10 +240,10 @@ namespace chaos
 						return true;
 					}
 					// character set markup found
-					auto character_set = generator.GetCharacterSet(markup.c_str());
-					if (character_set != nullptr)
+					auto font_info = generator.GetFontInfo(markup.c_str());
+					if (font_info != nullptr)
 					{
-						PushCharacterSet(character_set);
+						PushFontInfo(font_info);
 						return true;
 					}
 					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack 
@@ -268,17 +268,17 @@ namespace chaos
 			return &it->second;
 		}
 
-		BitmapAtlas::BitmapEntry const * Generator::GetBitmap(char const * name) const
+		BitmapAtlas::BitmapInfo const * Generator::GetBitmap(char const * name) const
 		{
 			auto it = bitmaps.find(name);
 			if (it == bitmaps.end())
 				return nullptr;
 			return it->second;
 		}
-		BitmapAtlas::CharacterSet const * Generator::GetCharacterSet(char const * name) const
+		BitmapAtlas::FontInfo const * Generator::GetFontInfo(char const * name) const
 		{
-			auto it = character_sets.find(name);
-			if (it == character_sets.end())
+			auto it = font_infos.find(name);
+			if (it == font_infos.end())
 				return nullptr;
 			return it->second;
 		}
@@ -298,7 +298,7 @@ namespace chaos
 			if (bitmaps.find(name) != bitmaps.end())
 				return false;
 			// ensure name is not already used by a character set
-			if (character_sets.find(name) != character_sets.end())
+			if (font_infos.find(name) != font_infos.end())
 				return false;
 			return true;
 		}
@@ -311,24 +311,24 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::AddCharacterSet(char const * name, char const * font_name)
+		bool Generator::AddFontInfo(char const * name, char const * font_name)
 		{
 			assert(name != nullptr);
 			assert(font_name != nullptr);
 
-			BitmapAtlas::CharacterSet const * character_set = atlas.GetCharacterSet(font_name);
-			if (character_set == nullptr)
+			BitmapAtlas::FontInfo const * font_info = atlas.GetFontInfo(font_name);
+			if (font_info == nullptr)
 				return false;
-			return AddCharacterSet(name, character_set);
+			return AddFontInfo(name, font_info);
 		}
 
-		bool Generator::AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set)
+		bool Generator::AddFontInfo(char const * name, BitmapAtlas::FontInfo const * font_info)
 		{
-			assert(character_set != nullptr);
+			assert(font_info != nullptr);
 
 			if (!IsNameValid(name))
 				return false;
-			character_sets.insert(std::make_pair(name, character_set));
+			font_infos.insert(std::make_pair(name, font_info));
 			return true;
 		}
 
@@ -341,19 +341,19 @@ namespace chaos
 			BitmapAtlas::BitmapSet const * bitmap_set = atlas.GetBitmapSet(bitmap_set_name);
 			if (bitmap_set == nullptr)
 				return false;
-			BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(bitmap_name);
-			if (entry == nullptr)
+			BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(bitmap_name);
+			if (info == nullptr)
 				return false;
-			return AddBitmap(name, entry);
+			return AddBitmap(name, info);
 		}
 
-		bool Generator::AddBitmap(char const * name, BitmapAtlas::BitmapEntry const * entry)
+		bool Generator::AddBitmap(char const * name, BitmapAtlas::BitmapInfo const * info)
 		{
-			assert(entry != nullptr);
+			assert(info != nullptr);
 
 			if (!IsNameValid(name))
 				return false;
-			bitmaps.insert(std::make_pair(name, entry));
+			bitmaps.insert(std::make_pair(name, info));
 			return true;
 		}
 
@@ -369,7 +369,7 @@ namespace chaos
 
 			Style style;
 			style.color = params.default_color;
-			style.character_set = generator_data.GetCharacterSetFromName(params.character_set_name.c_str());
+			style.font_info = generator_data.GetFontInfoFromName(params.font_info_name.c_str());
 			generator_data.style_stack.push_back(style);
 
 			// start the generation
@@ -594,9 +594,9 @@ namespace chaos
 						{
 							if (token.IsWhitespaceCharacter())
 							{
-								float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+								float factor = MathTools::CastAndDiv<float>(params.line_height, token.font_info->ascender - token.font_info->descender);
 
-								whitespace_width += factor * token.character_entry->advance.x;
+								whitespace_width += factor * token.character_info->advance.x;
 							}
 						}
 
@@ -620,9 +620,9 @@ namespace chaos
 							token.corners.topright.x += offset;
 							if (token.IsWhitespaceCharacter())
 							{
-								float factor = MathTools::CastAndDiv<float>(params.line_height, token.character_set->ascender - token.character_set->descender);
+								float factor = MathTools::CastAndDiv<float>(params.line_height, token.font_info->ascender - token.font_info->descender);
 
-								offset += factor * token.character_entry->advance.x * whitespace_scale_factor;
+								offset += factor * token.character_info->advance.x * whitespace_scale_factor;
 							}
 						}
 					}
@@ -657,7 +657,7 @@ namespace chaos
 
 			StyleDefinition style;
 			style.color = params.default_color;
-			style.character_set = generator_data.GetCharacterSetFromName(params.character_set_name.c_str());
+			style.font_info = generator_data.GetFontInfoFromName(params.font_info_name.c_str());
 			generator_data.style_stack.push_back(style);
 
 			// all steps to properly generate the result
@@ -726,7 +726,7 @@ namespace chaos
 				}
 			}
 
-			// copy the entry, if nothing has been done
+			// copy the info, if nothing has been done
 			if (leave_entry_unchanged)
 				result_lines.push_back(line);
 		}
@@ -740,9 +740,9 @@ namespace chaos
 				for (SpriteToken const & token : line)
 				{
 					if (token.IsBitmap())
-						sprite_manager->AddSpriteBitmap(token.bitmap_entry, token.position, token.size, Hotpoint::BOTTOM_LEFT);
+						sprite_manager->AddSpriteBitmap(token.bitmap_info, token.position, token.size, Hotpoint::BOTTOM_LEFT);
 					else if (token.IsVisibleCharacter())
-						sprite_manager->AddSpriteCharacter(token.character_entry, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
+						sprite_manager->AddSpriteCharacter(token.character_info, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
 				}
 			}
 			return true;

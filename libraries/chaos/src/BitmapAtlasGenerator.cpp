@@ -21,9 +21,9 @@ namespace chaos
 				delete(bitmap_set);
 			bitmap_sets.clear();
 			// destroy the fonts
-			for (CharacterSetInput * character_set : character_sets)
-				delete(character_set);
-			character_sets.clear();
+			for (FontInfoInput * font_info : font_infos)
+				delete(font_info);
+			font_infos.clear();
 		}
 
 		BitmapSetInput * AtlasInput::FindBitmapSetInput(char const * name)
@@ -53,17 +53,17 @@ namespace chaos
 			return result;
 		}
 
-		CharacterSetInput * AtlasInput::FindCharacterSetInput(char const * name)
+		FontInfoInput * AtlasInput::FindFontInfoInput(char const * name)
 		{
-			return NamedObject::FindNamedObject(character_sets, name);
+			return NamedObject::FindNamedObject(font_infos, name);
 		}
 
-		CharacterSetInput const * AtlasInput::FindCharacterSetInput(char const * name) const
+		FontInfoInput const * AtlasInput::FindFontInfoInput(char const * name) const
 		{
-			return NamedObject::FindNamedObject(character_sets, name);
+			return NamedObject::FindNamedObject(font_infos, name);
 		}
 
-		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, char const * font_name, FT_Library library, bool release_library, CharacterSetInputParams const & params)
+		FontInfoInput * AtlasInput::AddFontInfo(char const * name, char const * font_name, FT_Library library, bool release_library, FontInfoInputParams const & params)
 		{
 			assert(font_name != nullptr);
 
@@ -86,23 +86,23 @@ namespace chaos
 				return nullptr;
 			}
 
-			return AddCharacterSetImpl(name, library, face, release_library, true, params);
+			return AddFontInfoImpl(name, library, face, release_library, true, params);
 		}
 
-		CharacterSetInput * AtlasInput::AddCharacterSet(char const * name, FT_Face face, bool release_face, CharacterSetInputParams const & params)
+		FontInfoInput * AtlasInput::AddFontInfo(char const * name, FT_Face face, bool release_face, FontInfoInputParams const & params)
 		{
-			return AddCharacterSetImpl(name, nullptr, face, false, release_face, params);
+			return AddFontInfoImpl(name, nullptr, face, false, release_face, params);
 		}
 
-		CharacterSetInput * AtlasInput::AddCharacterSetImpl(char const * name, FT_Library library, FT_Face face, bool release_library, bool release_face, CharacterSetInputParams const & params)
+		FontInfoInput * AtlasInput::AddFontInfoImpl(char const * name, FT_Library library, FT_Face face, bool release_library, bool release_face, FontInfoInputParams const & params)
 		{
 			assert(name != nullptr);
 			assert(face != nullptr);
 
-			CharacterSetInput * result = FindCharacterSetInput(name);
+			FontInfoInput * result = FindFontInfoInput(name);
 			if (result == nullptr)
 			{
-				result = new CharacterSetInput;
+				result = new FontInfoInput;
 				if (result != nullptr)
 				{
 					// set font size
@@ -137,29 +137,29 @@ namespace chaos
 
 					std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
 
-					// transforms each entry of the glyph map into a bitmap
+					// transforms each info of the glyph map into a bitmap
 					for (auto & glyph : glyph_cache)
 					{
 						int w = glyph.second.bitmap_glyph->bitmap.width;
 						int h = glyph.second.bitmap_glyph->bitmap.rows;
 
 						FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::FORMAT_RGBA);
-						if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The entry is still interesting                                          
+						if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
 						{
 							char name[] = " ";
 							sprintf_s(name, 2, "%c", glyph.first);
 
-							CharacterEntryInput entry;
-							entry.name = name;
-							entry.tag = glyph.first;
+							CharacterInfoInput info;
+							info.name = name;
+							info.tag = glyph.first;
 							if (bitmap != nullptr)
-								entry.description = ImageTools::GetImageDescription(bitmap);
-							entry.bitmap = bitmap;
-							entry.release_bitmap = true;
-							entry.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
-							entry.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
-							entry.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
-							result->elements.push_back(std::move(entry));
+								info.description = ImageTools::GetImageDescription(bitmap);
+							info.bitmap = bitmap;
+							info.release_bitmap = true;
+							info.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
+							info.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
+							info.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
+							result->elements.push_back(std::move(info));
 						}
 					}
 
@@ -167,7 +167,7 @@ namespace chaos
 					for (auto & glyph : glyph_cache)
 						FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
 
-					character_sets.push_back(result);
+					font_infos.push_back(result);
 				}
 			}
 			return result;
@@ -179,7 +179,7 @@ namespace chaos
 
 		BitmapSetInput::~BitmapSetInput()
 		{
-			for (BitmapEntryInput & element : elements)
+			for (BitmapInfoInput & element : elements)
 				if (element.release_bitmap)
 					FreeImage_Unload(element.bitmap);
 			elements.clear();
@@ -260,22 +260,22 @@ namespace chaos
 			return result;
 		}
 
-		BitmapEntryInput * BitmapSetInput::FindEntry(int tag)
+		BitmapInfoInput * BitmapSetInput::FindInfo(int tag)
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}
 
-		BitmapEntryInput const * BitmapSetInput::FindEntry(int tag) const 
+		BitmapInfoInput const * BitmapSetInput::FindInfo(int tag) const
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}
 
-		BitmapEntryInput * BitmapSetInput::FindEntry(char const * name)
+		BitmapInfoInput * BitmapSetInput::FindInfo(char const * name)
 		{
 			return NamedObject::FindNamedObject(elements, name);
 		}
 
-		BitmapEntryInput const * BitmapSetInput::FindEntry(char const * name) const 
+		BitmapInfoInput const * BitmapSetInput::FindInfo(char const * name) const
 		{
 			return NamedObject::FindNamedObject(elements, name);
 		}
@@ -307,10 +307,10 @@ namespace chaos
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
 
-			if (FindEntry(name) != nullptr)
+			if (FindInfo(name) != nullptr)
 				return false;
 
-			BitmapEntryInput new_entry;
+			BitmapInfoInput new_entry;
 
 			new_entry.name = name;
 			new_entry.bitmap = bitmap;
@@ -324,10 +324,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// CharacterSetInput implementation
+		// FontInfoInput implementation
 		// ========================================================================
 
-		CharacterSetInput::~CharacterSetInput()
+		FontInfoInput::~FontInfoInput()
 		{
 			// release face
 			if (face != nullptr)
@@ -338,7 +338,7 @@ namespace chaos
 				if (release_library)
 					FT_Done_FreeType(library);
 			// release the bitmaps
-			for (CharacterEntryInput & element : elements)
+			for (CharacterInfoInput & element : elements)
 				if (element.release_bitmap)
 					FreeImage_Unload(element.bitmap);
 		}
@@ -395,13 +395,13 @@ namespace chaos
 			return result;
 		}
 
-		Rectangle AtlasGenerator::GetRectangle(BitmapEntry const & entry) const
+		Rectangle AtlasGenerator::GetRectangle(BitmapInfo const & info) const
 		{
 			Rectangle result;
-			result.x = entry.x;
-			result.y = entry.y;
-			result.width = entry.width;
-			result.height = entry.height;
+			result.x = info.x;
+			result.y = info.y;
+			result.width = info.width;
+			result.height = info.height;
 			return result;
 		}
 
@@ -415,7 +415,7 @@ namespace chaos
 			return result;
 		}
 
-		bool AtlasGenerator::EnsureValidResults(BitmapEntryInputVector const & entries, std::ostream & stream) const
+		bool AtlasGenerator::EnsureValidResults(BitmapInfoInputVector const & entries, std::ostream & stream) const
 		{
 			bool result = true;
 
@@ -423,27 +423,27 @@ namespace chaos
 
 			// individual tests
 			size_t bitmap_count = atlas_definitions.size(); // output->bitmaps not generated yet
-			for (BitmapEntryInput const * entry_input : entries)
+			for (BitmapInfoInput const * entry_input : entries)
 			{
-				BitmapEntry const * entry = entry_input->output_entry;
+				BitmapInfo const * info = entry_input->output_info;
 
-				// test whether all entry's bitmap_index are initialized
-				if (entry->bitmap_index < 0)
+				// test whether all info's bitmap_index are initialized
+				if (info->bitmap_index < 0)
 				{
-					stream << "Entry encoutered with uninitialized bitmap_index : [" << entry->name << " , " << entry->tag << "]" << std::endl;
+					stream << "Info encoutered with uninitialized bitmap_index : [" << info->name << " , " << info->tag << "]" << std::endl;
 					result = false;
 				}
-				// test whether all entry's bitmap_index are valid
-				else if (entry->bitmap_index >= (int)bitmap_count)
+				// test whether all info's bitmap_index are valid
+				else if (info->bitmap_index >= (int)bitmap_count)
 				{
-					stream << "Entry encoutered with invalid bitmap_index : [" << entry->name << " , " << entry->tag << "]" << std::endl;
+					stream << "Info encoutered with invalid bitmap_index : [" << info->name << " , " << info->tag << "]" << std::endl;
 					result = false;
 				}
-				// test whether all entry fits inside the atlas
-				Rectangle r = AddPadding(GetRectangle(*entry));
+				// test whether all info fits inside the atlas
+				Rectangle r = AddPadding(GetRectangle(*info));
 				if (!r.IsFullyInside(atlas_rectangle))
 				{
-					stream << "Entry encoutered that does not fit inside the atlas : [" << entry->name << " , " << entry->tag << "]" << std::endl;
+					stream << "Info encoutered that does not fit inside the atlas : [" << info->name << " , " << info->tag << "]" << std::endl;
 					result = false;
 				}
 			}
@@ -454,8 +454,8 @@ namespace chaos
 			{
 				for (size_t j = i + 1; j < count; ++j)
 				{
-					BitmapEntry const * entry1 = entries[i]->output_entry;
-					BitmapEntry const * entry2 = entries[j]->output_entry;
+					BitmapInfo const * entry1 = entries[i]->output_info;
+					BitmapInfo const * entry2 = entries[j]->output_info;
 
 					if (entry1->bitmap_index != entry2->bitmap_index) // ignore entries not in the same bitmap
 						continue;
@@ -475,22 +475,22 @@ namespace chaos
 			return result;
 		}
 
-		bool AtlasGenerator::HasIntersectingEntry(BitmapEntryInputVector const & entries, int bitmap_index, Rectangle const & r) const
+		bool AtlasGenerator::HasIntersectingInfo(BitmapInfoInputVector const & entries, int bitmap_index, Rectangle const & r) const
 		{
 			Rectangle r1 = AddPadding(r);
 
-			for (BitmapEntryInput const * entry : entries)
+			for (BitmapInfoInput const * info : entries)
 			{
-				if (entry->output_entry->bitmap_index != bitmap_index)
+				if (info->output_info->bitmap_index != bitmap_index)
 					continue;
-				Rectangle r2 = AddPadding(GetRectangle(*entry->output_entry));
+				Rectangle r2 = AddPadding(GetRectangle(*info->output_info));
 				if (r2.IsIntersecting(r1))
 					return true;
 			}
 			return false;
 		}
 
-		std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapEntryInputVector const & entries, PixelFormat const & final_pixel_format) const
+		std::vector<bitmap_ptr> AtlasGenerator::GenerateBitmaps(BitmapInfoInputVector const & entries, PixelFormat const & final_pixel_format) const
 		{		
 			std::vector<bitmap_ptr> result;
 
@@ -507,19 +507,19 @@ namespace chaos
 					ImageTools::FillImageBackground(image_description, params.background_color);
 
 					// copy-paste all entries
-					for (BitmapEntryInput const * entry_input : entries)
+					for (BitmapInfoInput const * entry_input : entries)
 					{
-						BitmapEntry const * entry = entry_input->output_entry;
+						BitmapInfo const * info = entry_input->output_info;
 
-						if (entry->bitmap_index != i)
+						if (info->bitmap_index != i)
 							continue;
 						if (entry_input->bitmap == nullptr)
 							continue;
 
 						// beware, according to FreeImage, the coordinate origin is top-left
 						// to match with OpenGL (bottom-left), we have to make a swap
-						int tex_x = entry->x;
-						int tex_y = params.atlas_height - entry->y - entry->height;
+						int tex_x = info->x;
+						int tex_y = params.atlas_height - info->y - info->height;
 
 						// copy and convert pixels
 						ImageDescription src_desc = ImageTools::GetImageDescription(entry_input->bitmap);
@@ -534,7 +534,7 @@ namespace chaos
 		}
 
 
-		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapEntryInputVector & result)
+		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result)
 		{
 			// fill with bitmap sets 
 			for (BitmapSetInput * bitmap_set_input : input->bitmap_sets)
@@ -547,63 +547,63 @@ namespace chaos
 				size_t count = bitmap_set_input->elements.size();
 				for (size_t i = 0; i < count; ++i)
 				{
-					BitmapEntryInput const & entry_input = bitmap_set_input->elements[i];
+					BitmapInfoInput const & entry_input = bitmap_set_input->elements[i];
 
-					BitmapEntry entry;
-					entry.name = entry_input.name;
-					entry.tag = entry_input.tag;
-					entry.bitmap_index = -1;
-					entry.x = 0;
-					entry.y = 0;
-					entry.width = entry_input.description.width;
-					entry.height = entry_input.description.height;
-					bitmap_set->elements.push_back(std::move(entry));
+					BitmapInfo info;
+					info.name = entry_input.name;
+					info.tag = entry_input.tag;
+					info.bitmap_index = -1;
+					info.x = 0;
+					info.y = 0;
+					info.width = entry_input.description.width;
+					info.height = entry_input.description.height;
+					bitmap_set->elements.push_back(std::move(info));
 				}
-				// once we are sure that Atlas.BitmapSet.Entry vector does not resize anymore, we can store pointers         
+				// once we are sure that Atlas.BitmapSet.info vector does not resize anymore, we can store pointers         
 				for (size_t i = 0; i < count; ++i)
 				{
-					bitmap_set_input->elements[i].output_entry = &bitmap_set->elements[i];
+					bitmap_set_input->elements[i].output_info = &bitmap_set->elements[i];
 					result.push_back(&bitmap_set_input->elements[i]);
 				}
 			}
 
 			// fill with  character sets
-			for (CharacterSetInput * character_set_input : input->character_sets)
+			for (FontInfoInput * font_info_input : input->font_infos)
 			{
-				CharacterSet * character_set = new CharacterSet;
-				character_set->name = character_set_input->name;
-				character_set->tag = character_set_input->tag;
-				character_set->max_character_width = character_set_input->max_character_width;
-				character_set->max_character_height = character_set_input->max_character_height;
-				character_set->ascender = character_set_input->ascender;
-				character_set->descender = character_set_input->descender;
-				character_set->face_height = character_set_input->face_height;
+				FontInfo * font_info = new FontInfo;
+				font_info->name = font_info_input->name;
+				font_info->tag = font_info_input->tag;
+				font_info->max_character_width = font_info_input->max_character_width;
+				font_info->max_character_height = font_info_input->max_character_height;
+				font_info->ascender = font_info_input->ascender;
+				font_info->descender = font_info_input->descender;
+				font_info->face_height = font_info_input->face_height;
 
-				output->character_sets.push_back(std::move(std::unique_ptr<CharacterSet>(character_set)));
+				output->font_infos.push_back(std::move(std::unique_ptr<FontInfo>(font_info)));
 
-				size_t count = character_set_input->elements.size();
+				size_t count = font_info_input->elements.size();
 				for (size_t i = 0; i < count; ++i)
 				{
-					CharacterEntryInput const & entry_input = character_set_input->elements[i];
+					CharacterInfoInput const & entry_input = font_info_input->elements[i];
 
-					CharacterEntry entry;
-					entry.name = entry_input.name;
-					entry.tag = entry_input.tag;
-					entry.bitmap_index = -1;
-					entry.x = 0;
-					entry.y = 0;
-					entry.width = entry_input.description.width;
-					entry.height = entry_input.description.height;
-					entry.advance = entry_input.advance;
-					entry.bitmap_left = entry_input.bitmap_left;
-					entry.bitmap_top = entry_input.bitmap_top;
-					character_set->elements.push_back(std::move(entry));
+					CharacterInfo info;
+					info.name = entry_input.name;
+					info.tag = entry_input.tag;
+					info.bitmap_index = -1;
+					info.x = 0;
+					info.y = 0;
+					info.width = entry_input.description.width;
+					info.height = entry_input.description.height;
+					info.advance = entry_input.advance;
+					info.bitmap_left = entry_input.bitmap_left;
+					info.bitmap_top = entry_input.bitmap_top;
+					font_info->elements.push_back(std::move(info));
 				}
-				// once we are sure that Atlas.CharacterSet.Entry vector does not resize anymore, we can store pointers         
+				// once we are sure that Atlas.FontInfo.info vector does not resize anymore, we can store pointers         
 				for (size_t i = 0; i < count; ++i)
 				{
-					character_set_input->elements[i].output_entry = &character_set->elements[i];
-					result.push_back(&character_set_input->elements[i]);
+					font_info_input->elements[i].output_info = &font_info->elements[i];
+					result.push_back(&font_info_input->elements[i]);
 				}
 			}
 		}
@@ -622,7 +622,7 @@ namespace chaos
 			output->Clear();
 
 			// generate input entries and sets. Collect input entries
-			BitmapEntryInputVector entries;
+			BitmapInfoInputVector entries;
 			FillAtlasEntriesFromInput(entries);
 
 			// search max texture size
@@ -631,17 +631,17 @@ namespace chaos
 
 			PixelFormatMerger pixel_format_merger(params.merge_params);
 
-			for (BitmapEntryInput const * entry : entries)
+			for (BitmapInfoInput const * info : entries)
 			{
-				if (entry->description.width == 0 || entry->description.height == 0) // ignore empty bitmaps
+				if (info->description.width == 0 || info->description.height == 0) // ignore empty bitmaps
 					continue;
 
-				if (max_width < 0 || max_width < entry->description.width)
-					max_width = entry->description.width;
-				if (max_height < 0 || max_height < entry->description.height)
-					max_height = entry->description.height;
+				if (max_width < 0 || max_width < info->description.width)
+					max_width = info->description.width;
+				if (max_height < 0 || max_height < info->description.height)
+					max_height = info->description.height;
 
-				pixel_format_merger.Merge(entry->description.pixel_format); // search the best pixel format
+				pixel_format_merger.Merge(info->description.pixel_format); // search the best pixel format
 			}
 
 			// test whether a correct pixel format has been found
@@ -706,7 +706,7 @@ namespace chaos
 			return false;
 		}
 
-		bool AtlasGenerator::DoComputeResult(BitmapEntryInputVector const & entries)
+		bool AtlasGenerator::DoComputeResult(BitmapInfoInputVector const & entries)
 		{
 			size_t count = entries.size();
 
@@ -714,8 +714,8 @@ namespace chaos
 			float padding = (float)params.atlas_padding;
 			std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2) {
 
-				BitmapEntryInput const * entry_1 = entries[i1];
-				BitmapEntryInput const * entry_2 = entries[i2];
+				BitmapInfoInput const * entry_1 = entries[i1];
+				BitmapInfoInput const * entry_2 = entries[i2];
 
 				if ((entry_1->description.height + padding) * (entry_1->description.width + padding) > (entry_2->description.height + padding) * (entry_2->description.width + padding))
 					return true;
@@ -726,7 +726,7 @@ namespace chaos
 			{
 				size_t entry_index = textures_indirection_table[i];
 
-				BitmapEntryInput const * input_entry = entries[entry_index];
+				BitmapInfoInput const * input_entry = entries[entry_index];
 
 				int   best_atlas_index = -1;
 				int   best_x = 0;
@@ -767,12 +767,12 @@ namespace chaos
 
 					atlas_definitions.push_back(std::move(def));
 				}
-				InsertBitmapInAtlas(*entries[entry_index]->output_entry, atlas_definitions[best_atlas_index], best_x, best_y);
+				InsertBitmapInAtlas(*entries[entry_index]->output_info, atlas_definitions[best_atlas_index], best_x, best_y);
 			}
 			return true;
 		}
 
-		float AtlasGenerator::GetAdjacentSurface(BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
+		float AtlasGenerator::GetAdjacentSurface(BitmapInfoInput const & info, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
 		{
 			float result = 0.0f;
 
@@ -801,29 +801,29 @@ namespace chaos
 					int x1 = atlas_def.split_x[a];
 					int x2 = atlas_def.split_x[u];
 
-					result = ((float)std::abs(x1 - x2)) * ((float)(entry.description.height + 2 * params.atlas_padding));
+					result = ((float)std::abs(x1 - x2)) * ((float)(info.description.height + 2 * params.atlas_padding));
 				}
 				else
 				{
 					int y1 = atlas_def.split_y[b];
 					int y2 = atlas_def.split_y[v];
 
-					result = ((float)std::abs(y1 - y2)) * ((float)(entry.description.width + 2 * params.atlas_padding));
+					result = ((float)std::abs(y1 - y2)) * ((float)(info.description.width + 2 * params.atlas_padding));
 				}
 			}
 
 			return result;
 		}
 
-		float AtlasGenerator::FindBestPositionInAtlas(BitmapEntryInputVector const & entries, BitmapEntryInput const & entry, AtlasDefinition const & atlas_def, int & x, int & y) const
+		float AtlasGenerator::FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, int & x, int & y) const
 		{
 			float result = -1.0f;
 
 			// not enought surface remaining. Early exit
 			unsigned int max_surface = (unsigned int)(params.atlas_width * params.atlas_height);
 			unsigned int entry_surface = (unsigned int)
-				((entry.description.width + 2 * params.atlas_padding) *
-				(entry.description.height + 2 * params.atlas_padding));
+				((info.description.width + 2 * params.atlas_padding) *
+				(info.description.height + 2 * params.atlas_padding));
 
 			if (atlas_def.surface_sum + entry_surface > max_surface)
 				return -1.0f;
@@ -837,25 +837,25 @@ namespace chaos
 
 																	   // find collision table
 			Rectangle r;
-			r.width = entry.description.width;
-			r.height = entry.description.height;
+			r.width = info.description.width;
+			r.height = info.description.height;
 
 			bool any_value = false;
 			for (size_t u = 0; u < x_count; ++u)
 			{
 				int px = atlas_def.split_x[u];
-				if (px + entry.description.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
+				if (px + info.description.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
 					break;
 				r.x = px + params.atlas_padding;
 
 				for (size_t v = 0; v < y_count; ++v)
 				{
 					int py = atlas_def.split_y[v];
-					if (py + entry.description.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
+					if (py + info.description.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
 						break;
 					r.y = py + params.atlas_padding;
 
-					bool collision = HasIntersectingEntry(entries, (int)(&atlas_def - &atlas_definitions[0]), r);
+					bool collision = HasIntersectingInfo(entries, (int)(&atlas_def - &atlas_definitions[0]), r);
 					any_value |= !collision;
 
 					if (!collision)
@@ -874,10 +874,10 @@ namespace chaos
 					size_t index = u * y_count + v;
 					if (!collision_table[index])
 					{
-						float surf1 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, +1, 0);
-						float surf2 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, -1, 0);
-						float surf3 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, 0, +1);
-						float surf4 = GetAdjacentSurface(entry, atlas_def, collision_table, x_count, y_count, u, v, 0, -1);
+						float surf1 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, +1, 0);
+						float surf2 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, -1, 0);
+						float surf3 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, 0, +1);
+						float surf4 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, 0, -1);
 
 						float sum_surf = surf1 + surf2 + surf3 + surf4;
 
@@ -909,21 +909,21 @@ namespace chaos
 			v.insert(it, value);
 		}
 
-		void AtlasGenerator::InsertBitmapInAtlas(BitmapEntry & entry, AtlasDefinition & atlas_def, int x, int y)
+		void AtlasGenerator::InsertBitmapInAtlas(BitmapInfo & info, AtlasDefinition & atlas_def, int x, int y)
 		{
-			entry.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
-			entry.x = x + params.atlas_padding;
-			entry.y = y + params.atlas_padding;
+			info.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
+			info.x = x + params.atlas_padding;
+			info.y = y + params.atlas_padding;
 
 			InsertOrdered(atlas_def.split_x, x);
-			InsertOrdered(atlas_def.split_x, x + entry.width + 2 * params.atlas_padding);
+			InsertOrdered(atlas_def.split_x, x + info.width + 2 * params.atlas_padding);
 
 			InsertOrdered(atlas_def.split_y, y);
-			InsertOrdered(atlas_def.split_y, y + entry.height + 2 * params.atlas_padding);
+			InsertOrdered(atlas_def.split_y, y + info.height + 2 * params.atlas_padding);
 
 			atlas_def.surface_sum += (unsigned int)
-				((entry.width + 2 * params.atlas_padding) *
-				(entry.height + 2 * params.atlas_padding));
+				((info.width + 2 * params.atlas_padding) *
+				(info.height + 2 * params.atlas_padding));
 		}
 
 		bool AtlasGenerator::CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, bool recursive, AtlasGeneratorParams const & in_params)

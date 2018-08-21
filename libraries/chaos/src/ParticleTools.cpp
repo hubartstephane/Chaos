@@ -28,7 +28,7 @@ namespace chaos
 		return result;
 	}
 
-	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapEntry const & entry, glm::vec2 const & atlas_size)
+	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapInfo const & info, glm::vec2 const & atlas_size)
 	{
 		// XXX : for OpenGL, texture 0, 0 is top-level
 		//       in image space (0, 0) is bottom-left
@@ -36,11 +36,11 @@ namespace chaos
 		//
 
 		ParticleTexcoords result;
-		result.bottomleft.x  = MathTools::CastAndDiv<float>(entry.x, atlas_size.x);
-		result.bottomleft.y  = 1.0f - MathTools::CastAndDiv<float>(entry.y + entry.height, atlas_size.y);
-		result.topright.x    = MathTools::CastAndDiv<float>(entry.x + entry.width, atlas_size.x);
-		result.topright.y    = 1.0f - MathTools::CastAndDiv<float>(entry.y, atlas_size.y);
-		result.bitmap_index  = (float)entry.bitmap_index;
+		result.bottomleft.x  = MathTools::CastAndDiv<float>(info.x, atlas_size.x);
+		result.bottomleft.y  = 1.0f - MathTools::CastAndDiv<float>(info.y + info.height, atlas_size.y);
+		result.topright.x    = MathTools::CastAndDiv<float>(info.x + info.width, atlas_size.x);
+		result.topright.y    = 1.0f - MathTools::CastAndDiv<float>(info.y, atlas_size.y);
+		result.bitmap_index  = (float)info.bitmap_index;
 		return result;
 	}
 

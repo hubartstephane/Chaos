@@ -46,7 +46,7 @@ namespace chaos
 			/** the color to use by default */
 			glm::vec3 default_color = glm::vec3(1.0f, 1.0f, 1.0f);
 			/** the font to use by default */
-			std::string character_set_name;
+			std::string font_info_name;
 			/** tab size */
 			int tab_size = 2;
 
@@ -82,9 +82,9 @@ namespace chaos
 		public:
 
 			/** returns true whether the token is a bitmap */
-			bool IsBitmap() const { return (bitmap_entry != nullptr); }
+			bool IsBitmap() const { return (bitmap_info != nullptr); }
 			/** returns true whether the token is a character */
-			bool IsCharacter() const { return (character_entry != nullptr); }
+			bool IsCharacter() const { return (character_info != nullptr); }
 			/** returns true whethe the token correspond to a visible character */
 			bool IsVisibleCharacter() const { return (IsCharacter() && character != ' '); }
 			/** returns true whethe the token correspond to a whitespace character */
@@ -95,11 +95,11 @@ namespace chaos
 			/** the character */
 			char character = 0;
 			/** the corresponding bitmap (if valid) */
-			BitmapAtlas::BitmapEntry const * bitmap_entry = nullptr;
+			BitmapAtlas::BitmapInfo const * bitmap_info = nullptr;
 			/** the corresponding character (if valid) */
-			BitmapAtlas::CharacterEntry const * character_entry = nullptr;
+			BitmapAtlas::CharacterInfo const * character_info = nullptr;
 			/** the corresponding character set (if valid) */
-			BitmapAtlas::CharacterSet const * character_set = nullptr;		
+			BitmapAtlas::FontInfo const * font_info = nullptr;		
 		};
 
 		using TokenLine = std::vector<Token>;
@@ -138,7 +138,7 @@ namespace chaos
 			/** the color to use */
 			glm::vec3 color;
 			/** the character set selected */
-			BitmapAtlas::CharacterSet const * character_set = nullptr;
+			BitmapAtlas::FontInfo const * font_info = nullptr;
 		};
 
 		/**
@@ -161,12 +161,12 @@ namespace chaos
 
 			/** duplicate the last stack element */
 			Style & PushDuplicate();
-			/** add an element on generator stack : keep color, but change current character_set */
-			Style & PushCharacterSet(BitmapAtlas::CharacterSet const * character_set);
-			/** add an element on generator stack : keep character_set, but change current color */
+			/** add an element on generator stack : keep color, but change current font_info */
+			Style & PushFontInfo(BitmapAtlas::FontInfo const * font_info);
+			/** add an element on generator stack : keep font_info, but change current color */
 			Style & PushColor(glm::vec3 const & color);
 			/** get a character set from its name */
-			BitmapAtlas::CharacterSet const * GetCharacterSetFromName(char const * character_set_name) const;
+			BitmapAtlas::FontInfo const * GetFontInfoFromName(char const * font_info_name) const;
 
 
 			/** start the markup */
@@ -174,9 +174,9 @@ namespace chaos
 			/** utility method to emit characters */
 			void EmitCharacters(char c, int count);
 			/** utility method to emit character */
-			void EmitCharacter(char c, BitmapAtlas::CharacterEntry const * entry, BitmapAtlas::CharacterSet const * character_set);
+			void EmitCharacter(char c, BitmapAtlas::CharacterInfo const * info, BitmapAtlas::FontInfo const * font_info);
 			/** emit a bitmap */
-			void EmitBitmap(BitmapAtlas::BitmapEntry const * entry);
+			void EmitBitmap(BitmapAtlas::BitmapInfo const * info);
 			/** end the current line */
 			void EndCurrentLine();
 			/** insert a token */
@@ -219,12 +219,12 @@ namespace chaos
 			/** add a named bitmap in the generator */
 			bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
 			/** add a named bitmap in the generator */
-			bool AddBitmap(char const * name, BitmapAtlas::BitmapEntry const * entry);
+			bool AddBitmap(char const * name, BitmapAtlas::BitmapInfo const * info);
 
 			/** add a named character set in the generator */
-			bool AddCharacterSet(char const * name, char const * font_name);
+			bool AddFontInfo(char const * name, char const * font_name);
 			/** add a named character set in the generator */
-			bool AddCharacterSet(char const * name, BitmapAtlas::CharacterSet const * character_set);
+			bool AddFontInfo(char const * name, BitmapAtlas::FontInfo const * font_info);
 
 			/** the main method to generator a text */
 			bool Generate(char const * text, GeneratorResult & result, GeneratorParams const & params = GeneratorParams());
@@ -239,10 +239,10 @@ namespace chaos
 			/** get a color by its name */
 			glm::vec3 const * GetColor(char const * name) const;
 			/** get a bitmap by its name */
-			BitmapAtlas::BitmapEntry const * GetBitmap(char const * name) const;
+			BitmapAtlas::BitmapInfo const * GetBitmap(char const * name) const;
 			/** get a character set by its name */
-			BitmapAtlas::CharacterSet const * GetCharacterSet(char const * name) const;
-			/** test whether a name is a key in one of the following maps : colors, bitmaps, character_sets */
+			BitmapAtlas::FontInfo const * GetFontInfo(char const * name) const;
+			/** test whether a name is a key in one of the following maps : colors, bitmaps, font_infos */
 			bool IsNameValid(char const * name) const;
 
 			/** compute the bounding box for all sprite generated */
@@ -286,9 +286,9 @@ namespace chaos
 			/** the colors to use, indexed by a joker name */
 			std::map<std::string, glm::vec3, StringTools::ci_less> colors;
 			/** the bitmaps to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::BitmapEntry const *, StringTools::ci_less> bitmaps;
-			/** the character_set to use, indexed by a joker name */
-			std::map<std::string, BitmapAtlas::CharacterSet const *, StringTools::ci_less> character_sets;
+			std::map<std::string, BitmapAtlas::BitmapInfo const *, StringTools::ci_less> bitmaps;
+			/** the font_info to use, indexed by a joker name */
+			std::map<std::string, BitmapAtlas::FontInfo const *, StringTools::ci_less> font_infos;
 
 			/** the atlas where to find entries */
 			BitmapAtlas::AtlasBase const & atlas;

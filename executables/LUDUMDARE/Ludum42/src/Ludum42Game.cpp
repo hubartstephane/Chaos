@@ -208,9 +208,9 @@ bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, ch
 	if (bitmap_set == nullptr)
 		return false;
 
-	// find bitmap entry
-	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(name);
-	if (entry == nullptr)
+	// find bitmap info
+	chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(name);
+	if (info == nullptr)
 		return false;
 
 	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
@@ -226,7 +226,7 @@ bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, ch
 	for (size_t i = 0 ; i < count ; ++i)
 	{
 		ParticleObject & particle = particles[start + i];
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 	}
 
 	return true;

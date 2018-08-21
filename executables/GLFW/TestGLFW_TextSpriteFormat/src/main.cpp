@@ -170,13 +170,13 @@ protected:
 		// parse the text
 		chaos::ParticleTextGenerator::Generator generator(*atlas);
 		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
-		generator.AddBitmap("BUTTON", atlas->GetBitmapSet("bitmap_set1")->GetEntry("xboxControllerButtonA.tga"));
-		generator.AddCharacterSet("C1", atlas->GetCharacterSet("character_set1"));
-		generator.AddCharacterSet("C2", atlas->GetCharacterSet("character_set2"));
+		generator.AddBitmap("BUTTON", atlas->GetBitmapSet("bitmap_set1")->GetInfo("xboxControllerButtonA.tga"));
+		generator.AddFontInfo("C1", atlas->GetFontInfo("font_info1"));
+		generator.AddFontInfo("C2", atlas->GetFontInfo("font_info2"));
 
 		chaos::ParticleTextGenerator::GeneratorParams generator_params;
 		generator_params.line_height = 50;
-		generator_params.character_set_name = "character_set1"; // the default character set
+		generator_params.font_info_name = "font_info1"; // the default character set
 		generator_params.position = glm::vec2(0.0f, 0.0f);
 		generator_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
 		generator_params.character_spacing = 0.0f;

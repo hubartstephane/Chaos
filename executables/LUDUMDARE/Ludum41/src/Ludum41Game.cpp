@@ -534,9 +534,9 @@ chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size
 	if (bitmap_set == nullptr)
 		return nullptr;
 
-	// find bitmap entry
-	chaos::BitmapAtlas::BitmapEntry const * entry = bitmap_set->GetEntry(name);
-	if (entry == nullptr)
+	// find bitmap info
+	chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(name);
+	if (info == nullptr)
 		return nullptr;
 
 	// allocate the objects
@@ -549,7 +549,7 @@ chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size
 	for (size_t i = 0 ; i < count ; ++i)
 	{
 		ParticleObject & particle = particles[i];
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*entry, texture_atlas->GetAtlasDimension());
+		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 	}
 		
 	return allocation;

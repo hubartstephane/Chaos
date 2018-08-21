@@ -35,27 +35,27 @@ namespace chaos
 		template<typename T>
 		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
 		{
-			for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
+			for (auto & element_ptr : elements) // iterate over FontInfo or BitmapSet
 			{
 				T const * element = element_ptr.get();
 
-				for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
+				for (auto const & info : element->elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
 				{
 					// keep only entries of corresponding bitmap 
-					if (entry.bitmap_index != bitmap_index)
+					if (info.bitmap_index != bitmap_index)
 						continue;
 
 					// create a TR element if necessary
 					if (TR == nullptr)
 						TR = html.PushElement(TABLE, "TR");
 
-					// output the element and its entry
+					// output the element and its info
 					tinyxml2::XMLElement * TD = html.PushElement(TR, "TD");
 					tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
 					html.PushText(PRE, "Set\n");
 					html.PushText(PRE, Atlas::GetInfoString(*element).c_str());
-					html.PushText(PRE, "Entry\n");
-					html.PushText(PRE, Atlas::GetInfoString(entry).c_str());
+					html.PushText(PRE, "Info\n");
+					html.PushText(PRE, Atlas::GetInfoString(info).c_str());
 
 					// reset TR every 5 elements
 					if (count % 5 == 4)
@@ -68,22 +68,22 @@ namespace chaos
 		template<typename T>
 		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
-			for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
+			for (auto & element_ptr : elements) // iterate over FontInfo or BitmapSet
 			{
 				T const * element = element_ptr.get();
 
-				for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
+				for (auto const & info : element->elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
 				{
 					// keep only entries of corresponding bitmap 
-					if (entry.bitmap_index != bitmap_index)
+					if (info.bitmap_index != bitmap_index)
 						continue;
 
 					int color = 10 + (rand() % 10) * 10;
 
-					int x = MathTools::CastAndMul<int>(entry.x, scale);
-					int y = MathTools::CastAndMul<int>(entry.y, scale);
-					int w = MathTools::CastAndMul<int>(entry.width, scale);
-					int h = MathTools::CastAndMul<int>(entry.height, scale);
+					int x = MathTools::CastAndMul<int>(info.x, scale);
+					int y = MathTools::CastAndMul<int>(info.y, scale);
+					int w = MathTools::CastAndMul<int>(info.width, scale);
+					int h = MathTools::CastAndMul<int>(info.height, scale);
 
 					char rect_props[1024];
 					sprintf_s(rect_props, 1024, "fill-opacity:0.5;fill:rgb(%d,0,0);stroke-width:1;stroke:rgb(0,0,0)", color);
@@ -101,18 +101,18 @@ namespace chaos
 		template<typename T>
 		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
-			for (auto & element_ptr : elements) // iterate over CharacterSet or BitmapSet
+			for (auto & element_ptr : elements) // iterate over FontInfo or BitmapSet
 			{
 				T const * element = element_ptr.get();
 
-				for (auto const & entry : element->elements) // all elements of CharacterSet or BitmapSet (i.e CharacterEntry or BitmapEntry)
+				for (auto const & info : element->elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
 				{
 					// keep only entries of corresponding bitmap 
-					if (entry.bitmap_index != bitmap_index)
+					if (info.bitmap_index != bitmap_index)
 						continue;
 
-					int x = MathTools::CastAndMul<int>(entry.x, scale) + MathTools::CastAndMul<int>(entry.width, scale * 0.5f);
-					int y = MathTools::CastAndMul<int>(entry.y, scale) + MathTools::CastAndMul<int>(entry.height, scale * 0.5f);
+					int x = MathTools::CastAndMul<int>(info.x, scale) + MathTools::CastAndMul<int>(info.width, scale * 0.5f);
+					int y = MathTools::CastAndMul<int>(info.y, scale) + MathTools::CastAndMul<int>(info.height, scale * 0.5f);
 
 					tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
 					html.PushAttribute(TEXT, "text-anchor", "middle");
@@ -120,7 +120,7 @@ namespace chaos
 					html.PushAttribute(TEXT, "y", y);
 					html.PushAttribute(TEXT, "fill", "white");
 
-					html.PushText(TEXT, entry.name.c_str());
+					html.PushText(TEXT, info.name.c_str());
 				}
 			}
 		}
@@ -183,10 +183,10 @@ namespace chaos
 
 				tinyxml2::XMLElement * TR = nullptr;
 
-				// enumerate all BitmapEntry and CharacterEntry using given bitmap
+				// enumerate all BitmapInfo and CharacterInfo using given bitmap
 				int count = 0;
 				OutputElementsToHTMLDocument(atlas.bitmap_sets, html, TABLE, TR, i, count);
-				OutputElementsToHTMLDocument(atlas.character_sets, html, TABLE, TR, i, count);
+				OutputElementsToHTMLDocument(atlas.font_infos, html, TABLE, TR, i, count);
 
 				if (params.show_textures)
 				{
@@ -205,12 +205,12 @@ namespace chaos
 
 					// Display the rectangles
 					OutputBitmapsToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
-					OutputBitmapsToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
+					OutputBitmapsToHTMLDocument(atlas.font_infos, html, SVG, i, scale);
 					// Display the filenames
 					if (params.show_textures_names)
 					{
 						OutputBitmapFilenamesToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
-						OutputBitmapFilenamesToHTMLDocument(atlas.character_sets, html, SVG, i, scale);
+						OutputBitmapFilenamesToHTMLDocument(atlas.font_infos, html, SVG, i, scale);
 					}
 				}
 			}

@@ -135,26 +135,26 @@ namespace chaos
 		// BitmapSet functions
 		// ========================================================================
 
-		BitmapEntry const * BitmapSet::GetEntry(char const * name) const
+		BitmapInfo const * BitmapSet::GetInfo(char const * name) const
 		{
 			return NamedObject::FindNamedObject(elements, name);
 		}
 
-		BitmapEntry const * BitmapSet::GetEntry(TagType tag) const
+		BitmapInfo const * BitmapSet::GetInfo(TagType tag) const
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}
 
 		// ========================================================================
-		// CharacterSet functions
+		// FontInfo functions
 		// ========================================================================
 
-		CharacterEntry const * CharacterSet::GetEntry(char const * name) const
+		CharacterInfo const * FontInfo::GetInfo(char const * name) const
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}
 
-		CharacterEntry const * CharacterSet::GetEntry(TagType tag) const
+		CharacterInfo const * FontInfo::GetInfo(TagType tag) const
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}
@@ -235,111 +235,111 @@ namespace chaos
 			}
 		}
 
-		void SaveIntoJSON(NamedObject const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry)
 		{
-			json_entry["name"] = entry.name;
-			json_entry["tag"] = entry.tag;
+			json_entry["name"] = info.name;
+			json_entry["tag"] = info.tag;
 		}
 
-		void LoadFromJSON(NamedObject & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry)
 		{
-			JSONTools::GetAttribute(json_entry, "name", entry.name, "");
-			JSONTools::GetAttribute(json_entry, "tag", entry.tag, 0);
+			JSONTools::GetAttribute(json_entry, "name", info.name, "");
+			JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);
 		}
 
-		void SaveIntoJSON(BitmapEntry const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
 		{
-			NamedObject const & named_entry = entry;
-			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+			NamedObject const & named_info = info;
+			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
-			json_entry["bitmap_index"] = entry.bitmap_index;
-			json_entry["x"] = entry.x;
-			json_entry["y"] = entry.y;
-			json_entry["width"] = entry.width;
-			json_entry["height"] = entry.height;
+			json_entry["bitmap_index"] = info.bitmap_index;
+			json_entry["x"] = info.x;
+			json_entry["y"] = info.y;
+			json_entry["width"] = info.width;
+			json_entry["height"] = info.height;
 		}
 
-		void LoadFromJSON(BitmapEntry & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry)
 		{
-			NamedObject & named_entry = entry;
-			LoadFromJSON(named_entry, json_entry); // call 'super' method
+			NamedObject & named_info = info;
+			LoadFromJSON(named_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "bitmap_index", entry.bitmap_index, 0);
-			JSONTools::GetAttribute(json_entry, "x", entry.x, 0);
-			JSONTools::GetAttribute(json_entry, "y", entry.y, 0);
-			JSONTools::GetAttribute(json_entry, "width", entry.width, 0);
-			JSONTools::GetAttribute(json_entry, "height", entry.height, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_index", info.bitmap_index, 0);
+			JSONTools::GetAttribute(json_entry, "x", info.x, 0);
+			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
+			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
+			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
 		}
 
-		void SaveIntoJSON(CharacterEntry const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry)
 		{
-			BitmapEntry const & bitmap_entry = entry;
-			SaveIntoJSON(bitmap_entry, json_entry); // call 'super' method
+			BitmapInfo const & bitmap_info = info;
+			SaveIntoJSON(bitmap_info, json_entry); // call 'super' method
 
-			json_entry["advance_x"] = entry.advance.x;
-			json_entry["advance_y"] = entry.advance.y;
-			json_entry["bitmap_left"] = entry.bitmap_left;
-			json_entry["bitmap_top"] = entry.bitmap_top;
+			json_entry["advance_x"] = info.advance.x;
+			json_entry["advance_y"] = info.advance.y;
+			json_entry["bitmap_left"] = info.bitmap_left;
+			json_entry["bitmap_top"] = info.bitmap_top;
 		}
 
-		void LoadFromJSON(CharacterEntry & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry)
 		{
-			BitmapEntry & bitmap_entry = entry;
-			LoadFromJSON(bitmap_entry, json_entry); // call 'super' method
+			BitmapInfo & bitmap_info = info;
+			LoadFromJSON(bitmap_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "advance_x", entry.advance.x, 0);
-			JSONTools::GetAttribute(json_entry, "advance_y", entry.advance.y, 0);
-			JSONTools::GetAttribute(json_entry, "bitmap_left", entry.bitmap_left, 0);
-			JSONTools::GetAttribute(json_entry, "bitmap_top", entry.bitmap_top, 0);
+			JSONTools::GetAttribute(json_entry, "advance_x", info.advance.x, 0);
+			JSONTools::GetAttribute(json_entry, "advance_y", info.advance.y, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_left", info.bitmap_left, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_top", info.bitmap_top, 0);
 		}
 
-		void SaveIntoJSON(BitmapSet const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(BitmapSet const & info, nlohmann::json & json_entry)
 		{
-			NamedObject const & named_entry = entry;
-			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+			NamedObject const & named_info = info;
+			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
 			json_entry["elements"] = nlohmann::json::array();
-			SaveIntoJSON(entry.elements, json_entry["elements"]);
+			SaveIntoJSON(info.elements, json_entry["elements"]);
 		}
 
-		void LoadFromJSON(BitmapSet & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(BitmapSet & info, nlohmann::json const & json_entry)
 		{
-			NamedObject & named_entry = entry;
-			LoadFromJSON(named_entry, json_entry); // call 'super' method
+			NamedObject & named_info = info;
+			LoadFromJSON(named_info, json_entry); // call 'super' method
 
 			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
 			if (json_elements != nullptr)
-				LoadFromJSON(entry.elements, *json_elements);
+				LoadFromJSON(info.elements, *json_elements);
 		}
 
-		void SaveIntoJSON(CharacterSet const & entry, nlohmann::json & json_entry)
+		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry)
 		{
-			NamedObject const & named_entry = entry;
-			SaveIntoJSON(named_entry, json_entry); // call 'super' method
+			NamedObject const & named_info = info;
+			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
-			json_entry["max_character_width"] = entry.max_character_width;
-			json_entry["max_character_height"] = entry.max_character_height;
-			json_entry["ascender"] = entry.ascender;
-			json_entry["descender"] = entry.descender;
-			json_entry["face_height"] = entry.face_height;
+			json_entry["max_character_width"] = info.max_character_width;
+			json_entry["max_character_height"] = info.max_character_height;
+			json_entry["ascender"] = info.ascender;
+			json_entry["descender"] = info.descender;
+			json_entry["face_height"] = info.face_height;
 			json_entry["elements"] = nlohmann::json::array();
-			SaveIntoJSON(entry.elements, json_entry["elements"]);
+			SaveIntoJSON(info.elements, json_entry["elements"]);
 		}
 
-		void LoadFromJSON(CharacterSet & entry, nlohmann::json const & json_entry)
+		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry)
 		{
-			NamedObject & named_entry = entry;
-			LoadFromJSON(named_entry, json_entry); // call 'super' method
+			NamedObject & named_info = info;
+			LoadFromJSON(named_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "max_character_width", entry.max_character_width, 0);
-			JSONTools::GetAttribute(json_entry, "max_character_height", entry.max_character_height, 0);
-			JSONTools::GetAttribute(json_entry, "ascender", entry.ascender, 0);
-			JSONTools::GetAttribute(json_entry, "descender", entry.descender, 0);
-			JSONTools::GetAttribute(json_entry, "face_height", entry.face_height, 0);
+			JSONTools::GetAttribute(json_entry, "max_character_width", info.max_character_width, 0);
+			JSONTools::GetAttribute(json_entry, "max_character_height", info.max_character_height, 0);
+			JSONTools::GetAttribute(json_entry, "ascender", info.ascender, 0);
+			JSONTools::GetAttribute(json_entry, "descender", info.descender, 0);
+			JSONTools::GetAttribute(json_entry, "face_height", info.face_height, 0);
 
 			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
 			if (json_elements != nullptr)
-				LoadFromJSON(entry.elements, *json_elements);
+				LoadFromJSON(info.elements, *json_elements);
 		}
 
 		// ========================================================================
@@ -354,7 +354,7 @@ namespace chaos
 			// destroy the bitmap sets
 			bitmap_sets.clear();
 			// destroy the character sets
-			character_sets.clear();
+			font_infos.clear();
 		}
 
 		BitmapSet const * AtlasBase::GetBitmapSet(char const * name) const
@@ -367,14 +367,14 @@ namespace chaos
 			return NamedObject::FindNamedObject(bitmap_sets, tag);
 		}
 
-		CharacterSet const * AtlasBase::GetCharacterSet(char const * name) const
+		FontInfo const * AtlasBase::GetFontInfo(char const * name) const
 		{
-			return NamedObject::FindNamedObject(character_sets, name);
+			return NamedObject::FindNamedObject(font_infos, name);
 		}
 
-		CharacterSet const * AtlasBase::GetCharacterSet(TagType tag) const
+		FontInfo const * AtlasBase::GetFontInfo(TagType tag) const
 		{
-			return NamedObject::FindNamedObject(character_sets, tag);
+			return NamedObject::FindNamedObject(font_infos, tag);
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const
@@ -385,18 +385,18 @@ namespace chaos
 			{
 				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
 				if (bitmap_set != nullptr)
-					for (BitmapEntry const & entry : bitmap_set->elements)
-						if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
-							result += (float)(entry.width * entry.height);
+					for (BitmapInfo const & info : bitmap_set->elements)
+						if (info.bitmap_index == bitmap_index || bitmap_index < 0)
+							result += (float)(info.width * info.height);
 			}
 			// surface for character sets
-			for (auto & character_set_ptr : character_sets)
+			for (auto & font_info_ptr : font_infos)
 			{
-				CharacterSet const * character_set = character_set_ptr.get();
-				if (character_set != nullptr)
-					for (CharacterEntry const & entry : character_set->elements)
-						if (entry.bitmap_index == bitmap_index || bitmap_index < 0)
-							result += (float)(entry.width * entry.height);
+				FontInfo const * font_info = font_info_ptr.get();
+				if (font_info != nullptr)
+					for (CharacterInfo const & info : font_info->elements)
+						if (info.bitmap_index == bitmap_index || bitmap_index < 0)
+							result += (float)(info.width * info.height);
 			}
 
 			return result;
@@ -409,46 +409,46 @@ namespace chaos
 			{
 				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
 				if (bitmap_set != nullptr)
-					for (BitmapEntry const & entry : bitmap_set->elements)
-						OutputInfo(entry, stream);
+					for (BitmapInfo const & info : bitmap_set->elements)
+						OutputInfo(info, stream);
 			}
 			// info for character sets
-			for (auto & character_set_ptr : character_sets)
+			for (auto & font_info_ptr : font_infos)
 			{
-				CharacterSet const * character_set = character_set_ptr.get();
-				if (character_set != nullptr)
-					for (CharacterEntry const & entry : character_set->elements)
-						OutputInfo(entry, stream);
+				FontInfo const * font_info = font_info_ptr.get();
+				if (font_info != nullptr)
+					for (CharacterInfo const & info : font_info->elements)
+						OutputInfo(info, stream);
 			}
 		}
 
-		void AtlasBase::OutputInfo(NamedObject const & entry, std::ostream & stream)
+		void AtlasBase::OutputInfo(NamedObject const & info, std::ostream & stream)
 		{
-			stream << "  name         : " << entry.name << std::endl;
-			stream << "  tag          : " << entry.tag << std::endl;
+			stream << "  name         : " << info.name << std::endl;
+			stream << "  tag          : " << info.tag << std::endl;
 		}
 
-		void AtlasBase::OutputInfo(BitmapEntry const & entry, std::ostream & stream)
+		void AtlasBase::OutputInfo(BitmapInfo const & info, std::ostream & stream)
 		{
-			NamedObject const & named_entry = entry;
-			OutputInfo(named_entry, stream);
+			NamedObject const & named_info = info;
+			OutputInfo(named_info, stream);
 
-			stream << "  bitmap_index : " << entry.bitmap_index << std::endl;
-			stream << "  width        : " << entry.width << std::endl;
-			stream << "  height       : " << entry.height << std::endl;
-			stream << "  x            : " << entry.x << std::endl;
-			stream << "  y            : " << entry.y << std::endl;
+			stream << "  bitmap_index : " << info.bitmap_index << std::endl;
+			stream << "  width        : " << info.width << std::endl;
+			stream << "  height       : " << info.height << std::endl;
+			stream << "  x            : " << info.x << std::endl;
+			stream << "  y            : " << info.y << std::endl;
 		}
 
-		void AtlasBase::OutputInfo(CharacterEntry const & entry, std::ostream & stream)
+		void AtlasBase::OutputInfo(CharacterInfo const & info, std::ostream & stream)
 		{
-			BitmapEntry const & bitmap_entry = entry;
-			OutputInfo(bitmap_entry, stream);
+			BitmapInfo const & bitmap_info = info;
+			OutputInfo(bitmap_info, stream);
 
-			stream << "  advance.x    : " << entry.advance.x << std::endl;
-			stream << "  advance.y    : " << entry.advance.y << std::endl;
-			stream << "  bitmap_left  : " << entry.bitmap_left << std::endl;
-			stream << "  bitmap_top   : " << entry.bitmap_top << std::endl;
+			stream << "  advance.x    : " << info.advance.x << std::endl;
+			stream << "  advance.y    : " << info.advance.y << std::endl;
+			stream << "  bitmap_left  : " << info.bitmap_left << std::endl;
+			stream << "  bitmap_top   : " << info.bitmap_top << std::endl;
 		}
 
 		std::string AtlasBase::GetInfoString() const
@@ -458,24 +458,24 @@ namespace chaos
 			return out.str();
 		}
 
-		std::string AtlasBase::GetInfoString(NamedObject const & entry)
+		std::string AtlasBase::GetInfoString(NamedObject const & info)
 		{
 			std::ostringstream out;
-			OutputInfo(entry, out);
+			OutputInfo(info, out);
 			return out.str();
 		}
 
-		std::string AtlasBase::GetInfoString(BitmapEntry const & entry)
+		std::string AtlasBase::GetInfoString(BitmapInfo const & info)
 		{
 			std::ostringstream out;
-			OutputInfo(entry, out);
+			OutputInfo(info, out);
 			return out.str();
 		}
 
-		std::string AtlasBase::GetInfoString(CharacterEntry const & entry)
+		std::string AtlasBase::GetInfoString(CharacterInfo const & info)
 		{
 			std::ostringstream out;
-			OutputInfo(entry, out);
+			OutputInfo(info, out);
 			return out.str();
 		}
 
@@ -610,8 +610,8 @@ namespace chaos
 				// insert the entries
 				json["bitmap_sets"] = nlohmann::json::array();
 				SaveIntoJSON(bitmap_sets, json["bitmap_sets"]);
-				json["character_sets"] = nlohmann::json::array();
-				SaveIntoJSON(character_sets, json["character_sets"]);
+				json["font_infos"] = nlohmann::json::array();
+				SaveIntoJSON(font_infos, json["font_infos"]);
 				// format the JSON into string and insert it into stream
 				stream << json.dump(4);
 				return true;
@@ -683,9 +683,9 @@ namespace chaos
 					nlohmann::json const * json_bitmap_sets = JSONTools::GetStructure(json, "bitmap_sets");
 					if (json_bitmap_sets != nullptr)
 						LoadFromJSON(bitmap_sets, *json_bitmap_sets);
-					nlohmann::json const * json_character_sets = JSONTools::GetStructure(json, "character_sets");
-					if (json_character_sets != nullptr)
-						LoadFromJSON(character_sets, *json_character_sets);
+					nlohmann::json const * json_font_infos = JSONTools::GetStructure(json, "font_infos");
+					if (json_font_infos != nullptr)
+						LoadFromJSON(font_infos, *json_font_infos);
 					atlas_count = (int)bitmaps.size();
 				}			
 			}

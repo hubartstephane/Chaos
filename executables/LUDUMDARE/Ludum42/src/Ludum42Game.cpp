@@ -204,7 +204,7 @@ chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size
 bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count)
 {
 	// find bitmap set
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
+	chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
 	if (bitmap_set == nullptr)
 		return false;
 

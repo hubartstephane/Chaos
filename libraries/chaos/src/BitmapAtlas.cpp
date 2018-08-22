@@ -173,12 +173,12 @@ namespace chaos
 		// FontInfo functions
 		// ========================================================================
 
-		CharacterInfo const * FontInfo::GetInfo(char const * name) const
+		CharacterInfo const * FontInfo::GetCharacterInfo(char const * name) const
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}
 
-		CharacterInfo const * FontInfo::GetInfo(TagType tag) const
+		CharacterInfo const * FontInfo::GetCharacterInfo(TagType tag) const
 		{
 			return NamedObject::FindNamedObject(elements, tag);
 		}

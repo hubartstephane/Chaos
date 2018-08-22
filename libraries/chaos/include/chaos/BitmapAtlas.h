@@ -115,34 +115,6 @@ namespace chaos
 			std::vector<FontInfo> fonts;
 		};
 
-
-
-
-
-
-
-
-
-
-		/**
-		* BitmapSet : this is a named group of Bitmaps (BitmapInfo)
-		*/
-
-		class BitmapSet : public NamedObject
-		{
-			friend class AtlasBase;
-
-		public:
-
-			/** gets an info by its name */
-			BitmapInfo const * GetInfo(char const * name) const;
-			/** gets an info by its tag */
-			BitmapInfo const * GetInfo(TagType tag) const;
-
-			/** the bitmap contained in the bitmap set */
-			std::vector<BitmapInfo> elements;
-		};
-
 		/**
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
@@ -154,9 +126,9 @@ namespace chaos
 		public:
 
 			/** gets an info by its name */
-			CharacterInfo const * GetInfo(char const * name) const;
+			CharacterInfo const * GetCharacterInfo(char const * name) const;
 			/** gets an info by its tag */
-			CharacterInfo const * GetInfo(TagType tag) const;
+			CharacterInfo const * GetCharacterInfo(TagType tag) const;
 
 			/** the max bitmap size in the set */
 			int max_character_width = 0;
@@ -254,11 +226,6 @@ namespace chaos
 			static std::string GetInfoString(BitmapInfo const & info);
 			/** display information about one character info */
 			static std::string GetInfoString(CharacterInfo const & info);
-
-			/** returns the bitmap sets contained in the atlas */
-			std::vector<std::unique_ptr<BitmapSet>> const & GetBitmapSets() const { return bitmap_sets; }
-			/** returns the character set contained in the atlas */
-			std::vector<std::unique_ptr<FontInfo>> const & GetFontInfos() const { return font_infos; }
 
 		protected:
 

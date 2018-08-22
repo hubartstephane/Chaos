@@ -217,7 +217,7 @@ namespace chaos
 			/** add a named color in the generator */
 			bool AddColor(char const * name, glm::vec3 const & color);
 			/** add a named bitmap in the generator */
-			bool AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name);
+			bool AddBitmap(char const * name, char const * folder_name, char const * bitmap_name);
 			/** add a named bitmap in the generator */
 			bool AddBitmap(char const * name, BitmapAtlas::BitmapInfo const * info);
 
@@ -239,7 +239,7 @@ namespace chaos
 			/** get a color by its name */
 			glm::vec3 const * GetColor(char const * name) const;
 			/** get a bitmap by its name */
-			BitmapAtlas::BitmapInfo const * GetBitmap(char const * name) const;
+			BitmapAtlas::BitmapInfo const * GetBitmapInfo(char const * name) const;
 			/** get a character set by its name */
 			BitmapAtlas::FontInfo const * GetFontInfo(char const * name) const;
 			/** test whether a name is a key in one of the following maps : colors, bitmaps, font_infos */

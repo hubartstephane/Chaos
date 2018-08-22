@@ -88,7 +88,7 @@ namespace chaos
 				return;
 
 			// get info corresponding to the glyph
-			BitmapAtlas::CharacterInfo const * info = font_info->GetInfo(c);
+			BitmapAtlas::CharacterInfo const * info = font_info->GetCharacterInfo(c);
 			if (info == nullptr)
 				return;
 
@@ -219,7 +219,7 @@ namespace chaos
 									  // the markup
 					std::string markup = std::string(&text[j], &text[i]);
 					// markup correspond to a bitmap, the current character MUST be ']'
-					auto bitmap = generator.GetBitmap(markup.c_str());
+					auto bitmap = generator.GetBitmapInfo(markup.c_str());
 					if (bitmap != nullptr)
 					{
 						if (c == ']')
@@ -268,7 +268,7 @@ namespace chaos
 			return &it->second;
 		}
 
-		BitmapAtlas::BitmapInfo const * Generator::GetBitmap(char const * name) const
+		BitmapAtlas::BitmapInfo const * Generator::GetBitmapInfo(char const * name) const
 		{
 			auto it = bitmaps.find(name);
 			if (it == bitmaps.end())
@@ -332,16 +332,16 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::AddBitmap(char const * name, char const * bitmap_set_name, char const * bitmap_name)
+		bool Generator::AddBitmap(char const * name, char const * folder_name, char const * bitmap_name)
 		{
 			assert(name != nullptr);
-			assert(bitmap_set_name != nullptr);
+			assert(folder_name != nullptr);
 			assert(bitmap_name != nullptr);
 
-			BitmapAtlas::BitmapSet const * bitmap_set = atlas.GetBitmapSet(bitmap_set_name);
-			if (bitmap_set == nullptr)
+			BitmapAtlas::FolderInfo const * folder_info = atlas.GetFolderInfo(folder_name);
+			if (folder_info == nullptr)
 				return false;
-			BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(bitmap_name);
+			BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name);
 			if (info == nullptr)
 				return false;
 			return AddBitmap(name, info);

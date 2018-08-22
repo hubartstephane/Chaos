@@ -27,7 +27,7 @@ namespace chaos
 				--i;
 			// no figure found ?
 			if (start == i)
-				return false; 
+				return false;
 			start = i;
 			return true;
 		}
@@ -75,10 +75,10 @@ namespace chaos
 		bool BitmapGridAnimationInfo::ParseFromNameReadGridSkip(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result)
 		{
 			// get a number
-			if (!ParseDigitReverse(name, i)) 
+			if (!ParseDigitReverse(name, i))
 				return false;
 			// we were reading Y in fact
-			if (name[i] == 'x') 
+			if (name[i] == 'x')
 			{
 				result.grid_size.y = i + 1;
 				return ParseFromNameReadGridX(name, i - 1, result, name_result);
@@ -96,7 +96,7 @@ namespace chaos
 			// hack the structure to hold 'pointer' on the string that contains the values
 			result.grid_size.x = -1;
 			result.grid_size.y = -1;
-			result.skip_lasts  = -1;
+			result.skip_lasts = -1;
 
 			// the format of an animated grid image can be
 			//   filename_1x4.png
@@ -397,11 +397,6 @@ namespace chaos
 			return root_folder.GetFolderInfo(tag);
 		}
 
-
-
-
-
-
 		void AtlasBase::Clear()
 		{
 			// reset members
@@ -413,28 +408,42 @@ namespace chaos
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const
 		{
-			float result = 0.0f;
-			// surface for the bitmap sets
-			for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
-				if (bitmap_set != nullptr)
-					for (BitmapInfo const & info : bitmap_set->elements)
-						if (info.bitmap_index == bitmap_index || bitmap_index < 0)
-							result += (float)(info.width * info.height);
-			}
-			// surface for character sets
-			for (auto & font_info_ptr : font_infos)
-			{
-				FontInfo const * font_info = font_info_ptr.get();
-				if (font_info != nullptr)
-					for (CharacterInfo const & info : font_info->elements)
-						if (info.bitmap_index == bitmap_index || bitmap_index < 0)
-							result += (float)(info.width * info.height);
-			}
+			return DoComputeSurface(bitmap_index, &root_folder);
+		}
 
+		float AtlasBase::DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const
+		{
+			if (folder_info == nullptr)
+				return 0.0f;
+
+			float result = 0.0f;
+			// surface for the bitmaps in the folder
+			for (BitmapInfo const & bitmap_info : folder_info->bitmaps)
+				if (bitmap_info.bitmap_index == bitmap_index || bitmap_index < 0)
+					result += (float)(bitmap_info.width * bitmap_info.height);
+			// surface for the fonts in the folder
+			for (FontInfo const & font_info : folder_info->fonts)
+				for (CharacterInfo const & character_info : font_info.elements)
+					if (character_info.bitmap_index == bitmap_index || bitmap_index < 0)
+						result += (float)(character_info.width * character_info.height);
+			// recursive calls
+			size_t count = folder_info->folders.size();
+			for (size_t i = 0 ; i < count ; ++i)
+				result += DoComputeSurface(bitmap_index, folder_info->folders[i].get())
 			return result;
 		}
+
+
+
+
+
+
+
+
+
+
+
+
 
 		void AtlasBase::OutputInfo(std::ostream & stream) const
 		{
@@ -562,6 +571,15 @@ namespace chaos
 			OutputGeneralInformation(stream);
 			return stream.str();
 		}
+
+
+
+
+
+
+
+
+
 
 		// ========================================================================
 		// Atlas functions

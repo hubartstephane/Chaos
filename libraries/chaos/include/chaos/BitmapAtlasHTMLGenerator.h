@@ -17,17 +17,17 @@ namespace chaos
 		public:
 
 			/** show the HTML header */
-			bool  show_header{ true };
+			bool  show_header = true;
 			/** show the atlas header */
-			bool  show_atlas_header{ true };
+			bool  show_atlas_header = true;
 			/** show the textures */
-			bool  show_textures{ true };
+			bool  show_textures = true;
 			/** show the texture names */
-			bool  show_textures_names{ true };
+			bool  show_textures_names = true;
 			/** should the document refresh itself ("http-equiv", "refresh") every 2 seconds */
-			bool  auto_refresh{ true };
+			bool  auto_refresh = true;
 			/** a scale factor to be applied for the rendering of the textures (-1 for auto factor dependent on the atlas size) */
-			float texture_scale{ -1.0f };
+			float texture_scale = -1.0f;
 		};
 
 		/**

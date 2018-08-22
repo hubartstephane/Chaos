@@ -148,6 +148,12 @@ namespace chaos
 			std::vector<CharacterInfoInput> elements;
 		};
 
+
+
+
+
+
+
 		/**
 		* AtlasInput : this hold the bitmaps / glyphs used for Atlas generation
 		*/
@@ -164,13 +170,13 @@ namespace chaos
 			/** clearing method */
 			void Clear();
 
-			/** insert a Bitmap set inside the input */
-			BitmapSetInput * AddBitmapSet(char const * name);
+			/** insert a Folder set inside the input */
+			FolderInput * AddFolder(char const * name);
 
 			/** find a bitmap set from its name */
-			BitmapSetInput * FindBitmapSetInput(char const * name);
+			FolderInput * FindBitmapSetInput(char const * name);
 			/** find a bitmap set from its name */
-			BitmapSetInput const * FindBitmapSetInput(char const * name) const;
+			FolderInput const * FindBitmapSetInput(char const * name) const;
 
 			/** find a character set from its name */
 			FontInfoInput * FindFontInfoInput(char const * name);

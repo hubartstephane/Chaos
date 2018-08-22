@@ -229,6 +229,11 @@ namespace chaos
 
 		protected:
 
+			/** utility function to get the surface used in a bitmap */
+			float DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const;
+
+
+
 			/** get a string with the general information */
 			std::string GetGeneralInformationString() const;
 			/** get a string with the surface occupation of all atlas */

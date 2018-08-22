@@ -115,7 +115,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	if (texture_atlas == nullptr)
 		return;
 
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
+	chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
 	if (bitmap_set == nullptr)
 		return;
 
@@ -153,7 +153,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_indice <= 0)
 				continue;
 			
-			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j)); // shuxxx +tile_layer->offset);
+			glm::vec2 position = chaos::GLMTools::RecastVector<glm::vec2>(tile_layer->GetTileCoordinate(j)); //  +tile_layer->offset);
 			position.y = -position.y;
 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);

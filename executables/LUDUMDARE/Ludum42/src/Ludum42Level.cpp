@@ -341,8 +341,8 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	if (texture_atlas == nullptr)
 		return;
 
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
-	if (bitmap_set == nullptr)
+	chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+	if (folder_info == nullptr)
 		return;
 
 	// compute the new world
@@ -384,7 +384,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			if (tile_info.tiledata == nullptr)
 				continue;
 		
-			chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(tile_info.tiledata->atlas_key.c_str());
+			chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(tile_info.tiledata->atlas_key.c_str());
 			if (info == nullptr)
 				continue;
 
@@ -445,7 +445,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata != nullptr)
 			{	
-				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(tile_info.tiledata->atlas_key.c_str());
+				chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(tile_info.tiledata->atlas_key.c_str());
 				if (info == nullptr)
 					continue;
 
@@ -459,7 +459,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 
 				glm::vec2 topright = bottomleft;
 				topright.x += tile_info.tiledata->image_size.x;
-				topright.y -= tile_info.tiledata->image_size.y; // SHUXXX = not clear could be info->size !!! (but with manual atlas, not a good idea)
+				topright.y -= tile_info.tiledata->image_size.y; //= not clear could be info->size !!! (but with manual atlas, not a good idea)
 
 
 				ParticleObject new_particle;

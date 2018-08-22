@@ -48,7 +48,7 @@ namespace chaos
 		};
 
 		/**
-		* BitmapInfo : represents an Base Bitmap info in the atlas. Contained in a BitmapSet
+		* BitmapInfo : represents an Base Bitmap info in the atlas
 		*/
 
 		class BitmapInfo : public ObjectBase

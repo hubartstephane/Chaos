@@ -166,11 +166,11 @@ namespace death
 		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
 
 		// Add sprites
-		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
-		if (bitmap_set == nullptr)
+		chaos::BitmapAtlas::FolderInput * folder_info = input.AddFolder("sprites");
+		if (folder_info == nullptr)
 			return false;
 
-		bitmap_set->AddBitmapFilesFromDirectory(sprite_directory, true);
+		folder_info->AddBitmapFilesFromDirectory(sprite_directory, true);
 
 		return true;
 	}
@@ -694,13 +694,13 @@ namespace death
 			return false;
 
 		// for each bitmap, that correspond to a button, register a [NAME] in the generator	
-		chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
-		if (bitmap_set != nullptr)
+		chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+		if (folder_info != nullptr)
 		{
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const & bitmap_name = it->second.first;
-				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(bitmap_name.c_str());
+				chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name.c_str());
 				if (info == nullptr)
 					continue;
 				std::string const & generator_alias = it->second.second;

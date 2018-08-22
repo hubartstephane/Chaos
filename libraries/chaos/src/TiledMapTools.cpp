@@ -5,14 +5,14 @@ namespace chaos
 	namespace TiledMapTools
 	{
 
-		bool GenerateAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input, char const * set_name)
+		bool GenerateAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input, char const * folder_name)
 		{
 			assert(map != nullptr);
-			assert(set_name != nullptr);
+			assert(folder_name != nullptr);
 
-			// create the BitmapSetInput (if not already existing)
-			BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet(set_name);
-			if (bitmap_set == nullptr)
+			// create the FolderInput (if not already existing)
+			BitmapAtlas::FolderInput * folder_input = input.AddFolder(folder_name);
+			if (folder_input == nullptr)
 				return false;
 
 			// insert all image layers in the map
@@ -23,24 +23,24 @@ namespace chaos
 				if (image_layer != nullptr)
 					continue;
 				if (image_layer->image_path.size() > 0)
-					bitmap_set->AddBitmap(image_layer->image_path, nullptr, 0);
+					folder_input->AddBitmap(image_layer->image_path, nullptr, 0);
 			}
 			return true;
 		}
 
-		bool GenerateAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input, char const * set_name)
+		bool GenerateAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input, char const * folder_name)
 		{
 			assert(tile_set != nullptr);
-			assert(set_name != nullptr);
+			assert(folder_name != nullptr);
 
-			// create the BitmapSetInput (if not already existing)
-			BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet(set_name);
-			if (bitmap_set == nullptr)
+			// create the FolderInput (if not already existing)
+			BitmapAtlas::FolderInput * folder_input = input.AddFolder(folder_name);
+			if (folder_input == nullptr)
 				return false;
 
 			// the 'single' image for the whole tile set
 			if (tile_set->image_path.size() > 0)
-				bitmap_set->AddBitmap(tile_set->image_path, nullptr, 0);
+				folder_input->AddBitmap(tile_set->image_path, nullptr, 0);
 
 			// enumerate all TileData
 			size_t tile_count = tile_set->tiles.size();
@@ -50,19 +50,19 @@ namespace chaos
 				if (tile_data == nullptr)
 					continue;
 				if (tile_data->image_path.size() > 0)
-					bitmap_set->AddBitmap(tile_data->image_path, nullptr, 0);
+					folder_input->AddBitmap(tile_data->image_path, nullptr, 0);
 			}
 			return true;
 		}
 
-		bool GenerateAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input, char const * set_name)
+		bool GenerateAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input, char const * folder_name)
 		{
 			assert(manager != nullptr);
-			assert(set_name != nullptr);
+			assert(folder_name != nullptr);
 
-			// create the BitmapSetInput (if not already existing)
-			BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet(set_name);
-			if (bitmap_set == nullptr)
+			// create the FolderInput (if not already existing)
+			BitmapAtlas::FolderInput * folder_input = input.AddFolder(folder_name);
+			if (folder_input == nullptr)
 				return false;
 
 			// insert all images in any referenced in TiledSet
@@ -72,7 +72,7 @@ namespace chaos
 				TiledMap::TileSet const * tile_set = manager->tile_sets[i].get();
 				if (tile_set == nullptr)
 					continue;
-				if (!GenerateAtlasInput(tile_set, input, set_name))
+				if (!GenerateAtlasInput(tile_set, input, folder_name))
 					return false;
 			}
 
@@ -83,7 +83,7 @@ namespace chaos
 				TiledMap::Map const * map = manager->maps[i].get();
 				if (map == nullptr)
 					continue;
-				if (!GenerateAtlasInput(map, input, set_name))
+				if (!GenerateAtlasInput(map, input, folder_name))
 					return false;
 			}
 			return true;

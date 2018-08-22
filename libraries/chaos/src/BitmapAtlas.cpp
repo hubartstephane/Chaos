@@ -170,20 +170,6 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// BitmapSet functions
-		// ========================================================================
-
-		BitmapInfo const * BitmapSet::GetInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(elements, name);
-		}
-
-		BitmapInfo const * BitmapSet::GetInfo(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(elements, tag);
-		}
-
-		// ========================================================================
 		// FontInfo functions
 		// ========================================================================
 

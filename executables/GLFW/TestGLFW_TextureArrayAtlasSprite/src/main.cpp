@@ -94,6 +94,9 @@ protected:
 			}
 		}
 
+
+		// shuxxx
+
 		// add bitmap
 		auto const & bitmap_sets = atlas->GetBitmapSets();
 		if (bitmap_sets.size() > 0)

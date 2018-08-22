@@ -36,6 +36,9 @@ protected:
       if (bitmap_index < 0)
         bitmap_index = 0;
 
+
+			// shuxxx
+
       int count = 0;
       // go throught all bitmap_sets
       auto const & bitmap_sets = atlas.GetBitmapSets();

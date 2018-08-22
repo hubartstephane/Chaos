@@ -25,7 +25,7 @@ namespace chaos
 
 
 
-		// shuxxx TODO : take care of level and border
+		// TODO : take care of level and border
 
 
 

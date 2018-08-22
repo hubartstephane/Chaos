@@ -10,11 +10,11 @@ namespace chaos
 	namespace TiledMapTools
 	{
 		/** fill BitmapAtlasInput from a TiledMap manager */
-		bool GenerateAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input, char const * set_name = "sprites");
+		bool GenerateAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input, char const * folder_name = "sprites");
 		/** fill BitmapAtlasInput from a TileSet */
-		bool GenerateAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input, char const * set_name = "sprites");
+		bool GenerateAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input, char const * folder_name = "sprites");
 		/** fill BitmapAtlasInput from a Map */
-		bool GenerateAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input, char const * set_name = "sprites");
+		bool GenerateAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input, char const * folder_name = "sprites");
 
 
 	}; // namespace TiledMapTools

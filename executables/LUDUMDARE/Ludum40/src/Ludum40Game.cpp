@@ -563,14 +563,14 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 
 	chaos::BitmapAtlas::AtlasInput input;
 
-	chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("sprites");
-	if (bitmap_set == nullptr)
+	chaos::BitmapAtlas::FolderInput * folder = input.AddFolder("sprites");
+	if (folder == nullptr)
 		return false;
 
 	for (ObjectDefinition const & def : object_definitions)
 	{
 		boost::filesystem::path image_path = chaos::BoostTools::FindAbsolutePath(path, def.bitmap_path); // make the image path relative to resource path
-		if (!bitmap_set->AddBitmap(image_path, nullptr, def.id))
+		if (!folder->AddBitmap(image_path, nullptr, def.id))
 			return false;
 	}
 

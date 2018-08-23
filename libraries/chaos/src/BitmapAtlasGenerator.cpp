@@ -10,68 +10,28 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 
-
-
-
-
-
-
-
-
 		// ========================================================================
-		// AtlasInput implementation
+		// FolderInfoInput implementation
 		// ========================================================================
 
-		void AtlasInput::Clear()
-		{
-			// destroy the bitmaps
-			for (BitmapSetInput * bitmap_set : bitmap_sets)
-				delete(bitmap_set);
-			bitmap_sets.clear();
-			// destroy the fonts
-			for (FontInfoInput * font_info : font_infos)
-				delete(font_info);
-			font_infos.clear();
-		}
-
-		BitmapSetInput * AtlasInput::FindBitmapSetInput(char const * name)
-		{
-			return NamedObject::FindNamedObject(bitmap_sets, name);
-		}
-
-		BitmapSetInput const * AtlasInput::FindBitmapSetInput(char const * name) const
-		{
-			return NamedObject::FindNamedObject(bitmap_sets, name);
-		}
-
-		BitmapSetInput * AtlasInput::AddBitmapSet(char const * name)
+		FolderInfoInput * FolderInfoInput::AddFolder(char const * name)
 		{
 			assert(name != nullptr);
 
-			BitmapSetInput * result = FindBitmapSetInput(name);
+			FolderInfoInput * result = GetFolderInfo(name);
 			if (result == nullptr)
 			{
-				result = new BitmapSetInput;
+				result = new FolderInfoInput;
 				if (result != nullptr)
 				{
 					result->name = name;
-					bitmap_sets.push_back(result);
+					folders.push_back(std::move(std::unique_ptr<FolderInfoInput>(result)));
 				}
 			}
 			return result;
 		}
 
-		FontInfoInput * AtlasInput::FindFontInfoInput(char const * name)
-		{
-			return NamedObject::FindNamedObject(font_infos, name);
-		}
-
-		FontInfoInput const * AtlasInput::FindFontInfoInput(char const * name) const
-		{
-			return NamedObject::FindNamedObject(font_infos, name);
-		}
-
-		FontInfoInput * AtlasInput::AddFontInfo(char const * name, char const * font_name, FT_Library library, bool release_library, FontInfoInputParams const & params)
+		bool FolderInfoInput::AddFont(char const * name, char const * font_name, FT_Library library, bool release_library, FontInfoInputParams const & params)
 		{
 			assert(font_name != nullptr);
 
@@ -80,7 +40,7 @@ namespace chaos
 			{
 				FT_Error error = FT_Init_FreeType(&library);
 				if (error)
-					return nullptr;
+					return false;
 				release_library = true;
 			}
 
@@ -91,101 +51,98 @@ namespace chaos
 			{
 				if (release_library)
 					FT_Done_FreeType(library); // delete library if necessary
-				return nullptr;
+				return false;
 			}
 
-			return AddFontInfoImpl(name, library, face, release_library, true, params);
+			return AddFontImpl(name, library, face, release_library, true, params);
 		}
 
-		FontInfoInput * AtlasInput::AddFontInfo(char const * name, FT_Face face, bool release_face, FontInfoInputParams const & params)
+		bool FolderInfoInput::AddFont(char const * name, FT_Face face, bool release_face, FontInfoInputParams const & params)
 		{
-			return AddFontInfoImpl(name, nullptr, face, false, release_face, params);
+			return AddFontImpl(name, nullptr, face, false, release_face, params);
 		}
 
-		FontInfoInput * AtlasInput::AddFontInfoImpl(char const * name, FT_Library library, FT_Face face, bool release_library, bool release_face, FontInfoInputParams const & params)
+		bool FolderInfoInput::AddFontImpl(char const * name, FT_Library library, FT_Face face, bool release_library, bool release_face, FontInfoInputParams const & params)
 		{
 			assert(name != nullptr);
 			assert(face != nullptr);
 
-			FontInfoInput * result = FindFontInfoInput(name);
-			if (result == nullptr)
+			// search whether the font already exists
+			if (GetFontInfo(name) != nullptr)
+				return true;
+
+			FontInfoInput result;
+
+			// set font size
+			// XXX : order is important. Face.size.metrics will not be initialized elsewhere
+			FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
+			if (error != 0)
+				return false;
+
+			// new character set input
+			result.name = name;
+			result.library = library;
+			result.face = face;
+			result.release_library = release_library;
+			result.release_face = release_face;
+			result.max_character_width = params.max_character_width;
+			result.max_character_height = params.max_character_height;
+			result.ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
+			result.descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
+			result.face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
+
+																	  // generate glyph cache
+
+																	  // if user does not provide a list of charset for the fonts, use this hard coded one
+			static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
+
+			char const * characters = (params.characters.length() > 0) ?
+				params.characters.c_str() :
+				DEFAULT_CHARACTERS;
+
+			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
+
+			// transforms each info of the glyph map into a bitmap
+			for (auto & glyph : glyph_cache)
 			{
-				result = new FontInfoInput;
-				if (result != nullptr)
+				int w = glyph.second.bitmap_glyph->bitmap.width;
+				int h = glyph.second.bitmap_glyph->bitmap.rows;
+
+				FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::FORMAT_RGBA);
+				if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
 				{
-					// set font size
-					// XXX : order is important. Face.size.metrics will not be initialized elsewhere
-					FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
-					if (error != 0)
-					{
-						delete(result);
-						return nullptr;
-					}
+					char name[] = " ";
+					sprintf_s(name, 2, "%c", glyph.first);
 
-					// new character set input
-					result->name = name;
-					result->library = library;
-					result->face = face;
-					result->release_library = release_library;
-					result->release_face = release_face;
-					result->max_character_width = params.max_character_width;
-					result->max_character_height = params.max_character_height;
-					result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
-					result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
-					result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
-
-					// generate glyph cache
-
-					// if user does not provide a list of charset for the fonts, use this hard coded one
-					static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
-
-					char const * characters = (params.characters.length() > 0) ?
-						params.characters.c_str() :
-						DEFAULT_CHARACTERS;
-
-					std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
-
-					// transforms each info of the glyph map into a bitmap
-					for (auto & glyph : glyph_cache)
-					{
-						int w = glyph.second.bitmap_glyph->bitmap.width;
-						int h = glyph.second.bitmap_glyph->bitmap.rows;
-
-						FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormat::FORMAT_RGBA);
-						if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
-						{
-							char name[] = " ";
-							sprintf_s(name, 2, "%c", glyph.first);
-
-							CharacterInfoInput info;
-							info.name = name;
-							info.tag = glyph.first;
-							if (bitmap != nullptr)
-								info.description = ImageTools::GetImageDescription(bitmap);
-							info.bitmap = bitmap;
-							info.release_bitmap = true;
-							info.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
-							info.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
-							info.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
-							result->elements.push_back(std::move(info));
-						}
-					}
-
-					// release the glyph cache 
-					for (auto & glyph : glyph_cache)
-						FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
-
-					font_infos.push_back(result);
+					CharacterInfoInput info;
+					info.name = name;
+					info.tag = glyph.first;
+					if (bitmap != nullptr)
+						info.description = ImageTools::GetImageDescription(bitmap);
+					info.bitmap = bitmap;
+					info.release_bitmap = true;
+					info.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
+					info.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
+					info.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
+					result.elements.push_back(std::move(info));
 				}
 			}
-			return result;
+
+			// release the glyph cache 
+			for (auto & glyph : glyph_cache)
+				FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
+
+			fonts.push_back(std::move(result));
+
+			return true;
 		}
 
+#if 0
 		// ========================================================================
-		// BitmapSetInput implementation
+		// FolderInfoInput implementation
 		// ========================================================================
 
-		BitmapSetInput::~BitmapSetInput()
+		FolderInfoInput::~FolderInfoInput()
 		{
 			for (BitmapInfoInput & element : elements)
 				if (element.release_bitmap)
@@ -193,7 +150,8 @@ namespace chaos
 			elements.clear();
 		}
 
-		bool BitmapSetInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
+#endif
+		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 			// enumerate the source directory
@@ -211,18 +169,11 @@ namespace chaos
 			return true;
 		}
 
-		bool BitmapSetInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
+		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
 		{
-			// shuxxx
-
-
-
-
-
-
-
 			bool result = false;
 
+#if 0
 			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
 			if (animated_bitmap != nullptr)
 			{
@@ -246,7 +197,7 @@ namespace chaos
 
 				FreeImage_CloseMultiBitmap(animated_bitmap, 0);
 			}
-
+#endif
 
 
 
@@ -268,27 +219,8 @@ namespace chaos
 			return result;
 		}
 
-		BitmapInfoInput * BitmapSetInput::FindInfo(int tag)
-		{
-			return NamedObject::FindNamedObject(elements, tag);
-		}
 
-		BitmapInfoInput const * BitmapSetInput::FindInfo(int tag) const
-		{
-			return NamedObject::FindNamedObject(elements, tag);
-		}
-
-		BitmapInfoInput * BitmapSetInput::FindInfo(char const * name)
-		{
-			return NamedObject::FindNamedObject(elements, name);
-		}
-
-		BitmapInfoInput const * BitmapSetInput::FindInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(elements, name);
-		}
-
-		bool BitmapSetInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
+		bool FolderInfoInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
 		{
 			BitmapGridAnimationInfo animation_info;
 			if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
@@ -302,7 +234,7 @@ namespace chaos
 			return AddBitmapImpl(name, bitmap, nullptr, release_bitmap, tag);
 		}
 
-		bool BitmapSetInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		bool FolderInfoInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
 		{
 
 
@@ -310,7 +242,7 @@ namespace chaos
 			return AddBitmapImpl(name, nullptr, animated_bitmap, release_bitmap, tag);
 		}
 
-		bool BitmapSetInput::AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		bool FolderInfoInput::AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
 		{
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
@@ -330,6 +262,66 @@ namespace chaos
 			elements.push_back(std::move(new_entry)); // move for std::string copy
 			return true;
 		}
+
+
+
+
+
+		// ========================================================================
+		// AtlasInput implementation
+		// ========================================================================
+
+		bool AtlasInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
+		{
+			return root_folder.AddBitmapFilesFromDirectory(path, recursive);
+		}
+		bool AtlasInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
+		{
+			return root_folder.AddBitmap(path, name, tag);
+		}
+		bool AtlasInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
+		{
+			return root_folder.AddBitmap(name, bitmap, release_bitmap, tag);
+		}
+		bool AtlasInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		{
+			return root_folder.AddBitmap(name, animated_bitmap, release_bitmap, tag);
+		}
+
+		FolderInfoInput * AtlasInput::AddFolder(char const * name)
+		{
+			return root_folder.AddFolder(name);
+		}
+
+		bool AtlasInput::AddFont(
+			char const * name,
+			char const * font_name,
+			FT_Library library,
+			bool release_library,
+			FontInfoInputParams const & params)
+		{
+			return root_folder.AddFont(name, font_name, library, release_library, params);
+		}
+		bool AtlasInput::AddFont(
+			char const * name,
+			FT_Face face,
+			bool release_face,
+			FontInfoInputParams const & params)
+		{
+			return root_folder.AddFont(name, face, release_face, params);
+		}
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// ========================================================================
 		// FontInfoInput implementation
@@ -545,7 +537,7 @@ namespace chaos
 		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result)
 		{
 			// fill with bitmap sets 
-			for (BitmapSetInput * bitmap_set_input : input->bitmap_sets)
+			for (FolderInfoInput * bitmap_set_input : input->bitmap_sets)
 			{
 				BitmapSet * bitmap_set = new BitmapSet;
 				bitmap_set->name = bitmap_set_input->name;
@@ -938,8 +930,8 @@ namespace chaos
 		{
 			// fill the atlas
 			AtlasInput input;
-			BitmapSetInput * bitmap_set = input.AddBitmapSet("files");
-			bitmap_set->AddBitmapFilesFromDirectory(bitmaps_dir, recursive);
+			FolderInfoInput * folder_info = input.AddFolder("files");
+			folder_info->AddBitmapFilesFromDirectory(bitmaps_dir, recursive);
 			// create the atlas files
 			Atlas          atlas;
 			AtlasGenerator generator;

@@ -132,32 +132,60 @@ namespace chaos
 		{
 		public:
 
+
+
+
+
 			/** gets a bitmap info by its name */
+			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name)
+			{
+				return NamedObject::FindNamedObject(bitmaps, name);
+			}
 			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name) const
 			{
 				return NamedObject::FindNamedObject(bitmaps, name);
 			}
 			/** gets a bitmap info by its tag */
+			BITMAP_INFO_TYPE * GetBitmapInfo(TagType tag)
+			{
+				return NamedObject::FindNamedObject(bitmaps, tag);
+			}
 			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag) const
 			{
 				return NamedObject::FindNamedObject(bitmaps, tag);
 			}
 			/** gets a font info by its name */
+			FONT_INFO_TYPE * GetFontInfo(char const * name)
+			{
+				return NamedObject::FindNamedObject(fonts, name);
+			}
 			FONT_INFO_TYPE const * GetFontInfo(char const * name) const
 			{
 				return NamedObject::FindNamedObject(fonts, name);
 			}
 			/** gets a font info by its tag */
+			FONT_INFO_TYPE * GetFontInfo(TagType tag)
+			{
+				return NamedObject::FindNamedObject(fonts, tag);
+			}
 			FONT_INFO_TYPE const * GetFontInfo(TagType tag) const
 			{
 				return NamedObject::FindNamedObject(fonts, tag);
 			}
 			/** gets a folder info by its name */
+			FOLDER_INFO_TYPE * GetFolderInfo(char const * name)
+			{
+				return NamedObject::FindNamedObject(folders, name);
+			}
 			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name) const
 			{
 				return NamedObject::FindNamedObject(folders, name);
 			}
 			/** gets a folder info by its tag */
+			FOLDER_INFO_TYPE * GetFolderInfo(TagType tag)
+			{
+				return NamedObject::FindNamedObject(folders, tag);
+			}
 			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag) const
 			{
 				return NamedObject::FindNamedObject(folders, tag);
@@ -197,32 +225,62 @@ namespace chaos
 		{
 		public:
 
+			/** clear method */
+			void Clear()
+			{
+				root_folder.Clear();
+			}
+
 			/** gets a bitmap info by its name */
+			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name)
+			{
+				return root_folder.GetBitmapInfo(name);
+			}
 			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name) const
 			{
 				return root_folder.GetBitmapInfo(name);
 			}
 			/** gets a bitmap info by its tag */
+			BITMAP_INFO_TYPE * GetBitmapInfo(TagType tag)
+			{
+				return root_folder.GetBitmapInfo(tag);
+			}
 			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag) const
 			{
 				return root_folder.GetBitmapInfo(tag);
 			}
 			/** gets a font info by its name */
+			FONT_INFO_TYPE * GetFontInfo(char const * name)
+			{
+				return root_folder.GetFontInfo(name);
+			}
 			FONT_INFO_TYPE const * GetFontInfo(char const * name) const
 			{
 				return root_folder.GetFontInfo(name);
 			}
 			/** gets a font info by its tag */
+			FONT_INFO_TYPE * GetFontInfo(TagType tag)
+			{
+				return root_folder.GetFontInfo(tag);
+			}
 			FONT_INFO_TYPE const * GetFontInfo(TagType tag) const
 			{
 				return root_folder.GetFontInfo(tag);
 			}
 			/** gets a folder info by its name */
+			FOLDER_INFO_TYPE * GetFolderInfo(char const * name)
+			{
+				return root_folder.GetFolderInfo(name);
+			}
 			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name) const
 			{
 				return root_folder.GetFolderInfo(name);
 			}
 			/** gets a folder info by its tag */
+			FOLDER_INFO_TYPE * GetFolderInfo(TagType tag)
+			{
+				return root_folder.GetFolderInfo(tag);
+			}
 			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag) const
 			{
 				return root_folder.GetFolderInfo(tag);

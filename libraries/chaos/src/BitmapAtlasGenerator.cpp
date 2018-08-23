@@ -91,9 +91,9 @@ namespace chaos
 			result.descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
 			result.face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
-																	  // generate glyph cache
+			// generate glyph cache
 
-																	  // if user does not provide a list of charset for the fonts, use this hard coded one
+			// if user does not provide a list of charset for the fonts, use this hard coded one
 			static char const * DEFAULT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789<>()[]{}+-*./\\?!;:$@\"'";
 
 			char const * characters = (params.characters.length() > 0) ?
@@ -169,41 +169,43 @@ namespace chaos
 			return true;
 		}
 
-		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
-		{
-			bool result = false;
-
 #if 0
-			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-			if (animated_bitmap != nullptr)
+		FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+		if (animated_bitmap != nullptr)
+		{
+			int page_count = FreeImage_GetPageCount(animated_bitmap);
+			if (page_count == 1)
 			{
-				int page_count = FreeImage_GetPageCount(animated_bitmap);
-				if (page_count == 1)
-				{
-					page_count = page_count;
+				page_count = page_count;
 
-				}
-				else if (page_count > 1)
-				{
-					page_count = page_count;
-
-				}
-				else
-				{
-					page_count = page_count;
-
-				}
-
-
-				FreeImage_CloseMultiBitmap(animated_bitmap, 0);
 			}
+			else if (page_count > 1)
+			{
+				page_count = page_count;
+
+			}
+			else
+			{
+				page_count = page_count;
+
+			}
+
+
+			FreeImage_CloseMultiBitmap(animated_bitmap, 0);
+		}
+
+		BitmapGridAnimationInfo animation_info;
+		if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
+		{
+			animation_info = animation_info;
+		}
 #endif
 
 
 
-
-
-
+		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
+		{
+			bool result = false;
 
 			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
 			if (bitmap != nullptr)
@@ -222,23 +224,11 @@ namespace chaos
 
 		bool FolderInfoInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
 		{
-			BitmapGridAnimationInfo animation_info;
-			if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
-			{
-				animation_info = animation_info;
-			}
-
-
-
-
 			return AddBitmapImpl(name, bitmap, nullptr, release_bitmap, tag);
 		}
 
 		bool FolderInfoInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
 		{
-
-
-
 			return AddBitmapImpl(name, nullptr, animated_bitmap, release_bitmap, tag);
 		}
 
@@ -247,7 +237,7 @@ namespace chaos
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
 
-			if (FindInfo(name) != nullptr)
+			if (GetBitmapInfo(name) != nullptr)
 				return false;
 
 			BitmapInfoInput new_entry;
@@ -259,7 +249,7 @@ namespace chaos
 			new_entry.release_bitmap = release_bitmap;
 			new_entry.tag            = tag;
 
-			elements.push_back(std::move(new_entry)); // move for std::string copy
+			bitmaps.push_back(std::move(new_entry)); // move for std::string copy
 			return true;
 		}
 

@@ -64,6 +64,7 @@ namespace chaos
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
+			friend class FolderInfoInput;
 
 		protected:
 

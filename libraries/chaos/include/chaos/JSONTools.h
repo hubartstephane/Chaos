@@ -126,6 +126,81 @@ namespace chaos
 
 		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
 		static boost::filesystem::path DumpConfigFile(nlohmann::json const & json, char const * filename = "myconfig.json");
+
+		/** utility function */
+		template<typename T>
+		static void SaveIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
+		{
+			for (auto const & element : elements)
+			{
+				auto json_entry = nlohmann::json();
+				SaveIntoJSON(element, json_entry);
+				json_entries.push_back(std::move(json_entry));
+			}
+		}
+		/** utility function */
+		template<typename T>
+		static void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
+		{
+			for (auto const * element : elements)
+			{
+				if (element == nullptr)
+					continue;
+				auto json_entry = nlohmann::json();
+				SaveIntoJSON(*element, json_entry);
+				json_entries.push_back(std::move(json_entry));
+			}
+		}
+		/** utility function */
+		template<typename T>
+		static void SaveIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
+		{
+			for (auto & element : elements)
+			{
+				auto json_entry = nlohmann::json();
+				SaveIntoJSON(*element.get(), json_entry);
+				json_entries.push_back(std::move(json_entry));
+			}
+		}
+
+		/** utility function */
+		template<typename T>
+		static void LoadFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
+		{
+			for (auto const & json_entry : json_entries)
+			{
+				T element;
+				LoadFromJSON(element, json_entry);
+				elements.push_back(std::move(element));
+			}
+		}
+		/** utility function */
+		template<typename T>
+		static void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
+		{
+			for (auto const & json_entry : json_entries)
+			{
+				T * element(new T);
+				if (element == nullptr)
+					continue;
+				LoadFromJSON(*element, json_entry);
+				elements.push_back(std::move(element));
+			}
+		}
+		/** utility function */
+		template<typename T>
+		static void LoadFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
+		{
+			for (auto const & json_entry : json_entries)
+			{
+				std::unique_ptr<T> element(new T);
+				if (element == nullptr)
+					continue;
+				LoadFromJSON(*element, json_entry);
+				elements.push_back(std::move(element));
+			}
+		}
+
 	};
 
 }; // namespace chaos

@@ -131,194 +131,45 @@ namespace chaos
 			return ParseFromNameReadGridSkip(name, i, result, name_result);
 		}
 
-		// ========================================================================
-		// FontInfo functions
-		// ========================================================================
 
 
 
-		// ========================================================================
-		// JSON functions
-		// ========================================================================
 
-		template<typename T>
-		void SaveIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto const & element : elements)
-			{
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(element, json_entry);
-				json_entries.push_back(std::move(json_entry));
-			}
-		}
 
-		template<typename T>
-		void SaveIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto & element : elements)
-			{
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(*element.get(), json_entry);
-				json_entries.push_back(std::move(json_entry));
-			}
-		}
 
-		template<typename T>
-		void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto const * element : elements)
-			{
-				if (element == nullptr)
-					continue;
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(*element, json_entry);
-				json_entries.push_back(std::move(json_entry));
-			}
-		}
 
-		template<typename T>
-		void LoadFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T element;
-				LoadFromJSON(element, json_entry);
-				elements.push_back(std::move(element));
-			}
-		}
 
-		template<typename T>
-		void LoadFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				std::unique_ptr<T> element(new T);
-				if (element == nullptr)
-					continue;
-				LoadFromJSON(*element, json_entry);
-				elements.push_back(std::move(element));
-			}
-		}
 
-		template<typename T>
-		void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T * element(new T);
-				if (element == nullptr)
-					continue;
-				LoadFromJSON(*element, json_entry);
-				elements.push_back(std::move(element));
-			}
-		}
 
-		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry)
-		{
-			json_entry["name"] = info.name;
-			json_entry["tag"] = info.tag;
-		}
 
-		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry)
-		{
-			JSONTools::GetAttribute(json_entry, "name", info.name, "");
-			JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);
-		}
 
-		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
-		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
-			json_entry["bitmap_index"] = info.bitmap_index;
-			json_entry["x"] = info.x;
-			json_entry["y"] = info.y;
-			json_entry["width"] = info.width;
-			json_entry["height"] = info.height;
-		}
 
-		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry)
-		{
-			NamedObject & named_info = info;
-			LoadFromJSON(named_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "bitmap_index", info.bitmap_index, 0);
-			JSONTools::GetAttribute(json_entry, "x", info.x, 0);
-			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
-			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
-			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
-		}
 
-		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry)
-		{
-			BitmapInfo const & bitmap_info = info;
-			SaveIntoJSON(bitmap_info, json_entry); // call 'super' method
 
-			json_entry["advance_x"] = info.advance.x;
-			json_entry["advance_y"] = info.advance.y;
-			json_entry["bitmap_left"] = info.bitmap_left;
-			json_entry["bitmap_top"] = info.bitmap_top;
-		}
 
-		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry)
-		{
-			BitmapInfo & bitmap_info = info;
-			LoadFromJSON(bitmap_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "advance_x", info.advance.x, 0);
-			JSONTools::GetAttribute(json_entry, "advance_y", info.advance.y, 0);
-			JSONTools::GetAttribute(json_entry, "bitmap_left", info.bitmap_left, 0);
-			JSONTools::GetAttribute(json_entry, "bitmap_top", info.bitmap_top, 0);
-		}
 
-		void SaveIntoJSON(BitmapSet const & info, nlohmann::json & json_entry)
-		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
-			json_entry["elements"] = nlohmann::json::array();
-			SaveIntoJSON(info.elements, json_entry["elements"]);
-		}
 
-		void LoadFromJSON(BitmapSet & info, nlohmann::json const & json_entry)
-		{
-			NamedObject & named_info = info;
-			LoadFromJSON(named_info, json_entry); // call 'super' method
 
-			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
-			if (json_elements != nullptr)
-				LoadFromJSON(info.elements, *json_elements);
-		}
 
-		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry)
-		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
-			json_entry["max_character_width"] = info.max_character_width;
-			json_entry["max_character_height"] = info.max_character_height;
-			json_entry["ascender"] = info.ascender;
-			json_entry["descender"] = info.descender;
-			json_entry["face_height"] = info.face_height;
-			json_entry["elements"] = nlohmann::json::array();
-			SaveIntoJSON(info.elements, json_entry["elements"]);
-		}
 
-		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry)
-		{
-			NamedObject & named_info = info;
-			LoadFromJSON(named_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "max_character_width", info.max_character_width, 0);
-			JSONTools::GetAttribute(json_entry, "max_character_height", info.max_character_height, 0);
-			JSONTools::GetAttribute(json_entry, "ascender", info.ascender, 0);
-			JSONTools::GetAttribute(json_entry, "descender", info.descender, 0);
-			JSONTools::GetAttribute(json_entry, "face_height", info.face_height, 0);
 
-			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
-			if (json_elements != nullptr)
-				LoadFromJSON(info.elements, *json_elements);
-		}
+
+
+
+
+
+
+
+
+
+
+
 
 		// ========================================================================
 		// Atlas functions
@@ -588,10 +439,9 @@ namespace chaos
 					json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, (int)i).string());
 				}
 				// insert the entries
-				json["bitmap_sets"] = nlohmann::json::array();
-				SaveIntoJSON(bitmap_sets, json["bitmap_sets"]);
-				json["font_infos"] = nlohmann::json::array();
-				SaveIntoJSON(font_infos, json["font_infos"]);
+				json["root_folder"] = nlohmann::json::array();
+				SaveIntoJSON(root_folder, json["root_folder"]);
+
 				// format the JSON into string and insert it into stream
 				stream << json.dump(4);
 				return true;
@@ -660,12 +510,10 @@ namespace chaos
 				// load the entries
 				if (result)
 				{
-					nlohmann::json const * json_bitmap_sets = JSONTools::GetStructure(json, "bitmap_sets");
-					if (json_bitmap_sets != nullptr)
-						LoadFromJSON(bitmap_sets, *json_bitmap_sets);
-					nlohmann::json const * json_font_infos = JSONTools::GetStructure(json, "font_infos");
-					if (json_font_infos != nullptr)
-						LoadFromJSON(font_infos, *json_font_infos);
+					nlohmann::json const * root_folder_json = JSONTools::GetStructure(json, "root_folder");
+					if (root_folder_json != nullptr)
+						LoadFromJSON(root_folder, *root_folder_json);
+
 					atlas_count = (int)bitmaps.size();
 				}			
 			}
@@ -703,6 +551,137 @@ namespace chaos
 			else
 				bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
 		}
+
+
+
+
+
+
+		// ========================================================================
+		// JSON functions
+		// ========================================================================
+
+		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry)
+		{
+			json_entry["name"] = info.name;
+			json_entry["tag"] = info.tag;
+		}
+
+		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry)
+		{
+			JSONTools::GetAttribute(json_entry, "name", info.name, "");
+			JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);
+		}
+
+		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
+		{
+			NamedObject const & named_info = info;
+			SaveIntoJSON(named_info, json_entry); // call 'super' method
+
+			json_entry["bitmap_index"] = info.bitmap_index;
+			json_entry["x"] = info.x;
+			json_entry["y"] = info.y;
+			json_entry["width"] = info.width;
+			json_entry["height"] = info.height;
+		}
+
+		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry)
+		{
+			NamedObject & named_info = info;
+			LoadFromJSON(named_info, json_entry); // call 'super' method
+
+			JSONTools::GetAttribute(json_entry, "bitmap_index", info.bitmap_index, 0);
+			JSONTools::GetAttribute(json_entry, "x", info.x, 0);
+			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
+			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
+			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
+		}
+
+		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry)
+		{
+			BitmapInfo const & bitmap_info = info;
+			SaveIntoJSON(bitmap_info, json_entry); // call 'super' method
+
+			json_entry["advance_x"] = info.advance.x;
+			json_entry["advance_y"] = info.advance.y;
+			json_entry["bitmap_left"] = info.bitmap_left;
+			json_entry["bitmap_top"] = info.bitmap_top;
+		}
+
+		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry)
+		{
+			BitmapInfo & bitmap_info = info;
+			LoadFromJSON(bitmap_info, json_entry); // call 'super' method
+
+			JSONTools::GetAttribute(json_entry, "advance_x", info.advance.x, 0);
+			JSONTools::GetAttribute(json_entry, "advance_y", info.advance.y, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_left", info.bitmap_left, 0);
+			JSONTools::GetAttribute(json_entry, "bitmap_top", info.bitmap_top, 0);
+		}
+
+		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry)
+		{
+			NamedObject const & named_info = info;
+			SaveIntoJSON(named_info, json_entry); // call 'super' method
+
+			json_entry["max_character_width"] = info.max_character_width;
+			json_entry["max_character_height"] = info.max_character_height;
+			json_entry["ascender"] = info.ascender;
+			json_entry["descender"] = info.descender;
+			json_entry["face_height"] = info.face_height;
+			json_entry["elements"] = nlohmann::json::array();
+			JSONTools::SaveIntoJSON(info.elements, json_entry["elements"]);
+		}
+
+		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry)
+		{
+			NamedObject & named_info = info;
+			LoadFromJSON(named_info, json_entry); // call 'super' method
+
+			JSONTools::GetAttribute(json_entry, "max_character_width", info.max_character_width, 0);
+			JSONTools::GetAttribute(json_entry, "max_character_height", info.max_character_height, 0);
+			JSONTools::GetAttribute(json_entry, "ascender", info.ascender, 0);
+			JSONTools::GetAttribute(json_entry, "descender", info.descender, 0);
+			JSONTools::GetAttribute(json_entry, "face_height", info.face_height, 0);
+
+			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
+			if (json_elements != nullptr)
+				JSONTools::LoadFromJSON(info.elements, *json_elements);
+		}
+
+		void SaveIntoJSON(FolderInfo const & info, nlohmann::json & json_entry)
+		{
+			NamedObject const & named_info = info;
+			SaveIntoJSON(named_info, json_entry); // call 'super' method
+
+			json_entry["bitmaps"] = nlohmann::json::array();
+			JSONTools::SaveIntoJSON(info.bitmaps, json_entry["bitmaps"]);
+
+			json_entry["fonts"] = nlohmann::json::array();
+			JSONTools::SaveIntoJSON(info.fonts, json_entry["fonts"]);
+
+			json_entry["folders"] = nlohmann::json::array();
+			JSONTools::SaveIntoJSON(info.folders, json_entry["folders"]);
+		}
+
+		void LoadFromJSON(FolderInfo & info, nlohmann::json const & json_entry)
+		{
+			NamedObject & named_info = info;
+			LoadFromJSON(named_info, json_entry); // call 'super' method
+
+			nlohmann::json const * bitmaps_elements = JSONTools::GetStructure(json_entry, "bitmaps");
+			if (bitmaps_elements != nullptr)
+				JSONTools::LoadFromJSON(info.bitmaps, *bitmaps_elements);
+
+			nlohmann::json const * fonts_elements = JSONTools::GetStructure(json_entry, "fonts");
+			if (fonts_elements != nullptr)
+				JSONTools::LoadFromJSON(info.fonts, *fonts_elements);
+
+			nlohmann::json const * folders_elements = JSONTools::GetStructure(json_entry, "folders");
+			if (folders_elements != nullptr)
+				JSONTools::LoadFromJSON(info.folders, *folders_elements);
+		}
+
 	}; // namespace BitmapAtlas
 }; // namespace chaos
 

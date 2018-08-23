@@ -121,7 +121,10 @@ namespace chaos
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
 
-		using FontInfo = FontInfoTemplate<CharacterInfo, NamedObject>;
+		class FontInfo : public FontInfoTemplate<CharacterInfo, NamedObject>
+		{
+
+		};
 
 		/**
 		* FolderInfoTemplate : a base template for FolderInfo and FolderInfoInput
@@ -131,10 +134,6 @@ namespace chaos
 		class FolderInfoTemplate : public PARENT_CLASS
 		{
 		public:
-
-
-
-
 
 			/** gets a bitmap info by its name */
 			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name)
@@ -213,7 +212,10 @@ namespace chaos
 		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		using FolderInfo = FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase>;
+		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase>
+		{
+
+		};
 
 
 		/**
@@ -289,7 +291,7 @@ namespace chaos
 		protected:
 
 			/** the root folder */
-			FONT_INFO_TYPE root_folder;
+			FOLDER_INFO_TYPE root_folder;
 
 		};
 
@@ -427,15 +429,13 @@ namespace chaos
 
 		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(BitmapSet const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(FolderInfo const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(BitmapSet & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(FolderInfo & info, nlohmann::json const & json_entry);
 
 		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry);
 
 		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry);
-
-
 
 	}; // namespace BitmapAtlas
 }; // namespace chaos

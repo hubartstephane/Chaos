@@ -80,55 +80,26 @@ namespace chaos
 		};
 
 		/**
-		* FolderInfo : contains bitmpas, font and other folders
+		* FontInfoTemplate : a base template for FontInfo and FontInfoInput
 		*/
 
-		class FolderInfo : public ObjectBase
+		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS>
+		class FontInfoTemplate : public PARENT_CLASS
 		{
-		public:
-
-			/** destroy the content of the folder */
-			void Clear();
-
-			/** gets a bitmap info by its name */
-			BitmapInfo const * GetBitmapInfo(char const * name) const;
-			/** gets a bitmap info by its tag */
-			BitmapInfo const * GetBitmapInfo(TagType tag) const;
-
-			/** gets a font info by its name */
-			FontInfo const * GetFontInfo(char const * name) const;
-			/** gets a font info by its tag */
-			FontInfo const * GetFontInfo(TagType tag) const;
-
-			/** gets a folder info by its name */
-			FolderInfo const * GetFolderInfo(char const * name) const;
-			/** gets a folder info by its tag */
-			FolderInfo const * GetFolderInfo(TagType tag) const;
-
-		public:
-
-			/** the sub folders contained in this folder */
-			std::vector<std::unique_ptr<FolderInfo>> folders;
-			/** the bitmaps contained in this folder */
-			std::vector<BitmapInfo> bitmaps;
-			/** the fonts contained in this folder */
-			std::vector<FontInfo> fonts;
-		};
-
-		/**
-		* FontInfo : this is a named group of Characters (CharacterInfo)
-		*/
-
-		class FontInfo : public NamedObject
-		{
-			friend class AtlasBase;
-
 		public:
 
 			/** gets an info by its name */
-			CharacterInfo const * GetCharacterInfo(char const * name) const;
+			CHARACTER_INFO_TYPE const * GetCharacterInfo(char const * name) const
+			{
+				return NamedObject::FindNamedObject(elements, tag);
+			}
 			/** gets an info by its tag */
-			CharacterInfo const * GetCharacterInfo(TagType tag) const;
+			CHARACTER_INFO_TYPE const * GetCharacterInfo(TagType tag) const
+			{
+				return NamedObject::FindNamedObject(elements, tag);
+			}
+
+		public:
 
 			/** the max bitmap size in the set */
 			int max_character_width = 0;
@@ -140,39 +111,135 @@ namespace chaos
 			int descender = 0;
 			/** the maximum height of a glyph */
 			int face_height = 0;
-			/** the glyph contained in the character set */
-			std::vector<CharacterInfo> elements;
+
+			/** the glyph contained in the character info */
+			std::vector<CHARACTER_INFO_TYPE> elements;
+		};
+
+
+		/**
+		* FontInfo : this is a named group of Characters (CharacterInfo)
+		*/
+
+		using FontInfo = FontInfoTemplate<CharacterInfo, NamedObject>;
+
+		/**
+		* FolderInfoTemplate : a base template for FolderInfo and FolderInfoInput
+		*/
+
+		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
+		class FolderInfoTemplate : public PARENT_CLASS
+		{
+		public:
+
+			/** gets a bitmap info by its name */
+			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name) const
+			{
+				return NamedObject::FindNamedObject(bitmaps, name);
+			}
+			/** gets a bitmap info by its tag */
+			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag) const
+			{
+				return NamedObject::FindNamedObject(bitmaps, tag);
+			}
+			/** gets a font info by its name */
+			FONT_INFO_TYPE const * GetFontInfo(char const * name) const
+			{
+				return NamedObject::FindNamedObject(fonts, name);
+			}
+			/** gets a font info by its tag */
+			FONT_INFO_TYPE const * GetFontInfo(TagType tag) const
+			{
+				return NamedObject::FindNamedObject(fonts, tag);
+			}
+			/** gets a folder info by its name */
+			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name) const
+			{
+				return NamedObject::FindNamedObject(folders, name);
+			}
+			/** gets a folder info by its tag */
+			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag) const
+			{
+				return NamedObject::FindNamedObject(folders, tag);
+			}
+
+			/** destroy the content of the folder */
+			void Clear()
+			{
+				bitmaps.clear();
+				fonts.clear();
+				folders.clear();
+			}
+
+		public:
+
+			/** the sub folders contained in this folder */
+			std::vector<std::unique_ptr<FOLDER_INFO_TYPE>> folders;
+			/** the bitmaps contained in this folder */
+			std::vector<BITMAP_INFO_TYPE> bitmaps;
+			/** the fonts contained in this folder */
+			std::vector<FONT_INFO_TYPE> fonts;		
 		};
 
 		/**
-		* Some JSON utility functions
+		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry);
+		using FolderInfo = FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase>;
 
-		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry);
 
-		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
+		/**
+		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
+		*/
 
-		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry);
+		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
+		class AtlasBaseTemplate : public PARENT_CLASS
+		{
+		public:
 
-		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry);
+			/** gets a bitmap info by its name */
+			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name) const
+			{
+				return root_folder.GetBitmapInfo(name);
+			}
+			/** gets a bitmap info by its tag */
+			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag) const
+			{
+				return root_folder.GetBitmapInfo(tag);
+			}
+			/** gets a font info by its name */
+			FONT_INFO_TYPE const * GetFontInfo(char const * name) const
+			{
+				return root_folder.GetFontInfo(name);
+			}
+			/** gets a font info by its tag */
+			FONT_INFO_TYPE const * GetFontInfo(TagType tag) const
+			{
+				return root_folder.GetFontInfo(tag);
+			}
+			/** gets a folder info by its name */
+			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name) const
+			{
+				return root_folder.GetFolderInfo(name);
+			}
+			/** gets a folder info by its tag */
+			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag) const
+			{
+				return root_folder.GetFolderInfo(tag);
+			}
 
-		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry);
+		protected:
 
-		void SaveIntoJSON(BitmapSet const & info, nlohmann::json & json_entry);
+			/** the root folder */
+			FONT_INFO_TYPE root_folder;
 
-		void LoadFromJSON(BitmapSet & info, nlohmann::json const & json_entry);
-
-		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry);
-
-		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry);
+		};
 
 		/**
 		* AtlasBase : base class for Atlas and TextureArrayAtlas
 		*/
 
-		class AtlasBase : public ReferencedObject
+		class AtlasBase : public  AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, ReferencedObject>
 		{
 
 			friend class AtlasGenerator;
@@ -185,21 +252,6 @@ namespace chaos
 			virtual ~AtlasBase() = default;
 			/** the clearing method */
 			virtual void Clear();
-
-			/** gets a bitmap info by its name */
-			BitmapInfo const * GetBitmapInfo(char const * name) const;
-			/** gets a bitmap info by its tag */
-			BitmapInfo const * GetBitmapInfo(TagType tag) const;
-
-			/** gets a font info by its name */
-			FontInfo const * GetFontInfo(char const * name) const;
-			/** gets a font info by its tag */
-			FontInfo const * GetFontInfo(TagType tag) const;
-
-			/** gets a folder info by its name */
-			FolderInfo const * GetFolderInfo(char const * name) const;
-			/** gets a folder info by its tag */
-			FolderInfo const * GetFolderInfo(TagType tag) const;
 
 			/** get the number of bitmap to hold the atlas */
 			size_t GetBitmapCount() const { return atlas_count; }
@@ -253,8 +305,6 @@ namespace chaos
 			int atlas_count = 0;
 			/** atlas dimension */
 			glm::ivec2 dimension = glm::ivec2(0, 0);
-			/** the root folder */
-			FolderInfo root_folder;
 		};
 
 		/**
@@ -299,5 +349,35 @@ namespace chaos
 			/** the bitmaps contained in the atlas */
 			std::vector<bitmap_ptr> bitmaps;
 		};
+
+
+
+
+		/**
+		* Some JSON utility functions
+		*/
+
+		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(BitmapSet const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(BitmapSet & info, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry);
+
+
+
 	}; // namespace BitmapAtlas
 }; // namespace chaos

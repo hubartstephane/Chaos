@@ -13,11 +13,22 @@ namespace chaos
 {
 	namespace BitmapAtlas
 	{
+
+
 		/**
-		* BitmapInfoInput : an info in BitmapSetInput. Will produced a BitmapInfo in the final Atlas
+		* ObjectBaseInput : base object for inputs
 		*/
 
-		class BitmapInfoInput : public NamedObject
+		class ObjectBaseInput : public NamedObject
+		{
+
+		};
+
+		/**
+		* BitmapInfoInput : Will produced a BitmapInfo in the final Atlas
+		*/
+
+		class BitmapInfoInput : public ObjectBaseInput
 		{
 		public:
 
@@ -46,73 +57,10 @@ namespace chaos
 		};
 
 		/**
-		* BitmapSetInput :  this info will produced in the final Atlas a BitmapSet
-		*/
-
-		class BitmapSetInput : public NamedObject
-		{
-			friend class AtlasInput;
-			friend class AtlasGenerator;
-
-		protected:
-
-			/** constructor is protected */
-			BitmapSetInput() = default;
-			/** destructor is protected */
-			virtual ~BitmapSetInput();
-
-		public:
-
-			/** insert multiple bitmap before computation */
-			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
-			/** insert a bitmap before computation */
-			bool AddBitmap(FilePathParam const & path, char const * name, int tag);
-			/** insert an image inside the atlas */
-			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
-			/** insert an image inside the atlas */
-			bool AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
-
-			/** finding an info */
-			BitmapInfoInput * FindInfo(char const * name);
-			/** finding an info */
-			BitmapInfoInput const * FindInfo(char const * name) const;
-			/** finding an info */
-			BitmapInfoInput * FindInfo(int tag);
-			/** finding an info */
-			BitmapInfoInput const * FindInfo(int tag) const;
-
-		protected:
-
-			/** internal method to add a bitmap or a multi bitmap */
-			bool AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
-
-		protected:
-
-			/** the bitmaps composing the set */
-			std::vector<BitmapInfoInput> elements;
-		};
-
-		/**
-		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
-		*/
-
-		class FontInfoInputParams
-		{
-		public:
-
-			/** width of the glyph */
-			int max_character_width = 32;
-			/** height of the glyph */
-			int max_character_height = 32;
-			/** the characters to generate */
-			std::string characters;
-		};
-
-		/**
 		* FontInfoInput : this info will produced in the final Atlas a FontInfo (a set of glyphs generated from FreeType)
 		*/
 
-		class FontInfoInput : public NamedObject
+		class FontInfoInput : public FontInfoTemplate<CharacterInfoInput, ObjectBaseInput>
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
@@ -134,19 +82,66 @@ namespace chaos
 			bool release_library = true;
 			/** should the face be released at destruction */
 			bool release_face = true;
-			/** the glyph width */
-			int  max_character_width = 0;
-			/** the glyph height */
-			int  max_character_height = 0;
-			/** the face ascender */
-			int  ascender = 0;
-			/** the face descender */
-			int  descender = 0;
-			/** the maximum size of a character */
-			int  face_height = 0;
-			/** the bitmaps composing the set */
-			std::vector<CharacterInfoInput> elements;
 		};
+
+		/**
+		* FolderInfoInput :  this info will produced in the final Atlas a FolderInfo
+		*/
+
+		class FolderInfoInput : public FolderInfoTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ObjectBaseInput>
+		{
+			friend class AtlasInput;
+			friend class AtlasGenerator;
+
+		protected:
+
+			/** constructor is protected */
+			FolderInfoInput() = default;
+			/** destructor is protected */
+			virtual ~FolderInfoInput();
+
+		public:
+
+			/** insert multiple bitmap before computation */
+			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
+			/** insert a bitmap before computation */
+			bool AddBitmap(FilePathParam const & path, char const * name, int tag);
+			/** insert an image inside the atlas */
+			bool AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag);
+			/** insert an image inside the atlas */
+			bool AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
+
+
+		protected:
+
+			/** internal method to add a bitmap or a multi bitmap */
+			bool AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
+
+		};
+
+
+
+
+
+
+
+		/**
+		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
+		*/
+
+		class FontInfoInputParams
+		{
+		public:
+
+			/** width of the glyph */
+			int max_character_width = 32;
+			/** height of the glyph */
+			int max_character_height = 32;
+			/** the characters to generate */
+			std::string characters;
+		};
+
+
 
 
 
@@ -158,7 +153,7 @@ namespace chaos
 		* AtlasInput : this hold the bitmaps / glyphs used for Atlas generation
 		*/
 
-		class AtlasInput
+		class AtlasInput public : AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ReferencedObject>
 		{
 			friend class AtlasGenerator;
 
@@ -172,16 +167,6 @@ namespace chaos
 
 			/** insert a Folder set inside the input */
 			FolderInput * AddFolder(char const * name);
-
-			/** find a bitmap set from its name */
-			FolderInput * FindBitmapSetInput(char const * name);
-			/** find a bitmap set from its name */
-			FolderInput const * FindBitmapSetInput(char const * name) const;
-
-			/** find a character set from its name */
-			FontInfoInput * FindFontInfoInput(char const * name);
-			/** find a character set from its name */
-			FontInfoInput const * FindFontInfoInput(char const * name) const;
 
 			/** Add a character set */
 			FontInfoInput * AddFontInfo(
@@ -207,13 +192,6 @@ namespace chaos
 				bool release_library,
 				bool release_face,
 				FontInfoInputParams const & params);
-
-		protected:
-
-			/** the bitmap sets */
-			std::vector<BitmapSetInput *> bitmap_sets;
-			/** the character sets */
-			std::vector<FontInfoInput *> font_infos;
 		};
 
 		/**

@@ -132,56 +132,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// FolderInfo functions
-		// ========================================================================
-
-		BitmapInfo const * FolderInfo::GetBitmapInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(bitmaps, name);
-		}
-		BitmapInfo const * FolderInfo::GetBitmapInfo(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(bitmaps, tag);
-		}
-
-		FontInfo const * FolderInfo::GetFontInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(fonts, name);
-		}
-		FontInfo const * FolderInfo::GetFontInfo(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(fonts, tag);
-		}
-
-		FolderInfo const * FolderInfo::GetFolderInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(folders, name);
-		}
-		FolderInfo const * FolderInfo::GetFolderInfo(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(folders, tag);
-		}
-
-		void FolderInfo::Clear()
-		{
-			bitmaps.clear();
-			fonts.clear();
-			folders.clear();
-		}
-
-		// ========================================================================
 		// FontInfo functions
 		// ========================================================================
 
-		CharacterInfo const * FontInfo::GetCharacterInfo(char const * name) const
-		{
-			return NamedObject::FindNamedObject(elements, tag);
-		}
 
-		CharacterInfo const * FontInfo::GetCharacterInfo(TagType tag) const
-		{
-			return NamedObject::FindNamedObject(elements, tag);
-		}
 
 		// ========================================================================
 		// JSON functions
@@ -370,32 +324,6 @@ namespace chaos
 		// Atlas functions
 		// ========================================================================
 
-		BitmapInfo const * AtlasBase::GetBitmapInfo(char const * name) const
-		{
-			return root_folder.GetBitmapInfo(name);
-		}
-		BitmapInfo const * AtlasBase::GetBitmapInfo(TagType tag) const
-		{
-			return root_folder.GetBitmapInfo(tag);
-		}
-
-		FontInfo const * AtlasBase::GetFontInfo(char const * name) const
-		{
-			return root_folder.GetFontInfo(name);
-		}
-		FontInfo const * AtlasBase::GetFontInfo(TagType tag) const
-		{
-			return root_folder.GetFontInfo(tag);
-		}
-
-		FolderInfo const * AtlasBase::GetFolderInfo(char const * name) const
-		{
-			return root_folder.GetFolderInfo(name);
-		}
-		FolderInfo const * AtlasBase::GetFolderInfo(TagType tag) const
-		{
-			return root_folder.GetFolderInfo(tag);
-		}
 
 		void AtlasBase::Clear()
 		{

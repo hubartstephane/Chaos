@@ -323,12 +323,10 @@ namespace chaos
 
 			/** display information */
 			void OutputInfo(std::ostream & stream) const;
-			/** display information about one named element */
-			static void OutputInfo(NamedObject const & info, std::ostream & stream);
-			/** display information about one bitmap info */
-			static void OutputInfo(BitmapInfo const & info, std::ostream & stream);
-			/** display information about one character info */
-			static void OutputInfo(CharacterInfo const & info, std::ostream & stream);
+
+
+
+
 
 			/** display information */
 			std::string GetInfoString() const;
@@ -344,7 +342,14 @@ namespace chaos
 			/** utility function to get the surface used in a bitmap */
 			float DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const;
 
-
+			/** display information */
+			void DoOutputInfo(std::ostream & stream, FolderInfo const * folder_info) const;
+			/** display information about one named element */
+			static void DoOutputInfo(NamedObject const & info, std::ostream & stream, char const * indent_prefix = nullptr);
+			/** display information about one bitmap info */
+			static void DoOutputInfo(BitmapInfo const & info, std::ostream & stream, char const * indent_prefix = nullptr);
+			/** display information about one character info */
+			static void DoOutputInfo(CharacterInfo const & info, std::ostream & stream, char const * indent_prefix = nullptr);
 
 			/** get a string with the general information */
 			std::string GetGeneralInformationString() const;

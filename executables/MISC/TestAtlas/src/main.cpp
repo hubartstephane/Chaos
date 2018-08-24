@@ -28,7 +28,7 @@ void SaveAtlasAndOutputAtlasToHTML(chaos::BitmapAtlas::Atlas & atlas, chaos::Fil
 	chaos::BitmapAtlas::AtlasHTMLGenerator::OutputToHTMLFile(atlas, html_dest_p, html_params);
 }
 
-bool AddFakeBitmap(chaos::BitmapAtlas::FolderInput * folder_input, char const * name)
+bool AddFakeBitmap(chaos::BitmapAtlas::FolderInfoInput * folder_input, char const * name)
 {
 	assert(name != nullptr);
 
@@ -57,7 +57,7 @@ void TestAtlasDebugMode(boost::filesystem::path const & dest_p)
 {
 	chaos::BitmapAtlas::AtlasInput input;
 
-	chaos::BitmapAtlas::FolderInput * folder_input = input.AddFolder("folder_input1");
+	chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("folder_input1");
 
 	AddFakeBitmap(folder_input, "A");
 	AddFakeBitmap(folder_input, "B");
@@ -93,12 +93,12 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 	chaos::BitmapAtlas::AtlasInput     input;
 
 	chaos::BitmapAtlas::FontInfoInput * font_info1 =
-		input.AddFontInfo("font_info1", font_path1.string().c_str(), nullptr, true, chaos::BitmapAtlas::FontInfoInputParams());
+		input.AddFont("font_info1", font_path1.string().c_str(), nullptr, true, chaos::BitmapAtlas::FontInfoInputParams());
 
 	chaos::BitmapAtlas::FontInfoInput * font_info2 =
-		input.AddFontInfo("font_info2", font_path2.string().c_str(), nullptr, true, chaos::BitmapAtlas::FontInfoInputParams());
+		input.AddFont("font_info2", font_path2.string().c_str(), nullptr, true, chaos::BitmapAtlas::FontInfoInputParams());
 
-	chaos::BitmapAtlas::FolderInput * folder_input =
+	chaos::BitmapAtlas::FolderInfoInput * folder_input =
 		input.AddFolder("folder_input1");
 
 	folder_input->AddBitmapFilesFromDirectory(resources_path / "ButtonImages", true);

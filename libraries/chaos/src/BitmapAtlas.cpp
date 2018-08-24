@@ -182,7 +182,8 @@ namespace chaos
 			atlas_count = 0;
 			dimension = glm::ivec2(0, 0);
 			// destroy the root folder
-			root_folder.Clear();
+			AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, ReferencedObject>::Clear();
+			//root_folder.Clear();
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const
@@ -208,7 +209,7 @@ namespace chaos
 			// recursive calls
 			size_t count = folder_info->folders.size();
 			for (size_t i = 0 ; i < count ; ++i)
-				result += DoComputeSurface(bitmap_index, folder_info->folders[i].get())
+				result += DoComputeSurface(bitmap_index, folder_info->folders[i].get());
 			return result;
 		}
 
@@ -219,41 +220,70 @@ namespace chaos
 
 
 
-
-
-
-
-
 		void AtlasBase::OutputInfo(std::ostream & stream) const
 		{
-			// info for bitmap sets
-			for (auto & bitmap_set_ptr : bitmap_sets)
-			{
-				BitmapSet const * bitmap_set = bitmap_set_ptr.get();
-				if (bitmap_set != nullptr)
-					for (BitmapInfo const & info : bitmap_set->elements)
-						OutputInfo(info, stream);
-			}
-			// info for character sets
-			for (auto & font_info_ptr : font_infos)
-			{
-				FontInfo const * font_info = font_info_ptr.get();
-				if (font_info != nullptr)
-					for (CharacterInfo const & info : font_info->elements)
-						OutputInfo(info, stream);
-			}
+			DoOutputInfo(stream, &root_folder);
 		}
 
-		void AtlasBase::OutputInfo(NamedObject const & info, std::ostream & stream)
+
+		void AtlasBase::DoOutputInfo(std::ostream & stream, FolderInfo const * folder_info) const
 		{
-			stream << "  name         : " << info.name << std::endl;
-			stream << "  tag          : " << info.tag << std::endl;
+			if (folder_info == nullptr)
+				return;
+
+			// surface for the bitmaps in the folder
+			for (BitmapInfo const & bitmap_info : folder_info->bitmaps)
+			{
+
+			}
+
+			// surface for the fonts in the folder
+			for (FontInfo const & font_info : folder_info->fonts)
+			{
+				for (CharacterInfo const & character_info : font_info.elements)
+				{
+
+				}
+			}
+			// recursive calls
+			size_t count = folder_info->folders.size();
+			for (size_t i = 0 ; i < count ; ++i)
+				DoOutputInfo(stream, folder_info->folders[i].get());
 		}
 
-		void AtlasBase::OutputInfo(BitmapInfo const & info, std::ostream & stream)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, char const * indent_prefix)
+		{
+			if (indent_prefix == nullptr)
+				indent_prefix = "";
+			stream << indent_prefix << "  name         : " << info.name << std::endl;
+			stream << indent_prefix << "  tag          : " << info.tag << std::endl;
+		}
+
+		void AtlasBase::DoOutputInfo(BitmapInfo const & info, std::ostream & stream, char const * indent_prefix)
 		{
 			NamedObject const & named_info = info;
-			OutputInfo(named_info, stream);
+			DoOutputInfo(named_info, stream);
 
 			stream << "  bitmap_index : " << info.bitmap_index << std::endl;
 			stream << "  width        : " << info.width << std::endl;
@@ -262,10 +292,10 @@ namespace chaos
 			stream << "  y            : " << info.y << std::endl;
 		}
 
-		void AtlasBase::OutputInfo(CharacterInfo const & info, std::ostream & stream)
+		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, char const * indent_prefix)
 		{
 			BitmapInfo const & bitmap_info = info;
-			OutputInfo(bitmap_info, stream);
+			DoOutputInfo(bitmap_info, stream);
 
 			stream << "  advance.x    : " << info.advance.x << std::endl;
 			stream << "  advance.y    : " << info.advance.y << std::endl;
@@ -283,21 +313,21 @@ namespace chaos
 		std::string AtlasBase::GetInfoString(NamedObject const & info)
 		{
 			std::ostringstream out;
-			OutputInfo(info, out);
+			DoOutputInfo(info, out);
 			return out.str();
 		}
 
 		std::string AtlasBase::GetInfoString(BitmapInfo const & info)
 		{
 			std::ostringstream out;
-			OutputInfo(info, out);
+			DoOutputInfo(info, out);
 			return out.str();
 		}
 
 		std::string AtlasBase::GetInfoString(CharacterInfo const & info)
 		{
 			std::ostringstream out;
-			OutputInfo(info, out);
+			DoOutputInfo(info, out);
 			return out.str();
 		}
 
@@ -350,15 +380,6 @@ namespace chaos
 			OutputGeneralInformation(stream);
 			return stream.str();
 		}
-
-
-
-
-
-
-
-
-
 
 		// ========================================================================
 		// Atlas functions
@@ -552,11 +573,6 @@ namespace chaos
 				bitmap_filename.replace_extension(); // for moment, BITMAP files should not have any extension
 		}
 
-
-
-
-
-
 		// ========================================================================
 		// JSON functions
 		// ========================================================================
@@ -683,5 +699,6 @@ namespace chaos
 		}
 
 	}; // namespace BitmapAtlas
+
 }; // namespace chaos
 

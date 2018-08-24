@@ -166,7 +166,7 @@ namespace death
 		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
 
 		// Add sprites
-		chaos::BitmapAtlas::FolderInput * folder_info = input.AddFolder("sprites");
+		chaos::BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites");
 		if (folder_info == nullptr)
 			return false;
 

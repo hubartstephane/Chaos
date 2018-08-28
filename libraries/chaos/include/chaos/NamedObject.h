@@ -13,18 +13,6 @@ namespace chaos
 	{
 	public:
 
-		/** some constructor */
-		NamedObject() = default;
-
-		NamedObject(char const * in_name);
-
-		NamedObject(TagType in_tag);
-
-		NamedObject(char const * in_name, TagType in_tag);
-
-
-		shuxxx
-
 		/** the name of the object */
 		std::string name;
 		/** the tag of the object */
@@ -38,7 +26,7 @@ namespace chaos
 		{
 			// maybe tag could math the position in the array
 			size_t count = elements.size();
-			if (tag >= 0 && tag < (TagType)count)
+			if (tag >= 0 && (size_t)tag < count)
 			{
 				if (meta::get_raw_pointer(elements[tag])->tag == tag)
 					return meta::get_raw_pointer(elements[tag]);
@@ -55,7 +43,7 @@ namespace chaos
 		{
 			// maybe tag could math the position in the array
 			size_t count = elements.size();
-			if (tag >= 0 && tag < (TagType)count)
+			if (tag >= 0 && (size_t)tag < count)
 			{
 				if (meta::get_raw_pointer(elements[tag])->tag == tag)
 					return meta::get_raw_pointer(elements[tag]);

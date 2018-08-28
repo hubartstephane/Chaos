@@ -246,7 +246,7 @@ namespace chaos
 			// recursive calls
 			size_t count = folder_info.folders.size();
 			for (size_t i = 0 ; i < count ; ++i)
-				DoOutputInfo(stream, *folder_info->folders[i]);
+				DoOutputInfo(*folder_info.folders[i], stream, indent);
 		}
 
 

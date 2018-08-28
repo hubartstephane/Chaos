@@ -45,7 +45,7 @@ namespace chaos
 		// FolderInfoInput implementation
 		// ========================================================================
 
-		FolderInfoInput * FolderInfoInput::AddFolder(char const * name)
+		FolderInfoInput * FolderInfoInput::AddFolder(char const * name, TagType tag)
 		{
 			assert(name != nullptr);
 
@@ -62,7 +62,7 @@ namespace chaos
 			return result;
 		}
 
-		bool FolderInfoInput::AddFont(char const * name, char const * font_name, FT_Library library, bool release_library, FontInfoInputParams const & params)
+		bool FolderInfoInput::AddFont(char const * font_name, FT_Library library, bool release_library, char const * name, TagType tag, FontInfoInputParams const & params)
 		{
 			assert(font_name != nullptr);
 
@@ -85,15 +85,15 @@ namespace chaos
 				return false;
 			}
 
-			return AddFontImpl(name, library, face, release_library, true, params);
+			return AddFontImpl(library, face, release_library, true, name, tag, params);
 		}
 
-		bool FolderInfoInput::AddFont(char const * name, FT_Face face, bool release_face, FontInfoInputParams const & params)
+		bool FolderInfoInput::AddFont(FT_Face face, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
 		{
-			return AddFontImpl(name, nullptr, face, false, release_face, params);
+			return AddFontImpl(nullptr, face, false, release_face, name, tag, params);
 		}
 
-		bool FolderInfoInput::AddFontImpl(char const * name, FT_Library library, FT_Face face, bool release_library, bool release_face, FontInfoInputParams const & params)
+		bool FolderInfoInput::AddFontImpl(FT_Library library, FT_Face face, bool release_library, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
 		{
 			assert(name != nullptr);
 			assert(face != nullptr);
@@ -234,7 +234,7 @@ namespace chaos
 
 
 
-		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
+		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
 			bool result = false;
 
@@ -244,8 +244,11 @@ namespace chaos
 				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 				result = AddBitmap(
+					bitmap,
+					true,
 					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
-					bitmap, true, tag);
+					tag
+				);
 				if (!result)
 					FreeImage_Unload(bitmap);
 			}
@@ -253,17 +256,17 @@ namespace chaos
 		}
 
 
-		bool FolderInfoInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
+		bool FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
-			return AddBitmapImpl(name, bitmap, nullptr, release_bitmap, tag);
+			return AddBitmapImpl(bitmap, nullptr, release_bitmap, name, tag);
 		}
 
-		bool FolderInfoInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		bool FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
-			return AddBitmapImpl(name, nullptr, animated_bitmap, release_bitmap, tag);
+			return AddBitmapImpl(nullptr, animated_bitmap, release_bitmap, name, tag);
 		}
 
-		bool FolderInfoInput::AddBitmapImpl(char const * name, FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		bool FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
@@ -296,22 +299,22 @@ namespace chaos
 		{
 			return root_folder.AddBitmapFilesFromDirectory(path, recursive);
 		}
-		bool AtlasInput::AddBitmap(FilePathParam const & path, char const * name, int tag)
+		bool AtlasInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(path, name, tag);
 		}
-		bool AtlasInput::AddBitmap(char const * name, FIBITMAP * bitmap, bool release_bitmap, int tag)
+		bool AtlasInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
-			return root_folder.AddBitmap(name, bitmap, release_bitmap, tag);
+			return root_folder.AddBitmap(bitmap, release_bitmap, name, tag);
 		}
-		bool AtlasInput::AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag)
+		bool AtlasInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
-			return root_folder.AddBitmap(name, animated_bitmap, release_bitmap, tag);
+			return root_folder.AddBitmap(animated_bitmap, release_bitmap, name, tag);
 		}
 
-		FolderInfoInput * AtlasInput::AddFolder(char const * name)
+		FolderInfoInput * AtlasInput::AddFolder(char const * name, TagType tag)
 		{
-			return root_folder.AddFolder(name);
+			return root_folder.AddFolder(name, tag);
 		}
 
 		bool AtlasInput::AddFont(

@@ -324,10 +324,6 @@ namespace chaos
 			/** display information */
 			void OutputInfo(std::ostream & stream) const;
 
-
-
-
-
 			/** display information */
 			std::string GetInfoString() const;
 			/** display information about one named object */

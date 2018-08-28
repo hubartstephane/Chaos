@@ -222,23 +222,21 @@ namespace chaos
 
 		void AtlasBase::OutputInfo(std::ostream & stream) const
 		{
-			DoOutputInfo(stream, &root_folder);
+			DoOutputInfo(root_folder, stream);
 		}
 
 
-		void AtlasBase::DoOutputInfo(std::ostream & stream, FolderInfo const * folder_info) const
+		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, char const * indent) const
 		{
-			if (folder_info == nullptr)
-				return;
 
 			// surface for the bitmaps in the folder
-			for (BitmapInfo const & bitmap_info : folder_info->bitmaps)
+			for (BitmapInfo const & bitmap_info : folder_info.bitmaps)
 			{
 
 			}
 
 			// surface for the fonts in the folder
-			for (FontInfo const & font_info : folder_info->fonts)
+			for (FontInfo const & font_info : folder_info.fonts)
 			{
 				for (CharacterInfo const & character_info : font_info.elements)
 				{
@@ -246,9 +244,9 @@ namespace chaos
 				}
 			}
 			// recursive calls
-			size_t count = folder_info->folders.size();
+			size_t count = folder_info.folders.size();
 			for (size_t i = 0 ; i < count ; ++i)
-				DoOutputInfo(stream, folder_info->folders[i].get());
+				DoOutputInfo(stream, *folder_info->folders[i]);
 		}
 
 
@@ -576,18 +574,6 @@ namespace chaos
 		// ========================================================================
 		// JSON functions
 		// ========================================================================
-
-		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry)
-		{
-			json_entry["name"] = info.name;
-			json_entry["tag"] = info.tag;
-		}
-
-		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry)
-		{
-			JSONTools::GetAttribute(json_entry, "name", info.name, "");
-			JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);
-		}
 
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
 		{

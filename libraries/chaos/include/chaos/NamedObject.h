@@ -13,6 +13,18 @@ namespace chaos
 	{
 	public:
 
+		/** some constructor */
+		NamedObject() = default;
+
+		NamedObject(char const * in_name);
+
+		NamedObject(TagType in_tag);
+
+		NamedObject(char const * in_name, TagType in_tag);
+
+
+		shuxxx
+
 		/** the name of the object */
 		std::string name;
 		/** the tag of the object */
@@ -83,4 +95,10 @@ namespace chaos
 			return nullptr;
 		}
 	};
+
+	/** function to serialize into JSON */
+	void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry);
+	/** function to serialize from JSON */
+	void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry);
+
 }; // namespace chaos

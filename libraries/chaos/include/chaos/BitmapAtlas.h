@@ -343,7 +343,7 @@ namespace chaos
 			float DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const;
 
 			/** display information */
-			void DoOutputInfo(std::ostream & stream, FolderInfo const * folder_info) const;
+			void DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, char const * indent_prefix = nullptr) const;
 			/** display information about one named element */
 			static void DoOutputInfo(NamedObject const & info, std::ostream & stream, char const * indent_prefix = nullptr);
 			/** display information about one bitmap info */
@@ -421,10 +421,6 @@ namespace chaos
 		/**
 		* Some JSON utility functions
 		*/
-
-		void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry);
-
-		void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry);
 
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
 

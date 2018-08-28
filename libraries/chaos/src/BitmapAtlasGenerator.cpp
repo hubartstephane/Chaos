@@ -11,6 +11,37 @@ namespace chaos
 	{
 
 		// ========================================================================
+		// BitmapInfoInput implementation
+		// ========================================================================
+
+		BitmapInfoInput::~BitmapInfoInput()
+		{				
+			if (release_bitmap)
+			{
+				if (bitmap != nullptr)
+					FreeImage_Unload(bitmap);
+				if (animated_bitmap != nullptr)
+					FreeImage_CloseMultiBitmap(animated_bitmap, 0);
+			}
+		}
+
+		// ========================================================================
+		// FontInfoInput implementation
+		// ========================================================================
+
+		FontInfoInput::~FontInfoInput()
+		{
+			// release face
+			if (face != nullptr)
+				if (release_face)
+					FT_Done_Face(face);
+			// release library
+			if (library != nullptr)
+				if (release_library)
+					FT_Done_FreeType(library);
+		}
+
+		// ========================================================================
 		// FolderInfoInput implementation
 		// ========================================================================
 
@@ -299,38 +330,6 @@ namespace chaos
 			FontInfoInputParams const & params)
 		{
 			return root_folder.AddFont(name, face, release_face, params);
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-		// ========================================================================
-		// FontInfoInput implementation
-		// ========================================================================
-
-		FontInfoInput::~FontInfoInput()
-		{
-			// release face
-			if (face != nullptr)
-				if (release_face)
-					FT_Done_Face(face);
-			// release library
-			if (library != nullptr)
-				if (release_library)
-					FT_Done_FreeType(library);
-			// release the bitmaps
-			for (CharacterInfoInput & element : elements)
-				if (element.release_bitmap)
-					FreeImage_Unload(element.bitmap);
 		}
 
 		// ========================================================================

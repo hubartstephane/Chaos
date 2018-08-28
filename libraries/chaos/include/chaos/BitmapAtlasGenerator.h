@@ -14,6 +14,21 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 
+		/**
+		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
+		*/
+
+		class FontInfoInputParams
+		{
+		public:
+
+			/** width of the glyph */
+			int max_character_width = 32;
+			/** height of the glyph */
+			int max_character_height = 32;
+			/** the characters to generate */
+			std::string characters;
+		};
 
 		/**
 		* ObjectBaseInput : base object for inputs
@@ -31,6 +46,9 @@ namespace chaos
 		class BitmapInfoInput : public ObjectBaseInput
 		{
 		public:
+
+			/** destructor */
+			virtual ~BitmapInfoInput();
 
 			/** the description of the bitmap */
 			ImageDescription description;
@@ -66,14 +84,12 @@ namespace chaos
 			friend class AtlasGenerator;
 			friend class FolderInfoInput;
 
-		protected:
+		public:
 
 			/** constructor */
 			FontInfoInput() = default;
 			/** destructor */
 			virtual ~FontInfoInput();
-
-		protected:
 
 			/** the Freetype library if appropriate */
 			FT_Library library = nullptr;
@@ -113,8 +129,6 @@ namespace chaos
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
 
-
-
 			/** Add a character set */
 			bool AddFont(
 				char const * name,
@@ -128,8 +142,6 @@ namespace chaos
 				FT_Face face,
 				bool release_face = true,
 				FontInfoInputParams const & params = FontInfoInputParams());
-
-
 
 		protected:
 
@@ -153,21 +165,7 @@ namespace chaos
 
 
 
-		/**
-		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
-		*/
 
-		class FontInfoInputParams
-		{
-		public:
-
-			/** width of the glyph */
-			int max_character_width = 32;
-			/** height of the glyph */
-			int max_character_height = 32;
-			/** the characters to generate */
-			std::string characters;
-		};
 
 
 
@@ -202,8 +200,6 @@ namespace chaos
 			/** insert an image inside the atlas */
 			bool AddBitmap(char const * name, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, int tag);
 
-	
-
 			/** Add a character set */
 			bool AddFont(
 				char const * name,
@@ -217,8 +213,6 @@ namespace chaos
 				FT_Face face,
 				bool release_face = true,
 				FontInfoInputParams const & params = FontInfoInputParams());
-
-
 		};
 
 		/**

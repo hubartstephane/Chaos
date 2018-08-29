@@ -9,6 +9,24 @@
 
 namespace chaos
 {
+	class OutputStreamIndent
+	{
+	public:
+
+		OutputStreamIndent(int in_value) : 
+			value(in_value){}
+
+		friend std::ostream & operator << (std::ostream & stream, OutputStreamIndent const & stream_indent)
+		{
+			for (int i = 0; i < stream_indent.value; ++i)
+				stream << "  ";
+			return stream;
+		}
+
+	protected:
+
+		int value = 0;
+	};
 
 	namespace BitmapAtlas
 	{
@@ -131,46 +149,6 @@ namespace chaos
 			return ParseFromNameReadGridSkip(name, i, result, name_result);
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		// ========================================================================
 		// Atlas functions
 		// ========================================================================
@@ -183,7 +161,6 @@ namespace chaos
 			dimension = glm::ivec2(0, 0);
 			// destroy the root folder
 			AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, ReferencedObject>::Clear();
-			//root_folder.Clear();
 		}
 
 		float AtlasBase::ComputeSurface(int bitmap_index) const
@@ -213,92 +190,93 @@ namespace chaos
 			return result;
 		}
 
-
-
-
-
-
-
-
 		void AtlasBase::OutputInfo(std::ostream & stream) const
 		{
 			DoOutputInfo(root_folder, stream);
 		}
 
-
-		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, char const * indent) const
+		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent) const
 		{
+			OutputStreamIndent stream_indent(indent);
 
-			// surface for the bitmaps in the folder
-			for (BitmapInfo const & bitmap_info : folder_info.bitmaps)
+			stream << stream_indent << "Folder:" << std::endl;
+			NamedObject const & named_info = folder_info;
+			DoOutputInfo(named_info, stream, indent);
+
+			// output the bitmaps in the folder
+			if (folder_info.bitmaps.size() > 0)
 			{
-
+				OutputStreamIndent bitmap_stream_indent(indent + 1);
+				stream << bitmap_stream_indent << "Bitmaps:" << std::endl;
+				for (BitmapInfo const & bitmap_info : folder_info.bitmaps)
+					DoOutputInfo(bitmap_info, stream, indent + 1);
 			}
-
-			// surface for the fonts in the folder
-			for (FontInfo const & font_info : folder_info.fonts)
+			// output the fonts in the folder
+			if (folder_info.fonts.size() > 0)
 			{
-				for (CharacterInfo const & character_info : font_info.elements)
-				{
-
-				}
+				OutputStreamIndent font_stream_indent(indent + 1);
+				stream << font_stream_indent << "Fonts:" << std::endl;
+				for (FontInfo const & font_info : folder_info.fonts)
+					DoOutputInfo(font_info, stream, indent + 1);
 			}
 			// recursive calls
 			size_t count = folder_info.folders.size();
 			for (size_t i = 0 ; i < count ; ++i)
-				DoOutputInfo(*folder_info.folders[i], stream, indent);
+				DoOutputInfo(*folder_info.folders[i], stream, indent + 1);
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, char const * indent_prefix)
+		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
 		{
-			if (indent_prefix == nullptr)
-				indent_prefix = "";
-			stream << indent_prefix << "  name         : " << info.name << std::endl;
-			stream << indent_prefix << "  tag          : " << info.tag << std::endl;
+			OutputStreamIndent stream_indent(indent);
+			stream << stream_indent << "  name         : " << info.name << std::endl;
+			stream << stream_indent << "  tag          : " << info.tag << std::endl;
 		}
 
-		void AtlasBase::DoOutputInfo(BitmapInfo const & info, std::ostream & stream, char const * indent_prefix)
+		void AtlasBase::DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent)
 		{
 			NamedObject const & named_info = info;
-			DoOutputInfo(named_info, stream);
+			DoOutputInfo(named_info, stream, indent);
 
-			stream << "  bitmap_index : " << info.bitmap_index << std::endl;
-			stream << "  width        : " << info.width << std::endl;
-			stream << "  height       : " << info.height << std::endl;
-			stream << "  x            : " << info.x << std::endl;
-			stream << "  y            : " << info.y << std::endl;
+			OutputStreamIndent stream_indent(indent);
+			stream << stream_indent << "  bitmap_index : " << info.bitmap_index << std::endl;
+			stream << stream_indent << "  width        : " << info.width << std::endl;
+			stream << stream_indent << "  height       : " << info.height << std::endl;
+			stream << stream_indent << "  x            : " << info.x << std::endl;
+			stream << stream_indent << "  y            : " << info.y << std::endl;
 		}
 
-		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, char const * indent_prefix)
+		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent)
 		{
 			BitmapInfo const & bitmap_info = info;
-			DoOutputInfo(bitmap_info, stream);
+			DoOutputInfo(bitmap_info, stream, indent);
 
-			stream << "  advance.x    : " << info.advance.x << std::endl;
-			stream << "  advance.y    : " << info.advance.y << std::endl;
-			stream << "  bitmap_left  : " << info.bitmap_left << std::endl;
-			stream << "  bitmap_top   : " << info.bitmap_top << std::endl;
+			OutputStreamIndent stream_indent(indent);
+			stream << stream_indent << "  advance.x    : " << info.advance.x << std::endl;
+			stream << stream_indent << "  advance.y    : " << info.advance.y << std::endl;
+			stream << stream_indent << "  bitmap_left  : " << info.bitmap_left << std::endl;
+			stream << stream_indent << "  bitmap_top   : " << info.bitmap_top << std::endl;
+		}
+
+		void AtlasBase::DoOutputInfo(FontInfo const & info, std::ostream & stream, int indent)
+		{
+			NamedObject const & named_info = info;
+			DoOutputInfo(info, stream, indent);
+
+			OutputStreamIndent stream_indent(indent);
+			stream << stream_indent << "  max_character_width  : " << info.max_character_width << std::endl;
+			stream << stream_indent << "  max_character_height : " << info.max_character_height << std::endl;
+			stream << stream_indent << "  ascender             : " << info.ascender << std::endl;
+			stream << stream_indent << "  descender            : " << info.descender << std::endl;
+			stream << stream_indent << "  face_height          : " << info.face_height << std::endl;
+
+			// output the charactars in the fonts
+			if (info.elements.size() > 0)
+			{
+				OutputStreamIndent character_stream_indent(indent + 1);
+				stream << character_stream_indent << "Characters:" << std::endl;
+				for (CharacterInfo const & character_info : info.elements)
+					DoOutputInfo(character_info, stream, indent + 1);
+			}
 		}
 
 		std::string AtlasBase::GetInfoString() const
@@ -632,7 +610,7 @@ namespace chaos
 			json_entry["descender"] = info.descender;
 			json_entry["face_height"] = info.face_height;
 			json_entry["elements"] = nlohmann::json::array();
-			JSONTools::SaveIntoJSON(info.elements, json_entry["elements"]);
+			JSONTools::SaveVectorIntoJSON(info.elements, json_entry["elements"]);
 		}
 
 		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry)
@@ -648,7 +626,7 @@ namespace chaos
 
 			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
 			if (json_elements != nullptr)
-				JSONTools::LoadFromJSON(info.elements, *json_elements);
+				JSONTools::LoadVectorFromJSON(info.elements, *json_elements);
 		}
 
 		void SaveIntoJSON(FolderInfo const & info, nlohmann::json & json_entry)
@@ -657,13 +635,13 @@ namespace chaos
 			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
 			json_entry["bitmaps"] = nlohmann::json::array();
-			JSONTools::SaveIntoJSON(info.bitmaps, json_entry["bitmaps"]);
+			JSONTools::SaveVectorIntoJSON(info.bitmaps, json_entry["bitmaps"]);
 
 			json_entry["fonts"] = nlohmann::json::array();
-			JSONTools::SaveIntoJSON(info.fonts, json_entry["fonts"]);
+			JSONTools::SaveVectorIntoJSON(info.fonts, json_entry["fonts"]);
 
 			json_entry["folders"] = nlohmann::json::array();
-			JSONTools::SaveIntoJSON(info.folders, json_entry["folders"]);
+			JSONTools::SaveVectorIntoJSON(info.folders, json_entry["folders"]);
 		}
 
 		void LoadFromJSON(FolderInfo & info, nlohmann::json const & json_entry)
@@ -673,15 +651,15 @@ namespace chaos
 
 			nlohmann::json const * bitmaps_elements = JSONTools::GetStructure(json_entry, "bitmaps");
 			if (bitmaps_elements != nullptr)
-				JSONTools::LoadFromJSON(info.bitmaps, *bitmaps_elements);
+				JSONTools::LoadVectorFromJSON(info.bitmaps, *bitmaps_elements);
 
 			nlohmann::json const * fonts_elements = JSONTools::GetStructure(json_entry, "fonts");
 			if (fonts_elements != nullptr)
-				JSONTools::LoadFromJSON(info.fonts, *fonts_elements);
+				JSONTools::LoadVectorFromJSON(info.fonts, *fonts_elements);
 
 			nlohmann::json const * folders_elements = JSONTools::GetStructure(json_entry, "folders");
 			if (folders_elements != nullptr)
-				JSONTools::LoadFromJSON(info.folders, *folders_elements);
+				JSONTools::LoadVectorFromJSON(info.folders, *folders_elements);
 		}
 
 	}; // namespace BitmapAtlas

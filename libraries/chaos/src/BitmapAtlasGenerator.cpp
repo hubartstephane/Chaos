@@ -131,7 +131,7 @@ namespace chaos
 				params.characters.c_str() :
 				DEFAULT_CHARACTERS;
 
-			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
+			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result.face, characters);
 
 			// transforms each info of the glyph map into a bitmap
 			for (auto & glyph : glyph_cache)
@@ -318,21 +318,23 @@ namespace chaos
 		}
 
 		bool AtlasInput::AddFont(
-			char const * name,
 			char const * font_name,
 			FT_Library library,
 			bool release_library,
+			char const * name,
+			TagType tag,
 			FontInfoInputParams const & params)
 		{
-			return root_folder.AddFont(name, font_name, library, release_library, params);
+			return root_folder.AddFont(font_name, library, release_library, name, tag, params);
 		}
 		bool AtlasInput::AddFont(
-			char const * name,
 			FT_Face face,
 			bool release_face,
+			char const * name,
+			TagType tag,
 			FontInfoInputParams const & params)
 		{
-			return root_folder.AddFont(name, face, release_face, params);
+			return root_folder.AddFont(face, release_face, name, tag, params);
 		}
 
 		// ========================================================================

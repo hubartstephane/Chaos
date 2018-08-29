@@ -110,12 +110,10 @@ namespace chaos
 			friend class AtlasInput;
 			friend class AtlasGenerator;
 
-		protected:
-
-			/** constructor is protected */
-			FolderInfoInput() = default;
-
 		public:
+
+			/** constructor */
+			FolderInfoInput() = default;
 
 			/** insert a Folder set inside the input */
 			FolderInfoInput * AddFolder(char const * name, TagType tag);

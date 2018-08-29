@@ -116,7 +116,6 @@ namespace chaos
 			std::vector<CHARACTER_INFO_TYPE> elements;
 		};
 
-
 		/**
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
@@ -217,7 +216,6 @@ namespace chaos
 
 		};
 
-
 		/**
 		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
 		*/
@@ -292,7 +290,6 @@ namespace chaos
 
 			/** the root folder */
 			FOLDER_INFO_TYPE root_folder;
-
 		};
 
 		/**
@@ -339,13 +336,15 @@ namespace chaos
 			float DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const;
 
 			/** display information */
-			void DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, char const * indent_prefix = nullptr) const;
+			void DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent = 0) const;
 			/** display information about one named element */
-			static void DoOutputInfo(NamedObject const & info, std::ostream & stream, char const * indent_prefix = nullptr);
+			static void DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent = 0);
 			/** display information about one bitmap info */
-			static void DoOutputInfo(BitmapInfo const & info, std::ostream & stream, char const * indent_prefix = nullptr);
+			static void DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent = 0);
 			/** display information about one character info */
-			static void DoOutputInfo(CharacterInfo const & info, std::ostream & stream, char const * indent_prefix = nullptr);
+			static void DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent = 0);
+			/** display information about one font info */
+			static void DoOutputInfo(FontInfo const & info, std::ostream & stream, int indent = 0);
 
 			/** get a string with the general information */
 			std::string GetGeneralInformationString() const;
@@ -410,9 +409,6 @@ namespace chaos
 			/** the bitmaps contained in the atlas */
 			std::vector<bitmap_ptr> bitmaps;
 		};
-
-
-
 
 		/**
 		* Some JSON utility functions

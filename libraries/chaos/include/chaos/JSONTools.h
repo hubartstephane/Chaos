@@ -129,7 +129,7 @@ namespace chaos
 
 		/** utility function */
 		template<typename T>
-		static void SaveIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
+		static void SaveVectorIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
 		{
 			for (auto const & element : elements)
 			{
@@ -140,7 +140,7 @@ namespace chaos
 		}
 		/** utility function */
 		template<typename T>
-		static void SaveIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
+		static void SaveVectorIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
 		{
 			for (auto const * element : elements)
 			{
@@ -153,7 +153,7 @@ namespace chaos
 		}
 		/** utility function */
 		template<typename T>
-		static void SaveIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
+		static void SaveVectorIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
 		{
 			for (auto & element : elements)
 			{
@@ -165,7 +165,7 @@ namespace chaos
 
 		/** utility function */
 		template<typename T>
-		static void LoadFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
+		static void LoadVectorFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
 		{
 			for (auto const & json_entry : json_entries)
 			{
@@ -176,7 +176,7 @@ namespace chaos
 		}
 		/** utility function */
 		template<typename T>
-		static void LoadFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
+		static void LoadVectorFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
 		{
 			for (auto const & json_entry : json_entries)
 			{
@@ -189,7 +189,7 @@ namespace chaos
 		}
 		/** utility function */
 		template<typename T>
-		static void LoadFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
+		static void LoadVectorFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
 		{
 			for (auto const & json_entry : json_entries)
 			{

@@ -56,6 +56,7 @@ namespace chaos
 				if (result != nullptr)
 				{
 					result->name = name;
+					result->tag = tag;
 					folders.push_back(std::move(std::unique_ptr<FolderInfoInput>(result)));
 				}
 			}
@@ -167,21 +168,7 @@ namespace chaos
 
 			return true;
 		}
-
-#if 0
-		// ========================================================================
-		// FolderInfoInput implementation
-		// ========================================================================
-
-		FolderInfoInput::~FolderInfoInput()
-		{
-			for (BitmapInfoInput & element : elements)
-				if (element.release_bitmap)
-					FreeImage_Unload(element.bitmap);
-			elements.clear();
-		}
-
-#endif
+		
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -231,8 +218,6 @@ namespace chaos
 			animation_info = animation_info;
 		}
 #endif
-
-
 
 		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
@@ -286,10 +271,6 @@ namespace chaos
 			bitmaps.push_back(std::move(new_entry)); // move for std::string copy
 			return true;
 		}
-
-
-
-
 
 		// ========================================================================
 		// AtlasInput implementation
@@ -528,8 +509,22 @@ namespace chaos
 		}
 
 
-		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result)
+		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput const * folder_info)
 		{
+			if (folder_info == nullptr)
+				return;
+			// iterate over bitmaps
+			for (size_t i = 0; i < folder_info->bitmaps.size(); ++i)
+			{
+			}
+
+
+			// recursively iterate over sub folders
+			for (size_t i = 0; i < folder_info->folders.size(); ++i)
+				FillAtlasEntriesFromInput(result, folder_info->folders[i].get());
+
+
+#if 0
 			// fill with bitmap sets 
 			for (FolderInfoInput * bitmap_set_input : input->bitmap_sets)
 			{
@@ -600,6 +595,7 @@ namespace chaos
 					result.push_back(&font_info_input->elements[i]);
 				}
 			}
+#endif
 		}
 
 		bool AtlasGenerator::ComputeResult(AtlasInput const & in_input, Atlas & in_output, AtlasGeneratorParams const & in_params)
@@ -617,7 +613,7 @@ namespace chaos
 
 			// generate input entries and sets. Collect input entries
 			BitmapInfoInputVector entries;
-			FillAtlasEntriesFromInput(entries);
+			FillAtlasEntriesFromInput(entries, &in_input.root_folder);
 
 			// search max texture size
 			int max_width = -1;
@@ -924,7 +920,7 @@ namespace chaos
 		{
 			// fill the atlas
 			AtlasInput input;
-			FolderInfoInput * folder_info = input.AddFolder("files");
+			FolderInfoInput * folder_info = input.AddFolder("files", 0);
 			folder_info->AddBitmapFilesFromDirectory(bitmaps_dir, recursive);
 			// create the atlas files
 			Atlas          atlas;

@@ -11,7 +11,7 @@ namespace chaos
 			assert(folder_name != nullptr);
 
 			// create the FolderInfoInput (if not already existing)
-			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder(folder_name);
+			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder(folder_name, 0);
 			if (folder_input == nullptr)
 				return false;
 
@@ -34,7 +34,7 @@ namespace chaos
 			assert(folder_name != nullptr);
 
 			// create the FolderInfoInput (if not already existing)
-			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder(folder_name);
+			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder(folder_name, 0);
 			if (folder_input == nullptr)
 				return false;
 
@@ -61,7 +61,7 @@ namespace chaos
 			assert(folder_name != nullptr);
 
 			// create the FolderInfoInput (if not already existing)
-			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder(folder_name);
+			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder(folder_name, 0);
 			if (folder_input == nullptr)
 				return false;
 

@@ -53,11 +53,15 @@ namespace chaos
 
 			/** utility methods to iterate over BitmapSets or FontInfos and display the texture rectangle into HTML */
 			template<typename T>
-			static void OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			static void OutputBitmapsToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			/** utility method to recursively draw the bitmaps and characters from folders */
+			static void OutputBitmapsToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
 
 			/** utility methods to iterate over BitmapSets or FontInfos and display the texture filename into HTML */
 			template<typename T>
-			static void OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			static void OutputBitmapFilenamesToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
+			/** utility method to recursively display bitmaps and characters filenames */
+			static void OutputBitmapFilenamesToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale);
 		};
 	}; // namespace BitmapAtlas
 }; // namespace chaos

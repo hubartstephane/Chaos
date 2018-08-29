@@ -65,63 +65,80 @@ namespace chaos
 			}
 		}
 
-		template<typename T>
-		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
-			for (auto & element_ptr : elements) // iterate over FontInfo or BitmapSet
-			{
-				T const * element = element_ptr.get();
-
-				for (auto const & info : element->elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
-				{
-					// keep only entries of corresponding bitmap 
-					if (info.bitmap_index != bitmap_index)
-						continue;
-
-					int color = 10 + (rand() % 10) * 10;
-
-					int x = MathTools::CastAndMul<int>(info.x, scale);
-					int y = MathTools::CastAndMul<int>(info.y, scale);
-					int w = MathTools::CastAndMul<int>(info.width, scale);
-					int h = MathTools::CastAndMul<int>(info.height, scale);
-
-					char rect_props[1024];
-					sprintf_s(rect_props, 1024, "fill-opacity:0.5;fill:rgb(%d,0,0);stroke-width:1;stroke:rgb(0,0,0)", color);
-
-					tinyxml2::XMLElement * RECT = html.PushElement(SVG, "RECT");
-					html.PushAttribute(RECT, "x", x);
-					html.PushAttribute(RECT, "y", y);
-					html.PushAttribute(RECT, "width", w);
-					html.PushAttribute(RECT, "height", h);
-					html.PushAttribute(RECT, "style", rect_props);
-				}
-			}
+			if (folder_info == nullptr)
+				return;
+			// draw the bitmaps and the characters
+			OutputBitmapsToHTMLDocument(folder_info->bitmaps, html, SVG, bitmap_index, scale);
+			for (size_t i = 0 ; i < folder_info->fonts.size() ; ++i)
+				OutputBitmapsToHTMLDocument(folder_info->fonts[i].elements, html, SVG, bitmap_index, scale);
+			// recursively iterate over sub folders
+			for (size_t i = 0; i < folder_info->folders.size(); ++i)
+				OutputBitmapsToHTMLDocument(folder_info->folders[i].get(), html, SVG, bitmap_index, scale);
 		}
 
 		template<typename T>
-		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+		void AtlasHTMLGenerator::OutputBitmapsToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
 		{
-			for (auto & element_ptr : elements) // iterate over FontInfo or BitmapSet
+			for (auto const & info : elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
 			{
-				T const * element = element_ptr.get();
+				// keep only entries of corresponding bitmap 
+				if (info.bitmap_index != bitmap_index)
+					continue;
 
-				for (auto const & info : element->elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
-				{
-					// keep only entries of corresponding bitmap 
-					if (info.bitmap_index != bitmap_index)
-						continue;
+				int color = 10 + (rand() % 10) * 10;
 
-					int x = MathTools::CastAndMul<int>(info.x, scale) + MathTools::CastAndMul<int>(info.width, scale * 0.5f);
-					int y = MathTools::CastAndMul<int>(info.y, scale) + MathTools::CastAndMul<int>(info.height, scale * 0.5f);
+				int x = MathTools::CastAndMul<int>(info.x, scale);
+				int y = MathTools::CastAndMul<int>(info.y, scale);
+				int w = MathTools::CastAndMul<int>(info.width, scale);
+				int h = MathTools::CastAndMul<int>(info.height, scale);
 
-					tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
-					html.PushAttribute(TEXT, "text-anchor", "middle");
-					html.PushAttribute(TEXT, "x", x);
-					html.PushAttribute(TEXT, "y", y);
-					html.PushAttribute(TEXT, "fill", "white");
+				char rect_props[1024];
+				sprintf_s(rect_props, 1024, "fill-opacity:0.5;fill:rgb(%d,0,0);stroke-width:1;stroke:rgb(0,0,0)", color);
 
-					html.PushText(TEXT, info.name.c_str());
-				}
+				tinyxml2::XMLElement * RECT = html.PushElement(SVG, "RECT");
+				html.PushAttribute(RECT, "x", x);
+				html.PushAttribute(RECT, "y", y);
+				html.PushAttribute(RECT, "width", w);
+				html.PushAttribute(RECT, "height", h);
+				html.PushAttribute(RECT, "style", rect_props);
+			}
+		}
+
+		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+		{
+			if (folder_info == nullptr)
+				return;
+			
+			// draw the bitmaps and the characters
+			OutputBitmapFilenamesToHTMLDocument(folder_info->bitmaps, html, SVG, bitmap_index, scale);
+			for (size_t i = 0; i < folder_info->fonts.size(); ++i)
+				OutputBitmapFilenamesToHTMLDocument(folder_info->fonts[i].elements, html, SVG, bitmap_index, scale);
+			// recursively iterate over sub folders
+			for (size_t i = 0; i < folder_info->folders.size(); ++i)
+				OutputBitmapFilenamesToHTMLDocument(folder_info->folders[i].get(), html, SVG, bitmap_index, scale);
+		}
+
+		template<typename T>
+		void AtlasHTMLGenerator::OutputBitmapFilenamesToHTMLDocument(std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * SVG, int bitmap_index, float scale)
+		{
+			for (auto const & info : elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
+			{
+				// keep only entries of corresponding bitmap 
+				if (info.bitmap_index != bitmap_index)
+					continue;
+
+				int x = MathTools::CastAndMul<int>(info.x, scale) + MathTools::CastAndMul<int>(info.width, scale * 0.5f);
+				int y = MathTools::CastAndMul<int>(info.y, scale) + MathTools::CastAndMul<int>(info.height, scale * 0.5f);
+
+				tinyxml2::XMLElement * TEXT = html.PushElement(SVG, "TEXT");
+				html.PushAttribute(TEXT, "text-anchor", "middle");
+				html.PushAttribute(TEXT, "x", x);
+				html.PushAttribute(TEXT, "y", y);
+				html.PushAttribute(TEXT, "fill", "white");
+
+				html.PushText(TEXT, info.name.c_str());
 			}
 		}
 
@@ -185,8 +202,9 @@ namespace chaos
 
 				// enumerate all BitmapInfo and CharacterInfo using given bitmap
 				int count = 0;
-				OutputElementsToHTMLDocument(atlas.bitmap_sets, html, TABLE, TR, i, count);
-				OutputElementsToHTMLDocument(atlas.font_infos, html, TABLE, TR, i, count);
+				// shuxxx
+				//OutputElementsToHTMLDocument(atlas.bitmap_sets, html, TABLE, TR, i, count);
+				//OutputElementsToHTMLDocument(atlas.font_infos, html, TABLE, TR, i, count);
 
 				if (params.show_textures)
 				{
@@ -204,14 +222,10 @@ namespace chaos
 					html.PushAttribute(RECT, "style", texture_bgnd);
 
 					// Display the rectangles
-					OutputBitmapsToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
-					OutputBitmapsToHTMLDocument(atlas.font_infos, html, SVG, i, scale);
+					OutputBitmapsToHTMLDocument(&atlas.root_folder, html, SVG, i, scale);
 					// Display the filenames
 					if (params.show_textures_names)
-					{
-						OutputBitmapFilenamesToHTMLDocument(atlas.bitmap_sets, html, SVG, i, scale);
-						OutputBitmapFilenamesToHTMLDocument(atlas.font_infos, html, SVG, i, scale);
-					}
+						OutputBitmapFilenamesToHTMLDocument(&atlas.root_folder, html, SVG, i, scale);
 				}
 			}
 		}

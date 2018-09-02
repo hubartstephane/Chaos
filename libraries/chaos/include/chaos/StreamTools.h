@@ -21,7 +21,7 @@ namespace chaos
 			OStreamIndent(int in_value = 0) :
 				value(in_value) {}
 			/** friend function to add indents */
-			friend std::ostream & operator << (std::ostream & stream, OutputStreamIndent const & stream_indent)
+			friend std::ostream & operator << (std::ostream & stream, OStreamIndent const & stream_indent)
 			{
 				for (int i = 0; i < stream_indent.value; ++i)
 					stream << "  ";

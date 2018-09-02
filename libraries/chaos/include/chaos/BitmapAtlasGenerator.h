@@ -313,7 +313,7 @@ namespace chaos
 			Rectangle GetRectangle(BitmapInfo const & info) const;
 
 			/** fill the entries of the atlas from input (collect all input entries) */
-			void FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput const * folder_info);
+			void FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput * folder_info_input, FolderInfo * folder_info_output);
 			/** test whether there is an intersection between each pair of Entries in an atlas */
 			bool EnsureValidResults(BitmapInfoInputVector const & result, std::ostream & stream = std::cout) const;
 			/** test whether rectangle intersects with any of the entries */

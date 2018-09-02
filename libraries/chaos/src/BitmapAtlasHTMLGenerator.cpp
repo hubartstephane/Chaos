@@ -1,5 +1,6 @@
 #include <chaos/BitmapAtlasHTMLGenerator.h>
 #include <chaos/MathTools.h>
+#include <chaos/StringTools.h>
 
 namespace chaos
 {
@@ -32,36 +33,57 @@ namespace chaos
 			return result;
 		}
 
-		template<typename T>
-		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(std::vector<std::unique_ptr<T>> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
+		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const * folder_path, FolderInfo const * folder_info, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
 		{
-			for (auto & element_ptr : elements) // iterate over FontInfo or BitmapSet
+			if (folder_info == nullptr)
+				return;
+
+			// display all bitmaps and characters
+			OutputElementsToHTMLDocument(folder_path, folder_info->bitmaps, html, TABLE, TR, bitmap_index, count);
+			for (size_t i = 0; i < folder_info->fonts.size(); ++i)
+				OutputElementsToHTMLDocument(folder_path, folder_info->fonts[i].elements, html, TABLE, TR, bitmap_index, count);
+
+			// recursively iterate of the folder
+			size_t folder_count = folder_info->folders.size();
+			for (size_t i = 0; i < folder_count; ++i)
 			{
-				T const * element = element_ptr.get();
+				FolderInfo const * child_folder_info = folder_info->folders[i].get();
+				if (child_folder_info == nullptr)
+					continue;
 
-				for (auto const & info : element->elements) // all elements of FontInfo or BitmapSet (i.e CharacterInfo or BitmapInfo)
-				{
-					// keep only entries of corresponding bitmap 
-					if (info.bitmap_index != bitmap_index)
-						continue;
+				std::string path = StringTools::Printf("%s%s/", 
+					folder_path, 
+					(child_folder_info->name.length() == 0)? "??" : child_folder_info->name.c_str()
+				);
+				OutputElementsToHTMLDocument(path.c_str(), child_folder_info, html, TABLE, TR, bitmap_index, count);
+			}
+		}
 
-					// create a TR element if necessary
-					if (TR == nullptr)
-						TR = html.PushElement(TABLE, "TR");
+		template<typename T>
+		void AtlasHTMLGenerator::OutputElementsToHTMLDocument(char const * folder_path, std::vector<T> const & elements, XMLTools & html, tinyxml2::XMLElement * TABLE, tinyxml2::XMLElement * &TR, int bitmap_index, int & count)
+		{
+			for (auto const & info : elements) // all elements 
+			{
+				// keep only entries of corresponding bitmap 
+				if (info.bitmap_index != bitmap_index)
+					continue;
 
-					// output the element and its info
-					tinyxml2::XMLElement * TD = html.PushElement(TR, "TD");
-					tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
-					html.PushText(PRE, "Set\n");
-					html.PushText(PRE, Atlas::GetInfoString(*element).c_str());
-					html.PushText(PRE, "Info\n");
-					html.PushText(PRE, Atlas::GetInfoString(info).c_str());
+				// create a TR element if necessary
+				if (TR == nullptr)
+					TR = html.PushElement(TABLE, "TR");
 
-					// reset TR every 5 elements
-					if (count % 5 == 4)
-						TR = nullptr;
-					++count;
-				}
+				// output the element and its info
+				tinyxml2::XMLElement * TD = html.PushElement(TR, "TD");
+				tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
+				html.PushText(PRE, "Folder\n");
+				html.PushText(PRE, folder_path);
+				html.PushText(PRE, "Info\n");
+				html.PushText(PRE, Atlas::GetInfoString(info).c_str());
+
+				// reset TR every 5 elements
+				if (count % 5 == 4)
+					TR = nullptr;
+				++count;
 			}
 		}
 
@@ -200,11 +222,9 @@ namespace chaos
 
 				tinyxml2::XMLElement * TR = nullptr;
 
-				// enumerate all BitmapInfo and CharacterInfo using given bitmap
+				// enumerate recursively all fonts and bitmaps from a folder
 				int count = 0;
-				// shuxxx
-				//OutputElementsToHTMLDocument(atlas.bitmap_sets, html, TABLE, TR, i, count);
-				//OutputElementsToHTMLDocument(atlas.font_infos, html, TABLE, TR, i, count);
+				OutputElementsToHTMLDocument("/",  &atlas.root_folder, html, TABLE, TR, i, count);
 
 				if (params.show_textures)
 				{

@@ -10,8 +10,6 @@
 
 namespace chaos
 {
-
-
 	namespace BitmapAtlas
 	{
 		// ========================================================================
@@ -137,7 +135,6 @@ namespace chaos
 		// Atlas functions
 		// ========================================================================
 
-
 		void AtlasBase::Clear()
 		{
 			// reset members
@@ -204,9 +201,15 @@ namespace chaos
 					DoOutputInfo(font_info, stream, indent + 1);
 			}
 			// recursive calls
-			size_t count = folder_info.folders.size();
-			for (size_t i = 0 ; i < count ; ++i)
-				DoOutputInfo(*folder_info.folders[i], stream, indent + 1);
+			if (folder_info.folders.size() > 0)
+			{
+				StreamTools::OStreamIndent folder_stream_indent(indent + 1);
+				stream << folder_stream_indent << "Child Folders:" << std::endl;
+
+				size_t count = folder_info.folders.size();
+				for (size_t i = 0; i < count; ++i)
+					DoOutputInfo(*folder_info.folders[i], stream, indent + 1);
+			}
 		}
 
 		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
@@ -256,8 +259,7 @@ namespace chaos
 			// output the charactars in the fonts
 			if (info.elements.size() > 0)
 			{
-				StreamTools::OStreamIndent character_stream_indent(indent + 1);
-				stream << character_stream_indent << "Characters:" << std::endl;
+				stream << stream_indent << "Characters:" << std::endl;
 				for (CharacterInfo const & character_info : info.elements)
 					DoOutputInfo(character_info, stream, indent + 1);
 			}

@@ -509,93 +509,97 @@ namespace chaos
 		}
 
 
-		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput const * folder_info)
+		void AtlasGenerator::FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput * folder_info_input, FolderInfo * folder_info_output)
 		{
-			if (folder_info == nullptr)
+			if (folder_info_input == nullptr)
 				return;
-			// iterate over bitmaps
-			for (size_t i = 0; i < folder_info->bitmaps.size(); ++i)
+
+			// recursively iterate over all sub folders
+			size_t count = folder_info_input->folders.size();
+			for (size_t i = 0; i < count; ++i)
 			{
+				FolderInfoInput * child_folder_info_input = folder_info_input->folders[i].get();
+				if (child_folder_info_input == nullptr)
+					continue;
+
+				FolderInfo * child_folder_info_output = new FolderInfo;
+				if (child_folder_info_output == nullptr)
+					continue;
+
+				child_folder_info_output->name = child_folder_info_input->name;
+				child_folder_info_output->tag = child_folder_info_input->tag;
+
+				folder_info_output->folders.push_back(std::move(std::unique_ptr<FolderInfo>(child_folder_info_output)));
+				FillAtlasEntriesFromInput(result, child_folder_info_input, child_folder_info_output);
 			}
 
-
-			// recursively iterate over sub folders
-			for (size_t i = 0; i < folder_info->folders.size(); ++i)
-				FillAtlasEntriesFromInput(result, folder_info->folders[i].get());
-
-
-#if 0
-			// fill with bitmap sets 
-			for (FolderInfoInput * bitmap_set_input : input->bitmap_sets)
+			// register the bitmaps
+			for (BitmapInfoInput const & bitmap_info_input : folder_info_input->bitmaps)
 			{
-				BitmapSet * bitmap_set = new BitmapSet;
-				bitmap_set->name = bitmap_set_input->name;
-				bitmap_set->tag = bitmap_set_input->tag;
-				output->bitmap_sets.push_back(std::move(std::unique_ptr<BitmapSet>(bitmap_set))); // 'move' in mandatory because, unique_ptr has no copy operator
-
-				size_t count = bitmap_set_input->elements.size();
-				for (size_t i = 0; i < count; ++i)
-				{
-					BitmapInfoInput const & entry_input = bitmap_set_input->elements[i];
-
-					BitmapInfo info;
-					info.name = entry_input.name;
-					info.tag = entry_input.tag;
-					info.bitmap_index = -1;
-					info.x = 0;
-					info.y = 0;
-					info.width = entry_input.description.width;
-					info.height = entry_input.description.height;
-					bitmap_set->elements.push_back(std::move(info));
-				}
-				// once we are sure that Atlas.BitmapSet.info vector does not resize anymore, we can store pointers         
-				for (size_t i = 0; i < count; ++i)
-				{
-					bitmap_set_input->elements[i].output_info = &bitmap_set->elements[i];
-					result.push_back(&bitmap_set_input->elements[i]);
-				}
+				BitmapInfo bitmap_info_output;
+				bitmap_info_output.name = bitmap_info_input.name;
+				bitmap_info_output.tag = bitmap_info_input.tag;
+				bitmap_info_output.bitmap_index = -1;
+				bitmap_info_output.x = 0;
+				bitmap_info_output.y = 0;
+				bitmap_info_output.width = bitmap_info_input.description.width;
+				bitmap_info_output.height = bitmap_info_input.description.height;
+				folder_info_output->bitmaps.push_back(std::move(bitmap_info_output));
+			}
+			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers    
+			size_t bitmap_count = folder_info_input->bitmaps.size();
+			for (size_t i = 0; i < bitmap_count; ++i)
+			{
+				folder_info_input->bitmaps[i].output_info = &folder_info_output->bitmaps[i];
+				result.push_back(&folder_info_input->bitmaps[i]);
 			}
 
-			// fill with  character sets
-			for (FontInfoInput * font_info_input : input->font_infos)
+			// register the fonts 
+			for (FontInfoInput const & font_info_input : folder_info_input->fonts)
 			{
-				FontInfo * font_info = new FontInfo;
-				font_info->name = font_info_input->name;
-				font_info->tag = font_info_input->tag;
-				font_info->max_character_width = font_info_input->max_character_width;
-				font_info->max_character_height = font_info_input->max_character_height;
-				font_info->ascender = font_info_input->ascender;
-				font_info->descender = font_info_input->descender;
-				font_info->face_height = font_info_input->face_height;
+				FontInfo font_info_output;
+				font_info_output.name = font_info_input.name;
+				font_info_output.tag = font_info_input.tag;
+				font_info_output.max_character_width = font_info_input.max_character_width;
+				font_info_output.max_character_height = font_info_input.max_character_height;
+				font_info_output.ascender = font_info_input.ascender;
+				font_info_output.descender = font_info_input.descender;
+				font_info_output.face_height = font_info_input.face_height;
 
-				output->font_infos.push_back(std::move(std::unique_ptr<FontInfo>(font_info)));
-
-				size_t count = font_info_input->elements.size();
-				for (size_t i = 0; i < count; ++i)
+				size_t character_count = font_info_input.elements.size(); // now the elements in the font
+				for (size_t i = 0; i < character_count; ++i)
 				{
-					CharacterInfoInput const & entry_input = font_info_input->elements[i];
+					CharacterInfoInput const & character_info_input = font_info_input.elements[i];
 
-					CharacterInfo info;
-					info.name = entry_input.name;
-					info.tag = entry_input.tag;
-					info.bitmap_index = -1;
-					info.x = 0;
-					info.y = 0;
-					info.width = entry_input.description.width;
-					info.height = entry_input.description.height;
-					info.advance = entry_input.advance;
-					info.bitmap_left = entry_input.bitmap_left;
-					info.bitmap_top = entry_input.bitmap_top;
-					font_info->elements.push_back(std::move(info));
+					CharacterInfo character_info_output;
+					character_info_output.name = character_info_input.name;
+					character_info_output.tag = character_info_input.tag;
+					character_info_output.bitmap_index = -1;
+					character_info_output.x = 0;
+					character_info_output.y = 0;
+					character_info_output.width = character_info_input.description.width;
+					character_info_output.height = character_info_input.description.height;
+					character_info_output.advance = character_info_input.advance;
+					character_info_output.bitmap_left = character_info_input.bitmap_left;
+					character_info_output.bitmap_top = character_info_input.bitmap_top;
+					font_info_output.elements.push_back(std::move(character_info_output));
 				}
-				// once we are sure that Atlas.FontInfo.info vector does not resize anymore, we can store pointers         
-				for (size_t i = 0; i < count; ++i)
+				folder_info_output->fonts.push_back(std::move(font_info_output));
+			}
+			// once we are sure that Folder.Fonts vector does not resize anymore, we can store pointers    
+			size_t font_count = folder_info_input->fonts.size();
+			for (size_t i = 0; i < font_count; ++i)
+			{
+				FontInfoInput & font_info_input  = folder_info_input->fonts[i];
+				FontInfo & font_info_output = folder_info_output->fonts[i];
+
+				size_t character_count = font_info_input.elements.size();
+				for (size_t j = 0; j < font_count; ++j)
 				{
-					font_info_input->elements[i].output_info = &font_info->elements[i];
-					result.push_back(&font_info_input->elements[i]);
+					font_info_input.elements[j].output_info = &font_info_output.elements[j];
+					result.push_back(&font_info_input.elements[j]);
 				}
 			}
-#endif
 		}
 
 		bool AtlasGenerator::ComputeResult(AtlasInput const & in_input, Atlas & in_output, AtlasGeneratorParams const & in_params)
@@ -611,9 +615,11 @@ namespace chaos
 			// prepare the result to receive new computation
 			output->Clear();
 
-			// generate input entries and sets. Collect input entries
+			// generate input entries and sets. Collect input entries 
+			// we have to const_cast<> as a non-const data because we are modifying "output_info" members
+			// this as no real side effect a the exit of this function on AtlasInput
 			BitmapInfoInputVector entries;
-			FillAtlasEntriesFromInput(entries, &in_input.root_folder);
+			FillAtlasEntriesFromInput(entries, const_cast<FolderInfoInput *>(&in_input.root_folder), &output->root_folder);
 
 			// search max texture size
 			int max_width = -1;

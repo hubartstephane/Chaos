@@ -6,27 +6,11 @@
 #include <chaos/LogTools.h>
 #include <chaos/JSONTools.h>
 #include <chaos/NamedObject.h>
+#include <chaos/StreamTools.h>
 
 namespace chaos
 {
-	class OutputStreamIndent
-	{
-	public:
 
-		OutputStreamIndent(int in_value) : 
-			value(in_value){}
-
-		friend std::ostream & operator << (std::ostream & stream, OutputStreamIndent const & stream_indent)
-		{
-			for (int i = 0; i < stream_indent.value; ++i)
-				stream << "  ";
-			return stream;
-		}
-
-	protected:
-
-		int value = 0;
-	};
 
 	namespace BitmapAtlas
 	{
@@ -197,7 +181,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent) const
 		{
-			OutputStreamIndent stream_indent(indent);
+			StreamTools::OStreamIndent stream_indent(indent);
 
 			stream << stream_indent << "Folder:" << std::endl;
 			NamedObject const & named_info = folder_info;
@@ -206,7 +190,7 @@ namespace chaos
 			// output the bitmaps in the folder
 			if (folder_info.bitmaps.size() > 0)
 			{
-				OutputStreamIndent bitmap_stream_indent(indent + 1);
+				StreamTools::OStreamIndent bitmap_stream_indent(indent + 1);
 				stream << bitmap_stream_indent << "Bitmaps:" << std::endl;
 				for (BitmapInfo const & bitmap_info : folder_info.bitmaps)
 					DoOutputInfo(bitmap_info, stream, indent + 1);
@@ -214,7 +198,7 @@ namespace chaos
 			// output the fonts in the folder
 			if (folder_info.fonts.size() > 0)
 			{
-				OutputStreamIndent font_stream_indent(indent + 1);
+				StreamTools::OStreamIndent font_stream_indent(indent + 1);
 				stream << font_stream_indent << "Fonts:" << std::endl;
 				for (FontInfo const & font_info : folder_info.fonts)
 					DoOutputInfo(font_info, stream, indent + 1);
@@ -227,7 +211,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
 		{
-			OutputStreamIndent stream_indent(indent);
+			StreamTools::OStreamIndent stream_indent(indent);
 			stream << stream_indent << "  name         : " << info.name << std::endl;
 			stream << stream_indent << "  tag          : " << info.tag << std::endl;
 		}
@@ -237,7 +221,7 @@ namespace chaos
 			NamedObject const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
-			OutputStreamIndent stream_indent(indent);
+			StreamTools::OStreamIndent stream_indent(indent);
 			stream << stream_indent << "  bitmap_index : " << info.bitmap_index << std::endl;
 			stream << stream_indent << "  width        : " << info.width << std::endl;
 			stream << stream_indent << "  height       : " << info.height << std::endl;
@@ -250,7 +234,7 @@ namespace chaos
 			BitmapInfo const & bitmap_info = info;
 			DoOutputInfo(bitmap_info, stream, indent);
 
-			OutputStreamIndent stream_indent(indent);
+			StreamTools::OStreamIndent stream_indent(indent);
 			stream << stream_indent << "  advance.x    : " << info.advance.x << std::endl;
 			stream << stream_indent << "  advance.y    : " << info.advance.y << std::endl;
 			stream << stream_indent << "  bitmap_left  : " << info.bitmap_left << std::endl;
@@ -262,7 +246,7 @@ namespace chaos
 			NamedObject const & named_info = info;
 			DoOutputInfo(info, stream, indent);
 
-			OutputStreamIndent stream_indent(indent);
+			StreamTools::OStreamIndent stream_indent(indent);
 			stream << stream_indent << "  max_character_width  : " << info.max_character_width << std::endl;
 			stream << stream_indent << "  max_character_height : " << info.max_character_height << std::endl;
 			stream << stream_indent << "  ascender             : " << info.ascender << std::endl;
@@ -272,7 +256,7 @@ namespace chaos
 			// output the charactars in the fonts
 			if (info.elements.size() > 0)
 			{
-				OutputStreamIndent character_stream_indent(indent + 1);
+				StreamTools::OStreamIndent character_stream_indent(indent + 1);
 				stream << character_stream_indent << "Characters:" << std::endl;
 				for (CharacterInfo const & character_info : info.elements)
 					DoOutputInfo(character_info, stream, indent + 1);

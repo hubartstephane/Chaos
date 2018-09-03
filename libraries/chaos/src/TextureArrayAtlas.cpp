@@ -66,10 +66,9 @@ namespace chaos
 				return false;
 		
 			// steal all data
-			atlas_count    = atlas.atlas_count;
-			dimension      = atlas.dimension;
-			bitmap_sets    = std::move(atlas.bitmap_sets);
-			font_infos = std::move(atlas.font_infos);
+			atlas_count = atlas.atlas_count;
+			dimension   = atlas.dimension;
+			root_folder = std::move(atlas.root_folder);
 			return true;		
 		}
 
@@ -80,27 +79,41 @@ namespace chaos
 
 			// copy all data
 			atlas_count = atlas.atlas_count;
-			dimension   = atlas.dimension;
+			dimension = atlas.dimension;
 
-			for (size_t i = 0 ; i < atlas.bitmap_sets.size() ; ++i)
-			{
-				BitmapSet * bitmap_set = new BitmapSet();
-				if (bitmap_set == nullptr)
-					break;
-				*bitmap_set = *atlas.bitmap_sets[i];
-				bitmap_sets.push_back(std::move(std::unique_ptr<BitmapSet>(bitmap_set)));
-			}
+			return DoCopyFolder(&root_folder, &atlas.root_folder);
+		}
 
-			for (size_t i = 0 ; i < atlas.font_infos.size() ; ++i)
+		bool TextureArrayAtlas::DoCopyFolder(FolderInfo * dst_folder_info, FolderInfo const * src_folder_info)
+		{
+			assert(dst_folder_info != nullptr);
+			assert(src_folder_info != nullptr);
+
+			// copy name
+			dst_folder_info->name = dst_folder_info->name;
+			dst_folder_info->tag  = src_folder_info->tag;
+			// copy bitmaps and characters
+			dst_folder_info->bitmaps = src_folder_info->bitmaps;
+			dst_folder_info->fonts   = src_folder_info->fonts;
+			// recursively copy data
+			size_t child_folder_count = src_folder_info->folders.size();
+			for (size_t i = 0; i < child_folder_count; ++i)
 			{
-				FontInfo * font_info = new FontInfo();
-				if (font_info == nullptr)
-					break;
-				*font_info = *atlas.font_infos[i];
-				font_infos.push_back(std::move(std::unique_ptr<FontInfo>(font_info)));
+				FolderInfo const * src_child_folder = src_folder_info->folders[i].get();
+				if (src_child_folder == nullptr)
+					continue;
+
+				FolderInfo * dst_child_folder = new FolderInfo;
+				if (dst_child_folder == nullptr)
+					continue;
+
+				dst_folder_info->folders.push_back(std::move(std::unique_ptr<FolderInfo>(dst_child_folder)));
+				DoCopyFolder(dst_child_folder, src_child_folder);
 			}
 			return true;
 		}
+
 	}; // namespace BitmapAtlas
+
 }; // namespace chaos
 

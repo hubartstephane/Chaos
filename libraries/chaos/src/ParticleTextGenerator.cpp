@@ -61,9 +61,24 @@ namespace chaos
 			return result;
 		}
 
+		BitmapAtlas::FontInfo const * GeneratorData::GetFirstFont(BitmapAtlas::FolderInfo const * folder_info) const
+		{
+			if (folder_info == nullptr)
+				return nullptr;
+			if (folder_info->fonts.size() > 0)
+				return &folder_info->fonts[0];
+
+			BitmapAtlas::FontInfo const * result = nullptr;
+
+			size_t count = folder_info->folders.size();
+			for (size_t i = 0; (i < count) && (result == nullptr); ++i)
+				result = GetFirstFont(folder_info->folders[i].get());
+			return result;
+		}
+
 		BitmapAtlas::FontInfo const * GeneratorData::GetFontInfoFromName(char const * font_info_name) const
 		{
-			BitmapAtlas::FontInfo const * result = atlas.GetFontInfo(font_info_name);
+			BitmapAtlas::FontInfo const * result = atlas.GetFontInfo(font_info_name, true);
 			if (result == nullptr)
 			{
 				// for convenience, if we cannot find the character set, try to use the one on the top of the stack
@@ -71,11 +86,7 @@ namespace chaos
 					result = style_stack.back().font_info;
 				// if we still have no character set, take the very first available
 				if (result == nullptr)
-				{
-					auto const & font_infos = atlas.GetFontInfos();
-					if (font_infos.size() > 0)
-						result = font_infos[0].get();
-				}
+					result = GetFirstFont(&atlas.root_folder);
 			}
 			return result;
 		}

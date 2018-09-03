@@ -167,7 +167,8 @@ namespace chaos
 			Style & PushColor(glm::vec3 const & color);
 			/** get a character set from its name */
 			BitmapAtlas::FontInfo const * GetFontInfoFromName(char const * font_info_name) const;
-
+			/** recursively search a font inside the folder */
+			BitmapAtlas::FontInfo const * GetFirstFont(BitmapAtlas::FolderInfo const * folder_info) const;
 
 			/** start the markup */
 			bool StartMarkup(char const * text, int & i, class Generator & generator);

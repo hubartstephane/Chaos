@@ -8,6 +8,10 @@
 
 namespace chaos
 {
+	namespace ParticleTextGenerator 
+	{
+		class GeneratorData;
+	};
 
 	namespace BitmapAtlas
 	{
@@ -39,7 +43,7 @@ namespace chaos
 		};
 
 		/**
-		* ObjectBase : base object 
+		* ObjectBase : base object
 		*/
 
 		class ObjectBase : public NamedObject
@@ -134,62 +138,36 @@ namespace chaos
 		{
 		public:
 
-			/** gets a bitmap info by its name */
-			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name)
-			{
-				return NamedObject::FindNamedObject(bitmaps, name);
+#define CHAOS_EMPTY_TOKEN
+#define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, param_type, constness)\
+			result_type constness * funcname(param_type name, bool recursive = false) constness\
+			{\
+				result_type constness * result = FindNamedObject(vector_name, name);\
+				if (result != nullptr)\
+					return result;\
+				size_t count = folders.size();\
+				for (size_t i = 0; (i < count) && (result == nullptr); ++i)\
+					result = folders[i]->funcname(name, recursive);\
+				return result;\
 			}
-			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name) const
-			{
-				return NamedObject::FindNamedObject(bitmaps, name);
-			}
-			/** gets a bitmap info by its tag */
-			BITMAP_INFO_TYPE * GetBitmapInfo(TagType tag)
-			{
-				return NamedObject::FindNamedObject(bitmaps, tag);
-			}
-			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag) const
-			{
-				return NamedObject::FindNamedObject(bitmaps, tag);
-			}
-			/** gets a font info by its name */
-			FONT_INFO_TYPE * GetFontInfo(char const * name)
-			{
-				return NamedObject::FindNamedObject(fonts, name);
-			}
-			FONT_INFO_TYPE const * GetFontInfo(char const * name) const
-			{
-				return NamedObject::FindNamedObject(fonts, name);
-			}
-			/** gets a font info by its tag */
-			FONT_INFO_TYPE * GetFontInfo(TagType tag)
-			{
-				return NamedObject::FindNamedObject(fonts, tag);
-			}
-			FONT_INFO_TYPE const * GetFontInfo(TagType tag) const
-			{
-				return NamedObject::FindNamedObject(fonts, tag);
-			}
-			/** gets a folder info by its name */
-			FOLDER_INFO_TYPE * GetFolderInfo(char const * name)
-			{
-				return NamedObject::FindNamedObject(folders, name);
-			}
-			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name) const
-			{
-				return NamedObject::FindNamedObject(folders, name);
-			}
-			/** gets a folder info by its tag */
-			FOLDER_INFO_TYPE * GetFolderInfo(TagType tag)
-			{
-				return NamedObject::FindNamedObject(folders, tag);
-			}
-			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag) const
-			{
-				return NamedObject::FindNamedObject(folders, tag);
-			}
+			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, char const *, const);
+			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, TagType, const);
 
-			/** destroy the content of the folder */
+			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, char const *, const);
+			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, TagType, const);
+
+			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, char const *, const);
+			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, TagType, const);
+#undef CHAOS_IMPL_GETINFO
+#undef CHAOS_EMPTY_TOKEN
+
+			/** clear the content of the folder */
 			void Clear()
 			{
 				bitmaps.clear();
@@ -204,7 +182,7 @@ namespace chaos
 			/** the bitmaps contained in this folder */
 			std::vector<BITMAP_INFO_TYPE> bitmaps;
 			/** the fonts contained in this folder */
-			std::vector<FONT_INFO_TYPE> fonts;		
+			std::vector<FONT_INFO_TYPE> fonts;
 		};
 
 		/**
@@ -225,6 +203,8 @@ namespace chaos
 		{
 		public:
 
+			friend class ParticleTextGenerator::GeneratorData;
+
 			/** clear method */
 			void Clear()
 			{
@@ -232,58 +212,58 @@ namespace chaos
 			}
 
 			/** gets a bitmap info by its name */
-			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name)
+			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name, bool recursive = false)
 			{
-				return root_folder.GetBitmapInfo(name);
+				return root_folder.GetBitmapInfo(name, recursive);
 			}
-			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name) const
+			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name, bool recursive = false) const
 			{
-				return root_folder.GetBitmapInfo(name);
+				return root_folder.GetBitmapInfo(name, recursive);
 			}
 			/** gets a bitmap info by its tag */
-			BITMAP_INFO_TYPE * GetBitmapInfo(TagType tag)
+			BITMAP_INFO_TYPE * GetBitmapInfo(TagType tag, bool recursive = false)
 			{
-				return root_folder.GetBitmapInfo(tag);
+				return root_folder.GetBitmapInfo(tag, recursive);
 			}
-			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag) const
+			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag, bool recursive = false) const
 			{
-				return root_folder.GetBitmapInfo(tag);
+				return root_folder.GetBitmapInfo(tag, recursive);
 			}
 			/** gets a font info by its name */
-			FONT_INFO_TYPE * GetFontInfo(char const * name)
+			FONT_INFO_TYPE * GetFontInfo(char const * name, bool recursive = false)
 			{
-				return root_folder.GetFontInfo(name);
+				return root_folder.GetFontInfo(name, recursive);
 			}
-			FONT_INFO_TYPE const * GetFontInfo(char const * name) const
+			FONT_INFO_TYPE const * GetFontInfo(char const * name, bool recursive = false) const
 			{
-				return root_folder.GetFontInfo(name);
+				return root_folder.GetFontInfo(name, recursive);
 			}
 			/** gets a font info by its tag */
-			FONT_INFO_TYPE * GetFontInfo(TagType tag)
+			FONT_INFO_TYPE * GetFontInfo(TagType tag, bool recursive = false)
 			{
-				return root_folder.GetFontInfo(tag);
+				return root_folder.GetFontInfo(tag, recursive);
 			}
-			FONT_INFO_TYPE const * GetFontInfo(TagType tag) const
+			FONT_INFO_TYPE const * GetFontInfo(TagType tag, bool recursive = false) const
 			{
-				return root_folder.GetFontInfo(tag);
+				return root_folder.GetFontInfo(tag, recursive);
 			}
 			/** gets a folder info by its name */
-			FOLDER_INFO_TYPE * GetFolderInfo(char const * name)
+			FOLDER_INFO_TYPE * GetFolderInfo(char const * name, bool recursive = false)
 			{
-				return root_folder.GetFolderInfo(name);
+				return root_folder.GetFolderInfo(name, recursive);
 			}
-			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name) const
+			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name, bool recursive = false) const
 			{
-				return root_folder.GetFolderInfo(name);
+				return root_folder.GetFolderInfo(name, recursive);
 			}
 			/** gets a folder info by its tag */
-			FOLDER_INFO_TYPE * GetFolderInfo(TagType tag)
+			FOLDER_INFO_TYPE * GetFolderInfo(TagType tag, bool recursive = false)
 			{
-				return root_folder.GetFolderInfo(tag);
+				return root_folder.GetFolderInfo(tag, recursive);
 			}
-			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag) const
+			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag, bool recursive = false) const
 			{
-				return root_folder.GetFolderInfo(tag);
+				return root_folder.GetFolderInfo(tag, recursive);
 			}
 
 		protected:
@@ -431,4 +411,5 @@ namespace chaos
 		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry);
 
 	}; // namespace BitmapAtlas
+
 }; // namespace chaos

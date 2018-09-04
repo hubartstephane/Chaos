@@ -13,6 +13,22 @@ namespace chaos
 		// ========================================================================
 		// BitmapInfoInput implementation
 		// ========================================================================
+		
+		BitmapInfoInput::BitmapInfoInput(BitmapInfoInput && src)
+		{
+			*this = std::move(src);
+		}
+		
+		BitmapInfoInput & BitmapInfoInput::operator = (BitmapInfoInput && src)
+		{
+			ObjectBaseInput::operator = (std::move(src));
+			std::swap(description, src.description);
+			std::swap(bitmap, src.bitmap);
+			std::swap(animated_bitmap, src.animated_bitmap);
+			std::swap(release_bitmap, src.release_bitmap);
+			std::swap(output_info, src.output_info);
+			return *this;
+		}
 
 		BitmapInfoInput::~BitmapInfoInput()
 		{				
@@ -28,6 +44,21 @@ namespace chaos
 		// ========================================================================
 		// FontInfoInput implementation
 		// ========================================================================
+
+		FontInfoInput::FontInfoInput(FontInfoInput && src)
+		{
+			*this = std::move(src);
+		}
+
+		FontInfoInput & FontInfoInput::operator = (FontInfoInput && src)
+		{
+			FontInfoTemplate<CharacterInfoInput, ObjectBaseInput>::operator = (std::move(src));
+			std::swap(library, src.library);
+			std::swap(face, src.face);
+			std::swap(release_library, src.release_library);
+			std::swap(release_face, src.release_face);
+			return *this;
+		}
 
 		FontInfoInput::~FontInfoInput()
 		{

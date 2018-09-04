@@ -47,8 +47,18 @@ namespace chaos
 		{
 		public:
 
+			/** constructor */
+			BitmapInfoInput() = default;
+			/** constructor (copy) */
+			BitmapInfoInput(BitmapInfoInput const & src) = default;
+			/** constructor (move) */
+			BitmapInfoInput(BitmapInfoInput && src);	// XXX : important because the move constructor does nothing by default on pointers
+																								//       we do not want double deletion on bitmaps
 			/** destructor */
 			virtual ~BitmapInfoInput();
+
+			/** copy and move operator */
+			BitmapInfoInput & operator = (BitmapInfoInput && src);
 
 			/** the description of the bitmap */
 			ImageDescription description;
@@ -88,8 +98,16 @@ namespace chaos
 
 			/** constructor */
 			FontInfoInput() = default;
+			/** constructor (copy) */
+			FontInfoInput(FontInfoInput const & src) = default;
+			/** constructor (move) */
+			FontInfoInput(FontInfoInput && src); // XXX : important because the move constructor does nothing by default on pointers
+			                                     //       we do not want double deletion on libreary and face
 			/** destructor */
 			virtual ~FontInfoInput();
+
+			/** copy and move operator */
+			FontInfoInput & operator = (FontInfoInput && src);
 
 			/** the Freetype library if appropriate */
 			FT_Library library = nullptr;

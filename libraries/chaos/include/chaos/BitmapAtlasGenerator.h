@@ -147,7 +147,7 @@ namespace chaos
 			bool AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
 			/** Add a character set */
-			bool AddFont(				
+			FontInfoInput * AddFont(				
 				char const * font_name,
 				FT_Library library,
 				bool release_library,
@@ -155,7 +155,7 @@ namespace chaos
 				TagType tag,
 				FontInfoInputParams const & params = FontInfoInputParams());
 			/** Add a character set */
-			bool AddFont(
+			FontInfoInput * AddFont(
 				FT_Face face,
 				bool release_face,
 				char const * name,
@@ -168,7 +168,7 @@ namespace chaos
 			bool AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
 			/** internal method to add a character set */
-			bool AddFontImpl(
+			FontInfoInput * AddFontImpl(
 				FT_Library library,
 				FT_Face face,
 				bool release_library,
@@ -205,7 +205,7 @@ namespace chaos
 			bool AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
 			/** Add a character set */
-			bool AddFont(
+			FontInfoInput * AddFont(
 				char const * font_name,
 				FT_Library library,
 				bool release_library,
@@ -213,7 +213,7 @@ namespace chaos
 				TagType tag,
 				FontInfoInputParams const & params = FontInfoInputParams());
 			/** Add a character set */
-			bool AddFont(
+			FontInfoInput * AddFont(
 				FT_Face face,
 				bool release_face,
 				char const * name,

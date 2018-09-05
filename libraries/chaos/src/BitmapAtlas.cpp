@@ -422,7 +422,7 @@ namespace chaos
 					json["bitmaps"].push_back(GetBitmapFilename(image_format, bitmap_filename, (int)i).string());
 				}
 				// insert the entries
-				json["root_folder"] = nlohmann::json::array();
+				json["root_folder"] = nlohmann::json::object();				
 				SaveIntoJSON(root_folder, json["root_folder"]);
 
 				// format the JSON into string and insert it into stream
@@ -620,14 +620,23 @@ namespace chaos
 			NamedObject const & named_info = info;
 			SaveIntoJSON(named_info, json_entry); // call 'super' method
 
-			json_entry["bitmaps"] = nlohmann::json::array();
-			JSONTools::SaveVectorIntoJSON(info.bitmaps, json_entry["bitmaps"]);
+			if (info.bitmaps.size())
+			{
+				json_entry["bitmaps"] = nlohmann::json::array();
+				JSONTools::SaveVectorIntoJSON(info.bitmaps, json_entry["bitmaps"]);
+			}
 
-			json_entry["fonts"] = nlohmann::json::array();
-			JSONTools::SaveVectorIntoJSON(info.fonts, json_entry["fonts"]);
+			if (info.fonts.size())
+			{
+				json_entry["fonts"] = nlohmann::json::array();
+				JSONTools::SaveVectorIntoJSON(info.fonts, json_entry["fonts"]);
+			}
 
-			json_entry["folders"] = nlohmann::json::array();
-			JSONTools::SaveVectorIntoJSON(info.folders, json_entry["folders"]);
+			if (info.folders.size())
+			{
+				json_entry["folders"] = nlohmann::json::array();
+				JSONTools::SaveVectorIntoJSON(info.folders, json_entry["folders"]);
+			}
 		}
 
 		void LoadFromJSON(FolderInfo & info, nlohmann::json const & json_entry)

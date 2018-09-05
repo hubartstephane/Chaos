@@ -94,7 +94,7 @@ namespace chaos
 			return result;
 		}
 
-		bool FolderInfoInput::AddFont(char const * font_name, FT_Library library, bool release_library, char const * name, TagType tag, FontInfoInputParams const & params)
+		FontInfoInput * FolderInfoInput::AddFont(char const * font_name, FT_Library library, bool release_library, char const * name, TagType tag, FontInfoInputParams const & params)
 		{
 			assert(font_name != nullptr);
 
@@ -103,7 +103,7 @@ namespace chaos
 			{
 				FT_Error error = FT_Init_FreeType(&library);
 				if (error)
-					return false;
+					return nullptr;
 				release_library = true;
 			}
 
@@ -114,25 +114,25 @@ namespace chaos
 			{
 				if (release_library)
 					FT_Done_FreeType(library); // delete library if necessary
-				return false;
+				return nullptr;
 			}
 
 			return AddFontImpl(library, face, release_library, true, name, tag, params);
 		}
 
-		bool FolderInfoInput::AddFont(FT_Face face, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
+		FontInfoInput * FolderInfoInput::AddFont(FT_Face face, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
 		{
 			return AddFontImpl(nullptr, face, false, release_face, name, tag, params);
 		}
 
-		bool FolderInfoInput::AddFontImpl(FT_Library library, FT_Face face, bool release_library, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
+		FontInfoInput * FolderInfoInput::AddFontImpl(FT_Library library, FT_Face face, bool release_library, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)
 		{
 			assert(name != nullptr);
 			assert(face != nullptr);
 
 			// search whether the font already exists
 			if (GetFontInfo(name) != nullptr)
-				return true;
+				return nullptr;
 
 			FontInfoInput result;
 
@@ -140,7 +140,7 @@ namespace chaos
 			// XXX : order is important. Face.size.metrics will not be initialized elsewhere
 			FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
 			if (error != 0)
-				return false;
+				return nullptr;
 
 			// new character set input
 			result.name = name;
@@ -197,7 +197,7 @@ namespace chaos
 
 			fonts.push_back(std::move(result));
 
-			return true;
+			return &fonts.back();
 		}
 		
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
@@ -329,7 +329,7 @@ namespace chaos
 			return root_folder.AddFolder(name, tag);
 		}
 
-		bool AtlasInput::AddFont(
+		FontInfoInput * AtlasInput::AddFont(
 			char const * font_name,
 			FT_Library library,
 			bool release_library,
@@ -339,7 +339,7 @@ namespace chaos
 		{
 			return root_folder.AddFont(font_name, library, release_library, name, tag, params);
 		}
-		bool AtlasInput::AddFont(
+		FontInfoInput * AtlasInput::AddFont(
 			FT_Face face,
 			bool release_face,
 			char const * name,

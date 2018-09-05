@@ -166,7 +166,7 @@ namespace death
 		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
 
 		// Add sprites
-		chaos::BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites");
+		chaos::BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites", 0);
 		if (folder_info == nullptr)
 			return false;
 
@@ -196,7 +196,7 @@ namespace death
 		font_params.max_character_height = 64;
 
 		chaos::BitmapAtlas::FontInfoInput * font_info1 =
-			input.AddFontInfo(font_name, font_path.c_str(), nullptr, true, font_params);
+			input.AddFont(font_path.c_str(), nullptr, true, font_name, 0, font_params);
 
 		return (font_info1 != nullptr);
 	}

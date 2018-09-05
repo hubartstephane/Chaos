@@ -546,8 +546,8 @@ namespace chaos
 				return;
 
 			// recursively iterate over all sub folders
-			size_t count = folder_info_input->folders.size();
-			for (size_t i = 0; i < count; ++i)
+			size_t folder_count = folder_info_input->folders.size();
+			for (size_t i = 0; i < folder_count; ++i)
 			{
 				FolderInfoInput * child_folder_info_input = folder_info_input->folders[i].get();
 				if (child_folder_info_input == nullptr)
@@ -625,7 +625,7 @@ namespace chaos
 				FontInfo & font_info_output = folder_info_output->fonts[i];
 
 				size_t character_count = font_info_input.elements.size();
-				for (size_t j = 0; j < font_count; ++j)
+				for (size_t j = 0; j < character_count; ++j)
 				{
 					font_info_input.elements[j].output_info = &font_info_output.elements[j];
 					result.push_back(&font_info_input.elements[j]);

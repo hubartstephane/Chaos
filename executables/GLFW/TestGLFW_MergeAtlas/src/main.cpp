@@ -162,13 +162,13 @@ void TestMergedAtlas(std::vector<FIBITMAP*> & atlas_bitmaps, chaos::PixelFormat 
 		chaos::BitmapAtlas::AtlasGeneratorParams params;
 		chaos::BitmapAtlas::AtlasInput     input;
 
-		chaos::BitmapAtlas::BitmapSetInput * bitmap_set = input.AddBitmapSet("bitmap_set1");
+		chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("bitmap_set1", 0);
 
 		for (size_t i = 0; i < atlas_bitmaps.size(); ++i)
 		{
 			std::string name = chaos::StringTools::Printf("Bitmap_%02d", i);
 
-			bitmap_set->AddBitmap(name.c_str(), atlas_bitmaps[i], false, (int)i);
+			folder_input->AddBitmap(atlas_bitmaps[i], false, name.c_str(), (int)i);
 		}
 
 		params.merge_params.pixel_format = pixel_format;

@@ -209,7 +209,7 @@ bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, ch
 		return false;
 
 	// find bitmap info
-	chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(name);
+	chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetBitmapInfo(name);
 	if (info == nullptr)
 		return false;
 

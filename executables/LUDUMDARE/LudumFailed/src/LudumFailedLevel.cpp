@@ -159,7 +159,7 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_indice);
 			if (tile_info.tiledata != nullptr)
 			{	
-				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(tile_info.tiledata->atlas_key.c_str());
+				chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetBitmapInfo(tile_info.tiledata->atlas_key.c_str());
 				if (info == nullptr)
 					continue;
 

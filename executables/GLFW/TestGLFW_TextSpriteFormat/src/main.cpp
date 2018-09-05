@@ -143,7 +143,6 @@ protected:
 
 	bool InitializeParticleManager(boost::filesystem::path const & resources_path)
 	{
-
 		// create the program
 		program = chaos::ParticleDefault::GenDefautParticleProgram();
 		if (program == nullptr)
@@ -170,7 +169,11 @@ protected:
 		// parse the text
 		chaos::ParticleTextGenerator::Generator generator(*atlas);
 		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
-		generator.AddBitmap("BUTTON", atlas->GetFolder("bitmap_set1")->GetBitmapInfo("xboxControllerButtonA.tga"));
+
+		auto x = atlas->GetFolderInfo("bitmap_set1");
+		auto y = x->GetBitmapInfo("xboxControllerButtonA.tga");
+
+		generator.AddBitmap("BUTTON", atlas->GetFolderInfo("bitmap_set1")->GetBitmapInfo("xboxControllerButtonA.tga"));
 		generator.AddFontInfo("C1", atlas->GetFontInfo("font_info1"));
 		generator.AddFontInfo("C2", atlas->GetFontInfo("font_info2"));
 

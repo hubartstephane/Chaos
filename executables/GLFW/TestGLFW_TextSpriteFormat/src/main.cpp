@@ -170,10 +170,14 @@ protected:
 		chaos::ParticleTextGenerator::Generator generator(*atlas);
 		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
 
-		auto x = atlas->GetFolderInfo("bitmap_set1");
-		auto y = x->GetBitmapInfo("xboxControllerButtonA.tga");
-
-		generator.AddBitmap("BUTTON", atlas->GetFolderInfo("bitmap_set1")->GetBitmapInfo("xboxControllerButtonA.tga"));
+		chaos::BitmapAtlas::FolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
+		if (folder != nullptr)
+		{
+			chaos::BitmapAtlas::BitmapInfo const * bitmap = folder->GetBitmapInfo("xboxControllerButtonA");
+			if (bitmap != nullptr)
+				generator.AddBitmap("BUTTON", bitmap);
+		}
+		
 		generator.AddFontInfo("C1", atlas->GetFontInfo("font_info1"));
 		generator.AddFontInfo("C2", atlas->GetFontInfo("font_info2"));
 

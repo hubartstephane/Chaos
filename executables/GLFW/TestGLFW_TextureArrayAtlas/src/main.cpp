@@ -119,17 +119,17 @@ protected:
     glm::vec2 entry_size  = glm::vec2((float)info->width, (float)info->height);
     glm::vec2 entry_end   = entry_start + entry_size;
 
-		glm::vec2 topleft;
-		glm::vec2 bottomright; 
+		glm::vec2 bottomleft;
+		glm::vec2 topright; 
 
-		topleft.x = entry_start.x / atlas_dimension.x;
-		bottomright.x = entry_end.x / atlas_dimension.x;
+		bottomleft.x = entry_start.x / atlas_dimension.x;
+		topright.x = entry_end.x / atlas_dimension.x;
 
-		topleft.y = 1.0f - entry_start.y / atlas_dimension.y;
-		bottomright.y = 1.0f - entry_end.y / atlas_dimension.y;  // BITMAP coordinates and OpenGL textures coordinates are inverted
+		topright.y = 1.0f - (entry_start.y / atlas_dimension.y);
+		bottomleft.y = 1.0f - (entry_end.y / atlas_dimension.y);  // BITMAP coordinates and OpenGL textures coordinates are inverted
 
-    uniform_provider.AddVariableValue("topleft", topleft);
-    uniform_provider.AddVariableValue("bottomright", bottomright);
+    uniform_provider.AddVariableValue("bottomleft", bottomleft);
+    uniform_provider.AddVariableValue("topright", topright);
 
     mesh_box->Render(program_box.get(), &uniform_provider);
 

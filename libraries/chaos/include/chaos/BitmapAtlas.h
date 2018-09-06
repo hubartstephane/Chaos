@@ -203,12 +203,27 @@ namespace chaos
 		{
 		public:
 
+			typedef BITMAP_INFO_TYPE bitmap_type;
+			typedef FONT_INFO_TYPE   font_type;
+			typedef FOLDER_INFO_TYPE folder_type;
+
 			friend class ParticleTextGenerator::GeneratorData;
 
 			/** clear method */
 			void Clear()
 			{
 				root_folder.Clear();
+			}
+
+			/** get the root folder */
+			FOLDER_INFO_TYPE * GetRootFolder()
+			{
+				return &root_folder;
+			}
+			/** get the root folder */
+			FOLDER_INFO_TYPE const * GetRootFolder() const
+			{
+				return &root_folder;
 			}
 
 			/** gets a bitmap info by its name */

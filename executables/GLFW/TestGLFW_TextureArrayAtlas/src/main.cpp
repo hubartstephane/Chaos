@@ -27,37 +27,54 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-  chaos::BitmapAtlas::BitmapInfo * ClampBitmapIndexAndGetEntry()
+	chaos::BitmapAtlas::BitmapInfo const * FindBitmapRecursive(chaos::BitmapAtlas::FolderInfo const * folder, size_t & count)
+	{
+		// bitmaps
+		size_t bitmap_count = folder->bitmaps.size();
+		if (count < bitmap_count)
+			return &folder->bitmaps[count];
+		else
+			count = count - bitmap_count;
+		// fonts
+		size_t font_count = folder->fonts.size();
+		for (size_t i = 0; i < font_count; ++i)
+		{
+			chaos::BitmapAtlas::FontInfo const & font_info = folder->fonts[i];
+
+			size_t character_count = font_info.elements.size();
+			if (count < character_count)
+				return &font_info.elements[count];
+			else
+				count = count - character_count;
+		}
+		// recursive
+		size_t child_folder_count = folder->folders.size();
+		for (size_t i = 0; i < child_folder_count; ++i)
+		{
+			chaos::BitmapAtlas::BitmapInfo const * result = FindBitmapRecursive(folder->folders[i].get(), count);
+			if (result != nullptr)
+				return result;
+		}
+		return nullptr;
+	}
+
+  chaos::BitmapAtlas::BitmapInfo const * ClampBitmapIndexAndGetEntry()
   {
-    chaos::BitmapAtlas::BitmapInfo * result = nullptr;
+    chaos::BitmapAtlas::BitmapInfo const * result = nullptr;
 
     if (atlas.GetBitmapCount() != 0)
     {
       if (bitmap_index < 0)
         bitmap_index = 0;
 
-      int count = 0;
-      // go throught all bitmap_sets
-      auto const & bitmap_sets = atlas.GetBitmapSets();
-      for (auto const & bitmap_set : bitmap_sets)
-      {
-        if (bitmap_index - count < (int)bitmap_set->elements.size())
-          return &bitmap_set->elements[bitmap_index - count];
-
-        count += (int)bitmap_set->elements.size();
-        result = &bitmap_set->elements.back(); // in case of there is not enough info after, keep a reference on the last
-      }
-      // go throught all character sets
-      auto const & font_infos = atlas.GetFontInfos();
-      for (auto const & font_info : font_infos)
-      {
-        if (bitmap_index - count < (int)font_info->elements.size())
-          return &font_info->elements[bitmap_index - count];
-
-        count += (int)font_info->elements.size();
-        result = &font_info->elements.back(); // in case of there is not enough info after, keep a reference on the last
-      }
-
+      size_t count = bitmap_index;
+			result = FindBitmapRecursive(atlas.GetRootFolder(), count);
+			if (result == nullptr)
+			{
+				bitmap_index = 0;
+				count = bitmap_index;
+				result = FindBitmapRecursive(atlas.GetRootFolder(), count);
+			}
       // not enough info : keep the last one (and clamp bitmap_index)
       bitmap_index = count;
     }
@@ -73,7 +90,7 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    chaos::BitmapAtlas::BitmapInfo * info = ClampBitmapIndexAndGetEntry();
+    chaos::BitmapAtlas::BitmapInfo const * info = ClampBitmapIndexAndGetEntry();
     if (info == nullptr)
       return true;
 
@@ -211,10 +228,13 @@ protected:
 
   virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
-      ++bitmap_index;
-    else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
-      --bitmap_index;
+		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+			++bitmap_index;
+		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+		{
+			if (bitmap_index > 0)
+				--bitmap_index;
+		}
   }
 
 protected:
@@ -225,7 +245,7 @@ protected:
 
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
 
-  int bitmap_index {0};
+  size_t bitmap_index = 0;
 
   chaos::FPSViewInputController fps_view_controller;
 

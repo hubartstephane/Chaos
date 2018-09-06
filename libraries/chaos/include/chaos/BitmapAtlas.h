@@ -175,6 +175,44 @@ namespace chaos
 				folders.clear();
 			}
 
+			/** get all entries from the root folder */
+			void CollectEntries(std::vector<BitmapInfo> & result, bool collect_bitmaps, bool collect_fonts, bool recursive) const
+			{
+				// early exit
+				if (!collect_bitmaps && !collect_fonts)
+					return;
+				// collect bitmaps
+				if (collect_bitmaps)
+				{
+					size_t bitmap_count = bitmaps.size();
+					result.reserve(result.size() + bitmap_count);
+
+					for (size_t i = 0; i < bitmap_count; ++i)
+						result.push_back(bitmaps[i]);
+				}
+				// collect fonts
+				if (collect_fonts)
+				{
+					size_t font_count = fonts.size();
+					for (size_t i = 0; i < font_count; ++i)
+					{
+						FontInfo const & font_info = fonts[i];
+
+						size_t character_count = font_info.elements.size();
+						result.reserve(result.size() + character_count);
+						for (size_t j = 0; j < character_count; ++j)
+							result.push_back(font_info.elements[j]);
+					}
+				}
+				// recursion
+				if (recursive)
+				{
+					size_t folder_count = folders.size();
+					for (size_t i = 0; i < folder_count; ++i)
+						folders[i]->CollectEntries(result, collect_bitmaps, collect_fonts, recursive);
+				}
+			}
+
 		public:
 
 			/** the sub folders contained in this folder */
@@ -324,6 +362,9 @@ namespace chaos
 			static std::string GetInfoString(BitmapInfo const & info);
 			/** display information about one character info */
 			static std::string GetInfoString(CharacterInfo const & info);
+
+			/** get all entries from the root folder */
+			void CollectEntries(std::vector<BitmapInfo> & result, bool collect_bitmaps, bool collect_fonts, bool recursive) const;
 
 		protected:
 

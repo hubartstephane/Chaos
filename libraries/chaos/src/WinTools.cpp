@@ -5,6 +5,25 @@
 
 namespace chaos
 {
+	bool WinTools::IsAzertyKeyboard()
+	{
+
+		// Azerty layouts are not for all french keyboards
+		// See layouts http://msdn.microsoft.com/en-us/goglobal/bb964651
+		// See french langs IDs http://msdn.microsoft.com/en-us/library/windows/desktop/dd318693(v=vs.85).aspx
+
+		HKL hKeyboardLayout = GetKeyboardLayout(NULL);
+		WORD wLangId = LOWORD(hKeyboardLayout);
+		switch (wLangId)
+		{
+		case MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH_MONACO):
+		case MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH_BELGIAN):
+		case MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH): 
+			return true;			
+		}
+		return false;
+	}
+
 	void WinTools::PressToContinue()
 	{
 		system("pause");

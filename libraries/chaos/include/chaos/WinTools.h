@@ -15,6 +15,9 @@ namespace chaos
 	{
 	public:
 
+		/** returns true whether the keyboard is AZERTY */
+		bool IsAzertyKeyboard();
+
 		/** create a "Press to continue ..." pause console */
 		static void PressToContinue();
 

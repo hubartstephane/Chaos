@@ -75,9 +75,9 @@ namespace chaos
 				// output the element and its info
 				tinyxml2::XMLElement * TD = html.PushElement(TR, "TD");
 				tinyxml2::XMLElement * PRE = html.PushElement(TD, "PRE");
-				html.PushText(PRE, "Folder\n");
+				html.PushText(PRE, "Folder : ");
 				html.PushText(PRE, folder_path);
-				html.PushText(PRE, "Info\n");
+				html.PushText(PRE, "\nInfo :\n");
 				html.PushText(PRE, Atlas::GetInfoString(info).c_str());
 
 				// reset TR every 5 elements

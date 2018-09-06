@@ -30,7 +30,7 @@ namespace chaos
 
 	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapInfo const & info, glm::vec2 const & atlas_size)
 	{
-		// XXX : for OpenGL, texture 0, 0 is top-level
+		// XXX : for OpenGL, texture 0, 0 is top-left
 		//       in image space (0, 0) is bottom-left
 		//       => explains why (1. - Y)
 		//

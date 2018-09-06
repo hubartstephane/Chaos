@@ -29,6 +29,14 @@ protected:
 
 	chaos::BitmapAtlas::BitmapInfo const * FindBitmapRecursive(chaos::BitmapAtlas::FolderInfo const * folder, size_t & count)
 	{
+		// recursive first (because bitmaps are in a sub folder in this example)
+		size_t child_folder_count = folder->folders.size();
+		for (size_t i = 0; i < child_folder_count; ++i)
+		{
+			chaos::BitmapAtlas::BitmapInfo const * result = FindBitmapRecursive(folder->folders[i].get(), count);
+			if (result != nullptr)
+				return result;
+		}
 		// bitmaps
 		size_t bitmap_count = folder->bitmaps.size();
 		if (count < bitmap_count)
@@ -46,14 +54,6 @@ protected:
 				return &font_info.elements[count];
 			else
 				count = count - character_count;
-		}
-		// recursive
-		size_t child_folder_count = folder->folders.size();
-		for (size_t i = 0; i < child_folder_count; ++i)
-		{
-			chaos::BitmapAtlas::BitmapInfo const * result = FindBitmapRecursive(folder->folders[i].get(), count);
-			if (result != nullptr)
-				return result;
 		}
 		return nullptr;
 	}
@@ -75,8 +75,6 @@ protected:
 				count = bitmap_index;
 				result = FindBitmapRecursive(atlas.GetRootFolder(), count);
 			}
-      // not enough info : keep the last one (and clamp bitmap_index)
-      bitmap_index = count;
     }
     return result;
   }
@@ -120,6 +118,9 @@ protected:
     glm::vec2 entry_start = glm::vec2((float)info->x, (float)info->y);
     glm::vec2 entry_size  = glm::vec2((float)info->width, (float)info->height);
     glm::vec2 entry_end   = entry_start + entry_size;
+
+		entry_start.y = 1.0f - entry_start.y; // BITMAP coordinates and OpenGL textures coordinates are inverted
+		entry_end.y   = 1.0f - entry_end.y;
 
     uniform_provider.AddVariableValue("entry_start", entry_start / atlas_dimension);
     uniform_provider.AddVariableValue("entry_end", entry_end / atlas_dimension);

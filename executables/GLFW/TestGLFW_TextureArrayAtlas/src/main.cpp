@@ -27,59 +27,6 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	chaos::BitmapAtlas::BitmapInfo const * FindBitmapRecursive(chaos::BitmapAtlas::FolderInfo const * folder, size_t & count)
-	{
-		// recursive first (because bitmaps are in a sub folder in this example)
-		size_t child_folder_count = folder->folders.size();
-		for (size_t i = 0; i < child_folder_count; ++i)
-		{
-			chaos::BitmapAtlas::BitmapInfo const * result = FindBitmapRecursive(folder->folders[i].get(), count);
-			if (result != nullptr)
-				return result;
-		}
-		// bitmaps
-		size_t bitmap_count = folder->bitmaps.size();
-		if (count < bitmap_count)
-			return &folder->bitmaps[count];
-		else
-			count = count - bitmap_count;
-		// fonts
-		size_t font_count = folder->fonts.size();
-		for (size_t i = 0; i < font_count; ++i)
-		{
-			chaos::BitmapAtlas::FontInfo const & font_info = folder->fonts[i];
-
-			size_t character_count = font_info.elements.size();
-			if (count < character_count)
-				return &font_info.elements[count];
-			else
-				count = count - character_count;
-		}
-		return nullptr;
-	}
-
-  chaos::BitmapAtlas::BitmapInfo const * ClampBitmapIndexAndGetEntry()
-  {
-    chaos::BitmapAtlas::BitmapInfo const * result = nullptr;
-
-    if (atlas.GetBitmapCount() != 0)
-    {
-      if (bitmap_index < 0)
-        bitmap_index = 0;
-
-      size_t count = bitmap_index;
-			result = FindBitmapRecursive(atlas.GetRootFolder(), count);
-			if (result == nullptr)
-			{
-				bitmap_index = 0;
-				count = bitmap_index;
-				result = FindBitmapRecursive(atlas.GetRootFolder(), count);
-			}
-    }
-    return result;
-  }
-
-
   virtual bool OnDraw(glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
@@ -88,7 +35,10 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    chaos::BitmapAtlas::BitmapInfo const * info = ClampBitmapIndexAndGetEntry();
+		if (bitmap_index >= bitmaps.size())
+			bitmap_index = bitmaps.size() - 1;
+
+		chaos::BitmapAtlas::BitmapInfo const * info = &bitmaps[bitmap_index];
     if (info == nullptr)
       return true;
 
@@ -189,6 +139,10 @@ protected:
     if (!LoadTextureArray(resources_path))
       return false;
 
+		atlas.CollectEntries(&bitmaps, nullptr, true, true);
+		if (bitmaps.size() == 0)
+			return false;
+
     // load programs      
     program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
     if (program_box == nullptr)
@@ -253,6 +207,7 @@ protected:
   chaos::BitmapAtlas::TextureArrayAtlas atlas;
 
   size_t bitmap_index = 0;
+	std::vector<chaos::BitmapAtlas::BitmapInfo> bitmaps;
 
   chaos::FPSViewInputController fps_view_controller;
 

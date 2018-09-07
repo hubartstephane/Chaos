@@ -44,8 +44,15 @@ protected:
 
   void GenerateParticles(float w, float h)
   {
-		static int PARTICLE_COUNT = 100;
+		// get the existing bitmaps
+		std::vector<chaos::BitmapAtlas::BitmapInfo> bitmaps;
+		atlas->CollectEntries(&bitmaps, nullptr, true, true);
 
+		size_t bitmap_count = bitmaps.size();
+		if (bitmap_count == 0)
+			return;
+
+		// early exit
 		if (particles_allocation != nullptr)
 			return;
 
@@ -53,71 +60,34 @@ protected:
 		if (layer == nullptr)
 			return;
 
-		particles_allocation = layer->SpawnParticles(PARTICLE_COUNT * 2);
+		// spawn particles
+		particles_allocation = layer->SpawnParticles(bitmap_count);
 		if (particles_allocation == nullptr)
-			return;
-		
-		chaos::ParticleDefault::Particle * particles = particles_allocation->GetParticleCheckedBuffer<chaos::ParticleDefault::Particle>();
-		if (particles == nullptr)
 			return;
 
 		glm::vec2 screen_size = glm::vec2(w, h);
 		float     particle_size = max(w, h);
 
-		// add characters
-		auto const & font_infos = atlas->GetFontInfos();
-		if (font_infos.size() > 0)
+		// initialize the particles
+
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particle_accessor = particles_allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		for (size_t i = 0; i < bitmap_count; ++i)
 		{
-			chaos::BitmapAtlas::FontInfo const * font_info = font_infos.at(0).get();
+			chaos::ParticleDefault::Particle & p = particle_accessor[i];
 
-			size_t element_count = font_info->elements.size();
-			if (element_count > 0)
-			{
-				for (int i = 0; i < PARTICLE_COUNT; ++i)
-				{
-					chaos::BitmapAtlas::CharacterInfo const * info = &font_info->elements[rand() % element_count];
+			glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
+			glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
+			glm::vec3 color = 
+				((i & 1) == 0)? glm::vec3(1.0f, 1.0f, 1.0f) : chaos::GLMTools::RandVec3();
 
-					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
-					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-					glm::vec3 color = chaos::GLMTools::RandVec3();
+			p.bounding_box.position = position;
+			p.bounding_box.half_size = size * 0.5f;
+			p.color.r = color.r;
+			p.color.g = color.g;
+			p.color.b = color.b;
+			p.color.a = 1.0f;
 
-					particles->bounding_box.position  = position;
-					particles->bounding_box.half_size = size * 0.5f;
-					particles->color.r = color.r;
-					particles->color.g = color.g;
-					particles->color.b = color.b;
-					particles->color.a = 1.0f;
-
-					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, atlas->GetAtlasDimension());
-					++particles;
-				}
-			}
-		}
-
-		// add bitmap
-		auto const & bitmap_sets = atlas->GetBitmapSets();
-		if (bitmap_sets.size() > 0)
-		{
-			chaos::BitmapAtlas::BitmapSet const * bitmap_set = bitmap_sets.at(0).get();
-
-			size_t element_count = bitmap_set->elements.size();
-			if (element_count > 0)
-			{
-				for (int i = 0; i < PARTICLE_COUNT; ++i)
-				{
-					chaos::BitmapAtlas::BitmapInfo const * info = &bitmap_set->elements[rand() % element_count];
-
-					glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
-					glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
-
-					particles->bounding_box.position = position;
-					particles->bounding_box.half_size = size * 0.5f;
-					particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-					particles->texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, atlas->GetAtlasDimension());
-					++particles;
-				}
-			}
+			p.texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmaps[i], atlas->GetAtlasDimension());
 		}
   }
 

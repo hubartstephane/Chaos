@@ -92,13 +92,15 @@ namespace chaos
 		{
 		public:
 
+			typedef CHARACTER_INFO_TYPE character_type;
+
 			/** gets an info by its name */
-			CHARACTER_INFO_TYPE const * GetCharacterInfo(char const * name) const
+			character_type const * GetCharacterInfo(char const * name) const
 			{
 				return NamedObject::FindNamedObject(elements, tag);
 			}
 			/** gets an info by its tag */
-			CHARACTER_INFO_TYPE const * GetCharacterInfo(TagType tag) const
+			character_type const * GetCharacterInfo(TagType tag) const
 			{
 				return NamedObject::FindNamedObject(elements, tag);
 			}
@@ -117,7 +119,7 @@ namespace chaos
 			int face_height = 0;
 
 			/** the glyph contained in the character info */
-			std::vector<CHARACTER_INFO_TYPE> elements;
+			std::vector<character_type> elements;
 		};
 
 		/**
@@ -138,6 +140,12 @@ namespace chaos
 		{
 		public:
 
+			typedef BITMAP_INFO_TYPE bitmap_type;
+			typedef FONT_INFO_TYPE font_type;
+			typedef FOLDER_INFO_TYPE folder_type;
+			typedef typename font_type::character_type character_type;
+
+
 #define CHAOS_EMPTY_TOKEN
 #define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, param_type, constness)\
 			result_type constness * funcname(param_type name, bool recursive = false) constness\
@@ -150,20 +158,20 @@ namespace chaos
 					result = folders[i]->funcname(name, recursive);\
 				return result;\
 			}
-			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, char const *, CHAOS_EMPTY_TOKEN);
-			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, char const *, const);
-			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, TagType, CHAOS_EMPTY_TOKEN);
-			CHAOS_IMPL_GETINFO(BITMAP_INFO_TYPE, GetBitmapInfo, bitmaps, TagType, const);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, const);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, const);
 
-			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, char const *, CHAOS_EMPTY_TOKEN);
-			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, char const *, const);
-			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, TagType, CHAOS_EMPTY_TOKEN);
-			CHAOS_IMPL_GETINFO(FONT_INFO_TYPE, GetFontInfo, fonts, TagType, const);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, const);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, const);
 
-			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, char const *, CHAOS_EMPTY_TOKEN);
-			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, char const *, const);
-			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, TagType, CHAOS_EMPTY_TOKEN);
-			CHAOS_IMPL_GETINFO(FOLDER_INFO_TYPE, GetFolderInfo, folders, TagType, const);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, const);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, const);
 #undef CHAOS_IMPL_GETINFO
 #undef CHAOS_EMPTY_TOKEN
 
@@ -176,32 +184,43 @@ namespace chaos
 			}
 
 			/** get all entries from the root folder */
-			void CollectEntries(std::vector<BitmapInfo> & result, bool collect_bitmaps, bool collect_fonts, bool recursive) const
+			void CollectEntries(std::vector<bitmap_type> * bitmap_result, std::vector<character_type> * character_result, bool convert_font_into_bitmap, bool recursive) const
 			{
+				assert(!convert_font_into_bitmap || character_result == nullptr); // not clear what expected if there is a font result + conversion
+				assert(!convert_font_into_bitmap || bitmap_result != nullptr); // cannot convert without a result vector
 				// early exit
-				if (!collect_bitmaps && !collect_fonts)
+				if (bitmap_result == nullptr && character_result == nullptr)
 					return;
 				// collect bitmaps
-				if (collect_bitmaps)
+				if (bitmap_result != nullptr)
 				{
 					size_t bitmap_count = bitmaps.size();
-					result.reserve(result.size() + bitmap_count);
+					bitmap_result->reserve(bitmap_result->size() + bitmap_count);
 
 					for (size_t i = 0; i < bitmap_count; ++i)
-						result.push_back(bitmaps[i]);
+						bitmap_result->push_back(bitmaps[i]);
 				}
 				// collect fonts
-				if (collect_fonts)
+				if (character_result != nullptr || (bitmap_result != nullptr && convert_font_into_bitmap))
 				{
 					size_t font_count = fonts.size();
 					for (size_t i = 0; i < font_count; ++i)
 					{
-						FontInfo const & font_info = fonts[i];
+						font_type const & font_info = fonts[i];
 
 						size_t character_count = font_info.elements.size();
-						result.reserve(result.size() + character_count);
-						for (size_t j = 0; j < character_count; ++j)
-							result.push_back(font_info.elements[j]);
+						if (!convert_font_into_bitmap)
+						{
+							character_result->reserve(character_result->size() + character_count);
+							for (size_t j = 0; j < character_count; ++j)		
+								character_result->push_back(font_info.elements[j]);
+						}
+						else
+						{
+							bitmap_result->reserve(bitmap_result->size() + character_count);
+							for (size_t j = 0; j < character_count; ++j)		
+								bitmap_result->push_back(font_info.elements[j]);
+						}
 					}
 				}
 				// recursion
@@ -209,18 +228,18 @@ namespace chaos
 				{
 					size_t folder_count = folders.size();
 					for (size_t i = 0; i < folder_count; ++i)
-						folders[i]->CollectEntries(result, collect_bitmaps, collect_fonts, recursive);
+						folders[i]->CollectEntries(bitmap_result, character_result, convert_font_into_bitmap, recursive);
 				}
 			}
 
 		public:
 
 			/** the sub folders contained in this folder */
-			std::vector<std::unique_ptr<FOLDER_INFO_TYPE>> folders;
+			std::vector<std::unique_ptr<folder_type>> folders;
 			/** the bitmaps contained in this folder */
-			std::vector<BITMAP_INFO_TYPE> bitmaps;
+			std::vector<bitmap_type> bitmaps;
 			/** the fonts contained in this folder */
-			std::vector<FONT_INFO_TYPE> fonts;
+			std::vector<font_type> fonts;
 		};
 
 		/**
@@ -244,6 +263,7 @@ namespace chaos
 			typedef BITMAP_INFO_TYPE bitmap_type;
 			typedef FONT_INFO_TYPE   font_type;
 			typedef FOLDER_INFO_TYPE folder_type;
+			typedef typename font_type::character_type character_type;
 
 			friend class ParticleTextGenerator::GeneratorData;
 
@@ -254,67 +274,67 @@ namespace chaos
 			}
 
 			/** get the root folder */
-			FOLDER_INFO_TYPE * GetRootFolder()
+			folder_type * GetRootFolder()
 			{
 				return &root_folder;
 			}
 			/** get the root folder */
-			FOLDER_INFO_TYPE const * GetRootFolder() const
+			folder_type const * GetRootFolder() const
 			{
 				return &root_folder;
 			}
 
 			/** gets a bitmap info by its name */
-			BITMAP_INFO_TYPE * GetBitmapInfo(char const * name, bool recursive = false)
+			bitmap_type * GetBitmapInfo(char const * name, bool recursive = false)
 			{
 				return root_folder.GetBitmapInfo(name, recursive);
 			}
-			BITMAP_INFO_TYPE const * GetBitmapInfo(char const * name, bool recursive = false) const
+			bitmap_type const * GetBitmapInfo(char const * name, bool recursive = false) const
 			{
 				return root_folder.GetBitmapInfo(name, recursive);
 			}
 			/** gets a bitmap info by its tag */
-			BITMAP_INFO_TYPE * GetBitmapInfo(TagType tag, bool recursive = false)
+			bitmap_type * GetBitmapInfo(TagType tag, bool recursive = false)
 			{
 				return root_folder.GetBitmapInfo(tag, recursive);
 			}
-			BITMAP_INFO_TYPE const * GetBitmapInfo(TagType tag, bool recursive = false) const
+			bitmap_type const * GetBitmapInfo(TagType tag, bool recursive = false) const
 			{
 				return root_folder.GetBitmapInfo(tag, recursive);
 			}
 			/** gets a font info by its name */
-			FONT_INFO_TYPE * GetFontInfo(char const * name, bool recursive = false)
+			font_type * GetFontInfo(char const * name, bool recursive = false)
 			{
 				return root_folder.GetFontInfo(name, recursive);
 			}
-			FONT_INFO_TYPE const * GetFontInfo(char const * name, bool recursive = false) const
+			font_type const * GetFontInfo(char const * name, bool recursive = false) const
 			{
 				return root_folder.GetFontInfo(name, recursive);
 			}
 			/** gets a font info by its tag */
-			FONT_INFO_TYPE * GetFontInfo(TagType tag, bool recursive = false)
+			font_type * GetFontInfo(TagType tag, bool recursive = false)
 			{
 				return root_folder.GetFontInfo(tag, recursive);
 			}
-			FONT_INFO_TYPE const * GetFontInfo(TagType tag, bool recursive = false) const
+			font_type const * GetFontInfo(TagType tag, bool recursive = false) const
 			{
 				return root_folder.GetFontInfo(tag, recursive);
 			}
 			/** gets a folder info by its name */
-			FOLDER_INFO_TYPE * GetFolderInfo(char const * name, bool recursive = false)
+			folder_type * GetFolderInfo(char const * name, bool recursive = false)
 			{
 				return root_folder.GetFolderInfo(name, recursive);
 			}
-			FOLDER_INFO_TYPE const * GetFolderInfo(char const * name, bool recursive = false) const
+			folder_type const * GetFolderInfo(char const * name, bool recursive = false) const
 			{
 				return root_folder.GetFolderInfo(name, recursive);
 			}
 			/** gets a folder info by its tag */
-			FOLDER_INFO_TYPE * GetFolderInfo(TagType tag, bool recursive = false)
+			folder_type * GetFolderInfo(TagType tag, bool recursive = false)
 			{
 				return root_folder.GetFolderInfo(tag, recursive);
 			}
-			FOLDER_INFO_TYPE const * GetFolderInfo(TagType tag, bool recursive = false) const
+			folder_type const * GetFolderInfo(TagType tag, bool recursive = false) const
 			{
 				return root_folder.GetFolderInfo(tag, recursive);
 			}
@@ -322,7 +342,7 @@ namespace chaos
 		protected:
 
 			/** the root folder */
-			FOLDER_INFO_TYPE root_folder;
+			folder_type root_folder;
 		};
 
 		/**
@@ -364,7 +384,7 @@ namespace chaos
 			static std::string GetInfoString(CharacterInfo const & info);
 
 			/** get all entries from the root folder */
-			void CollectEntries(std::vector<BitmapInfo> & result, bool collect_bitmaps, bool collect_fonts, bool recursive) const;
+			void CollectEntries(std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool convert_font_into_bitmap, bool recursive) const;
 
 		protected:
 

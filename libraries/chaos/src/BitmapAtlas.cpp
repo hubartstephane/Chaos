@@ -343,9 +343,9 @@ namespace chaos
 			return stream.str();
 		}
 
-		void AtlasBase::CollectEntries(std::vector<BitmapInfo> & result, bool collect_bitmaps, bool collect_fonts, bool recursive) const
+		void AtlasBase::CollectEntries(std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool convert_font_into_bitmap, bool recursive) const
 		{
-			root_folder.CollectEntries(result, collect_bitmaps, collect_fonts, recursive);
+			root_folder.CollectEntries(bitmap_result, character_result, convert_font_into_bitmap, recursive);
 		}
 
 		// ========================================================================

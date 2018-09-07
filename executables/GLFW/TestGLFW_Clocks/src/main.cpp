@@ -84,9 +84,9 @@ protected:
 	void DebugDisplayTips()
 	{
 		debug_display.Clear();
-		debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM1 & NUM2 : %f", clock1->GetClockID(), clock1->GetTimeScale()).c_str());
-		debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM4 & NUM5 : %f", clock2->GetClockID(), clock2->GetTimeScale()).c_str());
-		debug_display.AddLine(chaos::StringTools::Printf("update clock [%d] with NUM7 & NUM8 : %f", clock3->GetClockID(), clock3->GetTimeScale()).c_str());    
+		debug_display.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM1 & NUM2 : %f", clock1->GetClockName(), clock1->GetTimeScale()).c_str());
+		debug_display.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM4 & NUM5 : %f", clock2->GetClockName(), clock2->GetTimeScale()).c_str());
+		debug_display.AddLine(chaos::StringTools::Printf("update clock [%s] with NUM7 & NUM8 : %f", clock3->GetClockName(), clock3->GetTimeScale()).c_str());
 		debug_display.AddLine("Press A to generate an Event on Clock 1 : SingleTickEvent");
 		debug_display.AddLine("Press Z to generate an Event on Clock 2 : RangeEvent");
 		debug_display.AddLine("Press E to generate an Event on Clock 3 : Forever Event");
@@ -233,9 +233,9 @@ protected:
 			return false;
 
 		// create a timer
-		clock1 = application->GetMainClock()->CreateChildClock(-1);
-		clock2 = clock1->CreateChildClock(-1);
-		clock3 = clock2->CreateChildClock(-1);
+		clock1 = application->GetMainClock()->CreateChildClock("clock 1");
+		clock2 = clock1->CreateChildClock("clock 2");
+		clock3 = clock2->CreateChildClock("clock 3");
 
 		// create meshes
 		chaos::box3    b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));

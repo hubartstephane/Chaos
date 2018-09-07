@@ -248,12 +248,12 @@ chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size
 		return nullptr;
 
 	// find bitmap set
-	chaos::BitmapAtlas::BitmapSet const * bitmap_set = texture_atlas->GetBitmapSet("sprites");
-	if (bitmap_set == nullptr)
+	chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+	if (folder_info == nullptr)
 		return nullptr;
 
 	// find bitmap info
-	chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetInfo(name);
+	chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(name);
 	if (info == nullptr)
 		return nullptr;
 

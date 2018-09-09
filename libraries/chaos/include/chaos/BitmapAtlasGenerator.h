@@ -15,10 +15,22 @@ namespace chaos
 	{
 
 		/**
+		* FontInfoInputBaseParams : base data for font generating
+		*/
+
+		class FontInfoInputBaseParams
+		{
+		public:
+
+			/** the characters to generate / the characters in the font bitmap */
+			std::string characters;
+		};
+
+		/**
 		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
 
-		class FontInfoInputParams
+		class FontInfoInputParams : public FontInfoInputBaseParams
 		{
 		public:
 
@@ -26,8 +38,18 @@ namespace chaos
 			int max_character_width = 32;
 			/** height of the glyph */
 			int max_character_height = 32;
-			/** the characters to generate */
-			std::string characters;
+		};
+
+		/**
+		* FontInfoBitmapParams : some fonts can be represent by a grid of characters
+		*/
+
+		class FontInfoBitmapParams : public FontInfoInputBaseParams
+		{
+		public:
+
+			/** number of uniform grid cells for the bitmaps */
+			glm::ivec2 size = glm::ivec2(0, 0);
 		};
 
 		/**
@@ -140,11 +162,26 @@ namespace chaos
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 
 			/** insert a bitmap before computation */
-			bool AddBitmap(FilePathParam const & path, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
 			/** insert an image inside the atlas */
+			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
+			/** insert an image inside the atlas */
+			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
+
+
+#if 0
+
+			/** Add a Bitmap Font */
+			FontInfoInput * AddFontBitmap(FilePathParam const & path, char const * name, TagType tag, FontInfoBitmapParams const & params);
+			/** Add a Bitmap Font */
 			bool AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
-			/** insert an image inside the atlas */
-			bool AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
+
+#endif
+
+
+
+
+
 
 			/** Add a character set */
 			FontInfoInput * AddFont(				
@@ -165,7 +202,7 @@ namespace chaos
 		protected:
 
 			/** internal method to add a bitmap or a multi bitmap */
-			bool AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(
@@ -198,11 +235,11 @@ namespace chaos
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 
 			/** insert a bitmap before computation */
-			bool AddBitmap(FilePathParam const & path, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
 			/** insert an image inside the atlas */
-			bool AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
 			/** insert an image inside the atlas */
-			bool AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
 			/** Add a character set */
 			FontInfoInput * AddFont(

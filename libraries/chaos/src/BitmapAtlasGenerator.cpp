@@ -250,9 +250,9 @@ namespace chaos
 		}
 #endif
 
-		bool FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
-			bool result = false;
+			BitmapInfoInput * result = nullptr;
 
 			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
 			if (bitmap != nullptr)
@@ -265,30 +265,30 @@ namespace chaos
 					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
 					tag
 				);
-				if (!result)
+				if (result == nullptr)
 					FreeImage_Unload(bitmap);
 			}
 			return result;
 		}
 
 
-		bool FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			return AddBitmapImpl(bitmap, nullptr, release_bitmap, name, tag);
 		}
 
-		bool FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			return AddBitmapImpl(nullptr, animated_bitmap, release_bitmap, name, tag);
 		}
 
-		bool FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			assert(name != nullptr);
 			assert(bitmap != nullptr);
 
 			if (GetBitmapInfo(name) != nullptr)
-				return false;
+				return nullptr;
 
 			BitmapInfoInput new_entry;
 
@@ -300,7 +300,7 @@ namespace chaos
 			new_entry.tag            = tag;
 
 			bitmaps.push_back(std::move(new_entry)); // move for std::string copy
-			return true;
+			return &bitmaps.back();
 		}
 
 		// ========================================================================
@@ -311,15 +311,15 @@ namespace chaos
 		{
 			return root_folder.AddBitmapFilesFromDirectory(path, recursive);
 		}
-		bool AtlasInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
+		BitmapInfoInput * AtlasInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(path, name, tag);
 		}
-		bool AtlasInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
+		BitmapInfoInput * AtlasInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(bitmap, release_bitmap, name, tag);
 		}
-		bool AtlasInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
+		BitmapInfoInput * AtlasInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			return root_folder.AddBitmap(animated_bitmap, release_bitmap, name, tag);
 		}
@@ -339,6 +339,7 @@ namespace chaos
 		{
 			return root_folder.AddFont(font_name, library, release_library, name, tag, params);
 		}
+
 		FontInfoInput * AtlasInput::AddFont(
 			FT_Face face,
 			bool release_face,

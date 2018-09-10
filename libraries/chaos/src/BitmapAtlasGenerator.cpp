@@ -554,6 +554,7 @@ namespace chaos
 
 			// recursively iterate over all sub folders
 			size_t folder_count = folder_info_input->folders.size();
+			folder_info_output->folders.reserve(folder_count + folder_info_output->folders.size());
 			for (size_t i = 0; i < folder_count; ++i)
 			{
 				FolderInfoInput * child_folder_info_input = folder_info_input->folders[i].get();
@@ -573,6 +574,7 @@ namespace chaos
 
 			// register the bitmaps
 			size_t bitmap_count = folder_info_input->bitmaps.size();
+			folder_info_output->bitmaps.reserve(bitmap_count + folder_info_output->bitmaps.size());
 			for (size_t i = 0 ; i < bitmap_count ; ++i)
 			{
 				BitmapInfoInput const * bitmap_info_input = folder_info_input->bitmaps[i].get();
@@ -598,6 +600,7 @@ namespace chaos
 
 			// register the fonts 
 			size_t font_count = folder_info_input->fonts.size();
+			folder_info_output->fonts.reserve(font_count + folder_info_output->fonts.size());
 			for (size_t i = 0 ; i < font_count ; ++i)
 			{
 				FontInfoInput const * font_info_input = folder_info_input->fonts[i].get();
@@ -614,6 +617,7 @@ namespace chaos
 				font_info_output.face_height = font_info_input->face_height;
 
 				size_t character_count = font_info_input->elements.size(); // now the elements in the font
+				font_info_output.elements.reserve(character_count + font_info_output.elements.size());
 				for (size_t i = 0; i < character_count; ++i)
 				{
 					CharacterInfoInput const * character_info_input = font_info_input->elements[i].get();

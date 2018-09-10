@@ -15,6 +15,25 @@ namespace chaos
 
 	namespace BitmapAtlas
 	{
+		/** meta function that returns the input type (identity) */
+		struct DataWrapperRaw
+		{
+			template<typename T> 
+			struct apply
+			{
+				typedef T type;
+			};
+		};
+		/** meta function that transforms the input into unique_ptr<> */
+		struct DataWrapperUniquePtr
+		{
+			template<typename T>
+			struct apply
+			{
+				typedef std::unique_ptr<T> type;
+			};
+		};
+
 		/**
 		* BitmapGridAnimationInfo : some bitmaps represent a uniform grid of individual animation frames
 		*/
@@ -87,12 +106,14 @@ namespace chaos
 		* FontInfoTemplate : a base template for FontInfo and FontInfoInput
 		*/
 
-		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS>
+		template<typename CHARACTER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
 		class FontInfoTemplate : public PARENT_CLASS
 		{
 		public:
 
 			typedef CHARACTER_INFO_TYPE character_type;
+			typedef META_WRAPPER_TYPE meta_wrapper_type;
+			typedef typename boost::mpl::apply<meta_wrapper_type, character_type>::type character_stored_type;
 
 			/** gets an info by its name */
 			character_type const * GetCharacterInfo(char const * name) const
@@ -119,14 +140,14 @@ namespace chaos
 			int face_height = 0;
 
 			/** the glyph contained in the character info */
-			std::vector<character_type> elements;
+			std::vector<character_stored_type> elements;
 		};
 
 		/**
 		* FontInfo : this is a named group of Characters (CharacterInfo)
 		*/
 
-		class FontInfo : public FontInfoTemplate<CharacterInfo, NamedObject>
+		class FontInfo : public FontInfoTemplate<CharacterInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
 		{
 
 		};
@@ -135,7 +156,7 @@ namespace chaos
 		* FolderInfoTemplate : a base template for FolderInfo and FolderInfoInput
 		*/
 
-		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
+		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS, typename META_WRAPPER_TYPE>
 		class FolderInfoTemplate : public PARENT_CLASS
 		{
 		public:
@@ -145,6 +166,9 @@ namespace chaos
 			typedef FOLDER_INFO_TYPE folder_type;
 			typedef typename font_type::character_type character_type;
 
+			typedef META_WRAPPER_TYPE meta_wrapper_type;
+			typedef typename boost::mpl::apply<meta_wrapper_type, bitmap_type>::type bitmap_stored_type;
+			typedef typename boost::mpl::apply<meta_wrapper_type, font_type>::type font_stored_type;
 
 #define CHAOS_EMPTY_TOKEN
 #define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, param_type, constness)\
@@ -237,16 +261,16 @@ namespace chaos
 			/** the sub folders contained in this folder */
 			std::vector<std::unique_ptr<folder_type>> folders;
 			/** the bitmaps contained in this folder */
-			std::vector<bitmap_type> bitmaps;
+			std::vector<bitmap_stored_type> bitmaps;
 			/** the fonts contained in this folder */
-			std::vector<font_type> fonts;
+			std::vector<font_stored_type> fonts;
 		};
 
 		/**
 		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase>
+		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase, boost::mpl::identity<boost::mpl::_1>>
 		{
 
 		};
@@ -254,7 +278,6 @@ namespace chaos
 		/**
 		* AtlasBaseTemplate : a base template for AtlasBase and AtlasInput
 		*/
-
 		template<typename BITMAP_INFO_TYPE, typename FONT_INFO_TYPE, typename FOLDER_INFO_TYPE, typename PARENT_CLASS>
 		class AtlasBaseTemplate : public PARENT_CLASS
 		{

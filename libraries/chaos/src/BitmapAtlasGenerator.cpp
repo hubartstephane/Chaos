@@ -52,7 +52,7 @@ namespace chaos
 
 		FontInfoInput & FontInfoInput::operator = (FontInfoInput && src)
 		{
-			FontInfoTemplate<CharacterInfoInput, ObjectBaseInput>::operator = (std::move(src));
+			FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, meta_wrapper_type>::operator = (std::move(src));
 			std::swap(library, src.library);
 			std::swap(face, src.face);
 			std::swap(release_library, src.release_library);

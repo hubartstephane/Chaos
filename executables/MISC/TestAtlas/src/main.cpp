@@ -46,8 +46,8 @@ bool AddFakeBitmap(chaos::BitmapAtlas::FolderInfoInput * folder_input, char cons
 
 		chaos::ImageTools::FillImageBackground(image_description, glm::vec4(color, color, color, 1.0f));
 
-		result = folder_input->AddBitmap(bitmap, true, name, 0);
-		if (!result)
+		chaos::BitmapAtlas::BitmapInfoInput * result = folder_input->AddBitmap(bitmap, true, name, 0);
+		if (result == nullptr)
 			FreeImage_Unload(bitmap);
 	}
 	return result;
@@ -233,7 +233,6 @@ protected:
 		return true;
 	}
 };
-
 
 int _tmain(int argc, char ** argv, char ** env)
 {

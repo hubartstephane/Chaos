@@ -110,7 +110,7 @@ namespace chaos
 		* FontInfoInput : this info will produced in the final Atlas a FontInfo (a set of glyphs generated from FreeType)
 		*/
 
-		class FontInfoInput : public FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, boost::mpl::identity<boost::mpl::_1>>
+		class FontInfoInput : public FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
@@ -145,7 +145,7 @@ namespace chaos
 		* FolderInfoInput :  this info will produced in the final Atlas a FolderInfo
 		*/
 
-		class FolderInfoInput : public FolderInfoTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ObjectBaseInput, boost::mpl::identity<boost::mpl::_1>>
+		class FolderInfoInput : public FolderInfoTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;

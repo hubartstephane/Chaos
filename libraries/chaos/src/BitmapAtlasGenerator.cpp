@@ -134,7 +134,9 @@ namespace chaos
 			if (GetFontInfo(name) != nullptr)
 				return nullptr;
 
-			FontInfoInput result;
+			FontInfoInput * result = new FontInfoInput;
+			if (result == nullptr)
+				return nullptr;
 
 			// set font size
 			// XXX : order is important. Face.size.metrics will not be initialized elsewhere
@@ -143,16 +145,16 @@ namespace chaos
 				return nullptr;
 
 			// new character set input
-			result.name = name;
-			result.library = library;
-			result.face = face;
-			result.release_library = release_library;
-			result.release_face = release_face;
-			result.max_character_width = params.max_character_width;
-			result.max_character_height = params.max_character_height;
-			result.ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
-			result.descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
-			result.face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
+			result->name = name;
+			result->library = library;
+			result->face = face;
+			result->release_library = release_library;
+			result->release_face = release_face;
+			result->max_character_width = params.max_character_width;
+			result->max_character_height = params.max_character_height;
+			result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
+			result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
+			result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
 
 			// generate glyph cache
 
@@ -163,7 +165,7 @@ namespace chaos
 				params.characters.c_str() :
 				DEFAULT_CHARACTERS;
 
-			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result.face, characters);
+			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
 
 			// transforms each info of the glyph map into a bitmap
 			for (auto & glyph : glyph_cache)
@@ -177,17 +179,19 @@ namespace chaos
 					char name[] = " ";
 					sprintf_s(name, 2, "%c", glyph.first);
 
-					CharacterInfoInput info;
-					info.name = name;
-					info.tag = glyph.first;
+					CharacterInfoInput * info = new CharacterInfoInput;
+					if (info == nullptr)
+						continue;
+					info->name = name;
+					info->tag = glyph.first;
 					if (bitmap != nullptr)
-						info.description = ImageTools::GetImageDescription(bitmap);
-					info.bitmap = bitmap;
-					info.release_bitmap = true;
-					info.advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
-					info.bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
-					info.bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
-					result.elements.push_back(std::move(info));
+						info->description = ImageTools::GetImageDescription(bitmap);
+					info->bitmap = bitmap;
+					info->release_bitmap = true;
+					info->advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
+					info->bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
+					info->bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
+					result->elements.push_back(std::move(std::unique_ptr<CharacterInfoInput>(info)));
 				}
 			}
 
@@ -195,9 +199,9 @@ namespace chaos
 			for (auto & glyph : glyph_cache)
 				FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
 
-			fonts.push_back(std::move(result));
+			fonts.push_back(std::move(std::unique_ptr<FontInfoInput>(result)));
 
-			return &fonts.back();
+			return result;
 		}
 		
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
@@ -290,17 +294,19 @@ namespace chaos
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
 
-			BitmapInfoInput new_entry;
+			BitmapInfoInput * result = new BitmapInfoInput;
+			if (result == nullptr)
+				return nullptr;
 
-			new_entry.name = name;
-			new_entry.bitmap = bitmap;
-			new_entry.animated_bitmap = animated_bitmap;
-			new_entry.description = ImageTools::GetImageDescription(bitmap);
-			new_entry.release_bitmap = release_bitmap;
-			new_entry.tag            = tag;
+			result->name = name;
+			result->bitmap = bitmap;
+			result->animated_bitmap = animated_bitmap;
+			result->description = ImageTools::GetImageDescription(bitmap);
+			result->release_bitmap = release_bitmap;
+			result->tag            = tag;
 
-			bitmaps.push_back(std::move(new_entry)); // move for std::string copy
-			return &bitmaps.back();
+			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
+			return result;
 		}
 
 		// ========================================================================
@@ -566,70 +572,78 @@ namespace chaos
 			}
 
 			// register the bitmaps
-			for (BitmapInfoInput const & bitmap_info_input : folder_info_input->bitmaps)
+			size_t bitmap_count = folder_info_input->bitmaps.size();
+			for (size_t i = 0 ; i < bitmap_count ; ++i)
 			{
+				BitmapInfoInput const * bitmap_info_input = folder_info_input->bitmaps[i].get();
+				if (bitmap_info_input == nullptr)
+					continue;
+
 				BitmapInfo bitmap_info_output;
-				bitmap_info_output.name = bitmap_info_input.name;
-				bitmap_info_output.tag = bitmap_info_input.tag;
+				bitmap_info_output.name = bitmap_info_input->name;
+				bitmap_info_output.tag = bitmap_info_input->tag;
 				bitmap_info_output.bitmap_index = -1;
 				bitmap_info_output.x = 0;
 				bitmap_info_output.y = 0;
-				bitmap_info_output.width = bitmap_info_input.description.width;
-				bitmap_info_output.height = bitmap_info_input.description.height;
+				bitmap_info_output.width = bitmap_info_input->description.width;
+				bitmap_info_output.height = bitmap_info_input->description.height;
 				folder_info_output->bitmaps.push_back(std::move(bitmap_info_output));
 			}
 			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers    
-			size_t bitmap_count = folder_info_input->bitmaps.size();
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{
-				folder_info_input->bitmaps[i].output_info = &folder_info_output->bitmaps[i];
-				result.push_back(&folder_info_input->bitmaps[i]);
+				folder_info_input->bitmaps[i]->output_info = &folder_info_output->bitmaps[i];
+				result.push_back(folder_info_input->bitmaps[i].get());
 			}
 
 			// register the fonts 
-			for (FontInfoInput const & font_info_input : folder_info_input->fonts)
+			size_t font_count = folder_info_input->fonts.size();
+			for (size_t i = 0 ; i < font_count ; ++i)
 			{
-				FontInfo font_info_output;
-				font_info_output.name = font_info_input.name;
-				font_info_output.tag = font_info_input.tag;
-				font_info_output.max_character_width = font_info_input.max_character_width;
-				font_info_output.max_character_height = font_info_input.max_character_height;
-				font_info_output.ascender = font_info_input.ascender;
-				font_info_output.descender = font_info_input.descender;
-				font_info_output.face_height = font_info_input.face_height;
+				FontInfoInput const * font_info_input = folder_info_input->fonts[i].get();
+				if (font_info_input == nullptr)
+					continue;
 
-				size_t character_count = font_info_input.elements.size(); // now the elements in the font
+				FontInfo font_info_output;
+				font_info_output.name = font_info_input->name;
+				font_info_output.tag = font_info_input->tag;
+				font_info_output.max_character_width = font_info_input->max_character_width;
+				font_info_output.max_character_height = font_info_input->max_character_height;
+				font_info_output.ascender = font_info_input->ascender;
+				font_info_output.descender = font_info_input->descender;
+				font_info_output.face_height = font_info_input->face_height;
+
+				size_t character_count = font_info_input->elements.size(); // now the elements in the font
 				for (size_t i = 0; i < character_count; ++i)
 				{
-					CharacterInfoInput const & character_info_input = font_info_input.elements[i];
+					CharacterInfoInput const * character_info_input = font_info_input->elements[i].get();
 
 					CharacterInfo character_info_output;
-					character_info_output.name = character_info_input.name;
-					character_info_output.tag = character_info_input.tag;
+					character_info_output.name = character_info_input->name;
+					character_info_output.tag = character_info_input->tag;
 					character_info_output.bitmap_index = -1;
 					character_info_output.x = 0;
 					character_info_output.y = 0;
-					character_info_output.width = character_info_input.description.width;
-					character_info_output.height = character_info_input.description.height;
-					character_info_output.advance = character_info_input.advance;
-					character_info_output.bitmap_left = character_info_input.bitmap_left;
-					character_info_output.bitmap_top = character_info_input.bitmap_top;
+					character_info_output.width = character_info_input->description.width;
+					character_info_output.height = character_info_input->description.height;
+					character_info_output.advance = character_info_input->advance;
+					character_info_output.bitmap_left = character_info_input->bitmap_left;
+					character_info_output.bitmap_top = character_info_input->bitmap_top;
 					font_info_output.elements.push_back(std::move(character_info_output));
 				}
 				folder_info_output->fonts.push_back(std::move(font_info_output));
 			}
-			// once we are sure that Folder.Fonts vector does not resize anymore, we can store pointers    
-			size_t font_count = folder_info_input->fonts.size();
+			// once we are sure that Folder.Fonts vector does not resize anymore, we can store pointers    			
 			for (size_t i = 0; i < font_count; ++i)
 			{
-				FontInfoInput & font_info_input  = folder_info_input->fonts[i];
+				FontInfoInput * font_info_input  = folder_info_input->fonts[i].get();
 				FontInfo & font_info_output = folder_info_output->fonts[i];
 
-				size_t character_count = font_info_input.elements.size();
+				size_t character_count = font_info_input->elements.size();
 				for (size_t j = 0; j < character_count; ++j)
 				{
-					font_info_input.elements[j].output_info = &font_info_output.elements[j];
-					result.push_back(&font_info_input.elements[j]);
+					font_info_input->elements[j]->output_info = &font_info_output.elements[j];
+					result.push_back(font_info_input->elements[j].get());
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/ImageTools.h>
+#include <chaos/FontTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/Application.h>
@@ -11,6 +12,30 @@ namespace chaos
 {
 	namespace BitmapAtlas
 	{
+
+		// ========================================================================
+		// ObjectBaseInput implementation
+		// ========================================================================
+
+		void ObjectBaseInput::RegisterResource(FIBITMAP * bitmap, bool release)
+		{
+			atlas_input->RegisterResource(bitmap, release);
+		}
+
+		void ObjectBaseInput::RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release)
+		{
+			atlas_input->RegisterResource(multi_bitmap, release);
+		}
+
+		void ObjectBaseInput::RegisterResource(FT_Library library, bool release)
+		{
+			atlas_input->RegisterResource(library, release);
+		}
+
+		void ObjectBaseInput::RegisterResource(FT_Face face, bool release)
+		{
+			atlas_input->RegisterResource(face, release);
+		}
 
 		// ========================================================================
 		// BitmapInfoInput implementation
@@ -88,6 +113,7 @@ namespace chaos
 				result = new FolderInfoInput;
 				if (result != nullptr)
 				{
+					result->atlas_input = atlas_input;
 					result->name = name;
 					result->tag = tag;
 					folders.push_back(std::move(std::unique_ptr<FolderInfoInput>(result)));
@@ -147,6 +173,7 @@ namespace chaos
 				return nullptr;
 
 			// new character set input
+			result->atlas_input = atlas_input;
 			result->name = name;
 			result->library = library;
 			result->face = face;
@@ -184,6 +211,7 @@ namespace chaos
 					CharacterInfoInput * info = new CharacterInfoInput;
 					if (info == nullptr)
 						continue;
+					info->atlas_input = atlas_input;
 					info->name = name;
 					info->tag = glyph.first;
 					if (bitmap != nullptr)
@@ -202,6 +230,64 @@ namespace chaos
 				FT_Done_Glyph((FT_Glyph)glyph.second.bitmap_glyph);
 
 			fonts.push_back(std::move(std::unique_ptr<FontInfoInput>(result)));
+
+			return result;
+		}
+
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
+		{
+			BitmapInfoInput * result = nullptr;
+
+			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
+			if (bitmap != nullptr)
+			{
+				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+				result = AddBitmap(
+					bitmap,
+					true,
+					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+					tag
+				);
+				if (result == nullptr)
+					FreeImage_Unload(bitmap);
+			}
+			return result;
+		}
+
+		FontInfoInput * FolderInfoInput::AddFontBitmap(FilePathParam const & path, char const * name, TagType tag, FontInfoBitmapParams const & params)
+		{
+			FontInfoInput * result = nullptr;
+
+			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
+			if (bitmap != nullptr)
+			{
+				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+				result = AddFontBitmap(
+					bitmap,
+					true,
+					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+					tag,
+					params
+				);
+				if (result == nullptr)
+					FreeImage_Unload(bitmap);
+			}
+			return result;
+		}
+
+		FontInfoInput * FolderInfoInput::AddFontBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, FontInfoBitmapParams const & params)
+		{
+			// search whether the font already exists
+			if (GetFontInfo(name) != nullptr)
+				return nullptr;
+
+			FontInfoInput * result = new FontInfoInput;
+			if (result == nullptr)
+				return nullptr;
+
+
 
 			return result;
 		}
@@ -256,26 +342,7 @@ namespace chaos
 		}
 #endif
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
-		{
-			BitmapInfoInput * result = nullptr;
 
-			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
-			if (bitmap != nullptr)
-			{
-				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-				result = AddBitmap(
-					bitmap,
-					true,
-					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
-					tag
-				);
-				if (result == nullptr)
-					FreeImage_Unload(bitmap);
-			}
-			return result;
-		}
 
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
@@ -300,6 +367,7 @@ namespace chaos
 			if (result == nullptr)
 				return nullptr;
 
+			result->atlas_input = atlas_input;
 			result->name = name;
 			result->bitmap = bitmap;
 			result->animated_bitmap = animated_bitmap;
@@ -314,6 +382,68 @@ namespace chaos
 		// ========================================================================
 		// AtlasInput implementation
 		// ========================================================================
+		
+		AtlasInput::AtlasInput()
+		{
+			root_folder.atlas_input = this;
+		}
+
+		void AtlasInput::Clear()
+		{
+			AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ReferencedObject>::Clear();
+			bitmaps.clear();
+			multi_bitmaps.clear();
+			libraries.clear();
+			faces.clear();
+		}
+
+		void AtlasInput::RegisterResource(FIBITMAP * bitmap, bool release)
+		{
+			assert(bitmap != nullptr);
+			if (!release)
+				return;
+			size_t count = bitmaps.size();
+			for (size_t i = 0; i < count; ++i)
+				if (bitmaps[i].get() == bitmap)
+					return;
+			bitmaps.push_back(std::move(bitmap_ptr(bitmap)));
+		}
+
+		void AtlasInput::RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release)
+		{
+			assert(multi_bitmap != nullptr);
+			if (!release)
+				return;
+			size_t count = multi_bitmaps.size();
+			for (size_t i = 0; i < count; ++i)
+				if (multi_bitmaps[i].get() == multi_bitmap)
+					return;
+			multi_bitmaps.push_back(std::move(multibitmap_ptr(multi_bitmap)));
+		}
+
+		void AtlasInput::RegisterResource(FT_Library library, bool release)
+		{
+			assert(library != nullptr);
+			if (!release)
+				return;
+			size_t count = libraries.size();
+			for (size_t i = 0; i < count; ++i)
+				if (libraries[i].get() == library)
+					return;
+			libraries.push_back(std::move(library_ptr(library)));
+		}
+
+		void AtlasInput::RegisterResource(FT_Face face, bool release)
+		{
+			assert(face != nullptr);
+			if (!release)
+				return;
+			size_t count = multi_bitmaps.size();
+			for (size_t i = 0; i < count; ++i)
+				if (faces[i].get() == face)
+					return;
+			faces.push_back(std::move(face_ptr(face)));
+		}
 
 		bool AtlasInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
@@ -543,7 +673,7 @@ namespace chaos
 						int tex_y = params.atlas_height - info->y - info->height;
 
 						// copy and convert pixels
-						ImageDescription src_desc = ImageTools::GetImageDescription(entry_input->bitmap);
+						ImageDescription src_desc = entry_input->description;
 						ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
 
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, false);

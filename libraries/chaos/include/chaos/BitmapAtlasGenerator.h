@@ -58,7 +58,21 @@ namespace chaos
 
 		class ObjectBaseInput : public NamedObject
 		{
+		public:
 
+			/** register bitmap */
+			void RegisterResource(FIBITMAP * bitmap, bool release);
+			/** register multi bitmap */
+			void RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release);
+			/** register font */
+			void RegisterResource(FT_Library library, bool release);
+			/** register face */
+			void RegisterResource(FT_Face face, bool release);
+
+		public:
+
+			/** the atlas the input belongs to */
+			class AtlasInput * atlas_input = nullptr;
 		};
 
 		/**
@@ -178,14 +192,16 @@ namespace chaos
 			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
 
-#if 0
-
 			/** Add a Bitmap Font */
-			FontInfoInput * AddFontBitmap(FilePathParam const & path, char const * name, TagType tag, FontInfoBitmapParams const & params);
+			FontInfoInput * AddFontBitmap(FilePathParam const & path, char const * name, TagType tag, FontInfoBitmapParams const & params = FontInfoBitmapParams());
+			/** insert an image inside the atlas */
+			FontInfoInput * AddFontBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, FontInfoBitmapParams const & params = FontInfoBitmapParams());
+
+#if 0
 			/** Add a Bitmap Font */
 			bool AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
-
 #endif
+
 
 
 
@@ -200,6 +216,7 @@ namespace chaos
 				char const * name,
 				TagType tag,
 				FontInfoInputParams const & params = FontInfoInputParams());
+
 			/** Add a character set */
 			FontInfoInput * AddFont(
 				FT_Face face,
@@ -234,8 +251,13 @@ namespace chaos
 
 		public:
 
+			/** constructor */
+			AtlasInput();
 			/** destructor */
 			virtual ~AtlasInput() { Clear(); }
+
+			/** the clear method */
+			virtual void Clear() override;
 
 			/** insert a Folder set inside the input */
 			FolderInfoInput * AddFolder(char const * name, TagType tag);
@@ -258,6 +280,7 @@ namespace chaos
 				char const * name,
 				TagType tag,
 				FontInfoInputParams const & params = FontInfoInputParams());
+
 			/** Add a character set */
 			FontInfoInput * AddFont(
 				FT_Face face,
@@ -265,6 +288,28 @@ namespace chaos
 				char const * name,
 				TagType tag,
 				FontInfoInputParams const & params = FontInfoInputParams());
+
+		protected:
+
+			/** register bitmap */
+			void RegisterResource(FIBITMAP * bitmap, bool release);
+			/** register multi bitmap */
+			void RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release);
+			/** register font */
+			void RegisterResource(FT_Library library, bool release);
+			/** register face */
+			void RegisterResource(FT_Face face, bool release);
+
+		protected:
+
+			/** the bitmaps to destroy */
+			std::vector<bitmap_ptr> bitmaps;
+			/** the multi bitmaps to destroy */
+			std::vector<multibitmap_ptr> multi_bitmaps;
+			/** the ft_libraries to destroy */
+			std::vector<library_ptr> libraries;
+			/** the ft_faces to destroy */
+			std::vector<face_ptr> faces;
 		};
 
 		/**

@@ -293,7 +293,7 @@ namespace chaos
 			friend class ParticleTextGenerator::GeneratorData;
 
 			/** clear method */
-			void Clear()
+			virtual void Clear()
 			{
 				root_folder.Clear();
 			}

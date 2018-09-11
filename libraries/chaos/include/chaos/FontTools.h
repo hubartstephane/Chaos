@@ -7,6 +7,56 @@
 namespace chaos
 {
 	/**
+	* A smart pointer for FT_Library
+	*/
+
+	class FTLibraryDeleter
+	{
+	public:
+
+		/** constructor */
+		FTLibraryDeleter(bool in_release = true) :
+			release(in_release) {}
+		/** the destruction method */
+		void operator ()(FT_Library library)
+		{
+			if (release)
+				FT_Done_FreeType(library);
+		}
+	protected:
+
+		/** whether the resource is to be destroyed or not */
+		bool release = true;
+	};
+
+	using library_ptr = std::unique_ptr<FT_Library, FTLibraryDeleter>;
+
+	/**
+	* A smart pointer for FT_Face
+	*/
+
+	class FTFaceDeleter
+	{
+	public:
+
+		/** constructor */
+		FTFaceDeleter(bool in_release = true) :
+			release(in_release) {}
+		/** the destruction method */
+		void operator ()(FT_Face face)
+		{
+			if (release)
+				FT_Done_Face(face);
+		}
+	protected:
+
+		/** whether the resource is to be destroyed or not */
+		bool release = true;
+	};
+
+	using face_ptr = std::unique_ptr<FT_Face, FTFaceDeleter>;
+
+	/**
 	* FontTools : provide some static methods to manipulate tools
 	*/
 

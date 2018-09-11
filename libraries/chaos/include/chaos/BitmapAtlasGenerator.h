@@ -84,12 +84,21 @@ namespace chaos
 
 			/** the description of the bitmap */
 			ImageDescription description;
+
 			/** the bitmap */
 			FIBITMAP * bitmap = nullptr;
 			/** the animated bitmap */
 			FIMULTIBITMAP * animated_bitmap = nullptr;
 			/** whether the bitmap is to be destroyed at the end */
 			bool release_bitmap = true;
+
+			/** for grid base animation */
+			BitmapInfoInput * parent_grid = nullptr;
+			/** the grid size for animation */
+			glm::ivec2 grid_size = glm::ivec2(1, 1);
+			/** the position in parent grid */
+			glm::ivec2 grid_position = glm::ivec2(0, 0);
+
 			/** a pointer on the destination info associated */
 			BitmapInfo * output_info = nullptr;
 		};

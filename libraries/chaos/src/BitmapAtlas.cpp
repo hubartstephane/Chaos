@@ -151,6 +151,8 @@ namespace chaos
 
 		float AtlasBase::DoComputeSurface(int bitmap_index, FolderInfo const * folder_info) const
 		{
+			// XXX : ignore child entries. Their surface is already considered by their parent entry
+
 			if (folder_info == nullptr)
 				return 0.0f;
 
@@ -158,12 +160,14 @@ namespace chaos
 			// surface for the bitmaps in the folder
 			for (BitmapInfo const & bitmap_info : folder_info->bitmaps)
 				if (bitmap_info.bitmap_index == bitmap_index || bitmap_index < 0)
-					result += (float)(bitmap_info.width * bitmap_info.height);
+					if (!bitmap_info.child_bitmap)
+						result += (float)(bitmap_info.width * bitmap_info.height);
 			// surface for the fonts in the folder
 			for (FontInfo const & font_info : folder_info->fonts)
 				for (CharacterInfo const & character_info : font_info.elements)
 					if (character_info.bitmap_index == bitmap_index || bitmap_index < 0)
-						result += (float)(character_info.width * character_info.height);
+						if (!character_info.child_bitmap)
+							result += (float)(character_info.width * character_info.height);
 			// recursive calls
 			size_t count = folder_info->folders.size();
 			for (size_t i = 0 ; i < count ; ++i)
@@ -230,6 +234,7 @@ namespace chaos
 			stream << stream_indent << "  height       : " << info.height << std::endl;
 			stream << stream_indent << "  x            : " << info.x << std::endl;
 			stream << stream_indent << "  y            : " << info.y << std::endl;
+			stream << stream_indent << "  child_bitmap : " << info.child_bitmap << std::endl;
 		}
 
 		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent)
@@ -554,6 +559,7 @@ namespace chaos
 			json_entry["y"] = info.y;
 			json_entry["width"] = info.width;
 			json_entry["height"] = info.height;
+			json_entry["child_bitmap"] = info.child_bitmap;
 		}
 
 		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry)
@@ -566,6 +572,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
 			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
 			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
+			JSONTools::GetAttribute(json_entry, "child_bitmap", info.child_bitmap, 0);
 		}
 
 		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry)

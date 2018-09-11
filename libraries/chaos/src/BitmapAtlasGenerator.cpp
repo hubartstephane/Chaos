@@ -5,6 +5,8 @@
 #include <chaos/BoostTools.h>
 #include <chaos/Application.h>
 
+#define CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG (_DEBUG && 0)
+
 namespace chaos
 {
 	namespace BitmapAtlas
@@ -465,8 +467,14 @@ namespace chaos
 			size_t count = entries.size();
 			for (size_t i = 0; i < count - 1; ++i)
 			{
+				if (entries[i]->parent_grid != nullptr) // ignore child animation frame
+					continue;
+
 				for (size_t j = i + 1; j < count; ++j)
 				{
+					if (entries[j]->parent_grid != nullptr) // ignore child animation frame
+						continue;
+
 					BitmapInfo const * entry1 = entries[i]->output_info;
 					BitmapInfo const * entry2 = entries[j]->output_info;
 
@@ -589,6 +597,9 @@ namespace chaos
 				bitmap_info_output.y = 0;
 				bitmap_info_output.width = bitmap_info_input->description.width;
 				bitmap_info_output.height = bitmap_info_input->description.height;
+
+				bitmap_info_output.child_bitmap = (bitmap_info_input->parent_grid != nullptr);
+
 				folder_info_output->bitmaps.push_back(std::move(bitmap_info_output));
 			}
 			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers    
@@ -633,6 +644,9 @@ namespace chaos
 					character_info_output.advance = character_info_input->advance;
 					character_info_output.bitmap_left = character_info_input->bitmap_left;
 					character_info_output.bitmap_top = character_info_input->bitmap_top;
+
+					character_info_output.child_bitmap = (character_info_input->parent_grid != nullptr);
+
 					font_info_output.elements.push_back(std::move(character_info_output));
 				}
 				folder_info_output->fonts.push_back(std::move(font_info_output));
@@ -679,6 +693,9 @@ namespace chaos
 
 			for (BitmapInfoInput const * info : entries)
 			{
+				if (info->parent_grid != nullptr) // ignore non parent bitmaps
+					continue;
+
 				if (info->description.width == 0 || info->description.height == 0) // ignore empty bitmaps
 					continue;
 
@@ -722,29 +739,29 @@ namespace chaos
 			// ensure this can be produced inside an atlas with size_restriction
 			if (DoComputeResult(entries))
 			{
+#if _DEBUG
 				if (EnsureValidResults(entries))
+#endif // _DEBUG
 				{
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
 					output->atlas_count = (int)output->bitmaps.size();
-					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);
-#if _DEBUG
-#if 0
+					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);					
+#if CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
 					output->OutputAtlasSpaceOccupation(std::cout);
 					output->OutputInfo(std::cout);
-#endif
+#endif // CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
 					if (params.debug_dump_atlas_dirname.size() > 0) // dump the atlas
 					{
 						Application * application = Application::GetInstance();
 						if (application != nullptr)
 							in_output.SaveAtlas(application->GetUserLocalTempPath() / params.debug_dump_atlas_dirname.c_str());
 					}
-#endif
 					return true;
 				}
-#if 0 && _DEBUG
+#if CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
 				else
 					output->OutputInfo(std::cout);
-#endif
+#endif // CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
 			}
 
 			// in case of failure, clean the atlas
@@ -773,6 +790,8 @@ namespace chaos
 				size_t entry_index = textures_indirection_table[i];
 
 				BitmapInfoInput const * input_entry = entries[entry_index];
+				if (input_entry->parent_grid != nullptr) // ignore child animation frame
+					continue;
 
 				int   best_atlas_index = -1;
 				int   best_x = 0;
@@ -814,6 +833,23 @@ namespace chaos
 					atlas_definitions.push_back(std::move(def));
 				}
 				InsertBitmapInAtlas(*entries[entry_index]->output_info, atlas_definitions[best_atlas_index], best_x, best_y);
+			}
+
+			// handle child frame BitmapInfo
+			for (BitmapInfoInput * input_entry : entries)
+			{
+				// ignore parent animation frame
+				BitmapInfoInput * parent_input_entry = input_entry->parent_grid;
+				if (parent_input_entry == nullptr) 
+					continue;
+
+				// initialize the child bitmap relatively to the parent position
+				BitmapInfo * child_info  = input_entry->output_info;
+				BitmapInfo * parent_info = input_entry->parent_grid->output_info;
+
+				child_info->bitmap_index = parent_info->bitmap_index;
+				child_info->x = parent_info->x + (parent_info->width  / parent_input_entry->grid_size.x) * input_entry->grid_position.x;
+				child_info->y = parent_info->y + (parent_info->height / parent_input_entry->grid_size.y) * input_entry->grid_position.y;
 			}
 			return true;
 		}

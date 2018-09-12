@@ -247,7 +247,8 @@ namespace chaos
 
 		class AtlasInput : public AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ReferencedObject>
 		{
-			friend class AtlasGenerator;
+			friend class ObjectBaseInput;
+			friend class AtlasGenerator;		
 
 		public:
 

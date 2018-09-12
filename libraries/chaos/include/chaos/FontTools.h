@@ -29,7 +29,7 @@ namespace chaos
 		bool release = true;
 	};
 
-	using library_ptr = std::unique_ptr<FT_Library, FTLibraryDeleter>;
+	using library_ptr = std::unique_ptr<struct FT_LibraryRec_, FTLibraryDeleter>; // FT_Library = struct FT_LibraryRec_ *
 
 	/**
 	* A smart pointer for FT_Face
@@ -43,7 +43,7 @@ namespace chaos
 		FTFaceDeleter(bool in_release = true) :
 			release(in_release) {}
 		/** the destruction method */
-		void operator ()(FT_Face face)
+		void operator ()(FT_Face face) 
 		{
 			if (release)
 				FT_Done_Face(face);
@@ -54,7 +54,7 @@ namespace chaos
 		bool release = true;
 	};
 
-	using face_ptr = std::unique_ptr<FT_Face, FTFaceDeleter>;
+	using face_ptr = std::unique_ptr<struct FT_FaceRec_, FTFaceDeleter>; // FT_Face = struct FT_FaceRec_  
 
 	/**
 	* FontTools : provide some static methods to manipulate tools

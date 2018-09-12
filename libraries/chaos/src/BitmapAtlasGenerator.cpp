@@ -38,68 +38,6 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// BitmapInfoInput implementation
-		// ========================================================================
-		
-		BitmapInfoInput::BitmapInfoInput(BitmapInfoInput && src)
-		{
-			*this = std::move(src);
-		}
-		
-		BitmapInfoInput & BitmapInfoInput::operator = (BitmapInfoInput && src)
-		{
-			ObjectBaseInput::operator = (std::move(src));
-			std::swap(description, src.description);
-			std::swap(bitmap, src.bitmap);
-			std::swap(animated_bitmap, src.animated_bitmap);
-			std::swap(release_bitmap, src.release_bitmap);
-			std::swap(output_info, src.output_info);
-			return *this;
-		}
-
-		BitmapInfoInput::~BitmapInfoInput()
-		{				
-			if (release_bitmap)
-			{
-				if (bitmap != nullptr)
-					FreeImage_Unload(bitmap);
-				if (animated_bitmap != nullptr)
-					FreeImage_CloseMultiBitmap(animated_bitmap, 0);
-			}
-		}
-
-		// ========================================================================
-		// FontInfoInput implementation
-		// ========================================================================
-
-		FontInfoInput::FontInfoInput(FontInfoInput && src)
-		{
-			*this = std::move(src);
-		}
-
-		FontInfoInput & FontInfoInput::operator = (FontInfoInput && src)
-		{
-			FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, meta_wrapper_type>::operator = (std::move(src));
-			std::swap(library, src.library);
-			std::swap(face, src.face);
-			std::swap(release_library, src.release_library);
-			std::swap(release_face, src.release_face);
-			return *this;
-		}
-
-		FontInfoInput::~FontInfoInput()
-		{
-			// release face
-			if (face != nullptr)
-				if (release_face)
-					FT_Done_Face(face);
-			// release library
-			if (library != nullptr)
-				if (release_library)
-					FT_Done_FreeType(library);
-		}
-
-		// ========================================================================
 		// FolderInfoInput implementation
 		// ========================================================================
 
@@ -175,15 +113,14 @@ namespace chaos
 			// new character set input
 			result->atlas_input = atlas_input;
 			result->name = name;
-			result->library = library;
-			result->face = face;
-			result->release_library = release_library;
-			result->release_face = release_face;
 			result->max_character_width = params.max_character_width;
 			result->max_character_height = params.max_character_height;
 			result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
 			result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
 			result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
+
+			RegisterResource(library, release_library);
+			RegisterResource(face, release_face);
 
 			// generate glyph cache
 
@@ -194,7 +131,7 @@ namespace chaos
 				params.characters.c_str() :
 				DEFAULT_CHARACTERS;
 
-			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(result->face, characters);
+			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(face, characters);
 
 			// transforms each info of the glyph map into a bitmap
 			for (auto & glyph : glyph_cache)
@@ -216,12 +153,12 @@ namespace chaos
 					info->tag = glyph.first;
 					if (bitmap != nullptr)
 						info->description = ImageTools::GetImageDescription(bitmap);
-					info->bitmap = bitmap;
-					info->release_bitmap = true;
 					info->advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
 					info->bitmap_left = glyph.second.bitmap_left; // take the FT_Pixel_Size(...) into consideration
 					info->bitmap_top = glyph.second.bitmap_top;   // take the FT_Pixel_Size(...) into consideration
 					result->elements.push_back(std::move(std::unique_ptr<CharacterInfoInput>(info)));
+
+					RegisterResource(bitmap, true);
 				}
 			}
 
@@ -368,14 +305,15 @@ namespace chaos
 				return nullptr;
 
 			result->atlas_input = atlas_input;
-			result->name = name;
-			result->bitmap = bitmap;
-			result->animated_bitmap = animated_bitmap;
+			result->name        = name;
 			result->description = ImageTools::GetImageDescription(bitmap);
-			result->release_bitmap = release_bitmap;
-			result->tag            = tag;
+			result->tag         = tag;
 
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
+
+			RegisterResource(bitmap, release_bitmap);
+			RegisterResource(animated_bitmap, release_bitmap);
+
 			return result;
 		}
 
@@ -390,17 +328,16 @@ namespace chaos
 
 		void AtlasInput::Clear()
 		{
-			AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ReferencedObject>::Clear();
 			bitmaps.clear();
 			multi_bitmaps.clear();
+			faces.clear(); // XXX : face / library destruction is important
 			libraries.clear();
-			faces.clear();
+			AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ReferencedObject>::Clear();
 		}
 
 		void AtlasInput::RegisterResource(FIBITMAP * bitmap, bool release)
 		{
-			assert(bitmap != nullptr);
-			if (!release)
+			if (bitmap == nullptr || !release)
 				return;
 			size_t count = bitmaps.size();
 			for (size_t i = 0; i < count; ++i)
@@ -411,8 +348,7 @@ namespace chaos
 
 		void AtlasInput::RegisterResource(FIMULTIBITMAP * multi_bitmap, bool release)
 		{
-			assert(multi_bitmap != nullptr);
-			if (!release)
+			if (multi_bitmap == nullptr || !release)
 				return;
 			size_t count = multi_bitmaps.size();
 			for (size_t i = 0; i < count; ++i)
@@ -423,8 +359,7 @@ namespace chaos
 
 		void AtlasInput::RegisterResource(FT_Library library, bool release)
 		{
-			assert(library != nullptr);
-			if (!release)
+			if (library == nullptr || !release)
 				return;
 			size_t count = libraries.size();
 			for (size_t i = 0; i < count; ++i)
@@ -435,10 +370,9 @@ namespace chaos
 
 		void AtlasInput::RegisterResource(FT_Face face, bool release)
 		{
-			assert(face != nullptr);
-			if (!release)
+			if (face == nullptr || !release)
 				return;
-			size_t count = multi_bitmaps.size();
+			size_t count = faces.size();
 			for (size_t i = 0; i < count; ++i)
 				if (faces[i].get() == face)
 					return;
@@ -664,7 +598,7 @@ namespace chaos
 
 						if (info->bitmap_index != i)
 							continue;
-						if (entry_input->bitmap == nullptr)
+						if (entry_input->description.IsEmpty(false))
 							continue;
 
 						// beware, according to FreeImage, the coordinate origin is top-left

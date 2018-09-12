@@ -83,28 +83,8 @@ namespace chaos
 		{
 		public:
 
-			/** constructor */
-			BitmapInfoInput() = default;
-			/** constructor (copy) */
-			BitmapInfoInput(BitmapInfoInput const & src) = default;
-			/** constructor (move) */
-			BitmapInfoInput(BitmapInfoInput && src);	// XXX : important because the move constructor does nothing by default on pointers
-																								//       we do not want double deletion on bitmaps
-			/** destructor */
-			virtual ~BitmapInfoInput();
-
-			/** copy and move operator */
-			BitmapInfoInput & operator = (BitmapInfoInput && src);
-
 			/** the description of the bitmap */
 			ImageDescription description;
-
-			/** the bitmap */
-			FIBITMAP * bitmap = nullptr;
-			/** the animated bitmap */
-			FIMULTIBITMAP * animated_bitmap = nullptr;
-			/** whether the bitmap is to be destroyed at the end */
-			bool release_bitmap = true;
 
 			/** for grid base animation */
 			BitmapInfoInput * parent_grid = nullptr;
@@ -124,8 +104,12 @@ namespace chaos
 		class CharacterInfoInput : public BitmapInfoInput
 		{
 		public:
+
+			/** from 'CharacterMetrics' class */
 			FT_Vector advance{ 0, 0 };
-			int       bitmap_left = 0; // from 'CharacterMetrics' class
+			/** from 'CharacterMetrics' class */
+			int       bitmap_left = 0; 
+			/** from 'CharacterMetrics' class */
 			int       bitmap_top = 0;
 		};
 
@@ -135,33 +119,7 @@ namespace chaos
 
 		class FontInfoInput : public FontInfoTemplate<CharacterInfoInput, ObjectBaseInput, std::unique_ptr<boost::mpl::_1>>
 		{
-			friend class AtlasInput;
-			friend class AtlasGenerator;
-			friend class FolderInfoInput;
 
-		public:
-
-			/** constructor */
-			FontInfoInput() = default;
-			/** constructor (copy) */
-			FontInfoInput(FontInfoInput const & src) = default;
-			/** constructor (move) */
-			FontInfoInput(FontInfoInput && src); // XXX : important because the move constructor does nothing by default on pointers
-			                                     //       we do not want double deletion on libreary and face
-			/** destructor */
-			virtual ~FontInfoInput();
-
-			/** copy and move operator */
-			FontInfoInput & operator = (FontInfoInput && src);
-
-			/** the Freetype library if appropriate */
-			FT_Library library = nullptr;
-			/** the Freetype face if appropriate */
-			FT_Face    face = nullptr;
-			/** should the library be released at destruction */
-			bool release_library = true;
-			/** should the face be released at destruction */
-			bool release_face = true;
 		};
 
 		/**
@@ -254,9 +212,6 @@ namespace chaos
 
 			/** constructor */
 			AtlasInput();
-			/** destructor */
-			virtual ~AtlasInput() { Clear(); }
-
 			/** the clear method */
 			virtual void Clear() override;
 
@@ -308,9 +263,9 @@ namespace chaos
 			/** the multi bitmaps to destroy */
 			std::vector<multibitmap_ptr> multi_bitmaps;
 			/** the ft_libraries to destroy */
-			std::vector<library_ptr> libraries;
-			/** the ft_faces to destroy */
-			std::vector<face_ptr> faces;
+			std::vector<library_ptr> libraries; // XXX : order declaration of 'libraries' and 'faces' is important
+			/** the ft_faces to destroy */      //       'faces' have to be destroyed first. So it must be declared last
+			std::vector<face_ptr> faces;    
 		};
 
 		/**

@@ -23,7 +23,7 @@
 #include <chaos/GPUFramebufferGenerator.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 
-#define DUMP_DEBUG_DATA 0 // _DEBUG
+#define DUMP_DEBUG_DATA 1 // _DEBUG
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -143,7 +143,12 @@ protected:
 	{
 		// fill the input
 		chaos::BitmapAtlas::AtlasInput input;
-		if (!chaos::TiledMapTools::GenerateAtlasInput(manager, input, "sprites"))
+
+		chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
+		if (folder_input == nullptr)
+			return nullptr;
+
+		if (!chaos::TiledMapTools::GenerateAtlasInput(manager, folder_input))
 			return nullptr;
 
 		// generate the atlas

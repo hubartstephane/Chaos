@@ -313,7 +313,10 @@ void LudumGame::CreateAllGameObjects(int level)
 
 bool LudumGame::FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	return chaos::TiledMapTools::GenerateAtlasInput(tiledmap_manager.get(), input, "sprites");
+	chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
+	if (folder_input == nullptr)
+		return false;
+	return chaos::TiledMapTools::GenerateAtlasInput(tiledmap_manager.get(), folder_input);
 }
 
 bool LudumGame::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)

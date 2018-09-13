@@ -84,10 +84,11 @@ namespace chaos
 		/** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */
 		static FIBITMAP * LoadImageFromFile(FilePathParam const & path);
 
+		/** load multiple image from a buffer (animated gif) */
+		static FIMULTIBITMAP * LoadMultiImageFromBuffer(Buffer<char> buffer);
 		/** load multiple image from a file (animated gif) */
 		static FIMULTIBITMAP * LoadMultiImageFromFile(FilePathParam const & path);
-		/** load multiple image from a file (animated gif) */
-		static FIMULTIBITMAP * LoadMultiImageFromFile(Buffer<char> buffer);
+
 
 		/** returns true whether the image is paletted, 8 bits and its color are grays */
 		static bool IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed = nullptr);

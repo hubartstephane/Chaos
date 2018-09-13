@@ -572,7 +572,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
 			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
 			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
-			JSONTools::GetAttribute(json_entry, "child_bitmap", info.child_bitmap, 0);
+			JSONTools::GetAttribute(json_entry, "child_bitmap", info.child_bitmap, false);
 		}
 
 		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry)

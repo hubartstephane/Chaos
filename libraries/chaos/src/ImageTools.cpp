@@ -564,11 +564,11 @@ namespace chaos
 	{
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
 		if (buffer != nullptr)
-			return LoadMultiImageFromFile(buffer);
+			return LoadMultiImageFromBuffer(buffer);
 		return nullptr;
 	}
 
-	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(Buffer<char> buffer)
+	FIMULTIBITMAP * ImageTools::LoadMultiImageFromBuffer(Buffer<char> buffer)
 	{
 		FIMULTIBITMAP * result = nullptr;
 

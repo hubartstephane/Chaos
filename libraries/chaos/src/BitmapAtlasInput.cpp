@@ -169,9 +169,69 @@ namespace chaos
 			return result;
 		}
 
+
+
+
+#if 0
+		FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+		if (animated_bitmap != nullptr)
+		{
+			int page_count = FreeImage_GetPageCount(animated_bitmap);
+			if (page_count == 1)
+			{
+				page_count = page_count;
+
+			}
+			else if (page_count > 1)
+			{
+				page_count = page_count;
+
+			}
+			else
+			{
+				page_count = page_count;
+
+			}
+
+
+			FreeImage_CloseMultiBitmap(animated_bitmap, 0);
+		}
+
+		BitmapGridAnimationInfo animation_info;
+		if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
+		{
+			animation_info = animation_info;
+		}
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
 			BitmapInfoInput * result = nullptr;
+
+
+			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+			if (animated_bitmap != nullptr)
+			{
+				int page_count = FreeImage_GetPageCount(animated_bitmap);
+				page_count = page_count;
+
+				if (page_count == 1)
+					page_count = page_count;
+				else
+					page_count = page_count;
+			}
 
 			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
 			if (bitmap != nullptr)
@@ -244,41 +304,6 @@ namespace chaos
 			}
 			return true;
 		}
-
-#if 0
-		FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-		if (animated_bitmap != nullptr)
-		{
-			int page_count = FreeImage_GetPageCount(animated_bitmap);
-			if (page_count == 1)
-			{
-				page_count = page_count;
-
-			}
-			else if (page_count > 1)
-			{
-				page_count = page_count;
-
-			}
-			else
-			{
-				page_count = page_count;
-
-			}
-
-
-			FreeImage_CloseMultiBitmap(animated_bitmap, 0);
-		}
-
-		BitmapGridAnimationInfo animation_info;
-		if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
-		{
-			animation_info = animation_info;
-		}
-#endif
-
-
-
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{

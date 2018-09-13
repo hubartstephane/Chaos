@@ -4,22 +4,22 @@ namespace chaos
 {
 	namespace TiledMapTools
 	{
-		bool GenerateAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input)
+		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input)
 		{
-			return GenerateAtlasInput(manager, input.GetRootFolder());
+			return AddIntoAtlasInput(manager, input.GetRootFolder());
 		}
 
-		bool GenerateAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input)
 		{
-			return GenerateAtlasInput(tile_set, input.GetRootFolder());
+			return AddIntoAtlasInput(tile_set, input.GetRootFolder());
 		}
 
-		bool GenerateAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input)
+		bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input)
 		{
-			return GenerateAtlasInput(map, input.GetRootFolder());
+			return AddIntoAtlasInput(map, input.GetRootFolder());
 		}
 
-		bool GenerateAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input)
+		bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input)
 		{
 			assert(map != nullptr);
 			assert(folder_input != nullptr);
@@ -37,7 +37,7 @@ namespace chaos
 			return true;
 		}
 
-		bool GenerateAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input)
 		{
 			assert(tile_set != nullptr);
 			assert(folder_input != nullptr);
@@ -59,7 +59,7 @@ namespace chaos
 			return true;
 		}
 
-		bool GenerateAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input)
+		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input)
 		{
 			assert(manager != nullptr);
 			assert(folder_input != nullptr);
@@ -71,7 +71,7 @@ namespace chaos
 				TiledMap::TileSet const * tile_set = manager->tile_sets[i].get();
 				if (tile_set == nullptr)
 					continue;
-				if (!GenerateAtlasInput(tile_set, folder_input))
+				if (!AddIntoAtlasInput(tile_set, folder_input))
 					return false;
 			}
 
@@ -82,7 +82,7 @@ namespace chaos
 				TiledMap::Map const * map = manager->maps[i].get();
 				if (map == nullptr)
 					continue;
-				if (!GenerateAtlasInput(map, folder_input))
+				if (!AddIntoAtlasInput(map, folder_input))
 					return false;
 			}
 			return true;

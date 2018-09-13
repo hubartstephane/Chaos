@@ -148,7 +148,7 @@ protected:
 		if (folder_input == nullptr)
 			return nullptr;
 
-		if (!chaos::TiledMapTools::GenerateAtlasInput(manager, folder_input))
+		if (!chaos::TiledMapTools::AddIntoAtlasInput(manager, folder_input))
 			return nullptr;
 
 		// generate the atlas

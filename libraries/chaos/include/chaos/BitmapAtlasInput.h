@@ -143,28 +143,11 @@ namespace chaos
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
-
-
-			/** Add a Bitmap Font */
-			FontInfoInput * AddFontBitmap(FilePathParam const & path, char const * name, TagType tag, FontInfoBitmapParams const & params = FontInfoBitmapParams());
-			/** insert an image inside the atlas */
-			FontInfoInput * AddFontBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, FontInfoBitmapParams const & params = FontInfoBitmapParams());
-
-#if 0
-			/** Add a Bitmap Font */
-			bool AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
-#endif
-
-
-
-
-
-
+			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
 
 			/** Add a character set */
 			FontInfoInput * AddFont(				
@@ -186,7 +169,7 @@ namespace chaos
 		protected:
 
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput * AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
+			BitmapInfoInput * AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_resource, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(

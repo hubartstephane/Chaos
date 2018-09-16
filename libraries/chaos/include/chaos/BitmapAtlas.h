@@ -15,25 +15,6 @@ namespace chaos
 
 	namespace BitmapAtlas
 	{
-		/** meta function that returns the input type (identity) */
-		struct DataWrapperRaw
-		{
-			template<typename T> 
-			struct apply
-			{
-				typedef T type;
-			};
-		};
-		/** meta function that transforms the input into unique_ptr<> */
-		struct DataWrapperUniquePtr
-		{
-			template<typename T>
-			struct apply
-			{
-				typedef std::unique_ptr<T> type;
-			};
-		};
-
 		/**
 		* BitmapGridAnimationInfo : some bitmaps represent a uniform grid of individual animation frames
 		*/
@@ -43,14 +24,20 @@ namespace chaos
 		public:
 
 			/** the size of the grid */
-			glm::ivec2 grid_size;
+			glm::ivec2 grid_size = glm::ivec2(0, 0);
 			/** the last images that are not filled */
 			int skip_lasts = 0;
 
 		public:
 
+			/** returns whether the animation is valid */
+			bool IsEmpty() const { return (grid_size.x <= 0) || (grid_size.y <= 0); }
+
 			/** parsing the the name to extract the grid numbers */
 			static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
+
+		protected:
+
 			/** utility method */
 			static bool ParseFromNameReadGridX(char const * name, int i, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
 			/** utility method */
@@ -71,7 +58,23 @@ namespace chaos
 		};
 
 		/**
-		* BitmapInfo : represents an Base Bitmap info in the atlas
+		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
+		 */
+
+		class BitmapAnimationInfo : public ReferencedObject
+		{
+		public:
+
+			/** if the animation is stored inside a grid, this is the way */
+			BitmapGridAnimationInfo grid_animation;
+			/** maybe the images are stored inside an array */
+			
+
+
+		};
+
+		/**
+		* BitmapInfoBase : represents an Base Bitmap info in the atlas
 		*/
 
 		class BitmapInfo : public ObjectBase
@@ -120,7 +123,7 @@ namespace chaos
 			/** gets an info by its name */
 			character_type const * GetCharacterInfo(char const * name) const
 			{
-				return NamedObject::FindNamedObject(elements, tag);
+				return NamedObject::FindNamedObject(elements, name);
 			}
 			/** gets an info by its tag */
 			character_type const * GetCharacterInfo(TagType tag) const

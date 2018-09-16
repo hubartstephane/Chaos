@@ -99,7 +99,7 @@ void TestAtlasFont(boost::filesystem::path const & dest_p, boost::filesystem::pa
 	chaos::BitmapAtlas::FolderInfoInput * folder_input =
 		input.AddFolder("folder_input1", 0);
 
-	folder_input->AddBitmapFilesFromDirectory(resources_path / "ButtonImages", true);
+	folder_input->AddBitmapFilesFromDirectory(resources_path / "Images", true);
 
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(512, 512, ATLAS_PADDING, merge_params);
 	if (generator.ComputeResult(input, atlas, params))

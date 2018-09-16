@@ -4,6 +4,7 @@
 #include <chaos/FontTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
+#include <chaos/FileTools.h>
 #include <chaos/Application.h>
 
 namespace chaos
@@ -169,124 +170,6 @@ namespace chaos
 			return result;
 		}
 
-
-
-
-#if 0
-		FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-		if (animated_bitmap != nullptr)
-		{
-			int page_count = FreeImage_GetPageCount(animated_bitmap);
-			if (page_count == 1)
-			{
-				page_count = page_count;
-
-			}
-			else if (page_count > 1)
-			{
-				page_count = page_count;
-
-			}
-			else
-			{
-				page_count = page_count;
-
-			}
-
-
-			FreeImage_CloseMultiBitmap(animated_bitmap, 0);
-		}
-
-		BitmapGridAnimationInfo animation_info;
-		if (BitmapGridAnimationInfo::ParseFromName(name, animation_info))
-		{
-			animation_info = animation_info;
-		}
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
-		{
-			BitmapInfoInput * result = nullptr;
-
-
-			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-			if (animated_bitmap != nullptr)
-			{
-				int page_count = FreeImage_GetPageCount(animated_bitmap);
-				page_count = page_count;
-
-				if (page_count == 1)
-					page_count = page_count;
-				else
-					page_count = page_count;
-			}
-
-			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
-			if (bitmap != nullptr)
-			{
-				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-				result = AddBitmap(
-					bitmap,
-					true,
-					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
-					tag
-				);
-				if (result == nullptr)
-					FreeImage_Unload(bitmap);
-			}
-			return result;
-		}
-
-		FontInfoInput * FolderInfoInput::AddFontBitmap(FilePathParam const & path, char const * name, TagType tag, FontInfoBitmapParams const & params)
-		{
-			FontInfoInput * result = nullptr;
-
-			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
-			if (bitmap != nullptr)
-			{
-				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-				result = AddFontBitmap(
-					bitmap,
-					true,
-					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
-					tag,
-					params
-				);
-				if (result == nullptr)
-					FreeImage_Unload(bitmap);
-			}
-			return result;
-		}
-
-		FontInfoInput * FolderInfoInput::AddFontBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, FontInfoBitmapParams const & params)
-		{
-			// search whether the font already exists
-			if (GetFontInfo(name) != nullptr)
-				return nullptr;
-
-			FontInfoInput * result = new FontInfoInput;
-			if (result == nullptr)
-				return nullptr;
-
-
-
-			return result;
-		}
-		
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -296,47 +179,151 @@ namespace chaos
 			{
 				if (recursive && boost::filesystem::is_directory(*it))
 				{
-					AddBitmapFilesFromDirectory(it->path(), recursive);
-					continue;
+					FolderInfoInput * child_folder = AddFolder(BoostTools::PathToName(it->path()).c_str(), 0);
+					if (child_folder == nullptr)
+						continue;
+					child_folder->AddBitmapFilesFromDirectory(it->path(), recursive);
 				}
-				// this will reject files that are not images .. not an error
-				AddBitmap(it->path(), nullptr, 0);                           
+				else
+				{
+					// this will reject files that are not images .. not an error
+					AddBitmap(it->path(), nullptr, 0);
+				}
 			}
 			return true;
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
 		{
-			return AddBitmapImpl(bitmap, nullptr, release_bitmap, name, tag);
-		}
+			BitmapInfoInput * result = nullptr;
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
-		{
-			return AddBitmapImpl(nullptr, animated_bitmap, release_bitmap, name, tag);
-		}
-
-		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag)
-		{
-			assert(name != nullptr);
-			assert(bitmap != nullptr);
-
+			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
 
+			// decrypt the image (animated or not)
+			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+			if (animated_bitmap != nullptr)
+			{
+				// test whether there is a grid describing the animation
+				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+				BitmapGridAnimationInfo animation;
+				if (animation_info == nullptr) // use the path to find the animation_info	by default		
+					if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, nullptr))
+						animation_info = &animation;
+
+				// prepare resource for destruction (in case of failure, there will not be memory leak)
+				RegisterResource(animated_bitmap, true);
+
+				// create the bitmap
+				result = AddBitmapImpl(
+					nullptr,
+					animated_bitmap,
+					true,
+					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+					tag,
+					animation_info
+				);
+			}
+			return result;
+		}
+
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		{
+			// prepare resource for destruction (in case of failure, there will not be memory leak)
+			RegisterResource(bitmap, release_bitmap);
+
+			// test whether the object already exists
+			if (GetBitmapInfo(name) != nullptr)
+				return nullptr;
+			// make the insertion
+			return AddBitmapImpl(bitmap, nullptr, release_bitmap, name, tag, animation_info);
+		}
+
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		{
+			// prepare resource for destruction (in case of failure, there will not be memory leak)
+			RegisterResource(animated_bitmap, release_animated_bitmap);
+
+			// test whether the object already exists
+			if (GetBitmapInfo(name) != nullptr)
+				return nullptr;
+			// make the insertion
+			return AddBitmapImpl(nullptr, animated_bitmap, release_animated_bitmap, name, tag, animation_info);
+		}
+
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_resource, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		{
+			assert(name != nullptr);
+			assert((bitmap != nullptr) ^ (animated_bitmap != nullptr)); // not both at the time
+
+			// flag for releasing resources
+			bool release_bitmap = (bitmap != nullptr) && release_resource;
+			bool release_animated_bitmap = (animated_bitmap != nullptr) && release_resource;
+
+			// create the result
 			BitmapInfoInput * result = new BitmapInfoInput;
 			if (result == nullptr)
 				return nullptr;
 
+			// work on result
+			if (animated_bitmap != nullptr)
+			{
+				// single page animation
+				int page_count = FreeImage_GetPageCount(animated_bitmap);
+				if (page_count == 1)
+				{
+					bitmap = FreeImage_LockPage(animated_bitmap, 0);
+					if (bitmap == nullptr)
+					{
+						delete(result);
+						return nullptr;
+					}
+					RegisterResource(bitmap, true);
+					result->description = ImageTools::GetImageDescription(bitmap);
+				}
+				// multi page animation
+				else
+				{
+					for (int i = 0; i < page_count; ++i)
+					{
+						bitmap = FreeImage_LockPage(animated_bitmap, i);
+						if (bitmap != nullptr)
+						{
+							i = i;
+
+						}
+						FreeImage_UnlockPage(animated_bitmap, bitmap, false);
+
+
+					}
+					int i = 0; 
+					++i;
+
+
+
+
+				}
+			}
+			// simple page
+			else
+			{
+				result->description = ImageTools::GetImageDescription(bitmap);
+			}
+
+			// finalize the result
 			result->atlas_input = atlas_input;
-			result->name        = name;
-			result->description = ImageTools::GetImageDescription(bitmap);
+			result->name        = name;			
 			result->tag         = tag;
 
+			if (animation_info != nullptr)
+			{
+
+			}
+
+			// insert result into the folder
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
-
-			RegisterResource(bitmap, release_bitmap);
-			RegisterResource(animated_bitmap, release_bitmap);
-
 			return result;
 		}
 

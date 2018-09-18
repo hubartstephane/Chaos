@@ -320,7 +320,7 @@ namespace chaos
 
 		void SingleWindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
 		{
-
+			LogTools::Log("FreeImage warning message [%d][%s]", fif, msg);
 		}
 
 		bool SingleWindowApplication::InitializeStandardLibraries()

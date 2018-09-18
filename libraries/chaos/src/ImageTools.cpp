@@ -4,12 +4,21 @@
 
 namespace chaos
 {
+	// XXX : from breakpoint and crash tests, it seems that
+	//  - Buffer<char> should not be destroyed/altered until you re done using MEMORY
+	//  - for FIBITMAP, you can close the MEMORY once FreeImage_LoadFromMemory(...) is done
+	//  - for FIMULTIBITMAP, it seems that you should not destroy the MEMORY until you have finished accessing the pages
+	//
+	//   Lifetime(buffer) > Lifetime(MEMORY)
+	//   Lifetime(MEMORY) < or > Lifetime(BITMAP)  (unrelated)	
+	//   Lifetime(MEMORY) > Lifetime(MULTIBITMAP)
+
 	class FillImageMetaFunc
 	{
 	public:
 
 		/// constructor
-		FillImageMetaFunc(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :	
+		FillImageMetaFunc(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :
 			dst_format(in_dst_desc.pixel_format.GetFormat()),
 			dst_desc(in_dst_desc),
 			color(in_color)
@@ -33,7 +42,7 @@ namespace chaos
 
 				PixelConverter::Convert(dst_color, rgba_color); // ... convert it into the wanted PixelType
 
-																// step 1 : fill line 1 (with standard assignement)
+				// step 1 : fill line 1 (with standard assignement)
 				DST_TYPE * d1 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, 0);
 				for (int c = 0; c < dst_desc.width; ++c)
 					d1[c] = dst_color;
@@ -92,7 +101,7 @@ namespace chaos
 
 					unsigned char bgra[4];
 					bgra[0] = gray_color;
-					bgra[1] = gray_color;						
+					bgra[1] = gray_color;
 					bgra[2] = gray_color;
 					bgra[3] = 255; // XXX : important for FreeImage (depending of the flag of FI_COLOR_IS_RGBA_COLOR)
 
@@ -162,7 +171,7 @@ namespace chaos
 
 	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
 	{
-		return (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR)? FIF_PNG : FIF_EXR;	
+		return (pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? FIF_PNG : FIF_EXR;
 	}
 
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
@@ -173,7 +182,7 @@ namespace chaos
 			{
 				if (bpp != nullptr)
 					*bpp = pixel_format.component_count * 8;
-				return FIT_BITMAP;		
+				return FIT_BITMAP;
 			}
 		}
 		else if (pixel_format.component_type == PixelFormat::TYPE_FLOAT)
@@ -231,18 +240,18 @@ namespace chaos
 		if (pixel_format.IsValid())
 		{
 			ImageDescription result;
-			result.width        = FreeImage_GetWidth(image);
-			result.height       = FreeImage_GetHeight(image);
+			result.width = FreeImage_GetWidth(image);
+			result.height = FreeImage_GetHeight(image);
 			result.pixel_format = pixel_format;
-			result.line_size    = FreeImage_GetLine(image);
-			result.pitch_size   = FreeImage_GetPitch(image);
+			result.line_size = FreeImage_GetLine(image);
+			result.pitch_size = FreeImage_GetPitch(image);
 			result.padding_size = result.pitch_size - result.line_size;
-			result.data         = FreeImage_GetBits(image);
+			result.data = FreeImage_GetBits(image);
 
 			// test whether the result is valid (line_size & pitch come from FreeImage ... just in case ... helps ensure ::IsValid() implementation is correct)
 			if (result.IsValid(false))
-				return result;				
-		}			
+				return result;
+		}
 		return ImageDescription();
 	}
 
@@ -352,7 +361,7 @@ namespace chaos
 		int src_y;
 		int dst_x;
 		int dst_y;
-		int width; 
+		int width;
 		int height;
 		// whether a central symetry is to be applyed
 		bool central_symetry;
@@ -363,7 +372,7 @@ namespace chaos
 	// (DST_TYPE is already well known)
 	//
 
-	template<typename DST_TYPE> 
+	template<typename DST_TYPE>
 	class CopyPixelMetaFunc2
 	{
 	public:
@@ -404,19 +413,19 @@ namespace chaos
 		ImageDescription result;
 
 		int pixel_size = pixel_format.GetPixelSize();
-		int line_size  = width * pixel_size;
+		int line_size = width * pixel_size;
 		int pitch_size = ((line_size + 3) & ~3);
-		int padding    = (pitch_size - line_size);
+		int padding = (pitch_size - line_size);
 
 		void * aligned_buffer = (void*)((((uintptr_t)buffer) + 3) & ~3);
 
 		result.pixel_format = pixel_format;
-		result.width        = width;
-		result.height       = height;
-		result.data         = aligned_buffer;
-		result.line_size    = line_size;
-		result.pitch_size   = pitch_size;
-		result.padding_size = padding;	
+		result.width = width;
+		result.height = height;
+		result.data = aligned_buffer;
+		result.line_size = line_size;
+		result.pitch_size = pitch_size;
+		result.padding_size = padding;
 
 		return result;
 	}
@@ -476,7 +485,7 @@ namespace chaos
 		if (color_count != 256)
 			return false;
 
-		for (unsigned int i = 0 ; i < color_count ; ++i)
+		for (unsigned int i = 0; i < color_count; ++i)
 		{
 			if (palette[i].rgbRed != (BYTE)i)
 				return false;
@@ -505,7 +514,7 @@ namespace chaos
 				bool alpha_needed = false;
 				if (!IsGrayscaleImage(image, &alpha_needed)) // don't want a palette any more (this code is good even if the conversion fails)
 				{
-					FIBITMAP * other = nullptr;					
+					FIBITMAP * other = nullptr;
 					if (alpha_needed)
 						other = FreeImage_ConvertTo32Bits(image); // keep alpha
 					else
@@ -523,7 +532,7 @@ namespace chaos
 					FreeImage_Unload(image);
 				return other;
 			}
-		}	
+		}
 
 		// test whether pixel format is valid
 		PixelFormat pixel_format = ImageTools::GetPixelFormat(image);
@@ -531,12 +540,13 @@ namespace chaos
 		{
 			if (can_delete_src)
 				FreeImage_Unload(image);
-			return nullptr;		
+			return nullptr;
 		}
 		return image;
 	}
 
-	FIBITMAP * ImageTools::LoadImageFromBuffer(Buffer<char> buffer)
+	// XXX : Lifetime rules are respected (see note at the begining of this file)
+	FIBITMAP * ImageTools::LoadImageFromBuffer(Buffer<char> & buffer)
 	{
 		FIBITMAP * result = nullptr;
 
@@ -546,13 +556,11 @@ namespace chaos
 			if (memory != nullptr)
 			{
 				FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
-
 				result = ConvertToSupportedType(FreeImage_LoadFromMemory(format, memory, 0), true);
-
 				FreeImage_CloseMemory(memory);
 			}
-		}	
-		return result;	
+		}
+		return result;
 	}
 
 	FIBITMAP * ImageTools::LoadImageFromFile(FilePathParam const & path)
@@ -563,6 +571,12 @@ namespace chaos
 	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePathParam const & path)
 	{
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
+
+		// shuxxx
+
+		//Buffer<char> * b = new Buffer<char>;
+		//*b = buffer;
+
 		if (buffer != nullptr)
 			return LoadMultiImageFromBuffer(buffer);
 		return nullptr;
@@ -578,6 +592,11 @@ namespace chaos
 			FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
 
 			result = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
+
+
+
+
+			// shuxxx
 
 			FreeImage_CloseMemory(memory);
 		}

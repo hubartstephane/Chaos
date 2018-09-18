@@ -202,8 +202,15 @@ namespace chaos
 				return nullptr;
 
 			// decrypt the image (animated or not)
-			FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-			if (animated_bitmap != nullptr)
+			//FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+
+			FIMULTIBITMAP * animated_bitmap = nullptr;
+			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
+
+			//animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
+			//bitmap = nullptr;
+
+			if (animated_bitmap != nullptr || bitmap != nullptr)
 			{
 				// test whether there is a grid describing the animation
 				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -218,7 +225,7 @@ namespace chaos
 
 				// create the bitmap
 				result = AddBitmapImpl(
-					nullptr,
+					bitmap,
 					animated_bitmap,
 					true,
 					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object

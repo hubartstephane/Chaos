@@ -80,7 +80,7 @@ namespace chaos
 		static FREE_IMAGE_FORMAT GetFreeImageFormat(PixelFormat const & pixel_format);
 
 		/** load an image from a buffer */
-		static FIBITMAP * LoadImageFromBuffer(Buffer<char> buffer);
+		static FIBITMAP * LoadImageFromBuffer(Buffer<char> & buffer);
 		/** load an image from file (use our own implementation instead of FreeImage_LoadFromFile to provide our own error management) */
 		static FIBITMAP * LoadImageFromFile(FilePathParam const & path);
 

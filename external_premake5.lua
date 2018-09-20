@@ -324,4 +324,24 @@ local FFMPEG_LIB_PATH = {
   x64 = path.join(FFMPEG_PATH, "win64", "lib")
 } 
 --DeclareExternalLib("FFMPEG", FFMPEG_INC_PATH, FFMPEG_LIB_PATH, {"avcodec.lib", "avdevice.lib", "avfilter.lib", "avformat.lib", "avutil.lib", "postproc.lib", "swresample.lib", "swscale.lib"}) 
-  
+
+  -- OPENCV  
+local OPENCV_PATH     = "opencv"
+local OPENCV_INC_PATH = path.join(OPENCV_PATH, "build", "include")
+local OPENCV_LIB_PATH = {
+  x32 = {
+    DEBUG   = path.join(OPENCV_PATH, "build", "win32", "vc15", "lib"),   
+    RELEASE = path.join(OPENCV_PATH, "build", "win32", "vc15", "lib")  
+  },
+  x64 = {
+    DEBUG   = path.join(OPENCV_PATH, "build", "x64", "vc15", "lib"),   
+    RELEASE = path.join(OPENCV_PATH, "build", "x64", "vc15", "lib")  
+  },
+} 
+
+local OPENCV_LIBNAME = {
+  DEBUG   = "opencv_world400d.lib",
+  RELEASE = "opencv_world400.lib"  
+}
+
+DeclareExternalLib("OPENCV", OPENCV_INC_PATH, OPENCV_LIB_PATH, OPENCV_LIBNAME)  

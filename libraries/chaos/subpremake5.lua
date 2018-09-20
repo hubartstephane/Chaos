@@ -20,6 +20,7 @@
   DependOnLib("FREETYPE2")
   DependOnLib("JSON")
   DependOnLib("ZLIB")
+  DependOnLib("OPENCV")
   --DependOnLib("FFMPEG")      
       
         

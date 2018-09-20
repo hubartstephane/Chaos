@@ -319,7 +319,7 @@ namespace chaos
 		DrawPrimitive primitive;
 		primitive.primitive_type = GL_TRIANGLES;
 		primitive.indexed = false;
-		primitive.count = vcount;
+		primitive.count = (int)vcount;
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
 

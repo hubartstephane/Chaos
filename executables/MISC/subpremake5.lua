@@ -5,6 +5,7 @@
 ProcessSubPremake("TestAllLibs")
 ProcessSubPremake("TestMyZLib")
 ProcessSubPremake("TestMyBase64")
+ProcessSubPremake("TestOpenCV")
 ProcessSubPremake("TestTiledMapReader")
 ProcessSubPremake("TestTiledMapParticle")
 ProcessSubPremake("TestClientServer")

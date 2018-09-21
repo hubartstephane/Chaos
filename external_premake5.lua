@@ -343,5 +343,14 @@ local OPENCV_LIBNAME = {
   DEBUG   = "opencv_world400d.lib",
   RELEASE = "opencv_world400.lib"  
 }
-
-DeclareExternalLib("OPENCV", OPENCV_INC_PATH, OPENCV_LIB_PATH, OPENCV_LIBNAME)  
+local OPENCV_TOCOPY  = {   -- @ because this copies the file directly in
+  x32 = {
+    DEBUG   = "@" .. path.join(OPENCV_PATH, "build", "x32", "vc15", "bin", "opencv_world400d.dll"), 
+    RELEASE = "@" .. path.join(OPENCV_PATH, "build", "x32", "vc15", "bin", "opencv_world400.dll"), 
+  },
+  x64 = {
+    DEBUG   = "@" .. path.join(OPENCV_PATH, "build", "x64", "vc15", "bin", "opencv_world400d.dll"), 
+    RELEASE = "@" .. path.join(OPENCV_PATH, "build", "x64", "vc15", "bin", "opencv_world400.dll"), 
+  }
+} 
+DeclareExternalLib("OPENCV", OPENCV_INC_PATH, OPENCV_LIB_PATH, OPENCV_LIBNAME, OPENCV_TOCOPY)  

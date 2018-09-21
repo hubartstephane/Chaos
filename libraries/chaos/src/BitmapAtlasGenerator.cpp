@@ -406,12 +406,15 @@ namespace chaos
 					output->OutputAtlasSpaceOccupation(std::cout);
 					output->OutputInfo(std::cout);
 #endif // CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
+
+#if _DEBUG
 					if (params.debug_dump_atlas_dirname.size() > 0) // dump the atlas
 					{
 						Application * application = Application::GetInstance();
 						if (application != nullptr)
 							in_output.SaveAtlas(application->GetUserLocalTempPath() / params.debug_dump_atlas_dirname.c_str());
 					}
+#endif
 					return true;
 				}
 #if CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG

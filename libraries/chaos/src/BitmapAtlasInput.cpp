@@ -201,11 +201,18 @@ namespace chaos
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
 
+			// load all pages for the bitmap
+			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path);
+
+
+
 			// decrypt the image (animated or not)
 			//FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
 
 			FIMULTIBITMAP * animated_bitmap = nullptr;
-			FIBITMAP * bitmap = ImageTools::LoadImageFromFile(path);
+			FIBITMAP * bitmap = nullptr;
+			
+			bitmap = ImageTools::LoadImageFromFile(path);
 
 			//animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
 			//bitmap = nullptr;
@@ -240,13 +247,14 @@ namespace chaos
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(bitmap, release_bitmap);
-
 			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
 			// make the insertion
 			return AddBitmapImpl(bitmap, nullptr, release_bitmap, name, tag, animation_info);
 		}
+
+
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
 		{
@@ -256,9 +264,21 @@ namespace chaos
 			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
+
+			// load all pages for the bitmap
+			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap);
 			// make the insertion
-			return AddBitmapImpl(nullptr, animated_bitmap, release_animated_bitmap, name, tag, animation_info);
+			return AddBitmapImpl(nullptr, pages, release_animated_bitmap, name, tag, animation_info);
 		}
+		
+
+
+
+
+
+
+
+
 
 		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_resource, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
 		{

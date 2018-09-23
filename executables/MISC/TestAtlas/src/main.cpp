@@ -142,6 +142,12 @@ protected:
 
 	void TestGIF()
 	{
+
+
+		
+
+#if 0
+
 		boost::filesystem::path ip = GetResourcesPath() / "images";
 
 		FIMULTIBITMAP * a1 = chaos::ImageTools::LoadMultiImageFromFile(ip / "moving_gif.gif");
@@ -160,6 +166,7 @@ protected:
 		b1 = b1;
 		b2 = b2;
 		b3 = b3;
+#endif
 
 		chaos::BitmapAtlas::BitmapGridAnimationInfo info1;
 		std::string s1;

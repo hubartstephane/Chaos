@@ -12,6 +12,11 @@ namespace chaos
 	//   Lifetime(buffer) > Lifetime(MEMORY)
 	//   Lifetime(MEMORY) < or > Lifetime(BITMAP)  (unrelated)	
 	//   Lifetime(MEMORY) > Lifetime(MULTIBITMAP)
+	//
+	// XXX : FreeImage_LoadMultiBitmap...(...) functions
+	//
+	//   - can read GIF correctly and lock pages even if there is a single image
+	//   - for other formats, the lock page fails
 
 	class FillImageMetaFunc
 	{
@@ -568,37 +573,75 @@ namespace chaos
 		return LoadImageFromBuffer(FileTools::LoadFile(path, false));
 	}
 
-	FIMULTIBITMAP * ImageTools::LoadMultiImageFromFile(FilePathParam const & path)
+	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromFile(FilePathParam const & path)
 	{
+		std::vector<FIBITMAP*> result;
+		// load the image and get multi image
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
-
-		// shuxxx
-
-		//Buffer<char> * b = new Buffer<char>;
-		//*b = buffer;
-
 		if (buffer != nullptr)
-			return LoadMultiImageFromBuffer(buffer);
-		return nullptr;
+			result = LoadMultipleImagesFromBuffer(buffer);
+		return result;
 	}
 
-	FIMULTIBITMAP * ImageTools::LoadMultiImageFromBuffer(Buffer<char> buffer)
+	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromBuffer(Buffer<char> buffer)
 	{
-		FIMULTIBITMAP * result = nullptr;
+		std::vector<FIBITMAP*> result;
 
 		FIMEMORY * memory = FreeImage_OpenMemory((BYTE*)buffer.data, (DWORD)buffer.bufsize);
 		if (memory != nullptr)
 		{
+			// format supporting image paging
 			FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
-
-			result = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
-
-
-
-
-			// shuxxx
-
+			if (format == FIF_GIF)
+			{
+				FIMULTIBITMAP * multi_bitmap = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
+				if (multi_bitmap != nullptr)
+				{
+					result = GetMultiImagePages(multi_bitmap);
+					FreeImage_CloseMultiBitmap(multi_bitmap, 0);
+				}
+			}
+			// format that does not support image paging : simple image reading
+			else
+			{
+				FIBITMAP * bitmap = FreeImage_LoadFromMemory(format, memory, 0);
+				if (bitmap != nullptr)
+				{
+					bitmap = ConvertToSupportedType(bitmap, true); // convert to a supported format : may fails
+					if (bitmap != nullptr)
+						result.push_back(bitmap);
+				}
+			}				
 			FreeImage_CloseMemory(memory);
+		}
+		return result;
+	}
+
+	std::vector<FIBITMAP *> ImageTools::GetMultiImagePages(FIMULTIBITMAP * multi_bitmap)
+	{
+		std::vector<FIBITMAP *> result;
+		if (multi_bitmap != nullptr)
+		{
+			int page_count = FreeImage_GetPageCount(multi_bitmap);
+			for (int i = 0; i < page_count; ++i)
+			{
+				// lock the page
+				FIBITMAP * page = FreeImage_LockPage(multi_bitmap, i);
+				if (page == nullptr)
+					continue;
+
+				// XXX : due to FreeImage library limitation, we cannot keep a reference to locked page
+				//       we have to clone the page. While we may make a format conversion, we can avoid the cloning in some circonstences
+				FIBITMAP * other_page = ConvertToSupportedType(page, false);
+				if (other_page != nullptr)
+				{
+					if (other_page != page)
+						result.push_back(other_page); // no need to clone the page, we already have a bitmap independant of the FIMULTIBITMAP
+					else
+						result.push_back(FreeImage_Clone(page)); // we cannot store a reference to locked page : make a costly clone !!!
+				}
+				FreeImage_UnlockPage(multi_bitmap, page, false);
+			}			
 		}
 		return result;
 	}

@@ -204,42 +204,25 @@ namespace chaos
 			// load all pages for the bitmap
 			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path);
 
+			size_t count = pages.size();
+			for (size_t i = 0; i < count; ++i)
+				RegisterResource(pages[i], true);
 
+			// test whether there is a grid describing the animation
+			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
-			// decrypt the image (animated or not)
-			//FIMULTIBITMAP * animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-
-			FIMULTIBITMAP * animated_bitmap = nullptr;
-			FIBITMAP * bitmap = nullptr;
+			BitmapGridAnimationInfo animation;
+			if (animation_info == nullptr) // use the path to find the animation_info	by default		
+				if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, nullptr))
+					animation_info = &animation;
 			
-			bitmap = ImageTools::LoadImageFromFile(path);
-
-			//animated_bitmap = ImageTools::LoadMultiImageFromFile(path);
-			//bitmap = nullptr;
-
-			if (animated_bitmap != nullptr || bitmap != nullptr)
-			{
-				// test whether there is a grid describing the animation
-				boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-				BitmapGridAnimationInfo animation;
-				if (animation_info == nullptr) // use the path to find the animation_info	by default		
-					if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, nullptr))
-						animation_info = &animation;
-
-				// prepare resource for destruction (in case of failure, there will not be memory leak)
-				RegisterResource(animated_bitmap, true);
-
-				// create the bitmap
-				result = AddBitmapImpl(
-					bitmap,
-					animated_bitmap,
-					true,
-					(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
-					tag,
-					animation_info
-				);
-			}
+			// create the bitmap
+			result = AddBitmapImpl(
+				pages,
+				(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+				tag,
+				animation_info
+			);
 			return result;
 		}
 
@@ -247,14 +230,14 @@ namespace chaos
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(bitmap, release_bitmap);
+
 			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
+
 			// make the insertion
-			return AddBitmapImpl(bitmap, nullptr, release_bitmap, name, tag, animation_info);
+			return AddBitmapImpl({ bitmap }, name, tag, animation_info);
 		}
-
-
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
 		{
@@ -267,8 +250,13 @@ namespace chaos
 
 			// load all pages for the bitmap
 			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap);
+
+			size_t count = pages.size();
+			for (size_t i = 0; i < count; ++i)
+				RegisterResource(pages[i], true);
+
 			// make the insertion
-			return AddBitmapImpl(nullptr, pages, release_animated_bitmap, name, tag, animation_info);
+			return AddBitmapImpl(pages, name, tag, animation_info);
 		}
 		
 
@@ -280,8 +268,13 @@ namespace chaos
 
 
 
-		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_resource, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
 		{
+			// create the result
+			BitmapInfoInput * result = new BitmapInfoInput;
+			if (result == nullptr)
+				return nullptr;
+#if 0
 			assert(name != nullptr);
 			assert((bitmap != nullptr) ^ (animated_bitmap != nullptr)); // not both at the time
 
@@ -289,10 +282,7 @@ namespace chaos
 			bool release_bitmap = (bitmap != nullptr) && release_resource;
 			bool release_animated_bitmap = (animated_bitmap != nullptr) && release_resource;
 
-			// create the result
-			BitmapInfoInput * result = new BitmapInfoInput;
-			if (result == nullptr)
-				return nullptr;
+
 
 			// work on result
 			if (animated_bitmap != nullptr)
@@ -351,6 +341,8 @@ namespace chaos
 
 			// insert result into the folder
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
+			return result;
+#endif
 			return result;
 		}
 

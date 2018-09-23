@@ -169,7 +169,7 @@ namespace chaos
 		protected:
 
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput * AddBitmapImpl(FIBITMAP * bitmap, FIMULTIBITMAP * animated_bitmap, bool release_resource, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
+			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(

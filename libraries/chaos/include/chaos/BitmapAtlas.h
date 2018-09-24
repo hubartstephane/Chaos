@@ -61,16 +61,30 @@ namespace chaos
 		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
 		 */
 
+		template<typename T>
 		class BitmapAnimationInfo : public ReferencedObject
 		{
 		public:
 
-			/** if the animation is stored inside a grid, this is the way */
-			BitmapGridAnimationInfo grid_animation;
-			/** maybe the images are stored inside an array */
-			
+			/** get the frame of a linear animation */
+			void GetFrame(size_t index) {}
+			/** get the frame from a grid animation */
+			void GetFrame(glm::ivec2 const & index) {}
 
+			/** get the number of frames */
+			size_t GetFrameCount() const
+			{
+				if (!grid_data.IsEmpty())
+					return (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
+				return child_frames.size();
+			}
 
+		public:
+
+			/** if the animation is stored inside a grid */
+			BitmapGridAnimationInfo grid_data;
+			/** the child frames of animated image (GIF) */
+			std::vector<T *> child_frames;
 		};
 
 		/**
@@ -93,6 +107,9 @@ namespace chaos
 			int height = 0;
 			/** whether the bitmap is a sub frame of a parent */
 			bool child_bitmap = false;
+
+			/** whether the bitmap is part of an animation */
+			boost::intrusive_ptr<BitmapAnimationInfo<BitmapInfo>> animation_info;
 		};
 
 		/**

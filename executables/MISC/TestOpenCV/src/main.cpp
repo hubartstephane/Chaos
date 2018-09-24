@@ -6,9 +6,11 @@
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/FileTools.h> 
 
+#if 0
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#endif
 
 class MyGLFWWindowOpenCVTest : public chaos::MyGLFW::Window
 {
@@ -27,9 +29,6 @@ public:
 
 		cv::InputArray buf = cv::InputArray(nullptr, 0);
 		cv::imdecode(buf, 0);
-
-		
-
 
 		cv::Mat image = cv::imread(filepath.string().c_str(), cv::IMREAD_COLOR);
 

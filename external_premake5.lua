@@ -326,6 +326,9 @@ local FFMPEG_LIB_PATH = {
 --DeclareExternalLib("FFMPEG", FFMPEG_INC_PATH, FFMPEG_LIB_PATH, {"avcodec.lib", "avdevice.lib", "avfilter.lib", "avformat.lib", "avutil.lib", "postproc.lib", "swresample.lib", "swscale.lib"}) 
 
   -- OPENCV  
+  
+  --[[
+  
 local OPENCV_PATH     = "opencv"
 local OPENCV_INC_PATH = path.join(OPENCV_PATH, "build", "include")
 local OPENCV_LIB_PATH = {
@@ -353,4 +356,6 @@ local OPENCV_TOCOPY  = {   -- @ because this copies the file directly in
     RELEASE = "@" .. path.join(OPENCV_PATH, "build", "x64", "vc15", "bin", "opencv_world400.dll"), 
   }
 } 
-DeclareExternalLib("OPENCV", OPENCV_INC_PATH, OPENCV_LIB_PATH, OPENCV_LIBNAME, OPENCV_TOCOPY)  
+DeclareExternalLib("OPENCV", OPENCV_INC_PATH, OPENCV_LIB_PATH, OPENCV_LIBNAME, OPENCV_TOCOPY)
+
+--]]  

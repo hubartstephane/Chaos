@@ -93,6 +93,9 @@ namespace chaos
 			/** the position in parent grid */
 			glm::ivec2 grid_position = glm::ivec2(0, 0);
 
+			/** whether the bitmap is part of an animation */
+			boost::intrusive_ptr<BitmapAnimationInfo<BitmapInfoInput>> animation_info;
+
 			/** a pointer on the destination info associated */
 			BitmapInfo * output_info = nullptr;
 		};
@@ -143,11 +146,11 @@ namespace chaos
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
+			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
+			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
+			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
 
 			/** Add a character set */
 			FontInfoInput * AddFont(				
@@ -169,7 +172,7 @@ namespace chaos
 		protected:
 
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info = nullptr);
+			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(

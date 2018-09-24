@@ -193,7 +193,7 @@ namespace chaos
 			return true;
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
 		{
 			BitmapInfoInput * result = nullptr;
 
@@ -212,21 +212,21 @@ namespace chaos
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 			BitmapGridAnimationInfo animation;
-			if (animation_info == nullptr) // use the path to find the animation_info	by default		
+			if (grid_animation_info == nullptr) // use the path to find the animation_info	by default		
 				if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, nullptr))
-					animation_info = &animation;
+					grid_animation_info = &animation;
 			
 			// create the bitmap
 			result = AddBitmapImpl(
 				pages,
 				(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
 				tag,
-				animation_info
+				grid_animation_info
 			);
 			return result;
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(bitmap, release_bitmap);
@@ -236,10 +236,10 @@ namespace chaos
 				return nullptr;
 
 			// make the insertion
-			return AddBitmapImpl({ bitmap }, name, tag, animation_info);
+			return AddBitmapImpl({ bitmap }, name, tag, grid_animation_info);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(animated_bitmap, release_animated_bitmap);
@@ -256,93 +256,59 @@ namespace chaos
 				RegisterResource(pages[i], true);
 
 			// make the insertion
-			return AddBitmapImpl(pages, name, tag, animation_info);
+			return AddBitmapImpl(pages, name, tag, grid_animation_info);
 		}
-		
 
-
-
-
-
-
-
-
-
-		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
 		{
 			// create the result
 			BitmapInfoInput * result = new BitmapInfoInput;
 			if (result == nullptr)
 				return nullptr;
-#if 0
-			assert(name != nullptr);
-			assert((bitmap != nullptr) ^ (animated_bitmap != nullptr)); // not both at the time
 
-			// flag for releasing resources
-			bool release_bitmap = (bitmap != nullptr) && release_resource;
-			bool release_animated_bitmap = (animated_bitmap != nullptr) && release_resource;
-
-
-
-			// work on result
-			if (animated_bitmap != nullptr)
-			{
-				// single page animation
-				int page_count = FreeImage_GetPageCount(animated_bitmap);
-				if (page_count == 1)
-				{
-					bitmap = FreeImage_LockPage(animated_bitmap, 0);
-					if (bitmap == nullptr)
-					{
-						delete(result);
-						return nullptr;
-					}
-					RegisterResource(bitmap, true);
-					result->description = ImageTools::GetImageDescription(bitmap);
-				}
-				// multi page animation
-				else
-				{
-					for (int i = 0; i < page_count; ++i)
-					{
-						bitmap = FreeImage_LockPage(animated_bitmap, i);
-						if (bitmap != nullptr)
-						{
-							i = i;
-
-						}
-						FreeImage_UnlockPage(animated_bitmap, bitmap, false);
-
-
-					}
-					int i = 0; 
-					++i;
-
-
-
-
-				}
-			}
-			// simple page
-			else
-			{
-				result->description = ImageTools::GetImageDescription(bitmap);
-			}
+			// set the surface description
+			size_t page_count = pages.size();
+			if (page_count == 1)
+				result->description = ImageTools::GetImageDescription(pages[0]);
 
 			// finalize the result
 			result->atlas_input = atlas_input;
-			result->name        = name;			
-			result->tag         = tag;
+			result->name = name;
+			result->tag = tag;
 
-			if (animation_info != nullptr)
+			if ((grid_animation_info != nullptr && !grid_animation_info->IsEmpty()) || page_count > 1)
 			{
+				BitmapAnimationInfo<BitmapInfoInput> * animation_info = new BitmapAnimationInfo<BitmapInfoInput>;
+				if (animation_info != nullptr)
+				{
+					result->animation_info = animation_info;
 
+					// use grid animation system only if we are not on a GIF
+					if (page_count == 1 && grid_animation_info != nullptr && !grid_animation_info->IsEmpty())
+						animation_info->grid_data = *grid_animation_info;
+
+					// animated images with frames						
+					if (page_count > 1)
+					{
+						for (size_t i = 0; i < page_count; ++i)
+						{
+							// create the child frame
+							BitmapInfoInput * child_frame = new BitmapInfoInput; 
+							if (child_frame == nullptr)
+								continue;
+							// insert the child frames inside the folder (as unamed, untagged)
+							child_frame->atlas_input = atlas_input;
+							child_frame->description = ImageTools::GetImageDescription(pages[i]);
+							bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(child_frame)));
+							// insert the child frame inside the animation block
+							animation_info->child_frames.push_back(child_frame);							
+						}
+					}
+				}
 			}
 
 			// insert result into the folder
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
-			return result;
-#endif
 			return result;
 		}
 

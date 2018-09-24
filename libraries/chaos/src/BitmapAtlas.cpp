@@ -549,23 +549,49 @@ namespace chaos
 		// JSON functions
 		// ========================================================================
 
-		void SaveIntoJSON(BitmapAnimationInfo<BitmapInfo> const & info, nlohmann::json & json_entry)
+		void SaveIntoJSON(BitmapInfo const & bitmap_reference_info, BitmapAnimationInfo<BitmapInfo> const & info, nlohmann::json & json_entry)
 		{
 			json_entry["grid_size_x"] = info.grid_data.grid_size.x;
 			json_entry["grid_size_y"] = info.grid_data.grid_size.y;
 			json_entry["skip_lasts"]  = info.grid_data.skip_lasts;
 
 			json_entry["child_frames"] = nlohmann::json::array();
+
+			nlohmann::json & child_frames_json = json_entry["child_frames"];
+
+			// XXX : Child frames are stored in the same folder than the parent
+			//       Store the pointer as difference with the reference bitmap (this work because this is a std::vector<> on raw data (and not pointer on raw data)
+			//       The child frames are stored before their parent
+			//         => the diff should be negative, but we inverse it 
+			//            (we will do a conversion int => pointer later, its preferable to work with positive value 
+			//            (sizeof(int) , sizeof(pointer) may differ)
+			size_t count = info.child_frames.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				int diff = (int)(&bitmap_reference_info - info.child_frames[i]);
+				child_frames_json.push_back(diff);
+			}
 		}
 
-		void LoadFromJSON(BitmapAnimationInfo<BitmapInfo> & info, nlohmann::json const & json_entry)
+		void LoadFromJSON(BitmapInfo const & bitmap_reference_info, BitmapAnimationInfo<BitmapInfo> & info, nlohmann::json const & json_entry)
 		{
 			info.grid_data.grid_size.x = json_entry["grid_size_x"];
 			info.grid_data.grid_size.y = json_entry["grid_size_y"];
 			info.grid_data.skip_lasts  = json_entry["skip_lasts"];
 		
-		
-		
+			// XXX : the reference pointer deserve to be reallocated (due to std::vector<> reallocation) 
+			//       we store "fake" pointers (just int in facts)
+			//       this array has to be patched later !!!
+			nlohmann::json const * child_frames_json = JSONTools::GetStructure(json_entry, "child_frames");
+			if (child_frames_json != nullptr)
+			{
+				size_t page_count = child_frames_json->size();
+				for (size_t i = 0; i < page_count; ++i)
+				{
+					int diff = child_frames_json->operator[](i);
+					info.child_frames.push_back(reinterpret_cast<BitmapInfo*>(diff));
+				}
+			}		
 		}
 
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
@@ -583,7 +609,7 @@ namespace chaos
 			if (info.animation_info != nullptr)
 			{
 				json_entry["animation_info"] = nlohmann::json::object();
-				SaveIntoJSON(*info.animation_info, json_entry["animation_info"]);
+				SaveIntoJSON(info, *info.animation_info, json_entry["animation_info"]);
 			}
 		}
 
@@ -604,7 +630,7 @@ namespace chaos
 			{
 				info.animation_info = new BitmapAnimationInfo<BitmapInfo>;
 				if (info.animation_info != nullptr)
-					LoadFromJSON(*info.animation_info, *animation_json);
+					LoadFromJSON(info, *info.animation_info, *animation_json);
 			}
 		}
 

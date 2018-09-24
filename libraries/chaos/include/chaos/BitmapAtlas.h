@@ -515,6 +515,10 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
+		void SaveIntoJSON(BitmapAnimationInfo<BitmapInfo> const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(BitmapAnimationInfo<BitmapInfo> & info, nlohmann::json const & json_entry);
+
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
 
 		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry);

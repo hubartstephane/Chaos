@@ -258,11 +258,40 @@ namespace chaos
 
 				folder_info_output->bitmaps.push_back(std::move(bitmap_info_output));
 			}
+
 			// once we are sure that Folder.Bitmaps does not resize anymore, we can store pointers    
 			for (size_t i = 0; i < bitmap_count; ++i)
 			{
-				folder_info_input->bitmaps[i]->output_info = &folder_info_output->bitmaps[i];
-				result.push_back(folder_info_input->bitmaps[i].get());
+				BitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
+				BitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
+
+				bitmap_info_input->output_info = bitmap_info;
+				result.push_back(bitmap_info_input);
+			}
+
+			// now that all BitmapInfoInput are linked to their BitmapInfo, handle animation
+			for (size_t i = 0; i < bitmap_count; ++i)
+			{
+				BitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
+				BitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
+
+				// create the animation if necessary
+				BitmapAnimationInfo<BitmapInfoInput> * animation_info_input = bitmap_info_input->animation_info.get();
+				if (animation_info_input != nullptr)
+				{
+					BitmapAnimationInfo<BitmapInfo> * animation_info = new BitmapAnimationInfo<BitmapInfo>;
+					if (animation_info != nullptr)
+					{
+						// copy grid information
+						animation_info->grid_data = animation_info_input->grid_data;
+						// store the pointers to child frames
+						size_t page_count = animation_info_input->child_frames.size();
+						for (size_t j = 0; j < page_count; ++j)
+							animation_info->child_frames.push_back(animation_info_input->child_frames[j]->output_info); 
+						// store the animation
+						bitmap_info->animation_info = animation_info;
+					}
+				}
 			}
 
 			// register the fonts 
@@ -434,8 +463,8 @@ namespace chaos
 
 			// create an indirection list for entries sorted by surface
 			float padding = (float)params.atlas_padding;
-			std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2) {
-
+			std::vector<size_t> textures_indirection_table = CreateIndirectionTable(count, [padding, &entries](size_t i1, size_t i2) 
+			{
 				BitmapInfoInput const * entry_1 = entries[i1];
 				BitmapInfoInput const * entry_2 = entries[i2];
 

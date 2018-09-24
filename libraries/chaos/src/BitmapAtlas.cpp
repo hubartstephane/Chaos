@@ -549,6 +549,25 @@ namespace chaos
 		// JSON functions
 		// ========================================================================
 
+		void SaveIntoJSON(BitmapAnimationInfo<BitmapInfo> const & info, nlohmann::json & json_entry)
+		{
+			json_entry["grid_size_x"] = info.grid_data.grid_size.x;
+			json_entry["grid_size_y"] = info.grid_data.grid_size.y;
+			json_entry["skip_lasts"]  = info.grid_data.skip_lasts;
+
+			json_entry["child_frames"] = nlohmann::json::array();
+		}
+
+		void LoadFromJSON(BitmapAnimationInfo<BitmapInfo> & info, nlohmann::json const & json_entry)
+		{
+			info.grid_data.grid_size.x = json_entry["grid_size_x"];
+			info.grid_data.grid_size.y = json_entry["grid_size_y"];
+			info.grid_data.skip_lasts  = json_entry["skip_lasts"];
+		
+		
+		
+		}
+
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
 		{
 			NamedObject const & named_info = info;
@@ -560,6 +579,12 @@ namespace chaos
 			json_entry["width"] = info.width;
 			json_entry["height"] = info.height;
 			json_entry["child_bitmap"] = info.child_bitmap;
+
+			if (info.animation_info != nullptr)
+			{
+				json_entry["animation_info"] = nlohmann::json::object();
+				SaveIntoJSON(*info.animation_info, json_entry["animation_info"]);
+			}
 		}
 
 		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry)
@@ -573,6 +598,14 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
 			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
 			JSONTools::GetAttribute(json_entry, "child_bitmap", info.child_bitmap, false);
+
+			nlohmann::json const * animation_json = JSONTools::GetStructure(json_entry, "animation_info");
+			if (animation_json != nullptr)
+			{
+				info.animation_info = new BitmapAnimationInfo<BitmapInfo>;
+				if (info.animation_info != nullptr)
+					LoadFromJSON(*info.animation_info, *animation_json);
+			}
 		}
 
 		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry)

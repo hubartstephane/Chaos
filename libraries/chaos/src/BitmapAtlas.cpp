@@ -132,6 +132,65 @@ namespace chaos
 		}
 
 		// ========================================================================
+		// BitmapInfo functions
+		// ========================================================================
+
+		BitmapLayout BitmapInfo::GetAnimationFrameLayout(size_t index) const
+		{
+			// non animated bitmap
+			if (animation_info == nullptr)
+				return BitmapLayout();
+			// test whether the frame index is valid
+			if (index >= GetAnimationFrameCount())
+				return BitmapLayout();
+			// whether this is a grid animation
+			if (!animation_info->grid_data.IsEmpty())
+			{
+				size_t frame_count = (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
+				if (index >= frame_count)
+					return BitmapLayout();
+
+			}
+			// whether this is contigus Bitmap style animation
+
+
+
+
+			return BitmapLayout();
+		}
+
+		BitmapLayout BitmapInfo::GetAnimationFrameLayout(glm::ivec2 const & index) const
+		{
+			// non animated bitmap
+			if (animation_info == nullptr)
+				return BitmapLayout();
+			// this function is only valid for grid
+			if (animation_info->grid_data.IsEmpty())
+				return BitmapLayout();
+			// test whether the index is valid
+			if (index.x < 0 || index.x >= animation_info->grid_data.grid_size.x)
+				return BitmapLayout();
+			if (index.y < 0 || index.y >= animation_info->grid_data.grid_size.y)
+				return BitmapLayout();
+			
+
+
+			//child_info->x = parent_info->x + (parent_info->width / parent_input_entry->grid_size.x) * input_entry->grid_position.x;
+			//child_info->y = parent_info->y + (parent_info->height / parent_input_entry->grid_size.y) * input_entry->grid_position.y;
+
+			return BitmapLayout();
+		}
+
+		size_t BitmapInfo::GetAnimationFrameCount() const
+		{
+			if (animation_info == nullptr)
+				return 0;
+			if (!animation_info->grid_data.IsEmpty())
+				return (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
+			return (size_t)animation_info->child_frame_count;
+		}
+
+		// ========================================================================
 		// Atlas functions
 		// ========================================================================
 

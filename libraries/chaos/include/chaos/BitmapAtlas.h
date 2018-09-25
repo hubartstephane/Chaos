@@ -65,21 +65,6 @@ namespace chaos
 		{
 		public:
 
-			/** get the frame of a linear animation */
-			void GetFrame(size_t index) {}
-			/** get the frame from a grid animation */
-			void GetFrame(glm::ivec2 const & index) {}
-
-			/** get the number of frames */
-			size_t GetFrameCount() const
-			{
-				if (!grid_data.IsEmpty())
-					return (size_t)(grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
-				return (size_t)child_frame_count;
-			}
-
-		public:
-
 			/** if the animation is stored inside a grid */
 			BitmapGridAnimationInfo grid_data;
 			/** number of child frame (directly following the BitmapInfo */
@@ -87,11 +72,16 @@ namespace chaos
 		};
 
 		/**
-		* BitmapInfoBase : represents an Base Bitmap info in the atlas
+		* BitmapLayout : were the bitmap lies in the atlas
 		*/
 
-		class BitmapInfo : public ObjectBase
+		class BitmapLayout
 		{
+		public:
+
+			/** returns whether the bitmap index is valid */
+			bool IsValid() const { return (bitmap_index >= 0); }
+
 		public:
 
 			/** the atlas in which it is stored in result */
@@ -104,6 +94,24 @@ namespace chaos
 			int width = 0;
 			/** the size of the bitmap (beware, 2 x padding must be add for correct result) */
 			int height = 0;
+		};
+
+		/**
+		* BitmapInfo : represents an Bitmap info in the atlas
+		*/
+
+		class BitmapInfo : public BitmapLayout, public ObjectBase
+		{
+		public:
+
+			/** returns the layout for one linear frame of the animation */
+			BitmapLayout GetAnimationFrameLayout(size_t index) const;
+			/** returns the layout for one grid frame of the animation */
+			BitmapLayout GetAnimationFrameLayout(glm::ivec2 const & index) const;
+			/** returns the number of frames in the animation */
+			size_t GetAnimationFrameCount() const;
+
+		public:
 
 			/** whether the bitmap is part of an animation */
 			boost::intrusive_ptr<BitmapAnimationInfo> animation_info;

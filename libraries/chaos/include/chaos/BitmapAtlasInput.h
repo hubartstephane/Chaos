@@ -102,8 +102,6 @@ namespace chaos
 			/** the description of the bitmap */
 			ImageDescription description;
 
-			/** for grid base animation */
-			BitmapInfoInput * parent_grid = nullptr;
 			/** the grid size for animation */
 			glm::ivec2 grid_size = glm::ivec2(1, 1);
 			/** the position in parent grid */

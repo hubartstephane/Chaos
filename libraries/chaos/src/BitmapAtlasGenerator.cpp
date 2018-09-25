@@ -123,14 +123,8 @@ namespace chaos
 			size_t count = entries.size();
 			for (size_t i = 0; i < count - 1; ++i)
 			{
-				if (entries[i]->parent_grid != nullptr) // ignore child animation frame
-					continue;
-
 				for (size_t j = i + 1; j < count; ++j)
 				{
-					if (entries[j]->parent_grid != nullptr) // ignore child animation frame
-						continue;
-
 					BitmapInfo const * entry1 = entries[i]->output_info;
 					BitmapInfo const * entry2 = entries[j]->output_info;
 
@@ -254,8 +248,6 @@ namespace chaos
 				bitmap_info_output.width = bitmap_info_input->description.width;
 				bitmap_info_output.height = bitmap_info_input->description.height;
 
-				bitmap_info_output.child_bitmap = (bitmap_info_input->parent_grid != nullptr);
-
 				folder_info_output->bitmaps.push_back(std::move(bitmap_info_output));
 			}
 
@@ -327,8 +319,6 @@ namespace chaos
 					character_info_output.bitmap_left = character_info_input->bitmap_left;
 					character_info_output.bitmap_top = character_info_input->bitmap_top;
 
-					character_info_output.child_bitmap = (character_info_input->parent_grid != nullptr);
-
 					font_info_output.elements.push_back(std::move(character_info_output));
 				}
 				folder_info_output->fonts.push_back(std::move(font_info_output));
@@ -375,9 +365,6 @@ namespace chaos
 
 			for (BitmapInfoInput const * info : entries)
 			{
-				if (info->parent_grid != nullptr) // ignore non parent bitmaps
-					continue;
-
 				if (info->description.width == 0 || info->description.height == 0) // ignore empty bitmaps
 					continue;
 
@@ -475,8 +462,6 @@ namespace chaos
 				size_t entry_index = textures_indirection_table[i];
 
 				BitmapInfoInput const * input_entry = entries[entry_index];
-				if (input_entry->parent_grid != nullptr) // ignore child animation frame
-					continue;
 
 				int   best_atlas_index = -1;
 				int   best_x = 0;
@@ -518,23 +503,6 @@ namespace chaos
 					atlas_definitions.push_back(std::move(def));
 				}
 				InsertBitmapInAtlas(*entries[entry_index]->output_info, atlas_definitions[best_atlas_index], best_x, best_y);
-			}
-
-			// handle child frame BitmapInfo
-			for (BitmapInfoInput * input_entry : entries)
-			{
-				// ignore parent animation frame
-				BitmapInfoInput * parent_input_entry = input_entry->parent_grid;
-				if (parent_input_entry == nullptr) 
-					continue;
-
-				// initialize the child bitmap relatively to the parent position
-				BitmapInfo * child_info  = input_entry->output_info;
-				BitmapInfo * parent_info = input_entry->parent_grid->output_info;
-
-				child_info->bitmap_index = parent_info->bitmap_index;
-				child_info->x = parent_info->x + (parent_info->width  / parent_input_entry->grid_size.x) * input_entry->grid_position.x;
-				child_info->y = parent_info->y + (parent_info->height / parent_input_entry->grid_size.y) * input_entry->grid_position.y;
 			}
 			return true;
 		}

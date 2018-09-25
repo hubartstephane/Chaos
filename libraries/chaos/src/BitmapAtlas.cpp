@@ -160,14 +160,12 @@ namespace chaos
 			// surface for the bitmaps in the folder
 			for (BitmapInfo const & bitmap_info : folder_info->bitmaps)
 				if (bitmap_info.bitmap_index == bitmap_index || bitmap_index < 0)
-					if (!bitmap_info.child_bitmap)
-						result += (float)(bitmap_info.width * bitmap_info.height);
+					result += (float)(bitmap_info.width * bitmap_info.height);
 			// surface for the fonts in the folder
 			for (FontInfo const & font_info : folder_info->fonts)
 				for (CharacterInfo const & character_info : font_info.elements)
 					if (character_info.bitmap_index == bitmap_index || bitmap_index < 0)
-						if (!character_info.child_bitmap)
-							result += (float)(character_info.width * character_info.height);
+						result += (float)(character_info.width * character_info.height);
 			// recursive calls
 			size_t count = folder_info->folders.size();
 			for (size_t i = 0 ; i < count ; ++i)
@@ -234,7 +232,6 @@ namespace chaos
 			stream << stream_indent << "  height       : " << info.height << std::endl;
 			stream << stream_indent << "  x            : " << info.x << std::endl;
 			stream << stream_indent << "  y            : " << info.y << std::endl;
-			stream << stream_indent << "  child_bitmap : " << info.child_bitmap << std::endl;
 		}
 
 		void AtlasBase::DoOutputInfo(CharacterInfo const & info, std::ostream & stream, int indent)
@@ -575,7 +572,6 @@ namespace chaos
 			json_entry["y"] = info.y;
 			json_entry["width"] = info.width;
 			json_entry["height"] = info.height;
-			json_entry["child_bitmap"] = info.child_bitmap;
 
 			if (info.animation_info != nullptr)
 			{
@@ -594,7 +590,6 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
 			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
 			JSONTools::GetAttribute(json_entry, "height", info.height, 0);
-			JSONTools::GetAttribute(json_entry, "child_bitmap", info.child_bitmap, false);
 
 			nlohmann::json const * animation_json = JSONTools::GetStructure(json_entry, "animation_info");
 			if (animation_json != nullptr)

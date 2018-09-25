@@ -104,8 +104,6 @@ namespace chaos
 			int width = 0;
 			/** the size of the bitmap (beware, 2 x padding must be add for correct result) */
 			int height = 0;
-			/** whether the bitmap is a sub frame of a parent */
-			bool child_bitmap = false;
 
 			/** whether the bitmap is part of an animation */
 			boost::intrusive_ptr<BitmapAnimationInfo> animation_info;

@@ -276,18 +276,15 @@ namespace chaos
 				BitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
 
 				// create the animation if necessary
-				BitmapAnimationInfo<BitmapInfoInput> * animation_info_input = bitmap_info_input->animation_info.get();
+				BitmapAnimationInfoInput * animation_info_input = bitmap_info_input->animation_info.get();
 				if (animation_info_input != nullptr)
 				{
-					BitmapAnimationInfo<BitmapInfo> * animation_info = new BitmapAnimationInfo<BitmapInfo>;
+					BitmapAnimationInfo * animation_info = new BitmapAnimationInfo;
 					if (animation_info != nullptr)
 					{
 						// copy grid information
 						animation_info->grid_data = animation_info_input->grid_data;
-						// store the pointers to child frames
-						size_t page_count = animation_info_input->child_frames.size();
-						for (size_t j = 0; j < page_count; ++j)
-							animation_info->child_frames.push_back(animation_info_input->child_frames[j]->output_info); 
+						animation_info->child_frame_count = (int)animation_info_input->child_frames.size();
 						// store the animation
 						bitmap_info->animation_info = animation_info;
 					}

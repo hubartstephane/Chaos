@@ -61,7 +61,6 @@ namespace chaos
 		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
 		 */
 
-		template<typename T>
 		class BitmapAnimationInfo : public ReferencedObject
 		{
 		public:
@@ -75,16 +74,16 @@ namespace chaos
 			size_t GetFrameCount() const
 			{
 				if (!grid_data.IsEmpty())
-					return (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
-				return child_frames.size();
+					return (size_t)(grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
+				return (size_t)child_frame_count;
 			}
 
 		public:
 
 			/** if the animation is stored inside a grid */
 			BitmapGridAnimationInfo grid_data;
-			/** the child frames of animated image (GIF) */
-			std::vector<T *> child_frames;
+			/** number of child frame (directly following the BitmapInfo */
+			int child_frame_count = 0;
 		};
 
 		/**
@@ -109,7 +108,7 @@ namespace chaos
 			bool child_bitmap = false;
 
 			/** whether the bitmap is part of an animation */
-			boost::intrusive_ptr<BitmapAnimationInfo<BitmapInfo>> animation_info;
+			boost::intrusive_ptr<BitmapAnimationInfo> animation_info;
 		};
 
 		/**
@@ -515,9 +514,9 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		void SaveIntoJSON(BitmapInfo const & bitmap_reference_info, BitmapAnimationInfo<BitmapInfo> const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(BitmapAnimationInfo const & info, nlohmann::json & json_entry);
 
-		void LoadFromJSON(BitmapInfo const & bitmap_reference_info, BitmapAnimationInfo<BitmapInfo> & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(BitmapAnimationInfo & info, nlohmann::json const & json_entry);
 
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
 

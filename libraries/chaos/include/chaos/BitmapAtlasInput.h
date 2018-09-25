@@ -76,6 +76,22 @@ namespace chaos
 		};
 
 		/**
+		* BitmapAnimationInfoInput : Describe an animation for a BitmapInfoInput
+		*/
+
+		class BitmapAnimationInfoInput : public ReferencedObject
+		{
+
+		public:
+
+			/** if the animation is stored inside a grid */
+			BitmapGridAnimationInfo grid_data;
+			/** the child frames of animated image (GIF) */
+			std::vector<class BitmapInfoInput *> child_frames;
+		};
+
+
+		/**
 		* BitmapInfoInput : Will produced a BitmapInfo in the final Atlas
 		*/
 
@@ -94,7 +110,7 @@ namespace chaos
 			glm::ivec2 grid_position = glm::ivec2(0, 0);
 
 			/** whether the bitmap is part of an animation */
-			boost::intrusive_ptr<BitmapAnimationInfo<BitmapInfoInput>> animation_info;
+			boost::intrusive_ptr<BitmapAnimationInfoInput> animation_info;
 
 			/** a pointer on the destination info associated */
 			BitmapInfo * output_info = nullptr;

@@ -276,9 +276,14 @@ namespace chaos
 			result->name = name;
 			result->tag = tag;
 
+			// insert result into the folder
+			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
+			result = bitmaps.back().get();
+
+			// insert child animation frames
 			if ((grid_animation_info != nullptr && !grid_animation_info->IsEmpty()) || page_count > 1)
 			{
-				BitmapAnimationInfo<BitmapInfoInput> * animation_info = new BitmapAnimationInfo<BitmapInfoInput>;
+				BitmapAnimationInfoInput * animation_info = new BitmapAnimationInfoInput;
 				if (animation_info != nullptr)
 				{
 					result->animation_info = animation_info;
@@ -307,8 +312,6 @@ namespace chaos
 				}
 			}
 
-			// insert result into the folder
-			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
 			return result;
 		}
 

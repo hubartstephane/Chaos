@@ -121,8 +121,8 @@ namespace chaos
 			Rectangle GetAtlasRectangle() const;
 			/** add padding to a rectangle */
 			Rectangle AddPadding(Rectangle const & r) const;
-			/** returns the rectangle corresponding to the BitmapInfo */
-			Rectangle GetRectangle(BitmapInfo const & info) const;
+			/** returns the rectangle corresponding to the BitmapLayout */
+			Rectangle GetRectangle(BitmapLayout const & layout) const;
 
 			/** fill the entries of the atlas from input (collect all input entries) */
 			void FillAtlasEntriesFromInput(BitmapInfoInputVector & result, FolderInfoInput * folder_info_input, FolderInfo * folder_info_output);

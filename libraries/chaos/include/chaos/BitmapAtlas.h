@@ -49,29 +49,6 @@ namespace chaos
 		};
 
 		/**
-		* ObjectBase : base object
-		*/
-
-		class ObjectBase : public NamedObject
-		{
-
-		};
-
-		/**
-		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
-		 */
-
-		class BitmapAnimationInfo : public ReferencedObject
-		{
-		public:
-
-			/** if the animation is stored inside a grid */
-			BitmapGridAnimationInfo grid_data;
-			/** number of child frame (directly following the BitmapInfo */
-			int child_frame_count = 0;
-		};
-
-		/**
 		* BitmapLayout : were the bitmap lies in the atlas
 		*/
 
@@ -94,6 +71,41 @@ namespace chaos
 			int width = 0;
 			/** the size of the bitmap (beware, 2 x padding must be add for correct result) */
 			int height = 0;
+		};
+
+		/**
+		* CharacterLayout : were the character lies in the atlas
+		*/
+
+		class CharacterLayout : public BitmapLayout
+		{
+		public:
+			FT_Vector advance{ 0, 0 };
+			int       bitmap_left = 0; // from 'CharacterMetrics' class
+			int       bitmap_top = 0;		
+		};
+
+		/**
+		* ObjectBase : base object
+		*/
+
+		class ObjectBase : public NamedObject
+		{
+
+		};
+
+		/**
+		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
+		 */
+
+		class BitmapAnimationInfo : public ReferencedObject
+		{
+		public:
+
+			/** if the animation is stored inside a grid */
+			BitmapGridAnimationInfo grid_data;
+			/** number of child frame (directly following the BitmapInfo */
+			int child_frame_count = 0;
 		};
 
 		/**
@@ -121,12 +133,10 @@ namespace chaos
 		* CharacterInfo : represents a Character info in the atlas. Contained in a FontInfo. It is a BitmapInfo with additionnal information
 		*/
 
-		class CharacterInfo : public BitmapInfo
+		class CharacterInfo : public CharacterLayout, public ObjectBase
 		{
 		public:
-			FT_Vector advance{ 0, 0 };
-			int       bitmap_left = 0; // from 'CharacterMetrics' class
-			int       bitmap_top = 0;
+
 		};
 
 		/**
@@ -445,6 +455,10 @@ namespace chaos
 			void DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent = 0) const;
 			/** display information about one named element */
 			static void DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent = 0);
+			/** display information about one bitmap layout */
+			static void DoOutputInfo(BitmapLayout const & info, std::ostream & stream, int indent = 0);
+			/** display information about one character layout */
+			static void DoOutputInfo(CharacterLayout const & info, std::ostream & stream, int indent = 0);
 			/** display information about one bitmap info */
 			static void DoOutputInfo(BitmapInfo const & info, std::ostream & stream, int indent = 0);
 			/** display information about one character info */
@@ -523,6 +537,14 @@ namespace chaos
 		void SaveIntoJSON(BitmapAnimationInfo const & info, nlohmann::json & json_entry);
 
 		void LoadFromJSON(BitmapAnimationInfo & info, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(BitmapLayout const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(BitmapLayout & info, nlohmann::json const & json_entry);
+
+		void SaveIntoJSON(CharacterLayout const & info, nlohmann::json & json_entry);
+
+		void LoadFromJSON(CharacterLayout & info, nlohmann::json const & json_entry);
 
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
 

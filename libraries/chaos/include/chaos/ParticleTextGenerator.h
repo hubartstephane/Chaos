@@ -82,9 +82,9 @@ namespace chaos
 		public:
 
 			/** returns true whether the token is a bitmap */
-			bool IsBitmap() const { return (bitmap_info != nullptr); }
+			bool IsBitmap() const { return (bitmap_layout != nullptr); }
 			/** returns true whether the token is a character */
-			bool IsCharacter() const { return (character_info != nullptr); }
+			bool IsCharacter() const { return (character_layout != nullptr); }
 			/** returns true whethe the token correspond to a visible character */
 			bool IsVisibleCharacter() const { return (IsCharacter() && character != ' '); }
 			/** returns true whethe the token correspond to a whitespace character */
@@ -95,9 +95,9 @@ namespace chaos
 			/** the character */
 			char character = 0;
 			/** the corresponding bitmap (if valid) */
-			BitmapAtlas::BitmapInfo const * bitmap_info = nullptr;
+			BitmapAtlas::BitmapLayout const * bitmap_layout = nullptr;
 			/** the corresponding character (if valid) */
-			BitmapAtlas::CharacterInfo const * character_info = nullptr;
+			BitmapAtlas::CharacterLayout const * character_layout = nullptr;
 			/** the corresponding character set (if valid) */
 			BitmapAtlas::FontInfo const * font_info = nullptr;		
 		};
@@ -175,9 +175,9 @@ namespace chaos
 			/** utility method to emit characters */
 			void EmitCharacters(char c, int count);
 			/** utility method to emit character */
-			void EmitCharacter(char c, BitmapAtlas::CharacterInfo const * info, BitmapAtlas::FontInfo const * font_info);
+			void EmitCharacter(char c, BitmapAtlas::CharacterLayout const * layout, BitmapAtlas::FontInfo const * font_info);
 			/** emit a bitmap */
-			void EmitBitmap(BitmapAtlas::BitmapInfo const * info);
+			void EmitBitmap(BitmapAtlas::BitmapLayout const * layout);
 			/** end the current line */
 			void EndCurrentLine();
 			/** insert a token */

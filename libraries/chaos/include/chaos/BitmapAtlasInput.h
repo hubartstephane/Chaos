@@ -102,16 +102,13 @@ namespace chaos
 			/** the description of the bitmap */
 			ImageDescription description;
 
-			/** the grid size for animation */
-			glm::ivec2 grid_size = glm::ivec2(1, 1);
-			/** the position in parent grid */
-			glm::ivec2 grid_position = glm::ivec2(0, 0);
-
 			/** whether the bitmap is part of an animation */
 			boost::intrusive_ptr<BitmapAnimationInfoInput> animation_info;
 
 			/** a pointer on the destination info associated */
-			BitmapInfo * output_info = nullptr;
+			BitmapInfo * bitmap_output_info = nullptr;
+			/** a pointer on the destination info associated */
+			BitmapInfo * character_output_info = nullptr;
 		};
 
 		/**

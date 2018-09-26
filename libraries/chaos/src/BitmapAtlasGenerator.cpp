@@ -15,6 +15,46 @@ namespace chaos
 	{
 
 		// ========================================================================
+		// Utility functions
+		// ========================================================================
+
+		static BitmapLayout * GetBitmapLayout(BitmapInfoInput * info)
+		{
+			if (info->bitmap_output_info != nullptr)
+				return info->bitmap_output_info;
+			if (info->character_output_info != nullptr)
+				return info->character_output_info;
+			return nullptr;
+		}
+
+		static BitmapLayout const * GetBitmapLayout(BitmapInfoInput const * info)
+		{
+			if (info->bitmap_output_info != nullptr)
+				return info->bitmap_output_info;
+			if (info->character_output_info != nullptr)
+				return info->character_output_info;
+			return nullptr;
+		}
+
+		static NamedObject * GetNamedObject(BitmapInfoInput * info)
+		{
+			if (info->bitmap_output_info != nullptr)
+				return info->bitmap_output_info;
+			if (info->character_output_info != nullptr)
+				return info->character_output_info;
+			return nullptr;
+		}
+
+		static NamedObject const * GetNamedObject(BitmapInfoInput const * info)
+		{
+			if (info->bitmap_output_info != nullptr)
+				return info->bitmap_output_info;
+			if (info->character_output_info != nullptr)
+				return info->character_output_info;
+			return nullptr;
+		}
+
+		// ========================================================================
 		// Rectangle implementation
 		// ========================================================================
 
@@ -66,13 +106,13 @@ namespace chaos
 			return result;
 		}
 
-		Rectangle AtlasGenerator::GetRectangle(BitmapInfo const & info) const
+		Rectangle AtlasGenerator::GetRectangle(BitmapLayout const & layout) const
 		{
 			Rectangle result;
-			result.x = info.x;
-			result.y = info.y;
-			result.width = info.width;
-			result.height = info.height;
+			result.x = layout.x;
+			result.y = layout.y;
+			result.width = layout.width;
+			result.height = layout.height;
 			return result;
 		}
 
@@ -96,25 +136,31 @@ namespace chaos
 			size_t bitmap_count = atlas_definitions.size(); // output->bitmaps not generated yet
 			for (BitmapInfoInput const * entry_input : entries)
 			{
-				BitmapInfo const * info = entry_input->output_info;
+				BitmapLayout const * layout = GetBitmapLayout(entry_input);
+				if (layout == nullptr)
+					continue;
+
+				NamedObject const  * named  = GetNamedObject(entry_input);
+				if (named == nullptr)
+					continue;
 
 				// test whether all info's bitmap_index are initialized
-				if (info->bitmap_index < 0)
+				if (layout->bitmap_index < 0)
 				{
-					stream << "Info encoutered with uninitialized bitmap_index : [" << info->name << " , " << info->tag << "]" << std::endl;
+					stream << "Info encoutered with uninitialized bitmap_index : [" << named->name << " , " << named->tag << "]" << std::endl;
 					result = false;
 				}
 				// test whether all info's bitmap_index are valid
-				else if (info->bitmap_index >= (int)bitmap_count)
+				else if (layout->bitmap_index >= (int)bitmap_count)
 				{
-					stream << "Info encoutered with invalid bitmap_index : [" << info->name << " , " << info->tag << "]" << std::endl;
+					stream << "Info encoutered with invalid bitmap_index : [" << named->name << " , " << named->tag << "]" << std::endl;
 					result = false;
 				}
 				// test whether all info fits inside the atlas
-				Rectangle r = AddPadding(GetRectangle(*info));
+				Rectangle r = AddPadding(GetRectangle(*layout));
 				if (!r.IsFullyInside(atlas_rectangle))
 				{
-					stream << "Info encoutered that does not fit inside the atlas : [" << info->name << " , " << info->tag << "]" << std::endl;
+					stream << "Info encoutered that does not fit inside the atlas : [" << named->name << " , " << named->tag << "]" << std::endl;
 					result = false;
 				}
 			}
@@ -125,20 +171,29 @@ namespace chaos
 			{
 				for (size_t j = i + 1; j < count; ++j)
 				{
-					BitmapInfo const * entry1 = entries[i]->output_info;
-					BitmapInfo const * entry2 = entries[j]->output_info;
+					BitmapLayout const * layout1 = GetBitmapLayout(entries[i]);
+					BitmapLayout const * layout2 = GetBitmapLayout(entries[j]);
 
-					if (entry1->bitmap_index != entry2->bitmap_index) // ignore entries not in the same bitmap
+					if (layout1 == nullptr || layout2 == nullptr)
 						continue;
 
-					Rectangle r1 = AddPadding(GetRectangle(*entry1));
-					Rectangle r2 = AddPadding(GetRectangle(*entry2));
+					if (layout1->bitmap_index != layout2->bitmap_index) // ignore entries not in the same bitmap
+						continue;
+
+					Rectangle r1 = AddPadding(GetRectangle(*layout1));
+					Rectangle r2 = AddPadding(GetRectangle(*layout2));
 
 					if (r1.IsIntersecting(r2))
 					{
-						stream << "Collision between entries : " << std::endl;
-						stream << "  [" << entry1->name << " , " << entry1->tag << "]" << std::endl;
-						stream << "  [" << entry2->name << " , " << entry2->tag << "]" << std::endl;
+						NamedObject const * named1 = GetNamedObject(entries[i]);
+						NamedObject const * named2 = GetNamedObject(entries[j]);
+
+						if (named1 != nullptr && named2 != nullptr)
+						{
+							stream << "Collision between entries : " << std::endl;
+							stream << "  [" << named1->name << " , " << named1->tag << "]" << std::endl;
+							stream << "  [" << named2->name << " , " << named2->tag << "]" << std::endl;
+						}
 						result = false;
 					}
 				}
@@ -152,9 +207,13 @@ namespace chaos
 
 			for (BitmapInfoInput const * info : entries)
 			{
-				if (info->output_info->bitmap_index != bitmap_index)
+				BitmapLayout const * layout = GetBitmapLayout(info);
+				if (layout == nullptr)
 					continue;
-				Rectangle r2 = AddPadding(GetRectangle(*info->output_info));
+
+				if (layout->bitmap_index != bitmap_index)
+					continue;
+				Rectangle r2 = AddPadding(GetRectangle(*layout));
 				if (r2.IsIntersecting(r1))
 					return true;
 			}
@@ -180,17 +239,19 @@ namespace chaos
 					// copy-paste all entries
 					for (BitmapInfoInput const * entry_input : entries)
 					{
-						BitmapInfo const * info = entry_input->output_info;
+						BitmapLayout const * layout = GetBitmapLayout(entry_input);
+						if (layout == nullptr)
+							continue;
 
-						if (info->bitmap_index != i)
+						if (layout->bitmap_index != i)
 							continue;
 						if (entry_input->description.IsEmpty(false))
 							continue;
 
 						// beware, according to FreeImage, the coordinate origin is top-left
 						// to match with OpenGL (bottom-left), we have to make a swap
-						int tex_x = info->x;
-						int tex_y = params.atlas_height - info->y - info->height;
+						int tex_x = layout->x;
+						int tex_y = params.atlas_height - layout->y - layout->height;
 
 						// copy and convert pixels
 						ImageDescription src_desc = entry_input->description;

@@ -108,20 +108,20 @@ namespace chaos
 				EmitCharacter(c, info, font_info);
 		}
 
-		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterInfo const * info, BitmapAtlas::FontInfo const * font_info)
+		void GeneratorData::EmitCharacter(char c, BitmapAtlas::CharacterLayout const * layout, BitmapAtlas::FontInfo const * font_info)
 		{
 			Token token;
 			token.character = c;
-			token.character_info = info;
+			token.character_layout = layout;
 			token.font_info = font_info;
 			token.color = style_stack.back().color;
 			InsertTokenInLine(token);
 		}
 
-		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapInfo const * info)
+		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapLayout const * layout)
 		{
 			Token token;
-			token.bitmap_info = info;
+			token.bitmap_layout = layout;
 			token.color = glm::vec3(1.0f, 1.0f, 1.0f);
 			InsertTokenInLine(token);
 		}
@@ -133,27 +133,27 @@ namespace chaos
 				result.token_lines.push_back(TokenLine());
 
 			// insert the token
-			if (token.bitmap_info != nullptr)
+			if (token.bitmap_layout != nullptr)
 			{
 				// restrict the bitmap to the size of the line
-				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_info->height);
+				float factor = MathTools::CastAndDiv<float>(params.line_height - 2 * params.bitmap_padding.y, token.bitmap_layout->height);
 
 				glm::vec2 bottomleft_position = bitmap_position + params.bitmap_padding;
 
 				glm::vec2 token_size;
-				token_size.x = factor * (float)token.bitmap_info->width;
+				token_size.x = factor * (float)token.bitmap_layout->width;
 				token_size.y = params.line_height - 2 * params.bitmap_padding.y;
 
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_info, atlas.GetAtlasDimension());
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_layout, atlas.GetAtlasDimension());
 
 				// next bitmap/character data
 				bitmap_position.x    += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 				character_position.x += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 			}
-			else if (token.character_info != nullptr)
+			else if (token.character_layout != nullptr)
 			{
 				// get the descender 
 				Style const & style = style_stack.back();
@@ -166,33 +166,33 @@ namespace chaos
 				glm::vec2 bottomleft_position;
 				bottomleft_position = character_position - glm::vec2(0.0f, descender) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-					(float)(token.character_info->bitmap_left),
-						(float)(token.character_info->bitmap_top - token.character_info->height) // XXX : -token.character_info->height => to have BOTTOM LEFT CORNER
+					(float)(token.character_layout->bitmap_left),
+						(float)(token.character_layout->bitmap_top - token.character_layout->height) // XXX : -token.character_layout->height => to have BOTTOM LEFT CORNER
 					);
 #endif
 
 				glm::vec2 bottomleft_position;
 				bottomleft_position = character_position - glm::vec2(0.0f, descender * factor) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-					(float)(token.character_info->bitmap_left),
-						(float)(token.character_info->bitmap_top - token.character_info->height) // XXX : -token.character_info->height => to have BOTTOM LEFT CORNER
+					(float)(token.character_layout->bitmap_left),
+						(float)(token.character_layout->bitmap_top - token.character_layout->height) // XXX : -token.character_layout->height => to have BOTTOM LEFT CORNER
 					);
 
 				glm::vec2 token_size;
-				token_size.x = factor * (float)token.character_info->width;
-				token_size.y = factor * (float)token.character_info->height;
+				token_size.x = factor * (float)token.character_layout->width;
+				token_size.y = factor * (float)token.character_layout->height;
 
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.character_info, atlas.GetAtlasDimension());
+				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.character_layout, atlas.GetAtlasDimension());
 
 				// XXX : Some fonts are in italic. The 'advance' cause some 'override' in character bounding box.
 				//       That's great for characters that are near one another
 				//       But with bitmap that causes real overide.
 				//       => that's why we are using two position : 'bitmap_position' & 'character_position'
 				bitmap_position.x = bottomleft_position.x + params.character_spacing + token_size.x;
-				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_info->advance.x);
+				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_layout->advance.x);
 
 			}
 			result.token_lines.back().push_back(token); // insert the token in the last line
@@ -607,7 +607,7 @@ namespace chaos
 							{
 								float factor = MathTools::CastAndDiv<float>(params.line_height, token.font_info->ascender - token.font_info->descender);
 
-								whitespace_width += factor * token.character_info->advance.x;
+								whitespace_width += factor * token.character_layout->advance.x;
 							}
 						}
 
@@ -633,7 +633,7 @@ namespace chaos
 							{
 								float factor = MathTools::CastAndDiv<float>(params.line_height, token.font_info->ascender - token.font_info->descender);
 
-								offset += factor * token.character_info->advance.x * whitespace_scale_factor;
+								offset += factor * token.character_layout->advance.x * whitespace_scale_factor;
 							}
 						}
 					}
@@ -751,9 +751,9 @@ namespace chaos
 				for (SpriteToken const & token : line)
 				{
 					if (token.IsBitmap())
-						sprite_manager->AddSpriteBitmap(token.bitmap_info, token.position, token.size, Hotpoint::BOTTOM_LEFT);
+						sprite_manager->AddSpriteBitmap(token.bitmap_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT);
 					else if (token.IsVisibleCharacter())
-						sprite_manager->AddSpriteCharacter(token.character_info, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
+						sprite_manager->AddSpriteCharacter(token.character_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
 				}
 			}
 			return true;

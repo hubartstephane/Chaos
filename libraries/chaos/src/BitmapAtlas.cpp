@@ -190,6 +190,72 @@ namespace chaos
 			return (size_t)animation_info->child_frame_count;
 		}
 
+
+
+
+
+		// ========================================================================
+		// FolderInfo functions
+		// ========================================================================
+
+		void FolderInfo::CollectEntries(std::vector<BitmapLayout> * layout_result, std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool recursive) const
+		{																													 
+			// early exit
+			if (layout_result == nullptr && bitmap_result == nullptr && character_result == nullptr)
+				return;
+			// collect layouts
+			if (layout_result != nullptr)
+			{
+				size_t count = bitmaps.size();
+
+				layout_result->reserve(layout_result->size() + count);
+				for (size_t i = 0; i < count; ++i)
+					layout_result->push_back(bitmaps[i]);
+			}
+			// collect bitmaps
+			if (bitmap_result != nullptr)
+			{
+				size_t count = bitmaps.size();
+
+				bitmap_result->reserve(bitmap_result->size() + count);
+				for (size_t i = 0; i < count; ++i)
+					bitmap_result->push_back(bitmaps[i]);
+			}
+			// collect fonts
+			if (layout_result != nullptr || character_result != nullptr)
+			{
+				size_t font_count = fonts.size();
+				for (size_t i = 0; i < font_count; ++i)
+				{
+					font_type const & font_info = fonts[i];
+
+					size_t count = font_info.elements.size();
+
+					if (layout_result != nullptr)
+					{
+						layout_result->reserve(layout_result->size() + count);
+						for (size_t j = 0; j < count; ++j)
+							layout_result->push_back(font_info.elements[j]);
+					}
+
+					if (character_result != nullptr)
+					{
+						character_result->reserve(character_result->size() + count);
+						for (size_t j = 0; j < count; ++j)
+							character_result->push_back(font_info.elements[j]);
+					}
+				}
+
+			}
+			// recursion
+			if (recursive)
+			{
+				size_t folder_count = folders.size();
+				for (size_t i = 0; i < folder_count; ++i)
+					folders[i]->CollectEntries(layout_result, bitmap_result, character_result, recursive);
+			}
+		}
+
 		// ========================================================================
 		// Atlas functions
 		// ========================================================================
@@ -420,9 +486,9 @@ namespace chaos
 			return stream.str();
 		}
 
-		void AtlasBase::CollectEntries(std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool convert_font_into_bitmap, bool recursive) const
+		void AtlasBase::CollectEntries(std::vector<BitmapLayout> * layout_result, std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool recursive) const
 		{
-			root_folder.CollectEntries(bitmap_result, character_result, convert_font_into_bitmap, recursive);
+			root_folder.CollectEntries(layout_result, bitmap_result, character_result, recursive);
 		}
 
 		// ========================================================================

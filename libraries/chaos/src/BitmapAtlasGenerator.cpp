@@ -318,7 +318,7 @@ namespace chaos
 				BitmapInfoInput * bitmap_info_input = folder_info_input->bitmaps[i].get();
 				BitmapInfo      * bitmap_info = &folder_info_output->bitmaps[i];
 
-				bitmap_info_input->output_info = bitmap_info;
+				bitmap_info_input->bitmap_output_info = bitmap_info;
 				result.push_back(bitmap_info_input);
 			}
 
@@ -393,7 +393,7 @@ namespace chaos
 				size_t character_count = font_info_input->elements.size();
 				for (size_t j = 0; j < character_count; ++j)
 				{
-					font_info_input->elements[j]->output_info = &font_info_output.elements[j];
+					font_info_input->elements[j]->character_output_info = &font_info_output.elements[j];
 					result.push_back(font_info_input->elements[j].get());
 				}
 			}
@@ -563,7 +563,10 @@ namespace chaos
 
 					atlas_definitions.push_back(std::move(def));
 				}
-				InsertBitmapInAtlas(*entries[entry_index]->output_info, atlas_definitions[best_atlas_index], best_x, best_y);
+
+				BitmapLayout * layout = GetBitmapLayout(entries[entry_index]);
+				if (layout != nullptr)					
+					InsertBitmapLayoutInAtlas(*layout, atlas_definitions[best_atlas_index], best_x, best_y);
 			}
 			return true;
 		}
@@ -705,21 +708,21 @@ namespace chaos
 			v.insert(it, value);
 		}
 
-		void AtlasGenerator::InsertBitmapInAtlas(BitmapInfo & info, AtlasDefinition & atlas_def, int x, int y)
+		void AtlasGenerator::InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, int x, int y)
 		{
-			info.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
-			info.x = x + params.atlas_padding;
-			info.y = y + params.atlas_padding;
+			layout.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
+			layout.x = x + params.atlas_padding;
+			layout.y = y + params.atlas_padding;
 
 			InsertOrdered(atlas_def.split_x, x);
-			InsertOrdered(atlas_def.split_x, x + info.width + 2 * params.atlas_padding);
+			InsertOrdered(atlas_def.split_x, x + layout.width + 2 * params.atlas_padding);
 
 			InsertOrdered(atlas_def.split_y, y);
-			InsertOrdered(atlas_def.split_y, y + info.height + 2 * params.atlas_padding);
+			InsertOrdered(atlas_def.split_y, y + layout.height + 2 * params.atlas_padding);
 
 			atlas_def.surface_sum += (unsigned int)
-				((info.width + 2 * params.atlas_padding) *
-				(info.height + 2 * params.atlas_padding));
+				((layout.width + 2 * params.atlas_padding) *
+				(layout.height + 2 * params.atlas_padding));
 		}
 
 		bool AtlasGenerator::CreateAtlasFromDirectory(FilePathParam const & bitmaps_dir, FilePathParam const & path, bool recursive, AtlasGeneratorParams const & in_params)

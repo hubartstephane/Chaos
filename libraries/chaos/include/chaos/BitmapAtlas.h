@@ -244,54 +244,7 @@ namespace chaos
 				folders.clear();
 			}
 
-			/** get all entries from the root folder */
-			void CollectEntries(std::vector<bitmap_type> * bitmap_result, std::vector<character_type> * character_result, bool convert_font_into_bitmap, bool recursive) const
-			{
-				assert(!convert_font_into_bitmap || character_result == nullptr); // not clear what expected if there is a font result + conversion
-				assert(!convert_font_into_bitmap || bitmap_result != nullptr); // cannot convert without a result vector
-				// early exit
-				if (bitmap_result == nullptr && character_result == nullptr)
-					return;
-				// collect bitmaps
-				if (bitmap_result != nullptr)
-				{
-					size_t bitmap_count = bitmaps.size();
-					bitmap_result->reserve(bitmap_result->size() + bitmap_count);
 
-					for (size_t i = 0; i < bitmap_count; ++i)
-						bitmap_result->push_back(bitmaps[i]);
-				}
-				// collect fonts
-				if (character_result != nullptr || (bitmap_result != nullptr && convert_font_into_bitmap))
-				{
-					size_t font_count = fonts.size();
-					for (size_t i = 0; i < font_count; ++i)
-					{
-						font_type const & font_info = fonts[i];
-
-						size_t character_count = font_info.elements.size();
-						if (!convert_font_into_bitmap)
-						{
-							character_result->reserve(character_result->size() + character_count);
-							for (size_t j = 0; j < character_count; ++j)		
-								character_result->push_back(font_info.elements[j]);
-						}
-						else
-						{
-							bitmap_result->reserve(bitmap_result->size() + character_count);
-							for (size_t j = 0; j < character_count; ++j)		
-								bitmap_result->push_back(font_info.elements[j]);
-						}
-					}
-				}
-				// recursion
-				if (recursive)
-				{
-					size_t folder_count = folders.size();
-					for (size_t i = 0; i < folder_count; ++i)
-						folders[i]->CollectEntries(bitmap_result, character_result, convert_font_into_bitmap, recursive);
-				}
-			}
 
 		public:
 
@@ -309,7 +262,10 @@ namespace chaos
 
 		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase, boost::mpl::identity<boost::mpl::_1>>
 		{
+		public:
 
+			/** get all entries from the root folder */
+			void CollectEntries(std::vector<BitmapLayout> * layout_result, std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool recursive) const;
 		};
 
 		/**
@@ -444,7 +400,7 @@ namespace chaos
 			static std::string GetInfoString(CharacterInfo const & info);
 
 			/** get all entries from the root folder */
-			void CollectEntries(std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool convert_font_into_bitmap, bool recursive) const;
+			void CollectEntries(std::vector<BitmapLayout> * layout_result, std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool recursive) const;
 
 		protected:
 

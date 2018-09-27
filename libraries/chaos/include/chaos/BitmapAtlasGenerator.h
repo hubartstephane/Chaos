@@ -140,7 +140,7 @@ namespace chaos
 			/** insert an integer in a vector. keep it ordered */
 			void InsertOrdered(std::vector<int> & v, int value);
 			/** insert a bitmap in an atlas definition */
-			void InsertBitmapInAtlas(BitmapInfo & info, AtlasDefinition & atlas_def, int x, int y);
+			void InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, int x, int y);
 
 			/** an utility function that returns an array with 0.. count - 1*/
 			static std::vector<size_t> CreateIndexTable(size_t count)

@@ -108,7 +108,7 @@ namespace chaos
 			/** a pointer on the destination info associated */
 			BitmapInfo * bitmap_output_info = nullptr;
 			/** a pointer on the destination info associated */
-			BitmapInfo * character_output_info = nullptr;
+			CharacterInfo * character_output_info = nullptr;
 		};
 
 		/**

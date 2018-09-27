@@ -139,7 +139,7 @@ protected:
     if (!LoadTextureArray(resources_path))
       return false;
 
-		atlas.CollectEntries(&bitmaps, nullptr, true, true);
+		atlas.CollectEntries(&bitmaps, nullptr, true);
 		if (bitmaps.size() == 0)
 			return false;
 

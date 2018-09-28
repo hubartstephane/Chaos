@@ -265,7 +265,25 @@ namespace chaos
 		public:
 
 			/** get all entries from the root folder */
-			void CollectEntries(std::vector<BitmapLayout> * layout_result, std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool recursive) const;
+			template<typename T, typename ...PARAMS>
+			void CollectEntries(T & result, bool recursive, PARAMS... params)
+			{
+				DoCollectEntries(result);
+				if (recursive)
+				{
+					size_t folder_count = folders.size();
+					for (size_t i = 0; i < folder_count; ++i)
+						folders[i]->CollectEntries(result, recursive, params...);
+				}			
+			}
+			
+		protected:
+
+			void DoCollectEntries(std::vector<BitmapInfo> & result);
+			/** get all entries from the root folder */
+			void DoCollectEntries(std::vector<CharacterInfo> & result);
+			/** get all entries from the root folder */
+			void DoCollectEntries(std::vector<BitmapLayout> & result, bool collect_bitmaps = true, bool collect_characters = true);
 		};
 
 		/**
@@ -400,7 +418,11 @@ namespace chaos
 			static std::string GetInfoString(CharacterInfo const & info);
 
 			/** get all entries from the root folder */
-			void CollectEntries(std::vector<BitmapLayout> * layout_result, std::vector<BitmapInfo> * bitmap_result, std::vector<CharacterInfo> * character_result, bool recursive) const;
+			template<typename T, typename ...PARAMS>
+			void CollectEntries(T & result, bool recursive, PARAMS... params)
+			{
+				root_folder.CollectEntries(result, recursive, params...);
+			}
 
 		protected:
 

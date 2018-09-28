@@ -72,7 +72,7 @@ namespace chaos
     /** internal method to send data to GPU */
     void UpdateGPUVertexBuffer();
     /** internal method to insert a sprite in the buffer */
-    void AddSpriteImpl(BitmapAtlas::BitmapInfo const * info, ParticleCorners const & corners, glm::vec3 const & color);
+    void AddSpriteImpl(BitmapAtlas::BitmapLayout const * layout, ParticleCorners const & corners, glm::vec3 const & color);
 
   protected:
 

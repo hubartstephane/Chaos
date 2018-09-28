@@ -118,9 +118,9 @@ namespace chaos
 		AddSpriteImpl(info, corners, color);
 	}
 
-	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapInfo const * info, ParticleCorners const & corners, glm::vec3 const & color)
+	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapLayout const * layout, ParticleCorners const & corners, glm::vec3 const & color)
 	{
-		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*info, atlas->GetAtlasDimension());
+		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*layout, atlas->GetAtlasDimension());
 
 		// extend the array
 		size_t count = sprites.size();

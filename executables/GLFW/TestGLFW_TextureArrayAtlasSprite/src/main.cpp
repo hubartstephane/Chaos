@@ -45,8 +45,8 @@ protected:
   void GenerateParticles(float w, float h)
   {
 		// get the existing bitmaps
-		std::vector<chaos::BitmapAtlas::BitmapInfo> bitmaps;
-		atlas->CollectEntries(&bitmaps, nullptr, true, true);
+		std::vector<chaos::BitmapAtlas::BitmapLayout> bitmaps;
+		atlas->CollectEntries(bitmaps, true);
 
 		size_t bitmap_count = bitmaps.size();
 		if (bitmap_count == 0)

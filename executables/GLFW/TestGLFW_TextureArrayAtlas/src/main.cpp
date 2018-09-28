@@ -27,47 +27,45 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-  virtual bool OnDraw(glm::ivec2 size) override
-  {
-    glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
-    glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+	virtual bool OnDraw(glm::ivec2 size) override
+	{
+		glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
-    float far_plane = 1000.0f;
-    glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+		float far_plane = 1000.0f;
+		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		if (bitmap_index >= bitmaps.size())
-			bitmap_index = bitmaps.size() - 1;
+		if (bitmap_index >= bitmap_layouts.size())
+			bitmap_index = bitmap_layouts.size() - 1;
 
-		chaos::BitmapAtlas::BitmapInfo const * info = &bitmaps[bitmap_index];
-    if (info == nullptr)
-      return true;
+		chaos::BitmapAtlas::BitmapLayout const & layout = bitmap_layouts[bitmap_index];
 
-    glViewport(0, 0, size.x, size.y);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);   // when viewer is inside the cube
+		glViewport(0, 0, size.x, size.y);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
-    // XXX : the scaling is used to avoid the near plane clipping
-    chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+								  // XXX : the scaling is used to avoid the near plane clipping
+		chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-    static float FOV = 60.0f;
-    glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
-    glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
-    glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
+		static float FOV = 60.0f;
+		glm::mat4 projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
+		glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
+		glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
-    chaos::GPUProgramProvider uniform_provider;
+		chaos::GPUProgramProvider uniform_provider;
 
-    uniform_provider.AddVariableValue("projection",      projection);
-    uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
-    uniform_provider.AddVariableValue("local_to_world",  local_to_world);
-    uniform_provider.AddVariableValue("texture_slice", (float)info->bitmap_index);
+		uniform_provider.AddVariableValue("projection",      projection);
+		uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
+		uniform_provider.AddVariableValue("local_to_world",  local_to_world);
+		uniform_provider.AddVariableValue("texture_slice", (float)layout.bitmap_index);
 
-    uniform_provider.AddVariableTexture("material", atlas.GetTexture());
+		uniform_provider.AddVariableTexture("material", atlas.GetTexture());
 
-    glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
+		glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
 
-    glm::vec2 entry_start = glm::vec2((float)info->x, (float)info->y);
-    glm::vec2 entry_size  = glm::vec2((float)info->width, (float)info->height);
-    glm::vec2 entry_end   = entry_start + entry_size;
+		glm::vec2 entry_start = glm::vec2((float)layout.x, (float)layout.y);
+		glm::vec2 entry_size  = glm::vec2((float)layout.width, (float)layout.height);
+		glm::vec2 entry_end   = entry_start + entry_size;
 
 		glm::vec2 bottomleft;
 		glm::vec2 topright; 
@@ -78,117 +76,117 @@ protected:
 		topright.y = 1.0f - (entry_start.y / atlas_dimension.y);
 		bottomleft.y = 1.0f - (entry_end.y / atlas_dimension.y);  // BITMAP coordinates and OpenGL textures coordinates are inverted
 
-    uniform_provider.AddVariableValue("bottomleft", bottomleft);
-    uniform_provider.AddVariableValue("topright", topright);
+		uniform_provider.AddVariableValue("bottomleft", bottomleft);
+		uniform_provider.AddVariableValue("topright", topright);
 
-    mesh_box->Render(program_box.get(), &uniform_provider);
+		mesh_box->Render(program_box.get(), &uniform_provider);
 
-    debug_display.Display(size.x, size.y);
+		debug_display.Display(size.x, size.y);
 
-    return true;
-  }
+		return true;
+	}
 
-  virtual void Finalize() override
-  {
-    mesh_box    = nullptr;
-    program_box = nullptr;
-    atlas.Clear();
+	virtual void Finalize() override
+	{
+		mesh_box    = nullptr;
+		program_box = nullptr;
+		atlas.Clear();
 
-    debug_display.Finalize();
-  }
+		debug_display.Finalize();
+	}
 
-  boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
-  {
-    chaos::GPUProgramGenerator program_generator;
-    program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-    program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
+	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+	{
+		chaos::GPUProgramGenerator program_generator;
+		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
+		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
 
-    return program_generator.GenProgramObject();
-  }
+		return program_generator.GenProgramObject();
+	}
 
 
-  bool LoadTextureArray(boost::filesystem::path const & resources_path)
-  {
-    return atlas.LoadAtlas(resources_path / "MyAtlas.json");
-  }
+	bool LoadTextureArray(boost::filesystem::path const & resources_path)
+	{
+		return atlas.LoadAtlas(resources_path / "MyAtlas.json");
+	}
 
-  virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
-  {
-    chaos::Application * application = chaos::Application::GetInstance();
-    if (application == nullptr)
-      return false;
-
-    // compute resource path
-    boost::filesystem::path resources_path = application->GetResourcesPath();
-    boost::filesystem::path font_path = resources_path / "font.png";
-
-    // initialize debug font display 
-    chaos::GLDebugOnScreenDisplay::Params debug_params;
-    debug_params.texture_path               = font_path;
-    debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    debug_params.font_characters_per_line   = 10;
-    debug_params.font_characters_line_count = 10;
-    debug_params.character_width            = 20;
-    debug_params.spacing                    = glm::ivec2( 0, 0);
-    debug_params.crop_texture               = glm::ivec2(15, 7);
-
-    if (!debug_display.Initialize(debug_params))
-      return false;
-    
-    // load texture
-    if (!LoadTextureArray(resources_path))
-      return false;
-
-		atlas.CollectEntries(&bitmaps, nullptr, true);
-		if (bitmaps.size() == 0)
+	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
+	{
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
 			return false;
 
-    // load programs      
-    program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
-    if (program_box == nullptr)
-      return false;
+		// compute resource path
+		boost::filesystem::path resources_path = application->GetResourcesPath();
+		boost::filesystem::path font_path = resources_path / "font.png";
 
-    // create meshes
-    chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		// initialize debug font display 
+		chaos::GLDebugOnScreenDisplay::Params debug_params;
+		debug_params.texture_path               = font_path;
+		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+		debug_params.font_characters_per_line   = 10;
+		debug_params.font_characters_line_count = 10;
+		debug_params.character_width            = 20;
+		debug_params.spacing                    = glm::ivec2( 0, 0);
+		debug_params.crop_texture               = glm::ivec2(15, 7);
 
-    chaos::MultiMeshGenerator generators;    
-    generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
+		if (!debug_display.Initialize(debug_params))
+			return false;
 
-    if (!generators.GenerateMeshes())
-      return false;
+		// load texture
+		if (!LoadTextureArray(resources_path))
+			return false;
 
-    // place camera
-    fps_view_controller.fps_controller.position.y = 0.0f;
-    fps_view_controller.fps_controller.position.z = 10.0f;
+		atlas.CollectEntries(bitmap_layouts, true);
+		if (bitmap_layouts.size() == 0)
+			return false;
 
-    // initial display
-    debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
+		// load programs      
+		program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
+		if (program_box == nullptr)
+			return false;
 
-    return true;
-  }
+		// create meshes
+		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-  virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
-  {
-    chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::MultiMeshGenerator generators;    
+		generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
 
-    hints.toplevel  = 0;
-    hints.decorated = 1;
-  }
+		if (!generators.GenerateMeshes())
+			return false;
 
-  virtual bool Tick(double delta_time) override
-  {
-    if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      RequireWindowClosure();
+		// place camera
+		fps_view_controller.fps_controller.position.y = 0.0f;
+		fps_view_controller.fps_controller.position.z = 10.0f;
 
-    fps_view_controller.Tick(glfw_window, delta_time);
+		// initial display
+		debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
 
-    debug_display.Tick(delta_time);
+		return true;
+	}
 
-    return true; // refresh
-  }
+	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	{
+		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
-  {
+		hints.toplevel  = 0;
+		hints.decorated = 1;
+	}
+
+	virtual bool Tick(double delta_time) override
+	{
+		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			RequireWindowClosure();
+
+		fps_view_controller.Tick(glfw_window, delta_time);
+
+		debug_display.Tick(delta_time);
+
+		return true; // refresh
+	}
+
+	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 			++bitmap_index;
 		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
@@ -196,34 +194,34 @@ protected:
 			if (bitmap_index > 0)
 				--bitmap_index;
 		}
-  }
+	}
 
 protected:
 
-  // rendering for the box  
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-  boost::intrusive_ptr<chaos::GPUProgram>  program_box;
+	// rendering for the box  
+	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
+	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
 
-  chaos::BitmapAtlas::TextureArrayAtlas atlas;
+	chaos::BitmapAtlas::TextureArrayAtlas atlas;
 
-  size_t bitmap_index = 0;
-	std::vector<chaos::BitmapAtlas::BitmapInfo> bitmaps;
+	size_t bitmap_index = 0;
+	std::vector<chaos::BitmapAtlas::BitmapLayout> bitmap_layouts;
 
-  chaos::FPSViewInputController fps_view_controller;
+	chaos::FPSViewInputController fps_view_controller;
 
-  chaos::GLDebugOnScreenDisplay debug_display;
+	chaos::GLDebugOnScreenDisplay debug_display;
 };
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-  chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor = nullptr;
-  params.width = 1200;
-  params.height = 600;
-  params.monitor_index = 0;
-  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
+	chaos::MyGLFW::SingleWindowApplicationParams params;
+	params.monitor = nullptr;
+	params.width = 1200;
+	params.height = 600;
+	params.monitor_index = 0;
+	chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
-  return 0;
+	return 0;
 }
 
 

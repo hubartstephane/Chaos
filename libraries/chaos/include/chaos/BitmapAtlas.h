@@ -268,7 +268,7 @@ namespace chaos
 			template<typename T, typename ...PARAMS>
 			void CollectEntries(T & result, bool recursive, PARAMS... params)
 			{
-				DoCollectEntries(result);
+				DoCollectEntries(result, params...);
 				if (recursive)
 				{
 					size_t folder_count = folders.size();

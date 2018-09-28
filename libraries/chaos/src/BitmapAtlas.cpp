@@ -132,62 +132,104 @@ namespace chaos
 		}
 
 		// ========================================================================
+		// BitmapAnimationInfo functions
+		// ========================================================================
+
+		bool BitmapAnimationInfo::IsFrameAnimation() const
+		{
+			return (child_frame_count > 0);
+		}
+
+		bool BitmapAnimationInfo::IsGridAnimation() const
+		{
+			if (IsFrameAnimation())
+				return false;
+			return !grid_data.IsEmpty();
+		}
+
+		// ========================================================================
 		// BitmapInfo functions
 		// ========================================================================
 
-		BitmapLayout BitmapInfo::GetAnimationFrameLayout(size_t index) const
+		bool BitmapInfo::HasAnimation() const
 		{
-			// non animated bitmap
 			if (animation_info == nullptr)
-				return BitmapLayout();
-			// test whether the frame index is valid
-			if (index >= GetAnimationFrameCount())
-				return BitmapLayout();
-			// whether this is a grid animation
-			if (!animation_info->grid_data.IsEmpty())
-			{
-				size_t frame_count = (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
-				if (index >= frame_count)
-					return BitmapLayout();
-
-			}
-			// whether this is contigus Bitmap style animation
-
-
-
-
-			return BitmapLayout();
+				return false;
+			return true;
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationFrameLayout(glm::ivec2 const & index) const
+		bool BitmapInfo::HasFrameAnimation() const
+		{
+			if (animation_info == nullptr)
+				return false;
+			return animation_info->IsFrameAnimation();
+		}
+
+		bool BitmapInfo::HasGridAnimation() const
+		{
+			if (animation_info == nullptr)
+				return false;
+			return animation_info->IsGridAnimation();
+		}
+
+		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
 				return BitmapLayout();
-			// this function is only valid for grid
-			if (animation_info->grid_data.IsEmpty())
+			// non frame animation
+			if (!animation_info->IsFrameAnimation())
+				return BitmapLayout();
+			// whether the index is out of range
+			if (index >= (size_t)animation_info->child_frame_count)
+				return BitmapLayout();
+			// find the bitmap further in the bitmapinfo array
+			return this[index];
+		}
+
+		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & index) const
+		{
+			BitmapLayout result;
+
+			// non animated bitmap
+			if (animation_info == nullptr)
+				return BitmapLayout();
+			// non grid animation
+			if (!animation_info->IsGridAnimation())
 				return BitmapLayout();
 			// test whether the index is valid
-			if (index.x < 0 || index.x >= animation_info->grid_data.grid_size.x)
+			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
+
+			if (index.x < 0 || index.x >= grid_data.grid_size.x)
 				return BitmapLayout();
-			if (index.y < 0 || index.y >= animation_info->grid_data.grid_size.y)
+			if (index.y < 0 || index.y >= grid_data.grid_size.y)
 				return BitmapLayout();
-			
+			// test with skip consideration
+			if (grid_data.skip_lasts > 0) // if 0 this test is useless
+			{
+				int effective_index = index.x + index.y * grid_data.grid_size.x;
+				if (effective_index >= grid_data.grid_size.x * grid_data.grid_size.y * grid_data.skip_lasts)
+					return BitmapLayout();
+			}
+			// the result
+			result.bitmap_index = bitmap_index;
+			result.width  = width  / grid_data.grid_size.x;
+			result.height = height / grid_data.grid_size.y;
+			result.x = x + (index.x * result.width);
+			result.y = y + (index.y * result.height);
 
-
-			//child_info->x = parent_info->x + (parent_info->width / parent_input_entry->grid_size.x) * input_entry->grid_position.x;
-			//child_info->y = parent_info->y + (parent_info->height / parent_input_entry->grid_size.y) * input_entry->grid_position.y;
-
-			return BitmapLayout();
+			return result;
 		}
 
-		size_t BitmapInfo::GetAnimationFrameCount() const
+		size_t BitmapInfo::GetAnimationImageCount() const
 		{
 			if (animation_info == nullptr)
 				return 0;
-			if (!animation_info->grid_data.IsEmpty())
-				return (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
-			return (size_t)animation_info->child_frame_count;
+			if (animation_info->IsFrameAnimation())
+				return animation_info->child_frame_count;
+
+			assert(animation_info->IsGridAnimation());
+			return (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
 		}
 
 		// ========================================================================
@@ -243,7 +285,6 @@ namespace chaos
 						result.push_back(font_info.elements[j]);
 				}
 			}
-		
 		}
 
 		// ========================================================================

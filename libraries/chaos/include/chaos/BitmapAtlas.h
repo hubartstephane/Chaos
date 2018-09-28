@@ -102,6 +102,13 @@ namespace chaos
 		{
 		public:
 
+			/** returns true whether the animation is of type frame (i.e GIF) */
+			bool IsFrameAnimation() const;
+			/** returns true whether the animation is of type grid */
+			bool IsGridAnimation() const;
+
+		public:
+
 			/** if the animation is stored inside a grid */
 			BitmapGridAnimationInfo grid_data;
 			/** number of child frame (directly following the BitmapInfo */
@@ -116,12 +123,19 @@ namespace chaos
 		{
 		public:
 
+			/** returns true whether the bitmap contains an animation of any type */
+			bool HasAnimation() const;
+			/** returns true whether the bitmap contains an animation of type frame (i.e GIF) */
+			bool HasFrameAnimation() const;
+			/** returns true whether the bitmap contains an animation of type grid */
+			bool HasGridAnimation() const;
+
 			/** returns the layout for one linear frame of the animation */
-			BitmapLayout GetAnimationFrameLayout(size_t index) const;
+			BitmapLayout GetAnimationLayout(size_t index) const;
 			/** returns the layout for one grid frame of the animation */
-			BitmapLayout GetAnimationFrameLayout(glm::ivec2 const & index) const;
+			BitmapLayout GetAnimationLayout(glm::ivec2 const & index) const;
 			/** returns the number of frames in the animation */
-			size_t GetAnimationFrameCount() const;
+			size_t GetAnimationImageCount() const;
 
 		public:
 

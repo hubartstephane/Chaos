@@ -31,7 +31,7 @@ namespace chaos
 		public:
 
 			/** returns whether the animation is valid */
-			bool IsEmpty() const { return (grid_size.x <= 0) || (grid_size.y <= 0); }
+			bool IsEmpty() const { return (grid_size.x * grid_size.y - skip_lasts <= 0); }
 
 			/** parsing the the name to extract the grid numbers */
 			static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
@@ -131,11 +131,18 @@ namespace chaos
 			bool HasGridAnimation() const;
 
 			/** returns the layout for one linear frame of the animation */
-			BitmapLayout GetAnimationLayout(size_t index) const;
+			BitmapLayout GetAnimationLayout(size_t index, bool clamp_index) const;
 			/** returns the layout for one grid frame of the animation */
-			BitmapLayout GetAnimationLayout(glm::ivec2 const & index) const;
+			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, bool clamp_index) const;
 			/** returns the number of frames in the animation */
 			size_t GetAnimationImageCount() const;
+
+		protected:
+
+			/** utility method */
+			BitmapLayout DoGetFrameAnimationLayout(int index, bool clamp_index) const;
+			/** utility method */
+			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, bool clamp_index) const;
 
 		public:
 

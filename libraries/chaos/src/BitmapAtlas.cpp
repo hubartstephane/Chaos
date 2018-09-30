@@ -172,53 +172,101 @@ namespace chaos
 			return animation_info->IsGridAnimation();
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index) const
+		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, bool clamp_index) const
 		{
-			// non animated bitmap
-			if (animation_info == nullptr)
-				return BitmapLayout();
-			// non frame animation
-			if (!animation_info->IsFrameAnimation())
-				return BitmapLayout();
-			// whether the index is out of range
-			if (index >= (size_t)animation_info->child_frame_count)
-				return BitmapLayout();
+			// check index range, returns failure or clamp
+			if (index < 0 || index >= animation_info->child_frame_count)
+			{
+				if (!clamp_index)
+					return BitmapLayout();
+				index = MathTools::Clamp(index, 0, animation_info->child_frame_count - 1);
+			}
 			// find the bitmap further in the bitmapinfo array
 			return this[index];
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & index) const
+		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, bool clamp_index) const
 		{
-			BitmapLayout result;
+			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
+			// check grid_index range, returns failure or clamp
+			if (grid_index.x < 0 || grid_index.x >= grid_data.grid_size.x)
+			{
+				if (!clamp_index)
+					return BitmapLayout();
+				grid_index.x = MathTools::Clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
+			}
+
+			if (grid_index.y < 0 || grid_index.y >= grid_data.grid_size.y)
+			{
+				if (!clamp_index)
+					return BitmapLayout();
+				grid_index.y = MathTools::Clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
+			}
+
+			// check linear index and skip_lasts 
+			if (grid_data.skip_lasts > 0) // if 0 this test is useless
+			{
+				int index = grid_index.x + grid_index.y * grid_data.grid_size.x;
+
+				int animation_count = (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
+				if (index >= animation_count)
+				{
+					if (!clamp_index)
+						return BitmapLayout();
+					index = animation_count - 1;
+					grid_index.x = (index % grid_data.grid_size.x);
+					grid_index.y = (index / grid_data.grid_size.x);
+				}			
+			}
+
+			// compute the result
+			BitmapLayout result;
+			result.bitmap_index = bitmap_index;
+			result.width = width / animation_info->grid_data.grid_size.x;
+			result.height = height / animation_info->grid_data.grid_size.y;
+			result.x = x + (grid_index.x * result.width);
+			result.y = y + (grid_index.y * result.height);
+			return result;
+		}
+
+		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, bool clamp_index) const
+		{
 			// non animated bitmap
 			if (animation_info == nullptr)
 				return BitmapLayout();
-			// non grid animation
-			if (!animation_info->IsGridAnimation())
-				return BitmapLayout();
-			// test whether the index is valid
-			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
-
-			if (index.x < 0 || index.x >= grid_data.grid_size.x)
-				return BitmapLayout();
-			if (index.y < 0 || index.y >= grid_data.grid_size.y)
-				return BitmapLayout();
-			// test with skip consideration
-			if (grid_data.skip_lasts > 0) // if 0 this test is useless
+			// frame base animation
+			if (animation_info->IsFrameAnimation())
 			{
-				int effective_index = index.x + index.y * grid_data.grid_size.x;
-				if (effective_index >= grid_data.grid_size.x * grid_data.grid_size.y * grid_data.skip_lasts)
-					return BitmapLayout();
+				return DoGetFrameAnimationLayout((int)index, clamp_index);
 			}
-			// the result
-			result.bitmap_index = bitmap_index;
-			result.width  = width  / grid_data.grid_size.x;
-			result.height = height / grid_data.grid_size.y;
-			result.x = x + (index.x * result.width);
-			result.y = y + (index.y * result.height);
+			else // grid base animation
+			{
+				BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
-			return result;
+				glm::ivec2 grid_index;
+				grid_index.x = ((int)index) % grid_data.grid_size.x;
+				grid_index.y = ((int)index) / grid_data.grid_size.x;
+				return DoGetGridAnimationLayout(grid_index, clamp_index);
+			}
+		}
+
+		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, bool clamp_index) const
+		{
+			// non animated bitmap
+			if (animation_info == nullptr)
+				return BitmapLayout();
+			// frame base animation
+			if (animation_info->IsFrameAnimation())
+			{
+				if (grid_index.y != 0 && !clamp_index)
+					return BitmapLayout();
+				return DoGetFrameAnimationLayout(grid_index.x, clamp_index);
+			}
+			else // grid base animation
+			{
+				return DoGetGridAnimationLayout(grid_index, clamp_index);
+			}
 		}
 
 		size_t BitmapInfo::GetAnimationImageCount() const

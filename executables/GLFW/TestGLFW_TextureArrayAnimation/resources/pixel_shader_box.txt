@@ -1,0 +1,23 @@
+out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+in vec3 vs_position;
+
+uniform sampler2DArray material;
+
+uniform float texture_slice;
+uniform vec2 bottomleft;
+uniform vec2 topright;
+
+void main()
+{
+  vec3 tex_coord;
+
+	tex_coord.xy = 
+		bottomleft + 
+		(topright - bottomleft) * (vs_position.xy * 0.5 + 0.5);
+
+	tex_coord.z  = texture_slice;
+  output_color.xyz = texture(material, tex_coord).xyz;
+
+  output_color.w = 0.0; // keep alpha from incomming color
+}

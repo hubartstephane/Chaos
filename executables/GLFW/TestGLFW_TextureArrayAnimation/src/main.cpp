@@ -11,6 +11,8 @@
 #include <chaos/Application.h>
 #include <chaos/SimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
+#include <chaos/BitmapAtlasInput.h>
+#include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
@@ -35,10 +37,13 @@ protected:
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		if (bitmap_index >= bitmap_layouts.size())
-			bitmap_index = bitmap_layouts.size() - 1;
+		chaos::BitmapAtlas::BitmapInfo const * info = atlas->GetBitmapInfo("moving", true);
+		if (info == nullptr)
+			return true;
 
-		chaos::BitmapAtlas::BitmapLayout const & layout = bitmap_layouts[bitmap_index];
+		bitmap_index = 0; // (bitmap_index + 1) % info->GetAnimationImageCount();
+
+		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(bitmap_index, true);
 
 		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
@@ -59,9 +64,9 @@ protected:
 		uniform_provider.AddVariableValue("local_to_world",  local_to_world);
 		uniform_provider.AddVariableValue("texture_slice", (float)layout.bitmap_index);
 
-		uniform_provider.AddVariableTexture("material", atlas.GetTexture());
+		uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
-		glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
+		glm::vec2 atlas_dimension = atlas->GetAtlasDimension();
 
 		glm::vec2 entry_start = glm::vec2((float)layout.x, (float)layout.y);
 		glm::vec2 entry_size  = glm::vec2((float)layout.width, (float)layout.height);
@@ -81,8 +86,6 @@ protected:
 
 		mesh_box->Render(program_box.get(), &uniform_provider);
 
-		debug_display.Display(size.x, size.y);
-
 		return true;
 	}
 
@@ -90,9 +93,7 @@ protected:
 	{
 		mesh_box    = nullptr;
 		program_box = nullptr;
-		atlas.Clear();
-
-		debug_display.Finalize();
+		atlas = nullptr;
 	}
 
 	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -105,9 +106,18 @@ protected:
 	}
 
 
-	bool LoadTextureArray(boost::filesystem::path const & resources_path)
+	chaos::BitmapAtlas::TextureArrayAtlas * LoadTextureArray(boost::filesystem::path const & resources_path)
 	{
-		return atlas.LoadAtlas(resources_path / "MyAtlas.json");
+		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+
+		chaos::BitmapAtlas::AtlasInput input;
+		input.AddBitmap(resources_path / "moving_gif.gif", "moving", 0);
+		input.AddBitmap(resources_path / "walking_5x2s0.png", "walking", 1);
+
+		int ATLAS_SIZE = 1024;
+		int ATLAS_PADDING = 10;
+		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+		return generator.ComputeResult(input, params);
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
@@ -120,25 +130,9 @@ protected:
 		boost::filesystem::path resources_path = application->GetResourcesPath();
 		boost::filesystem::path font_path = resources_path / "font.png";
 
-		// initialize debug font display 
-		chaos::GLDebugOnScreenDisplay::Params debug_params;
-		debug_params.texture_path               = font_path;
-		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-		debug_params.font_characters_per_line   = 10;
-		debug_params.font_characters_line_count = 10;
-		debug_params.character_width            = 20;
-		debug_params.spacing                    = glm::ivec2( 0, 0);
-		debug_params.crop_texture               = glm::ivec2(15, 7);
-
-		if (!debug_display.Initialize(debug_params))
-			return false;
-
 		// load texture
-		if (!LoadTextureArray(resources_path))
-			return false;
-
-		atlas.CollectEntries(bitmap_layouts, true);
-		if (bitmap_layouts.size() == 0)
+		atlas = LoadTextureArray(resources_path);
+		if (atlas == nullptr)
 			return false;
 
 		// load programs      
@@ -159,9 +153,6 @@ protected:
 		fps_view_controller.fps_controller.position.y = 0.0f;
 		fps_view_controller.fps_controller.position.z = 10.0f;
 
-		// initial display
-		debug_display.AddLine("Draw a box with a texture array : \n  Use +/- to change slice.\n  Array composed of images with different size and BPP");
-
 		return true;
 	}
 
@@ -179,8 +170,6 @@ protected:
 			RequireWindowClosure();
 
 		fps_view_controller.Tick(glfw_window, delta_time);
-
-		debug_display.Tick(delta_time);
 
 		return true; // refresh
 	}
@@ -202,14 +191,11 @@ protected:
 	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
 	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
 
-	chaos::BitmapAtlas::TextureArrayAtlas atlas;
+	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
 
 	size_t bitmap_index = 0;
-	std::vector<chaos::BitmapAtlas::BitmapLayout> bitmap_layouts;
 
 	chaos::FPSViewInputController fps_view_controller;
-
-	chaos::GLDebugOnScreenDisplay debug_display;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

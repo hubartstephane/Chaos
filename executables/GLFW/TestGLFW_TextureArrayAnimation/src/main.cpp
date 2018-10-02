@@ -41,7 +41,7 @@ protected:
 		if (info == nullptr)
 			return true;
 
-		bitmap_index = 0; // (bitmap_index + 1) % info->GetAnimationImageCount();
+		bitmap_index = (bitmap_index + 1) % info->GetAnimationImageCount();
 
 		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(bitmap_index, true);
 
@@ -128,7 +128,6 @@ protected:
 
 		// compute resource path
 		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path font_path = resources_path / "font.png";
 
 		// load texture
 		atlas = LoadTextureArray(resources_path);

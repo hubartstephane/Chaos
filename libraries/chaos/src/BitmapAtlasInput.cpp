@@ -268,10 +268,9 @@ namespace chaos
 
 			// set the surface description
 			size_t page_count = pages.size();
-			if (page_count == 1)
-				result->description = ImageTools::GetImageDescription(pages[0]);
 
 			// finalize the result
+			result->description = ImageTools::GetImageDescription(pages[0]);
 			result->atlas_input = atlas_input;
 			result->name = name;
 			result->tag = tag;
@@ -295,7 +294,7 @@ namespace chaos
 					// animated images with frames						
 					if (page_count > 1)
 					{
-						for (size_t i = 0; i < page_count; ++i)
+						for (size_t i = 1; i < page_count; ++i)
 						{
 							// create the child frame
 							BitmapInfoInput * child_frame = new BitmapInfoInput; 

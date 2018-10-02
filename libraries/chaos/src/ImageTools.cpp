@@ -506,6 +506,46 @@ namespace chaos
 
 	FIBITMAP * ImageTools::ConvertToSupportedType(FIBITMAP * image, bool can_delete_src)
 	{
+		FITAG * tag = nullptr;
+
+		unsigned meta_count1 = FreeImage_GetMetadataCount(FIMD_ANIMATION, image);
+		unsigned meta_count2 = FreeImage_GetMetadataCount(FIMD_CUSTOM, image);
+
+		// "FrameLeft"
+		// "FrameTime"
+		// "FrameTop"
+		// "Interlaced"
+		// "Loop"
+
+		FITAG * FrameTimeTag = nullptr;
+		FreeImage_GetMetadata(FIMD_ANIMATION, image, "FrameTime", &FrameTimeTag);
+
+		FITAG * LoopTag = nullptr;
+		FreeImage_GetMetadata(FIMD_ANIMATION, image, "Loop", &LoopTag);
+
+		if (FrameTimeTag != nullptr || LoopTag != nullptr)
+			LoopTag = LoopTag;
+
+		FIMETADATA * meta = FreeImage_FindFirstMetadata(FIMD_ANIMATION, image, &tag);
+		if (meta != nullptr)
+		{
+			while (tag != nullptr)
+			{
+				const char * k = FreeImage_GetTagKey(tag);
+				WORD id = FreeImage_GetTagID(tag);
+				DWORD c = FreeImage_GetTagCount(tag);
+				DWORD l = FreeImage_GetTagLength(tag);
+				const void * v = FreeImage_GetTagValue(tag);
+
+				const char* cc = FreeImage_TagToString(FIMD_ANIMATION, tag);
+
+
+				if (!FreeImage_FindNextMetadata(meta, &tag))
+					break;
+			}
+			FreeImage_FindCloseMetadata(meta);
+		}
+
 		if (image == nullptr)
 			return nullptr;
 

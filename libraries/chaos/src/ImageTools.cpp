@@ -511,7 +511,24 @@ namespace chaos
 		unsigned meta_count1 = FreeImage_GetMetadataCount(FIMD_ANIMATION, image);
 		unsigned meta_count2 = FreeImage_GetMetadataCount(FIMD_CUSTOM, image);
 
+#if 0
+
+#define ANIMTAG_LOGICALWIDTH	0x0001
+#define ANIMTAG_LOGICALHEIGHT	0x0002
+#define ANIMTAG_GLOBALPALETTE	0x0003
+#define ANIMTAG_LOOP			0x0004
+#define ANIMTAG_FRAMELEFT		0x1001
+#define ANIMTAG_FRAMETOP		0x1002
+#define ANIMTAG_NOLOCALPALETTE	0x1003
+#define ANIMTAG_INTERLACED		0x1004
+#define ANIMTAG_FRAMETIME		0x1005
+#define ANIMTAG_DISPOSALMETHOD	0x1006
+#endif
+
+
 		// "FrameLeft"
+
+
 		// "FrameTime"
 		// "FrameTop"
 		// "Interlaced"

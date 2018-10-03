@@ -15,8 +15,11 @@ namespace chaos
 	{
 	public:
 
+		/** returns true whether the application has focus */
+		static bool IsApplicationForeground();
+
 		/** returns true whether the keyboard is AZERTY */
-		bool IsAzertyKeyboard();
+		static bool IsAzertyKeyboard();
 
 		/** create a "Press to continue ..." pause console */
 		static void PressToContinue();

@@ -5,6 +5,13 @@
 
 namespace chaos
 {
+	bool WinTools::IsApplicationForeground()
+	{
+		std::uint32_t foreground_process;
+		::GetWindowThreadProcessId(GetForegroundWindow(), (::DWORD *)&foreground_process);
+		return (foreground_process == GetCurrentProcessId());	
+	}
+
 	bool WinTools::IsAzertyKeyboard()
 	{
 

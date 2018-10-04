@@ -85,11 +85,14 @@ namespace chaos
 		static FIBITMAP * LoadImageFromFile(FilePathParam const & path);
 
 		/** load multiple image from a buffer (animated gif) */
-		static std::vector<FIBITMAP*> LoadMultipleImagesFromBuffer(Buffer<char> buffer);
+		static std::vector<FIBITMAP*> LoadMultipleImagesFromBuffer(Buffer<char> buffer, ImageAnimationDescription * anim_description = nullptr);
 		/** load multiple image from a file (animated gif) */
-		static std::vector<FIBITMAP*> LoadMultipleImagesFromFile(FilePathParam const & path);
+		static std::vector<FIBITMAP*> LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description = nullptr);
 		/** extract from a multi bitmap all pages (this is a 'duplication' due to library limitation) */
-		static std::vector<FIBITMAP *> ImageTools::GetMultiImagePages(FIMULTIBITMAP * multi_bitmap);
+		static std::vector<FIBITMAP *> ImageTools::GetMultiImagePages(FIMULTIBITMAP * multi_bitmap, ImageAnimationDescription * anim_description = nullptr);
+
+		/** try to read animation meta data from an image */
+		static bool GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result);
 
 		/** returns true whether the image is paletted, 8 bits and its color are grays */
 		static bool IsGrayscaleImage(FIBITMAP * image, bool * alpha_needed = nullptr);

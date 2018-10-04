@@ -202,7 +202,9 @@ namespace chaos
 				return nullptr;
 
 			// load all pages for the bitmap
-			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path);
+			ImageAnimationDescription anim_description;
+
+			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &anim_description);
 
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)
@@ -249,7 +251,9 @@ namespace chaos
 				return nullptr;
 
 			// load all pages for the bitmap
-			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap);
+			ImageAnimationDescription anim_description;
+
+			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap, &anim_description);
 
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)

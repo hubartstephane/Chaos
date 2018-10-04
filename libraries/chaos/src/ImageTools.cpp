@@ -506,63 +506,6 @@ namespace chaos
 
 	FIBITMAP * ImageTools::ConvertToSupportedType(FIBITMAP * image, bool can_delete_src)
 	{
-		FITAG * tag = nullptr;
-
-		unsigned meta_count1 = FreeImage_GetMetadataCount(FIMD_ANIMATION, image);
-		unsigned meta_count2 = FreeImage_GetMetadataCount(FIMD_CUSTOM, image);
-
-#if 0
-
-#define ANIMTAG_LOGICALWIDTH	0x0001
-#define ANIMTAG_LOGICALHEIGHT	0x0002
-#define ANIMTAG_GLOBALPALETTE	0x0003
-#define ANIMTAG_LOOP			0x0004
-#define ANIMTAG_FRAMELEFT		0x1001
-#define ANIMTAG_FRAMETOP		0x1002
-#define ANIMTAG_NOLOCALPALETTE	0x1003
-#define ANIMTAG_INTERLACED		0x1004
-#define ANIMTAG_FRAMETIME		0x1005
-#define ANIMTAG_DISPOSALMETHOD	0x1006
-#endif
-
-
-		// "FrameLeft"
-
-
-		// "FrameTime"
-		// "FrameTop"
-		// "Interlaced"
-		// "Loop"
-
-		FITAG * FrameTimeTag = nullptr;
-		FreeImage_GetMetadata(FIMD_ANIMATION, image, "FrameTime", &FrameTimeTag);
-
-		FITAG * LoopTag = nullptr;
-		FreeImage_GetMetadata(FIMD_ANIMATION, image, "Loop", &LoopTag);
-
-		if (FrameTimeTag != nullptr || LoopTag != nullptr)
-			LoopTag = LoopTag;
-
-		FIMETADATA * meta = FreeImage_FindFirstMetadata(FIMD_ANIMATION, image, &tag);
-		if (meta != nullptr)
-		{
-			while (tag != nullptr)
-			{
-				const char * k = FreeImage_GetTagKey(tag);
-				WORD id = FreeImage_GetTagID(tag);
-				DWORD c = FreeImage_GetTagCount(tag);
-				DWORD l = FreeImage_GetTagLength(tag);
-				const void * v = FreeImage_GetTagValue(tag);
-
-				const char* cc = FreeImage_TagToString(FIMD_ANIMATION, tag);
-
-
-				if (!FreeImage_FindNextMetadata(meta, &tag))
-					break;
-			}
-			FreeImage_FindCloseMetadata(meta);
-		}
-
 		if (image == nullptr)
 			return nullptr;
 
@@ -630,17 +573,17 @@ namespace chaos
 		return LoadImageFromBuffer(FileTools::LoadFile(path, false));
 	}
 
-	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromFile(FilePathParam const & path)
+	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description)
 	{
 		std::vector<FIBITMAP*> result;
 		// load the image and get multi image
 		Buffer<char> buffer = FileTools::LoadFile(path, false);
 		if (buffer != nullptr)
-			result = LoadMultipleImagesFromBuffer(buffer);
+			result = LoadMultipleImagesFromBuffer(buffer, anim_description);
 		return result;
 	}
 
-	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromBuffer(Buffer<char> buffer)
+	std::vector<FIBITMAP*> ImageTools::LoadMultipleImagesFromBuffer(Buffer<char> buffer, ImageAnimationDescription * anim_description)
 	{
 		std::vector<FIBITMAP*> result;
 
@@ -654,7 +597,7 @@ namespace chaos
 				FIMULTIBITMAP * multi_bitmap = FreeImage_LoadMultiBitmapFromMemory(format, memory, 0);
 				if (multi_bitmap != nullptr)
 				{
-					result = GetMultiImagePages(multi_bitmap);
+					result = GetMultiImagePages(multi_bitmap, anim_description);
 					FreeImage_CloseMultiBitmap(multi_bitmap, 0);
 				}
 			}
@@ -674,7 +617,7 @@ namespace chaos
 		return result;
 	}
 
-	std::vector<FIBITMAP *> ImageTools::GetMultiImagePages(FIMULTIBITMAP * multi_bitmap)
+	std::vector<FIBITMAP *> ImageTools::GetMultiImagePages(FIMULTIBITMAP * multi_bitmap, ImageAnimationDescription * anim_description)
 	{
 		std::vector<FIBITMAP *> result;
 		if (multi_bitmap != nullptr)
@@ -686,6 +629,11 @@ namespace chaos
 				FIBITMAP * page = FreeImage_LockPage(multi_bitmap, i);
 				if (page == nullptr)
 					continue;
+
+				// extract animation meta data if anny
+				if (anim_description != nullptr && page_count > 1)
+					if (GetImageAnimDescription(page, *anim_description)) // as soon as animation meta data has been extracted, ignore for every following pages
+						anim_description = nullptr;
 
 				// XXX : due to FreeImage library limitation, we cannot keep a reference to locked page
 				//       we have to clone the page. While we may make a format conversion, we can avoid the cloning in some circonstences
@@ -701,6 +649,91 @@ namespace chaos
 			}			
 		}
 		return result;
+	}
+
+	template<typename T>
+	static bool ReadFIFTag(FITAG * tag, T & result)
+	{
+		// early exit
+		if (tag == nullptr)
+			return false;
+		// get the value
+		void const * value_ptr = FreeImage_GetTagValue(tag);
+		if (value_ptr == nullptr)
+			return false;
+		// get the type
+		FREE_IMAGE_MDTYPE type = FreeImage_GetTagType(tag);
+		// try to make a conversion
+#define CHAOS_IMAGETOOLS_READTAG(enumtype, cpptype)\
+if (type == enumtype)\
+{\
+cpptype value = *((cpptype *)value_ptr);\
+result = static_cast<T>(value);\
+return true;\
+}
+		CHAOS_IMAGETOOLS_READTAG(FIDT_BYTE, std::uint8_t);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_SHORT, std::uint16_t);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_LONG, std::uint32_t);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_LONG8, std::uint64_t);
+
+		CHAOS_IMAGETOOLS_READTAG(FIDT_SBYTE, std::int8_t);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_SSHORT, std::int16_t);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_SLONG, std::int32_t);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_SLONG8, std::int64_t);
+
+		CHAOS_IMAGETOOLS_READTAG(FIDT_FLOAT, float);
+		CHAOS_IMAGETOOLS_READTAG(FIDT_DOUBLE, double);
+#undef CHAOS_IMAGETOOLS_READTAG
+		return false;
+	}
+
+	template<typename T>
+	static bool ReadFIFTag(FITAG * tag, T & result, T default_value)
+	{
+		if (ReadFIFTag(tag, result))
+			return true;
+		result = default_value;
+		return false;
+	}
+
+	template<typename T>
+	static bool ReadMetaData(FIBITMAP * image, FREE_IMAGE_MDMODEL model, char const * name, T & result, T default_value = T())
+	{
+		FITAG * tag = nullptr;
+		if (!FreeImage_GetMetadata(model, image, name, &tag))
+			return false;
+		if (tag == nullptr)
+			return false;
+		return ReadFIFTag(tag, result, default_value);
+	}
+
+	bool ImageTools::GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result)
+	{
+		std::int32_t frame_time = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_time);
+
+		std::int32_t loop = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "Loop", loop);
+
+		std::int32_t frame_top = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "FrameTop", frame_top);
+
+		std::int32_t frame_left = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "FrameLeft", frame_left);
+
+		std::int32_t interlaced = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "Interlaced", interlaced);
+
+		std::int32_t logical_width = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "LogicalWidth", logical_width);
+
+		std::int32_t logical_height = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "LogicalHeight", logical_height);
+
+		std::int32_t disposal_method = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "DisposalMethod", disposal_method);
+
+		return true;
 	}
 
 }; // namespace chaos

@@ -44,5 +44,14 @@ namespace chaos
 		int    padding_size = 0;
 	};
 
+	/**
+	* ImageAnimationDescription : data to work with animation
+	*/
+
+	class ImageAnimationDescription
+	{
+
+	};
+
 }; // namespace chaos
 

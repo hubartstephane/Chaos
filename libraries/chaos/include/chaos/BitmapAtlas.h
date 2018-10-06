@@ -106,6 +106,8 @@ namespace chaos
 			bool IsFrameAnimation() const;
 			/** returns true whether the animation is of type grid */
 			bool IsGridAnimation() const;
+			/** get the duration of a frame in ms */
+			int GetFrameTime() const { return animation_description.frame_time;	}
 
 		public:
 
@@ -113,6 +115,8 @@ namespace chaos
 			BitmapGridAnimationInfo grid_data;
 			/** number of child frame (directly following the BitmapInfo */
 			int child_frame_count = 0;
+			/** the animation description */
+			ImageAnimationDescription animation_description;
 		};
 
 		/**
@@ -136,6 +140,8 @@ namespace chaos
 			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, bool clamp_index) const;
 			/** returns the number of frames in the animation */
 			size_t GetAnimationImageCount() const;
+			/** returns the duration of a frame in ms */
+			int GetFrameTime() const;
 
 		protected:
 

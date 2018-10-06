@@ -280,6 +280,13 @@ namespace chaos
 			return (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
 		}
 
+		int BitmapInfo::GetFrameTime() const
+		{
+			if (animation_info == nullptr)
+				return 0;
+			return animation_info->GetFrameTime();
+		}
+
 		// ========================================================================
 		// FolderInfo functions
 		// ========================================================================

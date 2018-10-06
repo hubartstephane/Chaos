@@ -651,64 +651,12 @@ namespace chaos
 		return result;
 	}
 
-	template<typename T>
-	static bool ReadFIFTag(FITAG * tag, T & result)
-	{
-		// early exit
-		if (tag == nullptr)
-			return false;
-		// get the value
-		void const * value_ptr = FreeImage_GetTagValue(tag);
-		if (value_ptr == nullptr)
-			return false;
-		// get the type
-		FREE_IMAGE_MDTYPE type = FreeImage_GetTagType(tag);
-		// try to make a conversion
-#define CHAOS_IMAGETOOLS_READTAG(enumtype, cpptype)\
-if (type == enumtype)\
-{\
-cpptype value = *((cpptype *)value_ptr);\
-result = static_cast<T>(value);\
-return true;\
-}
-		CHAOS_IMAGETOOLS_READTAG(FIDT_BYTE, std::uint8_t);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_SHORT, std::uint16_t);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_LONG, std::uint32_t);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_LONG8, std::uint64_t);
-
-		CHAOS_IMAGETOOLS_READTAG(FIDT_SBYTE, std::int8_t);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_SSHORT, std::int16_t);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_SLONG, std::int32_t);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_SLONG8, std::int64_t);
-
-		CHAOS_IMAGETOOLS_READTAG(FIDT_FLOAT, float);
-		CHAOS_IMAGETOOLS_READTAG(FIDT_DOUBLE, double);
-#undef CHAOS_IMAGETOOLS_READTAG
-		return false;
-	}
-
-	template<typename T>
-	static bool ReadFIFTag(FITAG * tag, T & result, T default_value)
-	{
-		if (ReadFIFTag(tag, result))
-			return true;
-		result = default_value;
-		return false;
-	}
-
-	template<typename T>
-	static bool ReadMetaData(FIBITMAP * image, FREE_IMAGE_MDMODEL model, char const * name, T & result, T default_value = T())
-	{
-		FITAG * tag = nullptr;
-		if (!FreeImage_GetMetadata(model, image, name, &tag))
-			return false;
-		if (tag == nullptr)
-			return false;
-		return ReadFIFTag(tag, result, default_value);
-	}
-
 	bool ImageTools::GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result)
 	{
+		return ReadMetaData(image, FIMD_ANIMATION, "FrameTime", result.frame_time);
+
+		// Some metadata (GIF ?) FreeImage library read them
+#if 0 
 		std::int32_t frame_time = 0;
 		ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_time);
 
@@ -732,7 +680,7 @@ return true;\
 
 		std::int32_t disposal_method = 0;
 		ReadMetaData(image, FIMD_ANIMATION, "DisposalMethod", disposal_method);
-
+#endif
 		return true;
 	}
 

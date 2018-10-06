@@ -45,6 +45,8 @@ protected:
 
 		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(bitmap_index, true);
 
+		int iii = info->GetFrameTime();
+
 		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube

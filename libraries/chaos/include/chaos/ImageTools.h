@@ -89,7 +89,7 @@ namespace chaos
 		/** load multiple image from a file (animated gif) */
 		static std::vector<FIBITMAP*> LoadMultipleImagesFromFile(FilePathParam const & path, ImageAnimationDescription * anim_description = nullptr);
 		/** extract from a multi bitmap all pages (this is a 'duplication' due to library limitation) */
-		static std::vector<FIBITMAP *> ImageTools::GetMultiImagePages(FIMULTIBITMAP * multi_bitmap, ImageAnimationDescription * anim_description = nullptr);
+		static std::vector<FIBITMAP *> GetMultiImagePages(FIMULTIBITMAP * multi_bitmap, ImageAnimationDescription * anim_description = nullptr);
 
 		/** try to read animation meta data from an image */
 		static bool GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result);
@@ -139,6 +139,66 @@ namespace chaos
 			}
 			return result;
 		}
+
+		// Read a FIFTag with a conversion (not all type handled)
+		template<typename T>
+		static bool ReadFIFTag(FITAG * tag, T & result)
+		{
+			// early exit
+			if (tag == nullptr)
+				return false;
+			// get the value
+			void const * value_ptr = FreeImage_GetTagValue(tag);
+			if (value_ptr == nullptr)
+				return false;
+			// get the type
+			FREE_IMAGE_MDTYPE type = FreeImage_GetTagType(tag);
+			// try to make a conversion
+#define CHAOS_IMAGETOOLS_READTAG(enumtype, cpptype)\
+if (type == enumtype)\
+{\
+cpptype value = *((cpptype *)value_ptr);\
+result = static_cast<T>(value);\
+return true;\
+}
+			CHAOS_IMAGETOOLS_READTAG(FIDT_BYTE, std::uint8_t);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_SHORT, std::uint16_t);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_LONG, std::uint32_t);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_LONG8, std::uint64_t);
+
+			CHAOS_IMAGETOOLS_READTAG(FIDT_SBYTE, std::int8_t);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_SSHORT, std::int16_t);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_SLONG, std::int32_t);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_SLONG8, std::int64_t);
+
+			CHAOS_IMAGETOOLS_READTAG(FIDT_FLOAT, float);
+			CHAOS_IMAGETOOLS_READTAG(FIDT_DOUBLE, double);
+#undef CHAOS_IMAGETOOLS_READTAG
+			return false;
+		}
+
+		// read a FIFTag with a conversion (and a default value)
+		template<typename T>
+		static bool ReadFIFTag(FITAG * tag, T & result, T default_value)
+		{
+			if (ReadFIFTag(tag, result))
+				return true;
+			result = default_value;
+			return false;
+		}
+
+		// Read some meta data
+		template<typename T>
+		static bool ReadMetaData(FIBITMAP * image, FREE_IMAGE_MDMODEL model, char const * name, T & result, T default_value = T())
+		{
+			FITAG * tag = nullptr;
+			if (!FreeImage_GetMetadata(model, image, name, &tag))
+				return false;
+			if (tag == nullptr)
+				return false;
+			return ReadFIFTag(tag, result, default_value);
+		}
+
 	};
 
 }; // namespace chaos

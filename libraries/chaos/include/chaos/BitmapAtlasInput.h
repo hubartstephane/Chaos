@@ -88,6 +88,8 @@ namespace chaos
 			BitmapGridAnimationInfo grid_data;
 			/** the child frames of animated image (GIF) */
 			std::vector<class BitmapInfoInput *> child_frames;
+			/** the animation description */
+			ImageAnimationDescription animation_description;
 		};
 
 
@@ -183,7 +185,7 @@ namespace chaos
 		protected:
 
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
+			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr, ImageAnimationDescription const * anim_desc = nullptr);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(

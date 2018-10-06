@@ -50,7 +50,10 @@ namespace chaos
 
 	class ImageAnimationDescription
 	{
+	public:
 
+		/** the duration of a frame in ms */
+		int frame_time = 0;
 	};
 
 }; // namespace chaos

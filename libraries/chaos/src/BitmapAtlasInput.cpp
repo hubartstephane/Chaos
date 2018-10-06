@@ -223,7 +223,8 @@ namespace chaos
 				pages,
 				(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
 				tag,
-				grid_animation_info
+				grid_animation_info,
+				&anim_description
 			);
 			return result;
 		}
@@ -238,7 +239,7 @@ namespace chaos
 				return nullptr;
 
 			// make the insertion
-			return AddBitmapImpl({ bitmap }, name, tag, grid_animation_info);
+			return AddBitmapImpl({ bitmap }, name, tag, grid_animation_info, nullptr);
 		}
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
@@ -260,10 +261,10 @@ namespace chaos
 				RegisterResource(pages[i], true);
 
 			// make the insertion
-			return AddBitmapImpl(pages, name, tag, grid_animation_info);
+			return AddBitmapImpl(pages, name, tag, grid_animation_info, &anim_description);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info, ImageAnimationDescription const * anim_desc)
 		{
 			// create the result
 			BitmapInfoInput * result = new BitmapInfoInput;
@@ -290,6 +291,8 @@ namespace chaos
 				if (animation_info != nullptr)
 				{
 					result->animation_info = animation_info;
+					if (anim_desc != nullptr)
+						result->animation_info->animation_description = *anim_desc;
 
 					// use grid animation system only if we are not on a GIF
 					if (page_count == 1 && grid_animation_info != nullptr && !grid_animation_info->IsEmpty())

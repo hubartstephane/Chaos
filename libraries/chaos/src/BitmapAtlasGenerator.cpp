@@ -338,6 +338,7 @@ namespace chaos
 						// copy grid information
 						animation_info->grid_data = animation_info_input->grid_data;
 						animation_info->child_frame_count = (int)animation_info_input->child_frames.size();
+						animation_info->animation_description = animation_info_input->animation_description;
 						// store the animation
 						bitmap_info->animation_info = animation_info;
 					}

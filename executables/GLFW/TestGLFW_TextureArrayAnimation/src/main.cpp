@@ -41,11 +41,12 @@ protected:
 		if (info == nullptr)
 			return true;
 
-		bitmap_index = (bitmap_index + 1) % info->GetAnimationImageCount();
+		int image = (int)(time / (0.001 * (double)info->GetFrameTime()));
+		
 
-		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(bitmap_index, true);
+		image = image % info->GetAnimationImageCount();
 
-		int iii = info->GetFrameTime();
+		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, true);
 
 		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
@@ -167,6 +168,8 @@ protected:
 
 	virtual bool Tick(double delta_time) override
 	{
+		time += delta_time;
+
 		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			RequireWindowClosure();
 
@@ -197,6 +200,8 @@ protected:
 	size_t bitmap_index = 0;
 
 	chaos::FPSViewInputController fps_view_controller;
+
+	double time = 0.0;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

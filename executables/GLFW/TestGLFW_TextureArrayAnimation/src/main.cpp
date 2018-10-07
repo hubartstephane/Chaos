@@ -44,9 +44,9 @@ protected:
 		int image = (int)(time / (0.001 * (double)info->GetFrameTime()));
 		
 
-		image = image % info->GetAnimationImageCount();
+		//image = image % info->GetAnimationImageCount();
 
-		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, true);
+		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp);
 
 		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);

@@ -123,6 +123,13 @@ namespace chaos
 		* BitmapInfo : represents an Bitmap info in the atlas
 		*/
 
+		enum class GetBitmapLayoutFlag
+		{
+			none = 0,
+			clamp = 1,
+			wrap = 2
+		};
+
 		class BitmapInfo : public BitmapLayout, public ObjectBase
 		{
 		public:
@@ -135,9 +142,9 @@ namespace chaos
 			bool HasGridAnimation() const;
 
 			/** returns the layout for one linear frame of the animation */
-			BitmapLayout GetAnimationLayout(size_t index, bool clamp_index) const;
+			BitmapLayout GetAnimationLayout(size_t index, GetBitmapLayoutFlag flag) const;
 			/** returns the layout for one grid frame of the animation */
-			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, bool clamp_index) const;
+			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, GetBitmapLayoutFlag flag) const;
 			/** returns the number of frames in the animation */
 			size_t GetAnimationImageCount() const;
 			/** returns the duration of a frame in ms */
@@ -146,9 +153,9 @@ namespace chaos
 		protected:
 
 			/** utility method */
-			BitmapLayout DoGetFrameAnimationLayout(int index, bool clamp_index) const;
+			BitmapLayout DoGetFrameAnimationLayout(int index, GetBitmapLayoutFlag flag) const;
 			/** utility method */
-			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, bool clamp_index) const;
+			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, GetBitmapLayoutFlag flag) const;
 
 		public:
 

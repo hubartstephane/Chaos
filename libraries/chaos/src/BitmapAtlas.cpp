@@ -128,7 +128,10 @@ namespace chaos
 				i = len - 1; // take the whole input
 			}
 			// parsing chain
-			return ParseFromNameReadGridSkip(name, i, result, name_result);
+			if (!ParseFromNameReadGridSkip(name, i, result, name_result))
+				return false;
+			// ensure the result is not empty
+			return !result.IsEmpty();
 		}
 
 		// ========================================================================
@@ -172,36 +175,45 @@ namespace chaos
 			return animation_info->IsGridAnimation();
 		}
 
-		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, bool clamp_index) const
+		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, GetBitmapLayoutFlag flag) const
 		{
 			// check index range, returns failure or clamp
 			if (index < 0 || index >= animation_info->child_frame_count)
 			{
-				if (!clamp_index)
+				if (flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
-				index = MathTools::Clamp(index, 0, animation_info->child_frame_count - 1);
+				if (flag == GetBitmapLayoutFlag::clamp)
+					index = MathTools::Clamp(index, 0, animation_info->child_frame_count - 1);
+				else if (flag == GetBitmapLayoutFlag::wrap)
+					index = index % animation_info->child_frame_count;
 			}
 			// find the bitmap further in the bitmapinfo array
 			return this[index];
 		}
 
-		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, bool clamp_index) const
+		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, GetBitmapLayoutFlag flag) const
 		{
 			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
 			// check grid_index range, returns failure or clamp
 			if (grid_index.x < 0 || grid_index.x >= grid_data.grid_size.x)
 			{
-				if (!clamp_index)
+				if (flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
-				grid_index.x = MathTools::Clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
+				if (flag == GetBitmapLayoutFlag::clamp)
+					grid_index.x = MathTools::Clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
+				else if (flag == GetBitmapLayoutFlag::wrap)
+					grid_index.x = grid_index.x % grid_data.grid_size.x;
 			}
 
 			if (grid_index.y < 0 || grid_index.y >= grid_data.grid_size.y)
 			{
-				if (!clamp_index)
+				if (flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
-				grid_index.y = MathTools::Clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
+				if (flag == GetBitmapLayoutFlag::clamp)
+					grid_index.y = MathTools::Clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
+				else if (flag == GetBitmapLayoutFlag::wrap)
+					grid_index.y = grid_index.y % grid_data.grid_size.y;
 			}
 
 			// check linear index and skip_lasts 
@@ -212,9 +224,12 @@ namespace chaos
 				int animation_count = (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
 				if (index >= animation_count)
 				{
-					if (!clamp_index)
+					if (flag == GetBitmapLayoutFlag::none)
 						return BitmapLayout();
-					index = animation_count - 1;
+					if (flag == GetBitmapLayoutFlag::clamp)
+						index = animation_count - 1;
+					else if (flag == GetBitmapLayoutFlag::wrap)
+						index = index % animation_count;
 					grid_index.x = (index % grid_data.grid_size.x);
 					grid_index.y = (index / grid_data.grid_size.x);
 				}			
@@ -230,7 +245,7 @@ namespace chaos
 			return result;
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, bool clamp_index) const
+		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, GetBitmapLayoutFlag flag) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
@@ -238,7 +253,7 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				return DoGetFrameAnimationLayout((int)index, clamp_index);
+				return DoGetFrameAnimationLayout((int)index, flag);
 			}
 			else // grid base animation
 			{
@@ -247,11 +262,11 @@ namespace chaos
 				glm::ivec2 grid_index;
 				grid_index.x = ((int)index) % grid_data.grid_size.x;
 				grid_index.y = ((int)index) / grid_data.grid_size.x;
-				return DoGetGridAnimationLayout(grid_index, clamp_index);
+				return DoGetGridAnimationLayout(grid_index, flag);
 			}
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, bool clamp_index) const
+		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, GetBitmapLayoutFlag flag) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
@@ -259,13 +274,13 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				if (grid_index.y != 0 && !clamp_index)
+				if (grid_index.y != 0 && flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
-				return DoGetFrameAnimationLayout(grid_index.x, clamp_index);
+				return DoGetFrameAnimationLayout(grid_index.x, flag);
 			}
 			else // grid base animation
 			{
-				return DoGetGridAnimationLayout(grid_index, clamp_index);
+				return DoGetGridAnimationLayout(grid_index, flag);
 			}
 		}
 
@@ -277,7 +292,7 @@ namespace chaos
 				return animation_info->child_frame_count;
 
 			assert(animation_info->IsGridAnimation());
-			return (size_t)(animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts;
+			return (size_t)MathTools::Maximum((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
 		}
 
 		int BitmapInfo::GetFrameTime() const

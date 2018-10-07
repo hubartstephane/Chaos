@@ -145,7 +145,7 @@ namespace chaos
 		// StateMachine
 		// ==================================================
 
-		bool StateMachine::Tick(double delta_time, int max_transition_changes)
+		bool StateMachine::Tick(double delta_time)
 		{
 			// enter initial state if necessary
 			if (current_state == nullptr)
@@ -185,6 +185,40 @@ namespace chaos
 		{
 			ChangeState(initial_state);
 		}
+
+		StateMachineInstance * StateMachine::CreateInstance()
+		{
+			return new StateMachineInstance(this);
+		}
+
+		// ==================================================
+		// StateMachineInstance
+		// ==================================================
+
+		StateMachineInstance::StateMachineInstance(StateMachine * in_state_machine) :
+			state_machine(in_state_machine)
+		{
+			assert(in_state_machine != nullptr);
+
+		}
+
+		bool StateMachineInstance::Tick(double delta_time)
+		{
+
+			
+			return true;
+		}
+
+		void StateMachineInstance::Restart(int initial_state_id)
+		{
+
+		}
+
+		void StateMachineInstance::SendEvent(int event_id, void * extra_data)
+		{
+
+		}
+
 
 	}; // namespace StateMachine
 

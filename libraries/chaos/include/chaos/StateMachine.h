@@ -16,7 +16,7 @@ namespace chaos
 		// ==================================================
 
 		// all classes in this file
-#define CHAOS_STATEMACHINE_CLASSES (State) (Transition) (StateMachine)
+#define CHAOS_STATEMACHINE_CLASSES (State) (Transition) (StateMachine) (StateMachineInstance)
 
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;
@@ -128,19 +128,47 @@ namespace chaos
 		};
 
 		// ==================================================
+		// StateMachineInstance
+		// ==================================================
+
+		class StateMachineInstance : public ReferencedObject
+		{
+			CHAOS_STATEMACHINE_ALL_FRIENDS
+
+		protected:
+
+			/** protected constructor */
+			StateMachineInstance(StateMachine * in_state_machine);
+
+		public:
+
+			/** the tick method */
+			bool Tick(double delta_time);
+			/** restart the state_machine */
+			void Restart(int initial_state_id = -1);
+			/** get the current state */
+			State * GetCurrentState() { return current_state; }
+			/** get the current state */
+			State const * GetCurrentState() const { return current_state; }
+
+			/** send an event to current state */
+			void SendEvent(int event_id, void * extra_data);
+
+		protected:
+
+			/** the state machine */
+			StateMachine * state_machine = nullptr;
+			/** the current state of the state_machine */
+			State * current_state = nullptr;
+			/** some data for current state / transition */
+			boost::intrusive_ptr<ReferencedObject> context_data;
+		};
+
+		// ==================================================
 		// StateMachine
 		// ==================================================
 
-		class StateMachineContext : public ReferencedObject
-		{
-
-		};
-
-			// ==================================================
-			// StateMachine
-			// ==================================================
-
-			class StateMachine : public ReferencedObject
+		class StateMachine : public ReferencedObject
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -149,8 +177,12 @@ namespace chaos
 			/** destructor */
 			virtual ~StateMachine() = default;
 
+			/** create the context */
+			StateMachineInstance * CreateInstance();
+
+
 			/** the tick method */
-			bool Tick(double delta_time, int max_transition_changes = 0);
+			bool Tick(double delta_time);
 
 			/** restart the state_machine */
 			void Restart();

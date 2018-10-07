@@ -12,12 +12,12 @@ namespace death
 	// GameState
 	// =========================================================
 
-	class GameState : public chaos::StateMachine::State
+	class GameState : public chaos::SM::State
 	{
 	public:
 
 		/** constructor */
-		GameState(class GameAutomata * in_automata);
+		GameState(class GameStateMachine * in_state_machine);
 		/** get the game */
 		Game * GetGame();
 		/** get the game */
@@ -28,7 +28,7 @@ namespace death
 	// GameTransition
 	// =========================================================
 
-	class GameTransition : public chaos::StateMachine::Transition
+	class GameTransition : public chaos::SM::Transition
 	{
 	public:
 
@@ -49,9 +49,9 @@ namespace death
 	public:
 
 		/** constructor */
-		MainMenuState(GameAutomata * in_automata);
+		MainMenuState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(chaos::StateMachine::State * state) override;
+		virtual bool OnEnterImpl(chaos::SM::State * state) override;
 	};
 
 	class PlayingState : public GameState
@@ -59,7 +59,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingState(GameAutomata * in_automata);
+		PlayingState(GameStateMachine * in_state_machine);
 		/** override */
 		virtual bool TickImpl(double delta_time) override;
 	};
@@ -69,7 +69,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PauseState(GameAutomata * in_automata);
+		PauseState(GameStateMachine * in_state_machine);
 	};
 
 	// =========================================================
@@ -86,7 +86,7 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time) override;
 	};
@@ -102,9 +102,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::StateMachine::State * to) override;
+		virtual bool OnLeaveImpl(chaos::SM::State * to) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time) override;
 	};
@@ -120,7 +120,7 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time) override;
 	};
@@ -137,7 +137,7 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time) override;
 	};
@@ -151,9 +151,9 @@ namespace death
 		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state);
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::StateMachine::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::StateMachine::State * to) override;
+		virtual bool OnLeaveImpl(chaos::SM::State * to) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time) override;
 
@@ -164,10 +164,10 @@ namespace death
 	};
 
 	// =========================================================
-	// GameAutomata
+	// GameStateMachine
 	// =========================================================
 
-	class GameAutomata : public chaos::StateMachine::Automata
+	class GameStateMachine : public chaos::SM::StateMachine
 	{
 		friend class Game;
 
@@ -184,7 +184,7 @@ namespace death
 		static int const STATE_TRANSITION_PAUSE_TO_PLAYING = 7;
 
 		/** constructor */
-		GameAutomata(Game * in_game);
+		GameStateMachine(Game * in_game);
 
 		/** get the game */
 		Game * GetGame() { return game; }
@@ -194,7 +194,7 @@ namespace death
 	protected:
 
 		/** create states and transitions */
-		virtual bool CreateAutomata();
+		virtual bool CreateStateMachine();
 
 	protected:
 

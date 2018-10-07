@@ -27,7 +27,7 @@
 class LudumGame : public death::Game
 {
 	friend class LudumWindow;
-	friend class LudumAutomata;
+	friend class LudumStateMachine;
 	friend class MainMenuState;
 	friend class PlayingToPauseTransition;
 	friend class PauseToPlayingTransition;
@@ -75,7 +75,7 @@ protected:
 	virtual bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	/** override */
-	virtual bool CreateGameAutomata() override;
+	virtual bool CreateGameStateMachine() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
 

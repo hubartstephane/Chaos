@@ -26,7 +26,7 @@ namespace death
 		friend class GamepadManager;
 		friend class GameWindow;
 
-		friend class GameAutomata;
+		friend class GameStateMachine;
 		friend class GameState;
 		friend class GameTransition;
 
@@ -190,8 +190,8 @@ namespace death
 		virtual bool CreateAllMusics();
 		/** declare all particle types (for safety) */
 		virtual bool DeclareParticleClasses();
-		/** create the game automata */
-		virtual bool CreateGameAutomata();
+		/** create the game state_machine */
+		virtual bool CreateGameStateMachine();
 		/** handle the gamepad input */
 		virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
 		/** handle keyboards input */
@@ -385,8 +385,8 @@ namespace death
 		boost::intrusive_ptr<PlayingHUD> playing_hud;
 		boost::intrusive_ptr<GameOverHUD> gameover_hud;
 
-		/** pointer on the automata */
-		boost::intrusive_ptr<class GameAutomata> game_automata;
+		/** pointer on the state_machine */
+		boost::intrusive_ptr<class GameStateMachine> game_state_machine;
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;

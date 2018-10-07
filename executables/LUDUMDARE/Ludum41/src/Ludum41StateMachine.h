@@ -4,18 +4,18 @@
 #include <chaos/StateMachine.h>
 #include <chaos/SoundManager.h>
 
-#include <death/GameAutomata.h>
+#include <death/GameStateMachine.h>
 
 // =========================================================
-// Automata
+// StateMachine
 // =========================================================
 
-class LudumAutomata : public death::GameAutomata
+class LudumStateMachine : public death::GameStateMachine
 {
 	friend class LudumGame;
 
 public:
 
 	/** constructor */
-	LudumAutomata(LudumGame * in_game);
+	LudumStateMachine(LudumGame * in_game);
 };

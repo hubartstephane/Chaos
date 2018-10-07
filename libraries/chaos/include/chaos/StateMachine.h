@@ -8,7 +8,7 @@
 
 namespace chaos
 {
-	namespace StateMachine
+	namespace SM // for StateMachine
 	{
 
 		// ==================================================
@@ -16,7 +16,7 @@ namespace chaos
 		// ==================================================
 
 		// all classes in this file
-#define CHAOS_STATEMACHINE_CLASSES (State) (Transition) (Automata)
+#define CHAOS_STATEMACHINE_CLASSES (State) (Transition) (StateMachine)
 
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;
@@ -37,7 +37,7 @@ namespace chaos
 		public:
 
 			/** constructor */
-			State(Automata * in_automata);
+			State(StateMachine * in_state_machine);
 			/** destructor */
 			virtual ~State();
 
@@ -51,7 +51,7 @@ namespace chaos
 			/** get the name */
 			char const * GetName() const { return name.c_str(); }
 
-		protected: 
+		protected:
 
 			/** FRAMEWORK : called whenever we enter in this state */
 			virtual void OnEnter(State * from_state);
@@ -69,8 +69,8 @@ namespace chaos
 
 		protected:
 
-			/** the automata this instance belongs to */
-			Automata * automata = nullptr;
+			/** the state_machine this instance belongs to */
+			StateMachine * state_machine = nullptr;
 
 			/** an ID for the state */
 			int id = 0;
@@ -128,22 +128,31 @@ namespace chaos
 		};
 
 		// ==================================================
-		// Automata
+		// StateMachine
 		// ==================================================
 
-		class Automata : public ReferencedObject
+		class StateMachineContext : public ReferencedObject
+		{
+
+		};
+
+			// ==================================================
+			// StateMachine
+			// ==================================================
+
+			class StateMachine : public ReferencedObject
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
 		public:
 
 			/** destructor */
-			virtual ~Automata() = default;
+			virtual ~StateMachine() = default;
 
 			/** the tick method */
 			bool Tick(double delta_time, int max_transition_changes = 0);
 
-			/** restart the automata */
+			/** restart the state_machine */
 			void Restart();
 
 			/** get the current state */
@@ -160,13 +169,11 @@ namespace chaos
 
 		protected:
 
-			/** the initial state of the automata */
+			/** the initial state of the state_machine */
 			State * initial_state = nullptr;
 
-			/** the current state of the automata */
+			/** the current state of the state_machine */
 			State * current_state = nullptr;
-
-
 		};
 
 		// undefine macros

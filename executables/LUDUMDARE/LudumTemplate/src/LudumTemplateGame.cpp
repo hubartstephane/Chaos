@@ -105,7 +105,7 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 
 	// maybe a start game
 	if (physical_gamepad->IsAnyButtonPressed())
-		if (game_automata->main_menu_to_playing->TriggerTransition(true))
+		if (game_state_machine->main_menu_to_playing->TriggerTransition(true))
 			return true;
 
 	// maybe a game/pause resume
@@ -359,10 +359,10 @@ bool LudumGame::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input,
 	return true;
 }
 
-bool LudumGame::CreateGameAutomata()
+bool LudumGame::CreateGameStateMachine()
 {
-	game_automata = new LudumAutomata(this);
-	if (game_automata == nullptr)
+	game_state_machine = new LudumStateMachine(this);
+	if (game_state_machine == nullptr)
 		return false;
 	return true;
 }

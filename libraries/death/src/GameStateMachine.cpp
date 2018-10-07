@@ -1,4 +1,4 @@
-#include <death/GameAutomata.h>
+#include <death/GameStateMachine.h>
 
 namespace death
 {
@@ -7,25 +7,25 @@ namespace death
 	// GameState
 	// =========================================================
 
-	GameState::GameState(GameAutomata * in_automata) :
-		chaos::StateMachine::State(in_automata)
+	GameState::GameState(GameStateMachine * in_state_machine) :
+		chaos::SM::State(in_state_machine)
 	{
 	}
 
 	Game * GameState::GetGame()
 	{
-		GameAutomata * game_automata = (GameAutomata *)automata;
-		if (game_automata == nullptr)
+		GameStateMachine * game_state_machine = (GameStateMachine *)state_machine;
+		if (game_state_machine == nullptr)
 			return nullptr;
-		return game_automata->GetGame();
+		return game_state_machine->GetGame();
 	}
 
 	Game const * GameState::GetGame() const
 	{
-		GameAutomata const * game_automata = (GameAutomata const *)automata;
-		if (game_automata == nullptr)
+		GameStateMachine const * game_state_machine = (GameStateMachine const *)state_machine;
+		if (game_state_machine == nullptr)
 			return nullptr;
-		return game_automata->GetGame();
+		return game_state_machine->GetGame();
 	}
 
 	// =========================================================
@@ -33,38 +33,38 @@ namespace death
 	// =========================================================
 
 	GameTransition::GameTransition(GameState * in_from_state, GameState * in_to_state) :
-		chaos::StateMachine::Transition(in_from_state, in_to_state)
+		chaos::SM::Transition(in_from_state, in_to_state)
 	{
 	}
 
 	Game * GameTransition::GetGame()
 	{
-		GameAutomata * game_automata = (GameAutomata *)automata;
-		if (game_automata == nullptr)
+		GameStateMachine * game_state_machine = (GameStateMachine *)state_machine;
+		if (game_state_machine == nullptr)
 			return nullptr;
-		return game_automata->GetGame();
+		return game_state_machine->GetGame();
 	}
 
 	Game const * GameTransition::GetGame() const
 	{
-		GameAutomata const * game_automata = (GameAutomata const *)automata;
-		if (game_automata == nullptr)
+		GameStateMachine const * game_state_machine = (GameStateMachine const *)state_machine;
+		if (game_state_machine == nullptr)
 			return nullptr;
-		return game_automata->GetGame();
+		return game_state_machine->GetGame();
 	}
 
 	// =========================================================
 	// All states
 	// =========================================================
 
-	MainMenuState::MainMenuState(GameAutomata * in_automata) :
-		GameState(in_automata)
+	MainMenuState::MainMenuState(GameStateMachine * in_state_machine) :
+		GameState(in_state_machine)
 	{
-		SetStateID(GameAutomata::STATE_MAINMENU);
+		SetStateID(GameStateMachine::STATE_MAINMENU);
 		SetName("MainMenu");
 	}
 
-	bool MainMenuState::OnEnterImpl(chaos::StateMachine::State * from)
+	bool MainMenuState::OnEnterImpl(chaos::SM::State * from)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
@@ -72,10 +72,10 @@ namespace death
 		return false;
 	}
 
-	PlayingState::PlayingState(GameAutomata * in_automata) :
-		GameState(in_automata)
+	PlayingState::PlayingState(GameStateMachine * in_state_machine) :
+		GameState(in_state_machine)
 	{
-		SetStateID(GameAutomata::STATE_PLAYING);
+		SetStateID(GameStateMachine::STATE_PLAYING);
 		SetName("Playing");
 	}
 
@@ -87,10 +87,10 @@ namespace death
 		return true;
 	}
 
-	PauseState::PauseState(GameAutomata * in_automata) :
-		GameState(in_automata)
+	PauseState::PauseState(GameStateMachine * in_state_machine) :
+		GameState(in_state_machine)
 	{
-		SetStateID(GameAutomata::STATE_PAUSE);
+		SetStateID(GameStateMachine::STATE_PAUSE);
 		SetName("Pause");
 	}
 
@@ -103,7 +103,7 @@ namespace death
 	{
 	}
 
-	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
+	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::State * from)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -125,7 +125,7 @@ namespace death
 	{
 	}
 
-	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::StateMachine::State * from)
+	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::SM::State * from)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -142,7 +142,7 @@ namespace death
 		return game->IsGameLeaveComplete();
 	}
 
-	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::StateMachine::State * to)
+	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::SM::State * to)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -157,7 +157,7 @@ namespace death
 	}
 
 
-	bool PlayingToPauseTransition::OnEnterImpl(chaos::StateMachine::State * from)
+	bool PlayingToPauseTransition::OnEnterImpl(chaos::SM::State * from)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -179,7 +179,7 @@ namespace death
 	{
 	}
 
-	bool PauseToPlayingTransition::OnEnterImpl(chaos::StateMachine::State * from)
+	bool PauseToPlayingTransition::OnEnterImpl(chaos::SM::State * from)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -201,7 +201,7 @@ namespace death
 	{
 	}
 
-	bool PlayingToGameOverTransition::OnEnterImpl(chaos::StateMachine::State * from)
+	bool PlayingToGameOverTransition::OnEnterImpl(chaos::SM::State * from)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
@@ -212,7 +212,7 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::StateMachine::State * to)
+	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::SM::State * to)
 	{
 		// notify the game that it is finished
 		Game * game = GetGame();
@@ -237,16 +237,16 @@ namespace death
 	}
 
 	// =========================================================
-	// GameAutomata
+	// GameStateMachine
 	// =========================================================
 
-	GameAutomata::GameAutomata(class Game * in_game) :
+	GameStateMachine::GameStateMachine(class Game * in_game) :
 		game(in_game)
 	{
 		assert(in_game != nullptr);
 	}
 
-	bool GameAutomata::CreateAutomata()
+	bool GameStateMachine::CreateStateMachine()
 	{
 		main_menu_state = new MainMenuState(this);
 		playing_state = new PlayingState(this);

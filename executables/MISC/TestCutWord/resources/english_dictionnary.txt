@@ -22607,8 +22607,8 @@ automanipulation
 automanipulative
 automanual
 automat
-automata
-automatable
+state_machine
+state_machineble
 automate
 automated
 automates

@@ -328,10 +328,10 @@ bool LudumGame::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input,
 	return true;
 }
 
-bool LudumGame::CreateGameAutomata()
+bool LudumGame::CreateGameStateMachine()
 {
-	game_automata = new LudumAutomata(this);
-	if (game_automata == nullptr)
+	game_state_machine = new LudumStateMachine(this);
+	if (game_state_machine == nullptr)
 		return false;
 	return true;
 }

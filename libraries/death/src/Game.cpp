@@ -1,5 +1,5 @@
 #include <death/Game.h>
-#include <death/GameAutomata.h>
+#include <death/GameStateMachine.h>
 #include <death/GamepadManager.h>
 #include <death/GameLevel.h>
 
@@ -46,9 +46,9 @@ namespace death
 			gamepad_manager->Tick((float)delta_time);
 		// handle keyboard inputs
 		HandleKeyboardInputs();
-		// update the game automata
-		if (game_automata != nullptr)
-			game_automata->Tick(delta_time);
+		// update the game state_machine
+		if (game_state_machine != nullptr)
+			game_state_machine->Tick(delta_time);
 		// clear the cached inputs
 		ResetPlayerCachedInputs();
 		// tick the particle manager
@@ -83,7 +83,7 @@ namespace death
 	
 	void Game::OnMouseButton(int button, int action, int modifier)
 	{
-		if (GetCurrentStateID() == GameAutomata::STATE_MAINMENU)
+		if (GetCurrentStateID() == GameStateMachine::STATE_MAINMENU)
 		{
 			if (action == GLFW_PRESS)
 				RequireStartGame();
@@ -574,7 +574,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::CreateGameAutomata()
+	bool Game::CreateGameStateMachine()
 	{
 		return true;
 	}
@@ -590,10 +590,10 @@ namespace death
 		if (gamepad_manager == nullptr)
 			return false;
 
-		// create game automata
-		if (!CreateGameAutomata())		
+		// create game state_machine
+		if (!CreateGameStateMachine())		
 			return false;
-		if (!game_automata->CreateAutomata())
+		if (!game_state_machine->CreateStateMachine())
 			return false;
 
 		// create the musics
@@ -635,7 +635,7 @@ namespace death
 	{
 		// maybe a start game
 		if (in_gamepad_data.IsAnyButtonPressed())
-			if (game_automata->main_menu_to_playing->TriggerTransition(true))
+			if (game_state_machine->main_menu_to_playing->TriggerTransition(true))
 				return true;
 
 		// maybe a game/pause resume
@@ -875,9 +875,9 @@ namespace death
 
 	int Game::GetCurrentStateID() const
 	{
-		if (game_automata == nullptr)
+		if (game_state_machine == nullptr)
 			return -1;
-		chaos::StateMachine::State const * current_state = game_automata->GetCurrentState();
+		chaos::SM::State const * current_state = game_state_machine->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
 		return current_state->GetStateID();
@@ -885,14 +885,14 @@ namespace death
 
 	bool Game::IsPlaying() const
 	{
-		if (GetCurrentStateID() == GameAutomata::STATE_PLAYING)
+		if (GetCurrentStateID() == GameStateMachine::STATE_PLAYING)
 			return true;
 		return false;
 	}
 
 	bool Game::IsPaused() const
 	{
-		if (GetCurrentStateID() == GameAutomata::STATE_PAUSE)
+		if (GetCurrentStateID() == GameStateMachine::STATE_PAUSE)
 			return true;
 		return false;
 	}
@@ -900,30 +900,30 @@ namespace death
 
 	bool Game::RequireGameOver()
 	{
-		if (game_automata->playing_to_gameover->TriggerTransition(true))
+		if (game_state_machine->playing_to_gameover->TriggerTransition(true))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireTogglePause()
 	{
-		if (game_automata->playing_to_pause->TriggerTransition(true))
+		if (game_state_machine->playing_to_pause->TriggerTransition(true))
 			return true;
-		if (game_automata->pause_to_playing->TriggerTransition(true))
+		if (game_state_machine->pause_to_playing->TriggerTransition(true))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireExitGame()
 	{
-		if (game_automata->playing_to_main_menu->TriggerTransition(true))
+		if (game_state_machine->playing_to_main_menu->TriggerTransition(true))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireStartGame()
 	{
-		if (game_automata->main_menu_to_playing->TriggerTransition(true))
+		if (game_state_machine->main_menu_to_playing->TriggerTransition(true))
 			return true;
 		return false;
 	}

@@ -3,17 +3,17 @@
 
 namespace chaos
 {
-	namespace StateMachine
+	namespace SM
 	{
 
 		// ==================================================
 		// State
 		// ==================================================
 
-		State::State(Automata * in_automata):
-			automata(in_automata)
+		State::State(StateMachine * in_state_machine):
+			state_machine(in_state_machine)
 		{
-			assert(in_automata != nullptr);		
+			assert(in_state_machine != nullptr);		
 		}
 
 		State::~State()
@@ -37,7 +37,7 @@ namespace chaos
 				{
 					if (it->CheckTransitionConditions()) // check outgoing transtitions
 					{
-						automata->ChangeState(it);
+						state_machine->ChangeState(it);
 						return;
 					}
 				}
@@ -74,13 +74,13 @@ namespace chaos
 		// ==================================================
 
 		Transition::Transition(State * in_from_state, State * in_to_state):
-			State(in_from_state->automata),
+			State(in_from_state->state_machine),
 			from_state(in_from_state),
 			to_state(in_to_state)
 		{
 			assert(in_from_state != nullptr);
 			assert(in_to_state != nullptr);
-			assert(in_from_state->automata == in_to_state->automata);
+			assert(in_from_state->state_machine == in_to_state->state_machine);
 
 			in_from_state->outgoing_transitions.push_back(this);
 			in_to_state->incomming_transitions.push_back(this);
@@ -88,14 +88,14 @@ namespace chaos
 
 		bool Transition::TriggerTransition(bool force)
 		{
-			// triggering the transition is only possible if the automata is in start state
-			if (automata->current_state != from_state)
+			// triggering the transition is only possible if the state_machine is in start state
+			if (state_machine->current_state != from_state)
 				return false;
 			// test for conditions if required
 			if (!force && !CheckTransitionConditions())
 				return false;
 			// change the state
-			automata->ChangeState(this);		
+			state_machine->ChangeState(this);		
 			return true;
 		}
 
@@ -111,13 +111,13 @@ namespace chaos
 		void Transition::OnEnter(State * from_state)
 		{
 			if (OnEnterImpl(from_state))
-				automata->ChangeState(to_state); // will cause OnLeave call
+				state_machine->ChangeState(to_state); // will cause OnLeave call
 		}
 
 		void Transition::Tick(double delta_time)
 		{	
 			if (TickImpl(delta_time))
-				automata->ChangeState(to_state); // will cause OnLeave call
+				state_machine->ChangeState(to_state); // will cause OnLeave call
 		}
 
 		void Transition::OnLeave(State * to_state)
@@ -142,10 +142,10 @@ namespace chaos
 		}
 
 		// ==================================================
-		// Automata
+		// StateMachine
 		// ==================================================
 
-		bool Automata::Tick(double delta_time, int max_transition_changes)
+		bool StateMachine::Tick(double delta_time, int max_transition_changes)
 		{
 			// enter initial state if necessary
 			if (current_state == nullptr)
@@ -160,7 +160,7 @@ namespace chaos
 			return true;
 		}
 
-		void Automata::ChangeState(State * new_state)
+		void StateMachine::ChangeState(State * new_state)
 		{
 			// early exit
 			if (current_state == new_state)
@@ -176,12 +176,12 @@ namespace chaos
 				current_state->OnEnter(old_state);
 		}
 
-		void Automata::SetInitialState(State * in_state)
+		void StateMachine::SetInitialState(State * in_state)
 		{
 			initial_state = in_state;	
 		}
 
-		void Automata::Restart()
+		void StateMachine::Restart()
 		{
 			ChangeState(initial_state);
 		}

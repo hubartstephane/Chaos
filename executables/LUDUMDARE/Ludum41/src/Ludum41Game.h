@@ -98,7 +98,7 @@ protected:
 	void DestroyGameObjects();
 
 	/** override */
-	virtual bool CreateGameAutomata() override;
+	virtual bool CreateGameStateMachine() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
 	/** override */

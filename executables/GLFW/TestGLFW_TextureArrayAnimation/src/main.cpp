@@ -37,16 +37,20 @@ protected:
 		float far_plane = 1000.0f;
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		chaos::BitmapAtlas::BitmapInfo const * info = atlas->GetBitmapInfo("moving", true);
+		static int k = 0;
+		char const * bitmap_name = (k == 0)? "walking" : "moving";
+
+		chaos::BitmapAtlas::BitmapInfo const * info = atlas->GetBitmapInfo(bitmap_name, true);
 		if (info == nullptr)
 			return true;
 
-		int image = (int)(time / (0.001 * (double)info->GetFrameTime()));
+		double frame_time = info->GetFrameTime();
+		if (frame_time <= 0.0)
+			frame_time = 1.0 / 10.0;
+
+		int image = (int)(time / frame_time);
 		
-
-		//image = image % info->GetAnimationImageCount();
-
-		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp);
+		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
 
 		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);

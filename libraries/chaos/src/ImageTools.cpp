@@ -653,7 +653,7 @@ namespace chaos
 
 	bool ImageTools::GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result)
 	{
-		return ReadMetaData(image, FIMD_ANIMATION, "FrameTime", result.frame_time);
+		return ReadMetaData(image, FIMD_ANIMATION, "FrameTime", result.frame_time_ms);
 
 		// Some metadata (GIF ?) FreeImage library read them
 #if 0 

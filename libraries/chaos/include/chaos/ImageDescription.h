@@ -53,7 +53,7 @@ namespace chaos
 	public:
 
 		/** the duration of a frame in ms */
-		int frame_time = 0;
+		int frame_time_ms = 0;
 	};
 
 }; // namespace chaos

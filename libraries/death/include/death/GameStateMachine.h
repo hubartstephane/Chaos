@@ -51,7 +51,7 @@ namespace death
 		/** constructor */
 		MainMenuState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(chaos::SM::State * state) override;
+		virtual bool OnEnterImpl(chaos::SM::State * state, chaos::ReferencedObject * context_data) override;
 	};
 
 	class PlayingState : public GameState
@@ -61,7 +61,7 @@ namespace death
 		/** constructor */
 		PlayingState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool TickImpl(double delta_time) override;
+		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
 	};
 
 	class PauseState : public GameState
@@ -86,9 +86,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time) override;
+		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
 	};
 
 	class PlayingToMainMenuTransition : public GameTransition
@@ -102,11 +102,11 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::State * to) override;
+		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time) override;
+		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
 	};
 
 	class PlayingToPauseTransition : public GameTransition
@@ -120,9 +120,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time) override;
+		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
 	};
 
 
@@ -137,9 +137,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time) override;
+		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
 	};
 
 	class PlayingToGameOverTransition : public GameTransition
@@ -151,11 +151,11 @@ namespace death
 		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state);
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::State * to) override;
+		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::ReferencedObject * context_data) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time) override;
+		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
 
 	protected:
 

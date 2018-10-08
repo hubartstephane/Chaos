@@ -54,18 +54,18 @@ namespace chaos
 		protected:
 
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual void OnEnter(State * from_state);
+			virtual void OnEnter(State * from_state, StateMachineInstance * sm_instance, ReferencedObject * context_data);
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual void Tick(double delta_time);
+			virtual void Tick(double delta_time, StateMachineInstance * sm_instance, ReferencedObject * context_data);
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(State * to_state);
+			virtual void OnLeave(State * to_state, StateMachineInstance * sm_instance, ReferencedObject * context_data);
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(State * from_state);
+			virtual bool OnEnterImpl(State * from_state, ReferencedObject * context_data);
 			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool TickImpl(double delta_time);
+			virtual bool TickImpl(double delta_time, ReferencedObject * context_data);
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(State * to_state);
+			virtual bool OnLeaveImpl(State * to_state, ReferencedObject * context_data);
 
 		protected:
 
@@ -105,18 +105,18 @@ namespace chaos
 			virtual bool CheckTransitionConditions();
 
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual void OnEnter(State * from_state) override;
+			virtual void OnEnter(State * from_state, StateMachineInstance * sm_instance, ReferencedObject * context_data) override;
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual void Tick(double delta_time) override;
+			virtual void Tick(double delta_time, StateMachineInstance * sm_instance, ReferencedObject * context_data) override;
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(State * to_state) override;
+			virtual void OnLeave(State * to_state, StateMachineInstance * sm_instance, ReferencedObject * context_data) override;
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(State * from_state) override;
+			virtual bool OnEnterImpl(State * from_state, ReferencedObject * context_data) override;
 			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool TickImpl(double delta_time) override;
+			virtual bool TickImpl(double delta_time, ReferencedObject * context_data) override;
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(State * to_state) override;
+			virtual bool OnLeaveImpl(State * to_state, ReferencedObject * context_data) override;
 
 		protected:
 
@@ -145,7 +145,8 @@ namespace chaos
 			/** the tick method */
 			bool Tick(double delta_time);
 			/** restart the state_machine */
-			void Restart(int initial_state_id = -1);
+			void Restart();
+
 			/** get the current state */
 			State * GetCurrentState() { return current_state; }
 			/** get the current state */
@@ -153,6 +154,11 @@ namespace chaos
 
 			/** send an event to current state */
 			void SendEvent(int event_id, void * extra_data);
+
+		protected:
+
+			/** internal method to change state */
+			void ChangeState(State * new_state);
 
 		protected:
 
@@ -180,22 +186,8 @@ namespace chaos
 			/** create the context */
 			StateMachineInstance * CreateInstance();
 
-
-			/** the tick method */
-			bool Tick(double delta_time);
-
-			/** restart the state_machine */
-			void Restart();
-
-			/** get the current state */
-			State * GetCurrentState() { return current_state; }
-			/** get the current state */
-			State const * GetCurrentState() const { return current_state; }
-
 		protected:
 
-			/** internal method to change state */
-			void ChangeState(State * new_state);
 			/** set the initial state */
 			void SetInitialState(State * in_state);
 
@@ -203,9 +195,6 @@ namespace chaos
 
 			/** the initial state of the state_machine */
 			State * initial_state = nullptr;
-
-			/** the current state of the state_machine */
-			State * current_state = nullptr;
 		};
 
 		// undefine macros

@@ -183,6 +183,13 @@ namespace death
 		static int const STATE_TRANSITION_PLAYING_TO_PAUSE = 6;
 		static int const STATE_TRANSITION_PAUSE_TO_PLAYING = 7;
 
+		// the events
+		static int const EVENT_PRESS_START  = 1;
+		static int const EVENT_TOGGLE_PAUSE = 2;
+		static int const EVENT_EXIT_GAME    = 3;
+		static int const EVENT_START_GAME   = 4;
+		static int const EVENT_GAME_OVER    = 5;
+
 		/** constructor */
 		GameStateMachine(Game * in_game);
 

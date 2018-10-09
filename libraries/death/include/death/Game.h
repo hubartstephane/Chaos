@@ -13,6 +13,7 @@
 #include <chaos/ParticleTextGenerator.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
+#include <chaos/StateMachine.h>
 
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
@@ -192,6 +193,8 @@ namespace death
 		virtual bool DeclareParticleClasses();
 		/** create the game state_machine */
 		virtual bool CreateGameStateMachine();
+		/** create the game state_machine instance */
+		virtual bool CreateGameStateMachineInstance();
 		/** handle the gamepad input */
 		virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
 		/** handle keyboards input */
@@ -386,7 +389,9 @@ namespace death
 		boost::intrusive_ptr<GameOverHUD> gameover_hud;
 
 		/** pointer on the state_machine */
-		boost::intrusive_ptr<class GameStateMachine> game_state_machine;
+		boost::intrusive_ptr<chaos::SM::StateMachine> game_state_machine;
+		/** pointer on the state_machine instance */
+		boost::intrusive_ptr<chaos::SM::StateMachineInstance> game_state_machine_instance;
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;

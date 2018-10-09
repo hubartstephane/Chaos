@@ -47,8 +47,8 @@ namespace death
 		// handle keyboard inputs
 		HandleKeyboardInputs();
 		// update the game state_machine
-		if (game_state_machine != nullptr)
-			game_state_machine->Tick(delta_time);
+		if (game_state_machine_instance != nullptr)
+			game_state_machine_instance->Tick(delta_time);
 		// clear the cached inputs
 		ResetPlayerCachedInputs();
 		// tick the particle manager
@@ -579,6 +579,14 @@ namespace death
 		return true;
 	}
 
+	bool Game::CreateGameStateMachineInstance()
+	{
+		game_state_machine_instance = game_state_machine->CreateInstance();
+		if (game_state_machine_instance == nullptr)
+			return false;
+		return true;
+	}
+
 	bool Game::InitializeGame(GLFWwindow * in_glfw_window)
 	{
 		// initialize the window
@@ -593,9 +601,12 @@ namespace death
 		// create game state_machine
 		if (!CreateGameStateMachine())		
 			return false;
-		if (!game_state_machine->CreateStateMachine())
+		if (!CreateGameStateMachineInstance())		
 			return false;
 
+		if (!game_state_machine_instance = game_state_machine->CreateStateMachine())
+			return false;
+	
 		// create the musics
 		if (!CreateAllMusics())
 			return false;
@@ -635,7 +646,7 @@ namespace death
 	{
 		// maybe a start game
 		if (in_gamepad_data.IsAnyButtonPressed())
-			if (game_state_machine->main_menu_to_playing->TriggerTransition(true))
+			if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_PRESS_START, nullptr))
 				return true;
 
 		// maybe a game/pause resume
@@ -900,30 +911,28 @@ namespace death
 
 	bool Game::RequireGameOver()
 	{
-		if (game_state_machine->playing_to_gameover->TriggerTransition(true))
+		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_GAME_OVER, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireTogglePause()
 	{
-		if (game_state_machine->playing_to_pause->TriggerTransition(true))
-			return true;
-		if (game_state_machine->pause_to_playing->TriggerTransition(true))
+		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_TOGGLE_PAUSE, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireExitGame()
 	{
-		if (game_state_machine->playing_to_main_menu->TriggerTransition(true))
+		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_EXIT_GAME, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireStartGame()
 	{
-		if (game_state_machine->main_menu_to_playing->TriggerTransition(true))
+		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_START_GAME, nullptr))
 			return true;
 		return false;
 	}

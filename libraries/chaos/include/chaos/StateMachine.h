@@ -98,7 +98,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 		public:
 
 			/** constructor */
-			Transition(State * in_from_state, State * in_to_state);
+			Transition(State * in_from_state, State * in_to_state, int in_triggering_event = -1);
 
 			/** force trigger the state change */
 			bool TriggerTransition(bool force = true);
@@ -128,6 +128,8 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			State * from_state = nullptr;
 			/** destination state */
 			State * to_state = nullptr;
+			/** the ID of the event that will automatically trigger the transition */
+			int triggering_event = -1;
 
 		};
 

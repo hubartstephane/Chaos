@@ -603,9 +603,6 @@ namespace death
 			return false;
 		if (!CreateGameStateMachineInstance())		
 			return false;
-
-		if (!game_state_machine_instance = game_state_machine->CreateStateMachine())
-			return false;
 	
 		// create the musics
 		if (!CreateAllMusics())
@@ -886,9 +883,9 @@ namespace death
 
 	int Game::GetCurrentStateID() const
 	{
-		if (game_state_machine == nullptr)
+		if (game_state_machine_instance == nullptr)
 			return -1;
-		chaos::SM::State const * current_state = game_state_machine->GetCurrentState();
+		chaos::SM::State const * current_state = game_state_machine_instance->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
 		return current_state->GetStateID();

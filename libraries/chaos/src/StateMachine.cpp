@@ -83,10 +83,11 @@ namespace chaos
 		// Transition
 		// ==================================================
 
-		Transition::Transition(State * in_from_state, State * in_to_state):
+		Transition::Transition(State * in_from_state, State * in_to_state, int in_triggering_event):
 			State(in_from_state->state_machine),
 			from_state(in_from_state),
-			to_state(in_to_state)
+			to_state(in_to_state),
+			triggering_event(in_triggering_event)
 		{
 			assert(in_from_state != nullptr);
 			assert(in_to_state != nullptr);
@@ -99,6 +100,7 @@ namespace chaos
 
 		bool Transition::TriggerTransition(bool force)
 		{
+#if 0
 			// triggering the transition is only possible if the state_machine is in start state
 			if (state_machine->current_state != from_state)
 				return false;
@@ -107,6 +109,7 @@ namespace chaos
 				return false;
 			// change the state
 			state_machine->ChangeState(this);		
+#endif
 			return true;
 		}
 

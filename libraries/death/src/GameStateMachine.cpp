@@ -64,7 +64,7 @@ namespace death
 		SetName("MainMenu");
 	}
 
-	bool MainMenuState::OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data)
+	bool MainMenuState::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
@@ -79,7 +79,7 @@ namespace death
 		SetName("Playing");
 	}
 
-	bool PlayingState::TickImpl(double delta_time, chaos::ReferencedObject * context_data)
+	bool PlayingState::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
@@ -103,7 +103,7 @@ namespace death
 	{
 	}
 
-	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data)
+	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -112,7 +112,7 @@ namespace death
 		return false;
 	}
 
-	bool MainMenuToPlayingTransition::TickImpl(double delta_time, chaos::ReferencedObject * context_data)
+	bool MainMenuToPlayingTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -125,7 +125,7 @@ namespace death
 	{
 	}
 
-	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data)
+	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -134,7 +134,7 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToMainMenuTransition::TickImpl(double delta_time, chaos::ReferencedObject * context_data)
+	bool PlayingToMainMenuTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -142,7 +142,7 @@ namespace death
 		return game->IsGameLeaveComplete();
 	}
 
-	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::SM::State * to, chaos::ReferencedObject * context_data)
+	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -157,7 +157,7 @@ namespace death
 	}
 
 
-	bool PlayingToPauseTransition::OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data)
+	bool PlayingToPauseTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -166,7 +166,7 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToPauseTransition::TickImpl(double delta_time, chaos::ReferencedObject * context_data)
+	bool PlayingToPauseTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -179,7 +179,7 @@ namespace death
 	{
 	}
 
-	bool PauseToPlayingTransition::OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data)
+	bool PauseToPlayingTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -188,7 +188,7 @@ namespace death
 		return false;
 	}
 
-	bool PauseToPlayingTransition::TickImpl(double delta_time, chaos::ReferencedObject * context_data)
+	bool PauseToPlayingTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -201,31 +201,32 @@ namespace death
 	{
 	}
 
-	bool PlayingToGameOverTransition::OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data)
+	bool PlayingToGameOverTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
 		{
-			gameover_sound = game->PlaySound("gameover", false, false);
+			sm_instance->SetContextData(game->PlaySound("gameover", false, false));
 			game->OnLeaveGame(true);
 		}
 		return false;
 	}
 
-	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::SM::State * to, chaos::ReferencedObject * context_data)
+	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance)
 	{
+		// destroy the sound object
+		sm_instance->SetContextData(nullptr);
 		// notify the game that it is finished
 		Game * game = GetGame();
 		if (game != nullptr)
 			game->OnGameOver();
-		// destroy the sound object
-		gameover_sound = nullptr;
 		return true;
 	}
 
-	bool PlayingToGameOverTransition::TickImpl(double delta_time, chaos::ReferencedObject * context_data)
+	bool PlayingToGameOverTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		// wait until game over sound is finished
+		chaos::Sound * gameover_sound = dynamic_cast<chaos::Sound*>(sm_instance->GetContextData());
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
 				return false;

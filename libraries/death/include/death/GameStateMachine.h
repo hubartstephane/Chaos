@@ -51,7 +51,7 @@ namespace death
 		/** constructor */
 		MainMenuState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(chaos::SM::State * state, chaos::ReferencedObject * context_data) override;
+		virtual bool OnEnterImpl(chaos::SM::State * state, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	class PlayingState : public GameState
@@ -61,7 +61,7 @@ namespace death
 		/** constructor */
 		PlayingState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
+		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	class PauseState : public GameState
@@ -86,9 +86,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
+		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	class PlayingToMainMenuTransition : public GameTransition
@@ -102,11 +102,11 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::ReferencedObject * context_data) override;
+		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
+		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	class PlayingToPauseTransition : public GameTransition
@@ -120,9 +120,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
+		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 
@@ -137,9 +137,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
+		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	class PlayingToGameOverTransition : public GameTransition
@@ -151,16 +151,11 @@ namespace death
 		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state);
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::ReferencedObject * context_data) override;
+		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::ReferencedObject * context_data) override;
+		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool TickImpl(double delta_time, chaos::ReferencedObject * context_data) override;
-
-	protected:
-
-		/** the sound being played */
-		boost::intrusive_ptr<chaos::Sound> gameover_sound;
+		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	// =========================================================

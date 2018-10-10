@@ -73,7 +73,7 @@ namespace chaos
 			// give to the outgoing transitions the opportunities to catch the event
 			for (Transition * transition : outgoing_transitions)
 			{
-				if (transition->triggering_event >= 0 && transition->triggering_event)
+				if (transition->triggering_event >= 0 && transition->triggering_event == event_id)
 				{
 					sm_instance->ChangeState(transition);
 					return true;

@@ -328,12 +328,9 @@ bool LudumGame::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input,
 	return true;
 }
 
-bool LudumGame::CreateGameStateMachine()
+chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {
-	game_state_machine = new LudumStateMachine(this);
-	if (game_state_machine == nullptr)
-		return false;
-	return true;
+	return new LudumStateMachine(this);
 }
 
 bool LudumGame::DeclareParticleClasses()

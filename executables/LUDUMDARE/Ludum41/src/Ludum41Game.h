@@ -98,7 +98,7 @@ protected:
 	void DestroyGameObjects();
 
 	/** override */
-	virtual bool CreateGameStateMachine() override;
+	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
 	/** override */

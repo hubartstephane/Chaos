@@ -19,9 +19,9 @@ namespace death
 		/** constructor */
 		GameState(class GameStateMachine * in_state_machine);
 		/** get the game */
-		Game * GetGame();
+		Game * GetGame(chaos::SM::StateMachineInstance * sm_instance);
 		/** get the game */
-		Game const * GetGame() const;
+		Game const * GetGame(chaos::SM::StateMachineInstance const * sm_instance) const;
 	};
 
 	// =========================================================
@@ -35,9 +35,9 @@ namespace death
 		/** constructor */
 		GameTransition(GameState * in_from_state, GameState * in_to_state);
 		/** get the game */
-		Game * GetGame();
+		Game * GetGame(chaos::SM::StateMachineInstance * sm_instance);
 		/** get the game */
-		Game const * GetGame() const;
+		Game const * GetGame(chaos::SM::StateMachineInstance * sm_instance) const;
 	};
 
 	// =========================================================
@@ -51,7 +51,7 @@ namespace death
 		/** constructor */
 		MainMenuState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(chaos::SM::State * state, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnEnterImpl(chaos::SM::StateBase * from_state, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
 
 	class PlayingState : public GameState
@@ -86,7 +86,7 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
@@ -102,9 +102,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnLeaveImpl(chaos::SM::StateBase * to, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
@@ -120,7 +120,7 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
@@ -137,7 +137,7 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
@@ -151,9 +151,9 @@ namespace death
 		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state);
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance) override;
+		virtual bool OnLeaveImpl(chaos::SM::StateBase * to, chaos::SM::StateMachineInstance * sm_instance) override;
 		/** overriding */
 		virtual bool TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance) override;
 	};
@@ -193,10 +193,8 @@ namespace death
 		/** get the game */
 		Game const * GetGame() const { return game; }
 
-	protected:
-
 		/** create states and transitions */
-		virtual bool CreateStateMachine();
+		virtual bool InitializeStateMachine() override;
 
 	protected:
 
@@ -216,6 +214,34 @@ namespace death
 		boost::intrusive_ptr<GameTransition> playing_to_pause;
 		boost::intrusive_ptr<GameTransition> pause_to_playing;
 		boost::intrusive_ptr<GameTransition> playing_to_gameover;
+	};
+
+	// =========================================================
+	// GameStateMachineInstance
+	// =========================================================
+
+	class GameStateMachineInstance : public chaos::SM::StateMachineInstance
+	{
+	public:
+
+		/** constructor */
+		GameStateMachineInstance(Game * in_game, chaos::SM::StateMachine * in_state_machine);
+
+		/** get the game */
+		Game * GetGame()
+		{
+			return game;
+		}
+		/** get the game */
+		Game const * GetGame() const
+		{
+			return game;		
+		}
+
+	protected:
+
+		/** the game */
+		Game * game = nullptr;	
 	};
 
 }; // namespace death

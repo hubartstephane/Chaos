@@ -12,20 +12,20 @@ namespace death
 	{
 	}
 
-	Game * GameState::GetGame()
+	Game * GameState::GetGame(chaos::SM::StateMachineInstance * sm_instance)
 	{
-		GameStateMachine * game_state_machine = (GameStateMachine *)state_machine;
-		if (game_state_machine == nullptr)
-			return nullptr;
-		return game_state_machine->GetGame();
+		GameStateMachineInstance * game_state_machine_instance = dynamic_cast<GameStateMachineInstance *>(sm_instance);
+		if (game_state_machine_instance != nullptr)
+			return game_state_machine_instance->GetGame();
+		return nullptr;
 	}
 
-	Game const * GameState::GetGame() const
+	Game const * GameState::GetGame(chaos::SM::StateMachineInstance const * sm_instance) const
 	{
-		GameStateMachine const * game_state_machine = (GameStateMachine const *)state_machine;
-		if (game_state_machine == nullptr)
-			return nullptr;
-		return game_state_machine->GetGame();
+		GameStateMachineInstance const * game_state_machine_instance = dynamic_cast<GameStateMachineInstance const *>(sm_instance);
+		if (game_state_machine_instance != nullptr)
+			return game_state_machine_instance->GetGame();
+		return nullptr;
 	}
 
 	// =========================================================
@@ -37,20 +37,20 @@ namespace death
 	{
 	}
 
-	Game * GameTransition::GetGame()
+	Game * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance)
 	{
-		GameStateMachine * game_state_machine = (GameStateMachine *)state_machine;
-		if (game_state_machine == nullptr)
-			return nullptr;
-		return game_state_machine->GetGame();
+		GameStateMachineInstance * game_state_machine_instance = dynamic_cast<GameStateMachineInstance *>(sm_instance);
+		if (game_state_machine_instance != nullptr)
+			return game_state_machine_instance->GetGame();
+		return nullptr;
 	}
 
-	Game const * GameTransition::GetGame() const
+	Game const * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance) const
 	{
-		GameStateMachine const * game_state_machine = (GameStateMachine const *)state_machine;
-		if (game_state_machine == nullptr)
-			return nullptr;
-		return game_state_machine->GetGame();
+		GameStateMachineInstance const * game_state_machine_instance = dynamic_cast<GameStateMachineInstance const *>(sm_instance);
+		if (game_state_machine_instance != nullptr)
+			return game_state_machine_instance->GetGame();
+		return nullptr;
 	}
 
 	// =========================================================
@@ -60,13 +60,13 @@ namespace death
 	MainMenuState::MainMenuState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
-		SetStateID(GameStateMachine::STATE_MAINMENU);
+		SetID(GameStateMachine::STATE_MAINMENU);
 		SetName("MainMenu");
 	}
 
-	bool MainMenuState::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
+	bool MainMenuState::OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnEnterMainMenu(from == nullptr); // very first game ?
 		return false;
@@ -75,13 +75,13 @@ namespace death
 	PlayingState::PlayingState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
-		SetStateID(GameStateMachine::STATE_PLAYING);
+		SetID(GameStateMachine::STATE_PLAYING);
 		SetName("Playing");
 	}
 
 	bool PlayingState::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->TickGameLoop(delta_time);
 		return true;
@@ -90,7 +90,7 @@ namespace death
 	PauseState::PauseState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
-		SetStateID(GameStateMachine::STATE_PAUSE);
+		SetID(GameStateMachine::STATE_PAUSE);
 		SetName("Pause");
 	}
 
@@ -103,9 +103,9 @@ namespace death
 	{
 	}
 
-	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
+	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		game->OnEnterGame();
@@ -114,7 +114,7 @@ namespace death
 
 	bool MainMenuToPlayingTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		return game->IsGameEnterComplete();
@@ -125,9 +125,9 @@ namespace death
 	{
 	}
 
-	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
+	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		game->OnLeaveGame(false);
@@ -136,15 +136,15 @@ namespace death
 
 	bool PlayingToMainMenuTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		return game->IsGameLeaveComplete();
 	}
 
-	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance)
+	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::SM::StateBase * to, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		game->OnAbordGame();
@@ -157,9 +157,9 @@ namespace death
 	}
 
 
-	bool PlayingToPauseTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
+	bool PlayingToPauseTransition::OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		game->OnEnterPause();
@@ -168,7 +168,7 @@ namespace death
 
 	bool PlayingToPauseTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		return game->IsPauseEnterComplete();
@@ -179,9 +179,9 @@ namespace death
 	{
 	}
 
-	bool PauseToPlayingTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
+	bool PauseToPlayingTransition::OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		game->OnLeavePause();
@@ -190,7 +190,7 @@ namespace death
 
 	bool PauseToPlayingTransition::TickImpl(double delta_time, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
 		return game->IsPauseLeaveComplete();
@@ -201,9 +201,9 @@ namespace death
 	{
 	}
 
-	bool PlayingToGameOverTransition::OnEnterImpl(chaos::SM::State * from, chaos::SM::StateMachineInstance * sm_instance)
+	bool PlayingToGameOverTransition::OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance)
 	{
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 		{
 			sm_instance->SetContextData(game->PlaySound("gameover", false, false));
@@ -212,12 +212,12 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::SM::State * to, chaos::SM::StateMachineInstance * sm_instance)
+	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::SM::StateBase * to, chaos::SM::StateMachineInstance * sm_instance)
 	{
 		// destroy the sound object
 		sm_instance->SetContextData(nullptr);
 		// notify the game that it is finished
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnGameOver();
 		return true;
@@ -231,7 +231,7 @@ namespace death
 			if (!gameover_sound->IsFinished())
 				return false;
 		// wait until the music is blend correctly
-		Game * game = GetGame();
+		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			return game->IsGameLeaveComplete();
 		return true;
@@ -247,7 +247,7 @@ namespace death
 		assert(in_game != nullptr);
 	}
 
-	bool GameStateMachine::CreateStateMachine()
+	bool GameStateMachine::InitializeStateMachine()
 	{
 		main_menu_state = new MainMenuState(this);
 		playing_state = new PlayingState(this);
@@ -262,6 +262,17 @@ namespace death
 		SetInitialState(main_menu_state.get());
 
 		return true;
+	}
+
+	// =========================================================
+	// GameStateMachineInstance
+	// =========================================================
+
+	GameStateMachineInstance::GameStateMachineInstance(Game * in_game, chaos::SM::StateMachine * in_state_machine) : 
+		chaos::SM::StateMachineInstance(in_state_machine),
+		game(in_game)
+	{
+		assert(in_game != nullptr);
 	}
 
 }; // namespace death

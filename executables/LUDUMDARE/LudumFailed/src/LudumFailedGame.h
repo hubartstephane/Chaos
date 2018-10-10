@@ -80,7 +80,7 @@ protected:
 	virtual bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	/** override */
-	virtual bool CreateGameStateMachine() override;
+	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
 

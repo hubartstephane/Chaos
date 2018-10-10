@@ -193,6 +193,8 @@ namespace death
 		virtual bool DeclareParticleClasses();
 		/** create the game state_machine */
 		virtual bool CreateGameStateMachine();
+		/** allocate the state machine */
+		virtual chaos::SM::StateMachine * DoCreateGameStateMachine();
 		/** create the game state_machine instance */
 		virtual bool CreateGameStateMachineInstance();
 		/** handle the gamepad input */

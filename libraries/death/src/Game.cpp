@@ -576,12 +576,22 @@ namespace death
 
 	bool Game::CreateGameStateMachine()
 	{
+		game_state_machine = DoCreateGameStateMachine();
+		if (game_state_machine == nullptr)
+			return false;
+		if (!game_state_machine->InitializeStateMachine()) // create all internal states and transition
+			return false;
 		return true;
+	}
+
+	chaos::SM::StateMachine * Game::DoCreateGameStateMachine()
+	{
+		return nullptr;
 	}
 
 	bool Game::CreateGameStateMachineInstance()
 	{
-		game_state_machine_instance = game_state_machine->CreateInstance();
+		game_state_machine_instance = new GameStateMachineInstance(this, game_state_machine.get());
 		if (game_state_machine_instance == nullptr)
 			return false;
 		return true;
@@ -885,10 +895,10 @@ namespace death
 	{
 		if (game_state_machine_instance == nullptr)
 			return -1;
-		chaos::SM::State const * current_state = game_state_machine_instance->GetCurrentState();
+		chaos::SM::StateBase const * current_state = game_state_machine_instance->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
-		return current_state->GetStateID();
+		return current_state->GetID();
 	}
 
 	bool Game::IsPlaying() const

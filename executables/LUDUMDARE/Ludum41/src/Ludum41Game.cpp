@@ -1067,12 +1067,9 @@ void LudumGame::OnLongBarChallenge(bool success)
 		SetPlayerLength(player_length - player_length_decrement);
 }
 
-bool LudumGame::CreateGameStateMachine()
+chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {
-	game_state_machine = new LudumStateMachine(this);
-	if (game_state_machine == nullptr)
-		return false;
-	return true;
+	return new LudumStateMachine(this);
 }
 
 bool LudumGame::DeclareParticleClasses()

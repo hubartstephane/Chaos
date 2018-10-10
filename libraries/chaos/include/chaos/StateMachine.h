@@ -16,35 +16,35 @@ namespace chaos
 		// ==================================================
 
 		// all classes in this file
-#define CHAOS_STATEMACHINE_CLASSES (State) (Transition) (StateMachine) (StateMachineInstance)
+#define CHAOS_STATEMACHINE_CLASSES (StateBase) (State) (Transition) (StateMachine) (StateMachineInstance)
 
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;		
-BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES)
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES)
 
-		// friendship macro
+			// friendship macro
 #define CHAOS_STATEMACHINE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_STATEMACHINE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FRIEND_DECL, _, CHAOS_STATEMACHINE_CLASSES)
 
-		// ==================================================
-		// State
-		// ==================================================
-		
-		class State : public ReferencedObject
+			// ==================================================
+			// State
+			// ==================================================
+
+		class StateBase : public ReferencedObject
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
 		public:
 
 			/** constructor */
-			State(StateMachine * in_state_machine);
+			StateBase(StateMachine * in_state_machine);
 			/** destructor */
-			virtual ~State();
+			virtual ~StateBase();
 
 			/** change the ID */
-			void SetStateID(int new_id) { id = new_id; }
+			void SetID(int new_id) { id = new_id; }
 			/** get the ID */
-			int GetStateID() const { return id; }
+			int GetID() const { return id; }
 
 			/** change the name */
 			void SetName(char const * in_name);
@@ -54,32 +54,68 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 		protected:
 
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual void OnEnter(State * from_state, StateMachineInstance * sm_instance);
-			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual void Tick(double delta_time, StateMachineInstance * sm_instance);
+			virtual void OnEnter(StateBase * from_state, StateMachineInstance * sm_instance){}
+			/** FRAMEWORK : called at each tick */
+			virtual void Tick(double delta_time, StateMachineInstance * sm_instance){}
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(State * to_state, StateMachineInstance * sm_instance);
+			virtual void OnLeave(StateBase * to_state, StateMachineInstance * sm_instance){}
 			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEvent(int event_id, void * extra_data, StateMachineInstance * sm_instance);
+			virtual bool SendEvent(int event_id, void * extra_data, StateMachineInstance * sm_instance){ return false; }
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(State * from_state, StateMachineInstance * sm_instance);
-			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool TickImpl(double delta_time, StateMachineInstance * sm_instance);
+			virtual bool OnEnterImpl(StateBase * from_state, StateMachineInstance * sm_instance){ return true;}
+			/** USER IMPLEMENTATION : called at each tick */
+			virtual bool TickImpl(double delta_time, StateMachineInstance * sm_instance){ return true; }
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(State * to_state, StateMachineInstance * sm_instance);
+			virtual bool OnLeaveImpl(StateBase * to_state, StateMachineInstance * sm_instance){ return true; }
 			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEventImpl(int event_id, void * extra_data, StateMachineInstance * sm_instance);
+			virtual bool SendEventImpl(int event_id, void * extra_data, StateMachineInstance * sm_instance){ return false; }
 
 		protected:
 
 			/** the state_machine this instance belongs to */
 			StateMachine * state_machine = nullptr;
-
 			/** an ID for the state */
 			int id = 0;
 			/** the name of the state */
 			std::string name;
+		};
+
+
+		// ==================================================
+		// State
+		// ==================================================
+
+		class State : public StateBase
+		{
+			CHAOS_STATEMACHINE_ALL_FRIENDS
+
+		public:
+
+			/** constructor */
+			State(StateMachine * in_state_machine);
+
+		protected:
+
+			/** FRAMEWORK : called whenever we enter in this state */
+			virtual void OnEnter(StateBase * from_state, StateMachineInstance * sm_instance) override;
+			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
+			virtual void Tick(double delta_time, StateMachineInstance * sm_instance) override;
+			/** FRAMEWORK : called whenever we leave this state */
+			virtual void OnLeave(StateBase * to_state, StateMachineInstance * sm_instance) override;
+			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
+			virtual bool SendEvent(int event_id, void * extra_data, StateMachineInstance * sm_instance) override;
+
+			/** USER IMPLEMENTATION : called whenever we enter in this state */
+			virtual bool OnEnterImpl(StateBase * from_state, StateMachineInstance * sm_instance) override;
+			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
+			virtual bool TickImpl(double delta_time, StateMachineInstance * sm_instance) override;
+			/** USER IMPLEMENTATION : called whenever we leave this state */
+			virtual bool OnLeaveImpl(StateBase * to_state, StateMachineInstance * sm_instance) override;
+			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
+			virtual bool SendEventImpl(int event_id, void * extra_data, StateMachineInstance * sm_instance) override;
+
+		protected:
 
 			/** the list of outgoing transitions */
 			std::vector<Transition *> outgoing_transitions;
@@ -91,7 +127,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 		// Transition
 		// ==================================================
 
-		class Transition : public State
+		class Transition : public StateBase
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -100,27 +136,24 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** constructor */
 			Transition(State * in_from_state, State * in_to_state, int in_triggering_event = -1);
 
-			/** force trigger the state change */
-			bool TriggerTransition(bool force = true);
-
 		protected:
 
-			/** user implementable method to know whether the transition can trigger itself */
+			/** user implementable method to know whether the transition can trigger itself. Returns true whether the transition can be automatically used */
 			virtual bool CheckTransitionConditions();
 
-			/** FRAMEWORK : called whenever we enter in this state */
-			virtual void OnEnter(State * from_state, StateMachineInstance * sm_instance) override;
+			/** FRAMEWORK : called whenever we enter in this state. Returns true whether this is a passthrought transition (directly go to outgoing transition) */
+			virtual void OnEnter(StateBase * from_state, StateMachineInstance * sm_instance) override;
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
 			virtual void Tick(double delta_time, StateMachineInstance * sm_instance) override;
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(State * to_state, StateMachineInstance * sm_instance) override;
+			virtual void OnLeave(StateBase * to_state, StateMachineInstance * sm_instance) override;
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(State * from_state, StateMachineInstance * sm_instance) override;
+			virtual bool OnEnterImpl(StateBase * from_state, StateMachineInstance * sm_instance) override;
 			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
 			virtual bool TickImpl(double delta_time, StateMachineInstance * sm_instance) override;
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(State * to_state, StateMachineInstance * sm_instance) override;
+			virtual bool OnLeaveImpl(StateBase * to_state, StateMachineInstance * sm_instance) override;
 
 		protected:
 
@@ -141,12 +174,10 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
-		protected:
-
-			/** protected constructor */
-			StateMachineInstance(StateMachine * in_state_machine);
-
 		public:
+
+			/** constructor */
+			StateMachineInstance(StateMachine * in_state_machine);
 
 			/** the tick method */
 			bool Tick(double delta_time);
@@ -156,9 +187,9 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			bool SendEvent(int event_id, void * extra_data);
 
 			/** get the current state */
-			State * GetCurrentState() { return current_state; }
+			StateBase * GetCurrentState() { return current_state; }
 			/** get the current state */
-			State const * GetCurrentState() const { return current_state; }
+			StateBase const * GetCurrentState() const { return current_state; }
 
 
 			/** get the context object */
@@ -169,14 +200,14 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 		protected:
 
 			/** internal method to change state */
-			void ChangeState(State * new_state);
+			void ChangeState(StateBase * new_state);
 
 		protected:
 
 			/** the state machine */
 			StateMachine * state_machine = nullptr;
 			/** the current state of the state_machine */
-			State * current_state = nullptr;
+			StateBase * current_state = nullptr;
 			/** some data for current state / transition */
 			boost::intrusive_ptr<ReferencedObject> context_data;
 		};
@@ -194,18 +225,16 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLA
 			/** destructor */
 			virtual ~StateMachine() = default;
 
-			/** create the instance */
-			StateMachineInstance * CreateInstance();
-
-		protected:
+			/** create states and transitions */
+			virtual bool InitializeStateMachine(){ return true; }
 
 			/** set the initial state */
-			void SetInitialState(State * in_state);
+			void SetInitialState(StateBase * in_state);
 
 		protected:
 
 			/** the initial state of the state_machine */
-			State * initial_state = nullptr;
+			StateBase * initial_state = nullptr;
 		};
 
 		// undefine macros

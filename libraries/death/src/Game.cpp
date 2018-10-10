@@ -83,11 +83,8 @@ namespace death
 	
 	void Game::OnMouseButton(int button, int action, int modifier)
 	{
-		if (GetCurrentStateID() == GameStateMachine::STATE_MAINMENU)
-		{
-			if (action == GLFW_PRESS)
-				RequireStartGame();
-		}
+		if (action == GLFW_PRESS)
+			RequireStartGame();
 	}
 	
 	void Game::OnMouseMove(double x, double y)
@@ -581,6 +578,9 @@ namespace death
 			return false;
 		if (!game_state_machine->InitializeStateMachine()) // create all internal states and transition
 			return false;
+		game_state_machine_instance = DoCreateGameStateMachineInstance(game_state_machine.get());
+		if (game_state_machine_instance == nullptr)
+			return false;
 		return true;
 	}
 
@@ -589,12 +589,9 @@ namespace death
 		return nullptr;
 	}
 
-	bool Game::CreateGameStateMachineInstance()
+	chaos::SM::StateMachineInstance * Game::DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine)
 	{
-		game_state_machine_instance = new GameStateMachineInstance(this, game_state_machine.get());
-		if (game_state_machine_instance == nullptr)
-			return false;
-		return true;
+		return new GameStateMachineInstance(this, state_machine);
 	}
 
 	bool Game::InitializeGame(GLFWwindow * in_glfw_window)
@@ -610,8 +607,6 @@ namespace death
 
 		// create game state_machine
 		if (!CreateGameStateMachine())		
-			return false;
-		if (!CreateGameStateMachineInstance())		
 			return false;
 	
 		// create the musics
@@ -653,7 +648,7 @@ namespace death
 	{
 		// maybe a start game
 		if (in_gamepad_data.IsAnyButtonPressed())
-			if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_PRESS_START, nullptr))
+			if (RequireStartGame())
 				return true;
 
 		// maybe a game/pause resume

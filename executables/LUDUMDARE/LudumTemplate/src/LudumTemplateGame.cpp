@@ -105,7 +105,7 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 
 	// maybe a start game
 	if (physical_gamepad->IsAnyButtonPressed())
-		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_PRESS_START, nullptr))
+		if (RequireStartGame())
 			return true;
 
 	// maybe a game/pause resume

@@ -33,7 +33,7 @@ namespace death
 	public:
 
 		/** constructor */
-		GameTransition(GameState * in_from_state, GameState * in_to_state);
+		GameTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
 		/** get the game */
 		Game * GetGame(chaos::SM::StateMachineInstance * sm_instance);
 		/** get the game */
@@ -81,7 +81,7 @@ namespace death
 	public:
 
 		/** constructor */
-		MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state);
+		MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
 
 	protected:
 
@@ -97,7 +97,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state);
+		PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
 
 	protected:
 
@@ -115,7 +115,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state);
+		PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
 
 	protected:
 
@@ -132,7 +132,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state);
+		PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
 
 	protected:
 
@@ -148,7 +148,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state);
+		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
@@ -179,11 +179,10 @@ namespace death
 		static int const STATE_TRANSITION_PAUSE_TO_PLAYING = 7;
 
 		// the events
-		static int const EVENT_PRESS_START  = 1;
-		static int const EVENT_TOGGLE_PAUSE = 2;
-		static int const EVENT_EXIT_GAME    = 3;
-		static int const EVENT_START_GAME   = 4;
-		static int const EVENT_GAME_OVER    = 5;
+		static int const EVENT_TOGGLE_PAUSE = 1;
+		static int const EVENT_EXIT_GAME    = 2;
+		static int const EVENT_START_GAME   = 3;
+		static int const EVENT_GAME_OVER    = 4;
 
 		/** constructor */
 		GameStateMachine(Game * in_game);

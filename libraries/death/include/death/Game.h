@@ -196,7 +196,7 @@ namespace death
 		/** allocate the state machine */
 		virtual chaos::SM::StateMachine * DoCreateGameStateMachine();
 		/** create the game state_machine instance */
-		virtual bool CreateGameStateMachineInstance();
+		virtual chaos::SM::StateMachineInstance * DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine);
 		/** handle the gamepad input */
 		virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
 		/** handle keyboards input */

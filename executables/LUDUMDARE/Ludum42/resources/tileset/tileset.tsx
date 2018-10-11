@@ -10,6 +10,7 @@
    <property name="OBJECT_TYPE" type="int" value="0"/>
   </properties>
   <image width="563" height="226" source="player.png"/>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="3">
   <properties>

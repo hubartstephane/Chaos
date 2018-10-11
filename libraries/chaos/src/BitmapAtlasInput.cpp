@@ -197,6 +197,16 @@ namespace chaos
 		{
 			BitmapInfoInput * result = nullptr;
 
+			// compute a name from the path if necessary
+			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+			std::string generated_name;
+			if (name == nullptr)
+			{
+				generated_name = BoostTools::PathToName(resolved_path);
+				name = generated_name.c_str();
+			}
+
 			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
@@ -211,8 +221,6 @@ namespace chaos
 				RegisterResource(pages[i], true);
 
 			// test whether there is a grid describing the animation
-			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
 			BitmapGridAnimationInfo animation;
 			if (grid_animation_info == nullptr) // use the path to find the animation_info	by default		
 				if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, nullptr))
@@ -221,7 +229,7 @@ namespace chaos
 			// create the bitmap
 			result = AddBitmapImpl(
 				pages,
-				(name != nullptr) ? name : BoostTools::PathToName(resolved_path).c_str(), // XXX : cannot use an intermediate temporary because the filesystem.string() is a temp object
+				name,
 				tag,
 				grid_animation_info,
 				&anim_description

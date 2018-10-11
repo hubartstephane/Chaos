@@ -349,13 +349,16 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	chaos::box2 world_bounds; 
 	bool explicit_world_bounds = FindExplicitWorldBounds(tiled_map, world_bounds);
 
-	glm::vec2 world_origin; 
+	glm::vec2 world_origin = glm::vec2(0.0f, 0.0f);
 	bool explicit_world_origin = FindExplicitWorldOrigin(tiled_map, world_origin);
 	
 
+	explicit_world_bounds = explicit_world_origin = false;
 
-
-
+	if (!explicit_world_bounds)
+		world_bounds = chaos::box2();
+	if (!explicit_world_origin)
+		world_origin = glm::vec2(0.0f, 0.0f);
 
 
 

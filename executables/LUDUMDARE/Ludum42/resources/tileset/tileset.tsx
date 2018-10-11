@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="tileset" tilewidth="640" tileheight="640" tilecount="9" columns="0">
+<tileset name="tileset" tilewidth="640" tileheight="640" tilecount="10" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="2">
   <properties>
@@ -63,5 +63,8 @@
    <property name="OBJECT_TYPE" type="int" value="1"/>
   </properties>
   <image width="464" height="464" source="../sprites/planet7.png"/>
+ </tile>
+ <tile id="11">
+  <image width="128" height="128" source="brickwall.png"/>
  </tile>
 </tileset>

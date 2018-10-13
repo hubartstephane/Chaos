@@ -85,245 +85,6 @@ chaos::ParticleAllocation * LudumGameplayLevelInstance::FindOrAllocationForObjec
 }
 
 
-
-
-
-
-
-
-
-
-// returns false, if the object does not have the flag
-bool HasExplicitFlag(chaos::TiledMap::GeometricObject const * object_geometric, char const * name, char const * type, char const * property_name)
-{
-	// name is an indicator
-	if (name != nullptr && object_geometric->name == name)
-		return true;
-	// type is an indicator
-	if (type != nullptr && object_geometric->type == type)
-		return true;
-	// search in properties
-	if (property_name != nullptr)
-	{
-		chaos::TiledMap::Property const * property = object_geometric->FindProperty(property_name);
-		if (property != nullptr)
-		{
-			bool const * property_bool = property->GetBoolProperty();
-			if (property_bool != nullptr)
-				return *property_bool;
-
-			int const * property_int = property->GetIntProperty();
-			if (property_int != nullptr)
-				return (*property_int > 0);				
-		}
-	}
-	return false;
-}
-
-
-
-
-
-
-bool HasExplicitWorldOrigin(chaos::TiledMap::GeometricObject const * object_geometric)
-{
-	return HasExplicitFlag(object_geometric, "world_origin", "world_origin", "WORLD_ORIGIN");
-}
-
-bool GetExplicitWorldOrigin(chaos::TiledMap::GeometricObject const * object_geometric, glm::vec2 & result) // expressed in layer coordinates
-{
-	if (object_geometric == nullptr)
-		return false;
-	if (HasExplicitWorldOrigin(object_geometric))
-	{
-		result = object_geometric->position;
-		return true;
-	}
-	return false;
-}
-
-bool FindExplicitWorldOrigin(chaos::TiledMap::ObjectLayer const * object_layer, glm::vec2 & result)
-{
-	if (object_layer == nullptr)
-		return false;
-	for (size_t i = 0 ; i < object_layer->geometric_objects.size(); ++i)
-	{
-		chaos::TiledMap::GeometricObject const * object = object_layer->geometric_objects[i].get();
-		if (GetExplicitWorldOrigin(object, result))
-		{
-			result += object_layer->offset;
-			return true;
-		}
-	}
-	return false;
-}
-
-bool FindExplicitWorldOrigin(chaos::TiledMap::Map const * tiled_map, glm::vec2 & result) // expressed in map coordinates
-{
-	if (tiled_map == nullptr)
-		return false;
-	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
-	{
-		chaos::TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
-		if (FindExplicitWorldOrigin(object_layer, result))
-			return true;
-	}
-	return false;
-}
-
-
-
-
-
-
-
-
-
-
-bool HasExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geometric)
-{
-	return HasExplicitFlag(object_geometric, "world_bounds", "world_bounds", "WORLD_BOUNDS");
-}
-
-bool GetExplicitWorldBounds(chaos::TiledMap::GeometricObject const * object_geometric, chaos::box2 & result)  // expressed in layer coordinates
-{
-	if (object_geometric == nullptr)
-		return false;
-	chaos::TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
-	if (object_surface == nullptr)
-		return false;
-	if (HasExplicitWorldBounds(object_surface))
-	{
-		result = object_surface->GetBoundingBox();
-		return true;
-	}
-	return false;
-}
-
-bool FindExplicitWorldBounds(chaos::TiledMap::ObjectLayer const * object_layer, chaos::box2 & result)
-{
-	if (object_layer == nullptr)
-		return false;
-	for (size_t i = 0 ; i < object_layer->geometric_objects.size(); ++i)
-	{
-		chaos::TiledMap::GeometricObject const * object = object_layer->geometric_objects[i].get();
-		if (GetExplicitWorldBounds(object, result))
-		{
-			result.position += object_layer->offset;
-			return true;
-		}
-	}
-	return false;
-}
-
-bool FindExplicitWorldBounds(chaos::TiledMap::Map const * tiled_map, chaos::box2 & result) // expressed in map coordinates
-{
-	if (tiled_map == nullptr)
-		return false;
-	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
-	{
-		chaos::TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
-		if (FindExplicitWorldBounds(object_layer, result))
-			return true;
-	}
-	return false;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-class ParticleLayerOwner : public ReferencedObject
-{
-	void ParticleLayer * AddParticleLayer(float render_order)
-	{
-
-		return nullptr;
-	}
-};
-
-class ParticleLayer : public ParticleLayerOwner
-{
-	AddParticleGroup(ParticleGroup * group)
-
-};
-
-
-class ParticleGroup : public ReferencedObject
-{
-	ParticleAllocation * SpawnParticles(size_t count);
-
-	
-};
-
-
-
-class ParticleManager : public ParticleLayerOwner
-{
-
-
-};
-
-
-
-void InitializeParticleManager()
-{
-	ParticleManager * manager;
-
-
-
-
-};
-
-
-class Loader
-{
-public:
-
-	chaos::TiledMap::Map const * tiled_map = nullptr;
-
-
-	void OnTiled(chaos::TiledMap::GeometricObjectTile const * object_tile, chaos::TiledMap::TileInfo tile_info);
-	
-	info
-
-};
-#endif
-
-
-
-
-
-
-
-
 void LudumGameplayLevelInstance::OnLevelStarted()
 {
 	allocations.clear();
@@ -347,10 +108,10 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 
 	// compute the new world
 	chaos::box2 world_bounds; 
-	bool explicit_world_bounds = FindExplicitWorldBounds(tiled_map, world_bounds);
+	bool explicit_world_bounds = chaos::TiledMapTools::FindExplicitWorldBounds(tiled_map, world_bounds);
 
 	glm::vec2 world_origin = glm::vec2(0.0f, 0.0f);
-	bool explicit_world_origin = FindExplicitWorldOrigin(tiled_map, world_origin);
+	bool explicit_world_origin = chaos::TiledMapTools::FindExplicitWorldOrigin(tiled_map, world_origin);
 	
 
 	explicit_world_bounds = explicit_world_origin = false;
@@ -446,6 +207,9 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				continue;
 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+			if (tile_info.tiledata == nullptr)
+				continue;
+
 			if (tile_info.tiledata != nullptr)
 			{	
 				chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(tile_info.tiledata->atlas_key.c_str());
@@ -492,10 +256,13 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 				int object_type = 0;
 
 				int const * prop_object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
-				if (prop_object_type == nullptr)
-					continue;
+		//		if (prop_object_type == nullptr)
+		//			continue;
 
-				object_type = *prop_object_type;
+				if (prop_object_type != nullptr)
+					object_type = *prop_object_type;
+				else
+					object_type = LudumGame::OBJECT_TYPE_PLANET;
 
 				if (object_type == LudumGame::OBJECT_TYPE_PLAYER)
 				{

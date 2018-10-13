@@ -66,6 +66,14 @@
   <image width="464" height="464" source="../sprites/planet7.png"/>
  </tile>
  <tile id="11">
+  <properties>
+   <property name="OBJECT_TYPE" type="int" value="1"/>
+  </properties>
   <image width="128" height="128" source="brickwall.png"/>
+  <objectgroup draworder="index">
+   <properties>
+    <property name="OBJECT_TYPE" type="int" value="1"/>
+   </properties>
+  </objectgroup>
  </tile>
 </tileset>

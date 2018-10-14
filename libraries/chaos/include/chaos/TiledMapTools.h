@@ -31,6 +31,8 @@ namespace chaos
 		static bool IsWorldOrigin(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object defines an explicit world bounds */
 		static bool IsWorldBounds(TiledMap::GeometricObject const * object_geometric);
+		/** returns true whether the object is a player start */
+		static bool IsPlayerStart(TiledMap::GeometricObject const * object_geometric);
 
 		/** try to read world origin from object if possible (expressed in object layer coordinates) */
 		static bool GetExplicitWorldOrigin(TiledMap::GeometricObject const * object_geometric, glm::vec2 & result);
@@ -45,9 +47,6 @@ namespace chaos
 		static bool FindExplicitWorldBounds(TiledMap::ObjectLayer const * object_layer, box2 & result, bool absolute_system = true);
 		/** iterate over all objects of all layers and find one that is world bounds (expressed in absolute coordinates) */
 		static bool FindExplicitWorldBounds(TiledMap::Map const * tiled_map, box2 & result);
-
-		/** returns true whether the object is a player start */
-		static bool IsPlayerStart(TiledMap::GeometricObject const * object_geometric);
 	}; 
 
 }; // namespace chaos

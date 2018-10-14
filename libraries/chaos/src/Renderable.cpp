@@ -14,6 +14,11 @@ namespace chaos
 		return DoDisplay(uniform_provider, instancing);
 	}
 
+	int Renderable::DoDisplay(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	{
+		return 0;
+	}	
+
 	void Renderable::Show(bool new_visible)
 	{
 		if (visible == new_visible)
@@ -83,5 +88,37 @@ namespace chaos
 		layers.erase((layer_info - &layers[0]) + layers.begin());
 		return true;
 	}
+
+	Renderable * RenderableLayer::FindChildRenderable(char const * name)
+	{
+		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, name);
+		if (info == nullptr)
+			return nullptr;
+		return info->renderable.get();
+	}
+
+	Renderable const * RenderableLayer::FindChildRenderable(char const * name) const
+	{
+		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, name);
+		if (info == nullptr)
+			return nullptr;
+		return info->renderable.get();
+	}
+
+	Renderable * RenderableLayer::FindChildRenderable(TagType tag)
+	{
+		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, tag);
+		if (info == nullptr)
+			return nullptr;
+		return info->renderable.get();
+	}
+
+	Renderable const * RenderableLayer::FindChildRenderable(TagType tag) const
+	{
+		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, tag);
+		if (info == nullptr)
+			return nullptr;
+		return info->renderable.get();
+	}	
 
 }; // namespace chaos

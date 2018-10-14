@@ -11,6 +11,7 @@ namespace chaos
 	// ========================================================
 	// Renderable : base class for all object that can be rendered
 	// ========================================================
+
 	class Renderable : public ReferencedObject, public NamedObject
 	{
 	public:
@@ -39,6 +40,7 @@ namespace chaos
 	// ========================================================
 	// RenderableLayerInfo : an entry in the RenderableLayer
 	// ========================================================
+
 	class RenderableLayerInfo
 	{
 		friend class RenderableLayer;
@@ -47,6 +49,10 @@ namespace chaos
 
 		/** special method for sorted insertion : lower_bound + insert */
 		operator int() const { return render_order; }
+		/** special method to have access to NamedObject static utility functions */
+		char const * GetName() const { return renderable->GetName(); }
+		/** special method to have access to NamedObject static utility functions */
+		TagType GetTag() const { return renderable->GetTag(); }
 
 	public:
 
@@ -59,13 +65,19 @@ namespace chaos
 	// ========================================================
 	// RenderableLayer : used as a sorted container for renderers
 	// ========================================================
+
 	class RenderableLayer : public Renderable
 	{
 	public:
 
-		Renderable * 
-
-
+		/** Find a renderable by its name */
+		Renderable * FindChildRenderable(char const * name);
+		/** Find a renderable by its name */
+		Renderable const * FindChildRenderable(char const * name) const;
+		/** Find a renderable by its tag */
+		Renderable * FindChildRenderable(TagType tag);
+		/** Find a renderable by its tag */
+		Renderable const * FindChildRenderable(TagType tag) const;
 		/** insert a renderable */
 		bool AddChildRenderable(Renderable * renderable, int render_order);
 		/** remove a renderable */
@@ -74,7 +86,7 @@ namespace chaos
 	protected:
 
 		/** the main rendering method */
-		virtual void DoDisplay(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const override;
+		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const override;
 		/** find a renderable */
 		RenderableLayerInfo * FindChildRenderable(Renderable * renderable);
 		/** find a renderable */

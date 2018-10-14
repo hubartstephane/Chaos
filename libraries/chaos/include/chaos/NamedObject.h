@@ -13,6 +13,13 @@ namespace chaos
 	{
 	public:
 
+		/** get the name of the object */
+		char const * GetName() const { return name.c_str(); }
+		/** get the Tag of the object */
+		TagType GetTag() const { return tag; }
+
+	public:
+
 		/** the name of the object */
 		std::string name;
 		/** the tag of the object */
@@ -28,12 +35,12 @@ namespace chaos
 			size_t count = elements.size();
 			if (tag >= 0 && (size_t)tag < count)
 			{
-				if (meta::get_raw_pointer(elements[tag])->tag == tag)
+				if (meta::get_raw_pointer(elements[tag])->GetTag() == tag)
 					return meta::get_raw_pointer(elements[tag]);
 			}
 			// search in the list
 			for (size_t i = 0; i < count; ++i)
-				if (meta::get_raw_pointer(elements[i])->tag == tag)
+				if (meta::get_raw_pointer(elements[i])->GetTag() == tag)
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}
@@ -45,12 +52,12 @@ namespace chaos
 			size_t count = elements.size();
 			if (tag >= 0 && (size_t)tag < count)
 			{
-				if (meta::get_raw_pointer(elements[tag])->tag == tag)
+				if (meta::get_raw_pointer(elements[tag])->GetTag() == tag)
 					return meta::get_raw_pointer(elements[tag]);
 			}
 			// search in the list
 			for (size_t i = 0; i < count; ++i)
-				if (meta::get_raw_pointer(elements[i])->tag == tag)
+				if (meta::get_raw_pointer(elements[i])->GetTag() == tag)
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}
@@ -64,7 +71,7 @@ namespace chaos
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
-				if (meta::get_raw_pointer(elements[i])->name == in_name)
+				if (strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}
@@ -78,7 +85,7 @@ namespace chaos
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
-				if (meta::get_raw_pointer(elements[i])->name == in_name)
+				if (strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}

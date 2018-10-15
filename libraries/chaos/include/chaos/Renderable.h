@@ -20,6 +20,12 @@ namespace chaos
 
 	class RenderParams
 	{
+
+	public:
+
+		/** get the material */
+		GPURenderMaterial const * GetMaterial(Renderable const * renderable, GPURenderMaterial const * default_material) const;
+
 	public:
 
 		/** material provider */
@@ -37,7 +43,7 @@ namespace chaos
 	public:
 
 		/** the material provider main method */
-		virtual GPURenderMaterial * GetMaterial(Renderable * renderable, GPURenderMaterial * default_material, RenderParams const & render_params = RenderParams());
+		virtual GPURenderMaterial const * GetMaterial(Renderable const * renderable, GPURenderMaterial const * default_material, RenderParams const & render_params = RenderParams()) const;
 	};	
 
 

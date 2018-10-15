@@ -230,7 +230,7 @@ protected:
 				chaos::ParticleLayer * particle_layer = particle_manager->AddLayer(new ParticleLayerDescExample());
 					
 				particle_layer->SetRenderOrder(i);
-				particle_layer->SetLayerID(j + i * MATERIAL_COUNT);
+				particle_layer->SetTag(j + i * MATERIAL_COUNT);
 
 				particle_layer->SetRenderMaterial(materials[j]);
 			}

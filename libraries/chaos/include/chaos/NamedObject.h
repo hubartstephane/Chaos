@@ -18,6 +18,11 @@ namespace chaos
 		/** get the Tag of the object */
 		TagType GetTag() const { return tag; }
 
+		/** change the name of the object */
+		void SetName(char const * in_name);
+		/** change the tag of the object */
+		void SetTag(TagType in_tag) { tag = in_tag; }
+
 	public:
 
 		/** the name of the object */

@@ -11,6 +11,7 @@
 #include <chaos/DrawPrimitive.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/ClassTools.h>
+#include <chaos/Renderable.h>
 
 namespace chaos
 {
@@ -461,7 +462,7 @@ namespace chaos
 	// PARTICLE LAYER 
 	// ==============================================================
 
-	class ParticleLayer : public ReferencedObject
+	class ParticleLayer : public Renderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -471,16 +472,6 @@ namespace chaos
 		ParticleLayer(ParticleLayerDesc * in_layer_desc);
 		/** destructor */
 		virtual ~ParticleLayer();
-
-		/** get the name of the object */
-		char const * GetName() const { return name.c_str(); }
-		/** get the ID of the object */
-		int GetLayerID() const { return id; }
-
-		/** Set the name method */
-		void SetLayerName(char const * in_name);
-		/** Set the id method */
-		void SetLayerID(int in_id);
 
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
@@ -504,11 +495,6 @@ namespace chaos
 		void Pause(bool in_paused = true);
 		/** returns whether the layer is paused */
 		bool IsPaused() const;
-
-		/** show/hide the layer */
-		void Show(bool in_visible = true);
-		/** returns whether the layer is visible */
-		bool IsVisible() const;
 
 		/** get the particle ID for this system */
 		ClassTools::ClassRegistration const * GetParticleClass() const;
@@ -535,10 +521,11 @@ namespace chaos
 
 		/** ticking the particle system */
 		virtual void TickParticles(float delta_time);
-		/** draw the layer */
-		void Display(GPURenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing = InstancingInfo()) const;
-
+		
 	protected:
+
+		/** draw the layer */
+		virtual void DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();

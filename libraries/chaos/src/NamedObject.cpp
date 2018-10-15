@@ -3,6 +3,14 @@
 
 namespace chaos
 {
+	void NamedObject::SetName(char const * in_name)
+	{
+		if (in_name == nullptr)
+			name.clear();
+		else
+			name = in_name;
+	}
+
 	void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry)
 	{
 		json_entry["name"] = info.name;

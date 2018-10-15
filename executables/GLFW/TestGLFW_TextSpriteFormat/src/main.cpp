@@ -163,7 +163,7 @@ protected:
 		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>());
 		if (layer == nullptr)
 			return false;
-		layer->SetLayerID(0);
+		layer->SetTag(0);
 		layer->SetRenderMaterial(material.get());
 
 		// parse the text

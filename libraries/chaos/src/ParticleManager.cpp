@@ -280,10 +280,8 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayer::Display(GPURenderMaterial const * material_override, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
-		if (!IsVisible())
-			return;
 		// Update GPU buffers	
 		size_t vcount = UpdateGPUBuffers();
 		if (vcount == 0)
@@ -291,15 +289,9 @@ namespace chaos
 		// update the vertex declaration
 		UpdateVertexDeclaration();
 		// search the material
-		GPURenderMaterial const * final_material = material_override;
-		if (final_material == nullptr)
-		{
-			final_material = render_material.get();
-			if (final_material == nullptr)
-				return;
-		}
+		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
 		// do the rendering
-		DoDisplay(vcount, final_material, uniform_provider, instancing);
+		DoDisplay(vcount, final_material, uniform_provider, render_params.instancing);
 	}
 
 	void ParticleLayer::DoDisplay(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
@@ -538,7 +530,7 @@ namespace chaos
 		if (result != nullptr)
 		{
 			// change layer render order / ID
-			result->SetLayerID(layer_id);
+			result->SetTag(layer_id);
 			result->SetRenderOrder(render_order);
 			// change the material
 			result->SetRenderMaterial(render_material);

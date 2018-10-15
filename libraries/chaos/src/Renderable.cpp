@@ -6,9 +6,20 @@ namespace chaos
 	// MaterialProvider implementation
 	// ========================================================
 
-	GPURenderMaterial * MaterialProvider::GetMaterial(Renderable * renderable, GPURenderMaterial * default_material, RenderParams const & render_params)
+	GPURenderMaterial const * MaterialProvider::GetMaterial(Renderable const * renderable, GPURenderMaterial const * default_material, RenderParams const & render_params) const
 	{
 		return default_material;
+	}
+
+	// ========================================================
+	// RenderParams implementation
+	// ========================================================	
+
+	GPURenderMaterial const * RenderParams::GetMaterial(Renderable const * renderable, GPURenderMaterial const * default_material) const
+	{
+		if (material_provider == nullptr)
+			return default_material;
+		return material_provider->GetMaterial(renderable, default_material, *this);
 	}
 
 	// ========================================================

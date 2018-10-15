@@ -91,6 +91,23 @@ namespace chaos
 		}
 	};
 
+	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */
+	template<typename T>
+	class NamedObjectWrapper
+	{
+	public:
+
+		/** special method to have access to NamedObject static utility functions */
+		char const * GetName() const { return object->GetName(); }
+		/** special method to have access to NamedObject static utility functions */
+		TagType GetTag() const { return object->GetTag(); }
+
+	public:
+
+		/** the renderable to render */
+		boost::intrusive_ptr<T> object;
+	};
+
 	/** function to serialize into JSON */
 	void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry);
 	/** function to serialize from JSON */

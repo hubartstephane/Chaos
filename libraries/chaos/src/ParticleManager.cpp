@@ -165,19 +165,6 @@ namespace chaos
 		DetachAllParticleAllocations();
 	}
 
-	void ParticleLayer::SetLayerName(char const * in_name)
-	{
-		if (in_name == nullptr)
-			name.clear();
-		else
-			name = in_name;
-	}
-
-	void ParticleLayer::SetLayerID(int in_id)
-	{
-		id = in_id;
-	}
-
 	void ParticleLayer::DetachAllParticleAllocations()
 	{
 		// faster to do that from end to begin
@@ -210,16 +197,6 @@ namespace chaos
 	bool ParticleLayer::IsPaused() const
 	{
 		return paused;
-	}
-
-	void ParticleLayer::Show(bool in_visible)
-	{
-		visible = in_visible;
-	}
-
-	bool ParticleLayer::IsVisible() const
-	{
-		return visible;
 	}
 
 	ClassTools::ClassRegistration const * ParticleLayer::GetParticleClass() const
@@ -280,29 +257,29 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		// Update GPU buffers	
 		size_t vcount = UpdateGPUBuffers();
 		if (vcount == 0)
-			return;
+			return 0;
 		// update the vertex declaration
 		UpdateVertexDeclaration();
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
 		// do the rendering
-		DoDisplay(vcount, final_material, uniform_provider, render_params.instancing);
+		return DoDisplayHelper(vcount, final_material, uniform_provider, render_params.instancing);
 	}
 
-	void ParticleLayer::DoDisplay(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	int ParticleLayer::DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// no vertices, no rendering
 		if (vcount == 0)
-			return;
+			return 0;
 		// get the vertex array
 		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
 		if (vertex_array == nullptr)
-			return;
+			return 0;
 		// use the material
 		final_material->UseMaterial(uniform_provider);
 		// bind the vertex array
@@ -316,6 +293,7 @@ namespace chaos
 		primitive.base_vertex_index = 0;
 
 		primitive.Render(instancing);
+		return 1; // 1 DrawCall
 	}
 
 	void ParticleLayer::UpdateVertexDeclaration() const
@@ -432,54 +410,22 @@ namespace chaos
 
 	ParticleLayer * ParticleManager::FindLayer(char const * name)
 	{
-		if (name == nullptr)
-			return nullptr;
-		size_t count = layers.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			ParticleLayer * layer = layers[i].get();
-			if (strcmp(layer->GetName(), name) == 0)
-				return layer;
-		}
-		return nullptr;
+		return NamedObject::FindNamedObject(layers, name);
 	}
 
 	ParticleLayer const * ParticleManager::FindLayer(char const * name) const
 	{
-		if (name == nullptr)
-			return nullptr;
-		size_t count = layers.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			ParticleLayer const * layer = layers[i].get();
-			if (strcmp(layer->GetName(), name) == 0)
-				return layer;
-		}
-		return nullptr;
+		return NamedObject::FindNamedObject(layers, name);
 	}
 
 	ParticleLayer * ParticleManager::FindLayer(int id)
 	{
-		size_t count = layers.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			ParticleLayer * layer = layers[i].get();
-			if (layer->GetLayerID() == id)
-				return layer;
-		}
-		return nullptr;
+		return NamedObject::FindNamedObject(layers, id);
 	}
 
 	ParticleLayer const * ParticleManager::FindLayer(int id) const
 	{
-		size_t count = layers.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			ParticleLayer const * layer = layers[i].get();
-			if (layer->GetLayerID() == id)
-				return layer;
-		}
-		return nullptr;
+		return NamedObject::FindNamedObject(layers, id);
 	}
 
 	size_t ParticleManager::FindLayerIndex(ParticleLayer * layer) const
@@ -643,12 +589,13 @@ namespace chaos
 		});
 	}
 
-	void ParticleManager::Display(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	int ParticleManager::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
+		int result = 0;
 		// early exit
 		size_t count = layers.size();
 		if (count == 0)
-			return;
+			return 0;
 		// sort the layer if necessary (Z order + material)
 		bool test_program_id = true;
 		if (!AreLayersSorted(test_program_id))
@@ -661,9 +608,10 @@ namespace chaos
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		// draw all the layers		
 		for (size_t i = 0; i < count; ++i)
-			layers[i]->Display(nullptr, (atlas != nullptr)? &main_uniform_provider : uniform_provider, instancing);
+			result += layers[i]->Display((atlas != nullptr)? &main_uniform_provider : uniform_provider, render_params);
 		// update the states
 		UpdateRenderingStates(false);
+		return result;
 	}
 
 	void ParticleManager::UpdateRenderingStates(bool begin) const

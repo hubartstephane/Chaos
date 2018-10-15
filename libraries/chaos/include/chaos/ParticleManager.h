@@ -525,7 +525,7 @@ namespace chaos
 	protected:
 
 		/** draw the layer */
-		virtual void DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
+		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
@@ -540,24 +540,17 @@ namespace chaos
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		void DoDisplay(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		int DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool UpdateParticles(float delta_time);
 
 	protected:
 
-		/** the name of the layer */
-		std::string name;
-		/** the ID of the layer */
-		int id = 0;
-
 		/** the order of the layer in the manager */
 		int render_order = 0;
 		/** whether the layer is paused */
 		bool paused = false;
-		/** whether the layer is visible */
-		bool visible = true;
 
 		/** whether there was changes in particles, and a vertex array need to be recomputed */
 		mutable bool require_GPU_update = false;
@@ -629,7 +622,7 @@ namespace chaos
 	// ParticleManager
 	// ==============================================================
 
-	class ParticleManager : public ReferencedObject
+	class ParticleManager : public Renderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -637,8 +630,6 @@ namespace chaos
 
 		/** change the bitmap atlas */
 		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
-		/** display all the particles */
-		void Display(GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing = InstancingInfo()) const;
 
 		/** Search a layer by its name */
 		ParticleLayer * FindLayer(char const * name);
@@ -648,7 +639,6 @@ namespace chaos
 		ParticleLayer * FindLayer(int id);
 		/** Search a layer by its id */
 		ParticleLayer const * FindLayer(int id) const;
-
 
 		/** create a layer and add it to the manager */
 		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc);
@@ -708,6 +698,8 @@ namespace chaos
 
 	protected:
 
+		/** display all the particles */
+		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 		/** find the index of a layer */
 		size_t FindLayerIndex(ParticleLayer * layer) const;
 		/** sort the layers by rendering order */

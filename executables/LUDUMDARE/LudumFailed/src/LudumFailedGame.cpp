@@ -355,14 +355,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-bool LudumGame::DoLoadLevelInitialize(LudumNarrativeLevel * level, nlohmann::json const & json_level)
-{
-
-
-
-	return true;
-}
-
 bool LudumGame::DoLoadLevelInitialize(LudumGameplayLevel * level, chaos::TiledMap::Map * tiled_map)
 {
 	// initialize level
@@ -376,28 +368,8 @@ bool LudumGame::DoLoadLevelInitialize(LudumGameplayLevel * level, chaos::TiledMa
 death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam const & path)
 {
 	boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-#if 0
-	if (chaos::FileTools::IsTypedFile(resolved_path, "json"))
-	{
-		nlohmann::json json_level;
-		if (!chaos::JSONTools::LoadJSONFile(path, json_level, false))
-			return nullptr;
-
-		// allocate a level
-		LudumNarrativeLevel * ludum_result = new LudumNarrativeLevel(this);
-		if (ludum_result == nullptr)
-			return false;
-		// some additionnal computation
-		if (!DoLoadLevelInitialize(ludum_result, json_level))
-		{
-			delete(ludum_result);
-			return nullptr;
-		}	
-		return ludum_result;	
-	}
-	else 
-#endif		
-		if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
+	
+	if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
 	{
 		// load the resource
 		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);

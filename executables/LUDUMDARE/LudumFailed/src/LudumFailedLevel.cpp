@@ -7,11 +7,6 @@ death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance()
 	return new LudumGameplayLevelInstance(game);
 }
 
-death::GameLevelInstance * LudumNarrativeLevel::DoCreateLevelInstance()
-{
-	return new LudumNarrativeLevelInstance(game);
-}
-
 // =============================================================
 
 LudumLevel::LudumLevel(class LudumGame * in_game):
@@ -21,16 +16,6 @@ LudumLevel::LudumLevel(class LudumGame * in_game):
 
 LudumLevelInstance::LudumLevelInstance(class LudumGame * in_game):
 	game(in_game)
-{
-}
-
-LudumNarrativeLevel::LudumNarrativeLevel(class LudumGame * in_game):
-	LudumLevel(in_game)
-{
-}
-
-LudumNarrativeLevelInstance::LudumNarrativeLevelInstance(class LudumGame * in_game):
-	LudumLevelInstance(in_game)
 {
 }
 
@@ -45,16 +30,6 @@ LudumGameplayLevelInstance::LudumGameplayLevelInstance(class LudumGame * in_game
 }
 
 // =============================================================
-
-LudumNarrativeLevel * LudumNarrativeLevelInstance::GetLudumLevel()
-{
-	return dynamic_cast<LudumNarrativeLevel*>(GetLevel());
-}
-
-LudumNarrativeLevel const * LudumNarrativeLevelInstance::GetLudumLevel() const
-{
-	return dynamic_cast<LudumNarrativeLevel const *>(GetLevel());
-}
 
 LudumGameplayLevel * LudumGameplayLevelInstance::GetLudumLevel()
 {
@@ -220,14 +195,4 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	}
 
 	world_box = wb;
-}
-
-// =============================================================
-
-void LudumNarrativeLevelInstance::OnLevelEnded()
-{
-}
-
-void LudumNarrativeLevelInstance::OnLevelStarted()
-{
 }

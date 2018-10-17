@@ -1262,7 +1262,7 @@ namespace death
 				camera.position = safe_camera.position;
 		}
 			
-		// try to keep the player in the world
+		// try to keep the camera in the world
 		chaos::box2 world = GetWorldBox();
 		if (!world.IsEmpty())
 			chaos::RestrictToInside(world, camera, false);

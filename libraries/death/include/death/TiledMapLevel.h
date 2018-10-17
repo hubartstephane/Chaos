@@ -8,6 +8,7 @@
 
 namespace death
 {
+	/** TiledMapLevel : a level described by a tiledmap */
 	class TiledMapLevel : public GameLevel
 	{
 	public:
@@ -24,12 +25,11 @@ namespace death
 
 		/** the tiled map corresponding to this level */
 		boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
-
 	};
 
+	/** TiledMapLevelInstance : instance of a TiledMapLevel */
 	class TiledMapLevelInstance : public GameLevelInstance
 	{
-
 	public:
 
 

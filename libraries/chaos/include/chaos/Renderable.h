@@ -51,7 +51,7 @@ namespace chaos
 	// Renderable : base class for all object that can be rendered
 	// ========================================================
 
-	class Renderable : public ReferencedObject, public NamedObject
+	class Renderable : public ReferencedObject, public virtual NamedObject
 	{
 	public:
 
@@ -77,30 +77,24 @@ namespace chaos
 	};
 
 	// ========================================================
-	// RenderableLayerInfo : an entry in the RenderableLayer
-	// ========================================================
-
-	class RenderableLayerInfo : public NamedObjectWrapper<Renderable>
-	{
-		friend class RenderableLayer;
-
-	public:
-
-		/** special method for sorted insertion : lower_bound + insert */
-		operator int() const { return render_order; }
-
-	public:
-
-		/** the render order */
-		int render_order = 0;
-	};
-
-	// ========================================================
 	// RenderableLayer : used as a sorted container for renderers
 	// ========================================================
 
 	class RenderableLayer : public Renderable
 	{
+	protected:
+
+		/** an utility class to store a a Renderable with a render order */
+		class RenderableLayerInfo : public NamedObjectWrapper<Renderable>
+		{	
+		public:
+
+			/** special method for sorted insertion : lower_bound + insert */
+			operator int() const { return render_order; }
+			/** the render order */
+			int render_order = 0;
+		};
+
 	public:
 
 		/** Find a renderable by its name */
@@ -152,7 +146,7 @@ namespace chaos
 	// ParticleManager : a container for ParticleLayers
 	// ========================================================	
 
-	class Tickable : public ReferencedObject
+	class Tickable : public virtual NamedObject
 	{
 	public:
 

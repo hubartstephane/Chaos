@@ -4,10 +4,6 @@
 
 #include "Ludum42Game.h"
 
-#include <chaos/Renderable.h>
-
-using namespace chaos;
-
 int _tmain(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;

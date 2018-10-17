@@ -1,36 +1,35 @@
 #include "Ludum42Level.h"
+#include "Ludum42Game.h"
 
 #include <chaos/GLMTools.h>
+
+// =============================================================
+// LudumGameplayLevel implementation
+// =============================================================
+
+LudumGameplayLevel::LudumGameplayLevel(chaos::TiledMap::Map * in_tiled_map, class LudumGame * in_game):
+	death::TiledMapLevel(in_tiled_map),
+	game(in_game)
+{
+	assert(in_game != nullptr);
+}
 
 death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance()
 {
 	return new LudumGameplayLevelInstance(game);
 }
 
-
 // =============================================================
-
-LudumLevel::LudumLevel(class LudumGame * in_game):
-	game(in_game)
-{
-}
-
-LudumLevelInstance::LudumLevelInstance(class LudumGame * in_game):
-	game(in_game)
-{
-}
-
-LudumGameplayLevel::LudumGameplayLevel(class LudumGame * in_game):
-	LudumLevel(in_game)
-{
-}
+// LudumGameplayLevelInstance implementation
+// =============================================================
 
 LudumGameplayLevelInstance::LudumGameplayLevelInstance(class LudumGame * in_game):
-	LudumLevelInstance(in_game)
+	game(in_game)
 {
+	assert(in_game != nullptr);
 }
 
-// =============================================================
+
 
 LudumGameplayLevel * LudumGameplayLevelInstance::GetLudumLevel()
 {
@@ -41,8 +40,6 @@ LudumGameplayLevel const * LudumGameplayLevelInstance::GetLudumLevel() const
 {
 	return dynamic_cast<LudumGameplayLevel const *>(GetLevel());
 }
-
-// =============================================================
 
 void LudumGameplayLevelInstance::OnLevelEnded()
 {

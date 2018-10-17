@@ -68,7 +68,7 @@ namespace chaos
 		return result;
 	}
 
-	RenderableLayerInfo * RenderableLayer::FindChildRenderable(Renderable * renderable)
+	RenderableLayer::RenderableLayerInfo * RenderableLayer::FindChildRenderable(Renderable * renderable)
 	{
 		for (RenderableLayerInfo & info : layers)
 			if (info.object == renderable)
@@ -76,7 +76,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	RenderableLayerInfo const * RenderableLayer::FindChildRenderable(Renderable * renderable) const
+	RenderableLayer::RenderableLayerInfo const * RenderableLayer::FindChildRenderable(Renderable * renderable) const
 	{
 		for (RenderableLayerInfo const & info : layers)
 			if (info.object == renderable)

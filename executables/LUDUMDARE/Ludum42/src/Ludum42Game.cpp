@@ -349,7 +349,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 
 bool LudumGame::DoLoadLevelInitialize(LudumGameplayLevel * level, chaos::TiledMap::Map * tiled_map)
 {
-	return true;
+	return level->Initialize(tiled_map);
 }
 
 
@@ -364,7 +364,7 @@ death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam
 			return false;	
 
 		// allocate a level
-		LudumGameplayLevel * ludum_result = new LudumGameplayLevel(tiled_map, this);
+		LudumGameplayLevel * ludum_result = new LudumGameplayLevel(this);
 		if (ludum_result == nullptr)
 			return false;
 		// some additionnal computation

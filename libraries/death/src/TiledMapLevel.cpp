@@ -2,10 +2,25 @@
 
 namespace death
 {
-	TiledMapLevel::TiledMapLevel(chaos::TiledMap::Map * in_tiled_map):
-		tiled_map(in_tiled_map)
+	TiledMapLevel::TiledMapLevel()
+	{
+
+	}
+
+	bool TiledMapLevel::Initialize(chaos::TiledMap::Map * in_tiled_map)
 	{
 		assert(in_tiled_map != nullptr);
+
+		/** already initialized ?*/
+		if (tiled_map != nullptr)
+			return false;
+		/** copy the tile map */
+		tiled_map = in_tiled_map;
+		/** the real initialization */
+
+
+
+		return true;
 	}
 
 

@@ -7,8 +7,7 @@
 // LudumGameplayLevel implementation
 // =============================================================
 
-LudumGameplayLevel::LudumGameplayLevel(chaos::TiledMap::Map * in_tiled_map, class LudumGame * in_game):
-	death::TiledMapLevel(in_tiled_map),
+LudumGameplayLevel::LudumGameplayLevel(class LudumGame * in_game):
 	game(in_game)
 {
 	assert(in_game != nullptr);

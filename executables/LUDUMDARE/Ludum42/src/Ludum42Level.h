@@ -23,7 +23,7 @@ class LudumGameplayLevel : public death::TiledMapLevel
 public:
 
 	/** constructor */
-	LudumGameplayLevel(chaos::TiledMap::Map * in_tiled_map, class LudumGame * in_game);
+	LudumGameplayLevel(class LudumGame * in_game);
 
 protected:
 

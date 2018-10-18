@@ -691,6 +691,8 @@ namespace chaos
 			bool locked = false;
 			/** the opacity */
 			float opacity = 1.0f;
+			/** the zorder of the layer in the stack */
+			int zorder = 0;
 			/** the offset of the layer */
 			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 		};
@@ -980,6 +982,8 @@ namespace chaos
 			bool DoLoadImageLayers(tinyxml2::XMLElement const * element);
 			/** load the object groups */
 			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
+			/** fix the layer order (JSON and TileMapEditor give the layers in reverse order */
+			bool DoFixLayersZOrder();
 
 		public:
 
@@ -997,6 +1001,9 @@ namespace chaos
 			TileInfo FindTileInfoFromAtlasKey(char const * atlas_key);
 			/** find tileset data from its atlas key */
 			TileInfo const  FindTileInfoFromAtlasKey(char const * atlas_key) const;
+
+			/** returns the number of layers */
+			int GetLayerCount() const;
 
 		public:
 

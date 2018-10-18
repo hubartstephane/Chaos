@@ -581,6 +581,14 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "opacity", opacity);
 			XMLTools::ReadAttribute(element, "offsetx", offset.x);
 			XMLTools::ReadAttribute(element, "offsety", offset.y);
+
+			// compute the order of the layer in the map
+			// XXX : the layers in the JSON are given in reversed order than in TileMap Editor
+			//       we have to fix that later in the loading code
+			Map * map = GetOwner<Map>();
+			if (map != nullptr)
+				zorder = map->GetLayerCount();
+
 			return true;
 		}
 
@@ -976,6 +984,8 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 				return false;
 			if (!DoLoadObjectGroups(element))
 				return false;
+			if (!DoFixLayersZOrder())
+				return false;
 
 			return true;
 		}
@@ -1032,6 +1042,12 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			return true;
 		}
 
+		int Map::GetLayerCount() const
+		{
+			return (int)(image_layers.size() + tile_layers.size() + object_layers.size());
+		}
+
+		
 		bool Map::DoLoadImageLayers(tinyxml2::XMLElement const * element)
 		{
 			return DoLoadObjectListHelper(element, image_layers, "imagelayer", nullptr, this);
@@ -1045,6 +1061,23 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 		bool Map::DoLoadTileLayers(tinyxml2::XMLElement const * element)
 		{
 			return DoLoadObjectListHelper(element, tile_layers, "layer", nullptr, this);
+		}
+
+		bool Map::DoFixLayersZOrder()
+		{
+			int layer_count = GetLayerCount();
+
+			for (auto layer : image_layers)
+				if (layer != nullptr)
+					layer->zorder = (layer_count - 1) - layer->zorder;
+			for (auto layer : tile_layers)
+				if (layer != nullptr)
+					layer->zorder = (layer_count - 1) - layer->zorder;
+			for (auto layer : object_layers)
+				if (layer != nullptr)
+					layer->zorder = (layer_count - 1) - layer->zorder;
+		
+			return true;
 		}
 
 		TileInfo Map::FindTileInfo(int gid)

@@ -86,15 +86,22 @@ namespace chaos
 
 				tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
 				for (; e != nullptr; e = e->NextSiblingElement(element_name))
+					DoLoadObjectAndInserInList(e, result, params...);
+				return true;
+			}
+
+			template<typename T, typename ...PARAMS>
+			static bool DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, PARAMS...params)
+			{
+				T * object = new T(params...);
+				if (object == nullptr)
+					return false;
+				if (!object->DoLoad(element))
 				{
-					T * object = new T(params...);
-					if (object == nullptr)
-						break;
-					if (!object->DoLoad(e))
-						delete(object);
-					else
-						result.push_back(object);
-				}
+					delete(object);
+					return false;
+				}				
+				result.push_back(object);			
 				return true;
 			}
 
@@ -976,12 +983,9 @@ namespace chaos
 			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
 			/** load the tile sets */
 			bool DoLoadTileSet(tinyxml2::XMLElement const * element);
-			/** load the tile layers */
-			bool DoLoadTileLayers(tinyxml2::XMLElement const * element);
-			/** load the image layers */
-			bool DoLoadImageLayers(tinyxml2::XMLElement const * element);
-			/** load the object groups */
-			bool DoLoadObjectGroups(tinyxml2::XMLElement const * element);
+
+			/** load all the layers */
+			bool DoLoadLayers(tinyxml2::XMLElement const * element);
 			/** fix the layer order (JSON and TileMapEditor give the layers in reverse order */
 			bool DoFixLayersZOrder();
 
@@ -1001,6 +1005,16 @@ namespace chaos
 			TileInfo FindTileInfoFromAtlasKey(char const * atlas_key);
 			/** find tileset data from its atlas key */
 			TileInfo const  FindTileInfoFromAtlasKey(char const * atlas_key) const;
+
+
+			/** find a layer by its name */
+			LayerBase * FindLayerByName(char const * in_name);
+			/** find a layer by its name */
+			LayerBase const * FindLayerByName(char const * in_name) const;
+			/** find a layer by its zorder */
+			LayerBase * FindLayerByZOrder(int zorder);
+			/** find a layer by its zorder */
+			LayerBase const * FindLayerByZOrder(int zorder) const;
 
 			/** returns the number of layers */
 			int GetLayerCount() const;

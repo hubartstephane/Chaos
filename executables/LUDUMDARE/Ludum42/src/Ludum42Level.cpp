@@ -83,6 +83,8 @@ chaos::ParticleAllocation * LudumGameplayLevelInstance::FindOrAllocationForObjec
 
 void LudumGameplayLevelInstance::OnLevelStarted()
 {
+
+
 	allocations.clear();
 
 	LudumGameplayLevel const * ludum_level = GetLudumLevel();
@@ -93,6 +95,11 @@ void LudumGameplayLevelInstance::OnLevelStarted()
 	if (tiled_map == nullptr)
 		return;
 
+	auto layer1 = tiled_map->FindLayerByZOrder(2);
+	auto layer2 = tiled_map->FindLayerByName("planets");
+	auto layer3 = tiled_map->FindLayerByName("planetsXX");
+
+	int cc = tiled_map->GetLayerCount();
 
 	chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = game->GetTextureAtlas();
 	if (texture_atlas == nullptr)

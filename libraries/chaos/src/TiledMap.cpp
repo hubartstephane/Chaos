@@ -978,15 +978,8 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 				return false;
 			if (!DoLoadTileSet(element))
 				return false;
-			if (!DoLoadTileLayers(element))
+			if (!DoLoadLayers(element))
 				return false;
-			if (!DoLoadImageLayers(element))
-				return false;
-			if (!DoLoadObjectGroups(element))
-				return false;
-			if (!DoFixLayersZOrder())
-				return false;
-
 			return true;
 		}
 
@@ -1047,20 +1040,24 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			return (int)(image_layers.size() + tile_layers.size() + object_layers.size());
 		}
 
-		
-		bool Map::DoLoadImageLayers(tinyxml2::XMLElement const * element)
+		bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)		
 		{
-			return DoLoadObjectListHelper(element, image_layers, "imagelayer", nullptr, this);
-		}
-
-		bool Map::DoLoadObjectGroups(tinyxml2::XMLElement const * element)
-		{ 
-			return DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
-		}
-
-		bool Map::DoLoadTileLayers(tinyxml2::XMLElement const * element)
-		{
-			return DoLoadObjectListHelper(element, tile_layers, "layer", nullptr, this);
+			// get all layers
+			tinyxml2::XMLElement const * e = element->FirstChildElement();
+			for (; e != nullptr; e = e->NextSiblingElement())
+			{
+				char const * child_name = e->Name();
+				if (strcmp(child_name, "imagelayer") == 0)
+					DoLoadObjectAndInserInList(e, image_layers, this);
+				else if (strcmp(child_name, "objectgroup") == 0)
+					DoLoadObjectAndInserInList(e, object_layers, this);
+				else if (strcmp(child_name, "layer") == 0)
+					DoLoadObjectAndInserInList(e, tile_layers, this);
+			}
+			// now fix the zorders
+			if (!DoFixLayersZOrder()) 
+				return false;
+			return true;
 		}
 
 		bool Map::DoFixLayersZOrder()
@@ -1123,6 +1120,27 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 		}
 
 #define CHAOS_EMPTY_TOKEN
+#define CHAOS_IMPL_FIND_LAYER(func_name, member_name, arg_type, constess)\
+	LayerBase constess * Map::func_name(arg_type arg_name) constess\
+	{\
+		for (auto & it : image_layers)\
+			if (it->member_name == arg_name)\
+				return it.get();\
+		for (auto & it : tile_layers)\
+			if (it->member_name == arg_name)\
+				return it.get();\
+		for (auto & it : object_layers)\
+			if (it->member_name == arg_name)\
+				return it.get();\
+		return nullptr;\
+	}
+
+CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, const)
+CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
+#undef CHAOS_IMPL_FIND_LAYER
+
 #define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constess)\
 		TileInfo constess Map::func_name(arg_type arg_name) constess\
 		{\
@@ -1144,8 +1162,8 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, CHAOS_EMPTY_
 CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, const)
 CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, CHAOS_EMPTY_TOKEN)
 CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, const)
-
 #undef CHAOS_IMPL_FIND_FILE_INFO
+
 #undef CHAOS_EMPTY_TOKEN
 
 

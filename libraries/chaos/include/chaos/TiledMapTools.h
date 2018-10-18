@@ -25,6 +25,8 @@ namespace chaos
 		/** fill BitmapAtlasInput from a Map */
 		static bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
 
+		/** search whether the object has a boolean/integer property set to true */
+		static bool HasFlag(TiledMap::PropertyOwner const * property_owner, char const * property_name);
 		/** search whether the object has a given name, a given type or a boolean/integer property set to true */
 		static bool HasFlag(TiledMap::GeometricObject const * object_geometric, char const * name, char const * type, char const * property_name);
 		/** returns true whether the object explicitly define a world origin */
@@ -36,7 +38,7 @@ namespace chaos
 
 		/** try to read world origin from object if possible (expressed in object layer coordinates) */
 		static bool GetExplicitWorldOrigin(TiledMap::GeometricObject const * object_geometric, glm::vec2 & result);
-		/** iterate over all layer's object and find the current origin if possible) */
+		/** iterate over all layer's object and find the current origin if possible */
 		static bool FindExplicitWorldOrigin(TiledMap::ObjectLayer const * object_layer, glm::vec2 & result, bool absolute_system = true);
 		/** iterate over all objects of all layers and find one that is world origin (expressed in absolute coordinates) */
 		static bool FindExplicitWorldOrigin(TiledMap::Map const * tiled_map, glm::vec2 & result);

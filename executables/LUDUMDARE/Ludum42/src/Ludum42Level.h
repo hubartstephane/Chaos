@@ -15,7 +15,7 @@
 // Levels
 // =================================================
 
-class LudumGameplayLevel : public death::TiledMapLevel
+class LudumGameplayLevel : public death::TiledMap::Level
 {
 	friend class LudumGame;
 	friend class LudumGameplayLevelInstance;

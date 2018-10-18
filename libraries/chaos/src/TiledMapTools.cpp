@@ -86,19 +86,13 @@ namespace chaos
 		return true;
 	}
 
-	bool TiledMapTools::HasFlag(TiledMap::GeometricObject const * object_geometric, char const * name, char const * type, char const * property_name)
+	bool TiledMapTools::HasFlag(TiledMap::PropertyOwner const * property_owner, char const * property_name)
 	{
-		assert(object_geometric != nullptr);
-		// name is an indicator
-		if (name != nullptr && object_geometric->name == name)
-			return true;
-		// type is an indicator
-		if (type != nullptr && object_geometric->type == type)
-			return true;
+		assert(property_owner != nullptr);
 		// search in properties
 		if (property_name != nullptr)
 		{
-			TiledMap::Property const * property = object_geometric->FindProperty(property_name);
+			TiledMap::Property const * property = property_owner->FindProperty(property_name);
 			if (property != nullptr)
 			{
 				bool const * property_bool = property->GetBoolProperty();
@@ -110,6 +104,22 @@ namespace chaos
 					return (*property_int > 0);
 			}
 		}
+		return false;
+	}
+
+	bool TiledMapTools::HasFlag(TiledMap::GeometricObject const * object_geometric, char const * name, char const * type, char const * property_name)
+	{
+		assert(object_geometric != nullptr);
+		// name is an indicator
+		if (name != nullptr && object_geometric->name == name)
+			return true;
+		// type is an indicator
+		if (type != nullptr && object_geometric->type == type)
+			return true;
+		// search in properties
+		TiledMap::PropertyOwner const * property_owner = object_geometric;
+		if (HasFlag(property_owner, property_name))
+			return true;
 		return false;
 	}
 

@@ -52,9 +52,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// BaseObject methods
-		//
+		// ==========================================
 
 		boost::filesystem::path BaseObject::GetOwnerPath() const
 		{
@@ -73,9 +73,9 @@ namespace chaos
 			return boost::filesystem::path();
 		}
 
-		//
+		// ==========================================
 		// PropertyOwner methods
-		//
+		// ==========================================
 
 		Property * PropertyOwner::FindProperty(char const * name, int type_id)
 		{
@@ -256,9 +256,9 @@ namespace chaos
 			return result;
 		}
 
-		//
+		// ==========================================
 		// GeometricObject methods
-		//
+		// ==========================================
 
 		std::vector<glm::vec2> GeometricObject::GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name)
 		{
@@ -440,9 +440,9 @@ namespace chaos
 		}
 
 
-		//
+		// ==========================================
 		// GroundData methods
-		//
+		// ==========================================
 
 		bool GroundData::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -453,9 +453,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// TileData methods
-		//
+		// ==========================================
 
 		bool TileData::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -527,9 +527,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// ManagerObject methods
-		//
+		// ==========================================
 
 		ManagerObject::ManagerObject(BaseObject * in_owner, boost::filesystem::path in_path) :
 			PropertyOwner(in_owner),
@@ -567,9 +567,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// LayerBase methods
-		//
+		// ==========================================
 
 		bool LayerBase::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -592,9 +592,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// ImageLayer methods
-		//
+		// ==========================================
 
 		bool ImageLayer::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -614,9 +614,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// LayerBase methods
-		//
+		// ==========================================
 
 		bool ObjectLayer::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -689,9 +689,9 @@ namespace chaos
 			return true;
 		}
 
-		//
+		// ==========================================
 		// TileLayer methods
-		//
+		// ==========================================
 
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -817,9 +817,9 @@ namespace chaos
 			return glm::ivec2(index % size.x, index / size.x);		
 		}
 
-		//
+		// ==========================================
 		// TileSet methods
-		//
+		// ==========================================
 
 		TileSet::TileSet(BaseObject * in_owner, boost::filesystem::path in_path) :
 			ManagerObject(in_owner, in_path)
@@ -917,9 +917,9 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			return true;
 		}
 
-		//
+		// ==========================================
 		// Map methods
-		//
+		// ==========================================
 
 		Map::Map(BaseObject * in_owner, boost::filesystem::path in_path) :
 			ManagerObject(in_owner, in_path)
@@ -1167,9 +1167,9 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 #undef CHAOS_EMPTY_TOKEN
 
 
-		//
+		// ==========================================
 		// Manager methods
-		//
+		// ==========================================
 
 		TileSet * Manager::LoadTileSet(FilePathParam const & path)
 		{

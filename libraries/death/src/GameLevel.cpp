@@ -2,6 +2,10 @@
 
 namespace death
 {
+	// =====================================
+	// GameLevelInstance implementation
+	// =====================================
+
 	GameLevelInstance * GameLevel::CreateLevelInstance()
 	{
 		GameLevelInstance * result = DoCreateLevelInstance();
@@ -16,10 +20,9 @@ namespace death
 		return new GameLevelInstance;
 	}
 
-	void GameLevelInstance::Tick(double delta_time)
-	{
-
-	}
+	// =====================================
+	// GameLevel implementation
+	// =====================================
 
 	void GameLevelInstance::OnLevelEnded()
 	{

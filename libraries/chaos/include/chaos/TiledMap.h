@@ -111,9 +111,9 @@ namespace chaos
 			BaseObject * owner = nullptr;
 		};
 
-		//
+		// ==========================================
 		// Property : base class for some properties
-		//
+		// ==========================================
 
 		class Property : public BaseObject
 		{
@@ -167,9 +167,9 @@ namespace chaos
 			int property_type_id = PROPERTY_TYPEID_ANY;
 		};
 
-		//
+		// ==========================================
 		// PropertyTemplate : templated specialization for properties
-		//
+		// ==========================================
 
 		template<typename T, int TYPE_ID>
 		class PropertyTemplate : public Property
@@ -220,18 +220,18 @@ namespace chaos
 			property_type value;
 		};
 
-		//
+		// ==========================================
 		// Specialization of properties
-		//
+		// ==========================================
 
 		using PropertyInt = PropertyTemplate<int, Property::PROPERTY_TYPEID_INT>;
 		using PropertyFloat = PropertyTemplate<float, Property::PROPERTY_TYPEID_FLOAT>;
 		using PropertyBool = PropertyTemplate<bool, Property::PROPERTY_TYPEID_BOOL>;
 		using PropertyString = PropertyTemplate<std::string, Property::PROPERTY_TYPEID_STRING>;
 
-		//
+		// ==========================================
 		// PropertyOwner : some objects that have dynamic properties
-		//
+		// ==========================================
 
 		class PropertyOwner : public BaseObject
 		{
@@ -288,9 +288,9 @@ namespace chaos
 			std::vector<boost::intrusive_ptr<Property>> properties;
 		};
 
-		//
+		// ==========================================
 		// GeometricObject
-		//
+		// ==========================================
 
 		class GeometricObject : public PropertyOwner
 		{
@@ -360,9 +360,9 @@ namespace chaos
 			float rotation = 0.0f; // clockwise rotation in degree
 		};
 
-		//
+		// ==========================================
 		// GeometricObjectPoint
-		//
+		// ==========================================
 
 		class GeometricObjectPoint : public GeometricObject
 		{
@@ -382,9 +382,9 @@ namespace chaos
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectSurface
-		//
+		// ==========================================
 
 		class GeometricObjectSurface : public GeometricObject
 		{
@@ -414,9 +414,9 @@ namespace chaos
 			glm::vec2 size = glm::vec2(0.0f, 0.0f);
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectRectangle
-		//
+		// ==========================================
 
 		class GeometricObjectRectangle : public GeometricObjectSurface
 		{
@@ -437,9 +437,9 @@ namespace chaos
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectEllipse
-		//
+		// ==========================================
 
 		class GeometricObjectEllipse : public GeometricObjectSurface
 		{
@@ -460,9 +460,9 @@ namespace chaos
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectPolygon
-		//
+		// ==========================================
 
 		class GeometricObjectPolygon : public GeometricObject
 		{
@@ -488,9 +488,9 @@ namespace chaos
 			std::vector<glm::vec2> points;
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectPolyline
-		//
+		// ==========================================
 
 		class GeometricObjectPolyline : public GeometricObject
 		{
@@ -515,9 +515,9 @@ namespace chaos
 			std::vector<glm::vec2> points;
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectText
-		//
+		// ==========================================
 
 		class GeometricObjectText : public GeometricObjectSurface
 		{
@@ -565,9 +565,9 @@ namespace chaos
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		};
 
-		// 
+		// ==========================================
 		// GeometricObjectTile
-		//
+		// ==========================================
 
 		class GeometricObjectTile : public GeometricObjectSurface
 		{
@@ -601,9 +601,9 @@ namespace chaos
 			bool vertical_flip = false;
 		};
 
-		//
+		// ==========================================
 		// GroundData
-		//
+		// ==========================================
 
 		class GroundData : public PropertyOwner
 		{
@@ -627,9 +627,9 @@ namespace chaos
 			std::string name;
 		};
 
-		//
+		// ==========================================
 		// TileData
-		//
+		// ==========================================
 
 		class TileData : public PropertyOwner
 		{
@@ -672,9 +672,9 @@ namespace chaos
 		};
 
 
-		//
+		// ==========================================
 		// LayerBase
-		//
+		// ==========================================
 
 		class LayerBase : public PropertyOwner
 		{
@@ -704,9 +704,9 @@ namespace chaos
 			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 		};
 
-		//
+		// ==========================================
 		// ImageLayer
-		//
+		// ==========================================
 
 		class ImageLayer : public LayerBase
 		{
@@ -731,9 +731,9 @@ namespace chaos
 			glm::vec4 transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		};
 
-		//
+		// ==========================================
 		// ObjectLayer
-		//
+		// ==========================================
 
 		class ObjectLayer : public LayerBase
 		{
@@ -767,9 +767,9 @@ namespace chaos
 			std::vector<boost::intrusive_ptr<GeometricObject>> geometric_objects;
 		};
 
-		//
+		// ==========================================
 		// TileLayer
-		//
+		// ==========================================
 
 		class TileLayer : public LayerBase
 		{
@@ -805,9 +805,9 @@ namespace chaos
 			std::vector<int> tile_indices;
 		};
 
-		//
+		// ==========================================
 		// ManagerObject : objects control by the manager (Map & TileSet)
-		//
+		// ==========================================
 
 		class ManagerObject : public PropertyOwner
 		{
@@ -839,9 +839,9 @@ namespace chaos
 			boost::filesystem::path path;
 		};
 
-		//
+		// ==========================================
 		// TileSet
-		//
+		// ==========================================
 
 		class TileSet : public ManagerObject
 		{
@@ -917,9 +917,9 @@ namespace chaos
 			std::vector<boost::intrusive_ptr<GroundData>> grounds;
 		};
 
-		//
+		// ==========================================
 		// Map : some map class
-		//
+		// ==========================================
 
 		class TileSetData
 		{
@@ -1052,9 +1052,9 @@ namespace chaos
 			std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
 		};
 
-		//
+		// ==========================================
 		// Manager : container for maps and tileset
-		//
+		// ==========================================
 
 		class Manager : public BaseObject
 		{

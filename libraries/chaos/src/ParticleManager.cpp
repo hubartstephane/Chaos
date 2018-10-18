@@ -497,11 +497,12 @@ namespace chaos
 		layers.erase(layers.begin() + index);
 	}
 
-	void ParticleManager::Tick(float delta_time)
+	bool ParticleManager::DoTick(double delta_time)
 	{
 		size_t count = layers.size();
 		for (size_t i = 0; i < count; ++i)
-			layers[i]->TickParticles(delta_time);
+			layers[i]->TickParticles((float)delta_time);
+		return true;
 	}
 
 	bool ParticleManager::AreLayersSorted(bool test_program_id) const

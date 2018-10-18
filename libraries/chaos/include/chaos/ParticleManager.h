@@ -12,6 +12,7 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/ClassTools.h>
 #include <chaos/Renderable.h>
+#include <chaos/Tickable.h>
 
 namespace chaos
 {
@@ -622,7 +623,7 @@ namespace chaos
 	// ParticleManager
 	// ==============================================================
 
-	class ParticleManager : public Renderable
+	class ParticleManager : public Renderable, public Tickable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -671,9 +672,6 @@ namespace chaos
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayer * layer);
 
-		/** tick the manager */
-		void Tick(float delta_time);
-
 		/** returns true whether the particle can be casted into a given class */
 		template<typename PARTICLE_TYPE>
 		static bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
@@ -697,7 +695,9 @@ namespace chaos
 		}
 
 	protected:
-
+		
+		/** tick the manager */
+		virtual bool DoTick(double delta_time) override;
 		/** display all the particles */
 		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 		/** find the index of a layer */

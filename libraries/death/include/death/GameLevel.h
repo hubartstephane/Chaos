@@ -3,9 +3,15 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/Renderable.h>
+#include <chaos/Tickable.h>
 
 namespace death
 {
+	// =====================================
+	// GameLevel : a simple game level
+	// =====================================
+
 	class GameLevel : public chaos::ReferencedObject
 	{
 		friend class Game;
@@ -29,14 +35,15 @@ namespace death
 		int level_index = 0;
 	};
 
-	class GameLevelInstance : public chaos::ReferencedObject
+	// =====================================
+	// GameLevelInstance : this is the runtime part of a level
+	// =====================================
+
+	class GameLevelInstance : public chaos::Renderable, public chaos::Tickable
 	{
 		friend class GameLevel;
 
 	public:
-
-		/** ticking the level instance */
-		virtual void Tick(double delta_time);
 
 		/** get the level corresponding to this instance */
 		GameLevel * GetLevel() { return level; }
@@ -47,7 +54,6 @@ namespace death
 		chaos::box2 GetWorldBox() const { return world_box; }
 		/** set the world box */
 		void SetWorldBox(chaos::box2 const & in_world_box) { world_box = in_world_box; }
-
 
 		/** some callbacks */
 		virtual void OnLevelEnded();

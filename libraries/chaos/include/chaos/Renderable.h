@@ -51,7 +51,7 @@ namespace chaos
 	// Renderable : base class for all object that can be rendered
 	// ========================================================
 
-	class Renderable : public ReferencedObject, public virtual NamedObject
+	class Renderable : public virtual ReferencedObject, public virtual NamedObject
 	{
 	public:
 
@@ -124,59 +124,5 @@ namespace chaos
 		/** all child renderable */
 		std::vector<RenderableLayerInfo> layers;
 	};
-
-
-#if 0
-	// ========================================================
-	// ParticleLayer : used as container for particles
-	// ========================================================
-
-	class ParticleLayer : public Renderable
-	{
-	public:
-
-		/** constructor */
-		ParticleLayer()
-
-
-	};
-#endif	
-
-	// ========================================================
-	// ParticleManager : a container for ParticleLayers
-	// ========================================================	
-
-	class Tickable : public virtual NamedObject
-	{
-	public:
-
-		/** change the pause state */
-		void SetPause(bool in_pause = true);
-		/** get the pause state */
-		bool IsPaused() const;
-		/** the tick entry point */
-		bool Tick(double delta_time);
-
-	protected:
-
-		/** the tick user function */
-		virtual bool DoTick(double delta_time);
-		/** called whenever object pause state has been changed */
-		virtual void OnPauseStateChanged(bool in_pause);
-
-	protected:
-
-		/** the pause state */
-		bool paused = false;
-
-
-	};
-
-
-
-
-
-
-
 
 }; // namespace chaos

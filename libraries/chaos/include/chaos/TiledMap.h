@@ -268,6 +268,15 @@ namespace chaos
 			/** find a property of type string */
 			std::string const * FindPropertyString(char const * name) const;
 
+			/** find a typed property with default value */
+			int FindPropertyInt(char const * name, int default_value) const;
+			/** find a typed property with default value */
+			float FindPropertyFloat(char const * name, float default_value) const;
+			/** find a typed property with default value */
+			bool FindPropertyBool(char const * name, bool default_value) const;
+			/** find a typed property with default value */
+			std::string FindPropertyString(char const * name, char const * default_value) const;
+
 		protected:
 
 			/** the method to override */

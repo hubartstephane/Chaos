@@ -2,7 +2,7 @@
 
 #include <chaos/GLMTools.h>
 
-death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance()
+death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance(death::Game * in_game)
 {
 	return new LudumGameplayLevelInstance(game);
 }

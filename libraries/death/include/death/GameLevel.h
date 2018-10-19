@@ -19,7 +19,7 @@ namespace death
 	public:
 
 		/** create a level instance for that level */
-		class GameLevelInstance * CreateLevelInstance();
+		class GameLevelInstance * CreateLevelInstance(Game * in_game);
 
 		/** the index of that level */
 		int GetLevelIndex() const { return level_index; }
@@ -27,7 +27,7 @@ namespace death
 	protected:
 
 		/** create a level instance for that level user specified function */
-		virtual class GameLevelInstance * DoCreateLevelInstance();
+		virtual class GameLevelInstance * DoCreateLevelInstance(Game * in_game);
 
 	protected:
 

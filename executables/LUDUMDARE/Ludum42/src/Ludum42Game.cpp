@@ -364,7 +364,7 @@ death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam
 			return false;	
 
 		// allocate a level
-		LudumGameplayLevel * ludum_result = new LudumGameplayLevel(this);
+		LudumGameplayLevel * ludum_result = new LudumGameplayLevel();
 		if (ludum_result == nullptr)
 			return false;
 		// some additionnal computation

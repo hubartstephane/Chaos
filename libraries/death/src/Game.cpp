@@ -1228,7 +1228,7 @@ namespace death
 			return true;
 		}
 		// change the level
-		boost::intrusive_ptr<GameLevelInstance> new_level_instance = new_level->CreateLevelInstance();
+		boost::intrusive_ptr<GameLevelInstance> new_level_instance = new_level->CreateLevelInstance(this);
 		if (new_level_instance == nullptr)
 			return false;
 		current_level_instance = new_level_instance;

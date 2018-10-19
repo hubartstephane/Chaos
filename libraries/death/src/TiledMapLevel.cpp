@@ -14,10 +14,14 @@ namespace death
 			assert(in_layer != nullptr);
 			assert(tiled_layer == nullptr);
 
-			
+			// keep a copy of the tile layer			
 			tiled_layer = in_layer;
 
-
+			// get the properties of interrest
+			displacement_ratio = tiled_layer->FindPropertyFloat("DISPLACEMENT_FACTOR", 1.0f);
+			wrap_x = tiled_layer->FindPropertyBool("WRAP_X", false);
+			wrap_y = tiled_layer->FindPropertyBool("WRAP_Y", false);
+			material_name = tiled_layer->FindPropertyString("MATERIAL", "");
 
 			return true;
 		}
@@ -56,20 +60,6 @@ namespace death
 
 				// store the layer
 				layers.push_back(my_layer);
-
-				// LAYER_DISPLACEMENT_FACTOR : the relative displacement factor of the camera
-				// LAYER_WARP_X              : whether the layer is to be repeated at infinity along X axis
-				// LAYER_WARP_Y              : whether the layer is to be repeated at infinity along Y axis
-				// MATERIAL                  : the default material to apply to each object of the layer
-
-				//chaos::TiledMapTools::HasFlag()
-
-				//chaos::TiledMapTools::FindExplicitWorldBounds()
-				//layer-
-
-
-
-
 			}
 			return true;
 		}
@@ -92,7 +82,7 @@ namespace death
 		}
 
 
-		GameLevelInstance * Level::DoCreateLevelInstance()
+		GameLevelInstance * Level::DoCreateLevelInstance(Game * in_game)
 		{
 			LevelInstance * result = new LevelInstance;
 			if (result == nullptr)

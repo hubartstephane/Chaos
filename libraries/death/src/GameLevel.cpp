@@ -6,16 +6,16 @@ namespace death
 	// GameLevelInstance implementation
 	// =====================================
 
-	GameLevelInstance * GameLevel::CreateLevelInstance()
+	GameLevelInstance * GameLevel::CreateLevelInstance(Game * in_game)
 	{
-		GameLevelInstance * result = DoCreateLevelInstance();
+		GameLevelInstance * result = DoCreateLevelInstance(in_game);
 		if (result == nullptr)
 			return nullptr;
 		result->level = this;
 		return result;
 	}
 
-	GameLevelInstance * GameLevel::DoCreateLevelInstance()
+	GameLevelInstance * GameLevel::DoCreateLevelInstance(Game * in_game)
 	{
 		return new GameLevelInstance;
 	}

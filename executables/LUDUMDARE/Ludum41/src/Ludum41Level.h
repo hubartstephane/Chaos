@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
 
+#include <death/Game.h>
 #include <death/GameLevel.h>
 
 // =================================================
@@ -23,7 +24,7 @@ public:
 protected:
 
 	/** override */
-	virtual death::GameLevelInstance * DoCreateLevelInstance() override;
+	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
 public:
 

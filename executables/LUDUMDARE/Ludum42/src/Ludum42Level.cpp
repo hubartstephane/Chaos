@@ -7,25 +7,24 @@
 // LudumGameplayLevel implementation
 // =============================================================
 
-LudumGameplayLevel::LudumGameplayLevel(class LudumGame * in_game):
-	game(in_game)
+LudumGameplayLevel::LudumGameplayLevel()
 {
-	assert(in_game != nullptr);
+
 }
 
-death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance()
+death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance(death::Game * in_game)
 {
-	return new LudumGameplayLevelInstance(game);
+	return new LudumGameplayLevelInstance(dynamic_cast<LudumGame *>(in_game));
 }
 
 // =============================================================
 // LudumGameplayLevelInstance implementation
 // =============================================================
 
-LudumGameplayLevelInstance::LudumGameplayLevelInstance(class LudumGame * in_game):
+LudumGameplayLevelInstance::LudumGameplayLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
-	assert(in_game != nullptr);
+	assert(in_game != nullptr); 
 }
 
 

@@ -34,6 +34,8 @@ namespace death
 			bool wrap_x = false;
 			/** whether the layer is to be repeated infinitely in Y direction */
 			bool wrap_y = false;
+			/** material name */
+			std::string material_name;
 
 			/** the tiled layer corresponding to this object */
 			boost::intrusive_ptr<chaos::TiledMap::LayerBase> tiled_layer;
@@ -56,7 +58,7 @@ namespace death
 		protected:
 
 			/** create a level instance for that level user specified function */
-			virtual class GameLevelInstance * DoCreateLevelInstance() override;
+			virtual class GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
 
 			/** a function that iterate over the layers and extract important informations */
 			bool ExtractLayersInformation();

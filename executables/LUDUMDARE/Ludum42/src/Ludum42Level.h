@@ -7,6 +7,7 @@
 
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
+#include <death/Game.h>
 
 #include "Ludum42Game.h"
 
@@ -23,18 +24,12 @@ class LudumGameplayLevel : public death::TiledMap::Level
 public:
 
 	/** constructor */
-	LudumGameplayLevel(class LudumGame * in_game);
+	LudumGameplayLevel();
 
 protected:
 
 	/** override */
-	virtual death::GameLevelInstance * DoCreateLevelInstance() override;
-
-protected:
-
-	/** pointer on game */
-	class LudumGame * game = nullptr;
-
+	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 };
 
 // =================================================

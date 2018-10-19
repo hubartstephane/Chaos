@@ -36,8 +36,6 @@ class LudumGame : public death::Game
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
-	friend class LudumGameplayLevelInstance;
-
 public:
 
 	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;		
@@ -136,7 +134,7 @@ protected:
 	/** load one level */
 	virtual death::GameLevel * DoLoadLevel(int level_number, chaos::FilePathParam const & path) override;
 	/** additionnal initialization when loading a level */
-	bool DoLoadLevelInitialize(class LudumGameplayLevel * level, chaos::TiledMap::Map * tiled_map);
+	bool DoLoadLevelInitialize(class LudumLevel * level, chaos::TiledMap::Map * tiled_map);
 
 
 	/** called whenever the input mode changes */

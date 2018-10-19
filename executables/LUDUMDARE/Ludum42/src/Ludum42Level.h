@@ -16,15 +16,14 @@
 // Levels
 // =================================================
 
-class LudumGameplayLevel : public death::TiledMap::Level
+class LudumLevel : public death::TiledMap::Level
 {
-	friend class LudumGame;
-	friend class LudumGameplayLevelInstance;
+	friend class LudumLevelInstance;
 
 public:
 
 	/** constructor */
-	LudumGameplayLevel();
+	LudumLevel();
 
 protected:
 
@@ -36,18 +35,18 @@ protected:
 // LevelInstance
 // =================================================
 
-class LudumGameplayLevelInstance : public death::GameLevelInstance
+class LudumLevelInstance : public death::GameLevelInstance
 {
 public:
 
 	/** constructor */
-	LudumGameplayLevelInstance(class LudumGame * in_game);
+	LudumLevelInstance(class LudumGame * in_game);
 
 protected:
 
 	/** get the typed level */
-	LudumGameplayLevel * GetLudumLevel();
-	LudumGameplayLevel const * GetLudumLevel() const;
+	LudumLevel * GetLudumLevel();
+	LudumLevel const * GetLudumLevel() const;
 
 	/** overrides */
 	virtual void OnLevelEnded() override;

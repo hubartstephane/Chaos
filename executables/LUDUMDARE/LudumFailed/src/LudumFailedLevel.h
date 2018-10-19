@@ -15,44 +15,12 @@
 
 class LudumLevel : public death::GameLevel
 {
-public:
-
-	/** constructor */
-	LudumLevel(class LudumGame * in_game);
-
-protected:
-
-	/** pointer on game */
-	class LudumGame * game = nullptr;
-
-};
-
-class LudumLevelInstance : public death::GameLevelInstance
-{
-public:
-
-	/** constructor */
-	LudumLevelInstance(class LudumGame * in_game);
-
-protected:
-
-	/** pointer on game */
-	class LudumGame * game = nullptr;
-};
-
-// =================================================
-// Levels
-// =================================================
-
-class LudumGameplayLevel : public LudumLevel
-{
 	friend class LudumGame;
-	friend class LudumGameplayLevelInstance;
 
 public:
 
 	/** constructor */
-	LudumGameplayLevel(class LudumGame * in_game);
+	LudumLevel();
 
 protected:
 
@@ -70,18 +38,18 @@ protected:
 // LevelInstance
 // =================================================
 
-class LudumGameplayLevelInstance : public LudumLevelInstance
+class LudumLevelInstance : public death::GameLevelInstance
 {
 public:
 
 	/** constructor */
-	LudumGameplayLevelInstance(class LudumGame * in_game);
+	LudumLevelInstance(class LudumGame * in_game);
 
 protected:
 
 	/** get the typed level */
-	LudumGameplayLevel * GetLudumLevel();
-	LudumGameplayLevel const * GetLudumLevel() const;
+	LudumLevel * GetLudumLevel();
+	LudumLevel const * GetLudumLevel() const;
 
 	/** overrides */
 	virtual void OnLevelEnded() override;
@@ -91,6 +59,8 @@ protected:
 	chaos::ParticleLayer * LevelLayerToParticleLayer(chaos::TiledMap::TileLayer const * level_layer) const;
 
 protected:
+
+	LudumGame * game = nullptr;
 
 	std::vector<boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;
 };

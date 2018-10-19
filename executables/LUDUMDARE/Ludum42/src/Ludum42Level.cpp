@@ -4,24 +4,24 @@
 #include <chaos/GLMTools.h>
 
 // =============================================================
-// LudumGameplayLevel implementation
+// LudumLevel implementation
 // =============================================================
 
-LudumGameplayLevel::LudumGameplayLevel()
+LudumLevel::LudumLevel()
 {
 
 }
 
-death::GameLevelInstance * LudumGameplayLevel::DoCreateLevelInstance(death::Game * in_game)
+death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 {
-	return new LudumGameplayLevelInstance(dynamic_cast<LudumGame *>(in_game));
+	return new LudumLevelInstance(dynamic_cast<LudumGame *>(in_game));
 }
 
 // =============================================================
-// LudumGameplayLevelInstance implementation
+// LudumLevelInstance implementation
 // =============================================================
 
-LudumGameplayLevelInstance::LudumGameplayLevelInstance(LudumGame * in_game):
+LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
 	assert(in_game != nullptr); 
@@ -29,23 +29,23 @@ LudumGameplayLevelInstance::LudumGameplayLevelInstance(LudumGame * in_game):
 
 
 
-LudumGameplayLevel * LudumGameplayLevelInstance::GetLudumLevel()
+LudumLevel * LudumLevelInstance::GetLudumLevel()
 {
-	return dynamic_cast<LudumGameplayLevel*>(GetLevel());
+	return dynamic_cast<LudumLevel*>(GetLevel());
 }
 
-LudumGameplayLevel const * LudumGameplayLevelInstance::GetLudumLevel() const
+LudumLevel const * LudumLevelInstance::GetLudumLevel() const
 {
-	return dynamic_cast<LudumGameplayLevel const *>(GetLevel());
+	return dynamic_cast<LudumLevel const *>(GetLevel());
 }
 
-void LudumGameplayLevelInstance::OnLevelEnded()
+void LudumLevelInstance::OnLevelEnded()
 {
 	allocations.clear();
 	game->UnSpawnPlayer();
 }
 
-chaos::ParticleLayer * LudumGameplayLevelInstance::ObjectToParticleLayer(int object_type) const
+chaos::ParticleLayer * LudumLevelInstance::ObjectToParticleLayer(int object_type) const
 {
 	int layer_id = -1;
 	if (object_type == LudumGame::OBJECT_TYPE_PLAYER)
@@ -59,7 +59,7 @@ chaos::ParticleLayer * LudumGameplayLevelInstance::ObjectToParticleLayer(int obj
 	return nullptr;
 }
 
-chaos::ParticleAllocation * LudumGameplayLevelInstance::FindOrAllocationForObjectType(int object_type)
+chaos::ParticleAllocation * LudumLevelInstance::FindOrAllocationForObjectType(int object_type)
 {
 	// find the allocation
 	auto it = allocations.find(object_type);
@@ -80,13 +80,13 @@ chaos::ParticleAllocation * LudumGameplayLevelInstance::FindOrAllocationForObjec
 }
 
 
-void LudumGameplayLevelInstance::OnLevelStarted()
+void LudumLevelInstance::OnLevelStarted()
 {
 
 
 	allocations.clear();
 
-	LudumGameplayLevel const * ludum_level = GetLudumLevel();
+	LudumLevel const * ludum_level = GetLudumLevel();
 	if (ludum_level == nullptr)
 		return;
 

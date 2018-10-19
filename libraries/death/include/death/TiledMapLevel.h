@@ -85,6 +85,8 @@ namespace death
 		protected:
 
 			/** override */
+			virtual bool Initialize(death::Game * in_game) override;
+			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;

@@ -62,6 +62,6 @@ protected:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;
-
+	/** some allocations */
 	std::map<int, boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;
 };

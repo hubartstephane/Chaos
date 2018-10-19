@@ -1,4 +1,5 @@
 #include <death/TiledMapLevel.h>
+#include <death/Game.h>
 #include <chaos/TiledMapTools.h>
 
 namespace death
@@ -108,6 +109,21 @@ namespace death
 			if (particle_manager == nullptr)
 				return 0;
 			return particle_manager->Display(uniform_provider, render_params);
+		}
+
+		bool LevelInstance::Initialize(death::Game * in_game)
+		{
+			assert(in_game != nullptr);
+			// create a particle manager
+			particle_manager = new chaos::ParticleManager;
+			if (particle_manager == nullptr)
+				return false;
+			particle_manager->SetTextureAtlas(in_game->GetTextureAtlas()); // take the atlas
+			 
+
+
+
+ 			return true;
 		}
 
 	}; // namespace TiledMap

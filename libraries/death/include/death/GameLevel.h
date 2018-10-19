@@ -62,6 +62,11 @@ namespace death
 
 	protected:
 
+		/** additionnal initialization */
+		virtual bool Initialize(Game * in_game);
+
+	protected:
+
 		/** a pointer on the level that generated this */
 		GameLevel * level = nullptr;
 		/** the world box */

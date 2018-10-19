@@ -144,7 +144,8 @@ namespace death
 
 	void Game::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)
 	{
-
+		if (current_level_instance != nullptr)
+			current_level_instance->Display(&uniform_provider);
 	}
 
 	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)

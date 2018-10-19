@@ -35,7 +35,7 @@ protected:
 // LevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::GameLevelInstance
+class LudumLevelInstance : public death::TiledMap::LevelInstance
 {
 public:
 

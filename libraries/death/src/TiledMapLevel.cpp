@@ -163,6 +163,20 @@ namespace death
 			if (tiled_map == nullptr)
 				return false;
 
+			// iterate over all layers by Z-order
+			int count = tiled_map->GetLayerCount();
+			for (int i = 0 ; i < count; ++i)
+			{
+				chaos::TiledMap::LayerBase const * layer = tiled_map->FindLayerByZOrder(i);
+				if (layer == nullptr)
+					continue;
+
+				Layer * new_layer = new Layer();
+				if (new_layer == nullptr)
+					continue;
+
+
+			}
 
 
 			return true;

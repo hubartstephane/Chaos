@@ -55,6 +55,11 @@ namespace death
 			/** initialization from tiledmap */
 			virtual bool Initialize(chaos::TiledMap::Map * in_tiled_map);
 
+			/** get the tiled map */
+			chaos::TiledMap::Map * GetTiledMap() { return tiled_map.get(); }
+			/** get the tiled map */
+			chaos::TiledMap::Map const * GetTiledMap() const { return tiled_map.get(); }
+
 		protected:
 
 			/** create a level instance for that level user specified function */
@@ -80,7 +85,15 @@ namespace death
 		{
 		public:
 
-			
+			/** level getter with a cast */
+			Level * GetTypedLevel();
+			/** level getter with a cast */
+			Level const * GetTypedLevel() const;
+
+			/** get the tiled map */
+			chaos::TiledMap::Map * GetTiledMap();
+			/** get the tiled map */
+			chaos::TiledMap::Map const * GetTiledMap() const;
 
 		protected:
 
@@ -90,6 +103,11 @@ namespace death
 			virtual bool DoTick(double delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+
+			/** create the particle manager */
+			virtual bool CreateParticleManager(death::Game * in_game);
+			/** create the layers */
+			virtual bool CreateLayers(death::Game * in_game);
 
 		protected:
 

@@ -82,20 +82,40 @@ namespace death
 			return true;
 		}
 
-
 		GameLevelInstance * Level::DoCreateLevelInstance(Game * in_game)
 		{
-			LevelInstance * result = new LevelInstance;
-			if (result == nullptr)
-				return result;
-
-
-			return result;
+			return new LevelInstance;
 		}
 
 		// =====================================
 		// LevelInstance implementation
 		// =====================================
+
+		chaos::TiledMap::Map * LevelInstance::GetTiledMap()
+		{
+			Level * level = GetTypedLevel();
+			if (level == nullptr)
+				return nullptr;
+			return level->GetTiledMap();
+		}
+
+		chaos::TiledMap::Map const * LevelInstance::GetTiledMap() const 
+		{
+			Level const * level = GetTypedLevel();
+			if (level == nullptr)
+				return nullptr;
+			return level->GetTiledMap();
+		}
+
+		Level * LevelInstance::GetTypedLevel()
+		{
+			return dynamic_cast<Level*>(GetLevel());
+		}
+
+		Level const * LevelInstance::GetTypedLevel() const
+		{
+			return dynamic_cast<Level const *>(GetLevel());
+		}
 
 		bool LevelInstance::DoTick(double delta_time)
 		{
@@ -115,16 +135,39 @@ namespace death
 		{
 			assert(in_game != nullptr);
 			// create a particle manager
-			particle_manager = new chaos::ParticleManager;
-			if (particle_manager == nullptr)
+			if (!CreateParticleManager(in_game))
 				return false;
-			particle_manager->SetTextureAtlas(in_game->GetTextureAtlas()); // take the atlas
+			// create a the layers
+			if (!CreateLayers(in_game))
+				return false;
+
 			 
 
 
 
  			return true;
 		}
+
+		bool LevelInstance::CreateParticleManager(death::Game * in_game)
+		{
+			particle_manager = new chaos::ParticleManager;
+			if (particle_manager == nullptr)
+				return false;
+			particle_manager->SetTextureAtlas(in_game->GetTextureAtlas()); // take the atlas
+			return true;
+		}
+
+		bool LevelInstance::CreateLayers(death::Game * in_game)
+		{
+			chaos::TiledMap::Map const * tiled_map = GetTiledMap();
+			if (tiled_map == nullptr)
+				return false;
+
+
+
+			return true;
+		}
+
 
 	}; // namespace TiledMap
 

@@ -21,12 +21,12 @@ LudumLevelInstance::LudumLevelInstance(class LudumGame * in_game):
 
 // =============================================================
 
-LudumLevel * LudumLevelInstance::GetLudumLevel()
+LudumLevel * LudumLevelInstance::GetTypedLevel()
 {
 	return dynamic_cast<LudumLevel*>(GetLevel());
 }
 
-LudumLevel const * LudumLevelInstance::GetLudumLevel() const
+LudumLevel const * LudumLevelInstance::GetTypedLevel() const
 {
 	return dynamic_cast<LudumLevel const *>(GetLevel());
 }
@@ -67,7 +67,7 @@ void LudumLevelInstance::OnLevelStarted()
 {
 	allocations.clear();
 
-	LudumLevel const * ludum_level = GetLudumLevel();
+	LudumLevel const * ludum_level = GetTypedLevel();
 	if (ludum_level == nullptr)
 		return;
 

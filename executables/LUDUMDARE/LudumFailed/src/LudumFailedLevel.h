@@ -48,8 +48,8 @@ public:
 protected:
 
 	/** get the typed level */
-	LudumLevel * GetLudumLevel();
-	LudumLevel const * GetLudumLevel() const;
+	LudumLevel * GetTypedLevel();
+	LudumLevel const * GetTypedLevel() const;
 
 	/** overrides */
 	virtual void OnLevelEnded() override;

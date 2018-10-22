@@ -36,13 +36,17 @@ protected:
                                                                                                                                           
   /** the max time during which the player can receive a vertical impulse */
   float max_impulse_time = 0.2f;
+  /** the max height displacement during which the player can be impulsing  */
+  float max_impulse_height = 20.0f;
   /** the number of time the player can jump before touching the ground */
   int   max_jump_count = 1:
   
   /** the current jump count */
-  int current_jump_count = 0;
+  int   current_jump_count = 0;
   /** the current impulse time */
   float current_impulse_time = 0.0f;
+  /** the current impulse height */
+  float current_impulse_height = 0.0f;
 };
 
 
@@ -58,13 +62,15 @@ void DisplacementManager::Tick(double delta_time)
   // search whether the player touched a FLOOR
   if (old_position.y < position.y)
   {
-    jump_count = 0;
+    current_jump_count = 0;
     current_impulse_time = 0.0f;
+    current_impulse_height = 0.0f;
   }                                                       
   // search whether the player touched a ROOF
   else if (old_position.y > position.y)
   {
     current_impulse_time = max_impulse_time; // top of the jump curve
+    current_impulse_height = max_impulse_height;
   }                                                       
 }
 
@@ -90,7 +96,8 @@ float DisplacementManager::UpdateVerticalImpulse(double delta_time)
   if (IsJumpKeyPressed())
   {                                           
     // begin jumping
-    if (current_impulse_time == 0.0f)
+    if ((max_impulse_time > 0.0f && current_impulse_time == 0.0f) ||   // we start a new jump only if current_ ...time/height is 0
+        (max_impulse_height > 0.0f && current_impulse_height == 0.0f))
     {
       if (current_jump_count == max_jump_count) // cannot jump anymore
         return 0.0f;
@@ -100,17 +107,24 @@ float DisplacementManager::UpdateVerticalImpulse(double delta_time)
     else
     {
       // jump limit reached. player has to release the jump button before doing another jump
-      if (current_impulse_time >= max_impulse_time)
-        return 0.0f;       
+      if (max_impulse_time > 0 && current_impulse_time >= max_impulse_time)
+        return 0.0f;
+      if (max_impulse_height > 0 && current_impulse_height >= max_impulse_height)
+        return 0.0f;              
     }
     // update impulse time
-    current_impulse_time = MathTools::Min(current_impulse_time + (float)delta_time, max_impulse_time);
+    if (max_impulse_time > 0.0f)
+      current_impulse_time = MathTools::Min(current_impulse_time + (float)delta_time, max_impulse_time);
+    // update impulse height
+    if (max_impulse_height > 0.0f)
+      current_impulse_height = MathTools::Min(current_impulse_height + (float)delta_time * jump_impulse, max_impulse_height);
     // we are impulsing
     return jump_impulse;
   }
   else
   {
     current_impulse_time = 0.0f;
+    current_impulse_height = 0.0f;
     return 0.0f;
   } 
 }
@@ -129,5 +143,5 @@ bool DisplacementManager::IsJumpKeyPressed() const
 
 void DisplacementManager::OnGroundTouched()
 {
-  current_jump_count = 0;
+  
 }

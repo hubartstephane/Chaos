@@ -47,6 +47,9 @@ protected:
   float current_impulse_time = 0.0f;
   /** the current impulse height */
   float current_impulse_height = 0.0f;
+  
+  /** whether the jump button is pressed */
+  bool jump_button_pressed = false;
 };
 
 
@@ -93,11 +96,15 @@ void DisplacementManager::UpdateVerticalVelocity(double delta_time)
 
 float DisplacementManager::UpdateVerticalImpulse(double delta_time)
 {
-  if (IsJumpKeyPressed())
+  // update the pressed button state 
+  bool old_jump_pressed = jump_pressed;
+  bool new_jump_pressed = IsJumpKeyPressed();
+  jump_pressed = new_jump_pressed;
+  // compute vertical impulse  
+  if (new_jump_pressed)
   {                                           
     // begin jumping
-    if ((max_impulse_time > 0.0f && current_impulse_time == 0.0f) ||   // we start a new jump only if current_ ...time/height is 0
-        (max_impulse_height > 0.0f && current_impulse_height == 0.0f))
+    if (!old_jump_pressed) 
     {
       if (current_jump_count == max_jump_count) // cannot jump anymore
         return 0.0f;

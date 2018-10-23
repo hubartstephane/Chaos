@@ -2,23 +2,36 @@ class DisplacementManager
 {
 public:
 
-  void OnGroundTouched();
   
+  /** the tick entry point */
   void Tick(double delta_time);
   
-  
-  
+  /** whether the pawn is jumping */
+  bool IsJumping() const;
+  /** whether the pawn is falling */
+  bool IsFalling() const;
+  /** whether the pawn is touching the ground */
+  bool IsTouchingGround() const;
   
 protected:
         
   /** update the vertical velocity */
   void  UpdateVerticalVelocity(double delta_time);                  
   /** update the vertical impulse */
-  float UpdateVerticalImpulse(double delta_time);
-  
+  float UpdateVerticalImpulse(double delta_time);  
   /** test whether the jump button is pressed */
   bool IsJumpKeyPressed() const;
-  
+                               
+                               
+  /** called whenever the jump button is successfully pressed (with an effective jump start) */
+  virtual void OnJumpStarted();
+  /** called whenever the jump button is released */
+  virtual void OnJumpStopped();
+  /** called whenever the pawn touch the ground */
+  virtual void OnGroundTouched();
+  /** called whenever the pawn hit a roof */
+  virtual void OnRoofTouched();
+
     
 protected:
 
@@ -50,8 +63,48 @@ protected:
   
   /** whether the jump button is pressed */
   bool jump_button_pressed = false;
+  /** whether to pawn is touching te ground */
+  bool touching_floor = false;
 };
 
+bool DisplacementManager::IsJumping() const
+{
+  if (IsTouchingGround())
+    return false;
+  if (velocity.y > 0.0f)
+    return true;
+  return false;
+}
+  
+bool DisplacementManager::IsFalling() const
+{
+  if (IsTouchingGround())
+    return false;
+  if (velocity.y < 0.0f)
+    return true;
+  return false;    
+}
+
+bool DisplacementManager::IsTouchingGround() const
+{
+  return touching_ground;
+}
+  
+void DisplacementManager::OnJumpStarted()
+{
+}
+  
+void DisplacementManager::OnJumpEnded()
+{
+}
+
+void DisplacementManager::OnGroundTouched()
+{
+}
+
+void DisplacementManager::OnRoofTouched()
+{
+}
 
 void DisplacementManager::Tick(double delta_time)
 {
@@ -62,18 +115,25 @@ void DisplacementManager::Tick(double delta_time)
   // search for collisions 
   glm::vec2 old_position = position;
   ComputePawnCollision(delta_time);
-  // search whether the player touched a FLOOR
+  // search whether the player touched a GROUND
+  bool old_touching_ground = touching_ground; 
+  touching_ground = false;
+  // collision bring the pawn higher => this is a collision with the GROUND
   if (old_position.y < position.y)
   {
     current_jump_count = 0;
     current_impulse_time = 0.0f;
-    current_impulse_height = 0.0f;
+    current_impulse_height = 0.0f; // reset jump data
+    touching_ground = true;
+    if (!old_touching_ground) // if we were already touching the ground, we are walking => do not trigger the callback
+      OnGroundTouched();    
   }                                                       
-  // search whether the player touched a ROOF
+  // collision bring the pawn lower => this is a collision with the ROOF
   else if (old_position.y > position.y)
   {
     current_impulse_time = max_impulse_time; // top of the jump curve
     current_impulse_height = max_impulse_height;
+    OnRoofTouched();
   }                                                       
 }
 
@@ -109,15 +169,22 @@ float DisplacementManager::UpdateVerticalImpulse(double delta_time)
       if (current_jump_count == max_jump_count) // cannot jump anymore
         return 0.0f;
       ++current_jump_count;
+      OnJumpStarted();
     }
     // continue jumping
     else
     {
       // jump limit reached. player has to release the jump button before doing another jump
       if (max_impulse_time > 0 && current_impulse_time >= max_impulse_time)
+      {
+        OnJumpStopped();
         return 0.0f;
+      }
       if (max_impulse_height > 0 && current_impulse_height >= max_impulse_height)
-        return 0.0f;              
+      {
+        OnJumpStopped();
+        return 0.0f;   
+      }           
     }
     // update impulse time
     if (max_impulse_time > 0.0f)
@@ -130,25 +197,15 @@ float DisplacementManager::UpdateVerticalImpulse(double delta_time)
   }
   else
   {
+    if (old_jump_pressed)
+      OnJumpStopped();
     current_impulse_time = 0.0f;
     current_impulse_height = 0.0f;
     return 0.0f;
   } 
 }
 
-
-
-
-
-
-
-
 bool DisplacementManager::IsJumpKeyPressed() const
 {
   return false;
-}
-
-void DisplacementManager::OnGroundTouched()
-{
-  
 }

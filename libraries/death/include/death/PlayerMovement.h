@@ -95,8 +95,10 @@ namespace death
 		/** the current jump count */
 		int   current_jump_count = 0;
 
-		/** whether the jump button is pressed */
-		bool jump_button_pressed = false;
+		/** whether the jump button must be ignored until it is released (initialize to true so that player does not jump when the game begins) */
+		bool wait_jump_button_released = true;
+		/** whether the player is jumping */
+		bool jumping = false;
 		/** whether to pawn is touching te ground */
 		bool touching_ground = false;
 	};

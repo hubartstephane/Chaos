@@ -6,26 +6,6 @@ namespace death
 {
 	namespace TiledMap
 	{
-		// =====================================
-		// Layer implementation
-		// =====================================
-
-		bool Layer::Initialize(chaos::TiledMap::LayerBase * in_layer)
-		{
-			assert(in_layer != nullptr);
-			assert(tiled_layer == nullptr);
-
-			// keep a copy of the tile layer			
-			tiled_layer = in_layer;
-
-			// get the properties of interrest
-			displacement_ratio = tiled_layer->FindPropertyFloat("DISPLACEMENT_FACTOR", 1.0f);
-			wrap_x = tiled_layer->FindPropertyBool("WRAP_X", false);
-			wrap_y = tiled_layer->FindPropertyBool("WRAP_Y", false);
-			material_name = tiled_layer->FindPropertyString("MATERIAL", "");
-
-			return true;
-		}
 
 		// =====================================
 		// Level implementation
@@ -36,49 +16,11 @@ namespace death
 
 		}
 
-		bool Level::ExtractLayersInformation()
-		{
-			// iterate over all LayerBase ordered by zorder
-			int count = tiled_map->GetLayerCount();
-			for (int i = 0; i < count; ++i)
-			{
-				// get the layer by zorder
-				chaos::TiledMap::LayerBase * layer = tiled_map->FindLayerByZOrder(i);
-				if (layer == nullptr)
-					continue;
-
-				// create a 'layer' from ::death point of view
-				death::TiledMap::Layer * my_layer = new death::TiledMap::Layer;
-				if (my_layer == nullptr)
-					continue;
-
-				// initialize death::Layer from chaos::Layer
-				if (!my_layer->Initialize(layer))
-				{
-					delete(my_layer);
-					continue;
-				}
-
-				// store the layer
-				layers.push_back(my_layer);
-			}
-			return true;
-		}
-
 		bool Level::Initialize(chaos::TiledMap::Map * in_tiled_map)
 		{
 			assert(in_tiled_map != nullptr);
-
-			/** already initialized ?*/
-			if (tiled_map != nullptr)
-				return false;
-			/** copy the tile map */
+			assert(tiled_map == nullptr);
 			tiled_map = in_tiled_map;
-			/** the real initialization */
-			ExtractLayersInformation();
-
-
-
 			return true;
 		}
 
@@ -91,11 +33,30 @@ namespace death
 		// LayerInstance implementation
 		// =====================================
 
-		bool LayerInstance::Initialize(Layer * in_layer)
+		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_tiled_layer)
 		{
-			layer = in_layer;
+			// store the layer
+			tiled_layer = in_tiled_layer;
+
+			// get the properties of interrest
+			displacement_ratio = in_tiled_layer->FindPropertyFloat("DISPLACEMENT_FACTOR", 1.0f);
+			wrap_x = in_tiled_layer->FindPropertyBool("WRAP_X", false);
+			wrap_y = in_tiled_layer->FindPropertyBool("WRAP_Y", false);
+			material_name = in_tiled_layer->FindPropertyString("MATERIAL", "");
 
 			return true;
+		}
+
+		bool LayerInstance::DoTick(double delta_time)
+		{
+
+			return true;
+		}
+		
+		int LayerInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
+		{
+
+			return 0;
 		}
 
 		// =====================================
@@ -130,16 +91,29 @@ namespace death
 
 		bool LevelInstance::DoTick(double delta_time)
 		{
+			// tick the particle manager
 			if (particle_manager == nullptr)
 				return 0;
-			return particle_manager->Tick(delta_time);
+			particle_manager->Tick(delta_time);
+			// tick all layer instances
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+				layer_instances[i]->Tick(delta_time);
+
+			return true;
 		}
 
 		int LevelInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
-			if (particle_manager == nullptr)
-				return 0;
-			return particle_manager->Display(uniform_provider, render_params);
+			int result = 0;
+			// display particle manager
+			if (particle_manager != nullptr)
+				result += particle_manager->Display(uniform_provider, render_params);
+			// display all layer instances
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+				result += layer_instances[i]->Display(uniform_provider, render_params);
+			return result;
 		}
 
 		bool LevelInstance::Initialize(death::Game * in_game)
@@ -148,13 +122,9 @@ namespace death
 			// create a particle manager
 			if (!CreateParticleManager(in_game))
 				return false;
-			// create a the layers
+			// create a the layers instances
 			if (!CreateLayerInstances(in_game))
 				return false;
-
-			 
-
-
 
  			return true;
 		}
@@ -170,27 +140,30 @@ namespace death
 
 		bool LevelInstance::CreateLayerInstances(death::Game * in_game)
 		{
-			Level * level = GetTypedLevel();
+			chaos::TiledMap::Map * tiled_map = GetTiledMap();
 
-			size_t count = level->layers.size();
+			// handle layers ordered by Z-Order
+			size_t count = tiled_map->GetLayerCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				Layer * layer = level->layers[i].get();
+				// create a layer_instance per layer
+				chaos::TiledMap::LayerBase * layer = tiled_map->FindLayerByZOrder(i);
 				if (layer == nullptr)
 					continue;
-
 				LayerInstance * layer_instance = new LayerInstance;
 				if (layer_instance == nullptr)
 					continue;
-
+				// initialize the level_instance
 				if (!layer_instance->Initialize(layer))
+				{
+					delete(layer_instance);
 					continue;
-
+				}
+				// insert the layer_instance
 				layer_instances.push_back(layer_instance);
 			}
 			return true;
 		}
-
 
 	}; // namespace TiledMap
 

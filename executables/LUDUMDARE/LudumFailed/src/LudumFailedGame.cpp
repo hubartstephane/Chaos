@@ -119,6 +119,9 @@ void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvide
 	// draw particle system
 	if (particle_manager != nullptr)
 		particle_manager->Display(&uniform_provider);
+
+	// super method
+	death::Game::DoDisplay(viewport, uniform_provider);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
@@ -377,7 +380,7 @@ death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam
 			return false;	
 	
 		// allocate a level
-		LudumLevel * ludum_result = new LudumLevel(this);
+		LudumLevel * ludum_result = new LudumLevel();
 		if (ludum_result == nullptr)
 			return false;
 		// some additionnal computation

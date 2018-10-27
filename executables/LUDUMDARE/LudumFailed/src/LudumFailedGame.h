@@ -36,6 +36,8 @@ class LudumGame : public death::Game
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
+	friend class LudumLevelInstance;
+
 public:
 
 	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;		

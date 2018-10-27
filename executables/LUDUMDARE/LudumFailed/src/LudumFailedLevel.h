@@ -16,6 +16,7 @@
 class LudumLevel : public death::GameLevel
 {
 	friend class LudumGame;
+	friend class LudumLevelInstance;
 
 public:
 

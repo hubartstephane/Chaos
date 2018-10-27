@@ -202,6 +202,9 @@ void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvide
 	// draw particle system
 	if (particle_manager != nullptr)
 		particle_manager->Display(&uniform_provider);
+
+	// super method
+	death::Game::DoDisplay(viewport, uniform_provider);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

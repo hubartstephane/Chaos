@@ -11,15 +11,38 @@
 
 namespace death
 {
+
 	namespace TiledMap
 	{
+		// ==============================================================
+		// FORWARD DECLARATION / FRIENDSHIP MACROS
+		// ==============================================================
+
+		// all classes in this file
+#define DEATH_TILEDLEVEL_CLASSES (Level) (Layer) (LevelInstance) (LevelInstance)
+
+		// forward declaration
+#define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
+		BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FORWARD_DECL, _, DEATH_TILEDLEVEL_CLASSES)
+
+			// friendship macro
+#define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
+#define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
+
 		// =====================================
 		// Layer : a layer in the game point of view
 		// =====================================
 
 		class Layer : public chaos::ReferencedObject
 		{
-			friend class Level;
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		public:
+
+			/** get the tiled layer */
+			chaos::TiledMap::LayerBase * GetTiledLayer() { return tiled_layer.get(); }
+			/** get the tiled layer */
+			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return tiled_layer.get(); }
 
 		protected:
 
@@ -47,6 +70,8 @@ namespace death
 
 		class Level : public GameLevel
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
 
 			/** constructor */
@@ -72,9 +97,34 @@ namespace death
 
 			/** the layers for this map */
 			std::vector<boost::intrusive_ptr<Layer>> layers;
-
 			/** the tiled map corresponding to this level */
 			boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
+		};
+
+		// =====================================
+		// LayerInstance : instance of a Layer
+		// =====================================
+
+		class LayerInstance : public chaos::ReferencedObject
+		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		public:
+
+			/** get the tiled layer */
+			chaos::TiledMap::LayerBase * GetTiledLayer() { return layer->GetTiledLayer(); }
+			/** get the tiled layer */
+			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return layer->GetTiledLayer(); }
+
+		protected:
+
+			/** initialization */
+			virtual bool Initialize(Layer * in_layer);
+
+		protected:
+
+			/** the layer corresponding to this instance */
+			boost::intrusive_ptr<Layer> layer;
 		};
 
 		// =====================================
@@ -83,6 +133,8 @@ namespace death
 
 		class LevelInstance : public GameLevelInstance
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
 
 			/** level getter with a cast */
@@ -106,15 +158,23 @@ namespace death
 
 			/** create the particle manager */
 			virtual bool CreateParticleManager(death::Game * in_game);
-			/** create the layers */
-			virtual bool CreateLayers(death::Game * in_game);
+			/** create the layers instances */
+			virtual bool CreateLayerInstances(death::Game * in_game);
 
 		protected:
 
 			/** the particle manager used to render the world */
 			boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+			/** the layers */
+			std::vector<boost::intrusive_ptr<LayerInstance>> layer_instances;
 		};
 
 	}; // namespace TiledMap
+
+		 // undefine macros
+#undef DEATH_TILEDMAP_CLASSES
+#undef DEATH_TILEDMAP_FORWARD_DECL
+#undef DEATH_TILEDMAP_FRIEND_DECL
+#undef DEATH_TILEDMAP_ALL_FRIENDS
 
 }; // namespace death

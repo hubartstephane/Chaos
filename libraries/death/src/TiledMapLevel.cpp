@@ -88,6 +88,17 @@ namespace death
 		}
 
 		// =====================================
+		// LayerInstance implementation
+		// =====================================
+
+		bool LayerInstance::Initialize(Layer * in_layer)
+		{
+			layer = in_layer;
+
+			return true;
+		}
+
+		// =====================================
 		// LevelInstance implementation
 		// =====================================
 
@@ -138,7 +149,7 @@ namespace death
 			if (!CreateParticleManager(in_game))
 				return false;
 			// create a the layers
-			if (!CreateLayers(in_game))
+			if (!CreateLayerInstances(in_game))
 				return false;
 
 			 
@@ -157,28 +168,26 @@ namespace death
 			return true;
 		}
 
-		bool LevelInstance::CreateLayers(death::Game * in_game)
+		bool LevelInstance::CreateLayerInstances(death::Game * in_game)
 		{
-			chaos::TiledMap::Map const * tiled_map = GetTiledMap();
-			if (tiled_map == nullptr)
-				return false;
+			Level * level = GetTypedLevel();
 
-			// iterate over all layers by Z-order
-			int count = tiled_map->GetLayerCount();
-			for (int i = 0 ; i < count; ++i)
+			size_t count = level->layers.size();
+			for (size_t i = 0; i < count; ++i)
 			{
-				chaos::TiledMap::LayerBase const * layer = tiled_map->FindLayerByZOrder(i);
+				Layer * layer = level->layers[i].get();
 				if (layer == nullptr)
 					continue;
 
-				Layer * new_layer = new Layer();
-				if (new_layer == nullptr)
+				LayerInstance * layer_instance = new LayerInstance;
+				if (layer_instance == nullptr)
 					continue;
 
+				if (!layer_instance->Initialize(layer))
+					continue;
 
+				layer_instances.push_back(layer_instance);
 			}
-
-
 			return true;
 		}
 

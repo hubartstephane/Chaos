@@ -347,6 +347,54 @@ namespace chaos
 				window->OnInputModeChanged(new_mode, old_mode);			
 		}
 
+		Clock * SingleWindowApplication::GetMainClockInstance()
+		{
+			SingleWindowApplication * application = GetGLFWApplicationInstance();
+			if (application == nullptr)
+				return nullptr;
+			return application->GetMainClock();
+		}
+
+		Clock const * SingleWindowApplication::GetMainClockConstInstance()
+		{
+			SingleWindowApplication const * application = GetGLFWApplicationConstInstance();
+			if (application == nullptr)
+				return nullptr;
+			return application->GetMainClock();
+		}
+
+		SoundManager * SingleWindowApplication::GetSoundManagerInstance()
+		{
+			SingleWindowApplication * application = GetGLFWApplicationInstance();
+			if (application == nullptr)
+				return nullptr;
+			return application->GetSoundManager();
+		}
+
+		SoundManager const * SingleWindowApplication::GetSoundManagerConstInstance()
+		{
+			SingleWindowApplication const * application = GetGLFWApplicationConstInstance();
+			if (application == nullptr)
+				return nullptr;
+			return application->GetSoundManager();
+		}
+
+		GPUResourceManager * SingleWindowApplication::GetGPUResourceManagerInstance()
+		{
+			SingleWindowApplication * application = GetGLFWApplicationInstance();
+			if (application == nullptr)
+				return nullptr;
+			return application->GetGPUResourceManager();
+		}
+
+		GPUResourceManager const * SingleWindowApplication::GetGPUResourceManagerConstInstance()
+		{
+			SingleWindowApplication const * application = GetGLFWApplicationConstInstance();
+			if (application == nullptr)
+				return nullptr;
+			return application->GetGPUResourceManager();
+		}
+
 	}; // namespace MyGLFW
 
 }; // namespace chaos

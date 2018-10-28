@@ -61,9 +61,9 @@ protected:
 
 		double realtime = 0.0;
 
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application != nullptr)
-			application->GetMainClock()->GetClockTime();
+		chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+		if (clock != nullptr)
+			clock->GetClockTime();
 
 		chaos::GPUProgramProvider uniform_provider;
 		uniform_provider.AddVariableValue("projection", projection_matrix);
@@ -99,13 +99,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return false;
-
-		chaos::GPUResourceManager * resource_manager = application->GetGPUResourceManager();
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
-			return false;
+			return nullptr;
 
 		// create the mesh
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));

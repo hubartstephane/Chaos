@@ -81,6 +81,9 @@ namespace death
 
 			/** initialization */
 			virtual bool Initialize(chaos::TiledMap::LayerBase * in_tiled_layer);
+			/** find render material according to its name */
+			chaos::GPURenderMaterial * FindRenderMaterial(char const * material_name);
+
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */

@@ -343,9 +343,9 @@ protected:
 	{
 		if (key == GLFW_KEY_T && action == GLFW_RELEASE)
 		{
-      chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-      if (application != nullptr)
-			  application->GetMainClock()->Toggle();
+			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+			if (clock != nullptr)
+				clock->Toggle();
 		}
 		else
 		{

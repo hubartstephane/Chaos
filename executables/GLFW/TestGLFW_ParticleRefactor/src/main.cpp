@@ -208,11 +208,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return false;
-
-		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
+		chaos::GPUResourceManager * gpu_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (gpu_manager == nullptr)
+			return nullptr;
 
 		chaos::GPURenderMaterial * RM1 = gpu_manager->FindRenderMaterial("mat1");
 		chaos::GPURenderMaterial * RM2 = gpu_manager->FindRenderMaterial("mat2");

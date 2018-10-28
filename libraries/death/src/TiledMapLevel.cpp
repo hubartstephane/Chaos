@@ -33,6 +33,20 @@ namespace death
 		// LayerInstance implementation
 		// =====================================
 
+		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
+		{
+			// early exit
+			if (material_name == nullptr)
+				return nullptr;
+			// get the resource manager
+			chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+			if (resource_manager == nullptr)
+				return nullptr;
+
+
+			return resource_manager->FindRenderMaterial(material_name);
+		}
+
 		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_tiled_layer)
 		{
 			// store the layer
@@ -43,6 +57,12 @@ namespace death
 			wrap_x = in_tiled_layer->FindPropertyBool("WRAP_X", false);
 			wrap_y = in_tiled_layer->FindPropertyBool("WRAP_Y", false);
 			material_name = in_tiled_layer->FindPropertyString("MATERIAL", "");
+
+			// find render material
+			chaos::GPURenderMaterial * render_material = FindRenderMaterial(material_name.c_str());
+
+
+
 
 			return true;
 		}

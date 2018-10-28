@@ -75,9 +75,9 @@ protected:
 
 		chaos::ClockEventInfo event_info = chaos::ClockEventInfo(0.0, 0.0, chaos::ClockEventRepetitionInfo::InfiniteRepetition(0.5));
 
-    chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-    if (application != nullptr)
-		  application->GetMainClock()->AddPendingEvent(new MIDIPlaySoundEvent(this), event_info, false);
+		chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+		if (clock != nullptr)
+			clock->AddPendingEvent(new MIDIPlaySoundEvent(this), event_info, false);
 
 		return true;
 	}

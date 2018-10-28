@@ -59,9 +59,9 @@ protected:
 
 			double realtime = 0.0;
 
-			chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-			if (application != nullptr)
-				application->GetMainClock()->GetClockTime();
+			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+			if (clock != nullptr)
+				clock->GetClockTime();
 
 			chaos::GPUProgramProvider uniform_provider;
 			uniform_provider.AddVariableValue("projection", projection_matrix);

@@ -58,7 +58,6 @@ protected:
 
 		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
 
-
 		boost::filesystem::path const & resource_path = application->GetResourcesPath();
 
 		boost::filesystem::path const & user_local = application->GetUserLocalPath();

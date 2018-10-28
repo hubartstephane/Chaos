@@ -198,26 +198,15 @@ protected:
 
 	bool InitializeParticleMap()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return false;
-
-		chaos::GPUResourceManager * gpu_manager = application->GetGPUResourceManager();
+		chaos::GPUResourceManager * gpu_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_manager == nullptr)
-			return false;
-
-		
-
-
-
+			return nullptr;
 
 		for (size_t i = 0; i < tiled_map->tile_layers.size(); ++i)
 		{
 			chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
 			if (tile_layer == nullptr)
 				continue;
-
-			
 
 			// find the render material name
 			char const * render_material_name = "tile";

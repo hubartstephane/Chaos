@@ -226,15 +226,15 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{	
-    chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-    if (application == nullptr)
+		chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+		if (clock == nullptr)
       return false;
 
 		// create child clocks (BEFORE !!)
-		track_clock = application->GetMainClock()->CreateChildClock(0);
+		track_clock = clock->CreateChildClock(0);
 		if (track_clock == nullptr)
 			return false;
-		management_clock = application->GetMainClock()->CreateChildClock(0);
+		management_clock = clock->CreateChildClock(0);
 		if (management_clock == nullptr)
 			return false;
 		// initialize MIDI's

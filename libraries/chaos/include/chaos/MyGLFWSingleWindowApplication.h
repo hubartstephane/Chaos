@@ -51,6 +51,22 @@ namespace chaos
 			/** getter of the singleton instance */
 			static inline SingleWindowApplication const * GetGLFWApplicationConstInstance() { return dynamic_cast<SingleWindowApplication const*>(singleton_instance); }
 
+			/** getter of the main clock */
+			static Clock * GetMainClockInstance();
+			/** getter of the main clock */
+			static Clock const * GetMainClockConstInstance();
+
+			/** getter of the sound manager */
+			static SoundManager * GetSoundManagerInstance();
+			/** getter of the sound manager */
+			static SoundManager const * GetSoundManagerConstInstance();
+
+			/** getter of the GPU resource manager */
+			static GPUResourceManager * GetGPUResourceManagerInstance();
+			/** getter of the GPU resource manager */
+			static GPUResourceManager const * GetGPUResourceManagerConstInstance();
+
+
 			/** gets the main clock */
 			Clock * GetMainClock() { return main_clock.get(); }
 			/** gets the main clock */

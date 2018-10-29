@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Ludum42StateMachine.h"
-#include "Ludum42Particles.h"
-#include "Ludum42Level.h"
+#include "Ludum42TwoStateMachine.h"
+#include "Ludum42TwoParticles.h"
+#include "Ludum42TwoLevel.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -41,13 +41,17 @@ class LudumGame : public death::Game
 public:
 
 	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;		
-	static int const PLANETS_LAYER_ID    = death::Game::LAST_LAYER_ID + 2;
+	static int const GROUND_LAYER_ID     = death::Game::LAST_LAYER_ID + 2;
+	static int const WALLS_LAYER_ID      = death::Game::LAST_LAYER_ID + 3;
 	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
 	static int const PLAYER_LAYER_ID     = death::Game::LAST_LAYER_ID + 5;
+	static int const FIRE_LAYER_ID       = death::Game::LAST_LAYER_ID + 6;
+	static int const WATER_LAYER_ID      = death::Game::LAST_LAYER_ID + 7;
 	
 
 	static int const OBJECT_TYPE_PLAYER = 0;
-	static int const OBJECT_TYPE_PLANET = 1;
+	static int const OBJECT_TYPE_WALL   = 1;
+	static int const OBJECT_TYPE_FIRE   = 2;
 
 	/** constructor */
 	LudumGame();
@@ -122,9 +126,10 @@ protected:
 	virtual bool InitializeParticleManager() override;
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-	
-	/** override level creation */
-	death::TiledMap::Level * CreateTiledMapLevel() override;
+
+	/** level creation override */
+	virtual death::TiledMap::Level * CreateTiledMapLevel() override;
+
 
 	/** called whenever the input mode changes */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
@@ -166,7 +171,7 @@ protected:
 
 
 	/** spawning player */
-	bool SpawnPlayer(ParticlePlayer const & particle_object);
+	bool SpawnPlayer(ParticleObject const & particle_object);
 	/** destroying player */
 	void UnSpawnPlayer();
 
@@ -187,6 +192,8 @@ protected:
 	/** ensure player is inside the world */
 	void RestrictPlayerToWorld();
 
+	void PlayerThrowWater();
+
 	/** move the player */
 	void DisplacePlayer(double delta_time);
 
@@ -200,12 +207,11 @@ protected:
 
 protected:
 
-	/** the tiled map manager */
-	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
-
 	/** game settings */
 	int initial_life = 3;
 	float cooldown = 0.1f;
+	float water_speed = 1.0f;
+	float water_lifetime = 1.0f;
 	
 
 	/** current game values */
@@ -219,6 +225,7 @@ protected:
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
+	boost::intrusive_ptr<chaos::ParticleAllocation> water_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 };

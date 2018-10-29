@@ -1,5 +1,5 @@
-#include "Ludum42Level.h"
-#include "Ludum42Game.h"
+#include "Ludum42OneLevel.h"
+#include "Ludum42OneGame.h"
 
 #include <chaos/GLMTools.h>
 

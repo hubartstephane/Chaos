@@ -1,6 +1,6 @@
-#include "LudumFailedGame.h"
-#include "LudumFailedParticles.h"
-#include "LudumFailedLevel.h"
+#include "Ludum42TwoGame.h"
+#include "Ludum42TwoParticles.h"
+#include "Ludum42TwoLevel.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>

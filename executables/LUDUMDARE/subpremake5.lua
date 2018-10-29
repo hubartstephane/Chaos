@@ -4,6 +4,6 @@
 
 ProcessSubPremake("Ludum40")
 ProcessSubPremake("Ludum41")
-ProcessSubPremake("Ludum42")
-ProcessSubPremake("LudumFailed")
+ProcessSubPremake("Ludum42One")
+ProcessSubPremake("Ludum42Two")
 ProcessSubPremake("LudumTemplate")

@@ -8,7 +8,7 @@
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
 
-#include "LudumFailedGame.h"
+#include "Ludum42TwoGame.h"
 
 // =================================================
 // Levels

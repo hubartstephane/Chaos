@@ -1,5 +1,5 @@
-#include "Ludum42StateMachine.h"
-#include "Ludum42Game.h"
+#include "Ludum42OneStateMachine.h"
+#include "Ludum42OneGame.h"
 
 LudumStateMachine::LudumStateMachine(class LudumGame * in_game) : 
 	death::GameStateMachine(in_game)

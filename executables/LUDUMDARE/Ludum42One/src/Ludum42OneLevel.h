@@ -9,7 +9,7 @@
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
 
-#include "Ludum42Game.h"
+#include "Ludum42OneGame.h"
 
 
 // =================================================

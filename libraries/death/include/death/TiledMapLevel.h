@@ -63,6 +63,23 @@ namespace death
 		};
 
 		// =====================================
+		// PlayerStartInstance : a place where the player can start
+		// =====================================
+
+		class PlayerStartInstance : public chaos::ReferencedObject
+		{
+		public:
+
+			/** initialization */
+			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object);
+
+		public:
+
+			/** the associated geoemtric object */
+			boost::intrusive_ptr<chaos::TiledMap::GeometricObject> geometric_object;
+		};
+
+		// =====================================
 		// LayerInstance : instance of a Layer
 		// =====================================
 
@@ -73,14 +90,14 @@ namespace death
 		public:
 
 			/** get the tiled layer */
-			chaos::TiledMap::LayerBase * GetTiledLayer() { return tiled_layer.get(); }
+			chaos::TiledMap::LayerBase * GetTiledLayer() { return layer.get(); }
 			/** get the tiled layer */
-			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return tiled_layer.get(); }
+			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return layer.get(); }
 
 		protected:
 
 			/** initialization */
-			virtual bool Initialize(chaos::TiledMap::LayerBase * in_tiled_layer);
+			virtual bool Initialize(chaos::TiledMap::LayerBase * in_layer);
 			/** find render material according to its name */
 			chaos::GPURenderMaterial * FindRenderMaterial(char const * material_name);
 
@@ -88,6 +105,13 @@ namespace death
 			virtual bool DoTick(double delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+
+			/** specialized layer */
+			bool InitializeLayer(chaos::TiledMap::ImageLayer * image_layer);
+			/** specialized layer */
+			bool InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer);
+			/** specialized layer */
+			bool InitializeLayer(chaos::TiledMap::TileLayer * tile_layer);
 
 		protected:
 
@@ -101,7 +125,11 @@ namespace death
 			std::string material_name;
 
 			/** the tiled layer corresponding to this object */
-			boost::intrusive_ptr<chaos::TiledMap::LayerBase> tiled_layer;
+			boost::intrusive_ptr<chaos::TiledMap::LayerBase> layer;
+			/** the particle layer */
+			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
+			/** the player starts */
+			std::vector<boost::intrusive_ptr<PlayerStartInstance>> player_starts;
 		};
 
 		// =====================================

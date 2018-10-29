@@ -1,6 +1,7 @@
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
 #include <chaos/TiledMapTools.h>
+#include <chaos/ParticleDefault.h>
 
 namespace death
 {
@@ -30,39 +31,126 @@ namespace death
 		}
 
 		// =====================================
+		// PlayerStartInstance implementation
+		// =====================================
+
+		bool PlayerStartInstance::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		{
+			geometric_object = in_geometric_object;
+
+
+			return true;
+		}
+
+		// =====================================
 		// LayerInstance implementation
 		// =====================================
 
 		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
 		{
 			// early exit
-			if (material_name == nullptr)
+			if (material_name == nullptr || material_name[0] == 0)
 				return nullptr;
 			// get the resource manager
 			chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 			if (resource_manager == nullptr)
 				return nullptr;
-
-
+			// get the material
 			return resource_manager->FindRenderMaterial(material_name);
 		}
 
-		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_tiled_layer)
+		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_layer)
 		{
 			// store the layer
-			tiled_layer = in_tiled_layer;
+			layer = in_layer;
 
 			// get the properties of interrest
-			displacement_ratio = in_tiled_layer->FindPropertyFloat("DISPLACEMENT_FACTOR", 1.0f);
-			wrap_x = in_tiled_layer->FindPropertyBool("WRAP_X", false);
-			wrap_y = in_tiled_layer->FindPropertyBool("WRAP_Y", false);
-			material_name = in_tiled_layer->FindPropertyString("MATERIAL", "");
+			displacement_ratio = in_layer->FindPropertyFloat("DISPLACEMENT_FACTOR", 1.0f);
+			wrap_x = in_layer->FindPropertyBool("WRAP_X", false);
+			wrap_y = in_layer->FindPropertyBool("WRAP_Y", false);
+			material_name = in_layer->FindPropertyString("MATERIAL", "");
 
+			// special initialization
+
+			chaos::TiledMap::ImageLayer * image_layer = in_layer->GetImageLayer();
+			if (image_layer != nullptr)
+				return Initialize(image_layer);
+
+			chaos::TiledMap::ObjectLayer * object_layer = in_layer->GetObjectLayer();
+			if (object_layer != nullptr)
+				return Initialize(object_layer);
+
+			chaos::TiledMap::TileLayer * tile_layer = in_layer->GetTileLayer();
+			if (tile_layer != nullptr)
+				return Initialize(tile_layer);
+
+			return false;
+		}
+
+		bool LayerInstance::InitializeLayer(chaos::TiledMap::ImageLayer * image_layer)
+		{
+
+			return true;
+		}
+
+		bool LayerInstance::InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer)
+		{
+			size_t count = object_layer->geometric_objects.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				chaos::TiledMap::GeometricObject * geometric_object = object_layer->geometric_objects[i].get();
+				if (geometric_object == nullptr)
+					continue;
+				
+				// player start ?
+				bool player_start = chaos::TiledMapTools::IsPlayerStart(geometric_object);
+				if (player_start)
+				{
+					PlayerStartInstance * player_start_instance = new PlayerStartInstance;
+					if (player_start_instance != nullptr)
+					{
+						if (player_start_instance->Initialize(geometric_object))
+							player_starts.push_back(player_start_instance);
+						else
+							delete player_start_instance;
+					}
+				}
+
+				// zones
+				chaos::TiledMap::GeometricObjectRectangle * rectangle = geometric_object->GetObjectRectangle();
+				chaos::TiledMap::GeometricObjectEllipse   * ellipse   = geometric_object->GetObjectEllipse();
+				if (rectangle != nullptr || ellipse != nullptr)
+				{
+
+				}
+	
+				// zones
+				chaos::TiledMap::GeometricObjectTile * tile = geometric_object->GetObjectTile();
+				if (tile != nullptr)
+				{
+
+				}
+					
+
+
+			}
+
+			chaos::box2 world_bounds;
+			chaos::TiledMapTools::FindExplicitWorldBounds(object_layer, world_bounds);
+
+			return true;
+		}
+
+		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)
+		{
 			// find render material
 			chaos::GPURenderMaterial * render_material = FindRenderMaterial(material_name.c_str());
 
-
-
+			// create a particle layer
+			particle_layer = new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>);
+			if (particle_layer == nullptr)
+				return false;
+			particle_layer->SetRenderMaterial(render_material);
 
 			return true;
 		}

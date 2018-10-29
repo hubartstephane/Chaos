@@ -689,6 +689,23 @@ namespace chaos
 		{
 			friend class Map;
 
+		public:
+
+			/** cast method into its subtype */
+			virtual class ImageLayer * GetImageLayer() { return nullptr; }
+			/** cast method into its subtype */
+			virtual class ImageLayer const * GetImageLayer() const { return nullptr; }
+
+			/** cast method into its subtype */
+			virtual class ObjectLayer * GetObjectLayer() { return nullptr; }
+			/** cast method into its subtype */
+			virtual class ObjectLayer const * GetObjectLayer() const { return nullptr; }
+
+			/** cast method into its subtype */
+			virtual class TileLayer * GetTileLayer() { return nullptr; }
+			/** cast method into its subtype */
+			virtual class TileLayer const * GetTileLayer() const { return nullptr; }
+
 		protected:
 
 			/** constructor */
@@ -730,6 +747,11 @@ namespace chaos
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
+			/** override */
+			virtual class ImageLayer * GetImageLayer() override { return this; }
+			/** override */
+			virtual class ImageLayer const * GetImageLayer() const override { return this; }
+
 		public:
 
 			/** object information */
@@ -751,6 +773,13 @@ namespace chaos
 
 			static int const DRAW_ORDER_MANUAL = 0;
 			static int const DRAW_ORDER_TOPDOWN = 1;
+
+		public:
+
+			/** override */
+			virtual class ObjectLayer * GetObjectLayer() override { return this; }
+			/** override */
+			virtual class ObjectLayer const * GetObjectLayer() const override { return this; }
 
 		protected:
 
@@ -792,6 +821,11 @@ namespace chaos
 			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
 			glm::ivec2 GetTileCoordinate(int index) const;
+
+			/** override */
+			virtual class TileLayer * GetTileLayer() override { return this; }
+			/** override */
+			virtual class TileLayer const * GetTileLayer() const override { return this; }
 
 		protected:
 

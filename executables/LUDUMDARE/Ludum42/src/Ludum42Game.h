@@ -70,10 +70,6 @@ public:
 
 protected:
 
-	/** internal methods to generate the atlas for sprites */
-	virtual bool FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-	virtual bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
@@ -127,13 +123,8 @@ protected:
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 	
-	/** loading the levels */
-	virtual bool LoadLevels() override;
-	/** load one level */
-	virtual death::GameLevel * DoLoadLevel(int level_number, chaos::FilePathParam const & path) override;
-	/** additionnal initialization when loading a level */
-	bool DoLoadLevelInitialize(class LudumLevel * level, chaos::TiledMap::Map * tiled_map);
-
+	/** override level creation */
+	death::TiledMap::Level * CreateTiledMapLevel() override;
 
 	/** called whenever the input mode changes */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;

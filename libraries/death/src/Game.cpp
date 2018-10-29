@@ -2,8 +2,12 @@
 #include <death/GameStateMachine.h>
 #include <death/GamepadManager.h>
 #include <death/GameLevel.h>
+#include <death/TiledMapLevel.h>
 
 #include <chaos/InputMode.h>
+#include <chaos/FileTools.h>
+#include <chaos/TiledMap.h>
+#include <chaos/TiledMapTools.h>
 #include <chaos/CollisionFramework.h>
 
 namespace death
@@ -154,6 +158,21 @@ namespace death
 			return false;
 		if (!FillAtlasGenerationInputFonts(input, config, config_path))
 			return false;
+		if (!FillAtlasGenerationInputTiledMapManager(input, config, config_path))
+			return false;
+		return true;
+	}
+
+	bool Game::FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	{
+		if (tiled_map_manager != nullptr)
+		{
+			chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
+			if (folder_input == nullptr)
+				return false;
+			if (!chaos::TiledMapTools::AddIntoAtlasInput(tiled_map_manager.get(), folder_input))
+				return false;
+		}
 		return true;
 	}
 
@@ -240,8 +259,43 @@ namespace death
 		return true;
 	}
 
+	death::TiledMap::Level * Game::CreateTiledMapLevel()
+	{
+		return nullptr;
+	}
+
 	death::GameLevel * Game::DoLoadLevel(int level_index, chaos::FilePathParam const & path)
 	{
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+		if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
+		{
+			// create the tiledmap manager if necessary
+			if (tiled_map_manager == nullptr)
+			{
+				tiled_map_manager = new chaos::TiledMap::Manager;
+				if (tiled_map_manager == nullptr)
+					return nullptr;
+			}
+
+			// load the resource
+			chaos::TiledMap::Map * tiled_map = tiled_map_manager->LoadMap(path);
+			if (tiled_map == nullptr)
+				return false;
+
+			// allocate a level
+			death::TiledMap::Level * result = CreateTiledMapLevel();
+			if (result == nullptr)
+				return false;
+			// some additionnal computation
+			if (!result->Initialize(tiled_map))
+			{
+				delete(result);
+				return nullptr;
+			}
+			return result;
+		}
+
 		return nullptr;
 	}
 

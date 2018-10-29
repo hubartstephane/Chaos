@@ -14,9 +14,11 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/StateMachine.h>
+#include <chaos/TiledMap.h>
 
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
+#include <death/TiledMapLevel.h>
 
 namespace death
 {
@@ -242,11 +244,15 @@ namespace death
 		virtual bool FillAtlasGenerationInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input (one font from configuration file) */
 		virtual bool FillAtlasGenerationInputOneFont(char const * font_config_name, char const * font_name, chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+		/** fill atlas generation input from the tiled map manager */
+		virtual bool FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();
 		/* load one level */
 		virtual class death::GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path);
+		/** create one tiled map level */
+		virtual death::TiledMap::Level * CreateTiledMapLevel();
 
 		/** the game main loop */
 		virtual bool TickGameLoop(double delta_time);
@@ -421,8 +427,10 @@ namespace death
 		boost::intrusive_ptr<chaos::Clock> main_clock;
 		boost::intrusive_ptr<chaos::Clock> game_clock;
 		boost::intrusive_ptr<chaos::Clock> pause_clock;
-		
 
+		/** a tiled map manager */
+		boost::intrusive_ptr<chaos::TiledMap::Manager> tiled_map_manager;
+		
 		/** level data */
 		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
 		/** the current level instance */

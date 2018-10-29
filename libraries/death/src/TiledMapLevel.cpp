@@ -9,6 +9,12 @@ namespace death
 	{
 
 		// =====================================
+		// LevelInstanc implementation
+		// =====================================
+
+
+
+		// =====================================
 		// Level implementation
 		// =====================================
 
@@ -74,15 +80,15 @@ namespace death
 
 			chaos::TiledMap::ImageLayer * image_layer = in_layer->GetImageLayer();
 			if (image_layer != nullptr)
-				return Initialize(image_layer);
+				return InitializeLayer(image_layer);
 
 			chaos::TiledMap::ObjectLayer * object_layer = in_layer->GetObjectLayer();
 			if (object_layer != nullptr)
-				return Initialize(object_layer);
+				return InitializeLayer(object_layer);
 
 			chaos::TiledMap::TileLayer * tile_layer = in_layer->GetTileLayer();
 			if (tile_layer != nullptr)
-				return Initialize(tile_layer);
+				return InitializeLayer(tile_layer);
 
 			return false;
 		}
@@ -121,6 +127,22 @@ namespace death
 				chaos::TiledMap::GeometricObjectEllipse   * ellipse   = geometric_object->GetObjectEllipse();
 				if (rectangle != nullptr || ellipse != nullptr)
 				{
+					if (rectangle != nullptr)
+					{
+						chaos::box2 bounding_box = rectangle->GetBoundingBox();
+
+						auto corners = bounding_box.GetCorners();
+						rectangle = rectangle;
+					}
+
+					if (ellipse != nullptr)
+					{
+						chaos::box2 bounding_box = ellipse->GetBoundingBox();
+
+						auto corners = bounding_box.GetCorners();
+						ellipse = ellipse;
+
+					}
 
 				}
 	
@@ -163,6 +185,8 @@ namespace death
 		
 		int LayerInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
+			if (particle_layer != nullptr)
+				particle_layer->Display(uniform_provider, render_params);
 
 			return 0;
 		}

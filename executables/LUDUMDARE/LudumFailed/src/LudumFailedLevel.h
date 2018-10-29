@@ -6,6 +6,7 @@
 #include <chaos/TiledMapTools.h>
 
 #include <death/GameLevel.h>
+#include <death/TiledMapLevel.h>
 
 #include "LudumFailedGame.h"
 
@@ -13,7 +14,7 @@
 // Levels
 // =================================================
 
-class LudumLevel : public death::GameLevel
+class LudumLevel : public death::TiledMap::Level
 {
 	friend class LudumGame;
 	friend class LudumLevelInstance;
@@ -27,19 +28,13 @@ protected:
 
 	/** override */
 	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
-
-protected:
-
-	/** the tiled map corresponding to this level */
-	boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
-
 };
 
 // =================================================
 // LevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::GameLevelInstance
+class LudumLevelInstance : public death::TiledMap::LevelInstance
 {
 public:
 

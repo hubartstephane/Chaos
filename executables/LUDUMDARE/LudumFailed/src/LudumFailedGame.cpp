@@ -314,23 +314,6 @@ void LudumGame::CreateAllGameObjects(int level)
 #endif
 }
 
-bool LudumGame::FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
-{
-	chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
-	if (folder_input == nullptr)
-		return false;
-	return chaos::TiledMapTools::AddIntoAtlasInput(tiledmap_manager.get(), folder_input);
-}
-
-bool LudumGame::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
-{
-	if (!death::Game::FillAtlasGenerationInput(input, config, config_path))
-		return false;
-	if (!FillAtlasGenerationInputWithTileSets(input, config, config_path))
-		return false;
-	return true;
-}
-
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {
 	return new LudumStateMachine(this);
@@ -358,50 +341,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-bool LudumGame::DoLoadLevelInitialize(LudumLevel * level, chaos::TiledMap::Map * tiled_map)
+death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 {
-	// initialize level
-	level->tiled_map = tiled_map;
-
-
-	return true;
-}
-
-
-death::GameLevel * LudumGame::DoLoadLevel(int level_number, chaos::FilePathParam const & path)
-{
-	boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-	
-	if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
-	{
-		// load the resource
-		chaos::TiledMap::Map * tiled_map = tiledmap_manager->LoadMap(path);
-		if (tiled_map == nullptr)
-			return false;	
-	
-		// allocate a level
-		LudumLevel * ludum_result = new LudumLevel();
-		if (ludum_result == nullptr)
-			return false;
-		// some additionnal computation
-		if (!DoLoadLevelInitialize(ludum_result, tiled_map))
-		{
-			delete(ludum_result);
-			return nullptr;
-		}	
-		return ludum_result;
-	}
-	return nullptr;
-}
-
-bool LudumGame::LoadLevels()
-{
-	// create the manager
-	tiledmap_manager = new chaos::TiledMap::Manager;
-	if (tiledmap_manager == nullptr)
-		return false;
-	// super call
-	return death::Game::LoadLevels();
+	return new LudumLevel();
 }
 
 void LudumGame::FillBackgroundLayer()

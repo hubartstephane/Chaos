@@ -74,10 +74,6 @@ public:
 
 protected:
 
-	/** internal methods to generate the atlas for sprites */
-	virtual bool FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-	virtual bool FillAtlasGenerationInputWithTileSets(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
@@ -130,13 +126,9 @@ protected:
 	virtual bool InitializeParticleManager() override;
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-	
-	/** loading the levels */
-	virtual bool LoadLevels() override;
-	/** load one level */
-	virtual death::GameLevel * DoLoadLevel(int level_number, chaos::FilePathParam const & path) override;
-	/** additionnal initialization when loading a level */
-	bool DoLoadLevelInitialize(class LudumLevel * level, chaos::TiledMap::Map * tiled_map);
+
+	/** level creation override */
+	virtual death::TiledMap::Level * CreateTiledMapLevel() override;
 
 
 	/** called whenever the input mode changes */
@@ -214,9 +206,6 @@ protected:
 	bool IsLevelCompleted();
 
 protected:
-
-	/** the tiled map manager */
-	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
 	/** game settings */
 	int initial_life = 3;

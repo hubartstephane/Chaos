@@ -164,6 +164,10 @@ namespace death
 			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
 			/** the player starts */
 			std::vector<boost::intrusive_ptr<PlayerStartObject>> player_starts;
+
+			/** the bounding box of the layer */
+			chaos::box2 bounding_box;
+
 		};
 
 		// =====================================

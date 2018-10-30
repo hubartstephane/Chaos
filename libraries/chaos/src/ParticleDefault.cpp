@@ -24,7 +24,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUProgram * ParticleDefault::GenDefautParticleProgram()
+	GPUProgram * ParticleDefault::GenDefaultParticleProgram()
 	{
 		char const * vertex_shader_source = R"SHADERCODE(
 		in vec2 position;
@@ -63,6 +63,21 @@ namespace chaos
 		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
 		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 		return program_generator.GenProgramObject();
+	}
+
+	GPURenderMaterial * ParticleDefault::GenDefaultParticleMaterial()
+	{
+		// create the default program
+		boost::intrusive_ptr<GPUProgram> program = chaos::ParticleDefault::GenDefaultParticleProgram();
+		if (program == nullptr)
+			return nullptr;
+		// create the material
+		GPURenderMaterial * result = new GPURenderMaterial();
+		if (result == nullptr)
+			return nullptr;
+		// initialize the program
+		result->SetProgram(program.get());
+		return result;
 	}
 
 }; // namespace chaos

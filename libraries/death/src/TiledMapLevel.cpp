@@ -112,7 +112,11 @@ namespace death
 			if (resource_manager == nullptr)
 				return nullptr;
 			// get the material
-			return resource_manager->FindRenderMaterial(material_name);
+			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_name);
+			if (result != nullptr)
+				return result;
+			// default material else where
+			return chaos::ParticleDefault::GenDefaultParticleMaterial();
 		}
 
 		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_layer)
@@ -125,6 +129,9 @@ namespace death
 			wrap_x = in_layer->FindPropertyBool("WRAP_X", false);
 			wrap_y = in_layer->FindPropertyBool("WRAP_Y", false);
 			material_name = in_layer->FindPropertyString("MATERIAL", "");
+
+			// empty the bounding box
+			bounding_box = chaos::box2();
 
 			// special initialization
 			chaos::TiledMap::ImageLayer * image_layer = in_layer->GetImageLayer();
@@ -210,6 +217,11 @@ namespace death
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)
 		{
+			// early exit for empty tile_layer
+			size_t count = tile_layer->tile_indices.size();
+			if (count == 0)
+				return true;
+
 			// find render material
 			chaos::GPURenderMaterial * render_material = FindRenderMaterial(material_name.c_str());
 
@@ -221,6 +233,138 @@ namespace death
 
 			return true;
 		}
+
+
+
+
+
+
+#if 0
+		glm::vec2 tile_size = chaos::GLMTools::RecastVector<glm::vec2>(tiled_map->tile_size);
+		for (size_t j = 0; j < tile_layer->tile_indices.size(); ++j)
+		{
+			int gid = tile_layer->tile_indices[j];
+			if (gid <= 0)
+				continue;
+
+			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+			if (tile_info.tiledata == nullptr)
+				continue;
+
+			if (tile_info.tiledata != nullptr)
+			{
+				chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(tile_info.tiledata->atlas_key.c_str());
+				if (info == nullptr)
+					continue;
+
+				glm::ivec2 tile_coord =
+					tile_layer->GetTileCoordinate(j);
+
+				// the coordinate of a tile is the BOTTOMLEFT (greater Y, because Y axis is oriented UP)
+				glm::vec2 bottomleft =
+					chaos::GLMTools::RecastVector<glm::vec2>(tile_coord) * tile_size +
+					glm::vec2(0.0f, tile_size.y);
+
+				glm::vec2 topright = bottomleft;
+				topright.x += tile_info.tiledata->image_size.x;
+				topright.y -= tile_info.tiledata->image_size.y; //= not clear could be info->size !!! (but with manual atlas, not a good idea)
+
+
+				ParticleObject new_particle;
+				new_particle.bounding_box = chaos::box2(std::make_pair(bottomleft, topright));
+				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
+				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				int default_object_type = 0;
+				int object_type = 0;
+
+				int const * prop_object_type = tile_info.tiledata->FindPropertyInt("OBJECT_TYPE");
+				//		if (prop_object_type == nullptr)
+				//			continue;
+
+				if (prop_object_type != nullptr)
+					object_type = *prop_object_type;
+				else
+					object_type = LudumGame::OBJECT_TYPE_PLANET;
+
+				if (object_type == LudumGame::OBJECT_TYPE_PLAYER)
+				{
+					ParticlePlayer player_particle;
+					(ParticleObject&)player_particle = new_particle;
+
+					int const * atlas_size_x = tile_info.tiledata->FindPropertyInt("ATLAS_SIZE_X");
+					if (atlas_size_x != nullptr)
+						player_particle.atlas_dimension.x = *atlas_size_x;
+
+					int const * atlas_size_y = tile_info.tiledata->FindPropertyInt("ATLAS_SIZE_Y");
+					if (atlas_size_y != nullptr)
+						player_particle.atlas_dimension.y = *atlas_size_y;
+
+					float const * atlas_frequency = tile_info.tiledata->FindPropertyFloat("ATLAS_FREQUENCY");
+					if (atlas_frequency != nullptr)
+						player_particle.frequency = *atlas_frequency;
+
+					int const * skip_last = tile_info.tiledata->FindPropertyInt("ATLAS_SKIP_LAST");
+					if (skip_last != nullptr)
+						player_particle.skip_last = *skip_last;
+
+					//player_particle.delta_image = abs(rand());
+
+					game->SpawnPlayer(player_particle);
+					continue;
+				}
+
+
+				// create an allocation
+				chaos::ParticleAllocation * allocation = FindOrAllocationForObjectType(object_type);
+				if (allocation == nullptr)
+					continue;
+
+				if (!allocation->AddParticles(1))
+					continue;
+
+				if (!explicit_world_bounds)
+					world_bounds = world_bounds | new_particle.bounding_box;
+
+				chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
+				new_particle.bounding_box.position.y = -new_particle.bounding_box.position.y;
+				particles[particles.GetCount() - 1] = new_particle;
+			}
+		}
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		bool LayerInstance::DoTick(double delta_time)
 		{

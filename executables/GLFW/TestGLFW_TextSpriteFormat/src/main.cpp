@@ -144,7 +144,7 @@ protected:
 	bool InitializeParticleManager(boost::filesystem::path const & resources_path)
 	{
 		// create the program
-		program = chaos::ParticleDefault::GenDefautParticleProgram();
+		program = chaos::ParticleDefault::GenDefaultParticleProgram();
 		if (program == nullptr)
 			return false;
 

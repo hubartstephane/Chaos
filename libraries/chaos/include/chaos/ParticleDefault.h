@@ -42,7 +42,10 @@ namespace chaos
 		chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Vertex>);
 
 		/** generate a default shader */
-		GPUProgram * GenDefautParticleProgram();
+		GPUProgram * GenDefaultParticleProgram();
+
+		/** generate a default material */
+		GPURenderMaterial * GenDefaultParticleMaterial();
 
 	}; // namespace ParticleDefault
 

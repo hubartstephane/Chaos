@@ -129,7 +129,6 @@ protected:
 		particle_manager = nullptr;
 		atlas = nullptr;
 		material = nullptr;
-		program = nullptr;
 		particles_allocation = nullptr;
 	}
 
@@ -143,17 +142,10 @@ protected:
 
 	bool InitializeParticleManager(boost::filesystem::path const & resources_path)
 	{
-		// create the program
-		program = chaos::ParticleDefault::GenDefaultParticleProgram();
-		if (program == nullptr)
-			return false;
-
 		// create the material
-		material = new chaos::GPURenderMaterial;
+		material = chaos::ParticleDefault::GenDefaultParticleMaterial();
 		if (material == nullptr)
 			return false;
-		material->SetProgram(program.get());
-
 		// create the particle manager
 		particle_manager = new chaos::ParticleManager;
 		if (particle_manager == nullptr)
@@ -259,8 +251,6 @@ protected:
 	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
 	/** the material */
 	boost::intrusive_ptr<chaos::GPURenderMaterial> material;
-	/** the program */
-	boost::intrusive_ptr<chaos::GPUProgram> program;
 	/** allocation */
 	boost::intrusive_ptr<chaos::ParticleAllocation> particles_allocation;
 

@@ -36,11 +36,41 @@ namespace death
 			return new LevelInstance;
 		}
 
+#define DEATH_EMPTY_TOKEN
+#define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, calling_parameters)\
+		result_type * Level::Do##func_name(declared_parameters)\
+		{\
+			return new result_type(calling_parameters);\
+		}
+#define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters, initialization_parameters)\
+		result_type * Level::func_name(declared_parameters)\
+		{\
+			result_type * result = Do##func_name(constructor_parameters);\
+			if (result == nullptr)\
+				return nullptr;\
+			if (!result->Initialize(initialization_parameters))\
+			{\
+				delete result;\
+				return nullptr;\
+			}\
+			return result;\
+		}
+
+		DEATH_DOCREATE_OBJECT(PlayerStartObject, CreatePlayerStart, DEATH_EMPTY_TOKEN, DEATH_EMPTY_TOKEN);		
+		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, chaos::TiledMap::GeometricObject * in_geometric_object, DEATH_EMPTY_TOKEN, in_geometric_object);
+
+		DEATH_DOCREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance, in_level_instance);
+		DEATH_CREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance, in_layer);
+
+#undef DEATH_CREATE_OBJECT
+#undef DEATH_DOCREATE_OBJECT
+#undef DEATH_EMPTY_TOKEN
+
 		// =====================================
-		// PlayerStartInstance implementation
+		// PlayerStartObject implementation
 		// =====================================
 
-		bool PlayerStartInstance::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		bool PlayerStartObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
 			geometric_object = in_geometric_object;
 
@@ -51,6 +81,26 @@ namespace death
 		// =====================================
 		// LayerInstance implementation
 		// =====================================
+
+		LayerInstance::LayerInstance(LevelInstance * in_level_instance):
+			level_instance(in_level_instance)
+		{
+			assert(in_level_instance != nullptr);
+		}
+
+		Level * LayerInstance::GetTypedLevel()
+		{
+			if (level_instance == nullptr)
+				return nullptr;
+			return level_instance->GetTypedLevel();
+		}
+
+		Level const * LayerInstance::GetTypedLevel() const
+		{
+			if (level_instance == nullptr)
+				return nullptr;
+			return level_instance->GetTypedLevel();
+		}
 
 		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
 		{
@@ -77,7 +127,6 @@ namespace death
 			material_name = in_layer->FindPropertyString("MATERIAL", "");
 
 			// special initialization
-
 			chaos::TiledMap::ImageLayer * image_layer = in_layer->GetImageLayer();
 			if (image_layer != nullptr)
 				return InitializeLayer(image_layer);
@@ -101,6 +150,8 @@ namespace death
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer)
 		{
+			Level * level = GetTypedLevel();
+
 			size_t count = object_layer->geometric_objects.size();
 			for (size_t i = 0; i < count; ++i)
 			{
@@ -109,19 +160,13 @@ namespace death
 					continue;
 				
 				// player start ?
-				bool player_start = chaos::TiledMapTools::IsPlayerStart(geometric_object);
-				if (player_start)
+				if (chaos::TiledMapTools::IsPlayerStart(geometric_object))
 				{
-					PlayerStartInstance * player_start_instance = new PlayerStartInstance;
-					if (player_start_instance != nullptr)
-					{
-						if (player_start_instance->Initialize(geometric_object))
-							player_starts.push_back(player_start_instance);
-						else
-							delete player_start_instance;
-					}
+					PlayerStartObject * player_start = level->CreatePlayerStart(geometric_object);
+					if (player_start != nullptr)
+						player_starts.push_back(player_start);
 				}
-
+#if 0
 				// zones
 				chaos::TiledMap::GeometricObjectRectangle * rectangle = geometric_object->GetObjectRectangle();
 				chaos::TiledMap::GeometricObjectEllipse   * ellipse   = geometric_object->GetObjectEllipse();
@@ -153,7 +198,7 @@ namespace death
 
 				}
 					
-
+#endif
 
 			}
 
@@ -251,11 +296,11 @@ namespace death
 		bool LevelInstance::Initialize(death::Game * in_game)
 		{
 			assert(in_game != nullptr);
-			// create a particle manager
-			if (!CreateParticleManager(in_game))
-				return false;
 			// create a the layers instances
 			if (!CreateLayerInstances(in_game))
+				return false;
+			// create a particle manager
+			if (!CreateParticleManager(in_game))
 				return false;
 
  			return true;
@@ -272,27 +317,22 @@ namespace death
 
 		bool LevelInstance::CreateLayerInstances(death::Game * in_game)
 		{
+			Level * level = GetTypedLevel();
+
 			chaos::TiledMap::Map * tiled_map = GetTiledMap();
 
 			// handle layers ordered by Z-Order
 			size_t count = tiled_map->GetLayerCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				// create a layer_instance per layer
+				// get the chaos::LayerBase object per Z-order
 				chaos::TiledMap::LayerBase * layer = tiled_map->FindLayerByZOrder(i);
 				if (layer == nullptr)
 					continue;
-				LayerInstance * layer_instance = new LayerInstance;
-				if (layer_instance == nullptr)
-					continue;
-				// initialize the level_instance
-				if (!layer_instance->Initialize(layer))
-				{
-					delete(layer_instance);
-					continue;
-				}
-				// insert the layer_instance
-				layer_instances.push_back(layer_instance);
+				// create and store the layer_instance
+				LayerInstance * layer_instance = level->CreateLayerInstance(this, layer);
+				if (layer_instance != nullptr)
+					layer_instances.push_back(layer_instance);	
 			}
 			return true;
 		}

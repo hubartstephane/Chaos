@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="54">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="57">
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <layer name="objects" width="100" height="100" visible="0">
   <properties>
@@ -215,7 +215,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="Calque d'objets 1" visible="0">
+ <objectgroup name="Calque d'objets 1">
   <object id="2" name="grosse planete" gid="3221225480" x="2840" y="6576" width="10000" height="10000">
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="0"/>
@@ -244,6 +244,15 @@
   </object>
   <object id="43" name="mytext" x="27.5" y="54.5" width="2000" height="2000">
    <text fontfamily="MS Shell Dlg 2" pixelsize="96" wrap="1">Exemple de texte</text>
+  </object>
+  <object id="55" x="1584" y="4000">
+   <point/>
+  </object>
+  <object id="56" x="-2860" y="3280">
+   <properties>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+   <point/>
   </object>
  </objectgroup>
 </map>

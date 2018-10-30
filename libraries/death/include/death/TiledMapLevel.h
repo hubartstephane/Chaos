@@ -20,7 +20,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LevelInstance)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (PlayerStartObject) (BaseObject)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -29,6 +29,32 @@ namespace death
 			// friendship macro
 #define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
+
+		// =====================================
+		// BaseObject : a base object for special game entities
+		// =====================================
+
+		class BaseObject : public chaos::ReferencedObject
+		{
+
+		};
+
+		// =====================================
+		// PlayerStartObject : where the player may start
+		// =====================================
+
+		class PlayerStartObject : public BaseObject
+		{
+		public:
+
+			/** initialization */
+			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object);
+
+		public:
+
+			/** the associated geometric object */
+			boost::intrusive_ptr<chaos::TiledMap::GeometricObject> geometric_object;
+		};
 
 		// =====================================
 		// Level : a level described by a tiledmap
@@ -43,7 +69,7 @@ namespace death
 			/** constructor */
 			Level();
 
-			/** initialization from tiledmap */
+			/** initialization from tiled_map */
 			virtual bool Initialize(chaos::TiledMap::Map * in_tiled_map);
 
 			/** get the tiled map */
@@ -56,27 +82,22 @@ namespace death
 			/** create a level instance for that level user specified function */
 			virtual class GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
 
+			/** create a PlayerStartObject specializable method */
+			virtual PlayerStartObject * DoCreatePlayerStart();
+			/** create a PlayerStartObject specializable method */
+			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance);
+
+
+
+			/** create a player start 'entry point' */
+			PlayerStartObject * CreatePlayerStart(chaos::TiledMap::GeometricObject * in_geometric_object);
+			/** create a layer instance 'entry point' */
+			LayerInstance * CreateLayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
+
 		protected:
 
 			/** the tiled map corresponding to this level */
 			boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
-		};
-
-		// =====================================
-		// PlayerStartInstance : a place where the player can start
-		// =====================================
-
-		class PlayerStartInstance : public chaos::ReferencedObject
-		{
-		public:
-
-			/** initialization */
-			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object);
-
-		public:
-
-			/** the associated geoemtric object */
-			boost::intrusive_ptr<chaos::TiledMap::GeometricObject> geometric_object;
 		};
 
 		// =====================================
@@ -87,12 +108,22 @@ namespace death
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		protected:
+
+			/** protected constructor */
+			LayerInstance(LevelInstance * in_level_instance);
+
 		public:
 
 			/** get the tiled layer */
 			chaos::TiledMap::LayerBase * GetTiledLayer() { return layer.get(); }
 			/** get the tiled layer */
 			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return layer.get(); }
+
+			/** get the level (for this layer) */
+			Level * GetTypedLevel();
+			/** get the level (for this layer) */
+			Level const * GetTypedLevel() const;
 
 		protected:
 
@@ -124,12 +155,15 @@ namespace death
 			/** material name */
 			std::string material_name;
 
+			/** the level instance this object belongs to */
+			LevelInstance * level_instance = nullptr;
+
 			/** the tiled layer corresponding to this object */
 			boost::intrusive_ptr<chaos::TiledMap::LayerBase> layer;
 			/** the particle layer */
 			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
 			/** the player starts */
-			std::vector<boost::intrusive_ptr<PlayerStartInstance>> player_starts;
+			std::vector<boost::intrusive_ptr<PlayerStartObject>> player_starts;
 		};
 
 		// =====================================

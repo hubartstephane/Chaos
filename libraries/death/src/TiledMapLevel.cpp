@@ -9,12 +9,6 @@ namespace death
 	{
 
 		// =====================================
-		// LevelInstanc implementation
-		// =====================================
-
-
-
-		// =====================================
 		// Level implementation
 		// =====================================
 
@@ -34,6 +28,11 @@ namespace death
 		GameLevelInstance * Level::DoCreateLevelInstance(Game * in_game)
 		{
 			return new LevelInstance;
+		}
+
+		chaos::GPURenderMaterial * Level::GetDefaultRenderMaterial()
+		{
+			return chaos::ParticleDefault::GenDefaultParticleMaterial();
 		}
 
 #define DEATH_EMPTY_TOKEN
@@ -88,6 +87,16 @@ namespace death
 			assert(in_level_instance != nullptr);
 		}
 
+		Game * LayerInstance::GetGame() 
+		{ 
+			return level_instance->GetGame(); 
+		}
+
+		Game const * LayerInstance::GetGame() const 
+		{ 
+			return level_instance->GetGame(); 
+		}
+
 		Level * LayerInstance::GetTypedLevel()
 		{
 			if (level_instance == nullptr)
@@ -104,19 +113,20 @@ namespace death
 
 		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
 		{
-			// early exit
-			if (material_name == nullptr || material_name[0] == 0)
-				return nullptr;
-			// get the resource manager
-			chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
-			if (resource_manager == nullptr)
-				return nullptr;
-			// get the material
-			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_name);
-			if (result != nullptr)
-				return result;
+			if (material_name != nullptr && material_name[0] != 0) // unamed material
+			{
+				// get the resource manager
+				chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+				if (resource_manager != nullptr)
+				{
+					// search declared material
+					chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_name);
+					if (result != nullptr)
+						return result;
+				}
+			}
 			// default material else where
-			return chaos::ParticleDefault::GenDefaultParticleMaterial();
+			return level_instance->GetDefaultRenderMaterial();
 		}
 
 		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_layer)
@@ -220,16 +230,76 @@ namespace death
 			// early exit for empty tile_layer
 			size_t count = tile_layer->tile_indices.size();
 			if (count == 0)
-				return true;
+				return false;
 
 			// find render material
 			chaos::GPURenderMaterial * render_material = FindRenderMaterial(material_name.c_str());
+			if (render_material == nullptr)
+				return false;
 
 			// create a particle layer
 			particle_layer = new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>);
 			if (particle_layer == nullptr)
 				return false;
 			particle_layer->SetRenderMaterial(render_material);
+
+			// get the texture atlas
+			chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = GetGame()->GetTextureAtlas();
+			if (texture_atlas == nullptr)
+				return false;
+
+			// get the folder containing the sprites
+			chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+			if (folder_info == nullptr)
+				return false;
+
+			// populate the layer
+			chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
+
+			glm::vec2 tile_size = chaos::GLMTools::RecastVector<glm::vec2>(tiled_map->tile_size);
+			for (size_t i = 0; i < count; ++i)
+			{
+				// gid of the tile
+				int gid = tile_layer->tile_indices[i];
+				if (gid <= 0)
+					continue;
+				// search the tile information 
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+				if (tile_info.tiledata == nullptr)
+					continue;
+
+
+				chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(tile_info.tiledata->atlas_key.c_str());
+				if (info == nullptr)
+					continue;
+
+				glm::ivec2 tile_coord = tile_layer->GetTileCoordinate(i);
+
+				// the coordinate of a tile is the BOTTOMLEFT (greater Y, because Y axis is oriented UP)
+				glm::vec2 bottomleft =
+					chaos::GLMTools::RecastVector<glm::vec2>(tile_coord) * tile_size +
+					glm::vec2(0.0f, tile_size.y);
+
+				glm::vec2 topright = bottomleft;
+				topright.x += tile_info.tiledata->image_size.x;
+				topright.y -= tile_info.tiledata->image_size.y; //= not clear could be info->size !!! (but with manual atlas, not a good idea)
+
+#if 0
+				chaos::ParticleObject new_particle;
+				new_particle.bounding_box = chaos::box2(std::make_pair(bottomleft, topright));
+				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
+				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+#endif
+
+
+
+
+
+			}
+
+
+
+
 
 			return true;
 		}
@@ -440,6 +510,9 @@ namespace death
 		bool LevelInstance::Initialize(death::Game * in_game)
 		{
 			assert(in_game != nullptr);
+
+			// keep a reference on the game
+			game = in_game;
 			// create a the layers instances
 			if (!CreateLayerInstances(in_game))
 				return false;
@@ -479,6 +552,13 @@ namespace death
 					layer_instances.push_back(layer_instance);	
 			}
 			return true;
+		}
+
+		chaos::GPURenderMaterial * LevelInstance::GetDefaultRenderMaterial()
+		{
+			if (default_material == nullptr)
+				default_material = GetTypedLevel()->GetDefaultRenderMaterial(); // create material and cache
+			return default_material.get();
 		}
 
 	}; // namespace TiledMap

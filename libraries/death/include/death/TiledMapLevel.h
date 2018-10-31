@@ -87,12 +87,13 @@ namespace death
 			/** create a PlayerStartObject specializable method */
 			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance);
 
-
-
 			/** create a player start 'entry point' */
 			PlayerStartObject * CreatePlayerStart(chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a layer instance 'entry point' */
 			LayerInstance * CreateLayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
+
+			/** the default material when not specified */
+			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
 
 		protected:
 
@@ -124,6 +125,11 @@ namespace death
 			Level * GetTypedLevel();
 			/** get the level (for this layer) */
 			Level const * GetTypedLevel() const;
+
+			/** get the game */
+			Game * GetGame();
+			/** get the game */
+			Game const * GetGame() const;
 
 		protected:
 
@@ -190,6 +196,11 @@ namespace death
 			/** get the tiled map */
 			chaos::TiledMap::Map const * GetTiledMap() const;
 
+			/** get the game */
+			Game * GetGame() { return game; }
+			/** get the game */
+			Game const * GetGame() const { return game; }
+
 		protected:
 
 			/** override */
@@ -204,12 +215,20 @@ namespace death
 			/** create the layers instances */
 			virtual bool CreateLayerInstances(death::Game * in_game);
 
+			/** the default material when not specified */
+			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
+
 		protected:
+
+			/** a reference uppon the game */
+			Game * game = nullptr;
 
 			/** the particle manager used to render the world */
 			boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 			/** the layers */
 			std::vector<boost::intrusive_ptr<LayerInstance>> layer_instances;
+			/** the default render material */
+			boost::intrusive_ptr<chaos::GPURenderMaterial> default_material;
 		};
 
 	}; // namespace TiledMap

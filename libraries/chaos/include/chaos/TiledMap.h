@@ -817,6 +817,9 @@ namespace chaos
 
 		public:
 
+			/** get the bounding box of a tile */
+			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size) const;
+
 			/** get the number of tiles with something inside */
 			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
@@ -830,8 +833,10 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			TileLayer(BaseObject * in_owner) :
-				LayerBase(in_owner) {}
+			TileLayer(BaseObject * in_owner, glm::ivec2 const & in_tile_size) :
+				LayerBase(in_owner),
+				tile_size(in_tile_size)
+				{}
 
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -846,6 +851,8 @@ namespace chaos
 			glm::ivec2 size = glm::ivec2(0, 0);
 			/** the tiles */
 			std::vector<int> tile_indices;
+			/** cache the tile size for better performance (see TileMap) */
+			glm::ivec2 tile_size = glm::ivec2(0, 0);
 		};
 
 		// ==========================================

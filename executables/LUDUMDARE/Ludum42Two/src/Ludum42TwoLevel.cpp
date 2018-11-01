@@ -84,7 +84,6 @@ void LudumLevelInstance::OnLevelStarted()
 	if (bitmap_set == nullptr)
 		return;
 
-	static float scale = 1.0f;
 
 	chaos::box2 wb; // compute the world box
 
@@ -129,8 +128,16 @@ void LudumLevelInstance::OnLevelStarted()
 					continue;
 
 				ParticleObject new_particle;
-				new_particle.bounding_box.position = scale * position * tile_size;
-				new_particle.bounding_box.half_size = scale * 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
+
+				glm::ivec2 tile_coord = tile_layer->GetTileCoordinate(j);
+
+
+//
+				new_particle.bounding_box.position = position * tile_size;
+			new_particle.bounding_box.half_size = 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
+
+			new_particle.bounding_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);
+
 				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 

@@ -707,6 +707,19 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		// TileLayer methods
 		// ==========================================
 
+		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size) const
+		{
+			glm::vec2 bottomleft =
+				chaos::GLMTools::RecastVector<glm::vec2>(tile_coord * tile_size) +
+				glm::vec2(0.0f, (float)tile_size.y);
+
+			glm::vec2 topright = bottomleft;
+			topright.x += image_size.x;
+			topright.y -= image_size.y;
+
+			return box2(std::make_pair(bottomleft, topright));
+		}
+
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!LayerBase::DoLoad(element))
@@ -1066,7 +1079,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 				else if (strcmp(child_name, "objectgroup") == 0)
 					DoLoadObjectAndInserInList(e, object_layers, this);
 				else if (strcmp(child_name, "layer") == 0)
-					DoLoadObjectAndInserInList(e, tile_layers, this);
+					DoLoadObjectAndInserInList(e, tile_layers, this, tile_size);
 			}
 			// now fix the zorders
 			if (!DoFixLayersZOrder()) 

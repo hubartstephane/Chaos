@@ -126,7 +126,7 @@ void LudumLevelInstance::OnLevelStarted()
 
 
 
-
+#if 0
 
 
 
@@ -192,6 +192,7 @@ void LudumLevelInstance::OnLevelStarted()
 		}
 	}
 
+#endif
 
 	//
 
@@ -201,7 +202,6 @@ void LudumLevelInstance::OnLevelStarted()
 		if (tile_layer == nullptr)
 			continue;
 
-		glm::vec2 tile_size = chaos::GLMTools::RecastVector<glm::vec2>(tiled_map->tile_size);
 		for (size_t j = 0 ; j < tile_layer->tile_indices.size() ; ++j)
 		{
 			int gid = tile_layer->tile_indices[j];
@@ -218,40 +218,12 @@ void LudumLevelInstance::OnLevelStarted()
 				if (info == nullptr)
 					continue;
 
-				glm::ivec2 tile_coord = 
-					tile_layer->GetTileCoordinate(j);
-
-				// the coordinate of a tile is the BOTTOMLEFT (greater Y, because Y axis is oriented UP)
-				glm::vec2 bottomleft = 
-					chaos::GLMTools::RecastVector<glm::vec2>(tile_coord) * tile_size +
-					glm::vec2(0.0f, tile_size.y);
-
-				glm::vec2 topright = bottomleft;
-				topright.x += tile_info.tiledata->image_size.x;
-				topright.y -= tile_info.tiledata->image_size.y; //= not clear could be info->size !!! (but with manual atlas, not a good idea)
-
+				glm::ivec2 tile_coord = tile_layer->GetTileCoordinate(j);
 
 				ParticleObject new_particle;
-				new_particle.bounding_box = chaos::box2(std::make_pair(bottomleft, topright));
+				new_particle.bounding_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);
 				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-
-
-
-				
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 				int default_object_type = 0;

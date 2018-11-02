@@ -7,6 +7,8 @@
 #include <chaos/MyBase64.h>
 #include <chaos/MyZLib.h>
 
+#define CHAOS_REVERSE_Y_AXIS 1
+
 namespace chaos
 {
 	namespace TiledMap
@@ -293,7 +295,11 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 						p[coord++] = (float)atof(&values[i]);
 						if (coord == 2)
 						{
+#if CHAOS_REVERSE_Y_AXIS
+							result.push_back(glm::vec2(p.x, -p.y));
+#else
 							result.push_back(p);
+#endif
 							p = glm::vec2(0.0f, 0.0f); // flush the point if both axis are found
 							coord = 0;
 						}
@@ -303,8 +309,15 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 						if (values[i] == ',' || values[i] == ' ')
 							++i;
 					}
+					// flush the point even if there is a missing axis
 					if (coord == 1)
-						result.push_back(p); // flush the point even if there is a missing axis
+					{
+#if CHAOS_REVERSE_Y_AXIS
+						result.push_back(glm::vec2(p.x, -p.y));
+#else
+						result.push_back(p);
+#endif
+					}
 				}
 			}
 			return result;
@@ -330,6 +343,11 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			XMLTools::ReadAttribute(element, "x", position.x);
 			XMLTools::ReadAttribute(element, "y", position.y);
 			XMLTools::ReadAttribute(element, "rotation", rotation);
+			
+			// reverse the Y axis
+#if CHAOS_REVERSE_Y_AXIS
+			position.y = -position.y;
+#endif
 			return true;
 		}
 
@@ -441,11 +459,14 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		box2 GeometricObjectSurface::GetBoundingBox() const
 		{
+			//CHAOS_REVERSE_Y_AXIS
 			return box2(std::make_pair(position, position + size)); 
 		}
 
 		box2 GeometricObjectTile::GetBoundingBox() const
 		{
+			//CHAOS_REVERSE_Y_AXIS
+
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = position;
 			p2.x += size.x;
@@ -596,6 +617,10 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			XMLTools::ReadAttribute(element, "offsetx", offset.x);
 			XMLTools::ReadAttribute(element, "offsety", offset.y);
 
+			// reverse the Y axis
+#if CHAOS_REVERSE_Y_AXIS
+			offset.y = -offset.y;
+#endif
 			// compute the order of the layer in the map
 			// XXX : the layers in the JSON are given in reversed order than in TileMap Editor
 			//       we have to fix that later in the loading code
@@ -709,7 +734,8 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size) const
 		{
-			glm::vec2 bottomleft =
+			//CHAOS_REVERSE_Y_AXIS
+			glm::vec2 bottomleft = 
 				chaos::GLMTools::RecastVector<glm::vec2>(tile_coord * tile_size) +
 				glm::vec2(0.0f, (float)tile_size.y);
 
@@ -1365,3 +1391,5 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 	};  // namespace TiledMap
 
 }; // namespace chaos
+
+#undef CHAOS_REVERSE_Y_AXIS

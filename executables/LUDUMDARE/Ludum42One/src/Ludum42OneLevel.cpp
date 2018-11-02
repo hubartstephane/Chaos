@@ -82,8 +82,6 @@ chaos::ParticleAllocation * LudumLevelInstance::FindOrAllocationForObjectType(in
 
 void LudumLevelInstance::OnLevelStarted()
 {
-
-
 	allocations.clear();
 
 	LudumLevel const * ludum_level = GetTypedLevel();
@@ -127,7 +125,6 @@ void LudumLevelInstance::OnLevelStarted()
 
 
 #if 1
-
 
 
 	for (size_t i = 0 ; i < tiled_map->object_layers.size(); ++i)
@@ -182,13 +179,7 @@ void LudumLevelInstance::OnLevelStarted()
 				world_bounds = world_bounds | new_particle.bounding_box;
 
 			chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-			new_particle.bounding_box.position.y = -new_particle.bounding_box.position.y;
 			particles[particles.GetCount() - 1] = new_particle;
-
-
-
-
-
 		}
 	}
 
@@ -278,15 +269,12 @@ void LudumLevelInstance::OnLevelStarted()
 					world_bounds = world_bounds | new_particle.bounding_box;
 
 				chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-				new_particle.bounding_box.position.y = -new_particle.bounding_box.position.y;
 				particles[particles.GetCount() - 1] = new_particle;
 			}
 		}
 	}
 
 	world_box = world_bounds;
-
-	world_box.position.y = -world_box.position.y;
 }
 
 

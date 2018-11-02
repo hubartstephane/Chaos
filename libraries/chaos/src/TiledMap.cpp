@@ -460,17 +460,21 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		box2 GeometricObjectSurface::GetBoundingBox() const
 		{
 			//CHAOS_REVERSE_Y_AXIS
-			return box2(std::make_pair(position, position + size)); 
+			glm::vec2 p1 = position;
+			glm::vec2 p2 = glm::vec2(position.x + size.x, position.y - size.y);
+			return box2(std::make_pair(p1, p2)); 
 		}
 
 		box2 GeometricObjectTile::GetBoundingBox() const
 		{
 			//CHAOS_REVERSE_Y_AXIS
-
 			glm::vec2 p1 = position;
-			glm::vec2 p2 = position;
-			p2.x += size.x;
-			p2.y -= size.y; // axis Y is DOWN !!!
+			glm::vec2 p2 = glm::vec2(position.x + size.x, position.y + size.y);
+			
+			//glm::vec2 p1 = position;
+			//glm::vec2 p2 = position;
+			//p2.x += size.x;
+			//p2.y -= size.y; // axis Y is DOWN !!!
 			return box2(std::make_pair(p1, p2)); 
 		}
 
@@ -735,15 +739,27 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size) const
 		{
 			//CHAOS_REVERSE_Y_AXIS
+			glm::vec2 p1 = glm::vec2(
+				(float)( tile_coord.x * tile_size.x),
+				(float)(-tile_coord.y * tile_size.y - tile_size.y));
+			glm::vec2 p2 = p1;
+			p2.x += image_size.x;
+			p2.y += image_size.y;
+			return box2(std::make_pair(p1, p2));
+
+#if 0
 			glm::vec2 bottomleft = 
 				chaos::GLMTools::RecastVector<glm::vec2>(tile_coord * tile_size) +
 				glm::vec2(0.0f, (float)tile_size.y);
-
 			glm::vec2 topright = bottomleft;
 			topright.x += image_size.x;
 			topright.y -= image_size.y;
 
+
 			return box2(std::make_pair(bottomleft, topright));
+#endif
+
+
 		}
 
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)

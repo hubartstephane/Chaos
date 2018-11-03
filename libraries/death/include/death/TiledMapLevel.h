@@ -9,6 +9,8 @@
 #include <chaos/Renderable.h>
 #include <chaos/Tickable.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/ParticleDefault.h>
+#include <chaos/BitmapAtlas.h>
 
 namespace death
 {
@@ -29,6 +31,22 @@ namespace death
 			// friendship macro
 #define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
+
+			// =====================================
+			// TileParticleData : a aggregate of data for flushing particles in an allocation
+			// =====================================
+			
+		class TileParticleData
+		{
+		public:
+
+			/** the particle data, can be unriched by framework */
+			chaos::ParticleDefault::Particle particle;
+			/** information concerning the tile */
+			chaos::TiledMap::TileInfo tile_info;
+			/** the bitmap info corresponding to the tile */
+			chaos::BitmapAtlas::BitmapInfo const * bitmap_info;
+		};
 
 		// =====================================
 		// BaseObject : a base object for special game entities
@@ -92,8 +110,18 @@ namespace death
 			/** create a layer instance 'entry point' */
 			LayerInstance * CreateLayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
 
+			/** get the folder in which bitmaps are stored in Game::Atlas */
+			virtual chaos::BitmapAtlas::FolderInfo const * GetFolderInfo(LayerInstance * layer_instance) const;
+			/** get the atlas to use for the rendering */
+			virtual chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas(LayerInstance * layer_instance) const;
+			/** create a particle layer */
+			virtual chaos::ParticleLayer * CreateParticleLayer(LayerInstance * layer_instance);
+
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
+
+			/** flushing (and converting) some particles inside the allocation */
+			virtual void FlushParticles(TileParticleData const * particles, size_t count, chaos::ParticleAllocation * allocation, LayerInstance * layer_instance);
 
 		protected:
 
@@ -149,6 +177,9 @@ namespace death
 			bool InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer);
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::TileLayer * tile_layer);
+
+			/** create a particle allocation for the layer */
+			chaos::ParticleAllocation * CreateParticleAllocation();
 
 		protected:
 

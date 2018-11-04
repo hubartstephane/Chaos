@@ -246,10 +246,10 @@
   <object id="43" name="mytext" x="27.5" y="54.5" width="2000" height="2000">
    <text fontfamily="MS Shell Dlg 2" pixelsize="96" wrap="1">Exemple de texte</text>
   </object>
-  <object id="55" x="1584" y="4000">
+  <object id="55" name="OnePoint" x="1584" y="4000">
    <point/>
   </object>
-  <object id="56" x="-2860" y="3280">
+  <object id="56" name="ThePlayerStart" x="-2860" y="3280">
    <properties>
     <property name="PLAYER_START" type="bool" value="true"/>
    </properties>

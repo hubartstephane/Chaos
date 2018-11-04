@@ -89,8 +89,8 @@ namespace death
 			return result;\
 		}
 
-		DEATH_DOCREATE_OBJECT(PlayerStartObject, CreatePlayerStart, DEATH_EMPTY_TOKEN, DEATH_EMPTY_TOKEN);		
-		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, chaos::TiledMap::GeometricObject * in_geometric_object, DEATH_EMPTY_TOKEN, in_geometric_object);
+		DEATH_DOCREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance, in_layer_instance);
+		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
 
 		DEATH_DOCREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance, in_level_instance);
 		DEATH_CREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance, in_layer);
@@ -154,13 +154,30 @@ namespace death
 		}
 
 		// =====================================
+		// BaseObject implementation
+		// =====================================
+
+		BaseObject::BaseObject(class LayerInstance * in_layer_instance):
+			layer_instance(in_layer_instance)
+		{
+			assert(in_layer_instance != nullptr);
+		}
+			
+		// =====================================
 		// PlayerStartObject implementation
 		// =====================================
 
+		PlayerStartObject::PlayerStartObject(class LayerInstance * in_layer_instance) :
+			BaseObject(in_layer_instance)
+		{
+		}
+
 		bool PlayerStartObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
+			// copy the reference of the geometric object
 			geometric_object = in_geometric_object;
-
+			// store the name/id
+			name = geometric_object->name;
 
 			return true;
 		}
@@ -267,7 +284,7 @@ namespace death
 				// player start ?
 				if (chaos::TiledMapTools::IsPlayerStart(geometric_object))
 				{
-					PlayerStartObject * player_start = level->CreatePlayerStart(geometric_object);
+					PlayerStartObject * player_start = level->CreatePlayerStart(this, geometric_object);
 					if (player_start != nullptr)
 						player_starts.push_back(player_start);
 				}
@@ -415,6 +432,24 @@ namespace death
 			return 0;
 		}
 
+		PlayerStartObject * LayerInstance::FindPlayerStart(char const * name)
+		{
+			// very first player start required ?
+			if (name == nullptr && player_starts.size() > 0)
+				return player_starts[0].get();
+			// search by name
+			return NamedObject::FindNamedObject(player_starts, name);
+		}
+
+		PlayerStartObject const * LayerInstance::FindPlayerStart(char const * name) const
+		{
+			// very first player start required ?
+			if (name == nullptr && player_starts.size() > 0)
+				return player_starts[0].get();
+			// search by name
+			return NamedObject::FindNamedObject(player_starts, name);
+		}
+
 		// =====================================
 		// LevelInstance implementation
 		// =====================================
@@ -535,6 +570,30 @@ namespace death
 			if (default_material == nullptr)
 				default_material = GetTypedLevel()->GetDefaultRenderMaterial(); // create material and cache
 			return default_material.get();
+		}
+
+		PlayerStartObject * LevelInstance::FindPlayerStart(char const * name)
+		{
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				PlayerStartObject * result = layer_instances[i]->FindPlayerStart(name);
+				if (result != nullptr)
+					return result;
+			}
+			return nullptr;
+		}
+
+		PlayerStartObject const * LevelInstance::FindPlayerStart(char const * name) const
+		{
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				PlayerStartObject const * result = layer_instances[i]->FindPlayerStart(name);
+				if (result != nullptr)
+					return result;
+			}
+			return nullptr;
 		}
 
 		// =====================================

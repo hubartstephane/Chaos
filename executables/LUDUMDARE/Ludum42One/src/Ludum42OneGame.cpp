@@ -317,7 +317,6 @@ bool LudumGame::DeclareParticleClasses()
 {
 	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
 	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
-	chaos::ClassTools::DeclareClass<ParticleWater, ParticleObject>("ParticleWater");
 	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleObjectAtlas>("ParticlePlayer");
 	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
 	return true;

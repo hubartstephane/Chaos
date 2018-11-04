@@ -43,7 +43,6 @@ namespace chaos
 
 		/** generate a default shader */
 		GPUProgram * GenDefaultParticleProgram();
-
 		/** generate a default material */
 		GPURenderMaterial * GenDefaultParticleMaterial();
 

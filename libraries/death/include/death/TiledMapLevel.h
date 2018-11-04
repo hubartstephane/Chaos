@@ -52,9 +52,24 @@ namespace death
 		// BaseObject : a base object for special game entities
 		// =====================================
 
-		class BaseObject : public chaos::ReferencedObject
+		class BaseObject : public chaos::ReferencedObject, public chaos::NamedObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		public:
+
+			/** constructor */
+			BaseObject(LayerInstance * in_layer_instance);
+
+			/** get the layer instance owning this object */
+			LayerInstance * GetLayerInstance() { return layer_instance; }
+			/** get the layer instance owning this object */
+			LayerInstance const * GetLayerInstance() const { return layer_instance; }
+
+		protected:
+
+			/** a reference to the layer instance */
+			LayerInstance * layer_instance = nullptr;
 		};
 
 		// =====================================
@@ -63,12 +78,24 @@ namespace death
 
 		class PlayerStartObject : public BaseObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
+
+			/** constructor */
+			PlayerStartObject(LayerInstance * in_layer_instance);
+
+			/** get the geometric object corresponding to this */
+			chaos::TiledMap::GeometricObject * GetGeometricObject() { return geometric_object.get(); }
+			/** get the geometric object corresponding to this */
+			chaos::TiledMap::GeometricObject const * GetGeometricObject() const { return geometric_object.get(); }
+
+		protected:
 
 			/** initialization */
 			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object);
 
-		public:
+		protected:
 
 			/** the associated geometric object */
 			boost::intrusive_ptr<chaos::TiledMap::GeometricObject> geometric_object;
@@ -98,15 +125,15 @@ namespace death
 		protected:
 
 			/** create a level instance for that level user specified function */
-			virtual class GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
+			virtual GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
 
 			/** create a PlayerStartObject specializable method */
-			virtual PlayerStartObject * DoCreatePlayerStart();
+			virtual PlayerStartObject * DoCreatePlayerStart(LayerInstance * in_layer_instance);
 			/** create a PlayerStartObject specializable method */
 			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance);
 
 			/** create a player start 'entry point' */
-			PlayerStartObject * CreatePlayerStart(chaos::TiledMap::GeometricObject * in_geometric_object);
+			PlayerStartObject * CreatePlayerStart(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a layer instance 'entry point' */
 			LayerInstance * CreateLayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
 
@@ -160,6 +187,11 @@ namespace death
 			Game * GetGame();
 			/** get the game */
 			Game const * GetGame() const;
+
+			/** find the player start from its name */
+			PlayerStartObject * FindPlayerStart(char const * name);
+			/** find the player start from its name */
+			PlayerStartObject const * FindPlayerStart(char const * name) const;
 
 		protected:
 
@@ -233,6 +265,11 @@ namespace death
 			Game * GetGame() { return game; }
 			/** get the game */
 			Game const * GetGame() const { return game; }
+
+			/** find the player start from its name */
+			PlayerStartObject * FindPlayerStart(char const * name);
+			/** find the player start from its name */
+			PlayerStartObject const * FindPlayerStart(char const * name) const;
 
 		protected:
 

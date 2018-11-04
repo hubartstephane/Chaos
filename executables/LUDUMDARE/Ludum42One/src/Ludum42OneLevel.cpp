@@ -192,6 +192,7 @@ void LudumLevelInstance::OnLevelStarted()
 
 	//
 
+	if (1)
 	for (size_t i = 0 ; i < tiled_map->tile_layers.size(); ++i)
 	{
 		chaos::TiledMap::TileLayer const * tile_layer = tiled_map->tile_layers[i].get();
@@ -280,6 +281,22 @@ void LudumLevelInstance::OnLevelStarted()
 				particles[particles.GetCount() - 1] = new_particle;
 #endif
 			}
+		}
+	}
+
+	//LudumLevel * level = GetTypedLevel();
+
+	death::TiledMap::PlayerStartObject const * player_start = FindPlayerStart(nullptr);
+	if (player_start != nullptr)
+	{
+		chaos::TiledMap::GeometricObject const * geometric_object = player_start->GetGeometricObject();
+	
+		if (geometric_object != nullptr)	
+		{ 
+			ParticlePlayer player_particle;
+			//player_particle.bounding_box = player_start->
+
+	//		game->SpawnPlayer(player_particle);
 		}
 	}
 

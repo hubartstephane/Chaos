@@ -79,20 +79,6 @@ public:
 	class LudumGame * game = nullptr;
 };
 
-
-// ===========================================================================
-// ParticleWater
-// ===========================================================================
-
-class ParticleWater : public ParticleObject
-{
-public:
-
-	float initial_life = 0.0f;
-	float current_life = 0.0f;
-	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
-};
-
 // ===========================================================================
 // ParticlePlayer
 // ===========================================================================
@@ -114,21 +100,3 @@ public:
 
 	class LudumGame * game = nullptr;
 };
-
-
-#if 0
-class ParticleWaterTrait : public chaos::ParticleLayerTrait<ParticleWater, VertexBase>
-{
-public:
-
-	bool UpdateParticle(float delta_time, ParticleWater * particle, chaos::ParticleAllocation * allocation) const;
-
-	size_t ParticleToVertices(ParticleWater const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
-
-public:
-
-	class LudumGame * game = nullptr;
-
-	glm::ivec2 atlas_dimension = glm::ivec2(0, 0);
-};
-#endif

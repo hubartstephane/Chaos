@@ -4,14 +4,14 @@
 namespace death
 {
 
-	void GameHUD::AddParticles(int key, chaos::ParticleAllocation * allocation, bool remove_previous)
+	void GameHUD::RegisterParticles(int key, chaos::ParticleAllocation * allocation, bool remove_previous)
 	{
 		if (remove_previous)
-			RemoveParticles(key);
+			UnregisterParticles(key);
 		particle_allocations.insert(std::make_pair(key, allocation));
 	}
 	
-	void GameHUD::RemoveParticles(int key)
+	void GameHUD::UnregisterParticles(int key)
 	{
 		particle_allocations.erase(key);
 	}
@@ -29,9 +29,9 @@ namespace death
 	void PlayingHUD::CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y,int & cached_value, int key)
 	{
 		if (value < 0)
-			RemoveParticles(key);
+			UnregisterParticles(key);
 		else if (cached_value != value)
-			AddParticles(key, game->CreateScoringText(format, value, Y));
+			RegisterParticles(key, game->CreateScoringText(format, value, Y));
 		cached_value = value;
 	}
 

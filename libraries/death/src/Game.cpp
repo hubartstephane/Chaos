@@ -1088,7 +1088,7 @@ namespace death
 		PauseMenuHUD * result = new PauseMenuHUD;
 		if (result == nullptr)
 			return nullptr;
-		result->AddParticles(GameHUD::TITLE, CreateTitle("Pause", true));
+		result->RegisterParticles(GameHUD::TITLE, CreateTitle("Pause", true));
 		return result;
 	}
 
@@ -1099,7 +1099,7 @@ namespace death
 			return nullptr;
 
 		if (game_name != nullptr)
-			result->AddParticles(GameHUD::TITLE, CreateTitle(game_name, false));
+			result->RegisterParticles(GameHUD::TITLE, CreateTitle(game_name, false));
 		
 		if (best_score > 0)
 		{
@@ -1112,7 +1112,7 @@ namespace death
 			params.font_info_name = "normal";
 
 			std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-			result->AddParticles(GameHUD::BEST_SCORE, CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID));
+			result->RegisterParticles(GameHUD::BEST_SCORE, CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID));
 		}
 		return result;
 	}
@@ -1130,7 +1130,7 @@ namespace death
 		GameOverHUD * result = new GameOverHUD;
 		if (result == nullptr)
 			return nullptr;
-		result->AddParticles(GameHUD::TITLE, CreateTitle("Game Over", true));
+		result->RegisterParticles(GameHUD::TITLE, CreateTitle("Game Over", true));
 		return result;
 	}
 

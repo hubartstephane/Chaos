@@ -15,9 +15,9 @@ namespace death
 		static int const LAST_KEY    = 1;
 
 		/** insert some particles inside the HUD */
-		void AddParticles(int key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
+		void RegisterParticles(int key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
 		/** remove some particles from the HUD */
-		void RemoveParticles(int key);
+		void UnregisterParticles(int key);
 		/** clear all particles from the HUD */
 		void Clear();
 

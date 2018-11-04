@@ -15,7 +15,7 @@ namespace chaos
 	//            -> decrypt PATH = "file2.xxx"
 	//               -> GenTextureObject ( PATH = "file2.xxx" )
 	//
-	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even its the final call)
+	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even it is the final call)
 
 	/**
 	* GPUResourceManagerLoader

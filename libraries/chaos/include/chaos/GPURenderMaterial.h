@@ -69,6 +69,9 @@ namespace chaos
 		/** get the uniform provider */
 		GPUProgramProvider const & GetUniformProvider() const { return uniform_provider; }
 
+		/** create a RenderMaterial from a simple program */
+		static GPURenderMaterial * GenRenderMaterialObject(GPUProgram * program);
+
 	protected:
 
 		/** cleaning the resource */

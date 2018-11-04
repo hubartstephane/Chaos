@@ -492,6 +492,9 @@ namespace chaos
 		/** returns true whether particles need to be updated */
 		bool AreParticlesDynamic() const { return layer_desc->AreParticlesDynamic(); }
 
+		/** change the GL rendering state */
+		static void UpdateRenderingStates(bool begin);
+
 		/** pause/resume the layer */
 		void Pause(bool in_paused = true);
 		/** returns whether the layer is paused */
@@ -706,8 +709,6 @@ namespace chaos
 		void SortLayers(bool test_program_id) const;
 		/** test whether the layers are sort correctly */
 		bool AreLayersSorted(bool test_program_id) const;
-		/** change the GL rendering state */
-		virtual void UpdateRenderingStates(bool begin) const;
 
 	protected:
 

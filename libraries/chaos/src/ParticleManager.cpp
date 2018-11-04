@@ -399,6 +399,23 @@ namespace chaos
 		return result;
 	}
 
+	void ParticleLayer::UpdateRenderingStates(bool begin)
+	{
+		if (begin)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+		}
+	}
+
 	// ==============================================================
 	// PARTICLE MANAGER
 	// ==============================================================
@@ -599,7 +616,7 @@ namespace chaos
 		if (!AreLayersSorted(test_program_id))
 			SortLayers(test_program_id);
 		// update the states
-		UpdateRenderingStates(true);
+		ParticleLayer::UpdateRenderingStates(true);
 		// create an uniform provider to enrich the input
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		if (atlas != nullptr)
@@ -608,25 +625,9 @@ namespace chaos
 		for (size_t i = 0; i < count; ++i)
 			result += layers[i]->Display((atlas != nullptr)? &main_uniform_provider : uniform_provider, render_params);
 		// update the states
-		UpdateRenderingStates(false);
+		ParticleLayer::UpdateRenderingStates(false);
 		return result;
 	}
 
-	void ParticleManager::UpdateRenderingStates(bool begin) const
-	{
-		if (begin)
-		{
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_CULL_FACE);
-		}
-		else
-		{
-			glDisable(GL_BLEND);
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_CULL_FACE);
-		}
-	}
 }; // namespace chaos
 

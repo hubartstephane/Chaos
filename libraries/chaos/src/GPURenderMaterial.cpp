@@ -89,4 +89,17 @@ namespace chaos
 		return true;
 	}
 
+	GPURenderMaterial * GPURenderMaterial::GenRenderMaterialObject(GPUProgram * program)
+	{
+		if (program == nullptr)
+			return nullptr;
+		// create the material
+		GPURenderMaterial * result = new GPURenderMaterial();
+		if (result == nullptr)
+			return nullptr;
+		// initialize the program
+		result->SetProgram(program);
+		return result;
+	}
+
 }; // namespace chaos

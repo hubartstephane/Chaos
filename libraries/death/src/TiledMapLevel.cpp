@@ -2,6 +2,7 @@
 #include <death/Game.h>
 #include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/GPUProgramGenerator.h>
 
 namespace death
 {
@@ -28,11 +29,6 @@ namespace death
 		GameLevelInstance * Level::DoCreateLevelInstance(Game * in_game)
 		{
 			return new LevelInstance;
-		}
-
-		chaos::GPURenderMaterial * Level::GetDefaultRenderMaterial()
-		{
-			return chaos::ParticleDefault::GenDefaultParticleMaterial();
 		}
 
 		chaos::BitmapAtlas::TextureArrayAtlas const * Level::GetTextureAtlas(LayerInstance * layer_instance) const
@@ -102,6 +98,60 @@ namespace death
 #undef DEATH_CREATE_OBJECT
 #undef DEATH_DOCREATE_OBJECT
 #undef DEATH_EMPTY_TOKEN
+
+		chaos::GPUProgram * Level::GenDefaultRenderProgram()
+		{
+			char const * vertex_shader_source = R"SHADERCODE(
+			in vec2 position;
+			in vec3 texcoord;
+			in vec4 color;
+
+			out vec2 vs_position;
+			out vec3 vs_texcoord;
+			out vec4 vs_color;
+
+			uniform vec4 camera_box;
+
+			void main() 
+			{
+				vs_position = position;
+				vs_texcoord = texcoord;
+				vs_color    = color;
+
+				gl_Position.xy = (position - camera_box.xy) / camera_box.zw;
+				gl_Position.z  = 0.0;
+				gl_Position.w  = 1.0;
+			}										
+		)SHADERCODE";
+
+			char const * pixel_shader_source = R"SHADERCODE(
+			out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+			in vec2 vs_position;
+			in vec3 vs_texcoord;
+			in vec4 vs_color;
+
+			uniform sampler2DArray material;
+
+			void main()
+			{
+				vec4 color = texture(material, vs_texcoord);
+				output_color.xyz = color.xyz * vs_color.xyz;
+				output_color.a   = vs_color.a * color.a;
+			};
+		)SHADERCODE";
+
+			chaos::GPUProgramGenerator program_generator;
+			program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+			program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+			return program_generator.GenProgramObject();
+		}
+
+		chaos::GPURenderMaterial * Level::GetDefaultRenderMaterial()
+		{
+			boost::intrusive_ptr<chaos::GPUProgram> program = GenDefaultRenderProgram(); // store a temporary object for lifetime management
+			return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
+		}
 
 		// =====================================
 		// PlayerStartObject implementation
@@ -411,13 +461,25 @@ namespace death
 		int LevelInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
 			int result = 0;
+
 			// display particle manager
 			if (particle_manager != nullptr)
 				result += particle_manager->Display(uniform_provider, render_params);
-			// display all layer instances
+			// prepare rendering states
+			chaos::ParticleLayer::UpdateRenderingStates(true);
+			// enrich the uniform_provider with texture
+			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+
+			chaos::BitmapAtlas::TextureArrayAtlas * atlas = game->GetTextureAtlas();
+			if (atlas != nullptr)
+				main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
+			// draw the layer instances
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
-				result += layer_instances[i]->Display(uniform_provider, render_params);
+				result += layer_instances[i]->Display(&main_uniform_provider, render_params);
+			// restore the rendering states
+			chaos::ParticleLayer::UpdateRenderingStates(false);
+			
 			return result;
 		}
 
@@ -474,6 +536,22 @@ namespace death
 				default_material = GetTypedLevel()->GetDefaultRenderMaterial(); // create material and cache
 			return default_material.get();
 		}
+
+		// =====================================
+		// LevelInstance implementation
+		// =====================================
+
+
+
+
+
+
+
+
+
+
+
+
 
 	}; // namespace TiledMap
 

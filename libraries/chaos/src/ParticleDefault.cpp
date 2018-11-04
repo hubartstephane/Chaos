@@ -1,6 +1,7 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GPUVertexDeclaration.h>
+#include <chaos/GPURenderMaterialLoader.h>
 
 namespace chaos
 {
@@ -67,17 +68,8 @@ namespace chaos
 
 	GPURenderMaterial * ParticleDefault::GenDefaultParticleMaterial()
 	{
-		// create the default program
-		boost::intrusive_ptr<GPUProgram> program = chaos::ParticleDefault::GenDefaultParticleProgram();
-		if (program == nullptr)
-			return nullptr;
-		// create the material
-		GPURenderMaterial * result = new GPURenderMaterial();
-		if (result == nullptr)
-			return nullptr;
-		// initialize the program
-		result->SetProgram(program.get());
-		return result;
+		boost::intrusive_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
+		return GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 
 }; // namespace chaos

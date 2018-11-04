@@ -117,6 +117,8 @@ namespace death
 			/** create a particle layer */
 			virtual chaos::ParticleLayer * CreateParticleLayer(LayerInstance * layer_instance);
 
+			/** the default program when not specified */
+			virtual chaos::GPUProgram * GenDefaultRenderProgram();
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
 

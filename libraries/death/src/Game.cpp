@@ -336,7 +336,7 @@ namespace death
 
 #define DEATH_EMPTY_TOKEN
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
-	result constness * Game::funcname(param_type param, chaos::RenderableLayer constness * root) constness\
+	result constness * Game::funcname(param_type param, chaos::RenderableLayerSystem constness * root) constness\
 	{\
 		if (root == nullptr)\
 		{\
@@ -352,16 +352,16 @@ namespace death
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
 
-	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::RenderableLayer, FindRenderableLayer);
+	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::RenderableLayerSystem, FindRenderableLayer);
 	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayer, FindParticleLayer);
 
 #undef DEATH_FIND_RENDERABLE_CHILD_ALL
 #undef DEATH_FIND_RENDERABLE_CHILD
 #undef DEATH_EMPTY_TOKEN
 
-	chaos::RenderableLayer * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
+	chaos::RenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
 	{
-		chaos::RenderableLayer * result = new chaos::RenderableLayer();
+		chaos::RenderableLayerSystem * result = new chaos::RenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return result;
 		result->SetName(layer_name);
@@ -372,7 +372,7 @@ namespace death
 
 	bool Game::InitializeRootRenderLayer()
 	{
-		root_render_layer = new chaos::RenderableLayer();
+		root_render_layer = new chaos::RenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return false;
 		if (AddChildRenderLayer("GAME", GAME_LAYER_ID, GAME_LAYER_ORDER) == nullptr)

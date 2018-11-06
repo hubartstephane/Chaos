@@ -15,6 +15,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/StateMachine.h>
 #include <chaos/TiledMap.h>
+#include <chaos/RenderableLayerSystem.h>
 
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
@@ -89,11 +90,11 @@ namespace death
 
 		// Renderable layers
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname)\
-		result * funcname(char const * name, chaos::RenderableLayer * root = nullptr);\
-		result const * funcname(char const * name, chaos::RenderableLayer const * root = nullptr) const;\
-		result * funcname(chaos::TagType tag, chaos::RenderableLayer * root = nullptr);\
-		result const * funcname(chaos::TagType tag, chaos::RenderableLayer const * root = nullptr) const;
-		DEATH_FIND_RENDERABLE_CHILD(chaos::RenderableLayer, FindRenderableLayer);
+		result * funcname(char const * name, chaos::RenderableLayerSystem * root = nullptr);\
+		result const * funcname(char const * name, chaos::RenderableLayerSystem const * root = nullptr) const;\
+		result * funcname(chaos::TagType tag, chaos::RenderableLayerSystem * root = nullptr);\
+		result const * funcname(chaos::TagType tag, chaos::RenderableLayerSystem const * root = nullptr) const;
+		DEATH_FIND_RENDERABLE_CHILD(chaos::RenderableLayerSystem, FindRenderableLayer);
 		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayer, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
 	protected:
@@ -254,7 +255,7 @@ namespace death
 		virtual bool InitializeRootRenderLayer();
 
 		/** insert a rendering layering */
-		chaos::RenderableLayer * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
+		chaos::RenderableLayerSystem * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
 
 		/** generate the atlas for the whole game */
 		virtual bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -406,7 +407,7 @@ namespace death
 		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 
 		/** the rendering layer system */
-		boost::intrusive_ptr<chaos::RenderableLayer> root_render_layer;
+		boost::intrusive_ptr<chaos::RenderableLayerSystem> root_render_layer;
 
 
 		/** the text generator */

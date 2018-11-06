@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/ClassTools.h>
 
 namespace chaos
 {
@@ -112,6 +113,28 @@ namespace chaos
 			particle_corners.bottomleft = corners.first;
 			particle_corners.topright   = corners.second;
 			GenerateBoxParticle(particle_corners, texcoords, vertices, rotation);
+		}
+
+		/** returns true whether the particle can be casted into a given class */
+		template<typename PARTICLE_TYPE>
+		static bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
+		{
+			ClassTools::ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
+
+			// strict equality
+			if (particle_class == wanted_class)
+				return true;
+			// smaller size => failure
+			if (particle_size < sizeof(PARTICLE_TYPE))
+				return false;
+			// bigger size => success only if accepted
+			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
+				return false;
+			// ensure we have not declared class as incompatible
+			if (ClassTools::InheritsFrom(particle_class, wanted_class) == ClassTools::INHERITANCE_NO)
+				return false;
+			// success
+			return true;
 		}
 
 	}; // namespace ParticleTools

@@ -478,7 +478,7 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(bool accept_bigger_particle) const
 		{
-			return ParticleManager::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
 		}
 
 		/** returns the number of particle count */

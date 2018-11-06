@@ -1391,6 +1391,9 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 	return allocation;
 }
 
+//chaos::ParticleLayer * LudumGame::AddParticleLayer()
+
+
 bool LudumGame::InitializeParticleManager()
 {
 	if (!death::Game::InitializeParticleManager())

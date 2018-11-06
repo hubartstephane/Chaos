@@ -500,20 +500,10 @@ namespace death
 			// display particle manager
 			if (particle_manager != nullptr)
 				result += particle_manager->Display(uniform_provider, render_params);
-			// prepare rendering states
-			chaos::ParticleLayer::UpdateRenderingStates(true);
-			// enrich the uniform_provider with texture
-			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
-
-			chaos::BitmapAtlas::TextureArrayAtlas * atlas = game->GetTextureAtlas();
-			if (atlas != nullptr)
-				main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 			// draw the layer instances
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
-				result += layer_instances[i]->Display(&main_uniform_provider, render_params);
-			// restore the rendering states
-			chaos::ParticleLayer::UpdateRenderingStates(false);
+				result += layer_instances[i]->Display(uniform_provider, render_params);
 			
 			return result;
 		}

@@ -247,6 +247,8 @@ namespace chaos
 
 	int ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
+		int result = 0;
+
 		// Update GPU buffers	
 		size_t vcount = UpdateGPUBuffers();
 		if (vcount == 0)
@@ -255,8 +257,17 @@ namespace chaos
 		UpdateVertexDeclaration();
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
-		// do the rendering
-		return DoDisplayHelper(vcount, final_material, uniform_provider, render_params.instancing);
+		// prepare rendering state
+		UpdateRenderingStates(true);
+		// update uniform provider with atlas, and do the rendering
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		if (atlas != nullptr)
+			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
+
+		result = DoDisplayHelper(vcount, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
+		// restore rendering states
+		UpdateRenderingStates(false);
+		return result;
 	}
 
 	int ParticleLayer::DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
@@ -387,7 +398,7 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayer::UpdateRenderingStates(bool begin)
+	void ParticleLayer::UpdateRenderingStates(bool begin) const
 	{
 		if (begin)
 		{
@@ -451,6 +462,7 @@ namespace chaos
 		ParticleLayer * result = new ParticleLayer(layer_desc);
 		if (result == nullptr)
 			return nullptr;
+		result->SetTextureAtlas(atlas.get());
 		// insert the layer at the end
 		layers.push_back(result);
 		return result;
@@ -477,15 +489,13 @@ namespace chaos
 		ParticleLayer * result = AddLayer(layer_desc);
 		if (result != nullptr)
 		{
-			// change layer render order / ID
+			// change layer render order / ID / material
 			result->SetTag(layer_id);
 			result->SetRenderOrder(render_order);
-			// change the material
 			result->SetRenderMaterial(render_material);
 		}
 		return result;
 	}
-
 
 	void ParticleManager::RemoveLayer(ParticleLayer * layer)
 	{
@@ -603,17 +613,10 @@ namespace chaos
 		bool test_program_id = true;
 		if (!AreLayersSorted(test_program_id))
 			SortLayers(test_program_id);
-		// update the states
-		ParticleLayer::UpdateRenderingStates(true);
-		// create an uniform provider to enrich the input
-		GPUProgramProviderChain main_uniform_provider(uniform_provider);
-		if (atlas != nullptr)
-			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		// draw all the layers		
 		for (size_t i = 0; i < count; ++i)
-			result += layers[i]->Display((atlas != nullptr)? &main_uniform_provider : uniform_provider, render_params);
-		// update the states
-		ParticleLayer::UpdateRenderingStates(false);
+			result += layers[i]->Display(uniform_provider, render_params);
+
 		return result;
 	}
 

@@ -492,9 +492,6 @@ namespace chaos
 		/** returns true whether particles need to be updated */
 		bool AreParticlesDynamic() const { return layer_desc->AreParticlesDynamic(); }
 
-		/** change the GL rendering state */
-		static void UpdateRenderingStates(bool begin);
-
 		/** get the particle ID for this system */
 		ClassTools::ClassRegistration const * GetParticleClass() const;
 
@@ -510,15 +507,18 @@ namespace chaos
 		/** set the render order */
 		void SetRenderOrder(int in_render_order) { render_order = in_render_order; }
 
+		/** change the atlas */
+		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas) { atlas = in_atlas; }
 		/** change the material */
 		void SetRenderMaterial(GPURenderMaterial * in_render_material) { render_material = in_render_material; }
+
+		/** get the atlas const method */
+		BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return atlas.get(); }
 		/** get the material const method */
 		GPURenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
 
 		/** spawn a given number of particles */
 		ParticleAllocation * SpawnParticles(size_t count);
-
-
 		
 	protected:
 
@@ -526,6 +526,9 @@ namespace chaos
 		virtual bool DoTick(double delta_time) override;
 		/** draw the layer */
 		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
+
+		/** change the GL rendering state */
+		void UpdateRenderingStates(bool begin) const;
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
@@ -542,10 +545,14 @@ namespace chaos
 		/** the effective rendering */
 		int DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
+
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool UpdateParticles(float delta_time);
 
 	protected:
+
+		/** the texture atlas */
+		boost::intrusive_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
 
 		/** the order of the layer in the manager */
 		int render_order = 0;
@@ -638,9 +645,6 @@ namespace chaos
 		/** Search a layer by its id */
 		ParticleLayer const * FindLayer(int id) const;
 
-		/** create a layer and add it to the manager */
-		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc);
-
 		/** templated method to add a layer and set some values */
 		template<typename TRAIT_TYPE, typename ...PARAMS>
 		ParticleLayer * AddLayer(int render_order, int layer_id, char const * material_name, PARAMS... params)
@@ -661,9 +665,11 @@ namespace chaos
 			return AddLayer(layer_desc, render_order, layer_id, render_material);
 		}
 
-		/** templated method to add a layer and set some values */
+		/** create a layer and add it to the manager */
+		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc);
+		/** create a layer and set some values */
 		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, char const * material_name);
-		/** templated method to add a layer and set some values */
+		/** create a layer and set some values */
 		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, int layer_id, GPURenderMaterial * render_material);
 
 		/** remove a layer from the manager */
@@ -671,6 +677,7 @@ namespace chaos
 
 	protected:
 		
+
 		/** tick the manager */
 		virtual bool DoTick(double delta_time) override;
 		/** display all the particles */
@@ -685,7 +692,7 @@ namespace chaos
 	protected:
 
 		/** the texture atlas */
-		BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
+		boost::intrusive_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
 		/** the layers */
 		mutable std::vector<boost::intrusive_ptr<ParticleLayer>> layers;
 	};

@@ -225,12 +225,9 @@ protected:
 		{
 			for (int j = 0; j < MATERIAL_COUNT; ++j)
 			{
-				chaos::ParticleLayer * particle_layer = particle_manager->AddLayer(new ParticleLayerDescExample());
-					
-				particle_layer->SetRenderOrder(i);
-				particle_layer->SetTag(j + i * MATERIAL_COUNT);
-
-				particle_layer->SetRenderMaterial(materials[j]);
+				int render_order = i;
+				int layer_id = j + i * MATERIAL_COUNT;
+				particle_manager->AddLayer(new ParticleLayerDescExample(), render_order, layer_id, materials[j]);
 			}
 		}
 		return true;

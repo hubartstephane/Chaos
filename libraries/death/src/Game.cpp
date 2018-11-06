@@ -334,6 +334,57 @@ namespace death
 		return true;
 	}
 
+#define DEATH_EMPTY_TOKEN
+#define DEATH_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
+	result constness * Game::funcname(param_type param, chaos::RenderableLayer constness * root) constness\
+	{\
+		if (root == nullptr)\
+		{\
+			root = root_render_layer.get();\
+			if (root == nullptr)\
+				return nullptr;\
+		}\
+		return dynamic_cast<result constness*>(root->FindChildRenderable(param));\
+	}
+#define DEATH_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
+	DEATH_FIND_RENDERABLE_CHILD(result, funcname, DEATH_EMPTY_TOKEN, char const *);\
+	DEATH_FIND_RENDERABLE_CHILD(result, funcname, DEATH_EMPTY_TOKEN, chaos::TagType);\
+	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
+	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
+
+	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::RenderableLayer, FindRenderableLayer);
+	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayer, FindParticleLayer);
+
+#undef DEATH_FIND_RENDERABLE_CHILD_ALL
+#undef DEATH_FIND_RENDERABLE_CHILD
+#undef DEATH_EMPTY_TOKEN
+
+	chaos::RenderableLayer * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
+	{
+		chaos::RenderableLayer * result = new chaos::RenderableLayer();
+		if (root_render_layer == nullptr)
+			return result;
+		result->SetName(layer_name);
+		result->SetTag(layer_tag);
+		root_render_layer->AddChildRenderable(result, render_order);
+		return result;
+	}
+
+	bool Game::InitializeRootRenderLayer()
+	{
+		root_render_layer = new chaos::RenderableLayer();
+		if (root_render_layer == nullptr)
+			return false;
+		if (AddChildRenderLayer("GAME", GAME_LAYER_ID, GAME_LAYER_ORDER) == nullptr)
+			return false;
+		if (AddChildRenderLayer("PLAYER", PLAYER_LAYER_ID, PLAYER_LAYER_ORDER) == nullptr) // maybe the player will go in another layer
+			return false;
+		if (AddChildRenderLayer("HUD", HUD_LAYER_ID, HUD_LAYER_ORDER) == nullptr)
+			return false;
+
+		return true;
+	}
+
 	bool Game::InitializeParticleManager()
 	{
 		// create the manager
@@ -428,6 +479,10 @@ namespace death
 			return false;
 		// the atlas
 		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
+			return false;
+
+		// initialize the root render system
+		if (!InitializeRootRenderLayer())
 			return false;
 		// initialize the particle manager
 		if (!InitializeParticleManager())

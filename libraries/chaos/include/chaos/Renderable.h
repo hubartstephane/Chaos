@@ -115,9 +115,9 @@ namespace chaos
 		/** the main rendering method */
 		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 		/** find a renderable */
-		RenderableLayerInfo * FindChildRenderable(Renderable * renderable);
+		RenderableLayerInfo * FindChildRenderableInfo(Renderable * renderable);
 		/** find a renderable */
-		RenderableLayerInfo const * FindChildRenderable(Renderable * renderable) const;
+		RenderableLayerInfo const * FindChildRenderableInfo(Renderable * renderable) const;
 
 	protected:
 

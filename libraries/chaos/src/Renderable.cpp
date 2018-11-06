@@ -68,7 +68,7 @@ namespace chaos
 		return result;
 	}
 
-	RenderableLayer::RenderableLayerInfo * RenderableLayer::FindChildRenderable(Renderable * renderable)
+	RenderableLayer::RenderableLayerInfo * RenderableLayer::FindChildRenderableInfo(Renderable * renderable)
 	{
 		for (RenderableLayerInfo & info : layers)
 			if (info.object == renderable)
@@ -76,7 +76,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	RenderableLayer::RenderableLayerInfo const * RenderableLayer::FindChildRenderable(Renderable * renderable) const
+	RenderableLayer::RenderableLayerInfo const * RenderableLayer::FindChildRenderableInfo(Renderable * renderable) const
 	{
 		for (RenderableLayerInfo const & info : layers)
 			if (info.object == renderable)
@@ -86,7 +86,7 @@ namespace chaos
 
 	bool RenderableLayer::AddChildRenderable(Renderable * renderable, int render_order)
 	{
-		if (FindChildRenderable(renderable) != nullptr)
+		if (FindChildRenderableInfo(renderable) != nullptr)
 			return false;
 
 		auto it = std::lower_bound(layers.begin(), layers.end(), render_order); // sorted insertion
@@ -101,7 +101,7 @@ namespace chaos
 
 	bool RenderableLayer::RemoveChildRenderable(Renderable * renderable)
 	{
-		RenderableLayerInfo * layer_info = FindChildRenderable(renderable);
+		RenderableLayerInfo * layer_info = FindChildRenderableInfo(renderable);
 		if (layer_info == nullptr)
 			return false;
 		layers.erase((layer_info - &layers[0]) + layers.begin());

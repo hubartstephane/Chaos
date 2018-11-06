@@ -48,6 +48,14 @@ namespace death
 
 	public:
 
+		static const int GAME_LAYER_ID = 1;
+		static const int PLAYER_LAYER_ID = 2;
+		static const int HUD_LAYER_ID = 3;
+
+		static const int GAME_LAYER_ORDER = 1;
+		static const int PLAYER_LAYER_ORDER = 2;
+		static const int HUD_LAYER_ORDER = 3;
+
 		/** some ID for layers */
 		static int const TEXT_LAYER_ID = 0;
 		static int const LAST_LAYER_ID = 0;
@@ -79,6 +87,15 @@ namespace death
 		/** returns the pause time */
 		double GetPauseClockTime() const;
 
+		// Renderable layers
+#define DEATH_FIND_RENDERABLE_CHILD(result, funcname)\
+		result * funcname(char const * name, chaos::RenderableLayer * root = nullptr);\
+		result const * funcname(char const * name, chaos::RenderableLayer const * root = nullptr) const;\
+		result * funcname(chaos::TagType tag, chaos::RenderableLayer * root = nullptr);\
+		result const * funcname(chaos::TagType tag, chaos::RenderableLayer const * root = nullptr) const;
+		DEATH_FIND_RENDERABLE_CHILD(chaos::RenderableLayer, FindRenderableLayer);
+		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayer, FindParticleLayer);
+#undef DEATH_FIND_RENDERABLE_CHILD
 	protected:
 
 		/** the tick method */
@@ -233,6 +250,11 @@ namespace death
 		virtual bool InitializeParticleTextGenerator();
 		/** initialize the particle manager */
 		virtual bool InitializeParticleManager();
+		/** initialize the render layer */
+		virtual bool InitializeRootRenderLayer();
+
+		/** insert a rendering layering */
+		chaos::RenderableLayer * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
 
 		/** generate the atlas for the whole game */
 		virtual bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -306,7 +328,7 @@ namespace death
 		/** create a title */
 		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, int layer_id = TEXT_LAYER_ID);
 		/** create a score text at the top left corner */
-		chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, int layer_id = TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, int layer_id = TEXT_LAYER_ID);
 
 		/** create the pause HUD */
 		void CreatePauseMenuHUD();
@@ -382,6 +404,11 @@ namespace death
 		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 		/** the particle manager */
 		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+
+		/** the rendering layer system */
+		boost::intrusive_ptr<chaos::RenderableLayer> root_render_layer;
+
+
 		/** the text generator */
 		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 

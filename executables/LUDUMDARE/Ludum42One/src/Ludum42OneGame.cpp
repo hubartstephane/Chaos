@@ -185,8 +185,8 @@ void LudumGame::OnMouseMove(double x, double y)
 
 void LudumGame::DestroyGameObjects()
 {
-	player_allocations = nullptr;
-	life_allocations = nullptr;
+	//player_allocations = nullptr;
+	//life_allocations = nullptr;
 }
 
 chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)

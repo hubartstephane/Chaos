@@ -421,7 +421,7 @@ namespace death
 		bool LayerInstance::DoTick(double delta_time)
 		{
 			if (particle_layer != nullptr)
-				particle_layer->TickParticles((float)delta_time);
+				particle_layer->Tick(delta_time);
 			return true;
 		}
 		

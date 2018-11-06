@@ -180,7 +180,7 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(bool accept_bigger_particle) const
 		{
-			return ParticleManager::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
 		}
 
 		/** get an accessor for the particles */
@@ -463,7 +463,7 @@ namespace chaos
 	// PARTICLE LAYER 
 	// ==============================================================
 
-	class ParticleLayer : public Renderable
+	class ParticleLayer : public Renderable, public Tickable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -495,11 +495,6 @@ namespace chaos
 		/** change the GL rendering state */
 		static void UpdateRenderingStates(bool begin);
 
-		/** pause/resume the layer */
-		void Pause(bool in_paused = true);
-		/** returns whether the layer is paused */
-		bool IsPaused() const;
-
 		/** get the particle ID for this system */
 		ClassTools::ClassRegistration const * GetParticleClass() const;
 
@@ -523,11 +518,12 @@ namespace chaos
 		/** spawn a given number of particles */
 		ParticleAllocation * SpawnParticles(size_t count);
 
-		/** ticking the particle system */
-		virtual void TickParticles(float delta_time);
+
 		
 	protected:
 
+		/** ticking the particle system */
+		virtual bool DoTick(double delta_time) override;
 		/** draw the layer */
 		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
@@ -553,8 +549,6 @@ namespace chaos
 
 		/** the order of the layer in the manager */
 		int render_order = 0;
-		/** whether the layer is paused */
-		bool paused = false;
 
 		/** whether there was changes in particles, and a vertex array need to be recomputed */
 		mutable bool require_GPU_update = false;
@@ -674,28 +668,6 @@ namespace chaos
 
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayer * layer);
-
-		/** returns true whether the particle can be casted into a given class */
-		template<typename PARTICLE_TYPE>
-		static bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
-		{
-			ClassTools::ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
-
-			// strict equality
-			if (particle_class == wanted_class)
-				return true;
-			// smaller size => failure
-			if (particle_size < sizeof(PARTICLE_TYPE))
-				return false;
-			// bigger size => success only if accepted
-			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
-				return false;
-			// ensure we have not declared class as incompatible
-			if (ClassTools::InheritsFrom(particle_class, wanted_class) == ClassTools::INHERITANCE_NO)
-				return false;
-			// success
-			return true;
-		}
 
 	protected:
 		

@@ -189,29 +189,17 @@ namespace chaos
 		}
 	}
 
-	void ParticleLayer::Pause(bool in_paused)
-	{
-		paused = in_paused;
-	}
-
-	bool ParticleLayer::IsPaused() const
-	{
-		return paused;
-	}
-
 	ClassTools::ClassRegistration const * ParticleLayer::GetParticleClass() const
 	{
 		return layer_desc->GetParticleClass();
 	}
 
-	void ParticleLayer::TickParticles(float delta_time)
+	bool ParticleLayer::DoTick(double delta_time)
 	{
-		// early exit
-		if (IsPaused())
-			return;
 		// update the particles themselves
 		if (AreParticlesDynamic())
-			require_GPU_update |= UpdateParticles(delta_time);
+			require_GPU_update |= UpdateParticles((float)delta_time);
+		return true;
 	}
 
 	bool ParticleLayer::UpdateParticles(float delta_time)
@@ -515,7 +503,7 @@ namespace chaos
 	{
 		size_t count = layers.size();
 		for (size_t i = 0; i < count; ++i)
-			layers[i]->TickParticles((float)delta_time);
+			layers[i]->Tick(delta_time);
 		return true;
 	}
 

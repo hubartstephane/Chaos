@@ -4,6 +4,7 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/ClassTools.h>
+#include <chaos/NamedObject.h>
 
 namespace chaos
 {

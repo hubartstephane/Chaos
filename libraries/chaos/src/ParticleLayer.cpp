@@ -1,0 +1,446 @@
+#include <chaos/ParticleManager.h>
+#include <chaos/GLTools.h>
+#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUResourceManager.h>
+#include <chaos/MyGLFWSingleWindowApplication.h>
+#include <chaos/ParticleTools.h>
+
+namespace chaos
+{
+	// ==============================================================
+	// ParticleAllocation
+	// ==============================================================
+
+	ParticleAllocation::ParticleAllocation(ParticleLayer * in_layer):
+		layer(in_layer)
+	{
+		assert(in_layer != nullptr);
+	}
+
+	ParticleAllocation::~ParticleAllocation()
+	{
+		assert(layer == nullptr);
+	}
+
+	void ParticleAllocation::RemoveFromLayer()
+	{
+		if (layer == nullptr)
+			return;
+		layer->RemoveParticleAllocation(this);
+	}
+
+	void ParticleAllocation::OnRemovedFromLayer()
+	{		
+		ConditionalRequireGPUUpdate(true, true);
+		layer = nullptr;
+	}
+
+	void ParticleAllocation::ConditionalRequireGPUUpdate(bool skip_if_invisible, bool skip_if_empty)
+	{
+		if (layer == nullptr)
+			return;
+		if (skip_if_invisible && !IsVisible())
+			return;
+		if (skip_if_empty && GetParticleCount() == 0)
+			return;			
+		layer->require_GPU_update = true;
+	}
+
+	bool ParticleAllocation::IsAttachedToLayer() const
+	{
+		return (layer != nullptr);
+	}
+
+	void ParticleAllocation::Pause(bool in_paused)
+	{
+		paused = in_paused;
+	}
+
+	bool ParticleAllocation::IsPaused() const
+	{
+		return paused;
+	}
+
+	void ParticleAllocation::Show(bool in_visible)
+	{
+		if (visible != in_visible)
+		{
+			visible = in_visible;
+			ConditionalRequireGPUUpdate(false, true); // the GPU buffer is about to be changed
+		}
+	}
+
+	bool ParticleAllocation::IsVisible() const
+	{
+		return visible;
+	}
+
+	size_t ParticleAllocation::GetParticleSize() const
+	{
+		return 0;
+	}
+
+	size_t ParticleAllocation::GetParticleCount() const
+	{
+		return 0;
+	}
+
+	void * ParticleAllocation::GetParticleBuffer()
+	{
+		return nullptr;
+	}
+
+	void const * ParticleAllocation::GetParticleBuffer() const
+	{
+		return nullptr;
+	}
+
+	bool ParticleAllocation::Resize(size_t new_count)
+	{
+		return true;
+	}
+
+	bool ParticleAllocation::AddParticles(size_t extra_count)
+	{
+		return Resize(extra_count + GetParticleCount());
+	}
+
+	// ==============================================================
+	// PARTICLE LAYER DESC
+	// ==============================================================
+
+	ParticleAllocation * ParticleLayerDesc::NewAllocation(ParticleLayer * in_layer)
+	{
+		return new ParticleAllocation(in_layer);
+	}
+
+	size_t ParticleLayerDesc::GetParticleSize() const
+	{
+		return 0;
+	}
+
+	size_t ParticleLayerDesc::GetVerticesCountPerParticles() const
+	{
+		return 2 * 3; // 2 triangles per particles to have a square
+	}
+
+	size_t ParticleLayerDesc::GetVertexSize() const
+	{
+		return 0;
+	}
+
+	bool ParticleLayerDesc::AreParticlesDynamic() const
+	{
+		return false;
+	}
+
+	GPUVertexDeclaration ParticleLayerDesc::GetVertexDeclaration() const
+	{
+		return GPUVertexDeclaration();
+	}
+
+	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation)
+	{
+		return particle_count; // no particles destroyed
+	}
+
+	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const
+	{
+		assert(particles != nullptr);
+		assert(vertices != nullptr);
+		return 0; // no vertex inserted
+	}
+
+	// ==============================================================
+	// PARTICLE LAYER
+	// ==============================================================
+
+	ParticleLayer::ParticleLayer(ParticleLayerDesc * in_layer_desc)
+		: layer_desc(in_layer_desc)
+	{
+		assert(in_layer_desc != nullptr);
+	}
+
+	ParticleLayer::~ParticleLayer()
+	{
+		DetachAllParticleAllocations();
+	}
+
+	void ParticleLayer::DetachAllParticleAllocations()
+	{
+		// faster to do that from end to begin
+		while (particles_allocations.size())
+			RemoveParticleAllocation(particles_allocations[particles_allocations.size() - 1]);
+	}
+
+	void ParticleLayer::RemoveParticleAllocation(ParticleAllocation * allocation)
+	{
+		assert(allocation != nullptr);
+		assert(allocation->layer == this);
+
+		for (size_t i = particles_allocations.size(); i > 0; --i)
+		{
+			size_t index = i - 1;
+			if (particles_allocations[index] == allocation)
+			{
+				particles_allocations.erase(particles_allocations.begin() + index);
+				allocation->OnRemovedFromLayer();
+				return;
+			}
+		}
+	}
+
+	ClassTools::ClassRegistration const * ParticleLayer::GetParticleClass() const
+	{
+		return layer_desc->GetParticleClass();
+	}
+
+	bool ParticleLayer::DoTick(double delta_time)
+	{
+		// update the particles themselves
+		if (AreParticlesDynamic())
+			require_GPU_update |= UpdateParticles((float)delta_time);
+		return true;
+	}
+
+	bool ParticleLayer::UpdateParticles(float delta_time)
+	{
+		bool result = false;
+
+		size_t count = particles_allocations.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			ParticleAllocation * allocation = particles_allocations[i];
+			// early exit
+			if (allocation->IsPaused())
+				continue;
+			// get the number of particles
+			size_t particle_count = allocation->GetParticleCount();
+			if (particle_count == 0)
+				continue;
+			// get the particle (void) buffer
+			void * particles = allocation->GetParticleBuffer();
+			if (particles == nullptr)
+				continue;
+			// update all particles
+			size_t remaining_particles = layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation);
+			// clean buffer of all particles that have bean destroyed
+			if (remaining_particles != particle_count)
+				allocation->Resize(remaining_particles);
+			// particles have changed ... so must it be for vertices
+			result = true;
+		}
+		return result;
+	}
+
+	ParticleAllocation * ParticleLayer::SpawnParticles(size_t count)
+	{
+		// create an allocation
+		ParticleAllocation * result = layer_desc->NewAllocation(this);
+		if (result == nullptr)
+			return nullptr;
+		// increase the particle count for that allocation
+		result->Resize(count);
+		// register the allocation
+		particles_allocations.push_back(result);
+		return result;
+	}
+
+	int ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	{
+		int result = 0;
+
+		// Update GPU buffers	
+		size_t vcount = UpdateGPUBuffers();
+		if (vcount == 0)
+			return 0;
+		// update the vertex declaration
+		UpdateVertexDeclaration();
+		// search the material
+		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
+		// prepare rendering state
+		UpdateRenderingStates(true);
+		// update uniform provider with atlas, and do the rendering
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		if (atlas != nullptr)
+			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
+
+		result = DoDisplayHelper(vcount, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
+		// restore rendering states
+		UpdateRenderingStates(false);
+		return result;
+	}
+
+	int ParticleLayer::DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	{
+		// no vertices, no rendering
+		if (vcount == 0)
+			return 0;
+		// get the vertex array
+		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
+		if (vertex_array == nullptr)
+			return 0;
+		// use the material
+		final_material->UseMaterial(uniform_provider);
+		// bind the vertex array
+		glBindVertexArray(vertex_array->GetResourceID());
+		// one draw call for the whole buffer
+		DrawPrimitive primitive;
+		primitive.primitive_type = GL_TRIANGLES;
+		primitive.indexed = false;
+		primitive.count = (int)vcount;
+		primitive.start = 0;
+		primitive.base_vertex_index = 0;
+
+		primitive.Render(instancing);
+		return 1; // 1 DrawCall
+	}
+
+	void ParticleLayer::UpdateVertexDeclaration() const
+	{
+		// is the vertex declaration already filled
+		if (vertex_declaration.entries.size() > 0)
+			return;
+		// fill the vertex declaration
+		vertex_declaration = layer_desc->GetVertexDeclaration();
+	}
+
+	size_t ParticleLayer::UpdateGPUBuffers() const
+	{
+		size_t result = 0;
+
+		// return the number of vertices from the previous call
+		if (!require_GPU_update)
+			return vertices_count; 
+		// create the vertex buffer if necessary
+		if (vertex_buffer == nullptr)
+		{
+			GLTools::GenerateVertexAndIndexBuffersObject(nullptr, &vertex_buffer, nullptr);
+			if (vertex_buffer == nullptr)
+				return 0;
+		}
+		// reserve memory (for the maximum number of vertices possible)
+		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
+		if (vertex_buffer_size == 0)
+			return 0;
+
+		GLuint buffer_id = vertex_buffer->GetResourceID();
+		GLenum map_type = (AreParticlesDynamic()) ?
+			GL_STREAM_DRAW :
+			GL_STATIC_DRAW;
+		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
+
+		// map the vertex buffer
+		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+		if (buffer == nullptr)
+			return 0;
+		// update the buffer
+		result = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
+		// unmap the buffer
+		glUnmapNamedBuffer(buffer_id);
+
+		// no more update required
+		require_GPU_update = false;
+		// cache the number of particles inserted
+		vertices_count = result;
+
+		return result;
+	}
+
+	size_t ParticleLayer::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
+	{
+		size_t result = 0;
+
+		size_t vertex_size = GetVertexSize();
+
+		size_t count = particles_allocations.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			// get the allocation, ignore if invisible
+			ParticleAllocation * allocation = particles_allocations[i];
+			if (!allocation->IsVisible())
+				continue;
+			// ignore empty allocations
+			size_t particle_count = allocation->GetParticleCount();
+			if (particle_count == 0)
+				continue;
+			// get the buffer
+			void * particles = allocation->GetParticleBuffer();
+			if (particles == nullptr)
+				continue;
+			// transform particles into vertices
+			size_t new_vertices = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation);
+			// shift buffer
+			buffer += new_vertices * vertex_size;
+			result += new_vertices;
+		}
+
+		return result;
+	}
+
+	size_t ParticleLayer::ComputeMaxParticleCount() const
+	{
+		size_t result = 0;
+
+		size_t count = particles_allocations.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			// get the allocation, ignore if invisible
+			ParticleAllocation * allocation = particles_allocations[i];
+			if (!allocation->IsVisible())
+				continue;
+			// ignore empty allocations
+			size_t particle_count = allocation->GetParticleCount();
+			if (particle_count == 0)
+				continue;
+
+			result += allocation->GetParticleCount();
+		}
+		return result;
+	}
+
+	void ParticleLayer::UpdateRenderingStates(bool begin) const
+	{
+		if (begin)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+		}
+	}
+
+	ParticleLayer * ParticleLayer::CreateParticleLayer(ParticleLayerDesc * layer_desc, GPURenderMaterial * render_material)
+	{
+		ParticleLayer * result = new ParticleLayer(layer_desc);
+		if (result == nullptr)
+			return nullptr;
+		result->SetRenderMaterial(render_material);
+		return result;
+	}
+
+	ParticleLayer * ParticleLayer::CreateParticleLayer(ParticleLayerDesc * layer_desc, char const * material_name)
+	{
+		// find the optional GPURenderMaterial
+		GPURenderMaterial * render_material = nullptr;
+		if (material_name != nullptr)
+		{
+			GPUResourceManager * resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+			if (resource_manager == nullptr)
+				return nullptr;
+			render_material = resource_manager->FindRenderMaterial(material_name);
+			if (render_material == nullptr)
+				return nullptr;
+		}
+		// create the layer
+		return CreateParticleLayer(layer_desc, render_material);
+	}
+
+}; // namespace chaos
+

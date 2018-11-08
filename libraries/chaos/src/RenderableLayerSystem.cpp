@@ -86,4 +86,18 @@ namespace chaos
 		return info->object.get();
 	}	
 
+	size_t RenderableLayerSystem::GetChildCount() const
+	{
+		return layers.size();
+	}
+	Renderable * RenderableLayerSystem::GetChildAt(size_t index)
+	{
+		return layers[index].object.get();
+	}
+
+	Renderable const * RenderableLayerSystem::GetChildAt(size_t index) const
+	{
+		return layers[index].object.get();
+	}
+
 }; // namespace chaos

@@ -41,6 +41,13 @@ namespace chaos
 		/** remove a renderable */
 		bool RemoveChildRenderable(Renderable * renderable);
 
+		/** get the number of children */
+		size_t GetChildCount() const;
+		/** get the child at a given position (not the rendering order) */
+		Renderable * GetChildAt(size_t index);
+		/** get the child at a given position (not the rendering order) */
+		Renderable const * GetChildAt(size_t index) const;
+
 	protected:
 
 		/** the main rendering method */

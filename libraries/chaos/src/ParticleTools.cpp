@@ -1,6 +1,10 @@
 #include <chaos/ParticleTools.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/MathTools.h>
+#include <chaos/ParticleLayer.h>
+#include <chaos/GPURenderMaterial.h>
+#include <chaos/MyGLFWSingleWindowApplication.h> 
+#include <chaos/GPUResourceManager.h>
 
 namespace chaos
 {
@@ -82,7 +86,6 @@ namespace chaos
 		}	
 		return texcoords;
 	}
-
 
 }; // namespace chaos
 

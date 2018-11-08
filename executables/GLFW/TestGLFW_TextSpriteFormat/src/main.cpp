@@ -152,11 +152,11 @@ protected:
 			return false;
 		particle_manager->SetTextureAtlas(atlas.get());
 		// create the layer
-		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>());
+		int render_order = 0;
+		int layer_id = 0;
+		chaos::ParticleLayer * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>(), render_order, layer_id, material.get());
 		if (layer == nullptr)
 			return false;
-		layer->SetTag(0);
-		layer->SetRenderMaterial(material.get());
 
 		// parse the text
 		chaos::ParticleTextGenerator::Generator generator(*atlas);

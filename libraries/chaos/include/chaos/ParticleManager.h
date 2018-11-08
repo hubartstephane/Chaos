@@ -43,7 +43,7 @@ namespace chaos
 			ParticleLayer * result = ParticleLayer::CreateParticleLayer<TRAIT_TYPE>(material_name, params...);
 			if (result == nullptr)
 				return nullptr;
-			DoAddLayer(result, layer_id, render_order);
+			DoAddLayer(result, render_order, layer_id);
 			return result;
 		}
 
@@ -54,7 +54,7 @@ namespace chaos
 			ParticleLayer * result = ParticleLayer::CreateParticleLayer<TRAIT_TYPE>(render_material, params...);
 			if (result == nullptr)
 				return nullptr;
-			DoAddLayer(result, layer_id, render_order);
+			DoAddLayer(result, render_order, layer_id);
 			return result;
 		}
 

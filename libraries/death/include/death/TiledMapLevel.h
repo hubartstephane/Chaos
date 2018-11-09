@@ -162,7 +162,7 @@ namespace death
 		// LayerInstance : instance of a Layer
 		// =====================================
 
-		class LayerInstance : public chaos::Tickable, public chaos::Renderable
+		class LayerInstance : public chaos::Renderable
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 

@@ -56,4 +56,23 @@ namespace chaos
 
 	}
 
+	bool Renderable::CanTick()
+	{
+		if (!Tickable::CanTick())
+			return false;
+		if (!visible && !tick_hidden)
+			return false;
+		return true;
+	}
+
+	bool Renderable::CanTickIfHidden() const
+	{
+		return tick_hidden;
+	}
+
+	void Renderable::SetCanTickIfHidden(bool in_tick_hidden)
+	{
+		tick_hidden = in_tick_hidden;
+	}
+
 }; // namespace chaos

@@ -464,7 +464,7 @@ namespace chaos
 	// PARTICLE LAYER 
 	// ==============================================================
 
-	class ParticleLayer : public Renderable, public Tickable
+	class ParticleLayer : public Renderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 

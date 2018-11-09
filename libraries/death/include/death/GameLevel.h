@@ -39,7 +39,7 @@ namespace death
 	// GameLevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class GameLevelInstance : public chaos::Renderable, public chaos::Tickable
+	class GameLevelInstance : public chaos::Renderable
 	{
 		friend class GameLevel;
 

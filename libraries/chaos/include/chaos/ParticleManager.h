@@ -18,7 +18,7 @@ namespace chaos
 	// ParticleManager
 	// ==============================================================
 
-	class ParticleManager : public Renderable, public Tickable
+	class ParticleManager : public Renderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 

@@ -11,7 +11,7 @@ namespace chaos
 	// Tickable : an object that deserve to be ticked
 	// ========================================================	
 
-	class Tickable : public virtual ReferencedObject, public virtual NamedObject
+	class Tickable : public ReferencedObject, public NamedObject
 	{
 	public:
 
@@ -26,6 +26,8 @@ namespace chaos
 
 		/** the tick user function */
 		virtual bool DoTick(double delta_time);
+		/** whether the object should be ticked or not */
+		virtual bool CanTick();
 		/** called whenever object pause state has been changed */
 		virtual void OnPauseStateChanged(bool in_pause);
 

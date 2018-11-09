@@ -21,9 +21,14 @@ namespace chaos
 
 	bool Tickable::Tick(double delta_time)
 	{
-		if (IsPaused())
+		if (!CanTick())
 			return false;
 		return DoTick(delta_time);
+	}
+
+	bool Tickable::CanTick()
+	{
+		return !IsPaused();
 	}
 
 	bool Tickable::DoTick(double delta_time)

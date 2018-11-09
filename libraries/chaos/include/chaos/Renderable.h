@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/NamedObject.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/Tickable.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPURenderMaterial.h>
@@ -51,7 +52,7 @@ namespace chaos
 	// Renderable : base class for all object that can be rendered
 	// ========================================================
 
-	class Renderable : public virtual ReferencedObject, public virtual NamedObject
+	class Renderable : public Tickable
 	{
 	public:
 
@@ -63,17 +64,26 @@ namespace chaos
 		/** returns whether the object is visible or not */
 		bool IsVisible() const;
 
+		/** whether the object can be ticked if hidden */
+		bool CanTickIfHidden() const;
+		/** change whether the object can be ticked if hidden flag */
+		void SetCanTickIfHidden(bool in_tick_hidden);
+
 	protected:
 
+		/** override */
+		virtual bool CanTick() override;
 		/** the user defined method to display the object */
 		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 
-	public:
+	protected:
 
 		/** whether the object is hidden or visible */
 		bool visible = true;
+		/** whether the object must be ticked if hidden */
+		bool tick_hidden = false;
 	};
 
 }; // namespace chaos

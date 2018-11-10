@@ -20,9 +20,26 @@
 #include <death/Game.h>
 #include <death/GameHUD.h>
 
+// Create a gamespace for unique idenfiers
+
+namespace death
+{
+	namespace GameHUDKeys
+	{
+		CHAOS_STATIC_TAG(COMBO_ID);
+
+		CHAOS_STATIC_TAG(BACKGROUND_LAYER_ID);
+		CHAOS_STATIC_TAG(BACKGROUND_GAMEOBJECT_LAYER_ID);
+		CHAOS_STATIC_TAG(GAMEOBJECT_LAYER_ID);
+		CHAOS_STATIC_TAG(BRICK_LAYER_ID);
+		CHAOS_STATIC_TAG(LIFE_LAYER_ID);
+		CHAOS_STATIC_TAG(BALL_LAYER_ID);
+		CHAOS_STATIC_TAG(CHALLENGE_LAYER_ID);
+	};
+};
+
 class LudumPlayingHUD : public death::PlayingHUD
 {
-	static int const COMBO_VALUE = death::GameHUD::LAST_KEY + 1;
 
 public:
 
@@ -53,14 +70,6 @@ class LudumGame : public death::Game
 	friend class ParticleMovableObjectTrait;
 	friend class ParticleLifeObjectTrait;
 	friend class ParticleBrickTrait;
-
-	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;
-	static int const BACKGROUND_GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 2;
-	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 3;
-	static int const BRICK_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
-	static int const LIFE_LAYER_ID = death::Game::LAST_LAYER_ID + 5;
-	static int const BALL_LAYER_ID = death::Game::LAST_LAYER_ID + 6;
-	static int const CHALLENGE_LAYER_ID = death::Game::LAST_LAYER_ID + 7;
 
 protected:
 
@@ -190,7 +199,7 @@ protected:
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
 
 	/** create a number of game object */
-	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id = death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 

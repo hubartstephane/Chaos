@@ -3,10 +3,14 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/MetaProgramming.h>
 
+// XXX : the identifiers are unique because they are pointers (uintptr_t) on themselves
+//#define CHAOS_STATIC_TAG(x) static chaos::TagType const x = (chaos::TagType const)&x
+#define CHAOS_STATIC_TAG(x) static chaos::TagType const x = (chaos::TagType const)new int;
+
 namespace chaos
 {
 	/** a tag is an integer that can reference any address */
-	using TagType = uintptr_t;
+	using TagType = int; // intptr_t;
 
 	/** a class that describe an object that can be reference by tag and by name */
 	class NamedObject

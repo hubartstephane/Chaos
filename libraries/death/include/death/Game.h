@@ -23,6 +23,14 @@
 
 namespace death
 {
+	namespace GameHUDKeys
+	{
+		CHAOS_STATIC_TAG(GAME_LAYER_ID);
+		CHAOS_STATIC_TAG(PLAYER_LAYER_ID);
+		CHAOS_STATIC_TAG(HUD_LAYER_ID);
+		CHAOS_STATIC_TAG(TEXT_LAYER_ID);
+	};
+
 #define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
 
 	class Game : public chaos::ReferencedObject
@@ -48,18 +56,6 @@ namespace death
 		friend class PlayingHUD;
 
 	public:
-
-		static const int GAME_LAYER_ID = 1;
-		static const int PLAYER_LAYER_ID = 2;
-		static const int HUD_LAYER_ID = 3;
-
-		static const int GAME_LAYER_ORDER = 1;
-		static const int PLAYER_LAYER_ORDER = 2;
-		static const int HUD_LAYER_ORDER = 3;
-
-		/** some ID for layers */
-		static int const TEXT_LAYER_ID = 0;
-		static int const LAST_LAYER_ID = 0;
 
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
@@ -325,11 +321,11 @@ namespace death
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
 		/** create a text particle system */
-		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id = TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** create a title */
-		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, int layer_id = TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** create a score text at the top left corner */
-		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, int layer_id = TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 
 		/** create the pause HUD */
 		void CreatePauseMenuHUD();

@@ -17,10 +17,10 @@ void LudumPlayingHUD::SetComboValue(death::Game * game, int new_combo)
 	if (new_combo < 2)
 	{
 		cached_combo_value = new_combo;
-		UnregisterParticles(COMBO_VALUE);
+		UnregisterParticles(death::GameHUDKeys::COMBO_ID);
 		return;
 	}
-	CacheAndCreateScoreAllocation(game, new_combo, "Combo : %d x", 60.0f, cached_combo_value, COMBO_VALUE);
+	CacheAndCreateScoreAllocation(game, new_combo, "Combo : %d x", 60.0f, cached_combo_value, death::GameHUDKeys::COMBO_ID);
 }
 
 LudumGame::LudumGame()
@@ -66,7 +66,7 @@ void LudumGame::UpdateLifeParticles()
 	
 	//if (life_allocations == nullptr)
 		
-	life_allocations = CreateGameObjects("life", current_life, LIFE_LAYER_ID);
+	life_allocations = CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
 	if (life_allocations == nullptr)
 		return;
 
@@ -525,7 +525,7 @@ void LudumGame::DestroyGameObjects()
 	sequence_challenge = nullptr;
 }
 
-chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
+chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id)
 {
 	// find layer of concern
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
@@ -590,7 +590,7 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(LudumLevel const * level)
 
 	// create the bricks resource
 	size_t brick_count = level->GetBrickCount();
-	chaos::ParticleAllocation * result = CreateGameObjects("brick", brick_count, BRICK_LAYER_ID);
+	chaos::ParticleAllocation * result = CreateGameObjects("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -659,7 +659,7 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 {
 
 	// create the object
-	chaos::ParticleAllocation * result = CreateGameObjects("ball", 1, BALL_LAYER_ID);
+	chaos::ParticleAllocation * result = CreateGameObjects("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -1293,7 +1293,7 @@ bool LudumGame::InitializeGamepadButtonInfo()
 
 void LudumGame::FillBackgroundLayer()
 {
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(BACKGROUND_LAYER_ID);
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::BACKGROUND_LAYER_ID);
 	if (layer == nullptr)
 		return;
 
@@ -1352,7 +1352,7 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
 
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(CHALLENGE_LAYER_ID);
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
 	if (layer == nullptr)
 		return nullptr;
 
@@ -1401,25 +1401,27 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
+	// shuxxx
+
 	// create layers
-	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
 
 	ParticleMovableObjectTrait movable_trait;
 	movable_trait.game = this;
-	particle_manager->AddLayer<ParticleMovableObjectTrait>(++render_order, BALL_LAYER_ID, "gameobject", movable_trait);
+	particle_manager->AddLayer<ParticleMovableObjectTrait>(++render_order, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
 
 	ParticleBrickTrait brick_trait;
 	brick_trait.game = this;
-	particle_manager->AddLayer<ParticleBrickTrait>(++render_order, BRICK_LAYER_ID, "gameobject", brick_trait);
+	particle_manager->AddLayer<ParticleBrickTrait>(++render_order, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
 
 	ParticleLifeObjectTrait life_trait;
 	life_trait.game = this;
-	particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, LIFE_LAYER_ID, "gameobject", life_trait);
+	particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
 
-	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, CHALLENGE_LAYER_ID, "challenge");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	// fill the background
 	FillBackgroundLayer();

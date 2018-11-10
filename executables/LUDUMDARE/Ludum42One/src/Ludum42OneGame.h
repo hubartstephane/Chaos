@@ -45,7 +45,6 @@ public:
 	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
 	static int const PLAYER_LAYER_ID     = death::Game::LAST_LAYER_ID + 5;
 	
-
 	static int const OBJECT_TYPE_PLAYER = 0;
 	static int const OBJECT_TYPE_PLANET = 1;
 

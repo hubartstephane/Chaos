@@ -3,27 +3,35 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/Renderable.h>
+#include <chaos/NamedObject.h>
 
 namespace death
 {
-	class GameHUD : public chaos::ReferencedObject
+	// Create a gamespace for unique idenfiers
+	namespace GameHUDKeys
+	{		
+		CHAOS_STATIC_TAG(TITLE_ID);
+		CHAOS_STATIC_TAG(BEST_SCORE_ID);
+	};
+
+	class GameHUD : public chaos::Renderable
 	{
 	public:
 
-		static int const TITLE       = 0;
-		static int const BEST_SCORE  = 1;
-		static int const LAST_KEY    = 1;
+
+
 
 		/** insert some particles inside the HUD */
-		void RegisterParticles(int key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
+		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
 		/** remove some particles from the HUD */
-		void UnregisterParticles(int key);
+		void UnregisterParticles(chaos::TagType key);
 		/** clear all particles from the HUD */
 		void Clear();
 
 	protected:
 
-		std::multimap<int, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
+		std::multimap<chaos::TagType, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
 	};
 
 	class MainMenuHUD : public GameHUD
@@ -53,7 +61,7 @@ namespace death
 
 	protected:
 
-		void CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y, int & cached_value, int key);
+		void CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y, int & cached_value, chaos::TagType key);
 
 	protected:
 

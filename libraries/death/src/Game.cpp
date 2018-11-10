@@ -375,11 +375,11 @@ namespace death
 		root_render_layer = new chaos::RenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return false;
-		if (AddChildRenderLayer("GAME", GAME_LAYER_ID, GAME_LAYER_ORDER) == nullptr)
+		if (AddChildRenderLayer("GAME", death::GameHUDKeys::GAME_LAYER_ID, 1) == nullptr)
 			return false;
-		if (AddChildRenderLayer("PLAYER", PLAYER_LAYER_ID, PLAYER_LAYER_ORDER) == nullptr) // maybe the player will go in another layer
+		if (AddChildRenderLayer("PLAYER", death::GameHUDKeys::PLAYER_LAYER_ID, 2) == nullptr) // maybe the player will go in another layer
 			return false;
-		if (AddChildRenderLayer("HUD", HUD_LAYER_ID, HUD_LAYER_ORDER) == nullptr)
+		if (AddChildRenderLayer("HUD", death::GameHUDKeys::HUD_LAYER_ID, 3) == nullptr)
 			return false;
 
 		return true;
@@ -1049,7 +1049,16 @@ namespace death
 		return false;
 	}
 
-	chaos::ParticleAllocation * Game::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, int layer_id)
+
+
+
+
+
+
+
+
+
+	chaos::ParticleAllocation * Game::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id)
 	{
 		// find layer of concern
 		chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
@@ -1066,7 +1075,7 @@ namespace death
 		return allocation;
 	}
 
-	chaos::ParticleAllocation * Game::CreateTitle(char const * title, bool normal, int layer_id)
+	chaos::ParticleAllocation * Game::CreateTitle(char const * title, bool normal, chaos::TagType layer_id)
 	{
 		chaos::ParticleTextGenerator::GeneratorParams params;
 		params.line_height = title_size;
@@ -1078,7 +1087,7 @@ namespace death
 		return CreateTextParticles(title, params, layer_id);
 	}
 
-	chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, int layer_id)
+	chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id)
 	{
 		// get view size
 		chaos::box2 view = GetViewBox();
@@ -1097,6 +1106,20 @@ namespace death
 		std::string str = chaos::StringTools::Printf(format, value);
 		return CreateTextParticles(str.c_str(), params, layer_id);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	void Game::CreatePauseMenuHUD()
 	{
@@ -1143,8 +1166,14 @@ namespace death
 		PauseMenuHUD * result = new PauseMenuHUD;
 		if (result == nullptr)
 			return nullptr;
-		result->RegisterParticles(GameHUD::TITLE, CreateTitle("Pause", true));
+		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Pause", true));
 		return result;
+	}
+
+	static void fff(chaos::TagType t)
+	{
+		chaos::TagType a = t;
+		a = a;
 	}
 
 	MainMenuHUD * Game::DoCreateMainMenuHUD()
@@ -1154,7 +1183,32 @@ namespace death
 			return nullptr;
 
 		if (game_name != nullptr)
-			result->RegisterParticles(GameHUD::TITLE, CreateTitle(game_name, false));
+		{
+			chaos::TagType u = 666;
+			chaos::TagType v = u;
+
+			auto ppp = GameHUDKeys::TEXT_LAYER_ID;
+			auto ppp2 = death::GameHUDKeys::TEXT_LAYER_ID;
+
+			chaos::TagType a = (chaos::TagType)GameHUDKeys::TEXT_LAYER_ID;
+			chaos::TagType b = a;
+
+			intptr_t  c = GameHUDKeys::TEXT_LAYER_ID;
+			uintptr_t d = GameHUDKeys::TEXT_LAYER_ID;
+
+			if (c == GameHUDKeys::TEXT_LAYER_ID)
+				c = c;
+
+			intptr_t  e = (intptr_t)GameHUDKeys::TEXT_LAYER_ID;
+			uintptr_t f = (uintptr_t)GameHUDKeys::TEXT_LAYER_ID;
+			
+			fff(GameHUDKeys::TEXT_LAYER_ID);
+			auto xxx = CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID);
+			result->RegisterParticles(GameHUDKeys::TITLE_ID, xxx); // shuxxx
+
+		}
+
+			//result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID)); // shuxxx
 		
 		if (best_score > 0)
 		{
@@ -1167,7 +1221,7 @@ namespace death
 			params.font_info_name = "normal";
 
 			std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-			result->RegisterParticles(GameHUD::BEST_SCORE, CreateTextParticles(str.c_str(), params, TEXT_LAYER_ID));
+			result->RegisterParticles(GameHUDKeys::BEST_SCORE_ID, CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID));
 		}
 		return result;
 	}
@@ -1185,7 +1239,7 @@ namespace death
 		GameOverHUD * result = new GameOverHUD;
 		if (result == nullptr)
 			return nullptr;
-		result->RegisterParticles(GameHUD::TITLE, CreateTitle("Game Over", true));
+		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Game Over", true));
 		return result;
 	}
 

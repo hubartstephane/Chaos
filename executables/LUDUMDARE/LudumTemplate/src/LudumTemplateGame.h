@@ -24,6 +24,15 @@
 // LudumGame
 // =================================================
 
+namespace death
+{
+	namespace GameHUDKeys
+	{
+		CHAOS_STATIC_TAG(BACKGROUND_LAYER_ID);
+		CHAOS_STATIC_TAG(GAMEOBJECT_LAYER_ID);
+	};
+};
+
 class LudumGame : public death::Game
 {
 	friend class LudumWindow;
@@ -36,11 +45,7 @@ class LudumGame : public death::Game
 	friend class PlayingState;
 	friend class PlayingToGameOverTransition;
 
-
 public:
-
-	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;
-	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 2;
 
 	/** constructor */
 	LudumGame();
@@ -125,7 +130,7 @@ protected:
 	void FillBackgroundLayer();
 
 	/** create a number of game object */
-	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id = death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 

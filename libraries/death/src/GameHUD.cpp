@@ -3,7 +3,6 @@
 
 namespace death
 {
-
 	void GameHUD::RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous)
 	{
 		if (remove_previous)

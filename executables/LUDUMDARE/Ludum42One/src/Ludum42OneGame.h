@@ -24,6 +24,16 @@
 // LudumGame
 // =================================================
 
+namespace death
+{
+	namespace GameHUDKeys
+	{
+		CHAOS_STATIC_TAG(BACKGROUND_LAYER_ID);
+		CHAOS_STATIC_TAG(PLANETS_LAYER_ID);
+		CHAOS_STATIC_TAG(GAMEOBJECT_LAYER_ID);
+	};
+};
+
 class LudumGame : public death::Game
 {
 	friend class LudumWindow;
@@ -40,11 +50,6 @@ class LudumGame : public death::Game
 
 public:
 
-	static int const BACKGROUND_LAYER_ID = death::Game::LAST_LAYER_ID + 1;		
-	static int const PLANETS_LAYER_ID    = death::Game::LAST_LAYER_ID + 2;
-	static int const GAMEOBJECT_LAYER_ID = death::Game::LAST_LAYER_ID + 4;
-	static int const PLAYER_LAYER_ID     = death::Game::LAST_LAYER_ID + 5;
-	
 	static int const OBJECT_TYPE_PLAYER = 0;
 	static int const OBJECT_TYPE_PLANET = 1;
 
@@ -136,7 +141,7 @@ protected:
 	void FillBackgroundLayer();
 
 	/** create a number of game object */
-	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, int layer_id = GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id = death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	/** fill game object texture coordinates (from the last of the array) */
 	bool InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count);
 	/** create the player */
@@ -169,7 +174,7 @@ protected:
 	/** destroying player */
 	void UnSpawnPlayer();
 
-	chaos::ParticleAllocation * SpawnObjects(int layer_id, size_t count);
+	chaos::ParticleAllocation * SpawnObjects(chaos::TagType layer_id, size_t count);
 
 	/** get the position of the player */
 	bool SetPlayerPosition(glm::vec2 const & position);

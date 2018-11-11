@@ -195,7 +195,7 @@ void LudumGame::DestroyGameObjects()
 	life_allocations = nullptr;
 }
 
-chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
+chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id)
 {
 	// allocate the objects
 	chaos::ParticleAllocation * allocation = SpawnObjects(layer_id, count);
@@ -348,7 +348,7 @@ death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 
 void LudumGame::FillBackgroundLayer()
 {
-	background_allocations = SpawnObjects(BACKGROUND_LAYER_ID, 1);
+	background_allocations = SpawnObjects(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
 	if (background_allocations == nullptr)
 		return;
 
@@ -366,28 +366,28 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
-	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "space_background");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GROUND_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, WALLS_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "space_background");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GROUND_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::WALLS_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
 
 
 	ParticlePlayerTrait player_trait;
 	player_trait.game = this;
 	player_trait.atlas_dimension = glm::ivec2(8, 8);
-	particle_manager->AddLayer<ParticlePlayerTrait>(++render_order, PLAYER_LAYER_ID, "gameobject", player_trait);
+	particle_manager->AddLayer<ParticlePlayerTrait>(++render_order, death::GameHUDKeys::PLAYER_LAYER_ID, "gameobject", player_trait);
 
 
 	ParticleObjectAtlasTrait atlas_trait;
 	atlas_trait.game = this;
-	particle_manager->AddLayer<ParticleObjectAtlasTrait>(++render_order, FIRE_LAYER_ID, "gameobject", atlas_trait);
+	particle_manager->AddLayer<ParticleObjectAtlasTrait>(++render_order, death::GameHUDKeys::FIRE_LAYER_ID, "gameobject", atlas_trait);
 
 	ParticleWaterTrait water_trait;
 	water_trait.game = this;
 	water_trait.atlas_dimension = glm::ivec2(7, 1);
-	particle_manager->AddLayer<ParticleWaterTrait>(++render_order, WATER_LAYER_ID, "gameobject", water_trait);
+	particle_manager->AddLayer<ParticleWaterTrait>(++render_order, death::GameHUDKeys::WATER_LAYER_ID, "gameobject", water_trait);
 
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	// fill the background
 	FillBackgroundLayer();
@@ -409,7 +409,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 }
 
-chaos::ParticleAllocation * LudumGame::SpawnObjects(int layer_id, size_t count)
+chaos::ParticleAllocation * LudumGame::SpawnObjects(chaos::TagType layer_id, size_t count)
 {
 	chaos::ParticleLayer * layer = GetParticleManager()->FindLayer(layer_id);
 	if (layer == nullptr)
@@ -424,7 +424,7 @@ bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 	if (player_allocations != nullptr) // already existing
 		return false;
 
-	player_allocations = SpawnObjects(LudumGame::PLAYER_LAYER_ID, 1);
+	player_allocations = SpawnObjects(death::GameHUDKeys::PLAYER_LAYER_ID, 1);
 	if (player_allocations == nullptr)
 		return false;
 
@@ -432,7 +432,7 @@ bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 	particles[0] = particle_object;
 
 	// create the water allocation
-	water_allocations = SpawnObjects(LudumGame::WATER_LAYER_ID, 0);
+	water_allocations = SpawnObjects(death::GameHUDKeys::WATER_LAYER_ID, 0);
 
 	return true;
 }

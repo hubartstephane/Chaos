@@ -1401,8 +1401,6 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
-	// shuxxx
-
 	// create layers
 	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");

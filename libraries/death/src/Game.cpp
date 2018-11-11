@@ -12,7 +12,6 @@
 
 namespace death
 {
-
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
 	{
 
@@ -1170,12 +1169,6 @@ namespace death
 		return result;
 	}
 
-	static void fff(chaos::TagType t)
-	{
-		chaos::TagType a = t;
-		a = a;
-	}
-
 	MainMenuHUD * Game::DoCreateMainMenuHUD()
 	{
 		MainMenuHUD * result = new MainMenuHUD;
@@ -1183,33 +1176,8 @@ namespace death
 			return nullptr;
 
 		if (game_name != nullptr)
-		{
-			chaos::TagType u = 666;
-			chaos::TagType v = u;
-
-			auto ppp = GameHUDKeys::TEXT_LAYER_ID;
-			auto ppp2 = death::GameHUDKeys::TEXT_LAYER_ID;
-
-			chaos::TagType a = (chaos::TagType)GameHUDKeys::TEXT_LAYER_ID;
-			chaos::TagType b = a;
-
-			intptr_t  c = GameHUDKeys::TEXT_LAYER_ID;
-			uintptr_t d = GameHUDKeys::TEXT_LAYER_ID;
-
-			if (c == GameHUDKeys::TEXT_LAYER_ID)
-				c = c;
-
-			intptr_t  e = (intptr_t)GameHUDKeys::TEXT_LAYER_ID;
-			uintptr_t f = (uintptr_t)GameHUDKeys::TEXT_LAYER_ID;
-			
-			fff(GameHUDKeys::TEXT_LAYER_ID);
-			auto xxx = CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID);
-			result->RegisterParticles(GameHUDKeys::TITLE_ID, xxx); // shuxxx
-
-		}
-
-			//result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID)); // shuxxx
-		
+			result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID));
+	
 		if (best_score > 0)
 		{
 			chaos::ParticleTextGenerator::GeneratorParams params;

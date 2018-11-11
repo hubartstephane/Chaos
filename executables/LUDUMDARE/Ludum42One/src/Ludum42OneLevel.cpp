@@ -49,9 +49,9 @@ chaos::ParticleLayer * LudumLevelInstance::ObjectToParticleLayer(int object_type
 {
 	int layer_id = -1;
 	if (object_type == LudumGame::OBJECT_TYPE_PLAYER)
-		layer_id = LudumGame::PLAYER_LAYER_ID;
+		layer_id = death::GameHUDKeys::PLAYER_LAYER_ID;
 	else if (object_type == LudumGame::OBJECT_TYPE_PLANET)
-		layer_id = LudumGame::PLANETS_LAYER_ID;
+		layer_id = death::GameHUDKeys::PLANETS_LAYER_ID;
 
 	if (layer_id > 0)
 		return game->GetParticleManager()->FindLayer(layer_id);

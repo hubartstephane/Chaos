@@ -240,7 +240,7 @@ void LudumGame::DestroyGameObjects()
 	life_allocations = nullptr;
 }
 
-chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, int layer_id)
+chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id)
 {
 	// find layer of concern
 	chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
@@ -367,7 +367,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 
 void LudumGame::FillBackgroundLayer()
 {
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(BACKGROUND_LAYER_ID);
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::BACKGROUND_LAYER_ID);
 	if (layer == nullptr)
 		return;
 
@@ -389,9 +389,9 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
-	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, BACKGROUND_LAYER_ID, "background");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	// fill the background
 	FillBackgroundLayer();

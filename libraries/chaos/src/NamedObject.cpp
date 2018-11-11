@@ -3,6 +3,24 @@
 
 namespace chaos
 {
+	TagType MakeStaticTagType(char const * name)
+	{
+		static std::map<std::string, TagType> tags;
+
+		// search if tag is already registered
+		for (auto it : tags)
+			if (it.first == name)
+				return it.second;
+		// create a tag
+		TagType * result = new TagType;
+		if (result == nullptr)
+			return 0;
+		// the pointer points on itsef
+		*result = (TagType)result; 
+		tags[name] = (TagType)result;
+		return (TagType)result;
+	}
+
 	void NamedObject::SetName(char const * in_name)
 	{
 		if (in_name == nullptr)

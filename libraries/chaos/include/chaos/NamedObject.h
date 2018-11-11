@@ -7,7 +7,7 @@
 //
 //  at first, i test for an automatic tag generation with 
 //
-//  #define CHAOS_STATIC_TAG(x) static chaos::TagType const x = (chaos::TagType const)&x
+//  #define CHAOS_DECLARE_TAG(x) static chaos::TagType const x = (chaos::TagType const)&x
 //
 //  seemed find until i realized that each time header containing this definition was included, there was a copy of the TagType (with a different address)
 //  the '#pragma once' was not preventing this issue due to several file object 'building'
@@ -20,7 +20,7 @@
 //
 //  The macro deserve to be used in declaration and so is not thread safe (the function it calls is not thread safe)
 
-#define CHAOS_STATIC_TAG(x) static chaos::TagType x = chaos::MakeStaticTagType(#x)
+#define CHAOS_DECLARE_TAG(x) static chaos::TagType x = chaos::MakeStaticTagType(#x)
 
 
 namespace chaos

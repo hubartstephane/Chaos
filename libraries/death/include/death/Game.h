@@ -25,10 +25,10 @@ namespace death
 {
 	namespace GameHUDKeys
 	{
-		CHAOS_STATIC_TAG(GAME_LAYER_ID);
-		CHAOS_STATIC_TAG(PLAYER_LAYER_ID);
-		CHAOS_STATIC_TAG(HUD_LAYER_ID);
-		CHAOS_STATIC_TAG(TEXT_LAYER_ID);
+		CHAOS_DECLARE_TAG(GAME_LAYER_ID);
+		CHAOS_DECLARE_TAG(PLAYER_LAYER_ID);
+		CHAOS_DECLARE_TAG(HUD_LAYER_ID);
+		CHAOS_DECLARE_TAG(TEXT_LAYER_ID);
 	};
 
 #define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
@@ -108,7 +108,7 @@ namespace death
 		/** the rendering method */
 		virtual void Display(glm::ivec2 const & size);
 		/** the user defined rendering function */
-		virtual void DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider);
+		virtual void DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider);
 
 		/** utility method to set a box uniform */
 		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b);

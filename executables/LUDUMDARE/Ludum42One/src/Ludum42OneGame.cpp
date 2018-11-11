@@ -96,7 +96,7 @@ bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	return false;
 }
 
-void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)
+void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider)
 {
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -116,7 +116,7 @@ void LudumGame::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvide
 		particle_manager->Display(&uniform_provider);
 
 	// super method
-	death::Game::DoDisplay(viewport, uniform_provider);
+	death::Game::DoDisplay(render_params, uniform_provider);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

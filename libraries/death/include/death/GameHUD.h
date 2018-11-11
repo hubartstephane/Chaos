@@ -11,8 +11,8 @@ namespace death
 	// Create a gamespace for unique idenfiers
 	namespace GameHUDKeys
 	{		
-		CHAOS_STATIC_TAG(TITLE_ID);
-		CHAOS_STATIC_TAG(BEST_SCORE_ID);
+		CHAOS_DECLARE_TAG(TITLE_ID);
+		CHAOS_DECLARE_TAG(BEST_SCORE_ID);
 	};
 
 	class GameHUD : public chaos::Renderable

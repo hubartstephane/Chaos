@@ -57,6 +57,15 @@ namespace death
 		// tick the particle manager
 		if (particle_manager != nullptr)
 			particle_manager->Tick((float)delta_time);
+		// tick the hud
+		if (main_menu_hud != nullptr)
+			main_menu_hud->Tick(delta_time);
+		if (pause_menu_hud != nullptr)
+			pause_menu_hud->Tick(delta_time);
+		if (playing_hud != nullptr)
+			playing_hud->Tick(delta_time);
+		if (gameover_hud != nullptr)
+			gameover_hud->Tick(delta_time);
 	}
 	
 	bool Game::OnKeyEvent(int key, int action)
@@ -142,13 +151,25 @@ namespace death
 		double pause_time = GetMainClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
 
-		DoDisplay(viewport, main_uniform_provider);
+		chaos::RenderParams render_params;
+		render_params.viewport = viewport;
+		DoDisplay(render_params, main_uniform_provider);
 	}
 
-	void Game::DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider)
+	void Game::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider)
 	{
+		// display the level instance
 		if (current_level_instance != nullptr)
-			current_level_instance->Display(&uniform_provider);
+			current_level_instance->Display(&uniform_provider, render_params);
+		// display the hud (AFTER the level)
+		if (main_menu_hud != nullptr)
+			main_menu_hud->Display(&uniform_provider, render_params);
+		if (pause_menu_hud != nullptr)
+			pause_menu_hud->Display(&uniform_provider, render_params);
+		if (playing_hud != nullptr)
+			playing_hud->Display(&uniform_provider, render_params);
+		if (gameover_hud != nullptr)
+			gameover_hud->Display(&uniform_provider, render_params);
 	}
 
 	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)

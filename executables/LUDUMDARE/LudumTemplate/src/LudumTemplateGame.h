@@ -28,8 +28,8 @@ namespace death
 {
 	namespace GameHUDKeys
 	{
-		CHAOS_STATIC_TAG(BACKGROUND_LAYER_ID);
-		CHAOS_STATIC_TAG(GAMEOBJECT_LAYER_ID);
+		CHAOS_DECLARE_TAG(BACKGROUND_LAYER_ID);
+		CHAOS_DECLARE_TAG(GAMEOBJECT_LAYER_ID);
 	};
 };
 
@@ -57,7 +57,7 @@ public:
 	/** override */
 	virtual void OnMouseMove(double x, double y) override;
 	/** override */
-	virtual void DoDisplay(chaos::box2 const & viewport, chaos::GPUProgramProvider & uniform_provider) override;
+	virtual void DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider) override;
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 

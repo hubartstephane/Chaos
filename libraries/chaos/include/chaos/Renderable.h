@@ -29,6 +29,8 @@ namespace chaos
 
 	public:
 
+		/** the viewport */
+		chaos::box2 viewport;
 		/** material provider */
 		boost::intrusive_ptr<MaterialProvider> material_provider;
 		/** the instancing information */

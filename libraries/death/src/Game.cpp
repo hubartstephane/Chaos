@@ -983,7 +983,16 @@ namespace death
 	{
 		if (playing_hud == nullptr)
 			return;
+
+		if (playing_hud->IsDynamicParticlesRequiringUpdate(death::GameHUDKeys::BEST_SCORE_ID, current_score))
+		{
+
+		}
+
+
+
 		playing_hud->SetScoreValue(this, current_score);
+		playing_hud->UpdateDynamicParticles(death::GameHUDKeys::BEST_SCORE_ID, current_score);
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)
@@ -1078,10 +1087,18 @@ namespace death
 
 
 
-	chaos::ParticleAllocation * Game::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id)
+	chaos::ParticleAllocation * Game::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id)
 	{
+		// select the particle manager we want
+		if (in_particle_manager == nullptr)
+		{
+			in_particle_manager = particle_manager.get(); // by default, take the manager of the Game
+			if (in_particle_manager == nullptr)
+				return nullptr;
+		}
+
 		// find layer of concern
-		chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
+		chaos::ParticleLayer * layer = in_particle_manager->FindLayer(layer_id);
 		if (layer == nullptr)
 			return nullptr;
 
@@ -1095,7 +1112,7 @@ namespace death
 		return allocation;
 	}
 
-	chaos::ParticleAllocation * Game::CreateTitle(char const * title, bool normal, chaos::TagType layer_id)
+	chaos::ParticleAllocation * Game::CreateTitle(char const * title, bool normal, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id)
 	{
 		chaos::ParticleTextGenerator::GeneratorParams params;
 		params.line_height = title_size;
@@ -1104,10 +1121,10 @@ namespace death
 
 		params.font_info_name = (normal) ? "normal" : "title";
 
-		return CreateTextParticles(title, params, layer_id);
+		return CreateTextParticles(title, params, in_particle_manager, layer_id);
 	}
 
-	chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id)
+	chaos::ParticleAllocation * Game::CreateScoringText(char const * format, int value, float Y, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id)
 	{
 		// get view size
 		chaos::box2 view = GetViewBox();
@@ -1124,22 +1141,18 @@ namespace death
 
 		// format text and create particles
 		std::string str = chaos::StringTools::Printf(format, value);
-		return CreateTextParticles(str.c_str(), params, layer_id);
+		return CreateTextParticles(str.c_str(), params, in_particle_manager, layer_id);
 	}
 
+	bool Game::InitializeHUD(death::GameHUD * hud)
+	{
+		assert(hud != nullptr);
+		if (!hud->Initialize(texture_atlas.get()))
+			return false;
+		//hud->GetParticleManager()->AddLayer<ParticleDefault::PTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
-
-
-
-
-
-
-
-
-
-
-
-
+		return true;
+	}
 
 	void Game::CreatePauseMenuHUD()
 	{
@@ -1186,7 +1199,8 @@ namespace death
 		PauseMenuHUD * result = new PauseMenuHUD;
 		if (result == nullptr)
 			return nullptr;
-		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Pause", true));
+		InitializeHUD(result);
+		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Pause", true, result->GetParticleManager()));
 		return result;
 	}
 
@@ -1195,9 +1209,10 @@ namespace death
 		MainMenuHUD * result = new MainMenuHUD;
 		if (result == nullptr)
 			return nullptr;
+		InitializeHUD(result);
 
 		if (game_name != nullptr)
-			result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID));
+			result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, result->GetParticleManager(), GameHUDKeys::TEXT_LAYER_ID));
 	
 		if (best_score > 0)
 		{
@@ -1210,7 +1225,7 @@ namespace death
 			params.font_info_name = "normal";
 
 			std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-			result->RegisterParticles(GameHUDKeys::BEST_SCORE_ID, CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID));
+			result->RegisterParticles(GameHUDKeys::BEST_SCORE_ID, CreateTextParticles(str.c_str(), params, result->GetParticleManager(), death::GameHUDKeys::TEXT_LAYER_ID));
 		}
 		return result;
 	}
@@ -1220,6 +1235,7 @@ namespace death
 		PlayingHUD * result = new PlayingHUD;
 		if (result == nullptr)
 			return nullptr;
+		InitializeHUD(result);
 		return result;
 	}
 
@@ -1228,7 +1244,8 @@ namespace death
 		GameOverHUD * result = new GameOverHUD;
 		if (result == nullptr)
 			return nullptr;
-		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Game Over", true));
+		InitializeHUD(result);
+		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Game Over", true, result->GetParticleManager()));
 		return result;
 	}
 

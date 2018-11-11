@@ -321,11 +321,11 @@ namespace death
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
 		/** create a text particle system */
-		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** create a title */
-		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** create a score text at the top left corner */
-		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 
 		/** create the pause HUD */
 		void CreatePauseMenuHUD();
@@ -353,6 +353,9 @@ namespace death
 		virtual PlayingHUD * DoCreatePlayingHUD();
 		/** user defined method to create the gameover HUD */
 		virtual GameOverHUD * DoCreateGameOverHUD();
+
+		/** initialize the hud with any necessary data */
+		virtual bool InitializeHUD(death::GameHUD * hud);
 
 		/** get currently played level */
 		GameLevel * GetCurrentLevel();

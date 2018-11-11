@@ -19,8 +19,10 @@ namespace death
 	{
 	public:
 
-
-
+		/** initialization method : set the particle manager and use it */
+		bool Initialize(chaos::ParticleManager * in_particle_manager, bool in_external_manager);
+		/** initialization method : create a new particle manager using given atlas */
+		bool Initialize(chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 
 		/** insert some particles inside the HUD */
 		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
@@ -29,9 +31,36 @@ namespace death
 		/** clear all particles from the HUD */
 		void Clear();
 
+
+		bool IsDynamicParticlesRequiringUpdate(chaos::TagType key, int new_value);
+
+		/** update a formated text parameter */
+		chaos::ParticleAllocation * UpdateDynamicParticles(chaos::TagType key, int new_value);
+
+		bool CreateDynamicParticles(chaos::TagType, int initial_value);
+
+
+		/** get the particle manager */
+		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
+		/** get the particle manager */
+		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
+
 	protected:
 
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+
+	protected:
+
+		/** the allocations */
 		std::multimap<chaos::TagType, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
+
+		/** the particle manager */
+		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+		/** indicates whether THIS is responsible or not of rendering/ticking the particle manager */
+		bool external_manager = false;
 	};
 
 	class MainMenuHUD : public GameHUD

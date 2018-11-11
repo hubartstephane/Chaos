@@ -100,6 +100,7 @@ void LudumGame::UpdateComboParticles()
 	if (hud == nullptr)
 		return;
 	hud->SetComboValue(this, combo_multiplier);
+	hud->UpdateDynamicParticles(death::GameHUDKeys::COMBO_ID, combo_multiplier);
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)

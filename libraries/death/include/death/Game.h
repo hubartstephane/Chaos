@@ -53,10 +53,16 @@ namespace death
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
 
+		/** returns the game name */
+		char const * GetGameName() const { return game_name; }
+		/** returns the best score */
+		int GetBestScore() const { return best_score; }
+		/** returns the current score */
+		int GetCurrentScore() const { return current_score; }
+
 		/** getter on the particle manager */
 		chaos::ParticleManager * GetParticleManager(){ return particle_manager.get(); }
 		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
-
 
 		/** getter on the texture atlas */
 		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }

@@ -1,5 +1,15 @@
 #include "Ludum41HUD.h"
 
+bool LudumPlayingHUD::DoTick(double delta_time)
+{
+	// call super method
+	PlayingHUD::DoTick(delta_time);
+	// update the counter
+
+
+	return true;
+}
+
 void LudumPlayingHUD::SetComboValue(death::Game * game, int new_combo)
 {
 	if (new_combo < 2)

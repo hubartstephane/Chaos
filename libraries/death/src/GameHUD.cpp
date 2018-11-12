@@ -149,12 +149,23 @@ namespace death
 		// call super method
 		if (!GameHUD::FillHUDContent(in_game))
 			return false;
+		// populate the HUD
+		if (in_game->GetGameName() != nullptr)
+			RegisterParticles(GameHUDKeys::TITLE_ID, in_game->CreateTitle(in_game->GetGameName(), false, GetParticleManager(), GameHUDKeys::TEXT_LAYER_ID));
 
+		if (in_game->GetBestScore() > 0)
+		{
+			chaos::ParticleTextGenerator::GeneratorParams params;
+			params.line_height = 50;
+			params.hotpoint_type = chaos::Hotpoint::CENTER;
+			params.position.x = 0.0f;
+			params.position.y = -130.0f;
 
+			params.font_info_name = "normal";
 
-
-
-
+			std::string str = chaos::StringTools::Printf("Best score : %d", in_game->GetBestScore());
+			RegisterParticles(GameHUDKeys::BEST_SCORE_ID, in_game->CreateTextParticles(str.c_str(), params, GetParticleManager(), death::GameHUDKeys::TEXT_LAYER_ID));
+		}
 		return true;
 	}
 
@@ -198,14 +209,22 @@ namespace death
 		// populate the HUD
 
 
+		return true;
+	}
 
+	bool PlayingHUD::DoTick(double delta_time)
+	{
+		// call super method
+		GameHUD::DoTick(delta_time);
 
 		return true;
 	}
 
+
+
 	void PlayingHUD::SetScoreValue(class Game * game, int new_score)
 	{
-		CacheAndCreateScoreAllocation(game, new_score, "Score : %d", 20.0f, cached_score_value, GameHUDKeys::BEST_SCORE_ID);
+		CacheAndCreateScoreAllocation(game, new_score, "Score : %d", 20.0f, cached_score_value, GameHUDKeys::SCORE_ID);
 	}
 
 	void PlayingHUD::CacheAndCreateScoreAllocation(class Game * game, int value, char const * format, float Y,int & cached_value, chaos::TagType key)

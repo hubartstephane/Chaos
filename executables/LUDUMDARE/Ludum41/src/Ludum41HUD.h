@@ -19,9 +19,13 @@ namespace death
 	};
 };
 
-
 class LudumPlayingHUD : public death::PlayingHUD
 {
+
+protected:
+
+	/** override */
+	virtual bool DoTick(double delta_time) override;
 
 public:
 

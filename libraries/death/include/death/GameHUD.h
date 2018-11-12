@@ -13,6 +13,7 @@ namespace death
 	{
 		// some allocation ID's
 		CHAOS_DECLARE_TAG(TITLE_ID);
+		CHAOS_DECLARE_TAG(SCORE_ID);
 		CHAOS_DECLARE_TAG(BEST_SCORE_ID);
 		// some layer ID's
 		CHAOS_DECLARE_TAG(GAME_LAYER_ID);
@@ -128,6 +129,13 @@ namespace death
 
 		/** override */
 		virtual bool FillHUDContent(class Game * in_game) override;
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	public:
 
 		void SetScoreValue(class Game * game, int new_score);
 

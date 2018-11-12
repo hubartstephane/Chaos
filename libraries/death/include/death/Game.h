@@ -23,13 +23,6 @@
 
 namespace death
 {
-	namespace GameHUDKeys
-	{
-		CHAOS_DECLARE_TAG(GAME_LAYER_ID);
-		CHAOS_DECLARE_TAG(PLAYER_LAYER_ID);
-		CHAOS_DECLARE_TAG(HUD_LAYER_ID);
-		CHAOS_DECLARE_TAG(TEXT_LAYER_ID);
-	};
 
 #define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
 
@@ -93,6 +86,19 @@ namespace death
 		DEATH_FIND_RENDERABLE_CHILD(chaos::RenderableLayerSystem, FindRenderableLayer);
 		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayer, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
+
+		/** create a text particle system */
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		/** create a title */
+		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		/** create a score text at the top left corner */
+		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+
+
+
+
+
+
 	protected:
 
 		/** the tick method */
@@ -320,21 +326,14 @@ namespace death
 		/** pause/resume pause/game clocks */
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
-		/** create a text particle system */
-		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
-		/** create a title */
-		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
-		/** create a score text at the top left corner */
-		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
-
 		/** create the pause HUD */
-		void CreatePauseMenuHUD();
+		bool CreatePauseMenuHUD();
 		/** create the main menu HUD */
-		void CreateMainMenuHUD();
+		bool CreateMainMenuHUD();
 		/** create the game HUD */
-		void CreatePlayingHUD();
+		bool CreatePlayingHUD();
 		/** create the gameover HUD */
-		void CreateGameOverHUD();
+		bool CreateGameOverHUD();
 
 		/** destroy the pause HUD */
 		void DestroyPauseMenuHUD();
@@ -353,9 +352,6 @@ namespace death
 		virtual PlayingHUD * DoCreatePlayingHUD();
 		/** user defined method to create the gameover HUD */
 		virtual GameOverHUD * DoCreateGameOverHUD();
-
-		/** initialize the hud with any necessary data */
-		virtual bool InitializeHUD(death::GameHUD * hud);
 
 		/** get currently played level */
 		GameLevel * GetCurrentLevel();

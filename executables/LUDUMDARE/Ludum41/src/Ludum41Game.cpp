@@ -1,5 +1,6 @@
 #include "Ludum41Game.h"
 #include "Ludum41Particles.h"
+#include "Ludum41HUD.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -12,17 +13,6 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
-void LudumPlayingHUD::SetComboValue(death::Game * game, int new_combo)
-{
-	if (new_combo < 2)
-	{
-		cached_combo_value = new_combo;
-		UnregisterParticles(death::GameHUDKeys::COMBO_ID);
-		return;
-	}
-	CacheAndCreateScoreAllocation(game, new_combo, "Combo : %d x", 60.0f, cached_combo_value, death::GameHUDKeys::COMBO_ID);
-}
-
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";
@@ -30,10 +20,14 @@ LudumGame::LudumGame()
 
 death::PlayingHUD * LudumGame::DoCreatePlayingHUD()
 {
+	return new LudumPlayingHUD;
+#if 0
 	LudumPlayingHUD * result = new LudumPlayingHUD;
 	if (result == nullptr)
 		return nullptr;
+	InitializeHUD(result);
 	return result;
+#endif
 }
 
 void LudumGame::IncrementScore(int delta)

@@ -3,6 +3,10 @@
 
 namespace death
 {
+	// =============================================
+	// GameHUD
+	// =============================================
+
 	bool GameHUD::Initialize(chaos::ParticleManager * in_particle_manager, bool in_external_manager)
 	{
 		// ensure not already initialized or in use
@@ -71,10 +75,47 @@ namespace death
 		return true;
 	}
 
+	bool GameHUD::InitializeHUD(Game * in_game)
+	{
+		assert(in_game != nullptr);
+		// create the particle manager from the game texture atlas
+		if (!Initialize(in_game->GetTextureAtlas()))
+			return false;
+
+		// create some layers
+		int render_order = 0;
+		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait> (++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+
+		
+
+		return true;
+	}
+
+
+	bool GameHUD::FillHUDContent(Game * in_game)
+	{
+		assert(in_game != nullptr);
+		if (!InitializeHUD(in_game))
+			return false;
+		return true;
+	}
+
+
+#if 0
+	bool Game::InitializeHUD(death::GameHUD * hud)
+	{
+		assert(hud != nullptr);
+		if (!hud->Initialize(texture_atlas.get()))
+			return false;
 
 
 
 
+		//hud->GetParticleManager()->AddLayer<ParticleDefault::PTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+
+		return true;
+	}
+#endif
 
 
 
@@ -99,10 +140,68 @@ namespace death
 	void GameHUD::CreateDynamicText(TagType key, char const * format, int initial_value)
 #endif
 
+		// =============================================
+		// MainMenuHUD
+		// =============================================
+
+	bool MainMenuHUD::FillHUDContent(Game * in_game)
+	{
+		// call super method
+		if (!GameHUD::FillHUDContent(in_game))
+			return false;
 
 
 
 
+
+
+		return true;
+	}
+
+	// =============================================
+	// PauseMenuHUD
+	// =============================================
+
+	bool PauseMenuHUD::FillHUDContent(Game * in_game)
+	{
+		// call super method
+		if (!GameHUD::FillHUDContent(in_game))
+			return false;
+		// populate the HUD
+		RegisterParticles(GameHUDKeys::TITLE_ID, in_game->CreateTitle("Pause", true, GetParticleManager()));
+		return true;
+	}
+
+	// =============================================
+	// GameOverHUD
+	// =============================================
+
+	bool GameOverHUD::FillHUDContent(Game * in_game)
+	{
+		// call super method
+		if (!GameHUD::FillHUDContent(in_game))
+			return false;
+		// populate the HUD
+		RegisterParticles(GameHUDKeys::TITLE_ID, in_game->CreateTitle("Game Over", true, GetParticleManager()));
+		return true;
+	}
+
+		// =============================================
+		// PlayingHUD
+		// =============================================
+
+	bool PlayingHUD::FillHUDContent(Game * in_game)
+	{
+		// call super method
+		if (!GameHUD::FillHUDContent(in_game))
+			return false;
+		// populate the HUD
+
+
+
+
+		return true;
+	}
 
 	void PlayingHUD::SetScoreValue(class Game * game, int new_score)
 	{
@@ -120,3 +219,59 @@ namespace death
 
 }; // namespace death
 
+
+
+
+
+
+
+#if 0
+
+
+
+MainMenuHUD * Game::DoCreateMainMenuHUD()
+{
+	MainMenuHUD * result = new MainMenuHUD;
+	if (result == nullptr)
+		return nullptr;
+	InitializeHUD(result);
+
+	if (game_name != nullptr)
+		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, result->GetParticleManager(), GameHUDKeys::TEXT_LAYER_ID));
+
+	if (best_score > 0)
+	{
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 50;
+		params.hotpoint_type = chaos::Hotpoint::CENTER;
+		params.position.x = 0.0f;
+		params.position.y = -130.0f;
+
+		params.font_info_name = "normal";
+
+		std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
+		result->RegisterParticles(GameHUDKeys::BEST_SCORE_ID, CreateTextParticles(str.c_str(), params, result->GetParticleManager(), death::GameHUDKeys::TEXT_LAYER_ID));
+	}
+	return result;
+}
+
+PlayingHUD * Game::DoCreatePlayingHUD()
+{
+	PlayingHUD * result = new PlayingHUD;
+	if (result == nullptr)
+		return nullptr;
+	InitializeHUD(result);
+	return result;
+}
+
+GameOverHUD * Game::DoCreateGameOverHUD()
+{
+	GameOverHUD * result = new GameOverHUD;
+	if (result == nullptr)
+		return nullptr;
+	InitializeHUD(result);
+	result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Game Over", true, result->GetParticleManager()));
+	return result;
+}
+
+#endif

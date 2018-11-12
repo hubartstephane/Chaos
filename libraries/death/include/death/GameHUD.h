@@ -10,10 +10,20 @@ namespace death
 {
 	// Create a gamespace for unique idenfiers
 	namespace GameHUDKeys
-	{		
+	{
+		// some allocation ID's
 		CHAOS_DECLARE_TAG(TITLE_ID);
 		CHAOS_DECLARE_TAG(BEST_SCORE_ID);
+		// some layer ID's
+		CHAOS_DECLARE_TAG(GAME_LAYER_ID);
+		CHAOS_DECLARE_TAG(PLAYER_LAYER_ID);
+		CHAOS_DECLARE_TAG(HUD_LAYER_ID);
+		CHAOS_DECLARE_TAG(TEXT_LAYER_ID);
 	};
+
+	// =============================================
+	// GameHUD
+	// =============================================
 
 	class GameHUD : public chaos::Renderable
 	{
@@ -45,6 +55,14 @@ namespace death
 		/** get the particle manager */
 		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
 
+		/** initialize the content of the HUD */
+		virtual bool FillHUDContent(class Game * in_game);
+
+	protected:
+
+		/** initialization of the HUD from the game values */
+		virtual bool InitializeHUD(death::Game * in_game);
+
 	protected:
 
 		/** override */
@@ -63,28 +81,53 @@ namespace death
 		bool external_manager = false;
 	};
 
+	// =============================================
+	// MainMenuHUD
+	// =============================================
+
 	class MainMenuHUD : public GameHUD
 	{
 	public:
 
+		/** override */
+		virtual bool FillHUDContent(class Game * in_game) override;
 	};
+
+	// =============================================
+	// PauseMenuHUD
+	// =============================================
 
 	class PauseMenuHUD : public GameHUD
 	{
 	public:
 
+		/** override */
+		virtual bool FillHUDContent(class Game * in_game) override;
 	};
+
+	// =============================================
+	// GameOverHUD
+	// =============================================
 
 	class GameOverHUD : public GameHUD
 	{
 	public:
 
+		/** override */
+		virtual bool FillHUDContent(class Game * in_game) override;
 	};
+
+	// =============================================
+	// PlayingHUD
+	// =============================================
 
 	class PlayingHUD : public GameHUD
 	{
 
 	public:
+
+		/** override */
+		virtual bool FillHUDContent(class Game * in_game) override;
 
 		void SetScoreValue(class Game * game, int new_score);
 

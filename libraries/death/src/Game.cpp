@@ -1144,34 +1144,56 @@ namespace death
 		return CreateTextParticles(str.c_str(), params, in_particle_manager, layer_id);
 	}
 
-	bool Game::InitializeHUD(death::GameHUD * hud)
+	bool Game::CreatePauseMenuHUD()
 	{
-		assert(hud != nullptr);
-		if (!hud->Initialize(texture_atlas.get()))
+		pause_menu_hud = DoCreatePauseMenuHUD();
+		if (pause_menu_hud == nullptr)
 			return false;
-		//hud->GetParticleManager()->AddLayer<ParticleDefault::PTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
-
+		if (!pause_menu_hud->FillHUDContent(this))
+		{
+			pause_menu_hud = nullptr;
+			return false;
+		}
 		return true;
 	}
 
-	void Game::CreatePauseMenuHUD()
-	{
-		pause_menu_hud = DoCreatePauseMenuHUD();
-	}
-
-	void Game::CreateMainMenuHUD()
+	bool Game::CreateMainMenuHUD()
 	{
 		main_menu_hud = DoCreateMainMenuHUD();
+		if (main_menu_hud == nullptr)
+			return false;
+		if (!main_menu_hud->FillHUDContent(this))
+		{
+			main_menu_hud = nullptr;
+			return false;
+		}
+		return true;
 	}
 
-	void Game::CreatePlayingHUD()
+	bool Game::CreatePlayingHUD()
 	{
 		playing_hud = DoCreatePlayingHUD();
+		if (playing_hud == nullptr)
+			return false;
+		if (!playing_hud->FillHUDContent(this))
+		{
+			playing_hud = nullptr;
+			return false;
+		}
+		return true;
 	}
 
-	void Game::CreateGameOverHUD()
+	bool Game::CreateGameOverHUD()
 	{
 		gameover_hud = DoCreateGameOverHUD();
+		if (gameover_hud == nullptr)
+			return false;
+		if (!gameover_hud->FillHUDContent(this))
+		{
+			gameover_hud = nullptr;
+			return false;
+		}
+		return true;
 	}
 
 	void Game::DestroyPauseMenuHUD()
@@ -1193,6 +1215,34 @@ namespace death
 	{
 		gameover_hud = nullptr;
 	}
+
+
+
+	PauseMenuHUD * Game::DoCreatePauseMenuHUD()
+	{
+		return new PauseMenuHUD;
+	}
+
+	MainMenuHUD * Game::DoCreateMainMenuHUD()
+	{
+		return new MainMenuHUD;
+	}
+
+	PlayingHUD * Game::DoCreatePlayingHUD()
+	{
+		return new PlayingHUD;
+	}
+
+	GameOverHUD * Game::DoCreateGameOverHUD()
+	{
+		return new GameOverHUD;
+	}
+
+
+
+
+
+#if 0
 
 	PauseMenuHUD * Game::DoCreatePauseMenuHUD()
 	{
@@ -1248,6 +1298,17 @@ namespace death
 		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Game Over", true, result->GetParticleManager()));
 		return result;
 	}
+
+#endif
+
+
+
+
+
+
+
+
+
 
 	glm::vec2 Game::GetViewSize() const
 	{

@@ -22,16 +22,19 @@ namespace death
 class LudumPlayingHUD : public death::PlayingHUD
 {
 
+public:
+
+	/** constructor */
+	LudumPlayingHUD(death::Game * in_game) :
+		death::PlayingHUD(in_game) {}
+
 protected:
 
 	/** override */
 	virtual bool DoTick(double delta_time) override;
 
-public:
-
-	void SetComboValue(death::Game * game, int new_combo);
-
 protected:
 
+	/** caching the combo value */
 	int cached_combo_value = -1;
 };

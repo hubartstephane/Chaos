@@ -20,14 +20,7 @@ LudumGame::LudumGame()
 
 death::PlayingHUD * LudumGame::DoCreatePlayingHUD()
 {
-	return new LudumPlayingHUD;
-#if 0
-	LudumPlayingHUD * result = new LudumPlayingHUD;
-	if (result == nullptr)
-		return nullptr;
-	InitializeHUD(result);
-	return result;
-#endif
+	return new LudumPlayingHUD(this);
 }
 
 void LudumGame::IncrementScore(int delta)
@@ -86,15 +79,6 @@ void LudumGame::UpdateLifeParticles()
 
 		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-}
-
-void LudumGame::UpdateComboParticles()
-{
-	LudumPlayingHUD * hud = dynamic_cast<LudumPlayingHUD *>(playing_hud.get());
-	if (hud == nullptr)
-		return;
-	hud->SetComboValue(this, combo_multiplier);
-	hud->UpdateDynamicParticles(death::GameHUDKeys::COMBO_ID, combo_multiplier);
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)
@@ -435,8 +419,6 @@ bool LudumGame::TickGameLoop(double delta_time)
 
 	// displace the player
 	DisplacePlayer(delta_time);
-	// create the combo text
-	UpdateComboParticles();
 	// create the life 
 	UpdateLifeParticles();
 	// some other calls

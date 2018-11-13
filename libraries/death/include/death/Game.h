@@ -289,8 +289,6 @@ namespace death
 		virtual bool TickGameLoop(double delta_time);
 		/** test whether there is a game over */
 		virtual bool CheckGameOverCondition(double delta_time);
-		/** update the score particles if necessary */
-		void UpdateScoreParticles();
 
 		virtual void ResetGameVariables();
 

@@ -56,6 +56,9 @@ public:
 	/** constructor */
 	LudumGame();
 
+	/** returns the current combo multiplier */
+	int GetCurrentComboMultiplier() const { return combo_multiplier; }
+
 	/** override */
 	virtual bool OnKeyEvent(int key, int action) override;
 	/** override */
@@ -286,8 +289,6 @@ protected:
 	void OnLongBarChallenge(bool success);
 	bool IsLongBarChallengeValid(bool success);
 
-	/** create the combo allocation */
-	void UpdateComboParticles();
 	/** create the life allocation */
 	void UpdateLifeParticles();
 

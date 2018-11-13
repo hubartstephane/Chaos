@@ -969,30 +969,12 @@ namespace death
 		// tick the level
 		if (current_level_instance != nullptr)
 			current_level_instance->Tick(delta_time);
-		// create the score text
-		UpdateScoreParticles();	
 		return true;
 	}
 
 	void Game::ResetGameVariables()
 	{
 		current_score = 0;
-	}
-
-	void Game::UpdateScoreParticles()
-	{
-		if (playing_hud == nullptr)
-			return;
-
-		if (playing_hud->IsDynamicParticlesRequiringUpdate(death::GameHUDKeys::BEST_SCORE_ID, current_score))
-		{
-
-		}
-
-
-
-		playing_hud->SetScoreValue(this, current_score);
-		playing_hud->UpdateDynamicParticles(death::GameHUDKeys::BEST_SCORE_ID, current_score);
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)
@@ -1144,171 +1126,33 @@ namespace death
 		return CreateTextParticles(str.c_str(), params, in_particle_manager, layer_id);
 	}
 
-	bool Game::CreatePauseMenuHUD()
-	{
-		pause_menu_hud = DoCreatePauseMenuHUD();
-		if (pause_menu_hud == nullptr)
-			return false;
-		if (!pause_menu_hud->FillHUDContent(this))
-		{
-			pause_menu_hud = nullptr;
-			return false;
-		}
-		return true;
+#define DEATH_IMPLEMENTHUD_FUNC(classname, member_name)\
+	bool Game::Create##classname()\
+	{\
+		member_name = DoCreate##classname();\
+		if (member_name == nullptr)\
+			return false;\
+		if (!member_name->FillHUDContent())\
+		{\
+			member_name = nullptr;\
+			return false;\
+		}\
+		return true;\
+	}\
+	void Game::Destroy##classname()\
+	{\
+		member_name = nullptr;\
+	}\
+	classname * Game::DoCreate##classname()\
+	{\
+		return new classname(this);\
 	}
+	DEATH_IMPLEMENTHUD_FUNC(PauseMenuHUD, pause_menu_hud);
+	DEATH_IMPLEMENTHUD_FUNC(MainMenuHUD, main_menu_hud);
+	DEATH_IMPLEMENTHUD_FUNC(PlayingHUD, playing_hud);
+	DEATH_IMPLEMENTHUD_FUNC(GameOverHUD, gameover_hud);
 
-	bool Game::CreateMainMenuHUD()
-	{
-		main_menu_hud = DoCreateMainMenuHUD();
-		if (main_menu_hud == nullptr)
-			return false;
-		if (!main_menu_hud->FillHUDContent(this))
-		{
-			main_menu_hud = nullptr;
-			return false;
-		}
-		return true;
-	}
-
-	bool Game::CreatePlayingHUD()
-	{
-		playing_hud = DoCreatePlayingHUD();
-		if (playing_hud == nullptr)
-			return false;
-		if (!playing_hud->FillHUDContent(this))
-		{
-			playing_hud = nullptr;
-			return false;
-		}
-		return true;
-	}
-
-	bool Game::CreateGameOverHUD()
-	{
-		gameover_hud = DoCreateGameOverHUD();
-		if (gameover_hud == nullptr)
-			return false;
-		if (!gameover_hud->FillHUDContent(this))
-		{
-			gameover_hud = nullptr;
-			return false;
-		}
-		return true;
-	}
-
-	void Game::DestroyPauseMenuHUD()
-	{
-		pause_menu_hud = nullptr;
-	}
-
-	void Game::DestroyMainMenuHUD()
-	{
-		main_menu_hud = nullptr;
-	}
-
-	void Game::DestroyPlayingHUD()
-	{
-		playing_hud = nullptr;
-	}
-
-	void Game::DestroyGameOverHUD()
-	{
-		gameover_hud = nullptr;
-	}
-
-
-
-	PauseMenuHUD * Game::DoCreatePauseMenuHUD()
-	{
-		return new PauseMenuHUD;
-	}
-
-	MainMenuHUD * Game::DoCreateMainMenuHUD()
-	{
-		return new MainMenuHUD;
-	}
-
-	PlayingHUD * Game::DoCreatePlayingHUD()
-	{
-		return new PlayingHUD;
-	}
-
-	GameOverHUD * Game::DoCreateGameOverHUD()
-	{
-		return new GameOverHUD;
-	}
-
-
-
-
-
-#if 0
-
-	PauseMenuHUD * Game::DoCreatePauseMenuHUD()
-	{
-		PauseMenuHUD * result = new PauseMenuHUD;
-		if (result == nullptr)
-			return nullptr;
-		InitializeHUD(result);
-		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Pause", true, result->GetParticleManager()));
-		return result;
-	}
-
-	MainMenuHUD * Game::DoCreateMainMenuHUD()
-	{
-		MainMenuHUD * result = new MainMenuHUD;
-		if (result == nullptr)
-			return nullptr;
-		InitializeHUD(result);
-
-		if (game_name != nullptr)
-			result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle(game_name, false, result->GetParticleManager(), GameHUDKeys::TEXT_LAYER_ID));
-	
-		if (best_score > 0)
-		{
-			chaos::ParticleTextGenerator::GeneratorParams params;
-			params.line_height = 50;
-			params.hotpoint_type = chaos::Hotpoint::CENTER;
-			params.position.x = 0.0f;
-			params.position.y = -130.0f;
-
-			params.font_info_name = "normal";
-
-			std::string str = chaos::StringTools::Printf("Best score : %d", best_score);
-			result->RegisterParticles(GameHUDKeys::BEST_SCORE_ID, CreateTextParticles(str.c_str(), params, result->GetParticleManager(), death::GameHUDKeys::TEXT_LAYER_ID));
-		}
-		return result;
-	}
-
-	PlayingHUD * Game::DoCreatePlayingHUD()
-	{
-		PlayingHUD * result = new PlayingHUD;
-		if (result == nullptr)
-			return nullptr;
-		InitializeHUD(result);
-		return result;
-	}
-
-	GameOverHUD * Game::DoCreateGameOverHUD()
-	{
-		GameOverHUD * result = new GameOverHUD;
-		if (result == nullptr)
-			return nullptr;
-		InitializeHUD(result);
-		result->RegisterParticles(GameHUDKeys::TITLE_ID, CreateTitle("Game Over", true, result->GetParticleManager()));
-		return result;
-	}
-
-#endif
-
-
-
-
-
-
-
-
-
+#undef DEATH_IMPLEMENTHUD_FUNC
 
 	glm::vec2 Game::GetViewSize() const
 	{

@@ -58,14 +58,8 @@ namespace death
 		if (particle_manager != nullptr)
 			particle_manager->Tick((float)delta_time);
 		// tick the hud
-		if (main_menu_hud != nullptr)
-			main_menu_hud->Tick(delta_time);
-		if (pause_menu_hud != nullptr)
-			pause_menu_hud->Tick(delta_time);
-		if (playing_hud != nullptr)
-			playing_hud->Tick(delta_time);
-		if (gameover_hud != nullptr)
-			gameover_hud->Tick(delta_time);
+		if (hud != nullptr)
+			hud->Tick(delta_time);
 	}
 	
 	bool Game::OnKeyEvent(int key, int action)
@@ -162,14 +156,8 @@ namespace death
 		if (current_level_instance != nullptr)
 			current_level_instance->Display(&uniform_provider, render_params);
 		// display the hud (AFTER the level)
-		if (main_menu_hud != nullptr)
-			main_menu_hud->Display(&uniform_provider, render_params);
-		if (pause_menu_hud != nullptr)
-			pause_menu_hud->Display(&uniform_provider, render_params);
-		if (playing_hud != nullptr)
-			playing_hud->Display(&uniform_provider, render_params);
-		if (gameover_hud != nullptr)
-			gameover_hud->Display(&uniform_provider, render_params);
+		if (hud != nullptr)
+			hud->Display(&uniform_provider, render_params);
 	}
 
 	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -866,9 +854,6 @@ namespace death
 		if (very_first)
 			StartMainMenuMusic(true);
 		CreateMainMenuHUD();
-		DestroyGameOverHUD();
-		DestroyPlayingHUD();
-		DestroyInGameClocks();
 	}
 
 	void Game::OnGameOver()
@@ -898,14 +883,13 @@ namespace death
 	bool Game::OnLeavePause()
 	{
 		StartGameMusic(false);
-		DestroyPauseMenuHUD();
+		CreatePlayingHUD();
 		OnPauseStateUpdateClocks(false);
 		return true;
 	}
 
 	bool Game::OnEnterGame()
 	{		
-		DestroyMainMenuHUD();
 		CreatePlayingHUD();
 		ResetGameVariables();
 		SetNextLevel(true); // select the very first
@@ -1126,33 +1110,34 @@ namespace death
 		return CreateTextParticles(str.c_str(), params, in_particle_manager, layer_id);
 	}
 
-#define DEATH_IMPLEMENTHUD_FUNC(classname, member_name)\
+#define DEATH_IMPLEMENTHUD_FUNC(classname)\
 	bool Game::Create##classname()\
 	{\
-		member_name = DoCreate##classname();\
-		if (member_name == nullptr)\
+		hud = DoCreate##classname();\
+		if (hud == nullptr)\
 			return false;\
-		if (!member_name->FillHUDContent())\
+		if (!hud->FillHUDContent())\
 		{\
-			member_name = nullptr;\
+			hud = nullptr;\
 			return false;\
 		}\
 		return true;\
-	}\
-	void Game::Destroy##classname()\
-	{\
-		member_name = nullptr;\
 	}\
 	classname * Game::DoCreate##classname()\
 	{\
 		return new classname(this);\
 	}
-	DEATH_IMPLEMENTHUD_FUNC(PauseMenuHUD, pause_menu_hud);
-	DEATH_IMPLEMENTHUD_FUNC(MainMenuHUD, main_menu_hud);
-	DEATH_IMPLEMENTHUD_FUNC(PlayingHUD, playing_hud);
-	DEATH_IMPLEMENTHUD_FUNC(GameOverHUD, gameover_hud);
+	DEATH_IMPLEMENTHUD_FUNC(PauseMenuHUD);
+	DEATH_IMPLEMENTHUD_FUNC(MainMenuHUD);
+	DEATH_IMPLEMENTHUD_FUNC(PlayingHUD);
+	DEATH_IMPLEMENTHUD_FUNC(GameOverHUD);
 
 #undef DEATH_IMPLEMENTHUD_FUNC
+
+	void Game::DestroyHUD()
+	{
+		hud = nullptr;
+	}
 
 	glm::vec2 Game::GetViewSize() const
 	{

@@ -339,14 +339,8 @@ namespace death
 		/** create the gameover HUD */
 		bool CreateGameOverHUD();
 
-		/** destroy the pause HUD */
-		void DestroyPauseMenuHUD();
-		/** destroy the main menu HUD */
-		void DestroyMainMenuHUD();
-		/** destroy the game HUD */
-		void DestroyPlayingHUD();
-		/** destroy the gameover HUD */
-		void DestroyGameOverHUD();
+		/** destroy the HUD */
+		void DestroyHUD();
 
 		/** user defined method to create the pause HUD */
 		virtual PauseMenuHUD * DoCreatePauseMenuHUD();
@@ -418,10 +412,7 @@ namespace death
 		boost::intrusive_ptr<chaos::Sound> pause_music;
 
 		/** the HUDs */
-		boost::intrusive_ptr<MainMenuHUD> main_menu_hud;
-		boost::intrusive_ptr<PauseMenuHUD> pause_menu_hud;
-		boost::intrusive_ptr<PlayingHUD> playing_hud;
-		boost::intrusive_ptr<GameOverHUD> gameover_hud;
+		boost::intrusive_ptr<GameHUD> hud;
 
 		/** pointer on the state_machine */
 		boost::intrusive_ptr<chaos::SM::StateMachine> game_state_machine;

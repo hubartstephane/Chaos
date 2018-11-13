@@ -148,6 +148,9 @@ namespace death
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 
+		/** update the score particles */
+		void UpdateScoreParticles();
+
 	protected:
 
 		/** caching the score */

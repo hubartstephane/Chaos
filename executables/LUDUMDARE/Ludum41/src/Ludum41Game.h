@@ -56,6 +56,8 @@ public:
 	/** constructor */
 	LudumGame();
 
+	/** returns the current life */
+	int GetCurrentLife() const { return current_life; }
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }
 

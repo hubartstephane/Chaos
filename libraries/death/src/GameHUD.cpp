@@ -83,7 +83,7 @@ namespace death
 
 		// create some layers
 		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait> (++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait> (render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 		return true;
 	}
@@ -171,6 +171,12 @@ namespace death
 		// call super method
 		GameHUD::DoTick(delta_time);
 		// populate the HUD
+		UpdateScoreParticles();
+		return true;
+	}
+
+	void PlayingHUD::UpdateScoreParticles()
+	{
 		int current_score = game->GetCurrentScore();
 		if (current_score != cached_score_value)
 		{
@@ -181,7 +187,6 @@ namespace death
 
 			cached_score_value = current_score;
 		}
-		return true;
 	}
 
 }; // namespace death

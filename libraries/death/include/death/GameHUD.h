@@ -45,6 +45,11 @@ namespace death
 		/** clear all particles from the HUD */
 		void Clear();
 
+		/** get the particle allocation from its ID */
+		chaos::ParticleAllocation * FindParticleAllocation(chaos::TagType key);
+		/** get the particle allocation from its ID */
+		chaos::ParticleAllocation const * FindParticleAllocation(chaos::TagType key) const;
+
 		/** get the particle manager */
 		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
 		/** get the particle manager */

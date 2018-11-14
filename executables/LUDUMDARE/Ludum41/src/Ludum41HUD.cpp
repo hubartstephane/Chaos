@@ -39,8 +39,43 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 			UnregisterParticles(death::GameHUDKeys::LIFE_ID);
 		else
 		{
+			chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
+			if (allocation == nullptr)
+			{
+
+#if 0
+				life_allocations = CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
+				if (life_allocations == nullptr)
+					return;
+#endif
 
 
+			}
+			else
+			{
+				allocation->Resize(current_life);
+			}
+
+			// set the color
+			chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
+
+			glm::vec2 view_size = ludum_game->GetViewSize();
+
+			glm::vec2 particle_size;
+			particle_size.x = 35.0f;
+			particle_size.y = 20.0f;
+
+			for (size_t i = 0; i < (size_t)current_life; ++i)
+			{
+				glm::vec2 position;
+				position.x = -view_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
+				position.y = -view_size.y * 0.5f + 15.0f;
+
+				particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+				particles[i].bounding_box.half_size = 0.5f * particle_size;
+
+				particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			}
 		}
 		cached_life_value = current_life;
 	}
@@ -76,33 +111,8 @@ void LudumGame::UpdateLifeParticles()
 
 	//if (life_allocations == nullptr)
 
-	life_allocations = CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
-	if (life_allocations == nullptr)
-		return;
 
-	// set the color
-	chaos::ParticleAccessor<ParticleObject> particles = life_allocations->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return;
 
-	glm::vec2 view_size = GetViewSize();
-
-	glm::vec2 particle_size;
-	particle_size.x = 35.0f;
-	particle_size.y = 20.0f;
-
-	for (size_t i = 0; i < (size_t)current_life; ++i)
-	{
-		glm::vec2 position;
-		position.x = -view_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
-		position.y = -view_size.y * 0.5f + 15.0f;
-
-		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-		particles[i].bounding_box.half_size = 0.5f * particle_size;
-
-		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-}
 
 #endif
 

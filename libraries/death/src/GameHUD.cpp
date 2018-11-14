@@ -59,6 +59,21 @@ namespace death
 		particle_allocations.clear();
 	}
 
+	chaos::ParticleAllocation * GameHUD::FindParticleAllocation(chaos::TagType key)
+	{
+		auto it = particle_allocations.find(key);
+		if (it == particle_allocations.end())
+			return nullptr;
+		return it->second.get();
+	}
+	chaos::ParticleAllocation const * GameHUD::FindParticleAllocation(chaos::TagType key) const
+	{
+		auto it = particle_allocations.find(key);
+		if (it == particle_allocations.end())
+			return nullptr;
+		return it->second.get();
+	}
+
 	bool GameHUD::DoTick(double delta_time)
 	{
 		if (!external_manager && particle_manager != nullptr)

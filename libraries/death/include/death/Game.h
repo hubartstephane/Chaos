@@ -133,9 +133,6 @@ namespace death
 		/** returns pause clock */
 		chaos::Clock const * GetPauseClock() const;
 
-		/** play some sound */
-		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
-
 		/** returns the HUD */
 		GameHUD * GetCurrentHUD(){ return hud.get();}
 		/** returns the HUD */
@@ -144,6 +141,32 @@ namespace death
 
 
 
+
+
+
+
+
+
+
+
+		/** get the size of the world */
+		virtual glm::vec2 GetViewSize() const;
+		/** get the view */
+		chaos::box2 GetViewBox() const;
+
+		/** getting the world boxes */
+		virtual chaos::box2 GetWorldBox() const;
+		/** getting the camera box */
+		virtual chaos::box2 GetCameraBox() const;
+		/** getting the player box */
+		virtual chaos::box2 GetPlayerBox() const;
+
+
+
+
+
+		/** play some sound */
+		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
 
 	protected:
 
@@ -171,17 +194,7 @@ namespace death
 
 
 
-		/** get the size of the world */
-		virtual glm::vec2 GetViewSize() const;
-		/** get the view */
-		chaos::box2 GetViewBox() const;
 
-		/** getting the world boxes */
-		virtual chaos::box2 GetWorldBox() const;
-		/** getting the camera box */
-		virtual chaos::box2 GetCameraBox() const;
-		/** getting the player box */
-		virtual chaos::box2 GetPlayerBox() const;
 
 		/** update the camera box */
 		virtual void SetCameraBox(chaos::box2 const & in_camera_box);

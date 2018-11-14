@@ -174,8 +174,6 @@ protected:
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
 
-	/** create a number of game object */
-	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id = death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 

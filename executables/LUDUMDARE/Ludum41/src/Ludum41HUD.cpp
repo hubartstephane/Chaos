@@ -24,7 +24,7 @@ void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
 		if (current_combo < 2)
 			UnregisterParticles(death::GameHUDKeys::COMBO_ID);
 		else
-			RegisterParticles(death::GameHUDKeys::COMBO_ID, game->CreateScoringText("Combo : %d x", current_combo, 60.0f, particle_manager.get()));
+			RegisterParticles(death::GameHUDKeys::COMBO_ID, game->CreateScoringText("Combo : %d x", current_combo, 60.0f, death::GameHUDKeys::TEXT_LAYER_ID, particle_manager.get()));
 
 		cached_combo_value = current_combo;
 	}

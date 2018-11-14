@@ -188,7 +188,7 @@ void LudumGame::DestroyGameObjects()
 	//player_allocations = nullptr;
 	//life_allocations = nullptr;
 }
-
+#if 0
 chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id)
 {
 	// allocate the objects
@@ -203,6 +203,7 @@ chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size
 	}
 	return allocation;
 }
+#endif
 
 bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count)
 {
@@ -239,7 +240,7 @@ bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, ch
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
-	chaos::ParticleAllocation * result = CreateGameObjects("player", 1);
+	chaos::ParticleAllocation * result = CreateGameObjects("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 

@@ -121,7 +121,7 @@ namespace death
 			return false;
 		// populate the HUD
 		if (game->GetGameName() != nullptr)
-			RegisterParticles(GameHUDKeys::TITLE_ID, game->CreateTitle(game->GetGameName(), false, GetParticleManager(), GameHUDKeys::TEXT_LAYER_ID));
+			RegisterParticles(GameHUDKeys::TITLE_ID, game->CreateTitle(game->GetGameName(), false, GameHUDKeys::TEXT_LAYER_ID, GetParticleManager()));
 
 		if (game->GetBestScore() > 0)
 		{
@@ -134,7 +134,7 @@ namespace death
 			params.font_info_name = "normal";
 
 			std::string str = chaos::StringTools::Printf("Best score : %d", game->GetBestScore());
-			RegisterParticles(GameHUDKeys::BEST_SCORE_ID, game->CreateTextParticles(str.c_str(), params, GetParticleManager(), death::GameHUDKeys::TEXT_LAYER_ID));
+			RegisterParticles(GameHUDKeys::BEST_SCORE_ID, game->CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID, GetParticleManager()));
 		}
 		return true;
 	}
@@ -149,7 +149,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// populate the HUD
-		RegisterParticles(GameHUDKeys::TITLE_ID, game->CreateTitle("Pause", true, GetParticleManager()));
+		RegisterParticles(GameHUDKeys::TITLE_ID, game->CreateTitle("Pause", true, death::GameHUDKeys::TEXT_LAYER_ID, GetParticleManager()));
 		return true;
 	}
 
@@ -163,7 +163,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// populate the HUD
-		RegisterParticles(GameHUDKeys::TITLE_ID, game->CreateTitle("Game Over", true, GetParticleManager()));
+		RegisterParticles(GameHUDKeys::TITLE_ID, game->CreateTitle("Game Over", true, death::GameHUDKeys::TEXT_LAYER_ID, GetParticleManager()));
 		return true;
 	}
 
@@ -198,7 +198,7 @@ namespace death
 			if (current_score < 0)
 				UnregisterParticles(GameHUDKeys::SCORE_ID);
 			else
-				RegisterParticles(GameHUDKeys::SCORE_ID, game->CreateScoringText("Score : %d", current_score, 20.0f, particle_manager.get()));
+				RegisterParticles(GameHUDKeys::SCORE_ID, game->CreateScoringText("Score : %d", current_score, 20.0f, death::GameHUDKeys::TEXT_LAYER_ID, particle_manager.get()));
 
 			cached_score_value = current_score;
 		}

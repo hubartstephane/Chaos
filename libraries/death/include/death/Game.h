@@ -93,12 +93,15 @@ namespace death
 		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayer, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
 
+		/** create some sprites of the given type */
+		chaos::ParticleAllocation * CreateGameObjects(char const * bitmap_name, size_t count, chaos::TagType layer_id, chaos::ParticleManager * in_particle_manager = nullptr);
+
 		/** create a text particle system */
-		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID, chaos::ParticleManager * in_particle_manager = nullptr);
 		/** create a title */
-		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID, chaos::ParticleManager * in_particle_manager = nullptr);
 		/** create a score text at the top left corner */
-		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID, chaos::ParticleManager * in_particle_manager = nullptr);
 
 
 		/** utility function to get the application */

@@ -129,8 +129,6 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 
-	/** create a number of game object */
-	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id = death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 

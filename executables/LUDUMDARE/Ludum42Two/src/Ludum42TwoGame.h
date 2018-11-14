@@ -145,8 +145,6 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 
-	/** create a number of game object */
-	chaos::ParticleAllocation * CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id = death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	/** fill game object texture coordinates (from the last of the array) */
 	bool InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count);
 	/** create the player */

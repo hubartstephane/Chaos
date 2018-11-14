@@ -8,7 +8,6 @@
   "cooldown": 0.1,
   "water_speed":  900.0,
   "water_lifetime": 1.5,
-	"heart_beat_speed" : 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 5012.0
 }

@@ -123,7 +123,7 @@ protected:
 
 	void TickBallSplit(double delta_time);
 
-	void TickHeartWarning(double delta_time);
+	
 
 	virtual bool CheckGameOverCondition(double delta_time) override;
 
@@ -290,10 +290,7 @@ protected:
 	/** some challenges */
 	void OnLongBarChallenge(bool success);
 	bool IsLongBarChallengeValid(bool success);
-
-	/** create the life allocation */
-	void UpdateLifeParticles();
-
+	
 	void ChangeLife(int delta_life);
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
@@ -351,8 +348,6 @@ protected:
 	
 	float delay_before_ball_move = 2.0f;
 
-	float heart_beat_speed = 2.0f;
-
 	int min_brick_life = 1;
 	float max_brick_life = 5.0f;
 
@@ -379,8 +374,6 @@ protected:
 	
 	int current_level = 0;
 
-	float heart_warning = 0.0f;
-
 #if _DEBUG
 	bool cheat_next_level = false;
 #endif
@@ -388,7 +381,6 @@ protected:
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 

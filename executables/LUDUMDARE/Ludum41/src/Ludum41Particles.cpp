@@ -74,9 +74,16 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	
 	// create pulsating effect
+
+	float heart_warning = 0.0f;
+
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(game->GetCurrentHUD());
+	if (playing_hud != nullptr)
+		playing_hud->GetHeartWarningValue();
+
 	glm::vec4 color = particle->color;
-	if (game->heart_warning < 0.5f)
-		color.a = 0.4f + 0.6f * game->heart_warning / 0.5f;
+	if (heart_warning < 0.5f)
+		color.a = 0.4f + 0.6f * heart_warning / 0.5f;
 	
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)

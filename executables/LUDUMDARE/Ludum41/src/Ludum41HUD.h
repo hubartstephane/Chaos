@@ -29,6 +29,9 @@ public:
 	LudumPlayingHUD(death::Game * in_game) :
 		death::PlayingHUD(in_game) {}
 
+	/** returns the current heart warning value */
+	float GetHeartWarningValue() const { return heart_warning; }
+
 protected:
 
 	/** override */
@@ -43,8 +46,18 @@ protected:
 
 protected:
 
+	/** update the Heart Beat values */
+	void TickHeartWarning(LudumGame * ludum_game, double delta_time);
+
+protected:
+
 	/** caching the combo value */
 	int cached_combo_value = -1;
 	/** caching the current life count */
 	int cached_life_value = -1;
+
+	/** the current heart warning timer value */
+	float heart_warning = 0.0f;
+	/** the heart warning period */
+	float heart_beat_speed = 1.0f;
 };

@@ -5,6 +5,8 @@
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
 
+#include <death/Game.h> 
+
 // ===========================================================================
 // VertexBase and Particle
 // ===========================================================================
@@ -56,7 +58,7 @@ public:
 
 	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
-	class LudumGame * game = nullptr;
+	death::Game * game = nullptr;
 };
 
 

@@ -101,34 +101,6 @@ namespace death
 		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::ParticleManager * in_particle_manager, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 
 
-
-
-
-
-	protected:
-
-		/** the tick method */
-		virtual void Tick(double delta_time);
-		/** whenever a key event is received */
-		virtual bool OnKeyEvent(int key, int action);
-		/** whenever a char event is received */
-		virtual bool OnCharEvent(unsigned int c);
-		/** whenever a mouse event is received */
-		virtual void OnMouseButton(int button, int action, int modifier);
-		/** whenever mouse is displaced */
-		virtual void OnMouseMove(double x, double y);
-		/** the rendering method */
-		virtual void Display(glm::ivec2 const & size);
-		/** the user defined rendering function */
-		virtual void DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider);
-
-		/** utility method to set a box uniform */
-		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b);
-
-
-		/** initialization from the config file */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
-
 		/** utility function to get the application */
 		chaos::MyGLFW::SingleWindowApplication * GetApplication();
 		/** utility function to get the application */
@@ -161,6 +133,44 @@ namespace death
 		/** returns pause clock */
 		chaos::Clock const * GetPauseClock() const;
 
+		/** play some sound */
+		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
+
+		/** returns the HUD */
+		GameHUD * GetCurrentHUD(){ return hud.get();}
+		/** returns the HUD */
+		GameHUD const * GetCurrentHUD() const { return hud.get();}
+
+
+
+
+
+	protected:
+
+		/** the tick method */
+		virtual void Tick(double delta_time);
+		/** whenever a key event is received */
+		virtual bool OnKeyEvent(int key, int action);
+		/** whenever a char event is received */
+		virtual bool OnCharEvent(unsigned int c);
+		/** whenever a mouse event is received */
+		virtual void OnMouseButton(int button, int action, int modifier);
+		/** whenever mouse is displaced */
+		virtual void OnMouseMove(double x, double y);
+		/** the rendering method */
+		virtual void Display(glm::ivec2 const & size);
+		/** the user defined rendering function */
+		virtual void DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider);
+
+		/** utility method to set a box uniform */
+		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b);
+
+
+		/** initialization from the config file */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+
+
+
 		/** get the size of the world */
 		virtual glm::vec2 GetViewSize() const;
 		/** get the view */
@@ -187,8 +197,7 @@ namespace death
 		/** update the player and the camera position so that they remains inside the world */
 		void RestrictCameraToPlayerAndWorld();
 
-		/** play some sound */
-		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
+
 		/** blend out a music */
 		void BlendMusic(chaos::Sound * music, bool blend_in);
 		/** start music[0], stop all others */

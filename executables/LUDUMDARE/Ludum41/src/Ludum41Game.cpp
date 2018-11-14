@@ -30,57 +30,6 @@ void LudumGame::IncrementScore(int delta)
 	current_score += delta * combo_multiplier;
 }
 
-void LudumGame::UpdateLifeParticles()
-{
-	// get the number of particles already existing
-	size_t life_particles = 0;
-	if (life_allocations != nullptr)
-		life_particles = life_allocations->GetParticleCount();
-
-	// no changes ?
-	if (life_particles == current_life)
-		return;
-
-	// some life lost (destroy particles)
-	if ((size_t)current_life < life_particles)
-	{
-		life_allocations->Resize(current_life);
-		return;
-	}
-
-	// some life gained
-	assert(life_particles < (size_t)current_life);
-	
-	//if (life_allocations == nullptr)
-		
-	life_allocations = CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
-	if (life_allocations == nullptr)
-		return;
-
-	// set the color
-	chaos::ParticleAccessor<ParticleObject> particles = life_allocations->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return;
-
-	glm::vec2 view_size = GetViewSize();
-
-	glm::vec2 particle_size;
-	particle_size.x = 35.0f;
-	particle_size.y = 20.0f;
-
-	for (size_t i = 0; i < (size_t)current_life; ++i)
-	{
-		glm::vec2 position;
-		position.x = -view_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
-		position.y = -view_size.y * 0.5f + 15.0f;
-
-		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-		particles[i].bounding_box.half_size = 0.5f * particle_size;
-
-		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-}
-
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
 	death::Game::OnEnterMainMenu(very_first);
@@ -213,7 +162,6 @@ void LudumGame::ResetGameVariables()
 	challenge_timer    = challenge_frequency;
 	pending_split_count = 0;
 	ball_collision_speed = 0.0f;
-	heart_warning = 1.0f;
 
 	combo_multiplier = 1;
 	current_level = 0;
@@ -377,25 +325,6 @@ void LudumGame::TickLevelCompleted(double delta_time)
 	}
 }
 
-void LudumGame::TickHeartWarning(double delta_time)
-{
-	if (current_life == 1)
-	{
-		heart_warning -= heart_beat_speed * (float)delta_time;
-		if (heart_warning <= 0.0f)
-		{
-			PlaySound("heartbeat", false, false);
-
-			float fractionnal_part, integer_part;
-			fractionnal_part = modf(heart_warning, &integer_part);
-
-			heart_warning = (1.0f + fractionnal_part);
-		}
-	}
-	else
-		heart_warning = 1.0f;
-}
-
 void LudumGame::TickBrickOffset(double delta_time)
 {
 	if (target_brick_offset > brick_offset)
@@ -419,14 +348,11 @@ bool LudumGame::TickGameLoop(double delta_time)
 
 	// displace the player
 	DisplacePlayer(delta_time);
-	// create the life 
-	UpdateLifeParticles();
 	// some other calls
 	TickBrickOffset(delta_time);
 	TickLevelCompleted(delta_time);
 	TickChallenge(delta_time);
 	TickBallSplit(delta_time);
-	TickHeartWarning(delta_time);
 	return true;
 }
 
@@ -496,7 +422,6 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 void LudumGame::DestroyGameObjects()
 {
 	player_allocations = nullptr;
-	life_allocations = nullptr;
 	balls_allocations = nullptr;
 
 	sequence_challenge = nullptr;
@@ -1084,7 +1009,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(challenge_frequency);
 	DEATHGAME_JSON_ATTRIBUTE(challenge_duration);
 	DEATHGAME_JSON_ATTRIBUTE(delay_before_ball_move);
-	DEATHGAME_JSON_ATTRIBUTE(heart_beat_speed);
 	DEATHGAME_JSON_ATTRIBUTE(min_brick_life);
 	DEATHGAME_JSON_ATTRIBUTE(max_brick_life);
 	DEATHGAME_JSON_ATTRIBUTE(brick_per_line);
@@ -1390,10 +1314,6 @@ bool LudumGame::InitializeParticleManager()
 	ParticleBrickTrait brick_trait;
 	brick_trait.game = this;
 	particle_manager->AddLayer<ParticleBrickTrait>(++render_order, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
-
-	ParticleLifeObjectTrait life_trait;
-	life_trait.game = this;
-	particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
 
 	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");

@@ -102,7 +102,10 @@ namespace death
 		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID, chaos::ParticleManager * in_particle_manager = nullptr);
 		/** create a score text at the top left corner */
 		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID, chaos::ParticleManager * in_particle_manager = nullptr);
-
+		/** spawn some objects */
+		chaos::ParticleAllocation * SpawnObjects(chaos::TagType layer_id, size_t count, chaos::ParticleManager * in_particle_manager = nullptr);
+		/** initialize the game objects texture coordinates (from the end of the array) */
+		bool InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * bitmap_name, size_t last_count);
 
 		/** utility function to get the application */
 		chaos::MyGLFW::SingleWindowApplication * GetApplication();

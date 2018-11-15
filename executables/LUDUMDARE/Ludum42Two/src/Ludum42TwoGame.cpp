@@ -195,55 +195,6 @@ void LudumGame::DestroyGameObjects()
 	life_allocations = nullptr;
 }
 
-#if 0
-chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id)
-{
-	// allocate the objects
-	chaos::ParticleAllocation * allocation = SpawnObjects(layer_id, count);
-	if (allocation == nullptr)
-		return nullptr;
-
-	if (!InitializeGameObjects(allocation, name, count))
-	{
-		delete(allocation);
-		return nullptr;
-	}
-	return allocation;
-}
-#endif
-
-bool LudumGame::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count)
-{
-	// find bitmap set
-	chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
-	if (bitmap_set == nullptr)
-		return false;
-
-	// find bitmap info
-	chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetBitmapInfo(name);
-	if (info == nullptr)
-		return false;
-
-	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-
-	size_t particles_count = particles.GetCount();
-	size_t start = 0;
-
-	if (particles_count < count)
-		count = particles_count; 
-	else
-		start = particles_count - count;
-
-	for (size_t i = 0 ; i < count ; ++i)
-	{
-		ParticleObject & particle = particles[start + i];
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
-	}
-		
-	return true;
-}
-
-
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
@@ -410,15 +361,6 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
 }
-
-chaos::ParticleAllocation * LudumGame::SpawnObjects(chaos::TagType layer_id, size_t count)
-{
-	chaos::ParticleLayer * layer = GetParticleManager()->FindLayer(layer_id);
-	if (layer == nullptr)
-		return nullptr;
-	return layer->SpawnParticles(count);
-}
-
 
 bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 {

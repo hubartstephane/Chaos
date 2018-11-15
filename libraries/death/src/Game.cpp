@@ -1045,7 +1045,7 @@ namespace death
 		return false;
 	}
 
-	chaos::ParticleAllocation * Game::CreateGameObjects(char const * bitmap_name, size_t count, chaos::TagType layer_id, chaos::ParticleManager * in_particle_manager)
+	chaos::ParticleAllocation * Game::SpawnObjects(chaos::TagType layer_id, size_t count, chaos::ParticleManager * in_particle_manager)
 	{
 		// select the particle manager we want
 		if (in_particle_manager == nullptr)
@@ -1054,38 +1054,59 @@ namespace death
 			if (in_particle_manager == nullptr)
 				return nullptr;
 		}
-
-		// find layer of concern
+		// spawn the particles
 		chaos::ParticleLayer * layer = in_particle_manager->FindLayer(layer_id);
 		if (layer == nullptr)
 			return nullptr;
+		return layer->SpawnParticles(count);
+	}
 
-		// find bitmap set
-		chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
-		if (folder_info == nullptr)
-			return nullptr;
-
-		// find bitmap info
-		chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name);
-		if (info == nullptr)
-			return nullptr;
-
+	chaos::ParticleAllocation * Game::CreateGameObjects(char const * bitmap_name, size_t count, chaos::TagType layer_id, chaos::ParticleManager * in_particle_manager)
+	{
 		// allocate the objects
-		chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
+		chaos::ParticleAllocation * allocation = SpawnObjects(layer_id, count, in_particle_manager);
 		if (allocation == nullptr)
 			return nullptr;
 
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
-
-		for (size_t i = 0 ; i < count ; ++i)
+		if (!InitializeGameObjects(allocation, bitmap_name, count))
 		{
-			chaos::ParticleDefault::Particle & particle = particles[i];
-			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
+			delete(allocation);
+			return nullptr;
 		}
-
 		return allocation;
 	}
 
+	bool Game::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * bitmap_name, size_t last_count)
+	{
+		// find bitmap set
+		chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
+		if (bitmap_set == nullptr)
+			return false;
+
+		// find bitmap info
+		chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetBitmapInfo(bitmap_name);
+		if (info == nullptr)
+			return false;
+
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+
+		size_t particles_count = particles.GetCount();
+		size_t start = 0;
+		size_t count = last_count;
+
+		if (particles_count < count)
+			count = particles_count; 
+		else
+			start = particles_count - count;
+
+		for (size_t i = 0 ; i < count ; ++i)
+		{
+			chaos::ParticleDefault::Particle & particle = particles[start + i];
+			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
+		}
+
+		return true;
+	}
 
 	chaos::ParticleAllocation * Game::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id, chaos::ParticleManager * in_particle_manager)
 	{

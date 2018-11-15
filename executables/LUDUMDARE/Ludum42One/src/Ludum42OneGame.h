@@ -140,8 +140,6 @@ protected:
 	/** create one particle for the background */
 	void FillBackgroundLayer();
 
-	/** fill game object texture coordinates (from the last of the array) */
-	bool InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * name, size_t count);
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
@@ -171,8 +169,6 @@ protected:
 	bool SpawnPlayer(ParticlePlayer const & particle_object);
 	/** destroying player */
 	void UnSpawnPlayer();
-
-	chaos::ParticleAllocation * SpawnObjects(chaos::TagType layer_id, size_t count);
 
 	/** get the position of the player */
 	bool SetPlayerPosition(glm::vec2 const & position);

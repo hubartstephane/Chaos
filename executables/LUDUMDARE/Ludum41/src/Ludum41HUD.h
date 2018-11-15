@@ -35,7 +35,7 @@ protected:
 	/** override */
 	virtual bool DoTick(double delta_time) override;
 	/** override */
-	virtual bool InitializeHUD() override;
+	virtual bool CreateHUDLayers() override;
 
 	/** update the combo particles */
 	void UpdateComboParticles(class LudumGame const * ludum_game);

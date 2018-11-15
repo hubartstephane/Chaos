@@ -23,8 +23,8 @@ namespace death
 		/** constructor */
 		GameHUD(class Game * in_game);
 
-		/** initialization method */
-		bool Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
+		/** initialization of the HUD from the game values */
+		virtual bool InitializeHUD();
 
 		/** insert some particles inside the HUD */
 		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
@@ -43,9 +43,6 @@ namespace death
 		/** get the particle manager */
 		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
 
-		/** initialize the content of the HUD */
-		virtual bool FillHUDContent();
-
 		/** get particle tools */
 		GameParticleCreator & GetGameParticleCreator(){ return particle_creator; }
 		/** get particle tools */
@@ -53,8 +50,12 @@ namespace death
 
 	protected:
 
-		/** initialization of the HUD from the game values */
-		virtual bool InitializeHUD();
+		/** initialization method */
+		virtual bool CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
+		/** create the layers */
+		virtual bool CreateHUDLayers();
+		/** create the particles */
+		virtual bool FillHUDContent();
 
 	protected:
 
@@ -92,6 +93,8 @@ namespace death
 		MainMenuHUD(class Game * in_game) :
 			GameHUD(in_game) {}
 
+	protected:
+
 		/** override */
 		virtual bool FillHUDContent() override;
 	};
@@ -107,6 +110,8 @@ namespace death
 		/** constructor */
 		PauseMenuHUD(class Game * in_game) :
 			GameHUD(in_game) {}
+
+	protected:
 
 		/** override */
 		virtual bool FillHUDContent() override;
@@ -124,6 +129,8 @@ namespace death
 		GameOverHUD(class Game * in_game) :
 			GameHUD(in_game) {}
 
+	protected:
+
 		/** override */
 		virtual bool FillHUDContent() override;
 	};
@@ -140,9 +147,6 @@ namespace death
 		/** constructor */
 		PlayingHUD(class Game * in_game) :
 			GameHUD(in_game) {}
-
-		/** override */
-		virtual bool FillHUDContent() override;
 
 	protected:
 

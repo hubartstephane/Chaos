@@ -1068,7 +1068,7 @@ namespace death
 		hud = DoCreate##classname();\
 		if (hud == nullptr)\
 			return false;\
-		if (!hud->FillHUDContent())\
+		if (!hud->InitializeHUD())\
 		{\
 			hud = nullptr;\
 			return false;\

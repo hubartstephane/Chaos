@@ -16,25 +16,27 @@ namespace death
 	bool GameHUD::InitializeHUD()
 	{
 		// create the particle manager from the game texture atlas
-		if (!Initialize(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
+		if (!CreateInternalData(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
 			return false;
-
-		// create some layers
-		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+		// Create the layers
+		if (!CreateHUDLayers())
+			return false;
+		// create the particles
+		if (!FillHUDContent())
+			return false;
 
 		return true;
 	}
 
-	bool GameHUD::Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
+	bool GameHUD::CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
 	{
 		assert((in_particle_manager != nullptr) ^ (in_texture_atlas != nullptr)); // cannot have both creation protocole
 
-		// create the particle manager
+																																							// create the particle manager
 		if (in_particle_manager != nullptr)
 		{
 			particle_manager = in_particle_manager;
-			external_manager = true;			
+			external_manager = true;
 		}
 		else if (in_texture_atlas != nullptr)
 		{
@@ -47,6 +49,19 @@ namespace death
 		// initialize the particle creator
 		particle_creator.Initialize(in_particle_manager, in_particle_text_generator, in_texture_atlas);
 
+		return true;
+	}
+		
+	bool GameHUD::CreateHUDLayers()
+	{
+		int render_order = 0;
+		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+
+		return true;
+	}
+
+	bool GameHUD::FillHUDContent()
+	{
 		return true;
 	}
 
@@ -97,12 +112,6 @@ namespace death
 		return result;
 	}
 
-	bool GameHUD::FillHUDContent()
-	{
-		if (!InitializeHUD())
-			return false;
-		return true;
-	}
 
 		// =============================================
 		// MainMenuHUD
@@ -164,16 +173,6 @@ namespace death
 		// =============================================
 		// PlayingHUD
 		// =============================================
-
-	bool PlayingHUD::FillHUDContent()
-	{
-		// call super method
-		if (!GameHUD::FillHUDContent())
-			return false;
-		// populate the HUD
-
-		return true;
-	}
 
 	bool PlayingHUD::DoTick(double delta_time)
 	{

@@ -96,10 +96,10 @@ void LudumPlayingHUD::TickHeartWarning(LudumGame * ludum_game, double delta_time
 		heart_warning = 1.0f;
 }
 
-bool LudumPlayingHUD::InitializeHUD()
+bool LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	if (!death::PlayingHUD::InitializeHUD())
+	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;
 	// create a layer for the life bar
 	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game);

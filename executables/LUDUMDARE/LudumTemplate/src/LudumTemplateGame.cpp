@@ -242,42 +242,6 @@ void LudumGame::DestroyGameObjects()
 	life_allocations = nullptr;
 }
 
-#if 0
-chaos::ParticleAllocation * LudumGame::CreateGameObjects(char const * name, size_t count, chaos::TagType layer_id)
-{
-	// find layer of concern
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
-	if (layer == nullptr)
-		return nullptr;
-
-	// find bitmap set
-	chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
-	if (folder_info == nullptr)
-		return nullptr;
-
-	// find bitmap info
-	chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(name);
-	if (info == nullptr)
-		return nullptr;
-
-	// allocate the objects
-	chaos::ParticleAllocation * allocation = layer->SpawnParticles(count);
-	if (allocation == nullptr)
-		return nullptr;
-
-	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-
-	for (size_t i = 0 ; i < count ; ++i)
-	{
-		ParticleObject & particle = particles[i];
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
-	}
-		
-	return allocation;
-}
-#endif
-
-
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
@@ -297,13 +261,6 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 	
 	return result;
 }
-
-
-
-
-
-
-
 
 glm::vec2 LudumGame::GetPlayerPosition() const
 {

@@ -1056,7 +1056,7 @@ namespace death
 		}
 
 		// find layer of concern
-		chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
+		chaos::ParticleLayer * layer = in_particle_manager->FindLayer(layer_id);
 		if (layer == nullptr)
 			return nullptr;
 

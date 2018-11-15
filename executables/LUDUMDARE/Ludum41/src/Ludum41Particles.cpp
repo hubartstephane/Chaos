@@ -79,7 +79,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 
 	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(game->GetCurrentHUD());
 	if (playing_hud != nullptr)
-		playing_hud->GetHeartWarningValue();
+		heart_warning = playing_hud->GetHeartWarningValue();
 
 	glm::vec4 color = particle->color;
 	if (heart_warning < 0.5f)

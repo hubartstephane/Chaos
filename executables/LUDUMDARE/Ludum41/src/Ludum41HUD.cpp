@@ -42,14 +42,10 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 			chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
 			if (allocation == nullptr)
 			{
-
-#if 0
-				life_allocations = CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
-				if (life_allocations == nullptr)
+				allocation = game->CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID, GetParticleManager());
+				if (allocation == nullptr)
 					return;
-#endif
-
-
+				RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);
 			}
 			else
 			{

@@ -6,6 +6,8 @@
 #include <chaos/Renderable.h>
 #include <chaos/NamedObject.h>
 
+#include <death/GameParticleTools.h>
+
 namespace death
 {
 	// Create a gamespace for unique idenfiers
@@ -58,6 +60,11 @@ namespace death
 		/** initialize the content of the HUD */
 		virtual bool FillHUDContent();
 
+		/** get particle tools */
+		GameParticleTools & GetGameParticleTools(){ return particle_tools; }
+		/** get particle tools */
+		GameParticleTools const & GetGameParticleTools() const { return particle_tools; }
+
 	protected:
 
 		/** initialization of the HUD from the game values */
@@ -74,6 +81,9 @@ namespace death
 
 		/** the allocations */
 		std::multimap<chaos::TagType, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
+
+		/** the particle tools */
+		GameParticleTools particle_tools;
 
 		/** the particle manager */
 		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;

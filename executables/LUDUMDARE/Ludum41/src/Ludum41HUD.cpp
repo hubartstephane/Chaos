@@ -24,7 +24,7 @@ void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
 		if (current_combo < 2)
 			UnregisterParticles(death::GameHUDKeys::COMBO_ID);
 		else
-			RegisterParticles(death::GameHUDKeys::COMBO_ID, game->CreateScoringText("Combo : %d x", current_combo, 60.0f, death::GameHUDKeys::TEXT_LAYER_ID, particle_manager.get()));
+			RegisterParticles(death::GameHUDKeys::COMBO_ID, GetGameParticleTools().CreateScoringText("Combo : %d x", current_combo, 60.0f, death::GameHUDKeys::TEXT_LAYER_ID));
 
 		cached_combo_value = current_combo;
 	}
@@ -42,7 +42,7 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 			chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
 			if (allocation == nullptr)
 			{
-				allocation = game->CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID, GetParticleManager());
+				allocation = GetGameParticleTools().CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
 				if (allocation == nullptr)
 					return;
 				RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);
@@ -76,48 +76,6 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 		cached_life_value = current_life;
 	}
 }
-
-
-
-
-
-
-#if 0
-
-void LudumGame::UpdateLifeParticles()
-{
-	// get the number of particles already existing
-	size_t life_particles = 0;
-	if (life_allocations != nullptr)
-		life_particles = life_allocations->GetParticleCount();
-
-	// no changes ?
-	if (life_particles == current_life)
-		return;
-
-	// some life lost (destroy particles)
-	if ((size_t)current_life < life_particles)
-	{
-		life_allocations->Resize(current_life);
-		return;
-	}
-
-	// some life gained
-	assert(life_particles < (size_t)current_life);
-
-	//if (life_allocations == nullptr)
-
-
-
-
-#endif
-
-
-
-
-
-
-
 
 void LudumPlayingHUD::TickHeartWarning(LudumGame * ludum_game, double delta_time)
 {

@@ -1,6 +1,53 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+
+#include <chaos/TextureArrayAtlas.h>
+#include <chaos/ParticleManager.h>
+#include <chaos/ParticleTextGenerator.h>
+
+namespace death
+{
+	class GameParticleTools
+	{
+	public:
+
+		/** create some sprites of the given type */
+		chaos::ParticleAllocation * CreateGameObjects(char const * bitmap_name, size_t count, chaos::TagType layer_id) const;
+		/** create a text particle system */
+		chaos::ParticleAllocation * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id /*= death::GameHUDKeys::TEXT_LAYER_ID*/ ) const; //shuxxx
+		/** create a title */
+		chaos::ParticleAllocation * CreateTitle(char const * title, bool normal, chaos::TagType layer_id /* = death::GameHUDKeys::TEXT_LAYER_ID*/ ) const; // shuxxx
+		/** create a score text at the top left corner */
+		chaos::ParticleAllocation * CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id /*= death::GameHUDKeys::TEXT_LAYER_ID*/) const; // shuxxx
+		/** spawn some objects */
+		chaos::ParticleAllocation * SpawnObjects(chaos::TagType layer_id, size_t count) const;
+		/** initialize the game objects texture coordinates (from the end of the array) */
+		bool InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * bitmap_name, size_t last_count) const;
+
+	protected:
+
+		/** the particle manager */
+		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+		/** the text generator */
+		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+		/** the texture atlas */
+		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+
+	};
+
+}; //namespace death
+
+
+
+
+
+
+
+
+
+
+#if 0
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWwindow.h>
 #include <chaos/MyGLFWGamepadManager.h>
@@ -8,9 +55,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/SoundManager.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleTextGenerator.h>
+
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/StateMachine.h>
@@ -20,7 +65,6 @@
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
-#include <death/GameParticleTools.h>
 
 namespace death
 {
@@ -94,6 +138,7 @@ namespace death
 		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayer, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
 
+
 		/** utility function to get the application */
 		chaos::MyGLFW::SingleWindowApplication * GetApplication();
 		/** utility function to get the application */
@@ -131,10 +176,7 @@ namespace death
 		/** returns the HUD */
 		GameHUD const * GetCurrentHUD() const { return hud.get();}
 
-		/** get particle tools */
-		GameParticleTools & GetGameParticleTools(){ return particle_tools; }
-		/** get particle tools */
-		GameParticleTools const & GetGameParticleTools() const { return particle_tools; }
+
 
 
 
@@ -464,12 +506,9 @@ namespace death
 		boost::intrusive_ptr<chaos::Clock> game_clock;
 		boost::intrusive_ptr<chaos::Clock> pause_clock;
 
-		/** the particle tools */
-		GameParticleTools particle_tools;
-
 		/** a tiled map manager */
 		boost::intrusive_ptr<chaos::TiledMap::Manager> tiled_map_manager;
-
+		
 		/** level data */
 		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
 		/** the current level instance */
@@ -477,3 +516,5 @@ namespace death
 	};
 
 }; // namespace death
+
+#endif

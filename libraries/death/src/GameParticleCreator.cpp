@@ -1,13 +1,23 @@
-#include <death/GameParticleTools.h>
+#include <death/GameParticleCreator.h>
 
 #include <chaos/ParticleDefault.h>
 
 namespace death
 {
 
+	bool GameParticleCreator::Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
+	{
+		// particle text generator can be null if we dont want to create text
+		assert(in_particle_manager != nullptr);
+		assert(in_texture_atlas != nullptr);
 
+		particle_manager = in_particle_manager;
+		particle_text_generator = in_particle_text_generator;
+		texture_atlas = in_texture_atlas;
+		return true;
+	}
 
-	chaos::ParticleAllocation * GameParticleTools::SpawnObjects(chaos::TagType layer_id, size_t count) const
+	chaos::ParticleAllocation * GameParticleCreator::SpawnObjects(chaos::TagType layer_id, size_t count) const
 	{
 		// spawn the particles
 		chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
@@ -16,7 +26,7 @@ namespace death
 		return layer->SpawnParticles(count);
 	}
 
-	chaos::ParticleAllocation * GameParticleTools::CreateGameObjects(char const * bitmap_name, size_t count, chaos::TagType layer_id) const
+	chaos::ParticleAllocation * GameParticleCreator::CreateGameObjects(char const * bitmap_name, size_t count, chaos::TagType layer_id) const
 	{
 		// allocate the objects
 		chaos::ParticleAllocation * allocation = SpawnObjects(layer_id, count);
@@ -31,7 +41,7 @@ namespace death
 		return allocation;
 	}
 
-	bool GameParticleTools::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * bitmap_name, size_t last_count) const
+	bool GameParticleCreator::InitializeGameObjects(chaos::ParticleAllocation * allocation, char const * bitmap_name, size_t last_count) const
 	{
 		// find bitmap set
 		chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
@@ -63,7 +73,7 @@ namespace death
 		return true;
 	}
 
-	chaos::ParticleAllocation * GameParticleTools::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id) const
+	chaos::ParticleAllocation * GameParticleCreator::CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id) const
 	{
 		// find layer of concern
 		chaos::ParticleLayer * layer = particle_manager->FindLayer(layer_id);
@@ -80,23 +90,24 @@ namespace death
 		return allocation;
 	}
 
-	chaos::ParticleAllocation * GameParticleTools::CreateTitle(char const * title, bool normal, chaos::TagType layer_id) const
+	chaos::ParticleAllocation * GameParticleCreator::CreateTitle(char const * title, bool normal, chaos::TagType layer_id) const
 	{
+		float title_size = 150.0f;
+		float title_placement_y = 0.0f;	
+
 		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 0; // title_size; // shuxxx
+		params.line_height = title_size;
 		params.hotpoint_type = chaos::Hotpoint::CENTER;
-		params.position.y = 0.0f;// title_placement_y; // shuxxx
+		params.position.y = title_placement_y;
 
 		params.font_info_name = (normal) ? "normal" : "title";
 
 		return CreateTextParticles(title, params, layer_id);
 	}
 
-	chaos::ParticleAllocation * GameParticleTools::CreateScoringText(char const * format, int value, float Y, chaos::TagType layer_id) const
+	chaos::ParticleAllocation * GameParticleCreator::CreateScoringText(char const * format, int value, float Y, chaos::box2 const & view, chaos::TagType layer_id) const
 	{
 		// get view size
-		chaos::box2 view ; // shuxxx = GetViewBox();
-
 		std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
 
 		// set the values

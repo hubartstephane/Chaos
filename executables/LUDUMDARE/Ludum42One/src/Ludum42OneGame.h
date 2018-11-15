@@ -28,7 +28,6 @@ namespace death
 {
 	namespace GameHUDKeys
 	{
-		CHAOS_DECLARE_TAG(BACKGROUND_LAYER_ID);
 		CHAOS_DECLARE_TAG(PLANETS_LAYER_ID);
 		CHAOS_DECLARE_TAG(GAMEOBJECT_LAYER_ID);
 	};
@@ -138,7 +137,7 @@ protected:
 
 
 	/** create one particle for the background */
-	void FillBackgroundLayer();
+	virtual bool CreateBackgroundImage() override;
 
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();

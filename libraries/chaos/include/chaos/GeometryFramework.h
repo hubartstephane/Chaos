@@ -117,8 +117,10 @@ namespace chaos
 		/** get the corners of the box */
 		std::pair<vec_type, vec_type> GetCorners() const
 		{
-			assert(!IsEmpty());
-			return std::make_pair(position - half_size, position + half_size);
+			if (!IsEmpty())
+				return std::make_pair(position - half_size, position + half_size);
+				
+			return std::make_pair(position, position);						
 		}
 
 		/** returns true whether the box is empty */

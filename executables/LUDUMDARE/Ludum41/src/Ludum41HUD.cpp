@@ -24,7 +24,7 @@ void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
 		if (current_combo < 2)
 			UnregisterParticles(death::GameHUDKeys::COMBO_ID);
 		else
-			RegisterParticles(death::GameHUDKeys::COMBO_ID, GetGameParticleTools().CreateScoringText("Combo : %d x", current_combo, 60.0f, death::GameHUDKeys::TEXT_LAYER_ID));
+			RegisterParticles(death::GameHUDKeys::COMBO_ID, GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
 
 		cached_combo_value = current_combo;
 	}
@@ -42,7 +42,7 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 			chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
 			if (allocation == nullptr)
 			{
-				allocation = GetGameParticleTools().CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
+				allocation = GetGameParticleCreator().CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
 				if (allocation == nullptr)
 					return;
 				RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);

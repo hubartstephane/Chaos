@@ -20,7 +20,7 @@
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
-#include <death/GameParticleTools.h>
+#include <death/GameParticleCreator.h>
 
 namespace death
 {
@@ -68,6 +68,10 @@ namespace death
 		/** getter on the texture atlas */
 		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }
 		chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
+
+		/** getter on the text generator */
+		chaos::ParticleTextGenerator::Generator * GetTextGenerator() { return particle_text_generator.get(); }
+		chaos::ParticleTextGenerator::Generator const * GetTextGenerator() const { return particle_text_generator.get(); }
 
 		// The clocks: 
 		//   - root  clock : the top level clock. never reseted, never paused
@@ -132,18 +136,9 @@ namespace death
 		GameHUD const * GetCurrentHUD() const { return hud.get();}
 
 		/** get particle tools */
-		GameParticleTools & GetGameParticleTools(){ return particle_tools; }
+		GameParticleCreator & GetGameParticleCreator(){ return particle_creator; }
 		/** get particle tools */
-		GameParticleTools const & GetGameParticleTools() const { return particle_tools; }
-
-
-
-
-
-
-
-
-
+		GameParticleCreator const & GetGameParticleCreator() const { return particle_creator; }
 
 		/** get the size of the world */
 		virtual glm::vec2 GetViewSize() const;
@@ -277,6 +272,11 @@ namespace death
 		virtual bool InitializeParticleTextGenerator();
 		/** initialize the particle manager */
 		virtual bool InitializeParticleManager();
+		/** initialize the GameParticleCreator */
+		virtual bool InitializeGameParticleCreator();
+		/** create the background image */
+		virtual bool CreateBackgroundImage();
+
 		/** initialize the render layer */
 		virtual bool InitializeRootRenderLayer();
 
@@ -451,9 +451,6 @@ namespace death
 
 		/** the wanted viewport aspect */
 		float viewport_wanted_aspect = (16.0f / 9.0f);
-		/** some HUD settings */
-		float title_size = 150.0f;
-		float title_placement_y = 0;
 
 		/** name of the game */
 		char const * game_name = nullptr;
@@ -465,7 +462,7 @@ namespace death
 		boost::intrusive_ptr<chaos::Clock> pause_clock;
 
 		/** the particle tools */
-		GameParticleTools particle_tools;
+		GameParticleCreator particle_creator;
 
 		/** a tiled map manager */
 		boost::intrusive_ptr<chaos::TiledMap::Manager> tiled_map_manager;

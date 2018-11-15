@@ -13,31 +13,39 @@ namespace death
 		assert(in_game != nullptr);
 	}
 
-	bool GameHUD::Initialize(chaos::ParticleManager * in_particle_manager, bool in_external_manager)
+	bool GameHUD::InitializeHUD()
 	{
-		// ensure not already initialized or in use
-		assert(particle_manager == nullptr);
-		assert(in_particle_manager != nullptr);
-		assert(particle_allocations.size() == 0);
+		// create the particle manager from the game texture atlas
+		if (!Initialize(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
+			return false;
 
-		// copy the data
-		particle_manager = in_particle_manager;
-		external_manager = in_external_manager;
+		// create some layers
+		int render_order = 0;
+		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+
 		return true;
 	}
 
-	bool GameHUD::Initialize(chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
+	bool GameHUD::Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
 	{
-		// ensure not already initialized or in use
-		assert(particle_manager == nullptr);
-		assert(in_texture_atlas != nullptr);
-		assert(particle_allocations.size() == 0);
+		assert((in_particle_manager != nullptr) ^ (in_texture_atlas != nullptr)); // cannot have both creation protocole
 
-		// create a texture manager
-		particle_manager = new chaos::ParticleManager;
-		if (particle_manager == nullptr)
-			return false;
-		particle_manager->SetTextureAtlas(in_texture_atlas);
+		// create the particle manager
+		if (in_particle_manager != nullptr)
+		{
+			particle_manager = in_particle_manager;
+			external_manager = true;			
+		}
+		else if (in_texture_atlas != nullptr)
+		{
+			particle_manager = in_particle_manager = new chaos::ParticleManager;
+			if (particle_manager == nullptr)
+				return false;
+			particle_manager->SetTextureAtlas(in_texture_atlas);
+			external_manager = false;
+		}
+		// initialize the particle creator
+		particle_creator.Initialize(in_particle_manager, in_particle_text_generator, in_texture_atlas);
 
 		return true;
 	}
@@ -89,20 +97,6 @@ namespace death
 		return result;
 	}
 
-
-	bool GameHUD::InitializeHUD()
-	{
-		// create the particle manager from the game texture atlas
-		if (!Initialize(game->GetTextureAtlas()))
-			return false;
-
-		// create some layers
-		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait> (render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
-
-		return true;
-	}
-
 	bool GameHUD::FillHUDContent()
 	{
 		if (!InitializeHUD())
@@ -121,7 +115,7 @@ namespace death
 			return false;
 		// populate the HUD
 		if (game->GetGameName() != nullptr)
-			RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleTools().CreateTitle(game->GetGameName(), false, GameHUDKeys::TEXT_LAYER_ID));
+			RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleCreator().CreateTitle(game->GetGameName(), false, GameHUDKeys::TEXT_LAYER_ID));
 
 		if (game->GetBestScore() > 0)
 		{
@@ -134,7 +128,7 @@ namespace death
 			params.font_info_name = "normal";
 
 			std::string str = chaos::StringTools::Printf("Best score : %d", game->GetBestScore());
-			RegisterParticles(GameHUDKeys::BEST_SCORE_ID, GetGameParticleTools().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID));
+			RegisterParticles(GameHUDKeys::BEST_SCORE_ID, GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID));
 		}
 		return true;
 	}
@@ -149,7 +143,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// populate the HUD
-		RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleTools().CreateTitle("Pause", true, death::GameHUDKeys::TEXT_LAYER_ID));
+		RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleCreator().CreateTitle("Pause", true, death::GameHUDKeys::TEXT_LAYER_ID));
 		return true;
 	}
 
@@ -163,7 +157,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// populate the HUD
-		RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleTools().CreateTitle("Game Over", true, death::GameHUDKeys::TEXT_LAYER_ID));
+		RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleCreator().CreateTitle("Game Over", true, death::GameHUDKeys::TEXT_LAYER_ID));
 		return true;
 	}
 
@@ -198,7 +192,7 @@ namespace death
 			if (current_score < 0)
 				UnregisterParticles(GameHUDKeys::SCORE_ID);
 			else
-				RegisterParticles(GameHUDKeys::SCORE_ID, GetGameParticleTools().CreateScoringText("Score : %d", current_score, 20.0f, death::GameHUDKeys::TEXT_LAYER_ID));
+				RegisterParticles(GameHUDKeys::SCORE_ID, GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
 
 			cached_score_value = current_score;
 		}

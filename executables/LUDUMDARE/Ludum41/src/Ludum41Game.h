@@ -167,7 +167,7 @@ protected:
 	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
 
 	/** create one particle for the background */
-	void FillBackgroundLayer();
+	virtual bool CreateBackgroundImage() override;
 	/** create a text for the challenge */
 	chaos::ParticleAllocation * CreateChallengeParticles(LudumChallenge * challenge);
 

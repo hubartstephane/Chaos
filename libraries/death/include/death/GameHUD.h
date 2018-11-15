@@ -6,23 +6,11 @@
 #include <chaos/Renderable.h>
 #include <chaos/NamedObject.h>
 
-#include <death/GameParticleTools.h>
+#include <death/GameHUDKeys.h>
+#include <death/GameParticleCreator.h>
 
 namespace death
 {
-	// Create a gamespace for unique idenfiers
-	namespace GameHUDKeys
-	{
-		// some allocation ID's
-		CHAOS_DECLARE_TAG(TITLE_ID);
-		CHAOS_DECLARE_TAG(SCORE_ID);
-		CHAOS_DECLARE_TAG(BEST_SCORE_ID);
-		// some layer ID's
-		CHAOS_DECLARE_TAG(GAME_LAYER_ID);
-		CHAOS_DECLARE_TAG(PLAYER_LAYER_ID);
-		CHAOS_DECLARE_TAG(HUD_LAYER_ID);
-		CHAOS_DECLARE_TAG(TEXT_LAYER_ID);
-	};
 
 	// =============================================
 	// GameHUD
@@ -35,10 +23,8 @@ namespace death
 		/** constructor */
 		GameHUD(class Game * in_game);
 
-		/** initialization method : set the particle manager and use it */
-		bool Initialize(chaos::ParticleManager * in_particle_manager, bool in_external_manager);
-		/** initialization method : create a new particle manager using given atlas */
-		bool Initialize(chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
+		/** initialization method */
+		bool Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 
 		/** insert some particles inside the HUD */
 		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
@@ -61,9 +47,9 @@ namespace death
 		virtual bool FillHUDContent();
 
 		/** get particle tools */
-		GameParticleTools & GetGameParticleTools(){ return particle_tools; }
+		GameParticleCreator & GetGameParticleCreator(){ return particle_creator; }
 		/** get particle tools */
-		GameParticleTools const & GetGameParticleTools() const { return particle_tools; }
+		GameParticleCreator const & GetGameParticleCreator() const { return particle_creator; }
 
 	protected:
 
@@ -83,7 +69,7 @@ namespace death
 		std::multimap<chaos::TagType, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
 
 		/** the particle tools */
-		GameParticleTools particle_tools;
+		GameParticleCreator particle_creator;
 
 		/** the particle manager */
 		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;

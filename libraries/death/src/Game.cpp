@@ -403,6 +403,11 @@ namespace death
 		particle_manager->SetTextureAtlas(texture_atlas.get());
 		return true;
 	}
+
+	bool Game::CreateBackgroundImage()
+	{
+		return true;
+	}
 	
 	bool Game::DestroyInGameClocks()
 	{
@@ -489,7 +494,6 @@ namespace death
 		// the atlas
 		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
 			return false;
-
 		// initialize the root render system
 		if (!InitializeRootRenderLayer())
 			return false;
@@ -499,6 +503,13 @@ namespace death
 		// initialize the particle text generator manager
 		if (!InitializeParticleTextGenerator())
 			return false;
+		// initialize game particles creator
+		if (!InitializeGameParticleCreator())
+			return false;
+		// create the game background
+		if (!CreateBackgroundImage())
+			return false;
+
 		// load the best score if any
 		SerializeBestScore(false);
 		return true;
@@ -842,6 +853,12 @@ namespace death
 
 		return true;
 	}
+
+	bool Game::InitializeGameParticleCreator()
+	{
+		return particle_creator.Initialize(particle_manager.get(), particle_text_generator.get(), texture_atlas.get());
+	}
+
 
 	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{

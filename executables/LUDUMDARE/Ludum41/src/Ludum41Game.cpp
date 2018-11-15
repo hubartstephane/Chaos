@@ -459,7 +459,7 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(LudumLevel const * level)
 
 	// create the bricks resource
 	size_t brick_count = level->GetBrickCount();
-	chaos::ParticleAllocation * result = GetGameParticleTools().CreateGameObjects("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -528,7 +528,7 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 {
 
 	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleTools().CreateGameObjects("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -556,7 +556,7 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleTools().CreateGameObjects("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -1159,21 +1159,18 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	return true;
 }
 
-void LudumGame::FillBackgroundLayer()
+bool LudumGame::CreateBackgroundImage()
 {
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::BACKGROUND_LAYER_ID);
-	if (layer == nullptr)
-		return;
-
-	background_allocations = layer->SpawnParticles(1);
+	background_allocations = GetGameParticleCreator().SpawnObjects(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
 	if (background_allocations == nullptr)
-		return;
+		return false;
 
 	chaos::ParticleAccessor<ParticleBackground> particles = background_allocations->GetParticleAccessor<ParticleBackground>();
 	if (particles.GetCount() == 0)
-		return;
+		return false;
 
 	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	return true;
 }
 
 bool LudumGame::InitializeRewardsAndPunishments()
@@ -1284,9 +1281,6 @@ bool LudumGame::InitializeParticleManager()
 
 	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
-
-	// fill the background
-	FillBackgroundLayer();
 
 	return true;
 }

@@ -2,9 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
-
-
-
+#include <chaos/NamedObject.h>
 
 namespace chaos
 {
@@ -30,7 +28,7 @@ namespace chaos
 			// State
 			// ==================================================
 
-		class StateBase : public ReferencedObject
+		class StateBase : public ReferencedObject, public NamedObject
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
@@ -41,16 +39,6 @@ namespace chaos
 			/** destructor */
 			virtual ~StateBase();
 
-			/** change the ID */
-			void SetID(int new_id) { id = new_id; }
-			/** get the ID */
-			int GetID() const { return id; }
-
-			/** change the name */
-			void SetName(char const * in_name);
-			/** get the name */
-			char const * GetName() const { return name.c_str(); }
-
 		protected:
 
 			/** FRAMEWORK : called whenever we enter in this state */
@@ -60,7 +48,7 @@ namespace chaos
 			/** FRAMEWORK : called whenever we leave this state */
 			virtual void OnLeave(StateBase * to_state, StateMachineInstance * sm_instance){}
 			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEvent(int event_id, void * extra_data, StateMachineInstance * sm_instance){ return false; }
+			virtual bool SendEvent(TagType event_tag, void * extra_data, StateMachineInstance * sm_instance){ return false; }
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
 			virtual bool OnEnterImpl(StateBase * from_state, StateMachineInstance * sm_instance){ return true;}
@@ -69,16 +57,13 @@ namespace chaos
 			/** USER IMPLEMENTATION : called whenever we leave this state */
 			virtual bool OnLeaveImpl(StateBase * to_state, StateMachineInstance * sm_instance){ return true; }
 			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEventImpl(int event_id, void * extra_data, StateMachineInstance * sm_instance){ return false; }
+			virtual bool SendEventImpl(TagType event_tag, void * extra_data, StateMachineInstance * sm_instance){ return false; }
 
 		protected:
 
 			/** the state_machine this instance belongs to */
 			StateMachine * state_machine = nullptr;
-			/** an ID for the state */
-			int id = 0;
-			/** the name of the state */
-			std::string name;
+
 		};
 
 
@@ -104,7 +89,7 @@ namespace chaos
 			/** FRAMEWORK : called whenever we leave this state */
 			virtual void OnLeave(StateBase * to_state, StateMachineInstance * sm_instance) override;
 			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEvent(int event_id, void * extra_data, StateMachineInstance * sm_instance) override;
+			virtual bool SendEvent(TagType event_tag, void * extra_data, StateMachineInstance * sm_instance) override;
 
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
 			virtual bool OnEnterImpl(StateBase * from_state, StateMachineInstance * sm_instance) override;
@@ -113,7 +98,7 @@ namespace chaos
 			/** USER IMPLEMENTATION : called whenever we leave this state */
 			virtual bool OnLeaveImpl(StateBase * to_state, StateMachineInstance * sm_instance) override;
 			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEventImpl(int event_id, void * extra_data, StateMachineInstance * sm_instance) override;
+			virtual bool SendEventImpl(TagType event_tag, void * extra_data, StateMachineInstance * sm_instance) override;
 
 		protected:
 
@@ -134,7 +119,7 @@ namespace chaos
 		public:
 
 			/** constructor */
-			Transition(State * in_from_state, State * in_to_state, int in_triggering_event = -1);
+			Transition(State * in_from_state, State * in_to_state, TagType in_triggering_event = 0);
 
 		protected:
 
@@ -162,8 +147,7 @@ namespace chaos
 			/** destination state */
 			State * to_state = nullptr;
 			/** the ID of the event that will automatically trigger the transition */
-			int triggering_event = -1;
-
+			TagType triggering_event = 0;
 		};
 
 		// ==================================================
@@ -184,7 +168,7 @@ namespace chaos
 			/** restart the state_machine */
 			void Restart();
 			/** send an event to current state */
-			bool SendEvent(int event_id, void * extra_data);
+			bool SendEvent(TagType event_tag, void * extra_data);
 
 			/** get the current state */
 			StateBase * GetCurrentState() { return current_state; }

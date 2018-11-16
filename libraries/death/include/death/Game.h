@@ -213,7 +213,7 @@ namespace death
 		void StartPauseMusic(bool restart_first);
 
 		/** get current state ID */
-		int GetCurrentStateID() const;
+		int GetCurrentStateTag() const;
 		/** returns whether were are in playing state */
 		bool IsPlaying() const;
 		/** returns whether were are in pause state */

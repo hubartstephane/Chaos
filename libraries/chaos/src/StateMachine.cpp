@@ -21,15 +21,6 @@ namespace chaos
 
 		}
 
-		void StateBase::SetName(char const * in_name)
-		{
-			if (in_name == nullptr)
-				name.clear();
-			else
-				name = in_name;
-		}
-
-
 		// ==================================================
 		// State
 		// ==================================================
@@ -65,15 +56,15 @@ namespace chaos
 			OnLeaveImpl(to_state, sm_instance);
 		}
 
-		bool State::SendEvent(int event_id, void * extra_data, StateMachineInstance * sm_instance)
+		bool State::SendEvent(TagType event_tag, void * extra_data, StateMachineInstance * sm_instance)
 		{
 			// the USER implementation catch the method
-			if (SendEventImpl(event_id, extra_data, sm_instance))
+			if (SendEventImpl(event_tag, extra_data, sm_instance))
 				return true;
 			// give to the outgoing transitions the opportunities to catch the event
 			for (Transition * transition : outgoing_transitions)
 			{
-				if (transition->triggering_event >= 0 && transition->triggering_event == event_id)
+				if (transition->triggering_event > 0 && transition->triggering_event == event_tag)
 				{
 					sm_instance->ChangeState(transition);
 					return true;
@@ -97,7 +88,7 @@ namespace chaos
 			return false;
 		}
 
-		bool State::SendEventImpl(int event_id, void * extra_data, StateMachineInstance * sm_instance)
+		bool State::SendEventImpl(TagType event_tag, void * extra_data, StateMachineInstance * sm_instance)
 		{
 			return false; // do not catch the event : let the outgoing transition do their job
 		}
@@ -106,7 +97,7 @@ namespace chaos
 		// Transition
 		// ==================================================
 
-		Transition::Transition(State * in_from_state, State * in_to_state, int in_triggering_event):
+		Transition::Transition(State * in_from_state, State * in_to_state, TagType in_triggering_event):
 			StateBase(in_from_state->state_machine),
 			from_state(in_from_state),
 			to_state(in_to_state),
@@ -215,11 +206,11 @@ namespace chaos
 			ChangeState(state_machine->initial_state);
 		}
 
-		bool StateMachineInstance::SendEvent(int event_id, void * extra_data)
+		bool StateMachineInstance::SendEvent(TagType event_tag, void * extra_data)
 		{
 			if (current_state == nullptr)
 				return false;
-			return current_state->SendEvent(event_id, extra_data, this);
+			return current_state->SendEvent(event_tag, extra_data, this);
 		}
 
 

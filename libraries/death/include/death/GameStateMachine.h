@@ -7,6 +7,19 @@
 
 namespace death
 {
+	namespace GameStateMachineKeys
+	{
+		// the possible states
+		CHAOS_DECLARE_TAG(STATE_MAINMENU);
+		CHAOS_DECLARE_TAG(STATE_PAUSE);
+		CHAOS_DECLARE_TAG(STATE_PLAYING);
+
+		// the events
+		CHAOS_DECLARE_TAG(EVENT_TOGGLE_PAUSE);
+		CHAOS_DECLARE_TAG(EVENT_EXIT_GAME);
+		CHAOS_DECLARE_TAG(EVENT_START_GAME);
+		CHAOS_DECLARE_TAG(EVENT_GAME_OVER);
+	};
 
 	// =========================================================
 	// GameState
@@ -33,7 +46,7 @@ namespace death
 	public:
 
 		/** constructor */
-		GameTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
+		GameTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 		/** get the game */
 		Game * GetGame(chaos::SM::StateMachineInstance * sm_instance);
 		/** get the game */
@@ -81,7 +94,7 @@ namespace death
 	public:
 
 		/** constructor */
-		MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
+		MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 
 	protected:
 
@@ -97,7 +110,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
+		PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 
 	protected:
 
@@ -115,7 +128,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
+		PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 
 	protected:
 
@@ -132,7 +145,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
+		PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 
 	protected:
 
@@ -148,7 +161,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event);
+		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateBase * from, chaos::SM::StateMachineInstance * sm_instance) override;
@@ -167,22 +180,6 @@ namespace death
 		friend class Game;
 
 	public:
-
-		// the possible states
-		static int const STATE_MAINMENU = 1;
-		static int const STATE_PAUSE = 2;
-		static int const STATE_PLAYING = 3;
-
-		// the possible transition-states
-		static int const STATE_TRANSITION_MAINMENU_TO_PLAYING = 5;
-		static int const STATE_TRANSITION_PLAYING_TO_PAUSE = 6;
-		static int const STATE_TRANSITION_PAUSE_TO_PLAYING = 7;
-
-		// the events
-		static int const EVENT_TOGGLE_PAUSE = 1;
-		static int const EVENT_EXIT_GAME    = 2;
-		static int const EVENT_START_GAME   = 3;
-		static int const EVENT_GAME_OVER    = 4;
 
 		/** constructor */
 		GameStateMachine(Game * in_game);

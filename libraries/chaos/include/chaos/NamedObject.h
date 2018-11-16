@@ -26,7 +26,7 @@
 namespace chaos
 {
 	/** a tag is an integer that can reference any address */
-	using TagType = intptr_t;
+	using TagType = uintptr_t;
 
 	/** function to generate a TagType from a name (XXX : not thread safe) */
 	TagType MakeStaticTagType(char const * name);

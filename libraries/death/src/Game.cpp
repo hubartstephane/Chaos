@@ -1009,26 +1009,26 @@ namespace death
 		ChangeMusic(musics, 3, restart_first);
 	}
 
-	int Game::GetCurrentStateID() const
+	int Game::GetCurrentStateTag() const
 	{
 		if (game_state_machine_instance == nullptr)
 			return -1;
 		chaos::SM::StateBase const * current_state = game_state_machine_instance->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
-		return current_state->GetID();
+		return current_state->GetTag();
 	}
 
 	bool Game::IsPlaying() const
 	{
-		if (GetCurrentStateID() == GameStateMachine::STATE_PLAYING)
+		if (GetCurrentStateTag() == GameStateMachineKeys::STATE_PLAYING)
 			return true;
 		return false;
 	}
 
 	bool Game::IsPaused() const
 	{
-		if (GetCurrentStateID() == GameStateMachine::STATE_PAUSE)
+		if (GetCurrentStateTag() == GameStateMachineKeys::STATE_PAUSE)
 			return true;
 		return false;
 	}
@@ -1036,28 +1036,28 @@ namespace death
 
 	bool Game::RequireGameOver()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_GAME_OVER, nullptr))
+		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_GAME_OVER, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireTogglePause()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_TOGGLE_PAUSE, nullptr))
+		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_TOGGLE_PAUSE, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireExitGame()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_EXIT_GAME, nullptr))
+		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_EXIT_GAME, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireStartGame()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachine::EVENT_START_GAME, nullptr))
+		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, nullptr))
 			return true;
 		return false;
 	}

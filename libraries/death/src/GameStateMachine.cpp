@@ -32,7 +32,7 @@ namespace death
 	// GameTransition
 	// =========================================================
 
-	GameTransition::GameTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event) :
+	GameTransition::GameTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		chaos::SM::Transition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
@@ -60,7 +60,7 @@ namespace death
 	MainMenuState::MainMenuState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
-		SetID(GameStateMachine::STATE_MAINMENU);
+		SetTag(GameStateMachineKeys::STATE_MAINMENU);
 		SetName("MainMenu");
 	}
 
@@ -75,7 +75,7 @@ namespace death
 	PlayingState::PlayingState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
-		SetID(GameStateMachine::STATE_PLAYING);
+		SetTag(GameStateMachineKeys::STATE_PLAYING);
 		SetName("Playing");
 	}
 
@@ -90,7 +90,7 @@ namespace death
 	PauseState::PauseState(GameStateMachine * in_state_machine) :
 		GameState(in_state_machine)
 	{
-		SetID(GameStateMachine::STATE_PAUSE);
+		SetTag(GameStateMachineKeys::STATE_PAUSE);
 		SetName("Pause");
 	}
 
@@ -98,7 +98,7 @@ namespace death
 	// All transitions
 	// =========================================================
 
-	MainMenuToPlayingTransition::MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event) :
+	MainMenuToPlayingTransition::MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
@@ -120,7 +120,7 @@ namespace death
 		return game->IsGameEnterComplete();
 	}
 
-	PlayingToMainMenuTransition::PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event) :
+	PlayingToMainMenuTransition::PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
@@ -151,7 +151,7 @@ namespace death
 		return false;
 	}
 
-	PlayingToPauseTransition::PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event) :
+	PlayingToPauseTransition::PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
@@ -174,7 +174,7 @@ namespace death
 		return game->IsPauseEnterComplete();
 	}
 
-	PauseToPlayingTransition::PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event) :
+	PauseToPlayingTransition::PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
@@ -196,7 +196,7 @@ namespace death
 		return game->IsPauseLeaveComplete();
 	}
 
-	PlayingToGameOverTransition::PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, int in_triggering_event) :
+	PlayingToGameOverTransition::PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
@@ -253,11 +253,11 @@ namespace death
 		playing_state = new PlayingState(this);
 		pause_state = new PauseState(this);
 
-		main_menu_to_playing = new MainMenuToPlayingTransition(main_menu_state.get(), playing_state.get(), GameStateMachine::EVENT_START_GAME);
-		playing_to_main_menu = new PlayingToMainMenuTransition(playing_state.get(), main_menu_state.get(), GameStateMachine::EVENT_EXIT_GAME);
-		playing_to_pause = new PlayingToPauseTransition(playing_state.get(), pause_state.get(), GameStateMachine::EVENT_TOGGLE_PAUSE);
-		pause_to_playing = new PauseToPlayingTransition(pause_state.get(), playing_state.get(), GameStateMachine::EVENT_TOGGLE_PAUSE);
-		playing_to_gameover = new PlayingToGameOverTransition(playing_state.get(), main_menu_state.get(), GameStateMachine::EVENT_GAME_OVER);
+		main_menu_to_playing = new MainMenuToPlayingTransition(main_menu_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_START_GAME);
+		playing_to_main_menu = new PlayingToMainMenuTransition(playing_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_EXIT_GAME);
+		playing_to_pause = new PlayingToPauseTransition(playing_state.get(), pause_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
+		pause_to_playing = new PauseToPlayingTransition(pause_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
+		playing_to_gameover = new PlayingToGameOverTransition(playing_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_GAME_OVER);
 
 		SetInitialState(main_menu_state.get());
 

@@ -42,7 +42,7 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 			chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
 			if (allocation == nullptr)
 			{
-				allocation = GetGameParticleCreator().CreateGameObjects("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
+				allocation = GetGameParticleCreator().CreateParticles("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
 				if (allocation == nullptr)
 					return;
 				RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);

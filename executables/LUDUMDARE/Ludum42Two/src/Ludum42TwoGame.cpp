@@ -198,7 +198,7 @@ void LudumGame::DestroyGameObjects()
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -301,7 +301,7 @@ death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 
 bool LudumGame::CreateBackgroundImage()
 {
-	background_allocations = GetGameParticleCreator().SpawnObjects(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
+	background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
 	if (background_allocations == nullptr)
 		return false;
 
@@ -366,7 +366,7 @@ bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 	if (player_allocations != nullptr) // already existing
 		return false;
 
-	player_allocations = GetGameParticleCreator().SpawnObjects(death::GameHUDKeys::PLAYER_LAYER_ID, 1);
+	player_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::PLAYER_LAYER_ID, 1);
 	if (player_allocations == nullptr)
 		return false;
 
@@ -374,7 +374,7 @@ bool LudumGame::SpawnPlayer(ParticleObject const & particle_object)
 	particles[0] = particle_object;
 
 	// create the water allocation
-	water_allocations = GetGameParticleCreator().SpawnObjects(death::GameHUDKeys::WATER_LAYER_ID, 0);
+	water_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::WATER_LAYER_ID, 0);
 
 	return true;
 }
@@ -514,7 +514,7 @@ void LudumGame::PlayerThrowWater()
 	size_t new_count = water_allocations->GetParticleCount() + 1;
 	water_allocations->Resize(new_count);
 
-	GetGameParticleCreator().InitializeGameObjects(water_allocations.get(), "water", 1);
+	GetGameParticleCreator().InitializeParticles(water_allocations.get(), "water", 1);
 
 	chaos::ParticleAccessor<ParticleWater> particles = water_allocations->GetParticleAccessor<ParticleWater>();
 	if (particles.GetCount() < new_count)

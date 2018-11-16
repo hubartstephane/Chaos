@@ -459,7 +459,7 @@ chaos::ParticleAllocation * LudumGame::CreateBricks(LudumLevel const * level)
 
 	// create the bricks resource
 	size_t brick_count = level->GetBrickCount();
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -528,7 +528,7 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 {
 
 	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -556,7 +556,7 @@ chaos::ParticleAllocation * LudumGame::CreateBalls(size_t count, bool full_init)
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateGameObjects("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -1161,7 +1161,7 @@ bool LudumGame::InitializeGamepadButtonInfo()
 
 bool LudumGame::CreateBackgroundImage()
 {
-	background_allocations = GetGameParticleCreator().SpawnObjects(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
+	background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
 	if (background_allocations == nullptr)
 		return false;
 

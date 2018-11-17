@@ -191,23 +191,10 @@ protected:
 
 	/** called whenever a ball collide */
 	void OnBallCollide(bool collide_brick);
-	/** change the player position */
-	void SetPlayerPosition(float position);
 	/** change the length */
 	void SetPlayerLength(float length);
 
 
-
-
-	/** get an object particle */
-	ParticleObject * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
-	/** get an object particle */
-	ParticleObject const * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index) const;
-
-	/** get the player particle */
-	ParticleObject * GetPlayerParticle();
-	/** get the player particle */
-	ParticleObject const * GetPlayerParticle() const;
 
 	/** get the balls */
 	ParticleMovableObject * GetBallParticles();
@@ -228,32 +215,6 @@ protected:
 	/** returns true whether we can start a challenge (returns index of a valid ball) */
 	size_t CanStartChallengeBallIndex(bool reverse = false) const;
 
-
-
-	/** get the box for a given object */
-	chaos::box2 GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const;
-	/** get the box for player */
-	virtual chaos::box2 GetPlayerBox() const override;
-
-	/** change one object box */
-	bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
-	/** change player box */
-	virtual bool SetPlayerBox(chaos::box2 const & box) override;
-
-	/** get the position for given object */
-	glm::vec2 GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const;
-	/** get the player position */
-	glm::vec2 GetPlayerPosition() const;
-
-
-
-
-
-
-
-
-	/** change an object position */
-	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
 
 	/** ensure object is inside the world */
 	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
@@ -293,6 +254,10 @@ protected:
 	void ChangeLife(int delta_life);
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
+
+	/** override */
+	virtual chaos::ParticleAllocation * GetPlayerAllocation() override { return player_allocations.get(); }
+	virtual chaos::ParticleAllocation const * GetPlayerAllocation() const override { return player_allocations.get(); }
 
 protected:
 

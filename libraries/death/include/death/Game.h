@@ -149,9 +149,6 @@ namespace death
 		virtual chaos::box2 GetWorldBox() const;
 		/** getting the camera box */
 		virtual chaos::box2 GetCameraBox() const;
-		/** getting the player box */
-		virtual chaos::box2 GetPlayerBox() const;
-
 
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
@@ -162,6 +159,37 @@ namespace death
 		/** test whether we want to skip level */
 		bool GetCheatSkipLevelRequired() const;
 #endif
+
+		/** get the player allocation */
+		virtual chaos::ParticleAllocation * GetPlayerAllocation() { return nullptr; }
+		virtual chaos::ParticleAllocation const * GetPlayerAllocation() const { return nullptr; }
+
+		/** get object particle */
+		chaos::ParticleDefault::Particle * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
+		chaos::ParticleDefault::Particle const * GetObjectParticle(chaos::ParticleAllocation const * allocation, size_t index) const;
+
+		/** get object position */
+		glm::vec2   GetObjectPosition(chaos::ParticleAllocation const * allocation, size_t index) const;
+		/** get object box */
+		chaos::box2 GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const;
+		/** set the object position */
+		bool SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
+		/** set the object box */
+		bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
+
+		/** get player particle */
+		chaos::ParticleDefault::Particle * GetPlayerParticle();
+		chaos::ParticleDefault::Particle const * GetPlayerParticle() const;
+
+		/** get player position */
+		glm::vec2 GetPlayerPosition() const;
+		/** get player box */
+		chaos::box2 GetPlayerBox() const;
+		/** set the player position */
+		bool SetPlayerPosition(glm::vec2 const & position);
+		/** set the player box */
+		bool SetPlayerBox(chaos::box2 const & box);
+
 
 	protected:
 
@@ -187,20 +215,8 @@ namespace death
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
-
-
-
-
 		/** update the camera box */
 		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
-		/** update the player box */
-		virtual bool SetPlayerBox(chaos::box2 const & in_player_box);
-
-
-
-
-
-
 
 		/** update the player and the camera position so that they remains inside the world */
 		void RestrictCameraToPlayerAndWorld();

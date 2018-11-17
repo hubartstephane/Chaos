@@ -1180,19 +1180,9 @@ namespace death
 		return camera_box;
 	}
 
-	chaos::box2 Game::GetPlayerBox() const
-	{
-		return chaos::box2();
-	}
-
 	void Game::SetCameraBox(chaos::box2 const & in_camera_box)
 	{
 		camera_box = in_camera_box;
-	}
-
-	bool Game::SetPlayerBox(chaos::box2 const & in_player_box)
-	{
-		return false;
 	}
 
 	GameLevel * Game::GetCurrentLevel()
@@ -1335,6 +1325,93 @@ namespace death
 		// apply camera changes
 		SetCameraBox(camera);
 	}
+
+	chaos::ParticleDefault::Particle * Game::GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index)
+	{
+		if (allocation == nullptr)
+			return nullptr;
+		if (index >= allocation->GetParticleCount())
+			return nullptr;
+
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		if (particles.GetCount() == 0)
+			return nullptr;
+		return &particles[index];
+	}
+
+	chaos::ParticleDefault::Particle const * Game::GetObjectParticle(chaos::ParticleAllocation const * allocation, size_t index) const
+	{
+		if (allocation == nullptr)
+			return nullptr;
+		if (index >= allocation->GetParticleCount())
+			return nullptr;
+
+		chaos::ParticleConstAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		if (particles.GetCount() == 0)
+			return nullptr;
+		return &particles[index];
+	}
+
+	glm::vec2 Game::GetObjectPosition(chaos::ParticleAllocation const * allocation, size_t index) const
+	{
+		return GetObjectBox(allocation, index).position;
+	}
+
+	chaos::box2 Game::GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const
+	{
+		chaos::ParticleDefault::Particle const * object = GetObjectParticle(allocation, index);
+		if (object == nullptr)
+			return chaos::box2();
+		return object->bounding_box;
+	}
+
+	bool Game::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
+	{
+		chaos::ParticleDefault::Particle * particle = GetObjectParticle(allocation, index);
+		if (particle == nullptr)
+			return false;
+		particle->bounding_box.position = position;
+		return true;
+	}
+
+	bool Game::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box)
+	{
+		chaos::ParticleDefault::Particle * object = GetObjectParticle(allocation, index);
+		if (object == nullptr)
+			return false;
+		object->bounding_box = box;
+		return true;
+	}
+
+	chaos::ParticleDefault::Particle * Game::GetPlayerParticle()
+	{
+		return GetObjectParticle(GetPlayerAllocation(), 0);
+	}
+
+	chaos::ParticleDefault::Particle const * Game::GetPlayerParticle() const
+	{
+		return GetObjectParticle(GetPlayerAllocation(), 0);
+	}
+
+	glm::vec2 Game::GetPlayerPosition() const
+	{
+		return GetObjectPosition(GetPlayerAllocation(), 0);
+	}
+
+	chaos::box2 Game::GetPlayerBox() const
+	{
+		return GetObjectBox(GetPlayerAllocation(), 0);
+	}
+
+	bool Game::SetPlayerPosition(glm::vec2 const & position)
+	{
+		return SetObjectPosition(GetPlayerAllocation(), 0, position);
+	}
+	bool Game::SetPlayerBox(chaos::box2 const & box)
+	{
+		return SetObjectBox(GetPlayerAllocation(), 0, box);
+	}
+
 
 }; // namespace death
 

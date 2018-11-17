@@ -173,7 +173,8 @@ void LudumGame::DisplacePlayer(double delta_time)
 		value = right_stick_position.x;
 
 	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position.x + value);
+	SetPlayerPosition(glm::vec2(position.x + value, PLAYER_Y));
+	RestrictPlayerToWorld();
 }
 
 
@@ -541,22 +542,6 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 	return result;
 }
 
-
-ParticleObject const * LudumGame::GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index) const
-{
-	if (allocation == nullptr)
-		return nullptr;
-	if (index >= allocation->GetParticleCount())
-		return nullptr;
-
-	chaos::ParticleConstAccessor<ParticleObject> p = player_allocations->GetParticleConstAccessor<ParticleObject>();
-	if (p.GetCount() == 0)
-		return nullptr;
-
-	return &p[index];
-}
-
-
 ParticleMovableObject * LudumGame::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
@@ -585,82 +570,6 @@ size_t LudumGame::GetBallCount() const
 	return balls_allocations->GetParticleCount();
 }
 
-ParticleObject * LudumGame::GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index)
-{
-	if (allocation == nullptr)
-		return nullptr;
-	if (index >= allocation->GetParticleCount())
-		return nullptr;
-
-	chaos::ParticleAccessor<ParticleObject> particles = player_allocations->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-	return &particles[index];
-}
-
-ParticleObject * LudumGame::GetPlayerParticle()
-{
-	return GetObjectParticle(player_allocations.get(), 0);
-}
-
-ParticleObject const * LudumGame::GetPlayerParticle() const
-{
-	return GetObjectParticle(player_allocations.get(), 0);
-}
-
-chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation * allocation, size_t index) const
-{
-	ParticleObject const * object = GetObjectParticle(allocation, index);
-	if (object == nullptr)
-		return chaos::box2();
-	return object->bounding_box;
-}
-
-chaos::box2 LudumGame::GetPlayerBox() const
-{
-	return GetObjectBox(player_allocations.get(), 0);
-}
-
-
-bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box) 
-{
-	ParticleObject * object = GetObjectParticle(allocation, index);
-	if (object == nullptr)
-		return false;
-	object->bounding_box = box;
-	return true;
-}
-
-bool LudumGame::SetPlayerBox(chaos::box2 const & box)
-{
-	return SetObjectBox(player_allocations.get(), 0, box);
-}
-
-glm::vec2 LudumGame::GetObjectPosition(chaos::ParticleAllocation * allocation, size_t index) const
-{
-	return GetObjectBox(allocation, index).position;
-}
-
-glm::vec2 LudumGame::GetPlayerPosition() const
-{
-	return GetPlayerBox().position;
-}
-
-void LudumGame::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
-{
-	ParticleObject * particle = GetObjectParticle(allocation, index);
-	if (particle == nullptr)
-		return;
-	particle->bounding_box.position = position;
-}
-
-void LudumGame::SetPlayerPosition(float position)
-{
-	SetObjectPosition(player_allocations.get(), 0, glm::vec2(position, PLAYER_Y));
-	RestrictPlayerToWorld();
-}
-
-
 void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
 	ParticleObject * particle = GetObjectParticle(allocation, index);
@@ -672,7 +581,6 @@ void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, si
 	chaos::RestrictToInside(world, box, false);
 	SetObjectPosition(allocation, index, box.position);
 }
-
 
 
 void LudumGame::RestrictPlayerToWorld()
@@ -701,7 +609,8 @@ void LudumGame::CreateAllGameObjects(int level)
 	{
 		player_allocations = CreatePlayer();
 		SetPlayerLength(player_length);
-		SetPlayerPosition(0.0f);
+		SetPlayerPosition(glm::vec2(0.0f, PLAYER_Y));
+		RestrictPlayerToWorld();
 	}
 
 	if (balls_allocations == nullptr)

@@ -109,16 +109,6 @@ protected:
 	/** cooldown the weapon */
 	void TickCooldown(double delta_time);
 
-
-
-
-
-
-
-
-
-
-
 	/** the game main loop */
 	virtual bool CheckGameOverCondition() override;
 
@@ -144,42 +134,13 @@ protected:
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
-	ParticlePlayer * GetPlayerParticle();
-
-
-	/** override */
-	virtual chaos::box2 GetPlayerBox() const override;
-	/** override */
-	virtual bool SetPlayerBox(chaos::box2 const & in_player_box) override;
-
-
-
-	/** utility method to move an object */
-	chaos::box2 GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const;
-	/** utility method to move an object */
-	bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & b);
-
-	
-
-
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
-
 
 	/** spawning player */
 	bool SpawnPlayer(ParticleObject const & particle_object);
 	/** destroying player */
 	void UnSpawnPlayer();
-
-	/** get the position of the player */
-	bool SetPlayerPosition(glm::vec2 const & position);
-	/** get the player position */
-	glm::vec2 GetPlayerPosition() const;
-
-
-
-	/** change an object position */
-	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
 
 	/** ensure object is inside the world */
 	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
@@ -195,6 +156,10 @@ protected:
 
 	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
+
+	/** override */
+	virtual chaos::ParticleAllocation * GetPlayerAllocation() override { return player_allocations.get(); }
+	virtual chaos::ParticleAllocation const * GetPlayerAllocation() const override { return player_allocations.get(); }
 
 protected:
 

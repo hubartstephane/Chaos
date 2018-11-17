@@ -13,14 +13,10 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
-
-
 LudumGame::LudumGame()
 {		
 	game_name = "Escape Paouf 3";
 }
-
-
 
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
@@ -192,25 +188,6 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 	return result;
 }
 
-glm::vec2 LudumGame::GetPlayerPosition() const
-{
-	chaos::box2 b = GetPlayerBox();
-	return b.position;
-}
-
-bool LudumGame::SetPlayerPosition(glm::vec2 const & position)
-{
-	chaos::box2 b = GetPlayerBox();
-	b.position = position;
-	if (SetPlayerBox(b))
-	{
-		RestrictPlayerToWorld();
-		return true;
-	}
-	return false;
-}
-
-
 void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
 	chaos::box2 box    = GetObjectBox(allocation, index);
@@ -336,54 +313,6 @@ void LudumGame::UnSpawnPlayer()
 	player_allocations = nullptr;
 }
 
-
-chaos::box2 LudumGame::GetPlayerBox() const
-{
-	return GetObjectBox(player_allocations.get(), 0);
-}
-
-bool LudumGame::SetPlayerBox(chaos::box2 const & in_player_box)
-{
-
-	return SetObjectBox(player_allocations.get(), 0, in_player_box);
-}
-
-chaos::box2 LudumGame::GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const
-{
-	if (allocation == nullptr)
-		return chaos::box2();
-
-	chaos::ParticleConstAccessor<ParticleObject> particles = allocation->GetParticleConstAccessor<ParticleObject>();
-	if (index >= particles.GetCount())
-		return chaos::box2();
-
-	return particles[index].bounding_box;
-}
-
-
-bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & b)
-{
-	if (allocation == nullptr)
-		return false;
-
-	chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-	if (index >= particles.GetCount())
-		return false;
-
-	particles[index].bounding_box = b;
-	return true;
-}
-
-ParticlePlayer * LudumGame::GetPlayerParticle()
-{
-	if (player_allocations == nullptr)
-		return nullptr;
-	chaos::ParticleAccessor<ParticlePlayer> particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-	return &particles[0];
-}
-
 static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_count)
 {
 	float angle = atan2(direction.y, direction.x);
@@ -418,6 +347,7 @@ void LudumGame::DisplacePlayer(double delta_time)
 
 	glm::vec2 position = GetPlayerPosition();
 	SetPlayerPosition(position + value * (float)delta_time);
+	RestrictPlayerToWorld();
 }
 
 void LudumGame::TickCooldown(double delta_time)

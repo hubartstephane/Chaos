@@ -160,7 +160,7 @@ namespace death
 		/** declare we want to skip level */
 		void SetCheatSkipLevelRequired(bool value);
 		/** test whether we want to skip level */
-		bool GetCheatSkipLevelRequired(bool reset = true) const;
+		bool GetCheatSkipLevelRequired() const;
 #endif
 
 	protected:
@@ -310,7 +310,11 @@ namespace death
 		/** the game main loop */
 		virtual bool TickGameLoop(double delta_time);
 		/** test whether there is a game over */
-		virtual bool CheckGameOverCondition(double delta_time);
+		virtual bool CheckGameOverCondition();
+		/** check whether we must go to next level */
+		virtual bool CheckLevelCompleted();
+		/** check whether we can go to next level */
+		virtual bool CanCompleteLevel();
 
 		virtual void ResetGameVariables();
 

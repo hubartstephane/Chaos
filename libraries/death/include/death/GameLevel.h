@@ -50,6 +50,12 @@ namespace death
 		/** get the level corresponding to this instance */
 		GameLevel const * GetLevel() const { return level; }
 
+
+		/** get the game */
+		Game * GetGame() { return game; }
+		/** get the game */
+		Game const * GetGame() const { return game; }
+
 		/** get the world box */
 		chaos::box2 GetWorldBox() const { return world_box; }
 		/** set the world box */
@@ -62,6 +68,8 @@ namespace death
 
 		/** returns whether the level is completed */
 		virtual bool IsLevelCompleted() const;
+		/** returns whether we can go to next level */
+		virtual bool CanCompleteLevel() const;
 
 	protected:
 
@@ -74,6 +82,8 @@ namespace death
 		GameLevel * level = nullptr;
 		/** the world box */
 		chaos::box2 world_box;
+		/** pointer on the game */
+		Game * game = nullptr;
 	};
 
 }; // namespace death

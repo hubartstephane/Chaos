@@ -116,10 +116,7 @@ protected:
 
 
 	/** the game main loop */
-	
-	void TickLevelCompleted(double delta_time);
-
-	virtual bool CheckGameOverCondition(double delta_time) override;
+	virtual bool CheckGameOverCondition() override;
 
 	/** initialize the particle manager */
 	virtual bool InitializeParticleManager() override;
@@ -191,9 +188,6 @@ protected:
 
 	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
-
-	/** returns whether current level is completed */
-	bool IsLevelCompleted();
 
 protected:
 

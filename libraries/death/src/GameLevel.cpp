@@ -12,6 +12,7 @@ namespace death
 		if (result == nullptr)
 			return nullptr;
 		result->level = this;
+		result->game  = in_game;
 		if (!result->Initialize(in_game)) // additional initialization
 		{
 			delete(result);
@@ -46,6 +47,13 @@ namespace death
 	{
 		return false;
 	}
+
+	bool GameLevelInstance::CanCompleteLevel() const
+	{
+		return true; // no delay to effectively complete the level
+	}
+
+	
 
 }; // namespace death
 

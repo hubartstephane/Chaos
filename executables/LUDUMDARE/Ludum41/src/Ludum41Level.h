@@ -42,4 +42,8 @@ class LudumLevelInstance : public death::GameLevelInstance
 {
 public:
 
+	/** override */
+	virtual bool IsLevelCompleted() const override;
+	/** override */
+	virtual bool CanCompleteLevel() const override;
 };

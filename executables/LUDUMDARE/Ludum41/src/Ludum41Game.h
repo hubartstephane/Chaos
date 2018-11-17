@@ -42,6 +42,9 @@ class LudumGame : public death::Game
 	friend class ParticleLifeObjectTrait;
 	friend class ParticleBrickTrait;
 
+	friend class LudumLevel;
+	friend class LudumLevelInstance;
+
 protected:
 
 	/** some aspect constant */
@@ -117,15 +120,13 @@ protected:
 	
 	void TickBrickOffset(double delta_time);
 
-	void TickLevelCompleted(double delta_time);
-
 	void TickChallenge(double delta_time);
 
 	void TickBallSplit(double delta_time);
 
 	
 
-	virtual bool CheckGameOverCondition(double delta_time) override;
+	virtual bool CheckGameOverCondition() override;
 
 	/** initialize the dictionnary */
 	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);

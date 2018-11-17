@@ -137,19 +137,13 @@ void LudumGame::ChangeLife(int delta_life)
 	current_life = chaos::MathTools::Maximum(current_life + delta_life, 0);
 }
 
-bool LudumGame::CheckGameOverCondition(double delta_time)
+bool LudumGame::CheckGameOverCondition()
 {
 	if (current_life <= 0)
 	{
 		RequireGameOver();
 		return true;
 	}
-	return false;
-}
-
-bool LudumGame::IsLevelCompleted()
-{
-
 	return false;
 }
 
@@ -162,10 +156,6 @@ bool LudumGame::TickGameLoop(double delta_time)
 	DisplacePlayer(delta_time);
 	// cooldown
 	TickCooldown(delta_time);
-	// test whether current level is terminated
-	TickLevelCompleted(delta_time);
-
-
 
 	return true;
 }
@@ -382,24 +372,6 @@ bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t inde
 
 	particles[index].bounding_box = b;
 	return true;
-}
-
-
-void LudumGame::TickLevelCompleted(double delta_time)
-{
-	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
-	if (level_instance == nullptr)
-		return;
-
-#if _DEBUG
-	if (GetCheatSkipLevelRequired())
-	{
-		SetNextLevel(true);
-		return;
-	}
-#endif
-
-
 }
 
 ParticlePlayer * LudumGame::GetPlayerParticle()

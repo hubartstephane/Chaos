@@ -261,7 +261,7 @@ void LudumGame::ChangeLife(int delta_life)
 	current_life = chaos::MathTools::Clamp(current_life + delta_life, 0, max_life);
 }
 
-bool LudumGame::CheckGameOverCondition(double delta_time)
+bool LudumGame::CheckGameOverCondition()
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count == 0)
@@ -294,31 +294,6 @@ void LudumGame::OnBallCollide(bool collide_brick)
 		IncrementScore(points_per_brick);
 }
 
-void LudumGame::TickLevelCompleted(double delta_time)
-{
-	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
-	if (level == nullptr)
-		return;
-
-#if _DEBUG
-	if (GetCheatSkipLevelRequired())
-	{
-		SetNextLevel(true);
-		return;
-	}
-#endif
-
-	// no more destructible
-	size_t brick_count = GetBrickCount();
-	if (brick_count == level->indestructible_brick_count) 
-	{		
-		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
-		{
-			SetNextLevel(true);
-		}
-	}
-}
-
 void LudumGame::TickBrickOffset(double delta_time)
 {
 	if (target_brick_offset > brick_offset)
@@ -344,7 +319,6 @@ bool LudumGame::TickGameLoop(double delta_time)
 	DisplacePlayer(delta_time);
 	// some other calls
 	TickBrickOffset(delta_time);
-	TickLevelCompleted(delta_time);
 	TickChallenge(delta_time);
 	TickBallSplit(delta_time);
 	return true;

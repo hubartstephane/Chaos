@@ -23,12 +23,9 @@ namespace death
 		cheat_skip_level_required = value;
 	}
 
-	bool Game::GetCheatSkipLevelRequired(bool reset) const
+	bool Game::GetCheatSkipLevelRequired() const
 	{
-		bool result = cheat_skip_level_required;
-		if (reset)
-			cheat_skip_level_required = false;
-		return result;
+		return cheat_skip_level_required;
 	}
 
 	void Game::HandleKeyboardInputs()
@@ -978,15 +975,50 @@ namespace death
 		return !menu_music->HasVolumeBlending();
 	}
 
-	bool Game::CheckGameOverCondition(double delta_time)
+	bool Game::CheckGameOverCondition()
 	{
 		return false; // no game hover
 	}
 
+
+	bool Game::CheckLevelCompleted()
+	{
+		// cheat code
+#if _DEBUG
+		if (GetCheatSkipLevelRequired())
+			return true;
+#endif
+		// game finished
+		death::GameLevelInstance const * level_instance = GetCurrentLevelInstance();
+		if (level_instance != nullptr)
+			if (level_instance->IsLevelCompleted())
+				return true;
+		return false;
+	}
+
+	bool Game::CanCompleteLevel()
+	{
+		death::GameLevelInstance const * level_instance = GetCurrentLevelInstance();
+		if (level_instance != nullptr)
+			if (level_instance->CanCompleteLevel())
+				return true;
+		return false;
+	}
+
 	bool Game::TickGameLoop(double delta_time)
 	{
-		if (CheckGameOverCondition(delta_time)) 
+		// game over ?
+		if (CheckGameOverCondition()) 
 			return false;
+		// level finished
+		if (CheckLevelCompleted())
+		{
+			if (CanCompleteLevel())
+			{
+				SetNextLevel(true);
+				return false; // do not call remaining code in TickGameLoop(...) specialization
+			}
+		}			
 		// tick the level
 		if (current_level_instance != nullptr)
 			current_level_instance->Tick(delta_time);

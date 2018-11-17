@@ -176,7 +176,7 @@ void LudumGame::ChangeLife(int delta_life)
 	current_life = chaos::MathTools::Maximum(current_life + delta_life, 0);
 }
 
-bool LudumGame::CheckGameOverCondition(double delta_time)
+bool LudumGame::CheckGameOverCondition()
 {
 	if (current_life <= 0)
 	{
@@ -184,32 +184,6 @@ bool LudumGame::CheckGameOverCondition(double delta_time)
 		return true;
 	}
 	return false;
-}
-
-bool LudumGame::IsLevelCompleted()
-{
-
-	return false;
-}
-
-void LudumGame::TickLevelCompleted(double delta_time)
-{
-	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
-	if (level == nullptr)
-		return;
-
-#if _DEBUG
-	bool completed = GetCheatSkipLevelRequired() || IsLevelCompleted();
-#else
-	bool completed = IsLevelCompleted();
-#endif
-
-	if (completed)
-	{
-
-
-
-	}
 }
 
 bool LudumGame::TickGameLoop(double delta_time)

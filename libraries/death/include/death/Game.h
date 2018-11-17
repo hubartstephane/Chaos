@@ -153,11 +153,15 @@ namespace death
 		virtual chaos::box2 GetPlayerBox() const;
 
 
-
-
-
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
+
+#if _DEBUG	
+		/** declare we want to skip level */
+		void SetCheatSkipLevelRequired(bool value);
+		/** test whether we want to skip level */
+		bool GetCheatSkipLevelRequired(bool reset = true) const;
+#endif
 
 	protected:
 
@@ -444,6 +448,11 @@ namespace death
 		/** score values */
 		int best_score = 0;
 		int current_score = 0;
+
+		/** cheating */
+#if _DEBUG
+		mutable bool cheat_skip_level_required = false;
+#endif
 
 		/** game settings */
 		float mouse_sensitivity = 1.0f;

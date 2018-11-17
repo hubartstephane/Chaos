@@ -208,11 +208,6 @@ protected:
 	/** current game values */
 	int current_life     = 3;
 	float current_cooldown = 0.1f;
-	
-
-#if _DEBUG
-	bool cheat_next_level = false;
-#endif
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;

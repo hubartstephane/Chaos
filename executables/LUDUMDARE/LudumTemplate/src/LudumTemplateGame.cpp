@@ -68,13 +68,6 @@ bool LudumGame::OnKeyEvent(int key, int action)
 {
 	if (death::Game::OnKeyEvent(key, action))
 		return true;
-
-	// FORCE GAMEOVER
-#if _DEBUG
-	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-			cheat_next_level = true;
-#endif
-
 	return false;
 }
 
@@ -206,7 +199,7 @@ void LudumGame::TickLevelCompleted(double delta_time)
 		return;
 
 #if _DEBUG
-	bool completed = cheat_next_level || IsLevelCompleted();
+	bool completed = GetCheatSkipLevelRequired() || IsLevelCompleted();
 #else
 	bool completed = IsLevelCompleted();
 #endif

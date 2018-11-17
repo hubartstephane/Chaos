@@ -71,13 +71,6 @@ bool LudumGame::OnKeyEvent(int key, int action)
 {
 	if (death::Game::OnKeyEvent(key, action))
 		return true;
-
-	// FORCE GAMEOVER
-#if _DEBUG
-	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-		cheat_next_level = true;
-#endif
-
 	return false;
 }
 
@@ -394,19 +387,17 @@ bool LudumGame::SetObjectBox(chaos::ParticleAllocation * allocation, size_t inde
 
 void LudumGame::TickLevelCompleted(double delta_time)
 {
-
-#if _DEBUG
-	if (cheat_next_level)
-	{
-		SetNextLevel(true);
-		cheat_next_level = false;
-		return;
-	}
-#endif
-
 	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
 	if (level_instance == nullptr)
 		return;
+
+#if _DEBUG
+	if (GetCheatSkipLevelRequired())
+	{
+		SetNextLevel(true);
+		return;
+	}
+#endif
 
 
 }

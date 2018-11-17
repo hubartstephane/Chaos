@@ -60,6 +60,9 @@ namespace death
 		/** some callbacks */
 		virtual void OnLevelStarted();
 
+		/** returns whether the level is completed */
+		virtual bool IsLevelCompleted() const;
+
 	protected:
 
 		/** additionnal initialization */

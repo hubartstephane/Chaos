@@ -42,5 +42,10 @@ namespace death
 		return true;
 	}
 
+	bool GameLevelInstance::IsLevelCompleted() const
+	{
+		return false;
+	}
+
 }; // namespace death
 

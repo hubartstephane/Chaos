@@ -18,6 +18,19 @@ namespace death
 
 	}
 
+	void Game::SetCheatSkipLevelRequired(bool value)
+	{
+		cheat_skip_level_required = value;
+	}
+
+	bool Game::GetCheatSkipLevelRequired(bool reset) const
+	{
+		bool result = cheat_skip_level_required;
+		if (reset)
+			cheat_skip_level_required = false;
+		return result;
+	}
+
 	void Game::HandleKeyboardInputs()
 	{
 		// test whether the stick position can be overriden
@@ -79,6 +92,12 @@ namespace death
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 			if (RequireExitGame())
 				return true;
+
+		// CHEAT CODE TO SKIP LEVEL
+#if _DEBUG
+		if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
+			SetCheatSkipLevelRequired(true);
+#endif
 
 		return false;
 	}
@@ -1190,6 +1209,8 @@ namespace death
 
 	bool Game::SetNextLevel(bool looping_levels)
 	{
+		SetCheatSkipLevelRequired(false); 
+
 		// existing any level
 		size_t count = levels.size();
 		if (count == 0)

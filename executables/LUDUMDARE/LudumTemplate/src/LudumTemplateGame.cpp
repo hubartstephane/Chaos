@@ -229,18 +229,6 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 	return result;
 }
 
-glm::vec2 LudumGame::GetPlayerPosition() const
-{
-	return glm::vec2(0.0f, 0.0f);
-}
-
-void LudumGame::SetPlayerPosition(float position)
-{
-
-	RestrictedPlayerToScreen();
-}
-
-
 void LudumGame::RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index)
 {
 #if 0
@@ -269,7 +257,7 @@ void LudumGame::CreateAllGameObjects(int level)
 	if (player_allocations == nullptr)
 	{
 		player_allocations = CreatePlayer();
-		SetPlayerPosition(0.0f);
+		SetPlayerPosition(glm::vec2(0.0f, 0.0f));
 	}
 }
 

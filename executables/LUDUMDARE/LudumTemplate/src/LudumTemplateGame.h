@@ -135,17 +135,6 @@ protected:
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
 
-
-	/** get the position of the player */
-	void SetPlayerPosition(float position);
-	/** get the player position */
-	glm::vec2 GetPlayerPosition() const;
-
-
-
-	/** change an object position */
-	void SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
-
 	/** ensure object is inside the world */
 	void RestrictedObjectToScreen(chaos::ParticleAllocation * allocation, size_t index);
 	/** ensure player is inside the world */
@@ -171,7 +160,6 @@ protected:
 	int current_level = 0;
 
 	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 };

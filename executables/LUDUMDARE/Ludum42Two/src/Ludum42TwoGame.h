@@ -157,10 +157,6 @@ protected:
 	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
-	/** override */
-	virtual chaos::ParticleAllocation * GetPlayerAllocation() override { return player_allocations.get(); }
-	virtual chaos::ParticleAllocation const * GetPlayerAllocation() const override { return player_allocations.get(); }
-
 protected:
 
 	/** game settings */
@@ -174,8 +170,7 @@ protected:
 	int current_life     = 3;
 	float current_cooldown = 0.1f;
 	
-	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
+	/** some sprites */	
 	boost::intrusive_ptr<chaos::ParticleAllocation> water_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;

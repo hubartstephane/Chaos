@@ -255,10 +255,6 @@ protected:
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
-	/** override */
-	virtual chaos::ParticleAllocation * GetPlayerAllocation() override { return player_allocations.get(); }
-	virtual chaos::ParticleAllocation const * GetPlayerAllocation() const override { return player_allocations.get(); }
-
 protected:
 
 	/** the dictionnary */
@@ -338,8 +334,7 @@ protected:
 	
 	int current_level = 0;
 
-	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
+	/** some sprites */	
 	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;

@@ -160,9 +160,14 @@ namespace death
 		bool GetCheatSkipLevelRequired() const;
 #endif
 
+		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
+		//       it can be set from a level instance's particle_manager
+
 		/** get the player allocation */
-		virtual chaos::ParticleAllocation * GetPlayerAllocation() { return nullptr; }
-		virtual chaos::ParticleAllocation const * GetPlayerAllocation() const { return nullptr; }
+		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
+		chaos::ParticleAllocation const * GetPlayerAllocation() const { return player_allocations.get(); }
+		/** set player allocation */
+		void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) { player_allocations = in_allocation; }
 
 		/** get object particle */
 		chaos::ParticleDefault::Particle * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
@@ -500,6 +505,10 @@ namespace death
 		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
 		/** the current level instance */
 		boost::intrusive_ptr<GameLevelInstance> current_level_instance;
+
+		/** some allocations */
+		boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
+
 	};
 
 }; // namespace death

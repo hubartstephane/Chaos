@@ -11,6 +11,8 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ParticleDefault.h>
 
+#include <Death/GameParticles.h>
+
 namespace death
 {
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
@@ -714,6 +716,10 @@ namespace death
 
 	bool Game::DeclareParticleClasses()
 	{
+		// XXX : cannot register ParticleDefault, because if will be registered later as ParticleObject
+		//       require refactor
+		//chaos::ClassTools::DeclareClass<chaos::ParticleDefault::Particle>("ParticleDefault");
+		chaos::ClassTools::DeclareClass<death::ParticleBackground>("ParticleBackground");
 		return true;
 	}
 

@@ -143,7 +143,6 @@ protected:
 
 
 	/** move the player */
-	void DisplacePlayer(double delta_time);
 
 	void ChangeLife(int delta_life);
 
@@ -161,5 +160,4 @@ protected:
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 };

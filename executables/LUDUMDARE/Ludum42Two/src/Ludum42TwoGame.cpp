@@ -13,7 +13,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 
-
+#include <death/GameParticles.h>
 
 LudumGame::LudumGame()
 {		
@@ -231,11 +231,13 @@ chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 
 bool LudumGame::DeclareParticleClasses()
 {
+	if (!Game::DeclareParticleClasses())
+		return false;
+
 	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
 	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
 	chaos::ClassTools::DeclareClass<ParticleWater, ParticleObject>("ParticleWater");
 	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleObject>("ParticlePlayer");
-	chaos::ClassTools::DeclareClass<ParticleBackground>("ParticleBackground");
 	return true;
 }
 
@@ -262,7 +264,7 @@ bool LudumGame::CreateBackgroundImage()
 	if (background_allocations == nullptr)
 		return false;
 
-	chaos::ParticleAccessor<ParticleBackground> particles = background_allocations->GetParticleAccessor<ParticleBackground>();
+	chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor<death::ParticleBackground>();
 	if (particles.GetCount() == 0)
 		return false;
 
@@ -277,7 +279,7 @@ bool LudumGame::InitializeParticleManager()
 
 	int render_order = 0;
 
-	particle_manager->AddLayer<ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "space_background");
+	particle_manager->AddLayer<death::ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "space_background");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GROUND_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::WALLS_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");

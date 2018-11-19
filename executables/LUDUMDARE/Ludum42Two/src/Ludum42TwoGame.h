@@ -173,6 +173,5 @@ protected:
 	/** some sprites */	
 	boost::intrusive_ptr<chaos::ParticleAllocation> water_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 };
 

@@ -337,7 +337,6 @@ protected:
 	/** some sprites */	
 	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 
 	/** the possible rewards */
 	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;

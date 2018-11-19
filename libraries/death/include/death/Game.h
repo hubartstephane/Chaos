@@ -174,7 +174,7 @@ namespace death
 		chaos::ParticleDefault::Particle const * GetObjectParticle(chaos::ParticleAllocation const * allocation, size_t index) const;
 
 		/** get object position */
-		glm::vec2   GetObjectPosition(chaos::ParticleAllocation const * allocation, size_t index) const;
+		glm::vec2 GetObjectPosition(chaos::ParticleAllocation const * allocation, size_t index) const;
 		/** get object box */
 		chaos::box2 GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const;
 		/** set the object position */
@@ -194,7 +194,6 @@ namespace death
 		bool SetPlayerPosition(glm::vec2 const & position);
 		/** set the player box */
 		bool SetPlayerBox(chaos::box2 const & box);
-
 
 	protected:
 
@@ -508,7 +507,7 @@ namespace death
 
 		/** some allocations */
 		boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
-
+		boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
 	};
 
 }; // namespace death

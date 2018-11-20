@@ -432,17 +432,54 @@ namespace death
 		return true;
 	}
 
-	bool Game::CreateBackgroundImage()
+	bool Game::CreateBackgroundImage(char const * texture_name)
 	{
-		background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
+		texture_name = "background2";
+
+		// create the particle allocation if necessary
 		if (background_allocations == nullptr)
-			return false;
+		{
+			background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
+			if (background_allocations == nullptr)
+				return false;
 
-		chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor<death::ParticleBackground>();
-		if (particles.GetCount() == 0)
-			return false;
+			chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor<death::ParticleBackground>();
+			if (particles.GetCount() == 0)
+				return false;
 
-		particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+
+		// create a material
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (resource_manager != nullptr)
+		{
+			// search declared material
+			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial("background");
+			if (result != nullptr)
+			{
+				if (texture_name != nullptr)
+				{
+					// search the corresponding texture
+					chaos::GPUTexture * texture = resource_manager->FindTexture(texture_name);
+					if (texture == nullptr)
+						return false;
+					// create a child material
+					chaos::GPURenderMaterial * child_material = new chaos::GPURenderMaterial();
+					if (child_material == nullptr)
+						return false;
+					// initialize the material with parent ande texture
+					child_material->SetParentMaterial(result);
+					child_material->GetUniformProvider().AddVariableTexture("background", texture);
+					result = child_material;
+				}
+				// assign the material to the background
+				chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::BACKGROUND_LAYER_ID);
+				if (layer != nullptr)
+					layer->SetRenderMaterial(result);
+			}
+		}
+
 		return true;
 	}
 	

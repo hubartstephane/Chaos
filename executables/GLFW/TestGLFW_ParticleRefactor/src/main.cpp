@@ -167,6 +167,8 @@ protected:
 			{
 				int particle_count = rand() % 50 + 5;
 				chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(particle_count);
+				allocation->SetEmptyCallbackAutoRemove();
+
 				particle_allocations.push_back(allocation);
 
 				size_t pc = allocation->GetParticleCount();

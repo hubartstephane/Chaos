@@ -23,7 +23,7 @@ namespace chaos
 
 
 	// all classes in this file
-#define CHAOS_PARTICLE_CLASSES (ParticleAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc)
+#define CHAOS_PARTICLE_CLASSES (ParticleAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc) (ParticleAllocationEmptyCallback)
 
 	// forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;
@@ -131,6 +131,35 @@ namespace chaos
 	};
 
 	// ==============================================================
+	// ParticleAllocationEmptyCallback : a callback called whenever the allocation becomes empty for the very first time
+	// ==============================================================
+
+	class ParticleAllocationEmptyCallback : public ReferencedObject
+	{
+		CHAOS_PARTICLE_ALL_FRIENDS
+
+	public:
+
+		/** destructor */
+		virtual ~ParticleAllocationEmptyCallback() = default;
+
+		/** called whenever the allocation becomes empty */
+		virtual bool OnAllocationEmpty(ParticleAllocation * allocation);
+	};
+
+	// ==============================================================
+	// ParticleAllocationAutoRemoveEmptyCallback : remove the allocation from its layer
+	// ==============================================================
+
+	class ParticleAllocationAutoRemoveEmptyCallback : public ParticleAllocationEmptyCallback
+	{
+	public:
+
+		/** override */
+		virtual bool OnAllocationEmpty(ParticleAllocation * allocation) override;
+	};
+
+	// ==============================================================
 	// ParticleAllocation
 	// ==============================================================
 
@@ -176,6 +205,12 @@ namespace chaos
 
 		/** increment number of particles */
 		bool AddParticles(size_t extra_count);
+
+		/** set the empty callback */
+		void SetEmptyCallback(ParticleAllocationEmptyCallback * in_empty_callback) { empty_callback = in_empty_callback; }
+
+		/** set empty callback to auto remove */
+		void SetEmptyCallbackAutoRemove();
 
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
@@ -242,6 +277,8 @@ namespace chaos
 		bool paused = false;
 		/** whether the allocation is visible */
 		bool visible = true;
+		/** a callback called whenever the allocation becomes empty */
+		boost::intrusive_ptr<ParticleAllocationEmptyCallback> empty_callback;
 	};
 
 	// ==============================================================

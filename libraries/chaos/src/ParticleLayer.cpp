@@ -7,6 +7,28 @@
 
 namespace chaos
 {
+
+	// ==============================================================
+	// ParticleAllocationEmptyCallback
+	// ==============================================================
+
+	bool ParticleAllocationEmptyCallback::OnAllocationEmpty(ParticleAllocation * allocation)
+	{
+		assert(allocation != nullptr);
+		return true;
+	}
+
+	// ==============================================================
+	// ParticleAllocationAutoRemoveEmptyCallback
+	// ==============================================================
+
+	bool ParticleAllocationAutoRemoveEmptyCallback::OnAllocationEmpty(ParticleAllocation * allocation)
+	{
+		assert(allocation != nullptr);
+		allocation->RemoveFromLayer();
+		return true;
+	}		
+
 	// ==============================================================
 	// ParticleAllocation
 	// ==============================================================
@@ -103,6 +125,12 @@ namespace chaos
 	bool ParticleAllocation::AddParticles(size_t extra_count)
 	{
 		return Resize(extra_count + GetParticleCount());
+	}
+
+	void ParticleAllocation::SetEmptyCallbackAutoRemove()
+	{
+		static DisableLastReferenceLost<ParticleAllocationAutoRemoveEmptyCallback> auto_remove_callback;
+		SetEmptyCallback(&auto_remove_callback);
 	}
 
 	// ==============================================================
@@ -206,9 +234,14 @@ namespace chaos
 	bool ParticleLayer::UpdateParticles(float delta_time)
 	{
 		bool result = false;
+		
+		// store allocations that want to be notified of their emptyness here,
+		// to be handled after the main loop
+		std::vector<ParticleAllocation *> empty_allocations; 
 
+		// main loop
 		size_t count = particles_allocations.size();
-		for (size_t i = 0; i < count; ++i)
+		for (size_t i = 0 ; i < count; ++i)
 		{
 			ParticleAllocation * allocation = particles_allocations[i];
 			// early exit
@@ -227,9 +260,24 @@ namespace chaos
 			// clean buffer of all particles that have bean destroyed
 			if (remaining_particles != particle_count)
 				allocation->Resize(remaining_particles);
+
+			// test whether the allocation becomes empty
+			if (remaining_particles == 0)
+				if (allocation->empty_callback != nullptr)
+					empty_allocations.push_back(allocation);
+			
 			// particles have changed ... so must it be for vertices
 			result = true;
 		}
+
+		// handle allocation that wanted to react whenever they become empty
+		// XXX : this is done outside the loop because this could callback can create or destroy some allocations 
+		//       causing iteration in 'particles_allocations' dangerous
+
+		size_t empty_count = empty_allocations.size();
+		for (size_t i = 0 ; i < empty_count; ++i)
+			empty_allocations[i]->empty_callback->OnAllocationEmpty(empty_allocations[i]);
+
 		return result;
 	}
 

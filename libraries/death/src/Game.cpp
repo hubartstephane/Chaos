@@ -419,6 +419,16 @@ namespace death
 		if (particle_manager == nullptr)
 			return false;
 		particle_manager->SetTextureAtlas(texture_atlas.get());
+		if (AddParticleLayers() < 0) 
+			return false;
+		return true;
+	}
+
+	int Game::AddParticleLayers()
+	{
+		int render_order = 0;
+		particle_manager->AddLayer<death::ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
+
 		return true;
 	}
 

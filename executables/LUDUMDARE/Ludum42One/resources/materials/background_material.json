@@ -1,10 +1,11 @@
 {
-  "program": "background_program",
+  "program": "fire_background_program",
 
   "textures": {
     
+    "fire": { "name": "fire" },
+    "perlin_noise": { "name": "perlin_noise" },
     "background": { "name": "background" }
 
   }
-
 }

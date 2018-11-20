@@ -296,6 +296,8 @@ namespace death
 		virtual bool InitializeParticleTextGenerator();
 		/** initialize the particle manager */
 		virtual bool InitializeParticleManager();
+		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
+		virtual int AddParticleLayers();
 		/** initialize the GameParticleCreator */
 		virtual bool InitializeGameParticleCreator();
 		/** create the background image */

@@ -284,18 +284,15 @@ bool LudumGame::CreateBackgroundImage()
 	return true;
 }
 
-bool LudumGame::InitializeParticleManager()
+int LudumGame::AddParticleLayers()
 {
-	if (!death::Game::InitializeParticleManager())
-		return false;
+	int render_order = death::Game::AddParticleLayers();
+	if (render_order < 0)
+		return render_order;
 
-	int render_order = 0;
-
-	particle_manager->AddLayer<death::ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
-
-	return true;
+	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+	return render_order;
 }
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)

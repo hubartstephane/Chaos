@@ -138,7 +138,7 @@ protected:
 	/** initialize the mapping between button index and resource name */
 	virtual bool InitializeGamepadButtonInfo() override;
 	/** initialize the particle manager */
-	virtual bool InitializeParticleManager() override;
+	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
 	bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 	/** fullfill the lists of rewards an punishments */

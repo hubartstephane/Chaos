@@ -1,6 +1,5 @@
 {
 		"@background": {"path":"@materials/background_material.json"},
-    "@space_background": {"path":"@materials/space_background_material.json"},
 		"@challenge" : {"path":"@materials/challenge_material.json"},
 		"@gameobject" : {"path":"@materials/gameobject_material.json"},
 		"@text" : {"path":"@materials/text_material.json"}    

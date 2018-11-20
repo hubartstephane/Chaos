@@ -109,7 +109,7 @@ protected:
 	virtual bool CheckGameOverCondition() override;
 
 	/** initialize the particle manager */
-	virtual bool InitializeParticleManager() override;
+	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 	

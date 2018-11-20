@@ -1138,30 +1138,28 @@ chaos::ParticleAllocation * LudumGame::CreateChallengeParticles(LudumChallenge *
 //chaos::ParticleLayer * LudumGame::AddParticleLayer()
 
 
-bool LudumGame::InitializeParticleManager()
+int LudumGame::AddParticleLayers()
 {
-	if (!death::Game::InitializeParticleManager())
-		return false;
-
-	int render_order = 0;
+	int render_order = death::Game::AddParticleLayers();
+	if (render_order < 0)
+		return render_order;
 
 	// create layers
-	particle_manager->AddLayer<death::ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
 
 	ParticleMovableObjectTrait movable_trait;
 	movable_trait.game = this;
-	particle_manager->AddLayer<ParticleMovableObjectTrait>(++render_order, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
+	particle_manager->AddLayer<ParticleMovableObjectTrait>(render_order++, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
 
 	ParticleBrickTrait brick_trait;
 	brick_trait.game = this;
-	particle_manager->AddLayer<ParticleBrickTrait>(++render_order, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
+	particle_manager->AddLayer<ParticleBrickTrait>(render_order++, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
 
-	particle_manager->AddLayer<ParticleChallengeTrait>(++render_order, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
-	particle_manager->AddLayer<ParticleObjectTrait>(++render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleChallengeTrait>(render_order++, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
+	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
-	return true;
+	return render_order;
 }
 
 

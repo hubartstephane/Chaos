@@ -119,10 +119,6 @@ protected:
 	/** called whenever the input mode changes */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
-	
-	/** create one particle for the background */
-	virtual bool CreateBackgroundImage() override;
-
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 

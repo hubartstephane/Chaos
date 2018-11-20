@@ -270,20 +270,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-bool LudumGame::CreateBackgroundImage()
-{
-	background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
-	if (background_allocations == nullptr)
-		return false;
-
-	chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor<death::ParticleBackground>();
-	if (particles.GetCount() == 0)
-		return false;
-
-	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	return true;
-}
-
 int LudumGame::AddParticleLayers()
 {
 	int render_order = death::Game::AddParticleLayers();

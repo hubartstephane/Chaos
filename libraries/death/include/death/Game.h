@@ -301,7 +301,7 @@ namespace death
 		/** initialize the GameParticleCreator */
 		virtual bool InitializeGameParticleCreator();
 		/** create the background image */
-		virtual bool CreateBackgroundImage(char const * texture_name = nullptr);
+		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
 
 		/** initialize the render layer */
 		virtual bool InitializeRootRenderLayer();

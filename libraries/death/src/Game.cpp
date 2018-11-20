@@ -432,9 +432,10 @@ namespace death
 		return true;
 	}
 
-	bool Game::CreateBackgroundImage(char const * texture_name)
+	bool Game::CreateBackgroundImage(char const * material_name, char const * texture_name)
 	{
-		texture_name = "background2";
+		if (material_name == nullptr)
+			material_name = "background";
 
 		// create the particle allocation if necessary
 		if (background_allocations == nullptr)
@@ -455,7 +456,7 @@ namespace death
 		if (resource_manager != nullptr)
 		{
 			// search declared material
-			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial("background");
+			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_name);
 			if (result != nullptr)
 			{
 				if (texture_name != nullptr)
@@ -581,7 +582,7 @@ namespace death
 		if (!InitializeGameParticleCreator())
 			return false;
 		// create the game background
-		if (!CreateBackgroundImage())
+		if (!CreateBackgroundImage(nullptr, nullptr))
 			return false;
 
 		// load the best score if any

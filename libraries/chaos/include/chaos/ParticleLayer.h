@@ -403,10 +403,14 @@ namespace chaos
 	// TypedParticleLayerDesc
 	// ==============================================================
 
+	
+
 	template<typename LAYER_TRAIT>
 	class TypedParticleLayerDesc : public ParticleLayerDesc
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
+
+		BOOST_TTI_HAS_MEMBER_FUNCTION(BeginUpdateParticles);
 
 	public:
 
@@ -449,21 +453,42 @@ namespace chaos
 		/** override */
 		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation) override
 		{
+			
+
+			using has_begin_update = has_member_function_BeginUpdateParticles<trait_type, int (trait_type::*)(float, void *, size_t, ParticleAllocation *)>;
+
+			//auto xx = has_begin_update::value;
+			DoUpdateParticles(delta_time, particles, particle_count, allocation, has_begin_update::type());
+
+
 			particle_type * p = (particle_type *)particles;
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0 ; i < particle_count ; ++i)			
 			{
+				// shuxxx
+			//	auto data = trait.BeginUpdateParticles();
+
+
+
+
+
 				if (!trait.UpdateParticle(delta_time, &p[i], allocation)) // particle not destroyed ?
 				{
 					if (i != j)
 						p[j] = p[i]; 
 					++j;
 				}
+
+
+
+
 			}
 			return j; // final number of particles
 		}
+
+
 
 		/** override */
 		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const override
@@ -489,6 +514,22 @@ namespace chaos
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{
 			return trait.GetParticleClass();
+		}
+
+	protected:
+
+		bool DoUpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
+		{
+
+
+			return true;
+		}
+
+		bool DoUpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
+		{
+
+
+			return true;
 		}
 
 	protected:

@@ -109,6 +109,7 @@ T max(T a, T b)
 #include <boost/mpl/apply_wrap.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/tti/has_member_data.hpp>
+#include <boost/tti/has_member_function.hpp>
 #include <boost/convert/detail/has_member.hpp>
 #include <boost/mpl/aux_/has_type.hpp>
 

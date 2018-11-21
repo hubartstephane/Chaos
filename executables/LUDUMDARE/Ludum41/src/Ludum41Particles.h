@@ -38,6 +38,11 @@ class ParticleLifeObjectTrait : public ParticleObjectTrait
 {
 public:
 
+	int BeginUpdateParticles(float, void *, size_t, chaos::ParticleAllocation *)
+	{
+		return 0;
+	}
+
 	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
 	death::Game * game = nullptr;

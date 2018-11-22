@@ -8,7 +8,7 @@ class A
 {
 public:
 
-	int FF();
+	static int FF() { return 0; }
 
 
 };
@@ -17,75 +17,56 @@ class B
 {
 public:
 
-//	int FF(int);
+
 
 
 };
 
 
-#if 0
-template<typename T>
-int * FFF(T)
-{
-	return nullptr;
-}
+#if 1
 
-template<typename T, typename RET>
-char FFF(RET(T::*)())
-{
-	return 1;
-}
-template<typename T, typename RET, typename PARAM1 >
-char FFF(RET(T::*)(PARAM1))
-{
-	return 1;
-}
+char HasFF(...);
+
+template<typename T>
+auto HasFF(T const & t) -> decltype(&T::FF);
+
+
 #endif
-
-
-
-template<typename T, typename P = &T::FF>
-char HasFF()
-{
-
-	return 7;
-}
-
-template<typename T>
-int HasFF()
-{
-	return 6;
-}
-
-
 
 #if 0
 
-template<typename T>
-int * FFF()
+template<int i>
+class Integer
 {
-	return nullptr;
-}
+
+};
 
 template<typename T>
-char FFF<RET(T::*)()>()
+class HasFF
 {
-	return 1;
-}
+	int p[10];
+};
 
-template<typename T, typename RET, typename PARAM1 >
-char FFF<RET(T::*)(PARAM1)>()
+template<typename T>
+class HasFF : public Integer<sizeof(&T::FF)>
 {
-	return 1;
-}
+	int p[100];
+};
 #endif
+
+
 
 
 int _tmain(int argc, char ** argv, char ** env)
 {
 
-	auto x = HasFF<A>();
-	auto y = HasFF<B>();
+//	auto x = sizeof(HasFF<A>);
+//	auto y = sizeof(HasFF<B>);
+
+	auto x = sizeof(HasFF(A()));
+	auto y = sizeof(HasFF(B()));
+
+
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

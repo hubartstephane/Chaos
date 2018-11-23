@@ -4,6 +4,42 @@
 
 namespace chaos
 {
+
+	// create some meta class : HasMyFunctionNameFunction<A> => boost::mpl::bool_
+	// XXX : it just test whether the T parameter has a member of given name, not (yet) if this is a function
+#define CHAOS_GENERATE_HAS_FUNCTION_METACLASS(function_name)\
+namespace details\
+{\
+char HasFunctionHelper_##function_name(...);\
+template<typename T>\
+auto HasFunctionHelper_##function_name(T const & t) -> decltype(&T::function_name);\
+};\
+template<typename T>\
+using HasFunction_##function_name = boost::mpl::bool_<\
+	sizeof(details::HasFunctionHelper_##function_name(chaos::meta::GenerateFakeInstance<T>())) != 1\
+>;
+
+	// SFINAE
+	// ------
+	// XXX : here is an example of what kind of code, the preceding macro can generate
+	//  
+	//
+	// char HasFunctionHelper_XXXXXXXXX(...);
+	//
+	// template<typename T>
+	// auto HasFunctionHelper_XXXXXXXXX(T const & t) -> decltype(&T::XXXXXXXXX);
+	//
+	// template<typename T>
+	// using HasFunction_XXXXXXXXX = boost::mpl::bool_<
+	//	 sizeof(HasFunctionHelper_XXXXXXXXX(chaos::meta::GenerateFakeInstance<T>())) != 1
+	// >;
+	//
+	// XXX : boost can generate some 'similar' code with : BOOST_TTI_HAS_MEMBER_FUNCTION(XXXXXXX);
+	//       the difference is that at usage, we have to ask for a precise function signature
+	//
+	//  has_member_function_XXXXXXXX<T, int (T::*)(float)>;    <-- function signature required (even return type)
+
+	// Meta 
 	namespace meta
 	{
 		/** meta function to get a raw pointer from an input */
@@ -90,6 +126,10 @@ namespace chaos
 			typename boost::mpl::find_if<SEQ, PRED>::type
 			>
 		>;
+
+		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
+		template<typename T>
+		T const & GenerateFakeInstance();
 	};
 
 }; // namespace chaos

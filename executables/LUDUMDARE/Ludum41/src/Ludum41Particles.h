@@ -38,10 +38,12 @@ class ParticleLifeObjectTrait : public ParticleObjectTrait
 {
 public:
 
-	int BeginUpdateParticles(float, void *, size_t, chaos::ParticleAllocation *)
+	int BeginUpdateParticles(float delta_time, void * particles, size_t count , chaos::ParticleAllocation * allocation)
 	{
-		return 0;
+		return count;
 	}
+
+	bool UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, int extra_param) const;
 
 	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 

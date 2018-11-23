@@ -32,6 +32,11 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Life particle system
 // ===========================================================================
 
+bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, int extra_param) const
+{
+	return false;
+}
+
 
 size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {

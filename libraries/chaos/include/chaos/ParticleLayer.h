@@ -366,6 +366,18 @@ namespace chaos
 	// PARTICLE LAYER DESC
 	// ==============================================================
 
+	// ParticleLayerDesc : this is class that deserves to implement how 
+	//
+	//  - Particles are allocated (create an ParticleAllocation subclass instance corresponding to the read structure for each particles)
+	//  - Particles are updated
+	//  - Particles are transformed into (6?) vertices fo rendering (a quad?)
+	//
+	// the main functions to override are:
+	//
+	//  - NewAllocation(...)
+	//  - ParticlesToVertices(...)
+	//  - UpdateParticles(...)
+
 	class ParticleLayerDesc : public ReferencedObject
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
@@ -392,7 +404,6 @@ namespace chaos
 
 		/** create an allocation */
 		virtual ParticleAllocation * NewAllocation(ParticleLayer * in_layer);
-
 		/** transform the particles into vertices */
 		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const;
 		/** update all particles */
@@ -402,6 +413,39 @@ namespace chaos
 	// ==============================================================
 	// TypedParticleLayerDesc
 	// ==============================================================
+	
+	// TypedParticleLayerDesc : 
+	//    
+	//   this a ParticleLayerDesc derived class. Instead of implementing by hand such a new class for each PARTICLE type, 
+	//   we use this template class that use a LAYER_TRAIT argument
+	//
+	//   => the LAYER_TRAIT implement the very low level necessary functions and 'TypedParticleLayerDesc' helps making the glue to have a valid 'ParticleLayerDesc' class
+	//   => PRO: we avoid virtual function calls for each particles, but only a single time for every 'Allocation'
+	//
+	// requirement of LAYER_TRAIT:
+	//
+	// it must implement:
+	//
+	//    bool UpdateParticle(...) const;    => returns true if the particle must be destroyed
+	//
+	// and 
+	//
+	//    size_t ParticleToVertices(...) const;  => returns the number of vertices written (should be 6)
+	//
+	// If we have to make a computation on ALL particles before, we can implement the two following functions
+	//
+	//	  TYPE_XXX BeginUpdateParticles(...)
+	//
+	//	  TYPE_YYY BeginParticlesToVertices(...)
+	//
+	// in that case, the previous functions have an additionnal argument
+	//
+	//    UpdateParticle(... TYPE_XXX)
+	//
+	//    ParticleToVertices(... TYPE_YYY)
+	//
+	// Example : we can compute an transform for the whole allocation (single call) and apply it to each particle
+	//
 
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)

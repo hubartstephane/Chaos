@@ -452,27 +452,18 @@ namespace chaos
 		/** override */
 		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation) override
 		{
-			return DoUpdateParticles(delta_time, particles, particle_count, allocation, HasFunction_BeginUpdateParticles<trait_type>::type());
+			particle_type * p = (particle_type *)particles;
+			return DoUpdateParticles(delta_time, p, particle_count, allocation, HasFunction_BeginUpdateParticles<trait_type>::type());
 		}
 
 		/** override */
 		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const override
 		{
-			size_t result = 0;
-
-			size_t vertices_per_particle = GetVerticesCountPerParticles();
-
 			particle_type const * p = (particle_type const *)particles;
 			vertex_type * v = (vertex_type *)vertices;
 
-			for (size_t i = 0; i < particles_count; ++i)
-			{
-				size_t new_vertices = trait.ParticleToVertices(&p[i], v, vertices_per_particle, allocation);
-				assert(new_vertices <= vertices_per_particle);
-				result += new_vertices;
-				v += new_vertices;
-			}
-			return result;
+			size_t vertices_per_particle = GetVerticesCountPerParticles();
+			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, HasFunction_BeginParticlesToVertices<trait_type>::type());
 		}
 
 		/** override */
@@ -483,42 +474,66 @@ namespace chaos
 
 	protected:
 
-		size_t DoUpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
 		{
-			particle_type * p = (particle_type *)particles;
-
-			auto extra_param = trait.BeginUpdateParticles(delta_time, p, particle_count, allocation);
+			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!trait.UpdateParticle(delta_time, &p[i], allocation, extra_param)) // particle not destroyed ?
+				if (!trait.UpdateParticle(delta_time, &particles[i], allocation, extra_param)) // particle not destroyed ?
 				{
 					if (i != j)
-						p[j] = p[i];
+						particles[j] = particles[i];
 					++j;
 				}
 			}
 			return j; // final number of particles
 		}
 
-		size_t DoUpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
 		{
-			particle_type * p = (particle_type *)particles;
-
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!trait.UpdateParticle(delta_time, &p[i], allocation)) // particle not destroyed ?
+				if (!trait.UpdateParticle(delta_time, &particles[i], allocation)) // particle not destroyed ?
 				{
 					if (i != j)
-						p[j] = p[i];
+						particles[j] = particles[i];
 					++j;
 				}
 			}
 			return j; // final number of particles
+		}
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::false_) const
+		{
+			size_t result = 0;
+			for (size_t i = 0; i < particles_count; ++i)
+			{
+				size_t new_vertices = trait.ParticleToVertices(&particles[i], vertices, vertices_per_particle, allocation);
+				assert(new_vertices <= vertices_per_particle);
+				result += new_vertices;
+				vertices += new_vertices;
+			}
+			return result;
+		}
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::true_) const
+		{
+			auto extra_param = trait.BeginParticlesToVertices(particles, particles_count, allocation);
+
+			size_t result = 0;
+			for (size_t i = 0; i < particles_count; ++i)
+			{
+				size_t new_vertices = trait.ParticleToVertices(&particles[i], vertices, vertices_per_particle, allocation, extra_param);
+				assert(new_vertices <= vertices_per_particle);
+				result += new_vertices;
+				vertices += new_vertices;
+			}
+			return result;
 		}
 
 	protected:

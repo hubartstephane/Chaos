@@ -82,6 +82,35 @@ chaos::ParticleAllocation * LudumLevelInstance::FindOrAllocationForObjectType(in
 
 void LudumLevelInstance::OnLevelStarted()
 {
+	death::TiledMap::PlayerStartObject * player_start = FindPlayerStart(nullptr);
+	if (player_start == nullptr)
+		return;
+
+	death::TiledMap::LayerInstance * layer_instance = player_start->GetLayerInstance();
+	if (layer_instance == nullptr)
+		return;
+
+	chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = game->GetTextureAtlas();
+	if (texture_atlas == nullptr)
+		return;
+
+	chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+	if (folder_info == nullptr)
+		return;
+
+	chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo("planet2");
+	if (info == nullptr)
+		return;
+
+	info = info;
+
+
+
+	return;
+
+
+#if 0
+
 	allocations.clear();
 
 	LudumLevel const * ludum_level = GetTypedLevel();
@@ -301,6 +330,7 @@ void LudumLevelInstance::OnLevelStarted()
 	}
 
 	world_box = world_bounds;
+#endif
 }
 
 

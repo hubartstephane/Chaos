@@ -22,7 +22,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (PlayerStartObject) (BaseObject)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (PlayerStartObject) (BaseObject) (LayerInstanceParticlePopulator)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -46,6 +46,48 @@ namespace death
 			chaos::TiledMap::TileInfo tile_info;
 			/** the bitmap info corresponding to the tile */
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info;
+		};
+
+		// =====================================
+		// LayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
+		// =====================================
+
+		class LayerInstanceParticlePopulator
+		{
+			static size_t const PARTICLE_BUFFER_SIZE = 100;
+
+		public:
+
+			/** constructor */
+			LayerInstanceParticlePopulator(LayerInstance * in_layer_instance);
+			/** initialize the object */
+			bool Initialize(Level * level);
+			/** insert a particle */
+			bool AddParticle(char const * bitmap_name, chaos::TiledMap::TileInfo tile_info, chaos::box2 const & particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			/** flush remaining particles */
+			void FlushParticles();
+
+			/** get the final bounding box */
+			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+
+		protected:
+
+			/** the concerned layer instance */
+			LayerInstance * layer_instance = nullptr;
+			/** the texture atlas required */
+			chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = nullptr;
+			/** the folder containing the bitmaps */
+			chaos::BitmapAtlas::FolderInfo const * folder_info = nullptr;
+
+			/** the allocation for all those particles */
+			chaos::ParticleAllocation * allocation = nullptr;
+
+			/** a cache of particles */
+			chaos::ParticleDefault::Particle particles[PARTICLE_BUFFER_SIZE];
+			/** the cached number of particles */
+			size_t particle_count = 0;
+			/** a bounding box */
+			chaos::box2 bounding_box;
 		};
 
 		// =====================================
@@ -148,9 +190,6 @@ namespace death
 			virtual chaos::GPUProgram * GenDefaultRenderProgram();
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
-
-			/** flushing (and converting) some particles inside the allocation */
-			virtual void FlushParticles(TileParticleData const * particles, size_t count, chaos::ParticleAllocation * allocation, LayerInstance * layer_instance);
 
 		protected:
 

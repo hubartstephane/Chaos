@@ -58,17 +58,17 @@ namespace death
 
 		public:
 
-			/** constructor */
-			LayerInstanceParticlePopulator(LayerInstance * in_layer_instance);
 			/** initialize the object */
-			bool Initialize(Level * level);
+			bool Initialize(LayerInstance * in_layer_instance);
 			/** insert a particle */
-			bool AddParticle(char const * bitmap_name, chaos::box2 const & particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			bool AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 			/** flush remaining particles */
 			void FlushParticles();
 
 			/** get the final bounding box */
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+			/** get the particle allocation */
+			chaos::ParticleAllocation * GetParticleAllocation() { return allocation; }
 
 		protected:
 
@@ -333,9 +333,6 @@ namespace death
 			virtual void UnSpawnPlayer();
 			/** create the player allocation */
 			virtual void SpawnPlayer();
-
-			/** code to generate particle */
-			virtual void InitializePlayerParticle(TiledMap::PlayerStartObject * player_start, chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas, chaos::BitmapAtlas::BitmapInfo const * bitmap_info, chaos::ParticleAllocation * player_allocation);
 
 			/** create the particle manager */
 			virtual bool CreateParticleManager(Game * in_game);

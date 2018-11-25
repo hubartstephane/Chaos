@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="57">
+ <properties>
+  <property name="PLAYER_START_NAME" value="ThePlayerStart2"/>
+ </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <objectgroup name="Calque d'objets 1">
   <object id="2" name="grosse planete" gid="3221225480" x="2840" y="6576" width="10000" height="10000">
@@ -19,7 +22,12 @@
    </properties>
    <point/>
   </object>
-  <object id="39" name="myrect" x="48" y="40" width="1392" height="880"/>
+  <object id="39" name="ThePlayerStart2" x="824" y="560" width="500">
+   <properties>
+    <property name="BITMAP_NAME" value="flames"/>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="40" name="myellipse" x="72" y="56" width="1456" height="1384">
    <ellipse/>
   </object>
@@ -35,7 +43,7 @@
   <object id="55" name="OnePoint" x="1584" y="4000">
    <point/>
   </object>
-  <object id="56" name="ThePlayerStart" x="-2860" y="3280">
+  <object id="56" name="ThePlayerStart1" x="1692" y="328">
    <properties>
     <property name="BITMAP_NAME" value="flames"/>
     <property name="PLAYER_START" type="bool" value="true"/>

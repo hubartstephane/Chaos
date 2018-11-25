@@ -138,6 +138,11 @@ namespace chaos
 		return HasFlag(object_geometric, "player_start", "player_start", "PLAYER_START");
 	}
 
+	bool TiledMapTools::IsCamera(TiledMap::GeometricObject const * object_geometric)
+	{
+		return HasFlag(object_geometric, "camera", "camera", "CAMERA");
+	}
+
 	bool TiledMapTools::GetExplicitWorldOrigin(TiledMap::GeometricObject const * object_geometric, glm::vec2 & result)
 	{
 		if (object_geometric == nullptr)

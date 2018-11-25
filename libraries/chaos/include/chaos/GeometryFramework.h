@@ -673,6 +673,8 @@ namespace chaos
 
 	/** reduce a rectangle with an aspect */
 	box2 ShrinkBoxToAspect(box2 src, float aspect);
+	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
+	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update = true);
 
 
 }; // namespace chaos

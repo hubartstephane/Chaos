@@ -264,13 +264,7 @@ namespace death
 			// maintain aspect ratio
 			else
 			{
-				if (particle_box.half_size.x != 0.0f || particle_box.half_size.y != 0.0f) // at least one non null component
-				{
-					if (particle_box.half_size.x == 0.0f)
-						particle_box.half_size.x = (bitmap_info->width / bitmap_info->height) * particle_box.half_size.y;
-					else if (particle_box.half_size.y == 0.0f)
-						particle_box.half_size.y = (bitmap_info->height / bitmap_info->width) * particle_box.half_size.x;
-				}
+				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(bitmap_info->width, bitmap_info->height), true);
 			}
 
 			// add the particle
@@ -403,6 +397,14 @@ namespace death
 					PlayerStartObject * player_start = level->CreatePlayerStart(this, geometric_object);
 					if (player_start != nullptr)
 						player_starts.push_back(player_start);
+				}
+
+				// camera ?
+				if (chaos::TiledMapTools::IsCamera(geometric_object))
+				{
+					CameraObject * camera = level->CreateCamera(this, geometric_object);
+					if (camera != nullptr)
+						cameras.push_back(camera);
 				}
 
 				// zones
@@ -708,11 +710,33 @@ namespace death
 		{
 			GameLevelInstance::OnLevelStarted();
 			SpawnPlayer();
+			CreateCamera();
+		}
+
+		void LevelInstance::CreateCamera()
+		{
+			Level * level = GetTypedLevel();
+
+			// search CAMERA NAME
+			std::string const * camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
+
+			// search the CAMERA
+			TiledMap::CameraObject * camera = FindCamera((camera_name == nullptr) ? nullptr : camera_name->c_str());
+			if (camera == nullptr)
+				return;
+
+			chaos::TiledMap::GeometricObjectSurface * camera_surface = camera->GetGeometricObject()->GetObjectSurface();
+			if (camera_surface == nullptr)
+				return;
+
+			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(), 16.0f / 9.0f, true);
+			game->SetCameraBox(camera_box);
 		}
 
 		void LevelInstance::UnSpawnPlayer()
 		{
 			game->SetPlayerAllocation(nullptr);
+			game->SetCameraBox(chaos::box2()); // reset the camera
 		}
 
 		void LevelInstance::SpawnPlayer()

@@ -382,6 +382,8 @@ namespace death
 			/** override */
 			virtual void OnLevelEnded() override;
 
+			/** create the camera */
+			virtual void CreateCamera();
 			/** destroy the player allocation */
 			virtual void UnSpawnPlayer();
 			/** create the player allocation */

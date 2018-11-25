@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="57">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="63">
  <properties>
   <property name="PLAYER_START_NAME" value="ThePlayerStart2"/>
  </properties>
@@ -22,7 +22,7 @@
    </properties>
    <point/>
   </object>
-  <object id="39" name="ThePlayerStart2" x="824" y="560" width="500">
+  <object id="39" name="ThePlayerStart2" x="824" y="560" width="384" height="364">
    <properties>
     <property name="BITMAP_NAME" value="flames"/>
     <property name="PLAYER_START" type="bool" value="true"/>
@@ -49,6 +49,11 @@
     <property name="PLAYER_START" type="bool" value="true"/>
    </properties>
    <point/>
+  </object>
+  <object id="57" name="TheCamera1" x="-664" y="-688" width="6024" height="3776">
+   <properties>
+    <property name="CAMERA" type="bool" value="true"/>
+   </properties>
   </object>
  </objectgroup>
  <layer name="objects" width="100" height="100">

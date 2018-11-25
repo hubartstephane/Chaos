@@ -145,10 +145,13 @@ namespace death
 		/** get the view */
 		chaos::box2 GetViewBox() const;
 
-		/** getting the world boxes */
-		virtual chaos::box2 GetWorldBox() const;
 		/** getting the camera box */
 		virtual chaos::box2 GetCameraBox() const;
+		/** update the camera box */
+		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
+
+		/** getting the world boxes */
+		virtual chaos::box2 GetWorldBox() const;
 
 		/** play some sound */
 		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
@@ -215,12 +218,8 @@ namespace death
 		/** utility method to set a box uniform */
 		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b);
 
-
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
-
-		/** update the camera box */
-		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
 
 		/** update the player and the camera position so that they remains inside the world */
 		void RestrictCameraToPlayerAndWorld();

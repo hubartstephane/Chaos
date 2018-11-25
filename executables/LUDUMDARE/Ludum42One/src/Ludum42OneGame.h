@@ -49,9 +49,6 @@ class LudumGame : public death::Game
 
 public:
 
-	static int const OBJECT_TYPE_PLAYER = 0;
-	static int const OBJECT_TYPE_PLANET = 1;
-
 	/** constructor */
 	LudumGame();
 
@@ -124,11 +121,6 @@ protected:
 
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
-
-	/** spawning player */
-	bool SpawnPlayer(ParticlePlayer const & particle_object);
-	/** destroying player */
-	void UnSpawnPlayer();
 
 	/** ensure object is inside the world */
 	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);

@@ -232,6 +232,12 @@ namespace death
 			/** find the player start from its name */
 			PlayerStartObject const * FindPlayerStart(char const * name) const;
 
+			/** get the bounding box for the level */
+			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+
+			/** create a particle allocation for the layer */
+			chaos::ParticleAllocation * CreateParticleAllocation();
+
 		protected:
 
 			/** initialization */
@@ -250,9 +256,6 @@ namespace death
 			bool InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer);
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::TileLayer * tile_layer);
-
-			/** create a particle allocation for the layer */
-			chaos::ParticleAllocation * CreateParticleAllocation();
 
 		protected:
 
@@ -277,7 +280,6 @@ namespace death
 
 			/** the bounding box of the layer */
 			chaos::box2 bounding_box;
-
 		};
 
 		// =====================================
@@ -310,6 +312,9 @@ namespace death
 			/** find the player start from its name */
 			PlayerStartObject const * FindPlayerStart(char const * name) const;
 
+			/** get the bounding box for the level */
+			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+
 		protected:
 
 			/** override */
@@ -323,6 +328,8 @@ namespace death
 			virtual bool CreateParticleManager(death::Game * in_game);
 			/** create the layers instances */
 			virtual bool CreateLayerInstances(death::Game * in_game);
+			/** compute the bounding box of the level */
+			virtual void ComputeBoundingBox();
 
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();

@@ -1226,7 +1226,7 @@ namespace death
 		// look at the level instance
 		if (current_level_instance != nullptr)
 		{
-			chaos::box2 result = current_level_instance->GetWorldBox();
+			chaos::box2 result = current_level_instance->GetBoundingBox();
 			if (!result.IsEmpty())
 				return result;
 		}

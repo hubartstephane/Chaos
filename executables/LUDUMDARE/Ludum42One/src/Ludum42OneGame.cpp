@@ -277,27 +277,6 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 }
 
-bool LudumGame::SpawnPlayer(ParticlePlayer const & particle_object)
-{
-	// spawn the player
-	if (player_allocations != nullptr) // already existing
-		return false;
-
-	player_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::PLAYER_LAYER_ID, 1);
-	if (player_allocations == nullptr)
-		return false;
-
-	chaos::ParticleAccessor<ParticlePlayer> particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
-	particles[0] = particle_object;
-
-	return true;
-}
-
-void LudumGame::UnSpawnPlayer()
-{
-	player_allocations = nullptr;
-}
-
 static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_count)
 {
 	float angle = atan2(direction.y, direction.x);
@@ -308,7 +287,6 @@ static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_
 
 	return (int)((angle + section / 2.0f) / section);
 }
-
 
 static glm::vec2 GetDirectionFromCircleSection(int quadran, int section_count)
 {

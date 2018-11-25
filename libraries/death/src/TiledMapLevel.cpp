@@ -580,6 +580,8 @@ namespace death
 			// create a particle manager
 			if (!CreateParticleManager(in_game))
 				return false;
+			// compute the world bounding box
+			ComputeBoundingBox();
 
  			return true;
 		}
@@ -613,6 +615,14 @@ namespace death
 					layer_instances.push_back(layer_instance);	
 			}
 			return true;
+		}
+
+		void LevelInstance::ComputeBoundingBox()
+		{
+			bounding_box = chaos::box2();
+			size_t count = layer_instances.size();
+			for (size_t i = 0 ; i < count ; ++i)
+				bounding_box = bounding_box | layer_instances[i]->GetBoundingBox();
 		}
 
 		chaos::GPURenderMaterial * LevelInstance::GetDefaultRenderMaterial()

@@ -54,7 +54,6 @@ namespace death
 			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>);
 		}
 
-#define DEATH_EMPTY_TOKEN
 #define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, calling_parameters)\
 		result_type * Level::Do##func_name(declared_parameters)\
 		{\
@@ -74,6 +73,9 @@ namespace death
 			return result;\
 		}
 
+		DEATH_DOCREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance, in_layer_instance);
+		DEATH_CREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
+
 		DEATH_DOCREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance, in_layer_instance);
 		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
 
@@ -82,7 +84,6 @@ namespace death
 
 #undef DEATH_CREATE_OBJECT
 #undef DEATH_DOCREATE_OBJECT
-#undef DEATH_EMPTY_TOKEN
 
 		chaos::GPUProgram * Level::GenDefaultRenderProgram()
 		{
@@ -147,23 +148,54 @@ namespace death
 		{
 			assert(in_layer_instance != nullptr);
 		}
+
+		// =====================================
+		// GeometricObject implementation
+		// =====================================
+
+		GeometricObject::GeometricObject(class LayerInstance * in_layer_instance) :
+			BaseObject(in_layer_instance)
+		{
+		}
+
+		bool GeometricObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		{
+			// copy the reference of the geometric object
+			geometric_object = in_geometric_object;
+			// store the name/id
+			name = geometric_object->name;
+			return true;
+		}
 			
 		// =====================================
 		// PlayerStartObject implementation
 		// =====================================
 
 		PlayerStartObject::PlayerStartObject(class LayerInstance * in_layer_instance) :
-			BaseObject(in_layer_instance)
+			GeometricObject(in_layer_instance)
 		{
 		}
 
 		bool PlayerStartObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
-			// copy the reference of the geometric object
-			geometric_object = in_geometric_object;
-			// store the name/id
-			name = geometric_object->name;
+			if (!GeometricObject::Initialize(in_geometric_object))
+				return false;
+			return true;
+		}
 
+		// =====================================
+		// CameraObject implementation
+		// =====================================
+
+		CameraObject::CameraObject(class LayerInstance * in_layer_instance) :
+			GeometricObject(in_layer_instance)
+		{
+		}
+
+		bool CameraObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		{
+			if (!GeometricObject::Initialize(in_geometric_object))
+				return false;
 			return true;
 		}
 
@@ -505,23 +537,22 @@ namespace death
 			return 0;
 		}
 
-		PlayerStartObject * LayerInstance::FindPlayerStart(char const * name)
-		{
-			// very first player start required ?
-			if (name == nullptr && player_starts.size() > 0)
-				return player_starts[0].get();
-			// search by name
-			return NamedObject::FindNamedObject(player_starts, name);
-		}
 
-		PlayerStartObject const * LayerInstance::FindPlayerStart(char const * name) const
-		{
-			// very first player start required ?
-			if (name == nullptr && player_starts.size() > 0)
-				return player_starts[0].get();
-			// search by name
-			return NamedObject::FindNamedObject(player_starts, name);
+#define DEATH_EMPTY_TOKEN
+#define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
+		result_type constness * LayerInstance::func_name(char const * name) constness\
+		{\
+			if (name == nullptr && player_starts.size() > 0)\
+				return member_vector[0].get();\
+			return NamedObject::FindNamedObject(member_vector, name);\
 		}
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, const);
+
+#undef DEATH_EMPTY_TOKEN
+#undef DEATH_FIND_OBJECT
 
 		// =====================================
 		// LevelInstance implementation
@@ -645,35 +676,32 @@ namespace death
 			return default_material.get();
 		}
 
-		PlayerStartObject * LevelInstance::FindPlayerStart(char const * name)
-		{
-			size_t count = layer_instances.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				PlayerStartObject * result = layer_instances[i]->FindPlayerStart(name);
-				if (result != nullptr)
-					return result;
-			}
-			return nullptr;
-		}
 
-		PlayerStartObject const * LevelInstance::FindPlayerStart(char const * name) const
-		{
-			size_t count = layer_instances.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				PlayerStartObject const * result = layer_instances[i]->FindPlayerStart(name);
-				if (result != nullptr)
-					return result;
-			}
-			return nullptr;
+#define DEATH_EMPTY_TOKEN
+#define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
+		result_type constness * LevelInstance::func_name(char const * name) constness\
+		{\
+			size_t count = layer_instances.size();\
+			for (size_t i = 0; i < count; ++i)\
+			{\
+				result_type constness * result = layer_instances[i]->func_name(name);\
+				if (result != nullptr)\
+					return result;\
+			}\
+			return nullptr;\
 		}
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, const);
+
+#undef DEATH_EMPTY_TOKEN
+#undef DEATH_FIND_OBJECT
 
 		void LevelInstance::OnLevelEnded()
 		{
 			GameLevelInstance::OnLevelEnded();
-			UnSpawnPlayer();
-			
+			UnSpawnPlayer();		
 		}
 
 		void LevelInstance::OnLevelStarted()

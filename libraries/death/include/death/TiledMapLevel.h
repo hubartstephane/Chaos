@@ -22,7 +22,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (PlayerStartObject) (BaseObject) (LayerInstanceParticlePopulator)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (BaseObject) (LayerInstanceParticlePopulator)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -115,17 +115,17 @@ namespace death
 		};
 
 		// =====================================
-		// PlayerStartObject : where the player may start
+		// GeometricObject 
 		// =====================================
 
-		class PlayerStartObject : public BaseObject
+		class GeometricObject : public BaseObject
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
 		public:
 
 			/** constructor */
-			PlayerStartObject(LayerInstance * in_layer_instance);
+			GeometricObject(LayerInstance * in_layer_instance);
 
 			/** get the geometric object corresponding to this */
 			chaos::TiledMap::GeometricObject * GetGeometricObject() { return geometric_object.get(); }
@@ -141,6 +141,44 @@ namespace death
 
 			/** the associated geometric object */
 			boost::intrusive_ptr<chaos::TiledMap::GeometricObject> geometric_object;
+		};
+
+		// =====================================
+		// CameraObject : where the player may start
+		// =====================================
+
+		class CameraObject : public GeometricObject
+		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		public:
+
+			/** constructor */
+			CameraObject(LayerInstance * in_layer_instance);
+
+		protected:
+
+			/** override */
+			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object) override;
+		};
+
+		// =====================================
+		// PlayerStartObject : where the player may start
+		// =====================================
+
+		class PlayerStartObject : public GeometricObject
+		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		public:
+
+			/** constructor */
+			PlayerStartObject(LayerInstance * in_layer_instance);
+
+		protected:
+
+			/** override */
+			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object) override;
 		};
 
 		// =====================================
@@ -169,11 +207,15 @@ namespace death
 			/** create a level instance for that level user specified function */
 			virtual GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
 
+			/** create a Camera specializable method */
+			virtual CameraObject * DoCreateCamera(LayerInstance * in_layer_instance);
 			/** create a PlayerStartObject specializable method */
 			virtual PlayerStartObject * DoCreatePlayerStart(LayerInstance * in_layer_instance);
 			/** create a PlayerStartObject specializable method */
 			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance);
 
+			/** create a camera 'entry point' */
+			CameraObject * CreateCamera(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a player start 'entry point' */
 			PlayerStartObject * CreatePlayerStart(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a layer instance 'entry point' */
@@ -232,6 +274,11 @@ namespace death
 			/** find the player start from its name */
 			PlayerStartObject const * FindPlayerStart(char const * name) const;
 
+			/** find the camera from its name */
+			CameraObject * FindCamera(char const * name);
+			/** find the camera from its name */
+			CameraObject const * FindCamera(char const * name) const;
+
 			/** get the bounding box for the level */
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
 
@@ -277,6 +324,8 @@ namespace death
 			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
 			/** the player starts */
 			std::vector<boost::intrusive_ptr<PlayerStartObject>> player_starts;
+			/** the player cameras */
+			std::vector<boost::intrusive_ptr<CameraObject>> cameras;
 
 			/** the bounding box of the layer */
 			chaos::box2 bounding_box;
@@ -307,6 +356,10 @@ namespace death
 			/** get the game */
 			Game const * GetGame() const { return game; }
 
+			/** find the camera from its name */
+			CameraObject * FindCamera(char const * name);
+			/** find the camera from its name */
+			CameraObject const * FindCamera(char const * name) const;
 			/** find the player start from its name */
 			PlayerStartObject * FindPlayerStart(char const * name);
 			/** find the player start from its name */

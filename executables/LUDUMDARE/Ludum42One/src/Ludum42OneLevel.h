@@ -48,14 +48,8 @@ protected:
 	LudumLevel * GetTypedLevel();
 	LudumLevel const * GetTypedLevel() const;
 
-	/** overrides */
-	virtual void OnLevelEnded() override;
-	virtual void OnLevelStarted() override;
-
 protected:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;
-	/** some allocations */
-	std::map<int, boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;
 };

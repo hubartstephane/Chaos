@@ -63,7 +63,7 @@ namespace death
 			/** initialize the object */
 			bool Initialize(Level * level);
 			/** insert a particle */
-			bool AddParticle(char const * bitmap_name, chaos::TiledMap::TileInfo tile_info, chaos::box2 const & particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			bool AddParticle(char const * bitmap_name, chaos::box2 const & particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 			/** flush remaining particles */
 			void FlushParticles();
 
@@ -318,16 +318,29 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool Initialize(death::Game * in_game) override;
+			virtual bool Initialize(Game * in_game) override;
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
+			/** override */
+			virtual void OnLevelStarted() override;
+			/** override */
+			virtual void OnLevelEnded() override;
+
+			/** destroy the player allocation */
+			virtual void UnSpawnPlayer();
+			/** create the player allocation */
+			virtual void SpawnPlayer();
+
+			/** code to generate particle */
+			virtual void InitializePlayerParticle(TiledMap::PlayerStartObject * player_start, chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas, chaos::BitmapAtlas::BitmapInfo const * bitmap_info, chaos::ParticleAllocation * player_allocation);
+
 			/** create the particle manager */
-			virtual bool CreateParticleManager(death::Game * in_game);
+			virtual bool CreateParticleManager(Game * in_game);
 			/** create the layers instances */
-			virtual bool CreateLayerInstances(death::Game * in_game);
+			virtual bool CreateLayerInstances(Game * in_game);
 			/** compute the bounding box of the level */
 			virtual void ComputeBoundingBox();
 

@@ -220,7 +220,7 @@ namespace death
 			particle_count = 0;
 		}
 
-		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::TiledMap::TileInfo tile_info, chaos::box2 const & particle_box, glm::vec4 const & color)
+		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 const & particle_box, glm::vec4 const & color)
 		{
 			// search bitmap information for the particle
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
@@ -463,11 +463,10 @@ namespace death
 					continue;
 
 				// create a simple particle
-				glm::ivec2 tile_coord = tile_layer->GetTileCoordinate(i);
-
+				glm::ivec2  tile_coord   = tile_layer->GetTileCoordinate(i);
 				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);
 
-				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), tile_info, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 			}
 
 			// final flush
@@ -568,7 +567,7 @@ namespace death
 			return result;
 		}
 
-		bool LevelInstance::Initialize(death::Game * in_game)
+		bool LevelInstance::Initialize(Game * in_game)
 		{
 			assert(in_game != nullptr);
 
@@ -586,7 +585,7 @@ namespace death
  			return true;
 		}
 
-		bool LevelInstance::CreateParticleManager(death::Game * in_game)
+		bool LevelInstance::CreateParticleManager(Game * in_game)
 		{
 			particle_manager = new chaos::ParticleManager;
 			if (particle_manager == nullptr)
@@ -595,7 +594,7 @@ namespace death
 			return true;
 		}
 
-		bool LevelInstance::CreateLayerInstances(death::Game * in_game)
+		bool LevelInstance::CreateLayerInstances(Game * in_game)
 		{
 			Level * level = GetTypedLevel();
 
@@ -656,9 +655,102 @@ namespace death
 			return nullptr;
 		}
 
-		// =====================================
-		// LevelInstance implementation
-		// =====================================
+		void LevelInstance::OnLevelEnded()
+		{
+			GameLevelInstance::OnLevelEnded();
+			UnSpawnPlayer();
+			
+		}
+
+		void LevelInstance::OnLevelStarted()
+		{
+			GameLevelInstance::OnLevelStarted();
+			SpawnPlayer();
+		}
+
+		void LevelInstance::UnSpawnPlayer()
+		{
+			game->SetPlayerAllocation(nullptr);
+		}
+
+		void LevelInstance::SpawnPlayer()
+		{
+			Level * level = GetTypedLevel();
+
+			// search PLAYER START NAME
+			std::string const * player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
+			
+			// search the PLAYER START
+			TiledMap::PlayerStartObject * player_start = FindPlayerStart((player_start_name == nullptr)? nullptr : player_start_name->c_str());
+			if (player_start == nullptr)
+				return;
+
+			// initialize some data
+			TiledMap::LayerInstance * layer_instance = player_start->GetLayerInstance();
+			if (layer_instance == nullptr)
+				return;
+
+			chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = game->GetTextureAtlas();
+			if (texture_atlas == nullptr)
+				return;
+
+			chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+			if (folder_info == nullptr)
+				return;
+
+			// search the bitmap name for the player
+			std::string const * bitmap_name = player_start->GetGeometricObject()->FindPropertyString("BITMAP_NAME");
+			if (bitmap_name == nullptr)
+				return;
+
+			// search the info for the bitmap
+			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name->c_str());
+			if (bitmap_info == nullptr)
+				return;
+
+			// create an allocation for the player 
+			chaos::ParticleAllocation * player_allocation = layer_instance->CreateParticleAllocation();
+			if (!player_allocation->AddParticles(1))
+				return;
+
+			// fullfill the player allocation
+			InitializePlayerParticle(player_start, texture_atlas, bitmap_info, player_allocation);
+
+			// set the player allocation
+			game->SetPlayerAllocation(player_allocation);
+		}
+
+		void LevelInstance::InitializePlayerParticle(TiledMap::PlayerStartObject * player_start, chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas, chaos::BitmapAtlas::BitmapInfo const * bitmap_info, chaos::ParticleAllocation * player_allocation)
+		{
+			chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particle_accessor = player_allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+
+			chaos::ParticleDefault::Particle & player_particle = particle_accessor[particle_accessor.GetCount() - 1];
+
+			chaos::box2 player_bounding_box;
+
+			chaos::TiledMap::GeometricObjectSurface const * object_surface = player_start->GetGeometricObject()->GetObjectSurface();
+			if (object_surface != nullptr)
+			{
+				player_bounding_box = object_surface->GetBoundingBox();
+
+
+
+			}
+			else
+			{
+				player_bounding_box.position = player_start->GetGeometricObject()->position;
+				player_bounding_box.half_size = glm::vec2(bitmap_info->width, bitmap_info->height) * 0.5f;
+			}
+
+			player_particle.bounding_box = player_bounding_box;
+			player_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, texture_atlas->GetAtlasDimension());
+			player_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+
+
+
+
+
 
 
 

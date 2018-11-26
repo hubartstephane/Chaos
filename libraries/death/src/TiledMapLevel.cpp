@@ -362,7 +362,7 @@ namespace death
 							continue;
 						// create a simple particle
 						chaos::box2 particle_box = tile->GetBoundingBox();
-						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));				
+						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->horizontal_flip, tile->vertical_flip);
 						continue;
 					}					
 				}
@@ -422,7 +422,9 @@ namespace death
 				glm::ivec2  tile_coord   = tile_layer->GetTileCoordinate(i);
 				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);
 
-				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+				bool horizontal_flip = false;
+				bool vertical_flip = false;
+				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), horizontal_flip, vertical_flip);
 			}
 
 			// final flush

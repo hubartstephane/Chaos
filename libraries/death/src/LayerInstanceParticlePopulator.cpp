@@ -58,7 +58,7 @@ namespace death
 			particle_count = 0;
 		}
 
-		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color)
+		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, bool horizontal_flip, bool vertical_flip)
 		{
 			// search bitmap information for the particle
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
@@ -80,6 +80,7 @@ namespace death
 			chaos::ParticleDefault::Particle particle;
 			particle.bounding_box = particle_box;
 			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, texture_atlas->GetAtlasDimension());
+			particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
 			particle.color = color;
 
 			particles[particle_count++] = particle;

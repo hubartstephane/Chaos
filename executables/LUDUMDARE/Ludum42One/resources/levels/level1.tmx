@@ -6,12 +6,12 @@
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <objectgroup name="Calque d'objets 1">
-  <object id="2" name="grosse planete" gid="3221225480" x="2840" y="6576" width="10000" height="10000">
+  <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000">
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="0"/>
    </properties>
   </object>
-  <object id="18" name="world_bounds_c" x="-1000" y="-1000" width="8000" height="8000">
+  <object id="18" name="world_bounds_c" x="-1000" y="-1000" width="9200" height="8000">
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="1"/>
    </properties>

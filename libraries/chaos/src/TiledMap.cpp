@@ -1148,7 +1148,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 
 		TileInfo Map::FindTileInfo(int gid)
 		{
-			if (gid >= 0)
+			if (gid > 0)
 			{
 				size_t count = tilesets.size();
 				for (size_t i = count ; i > 0; --i)

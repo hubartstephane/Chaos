@@ -138,6 +138,18 @@ namespace chaos
 			return true;
 		}
 
+		/** apply some symetries to ParticleTexcoords or ParticleCorners */
+		template<typename T>
+		T ApplySymetriesToTexcoords(T const & src, bool horizontal_flip, bool vertical_flip)
+		{
+			T result = src;
+			if (horizontal_flip)
+				std::swap(result.bottomleft.x, result.topright.x);
+			if (vertical_flip)
+				std::swap(result.bottomleft.y, result.topright.y);
+			return result;
+		}
+
 	}; // namespace ParticleTools
 
 }; // namespace chaos

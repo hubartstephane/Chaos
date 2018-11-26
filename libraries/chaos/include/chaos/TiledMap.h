@@ -598,8 +598,6 @@ namespace chaos
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-			
-
 		public:
 
 			/** object information */

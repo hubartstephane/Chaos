@@ -30,7 +30,7 @@ namespace death
 			/** initialize the object */
 			bool Initialize(LayerInstance * in_layer_instance);
 			/** insert a particle */
-			bool AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			bool AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), bool horizontal_flip = false, bool vertical_flip = false);
 			/** flush remaining particles */
 			void FlushParticles();
 

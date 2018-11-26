@@ -8,7 +8,6 @@
 
 namespace chaos
 {
-
 	box2 ParticleTools::ParticleCornersToBox(ParticleCorners const & corners)
 	{
 		return box2(std::make_pair(corners.bottomleft, corners.topright));	

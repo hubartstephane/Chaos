@@ -380,8 +380,17 @@ namespace death
 			chaos::box2 layer_box;
 			bool explicit_world_bounds = chaos::TiledMapTools::FindExplicitWorldBounds(object_layer, layer_box);
 
-			// the allocation (will be created only at the last moment)
-			chaos::ParticleAllocation * allocation = nullptr;
+			// the particle generator
+			LayerInstanceParticlePopulator particle_populator;
+			if (!particle_populator.Initialize(this))
+				return false;
+
+
+
+			// shuxxx
+
+
+
 
 			// iterate over all objects
 			size_t count = object_layer->geometric_objects.size();
@@ -456,10 +465,10 @@ namespace death
 			}
 
 			// final flush
-//			level->FlushParticles(new_particles, new_particle_count, allocation, this); // allocation may be nullptr, but in this case count should be 0
-			// save the bounding box
-			bounding_box = layer_box;
-
+			particle_populator.FlushParticles();
+			// update the bounding box
+			if (!explicit_world_bounds)
+				bounding_box = particle_populator.GetBoundingBox();
 			return true;
 		}
 

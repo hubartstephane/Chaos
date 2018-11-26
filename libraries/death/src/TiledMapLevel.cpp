@@ -294,20 +294,13 @@ namespace death
 			Level * level = GetTypedLevel();
 
 			// search the explicit bounding box
-			chaos::box2 layer_box;
-			bool explicit_world_bounds = chaos::TiledMapTools::FindExplicitWorldBounds(object_layer, layer_box);
+			chaos::box2 box;
+			bool has_explicit_bounding_box = chaos::TiledMapTools::FindExplicitWorldBounds(object_layer, box);
 
 			// the particle generator
 			LayerInstanceParticlePopulator particle_populator;
 			if (!particle_populator.Initialize(this))
 				return false;
-
-
-
-			// shuxxx
-
-
-
 
 			// iterate over all objects
 			size_t count = object_layer->geometric_objects.size();
@@ -333,13 +326,16 @@ namespace death
 						cameras.push_back(camera);
 				}
 
+				// get the tiled map
+				chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
+
 				// zones
 				chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
 				if (surface != nullptr)
 				{
 					chaos::box2 surface_box = surface->GetBoundingBox();
-					if (!explicit_world_bounds)
-						layer_box = layer_box | surface_box;
+					if (!has_explicit_bounding_box)
+						box = box | surface_box;
 
 					chaos::TiledMap::GeometricObjectRectangle * rectangle = geometric_object->GetObjectRectangle();
 					chaos::TiledMap::GeometricObjectEllipse   * ellipse = geometric_object->GetObjectEllipse();
@@ -360,33 +356,24 @@ namespace death
 					chaos::TiledMap::GeometricObjectTile * tile = geometric_object->GetObjectTile();
 					if (tile != nullptr)
 					{
-
-#if 0						
-						// create an allocation if necessary
-						if (allocation == nullptr)
-						{
-							allocation = CreateParticleAllocation();
-							if (allocation == nullptr)
-								return false;
-						}
-						// create the particle
-						TileParticleData & new_part = new_particles[new_particle_count];
-
-						chaos::ParticleDefault::Particle & p = new_part.particle;
-						p.bounding_box = surface_box;
-						p.texcoords = chaos::ParticleTools::GetParticleTexcoords(*new_part.bitmap_info, texture_atlas->GetAtlasDimension());
-						p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-#endif						
+						// search the tile information 
+						chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile->gid);
+						if (tile_info.tiledata == nullptr)
+							continue;
+						// create a simple particle
+						chaos::box2 particle_box = tile->GetBoundingBox();
+						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));				
 						continue;
 					}					
 				}
 			}
-
 			// final flush
 			particle_populator.FlushParticles();
 			// update the bounding box
-			if (!explicit_world_bounds)
-				bounding_box = particle_populator.GetBoundingBox();
+			if (!has_explicit_bounding_box)
+				bounding_box = box | particle_populator.GetBoundingBox();
+			else
+				bounding_box = box;
 			return true;
 		}
 
@@ -425,18 +412,12 @@ namespace death
 			// populate the layer
 			chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
 
-			chaos::box2 layer_box;
 			for (size_t i = 0; i < count; ++i)
 			{
-				// gid of the tile
-				int gid = tile_layer->tile_indices[i];
-				if (gid <= 0)
-					continue;
 				// search the tile information 
-				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_layer->tile_indices[i]);
 				if (tile_info.tiledata == nullptr)
 					continue;
-
 				// create a simple particle
 				glm::ivec2  tile_coord   = tile_layer->GetTileCoordinate(i);
 				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);

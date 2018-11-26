@@ -1,0 +1,64 @@
+#pragma once
+
+#include <chaos/StandardHeaders.h>
+#include <chaos/GeometryFramework.h>
+#include <chaos/ReferencedObject.h>
+#include <chaos/TiledMap.h>
+#include <chaos/Renderable.h>
+#include <chaos/Tickable.h>
+#include <chaos/ParticleManager.h>
+#include <chaos/ParticleDefault.h>
+#include <chaos/BitmapAtlas.h>
+
+#include <death/TiledMapLevel.h>
+
+namespace death
+{
+
+	namespace TiledMap
+	{
+		// =====================================
+		// LayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
+		// =====================================
+
+		class LayerInstanceParticlePopulator
+		{
+			static size_t const PARTICLE_BUFFER_SIZE = 100;
+
+		public:
+
+			/** initialize the object */
+			bool Initialize(LayerInstance * in_layer_instance);
+			/** insert a particle */
+			bool AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			/** flush remaining particles */
+			void FlushParticles();
+
+			/** get the final bounding box */
+			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+			/** get the particle allocation */
+			chaos::ParticleAllocation * GetParticleAllocation() { return allocation; }
+
+		protected:
+
+			/** the concerned layer instance */
+			LayerInstance * layer_instance = nullptr;
+			/** the texture atlas required */
+			chaos::BitmapAtlas::TextureArrayAtlas const * texture_atlas = nullptr;
+			/** the folder containing the bitmaps */
+			chaos::BitmapAtlas::FolderInfo const * folder_info = nullptr;
+
+			/** the allocation for all those particles */
+			chaos::ParticleAllocation * allocation = nullptr;
+
+			/** a cache of particles */
+			chaos::ParticleDefault::Particle particles[PARTICLE_BUFFER_SIZE];
+			/** the cached number of particles */
+			size_t particle_count = 0;
+			/** a bounding box */
+			chaos::box2 bounding_box;
+		};
+
+	}; // namespace TiledMap
+
+}; // namespace death

@@ -75,6 +75,9 @@ namespace death
 			return result;\
 		}
 
+		DEATH_DOCREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance, in_layer_instance);
+		DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
+
 		DEATH_DOCREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance, in_layer_instance);
 		DEATH_CREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
 
@@ -169,6 +172,26 @@ namespace death
 			return true;
 		}
 			
+
+		// =====================================
+		// TriggerSurfaceObject implementation
+		// =====================================
+
+		TriggerSurfaceObject::TriggerSurfaceObject(class LayerInstance * in_layer_instance) :
+			GeometricObject(in_layer_instance)
+		{
+		}
+
+		bool TriggerSurfaceObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		{
+			if (!GeometricObject::Initialize(in_geometric_object))
+				return false;
+
+			
+
+			return true;
+		}
+
 		// =====================================
 		// PlayerStartObject implementation
 		// =====================================
@@ -458,6 +481,8 @@ namespace death
 				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, name);\
 		}
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
 		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, DEATH_EMPTY_TOKEN);
@@ -602,6 +627,8 @@ namespace death
 			}\
 			return nullptr;\
 		}
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
 		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, DEATH_EMPTY_TOKEN);

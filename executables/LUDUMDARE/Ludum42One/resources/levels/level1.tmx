@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="65">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="71">
  <properties>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart2"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <objectgroup name="Calque d'objets 1">
+ <objectgroup name="Calque d'objets 1" visible="0">
   <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000">
    <properties>
     <property name="WORLD_BOUNDS" type="int" value="0"/>
@@ -63,7 +63,7 @@
    </properties>
   </object>
  </objectgroup>
- <layer name="objects" width="100" height="100">
+ <layer name="objects" width="100" height="100" visible="0">
   <properties>
    <property name="PARTICLE_LAYER" value="OBJECTS"/>
   </properties>
@@ -170,7 +170,19 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="planets" width="100" height="100" offsetx="5.5" offsety="0">
+ <objectgroup name="repeated">
+  <properties>
+   <property name="DISPLACEMENT_FACTOR" type="float" value="3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="65" name="obj5" gid="6" x="280" y="840" width="400" height="400"/>
+  <object id="67" name="obj4" gid="6" x="3048" y="1880" width="912" height="880"/>
+  <object id="68" name="obj3" gid="6" x="648" y="2008" width="400" height="400"/>
+  <object id="69" name="obj2" gid="10" x="1430" y="1370" width="868" height="1028"/>
+  <object id="70" name="obj1" gid="10" x="1334" y="3402" width="1492" height="1396"/>
+ </objectgroup>
+ <layer name="planets" width="100" height="100" visible="0" offsetx="5.5" offsety="0">
   <properties>
    <property name="PARTICLE_LAYER" value="PLANETS"/>
   </properties>

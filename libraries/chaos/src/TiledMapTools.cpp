@@ -133,6 +133,11 @@ namespace chaos
 		return HasFlag(object_geometric, "world_bounds", "world_bounds", "WORLD_BOUNDS");
 	}
 
+	bool TiledMapTools::IsTriggerSurface(TiledMap::GeometricObject const * object_geometric)
+	{
+		return HasFlag(object_geometric, "trigger_surface", "trigger_surface", "TRIGGER_SURFACE");
+	}
+
 	bool TiledMapTools::IsPlayerStart(TiledMap::GeometricObject const * object_geometric)
 	{
 		return HasFlag(object_geometric, "player_start", "player_start", "PLAYER_START");

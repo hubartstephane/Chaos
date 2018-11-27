@@ -2,6 +2,7 @@
 #include <death/Game.h>
 #include <death/LayerInstanceParticlePopulator.h>
 
+#include <chaos/CollisionFramework.h>
 #include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
@@ -187,8 +188,22 @@ namespace death
 			if (!GeometricObject::Initialize(in_geometric_object))
 				return false;
 
-			
+			enabled    = in_geometric_object->FindPropertyBool("ENABLED", true);
+			trigger_id = in_geometric_object->FindPropertyInt("TRIGGER_ID", 0);
+		
+			return true;
+		}
 
+		chaos::box2 TriggerSurfaceObject::GetBoundingBox() const
+		{
+			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
+			if (surface == nullptr)
+				return chaos::box2();
+			return surface->GetBoundingBox();
+		}
+
+		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+		{
 			return true;
 		}
 
@@ -287,6 +302,9 @@ namespace death
 			wrap_y = in_layer->FindPropertyBool("WRAP_Y", false);
 			material_name = in_layer->FindPropertyString("MATERIAL", "");
 
+			trigger_surfaces_enabled = in_layer->FindPropertyBool("TRIGGER_SURFACE_ENABLED", true);
+			player_collision_enabled = in_layer->FindPropertyBool("PLAYER_COLLISION_ENABLED", true);
+
 			// empty the bounding box
 			bounding_box = chaos::box2();
 
@@ -356,6 +374,15 @@ namespace death
 				chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
 				if (surface != nullptr)
 				{
+					// is a trigger surface
+					if (chaos::TiledMapTools::IsTriggerSurface(geometric_object))
+					{
+						TriggerSurfaceObject * trigger_surface = level->CreateTriggerSurface(this, geometric_object);
+						if (trigger_surface != nullptr)
+							trigger_surfaces.push_back(trigger_surface);
+					}
+
+#if 0
 					chaos::box2 surface_box = surface->GetBoundingBox();
 					if (!has_explicit_bounding_box)
 						box = box | surface_box;
@@ -364,17 +391,9 @@ namespace death
 					chaos::TiledMap::GeometricObjectEllipse   * ellipse = geometric_object->GetObjectEllipse();
 					if (rectangle != nullptr || ellipse != nullptr)
 					{
-						if (rectangle != nullptr)
-						{
-
-						}
-
-						if (ellipse != nullptr)
-						{
-
-						}
 						continue;
 					}
+#endif
 
 					chaos::TiledMap::GeometricObjectTile * tile = geometric_object->GetObjectTile();
 					if (tile != nullptr)
@@ -458,6 +477,43 @@ namespace death
 			return true;
 		}
 
+		void LayerInstance::ComputePlayerCollision(double delta_time)
+		{
+			// early exit
+			if (!ArePlayerCollisionEnabled())
+				return;
+			// get the game
+			Game * game = GetGame();
+			if (game == nullptr)
+				return;
+			// get the player particle
+			chaos::ParticleDefault::Particle * player_particle = game->GetPlayerParticle();
+			if (player_particle == nullptr)
+				return;
+			// collision with surface triggers
+			if (AreTriggerSurfacesEnabled())
+				ComputePlayerCollisionWithSurfaceTriggers(delta_time, player_particle);
+		}
+
+		void LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+		{
+			death::TiledMap::Level * level = GetTypedLevel();
+
+			size_t count = trigger_surfaces.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
+				if (trigger == nullptr || !trigger->IsEnabled())
+					continue;
+
+				chaos::box2 trigger_box = trigger->GetBoundingBox();
+
+				if (chaos::Collide(player_particle->bounding_box, trigger_box))
+					if (!trigger->OnPlayerCollision(delta_time, player_particle))
+						break;
+			}			
+		}
+
 		bool LayerInstance::DoTick(double delta_time)
 		{
 			if (particle_layer != nullptr)
@@ -521,6 +577,13 @@ namespace death
 			return dynamic_cast<Level const *>(GetLevel());
 		}
 
+		void LevelInstance::ComputePlayerCollision(double delta_time)
+		{
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+				layer_instances[i]->ComputePlayerCollision(delta_time);
+		}
+
 		bool LevelInstance::DoTick(double delta_time)
 		{
 			// tick the particle manager
@@ -530,6 +593,8 @@ namespace death
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
 				layer_instances[i]->Tick(delta_time);
+			// compute the collisions with the player
+			ComputePlayerCollision(delta_time);
 
 			return true;
 		}

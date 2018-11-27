@@ -154,16 +154,29 @@ namespace death
 
 			/** whether it is enabled or not */
 			bool IsEnabled() const { return enabled; }
+			/** change whether the trigger is enabled or not */
+			void SetEnabled(bool in_enabled = true) { enabled = in_enabled;}
+		
+			/** get the trigger ID */
+			int GetTriggerID() const { return trigger_id; }
+
+			/** get the object bounding box */
+			chaos::box2 GetBoundingBox() const;
 
 		protected:
 
 			/** override */
 			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
+			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+			virtual bool OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle);
+			
 		protected:
 
 			/** flag whether to object is enabled or not */
 			bool enabled = true;
+			/** an ID that helps make classification */
+			int trigger_id = 0;
 		};
 
 		// =====================================
@@ -273,12 +286,21 @@ namespace death
 			/** find the trigger surface from its name */
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
 
-
 			/** get the bounding box for the level */
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
 
 			/** create a particle allocation for the layer */
 			chaos::ParticleAllocation * CreateParticleAllocation();
+
+			/** get whether player collisions are enabled on that layer */
+			bool ArePlayerCollisionEnabled() const { return player_collision_enabled; }
+			/** change whether collisions with player are to be test on that layer */
+			void SetPlayerCollisionEnabled(bool in_player_collision_enabled){ player_collision_enabled = in_player_collision_enabled; }
+
+			/** get whether trigger surfaces are enabled on that layer */
+			bool AreTriggerSurfacesEnabled() const { return trigger_surfaces_enabled; }
+			/** change whether trigger surfaces are enabled on that layer */
+			void SetTriggerSurfacesEnabled(bool in_trigger_surfaces_enabled) { trigger_surfaces_enabled = in_trigger_surfaces_enabled; }
 
 		protected:
 
@@ -291,6 +313,11 @@ namespace death
 			virtual bool DoTick(double delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+
+			/** search all collision with the player (tiles/TriggerSurfaceObject) */
+			virtual void ComputePlayerCollision(double delta_time);
+			/** compute trigger collisions with surface triggers */
+			virtual void ComputePlayerCollisionWithSurfaceTriggers(double delta_time, chaos::ParticleDefault::Particle * player_particle);
 
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::ImageLayer * image_layer);
@@ -326,6 +353,11 @@ namespace death
 
 			/** the bounding box of the layer */
 			chaos::box2 bounding_box;
+
+			/** whether collision with player are to be tested with that layer */
+			bool player_collision_enabled = true;
+			/** whether trigger surfaces are enabled onthat layer */
+			bool trigger_surfaces_enabled = true;
 		};
 
 		// =====================================
@@ -377,6 +409,9 @@ namespace death
 			virtual bool DoTick(double delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+
+			/** search all collision with the player (tiles/TriggerSurfaceObject) */
+			virtual void ComputePlayerCollision(double delta_time);
 
 			/** override */
 			virtual void OnLevelStarted() override;

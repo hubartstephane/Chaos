@@ -35,6 +35,8 @@ namespace chaos
 		static bool IsWorldBounds(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object is a player start */
 		static bool IsPlayerStart(TiledMap::GeometricObject const * object_geometric);
+		/** returns true whether the object is a trigger surface */
+		static bool IsTriggerSurface(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object is a camera */
 		static bool IsCamera(TiledMap::GeometricObject const * object_geometric);
 

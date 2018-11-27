@@ -642,6 +642,13 @@ namespace chaos
 		/** spawn a given number of particles */
 		ParticleAllocation * SpawnParticles(size_t count);
 
+		/** get the number of allocations */
+		size_t GetAllocationCount() const;
+		/** get the allocation by index */
+		ParticleAllocation * GetAllocation(size_t index);
+		/** get the allocation by index */
+		ParticleAllocation const * GetAllocation(size_t index) const;
+
 	public:
 
 		/** templated method to create a layer and set some values */
@@ -693,7 +700,6 @@ namespace chaos
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
 		int DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
-
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool UpdateParticles(float delta_time);

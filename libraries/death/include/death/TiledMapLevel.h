@@ -215,6 +215,9 @@ namespace death
 			/** create a particle layer */
 			virtual chaos::ParticleLayer * CreateParticleLayer(LayerInstance * layer_instance);
 
+			/** called whenever a collision between player and tile happens */
+			virtual bool OnPlayerTileCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
+
 			/** the default program when not specified */
 			virtual chaos::GPUProgram * GenDefaultRenderProgram();
 			/** the default material when not specified */
@@ -336,6 +339,13 @@ namespace death
 			boost::intrusive_ptr<chaos::TiledMap::LayerBase> layer;
 			/** the particle layer */
 			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
+
+			// shuxxx : some hack to prevent a memory leak. 
+			//          a single allocation per layer for moment
+
+			boost::intrusive_ptr<chaos::ParticleAllocation> allocation;
+
+
 			/** the player starts */
 			std::vector<boost::intrusive_ptr<PlayerStartObject>> player_starts;
 			/** the player cameras */

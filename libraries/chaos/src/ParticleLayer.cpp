@@ -290,7 +290,7 @@ namespace chaos
 		// increase the particle count for that allocation
 		result->Resize(count);
 		// register the allocation
-		particles_allocations.push_back(result);
+		particles_allocations.push_back(result); // shuxxx : raw pointer => memory leak
 		return result;
 	}
 
@@ -488,6 +488,19 @@ namespace chaos
 		}
 		// create the layer
 		return CreateParticleLayer(layer_desc, render_material);
+	}
+
+	size_t ParticleLayer::GetAllocationCount() const
+	{
+		return particles_allocations.size();
+	}
+	ParticleAllocation * ParticleLayer::GetAllocation(size_t index)
+	{
+		return particles_allocations[index];
+	}
+	ParticleAllocation const * ParticleLayer::GetAllocation(size_t index) const
+	{
+		return particles_allocations[index];
 	}
 
 }; // namespace chaos

@@ -145,6 +145,12 @@ namespace death
 			return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 		}
 
+		bool Level::OnPlayerTileCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
+		{
+
+			return true; // continue with other
+		}
+
 		// =====================================
 		// BaseObject implementation
 		// =====================================
@@ -204,7 +210,7 @@ namespace death
 
 		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
 		{
-			return true;
+			return true; // continue other collisions
 		}
 
 		// =====================================
@@ -423,6 +429,10 @@ namespace death
 
 		chaos::ParticleAllocation * LayerInstance::CreateParticleAllocation()
 		{
+			// return cached value if any
+	//		if (allocation != nullptr)
+	//			return allocation.get();
+
 			if (particle_layer == nullptr)
 			{
 				// find render material
@@ -436,8 +446,10 @@ namespace death
 				particle_layer->SetRenderMaterial(render_material);
 			}
 
-			// create the allocation
+			// create the allocation and cache it  // shuxxx memory leak prevention
 			return particle_layer->SpawnParticles(0);
+			//allocation = particle_layer->SpawnParticles(0);
+			//return allocation.get();
 		}
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)
@@ -522,7 +534,36 @@ namespace death
 
 		void LayerInstance::ComputePlayerTileCollisions(double delta_time, chaos::ParticleDefault::Particle * player_particle)
 		{
+			death::TiledMap::Level * level = GetTypedLevel();
 
+			// no particle layer, no collisions
+			if (particle_layer == nullptr)
+				return;
+			// iterate over all allocations
+			size_t allocation_count = particle_layer->GetAllocationCount();
+			for (size_t i = 0; i < allocation_count; ++i)
+			{
+				chaos::ParticleAllocation * particle_allocation = particle_layer->GetAllocation(i);
+				if (particle_allocation == nullptr)
+					continue;
+
+				chaos::ParticleAccessor<TileParticle> particles = particle_allocation->GetParticleAccessor<TileParticle>();
+
+				size_t particle_count = particles.GetCount();
+				for (size_t j = 0; j < particle_count; ++j)
+				{
+					TileParticle & particle = particles[j];
+
+					if (player_particle == &particle) // ignore self collision
+						continue;
+					if (chaos::Collide(player_particle->bounding_box, particle.bounding_box))
+						if (!level->OnPlayerTileCollision(delta_time, player_particle, &particle))
+							return;
+				}
+			}
+
+			// XXX : shuxxx do not use 'allocation' member that is just a fix for temporary memory leak
+			//       this member will be removed soon
 		}
 
 		

@@ -302,8 +302,9 @@ namespace death
 			wrap_y = in_layer->FindPropertyBool("WRAP_Y", false);
 			material_name = in_layer->FindPropertyString("MATERIAL", "");
 
-			trigger_surfaces_enabled = in_layer->FindPropertyBool("TRIGGER_SURFACE_ENABLED", true);
-			player_collision_enabled = in_layer->FindPropertyBool("PLAYER_COLLISION_ENABLED", true);
+			trigger_surfaces_enabled = in_layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", true);
+			player_collision_enabled = in_layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", true);
+			trigger_surfaces_enabled = in_layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", true);
 
 			// empty the bounding box
 			bounding_box = chaos::box2();
@@ -495,6 +496,9 @@ namespace death
 			// collision with surface triggers
 			if (AreTriggerSurfacesEnabled())
 				ComputePlayerCollisionWithSurfaceTriggers(delta_time, player_particle);
+			// collision with tiles
+			if (AreTileCollisionsEnabled())
+				ComputePlayerTileCollisions(delta_time, player_particle);
 		}
 
 		void LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, chaos::ParticleDefault::Particle * player_particle)
@@ -515,6 +519,13 @@ namespace death
 						break;
 			}			
 		}
+
+		void LayerInstance::ComputePlayerTileCollisions(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+		{
+
+		}
+
+		
 
 		bool LayerInstance::DoTick(double delta_time)
 		{
@@ -725,10 +736,19 @@ namespace death
 			std::string const * camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
 
 			// search the CAMERA
-			TiledMap::CameraObject * camera = FindCamera((camera_name == nullptr) ? nullptr : camera_name->c_str());
+			TiledMap::CameraObject * camera = nullptr;
+			if (camera_name != nullptr)
+			{
+				camera = FindCamera(camera_name->c_str()); // first, if a name is given, use it
+			}
 			if (camera == nullptr)
-				return;
+			{
+				camera = FindCamera(nullptr); // try to find the very first one otherwise
+				if (camera == nullptr)
+					return;
+			}
 
+			// create camera
 			chaos::TiledMap::GeometricObjectSurface * camera_surface = camera->GetGeometricObject()->GetObjectSurface();
 			if (camera_surface == nullptr)
 				return;
@@ -751,9 +771,17 @@ namespace death
 			std::string const * player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
 			
 			// search the PLAYER START
-			TiledMap::PlayerStartObject * player_start = FindPlayerStart((player_start_name == nullptr)? nullptr : player_start_name->c_str());
+			TiledMap::PlayerStartObject * player_start = nullptr;
+			if (player_start_name != nullptr)
+			{
+				player_start = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
+			}
 			if (player_start == nullptr)
-				return;
+			{
+				player_start = FindPlayerStart(nullptr); // try to find the very first one otherwise
+				if (player_start == nullptr)
+					return;
+			}
 
 			// search the bitmap name for the player
 			std::string const * bitmap_name = player_start->GetGeometricObject()->FindPropertyString("BITMAP_NAME");

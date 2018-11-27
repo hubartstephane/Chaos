@@ -287,6 +287,11 @@ namespace death
 			/** change whether trigger surfaces are enabled on that layer */
 			void SetTriggerSurfacesEnabled(bool in_trigger_surfaces_enabled) { trigger_surfaces_enabled = in_trigger_surfaces_enabled; }
 
+			/** get whether collisions with tiles are enabled on that layer */
+			bool AreTileCollisionsEnabled() const { return tile_collisions_enabled; }
+			/** change whether collisions with tiles are enabled on that layer */
+			void SetTileCollisionsEnabled(bool in_tile_collisions_enabled) { tile_collisions_enabled = in_tile_collisions_enabled; }
+
 		protected:
 
 			/** initialization */
@@ -303,6 +308,8 @@ namespace death
 			virtual void ComputePlayerCollision(double delta_time);
 			/** compute trigger collisions with surface triggers */
 			virtual void ComputePlayerCollisionWithSurfaceTriggers(double delta_time, chaos::ParticleDefault::Particle * player_particle);
+			/** compute collisions between players and tiles */
+			virtual void ComputePlayerTileCollisions(double delta_time, chaos::ParticleDefault::Particle * player_particle);
 
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::ImageLayer * image_layer);
@@ -341,8 +348,10 @@ namespace death
 
 			/** whether collision with player are to be tested with that layer */
 			bool player_collision_enabled = true;
-			/** whether trigger surfaces are enabled onthat layer */
+			/** whether trigger surfaces are enabled on that layer */
 			bool trigger_surfaces_enabled = true;
+			/** whether collisions with tiles are enabled on that layer */
+			bool tile_collisions_enabled = true;
 		};
 
 		// =====================================

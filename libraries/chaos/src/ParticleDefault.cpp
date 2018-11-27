@@ -5,7 +5,7 @@
 
 namespace chaos
 {
-	size_t ParticleDefault::ParticleTrait::ParticleToVertices(Particle const * particle, Vertex * vertices, size_t vertices_per_particle, ParticleAllocation * allocation) const
+	size_t ParticleDefault::ParticleTrait::ParticleToVertices(Particle const * particle, Vertex * vertices, size_t vertices_per_particle, ParticleAllocation * allocation)
 	{
 		// generate particle corners and texcoords
 		chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);

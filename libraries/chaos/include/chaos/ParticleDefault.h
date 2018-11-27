@@ -35,7 +35,7 @@ namespace chaos
 		{
 		public:
 
-			size_t ParticleToVertices(Particle const * particle, Vertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+			static size_t ParticleToVertices(Particle const * particle, Vertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation);
 		};
 
 		/** the default vertex declaration */

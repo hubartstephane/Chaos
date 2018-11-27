@@ -54,7 +54,7 @@ namespace death
 
 		chaos::ParticleLayer * Level::CreateParticleLayer(LayerInstance * layer_instance)
 		{
-			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>);
+			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<TileParticleTrait>);
 		}
 
 #define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, calling_parameters)\
@@ -398,13 +398,14 @@ namespace death
 					chaos::TiledMap::GeometricObjectTile * tile = geometric_object->GetObjectTile();
 					if (tile != nullptr)
 					{
+						int gid = tile->gid;
 						// search the tile information 
-						chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile->gid);
+						chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 						if (tile_info.tiledata == nullptr)
 							continue;
 						// create a simple particle
 						chaos::box2 particle_box = tile->GetBoundingBox();
-						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->horizontal_flip, tile->vertical_flip);
+						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip);
 						continue;
 					}					
 				}
@@ -456,8 +457,9 @@ namespace death
 
 			for (size_t i = 0; i < count; ++i)
 			{
+				int gid = tile_layer->tile_indices[i];
 				// search the tile information 
-				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(tile_layer->tile_indices[i]);
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 				if (tile_info.tiledata == nullptr)
 					continue;
 				// create a simple particle
@@ -466,7 +468,7 @@ namespace death
 
 				bool horizontal_flip = false;
 				bool vertical_flip = false;
-				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), horizontal_flip, vertical_flip);
+				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
 			}
 
 			// final flush

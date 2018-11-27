@@ -1,6 +1,7 @@
 #pragma once
 
 #include <death/GameLevel.h>
+#include <death/TiledMapParticle.h>
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
@@ -31,22 +32,6 @@ namespace death
 			// friendship macro
 #define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
-
-			// =====================================
-			// TileParticleData : a aggregate of data for flushing particles in an allocation
-			// =====================================
-			
-		class TileParticleData
-		{
-		public:
-
-			/** the particle data, can be unriched by framework */
-			chaos::ParticleDefault::Particle particle;
-			/** information concerning the tile */
-			chaos::TiledMap::TileInfo tile_info;
-			/** the bitmap info corresponding to the tile */
-			chaos::BitmapAtlas::BitmapInfo const * bitmap_info;
-		};
 
 		// =====================================
 		// BaseObject : a base object for special game entities

@@ -50,7 +50,7 @@ namespace death
 			// reserve memory
 			allocation->AddParticles(particle_count);
 			// an accessor to flush
-			chaos::ParticleAccessor<chaos::ParticleDefault::Particle> p = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+			chaos::ParticleAccessor<TileParticle> p = allocation->GetParticleAccessor<TileParticle>();
 			for (size_t i = 0; i < particle_count; ++i)
 				p[old_count + i] = particles[i];
 
@@ -58,7 +58,7 @@ namespace death
 			particle_count = 0;
 		}
 
-		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, bool horizontal_flip, bool vertical_flip)
+		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, int gid, bool horizontal_flip, bool vertical_flip)
 		{
 			// search bitmap information for the particle
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
@@ -77,11 +77,12 @@ namespace death
 			}
 
 			// add the particle
-			chaos::ParticleDefault::Particle particle;
+			TileParticle particle;
 			particle.bounding_box = particle_box;
 			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, texture_atlas->GetAtlasDimension());
 			particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
 			particle.color = color;
+			particle.gid = gid;
 
 			particles[particle_count++] = particle;
 

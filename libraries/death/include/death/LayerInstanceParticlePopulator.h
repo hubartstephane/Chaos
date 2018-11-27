@@ -11,6 +11,7 @@
 #include <chaos/BitmapAtlas.h>
 
 #include <death/TiledMapLevel.h>
+#include <death/TiledMapParticle.h>
 
 namespace death
 {
@@ -30,7 +31,7 @@ namespace death
 			/** initialize the object */
 			bool Initialize(LayerInstance * in_layer_instance);
 			/** insert a particle */
-			bool AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), bool horizontal_flip = false, bool vertical_flip = false);
+			bool AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), int gid = 0, bool horizontal_flip = false, bool vertical_flip = false);
 			/** flush remaining particles */
 			void FlushParticles();
 
@@ -52,7 +53,7 @@ namespace death
 			chaos::ParticleAllocation * allocation = nullptr;
 
 			/** a cache of particles */
-			chaos::ParticleDefault::Particle particles[PARTICLE_BUFFER_SIZE];
+			TileParticle particles[PARTICLE_BUFFER_SIZE];
 			/** the cached number of particles */
 			size_t particle_count = 0;
 			/** a bounding box */

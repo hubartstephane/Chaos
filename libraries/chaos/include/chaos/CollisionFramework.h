@@ -12,6 +12,16 @@ namespace chaos
 	// Restriction function
 	// ==============================================================================================
 
+	template<typename T>
+	bool MoveValue(T & bigger, T & smaller, bool move_big, T delta)
+	{
+		if (move_big)
+			bigger += delta;
+		else
+			smaller -= delta;
+		return true;
+	}
+
 	template<typename T, int dimension>
 	bool RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
 	{
@@ -31,6 +41,72 @@ namespace chaos
 		int const count = dimension;
 		for (int i = 0; i < count; ++i)
 		{
+			// degenerated case : smaller ISNOT the smallest
+			//  => just make 'smaller' fullfill 'bigger' surface
+			//
+			//               'smaller'
+			//   +----------------------------------+ smaller fullfill fully the bigger surface
+			//
+			//         +---------------------+
+			//                'bigger'
+
+			if (smaller.half_size[i] >= bigger.half_size[i])
+			{
+				T delta1 = small_corners.first[i] - big_corners.first[i];
+				
+				if (delta1 > 0)
+					result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta1);				
+				else
+				{
+					T delta2 = small_corners.second[i] - big_corners.second[i];
+					if (delta2 < 0)
+						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);				
+				}
+			}
+			// normal case : smaller IS the smallest
+			//
+			//               'smaller'
+			//         +---------------------+
+			//
+			//   +----------------------------------+ smaller fullfill inside the bigger surface
+			//                'bigger'
+			else
+			{
+				T delta1 = small_corners.first[i] - big_corners.first[i];
+				if (delta1 < 0)
+					result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta1);
+				else
+				{
+					T delta2 = small_corners.second[i] - big_corners.second[i];
+					if (delta2 > 0)
+						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);
+				}			
+			
+			}		
+		}
+		return result;
+	}
+
+#if 0
+	template<typename T, int dimension>
+	bool RestrictToInside(type_box<T, dimension> & bigger, type_box<T, dimension> & smaller, bool move_big)
+	{
+		bool result = false;
+
+		// if one is empty, nothing to do
+		if (bigger.IsEmpty() || smaller.IsEmpty())
+			return false;
+
+		// ensure smaller and bigger are coherent
+		if (glm::any(glm::greaterThan(smaller.half_size, bigger.half_size)))
+			return false;
+
+		auto big_corners = bigger.GetCorners();
+		auto small_corners = smaller.GetCorners();
+
+		int const count = dimension;
+		for (int i = 0; i < count; ++i)
+		{				
 			T delta1 = small_corners.first[i] - big_corners.first[i];
 			if (delta1 < 0)
 			{
@@ -55,6 +131,8 @@ namespace chaos
 		}
 		return result;
 	}
+#endif
+
 
 	template<typename T, int dimension>
 	bool RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
@@ -129,12 +207,7 @@ namespace chaos
 
 		delta_pos = delta_pos * factor;
 
-		if (move_big)
-			bigger.position = smaller.position - delta_pos;
-		else
-			smaller.position = bigger.position + delta_pos;
-
-		return true;
+		return MoveValue(bigger.position, smaller.position, move_big, -delta_pos);
 	}
 
 	template<typename T, int dimension>

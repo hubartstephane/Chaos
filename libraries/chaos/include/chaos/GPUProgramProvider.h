@@ -157,8 +157,8 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const * in_other_provider) :
-			other_provider(in_other_provider)
+		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider) :
+			fallback_provider(in_fallback_provider)
 		{}
 
 	protected:
@@ -169,7 +169,7 @@ namespace chaos
 	protected:
 
 		/** another provider (use a non intrusive reference !!!) */
-		GPUProgramProviderBase const * other_provider = nullptr;
+		GPUProgramProviderBase const * fallback_provider = nullptr;
 	};
 
 }; // namespace chaos

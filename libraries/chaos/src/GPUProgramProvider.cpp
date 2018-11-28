@@ -35,13 +35,13 @@ namespace chaos
 
 	bool GPUProgramProviderChain::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
 	{
-		// use extra provider
-		if (other_provider != nullptr)
-			if (other_provider->DoProcessAction(name, action, other_provider))
-				return true;
 		// use variables inside this provider
 		if (GPUProgramProvider::DoProcessAction(name, action, top_provider))
 			return true;
+		// use fallback provider
+		if (fallback_provider != nullptr)
+			if (fallback_provider->DoProcessAction(name, action, top_provider))
+				return true;
 		return false;
 	}
 

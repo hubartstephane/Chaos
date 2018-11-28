@@ -32,31 +32,35 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
-static int const RECTANGLE_DISPLAY_TEST        = 0;
-static int const RECTANGLE_CORNERS_TEST        = 1;
-static int const CORNERS_TO_RECTANGLE_TEST     = 2;
-static int const BOX_INTERSECTION_TEST         = 3;
-static int const BOX_UNION_TEST                = 4;
-static int const RESTRICT_BOX_INSIDE_1_TEST    = 5;
-static int const RESTRICT_BOX_INSIDE_2_TEST    = 6;
-static int const RESTRICT_SPHERE_INSIDE_1_TEST = 7;
-static int const RESTRICT_SPHERE_INSIDE_2_TEST = 8;
-static int const SPHERE_DISPLAY_TEST           = 9;
-static int const SPHERE_INTERSECTION_TEST      = 10;
-static int const SPHERE_UNION_TEST             = 11;
-static int const INNER_SPHERE_TEST             = 12;
-static int const BOUNDING_SPHERE_TEST          = 13;
-static int const BOUNDING_BOX_TEST             = 14;
-static int const SPLIT_BOX_TEST                = 15;
-static int const BOX_COLLISION_TEST            = 16;
-static int const SPHERE_COLLISION_TEST         = 17;
-static int const RESTRICT_BOX_OUTSIDE_TEST     = 18;
-static int const RESTRICT_SPHERE_OUTSIDE_TEST  = 19;
-static int const POINT_INSIDE_BOX_TEST         = 20;
-static int const POINT_INSIDE_SPHERE_TEST      = 21;
-static int const COLLISION_SHERE2_BOX2_TEST    = 22;
-static int const COLLISION_SHERE2_TRIANGLE_TEST = 23;
-static int const COLLISION_POINT_TRIANGLE_TEST  = 24;
+static int EXAMPLE_COUNT = 0;
+
+static int const RECTANGLE_DISPLAY_TEST        = EXAMPLE_COUNT++;
+static int const RECTANGLE_CORNERS_TEST        = EXAMPLE_COUNT++;
+static int const CORNERS_TO_RECTANGLE_TEST     = EXAMPLE_COUNT++;
+static int const BOX_INTERSECTION_TEST         = EXAMPLE_COUNT++;
+static int const BOX_UNION_TEST                = EXAMPLE_COUNT++;
+static int const RESTRICT_BOX_INSIDE_1_TEST    = EXAMPLE_COUNT++;
+static int const RESTRICT_BOX_INSIDE_2_TEST    = EXAMPLE_COUNT++;
+static int const RESTRICT_BOX_INSIDE_3_TEST    = EXAMPLE_COUNT++;
+static int const RESTRICT_BOX_INSIDE_4_TEST    = EXAMPLE_COUNT++;
+static int const RESTRICT_SPHERE_INSIDE_1_TEST = EXAMPLE_COUNT++;
+static int const RESTRICT_SPHERE_INSIDE_2_TEST = EXAMPLE_COUNT++;
+static int const SPHERE_DISPLAY_TEST           = EXAMPLE_COUNT++;
+static int const SPHERE_INTERSECTION_TEST      = EXAMPLE_COUNT++;
+static int const SPHERE_UNION_TEST             = EXAMPLE_COUNT++;
+static int const INNER_SPHERE_TEST             = EXAMPLE_COUNT++;
+static int const BOUNDING_SPHERE_TEST          = EXAMPLE_COUNT++;
+static int const BOUNDING_BOX_TEST             = EXAMPLE_COUNT++;
+static int const SPLIT_BOX_TEST                = EXAMPLE_COUNT++;
+static int const BOX_COLLISION_TEST            = EXAMPLE_COUNT++;
+static int const SPHERE_COLLISION_TEST         = EXAMPLE_COUNT++;
+static int const RESTRICT_BOX_OUTSIDE_TEST     = EXAMPLE_COUNT++;
+static int const RESTRICT_SPHERE_OUTSIDE_TEST  = EXAMPLE_COUNT++;
+static int const POINT_INSIDE_BOX_TEST         = EXAMPLE_COUNT++;
+static int const POINT_INSIDE_SPHERE_TEST      = EXAMPLE_COUNT++;
+static int const COLLISION_SHERE2_BOX2_TEST    = EXAMPLE_COUNT++;
+static int const COLLISION_SHERE2_TRIANGLE_TEST = EXAMPLE_COUNT++;
+static int const COLLISION_POINT_TRIANGLE_TEST  = EXAMPLE_COUNT++;
 
 static int const TEST_COUNT = 25;
 
@@ -125,6 +129,8 @@ protected:
     if (example == BOX_UNION_TEST)                 return "box union";
     if (example == RESTRICT_BOX_INSIDE_1_TEST)     return "restrict box displacement to inside : move bigger";
     if (example == RESTRICT_BOX_INSIDE_2_TEST)     return "restrict box displacement to inside : move smaller";
+		if (example == RESTRICT_BOX_INSIDE_3_TEST)     return "restrict box displacement to inside : move bigger  (smaller is REAL bigger)";
+		if (example == RESTRICT_BOX_INSIDE_4_TEST)     return "restrict box displacement to inside : move smaller (smaller is REAL bigger)";
     if (example == RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
     if (example == RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
     if (example == SPHERE_DISPLAY_TEST)            return "sphere touch each others";
@@ -539,8 +545,12 @@ protected:
     }
     
     // restrict displacement
-    if (display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_2_TEST)
-      DrawRestrictToInside(ctx, smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST);
+		if (
+			display_example == RESTRICT_BOX_INSIDE_1_TEST || 
+			display_example == RESTRICT_BOX_INSIDE_2_TEST ||
+			display_example == RESTRICT_BOX_INSIDE_3_TEST ||
+			display_example == RESTRICT_BOX_INSIDE_4_TEST )
+			DrawRestrictToInside(ctx, smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_3_TEST);
 
     if (display_example == RESTRICT_SPHERE_INSIDE_1_TEST || display_example == RESTRICT_SPHERE_INSIDE_2_TEST)
       DrawRestrictToInside(ctx, smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
@@ -818,7 +828,7 @@ protected:
 
   void SetExample(int new_display_example)
   {
-    new_display_example = (new_display_example + TEST_COUNT) % TEST_COUNT;
+    new_display_example = (new_display_example + EXAMPLE_COUNT) % EXAMPLE_COUNT;
 
     // reset the time
     if (clock != nullptr)
@@ -828,6 +838,8 @@ protected:
     bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(5.0f, 6.0f, 7.0f));
     smaller_box = chaos::box3(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(2.0f, 3.0f, 4.0f));
 
+		if (new_display_example == RESTRICT_BOX_INSIDE_3_TEST || new_display_example == RESTRICT_BOX_INSIDE_4_TEST)
+			smaller_box.half_size.x *= 4.0f;
     // restore the sphere position each time example change
     bigger_sphere  = chaos::sphere3(glm::vec3(3.0f, 0.0f, 0.0f), 7.0f);
     smaller_sphere = chaos::sphere3(glm::vec3(-3.0f, 0.0f, 0.0f), 3.0f);

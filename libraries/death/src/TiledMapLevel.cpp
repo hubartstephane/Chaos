@@ -13,7 +13,11 @@ namespace death
 	{
 		static std::pair<glm::ivec2, glm::ivec2> ComputeLayerRepetitionRange(chaos::box2 const & layer_box, chaos::box2 const & scissor_box, bool wrap_x, bool wrap_y)
 		{
-
+			// First,
+			//   Considere that there is always wrap_x = wrap_y = true
+			//   Search along X and Y, the instance index that must collides with the scissor box
+			// Then,
+			//   whenever there are no wrap, we can skip the whole rendering if the instancee (0, 0) is not in the visible range
 
 			glm::vec2 layer_bottomleft = layer_box.GetCorners().first;
 			glm::vec2 scissor_bottomleft = scissor_box.GetCorners().first;
@@ -36,12 +40,6 @@ namespace death
 				(int)chaos::MathTools::Ceil(tmp.x),
 				(int)chaos::MathTools::Ceil(tmp.y)
 			);
-
-			if (wrap_x || wrap_y)
-				wrap_x = wrap_x;
-			else
-				wrap_x = wrap_x;
-
 			// test for unwrapped case X if no collision at all (the instance(0) is not in the visible range)
 			if (!wrap_x)
 			{
@@ -59,12 +57,6 @@ namespace death
 				offset_count.y = 0;
 				repetition_count.y = 1;
 			}
-
-			if (wrap_x || wrap_y)
-				wrap_x = wrap_x;
-			else
-				wrap_x = wrap_x;
-
 			return std::make_pair(offset_count, offset_count + repetition_count);
 		}
 
@@ -630,17 +622,17 @@ namespace death
 			chaos::box2 layer_box  = GetBoundingBox();
 			chaos::box2 camera_box = GetGame()->GetCameraBox();
 
-			if (wrap_x || wrap_y)
-				layer_box = layer_box;
-
 			std::pair<glm::ivec2, glm::ivec2> repetition = ComputeLayerRepetitionRange(layer_box, camera_box, wrap_x, wrap_y);
 
 			int result = 0;
 
+			int draw_instance_count = 0;
 			for (int x = repetition.first.x; x < repetition.second.x; ++x)
 			{
 				for (int y = repetition.first.y; y < repetition.second.y; ++y)
 				{
+					++draw_instance_count;
+
 					chaos::box2 decaled_camera_box;
 					decaled_camera_box.position = camera_box.position - 2.0f * layer_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(glm::ivec2(x, y));
 					decaled_camera_box.half_size = camera_box.half_size;

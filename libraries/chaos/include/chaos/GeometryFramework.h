@@ -677,5 +677,8 @@ namespace chaos
 	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update = true);
 
 
+	/** encode a box2 into a vector4 */
+	glm::vec4 EncodeBoxToVector(chaos::box2 const & src);
+
 }; // namespace chaos
 

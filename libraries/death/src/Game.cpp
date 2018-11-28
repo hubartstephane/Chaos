@@ -117,16 +117,6 @@ namespace death
 
 	}
 
-	void Game::AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b) const
-	{
-		glm::vec4 box_vec;
-		box_vec.x = b.position.x;
-		box_vec.y = b.position.y;
-		box_vec.z = b.half_size.x;
-		box_vec.w = b.half_size.y;
-		uniform_provider.AddVariableValue(variable_name, box_vec);
-	}
-	
 	void Game::Display(glm::ivec2 const & size)
 	{
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
@@ -146,13 +136,13 @@ namespace death
 
 		// boxes
 		chaos::box2 player = GetPlayerBox();
-		AddBoxVariable(main_uniform_provider, "player_box", player);
+		main_uniform_provider.AddVariableValue("player_box", chaos::EncodeBoxToVector(player));
 		chaos::box2 camera = GetCameraBox();
-		AddBoxVariable(main_uniform_provider, "camera_box", camera);
-		chaos::box2 world  = GetWorldBox();
-		AddBoxVariable(main_uniform_provider, "world_box", world);
-		chaos::box2 view   = GetViewBox();
-		AddBoxVariable(main_uniform_provider, "view_box", world);
+		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
+		chaos::box2 world = GetWorldBox();
+		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
+		chaos::box2 view = GetViewBox();
+		main_uniform_provider.AddVariableValue("view_box", chaos::EncodeBoxToVector(world));
 			 
 		// the time
 		double root_time = GetRootClockTime();

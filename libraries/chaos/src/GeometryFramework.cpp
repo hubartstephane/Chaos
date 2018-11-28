@@ -45,4 +45,14 @@ namespace chaos
 		return result;
 	}
 
+	glm::vec4 EncodeBoxToVector(chaos::box2 const & src)
+	{
+		glm::vec4 result;
+		result.x = src.position.x;
+		result.y = src.position.y;
+		result.z = src.half_size.x;
+		result.w = src.half_size.y;		
+		return result;
+	}
+
 }; // namespace chaos

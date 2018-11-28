@@ -198,9 +198,6 @@ namespace death
 		/** set the player box */
 		bool SetPlayerBox(chaos::box2 const & box);
 
-		/** utility method to set a box uniform */
-		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b) const;
-
 	protected:
 
 		/** the tick method */

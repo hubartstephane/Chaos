@@ -641,12 +641,21 @@ namespace death
 					decaled_camera_box.position = camera_box.position + 2.0f * layer_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(glm::ivec2(x, y));
 					decaled_camera_box.half_size = camera_box.half_size;
 					
-					chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
-					GetGame()->AddBoxVariable(main_uniform_provider, "camera_box", decaled_camera_box);
+				//	chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			//		GetGame()->AddBoxVariable(main_uniform_provider, "camera_box", decaled_camera_box);
 
-					result += particle_layer->Display(&main_uniform_provider, render_params);
+		//			result += particle_layer->Display(&main_uniform_provider, render_params);
 				}
 			}
+
+			chaos::box2 decaled_camera_box;
+			decaled_camera_box.position.y += 1300.0f; // = camera_box.position + 2.0f * layer_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(glm::ivec2(x, y));
+			decaled_camera_box.half_size = camera_box.half_size;
+
+			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(decaled_camera_box));
+
+			result += particle_layer->Display(&main_uniform_provider, render_params);
 
 			if (result == 0)
 				result = result;

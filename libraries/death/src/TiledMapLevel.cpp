@@ -11,30 +11,40 @@ namespace death
 {
 	namespace TiledMap
 	{
-		static std::pair<glm::ivec2, glm::ivec2> ComputeLayerRepetitionRange(chaos::box2 const & layer_box, chaos::box2 const & scissor_box, bool wrap_x, bool wrap_y)
+		// =====================================
+		// BoxScissoringWithRepetitionResult implementation
+		// =====================================
+
+		BoxScissoringWithRepetitionResult::BoxScissoringWithRepetitionResult(chaos::box2 const & in_target_box, chaos::box2 const & in_scissor_box, bool in_wrap_x, bool in_wrap_y)
 		{
+			// copy the parameters
+			target_box  = in_target_box;
+			scissor_box = in_scissor_box;
+			wrap_x = in_wrap_x;
+			wrap_y = in_wrap_y;
+
 			// First,
 			//   Considere that there is always wrap_x = wrap_y = true
 			//   Search along X and Y, the instance index that must collides with the scissor box
 			// Then,
 			//   whenever there are no wrap, we can skip the whole rendering if the instancee (0, 0) is not in the visible range
 
-			glm::vec2 layer_bottomleft = layer_box.GetCorners().first;
-			glm::vec2 scissor_bottomleft = scissor_box.GetCorners().first;
+			glm::vec2 target_bottomleft = in_target_box.GetCorners().first;
+			glm::vec2 scissor_bottomleft = in_scissor_box.GetCorners().first;
 
-			glm::vec2 layer_size = 2.0f * layer_box.half_size;
-			glm::vec2 scissor_size = 2.0f * scissor_box.half_size;
+			glm::vec2 target_size = 2.0f * in_target_box.half_size;
+			glm::vec2 scissor_size = 2.0f * in_scissor_box.half_size;
 
 			// number of time to decal the layer box, to be directly left of the scissor box
 			glm::ivec2 offset_count = glm::ivec2(
-				(int)chaos::MathTools::Ceil((scissor_bottomleft.x - layer_bottomleft.x - layer_size.x) / layer_size.x),
-				(int)chaos::MathTools::Ceil((scissor_bottomleft.y - layer_bottomleft.y - layer_size.y) / layer_size.y)
+				(int)chaos::MathTools::Ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x),
+				(int)chaos::MathTools::Ceil((scissor_bottomleft.y - target_bottomleft.y - target_size.y) / target_size.y)
 			);
-				
+
 			// the bottomleft corner of the decaled box
-			glm::vec2  virtual_layer_bottomleft = layer_bottomleft + chaos::GLMTools::RecastVector<glm::vec2>(offset_count) * layer_size;
+			glm::vec2  virtual_target_bottomleft = target_bottomleft + chaos::GLMTools::RecastVector<glm::vec2>(offset_count) * target_size;
 			// competition of the number of repetition
-			glm::vec2  tmp = ((scissor_bottomleft + scissor_size - virtual_layer_bottomleft) / layer_size);
+			glm::vec2  tmp = ((scissor_bottomleft + scissor_size - virtual_target_bottomleft) / target_size);
 
 			glm::ivec2 repetition_count = glm::ivec2(
 				(int)chaos::MathTools::Ceil(tmp.x),
@@ -44,20 +54,34 @@ namespace death
 			if (!wrap_x)
 			{
 				if (0 < offset_count.x || 0 >= offset_count.x + repetition_count.x)
-					return std::make_pair(glm::ivec2(0, 0), glm::ivec2(0, 0)); // nothing to render at all
+				{
+					start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
+					return;
+				}
 				offset_count.x = 0;
-				repetition_count.x = 1;			
+				repetition_count.x = 1;
 			}
 
 			// test for unwrapped case X if no collision at all (the instance(0) is not in the visible range)
 			if (!wrap_y)
 			{
 				if (0 < offset_count.y || 0 >= offset_count.y + repetition_count.y)
-					return std::make_pair(glm::ivec2(0, 0), glm::ivec2(0, 0)); // nothing to render at all
+				{
+					start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
+					return;
+				}
 				offset_count.y = 0;
 				repetition_count.y = 1;
 			}
-			return std::make_pair(offset_count, offset_count + repetition_count);
+
+			// finalize the initialization
+			start_instance = offset_count;
+			last_instance = offset_count + repetition_count;
+		}
+
+		glm::vec2 BoxScissoringWithRepetitionResult::GetInstanceOffset(glm::ivec2 const & index) const
+		{
+			return 2.0f * target_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(index);
 		}
 
 		// =====================================
@@ -605,8 +629,6 @@ namespace death
 			}
 		}
 
-		
-
 		bool LayerInstance::DoTick(double delta_time)
 		{
 			if (particle_layer != nullptr)
@@ -622,19 +644,20 @@ namespace death
 			chaos::box2 layer_box  = GetBoundingBox();
 			chaos::box2 camera_box = GetGame()->GetCameraBox();
 
-			std::pair<glm::ivec2, glm::ivec2> repetition = ComputeLayerRepetitionRange(layer_box, camera_box, wrap_x, wrap_y);
+			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, camera_box, wrap_x, wrap_y);
 
 			int result = 0;
 
 			int draw_instance_count = 0;
-			for (int x = repetition.first.x; x < repetition.second.x; ++x)
+			for (int x = scissor_result.start_instance.x; x < scissor_result.last_instance.x; ++x)
 			{
-				for (int y = repetition.first.y; y < repetition.second.y; ++y)
+				for (int y = scissor_result.start_instance.y; y < scissor_result.last_instance.y; ++y)
 				{
 					++draw_instance_count;
 
+					// instead of moving th particles for each instance, we move the camera in the opposite direction
 					chaos::box2 decaled_camera_box;
-					decaled_camera_box.position = camera_box.position - 2.0f * layer_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(glm::ivec2(x, y));
+					decaled_camera_box.position = camera_box.position - scissor_result.GetInstanceOffset(glm::ivec2(x, y));
 					decaled_camera_box.half_size = camera_box.half_size;
 					
 					chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);

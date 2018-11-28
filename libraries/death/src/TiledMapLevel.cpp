@@ -11,6 +11,54 @@ namespace death
 {
 	namespace TiledMap
 	{
+		static std::pair<glm::ivec2, glm::ivec2> ComputeLayerRepetitionRange(chaos::box2 const & layer_box, chaos::box2 const & scissor_box, bool wrap_x, bool wrap_y)
+		{
+			glm::ivec2 corner1 = glm::ivec2(0, 0);
+			glm::ivec2 corner2 = glm::ivec2(0, 0);
+
+			glm::vec2 layer_bottomleft   = layer_box.GetCorners().first;
+			glm::vec2 scissor_bottomleft = scissor_box.GetCorners().first;
+
+			glm::vec2 layer_size = 2.0f * layer_box.half_size;
+			glm::vec2 scissor_size = 2.0f * scissor_box.half_size;
+
+			// number of time to decal the layer box, to be directly left of the scissor box
+			glm::ivec2 offset_count = chaos::GLMTools::RecastVector<glm::ivec2>((scissor_bottomleft - layer_bottomleft - layer_size) / layer_size);
+			// the bottomleft corner of the decaled box
+			glm::vec2  virtual_layer_bottomleft = layer_bottomleft + chaos::GLMTools::RecastVector<glm::vec2>(offset_count) * layer_size;
+			// competition of the number of repetition
+			glm::vec2  tmp = ((scissor_bottomleft.x + scissor_size - virtual_layer_bottomleft) / layer_size);
+
+			glm::ivec2 repetition_count = glm::vec2(
+				(int)chaos::MathTools::Ceil(tmp.x),
+				(int)chaos::MathTools::Ceil(tmp.y)
+			);
+
+			// test for unwrapped case X if no collision at all
+			if (!wrap_x)
+			{
+		//		if (offset_count.x > 0 || offset_count.x + repetition_count.x <= 0)
+		//			return std::make_pair(glm::ivec2(0, 0), glm::ivec2(0, 0)); // nothing to render at all
+				offset_count.x = 0;
+				repetition_count.x = 1;			
+			}
+
+			// test for unwrapped case X if no collision at all
+			if (!wrap_y)
+			{
+		//		if (offset_count.y < 0 || offset_count.y + repetition_count.y <= 0)
+		//			return std::make_pair(glm::ivec2(0, 0), glm::ivec2(0, 0)); // nothing to render at all
+				offset_count.y = 0;
+				repetition_count.y = 1;
+			}
+
+
+
+			if (wrap_x || wrap_y)
+				wrap_x = wrap_x;
+
+			return std::make_pair(offset_count, offset_count + repetition_count);
+		}
 
 		// =====================================
 		// Level implementation
@@ -577,9 +625,43 @@ namespace death
 		
 		int LayerInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
-			if (particle_layer != nullptr)
-				particle_layer->Display(uniform_provider, render_params);
-			return 0;
+			if (particle_layer == nullptr)
+				return 0;
+
+			chaos::box2 layer_box  = GetBoundingBox();
+			chaos::box2 camera_box = GetGame()->GetCameraBox();
+
+			std::pair<glm::ivec2, glm::ivec2> repetition = ComputeLayerRepetitionRange(layer_box, camera_box, wrap_x, wrap_y);
+
+			int result = 0;
+
+#if 0
+			for (int x = repetition.first.x; x < repetition.second.x; ++x)
+			{
+				for (int y = repetition.first.y; y < repetition.second.y; ++y)
+				{
+#else
+			for (int x = -5; x < 5; ++x)
+			{
+				for (int y = -5 ; y < 5; ++y)
+				{
+#endif
+					chaos::box2 decaled_camera_box;
+					decaled_camera_box.position = camera_box.position + 2.0f * layer_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(glm::ivec2(x, y));
+					decaled_camera_box.half_size = camera_box.half_size;
+					
+					chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+					GetGame()->AddBoxVariable(main_uniform_provider, "camera_box", decaled_camera_box);
+
+					result += particle_layer->Display(&main_uniform_provider, render_params);
+				}
+			}
+
+			if (result == 0)
+				result = result;
+			
+
+			return result;
 		}
 
 

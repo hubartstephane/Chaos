@@ -6,63 +6,6 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart2"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <objectgroup name="Calque d'objets 1" visible="0">
-  <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000">
-   <properties>
-    <property name="WORLD_BOUNDS" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="18" name="world_bounds_c" x="-1000" y="-1000" width="9200" height="8000">
-   <properties>
-    <property name="WORLD_BOUNDS" type="int" value="1"/>
-   </properties>
-  </object>
-  <object id="35" name="world_origin_c" x="5760" y="3712">
-   <properties>
-    <property name="WORLD_ORIGIN" type="int" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="39" name="ThePlayerStart2" x="824" y="560" width="384" height="364">
-   <properties>
-    <property name="BITMAP_NAME" value="flames"/>
-    <property name="PLAYER_START" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="40" name="myellipse" x="72" y="56" width="1456" height="1384">
-   <ellipse/>
-  </object>
-  <object id="41" name="mypolygone" x="112" y="104">
-   <polygon points="0,0 496,1704 1216,696"/>
-  </object>
-  <object id="42" name="mypolyline" x="80" y="80">
-   <polyline points="0,0 192,1432 856,2168 2248,2208"/>
-  </object>
-  <object id="43" name="mytext" x="27.5" y="54.5" width="2000" height="2000">
-   <text fontfamily="MS Shell Dlg 2" pixelsize="96" wrap="1">Exemple de texte</text>
-  </object>
-  <object id="55" name="OnePoint" x="1584" y="4000">
-   <point/>
-  </object>
-  <object id="56" name="ThePlayerStart1" x="1692" y="328">
-   <properties>
-    <property name="BITMAP_NAME" value="flames"/>
-    <property name="PLAYER_START" type="bool" value="true"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="57" name="TheCamera1" x="-664" y="-688" width="6024" height="3776">
-   <properties>
-    <property name="CAMERA" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="63" name="TriggerSurface1" x="-112" y="5328" width="4112" height="1664">
-   <properties>
-    <property name="TRIGGER_ID" type="int" value="3"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
- </objectgroup>
  <layer name="objects" width="100" height="100" visible="0">
   <properties>
    <property name="PARTICLE_LAYER" value="OBJECTS"/>
@@ -176,11 +119,68 @@
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="65" name="obj5" gid="6" x="280" y="840" width="400" height="400"/>
-  <object id="67" name="obj4" gid="6" x="3048" y="1880" width="912" height="880"/>
-  <object id="68" name="obj3" gid="6" x="648" y="2008" width="400" height="400"/>
-  <object id="69" name="obj2" gid="10" x="1430" y="1370" width="868" height="1028"/>
-  <object id="70" name="obj1" gid="10" x="1334" y="3402" width="1492" height="1396"/>
+  <object id="65" name="obj5" gid="6" x="5144" y="5176" width="400" height="400"/>
+  <object id="67" name="obj4" gid="6" x="7912" y="6216" width="912" height="880"/>
+  <object id="68" name="obj3" gid="6" x="5512" y="6344" width="400" height="400"/>
+  <object id="69" name="obj2" gid="10" x="6294" y="5706" width="868" height="1028"/>
+  <object id="70" name="obj1" gid="10" x="6198" y="7738" width="1492" height="1396"/>
+ </objectgroup>
+ <objectgroup name="Calque d'objets 1" visible="0">
+  <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000">
+   <properties>
+    <property name="WORLD_BOUNDS" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="18" name="world_bounds_c" x="-1000" y="-1000" width="9200" height="8000">
+   <properties>
+    <property name="WORLD_BOUNDS" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="35" name="world_origin_c" x="5760" y="3712">
+   <properties>
+    <property name="WORLD_ORIGIN" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" name="ThePlayerStart2" x="824" y="560" width="384" height="364">
+   <properties>
+    <property name="BITMAP_NAME" value="flames"/>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="40" name="myellipse" x="72" y="56" width="1456" height="1384">
+   <ellipse/>
+  </object>
+  <object id="41" name="mypolygone" x="112" y="104">
+   <polygon points="0,0 496,1704 1216,696"/>
+  </object>
+  <object id="42" name="mypolyline" x="80" y="80">
+   <polyline points="0,0 192,1432 856,2168 2248,2208"/>
+  </object>
+  <object id="43" name="mytext" x="27.5" y="54.5" width="2000" height="2000">
+   <text fontfamily="MS Shell Dlg 2" pixelsize="96" wrap="1">Exemple de texte</text>
+  </object>
+  <object id="55" name="OnePoint" x="1584" y="4000">
+   <point/>
+  </object>
+  <object id="56" name="ThePlayerStart1" x="1692" y="328">
+   <properties>
+    <property name="BITMAP_NAME" value="flames"/>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="57" name="TheCamera1" x="-664" y="-688" width="2072" height="1744">
+   <properties>
+    <property name="CAMERA" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="63" name="TriggerSurface1" x="-112" y="5328" width="4112" height="1664">
+   <properties>
+    <property name="TRIGGER_ID" type="int" value="3"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="planets" width="100" height="100" visible="0" offsetx="5.5" offsety="0">
   <properties>

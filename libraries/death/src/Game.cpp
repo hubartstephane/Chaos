@@ -117,7 +117,7 @@ namespace death
 
 	}
 
-	void Game::AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b)
+	void Game::AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b) const
 	{
 		glm::vec4 box_vec;
 		box_vec.x = b.position.x;

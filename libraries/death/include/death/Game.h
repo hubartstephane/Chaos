@@ -198,6 +198,9 @@ namespace death
 		/** set the player box */
 		bool SetPlayerBox(chaos::box2 const & box);
 
+		/** utility method to set a box uniform */
+		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b) const;
+
 	protected:
 
 		/** the tick method */
@@ -215,15 +218,11 @@ namespace death
 		/** the user defined rendering function */
 		virtual void DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider);
 
-		/** utility method to set a box uniform */
-		void AddBoxVariable(chaos::GPUProgramProvider & uniform_provider, char const * variable_name, chaos::box2 const & b);
-
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** update the player and the camera position so that they remains inside the world */
 		void RestrictCameraToPlayerAndWorld();
-
 
 		/** blend out a music */
 		void BlendMusic(chaos::Sound * music, bool blend_in);

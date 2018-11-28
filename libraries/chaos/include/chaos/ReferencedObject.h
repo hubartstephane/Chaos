@@ -26,10 +26,10 @@ namespace chaos
 		inline ReferencedObject & operator = (ReferencedObject const & src) { return *this; }
 
 		/** Increment the reference count */
-		inline void AddReference() { ++reference_count; }
+		virtual void AddReference() { ++reference_count; }
 
 		/** Decrement the reference count */
-		inline void SubReference()
+		virtual void SubReference()
 		{
 			if (--reference_count == 0)
 				OnLastReferenceLost();

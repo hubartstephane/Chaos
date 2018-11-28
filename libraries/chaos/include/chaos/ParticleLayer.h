@@ -18,12 +18,19 @@
 namespace chaos
 {
 	// ==============================================================
+	// XXX : remark on ParticleAllocation
+	//
+	//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!! 
+	// ==============================================================
+
+
+	// ==============================================================
 	// FORWARD DECLARATION / FRIENDSHIP MACROS
 	// ==============================================================
 
 
 	// all classes in this file
-#define CHAOS_PARTICLE_CLASSES (ParticleAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc) (ParticleAllocationEmptyCallback)
+#define CHAOS_PARTICLE_CLASSES (ParticleAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc) (ParticleAllocationEmptyCallback) (ParticleAllocationAutoRemoveEmptyCallback)
 
 	// forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;
@@ -173,8 +180,9 @@ namespace chaos
 		ParticleAllocation(ParticleLayer * in_layer);
 		/** destructor */
 		virtual ~ParticleAllocation();
-		/** remove the allocation from its layer */
-		void RemoveFromLayer();
+
+		/** Decrement the reference count */
+		virtual void SubReference() override;
 
 		/** returns true whether the allocation is attached to a layer */
 		bool IsAttachedToLayer() const;
@@ -264,8 +272,10 @@ namespace chaos
 
 	protected:
 
+		/** remove the allocation from its layer */
+		void RemoveFromLayer();
 		/** called whenever the allocation is removed from the layer */
-		virtual void OnRemovedFromLayer();
+		void OnRemovedFromLayer();
 		/** require the layer to update the GPU buffer */
 		void ConditionalRequireGPUUpdate(bool skip_if_invisible, bool skip_if_empty);
 
@@ -300,7 +310,7 @@ namespace chaos
 		/** destructor */
 		virtual ~TypedParticleAllocation()
 		{
-			RemoveFromLayer(); // this call is not in ParticleAllocation::~ParticleAllocation(), because when destructor is incomming, the number of particles becomes invalid (0)
+
 		}
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
@@ -345,15 +355,6 @@ namespace chaos
 			// notify the layer
 			ConditionalRequireGPUUpdate(true, false);
 			return true;
-		}
-
-	protected:
-
-		/** override */
-		virtual void OnRemovedFromLayer() override
-		{
-			ParticleAllocation::OnRemovedFromLayer();
-			particles.clear();						
 		}
 
 	protected:
@@ -716,7 +717,7 @@ namespace chaos
 		boost::intrusive_ptr<GPURenderMaterial> render_material;
 
 		/** particles allocations */
-		std::vector<ParticleAllocation*> particles_allocations;
+		std::vector<boost::intrusive_ptr<ParticleAllocation>> particles_allocations;
 		/** the behavior description */
 		boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
 

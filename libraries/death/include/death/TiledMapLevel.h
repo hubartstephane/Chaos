@@ -340,12 +340,6 @@ namespace death
 			/** the particle layer */
 			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
 
-			// shuxxx : some hack to prevent a memory leak. 
-			//          a single allocation per layer for moment
-
-			boost::intrusive_ptr<chaos::ParticleAllocation> allocation;
-
-
 			/** the player starts */
 			std::vector<boost::intrusive_ptr<PlayerStartObject>> player_starts;
 			/** the player cameras */

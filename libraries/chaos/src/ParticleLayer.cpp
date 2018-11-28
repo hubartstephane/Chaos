@@ -133,6 +133,29 @@ namespace chaos
 		SetEmptyCallback(&auto_remove_callback);
 	}
 
+	//
+	// XXX : SpawnParticle(...) returns a raw pointer on ParticleAllocation
+	//       the user has to possibilities
+	//         - he ignores the result => the allocation is stored inside the layer and will be destroyed when the layer is destroyed
+	//         - he stores the result into an intrusive_ptr<...>
+	//              -> that means that he wants to override the allocation lifetime
+	//              -> as soon as this intrusive_ptr<...> is destroyed, we want to destroy the ParticleAllocation even if there still is 1 reference
+	//                 from the layer
+	//
+	void ParticleAllocation::SubReference()
+	{
+		if (layer == nullptr)
+		{
+			if (--reference_count == 0) // the ParticleAllocation is no more in a layer and there is no reference on it => destroy it
+				OnLastReferenceLost();							
+		}
+		else
+		{
+			if (--reference_count == 1) // the last reference is the one from the layer. Destroy it
+				RemoveFromLayer();		
+		}				
+	}
+
 	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================
@@ -198,7 +221,7 @@ namespace chaos
 	{
 		// faster to do that from end to begin
 		while (particles_allocations.size())
-			RemoveParticleAllocation(particles_allocations[particles_allocations.size() - 1]);
+			RemoveParticleAllocation(particles_allocations[particles_allocations.size() - 1].get());
 	}
 
 	void ParticleLayer::RemoveParticleAllocation(ParticleAllocation * allocation)
@@ -211,8 +234,8 @@ namespace chaos
 			size_t index = i - 1;
 			if (particles_allocations[index] == allocation)
 			{
-				particles_allocations.erase(particles_allocations.begin() + index);
 				allocation->OnRemovedFromLayer();
+				particles_allocations.erase(particles_allocations.begin() + index);
 				return;
 			}
 		}
@@ -243,7 +266,7 @@ namespace chaos
 		size_t count = particles_allocations.size();
 		for (size_t i = 0 ; i < count; ++i)
 		{
-			ParticleAllocation * allocation = particles_allocations[i];
+			ParticleAllocation * allocation = particles_allocations[i].get();
 			// early exit
 			if (allocation->IsPaused())
 				continue;
@@ -290,7 +313,7 @@ namespace chaos
 		// increase the particle count for that allocation
 		result->Resize(count);
 		// register the allocation
-		particles_allocations.push_back(result); // shuxxx : raw pointer => memory leak
+		particles_allocations.push_back(result);
 		return result;
 	}
 
@@ -405,7 +428,7 @@ namespace chaos
 		for (size_t i = 0; i < count; ++i)
 		{
 			// get the allocation, ignore if invisible
-			ParticleAllocation * allocation = particles_allocations[i];
+			ParticleAllocation * allocation = particles_allocations[i].get();
 			if (!allocation->IsVisible())
 				continue;
 			// ignore empty allocations
@@ -434,7 +457,7 @@ namespace chaos
 		for (size_t i = 0; i < count; ++i)
 		{
 			// get the allocation, ignore if invisible
-			ParticleAllocation * allocation = particles_allocations[i];
+			ParticleAllocation * allocation = particles_allocations[i].get();
 			if (!allocation->IsVisible())
 				continue;
 			// ignore empty allocations
@@ -496,11 +519,11 @@ namespace chaos
 	}
 	ParticleAllocation * ParticleLayer::GetAllocation(size_t index)
 	{
-		return particles_allocations[index];
+		return particles_allocations[index].get();
 	}
 	ParticleAllocation const * ParticleLayer::GetAllocation(size_t index) const
 	{
-		return particles_allocations[index];
+		return particles_allocations[index].get();
 	}
 
 }; // namespace chaos

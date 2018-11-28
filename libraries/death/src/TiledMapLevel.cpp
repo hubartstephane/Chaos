@@ -477,10 +477,6 @@ namespace death
 
 		chaos::ParticleAllocation * LayerInstance::CreateParticleAllocation()
 		{
-			// return cached value if any
-	//		if (allocation != nullptr)
-	//			return allocation.get();
-
 			if (particle_layer == nullptr)
 			{
 				// find render material
@@ -494,10 +490,8 @@ namespace death
 				particle_layer->SetRenderMaterial(render_material);
 			}
 
-			// create the allocation and cache it  // shuxxx memory leak prevention
+			// create the allocation
 			return particle_layer->SpawnParticles(0);
-			//allocation = particle_layer->SpawnParticles(0);
-			//return allocation.get();
 		}
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)
@@ -609,9 +603,6 @@ namespace death
 							return;
 				}
 			}
-
-			// XXX : shuxxx do not use 'allocation' member that is just a fix for temporary memory leak
-			//       this member will be removed soon
 		}
 
 		

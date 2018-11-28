@@ -169,7 +169,7 @@ protected:
 				chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(particle_count);
 				allocation->SetEmptyCallbackAutoRemove();
 
-				particle_allocations.push_back(allocation);
+				//particle_allocations.push_back(allocation);
 
 				size_t pc = allocation->GetParticleCount();
 

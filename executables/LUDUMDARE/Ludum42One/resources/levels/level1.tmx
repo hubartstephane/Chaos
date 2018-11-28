@@ -119,11 +119,8 @@
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="65" name="obj5" gid="6" x="5144" y="5176" width="400" height="400"/>
-  <object id="67" name="obj4" gid="6" x="7912" y="6216" width="912" height="880"/>
-  <object id="68" name="obj3" gid="6" x="5512" y="6344" width="400" height="400"/>
-  <object id="69" name="obj2" gid="10" x="6294" y="5706" width="868" height="1028"/>
-  <object id="70" name="obj1" gid="10" x="6198" y="7738" width="1492" height="1396"/>
+  <object id="65" name="obj5" gid="6" x="72" y="2264" width="288" height="240"/>
+  <object id="69" name="obj2" gid="10" x="1654" y="2794" width="324" height="436"/>
  </objectgroup>
  <objectgroup name="Calque d'objets 1" visible="0">
   <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000">

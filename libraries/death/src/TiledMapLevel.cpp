@@ -175,14 +175,15 @@ namespace death
 			out vec4 vs_color;
 
 			uniform vec4 camera_box;
+			uniform vec2 offset;
 
 			void main() 
 			{
-				vs_position = position;
+				vs_position = position + offset;
 				vs_texcoord = texcoord;
 				vs_color    = color;
 
-				gl_Position.xy = (position - camera_box.xy) / camera_box.zw;
+				gl_Position.xy = (position + offset - camera_box.xy) / camera_box.zw;
 				gl_Position.z  = 0.0;
 				gl_Position.w  = 1.0;
 			}										
@@ -655,13 +656,8 @@ namespace death
 				{
 					++draw_instance_count;
 
-					// instead of moving th particles for each instance, we move the camera in the opposite direction
-					chaos::box2 decaled_camera_box;
-					decaled_camera_box.position = camera_box.position - scissor_result.GetInstanceOffset(glm::ivec2(x, y));
-					decaled_camera_box.half_size = camera_box.half_size;
-					
 					chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
-					main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(decaled_camera_box));
+					main_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)));
 
 					result += particle_layer->Display(&main_uniform_provider, render_params);
 				}

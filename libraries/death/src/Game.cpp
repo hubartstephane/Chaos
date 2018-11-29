@@ -1233,6 +1233,16 @@ namespace death
 		return camera_box;
 	}
 
+	chaos::box2 Game::GetInitialCameraBox() const
+	{
+		return initial_camera_box;
+	}
+
+	void Game::SetInitialCameraBox(chaos::box2 const & in_camera_box)
+	{
+		initial_camera_box = in_camera_box;
+	}
+
 	void Game::SetCameraBox(chaos::box2 const & in_camera_box)
 	{
 		camera_box = in_camera_box;

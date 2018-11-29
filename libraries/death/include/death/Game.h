@@ -150,6 +150,12 @@ namespace death
 		/** update the camera box */
 		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
 
+
+		/** getting the initial camera box */
+		virtual chaos::box2 GetInitialCameraBox() const;
+		/** update the initial camera box */
+		virtual void SetInitialCameraBox(chaos::box2 const & in_camera_box);
+
 		/** getting the world boxes */
 		virtual chaos::box2 GetWorldBox() const;
 
@@ -425,6 +431,8 @@ namespace death
 
 		/** the camera */
 		mutable chaos::box2 camera_box;
+		/** the camera and last started level */
+		chaos::box2 initial_camera_box;
 		/** the safe zone of the camera */
 		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);
 

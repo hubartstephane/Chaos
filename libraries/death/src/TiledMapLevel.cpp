@@ -639,27 +639,43 @@ namespace death
 		
 		int LayerInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
+			// early exit
+			int result = 0;
 			if (particle_layer == nullptr)
-				return 0;
+				return result;
 
 			chaos::box2 layer_box  = GetBoundingBox();
 			chaos::box2 camera_box = GetGame()->GetCameraBox();
+			chaos::box2 initial_camera_box = GetGame()->GetInitialCameraBox();
 
-			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, camera_box, wrap_x, wrap_y);
+			// apply the displacement to the camera
+			chaos::box2 final_camera_box = camera_box;
 
-			int result = 0;
 
+
+			
+			
+
+			// compute repetitions
+			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);
+
+			// new provider for camera override (will be fullfill only if necessary)
+			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			
+			// draw instances 
 			int draw_instance_count = 0;
 			for (int x = scissor_result.start_instance.x; x < scissor_result.last_instance.x; ++x)
 			{
 				for (int y = scissor_result.start_instance.y; y < scissor_result.last_instance.y; ++y)
 				{
-					++draw_instance_count;
-
-					chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
-					main_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)));
-
-					result += particle_layer->Display(&main_uniform_provider, render_params);
+					// override the camera box only if there is at least one draw call
+					if (draw_instance_count++ == 0)
+						main_uniform_provider.AddVariableValue("camera", chaos::EncodeBoxToVector(final_camera_box));
+					// new Provider to apply the offset for this 'instance'
+					chaos::GPUProgramProviderChain instance_uniform_provider(main_uniform_provider);
+					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)));
+					// draw call
+					result += particle_layer->Display(&instance_uniform_provider, render_params);
 				}
 			}
 			return result;
@@ -879,6 +895,7 @@ namespace death
 
 			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(), 16.0f / 9.0f, true);
 			game->SetCameraBox(camera_box);
+			game->SetInitialCameraBox(camera_box);
 		}
 
 		void LevelInstance::UnSpawnPlayer()
@@ -938,6 +955,7 @@ namespace death
 
 			// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 			reference_displacement_ratio = layer_instance->displacement_ratio;
+			reference_layer = layer_instance;
 		}
 
 	}; // namespace TiledMap

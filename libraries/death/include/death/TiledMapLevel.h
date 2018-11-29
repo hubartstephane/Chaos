@@ -473,6 +473,9 @@ namespace death
 			/** the displacement ratio of reference */
 			float reference_displacement_ratio = 1.0f;
 
+			/** the layer of reference for displacement */
+			boost::intrusive_ptr<TiledMap::LayerInstance> reference_layer;
+
 			/** the particle manager used to render the world */
 			boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
 			/** the layers */

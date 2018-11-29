@@ -352,6 +352,16 @@ namespace death
 			return level_instance->GetTypedLevel();
 		}
 
+		LevelInstance * LayerInstance::GetTypeLevelInstance()
+		{
+			return level_instance;
+		}
+
+		LevelInstance const * LayerInstance::GetTypeLevelInstance() const
+		{
+			return level_instance;
+		}
+
 		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
 		{
 			if (material_name != nullptr && material_name[0] != 0) // unamed material
@@ -648,13 +658,24 @@ namespace death
 			chaos::box2 camera_box = GetGame()->GetCameraBox();
 			chaos::box2 initial_camera_box = GetGame()->GetInitialCameraBox();
 
+			// XXX : we want some layers to appear further or more near the camera
+			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
+			//       The reference layer is the layer where the 'effective' camera (and so the PlayerStart is)
+			//         => when player goes outside the screen, the camera is updated so that it is still watching the player
+			//         => that why we consider the PlayerStart's layer as the reference
+			//       to simulate other layer's speed, we just create at rendering time 'virtual cameras' (here this is 'final_camera_box')
+			//       We only multiply 'true camera' distance from its initial position by a ratio value
+
 			// apply the displacement to the camera
 			chaos::box2 final_camera_box = camera_box;
 
+			float final_ratio = 1.0f;
+			if (level_instance->reference_layer != nullptr && level_instance->reference_layer != this)
+				if (level_instance->reference_layer->displacement_ratio != 0.0f)
+					final_ratio = displacement_ratio / level_instance->reference_layer->displacement_ratio;
 
-
-			
-			
+			if (final_ratio != 1.0f)
+				final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
 
 			// compute repetitions
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);
@@ -670,7 +691,7 @@ namespace death
 				{
 					// override the camera box only if there is at least one draw call
 					if (draw_instance_count++ == 0)
-						main_uniform_provider.AddVariableValue("camera", chaos::EncodeBoxToVector(final_camera_box));
+						main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
 					// new Provider to apply the offset for this 'instance'
 					chaos::GPUProgramProviderChain instance_uniform_provider(main_uniform_provider);
 					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)));

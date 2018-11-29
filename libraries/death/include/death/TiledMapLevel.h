@@ -284,6 +284,11 @@ namespace death
 			/** get the level (for this layer) */
 			Level const * GetTypedLevel() const;
 
+			/** get the level instance for this layer */
+			LevelInstance * GetTypeLevelInstance();
+			/** get the level instance for this layer */
+			LevelInstance const * GetTypeLevelInstance() const;
+
 			/** get the game */
 			Game * GetGame();
 			/** get the game */

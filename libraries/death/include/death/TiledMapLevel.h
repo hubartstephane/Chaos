@@ -429,6 +429,9 @@ namespace death
 			/** get the bounding box for the level */
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
 
+			/** get the reference displacement ratio (displacement ratio is a way to make so layer move faster than others) */
+			float GetReferenceDisplacementRatio() const { return reference_displacement_ratio; }
+
 		protected:
 
 			/** override */
@@ -467,6 +470,8 @@ namespace death
 
 			/** a reference uppon the game */
 			Game * game = nullptr;
+			/** the displacement ratio of reference */
+			float reference_displacement_ratio = 1.0f;
 
 			/** the particle manager used to render the world */
 			boost::intrusive_ptr<chaos::ParticleManager> particle_manager;

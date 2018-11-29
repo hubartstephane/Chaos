@@ -359,7 +359,7 @@ namespace death
 		protected:
 
 			/** displacement ratio relatively to the main layer */
-			float displacement_ratio = 1.0f;
+			glm::vec2 displacement_ratio = glm::vec2(1.0f, 1.0f);
 			/** whether the layer is to be repeated infinitely in X direction */
 			bool wrap_x = false;
 			/** whether the layer is to be repeated infinitely in Y direction */
@@ -435,7 +435,7 @@ namespace death
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
 
 			/** get the reference displacement ratio (displacement ratio is a way to make so layer move faster than others) */
-			float GetReferenceDisplacementRatio() const { return reference_displacement_ratio; }
+			glm::vec2 GetReferenceDisplacementRatio() const { return reference_displacement_ratio; }
 
 		protected:
 
@@ -476,7 +476,7 @@ namespace death
 			/** a reference uppon the game */
 			Game * game = nullptr;
 			/** the displacement ratio of reference */
-			float reference_displacement_ratio = 1.0f;
+			glm::vec2 reference_displacement_ratio = glm::vec2(1.0f, 1.0f);
 
 			/** the layer of reference for displacement */
 			boost::intrusive_ptr<TiledMap::LayerInstance> reference_layer;

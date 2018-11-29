@@ -386,7 +386,16 @@ namespace death
 			layer = in_layer;
 
 			// get the properties of interrest
-			displacement_ratio = in_layer->FindPropertyFloat("DISPLACEMENT_FACTOR", 1.0f);
+			float const * ratio = in_layer->FindPropertyFloat("DISPLACEMENT_RATIO");
+			if (ratio != nullptr)
+			{
+				displacement_ratio = glm::vec2(*ratio, *ratio);
+			}
+			else
+			{
+				displacement_ratio.x = in_layer->FindPropertyFloat("DISPLACEMENT_RATIO_X", 1.0f);
+				displacement_ratio.y = in_layer->FindPropertyFloat("DISPLACEMENT_RATIO_Y", 1.0f);
+			}
 			wrap_x = in_layer->FindPropertyBool("WRAP_X", false);
 			wrap_y = in_layer->FindPropertyBool("WRAP_Y", false);
 			material_name = in_layer->FindPropertyString("MATERIAL", "");
@@ -669,13 +678,16 @@ namespace death
 			// apply the displacement to the camera
 			chaos::box2 final_camera_box = camera_box;
 
-			float final_ratio = 1.0f;
+			glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
 			if (level_instance->reference_layer != nullptr && level_instance->reference_layer != this)
-				if (level_instance->reference_layer->displacement_ratio != 0.0f)
-					final_ratio = displacement_ratio / level_instance->reference_layer->displacement_ratio;
+			{
+				if (level_instance->reference_layer->displacement_ratio.x != 0.0f)
+					final_ratio.x = displacement_ratio.x / level_instance->reference_layer->displacement_ratio.x;
+				if (level_instance->reference_layer->displacement_ratio.y != 0.0f)
+					final_ratio.y = displacement_ratio.y / level_instance->reference_layer->displacement_ratio.y;
+			}
 
-			if (final_ratio != 1.0f)
-				final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
+			final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
 
 			// compute repetitions
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);

@@ -76,9 +76,8 @@ bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom 
 
 	float l2 = glm::length2(delta_pos);
 
-	float attraction_maxradius = affector.attraction_maxradius;
-	float attraction_minradius = affector.attraction_minradius;
-	float player_attraction_force     = affector.attraction_force;
+	float attraction_maxradius = particle->particle_radius_factor * affector.attraction_maxradius;
+	float attraction_minradius = particle->particle_radius_factor * affector.attraction_minradius;
 
 	// particle in range
 	if (l2 < attraction_maxradius * attraction_maxradius)

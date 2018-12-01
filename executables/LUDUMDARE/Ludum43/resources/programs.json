@@ -3,6 +3,7 @@
   "@fire_background_program" : { "path": "@programs/fire_background/fire_background_program.json" },
   "@challenge_program"  : { "path": "@programs/challenge/challenge_program.json" },
   "@gameobject_program"  : { "path": "@programs/gameobject/gameobject_program.json" },
+  "@player_program"  : { "path": "@programs/player/player_program.json" },
   "@text_program"  : { "path": "@programs/text/text_program.json" }    
 
 }

@@ -5,7 +5,7 @@
   <properties>
    <property name="OBJECT_TYPE" type="int" value="1"/>
   </properties>
-  <image width="256" height="192" source="../sprites/flare.png"/>
+  <image width="28" height="21" source="../sprites/flare.png"/>
  </tile>
  <tile id="6">
   <properties>

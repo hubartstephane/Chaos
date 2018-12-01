@@ -85,6 +85,16 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 		}
 		particle->velocity = velocity;
 	}
+	else
+	{
+		static float slowing_factor = 0.5f;
+
+
+		//float velocity2 = glm::length2(particle->velocity);
+		
+		particle->velocity *= powf(slowing_factor, delta_time); // * 20.0f;
+	
+	}
 
 
 	particle->bounding_box.position += particle->velocity * (float)delta_time;

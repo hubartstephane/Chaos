@@ -70,36 +70,29 @@ size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase 
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
 }
 
-bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, ParticleAtomTrait::UpdateAtomData update_data) const
+bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, glm::vec2 const & affector_position, float attraction_factor) const
 {
-	glm::vec2 & player_position   = update_data.player_particle.bounding_box.position;
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_velocity = particle->velocity;
+
+	glm::vec2 delta_pos = (affector_position - particle_position);
+
+	float l2 = glm::length2(delta_pos);
 
 	float player_attraction_maxradius = particle->particle_radius_factor * update_data.player_attraction_maxradius;
 	float player_attraction_minradius = particle->particle_radius_factor * update_data.player_attraction_minradius;
 	float player_attraction_force     = update_data.player_attraction_force;
-	float particle_max_velocity       = update_data.particle_max_velocity;
 
-
-	glm::vec2 delta_pos = (player_position - particle_position);
-
-	float l2 = glm::length2(delta_pos);
-	float l  = 0.0f;
-
-	// particle too far ?
-	if (l2 > update_data.world_clamp_radius * update_data.world_clamp_radius)
-		return false;
-	
-	// particle in direction of player
+	// particle in range
 	if (l2 < player_attraction_maxradius * player_attraction_maxradius)
 	{
+		float l  = 0.0f;
 		// particle never goes below lin radius
 		if (l2 < player_attraction_minradius * player_attraction_minradius)
 		{		
 			l  = player_attraction_minradius;
 			l2 = l * l;
-			particle_position = player_position - glm::normalize(delta_pos) * l;
+			particle_position = affector_position - glm::normalize(delta_pos) * l;
 		}
 		else		
 		{
@@ -116,14 +109,43 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 			particle_velocity = particle_velocity + update_data.tangent_force * glm::vec2(tangent.x, tangent.y);
 		}
 
-		particle_velocity = particle_velocity + player_attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
-	}
-	// particle slowing down
-	else
-	{	
-		particle->velocity *= powf(update_data.particle_slowing_factor, delta_time);	
-	}
+		particle_velocity = particle_velocity + attraction_factor * player_attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
 
+		return true;
+	}
+	return false;
+}
+
+bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, ParticleAtomTrait::UpdateAtomData update_data) const
+{
+	glm::vec2 & player_position   = update_data.player_particle.bounding_box.position;
+	glm::vec2 & particle_position = particle->bounding_box.position;
+
+	glm::vec2 delta_pos = (player_position - particle_position);
+
+	float l2 = glm::length2(delta_pos);
+	float l  = 0.0f;
+
+	// particle too far ?
+	if (l2 > update_data.world_clamp_radius * update_data.world_clamp_radius)
+		return false;
+
+	// apply all effectors
+	bool affected = false;
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data, player_position, 1.0f);
+	
+	size_t enemy_count = update_data.enemy_particles.size();
+	for (size_t i = 0 ; i < enemy_count ; ++i)
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data, update_data.enemy_particles[i].bounding_box.position, 2.0f);
+
+	// final computation
+	float particle_max_velocity = update_data.particle_max_velocity;
+
+	glm::vec2 & particle_velocity = particle->velocity;
+
+	// particle slowing down
+	if (!affected)
+		particle->velocity *= powf(update_data.particle_slowing_factor, delta_time);	
 
 	// update particle velocity
 	float velocity_length2 = glm::length2(particle_velocity);

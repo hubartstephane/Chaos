@@ -134,6 +134,10 @@ public:
 
 	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, chaos::ParticleAllocation * allocation) const;
 
+protected:
+
+	bool ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, glm::vec2 const & affector_position, float attraction_factor) const;
+
 public:
 
 	class LudumGame * game = nullptr;

@@ -34,6 +34,8 @@ namespace chaos
 		static bool IsWorldBoundingBox(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object defines an explicit layer bounding */
 		static bool IsLayerBoundingBox(TiledMap::GeometricObject const * object_geometric);
+		/** returns true whether the object has an explicit type */
+		static bool IsTypedObject(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object is a player start */
 		static bool IsPlayerStart(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object is a trigger surface */

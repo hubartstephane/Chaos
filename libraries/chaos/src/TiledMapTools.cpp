@@ -130,10 +130,12 @@ namespace chaos
 
 	bool TiledMapTools::IsLayerBoundingBox(TiledMap::GeometricObject const * object_geometric)
 	{
-
-		// shuxxx
-		//return HasFlag(object_geometric, "world_bounding_box", "world_bounding_box", "WORLD_BOUNDING_BOX");
 		return HasFlag(object_geometric, "layer_bounding_box", "layer_bounding_box", "LAYER_BOUNDING_BOX");
+	}
+
+	bool TiledMapTools::IsTypedObject(TiledMap::GeometricObject const * object_geometric)
+	{
+		return HasFlag(object_geometric, nullptr, nullptr, "OBJECT_TYPE");
 	}
 
 	bool TiledMapTools::IsTriggerSurface(TiledMap::GeometricObject const * object_geometric)

@@ -37,6 +37,8 @@ namespace chaos
 
 		/** trim string to the left and to the right to only keep the base64 characters */
 		std::string TrimBase64String(char const * src);
+		/** trim string to the left and to the right */
+		std::string TrimString(char const * src, bool trim_left, bool trim_right);
 
 		/** ci_less : a case insensitive comparator */
 		struct ci_less

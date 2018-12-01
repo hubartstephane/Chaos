@@ -126,7 +126,7 @@
 </data>
  </layer>
  <objectgroup name="Calque d'objets 1">
-  <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000"/>
+  <object id="2" name="grosse planete" type="   ccccc a    " gid="1073741832" x="2840" y="6576" width="10000" height="10000"/>
   <object id="18" name="world_bb" x="-1000" y="-1000" width="16720" height="14784">
    <properties>
     <property name="WORLD_BOUNDING_BOX" type="bool" value="true"/>

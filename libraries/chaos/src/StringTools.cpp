@@ -127,6 +127,22 @@ namespace chaos
 			return std::string(&src[i], j - i);
 		}
 
+		std::string TrimString(char const * src, bool trim_left, bool trim_right)
+		{
+			assert(src != nullptr);
+
+			int i = 0;
+			if (trim_left)
+				while (src[i] != 0 && std::isspace(src[i]))
+					++i;
+			int j = strlen(src) - 1;
+			if (trim_right)
+				while (j > i && std::isspace(src[j]))
+					--j;
+
+			return std::string(&src[i], j - i + 1);
+		}
+
 
 
 	} // namespace StringTools

@@ -344,6 +344,10 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			XMLTools::ReadAttribute(element, "y", position.y);
 			XMLTools::ReadAttribute(element, "rotation", rotation);
 			
+			// remove useless space in type
+			if (type.length() > 0)
+				type = StringTools::TrimString(type.c_str(), true, true);
+
 			// reverse the Y axis
 #if CHAOS_REVERSE_Y_AXIS
 			position.y = -position.y;

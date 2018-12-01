@@ -19,6 +19,7 @@
 LudumGame::LudumGame()
 {		
 	game_name = "Quantic Paouf IV";
+	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)
@@ -127,6 +128,7 @@ void LudumGame::ResetGameVariables()
 	current_dash_direction = glm::vec2(0.0f, 0.0f);
 
 	waken_up_particle_count = 0;
+	heart_beat_time = 0.0f;
 
 }
 
@@ -164,10 +166,32 @@ bool LudumGame::TickGameLoop(double delta_time)
 	TickDashValues(delta_time);
 	// cooldown
 	TickCooldown(delta_time);
+	// tick sound for heart beat
+	TickHeartBeat(delta_time);
 
 	return true;
 }
 
+void LudumGame::TickHeartBeat(double delta_time) 
+{
+	float limit_value = 2.0f;
+	if (waken_up_particle_count < 1)
+		limit_value = 0.5f;
+	else if (waken_up_particle_count < 2)
+		limit_value = 0.75f;
+	else if (waken_up_particle_count < 3)
+		limit_value = 1.0f;
+	else if (waken_up_particle_count < 5)
+		limit_value = 1.5f;
+
+
+	heart_beat_time += (float)delta_time;
+	if (heart_beat_time >= limit_value)
+	{
+		heart_beat_time = 0.0f;
+		PlaySound("heartbeat", false, false);	
+	}
+}
 
 void LudumGame::OnMouseMove(double x, double y)
 {

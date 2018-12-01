@@ -103,6 +103,8 @@ protected:
 	/** override */
 	virtual bool TickGameLoop(double delta_time) override;
 
+	void TickHeartBeat(double delta_time);
+
 	/** cooldown the weapon */
 	void TickCooldown(double delta_time);
 	void TickDashValues(double delta_time);
@@ -188,6 +190,8 @@ public:
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;
+	/** the heart beat time */
+	float heart_beat_time = 0.0f;
 
 
 };

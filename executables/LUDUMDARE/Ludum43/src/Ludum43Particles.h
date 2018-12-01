@@ -30,6 +30,36 @@ public:
 
 
 
+// ===========================================================================
+// ParticleAffector
+// ===========================================================================
+
+class ParticleAffector : public ParticleBase
+{
+public:
+
+	float attraction_minradius = 0.0f;
+	float attraction_maxradius = 0.0f;
+	float attraction_force     = 0.0f;
+	float tangent_force        = 0.0f;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -37,7 +67,7 @@ public:
 // ParticlePlayer
 // ===========================================================================
 
-class ParticlePlayer : public ParticleBase
+class ParticlePlayer : public ParticleAffector
 {
 
 };
@@ -62,7 +92,7 @@ public:
 // ParticleEnemy
 // ===========================================================================
 
-class ParticleEnemy : public ParticleBase
+class ParticleEnemy : public ParticleAffector
 {
 
 };
@@ -93,6 +123,25 @@ public:
 	class LudumGame * game = nullptr;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ===========================================================================
 // ParticleAtom
 // ===========================================================================
@@ -100,8 +149,6 @@ public:
 class ParticleAtom : public ParticleBase
 {
 public:
-
-	ParticleAtom();
 
 	float particle_radius_factor = 1.0f;
 
@@ -116,12 +163,8 @@ public:
 	public:
 
 		ParticlePlayer player_particle;
-		float player_attraction_minradius;
-		float player_attraction_maxradius;
-		float player_attraction_force;
-		float tangent_force;
+
 		float particle_slowing_factor;
-		float enemy_attraction_radius;
 		float particle_max_velocity;
 		float world_clamp_radius;
 
@@ -136,9 +179,10 @@ public:
 
 protected:
 
-	bool ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, glm::vec2 const & affector_position, float attraction_factor) const;
+	bool ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, ParticleAffector const & affector) const;
 
 public:
 
 	class LudumGame * game = nullptr;
 };
+

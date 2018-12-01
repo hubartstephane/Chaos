@@ -416,15 +416,27 @@ namespace death
 			// special initialization
 			chaos::TiledMap::ImageLayer * image_layer = layer->GetImageLayer();
 			if (image_layer != nullptr)
-				return InitializeLayer(image_layer);
+			{
+				if (!InitializeLayer(image_layer))
+					return false;
+				return FinalizeParticles();
+			}
 
 			chaos::TiledMap::ObjectLayer * object_layer = layer->GetObjectLayer();
 			if (object_layer != nullptr)
-				return InitializeLayer(object_layer);
+			{
+				if (!InitializeLayer(object_layer))
+					return false;
+				return FinalizeParticles();
+			}
 
 			chaos::TiledMap::TileLayer * tile_layer = layer->GetTileLayer();
 			if (tile_layer != nullptr)
-				return InitializeLayer(tile_layer);
+			{
+				if (!InitializeLayer(tile_layer))
+					return false;
+				return FinalizeParticles();
+			}
 
 			return false;
 		}
@@ -541,6 +553,24 @@ namespace death
 				bounding_box = explicit_bounding_box;
 			else
 				bounding_box = box | particle_populator.GetBoundingBox();
+				
+			return true;
+		}
+
+		bool LayerInstance::FinalizeParticles()
+		{
+			// no layer, nothing to do !
+			if (particle_layer == nullptr)
+				return true;
+			// no level ?
+			Level * level = GetTypedLevel();
+			if (level == nullptr)
+				return true;
+			// initialize each allocations
+			size_t allocation_count = particle_layer->GetAllocationCount();
+			for (size_t i = 0 ; i < allocation_count ; ++i)
+				if (!level->FinalizeLayerParticles(this, particle_layer->GetAllocation(i)))
+					return false;
 				
 			return true;
 		}
@@ -1044,6 +1074,10 @@ namespace death
 			// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 			reference_displacement_ratio = layer_instance->displacement_ratio;
 			reference_layer = layer_instance;
+
+			// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
+			//          call it twice as a fast fix
+			layer_instance->FinalizeParticles();
 		}
 
 	}; // namespace TiledMap

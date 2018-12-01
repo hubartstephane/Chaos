@@ -16,10 +16,15 @@
   "player_attraction_minradius": 200.0,
   "player_attraction_maxradius": 800.0,
   "player_attraction_force": 500.0,
-  "tangent_force": 500000.0,
-  "enemy_attraction_radius": 200.0,
+  "player_tangent_force": 500000.0,
+
+  "enemy_attraction_minradius": 200.0,
+  "enemy_attraction_maxradius": 800.0,
+  "enemy_attraction_force": 500.0,
+  "enemy_tangent_force": 500000.0,
+
   "particle_max_velocity": 1000.0,
   "particle_slowing_factor": 0.5,
-  "particle_radius_rand_factor": 1.2,
+  "particle_radius_rand_factor": 2.0,
   "world_clamp_radius":3000
 }

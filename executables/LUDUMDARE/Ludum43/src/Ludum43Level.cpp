@@ -51,30 +51,85 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateTypedObject(death::TiledM
 
 chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
+	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 	if (layer_name == "PlayerAndCamera")
 	{
 		ParticlePlayerTrait trait;
-		trait.game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+		trait.game = ludum_game;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
 	}
 	if (layer_name == "Enemies")
 	{
 		ParticleEnemyTrait trait;
-		trait.game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+		trait.game = ludum_game;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
 
 	}
 	if (layer_name == "Atoms")
 	{
 		ParticleAtomTrait trait;
-		trait.game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+		trait.game = ludum_game;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
 	}
 
 	return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
 }
 
+bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocation * allocation)
+{
+	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+
+
+	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
+
+	bool is_enemy = (layer_name == "Enemies");
+	bool is_player = (layer_name == "PlayerAndCamera");
+
+	if (is_enemy || is_player)
+	{
+		chaos::ParticleAccessor<ParticleAffector> particles = allocation->GetParticleAccessor<ParticleAffector>();
+
+		size_t count = particles.GetCount();
+		for (size_t i = 0 ; i < count ; ++i)
+		{
+			ParticleAffector & p = particles[i]; 
+			if (is_player)
+			{
+				p.attraction_minradius = ludum_game->player_attraction_minradius;
+				p.attraction_maxradius = ludum_game->player_attraction_maxradius;
+				p.attraction_force     = ludum_game->player_attraction_force;
+				p.tangent_force        = ludum_game->player_tangent_force;			
+			}
+			else
+			{
+				p.attraction_minradius = ludum_game->enemy_attraction_minradius;
+				p.attraction_maxradius = ludum_game->enemy_attraction_maxradius;
+				p.attraction_force     = ludum_game->enemy_attraction_force;
+				p.tangent_force        = ludum_game->enemy_tangent_force;			
+			}
+		}	
+		return true;
+	}
+
+	bool is_atoms = (layer_name == "Atoms");
+	if (is_atoms)
+	{
+		chaos::ParticleAccessor<ParticleAtom> particles = allocation->GetParticleAccessor<ParticleAtom>();
+
+		size_t count = particles.GetCount();
+		for (size_t i = 0 ; i < count ; ++i)
+		{
+			ParticleAtom & p = particles[i]; 
+			p.particle_radius_factor = chaos::MathTools::RandFloat(1.0f, ludum_game->particle_radius_rand_factor);
+		}	
+		return true;
+	}
+
+
+	return true;
+}
 
 
 // =============================================================

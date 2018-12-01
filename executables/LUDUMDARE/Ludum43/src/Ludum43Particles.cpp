@@ -60,37 +60,34 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 // ParticleAtomTrait
 // ===========================================================================
 
-ParticleAtom::ParticleAtom()
-{
-	particle_radius_factor = chaos::MathTools::RandFloat(1.0f, 2.0f);
-}
-
 size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
 }
 
-bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, glm::vec2 const & affector_position, float attraction_factor) const
+bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, ParticleAffector const & affector) const
 {
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_velocity = particle->velocity;
+	
+	glm::vec2 const & affector_position = affector.bounding_box.position;
 
 	glm::vec2 delta_pos = (affector_position - particle_position);
 
 	float l2 = glm::length2(delta_pos);
 
-	float player_attraction_maxradius = particle->particle_radius_factor * update_data.player_attraction_maxradius;
-	float player_attraction_minradius = particle->particle_radius_factor * update_data.player_attraction_minradius;
-	float player_attraction_force     = update_data.player_attraction_force;
+	float attraction_maxradius = affector.attraction_maxradius;
+	float attraction_minradius = affector.attraction_minradius;
+	float player_attraction_force     = affector.attraction_force;
 
 	// particle in range
-	if (l2 < player_attraction_maxradius * player_attraction_maxradius)
+	if (l2 < attraction_maxradius * attraction_maxradius)
 	{
 		float l  = 0.0f;
 		// particle never goes below lin radius
-		if (l2 < player_attraction_minradius * player_attraction_minradius)
+		if (l2 < attraction_minradius * attraction_minradius)
 		{		
-			l  = player_attraction_minradius;
+			l  = attraction_minradius;
 			particle_position = affector_position - glm::normalize(delta_pos) * l;
 		}
 		else		
@@ -99,7 +96,7 @@ bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom 
 		}
 
 		float distance_ratio = 1.0f;
-		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - player_attraction_minradius) / (player_attraction_maxradius - player_attraction_minradius));
+		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius));
 
 		// create a tangent force
 		if (glm::length2(particle_velocity) > 0.0f)
@@ -108,10 +105,10 @@ bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom 
 			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
 			glm::vec3 tangent = glm::cross(a, b);
 
-			particle_velocity = particle_velocity + distance_ratio * update_data.tangent_force * glm::vec2(tangent.x, tangent.y);
+			particle_velocity = particle_velocity + distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
 		}
 
-		particle_velocity = particle_velocity + distance_ratio * attraction_factor * player_attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
+		particle_velocity = particle_velocity + distance_ratio *  affector.attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
 
 		return true;
 	}
@@ -134,11 +131,11 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 
 	// apply all effectors
 	bool affected = false;
-	affected |= ApplyAffectorToParticles(delta_time, particle, update_data, player_position, 1.0f);
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data, update_data.player_particle);
 	
 	size_t enemy_count = update_data.enemy_particles.size();
 	for (size_t i = 0 ; i < enemy_count ; ++i)
-		affected |= ApplyAffectorToParticles(delta_time, particle, update_data, update_data.enemy_particles[i].bounding_box.position, 2.0f);
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data, update_data.enemy_particles[i]);
 
 	// final computation
 	float particle_max_velocity = update_data.particle_max_velocity;
@@ -164,12 +161,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	ParticleAtomTrait::UpdateAtomData result;
 	result.player_particle = *((ParticlePlayer const*)game->GetPlayerParticle());
 
-	result.player_attraction_minradius = game->player_attraction_minradius;
-	result.player_attraction_maxradius = game->player_attraction_maxradius;
-	result.particle_slowing_factor     = game->particle_slowing_factor;
-	result.player_attraction_force     = game->player_attraction_force;
-	result.tangent_force               = game->tangent_force;
-	result.enemy_attraction_radius = game->enemy_attraction_radius;
+	result.particle_slowing_factor     = game->particle_slowing_factor;	
 	result.particle_max_velocity = game->particle_max_velocity;
 	result.world_clamp_radius    = game->world_clamp_radius;
 

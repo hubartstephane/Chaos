@@ -250,6 +250,9 @@ namespace death
 			/** create a particle layer */
 			virtual chaos::ParticleLayer * CreateParticleLayer(LayerInstance * layer_instance);
 
+			/** called after all particles of a layers has been created, so we can plug additionnal data */
+			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocation * allocation){ return true; }
+
 			/** called whenever a collision between player and tile happens */
 			virtual bool OnPlayerTileCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
 
@@ -376,6 +379,9 @@ namespace death
 			bool InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer);
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::TileLayer * tile_layer);
+
+			/** finalize the particles created */
+			virtual bool FinalizeParticles();
 
 		protected:
 

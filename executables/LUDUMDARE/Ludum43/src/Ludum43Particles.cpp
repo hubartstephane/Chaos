@@ -8,6 +8,60 @@
 #include <chaos/ClassTools.h>
 
 
+// ===========================================================================
+// Utility functions
+// ===========================================================================
+
+template<typename T>
+static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector)
+{
+	glm::vec2 & particle_position = particle->bounding_box.position;
+	glm::vec2 & particle_velocity = particle->velocity;
+
+	glm::vec2 const & affector_position = affector.bounding_box.position;
+
+	glm::vec2 delta_pos = (affector_position - particle_position);
+
+	float l2 = glm::length2(delta_pos);
+
+	float attraction_maxradius = particle->particle_radius_factor * affector.attraction_maxradius;
+	float attraction_minradius = particle->particle_radius_factor * affector.attraction_minradius;
+
+	// particle in range
+	if (l2 < attraction_maxradius * attraction_maxradius)
+	{
+		float l  = 0.0f;
+		// particle never goes below lin radius
+		if (l2 < attraction_minradius * attraction_minradius)
+		{		
+			l  = attraction_minradius;
+			particle_position = affector_position - glm::normalize(delta_pos) * l;
+		}
+		else		
+		{
+			l = chaos::MathTools::Sqrt(l2);
+		}
+
+		float distance_ratio = 1.0f;
+		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius));
+
+		// create a tangent force
+		if (glm::length2(particle_velocity) > 0.0f)
+		{
+			glm::vec3 a = glm::normalize(glm::vec3(delta_pos.x, delta_pos.y, 0.0f));
+			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
+			glm::vec3 tangent = glm::cross(a, b);
+
+			particle_velocity = particle_velocity + distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
+		}
+
+		particle_velocity = particle_velocity + distance_ratio *  affector.attraction_force * delta_pos; 
+
+		return true;
+	}
+	return false;
+}
+
 
 
 // ===========================================================================
@@ -22,6 +76,8 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, chaos::ParticleAllocation * allocation) const
 {
 	ParticlePlayerTrait::UpdatePlayerData result;
+
+	//game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles);
 	
 
 	return result;
@@ -30,6 +86,8 @@ ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation, UpdatePlayerData const & update_data) const
 {
+	std::vector<ParticleEnemy> enemy_particles;
+	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, enemy_particles);
 
 
 
@@ -74,54 +132,15 @@ size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase 
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
 }
 
-bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, ParticleAffector const & affector) const
-{
-	glm::vec2 & particle_position = particle->bounding_box.position;
-	glm::vec2 & particle_velocity = particle->velocity;
-	
-	glm::vec2 const & affector_position = affector.bounding_box.position;
 
-	glm::vec2 delta_pos = (affector_position - particle_position);
 
-	float l2 = glm::length2(delta_pos);
 
-	float attraction_maxradius = particle->particle_radius_factor * affector.attraction_maxradius;
-	float attraction_minradius = particle->particle_radius_factor * affector.attraction_minradius;
 
-	// particle in range
-	if (l2 < attraction_maxradius * attraction_maxradius)
-	{
-		float l  = 0.0f;
-		// particle never goes below lin radius
-		if (l2 < attraction_minradius * attraction_minradius)
-		{		
-			l  = attraction_minradius;
-			particle_position = affector_position - glm::normalize(delta_pos) * l;
-		}
-		else		
-		{
-			l = chaos::MathTools::Sqrt(l2);
-		}
 
-		float distance_ratio = 1.0f;
-		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius));
 
-		// create a tangent force
-		if (glm::length2(particle_velocity) > 0.0f)
-		{
-			glm::vec3 a = glm::normalize(glm::vec3(delta_pos.x, delta_pos.y, 0.0f));
-			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
-			glm::vec3 tangent = glm::cross(a, b);
 
-			particle_velocity = particle_velocity + distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
-		}
 
-		particle_velocity = particle_velocity + distance_ratio *  affector.attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
 
-		return true;
-	}
-	return false;
-}
 
 bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, ParticleAtomTrait::UpdateAtomData const & update_data) const
 {
@@ -139,11 +158,11 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 
 	// apply all effectors
 	bool affected = false;
-	affected |= ApplyAffectorToParticles(delta_time, particle, update_data, update_data.player_particle);
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle);
 	
 	size_t enemy_count = update_data.enemy_particles.size();
 	for (size_t i = 0 ; i < enemy_count ; ++i)
-		affected |= ApplyAffectorToParticles(delta_time, particle, update_data, update_data.enemy_particles[i]);
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i]);
 
 	// final computation
 	float particle_max_velocity = update_data.particle_max_velocity;

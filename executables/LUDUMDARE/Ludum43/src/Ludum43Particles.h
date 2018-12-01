@@ -106,6 +106,9 @@ public:
 
 class ParticlePlayer : public ParticleAffector
 {
+public:
+
+	float particle_radius_factor = 1.0f;
 
 };
 
@@ -185,10 +188,6 @@ public:
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
 	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, chaos::ParticleAllocation * allocation) const;
-
-protected:
-
-	bool ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, ParticleAffector const & affector) const;
 
 public:
 

@@ -8,8 +8,8 @@
 // AtomObject implementation
 // =============================================================
 
-AtomGameObject::AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance) :
-	death::TiledMap::GeometricObject(in_layer_instance)
+AtomGameObject::AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+	death::TiledMap::GeometricObject(in_layer_instance, in_geometric_object)
 {
 }
 
@@ -27,7 +27,7 @@ death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_ga
 	return new LudumLevelInstance(dynamic_cast<LudumGame *>(in_game));
 }
 
-death::TiledMap::GeometricObject * LudumLevel::DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance)
+death::TiledMap::GeometricObject * LudumLevel::DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
 	
 

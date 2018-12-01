@@ -129,18 +129,17 @@ namespace death
 			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<TileParticleTrait>);
 		}
 
-#define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, calling_parameters)\
+#define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
 		result_type * Level::Do##func_name(declared_parameters)\
 		{\
-			return new result_type(calling_parameters);\
-		}
-#define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters, initialization_parameters)\
+			return new result_type(constructor_parameters);\
+		}\
 		result_type * Level::func_name(declared_parameters)\
 		{\
 			result_type * result = Do##func_name(constructor_parameters);\
 			if (result == nullptr)\
 				return nullptr;\
-			if (!result->Initialize(initialization_parameters))\
+			if (!result->Initialize())\
 			{\
 				delete result;\
 				return nullptr;\
@@ -148,20 +147,11 @@ namespace death
 			return result;\
 		}
 
-		DEATH_DOCREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance, in_layer_instance);
-		DEATH_CREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
-
-		DEATH_DOCREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance, in_layer_instance);
-		DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
-
-		DEATH_DOCREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance, in_layer_instance);
-		DEATH_CREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
-
-		DEATH_DOCREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance, in_layer_instance);
-		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
-
-		DEATH_DOCREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance, in_level_instance);
-		DEATH_CREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance, in_layer);
+		DEATH_CREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+		DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+		DEATH_CREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+		DEATH_CREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance BOOST_PP_COMMA() in_layer);
 
 #undef DEATH_CREATE_OBJECT
 #undef DEATH_DOCREATE_OBJECT
@@ -241,17 +231,16 @@ namespace death
 		// GeometricObject implementation
 		// =====================================
 
-		GeometricObject::GeometricObject(class LayerInstance * in_layer_instance) :
-			BaseObject(in_layer_instance)
+		GeometricObject::GeometricObject(class LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+			BaseObject(in_layer_instance),
+			geometric_object(in_geometric_object)
+
 		{
+			assert(in_geometric_object != nullptr);
 		}
 
-		bool GeometricObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		bool GeometricObject::Initialize()
 		{
-			// copy the reference of the geometric object
-			geometric_object = in_geometric_object;
-			// store the name/id
-			name = geometric_object->name;
 			return true;
 		}
 			
@@ -260,18 +249,18 @@ namespace death
 		// TriggerSurfaceObject implementation
 		// =====================================
 
-		TriggerSurfaceObject::TriggerSurfaceObject(class LayerInstance * in_layer_instance) :
-			GeometricObject(in_layer_instance)
+		TriggerSurfaceObject::TriggerSurfaceObject(class LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+			GeometricObject(in_layer_instance, in_geometric_object)
 		{
 		}
 
-		bool TriggerSurfaceObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		bool TriggerSurfaceObject::Initialize()
 		{
-			if (!GeometricObject::Initialize(in_geometric_object))
+			if (!GeometricObject::Initialize())
 				return false;
 
-			enabled    = in_geometric_object->FindPropertyBool("ENABLED", true);
-			trigger_id = in_geometric_object->FindPropertyInt("TRIGGER_ID", 0);
+			enabled    = geometric_object->FindPropertyBool("ENABLED", true);
+			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
 		
 			return true;
 		}
@@ -296,14 +285,14 @@ namespace death
 		// PlayerStartObject implementation
 		// =====================================
 
-		PlayerStartObject::PlayerStartObject(class LayerInstance * in_layer_instance) :
-			GeometricObject(in_layer_instance)
+		PlayerStartObject::PlayerStartObject(class LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+			GeometricObject(in_layer_instance, in_geometric_object)
 		{
 		}
 
-		bool PlayerStartObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		bool PlayerStartObject::Initialize()
 		{
-			if (!GeometricObject::Initialize(in_geometric_object))
+			if (!GeometricObject::Initialize())
 				return false;
 			return true;
 		}
@@ -312,14 +301,14 @@ namespace death
 		// CameraObject implementation
 		// =====================================
 
-		CameraObject::CameraObject(class LayerInstance * in_layer_instance) :
-			GeometricObject(in_layer_instance)
+		CameraObject::CameraObject(class LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+			GeometricObject(in_layer_instance, in_geometric_object)
 		{
 		}
 
-		bool CameraObject::Initialize(chaos::TiledMap::GeometricObject * in_geometric_object)
+		bool CameraObject::Initialize()
 		{
-			if (!GeometricObject::Initialize(in_geometric_object))
+			if (!GeometricObject::Initialize())
 				return false;
 			return true;
 		}
@@ -328,10 +317,12 @@ namespace death
 		// LayerInstance implementation
 		// =====================================
 
-		LayerInstance::LayerInstance(LevelInstance * in_level_instance):
-			level_instance(in_level_instance)
+		LayerInstance::LayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer):
+			level_instance(in_level_instance),
+			layer(in_layer)
 		{
 			assert(in_level_instance != nullptr);
+			assert(in_layer != nullptr);
 		}
 
 		Game * LayerInstance::GetGame() 
@@ -394,45 +385,42 @@ namespace death
 			return level_instance->GetDefaultRenderMaterial();
 		}
 
-		bool LayerInstance::Initialize(chaos::TiledMap::LayerBase * in_layer)
+		bool LayerInstance::Initialize()
 		{
-			// store the layer
-			layer = in_layer;
-
 			// get the properties of interrest
-			float const * ratio = in_layer->FindPropertyFloat("DISPLACEMENT_RATIO");
+			float const * ratio = layer->FindPropertyFloat("DISPLACEMENT_RATIO");
 			if (ratio != nullptr)
 			{
 				displacement_ratio = glm::vec2(*ratio, *ratio);
 			}
 			else
 			{
-				displacement_ratio.x = in_layer->FindPropertyFloat("DISPLACEMENT_RATIO_X", 1.0f);
-				displacement_ratio.y = in_layer->FindPropertyFloat("DISPLACEMENT_RATIO_Y", 1.0f);
+				displacement_ratio.x = layer->FindPropertyFloat("DISPLACEMENT_RATIO_X", 1.0f);
+				displacement_ratio.y = layer->FindPropertyFloat("DISPLACEMENT_RATIO_Y", 1.0f);
 			}
-			wrap_x = in_layer->FindPropertyBool("WRAP_X", false);
-			wrap_y = in_layer->FindPropertyBool("WRAP_Y", false);
-			material_name = in_layer->FindPropertyString("MATERIAL", "");
+			wrap_x = layer->FindPropertyBool("WRAP_X", false);
+			wrap_y = layer->FindPropertyBool("WRAP_Y", false);
+			material_name = layer->FindPropertyString("MATERIAL", "");
 
-			trigger_surfaces_enabled = in_layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", true);
-			player_collision_enabled = in_layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", true);
-			trigger_surfaces_enabled = in_layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", true);
+			trigger_surfaces_enabled = layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", true);
+			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", true);
+			trigger_surfaces_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", true);
 
 			// copy the offset
-			offset = in_layer->offset;
+			offset = layer->offset;
 
 			// reset the bounding box
 			bounding_box = chaos::box2();
 			// special initialization
-			chaos::TiledMap::ImageLayer * image_layer = in_layer->GetImageLayer();
+			chaos::TiledMap::ImageLayer * image_layer = layer->GetImageLayer();
 			if (image_layer != nullptr)
 				return InitializeLayer(image_layer);
 
-			chaos::TiledMap::ObjectLayer * object_layer = in_layer->GetObjectLayer();
+			chaos::TiledMap::ObjectLayer * object_layer = layer->GetObjectLayer();
 			if (object_layer != nullptr)
 				return InitializeLayer(object_layer);
 
-			chaos::TiledMap::TileLayer * tile_layer = in_layer->GetTileLayer();
+			chaos::TiledMap::TileLayer * tile_layer = layer->GetTileLayer();
 			if (tile_layer != nullptr)
 				return InitializeLayer(tile_layer);
 

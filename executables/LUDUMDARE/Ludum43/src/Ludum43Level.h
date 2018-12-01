@@ -20,7 +20,7 @@ class AtomGameObject : public death::TiledMap::GeometricObject
 {
 public:
 
-	AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance);
+	AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
 
 };
@@ -41,7 +41,7 @@ public:
 protected:
 
 	/** override */
-	virtual death::TiledMap::GeometricObject * DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance) override;
+	virtual death::TiledMap::GeometricObject * DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
 	/** override */
 	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;

@@ -98,7 +98,7 @@ namespace death
 		public:
 
 			/** constructor */
-			GeometricObject(LayerInstance * in_layer_instance);
+			GeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
 			/** get the geometric object corresponding to this */
 			chaos::TiledMap::GeometricObject * GetGeometricObject() { return geometric_object.get(); }
@@ -107,8 +107,8 @@ namespace death
 
 		protected:
 
-			/** initialization */
-			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object);
+			/** additionnal initialization */
+			virtual bool Initialize();
 
 		protected:
 
@@ -127,12 +127,12 @@ namespace death
 		public:
 
 			/** constructor */
-			CameraObject(LayerInstance * in_layer_instance);
+			CameraObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
 		protected:
 
 			/** override */
-			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object) override;
+			virtual bool Initialize() override;
 		};
 
 		// =====================================
@@ -146,12 +146,12 @@ namespace death
 		public:
 
 			/** constructor */
-			PlayerStartObject(LayerInstance * in_layer_instance);
+			PlayerStartObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
 		protected:
 
 			/** override */
-			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object) override;
+			virtual bool Initialize() override;
 		};
 
 		// =====================================
@@ -165,7 +165,7 @@ namespace death
 		public:
 
 			/** constructor */
-			TriggerSurfaceObject(LayerInstance * in_layer_instance);
+			TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
 			/** whether it is enabled or not */
 			bool IsEnabled() const { return enabled; }
@@ -181,7 +181,7 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool Initialize(chaos::TiledMap::GeometricObject * in_geometric_object) override;
+			virtual bool Initialize() override;
 
 			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 			virtual bool OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle);
@@ -222,15 +222,15 @@ namespace death
 
 
 			/** create a typed object specializable method */
-			virtual GeometricObject * DoCreateTypedObject(LayerInstance * in_layer_instance);
+			virtual GeometricObject * DoCreateTypedObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a TriggerSurface specializable method */
-			virtual TriggerSurfaceObject * DoCreateTriggerSurface(LayerInstance * in_layer_instance);
+			virtual TriggerSurfaceObject * DoCreateTriggerSurface(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a Camera specializable method */
-			virtual CameraObject * DoCreateCamera(LayerInstance * in_layer_instance);
+			virtual CameraObject * DoCreateCamera(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a PlayerStartObject specializable method */
-			virtual PlayerStartObject * DoCreatePlayerStart(LayerInstance * in_layer_instance);
+			virtual PlayerStartObject * DoCreatePlayerStart(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a PlayerStartObject specializable method */
-			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance);
+			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
 
 			/** create a typed object 'entry point' */
 			GeometricObject * CreateTypedObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
@@ -275,7 +275,7 @@ namespace death
 		protected:
 
 			/** protected constructor */
-			LayerInstance(LevelInstance * in_level_instance);
+			LayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
 
 		public:
 
@@ -348,7 +348,7 @@ namespace death
 		protected:
 
 			/** initialization */
-			virtual bool Initialize(chaos::TiledMap::LayerBase * in_layer);
+			virtual bool Initialize();
 			/** find render material according to its name */
 			chaos::GPURenderMaterial * FindRenderMaterial(char const * material_name);
 

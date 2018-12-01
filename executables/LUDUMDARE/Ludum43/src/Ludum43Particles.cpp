@@ -7,13 +7,19 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 
+static float const PARTICLE_LIFETIME = 2.0f;
+static float const PLAYER_LIFETIME = 4.0f;
+
+static float const DANGER_RADIUS_RATIO = 0.3f;
+static float const WAKEN_RADIUS_RATIO  = 1.0f;
+
 
 // ===========================================================================
 // Utility functions
 // ===========================================================================
 
 template<typename T>
-static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector)
+static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor)
 {
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_velocity = particle->velocity;
@@ -42,6 +48,11 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 			l = chaos::MathTools::Sqrt(l2);
 		}
 
+		// whether the particle is inside the inner radius
+		float inner_radius = attraction_minradius + inner_radius_factor * (attraction_maxradius - attraction_minradius);
+		if (l <= inner_radius)
+			in_inner_radius = true;
+
 		float distance_ratio = 1.0f;
 		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius));
 
@@ -63,6 +74,23 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 }
 
 
+template<typename T>
+bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_time, float lifetime)
+{
+	if (in_inner_radius)
+	{
+		particle->life = chaos::MathTools::Clamp(particle->life - delta_time, 0.0f, lifetime);	
+		if (particle->life <= 0.0f)
+			return true; // destroy the particle
+	}
+	else
+	{
+		particle->life = chaos::MathTools::Clamp(particle->life + delta_time, 0.0f, lifetime);	
+	}
+
+	particle->color.a = particle->life / lifetime;
+	return false;
+}
 
 // ===========================================================================
 // ParticlePlayerTrait
@@ -86,14 +114,66 @@ ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation, UpdatePlayerData const & update_data) const
 {
+	// search all nearby enemies
 	std::vector<ParticleEnemy> enemy_particles;
 	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, enemy_particles);
 
+	// position of the particle
+	glm::vec2 & particle_position = particle->bounding_box.position;
+	glm::vec2 & particle_velocity = particle->velocity;
+
+	// apply all effectors
+	bool affected = false;
+
+	bool in_danger_zone = false;
+
+	size_t enemy_count = enemy_particles.size();
+	for (size_t i = 0 ; i < enemy_count ; ++i)
+		affected |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO);
+
+	// update life and color
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
+		return true;
+
+#if 0
+
+	// final computation
+	float particle_max_velocity = update_data.particle_max_velocity;
+
+	
+
+	// particle slowing down
+	if (!affected)
+		particle->velocity *= powf(update_data.particle_slowing_factor, delta_time);	
+
+	// update particle velocity
+	float velocity_length2 = glm::length2(particle_velocity);
+	if (velocity_length2 > particle_max_velocity * particle_max_velocity)
+		particle_velocity = glm::normalize(particle_velocity) * particle_max_velocity;				
+	// update particle position
+	particle_position += particle->velocity * (float)delta_time;
 
 
+
+#endif
 
 	return false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ===========================================================================
 // ParticleEnemyTrait
@@ -157,12 +237,31 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 		return false;
 
 	// apply all effectors
+
+	bool in_waken_up_zone = false;
+
 	bool affected = false;
-	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle);
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO);
 	
+	if (in_waken_up_zone && !particle->waken_up)
+	{
+		game->NotifyAtomCountChange(+1);
+		particle->waken_up = true;
+	}
+
+	// danger affector
+	bool in_danger_zone = false;
 	size_t enemy_count = update_data.enemy_particles.size();
 	for (size_t i = 0 ; i < enemy_count ; ++i)
-		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i]);
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO);
+
+	// update life and color
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PARTICLE_LIFETIME))
+	{
+		if (particle->waken_up)
+			game->NotifyAtomCountChange(-1);
+		return true;
+	}
 
 	// final computation
 	float particle_max_velocity = update_data.particle_max_velocity;
@@ -186,7 +285,13 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, chaos::ParticleAllocation * allocation) const
 {
 	ParticleAtomTrait::UpdateAtomData result;
-	result.player_particle = *((ParticlePlayer const*)game->GetPlayerParticle());
+
+	ParticlePlayer const * player_particle = (ParticlePlayer const*)game->GetPlayerParticle();
+	if (player_particle == nullptr)
+		return result;
+
+
+	result.player_particle = *player_particle;
 
 	result.particle_slowing_factor     = game->particle_slowing_factor;	
 	result.particle_max_velocity = game->particle_max_velocity;

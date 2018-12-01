@@ -108,7 +108,8 @@ class ParticlePlayer : public ParticleAffector
 {
 public:
 
-	float particle_radius_factor = 1.0f;
+	float particle_radius_factor = 2.0f;
+	float life = 2.0f;
 
 };
 
@@ -163,6 +164,8 @@ class ParticleAtom : public ParticleBase
 public:
 
 	float particle_radius_factor = 1.0f;
+	float life = 2.0f;
+	bool  waken_up = false;
 
 };
 

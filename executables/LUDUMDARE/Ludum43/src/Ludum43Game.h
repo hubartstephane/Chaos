@@ -70,6 +70,8 @@ public:
 
 	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles);
 
+	void NotifyAtomCountChange(int delta);
+
 protected:
 
 	/** override */
@@ -183,6 +185,9 @@ public:
 	float current_dash_cooldown   = 0.0f;
 	float current_dash_time = 0.0f;
 	glm::vec2 current_dash_direction = glm::vec2(0.0f, 0.0f);
+
+	/** number of waken up particle */
+	int waken_up_particle_count = 0;
 
 
 };

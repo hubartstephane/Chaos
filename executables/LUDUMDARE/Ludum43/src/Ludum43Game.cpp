@@ -126,6 +126,8 @@ void LudumGame::ResetGameVariables()
 	current_dash_time = 0.0f;
 	current_dash_direction = glm::vec2(0.0f, 0.0f);
 
+	waken_up_particle_count = 0;
+
 }
 
 void LudumGame::OnGameOver()
@@ -402,4 +404,9 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 			}		
 		}	
 	}
+}
+
+void LudumGame::NotifyAtomCountChange(int delta)
+{
+	waken_up_particle_count += delta;
 }

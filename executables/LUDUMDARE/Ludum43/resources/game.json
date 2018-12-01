@@ -13,9 +13,10 @@
 	"dash_cooldown": 0.25,
   "dash_speed_multiplier": 2.0,
 
-  "player_attraction_minradius": 50.0,
+  "player_attraction_minradius": 200.0,
   "player_attraction_maxradius": 800.0,
   "player_attraction_force": 500.0,
   "enemy_attraction_radius": 200.0,
-  "particle_max_velocity": 1000.0
+  "particle_max_velocity": 1000.0,
+  "particle_slowing_factor": 0.5
 }

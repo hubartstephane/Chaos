@@ -114,6 +114,7 @@ public:
 		float player_attraction_minradius;
 		float player_attraction_maxradius;
 		float player_attraction_force;
+		float particle_slowing_factor;
 		float enemy_attraction_radius;
 		float particle_max_velocity;
 

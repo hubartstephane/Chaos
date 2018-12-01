@@ -146,6 +146,8 @@ protected:
 	/** the tiled map manager */
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
+public:
+
 	/** game settings */
 	int initial_life = 3;
 	float cooldown = 0.1f;
@@ -156,7 +158,10 @@ protected:
 
 	float player_attraction_minradius = 50.0f;
 	float player_attraction_maxradius = 200.0f;
-	float enemy_attraction = 200.0f;
+	float player_attraction_force     = 20.0f;
+	float enemy_attraction_radius = 200.0f;
+
+	float particle_max_velocity = 20.0f;
 
 	/** current game values */
 	int current_life     = 3;
@@ -166,7 +171,6 @@ protected:
 	float current_dash_time = 0.0f;
 	glm::vec2 current_dash_direction = glm::vec2(0.0f, 0.0f);
 
-	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
+
 };
 

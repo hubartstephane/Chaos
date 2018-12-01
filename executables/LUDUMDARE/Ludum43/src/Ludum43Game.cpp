@@ -226,7 +226,10 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_minradius);
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_maxradius);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction);
+	DEATHGAME_JSON_ATTRIBUTE(player_attraction_force);	
+	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_radius);
+	DEATHGAME_JSON_ATTRIBUTE(particle_max_velocity);
+
 
 	return true;
 }

@@ -22,6 +22,8 @@ class ParticleBase : public death::TiledMap::TileParticle
 {
 public:
 
+	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+
 
 };
 
@@ -73,10 +75,14 @@ public:
 
 	class UpdateEnemyData
 	{
+	public:
+
+		ParticlePlayer player_particle;
+		float max_particle_velocity;
 	
 	};
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, UpdateEnemyData ExtraData) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, UpdateEnemyData update_data) const;
 
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
@@ -102,10 +108,19 @@ public:
 
 	class UpdateAtomData
 	{
+	public:
 
+		ParticlePlayer player_particle;
+		float player_attraction_minradius;
+		float player_attraction_maxradius;
+		float player_attraction_force;
+		float enemy_attraction_radius;
+		float particle_max_velocity;
+
+		std::vector<ParticleEnemy> enemy_particles;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, UpdateAtomData ExtraData) const;
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, UpdateAtomData update_data) const;
 
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 

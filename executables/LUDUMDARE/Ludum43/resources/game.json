@@ -14,6 +14,8 @@
   "dash_speed_multiplier": 2.0,
 
   "player_attraction_minradius": 50.0,
-  "player_attraction_maxradius": 50.0,
-  "enemy_attraction": 200.0
+  "player_attraction_maxradius": 500.0,
+  "player_attraction_force": 500.0,
+  "enemy_attraction_radius": 200.0,
+  "particle_max_velocity": 500.0
 }

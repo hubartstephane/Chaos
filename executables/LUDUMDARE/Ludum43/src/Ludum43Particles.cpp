@@ -143,6 +143,19 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	result.enemy_attraction_radius = game->enemy_attraction_radius;
 	result.particle_max_velocity = game->particle_max_velocity;
 
+
+	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(game->GetCurrentLevelInstance());
+	if (level_instance != nullptr)
+	{
+		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance("Enemies");
+		if (layer_instance)
+		{
+		
+		
+			layer_instance = layer_instance;
+		}	
+	}
+
 	return result;
 }
 

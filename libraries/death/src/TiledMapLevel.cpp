@@ -241,6 +241,7 @@ namespace death
 
 		bool GeometricObject::Initialize()
 		{
+			name = geometric_object->name;
 			return true;
 		}
 			
@@ -753,7 +754,7 @@ namespace death
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
 		result_type constness * LayerInstance::func_name(char const * name) constness\
 		{\
-			if (name == nullptr && player_starts.size() > 0)\
+			if (name == nullptr && member_vector.size() > 0)\
 				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, name);\
 		}
@@ -927,6 +928,19 @@ namespace death
 
 #undef DEATH_EMPTY_TOKEN
 #undef DEATH_FIND_OBJECT
+
+		LayerInstance * LevelInstance::FindLayerInstance(char const * name)
+		{
+			if (name == nullptr && layer_instances.size() > 0)
+				return layer_instances[0].get();
+				return NamedObject::FindNamedObject(layer_instances, name);
+		}
+		LayerInstance const * LevelInstance::FindLayerInstance(char const * name) const
+		{
+			if (name == nullptr && layer_instances.size() > 0)
+				return layer_instances[0].get();
+			return NamedObject::FindNamedObject(layer_instances, name);
+		}
 
 		void LevelInstance::OnLevelEnded()
 		{

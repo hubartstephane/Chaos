@@ -438,6 +438,10 @@ namespace death
 			/** get the game */
 			Game const * GetGame() const { return game; }
 
+			/** find the layer instance from its name */
+			LayerInstance * FindLayerInstance(char const * name);
+			/** find the layer instance from its name */
+			LayerInstance const * FindLayerInstance(char const * name) const;
 			/** find the camera from its name */
 			CameraObject * FindCamera(char const * name);
 			/** find the camera from its name */

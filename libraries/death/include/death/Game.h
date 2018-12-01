@@ -204,6 +204,21 @@ namespace death
 		/** set the player box */
 		bool SetPlayerBox(chaos::box2 const & box);
 
+		/** get currently played level */
+		GameLevel * GetCurrentLevel();
+		/** get currently played level */
+		GameLevel const * GetCurrentLevel() const;
+
+		/** get currently played level */
+		GameLevelInstance * GetCurrentLevelInstance();
+		/** get currently played level */
+		GameLevelInstance const * GetCurrentLevelInstance() const;
+
+		/** get currently played level */
+		GameLevel * GetLevel(int level_index);
+		/** get currently played level */
+		GameLevel const * GetLevel(int level_index) const;
+
 	protected:
 
 		/** the tick method */
@@ -402,21 +417,6 @@ namespace death
 		virtual PlayingHUD * DoCreatePlayingHUD();
 		/** user defined method to create the gameover HUD */
 		virtual GameOverHUD * DoCreateGameOverHUD();
-
-		/** get currently played level */
-		GameLevel * GetCurrentLevel();
-		/** get currently played level */
-		GameLevel const * GetCurrentLevel() const;
-
-		/** get currently played level */
-		GameLevelInstance * GetCurrentLevelInstance();
-		/** get currently played level */
-		GameLevelInstance const * GetCurrentLevelInstance() const;
-
-		/** get currently played level */
-		GameLevel * GetLevel(int level_index);
-		/** get currently played level */
-		GameLevel const * GetLevel(int level_index) const;
 
 		/** change the current level */
 		bool SetCurrentLevel(GameLevel * new_level);

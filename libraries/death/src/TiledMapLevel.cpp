@@ -273,12 +273,15 @@ namespace death
 			return true;
 		}
 
-		chaos::box2 TriggerSurfaceObject::GetBoundingBox() const
+		chaos::box2 TriggerSurfaceObject::GetBoundingBox(bool world_system) const
 		{
 			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
 			if (surface == nullptr)
 				return chaos::box2();
-			return surface->GetBoundingBox();
+			chaos::box2 result = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
+			if (world_system)
+				result.position += layer_instance->GetLayerOffset();
+			return result;
 		}
 
 		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
@@ -362,6 +365,14 @@ namespace death
 			return level_instance;
 		}
 
+		chaos::box2 LayerInstance::GetBoundingBox(bool world_system) const
+		{
+			chaos::box2 result = bounding_box; // apply our own offset that can have changed during game lifetime
+			if (world_system)
+				result.position += offset;
+			return result;
+		}
+
 		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
 		{
 			if (material_name != nullptr && material_name[0] != 0) // unamed material
@@ -404,9 +415,11 @@ namespace death
 			player_collision_enabled = in_layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", true);
 			trigger_surfaces_enabled = in_layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", true);
 
-			// empty the bounding box
-			bounding_box = chaos::box2();
+			// copy the offset
+			offset = in_layer->offset;
 
+			// reset the bounding box
+			bounding_box = chaos::box2();
 			// special initialization
 			chaos::TiledMap::ImageLayer * image_layer = in_layer->GetImageLayer();
 			if (image_layer != nullptr)
@@ -433,9 +446,9 @@ namespace death
 		{
 			Level * level = GetTypedLevel();
 
-			// search the explicit bounding box
+			// search the bounding box (explicit or not)
 			chaos::box2 box;
-			bool has_explicit_bounding_box = chaos::TiledMapTools::FindExplicitWorldBounds(object_layer, box);
+			chaos::box2 explicit_bounding_box;
 
 			// the particle generator
 			LayerInstanceParticlePopulator particle_populator;
@@ -450,6 +463,18 @@ namespace death
 				if (geometric_object == nullptr)
 					continue;
 				
+				// explicit world bounding box
+				if (level_instance->explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsWorldBoundingBox(geometric_object))
+				{
+					 chaos::TiledMapTools::GetExplicitWorldBoundingBox(geometric_object, level_instance->explicit_bounding_box, true); // in world coordinate				
+
+				}
+				// explicit layer bounding box
+				if (explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
+				{
+					chaos::TiledMapTools::GetExplicitLayerBoundingBox(geometric_object, explicit_bounding_box, false); // in layer coordinates				
+				}
+
 				// player start ?
 				if (chaos::TiledMapTools::IsPlayerStart(geometric_object))
 				{
@@ -503,7 +528,7 @@ namespace death
 						if (tile_info.tiledata == nullptr)
 							continue;
 						// create a simple particle
-						chaos::box2 particle_box = tile->GetBoundingBox();
+						chaos::box2 particle_box = tile->GetBoundingBox(false);
 						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip);
 						continue;
 					}					
@@ -512,10 +537,11 @@ namespace death
 			// final flush
 			particle_populator.FlushParticles();
 			// update the bounding box
-			if (!has_explicit_bounding_box)
-				bounding_box = box | particle_populator.GetBoundingBox();
+			if (!explicit_bounding_box.IsEmpty())
+				bounding_box = explicit_bounding_box;
 			else
-				bounding_box = box;
+				bounding_box = box | particle_populator.GetBoundingBox();
+				
 			return true;
 		}
 
@@ -563,7 +589,7 @@ namespace death
 					continue;
 				// create a simple particle
 				glm::ivec2  tile_coord   = tile_layer->GetTileCoordinate(i);
-				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);
+				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
 
 				bool horizontal_flip = false;
 				bool vertical_flip = false;
@@ -610,7 +636,7 @@ namespace death
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
 
-				chaos::box2 trigger_box = trigger->GetBoundingBox();
+				chaos::box2 trigger_box = trigger->GetBoundingBox(true);
 
 				if (chaos::Collide(player_particle->bounding_box, trigger_box))
 					if (!trigger->OnPlayerCollision(delta_time, player_particle))
@@ -663,7 +689,8 @@ namespace death
 			if (particle_layer == nullptr)
 				return result;
 
-			chaos::box2 layer_box  = GetBoundingBox();
+			// camera is expressed in world, so is for layer
+			chaos::box2 layer_box  = GetBoundingBox(true);
 			chaos::box2 camera_box = GetGame()->GetCameraBox();
 			chaos::box2 initial_camera_box = GetGame()->GetInitialCameraBox();
 
@@ -692,21 +719,30 @@ namespace death
 			// compute repetitions
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);
 
+			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
+			glm::ivec2 start_instance = scissor_result.start_instance;
+			glm::ivec2 last_instance  = scissor_result.last_instance;			
+			if (this == level_instance->reference_layer)
+			{
+				start_instance = glm::ivec2(0, 0);
+				last_instance  = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
+			}
+
 			// new provider for camera override (will be fullfill only if necessary)
 			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 			
 			// draw instances 
 			int draw_instance_count = 0;
-			for (int x = scissor_result.start_instance.x; x < scissor_result.last_instance.x; ++x)
+			for (int x = start_instance.x; x < last_instance.x; ++x)
 			{
-				for (int y = scissor_result.start_instance.y; y < scissor_result.last_instance.y; ++y)
+				for (int y = start_instance.y; y < last_instance.y; ++y)
 				{
 					// override the camera box only if there is at least one draw call
 					if (draw_instance_count++ == 0)
 						main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
 					// new Provider to apply the offset for this 'instance'
 					chaos::GPUProgramProviderChain instance_uniform_provider(main_uniform_provider);
-					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)));
+					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)) + offset);
 					// draw call
 					result += particle_layer->Display(&instance_uniform_provider, render_params);
 				}
@@ -792,9 +828,9 @@ namespace death
 			// display particle manager
 			if (particle_manager != nullptr)
 				result += particle_manager->Display(uniform_provider, render_params);
-			// draw the layer instances
+			// draw the layer instances0
 			size_t count = layer_instances.size();
-			for (size_t i = 0; i < count; ++i)
+			for (size_t i = 0; i < count ; ++i)
 				result += layer_instances[i]->Display(uniform_provider, render_params);
 			
 			return result;
@@ -812,8 +848,6 @@ namespace death
 			// create a particle manager
 			if (!CreateParticleManager(in_game))
 				return false;
-			// compute the world bounding box
-			ComputeBoundingBox();
 
  			return true;
 		}
@@ -849,12 +883,16 @@ namespace death
 			return true;
 		}
 
-		void LevelInstance::ComputeBoundingBox()
+		chaos::box2 LevelInstance::GetBoundingBox() const
 		{
-			bounding_box = chaos::box2();
+			if (!explicit_bounding_box.IsEmpty())
+				return explicit_bounding_box;
+
+			chaos::box2 result;
 			size_t count = layer_instances.size();
 			for (size_t i = 0 ; i < count ; ++i)
-				bounding_box = bounding_box | layer_instances[i]->GetBoundingBox();
+				result = result | layer_instances[i]->GetBoundingBox(true); // expressed in world system the bounding boxes
+			return result;
 		}
 
 		chaos::GPURenderMaterial * LevelInstance::GetDefaultRenderMaterial()
@@ -926,7 +964,7 @@ namespace death
 			if (camera_surface == nullptr)
 				return;
 
-			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(), 16.0f / 9.0f, true);
+			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(true), 16.0f / 9.0f, true);
 			game->SetCameraBox(camera_box);
 			game->SetInitialCameraBox(camera_box);
 		}
@@ -978,7 +1016,7 @@ namespace death
 
 			chaos::TiledMap::GeometricObjectSurface const * object_surface = player_start->GetGeometricObject()->GetObjectSurface();
 			if (object_surface != nullptr)
-				player_bounding_box = object_surface->GetBoundingBox();
+				player_bounding_box = object_surface->GetBoundingBox(false);
 
 			particle_populator.AddParticle(bitmap_name->c_str(), player_bounding_box);
 			particle_populator.FlushParticles();

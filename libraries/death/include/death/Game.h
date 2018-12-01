@@ -429,9 +429,9 @@ namespace death
 		/** the window in GLFW library */
 		GLFWwindow * glfw_window = nullptr;
 
-		/** the camera */
+		/** the camera (expressed in world system ?) */
 		mutable chaos::box2 camera_box;
-		/** the camera and last started level */
+		/** the camera and last started level (expressed in world system ?)*/
 		chaos::box2 initial_camera_box;
 		/** the safe zone of the camera */
 		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);

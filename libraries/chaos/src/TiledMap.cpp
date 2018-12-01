@@ -457,15 +457,23 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		//	GeometricObjectPolygon   : position = coordinates of very first point
 		//	GeometricObjectPolyline  : other points are given relative to the position
 
-		box2 GeometricObjectSurface::GetBoundingBox() const
+		box2 GeometricObjectSurface::GetBoundingBox(bool world_system) const
 		{
 			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = glm::vec2(position.x + size.x, position.y - size.y);
-			return box2(std::make_pair(p1, p2)); 
+
+			box2 result = box2(std::make_pair(p1, p2));
+			if (world_system)
+			{
+				LayerBase const * parent_layer = dynamic_cast<LayerBase const *>(owner);
+				if (parent_layer != nullptr)
+					result.position += parent_layer->offset;
+			}
+			return result; 
 		}
 
-		box2 GeometricObjectTile::GetBoundingBox() const
+		box2 GeometricObjectTile::GetBoundingBox(bool world_system) const
 		{
 			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = position;
@@ -475,7 +483,15 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			//glm::vec2 p2 = position;
 			//p2.x += size.x;
 			//p2.y -= size.y; // axis Y is DOWN !!!
-			return box2(std::make_pair(p1, p2)); 
+
+			box2 result = box2(std::make_pair(p1, p2));
+			if (world_system)
+			{
+				LayerBase const * parent_layer = dynamic_cast<LayerBase const *>(owner);
+				if (parent_layer != nullptr)
+					result.position += parent_layer->offset;			
+			}
+			return result; 
 		}
 
 
@@ -736,7 +752,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		// TileLayer methods
 		// ==========================================
 
-		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size) const
+		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, bool world_system) const
 		{
 			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = glm::vec2(
@@ -745,21 +761,10 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			glm::vec2 p2 = p1;
 			p2.x += image_size.x;
 			p2.y += image_size.y;
-			return box2(std::make_pair(p1, p2));
-
-#if 0
-			glm::vec2 bottomleft = 
-				chaos::GLMTools::RecastVector<glm::vec2>(tile_coord * tile_size) +
-				glm::vec2(0.0f, (float)tile_size.y);
-			glm::vec2 topright = bottomleft;
-			topright.x += image_size.x;
-			topright.y -= image_size.y;
-
-
-			return box2(std::make_pair(bottomleft, topright));
-#endif
-
-
+			box2 result = box2(std::make_pair(p1, p2));
+			if (world_system)
+				result.position += offset;
+			return result; 
 		}
 
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
@@ -1112,8 +1117,10 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 		bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)		
 		{
 			// get all layers
-			tinyxml2::XMLElement const * e = element->FirstChildElement();
-			for (; e != nullptr; e = e->NextSiblingElement())
+			// XXX : the very first encoutered layer, is the one that should be rendered last.
+			//       that why we proceed in reverse order
+			tinyxml2::XMLElement const * e = element->LastChildElement();
+			for (; e != nullptr; e = e->PreviousSiblingElement())
 			{
 				char const * child_name = e->Name();
 				if (strcmp(child_name, "imagelayer") == 0)

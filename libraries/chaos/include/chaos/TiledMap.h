@@ -406,7 +406,7 @@ namespace chaos
 			virtual class GeometricObjectSurface const * GetObjectSurface() const override { return this; }
 
 			/** get the bounding box */
-			virtual box2 GetBoundingBox() const;
+			virtual box2 GetBoundingBox(bool world_system) const;
 
 		protected:
 
@@ -587,7 +587,7 @@ namespace chaos
 			virtual GeometricObjectTile * GetObjectTile() override { return this; }
 			virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
 
-			virtual box2 GetBoundingBox() const override;
+			virtual box2 GetBoundingBox(bool world_system) const override;
 
 		protected:
 
@@ -816,7 +816,7 @@ namespace chaos
 		public:
 
 			/** get the bounding box of a tile */
-			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size) const;
+			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, bool world_system) const;
 
 			/** get the number of tiles with something inside */
 			size_t GetNonEmptyTileCount() const;

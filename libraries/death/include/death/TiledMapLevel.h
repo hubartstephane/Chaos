@@ -176,7 +176,7 @@ namespace death
 			int GetTriggerID() const { return trigger_id; }
 
 			/** get the object bounding box */
-			chaos::box2 GetBoundingBox() const;
+			chaos::box2 GetBoundingBox(bool world_system) const;
 
 		protected:
 
@@ -310,7 +310,7 @@ namespace death
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
 
 			/** get the bounding box for the level */
-			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+			chaos::box2 GetBoundingBox(bool world_system) const;
 
 			/** create a particle allocation for the layer */
 			chaos::ParticleAllocation * CreateParticleAllocation();
@@ -329,6 +329,11 @@ namespace death
 			bool AreTileCollisionsEnabled() const { return tile_collisions_enabled; }
 			/** change whether collisions with tiles are enabled on that layer */
 			void SetTileCollisionsEnabled(bool in_tile_collisions_enabled) { tile_collisions_enabled = in_tile_collisions_enabled; }
+
+			/** get the layer offset */
+			glm::vec2 GetLayerOffset() const { return offset; }
+			/** set the layer offset */
+			void SetLayerOffset(glm::vec2 const & in_offset){ offset = in_offset; }
 
 		protected:
 
@@ -391,6 +396,9 @@ namespace death
 			bool trigger_surfaces_enabled = true;
 			/** whether collisions with tiles are enabled on that layer */
 			bool tile_collisions_enabled = true;
+
+			/** the current offset */
+			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 		};
 
 		// =====================================
@@ -431,8 +439,8 @@ namespace death
 			/** find the trigger surface from its name */
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
 
-			/** get the bounding box for the level */
-			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
+			/** get the bounding box for the level (in worls system obviously) */
+			virtual chaos::box2 GetBoundingBox() const override;
 
 			/** get the reference displacement ratio (displacement ratio is a way to make so layer move faster than others) */
 			glm::vec2 GetReferenceDisplacementRatio() const { return reference_displacement_ratio; }
@@ -465,8 +473,6 @@ namespace death
 			virtual bool CreateParticleManager(Game * in_game);
 			/** create the layers instances */
 			virtual bool CreateLayerInstances(Game * in_game);
-			/** compute the bounding box of the level */
-			virtual void ComputeBoundingBox();
 
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
@@ -477,6 +483,9 @@ namespace death
 			Game * game = nullptr;
 			/** the displacement ratio of reference */
 			glm::vec2 reference_displacement_ratio = glm::vec2(1.0f, 1.0f);
+
+			/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
+			chaos::box2 explicit_bounding_box;
 
 			/** the layer of reference for displacement */
 			boost::intrusive_ptr<TiledMap::LayerInstance> reference_layer;

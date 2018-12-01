@@ -123,14 +123,17 @@ namespace chaos
 		return false;
 	}
 
-	bool TiledMapTools::IsWorldOrigin(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsWorldBoundingBox(TiledMap::GeometricObject const * object_geometric)
 	{
-		return HasFlag(object_geometric, "world_origin", "world_origin", "WORLD_ORIGIN");
+		return HasFlag(object_geometric, "world_bounding_box", "world_bounding_box", "WORLD_BOUNDING_BOX");
 	}
 
-	bool TiledMapTools::IsWorldBounds(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsLayerBoundingBox(TiledMap::GeometricObject const * object_geometric)
 	{
-		return HasFlag(object_geometric, "world_bounds", "world_bounds", "WORLD_BOUNDS");
+
+		// shuxxx
+		//return HasFlag(object_geometric, "world_bounding_box", "world_bounding_box", "WORLD_BOUNDING_BOX");
+		return HasFlag(object_geometric, "layer_bounding_box", "layer_bounding_box", "LAYER_BOUNDING_BOX");
 	}
 
 	bool TiledMapTools::IsTriggerSurface(TiledMap::GeometricObject const * object_geometric)
@@ -148,89 +151,32 @@ namespace chaos
 		return HasFlag(object_geometric, "camera", "camera", "CAMERA");
 	}
 
-	bool TiledMapTools::GetExplicitWorldOrigin(TiledMap::GeometricObject const * object_geometric, glm::vec2 & result)
-	{
-		if (object_geometric == nullptr)
-			return false;
-		if (IsWorldOrigin(object_geometric))
-		{
-			result = object_geometric->position;
-			return true;
-		}
-		return false;
-	}
-
-	bool TiledMapTools::FindExplicitWorldOrigin(TiledMap::ObjectLayer const * object_layer, glm::vec2 & result, bool absolute_system)
-	{
-		if (object_layer == nullptr)
-			return false;
-		for (size_t i = 0; i < object_layer->geometric_objects.size(); ++i)
-		{
-			TiledMap::GeometricObject const * object = object_layer->geometric_objects[i].get();
-			if (GetExplicitWorldOrigin(object, result))
-			{
-				if (absolute_system)
-					result += object_layer->offset;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool TiledMapTools::FindExplicitWorldOrigin(TiledMap::Map const * tiled_map, glm::vec2 & result)
-	{
-		if (tiled_map == nullptr)
-			return false;
-		for (size_t i = 0; i < tiled_map->object_layers.size(); ++i)
-		{
-			TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
-			if (FindExplicitWorldOrigin(object_layer, result, true))
-				return true;
-		}
-		return false;
-	}
-
-	bool TiledMapTools::GetExplicitWorldBounds(TiledMap::GeometricObject const * object_geometric, box2 & result)  // expressed in layer coordinates
+	bool TiledMapTools::GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system)
 	{
 		if (object_geometric == nullptr)
 			return false;
 		TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
 		if (object_surface == nullptr)
 			return false;
-		if (TiledMapTools::IsWorldBounds(object_surface))
+		if (TiledMapTools::IsWorldBoundingBox(object_surface))
 		{
-			result = object_surface->GetBoundingBox();
+			result = object_surface->GetBoundingBox(world_system);
 			return true;
 		}
 		return false;
 	}
 
-	bool TiledMapTools::FindExplicitWorldBounds(TiledMap::ObjectLayer const * object_layer, box2 & result, bool absolute_system)
+	bool TiledMapTools::GetExplicitLayerBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system) 
 	{
-		if (object_layer == nullptr)
+		if (object_geometric == nullptr)
 			return false;
-		for (size_t i = 0; i < object_layer->geometric_objects.size(); ++i)
-		{
-			TiledMap::GeometricObject const * object = object_layer->geometric_objects[i].get();
-			if (GetExplicitWorldBounds(object, result))
-			{
-				if (absolute_system)
-					result.position += object_layer->offset;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool TiledMapTools::FindExplicitWorldBounds(TiledMap::Map const * tiled_map, box2 & result) // expressed in map coordinates
-	{
-		if (tiled_map == nullptr)
+		TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
+		if (object_surface == nullptr)
 			return false;
-		for (size_t i = 0; i < tiled_map->object_layers.size(); ++i)
+		if (TiledMapTools::IsLayerBoundingBox(object_surface))
 		{
-			TiledMap::ObjectLayer const * object_layer = tiled_map->object_layers[i].get();
-			if (FindExplicitWorldBounds(object_layer, result, true))
-				return true;
+			result = object_surface->GetBoundingBox(world_system);
+			return true;
 		}
 		return false;
 	}

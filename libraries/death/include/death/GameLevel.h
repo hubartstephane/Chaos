@@ -57,7 +57,7 @@ namespace death
 		Game const * GetGame() const { return game; }
 
 		/** get the world box */
-		chaos::box2 GetBoundingBox() const { return bounding_box; }
+		virtual chaos::box2 GetBoundingBox() const { return chaos::box2(); }
 
 		/** some callbacks */
 		virtual void OnLevelEnded();
@@ -78,8 +78,6 @@ namespace death
 
 		/** a pointer on the level that generated this */
 		GameLevel * level = nullptr;
-		/** the world box */
-		chaos::box2 bounding_box;
 		/** pointer on the game */
 		Game * game = nullptr;
 	};

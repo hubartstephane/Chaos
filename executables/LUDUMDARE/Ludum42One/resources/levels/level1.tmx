@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="72">
  <properties>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart2"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
+ <objectgroup name="repeated">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="65" name="obj5" gid="6" x="72" y="2264" width="288" height="240"/>
+  <object id="69" name="obj2" gid="10" x="1654" y="2794" width="324" height="436"/>
+ </objectgroup>
  <objectgroup name="single object">
-  <object id="71" gid="9" x="6680" y="11152" width="2440" height="2904"/>
+  <object id="71" name="single planet" gid="9" x="6680" y="11152" width="2440" height="2904"/>
  </objectgroup>
  <layer name="objects" width="100" height="100">
   <properties>
@@ -117,21 +126,11 @@
 </data>
  </layer>
  <objectgroup name="Calque d'objets 1">
-  <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000">
+  <object id="2" name="grosse planete" gid="1073741832" x="2840" y="6576" width="10000" height="10000"/>
+  <object id="18" name="world_bb" x="-1000" y="-1000" width="16720" height="14784">
    <properties>
-    <property name="WORLD_BOUNDS" type="int" value="0"/>
+    <property name="WORLD_BOUNDING_BOX" type="bool" value="true"/>
    </properties>
-  </object>
-  <object id="18" name="world_bounds_c" x="-1000" y="-1000" width="16720" height="14784">
-   <properties>
-    <property name="WORLD_BOUNDS" type="int" value="1"/>
-   </properties>
-  </object>
-  <object id="35" name="world_origin_c" x="5760" y="3712">
-   <properties>
-    <property name="WORLD_ORIGIN" type="int" value="1"/>
-   </properties>
-   <point/>
   </object>
   <object id="39" name="ThePlayerStart2" x="824" y="560" width="384" height="364">
    <properties>
@@ -173,7 +172,7 @@
    </properties>
   </object>
  </objectgroup>
- <layer name="planets" width="100" height="100" offsetx="5.5" offsety="0">
+ <layer name="planets" width="100" height="100">
   <properties>
    <property name="PARTICLE_LAYER" value="PLANETS"/>
   </properties>
@@ -280,14 +279,4 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="repeated">
-  <properties>
-   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
-   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0"/>
-   <property name="WRAP_X" type="bool" value="true"/>
-   <property name="WRAP_Y" type="bool" value="true"/>
-  </properties>
-  <object id="65" name="obj5" gid="6" x="72" y="2264" width="288" height="240"/>
-  <object id="69" name="obj2" gid="10" x="1654" y="2794" width="324" height="436"/>
- </objectgroup>
 </map>

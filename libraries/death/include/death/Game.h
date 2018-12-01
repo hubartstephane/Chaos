@@ -410,13 +410,13 @@ namespace death
 		void DestroyHUD();
 
 		/** user defined method to create the pause HUD */
-		virtual PauseMenuHUD * DoCreatePauseMenuHUD();
+		virtual GameHUD * DoCreatePauseMenuHUD();
 		/** user defined method to create the main menu HUD */
-		virtual MainMenuHUD * DoCreateMainMenuHUD();
+		virtual GameHUD * DoCreateMainMenuHUD();
 		/** user defined method to create the game HUD */
-		virtual PlayingHUD * DoCreatePlayingHUD();
+		virtual GameHUD * DoCreatePlayingHUD();
 		/** user defined method to create the gameover HUD */
-		virtual GameOverHUD * DoCreateGameOverHUD();
+		virtual GameHUD * DoCreateGameOverHUD();
 
 		/** change the current level */
 		bool SetCurrentLevel(GameLevel * new_level);

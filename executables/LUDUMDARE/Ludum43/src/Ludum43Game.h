@@ -147,7 +147,7 @@ protected:
 
 	void ConditionnalStartDash();
 
-	virtual death::PlayingHUD * DoCreatePlayingHUD() override;
+	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
 protected:
 

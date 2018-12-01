@@ -78,7 +78,7 @@ public:
 protected:
 
 	/** override */
-	death::PlayingHUD * DoCreatePlayingHUD() override;
+	death::GameHUD * DoCreatePlayingHUD() override;
 
 	/** creating all object in the game */
 	void CreateAllGameObjects(int level);

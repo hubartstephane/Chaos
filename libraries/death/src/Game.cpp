@@ -1193,7 +1193,7 @@ namespace death
 		}\
 		return true;\
 	}\
-	classname * Game::DoCreate##classname()\
+	GameHUD * Game::DoCreate##classname()\
 	{\
 		return new classname(this);\
 	}

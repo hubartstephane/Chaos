@@ -20,7 +20,7 @@ LudumGame::LudumGame()
 	game_name = "AsciiPaouf 2";
 }
 
-death::PlayingHUD * LudumGame::DoCreatePlayingHUD()
+death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);
 }

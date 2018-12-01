@@ -225,7 +225,7 @@ void LudumGame::CreateAllGameObjects(int level)
 
 }
 
-death::PlayingHUD * LudumGame::DoCreatePlayingHUD()
+death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);
 }

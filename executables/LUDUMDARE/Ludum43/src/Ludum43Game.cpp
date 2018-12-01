@@ -1,6 +1,7 @@
 #include "Ludum43Game.h"
 #include "Ludum43Particles.h"
 #include "Ludum43Level.h"
+#include "Ludum43HUD.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -222,6 +223,11 @@ void LudumGame::RestrictPlayerToWorld()
 void LudumGame::CreateAllGameObjects(int level)
 {
 
+}
+
+death::PlayingHUD * LudumGame::DoCreatePlayingHUD()
+{
+	return new LudumPlayingHUD(this);
 }
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()

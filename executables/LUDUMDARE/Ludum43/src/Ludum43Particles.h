@@ -99,6 +99,11 @@ public:
 
 class ParticleAtom : public ParticleBase
 {
+public:
+
+	ParticleAtom();
+
+	float particle_radius_factor = 1.0f;
 
 };
 

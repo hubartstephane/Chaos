@@ -159,6 +159,7 @@ public:
 	float player_attraction_minradius = 50.0f;
 	float player_attraction_maxradius = 200.0f;
 	float particle_slowing_factor     = 0.5f;
+	float particle_radius_rand_factor = 1.2f;
 	float tangent_force               = 500000.0f;
 	float player_attraction_force     = 20.0f;
 	float enemy_attraction_radius = 200.0f;

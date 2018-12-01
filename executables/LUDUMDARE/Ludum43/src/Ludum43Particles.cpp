@@ -60,6 +60,11 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 // ParticleAtomTrait
 // ===========================================================================
 
+ParticleAtom::ParticleAtom()
+{
+	particle_radius_factor = chaos::MathTools::RandFloat(1.0f, 2.0f);
+}
+
 size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
@@ -71,8 +76,8 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_velocity = particle->velocity;
 
-	float player_attraction_maxradius = update_data.player_attraction_maxradius;
-	float player_attraction_minradius = update_data.player_attraction_minradius;
+	float player_attraction_maxradius = particle->particle_radius_factor * update_data.player_attraction_maxradius;
+	float player_attraction_minradius = particle->particle_radius_factor * update_data.player_attraction_minradius;
 	float player_attraction_force     = update_data.player_attraction_force;
 	float particle_max_velocity       = update_data.particle_max_velocity;
 

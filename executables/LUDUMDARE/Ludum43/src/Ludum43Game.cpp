@@ -18,7 +18,7 @@
 
 LudumGame::LudumGame()
 {		
-	game_name = "Escape Paouf 4";
+	game_name = "Quantic Paouf IV";
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)

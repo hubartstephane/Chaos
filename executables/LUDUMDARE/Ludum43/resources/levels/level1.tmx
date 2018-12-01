@@ -260,7 +260,7 @@
   <object id="190" gid="16" x="1570" y="3418" width="28" height="21"/>
   <object id="191" gid="16" x="2178" y="3386" width="28" height="21"/>
  </objectgroup>
- <objectgroup name="Particles">
+ <objectgroup name="Atoms">
   <object id="373" gid="19" x="359" y="329" width="50" height="50"/>
   <object id="374" gid="19" x="351" y="753" width="50" height="50"/>
   <object id="375" gid="19" x="951" y="1441" width="50" height="50"/>
@@ -269,7 +269,7 @@
   <object id="378" gid="19" x="391" y="1529" width="50" height="50"/>
   <object id="379" gid="19" x="1663" y="1057" width="50" height="50"/>
  </objectgroup>
- <objectgroup name="Ennemies">
+ <objectgroup name="Enemies">
   <object id="363" gid="18" x="3080" y="1344" width="400" height="400"/>
   <object id="364" gid="18" x="1736" y="2944" width="400" height="400"/>
   <object id="365" gid="18" x="736" y="4624" width="400" height="400"/>

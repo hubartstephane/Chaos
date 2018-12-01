@@ -54,25 +54,23 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 	if (layer_name == "PlayerAndCamera")
 	{
-		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>);	
+		ParticlePlayerTrait trait;
+		trait.game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
 	}
 	if (layer_name == "Enemies")
 	{
+		ParticleEnemyTrait trait;
+		trait.game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
 
 	}
-	if (layer_name == "Particles")
+	if (layer_name == "Atoms")
 	{
-
+		ParticleAtomTrait trait;
+		trait.game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
 	}
-
-
-	//return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<PlayerParticleTrait>);
-
-	//return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<EnemyParticleTrait>);
-
-	//return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleParticleTrait>);
-
-
 
 	return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
 }

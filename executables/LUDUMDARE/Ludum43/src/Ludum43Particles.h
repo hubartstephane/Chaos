@@ -48,3 +48,50 @@ public:
 
 	class LudumGame * game = nullptr;
 };
+
+
+
+
+// ===========================================================================
+// ParticleEnemy
+// ===========================================================================
+
+class ParticleEnemy : public ParticleBase
+{
+
+};
+
+class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation) const;
+
+	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+public:
+
+	class LudumGame * game = nullptr;
+};
+
+// ===========================================================================
+// ParticleAtom
+// ===========================================================================
+
+class ParticleAtom : public ParticleBase
+{
+
+};
+
+class ParticleAtomTrait : public chaos::ParticleLayerTrait<ParticleAtom, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation) const;
+
+	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+public:
+
+	class LudumGame * game = nullptr;
+};

@@ -214,11 +214,9 @@ bool LudumGame::DeclareParticleClasses()
 	if (!Game::DeclareParticleClasses())
 		return false;
 
-	chaos::ClassTools::DeclareClass<ParticlePlayer, chaos::ParticleDefault::Particle>("ParticlePlayer");
-
-	//chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
-//	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
-	//chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleObjectAtlas>("ParticlePlayer");
+	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleBase>("ParticlePlayer");
+	chaos::ClassTools::DeclareClass<ParticleEnemy, ParticleBase>("ParticleEnemy");
+	chaos::ClassTools::DeclareClass<ParticleAtom, ParticleBase>("ParticleAtom");
 	return true;
 }
 

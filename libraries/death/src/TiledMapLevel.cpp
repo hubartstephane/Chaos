@@ -402,9 +402,9 @@ namespace death
 			wrap_y = layer->FindPropertyBool("WRAP_Y", false);
 			material_name = layer->FindPropertyString("MATERIAL", "");
 
-			trigger_surfaces_enabled = layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", true);
-			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", true);
-			trigger_surfaces_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", true);
+			trigger_surfaces_enabled = layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", false);
+			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
+			trigger_surfaces_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
 
 			// copy the offset
 			offset = layer->offset;

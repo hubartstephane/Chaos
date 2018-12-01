@@ -1,0 +1,9 @@
+{
+  "program": "background_program",
+
+  "textures": {
+    
+    "background": { "name": "background" }
+
+  }
+}

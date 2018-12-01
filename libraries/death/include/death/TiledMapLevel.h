@@ -220,6 +220,9 @@ namespace death
 			/** create a level instance for that level user specified function */
 			virtual GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
 
+
+			/** create a typed object specializable method */
+			virtual GeometricObject * DoCreateTypedObject(LayerInstance * in_layer_instance);
 			/** create a TriggerSurface specializable method */
 			virtual TriggerSurfaceObject * DoCreateTriggerSurface(LayerInstance * in_layer_instance);
 			/** create a Camera specializable method */
@@ -229,6 +232,8 @@ namespace death
 			/** create a PlayerStartObject specializable method */
 			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance);
 
+			/** create a typed object 'entry point' */
+			GeometricObject * CreateTypedObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a TriggerSurface 'entry point' */
 			TriggerSurfaceObject * CreateTriggerSurface(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a camera 'entry point' */
@@ -309,6 +314,11 @@ namespace death
 			/** find the trigger surface from its name */
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
 
+			/** find the typed object from its name */
+			GeometricObject * FindTypedObject(char const * name);
+			/** find the typed object surface from its name */
+			GeometricObject const * FindTypedObject(char const * name) const;
+
 			/** get the bounding box for the level */
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
@@ -386,6 +396,8 @@ namespace death
 			std::vector<boost::intrusive_ptr<CameraObject>> cameras;
 			/** the trigger surface */
 			std::vector<boost::intrusive_ptr<TriggerSurfaceObject>> trigger_surfaces;
+			/** the geometric objects */
+			std::vector<boost::intrusive_ptr<GeometricObject>> typed_objects;
 
 			/** the bounding box of the layer */
 			chaos::box2 bounding_box;
@@ -438,6 +450,10 @@ namespace death
 			TriggerSurfaceObject * FindTriggerSurface(char const * name);
 			/** find the trigger surface from its name */
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
+			/** find the typed object from its name */
+			GeometricObject * FindTypedObject(char const * name);
+			/** find the typed object surface from its name */
+			GeometricObject const * FindTypedObject(char const * name) const;
 
 			/** get the bounding box for the level (in worls system obviously) */
 			virtual chaos::box2 GetBoundingBox() const override;

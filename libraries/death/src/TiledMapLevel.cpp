@@ -148,6 +148,9 @@ namespace death
 			return result;\
 		}
 
+		DEATH_DOCREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance, in_layer_instance);
+		DEATH_CREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
+
 		DEATH_DOCREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance, in_layer_instance);
 		DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance, in_geometric_object);
 
@@ -455,6 +458,9 @@ namespace death
 			if (!particle_populator.Initialize(this))
 				return false;
 
+			// get the tiled map
+			chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
+
 			// iterate over all objects
 			size_t count = object_layer->geometric_objects.size();
 			for (size_t i = 0; i < count; ++i)
@@ -467,7 +473,6 @@ namespace death
 				if (level_instance->explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsWorldBoundingBox(geometric_object))
 				{
 					 chaos::TiledMapTools::GetExplicitWorldBoundingBox(geometric_object, level_instance->explicit_bounding_box, true); // in world coordinate				
-
 				}
 				// explicit layer bounding box
 				if (explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
@@ -491,8 +496,13 @@ namespace death
 						cameras.push_back(camera);
 				}
 
-				// get the tiled map
-				chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
+				// object of interests
+				if (chaos::TiledMapTools::IsTypedObject(geometric_object))
+				{
+					GeometricObject * typed_object = level->CreateTypedObject(this, geometric_object);
+					if (typed_object != nullptr)
+						typed_objects.push_back(typed_object);
+				}
 
 				// zones
 				chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
@@ -759,6 +769,8 @@ namespace death
 				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, name);\
 		}
+		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, const);
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, DEATH_EMPTY_TOKEN);
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
@@ -904,7 +916,7 @@ namespace death
 
 
 #define DEATH_EMPTY_TOKEN
-#define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
+#define DEATH_FIND_OBJECT(result_type, func_name, constness)\
 		result_type constness * LevelInstance::func_name(char const * name) constness\
 		{\
 			size_t count = layer_instances.size();\
@@ -916,12 +928,14 @@ namespace death
 			}\
 			return nullptr;\
 		}
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, DEATH_EMPTY_TOKEN);
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
-		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
-		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
-		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, DEATH_EMPTY_TOKEN);
-		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, const);
+		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, const);
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, const);
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, const);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, const);
 
 #undef DEATH_EMPTY_TOKEN
 #undef DEATH_FIND_OBJECT

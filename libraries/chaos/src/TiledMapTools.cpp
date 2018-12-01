@@ -135,6 +135,10 @@ namespace chaos
 
 	bool TiledMapTools::IsTypedObject(TiledMap::GeometricObject const * object_geometric)
 	{
+		// the type of the object may be given by the field 'type'
+		if (object_geometric != nullptr && object_geometric->type.length() > 0)
+			return true;
+		// or by a property 'OBJECT_TYPE'
 		return HasFlag(object_geometric, nullptr, nullptr, "OBJECT_TYPE");
 	}
 

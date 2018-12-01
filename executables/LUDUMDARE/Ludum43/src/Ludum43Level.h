@@ -16,6 +16,19 @@
 // Levels
 // =================================================
 
+class AtomGameObject : public death::TiledMap::GeometricObject
+{
+public:
+
+	AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance);
+
+
+};
+
+// =================================================
+// Levels
+// =================================================
+
 class LudumLevel : public death::TiledMap::Level
 {
 	friend class LudumLevelInstance;
@@ -26,6 +39,9 @@ public:
 	LudumLevel();
 
 protected:
+
+	/** override */
+	virtual death::TiledMap::GeometricObject * DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance) override;
 
 	/** override */
 	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;

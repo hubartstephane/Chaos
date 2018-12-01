@@ -164,39 +164,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	result.particle_max_velocity = game->particle_max_velocity;
 	result.world_clamp_radius    = game->world_clamp_radius;
 
-	// capture all Enemies in range
-	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(game->GetCurrentLevelInstance());
-	if (level_instance != nullptr)
-	{
-		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance("Enemies");
-		if (layer_instance)
-		{
-			chaos::ParticleLayer const * particle_layer = layer_instance->GetParticleLayer();
-			if (particle_layer != nullptr)
-			{
-				size_t count = particle_layer->GetAllocationCount();
-				for (size_t i = 0 ; i < count ; ++i)
-				{
-					chaos::ParticleAllocation const * allocation = particle_layer->GetAllocation(i);
-					if (allocation == nullptr)
-						continue;
-
-					chaos::ParticleConstAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
-					
-					size_t enemies_count = enemies.GetCount();
-					for (size_t j = 0 ; j < enemies_count ; ++j)
-					{
-						ParticleEnemy const & enemy = enemies[j];
-					
-						float l2 = glm::length2(enemy.bounding_box.position - result.player_particle.bounding_box.position);
-						if (l2 > result.world_clamp_radius * result.world_clamp_radius)
-							continue;
-						result.enemy_particles.push_back(enemy);									
-					}				
-				}
-			}		
-		}	
-	}
+	game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles);
 
 	return result;
 }

@@ -68,6 +68,8 @@ public:
 
 	virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 
+	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles);
+
 protected:
 
 	/** override */
@@ -140,6 +142,8 @@ protected:
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
 	void ConditionnalStartDash();
+
+
 
 protected:
 

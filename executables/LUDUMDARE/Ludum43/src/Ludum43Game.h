@@ -117,8 +117,6 @@ protected:
 	/** called whenever the input mode changes */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
-	/** create the player */
-	chaos::ParticleAllocation * CreatePlayer();
 
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
@@ -155,6 +153,10 @@ protected:
 	float dash_duration = 0.5f;
 	float dash_cooldown = 2.0f;
 	float dash_speed_multiplier = 2.0f;
+
+	float player_attraction_minradius = 50.0f;
+	float player_attraction_maxradius = 200.0f;
+	float enemy_attraction = 200.0f;
 
 	/** current game values */
 	int current_life     = 3;

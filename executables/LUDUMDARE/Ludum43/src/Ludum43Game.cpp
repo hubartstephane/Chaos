@@ -178,26 +178,6 @@ void LudumGame::DestroyGameObjects()
 	//life_allocations = nullptr;
 }
 
-chaos::ParticleAllocation * LudumGame::CreatePlayer()
-{
-	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
-	if (result == nullptr)
-		return nullptr;
-
-	// set the color
-	chaos::ParticleAccessor<ParticleObject> particles = result->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-
-	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	particles->bounding_box.position  = glm::vec2(0.0f, 0.0f);
-	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
-
-	return result;
-}
-
 void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
 	chaos::box2 box    = GetObjectBox(allocation, index);
@@ -233,9 +213,12 @@ bool LudumGame::DeclareParticleClasses()
 {
 	if (!Game::DeclareParticleClasses())
 		return false;
-	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
-	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
-	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleObjectAtlas>("ParticlePlayer");
+
+	chaos::ClassTools::DeclareClass<ParticlePlayer, chaos::ParticleDefault::Particle>("ParticlePlayer");
+
+	//chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
+//	chaos::ClassTools::DeclareClass<ParticleObjectAtlas, ParticleObject>("ParticleObjectAtlas");
+	//chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleObjectAtlas>("ParticlePlayer");
 	return true;
 }
 
@@ -248,6 +231,11 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(dash_speed_multiplier);
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
 	DEATHGAME_JSON_ATTRIBUTE(cooldown);
+
+	DEATHGAME_JSON_ATTRIBUTE(player_attraction_minradius);
+	DEATHGAME_JSON_ATTRIBUTE(player_attraction_maxradius);
+	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction);
+
 	return true;
 }
 
@@ -262,14 +250,14 @@ int LudumGame::AddParticleLayers()
 	if (render_order < 0)
 		return render_order;
 
-	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::PLANETS_LAYER_ID, "gameobject");
+	//particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
+	//particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::PLANETS_LAYER_ID, "gameobject");
 
 	ParticlePlayerTrait player_trait;
 	player_trait.game = this;
-	particle_manager->AddLayer<ParticlePlayerTrait>(render_order++, death::GameHUDKeys::PLAYER_LAYER_ID, "gameobject", player_trait);
+	//particle_manager->AddLayer<ParticlePlayerTrait>(render_order++, death::GameHUDKeys::PLAYER_LAYER_ID, "gameobject", player_trait);
 
-	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+	//particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	return render_order;
 }

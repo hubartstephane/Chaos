@@ -45,6 +45,8 @@ protected:
 
 	/** override */
 	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
+
+	virtual chaos::ParticleLayer * CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance) override;
 };
 
 // =================================================

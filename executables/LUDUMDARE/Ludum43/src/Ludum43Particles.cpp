@@ -8,6 +8,9 @@
 #include <chaos/ClassTools.h>
 
 
+
+#if 0
+
 // ===========================================================================
 // Object particle system
 // ===========================================================================
@@ -71,17 +74,28 @@ bool ParticleObjectAtlasTrait::UpdateParticle(float delta_time, ParticleObjectAt
 	return false;
 }
 
+
+
+
+
+#endif
+
+
 // ===========================================================================
 // ParticlePlayerTrait
 // ===========================================================================
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
-	return AtlasParticleToVertices(game, p, vertices, vertices_per_particle, allocation, 0.0f);
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
 }
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const
 {
+
+
+
+
 	return false;
 }
 

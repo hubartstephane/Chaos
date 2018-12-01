@@ -48,6 +48,37 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateTypedObject(death::TiledM
 	return nullptr;
 }
 
+
+chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
+{
+	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
+	if (layer_name == "PlayerAndCamera")
+	{
+		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>);	
+	}
+	if (layer_name == "Enemies")
+	{
+
+	}
+	if (layer_name == "Particles")
+	{
+
+	}
+
+
+	//return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<PlayerParticleTrait>);
+
+	//return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<EnemyParticleTrait>);
+
+	//return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleParticleTrait>);
+
+
+
+	return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
+}
+
+
+
 // =============================================================
 // LudumLevelInstance implementation
 // =============================================================

@@ -4,6 +4,7 @@
   "@challenge_program"  : { "path": "@programs/challenge/challenge_program.json" },
   "@gameobject_program"  : { "path": "@programs/gameobject/gameobject_program.json" },
   "@player_program"  : { "path": "@programs/player/player_program.json" },
+  "@background_particle_program"  : { "path": "@programs/background_particle/background_particle_program.json" },
   "@text_program"  : { "path": "@programs/text/text_program.json" }    
 
 }

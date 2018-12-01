@@ -3,5 +3,6 @@
 		"@challenge" : {"path":"@materials/challenge_material.json"},
 		"@gameobject" : {"path":"@materials/gameobject_material.json"},
     "@player" : {"path":"@materials/player_material.json"},
+    "@background_particle" : {"path":"@materials/background_particle_material.json"},
 		"@text" : {"path":"@materials/text_material.json"}    
 }

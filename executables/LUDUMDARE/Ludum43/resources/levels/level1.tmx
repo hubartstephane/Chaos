@@ -1,19 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="78">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="129">
  <properties>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart2"/>
  </properties>
- <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <objectgroup name="repeated">
+ <tileset firstgid="1" name="tileset" tilewidth="500" tileheight="500" tilecount="2" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="6">
+   <properties>
+    <property name="OBJECT_TYPE" type="int" value="1"/>
+   </properties>
+   <image width="400" height="400" source="../sprites/planet3.png"/>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="OBJECT_TYPE" type="int" value="1"/>
+   </properties>
+   <image width="500" height="500" source="../sprites/planet6.png"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="11" source="../tileset/tileset.tsx"/>
+ <objectgroup name="Background2">
   <properties>
-   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
-   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
+   <property name="MATERIAL" value="background_particle"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="65" name="obj5" gid="6" x="72" y="2264" width="288" height="240"/>
-  <object id="69" name="obj2" gid="10" x="1654" y="2794" width="324" height="436"/>
+  <object id="118" gid="16" x="2864" y="752" width="256" height="192"/>
+  <object id="119" gid="16" x="1104" y="816" width="256" height="192"/>
+  <object id="120" gid="16" x="432" y="400" width="256" height="192"/>
+  <object id="121" gid="16" x="528" y="1488" width="256" height="192"/>
+  <object id="122" gid="16" x="416" y="2048" width="256" height="192"/>
+  <object id="123" gid="16" x="1072" y="2992" width="256" height="192"/>
+  <object id="124" gid="16" x="1840" y="2672" width="256" height="192"/>
+  <object id="125" gid="16" x="3296" y="2176" width="256" height="192"/>
+  <object id="126" gid="16" x="4224" y="3376" width="256" height="192"/>
+  <object id="127" gid="16" x="2768" y="4032" width="256" height="192"/>
+  <object id="128" gid="16" x="656" y="4448" width="256" height="192"/>
+ </objectgroup>
+ <objectgroup name="Background1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="MATERIAL" value="background_particle"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="108" gid="16" x="1744" y="816" width="256" height="192"/>
+  <object id="109" gid="16" x="1968" y="1008" width="256" height="192"/>
+  <object id="110" gid="16" x="2384" y="1296" width="256" height="192"/>
+  <object id="111" gid="16" x="3808" y="1392" width="256" height="192"/>
+  <object id="112" gid="16" x="656" y="848" width="256" height="192"/>
+  <object id="113" gid="16" x="1296" y="1600" width="256" height="192"/>
+  <object id="114" gid="16" x="1136" y="2320" width="256" height="192"/>
+  <object id="115" gid="16" x="1424" y="3040" width="256" height="192"/>
+  <object id="116" gid="16" x="2672" y="2992" width="256" height="192"/>
+  <object id="117" gid="16" x="2496" y="1952" width="256" height="192"/>
  </objectgroup>
  <objectgroup name="single object"/>
  <objectgroup name="PlayerAndCamera">
@@ -39,7 +83,5 @@
    </properties>
   </object>
   <object id="75" name="world_bounding_box" x="-11104" y="-5984" width="31808" height="22016"/>
-  <object id="76" x="-3328" y="-10400"/>
-  <object id="77" x="-4480" y="-64"/>
  </objectgroup>
 </map>

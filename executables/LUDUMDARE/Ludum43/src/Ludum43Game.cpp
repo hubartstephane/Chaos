@@ -9,6 +9,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/WinTools.h>
 #include <chaos/Application.h>
+#include <chaos/MathTools.h>
 #include <chaos/InputMode.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
@@ -120,6 +121,11 @@ void LudumGame::ResetGameVariables()
 	death::Game::ResetGameVariables();
 	current_life  = initial_life;
 	current_cooldown  = cooldown;
+
+	current_dash_cooldown = 0.0f;
+	current_dash_time = 0.0f;
+	current_dash_direction = glm::vec2(0.0f, 0.0f);
+
 }
 
 void LudumGame::OnGameOver()
@@ -152,6 +158,8 @@ bool LudumGame::TickGameLoop(double delta_time)
 		return false;
 	// displace the player
 	DisplacePlayer(delta_time);
+	// dash values update
+	TickDashValues(delta_time);
 	// cooldown
 	TickCooldown(delta_time);
 
@@ -235,6 +243,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 {
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
+	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
+	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);
+	DEATHGAME_JSON_ATTRIBUTE(dash_speed_multiplier);
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
 	DEATHGAME_JSON_ATTRIBUTE(cooldown);
 	return true;
@@ -316,4 +327,61 @@ void LudumGame::DisplacePlayer(double delta_time)
 void LudumGame::TickCooldown(double delta_time)
 {
 	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
+}
+
+void LudumGame::TickGameInputs(double delta_time)
+{
+	death::Game::TickGameInputs(delta_time);
+	if (current_dash_time > 0.0f)
+		left_stick_position += current_dash_direction * (current_dash_time / dash_duration);
+}
+
+void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+{
+	death::Game::HandleGamepadInput(in_gamepad_data);
+
+	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER, false) || in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false))
+		ConditionnalStartDash();
+}
+
+void LudumGame::HandleKeyboardInputs()
+{
+	death::Game::HandleKeyboardInputs();
+	if (glfwGetKey(glfw_window, GLFW_KEY_SPACE))
+		ConditionnalStartDash();
+}
+
+void LudumGame::ConditionnalStartDash()
+{
+	// dashing or cooling down
+	if (current_dash_cooldown > 0.0f || current_dash_time > 0.0f)
+		return;
+	// need a direction to dash
+	if (glm::length2(left_stick_position) == 0.0f)
+		return;
+	// initialize the dash
+	current_dash_direction = glm::normalize(left_stick_position) * dash_speed_multiplier * gamepad_sensitivity;
+	current_dash_cooldown = dash_cooldown;
+	current_dash_time = dash_duration;
+}
+
+void LudumGame::TickDashValues(double delta_time)
+{
+	// dash in progress
+	if (current_dash_time > 0.0f)
+	{
+		if (delta_time > current_dash_time)
+		{
+			current_dash_time = 0.0f;
+			delta_time -= delta_time;		 // maybe a cooldown can be decreased below
+		}
+		else
+		{
+			current_dash_time -= (float)delta_time; // cooldown cannot be decreased below
+			delta_time = 0.0f;
+		}
+	}
+	// cooldow in progress
+	if (current_dash_cooldown > 0.0f && delta_time > 0.0f)
+		current_dash_cooldown = chaos::MathTools::Maximum(0.0f, current_dash_cooldown - (float)delta_time);
 }

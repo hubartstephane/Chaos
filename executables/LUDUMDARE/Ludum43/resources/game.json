@@ -6,8 +6,10 @@
 
   "initial_life": 3,
   "cooldown": 0.1,
-  "water_speed":  900.0,
-  "water_lifetime": 1.5,
   "mouse_sensitivity": 1.0,
-  "gamepad_sensitivity": 5012.0
+  "gamepad_sensitivity": 5012.0,
+
+	"dash_duration": 0.5,
+	"dash_cooldown": 0.25,
+	"dash_speed_multiplier": 2.0
 }

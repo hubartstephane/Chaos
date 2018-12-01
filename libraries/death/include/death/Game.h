@@ -208,6 +208,9 @@ namespace death
 
 		/** the tick method */
 		virtual void Tick(double delta_time);
+		/** tick the game inputs */
+		virtual void TickGameInputs(double delta_time);
+
 		/** whenever a key event is received */
 		virtual bool OnKeyEvent(int key, int action);
 		/** whenever a char event is received */

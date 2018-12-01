@@ -55,13 +55,19 @@ namespace death
 		right_stick_position = glm::vec2(0.0f, 0.0f);
 	}
 	
-	void Game::Tick(double delta_time)
+	void Game::TickGameInputs(double delta_time)
 	{
 		// catch all stick inputs
 		if (gamepad_manager != nullptr)
 			gamepad_manager->Tick((float)delta_time);
 		// handle keyboard inputs
-		HandleKeyboardInputs();
+		HandleKeyboardInputs();	
+	}
+
+	void Game::Tick(double delta_time)
+	{
+		// update player inputs
+		TickGameInputs(delta_time);
 		// update the game state_machine
 		if (game_state_machine_instance != nullptr)
 			game_state_machine_instance->Tick(delta_time);

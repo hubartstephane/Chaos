@@ -101,7 +101,8 @@ protected:
 
 	/** cooldown the weapon */
 	void TickCooldown(double delta_time);
-	
+	void TickDashValues(double delta_time);
+		
 	/** the game main loop */
 	virtual bool CheckGameOverCondition() override;
 
@@ -127,6 +128,11 @@ protected:
 	/** ensure player is inside the world */
 	void RestrictPlayerToWorld();
 
+
+	virtual void TickGameInputs(double delta_time) override;
+	virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
+	virtual void HandleKeyboardInputs() override;
+
 	/** move the player */
 	void DisplacePlayer(double delta_time);
 
@@ -134,6 +140,8 @@ protected:
 
 	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
+
+	void ConditionnalStartDash();
 
 protected:
 
@@ -143,11 +151,18 @@ protected:
 	/** game settings */
 	int initial_life = 3;
 	float cooldown = 0.1f;
-	
+
+	float dash_duration = 0.5f;
+	float dash_cooldown = 2.0f;
+	float dash_speed_multiplier = 2.0f;
 
 	/** current game values */
 	int current_life     = 3;
 	float current_cooldown = 0.1f;
+
+	float current_dash_cooldown   = 0.0f;
+	float current_dash_time = 0.0f;
+	glm::vec2 current_dash_direction = glm::vec2(0.0f, 0.0f);
 
 	/** some sprites */
 	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;

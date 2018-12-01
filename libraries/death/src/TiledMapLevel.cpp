@@ -407,8 +407,9 @@ namespace death
 			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
 			trigger_surfaces_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
 
-			// copy the offset
+			// copy the offset / name
 			offset = layer->offset;
+			name = layer->name;
 
 			// reset the bounding box
 			bounding_box = chaos::box2();

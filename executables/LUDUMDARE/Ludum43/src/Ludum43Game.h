@@ -163,6 +163,7 @@ public:
 	float tangent_force               = 500000.0f;
 	float player_attraction_force     = 20.0f;
 	float enemy_attraction_radius = 200.0f;
+	float world_clamp_radius = 3000.0f;
 
 	float particle_max_velocity = 20.0f;
 

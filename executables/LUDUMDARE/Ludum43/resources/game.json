@@ -19,6 +19,7 @@
   "tangent_force": 500000.0,
   "enemy_attraction_radius": 200.0,
   "particle_max_velocity": 1000.0,
-  "particle_slowing_factor": 0.5,    
-  "particle_radius_rand_factor": 1.2
+  "particle_slowing_factor": 0.5,
+  "particle_radius_rand_factor": 1.2,
+  "world_clamp_radius":3000
 }

@@ -123,6 +123,7 @@ public:
 		float particle_slowing_factor;
 		float enemy_attraction_radius;
 		float particle_max_velocity;
+		float world_clamp_radius;
 
 		std::vector<ParticleEnemy> enemy_particles;
 	};

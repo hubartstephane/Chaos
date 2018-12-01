@@ -345,6 +345,12 @@ namespace death
 			/** set the layer offset */
 			void SetLayerOffset(glm::vec2 const & in_offset){ offset = in_offset; }
 
+
+			/** get the particle layer */
+			chaos::ParticleLayer * GetParticleLayer(){ return particle_layer.get();}
+			/** get the particle layer */
+			chaos::ParticleLayer const * GetParticleLayer() const { return particle_layer.get();}
+
 		protected:
 
 			/** initialization */

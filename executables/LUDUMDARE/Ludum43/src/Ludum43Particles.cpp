@@ -19,7 +19,16 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
 }
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const
+ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, chaos::ParticleAllocation * allocation) const
+{
+	ParticlePlayerTrait::UpdatePlayerData result;
+	
+
+	return result;
+}
+
+
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation, UpdatePlayerData const & update_data) const
 {
 
 
@@ -40,12 +49,12 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, chaos::ParticleAllocation * allocation) const
 {
 	ParticleEnemyTrait::UpdateEnemyData result;
-	result.player_particle = *((ParticlePlayer const*)game->GetPlayerParticle());
+	
 
 	return result;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, ParticleEnemyTrait::UpdateEnemyData update_data) const
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, ParticleEnemyTrait::UpdateEnemyData const & update_data) const
 {
 	
 
@@ -65,7 +74,7 @@ size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase 
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
 }
 
-bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, ParticleAffector const & affector) const
+bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, ParticleAffector const & affector) const
 {
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_velocity = particle->velocity;
@@ -114,9 +123,9 @@ bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom 
 	return false;
 }
 
-bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, ParticleAtomTrait::UpdateAtomData update_data) const
+bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, ParticleAtomTrait::UpdateAtomData const & update_data) const
 {
-	glm::vec2 & player_position   = update_data.player_particle.bounding_box.position;
+	glm::vec2 const & player_position   = update_data.player_particle.bounding_box.position;
 	glm::vec2 & particle_position = particle->bounding_box.position;
 
 	glm::vec2 delta_pos = (player_position - particle_position);

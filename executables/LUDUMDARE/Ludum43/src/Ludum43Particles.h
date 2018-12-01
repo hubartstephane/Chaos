@@ -63,27 +63,6 @@ public:
 
 
 
-// ===========================================================================
-// ParticlePlayer
-// ===========================================================================
-
-class ParticlePlayer : public ParticleAffector
-{
-
-};
-
-class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
-{
-public:
-
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation) const;
-
-	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
-
-public:
-
-	class LudumGame * game = nullptr;
-};
 
 
 
@@ -107,12 +86,10 @@ public:
 	{
 	public:
 
-		ParticlePlayer player_particle;
-		float max_particle_velocity;
 	
 	};
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, UpdateEnemyData update_data) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, UpdateEnemyData const & update_data) const;
 
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
@@ -123,6 +100,38 @@ public:
 	class LudumGame * game = nullptr;
 };
 
+// ===========================================================================
+// ParticlePlayer
+// ===========================================================================
+
+class ParticlePlayer : public ParticleAffector
+{
+
+};
+
+class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
+{
+public:
+
+	class UpdatePlayerData
+	{
+	public:
+
+
+		std::vector<ParticleEnemy> enemy_particles;
+	};
+
+
+	bool UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation, UpdatePlayerData const & update_data) const;
+
+	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, chaos::ParticleAllocation * allocation) const;
+
+public:
+
+	class LudumGame * game = nullptr;
+};
 
 
 
@@ -171,7 +180,7 @@ public:
 		std::vector<ParticleEnemy> enemy_particles;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, UpdateAtomData update_data) const;
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, UpdateAtomData const & update_data) const;
 
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
@@ -179,7 +188,7 @@ public:
 
 protected:
 
-	bool ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData update_data, ParticleAffector const & affector) const;
+	bool ApplyAffectorToParticles(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, ParticleAffector const & affector) const;
 
 public:
 

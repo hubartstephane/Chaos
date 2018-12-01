@@ -96,6 +96,16 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 			l = chaos::MathTools::Sqrt(l2);
 		}
 
+		// create a tangent force
+		if (glm::length2(particle_velocity) > 0.0f)
+		{
+			glm::vec3 a = glm::normalize(glm::vec3(delta_pos.x, delta_pos.y, 0.0f));
+			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
+			glm::vec3 tangent = glm::cross(a, b);
+
+			particle_velocity = particle_velocity + update_data.tangent_force * glm::vec2(tangent.x, tangent.y);
+		}
+
 		particle_velocity = particle_velocity + player_attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
 	}
 	// particle slowing down
@@ -124,6 +134,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	result.player_attraction_maxradius = game->player_attraction_maxradius;
 	result.particle_slowing_factor     = game->particle_slowing_factor;
 	result.player_attraction_force     = game->player_attraction_force;
+	result.tangent_force               = game->tangent_force;
 	result.enemy_attraction_radius = game->enemy_attraction_radius;
 	result.particle_max_velocity = game->particle_max_velocity;
 

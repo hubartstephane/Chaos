@@ -10,6 +10,8 @@ uniform sampler2DArray material;
 void main()
 {
 	vec4 color = texture(material, vs_texcoord);
-	output_color.xyz = color.xyz * vs_color.xyz;
-	output_color.a   = vs_color.a * color.a;
+  float translucency = length(color.xyz);
+  
+	output_color.xyz = color.xyz * vs_color.xyz;  
+	output_color.a   = translucency * vs_color.a * color.a;
 };

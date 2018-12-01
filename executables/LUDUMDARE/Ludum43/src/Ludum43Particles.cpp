@@ -91,13 +91,15 @@ bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom 
 		if (l2 < player_attraction_minradius * player_attraction_minradius)
 		{		
 			l  = player_attraction_minradius;
-			l2 = l * l;
 			particle_position = affector_position - glm::normalize(delta_pos) * l;
 		}
 		else		
 		{
 			l = chaos::MathTools::Sqrt(l2);
 		}
+
+		float distance_ratio = 1.0f;
+		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - player_attraction_minradius) / (player_attraction_maxradius - player_attraction_minradius));
 
 		// create a tangent force
 		if (glm::length2(particle_velocity) > 0.0f)
@@ -106,10 +108,10 @@ bool ParticleAtomTrait::ApplyAffectorToParticles(float delta_time, ParticleAtom 
 			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
 			glm::vec3 tangent = glm::cross(a, b);
 
-			particle_velocity = particle_velocity + update_data.tangent_force * glm::vec2(tangent.x, tangent.y);
+			particle_velocity = particle_velocity + distance_ratio * update_data.tangent_force * glm::vec2(tangent.x, tangent.y);
 		}
 
-		particle_velocity = particle_velocity + attraction_factor * player_attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
+		particle_velocity = particle_velocity + distance_ratio * attraction_factor * player_attraction_force * delta_pos; // * (update_data.player_attraction_maxradius - l) / update_data.player_attraction_maxradius;
 
 		return true;
 	}

@@ -62,6 +62,11 @@ namespace death
 			gamepad_manager->Tick((float)delta_time);
 		// handle keyboard inputs
 		HandleKeyboardInputs();	
+		// save the last non null sticks direction
+		if (glm::length2(left_stick_position) > 0.0f)
+			last_left_stick_position = left_stick_position;
+		if (glm::length2(right_stick_position) > 0.0f)
+			last_right_stick_position = right_stick_position;
 	}
 
 	void Game::Tick(double delta_time)
@@ -1087,6 +1092,9 @@ namespace death
 	void Game::ResetGameVariables()
 	{
 		current_score = 0;
+
+		left_stick_position = right_stick_position = glm::vec2(0.0f, 0.0f);
+		last_left_stick_position = last_right_stick_position = glm::vec2(0.0f, 0.0f);
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)

@@ -195,13 +195,7 @@ void LudumGame::RestrictPlayerToWorld()
 
 void LudumGame::CreateAllGameObjects(int level)
 {
-#if 0
-	if (player_allocations == nullptr)
-	{
-		player_allocations = CreatePlayer();
-		SetPlayerPosition(0.0f);
-	}
-#endif
+
 }
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
@@ -244,20 +238,7 @@ death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 
 int LudumGame::AddParticleLayers()
 {
-	int render_order = death::Game::AddParticleLayers();
-	if (render_order < 0)
-		return render_order;
-
-	//particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
-	//particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::PLANETS_LAYER_ID, "gameobject");
-
-	ParticlePlayerTrait player_trait;
-	player_trait.game = this;
-	//particle_manager->AddLayer<ParticlePlayerTrait>(render_order++, death::GameHUDKeys::PLAYER_LAYER_ID, "gameobject", player_trait);
-
-	//particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
-
-	return render_order;
+	return death::Game::AddParticleLayers();
 }
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -326,7 +307,7 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
 	death::Game::HandleGamepadInput(in_gamepad_data);
 
-	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER, false) || in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false))
+	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false) /* || in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER, false)*/)
 		ConditionnalStartDash();
 }
 
@@ -343,10 +324,10 @@ void LudumGame::ConditionnalStartDash()
 	if (current_dash_cooldown > 0.0f || current_dash_time > 0.0f)
 		return;
 	// need a direction to dash
-	if (glm::length2(left_stick_position) == 0.0f)
+	if (glm::length2(last_left_stick_position) == 0.0f)
 		return;
 	// initialize the dash
-	current_dash_direction = glm::normalize(left_stick_position) * dash_speed_multiplier * gamepad_sensitivity;
+	current_dash_direction = glm::normalize(last_left_stick_position) * dash_speed_multiplier * gamepad_sensitivity;
 	current_dash_cooldown = dash_cooldown;
 	current_dash_time = dash_duration;
 }

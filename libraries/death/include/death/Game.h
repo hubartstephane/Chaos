@@ -447,6 +447,9 @@ namespace death
 		/** the current stick position */
 		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
 		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
+		/** the stick position, last time it was non null */
+		glm::vec2 last_left_stick_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 last_right_stick_position = glm::vec2(0.0f, 0.0f);
 
 		/** the texture atlas */
 		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;

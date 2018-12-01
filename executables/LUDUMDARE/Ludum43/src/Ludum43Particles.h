@@ -17,9 +17,13 @@ using VertexBase = chaos::ParticleDefault::Vertex;
 //   should be that
 //using ParticleBase = chaos::ParticleDefault::Particle;
 //   but, due to required refactor of TiledMapSystem, replace with that
-using ParticleBase = death::TiledMap::TileParticle;
+
+class ParticleBase : public death::TiledMap::TileParticle
+{
+public:
 
 
+};
 
 
 
@@ -61,13 +65,22 @@ class ParticleEnemy : public ParticleBase
 
 };
 
+
+
 class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation) const;
+	class UpdateEnemyData
+	{
+	
+	};
+
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, UpdateEnemyData ExtraData) const;
 
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, chaos::ParticleAllocation * allocation) const;
 
 public:
 
@@ -87,9 +100,16 @@ class ParticleAtomTrait : public chaos::ParticleLayerTrait<ParticleAtom, VertexB
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation) const;
+	class UpdateAtomData
+	{
+
+	};
+
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, UpdateAtomData ExtraData) const;
 
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, chaos::ParticleAllocation * allocation) const;
 
 public:
 

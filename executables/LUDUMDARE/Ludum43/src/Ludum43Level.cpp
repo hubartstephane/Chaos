@@ -146,8 +146,8 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 			p.reversed             = is_world_limits;
 			p.world_limits         = is_world_limits;
 			p.color                = (is_world_limits)?
-				glm::vec4(0.5f, 0.5f, 0.5f, 1.0f):
-				glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f):
+				glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 		}	
 		return true;
 	}

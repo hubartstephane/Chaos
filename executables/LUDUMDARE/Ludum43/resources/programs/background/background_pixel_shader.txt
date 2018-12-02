@@ -13,6 +13,8 @@ void main()
 {
 	vec4 b1 = texture(background, vs_texcoord);
 	vec4 b2 = texture(extra_background, vs_texcoord);
+
+	//b2.xyz = b2.xyz * vec3(0.3, 0.3, 0.3) + vec3(0.7, 0.7, 0.7);
  
 
 	// XXX : very tricky => due to C++ code bug, once 'extra_background' has been set once, it remains set even if no provided explicitely (OpenGL State Machine issue)

@@ -7,7 +7,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 
-static bool CHEAT_PLAYER_LIFE = true;
+static bool CHEAT_PLAYER_LIFE = false;
 
 // ===========================================================================
 // Utility functions

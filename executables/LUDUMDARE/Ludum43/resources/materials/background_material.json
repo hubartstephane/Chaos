@@ -2,8 +2,12 @@
   "program": "background_program",
 
   "textures": {
-    
-    "background": { "name": "background1" }
 
+    "background": { "name": "background2" }
+
+  },
+  "uniforms":
+  {
+    "blend_backgrounds":[1.0, 1.0, 1.0, 1.0]
   }
 }

@@ -31,10 +31,12 @@ namespace chaos
 
 		/** the viewport */
 		chaos::box2 viewport;
+		/** the screen size */
+		glm::ivec2 screen_size = glm::ivec2(0, 0);
 		/** material provider */
 		boost::intrusive_ptr<MaterialProvider> material_provider;
 		/** the instancing information */
-		InstancingInfo instancing;
+		InstancingInfo instancing;		
 	};
 
 	// ========================================================

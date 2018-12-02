@@ -15,6 +15,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 #include <chaos/GPUFramebufferGenerator.h>
+#include <chaos/GLTools.h>
 
 #include <death/GameParticles.h>
 
@@ -115,17 +116,37 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
 	if (ludum_level_instance != nullptr)
 	{
+		ludum_level_instance->FindLayerInstance("Background1")->Show(false);
+		ludum_level_instance->FindLayerInstance("Background2")->Show(false);
+		ludum_level_instance->FindLayerInstance("Background3")->Show(false);
+		ludum_level_instance->FindLayerInstance("Background4")->Show(false);
+		ludum_level_instance->FindLayerInstance("Background5")->Show(false);
+
 		worldlimits = ludum_level_instance->FindLayerInstance("WorldLimits");
+
+		static bool b = true;
+		//if (b)
+		//	worldlimits = nullptr;
+		//b = !b;
+
+		//worldlimits = nullptr;
+
 		if (worldlimits != nullptr)
 		{
 			// generate the framebuffer
 			glm::ivec2 framebuffer_size;
 			framebuffer_size.x = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.x);
 			framebuffer_size.y = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.y);
-			if (GenerateFramebuffer(framebuffer_size))
+			if (GenerateFramebuffer(render_params.screen_size))
 			{
 				// render the layer on framebuffer
 				framebuffer->BeginRendering();
+
+				chaos::GLTools::SetViewport(render_params.viewport);
+
+				glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
 				worldlimits->Display(&uniform_provider, render_params);
 				framebuffer->EndRendering();
 				// hide the layer for the normal processing
@@ -134,9 +155,27 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 		}
 	}
 
+	chaos::GPUProgramProviderChain main_provider(&uniform_provider);
+
+	if (worldlimits != nullptr)
+	{
+		chaos::GPUFramebufferAttachmentInfo const * attachment = framebuffer->GetColorAttachment(0);
+		if (attachment != nullptr)
+		{
+			chaos::GPUTexture * texture = attachment->texture.get();
+			if (texture != nullptr)
+			{
+				main_provider.AddVariableValue("extra_background", texture);
+				//main_provider.AddVariableValue("background", texture);
+			}
+		}		
+		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	}
+	
+
 	// draw particle system
 	if (particle_manager != nullptr)
-		particle_manager->Display(&uniform_provider);
+		particle_manager->Display(&main_provider);
 
 	// super method
 	death::Game::DoDisplay(render_params, uniform_provider);

@@ -168,6 +168,7 @@ namespace death
 
 		chaos::RenderParams render_params;
 		render_params.viewport = viewport;
+		render_params.screen_size = size;
 		DoDisplay(render_params, main_uniform_provider);
 	}
 

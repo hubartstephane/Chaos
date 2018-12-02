@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="tileset" tilewidth="470" tileheight="470" tilecount="5" columns="0">
+<tileset name="tileset" tilewidth="640" tileheight="640" tilecount="14" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="5">
   <properties>
@@ -21,5 +21,32 @@
  </tile>
  <tile id="9">
   <image width="470" height="470" source="../sprites/Finishing.png"/>
+ </tile>
+ <tile id="10">
+  <image width="201" height="169" source="../sprites/meteor1.png"/>
+ </tile>
+ <tile id="11">
+  <image width="196" height="156" source="../sprites/meteor2.png"/>
+ </tile>
+ <tile id="12">
+  <image width="276" height="195" source="../sprites/meteor3.png"/>
+ </tile>
+ <tile id="13">
+  <image width="167" height="176" source="../sprites/meteor4.png"/>
+ </tile>
+ <tile id="14">
+  <image width="400" height="400" source="../sprites/planet1.png"/>
+ </tile>
+ <tile id="15">
+  <image width="400" height="400" source="../sprites/planet2.png"/>
+ </tile>
+ <tile id="16">
+  <image width="640" height="640" source="../sprites/planet4.png"/>
+ </tile>
+ <tile id="17">
+  <image width="400" height="400" source="../sprites/planet5.png"/>
+ </tile>
+ <tile id="18">
+  <image width="464" height="464" source="../sprites/planet7.png"/>
  </tile>
 </tileset>

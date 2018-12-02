@@ -194,12 +194,16 @@ public:
 	float player_max_velocity         = 20.0f;
 	float player_acceleration         = 2000.0f;
 
+	float worldlimits_attraction_maxradius_offset = 0.0f;
+	float worldlimits_attraction_minradius_offset = 0.0f;
+	float enemy_attraction_maxradius_offset = 200.0f;
+	float enemy_attraction_minradius_offset = 50.0f;
 
-	float worldlimits_attraction_maxradius = 200.0f;
-	float worldlimits_attraction_minradius = 50.0f;
+	float worldlimits_attraction_maxradius_factor = 1.0f;
+	float worldlimits_attraction_minradius_factor = 0.5f;
+	float enemy_attraction_maxradius_factor = 1.0f;
+	float enemy_attraction_minradius_factor = 1.0f;
 
-	float enemy_attraction_maxradius = 200.0f;
-	float enemy_attraction_minradius = 50.0f;
 	float enemy_tangent_force        = 500000.0f;
 	float enemy_attraction_force     = 20.0f;
 	float enemy_repulsion_force      = 20.0f;

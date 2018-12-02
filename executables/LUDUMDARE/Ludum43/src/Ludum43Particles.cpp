@@ -15,14 +15,6 @@
 template<typename T>
 static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, glm::vec2 & result_velocity)
 {
-	if (affector.world_limits)
-	{
-
-
-
-		return false;
-	}
-
 	if (affector.attraction_minradius <= 0.0f || affector.attraction_maxradius <= 0.0f)
 		return false;
 
@@ -56,12 +48,9 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 		}
 
 		// whether the particle is inside the inner radius
-		if (!affector.reversed)
-		{
-			float inner_radius = attraction_minradius + inner_radius_factor * (attraction_maxradius - attraction_minradius);
-			if (l <= inner_radius)
-				in_inner_radius = true;		
-		}
+		float inner_radius = attraction_minradius + inner_radius_factor * (attraction_maxradius - attraction_minradius);
+		if (l <= inner_radius)
+			in_inner_radius = true;	
 
 		float distance_ratio = 1.0f;
 		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius));
@@ -73,14 +62,17 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
 			glm::vec3 tangent = glm::cross(a, b);
 
-			if (!affector.reversed)
+			if (!affector.world_limits && !affector.reversed)
 				result_velocity += distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
 		}
 
-		if (!affector.reversed)
-			result_velocity += distance_ratio *  affector.attraction_force * delta_pos; 
-		else
-			result_velocity -= distance_ratio *  affector.repulsion_force * delta_pos; 
+		if (!affector.world_limits)
+		{
+			if (!affector.reversed)
+				result_velocity += distance_ratio *  affector.attraction_force * delta_pos; 
+			else
+				result_velocity -= distance_ratio *  affector.repulsion_force * delta_pos; 		
+		}
 
 		return true;
 	}

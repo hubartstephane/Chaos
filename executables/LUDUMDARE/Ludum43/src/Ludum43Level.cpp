@@ -82,6 +82,11 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
 }
 
+static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset)
+{
+	return r * factor + offset;
+}
+
 bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocation * allocation)
 {
 	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
@@ -125,15 +130,16 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 			float radius = chaos::GetInnerCircle(p.bounding_box).radius;
 
-			float min_r = (is_enemy)?
-				ludum_game->enemy_attraction_minradius:
-				ludum_game->worldlimits_attraction_minradius;
-			float max_r = (is_enemy)?
-				ludum_game->enemy_attraction_maxradius:
-				ludum_game->worldlimits_attraction_maxradius;
-
-			p.attraction_minradius = radius + min_r;
-			p.attraction_maxradius = radius + max_r;
+			if (is_enemy)
+			{
+				p.attraction_minradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->enemy_attraction_minradius_factor, ludum_game->enemy_attraction_minradius_offset);
+				p.attraction_maxradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->enemy_attraction_maxradius_factor, ludum_game->enemy_attraction_maxradius_offset);					
+			}
+			else
+			{
+				p.attraction_minradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->worldlimits_attraction_minradius_factor, ludum_game->worldlimits_attraction_minradius_offset);
+				p.attraction_maxradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->worldlimits_attraction_maxradius_factor, ludum_game->worldlimits_attraction_maxradius_offset);			
+			}
 			p.attraction_force     = ludum_game->enemy_attraction_force;
 			p.repulsion_force      = ludum_game->enemy_repulsion_force;
 			p.tangent_force        = ludum_game->enemy_tangent_force;			

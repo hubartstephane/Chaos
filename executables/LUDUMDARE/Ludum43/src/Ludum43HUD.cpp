@@ -58,8 +58,12 @@ chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float lev
 	// set the values
 	chaos::ParticleTextGenerator::GeneratorParams params;
 	params.line_height = 60;
-	params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
-	params.position.x = corners.second.x - 20.0f;
+	//params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
+	//params.position.x = corners.second.x - 20.0f;
+
+	params.hotpoint_type = chaos::Hotpoint::CENTER | chaos::Hotpoint::TOP;
+	params.position.x = view.position.x;
+
 	params.position.y = corners.second.y - 20.0f;
 	params.font_info_name = "normal";
 

@@ -13,16 +13,16 @@
 	"dash_cooldown": 0.5,
   "dash_velocity": 500.0,
 
-  "player_attraction_minradius": 200.0,
-  "player_attraction_maxradius": 800.0,
+  "player_attraction_minradius": 50.0,
+  "player_attraction_maxradius": 650.0,
   "player_attraction_force": 5000.0,
   "player_tangent_force": 3000000.0,
   "player_max_velocity": 5000.0,
   "player_slowing_factor": 0.1,
   "player_acceleration": 5000.0,
 
-  "enemy_attraction_minradius": 200.0,
-  "enemy_attraction_maxradius": 800.0,
+  "enemy_attraction_minradius": 50.0,
+  "enemy_attraction_maxradius": 650.0,
   "enemy_attraction_force": 500.0,
   "enemy_tangent_force": 500000.0,
 

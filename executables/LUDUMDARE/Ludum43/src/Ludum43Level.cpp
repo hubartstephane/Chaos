@@ -3,6 +3,7 @@
 
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/GeometryFramework.h>
 
 // =============================================================
 // AtomObject implementation
@@ -95,17 +96,20 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		for (size_t i = 0 ; i < count ; ++i)
 		{
 			ParticleAffector & p = particles[i]; 
+
+			float radius = chaos::GetInnerCircle(p.bounding_box).radius;
+
 			if (is_player)
 			{
-				p.attraction_minradius = ludum_game->player_attraction_minradius;
-				p.attraction_maxradius = ludum_game->player_attraction_maxradius;
+				p.attraction_minradius = radius + ludum_game->player_attraction_minradius;
+				p.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
 				p.attraction_force     = ludum_game->player_attraction_force;
 				p.tangent_force        = ludum_game->player_tangent_force;			
 			}
 			else
 			{
-				p.attraction_minradius = ludum_game->enemy_attraction_minradius;
-				p.attraction_maxradius = ludum_game->enemy_attraction_maxradius;
+				p.attraction_minradius = radius + ludum_game->enemy_attraction_minradius;
+				p.attraction_maxradius = radius + ludum_game->enemy_attraction_maxradius;
 				p.attraction_force     = ludum_game->enemy_attraction_force;
 				p.tangent_force        = ludum_game->enemy_tangent_force;
 				p.color                = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

@@ -346,13 +346,6 @@ void LudumGame::TickCooldown(double delta_time)
 	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
 }
 
-void LudumGame::TickGameInputs(double delta_time)
-{
-	death::Game::TickGameInputs(delta_time);
-	//if (current_dash_time > 0.0f)
-	//	left_stick_position += current_dash_direction * (current_dash_time / dash_duration);
-}
-
 void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
 	death::Game::HandleGamepadInput(in_gamepad_data);

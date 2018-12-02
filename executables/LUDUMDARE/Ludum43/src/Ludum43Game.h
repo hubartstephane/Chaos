@@ -152,7 +152,6 @@ protected:
 	void RestrictPlayerToWorld();
 
 
-	virtual void TickGameInputs(double delta_time) override;
 	virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 	virtual void HandleKeyboardInputs() override;
 

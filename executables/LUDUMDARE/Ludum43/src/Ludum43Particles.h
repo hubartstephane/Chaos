@@ -167,14 +167,18 @@ public:
 // Object particle system
 // ===========================================================================
 
+class ParticleLife : public chaos::ParticleDefault::Particle
+{
 
-class ParticleLifeTrait : public chaos::ParticleLayerTrait<chaos::ParticleDefault::Particle, VertexBase>
+};
+
+class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
 {
 public:
 
-	bool UpdateParticle(float delta_time, chaos::ParticleDefault::Particle * particle, chaos::ParticleAllocation * allocation) const;
+	bool UpdateParticle(float delta_time, ParticleLife * particle, chaos::ParticleAllocation * allocation) const;
 
-	size_t ParticleToVertices(chaos::ParticleDefault::Particle const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
 
 public:
 

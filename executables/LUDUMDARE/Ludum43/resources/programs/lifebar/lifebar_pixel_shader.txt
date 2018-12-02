@@ -9,7 +9,8 @@ uniform sampler2DArray material;
 
 void main()
 {
-	vec4 color = texture(material, vs_texcoord);
-	output_color.xyz = color.xyz * vs_color.xyz;
-	output_color.a   = vs_color.a * color.a;
+	vec4 color = vec4(1.0, 0.0, 0.0, 0.5); //texture(material, vs_texcoord);
+	output_color = color;
+	//output_color.xyz = color.xyz * vs_color.xyz;
+	//output_color.a   = vs_color.a * color.a;
 };

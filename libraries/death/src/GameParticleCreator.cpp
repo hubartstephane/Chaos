@@ -35,7 +35,7 @@ namespace death
 
 		if (!InitializeParticles(allocation, bitmap_name, count))
 		{
-			delete(allocation);
+			delete(allocation); // shuxxx !!!
 			return nullptr;
 		}
 		return allocation;

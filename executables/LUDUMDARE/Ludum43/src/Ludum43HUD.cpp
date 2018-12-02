@@ -45,12 +45,16 @@ void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 	float life = ludum_game->GetPlayerLife();
 	if (life != cached_life_value)
 	{
-#if 0
 		// create the allocation
 		chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
 		if (allocation == nullptr)
 		{
-			allocation = GetGameParticleCreator().CreateParticles("life", 1, death::GameHUDKeys::LIFE_LAYER_ID);
+			chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
+			if (layer == nullptr)
+				return;
+
+			allocation = layer->SpawnParticles(1);
+
 			if (allocation == nullptr)
 				return;
 			RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);
@@ -59,7 +63,24 @@ void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 		{
 			allocation->Resize(1);
 		}
-#endif
+		// fill the particle
+
+		chaos::ParticleAccessor<ParticleLife> particles = allocation->GetParticleAccessor<ParticleLife>();
+		if (particles.GetCount() == 0)
+			return;
+
+		glm::vec2 view_size = ludum_game->GetViewSize();
+
+
+		glm::vec2 position1, position2;
+		position1.x = -view_size.x * 0.5f + 40.0f;
+		position1.y = -view_size.y * 0.5f + 40.0f;
+
+		position2.x =  view_size.x * 0.5f - 40.0f;
+		position2.y = -view_size.y * 0.5f + 70.0f;
+
+		particles->bounding_box = chaos::box2(std::make_pair(position1, position2));				
+		particles->color        = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 		cached_life_value = life;
 	}

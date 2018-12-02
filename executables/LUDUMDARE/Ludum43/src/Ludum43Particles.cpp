@@ -307,17 +307,15 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 // ===========================================================================
 
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, chaos::ParticleDefault::Particle * particle, chaos::ParticleAllocation * allocation) const
+bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle, chaos::ParticleAllocation * allocation) const
 {
 
 	return false;
 }
 
-size_t ParticleLifeTrait::ParticleToVertices(chaos::ParticleDefault::Particle const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
-
-
-	return vertices_per_particle;
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle, allocation);
 }
 
 

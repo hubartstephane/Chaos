@@ -13,7 +13,7 @@
 // ===========================================================================
 
 template<typename T>
-static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor)
+static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, float force_factor)
 {
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_velocity = particle->velocity;
@@ -57,10 +57,10 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
 			glm::vec3 tangent = glm::cross(a, b);
 
-			particle_velocity = particle_velocity + distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
+			particle_velocity = particle_velocity + force_factor * distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
 		}
 
-		particle_velocity = particle_velocity + distance_ratio *  affector.attraction_force * delta_pos; 
+		particle_velocity = particle_velocity + force_factor * distance_ratio *  affector.attraction_force * delta_pos; 
 
 		return true;
 	}
@@ -86,13 +86,13 @@ bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_
 	return false;
 }
 
-void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool affected, float slowing_factor, float max_velocity)
+void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool apply_slowdown, float slowing_factor, float max_velocity)
 {
 	glm::vec2 & velocity = particle->velocity;
 	glm::vec2 & position = particle->bounding_box.position;
 
 	// particle slowing down
-	if (!affected)
+	if (apply_slowdown)
 		velocity *= powf(slowing_factor, delta_time);	
 
 	// update particle velocity
@@ -129,10 +129,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	std::vector<ParticleEnemy> enemy_particles;
 	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, enemy_particles);
 
-	// position of the particle
-	glm::vec2 & particle_position = particle->bounding_box.position;
-	glm::vec2 & particle_velocity = particle->velocity;
-
 	// apply all effectors
 	bool affected = false;
 
@@ -140,15 +136,19 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 	size_t enemy_count = enemy_particles.size();
 	for (size_t i = 0 ; i < enemy_count ; ++i)
-		affected |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO);
+		affected |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, 0.0f);
 
 	// update life and color
 	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
 		return true;
 
-	// update and clamp the velocity
-	//UpdateVelocityAndPosition(delta_time, particle, affected, game->player_slowing_factor, game->player_max_velocity);
+	// add external forces
+	particle->velocity += particle->acceleration * delta_time;
 
+	// update and clamp the velocity
+	bool apply_slowdown = (!affected && particle->acceleration == glm::vec2(0.0f, 0.0f));
+	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, game->player_max_velocity);
+	particle->acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
 }
 
@@ -233,7 +233,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	bool in_waken_up_zone = false;
 
 	bool affected = false;
-	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO);
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO, 1.0f);
 	
 	if (in_waken_up_zone && !particle->waken_up)
 	{
@@ -245,7 +245,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	bool in_danger_zone = false;
 	size_t enemy_count = update_data.enemy_particles.size();
 	for (size_t i = 0 ; i < enemy_count ; ++i)
-		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO);
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, 1.0f);
 
 	// update life and color
 	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PARTICLE_LIFETIME))
@@ -255,7 +255,8 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 		return true;
 	}
 
-	UpdateVelocityAndPosition(delta_time, particle, affected, update_data.slowing_factor, update_data.max_velocity);
+	bool apply_slowdown = !affected;
+	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, update_data.slowing_factor, update_data.max_velocity);
 
 	return false;
 }

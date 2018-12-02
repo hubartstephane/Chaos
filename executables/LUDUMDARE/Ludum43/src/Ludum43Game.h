@@ -87,6 +87,10 @@ public:
 
 	float GetPlayerLife() const;
 
+	ParticlePlayer * GetPlayerParticle();
+
+	ParticlePlayer const * GetPlayerParticle() const;
+
 protected:
 
 	/** override */
@@ -153,7 +157,7 @@ protected:
 	virtual void HandleKeyboardInputs() override;
 
 	/** move the player */
-	void DisplacePlayer(double delta_time);
+	void UpdatePlayerAcceleration(double delta_time);
 
 	void ChangeLife(int delta_life);
 
@@ -175,16 +179,16 @@ public:
 	int initial_life = 3;
 	float cooldown = 0.1f;
 
-	float dash_duration = 0.5f;
-	float dash_cooldown = 2.0f;
-	float dash_speed_multiplier = 2.0f;
+	float dash_cooldown = 0.5f;
+	float dash_velocity = 200.0f;
 
 	float player_attraction_minradius = 50.0f;
 	float player_attraction_maxradius = 200.0f;
 	float player_tangent_force        = 500000.0f;
 	float player_attraction_force     = 20.0f;
 	float player_slowing_factor       = 0.5f;
-	float player_max_velocity        = 20.0f;
+	float player_max_velocity         = 20.0f;
+	float player_acceleration         = 2000.0f;
 
 	float enemy_attraction_minradius = 50.0f;
 	float enemy_attraction_maxradius = 200.0f;
@@ -202,8 +206,6 @@ public:
 	float current_cooldown = 0.1f;
 
 	float current_dash_cooldown   = 0.0f;
-	float current_dash_time = 0.0f;
-	glm::vec2 current_dash_direction = glm::vec2(0.0f, 0.0f);
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;

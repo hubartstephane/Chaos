@@ -107,7 +107,8 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 				p.attraction_minradius = ludum_game->enemy_attraction_minradius;
 				p.attraction_maxradius = ludum_game->enemy_attraction_maxradius;
 				p.attraction_force     = ludum_game->enemy_attraction_force;
-				p.tangent_force        = ludum_game->enemy_tangent_force;			
+				p.tangent_force        = ludum_game->enemy_tangent_force;
+				p.color                = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			}
 		}	
 		return true;

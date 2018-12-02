@@ -19,7 +19,7 @@
 
 LudumGame::LudumGame()
 {		
-	game_name = "Quantic Paouf IV";
+	game_name = "Quantikaouf IV";
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
@@ -125,8 +125,6 @@ void LudumGame::ResetGameVariables()
 	current_cooldown  = cooldown;
 
 	current_dash_cooldown = 0.0f;
-	current_dash_time = 0.0f;
-	current_dash_direction = glm::vec2(0.0f, 0.0f);
 
 	waken_up_particle_count = 0;
 	saved_particle_count = 0;
@@ -164,7 +162,7 @@ bool LudumGame::TickGameLoop(double delta_time)
 	if (!death::Game::TickGameLoop(delta_time))
 		return false;
 	// displace the player
-	DisplacePlayer(delta_time);
+	UpdatePlayerAcceleration(delta_time);
 	// dash values update
 	TickDashValues(delta_time);
 	// cooldown
@@ -254,9 +252,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 {
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
-	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
 	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);
-	DEATHGAME_JSON_ATTRIBUTE(dash_speed_multiplier);
+	DEATHGAME_JSON_ATTRIBUTE(dash_velocity);
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
 	DEATHGAME_JSON_ATTRIBUTE(cooldown);
 
@@ -266,7 +263,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_force);	
 	DEATHGAME_JSON_ATTRIBUTE(player_slowing_factor);		
 	DEATHGAME_JSON_ATTRIBUTE(player_max_velocity);
-
+	DEATHGAME_JSON_ATTRIBUTE(player_acceleration);
+	
 	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_minradius);
 	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_maxradius);
 	DEATHGAME_JSON_ATTRIBUTE(enemy_tangent_force);		
@@ -324,21 +322,23 @@ static glm::vec2 GetDirectionFromCircleSection(int quadran, int section_count)
 	return glm::vec2(cos(angle), sin(-angle));
 }
 
-void LudumGame::DisplacePlayer(double delta_time)
+void LudumGame::UpdatePlayerAcceleration(double delta_time)
 {
-	glm::vec2 value;
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return;
+	player_particle->acceleration = glm::vec2(0.0f, 0.0f);
 
-	value.x = (abs(right_stick_position.x) > abs(left_stick_position.x))?
-		right_stick_position.x:
-		left_stick_position.x;
+	float left_length_2  = glm::length2(left_stick_position);
+	float right_length_2 = glm::length2(right_stick_position);
+	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
+	{
+		glm::vec2 acceleration = (left_length_2 > right_length_2)?
+			left_stick_position / chaos::MathTools::Sqrt(left_length_2):
+			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
 
-	value.y = (abs(right_stick_position.y) > abs(left_stick_position.y))?
-		-right_stick_position.y:
-		-left_stick_position.y;
-
-	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position + value * (float)delta_time);
-	RestrictPlayerToWorld();
+		player_particle->acceleration = player_acceleration * glm::vec2(1.0f, -1.0f) * acceleration; // axis Y reversed
+	}
 }
 
 void LudumGame::TickCooldown(double delta_time)
@@ -349,8 +349,8 @@ void LudumGame::TickCooldown(double delta_time)
 void LudumGame::TickGameInputs(double delta_time)
 {
 	death::Game::TickGameInputs(delta_time);
-	if (current_dash_time > 0.0f)
-		left_stick_position += current_dash_direction * (current_dash_time / dash_duration);
+	//if (current_dash_time > 0.0f)
+	//	left_stick_position += current_dash_direction * (current_dash_time / dash_duration);
 }
 
 void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
@@ -371,35 +371,28 @@ void LudumGame::HandleKeyboardInputs()
 void LudumGame::ConditionnalStartDash()
 {
 	// dashing or cooling down
-	if (current_dash_cooldown > 0.0f || current_dash_time > 0.0f)
+	if (current_dash_cooldown > 0.0f)
 		return;
-	// need a direction to dash
-	if (glm::length2(last_left_stick_position) == 0.0f)
+
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
 		return;
-	// initialize the dash
-	current_dash_direction = glm::normalize(last_left_stick_position) * dash_speed_multiplier * gamepad_sensitivity;
-	current_dash_cooldown = dash_cooldown;
-	current_dash_time = dash_duration;
+
+	glm::vec2 & velocity = player_particle->velocity;
+
+	float velocity_2 = glm::length2(velocity);
+	if (velocity_2 == 0.0f)
+		return;
+
+	velocity += (velocity / chaos::MathTools::Sqrt(velocity_2)) * dash_velocity;
+
+	current_dash_cooldown = 0.0f; //dash_cooldown;
 }
 
 void LudumGame::TickDashValues(double delta_time)
 {
-	// dash in progress
-	if (current_dash_time > 0.0f)
-	{
-		if (delta_time > current_dash_time)
-		{
-			current_dash_time = 0.0f;
-			delta_time -= delta_time;		 // maybe a cooldown can be decreased below
-		}
-		else
-		{
-			current_dash_time -= (float)delta_time; // cooldown cannot be decreased below
-			delta_time = 0.0f;
-		}
-	}
 	// cooldow in progress
-	if (current_dash_cooldown > 0.0f && delta_time > 0.0f)
+	if (current_dash_cooldown > 0.0f)
 		current_dash_cooldown = chaos::MathTools::Maximum(0.0f, current_dash_cooldown - (float)delta_time);
 }
 
@@ -449,12 +442,28 @@ void LudumGame::NotifyAtomCountChange(int delta)
 
 float LudumGame::GetPlayerLife() const
 {
-	if (player_allocations == nullptr)
+	ParticlePlayer const * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
 		return 0.0f;
-	
+	return player_particle->life;
+}
+
+ParticlePlayer * LudumGame::GetPlayerParticle()
+{
+	if (player_allocations == nullptr)
+		return nullptr;
+	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
+	if (player_particles.GetCount() == 0)
+		return nullptr;
+	return &player_particles[0];
+}
+
+ParticlePlayer const * LudumGame::GetPlayerParticle() const
+{
+	if (player_allocations == nullptr)
+		return nullptr;
 	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
 	if (player_particles.GetCount() == 0)
-		return 0.0f;
-
-	return player_particles->life;
+		return nullptr;
+	return &player_particles[0];
 }

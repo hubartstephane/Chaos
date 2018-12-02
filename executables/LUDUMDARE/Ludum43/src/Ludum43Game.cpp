@@ -350,15 +350,34 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
 	death::Game::HandleGamepadInput(in_gamepad_data);
 
-	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false) /* || in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFTTRIGGER, false)*/)
+	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false))
 		ConditionnalStartDash();
+
+	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
+	{
+		bool reversed_mode = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
+		SetPlayerReverseMode(reversed_mode);
+	}
 }
 
 void LudumGame::HandleKeyboardInputs()
 {
 	death::Game::HandleKeyboardInputs();
-	if (glfwGetKey(glfw_window, GLFW_KEY_SPACE))
+	if (glfwGetKey(glfw_window, GLFW_KEY_SPACE) == GLFW_PRESS) // no repetition for dash
 		ConditionnalStartDash();
+
+	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Keyboard)
+	{
+		bool reversed_mode = (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_CONTROL) != GLFW_RELEASE);
+		SetPlayerReverseMode(reversed_mode);
+	}
+}
+
+void LudumGame::SetPlayerReverseMode(bool reversed_mode)
+{
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle != nullptr)
+		player_particle->reversed = reversed_mode;
 }
 
 void LudumGame::ConditionnalStartDash()
@@ -392,8 +411,13 @@ void LudumGame::TickDashValues(double delta_time)
 
 void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name)
 {
+	// add the world limits if nothing is required specifically
 	if (layer_name == nullptr)
-		layer_name = "Enemies";
+	{
+		RegisterEnemiesInRange(center, radius, enemy_particles, "Enemies");
+		RegisterEnemiesInRange(center, radius, enemy_particles, "WorldLimits");
+		return;
+	}
 
 	// capture all Enemies in range
 	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());

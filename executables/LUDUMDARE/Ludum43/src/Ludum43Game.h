@@ -94,6 +94,8 @@ public:
 
 protected:
 
+	void SetPlayerReverseMode(bool reversed_mode);
+
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */

@@ -125,7 +125,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 			p.attraction_force     = ludum_game->enemy_attraction_force;
 			p.tangent_force        = ludum_game->enemy_tangent_force;
 			p.color                = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-			p.world_limit          = is_world_limits;
+			p.reversed             = is_world_limits;
 		}	
 		return true;
 	}

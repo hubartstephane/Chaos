@@ -59,10 +59,13 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 			glm::vec3 b = glm::vec3(0.0f, 0.0f, 1.0f);
 			glm::vec3 tangent = glm::cross(a, b);
 
-			result_velocity += distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
+			if (!affector.reversed)
+				result_velocity += - 1.0f * distance_ratio * affector.tangent_force * glm::vec2(tangent.x, tangent.y);
 		}
 
-		result_velocity += distance_ratio *  affector.attraction_force * delta_pos; 
+		float direction = (affector.reversed)? -1.0f : 1.0f;
+
+		result_velocity += direction * distance_ratio *  affector.attraction_force * delta_pos; 
 
 		return true;
 	}

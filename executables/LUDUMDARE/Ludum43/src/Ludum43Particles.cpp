@@ -7,12 +7,6 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 
-static float const PARTICLE_LIFETIME = 2.0f;
-static float const PLAYER_LIFETIME = 4.0f;
-
-static float const DANGER_RADIUS_RATIO = 0.3f;
-static float const WAKEN_RADIUS_RATIO  = 1.0f;
-
 
 // ===========================================================================
 // Utility functions

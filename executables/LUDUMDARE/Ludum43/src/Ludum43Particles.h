@@ -86,8 +86,10 @@ class ParticlePlayer : public ParticleAffector
 {
 public:
 
+	//static float const PLAYER_LIFETIME = 4.0f // copy from Ludum43Game.h
+
 	float particle_radius_factor = 2.0f;
-	float life = 2.0f;
+	float life = 4.0f;
 
 };
 

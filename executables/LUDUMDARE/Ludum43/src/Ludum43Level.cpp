@@ -61,6 +61,10 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 		trait.game = ludum_game;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
 	}
+
+	//if (layer_name == "WorldLimits")
+	//	return nullptr;
+
 	if ((layer_name == "Enemies") || (layer_name == "WorldLimits"))
 	{
 		ParticleEnemyTrait trait;
@@ -103,6 +107,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 			p.attraction_minradius = radius + ludum_game->player_attraction_minradius;
 			p.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
 			p.attraction_force     = ludum_game->player_attraction_force;
+			p.repulsion_force      = ludum_game->player_repulsion_force;
 			p.tangent_force        = ludum_game->player_tangent_force;	
 		}	
 		return true;
@@ -120,12 +125,23 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 			float radius = chaos::GetInnerCircle(p.bounding_box).radius;
 
-			p.attraction_minradius = radius + ludum_game->enemy_attraction_minradius;
-			p.attraction_maxradius = radius + ludum_game->enemy_attraction_maxradius;
+			float min_r = (is_enemy)?
+				ludum_game->enemy_attraction_minradius:
+				ludum_game->worldlimits_attraction_minradius;
+			float max_r = (is_enemy)?
+				ludum_game->enemy_attraction_maxradius:
+				ludum_game->worldlimits_attraction_maxradius;
+
+			p.attraction_minradius = radius + min_r;
+			p.attraction_maxradius = radius + max_r;
 			p.attraction_force     = ludum_game->enemy_attraction_force;
-			p.tangent_force        = ludum_game->enemy_tangent_force;
-			p.color                = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			p.repulsion_force      = ludum_game->enemy_repulsion_force;
+			p.tangent_force        = ludum_game->enemy_tangent_force;			
 			p.reversed             = is_world_limits;
+			p.world_limits         = is_world_limits;
+			p.color                = (is_world_limits)?
+				glm::vec4(0.5f, 0.5f, 0.5f, 1.0f):
+				glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		}	
 		return true;
 	}

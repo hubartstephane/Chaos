@@ -41,9 +41,11 @@ public:
 	float attraction_minradius = 0.0f;
 	float attraction_maxradius = 0.0f;
 	float attraction_force     = 0.0f;
+	float repulsion_force      = 0.0f;
 	float tangent_force        = 0.0f;
 
 	bool reversed = false;
+	bool world_limits = false;
 };
 
 
@@ -54,6 +56,8 @@ public:
 class ParticleEnemy : public ParticleAffector
 {
 public:
+
+	
 
 	
 

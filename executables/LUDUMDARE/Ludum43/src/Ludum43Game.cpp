@@ -385,6 +385,9 @@ void LudumGame::HandleKeyboardInputs()
 
 void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 {
+	if (level_time < 1.0f) // because the player start could cause a repulsion
+		return;
+
 	ParticlePlayer * player_particle = GetPlayerParticle();
 	if (player_particle != nullptr)
 		player_particle->reversed = reversed_mode;

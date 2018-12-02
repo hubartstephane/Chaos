@@ -72,6 +72,10 @@ public:
 
 	void NotifyAtomCountChange(int delta);
 
+
+	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
+	int GetSavedParticleCount() const { return saved_particle_count; }
+
 protected:
 
 	/** override */
@@ -190,6 +194,8 @@ public:
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;
+	/** number of particle saved */
+	int saved_particle_count =0;
 	/** the heart beat time */
 	float heart_beat_time = 0.0f;
 

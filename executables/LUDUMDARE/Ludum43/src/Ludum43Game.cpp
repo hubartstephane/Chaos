@@ -129,6 +129,7 @@ void LudumGame::ResetGameVariables()
 	current_dash_direction = glm::vec2(0.0f, 0.0f);
 
 	waken_up_particle_count = 0;
+	saved_particle_count = 0;
 	heart_beat_time = 0.0f;
 
 }

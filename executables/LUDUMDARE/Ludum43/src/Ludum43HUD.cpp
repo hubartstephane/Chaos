@@ -1,6 +1,43 @@
 #include "Ludum43HUD.h"
 #include "Ludum43Game.h"
 
+bool LudumPlayingHUD::DoTick(double delta_time)
+{
+	// call super method
+	GameHUD::DoTick(delta_time);
+
+	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game); // Game::PlaySound() in TickHeartWarning(..) requires a non const pointer
+	if (ludum_game != nullptr)
+	{
+		UpdateWakenUpParticleCount(ludum_game);
+		UpdateSavedParticleCount(ludum_game);
+	}
+	return true;
+}
+
+void LudumPlayingHUD::UpdateWakenUpParticleCount(LudumGame const * ludum_game)
+{
+	int waken_up_particle_count = ludum_game->GetWakenUpParticleCount();
+	if (waken_up_particle_count != cached_waken_up_particle_count)
+	{
+		RegisterParticles(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Particles : %d", waken_up_particle_count, 20.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
+		cached_waken_up_particle_count = waken_up_particle_count;
+	}
+}
+
+void LudumPlayingHUD::UpdateSavedParticleCount(LudumGame const * ludum_game)
+{
+	int saved_particle_count = ludum_game->GetSavedParticleCount();
+	if (saved_particle_count != cached_saved_particle_count)
+	{
+		if (saved_particle_count == 10)
+			UnregisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID);
+		else
+			RegisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Saved : %d", saved_particle_count, 70.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
+
+		cached_saved_particle_count = saved_particle_count;
+	}
+}
 
 
 

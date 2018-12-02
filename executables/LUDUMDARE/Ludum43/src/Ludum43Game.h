@@ -74,7 +74,10 @@ public:
 
 
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
+
 	int GetSavedParticleCount() const { return saved_particle_count; }
+
+	float GetPlayerLife() const;
 
 protected:
 

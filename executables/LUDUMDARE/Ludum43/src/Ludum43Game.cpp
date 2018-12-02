@@ -441,3 +441,15 @@ void LudumGame::NotifyAtomCountChange(int delta)
 {
 	waken_up_particle_count += delta;
 }
+
+float LudumGame::GetPlayerLife() const
+{
+	if (player_allocations == nullptr)
+		return 0.0f;
+	
+	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
+	if (player_particles.GetCount() == 0)
+		return 0.0f;
+
+	return player_particles->life;
+}

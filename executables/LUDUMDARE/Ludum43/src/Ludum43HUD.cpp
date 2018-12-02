@@ -11,6 +11,7 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 	{
 		UpdateWakenUpParticleCount(ludum_game);
 		UpdateSavedParticleCount(ludum_game);
+		UpdateLifeBar(ludum_game);	
 	}
 	return true;
 }
@@ -39,38 +40,36 @@ void LudumPlayingHUD::UpdateSavedParticleCount(LudumGame const * ludum_game)
 	}
 }
 
+void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
+{
+	float life = ludum_game->GetPlayerLife();
+	if (life != cached_life_value)
+	{
+#if 0
+		// create the allocation
+		chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
+		if (allocation == nullptr)
+		{
+			allocation = GetGameParticleCreator().CreateParticles("life", 1, death::GameHUDKeys::LIFE_LAYER_ID);
+			if (allocation == nullptr)
+				return;
+			RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);
+		}
+		else
+		{
+			allocation->Resize(1);
+		}
+#endif
+
+		cached_life_value = life;
+	}
+}
+
+
 
 
 #if 0
 
-bool LudumPlayingHUD::DoTick(double delta_time)
-{
-	// call super method
-	PlayingHUD::DoTick(delta_time);
-	
-	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game); // Game::PlaySound() in TickHeartWarning(..) requires a non const pointer
-	if (ludum_game != nullptr)
-	{
-		UpdateComboParticles(ludum_game);
-		UpdateLifeParticles(ludum_game);		
-		TickHeartWarning(ludum_game, delta_time);
-	}
-	return true;
-}
-
-void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
-{
-	int current_combo = ludum_game->GetCurrentComboMultiplier();
-	if (current_combo != cached_combo_value)
-	{
-		if (current_combo < 2)
-			UnregisterParticles(death::GameHUDKeys::COMBO_ID);
-		else
-			RegisterParticles(death::GameHUDKeys::COMBO_ID, GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
-
-		cached_combo_value = current_combo;
-	}
-}
 
 void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 {
@@ -119,24 +118,6 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 	}
 }
 
-void LudumPlayingHUD::TickHeartWarning(LudumGame * ludum_game, double delta_time)
-{
-	if (ludum_game->GetCurrentLife() == 1)
-	{
-		heart_warning -= heart_beat_speed * (float)delta_time;
-		if (heart_warning <= 0.0f)
-		{
-			ludum_game->PlaySound("heartbeat", false, false);
-
-			float fractionnal_part, integer_part;
-			fractionnal_part = modf(heart_warning, &integer_part);
-
-			heart_warning = (1.0f + fractionnal_part);
-		}
-	}
-	else
-		heart_warning = 1.0f;
-}
 
 bool LudumPlayingHUD::CreateHUDLayers()
 {

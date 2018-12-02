@@ -193,11 +193,15 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 
 	// add external forces
-	particle->velocity += particle->acceleration * delta_time;
+	float acceleration_factor = (particle->dash)? 3.0f: 1.0f;
+
+	float max_velocity_factor = (particle->dash)? 3.0f: 1.0f;
+
+	particle->velocity += acceleration_factor * particle->acceleration * delta_time;
 
 	// update and clamp the velocity
 	bool apply_slowdown = (particle->acceleration == glm::vec2(0.0f, 0.0f));
-	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, game->player_max_velocity);
+	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, max_velocity_factor * game->player_max_velocity);
 	particle->acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
 }

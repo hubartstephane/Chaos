@@ -103,6 +103,7 @@ public:
 
 	bool  level_end_reached = false;
 	float level_end_timer   = 0.0f;
+	bool  dash = false;
 };
 
 class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>

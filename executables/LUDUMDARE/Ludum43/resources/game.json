@@ -10,7 +10,8 @@
   "cgamepad_sensitivity": 3000.0,
   "gamepad_sensitivity": 1.0,
 
-	"dash_cooldown": 0.5,
+  "dash_duration": 1.0,
+  "dash_cooldown": 3.0,
   "dash_velocity": 500.0,
 
   "player_attraction_minradius": 50.0,

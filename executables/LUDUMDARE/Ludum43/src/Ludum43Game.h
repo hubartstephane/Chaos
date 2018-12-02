@@ -165,7 +165,7 @@ protected:
 
 	void ChangeLife(int delta_life);
 
-	void ConditionnalStartDash();
+	void SetPlayerDashMode(bool dash);
 
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
@@ -180,7 +180,8 @@ public:
 	int initial_life = 3;
 	float cooldown = 0.1f;
 
-	float dash_cooldown = 0.5f;
+	float dash_duration = 0.5f;
+	float dash_cooldown = 1.0f;
 	float dash_velocity = 200.0f;
 
 	float player_attraction_minradius = 50.0f;
@@ -219,7 +220,8 @@ public:
 	int current_life     = 3;
 	float current_cooldown = 0.1f;
 
-	float current_dash_cooldown   = 0.0f;
+	float current_dash_duration = 0.0f;
+	float current_dash_cooldown = 0.0f;
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;

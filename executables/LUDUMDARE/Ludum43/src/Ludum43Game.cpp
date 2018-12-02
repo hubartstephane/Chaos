@@ -126,6 +126,7 @@ void LudumGame::ResetGameVariables()
 	current_cooldown  = 0.0f;
 
 	current_dash_cooldown = 0.0f;
+	current_dash_duration = 0.0f;
 
 	waken_up_particle_count = 0;
 	saved_particle_count = 0;
@@ -254,6 +255,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 {
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
+	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
 	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);
 	DEATHGAME_JSON_ATTRIBUTE(dash_velocity);
 	DEATHGAME_JSON_ATTRIBUTE(initial_life);
@@ -319,6 +321,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	current_life  = initial_life;
 	current_cooldown  = 0.0f;
 	current_dash_cooldown = 0.0f;
+	current_dash_duration = 0.0f;
 	saved_particle_count += waken_up_particle_count;
 	waken_up_particle_count = 0;	
 	level_time = 0.0f;
@@ -371,11 +374,13 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
 	death::Game::HandleGamepadInput(in_gamepad_data);
 
-	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false))
-		ConditionnalStartDash();
+
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{
+		bool dash = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false);
+		SetPlayerDashMode(dash);
+
 		bool reversed_mode = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
 		SetPlayerReverseMode(reversed_mode);
 	}
@@ -384,11 +389,13 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 void LudumGame::HandleKeyboardInputs()
 {
 	death::Game::HandleKeyboardInputs();
-	if (glfwGetKey(glfw_window, GLFW_KEY_SPACE) == GLFW_PRESS) // no repetition for dash
-		ConditionnalStartDash();
+	
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Keyboard)
 	{
+		bool dash_mode = (glfwGetKey(glfw_window, GLFW_KEY_SPACE) != GLFW_RELEASE);
+		SetPlayerDashMode(dash_mode);
+		
 		bool reversed_mode = (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_CONTROL) != GLFW_RELEASE);
 		SetPlayerReverseMode(reversed_mode);
 	}
@@ -416,8 +423,30 @@ void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 	}
 }
 
-void LudumGame::ConditionnalStartDash()
+void LudumGame::SetPlayerDashMode(bool dash)
 {
+	if (level_time < 1.0f) // because the player start dash
+		return;
+
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle != nullptr)
+	{
+		if (player_particle->dash == dash) // no change, ignore
+			return;
+
+		if (dash) // only trigger a 'pulse' if no cooldown
+		{
+			if (current_dash_cooldown > 0.0f)
+				return;
+			current_dash_cooldown = dash_cooldown;
+			current_dash_duration = dash_duration;
+			PlaySound("thrust", false, false);
+		}	
+		player_particle->dash = dash;
+	}
+
+
+#if 0
 	// dashing or cooling down
 	if (current_dash_cooldown > 0.0f)
 		return;
@@ -435,6 +464,7 @@ void LudumGame::ConditionnalStartDash()
 	velocity += (velocity / chaos::MathTools::Sqrt(velocity_2)) * dash_velocity;
 
 	current_dash_cooldown = 0.0f; //dash_cooldown;
+#endif
 }
 
 void LudumGame::TickDashValues(double delta_time)
@@ -442,6 +472,12 @@ void LudumGame::TickDashValues(double delta_time)
 	// cooldow in progress
 	if (current_dash_cooldown > 0.0f)
 		current_dash_cooldown = chaos::MathTools::Maximum(0.0f, current_dash_cooldown - (float)delta_time);
+	if (current_dash_duration > 0.0f)
+	{
+		current_dash_duration = chaos::MathTools::Maximum(0.0f, current_dash_duration - (float)delta_time);
+		if (current_dash_duration == 0.0f)
+			SetPlayerDashMode(false);	
+	}
 }
 
 

@@ -19,7 +19,7 @@ namespace death
 	{
 
 	}
-
+#if _DEBUG
 	void Game::SetCheatSkipLevelRequired(bool value)
 	{
 		cheat_skip_level_required = value;
@@ -29,6 +29,7 @@ namespace death
 	{
 		return cheat_skip_level_required;
 	}
+#endif
 
 	void Game::HandleKeyboardInputs()
 	{
@@ -1308,7 +1309,9 @@ namespace death
 
 	bool Game::SetNextLevel(bool looping_levels)
 	{
+#if _DEBUG
 		SetCheatSkipLevelRequired(false); 
+#endif
 
 		// existing any level
 		size_t count = levels.size();

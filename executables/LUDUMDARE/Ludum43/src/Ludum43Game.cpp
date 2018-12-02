@@ -45,6 +45,7 @@ bool LudumGame::OnLeavePause()
 bool LudumGame::OnEnterGame()
 {
 	death::Game::OnEnterGame();
+	PlaySound("start", false, false);
 	CreateAllGameObjects(0);
 	return true;
 }
@@ -374,9 +375,6 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{
 		bool reversed_mode = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
-
-		if (!reversed_mode)
-			reversed_mode = reversed_mode;
 		SetPlayerReverseMode(reversed_mode);
 	}
 }
@@ -396,11 +394,6 @@ void LudumGame::HandleKeyboardInputs()
 
 void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 {
-	if (reversed_mode)
-		reversed_mode = reversed_mode;
-	else
-		reversed_mode = reversed_mode;
-
 	if (level_time < 1.0f) // because the player start could cause a repulsion
 		return;
 
@@ -415,8 +408,7 @@ void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 			if (current_cooldown > 0.0f)
 				return;
 			current_cooldown = cooldown;
-		
-			reversed_mode = reversed_mode;
+			PlaySound("collision", false, false);
 		}	
 		player_particle->reversed = reversed_mode;
 	}

@@ -5,7 +5,7 @@
 
 
   "initial_life": 3,
-  "cooldown": 0.1,
+  "cooldown": 1.0,
   "mouse_sensitivity": 1.0,
   "cgamepad_sensitivity": 3000.0,
   "gamepad_sensitivity": 1.0,

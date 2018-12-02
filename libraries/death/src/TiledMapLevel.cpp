@@ -412,7 +412,7 @@ namespace death
 
 			trigger_surfaces_enabled = layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", false);
 			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
-			trigger_surfaces_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
+			tile_collisions_enabled  = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
 
 			// copy the offset / name
 			offset = layer->offset;

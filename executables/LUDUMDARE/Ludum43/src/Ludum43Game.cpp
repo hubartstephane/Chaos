@@ -122,7 +122,7 @@ void LudumGame::ResetGameVariables()
 {
 	death::Game::ResetGameVariables();
 	current_life  = initial_life;
-	current_cooldown  = cooldown;
+	current_cooldown  = 0.0f;
 
 	current_dash_cooldown = 0.0f;
 
@@ -148,7 +148,8 @@ void LudumGame::ChangeLife(int delta_life)
 
 bool LudumGame::CheckGameOverCondition()
 {
-	if (current_life <= 0)
+	ParticlePlayer const * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
 	{
 		RequireGameOver();
 		return true;
@@ -366,6 +367,9 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{
 		bool reversed_mode = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
+
+		if (!reversed_mode)
+			reversed_mode = reversed_mode;
 		SetPlayerReverseMode(reversed_mode);
 	}
 }
@@ -385,12 +389,30 @@ void LudumGame::HandleKeyboardInputs()
 
 void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 {
+	if (reversed_mode)
+		reversed_mode = reversed_mode;
+	else
+		reversed_mode = reversed_mode;
+
 	if (level_time < 1.0f) // because the player start could cause a repulsion
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();
 	if (player_particle != nullptr)
+	{
+		if (player_particle->reversed == reversed_mode) // no change, ignore
+			return;
+	
+		if (reversed_mode) // only trigger a 'pulse' if no cooldown
+		{
+			if (current_cooldown > 0.0f)
+				return;
+			current_cooldown = cooldown;
+		
+			reversed_mode = reversed_mode;
+		}	
 		player_particle->reversed = reversed_mode;
+	}
 }
 
 void LudumGame::ConditionnalStartDash()

@@ -11,6 +11,24 @@
 
 #include "Ludum43Game.h"
 
+// =================================================
+// FinishingTriggerSurfaceObject
+// =================================================
+
+class FinishingTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
+{
+
+public:
+
+	/** constructor */
+	FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+
+protected:
+
+	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+	virtual bool OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle);
+};
+
 
 // =================================================
 // Levels
@@ -67,6 +85,8 @@ protected:
 	/** get the typed level */
 	LudumLevel * GetTypedLevel();
 	LudumLevel const * GetTypedLevel() const;
+
+	virtual bool IsLevelCompleted() const override;
 
 protected:
 

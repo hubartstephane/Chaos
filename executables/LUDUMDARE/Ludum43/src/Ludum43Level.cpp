@@ -189,3 +189,24 @@ LudumLevel const * LudumLevelInstance::GetTypedLevel() const
 {
 	return dynamic_cast<LudumLevel const *>(GetLevel());
 }
+
+bool LudumLevelInstance::IsLevelCompleted() const
+{
+
+	return false;
+}
+
+
+// ===========================================================================================
+
+FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object):
+	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_geometric_object)
+{
+
+}
+
+bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+{
+
+	return true;
+}

@@ -13,5 +13,5 @@ void main()
 	float translucency = length(color.xyz);
   
 	output_color.xyz = color.xyz;  
-	output_color.a   = translucency * vs_color.a * color.a;
+	output_color.a   = translucency * vs_color.a * color.a * 0.015;
 };

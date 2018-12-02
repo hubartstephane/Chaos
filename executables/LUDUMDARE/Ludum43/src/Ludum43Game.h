@@ -17,7 +17,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
-
+#include <chaos/GPUFramebuffer.h>
 #include <death/Game.h>
 
 // =================================================
@@ -169,7 +169,12 @@ protected:
 
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
+	bool GenerateFramebuffer(glm::ivec2 const & size);
+
 protected:
+
+	/** the render buffer */
+	boost::intrusive_ptr<chaos::GPUFramebuffer> framebuffer;
 
 	/** the tiled map manager */
 	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;

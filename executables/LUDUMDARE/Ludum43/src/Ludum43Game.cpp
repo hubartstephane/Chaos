@@ -14,6 +14,7 @@
 #include <chaos/InputMode.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
+#include <chaos/GPUFramebufferGenerator.h>
 
 #include <death/GameParticles.h>
 
@@ -106,12 +107,43 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
+	// try to capture the "WorldBounds layer"
+	// XXX : in menu, there is no current_level_instance, so we can test the pointer to exaclty know what to do
+	//
+	death::TiledMap::LayerInstance * worldlimits = nullptr;
+
+	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
+	if (ludum_level_instance != nullptr)
+	{
+		worldlimits = ludum_level_instance->FindLayerInstance("WorldLimits");
+		if (worldlimits != nullptr)
+		{
+			// generate the framebuffer
+			glm::ivec2 framebuffer_size;
+			framebuffer_size.x = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.x);
+			framebuffer_size.y = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.y);
+			if (GenerateFramebuffer(framebuffer_size))
+			{
+				// render the layer on framebuffer
+				framebuffer->BeginRendering();
+				worldlimits->Display(&uniform_provider, render_params);
+				framebuffer->EndRendering();
+				// hide the layer for the normal processing
+				worldlimits->Show(false);			
+			}
+		}
+	}
+
 	// draw particle system
 	if (particle_manager != nullptr)
 		particle_manager->Display(&uniform_provider);
 
 	// super method
 	death::Game::DoDisplay(render_params, uniform_provider);
+
+	// restore worldlimits state
+	if (worldlimits != nullptr)
+		worldlimits->Show(true);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
@@ -185,10 +217,11 @@ void LudumGame::TickHeartBeat(double delta_time)
 		limit_value = 0.5f;
 	else if (waken_up_particle_count < 2)
 		limit_value = 0.75f;
-	else if (waken_up_particle_count < 3)
-		limit_value = 1.0f;
 	else if (waken_up_particle_count < 5)
+		limit_value = 1.0f;
+	else if (waken_up_particle_count < 10)
 		limit_value = 1.5f;
+
 
 
 	heart_beat_time += (float)delta_time;
@@ -444,27 +477,6 @@ void LudumGame::SetPlayerDashMode(bool dash)
 		}	
 		player_particle->dash = dash;
 	}
-
-
-#if 0
-	// dashing or cooling down
-	if (current_dash_cooldown > 0.0f)
-		return;
-
-	ParticlePlayer * player_particle = GetPlayerParticle();
-	if (player_particle == nullptr)
-		return;
-
-	glm::vec2 & velocity = player_particle->velocity;
-
-	float velocity_2 = glm::length2(velocity);
-	if (velocity_2 == 0.0f)
-		return;
-
-	velocity += (velocity / chaos::MathTools::Sqrt(velocity_2)) * dash_velocity;
-
-	current_dash_cooldown = 0.0f; //dash_cooldown;
-#endif
 }
 
 void LudumGame::TickDashValues(double delta_time)
@@ -560,4 +572,26 @@ chaos::box2 LudumGame::GetWorldBox() const
 	if (current_level_instance != nullptr)
 		 return current_level_instance->GetBoundingBox();
 	return chaos::box2();
+}
+
+
+bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size)
+{
+	if (framebuffer != nullptr)
+	{
+		if (size == framebuffer->GetSize())
+			return true;	
+	}
+
+	chaos::GPUFramebufferGenerator framebuffer_generator;
+	framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), glm::ivec2(0, 0), "scene");
+
+	framebuffer = framebuffer_generator.GenerateFramebuffer(size);
+
+	if (framebuffer == nullptr)
+		return false;
+	if (!framebuffer->CheckCompletionStatus())
+		return false;
+
+	return true;
 }

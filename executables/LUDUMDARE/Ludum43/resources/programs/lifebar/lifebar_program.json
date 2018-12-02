@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@lifebar_pixel_shader.txt"
+	],
+	"vertex_sources":
+	[
+		"@lifebar_vertex_shader.txt"
+	]
+}

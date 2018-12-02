@@ -116,42 +116,39 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
 	if (ludum_level_instance != nullptr)
 	{
+#if 0
 		ludum_level_instance->FindLayerInstance("Background1")->Show(false);
 		ludum_level_instance->FindLayerInstance("Background2")->Show(false);
 		ludum_level_instance->FindLayerInstance("Background3")->Show(false);
 		ludum_level_instance->FindLayerInstance("Background4")->Show(false);
 		ludum_level_instance->FindLayerInstance("Background5")->Show(false);
-
+#endif
 		worldlimits = ludum_level_instance->FindLayerInstance("WorldLimits");
-
-		static bool b = true;
-		//if (b)
-		//	worldlimits = nullptr;
-		//b = !b;
 
 		//worldlimits = nullptr;
 
 		if (worldlimits != nullptr)
 		{
 			// generate the framebuffer
-			glm::ivec2 framebuffer_size;
-			framebuffer_size.x = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.x);
-			framebuffer_size.y = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.y);
-			//if (GenerateFramebuffer(framebuffer_size))
 			if (GenerateFramebuffer(render_params.screen_size))
 			{
 				// render the layer on framebuffer
 				framebuffer->BeginRendering();
 
-				//chaos::GLTools::SetViewport(render_params.viewport);
+				// XXX : i do not understand this !!!!
+				// shuxxx : fixme or understand
+				//          => i create a framebuffer, the same sizeof the window
+				//          => i should have the same glViewport(...) !!!
+				//          => with the aspect and clamp ...
+				glViewport(0, 0, render_params.screen_size.x, render_params.screen_size.y);
 
-				glm::vec4 clear_color = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+				glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 				worldlimits->Display(&uniform_provider, render_params);
 				framebuffer->EndRendering();
 
-				//chaos::GLTools::SetViewport(render_params.viewport);
+				chaos::GLTools::SetViewport(render_params.viewport);
 
 				// hide the layer for the normal processing
 				worldlimits->Show(false);			
@@ -168,15 +165,13 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 		{
 			chaos::GPUTexture * texture = attachment->texture.get();
 			if (texture != nullptr)
-			{
 				main_provider.AddVariableValue("extra_background", texture);
-				//main_provider.AddVariableValue("background", texture);
-			}
 		}		
 		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 	}
-	else
-		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	// following is not really necessary because the material explicitely give a value to 'blend_backgrounds'
+	//else
+	//	main_provider.AddVariableValue("blend_backgrounds", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)); // see if this is nece
 	
 
 	// draw particle system

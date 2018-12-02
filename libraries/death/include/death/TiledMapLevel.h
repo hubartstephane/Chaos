@@ -383,6 +383,9 @@ namespace death
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();
 
+			/** test whether there is an infinite bounding box flag */
+			virtual void CheckInfiniteBoundingBox();
+
 		protected:
 
 			/** displacement ratio relatively to the main layer */
@@ -518,6 +521,8 @@ namespace death
 
 			/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
 			chaos::box2 explicit_bounding_box;
+			/** whether the explicit_bounding_box is valid (empty is not a good answer) */
+			bool has_explicit_bounding_box = false;
 
 			/** the layer of reference for displacement */
 			boost::intrusive_ptr<TiledMap::LayerInstance> reference_layer;

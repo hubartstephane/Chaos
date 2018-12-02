@@ -51,6 +51,9 @@ public:
 
 class ParticleEnemy : public ParticleAffector
 {
+public:
+
+	bool world_limit = false;
 
 };
 

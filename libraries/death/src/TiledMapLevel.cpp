@@ -386,6 +386,13 @@ namespace death
 			return level_instance->GetDefaultRenderMaterial();
 		}
 
+		void LayerInstance::CheckInfiniteBoundingBox()
+		{
+			bool infinite_bounding_box = layer->FindPropertyBool("INFINITE_BOUNDING_BOX", false);
+			if (infinite_bounding_box)
+				bounding_box = chaos::box2();
+		}
+
 		bool LayerInstance::Initialize()
 		{
 			// get the properties of interrest
@@ -419,6 +426,7 @@ namespace death
 			{
 				if (!InitializeLayer(image_layer))
 					return false;
+				CheckInfiniteBoundingBox();
 				return FinalizeParticles();
 			}
 
@@ -427,6 +435,7 @@ namespace death
 			{
 				if (!InitializeLayer(object_layer))
 					return false;
+				CheckInfiniteBoundingBox();
 				return FinalizeParticles();
 			}
 
@@ -435,6 +444,7 @@ namespace death
 			{
 				if (!InitializeLayer(tile_layer))
 					return false;
+				CheckInfiniteBoundingBox();
 				return FinalizeParticles();
 			}
 
@@ -472,9 +482,10 @@ namespace death
 					continue;
 				
 				// explicit world bounding box
-				if (level_instance->explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsWorldBoundingBox(geometric_object))
+				if (!level_instance->has_explicit_bounding_box && chaos::TiledMapTools::IsWorldBoundingBox(geometric_object))
 				{
 					 chaos::TiledMapTools::GetExplicitWorldBoundingBox(geometric_object, level_instance->explicit_bounding_box, true); // in world coordinate				
+					 level_instance->has_explicit_bounding_box = true;
 				}
 				// explicit layer bounding box
 				if (explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
@@ -752,7 +763,7 @@ namespace death
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
 			glm::ivec2 start_instance = scissor_result.start_instance;
 			glm::ivec2 last_instance  = scissor_result.last_instance;			
-			if (this == level_instance->reference_layer)
+			if (this == level_instance->reference_layer || layer_box.IsEmpty()) 
 			{
 				start_instance = glm::ivec2(0, 0);
 				last_instance  = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
@@ -917,9 +928,10 @@ namespace death
 
 		chaos::box2 LevelInstance::GetBoundingBox() const
 		{
-			if (!explicit_bounding_box.IsEmpty())
+			// explicit bounding box
+			if (has_explicit_bounding_box)
 				return explicit_bounding_box;
-
+			// depend on layers
 			chaos::box2 result;
 			size_t count = layer_instances.size();
 			for (size_t i = 0 ; i < count ; ++i)

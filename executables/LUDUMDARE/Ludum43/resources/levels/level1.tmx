@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="382">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="439">
  <properties>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
@@ -260,7 +260,10 @@
   <object id="190" gid="16" x="1570" y="3418" width="196" height="196"/>
   <object id="191" gid="16" x="2178" y="3386" width="196" height="196"/>
  </objectgroup>
- <objectgroup name="Atoms">
+ <objectgroup name="Atoms" visible="0">
+  <properties>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
+  </properties>
   <object id="373" gid="19" x="359" y="329" width="50" height="50"/>
   <object id="374" gid="19" x="351" y="753" width="50" height="50"/>
   <object id="375" gid="19" x="951" y="1441" width="50" height="50"/>
@@ -283,8 +286,39 @@
   <object id="371" gid="18" x="9688" y="2864" width="400" height="400"/>
   <object id="372" gid="18" x="11976" y="928" width="400" height="400"/>
  </objectgroup>
+ <objectgroup name="WorldLimits">
+  <object id="409" gid="18" x="-4124" y="-8828" width="3000" height="3000"/>
+  <object id="410" gid="18" x="-2172" y="-9244" width="3000" height="3000"/>
+  <object id="411" gid="18" x="-284" y="-9244" width="3000" height="3000"/>
+  <object id="412" gid="18" x="1156" y="-8380" width="3000" height="3000"/>
+  <object id="413" gid="18" x="2436" y="-7132" width="3000" height="3000"/>
+  <object id="414" gid="18" x="3524" y="-5692" width="3000" height="3000"/>
+  <object id="415" gid="18" x="4164" y="-4188" width="3000" height="3000"/>
+  <object id="416" gid="18" x="4676" y="-2556" width="3000" height="3000"/>
+  <object id="417" gid="18" x="5028" y="-1404" width="3000" height="3000"/>
+  <object id="418" gid="18" x="5252" y="132" width="3000" height="3000"/>
+  <object id="419" gid="18" x="5060" y="2052" width="3000" height="3000"/>
+  <object id="420" gid="18" x="5028" y="3876" width="3000" height="3000"/>
+  <object id="422" gid="18" x="-4444" y="-6876" width="3000" height="3000"/>
+  <object id="423" gid="18" x="-3868" y="-5340" width="3000" height="3000"/>
+  <object id="424" gid="18" x="-4316" y="-3676" width="3000" height="3000"/>
+  <object id="426" gid="18" x="-5468" y="-1948" width="3000" height="3000"/>
+  <object id="427" gid="18" x="-5964" y="-300" width="3000" height="3000"/>
+  <object id="428" gid="18" x="-6300" y="1316" width="3000" height="3000"/>
+  <object id="429" gid="18" x="452" y="2340" width="3000" height="3000"/>
+  <object id="430" gid="18" x="-6220" y="3172" width="3000" height="3000"/>
+  <object id="431" gid="18" x="-5836" y="4852" width="3000" height="3000"/>
+  <object id="432" gid="18" x="-4972" y="6116" width="3000" height="3000"/>
+  <object id="433" gid="18" x="-3740" y="7316" width="3000" height="3000"/>
+  <object id="434" gid="18" x="-2220" y="8292" width="3000" height="3000"/>
+  <object id="435" gid="18" x="-684" y="9348" width="3000" height="3000"/>
+  <object id="436" gid="18" x="980" y="10052" width="3000" height="3000"/>
+  <object id="437" gid="18" x="2212" y="11044" width="3000" height="3000"/>
+  <object id="438" gid="18" x="3028" y="8116" width="3000" height="3000"/>
+ </objectgroup>
  <objectgroup name="PlayerAndCamera">
   <properties>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>
   </properties>
   <object id="56" name="ThePlayerStart1" x="526" y="-954">
@@ -305,6 +339,6 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="75" name="world_bounding_box" x="-11104" y="-5984" width="31808" height="22016" visible="0"/>
+  <object id="75" name="world_bounding_box" x="-41376" y="-18400" width="81472" height="34432" visible="0"/>
  </objectgroup>
 </map>

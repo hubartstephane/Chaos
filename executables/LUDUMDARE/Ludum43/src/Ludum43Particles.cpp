@@ -253,6 +253,11 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 		game->NotifyAtomCountChange(+1);
 		particle->waken_up = true;
 	}
+	else if (!affected && particle->waken_up)
+	{
+		game->NotifyAtomCountChange(-1);
+		particle->waken_up = false;	
+	}
 
 	// danger affectors
 	glm::vec2 enemy_sum_velocity  = glm::vec2(0.0f, 0.0f);

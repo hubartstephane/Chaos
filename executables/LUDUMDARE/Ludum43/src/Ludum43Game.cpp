@@ -389,13 +389,17 @@ void LudumGame::TickDashValues(double delta_time)
 		current_dash_cooldown = chaos::MathTools::Maximum(0.0f, current_dash_cooldown - (float)delta_time);
 }
 
-void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles)
+
+void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name)
 {
+	if (layer_name == nullptr)
+		layer_name = "Enemies";
+
 	// capture all Enemies in range
 	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
 	if (level_instance != nullptr)
 	{
-		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance("Enemies");
+		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
 		if (layer_instance)
 		{
 			chaos::ParticleLayer const * particle_layer = layer_instance->GetParticleLayer();
@@ -459,4 +463,11 @@ ParticlePlayer const * LudumGame::GetPlayerParticle() const
 	if (player_particles.GetCount() == 0)
 		return nullptr;
 	return &player_particles[0];
+}
+
+chaos::box2 LudumGame::GetWorldBox() const
+{
+	if (current_level_instance != nullptr)
+		 return current_level_instance->GetBoundingBox();
+	return chaos::box2();
 }

@@ -74,10 +74,11 @@ public:
 
 	virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 
-	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles);
+	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name = nullptr);
 
 	void NotifyAtomCountChange(int delta);
 
+	virtual chaos::box2 GetWorldBox() const override;
 
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
 

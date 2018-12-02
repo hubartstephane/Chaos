@@ -98,7 +98,7 @@ public:
 	//static float const PLAYER_LIFETIME = 4.0f // copy from Ludum43Game.h
 
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
-	float particle_radius_factor = 2.0f;
+	float particle_radius_factor = 2.0f;          // very usefull to prevent floating atoms between player and a field
 	float life = 4.0f;
 
 };

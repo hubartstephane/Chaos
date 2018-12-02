@@ -419,16 +419,8 @@ void LudumGame::TickDashValues(double delta_time)
 }
 
 
-void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name)
+void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all)
 {
-	// add the world limits if nothing is required specifically
-	if (layer_name == nullptr)
-	{
-		RegisterEnemiesInRange(center, radius, enemy_particles, "Enemies");
-		RegisterEnemiesInRange(center, radius, enemy_particles, "WorldLimits");
-		return;
-	}
-
 	// capture all Enemies in range
 	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
 	if (level_instance != nullptr)
@@ -454,10 +446,12 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 					for (size_t j = 0 ; j < enemies_count ; ++j)
 					{
 						ParticleEnemy const & enemy = enemies[j];
-
-						float l2 = glm::length2(enemy.bounding_box.position - center);
-						if (l2 > square_radius)
-							continue;
+						if (!take_all)
+						{
+							float l2 = glm::length2(enemy.bounding_box.position - center);
+							if (l2 > square_radius)
+								continue;						
+						}
 						enemy_particles.push_back(enemy);									
 					}				
 				}

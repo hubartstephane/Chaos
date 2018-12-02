@@ -7,17 +7,15 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 
+static bool CHEAT_PLAYER_LIFE = true;
 
 // ===========================================================================
 // Utility functions
 // ===========================================================================
 
 template<typename T>
-static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, glm::vec2 & result_velocity)
+static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, glm::vec2 & result_velocity, float particle_radius_factor)
 {
-	if (affector.attraction_minradius <= 0.0f || affector.attraction_maxradius <= 0.0f)
-		return false;
-
 	result_velocity = glm::vec2(0.0f, 0.0f);
 
 	glm::vec2 & particle_position = particle->bounding_box.position;
@@ -29,15 +27,15 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 
 	float l2 = glm::length2(delta_pos);
 
-	float attraction_maxradius = particle->particle_radius_factor * affector.attraction_maxradius;
-	float attraction_minradius = particle->particle_radius_factor * affector.attraction_minradius;
+	float attraction_maxradius = particle_radius_factor * affector.attraction_maxradius;
+	float attraction_minradius = particle_radius_factor * affector.attraction_minradius;
 
 	// particle in range
 	if (l2 < attraction_maxradius * attraction_maxradius)
 	{
 		float l  = 0.0f;
 		// particle never goes below lin radius
-		if (l2 < attraction_minradius * attraction_minradius)
+		if (attraction_minradius > 0.0f && l2 < attraction_minradius * attraction_minradius)
 		{		
 			l  = attraction_minradius;
 			particle_position = affector_position - glm::normalize(delta_pos) * l;
@@ -128,7 +126,6 @@ ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(
 {
 	ParticlePlayerTrait::UpdatePlayerData result;
 
-	//game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles);
 	
 
 	return result;
@@ -139,22 +136,43 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 {
 	// search all nearby enemies
 	std::vector<ParticleEnemy> enemy_particles;
-	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, enemy_particles);
+	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, enemy_particles, "Enemies", false);
+	std::vector<ParticleEnemy> worldlimits_particles;
+	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
 
 	// apply all effectors
-	bool affected = false;
+	bool affected_by_enemies = false;
+	bool affected_by_worldlimits = false;
 
 	bool in_danger_zone = false;
 
 	glm::vec2 sum_velocity = glm::vec2(0.0f, 0.0f);
 
+	// enemies
 	size_t enemy_count = enemy_particles.size();
 	for (size_t i = 0 ; i < enemy_count ; ++i)
 	{
 		glm::vec2 effector_velocity;
-		affected |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, effector_velocity);
+		affected_by_enemies |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, effector_velocity, particle->particle_radius_factor);
 		sum_velocity += effector_velocity;
 	}
+
+	// world
+	size_t worldlimit_count = worldlimits_particles.size();
+	for (size_t i = 0 ; i < worldlimit_count ; ++i)
+	{
+		bool in_dontcare = false;
+		glm::vec2 effector_velocity;
+		affected_by_worldlimits |= ApplyAffectorToParticles(delta_time, particle, worldlimits_particles[i], in_dontcare, DANGER_RADIUS_RATIO, effector_velocity, 1.0f); // 1.0f => just to test
+		//sum_velocity += effector_velocity;
+	}
+
+	// loose life if your not in danger zone
+	if (!affected_by_worldlimits && !CHEAT_PLAYER_LIFE)
+		in_danger_zone = true;
+
+
+
 
 	particle->velocity += sum_velocity * 0.0f;
 
@@ -166,7 +184,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	particle->velocity += particle->acceleration * delta_time;
 
 	// update and clamp the velocity
-	bool apply_slowdown = (!affected && particle->acceleration == glm::vec2(0.0f, 0.0f));
+	bool apply_slowdown = (particle->acceleration == glm::vec2(0.0f, 0.0f));
 	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, game->player_max_velocity);
 	particle->acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
@@ -256,7 +274,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 
 	glm::vec2 player_sum_velocity = glm::vec2(0.0f, 0.0f);
 	
-	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO, player_sum_velocity);
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO, player_sum_velocity, particle->particle_radius_factor);
 	
 	if (in_waken_up_zone && !particle->waken_up)
 	{
@@ -276,7 +294,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	for (size_t i = 0 ; i < enemy_count ; ++i)
 	{
 		glm::vec2 enemy_velocity;
-		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, enemy_velocity);
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, enemy_velocity, particle->particle_radius_factor);
 		enemy_sum_velocity += enemy_velocity;
 	}
 
@@ -310,7 +328,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	result.max_velocity       = game->particle_max_velocity;
 	result.world_clamp_radius = game->world_clamp_radius;
 
-	game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles);
+	game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles, "Enemies", true);
 
 	return result;
 }

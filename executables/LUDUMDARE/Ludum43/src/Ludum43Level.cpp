@@ -128,7 +128,13 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		{
 			ParticleEnemy & p = particles[i]; 
 
-			float radius = chaos::GetInnerCircle(p.bounding_box).radius;
+			chaos::sphere2 c = chaos::GetInnerCircle(p.bounding_box);
+
+			float & radius = c.radius;
+
+			radius *= chaos::MathTools::RandFloat(0.8f, 2.0f);
+
+			p.bounding_box = chaos::GetBoundingBox(c);
 
 			if (is_enemy)
 			{

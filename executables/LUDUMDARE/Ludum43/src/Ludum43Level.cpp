@@ -169,6 +169,13 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 	return true;
 }
 
+death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+{
+	if (in_geometric_object->name == "FinishSurface")
+		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+
+	return death::TiledMap::Level::DoCreateTriggerSurface(in_layer_instance, in_geometric_object);
+}
 
 // =============================================================
 // LudumLevelInstance implementation
@@ -192,7 +199,15 @@ LudumLevel const * LudumLevelInstance::GetTypedLevel() const
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {
-
+	if (game != nullptr)
+	{
+		ParticlePlayer * player_particle = game->GetPlayerParticle();
+		if (player_particle != nullptr)
+		{
+			if (player_particle->level_end_reached && player_particle->level_end_timer <= 0.0f)
+				return true;
+		}
+	}
 	return false;
 }
 
@@ -207,6 +222,15 @@ FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::La
 
 bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
 {
+	if (player_particle != nullptr)
+	{
+		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
+		if (!pp->level_end_reached)
+		{
+			pp->level_end_reached = true;
+			pp->level_end_timer   = 2.0f;		
+		}		
+	}
 
 	return true;
 }

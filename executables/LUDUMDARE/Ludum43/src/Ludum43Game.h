@@ -134,6 +134,8 @@ protected:
 	/** the game main loop */
 	virtual bool CheckGameOverCondition() override;
 
+	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance);
+
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
@@ -162,9 +164,6 @@ protected:
 	void UpdatePlayerAcceleration(double delta_time);
 
 	void ChangeLife(int delta_life);
-
-	/** override */
-	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
 	void ConditionnalStartDash();
 

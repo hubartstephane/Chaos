@@ -101,6 +101,8 @@ public:
 	float particle_radius_factor = 2.0f;          // very usefull to prevent floating atoms between player and a field
 	float life = 4.0f;
 
+	bool  level_end_reached = false;
+	float level_end_timer   = 0.0f;
 };
 
 class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>

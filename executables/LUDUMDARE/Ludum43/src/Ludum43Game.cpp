@@ -312,6 +312,13 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 {
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
+
+	current_life  = initial_life;
+	current_cooldown  = 0.0f;
+	current_dash_cooldown = 0.0f;
+	saved_particle_count += waken_up_particle_count;
+	waken_up_particle_count = 0;	
+	level_time = 0.0f;
 }
 
 static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_count)

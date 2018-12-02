@@ -168,8 +168,9 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	}
 
 	// loose life if your not in danger zone
-	if (!affected_by_worldlimits && !CHEAT_PLAYER_LIFE)
-		in_danger_zone = true;
+	if (!particle->level_end_reached)
+		if (!affected_by_worldlimits && !CHEAT_PLAYER_LIFE)
+			in_danger_zone = true;
 
 
 
@@ -177,8 +178,19 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	particle->velocity += sum_velocity * 0.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
-		return true;
+
+	if (particle->level_end_reached)
+	{
+		particle->level_end_timer = chaos::MathTools::Maximum(0.0f, particle->level_end_timer - delta_time);
+		particle->color.a = particle->level_end_timer / 2.0f;	
+	}
+	else
+	{
+		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
+			return true;		
+	}
+
+
 
 	// add external forces
 	particle->velocity += particle->acceleration * delta_time;

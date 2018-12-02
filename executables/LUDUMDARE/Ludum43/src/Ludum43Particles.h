@@ -45,28 +45,6 @@ public:
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ===========================================================================
 // ParticleEnemy
 // ===========================================================================
@@ -138,23 +116,6 @@ public:
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ===========================================================================
 // ParticleAtom
 // ===========================================================================
@@ -196,4 +157,28 @@ public:
 
 	class LudumGame * game = nullptr;
 };
+
+
+
+
+
+
+// ===========================================================================
+// Object particle system
+// ===========================================================================
+
+
+class ParticleLifeTrait : public chaos::ParticleLayerTrait<chaos::ParticleDefault::Particle, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, chaos::ParticleDefault::Particle * particle, chaos::ParticleAllocation * allocation) const;
+
+	size_t ParticleToVertices(chaos::ParticleDefault::Particle const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+
+public:
+
+	class LudumGame * game = nullptr;
+};
+
 

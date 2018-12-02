@@ -29,6 +29,8 @@ protected:
 	/** override */
 	virtual bool DoTick(double delta_time) override;
 
+	virtual bool CreateHUDLayers() override;
+
 	void UpdateWakenUpParticleCount(class LudumGame const * ludum_game);
 
 	void UpdateSavedParticleCount(class LudumGame const * ludum_game);

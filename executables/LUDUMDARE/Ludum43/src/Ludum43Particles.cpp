@@ -302,5 +302,22 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	return result;
 }
 
+// ===========================================================================
+// Object particle system
+// ===========================================================================
+
+
+bool ParticleLifeTrait::UpdateParticle(float delta_time, chaos::ParticleDefault::Particle * particle, chaos::ParticleAllocation * allocation) const
+{
+
+	return false;
+}
+
+size_t ParticleLifeTrait::ParticleToVertices(chaos::ParticleDefault::Particle const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+{
+
+
+	return vertices_per_particle;
+}
 
 

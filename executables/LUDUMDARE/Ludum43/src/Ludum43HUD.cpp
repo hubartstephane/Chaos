@@ -65,7 +65,22 @@ void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 	}
 }
 
-
+bool LudumPlayingHUD::CreateHUDLayers()
+{
+	// call super method
+	if (!death::GameHUD::CreateHUDLayers())
+		return false;
+	// create a layer for the life bar
+	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game);
+	if (ludum_game != nullptr)
+	{
+		int render_order = -1;
+		ParticleLifeTrait life_trait;
+		life_trait.game = ludum_game;
+		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "lifebar", life_trait);
+	}
+	return true;
+}
 
 
 #if 0
@@ -119,22 +134,7 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 }
 
 
-bool LudumPlayingHUD::CreateHUDLayers()
-{
-	// call super method
-	if (!death::PlayingHUD::CreateHUDLayers())
-		return false;
-	// create a layer for the life bar
-	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game);
-	if (ludum_game != nullptr)
-	{
-		int render_order = -1;
-		ParticleLifeObjectTrait life_trait;
-		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
-	}
-	return true;
-}
+
 
 #endif
 

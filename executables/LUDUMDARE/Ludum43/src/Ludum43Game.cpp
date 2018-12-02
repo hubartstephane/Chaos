@@ -137,18 +137,22 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 			glm::ivec2 framebuffer_size;
 			framebuffer_size.x = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.x);
 			framebuffer_size.y = (int)chaos::MathTools::Ceil(2.0f * render_params.viewport.half_size.y);
+			//if (GenerateFramebuffer(framebuffer_size))
 			if (GenerateFramebuffer(render_params.screen_size))
 			{
 				// render the layer on framebuffer
 				framebuffer->BeginRendering();
 
-				chaos::GLTools::SetViewport(render_params.viewport);
+				//chaos::GLTools::SetViewport(render_params.viewport);
 
-				glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec4 clear_color = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
 				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 				worldlimits->Display(&uniform_provider, render_params);
 				framebuffer->EndRendering();
+
+				//chaos::GLTools::SetViewport(render_params.viewport);
+
 				// hide the layer for the normal processing
 				worldlimits->Show(false);			
 			}
@@ -171,6 +175,8 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 		}		
 		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 	}
+	else
+		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	
 
 	// draw particle system

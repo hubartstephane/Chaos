@@ -14,7 +14,13 @@ void main()
 	vec4 b1 = texture(background, vs_texcoord);
 	vec4 b2 = texture(extra_background, vs_texcoord);
  
-	output_color = b1 * (b2 + blend_backgrounds);
-  
-	//output_color = blend_backgrounds * texture(background, vs_texcoord);
+
+	// XXX : very tricky => due to C++ code bug, once 'extra_background' has been set once, it remains set even if no provided explicitely (OpenGL State Machine issue)
+	//       so i use this format
+	//            ((1 - Blend) * b2 + Blend)
+	//
+	//       In menu or game, this works
+	//       b1 is blended correctly with 0 or 1
+
+	output_color = b1 * ((vec4(1.0, 1.0, 1.0, 1.0) - blend_backgrounds) * b2 + blend_backgrounds);
 }

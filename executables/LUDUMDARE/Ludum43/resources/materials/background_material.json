@@ -3,7 +3,7 @@
 
   "textures": {
 
-    "background": { "name": "background2" }
+    "background": { "name": "background1" }
 
   },
   "uniforms":

@@ -313,6 +313,8 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 {
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
+	if (new_level != nullptr && old_level != nullptr)
+		PlaySound("next_level", false, false);
 
 	current_life  = initial_life;
 	current_cooldown  = 0.0f;

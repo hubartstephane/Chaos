@@ -17,6 +17,8 @@
   "player_attraction_maxradius": 800.0,
   "player_attraction_force": 500.0,
   "player_tangent_force": 500000.0,
+  "player_max_velocity": 2000.0,
+  "player_slowing_factor": 0.7,
 
   "enemy_attraction_minradius": 200.0,
   "enemy_attraction_maxradius": 800.0,

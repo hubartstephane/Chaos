@@ -142,8 +142,8 @@ public:
 
 		ParticlePlayer player_particle;
 
-		float particle_slowing_factor;
-		float particle_max_velocity;
+		float slowing_factor;
+		float max_velocity;
 		float world_clamp_radius;
 
 		std::vector<ParticleEnemy> enemy_particles;

@@ -86,6 +86,23 @@ bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_
 	return false;
 }
 
+void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool affected, float slowing_factor, float max_velocity)
+{
+	glm::vec2 & velocity = particle->velocity;
+	glm::vec2 & position = particle->bounding_box.position;
+
+	// particle slowing down
+	if (!affected)
+		velocity *= powf(slowing_factor, delta_time);	
+
+	// update particle velocity
+	float velocity_length2 = glm::length2(particle->velocity);
+	if (velocity_length2 > max_velocity * max_velocity)
+		velocity = glm::normalize(velocity) * max_velocity;				
+	// update particle position
+	position += velocity * (float)delta_time;
+}
+
 // ===========================================================================
 // ParticlePlayerTrait
 // ===========================================================================
@@ -129,27 +146,8 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
 		return true;
 
-#if 0
-
-	// final computation
-	float particle_max_velocity = update_data.particle_max_velocity;
-
-	
-
-	// particle slowing down
-	if (!affected)
-		particle->velocity *= powf(update_data.particle_slowing_factor, delta_time);	
-
-	// update particle velocity
-	float velocity_length2 = glm::length2(particle_velocity);
-	if (velocity_length2 > particle_max_velocity * particle_max_velocity)
-		particle_velocity = glm::normalize(particle_velocity) * particle_max_velocity;				
-	// update particle position
-	particle_position += particle->velocity * (float)delta_time;
-
-
-
-#endif
+	// update and clamp the velocity
+	//UpdateVelocityAndPosition(delta_time, particle, affected, game->player_slowing_factor, game->player_max_velocity);
 
 	return false;
 }
@@ -257,21 +255,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 		return true;
 	}
 
-	// final computation
-	float particle_max_velocity = update_data.particle_max_velocity;
-
-	glm::vec2 & particle_velocity = particle->velocity;
-
-	// particle slowing down
-	if (!affected)
-		particle->velocity *= powf(update_data.particle_slowing_factor, delta_time);	
-
-	// update particle velocity
-	float velocity_length2 = glm::length2(particle_velocity);
-	if (velocity_length2 > particle_max_velocity * particle_max_velocity)
-		particle_velocity = glm::normalize(particle_velocity) * particle_max_velocity;				
-	// update particle position
-	particle_position += particle->velocity * (float)delta_time;
+	UpdateVelocityAndPosition(delta_time, particle, affected, update_data.slowing_factor, update_data.max_velocity);
 
 	return false;
 }
@@ -284,12 +268,11 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 	if (player_particle == nullptr)
 		return result;
 
-
 	result.player_particle = *player_particle;
 
-	result.particle_slowing_factor     = game->particle_slowing_factor;	
-	result.particle_max_velocity = game->particle_max_velocity;
-	result.world_clamp_radius    = game->world_clamp_radius;
+	result.slowing_factor     = game->particle_slowing_factor;	
+	result.max_velocity       = game->particle_max_velocity;
+	result.world_clamp_radius = game->world_clamp_radius;
 
 	game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles);
 

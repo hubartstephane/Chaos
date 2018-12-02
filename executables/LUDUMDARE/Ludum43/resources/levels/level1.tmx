@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="498">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="568">
  <properties>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
@@ -53,7 +53,7 @@
   <object id="496" gid="18" x="8500" y="-26252" width="8472" height="9752"/>
   <object id="497" gid="18" x="11124" y="-22412" width="8472" height="9752"/>
  </objectgroup>
- <objectgroup name="Background5" visible="0">
+ <objectgroup name="Background5" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
@@ -94,7 +94,7 @@
   <object id="360" gid="16" x="2546" y="746" width="24" height="24"/>
   <object id="361" gid="16" x="2386" y="1466" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background4" visible="0">
+ <objectgroup name="Background4" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
@@ -137,7 +137,7 @@
   <object id="328" gid="16" x="1602" y="1610" width="24" height="24"/>
   <object id="329" gid="16" x="3010" y="1002" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background3" visible="0">
+ <objectgroup name="Background3" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -192,7 +192,7 @@
   <object id="294" gid="16" x="290" y="634" width="24" height="24"/>
   <object id="295" gid="16" x="818" y="666" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background2" visible="0">
+ <objectgroup name="Background2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
@@ -230,7 +230,7 @@
   <object id="219" gid="16" x="338" y="2266" width="24" height="24"/>
   <object id="220" gid="16" x="1362" y="2282" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background1" visible="0">
+ <objectgroup name="Background1" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
@@ -293,7 +293,7 @@
   <object id="190" gid="16" x="1570" y="3418" width="24" height="24"/>
   <object id="191" gid="16" x="2178" y="3386" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Finishing" visible="0">
+ <objectgroup name="Finishing" locked="1">
   <properties>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
@@ -307,28 +307,84 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Atoms" visible="0">
+ <objectgroup name="Atoms">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
   </properties>
-  <object id="373" gid="19" x="3143" y="1481" width="50" height="50"/>
-  <object id="374" gid="19" x="3135" y="1905" width="50" height="50"/>
-  <object id="375" gid="19" x="3735" y="2593" width="50" height="50"/>
-  <object id="376" gid="19" x="3759" y="1881" width="50" height="50"/>
-  <object id="377" gid="19" x="3735" y="1473" width="50" height="50"/>
-  <object id="378" gid="19" x="3175" y="2681" width="50" height="50"/>
-  <object id="379" gid="19" x="4447" y="2209" width="50" height="50"/>
+  <object id="373" gid="19" x="-4689" y="1145" width="50" height="50"/>
+  <object id="374" gid="19" x="-4697" y="1569" width="50" height="50"/>
+  <object id="375" gid="19" x="-4097" y="2257" width="50" height="50"/>
+  <object id="376" gid="19" x="-4073" y="1545" width="50" height="50"/>
+  <object id="377" gid="19" x="-4097" y="1137" width="50" height="50"/>
+  <object id="378" gid="19" x="-4657" y="2345" width="50" height="50"/>
+  <object id="379" gid="19" x="-3385" y="1873" width="50" height="50"/>
   <object id="380" gid="19" x="3415" y="11641" width="50" height="50"/>
   <object id="381" gid="19" x="10583" y="1337" width="50" height="50"/>
-  <object id="439" gid="19" x="4151" y="247" width="50" height="50"/>
-  <object id="440" gid="19" x="3255" y="159" width="50" height="50"/>
-  <object id="441" gid="19" x="2439" y="-377" width="50" height="50"/>
-  <object id="442" gid="19" x="4583" y="-497" width="50" height="50"/>
-  <object id="443" gid="19" x="5231" y="367" width="50" height="50"/>
-  <object id="444" gid="19" x="3855" y="983" width="50" height="50"/>
-  <object id="445" gid="19" x="2503" y="919" width="50" height="50"/>
+  <object id="439" gid="19" x="-3681" y="-89" width="50" height="50"/>
+  <object id="440" gid="19" x="-4577" y="-177" width="50" height="50"/>
+  <object id="441" gid="19" x="-5393" y="-713" width="50" height="50"/>
+  <object id="442" gid="19" x="-3249" y="-833" width="50" height="50"/>
+  <object id="443" gid="19" x="-2601" y="31" width="50" height="50"/>
+  <object id="444" gid="19" x="-3977" y="647" width="50" height="50"/>
+  <object id="445" gid="19" x="-5329" y="583" width="50" height="50"/>
+  <object id="498" gid="19" x="3499" y="15524" width="50" height="50"/>
+  <object id="499" gid="19" x="2811" y="15196" width="50" height="50"/>
+  <object id="500" gid="19" x="1491" y="12938" width="50" height="50"/>
+  <object id="501" gid="19" x="2307" y="13474" width="50" height="50"/>
+  <object id="502" gid="19" x="3203" y="13562" width="50" height="50"/>
+  <object id="503" gid="19" x="2787" y="15908" width="50" height="50"/>
+  <object id="504" gid="19" x="3635" y="12818" width="50" height="50" visible="0"/>
+  <object id="505" gid="19" x="2787" y="14788" width="50" height="50"/>
+  <object id="506" gid="19" x="1555" y="14234" width="50" height="50"/>
+  <object id="507" gid="19" x="2227" y="15996" width="50" height="50"/>
+  <object id="508" gid="19" x="2907" y="14298" width="50" height="50"/>
+  <object id="509" gid="19" x="2187" y="15220" width="50" height="50"/>
+  <object id="510" gid="19" x="4283" y="13682" width="50" height="50"/>
+  <object id="511" gid="19" x="2195" y="14796" width="50" height="50"/>
+  <object id="512" gid="19" x="12427" y="19396" width="50" height="50"/>
+  <object id="513" gid="19" x="11739" y="19068" width="50" height="50"/>
+  <object id="514" gid="19" x="10419" y="16810" width="50" height="50"/>
+  <object id="515" gid="19" x="11235" y="17346" width="50" height="50"/>
+  <object id="516" gid="19" x="12131" y="17434" width="50" height="50"/>
+  <object id="517" gid="19" x="11715" y="19780" width="50" height="50"/>
+  <object id="518" gid="19" x="12563" y="16690" width="50" height="50"/>
+  <object id="519" gid="19" x="11715" y="18660" width="50" height="50"/>
+  <object id="520" gid="19" x="10483" y="18106" width="50" height="50"/>
+  <object id="521" gid="19" x="11155" y="19868" width="50" height="50"/>
+  <object id="522" gid="19" x="11835" y="18170" width="50" height="50"/>
+  <object id="523" gid="19" x="11115" y="19092" width="50" height="50"/>
+  <object id="524" gid="19" x="13211" y="17554" width="50" height="50"/>
+  <object id="525" gid="19" x="11123" y="18668" width="50" height="50"/>
+  <object id="526" gid="19" x="18923" y="12100" width="50" height="50"/>
+  <object id="527" gid="19" x="18235" y="11772" width="50" height="50"/>
+  <object id="528" gid="19" x="16915" y="9514" width="50" height="50"/>
+  <object id="529" gid="19" x="17731" y="10050" width="50" height="50"/>
+  <object id="530" gid="19" x="18627" y="10138" width="50" height="50"/>
+  <object id="531" gid="19" x="18211" y="12484" width="50" height="50"/>
+  <object id="532" gid="19" x="19059" y="9394" width="50" height="50"/>
+  <object id="533" gid="19" x="18211" y="11364" width="50" height="50"/>
+  <object id="534" gid="19" x="16979" y="10810" width="50" height="50"/>
+  <object id="535" gid="19" x="17651" y="12572" width="50" height="50"/>
+  <object id="536" gid="19" x="18331" y="10874" width="50" height="50"/>
+  <object id="537" gid="19" x="17611" y="11796" width="50" height="50"/>
+  <object id="538" gid="19" x="19707" y="10258" width="50" height="50"/>
+  <object id="539" gid="19" x="17619" y="11372" width="50" height="50"/>
+  <object id="540" gid="19" x="18091" y="1156" width="50" height="50"/>
+  <object id="541" gid="19" x="17403" y="828" width="50" height="50"/>
+  <object id="542" gid="19" x="16083" y="-1430" width="50" height="50"/>
+  <object id="543" gid="19" x="16899" y="-894" width="50" height="50"/>
+  <object id="544" gid="19" x="17795" y="-806" width="50" height="50"/>
+  <object id="545" gid="19" x="17379" y="1540" width="50" height="50"/>
+  <object id="546" gid="19" x="18227" y="-1550" width="50" height="50"/>
+  <object id="547" gid="19" x="17379" y="420" width="50" height="50"/>
+  <object id="548" gid="19" x="16147" y="-134" width="50" height="50"/>
+  <object id="549" gid="19" x="16819" y="1628" width="50" height="50"/>
+  <object id="550" gid="19" x="17499" y="-70" width="50" height="50"/>
+  <object id="551" gid="19" x="16779" y="852" width="50" height="50"/>
+  <object id="552" gid="19" x="18875" y="-686" width="50" height="50" visible="0"/>
+  <object id="553" gid="19" x="16787" y="428" width="50" height="50"/>
  </objectgroup>
- <objectgroup name="Enemies">
+ <objectgroup name="Enemies" locked="1">
   <object id="363" gid="18" x="-7736" y="6784" width="400" height="400"/>
   <object id="364" gid="18" x="1736" y="2944" width="400" height="400"/>
   <object id="365" gid="18" x="736" y="4624" width="400" height="400"/>
@@ -337,10 +393,10 @@
   <object id="368" gid="18" x="-2824" y="6296" width="400" height="400"/>
   <object id="369" gid="18" x="-4088" y="8712" width="400" height="400"/>
   <object id="370" gid="18" x="-2480" y="11408" width="400" height="400"/>
-  <object id="371" gid="18" x="-1128" y="8304" width="400" height="400"/>
+  <object id="371" gid="18" x="-1128" y="8304" width="400" height="400" visible="0"/>
   <object id="372" gid="18" x="1160" y="6368" width="400" height="400"/>
  </objectgroup>
- <objectgroup name="PlayerAndCamera">
+ <objectgroup name="PlayerAndCamera" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>

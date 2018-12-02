@@ -162,6 +162,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		{
 			ParticleAtom & p = particles[i]; 
 			p.particle_radius_factor = chaos::MathTools::RandFloat(1.0f, ludum_game->particle_radius_rand_factor);
+			p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		}	
 		return true;
 	}

@@ -131,6 +131,7 @@ void LudumGame::ResetGameVariables()
 	waken_up_particle_count = 0;
 	saved_particle_count = 0;
 	heart_beat_time = 0.0f;
+	level_time = 0.0f;
 
 }
 
@@ -170,6 +171,8 @@ bool LudumGame::TickGameLoop(double delta_time)
 	TickCooldown(delta_time);
 	// tick sound for heart beat
 	TickHeartBeat(delta_time);
+	// update some internal
+	level_time += (float)delta_time;
 
 	return true;
 }

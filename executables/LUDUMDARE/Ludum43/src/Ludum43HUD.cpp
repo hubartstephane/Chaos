@@ -6,9 +6,10 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 	// call super method
 	GameHUD::DoTick(delta_time);
 
-	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game); // Game::PlaySound() in TickHeartWarning(..) requires a non const pointer
+	LudumGame const * ludum_game = dynamic_cast<LudumGame const*>(game);
 	if (ludum_game != nullptr)
 	{
+		UpdateLevelTimer(ludum_game);
 		UpdateWakenUpParticleCount(ludum_game);
 		UpdateSavedParticleCount(ludum_game);
 		UpdateLifeBar(ludum_game);	
@@ -38,6 +39,33 @@ void LudumPlayingHUD::UpdateSavedParticleCount(LudumGame const * ludum_game)
 
 		cached_saved_particle_count = saved_particle_count;
 	}
+}
+
+void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
+{
+	float level_time = ludum_game->GetLevelTime();
+	if (fabsf(level_time - cached_level_time) > 0.1f)
+	{
+		RegisterParticles(death::GameHUDKeys::LEVEL_TIME_ID, CreateLevelTimeAllocation(level_time, ludum_game->GetViewBox()));
+		cached_level_time = level_time;
+	}
+}
+
+chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float level_time, chaos::box2 const & view)
+{
+	std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
+
+	// set the values
+	chaos::ParticleTextGenerator::GeneratorParams params;
+	params.line_height = 60;
+	params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
+	params.position.x = corners.second.x - 20.0f;
+	params.position.y = corners.second.y - 20.0f;
+	params.font_info_name = "normal";
+
+	// format text and create particles
+	std::string str = chaos::StringTools::Printf("%02.01f", level_time);
+	return GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 }
 
 void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)

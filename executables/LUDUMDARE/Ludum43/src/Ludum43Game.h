@@ -83,6 +83,8 @@ public:
 
 	int GetSavedParticleCount() const { return saved_particle_count; }
 
+	float GetLevelTime() const { return level_time; }
+
 	float GetPlayerLife() const;
 
 protected:
@@ -205,6 +207,8 @@ public:
 	int waken_up_particle_count = 0;
 	/** number of particle saved */
 	int saved_particle_count =0;
+	/** the time to run the level */
+	float level_time = 0.0f;
 	/** the heart beat time */
 	float heart_beat_time = 0.0f;
 

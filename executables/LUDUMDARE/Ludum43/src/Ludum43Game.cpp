@@ -21,7 +21,7 @@
 
 LudumGame::LudumGame()
 {		
-	game_name = "Quantikaouf IV";
+	game_name = "Quantic Paouf IV";
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
@@ -239,7 +239,7 @@ void LudumGame::ResetGameVariables()
 	current_dash_duration = 0.0f;
 
 	waken_up_particle_count = 0;
-	saved_particle_count = 0;
+	current_score = 0;
 	heart_beat_time = 0.0f;
 	level_time = 0.0f;
 
@@ -433,7 +433,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	current_cooldown  = 0.0f;
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;
-	saved_particle_count += waken_up_particle_count;
+	current_score += waken_up_particle_count;
 	waken_up_particle_count = 0;	
 	level_time = 0.0f;
 }

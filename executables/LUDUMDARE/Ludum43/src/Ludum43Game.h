@@ -24,12 +24,6 @@
 // LudumGame
 // =================================================
 
-static float const PARTICLE_LIFETIME = 2.0f;
-static float const PLAYER_LIFETIME = 4.0f;
-
-static float const DANGER_RADIUS_RATIO = 0.3f;
-static float const WAKEN_RADIUS_RATIO  = 1.0f;
-
 namespace death
 {
 	namespace GameHUDKeys
@@ -82,7 +76,7 @@ public:
 
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
 
-	int GetSavedParticleCount() const { return saved_particle_count; }
+	int GetSavedParticleCount() const { return current_score; }
 
 	float GetLevelTime() const { return level_time; }
 
@@ -231,8 +225,6 @@ public:
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;
-	/** number of particle saved */
-	int saved_particle_count =0;
 	/** the time to run the level */
 	float level_time = 0.0f;
 	/** the heart beat time */

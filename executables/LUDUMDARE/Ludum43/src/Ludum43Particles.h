@@ -7,6 +7,13 @@
 
 #include <death/TiledMapParticle.h> 
 
+
+static float const PARTICLE_LIFETIME = 0.7f;
+static float const PLAYER_LIFETIME = 4.0f;
+
+static float const DANGER_RADIUS_RATIO = 0.3f;
+static float const WAKEN_RADIUS_RATIO  = 1.0f;
+
 // ===========================================================================
 // VertexBase and Particle
 // ===========================================================================
@@ -103,7 +110,7 @@ public:
 
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
 	float particle_radius_factor = 2.0f;          // very usefull to prevent floating atoms between player and a field
-	float life = 4.0f;
+	float life = PLAYER_LIFETIME;
 
 	bool  level_end_reached = false;
 	float level_end_timer   = 0.0f;
@@ -144,7 +151,7 @@ class ParticleAtom : public ParticleBase
 public:
 
 	float particle_radius_factor = 1.0f;
-	float life = 2.0f;
+	float life = PARTICLE_LIFETIME;
 	bool  waken_up = false;
 
 };

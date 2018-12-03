@@ -29,15 +29,15 @@ void LudumPlayingHUD::UpdateWakenUpParticleCount(LudumGame const * ludum_game)
 
 void LudumPlayingHUD::UpdateSavedParticleCount(LudumGame const * ludum_game)
 {
-	int saved_particle_count = ludum_game->GetSavedParticleCount();
-	if (saved_particle_count != cached_saved_particle_count)
+	int current_score = ludum_game->GetSavedParticleCount();
+	if (current_score != cached_saved_particle_count)
 	{
-		if (saved_particle_count == 0)
+		if (current_score == 0)
 			UnregisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID);
 		else
-			RegisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Saved : %d", saved_particle_count, 70.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
+			RegisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Saved : %d", current_score, 70.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
 
-		cached_saved_particle_count = saved_particle_count;
+		cached_saved_particle_count = current_score;
 	}
 }
 

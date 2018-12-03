@@ -7,7 +7,6 @@
   "initial_life": 3,
   "cooldown": 1.0,
   "mouse_sensitivity": 1.0,
-  "cgamepad_sensitivity": 3000.0,
   "gamepad_sensitivity": 1.0,
 
   "dash_duration": 1.0,
@@ -29,7 +28,7 @@
   "enemy_attraction_maxradius_offset": 650.0,
 
   "worldlimits_attraction_minradius_factor": 0.0,
-  "worldlimits_attraction_maxradius_factor": 0.65,
+  "worldlimits_attraction_maxradius_factor": 0.8,
   "enemy_attraction_minradius_factor": 1.0,
   "enemy_attraction_maxradius_factor": 1.0,
 

@@ -32,7 +32,7 @@ void LudumPlayingHUD::UpdateSavedParticleCount(LudumGame const * ludum_game)
 	int saved_particle_count = ludum_game->GetSavedParticleCount();
 	if (saved_particle_count != cached_saved_particle_count)
 	{
-		if (saved_particle_count == -10)
+		if (saved_particle_count == 0)
 			UnregisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID);
 		else
 			RegisterParticles(death::GameHUDKeys::SAVED_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Saved : %d", saved_particle_count, 70.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));

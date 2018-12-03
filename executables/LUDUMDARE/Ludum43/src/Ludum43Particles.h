@@ -57,7 +57,11 @@ class ParticleEnemy : public ParticleAffector
 {
 public:
 
-	
+	glm::vec2 rotation_center;
+
+	float rotation_radius = 0.0f;
+	float rotation_alpha  = 0.0f;
+
 
 	
 

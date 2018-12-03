@@ -240,6 +240,17 @@ ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(flo
 
 bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, ParticleEnemyTrait::UpdateEnemyData const & update_data) const
 {
+	particle->rotation_alpha += 2.0f * delta_time;
+	if (particle->rotation_alpha > 2.0f * (float)M_PI)
+		particle->rotation_alpha -= 2.0f * (float)M_PI;
+
+
+	glm::vec2 v = glm::vec2(cosf(particle->rotation_alpha), sinf(particle->rotation_alpha));
+
+
+	particle->bounding_box.position = 
+		particle->rotation_center + 
+		particle->rotation_radius * v;
 	
 
 

@@ -153,7 +153,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 			p.world_limits         = is_world_limits;
 			p.color                = (is_world_limits)?
 				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f):
-				glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+				glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 			p.rotation_center = p.bounding_box.position;
 			if (is_enemy)

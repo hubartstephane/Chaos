@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="971">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1012">
  <properties>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
@@ -38,12 +38,11 @@
   <object id="481" gid="18" x="11776" y="256" width="8472" height="9752"/>
   <object id="482" gid="18" x="9620" y="-4492" width="8472" height="9752"/>
   <object id="483" gid="18" x="-620" y="-3308" width="8472" height="9752"/>
-  <object id="484" gid="18" x="-6284" y="-7756" width="8472" height="9752"/>
   <object id="487" gid="18" x="2644" y="-3404" width="8472" height="9752"/>
   <object id="490" gid="18" x="-3916" y="-5260" width="8472" height="9752"/>
   <object id="491" gid="18" x="5876" y="-4044" width="8472" height="9752"/>
  </objectgroup>
- <objectgroup name="Background5" visible="0" locked="1">
+ <objectgroup name="Background5" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
@@ -84,7 +83,7 @@
   <object id="360" gid="16" x="2546" y="746" width="24" height="24"/>
   <object id="361" gid="16" x="2386" y="1466" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background4" visible="0" locked="1">
+ <objectgroup name="Background4" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
@@ -127,7 +126,7 @@
   <object id="328" gid="16" x="1602" y="1610" width="24" height="24"/>
   <object id="329" gid="16" x="3010" y="1002" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background3" visible="0" locked="1">
+ <objectgroup name="Background3" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -182,7 +181,7 @@
   <object id="294" gid="16" x="290" y="634" width="24" height="24"/>
   <object id="295" gid="16" x="818" y="666" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background2" visible="0" locked="1">
+ <objectgroup name="Background2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
@@ -220,7 +219,7 @@
   <object id="219" gid="16" x="338" y="2266" width="24" height="24"/>
   <object id="220" gid="16" x="1362" y="2282" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background1" visible="0" locked="1">
+ <objectgroup name="Background1" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
@@ -283,14 +282,14 @@
   <object id="190" gid="16" x="1570" y="3418" width="24" height="24"/>
   <object id="191" gid="16" x="2178" y="3386" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="BackgroundObject5" visible="0" locked="1">
+ <objectgroup name="BackgroundObject5">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="695" gid="27" x="-2880" y="192" width="640" height="640"/>
+  <object id="695" gid="27" x="-2880" y="192" width="1200" height="1200"/>
   <object id="696" gid="24" x="-2195" y="2968" width="167" height="176"/>
   <object id="697" gid="24" x="-659" y="536" width="167" height="176"/>
   <object id="698" gid="24" x="1709" y="-2024" width="167" height="176"/>
@@ -324,7 +323,7 @@
   <object id="726" gid="23" x="-7498" y="-5983" width="276" height="195"/>
   <object id="970" gid="29" x="14232" y="-7272" width="1792" height="1856"/>
  </objectgroup>
- <objectgroup name="BackgroundObject4" visible="0" locked="1">
+ <objectgroup name="BackgroundObject4" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
@@ -340,9 +339,9 @@
   <object id="691" gid="23" x="3958" y="5089" width="276" height="195"/>
   <object id="692" gid="24" x="6381" y="5848" width="167" height="176"/>
   <object id="693" gid="24" x="11437" y="3096" width="167" height="176"/>
-  <object id="694" gid="28" x="7736" y="5640" width="400" height="400"/>
+  <object id="694" gid="28" x="6680" y="5640" width="1500" height="1500"/>
  </objectgroup>
- <objectgroup name="BackgroundObject3" visible="0" locked="1">
+ <objectgroup name="BackgroundObject3" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
@@ -357,7 +356,7 @@
   <object id="730" gid="23" x="-10314" y="-4383" width="276" height="195"/>
   <object id="731" gid="23" x="30070" y="-6495" width="276" height="195"/>
  </objectgroup>
- <objectgroup name="BackgroundObject2" visible="0" locked="1">
+ <objectgroup name="BackgroundObject2">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
@@ -367,8 +366,28 @@
   <object id="680" gid="21" x="7708" y="3476" width="201" height="169"/>
   <object id="681" gid="21" x="9948" y="980" width="201" height="169"/>
   <object id="682" gid="21" x="10588" y="7508" width="201" height="169"/>
+  <object id="992" gid="23" x="1494" y="1665" width="276" height="195"/>
+  <object id="993" gid="23" x="1334" y="5633" width="276" height="195"/>
+  <object id="994" gid="23" x="2710" y="8321" width="276" height="195"/>
+  <object id="995" gid="23" x="2230" y="11041" width="276" height="195"/>
+  <object id="996" gid="23" x="-4010" y="13345" width="276" height="195"/>
+  <object id="997" gid="23" x="-4810" y="9441" width="276" height="195"/>
+  <object id="998" gid="23" x="-906" y="9665" width="276" height="195"/>
+  <object id="999" gid="23" x="-938" y="5921" width="276" height="195"/>
+  <object id="1000" gid="23" x="-3818" y="5121" width="276" height="195"/>
+  <object id="1001" gid="23" x="-6890" y="513" width="276" height="195"/>
+  <object id="1002" gid="23" x="-3082" y="2753" width="276" height="195"/>
+  <object id="1003" gid="22" x="9918" y="12238" width="196" height="156"/>
+  <object id="1004" gid="22" x="6814" y="8782" width="196" height="156"/>
+  <object id="1005" gid="22" x="9438" y="5166" width="196" height="156"/>
+  <object id="1006" gid="22" x="12286" y="2254" width="196" height="156"/>
+  <object id="1007" gid="22" x="9118" y="-1874" width="196" height="156"/>
+  <object id="1008" gid="22" x="5534" y="-5042" width="196" height="156"/>
+  <object id="1009" gid="22" x="5694" y="846" width="196" height="156"/>
+  <object id="1010" gid="22" x="4766" y="5262" width="196" height="156"/>
+  <object id="1011" gid="25" x="1752" y="-1240" width="2000" height="2000"/>
  </objectgroup>
- <objectgroup name="BackgroundObject1" visible="0" locked="1">
+ <objectgroup name="BackgroundObject1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
@@ -383,8 +402,23 @@
   <object id="677" gid="21" x="10268" y="340" width="201" height="169"/>
   <object id="678" gid="21" x="10396" y="5076" width="201" height="169"/>
   <object id="679" gid="21" x="5148" y="7316" width="201" height="169"/>
+  <object id="971" gid="24" x="7661" y="4760" width="167" height="176"/>
+  <object id="972" gid="24" x="9069" y="8728" width="167" height="176"/>
+  <object id="973" gid="24" x="17581" y="11800" width="167" height="176"/>
+  <object id="974" gid="24" x="14349" y="7352" width="167" height="176"/>
+  <object id="975" gid="24" x="15405" y="2328" width="167" height="176"/>
+  <object id="976" gid="24" x="15277" y="-2760" width="167" height="176"/>
+  <object id="977" gid="24" x="9485" y="-5032" width="167" height="176"/>
+  <object id="978" gid="24" x="4173" y="-6728" width="167" height="176"/>
+  <object id="979" gid="24" x="10669" y="-2376" width="167" height="176"/>
+  <object id="980" gid="24" x="-6035" y="1176" width="167" height="176"/>
+  <object id="981" gid="24" x="-1651" y="6488" width="167" height="176"/>
+  <object id="982" gid="24" x="-4819" y="13880" width="167" height="176"/>
+  <object id="983" gid="24" x="6733" y="12056" width="167" height="176"/>
+  <object id="984" gid="24" x="3629" y="9560" width="167" height="176"/>
+  <object id="985" gid="29" x="3000" y="3000" width="1500" height="1500"/>
  </objectgroup>
- <objectgroup name="Finishing" visible="0">
+ <objectgroup name="Finishing" locked="1">
   <properties>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
@@ -398,7 +432,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Atoms" visible="0" locked="1">
+ <objectgroup name="Atoms" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
   </properties>
@@ -615,7 +649,7 @@
   <object id="940" gid="19" x="2685" y="-3052" width="50" height="50"/>
   <object id="941" gid="19" x="-13119" y="-20999" width="50" height="50"/>
  </objectgroup>
- <objectgroup name="Enemies" visible="0">
+ <objectgroup name="Enemies" locked="1">
   <object id="363" gid="18" x="-7736" y="6784" width="400" height="400"/>
   <object id="364" gid="18" x="1736" y="2944" width="400" height="400"/>
   <object id="365" gid="18" x="736" y="4624" width="400" height="400"/>
@@ -700,7 +734,7 @@
   <object id="968" gid="18" x="5240" y="-17800" width="400" height="400"/>
   <object id="969" gid="18" x="-264" y="7544" width="400" height="400"/>
  </objectgroup>
- <objectgroup name="PlayerAndCamera" visible="0" locked="1">
+ <objectgroup name="PlayerAndCamera" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>

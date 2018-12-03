@@ -23,13 +23,16 @@ void main()
 
 		float l = length(b2.xyz);
 
-		if (l < 0.6)
+		float R1 = 0.6;
+		float R2 = 0.8;
+
+		if (l < R1)
 			output_color = vec4(0.0, 0.0, 0.0, 0.0);
-		else if (l > 0.7)
-			output_color = b1; // * b2;	
+		else if (l > R2)
+			output_color = b1;
 		else
 		{
-			float f = (l - 0.6) / (0.7 - 0.6);
+			float f = (l - R1) / (R2 - R1);
 
 			output_color = b1 * f + b2 * (1 - f);			
 		}

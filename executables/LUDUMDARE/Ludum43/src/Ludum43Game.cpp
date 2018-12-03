@@ -614,6 +614,10 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 
 void LudumGame::NotifyAtomCountChange(int delta)
 {
+	if (delta > 0)
+		PlaySound("particle_add", false, false);
+	else if (delta < 0)
+		PlaySound("particle_removed", false, false);
 	waken_up_particle_count += delta;
 }
 

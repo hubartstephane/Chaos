@@ -223,6 +223,9 @@ public:
 	float current_dash_duration = 0.0f;
 	float current_dash_cooldown = 0.0f;
 
+
+	float previous_frame_life = 0.0f;
+
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;
 	/** the time to run the level */

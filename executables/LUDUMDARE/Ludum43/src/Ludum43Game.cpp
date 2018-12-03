@@ -238,6 +238,8 @@ void LudumGame::ResetGameVariables()
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;
 
+	previous_frame_life = 0.0;
+
 	waken_up_particle_count = 0;
 	current_score = 0;
 	heart_beat_time = 0.0f;
@@ -290,17 +292,16 @@ bool LudumGame::TickGameLoop(double delta_time)
 
 void LudumGame::TickHeartBeat(double delta_time) 
 {
-	float limit_value = 2.0f;
-	if (waken_up_particle_count < 1)
-		limit_value = 0.5f;
-	else if (waken_up_particle_count < 2)
-		limit_value = 0.75f;
-	else if (waken_up_particle_count < 5)
-		limit_value = 1.0f;
-	else if (waken_up_particle_count < 10)
-		limit_value = 1.5f;
+	ParticlePlayer const * particle_player = GetPlayerParticle();
+	if (particle_player == nullptr)
+		return;
 
+	float limit_value = 1.4f;
 
+	if (particle_player->life < previous_frame_life)
+		limit_value = 0.4f;
+	previous_frame_life = particle_player->life;
+	
 
 	heart_beat_time += (float)delta_time;
 	if (heart_beat_time >= limit_value)
@@ -433,6 +434,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	current_cooldown  = 0.0f;
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;
+	previous_frame_life   = 0.0f;
 	current_score += waken_up_particle_count;
 	waken_up_particle_count = 0;	
 	level_time = 0.0f;

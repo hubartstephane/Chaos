@@ -26,15 +26,25 @@ void main()
 		float R1 = 0.6;
 		float R2 = 0.8;
 
+		float ratio = 0.0;
+
+		float min_ratio = 0.2;
+
 		if (l < R1)
-			output_color = vec4(0.0, 0.0, 0.0, 0.0);
+			ratio = min_ratio;
 		else if (l > R2)
-			output_color = b1;
+			ratio = 1.0;
 		else
 		{
-			float f = (l - R1) / (R2 - R1);
+			ratio = min_ratio + (1.0 - min_ratio) * ((l - R1) / (R2 - R1));
 
-			output_color = b1 * f + b2 * (1 - f);			
 		}
+
+			
+
+		output_color = b1 * ratio + b2 * (1 - ratio);			
+
+
+
 	}
 }

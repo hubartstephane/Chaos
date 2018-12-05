@@ -123,8 +123,9 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// populate the HUD
-		if (game->GetGameName() != nullptr)
-			RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleCreator().CreateTitle(game->GetGameName(), false, GameHUDKeys::TEXT_LAYER_ID));
+		char const * game_name = game->GetGameName();
+		if (game_name != nullptr)
+			RegisterParticles(GameHUDKeys::TITLE_ID, GetGameParticleCreator().CreateTitle(game_name, false, GameHUDKeys::TEXT_LAYER_ID));
 
 		if (game->GetBestScore() > 0)
 		{
@@ -139,6 +140,21 @@ namespace death
 			std::string str = chaos::StringTools::Printf("Best score : %d", game->GetBestScore());
 			RegisterParticles(GameHUDKeys::BEST_SCORE_ID, GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID));
 		}
+		//
+		char const * game_instructions = game->GetGameInstructions();
+		if (game_instructions != nullptr)
+		{
+			chaos::ParticleTextGenerator::GeneratorParams params;
+			params.line_height = 40;
+			params.hotpoint_type = chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::TOP;
+			params.position.x = 0.0f;
+			params.position.y = -200.0f;
+
+			params.font_info_name = "normal";
+
+			RegisterParticles(GameHUDKeys::INSTRUCTIONS_ID, GetGameParticleCreator().CreateTextParticles(game_instructions, params, death::GameHUDKeys::TEXT_LAYER_ID));
+		}
+
 		return true;
 	}
 

@@ -22,6 +22,12 @@
 LudumGame::LudumGame()
 {		
 	game_name = "Quantic Paouf IV";
+	game_instructions = R"INSTRUCTIONS(
+Save particles to the level exit.
+Black holes and Shadows are dangerous.
+[ButtonA] Turbo
+[ButtonB] Ejects particles
+		)INSTRUCTIONS";
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
@@ -491,10 +497,10 @@ void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{
-		bool dash = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHTTRIGGER, false);
+		bool dash = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false); 
 		SetPlayerDashMode(dash);
 
-		bool reversed_mode = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
+		bool reversed_mode = in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_B, false);
 		SetPlayerReverseMode(reversed_mode);
 	}
 }

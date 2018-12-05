@@ -28,7 +28,7 @@ void main()
 
 		float ratio = 0.0;
 
-		float min_ratio = 0.2;
+		float min_ratio = 0.3;
 
 		if (l < R1)
 			ratio = min_ratio;

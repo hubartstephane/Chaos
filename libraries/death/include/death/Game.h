@@ -56,6 +56,8 @@ namespace death
 
 		/** returns the game name */
 		char const * GetGameName() const { return game_name; }
+		/** returns the game instructions */
+		char const * GetGameInstructions() const { return game_instructions; }
 		/** returns the best score */
 		int GetBestScore() const { return best_score; }
 		/** returns the current score */
@@ -498,6 +500,8 @@ namespace death
 
 		/** name of the game */
 		char const * game_name = nullptr;
+		/** instructions displayed on may screen */
+		char const * game_instructions = nullptr;
 
 		/** the clocks */
 		boost::intrusive_ptr<chaos::Clock> root_clock;

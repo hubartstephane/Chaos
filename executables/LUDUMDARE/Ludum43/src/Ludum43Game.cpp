@@ -427,7 +427,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
 	// change the background image
-	const std::string const * background_name = nullptr;
+	std::string const * background_name = nullptr;
 	if (new_level_instance != nullptr)
 	{		
 		death::TiledMap::Level const * level = dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());

@@ -29,6 +29,16 @@ namespace death
 	{
 		return cheat_skip_level_required;
 	}
+
+	void Game::SetCheatNoLifeLoss(bool value)
+	{
+		cheat_no_life_loss = value;
+	}
+
+	bool Game::GetCheatNoLifeLoss() const
+	{
+		return cheat_no_life_loss;
+	}
 #endif
 
 	void Game::HandleKeyboardInputs()
@@ -108,6 +118,8 @@ namespace death
 #if _DEBUG
 		if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
 			SetCheatSkipLevelRequired(true);
+		if (key == GLFW_KEY_F2 && action == GLFW_PRESS)
+			SetCheatNoLifeLoss(!GetCheatNoLifeLoss());
 #endif
 
 		return false;

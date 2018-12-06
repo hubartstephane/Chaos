@@ -238,12 +238,11 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 void LudumGame::ResetGameVariables()
 {
 	death::Game::ResetGameVariables();
-	current_life  = initial_life;
 	current_cooldown  = 0.0f;
 
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;
-
+	
 	previous_frame_life = 0.0;
 
 	waken_up_particle_count = 0;
@@ -257,13 +256,6 @@ void LudumGame::OnGameOver()
 {
 	death::Game::OnGameOver();
 	DestroyGameObjects();
-}
-
-void LudumGame::ChangeLife(int delta_life)
-{
-	if (delta_life == 0)
-		return;
-	current_life = chaos::MathTools::Maximum(current_life + delta_life, 0);
 }
 
 bool LudumGame::CheckGameOverCondition()
@@ -376,7 +368,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
 	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);
 	DEATHGAME_JSON_ATTRIBUTE(dash_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(initial_life);
+	DEATHGAME_JSON_ATTRIBUTE(player_initial_life);
+	DEATHGAME_JSON_ATTRIBUTE(particle_initial_life);
 	DEATHGAME_JSON_ATTRIBUTE(cooldown);
 
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_minradius);
@@ -433,10 +426,21 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 {
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
+	// change the background image
+	const std::string const * background_name = nullptr;
+	if (new_level_instance != nullptr)
+	{		
+		death::TiledMap::Level const * level = dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());
+		if (level != nullptr)
+			background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");	
+	}
+	CreateBackgroundImage(nullptr, (background_name == nullptr)? nullptr : background_name->c_str());
+
+	// play a sound
+
 	if (new_level != nullptr && old_level != nullptr)
 		PlaySound("next_level", false, false);
 
-	current_life  = initial_life;
 	current_cooldown  = 0.0f;
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;

@@ -1,6 +1,10 @@
 {
   "@background1": { "path": "@textures/background1.png" },
   "@background2": { "path": "@textures/background2.png" },
+  "@background3": { "path": "@textures/background3.png" },
+  "@background4": { "path": "@textures/background4.png" },
+  "@background5": { "path": "@textures/background5.png" },
+  "@background6": { "path": "@textures/background6.png" },
   "@fire": { "path": "@textures/fire.png" },
   "@perlin_noise": { "path": "@textures/perlin_noise.png" }
 }

@@ -186,6 +186,10 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	}
 	else
 	{
+	
+#if _DEBUG
+		if (!game->GetCheatNoLifeLoss())
+#endif
 		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
 			return true;		
 	}
@@ -194,6 +198,11 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 	// add external forces
 	float acceleration_factor = (particle->dash)? 3.0f: 1.0f;
+
+	//static float bbb = 5.0f;
+
+	//if (chaos::GLMTools::Get2DCrossProductZ(particle->velocity, particle->acceleration) < 0.0f)
+	//	acceleration_factor *= bbb;
 
 	float max_velocity_factor = (particle->dash)? 3.0f: 1.0f;
 

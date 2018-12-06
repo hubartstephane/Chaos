@@ -157,8 +157,6 @@ protected:
 	/** move the player */
 	void UpdatePlayerAcceleration(double delta_time);
 
-	void ChangeLife(int delta_life);
-
 	void SetPlayerDashMode(bool dash);
 
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
@@ -217,9 +215,12 @@ public:
 	float world_clamp_radius = 3000.0f;
 
 	/** current game values */
-	int current_life     = 3;
-	float current_cooldown = 0.1f;
+	float player_initial_life = 4.0f;
+	float particle_initial_life = 1.0f;
+	
 
+
+	float current_cooldown = 0.1f;
 	float current_dash_duration = 0.0f;
 	float current_dash_cooldown = 0.0f;
 

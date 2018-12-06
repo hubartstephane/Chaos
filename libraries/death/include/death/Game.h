@@ -169,6 +169,12 @@ namespace death
 		void SetCheatSkipLevelRequired(bool value);
 		/** test whether we want to skip level */
 		bool GetCheatSkipLevelRequired() const;
+
+		/** declare we want to loose life */
+		void SetCheatNoLifeLoss(bool value);
+		/** test whether we can to loose life */
+		bool GetCheatNoLifeLoss() const;
+
 #endif
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
@@ -489,6 +495,7 @@ namespace death
 		/** cheating */
 #if _DEBUG
 		mutable bool cheat_skip_level_required = false;
+		bool cheat_no_life_loss = false;
 #endif
 
 		/** game settings */

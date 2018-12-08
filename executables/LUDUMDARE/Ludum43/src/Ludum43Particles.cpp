@@ -93,13 +93,13 @@ bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_
 	}
 
 	if (player)
-		particle->color.a = particle->life / lifetime;
+	{
+		particle->color.a = 0.2f + 0.8f * (particle->life / lifetime);
+	}
 	else
 	{
 		particle->color.g = 1.0f - (particle->life / lifetime);
 		particle->color.b = 1.0f - (particle->life / lifetime);
-
-//		particle->color.a = particle->life / lifetime;
 	}
 	return false;
 }

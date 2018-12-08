@@ -12,6 +12,7 @@ namespace death
 		CHAOS_DECLARE_TAG(WAKENUP_PARTICLE_COUNT_ID);
 		CHAOS_DECLARE_TAG(SAVED_PARTICLE_COUNT_ID);
 		CHAOS_DECLARE_TAG(LIFE_LAYER_ID);
+		CHAOS_DECLARE_TAG(FPS_ID);
 	};
 
 };
@@ -38,6 +39,8 @@ protected:
 
 	void UpdateSavedParticleCount(class LudumGame const * ludum_game);
 
+	void UpdateFrameRate(class LudumGame const * ludum_game);
+
 	void UpdateLifeBar(class LudumGame const * ludum_game);
 	
 	chaos::ParticleAllocation * CreateLevelTimeAllocation(float level_time, chaos::box2 const & view);
@@ -52,5 +55,7 @@ protected:
 	float cached_level_time = -1.0f;
 	/** caching the life value */
 	float cached_life_value = -1.0f;
+	/** caching the framerate value */
+	float cached_framerate = -1.0f;
 
 };

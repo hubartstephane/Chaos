@@ -16,6 +16,7 @@
 #include <chaos/StateMachine.h>
 #include <chaos/TiledMap.h>
 #include <chaos/RenderableLayerSystem.h>
+#include <chaos/TimedAccumulator.h>
 
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
@@ -226,6 +227,9 @@ namespace death
 		GameLevel * GetLevel(int level_index);
 		/** get currently played level */
 		GameLevel const * GetLevel(int level_index) const;
+
+		/** get the current frame rate */
+		float GetFrameRate() const { return fps_counter.GetCurrentValue(); }
 
 	protected:
 
@@ -486,6 +490,9 @@ namespace death
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;
+
+		/** for counting frame per seconds */
+		chaos::TimedAccumulator<float> fps_counter;
 
 
 		/** score values */

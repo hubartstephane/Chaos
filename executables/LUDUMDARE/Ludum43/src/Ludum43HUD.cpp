@@ -67,6 +67,8 @@ chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float lev
 	params.position.y = corners.second.y - 20.0f;
 	params.font_info_name = "normal";
 
+	params.default_color = (level_time >= 10.0f)? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
 	// format text and create particles
 	std::string str = chaos::StringTools::Printf("%02.01f", level_time);
 	return GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);

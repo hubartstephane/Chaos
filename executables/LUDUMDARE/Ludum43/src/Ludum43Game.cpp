@@ -261,7 +261,7 @@ void LudumGame::OnGameOver()
 bool LudumGame::CheckGameOverCondition()
 {
 	ParticlePlayer const * player_particle = GetPlayerParticle();
-	if (player_particle == nullptr)
+	if (player_particle == nullptr || level_time <= 0.0f)
 	{
 		RequireGameOver();
 		return true;
@@ -283,7 +283,9 @@ bool LudumGame::TickGameLoop(double delta_time)
 	// tick sound for heart beat
 	TickHeartBeat(delta_time);
 	// update some internal
-	level_time += (float)delta_time;
+	level_time -= (float)delta_time;
+	if (level_time < 0.0f)
+		level_time = 0.0f;
 
 	return true;
 }
@@ -424,30 +426,41 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
 {
+	static float DEFAULT_LEVEL_TIME = 50.0f;
+	static int   DEFAULT_LEVEL_PARTICLE_REQUIREMENT = 10;
+
+	// super method
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
-	// change the background image
+	// internal
+	current_cooldown = 0.0f;
+	current_dash_cooldown = 0.0f;
+	current_dash_duration = 0.0f;
+	previous_frame_life = 0.0f;
+	current_score += waken_up_particle_count;
+	waken_up_particle_count = 0;
+	level_time = DEFAULT_LEVEL_TIME;
+	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;
+
+	// change the background image and the level time
 	std::string const * background_name = nullptr;
 	if (new_level_instance != nullptr)
 	{		
 		death::TiledMap::Level const * level = dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());
 		if (level != nullptr)
 			background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");	
+
+		level_time = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIME);
+		level_particle_requirement = level->GetTiledMap()->FindPropertyInt("LEVEL_PARTICLE_REQUIREMENT", DEFAULT_LEVEL_PARTICLE_REQUIREMENT);
 	}
 	CreateBackgroundImage(nullptr, (background_name == nullptr)? nullptr : background_name->c_str());
 
 	// play a sound
-
 	if (new_level != nullptr && old_level != nullptr)
 		PlaySound("next_level", false, false);
 
-	current_cooldown  = 0.0f;
-	current_dash_cooldown = 0.0f;
-	current_dash_duration = 0.0f;
-	previous_frame_life   = 0.0f;
-	current_score += waken_up_particle_count;
-	waken_up_particle_count = 0;	
-	level_time = 0.0f;
+
+	
 }
 
 static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_count)

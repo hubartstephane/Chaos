@@ -79,7 +79,7 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 
 
 template<typename T>
-bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_time, float lifetime)
+bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_time, float lifetime, bool player)
 {
 	if (in_inner_radius)
 	{
@@ -92,7 +92,15 @@ bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_
 		particle->life = chaos::MathTools::Clamp(particle->life + delta_time, 0.0f, lifetime);	
 	}
 
-	particle->color.a = particle->life / lifetime;
+	if (player)
+		particle->color.a = particle->life / lifetime;
+	else
+	{
+		particle->color.g = 1.0f - (particle->life / lifetime);
+		particle->color.b = 1.0f - (particle->life / lifetime);
+
+//		particle->color.a = particle->life / lifetime;
+	}
 	return false;
 }
 
@@ -190,7 +198,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 #if _DEBUG
 		if (!game->GetCheatNoLifeLoss())
 #endif
-		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME))
+		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME, true))
 			return true;		
 	}
 
@@ -337,7 +345,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	particle->velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PARTICLE_LIFETIME))
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PARTICLE_LIFETIME, false))
 	{
 		if (particle->waken_up)
 			game->NotifyAtomCountChange(-1);

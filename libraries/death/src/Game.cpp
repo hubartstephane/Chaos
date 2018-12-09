@@ -97,7 +97,6 @@ namespace death
 			hud->Tick(delta_time);
 		// count for frame rate
 		fps_counter.Tick((float)delta_time);
-
 	}
 	
 	bool Game::OnKeyEvent(int key, int action)
@@ -962,6 +961,8 @@ namespace death
 
 	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		DEATHGAME_JSON_ATTRIBUTE(initial_life);
+		DEATHGAME_JSON_ATTRIBUTE(max_life);
 		DEATHGAME_JSON_ATTRIBUTE(mouse_sensitivity);
 		DEATHGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
 		return true;
@@ -1111,6 +1112,7 @@ namespace death
 
 	void Game::ResetGameVariables()
 	{
+		SetCurrentLife(initial_life);
 		current_score = 0;
 
 		left_stick_position = right_stick_position = glm::vec2(0.0f, 0.0f);
@@ -1511,6 +1513,14 @@ namespace death
 		return SetObjectBox(GetPlayerAllocation(), 0, box);
 	}
 
+	void Game::SetCurrentLife(int new_life)
+	{
+		if (new_life < 0)
+			new_life = 0;
+		else if (max_life > 0 && new_life > max_life) 
+			new_life = max_life;
+		current_life = new_life;
+	}
 
 }; // namespace death
 

@@ -33,6 +33,7 @@ void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
 void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 {
 	int current_life = ludum_game->GetCurrentLife();
+
 	if (current_life != cached_life_value)
 	{
 		if (current_life < 0)

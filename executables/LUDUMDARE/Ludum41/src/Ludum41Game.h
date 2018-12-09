@@ -59,8 +59,6 @@ public:
 	/** constructor */
 	LudumGame();
 
-	/** returns the current life */
-	int GetCurrentLife() const { return current_life; }
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }
 
@@ -249,8 +247,6 @@ protected:
 	void OnLongBarChallenge(bool success);
 	bool IsLongBarChallengeValid(bool success);
 	
-	void ChangeLife(int delta_life);
-
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
 protected:
@@ -267,12 +263,7 @@ protected:
 	/** all the existing button */
 	std::vector<int> gamepad_buttons;
 
-
-
-
 	/** initial game values */
-	int initial_life = 3;
-	int max_life = 10;
 
 	int max_ball_count = 3;
 
@@ -321,7 +312,6 @@ protected:
 	float ball_angle_limit = 0.1f;
 
 	/** current game values */
-	int   current_life  = 3;
 	float player_length = 70.0f;
 	
 	float ball_time_dilation = 1.0f;
@@ -330,8 +320,6 @@ protected:
 	
 	int combo_multiplier = 1;
 	
-	int current_level = 0;
-
 	/** some sprites */	
 	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
 	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;

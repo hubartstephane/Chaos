@@ -59,10 +59,16 @@ namespace death
 		char const * GetGameName() const { return game_name; }
 		/** returns the game instructions */
 		char const * GetGameInstructions() const { return game_instructions; }
+
 		/** returns the best score */
 		int GetBestScore() const { return best_score; }
 		/** returns the current score */
 		int GetCurrentScore() const { return current_score; }
+
+		/** returns the current life */
+		void SetCurrentLife(int new_life);
+
+		int GetCurrentLife() const { return current_life; }
 
 		/** getter on the particle manager */
 		chaos::ParticleManager * GetParticleManager(){ return particle_manager.get(); }
@@ -494,10 +500,14 @@ namespace death
 		/** for counting frame per seconds */
 		chaos::TimedAccumulator<float> fps_counter;
 
-
 		/** score values */
 		int best_score = 0;
 		int current_score = 0;
+
+		/** life counters */
+		int current_life = 3;
+		int initial_life = 3;
+		int max_life = 3;
 
 		/** cheating */
 #if _DEBUG

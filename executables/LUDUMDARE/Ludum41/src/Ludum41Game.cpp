@@ -18,6 +18,7 @@
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";
+	max_life = 10;
 }
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
@@ -149,7 +150,6 @@ void LudumGame::ResetGameVariables()
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
 
-	current_life  = initial_life;
 	player_length = player_initial_length;
 	ball_power    = 1.0f;
 	ball_speed    = ball_initial_speed;
@@ -159,7 +159,6 @@ void LudumGame::ResetGameVariables()
 	ball_collision_speed = 0.0f;
 
 	combo_multiplier = 1;
-	current_level = 0;
 }
 
 void LudumGame::OnGameOver()
@@ -257,19 +256,12 @@ void LudumGame::TickBallSplit(double delta_time)
 	pending_split_count = 0;
 }
 
-void LudumGame::ChangeLife(int delta_life)
-{
-	if (delta_life == 0)
-		return;
-	current_life = chaos::MathTools::Clamp(current_life + delta_life, 0, max_life);
-}
-
 bool LudumGame::CheckGameOverCondition()
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count == 0)
 	{
-		ChangeLife(-1);
+		SetCurrentLife(GetCurrentLife() - 1);
 		if (current_life <= 0)
 			RequireGameOver();
 		else
@@ -799,7 +791,7 @@ bool LudumGame::IsExtraBallChallengeValid(bool success)
 
 void LudumGame::OnExtraBallChallenge(bool success)
 {
-	ChangeLife(success ? +1 : -1);
+	SetCurrentLife(GetCurrentLife() + (success ? +1 : -1));
 }
 
 bool LudumGame::IsLongBarChallengeValid(bool success)
@@ -839,8 +831,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(initial_life);
-	DEATHGAME_JSON_ATTRIBUTE(max_life);
 	DEATHGAME_JSON_ATTRIBUTE(max_ball_count);
 	DEATHGAME_JSON_ATTRIBUTE(ball_size);
 	DEATHGAME_JSON_ATTRIBUTE(player_max_length);
@@ -1040,7 +1030,10 @@ bool LudumGame::InitializeGamepadButtonInfo()
 
 bool LudumGame::InitializeRewardsAndPunishments()
 {
-#if 1
+	rewards.push_back(new LudumChallengeRewardPunishment_ExtraLife);
+	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
+
+#if 0
 	rewards.push_back(new LudumChallengeRewardPunishment_BrickOffset);
 	rewards.push_back(new LudumChallengeRewardPunishment_BallPower);
 	rewards.push_back(new LudumChallengeRewardPunishment_BarSize);
@@ -1048,9 +1041,7 @@ bool LudumGame::InitializeRewardsAndPunishments()
 	rewards.push_back(new LudumChallengeRewardPunishment_SplitBall);
 	rewards.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	rewards.push_back(new LudumChallengeRewardPunishment_ExtraLife);
-#endif
 
-#if 1
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickOffset);
 	punishments.push_back(new LudumChallengeRewardPunishment_BallPower);
 	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);

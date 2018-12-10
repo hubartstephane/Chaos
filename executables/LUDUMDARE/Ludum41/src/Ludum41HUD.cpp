@@ -51,6 +51,8 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 			else
 			{
 				allocation->Resize(current_life);
+				if (current_life > cached_life_value)
+					GetGameParticleCreator().InitializeParticles(allocation, "life", current_life - cached_life_value);
 			}
 
 			// set the color

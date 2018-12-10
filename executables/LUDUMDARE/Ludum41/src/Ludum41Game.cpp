@@ -1030,10 +1030,6 @@ bool LudumGame::InitializeGamepadButtonInfo()
 
 bool LudumGame::InitializeRewardsAndPunishments()
 {
-	rewards.push_back(new LudumChallengeRewardPunishment_ExtraLife);
-	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
-
-#if 0
 	rewards.push_back(new LudumChallengeRewardPunishment_BrickOffset);
 	rewards.push_back(new LudumChallengeRewardPunishment_BallPower);
 	rewards.push_back(new LudumChallengeRewardPunishment_BarSize);
@@ -1048,7 +1044,7 @@ bool LudumGame::InitializeRewardsAndPunishments()
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
-#endif
+
 	return true;
 }
 

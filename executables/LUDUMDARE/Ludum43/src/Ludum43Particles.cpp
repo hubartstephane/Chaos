@@ -198,7 +198,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 #if _DEBUG
 		if (!game->GetCheatNoLifeLoss())
 #endif
-		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PLAYER_LIFETIME, true))
+		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_player_life, true))
 			return true;		
 	}
 
@@ -345,7 +345,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	particle->velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, PARTICLE_LIFETIME, false))
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_particle_life, false))
 	{
 		if (particle->waken_up)
 			game->NotifyAtomCountChange(-1);

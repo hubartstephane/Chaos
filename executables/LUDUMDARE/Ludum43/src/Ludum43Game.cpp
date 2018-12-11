@@ -367,11 +367,13 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 {
 	if (!death::Game::InitializeGameValues(config, config_path))
 		return false;
+
+	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
+	DEATHGAME_JSON_ATTRIBUTE(initial_particle_life);
+
 	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
 	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);
 	DEATHGAME_JSON_ATTRIBUTE(dash_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(player_initial_life);
-	DEATHGAME_JSON_ATTRIBUTE(particle_initial_life);
 	DEATHGAME_JSON_ATTRIBUTE(cooldown);
 
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_minradius);
@@ -701,4 +703,15 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, boost::intrusive_pt
 		return false;
 
 	return true;
+}
+
+void LudumGame::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) 
+{ 
+	death::Game::SetPlayerAllocation(in_allocation);
+	if (in_allocation != nullptr)
+	{
+		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
+		if (player_particles.GetCount() > 0)
+			player_particles[0].life = initial_player_life;
+	}
 }

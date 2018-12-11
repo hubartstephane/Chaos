@@ -3,9 +3,11 @@
   "font_path": "@fonts/gomarice_katamari_serif.ttf",
 	"title_font_path": "@fonts/unispace bold italic.ttf",
 
+	"initial_life":3,
+	"max_life":3,
 
   "initial_player_life": 4.0,
-  "initial_particle_life": 1.0,
+  "initial_particle_life": 0.7,
   "cooldown": 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,

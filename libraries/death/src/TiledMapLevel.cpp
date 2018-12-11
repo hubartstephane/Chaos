@@ -1086,8 +1086,11 @@ namespace death
 			particle_populator.AddParticle(bitmap_name->c_str(), player_bounding_box);
 			particle_populator.FlushParticles();
 
+			// allocation
+			chaos::ParticleAllocation * player_allocation = particle_populator.GetParticleAllocation();
+
 			// set the player allocation
-			game->SetPlayerAllocation(particle_populator.GetParticleAllocation());
+			game->SetPlayerAllocation(player_allocation);
 
 			// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 			reference_displacement_ratio = layer_instance->displacement_ratio;

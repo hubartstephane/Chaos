@@ -1522,5 +1522,10 @@ namespace death
 		current_life = new_life;
 	}
 
+	void Game::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) 
+	{ 
+		player_allocations = in_allocation; 
+	}
+
 }; // namespace death
 

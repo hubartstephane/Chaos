@@ -191,7 +191,7 @@ namespace death
 		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
 		chaos::ParticleAllocation const * GetPlayerAllocation() const { return player_allocations.get(); }
 		/** set player allocation */
-		void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) { player_allocations = in_allocation; }
+		virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
 
 		/** get object particle */
 		chaos::ParticleDefault::Particle * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);

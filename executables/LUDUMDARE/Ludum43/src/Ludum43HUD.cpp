@@ -118,7 +118,7 @@ void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 
 		particles->bounding_box         = chaos::box2(std::make_pair(position1, position2));		
 		particles->texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
-		particles->texcoords.topright   = glm::vec2(PLAYER_LIFETIME, 1.0f);
+		particles->texcoords.topright   = glm::vec2(ludum_game->initial_player_life, 1.0f);
 		particles->color                = glm::vec4(life, life, life, life);
 
 		cached_life_value = life;

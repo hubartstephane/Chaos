@@ -88,6 +88,8 @@ public:
 
 protected:
 
+	virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) override;
+
 	void SetPlayerReverseMode(bool reversed_mode);
 
 	/** override */
@@ -215,8 +217,8 @@ public:
 	float world_clamp_radius = 3000.0f;
 
 	/** current game values */
-	float player_initial_life = 4.0f;
-	float particle_initial_life = 1.0f;
+	float initial_player_life = 4.0f;
+	float initial_particle_life = 1.0f;
 	
 
 

@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@enemy_pixel_shader.txt"
+	],
+	"vertex_sources":
+	[
+		"@enemy_vertex_shader.txt"
+	]
+}

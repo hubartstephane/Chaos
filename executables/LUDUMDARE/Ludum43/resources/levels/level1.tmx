@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1705">
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
@@ -7,6 +8,9 @@
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <objectgroup name="WorldLimits" locked="1">
+  <properties>
+   <property name="MATERIAL" value="worldlimit"/>
+  </properties>
   <object id="491" gid="8" x="-4108" y="-1548" width="2000" height="2000"/>
   <object id="1642" gid="8" x="-6468" y="1692" width="5000" height="5000"/>
   <object id="1643" gid="8" x="-3944" y="-2504" width="2000" height="2000"/>
@@ -420,6 +424,7 @@
  <objectgroup name="Atoms">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
+   <property name="MATERIAL" value="atom"/>
   </properties>
   <object id="1561" gid="9" x="-3826" y="-921.5" width="50" height="50"/>
   <object id="1664" gid="9" x="-3449" y="-1817" width="50" height="50"/>
@@ -463,6 +468,9 @@
   <object id="1702" gid="9" x="-1513" y="-10521" width="50" height="50"/>
  </objectgroup>
  <objectgroup name="Enemies">
+  <properties>
+   <property name="MATERIAL" value="enemy"/>
+  </properties>
   <object id="1603" gid="8" x="-3144" y="-3528" width="400" height="400"/>
   <object id="1703" gid="8" x="-3816" y="-7816" width="400" height="400"/>
   <object id="1704" gid="8" x="-1736" y="-10376" width="400" height="400"/>

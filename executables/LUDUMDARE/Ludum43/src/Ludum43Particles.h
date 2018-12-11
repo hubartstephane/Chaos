@@ -4,6 +4,8 @@
 #include <chaos/ParticleTools.h> 
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
+#include <chaos/GPUVertexDeclaration.h> 
+
 
 #include <death/TiledMapParticle.h> 
 
@@ -15,7 +17,15 @@ static float const WAKEN_RADIUS_RATIO  = 1.0f;
 // VertexBase and Particle
 // ===========================================================================
 
-using VertexBase = chaos::ParticleDefault::Vertex;
+class VertexBase : public chaos::ParticleDefault::Vertex
+{
+public:
+
+	//glm::vec2 bounding_box_position;
+	//glm::vec2 bounding_box_half_size;
+};
+
+chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
 
 // shuxxx : 
 //   should be that

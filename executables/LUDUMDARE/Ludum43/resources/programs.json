@@ -2,6 +2,9 @@
   "@background_program" : { "path": "@programs/background/background_program.json" },
   "@lifebar_program"  : { "path": "@programs/lifebar/lifebar_program.json" },
   "@player_program"  : { "path": "@programs/player/player_program.json" },
+  "@atom_program"  : { "path": "@programs/atom/atom_program.json" },
+  "@enemy_program"  : { "path": "@programs/enemy/enemy_program.json" },
+  "@worldlimit_program"  : { "path": "@programs/worldlimit/worldlimit_program.json" },
   "@background_particle_program"  : { "path": "@programs/background_particle/background_particle_program.json" },
   "@text_program"  : { "path": "@programs/text/text_program.json" }    
 

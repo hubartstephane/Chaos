@@ -9,6 +9,18 @@
 
 static bool CHEAT_PLAYER_LIFE = false;
 
+
+
+chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
+{
+	chaos::GPUVertexDeclaration result;
+	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	return result;
+}
+
+
 // ===========================================================================
 // Utility functions
 // ===========================================================================

@@ -2,6 +2,9 @@
 		"@background": {"path":"@materials/background_material.json"},
 		"@lifebar" : {"path":"@materials/lifebar_material.json"},
     "@player" : {"path":"@materials/player_material.json"},
+		"@enemy" : {"path":"@materials/enemy_material.json"},
+		"@atom" : {"path":"@materials/atom_material.json"},
+		"@worldlimit" : {"path":"@materials/worldlimit_material.json"},
     "@background_particle" : {"path":"@materials/background_particle_material.json"},
 		"@text" : {"path":"@materials/text_material.json"}    
 }

@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@worldlimit_pixel_shader.txt"
+	],
+	"vertex_sources":
+	[
+		"@worldlimit_vertex_shader.txt"
+	]
+}

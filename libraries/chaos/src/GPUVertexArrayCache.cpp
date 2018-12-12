@@ -51,11 +51,7 @@ namespace chaos
 		if (!GLTools::GenerateVertexAndIndexBuffersObject(&new_vertex_array, nullptr, nullptr))
 			return nullptr;
 
-		// bind attributes
-		GPUProgramData const & data = program->GetProgramData();
-
 		GLuint va = new_vertex_array->GetResourceID();
-		data.BindAttributes(va, declaration, nullptr);
 
 		// set the vertex buffer
 		if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
@@ -67,6 +63,10 @@ namespace chaos
 		// set the index buffer
 		if (index_buffer != nullptr)
 			glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
+
+		// bind attributes
+		GPUProgramData const & data = program->GetProgramData();
+		data.BindAttributes(va, declaration, nullptr);
 
 		// create the destruction callback
 		GPUProgramToVertexArrayCacheCallbacks * new_callback = new GPUProgramToVertexArrayCacheCallbacks();

@@ -30,12 +30,22 @@ namespace chaos
 			glm::vec4 color;
 		};
 
-		/** ParticleVertexDefault : vertex for default particle*/
+		/** ParticleVertexDefault : vertex for default particle */
 		class ParticleTrait : public ParticleLayerTrait<Particle, Vertex>
 		{
 		public:
 
-			static size_t ParticleToVertices(Particle const * particle, Vertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation);
+			template<typename VERTEX_TYPE>
+			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation)
+			{
+				// generate particle corners and texcoords
+				chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
+				// copy the color in all triangles vertex
+				for (size_t i = 0; i < 6; ++i)
+					vertices[i].color = particle->color;
+
+				return vertices_per_particle;
+			}
 		};
 
 		/** the default vertex declaration */

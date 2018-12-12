@@ -7,16 +7,14 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 
-static bool CHEAT_PLAYER_LIFE = false;
-
-
-
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
 	chaos::GPUVertexDeclaration result;
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
 	return result;
 }
 
@@ -189,7 +187,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 	// loose life if your not in danger zone
 	if (!particle->level_end_reached)
-		if (!affected_by_worldlimits && !CHEAT_PLAYER_LIFE)
+		if (!affected_by_worldlimits)
 			in_danger_zone = true;
 
 

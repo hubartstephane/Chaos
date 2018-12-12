@@ -21,8 +21,8 @@ class VertexBase : public chaos::ParticleDefault::Vertex
 {
 public:
 
-	//glm::vec2 bounding_box_position;
-	//glm::vec2 bounding_box_half_size;
+	glm::vec2 bounding_box_position;
+	glm::vec2 bounding_box_half_size;
 };
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);

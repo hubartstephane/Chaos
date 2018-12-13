@@ -409,7 +409,6 @@ namespace chaos
 			GL_STATIC_DRAW;
 		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
 
-
 		// map the vertex buffer
 		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
 		if (buffer == nullptr)
@@ -419,11 +418,9 @@ namespace chaos
 		// unmap the buffer
 		glUnmapNamedBuffer(buffer_id);
 
-
-
 		// no more update required
 		require_GPU_update = false;
-		// cache the number of particles inserted
+		// cache the number of particles remaining
 		vertices_count = result;
 
 		return result;

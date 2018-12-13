@@ -13,7 +13,7 @@ namespace chaos
 		/** constructor (create its own resource) */
 		GPUVertexArray();
 		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
-		GPUVertexArray(GLuint in_id, bool in_ownership = true);
+		GPUVertexArray(GLuint in_id, bool in_ownership);
 
 		/** destructor */
 		virtual ~GPUVertexArray();

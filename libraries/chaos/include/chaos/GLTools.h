@@ -41,12 +41,9 @@ namespace chaos
 
 		/** map an index and vertex buffer at the same time, all mapped or none mapped */
 		static bool MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result);
+
 		/** generate multiple arrays/buffer with a single call */
-		static bool GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
-		/** generate multiple arrays/buffer with a single call */
-		static bool GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer);
-		/** free multiple arrays/buffer with a single call */
-		static void FreeVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer);
+		static bool GenerateVertexAndIndexBuffers(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer);
 
 		/** an utility function to 'compute' offset in vertex buffer (simple cast in facts) */
 		static inline void * GetOffset(size_t s)

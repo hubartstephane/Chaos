@@ -51,7 +51,7 @@ namespace chaos
 				return false;
 			// get the resource size
 			GLint size = 0;
-			glGetNamedBufferParameteriv(buffer_id, GL_BUFFER_SIZE, &size);
+			glGetNamedBufferParameteriv(in_id, GL_BUFFER_SIZE, &size);
 			buffer_size = (size_t)size;
 			// initialize internals
 			buffer_id = in_id;

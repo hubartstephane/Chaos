@@ -12,7 +12,7 @@ namespace chaos
 		/** constructor (create its own resource) */
 		GPUVertexBuffer();
 		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
-		GPUVertexBuffer(GLuint in_id, bool in_ownership = true);
+		GPUVertexBuffer(GLuint in_id, bool in_ownership);
 	};
 
 }; // namespace chaos

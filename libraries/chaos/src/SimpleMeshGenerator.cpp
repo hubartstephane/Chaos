@@ -107,7 +107,7 @@ namespace chaos
 			boost::intrusive_ptr<GPUVertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
 			boost::intrusive_ptr<GPUIndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
 
-			if (GLTools::GenerateVertexAndIndexBuffersObject(nullptr, vb_ptr, ib_ptr))
+			if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr))
 			{
 				GLuint vb = (requirement.vertices_count > 0) ? vb_object->GetResourceID() : 0;
 				GLuint ib = (requirement.indices_count  > 0) ? ib_object->GetResourceID() : 0;

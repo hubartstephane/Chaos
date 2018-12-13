@@ -386,9 +386,12 @@ namespace chaos
 		// create the vertex buffer if necessary
 		if (vertex_buffer == nullptr)
 		{
-			GLTools::GenerateVertexAndIndexBuffersObject(nullptr, &vertex_buffer, nullptr);
-			if (vertex_buffer == nullptr)
+			vertex_buffer = new GPUVertexBuffer();
+			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
+			{
+				vertex_buffer = nullptr;
 				return 0;
+			}
 		}
 		// reserve memory (for the maximum number of vertices possible)
 		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
@@ -402,11 +405,6 @@ namespace chaos
 		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
 
 
-		// shuxxx
-
-
-
-
 		// map the vertex buffer
 		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
 		if (buffer == nullptr)
@@ -415,6 +413,8 @@ namespace chaos
 		result = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
 		// unmap the buffer
 		glUnmapNamedBuffer(buffer_id);
+
+
 
 		// no more update required
 		require_GPU_update = false;

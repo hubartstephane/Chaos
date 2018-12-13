@@ -192,7 +192,7 @@ namespace chaos
 		declaration.Push(SEMANTIC_TEXCOORD, 0, TYPE_FLOAT2);
 
 		// Generate Vertex Array and Buffer
-		if (!GLTools::GenerateVertexAndIndexBuffersObject(&vertex_array, &vertex_buffer, nullptr))
+		if (!GLTools::GenerateVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr))
 			return false;
 
 		GPUProgramData const & program_data = program->GetProgramData();

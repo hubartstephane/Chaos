@@ -105,28 +105,6 @@ namespace chaos
 		return GetEnumVectorArityImpl(type, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
 	}
 
-	void GLTools::FreeVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer)
-	{
-		// release the buffers
-		GLuint buffers[2] = { 0, 0 };
-
-		int buffer_count = 0;
-		if (vertex_buffer != nullptr && *vertex_buffer > 0)
-			std::swap(buffers[buffer_count++], *vertex_buffer); // in the same movement, this reset vertex_buffer value and push it in another array
-
-		if (index_buffer != nullptr && *index_buffer > 0)
-			std::swap(buffers[buffer_count++], *index_buffer);  // in the same movement, this reset index_buffer value and push it in another array
-
-		glDeleteBuffers(buffer_count, buffers); // single call for both index & vertex
-
-												// release the vertex array
-		if (vertex_array != nullptr)
-		{
-			glDeleteVertexArrays(1, vertex_array);
-			*vertex_array = 0;
-		}
-	}
-
 	bool GLTools::MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result)
 	{
 		result = std::make_pair(nullptr, nullptr);
@@ -153,58 +131,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GLTools::GenerateVertexAndIndexBuffers(GLuint * vertex_array, GLuint * vertex_buffer, GLuint * index_buffer)
-	{
-		int buffer_count = 0;
-
-		// clean the result
-		if (vertex_array != nullptr)
-			*vertex_array = 0;
-
-		if (vertex_buffer != nullptr)
-		{
-			*vertex_buffer = 0;
-			++buffer_count;
-		}
-
-		if (index_buffer != nullptr)
-		{
-			*index_buffer = 0;
-			++buffer_count;
-		}
-
-		// allocate the vertex array
-		if (vertex_array != nullptr)
-		{
-			glCreateVertexArrays(1, vertex_array);
-			if (*vertex_array <= 0)
-				return false;
-		}
-
-		// allocate the buffers
-		if (buffer_count > 0)
-		{
-			GLuint buffers[2] = { 0, 0 };
-			glCreateBuffers(buffer_count, buffers);
-
-			int count = 0;
-			if (vertex_buffer != nullptr)
-				*vertex_buffer = buffers[count++];
-			if (index_buffer != nullptr)
-				*index_buffer = buffers[count++];
-
-			if ((vertex_buffer != nullptr && *vertex_buffer <= 0) ||
-				(index_buffer != nullptr && *index_buffer <= 0))
-			{
-				FreeVertexAndIndexBuffers(vertex_array, vertex_buffer, index_buffer); // ensure all success
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	bool GLTools::GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer)
+	bool GLTools::GenerateVertexAndIndexBuffers(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer)
 	{
 		// release resource at destruction in case of failure 
 		boost::intrusive_ptr<GPUVertexArray> va;

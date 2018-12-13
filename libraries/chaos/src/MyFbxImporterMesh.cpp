@@ -516,6 +516,9 @@ namespace chaos
 				GLuint vb = 0;
 				GLuint ib = 0;
 
+				// shuxxx
+				assert(0);
+#if 0
 				if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
 				{
 					result->vertex_declaration = vertex_declaration;
@@ -544,6 +547,7 @@ namespace chaos
 
 					return result;
 				}
+#endif
 				delete(result);
 			}
 			return nullptr;

@@ -392,6 +392,8 @@ namespace chaos
 		/** returns the number of vertices required for each particles */
 		virtual size_t GetVerticesCountPerParticles() const;
 
+		/** returns true whether vertices need to be updated */
+		virtual bool AreVerticesDynamic() const;
 		/** returns true whether particles need to be updated */
 		virtual bool AreParticlesDynamic() const;
 
@@ -477,6 +479,11 @@ namespace chaos
 		virtual size_t GetVertexSize() const override
 		{
 			return sizeof(vertex_type);
+		}
+		/** override */
+		virtual bool AreVerticesDynamic() const
+		{
+			return trait.dynamic_vertices;
 		}
 		/** override */
 		virtual bool AreParticlesDynamic() const
@@ -617,6 +624,8 @@ namespace chaos
 		size_t GetVertexSize() const { return layer_desc->GetVertexSize(); }
 		/** returns the number of vertices required for each particles */
 		size_t GetVerticesCountPerParticles() const { return layer_desc->GetVerticesCountPerParticles(); }
+		/** returns true whether vertices need to be updated */
+		bool AreVerticesDynamic() const { return layer_desc->AreVerticesDynamic(); }
 		/** returns true whether particles need to be updated */
 		bool AreParticlesDynamic() const { return layer_desc->AreParticlesDynamic(); }
 
@@ -736,7 +745,7 @@ namespace chaos
 	// ParticleLayerTrait
 	// ==============================================================
 
-	template<typename PARTICLE_TYPE, typename VERTEX_TYPE>
+	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
 	class ParticleLayerTrait
 	{
 	public:
@@ -745,12 +754,6 @@ namespace chaos
 		using particle_type = PARTICLE_TYPE;
 		/** the type for one vertex */
 		using vertex_type = VERTEX_TYPE;
-
-		/** constructor */
-		ParticleLayerTrait(bool in_dynamic_particles = true) :
-			dynamic_particles(in_dynamic_particles)
-		{
-		}
 
 		/** by default, update do nothing */
 		bool UpdateParticle(float delta_time, particle_type * particle, ParticleAllocation * allocation) const
@@ -772,7 +775,9 @@ namespace chaos
 	public:
 
 		/** whether the particles are dynamic */
-		bool dynamic_particles = true;
+		bool dynamic_particles = DYNAMIC_PARTICLES;
+		/** whether the vertices are dynamic */
+		bool dynamic_vertices = DYNAMIC_VERTICES;
 	};
 
 	// undefine macros

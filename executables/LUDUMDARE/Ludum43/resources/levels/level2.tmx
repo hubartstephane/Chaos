@@ -612,7 +612,7 @@
    </properties>
    <point/>
   </object>
-  <object id="57" name="TheCamera1" x="-8456" y="-2112" width="8688" height="4648">
+  <object id="57" name="TheCamera1" x="-8456" y="-2112" width="18688" height="14648">
    <properties>
     <property name="CAMERA" type="bool" value="true"/>
    </properties>

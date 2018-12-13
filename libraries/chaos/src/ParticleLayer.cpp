@@ -180,6 +180,11 @@ namespace chaos
 		return 0;
 	}
 
+	bool ParticleLayerDesc::AreVerticesDynamic() const
+	{
+		return false;
+	}
+
 	bool ParticleLayerDesc::AreParticlesDynamic() const
 	{
 		return false;
@@ -381,7 +386,7 @@ namespace chaos
 		size_t result = 0;
 
 		// return the number of vertices from the previous call
-		if (!require_GPU_update)
+		if (!require_GPU_update && !AreVerticesDynamic())
 			return vertices_count; 
 		// create the vertex buffer if necessary
 		if (vertex_buffer == nullptr)
@@ -399,7 +404,7 @@ namespace chaos
 			return 0;
 
 		GLuint buffer_id = vertex_buffer->GetResourceID();
-		GLenum map_type = (AreParticlesDynamic()) ?
+		GLenum map_type = (AreVerticesDynamic() || AreParticlesDynamic()) ?
 			GL_STREAM_DRAW :
 			GL_STATIC_DRAW;
 		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);

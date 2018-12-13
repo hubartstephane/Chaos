@@ -3,9 +3,15 @@
 
 namespace chaos
 {
-	GPUBuffer::GPUBuffer(GLuint in_id) : resource_id(in_id)
-	{
 
+	GPUBuffer::GPUBuffer()
+	{
+		CreateResource();	
+	}
+
+	GPUBuffer::GPUBuffer(GLuint in_id, bool in_ownership)
+	{
+		SetResource(in_id, in_ownership);
 	}
 
 	GPUBuffer::~GPUBuffer()
@@ -13,12 +19,60 @@ namespace chaos
 		DoRelease();
 	}
 
+	bool GPUBuffer::CreateResource()
+	{
+		// release previous resource
+		Release();
+		// create new resource
+		glCreateBuffers(1, &buffer_id);
+		if (buffer_id == 0)
+			return false;
+		ownership = true;
+		return true;
+	}
+
+	bool GPUBuffer::SetResource(GLuint in_id, bool in_ownership)
+	{
+		// early exit
+		if (buffer_id == in_id)
+		{
+			ownership = in_ownership;
+			return true;
+		}
+
+		// release previous resource
+		Release();
+
+		// reference new resource (if exisiting)
+		if (in_id != 0)
+		{
+			// bad incomming resource
+			if (!glIsBuffer(in_id)) 
+				return false;
+			// get the resource size
+			GLint size = 0;
+			glGetNamedBufferParameteriv(buffer_id, GL_BUFFER_SIZE, &size);
+			buffer_size = (size_t)size;
+			// initialize internals
+			buffer_id = in_id;
+			ownership = in_ownership;
+		}
+		return true;
+	}		
+
+	bool GPUBuffer::IsValid() const 
+	{ 
+		return (buffer_id != 0);
+	}
+
 	bool GPUBuffer::DoRelease()
 	{
-		if (resource_id == 0)
+		if (buffer_id == 0)
 			return false;
-		glDeleteBuffers(1, &resource_id);
-		resource_id = 0;
+		if (ownership)
+			glDeleteBuffers(1, &buffer_id);
+		buffer_id = 0;
+		buffer_size = 0;
 		return true;
 	}
 
@@ -28,15 +82,11 @@ namespace chaos
 		return true;
 	}
 
-	GLint GPUBuffer::GetBufferSize() const
+	size_t GPUBuffer::GetBufferSize() const
 	{
-		if (!IsValid())
-			return 0;
-		GLint result = 0;
-		glGetNamedBufferParameteriv(resource_id, GL_BUFFER_SIZE, &result);
-		return result;
-
+		return buffer_size;
 	}
+
 
 #if 0
 

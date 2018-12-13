@@ -10,16 +10,23 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GPUVertexArray(GLuint in_id = 0);
+		/** constructor (create its own resource) */
+		GPUVertexArray();
+		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
+		GPUVertexArray(GLuint in_id, bool in_ownership = true);
+
 		/** destructor */
 		virtual ~GPUVertexArray();
 
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return vertex_array_id; }
-
 		/** returns true whether the resource is valid */
-		bool IsValid() const { return glIsVertexArray(vertex_array_id) == GL_TRUE;}
+		bool IsValid() const;
+
+		/** create an OpenGL resource */
+		bool CreateResource();
+		/** Initialize from GL Resource */
+		bool SetResource(GLuint in_id, bool in_ownership);
 
 	protected:
 
@@ -30,6 +37,8 @@ namespace chaos
 
 		/** the resource id */
 		GLuint vertex_array_id = 0;
+		/** whether the object has ownership of the GL resource */
+		bool ownership = true;
 	};
 
 

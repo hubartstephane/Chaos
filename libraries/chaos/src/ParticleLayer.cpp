@@ -322,8 +322,8 @@ namespace chaos
 		int result = 0;
 
 		// Update GPU buffers	
-		size_t vcount = UpdateGPUBuffers();
-		if (vcount == 0)
+		size_t vertex_count = UpdateGPUBuffers();
+		if (vertex_count == 0)
 			return 0;
 		// update the vertex declaration
 		UpdateVertexDeclaration();
@@ -336,16 +336,16 @@ namespace chaos
 		if (atlas != nullptr)
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
-		result = DoDisplayHelper(vcount, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
+		result = DoDisplayHelper(vertex_count, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
 		// restore rendering states
 		UpdateRenderingStates(false);
 		return result;
 	}
 
-	int ParticleLayer::DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	int ParticleLayer::DoDisplayHelper(size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// no vertices, no rendering
-		if (vcount == 0)
+		if (vertex_count == 0)
 			return 0;
 		// get the vertex array
 		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
@@ -359,7 +359,7 @@ namespace chaos
 		DrawPrimitive primitive;
 		primitive.primitive_type = GL_TRIANGLES;
 		primitive.indexed = false;
-		primitive.count = (int)vcount;
+		primitive.count = (int)vertex_count;
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
 
@@ -400,6 +400,12 @@ namespace chaos
 			GL_STREAM_DRAW :
 			GL_STATIC_DRAW;
 		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
+
+
+		// shuxxx
+
+
+
 
 		// map the vertex buffer
 		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);

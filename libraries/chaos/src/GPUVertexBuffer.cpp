@@ -2,7 +2,14 @@
 
 namespace chaos
 {
-	GPUVertexBuffer::GPUVertexBuffer(GLuint in_id) : GPUBuffer(in_id)
+	GPUVertexBuffer::GPUVertexBuffer(): 
+		GPUBuffer()
+	{
+
+	}
+
+	GPUVertexBuffer::GPUVertexBuffer(GLuint in_id, bool in_ownership): 
+		GPUBuffer(in_id, in_ownership)
 	{
 
 	}

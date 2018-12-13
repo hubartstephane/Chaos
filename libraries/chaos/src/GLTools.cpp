@@ -206,26 +206,41 @@ namespace chaos
 
 	bool GLTools::GenerateVertexAndIndexBuffersObject(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer)
 	{
-		GLuint va = 0;
-		GLuint vb = 0;
-		GLuint ib = 0;
+		// release resource at destruction in case of failure 
+		boost::intrusive_ptr<GPUVertexArray> va;
+		boost::intrusive_ptr<GPUVertexBuffer> vb;
+		boost::intrusive_ptr<GPUIndexBuffer> ib;
 
-		GLuint * va_ptr = (vertex_array != nullptr) ? &va : nullptr;
-		GLuint * vb_ptr = (vertex_buffer != nullptr) ? &vb : nullptr;
-		GLuint * ib_ptr = (index_buffer != nullptr) ? &ib : nullptr;
-
-		if (GenerateVertexAndIndexBuffers(va_ptr, vb_ptr, ib_ptr))
+		if (vertex_array != nullptr)
 		{
-			if (vertex_array != nullptr)
-				*vertex_array = new GPUVertexArray(va);
-			if (vertex_buffer != nullptr)
-				*vertex_buffer = new GPUVertexBuffer(vb);
-			if (index_buffer != nullptr)
-				*index_buffer = new GPUIndexBuffer(ib);
-
-			return true;
+			va = new GPUVertexArray(); // create a GL resource
+			if (va == nullptr || !va->IsValid())
+				return false;		
 		}
-		return false;
+
+		if (vertex_buffer != nullptr)
+		{
+			vb = new GPUVertexBuffer(); // create a GL resource
+			if (vb == nullptr || !vb->IsValid())
+				return false;		
+		}
+
+		if (index_buffer != nullptr)
+		{
+			ib = new GPUIndexBuffer(); // create a GL resource
+			if (ib == nullptr || !ib->IsValid())
+				return false;		
+		}
+
+		// success : validate pointers
+		if (vertex_array != nullptr)
+			*vertex_array = va;
+		if (vertex_buffer != nullptr)
+			*vertex_buffer = vb;
+		if (index_buffer != nullptr)
+			*index_buffer = ib;
+
+		return true;
 	}
 
 	void GLTools::DisplayGenericInformation()

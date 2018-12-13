@@ -10,10 +10,10 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GPUQuery(GLuint in_id, GLenum in_target);
-		/** constructor (generate the query itself) */
-		GPUQuery(GLenum target);
+		/** constructor (create its own resource) */
+		GPUQuery(GLenum in_target);
+		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
+		GPUQuery(GLuint in_id, bool in_ownership = true);
 
 		/** destructor */
 		virtual ~GPUQuery();
@@ -21,7 +21,12 @@ namespace chaos
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return query_id; }
 		/** returns true whether the resource is valid */
-		bool IsValid() const { return glIsQuery(query_id) == GL_TRUE;}
+		bool IsValid() const;
+
+		/** create an OpenGL resource */
+		bool CreateResource(GLenum in_target);
+		/** Initialize from GL Resource */
+		bool SetResource(GLuint in_id, bool in_ownership);
 
 		/** start the query */
 		bool BeginQuery();
@@ -56,6 +61,9 @@ namespace chaos
 
 		/** the resource id */
 		GLuint query_id = 0;
+		/** whether the object has ownership of the GL resource */
+		bool ownership = true;
+
 		/** indicates whether the query has been already started */
 		bool query_started = false;
 		/** indicates whether the query has been already been begun/ended */

@@ -9,8 +9,10 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GPUIndexBuffer(GLuint in_id = 0);
+		/** constructor (create its own resource) */
+		GPUIndexBuffer();
+		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
+		GPUIndexBuffer(GLuint in_id, bool in_ownership = true);
 	};
 
 }; // namespace chaos

@@ -129,7 +129,8 @@ protected:
 		uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 
 		// draw
-		particle_manager->Display(&uniform_provider);
+		chaos::RenderParams render_params;
+		particle_manager->Display(&uniform_provider, render_params);
 
 		return true;
 	}

@@ -125,7 +125,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 	// draw particle system
 	if (particle_manager != nullptr)
-		particle_manager->Display(&uniform_provider);
+		particle_manager->Display(&uniform_provider, render_params);
 
 	// super method
 	death::Game::DoDisplay(render_params, uniform_provider);

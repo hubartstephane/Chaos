@@ -170,7 +170,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 				// draw particle system (the background)
 				if (particle_manager != nullptr)
-					particle_manager->Display(&uniform_provider);
+					particle_manager->Display(&uniform_provider, render_params);
 
 				// draw the level_instance
 				current_level_instance->Display(&uniform_provider, render_params);
@@ -188,7 +188,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	if (worldlimits == nullptr)
 	{
 		if (particle_manager != nullptr)
-			particle_manager->Display(&uniform_provider); // only background !! HACK
+			particle_manager->Display(&uniform_provider, render_params); // only background !! HACK
 	
 	}
 	// combine the two layers
@@ -221,7 +221,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 		// redraw the background => BIG HACK
 		if (particle_manager != nullptr)
-			particle_manager->Display(&main_provider);
+			particle_manager->Display(&main_provider, render_params);
 	
 	}
 

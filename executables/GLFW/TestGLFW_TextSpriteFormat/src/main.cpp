@@ -119,7 +119,8 @@ protected:
 		bool b15 = uniform_provider->GetValue("toto", v7);
 #endif
 
-		particle_manager->Display(uniform_provider.get());
+		chaos::RenderParams render_params;
+		particle_manager->Display(uniform_provider.get(), render_params);
 
 		return true;
 	}

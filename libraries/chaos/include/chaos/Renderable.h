@@ -33,6 +33,8 @@ namespace chaos
 		chaos::box2 viewport;
 		/** the screen size */
 		glm::ivec2 screen_size = glm::ivec2(0, 0);
+		/** a time stamp */
+		uint64_t timestamp;
 		/** material provider */
 		boost::intrusive_ptr<MaterialProvider> material_provider;
 		/** the instancing information */
@@ -48,7 +50,7 @@ namespace chaos
 	public:
 
 		/** the material provider main method */
-		virtual GPURenderMaterial const * GetMaterial(Renderable const * renderable, GPURenderMaterial const * default_material, RenderParams const & render_params = RenderParams()) const;
+		virtual GPURenderMaterial const * GetMaterial(Renderable const * renderable, GPURenderMaterial const * default_material, RenderParams const & render_params) const;
 	};	
 
 
@@ -61,7 +63,7 @@ namespace chaos
 	public:
 
 		/** public method to render the object */
-		int Display(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params = RenderParams()) const;
+		int Display(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
 
 		/** show or hide the object */
 		void Show(bool in_visible = true);
@@ -79,6 +81,8 @@ namespace chaos
 		virtual bool CanTick() override;
 		/** the user defined method to display the object */
 		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
+		/** called to update the graphic resource */
+		virtual bool DoUpdateGPUResources() const;
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 
@@ -88,6 +92,8 @@ namespace chaos
 		bool visible = true;
 		/** whether the object must be ticked if hidden */
 		bool tick_hidden = false;
+		/** the last time the resource has been updated */
+		mutable uint64_t update_timestamp = 0;
 	};
 
 }; // namespace chaos

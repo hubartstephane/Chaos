@@ -324,14 +324,9 @@ namespace chaos
 
 	int ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
-		int result = 0;
-
-		// Update GPU buffers	
-		size_t vertex_count = UpdateGPUBuffers();
-		if (vertex_count == 0)
+		// early exit
+		if (vertices_count == 0)
 			return 0;
-		// update the vertex declaration
-		UpdateVertexDeclaration();
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
 		// prepare rendering state
@@ -341,10 +336,53 @@ namespace chaos
 		if (atlas != nullptr)
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
-		result = DoDisplayHelper(vertex_count, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
+		int result = DoDisplayHelper(vertices_count, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
 		// restore rendering states
 		UpdateRenderingStates(false);
 		return result;
+	}
+
+	bool ParticleLayer::DoUpdateGPUResources() const
+	{
+		// update the vertex declaration
+		UpdateVertexDeclaration();
+		// return the number of vertices from the previous call
+		if (!require_GPU_update && !AreVerticesDynamic())
+			return true; 
+		// create the vertex buffer if necessary
+		if (vertex_buffer == nullptr)
+		{
+			vertex_buffer = new GPUVertexBuffer();
+			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
+			{
+				vertex_buffer = nullptr;
+				return false;
+			}
+		}
+		// reserve memory (for the maximum number of vertices possible)
+		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
+		if (vertex_buffer_size == 0)
+			return true;
+
+		GLuint buffer_id = vertex_buffer->GetResourceID();
+		GLenum map_type = (AreVerticesDynamic() || AreParticlesDynamic()) ?
+			GL_STREAM_DRAW :
+			GL_STATIC_DRAW;
+		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
+
+		// map the vertex buffer
+		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+		if (buffer == nullptr)
+			return false;
+		// update the buffer
+		vertices_count = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
+		// unmap the buffer
+		glUnmapNamedBuffer(buffer_id);
+
+		// no more update required
+		require_GPU_update = false;
+
+		return true;
 	}
 
 	int ParticleLayer::DoDisplayHelper(size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
@@ -379,51 +417,6 @@ namespace chaos
 			return;
 		// fill the vertex declaration
 		vertex_declaration = layer_desc->GetVertexDeclaration();
-	}
-
-	size_t ParticleLayer::UpdateGPUBuffers() const
-	{
-		size_t result = 0;
-
-		// return the number of vertices from the previous call
-		if (!require_GPU_update && !AreVerticesDynamic())
-			return vertices_count; 
-		// create the vertex buffer if necessary
-		if (vertex_buffer == nullptr)
-		{
-			vertex_buffer = new GPUVertexBuffer();
-			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
-			{
-				vertex_buffer = nullptr;
-				return 0;
-			}
-		}
-		// reserve memory (for the maximum number of vertices possible)
-		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
-		if (vertex_buffer_size == 0)
-			return 0;
-
-		GLuint buffer_id = vertex_buffer->GetResourceID();
-		GLenum map_type = (AreVerticesDynamic() || AreParticlesDynamic()) ?
-			GL_STREAM_DRAW :
-			GL_STATIC_DRAW;
-		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
-
-		// map the vertex buffer
-		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
-		if (buffer == nullptr)
-			return 0;
-		// update the buffer
-		result = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
-		// unmap the buffer
-		glUnmapNamedBuffer(buffer_id);
-
-		// no more update required
-		require_GPU_update = false;
-		// cache the number of particles remaining
-		vertices_count = result;
-
-		return result;
 	}
 
 	size_t ParticleLayer::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const

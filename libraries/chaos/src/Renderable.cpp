@@ -30,6 +30,12 @@ namespace chaos
 	{
 		if (!IsVisible())
 			return 0;
+		if (update_timestamp != render_params.timestamp)
+		{
+			if (!DoUpdateGPUResources())
+				return 0;
+			update_timestamp = render_params.timestamp;
+		}
 		return DoDisplay(uniform_provider, render_params);
 	}
 
@@ -37,6 +43,11 @@ namespace chaos
 	{
 		return 0;
 	}	
+
+	bool Renderable::DoUpdateGPUResources() const
+	{
+		return true;
+	}
 
 	void Renderable::Show(bool in_visible)
 	{

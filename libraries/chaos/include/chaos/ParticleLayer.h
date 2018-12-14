@@ -701,8 +701,6 @@ namespace chaos
 		/** internal method to remove a range from the layer */
 		void RemoveParticleAllocation(ParticleAllocation * allocation);
 
-		/** update the GPU buffers (returns the number of vertices inserted) */
-		size_t UpdateGPUBuffers() const;
 		/** internal method to update the GPU buffers */
 		size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const;
 
@@ -713,6 +711,9 @@ namespace chaos
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool UpdateParticles(float delta_time);
+
+		/** override */
+		virtual bool DoUpdateGPUResources() const override;
 
 	protected:
 

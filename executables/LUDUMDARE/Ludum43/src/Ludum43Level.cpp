@@ -55,24 +55,28 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
-	if (layer_name == "PlayerAndCamera")
+
+	bool is_player_and_camera = (layer_name == "PlayerAndCamera");
+	if (is_player_and_camera)
 	{
 		ParticlePlayerTrait trait;
 		trait.game = ludum_game;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
 	}
 
-	//if (layer_name == "WorldLimits")
-	//	return nullptr;
-
-	if ((layer_name == "Enemies") || (layer_name == "WorldLimits"))
+	bool is_enemy       = (layer_name == "Enemies");
+	bool is_world_limit = (layer_name == "WorldLimits");
+	if (is_enemy || is_world_limit)
 	{
 		ParticleEnemyTrait trait;
 		trait.game = ludum_game;
+		trait.dynamic_particles = is_enemy; // shuxxx optimization
+		trait.dynamic_vertices  = is_enemy;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
-
 	}
-	if (layer_name == "Atoms")
+
+	bool is_atom = (layer_name == "Atoms");
+	if (is_atom)
 	{
 		ParticleAtomTrait trait;
 		trait.game = ludum_game;

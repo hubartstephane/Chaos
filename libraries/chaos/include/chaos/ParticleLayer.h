@@ -483,12 +483,12 @@ namespace chaos
 		/** override */
 		virtual bool AreVerticesDynamic() const
 		{
-			return trait.dynamic_vertices;
+			return trait.AreVerticesDynamic();
 		}
 		/** override */
 		virtual bool AreParticlesDynamic() const
 		{
-			return trait.dynamic_particles;
+			return trait.AreParticlesDynamic();
 		}
 		/** override */
 		virtual GPUVertexDeclaration GetVertexDeclaration() const override
@@ -771,6 +771,13 @@ namespace chaos
 		{
 			return ClassTools::GetClassRegistration<particle_type>();
 		}
+
+	public:
+
+		/** getters : can be override without risk even if not virtual because TRAIT use strong types */
+		bool AreVerticesDynamic() const { return dynamic_vertices;}
+		/** getters : can be override without risk even if not virtual because TRAIT use strong types */
+		bool AreParticlesDynamic() const { return dynamic_particles;}
 
 	public:
 

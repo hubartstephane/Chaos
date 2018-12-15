@@ -129,7 +129,7 @@ void LudumPlayingHUD::UpdateFrameRate(class LudumGame const * ludum_game)
 {
 	// test for cache
 	float frame_rate = ludum_game->GetFrameRate();
-	if (frame_rate == cached_framerate)
+	if (fabsf(frame_rate - cached_framerate) < 0.01f)
 		return;
 
 	// get box
@@ -155,7 +155,7 @@ void LudumPlayingHUD::UpdateFrameRate(class LudumGame const * ludum_game)
 
 	// register allocation an update cached value
 	RegisterParticles(death::GameHUDKeys::FPS_ID, fps_allocation);
-	frame_rate = cached_framerate;
+	cached_framerate = frame_rate;
 }
 
 

@@ -14,7 +14,7 @@ static float const DANGER_RADIUS_RATIO = 0.3f;
 static float const WAKEN_RADIUS_RATIO  = 1.0f;
 
 // ===========================================================================
-// VertexBase and Particle
+// VertexBase and ParticleBase
 // ===========================================================================
 
 class VertexBase : public chaos::ParticleDefault::Vertex
@@ -27,22 +27,12 @@ public:
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
 
-// shuxxx : 
-//   should be that
-//using ParticleBase = chaos::ParticleDefault::Particle;
-//   but, due to required refactor of TiledMapSystem, replace with that
-
 class ParticleBase : public death::TiledMap::TileParticle
 {
 public:
 
 	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
-
-
 };
-
-
-
 
 // ===========================================================================
 // ParticleAffector

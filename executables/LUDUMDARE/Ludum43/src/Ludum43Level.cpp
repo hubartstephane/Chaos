@@ -70,7 +70,7 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	{
 		ParticleEnemyTrait trait;
 		trait.game = ludum_game;
-		trait.dynamic_particles = is_enemy; // shuxxx optimization
+		trait.dynamic_particles = is_enemy;
 		trait.dynamic_vertices  = is_enemy;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
 	}

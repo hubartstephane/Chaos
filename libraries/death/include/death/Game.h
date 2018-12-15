@@ -547,6 +547,9 @@ namespace death
 		/** some allocations */
 		boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
 		boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
+
+		/** a time stamp for rendering */
+		uint64_t rendering_timestamp = 0;
 	};
 
 }; // namespace death

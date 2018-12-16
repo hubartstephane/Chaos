@@ -4,6 +4,32 @@
 namespace chaos
 {
 
+	size_t GPUBufferResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const
+	{
+		return in_size; // the normal policy
+	}
+
+	size_t GPUBufferDoublingResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const
+	{
+		size_t current_buffer_size = in_buffer.GetBufferSize();
+		// want to shrink
+		if (in_size < current_buffer_size)
+		{
+			if (in_size < current_buffer_size / 2) // only shrink if the size goes below a range
+				return in_size;
+			return current_buffer_size;
+		}
+		// want to grow
+		else if (in_size > current_buffer_size)
+		{
+			if (in_size > current_buffer_size * 2) 
+				return in_size;
+			return current_buffer_size * 2; // double the required size to avoid further reallocation
+		}
+		// size does not change
+		return in_size;
+	}
+
 	GPUBuffer::GPUBuffer()
 	{
 		CreateResource();	
@@ -76,9 +102,61 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUBuffer::SetBufferData(char const * buffer, size_t size)
+	bool GPUBuffer::SetBufferData(char const * in_data, size_t in_size, bool in_dynamic, GPUBufferResizePolicy const & in_policy)
 	{
+		// early exit
+		if (buffer_id == 0)
+			return 0;
 
+		// the type of buffer we want (there are more kind of buffers we don't support : STREAM ... COPY/READ */
+		GLenum buffer_type = (in_dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+
+		// compute the real size we want
+		size_t effective_size = in_policy.GetReservedSize(*this, in_size);
+
+		// just want to transfert some data
+		if (in_data != nullptr)
+		{
+			bool transfered = false;
+
+			// allocate buffer (if necessary) and try transfert data at buffer creation
+			if (effective_size != buffer_size)
+			{
+				if (effective_size == in_size)
+				{
+					glNamedBufferData(buffer_id, in_size, in_data, buffer_type); // can transfert data in the same time because data_size == allocation_size
+					transfered = true;
+				}
+				else
+				{
+					glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type); // reallocate and transfert data
+				}
+			}
+			// transfert data if not done yet
+			if (!transfered && in_size != 0)
+			{
+				char * mapped_buffer = MapBuffer(0, in_size, false, true); // now need to reallocate. Just transfert data
+				if (mapped_buffer == nullptr)
+					return false;
+				memcpy(mapped_buffer, in_data, in_size);
+				UnMapBuffer();
+			}
+
+			buffer_size = effective_size;
+			dynamic = in_dynamic;
+			return true;
+		}
+
+		// we want to allocate buffer without any transfert
+		assert(in_data == nullptr);
+
+		// no need to do any thing, time is the same
+		if (effective_size == buffer_size)
+			return true;
+
+		glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type);
+		buffer_size = effective_size;
+		dynamic = in_dynamic;
 		return true;
 	}
 
@@ -87,23 +165,48 @@ namespace chaos
 		return buffer_size;
 	}
 
+	char * GPUBuffer::MapBuffer(size_t start, size_t count, bool read, bool write)
+	{
+		assert(read || write);
+
+		// early exit
+		if (buffer_id == 0)
+			return nullptr;
+		if (!read && !write)
+			return nullptr;
+
+		// search kind of mapping
+		GLbitfield map_type = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // theses flag are REALLY important
+		if (read)
+			map_type |= GL_MAP_READ_BIT;
+		if (write)
+			map_type |= GL_MAP_WRITE_BIT;
+
+		// check for map range
+		if (start >= buffer_size)
+			return nullptr;
+		if (count == 0)
+		{
+			count = buffer_size - start;
+			if (count == 0)
+				return nullptr; // nothing more to map
+		}
+		else if (start + count > buffer_size) // map all what required or nothing
+			return nullptr;
+
+		// do the mapping
+		return (char*)glMapNamedBufferRange(buffer_id, start, count , map_type);
+	}
+
+	void GPUBuffer::UnMapBuffer()
+	{
+		if (buffer_id == 0)
+			return;			
+		glUnmapNamedBuffer(buffer_id);
+	}
+
 
 #if 0
-
-	glNamedBufferData
-		GL_STREAM_DRAW
-		GL_STREAM_READ
-		GL_STREAM_COPY
-
-		GL_STATIC_DRAW
-		GL_STATIC_READ
-		GL_STATIC_COPY
-
-		GL_DYNAMIC_DRAW
-		GL_DYNAMIC_READ
-		GL_DYNAMIC_COPY.
-
-
 
 		GL_BUFFER_ACCESS
 		GL_BUFFER_ACCESS_FLAGS

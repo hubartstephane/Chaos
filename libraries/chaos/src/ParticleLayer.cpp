@@ -364,20 +364,17 @@ namespace chaos
 		if (vertex_buffer_size == 0)
 			return true;
 
-		GLuint buffer_id = vertex_buffer->GetResourceID();
-		GLenum map_type = (AreVerticesDynamic() || AreParticlesDynamic()) ?
-			GL_STREAM_DRAW :
-			GL_STATIC_DRAW;
-		glNamedBufferData(buffer_id, vertex_buffer_size, nullptr, map_type);
-
+		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
+		if (!vertex_buffer->SetBufferData(nullptr, vertex_buffer_size, dynamic_buffer, GPUBufferDoublingResizePolicy()))
+			return false;
 		// map the vertex buffer
-		char * buffer = (char*)glMapNamedBuffer(buffer_id, GL_WRITE_ONLY);
+		char * buffer = vertex_buffer->MapBuffer(0, vertex_buffer_size, false, true);
 		if (buffer == nullptr)
 			return false;
 		// update the buffer
 		vertices_count = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
 		// unmap the buffer
-		glUnmapNamedBuffer(buffer_id);
+		vertex_buffer->UnMapBuffer();
 
 		// no more update required
 		require_GPU_update = false;

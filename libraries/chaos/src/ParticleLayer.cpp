@@ -352,6 +352,8 @@ namespace chaos
 		// create the vertex buffer if necessary
 		if (vertex_buffer == nullptr)
 		{
+			vertices_count = 0; // no vertices inside fot the moment
+
 			vertex_buffer = new GPUVertexBuffer();
 			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
 			{
@@ -359,18 +361,30 @@ namespace chaos
 				return false;
 			}
 		}
+
+		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
+
 		// reserve memory (for the maximum number of vertices possible)
 		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
 		if (vertex_buffer_size == 0)
+		{
+			vertex_buffer->SetBufferData(nullptr, 0, dynamic_buffer, GPUBufferResizePolicy()); // empty the buffer : for some reason, we cannot just kill the buffer
+			vertices_count = 0;
 			return true;
-
-		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
+		}
+		
 		if (!vertex_buffer->SetBufferData(nullptr, vertex_buffer_size, dynamic_buffer, GPUBufferDoublingResizePolicy()))
+		{
+			vertices_count = 0;
 			return false;
+		}
 		// map the vertex buffer
 		char * buffer = vertex_buffer->MapBuffer(0, vertex_buffer_size, false, true);
 		if (buffer == nullptr)
+		{
+			vertices_count = 0;
 			return false;
+		}
 		// update the buffer
 		vertices_count = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
 		// unmap the buffer

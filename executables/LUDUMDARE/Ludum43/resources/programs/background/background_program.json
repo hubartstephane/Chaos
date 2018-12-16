@@ -6,5 +6,9 @@
 	"vertex_sources":
 	[
 		"@background_vertex_shader.txt"
-	]
+	],
+	"textures":
+	{
+		"noise":{"name":"noise"}
+	}
 }

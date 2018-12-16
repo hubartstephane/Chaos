@@ -9,7 +9,7 @@ namespace chaos
 		return in_size; // the normal policy
 	}
 
-	size_t GPUBufferDoublingResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const
+	size_t GPUBufferDoublingResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const // slighty improve performance, but not incredible
 	{
 		size_t current_buffer_size = in_buffer.GetBufferSize();
 		// want to shrink
@@ -176,7 +176,7 @@ namespace chaos
 			return nullptr;
 
 		// search kind of mapping
-		GLbitfield map_type = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // theses flag are REALLY important
+		GLbitfield map_type = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // theses flag are REALLY important !! can create significant framerate drops
 		if (read)
 			map_type |= GL_MAP_READ_BIT;
 		if (write)

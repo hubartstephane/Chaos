@@ -8,6 +8,12 @@
   },
   "uniforms":
   {
-    "blend_backgrounds":[1.0, 1.0, 1.0, 1.0]
-  }
+    "blend_backgrounds":[1.0, 1.0, 1.0, 1.0],
+		"decal_speed":[0.1, 1.0],
+		"decal_ratio":[0.1, 1.0]
+  },
+	"textures":
+	{
+		"noise":{"name":"noise"}
+	}
 }

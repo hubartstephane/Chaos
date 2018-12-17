@@ -13,8 +13,7 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
 	return result;
 }
 
@@ -137,7 +136,8 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool a
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
+	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
+	return result;
 }
 
 ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, chaos::ParticleAllocation * allocation) const
@@ -254,7 +254,16 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
+	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle, allocation);
+
+	for (size_t i = 0; i < result; ++i)
+	{
+		vertices[i].attraction_position =
+			p->bounding_box.position +
+			2.0f * p->attraction_maxradius * glm::normalize(vertices[i].position - p->bounding_box.position);
+	}
+
+	return result;
 }
 
 ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, chaos::ParticleAllocation * allocation) const

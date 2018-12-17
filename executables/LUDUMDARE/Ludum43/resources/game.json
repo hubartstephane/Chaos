@@ -27,11 +27,11 @@
 
   "worldlimits_attraction_minradius_offset": 0.0,
   "worldlimits_attraction_maxradius_offset": 0.0,
-  "enemy_attraction_minradius_offset": 50.0,
-  "enemy_attraction_maxradius_offset": 650.0,
-
   "worldlimits_attraction_minradius_factor": 0.0,
   "worldlimits_attraction_maxradius_factor": 0.8,
+
+  "enemy_attraction_minradius_offset": 50.0,
+  "enemy_attraction_maxradius_offset": 650.0,
   "enemy_attraction_minradius_factor": 1.0,
   "enemy_attraction_maxradius_factor": 1.0,
 

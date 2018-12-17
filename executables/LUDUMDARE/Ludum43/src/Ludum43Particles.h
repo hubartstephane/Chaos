@@ -21,8 +21,7 @@ class VertexBase : public chaos::ParticleDefault::Vertex
 {
 public:
 
-	glm::vec2 bounding_box_position;
-	glm::vec2 bounding_box_half_size;
+	glm::vec2 attraction_position;
 };
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
@@ -104,7 +103,7 @@ class ParticlePlayer : public ParticleAffector
 public:
 
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
-	float particle_radius_factor = 2.0f;          // very usefull to prevent floating atoms between player and a field
+	float particle_radius_factor = 2.0f; // 2.0f         // very usefull to prevent floating atoms between player and a field
 	float life = 0.0f;
 
 	bool  level_end_reached = false;
@@ -145,7 +144,7 @@ class ParticleAtom : public ParticleBase
 {
 public:
 
-	float particle_radius_factor = 1.0f;
+	float particle_radius_factor = 1.0f; // shuxxx 1.0f
 	float life = 0.0f;
 	bool  waken_up = false;
 

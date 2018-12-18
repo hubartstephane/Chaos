@@ -37,6 +37,8 @@ namespace chaos
 		uint64_t timestamp = 0;
 		/** material provider */
 		boost::intrusive_ptr<MaterialProvider> material_provider;
+		/** some filters */
+		boost::intrusive_ptr<NamedObjectFilter> object_filter;
 		/** the instancing information */
 		InstancingInfo instancing;		
 	};

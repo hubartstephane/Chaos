@@ -30,6 +30,11 @@ namespace chaos
 	{
 		if (!IsVisible())
 			return 0;
+		// filter object
+		if (render_params.object_filter != nullptr)
+			if (!render_params.object_filter->CheckName(*this))
+				return 0;
+		// update it (only if necessary
 		if (render_params.timestamp == 0 || update_timestamp != render_params.timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{
 			if (!DoUpdateGPUResources())

@@ -604,6 +604,23 @@ namespace death
 				particle_layer = GetTypedLevel()->CreateParticleLayer(this);
 				if (particle_layer == nullptr)
 					return false;
+
+				std::string const * renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
+				if (renderable_name != nullptr)
+					particle_layer->SetName(renderable_name->c_str());
+				else 
+					particle_layer->SetName(layer->name.c_str());
+
+				std::string const * renderable_tag = layer->FindPropertyString("RENDERABLE_TAG");
+				if (renderable_tag != nullptr)
+					particle_layer->SetTag(chaos::MakeStaticTagType(renderable_tag->c_str()));
+				else
+				{
+					int const * layer_tag = layer->FindPropertyInt("RENDERABLE_TAG");
+					if (layer_tag != nullptr)
+						particle_layer->SetTag((chaos::TagType)*layer_tag);
+				}
+
 				particle_layer->SetRenderMaterial(render_material);
 			}
 

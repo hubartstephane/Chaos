@@ -16,6 +16,45 @@ namespace chaos
 
 
 	// ========================================================
+	// RenderableObjectFilter : filter-out some objects frome rendering
+	// ========================================================
+
+	class RenderableObjectFilter : public ReferencedObject
+	{
+	public:
+
+		/** check whether given object can be rendered */
+		virtual bool CanRender(class Renderable const * renderable) const { return true;}	
+	};
+
+	// ========================================================
+	// RenderableObjectFilter : filter-out some objects frome rendering
+	// ========================================================
+
+	template<typename T>
+	class TypedRenderableObjectFilter : public RenderableObjectFilter
+	{
+	public:
+
+		/** override */
+		virtual bool CanRender(class Renderable const * renderable) const override
+		{
+			assert(renderable != nullptr);
+			// check whether the typed object can be filtered out from its class
+			T const * typed_object = dynamic_cast<T const *>(renderable);
+			if (typed_object == nullptr)
+				return true;
+			// check from name
+			return name_filter.CheckName(*renderable);
+		}	
+
+		/** the filter to apply */
+		NamedObjectFilterList name_filter;	
+	};
+		
+	using ParticleLayerFilterList = TypedRenderableObjectFilter<class ParticleLayer>;
+
+	// ========================================================
 	// RenderParams : some data for the rendering
 	// ========================================================
 
@@ -38,7 +77,7 @@ namespace chaos
 		/** material provider */
 		boost::intrusive_ptr<MaterialProvider> material_provider;
 		/** some filters */
-		boost::intrusive_ptr<NamedObjectFilter> object_filter;
+		boost::intrusive_ptr<RenderableObjectFilter> object_filter;
 		/** the instancing information */
 		InstancingInfo instancing;		
 	};

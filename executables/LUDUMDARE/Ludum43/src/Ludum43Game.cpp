@@ -143,8 +143,8 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 			// World limits on RED
 			{
-				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter1;
-				filter1.enable_names.push_back("WorldLimits");
+				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter1;
+				filter1.name_filter.enable_names.push_back("WorldLimits");
 
 				chaos::RenderParams r1 = render_params;
 				r1.object_filter = &filter1;
@@ -155,8 +155,8 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 			// (enlarged) Enemies on GREEN
 			{
-				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter2;
-				filter2.enable_names.push_back("Enemies");
+				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter2;
+				filter2.name_filter.enable_names.push_back("Enemies");
 
 				chaos::RenderParams r2 = render_params;
 				r2.object_filter = &filter2;
@@ -177,9 +177,9 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 			{
-				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter3;
-				filter3.forbidden_names.push_back("Enemies");
-				filter3.forbidden_names.push_back("PlayerAndCamera");
+				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter3;
+				filter3.name_filter.forbidden_names.push_back("Enemies");
+				filter3.name_filter.forbidden_names.push_back("PlayerAndCamera");
 
 				chaos::RenderParams r3 = render_params;
 				r3.object_filter = &filter3;
@@ -220,9 +220,9 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 			// simply render player and ennemies
 			{
-				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter4;
-				filter4.enable_names.push_back("Enemies");
-				filter4.enable_names.push_back("PlayerAndCamera");
+				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter4;
+				filter4.name_filter.enable_names.push_back("Enemies");
+				filter4.name_filter.enable_names.push_back("PlayerAndCamera");
 
 				chaos::RenderParams r4 = render_params;
 				r4.object_filter = &filter4;

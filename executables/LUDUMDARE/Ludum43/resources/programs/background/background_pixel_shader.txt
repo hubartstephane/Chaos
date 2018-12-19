@@ -15,6 +15,26 @@ uniform vec4 blend_backgrounds;
 
 void main()
 {
+		vec4 b1 = texture(background, vs_texcoord);
+		output_color = b1;	
+		output_color.r = 0.5;
+		output_color.a = 1.0;
+		
+		return;	
+
+#if 1
+	if (blend_backgrounds.x == 1.0)
+	{
+
+		vec4 b1 = texture(extra_background, vs_texcoord);
+		output_color = b1;	
+		output_color.a = 1.0;
+
+
+		//output_color = vec4(1.0, 0.0, 0.0, 1.0);	
+	}
+	else
+	{
   vec2 tex1 = 2.0 * vs_texcoord;
 	vec2 tex2 = 2.0 * vs_texcoord;
 	tex1.y += game_time * decal_speed;
@@ -25,18 +45,7 @@ void main()
 
 	vec2 decal = -vec2(1.0, 1.0) + 2.0 * (decal1.xy + decal2.xy);
 
-#if 1
-	if (blend_backgrounds.x == 1.0)
-	{
-		vec2 tex = vs_texcoord + decal * decal_ratio;
-		tex = clamp(tex, vec2(0.0, 0.0), vec2(1.0, 1.0));
 
-
-		vec4 b1 = texture(background, tex);
-		output_color = b1;	
-	}
-	else
-	{
 		vec4 b1 = texture(background, vs_texcoord);
 		vec4 b2 = texture(extra_background, vs_texcoord);
 

@@ -124,6 +124,135 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	//
 	death::TiledMap::LayerInstance * worldlimits = nullptr;
 
+
+
+	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
+	if (ludum_level_instance != nullptr)
+	{
+		if (GenerateFramebuffer(render_params.screen_size, framebuffer_other) && GenerateFramebuffer(render_params.screen_size, framebuffer_worldlimits))
+		{
+
+			// RENDER TARGET 1 -----------------
+			glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+			framebuffer_worldlimits->BeginRendering();
+
+			glViewport(0, 0, render_params.screen_size.x, render_params.screen_size.y);
+
+			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+			// World limits on RED
+			{
+				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter1;
+				filter1.enable_names.push_back("WorldLimits");
+
+				chaos::RenderParams r1 = render_params;
+				r1.object_filter = &filter1;
+
+				glColorMask(true, false, false, true);
+				ludum_level_instance->Display(&uniform_provider, r1);
+			}
+
+			// (enlarged) Enemies on GREEN
+			{
+				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter2;
+				filter2.enable_names.push_back("Enemies");
+
+				chaos::RenderParams r2 = render_params;
+				r2.object_filter = &filter2;
+
+				chaos::GPUProgramProviderChain enlarged_provider(&uniform_provider);
+				enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
+
+				glColorMask(false, true, false, true);
+				ludum_level_instance->Display(&enlarged_provider, r2);
+				glColorMask(true, true, true, true);
+			}
+
+			framebuffer_worldlimits->EndRendering();
+
+			// RENDER TARGET 2 -----------------
+			framebuffer_other->BeginRendering();
+
+			glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+			{
+				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter3;
+				filter3.forbidden_names.push_back("Enemies");
+				filter3.forbidden_names.push_back("PlayerAndCamera");
+
+				chaos::RenderParams r3 = render_params;
+				r3.object_filter = &filter3;
+
+				// draw particle system (the background)
+				if (particle_manager != nullptr)
+					particle_manager->Display(&uniform_provider, render_params);
+				current_level_instance->Display(&uniform_provider, r3);
+			}
+
+			framebuffer_other->EndRendering();
+
+			// COMBINE STEP 1 & STEP 2
+			chaos::GLTools::SetViewport(render_params.viewport);
+
+			chaos::GPUProgramProviderChain main_provider(&uniform_provider);
+
+			chaos::GPUFramebufferAttachmentInfo const * attachment_worldlimits = framebuffer_worldlimits->GetColorAttachment(0);
+			if (framebuffer_worldlimits != nullptr)
+			{
+				chaos::GPUTexture * texture = attachment_worldlimits->texture.get();
+				if (texture != nullptr)
+					main_provider.AddVariableValue("extra_background", texture);
+			}
+
+			chaos::GPUFramebufferAttachmentInfo const * attachment_other = framebuffer_other->GetColorAttachment(0);
+			if (attachment_other != nullptr)
+			{
+				chaos::GPUTexture * texture = attachment_other->texture.get();
+				if (texture != nullptr)
+					main_provider.AddVariableValue("background", texture);
+			}
+
+			main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+			if (particle_manager != nullptr)
+				particle_manager->Display(&main_provider, render_params);
+
+			// simply render player and ennemies
+			{
+				chaos::DisableLastReferenceLost<chaos::NamedObjectFilterList> filter4;
+				filter4.enable_names.push_back("Enemies");
+				filter4.enable_names.push_back("PlayerAndCamera");
+
+				chaos::RenderParams r4 = render_params;
+				r4.object_filter = &filter4;
+
+				// draw particle system (the background)
+				current_level_instance->Display(&uniform_provider, r4);
+			}
+
+		}
+	}
+	else
+	{
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+		// draw particle system (the background)
+		if (particle_manager != nullptr)
+			particle_manager->Display(&uniform_provider, render_params);
+
+	}
+
+
+
+
+
+
+
+
+
+#if 0
+
 	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
 	if (ludum_level_instance != nullptr)
 	{
@@ -182,6 +311,8 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 		}
 	}
 
+
+
 	chaos::GLTools::SetViewport(render_params.viewport);
 
 	// In menu
@@ -224,7 +355,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 			particle_manager->Display(&main_provider, render_params);
 	
 	}
-
+#endif
 	// finally draw the hud
 	if (hud != nullptr)
 		hud->Display(&uniform_provider, render_params);

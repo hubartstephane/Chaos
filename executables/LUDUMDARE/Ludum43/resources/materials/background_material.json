@@ -3,17 +3,13 @@
 
   "textures": {
 
-    "background": { "name": "background1" }
-
+    "background": { "name": "background1" },
+		"noise":{"name":"noise"}
   },
   "uniforms":
   {
     "blend_backgrounds":[1.0, 1.0, 1.0, 1.0],
 		"decal_speed":[0.1],
 		"decal_ratio":[0.1]
-  },
-	"textures":
-	{
-		"noise":{"name":"noise"}
-	}
+  }
 }

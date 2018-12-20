@@ -15,18 +15,21 @@ uniform vec4 blend_backgrounds;
 
 void main()
 {
+#if 0
 		vec4 b1 = texture(background, vs_texcoord);
 		output_color = b1;	
 		output_color.r = 0.5;
 		output_color.a = 1.0;
 		
 		return;	
+#endif
+
 
 #if 1
 	if (blend_backgrounds.x == 1.0)
 	{
 
-		vec4 b1 = texture(extra_background, vs_texcoord);
+		vec4 b1 = texture(background, vs_texcoord);
 		output_color = b1;	
 		output_color.a = 1.0;
 

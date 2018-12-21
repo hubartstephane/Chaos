@@ -321,8 +321,6 @@ namespace death
 		virtual bool CreateInGameClocks();
 		/** destroy all clocks for the game */
 		virtual bool DestroyInGameClocks();
-		/** pause/resume all clocks for the game */
-		virtual void PauseInGameClocks(bool pause);
 
 		/** initialize the game data from configuration file */
 		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);

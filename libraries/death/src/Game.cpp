@@ -175,9 +175,9 @@ namespace death
 		main_uniform_provider.AddVariableValue("root_time", root_time);
 		double main_time = GetMainClockTime();
 		main_uniform_provider.AddVariableValue("main_time", main_time);
-		double game_time = GetMainClockTime();
+		double game_time = GetGameClockTime();
 		main_uniform_provider.AddVariableValue("game_time", game_time);
-		double pause_time = GetMainClockTime();
+		double pause_time = GetPauseClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
 
 		chaos::RenderParams render_params;
@@ -527,36 +527,34 @@ namespace death
 		return true;
 	}
 
-	void Game::PauseInGameClocks(bool pause)
-	{
-		if (main_clock != nullptr)
-			main_clock->SetPause(pause);
-
-		if (game_clock != nullptr)
-			game_clock->SetPause(pause);
-
-		if (pause_clock != nullptr)
-			pause_clock->SetPause(pause);
-	}
-
 	bool Game::CreateInGameClocks()
 	{
 		if (root_clock == nullptr)
 			return false;	
 
-		main_clock = root_clock->CreateChildClock("main_clock"); 
 		if (main_clock == nullptr)
-			return false;
+		{
+			main_clock = root_clock->CreateChildClock("main_clock"); 
+			if (main_clock == nullptr)
+				return false;
+		}
 
-		game_clock = root_clock->CreateChildClock("game_clock"); 
 		if (game_clock == nullptr)
-			return false;
+		{
+			game_clock = root_clock->CreateChildClock("game_clock"); 
+			if (game_clock == nullptr)
+				return false;		
+		}
 
-		chaos::ClockCreateParams pause_clock_params;
-		pause_clock_params.paused = true;
-		pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
 		if (pause_clock == nullptr)
-			return false;
+		{
+
+			chaos::ClockCreateParams pause_clock_params;
+			pause_clock_params.paused = true;
+			pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
+			if (pause_clock == nullptr)
+				return false;
+		}
 
 		return true;
 	}
@@ -1010,11 +1008,12 @@ namespace death
 
 	bool Game::OnEnterGame()
 	{		
-		CreatePlayingHUD();
 		ResetGameVariables();
+		CreateInGameClocks();
+		CreatePlayingHUD();
 		SetNextLevel(true); // select the very first
 		StartGameMusic(true);
-		CreateInGameClocks();
+
 		return true;
 	}
 
@@ -1023,7 +1022,7 @@ namespace death
 		StartMainMenuMusic(true);
 		if (gameover)
 			CreateGameOverHUD();
-		PauseInGameClocks(true); // clocks will be destroyed when EnterMainMenu
+		DestroyInGameClocks();
 		return true;
 	}
 

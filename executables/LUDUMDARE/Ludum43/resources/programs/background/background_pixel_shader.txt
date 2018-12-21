@@ -29,8 +29,55 @@ void main()
 		float shadow_factor      = data.r;
 		float deformation_factor = data.g;
 
+		vec2 tex1 = 2.0 * vs_texcoord;
+		vec2 tex2 = 2.0 * vs_texcoord;
+		tex1.y += game_time * decal_speed;
+		tex2.x += game_time * decal_speed;
 
-		output_color.xyz = vec3(deformation_factor, deformation_factor, deformation_factor);	
+		vec4 decal1 = texture(noise, tex1);
+		vec4 decal2 = texture(noise, tex2);
+
+		vec2 decal = -vec2(1.0, 1.0) + 2.0 * (decal1.xy + decal2.xy);
+
+
+		vec4 b1 = texture(background, vs_texcoord + decal * deformation_factor * decal_ratio);
+
+
+
+
+
+
+
+		float R1 = 0.6;
+		float R2 = 0.7;
+
+		float ratio = 0.0;
+
+		float min_ratio = 0.1;
+
+		if (shadow_factor < R1)
+			ratio = min_ratio;
+		else if (shadow_factor > R2)
+			ratio = 1.0;
+		else
+		{
+			ratio = min_ratio + (1.0 - min_ratio) * ((shadow_factor - R1) / (R2 - R1));
+		}
+
+
+
+
+
+
+		vec3 b2 = vec3(0.0, 0.0, 0.0);
+		
+		output_color.xyz = b1.xyz * ratio + b2.xyz * (1 - ratio);			
+
+
+
+
+		//output_color.xyz = vec3(deformation_factor, deformation_factor, deformation_factor);	
+		//output_color.xyz = vec3(shadow_factor, shadow_factor, shadow_factor);	
 		output_color.a = 1.0;
 	}
 

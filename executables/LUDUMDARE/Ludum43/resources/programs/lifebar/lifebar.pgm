@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@lifebar.psh"
+	],
+	"vertex_sources":
+	[
+		"@lifebar.vsh"
+	]
+}

@@ -320,6 +320,14 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
 				filter.name_filter.forbidden_names.push_back("WorldLimits");
 
+#if 0
+				filter.name_filter.forbidden_names.push_back("BackgroundObject1");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject2");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject3");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject4");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject5");
+#endif
+
 				chaos::RenderParams other_render_params = render_params;
 				other_render_params.object_filter = &filter;
 
@@ -366,6 +374,13 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				filter.name_filter.enable_names.push_back("Enemies");
 				filter.name_filter.enable_names.push_back("Atoms");
 				filter.name_filter.enable_names.push_back("PlayerAndCamera");
+#if 0
+				filter.name_filter.forbidden_names.push_back("BackgroundObject1");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject2");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject3");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject4");
+				filter.name_filter.forbidden_names.push_back("BackgroundObject5");
+#endif
 
 				chaos::RenderParams other_rendering_params = render_params;
 				other_rendering_params.object_filter = &filter;

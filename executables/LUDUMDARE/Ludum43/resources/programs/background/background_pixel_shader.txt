@@ -38,7 +38,9 @@ void main()
 		vec4 decal1 = texture(noise, tex1);
 		vec4 decal2 = texture(noise, tex2);
 
-		vec2 decal = -vec2(1.0, 1.0) + 2.0 * (decal1.xy + decal2.xy);
+		// vec2 decal = -vec2(1.0, 1.0) + 2.0 * (decal1.xy + decal2.xy);
+
+		vec2 decal = -vec2(1.0, 1.0) + (decal1.xy + decal2.xy);
 
 		// the world limits are too blurry.
 		// make the limit between inside and outside shadow more sharp
@@ -65,9 +67,12 @@ void main()
 		
 		// compute the sample coordinate
 
-		//vec2 tex = clamp(vs_texcoord + decal * (deformation_value + vec2(1.0 - shadow_ratio, 1.0 - shadow_ratio)) * decal_ratio, vec2(0.0, 0.0), vec2(1.0, 1.0));
+		vec2 tex = clamp(
+			vs_texcoord + decal * (deformation_value + vec2(1.0 - shadow_ratio, 1.0 - shadow_ratio)) * decal_ratio, 
+			vec2(0.0, 0.0), 
+			vec2(1.0, 1.0));
 
-		vec2 tex = clamp(vs_texcoord + decal * deformation_value * decal_ratio, vec2(0.0, 0.0), vec2(1.0, 1.0));
+		//vec2 tex = clamp(vs_texcoord + decal * deformation_value * decal_ratio, vec2(0.0, 0.0), vec2(1.0, 1.0));
 
 
 

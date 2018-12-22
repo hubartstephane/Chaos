@@ -39,9 +39,6 @@ void main()
 
 		vec2 decal = -vec2(1.0, 1.0) + 2.0 * (decal1.xy + decal2.xy);
 
-
-		vec4 b1 = texture(background, vs_texcoord + decal * deformation_factor * decal_ratio);
-
 		float R1 = 0.6;
 		float R2 = 0.7;
 
@@ -58,12 +55,14 @@ void main()
 			ratio = min_ratio + (1.0 - min_ratio) * ((shadow_factor - R1) / (R2 - R1));
 		}
 
+
 		vec3 b2 = vec3(0.0, 0.0, 0.0); // worldlimit color color
 		
+		vec2 tex = clamp(vs_texcoord + decal * deformation_factor * decal_ratio, vec2(0.0, 0.0), vec2(1.0, 1.0));
+
+		vec4 b1 = texture(background, tex);
 		output_color.xyz = b1.xyz * ratio + b2.xyz * (1 - ratio);			
-
-		output_color.r = output_color.r + 1.5 * deformation_factor;
-
+		output_color.r   = output_color.r + 1.5 * deformation_factor;
 
 		//output_color.xyz = vec3(deformation_factor, deformation_factor, deformation_factor);	
 		//output_color.xyz = vec3(shadow_factor, shadow_factor, shadow_factor);	

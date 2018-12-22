@@ -575,6 +575,7 @@
  </objectgroup>
  <objectgroup name="Enemies">
   <properties>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="enemy"/>
   </properties>
   <object id="1881" gid="9" x="-2649" y="-551" width="500" height="500"/>

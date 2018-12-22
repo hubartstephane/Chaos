@@ -1,12 +1,33 @@
 #! /bin/bash
 
+
+function ReplaceReference()
+{
+	SEARCHED_PATTERN=$1
+	REPLACEMENT=$2
+ 
+  for i in $(find . | grep .json) ; do
+    sed -i.bak '"s/$SEARCHED_PATTERN/$REPLACEMENT/"'
+  done 
+}
+
+
 function RenameFile()
 {
 	SEARCHED_PATTERN=$1
 	REPLACEMENT=$2
+
 	for i in $(find . | grep $SEARCHED_PATTERN) ; do
 		echo git mv $i $(echo $i | sed -e s/$SEARCHED_PATTERN/$2/)
 	done
 }
 
-RenameFile "_material.json" ".mat"
+ReplaceReference "_material.json" ".mat"
+ReplaceReference "_vertex_shader.txt" ".vsh"
+ReplaceReference "_pixel_shader.txt" ".psh"
+ReplaceReference "_program.json" ".pgm"
+
+#RenameFile "_material.json" ".mat"
+#RenameFile "_vertex_shader.txt" ".vsh"
+#RenameFile "_pixel_shader.txt" ".psh"
+#RenameFile "_program.json" ".pgm"

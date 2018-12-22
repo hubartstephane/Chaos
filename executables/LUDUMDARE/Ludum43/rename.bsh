@@ -1,0 +1,12 @@
+#! /bin/bash
+
+function RenameFile()
+{
+	SEARCHED_PATTERN=$1
+	REPLACEMENT=$2
+	for i in $(find . | grep $SEARCHED_PATTERN) ; do
+		echo git mv $i $(echo $i | sed -e s/$SEARCHED_PATTERN/$2/)
+	done
+}
+
+RenameFile "_material.json" ".mat"

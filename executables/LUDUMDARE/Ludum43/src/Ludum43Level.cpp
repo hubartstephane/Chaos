@@ -70,8 +70,8 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	{
 		ParticleEnemyTrait trait;
 		trait.game = ludum_game;
-		//trait.dynamic_particles = is_enemy; // shuxxx : optimization
-		//trait.dynamic_vertices  = is_enemy;
+		trait.dynamic_particles = is_enemy; // shuxxx : optimization 
+		trait.dynamic_vertices  = is_enemy;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
 	}
 
@@ -180,7 +180,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		for (size_t i = 0 ; i < count ; ++i)
 		{
 			ParticleAtom & p = particles[i]; 
-			p.particle_radius_factor = chaos::MathTools::RandFloat(1.0f, ludum_game->particle_radius_rand_factor);
+			p.particle_radius_factor = chaos::MathTools::RandFloat(ludum_game->particle_min_radius_factor, ludum_game->particle_max_radius_factor);
 			p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 			p.life = ludum_game->initial_particle_life;
 		}	

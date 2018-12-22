@@ -211,7 +211,9 @@ public:
 
 
 	float particle_slowing_factor     = 0.5f;
-	float particle_radius_rand_factor = 1.2f;	
+	float particle_min_radius_factor = 1.0f;
+	float particle_max_radius_factor = 3.0f;
+	
 	float particle_max_velocity = 20.0f;
 
 	float world_clamp_radius = 3000.0f;

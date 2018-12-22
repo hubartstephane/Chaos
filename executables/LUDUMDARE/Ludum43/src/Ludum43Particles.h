@@ -22,6 +22,7 @@ class VertexBase : public chaos::ParticleDefault::Vertex
 public:
 
 	glm::vec2 attraction_position;
+	glm::vec2 particle_center;
 };
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
@@ -144,7 +145,7 @@ class ParticleAtom : public ParticleBase
 {
 public:
 
-	float particle_radius_factor = 1.0f; // shuxxx 1.0f
+	float particle_radius_factor = 1.0f;
 	float life = 0.0f;
 	bool  waken_up = false;
 

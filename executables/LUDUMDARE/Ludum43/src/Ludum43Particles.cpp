@@ -14,6 +14,7 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
 	result.Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_POSITION, 2, chaos::TYPE_FLOAT2); // center of the particle
 	return result;
 }
 
@@ -261,6 +262,8 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 		vertices[i].attraction_position =
 			p->bounding_box.position +
 			2.0f * p->attraction_maxradius * glm::normalize(vertices[i].position - p->bounding_box.position);
+
+		vertices[i].particle_center = p->bounding_box.position;
 	}
 
 	return result;

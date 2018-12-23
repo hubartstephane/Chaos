@@ -293,9 +293,9 @@ namespace death
 			Level const * GetTypedLevel() const;
 
 			/** get the level instance for this layer */
-			LevelInstance * GetTypeLevelInstance();
+			LevelInstance * GetTypedLevelInstance();
 			/** get the level instance for this layer */
-			LevelInstance const * GetTypeLevelInstance() const;
+			LevelInstance const * GetTypedLevelInstance() const;
 
 			/** get the game */
 			Game * GetGame();
@@ -382,7 +382,8 @@ namespace death
 
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();
-
+			/** try to search a name and a tag in the chaos::layer,  give them to the particle layer */
+			virtual bool InitializeParticleLayerNameAndTag(chaos::ParticleLayer * in_particle_layer);
 			/** test whether there is an infinite bounding box flag */
 			virtual void CheckInfiniteBoundingBox();
 

@@ -129,9 +129,6 @@ namespace death
 			auto * trait = new chaos::TypedParticleLayerDesc<TileParticleTrait>;
 			if (trait == nullptr)
 				return nullptr;
-
-
-
 			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<TileParticleTrait>);
 		}
 
@@ -356,12 +353,12 @@ namespace death
 			return level_instance->GetTypedLevel();
 		}
 
-		LevelInstance * LayerInstance::GetTypeLevelInstance()
+		LevelInstance * LayerInstance::GetTypedLevelInstance()
 		{
 			return level_instance;
 		}
 
-		LevelInstance const * LayerInstance::GetTypeLevelInstance() const
+		LevelInstance const * LayerInstance::GetTypedLevelInstance() const
 		{
 			return level_instance;
 		}
@@ -591,6 +588,26 @@ namespace death
 				
 			return true;
 		}
+		bool LayerInstance::InitializeParticleLayerNameAndTag(chaos::ParticleLayer * in_particle_layer)
+		{
+			std::string const * renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
+			if (renderable_name != nullptr)
+				in_particle_layer->SetName(renderable_name->c_str());
+			else
+				in_particle_layer->SetName(layer->name.c_str());
+
+			std::string const * renderable_tag = layer->FindPropertyString("RENDERABLE_TAG");
+			if (renderable_tag != nullptr)
+				in_particle_layer->SetTag(chaos::MakeStaticTagType(renderable_tag->c_str()));
+			else
+			{
+				int const * layer_tag = layer->FindPropertyInt("RENDERABLE_TAG");
+				if (layer_tag != nullptr)
+					in_particle_layer->SetTag((chaos::TagType)*layer_tag);
+			}
+
+			return true;
+		}
 
 		chaos::ParticleAllocation * LayerInstance::CreateParticleAllocation()
 		{
@@ -600,27 +617,14 @@ namespace death
 				chaos::GPURenderMaterial * render_material = FindRenderMaterial(material_name.c_str());
 				if (render_material == nullptr)
 					return nullptr;
+
 				// create a particle layer
 				particle_layer = GetTypedLevel()->CreateParticleLayer(this);
 				if (particle_layer == nullptr)
 					return false;
-
-				std::string const * renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
-				if (renderable_name != nullptr)
-					particle_layer->SetName(renderable_name->c_str());
-				else 
-					particle_layer->SetName(layer->name.c_str());
-
-				std::string const * renderable_tag = layer->FindPropertyString("RENDERABLE_TAG");
-				if (renderable_tag != nullptr)
-					particle_layer->SetTag(chaos::MakeStaticTagType(renderable_tag->c_str()));
-				else
-				{
-					int const * layer_tag = layer->FindPropertyInt("RENDERABLE_TAG");
-					if (layer_tag != nullptr)
-						particle_layer->SetTag((chaos::TagType)*layer_tag);
-				}
-
+				// add name and tag to the particle_layer
+				InitializeParticleLayerNameAndTag(particle_layer.get());
+				// set the material
 				particle_layer->SetRenderMaterial(render_material);
 			}
 

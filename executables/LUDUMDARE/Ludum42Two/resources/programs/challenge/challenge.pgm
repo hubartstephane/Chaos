@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@challenge.psh"
+	],
+	"vertex_sources":
+	[
+		"@challenge.vsh"
+	]
+}

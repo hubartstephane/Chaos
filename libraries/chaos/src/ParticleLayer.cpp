@@ -146,12 +146,12 @@ namespace chaos
 	{
 		if (layer == nullptr)
 		{
-			if (--reference_count == 0) // the ParticleAllocation is no more in a layer and there is no reference on it => destroy it
+			if (--shared_count == 0) // the ParticleAllocation is no more in a layer and there is no reference on it => destroy it
 				OnLastReferenceLost();							
 		}
 		else
 		{
-			if (--reference_count == 1) // the last reference is the one from the layer. Destroy it
+			if (--shared_count == 1) // the last reference is the one from the layer. Destroy it
 				RemoveFromLayer();		
 		}				
 	}

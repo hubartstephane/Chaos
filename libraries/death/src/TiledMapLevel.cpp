@@ -809,7 +809,7 @@ namespace death
 					if (draw_instance_count++ == 0)
 						main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
 					// new Provider to apply the offset for this 'instance'
-					chaos::GPUProgramProviderChain instance_uniform_provider(main_uniform_provider);
+					chaos::GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
 					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)) + offset);
 					// draw call
 					result += particle_layer->Display(&instance_uniform_provider, render_params);

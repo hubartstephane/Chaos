@@ -136,7 +136,7 @@ void LudumLevelInstance::OnLevelStarted()
 				new_particle.bounding_box.position = position * tile_size;
 			new_particle.bounding_box.half_size = 0.5f * chaos::GLMTools::RecastVector<glm::vec2>(tile_info.tiledata->image_size);
 
-			new_particle.bounding_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size);
+			new_particle.bounding_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, true);
 
 				new_particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
 				new_particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -191,5 +191,4 @@ void LudumLevelInstance::OnLevelStarted()
 		}
 	}
 
-	world_box = wb;
 }

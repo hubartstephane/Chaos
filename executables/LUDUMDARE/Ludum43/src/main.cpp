@@ -91,25 +91,25 @@ class ReferencedObjectFriend
 {
 protected:
 
-	void AddReference(ReferencedObject * target)
+	void AddReference(ReferencedObject * target) const
 	{
 		assert(target != nullptr);
 		target->AddReference();
 	}
 
-	void SubReference(ReferencedObject * target)
+	void SubReference(ReferencedObject * target) const
 	{
 		assert(target != nullptr);
 		target->SubReference();
 	}
 
-	void AddWeakReference(ReferencedObject * target)
+	void AddWeakReference(ReferencedObject * target) const
 	{
 		assert(target != nullptr);
 		target->AddWeakReference();
 	}
 
-	void SubWeakReference(ReferencedObject * target)
+	void SubWeakReference(ReferencedObject * target) const
 	{
 		assert(target != nullptr);
 		target->SubWeakReference();
@@ -223,16 +223,18 @@ public:
 	}
 
 	/** getters */
-	type * Get() 
+	type * Get() const
 	{ 
 		return target; 
 	}
 
+#if 0
 	/** getters */
 	type const * Get() const 
 	{ 
 		return target; 
 	}
+#endif
 
 	/** getters */
 	type * operator ->() 
@@ -357,7 +359,7 @@ public:
 	}
 
 	/** getter */
-	type * Get()
+	type * Get() const 
 	{
 		if (target != nullptr && IsSharedDestroyed(target)) // take the opportunity to release memory
 		{
@@ -366,6 +368,7 @@ public:
 		}
 		return target;
 	}
+#if 0
 	/** getter */
 	type const * Get() const
 	{
@@ -376,6 +379,7 @@ public:
 		}
 		return target;
 	}
+#endif
 
 protected:
 
@@ -468,7 +472,7 @@ int _tmain(int argc, char ** argv, char ** env)
 		AA * cc = new AA;
 
 		weak_ptr<AA> w1 = aa;
-		weak_ptr<AA> w2 = aa;
+		
 
 		{
 			shared_ptr<AA> ptr = aa;
@@ -477,8 +481,10 @@ int _tmain(int argc, char ** argv, char ** env)
 			aa->ff();
 		}
 
+		weak_ptr<AA> w2 = w1;
 
 
+		aa = aa;
 
 
 

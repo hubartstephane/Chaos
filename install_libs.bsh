@@ -1,0 +1,30 @@
+#! /usr/bin
+apt install libglm-dev
+apt install libboost-all-dev
+apt install liblua5.3-dev
+apt install libfreetype6-dev
+apt install libfreeimage-dev
+apt install libfreeimageplus-dev
+apt install nlohmann-json-dev
+apt install libglfw3-dev
+apt install libglew2.0
+apt install libglew-dev
+apt install libassimp-dev
+apt install libtinyxml2-dev
+
+#OVR not found
+#GLI not found
+#NANA not found
+#TRISTRIPPER not found
+#FMOD STUDIO not found
+#IRRKLANG not found (.zip can be found)
+#FBXSDK not found (.zip can be found)
+
+apt install premake4
+apt install codeblocks
+apt install kdevelop
+apt install blender
+apt install blender-data
+apt install krita
+apt install krita-data
+

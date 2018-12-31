@@ -1,0 +1,54 @@
+#! /bin/bash
+
+DoInstall()
+{
+	echo "O" | apt install $1
+}
+
+if [ "$#" -eq 0 ]; then
+	echo "usage: sudo $0 -lib  -> install most of the libraries"
+	echo "usage: sudo $0 -exe  -> install some usual executables"
+else
+	for i in $* ; do
+		if [ "$i" == "-lib" ] ; then
+			DoInstall libglm-dev
+			DoInstall libboost-all-dev
+			DoInstall liblua5.3-dev
+			DoInstall libfreetype6-dev
+			DoInstall libfreeimage-dev
+			DoInstall libfreeimageplus-dev
+			DoInstall nlohmann-json-dev
+			DoInstall libglfw3-dev
+			DoInstall libglew2.0
+			DoInstall libglew-dev
+			DoInstall libassimp-dev
+			DoInstall libtinyxml2-dev
+			#OVR not found
+			#GLI not found
+			#NANA not found
+			#TRISTRIPPER not found
+			#FMOD STUDIO not found
+			#IRRKLANG not found (.zip can be found)
+			#FBXSDK not found (.zip can be found)
+		fi
+		if [ "$i" == "-exe" ] ; then
+			DoInstall premake4
+			DoInstall codeblocks
+			DoInstall kdevelop
+			DoInstall blender
+			DoInstall blender-data
+			DoInstall krita
+			DoInstall krita-data
+			DoInstall cmake
+			DoInstall libpython3-all-dev
+			DoInstall vlc
+			DoInstall audacity
+			DoInstall tiled
+		fi
+	done
+fi
+
+
+
+
+

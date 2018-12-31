@@ -163,16 +163,16 @@ protected:
 
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
-	bool GenerateFramebuffer(glm::ivec2 const & size, boost::intrusive_ptr<chaos::GPUFramebuffer> & in_framebuffer);
+	bool GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
 
 protected:
 
 	/** the render buffers */
-	boost::intrusive_ptr<chaos::GPUFramebuffer> framebuffer_worldlimits;
-	boost::intrusive_ptr<chaos::GPUFramebuffer> framebuffer_other;
+	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_worldlimits;
+	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_other;
 
 	/** the tiled map manager */
-	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
+	chaos::shared_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
 public:
 

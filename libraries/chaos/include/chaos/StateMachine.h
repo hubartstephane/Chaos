@@ -193,7 +193,7 @@ namespace chaos
 			/** the current state of the state_machine */
 			StateBase * current_state = nullptr;
 			/** some data for current state / transition */
-			boost::intrusive_ptr<ReferencedObject> context_data;
+			shared_ptr<ReferencedObject> context_data;
 		};
 
 		// ==================================================

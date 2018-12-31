@@ -119,7 +119,7 @@ protected:
 
 public:
 
-	boost::intrusive_ptr<chaos::SpriteManager> sprite_manager;
+	chaos::shared_ptr<chaos::SpriteManager> sprite_manager;
 
 	std::vector<Particle> particles;
 

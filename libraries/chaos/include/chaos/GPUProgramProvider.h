@@ -94,7 +94,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderTexture(char const * in_name, boost::intrusive_ptr<GPUTexture> in_value) :
+		GPUProgramProviderTexture(char const * in_name, shared_ptr<GPUTexture> in_value) :
 			handled_name(in_name), value(in_value) {}
 
 	protected:
@@ -107,7 +107,7 @@ namespace chaos
 		/** the name of the uniform handled */
 		std::string handled_name;
 		/** the value of the uniform */
-		boost::intrusive_ptr<GPUTexture> value;
+		shared_ptr<GPUTexture> value;
 	};
 
 	/**
@@ -127,7 +127,7 @@ namespace chaos
 			AddVariableProvider(new GPUProgramProviderValue<T>(name, value));
 		}
 		/** register a uniform texture */
-		void AddVariableTexture(char const * name, boost::intrusive_ptr<class GPUTexture> texture)
+		void AddVariableTexture(char const * name, shared_ptr<class GPUTexture> texture)
 		{
 			AddVariableProvider(new GPUProgramProviderTexture(name, texture));
 		}
@@ -144,7 +144,7 @@ namespace chaos
 	protected:
 
 		/** the uniforms to be set */
-		std::vector<boost::intrusive_ptr<GPUProgramProviderBase>> children_providers;
+		std::vector<shared_ptr<GPUProgramProviderBase>> children_providers;
 	};
 
 	/**

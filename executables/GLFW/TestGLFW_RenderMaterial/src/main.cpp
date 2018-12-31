@@ -148,10 +148,10 @@ protected:
 
 	int current_material = 0;
 
-	boost::intrusive_ptr<chaos::GPURenderMaterial> render_material1;
-	boost::intrusive_ptr<chaos::GPURenderMaterial> render_material2;
+	chaos::shared_ptr<chaos::GPURenderMaterial> render_material1;
+	chaos::shared_ptr<chaos::GPURenderMaterial> render_material2;
 
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
 };

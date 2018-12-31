@@ -75,9 +75,9 @@ namespace chaos
 		/** a time stamp */
 		uint64_t timestamp = 0;
 		/** material provider */
-		boost::intrusive_ptr<MaterialProvider> material_provider;
+		shared_ptr<MaterialProvider> material_provider;
 		/** some filters */
-		boost::intrusive_ptr<RenderableObjectFilter> object_filter;
+		shared_ptr<RenderableObjectFilter> object_filter;
 		/** the instancing information */
 		InstancingInfo instancing;		
 	};

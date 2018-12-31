@@ -101,11 +101,11 @@ namespace chaos
 		MeshGenerationRequirement requirement = GetRequirement();
 		if (requirement.IsValid())
 		{
-			boost::intrusive_ptr<GPUVertexBuffer> vb_object;
-			boost::intrusive_ptr<GPUIndexBuffer>  ib_object;
+			shared_ptr<GPUVertexBuffer> vb_object;
+			shared_ptr<GPUIndexBuffer>  ib_object;
 
-			boost::intrusive_ptr<GPUVertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
-			boost::intrusive_ptr<GPUIndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
+			shared_ptr<GPUVertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
+			shared_ptr<GPUIndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
 
 			if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr))
 			{
@@ -151,9 +151,9 @@ namespace chaos
 		return false;
 	}
 
-	boost::intrusive_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
+	shared_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
 	{
-		boost::intrusive_ptr<SimpleMesh> mesh = new SimpleMesh();
+		shared_ptr<SimpleMesh> mesh = new SimpleMesh();
 		if (mesh != nullptr)
 		{
 			if (!FillMeshData(mesh.get())) // automatic destruction in case of failure

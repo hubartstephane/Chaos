@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/ReferencedObject.h>
 
 namespace chaos
 {
@@ -68,13 +69,13 @@ using HasFunction_##function_name = boost::mpl::bool_<\
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T * get_raw_pointer(boost::intrusive_ptr<T> & src)
+		static T * get_raw_pointer(shared_ptr<T> & src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T const * get_raw_pointer(boost::intrusive_ptr<T> const & src)
+		static T const * get_raw_pointer(shared_ptr<T> const & src)
 		{
 			return src.get();
 		}

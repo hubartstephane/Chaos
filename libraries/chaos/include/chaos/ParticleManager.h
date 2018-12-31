@@ -83,7 +83,7 @@ namespace chaos
 		/** the layer system */
 		RenderableLayerSystem layer_system;
 		/** the texture atlas */
-		boost::intrusive_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
+		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
 	};
 
 }; // namespace chaos

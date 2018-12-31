@@ -5,6 +5,10 @@
 namespace chaos
 {
 
+	/** some tags for pointer's policies */
+	class SharedPointerPolicy {};
+	class WeakPointerPolicy {};
+
 	/**
 	* ReferencedObject is a base class that have a reference count (shared and weak)
 	*/
@@ -26,29 +30,37 @@ namespace chaos
 		/** destructor */
 		virtual ~ReferencedObject() = default;
 
-		/** utility method for boost::intrusive_ptr */
-		friend inline void intrusive_ptr_add_ref(ReferencedObject * obj)
+		/** utility method for shared_ptr */
+		template<typename POLICY>
+		friend inline void intrusive_ptr_add_ref(ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
 		{
-			obj->AddReference();
+			obj->AddReference(policy);
 		}
 
-		/** utility method for boost::intrusive_ptr */
-		friend inline void intrusive_ptr_release(ReferencedObject * obj)
+		/** utility method for shared_ptr */
+		template<typename POLICY>
+		friend inline void intrusive_ptr_release(ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
 		{
-			obj->SubReference();
+			obj->SubReference(policy);
 		}
 
 	protected:
 
 		/** adding a reference */
-		virtual void AddReference()
+		virtual void AddReference(SharedPointerPolicy policy = SharedPointerPolicy())
 		{
 			assert(!shared_destroyed);
 			++shared_count;
 		}
 
+		/** adding a weak reference */
+		virtual void AddReference(WeakPointerPolicy policy)
+		{
+			++weak_count; // can add a weak reference even if the object is destroyed
+		}
+
 		/** removing a reference */
-		virtual void SubReference()
+		virtual void SubReference(SharedPointerPolicy policy = SharedPointerPolicy())
 		{
 			assert(!shared_destroyed);
 			if (--shared_count <= 0)
@@ -60,14 +72,8 @@ namespace chaos
 			}
 		}
 
-		/** adding a weak reference */
-		virtual void AddWeakReference()
-		{
-			++weak_count; // can add a weak reference even if the object is destroyed
-		}
-
 		/** removing a weak reference */
-		virtual void SubWeakReference()
+		virtual void SubReference(WeakPointerPolicy policy)
 		{
 			if (--weak_count <= 0)
 				if (shared_destroyed) // no more weak reference nor shared reference, release memory
@@ -89,6 +95,215 @@ namespace chaos
 		/** whenever the content has been destroyed */
 		bool shared_destroyed = false;
 	};
+
+	/**
+	 * SmartPointerBase : implementation of both shared_ptr and weak_ptr
+	 */
+
+	template<typename T, typename POLICY>
+	class SmartPointerBase
+	{
+	public:
+
+		/** the type of object pointed */
+		using type = T;
+		
+		/** default constructor */
+		SmartPointerBase() {}
+		/** constructor with capturing the object */
+		template<typename U>
+		SmartPointerBase(U * in_target) :
+			target(in_target)
+		{
+			if (target != nullptr)
+				intrusive_ptr_add_ref(target, POLICY());
+		}
+		/** copy constructor */
+		template<typename U>
+		SmartPointerBase(SmartPointerBase<U, POLICY> const & src) :
+			SmartPointerBase(src.target)
+		{
+		}
+		/** move constructor */
+		template<typename U>
+		SmartPointerBase(SmartPointerBase<U, POLICY> && src) :
+			target(src.target)
+		{
+			src.target = nullptr; // necessary to capture the reference, else the move semantic would
+		}                       // not be an optimization while requiring reference count update    
+
+		/** destructor */
+		~SmartPointerBase()
+		{
+			if (target != nullptr)
+				intrusive_ptr_release(target, POLICY());
+		}
+
+		/** copy */
+		template<typename U>
+		SmartPointerBase & operator = (U * src)
+		{
+			DoSetTarget(src);
+			return *this;
+		}
+		/** copy */
+		template<typename U>
+		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> const & src)
+		{
+			DoSetTarget(src.target);
+			return *this;
+		}
+		/** move */
+		template<typename U>
+		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> && src)
+		{
+			assert(this != &src);
+			if (target != src.target)
+			{
+				if (target != nullptr)
+					intrusive_ptr_release(target, POLICY());
+				target = src.target;
+			}
+			else
+			{
+				if (src.target != nullptr)
+					intrusive_ptr_release(src.target, POLICY()); // no new reference added due to this, src' reference is lost
+			}
+			src.target = nullptr;
+			return *this;
+		}
+
+		/** getters */
+		type * get() const
+		{
+			return target;
+		}
+
+		/** getters */
+		type * operator ->() const
+		{
+			assert(target != nullptr);
+			return target;
+		}
+
+		/** getters */
+		type & operator * () const
+		{
+			assert(target != nullptr);
+			return *target;
+		}
+
+	protected:
+
+		/** internal method to change the content of the pointer */
+		template<typename U>
+		void DoSetTarget(U * src)
+		{
+			if (target != src)
+			{
+				if (target != nullptr)
+					intrusive_ptr_release(target, POLICY());
+				target = src;
+				if (target != nullptr)
+					intrusive_ptr_add_ref(target, POLICY());
+			}
+		}
+
+	protected:
+
+		/** the object pointed */
+		type * target = nullptr;
+	};
+
+	/** compare */
+	template<class T, class POLICY, class U=T>
+	bool operator == (SmartPointerBase<T, POLICY> const & src1, U * src2)
+	{
+		return (src1.get() == src2);
+	}
+	/** compare */
+	template<class T, class POLICY, class U=T>
+	bool operator != (SmartPointerBase<T, POLICY> const & src1, U * src2)
+	{
+		return (src1.get() != src2);
+	}
+	/** compare */
+	template<class T, class POLICY, class U=T>
+	bool operator == (U * src1, SmartPointerBase<T, POLICY> const & src2)
+	{
+		return (src1 == src2.get());
+	}
+	/** compare */
+	template<class T, class POLICY, class U=T>
+	bool operator != (U * src1, SmartPointerBase<T, POLICY> const & src2)
+	{
+		return (src1 != src2.get());
+	}
+
+
+
+
+	/** compare */
+	template<class T, class POLICY>
+	bool operator == (SmartPointerBase<T, POLICY> const & src1, nullptr_t src2)
+	{
+		return (src1.get() == src2);
+	}
+	/** compare */
+	template<class T, class POLICY>
+	bool operator != (SmartPointerBase<T, POLICY> const & src1, nullptr_t src2)
+	{
+		return (src1.get() != src2);
+	}
+	/** compare */
+	template<class T, class POLICY>
+	bool operator == (nullptr_t src1, SmartPointerBase<T, POLICY> const & src2)
+	{
+		return (src1 == src2.get());
+	}
+	/** compare */
+	template<class T, class POLICY>
+	bool operator != (nullptr_t src1, SmartPointerBase<T, POLICY> const & src2)
+	{
+		return (src1 != src2.get());
+	}
+
+
+
+
+
+	/** compare */
+	template<class T, class POLICY, class U>
+	bool operator == (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY> const & src2)
+	{
+		return (src1.get() == src2.get());
+	}
+	/** compare */
+	template<class T, class POLICY, class U>
+	bool operator != (SmartPointerBase<T, POLICY> const & src1, SmartPointerBase<U, POLICY> const & src2)
+	{
+		return (src1.get() != src2.get());
+	}
+
+	/**
+	* weak_ptr & shared_ptr definition
+	*/
+
+	template<typename T>
+	using weak_ptr = SmartPointerBase<T, WeakPointerPolicy>;
+	template<typename T>
+	using shared_ptr = SmartPointerBase<T, SharedPointerPolicy>;
+
+#if 0
+
+
+
+
+
+
+
+
+
 
 	/**
 	* ReferencedObjectFriend is a helper class to give access to ReferencedObject protected members
@@ -133,6 +348,10 @@ namespace chaos
 	* shared_ptr : self describing
 	*/
 
+	template<typename T>
+	using shared_ptr = boost::intrusive_ptr<T>;
+
+#if 0
 	template<typename T>
 	class shared_ptr : public ReferencedObjectFriend
 	{
@@ -227,36 +446,41 @@ namespace chaos
 		}
 
 		/** getters */
-		type * Get() const
+		type * get() const
 		{
 			return target;
 		}
 
 		/** getters */
-		type * operator ->()
+		type * operator ->() const
 		{
 			assert(target != nullptr);
 			return target;
 		}
+
+#if 0
 		/** getters */
 		type const * operator ->() const
 		{
 			assert(target != nullptr);
 			return target;
 		}
-
+#endif
 		/** getters */
-		type & operator * ()
+		type & operator * () const
 		{
 			assert(target != nullptr);
 			return *target;
 		}
+
+#if 0
 		/** getters */
 		type const & operator * () const
 		{
 			assert(target != nullptr);
 			return *target;
 		}
+#endif
 
 	protected:
 
@@ -279,6 +503,7 @@ namespace chaos
 		type * target = nullptr;
 	};
 
+#endif
 	/**
 	* weak_ptr : self describing
 	*/
@@ -307,7 +532,7 @@ namespace chaos
 
 		/** copy constructor */
 		weak_ptr(weak_ptr<type> const & src) : // forward constructor : give src the opportunity to release memory
-			weak_ptr(src.Get())
+			weak_ptr(src.get())
 		{
 		}
 
@@ -357,7 +582,7 @@ namespace chaos
 		}
 
 		/** getter */
-		type * Get() const
+		type * get() const
 		{
 			if (target != nullptr && IsSharedDestroyed(target)) // take the opportunity to release memory
 			{
@@ -387,6 +612,12 @@ namespace chaos
 		/** the object pointed */
 		mutable type * target = nullptr;
 	};
+
+
+
+
+
+#endif
 
 	/**
 	* DisableLastReferenceLost : an utility class to help using referenced object on stack

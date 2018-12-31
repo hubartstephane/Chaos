@@ -71,7 +71,7 @@ protected:
 
   void ChangeFont(int index)
   {
-    boost::intrusive_ptr<chaos::GPUTexture> new_font = LoadFont(index);
+    chaos::shared_ptr<chaos::GPUTexture> new_font = LoadFont(index);
     if (new_font != nullptr)
     {
       font_index = index;
@@ -79,7 +79,7 @@ protected:
     }
   }
 
-  boost::intrusive_ptr<chaos::GPUTexture> ReleaseResourceImpl(FT_Library * library, FT_Face * face)
+  chaos::shared_ptr<chaos::GPUTexture> ReleaseResourceImpl(FT_Library * library, FT_Face * face)
   {
     if (face != nullptr)
       FT_Done_Face(*face);
@@ -223,7 +223,7 @@ protected:
     bt = -bt;
   }
 
-  boost::intrusive_ptr<chaos::GPUTexture> LoadFont(int index)
+  chaos::shared_ptr<chaos::GPUTexture> LoadFont(int index)
   {
     FT_Error Err;
 
@@ -294,7 +294,7 @@ protected:
 
 #endif
 
-    boost::intrusive_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader().GenTextureObject(bm, parameters);
+    chaos::shared_ptr<chaos::GPUTexture> result = chaos::GPUTextureLoader().GenTextureObject(bm, parameters);
 
     glfwSetWindowSize(glfw_window, FreeImage_GetWidth(bm), FreeImage_GetHeight(bm));
 
@@ -359,9 +359,9 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<chaos::GPUProgram>  program;
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-  boost::intrusive_ptr<chaos::GPUTexture>    texture;
+  chaos::shared_ptr<chaos::GPUProgram>  program;
+  chaos::shared_ptr<chaos::SimpleMesh> mesh;
+  chaos::shared_ptr<chaos::GPUTexture>    texture;
 
   int font_index{ 0 };
 };

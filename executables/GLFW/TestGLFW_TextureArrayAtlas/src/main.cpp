@@ -95,7 +95,7 @@ protected:
 		debug_display.Finalize();
 	}
 
-	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
 		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
@@ -199,8 +199,8 @@ protected:
 protected:
 
 	// rendering for the box  
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
 	chaos::BitmapAtlas::TextureArrayAtlas atlas;
 

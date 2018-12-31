@@ -80,9 +80,9 @@ namespace chaos
 	protected:
 
 		/** the program */
-		boost::intrusive_ptr<GPUProgram> program;
+		shared_ptr<GPUProgram> program;
 		/** parent material */
-		boost::intrusive_ptr<GPURenderMaterial> parent_material;
+		shared_ptr<GPURenderMaterial> parent_material;
 		/** some rendering states */
 		GPUProgramProvider uniform_provider;
 	};

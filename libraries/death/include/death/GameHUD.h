@@ -67,13 +67,13 @@ namespace death
 	protected:
 
 		/** the allocations */
-		std::multimap<chaos::TagType, boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
+		std::multimap<chaos::TagType, chaos::shared_ptr<chaos::ParticleAllocation>> particle_allocations;
 
 		/** the particle tools */
 		GameParticleCreator particle_creator;
 
 		/** the particle manager */
-		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 		/** indicates whether THIS is responsible or not of rendering/ticking the particle manager */
 		bool external_manager = false;
 

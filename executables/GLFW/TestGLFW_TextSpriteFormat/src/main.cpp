@@ -77,8 +77,8 @@ protected:
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 
-    boost::intrusive_ptr<MyProvider> dynamic_provider = new MyProvider;
-    boost::intrusive_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
+    chaos::shared_ptr<MyProvider> dynamic_provider = new MyProvider;
+    chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 		uniform_provider->AddVariableValue("translate_mat", glm::translate(tr));
 		uniform_provider->AddVariableValue("scale_mat", glm::scale(scale));
 		uniform_provider->AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
@@ -247,13 +247,13 @@ protected:
 protected:
 
 	// the particle manager
-	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 	/** the texture atlas */
-	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
+	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
 	/** the material */
-	boost::intrusive_ptr<chaos::GPURenderMaterial> material;
+	chaos::shared_ptr<chaos::GPURenderMaterial> material;
 	/** allocation */
-	boost::intrusive_ptr<chaos::ParticleAllocation> particles_allocation;
+	chaos::shared_ptr<chaos::ParticleAllocation> particles_allocation;
 
 	// the camera
 	chaos::FPSViewInputController fps_view_controller;

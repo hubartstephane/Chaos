@@ -124,7 +124,7 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<Game> game;
+	chaos::shared_ptr<Game> game;
 };
 
 float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);

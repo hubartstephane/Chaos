@@ -200,16 +200,16 @@ namespace death
 	public:
 
 		/** the states */
-		boost::intrusive_ptr<GameState> main_menu_state;
-		boost::intrusive_ptr<GameState> playing_state;
-		boost::intrusive_ptr<GameState> pause_state;
+		chaos::shared_ptr<GameState> main_menu_state;
+		chaos::shared_ptr<GameState> playing_state;
+		chaos::shared_ptr<GameState> pause_state;
 
 		/** the transitions */
-		boost::intrusive_ptr<GameTransition> main_menu_to_playing;
-		boost::intrusive_ptr<GameTransition> playing_to_main_menu;
-		boost::intrusive_ptr<GameTransition> playing_to_pause;
-		boost::intrusive_ptr<GameTransition> pause_to_playing;
-		boost::intrusive_ptr<GameTransition> playing_to_gameover;
+		chaos::shared_ptr<GameTransition> main_menu_to_playing;
+		chaos::shared_ptr<GameTransition> playing_to_main_menu;
+		chaos::shared_ptr<GameTransition> playing_to_pause;
+		chaos::shared_ptr<GameTransition> pause_to_playing;
+		chaos::shared_ptr<GameTransition> playing_to_gameover;
 	};
 
 	// =========================================================

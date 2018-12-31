@@ -75,7 +75,7 @@ namespace chaos
 
 			/** utility function to load a layer */
 			template<typename T, typename ...PARAMS>
-			static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
+			static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
 			{
 				if (container_name != nullptr) // is there an intermediate node to contain all objects
 				{
@@ -91,7 +91,7 @@ namespace chaos
 			}
 
 			template<typename T, typename ...PARAMS>
-			static bool DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<boost::intrusive_ptr<T>> & result, PARAMS...params)
+			static bool DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result, PARAMS...params)
 			{
 				T * object = new T(params...);
 				if (object == nullptr)
@@ -294,7 +294,7 @@ namespace chaos
 		protected:
 
 			/** the properties of the object */
-			std::vector<boost::intrusive_ptr<Property>> properties;
+			std::vector<shared_ptr<Property>> properties;
 		};
 
 		// ==========================================
@@ -675,7 +675,7 @@ namespace chaos
 			std::string atlas_key;
 
 			/** the collision layer */
-			std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
+			std::vector<shared_ptr<ObjectLayer>> object_layers;
 		};
 
 
@@ -800,7 +800,7 @@ namespace chaos
 			int       draw_order = DRAW_ORDER_MANUAL;
 
 			/** the properties of the object */
-			std::vector<boost::intrusive_ptr<GeometricObject>> geometric_objects;
+			std::vector<shared_ptr<GeometricObject>> geometric_objects;
 		};
 
 		// ==========================================
@@ -960,9 +960,9 @@ namespace chaos
 			glm::vec4         transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 			/** the data for the tiles */
-			std::vector<boost::intrusive_ptr<TileData>> tiles;
+			std::vector<shared_ptr<TileData>> tiles;
 			/** the data for the tiles */
-			std::vector<boost::intrusive_ptr<GroundData>> grounds;
+			std::vector<shared_ptr<GroundData>> grounds;
 		};
 
 		// ==========================================
@@ -976,7 +976,7 @@ namespace chaos
 			/** the first gid for the tileset */
 			int first_gid = 1;
 			/** the tileset */
-			boost::intrusive_ptr<TileSet> tileset;
+			shared_ptr<TileSet> tileset;
 		};
 
 		class TileInfo
@@ -1093,11 +1093,11 @@ namespace chaos
 			/** the tileset used */
 			std::vector<TileSetData> tilesets;
 			/** the layers composing the map */
-			std::vector<boost::intrusive_ptr<ImageLayer>> image_layers;
+			std::vector<shared_ptr<ImageLayer>> image_layers;
 			/** the layers composing the map */
-			std::vector<boost::intrusive_ptr<TileLayer>> tile_layers;
+			std::vector<shared_ptr<TileLayer>> tile_layers;
 			/** the layers composing the map */
-			std::vector<boost::intrusive_ptr<ObjectLayer>> object_layers;
+			std::vector<shared_ptr<ObjectLayer>> object_layers;
 		};
 
 		// ==========================================
@@ -1154,9 +1154,9 @@ namespace chaos
 		public:
 
 			/** the maps */
-			std::vector<boost::intrusive_ptr<Map>> maps;
+			std::vector<shared_ptr<Map>> maps;
 			/** the assets */
-			std::vector<boost::intrusive_ptr<TileSet>> tile_sets;
+			std::vector<shared_ptr<TileSet>> tile_sets;
 		};
 
 	}; // namespace TiledMap

@@ -285,8 +285,8 @@ protected:
 
 	int current_state{ STATE_NONE };
 
-	boost::intrusive_ptr<chaos::Clock> track_clock;
-	boost::intrusive_ptr<chaos::Clock> management_clock;
+	chaos::shared_ptr<chaos::Clock> track_clock;
+	chaos::shared_ptr<chaos::Clock> management_clock;
 };
 
 // ================================================================

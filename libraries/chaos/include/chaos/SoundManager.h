@@ -94,7 +94,7 @@ namespace chaos
 		/** whether the object should be killed at the end of blend */
 		bool  kill_at_end = false;
 		/** some callbacks */
-		boost::intrusive_ptr<SoundCallbacks> callbacks;
+		shared_ptr<SoundCallbacks> callbacks;
 	};
 
 	// ==============================================================
@@ -239,7 +239,7 @@ namespace chaos
 		/** the blend value */
 		float           blend_value = 1.0f;
 		/** the callbacks */
-		boost::intrusive_ptr<SoundCallbacks> callbacks;
+		shared_ptr<SoundCallbacks> callbacks;
 	};
 
 	// ==============================================================
@@ -287,7 +287,7 @@ namespace chaos
 		/** the resource path */
 		boost::filesystem::path path;
 		/** the irrklang source */
-		boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source;
+		shared_ptr<irrklang::ISoundSource> irrklang_source;
 		/** the default category */
 		SoundCategory * default_category = nullptr;
 	};
@@ -391,7 +391,7 @@ namespace chaos
 		SoundSource * source = nullptr;
 
 		/** the irrklang sound */
-		boost::intrusive_ptr<irrklang::ISound> irrklang_sound;
+		shared_ptr<irrklang::ISound> irrklang_sound;
 	};
 
 	// ==============================================================
@@ -539,16 +539,16 @@ namespace chaos
 	protected:
 
 		/** all detected devices */
-		boost::intrusive_ptr<irrklang::ISoundDeviceList> irrklang_devices;
+		shared_ptr<irrklang::ISoundDeviceList> irrklang_devices;
 		/** the irrklank engine */
-		boost::intrusive_ptr<irrklang::ISoundEngine> irrklang_engine;
+		shared_ptr<irrklang::ISoundEngine> irrklang_engine;
 
 		/** the sources */
-		std::vector<boost::intrusive_ptr<SoundSource>> sources;
+		std::vector<shared_ptr<SoundSource>> sources;
 		/** the sounds */
-		std::vector<boost::intrusive_ptr<Sound>> sounds;
+		std::vector<shared_ptr<Sound>> sounds;
 		/** the categories */
-		std::vector<boost::intrusive_ptr<SoundCategory>> categories;
+		std::vector<shared_ptr<SoundCategory>> categories;
 	};
 
 	// undefine macros

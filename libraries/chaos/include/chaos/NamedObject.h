@@ -134,7 +134,7 @@ namespace chaos
 	public:
 
 		/** the renderable to render */
-		boost::intrusive_ptr<T> object;
+		shared_ptr<T> object;
 	};
 
 	/** NamedObjectFilter : a class to filter objects by their name */

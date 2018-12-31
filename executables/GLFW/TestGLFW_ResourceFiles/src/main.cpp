@@ -49,8 +49,8 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		using TexturePtr = boost::intrusive_ptr<chaos::GPUTexture>;
-		using ProgramPtr = boost::intrusive_ptr<chaos::GPUProgram>;
+		using TexturePtr = chaos::shared_ptr<chaos::GPUTexture>;
+		using ProgramPtr = chaos::shared_ptr<chaos::GPUProgram>;
 
 		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
 		if (application == nullptr)

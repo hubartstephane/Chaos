@@ -48,7 +48,7 @@ protected:
 			char * buffer = chaos::GLTextureTools::GetTextureImage(texture->GetResourceID(), 0, desc);
 			if (buffer != nullptr)
 			{
-				boost::intrusive_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
+				chaos::shared_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(desc.GetSubImageDescription(0, 0, desc.width - 7, desc.height - 7));
 				if (new_texture != nullptr)
 					texture = new_texture;
 			
@@ -59,7 +59,7 @@ protected:
 
 	void ChangeTexture(int index)
 	{
-		boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateTexture(index);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTexture(index);
 		if (new_texture != nullptr)
 		{
 			texture_index = index;
@@ -76,14 +76,14 @@ protected:
 
 	bool GenerateTextureFromFilename(char const * filename)
 	{
-		boost::intrusive_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(filename);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = chaos::GPUTextureLoader().GenTextureObject(filename);
 		if (new_texture == nullptr)
 			return false;
 		texture = new_texture;
 		return true;
 	}
 
-	boost::intrusive_ptr<chaos::GPUTexture> GenerateTexture(int index)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateTexture(int index)
 	{
 		static int const GENERATE_GRAY = 0;
 		static int const GENERATE_RGB  = 1;
@@ -95,7 +95,7 @@ protected:
 		static const int GENERATE_BACKGROUND_GRAY = 7;
 		static const int GENERATE_FLOAT_BACKGROUND = 8;
 
-		boost::intrusive_ptr<chaos::GPUTexture> result;
+		chaos::shared_ptr<chaos::GPUTexture> result;
 
 		static int TEXTURE_SIZE = 512;
 
@@ -333,9 +333,9 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<chaos::GPUProgram>  program;
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-	boost::intrusive_ptr<chaos::GPUTexture>    texture;
+	chaos::shared_ptr<chaos::GPUProgram>  program;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	int mipmap_level{ 0 };
 	int texture_index{ 0 };

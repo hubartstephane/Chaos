@@ -50,7 +50,7 @@ namespace chaos
 		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
 
 		/** generation function */
-		boost::intrusive_ptr<SimpleMesh> GenerateMesh() const;
+		shared_ptr<SimpleMesh> GenerateMesh() const;
 		/** population function */
 		bool FillMeshData(SimpleMesh * mesh) const;
 	};

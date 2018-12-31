@@ -268,10 +268,10 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 
-	std::vector<boost::intrusive_ptr<chaos::ParticleLayer>> particle_layers;
-	std::vector<boost::intrusive_ptr<chaos::ParticleAllocation>> particle_allocations;
+	std::vector<chaos::shared_ptr<chaos::ParticleLayer>> particle_layers;
+	std::vector<chaos::shared_ptr<chaos::ParticleAllocation>> particle_allocations;
 };
 
 // ===============================================

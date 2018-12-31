@@ -295,11 +295,11 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 
-	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
+	chaos::shared_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
-	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 
 	chaos::TiledMap::Map * tiled_map = nullptr;
 };

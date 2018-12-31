@@ -904,7 +904,7 @@ namespace chaos
 		// XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
-		boost::intrusive_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
+		shared_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
 		if (irrklang_source == nullptr)
 			return nullptr;
 		// insert the result

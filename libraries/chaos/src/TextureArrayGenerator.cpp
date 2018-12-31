@@ -77,7 +77,7 @@ namespace chaos
 	{
 		assert(generator != nullptr);
 
-		boost::intrusive_ptr<TextureArraySliceGenerator> generator_ptr = generator; // want to ensure that if PreRegister(...) fails, the resource is released
+		shared_ptr<TextureArraySliceGenerator> generator_ptr = generator; // want to ensure that if PreRegister(...) fails, the resource is released
 
 																					// prepare the generator
 		if (!generator->PreRegister())

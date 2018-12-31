@@ -105,7 +105,7 @@ namespace chaos
 			ImageDescription description;
 
 			/** whether the bitmap is part of an animation */
-			boost::intrusive_ptr<BitmapAnimationInfoInput> animation_info;
+			shared_ptr<BitmapAnimationInfoInput> animation_info;
 
 			/** a pointer on the destination info associated */
 			BitmapInfo * bitmap_output_info = nullptr;

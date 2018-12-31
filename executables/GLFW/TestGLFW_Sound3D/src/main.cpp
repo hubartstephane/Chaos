@@ -182,12 +182,12 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<chaos::SoundManager> sound_manager;
-  boost::intrusive_ptr<chaos::SoundSource> sound_source;
-  boost::intrusive_ptr<chaos::Sound> sound;
+  chaos::shared_ptr<chaos::SoundManager> sound_manager;
+  chaos::shared_ptr<chaos::SoundSource> sound_source;
+  chaos::shared_ptr<chaos::Sound> sound;
   
-  boost::intrusive_ptr<chaos::GPUProgram>  program;
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh;
+  chaos::shared_ptr<chaos::GPUProgram>  program;
+  chaos::shared_ptr<chaos::SimpleMesh> mesh;
  
   chaos::FPSViewInputController fps_view_controller;
 

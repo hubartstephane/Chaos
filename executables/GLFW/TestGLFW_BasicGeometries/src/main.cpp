@@ -214,7 +214,7 @@ protected:
 
 
     // cannot be on the stack. due to reference count
-    boost::intrusive_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
+    chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
     uniform_provider->AddVariableValue("p1", t.a);
     uniform_provider->AddVariableValue("p2", t.b);
     uniform_provider->AddVariableValue("p3", t.c);
@@ -715,7 +715,7 @@ protected:
       clock->RemoveFromParent();
   }
 
-  boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+  chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
   {
     chaos::GPUProgramGenerator program_generator;
     program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
@@ -850,16 +850,16 @@ protected:
 protected:
 
   // rendering for the box  
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-  boost::intrusive_ptr<chaos::GPUProgram>  program_box;
+  chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
+  chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
   // rendering for the triangle  
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh_triangle;
-  boost::intrusive_ptr<chaos::GPUProgram>  program_triangle;
+  chaos::shared_ptr<chaos::SimpleMesh> mesh_triangle;
+  chaos::shared_ptr<chaos::GPUProgram>  program_triangle;
 
   // rendering for the rect
-  boost::intrusive_ptr<chaos::SimpleMesh> mesh_sphere;
-  boost::intrusive_ptr<chaos::GPUProgram>  program_sphere;
+  chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
+  chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
 
   chaos::Clock * clock{ nullptr };
 

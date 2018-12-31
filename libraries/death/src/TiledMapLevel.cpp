@@ -210,7 +210,7 @@ namespace death
 
 		chaos::GPURenderMaterial * Level::GetDefaultRenderMaterial()
 		{
-			boost::intrusive_ptr<chaos::GPUProgram> program = GenDefaultRenderProgram(); // store a temporary object for lifetime management
+			chaos::shared_ptr<chaos::GPUProgram> program = GenDefaultRenderProgram(); // store a temporary object for lifetime management
 			return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 		}
 

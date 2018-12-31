@@ -118,9 +118,9 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<chaos::GPUProgram> program;
+	chaos::shared_ptr<chaos::GPUProgram> program;
 
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
 };

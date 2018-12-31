@@ -160,7 +160,7 @@ namespace chaos
 		public:
 
 			/** whether the bitmap is part of an animation */
-			boost::intrusive_ptr<BitmapAnimationInfo> animation_info;
+			shared_ptr<BitmapAnimationInfo> animation_info;
 		};
 
 		/**

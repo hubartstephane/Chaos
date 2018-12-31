@@ -113,7 +113,7 @@ namespace death
 		protected:
 
 			/** the associated geometric object */
-			boost::intrusive_ptr<chaos::TiledMap::GeometricObject> geometric_object;
+			chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
 		};
 
 		// =====================================
@@ -264,7 +264,7 @@ namespace death
 		protected:
 
 			/** the tiled map corresponding to this level */
-			boost::intrusive_ptr<chaos::TiledMap::Map> tiled_map;
+			chaos::shared_ptr<chaos::TiledMap::Map> tiled_map;
 		};
 
 		// =====================================
@@ -402,18 +402,18 @@ namespace death
 			LevelInstance * level_instance = nullptr;
 
 			/** the tiled layer corresponding to this object */
-			boost::intrusive_ptr<chaos::TiledMap::LayerBase> layer;
+			chaos::shared_ptr<chaos::TiledMap::LayerBase> layer;
 			/** the particle layer */
-			boost::intrusive_ptr<chaos::ParticleLayer> particle_layer;
+			chaos::shared_ptr<chaos::ParticleLayer> particle_layer;
 
 			/** the player starts */
-			std::vector<boost::intrusive_ptr<PlayerStartObject>> player_starts;
+			std::vector<chaos::shared_ptr<PlayerStartObject>> player_starts;
 			/** the player cameras */
-			std::vector<boost::intrusive_ptr<CameraObject>> cameras;
+			std::vector<chaos::shared_ptr<CameraObject>> cameras;
 			/** the trigger surface */
-			std::vector<boost::intrusive_ptr<TriggerSurfaceObject>> trigger_surfaces;
+			std::vector<chaos::shared_ptr<TriggerSurfaceObject>> trigger_surfaces;
 			/** the geometric objects */
-			std::vector<boost::intrusive_ptr<GeometricObject>> typed_objects;
+			std::vector<chaos::shared_ptr<GeometricObject>> typed_objects;
 
 			/** the bounding box of the layer */
 			chaos::box2 bounding_box;
@@ -526,14 +526,14 @@ namespace death
 			bool has_explicit_bounding_box = false;
 
 			/** the layer of reference for displacement */
-			boost::intrusive_ptr<TiledMap::LayerInstance> reference_layer;
+			chaos::shared_ptr<TiledMap::LayerInstance> reference_layer;
 
 			/** the particle manager used to render the world */
-			boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+			chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 			/** the layers */
-			std::vector<boost::intrusive_ptr<LayerInstance>> layer_instances;
+			std::vector<chaos::shared_ptr<LayerInstance>> layer_instances;
 			/** the default render material */
-			boost::intrusive_ptr<chaos::GPURenderMaterial> default_material;
+			chaos::shared_ptr<chaos::GPURenderMaterial> default_material;
 		};
 
 	}; // namespace TiledMap

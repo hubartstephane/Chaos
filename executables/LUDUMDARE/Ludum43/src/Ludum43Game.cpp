@@ -885,7 +885,7 @@ chaos::box2 LudumGame::GetWorldBox() const
 }
 
 
-bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, boost::intrusive_ptr<chaos::GPUFramebuffer> & in_framebuffer)
+bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer)
 {
 	if (in_framebuffer != nullptr)
 	{

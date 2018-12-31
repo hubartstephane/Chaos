@@ -123,7 +123,7 @@ namespace chaos
 		{
 		public:
 			/** the generator that will request some slices */
-			boost::intrusive_ptr<TextureArraySliceGenerator> generator;
+			shared_ptr<TextureArraySliceGenerator> generator;
 			/** optional where the slices are allocated */
 			SliceInfo * slice_info{ nullptr };
 		};

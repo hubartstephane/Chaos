@@ -39,7 +39,7 @@ namespace chaos
 		protected:
 
 			/** the texture array that will be generated */
-			boost::intrusive_ptr<GPUTexture> texture;
+			shared_ptr<GPUTexture> texture;
 		};
 	}; // namespace BitmapAtlas
 }; // namespace chaos

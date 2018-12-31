@@ -466,7 +466,7 @@ bool Game::InitializeSpriteManagers()
 	{
 		SpriteLayer & layer = sprite_layers[i];
 	
-		boost::intrusive_ptr<chaos::SpriteManager> sprite_manager = new chaos::SpriteManager();
+		chaos::shared_ptr<chaos::SpriteManager> sprite_manager = new chaos::SpriteManager();
 		if (sprite_manager == nullptr)
 			return false;			
 		if (!sprite_manager->Initialize(sprite_params))
@@ -492,7 +492,7 @@ bool Game::LoadBackgroundTexture(size_t index)
 
   index = index % background_paths.size();
 
-  boost::intrusive_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader().GenTextureObject(background_paths[index]);
+  chaos::shared_ptr<chaos::GPUTexture> new_background = chaos::GPUTextureLoader().GenTextureObject(background_paths[index]);
   if (new_background == nullptr)
     return false;
   background_texture = new_background;
@@ -622,7 +622,7 @@ void Game::DisplayControls(glm::ivec2 viewport_size)
 	DisplayFullscreen(viewport_size, control_texture, control_program);	
 }
 
-void Game::DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::GPUTexture> texture, boost::intrusive_ptr<chaos::GPUProgram> program)
+void Game::DisplayFullscreen(glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program)
 {
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
@@ -682,7 +682,7 @@ void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
 
 void Game::DisplaySprites(glm::ivec2 viewport_size)
 {
-  boost::intrusive_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
+  chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 
 	glm::vec3 scale = glm::vec3(2.0f / world_size.x, 2.0f / world_size.y, 1.0f);
 	glm::vec3 tr    = glm::vec3(-world_position.x, -world_position.y, 0.0f); 

@@ -123,7 +123,7 @@ namespace chaos
 		boost::filesystem::path configuration_path;
 
 		/** the file manager */
-		boost::intrusive_ptr<FileManager> file_manager;
+		shared_ptr<FileManager> file_manager;
 
 		/** the current input mode */
 		int current_input_mode = InputMode::Keyboard;

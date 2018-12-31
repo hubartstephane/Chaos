@@ -125,11 +125,11 @@ namespace chaos
 		protected:
 
 			/** the main clock of the manager */
-			boost::intrusive_ptr<Clock> main_clock;
+			shared_ptr<Clock> main_clock;
 			/** the sound manager */
-			boost::intrusive_ptr<SoundManager> sound_manager;
+			shared_ptr<SoundManager> sound_manager;
 			/** the graphic resource manager */
-			boost::intrusive_ptr<GPUResourceManager> gpu_manager;
+			shared_ptr<GPUResourceManager> gpu_manager;
 
 			/** the initial_window param */
 			SingleWindowApplicationParams window_params;

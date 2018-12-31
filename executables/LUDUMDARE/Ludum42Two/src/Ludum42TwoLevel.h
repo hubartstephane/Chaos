@@ -58,5 +58,5 @@ protected:
 
 	LudumGame * game = nullptr;
 
-	std::vector<boost::intrusive_ptr<chaos::ParticleAllocation>> allocations;
+	std::vector<chaos::shared_ptr<chaos::ParticleAllocation>> allocations;
 };

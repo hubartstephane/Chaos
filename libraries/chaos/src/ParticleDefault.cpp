@@ -57,7 +57,7 @@ namespace chaos
 
 	GPURenderMaterial * ParticleDefault::GenDefaultParticleMaterial()
 	{
-		boost::intrusive_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
+		shared_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
 		return GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 

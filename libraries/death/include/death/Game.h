@@ -457,7 +457,7 @@ namespace death
 
 
 		/** the current gamepad manager */
-		boost::intrusive_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
+		chaos::shared_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 		/** the gamepad data */
 		chaos::MyGLFW::GamepadData gamepad_data;
 		/** the current stick position */
@@ -468,29 +468,29 @@ namespace death
 		glm::vec2 last_right_stick_position = glm::vec2(0.0f, 0.0f);
 
 		/** the texture atlas */
-		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+		chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 		/** the particle manager */
-		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 
 		/** the rendering layer system */
-		boost::intrusive_ptr<chaos::RenderableLayerSystem> root_render_layer;
+		chaos::shared_ptr<chaos::RenderableLayerSystem> root_render_layer;
 
 
 		/** the text generator */
-		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 
 		/** the sounds being played */
-		boost::intrusive_ptr<chaos::Sound> menu_music;
-		boost::intrusive_ptr<chaos::Sound> game_music;
-		boost::intrusive_ptr<chaos::Sound> pause_music;
+		chaos::shared_ptr<chaos::Sound> menu_music;
+		chaos::shared_ptr<chaos::Sound> game_music;
+		chaos::shared_ptr<chaos::Sound> pause_music;
 
 		/** the HUDs */
-		boost::intrusive_ptr<GameHUD> hud;
+		chaos::shared_ptr<GameHUD> hud;
 
 		/** pointer on the state_machine */
-		boost::intrusive_ptr<chaos::SM::StateMachine> game_state_machine;
+		chaos::shared_ptr<chaos::SM::StateMachine> game_state_machine;
 		/** pointer on the state_machine instance */
-		boost::intrusive_ptr<chaos::SM::StateMachineInstance> game_state_machine_instance;
+		chaos::shared_ptr<chaos::SM::StateMachineInstance> game_state_machine_instance;
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;
@@ -526,25 +526,25 @@ namespace death
 		char const * game_instructions = nullptr;
 
 		/** the clocks */
-		boost::intrusive_ptr<chaos::Clock> root_clock;
-		boost::intrusive_ptr<chaos::Clock> main_clock;
-		boost::intrusive_ptr<chaos::Clock> game_clock;
-		boost::intrusive_ptr<chaos::Clock> pause_clock;
+		chaos::shared_ptr<chaos::Clock> root_clock;
+		chaos::shared_ptr<chaos::Clock> main_clock;
+		chaos::shared_ptr<chaos::Clock> game_clock;
+		chaos::shared_ptr<chaos::Clock> pause_clock;
 
 		/** the particle tools */
 		GameParticleCreator particle_creator;
 
 		/** a tiled map manager */
-		boost::intrusive_ptr<chaos::TiledMap::Manager> tiled_map_manager;
+		chaos::shared_ptr<chaos::TiledMap::Manager> tiled_map_manager;
 
 		/** level data */
-		std::vector<boost::intrusive_ptr<class GameLevel>> levels;
+		std::vector<chaos::shared_ptr<class GameLevel>> levels;
 		/** the current level instance */
-		boost::intrusive_ptr<GameLevelInstance> current_level_instance;
+		chaos::shared_ptr<GameLevelInstance> current_level_instance;
 
 		/** some allocations */
-		boost::intrusive_ptr<chaos::ParticleAllocation> player_allocations;
-		boost::intrusive_ptr<chaos::ParticleAllocation> background_allocations;
+		chaos::shared_ptr<chaos::ParticleAllocation> player_allocations;
+		chaos::shared_ptr<chaos::ParticleAllocation> background_allocations;
 
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;

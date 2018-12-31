@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUTexture.h>
@@ -18,9 +18,9 @@ namespace chaos
 		/** the mipmap of concern */
 		int texture_mipmap = 0;
 		/** texture attachment */
-		boost::intrusive_ptr<GPUTexture> texture;
+		shared_ptr<GPUTexture> texture;
 		/** texture attachment */
-		boost::intrusive_ptr<GPURenderbuffer> renderbuffer;
+		shared_ptr<GPURenderbuffer> renderbuffer;
 	};
 
 	template<class ATTACHMENT_TYPE>
@@ -73,9 +73,9 @@ namespace chaos
 			assert(surface != nullptr);
 			for (ATTACHMENT_TYPE const & attachment : attachment_info)
 			{
-				if (attachment.texture == surface)
+				if (attachment.texture.get() == surface)
 					return true;
-				if (attachment.renderbuffer == surface)
+				if (attachment.renderbuffer.get() == surface)
 					return true;
 			}
 			return false;

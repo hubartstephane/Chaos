@@ -35,11 +35,11 @@ namespace death
 	protected:
 
 		/** the particle manager */
-		boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 		/** the text generator */
-		boost::intrusive_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
 		/** the texture atlas */
-		boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+		chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 	};
 
 }; //namespace death

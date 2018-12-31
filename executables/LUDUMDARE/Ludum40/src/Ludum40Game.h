@@ -90,7 +90,7 @@ protected:
 
 	void DisplayBackground(glm::ivec2 viewport_size);
 	void DisplayControls(glm::ivec2 viewport_size);
-	void DisplayFullscreen(glm::ivec2 viewport_size, boost::intrusive_ptr<chaos::GPUTexture> texture, boost::intrusive_ptr<chaos::GPUProgram> program);
+	void DisplayFullscreen(glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program);
 
 	void SetLayerVisibility(int layer, bool visible);
 
@@ -154,11 +154,11 @@ protected:
 
 	std::vector<SpriteLayer> sprite_layers;
 
-	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
 
 	std::vector<ObjectDefinition> object_definitions;
 
-	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
+	chaos::shared_ptr<MyGamepadManager> gamepad_manager;
 
 	// screen information
 	glm::vec2 world_size;
@@ -200,23 +200,23 @@ protected:
 	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
 
 	// background data
-	boost::intrusive_ptr<chaos::SimpleMesh> fullscreen_mesh;
+	chaos::shared_ptr<chaos::SimpleMesh> fullscreen_mesh;
 
-	boost::intrusive_ptr<chaos::GPUProgram>  background_program;	
-	boost::intrusive_ptr<chaos::GPUTexture>    background_texture;
-	boost::intrusive_ptr<chaos::GPUProgram>  control_program;
-	boost::intrusive_ptr<chaos::GPUTexture>    control_texture;
+	chaos::shared_ptr<chaos::GPUProgram>  background_program;	
+	chaos::shared_ptr<chaos::GPUTexture>    background_texture;
+	chaos::shared_ptr<chaos::GPUProgram>  control_program;
+	chaos::shared_ptr<chaos::GPUTexture>    control_texture;
 
   std::vector<boost::filesystem::path> background_paths;
   size_t background_index = 0;
 
 	// sounds
-	boost::intrusive_ptr<chaos::SoundManager> sound_manager;
-	boost::intrusive_ptr<chaos::SoundSource> music_source;
-	boost::intrusive_ptr<chaos::SoundSource> gameover_source;
-	boost::intrusive_ptr<chaos::SoundSource> collision_source;
-	boost::intrusive_ptr<chaos::SoundSource> bonus1_source;
-	boost::intrusive_ptr<chaos::SoundSource> bonus2_source;
-	boost::intrusive_ptr<chaos::SoundSource> start_source;
-	boost::intrusive_ptr<chaos::SoundSource> pause_source;
+	chaos::shared_ptr<chaos::SoundManager> sound_manager;
+	chaos::shared_ptr<chaos::SoundSource> music_source;
+	chaos::shared_ptr<chaos::SoundSource> gameover_source;
+	chaos::shared_ptr<chaos::SoundSource> collision_source;
+	chaos::shared_ptr<chaos::SoundSource> bonus1_source;
+	chaos::shared_ptr<chaos::SoundSource> bonus2_source;
+	chaos::shared_ptr<chaos::SoundSource> start_source;
+	chaos::shared_ptr<chaos::SoundSource> pause_source;
 };

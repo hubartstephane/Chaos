@@ -288,7 +288,7 @@ namespace chaos
 		/** whether the allocation is visible */
 		bool visible = true;
 		/** a callback called whenever the allocation becomes empty */
-		boost::intrusive_ptr<ParticleAllocationEmptyCallback> empty_callback;
+		shared_ptr<ParticleAllocationEmptyCallback> empty_callback;
 	};
 
 	// ==============================================================
@@ -718,23 +718,23 @@ namespace chaos
 	protected:
 
 		/** the texture atlas */
-		boost::intrusive_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
+		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
 
 		/** whether there was changes in particles, and a vertex array need to be recomputed */
 		mutable bool require_GPU_update = false;
 
 		/** the material used to render the layer */
-		boost::intrusive_ptr<GPURenderMaterial> render_material;
+		shared_ptr<GPURenderMaterial> render_material;
 
 		/** particles allocations */
-		std::vector<boost::intrusive_ptr<ParticleAllocation>> particles_allocations;
+		std::vector<shared_ptr<ParticleAllocation>> particles_allocations;
 		/** the behavior description */
-		boost::intrusive_ptr<ParticleLayerDesc> layer_desc;
+		shared_ptr<ParticleLayerDesc> layer_desc;
 
 		/** the vertex declaration */
 		mutable GPUVertexDeclaration vertex_declaration;
 		/** the vertex buffer for the rendering */
-		mutable boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
+		mutable shared_ptr<GPUVertexBuffer> vertex_buffer;
 		/** the cache for vertex array */
 		mutable GPUVertexArrayCache vertex_array_cache;
 

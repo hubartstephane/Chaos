@@ -138,7 +138,7 @@ protected:
 protected:
 
 	/** the tiled map manager */
-	boost::intrusive_ptr<chaos::TiledMap::Manager> tiledmap_manager;
+	chaos::shared_ptr<chaos::TiledMap::Manager> tiledmap_manager;
 
 	/** game settings */
 	int initial_life = 3;
@@ -150,6 +150,6 @@ protected:
 	float current_cooldown = 0.1f;
 
 	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocation> life_allocations;
 };
 

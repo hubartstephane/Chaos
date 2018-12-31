@@ -36,7 +36,7 @@ namespace chaos
 		GPUProgramToVertexArrayCacheCallbacks * program_destruction_callback = nullptr;	
 
 		/** the vertex array */
-		boost::intrusive_ptr<GPUVertexArray> vertex_array;
+		shared_ptr<GPUVertexArray> vertex_array;
 	};
 
 	// =================================================================================================
@@ -64,7 +64,7 @@ namespace chaos
 	protected:
 
 		/** the cache content */
-		std::vector<boost::intrusive_ptr<VertexArrayCacheEntry>> entries;
+		std::vector<shared_ptr<VertexArrayCacheEntry>> entries;
 
 	};
 

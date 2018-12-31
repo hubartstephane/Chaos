@@ -13,11 +13,11 @@ namespace chaos
 		Clean();
 	}
 
-	void MultiMeshGenerator::AddGenerator(SimpleMeshGenerator * generator, boost::intrusive_ptr<SimpleMesh> & target_ptr)
+	void MultiMeshGenerator::AddGenerator(SimpleMeshGenerator * generator, shared_ptr<SimpleMesh> & target_ptr)
 	{
 		assert(generator != nullptr);
 
-		boost::intrusive_ptr<SimpleMeshGenerator> generator_ptr = generator;
+		shared_ptr<SimpleMeshGenerator> generator_ptr = generator;
 
 		generators.push_back(std::make_pair(generator_ptr, &target_ptr));
 	}
@@ -47,11 +47,11 @@ namespace chaos
 		}
 
 		// create a vertex buffer and an index buffer to be shared among all meshes
-		boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
-		boost::intrusive_ptr<GPUIndexBuffer>  index_buffer;
+		shared_ptr<GPUVertexBuffer> vertex_buffer;
+		shared_ptr<GPUIndexBuffer>  index_buffer;
 
-		boost::intrusive_ptr<GPUVertexBuffer> * vb_ptr = (vb_size > 0) ? &vertex_buffer : nullptr;
-		boost::intrusive_ptr<GPUIndexBuffer>  * ib_ptr = (ib_size > 0) ? &index_buffer : nullptr;
+		shared_ptr<GPUVertexBuffer> * vb_ptr = (vb_size > 0) ? &vertex_buffer : nullptr;
+		shared_ptr<GPUIndexBuffer>  * ib_ptr = (ib_size > 0) ? &index_buffer : nullptr;
 
 		if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr))
 		{
@@ -73,7 +73,7 @@ namespace chaos
 					size_t written_vertices_count = vertices_writer.GetWrittenCount();
 					size_t written_indices_count = indices_writer.GetWrittenCount();
 
-					boost::intrusive_ptr<SimpleMesh> mesh = (*it.second);
+					shared_ptr<SimpleMesh> mesh = (*it.second);
 					if (mesh == nullptr)
 						mesh = new SimpleMesh; // generate the mesh
 					else

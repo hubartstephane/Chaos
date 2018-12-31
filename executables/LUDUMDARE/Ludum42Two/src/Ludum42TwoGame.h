@@ -164,7 +164,7 @@ protected:
 	float current_cooldown = 0.1f;
 	
 	/** some sprites */	
-	boost::intrusive_ptr<chaos::ParticleAllocation> water_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocation> water_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocation> life_allocations;
 };
 

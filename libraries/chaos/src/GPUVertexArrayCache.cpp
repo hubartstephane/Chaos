@@ -47,7 +47,7 @@ namespace chaos
 			return result;
 
 		// create the vertex array
-		boost::intrusive_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray();
+		shared_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray();
 		if (new_vertex_array == nullptr || !new_vertex_array->IsValid())
 			return nullptr;
 

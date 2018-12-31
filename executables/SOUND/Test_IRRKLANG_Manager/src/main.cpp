@@ -109,13 +109,13 @@ protected:
 
 protected:
 
-  boost::intrusive_ptr<chaos::SoundManager> sound_manager;
+  chaos::shared_ptr<chaos::SoundManager> sound_manager;
 
-  boost::intrusive_ptr<chaos::SoundSource> source1;
+  chaos::shared_ptr<chaos::SoundSource> source1;
 
-  boost::intrusive_ptr<chaos::Sound> sound1;
+  chaos::shared_ptr<chaos::Sound> sound1;
 
-  boost::intrusive_ptr<chaos::SoundCategory> category1;
+  chaos::shared_ptr<chaos::SoundCategory> category1;
 };
 
 

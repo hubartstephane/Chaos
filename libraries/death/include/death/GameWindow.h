@@ -40,7 +40,7 @@ namespace death
 	protected:
 
 		/** pointer on the game */
-		boost::intrusive_ptr<Game> game;
+		chaos::shared_ptr<Game> game;
 	};
 
 

@@ -41,7 +41,7 @@ protected:
 
 	void ChangeSkyBox(int index)
 	{
-		boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateSkyBox(index);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateSkyBox(index);
 		if (new_texture != nullptr)
 		{
 			skybox_index = index;
@@ -56,7 +56,7 @@ protected:
 		}
 	}
 
-	boost::intrusive_ptr<chaos::GPUTexture> GenerateSkyBox(int index)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateSkyBox(int index)
 	{
 		chaos::PixelFormat pixel_format = chaos::PixelFormat(index + 1); // 0 = UNKNOWN FORMAT
 		if (!pixel_format.IsValid())
@@ -271,9 +271,9 @@ protected:
 
 	chaos::SkyBoxImages skybox;
 			
-	boost::intrusive_ptr<chaos::GPUProgram>  program;
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-	boost::intrusive_ptr<chaos::GPUTexture>    texture;
+	chaos::shared_ptr<chaos::GPUProgram>  program;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	chaos::FPSViewInputController fps_view_controller;
 

@@ -19,7 +19,7 @@ namespace chaos
 	{
 	public:
 
-		typedef std::vector<boost::intrusive_ptr<GPUProgramSourceGenerator>> GeneratorSet;
+		typedef std::vector<shared_ptr<GPUProgramSourceGenerator>> GeneratorSet;
 
 		typedef std::map<std::string, int> DefinitionSet;
 

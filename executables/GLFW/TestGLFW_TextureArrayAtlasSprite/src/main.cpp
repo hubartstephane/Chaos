@@ -219,13 +219,13 @@ protected:
 protected:
 
 	// the particle manager
-	boost::intrusive_ptr<chaos::ParticleManager> particle_manager;
+	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 	/** the texture atlas */
-	boost::intrusive_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
+	chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> atlas;
 	/** the material */
-	boost::intrusive_ptr<chaos::GPURenderMaterial> material;
+	chaos::shared_ptr<chaos::GPURenderMaterial> material;
 	/** allocation */
-	boost::intrusive_ptr<chaos::ParticleAllocation> particles_allocation;
+	chaos::shared_ptr<chaos::ParticleAllocation> particles_allocation;
   // the camera
   chaos::FPSViewInputController fps_view_controller;
 };

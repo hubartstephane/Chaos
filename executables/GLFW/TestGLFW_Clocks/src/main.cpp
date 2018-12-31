@@ -195,7 +195,7 @@ protected:
 		clock3 = nullptr;
 	}
 
-	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
 		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
@@ -362,14 +362,14 @@ protected:
 protected:
 
 	// rendering for the box  
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
-	boost::intrusive_ptr<chaos::Clock> clock1;
-	boost::intrusive_ptr<chaos::Clock> clock2;
-	boost::intrusive_ptr<chaos::Clock> clock3;
+	chaos::shared_ptr<chaos::Clock> clock1;
+	chaos::shared_ptr<chaos::Clock> clock2;
+	chaos::shared_ptr<chaos::Clock> clock3;
 
-	boost::intrusive_ptr<chaos::ClockEvent> clock_event;
+	chaos::shared_ptr<chaos::ClockEvent> clock_event;
 
 	float time_line_box_size{0.0f};
 	float time_line_box_position{0.0f};

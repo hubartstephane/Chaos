@@ -85,7 +85,7 @@ protected:
 			return false;
 
 		// list of sound devices
-		boost::intrusive_ptr<irrklang::ISoundDeviceList> deviceList = irrklang::createSoundDeviceList();
+		chaos::shared_ptr<irrklang::ISoundDeviceList> deviceList = irrklang::createSoundDeviceList();
 		if (deviceList != nullptr)
 		{
 			for (int i = 0; i < deviceList->getDeviceCount(); ++i)
@@ -131,11 +131,11 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<irrklang::ISoundEngine> engine;
-	boost::intrusive_ptr<irrklang::ISoundSource> sound_source1;
-	boost::intrusive_ptr<irrklang::ISoundSource> sound_source2;
+	chaos::shared_ptr<irrklang::ISoundEngine> engine;
+	chaos::shared_ptr<irrklang::ISoundSource> sound_source1;
+	chaos::shared_ptr<irrklang::ISoundSource> sound_source2;
 
-	std::vector<boost::intrusive_ptr<irrklang::ISound>> playing_sounds;
+	std::vector<chaos::shared_ptr<irrklang::ISound>> playing_sounds;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

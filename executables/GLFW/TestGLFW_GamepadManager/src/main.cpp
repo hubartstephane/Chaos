@@ -170,11 +170,11 @@ protected:
 
 protected:
 
-	boost::intrusive_ptr<MyGamepadManager> gamepad_manager;
+	chaos::shared_ptr<MyGamepadManager> gamepad_manager;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 
-	boost::intrusive_ptr<chaos::MyGLFW::Gamepad> main_gamepad;
+	chaos::shared_ptr<chaos::MyGLFW::Gamepad> main_gamepad;
 };
 
 int _tmain(int argc, char ** argv, char ** env)

@@ -258,7 +258,7 @@ protected:
 	int max_word_size = 0;
 
 	/** the challenge */
-	boost::intrusive_ptr<LudumChallenge> sequence_challenge;
+	chaos::shared_ptr<LudumChallenge> sequence_challenge;
 
 	/** all the existing button */
 	std::vector<int> gamepad_buttons;
@@ -321,12 +321,12 @@ protected:
 	int combo_multiplier = 1;
 	
 	/** some sprites */	
-	boost::intrusive_ptr<chaos::ParticleAllocation> bricks_allocations;
-	boost::intrusive_ptr<chaos::ParticleAllocation> balls_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocation> balls_allocations;
 
 	/** the possible rewards */
-	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> rewards;
+	std::vector<chaos::shared_ptr<LudumChallengeRewardPunishment>> rewards;
 	/** the possible punishment */
-	std::vector<boost::intrusive_ptr<LudumChallengeRewardPunishment>> punishments;
+	std::vector<chaos::shared_ptr<LudumChallengeRewardPunishment>> punishments;
 };
 

@@ -190,7 +190,7 @@ namespace chaos
 	{
 		// degenerated use case :
 		//   the processing of a previous event remove another event from execution
-		boost::intrusive_ptr<ClockEvent> clock_event = registered_event.clock_event;
+		shared_ptr<ClockEvent> clock_event = registered_event.clock_event;
 		if (clock_event == nullptr)
 			return;
 
@@ -288,7 +288,7 @@ namespace chaos
 
 				if (event_info.IsTooLateFor(time1))
 				{
-					boost::intrusive_ptr<ClockEvent> clock_event = pending_events[i]; // XXX : important to keep a reference after RemoveFromClock(...)
+					shared_ptr<ClockEvent> clock_event = pending_events[i]; // XXX : important to keep a reference after RemoveFromClock(...)
 					clock_event->RemoveFromClock(); // XXX : we know RemoveFromClock = "RemoveReplace" so --i
 					--i;
 				}
@@ -388,7 +388,7 @@ namespace chaos
 	{
 		while (children_clocks.size() > 0)
 		{
-			boost::intrusive_ptr<Clock> child_clock = children_clocks[children_clocks.size() - 1];
+			shared_ptr<Clock> child_clock = children_clocks[children_clocks.size() - 1];
 			child_clock->RemoveFromParent();
 		}
 	}
@@ -397,7 +397,7 @@ namespace chaos
 	{
 		while (pending_events.size() > 0)
 		{
-			boost::intrusive_ptr<ClockEvent> clock_event = pending_events[pending_events.size() - 1];
+			shared_ptr<ClockEvent> clock_event = pending_events[pending_events.size() - 1];
 			clock_event->RemoveFromClock();
 		}
 	}

@@ -152,5 +152,5 @@ protected:
 	int current_level = 0;
 
 	/** some sprites */
-	boost::intrusive_ptr<chaos::ParticleAllocation> life_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocation> life_allocations;
 };

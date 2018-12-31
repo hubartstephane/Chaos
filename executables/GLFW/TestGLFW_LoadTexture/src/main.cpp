@@ -37,7 +37,7 @@ protected:
 
 	void ChangeTexture(int index)
 	{
-		boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateTexture(index);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTexture(index);
 		if (new_texture != nullptr)
 		{
 			texture_index = index;
@@ -45,9 +45,9 @@ protected:
 		}
 	}
 
-	boost::intrusive_ptr<chaos::GPUTexture> GenerateTexture(int index)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateTexture(int index)
 	{
-		boost::intrusive_ptr<chaos::GPUTexture> result;
+		chaos::shared_ptr<chaos::GPUTexture> result;
 
     int texture_index  = index / 4;
     int texture_offset = index % 4;
@@ -156,9 +156,9 @@ protected:
 
 	std::vector<boost::filesystem::path> texture_paths;
 
-	boost::intrusive_ptr<chaos::GPUProgram>  program;
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh;
-	boost::intrusive_ptr<chaos::GPUTexture>    texture;
+	chaos::shared_ptr<chaos::GPUProgram>  program;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	int mipmap_level{ 0 };
 	int texture_index{ 0 };

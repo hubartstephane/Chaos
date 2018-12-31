@@ -55,9 +55,9 @@ namespace chaos
 		std::vector<DrawPrimitive> primitives;
 
 		/** self descriptive */
-		boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
+		shared_ptr<GPUVertexBuffer> vertex_buffer;
 		/** self descriptive */
-		boost::intrusive_ptr<GPUIndexBuffer> index_buffer;
+		shared_ptr<GPUIndexBuffer> index_buffer;
 		/** in the vertex buffer (that may be shared by other simpled mesh), the offset from the begining given to it */
 		GLintptr vertex_buffer_offset = 0;
 

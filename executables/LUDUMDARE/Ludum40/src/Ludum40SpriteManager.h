@@ -34,7 +34,7 @@ namespace chaos
     /** the texture atlas */
     BitmapAtlas::TextureArrayAtlas * atlas = nullptr;
     /** the replacement program */
-    boost::intrusive_ptr<GPUProgram> program;
+    chaos::shared_ptr<GPUProgram> program;
   };
 
 
@@ -77,11 +77,11 @@ namespace chaos
   protected:
 
     /** the program to run */
-    boost::intrusive_ptr<GPUProgram> program;
+    chaos::shared_ptr<GPUProgram> program;
     /** the vertex array */
-    boost::intrusive_ptr<GPUVertexArray> vertex_array;
+    chaos::shared_ptr<GPUVertexArray> vertex_array;
     /** the vertex buffer */
-    boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
+    chaos::shared_ptr<GPUVertexBuffer> vertex_buffer;
     /** the declaration of the vertex buffer */
     GPUVertexDeclaration declaration;
     /** the texture atlas */

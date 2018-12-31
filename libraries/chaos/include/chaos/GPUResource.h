@@ -73,7 +73,7 @@ namespace chaos
 	protected:
 
 		/** the callbacks that are to be called when resource is being released */
-		mutable std::vector<boost::intrusive_ptr<GPUResourceCallbacks>> callbacks;
+		mutable std::vector<shared_ptr<GPUResourceCallbacks>> callbacks;
 	};
 
 }; // namespace chaos

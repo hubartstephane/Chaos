@@ -55,7 +55,7 @@ namespace chaos
 	public:
 
 		/** the event */
-		boost::intrusive_ptr<class ClockEvent> clock_event;
+		shared_ptr<class ClockEvent> clock_event;
 		/** the absolute (top level clock reference) time lapse before starting the event */
 		double abs_time_to_start = 0.0;
 	};
@@ -405,9 +405,9 @@ namespace chaos
 		std::string name;
 
 		/** the events */
-		std::vector<boost::intrusive_ptr<ClockEvent>> pending_events;
+		std::vector<shared_ptr<ClockEvent>> pending_events;
 		/** the child clocks */
-		std::vector<boost::intrusive_ptr<Clock>> children_clocks;
+		std::vector<shared_ptr<Clock>> children_clocks;
 	};
 
 }; // namespace chaos

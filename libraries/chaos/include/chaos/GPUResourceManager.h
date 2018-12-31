@@ -102,10 +102,10 @@ namespace chaos
 	protected:
 
 		/** the textures */
-		std::vector<boost::intrusive_ptr<GPUTexture>> textures;
+		std::vector<shared_ptr<GPUTexture>> textures;
 		/** the programs */
-		std::vector<boost::intrusive_ptr<GPUProgram>> programs;
+		std::vector<shared_ptr<GPUProgram>> programs;
 		/** the render materials */
-		std::vector<boost::intrusive_ptr<GPURenderMaterial>> render_materials;
+		std::vector<shared_ptr<GPURenderMaterial>> render_materials;
 	};
 }; // namespace chaos

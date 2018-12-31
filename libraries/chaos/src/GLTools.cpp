@@ -1,4 +1,4 @@
-﻿#include <chaos/GLTools.h>
+#include <chaos/GLTools.h>
 #include <chaos/LogTools.h>
 #include <chaos/DebugTools.h>
 #include <chaos/MathTools.h>
@@ -131,12 +131,12 @@ namespace chaos
 		return true;
 	}
 
-	bool GLTools::GenerateVertexAndIndexBuffers(boost::intrusive_ptr<GPUVertexArray> * vertex_array, boost::intrusive_ptr<GPUVertexBuffer> * vertex_buffer, boost::intrusive_ptr<GPUIndexBuffer> * index_buffer)
+	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUVertexBuffer> * vertex_buffer, shared_ptr<GPUIndexBuffer> * index_buffer)
 	{
 		// release resource at destruction in case of failure 
-		boost::intrusive_ptr<GPUVertexArray> va;
-		boost::intrusive_ptr<GPUVertexBuffer> vb;
-		boost::intrusive_ptr<GPUIndexBuffer> ib;
+		shared_ptr<GPUVertexArray> va;
+		shared_ptr<GPUVertexBuffer> vb;
+		shared_ptr<GPUIndexBuffer> ib;
 
 		if (vertex_array != nullptr)
 		{

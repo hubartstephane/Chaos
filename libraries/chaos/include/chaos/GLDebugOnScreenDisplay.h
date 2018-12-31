@@ -74,13 +74,13 @@ namespace chaos
 		mutable int screen_width{-1};
 
 		/** the program to run */
-		boost::intrusive_ptr<GPUProgram> program;
+		shared_ptr<GPUProgram> program;
 		/** the texture */
-		boost::intrusive_ptr<GPUTexture> texture;
+		shared_ptr<GPUTexture> texture;
 		/** the vertex array */
-		boost::intrusive_ptr<GPUVertexArray> vertex_array;
+		shared_ptr<GPUVertexArray> vertex_array;
 		/** the vertex buffer */
-		boost::intrusive_ptr<GPUVertexBuffer> vertex_buffer;
+		shared_ptr<GPUVertexBuffer> vertex_buffer;
 		/** the declaration of the vertex buffer */
 		GPUVertexDeclaration declaration;
 

@@ -375,7 +375,7 @@ namespace death
 
 		// sort the levels
 		std::sort(levels.begin(), levels.end(),
-			[](boost::intrusive_ptr<GameLevel> l1, boost::intrusive_ptr<GameLevel> l2)
+			[](chaos::shared_ptr<GameLevel> l1, chaos::shared_ptr<GameLevel> l2)
 		{
 			return (l1->level_index < l2->level_index);
 		});
@@ -1371,8 +1371,8 @@ namespace death
 
 	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
 	{	
-		boost::intrusive_ptr<GameLevelInstance> old_level_instance = current_level_instance; // copy and keep a reference
-		boost::intrusive_ptr<GameLevel> old_level = (old_level_instance != nullptr) ?
+		chaos::shared_ptr<GameLevelInstance> old_level_instance = current_level_instance; // copy and keep a reference
+		chaos::shared_ptr<GameLevel> old_level = (old_level_instance != nullptr) ?
 			old_level_instance->GetLevel() :
 			nullptr;
 
@@ -1384,7 +1384,7 @@ namespace death
 			return true;
 		}
 		// change the level
-		boost::intrusive_ptr<GameLevelInstance> new_level_instance = new_level->CreateLevelInstance(this);
+		chaos::shared_ptr<GameLevelInstance> new_level_instance = new_level->CreateLevelInstance(this);
 		if (new_level_instance == nullptr)
 			return false;
 		current_level_instance = new_level_instance;

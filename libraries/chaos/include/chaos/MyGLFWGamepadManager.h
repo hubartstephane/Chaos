@@ -285,7 +285,7 @@ namespace chaos
 			/* the device */
 			PhysicalGamepad * physical_device = nullptr;
 			/** the callbacks */
-			boost::intrusive_ptr<GamepadCallbacks> callbacks;
+			shared_ptr<GamepadCallbacks> callbacks;
 			/** indicates whether the stick has already be connected to a physical device */
 			bool ever_connected = false;
 		};

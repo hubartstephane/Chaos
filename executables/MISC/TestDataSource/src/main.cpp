@@ -34,7 +34,7 @@ public:
 
 protected:
 
-  boost::intrusive_ptr<DataSource> data_source;
+  chaos::shared_ptr<DataSource> data_source;
 };
 
 
@@ -60,7 +60,7 @@ public:
 
 protected:
 
-  std::vector<boost::intrusive_ptr<OBJ>> objects;
+  std::vector<chaos::shared_ptr<OBJ>> objects;
 };
 
 

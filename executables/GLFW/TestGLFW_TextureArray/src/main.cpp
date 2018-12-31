@@ -72,7 +72,7 @@ protected:
 		debug_display.Finalize();
 	}
 
-	boost::intrusive_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
 	{
 		chaos::GPUProgramGenerator program_generator;
 		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
@@ -159,7 +159,7 @@ protected:
 		return true; // refresh
 	}
 
-	boost::intrusive_ptr<chaos::GPUTexture> GenerateTextureArray(int current_pixel_format)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(int current_pixel_format)
 	{
 		chaos::PixelFormat pixel_format = chaos::PixelFormat(current_pixel_format);
 		if (!pixel_format.IsValid())
@@ -172,7 +172,7 @@ protected:
 		chaos::PixelFormatMergeParams merge_params;
 		merge_params.pixel_format = pixel_format;
 
-		boost::intrusive_ptr<chaos::GPUTexture> result = generator.GenTextureObject(merge_params);
+		chaos::shared_ptr<chaos::GPUTexture> result = generator.GenTextureObject(merge_params);
 		if (result != nullptr)
 			texture_slice_count = (int)bitmaps.size();
 
@@ -181,7 +181,7 @@ protected:
 
 	void ChangePixelFormat(int delta)
 	{
-		boost::intrusive_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(current_pixel_format + delta);
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(current_pixel_format + delta);
 		if (new_texture != nullptr)
 		{
 			texture = new_texture;
@@ -246,9 +246,9 @@ protected:
 
 
 	// rendering for the box  
-	boost::intrusive_ptr<chaos::SimpleMesh> mesh_box;
-	boost::intrusive_ptr<chaos::GPUProgram>  program_box;
-	boost::intrusive_ptr<chaos::GPUTexture>    texture;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUProgram>  program_box;
+	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	int texture_slice{0};
 	int texture_slice_count{0};

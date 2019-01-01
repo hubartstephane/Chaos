@@ -55,6 +55,11 @@ namespace chaos
 	template<typename T>
 	class DisableLastReferenceLost : public T
 	{
+	public:
+
+		/** forwarding constructor */
+		using T::T;
+
 	protected:
 		/** disable the reference lost deletion */
 		virtual void OnLastReferenceLost() override { }

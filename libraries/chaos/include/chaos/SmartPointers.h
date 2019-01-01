@@ -35,18 +35,37 @@ namespace chaos
 				intrusive_ptr_add_ref(target, POLICY());
 		}
 		/** copy constructor */
-		template<typename U>
-		SmartPointerBase(SmartPointerBase<U, POLICY> const & src) :
-			SmartPointerBase(src.target)
+		SmartPointerBase(SmartPointerBase<T, POLICY> const & src) :
+			target(src.target)
 		{
+			if (target != nullptr)
+				intrusive_ptr_add_ref(target, POLICY());
 		}
-		/** move constructor */
+		/** conversion constructor */
+#if 0
 		template<typename U>
-		SmartPointerBase(SmartPointerBase<U, POLICY> && src) :
+		SmartPointerBase(SmartPointerBase<U, POLICY> const & src) : // shuxxx to test
+			target(src.target)
+		{
+			if (target != nullptr)
+				intrusive_ptr_add_ref(target, POLICY()); 
+		}
+#endif
+		/** move constructor */
+		SmartPointerBase(SmartPointerBase<T, POLICY> && src) :  // shuxxx to test
+			target(src.target)
+		{
+			src.target = nullptr; // necessary to capture the reference, else the move semantic would
+		}
+		/** move constructor + conversion */
+#if 0
+		template<typename U>
+		SmartPointerBase(SmartPointerBase<U, POLICY> && src) :  // shuxxx to test
 			target(src.target)
 		{
 			src.target = nullptr; // necessary to capture the reference, else the move semantic would
 		}                       // not be an optimization while requiring reference count update    
+#endif		
 
 		/** destructor */
 		~SmartPointerBase()
@@ -62,22 +81,23 @@ namespace chaos
 			return *this;
 		}
 		/** copy */
+		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> const & src)
+		{
+			DoSetTarget(src.target);
+			return *this;
+		}
+		/** copy + conversion */
+#if 0
 		template<typename U>
 		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> const & src)
 		{
 			DoSetTarget(src.target);
 			return *this;
 		}
+#endif
 		/** move */
-		template<typename U>
-		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> && src)
+		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> && src) // shuxxx to test
 		{
-			DoSetTarget(src.target);
-			if (src.target != nullptr)
-				intrusive_ptr_release(src.target, POLICY());
-			src.target = nullptr;
-
-#if 0
 			assert(this != &src);
 			if (target != src.target)
 			{
@@ -91,9 +111,29 @@ namespace chaos
 					intrusive_ptr_release(src.target, POLICY()); // no new reference added due to this, src' reference is lost
 			}
 			src.target = nullptr;
-#endif
 			return *this;
 		}
+		/** move */
+#if 0
+		template<typename U>
+		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> && src)
+		{
+			assert(this != &src);
+			if (target != src.target)
+			{
+				if (target != nullptr)
+					intrusive_ptr_release(target, POLICY());
+				target = src.target;
+			}
+			else
+			{
+				if (src.target != nullptr)
+					intrusive_ptr_release(src.target, POLICY()); // no new reference added due to this, src' reference is lost
+			}
+			src.target = nullptr;
+			return *this;
+		}
+#endif
 
 		/** getters */
 		type * get() const
@@ -113,6 +153,14 @@ namespace chaos
 		{
 			assert(target != nullptr);
 			return *target;
+		}
+
+		/** swap pointers */
+		void swap(SmartPointerBase<T, POLICY> & src)
+		{
+			type * tmp = target;
+			target = src.target;
+			src.target = tmp;
 		}
 
 	protected:
@@ -211,14 +259,24 @@ namespace chaos
 	}
 
 	/**
+	* swap
+	*/
+
+	template<typename T, typename POLICY> 
+	void swap(SmartPointerBase<T, POLICY> & src1, SmartPointerBase<T, POLICY> & src2)
+	{
+		src1.swap(src2);
+	}
+
+	/**
 	* weak_ptr & shared_ptr definition
 	*/
 
 	template<typename T>
 	using weak_ptr = SmartPointerBase<T, WeakPointerPolicy>;
 	template<typename T>
-	//using shared_ptr = SmartPointerBase<T, SharedPointerPolicy>;
-	using shared_ptr = boost::intrusive_ptr<T>;
+	using shared_ptr = SmartPointerBase<T, SharedPointerPolicy>;
+	//using shared_ptr = boost::intrusive_ptr<T>;
 
 }; // namespace chaos
 

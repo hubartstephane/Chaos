@@ -7,6 +7,8 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/SmartPointers.h>
 
+
+
 class A : public chaos::ReferencedObject
 {
 public:
@@ -29,27 +31,34 @@ public:
 
 };
 
+class B : public A {};
+
 
 int _tmain(int argc, char ** argv, char ** env)
 {
-	chaos::shared_ptr<A> a = new A;
-	chaos::shared_ptr<A> b = nullptr;
-
-	std::swap(a, b);
-
-	argc = argc;
+#if 0
 
 	{
-		std::vector<chaos::shared_ptr<A>> v;
+		chaos::shared_ptr<A> a = new A;
+		chaos::shared_ptr<A> b = nullptr;
 
-		for (int i = 0; i < 8; ++i)
-			v.push_back(new A);
+		chaos::shared_ptr<B> c = nullptr;
+
+
+		a = c;
+
 
 		argc = argc;
+		b = a;
+		argc = argc;
+
+		std::swap(a, b);
+
+		argc = argc;
+
 	}
+#endif
 
-
-//	return 0;
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

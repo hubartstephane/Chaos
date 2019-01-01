@@ -111,6 +111,10 @@ namespace chaos
 		GPUTexture * result = loader.GenTextureObject(path, GenTextureParameters());
 		if (result != nullptr)
 			textures.push_back(result);
+
+
+		// shuxxx
+
 		return result;
 	}
 
@@ -272,7 +276,10 @@ namespace chaos
 		// load the resource
 		GPUTexture * result = loader.GenTextureObject(json, config_path, GenTextureParameters());
 		if (result != nullptr)
-			textures.push_back(result);
+			textures.push_back(result); // shuxxx
+
+
+
 		return result;
 	}
 

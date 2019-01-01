@@ -142,7 +142,7 @@ namespace chaos
 	//              -> as soon as this intrusive_ptr<...> is destroyed, we want to destroy the ParticleAllocation even if there still is 1 reference
 	//                 from the layer
 	//
-	void ParticleAllocation::SubReference()
+	void ParticleAllocation::SubReference(SharedPointerPolicy policy)
 	{
 		if (layer == nullptr)
 		{

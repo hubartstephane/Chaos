@@ -133,7 +133,7 @@ namespace chaos
 		// the callbacks
 		if (callbacks != nullptr)
 			callbacks->OnRemovedFromManager(this);
-		if (blend_desc.callbacks)
+		if (blend_desc.callbacks != nullptr)
 			blend_desc.callbacks->OnRemovedFromManager(this);
 		// reset some data
 		blend_desc = BlendVolumeDesc();
@@ -229,7 +229,7 @@ namespace chaos
 				blend_value = 1.0f;
 			else if (desc.blend_type == BlendVolumeDesc::BLEND_OUT)
 				blend_value = 0.0f;
-			if (desc.callbacks)
+			if (desc.callbacks != nullptr)
 				desc.callbacks->OnFinished(this);
 		}
 		else

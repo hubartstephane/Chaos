@@ -1,25 +1,25 @@
 #include <chaos/IrrklangTools.h>
 
 /** boost smart pointer adapter */
-void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted * obj)
+void intrusive_ptr_add_ref(irrklang::IVirtualRefCounted * obj, chaos::SharedPointerPolicy policy)
 {
 	obj->grab();
 }
 
 /** boost smart pointer adapter */
-void intrusive_ptr_release(irrklang::IVirtualRefCounted * obj)
+void intrusive_ptr_release(irrklang::IVirtualRefCounted * obj, chaos::SharedPointerPolicy policy)
 {
 	obj->drop();
 }
 
 /** boost smart pointer adapter */
-void intrusive_ptr_add_ref(irrklang::IRefCounted * obj)
+void intrusive_ptr_add_ref(irrklang::IRefCounted * obj, chaos::SharedPointerPolicy policy)
 {
 	obj->grab();
 }
 
 /** boost smart pointer adapter */
-void intrusive_ptr_release(irrklang::IRefCounted * obj)
+void intrusive_ptr_release(irrklang::IRefCounted * obj, chaos::SharedPointerPolicy policy)
 {
 	obj->drop();
 }

@@ -182,7 +182,7 @@ namespace chaos
 		virtual ~ParticleAllocation();
 
 		/** Decrement the reference count */
-		virtual void SubReference() override;
+		virtual void SubReference(SharedPointerPolicy policy) override;
 
 		/** returns true whether the allocation is attached to a layer */
 		bool IsAttachedToLayer() const;

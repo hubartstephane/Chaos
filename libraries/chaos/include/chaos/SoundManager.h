@@ -1,13 +1,11 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
 #include <chaos/IrrklangTools.h>
+#include <chaos/SmartPointers.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/FilePath.h>
 #include <chaos/Manager.h>
-
-
-
 
 namespace chaos
 {

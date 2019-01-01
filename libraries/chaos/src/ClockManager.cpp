@@ -412,7 +412,7 @@ namespace chaos
 			{
 				if (tmp->pending_events[i].get() == this)
 				{
-					AddReference(); // because, we want to pop back the event, then call OnEventRemovedFromClock(...)
+					AddReference(SharedPointerPolicy()); // because, we want to pop back the event, then call OnEventRemovedFromClock(...)
 
 					if (i != count - 1)
 						std::swap(tmp->pending_events[i], tmp->pending_events.back());
@@ -420,7 +420,7 @@ namespace chaos
 					tmp->pending_events.pop_back();
 
 					OnEventRemovedFromClock();
-					SubReference();
+					SubReference(SharedPointerPolicy());
 					return true;
 				}
 			}

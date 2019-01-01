@@ -73,9 +73,9 @@ namespace chaos
 			assert(surface != nullptr);
 			for (ATTACHMENT_TYPE const & attachment : attachment_info)
 			{
-				if (attachment.texture.get() == surface)
+				if (attachment.texture == surface)
 					return true;
-				if (attachment.renderbuffer.get() == surface)
+				if (attachment.renderbuffer == surface)
 					return true;
 			}
 			return false;

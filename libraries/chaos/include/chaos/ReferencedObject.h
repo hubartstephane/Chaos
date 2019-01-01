@@ -27,21 +27,7 @@ namespace chaos
 		/** destructor */
 		virtual ~ReferencedObject() = default;
 
-		/** utility method for shared_ptr */
-		template<typename POLICY>
-		friend inline void intrusive_ptr_add_ref(ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
-		{
-			obj->AddReference(policy);
-		}
-
-		/** utility method for shared_ptr */
-		template<typename POLICY>
-		friend inline void intrusive_ptr_release(ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
-		{
-			obj->SubReference(policy);
-		}
-
-	protected:
+	public:
 
 		/** adding a reference */
 		virtual void AddReference(SharedPointerPolicy policy)
@@ -77,6 +63,8 @@ namespace chaos
 					OnLastReferenceLost();
 		}
 
+	protected:
+
 		/** called whenever there are no more reference on the object */
 		virtual void OnLastReferenceLost()
 		{
@@ -106,4 +94,27 @@ namespace chaos
 	};
 
 }; // namespace chaos
+
+	 /**
+	 * ReferencedObject : reference count external methods
+	 *
+	 * XXX : theses functions are out of chaos scope, else while shared_ptr is in chaos, it searches for chaos::intrusive_ptr_add function in prioriy
+	 *       and if it was finding ReferencedObject reference functions inside chaos scope, it will fail with IrrklangTools functions
+	 */
+
+	 /** utility method for shared_ptr */
+template<typename POLICY>
+void intrusive_ptr_add_ref(chaos::ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
+{
+	obj->AddReference(policy);
+}
+
+/** utility method for shared_ptr */
+template<typename POLICY>
+void intrusive_ptr_release(chaos::ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
+{
+	obj->SubReference(policy);
+}
+
+
 

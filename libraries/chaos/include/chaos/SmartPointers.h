@@ -210,7 +210,8 @@ namespace chaos
 	template<typename T>
 	using weak_ptr = SmartPointerBase<T, WeakPointerPolicy>;
 	template<typename T>
-	using shared_ptr = SmartPointerBase<T, SharedPointerPolicy>;
+	//using shared_ptr = SmartPointerBase<T, SharedPointerPolicy>;
+	using shared_ptr = boost::intrusive_ptr<T>;
 
 }; // namespace chaos
 

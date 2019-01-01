@@ -17,59 +17,26 @@ namespace chaos
 	public:
 
 		/** constructor */
-		ReferencedObject() :
-			shared_count(0),
-			weak_count(0),
-			shared_destroyed(false)
-		{
-		}
+		ReferencedObject();
 
 		/** destructor */
 		virtual ~ReferencedObject() = default;
 
 	public:
 
-		/** adding a reference */
-		virtual void AddReference(SharedPointerPolicy policy)
-		{
-			assert(!shared_destroyed);
-			++shared_count;
-		}
-
+		/** adding a shared reference */
+		virtual void AddReference(SharedPointerPolicy policy);
 		/** adding a weak reference */
-		virtual void AddReference(WeakPointerPolicy policy)
-		{
-			++weak_count; // can add a weak reference even if the object is destroyed
-		}
-
-		/** removing a reference */
-		virtual void SubReference(SharedPointerPolicy policy)
-		{
-			assert(!shared_destroyed);
-			if (--shared_count <= 0)
-			{
-				shared_destroyed = true;
-				this->~ReferencedObject(); // destroy the object content, but only release memory if weak_count is 0 too
-				if (weak_count <= 0)
-					OnLastReferenceLost();
-			}
-		}
-
+		virtual void AddReference(WeakPointerPolicy policy);
+		/** removing a shared reference */
+		virtual void SubReference(SharedPointerPolicy policy);
 		/** removing a weak reference */
-		virtual void SubReference(WeakPointerPolicy policy)
-		{
-			if (--weak_count <= 0)
-				if (shared_destroyed) // no more weak reference nor shared reference, release memory
-					OnLastReferenceLost();
-		}
+		virtual void SubReference(WeakPointerPolicy policy);
 
 	protected:
 
 		/** called whenever there are no more reference on the object */
-		virtual void OnLastReferenceLost()
-		{
-			free(this);
-		}
+		virtual void OnLastReferenceLost();
 
 	protected:
 
@@ -103,15 +70,15 @@ namespace chaos
 	 */
 
 	 /** utility method for shared_ptr */
-template<typename POLICY>
-void intrusive_ptr_add_ref(chaos::ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
+template<typename POLICY = chaos::SharedPointerPolicy>
+void intrusive_ptr_add_ref(chaos::ReferencedObject * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
 {
 	obj->AddReference(policy);
 }
 
 /** utility method for shared_ptr */
-template<typename POLICY>
-void intrusive_ptr_release(chaos::ReferencedObject * obj, POLICY policy = SharedPointerPolicy()) // to work with boost::intrusive_ptr<>
+template<typename POLICY = chaos::SharedPointerPolicy>
+void intrusive_ptr_release(chaos::ReferencedObject * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
 {
 	obj->SubReference(policy);
 }

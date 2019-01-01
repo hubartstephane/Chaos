@@ -4,11 +4,53 @@
 
 #include "Ludum43Game.h"
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
+#include <chaos/ReferencedObject.h>
+#include <chaos/SmartPointers.h>
+
+class A : public chaos::ReferencedObject
+{
+public:
+
+	A()
+	{
+		static int k = 0;
+		i = ++k;
+	}
+
+	~A()
+	{
+		int k = 0;
+		++k;
+
+	}
+	
+
+	int i = 0;
+
+};
+
 
 int _tmain(int argc, char ** argv, char ** env)
 {
+	chaos::shared_ptr<A> a = new A;
+	chaos::shared_ptr<A> b = nullptr;
+
+	std::swap(a, b);
+
+	argc = argc;
+
+	{
+		std::vector<chaos::shared_ptr<A>> v;
+
+		for (int i = 0; i < 8; ++i)
+			v.push_back(new A);
+
+		argc = argc;
+	}
+
+
+//	return 0;
+
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

@@ -72,6 +72,12 @@ namespace chaos
 		template<typename U>
 		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> && src)
 		{
+			DoSetTarget(src.target);
+			if (src.target != nullptr)
+				intrusive_ptr_release(src.target, POLICY());
+			src.target = nullptr;
+
+#if 0
 			assert(this != &src);
 			if (target != src.target)
 			{
@@ -85,6 +91,7 @@ namespace chaos
 					intrusive_ptr_release(src.target, POLICY()); // no new reference added due to this, src' reference is lost
 			}
 			src.target = nullptr;
+#endif
 			return *this;
 		}
 

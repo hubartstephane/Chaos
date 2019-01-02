@@ -11,7 +11,6 @@
   DependOnLib("OPENGL")      
   DependOnLib("GLEW")
   DependOnLib("GLFW")            
-  DependOnLib("OVR")
   DependOnLib("IRRKLANG")  
   DependOnLib("NANA")  
   DependOnLib("ASSIMP")       
@@ -20,13 +19,12 @@
   DependOnLib("FREETYPE2")
   DependOnLib("JSON")
   DependOnLib("ZLIB")
+  
+  --DependOnLib("OVR")  
   --DependOnLib("OPENCV")
-  --DependOnLib("FFMPEG")      
-      
-        
+  --DependOnLib("FFMPEG")                  
   --DependOnLib("FMODSTUDIO")  
   --DependOnLib("GLI")  
- 
   --DependOnLib("LIBXML2")    
      
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 

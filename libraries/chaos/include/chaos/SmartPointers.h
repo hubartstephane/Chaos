@@ -9,9 +9,27 @@ namespace chaos
 	 * some tags for pointer's policies 
 	 */
 
-	class SharedPointerPolicy	{};
+	class SharedPointerPolicy	
+	{
+	public:
 
-	class WeakPointerPolicy {};
+		template<typename T>
+		static auto Get(T const * smart_ptr)
+		{
+			return smart_ptr->target;
+		}
+	};
+
+	class WeakPointerPolicy 
+	{
+	public:
+
+		template<typename T>
+		static auto Get(T const * smart_ptr)
+		{
+			return smart_ptr->target;
+		}	
+	};
 
 	/**
 	 * SmartPointerBase : implementation of both shared_ptr and weak_ptr
@@ -20,6 +38,9 @@ namespace chaos
 	template<typename T, typename POLICY>
 	class SmartPointerBase
 	{
+		friend class SharedPointerPolicy;
+		friend class WeakPointerPolicy;
+
 	public:
 
 		/** the type of object pointed */
@@ -36,10 +57,8 @@ namespace chaos
 		}
 		/** copy constructor */
 		SmartPointerBase(SmartPointerBase<T, POLICY> const & src) :
-			target(src.target)
+			SmartPointerBase(src.get())
 		{
-			if (target != nullptr)
-				intrusive_ptr_add_ref(target, POLICY());
 		}
 		/** conversion constructor */
 #if 0
@@ -53,7 +72,7 @@ namespace chaos
 #endif
 		/** move constructor */
 		SmartPointerBase(SmartPointerBase<T, POLICY> && src) :  // shuxxx to test
-			target(src.target)
+			target(src.get())
 		{
 			src.target = nullptr; // necessary to capture the reference, else the move semantic would
 		}
@@ -83,7 +102,7 @@ namespace chaos
 		/** copy */
 		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> const & src)
 		{
-			DoSetTarget(src.target);
+			DoSetTarget(src.get());
 			return *this;
 		}
 		/** copy + conversion */
@@ -138,29 +157,34 @@ namespace chaos
 		/** getters */
 		type * get() const
 		{
-			return target;
+			return POLICY::Get(this);
 		}
 
 		/** getters */
 		type * operator ->() const
 		{
-			assert(target != nullptr);
-			return target;
+			type * result = get();
+			assert(result != nullptr);
+			return result;
 		}
 
 		/** getters */
 		type & operator * () const
 		{
-			assert(target != nullptr);
-			return *target;
+			type * result = get();
+			assert(result != nullptr);
+			return *result;
 		}
 
 		/** swap pointers */
 		void swap(SmartPointerBase<T, POLICY> & src)
 		{
-			type * tmp = target;
-			target = src.target;
-			src.target = tmp;
+			if (&src != this)
+			{
+				type * tmp = get();
+				target = src.get();
+				src.target = tmp;
+			}
 		}
 
 	protected:
@@ -182,7 +206,7 @@ namespace chaos
 	protected:
 
 		/** the object pointed */
-		type * target = nullptr;
+		mutable type * target = nullptr;
 	};
 
 

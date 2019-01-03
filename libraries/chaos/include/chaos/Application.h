@@ -69,6 +69,9 @@ namespace chaos
 		/** change the current input mode (search the application) */
 		static void SetApplicationInputMode(int new_mode);
 
+		/** reloading the configuration file (do not apply it to any object at all) */
+		bool ReLoadConfigurationFile(nlohmann::json & result) const;
+
 	protected:
 
 		/** the method that should be override */
@@ -89,11 +92,11 @@ namespace chaos
 		/** finalize the managers */
 		virtual bool FinalizeManagers();
 
-		/** loading the configuration file */
-		void LoadConfigurationFile();
-
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(int new_mode, int old_mode){}
+
+		/** loading the configuration file */
+		bool LoadConfigurationFile();
 
 	protected:
 

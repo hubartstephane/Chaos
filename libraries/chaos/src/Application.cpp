@@ -21,12 +21,21 @@ namespace chaos
 		singleton_instance = nullptr;
 	}
 
-	void Application::LoadConfigurationFile()
+	bool Application::ReLoadConfigurationFile(nlohmann::json & result) const
 	{
+		return JSONTools::LoadJSONFile(configuration, result, true);	
+	}
+
+	bool Application::LoadConfigurationFile()
+	{		
 		FilePathParam path = GetResourcesPath() / "config.json";
 
 		if (JSONTools::LoadJSONFile(path, configuration, true))
-			configuration_path = path.GetResolvedPath();
+		{
+			configuration_path = path.GetResolvedPath();		
+			return true;
+		}
+		return false;
 	}
 
 	bool Application::Initialize()
@@ -56,7 +65,7 @@ namespace chaos
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);
 
-			// load the configuration file
+			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
 			LoadConfigurationFile();
 
 			// initialize, run, and finalize the application

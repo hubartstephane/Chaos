@@ -99,6 +99,9 @@ namespace death
 			if (!game->InitializeFromConfiguration(*game_config, config_path))
 				return false;
 
+		exit(0); // shuxxx
+		return false;
+
 		return true;
 	}
 

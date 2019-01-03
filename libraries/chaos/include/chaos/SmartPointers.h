@@ -57,7 +57,7 @@ namespace chaos
 			target(in_target)
 		{
 			if (target != nullptr)
-				intrusive_ptr_add_ref(target, POLICY());
+				intrusive_ptr_add_ref(const_cast<boost::remove_const<type>::type * >(target), POLICY());
 		}
 		/** copy constructor */
 		SmartPointerBase(SmartPointerBase<T, POLICY> const & src) :
@@ -94,7 +94,7 @@ namespace chaos
 		~SmartPointerBase()
 		{
 			if (target != nullptr)
-				intrusive_ptr_release(target, POLICY());
+				intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(target), POLICY());
 		}
 
 		/** copy */
@@ -125,13 +125,13 @@ namespace chaos
 			if (target != src.target)
 			{
 				if (target != nullptr)
-					intrusive_ptr_release(target, POLICY());
+					intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(target), POLICY());
 				target = src.target;
 			}
 			else
 			{
 				if (src.target != nullptr)
-					intrusive_ptr_release(src.target, POLICY()); // no new reference added due to this, src' reference is lost
+					intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(src.target), POLICY()); // no new reference added due to this, src' reference is lost
 			}
 			src.target = nullptr;
 			return *this;
@@ -200,10 +200,10 @@ namespace chaos
 			if (target != src)
 			{
 				if (target != nullptr)
-					intrusive_ptr_release(target, POLICY());
+					intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(target), POLICY());
 				target = src;
 				if (target != nullptr)
-					intrusive_ptr_add_ref(target, POLICY());
+					intrusive_ptr_add_ref(const_cast<boost::remove_const<type>::type * >(target), POLICY());
 			}
 		}
 

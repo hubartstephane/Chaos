@@ -16,25 +16,27 @@ namespace chaos
 	// VertexArrayCacheEntry : an entry in the cache vertex array
 	// ==================================================================
 
-	class VertexArrayCacheEntry : public ReferencedObject
+	class VertexArrayCacheEntry
 	{
-		friend class GPUProgramToVertexArrayCacheCallbacks;
 		friend class GPUVertexArrayCache;
 
 	public:
 
-		/** destructor */
-		virtual ~VertexArrayCacheEntry();
+		/** whether the entry is still valid (whether one of the pointed element has been destroyed) */
+		bool IsValid() const;
 
 	public:
 
-		/** the cache containing the entry */
-		GPUVertexArrayCache * cache = nullptr;
-		/** the id of the program concerned */
-		GPUProgram const * program = nullptr;
-		/** a pointer on the destruction callback associated */
-		GPUProgramToVertexArrayCacheCallbacks * program_destruction_callback = nullptr;	
-
+		/** the program concerned */
+		weak_ptr<GPUProgram const> program;
+		/** the vertex buffer concerned */
+		weak_ptr<GPUVertexBuffer const> vertex_buffer;
+		/** the index buffer concerned */
+		weak_ptr<GPUIndexBuffer const> index_buffer;
+		/** whether the initial vertex buffer was valid */
+		bool has_vertex_buffer = false;
+		/** whether the initial index buffer was valid */
+		bool has_index_buffer = false;
 		/** the vertex array */
 		shared_ptr<GPUVertexArray> vertex_array;
 	};
@@ -45,7 +47,6 @@ namespace chaos
 
 	class GPUVertexArrayCache : public ReferencedObject
 	{
-		friend class GPUProgramToVertexArrayCacheCallbacks;
 
 	public:
 
@@ -58,37 +59,9 @@ namespace chaos
 
 	protected:
 
-		/** remove the entry from the cache */
-		void RemoveEntry(VertexArrayCacheEntry * entry);
-
-	protected:
-
 		/** the cache content */
-		std::vector<shared_ptr<VertexArrayCacheEntry>> entries;
+		mutable std::vector<VertexArrayCacheEntry> entries;
 
-	};
-
-	// ================================================================================================================
-	// GPUProgramToVertexArrayCacheCallbacks : a callback for GPUProgram to notify the cache that it is being destroyed
-	// ================================================================================================================
-
-	class GPUProgramToVertexArrayCacheCallbacks : public GPUResourceCallbacks
-	{
-
-		friend class GPUVertexArrayCache;
-		friend class VertexArrayCacheEntry;
-
-	protected:
-
-		/** called whenever the object is being released (returns true whether the callback must be removed from the list) */
-		virtual bool OnResourceReleased(GPUResource const * object, bool destruction) override;
-
-	protected:
-
-		/** a raw pointer on the program */
-		GPUProgram const * program = nullptr;
-		/** a raw pointer on a cache entry */
-		VertexArrayCacheEntry * cache_entry = nullptr;	
 	};
 
 }; // namespace chaos

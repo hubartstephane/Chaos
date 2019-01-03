@@ -4,18 +4,19 @@
 
 namespace chaos
 {
-	VertexArrayCacheEntry::~VertexArrayCacheEntry()
+	bool VertexArrayCacheEntry::IsValid() const
 	{
-		GPUProgramToVertexArrayCacheCallbacks * callbacks = program_destruction_callback;
-		if (callbacks != nullptr)
-		{
-			program_destruction_callback = nullptr;
-			// invalidate the destruction callback
-			callbacks->cache_entry = nullptr; 
-			// destroy the callback			
-			if (program != nullptr)
-				program->RemoveReleaseCallback(callbacks); 
-		}	
+		// should always have a program 
+		if (program.get() == nullptr)
+			return false;
+		// check for vertex buffer
+		if (has_vertex_buffer && vertex_buffer.get() == nullptr)
+			return false;
+		// check for index buffer
+		if (has_index_buffer && index_buffer.get() == nullptr)
+			return false;
+		// OK
+		return true;
 	}
 
 	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPUProgram const * program) const
@@ -24,15 +25,49 @@ namespace chaos
 		if (program == nullptr)
 			return nullptr;
 
-		// test whether the program id match
+		// search matching entry
+		GPUVertexArray const * result = nullptr;
+
 		size_t count = entries.size();
-		for (size_t i = 0 ; i < count ; ++i)
+
+		size_t i = 0;
+		while ((i < count) && (result == nullptr))
 		{
-			VertexArrayCacheEntry * entry = entries[i].get();
-			if (entry != nullptr && entry->program == program)
-				return entry->vertex_array.get();		
+			// check whether entry is still valid (else swap/pop with last)
+			VertexArrayCacheEntry & entry = entries[i];
+			if (!entry.IsValid())				
+			{
+				if (i != count - 1)
+					std::swap(entry, entries[count - 1]);
+				entries.pop_back();
+				--count;			
+				continue;
+			}
+			// check whether this is expected entry
+			if (entry.program.get() == program)
+				result = entry.vertex_array.get();
+			// next element
+			++i;
 		}	
-		return nullptr;
+
+		// complete the loop to purge invalid entries
+		while (i < count)
+		{
+			// check whether entry is still valid (else swap/pop with last)
+			VertexArrayCacheEntry & entry = entries[i];
+			if (!entry.IsValid())				
+			{
+				if (i != count - 1)
+					std::swap(entry, entries[count - 1]);
+				entries.pop_back();
+				--count;			
+				continue;
+			}
+			// next element
+			++i;
+		}	
+
+		return result;
 	}
 
 	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUVertexBuffer const * vertex_buffer, GPUIndexBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset)
@@ -68,70 +103,24 @@ namespace chaos
 		GPUProgramData const & data = program->GetProgramData();
 		data.BindAttributes(va, declaration, nullptr);
 
-		// create the destruction callback
-		GPUProgramToVertexArrayCacheCallbacks * new_callback = new GPUProgramToVertexArrayCacheCallbacks();
-		if (new_callback == nullptr)
-			return nullptr;
-
 		// create the entry in the cache
-		VertexArrayCacheEntry * new_entry = new VertexArrayCacheEntry();
-		if (new_entry == nullptr)
-		{
-			delete(new_callback);
-			return nullptr;
-		}
-		// populate data
-		new_callback->cache_entry = new_entry;
+		VertexArrayCacheEntry new_entry;
+		new_entry.program           = program;
+		new_entry.vertex_buffer     = vertex_buffer;
+		new_entry.index_buffer      = index_buffer;
+		new_entry.vertex_array      = new_vertex_array;
+		new_entry.has_vertex_buffer = (vertex_buffer != nullptr);
+		new_entry.has_index_buffer  = (index_buffer != nullptr);
 
-		new_entry->program_destruction_callback = new_callback;
-		new_entry->program = program;
-		new_entry->cache   = this;
-		new_entry->vertex_array = new_vertex_array;
+		entries.push_back(std::move(new_entry));
 
-		// insert the callbacks in the program
-		program->AddReleaseCallback(new_callback);
-		// insert the entry
-		entries.push_back(new_entry);
-
+		// result
 		return new_vertex_array.get();
-	}
-
-	void GPUVertexArrayCache::RemoveEntry(VertexArrayCacheEntry * entry)
-	{
-		assert(entry != nullptr);
-		size_t count = entries.size();
-		for (size_t i = 0 ; i < count ; ++i)
-		{
-			if (entries[i] == entry)
-			{
-				if (i != count - 1)
-					entries[i] = entries[count - 1];
-				entries.pop_back();
-				break;
-			}		
-		}	
 	}
 
 	void GPUVertexArrayCache::Clear()
 	{
 		entries.clear();
-	}
-
-	bool GPUProgramToVertexArrayCacheCallbacks::OnResourceReleased(GPUResource const * object, bool destruction)
-	{
-		VertexArrayCacheEntry * entry = cache_entry;
-		if (entry != nullptr)
-		{
-			cache_entry = nullptr;
-			// invalidate the entry
-			entry->program = nullptr;
-			entry->program_destruction_callback = nullptr;
-			// remove the entry from the cache
-			if (entry->cache != nullptr)
-				entry->cache->RemoveEntry(entry);
-
-		}
-		return true; // this destruction callback is to be removed
 	}
 
 }; // namespace chaos

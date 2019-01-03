@@ -397,7 +397,7 @@ int _tmain(int argc, char ** argv, char ** env)
 		chaos::weak_ptr<A> w1 = s1.get();
 
 
-		chaos::weak_ptr<A> w2 = w1; // std::move(w1);
+	//	chaos::weak_ptr<A> w2 = w1; // std::move(w1);
 
 		auto p2 = w1.get();
 

@@ -39,6 +39,7 @@ namespace chaos
 		virtual void OnLastReferenceLost();
 
 	protected:
+	public:
 
 		/** count shared reference */
 		boost::atomic<int> shared_count;

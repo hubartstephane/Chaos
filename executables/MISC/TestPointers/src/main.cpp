@@ -29,6 +29,8 @@ namespace toto
 		static auto Get(T const * smart_ptr)
 		{
 			assert(smart_ptr != nullptr);
+			if (smart_ptr->target != nullptr && smart_ptr->target->shared_destroyed)
+				smart_ptr->DoSetTarget((T::type*)nullptr);
 			return smart_ptr->target;
 		}
 	};
@@ -193,7 +195,7 @@ namespace toto
 
 		/** internal method to change the content of the pointer */
 		template<typename U>
-		void DoSetTarget(U * src)
+		void DoSetTarget(U * src) const // const because, we are using mutable (because we want weak_ptr.get() method to be able to reset itself and free memory)
 		{
 			if (target != src)
 			{
@@ -377,47 +379,33 @@ class B : public A {};
 int _tmain(int argc, char ** argv, char ** env)
 {
 
-	toto::shared_ptr<A> s1 = new A;
+	{
+		toto::shared_ptr<A> s1 = new A;
 
-	auto p1 = s1.get();
 
-	toto::weak_ptr<A> w1 = s1.get();
 
-	auto p2 = w1.get();
+		//toto::shared_ptr<A> s2 = std::move(s1);
+		auto p1 = s1.get();
 
-	s1 = nullptr;
+		toto::weak_ptr<A> w1 = s1.get();
 
-	auto p3 = s1.get();
-	auto p4 = w1.get();
+
+		toto::weak_ptr<A> w2 = w1; // std::move(w1);
+
+		auto p2 = w1.get();
+
+		s1 = nullptr;
+
+		auto p3 = s1.get();
+		auto p4 = w1.get();
+		//auto p5 = w2.get();
+
+
+		argc = argc;
+	}
 
 
 	argc = argc;
-
-
-#if 0
-
-	{
-		chaos::shared_ptr<A> a = new A;
-		chaos::shared_ptr<A> b = nullptr;
-
-		chaos::shared_ptr<B> c = nullptr;
-
-
-		a = c;
-
-
-		argc = argc;
-		b = a;
-		argc = argc;
-
-		std::swap(a, b);
-
-		argc = argc;
-
-	}
-#endif
-
-
 
   return 0;
 }

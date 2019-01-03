@@ -46,7 +46,7 @@ namespace chaos
 
 	void ReferencedObject::OnLastReferenceLost()
 	{
-	//	free(this);
+		free(this);
 	}
 
 }; // namespace chaos

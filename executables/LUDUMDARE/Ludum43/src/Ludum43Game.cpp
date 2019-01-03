@@ -562,9 +562,9 @@ bool LudumGame::DeclareParticleClasses()
 	return true;
 }
 
-bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
+bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
-	if (!death::Game::InitializeGameValues(config, config_path))
+	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
 	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);

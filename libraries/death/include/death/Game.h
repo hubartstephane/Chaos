@@ -323,7 +323,7 @@ namespace death
 		virtual bool DestroyInGameClocks();
 
 		/** initialize the game data from configuration file */
-		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload);
 
 		/** initialize a mapping with button names / text generator joker */
 		virtual bool InitializeGamepadButtonInfo();

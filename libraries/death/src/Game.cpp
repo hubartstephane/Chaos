@@ -580,7 +580,7 @@ namespace death
 		if (!InitializeGamepadButtonInfo())
 			return false;
 		// initialize game values
-		if (!InitializeGameValues(config, config_path))
+		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
 			return false;
 		// load exisiting levels
 		if (!LoadLevels())
@@ -958,7 +958,7 @@ namespace death
 	}
 
 
-	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 	{
 		DEATHGAME_JSON_ATTRIBUTE(initial_life);
 		DEATHGAME_JSON_ATTRIBUTE(max_life);

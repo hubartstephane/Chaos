@@ -110,7 +110,7 @@ protected:
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
-	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
+	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
 	
 	/** override level creation method */
 	virtual death::TiledMap::Level * CreateTiledMapLevel() override;

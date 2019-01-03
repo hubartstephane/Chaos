@@ -16,6 +16,7 @@ namespace chaos
 		template<typename T>
 		static auto Get(T const * smart_ptr)
 		{
+			assert(smart_ptr != nullptr);
 			return smart_ptr->target;
 		}
 	};
@@ -27,6 +28,9 @@ namespace chaos
 		template<typename T>
 		static auto Get(T const * smart_ptr)
 		{
+			assert(smart_ptr != nullptr);
+			if (smart_ptr->target != nullptr && smart_ptr->target->shared_destroyed)
+				smart_ptr->DoSetTarget((T::type*)nullptr);
 			return smart_ptr->target;
 		}	
 	};
@@ -191,7 +195,7 @@ namespace chaos
 
 		/** internal method to change the content of the pointer */
 		template<typename U>
-		void DoSetTarget(U * src)
+		void DoSetTarget(U * src) const // const because, we are using mutable (because we want weak_ptr.get() method to be able to reset itself and free memory)
 		{
 			if (target != src)
 			{

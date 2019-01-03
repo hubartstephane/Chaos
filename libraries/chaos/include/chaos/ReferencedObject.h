@@ -12,7 +12,8 @@ namespace chaos
 
 	class ReferencedObject
 	{
-		friend class ReferencedObjectFriend;
+		friend class SharedPointerPolicy;
+		friend class WeakPointerPolicy;
 
 	public:
 
@@ -39,7 +40,6 @@ namespace chaos
 		virtual void OnLastReferenceLost();
 
 	protected:
-	public:
 
 		/** count shared reference */
 		boost::atomic<int> shared_count;

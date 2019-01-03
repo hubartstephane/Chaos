@@ -2,6 +2,8 @@
 #include <chaos/SmartPointers.h>
 #include <chaos/ReferencedObject.h>
 
+#if 0
+
 namespace toto
 {
 
@@ -336,6 +338,8 @@ void intrusive_ptr_release(chaos::ReferencedObject * obj, toto::WeakPointerPolic
 // ====================================================
 
 
+#endif
+
 
 
 
@@ -379,6 +383,48 @@ class B : public A {};
 int _tmain(int argc, char ** argv, char ** env)
 {
 
+
+
+#if 1
+	{
+		chaos::shared_ptr<A> s1 = new A;
+
+
+
+		//chaos::shared_ptr<A> s2 = std::move(s1);
+		auto p1 = s1.get();
+
+		chaos::weak_ptr<A> w1 = s1.get();
+
+
+		chaos::weak_ptr<A> w2 = w1; // std::move(w1);
+
+		auto p2 = w1.get();
+
+		s1 = nullptr;
+
+		auto p3 = s1.get();
+		auto p4 = w1.get();
+		//auto p5 = w2.get();
+
+
+		argc = argc;
+	}
+
+
+	argc = argc;
+#endif
+
+
+
+
+
+
+
+
+
+
+#if 0
 	{
 		toto::shared_ptr<A> s1 = new A;
 
@@ -406,6 +452,7 @@ int _tmain(int argc, char ** argv, char ** env)
 
 
 	argc = argc;
+#endif
 
   return 0;
 }

@@ -482,10 +482,12 @@ bool LudumGame::TickGameLoop(double delta_time)
 	// tick sound for heart beat
 	TickHeartBeat(delta_time);
 	// update some internal
-	level_time -= (float)delta_time;
-	if (level_time < 0.0f)
-		level_time = 0.0f;
-
+	if (!GetCheatMode())
+	{
+		level_time -= (float)delta_time;
+		if (level_time < 0.0f)
+			level_time = 0.0f;
+	}
 	return true;
 }
 

@@ -53,6 +53,8 @@ namespace chaos
 
 		/** get the configuration */
 		nlohmann::json const & GetConfiguration() const { return configuration;}
+		/** get the configuration file */
+		boost::filesystem::path const & GetConfigurationPath() const { return configuration_path; }
 
 		/** open the temp local user directory (for debugging purpose) */
 		boost::filesystem::path const & ShowUserLocalTempDirectory() const;	
@@ -70,7 +72,7 @@ namespace chaos
 		static void SetApplicationInputMode(int new_mode);
 
 		/** reloading the configuration file (do not apply it to any object at all) */
-		bool ReLoadConfigurationFile(nlohmann::json & result) const;
+		bool ReloadConfigurationFile(nlohmann::json & result) const;
 
 	protected:
 

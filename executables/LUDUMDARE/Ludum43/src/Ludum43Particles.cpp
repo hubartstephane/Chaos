@@ -207,7 +207,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	{
 	
 #if _DEBUG
-		if (!game->GetCheatNoLifeLoss())
+		if (!game->GetCheatMode())
 #endif
 		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_player_life, true))
 			return true;		

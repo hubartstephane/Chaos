@@ -30,14 +30,14 @@ namespace death
 		return cheat_skip_level_required;
 	}
 
-	void Game::SetCheatNoLifeLoss(bool value)
+	void Game::SetCheatMode(bool value)
 	{
-		cheat_no_life_loss = value;
+		cheat_mode = value;
 	}
 
-	bool Game::GetCheatNoLifeLoss() const
+	bool Game::GetCheatMode() const
 	{
-		return cheat_no_life_loss;
+		return cheat_mode;
 	}
 #endif
 
@@ -121,7 +121,9 @@ namespace death
 		if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
 			SetCheatSkipLevelRequired(true);
 		if (key == GLFW_KEY_F2 && action == GLFW_PRESS)
-			SetCheatNoLifeLoss(!GetCheatNoLifeLoss());
+			SetCheatMode(!GetCheatMode());
+		if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
+			ReloadConfigurationFile();
 #endif
 
 		return false;
@@ -1526,6 +1528,24 @@ namespace death
 	{ 
 		player_allocations = in_allocation; 
 	}
+
+	bool Game::ReloadConfigurationFile()
+	{
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return false;
+
+		nlohmann::json config;
+		if (!application->ReloadConfigurationFile(config))
+			return false;
+
+		nlohmann::json const * game_config = chaos::JSONTools::GetStructure(config, "game");
+		if (game_config == nullptr)
+			return false;
+
+		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
+	}
+
 
 }; // namespace death
 

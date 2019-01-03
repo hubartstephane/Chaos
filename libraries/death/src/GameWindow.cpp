@@ -75,8 +75,10 @@ namespace death
 		{
 			boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
 
+			// display the directories to help debugging
 #if _DEBUG
 			chaos::WinTools::ShowFile(user_temp);
+			chaos::WinTools::ShowFile(application->GetResourcesPath()); 
 #endif
 		}
 
@@ -98,9 +100,6 @@ namespace death
 		if (game_config != nullptr)
 			if (!game->InitializeFromConfiguration(*game_config, config_path))
 				return false;
-
-		exit(0); // shuxxx
-		return false;
 
 		return true;
 	}

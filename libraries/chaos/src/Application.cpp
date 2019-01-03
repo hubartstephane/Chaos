@@ -21,9 +21,9 @@ namespace chaos
 		singleton_instance = nullptr;
 	}
 
-	bool Application::ReLoadConfigurationFile(nlohmann::json & result) const
+	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
 	{
-		return JSONTools::LoadJSONFile(configuration, result, true);	
+		return JSONTools::LoadJSONFile(configuration_path, result, true);	
 	}
 
 	bool Application::LoadConfigurationFile()

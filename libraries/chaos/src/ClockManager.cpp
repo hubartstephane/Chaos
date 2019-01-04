@@ -443,12 +443,25 @@ namespace chaos
 
 	}
 
-
 	void Clock::Reset(bool remove_events)
 	{
 		clock_time = 0.0;
 		if (remove_events)
 			RemoveAllPendingEvents();	
+	}
+
+	// XXX : See ParticleAllocation::SubReference(...) implementation and comments
+	void Clock::SubReference(SharedPointerPolicy policy)
+	{
+		if (parent_clock == nullptr)
+		{			
+			ReferencedObject::SubReference(policy); // the Clock is handled as usual
+		}
+		else
+		{
+			if (--shared_count == 1) // the last reference is the one from the parent clock. Destroy it 
+				RemoveFromParent();		
+		}				
 	}
 
 

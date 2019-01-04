@@ -145,14 +145,8 @@ namespace chaos
 	void ParticleAllocation::SubReference(SharedPointerPolicy policy)
 	{
 		if (layer == nullptr)
-		{
-			// the ParticleAllocation is handled as usual
-			ReferencedObject::SubReference(policy);
-			// the ParticleAllocation is no more in a layer and there is no reference on it => destroy it
-			//if (--shared_count == 0) 
-			//	OnLastReferenceLost();							
-
-			// shuxxx : ParticleAllocation::SubReference    should support weak ptr
+		{			
+			ReferencedObject::SubReference(policy); // the ParticleAllocation is handled as usual
 		}
 		else
 		{

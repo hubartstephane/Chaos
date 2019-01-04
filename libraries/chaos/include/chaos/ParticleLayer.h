@@ -181,7 +181,7 @@ namespace chaos
 		/** destructor */
 		virtual ~ParticleAllocation();
 
-		/** Decrement the reference count */
+		/** Reference count updated : 2 use cases (external reference or not) */
 		virtual void SubReference(SharedPointerPolicy policy) override;
 
 		/** returns true whether the allocation is attached to a layer */

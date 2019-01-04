@@ -320,6 +320,9 @@ namespace chaos
 		/** the destructor */
 		virtual ~Clock();
 
+		/** Reference count updated : 2 use cases (external reference or not) */
+		virtual void SubReference(SharedPointerPolicy policy) override;
+
 		/** returns the internal time */
 		double GetClockTime() const { return clock_time; }
 		/** returns the clock name */

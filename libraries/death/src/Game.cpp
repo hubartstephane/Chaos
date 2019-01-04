@@ -179,6 +179,8 @@ namespace death
 		main_uniform_provider.AddVariableValue("main_time", main_time);
 		double game_time = GetGameClockTime();
 		main_uniform_provider.AddVariableValue("game_time", game_time);
+		double level_time = GetLevelClockTime();
+		main_uniform_provider.AddVariableValue("level_time", level_time);
 		double pause_time = GetPauseClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
 
@@ -521,6 +523,12 @@ namespace death
 			game_clock = nullptr;
 		}
 
+		if (level_clock != nullptr)
+		{
+			game_clock->RemoveFromParent();
+			game_clock = nullptr;
+		}
+
 		if (pause_clock != nullptr)
 		{
 			pause_clock->RemoveFromParent();
@@ -550,7 +558,6 @@ namespace death
 
 		if (pause_clock == nullptr)
 		{
-
 			chaos::ClockCreateParams pause_clock_params;
 			pause_clock_params.paused = true;
 			pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
@@ -657,6 +664,8 @@ namespace death
 	CHAOS_IMPL_GET_CLOCK(GetMainClock, main_clock, const);
 	CHAOS_IMPL_GET_CLOCK(GetGameClock, game_clock, CHAOS_EMPTY_TOKEN);
 	CHAOS_IMPL_GET_CLOCK(GetGameClock, game_clock, const);
+	CHAOS_IMPL_GET_CLOCK(GetLevelClock, level_clock, CHAOS_EMPTY_TOKEN);
+	CHAOS_IMPL_GET_CLOCK(GetLevelClock, level_clock, const);
 	CHAOS_IMPL_GET_CLOCK(GetPauseClock, pause_clock, CHAOS_EMPTY_TOKEN);
 	CHAOS_IMPL_GET_CLOCK(GetPauseClock, pause_clock, const);
 #undef CHAOS_IMPL_GET_CLOCK
@@ -672,6 +681,7 @@ namespace death
 	CHAOS_IMPL_GET_CLOCK_TIME(GetRootClockTime, GetRootClock);
 	CHAOS_IMPL_GET_CLOCK_TIME(GetMainClockTime, GetMainClock);
 	CHAOS_IMPL_GET_CLOCK_TIME(GetGameClockTime, GetGameClock);
+	CHAOS_IMPL_GET_CLOCK_TIME(GetLevelClockTime, GetLevelClock);
 	CHAOS_IMPL_GET_CLOCK_TIME(GetPauseClockTime, GetPauseClock);
 #undef CHAOS_IMPL_GET_CLOCK_TIME
 #undef CHAOS_EMPTY_TOKEN
@@ -1396,10 +1406,23 @@ namespace death
 
 	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance)
 	{
+		// destroy previous level clock
+		if (level_clock != nullptr)
+		{
+			level_clock->RemoveFromParent();
+			level_clock = nullptr;
+		}
+		// leave previous level
 		if (old_level_instance != nullptr)
+		{
 			old_level_instance->OnLevelEnded();
+		}
+		// start new level. Create a new level clock
 		if (new_level_instance != nullptr)
+		{
+			level_clock = root_clock->CreateChildClock("level_clock"); 
 			new_level_instance->OnLevelStarted();
+		}
 	}
 
 	void Game::RestrictCameraToPlayerAndWorld()

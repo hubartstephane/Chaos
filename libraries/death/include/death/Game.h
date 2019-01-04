@@ -86,6 +86,7 @@ namespace death
 		//   - root  clock : the top level clock. never reseted, never paused
 		//   - main  clock : reseted whenever a new game starts/ends. never paused
 		//   - game  clock : reseted whenever a new game starts/ends. paused in MainMenu and Pause
+		//   - level clock : reseted whenever a new level starts/ends. paused in MainMenu and Pause
 		//   - pause clock : reseted whenever we enter/leave pause. only running during pause
 
 		/** returns the root time */
@@ -94,6 +95,8 @@ namespace death
 		double GetMainClockTime() const;
 		/** returns the game time */
 		double GetGameClockTime() const;
+		/** returns the level time */
+		double GetLevelClockTime() const;
 		/** returns the pause time */
 		double GetPauseClockTime() const;
 
@@ -133,6 +136,11 @@ namespace death
 		chaos::Clock * GetGameClock();
 		/** returns game clock */
 		chaos::Clock const * GetGameClock() const;
+
+		/** returns level clock */
+		chaos::Clock * GetLevelClock();
+		/** returns level clock */
+		chaos::Clock const * GetLevelClock() const;
 
 		/** returns pause clock */
 		chaos::Clock * GetPauseClock();
@@ -532,6 +540,7 @@ namespace death
 		chaos::shared_ptr<chaos::Clock> root_clock;
 		chaos::shared_ptr<chaos::Clock> main_clock;
 		chaos::shared_ptr<chaos::Clock> game_clock;
+		chaos::shared_ptr<chaos::Clock> level_clock;
 		chaos::shared_ptr<chaos::Clock> pause_clock;
 
 		/** the particle tools */

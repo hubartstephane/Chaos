@@ -13,6 +13,7 @@ namespace chaos
 		class Tools
 		{
 		public:
+
 			/** Get a list of all monitors sorted left to right */
 			static std::vector<GLFWmonitor *> GetSortedMonitors();
 			/** Get monitor by its index (negative for LEFT, positive for RIGHT, 0 for primary */

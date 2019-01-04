@@ -40,7 +40,7 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * Tools::GetMonitorByIndex(int monitor_index) // shuxxx monitor_index, relative to primary monitor
+		GLFWmonitor * Tools::GetMonitorByIndex(int monitor_index) // monitor_index relative to primary monitor
 		{
 			GLFWmonitor * result = glfwGetPrimaryMonitor();
 			if (monitor_index != 0)
@@ -55,7 +55,7 @@ namespace chaos
 				// primary index
 				int primary_index = (int)(it - b); // we want to offset it with positive or negative values (cast it into signed)
 
-												   // compute the index of the monitor we are interested in (and clamp)
+				 // compute the index of the monitor we are interested in (and clamp)
 				int result_index = primary_index + monitor_index;
 				if (result_index < 0)
 					result_index = 0;

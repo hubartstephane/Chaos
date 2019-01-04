@@ -111,7 +111,7 @@ namespace chaos
 		// the type of buffer we want (there are more kind of buffers we don't support : STREAM ... COPY/READ */
 		GLenum buffer_type = (in_dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;  // GL_STREAM_DRAW ???
 
-		//buffer_type = GL_DYNAMIC_DRAW; // shuxxx !!! avoid some OpenGL warnings
+		buffer_type = GL_DYNAMIC_DRAW; // shuxxx !!! avoid some OpenGL warnings
 		//buffer_type = GL_STREAM_DRAW;
 
 		// compute the real size we want

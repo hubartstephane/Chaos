@@ -511,29 +511,10 @@ namespace death
 	
 	bool Game::DestroyInGameClocks()
 	{
-		if (main_clock != nullptr)
-		{
-			main_clock->RemoveFromParent();
-			main_clock = nullptr;
-		}
-
-		if (game_clock != nullptr)
-		{
-			game_clock->RemoveFromParent();
-			game_clock = nullptr;
-		}
-
-		if (level_clock != nullptr)
-		{
-			game_clock->RemoveFromParent();
-			game_clock = nullptr;
-		}
-
-		if (pause_clock != nullptr)
-		{
-			pause_clock->RemoveFromParent();
-			pause_clock = nullptr;
-		}
+		main_clock  = nullptr;
+		game_clock  = nullptr;
+		game_clock  = nullptr;
+		pause_clock = nullptr;
 		return true;
 	}
 
@@ -1407,11 +1388,7 @@ namespace death
 	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance)
 	{
 		// destroy previous level clock
-		if (level_clock != nullptr)
-		{
-			level_clock->RemoveFromParent();
-			level_clock = nullptr;
-		}
+		level_clock = nullptr;
 		// leave previous level
 		if (old_level_instance != nullptr)
 		{

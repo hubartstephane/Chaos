@@ -447,7 +447,7 @@ void LudumGame::ResetGameVariables()
 	waken_up_particle_count = 0;
 	current_score = 0;
 	heart_beat_time = 0.0f;
-	level_time = 0.0f;
+	level_timeout = 0.0f;
 
 }
 
@@ -460,7 +460,7 @@ void LudumGame::OnGameOver()
 bool LudumGame::CheckGameOverCondition()
 {
 	ParticlePlayer const * player_particle = GetPlayerParticle();
-	if (player_particle == nullptr || level_time <= 0.0f)
+	if (player_particle == nullptr || level_timeout <= 0.0f)
 	{
 		RequireGameOver();
 		return true;
@@ -481,12 +481,12 @@ bool LudumGame::TickGameLoop(double delta_time)
 	TickCooldown(delta_time);
 	// tick sound for heart beat
 	TickHeartBeat(delta_time);
-	// update some internal
+	// update time out
 	if (!GetCheatMode())
 	{
-		level_time -= (float)delta_time;
-		if (level_time < 0.0f)
-			level_time = 0.0f;
+		level_timeout -= (float)delta_time;
+		if (level_timeout < 0.0f)
+			level_timeout = 0.0f;
 	}
 	return true;
 }
@@ -631,7 +631,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
 {
-	static float DEFAULT_LEVEL_TIME = 50.0f;
+	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
 	static int   DEFAULT_LEVEL_PARTICLE_REQUIREMENT = 10;
 
 	// super method
@@ -644,7 +644,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	previous_frame_life = 0.0f;
 	current_score += waken_up_particle_count;
 	waken_up_particle_count = 0;
-	level_time = DEFAULT_LEVEL_TIME;
+	level_timeout = DEFAULT_LEVEL_TIMEOUT;
 	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;
 
 	// change the background image and the level time
@@ -655,7 +655,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 		if (level != nullptr)
 			background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");	
 
-		level_time = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIME);
+		level_timeout = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIMEOUT);
 		level_particle_requirement = level->GetTiledMap()->FindPropertyInt("LEVEL_PARTICLE_REQUIREMENT", DEFAULT_LEVEL_PARTICLE_REQUIREMENT);
 	}
 	CreateBackgroundImage(nullptr, (background_name == nullptr)? nullptr : background_name->c_str());
@@ -744,7 +744,7 @@ void LudumGame::HandleKeyboardInputs()
 
 void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 {
-	if (level_time < 1.0f) // because the player start could cause a repulsion
+	if (GetLevelClockTime() < 3.0) // because the player start could cause a repulsion
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();
@@ -766,7 +766,7 @@ void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 
 void LudumGame::SetPlayerDashMode(bool dash)
 {
-	if (level_time < 1.0f) // because the player start dash
+	if (GetLevelClockTime() < 3.0) // because the player start dash
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();

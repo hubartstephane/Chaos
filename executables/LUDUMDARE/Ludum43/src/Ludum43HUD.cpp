@@ -46,15 +46,15 @@ void LudumPlayingHUD::UpdateSavedParticleCount(LudumGame const * ludum_game)
 
 void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
 {
-	float level_time = ludum_game->GetLevelTime();
-	if (fabsf(level_time - cached_level_time) > 0.1f)
+	float level_timeout = ludum_game->GetLevelTimeout();
+	if (fabsf(level_timeout - cached_level_timeout) > 0.1f)
 	{
-		RegisterParticles(death::GameHUDKeys::LEVEL_TIME_ID, CreateLevelTimeAllocation(level_time, ludum_game->GetViewBox()));
-		cached_level_time = level_time;
+		RegisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID, CreateLevelTimeAllocation(level_timeout, ludum_game->GetViewBox()));
+		cached_level_timeout = level_timeout;
 	}
 }
 
-chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float level_time, chaos::box2 const & view)
+chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float level_timeout, chaos::box2 const & view)
 {
 	std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
 
@@ -70,10 +70,10 @@ chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float lev
 	params.position.y = corners.second.y - 20.0f;
 	params.font_info_name = "normal";
 
-	params.default_color = (level_time >= 10.0f)? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	params.default_color = (level_timeout >= 10.0f)? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// format text and create particles
-	std::string str = chaos::StringTools::Printf("%02.01f", level_time);
+	std::string str = chaos::StringTools::Printf("%02.01f", level_timeout);
 	return GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 }
 

@@ -3,6 +3,7 @@
 #include <chaos/DebugTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/GLMTools.h>
+#include <chaos/Application.h>
 #include <chaos/GeometryFramework.h>
 
 namespace chaos
@@ -284,6 +285,11 @@ namespace chaos
 			LogTools::Log("               type      [%s]", type_str);
 
 			DebugTools::DisplayCallStack(std::cout);
+
+#if _WIN32 || _WIN64
+			if (Application::HasApplicationCommandLineFlag("-GLDebug"))
+				DebugBreak();
+#endif
 		}
 	}
 

@@ -136,7 +136,9 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 			float & radius = c.radius;
 
-			radius *= chaos::MathTools::RandFloat(0.8f, 2.0f);
+
+			//if (!is_world_limits)
+				radius *= chaos::MathTools::RandFloat(0.8f, 2.0f);
 
 			p.bounding_box = chaos::GetBoundingBox(c);
 

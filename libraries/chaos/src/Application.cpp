@@ -139,6 +139,14 @@ namespace chaos
 		userlocal_temp_path = userlocal_path / "temp";
 	}
 
+	char const * Application::GetApplicationEnvironment(char const * key)
+	{
+		Application const * application = Application::GetInstance();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetEnvironment(key);	
+	}
+
 	char const * Application::GetEnvironment(char const * key) const
 	{
 		assert(key != nullptr);
@@ -167,7 +175,7 @@ namespace chaos
 	{
 		Application const * application = Application::GetConstInstance();
 		if (application != nullptr)
-			return application->GetCurrentInputMode();	
+			return application->GetInputMode();	
 		return InputMode::Keyboard;
 	}
 
@@ -175,10 +183,10 @@ namespace chaos
 	{
 		Application * application = Application::GetInstance();
 		if (application != nullptr)
-			application->SetCurrentInputMode(new_mode);	
+			application->SetInputMode(new_mode);	
 	}
 
-	void Application::SetCurrentInputMode(int new_mode)
+	void Application::SetInputMode(int new_mode)
 	{
 		if (new_mode == current_input_mode)
 			return;
@@ -186,6 +194,23 @@ namespace chaos
 		int old_mode = current_input_mode;
 		current_input_mode = new_mode;
 		OnInputModeChanged(new_mode, old_mode);
+	}
+
+	bool Application::HasApplicationCommandLineFlag(char const * flag_name)
+	{
+		Application const * application = Application::GetInstance();
+		if (application == nullptr)
+			return false;
+		return application->HasCommandLineFlag(flag_name);	
+	}
+
+	bool Application::HasCommandLineFlag(char const * flag_name) const
+	{
+		assert(flag_name != nullptr);
+		for (std::string const & arg : arguments)
+			if (_strcmpi(arg.c_str(), flag_name) == 0)
+				return true;
+		return false;	
 	}
 
 }; // namespace chaos

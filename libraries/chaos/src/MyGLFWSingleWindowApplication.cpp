@@ -78,14 +78,18 @@ namespace chaos
 			return new Window;
 		}
 
+		
+
 		bool SingleWindowApplication::Main()
 		{
 			bool result = false;
 
 			SingleWindowApplicationParams params = window_params; // work on a copy of the params
 
-																  // set an error callback
+			// set an error callback
 			glfwSetErrorCallback(OnGLFWError);
+
+			// shuxxx, monitors
 
 			// compute the monitor upon which the window will be : use it for pixel format
 			if (params.monitor == nullptr)

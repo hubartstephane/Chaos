@@ -32,6 +32,8 @@ namespace chaos
 
 		/** get an environment value */
 		char const * GetEnvironment(char const * key) const;
+		/** get an environment value */
+		static char const * GetApplicationEnvironment(char const * key);
 
 		/** get the application arguments */
 		inline std::vector<std::string> const & GetArguments() const { return arguments; }
@@ -62,14 +64,19 @@ namespace chaos
 		boost::filesystem::path const & CreateUserLocalTempDirectory() const;
 
 		/* get the current input mode */
-		int GetCurrentInputMode() const { return current_input_mode; }
+		int GetInputMode() const { return current_input_mode; }
 		/* get the current input mode (search the application) */
 		static int GetApplicationInputMode();
 
 		/** change the current input mode */
-		void SetCurrentInputMode(int new_mode);
+		void SetInputMode(int new_mode);
 		/** change the current input mode (search the application) */
 		static void SetApplicationInputMode(int new_mode);
+
+		/** check whether -flag_name is in command line */
+		bool HasCommandLineFlag(char const * flag_name) const;
+		/** check whether -flag_name is in command line */
+		static bool HasApplicationCommandLineFlag(char const * flag_name);
 
 		/** reloading the configuration file (do not apply it to any object at all) */
 		bool ReloadConfigurationFile(nlohmann::json & result) const;

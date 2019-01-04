@@ -77,8 +77,11 @@ namespace death
 
 			// display the directories to help debugging
 #if _DEBUG
-			chaos::WinTools::ShowFile(user_temp);
-			chaos::WinTools::ShowFile(application->GetResourcesPath()); 
+			if (application->HasCommandLineFlag("-ShowDirectories"))
+			{
+				chaos::WinTools::ShowFile(user_temp);
+				chaos::WinTools::ShowFile(application->GetResourcesPath()); 			
+			}
 #endif
 		}
 

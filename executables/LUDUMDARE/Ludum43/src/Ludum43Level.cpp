@@ -136,9 +136,11 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 			float & radius = c.radius;
 
-
-			//if (!is_world_limits)
+			// XXX : i should rework on level themselves instead of scale 1.2 for world limits
+			if (!is_world_limits)
 				radius *= chaos::MathTools::RandFloat(0.8f, 2.0f);
+			else
+				radius *= 1.2f;
 
 			p.bounding_box = chaos::GetBoundingBox(c);
 

@@ -146,9 +146,11 @@ namespace chaos
 	{
 		if (layer == nullptr)
 		{
-			if (--shared_count == 0) // the ParticleAllocation is no more in a layer and there is no reference on it => destroy it
-				OnLastReferenceLost();							
-
+			// the ParticleAllocation is handled as usual
+			ReferencedObject::SubReference(policy);
+			// the ParticleAllocation is no more in a layer and there is no reference on it => destroy it
+			//if (--shared_count == 0) 
+			//	OnLastReferenceLost();							
 
 			// shuxxx : ParticleAllocation::SubReference    should support weak ptr
 		}

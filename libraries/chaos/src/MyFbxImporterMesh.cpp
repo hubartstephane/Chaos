@@ -542,7 +542,7 @@ namespace chaos
 					// Initialize the vertex arrays
 					glVertexArrayElementBuffer(va, ib);
 
-					glBindVertexArray(va);
+					glBindVertexArray(va); // shuxxx glBindVertexArray(0);
 					glBindBuffer(GL_ARRAY_BUFFER, vb);
 
 					return result;

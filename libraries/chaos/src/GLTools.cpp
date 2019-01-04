@@ -284,7 +284,7 @@ namespace chaos
 			LogTools::Log("               source    [%s]", source_str);
 			LogTools::Log("               type      [%s]", type_str);
 
-			DebugTools::DisplayCallStack(std::cout);
+			//DebugTools::DisplayCallStack(std::cout);
 
 #if _WIN32 || _WIN64
 			if (Application::HasApplicationCommandLineFlag("-GLDebug"))

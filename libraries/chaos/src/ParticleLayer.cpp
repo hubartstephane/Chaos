@@ -418,6 +418,7 @@ namespace chaos
 		primitive.base_vertex_index = 0;
 
 		primitive.Render(instancing);
+		glBindVertexArray(0);
 		return 1; // 1 DrawCall
 	}
 

@@ -65,6 +65,8 @@ namespace chaos
 		// render the primitives
 		for (auto const & primitive : primitives)
 			primitive.Render(instancing);
+		// unbind the vertex array
+		glBindVertexArray(0);
 	}
 
 	void SimpleMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)

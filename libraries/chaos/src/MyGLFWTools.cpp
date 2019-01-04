@@ -40,7 +40,7 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * Tools::GetMonitorByIndex(int monitor_index)
+		GLFWmonitor * Tools::GetMonitorByIndex(int monitor_index) // shuxxx monitor_index, relative to primary monitor
 		{
 			GLFWmonitor * result = glfwGetPrimaryMonitor();
 			if (monitor_index != 0)

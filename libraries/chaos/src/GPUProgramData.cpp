@@ -276,7 +276,7 @@ namespace chaos
 		if (!GLTools::IsSamplerType(type))
 			return false;
 
-		glBindTextureUnit(sampler_index, texture->GetResourceID());
+		glBindTextureUnit(sampler_index, texture->GetResourceID()); // shuxxx missing unbind     glGetTextureHandleARB / glMakeTextureHandleResidentARB / glProgramUniformHandleui64ARB !!!!
 		glUniform1i(location, sampler_index);
 
 		return true;

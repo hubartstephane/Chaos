@@ -101,6 +101,7 @@ namespace chaos
 		// restore states
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
+		glBindVertexArray(0);
 	}
 
 	bool GLDebugOnScreenDisplay::BuildVertexBuffer(int width, int height) const

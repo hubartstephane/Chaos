@@ -164,6 +164,7 @@ namespace chaos
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+		glBindVertexArray(0);
 	}
 
 	void SpriteManager::UpdateGPUVertexBuffer()

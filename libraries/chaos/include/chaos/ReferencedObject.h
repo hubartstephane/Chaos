@@ -50,11 +50,11 @@ namespace chaos
 	};
 
 	/**
-	* DisableLastReferenceLost : an utility class to help using referenced object on stack
+	* DisableReferenceCount : an utility class to help using referenced object on stack
 	*/
 
 	template<typename T>
-	class DisableLastReferenceLost : public T
+	class DisableReferenceCount : public T
 	{
 	public:
 
@@ -62,7 +62,12 @@ namespace chaos
 		using T::T;
 
 	protected:
-		/** disable the reference lost deletion */
+
+		/** disable all reference count functions */
+		virtual void AddReference(WeakPointerPolicy policy) override { }
+		virtual void AddReference(SharedPointerPolicy policy) override { }
+		virtual void SubReference(WeakPointerPolicy policy) override { }
+		virtual void SubReference(SharedPointerPolicy policy) override { }		
 		virtual void OnLastReferenceLost() override { }
 	};
 

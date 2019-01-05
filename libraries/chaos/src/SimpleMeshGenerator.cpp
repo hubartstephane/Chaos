@@ -107,7 +107,7 @@ namespace chaos
 			shared_ptr<GPUVertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
 			shared_ptr<GPUIndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
 
-			if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr))
+			if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr, false, false))  // vertex_buffer and index_buffer are static
 			{
 				GLuint vb = (requirement.vertices_count > 0) ? vb_object->GetResourceID() : 0;
 				GLuint ib = (requirement.indices_count  > 0) ? ib_object->GetResourceID() : 0;

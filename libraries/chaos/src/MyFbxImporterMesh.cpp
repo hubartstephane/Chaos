@@ -519,7 +519,7 @@ namespace chaos
 				// shuxxx
 				assert(0);
 #if 0
-				if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib))
+				if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib, false, false)) // vertex_buffer and index_buffer are static
 				{
 					result->vertex_declaration = vertex_declaration;
 
@@ -532,8 +532,8 @@ namespace chaos
 					result->primitives.push_back(primitive);
 
 					//result->vertex_array  = new GPUVertexArray(va);
-					result->vertex_buffer = new GPUVertexBuffer(vb);
-					result->index_buffer = new GPUIndexBuffer(ib);
+					result->vertex_buffer = new GPUVertexBuffer(vb, false); // static
+					result->index_buffer = new GPUIndexBuffer(ib, false);
 
 					// fill the buffers
 					glNamedBufferData(vb, vertices.bufsize, vertices.data, GL_STATIC_DRAW);

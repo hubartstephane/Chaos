@@ -153,7 +153,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 
-				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter;
+				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 				filter.name_filter.enable_names.push_back("WorldLimits");
 
 				chaos::RenderParams other_render_params = render_params;
@@ -170,7 +170,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 
-				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter;
+				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 				filter.name_filter.forbidden_names.push_back("WorldLimits");
 
 				chaos::RenderParams other_render_params = render_params;
@@ -279,7 +279,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 				// World limits on RED
 				{
-					chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter;
+					chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 					filter.name_filter.enable_names.push_back("WorldLimits");
 
 					chaos::RenderParams other_render_params = render_params;
@@ -292,7 +292,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				// (enlarged) Enemies on GREEN  (position_blend_ratio => enlarged for enemies)
 				//  BLACK => greatest deformation, white => smallest deformation
 				{
-					chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter;
+					chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 					filter.name_filter.enable_names.push_back("Enemies");
 
 					chaos::RenderParams other_render_params = render_params;
@@ -314,7 +314,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				framebuffer_other->BeginRendering();
 				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
-				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter;
+				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 				filter.name_filter.forbidden_names.push_back("Enemies");
 				filter.name_filter.forbidden_names.push_back("Atoms");
 				filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
@@ -370,7 +370,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 			// simply render player and ennemies
 			{
-				chaos::DisableLastReferenceLost<chaos::ParticleLayerFilterList> filter;
+				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 				filter.name_filter.enable_names.push_back("Enemies");
 				filter.name_filter.enable_names.push_back("Atoms");
 				filter.name_filter.enable_names.push_back("PlayerAndCamera");

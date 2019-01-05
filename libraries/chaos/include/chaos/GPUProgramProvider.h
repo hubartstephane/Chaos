@@ -152,7 +152,7 @@ namespace chaos
 	*                           the reference count of this object is disabled. It deserves to be used on the stack
 	*/
 
-	class GPUProgramProviderChain : public DisableLastReferenceLost<GPUProgramProvider>
+	class GPUProgramProviderChain : public DisableReferenceCount<GPUProgramProvider>
 	{
 	public:
 

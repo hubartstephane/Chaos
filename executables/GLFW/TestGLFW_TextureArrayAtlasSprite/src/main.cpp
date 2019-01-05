@@ -121,7 +121,7 @@ protected:
 
     glm::mat4 local_to_cam = glm::translate(tr) * glm::scale(scale);
 
-    chaos::DisableLastReferenceLost<chaos::GPUProgramProvider> uniform_provider;
+    chaos::DisableReferenceCount<chaos::GPUProgramProvider> uniform_provider;
     uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 		
 	chaos::RenderParams render_params;

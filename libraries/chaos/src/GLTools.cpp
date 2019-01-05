@@ -132,7 +132,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUVertexBuffer> * vertex_buffer, shared_ptr<GPUIndexBuffer> * index_buffer)
+	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUVertexBuffer> * vertex_buffer, shared_ptr<GPUIndexBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer)
 	{
 		// release resource at destruction in case of failure 
 		shared_ptr<GPUVertexArray> va;
@@ -148,14 +148,14 @@ namespace chaos
 
 		if (vertex_buffer != nullptr)
 		{
-			vb = new GPUVertexBuffer(); // create a GL resource
+			vb = new GPUVertexBuffer(in_dynamic_vertex_buffer); // create a GL resource
 			if (vb == nullptr || !vb->IsValid())
 				return false;		
 		}
 
 		if (index_buffer != nullptr)
 		{
-			ib = new GPUIndexBuffer(); // create a GL resource
+			ib = new GPUIndexBuffer(in_dynamic_index_buffer); // create a GL resource
 			if (ib == nullptr || !ib->IsValid())
 				return false;		
 		}
@@ -283,6 +283,7 @@ namespace chaos
 			LogTools::Log("               severity  [%s]", severity_str);
 			LogTools::Log("               source    [%s]", source_str);
 			LogTools::Log("               type      [%s]", type_str);
+			LogTools::Log("               id        [%08x]", id);
 
 			//DebugTools::DisplayCallStack(std::cout);
 

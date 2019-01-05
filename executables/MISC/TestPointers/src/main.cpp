@@ -383,6 +383,17 @@ class B : public A {};
 int _tmain(int argc, char ** argv, char ** env)
 {
 
+	chaos::DisableReferenceCount<A> aaa;
+	{
+		
+
+
+		chaos::shared_ptr<A> s1 = &aaa;
+
+		argc = argc;
+	}
+
+	argc = argc;
 
 
 #if 1

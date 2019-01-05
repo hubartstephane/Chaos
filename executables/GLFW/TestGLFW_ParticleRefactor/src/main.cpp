@@ -116,7 +116,7 @@ protected:
 		chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
 
 		//
-		chaos::DisableLastReferenceLost<chaos::GPUProgramProvider> uniform_provider;
+		chaos::DisableReferenceCount<chaos::GPUProgramProvider> uniform_provider;
 
 		glm::vec2 world_size     = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
 		glm::vec2 world_position = glm::vec2(0.0f, 0.0f);

@@ -43,7 +43,7 @@ namespace chaos
 		static bool MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result);
 
 		/** generate multiple arrays/buffer with a single call */
-		static bool GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUVertexBuffer> * vertex_buffer, shared_ptr<GPUIndexBuffer> * index_buffer);
+		static bool GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUVertexBuffer> * vertex_buffer, shared_ptr<GPUIndexBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer);
 
 		/** an utility function to 'compute' offset in vertex buffer (simple cast in facts) */
 		static inline void * GetOffset(size_t s)

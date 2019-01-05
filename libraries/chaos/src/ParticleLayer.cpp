@@ -129,7 +129,7 @@ namespace chaos
 
 	void ParticleAllocation::SetEmptyCallbackAutoRemove()
 	{
-		static DisableLastReferenceLost<ParticleAllocationAutoRemoveEmptyCallback> auto_remove_callback;
+		static DisableReferenceCount<ParticleAllocationAutoRemoveEmptyCallback> auto_remove_callback;
 		SetEmptyCallback(&auto_remove_callback);
 	}
 
@@ -348,12 +348,15 @@ namespace chaos
 		// return the number of vertices from the previous call
 		if (!require_GPU_update && !AreVerticesDynamic())
 			return true; 
+
 		// create the vertex buffer if necessary
+		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
+
 		if (vertex_buffer == nullptr)
 		{
-			vertices_count = 0; // no vertices inside fot the moment
+			vertices_count = 0; // no vertices inside for the moment
 
-			vertex_buffer = new GPUVertexBuffer();
+			vertex_buffer = new GPUVertexBuffer(dynamic_buffer);
 			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
 			{
 				vertex_buffer = nullptr;
@@ -361,18 +364,17 @@ namespace chaos
 			}
 		}
 
-		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
-
-		// reserve memory (for the maximum number of vertices possible)
+		// release memory => maybe this is worth delay this action after a while and being sure the data inside is not necessary anymore
 		size_t vertex_buffer_size = GetVertexSize() * GetVerticesCountPerParticles() * ComputeMaxParticleCount();
 		if (vertex_buffer_size == 0)
 		{
-			vertex_buffer->SetBufferData(nullptr, 0, dynamic_buffer, GPUBufferResizePolicy()); // empty the buffer : for some reason, we cannot just kill the buffer
+			vertex_buffer->SetBufferData(nullptr, 0); // empty the buffer : for some reason, we cannot just kill the buffer
 			vertices_count = 0;
 			return true;
 		}
-		
-		if (!vertex_buffer->SetBufferData(nullptr, vertex_buffer_size, dynamic_buffer, GPUBufferDoublingResizePolicy()))
+
+		// reserve memory (for the maximum number of vertices possible)
+		if (!vertex_buffer->SetBufferData(nullptr, vertex_buffer_size))
 		{
 			vertices_count = 0;
 			return false;
@@ -384,7 +386,7 @@ namespace chaos
 			vertices_count = 0;
 			return false;
 		}
-		// update the buffer
+		// fill the buffer with data
 		vertices_count = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
 		// unmap the buffer
 		vertex_buffer->UnMapBuffer();
@@ -415,7 +417,6 @@ namespace chaos
 		primitive.count = (int)vertex_count;
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
-
 		primitive.Render(instancing);
 		glBindVertexArray(0);
 		return 1; // 1 DrawCall

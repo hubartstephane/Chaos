@@ -3,7 +3,6 @@
 
 namespace chaos
 {
-
 	size_t GPUBufferResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const
 	{
 		return in_size; // the normal policy
@@ -51,14 +50,13 @@ namespace chaos
 		Release();
 		// create new resource
 		glCreateBuffers(1, &buffer_id);
-	//	glNamedBufferStorage(buffer_id, 10, nullptr, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
+		//glNamedBufferStorage(buffer_id, 6666, nullptr, /*GL_MAP_READ_BIT | */GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
 		// shuxxx
-
-
 		if (buffer_id == 0)
 			return false;
 		ownership = true;
 		dynamic = in_dynamic;
+		buffer_size = 0;
 		return true;
 	}
 
@@ -84,9 +82,10 @@ namespace chaos
 			GLint size = 0;
 			glGetNamedBufferParameteriv(in_id, GL_BUFFER_SIZE, &size);
 			buffer_size = (size_t)size;
-
-
-
+			// get the usage : dynamic, static ...
+			int usage = 0;
+			glGetNamedBufferParameteriv(in_id, GL_BUFFER_USAGE, &usage);
+			dynamic = (usage == GL_STREAM_DRAW || usage == GL_DYNAMIC_DRAW);
 			// initialize internals
 			buffer_id = in_id;
 			ownership = in_ownership;
@@ -114,33 +113,37 @@ namespace chaos
 	{
 		// early exit
 		if (buffer_id == 0)
-			return 0;
+			return false;
 
 		// the type of buffer we want (there are more kind of buffers we don't support : STREAM ... COPY/READ */
-		GLenum buffer_type = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;  // GL_STREAM_DRAW ???
+		GLenum buffer_type = (dynamic) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;  // GL_STREAM_DRAW ??? GL_DYNAMIC_DRAW ??
 
-		buffer_type = GL_DYNAMIC_DRAW; // shuxxx !!! avoid some OpenGL warnings
-		buffer_type = GL_STREAM_DRAW;
+		// XXX: a mapping a STATIC_BUFFER triggers a performance warning (not a notification)
+		//      static buffers should use glBufferData(...)
+		//      test what happens with glBufferStorage(...)
+
+		// buffer_type = GL_DYNAMIC_DRAW; // !!! avoid some OpenGL warnings
 
 		// compute the real size we want
-		size_t effective_size = in_size; // in_policy.GetReservedSize(*this, in_size);
+		size_t effective_size = (dynamic) ?
+			GPUBufferDoublingResizePolicy().GetReservedSize(*this, in_size):
+			GPUBufferResizePolicy().GetReservedSize(*this, in_size);
 
 		// just want to transfert some data
 		if (in_data != nullptr)
 		{
-			// typedef void (GLAPIENTRY * glNamedBufferSubData) (GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data);
-
 			bool transfered = false;
 
-			// allocate buffer (if necessary) and try transfert data at buffer creation
+			// resize necessary
 			if (effective_size != buffer_size)
 			{
+				// can resize + transfert at the same time
 				if (effective_size == in_size)
 				{
-					//glNamedBufferData(buffer_id, in_size, nullptr, buffer_type); // shuxxx orphan
 					glNamedBufferData(buffer_id, in_size, in_data, buffer_type); // can transfert data in the same time because data_size == allocation_size
 					transfered = true;
 				}
+				// resize. cannot transfert at the same time
 				else
 				{
 					glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type); // reallocate and transfert NO data
@@ -148,27 +151,20 @@ namespace chaos
 			}
 			// transfert data if not done yet
 			if (!transfered && in_size != 0)
-			{
-				char * mapped_buffer = MapBuffer(0, in_size, false, true); // no need to reallocate. Just transfert data
-				if (mapped_buffer == nullptr)
-					return false;
-				memcpy(mapped_buffer, in_data, in_size);
-				UnMapBuffer();
-			}
+				glNamedBufferSubData(buffer_id, 0, in_size, in_data);
 
 			buffer_size = effective_size;
 			return true;
 		}
-
-		// we want to allocate buffer without any transfert
-		assert(in_data == nullptr);
-
-		// no need to do any thing, time is the same
-		if (effective_size == buffer_size)
-			return true;
-
-		glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type);
-		buffer_size = effective_size;
+		// we want to resize buffer without any transfert
+		else
+		{
+			// no need to do any thing, time is the same
+			if (effective_size == buffer_size)
+				return true;
+			glNamedBufferData(buffer_id, effective_size, nullptr, buffer_type);
+			buffer_size = effective_size;
+		}
 		return true;
 	}
 
@@ -214,7 +210,6 @@ namespace chaos
 	{
 		if (buffer_id == 0)
 			return;			
-		//glFlushMappedNamedBufferRange(buffer_id, 0, length);
 		glUnmapNamedBuffer(buffer_id);
 	}
 

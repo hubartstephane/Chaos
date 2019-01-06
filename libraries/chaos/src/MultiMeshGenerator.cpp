@@ -60,7 +60,7 @@ namespace chaos
 
 			// allocate buffer for vertices and indices
 			std::pair<char *, GLuint *> mapping;
-			if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
+			if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping)) // shuxxx
 			{
 				// generate the indices and the vertices
 				MemoryBufferWriter vertices_writer(mapping.first, vb_size);

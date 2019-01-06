@@ -88,7 +88,7 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 {
 	if (!death::Game::OnPhysicalGamepadInput(physical_gamepad))
 		return false;
-
+	
 	return true;
 }
 
@@ -99,151 +99,8 @@ bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	return false;
 }
 
-
-
-
-
-
-
-
-
-#if 0
-
 void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider)
 {
-	// XXX : Very Hugly code !!!!
-	//       Do not try this at home
-
-
-
-	// clear the color buffers
-	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-	// clear the depth buffers
-	float far_plane = 1000.0f;
-	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-	// some states
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-
-	// try to capture the "WorldBounds layer"
-	// XXX : in menu, there is no current_level_instance, so we can test the pointer to exaclty know what to do
-	//
-
-	death::TiledMap::LayerInstance * worldlimits = nullptr;
-
-	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
-	if (ludum_level_instance != nullptr)
-	{
-		if (!GenerateFramebuffer(render_params.screen_size, framebuffer_other) || !GenerateFramebuffer(render_params.screen_size, framebuffer_worldlimits))
-		{
-			ludum_level_instance = nullptr;
-		}			
-		else
-		{
-			// render world limits
-			{
-				framebuffer_worldlimits->BeginRendering();
-
-				glViewport(0, 0, render_params.screen_size.x, render_params.screen_size.y);
-
-				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-
-				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
-				filter.name_filter.enable_names.push_back("WorldLimits");
-
-				chaos::RenderParams other_render_params = render_params;
-				other_render_params.object_filter = &filter;
-
-				ludum_level_instance->Display(&uniform_provider, other_render_params);
-
-				framebuffer_worldlimits->EndRendering();
-			}
-			// render all others
-			{
-				framebuffer_other->BeginRendering();
-
-				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-
-				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
-				filter.name_filter.forbidden_names.push_back("WorldLimits");
-
-				chaos::RenderParams other_render_params = render_params;
-				other_render_params.object_filter = &filter;
-
-				// draw particle system (the background)
-				if (particle_manager != nullptr)
-					particle_manager->Display(&uniform_provider, other_render_params);
-
-				// draw the level_instance
-				current_level_instance->Display(&uniform_provider, other_render_params);
-
-				framebuffer_other->EndRendering();
-			}
-		}
-	}
-
-	chaos::GLTools::SetViewport(render_params.viewport);
-
-	// In menu
-	if (ludum_level_instance == nullptr)
-	{
-		if (particle_manager != nullptr)
-			particle_manager->Display(&uniform_provider, render_params); // only background !! HACK
-
-	}
-	// combine the two layers
-	else
-	{
-
-		chaos::GPUProgramProviderChain main_provider(&uniform_provider);
-
-		chaos::GPUFramebufferAttachmentInfo const * attachment_worldlimits = framebuffer_worldlimits->GetColorAttachment(0);
-		if (framebuffer_worldlimits != nullptr)
-		{
-			chaos::GPUTexture * texture = attachment_worldlimits->texture.get();
-			if (texture != nullptr)
-				main_provider.AddVariableValue("extra_background", texture);
-		}
-
-		chaos::GPUFramebufferAttachmentInfo const * attachment_other = framebuffer_other->GetColorAttachment(0);
-		if (attachment_other != nullptr)
-		{
-			chaos::GPUTexture * texture = attachment_other->texture.get();
-			if (texture != nullptr)
-				main_provider.AddVariableValue("background", texture);
-		}
-
-		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-
-		// redraw the background => BIG HACK
-		if (particle_manager != nullptr)
-			particle_manager->Display(&main_provider, render_params);
-
-	}
-
-	// finally draw the hud
-	if (hud != nullptr)
-		hud->Display(&uniform_provider, render_params);
-}
-
-#endif
-
-#if 1
-
-void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider)
-{
-	// XXX : Very Hugly code !!!!
-	//       Do not try this at home
-
-
-
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -261,8 +118,6 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	// XXX : in menu, there is no current_level_instance, so we can test the pointer to exaclty know what to do
 	//
 	death::TiledMap::LayerInstance * worldlimits = nullptr;
-
-
 
 	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
 	if (ludum_level_instance != nullptr)
@@ -404,30 +259,6 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 	if (hud != nullptr)
 		hud->Display(&uniform_provider, render_params);
 }
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 {

@@ -106,13 +106,13 @@ namespace chaos
 		return GetEnumVectorArityImpl(type, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
 	}
 
-	bool GLTools::MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result)
+	bool GLTools::MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result) // shuxxx
 	{
 		result = std::make_pair(nullptr, nullptr);
 
 		if (vertex_buffer != 0)
 		{
-			glNamedBufferData(vertex_buffer, vb_size, nullptr, GL_STATIC_DRAW);
+			glNamedBufferData(vertex_buffer, vb_size, nullptr, GL_STATIC_DRAW); // shuxxx !!!
 			result.first = (char *)glMapNamedBuffer(vertex_buffer, GL_WRITE_ONLY);
 			if (result.first == nullptr)
 				return false;
@@ -273,7 +273,7 @@ namespace chaos
 
 	void WINAPI GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
-		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Application::HasApplicationCommandLineFlag("-GLDebugNotifications"))
 		{
 			char const * source_str = GLenumToString(source);
 			char const * type_str = GLenumToString(type);

@@ -50,10 +50,10 @@ namespace death
 			game->OnMouseMove(x, y);
 	}
 
-	bool GameWindow::OnDraw(glm::ivec2 size)
+	bool GameWindow::OnDraw(chaos::Renderer * in_renderer, glm::ivec2 size)
 	{
 		if (game != nullptr)
-			game->Display(size);
+			game->Display(in_renderer, size);
 		return true;
 	}
 

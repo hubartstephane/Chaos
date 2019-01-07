@@ -2,6 +2,7 @@
 #include <chaos/MyGLFWWindow.h>
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
+#include <chaos/MyGLFWSingleWindowApplication.h>
 
 namespace chaos
 {
@@ -150,9 +151,19 @@ namespace chaos
 				if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
 					return;
 
-				if (my_window->OnDraw(glm::ivec2(width, height)))
-					if (my_window->double_buffer)
-						glfwSwapBuffers(in_glfw_window);
+				MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+				if (application != nullptr)
+				{
+					Renderer * renderer = application->GetRenderer();
+					if (renderer != nullptr)
+					{
+						renderer->BeginRenderingFrame();
+						if (my_window->OnDraw(renderer, glm::ivec2(width, height)))
+							if (my_window->double_buffer)
+								glfwSwapBuffers(in_glfw_window);
+						renderer->EndRenderingFrame();
+					}
+				}
 			}
 		}
 

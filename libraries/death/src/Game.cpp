@@ -145,12 +145,8 @@ namespace death
 
 	}
 
-	void Game::Display(glm::ivec2 const & size)
+	void Game::Display(chaos::Renderer * renderer, glm::ivec2 const & size)
 	{
-		chaos::Renderer renderer;
-
-
-
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
 		// keep camera, player inside the world (can be done at rendering time)
@@ -192,7 +188,7 @@ namespace death
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
 		render_params.timestamp = rendering_timestamp++; // shuxxx : optimization
-		DoDisplay(&renderer, &main_uniform_provider, render_params);
+		DoDisplay(renderer, &main_uniform_provider, render_params);
 
 		// count the frame rate
 		fps_counter.Accumulate(1.0f);

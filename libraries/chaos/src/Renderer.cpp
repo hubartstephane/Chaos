@@ -2,4 +2,13 @@
 
 namespace chaos
 {
+
+	void Renderer::BeginRenderingFrame()
+	{
+	}
+
+	void Renderer::EndRenderingFrame()
+	{
+	}
+
 }; // namespace chaos

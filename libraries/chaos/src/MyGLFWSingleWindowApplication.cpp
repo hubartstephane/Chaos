@@ -146,72 +146,70 @@ namespace chaos
 
 			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
 			GLFWwindow * glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
+			if (glfw_window == nullptr)
+				return false;
+			glfwMakeContextCurrent(glfw_window);
 
-			// main loop
-			if (glfw_window != nullptr)
+			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
+			//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
+			glewExperimental = GL_TRUE;
+			// create the context
+			GLenum err = glewInit();
+			if (err != GLEW_OK)
 			{
-				glfwMakeContextCurrent(glfw_window);
-
-				// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
-				//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
-				glewExperimental = GL_TRUE;
-				// create the context
-				GLenum err = glewInit();
-				if (err != GLEW_OK)
-				{
-					LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
-				}
-				else
-				{
-					// set the debug log hander
-					GLTools::SetDebugMessageHandler();
-					// some generic information
-					GLTools::DisplayGenericInformation();
-
-					// initialize the GPU resource Manager
-					InitializeGPUManager();
-
-					// bind the window
-					window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);
-					// prepare the window
-					result = window->InitializeFromConfiguration(configuration, configuration_path);
-					if (result)
-					{
-						// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
-						int left, top, right, bottom;
-						glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-						if (left != 0 || top != 0 || right != 0 || bottom != 0)
-						{
-							x += left;
-							y += top;
-							params.width = params.width - left - right;
-							params.height = params.height - top - bottom;
-							glfwSetWindowSize(glfw_window, params.width, params.height);
-						}
-
-						glfwSetWindowPos(glfw_window, x, y);
-						glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-						// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-						//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-						glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
-
-						// now that the window is fully placed ... we can show it
-						if (params.hints.start_visible)
-							glfwShowWindow(glfw_window);
-
-						// the main loop
-						MessageLoop();
-					}
-					window->Finalize();
-					FinalizeGPUManager();
-				}
-				glfwDestroyWindow(glfw_window);
+				LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
+				return false;
 			}
 
-			return result;
+			// create the renderer
+			renderer = new Renderer;
+			if (renderer == nullptr)
+				return false;
+
+			// set the debug log hander
+			GLTools::SetDebugMessageHandler();
+			// some generic information
+			GLTools::DisplayGenericInformation();
+
+			// initialize the GPU resource Manager
+			InitializeGPUManager();
+
+			// bind the window
+			window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);
+			// prepare the window
+			result = window->InitializeFromConfiguration(configuration, configuration_path);
+			if (result)
+			{
+				// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
+				int left, top, right, bottom;
+				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
+				if (left != 0 || top != 0 || right != 0 || bottom != 0)
+				{
+					x += left;
+					y += top;
+					params.width = params.width - left - right;
+					params.height = params.height - top - bottom;
+					glfwSetWindowSize(glfw_window, params.width, params.height);
+				}
+
+				glfwSetWindowPos(glfw_window, x, y);
+				glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+				glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
+
+				// now that the window is fully placed ... we can show it
+				if (params.hints.start_visible)
+					glfwShowWindow(glfw_window);
+
+				// the main loop
+				MessageLoop();
+			}
+			return true;
 		}
 
+		
 		void SingleWindowApplication::TickManagers(double delta_time)
 		{
 			if (main_clock != nullptr)
@@ -312,9 +310,17 @@ namespace chaos
 
 		bool SingleWindowApplication::Finalize()
 		{
+			FinalizeGPUManager();
+
 			// stop the window
 			if (window != nullptr)
 			{
+				window->Finalize();
+
+				GLFWwindow * glfw_window = window->GetGLFWHandler();
+				if (glfw_window != nullptr)
+					glfwDestroyWindow(glfw_window);
+
 				delete(window);
 				window = nullptr;
 			}

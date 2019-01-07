@@ -264,7 +264,7 @@ namespace death
 		/** whenever mouse is displaced */
 		virtual void OnMouseMove(double x, double y);
 		/** the rendering method */
-		virtual void Display(glm::ivec2 const & size);
+		virtual void Display(chaos::Renderer * renderer, glm::ivec2 const & size);
 		/** the user defined rendering function */
 		virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 

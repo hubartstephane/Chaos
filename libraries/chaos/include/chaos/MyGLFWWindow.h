@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/Renderer.h>
 
 namespace chaos
 {
@@ -100,7 +101,7 @@ namespace chaos
 			/** called whenever the window is resized */
 			virtual void OnWindowResize(glm::ivec2 size) {}
 			/** called whenever the window is redrawn */
-			virtual bool OnDraw(glm::ivec2 size) { return true; }
+			virtual bool OnDraw(Renderer * in_renderer, glm::ivec2 size) { return true; }
 			/** called whenever the mouse is moved */
 			virtual void OnMouseMove(double x, double y) {}
 			/** called whenever the mouse button is down / up */

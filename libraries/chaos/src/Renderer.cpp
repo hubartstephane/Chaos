@@ -11,4 +11,9 @@ namespace chaos
 	{
 	}
 
+	void Renderer::Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing)
+	{
+
+	}
+
 }; // namespace chaos

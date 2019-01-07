@@ -7,6 +7,7 @@
 #include <chaos/DrawPrimitive.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPURenderMaterial.h>
+#include <chaos/Renderer.h>
 
 namespace chaos
 {
@@ -104,7 +105,7 @@ namespace chaos
 	public:
 
 		/** public method to render the object */
-		int Display(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
+		int Display(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
 
 		/** show or hide the object */
 		void Show(bool in_visible = true);
@@ -121,7 +122,7 @@ namespace chaos
 		/** override */
 		virtual bool CanTick() override;
 		/** the user defined method to display the object */
-		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
+		virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
 		/** called to update the graphic resource */
 		virtual bool DoUpdateGPUResources() const;
 		/** called whenever object visibility has been changed */

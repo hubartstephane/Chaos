@@ -266,7 +266,7 @@ namespace death
 		/** the rendering method */
 		virtual void Display(glm::ivec2 const & size);
 		/** the user defined rendering function */
-		virtual void DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider);
+		virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);

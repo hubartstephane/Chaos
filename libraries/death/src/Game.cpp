@@ -147,6 +147,10 @@ namespace death
 
 	void Game::Display(glm::ivec2 const & size)
 	{
+		chaos::Renderer renderer;
+
+
+
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
 		// keep camera, player inside the world (can be done at rendering time)
@@ -188,20 +192,20 @@ namespace death
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
 		render_params.timestamp = rendering_timestamp++; // shuxxx : optimization
-		DoDisplay(render_params, main_uniform_provider);
+		DoDisplay(&renderer, &main_uniform_provider, render_params);
 
 		// count the frame rate
 		fps_counter.Accumulate(1.0f);
 	}
 
-	void Game::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider)
+	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
 		// display the level instance
 		if (current_level_instance != nullptr)
-			current_level_instance->Display(&uniform_provider, render_params);
+			current_level_instance->Display(renderer, uniform_provider, render_params);
 		// display the hud (AFTER the level)
 		if (hud != nullptr)
-			hud->Display(&uniform_provider, render_params);
+			hud->Display(renderer, uniform_provider, render_params);
 	}
 
 	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)

@@ -99,7 +99,7 @@ bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
 	return false;
 }
 
-void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUProgramProvider & uniform_provider)
+void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 {
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -141,7 +141,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 					other_render_params.object_filter = &filter;
 
 					glColorMask(true, false, false, true);
-					ludum_level_instance->Display(&uniform_provider, other_render_params);
+					ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
 				}
 
 				// (enlarged) Enemies on GREEN  (position_blend_ratio => enlarged for enemies)
@@ -153,11 +153,11 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 					chaos::RenderParams other_render_params = render_params;
 					other_render_params.object_filter = &filter;
 
-					chaos::GPUProgramProviderChain enlarged_provider(&uniform_provider);
+					chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
 					enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
 
 					glColorMask(false, true, false, true);
-					ludum_level_instance->Display(&enlarged_provider, other_render_params);
+					ludum_level_instance->Display(renderer, &enlarged_provider, other_render_params);
 					glColorMask(true, true, true, true);
 				}
 
@@ -188,8 +188,8 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 				// draw particle system (the background)
 				if (particle_manager != nullptr)
-					particle_manager->Display(&uniform_provider, other_render_params);
-				current_level_instance->Display(&uniform_provider, other_render_params);
+					particle_manager->Display(renderer, uniform_provider, other_render_params);
+				current_level_instance->Display(renderer, uniform_provider, other_render_params);
 
 				framebuffer_other->EndRendering();
 			}
@@ -198,7 +198,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 			{
 				chaos::GLTools::SetViewport(render_params.viewport);
 
-				chaos::GPUProgramProviderChain main_provider(&uniform_provider);
+				chaos::GPUProgramProviderChain main_provider(uniform_provider);
 
 				chaos::GPUFramebufferAttachmentInfo const * attachment_worldlimits = framebuffer_worldlimits->GetColorAttachment(0);
 				if (framebuffer_worldlimits != nullptr)
@@ -219,7 +219,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 				if (particle_manager != nullptr)
-					particle_manager->Display(&main_provider, render_params);
+					particle_manager->Display(renderer, &main_provider, render_params);
 			}
 
 
@@ -241,7 +241,7 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 				other_rendering_params.object_filter = &filter;
 
 				// draw particle system (the background)
-				current_level_instance->Display(&uniform_provider, other_rendering_params);
+				current_level_instance->Display(renderer, uniform_provider, other_rendering_params);
 			}
 		}
 	}
@@ -251,13 +251,13 @@ void LudumGame::DoDisplay(chaos::RenderParams const & render_params, chaos::GPUP
 
 		// draw particle system (the background)
 		if (particle_manager != nullptr)
-			particle_manager->Display(&uniform_provider, render_params);
+			particle_manager->Display(renderer, uniform_provider, render_params);
 
 	}
 
 	// finally draw the hud
 	if (hud != nullptr)
-		hud->Display(&uniform_provider, render_params);
+		hud->Display(renderer, uniform_provider, render_params);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

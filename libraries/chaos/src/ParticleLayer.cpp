@@ -321,7 +321,7 @@ namespace chaos
 		return result;
 	}
 
-	int ParticleLayer::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleLayer::DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		// early exit
 		if (vertices_count == 0)

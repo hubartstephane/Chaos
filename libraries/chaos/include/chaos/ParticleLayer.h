@@ -691,7 +691,7 @@ namespace chaos
 		/** ticking the particle system */
 		virtual bool DoTick(double delta_time) override;
 		/** draw the layer */
-		virtual int DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
+		virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
 		/** change the GL rendering state */
 		void UpdateRenderingStates(bool begin) const;

@@ -364,7 +364,7 @@ namespace death
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
-			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+			virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerCollision(double delta_time);
@@ -488,7 +488,7 @@ namespace death
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
-			virtual int DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+			virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerCollision(double delta_time);

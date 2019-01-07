@@ -104,11 +104,11 @@ namespace death
 		return true;
 	}
 
-	int GameHUD::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
+	int GameHUD::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 	{
 		int result = 0; 
 		if (!external_manager && particle_manager != nullptr)
-			result += particle_manager->Display(uniform_provider, render_params);
+			result += particle_manager->Display(renderer, uniform_provider, render_params);
 		return result;
 	}
 

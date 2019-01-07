@@ -750,7 +750,7 @@ namespace death
 			return true;
 		}
 		
-		int LayerInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
+		int LayerInstance::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
 			// early exit
 			int result = 0;
@@ -812,7 +812,7 @@ namespace death
 					chaos::GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
 					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)) + offset);
 					// draw call
-					result += particle_layer->Display(&instance_uniform_provider, render_params);
+					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
 				}
 			}
 			return result;
@@ -891,17 +891,17 @@ namespace death
 			return true;
 		}
 
-		int LevelInstance::DoDisplay(chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
+		int LevelInstance::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 		{
 			int result = 0;
 
 			// display particle manager
 			if (particle_manager != nullptr)
-				result += particle_manager->Display(uniform_provider, render_params);
+				result += particle_manager->Display(renderer, uniform_provider, render_params);
 			// draw the layer instances0
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count ; ++i)
-				result += layer_instances[i]->Display(uniform_provider, render_params);
+				result += layer_instances[i]->Display(renderer, uniform_provider, render_params);
 			
 			return result;
 		}

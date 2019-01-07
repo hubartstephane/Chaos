@@ -88,9 +88,9 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleManager::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleManager::DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
-		return layer_system.Display(uniform_provider, render_params);
+		return layer_system.Display(renderer, uniform_provider, render_params);
 	}
 
 }; // namespace chaos

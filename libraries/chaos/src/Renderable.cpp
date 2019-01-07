@@ -26,8 +26,9 @@ namespace chaos
 	// Renderable implementation
 	// ========================================================
 
-	int Renderable::Display(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int Renderable::Display(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
+		assert(renderer != nullptr);
 		if (!IsVisible())
 			return 0;
 		// filter object
@@ -41,10 +42,10 @@ namespace chaos
 				return 0;
 			update_timestamp = render_params.timestamp;
 		}
-		return DoDisplay(uniform_provider, render_params);
+		return DoDisplay(renderer, uniform_provider, render_params);
 	}
 
-	int Renderable::DoDisplay(GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int Renderable::DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		return 0;
 	}	

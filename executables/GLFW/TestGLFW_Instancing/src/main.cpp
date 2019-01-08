@@ -22,7 +22,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
 		float     far_plane = 1000.0f;
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -59,7 +59,7 @@ protected:
 		chaos::InstancingInfo instancing;
 		instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		instancing.base_instance = 0;
-		mesh->Render(program.get(), &uniform_provider, instancing);
+		mesh->Render(renderer, program.get(), &uniform_provider, instancing);
 
 		return true;
 	}

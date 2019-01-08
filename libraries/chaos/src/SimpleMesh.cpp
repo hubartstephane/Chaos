@@ -27,7 +27,7 @@ namespace chaos
 		return true;
 	}
 
-	void SimpleMesh::Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider,InstancingInfo const & instancing) const
+	void SimpleMesh::Render(Renderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider,InstancingInfo const & instancing) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -35,10 +35,10 @@ namespace chaos
 		// use program
 		program->UseProgram(uniform_provider);
 		// do the rendering
-		DoRender(program, uniform_provider, instancing);
+		DoRender(renderer, program, uniform_provider, instancing);
 	}
 
-	void SimpleMesh::Render(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void SimpleMesh::Render(Renderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// early exit
 		if (material == nullptr)
@@ -50,10 +50,10 @@ namespace chaos
 		// use material and bind uniforms
 		material->UseMaterial(uniform_provider);
 		// do the rendering
-		DoRender(program, uniform_provider, instancing);
+		DoRender(renderer, program, uniform_provider, instancing);
 	}
 
-	void SimpleMesh::DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	void SimpleMesh::DoRender(Renderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
@@ -64,7 +64,7 @@ namespace chaos
 		glBindVertexArray(vertex_array->GetResourceID());
 		// render the primitives
 		for (auto const & primitive : primitives)
-			primitive.Render(instancing);
+			renderer->Draw(primitive, instancing);
 		// unbind the vertex array
 		glBindVertexArray(0);
 	}

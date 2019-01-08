@@ -29,7 +29,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -91,7 +91,7 @@ protected:
 		uniform_provider.AddVariableValue("bottomleft", bottomleft);
 		uniform_provider.AddVariableValue("topright", topright);
 
-		mesh_box->Render(program_box.get(), &uniform_provider);
+		mesh_box->Render(renderer, program_box.get(), &uniform_provider);
 
 		return true;
 	}

@@ -92,7 +92,7 @@ protected:
 		}
   }
 
-  virtual bool OnDraw(glm::ivec2 size) override
+  virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -124,8 +124,8 @@ protected:
     chaos::DisableReferenceCount<chaos::GPUProgramProvider> uniform_provider;
     uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
 		
-	chaos::RenderParams render_params;
-	particle_manager->Display(&uniform_provider, render_params);
+		chaos::RenderParams render_params;
+		particle_manager->Display(renderer, &uniform_provider, render_params);
 
     return true;
   }

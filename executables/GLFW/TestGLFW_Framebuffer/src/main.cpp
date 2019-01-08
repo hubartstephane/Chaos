@@ -17,6 +17,7 @@
 #include <chaos/GPUFramebuffer.h>
 #include <chaos/GPUFramebufferGenerator.h>
 #include <chaos/DrawPrimitive.h>
+#include <chaos/Renderer.h>
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -24,7 +25,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 window_size) override
 	{
 
 		for (int pass = 0; pass < 2; ++pass)
@@ -87,7 +88,7 @@ protected:
 			chaos::InstancingInfo instancing;
 			instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 			instancing.base_instance = 0;
-			mesh->Render(program.get(), &uniform_provider, instancing);
+			mesh->Render(renderer, program.get(), &uniform_provider, instancing);
 
 			if (pass == 0)
 				framebuffer->EndRendering(true);

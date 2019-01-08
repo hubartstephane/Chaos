@@ -335,7 +335,7 @@ namespace chaos
 		if (atlas != nullptr)
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
-		int result = DoDisplayHelper(vertices_count, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
+		int result = DoDisplayHelper(renderer, vertices_count, final_material, (atlas == nullptr)? uniform_provider : &main_uniform_provider, render_params.instancing);
 		// restore rendering states
 		UpdateRenderingStates(false);
 		return result;
@@ -397,7 +397,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleLayer::DoDisplayHelper(size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	int ParticleLayer::DoDisplayHelper(Renderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
 	{
 		// no vertices, no rendering
 		if (vertex_count == 0)
@@ -417,7 +417,7 @@ namespace chaos
 		primitive.count = (int)vertex_count;
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
-		primitive.Render(instancing);
+		renderer->Draw(primitive, instancing);
 		glBindVertexArray(0);
 		return 1; // 1 DrawCall
 	}

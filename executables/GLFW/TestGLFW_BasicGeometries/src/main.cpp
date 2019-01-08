@@ -68,6 +68,8 @@ class RenderingContext
 {
 public:
 
+	chaos::Renderer * renderer = nullptr;
+
   glm::mat4 projection;
   glm::mat4 world_to_camera;
 };
@@ -202,7 +204,7 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
     PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
 
-    mesh->Render(program, &uniform_provider);
+    mesh->Render(ctx.renderer, program, &uniform_provider);
 
     if (is_translucent)
       EndTranslucency();
@@ -221,8 +223,8 @@ protected:
     
     DrawPrimitiveImpl(
       ctx,
-      get_pointer(mesh_triangle),
-      get_pointer(program_triangle),
+      mesh_triangle.get(),
+      program_triangle.get(),
       color,
       local_to_world,
       is_translucent,
@@ -251,8 +253,8 @@ protected:
 
     DrawPrimitiveImpl(
       ctx,
-      get_pointer(mesh_sphere),
-      get_pointer(program_sphere),
+      mesh_sphere.get(),
+      program_sphere.get(),
       color,
       local_to_world,
       is_translucent,
@@ -271,8 +273,8 @@ protected:
 
     DrawPrimitiveImpl(
       ctx,
-      get_pointer(mesh_sphere),
-      get_pointer(program_sphere),
+      mesh_sphere.get(),
+      program_sphere.get(),
       color,
       local_to_world,
       is_translucent,
@@ -291,8 +293,8 @@ protected:
 
     DrawPrimitiveImpl(
       ctx,
-      get_pointer(mesh_box),
-      get_pointer(program_box),
+      mesh_box.get(),
+      program_box.get(),
       color,
       local_to_world,
       is_translucent,
@@ -311,8 +313,8 @@ protected:
 
     DrawPrimitiveImpl(
       ctx,
-      get_pointer(mesh_box),
-      get_pointer(program_box),
+      mesh_box.get(),
+      program_box.get(),
       color,
       local_to_world,
       is_translucent,
@@ -673,7 +675,7 @@ protected:
 
   }
 
-  virtual bool OnDraw(glm::ivec2 size) override
+  virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.0f, 0.7f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -687,6 +689,7 @@ protected:
 
     // XXX : the scaling is used to avoid the near plane clipping
     RenderingContext ctx;
+		ctx.renderer = renderer;
 
     static float FOV = 60.0f;
     ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);

@@ -31,7 +31,7 @@ protected:
 
   }
 
-  virtual bool OnDraw(glm::ivec2 size) override
+  virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -54,7 +54,7 @@ protected:
     uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
     uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 
-    mesh->Render(program.get(), &uniform_provider);
+    mesh->Render(renderer, program.get(), &uniform_provider);
 
     debug_display.Display(size.x, size.y);    
 

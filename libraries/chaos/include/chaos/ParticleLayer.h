@@ -707,7 +707,7 @@ namespace chaos
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		int DoDisplayHelper(size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		int DoDisplayHelper(Renderer * renderer, size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool UpdateParticles(float delta_time);

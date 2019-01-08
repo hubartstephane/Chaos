@@ -605,24 +605,24 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 	return true;
 }
 
-void Game::DisplayBackground(glm::ivec2 viewport_size)
+void Game::DisplayBackground(chaos::Renderer * renderer, glm::ivec2 viewport_size)
 {
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	DisplayFullscreen(viewport_size, background_texture, background_program);
+	DisplayFullscreen(renderer, viewport_size, background_texture, background_program);
 }
 
-void Game::DisplayControls(glm::ivec2 viewport_size)
+void Game::DisplayControls(chaos::Renderer * renderer, glm::ivec2 viewport_size)
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	DisplayFullscreen(viewport_size, control_texture, control_program);	
+	DisplayFullscreen(renderer, viewport_size, control_texture, control_program);	
 }
 
-void Game::DisplayFullscreen(glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program)
+void Game::DisplayFullscreen(chaos::Renderer * renderer, glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program)
 {
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
@@ -661,7 +661,7 @@ void Game::DisplayFullscreen(glm::ivec2 viewport_size, chaos::shared_ptr<chaos::
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
 	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
-	fullscreen_mesh->Render(program.get(), &uniform_provider);
+	fullscreen_mesh->Render(renderer, program.get(), &uniform_provider);
 }
 
 void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
@@ -680,7 +680,7 @@ void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
 	}
 }
 
-void Game::DisplaySprites(glm::ivec2 viewport_size)
+void Game::DisplaySprites(chaos::Renderer * renderer, glm::ivec2 viewport_size)
 {
   chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 
@@ -699,18 +699,18 @@ void Game::DisplaySprites(glm::ivec2 viewport_size)
   }
 }
 
-void Game::Display(glm::ivec2 viewport_size)
+void Game::Display(chaos::Renderer * renderer, glm::ivec2 viewport_size)
 {
 	// XXX : for screen,
 	//
 	//       (0, 0) is center.
 	//       (world_size.x / 2, world_size.y) are limits of the the viewport
 
-	DisplayBackground(viewport_size);
+	DisplayBackground(renderer, viewport_size);
 			
-	DisplaySprites(viewport_size);
+	DisplaySprites(renderer, viewport_size);
 
-	DisplayControls(viewport_size);
+	DisplayControls(renderer, viewport_size);
 }
 
 bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)

@@ -54,7 +54,7 @@ protected:
 				return;
 	}
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -71,7 +71,7 @@ protected:
 		float world_y = world_x / VIEWPORT_WANTED_ASPECT;
 
 		if (game != nullptr)
-			game->Display(glm::vec2(world_x, world_y));
+			game->Display(renderer, glm::vec2(world_x, world_y));
 
 		return true;
 	}

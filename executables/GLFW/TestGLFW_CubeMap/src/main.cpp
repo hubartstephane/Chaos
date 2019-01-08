@@ -114,7 +114,7 @@ protected:
     return nullptr;
   }
 
-  virtual bool OnDraw(glm::ivec2 size) override
+  virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
   {
     if (query->IsEnded())
     {
@@ -179,10 +179,8 @@ protected:
     glStencilOp(stencil_fail, depth_fail, depth_pass); // do not modify the stencil anymore
 
     query->BeginQuery();
-    mesh->Render(program.get(), &uniform_provider);
+    mesh->Render(renderer, program.get(), &uniform_provider);
     query->EndQuery();
-
-
 
     return true;
   }

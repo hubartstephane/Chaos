@@ -35,7 +35,7 @@ protected:
 
 	}
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
 
 
@@ -84,7 +84,7 @@ protected:
 			rm = materials[1 - current_material];
 
 		if (rm != nullptr)
-			mesh->Render(rm, &uniform_provider, instancing);
+			mesh->Render(renderer, rm, &uniform_provider, instancing);
 
 
 		return true;

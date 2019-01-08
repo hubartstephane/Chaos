@@ -19,6 +19,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/Renderer.h>
 
 class MyGLFWWindowOpenGLTest1;
 
@@ -60,6 +61,8 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 class RenderingContext
 {
 public:
+
+	chaos::Renderer * renderer = nullptr;
 
 	glm::mat4 projection;
 	glm::mat4 world_to_camera;
@@ -112,7 +115,7 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
-		mesh->Render(program, &uniform_provider);
+		mesh->Render(ctx.renderer, program, &uniform_provider);
 	}
 
 	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
@@ -122,7 +125,7 @@ protected:
 
 		glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-		DrawPrimitiveImpl(ctx, get_pointer(mesh_box), get_pointer(program_box), color, local_to_world);
+		DrawPrimitiveImpl(ctx, mesh_box.get(), program_box.get(), color, local_to_world);
 	}
 
 	void DrawGeometryObjects(RenderingContext const & ctx)
@@ -150,7 +153,7 @@ protected:
 			DrawPrimitive(ctx, b4, white);
 	}
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -164,6 +167,7 @@ protected:
 
 								  // XXX : the scaling is used to avoid the near plane clipping
 		RenderingContext ctx;
+		ctx.renderer = renderer;
 
 		static float FOV = 60.0f;
 		ctx.projection = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);

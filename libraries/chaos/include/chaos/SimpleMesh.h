@@ -13,6 +13,7 @@
 #include <chaos/GPUResource.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/GPUVertexArrayCache.h>
+#include <chaos/Renderer.h>
 
 namespace chaos
 {
@@ -31,9 +32,9 @@ namespace chaos
 		~SimpleMesh();
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
+		void Render(Renderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
+		void Render(Renderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider = nullptr, InstancingInfo const & instancing = InstancingInfo()) const;
 
 		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
@@ -45,7 +46,7 @@ namespace chaos
 		/** cleaning the object */
 		virtual bool DoRelease() override;
 		/** rendering internal method */
-		void DoRender(GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		void DoRender(Renderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
 	public:
 

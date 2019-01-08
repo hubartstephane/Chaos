@@ -104,10 +104,10 @@ void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider 
 
 	// draw particle system
 	if (particle_manager != nullptr)
-		particle_manager->Display(&uniform_provider, render_params);
+		particle_manager->Display(renderer, uniform_provider, render_params);
 
 	// super method
-	death::Game::DoDisplay(render_params, uniform_provider);
+	death::Game::DoDisplay(renderer, uniform_provider, render_params);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

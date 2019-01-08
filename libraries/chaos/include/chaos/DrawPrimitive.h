@@ -32,9 +32,6 @@ namespace chaos
 	{
 	public:
 
-		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(InstancingInfo const & instancing = InstancingInfo()) const;
-
 		/** offset the index or vertex position */
 		void ShiftIndexAndVertexPosition(int vb_offset, int ib_offset);
 

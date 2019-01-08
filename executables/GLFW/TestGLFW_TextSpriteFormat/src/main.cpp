@@ -33,7 +33,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(glm::ivec2 size) override
+	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.7f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -120,7 +120,7 @@ protected:
 #endif
 
 		chaos::RenderParams render_params;
-		particle_manager->Display(uniform_provider.get(), render_params);
+		particle_manager->Display(renderer, uniform_provider.get(), render_params);
 
 		return true;
 	}

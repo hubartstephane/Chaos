@@ -29,6 +29,8 @@ public:
 protected:
 
 	/** override */
+	virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+	/** override */
 	virtual bool DoTick(double delta_time) override;
 
 	virtual bool CreateHUDLayers() override;
@@ -57,5 +59,6 @@ protected:
 	float cached_life_value = -1.0f;
 	/** caching the framerate value */
 	float cached_framerate = -1.0f;
-
+	/** get framerate from the renderer */
+	mutable float framerate = 0.0f;
 };

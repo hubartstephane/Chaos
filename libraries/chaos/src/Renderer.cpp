@@ -10,9 +10,19 @@ namespace chaos
 
 	void Renderer::EndRenderingFrame()
 	{
-
+		// update the frame rate
+		fps_counter.Accumulate(1.0f);
 		// increment the timestamp
 		++rendering_timestamp;
+	}
+
+	bool Renderer::DoTick(double delta_time)
+	{
+		// count for frame rate
+		fps_counter.Tick((float)delta_time);
+
+
+		return true;
 	}
 
 	void Renderer::Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing)

@@ -95,8 +95,6 @@ namespace death
 		// tick the hud
 		if (hud != nullptr)
 			hud->Tick(delta_time);
-		// count for frame rate
-		fps_counter.Tick((float)delta_time);
 	}
 	
 	bool Game::OnKeyEvent(int key, int action)
@@ -188,9 +186,6 @@ namespace death
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
 		DoDisplay(renderer, &main_uniform_provider, render_params);
-
-		// count the frame rate
-		fps_counter.Accumulate(1.0f);
 	}
 
 	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)

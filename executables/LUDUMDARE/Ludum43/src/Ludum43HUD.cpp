@@ -124,12 +124,17 @@ void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 		cached_life_value = life;
 	}
 }
+int LudumPlayingHUD::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
+{
+	framerate = renderer->GetFrameRate();
+
+	return death::GameHUD::DoDisplay(renderer, uniform_provider, render_params);
+}
 
 void LudumPlayingHUD::UpdateFrameRate(class LudumGame const * ludum_game)
 {
 	// test for cache
-	float frame_rate = ludum_game->GetFrameRate();
-	if (fabsf(frame_rate - cached_framerate) < 0.01f)
+	if (fabsf(framerate - cached_framerate) < 0.01f)
 		return;
 
 	// get box
@@ -147,7 +152,7 @@ void LudumPlayingHUD::UpdateFrameRate(class LudumGame const * ludum_game)
 	params.font_info_name = "normal";
 
 	// generate the allocation
-	std::string str = chaos::StringTools::Printf("%02.01f FPS", frame_rate);
+	std::string str = chaos::StringTools::Printf("%02.01f FPS", framerate);
 
 	chaos::ParticleAllocation * fps_allocation = GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 	if (fps_allocation == nullptr)
@@ -155,7 +160,7 @@ void LudumPlayingHUD::UpdateFrameRate(class LudumGame const * ludum_game)
 
 	// register allocation an update cached value
 	RegisterParticles(death::GameHUDKeys::FPS_ID, fps_allocation);
-	cached_framerate = frame_rate;
+	cached_framerate = framerate;
 }
 
 

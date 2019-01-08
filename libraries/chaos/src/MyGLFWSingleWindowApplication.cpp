@@ -63,6 +63,9 @@ namespace chaos
 				double delta_time = t2 - t1;
 				if (max_tick_duration > 0.0)
 					delta_time = min(delta_time, max_tick_duration);
+				// tick the renderer
+				if (renderer != nullptr)
+					renderer->Tick(delta_time);
 				// tick the manager
 				TickManagers(delta_time);
 				// tick the window
@@ -77,8 +80,6 @@ namespace chaos
 		{
 			return new Window;
 		}
-
-		
 
 		bool SingleWindowApplication::Main()
 		{
@@ -212,6 +213,7 @@ namespace chaos
 		
 		void SingleWindowApplication::TickManagers(double delta_time)
 		{
+
 			if (main_clock != nullptr)
 				main_clock->TickClock(delta_time);
 			if (sound_manager != nullptr)

@@ -19,6 +19,14 @@ namespace chaos
 		/** called at the end of a new frame */
 		virtual void EndRenderingFrame();
 
+
+		/** get the rendering timestamp */
+		uint64_t GetTimestamp() const { return rendering_timestamp; }
+
+	protected:
+
+		/** a time stamp for rendering */
+		uint64_t rendering_timestamp = 0;
 	};
 
 }; // namespace chaos

@@ -187,7 +187,6 @@ namespace death
 		chaos::RenderParams render_params;
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
-		render_params.timestamp = rendering_timestamp++; // shuxxx : optimization
 		DoDisplay(renderer, &main_uniform_provider, render_params);
 
 		// count the frame rate

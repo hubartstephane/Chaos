@@ -36,11 +36,12 @@ namespace chaos
 			if (!render_params.object_filter->CanRender(this))
 				return 0;
 		// update it (only if necessary
-		if (render_params.timestamp == 0 || update_timestamp != render_params.timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
+		uint64_t renderer_timestamp = renderer->GetTimestamp();
+		if (renderer_timestamp == 0 || update_timestamp != renderer_timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{
 			if (!DoUpdateGPUResources())
 				return 0;
-			update_timestamp = render_params.timestamp;
+			update_timestamp = renderer_timestamp;
 		}
 		return DoDisplay(renderer, uniform_provider, render_params);
 	}

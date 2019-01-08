@@ -73,8 +73,6 @@ namespace chaos
 		chaos::box2 viewport;
 		/** the screen size */
 		glm::ivec2 screen_size = glm::ivec2(0, 0);
-		/** a time stamp */
-		uint64_t timestamp = 0;
 		/** material provider */
 		shared_ptr<MaterialProvider> material_provider;
 		/** some filters */

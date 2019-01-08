@@ -22,9 +22,9 @@ namespace chaos
 		virtual void EndRenderingFrame();
 
 		/** get the current frame rate */
-		float GetFrameRate() const { return fps_counter.GetCurrentValue(); }
+		float GetFrameRate() const;
 		/** get the rendering timestamp */
-		uint64_t GetTimestamp() const { return rendering_timestamp; }
+		uint64_t GetTimestamp() const;
 
 	protected:
 
@@ -36,7 +36,11 @@ namespace chaos
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;
 		/** for counting frame per seconds */
-		TimedAccumulator<float> fps_counter;
+		TimedAccumulator<float> framerate_counter;
+		/** for counting drawcall per seconds */
+		TimedAccumulator<float> drawcall_counter;
+		/** for counting drawcall per seconds */
+		TimedAccumulator<float> vertices_counter;
 	};
 
 }; // namespace chaos

@@ -11,16 +11,27 @@ namespace chaos
 	void Renderer::EndRenderingFrame()
 	{
 		// update the frame rate
-		fps_counter.Accumulate(1.0f);
+		framerate_counter.Accumulate(1.0f);
 		// increment the timestamp
 		++rendering_timestamp;
 	}
 
+	float Renderer::GetFrameRate() const 
+	{ 
+		return framerate_counter.GetCurrentValue();
+	}
+
+	uint64_t Renderer::GetTimestamp() const 
+	{ 
+		return rendering_timestamp; 
+	}
+
 	bool Renderer::DoTick(double delta_time)
 	{
-		// count for frame rate
-		fps_counter.Tick((float)delta_time);
-
+		// update counters
+		framerate_counter.Tick((float)delta_time);
+		drawcall_counter.Tick((float)delta_time);
+		vertices_counter.Tick((float)delta_time);
 
 		return true;
 	}
@@ -71,6 +82,12 @@ namespace chaos
 					glDrawElementsInstancedBaseVertexBaseInstance(primitive.primitive_type, primitive.count, GL_UNSIGNED_INT, offset, instancing.instance_count, primitive.base_vertex_index, instancing.base_instance);
 			}
 		}
+
+		// update some statistics
+		int instance_count = (instancing.instance_count > 1) ? instancing.instance_count : 1;
+		vertices_counter.Accumulate((float)primitive.count * instance_count);
+
+		drawcall_counter.Accumulate(1.0f);		
 	}
 
 }; // namespace chaos

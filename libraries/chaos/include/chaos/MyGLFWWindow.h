@@ -102,16 +102,18 @@ namespace chaos
 			virtual void OnWindowResize(glm::ivec2 size) {}
 			/** called whenever the window is redrawn */
 			virtual bool OnDraw(Renderer * in_renderer, glm::ivec2 size) { return true; }
+
 			/** called whenever the mouse is moved */
-			virtual void OnMouseMove(double x, double y) {}
+			virtual bool OnMouseMove(double x, double y) { return false; }
 			/** called whenever the mouse button is down / up */
-			virtual void OnMouseButton(int button, int action, int modifier) {}
+			virtual bool OnMouseButton(int button, int action, int modifier) { return false; }
 			/** called whenever the mouse wheel is changed */
-			virtual void OnMouseWheel(double scroll_x, double scroll_y) {}
+			virtual bool OnMouseWheel(double scroll_x, double scroll_y) { return false; }
 			/** called whenever a key is pressed */
-			virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) {}
+			virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) { return false; }
 			/** called whenever a char is generated */
-			virtual void OnCharEvent(unsigned int c) {}
+			virtual bool OnCharEvent(unsigned int c) { return false; }
+
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}
 			/** called whenever the window becomes iconified or is restored */

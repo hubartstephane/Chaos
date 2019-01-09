@@ -22,10 +22,14 @@ protected:
     return true;
   }
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-      RequireWindowClosure();
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		{
+			RequireWindowClosure();
+			return true;
+		}
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
   }
 
   virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override

@@ -38,20 +38,21 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
 			if (modifier & GLFW_MOD_SHIFT)
 			{
 				RequireWindowClosure();
-				return;
+				return true;
 			}						
 		}
 
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, action))
-				return;
+				return true;
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override

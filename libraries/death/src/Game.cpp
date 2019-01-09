@@ -117,11 +117,20 @@ namespace death
 		// CHEAT CODE TO SKIP LEVEL
 #if _DEBUG
 		if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
+		{
 			SetCheatSkipLevelRequired(true);
+			return true;
+		}
 		if (key == GLFW_KEY_F2 && action == GLFW_PRESS)
+		{
 			SetCheatMode(!GetCheatMode());
+			return true;
+		}
 		if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
+		{
 			ReloadConfigurationFile();
+			return true;
+		}
 #endif
 
 		return false;
@@ -129,18 +138,20 @@ namespace death
 	
 	bool Game::OnCharEvent(unsigned int c)
 	{
-		return true;
+		return false;
 	}
 	
-	void Game::OnMouseButton(int button, int action, int modifier)
+	bool Game::OnMouseButton(int button, int action, int modifier)
 	{
 		if (action == GLFW_PRESS)
-			RequireStartGame();
+			if (RequireStartGame())
+				return true;
+		return false;
 	}
 	
-	void Game::OnMouseMove(double x, double y)
+	bool Game::OnMouseMove(double x, double y)
 	{
-
+		return false;
 	}
 
 	void Game::Display(chaos::Renderer * renderer, glm::ivec2 const & size)

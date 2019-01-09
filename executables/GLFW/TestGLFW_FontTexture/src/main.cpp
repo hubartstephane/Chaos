@@ -39,7 +39,7 @@ protected:
     return true;
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override 
+  virtual bool OnMouseButton(int button, int action, int modifier) override
   {
     if (action == GLFW_PRESS)
     {
@@ -48,7 +48,9 @@ protected:
       else
         debug_display.AddLine(chaos::StringTools::Printf("LINE FROM CLICKED [%d]", click_count++).c_str(), 5.0f); 
       RequireWindowRefresh();    
+			return true;
     }
+		return false;
   }
 
   virtual void Finalize() override

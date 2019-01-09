@@ -23,20 +23,24 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 		{
 			ChangeTexture(texture_index + 1);
+			return true;
 		}
 		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
 		{
 			ChangeTexture(texture_index - 1);
+			return true;
 		}
 		else if (key == GLFW_KEY_KP_ENTER && action == GLFW_RELEASE)
 		{
 			ChangeTextureLevel();
+			return true;
 		}
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 	void ChangeTextureLevel()
@@ -250,7 +254,7 @@ protected:
 		return result;
 	}
 
-	virtual void OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButton(int button, int action, int modifier) override
 	{
 		if (button == 0 && action == GLFW_RELEASE)
 		{
@@ -260,7 +264,9 @@ protected:
 
 			mipmap_level = (mipmap_level + 1) % max_mipmap;
 			glTextureParameteri(texture->GetResourceID(), GL_TEXTURE_BASE_LEVEL, mipmap_level); //GL_TEXTURE_MAX_LEVEL
+			return true;
 		}
+		return false;
 	}
 
 	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override

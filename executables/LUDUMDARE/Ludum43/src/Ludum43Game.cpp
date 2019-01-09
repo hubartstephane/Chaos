@@ -73,15 +73,12 @@ bool LudumGame::OnAbordGame()
 
 bool LudumGame::OnCharEvent(unsigned int c)
 {
-
-	return true;
+	return death::Game::OnCharEvent(c);
 }
 
 bool LudumGame::OnKeyEvent(int key, int action)
 {
-	if (death::Game::OnKeyEvent(key, action))
-		return true;
-	return false;
+	return death::Game::OnKeyEvent(key, action);
 }
 
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
@@ -343,9 +340,9 @@ void LudumGame::TickHeartBeat(double delta_time)
 	}
 }
 
-void LudumGame::OnMouseMove(double x, double y)
+bool LudumGame::OnMouseMove(double x, double y)
 {
-
+	return death::Game::OnMouseMove(x, y);
 }
 
 void LudumGame::DestroyGameObjects()

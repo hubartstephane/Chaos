@@ -26,11 +26,6 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
-  {
-
-  }
-
   virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
   {
     glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -164,10 +159,14 @@ protected:
     return true; // refresh
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButton(int button, int action, int modifier) override
   {
-    if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS)
-      rotation_started = !rotation_started;
+		if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS)
+		{
+			rotation_started = !rotation_started;
+			return true;
+		}
+		return false;
 
   }
 

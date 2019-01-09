@@ -60,22 +60,28 @@ protected:
 		return false; // no redraw
 	}
 
-	virtual void OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButton(int button, int action, int modifier) override
 	{
 		if (button == 0 && action == GLFW_PRESS)
 		{
 			irrklang::ISound * sound = engine->play2D(sound_source1.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
 			playing_sounds.push_back(sound);
 			sound->drop();
+			return true;
 		}
 		else if (button == 1 && action == GLFW_PRESS)
 		{
 			irrklang::ISound * sound = engine->play2D(sound_source2.get(), false /* looped */, false /*  start paused */, true /* track */, true /* enable FX */);
 			playing_sounds.push_back(sound);
 			sound->drop();
+			return true;
 		}
 		else if (button == 2 && action == GLFW_PRESS)
+		{
 			DropAllSounds();
+			return true;
+		}
+		return false;
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

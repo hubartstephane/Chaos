@@ -84,17 +84,21 @@ bool LudumGame::OnCharEvent(unsigned int c)
 {
 	// CHALLENGE
 	if (c >= 'a' && c <= 'z')
+	{
 		SendKeyboardButtonToChallenge((char)c);
+		return true;
+	}
 	else if (c >= 'A' && c <= 'Z')
+	{
 		SendKeyboardButtonToChallenge((char)(c - 'A' + 'a'));
-	return true;
+		return true;
+	}
+	return death::Game::OnCharEvent(c);
 }
 
 bool LudumGame::OnKeyEvent(int key, int action)
 {
-	if (death::Game::OnKeyEvent(key, action))
-		return true;
-	return false;
+	return death::Game::OnKeyEvent(key, action);
 }
 
 bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
@@ -335,9 +339,10 @@ void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gam
 		sequence_challenge->OnGamepadButtonReceived(in_gamepad_data);
 }
 
-void LudumGame::OnMouseMove(double x, double y)
+bool LudumGame::OnMouseMove(double x, double y)
 {
 	left_stick_position.x = mouse_sensitivity * (float)x;
+	return death::Game::OnMouseMove(x, y);
 }
 
 void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)

@@ -17,13 +17,14 @@ namespace death
 		virtual Game * CreateGameInstance();
 
 		/** override */
-		virtual void OnMouseButton(int button, int action, int modifier) override;
+		virtual bool OnMouseButton(int button, int action, int modifier) override;
 		/** override */
-		virtual void OnMouseMove(double x, double y) override;
+		virtual bool OnMouseMove(double x, double y) override;
 		/** override */
-		virtual void OnCharEvent(unsigned int c) override;
+		virtual bool OnCharEvent(unsigned int c) override;
 		/** override */
-		virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+
 		/** override */
 		virtual bool OnDraw(chaos::Renderer * in_renderer, glm::ivec2 size) override;
 		/** override */

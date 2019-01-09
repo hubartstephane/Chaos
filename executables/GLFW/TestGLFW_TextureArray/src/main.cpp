@@ -194,24 +194,29 @@ protected:
 		texture_slice = (texture_slice + delta + texture_slice_count) % texture_slice_count;	
 	}
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 		{
 			ChangeSlice(+1);
+			return true;
 		}
 		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
 		{
 			ChangeSlice(-1);
+			return true;
 		}
 		else if (key == GLFW_KEY_KP_1 && action == GLFW_RELEASE)
 		{
 			ChangePixelFormat(+1);
+			return true;
 		}
 		else if (key == GLFW_KEY_KP_2 && action == GLFW_RELEASE)
 		{
 			ChangePixelFormat(-1);
+			return true;
 		}
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 	bool LoadBitmaps(boost::filesystem::path const & resources_path)

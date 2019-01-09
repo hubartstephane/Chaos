@@ -257,9 +257,10 @@ namespace death
 		/** whenever a char event is received */
 		virtual bool OnCharEvent(unsigned int c);
 		/** whenever a mouse event is received */
-		virtual void OnMouseButton(int button, int action, int modifier);
+		virtual bool OnMouseButton(int button, int action, int modifier);
 		/** whenever mouse is displaced */
-		virtual void OnMouseMove(double x, double y);
+		virtual bool OnMouseMove(double x, double y);
+
 		/** the rendering method */
 		virtual void Display(chaos::Renderer * renderer, glm::ivec2 const & size);
 		/** the user defined rendering function */

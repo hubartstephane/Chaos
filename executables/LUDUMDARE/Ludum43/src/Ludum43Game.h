@@ -57,7 +57,8 @@ public:
 	/** override */
 	virtual bool OnCharEvent(unsigned int c) override;
 	/** override */
-	virtual void OnMouseMove(double x, double y) override;
+	virtual bool OnMouseMove(double x, double y) override;
+
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	/** override */

@@ -343,24 +343,32 @@ protected:
 		return false;
 	}
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_T && action == GLFW_RELEASE)
 		{
 			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
+			return true;
 		}
 		else
 		{
-			if (!UpdateClockTimeScaleWithKeys(clock1.get(), key, GLFW_KEY_KP_1, GLFW_KEY_KP_2, action))
-				if (!UpdateClockTimeScaleWithKeys(clock2.get(), key, GLFW_KEY_KP_4, GLFW_KEY_KP_5, action))
-					UpdateClockTimeScaleWithKeys(clock3.get(), key, GLFW_KEY_KP_7, GLFW_KEY_KP_8, action);
+			if (UpdateClockTimeScaleWithKeys(clock1.get(), key, GLFW_KEY_KP_1, GLFW_KEY_KP_2, action))
+				return true;				
+			if (UpdateClockTimeScaleWithKeys(clock2.get(), key, GLFW_KEY_KP_4, GLFW_KEY_KP_5, action))
+				return true;
+			if (UpdateClockTimeScaleWithKeys(clock3.get(), key, GLFW_KEY_KP_7, GLFW_KEY_KP_8, action))
+				return true;
 
-			if (!GenerateEvent(clock1.get(), key, GLFW_KEY_A, action, "EVENT 1", EVENT_SINGLE_TEST))
-				if (!GenerateEvent(clock2.get(), key, GLFW_KEY_Z, action, "EVENT 2", EVENT_RANGE_TEST))
-					GenerateEvent(clock3.get(), key, GLFW_KEY_E, action, "EVENT 3", EVENT_FOREVER_TEST);
+			if (GenerateEvent(clock1.get(), key, GLFW_KEY_A, action, "EVENT 1", EVENT_SINGLE_TEST))
+				return true;
+			if (GenerateEvent(clock2.get(), key, GLFW_KEY_Z, action, "EVENT 2", EVENT_RANGE_TEST))
+				return true;
+			if (GenerateEvent(clock3.get(), key, GLFW_KEY_E, action, "EVENT 3", EVENT_FOREVER_TEST))
+				return true;
 		}
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 protected:

@@ -210,12 +210,6 @@ protected:
     return true; // refresh
   }
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
-  {
-
-  }
-
-
 protected:
 
 	// the particle manager

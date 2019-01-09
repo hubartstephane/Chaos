@@ -149,10 +149,10 @@ protected:
 		return true; // no redraw
 	}
 
-	virtual void OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButton(int button, int action, int modifier) override
 	{
 		if (action != GLFW_PRESS)
-			return;
+			return false;
 
 		double mouse_x = 0.0;
 		double mouse_y = 0.0;
@@ -187,6 +187,7 @@ protected:
 					InitializeParticles(particles, pc, center);
 				}
 			}
+			return true;
 		}
 		else
 		{
@@ -206,7 +207,9 @@ protected:
 				//	particle_allocations[r]->Pause(!particle_allocations[r]->IsPaused());
 				}
 			}
+			return true;
 		}
+		return false;
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

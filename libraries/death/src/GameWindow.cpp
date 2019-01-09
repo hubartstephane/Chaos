@@ -12,15 +12,16 @@ namespace death
 			game->OnInputModeChanged(new_mode, old_mode);
 	}
 
-	void GameWindow::OnCharEvent(unsigned int c)
+	bool GameWindow::OnCharEvent(unsigned int c)
 	{
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnCharEvent(c))
-				return;
+				return true;
+		return chaos::MyGLFW::Window::OnCharEvent(c);
 	}
 
-	void GameWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
+	bool GameWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 	{
 		// kill the window
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -28,26 +29,31 @@ namespace death
 			if (modifier & GLFW_MOD_SHIFT)
 			{
 				RequireWindowClosure();
-				return;
+				return true;
 			}
 		}
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, action))
-				return;
+				return true;
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 
-	void GameWindow::OnMouseButton(int button, int action, int modifier)
+	bool GameWindow::OnMouseButton(int button, int action, int modifier)
 	{
 		if (game != nullptr)
-			game->OnMouseButton(button, action, modifier);
+			if (game->OnMouseButton(button, action, modifier))
+				return true;
+		return chaos::MyGLFW::Window::OnMouseButton(button, action, modifier);
 	}
 
-	void GameWindow::OnMouseMove(double x, double y)
+	bool GameWindow::OnMouseMove(double x, double y)
 	{
 		if (game != nullptr)
-			game->OnMouseMove(x, y);
+			if (game->OnMouseMove(x, y))
+				return true;
+		return chaos::MyGLFW::Window::OnMouseMove(x, y);
 	}
 
 	bool GameWindow::OnDraw(chaos::Renderer * in_renderer, glm::ivec2 size)

@@ -809,24 +809,28 @@ protected:
     return true; // refresh
   }
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
     if (key == GLFW_KEY_T && action == GLFW_RELEASE)
     {
       chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
       if (clock != nullptr)
 				clock->Toggle();
+			return true;
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
       SetExample(display_example + 1);
       DebugDisplayExampleTitle(false);
+			return true;
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
     {
       SetExample(display_example - 1);
-      DebugDisplayExampleTitle(false);      
+      DebugDisplayExampleTitle(false);     
+			return true;
     }
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
   }
 
   void SetExample(int new_display_example)

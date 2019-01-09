@@ -21,18 +21,29 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+		{
 			current_material = 1 - current_material;
-
+			return true;
+		}
 		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+		{
 			render_material1 = nullptr;
+			return true;
+		}
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+		{
 			render_material2 = nullptr;
+			return true;
+		}
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+		{
 			mesh = nullptr;
-
+			return true;
+		}
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override

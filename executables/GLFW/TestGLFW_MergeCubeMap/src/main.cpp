@@ -27,16 +27,19 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 		{
 			ChangeSkyBox(skybox_index + 1);
+			return true;
 		}
 		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
 		{
 			ChangeSkyBox(skybox_index - 1);
+			return true;
 		}
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 	void ChangeSkyBox(int index)
@@ -259,10 +262,14 @@ protected:
 		return true; // refresh
 	}
 
-	virtual void OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButton(int button, int action, int modifier) override
 	{
 		if (button == 1 && action == GLFW_RELEASE)
+		{
 			debug_display.AddLine("HelloWorld");
+			return true;
+		}
+		return false;
 	}
 
 protected:

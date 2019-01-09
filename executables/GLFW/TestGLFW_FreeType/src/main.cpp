@@ -53,20 +53,24 @@ protected:
     texture = nullptr;
   }
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier) override
+  virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
       RequireWindowClosure();
+			return true;
     }
     else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
       ChangeFont(font_index + 1);
+			return true;
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
     {
       ChangeFont(font_index - 1);
+			return true;
     }
+		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
   }
 
   void ChangeFont(int index)

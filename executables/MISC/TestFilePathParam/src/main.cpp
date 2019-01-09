@@ -36,12 +36,9 @@ protected:
     return false; // no redraw
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButton(int button, int action, int modifier) override
   {
-
-
-
-
+		return false;
   }
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

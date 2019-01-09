@@ -36,12 +36,9 @@ protected:
     return false; // no redraw
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButton(int button, int action, int modifier) override
   {
-
-
-
-
+		return false; 
   }
 
   void Test1()

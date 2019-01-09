@@ -42,7 +42,7 @@ protected:
     return false; // no redraw
   }
 
-  virtual void OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButton(int button, int action, int modifier) override
   {
     if (button == 0 && action == GLFW_PRESS)
     {
@@ -50,7 +50,7 @@ protected:
       desc.category = category1.get();
       desc.looping = true;
       sound1 = source1->PlaySound(desc);
-
+			return true;
     }
     else if (button == 1 && action == GLFW_PRESS)
     {
@@ -62,6 +62,7 @@ protected:
         desc.kill_at_end = true;
         sound1->StartBlend(desc, true);   
       }
+			return true;
     }
     else if (button == 2 && action == GLFW_PRESS)
     {
@@ -73,7 +74,9 @@ protected:
         desc.kill_at_end = true;
         category1->StartBlend(desc, true);
       }
+			return true;
     }
+		return false;
   }
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

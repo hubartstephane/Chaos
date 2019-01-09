@@ -129,9 +129,9 @@ void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider 
 
 	// draw particle system
 	if (particle_manager != nullptr)
-		particle_manager->Display(&uniform_provider);
+		particle_manager->Display(renderer, uniform_provider, render_params);
 
-	Game::DoDisplay(render_params, uniform_provider);
+	Game::DoDisplay(renderer, uniform_provider, render_params);
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
@@ -183,9 +183,10 @@ bool LudumGame::TickGameLoop(double delta_time)
 }
 
 
-void LudumGame::OnMouseMove(double x, double y)
+bool LudumGame::OnMouseMove(double x, double y)
 {
 	left_stick_position.x = mouse_sensitivity * (float)x;
+	return death::Game::OnMouseMove(x, y);
 }
 
 void LudumGame::DestroyGameObjects()

@@ -37,6 +37,10 @@ namespace death
 		virtual bool Tick(double delta_time) override;
 		/** override */
 		virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+		/** override */
+		virtual void OnIconifiedStateChange(bool iconified) override;
+		/** override */
+		virtual void OnFocusStateChange(bool gain_focus) override;
 
 	protected:
 

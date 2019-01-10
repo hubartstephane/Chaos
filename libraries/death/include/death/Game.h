@@ -410,6 +410,8 @@ namespace death
 		/** returns true if the game leave is fully completed */
 		virtual bool IsGameLeaveComplete();
 
+		/** require a pause */
+		virtual bool RequirePauseGame();
 		/** require a pause or resume */
 		virtual bool RequireTogglePause();
 		/** require a game Start */

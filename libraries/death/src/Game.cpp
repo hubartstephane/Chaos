@@ -1179,6 +1179,13 @@ namespace death
 		return false;
 	}
 
+	bool Game::RequirePauseGame()
+	{
+		if (!IsPaused())
+			return RequireTogglePause();		
+		return false;
+	}
+
 	bool Game::RequireTogglePause()
 	{
 		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_TOGGLE_PAUSE, nullptr))

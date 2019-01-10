@@ -135,5 +135,17 @@ namespace death
 		return true; // refresh
 	}
 
+	void GameWindow::OnIconifiedStateChange(bool iconified)
+	{
+		if (iconified)
+			game->RequirePauseGame();
+	}
+
+	void GameWindow::OnFocusStateChange(bool gain_focus)
+	{
+		if (!gain_focus)
+			game->RequirePauseGame();
+	}
+
 }; // namespace death
 

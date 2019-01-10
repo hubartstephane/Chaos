@@ -37,7 +37,7 @@ namespace death
 			}
 		}
 		// try to go fullscreen
-		if (key == GLFW_KEY_F12 && action == GLFW_PRESS)
+		if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
 		{
 			ToggleFullscreen();
 			return true;

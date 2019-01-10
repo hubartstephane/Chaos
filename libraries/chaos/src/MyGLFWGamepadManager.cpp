@@ -228,9 +228,11 @@ namespace chaos
 		// PhysicalGamepad functions
 		//
 
-		PhysicalGamepad::PhysicalGamepad(int in_stick_index) :
+		PhysicalGamepad::PhysicalGamepad(GamepadManager * in_gamepad_manager, int in_stick_index) :
+			gamepad_manager(in_gamepad_manager),
 			stick_index(in_stick_index)
 		{
+			assert(in_gamepad_manager != nullptr);
 		}
 
 		void PhysicalGamepad::ClearInputs()
@@ -307,6 +309,11 @@ namespace chaos
 			if (!IsPresent())
 				return;
 			gamepad_data.UpdateAxisAndButtons(stick_index, delta_time, dead_zone);
+		}
+
+		Gamepad * PhysicalGamepad::CaptureDevice(GamepadCallbacks * in_callbacks)
+		{
+			return gamepad_manager->DoCaptureDevice(this, in_callbacks);
 		}
 
 		//
@@ -425,7 +432,7 @@ namespace chaos
 			physical_gamepads.reserve(MAX_SUPPORTED_GAMEPAD_COUNT); // allocate a PhysicalGamepad for all supported inputs
 			for (int i = 0; i < MAX_SUPPORTED_GAMEPAD_COUNT; ++i)
 			{
-				PhysicalGamepad * physical_gamepad = new PhysicalGamepad(i);
+				PhysicalGamepad * physical_gamepad = new PhysicalGamepad(this, i);
 				if (physical_gamepad != nullptr)
 				{
 					physical_gamepad->is_present = (glfwJoystickPresent(i) > 0);
@@ -520,6 +527,11 @@ namespace chaos
 			if (want_present && physical_gamepad == nullptr) // all physical device in use or not present ?
 				return nullptr;
 
+			return DoAllocateGamepad(physical_gamepad, in_callbacks);
+		}
+
+		Gamepad * GamepadManager::DoAllocateGamepad(PhysicalGamepad * physical_gamepad, GamepadCallbacks * in_callbacks)
+		{		
 			Gamepad * result = new Gamepad(this, physical_gamepad);
 			if (result != nullptr)
 			{
@@ -540,7 +552,7 @@ namespace chaos
 			int unallocated_present_physical_device_count = 0;
 			UpdateAndUnconnectPhysicalGamepads(delta_time, unallocated_present_physical_device_count); // get the number of physical devices to bind
 
-																									   // try to give all logical device a physical device
+			// try to give all logical device a physical device
 			if (unallocated_present_physical_device_count > 0)
 				GiveGamepadPhysicalDevices(unallocated_present_physical_device_count);
 
@@ -708,6 +720,18 @@ namespace chaos
 							return true;
 			}
 			return false;
+		}
+
+		Gamepad * GamepadManager::DoCaptureDevice(PhysicalGamepad * in_physical_gamepad, GamepadCallbacks * in_callbacks)
+		{
+			// the physical device is not present
+			if (!in_physical_gamepad->IsPresent())
+				return nullptr;
+			// the device is already allocated
+			if (in_physical_gamepad->user_gamepad != nullptr)
+				return nullptr;
+
+			return DoAllocateGamepad(in_physical_gamepad, in_callbacks);
 		}
 
 

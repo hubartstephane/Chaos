@@ -209,10 +209,16 @@ namespace chaos
 			/** returns true whether the gamepad is connected */
 			inline bool IsPresent() const { return is_present; }
 
+			/** take a physical device, and create a logical device if possible */
+			class Gamepad * CaptureDevice(GamepadCallbacks * in_callbacks);
+
 		protected:
 
 			/** the constructor is protected */
-			PhysicalGamepad(int in_stick_index);
+			PhysicalGamepad(GamepadManager * in_gamepad_manager, int in_stick_index);
+			/** destructor is protected */
+			~PhysicalGamepad(){}
+
 			/** update all the values for the axis and buttons */
 			void UpdateAxisAndButtons(float delta_time, float dead_zone);
 			/** called at unconnection to be sure input cannot be consulted anymore */
@@ -220,6 +226,8 @@ namespace chaos
 
 		protected:
 
+			/** the manager */
+			class GamepadManager * gamepad_manager = nullptr;
 			/** the current stick index */
 			int stick_index = -1;
 			/** indicates whether the stick is present */
@@ -297,6 +305,7 @@ namespace chaos
 		class GamepadManager : public ReferencedObject
 		{
 			friend class Gamepad;
+			friend class PhysicalGamepad;
 
 		public:
 
@@ -333,7 +342,11 @@ namespace chaos
 			bool OnGamepadDestroyed(Gamepad * gamepad);
 			/** called to pool inputs on unbound connected physical device */
 			void PoolInputs(int & unallocated_present_physical_device_count);
-
+			/** internal method to allocate and initialize a gamepad */
+			Gamepad * DoAllocateGamepad(PhysicalGamepad * physical_gamepad, GamepadCallbacks * in_callbacks);
+			/** capture a physical device and get a logical device */
+			Gamepad * DoCaptureDevice(PhysicalGamepad * in_physical_gamepad, GamepadCallbacks * in_callbacks);
+			
 		protected:
 
 			/** the pool method to override */

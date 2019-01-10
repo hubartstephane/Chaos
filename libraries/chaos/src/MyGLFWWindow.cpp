@@ -269,9 +269,9 @@ namespace chaos
 
 			HWND hWnd = glfwGetWin32Window(glfw_window);
 
-			LONG style = GetWindowLongPtr(hWnd, GWL_STYLE);
+			LONG Style = GetWindowLongPtr(hWnd, GWL_STYLE);
 
-			SetWindowLongPtr(hWnd, GWL_STYLE, style & ~WS_CAPTION);
+			SetWindowLongPtr(hWnd, GWL_STYLE, Style ^ (WS_CAPTION | WS_BORDER | WS_THICKFRAME ));
 
 			//if (glfw_window != nullptr)
 			//	glfwIconifyWindow(glfw_window);

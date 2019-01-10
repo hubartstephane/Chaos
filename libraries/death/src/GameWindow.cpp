@@ -23,6 +23,10 @@ namespace death
 
 	bool GameWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
 	{
+		// give inputs to the game
+		if (game != nullptr)
+			if (game->OnKeyEvent(key, action))
+				return true;
 		// kill the window
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
@@ -32,10 +36,13 @@ namespace death
 				return true;
 			}
 		}
-		// give inputs to the game
-		if (game != nullptr)
-			if (game->OnKeyEvent(key, action))
-				return true;
+		// try to go fullscreen
+		if (key == GLFW_KEY_F12 && action == GLFW_PRESS)
+		{
+			ToggleFullscreen();
+			return true;
+		}
+		// super method
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 

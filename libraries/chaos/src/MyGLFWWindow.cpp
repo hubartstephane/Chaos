@@ -262,6 +262,25 @@ namespace chaos
 			}
 		}
 
+		void Window::ToggleFullscreen()
+		{
+			if (glfw_window == nullptr)
+				return;
+
+			HWND hWnd = glfwGetWin32Window(glfw_window);
+
+			LONG style = GetWindowLongPtr(hWnd, GWL_STYLE);
+
+			SetWindowLongPtr(hWnd, GWL_STYLE, style & ~WS_VISIBLE);
+
+			//if (glfw_window != nullptr)
+			//	glfwIconifyWindow(glfw_window);
+			//glfwMaximizeWindow 	
+			//glfwRestoreWindow
+			//glfwSetWindowIconifyCallback
+			//glfwSwapInterval
+		}
+
 	}; // namespace MyGLFW
 
 }; // namespace chaos

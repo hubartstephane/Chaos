@@ -83,6 +83,9 @@ namespace chaos
 			/** returns whether the window has a pending GLFW close message */
 			bool ShouldClose();
 
+			/** toggle to fullscreen mode */
+			void ToggleFullscreen();
+
 		protected:
 
 			/** get the hints for new GLFW window */

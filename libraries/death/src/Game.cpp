@@ -894,6 +894,9 @@ namespace death
 		if (!physical_gamepad->IsAnyAction())
 			return true;
 
+
+		// chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad = physical_gamepad->CaptureDevice(nullptr); // shuxxx
+
 		// change the application mode
 		chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
 

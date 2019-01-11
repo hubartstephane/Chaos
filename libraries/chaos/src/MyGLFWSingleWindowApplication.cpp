@@ -107,11 +107,15 @@ namespace chaos
 			nlohmann::json const * window_configuration = JSONTools::GetStructure(configuration, "window");
 			if (window_configuration != nullptr)
 				TweakHintsFromConfiguration(params, *window_configuration);
-			params.hints.ApplyHints();
 
 			// compute the position and size of the window
 			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
 
+			// prepare window creation
+			window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
+			params.hints.ApplyHints();
+			
+			// compute window size and position
 			int x = 0;
 			int y = 0;
 			if (pseudo_fullscreen) // full-screen, the window use the full-size
@@ -137,9 +141,6 @@ namespace chaos
 				x = monitor_x + (mode->width - params.width) / 2;
 				y = monitor_y + (mode->height - params.height) / 2;
 			}
-
-			// prepare window creation
-			window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
 
 			// create window
 			if (params.title == nullptr) // title cannot be null

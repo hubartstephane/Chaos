@@ -257,9 +257,9 @@ function DebugConf(plat)
     defines { "_DEBUG" }
     flags { "Symbols" } 
 		
-    defines("PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
-    defines("PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-    defines("PROJECT_BUILD_PATH=\"".. PROJECT_BUILD_PATH.."\"")     
+    defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
+    defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
+    defines("CHAOS_PROJECT_BUILD_PATH=\"".. PROJECT_BUILD_PATH.."\"")     
 end
 
 -- =============================================================================
@@ -273,9 +273,9 @@ function ReleaseConf(plat)
     defines { "_RELEASE" }
     flags { "Optimize" }	   
 
-    defines("PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
-    defines("PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-    defines("PROJECT_BUILD_PATH=\"".. PROJECT_BUILD_PATH.."\"")     
+    defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
+    defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
+    defines("CHAOS_PROJECT_BUILD_PATH=\"".. PROJECT_BUILD_PATH.."\"")     
 end
 
 -- =============================================================================

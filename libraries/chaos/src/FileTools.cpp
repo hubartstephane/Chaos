@@ -38,79 +38,15 @@ namespace chaos
 		return DoIsTypedFile(resolved_path.string().c_str(), expected_ext); // use an utility function because path to string give a volatile object
 	}
 
-	boost::filesystem::path const & FileTools::GetRedirectedPath(boost::filesystem::path const & src, boost::filesystem::path & tmp)
-	{
-#if !_DEBUG
-		return src;
-#else
-
-		Application const * application = Application::GetConstInstance();
-		if (application == nullptr)
-			return src;
-
-		if (!application->HasCommandLineFlag("-RedirectResources"))
-			return src;
-		
-		
-#if defined XXXX
-	//	ddd
-#endif
-
-#if 0
-
-		"E:\\programmation\\build\\vs2015\\executables\\LUDUMDARE\\Ludum43\\DEBUG\\x32\\resources"
-
-			E:\programmation\Code\executables\LUDUMDARE\Ludum43\resources
-
-
-			build\\vs2015->Code
-
-			Debug\x32->Supprimer
-
-
-
-
-#endif
-
-
-		auto xxx = src.relative_path();
-
-		//boost::filesystem::path::relative_path
-
-		boost::filesystem::path const & application_path = application->GetApplicationPath();
-
-		boost::filesystem::path const & resources_path = application->GetResourcesPath();
-
-		auto it1 = src.begin();
-		auto it2 = application_path.begin();
-
-		while (it1 != src.end() && it2 != application_path.end())
-		{
-
-
-			++it1;
-			++it2;
-		}
-
-
-		return src;
-
-#endif
-	}
 
 	Buffer<char> FileTools::LoadFile(FilePathParam const & path, bool ascii)
 	{
 		Buffer<char> result;
 
-		// resolve the path
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-		// redirect path to resources for direct access
-		boost::filesystem::path tmp;
-		boost::filesystem::path const & redirected_path = GetRedirectedPath(resolved_path, tmp);
-
 		// load the content
-		std::ifstream file(redirected_path.string().c_str(), std::ifstream::binary);
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+		
+		std::ifstream file(resolved_path.string().c_str(), std::ifstream::binary);
 		if (file)
 		{
 			std::streampos start = file.tellg();
@@ -133,6 +69,8 @@ namespace chaos
 		}
 		return result;
 	}
+
+
 	bool FileTools::CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result)
 	{
 		boost::filesystem::path temp_path = boost::filesystem::temp_directory_path();
@@ -154,6 +92,15 @@ namespace chaos
 		std::vector<std::string> result;
 
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+
+
+
+
+
+
+
+
 
 		std::ifstream file(resolved_path.string().c_str());
 		if (file)

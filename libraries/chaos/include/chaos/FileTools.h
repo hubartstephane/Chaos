@@ -29,7 +29,7 @@ namespace chaos
 		static bool WriteFileLines(FilePathParam const & path, std::vector<std::string> const & lines);
 
 		/** redirect any access (under conditions) to the direct resources path of the project (not the build directory) */
-		static boost::filesystem::path const & GetRedirectedPath(boost::filesystem::path const & src, boost::filesystem::path & tmp);
+		//static boost::filesystem::path const & GetRedirectedPath(boost::filesystem::path const & src, boost::filesystem::path & tmp);
 
 	protected:
 

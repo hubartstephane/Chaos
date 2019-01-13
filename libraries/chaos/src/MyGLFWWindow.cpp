@@ -148,6 +148,15 @@ namespace chaos
 				glfwMakeContextCurrent(in_glfw_window);
 				glfwGetFramebufferSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
 
+
+				glfwGetWindowSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+
+				int l, r, t, b;
+				glfwGetWindowFrameSize(in_glfw_window, &l, &t, &r, &b); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+
+				auto ww = r - l;
+				auto hh = t - b;
+
 				if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
 					return;
 
@@ -288,7 +297,7 @@ namespace chaos
 
 			SetWindowLongPtr(hWnd, GWL_STYLE, Style);
 
-
+			RequireWindowRefresh();
 #if 0
 			static DWORD getWindowStyle(const _GLFWwindow* window)
 			{

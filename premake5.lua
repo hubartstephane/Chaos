@@ -256,10 +256,6 @@ function DebugConf(plat)
     defines { DEBUG }
     defines { "_DEBUG" }
     flags { "Symbols" } 
-		
-    defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
-    defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-    defines("CHAOS_PROJECT_BUILD_PATH=\"".. PROJECT_BUILD_PATH.."\"")     
 end
 
 -- =============================================================================
@@ -272,10 +268,6 @@ function ReleaseConf(plat)
     defines { RELEASE }
     defines { "_RELEASE" }
     flags { "Optimize" }	   
-
-    defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
-    defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-    defines("CHAOS_PROJECT_BUILD_PATH=\"".. PROJECT_BUILD_PATH.."\"")     
 end
 
 -- =============================================================================
@@ -403,7 +395,7 @@ function onConfig(in_kind, plat, conf, proj)
 
    -- where the result EXE/LIB is been saved
    local targ = path.join(PROJECT_BUILD_PATH, conf, plat)
-   targetdir (targ)
+   targetdir(targ)
    
    proj.targetdir[plat][conf] = targ     
                                         
@@ -412,6 +404,10 @@ function onConfig(in_kind, plat, conf, proj)
    includedirs(inc)
    
    proj.includedirs[plat][conf] = inc     
+   
+   defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
+   defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
+   defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
       
 end
 
@@ -463,7 +459,7 @@ function CppProject(in_kind, proj_type)
     kind("Makefile")  
   
   -- create the project it self
-  project (PROJ_NAME)
+  project(PROJ_NAME)
   
 
   

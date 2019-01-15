@@ -7,6 +7,41 @@
 namespace chaos
 {
 
+#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
+	bool FileTools::GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path & redirected_path)
+	{
+		Application const * application = Application::GetConstInstance();
+		if (application == nullptr)
+			return false;
+		if (!application->HasCommandLineFlag("-DirectResourceFiles"))
+			return false;
+
+
+		static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
+		static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
+
+		// search whether incomming path is inside the build_path
+		auto it1 = p.begin();
+		auto it2 = build_path.begin();
+
+		while (it1 != p.end() && it2 != build_path.end())
+		{
+			if (*it1 != *it2)
+				return false;
+			++it1;
+			++it2;
+		}
+		if (it2 != build_path.end()) // has all directories of build_path been consummed ?
+			return false;
+
+		// make substitution, build_path prefix to src_path prefix
+		redirected_path = (src_path / p.lexically_relative(build_path));
+		redirected_path.normalize();
+		return true;
+	}
+#endif // CHAOS_CAN_REDIRECT_RESOURCE_FILES
+
+
 	bool FileTools::DoIsTypedFile(char const * filename, char const * expected_ext)
 	{
 		assert(filename != nullptr);
@@ -39,16 +74,18 @@ namespace chaos
 	}
 
 
-	Buffer<char> FileTools::LoadFile(FilePathParam const & path, bool ascii)
+	Buffer<char> FileTools::DoLoadFile(boost::filesystem::path const & resolved_path, bool ascii, bool * success_open)
 	{
+		assert(success_open != nullptr && *success_open == false); // caller responsability
+
 		Buffer<char> result;
 
 		// load the content
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-		
 		std::ifstream file(resolved_path.string().c_str(), std::ifstream::binary);
 		if (file)
 		{
+			*success_open = true;
+
 			std::streampos start = file.tellg();
 			file.seekg(0, std::ios::end);
 			std::streampos end = file.tellg();
@@ -70,6 +107,31 @@ namespace chaos
 		return result;
 	}
 
+	Buffer<char> FileTools::LoadFile(FilePathParam const & path, bool ascii, bool * success_open)
+	{
+		// use a temporary open result, if not provided
+		bool default_success_open = false;
+		if (success_open == nullptr)
+			success_open = &default_success_open;
+		*success_open = false;
+
+		Buffer<char> result;
+
+		// resolve the path
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+		// try the alternative
+#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
+		boost::filesystem::path redirected_path;
+		if (GetRedirectedPath(resolved_path, redirected_path))
+		{
+			result = DoLoadFile(redirected_path, ascii, success_open);
+			if (*success_open)
+				return result;
+		}
+#endif // CHAOS_CAN_REDIRECT_RESOURCE_FILES 
+		return DoLoadFile(resolved_path, ascii, success_open);
+	}
 
 	bool FileTools::CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result)
 	{

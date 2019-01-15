@@ -14,40 +14,36 @@
 #define CHAOS_CAN_REDIRECT_RESOURCE_FILES (_DEBUG && defined CHAOS_PROJECT_PATH && defined CHAOS_PROJECT_SRC_PATH && defined CHAOS_PROJECT_BUILD_PATH)
 
 #if CHAOS_CAN_REDIRECT_RESOURCE_FILES
-bool GetRedirectedPath(boost::filesystem::path const & src, boost::filesystem::path & redirected_path)
+bool GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path & redirected_path)
 {
 	chaos::Application const * application = chaos::Application::GetConstInstance();
 	//if (application == nullptr)
 	//	return false;
-//	if (!application->HasCommandLineFlag("-RedirectResources"))
-//		return false;
-
-	// SRC = "E:\\programmation\\build\\vs2015\\executables\\LUDUMDARE\\Ludum43\\DEBUG\\x32\\resources\\config.json"
-
-	// CHAOS_PROJECT_PATH 
-	// ------------------
-	// "executables/LUDUMDARE/Ludum43"
-
-	// CHAOS_PROJECT_SRC_PATH 
-	// ----------------------
-	// "E:/programmation/Code/executables/LUDUMDARE/Ludum43"
-
-	// CHAOS_PROJECT_BUILD_PATH
-	// ------------------------
-	// "E:/programmation/build/vs2015/executables/LUDUMDARE/Ludum43"
-
-	auto a = CHAOS_PROJECT_PATH;
-	auto b = CHAOS_PROJECT_SRC_PATH;
-	auto c = CHAOS_PROJECT_BUILD_PATH;
+	//	if (!application->HasCommandLineFlag("-DirectResourceFiles"))
+	//		return false;
 
 
+	static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
+	static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
 
+	// search whether incomming path is inside the build_path
+	auto it1 = p.begin();
+	auto it2 = build_path.begin();
 
-
-
-
-
-	return false;
+	while (it1 != p.end() && it2 != build_path.end())
+	{
+		if (*it1 != *it2)
+			return false;
+		++it1;
+		++it2;
+	}
+	if (it2 != build_path.end()) // has all directories of build_path been consummed ?
+		return false;
+	
+	// make substitution, build_path prefix to src_path prefix
+	redirected_path = (src_path / p.lexically_relative(build_path));
+	redirected_path.normalize();
+	return true;
 }
 #endif // CHAOS_CAN_REDIRECT_RESOURCE_FILES
 
@@ -114,102 +110,13 @@ chaos::Buffer<char> LoadFile(chaos::FilePathParam const & path, bool ascii, bool
 	return DoLoadFile(resolved_path, ascii, success_open);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-	boost::filesystem::path const & GetRedirectedPath(boost::filesystem::path const & src, boost::filesystem::path & tmp)
-	{
-#if !_DEBUG
-		return src;
-#else
-
-		chaos::Application const * application = chaos::Application::GetConstInstance();
-		if (application == nullptr)
-			return src;
-
-		if (!application->HasCommandLineFlag("-RedirectResources"))
-			return src;
-
-
-#if defined XXXX
-		//	ddd
-#endif
-
-#if 0
-
-		"E:\\programmation\\build\\vs2015\\executables\\LUDUMDARE\\Ludum43\\DEBUG\\x32\\resources"
-
-			E:\programmation\Code\executables\LUDUMDARE\Ludum43\resources
-
-
-			build\\vs2015->Code
-
-			Debug\x32->Supprimer
-
-
-
-
-#endif
-
-
-			auto xxx = src.relative_path();
-
-		//boost::filesystem::path::relative_path
-
-		boost::filesystem::path const & application_path = application->GetApplicationPath();
-
-		boost::filesystem::path const & resources_path = application->GetResourcesPath();
-
-		auto it1 = src.begin();
-		auto it2 = application_path.begin();
-
-		while (it1 != src.end() && it2 != application_path.end())
-		{
-
-
-			++it1;
-			++it2;
-		}
-
-
-		return src;
-
-#endif
-	}
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int _tmain(int argc, char ** argv, char ** env)
 {
 
 
 
 	bool open_success = false;
-	chaos::Buffer<char> buffer = LoadFile("E:\\programmation\\build\\vs2015\\executables\\LUDUMDARE\\Ludum43\\DEBUG\\x32\\resources\\config.json", true, &open_success);
+	chaos::Buffer<char> buffer = LoadFile("D:\\Personnel\\Programmation\\build\\vs2015\\executables\\LUDUMDARE\\Ludum43\\DEBUG\\x32\\resources\\config.json", true, &open_success);
 
 
 	open_success = open_success;

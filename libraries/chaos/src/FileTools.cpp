@@ -10,12 +10,11 @@ namespace chaos
 #if CHAOS_CAN_REDIRECT_RESOURCE_FILES
 	bool FileTools::GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path & redirected_path)
 	{
-		Application const * application = Application::GetConstInstance();
-		if (application == nullptr)
-			return false;
-		if (!application->HasCommandLineFlag("-DirectResourceFiles"))
-			return false;
-
+	//	Application const * application = Application::GetConstInstance();
+	//	if (application == nullptr)
+	//		return false;
+	//	if (!application->HasCommandLineFlag("-DirectResourceFiles"))
+	//		return false;
 
 		static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
 		static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;

@@ -39,7 +39,7 @@ namespace chaos
 		/** returns true if the extension of a file correspond to a string */
 		static bool IsTypedFile(FilePathParam const & path, char const * expected_ext);
 		/** loading a whole file into memory */
-		static Buffer<char> LoadFile(FilePathParam const & path, bool ascii);
+		static Buffer<char> LoadFile(FilePathParam const & path, bool ascii, bool * success_open = nullptr);
 
 		/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);
@@ -59,7 +59,7 @@ namespace chaos
 		/** an utility function to test for extension */
 		static bool DoIsTypedFile(char const * filename, char const * expected_ext);
 		/** an utility function to load a file */
-		static Buffer<char> FileTools::DoLoadFile(boost::filesystem::path const & resolved_path, bool ascii, bool * success_open);
+		static Buffer<char> DoLoadFile(boost::filesystem::path const & resolved_path, bool ascii, bool * success_open = nullptr);
 	};
 
 }; // namespace chaos

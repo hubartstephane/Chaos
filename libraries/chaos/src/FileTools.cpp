@@ -153,24 +153,42 @@ namespace chaos
 		return false;
 	}
 
-	std::vector<std::string> FileTools::ReadFileLines(FilePathParam const & path)
+	std::vector<std::string> FileTools::ReadFileLines(FilePathParam const & path, bool * success_open)
 	{
+		// use a temporary open result, if not provided
+		bool default_success_open = false;
+		if (success_open == nullptr)
+			success_open = &default_success_open;
+		*success_open = false;
+
 		std::vector<std::string> result;
 
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
+		// try the alternative
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+		boost::filesystem::path redirected_path;
+		if (GetRedirectedPath(resolved_path, redirected_path))
+		{
+			result = DoReadFileLines(redirected_path, success_open);
+			if (*success_open)
+				return result;
+		}
+#endif // _DEBUG 
+		return DoReadFileLines(resolved_path, success_open);
+	}
 
+	std::vector<std::string> FileTools::DoReadFileLines(boost::filesystem::path const & path, bool * success_open)
+	{
+		assert(success_open != nullptr && *success_open == false); // caller responsability
 
+		std::vector<std::string> result;
 
-
-
-
-
-
-
-		std::ifstream file(resolved_path.string().c_str());
+		std::ifstream file(path.string().c_str());
 		if (file)
 		{
+			*success_open = true;
+
 			std::string str;
 			while (std::getline(file, str))
 				result.push_back(std::move(str));

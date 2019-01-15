@@ -80,6 +80,15 @@ namespace chaos
 
 		/** reloading the configuration file (do not apply it to any object at all) */
 		bool ReloadConfigurationFile(nlohmann::json & result) const;
+		
+#if _DEBUG
+		/** set redirection file directories */
+		void SetFileRedirectionDirectories(boost::filesystem::path const & build_path, boost::filesystem::path const & src_path);
+		/** get the redirected source directory */
+		boost::filesystem::path const & GetRedirectionSourcePath() const { return redirection_source_path;};
+		/** get the redirected build directory */
+		boost::filesystem::path const & GetRedirectionBuildPath() const { return redirection_build_path; };
+#endif
 
 	protected:
 
@@ -133,6 +142,12 @@ namespace chaos
 		nlohmann::json configuration;
 		/** the path where the configuration file is */
 		boost::filesystem::path configuration_path;
+
+		/** redirection source directories */
+#if _DEBUG
+		boost::filesystem::path redirection_source_path;
+		boost::filesystem::path redirection_build_path;
+#endif
 
 		/** the file manager */
 		shared_ptr<FileManager> file_manager;

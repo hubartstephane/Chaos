@@ -7,17 +7,22 @@
 namespace chaos
 {
 
-#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
 	bool FileTools::GetRedirectedPath(boost::filesystem::path const & p, boost::filesystem::path & redirected_path)
 	{
-	//	Application const * application = Application::GetConstInstance();
-	//	if (application == nullptr)
-	//		return false;
-	//	if (!application->HasCommandLineFlag("-DirectResourceFiles"))
-	//		return false;
+		Application const * application = Application::GetConstInstance();
+		if (application == nullptr)
+			return false;
+		if (!application->HasCommandLineFlag("-DirectResourceFiles"))
+			return false;
 
-		static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
-		static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
+		// try to get the source and build directories
+		boost::filesystem::path const & src_path = application->GetRedirectionSourcePath();
+		if (src_path.empty())
+			return false;
+		boost::filesystem::path const & build_path = application->GetRedirectionBuildPath();
+		if (build_path.empty())
+			return false;
 
 		// search whether incomming path is inside the build_path
 		auto it1 = p.begin();
@@ -38,7 +43,7 @@ namespace chaos
 		redirected_path.normalize();
 		return true;
 	}
-#endif // CHAOS_CAN_REDIRECT_RESOURCE_FILES
+#endif // _DEBUG
 
 
 	bool FileTools::DoIsTypedFile(char const * filename, char const * expected_ext)
@@ -120,7 +125,7 @@ namespace chaos
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 		// try the alternative
-#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
 		boost::filesystem::path redirected_path;
 		if (GetRedirectedPath(resolved_path, redirected_path))
 		{
@@ -128,7 +133,7 @@ namespace chaos
 			if (*success_open)
 				return result;
 		}
-#endif // CHAOS_CAN_REDIRECT_RESOURCE_FILES 
+#endif // _DEBUG 
 		return DoLoadFile(resolved_path, ascii, success_open);
 	}
 

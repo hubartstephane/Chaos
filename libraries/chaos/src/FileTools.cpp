@@ -13,7 +13,7 @@ namespace chaos
 		Application const * application = Application::GetConstInstance();
 		if (application == nullptr)
 			return false;
-		if (!application->HasCommandLineFlag("-DirectResourceFiles"))
+		if (application->HasCommandLineFlag("-NoDirectResourceFiles"))
 			return false;
 
 		// try to get the source and build directories

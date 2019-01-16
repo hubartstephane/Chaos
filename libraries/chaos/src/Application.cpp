@@ -213,10 +213,12 @@ namespace chaos
 		return false;	
 	}
 
+#if _DEBUG
 	void Application::SetFileRedirectionDirectories(boost::filesystem::path const & build_path, boost::filesystem::path const & src_path)
 	{
 		redirection_build_path = build_path;
 		redirection_source_path = src_path;		
 	}
+#endif // _DEBUG
 
 }; // namespace chaos

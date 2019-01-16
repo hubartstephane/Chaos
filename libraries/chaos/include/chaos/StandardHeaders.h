@@ -14,7 +14,9 @@
 *   That why i added a redirect resources mecanim.
 *   in DEBUG, we try to match files in BUILD_PATH and files in SRC_PATH to make a direct access from the SOURCE
 *
-*    premake5.lua defines some helpful macro for that. The command line has to have the swith "-DirectResourceFiles"
+*   premake5.lua defines some helpful macro for that. 
+*
+*   You can prevent this in _DEBUG with the command swith "-NoDirectResourceFiles"
 *
 *   You can only use this features if 'CHAOS_PROJECT_SRC_PATH' and 'CHAOS_PROJECT_BUILD_PATH' are defined (and in _DEBUG)
 *

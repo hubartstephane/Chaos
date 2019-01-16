@@ -282,12 +282,20 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 		if (--life < 0)
 		{
 			life = 0; // cheat mode en debug, but want life to be visually visible
+
+			bool death_enabled = true;
 #if !_DEBUG
-			pending_gameover = true;
-#else
-			if (collision_source != nullptr)
-				collision_source->PlaySound(chaos::PlaySoundDesc());	
+			death_enabled = false;
 #endif
+			if (death_enabled)
+			{
+				pending_gameover = true;
+			}
+			else
+			{
+				if (collision_source != nullptr)
+					collision_source->PlaySound(chaos::PlaySoundDesc());				
+			}
 		}
 		else
 		{
@@ -781,10 +789,11 @@ void Game::GameOver()
 	ResetWorld(); // Layer visibility flags are reseted here !!! => copy want we want for "game over" or "restart"
 
 	SetLayerVisibility(PAUSED_OBJECT_LAYER, false);
+
 	SetLayerVisibility(GAMEOVER_OBJECT_LAYER, old_pending_gameover);
 	SetLayerVisibility(TITLE_OBJECT_LAYER, old_pending_restart_game);
 
-  LoadBackgroundTexture(background_index + 1);
+	LoadBackgroundTexture(background_index + 1);
 }
 
 void Game::ResetWorld()
@@ -797,14 +806,14 @@ void Game::ResetWorld()
 	player_absolute_speed = initial_player_absolute_speed;
 	life  = initial_life;
 	level = initial_level;
-  player_speed = glm::vec2(0.0f, 0.0f);
+	player_speed = glm::vec2(0.0f, 0.0f);
 	
 	GameInfo game_info(*this);
 	for (SpriteLayer & layer : sprite_layers)
 	{
 		layer.SetVisible(layer.start_visible);
 		layer.DestroyAllParticles();
-		//layer.PopulateSprites(game_info, layer.min_particle_count);	
+		layer.PopulateSprites(game_info, layer.min_particle_count);	
 	}
 
 	glm::vec2 screen_space_position = GetPlayerInitialScreenPosition();

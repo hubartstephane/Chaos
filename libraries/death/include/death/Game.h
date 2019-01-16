@@ -22,6 +22,8 @@
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
 #include <death/GameParticleCreator.h>
+#include <death/Player.h>
+#include <death/GameInstance.h>
 
 namespace death
 {
@@ -192,14 +194,19 @@ namespace death
 
 #endif
 
+		/** get the player by its index */
+		Player * GetPlayer(int player_index);
+		/** get the player by its index */
+		Player const * GetPlayer(int player_index) const;
+
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
 
 		/** get the player allocation */
-		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
-		chaos::ParticleAllocation const * GetPlayerAllocation() const { return player_allocations.get(); }
+		chaos::ParticleAllocation * GetPlayerAllocation(int player_index);
+		chaos::ParticleAllocation const * GetPlayerAllocation(int player_index) const;
 		/** set player allocation */
-		virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
+		virtual void SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation);
 
 		/** get object particle */
 		chaos::ParticleDefault::Particle * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
@@ -215,17 +222,17 @@ namespace death
 		bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
 
 		/** get player particle */
-		chaos::ParticleDefault::Particle * GetPlayerParticle();
-		chaos::ParticleDefault::Particle const * GetPlayerParticle() const;
+		chaos::ParticleDefault::Particle * GetPlayerParticle(int player_index);
+		chaos::ParticleDefault::Particle const * GetPlayerParticle(int player_index) const;
 
 		/** get player position */
-		glm::vec2 GetPlayerPosition() const;
+		glm::vec2 GetPlayerPosition(int player_index) const;
 		/** get player box */
-		chaos::box2 GetPlayerBox() const;
+		chaos::box2 GetPlayerBox(int player_index) const;
 		/** set the player position */
-		bool SetPlayerPosition(glm::vec2 const & position);
+		bool SetPlayerPosition(int player_index, glm::vec2 const & position);
 		/** set the player box */
-		bool SetPlayerBox(chaos::box2 const & box);
+		bool SetPlayerBox(int player_index, chaos::box2 const & box);
 
 		/** get currently played level */
 		GameLevel * GetCurrentLevel();
@@ -244,6 +251,11 @@ namespace death
 
 		/** reloading the configuration file */
 		bool ReloadConfigurationFile();
+
+		/** get the game instance */
+		GameInstance * GetGameInstance() { return game_instance.get(); }
+		/** get the game instance */
+		GameInstance const * GetGameInstance() const { return game_instance.get(); }
 
 	protected:
 
@@ -270,7 +282,7 @@ namespace death
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** update the player and the camera position so that they remains inside the world */
-		void RestrictCameraToPlayerAndWorld();
+		void RestrictCameraToPlayerAndWorld(int player_index);
 
 		/** blend out a music */
 		void BlendMusic(chaos::Sound * music, bool blend_in);
@@ -552,8 +564,10 @@ namespace death
 		chaos::shared_ptr<GameLevelInstance> current_level_instance;
 
 		/** some allocations */
-		chaos::shared_ptr<chaos::ParticleAllocation> player_allocations;
 		chaos::shared_ptr<chaos::ParticleAllocation> background_allocations;
+
+		/** the game instance */
+		chaos::shared_ptr<GameInstance> game_instance;
 	};
 
 }; // namespace death

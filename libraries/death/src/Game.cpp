@@ -159,7 +159,7 @@ namespace death
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
 		// keep camera, player inside the world (can be done at rendering time)
-		RestrictCameraToPlayerAndWorld();
+		RestrictCameraToPlayerAndWorld(0);
 
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
@@ -172,7 +172,7 @@ namespace death
 		main_uniform_provider.AddVariableValue("view_size", view_size);
 
 		// boxes
-		chaos::box2 player = GetPlayerBox();
+		chaos::box2 player = GetPlayerBox(0);
 		main_uniform_provider.AddVariableValue("player_box", chaos::EncodeBoxToVector(player));
 		chaos::box2 camera = GetCameraBox();
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
@@ -1417,7 +1417,7 @@ namespace death
 		}
 	}
 
-	void Game::RestrictCameraToPlayerAndWorld()
+	void Game::RestrictCameraToPlayerAndWorld(int player_index)
 	{
 		// get camera, cannot continue if it is empty
 		chaos::box2 camera = GetCameraBox();
@@ -1425,7 +1425,7 @@ namespace death
 			return;
 
 		// keep player inside camera safe zone
-		chaos::box2 player = GetPlayerBox();
+		chaos::box2 player = GetPlayerBox(player_index);
 		if (!player.IsEmpty())
 		{
 			chaos::box2 safe_camera = camera;
@@ -1501,33 +1501,51 @@ namespace death
 		return true;
 	}
 
-	chaos::ParticleDefault::Particle * Game::GetPlayerParticle()
+	Player * Game::GetPlayer(int player_index)
 	{
-		return GetObjectParticle(GetPlayerAllocation(), 0);
+		// game even not started : no player
+		if (game_instance == nullptr)
+			return nullptr;
+		// give the instance the responsability 
+		return game_instance->GetPlayer(player_index);
+	}
+	
+	Player const * Game::GetPlayer(int player_index) const
+	{
+		// game even not started : no player
+		if (game_instance == nullptr)
+			return nullptr;
+		// give the instance the responsability 
+		return game_instance->GetPlayer(player_index);
 	}
 
-	chaos::ParticleDefault::Particle const * Game::GetPlayerParticle() const
+	chaos::ParticleDefault::Particle * Game::GetPlayerParticle(int player_index)
 	{
-		return GetObjectParticle(GetPlayerAllocation(), 0);
+		return GetObjectParticle(GetPlayerAllocation(player_index), 0);
 	}
 
-	glm::vec2 Game::GetPlayerPosition() const
+	chaos::ParticleDefault::Particle const * Game::GetPlayerParticle(int player_index) const
 	{
-		return GetObjectPosition(GetPlayerAllocation(), 0);
+		return GetObjectParticle(GetPlayerAllocation(player_index), 0);
 	}
 
-	chaos::box2 Game::GetPlayerBox() const
+	glm::vec2 Game::GetPlayerPosition(int player_index) const
 	{
-		return GetObjectBox(GetPlayerAllocation(), 0);
+		return GetObjectPosition(GetPlayerAllocation(player_index), 0);
 	}
 
-	bool Game::SetPlayerPosition(glm::vec2 const & position)
+	chaos::box2 Game::GetPlayerBox(int player_index) const
 	{
-		return SetObjectPosition(GetPlayerAllocation(), 0, position);
+		return GetObjectBox(GetPlayerAllocation(player_index), 0);
 	}
-	bool Game::SetPlayerBox(chaos::box2 const & box)
+
+	bool Game::SetPlayerPosition(int player_index, glm::vec2 const & position)
 	{
-		return SetObjectBox(GetPlayerAllocation(), 0, box);
+		return SetObjectPosition(GetPlayerAllocation(player_index), 0, position);
+	}
+	bool Game::SetPlayerBox(int player_index, chaos::box2 const & box)
+	{
+		return SetObjectBox(GetPlayerAllocation(player_index), 0, box);
 	}
 
 	void Game::SetCurrentLife(int new_life)
@@ -1539,9 +1557,28 @@ namespace death
 		current_life = new_life;
 	}
 
-	void Game::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) 
+	chaos::ParticleAllocation * Game::GetPlayerAllocation(int player_index) 
 	{ 
-		player_allocations = in_allocation; 
+		Player * player = GetPlayer(player_index);
+		if (player == nullptr)
+			return nullptr;
+		return player->GetPlayerAllocation();
+	}
+
+	chaos::ParticleAllocation const * Game::GetPlayerAllocation(int player_index) const 
+	{ 
+		Player const * player = GetPlayer(player_index);
+		if (player == nullptr)
+			return nullptr;
+		return player->GetPlayerAllocation();
+	}
+
+	void Game::SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation)
+	{
+		Player * player = GetPlayer(player_index);
+		if (player == nullptr)
+			return;
+		player->SetPlayerAllocation(in_allocation);
 	}
 
 	bool Game::ReloadConfigurationFile()

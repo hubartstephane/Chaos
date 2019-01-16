@@ -81,15 +81,15 @@ public:
 
 	float GetLevelTimeout() const { return level_timeout; }
 
-	float GetPlayerLife() const;
+	float GetPlayerLife(int player_index) const;
 
-	ParticlePlayer * GetPlayerParticle();
+	ParticlePlayer * GetPlayerParticle(int player_index);
 
-	ParticlePlayer const * GetPlayerParticle() const;
+	ParticlePlayer const * GetPlayerParticle(int player_index) const;
 
 protected:
 
-	virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) override;
+	virtual void SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation) override;
 
 	void SetPlayerReverseMode(bool reversed_mode);
 
@@ -151,7 +151,7 @@ protected:
 	/** ensure object is inside the world */
 	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
 	/** ensure player is inside the world */
-	void RestrictPlayerToWorld();
+	void RestrictPlayerToWorld(int player_index);
 
 
 	virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;

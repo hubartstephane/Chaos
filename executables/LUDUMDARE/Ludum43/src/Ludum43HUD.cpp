@@ -79,7 +79,7 @@ chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float lev
 
 void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 {
-	float life = ludum_game->GetPlayerLife();
+	float life = ludum_game->GetPlayerLife(0);
 	if (life != cached_life_value)
 	{
 		// create the allocation

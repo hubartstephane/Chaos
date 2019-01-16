@@ -384,7 +384,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 {
 	ParticleAtomTrait::UpdateAtomData result;
 
-	ParticlePlayer const * player_particle = (ParticlePlayer const*)game->GetPlayerParticle();
+	ParticlePlayer const * player_particle = (ParticlePlayer const*)game->GetPlayerParticle(0);
 	if (player_particle == nullptr)
 		return result;
 

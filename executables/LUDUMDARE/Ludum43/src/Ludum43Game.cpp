@@ -287,7 +287,7 @@ void LudumGame::OnGameOver()
 
 bool LudumGame::CheckGameOverCondition()
 {
-	ParticlePlayer const * player_particle = GetPlayerParticle();
+	ParticlePlayer const * player_particle = GetPlayerParticle(0);
 	if (player_particle == nullptr || level_timeout <= 0.0f)
 	{
 		RequireGameOver();
@@ -321,7 +321,7 @@ bool LudumGame::TickGameLoop(double delta_time)
 
 void LudumGame::TickHeartBeat(double delta_time) 
 {
-	ParticlePlayer const * particle_player = GetPlayerParticle();
+	ParticlePlayer const * particle_player = GetPlayerParticle(0);
 	if (particle_player == nullptr)
 		return;
 
@@ -359,9 +359,9 @@ void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, si
 	SetObjectBox(allocation, index, box);
 }
 
-void LudumGame::RestrictPlayerToWorld()
+void LudumGame::RestrictPlayerToWorld(int player_index)
 {
-	RestrictObjectToWorld(player_allocations.get(), 0);
+	RestrictObjectToWorld(GetPlayerAllocation(player_index), 0);
 }
 
 
@@ -517,7 +517,7 @@ static glm::vec2 GetDirectionFromCircleSection(int quadran, int section_count)
 
 void LudumGame::UpdatePlayerAcceleration(double delta_time)
 {
-	ParticlePlayer * player_particle = GetPlayerParticle();
+	ParticlePlayer * player_particle = GetPlayerParticle(0);
 	if (player_particle == nullptr)
 		return;
 	player_particle->acceleration = glm::vec2(0.0f, 0.0f);
@@ -575,7 +575,7 @@ void LudumGame::SetPlayerReverseMode(bool reversed_mode)
 	if (GetLevelClockTime() < 3.0) // because the player start could cause a repulsion
 		return;
 
-	ParticlePlayer * player_particle = GetPlayerParticle();
+	ParticlePlayer * player_particle = GetPlayerParticle(0);
 	if (player_particle != nullptr)
 	{
 		if (player_particle->reversed == reversed_mode) // no change, ignore
@@ -597,7 +597,7 @@ void LudumGame::SetPlayerDashMode(bool dash)
 	if (GetLevelClockTime() < 3.0) // because the player start dash
 		return;
 
-	ParticlePlayer * player_particle = GetPlayerParticle();
+	ParticlePlayer * player_particle = GetPlayerParticle(0);
 	if (player_particle != nullptr)
 	{
 		if (player_particle->dash == dash) // no change, ignore
@@ -679,16 +679,17 @@ void LudumGame::NotifyAtomCountChange(int delta)
 	waken_up_particle_count += delta;
 }
 
-float LudumGame::GetPlayerLife() const
+float LudumGame::GetPlayerLife(int player_index) const
 {
-	ParticlePlayer const * player_particle = GetPlayerParticle();
+	ParticlePlayer const * player_particle = GetPlayerParticle(player_index);
 	if (player_particle == nullptr)
 		return 0.0f;
 	return player_particle->life;
 }
 
-ParticlePlayer * LudumGame::GetPlayerParticle()
+ParticlePlayer * LudumGame::GetPlayerParticle(int player_index)
 {
+	chaos::ParticleAllocation * player_allocations = GetPlayerAllocation(player_index);
 	if (player_allocations == nullptr)
 		return nullptr;
 	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
@@ -697,8 +698,9 @@ ParticlePlayer * LudumGame::GetPlayerParticle()
 	return &player_particles[0];
 }
 
-ParticlePlayer const * LudumGame::GetPlayerParticle() const
+ParticlePlayer const * LudumGame::GetPlayerParticle(int player_index) const
 {
+	chaos::ParticleAllocation const * player_allocations = GetPlayerAllocation(player_index);
 	if (player_allocations == nullptr)
 		return nullptr;
 	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
@@ -736,9 +738,9 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 	return true;
 }
 
-void LudumGame::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) 
+void LudumGame::SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation) 
 { 
-	death::Game::SetPlayerAllocation(in_allocation);
+	death::Game::SetPlayerAllocation(player_index, in_allocation);
 	if (in_allocation != nullptr)
 	{
 		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();

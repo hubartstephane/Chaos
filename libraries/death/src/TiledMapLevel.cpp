@@ -682,7 +682,7 @@ namespace death
 			if (game == nullptr)
 				return;
 			// get the player particle
-			chaos::ParticleDefault::Particle * player_particle = game->GetPlayerParticle();
+			chaos::ParticleDefault::Particle * player_particle = game->GetPlayerParticle(0);
 			if (player_particle == nullptr)
 				return;
 			// collision with surface triggers
@@ -1057,7 +1057,7 @@ namespace death
 
 		void LevelInstance::UnSpawnPlayer()
 		{
-			game->SetPlayerAllocation(nullptr);
+			game->SetPlayerAllocation(0, nullptr);
 			game->SetCameraBox(chaos::box2()); // reset the camera
 		}
 
@@ -1111,7 +1111,7 @@ namespace death
 			chaos::ParticleAllocation * player_allocation = particle_populator.GetParticleAllocation();
 
 			// set the player allocation
-			game->SetPlayerAllocation(player_allocation);
+			game->SetPlayerAllocation(0, player_allocation);
 
 			// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 			reference_displacement_ratio = layer_instance->displacement_ratio;

@@ -86,7 +86,7 @@ namespace death
 		TickGameInputs(delta_time);
 		// update the game state_machine
 		if (game_state_machine_instance != nullptr)
-			game_state_machine_instance->Tick(delta_time);
+			game_state_machine_instance->Tick(delta_time, nullptr);
 		// clear the cached inputs
 		ResetPlayerCachedInputs();
 		// tick the particle manager
@@ -99,9 +99,14 @@ namespace death
 	
 	bool Game::OnKeyEvent(int key, int action)
 	{
+		// give the game instance opportunity to capture the input
+		if (game_instance != nullptr)
+			if (game_instance->OnKeyEvent(key, action))
+				return true;
+
 		// MAIN MENU to PLAYING
 		if (action == GLFW_PRESS)
-			if (RequireStartGame())
+			if (RequireStartGame(nullptr))
 				return true;
 
 		// PLAYING to PAUSE
@@ -138,19 +143,32 @@ namespace death
 	
 	bool Game::OnCharEvent(unsigned int c)
 	{
+		// give the game instance opportunity to capture the input
+		if (game_instance != nullptr)
+			if (game_instance->OnCharEvent(c))
+				return true;
 		return false;
 	}
 	
 	bool Game::OnMouseButton(int button, int action, int modifier)
 	{
+		// give the game instance opportunity to capture the input
+		if (game_instance != nullptr)
+			if (game_instance->OnMouseButton(button, action, modifier))
+				return true;
+		// start the game on a 'OnClick'
 		if (action == GLFW_PRESS)
-			if (RequireStartGame())
+			if (RequireStartGame(nullptr))
 				return true;
 		return false;
 	}
 	
 	bool Game::OnMouseMove(double x, double y)
 	{
+		// give the game instance opportunity to capture the input
+		if (game_instance != nullptr)
+			if (game_instance->OnMouseMove(x, y))
+				return true;
 		return false;
 	}
 
@@ -870,17 +888,17 @@ namespace death
 			right_stick_position = gamepad_sensitivity * rsp;
 	}
 
-	bool Game::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		// maybe a start game
-		if (in_gamepad_data.IsAnyButtonPressed())
-			if (RequireStartGame())
+		if (in_physical_gamepad->IsAnyButtonPressed())
+			if (RequireStartGame(in_physical_gamepad))
 				return true;
 
 		// maybe a game/pause resume
 		if (
-			(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-			(in_gamepad_data.GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+			(in_physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
+			(in_physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
 		{
 			if (RequireTogglePause())
 				return true;
@@ -894,19 +912,15 @@ namespace death
 		if (!physical_gamepad->IsAnyAction())
 			return true;
 
-
-		// chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad = physical_gamepad->CaptureDevice(nullptr); // shuxxx
-
 		// change the application mode
 		chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
 
 		// copy the gamepad information into the game and handle it
 		gamepad_data = physical_gamepad->GetGamepadData();
-
 		HandleGamepadInput(gamepad_data);
 
 		// special action on gamepad input
-		OnGamepadInput(gamepad_data);
+		OnGamepadInput(physical_gamepad);
 
 		return true;
 	}
@@ -1008,7 +1022,18 @@ namespace death
 	}
 
 	bool Game::OnEnterGame()
-	{		
+	{
+		// create the game instance
+		game_instance = DoGenerateGameInstance();
+		if (game_instance == nullptr)
+			return false;
+		// create a player 
+
+
+
+
+
+
 		ResetGameVariables();
 		CreateInGameClocks();
 		CreatePlayingHUD();
@@ -1203,9 +1228,9 @@ namespace death
 		return false;
 	}
 
-	bool Game::RequireStartGame()
+	bool Game::RequireStartGame(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, nullptr))
+		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, physical_gamepad))
 			return true;
 		return false;
 	}
@@ -1598,6 +1623,10 @@ namespace death
 		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
 	}
 
+	GameInstance * Game::DoGenerateGameInstance()
+	{
+		return new GameInstance;
+	}
 
 }; // namespace death
 

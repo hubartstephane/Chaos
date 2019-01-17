@@ -53,22 +53,11 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool OnKeyEvent(int key, int action) override;
-	/** override */
-	virtual bool OnCharEvent(unsigned int c) override;
-	/** override */
-	virtual bool OnMouseMove(double x, double y) override;
-
-	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
 	/** called whenever a gamepad input is comming */
-	virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
-
-	virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
-
 	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all);
 
 	void NotifyAtomCountChange(int delta);
@@ -98,26 +87,8 @@ protected:
 	/** override */
 	virtual bool DeclareParticleClasses() override;
 
-	/** creating all object in the game */
-	void CreateAllGameObjects(int level);
-	/** destroying game objects*/
-	void DestroyGameObjects();
-
-	/** override */
-	virtual void OnEnterMainMenu(bool very_first) override;
-	/** override */
-	virtual void OnGameOver() override;
-	/** override */
-	virtual bool OnEnterPause() override;
-	/** override */
-	virtual bool OnLeavePause() override;
-
 	/** override */
 	virtual bool OnEnterGame() override;
-	/** override */
-	virtual bool OnLeaveGame(bool gameover) override;
-	/** override */
-	virtual bool OnAbordGame() override;
 
 	/** override */
 	virtual bool TickGameLoop(double delta_time) override;

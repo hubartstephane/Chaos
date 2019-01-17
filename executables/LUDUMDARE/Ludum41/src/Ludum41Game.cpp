@@ -101,13 +101,13 @@ bool LudumGame::OnKeyEvent(int key, int action)
 	return death::Game::OnKeyEvent(key, action);
 }
 
-bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
 	// press start or go to pause
-	if (death::Game::OnGamepadInput(in_gamepad_data))
+	if (death::Game::OnGamepadInput(in_physical_gamepad))
 		return true;
 	// maybe this correspond to current challenge
-	SendGamepadButtonToChallenge(&in_gamepad_data);
+	SendGamepadButtonToChallenge(in_physical_gamepad->GetGamepadData());
 
 	return false;
 }

@@ -20,6 +20,9 @@ namespace death
 
 	public:
 
+		/** constructor */
+		Player(class GameInstance * in_game_instance);
+
 		/** get the player allocation */
 		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
 		/** get the player allocation */
@@ -37,6 +40,17 @@ namespace death
 		int GetScore() const { return score; }
 		/** returns whether the player is dead or not */
 		bool IsDead() const { return life_count == 0; }
+
+	protected:
+
+		/** handle keyboard input */
+		virtual bool OnKeyEvent(int key, int action);
+		/** handle keyboard input */
+		virtual bool OnCharEvent(unsigned int c);
+		/** handle mouse input */
+		virtual bool OnMouseButton(int button, int action, int modifier);
+		/** handle mouse movement */
+		virtual bool OnMouseMove(double x, double y);
 
 	protected:
 

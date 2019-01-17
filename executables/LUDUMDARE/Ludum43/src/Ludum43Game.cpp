@@ -31,69 +31,11 @@ Black holes and Shadows are dangerous.
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
-void LudumGame::OnEnterMainMenu(bool very_first)
-{
-	death::Game::OnEnterMainMenu(very_first);
-
-
-}
-
-bool LudumGame::OnEnterPause()
-{
-	death::Game::OnEnterPause();
-	return true;
-}
-
-bool LudumGame::OnLeavePause()
-{
-	death::Game::OnLeavePause();
-	return true;
-}
-
 bool LudumGame::OnEnterGame()
 {
 	death::Game::OnEnterGame();
 	PlaySound("start", false, false);
-	CreateAllGameObjects(0);
 	return true;
-}
-
-bool LudumGame::OnLeaveGame(bool gameover)
-{
-	death::Game::OnLeaveGame(gameover);
-	return true;
-}
-
-bool LudumGame::OnAbordGame()
-{
-	death::Game::OnAbordGame();
-	DestroyGameObjects();
-	return true;
-}
-
-bool LudumGame::OnCharEvent(unsigned int c)
-{
-	return death::Game::OnCharEvent(c);
-}
-
-bool LudumGame::OnKeyEvent(int key, int action)
-{
-	return death::Game::OnKeyEvent(key, action);
-}
-
-bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
-{
-	if (!death::Game::OnPhysicalGamepadInput(physical_gamepad))
-		return false;
-	
-	return true;
-}
-
-bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
-{
-	if (death::Game::OnGamepadInput(in_gamepad_data))
-		return true;
-	return false;
 }
 
 void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
@@ -279,12 +221,6 @@ void LudumGame::ResetGameVariables()
 
 }
 
-void LudumGame::OnGameOver()
-{
-	death::Game::OnGameOver();
-	DestroyGameObjects();
-}
-
 bool LudumGame::CheckGameOverCondition()
 {
 	ParticlePlayer const * player_particle = GetPlayerParticle(0);
@@ -340,17 +276,6 @@ void LudumGame::TickHeartBeat(double delta_time)
 	}
 }
 
-bool LudumGame::OnMouseMove(double x, double y)
-{
-	return death::Game::OnMouseMove(x, y);
-}
-
-void LudumGame::DestroyGameObjects()
-{
-	//player_allocations = nullptr;
-	//life_allocations = nullptr;
-}
-
 void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
 {
 	chaos::box2 box    = GetObjectBox(allocation, index);
@@ -362,13 +287,6 @@ void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, si
 void LudumGame::RestrictPlayerToWorld(int player_index)
 {
 	RestrictObjectToWorld(GetPlayerAllocation(player_index), 0);
-}
-
-
-
-void LudumGame::CreateAllGameObjects(int level)
-{
-
 }
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()

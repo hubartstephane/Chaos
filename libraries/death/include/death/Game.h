@@ -328,7 +328,7 @@ namespace death
 		virtual void ResetPlayerCachedInputs();
 
 		/** special action on gamepad input reception */
-		virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
+		virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
 		/** called whenever a gamepad input is comming */
 		virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
@@ -427,7 +427,7 @@ namespace death
 		/** require a pause or resume */
 		virtual bool RequireTogglePause();
 		/** require a game Start */
-		virtual bool RequireStartGame();
+		virtual bool RequireStartGame(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 		/** require a game exit */
 		virtual bool RequireExitGame();
 		/** require a game over */
@@ -465,6 +465,10 @@ namespace death
 		bool SetNextLevel(bool looping_levels);
 		/** reflex method whenever the level is changed */
 		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
+
+
+		/** generate the game instance */
+		virtual GameInstance * DoGenerateGameInstance();
 
 	protected:
 

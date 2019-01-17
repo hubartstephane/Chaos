@@ -24,6 +24,19 @@ namespace death
 		/** get the player by its index */
 		Player const * GetPlayer(int player_index) const;
 
+	protected:
+
+		/** handle keyboard input */
+		virtual bool OnKeyEvent(int key, int action);
+		/** handle keyboard input */
+		virtual bool OnCharEvent(unsigned int c);
+		/** handle mouse input */
+		virtual bool OnMouseButton(int button, int action, int modifier);
+		/** handle mouse movement */
+		virtual bool OnMouseMove(double x, double y);
+
+		/** return a new player */
+		virtual Player * DoGeneratePlayer();
 
 	protected:
 

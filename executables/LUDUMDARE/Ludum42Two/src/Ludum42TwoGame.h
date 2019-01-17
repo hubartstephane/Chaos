@@ -73,7 +73,7 @@ public:
 	/** called whenever a gamepad input is comming */
 	virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
 
-	virtual bool OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
+	virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 
 protected:
 

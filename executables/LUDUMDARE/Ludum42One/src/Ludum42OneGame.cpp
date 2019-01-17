@@ -77,7 +77,7 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 	return true;
 }
 
-bool LudumGame::OnGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
 	if (death::Game::OnGamepadInput(in_gamepad_data))
 		return true;

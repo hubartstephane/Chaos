@@ -2,9 +2,9 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/Tickable.h>
 #include <death/Player.h>
 #include <death/Game.h>
-
 
 namespace death
 {
@@ -13,7 +13,7 @@ namespace death
 	// GameInstance
 	// =============================================
 
-	class GameInstance : public chaos::ReferencedObject
+	class GameInstance : public chaos::Tickable
 	{
 		friend class Game;
 		friend class Player;
@@ -39,8 +39,11 @@ namespace death
         /** try to give a physical to any player (returns the player) */
         Player * GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
         
-
+        
 	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;        
 
 		/** handle keyboard input */
 		virtual bool OnKeyEvent(int key, int action);

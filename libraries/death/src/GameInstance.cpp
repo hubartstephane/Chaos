@@ -90,6 +90,15 @@ namespace death
 		return nullptr;
         
     }
+    
+    bool GameInstance::DoTick(double delta_time)
+    {
+        size_t count = players.size();
+		for (size_t i = 0; i < count; ++i)
+			players[i]->Tick(delta_time);
+        return true;
+    }
+    
 
 	size_t GameInstance::GetMaxPlayerCount() const
 	{

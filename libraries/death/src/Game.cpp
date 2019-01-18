@@ -1029,9 +1029,11 @@ namespace death
 			return false;
 		// create a player
 		Player * first_player = game_instance->CreatePlayer(in_physical_gamepad);
-
-
-
+        if (first_player == nullptr)
+        {
+            game_instance= nullptr; // destroy the game instance
+            return false;            
+        }
 
 
 
@@ -1648,7 +1650,7 @@ namespace death
 
 	GameInstance * Game::CreateGameInstance()
 	{
-		return new GameInstance;
+		return new GameInstance(this);
 	}
 
 }; // namespace death

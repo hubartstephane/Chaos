@@ -63,5 +63,11 @@ namespace death
             return false;
 		return true;
 	}
+	
+    bool Player::DoTick(double delta_time)
+    {
+        
+        return true;
+    }
 
 }; // namespace death

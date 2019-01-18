@@ -5,7 +5,7 @@
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/Game.h>
 #include <chaos/ParticleManager.h>
-
+#include <chaos/Tickable.h>
 
 namespace death
 {
@@ -14,7 +14,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::ReferencedObject
+	class Player : public chaos::Tickable
 	{
 		friend class Game;
 		friend class GameInstance;
@@ -52,6 +52,9 @@ namespace death
 
 	protected:
 
+        
+		/** override */
+		virtual bool DoTick(double delta_time) override;           
 		/** handle keyboard input */
 		virtual bool OnKeyEvent(int key, int action);
 		/** handle keyboard input */

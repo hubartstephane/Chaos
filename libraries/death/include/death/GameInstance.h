@@ -19,31 +19,31 @@ namespace death
 		friend class Player;
 
 	public:
-        
-        /** constructor */
-        GameInstance(Game * in_game);
-            
+
+		/** constructor */
+		GameInstance(Game * in_game);
+
 		/** get the player by its index */
 		Player * GetPlayer(int player_index);
 		/** get the player by its index */
 		Player const * GetPlayer(int player_index) const;
-        
-        /** returns the game */
-        Game * GetGame(){ return game; }
-        /** returns the game */
-        Game const * GetGame() const { return game; }        
+
+		/** returns the game */
+		Game * GetGame() { return game; }
+		/** returns the game */
+		Game const * GetGame() const { return game; }
 
 		/** create one player and give it the gamepad provided if any */
 		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
-        
-        /** try to give a physical to any player (returns the player) */
-        Player * GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
-        
-        
+
+		/** try to give a physical to any player (returns the player) */
+		Player * GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
+
+
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;        
+		virtual bool DoTick(double delta_time) override;
 
 		/** handle keyboard input */
 		virtual bool OnKeyEvent(int key, int action);
@@ -61,9 +61,9 @@ namespace death
 		virtual Player * DoCreatePlayer();
 
 	protected:
-        
-        /** the game */
-        Game * game = nullptr;
+
+		/** the game */
+		Game * game = nullptr;
 
 		/** all the players present in the game */
 		std::vector<chaos::shared_ptr<Player>> players;

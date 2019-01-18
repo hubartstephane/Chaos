@@ -65,14 +65,14 @@ namespace death
 		left_stick_position = glm::vec2(0.0f, 0.0f);
 		right_stick_position = glm::vec2(0.0f, 0.0f);
 	}
-	
+
 	void Game::TickGameInputs(double delta_time)
 	{
 		// catch all stick inputs
 		if (gamepad_manager != nullptr)
 			gamepad_manager->Tick((float)delta_time);
 		// handle keyboard inputs
-		HandleKeyboardInputs();	
+		HandleKeyboardInputs();
 		// save the last non null sticks direction
 		if (glm::length2(left_stick_position) > 0.0f)
 			last_left_stick_position = left_stick_position;
@@ -96,7 +96,7 @@ namespace death
 		if (hud != nullptr)
 			hud->Tick(delta_time);
 	}
-	
+
 	bool Game::OnKeyEvent(int key, int action)
 	{
 		// give the game instance opportunity to capture the input
@@ -140,7 +140,7 @@ namespace death
 
 		return false;
 	}
-	
+
 	bool Game::OnCharEvent(unsigned int c)
 	{
 		// give the game instance opportunity to capture the input
@@ -149,7 +149,7 @@ namespace death
 				return true;
 		return false;
 	}
-	
+
 	bool Game::OnMouseButton(int button, int action, int modifier)
 	{
 		// give the game instance opportunity to capture the input
@@ -162,7 +162,7 @@ namespace death
 				return true;
 		return false;
 	}
-	
+
 	bool Game::OnMouseMove(double x, double y)
 	{
 		// give the game instance opportunity to capture the input
@@ -198,7 +198,7 @@ namespace death
 		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
 		chaos::box2 view = GetViewBox();
 		main_uniform_provider.AddVariableValue("view_box", chaos::EncodeBoxToVector(world));
-			 
+
 		// the time
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
@@ -467,7 +467,7 @@ namespace death
 		if (particle_manager == nullptr)
 			return false;
 		particle_manager->SetTextureAtlas(texture_atlas.get());
-		if (AddParticleLayers() < 0) 
+		if (AddParticleLayers() < 0)
 			return false;
 		return true;
 	}
@@ -531,12 +531,12 @@ namespace death
 
 		return true;
 	}
-	
+
 	bool Game::DestroyInGameClocks()
 	{
-		main_clock  = nullptr;
-		game_clock  = nullptr;
-		game_clock  = nullptr;
+		main_clock = nullptr;
+		game_clock = nullptr;
+		game_clock = nullptr;
 		pause_clock = nullptr;
 		return true;
 	}
@@ -544,20 +544,20 @@ namespace death
 	bool Game::CreateInGameClocks()
 	{
 		if (root_clock == nullptr)
-			return false;	
+			return false;
 
 		if (main_clock == nullptr)
 		{
-			main_clock = root_clock->CreateChildClock("main_clock"); 
+			main_clock = root_clock->CreateChildClock("main_clock");
 			if (main_clock == nullptr)
 				return false;
 		}
 
 		if (game_clock == nullptr)
 		{
-			game_clock = root_clock->CreateChildClock("game_clock"); 
+			game_clock = root_clock->CreateChildClock("game_clock");
 			if (game_clock == nullptr)
-				return false;		
+				return false;
 		}
 
 		if (pause_clock == nullptr)
@@ -850,9 +850,9 @@ namespace death
 			return false;
 
 		// create game state_machine
-		if (!CreateGameStateMachine())		
+		if (!CreateGameStateMachine())
 			return false;
-	
+
 		// create the musics
 		if (!CreateAllMusics())
 			return false;
@@ -992,7 +992,7 @@ namespace death
 	void Game::OnGameOver()
 	{
 		SetCurrentLevel(nullptr);
-		ConditionnalSaveBestScore();		
+		ConditionnalSaveBestScore();
 	}
 	void Game::OnPauseStateUpdateClocks(bool enter_pause)
 	{
@@ -1029,11 +1029,11 @@ namespace death
 			return false;
 		// create a player
 		Player * first_player = game_instance->CreatePlayer(in_physical_gamepad);
-        if (first_player == nullptr)
-        {
-            game_instance= nullptr; // destroy the game instance
-            return false;            
-        }
+		if (first_player == nullptr)
+		{
+			game_instance = nullptr; // destroy the game instance
+			return false;
+		}
 
 
 
@@ -1125,7 +1125,7 @@ namespace death
 	bool Game::TickGameLoop(double delta_time)
 	{
 		// game over ?
-		if (CheckGameOverCondition()) 
+		if (CheckGameOverCondition())
 			return false;
 		// level finished
 		if (CheckLevelCompleted())
@@ -1135,7 +1135,7 @@ namespace death
 				SetNextLevel(true);
 				return false; // do not call remaining code in TickGameLoop(...) specialization
 			}
-		}			
+		}
 		// tick the level
 		if (current_level_instance != nullptr)
 			current_level_instance->Tick(delta_time);
@@ -1169,7 +1169,7 @@ namespace death
 			menu_music.get()
 		};
 		ChangeMusic(musics, 3, restart_first);
-}
+	}
 
 	void Game::StartPauseMusic(bool restart_first)
 	{
@@ -1216,7 +1216,7 @@ namespace death
 	bool Game::RequirePauseGame()
 	{
 		if (!IsPaused())
-			return RequireTogglePause();		
+			return RequireTogglePause();
 		return false;
 	}
 
@@ -1372,7 +1372,7 @@ namespace death
 	bool Game::SetNextLevel(bool looping_levels)
 	{
 #if _DEBUG
-		SetCheatSkipLevelRequired(false); 
+		SetCheatSkipLevelRequired(false);
 #endif
 
 		// existing any level
@@ -1411,7 +1411,7 @@ namespace death
 	}
 
 	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
-	{	
+	{
 		chaos::shared_ptr<GameLevelInstance> old_level_instance = current_level_instance; // copy and keep a reference
 		chaos::shared_ptr<GameLevel> old_level = (old_level_instance != nullptr) ?
 			old_level_instance->GetLevel() :
@@ -1445,7 +1445,7 @@ namespace death
 		// start new level. Create a new level clock
 		if (new_level_instance != nullptr)
 		{
-			level_clock = root_clock->CreateChildClock("level_clock"); 
+			level_clock = root_clock->CreateChildClock("level_clock");
 			new_level_instance->OnLevelStarted();
 		}
 	}
@@ -1467,7 +1467,7 @@ namespace death
 			if (chaos::RestrictToInside(safe_camera, player, true)) // apply the safe_zone displacement to the real camera
 				camera.position = safe_camera.position;
 		}
-			
+
 		// try to keep the camera in the world
 		chaos::box2 world = GetWorldBox();
 		if (!world.IsEmpty())
@@ -1542,7 +1542,7 @@ namespace death
 		// give the instance the responsability 
 		return game_instance->GetPlayer(player_index);
 	}
-	
+
 	Player const * Game::GetPlayer(int player_index) const
 	{
 		// game even not started : no player
@@ -1585,21 +1585,21 @@ namespace death
 	{
 		if (new_life < 0)
 			new_life = 0;
-		else if (max_life > 0 && new_life > max_life) 
+		else if (max_life > 0 && new_life > max_life)
 			new_life = max_life;
 		current_life = new_life;
 	}
 
-	chaos::ParticleAllocation * Game::GetPlayerAllocation(int player_index) 
-	{ 
+	chaos::ParticleAllocation * Game::GetPlayerAllocation(int player_index)
+	{
 		Player * player = GetPlayer(player_index);
 		if (player == nullptr)
 			return nullptr;
 		return player->GetPlayerAllocation();
 	}
 
-	chaos::ParticleAllocation const * Game::GetPlayerAllocation(int player_index) const 
-	{ 
+	chaos::ParticleAllocation const * Game::GetPlayerAllocation(int player_index) const
+	{
 		Player const * player = GetPlayer(player_index);
 		if (player == nullptr)
 			return nullptr;

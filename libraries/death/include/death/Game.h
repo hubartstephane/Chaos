@@ -75,11 +75,11 @@ namespace death
 		int GetCurrentLife() const { return current_life; }
 
 		/** getter on the particle manager */
-		chaos::ParticleManager * GetParticleManager(){ return particle_manager.get(); }
+		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
 		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
 
 		/** getter on the texture atlas */
-		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas(){ return texture_atlas.get(); }
+		chaos::BitmapAtlas::TextureArrayAtlas * GetTextureAtlas() { return texture_atlas.get(); }
 		chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
 
 		/** getter on the text generator */
@@ -152,12 +152,12 @@ namespace death
 		chaos::Clock const * GetPauseClock() const;
 
 		/** returns the HUD */
-		GameHUD * GetCurrentHUD(){ return hud.get();}
+		GameHUD * GetCurrentHUD() { return hud.get(); }
 		/** returns the HUD */
-		GameHUD const * GetCurrentHUD() const { return hud.get();}
+		GameHUD const * GetCurrentHUD() const { return hud.get(); }
 
 		/** get particle tools */
-		GameParticleCreator & GetGameParticleCreator(){ return particle_creator; }
+		GameParticleCreator & GetGameParticleCreator() { return particle_creator; }
 		/** get particle tools */
 		GameParticleCreator const & GetGameParticleCreator() const { return particle_creator; }
 
@@ -197,9 +197,9 @@ namespace death
 #endif
 
 		/** get the player by its index */
-		Player * GetPlayer(int player_index);
+		class Player * GetPlayer(int player_index);
 		/** get the player by its index */
-		Player const * GetPlayer(int player_index) const;
+		class Player const * GetPlayer(int player_index) const;
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
@@ -255,9 +255,9 @@ namespace death
 		bool ReloadConfigurationFile();
 
 		/** get the game instance */
-		GameInstance * GetGameInstance() { return game_instance.get(); }
+		class GameInstance * GetGameInstance() { return game_instance.get(); }
 		/** get the game instance */
-		GameInstance const * GetGameInstance() const { return game_instance.get(); }
+		class GameInstance const * GetGameInstance() const { return game_instance.get(); }
 
 	protected:
 

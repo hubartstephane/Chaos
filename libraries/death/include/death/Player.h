@@ -3,9 +3,9 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
-#include <chaos/Game.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/Tickable.h>
+#include <death/Game.h>
 
 namespace death
 {
@@ -23,11 +23,11 @@ namespace death
 
 		/** constructor */
 		Player(class GameInstance * in_game_instance);
-        
-        /** returns the game */
-        Game * GetGame();
-        /** returns the game */
-        Game const * GetGame() const;        
+
+		/** returns the game */
+		Game * GetGame();
+		/** returns the game */
+		Game const * GetGame() const;
 
 		/** get the player allocation */
 		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
@@ -36,7 +36,7 @@ namespace death
 		/** set the player allocation */
 		void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
 
-		
+
 		/** get the index of the player */
 		int GetPlayerIndex() const { return player_index; }
 
@@ -52,9 +52,9 @@ namespace death
 
 	protected:
 
-        
+
 		/** override */
-		virtual bool DoTick(double delta_time) override;           
+		virtual bool DoTick(double delta_time) override;
 		/** handle keyboard input */
 		virtual bool OnKeyEvent(int key, int action);
 		/** handle keyboard input */

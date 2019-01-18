@@ -64,7 +64,7 @@ namespace death
 		/** constructor */
 		MainMenuState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from_state, void * extra_data) override;
+		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from_state, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingState : public GameState
@@ -74,7 +74,7 @@ namespace death
 		/** constructor */
 		PlayingState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PauseState : public GameState
@@ -99,9 +99,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, void * extra_data) override;
+		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToMainMenuTransition : public GameTransition
@@ -115,11 +115,11 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, void * extra_data) override;
+		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, void * extra_data) override;
+		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToPauseTransition : public GameTransition
@@ -133,9 +133,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, void * extra_data) override;
+		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 
@@ -150,9 +150,9 @@ namespace death
 	protected:
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, void * extra_data) override;
+		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToGameOverTransition : public GameTransition
@@ -164,11 +164,11 @@ namespace death
 		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
 
 		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, void * extra_data) override;
+		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, void * extra_data) override;
+		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	// =========================================================

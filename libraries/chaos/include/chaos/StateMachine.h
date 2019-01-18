@@ -42,22 +42,22 @@ namespace chaos
 		protected:
 
 			/** FRAMEWORK : called at each tick */
-			virtual void Tick(StateMachineInstance * sm_instance, double delta_time, void * extra_data){}
+			virtual void Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data){}
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual void OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data){}
+			virtual void OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data){}
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data){}
+			virtual void OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data){}
 			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEvent(StateMachineInstance * sm_instance, TagType event_tag, void * extra_data){ return false; }
+			virtual bool SendEvent(StateMachineInstance * sm_instance, TagType event_tag, ReferencedObject * extra_data){ return false; }
 
 			/** USER IMPLEMENTATION : called at each tick */
-			virtual bool TickImpl(StateMachineInstance * sm_instance, double delta_time, void * extra_data) { return true; }
+			virtual bool TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data) { return true; }
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data){ return true;}
+			virtual bool OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data){ return true;}
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data){ return true; }
+			virtual bool OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data){ return true; }
 			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, void * extra_data){ return false; }
+			virtual bool SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, ReferencedObject * extra_data){ return false; }
 
 		protected:
 
@@ -81,22 +81,22 @@ namespace chaos
 		protected:
 
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual void Tick(StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+			virtual void Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data) override;
 			/** FRAMEWORK : called whenever we enter in this state */
-			virtual void OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data) override;
+			virtual void OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data) override;
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data) override;
+			virtual void OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data) override;
 			/** FRAMEWORK : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEvent(StateMachineInstance * sm_instance, TagType event_tag, void * extra_data) override;
+			virtual bool SendEvent(StateMachineInstance * sm_instance, TagType event_tag, ReferencedObject * extra_data) override;
 
 			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool TickImpl(StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+			virtual bool TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data) override;
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data) override;
+			virtual bool OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data) override;
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data) override;
+			virtual bool OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data) override;
 			/** USER IMPLEMENTATION : called whenever an event is send to the StateMachineInstance */
-			virtual bool SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, void * extra_data) override;
+			virtual bool SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, ReferencedObject * extra_data) override;
 
 		protected:
 
@@ -122,21 +122,21 @@ namespace chaos
 		protected:
 
 			/** user implementable method to know whether the transition can trigger itself. Returns true whether the transition can be automatically used */
-			virtual bool CheckTransitionConditions(void * extra_data);
+			virtual bool CheckTransitionConditions(ReferencedObject * extra_data);
 
 			/** FRAMEWORK : called at each tick. Returns true if outgoing transition can be tested */
-			virtual void Tick(StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+			virtual void Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data) override;
 			/** FRAMEWORK : called whenever we enter in this state. Returns true whether this is a passthrought transition (directly go to outgoing transition) */
-			virtual void OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data) override;
+			virtual void OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data) override;
 			/** FRAMEWORK : called whenever we leave this state */
-			virtual void OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data) override;
+			virtual void OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data) override;
 
 			/** USER IMPLEMENTATION : called at each tick. Returns true if outgoing transition can be tested */
-			virtual bool TickImpl(StateMachineInstance * sm_instance, double delta_time, void * extra_data) override;
+			virtual bool TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data) override;
 			/** USER IMPLEMENTATION : called whenever we enter in this state */
-			virtual bool OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data) override;
+			virtual bool OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data) override;
 			/** USER IMPLEMENTATION : called whenever we leave this state */
-			virtual bool OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data) override;
+			virtual bool OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data) override;
 
 		protected:
 
@@ -162,11 +162,11 @@ namespace chaos
 			StateMachineInstance(StateMachine * in_state_machine);
 
 			/** the tick method */
-			bool Tick(double delta_time, void * extra_data);
+			bool Tick(double delta_time, ReferencedObject * extra_data);
 			/** restart the state_machine */
 			void Restart();
 			/** send an event to current state */
-			bool SendEvent(TagType event_tag, void * extra_data);
+			bool SendEvent(TagType event_tag, ReferencedObject * extra_data);
 
 			/** get the current state */
 			StateBase * GetCurrentState() { return current_state; }
@@ -181,7 +181,7 @@ namespace chaos
 		protected:
 
 			/** internal method to change state */
-			void ChangeState(StateBase * new_state, void * extra_data);
+			void ChangeState(StateBase * new_state, ReferencedObject * extra_data);
 
 		protected:
 

@@ -39,9 +39,10 @@ bool LudumGame::OnLeavePause()
 	return true;
 }
 
-bool LudumGame::OnEnterGame()
+bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	death::Game::OnEnterGame();
+	if (!death::Game::OnEnterGame(in_physical_gamepad))
+		return false;
 	CreateAllGameObjects(0);
 	return true;
 }

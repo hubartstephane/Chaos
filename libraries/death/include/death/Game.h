@@ -30,6 +30,8 @@ namespace death
 
 #define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
 
+	using PhysicalGamepadWrapper = chaos::ReferencedObjectDataWrapper<chaos::MyGLFW::PhysicalGamepad*>;
+
 	class Game : public chaos::ReferencedObject
 	{
 		friend class GamepadManager;
@@ -406,7 +408,7 @@ namespace death
 		virtual bool OnLeavePause();
 
 		/** called whenever we enter in game mode */
-		virtual bool OnEnterGame();
+		virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 		/** called whenever we leave game mode */
 		virtual bool OnLeaveGame(bool gameover);
 		/** called whenever we are returning from game to main menu without gameover */

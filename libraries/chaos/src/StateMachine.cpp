@@ -29,7 +29,7 @@ namespace chaos
 		{
 		}
 
-		void State::Tick(StateMachineInstance * sm_instance, double delta_time, void * extra_data)
+		void State::Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
 		{
 			// the USER implementation catch the method
 			if (!TickImpl(sm_instance, delta_time, extra_data))
@@ -45,17 +45,17 @@ namespace chaos
 			}
 		}
 
-		void State::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data)
+		void State::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data)
 		{	
 			OnEnterImpl(sm_instance, from_state, extra_data);
 		}
 
-		void State::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data)
+		void State::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data)
 		{		
 			OnLeaveImpl(sm_instance, to_state, extra_data);
 		}
 
-		bool State::SendEvent(StateMachineInstance * sm_instance, TagType event_tag, void * extra_data)
+		bool State::SendEvent(StateMachineInstance * sm_instance, TagType event_tag, ReferencedObject * extra_data)
 		{
 			// the USER implementation catch the method
 			if (SendEventImpl(sm_instance, event_tag, extra_data))
@@ -72,22 +72,22 @@ namespace chaos
 			return false; // not handled
 		}
 
-		bool State::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data)
+		bool State::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data)
 		{
 			return false; 
 		}
 
-		bool State::TickImpl(StateMachineInstance * sm_instance, double delta_time, void * extra_data)
+		bool State::TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
 		{
 			return true; // enable automatic transitions
 		}
 
-		bool State::OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data)
+		bool State::OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data)
 		{
 			return false;
 		}
 
-		bool State::SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, void * extra_data)
+		bool State::SendEventImpl(StateMachineInstance * sm_instance, TagType event_tag, ReferencedObject * extra_data)
 		{
 			return false; // do not catch the event : let the outgoing transition do their job
 		}
@@ -110,42 +110,42 @@ namespace chaos
 			in_to_state->incomming_transitions.push_back(this);
 		}
 
-		bool Transition::CheckTransitionConditions(void * extra_data)
+		bool Transition::CheckTransitionConditions(ReferencedObject * extra_data)
 		{
 			return false; // refuse to automatically enter the transition
 		}
 
 
-		void Transition::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data)
+		void Transition::OnEnter(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data)
 		{
 			// test whether this is a passtrought transition
 			if (OnEnterImpl(sm_instance, from_state, extra_data))
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 
-		void Transition::Tick(StateMachineInstance * sm_instance, double delta_time, void * extra_data)
+		void Transition::Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
 		{	
 			if (TickImpl(sm_instance, delta_time, extra_data))
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 
-		void Transition::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data)
+		void Transition::OnLeave(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data)
 		{
 			OnLeaveImpl(sm_instance, to_state, extra_data);
 		}
 
 
-		bool Transition::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, void * extra_data)
+		bool Transition::OnEnterImpl(StateMachineInstance * sm_instance, StateBase * from_state, ReferencedObject * extra_data)
 		{
 			return true; // pass throught transition (no tick)
 		}
 
-		bool Transition::TickImpl(StateMachineInstance * sm_instance, double delta_time, void * extra_data)
+		bool Transition::TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
 		{
 			return true; // the transition has no special code. We can exit it
 		}
 
-		bool Transition::OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, void * extra_data)
+		bool Transition::OnLeaveImpl(StateMachineInstance * sm_instance, StateBase * to_state, ReferencedObject * extra_data)
 		{
 			return true;
 		}
@@ -169,7 +169,7 @@ namespace chaos
 			assert(in_state_machine != nullptr);
 		}
 
-		bool StateMachineInstance::Tick(double delta_time, void * extra_data)
+		bool StateMachineInstance::Tick(double delta_time, ReferencedObject * extra_data)
 		{
 			// enter initial state if necessary
 			if (current_state == nullptr)
@@ -183,7 +183,7 @@ namespace chaos
 			return true;
 		}
 
-		void StateMachineInstance::ChangeState(StateBase * new_state, void * extra_data)
+		void StateMachineInstance::ChangeState(StateBase * new_state, ReferencedObject * extra_data)
 		{
 			// early exit
 			if (current_state == new_state)
@@ -205,7 +205,7 @@ namespace chaos
 			ChangeState(state_machine->initial_state, nullptr);
 		}
 
-		bool StateMachineInstance::SendEvent(TagType event_tag, void * extra_data)
+		bool StateMachineInstance::SendEvent(TagType event_tag, ReferencedObject * extra_data)
 		{
 			if (current_state == nullptr)
 				return false;

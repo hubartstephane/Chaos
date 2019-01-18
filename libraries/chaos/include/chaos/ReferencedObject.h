@@ -71,6 +71,36 @@ namespace chaos
 		virtual void OnLastReferenceLost() override { }
 	};
 
+	/**
+	* ReferencedObjectDataWrapper : a data wrapped into a referenced object => while referenced object may be dynamic_casted we can test for the data inside
+	*/
+
+	template<typename T>
+	class ReferencedObjectDataWrapper : public DisableReferenceCount<ReferencedObject>
+	{
+		using type = T;
+
+	public:
+
+		/** copy constructor */
+		ReferencedObjectDataWrapper(ReferencedObjectDataWrapper const & src) : data(src.data){}
+
+		/** constructor */
+		template<typename ...PARAMS>
+		ReferencedObjectDataWrapper(PARAMS... params) : data(params...){}
+
+	public:
+
+		/** the wrapped data */
+		T data;
+	};
+
+	template<typename T, typename ...PARAMS>
+	auto MakeReferencedObjectWrapper(PARAMS... params)
+	{
+		return ReferencedObjectDataWrapper<T>(params...);
+	}
+
 }; // namespace chaos
 
 	 /**
@@ -93,6 +123,4 @@ void intrusive_ptr_release(chaos::ReferencedObject * obj, POLICY policy = POLICY
 {
 	obj->SubReference(policy);
 }
-
-
 

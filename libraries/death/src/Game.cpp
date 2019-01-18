@@ -1021,7 +1021,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::OnEnterGame()
+	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		// create the game instance
 		game_instance = DoGenerateGameInstance();
@@ -1230,7 +1230,9 @@ namespace death
 
 	bool Game::RequireStartGame(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, physical_gamepad))
+		PhysicalGamepadWrapper game_pad_wrapper = PhysicalGamepadWrapper(physical_gamepad);
+
+		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, &game_pad_wrapper))
 			return true;
 		return false;
 	}

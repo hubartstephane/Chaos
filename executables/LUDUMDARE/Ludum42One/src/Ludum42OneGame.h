@@ -90,7 +90,7 @@ protected:
 	virtual bool OnLeavePause() override;
 
 	/** override */
-	virtual bool OnEnterGame() override;
+	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 	/** override */
 	virtual bool OnLeaveGame(bool gameover) override;
 	/** override */

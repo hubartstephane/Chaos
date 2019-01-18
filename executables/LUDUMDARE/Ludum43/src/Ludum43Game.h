@@ -88,7 +88,7 @@ protected:
 	virtual bool DeclareParticleClasses() override;
 
 	/** override */
-	virtual bool OnEnterGame() override;
+	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** override */
 	virtual bool TickGameLoop(double delta_time) override;

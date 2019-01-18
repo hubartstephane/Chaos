@@ -31,9 +31,10 @@ Black holes and Shadows are dangerous.
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
-bool LudumGame::OnEnterGame()
+bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	death::Game::OnEnterGame();
+	if (!death::Game::OnEnterGame(in_physical_gamepad))
+		return false;
 	PlaySound("start", false, false);
 	return true;
 }

@@ -34,4 +34,21 @@ namespace death
 		return false;
 	}
 
+	bool Player::CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	{
+		// if no entry or the device is already owned by someone, exit
+		if (in_physical_gamepad == nullptr || in_physical_gamepad->IsAllocated())
+			return false;
+		// if we already have a device, ignore
+		if (gamepad != nullptr)
+			return false;
+
+
+
+
+
+
+		return true;
+	}
+
 }; // namespace death

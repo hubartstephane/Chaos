@@ -475,7 +475,7 @@ namespace death
 		void RestrictPlayerToWorld(int player_index);
 
 		/** generate the game instance */
-		virtual GameInstance * DoGenerateGameInstance();
+		virtual GameInstance * CreateGameInstance();
 
 	protected:
 

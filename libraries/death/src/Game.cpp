@@ -1024,10 +1024,14 @@ namespace death
 	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		// create the game instance
-		game_instance = DoGenerateGameInstance();
+		game_instance = CreateGameInstance();
 		if (game_instance == nullptr)
 			return false;
-		// create a player 
+		// create a player
+		Player * first_player = game_instance->CreatePlayer(in_physical_gamepad);
+
+
+
 
 
 
@@ -1642,7 +1646,7 @@ namespace death
 	}
 
 
-	GameInstance * Game::DoGenerateGameInstance()
+	GameInstance * Game::CreateGameInstance()
 	{
 		return new GameInstance;
 	}

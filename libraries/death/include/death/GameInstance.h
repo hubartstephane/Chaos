@@ -24,6 +24,9 @@ namespace death
 		/** get the player by its index */
 		Player const * GetPlayer(int player_index) const;
 
+		/** create one player and give it the gamepad provided if any */
+		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
+
 	protected:
 
 		/** handle keyboard input */
@@ -35,8 +38,11 @@ namespace death
 		/** handle mouse movement */
 		virtual bool OnMouseMove(double x, double y);
 
+		/** returns the maximum number of player */
+		size_t GetMaxPlayerCount() const;
+
 		/** return a new player */
-		virtual Player * DoGeneratePlayer();
+		virtual Player * DoCreatePlayer();
 
 	protected:
 

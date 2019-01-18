@@ -79,13 +79,13 @@ namespace death
 	}
 	
 	
-	PlayerGamepadCallback::PlayerGamepadCallback(Player * in_player):
+	PlayerGamepadCallbacks::PlayerGamepadCallbacks(Player * in_player):
 		player(in_player)
 	{
 		assert(in_player != nullptr);
 	}
 			
-	bool PlayerGamepadCallback::OnGamepadDisconnected(class Gamepad *)
+	bool PlayerGamepadCallbacks::OnGamepadDisconnected(chaos::MyGLFW::Gamepad * in_gamepad)
 	{
 		player->OnGamepadDisconnected();
 		return true;

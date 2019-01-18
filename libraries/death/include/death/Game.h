@@ -54,6 +54,9 @@ namespace death
 
 		friend class PlayingHUD;
 
+		friend class Player;
+		friend class GameInstance;
+
 	public:
 
 		/** initialization of the game */

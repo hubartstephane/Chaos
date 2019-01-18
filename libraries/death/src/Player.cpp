@@ -58,16 +58,18 @@ namespace death
 		if (gamepad != nullptr)
 			return false;
 		// try capture the device
-
-		chaos::MyGLFW::GamepadCallbacks callback;
-
-	//	new Callback
-
-
-		gamepad = in_physical_gamepad->CaptureDevice(&callback);
+		chaos::shared_ptr<PlayerGamepadCallbacks> gamepad_callback = new PlayerGamepadCallbacks(this);
+		gamepad = in_physical_gamepad->CaptureDevice(gamepad_callback.get());
 		if (gamepad == nullptr)
 			return false;
 		return true;
+	}
+	
+	void Player::OnGamepadDisconnected()
+	{
+		Game * game = GetGame();
+		if (game != nullptr)
+			game->RequirePauseGame();
 	}
 
 	bool Player::DoTick(double delta_time)
@@ -75,5 +77,19 @@ namespace death
 
 		return true;
 	}
+	
+	
+	PlayerGamepadCallback::PlayerGamepadCallback(Player * in_player):
+		player(in_player)
+	{
+		assert(in_player != nullptr);
+	}
+			
+	bool PlayerGamepadCallback::OnGamepadDisconnected(class Gamepad *)
+	{
+		player->OnGamepadDisconnected();
+		return true;
+	}
+
 
 }; // namespace death

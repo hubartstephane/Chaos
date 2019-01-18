@@ -87,6 +87,12 @@ namespace death
 		// update the game state_machine
 		if (game_state_machine_instance != nullptr)
 			game_state_machine_instance->Tick(delta_time, nullptr);
+		// update the game instance
+		if (game_instance != nullptr)
+			game_instance->Tick(delta_time);		
+		
+		
+		
 		// clear the cached inputs
 		ResetPlayerCachedInputs();
 		// tick the particle manager
@@ -110,7 +116,7 @@ namespace death
 				return true;
 
 		// PLAYING to PAUSE
-		if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER) && action == GLFW_PRESS)
+		if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER || key == GLFW_KEY_P) && action == GLFW_PRESS)
 			if (RequireTogglePause())
 				return true;
 

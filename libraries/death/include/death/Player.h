@@ -18,6 +18,7 @@ namespace death
 	{
 		friend class Game;
 		friend class GameInstance;
+		friend class PlayerGamepadCallback;
 
 	public:
 
@@ -52,7 +53,6 @@ namespace death
 
 	protected:
 
-
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 		/** handle keyboard input */
@@ -64,6 +64,9 @@ namespace death
 		/** handle mouse movement */
 		virtual bool OnMouseMove(double x, double y);
 
+		/** called whenever player gamepad is disconnected */
+		virtual void OnGamepadDisconnected();
+		
 	protected:
 
 		/** the game instance owning the player */
@@ -82,5 +85,27 @@ namespace death
 		/** the score for the player */
 		int score = 0;
 	};
+	
+	
+	// =============================================
+	// A callback object for gamepad disconnection
+	// =============================================
+
+		class PlayerGamepadCallback : public chaos::MyGLFW::GamepadCallbacks 
+		{
+		public:
+			
+				/** constructor */
+				PlayerGamepadCallback(Player * in_player);
+			
+				/** override */
+				virtual bool OnGamepadDisconnected(chaos::MyGLFW::Gamepad *) override;
+				
+		protected:
+			
+			/** player of interrest */
+			Player * player;
+		}	
+	
 
 }; // namespace death

@@ -8,7 +8,22 @@ namespace death
 	{
 		assert(in_game_instance != nullptr);
 	}
+	
+	Game * Player::GetGame()
+    {
+        if (game_instance == nullptr)
+            return game_instance;
+        return game_instance->GetGame();
+    }
 
+	Game const * Player::GetGame() const
+    {
+        if (game_instance == nullptr)
+            return game_instance;
+        return game_instance->GetGame();
+    }
+    
+    
 	void Player::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation)
 	{
 		player_allocations = in_allocation;
@@ -42,12 +57,10 @@ namespace death
 		// if we already have a device, ignore
 		if (gamepad != nullptr)
 			return false;
-
-
-
-
-
-
+        // try capture the device
+        gamepad = in_physical_gamepad->CapturePhysicalGamepad();
+        if (gamepad == nullptr)
+            return false;
 		return true;
 	}
 

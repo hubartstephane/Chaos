@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
+#include <chaos/Game.h>
 #include <chaos/ParticleManager.h>
 
 
@@ -22,6 +23,11 @@ namespace death
 
 		/** constructor */
 		Player(class GameInstance * in_game_instance);
+        
+        /** returns the game */
+        Game * GetGame();
+        /** returns the game */
+        Game const * GetGame() const;        
 
 		/** get the player allocation */
 		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }

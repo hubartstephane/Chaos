@@ -2,6 +2,12 @@
 
 namespace death
 {
+    GameInstance::GameInstance(Game * in_game):
+        game(in_game)
+    {
+        assert(in_game != nullptr);
+    }        
+    
 	Player * GameInstance::GetPlayer(int player_index)
 	{
 		size_t count = players.size();
@@ -74,6 +80,16 @@ namespace death
 
 		return result;
 	}
+	
+	Player * GameInstance::GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+    {
+		size_t count = players.size();
+		for (size_t i = 0; i < count; ++i)
+			if (players[i]->CapturePhysicalGamepad(in_physical_gamepad))
+				return players[i];
+		return nullptr;
+        
+    }
 
 	size_t GameInstance::GetMaxPlayerCount() const
 	{

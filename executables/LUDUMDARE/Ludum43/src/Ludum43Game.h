@@ -119,12 +119,6 @@ protected:
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
 
-	/** ensure object is inside the world */
-	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
-	/** ensure player is inside the world */
-	void RestrictPlayerToWorld(int player_index);
-
-
 	virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data) override;
 	virtual void HandleKeyboardInputs() override;
 

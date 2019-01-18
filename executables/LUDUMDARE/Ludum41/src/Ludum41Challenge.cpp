@@ -18,7 +18,7 @@ void LudumChallenge::Show(bool visible)
 		particle_range->Show(visible);
 }
 
-void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData * in_gamepad_data)
+void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * in_gamepad_data)
 {
 	int expected_key = gamepad_challenge[challenge_position];
 

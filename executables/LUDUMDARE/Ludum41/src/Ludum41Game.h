@@ -104,9 +104,7 @@ protected:
 	virtual bool OnLeavePause() override;
 
 	/** override */
-	virtual bool OnEnterGame() override;
-	/** override */
-	virtual bool OnLeaveGame(bool gameover) override;
+	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 	/** override */
 	virtual bool OnAbordGame() override;
 
@@ -155,7 +153,7 @@ protected:
 
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gamepad_data);
+	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data);
 	/** test whether a key is being pressed and whether it correspond to the current challenge */
 	void SendKeyboardButtonToChallenge(unsigned int C);
 
@@ -210,13 +208,6 @@ protected:
 
 	/** returns true whether we can start a challenge (returns index of a valid ball) */
 	size_t CanStartChallengeBallIndex(bool reverse = false) const;
-
-
-	/** ensure object is inside the world */
-	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
-	/** ensure player is inside the world */
-	void RestrictPlayerToWorld();
-
 
 	/** generate a direction updward random for the ball */
 	glm::vec2 GenerateBallRandomDirection() const;

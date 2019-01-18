@@ -1625,6 +1625,23 @@ namespace death
 		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
 	}
 
+
+	void Game::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
+	{
+		if (allocation == nullptr)
+			return;
+		chaos::box2 box = GetObjectBox(allocation, index);
+		chaos::box2 world = GetWorldBox();
+		chaos::RestrictToInside(world, box, false);
+		SetObjectBox(allocation, index, box);
+	}
+
+	void Game::RestrictPlayerToWorld(int player_index)
+	{
+		RestrictObjectToWorld(GetPlayerAllocation(player_index), 0);
+	}
+
+
 	GameInstance * Game::DoGenerateGameInstance()
 	{
 		return new GameInstance;

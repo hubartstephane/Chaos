@@ -192,7 +192,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// bounce against player
-	ParticleObject * player = game->GetPlayerParticle();
+	ParticleObject * player = game->GetPlayerParticle(0);
 	if (player != nullptr)
 	{
 		chaos::box2 player_box = player->bounding_box;

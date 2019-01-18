@@ -53,12 +53,6 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual bool OnKeyEvent(int key, int action) override;
-	/** override */
-	virtual bool OnCharEvent(unsigned int c) override;
-	/** override */
-	virtual bool OnMouseMove(double x, double y) override;
-	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
@@ -74,27 +68,6 @@ protected:
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
-
-	/** creating all object in the game */
-	void CreateAllGameObjects(int level);
-	/** destroying game objects*/
-	void DestroyGameObjects();
-
-	/** override */
-	virtual void OnEnterMainMenu(bool very_first) override;
-	/** override */
-	virtual void OnGameOver() override;
-	/** override */
-	virtual bool OnEnterPause() override;
-	/** override */
-	virtual bool OnLeavePause() override;
-
-	/** override */
-	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
-	/** override */
-	virtual bool OnLeaveGame(bool gameover) override;
-	/** override */
-	virtual bool OnAbordGame() override;
 
 	/** override */
 	virtual bool TickGameLoop(double delta_time) override;
@@ -122,10 +95,6 @@ protected:
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
 
-	/** ensure object is inside the world */
-	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
-	/** ensure player is inside the world */
-	void RestrictPlayerToWorld();
 
 	/** move the player */
 	void DisplacePlayer(double delta_time);

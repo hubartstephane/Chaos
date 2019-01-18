@@ -80,10 +80,10 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 
 bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	if (death::Game::OnGamepadInput(in_gamepad_data))
+	if (death::Game::OnGamepadInput(in_physical_gamepad))
 		return true;
 	// fire
-	if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A))
+	if (in_physical_gamepad != nullptr && in_physical_gamepad->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A))
 	{
 		PlayerThrowWater();
 	}
@@ -172,7 +172,6 @@ bool LudumGame::OnMouseMove(double x, double y)
 
 void LudumGame::DestroyGameObjects()
 {
-	player_allocations = nullptr;
 	water_allocations = nullptr;
 	life_allocations = nullptr;
 }
@@ -195,19 +194,6 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 	
 	return result;
-}
-
-void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
-{
-	chaos::box2 box    = GetObjectBox(allocation, index);
-	chaos::box2 world = GetWorldBox();
-	chaos::RestrictToInside(world, box, false);
-	SetObjectBox(allocation, index, box);
-}
-
-void LudumGame::RestrictPlayerToWorld()
-{
-	RestrictObjectToWorld(player_allocations.get(), 0);
 }
 
 void LudumGame::CreateAllGameObjects(int level)
@@ -358,12 +344,12 @@ void LudumGame::DisplacePlayer(double delta_time)
 		-right_stick_position.y:
 		-left_stick_position.y;
 
-	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position + value * (float)delta_time);
-	RestrictPlayerToWorld();
+	glm::vec2 position = GetPlayerPosition(0);
+	SetPlayerPosition(0, position + value * (float)delta_time);
+	RestrictPlayerToWorld(0);
 
 
-	ParticlePlayer * player_particle = (ParticlePlayer*) GetPlayerParticle();
+	ParticlePlayer * player_particle = (ParticlePlayer*) GetPlayerParticle(0);
 	if (player_particle != nullptr)
 	{
 		if (glm::length2(left_stick_position) > 0.0f)
@@ -394,7 +380,7 @@ void LudumGame::PlayerThrowWater()
 	if (particles.GetCount() < new_count)
 		return;
 
-	ParticlePlayer * player_particle = (ParticlePlayer*)GetPlayerParticle();
+	ParticlePlayer * player_particle = (ParticlePlayer*)GetPlayerParticle(0);
 	if (player_particle == nullptr)
 		return;
 

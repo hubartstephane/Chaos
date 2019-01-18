@@ -469,6 +469,11 @@ namespace death
 		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
 
 
+		/** force an object to stay in world */
+		void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
+		/** force a player to stay in world */
+		void RestrictPlayerToWorld(int player_index);
+
 		/** generate the game instance */
 		virtual GameInstance * DoGenerateGameInstance();
 

@@ -135,11 +135,6 @@ protected:
 	/** destroying player */
 	void UnSpawnPlayer();
 
-	/** ensure object is inside the world */
-	void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
-	/** ensure player is inside the world */
-	void RestrictPlayerToWorld();
-
 	void PlayerThrowWater();
 
 	/** move the player */

@@ -20,56 +20,6 @@ LudumGame::LudumGame()
 	game_name = "Escape Paouf 3";
 }
 
-void LudumGame::OnEnterMainMenu(bool very_first)
-{
-	death::Game::OnEnterMainMenu(very_first);
-
-
-}
-
-bool LudumGame::OnEnterPause()
-{
-	death::Game::OnEnterPause();
-	return true;
-}
-
-bool LudumGame::OnLeavePause()
-{
-	death::Game::OnLeavePause();
-	return true;
-}
-
-bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
-{
-	if (!death::Game::OnEnterGame(in_physical_gamepad))
-		return false;
-	CreateAllGameObjects(0);
-	return true;
-}
-
-bool LudumGame::OnLeaveGame(bool gameover)
-{
-	death::Game::OnLeaveGame(gameover);
-	return true;
-}
-
-bool LudumGame::OnAbordGame()
-{
-	death::Game::OnAbordGame();
-	DestroyGameObjects();
-	return true;
-}
-
-bool LudumGame::OnCharEvent(unsigned int c)
-{
-	return death::Game::OnCharEvent(c);
-}
-
-bool LudumGame::OnKeyEvent(int key, int action)
-{
-	return death::Game::OnKeyEvent(key, action);
-}
-
 bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
 {
 	if (!death::Game::OnPhysicalGamepadInput(physical_gamepad))
@@ -80,7 +30,7 @@ bool LudumGame::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical
 
 bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	if (death::Game::OnGamepadInput(in_gamepad_data))
+	if (death::Game::OnGamepadInput(in_physical_gamepad))
 		return true;
 	return false;
 }
@@ -120,12 +70,6 @@ void LudumGame::ResetGameVariables()
 	current_cooldown  = cooldown;
 }
 
-void LudumGame::OnGameOver()
-{
-	death::Game::OnGameOver();
-	DestroyGameObjects();
-}
-
 void LudumGame::ChangeLife(int delta_life)
 {
 	if (delta_life == 0)
@@ -156,18 +100,6 @@ bool LudumGame::TickGameLoop(double delta_time)
 	return true;
 }
 
-
-bool LudumGame::OnMouseMove(double x, double y)
-{
-	return death::Game::OnMouseMove(x, y);
-}
-
-void LudumGame::DestroyGameObjects()
-{
-	//player_allocations = nullptr;
-	//life_allocations = nullptr;
-}
-
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object
@@ -186,32 +118,6 @@ chaos::ParticleAllocation * LudumGame::CreatePlayer()
 	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 
 	return result;
-}
-
-void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
-{
-	chaos::box2 box    = GetObjectBox(allocation, index);
-	chaos::box2 world = GetWorldBox();
-	chaos::RestrictToInside(world, box, false);
-	SetObjectBox(allocation, index, box);
-}
-
-void LudumGame::RestrictPlayerToWorld()
-{
-	RestrictObjectToWorld(player_allocations.get(), 0);
-}
-
-
-
-void LudumGame::CreateAllGameObjects(int level)
-{
-#if 0
-	if (player_allocations == nullptr)
-	{
-		player_allocations = CreatePlayer();
-		SetPlayerPosition(0.0f);
-	}
-#endif
 }
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
@@ -306,9 +212,9 @@ void LudumGame::DisplacePlayer(double delta_time)
 		-right_stick_position.y:
 		-left_stick_position.y;
 
-	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(position + value * (float)delta_time);
-	RestrictPlayerToWorld();
+	glm::vec2 position = GetPlayerPosition(0);
+	SetPlayerPosition(0, position + value * (float)delta_time);
+	RestrictPlayerToWorld(0);
 }
 
 void LudumGame::TickCooldown(double delta_time)

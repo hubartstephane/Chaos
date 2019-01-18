@@ -277,19 +277,6 @@ void LudumGame::TickHeartBeat(double delta_time)
 	}
 }
 
-void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
-{
-	chaos::box2 box    = GetObjectBox(allocation, index);
-	chaos::box2 world = GetWorldBox();
-	chaos::RestrictToInside(world, box, false);
-	SetObjectBox(allocation, index, box);
-}
-
-void LudumGame::RestrictPlayerToWorld(int player_index)
-{
-	RestrictObjectToWorld(GetPlayerAllocation(player_index), 0);
-}
-
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);

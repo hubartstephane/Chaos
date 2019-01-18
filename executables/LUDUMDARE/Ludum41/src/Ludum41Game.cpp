@@ -68,12 +68,6 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-bool LudumGame::OnLeaveGame(bool gameover)
-{
-	death::Game::OnLeaveGame(gameover);	
-	return true;
-}
-
 bool LudumGame::OnAbordGame()
 {
 	death::Game::OnAbordGame();
@@ -108,7 +102,7 @@ bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_game
 	if (death::Game::OnGamepadInput(in_physical_gamepad))
 		return true;
 	// maybe this correspond to current challenge
-	SendGamepadButtonToChallenge(in_physical_gamepad->GetGamepadData());
+	SendGamepadButtonToChallenge(&in_physical_gamepad->GetGamepadData());
 
 	return false;
 }
@@ -178,9 +172,9 @@ void LudumGame::DisplacePlayer(double delta_time)
 	if (abs(right_stick_position.x) > abs(left_stick_position.x))
 		value = right_stick_position.x;
 
-	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(glm::vec2(position.x + value, PLAYER_Y));
-	RestrictPlayerToWorld();
+	glm::vec2 position = GetPlayerPosition(0);
+	SetPlayerPosition(0, glm::vec2(position.x + value, PLAYER_Y));
+	RestrictPlayerToWorld(0);
 }
 
 
@@ -332,7 +326,7 @@ void LudumGame::SendKeyboardButtonToChallenge(unsigned int c)
 		sequence_challenge->OnKeyboardButtonReceived((char)c);
 }
 
-void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData * in_gamepad_data)
+void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data)
 {
 	if (!IsPlaying())
 		return;
@@ -390,9 +384,7 @@ void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, s
 
 void LudumGame::DestroyGameObjects()
 {
-	player_allocations = nullptr;
 	balls_allocations = nullptr;
-
 	sequence_challenge = nullptr;
 }
 
@@ -570,35 +562,17 @@ size_t LudumGame::GetBallCount() const
 	return balls_allocations->GetParticleCount();
 }
 
-void LudumGame::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
-{
-	ParticleObject * particle = GetObjectParticle(allocation, index);
-	if (particle == nullptr)
-		return;
-
-	chaos::box2 box = particle->bounding_box;
-	chaos::box2 world = GetWorldBox();
-	chaos::RestrictToInside(world, box, false);
-	SetObjectPosition(allocation, index, box.position);
-}
-
-
-void LudumGame::RestrictPlayerToWorld()
-{
-	RestrictObjectToWorld(player_allocations.get(), 0);
-}
-
 void LudumGame::SetPlayerLength(float length)
 {
 
 	length = chaos::MathTools::Clamp(length, player_min_length, player_max_length);
 
-	chaos::box2 box = GetPlayerBox();
+	chaos::box2 box = GetPlayerBox(0);
 	box.half_size = glm::vec2(length * 0.5f, PLAYER_HEIGHT * 0.5f);
-	SetPlayerBox(box);
+	SetPlayerBox(0, box);
 
 	player_length = length;
-	RestrictPlayerToWorld();
+	RestrictPlayerToWorld(0);
 }
 
 
@@ -609,8 +583,8 @@ void LudumGame::CreateAllGameObjects(int level)
 	{
 		player_allocations = CreatePlayer();
 		SetPlayerLength(player_length);
-		SetPlayerPosition(glm::vec2(0.0f, PLAYER_Y));
-		RestrictPlayerToWorld();
+		SetPlayerPosition(0, glm::vec2(0.0f, PLAYER_Y));
+		RestrictPlayerToWorld(0);
 	}
 
 	if (balls_allocations == nullptr)

@@ -402,39 +402,24 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	
 }
 
-static int GetCircleSectionFromDirection(glm::vec2 const direction, int section_count)
-{
-	float angle = atan2(direction.y, direction.x);
-	if (angle < 0.0f)
-		angle += 2.0f * (float)M_PI;
-
-	float section = 2.0f * (float)M_PI / (float)section_count;
-
-	return (int)((angle + section / 2.0f) / section);
-}
-
-static glm::vec2 GetDirectionFromCircleSection(int quadran, int section_count)
-{
-	float section = 2.0f * (float)M_PI / (float)section_count;
-	float angle   = ((float)quadran) * section;
-
-	return glm::vec2(cos(angle), sin(-angle));
-}
-
 void LudumGame::UpdatePlayerAcceleration(double delta_time)
 {
+	death::Player * player = GetPlayer(0);
+	if (player == nullptr)
+		return;
+
 	ParticlePlayer * player_particle = GetPlayerParticle(0);
 	if (player_particle == nullptr)
 		return;
 	player_particle->acceleration = glm::vec2(0.0f, 0.0f);
 
-	float left_length_2  = glm::length2(left_stick_position);
-	float right_length_2 = glm::length2(right_stick_position);
+	float left_length_2  = glm::length2(player->left_stick_position);
+	float right_length_2 = glm::length2(player->right_stick_position);
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 	{
 		glm::vec2 acceleration = (left_length_2 > right_length_2)?
-			left_stick_position / chaos::MathTools::Sqrt(left_length_2):
-			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
+			player->left_stick_position / chaos::MathTools::Sqrt(left_length_2):
+			player->right_stick_position / chaos::MathTools::Sqrt(right_length_2);
 
 		player_particle->acceleration = player_acceleration * glm::vec2(1.0f, -1.0f) * acceleration; // axis Y reversed
 	}
@@ -445,11 +430,9 @@ void LudumGame::TickCooldown(double delta_time)
 	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
 }
 
-void LudumGame::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+void LudumGame::HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & in_gamepad_data)
 {
-	death::Game::HandleGamepadInput(in_gamepad_data);
-
-
+	death::Game::HandlePlayerGamepadInput(delta_time, in_gamepad_data);
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{

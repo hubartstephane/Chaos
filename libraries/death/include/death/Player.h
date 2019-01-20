@@ -69,8 +69,18 @@ namespace death
 		/** handle mouse movement */
 		virtual bool OnMouseMove(double x, double y);
 
+		/** handle the player input */
+		virtual void HandleKeyboardInputs(double delta_time);
+		/** handle the player input (top level function) */
+		virtual void HandleGamepadInputs(double delta_time);
+		/** handle the input for our own purpose (consuming any data) */
+		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData & gpd);
+
 		/** called whenever player gamepad is disconnected */
 		virtual void OnGamepadDisconnected();
+
+		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
+		virtual void ResetCachedInputs();
 
 	protected:
 
@@ -89,6 +99,11 @@ namespace death
 		int life_count = 3;
 		/** the score for the player */
 		int score = 0;
+
+		/** the current stick position */
+		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
+		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
+
 	};
 
 

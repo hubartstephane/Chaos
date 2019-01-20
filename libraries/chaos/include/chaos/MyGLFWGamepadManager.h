@@ -154,6 +154,11 @@ namespace chaos
 			/** returns the number of axis */
 			size_t GetAxisCount() const;
 
+			/** check whether a button is pressed. Reset it state to 0 */
+			bool IsButtonPressedAndConsume(size_t button_index, bool clear_state);
+			/** clear the state of a button */
+			void ClearButtonState(size_t button_index);
+
 		protected:
 
 			/** update all the values for the axis and buttons */
@@ -180,7 +185,7 @@ namespace chaos
 		public:
 
 			/** get a reference on the data */
-			GamepadData const & GetGamepadData() const { return gamepad_data; }
+			GamepadData const * GetGamepadData() const { return &gamepad_data; }
 
 			/* returns a status giving the change of button relative to previous frame */
 			int GetButtonChanges(size_t button_index) const;
@@ -256,6 +261,9 @@ namespace chaos
 
 			/** destructor */
 			virtual ~Gamepad();
+
+			/** get a reference on the data (if connected) */
+			GamepadData const * GetGamepadData() const;
 
 			/* returns a status giving the change of button relative to previous frame */
 			int GetButtonChanges(size_t button_index) const;

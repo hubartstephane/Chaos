@@ -43,27 +43,7 @@ namespace death
 
 	void Game::HandleKeyboardInputs()
 	{
-		// test whether the stick position can be overriden
-		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
-			simulated_stick.x -= 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
-			simulated_stick.x += 1.0f;
-
-		if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
-			simulated_stick.y += 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
-			simulated_stick.y -= 1.0f;
-
-		if (glm::length2(simulated_stick) > 0)
-			left_stick_position = gamepad_sensitivity * simulated_stick;
-	}
-
-	void Game::ResetPlayerCachedInputs()
-	{
-		left_stick_position = glm::vec2(0.0f, 0.0f);
-		right_stick_position = glm::vec2(0.0f, 0.0f);
 	}
 
 	void Game::TickGameInputs(double delta_time)
@@ -73,11 +53,6 @@ namespace death
 			gamepad_manager->Tick((float)delta_time);
 		// handle keyboard inputs
 		HandleKeyboardInputs();
-		// save the last non null sticks direction
-		if (glm::length2(left_stick_position) > 0.0f)
-			last_left_stick_position = left_stick_position;
-		if (glm::length2(right_stick_position) > 0.0f)
-			last_right_stick_position = right_stick_position;
 	}
 
 	void Game::Tick(double delta_time)
@@ -90,11 +65,6 @@ namespace death
 		// update the game instance
 		if (game_instance != nullptr)
 			game_instance->Tick(delta_time);		
-		
-		
-		
-		// clear the cached inputs
-		ResetPlayerCachedInputs();
 		// tick the particle manager
 		if (particle_manager != nullptr)
 			particle_manager->Tick((float)delta_time);
@@ -542,7 +512,7 @@ namespace death
 	{
 		main_clock = nullptr;
 		game_clock = nullptr;
-		game_clock = nullptr;
+		level_clock = nullptr;
 		pause_clock = nullptr;
 		return true;
 	}
@@ -870,45 +840,26 @@ namespace death
 		return true;
 	}
 
-	void Game::HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data)
+	void Game::HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & gpd)
 	{
-		// cache the stick position
-		glm::vec2 lsp = in_gamepad_data.GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
-		if (glm::length2(lsp) > 0.0f)
-			left_stick_position = gamepad_sensitivity * lsp;
-		else
-		{
-			if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT))
-				left_stick_position.x = -gamepad_sensitivity * 1.0f;
-			else if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT))
-				left_stick_position.x = gamepad_sensitivity * 1.0f;
-
-			if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_UP))
-				left_stick_position.y = -gamepad_sensitivity * 1.0f;
-			else if (in_gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN))
-				left_stick_position.y = gamepad_sensitivity * 1.0f;
-		}
-
-		glm::vec2 rsp = in_gamepad_data.GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
-		if (glm::length2(rsp) > 0.0f)
-			right_stick_position = gamepad_sensitivity * rsp;
+		// maybe a game/pause resume
+		if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_SELECT, true) || gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_SELECT, true))
+			RequireTogglePause();
 	}
 
 	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
+		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
+
 		// maybe a start game
 		if (in_physical_gamepad->IsAnyButtonPressed())
 			if (RequireStartGame(in_physical_gamepad))
 				return true;
 
-		// maybe a game/pause resume
-		if (
-			(in_physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-			(in_physical_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
-		{
-			if (RequireTogglePause())
-				return true;
-		}
+		// maybe a player is interrested in capturing this device
+		if (game_instance != nullptr)
+			game_instance->GivePhysicalGamepadToPlayer(in_physical_gamepad); // single player mode
+
 		return false;
 	}
 
@@ -917,14 +868,8 @@ namespace death
 		// ignore invalid gamepad : should never happen
 		if (!physical_gamepad->IsAnyAction())
 			return true;
-
 		// change the application mode
 		chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
-
-		// copy the gamepad information into the game and handle it
-		gamepad_data = physical_gamepad->GetGamepadData();
-		HandleGamepadInput(gamepad_data);
-
 		// special action on gamepad input
 		OnGamepadInput(physical_gamepad);
 
@@ -1154,8 +1099,8 @@ namespace death
 		SetCurrentLife(initial_life);
 		current_score = 0;
 
-		left_stick_position = right_stick_position = glm::vec2(0.0f, 0.0f);
-		last_left_stick_position = last_right_stick_position = glm::vec2(0.0f, 0.0f);
+		left_stick_position = glm::vec2(0.0f, 0.0f);
+		last_left_stick_position = glm::vec2(0.0f, 0.0f);
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)

@@ -325,12 +325,10 @@ namespace death
 		virtual chaos::SM::StateMachine * DoCreateGameStateMachine();
 		/** create the game state_machine instance */
 		virtual chaos::SM::StateMachineInstance * DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine);
-		/** handle the gamepad input */
-		virtual void HandleGamepadInput(chaos::MyGLFW::GamepadData & in_gamepad_data);
+		/** handle the gamepad input (some uncatched player gamepad input) */
+		virtual void HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & gpd);
 		/** handle keyboards input */
 		virtual void HandleKeyboardInputs();
-		/** internal method called to reset cached inputs */
-		virtual void ResetPlayerCachedInputs();
 
 		/** special action on gamepad input reception */
 		virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
@@ -480,6 +478,9 @@ namespace death
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
 
+		/** get glfw window */
+		GLFWwindow * GetGLFWWindow() { return glfw_window; }
+
 	protected:
 
 		/** the window in GLFW library */
@@ -497,12 +498,6 @@ namespace death
 		chaos::shared_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
 		/** the gamepad data */
 		chaos::MyGLFW::GamepadData gamepad_data;
-		/** the current stick position */
-		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
-		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
-		/** the stick position, last time it was non null */
-		glm::vec2 last_left_stick_position = glm::vec2(0.0f, 0.0f);
-		glm::vec2 last_right_stick_position = glm::vec2(0.0f, 0.0f);
 
 		/** the texture atlas */
 		chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;

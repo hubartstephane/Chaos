@@ -63,6 +63,7 @@ namespace chaos
 			return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
 		}
 
+
 		int GamepadData::GetButtonChanges(size_t button_index) const
 		{
 			bool current_state = IsButtonPressed(button_index, false);
@@ -72,6 +73,23 @@ namespace chaos
 				return (current_state) ? BUTTON_STAY_PRESSED : BUTTON_STAY_RELEASED;
 			else
 				return (current_state) ? BUTTON_BECOME_PRESSED : BUTTON_BECOME_RELEASED;
+		}
+
+		void GamepadData::ClearButtonState(size_t button_index)
+		{
+			size_t count = GetButtonCount();
+			if (button_index >= count)
+				return;
+			buttons[button_index] = 0;
+		}
+
+		bool GamepadData::IsButtonPressedAndConsume(size_t button_index, bool clear_state)
+		{
+			if (!IsButtonPressed(button_index))
+				return false;
+			if (clear_state)
+				ClearButtonState(button_index);
+			return true;
 		}
 
 		bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
@@ -421,6 +439,13 @@ namespace chaos
 		void Gamepad::SetCallbacks(GamepadCallbacks * in_callbacks)
 		{
 			callbacks = in_callbacks;
+		}
+
+		GamepadData const * Gamepad::GetGamepadData() const
+		{
+			if (physical_device == nullptr)
+				return nullptr;
+			return physical_device->GetGamepadData();
 		}
 
 		//

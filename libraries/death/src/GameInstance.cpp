@@ -99,6 +99,20 @@ namespace death
 		return true;
 	}
 
+	void GameInstance::HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & gpd)
+	{
+		// Handle the inputs as we want, modifying the object by consuming data inside
+		InternalHandleGamepadInputs(delta_time, gpd);
+
+		// give remaining input back to game instance
+		if (game != nullptr && (gpd.IsAnyAction() || gpd.IsAnyAxisAction()))
+			game->HandlePlayerGamepadInput(delta_time, gpd);
+	}
+
+	void GameInstance::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData & gpd)
+	{
+
+	}
 
 	size_t GameInstance::GetMaxPlayerCount() const
 	{

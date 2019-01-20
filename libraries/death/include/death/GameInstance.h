@@ -53,6 +53,11 @@ namespace death
 		virtual bool OnMouseButton(int button, int action, int modifier);
 		/** handle mouse movement */
 		virtual bool OnMouseMove(double x, double y);
+		/** handle gamepad inputs that are not catched by the players */
+		virtual void HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & gpd);
+		/** handle the input for our own purpose (consuming any data) */
+		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData & gpd);
+
 
 		/** returns the maximum number of player */
 		size_t GetMaxPlayerCount() const;

@@ -102,7 +102,7 @@ bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_game
 	if (death::Game::OnGamepadInput(in_physical_gamepad))
 		return true;
 	// maybe this correspond to current challenge
-	SendGamepadButtonToChallenge(&in_physical_gamepad->GetGamepadData());
+	SendGamepadButtonToChallenge(in_physical_gamepad->GetGamepadData());
 
 	return false;
 }

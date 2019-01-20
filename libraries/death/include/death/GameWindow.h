@@ -14,7 +14,7 @@ namespace death
 	protected:
 
 		/** game instance creation */
-		virtual Game * CreateGameInstance();
+		virtual Game * CreateGame();
 
 		/** override */
 		virtual bool OnMouseButton(int button, int action, int modifier) override;
@@ -55,7 +55,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual Game * CreateGameInstance() override
+		virtual Game * CreateGame() override
 		{
 			return new GAME_TYPE;
 		}

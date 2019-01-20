@@ -75,7 +75,7 @@ namespace death
 		game = nullptr;
 	}
 
-	Game * GameWindow::CreateGameInstance()
+	Game * GameWindow::CreateGame()
 	{
 		return nullptr;
 	}
@@ -103,7 +103,7 @@ namespace death
 #endif
 
 		// create the game
-		game = CreateGameInstance();
+		game = CreateGame();
 		if (game == nullptr)
 			return false;
 

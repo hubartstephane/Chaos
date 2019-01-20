@@ -1061,6 +1061,7 @@ namespace death
 		if (gameover)
 			CreateGameOverHUD();
 		DestroyInGameClocks();
+		game_instance = nullptr;
 		return true;
 	}
 

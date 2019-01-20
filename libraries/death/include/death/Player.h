@@ -25,6 +25,11 @@ namespace death
 		/** constructor */
 		Player(class GameInstance * in_game_instance);
 
+		/** returns the game  instance */
+		class GameInstance * GetGameInstance() { return game_instance; }
+		/** returns the game instance */
+		class GameInstance const * GetGameInstance() const { return game_instance; }
+
 		/** returns the game */
 		Game * GetGame();
 		/** returns the game */

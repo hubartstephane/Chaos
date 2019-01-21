@@ -2,6 +2,7 @@
 #include "Ludum43Particles.h"
 #include "Ludum43Level.h"
 #include "Ludum43HUD.h"
+#include "Ludum43GameInstance.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -636,4 +637,9 @@ void LudumGame::SetPlayerAllocation(int player_index, chaos::ParticleAllocation 
 		if (player_particles.GetCount() > 0)
 			player_particles[0].life = initial_player_life;
 	}
+}
+
+death::GameInstance * LudumGame::CreateGameInstance()
+{
+	return new LudumGameInstance(this);
 }

@@ -1,6 +1,7 @@
 #include "Ludum42OneGame.h"
 #include "Ludum42OneParticles.h"
 #include "Ludum42OneLevel.h"
+#include "Ludum42OneGameInstance.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -220,4 +221,9 @@ void LudumGame::DisplacePlayer(double delta_time)
 void LudumGame::TickCooldown(double delta_time)
 {
 	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
+}
+
+death::GameInstance * LudumGame::CreateGameInstance()
+{
+	return new LudumGameInstance(this);
 }

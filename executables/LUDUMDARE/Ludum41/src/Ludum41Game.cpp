@@ -1,6 +1,7 @@
 #include "Ludum41Game.h"
 #include "Ludum41Particles.h"
 #include "Ludum41HUD.h"
+#include "Ludum41GameInstance.h"
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -1198,3 +1199,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 		bricks_allocations = CreateBricks(dynamic_cast<LudumLevel const*>(new_level));
 }
 
+death::GameInstance * LudumGame::CreateGameInstance()
+{
+	return new LudumGameInstance(this);
+}

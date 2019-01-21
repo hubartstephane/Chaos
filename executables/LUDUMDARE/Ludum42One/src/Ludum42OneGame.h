@@ -104,6 +104,8 @@ protected:
 	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance) override;
 
+	virtual death::GameInstance * CreateGameInstance() override;
+
 protected:
 
 	/** the tiled map manager */

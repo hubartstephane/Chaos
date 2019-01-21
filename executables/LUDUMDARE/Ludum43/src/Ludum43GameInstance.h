@@ -16,6 +16,13 @@ public:
 	/** constructor */
 	LudumGameInstance(death::Game * in_game);
 
+	/** utility getters + cast */
+	class LudumPlayer * GetLudumPlayer(int player_index);
+	class LudumPlayer const * GetLudumPlayer(int player_index) const;
+
+	class LudumGame * GetLudumGame();
+	class LudumGame const * GetLudumGame() const;
+
 protected:
 
 	virtual death::Player * DoCreatePlayer() override;

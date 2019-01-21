@@ -1098,9 +1098,6 @@ namespace death
 	{
 		SetCurrentLife(initial_life);
 		current_score = 0;
-
-		left_stick_position = glm::vec2(0.0f, 0.0f);
-		last_left_stick_position = glm::vec2(0.0f, 0.0f);
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)

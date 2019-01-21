@@ -79,8 +79,15 @@ namespace death
 		HandleKeyboardInputs(delta_time);
 		// handle gamepad inputs
 		HandleGamepadInputs(delta_time);
+		// tick player displacement
+		TickPlayerDisplacement(delta_time);
 
 		return true;
+	}
+
+	void Player::TickPlayerDisplacement(double delta_time)
+	{
+
 	}
 
 	void Player::HandleKeyboardInputs(double delta_time)

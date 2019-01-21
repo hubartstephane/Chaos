@@ -262,6 +262,9 @@ namespace death
 		/** get the game instance */
 		class GameInstance const * GetGameInstance() const { return game_instance.get(); }
 
+		/** get glfw window */
+		GLFWwindow * GetGLFWWindow() { return glfw_window; }
+
 	protected:
 
 		/** the tick method */
@@ -477,9 +480,6 @@ namespace death
 
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
-
-		/** get glfw window */
-		GLFWwindow * GetGLFWWindow() { return glfw_window; }
 
 	protected:
 

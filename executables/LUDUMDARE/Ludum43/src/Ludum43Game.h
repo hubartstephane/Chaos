@@ -52,6 +52,13 @@ public:
 	/** constructor */
 	LudumGame();
 
+	/** utility getters + cast */
+	class LudumPlayer * GetLudumPlayer(int player_index);
+	class LudumPlayer const * GetLudumPlayer(int player_index) const;
+
+	class LudumGameInstance * GetLudumGameInstance();
+	class LudumGameInstance const * GetLudumGameInstance() const;
+
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	/** override */
@@ -80,8 +87,6 @@ protected:
 
 	virtual void SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation) override;
 
-	void SetPlayerReverseMode(bool reversed_mode);
-
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
@@ -94,10 +99,6 @@ protected:
 	virtual bool TickGameLoop(double delta_time) override;
 
 	void TickHeartBeat(double delta_time);
-
-	/** cooldown the weapon */
-	void TickCooldown(double delta_time);
-	void TickDashValues(double delta_time);
 		
 	/** the game main loop */
 	virtual bool CheckGameOverCondition() override;
@@ -123,10 +124,6 @@ protected:
 	virtual void HandleKeyboardInputs() override;
 
 	/** move the player */
-	void UpdatePlayerAcceleration(double delta_time);
-
-	void SetPlayerDashMode(bool dash);
-
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
 	bool GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
@@ -190,13 +187,6 @@ public:
 	float initial_player_life = 4.0f;
 	float initial_particle_life = 1.0f;
 	
-
-
-	float current_cooldown = 0.1f;
-	float current_dash_duration = 0.0f;
-	float current_dash_cooldown = 0.0f;
-
-
 	float previous_frame_life = 0.0f;
 
 	/** number of waken up particle */

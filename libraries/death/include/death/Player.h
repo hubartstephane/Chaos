@@ -82,6 +82,9 @@ namespace death
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 
+		/** tick the player displacement */
+		virtual void TickPlayerDisplacement(double delta_time);
+
 	protected:
 
 		/** the game instance owning the player */

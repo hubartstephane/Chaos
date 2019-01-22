@@ -230,10 +230,6 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 void LudumGame::ResetGameVariables()
 {
 	death::Game::ResetGameVariables();
-	current_cooldown  = 0.0f;
-
-	current_dash_cooldown = 0.0f;
-	current_dash_duration = 0.0f;
 	
 	previous_frame_life = 0.0;
 
@@ -388,9 +384,10 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
 	// internal
-	current_cooldown = 0.0f;
-	current_dash_cooldown = 0.0f;
-	current_dash_duration = 0.0f;
+	LudumPlayer * player = GetLudumPlayer(0);
+	if (player != nullptr)
+		player->OnLevelChanged();
+
 	previous_frame_life = 0.0f;
 	current_score += waken_up_particle_count;
 	waken_up_particle_count = 0;

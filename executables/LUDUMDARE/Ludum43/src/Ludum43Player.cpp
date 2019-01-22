@@ -189,3 +189,12 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 		SetReverseMode(reversed_mode);
 	}
 }
+
+void LudumPlayer::OnLevelChanged()
+{
+	current_cooldown = 0.0f;
+	current_dash_cooldown = 0.0f;
+	current_dash_duration = 0.0f;
+}
+
+

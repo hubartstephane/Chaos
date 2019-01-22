@@ -29,6 +29,9 @@ public:
 	ParticlePlayer * GetPlayerParticle();
 	ParticlePlayer const * GetPlayerParticle() const;
 
+	/** called whenever the level is being changed */
+	void OnLevelChanged();
+
 protected:
 
 	/** override */

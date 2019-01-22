@@ -120,9 +120,6 @@ protected:
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
 
-	virtual void HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & in_gamepad_data) override;
-	virtual void HandleKeyboardInputs() override;
-
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 

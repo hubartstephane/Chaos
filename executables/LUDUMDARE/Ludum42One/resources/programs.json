@@ -1,8 +1,0 @@
-{
-  "@background" : { "path": "@programs/background/background.pgm" },
-  "@fire_background" : { "path": "@programs/fire_background/fire_background.pgm" },
-  "@challenge"  : { "path": "@programs/challenge/challenge.pgm" },
-  "@gameobject"  : { "path": "@programs/gameobject/gameobject.pgm" },
-  "@text"  : { "path": "@programs/text/text.pgm" }    
-
-}

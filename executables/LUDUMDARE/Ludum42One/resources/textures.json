@@ -1,5 +1,0 @@
-{
-  "@background": { "path": "@textures/background.png" },
-  "@fire": { "path": "@textures/fire.png" },
-  "@perlin_noise": { "path": "@textures/perlin_noise.png" }
-}

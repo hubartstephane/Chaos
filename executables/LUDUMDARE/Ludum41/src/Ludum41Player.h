@@ -16,4 +16,11 @@ public:
 
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
+
+protected:
+
+	/** override */
+	virtual void TickPlayerDisplacement(double delta_time) override;
+	/** override */
+	virtual bool OnMouseMove(double x, double y) override;
 };

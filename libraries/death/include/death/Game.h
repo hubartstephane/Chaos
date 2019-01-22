@@ -213,19 +213,6 @@ namespace death
 		/** set player allocation */
 		virtual void SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation);
 
-		/** get object particle */
-		chaos::ParticleDefault::Particle * GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index);
-		chaos::ParticleDefault::Particle const * GetObjectParticle(chaos::ParticleAllocation const * allocation, size_t index) const;
-
-		/** get object position */
-		glm::vec2 GetObjectPosition(chaos::ParticleAllocation const * allocation, size_t index) const;
-		/** get object box */
-		chaos::box2 GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const;
-		/** set the object position */
-		bool SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
-		/** set the object box */
-		bool SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
-
 		/** get player particle */
 		chaos::ParticleDefault::Particle * GetPlayerParticle(int player_index);
 		chaos::ParticleDefault::Particle const * GetPlayerParticle(int player_index) const;

@@ -29,6 +29,8 @@ namespace chaos
 		std::string name;
 		/** the path of the object */
 		boost::filesystem::path path;
+		/** the file timestamp */
+		std::time_t file_timestamp = 0;
 	};
 
 	class GPUFileResourceFriend

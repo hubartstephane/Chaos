@@ -166,19 +166,6 @@ void LudumGame::OnGameOver()
 	death::Game::OnGameOver();
 	DestroyGameObjects();
 }
-
-void LudumGame::DisplacePlayer(double delta_time)
-{
-	float value = left_stick_position.x;
-	if (abs(right_stick_position.x) > abs(left_stick_position.x))
-		value = right_stick_position.x;
-
-	glm::vec2 position = GetPlayerPosition(0);
-	SetPlayerPosition(0, glm::vec2(position.x + value, PLAYER_Y));
-	RestrictPlayerToWorld(0);
-}
-
-
 size_t LudumGame::CanStartChallengeBallIndex(bool reverse) const
 {
 	size_t ball_count = GetBallCount();
@@ -310,8 +297,6 @@ bool LudumGame::TickGameLoop(double delta_time)
 	if (!death::Game::TickGameLoop(delta_time))
 		return false;
 
-	// displace the player
-	DisplacePlayer(delta_time);
 	// some other calls
 	TickBrickOffset(delta_time);
 	TickChallenge(delta_time);
@@ -580,6 +565,9 @@ void LudumGame::SetPlayerLength(float length)
 
 void LudumGame::CreateAllGameObjects(int level)
 {
+
+
+
 	if (player_allocations == nullptr)
 	{
 		player_allocations = CreatePlayer();

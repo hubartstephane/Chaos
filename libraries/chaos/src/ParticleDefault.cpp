@@ -61,5 +61,62 @@ namespace chaos
 		return GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 
+	chaos::ParticleDefault::Particle * ParticleDefault::GetParticle(chaos::ParticleAllocation * allocation, size_t index)
+	{
+		if (allocation == nullptr)
+			return nullptr;
+		if (index >= allocation->GetParticleCount())
+			return nullptr;
+
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		if (particles.GetCount() == 0)
+			return nullptr;
+		return &particles[index];
+	}
+
+	chaos::ParticleDefault::Particle const * ParticleDefault::GetParticle(chaos::ParticleAllocation const * allocation, size_t index)
+	{
+		if (allocation == nullptr)
+			return nullptr;
+		if (index >= allocation->GetParticleCount())
+			return nullptr;
+
+		chaos::ParticleConstAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		if (particles.GetCount() == 0)
+			return nullptr;
+		return &particles[index];
+	}
+
+	glm::vec2 ParticleDefault::GetParticlePosition(chaos::ParticleAllocation const * allocation, size_t index)
+	{
+		return GetParticleBox(allocation, index).position;
+	}
+
+	chaos::box2 ParticleDefault::GetParticleBox(chaos::ParticleAllocation const * allocation, size_t index)
+	{
+		chaos::ParticleDefault::Particle const * particle = GetParticle(allocation, index);
+		if (particle == nullptr)
+			return chaos::box2();
+		return particle->bounding_box;
+	}
+
+	bool ParticleDefault::SetParticlePosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
+	{
+		chaos::ParticleDefault::Particle * particle = GetParticle(allocation, index);
+		if (particle == nullptr)
+			return false;
+		particle->bounding_box.position = position;
+		return true;
+	}
+
+	bool ParticleDefault::SetParticleBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box)
+	{
+		chaos::ParticleDefault::Particle * particle = GetParticle(allocation, index);
+		if (particle == nullptr)
+			return false;
+		particle->bounding_box = box;
+		return true;
+	}
+
 }; // namespace chaos
 

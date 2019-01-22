@@ -30,6 +30,19 @@ namespace chaos
 			glm::vec4 color;
 		};
 
+
+		/** get particle by index */
+		chaos::ParticleDefault::Particle * GetParticle(chaos::ParticleAllocation * allocation, size_t index);
+		chaos::ParticleDefault::Particle const * GetParticle(chaos::ParticleAllocation const * allocation, size_t index);
+		/** get particle position */
+		glm::vec2 GetParticlePosition(chaos::ParticleAllocation const * allocation, size_t index);
+		/** get particle box */
+		chaos::box2 GetParticleBox(chaos::ParticleAllocation const * allocation, size_t index);
+		/** set the particle position */
+		bool SetParticlePosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position);
+		/** set the particle box */
+		bool SetParticleBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box);
+
 		/** ParticleVertexDefault : vertex for default particle */
 		class ParticleTrait : public ParticleLayerTrait<Particle, Vertex>
 		{

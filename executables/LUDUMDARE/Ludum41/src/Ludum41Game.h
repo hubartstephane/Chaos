@@ -212,10 +212,6 @@ protected:
 	/** generate a direction updward random for the ball */
 	glm::vec2 GenerateBallRandomDirection() const;
 
-	/** move the player */
-	void DisplacePlayer(double delta_time);
-
-
 	/** some challenges */
 	void OnBrickLifeChallenge(bool success);
 	bool IsBrickLifeChallengeValid(bool success);

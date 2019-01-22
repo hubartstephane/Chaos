@@ -11,7 +11,8 @@ namespace chaos
 	}
 
 	void GPUFileResource::SetPath(boost::filesystem::path const & in_path)
-	{
+	{	
+		file_timestamp = boost::filesystem::last_write_time(in_path);
 		path = in_path;
 	}
 

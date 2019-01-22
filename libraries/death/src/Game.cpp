@@ -843,7 +843,7 @@ namespace death
 	void Game::HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & gpd)
 	{
 		// maybe a game/pause resume
-		if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_SELECT, true) || gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_SELECT, true))
+		if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_SELECT, true) || gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_START, true))
 			RequireTogglePause();
 	}
 
@@ -1426,63 +1426,6 @@ namespace death
 		SetCameraBox(camera);
 	}
 
-	chaos::ParticleDefault::Particle * Game::GetObjectParticle(chaos::ParticleAllocation * allocation, size_t index)
-	{
-		if (allocation == nullptr)
-			return nullptr;
-		if (index >= allocation->GetParticleCount())
-			return nullptr;
-
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
-		if (particles.GetCount() == 0)
-			return nullptr;
-		return &particles[index];
-	}
-
-	chaos::ParticleDefault::Particle const * Game::GetObjectParticle(chaos::ParticleAllocation const * allocation, size_t index) const
-	{
-		if (allocation == nullptr)
-			return nullptr;
-		if (index >= allocation->GetParticleCount())
-			return nullptr;
-
-		chaos::ParticleConstAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
-		if (particles.GetCount() == 0)
-			return nullptr;
-		return &particles[index];
-	}
-
-	glm::vec2 Game::GetObjectPosition(chaos::ParticleAllocation const * allocation, size_t index) const
-	{
-		return GetObjectBox(allocation, index).position;
-	}
-
-	chaos::box2 Game::GetObjectBox(chaos::ParticleAllocation const * allocation, size_t index) const
-	{
-		chaos::ParticleDefault::Particle const * object = GetObjectParticle(allocation, index);
-		if (object == nullptr)
-			return chaos::box2();
-		return object->bounding_box;
-	}
-
-	bool Game::SetObjectPosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
-	{
-		chaos::ParticleDefault::Particle * particle = GetObjectParticle(allocation, index);
-		if (particle == nullptr)
-			return false;
-		particle->bounding_box.position = position;
-		return true;
-	}
-
-	bool Game::SetObjectBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box)
-	{
-		chaos::ParticleDefault::Particle * object = GetObjectParticle(allocation, index);
-		if (object == nullptr)
-			return false;
-		object->bounding_box = box;
-		return true;
-	}
-
 	Player * Game::GetPlayer(int player_index)
 	{
 		// game even not started : no player
@@ -1503,31 +1446,31 @@ namespace death
 
 	chaos::ParticleDefault::Particle * Game::GetPlayerParticle(int player_index)
 	{
-		return GetObjectParticle(GetPlayerAllocation(player_index), 0);
+		return chaos::ParticleDefault::GetParticle(GetPlayerAllocation(player_index), 0);
 	}
 
 	chaos::ParticleDefault::Particle const * Game::GetPlayerParticle(int player_index) const
 	{
-		return GetObjectParticle(GetPlayerAllocation(player_index), 0);
+		return chaos::ParticleDefault::GetParticle(GetPlayerAllocation(player_index), 0);
 	}
 
 	glm::vec2 Game::GetPlayerPosition(int player_index) const
 	{
-		return GetObjectPosition(GetPlayerAllocation(player_index), 0);
+		return chaos::ParticleDefault::GetParticlePosition(GetPlayerAllocation(player_index), 0);
 	}
 
 	chaos::box2 Game::GetPlayerBox(int player_index) const
 	{
-		return GetObjectBox(GetPlayerAllocation(player_index), 0);
+		return chaos::ParticleDefault::GetParticleBox(GetPlayerAllocation(player_index), 0);
 	}
 
 	bool Game::SetPlayerPosition(int player_index, glm::vec2 const & position)
 	{
-		return SetObjectPosition(GetPlayerAllocation(player_index), 0, position);
+		return chaos::ParticleDefault::SetParticlePosition(GetPlayerAllocation(player_index), 0, position);
 	}
 	bool Game::SetPlayerBox(int player_index, chaos::box2 const & box)
 	{
-		return SetObjectBox(GetPlayerAllocation(player_index), 0, box);
+		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(player_index), 0, box);
 	}
 
 	void Game::SetCurrentLife(int new_life)
@@ -1585,17 +1528,16 @@ namespace death
 	{
 		if (allocation == nullptr)
 			return;
-		chaos::box2 box = GetObjectBox(allocation, index);
+		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);
 		chaos::box2 world = GetWorldBox();
 		chaos::RestrictToInside(world, box, false);
-		SetObjectBox(allocation, index, box);
+		chaos::ParticleDefault::SetParticleBox(allocation, index, box);
 	}
 
 	void Game::RestrictPlayerToWorld(int player_index)
 	{
 		RestrictObjectToWorld(GetPlayerAllocation(player_index), 0);
 	}
-
 
 	GameInstance * Game::CreateGameInstance()
 	{

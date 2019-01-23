@@ -85,7 +85,12 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 
 void LudumPlayingHUD::TickHeartWarning(LudumGame * ludum_game, double delta_time)
 {
-	if (ludum_game->GetCurrentLife() == 1)
+	death::Player const * player = ludum_game->GetPlayer(0);
+	if (player == nullptr)
+		return;
+
+	int current_life = player->GetLifeCount();
+	if (current_life == 1)
 	{
 		heart_warning -= heart_beat_speed * (float)delta_time;
 		if (heart_warning <= 0.0f)

@@ -56,6 +56,8 @@ namespace death
 
 		/** update player score */
 		void SetScore(int in_score, bool increment = false);
+		/** update player life */
+		void SetLifeCount(int in_life, bool increment = false);
 
 		/** try to give physical device to the player */
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
@@ -101,7 +103,6 @@ namespace death
 
 		/** the index of the player */
 		int player_index = 0;
-
 		/** the life for the player */
 		int life_count = 3;
 		/** the score for the player */
@@ -110,7 +111,6 @@ namespace death
 		/** the current stick position */
 		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
 		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
-
 	};
 
 

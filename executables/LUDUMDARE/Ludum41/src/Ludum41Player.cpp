@@ -19,5 +19,43 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 
 bool LudumPlayer::OnMouseMove(double x, double y)
 {
+	death::Game const * game = GetGame();
+	if (game == nullptr)
+		return true;
+	left_stick_position.x = game->GetMouseSensitivity() * (float)x;
 	return false;
 }
+
+void LudumPlayer::SetPlayerLength(float in_length, bool increment)
+{
+	if (increment)
+		player_length += in_length;
+	else
+		player_length = in_length;
+}
+
+#if 0
+
+
+if (player_allocations == nullptr)
+{
+	player_allocations = CreatePlayer();
+	SetPlayerLength(player_length);
+	SetPlayerPosition(0, glm::vec2(0.0f, PLAYER_Y));
+	RestrictPlayerToWorld(0);
+}
+
+
+
+void LudumGame::SetPlayerLength(float length)
+{
+	length = chaos::MathTools::Clamp(length, player_min_length, player_max_length);
+
+	chaos::box2 box = GetPlayerBox(0);
+	box.half_size = glm::vec2(length * 0.5f, PLAYER_HEIGHT * 0.5f);
+	SetPlayerBox(0, box);
+
+	player_length = length;
+	RestrictPlayerToWorld(0);
+}
+#endif

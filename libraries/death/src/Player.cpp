@@ -73,14 +73,14 @@ namespace death
 
 	bool Player::DoTick(double delta_time)
 	{
-		// remove previous frame cached input
-		ResetCachedInputs();
 		// transform keyboard inputs as stick input
 		HandleKeyboardInputs(delta_time);
 		// handle gamepad inputs
 		HandleGamepadInputs(delta_time);
 		// tick player displacement
 		TickPlayerDisplacement(delta_time);
+		// remove previous frame cached input
+		ResetCachedInputs();
 
 		return true;
 	}
@@ -115,7 +115,7 @@ namespace death
 			simulated_stick.y -= 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
-			left_stick_position = game->gamepad_sensitivity * simulated_stick;
+			left_stick_position = game->GetGamepadSensitivity() * simulated_stick;
 	}
 
 	void Player::ResetCachedInputs()
@@ -153,7 +153,7 @@ namespace death
 			return;
 
 		// cache the stick position
-		float gamepad_sensitivity = game->gamepad_sensitivity;
+		float gamepad_sensitivity = game->GetGamepadSensitivity();
 
 		glm::vec2 lsp = gpd.GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 		if (glm::length2(lsp) > 0.0f)
@@ -183,7 +183,15 @@ namespace death
 		else
 			score = in_score;	
 	}
-	
+
+	void Player::SetLifeCount(int in_life, bool increment)
+	{
+		if (increment)
+			life_count += in_life;
+		else
+			life_count = in_life;
+	}
+
 	PlayerGamepadCallbacks::PlayerGamepadCallbacks(Player * in_player):
 		player(in_player)
 	{

@@ -2,6 +2,8 @@
 #include "Ludum41Particles.h"
 #include "Ludum41HUD.h"
 #include "Ludum41GameInstance.h"
+#include "Ludum41Player.h"
+
 
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlas.h>
@@ -22,6 +24,37 @@ LudumGame::LudumGame()
 	max_life = 10;
 }
 
+class LudumPlayer * LudumGame::GetLudumPlayer(int player_index)
+{
+	return dynamic_cast<LudumPlayer*>(GetPlayer(player_index));
+}
+
+class LudumPlayer const * LudumGame::GetLudumPlayer(int player_index) const
+{
+	return dynamic_cast<LudumPlayer const *>(GetPlayer(player_index));
+}
+
+class LudumGameInstance * LudumGame::GetLudumGameInstance()
+{
+	return dynamic_cast<LudumGameInstance*>(GetGameInstance());
+}
+
+class LudumGameInstance const * LudumGame::GetLudumGameInstance() const
+{
+	return dynamic_cast<LudumGameInstance const *>(GetGameInstance());
+}
+
+
+
+
+
+
+
+
+
+
+
+
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);
@@ -31,7 +64,10 @@ void LudumGame::IncrementScore(int delta)
 {
 	if (delta <= 0)
 		return;
-	current_score += delta * combo_multiplier;
+	death::Player * player = GetPlayer(0);
+	if (player == nullptr)
+		return;
+	player->SetScore(delta, true);
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)
@@ -91,12 +127,6 @@ bool LudumGame::OnCharEvent(unsigned int c)
 	}
 	return death::Game::OnCharEvent(c);
 }
-
-bool LudumGame::OnKeyEvent(int key, int action)
-{
-	return death::Game::OnKeyEvent(key, action);
-}
-
 bool LudumGame::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
 	// press start or go to pause
@@ -245,6 +275,9 @@ void LudumGame::TickBallSplit(double delta_time)
 
 bool LudumGame::CheckGameOverCondition()
 {
+
+#if 0
+
 	size_t ball_count = GetBallCount();
 	if (ball_count == 0)
 	{
@@ -263,6 +296,7 @@ bool LudumGame::CheckGameOverCondition()
 		}
 		return true;
 	}
+#endif
 	return false;
 }
 
@@ -318,12 +352,6 @@ void LudumGame::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * 
 		return;
 	if (sequence_challenge != nullptr)
 		sequence_challenge->OnGamepadButtonReceived(in_gamepad_data);
-}
-
-bool LudumGame::OnMouseMove(double x, double y)
-{
-	left_stick_position.x = mouse_sensitivity * (float)x;
-	return death::Game::OnMouseMove(x, y);
 }
 
 void LudumGame::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)
@@ -548,34 +576,8 @@ size_t LudumGame::GetBallCount() const
 	return balls_allocations->GetParticleCount();
 }
 
-void LudumGame::SetPlayerLength(float length)
-{
-
-	length = chaos::MathTools::Clamp(length, player_min_length, player_max_length);
-
-	chaos::box2 box = GetPlayerBox(0);
-	box.half_size = glm::vec2(length * 0.5f, PLAYER_HEIGHT * 0.5f);
-	SetPlayerBox(0, box);
-
-	player_length = length;
-	RestrictPlayerToWorld(0);
-}
-
-
-
 void LudumGame::CreateAllGameObjects(int level)
 {
-
-
-
-	if (player_allocations == nullptr)
-	{
-		player_allocations = CreatePlayer();
-		SetPlayerLength(player_length);
-		SetPlayerPosition(0, glm::vec2(0.0f, PLAYER_Y));
-		RestrictPlayerToWorld(0);
-	}
-
 	if (balls_allocations == nullptr)
 		balls_allocations = CreateBalls(1, true);	
 }
@@ -752,6 +754,11 @@ void LudumGame::OnBallPowerChallenge(bool success)
 
 bool LudumGame::IsExtraBallChallengeValid(bool success)
 {
+	death::Player * player = GetPlayer(0);
+	if (player == nullptr)
+		return false;
+
+	int current_life = player->GetLifeCount();
 	if (success)
 		return current_life < max_life; // do not add life is already max
 	else
@@ -760,11 +767,19 @@ bool LudumGame::IsExtraBallChallengeValid(bool success)
 
 void LudumGame::OnExtraBallChallenge(bool success)
 {
-	SetCurrentLife(GetCurrentLife() + (success ? +1 : -1));
+	death::Player * player = GetPlayer(0);
+	if (player == nullptr)
+		return;
+	player->SetLifeCount((success ? +1 : -1), true);
 }
 
 bool LudumGame::IsLongBarChallengeValid(bool success)
 {
+	LudumPlayer * player = GetLudumPlayer(0);
+	if (player == nullptr)
+		return false;
+
+	float player_length = player->GetPlayerLength();
 	if (success)
 		return (player_length < player_max_length); // can only increment if bar is not at max already
 	else
@@ -773,10 +788,14 @@ bool LudumGame::IsLongBarChallengeValid(bool success)
 
 void LudumGame::OnLongBarChallenge(bool success)
 {
+	LudumPlayer * player = GetLudumPlayer(0);
+	if (player == nullptr)
+		return;
+
 	if (success)
-		SetPlayerLength(player_length + player_length_increment);
+		player->SetPlayerLength(player_length_increment, true);
 	else
-		SetPlayerLength(player_length - player_length_decrement);
+		player->SetPlayerLength(player_length_decrement, true);
 }
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()

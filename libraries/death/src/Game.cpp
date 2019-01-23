@@ -1110,7 +1110,7 @@ namespace death
 
 	void Game::ResetGameVariables()
 	{
-		SetCurrentLife(initial_life);
+		
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)
@@ -1484,15 +1484,6 @@ namespace death
 	bool Game::SetPlayerBox(int player_index, chaos::box2 const & box)
 	{
 		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(player_index), 0, box);
-	}
-
-	void Game::SetCurrentLife(int new_life)
-	{
-		if (new_life < 0)
-			new_life = 0;
-		else if (max_life > 0 && new_life > max_life)
-			new_life = max_life;
-		current_life = new_life;
 	}
 
 	chaos::ParticleAllocation * Game::GetPlayerAllocation(int player_index)

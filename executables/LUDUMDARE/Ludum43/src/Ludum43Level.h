@@ -29,20 +29,6 @@ protected:
 	virtual bool OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle);
 };
 
-
-// =================================================
-// Levels
-// =================================================
-
-class AtomGameObject : public death::TiledMap::GeometricObject
-{
-public:
-
-	AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
-
-
-};
-
 // =================================================
 // Levels
 // =================================================
@@ -57,9 +43,6 @@ public:
 	LudumLevel();
 
 protected:
-
-	/** override */
-	virtual death::TiledMap::GeometricObject * DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
 	/** override */
 	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;

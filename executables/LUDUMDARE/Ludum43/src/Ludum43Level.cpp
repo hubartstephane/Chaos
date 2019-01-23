@@ -6,20 +6,8 @@
 #include <chaos/GeometryFramework.h>
 
 // =============================================================
-// AtomObject implementation
-// =============================================================
-
-AtomGameObject::AtomGameObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
-	death::TiledMap::GeometricObject(in_layer_instance, in_geometric_object)
-{
-}
-
-// =============================================================
 // LudumLevel implementation
 // =============================================================
-
-#define LUDUM_PARTICLE_SPAWNER 1
-#define LUDUM_PARTICLE_ENEMY 2
 
 LudumLevel::LudumLevel()
 {
@@ -30,25 +18,6 @@ death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_ga
 {
 	return new LudumLevelInstance(dynamic_cast<LudumGame *>(in_game));
 }
-
-death::TiledMap::GeometricObject * LudumLevel::DoCreateTypedObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
-{
-	int const * object_type_ptr = in_geometric_object->FindPropertyInt("OBJECT_TYPE");
-	if (object_type_ptr == nullptr)
-		return nullptr;
-
-	int object_type = *object_type_ptr;
-
-	if (object_type == LUDUM_PARTICLE_SPAWNER)
-		return nullptr;
-	if (object_type == LUDUM_PARTICLE_ENEMY)
-		return nullptr;
-
-	
-
-	return nullptr;
-}
-
 
 chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
@@ -82,8 +51,7 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 		trait.game = ludum_game;
 		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
 	}
-
-	return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
+	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
 
 static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset)

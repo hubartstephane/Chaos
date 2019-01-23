@@ -126,10 +126,7 @@ namespace death
 
 		chaos::ParticleLayer * Level::CreateParticleLayer(LayerInstance * layer_instance)
 		{
-			auto * trait = new chaos::TypedParticleLayerDesc<TileParticleTrait>;
-			if (trait == nullptr)
-				return nullptr;
-			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<TileParticleTrait>);
+			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
 		}
 
 #define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\

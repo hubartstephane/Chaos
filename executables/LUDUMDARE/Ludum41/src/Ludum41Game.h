@@ -51,23 +51,23 @@ protected:
 	float CHALLENGE_SIZE = 100.0f;
 	float CHALLENGE_PLACEMENT_Y = 0;
 
-	float PLAYER_Y = -385.0f;
-	float PLAYER_HEIGHT = 35.0f;
-
 public:
 
 	/** constructor */
 	LudumGame();
 
+	/** utility getters + cast */
+	class LudumPlayer * GetLudumPlayer(int player_index);
+	class LudumPlayer const * GetLudumPlayer(int player_index) const;
+
+	class LudumGameInstance * GetLudumGameInstance();
+	class LudumGameInstance const * GetLudumGameInstance() const;
+
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }
 
 	/** override */
-	virtual bool OnKeyEvent(int key, int action) override;
-	/** override */
 	virtual bool OnCharEvent(unsigned int c) override;
-	/** override */
-	virtual bool OnMouseMove(double x, double y) override;
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	/** override */
@@ -185,10 +185,6 @@ protected:
 
 	/** called whenever a ball collide */
 	void OnBallCollide(bool collide_brick);
-	/** change the length */
-	void SetPlayerLength(float length);
-
-
 
 	/** get the balls */
 	ParticleMovableObject * GetBallParticles();
@@ -301,8 +297,6 @@ protected:
 	float ball_angle_limit = 0.1f;
 
 	/** current game values */
-	float player_length = 70.0f;
-	
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
 

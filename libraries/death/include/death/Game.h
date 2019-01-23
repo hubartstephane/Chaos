@@ -72,11 +72,6 @@ namespace death
 		/** returns the best score among existing players */
 		int GetBestPlayerScore() const;
 
-		/** returns the current life */
-		void SetCurrentLife(int new_life);
-
-		int GetCurrentLife() const { return current_life; }
-
 		/** getter on the particle manager */
 		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
 		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
@@ -251,6 +246,14 @@ namespace death
 
 		/** get glfw window */
 		GLFWwindow * GetGLFWWindow() { return glfw_window; }
+
+
+
+
+		/** getter on mouse sensitivity */
+		float GetMouseSensitivity() const { return mouse_sensitivity;}
+		/** getter on gamepad sensitivity */
+		float GetGamepadSensitivity() const { return gamepad_sensitivity; }
 
 	protected:
 
@@ -522,7 +525,6 @@ namespace death
 		int best_score = 0;
 
 		/** life counters */
-		int current_life = 3;
 		int initial_life = 3;
 		int max_life = 3;
 

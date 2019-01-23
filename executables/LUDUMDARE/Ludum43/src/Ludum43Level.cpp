@@ -137,8 +137,6 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 				p.rotation_radius = radius * chaos::MathTools::RandFloat(0.0f, 2.0f);
 				p.rotation_alpha  = chaos::MathTools::RandFloat(0.0f, 6.28f);						
 			}
-
-
 		}	
 		return true;
 	}
@@ -213,7 +211,7 @@ FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::La
 
 }
 
-bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 {
 	if (player_particle != nullptr)
 	{

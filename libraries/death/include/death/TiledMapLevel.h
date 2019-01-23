@@ -15,6 +15,7 @@
 
 namespace death
 {
+	class Player; // for compilation, nested namespace cause issues
 
 	namespace TiledMap
 	{
@@ -184,7 +185,7 @@ namespace death
 			virtual bool Initialize() override;
 
 			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-			virtual bool OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle);
+			virtual bool OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
 			
 		protected:
 
@@ -254,7 +255,7 @@ namespace death
 			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocation * allocation){ return true; }
 
 			/** called whenever a collision between player and tile happens */
-			virtual bool OnPlayerTileCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
+			virtual bool OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
 
 			/** the default program when not specified */
 			virtual chaos::GPUProgram * GenDefaultRenderProgram();
@@ -369,9 +370,9 @@ namespace death
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerCollision(double delta_time);
 			/** compute trigger collisions with surface triggers */
-			virtual void ComputePlayerCollisionWithSurfaceTriggers(double delta_time, chaos::ParticleDefault::Particle * player_particle);
+			virtual void ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
 			/** compute collisions between players and tiles */
-			virtual void ComputePlayerTileCollisions(double delta_time, chaos::ParticleDefault::Particle * player_particle);
+			virtual void ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
 
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::ImageLayer * image_layer);

@@ -1,6 +1,7 @@
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
 #include <death/LayerInstanceParticlePopulator.h>
+#include <death/Player.h>
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/TiledMapTools.h>
@@ -211,7 +212,7 @@ namespace death
 			return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 		}
 
-		bool Level::OnPlayerTileCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
+		bool Level::OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
 		{
 
 			return true; // continue with other
@@ -277,7 +278,7 @@ namespace death
 			return result;
 		}
 
-		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			return true; // continue other collisions
 		}
@@ -678,19 +679,23 @@ namespace death
 			Game * game = GetGame();
 			if (game == nullptr)
 				return;
+			// get the player
+			Player * player = game->GetPlayer(0);
+			if (player == nullptr)
+				return;
 			// get the player particle
 			chaos::ParticleDefault::Particle * player_particle = game->GetPlayerParticle(0);
 			if (player_particle == nullptr)
 				return;
 			// collision with surface triggers
 			if (AreTriggerSurfacesEnabled())
-				ComputePlayerCollisionWithSurfaceTriggers(delta_time, player_particle);
+				ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle);
 			// collision with tiles
 			if (AreTileCollisionsEnabled())
-				ComputePlayerTileCollisions(delta_time, player_particle);
+				ComputePlayerTileCollisions(delta_time, player, player_particle);
 		}
 
-		void LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+		void LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			death::TiledMap::Level * level = GetTypedLevel();
 
@@ -704,12 +709,12 @@ namespace death
 				chaos::box2 trigger_box = trigger->GetBoundingBox(true);
 
 				if (chaos::Collide(player_particle->bounding_box, trigger_box))
-					if (!trigger->OnPlayerCollision(delta_time, player_particle))
+					if (!trigger->OnPlayerCollision(delta_time, player, player_particle))
 						break;
 			}			
 		}
 
-		void LayerInstance::ComputePlayerTileCollisions(double delta_time, chaos::ParticleDefault::Particle * player_particle)
+		void LayerInstance::ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			death::TiledMap::Level * level = GetTypedLevel();
 
@@ -734,7 +739,7 @@ namespace death
 					if (player_particle == &particle) // ignore self collision
 						continue;
 					if (chaos::Collide(player_particle->bounding_box, particle.bounding_box))
-						if (!level->OnPlayerTileCollision(delta_time, player_particle, &particle))
+						if (!level->OnPlayerTileCollision(delta_time, player, player_particle, &particle))
 							return;
 				}
 			}

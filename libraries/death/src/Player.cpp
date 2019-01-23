@@ -134,6 +134,10 @@ namespace death
 		if (gamepad_data == nullptr)
 			return;
 
+		// change the application mode
+		if (gamepad_data->IsAnyAction())			
+			chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
+
 		// create a copy of gamedata input to be given back to game instance
 		chaos::MyGLFW::GamepadData gpd = *gamepad_data;
 
@@ -141,7 +145,7 @@ namespace death
 		InternalHandleGamepadInputs(delta_time, gpd);
 
 		// give remaining input back to game instance
-		if (game_instance != nullptr && (gpd.IsAnyAction() || gpd.IsAnyAxisAction()))
+		if (game_instance != nullptr && gpd.IsAnyAction())
 			game_instance->HandlePlayerGamepadInput(delta_time, gpd);
 	}
 

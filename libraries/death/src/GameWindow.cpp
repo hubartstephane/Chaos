@@ -137,14 +137,20 @@ namespace death
 
 	void GameWindow::OnIconifiedStateChange(bool iconified)
 	{
+		// do not execute following code in debug because it does not fit well with debugger
+#if !_DEBUG
 		if (iconified)
 			game->RequirePauseGame();
+#endif
 	}
 
 	void GameWindow::OnFocusStateChange(bool gain_focus)
 	{
+		// do not execute following code in debug because it does not fit well with debugger
+#if !_DEBUG
 		if (!gain_focus)
 			game->RequirePauseGame();
+#endif
 	}
 
 }; // namespace death

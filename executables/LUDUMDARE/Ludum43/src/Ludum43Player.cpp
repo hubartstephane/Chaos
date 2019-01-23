@@ -104,10 +104,13 @@ void LudumPlayer::TickDashValues(double delta_time)
 
 void LudumPlayer::SetReverseMode(bool reversed_mode)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	if (reversed_mode)
+		reversed_mode = reversed_mode;
+
+	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
 		return;
-	if (ludum_game->GetLevelClockTime() < 3.0) // because the player start could cause a repulsion
+	if (ludum_game->GetLevelClockTime() < 2.0) // because the player start could cause a repulsion
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();
@@ -121,7 +124,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 			if (current_cooldown > 0.0f)
 				return;
 			current_cooldown = ludum_game->cooldown;
-			PlaySound("collision", false, false);
+			ludum_game->PlaySound("collision", false, false);
 		}
 		player_particle->reversed = reversed_mode;
 	}
@@ -129,10 +132,10 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 
 void LudumPlayer::SetDashMode(bool dash)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
 		return;
-	if (ludum_game->GetLevelClockTime() < 3.0) // because the player start dash
+	if (ludum_game->GetLevelClockTime() < 2.0) // because the player start dash
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();
@@ -147,7 +150,7 @@ void LudumPlayer::SetDashMode(bool dash)
 				return;
 			current_dash_cooldown = ludum_game->dash_cooldown;
 			current_dash_duration = ludum_game->dash_duration;
-			PlaySound("thrust", false, false);
+			ludum_game->PlaySound("thrust", false, false);
 		}
 		player_particle->dash = dash;
 	}

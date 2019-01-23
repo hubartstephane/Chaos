@@ -15,6 +15,18 @@
 
 namespace death
 {
+
+	int Game::GetBestPlayerScore() const
+	{
+
+		return 666;
+	}
+
+	void Game::DestroyAllPlayers()
+	{
+
+	}
+
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
 	{
 
@@ -680,9 +692,10 @@ namespace death
 
 	void Game::ConditionnalSaveBestScore()
 	{
-		if (best_score < current_score)
+		int player_best_score = GetBestPlayerScore();
+		if (best_score < player_best_score)
 		{
-			best_score = current_score;
+			best_score = player_best_score;
 			SerializeBestScore(true);
 		}
 	}
@@ -942,8 +955,9 @@ namespace death
 
 	void Game::OnGameOver()
 	{
-		SetCurrentLevel(nullptr);
 		ConditionnalSaveBestScore();
+		DestroyAllPlayers();
+		SetCurrentLevel(nullptr);		
 	}
 	void Game::OnPauseStateUpdateClocks(bool enter_pause)
 	{
@@ -1097,7 +1111,6 @@ namespace death
 	void Game::ResetGameVariables()
 	{
 		SetCurrentLife(initial_life);
-		current_score = 0;
 	}
 
 	void Game::StartMainMenuMusic(bool restart_first)

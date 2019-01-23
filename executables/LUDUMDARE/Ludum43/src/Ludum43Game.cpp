@@ -234,7 +234,6 @@ void LudumGame::ResetGameVariables()
 	previous_frame_life = 0.0;
 
 	waken_up_particle_count = 0;
-	current_score = 0;
 	heart_beat_time = 0.0f;
 	level_timeout = 0.0f;
 
@@ -386,10 +385,12 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 	// internal
 	LudumPlayer * player = GetLudumPlayer(0);
 	if (player != nullptr)
+	{
+		player->SetScore(waken_up_particle_count, true);
 		player->OnLevelChanged();
+	}
 
 	previous_frame_life = 0.0f;
-	current_score += waken_up_particle_count;
 	waken_up_particle_count = 0;
 	level_timeout = DEFAULT_LEVEL_TIMEOUT;
 	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;

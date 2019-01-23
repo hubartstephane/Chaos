@@ -201,16 +201,19 @@ namespace death
 
 	void PlayingHUD::UpdateScoreParticles()
 	{
-		int current_score = game->GetCurrentScore();
-		if (current_score != cached_score_value)
-		{
-			if (current_score < 0)
-				UnregisterParticles(GameHUDKeys::SCORE_ID);
-			else
-				RegisterParticles(GameHUDKeys::SCORE_ID, GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
+		Player * player = game->GetPlayer(0);
+		if (player == nullptr)
+			return;
 
-			cached_score_value = current_score;
-		}
+		int current_score = player->GetScore();
+		if (current_score == cached_score_value)
+			return;
+
+		if (current_score < 0)
+			UnregisterParticles(GameHUDKeys::SCORE_ID);
+		else
+			RegisterParticles(GameHUDKeys::SCORE_ID, GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
+		cached_score_value = current_score;
 	}
 
 }; // namespace death

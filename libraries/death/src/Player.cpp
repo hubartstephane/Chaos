@@ -175,6 +175,14 @@ namespace death
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = gamepad_sensitivity * rsp;
 	}
+
+	void Player::SetScore(int in_score, bool increment)
+	{
+		if (increment)
+			score += in_score;
+		else
+			score = in_score;	
+	}
 	
 	PlayerGamepadCallbacks::PlayerGamepadCallbacks(Player * in_player):
 		player(in_player)

@@ -73,8 +73,6 @@ public:
 
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
 
-	int GetSavedParticleCount() const { return current_score; }
-
 	float GetLevelTimeout() const { return level_timeout; }
 
 	float GetPlayerLife(int player_index) const;

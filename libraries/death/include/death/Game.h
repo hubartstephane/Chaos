@@ -69,8 +69,8 @@ namespace death
 
 		/** returns the best score */
 		int GetBestScore() const { return best_score; }
-		/** returns the current score */
-		int GetCurrentScore() const { return current_score; }
+		/** returns the best score among existing players */
+		int GetBestPlayerScore() const;
 
 		/** returns the current life */
 		void SetCurrentLife(int new_life);
@@ -468,6 +468,10 @@ namespace death
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
 
+
+		/** remove all players from the game */
+		virtual void DestroyAllPlayers();
+
 	protected:
 
 		/** the window in GLFW library */
@@ -516,7 +520,6 @@ namespace death
 
 		/** score values */
 		int best_score = 0;
-		int current_score = 0;
 
 		/** life counters */
 		int current_life = 3;

@@ -10,21 +10,20 @@ namespace death
 	{
 		CHAOS_DECLARE_TAG(LEVEL_TIMEOUT_ID);
 		CHAOS_DECLARE_TAG(WAKENUP_PARTICLE_COUNT_ID);
-		CHAOS_DECLARE_TAG(SAVED_PARTICLE_COUNT_ID);
 		CHAOS_DECLARE_TAG(LIFE_LAYER_ID);
 		CHAOS_DECLARE_TAG(FPS_ID);
 	};
 
 };
 
-class LudumPlayingHUD : public death::GameHUD
+class LudumPlayingHUD : public death::PlayingHUD
 {
 
 public:
 
 	/** constructor */
 	LudumPlayingHUD(death::Game * in_game) :
-		death::GameHUD(in_game) {}
+		death::PlayingHUD(in_game) {}
 
 protected:
 

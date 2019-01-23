@@ -53,6 +53,10 @@ namespace death
 		/** returns whether the player is dead or not */
 		bool IsDead() const { return life_count == 0; }
 
+
+		/** update player score */
+		void SetScore(int in_score, bool increment = false);
+
 		/** try to give physical device to the player */
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 

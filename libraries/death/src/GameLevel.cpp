@@ -1,4 +1,7 @@
 #include <death/GameLevel.h>
+#include <death/Game.h>
+#include <death/GameInstance.h>
+#include <death/Player.h>
 
 namespace death
 {
@@ -30,12 +33,65 @@ namespace death
 	// GameLevel implementation
 	// =====================================
 
+
+	GameLevel * GameLevelInstance::GetLevel() 
+	{ 
+		return level; 
+	}
+
+	GameLevel const * GameLevelInstance::GetLevel() const 
+	{ 
+		return level; 
+	}
+
+	Game * GameLevelInstance::GetGame() 
+	{ 
+		return game; 
+	}
+	
+	Game const * GameLevelInstance::GetGame() const 
+	{ 
+		return game; 
+	}
+
+	GameInstance * GameLevelInstance::GetGameInstance() 
+	{ 
+		return game->GetGameInstance(); 
+	}
+
+	GameInstance const * GameLevelInstance::GetGameInstance() const 
+	{ 
+		return game->GetGameInstance(); 
+	}
+
+	void GameLevelInstance::OnPlayerLevelStarted(Player * player)
+	{
+
+	}
+
+	void GameLevelInstance::OnPlayerLevelEnded(Player * player)
+	{
+	
+	}
+
 	void GameLevelInstance::OnLevelEnded()
 	{
+		GameInstance * game_instance = GetGameInstance();
+		if (game_instance == nullptr)
+			return;
+		size_t count = game_instance->GetPlayerCount();
+		for (size_t i = 0; i < count; ++i)
+			OnPlayerLevelEnded(game_instance->GetPlayer(i));
 	}
 	
 	void GameLevelInstance::OnLevelStarted()
 	{
+		GameInstance * game_instance = GetGameInstance();
+		if (game_instance == nullptr)
+			return;
+		size_t count = game_instance->GetPlayerCount();
+		for (size_t i = 0; i < count; ++i)
+			OnPlayerLevelStarted(game_instance->GetPlayer(i));
 	}
 
 	bool GameLevelInstance::Initialize(Game * in_game)

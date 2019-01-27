@@ -27,6 +27,8 @@ namespace death
 		Player * GetPlayer(int player_index);
 		/** get the player by its index */
 		Player const * GetPlayer(int player_index) const;
+		/** get the number of players */
+		size_t GetPlayerCount() const { return players.size(); }
 
 		/** returns the game */
 		Game * GetGame() { return game; }
@@ -39,6 +41,8 @@ namespace death
 		/** try to give a physical to any player (returns the player) */
 		Player * GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
+		/** get the best score among players */
+		int GetBestPlayerScore() const;
 
 	protected:
 

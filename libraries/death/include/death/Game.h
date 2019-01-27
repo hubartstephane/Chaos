@@ -275,6 +275,10 @@ namespace death
 		virtual void Display(chaos::Renderer * renderer, glm::ivec2 const & size);
 		/** the user defined rendering function */
 		virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		/** internal  method to display the level */
+		virtual void DoDisplayLevel(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		/** internal  method to display the HUD */
+		virtual void DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -404,7 +408,7 @@ namespace death
 		/** called whenever we enter in game mode */
 		virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 		/** called whenever we leave game mode */
-		virtual bool OnLeaveGame(bool gameover);
+		virtual bool OnLeaveGame();
 		/** called whenever we are returning from game to main menu without gameover */
 		virtual bool OnAbordGame();
 
@@ -470,10 +474,6 @@ namespace death
 
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
-
-
-		/** remove all players from the game */
-		virtual void DestroyAllPlayers();
 
 	protected:
 

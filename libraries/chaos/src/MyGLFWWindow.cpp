@@ -273,6 +273,7 @@ namespace chaos
 
 		void Window::ToggleFullscreen()
 		{
+#if 0		
 			if (glfw_window == nullptr)
 				return;
 
@@ -328,6 +329,7 @@ namespace chaos
 			//glfwRestoreWindow
 			//glfwSetWindowIconifyCallback
 			//glfwSwapInterval
+#endif
 		}
 
 	}; // namespace MyGLFW

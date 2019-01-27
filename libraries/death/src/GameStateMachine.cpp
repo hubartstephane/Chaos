@@ -133,7 +133,7 @@ namespace death
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
-		game->OnLeaveGame(false);
+		game->OnLeaveGame();
 		return false;
 	}
 
@@ -210,7 +210,7 @@ namespace death
 		if (game != nullptr)
 		{
 			sm_instance->SetContextData(game->PlaySound("gameover", false, false));
-			game->OnLeaveGame(true);
+			game->OnGameOver();
 		}
 		return false;
 	}
@@ -222,7 +222,7 @@ namespace death
 		// notify the game that it is finished
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
-			game->OnGameOver();
+			game->OnLeaveGame();
 		return true;
 	}
 

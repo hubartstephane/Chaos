@@ -26,6 +26,17 @@ namespace death
 		return nullptr;
 	}
 
+	int GameInstance::GetBestPlayerScore() const
+	{
+		int result = 0;
+
+		size_t count = players.size();
+		for (size_t i = 0; i < count; ++i)
+			if (players[i]->GetScore() > result)
+				result = players[i]->GetScore();
+		return result;
+	}
+
 	bool GameInstance::OnKeyEvent(int key, int action)
 	{
 		size_t count = players.size();

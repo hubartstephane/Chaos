@@ -1017,13 +1017,13 @@ namespace death
 		void LevelInstance::OnLevelEnded()
 		{
 			GameLevelInstance::OnLevelEnded();
-			UnSpawnPlayer();		
+			UnSpawnPlayer();		// shuxxx
 		}
 
 		void LevelInstance::OnLevelStarted()
 		{
 			GameLevelInstance::OnLevelStarted();
-			SpawnPlayer();
+			SpawnPlayer(); // shuxxx
 			CreateCamera();
 		}
 

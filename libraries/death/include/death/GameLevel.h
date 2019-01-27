@@ -42,19 +42,25 @@ namespace death
 	class GameLevelInstance : public chaos::Renderable
 	{
 		friend class GameLevel;
+		friend class Game;
+		friend class GameInstance;
 
 	public:
 
 		/** get the level corresponding to this instance */
-		GameLevel * GetLevel() { return level; }
+		GameLevel * GetLevel();
 		/** get the level corresponding to this instance */
-		GameLevel const * GetLevel() const { return level; }
-
+		GameLevel const * GetLevel() const;
 
 		/** get the game */
-		Game * GetGame() { return game; }
+		Game * GetGame();
 		/** get the game */
-		Game const * GetGame() const { return game; }
+		Game const * GetGame() const;
+
+		/** get the game instance */
+		GameInstance * GetGameInstance();
+		/** get the game instance */
+		GameInstance const * GetGameInstance() const;
 
 		/** get the world box */
 		virtual chaos::box2 GetBoundingBox() const { return chaos::box2(); }
@@ -73,6 +79,11 @@ namespace death
 
 		/** additionnal initialization */
 		virtual bool Initialize(Game * in_game);
+
+		/** called for each player whenever a level is started */
+		virtual void OnPlayerLevelStarted(class Player * player);
+		/** called for each player whenever a level is ended */
+		virtual void OnPlayerLevelEnded(class Player * player);
 
 	protected:
 

@@ -18,13 +18,9 @@ namespace death
 
 	int Game::GetBestPlayerScore() const
 	{
-
-		return 666;
-	}
-
-	void Game::DestroyAllPlayers()
-	{
-
+		if (game_instance != nullptr)
+			return game_instance->GetBestPlayerScore();
+		return 0;
 	}
 
 	void Game::OnInputModeChanged(int new_mode, int old_mode)
@@ -169,6 +165,8 @@ namespace death
 
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
+		//FillUniformProvider(main_uniform_provider);
+
 
 		// the viewport
 		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
@@ -180,6 +178,10 @@ namespace death
 		// boxes
 		chaos::box2 player = GetPlayerBox(0);
 		main_uniform_provider.AddVariableValue("player_box", chaos::EncodeBoxToVector(player));
+
+
+
+
 		chaos::box2 camera = GetCameraBox();
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 		chaos::box2 world = GetWorldBox();
@@ -199,6 +201,9 @@ namespace death
 		double pause_time = GetPauseClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
 
+
+
+
 		chaos::RenderParams render_params;
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
@@ -207,9 +212,19 @@ namespace death
 
 	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
+		DoDisplayLevel(renderer, uniform_provider, render_params);
+		DoDisplayHUD(renderer, uniform_provider, render_params);
+	}
+
+	void Game::DoDisplayLevel(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	{
 		// display the level instance
 		if (current_level_instance != nullptr)
 			current_level_instance->Display(renderer, uniform_provider, render_params);
+	}
+
+	void Game::DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	{
 		// display the hud (AFTER the level)
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);
@@ -953,11 +968,11 @@ namespace death
 		CreateMainMenuHUD();
 	}
 
-	void Game::OnGameOver()
-	{
-		ConditionnalSaveBestScore();
-		DestroyAllPlayers();
-		SetCurrentLevel(nullptr);		
+	void Game::OnGameOver() // shuxxx called after game_instance = nullptr => OnLevelEnded called with no players
+	{		
+		if (game_clock != nullptr)
+			game_clock->SetPause(true);
+		CreateGameOverHUD(); 
 	}
 	void Game::OnPauseStateUpdateClocks(bool enter_pause)
 	{
@@ -1014,11 +1029,11 @@ namespace death
 		return true;
 	}
 
-	bool Game::OnLeaveGame(bool gameover)
+	bool Game::OnLeaveGame()
 	{
+		ConditionnalSaveBestScore();
+		SetCurrentLevel(nullptr);	
 		StartMainMenuMusic(true);
-		if (gameover)
-			CreateGameOverHUD();
 		DestroyInGameClocks();
 		game_instance = nullptr;
 		return true;
@@ -1374,22 +1389,22 @@ namespace death
 
 	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
 	{
-		chaos::shared_ptr<GameLevelInstance> old_level_instance = current_level_instance; // copy and keep a reference
+		// copy and keep a reference
+		chaos::shared_ptr<GameLevelInstance> old_level_instance = current_level_instance; 
 		chaos::shared_ptr<GameLevel> old_level = (old_level_instance != nullptr) ?
 			old_level_instance->GetLevel() :
 			nullptr;
 
-		// clear the level
-		if (new_level == nullptr)
+		// create the new level instance if required
+		chaos::shared_ptr<GameLevelInstance> new_level_instance;
+		if (new_level != nullptr)
 		{
-			current_level_instance = nullptr;
-			OnLevelChanged(nullptr, old_level.get(), nullptr, old_level_instance.get());
-			return true;
+			new_level_instance = new_level->CreateLevelInstance(this);
+			if (new_level_instance == nullptr)
+				return false;
 		}
+
 		// change the level
-		chaos::shared_ptr<GameLevelInstance> new_level_instance = new_level->CreateLevelInstance(this);
-		if (new_level_instance == nullptr)
-			return false;
 		current_level_instance = new_level_instance;
 		OnLevelChanged(new_level, old_level.get(), current_level_instance.get(), old_level_instance.get());
 		return true;
@@ -1474,6 +1489,13 @@ namespace death
 
 	chaos::box2 Game::GetPlayerBox(int player_index) const
 	{
+#if 0
+		if (game_instance != nullptr)
+			return game_instance->GetPlayerBox(player_index);
+		return chaos::box2();
+#endif
+
+
 		return chaos::ParticleDefault::GetParticleBox(GetPlayerAllocation(player_index), 0);
 	}
 

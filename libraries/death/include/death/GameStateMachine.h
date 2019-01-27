@@ -100,8 +100,6 @@ namespace death
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
-		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToMainMenuTransition : public GameTransition
@@ -118,8 +116,6 @@ namespace death
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
 		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
-		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToPauseTransition : public GameTransition
@@ -134,8 +130,6 @@ namespace death
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
-		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 
@@ -151,8 +145,6 @@ namespace death
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
-		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToGameOverTransition : public GameTransition

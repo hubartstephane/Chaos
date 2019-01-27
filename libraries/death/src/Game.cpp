@@ -1045,34 +1045,6 @@ namespace death
 		return true;
 	}
 
-	bool Game::IsPauseEnterComplete()
-	{
-		if (pause_music == nullptr)
-			return true;
-		return !pause_music->HasVolumeBlending();
-	}
-
-	bool Game::IsPauseLeaveComplete()
-	{
-		if (game_music == nullptr)
-			return true;
-		return !game_music->HasVolumeBlending();
-	}
-
-	bool Game::IsGameEnterComplete()
-	{
-		if (game_music == nullptr)
-			return true;
-		return !game_music->HasVolumeBlending();
-	}
-
-	bool Game::IsGameLeaveComplete()
-	{
-		if (menu_music == nullptr)
-			return true;
-		return !menu_music->HasVolumeBlending();
-	}
-
 	bool Game::CheckGameOverCondition()
 	{
 		return false; // no game hover

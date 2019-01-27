@@ -412,16 +412,6 @@ namespace death
 		/** called whenever we are returning from game to main menu without gameover */
 		virtual bool OnAbordGame();
 
-		/** returns true if the pause if fully set */
-		virtual bool IsPauseEnterComplete();
-		/** returns true if the game if fully restored from pause */
-		virtual bool IsPauseLeaveComplete();
-
-		/** returns true if the game enter if fully set */
-		virtual bool IsGameEnterComplete();
-		/** returns true if the game leave is fully completed */
-		virtual bool IsGameLeaveComplete();
-
 		/** require a pause */
 		virtual bool RequirePauseGame();
 		/** require a pause or resume */

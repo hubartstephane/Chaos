@@ -115,13 +115,7 @@ namespace death
 		return false;
 	}
 
-	bool MainMenuToPlayingTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
-	{
-		Game * game = GetGame(sm_instance);
-		if (game == nullptr)
-			return true;
-		return game->IsGameEnterComplete();
-	}
+	// ======
 
 	PlayingToMainMenuTransition::PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
@@ -137,14 +131,6 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToMainMenuTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
-	{
-		Game * game = GetGame(sm_instance);
-		if (game == nullptr)
-			return true;
-		return game->IsGameLeaveComplete();
-	}
-
 	bool PlayingToMainMenuTransition::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
@@ -153,6 +139,8 @@ namespace death
 		game->OnAbordGame();
 		return false;
 	}
+
+	// ======
 
 	PlayingToPauseTransition::PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
@@ -169,13 +157,7 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToPauseTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
-	{
-		Game * game = GetGame(sm_instance);
-		if (game == nullptr)
-			return true;
-		return game->IsPauseEnterComplete();
-	}
+	// ======
 
 	PauseToPlayingTransition::PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
@@ -191,13 +173,7 @@ namespace death
 		return false;
 	}
 
-	bool PauseToPlayingTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
-	{
-		Game * game = GetGame(sm_instance);
-		if (game == nullptr)
-			return true;
-		return game->IsPauseLeaveComplete();
-	}
+	// ======
 
 	PlayingToGameOverTransition::PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
 		GameTransition(in_from_state, in_to_state, in_triggering_event)
@@ -233,10 +209,6 @@ namespace death
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
 				return false;
-		// wait until the music is blend correctly
-		Game * game = GetGame(sm_instance);
-		if (game != nullptr)
-			return game->IsGameLeaveComplete();
 		return true;
 	}
 

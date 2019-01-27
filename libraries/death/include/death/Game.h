@@ -409,8 +409,6 @@ namespace death
 		virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 		/** called whenever we leave game mode */
 		virtual bool OnLeaveGame();
-		/** called whenever we are returning from game to main menu without gameover */
-		virtual bool OnAbordGame();
 
 		/** require a pause */
 		virtual bool RequirePauseGame();

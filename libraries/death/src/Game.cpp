@@ -1039,12 +1039,6 @@ namespace death
 		return true;
 	}
 
-	bool Game::OnAbordGame()
-	{
-		SetCurrentLevel(nullptr);
-		return true;
-	}
-
 	bool Game::CheckGameOverCondition()
 	{
 		return false; // no game hover

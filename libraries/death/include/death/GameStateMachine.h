@@ -93,8 +93,7 @@ namespace death
 	{
 	public:
 
-		/** constructor */
-		MainMenuToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
+		using GameTransition::GameTransition; // inherit constructor
 
 	protected:
 
@@ -107,15 +106,12 @@ namespace death
 
 	public:
 
-		/** constructor */
-		PlayingToMainMenuTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
+		using GameTransition::GameTransition; // inherit constructor
 
 	protected:
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
-		/** overriding */
-		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingToPauseTransition : public GameTransition
@@ -123,8 +119,7 @@ namespace death
 
 	public:
 
-		/** constructor */
-		PlayingToPauseTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
+		using GameTransition::GameTransition; // inherit constructor
 
 	protected:
 
@@ -138,8 +133,7 @@ namespace death
 
 	public:
 
-		/** constructor */
-		PauseToPlayingTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
+		using GameTransition::GameTransition; // inherit constructor
 
 	protected:
 
@@ -152,8 +146,9 @@ namespace death
 
 	public:
 
-		/** constructor */
-		PlayingToGameOverTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event);
+		using GameTransition::GameTransition; // inherit constructor
+
+	protected:
 
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;

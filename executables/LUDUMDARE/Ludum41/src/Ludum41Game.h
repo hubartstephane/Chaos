@@ -106,7 +106,7 @@ protected:
 	/** override */
 	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 	/** override */
-	virtual bool OnAbordGame() override;
+	virtual bool OnLeaveGame() override;
 
 	/** override */
 	virtual bool TickGameLoop(double delta_time) override;

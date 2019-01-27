@@ -105,9 +105,9 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-bool LudumGame::OnAbordGame()
+bool LudumGame::OnLeaveGame()
 {
-	death::Game::OnAbordGame();
+	death::Game::OnLeaveGame();
 	DestroyGameObjects();
 	return true;
 }

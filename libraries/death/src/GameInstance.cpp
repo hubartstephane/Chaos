@@ -135,4 +135,97 @@ namespace death
 		return new Player(this);
 	}
 
+	double GameInstance::GetMainClockTime() const
+	{
+		if (main_clock == nullptr)
+			return 0.0;
+		return main_clock->GetClockTime();
+	}
+
+	double GameInstance::GetGameClockTime() const
+	{
+		if (game_clock == nullptr)
+			return 0.0;
+		return game_clock->GetClockTime();
+	}
+
+	double GameInstance::GetPauseClockTime() const
+	{
+		if (pause_clock == nullptr)
+			return 0.0;
+		return pause_clock->GetClockTime();
+	}
+
+	void GameInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	{
+		double main_time = GetMainClockTime();
+		main_uniform_provider.AddVariableValue("main_time", main_time);
+		double game_time = GetGameClockTime();
+		main_uniform_provider.AddVariableValue("game_time", game_time);
+		double pause_time = GetPauseClockTime();
+		main_uniform_provider.AddVariableValue("pause_time", pause_time);
+	}
+
+	bool GameInstance::Initialize(death::Game * in_game)
+	{
+		// create the game instance clocks
+		chaos::Clock * root_clock = in_game->GetRootClock();
+		if (root_clock == nullptr)
+			return false;
+
+		if (main_clock == nullptr)
+		{
+			main_clock = root_clock->CreateChildClock("main_clock");
+			if (main_clock == nullptr)
+				return false;
+		}
+
+		if (game_clock == nullptr)
+		{
+			game_clock = root_clock->CreateChildClock("game_clock");
+			if (game_clock == nullptr)
+				return false;
+		}
+
+		if (pause_clock == nullptr)
+		{
+			chaos::ClockCreateParams pause_clock_params;
+			pause_clock_params.paused = true;
+			pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
+			if (pause_clock == nullptr)
+				return false;
+		}
+
+		return true;
+	}
+
+	void GameInstance::OnEnterPause()
+	{
+		OnPauseStateUpdateClocks(true);
+
+	}
+
+	void GameInstance::OnLeavePause()
+	{
+		OnPauseStateUpdateClocks(false);
+
+	}
+
+	void GameInstance::OnGameOver()
+	{
+		if (game_clock != nullptr)
+			game_clock->SetPause(true);
+	}
+
+	void GameInstance::OnPauseStateUpdateClocks(bool enter_pause)
+	{
+		if (pause_clock != nullptr)
+		{
+			pause_clock->SetPause(!enter_pause);
+			pause_clock->Reset();
+		}
+		if (game_clock != nullptr)
+			game_clock->SetPause(enter_pause);
+	}
+
 }; // namespace death

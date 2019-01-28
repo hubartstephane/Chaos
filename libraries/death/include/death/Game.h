@@ -93,14 +93,15 @@ namespace death
 
 		/** returns the root time */
 		double GetRootClockTime() const;
-		/** returns the main time */
-		double GetMainClockTime() const;
-		/** returns the game time */
-		double GetGameClockTime() const;
-		/** returns the level time */
-		double GetLevelClockTime() const;
-		/** returns the pause time */
-		double GetPauseClockTime() const;
+
+		/** returns root clock */
+		chaos::Clock * GetRootClock() { return root_clock.get(); }
+		/** returns root clock */
+		chaos::Clock const * GetRootClock() const { return root_clock.get(); }
+
+
+
+
 
 		// Renderable layers
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname)\
@@ -123,31 +124,6 @@ namespace death
 		chaos::Clock * GetApplicationClock();
 		/** returns application clock */
 		chaos::Clock const * GetApplicationClock() const;
-
-		/** returns root clock */
-		chaos::Clock * GetRootClock();
-		/** returns root clock */
-		chaos::Clock const * GetRootClock() const;
-
-		/** returns main clock */
-		chaos::Clock * GetMainClock();
-		/** returns main clock */
-		chaos::Clock const * GetMainClock() const;
-
-		/** returns game clock */
-		chaos::Clock * GetGameClock();
-		/** returns game clock */
-		chaos::Clock const * GetGameClock() const;
-
-		/** returns level clock */
-		chaos::Clock * GetLevelClock();
-		/** returns level clock */
-		chaos::Clock const * GetLevelClock() const;
-
-		/** returns pause clock */
-		chaos::Clock * GetPauseClock();
-		/** returns pause clock */
-		chaos::Clock const * GetPauseClock() const;
 
 		/** returns the HUD */
 		GameHUD * GetCurrentHUD() { return hud.get(); }
@@ -280,6 +256,11 @@ namespace death
 		/** internal  method to display the HUD */
 		virtual void DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 
+		/** fill the rendering params before rendering */
+		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
+
+
+
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -338,10 +319,6 @@ namespace death
 
 		/** create some clocks */
 		virtual bool InitializeClocks();
-		/** create clocks used in game */
-		virtual bool CreateInGameClocks();
-		/** destroy all clocks for the game */
-		virtual bool DestroyInGameClocks();
 
 		/** initialize the game data from configuration file */
 		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload);
@@ -420,9 +397,6 @@ namespace death
 		virtual bool RequireExitGame();
 		/** require a game over */
 		virtual bool RequireGameOver();
-
-		/** pause/resume pause/game clocks */
-		void OnPauseStateUpdateClocks(bool enter_pause);
 
 		/** create the pause HUD */
 		bool CreatePauseMenuHUD();
@@ -536,10 +510,6 @@ namespace death
 
 		/** the clocks */
 		chaos::shared_ptr<chaos::Clock> root_clock;
-		chaos::shared_ptr<chaos::Clock> main_clock;
-		chaos::shared_ptr<chaos::Clock> game_clock;
-		chaos::shared_ptr<chaos::Clock> level_clock;
-		chaos::shared_ptr<chaos::Clock> pause_clock;
 
 		/** the particle tools */
 		GameParticleCreator particle_creator;

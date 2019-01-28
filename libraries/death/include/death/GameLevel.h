@@ -5,6 +5,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/Renderable.h>
 #include <chaos/Tickable.h>
+#include <chaos/ClockManager.h>
 
 namespace death
 {
@@ -62,6 +63,18 @@ namespace death
 		/** get the game instance */
 		GameInstance const * GetGameInstance() const;
 
+		/** the camera box */
+		chaos::box2 GetCameraBox() const { return camera_box; }
+		/** the initial camera box */
+		chaos::box2 GetInitialCameraBox() const { return initial_camera_box; }
+
+		/** returns level clock */
+		chaos::Clock * GetLevelClock() { return level_clock.get();}
+		/** returns level clock */
+		chaos::Clock const * GetLevelClock() const { return level_clock.get(); }
+		/** returns the level time */
+		double GetLevelClockTime() const;
+
 		/** get the world box */
 		virtual chaos::box2 GetBoundingBox() const { return chaos::box2(); }
 
@@ -85,12 +98,31 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLevelEnded(class Player * player);
 
+		/** fill the rendering params before rendering */
+		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
+
+		/** state changes */
+		virtual void OnEnterPause();
+		/** state changes */
+		virtual void OnLeavePause();
+		/** state changes */
+		virtual void OnGameOver();
+
 	protected:
 
 		/** a pointer on the level that generated this */
 		GameLevel * level = nullptr;
 		/** pointer on the game */
 		Game * game = nullptr;
+
+		/** the camera bounding box */
+		chaos::box2 camera_box;
+		/** the initial camera bounding box (at level startup) */
+		chaos::box2 initial_camera_box;
+
+		/** the level clock */
+		chaos::shared_ptr<chaos::Clock> level_clock;
+
 	};
 
 }; // namespace death

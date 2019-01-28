@@ -6,6 +6,8 @@
 #include <chaos/MathTools.h>
 #include <chaos/ParticleLayer.h>
 
+#include <death/GameLevel.h>
+
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -104,13 +106,16 @@ void LudumPlayer::TickDashValues(double delta_time)
 
 void LudumPlayer::SetReverseMode(bool reversed_mode)
 {
-	if (reversed_mode)
-		reversed_mode = reversed_mode;
-
 	LudumGame * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
+	assert(ludum_game != nullptr);
+	assert(game_instance != nullptr);
+	assert(game_instance != nullptr);
+
+	death::GameLevelInstance * level_instance = ludum_game->GetCurrentLevelInstance();
+	if (level_instance == nullptr)
 		return;
-	if (ludum_game->GetLevelClockTime() < 2.0) // because the player start could cause a repulsion
+
+	if (level_instance->GetLevelClockTime() < 2.0) // because the player start could cause a repulsion
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();
@@ -133,9 +138,14 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 void LudumPlayer::SetDashMode(bool dash)
 {
 	LudumGame * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
+	assert(ludum_game != nullptr);
+	assert(game_instance != nullptr);
+
+	death::GameLevelInstance * level_instance = ludum_game->GetCurrentLevelInstance();
+	if (level_instance == nullptr)
 		return;
-	if (ludum_game->GetLevelClockTime() < 2.0) // because the player start dash
+
+	if (level_instance->GetLevelClockTime() < 2.0)// because the player start dash
 		return;
 
 	ParticlePlayer * player_particle = GetPlayerParticle();

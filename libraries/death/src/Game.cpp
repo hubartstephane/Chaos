@@ -165,7 +165,7 @@ namespace death
 
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
-		//FillUniformProvider(main_uniform_provider);
+		FillUniformProvider(main_uniform_provider);
 
 
 		// the viewport
@@ -192,22 +192,20 @@ namespace death
 		// the time
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
-		double main_time = GetMainClockTime();
-		main_uniform_provider.AddVariableValue("main_time", main_time);
-		double game_time = GetGameClockTime();
-		main_uniform_provider.AddVariableValue("game_time", game_time);
-		double level_time = GetLevelClockTime();
-		main_uniform_provider.AddVariableValue("level_time", level_time);
-		double pause_time = GetPauseClockTime();
-		main_uniform_provider.AddVariableValue("pause_time", pause_time);
-
-
 
 
 		chaos::RenderParams render_params;
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
 		DoDisplay(renderer, &main_uniform_provider, render_params);
+	}
+
+	void Game::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	{
+		if (game_instance != nullptr)
+			game_instance->FillUniformProvider(main_uniform_provider);
+		if (current_level_instance != nullptr)
+			current_level_instance->FillUniformProvider(main_uniform_provider);
 	}
 
 	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
@@ -535,46 +533,6 @@ namespace death
 		return true;
 	}
 
-	bool Game::DestroyInGameClocks()
-	{
-		main_clock = nullptr;
-		game_clock = nullptr;
-		level_clock = nullptr;
-		pause_clock = nullptr;
-		return true;
-	}
-
-	bool Game::CreateInGameClocks()
-	{
-		if (root_clock == nullptr)
-			return false;
-
-		if (main_clock == nullptr)
-		{
-			main_clock = root_clock->CreateChildClock("main_clock");
-			if (main_clock == nullptr)
-				return false;
-		}
-
-		if (game_clock == nullptr)
-		{
-			game_clock = root_clock->CreateChildClock("game_clock");
-			if (game_clock == nullptr)
-				return false;
-		}
-
-		if (pause_clock == nullptr)
-		{
-			chaos::ClockCreateParams pause_clock_params;
-			pause_clock_params.paused = true;
-			pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
-			if (pause_clock == nullptr)
-				return false;
-		}
-
-		return true;
-	}
-
 	bool Game::InitializeClocks()
 	{
 		chaos::Clock * application_clock = GetApplicationClock();
@@ -659,39 +617,12 @@ namespace death
 		return application->GetMainClock();
 	}
 
-#define CHAOS_EMPTY_TOKEN
-#define CHAOS_IMPL_GET_CLOCK(func_name, member_name, constess)\
-	chaos::Clock constess * Game::func_name() constess\
-	{\
-		return member_name.get();\
+	double Game::GetRootClockTime() const
+	{
+		if (root_clock == nullptr)
+			return 0.0;
+		return root_clock->GetClockTime();
 	}
-	CHAOS_IMPL_GET_CLOCK(GetRootClock, root_clock, CHAOS_EMPTY_TOKEN);
-	CHAOS_IMPL_GET_CLOCK(GetRootClock, root_clock, const);
-	CHAOS_IMPL_GET_CLOCK(GetMainClock, main_clock, CHAOS_EMPTY_TOKEN);
-	CHAOS_IMPL_GET_CLOCK(GetMainClock, main_clock, const);
-	CHAOS_IMPL_GET_CLOCK(GetGameClock, game_clock, CHAOS_EMPTY_TOKEN);
-	CHAOS_IMPL_GET_CLOCK(GetGameClock, game_clock, const);
-	CHAOS_IMPL_GET_CLOCK(GetLevelClock, level_clock, CHAOS_EMPTY_TOKEN);
-	CHAOS_IMPL_GET_CLOCK(GetLevelClock, level_clock, const);
-	CHAOS_IMPL_GET_CLOCK(GetPauseClock, pause_clock, CHAOS_EMPTY_TOKEN);
-	CHAOS_IMPL_GET_CLOCK(GetPauseClock, pause_clock, const);
-#undef CHAOS_IMPL_GET_CLOCK
-
-#define CHAOS_IMPL_GET_CLOCK_TIME(func_name, clock_func_name)\
-	double Game::func_name() const\
-	{\
-		chaos::Clock const * clock = clock_func_name();\
-		if (clock == nullptr)\
-			return 0.0;\
-		return clock->GetClockTime();\
-	}
-	CHAOS_IMPL_GET_CLOCK_TIME(GetRootClockTime, GetRootClock);
-	CHAOS_IMPL_GET_CLOCK_TIME(GetMainClockTime, GetMainClock);
-	CHAOS_IMPL_GET_CLOCK_TIME(GetGameClockTime, GetGameClock);
-	CHAOS_IMPL_GET_CLOCK_TIME(GetLevelClockTime, GetLevelClock);
-	CHAOS_IMPL_GET_CLOCK_TIME(GetPauseClockTime, GetPauseClock);
-#undef CHAOS_IMPL_GET_CLOCK_TIME
-#undef CHAOS_EMPTY_TOKEN
 
 	bool Game::LoadBestScore(std::ifstream & file)
 	{
@@ -875,7 +806,7 @@ namespace death
 			RequireTogglePause();
 	}
 
-	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
 	{
 		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
 
@@ -883,11 +814,9 @@ namespace death
 		if (in_physical_gamepad->IsAnyButtonPressed())
 			if (RequireStartGame(in_physical_gamepad))
 				return true;
-
 		// maybe a player is interrested in capturing this device
 		if (game_instance != nullptr)
 			game_instance->GivePhysicalGamepadToPlayer(in_physical_gamepad); // single player mode
-
 		return false;
 	}
 
@@ -968,36 +897,42 @@ namespace death
 		CreateMainMenuHUD();
 	}
 
-	void Game::OnGameOver() // shuxxx called after game_instance = nullptr => OnLevelEnded called with no players
-	{		
-		if (game_clock != nullptr)
-			game_clock->SetPause(true);
-		CreateGameOverHUD(); 
-	}
-	void Game::OnPauseStateUpdateClocks(bool enter_pause)
+	void Game::OnGameOver()
 	{
-		if (pause_clock != nullptr)
-		{
-			pause_clock->SetPause(!enter_pause);
-			pause_clock->Reset();
-		}
-		if (game_clock != nullptr)
-			game_clock->SetPause(enter_pause);
+		// internal code
+		CreateGameOverHUD();
+		// give opportunity to other game classes to respond
+		if (current_level_instance != nullptr)
+			current_level_instance->OnGameOver();
+		if (game_instance != nullptr)
+			game_instance->OnGameOver();		
 	}
 
 	bool Game::OnEnterPause()
 	{
+		// internal code
 		StartPauseMusic(true);
 		CreatePauseMenuHUD();
-		OnPauseStateUpdateClocks(true);
+		// give opportunity to other game classes to respond
+		if (current_level_instance != nullptr)
+			current_level_instance->OnEnterPause();
+		if (game_instance != nullptr)
+			game_instance->OnEnterPause();
+
 		return true;
 	}
 
 	bool Game::OnLeavePause()
 	{
+		// internal code
 		StartGameMusic(false);
 		CreatePlayingHUD();
-		OnPauseStateUpdateClocks(false);
+		// give opportunity to other game classes to respond
+		if (current_level_instance != nullptr)
+			current_level_instance->OnLeavePause();
+		if (game_instance != nullptr)
+			game_instance->OnLeavePause();
+
 		return true;
 	}
 
@@ -1006,6 +941,8 @@ namespace death
 		// create the game instance
 		game_instance = CreateGameInstance();
 		if (game_instance == nullptr)
+			return false;
+		if (!game_instance->Initialize(this))
 			return false;
 		// create a player
 		Player * first_player = game_instance->CreatePlayer(in_physical_gamepad);
@@ -1021,7 +958,6 @@ namespace death
 
 
 		ResetGameVariables();
-		CreateInGameClocks();
 		CreatePlayingHUD();
 		SetNextLevel(true); // select the very first
 		StartGameMusic(true);
@@ -1034,7 +970,6 @@ namespace death
 		ConditionnalSaveBestScore();
 		SetCurrentLevel(nullptr);	
 		StartMainMenuMusic(true);
-		DestroyInGameClocks();
 		game_instance = nullptr;
 		return true;
 	}
@@ -1378,19 +1313,12 @@ namespace death
 
 	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance)
 	{
-		// destroy previous level clock
-		level_clock = nullptr;
 		// leave previous level
 		if (old_level_instance != nullptr)
-		{
 			old_level_instance->OnLevelEnded();
-		}
 		// start new level. Create a new level clock
 		if (new_level_instance != nullptr)
-		{
-			level_clock = root_clock->CreateChildClock("level_clock");
 			new_level_instance->OnLevelStarted();
-		}
 	}
 
 	void Game::RestrictCameraToPlayerAndWorld(int player_index)

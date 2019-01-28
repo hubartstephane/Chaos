@@ -25,15 +25,15 @@ namespace death
 		/** constructor */
 		Player(class GameInstance * in_game_instance);
 
-		/** returns the game  instance */
-		class GameInstance * GetGameInstance() { return game_instance; }
-		/** returns the game instance */
-		class GameInstance const * GetGameInstance() const { return game_instance; }
-
 		/** returns the game */
 		Game * GetGame();
 		/** returns the game */
 		Game const * GetGame() const;
+
+		/** returns the game  instance */
+		class GameInstance * GetGameInstance() { return game_instance; }
+		/** returns the game instance */
+		class GameInstance const * GetGameInstance() const { return game_instance; }
 
 		/** get the player allocation */
 		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
@@ -52,7 +52,6 @@ namespace death
 		int GetScore() const { return score; }
 		/** returns whether the player is dead or not */
 		bool IsDead() const { return life_count == 0; }
-
 
 		/** update player score */
 		void SetScore(int in_score, bool increment = false);

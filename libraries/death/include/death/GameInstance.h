@@ -44,7 +44,33 @@ namespace death
 		/** get the best score among players */
 		int GetBestPlayerScore() const;
 
+
+		/** returns main clock */
+		chaos::Clock * GetMainClock() { return main_clock.get(); }
+		/** returns main clock */
+		chaos::Clock const * GetMainClock() const { return main_clock.get(); }
+
+		/** returns game clock */
+		chaos::Clock * GetGameClock() { return game_clock.get(); }
+		/** returns game clock */
+		chaos::Clock const * GetGameClock() const { return game_clock.get(); }
+
+		/** returns pause clock */
+		chaos::Clock * GetPauseClock() { return pause_clock.get(); }
+		/** returns pause clock */
+		chaos::Clock const * GetPauseClock() const { return pause_clock.get(); }
+
+		/** returns the main time */
+		double GetMainClockTime() const;
+		/** returns the game time */
+		double GetGameClockTime() const;
+		/** returns the pause time */
+		double GetPauseClockTime() const;
+
 	protected:
+
+		/** initialize the game instance */
+		virtual bool Initialize(death::Game * in_game);
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
@@ -69,6 +95,19 @@ namespace death
 		/** return a new player */
 		virtual Player * DoCreatePlayer();
 
+		/** fill the rendering params before rendering */
+		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
+
+		/** state changes */
+		virtual void OnEnterPause();
+		/** state changes */
+		virtual void OnLeavePause();
+		/** state changes */
+		virtual void OnGameOver();
+
+		/** pause/resume pause/game clocks */
+		void OnPauseStateUpdateClocks(bool enter_pause);
+
 	protected:
 
 		/** the game */
@@ -76,6 +115,11 @@ namespace death
 
 		/** all the players present in the game */
 		std::vector<chaos::shared_ptr<Player>> players;
+
+		/** the clocks */
+		chaos::shared_ptr<chaos::Clock> main_clock;
+		chaos::shared_ptr<chaos::Clock> game_clock;
+		chaos::shared_ptr<chaos::Clock> pause_clock;
 
 	};
 

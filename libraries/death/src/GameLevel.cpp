@@ -33,7 +33,6 @@ namespace death
 	// GameLevel implementation
 	// =====================================
 
-
 	GameLevel * GameLevelInstance::GetLevel() 
 	{ 
 		return level; 
@@ -63,6 +62,20 @@ namespace death
 	{ 
 		return game->GetGameInstance(); 
 	}
+
+	double GameLevelInstance::GetLevelClockTime() const
+	{
+		if (level_clock == nullptr)
+			return 0.0;
+		return level_clock->GetClockTime();
+	}
+
+	void GameLevelInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	{
+		double level_time = GetLevelClockTime();
+		main_uniform_provider.AddVariableValue("level_time", level_time);
+	}
+
 
 	void GameLevelInstance::OnPlayerLevelStarted(Player * player)
 	{
@@ -96,6 +109,15 @@ namespace death
 
 	bool GameLevelInstance::Initialize(Game * in_game)
 	{
+		// create the level clock
+		chaos::Clock * root_clock = in_game->GetRootClock();
+		if (root_clock == nullptr)
+			return false;
+
+		level_clock = root_clock->CreateChildClock("level_clock");
+		if (level_clock == nullptr)
+			return false;
+
 		return true;
 	}
 
@@ -109,7 +131,20 @@ namespace death
 		return true; // no delay to effectively complete the level
 	}
 
-	
+	void GameLevelInstance::OnEnterPause()
+	{
+
+	}
+
+	void GameLevelInstance::OnLeavePause()
+	{
+
+	}
+
+	void GameLevelInstance::OnGameOver()
+	{
+
+	}
 
 }; // namespace death
 

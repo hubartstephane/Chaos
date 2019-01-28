@@ -83,8 +83,6 @@ public:
 
 protected:
 
-	virtual void SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation) override;
-
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */

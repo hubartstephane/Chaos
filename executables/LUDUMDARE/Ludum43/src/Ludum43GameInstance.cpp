@@ -5,6 +5,7 @@
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
+	
 }
 
 death::Player * LudumGameInstance::DoCreatePlayer()

@@ -140,17 +140,6 @@ namespace death
 		/** get the view */
 		chaos::box2 GetViewBox() const;
 
-		/** getting the camera box */
-		virtual chaos::box2 GetCameraBox() const;
-		/** update the camera box */
-		virtual void SetCameraBox(chaos::box2 const & in_camera_box);
-
-
-		/** getting the initial camera box */
-		virtual chaos::box2 GetInitialCameraBox() const;
-		/** update the initial camera box */
-		virtual void SetInitialCameraBox(chaos::box2 const & in_camera_box);
-
 		/** getting the world boxes */
 		virtual chaos::box2 GetWorldBox() const;
 
@@ -174,28 +163,6 @@ namespace death
 		class Player * GetPlayer(int player_index);
 		/** get the player by its index */
 		class Player const * GetPlayer(int player_index) const;
-
-		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
-		//       it can be set from a level instance's particle_manager
-
-		/** get the player allocation */
-		chaos::ParticleAllocation * GetPlayerAllocation(int player_index);
-		chaos::ParticleAllocation const * GetPlayerAllocation(int player_index) const;
-		/** set player allocation */
-		virtual void SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation);
-
-		/** get player particle */
-		chaos::ParticleDefault::Particle * GetPlayerParticle(int player_index);
-		chaos::ParticleDefault::Particle const * GetPlayerParticle(int player_index) const;
-
-		/** get player position */
-		glm::vec2 GetPlayerPosition(int player_index) const;
-		/** get player box */
-		chaos::box2 GetPlayerBox(int player_index) const;
-		/** set the player position */
-		bool SetPlayerPosition(int player_index, glm::vec2 const & position);
-		/** set the player box */
-		bool SetPlayerBox(int player_index, chaos::box2 const & box);
 
 		/** get currently played level */
 		GameLevel * GetCurrentLevel();
@@ -263,9 +230,6 @@ namespace death
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
-
-		/** update the player and the camera position so that they remains inside the world */
-		void RestrictCameraToPlayerAndWorld(int player_index);
 
 		/** blend out a music */
 		void BlendMusic(chaos::Sound * music, bool blend_in);
@@ -428,12 +392,6 @@ namespace death
 		/** reflex method whenever the level is changed */
 		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
 
-
-		/** force an object to stay in world */
-		void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
-		/** force a player to stay in world */
-		void RestrictPlayerToWorld(int player_index);
-
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
 
@@ -441,14 +399,6 @@ namespace death
 
 		/** the window in GLFW library */
 		GLFWwindow * glfw_window = nullptr;
-
-		/** the camera (expressed in world system ?) */
-		mutable chaos::box2 camera_box;
-		/** the camera and last started level (expressed in world system ?)*/
-		chaos::box2 initial_camera_box;
-		/** the safe zone of the camera */
-		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);
-
 
 		/** the current gamepad manager */
 		chaos::shared_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;

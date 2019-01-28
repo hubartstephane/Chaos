@@ -30,7 +30,6 @@ Black holes and Shadows are dangerous.
 [ButtonA] Turbo
 [ButtonB] Ejects particles
 		)INSTRUCTIONS";
-	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
 class LudumPlayer * LudumGame::GetLudumPlayer(int player_index)
@@ -515,17 +514,6 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 		return false;
 
 	return true;
-}
-
-void LudumGame::SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation) 
-{ 
-	death::Game::SetPlayerAllocation(player_index, in_allocation);
-	if (in_allocation != nullptr)
-	{
-		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
-		if (player_particles.GetCount() > 0)
-			player_particles[0].life = initial_player_life;
-	}
 }
 
 death::GameInstance * LudumGame::CreateGameInstance()

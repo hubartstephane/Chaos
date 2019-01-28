@@ -1,4 +1,5 @@
 #include <death/GameInstance.h>
+#include <death/Player.h>
 
 namespace death
 {
@@ -164,6 +165,13 @@ namespace death
 		main_uniform_provider.AddVariableValue("game_time", game_time);
 		double pause_time = GetPauseClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
+
+		Player const * player = GetPlayer(0);
+		if (player != nullptr)
+		{
+			chaos::box2 player_box = player->GetPlayerBox();
+			main_uniform_provider.AddVariableValue("player_box", chaos::EncodeBoxToVector(player_box));
+		}
 	}
 
 	bool GameInstance::Initialize(death::Game * in_game)

@@ -3,6 +3,8 @@
 #include <death/GameInstance.h>
 #include <death/Player.h>
 
+#include <chaos/CollisionFramework.h>
+
 namespace death
 {
 	// =====================================
@@ -58,6 +60,23 @@ namespace death
 		return game->GetGameInstance(); 
 	}
 
+	Player * GameLevelInstance::GetPlayer(int player_index)
+	{
+		GameInstance * game_instance = GetGameInstance();
+		if (game_instance == nullptr)
+			return nullptr;
+		return game_instance->GetPlayer(player_index);
+	}
+
+	Player const * GameLevelInstance::GetPlayer(int player_index) const
+	{
+		GameInstance const * game_instance = GetGameInstance();
+		if (game_instance == nullptr)
+			return nullptr;
+		return game_instance->GetPlayer(player_index);
+	}
+
+
 	GameInstance const * GameLevelInstance::GetGameInstance() const 
 	{ 
 		return game->GetGameInstance(); 
@@ -74,6 +93,9 @@ namespace death
 	{
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariableValue("level_time", level_time);
+
+		chaos::box2 camera = GetCameraBox();
+		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 	}
 
 
@@ -145,6 +167,57 @@ namespace death
 	{
 
 	}
+
+	void GameLevelInstance::RestrictCameraToPlayerAndWorld(int player_index)
+	{
+		// get the wanted player
+		Player * player = GetPlayer(player_index);
+		if (player == nullptr)
+			return;
+
+		// get camera, cannot continue if it is empty
+		chaos::box2 camera = GetCameraBox();
+		if (camera.IsEmpty())
+			return;
+
+		// keep player inside camera safe zone
+		chaos::box2 player_box = player->GetPlayerBox();
+		if (!player_box.IsEmpty())
+		{
+			chaos::box2 safe_camera = camera;
+			safe_camera.half_size *= camera_safe_zone;
+
+			if (chaos::RestrictToInside(safe_camera, player_box, true)) // apply the safe_zone displacement to the real camera
+				camera.position = safe_camera.position;
+		}
+
+		// try to keep the camera in the world
+		chaos::box2 world = GetBoundingBox();
+		if (!world.IsEmpty())
+			chaos::RestrictToInside(world, camera, false);
+
+		// apply camera changes
+		SetCameraBox(camera);
+	}
+
+	void GameLevelInstance::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
+	{
+		if (allocation == nullptr)
+			return;
+		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);
+		chaos::box2 world = GetBoundingBox();
+		chaos::RestrictToInside(world, box, false);
+		chaos::ParticleDefault::SetParticleBox(allocation, index, box);
+	}
+
+	void GameLevelInstance::RestrictPlayerToWorld(int player_index)
+	{
+		Player * player = GetPlayer(player_index);
+		if (player == nullptr)
+			return;
+		RestrictObjectToWorld(player->GetPlayerAllocation(), 0);
+	}
+
 
 }; // namespace death
 

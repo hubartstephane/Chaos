@@ -161,12 +161,11 @@ namespace death
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
 		// keep camera, player inside the world (can be done at rendering time)
-		RestrictCameraToPlayerAndWorld(0);
+		//RestrictCameraToPlayerAndWorld(0);
 
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 		FillUniformProvider(main_uniform_provider);
-
 
 		// the viewport
 		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
@@ -176,14 +175,6 @@ namespace death
 		main_uniform_provider.AddVariableValue("view_size", view_size);
 
 		// boxes
-		chaos::box2 player = GetPlayerBox(0);
-		main_uniform_provider.AddVariableValue("player_box", chaos::EncodeBoxToVector(player));
-
-
-
-
-		chaos::box2 camera = GetCameraBox();
-		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 		chaos::box2 world = GetWorldBox();
 		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
 		chaos::box2 view = GetViewBox();
@@ -1179,30 +1170,6 @@ namespace death
 		return GetViewBox();
 	}
 
-	chaos::box2 Game::GetCameraBox() const
-	{
-		// default initialization of the camera if required
-		if (camera_box.IsEmpty())
-			camera_box = GetViewBox();
-		// stored value
-		return camera_box;
-	}
-
-	chaos::box2 Game::GetInitialCameraBox() const
-	{
-		return initial_camera_box;
-	}
-
-	void Game::SetInitialCameraBox(chaos::box2 const & in_camera_box)
-	{
-		initial_camera_box = in_camera_box;
-	}
-
-	void Game::SetCameraBox(chaos::box2 const & in_camera_box)
-	{
-		camera_box = in_camera_box;
-	}
-
 	GameLevel * Game::GetCurrentLevel()
 	{
 		GameLevelInstance * li = GetCurrentLevelInstance();
@@ -1321,33 +1288,6 @@ namespace death
 			new_level_instance->OnLevelStarted();
 	}
 
-	void Game::RestrictCameraToPlayerAndWorld(int player_index)
-	{
-		// get camera, cannot continue if it is empty
-		chaos::box2 camera = GetCameraBox();
-		if (camera.IsEmpty())
-			return;
-
-		// keep player inside camera safe zone
-		chaos::box2 player = GetPlayerBox(player_index);
-		if (!player.IsEmpty())
-		{
-			chaos::box2 safe_camera = camera;
-			safe_camera.half_size *= camera_safe_zone;
-
-			if (chaos::RestrictToInside(safe_camera, player, true)) // apply the safe_zone displacement to the real camera
-				camera.position = safe_camera.position;
-		}
-
-		// try to keep the camera in the world
-		chaos::box2 world = GetWorldBox();
-		if (!world.IsEmpty())
-			chaos::RestrictToInside(world, camera, false);
-
-		// apply camera changes
-		SetCameraBox(camera);
-	}
-
 	Player * Game::GetPlayer(int player_index)
 	{
 		// game even not started : no player
@@ -1366,65 +1306,12 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	chaos::ParticleDefault::Particle * Game::GetPlayerParticle(int player_index)
-	{
-		return chaos::ParticleDefault::GetParticle(GetPlayerAllocation(player_index), 0);
-	}
-
-	chaos::ParticleDefault::Particle const * Game::GetPlayerParticle(int player_index) const
-	{
-		return chaos::ParticleDefault::GetParticle(GetPlayerAllocation(player_index), 0);
-	}
-
-	glm::vec2 Game::GetPlayerPosition(int player_index) const
-	{
-		return chaos::ParticleDefault::GetParticlePosition(GetPlayerAllocation(player_index), 0);
-	}
-
-	chaos::box2 Game::GetPlayerBox(int player_index) const
-	{
-#if 0
-		if (game_instance != nullptr)
-			return game_instance->GetPlayerBox(player_index);
-		return chaos::box2();
-#endif
 
 
-		return chaos::ParticleDefault::GetParticleBox(GetPlayerAllocation(player_index), 0);
-	}
 
-	bool Game::SetPlayerPosition(int player_index, glm::vec2 const & position)
-	{
-		return chaos::ParticleDefault::SetParticlePosition(GetPlayerAllocation(player_index), 0, position);
-	}
-	bool Game::SetPlayerBox(int player_index, chaos::box2 const & box)
-	{
-		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(player_index), 0, box);
-	}
 
-	chaos::ParticleAllocation * Game::GetPlayerAllocation(int player_index)
-	{
-		Player * player = GetPlayer(player_index);
-		if (player == nullptr)
-			return nullptr;
-		return player->GetPlayerAllocation();
-	}
 
-	chaos::ParticleAllocation const * Game::GetPlayerAllocation(int player_index) const
-	{
-		Player const * player = GetPlayer(player_index);
-		if (player == nullptr)
-			return nullptr;
-		return player->GetPlayerAllocation();
-	}
 
-	void Game::SetPlayerAllocation(int player_index, chaos::ParticleAllocation * in_allocation)
-	{
-		Player * player = GetPlayer(player_index);
-		if (player == nullptr)
-			return;
-		player->SetPlayerAllocation(in_allocation);
-	}
 
 	bool Game::ReloadConfigurationFile()
 	{
@@ -1441,22 +1328,6 @@ namespace death
 			return false;
 
 		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
-	}
-
-
-	void Game::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
-	{
-		if (allocation == nullptr)
-			return;
-		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);
-		chaos::box2 world = GetWorldBox();
-		chaos::RestrictToInside(world, box, false);
-		chaos::ParticleDefault::SetParticleBox(allocation, index, box);
-	}
-
-	void Game::RestrictPlayerToWorld(int player_index)
-	{
-		RestrictObjectToWorld(GetPlayerAllocation(player_index), 0);
 	}
 
 	GameInstance * Game::CreateGameInstance()

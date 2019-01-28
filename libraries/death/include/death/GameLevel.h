@@ -6,6 +6,7 @@
 #include <chaos/Renderable.h>
 #include <chaos/Tickable.h>
 #include <chaos/ClockManager.h>
+#include <chaos/ParticleManager.h>
 
 namespace death
 {
@@ -44,6 +45,7 @@ namespace death
 	{
 		friend class GameLevel;
 		friend class Game;
+		friend class Player;
 		friend class GameInstance;
 
 	public:
@@ -63,10 +65,20 @@ namespace death
 		/** get the game instance */
 		GameInstance const * GetGameInstance() const;
 
-		/** the camera box */
+		/** get a player */
+		Player * GetPlayer(int player_index);
+		/** get a player */
+		Player const * GetPlayer(int player_index) const;
+
+		/** the camera box getter */
 		chaos::box2 GetCameraBox() const { return camera_box; }
-		/** the initial camera box */
+		/** the camera box setter */
+		void SetCameraBox(chaos::box2 in_box) { camera_box = in_box; }
+		
+		/** the initial camera box getter */
 		chaos::box2 GetInitialCameraBox() const { return initial_camera_box; }
+		/** the initial camera box setter */
+		void SetInitialCameraBox(chaos::box2 in_box) { initial_camera_box = in_box; }
 
 		/** returns level clock */
 		chaos::Clock * GetLevelClock() { return level_clock.get();}
@@ -87,6 +99,13 @@ namespace death
 		virtual bool IsLevelCompleted() const;
 		/** returns whether we can go to next level */
 		virtual bool CanCompleteLevel() const;
+
+		/** update the player and the camera position so that they remains inside the world */
+		void RestrictCameraToPlayerAndWorld(int player_index);
+		/** restrict an object to the world */
+		void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
+		/** restrict an player to the world */
+		void RestrictPlayerToWorld(int player_index);
 
 	protected:
 
@@ -114,6 +133,9 @@ namespace death
 		GameLevel * level = nullptr;
 		/** pointer on the game */
 		Game * game = nullptr;
+
+		/** the safe zone of the camera */
+		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);
 
 		/** the camera bounding box */
 		chaos::box2 camera_box;

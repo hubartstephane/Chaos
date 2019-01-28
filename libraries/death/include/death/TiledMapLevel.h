@@ -498,13 +498,15 @@ namespace death
 			virtual void OnLevelStarted() override;
 			/** override */
 			virtual void OnLevelEnded() override;
+			/** override */
+			virtual void OnPlayerLevelStarted(Player * player) override;
+			/** override */
+			virtual void OnPlayerLevelEnded(Player * player) override;
 
 			/** create the camera */
 			virtual void CreateCamera();
-			/** destroy the player allocation */
-			virtual void UnSpawnPlayer();
-			/** create the player allocation */
-			virtual void SpawnPlayer();
+			/** destroy the camera */
+			virtual void DestroyCamera();
 
 			/** create the particle manager */
 			virtual bool CreateParticleManager(Game * in_game);

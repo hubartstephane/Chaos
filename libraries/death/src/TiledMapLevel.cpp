@@ -684,7 +684,7 @@ namespace death
 			if (player == nullptr)
 				return;
 			// get the player particle
-			chaos::ParticleDefault::Particle * player_particle = game->GetPlayerParticle(0);
+			chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
 			if (player_particle == nullptr)
 				return;
 			// collision with surface triggers
@@ -761,8 +761,8 @@ namespace death
 
 			// camera is expressed in world, so is for layer
 			chaos::box2 layer_box  = GetBoundingBox(true);
-			chaos::box2 camera_box = GetGame()->GetCameraBox();
-			chaos::box2 initial_camera_box = GetGame()->GetInitialCameraBox();
+			chaos::box2 camera_box = GetTypedLevelInstance()->GetCameraBox();
+			chaos::box2 initial_camera_box = GetTypedLevelInstance()->GetInitialCameraBox();
 
 			// XXX : we want some layers to appear further or more near the camera
 			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
@@ -1017,13 +1017,12 @@ namespace death
 		void LevelInstance::OnLevelEnded()
 		{
 			GameLevelInstance::OnLevelEnded();
-			UnSpawnPlayer();		// shuxxx
+			DestroyCamera();
 		}
 
 		void LevelInstance::OnLevelStarted()
 		{
 			GameLevelInstance::OnLevelStarted();
-			SpawnPlayer(); // shuxxx
 			CreateCamera();
 		}
 
@@ -1053,23 +1052,26 @@ namespace death
 				return;
 
 			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(true), 16.0f / 9.0f, true);
-			game->SetCameraBox(camera_box);
-			game->SetInitialCameraBox(camera_box);
+			SetCameraBox(camera_box);
+			SetInitialCameraBox(camera_box);
 		}
 
-		void LevelInstance::UnSpawnPlayer()
+		void LevelInstance::DestroyCamera()
 		{
-			game->SetPlayerAllocation(0, nullptr);
-			game->SetCameraBox(chaos::box2()); // reset the camera
+			SetCameraBox(chaos::box2()); // reset the camera
 		}
 
-		void LevelInstance::SpawnPlayer()
+		void LevelInstance::OnPlayerLevelStarted(Player * player)
 		{
+			// early exit
+			if (player == nullptr)
+				return;
+
 			Level * level = GetTypedLevel();
 
 			// search PLAYER START NAME
 			std::string const * player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
-			
+
 			// search the PLAYER START
 			TiledMap::PlayerStartObject * player_start = nullptr;
 			if (player_start_name != nullptr)
@@ -1113,7 +1115,7 @@ namespace death
 			chaos::ParticleAllocation * player_allocation = particle_populator.GetParticleAllocation();
 
 			// set the player allocation
-			game->SetPlayerAllocation(0, player_allocation);
+			player->SetPlayerAllocation(player_allocation);
 
 			// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 			reference_displacement_ratio = layer_instance->displacement_ratio;
@@ -1122,6 +1124,13 @@ namespace death
 			// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
 			//          call it twice as a fast fix
 			layer_instance->FinalizeParticles();
+		}
+
+		void LevelInstance::OnPlayerLevelEnded(Player * player)
+		{
+			if (player == nullptr)
+				return;
+			player->SetPlayerAllocation(nullptr);
 		}
 
 	}; // namespace TiledMap

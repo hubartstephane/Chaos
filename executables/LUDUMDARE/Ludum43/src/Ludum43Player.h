@@ -32,6 +32,9 @@ public:
 	/** called whenever the level is being changed */
 	void OnLevelChanged();
 
+	/** override */
+	virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) override;
+
 protected:
 
 	/** override */

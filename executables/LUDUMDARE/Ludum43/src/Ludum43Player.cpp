@@ -210,4 +210,14 @@ void LudumPlayer::OnLevelChanged()
 	current_dash_duration = 0.0f;
 }
 
-
+void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation)
+{
+	Player::SetPlayerAllocation(in_allocation);
+	if (in_allocation != nullptr)
+	{
+		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
+		size_t count = player_particles.GetCount();
+		//for (size_t i = 0 ; i < count ; ++i)
+		//	player_particles[i].life = initial_player_life;
+	}
+}

@@ -35,12 +35,15 @@ namespace death
 		/** returns the game instance */
 		class GameInstance const * GetGameInstance() const { return game_instance; }
 
+		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
+		//       it can be set from a level instance's particle_manager
+
 		/** get the player allocation */
 		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
 		/** get the player allocation */
 		chaos::ParticleAllocation const * GetPlayerAllocation() const { return player_allocations.get(); }
 		/** set the player allocation */
-		void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
+		virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
 
 
 		/** get the index of the player */
@@ -60,6 +63,19 @@ namespace death
 
 		/** try to give physical device to the player */
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
+
+		/** get player particle */
+		chaos::ParticleDefault::Particle * GetPlayerParticle();
+		chaos::ParticleDefault::Particle const * GetPlayerParticle() const;
+
+		/** get player position */
+		glm::vec2 GetPlayerPosition() const;
+		/** get player box */
+		chaos::box2 GetPlayerBox() const;
+		/** set the player position */
+		bool SetPlayerPosition(glm::vec2 const & position);
+		/** set the player box */
+		bool SetPlayerBox(chaos::box2 const & box);
 
 	protected:
 

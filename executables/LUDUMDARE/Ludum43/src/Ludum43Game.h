@@ -73,8 +73,6 @@ public:
 
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
 
-	float GetLevelTimeout() const { return level_timeout; }
-
 	float GetPlayerLife(int player_index) const;
 
 	ParticlePlayer * GetPlayerParticle(int player_index);
@@ -135,7 +133,7 @@ protected:
 public:
 
 	/** game settings */
-	int initial_life = 3;
+	//int initial_life = 3;
 	float cooldown = 0.1f;
 
 	float dash_duration = 0.5f;
@@ -184,13 +182,9 @@ public:
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;
-	/** the time to run the level */
-	float level_timeout = 0.0f;
 	/** the default level requirement */
 	int level_particle_requirement = 0;
 	/** the heart beat time */
 	float heart_beat_time = 0.0f;
-
-
 };
 

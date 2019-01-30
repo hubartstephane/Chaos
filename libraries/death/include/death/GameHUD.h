@@ -12,6 +12,9 @@
 namespace death
 {
 
+	class Game;
+	class GameInstance;
+
 	// =============================================
 	// GameHUD
 	// =============================================
@@ -22,6 +25,16 @@ namespace death
 
 		/** constructor */
 		GameHUD(class Game * in_game);
+
+		/** getters on game */
+		Game * GetGame() { return game; }
+		/** getters on game */
+		Game const * GetGame() const { return game; }
+
+		/** getters on game instance */
+		GameInstance * GetGameInstance();
+		/** getters on game instance */
+		GameInstance const * GetGameInstance() const;
 
 		/** initialization of the HUD from the game values */
 		virtual bool InitializeHUD();

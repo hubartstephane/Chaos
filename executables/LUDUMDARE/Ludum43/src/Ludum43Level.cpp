@@ -203,6 +203,15 @@ bool LudumLevelInstance::IsLevelCompleted() const
 	return false;
 }
 
+bool LudumLevelInstance::DoTick(double delta_time)
+{
+	death::TiledMap::LevelInstance::DoTick(delta_time);
+	// keep camera, player inside the world
+	RestrictCameraToPlayerAndWorld(0);
+
+	return true;
+}
+
 
 // ===========================================================================================
 

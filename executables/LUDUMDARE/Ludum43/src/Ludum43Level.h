@@ -73,8 +73,15 @@ protected:
 
 	virtual bool IsLevelCompleted() const override;
 
+	virtual bool DoTick(double delta_time) override;
+
+	float GetLevelTimeout() const { return level_timeout; }
+
 protected:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;
+
+	/** the time to run the level */
+	float level_timeout = 0.0f;
 };

@@ -160,9 +160,6 @@ namespace death
 	{
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
-		// keep camera, player inside the world (can be done at rendering time)
-		//RestrictCameraToPlayerAndWorld(0);
-
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 		FillUniformProvider(main_uniform_provider);
@@ -967,7 +964,7 @@ namespace death
 
 	bool Game::CheckGameOverCondition()
 	{
-		return false; // no game hover
+		return false; // no gameover
 	}
 
 

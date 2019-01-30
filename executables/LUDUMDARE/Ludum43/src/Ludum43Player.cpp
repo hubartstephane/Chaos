@@ -212,12 +212,16 @@ void LudumPlayer::OnLevelChanged()
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation)
 {
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
 	Player::SetPlayerAllocation(in_allocation);
 	if (in_allocation != nullptr)
 	{
 		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
 		size_t count = player_particles.GetCount();
-		//for (size_t i = 0 ; i < count ; ++i)
-		//	player_particles[i].life = initial_player_life;
+		for (size_t i = 0 ; i < count ; ++i)
+			player_particles[i].life = ludum_game->initial_player_life;
 	}
 }

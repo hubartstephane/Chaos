@@ -1,5 +1,6 @@
 #include <death/GameHUD.h>
 #include <death/Game.h>
+#include <death/GameInstance.h>
 
 namespace death
 {
@@ -11,6 +12,16 @@ namespace death
 		game(in_game)
 	{
 		assert(in_game != nullptr);
+	}
+
+	GameInstance * GameHUD::GetGameInstance()
+	{ 
+		return game->GetGameInstance(); 
+	}
+
+	GameInstance const * GameHUD::GetGameInstance() const 
+	{ 
+		return game->GetGameInstance(); 
 	}
 
 	bool GameHUD::InitializeHUD()
@@ -32,7 +43,7 @@ namespace death
 	{
 		assert((in_particle_manager != nullptr) ^ (in_texture_atlas != nullptr)); // cannot have both creation protocole
 
-																																							// create the particle manager
+		// create the particle manager
 		if (in_particle_manager != nullptr)
 		{
 			particle_manager = in_particle_manager;

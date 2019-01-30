@@ -26,4 +26,6 @@ public:
 protected:
 
 	virtual death::Player * DoCreatePlayer() override;
+
+	virtual bool CheckGameOverCondition() override;
 };

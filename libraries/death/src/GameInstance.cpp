@@ -236,4 +236,9 @@ namespace death
 			game_clock->SetPause(enter_pause);
 	}
 
+	bool GameInstance::CheckGameOverCondition()
+	{
+		return false;
+	}
+
 }; // namespace death

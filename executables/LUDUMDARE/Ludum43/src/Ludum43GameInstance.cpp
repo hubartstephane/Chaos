@@ -32,3 +32,14 @@ class LudumGame const * LudumGameInstance::GetLudumGame() const
 {
 	return dynamic_cast<LudumGame const *>(GetGame());
 }
+
+
+bool LudumGameInstance::CheckGameOverCondition()
+{
+
+
+//	ParticlePlayer const * player_particle = GetPlayerParticle(0);
+//	if (player_particle == nullptr)
+//		return true;
+	return false;
+}

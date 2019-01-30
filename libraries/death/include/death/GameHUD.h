@@ -14,6 +14,8 @@ namespace death
 
 	class Game;
 	class GameInstance;
+	class GameLevel;
+	class GameLevelInstance;
 
 	// =============================================
 	// GameHUD
@@ -35,6 +37,16 @@ namespace death
 		GameInstance * GetGameInstance();
 		/** getters on game instance */
 		GameInstance const * GetGameInstance() const;
+
+		/** get currently played level */
+		GameLevel * GetCurrentLevel();
+		/** get currently played level */
+		GameLevel const * GetCurrentLevel() const;
+
+		/** get currently played level */
+		GameLevelInstance * GetCurrentLevelInstance();
+		/** get currently played level */
+		GameLevelInstance const * GetCurrentLevelInstance() const;
 
 		/** initialization of the HUD from the game values */
 		virtual bool InitializeHUD();

@@ -108,6 +108,9 @@ namespace death
 		/** pause/resume pause/game clocks */
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
+		/** check whether there is a game over */
+		virtual bool CheckGameOverCondition();
+
 	protected:
 
 		/** the game */

@@ -65,6 +65,9 @@ public:
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);
 
+	/** get the current time out */
+	float GetLevelTimeout() const { return level_timeout; }
+
 protected:
 
 	/** get the typed level */
@@ -75,7 +78,7 @@ protected:
 
 	virtual bool DoTick(double delta_time) override;
 
-	float GetLevelTimeout() const { return level_timeout; }
+	virtual bool CheckGameOverCondition() override;
 
 protected:
 

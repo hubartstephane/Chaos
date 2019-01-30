@@ -964,6 +964,16 @@ namespace death
 
 	bool Game::CheckGameOverCondition()
 	{
+		if (game_instance != nullptr)
+		{
+			// check for game over in game instance
+			if (game_instance->CheckGameOverCondition())
+				return true;
+			// check level game over only if game is started. It could be a background level in main menu
+			if (current_level_instance != nullptr)
+				if (current_level_instance->CheckGameOverCondition()) 
+					return true;
+		}
 		return false; // no gameover
 	}
 
@@ -996,7 +1006,10 @@ namespace death
 	{
 		// game over ?
 		if (CheckGameOverCondition())
+		{
+			RequireGameOver();
 			return false;
+		}
 		// level finished
 		if (CheckLevelCompleted())
 		{

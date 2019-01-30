@@ -127,6 +127,9 @@ namespace death
 		/** state changes */
 		virtual void OnGameOver();
 
+		/** check whether there is a game over */
+		virtual bool CheckGameOverCondition();
+
 	protected:
 
 		/** a pointer on the level that generated this */

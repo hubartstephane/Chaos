@@ -218,6 +218,11 @@ namespace death
 		RestrictObjectToWorld(player->GetPlayerAllocation(), 0);
 	}
 
+	bool GameLevelInstance::CheckGameOverCondition()
+	{
+		return false;
+	}
+
 
 }; // namespace death
 

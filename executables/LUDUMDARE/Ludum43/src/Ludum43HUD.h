@@ -38,8 +38,6 @@ protected:
 
 	void UpdateWakenUpParticleCount(class LudumGame const * ludum_game);
 
-	void UpdateSavedParticleCount(class LudumGame const * ludum_game);
-
 	void UpdateFrameRate(class LudumGame const * ludum_game);
 
 	void UpdateLifeBar(class LudumGame const * ludum_game);

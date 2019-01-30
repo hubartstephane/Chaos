@@ -208,8 +208,21 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 	// keep camera, player inside the world
 	RestrictCameraToPlayerAndWorld(0);
-
+	// update the timeout
+	if (!game->GetCheatMode())
+	{
+		level_timeout -= (float)delta_time;
+		if (level_timeout < 0.0f)
+			level_timeout = 0.0f;
+	}
 	return true;
+}
+
+bool LudumLevelInstance::CheckGameOverCondition()
+{
+	if (level_timeout == 0.0f)
+		return true;
+	return false;
 }
 
 

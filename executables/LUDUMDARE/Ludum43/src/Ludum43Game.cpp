@@ -234,19 +234,6 @@ void LudumGame::ResetGameVariables()
 
 	waken_up_particle_count = 0;
 	heart_beat_time = 0.0f;
-	level_timeout = 0.0f;
-
-}
-
-bool LudumGame::CheckGameOverCondition()
-{
-	ParticlePlayer const * player_particle = GetPlayerParticle(0);
-	if (player_particle == nullptr || level_timeout <= 0.0f)
-	{
-		RequireGameOver();
-		return true;
-	}
-	return false;
 }
 
 bool LudumGame::TickGameLoop(double delta_time)
@@ -256,13 +243,6 @@ bool LudumGame::TickGameLoop(double delta_time)
 		return false;
 	// tick sound for heart beat
 	TickHeartBeat(delta_time);
-	// update time out
-	if (!GetCheatMode())
-	{
-		level_timeout -= (float)delta_time;
-		if (level_timeout < 0.0f)
-			level_timeout = 0.0f;
-	}
 	return true;
 }
 

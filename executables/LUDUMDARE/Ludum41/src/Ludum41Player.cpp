@@ -12,9 +12,8 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 	if (abs(right_stick_position.x) > abs(left_stick_position.x))
 		value = right_stick_position.x;
 
-	glm::vec2 position = GetPlayerPosition(0);
-	SetPlayerPosition(0, glm::vec2(position.x + value, PLAYER_Y));
-	RestrictPlayerToWorld(0);
+	glm::vec2 position = GetPlayerPosition();
+	SetPlayerPosition(glm::vec2(position.x + value, PLAYER_Y));	
 }
 
 bool LudumPlayer::OnMouseMove(double x, double y)

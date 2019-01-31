@@ -50,6 +50,13 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
+bool LudumLevelInstance::DoTick(double delta_time)
+{
+	death::GameLevelInstance::DoTick(delta_time);
+	RestrictPlayerToWorld(0);
+	return true;
+}
+
 
 #if 0
 

@@ -231,7 +231,6 @@ void LudumGame::ResetGameVariables()
 	death::Game::ResetGameVariables();
 	
 	previous_frame_life = 0.0;
-
 	waken_up_particle_count = 0;
 	heart_beat_time = 0.0f;
 }

@@ -46,4 +46,6 @@ public:
 	virtual bool IsLevelCompleted() const override;
 	/** override */
 	virtual bool CanCompleteLevel() const override;
+	/** override */
+	virtual bool DoTick(double delta_time) override;
 };

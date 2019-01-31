@@ -35,9 +35,14 @@ void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
 	LudumLevelInstance const * ludum_level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
 	if (ludum_level_instance == nullptr)
 		return;
-
 	float level_timeout = ludum_level_instance->GetLevelTimeout();
-	if (fabsf(level_timeout - cached_level_timeout) > 0.1f)
+	// level without timer, hide it
+	if (level_timeout < 0.0f)
+	{
+		UnregisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID);	
+	}
+	// update the timer 
+	else if (fabsf(level_timeout - cached_level_timeout) > 0.1f)
 	{
 		RegisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID, CreateLevelTimeAllocation(level_timeout, ludum_game->GetViewBox()));
 		cached_level_timeout = level_timeout;

@@ -74,11 +74,11 @@ protected:
 	LudumLevel * GetTypedLevel();
 	LudumLevel const * GetTypedLevel() const;
 
+	virtual bool CheckGameOverCondition() override;
+
 	virtual bool IsLevelCompleted() const override;
 
 	virtual bool DoTick(double delta_time) override;
-
-	virtual bool CheckGameOverCondition() override;
 	
 	virtual void OnLevelStarted() override;
 

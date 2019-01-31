@@ -209,7 +209,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	// keep camera, player inside the world
 	RestrictCameraToPlayerAndWorld(0);
 	// update the timeout
-	if (!game->GetCheatMode())
+	if (level_timeout > 0.0f && !game->GetCheatMode())
 	{
 		level_timeout -= (float)delta_time;
 		if (level_timeout < 0.0f)

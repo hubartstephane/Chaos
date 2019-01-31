@@ -36,10 +36,12 @@ class LudumGame const * LudumGameInstance::GetLudumGame() const
 
 bool LudumGameInstance::CheckGameOverCondition()
 {
-
-
-//	ParticlePlayer const * player_particle = GetPlayerParticle(0);
-//	if (player_particle == nullptr)
-//		return true;
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game != nullptr)
+	{
+		ParticlePlayer const * particle_player = ludum_game->GetPlayerParticle(0);
+		if (particle_player == nullptr)
+			return true;		
+	}
 	return false;
 }

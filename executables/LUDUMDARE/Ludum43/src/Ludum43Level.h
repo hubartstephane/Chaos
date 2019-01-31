@@ -79,6 +79,8 @@ protected:
 	virtual bool DoTick(double delta_time) override;
 
 	virtual bool CheckGameOverCondition() override;
+	
+	virtual void OnLevelStarted() override;
 
 protected:
 
@@ -87,4 +89,6 @@ protected:
 
 	/** the time to run the level */
 	float level_timeout = 0.0f;
+	/** the default level requirement */
+	int level_particle_requirement = 0;
 };

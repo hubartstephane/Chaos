@@ -182,8 +182,6 @@ public:
 
 	/** number of waken up particle */
 	int waken_up_particle_count = 0;
-	/** the default level requirement */
-	int level_particle_requirement = 0;
 	/** the heart beat time */
 	float heart_beat_time = 0.0f;
 };

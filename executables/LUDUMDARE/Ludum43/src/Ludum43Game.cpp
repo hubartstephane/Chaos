@@ -355,9 +355,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
 {
-	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
-	static int   DEFAULT_LEVEL_PARTICLE_REQUIREMENT = 10;
-
 	// super method
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
 
@@ -371,21 +368,6 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 	previous_frame_life = 0.0f;
 	waken_up_particle_count = 0;
-	level_timeout = DEFAULT_LEVEL_TIMEOUT;
-	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;
-
-	// change the background image and the level time
-	std::string const * background_name = nullptr;
-	if (new_level_instance != nullptr)
-	{		
-		death::TiledMap::Level const * level = dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());
-		if (level != nullptr)
-			background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");	
-
-		level_timeout = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIMEOUT);
-		level_particle_requirement = level->GetTiledMap()->FindPropertyInt("LEVEL_PARTICLE_REQUIREMENT", DEFAULT_LEVEL_PARTICLE_REQUIREMENT);
-	}
-	CreateBackgroundImage(nullptr, (background_name == nullptr)? nullptr : background_name->c_str());
 
 	// play a sound
 	if (new_level != nullptr && old_level != nullptr)

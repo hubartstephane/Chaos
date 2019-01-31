@@ -225,6 +225,29 @@ bool LudumLevelInstance::CheckGameOverCondition()
 	return false;
 }
 
+void LudumLevelInstance::OnLevelStarted()
+{
+	death::TiledMap::LevelInstance::OnLevelStarted();
+
+	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
+	static int   DEFAULT_LEVEL_PARTICLE_REQUIREMENT = 10;
+
+	level_timeout = DEFAULT_LEVEL_TIMEOUT;
+	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;
+
+	// change the background image and the level time
+	std::string const * background_name = nullptr;
+
+	death::TiledMap::Level const * level = GetTypedLevel(); // dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());
+	if (level != nullptr)
+		background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");
+
+	level_timeout = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIMEOUT);
+	level_particle_requirement = level->GetTiledMap()->FindPropertyInt("LEVEL_PARTICLE_REQUIREMENT", DEFAULT_LEVEL_PARTICLE_REQUIREMENT);
+
+	game->CreateBackgroundImage(nullptr, (background_name == nullptr) ? nullptr : background_name->c_str());
+}
+
 
 // ===========================================================================================
 

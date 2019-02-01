@@ -166,15 +166,15 @@ void LudumPlayer::SetDashMode(bool dash)
 	}
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData & gpd)
+void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{
-		bool dash = gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_A, true);
+		bool dash = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
 		SetDashMode(dash);
-		bool reversed_mode = gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_B, true);
+		bool reversed_mode = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_B, false);
 		SetReverseMode(reversed_mode);
 	}
 }

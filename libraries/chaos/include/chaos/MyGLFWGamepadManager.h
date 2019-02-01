@@ -154,11 +154,6 @@ namespace chaos
 			/** returns the number of axis */
 			size_t GetAxisCount() const;
 
-			/** check whether a button is pressed. Reset it state to 0 */
-			bool IsButtonPressedAndConsume(size_t button_index, bool clear_state);
-			/** clear the state of a button */
-			void ClearButtonState(size_t button_index);
-
 		protected:
 
 			/** update all the values for the axis and buttons */

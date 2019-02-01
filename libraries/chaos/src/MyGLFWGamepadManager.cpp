@@ -75,23 +75,6 @@ namespace chaos
 				return (current_state) ? BUTTON_BECOME_PRESSED : BUTTON_BECOME_RELEASED;
 		}
 
-		void GamepadData::ClearButtonState(size_t button_index)
-		{
-			size_t count = GetButtonCount();
-			if (button_index >= count)
-				return;
-			buttons[button_index] = 0;
-		}
-
-		bool GamepadData::IsButtonPressedAndConsume(size_t button_index, bool clear_state)
-		{
-			if (!IsButtonPressed(button_index))
-				return false;
-			if (clear_state)
-				ClearButtonState(button_index);
-			return true;
-		}
-
 		bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
 		{
 			// simulated buttons

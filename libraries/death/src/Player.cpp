@@ -146,18 +146,11 @@ namespace death
 		if (gamepad_data->IsAnyAction())			
 			chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
 
-		// create a copy of gamedata input to be given back to game instance
-		chaos::MyGLFW::GamepadData gpd = *gamepad_data;
-
-		// Handle the inputs as we want, modifying the object by consuming data inside
-		InternalHandleGamepadInputs(delta_time, gpd);
-
-		// give remaining input back to game instance
-		if (game_instance != nullptr && gpd.IsAnyAction())
-			game_instance->HandlePlayerGamepadInput(delta_time, gpd);
+		// Handle the inputs as we want
+		InternalHandleGamepadInputs(delta_time, gamepad_data);
 	}
 
-	void Player::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData & gpd)
+	void Player::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
 	{
 		// get data
 		Game * game = GetGame();
@@ -167,25 +160,30 @@ namespace death
 		// cache the stick position
 		float gamepad_sensitivity = game->GetGamepadSensitivity();
 
-		glm::vec2 lsp = gpd.GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
+		glm::vec2 lsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = gamepad_sensitivity * lsp;
 		else
 		{
-			if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_LEFT, true))
+			if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT, false))
 				left_stick_position.x = -gamepad_sensitivity * 1.0f;
-			else if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_RIGHT, true))
+			else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT, false))
 				left_stick_position.x = gamepad_sensitivity * 1.0f;
 
-			if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_UP, true))
+			if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_UP, false))
 				left_stick_position.y = -gamepad_sensitivity * 1.0f;
-			else if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_DOWN, true))
+			else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN, false))
 				left_stick_position.y = gamepad_sensitivity * 1.0f;
 		}
 
-		glm::vec2 rsp = gpd.GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+		glm::vec2 rsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = gamepad_sensitivity * rsp;
+
+		// maybe a game/pause resume
+		if ((gpd->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) || 
+				(gpd->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+			game->RequireTogglePause();
 	}
 
 	void Player::SetScore(int in_score, bool increment)

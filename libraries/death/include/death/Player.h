@@ -95,7 +95,7 @@ namespace death
 		/** handle the player input (top level function) */
 		virtual void HandleGamepadInputs(double delta_time);
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData & gpd);
+		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd);
 
 		/** called whenever player gamepad is disconnected */
 		virtual void OnGamepadDisconnected();

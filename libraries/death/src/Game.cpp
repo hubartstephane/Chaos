@@ -787,13 +787,6 @@ namespace death
 		return true;
 	}
 
-	void Game::HandlePlayerGamepadInput(double delta_time, chaos::MyGLFW::GamepadData & gpd)
-	{
-		// maybe a game/pause resume
-		if (gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_SELECT, true) || gpd.IsButtonPressedAndConsume(chaos::MyGLFW::XBOX_BUTTON_START, true))
-			RequireTogglePause();
-	}
-
 	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
 	{
 		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());

@@ -908,12 +908,10 @@ namespace death
 			return result;
 		}
 
-		bool LevelInstance::Initialize(Game * in_game)
+		bool LevelInstance::Initialize(Game * in_game, GameLevel * in_level)
 		{
-			assert(in_game != nullptr);
-
-			// keep a reference on the game
-			game = in_game;
+			if (!GameLevelInstance::Initialize(in_game, in_level))
+				return false;
 			// create a the layers instances
 			if (!CreateLayerInstances(in_game))
 				return false;

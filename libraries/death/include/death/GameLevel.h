@@ -110,7 +110,7 @@ namespace death
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize(Game * in_game);
+		virtual bool Initialize(Game * in_game, GameLevel * in_level);
 
 		/** called for each player whenever a level is started */
 		virtual void OnPlayerLevelStarted(class Player * player);

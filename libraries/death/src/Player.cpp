@@ -58,11 +58,11 @@ namespace death
 
 	bool Player::CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
-		// if no entry or the device is already owned by someone, exit
-		if (in_physical_gamepad == nullptr || in_physical_gamepad->IsAllocated())
-			return false;
 		// if we already have a device, ignore
 		if (gamepad != nullptr)
+			return false;
+		// if no entry or the device is already owned by someone, exit
+		if (in_physical_gamepad == nullptr || in_physical_gamepad->IsAllocated())
 			return false;
 		// try capture the device
 		chaos::shared_ptr<PlayerGamepadCallbacks> gamepad_callback = new PlayerGamepadCallbacks(this);
@@ -86,7 +86,8 @@ namespace death
 		// handle gamepad inputs
 		HandleGamepadInputs(delta_time);
 		// tick player displacement
-		TickPlayerDisplacement(delta_time);
+		if (GetGame()->IsPlaying())
+			TickPlayerDisplacement(delta_time);
 		// remove previous frame cached input
 		ResetCachedInputs();
 
@@ -104,26 +105,29 @@ namespace death
 		Game * game = GetGame();
 		if (game == nullptr)
 			return;
+		// ignore inputs if player is in pause
+		if (game->IsPlaying())
+		{
+			// get the GLFW object to get the key state
+			GLFWwindow * glfw_window = game->GetGLFWWindow();
+			if (glfw_window == nullptr)
+				return;
+			// test whether the stick position can be overriden
+			glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		GLFWwindow * glfw_window = game->GetGLFWWindow();
-		if (glfw_window == nullptr)
-			return;
+			if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
+				simulated_stick.x -= 1.0f;
+			if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
+				simulated_stick.x += 1.0f;
 
-		// test whether the stick position can be overriden
-		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
+			if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
+				simulated_stick.y += 1.0f;
+			if (glfwGetKey(glfw_window, GLFW_KEY_UP))
+				simulated_stick.y -= 1.0f;
 
-		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
-			simulated_stick.x -= 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
-			simulated_stick.x += 1.0f;
-
-		if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
-			simulated_stick.y += 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
-			simulated_stick.y -= 1.0f;
-
-		if (glm::length2(simulated_stick) > 0)
-			left_stick_position = game->GetGamepadSensitivity() * simulated_stick;
+			if (glm::length2(simulated_stick) > 0)
+				left_stick_position = game->GetGamepadSensitivity() * simulated_stick;
+		}
 	}
 
 	void Player::ResetCachedInputs()
@@ -137,15 +141,13 @@ namespace death
 		// early exit
 		if (gamepad == nullptr)
 			return;
-
+		// get the gamepad data
 		chaos::MyGLFW::GamepadData const * gamepad_data = gamepad->GetGamepadData();
 		if (gamepad_data == nullptr)
 			return;
-
 		// change the application mode
 		if (gamepad_data->IsAnyAction())			
 			chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
-
 		// Handle the inputs as we want
 		InternalHandleGamepadInputs(delta_time, gamepad_data);
 	}
@@ -157,29 +159,30 @@ namespace death
 		if (game == nullptr)
 			return;
 
-		// cache the stick position
-		float gamepad_sensitivity = game->GetGamepadSensitivity();
-
-		glm::vec2 lsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
-		if (glm::length2(lsp) > 0.0f)
-			left_stick_position = gamepad_sensitivity * lsp;
-		else
+		// cache the stick position (not in pause)
+		if (game->IsPlaying())
 		{
-			if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT, false))
-				left_stick_position.x = -gamepad_sensitivity * 1.0f;
-			else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT, false))
-				left_stick_position.x = gamepad_sensitivity * 1.0f;
+			float gamepad_sensitivity = game->GetGamepadSensitivity();
 
-			if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_UP, false))
-				left_stick_position.y = -gamepad_sensitivity * 1.0f;
-			else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN, false))
-				left_stick_position.y = gamepad_sensitivity * 1.0f;
+			glm::vec2 lsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
+			if (glm::length2(lsp) > 0.0f)
+				left_stick_position = gamepad_sensitivity * lsp;
+			else
+			{
+				if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT, false))
+					left_stick_position.x = -gamepad_sensitivity * 1.0f;
+				else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT, false))
+					left_stick_position.x = gamepad_sensitivity * 1.0f;
+
+				if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_UP, false))
+					left_stick_position.y = -gamepad_sensitivity * 1.0f;
+				else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN, false))
+					left_stick_position.y = gamepad_sensitivity * 1.0f;
+			}
+			glm::vec2 rsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
+			if (glm::length2(rsp) > 0.0f)
+				right_stick_position = gamepad_sensitivity * rsp;
 		}
-
-		glm::vec2 rsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
-		if (glm::length2(rsp) > 0.0f)
-			right_stick_position = gamepad_sensitivity * rsp;
-
 		// maybe a game/pause resume
 		if ((gpd->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) || 
 				(gpd->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))

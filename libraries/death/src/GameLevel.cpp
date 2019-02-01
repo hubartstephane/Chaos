@@ -16,9 +16,7 @@ namespace death
 		GameLevelInstance * result = DoCreateLevelInstance(in_game); // create the instance
 		if (result == nullptr)
 			return nullptr;
-		result->level = this;
-		result->game  = in_game;
-		if (!result->Initialize(in_game)) // additional initialization
+		if (!result->Initialize(in_game, this)) // additional initialization
 		{
 			delete(result);
 			return nullptr;
@@ -129,8 +127,12 @@ namespace death
 			OnPlayerLevelStarted(game_instance->GetPlayer(i));
 	}
 
-	bool GameLevelInstance::Initialize(Game * in_game)
+	bool GameLevelInstance::Initialize(Game * in_game, GameLevel * in_level)
 	{
+		assert(in_game != nullptr);
+		assert(in_level != nullptr);
+		game  = in_game;
+		level = in_level;		
 		// create the level clock
 		chaos::Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)

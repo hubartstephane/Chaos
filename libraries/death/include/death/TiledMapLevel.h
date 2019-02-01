@@ -485,7 +485,7 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool Initialize(Game * in_game) override;
+			virtual bool Initialize(Game * in_game, GameLevel * in_level) override;
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
@@ -518,8 +518,6 @@ namespace death
 
 		protected:
 
-			/** a reference uppon the game */
-			Game * game = nullptr;
 			/** the displacement ratio of reference */
 			glm::vec2 reference_displacement_ratio = glm::vec2(1.0f, 1.0f);
 

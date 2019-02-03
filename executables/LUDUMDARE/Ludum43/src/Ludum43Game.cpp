@@ -352,10 +352,10 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	return true;
 }
 
-void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
+void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	// super method
-	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
+	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	// internal
 	LudumPlayer * player = GetLudumPlayer(0);

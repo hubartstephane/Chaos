@@ -1194,9 +1194,9 @@ LudumChallenge * LudumGame::CreateSequenceChallenge(size_t len)
 	return result;
 }
 
-void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance, death::GameLevelInstance * old_level_instance)
+void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
-	death::Game::OnLevelChanged(new_level, old_level, new_level_instance, old_level_instance);
+	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	bricks_allocations = nullptr;
 	target_brick_offset = 0.0f;

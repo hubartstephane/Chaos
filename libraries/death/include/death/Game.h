@@ -388,7 +388,7 @@ namespace death
 		/** change the current level for the next */
 		bool SetNextLevel(bool looping_levels);
 		/** reflex method whenever the level is changed */
-		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance);
+		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance);
 
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();

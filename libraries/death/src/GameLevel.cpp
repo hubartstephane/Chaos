@@ -138,7 +138,7 @@ namespace death
 		if (root_clock == nullptr)
 			return false;
 
-		level_clock = root_clock->CreateChildClock("level_clock");
+		level_clock = root_clock->CreateChildClock("level_clock"); // shuxxx  probleme pour passer dfe niveau parce que la clock existe deja
 		if (level_clock == nullptr)
 			return false;
 

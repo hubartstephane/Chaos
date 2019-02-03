@@ -1260,35 +1260,32 @@ namespace death
 
 	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
 	{
-		// copy and keep a reference
-		chaos::shared_ptr<GameLevelInstance> old_level_instance = current_level_instance; 
-		chaos::shared_ptr<GameLevel> old_level = (old_level_instance != nullptr) ?
-			old_level_instance->GetLevel() :
-			nullptr;
+		chaos::shared_ptr<GameLevel> old_level = GetCurrentLevel();
+
+		// destroy current level instance, so that new instance can get all resources it want
+		if (current_level_instance != nullptr)
+		{
+			current_level_instance->OnLevelEnded();
+			current_level_instance = nullptr;
+		}
 
 		// create the new level instance if required
-		chaos::shared_ptr<GameLevelInstance> new_level_instance;
 		if (new_level != nullptr)
 		{
-			new_level_instance = new_level->CreateLevelInstance(this);
-			if (new_level_instance == nullptr)
+			current_level_instance = new_level->CreateLevelInstance(this);
+			if (current_level_instance == nullptr)
 				return false;
+			current_level_instance->OnLevelStarted();
 		}
 
 		// change the level
-		current_level_instance = new_level_instance;
-		OnLevelChanged(new_level, old_level.get(), current_level_instance.get(), old_level_instance.get());
+		OnLevelChanged(new_level, old_level.get(), current_level_instance.get());
 		return true;
 	}
 
-	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance, GameLevelInstance * old_level_instance)
+	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance)
 	{
-		// leave previous level
-		if (old_level_instance != nullptr)
-			old_level_instance->OnLevelEnded();
-		// start new level. Create a new level clock
-		if (new_level_instance != nullptr)
-			new_level_instance->OnLevelStarted();
+
 	}
 
 	Player * Game::GetPlayer(int player_index)

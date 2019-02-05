@@ -25,6 +25,43 @@
 #include <death/Player.h>
 #include <death/GameInstance.h>
 
+#define DEATH_GAMEFRAMEWORK_FRIENDSHIPS(prefix)\
+	friend class prefix##Player;\
+	friend class prefix##Level;\
+	friend class prefix##LevelInstance;\
+	friend class prefix##Game;\
+	friend class prefix##GameInstance;\
+
+
+#define DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, type)\
+	prefix##type * Get##prefix##type(){ return dynamic_cast<prefix##type *>(Get##type());}\
+	prefix##type const * Get##prefix##type() const { return dynamic_cast<prefix##type const *>(Get##type());}
+
+#define DEATH_GAMEFRAMEWORK_TYPEDPLAYERGETTER(prefix)\
+	prefix##Player * Get##prefix##Player(int player_index){ return dynamic_cast<prefix##Player *>(GetPlayer(player_index));}\
+	prefix##Player const * Get##prefix##Player(int player_index) const { return dynamic_cast<prefix##Player const*>(GetPlayer(player_index));}\
+
+#define CHAOS_GAMEFRAMEWORK_GAMEGETTERS(prefix)\
+	DEATH_GAMEFRAMEWORK_FRIENDSHIPS(prefix)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, Level)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, LevelInstance)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, Game)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, GameInstance)\
+	DEATH_GAMEFRAMEWORK_TYPEDPLAYERGETTER(prefix)
+
+
+
+
+
+#define CHAOS_GAMEFRAMEWORK_GAMEGETTERS(prefix)\
+	DEATH_GAMEFRAMEWORK_FRIENDSHIPS(prefix)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, Level)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, LevelInstance)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, Game)\
+	DEATH_GAMEFRAMEWORK_TYPEDGETTER(prefix, GameInstance)\
+	DEATH_GAMEFRAMEWORK_TYPEDPLAYERGETTER(prefix)
+
+
 namespace death
 {
 
@@ -58,6 +95,38 @@ namespace death
 		friend class GameInstance;
 
 	public:
+
+
+		/** get the player by its index */
+		class Player * GetPlayer(int player_index);
+		/** get the player by its index */
+		class Player const * GetPlayer(int player_index) const;
+
+		/** get currently played level */
+		class GameLevel * GetLevel();
+		/** get currently played level */
+		class GameLevel const * GetLevel() const;
+
+		/** get currently played level */
+		class GameLevelInstance * GetLevelInstance();
+		/** get currently played level */
+		class GameLevelInstance const * GetLevelInstance() const;
+
+		/** get the game instance */
+		class GameInstance * GetGameInstance() { return game_instance.get(); }
+		/** get the game instance */
+		class GameInstance const * GetGameInstance() const { return game_instance.get(); }
+
+
+
+
+
+
+
+
+
+
+
 
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
@@ -159,34 +228,10 @@ namespace death
 
 #endif
 
-		/** get the player by its index */
-		class Player * GetPlayer(int player_index);
-		/** get the player by its index */
-		class Player const * GetPlayer(int player_index) const;
-
-		/** get currently played level */
-		GameLevel * GetCurrentLevel();
-		/** get currently played level */
-		GameLevel const * GetCurrentLevel() const;
-
-		/** get currently played level */
-		GameLevelInstance * GetCurrentLevelInstance();
-		/** get currently played level */
-		GameLevelInstance const * GetCurrentLevelInstance() const;
-
-		/** get currently played level */
-		GameLevel * GetLevel(int level_index);
-		/** get currently played level */
-		GameLevel const * GetLevel(int level_index) const;
-
-		/** get the game instance */
-		class GameInstance * GetGameInstance() { return game_instance.get(); }
-		/** get the game instance */
-		class GameInstance const * GetGameInstance() const { return game_instance.get(); }
-
-
-
-
+		/** get any level */
+		class GameLevel * GetLevel(int level_index);
+		/** get any level */
+		class GameLevel const * GetLevel(int level_index) const;
 
 
 		/** get glfw window */

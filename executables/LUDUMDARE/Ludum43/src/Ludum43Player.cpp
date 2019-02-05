@@ -111,7 +111,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 	assert(game_instance != nullptr);
 	assert(game_instance != nullptr);
 
-	death::GameLevelInstance * level_instance = ludum_game->GetCurrentLevelInstance();
+	death::GameLevelInstance * level_instance = ludum_game->GetLevelInstance();
 	if (level_instance == nullptr)
 		return;
 
@@ -141,7 +141,7 @@ void LudumPlayer::SetDashMode(bool dash)
 	assert(ludum_game != nullptr);
 	assert(game_instance != nullptr);
 
-	death::GameLevelInstance * level_instance = ludum_game->GetCurrentLevelInstance();
+	death::GameLevelInstance * level_instance = ludum_game->GetLevelInstance();
 	if (level_instance == nullptr)
 		return;
 

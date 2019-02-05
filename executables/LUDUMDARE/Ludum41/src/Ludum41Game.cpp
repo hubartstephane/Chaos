@@ -617,7 +617,7 @@ ParticleBrick const * LudumGame::GetBricks() const
 
 bool LudumGame::IsBrickLifeChallengeValid(bool success)
 {
-	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetCurrentLevel());
+	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetLevel());
 	if (level == nullptr)
 		return false;
 

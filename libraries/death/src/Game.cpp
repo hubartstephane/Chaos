@@ -979,7 +979,7 @@ namespace death
 			return true;
 #endif
 		// game finished
-		death::GameLevelInstance const * level_instance = GetCurrentLevelInstance();
+		death::GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (level_instance->IsLevelCompleted())
 				return true;
@@ -988,7 +988,7 @@ namespace death
 
 	bool Game::CanCompleteLevel()
 	{
-		death::GameLevelInstance const * level_instance = GetCurrentLevelInstance();
+		death::GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (level_instance->CanCompleteLevel())
 				return true;
@@ -1173,28 +1173,28 @@ namespace death
 		return GetViewBox();
 	}
 
-	GameLevel * Game::GetCurrentLevel()
+	GameLevel * Game::GetLevel()
 	{
-		GameLevelInstance * li = GetCurrentLevelInstance();
+		GameLevelInstance * li = GetLevelInstance();
 		if (li == nullptr)
 			return nullptr;
 		return li->GetLevel();
 	}
 
-	GameLevel const * Game::GetCurrentLevel() const
+	GameLevel const * Game::GetLevel() const
 	{
-		GameLevelInstance const * li = GetCurrentLevelInstance();
+		GameLevelInstance const * li = GetLevelInstance();
 		if (li == nullptr)
 			return nullptr;
 		return li->GetLevel();
 	}
 
-	GameLevelInstance * Game::GetCurrentLevelInstance()
+	GameLevelInstance * Game::GetLevelInstance()
 	{
 		return current_level_instance.get();
 	}
 
-	GameLevelInstance const * Game::GetCurrentLevelInstance() const
+	GameLevelInstance const * Game::GetLevelInstance() const
 	{
 		return current_level_instance.get();
 	}
@@ -1228,7 +1228,7 @@ namespace death
 		if (count == 0)
 			return false;
 		// very first level
-		GameLevel * current_level = GetCurrentLevel();
+		GameLevel * current_level = GetLevel();
 		if (current_level == nullptr)
 			return SetCurrentLevel(levels[0].get());
 		// search the current level
@@ -1260,7 +1260,7 @@ namespace death
 
 	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
 	{
-		chaos::shared_ptr<GameLevel> old_level = GetCurrentLevel();
+		chaos::shared_ptr<GameLevel> old_level = GetLevel();
 
 		// destroy current level instance, so that new instance can get all resources it want
 		if (current_level_instance != nullptr)

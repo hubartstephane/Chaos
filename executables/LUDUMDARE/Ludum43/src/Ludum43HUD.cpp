@@ -32,7 +32,7 @@ void LudumPlayingHUD::UpdateWakenUpParticleCount(LudumGame const * ludum_game)
 
 void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
 {
-	LudumLevelInstance const * ludum_level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
+	LudumLevelInstance const * ludum_level_instance = dynamic_cast<LudumLevelInstance const *>(GetLevelInstance());
 	if (ludum_level_instance == nullptr)
 		return;
 	float level_timeout = ludum_level_instance->GetLevelTimeout();

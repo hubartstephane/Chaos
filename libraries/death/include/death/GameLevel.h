@@ -51,24 +51,29 @@ namespace death
 	public:
 
 		/** get the level corresponding to this instance */
-		GameLevel * GetLevel();
+		class GameLevel * GetLevel();
 		/** get the level corresponding to this instance */
-		GameLevel const * GetLevel() const;
+		class GameLevel const * GetLevel() const;
 
 		/** get the game */
-		Game * GetGame();
+		class Game * GetGame();
 		/** get the game */
-		Game const * GetGame() const;
+		class Game const * GetGame() const;
 
 		/** get the game instance */
-		GameInstance * GetGameInstance();
+		class GameInstance * GetGameInstance();
 		/** get the game instance */
-		GameInstance const * GetGameInstance() const;
+		class GameInstance const * GetGameInstance() const;
 
 		/** get a player */
-		Player * GetPlayer(int player_index);
+		class Player * GetPlayer(int player_index);
 		/** get a player */
-		Player const * GetPlayer(int player_index) const;
+		class Player const * GetPlayer(int player_index) const;
+
+
+
+
+
 
 		/** the camera box getter */
 		chaos::box2 GetCameraBox() const { return camera_box; }

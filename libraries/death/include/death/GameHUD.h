@@ -39,14 +39,14 @@ namespace death
 		GameInstance const * GetGameInstance() const;
 
 		/** get currently played level */
-		GameLevel * GetCurrentLevel();
+		GameLevel * GetLevel();
 		/** get currently played level */
-		GameLevel const * GetCurrentLevel() const;
+		GameLevel const * GetLevel() const;
 
 		/** get currently played level */
-		GameLevelInstance * GetCurrentLevelInstance();
+		GameLevelInstance * GetLevelInstance();
 		/** get currently played level */
-		GameLevelInstance const * GetCurrentLevelInstance() const;
+		GameLevelInstance const * GetLevelInstance() const;
 
 		/** initialization of the HUD from the game values */
 		virtual bool InitializeHUD();

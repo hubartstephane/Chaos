@@ -377,7 +377,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all)
 {
 	// capture all Enemies in range
-	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetCurrentLevelInstance());
+	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetLevelInstance());
 	if (level_instance != nullptr)
 	{
 		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);

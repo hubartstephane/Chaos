@@ -44,6 +44,7 @@ class LudumGame : public death::Game
 
 	friend class LudumLevel;
 	friend class LudumLevelInstance;
+	friend class LudumPlayer;
 
 protected:
 

@@ -180,7 +180,6 @@ void LudumGame::ResetGameVariables()
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
 
-	player_length = player_initial_length;
 	ball_power    = 1.0f;
 	ball_speed    = ball_initial_speed;
 	ball_time_dilation = 1.0f;

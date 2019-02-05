@@ -4,6 +4,9 @@
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
+	LudumGame const * ludum_game = dynamic_cast<LudumGame const *>(GetGame());
+	if (ludum_game != nullptr)
+		player_length = ludum_game->player_initial_length;
 }
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)

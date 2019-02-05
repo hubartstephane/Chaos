@@ -179,17 +179,21 @@ namespace death
 		/** get currently played level */
 		GameLevel const * GetLevel(int level_index) const;
 
-		/** reloading the configuration file */
-		bool ReloadConfigurationFile();
-
 		/** get the game instance */
 		class GameInstance * GetGameInstance() { return game_instance.get(); }
 		/** get the game instance */
 		class GameInstance const * GetGameInstance() const { return game_instance.get(); }
 
+
+
+
+
+
 		/** get glfw window */
 		GLFWwindow * GetGLFWWindow() { return glfw_window; }
 
+		/** reloading the configuration file */
+		bool ReloadConfigurationFile();
 
 
 

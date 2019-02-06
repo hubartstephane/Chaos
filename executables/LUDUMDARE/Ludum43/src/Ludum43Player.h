@@ -21,7 +21,7 @@ public:
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
 
-	DEATH_GAMEFRAMEWORK_DECLAREPLAYERGETTERS(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 
 	/** get the player particle */
 	ParticlePlayer * GetPlayerParticle();

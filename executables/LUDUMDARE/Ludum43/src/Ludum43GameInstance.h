@@ -18,7 +18,7 @@ public:
 	/** constructor */
 	LudumGameInstance(death::Game * in_game);
 
-	DEATH_GAMEFRAMEWORK_DECLAREGAMEINSTANCEGETTERS(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_GAMEINSTANCE(Ludum);
 
 protected:
 

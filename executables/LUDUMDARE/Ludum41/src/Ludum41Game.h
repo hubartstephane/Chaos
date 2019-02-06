@@ -58,7 +58,7 @@ public:
 	/** constructor */
 	LudumGame();
 
-	DEATH_GAMEFRAMEWORK_DECLAREGAMEGETTERS(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
 
 
 	/** returns the current combo multiplier */

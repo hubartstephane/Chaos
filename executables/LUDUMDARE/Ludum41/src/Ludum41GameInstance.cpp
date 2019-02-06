@@ -7,7 +7,7 @@ LudumGameInstance::LudumGameInstance(death::Game * in_game) :
 {
 }
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTGAMEINSTANCEGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
 
 death::Player * LudumGameInstance::DoCreatePlayer()
 {

@@ -32,7 +32,7 @@ Black holes and Shadows are dangerous.
 		)INSTRUCTIONS";
 }
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTGAMEGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {

@@ -181,7 +181,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTLEVELINSTANCEGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {

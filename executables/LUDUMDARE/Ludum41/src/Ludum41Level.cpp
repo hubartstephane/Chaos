@@ -24,7 +24,7 @@ death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_ga
 }
 
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTLEVELINSTANCEGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {

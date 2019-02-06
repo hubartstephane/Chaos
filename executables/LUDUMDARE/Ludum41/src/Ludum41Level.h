@@ -43,7 +43,7 @@ class LudumLevelInstance : public death::GameLevelInstance
 {
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARELEVELINSTANCEGETTERS(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);
 
 	/** override */
 	virtual bool IsLevelCompleted() const override;

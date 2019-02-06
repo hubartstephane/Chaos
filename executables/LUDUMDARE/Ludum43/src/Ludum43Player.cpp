@@ -13,7 +13,7 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 {
 }
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTPLAYERGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {

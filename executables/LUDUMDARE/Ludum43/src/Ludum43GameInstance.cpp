@@ -14,7 +14,7 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 }
 
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTGAMEINSTANCEGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
 
 bool LudumGameInstance::CheckGameOverCondition()
 {

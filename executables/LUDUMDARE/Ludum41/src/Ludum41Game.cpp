@@ -24,7 +24,7 @@ LudumGame::LudumGame()
 	max_life = 10;
 }
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTGAMEGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()

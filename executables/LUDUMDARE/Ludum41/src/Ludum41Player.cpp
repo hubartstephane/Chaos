@@ -11,7 +11,7 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 		player_length = ludum_game->player_initial_length;
 }
 
-DEATH_GAMEFRAMEWORK_IMPLEMENTPLAYERGETTERS(Ludum);
+DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {

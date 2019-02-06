@@ -54,7 +54,7 @@ public:
 	/** constructor */
 	LudumGame();
 
-	DEATH_GAMEFRAMEWORK_DECLAREGAMEGETTERS(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
 
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;

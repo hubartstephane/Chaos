@@ -1,4 +1,6 @@
 #include "Ludum41Game.h"
+#include "Ludum41Level.h"
+#include "Ludum41LevelInstance.h"
 #include "Ludum41Particles.h"
 #include "Ludum41HUD.h"
 #include "Ludum41GameInstance.h"
@@ -18,14 +20,14 @@
 
 #include <death/GameParticles.h>
 
+
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
+
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";
 	max_life = 10;
 }
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
-
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {

@@ -2,6 +2,9 @@
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
 #include "Ludum41Level.h"
+#include "Ludum41LevelInstance.h"
+
+DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
@@ -10,8 +13,6 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 	if (ludum_game != nullptr)
 		player_length = ludum_game->player_initial_length;
 }
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {

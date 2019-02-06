@@ -10,12 +10,12 @@
 
 #include <death/GameLevel.h>
 
+DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
+
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
 }
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {

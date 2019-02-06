@@ -4,6 +4,8 @@
 #include "Ludum43LevelInstance.h"
 #include "Ludum43Player.h"
 
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
+
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -14,9 +16,6 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 {
 	return new LudumPlayer(this);
 }
-
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
 
 bool LudumGameInstance::CheckGameOverCondition()
 {

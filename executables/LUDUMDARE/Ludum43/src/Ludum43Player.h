@@ -18,10 +18,10 @@ class LudumPlayer : public death::Player
 
 public:
 
+	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
+
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
-
-	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 
 	/** get the player particle */
 	ParticlePlayer * GetPlayerParticle();

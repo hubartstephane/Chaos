@@ -51,10 +51,10 @@ class LudumGame : public death::Game
 
 public:
 
+	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
+
 	/** constructor */
 	LudumGame();
-
-	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
 
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;

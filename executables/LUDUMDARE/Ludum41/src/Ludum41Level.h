@@ -34,21 +34,3 @@ public:
 	/** the brick types */
 	std::vector<std::vector<int>> bricks;
 };
-
-// =================================================
-// LevelInstance
-// =================================================
-
-class LudumLevelInstance : public death::GameLevelInstance
-{
-public:
-
-	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);
-
-	/** override */
-	virtual bool IsLevelCompleted() const override;
-	/** override */
-	virtual bool CanCompleteLevel() const override;
-	/** override */
-	virtual bool DoTick(double delta_time) override;
-};

@@ -20,10 +20,10 @@ class LudumLevelInstance : public death::TiledMap::LevelInstance
 {
 public:
 
+	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);
+
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);
-
-	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);
 
 	/** get the current time out */
 	float GetLevelTimeout() const { return level_timeout; }

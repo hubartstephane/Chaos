@@ -55,11 +55,10 @@ protected:
 
 public:
 
-	/** constructor */
-	LudumGame();
-
 	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
 
+	/** constructor */
+	LudumGame();
 
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }

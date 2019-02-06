@@ -22,6 +22,8 @@
 
 #include <death/GameParticles.h>
 
+DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
+
 LudumGame::LudumGame()
 {		
 	game_name = "Quantic Paouf IV";
@@ -32,8 +34,6 @@ Black holes and Shadows are dangerous.
 [ButtonB] Ejects particles
 		)INSTRUCTIONS";
 }
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {

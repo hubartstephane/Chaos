@@ -20,10 +20,10 @@ class LudumPlayer : public death::Player
 
 public:
 
+	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
+
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
-
-	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 
 	/** change the length of the player */
 	void SetPlayerLength(float in_length, bool increment);

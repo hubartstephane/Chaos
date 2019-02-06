@@ -1,6 +1,7 @@
 #pragma once
 
 #include <death/GameLevel.h>
+#include <death/GameLevelInstance.h>
 #include <death/TiledMapParticle.h>
 
 #include <chaos/StandardHeaders.h>

@@ -289,14 +289,14 @@ namespace death
 			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return layer.get(); }
 
 			/** get the level (for this layer) */
-			Level * GetTypedLevel();
+			Level * GetTiledLevel();
 			/** get the level (for this layer) */
-			Level const * GetTypedLevel() const;
+			Level const * GetTiledLevel() const;
 
 			/** get the level instance for this layer */
-			LevelInstance * GetTypedLevelInstance();
+			LevelInstance * GetTiledLevelInstance();
 			/** get the level instance for this layer */
-			LevelInstance const * GetTypedLevelInstance() const;
+			LevelInstance const * GetTiledLevelInstance() const;
 
 			/** get the game */
 			Game * GetGame();
@@ -441,9 +441,9 @@ namespace death
 		public:
 
 			/** level getter with a cast */
-			Level * GetTypedLevel();
+			Level * GetTiledLevel();
 			/** level getter with a cast */
-			Level const * GetTypedLevel() const;
+			Level const * GetTiledLevel() const;
 
 			/** get the tiled map */
 			chaos::TiledMap::Map * GetTiledMap();

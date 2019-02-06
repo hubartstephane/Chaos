@@ -337,26 +337,26 @@ namespace death
 			return level_instance->GetGame(); 
 		}
 
-		Level * LayerInstance::GetTypedLevel()
+		Level * LayerInstance::GetTiledLevel()
 		{
 			if (level_instance == nullptr)
 				return nullptr;
-			return level_instance->GetTypedLevel();
+			return level_instance->GetTiledLevel();
 		}
 
-		Level const * LayerInstance::GetTypedLevel() const
+		Level const * LayerInstance::GetTiledLevel() const
 		{
 			if (level_instance == nullptr)
 				return nullptr;
-			return level_instance->GetTypedLevel();
+			return level_instance->GetTiledLevel();
 		}
 
-		LevelInstance * LayerInstance::GetTypedLevelInstance()
+		LevelInstance * LayerInstance::GetTiledLevelInstance()
 		{
 			return level_instance;
 		}
 
-		LevelInstance const * LayerInstance::GetTypedLevelInstance() const
+		LevelInstance const * LayerInstance::GetTiledLevelInstance() const
 		{
 			return level_instance;
 		}
@@ -460,7 +460,7 @@ namespace death
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer)
 		{
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 
 			// search the bounding box (explicit or not)
 			chaos::box2 box;
@@ -575,7 +575,7 @@ namespace death
 			if (particle_layer == nullptr)
 				return true;
 			// no level ?
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 			if (level == nullptr)
 				return true;
 			// initialize each allocations
@@ -617,7 +617,7 @@ namespace death
 					return nullptr;
 
 				// create a particle layer
-				particle_layer = GetTypedLevel()->CreateParticleLayer(this);
+				particle_layer = GetTiledLevel()->CreateParticleLayer(this);
 				if (particle_layer == nullptr)
 					return false;
 				// add name and tag to the particle_layer
@@ -632,7 +632,7 @@ namespace death
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)
 		{
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 
 			// early exit for empty tile_layer
 			size_t count = tile_layer->tile_indices.size();
@@ -697,7 +697,7 @@ namespace death
 
 		void LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
-			death::TiledMap::Level * level = GetTypedLevel();
+			death::TiledMap::Level * level = GetTiledLevel();
 
 			size_t count = trigger_surfaces.size();
 			for (size_t i = 0; i < count; ++i)
@@ -716,7 +716,7 @@ namespace death
 
 		void LayerInstance::ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
-			death::TiledMap::Level * level = GetTypedLevel();
+			death::TiledMap::Level * level = GetTiledLevel();
 
 			// no particle layer, no collisions
 			if (particle_layer == nullptr)
@@ -761,8 +761,8 @@ namespace death
 
 			// camera is expressed in world, so is for layer
 			chaos::box2 layer_box  = GetBoundingBox(true);
-			chaos::box2 camera_box = GetTypedLevelInstance()->GetCameraBox();
-			chaos::box2 initial_camera_box = GetTypedLevelInstance()->GetInitialCameraBox();
+			chaos::box2 camera_box = GetTiledLevelInstance()->GetCameraBox();
+			chaos::box2 initial_camera_box = GetTiledLevelInstance()->GetInitialCameraBox();
 
 			// XXX : we want some layers to appear further or more near the camera
 			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
@@ -847,7 +847,7 @@ namespace death
 
 		chaos::TiledMap::Map * LevelInstance::GetTiledMap()
 		{
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 			if (level == nullptr)
 				return nullptr;
 			return level->GetTiledMap();
@@ -855,18 +855,18 @@ namespace death
 
 		chaos::TiledMap::Map const * LevelInstance::GetTiledMap() const 
 		{
-			Level const * level = GetTypedLevel();
+			Level const * level = GetTiledLevel();
 			if (level == nullptr)
 				return nullptr;
 			return level->GetTiledMap();
 		}
 
-		Level * LevelInstance::GetTypedLevel()
+		Level * LevelInstance::GetTiledLevel()
 		{
 			return dynamic_cast<Level*>(GetLevel());
 		}
 
-		Level const * LevelInstance::GetTypedLevel() const
+		Level const * LevelInstance::GetTiledLevel() const
 		{
 			return dynamic_cast<Level const *>(GetLevel());
 		}
@@ -933,7 +933,7 @@ namespace death
 
 		bool LevelInstance::CreateLayerInstances(Game * in_game)
 		{
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 
 			chaos::TiledMap::Map * tiled_map = GetTiledMap();
 
@@ -969,7 +969,7 @@ namespace death
 		chaos::GPURenderMaterial * LevelInstance::GetDefaultRenderMaterial()
 		{
 			if (default_material == nullptr)
-				default_material = GetTypedLevel()->GetDefaultRenderMaterial(); // create material and cache
+				default_material = GetTiledLevel()->GetDefaultRenderMaterial(); // create material and cache
 			return default_material.get();
 		}
 
@@ -1026,7 +1026,7 @@ namespace death
 
 		void LevelInstance::CreateCamera()
 		{
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 
 			// search CAMERA NAME
 			std::string const * camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
@@ -1065,7 +1065,7 @@ namespace death
 			if (player == nullptr)
 				return;
 
-			Level * level = GetTypedLevel();
+			Level * level = GetTiledLevel();
 
 			// search PLAYER START NAME
 			std::string const * player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");

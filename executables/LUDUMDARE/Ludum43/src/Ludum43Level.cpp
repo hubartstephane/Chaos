@@ -232,7 +232,7 @@ void LudumLevelInstance::OnLevelStarted()
 	// change the background image and the level time
 	std::string const * background_name = nullptr;
 
-	death::TiledMap::Level const * level = GetTypedLevel(); // dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());
+	death::TiledMap::Level const * level = GetTiledLevel(); // dynamic_cast<death::TiledMap::Level const *>(new_level_instance->GetLevel());
 	if (level != nullptr)
 		background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");
 

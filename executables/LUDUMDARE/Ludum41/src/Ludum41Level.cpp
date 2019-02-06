@@ -1,5 +1,7 @@
 #include "Ludum41Level.h"
 #include "Ludum41Game.h"
+#include "Ludum41GameInstance.h"
+#include "Ludum41Player.h"
 
 
 
@@ -20,6 +22,9 @@ death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_ga
 {
 	return new LudumLevelInstance;
 }
+
+
+DEATH_GAMEFRAMEWORK_IMPLEMENTLEVELINSTANCEGETTERS(Ludum);
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {

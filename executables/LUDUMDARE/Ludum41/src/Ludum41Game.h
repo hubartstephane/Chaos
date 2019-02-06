@@ -20,6 +20,7 @@
 
 #include <death/Game.h>
 #include <death/GameHUD.h>
+#include <death/GameFramework.h>
 
 // =================================================
 // LudumGame
@@ -57,12 +58,8 @@ public:
 	/** constructor */
 	LudumGame();
 
-	/** utility getters + cast */
-	class LudumPlayer * GetLudumPlayer(int player_index);
-	class LudumPlayer const * GetLudumPlayer(int player_index) const;
+	DEATH_GAMEFRAMEWORK_DECLAREGAMEGETTERS(Ludum);
 
-	class LudumGameInstance * GetLudumGameInstance();
-	class LudumGameInstance const * GetLudumGameInstance() const;
 
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }

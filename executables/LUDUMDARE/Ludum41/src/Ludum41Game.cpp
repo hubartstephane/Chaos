@@ -24,35 +24,7 @@ LudumGame::LudumGame()
 	max_life = 10;
 }
 
-class LudumPlayer * LudumGame::GetLudumPlayer(int player_index)
-{
-	return dynamic_cast<LudumPlayer*>(GetPlayer(player_index));
-}
-
-class LudumPlayer const * LudumGame::GetLudumPlayer(int player_index) const
-{
-	return dynamic_cast<LudumPlayer const *>(GetPlayer(player_index));
-}
-
-class LudumGameInstance * LudumGame::GetLudumGameInstance()
-{
-	return dynamic_cast<LudumGameInstance*>(GetGameInstance());
-}
-
-class LudumGameInstance const * LudumGame::GetLudumGameInstance() const
-{
-	return dynamic_cast<LudumGameInstance const *>(GetGameInstance());
-}
-
-
-
-
-
-
-
-
-
-
+DEATH_GAMEFRAMEWORK_IMPLEMENTGAMEGETTERS(Ludum);
 
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()

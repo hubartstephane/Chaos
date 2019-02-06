@@ -4,6 +4,7 @@
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/Player.h>
+#include <death/GameFramework.h>
 
 // =========================================================
 // LudumPlayer
@@ -21,6 +22,8 @@ public:
 
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
+
+	DEATH_GAMEFRAMEWORK_DECLAREPLAYERGETTERS(Ludum);
 
 	/** change the length of the player */
 	void SetPlayerLength(float in_length, bool increment);

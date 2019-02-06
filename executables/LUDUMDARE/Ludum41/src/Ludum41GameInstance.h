@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h> 
 #include <death/Game.h>
 #include <death/GameInstance.h>
+#include <death/GameFramework.h>
 
 // =========================================================
 // LudumGameInstance
@@ -15,6 +16,8 @@ public:
 
 	/** constructor */
 	LudumGameInstance(death::Game * in_game);
+
+	DEATH_GAMEFRAMEWORK_DECLAREGAMEINSTANCEGETTERS(Ludum);
 
 protected:
 

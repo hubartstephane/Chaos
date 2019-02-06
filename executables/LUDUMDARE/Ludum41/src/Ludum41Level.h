@@ -5,6 +5,7 @@
 
 #include <death/Game.h>
 #include <death/GameLevel.h>
+#include <death/GameFramework.h>
 
 // =================================================
 // Levels
@@ -41,6 +42,8 @@ public:
 class LudumLevelInstance : public death::GameLevelInstance
 {
 public:
+
+	DEATH_GAMEFRAMEWORK_DECLARELEVELINSTANCEGETTERS(Ludum);
 
 	/** override */
 	virtual bool IsLevelCompleted() const override;

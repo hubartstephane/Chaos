@@ -8,6 +8,7 @@
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
+#include <death/GameFramework.h>
 
 #include "Ludum43Game.h"
 
@@ -65,14 +66,14 @@ public:
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);
 
+	DEATH_GAMEFRAMEWORK_DECLARELEVELINSTANCEGETTERS(Ludum);
+
 	/** get the current time out */
 	float GetLevelTimeout() const { return level_timeout; }
 
 protected:
 
-	/** get the typed level */
-	LudumLevel * GetTypedLevel();
-	LudumLevel const * GetTypedLevel() const;
+
 
 	virtual bool CheckGameOverCondition() override;
 

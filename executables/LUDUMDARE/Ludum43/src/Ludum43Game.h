@@ -18,7 +18,9 @@
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
 #include <chaos/GPUFramebuffer.h>
+
 #include <death/Game.h>
+#include <death/GameFramework.h>
 
 // =================================================
 // LudumGame
@@ -52,12 +54,7 @@ public:
 	/** constructor */
 	LudumGame();
 
-	/** utility getters + cast */
-	class LudumPlayer * GetLudumPlayer(int player_index);
-	class LudumPlayer const * GetLudumPlayer(int player_index) const;
-
-	class LudumGameInstance * GetLudumGameInstance();
-	class LudumGameInstance const * GetLudumGameInstance() const;
+	DEATH_GAMEFRAMEWORK_DECLAREGAMEGETTERS(Ludum);
 
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;

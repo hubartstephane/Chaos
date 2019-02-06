@@ -1,9 +1,11 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
+
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/Player.h>
+#include <death/GameFramework.h>
 
 #include "Ludum43Particles.h"
 
@@ -19,11 +21,7 @@ public:
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
 
-	/** utility function to get other classes + casting */
-	class LudumGame * GetLudumGame();
-	class LudumGame const * GetLudumGame() const;
-	class LudumGameInstance * GetLudumGameInstance();
-	class LudumGameInstance const * GetLudumGameInstance() const;
+	DEATH_GAMEFRAMEWORK_DECLAREPLAYERGETTERS(Ludum);
 
 	/** get the player particle */
 	ParticlePlayer * GetPlayerParticle();

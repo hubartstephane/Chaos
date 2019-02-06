@@ -26,14 +26,34 @@ namespace death
 		Player(class GameInstance * in_game_instance);
 
 		/** returns the game */
-		Game * GetGame();
+		class Game * GetGame();
 		/** returns the game */
-		Game const * GetGame() const;
+		class Game const * GetGame() const;
 
-		/** returns the game  instance */
+		/** returns the game instance */
 		class GameInstance * GetGameInstance() { return game_instance; }
 		/** returns the game instance */
 		class GameInstance const * GetGameInstance() const { return game_instance; }
+
+		/** returns the level */
+		class GameLevel * GetLevel();
+		/** returns the level */
+		class GameLevel const * GetLevel() const;
+
+		/** returns the level instance */
+		class GameLevelInstance * GetLevelInstance();
+		/** returns the level */
+		class GameLevelInstance const * GetLevelInstance() const;
+
+
+
+
+
+
+
+
+
+
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager

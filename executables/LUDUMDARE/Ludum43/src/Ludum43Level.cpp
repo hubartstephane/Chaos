@@ -1,5 +1,7 @@
 #include "Ludum43Level.h"
 #include "Ludum43Game.h"
+#include "Ludum43Player.h"
+#include "Ludum43GameInstance.h"
 
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
@@ -179,15 +181,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
-LudumLevel * LudumLevelInstance::GetTypedLevel()
-{
-	return dynamic_cast<LudumLevel*>(GetLevel());
-}
-
-LudumLevel const * LudumLevelInstance::GetTypedLevel() const
-{
-	return dynamic_cast<LudumLevel const *>(GetLevel());
-}
+DEATH_GAMEFRAMEWORK_IMPLEMENTLEVELINSTANCEGETTERS(Ludum);
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {

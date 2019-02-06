@@ -23,17 +23,35 @@ namespace death
 		/** constructor */
 		GameInstance(Game * in_game);
 
+
+		/** returns the game */
+		class Game * GetGame() { return game; }
+		/** returns the game */
+		class Game const * GetGame() const { return game; }
+
+		/** returns the level */
+		class GameLevel * GetLevel();
+		/** returns the level */
+		class GameLevel const * GetLevel() const;
+
+		/** returns the level instance */
+		class GameLevelInstance * GetLevelInstance();
+		/** returns the level instance */
+		class GameLevelInstance const * GetLevelInstance() const;
+
 		/** get the player by its index */
 		Player * GetPlayer(int player_index);
 		/** get the player by its index */
 		Player const * GetPlayer(int player_index) const;
+
+
+
+
+
+
 		/** get the number of players */
 		size_t GetPlayerCount() const { return players.size(); }
 
-		/** returns the game */
-		Game * GetGame() { return game; }
-		/** returns the game */
-		Game const * GetGame() const { return game; }
 
 		/** create one player and give it the gamepad provided if any */
 		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);

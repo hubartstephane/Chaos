@@ -31,6 +31,43 @@ namespace death
 		return game_instance->GetGame();
 	}
 
+	GameLevel * Player::GetLevel()
+	{
+		Game * game = GetGame();
+		if (game == nullptr)
+			return nullptr;
+		return game->GetLevel();
+	}
+	
+	GameLevel const * Player::GetLevel() const
+	{
+		Game const * game = GetGame();
+		if (game == nullptr)
+			return nullptr;
+		return game->GetLevel();
+	}
+	
+	GameLevelInstance * Player::GetLevelInstance()
+	{
+		Game * game = GetGame();
+		if (game == nullptr)
+			return nullptr;
+		return game->GetLevelInstance();
+	}
+	
+	GameLevelInstance const * Player::GetLevelInstance() const
+	{
+		Game const * game = GetGame();
+		if (game == nullptr)
+			return nullptr;
+		return game->GetLevelInstance();
+	}
+
+
+
+
+
+
 	void Player::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation)
 	{
 		player_allocations = in_allocation;

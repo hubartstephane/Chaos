@@ -13,25 +13,7 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 {
 }
 
-class LudumGame * LudumPlayer::GetLudumGame()
-{
-	return dynamic_cast<LudumGame*>(GetGame());
-}
-
-class LudumGame const * LudumPlayer::GetLudumGame() const
-{
-	return dynamic_cast<LudumGame const *>(GetGame());
-}
-
-class LudumGameInstance * LudumPlayer::GetLudumGameInstance()
-{
-	return dynamic_cast<LudumGameInstance*>(GetGameInstance());
-}
-
-class LudumGameInstance const * LudumPlayer::GetLudumGameInstance() const
-{
-	return dynamic_cast<LudumGameInstance const *>(GetGameInstance());
-}
+DEATH_GAMEFRAMEWORK_IMPLEMENTPLAYERGETTERS(Ludum);
 
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {

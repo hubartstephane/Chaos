@@ -1,4 +1,5 @@
 #include <death/GameInstance.h>
+#include <death/GameLevel.h>
 #include <death/Player.h>
 
 namespace death
@@ -7,6 +8,27 @@ namespace death
 		game(in_game)
 	{
 		assert(in_game != nullptr);
+	}
+
+	
+	GameLevel * GameInstance::GetLevel()
+	{
+		return game->GetLevel();
+	}
+	
+	GameLevel const * GameInstance::GetLevel() const
+	{
+		return game->GetLevel();
+	}
+
+	GameLevelInstance * GameInstance::GetLevelInstance()
+	{
+		return game->GetLevelInstance();
+	}
+	
+	GameLevelInstance const * GameInstance::GetLevelInstance() const
+	{
+		return game->GetLevelInstance();
 	}
 
 	Player * GameInstance::GetPlayer(int player_index)
@@ -26,6 +48,13 @@ namespace death
 				return players[i].get();
 		return nullptr;
 	}
+
+
+
+
+
+
+
 
 	int GameInstance::GetBestPlayerScore() const
 	{

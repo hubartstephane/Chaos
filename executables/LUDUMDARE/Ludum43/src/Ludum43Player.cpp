@@ -1,4 +1,6 @@
 #include "Ludum43Player.h"
+#include "Ludum43Level.h"
+#include "Ludum43LevelInstance.h"
 #include "Ludum43Game.h"
 #include "Ludum43GameInstance.h"
 #include "Ludum43Particles.h"

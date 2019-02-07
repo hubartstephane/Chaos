@@ -54,7 +54,6 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-
 	GameInstance const * GameLevelInstance::GetGameInstance() const 
 	{ 
 		return game->GetGameInstance(); 
@@ -77,7 +76,6 @@ namespace death
 			camera = game->GetViewBox();
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 	}
-
 
 	void GameLevelInstance::OnPlayerLevelStarted(Player * player)
 	{
@@ -119,8 +117,8 @@ namespace death
 		chaos::Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)
 			return false;
-
-		level_clock = root_clock->CreateChildClock("level_clock"); // shuxxx  probleme pour passer dfe niveau parce que la clock existe deja
+		// note : this can fails if the named clock already exists
+		level_clock = root_clock->CreateChildClock("level_clock"); 
 		if (level_clock == nullptr)
 			return false;
 

@@ -820,8 +820,6 @@ namespace death
 			return result;
 		}
 
-
-#define DEATH_EMPTY_TOKEN
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
 		result_type constness * LayerInstance::func_name(char const * name) constness\
 		{\
@@ -829,16 +827,15 @@ namespace death
 				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, name);\
 		}
-		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, const);
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
-		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
-		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, const);
 
-#undef DEATH_EMPTY_TOKEN
 #undef DEATH_FIND_OBJECT
 
 		// =====================================
@@ -973,8 +970,6 @@ namespace death
 			return default_material.get();
 		}
 
-
-#define DEATH_EMPTY_TOKEN
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
 		result_type constness * LevelInstance::func_name(char const * name) constness\
 		{\
@@ -987,16 +982,15 @@ namespace death
 			}\
 			return nullptr;\
 		}
-		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, const);
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, const);
-		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, const);
-		DEATH_FIND_OBJECT(CameraObject, FindCamera, DEATH_EMPTY_TOKEN);
+		DEATH_FIND_OBJECT(CameraObject, FindCamera, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(CameraObject, FindCamera, const);
 
-#undef DEATH_EMPTY_TOKEN
 #undef DEATH_FIND_OBJECT
 
 		LayerInstance * LevelInstance::FindLayerInstance(char const * name)

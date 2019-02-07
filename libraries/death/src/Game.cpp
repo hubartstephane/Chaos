@@ -27,6 +27,7 @@ namespace death
 	{
 
 	}
+
 #if _DEBUG
 	void Game::SetCheatSkipLevelRequired(bool value)
 	{
@@ -88,40 +89,39 @@ namespace death
 			if (game_instance->OnKeyEvent(key, action))
 				return true;
 
-		// MAIN MENU to PLAYING
+		// only care for keys that are PRESSED (ignore RELEASE, ignore REPEAT)
 		if (action == GLFW_PRESS)
+		{
+			// MAIN MENU to PLAYING
 			if (RequireStartGame(nullptr))
 				return true;
-
-		// PLAYING to PAUSE
-		if ((key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER || key == GLFW_KEY_P) && action == GLFW_PRESS)
-			if (RequireTogglePause())
-				return true;
-
-		// QUIT GAME
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-			if (RequireExitGame())
-				return true;
-
-		// CHEAT CODE TO SKIP LEVEL
+			// PLAYING to PAUSE
+			if (key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER || key == GLFW_KEY_P)
+				if (RequireTogglePause())
+					return true;
+			// QUIT GAME
+			if (key == GLFW_KEY_ESCAPE)
+				if (RequireExitGame())
+					return true;
+			// CHEAT CODE TO SKIP LEVEL
 #if _DEBUG
-		if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-		{
-			SetCheatSkipLevelRequired(true);
-			return true;
-		}
-		if (key == GLFW_KEY_F2 && action == GLFW_PRESS)
-		{
-			SetCheatMode(!GetCheatMode());
-			return true;
-		}
-		if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
-		{
-			ReloadConfigurationFile();
-			return true;
-		}
+			if (key == GLFW_KEY_F1)
+			{
+				SetCheatSkipLevelRequired(true);
+				return true;
+			}
+			if (key == GLFW_KEY_F2)
+			{
+				SetCheatMode(!GetCheatMode());
+				return true;
+			}
+			if (key == GLFW_KEY_F3)
+			{
+				ReloadConfigurationFile();
+				return true;
+			}
 #endif
-
+		}
 		return false;
 	}
 
@@ -163,25 +163,21 @@ namespace death
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 		FillUniformProvider(main_uniform_provider);
-
 		// the viewport
 		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
-
 		// the related box
 		glm::vec2 view_size = GetViewSize();
 		main_uniform_provider.AddVariableValue("view_size", view_size);
-
 		// boxes
 		chaos::box2 world = GetWorldBox();
 		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
 		chaos::box2 view = GetViewBox();
 		main_uniform_provider.AddVariableValue("view_box", chaos::EncodeBoxToVector(world));
-
 		// the time
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
 
-
+		// rendering
 		chaos::RenderParams render_params;
 		render_params.viewport = viewport;
 		render_params.screen_size = size;
@@ -198,20 +194,20 @@ namespace death
 
 	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
+		// display the level instance
 		DoDisplayLevel(renderer, uniform_provider, render_params);
+		// display the hud (AFTER the level)
 		DoDisplayHUD(renderer, uniform_provider, render_params);
 	}
 
 	void Game::DoDisplayLevel(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
-	{
-		// display the level instance
+	{		
 		if (current_level_instance != nullptr)
 			current_level_instance->Display(renderer, uniform_provider, render_params);
 	}
 
 	void Game::DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
-	{
-		// display the hud (AFTER the level)
+	{	
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);
 	}
@@ -231,9 +227,11 @@ namespace death
 	{
 		if (tiled_map_manager != nullptr)
 		{
+			// find or create folder
 			chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
 			if (folder_input == nullptr)
 				return false;
+			// add sprites from TiledMap
 			if (!chaos::TiledMapTools::AddIntoAtlasInput(tiled_map_manager.get(), folder_input))
 				return false;
 		}
@@ -245,12 +243,11 @@ namespace death
 		// get the directory where the sprites are
 		std::string sprite_directory;
 		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
-
-		// Add sprites
+		// find or create folder
 		chaos::BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites", 0);
 		if (folder_info == nullptr)
 			return false;
-
+		// Add sprites
 		folder_info->AddBitmapFilesFromDirectory(sprite_directory, true);
 
 		return true;
@@ -270,16 +267,15 @@ namespace death
 		// get the path of the font
 		std::string font_path;
 		chaos::JSONTools::GetAttribute(config, font_config_name, font_path);
-
 		// Add the font
 		chaos::BitmapAtlas::FontInfoInputParams font_params;
 		font_params.max_character_width = 64;
 		font_params.max_character_height = 64;
 
-		chaos::BitmapAtlas::FontInfoInput * font_info1 =
-			input.AddFont(font_path.c_str(), nullptr, true, font_name, 0, font_params);
+		if (input.AddFont(font_path.c_str(), nullptr, true, font_name, 0, font_params) == nullptr)
+			return false;
 
-		return (font_info1 != nullptr);
+		return true;
 	}
 
 	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
@@ -341,12 +337,10 @@ namespace death
 				if (tiled_map_manager == nullptr)
 					return nullptr;
 			}
-
 			// load the resource
 			chaos::TiledMap::Map * tiled_map = tiled_map_manager->LoadMap(path);
 			if (tiled_map == nullptr)
 				return false;
-
 			// allocate a level
 			death::TiledMap::Level * result = CreateTiledMapLevel();
 			if (result == nullptr)
@@ -398,7 +392,6 @@ namespace death
 		return true;
 	}
 
-#define DEATH_EMPTY_TOKEN
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
 	result constness * Game::funcname(param_type param, chaos::RenderableLayerSystem constness * root) constness\
 	{\
@@ -411,8 +404,8 @@ namespace death
 		return dynamic_cast<result constness*>(root->FindChildRenderable(param));\
 	}
 #define DEATH_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
-	DEATH_FIND_RENDERABLE_CHILD(result, funcname, DEATH_EMPTY_TOKEN, char const *);\
-	DEATH_FIND_RENDERABLE_CHILD(result, funcname, DEATH_EMPTY_TOKEN, chaos::TagType);\
+	DEATH_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), char const *);\
+	DEATH_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), chaos::TagType);\
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
 
@@ -421,7 +414,6 @@ namespace death
 
 #undef DEATH_FIND_RENDERABLE_CHILD_ALL
 #undef DEATH_FIND_RENDERABLE_CHILD
-#undef DEATH_EMPTY_TOKEN
 
 	chaos::RenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
 	{

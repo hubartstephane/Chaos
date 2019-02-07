@@ -145,6 +145,7 @@ T max(T a, T b)
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/facilities/empty.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> 

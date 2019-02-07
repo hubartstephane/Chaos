@@ -59,7 +59,6 @@ namespace death
 
 	public:
 
-
 		/** get the player by its index */
 		Player * GetPlayer(int player_index);
 		/** get the player by its index */
@@ -79,17 +78,6 @@ namespace death
 		GameInstance * GetGameInstance() { return game_instance.get(); }
 		/** get the game instance */
 		GameInstance const * GetGameInstance() const { return game_instance.get(); }
-
-
-
-
-
-
-
-
-
-
-
 
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
@@ -130,10 +118,6 @@ namespace death
 		chaos::Clock * GetRootClock() { return root_clock.get(); }
 		/** returns root clock */
 		chaos::Clock const * GetRootClock() const { return root_clock.get(); }
-
-
-
-
 
 		// Renderable layers
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname)\
@@ -203,8 +187,6 @@ namespace death
 		/** reloading the configuration file */
 		bool ReloadConfigurationFile();
 
-
-
 		/** getter on mouse sensitivity */
 		float GetMouseSensitivity() const { return mouse_sensitivity;}
 		/** getter on gamepad sensitivity */
@@ -237,8 +219,6 @@ namespace death
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
-
-
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -412,8 +392,6 @@ namespace death
 
 		/** the current gamepad manager */
 		chaos::shared_ptr<chaos::MyGLFW::GamepadManager> gamepad_manager;
-		/** the gamepad data */
-		chaos::MyGLFW::GamepadData gamepad_data;
 
 		/** the texture atlas */
 		chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;

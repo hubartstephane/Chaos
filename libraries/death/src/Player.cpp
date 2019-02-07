@@ -63,11 +63,6 @@ namespace death
 		return game->GetLevelInstance();
 	}
 
-
-
-
-
-
 	void Player::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation)
 	{
 		player_allocations = in_allocation;

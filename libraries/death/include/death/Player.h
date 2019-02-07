@@ -45,16 +45,6 @@ namespace death
 		/** returns the level */
 		class GameLevelInstance const * GetLevelInstance() const;
 
-
-
-
-
-
-
-
-
-
-
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
 
@@ -64,7 +54,6 @@ namespace death
 		chaos::ParticleAllocation const * GetPlayerAllocation() const { return player_allocations.get(); }
 		/** set the player allocation */
 		virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
-
 
 		/** get the index of the player */
 		int GetPlayerIndex() const { return player_index; }

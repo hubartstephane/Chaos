@@ -5,6 +5,8 @@
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/Tickable.h>
+
+#include <death/GameFramework.h>
 #include <death/Game.h>
 
 namespace death
@@ -16,34 +18,33 @@ namespace death
 
 	class Player : public chaos::Tickable
 	{
-		friend class Game;
-		friend class GameInstance;
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;
 
 	public:
 
 		/** constructor */
-		Player(class GameInstance * in_game_instance);
+		Player(GameInstance * in_game_instance);
 
 		/** returns the game */
-		class Game * GetGame();
+		Game * GetGame();
 		/** returns the game */
-		class Game const * GetGame() const;
+		Game const * GetGame() const;
 
 		/** returns the game instance */
-		class GameInstance * GetGameInstance() { return game_instance; }
+		GameInstance * GetGameInstance() { return game_instance; }
 		/** returns the game instance */
-		class GameInstance const * GetGameInstance() const { return game_instance; }
+		GameInstance const * GetGameInstance() const { return game_instance; }
 
 		/** returns the level */
-		class GameLevel * GetLevel();
+		GameLevel * GetLevel();
 		/** returns the level */
-		class GameLevel const * GetLevel() const;
+		GameLevel const * GetLevel() const;
 
 		/** returns the level instance */
-		class GameLevelInstance * GetLevelInstance();
+		GameLevelInstance * GetLevelInstance();
 		/** returns the level */
-		class GameLevelInstance const * GetLevelInstance() const;
+		GameLevelInstance const * GetLevelInstance() const;
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
@@ -88,6 +89,9 @@ namespace death
 
 	protected:
 
+		/** initialize the game instance */
+		virtual bool Initialize(death::GameInstance * in_game_instance);
+
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 		/** handle keyboard input */
@@ -118,7 +122,7 @@ namespace death
 	protected:
 
 		/** the game instance owning the player */
-		class GameInstance * game_instance = nullptr;
+		GameInstance * game_instance = nullptr;
 		/** a gamepad that can be given to the player */
 		chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad;
 
@@ -144,7 +148,6 @@ namespace death
 
 	class PlayerGamepadCallbacks : public chaos::MyGLFW::GamepadCallbacks
 	{
-		friend class Player;
 
 	public:
 

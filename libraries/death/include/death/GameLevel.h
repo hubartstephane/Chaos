@@ -3,6 +3,8 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 
+#include <death/GameFramework.h>
+
 namespace death
 {
 	// =====================================
@@ -11,12 +13,12 @@ namespace death
 
 	class GameLevel : public chaos::ReferencedObject
 	{
-		friend class Game;
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
 
 		/** create a level instance for that level */
-		class GameLevelInstance * CreateLevelInstance(Game * in_game);
+		GameLevelInstance * CreateLevelInstance(Game * in_game);
 
 		/** the index of that level */
 		int GetLevelIndex() const { return level_index; }

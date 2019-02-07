@@ -18,6 +18,7 @@
 #include <chaos/RenderableLayerSystem.h>
 #include <chaos/TimedAccumulator.h>
 
+#include <death/GameFramework.h>
 #include <death/GameHUD.h>
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
@@ -54,31 +55,30 @@ namespace death
 
 		friend class PlayingHUD;
 
-		friend class Player;
-		friend class GameInstance;
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
 
 
 		/** get the player by its index */
-		class Player * GetPlayer(int player_index);
+		Player * GetPlayer(int player_index);
 		/** get the player by its index */
-		class Player const * GetPlayer(int player_index) const;
+		Player const * GetPlayer(int player_index) const;
 
 		/** get currently played level */
-		class GameLevel * GetLevel();
+		GameLevel * GetLevel();
 		/** get currently played level */
-		class GameLevel const * GetLevel() const;
+		GameLevel const * GetLevel() const;
 
 		/** get currently played level */
-		class GameLevelInstance * GetLevelInstance();
+		GameLevelInstance * GetLevelInstance();
 		/** get currently played level */
-		class GameLevelInstance const * GetLevelInstance() const;
+		GameLevelInstance const * GetLevelInstance() const;
 
 		/** get the game instance */
-		class GameInstance * GetGameInstance() { return game_instance.get(); }
+		GameInstance * GetGameInstance() { return game_instance.get(); }
 		/** get the game instance */
-		class GameInstance const * GetGameInstance() const { return game_instance.get(); }
+		GameInstance const * GetGameInstance() const { return game_instance.get(); }
 
 
 
@@ -192,9 +192,9 @@ namespace death
 #endif
 
 		/** get any level */
-		class GameLevel * GetLevel(int level_index);
+		GameLevel * GetLevel(int level_index);
 		/** get any level */
-		class GameLevel const * GetLevel(int level_index) const;
+		GameLevel const * GetLevel(int level_index) const;
 
 
 		/** get glfw window */
@@ -332,7 +332,7 @@ namespace death
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();
 		/* load one level */
-		virtual class death::GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path);
+		virtual GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path);
 		/** create one tiled map level */
 		virtual death::TiledMap::Level * CreateTiledMapLevel();
 
@@ -478,7 +478,7 @@ namespace death
 		chaos::shared_ptr<chaos::TiledMap::Manager> tiled_map_manager;
 
 		/** level data */
-		std::vector<chaos::shared_ptr<class GameLevel>> levels;
+		std::vector<chaos::shared_ptr<GameLevel>> levels;
 		/** the current level instance */
 		chaos::shared_ptr<GameLevelInstance> current_level_instance;
 

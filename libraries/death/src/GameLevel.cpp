@@ -10,10 +10,12 @@ namespace death
 
 	GameLevelInstance * GameLevel::CreateLevelInstance(Game * in_game)
 	{
-		GameLevelInstance * result = DoCreateLevelInstance(in_game); // create the instance
+		// create the instance
+		GameLevelInstance * result = DoCreateLevelInstance(in_game); 
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize(in_game, this)) // additional initialization
+		// additional initialization
+		if (!result->Initialize(in_game, this)) 
 		{
 			delete(result);
 			return nullptr;

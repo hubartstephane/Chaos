@@ -8,6 +8,8 @@
 #include <chaos/ClockManager.h>
 #include <chaos/ParticleManager.h>
 
+#include <death/GameFramework.h>
+
 namespace death
 {
 
@@ -17,32 +19,29 @@ namespace death
 
 	class GameLevelInstance : public chaos::Renderable
 	{
-		friend class GameLevel;
-		friend class Game;
-		friend class Player;
-		friend class GameInstance;
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
 
 		/** get the level corresponding to this instance */
-		class GameLevel * GetLevel();
+		GameLevel * GetLevel();
 		/** get the level corresponding to this instance */
-		class GameLevel const * GetLevel() const;
+		GameLevel const * GetLevel() const;
 
 		/** get the game */
-		class Game * GetGame();
+		Game * GetGame();
 		/** get the game */
-		class Game const * GetGame() const;
+		Game const * GetGame() const;
 
 		/** get the game instance */
-		class GameInstance * GetGameInstance();
+		GameInstance * GetGameInstance();
 		/** get the game instance */
-		class GameInstance const * GetGameInstance() const;
+		GameInstance const * GetGameInstance() const;
 
 		/** get a player */
-		class Player * GetPlayer(int player_index);
+		Player * GetPlayer(int player_index);
 		/** get a player */
-		class Player const * GetPlayer(int player_index) const;
+		Player const * GetPlayer(int player_index) const;
 
 		/** the camera box getter */
 		chaos::box2 GetCameraBox() const { return camera_box; }
@@ -87,9 +86,9 @@ namespace death
 		virtual bool Initialize(Game * in_game, GameLevel * in_level);
 
 		/** called for each player whenever a level is started */
-		virtual void OnPlayerLevelStarted(class Player * player);
+		virtual void OnPlayerLevelStarted(Player * player);
 		/** called for each player whenever a level is ended */
-		virtual void OnPlayerLevelEnded(class Player * player);
+		virtual void OnPlayerLevelEnded(Player * player);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);

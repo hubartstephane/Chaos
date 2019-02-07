@@ -49,13 +49,6 @@ namespace death
 		return nullptr;
 	}
 
-
-
-
-
-
-
-
 	int GameInstance::GetBestPlayerScore() const
 	{
 		int result = 0;
@@ -113,11 +106,16 @@ namespace death
 		Player * result = DoCreatePlayer();
 		if (result == nullptr)
 			return nullptr;
+		// initialize the player
+		if (!result->Initialize(this))
+		{
+			delete(result);
+			return result;
+		}
 		// insert the player in our list
 		players.push_back(result);
 		// give the physical device to the player
 		result->CapturePhysicalGamepad(in_physical_gamepad);
-
 
 		return result;
 	}
@@ -224,13 +222,11 @@ namespace death
 	void GameInstance::OnEnterPause()
 	{
 		OnPauseStateUpdateClocks(true);
-
 	}
 
 	void GameInstance::OnLeavePause()
 	{
 		OnPauseStateUpdateClocks(false);
-
 	}
 
 	void GameInstance::OnGameOver()

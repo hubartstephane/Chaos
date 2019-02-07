@@ -2,8 +2,6 @@
 
 #include <chaos/ParticleDefault.h>
 
-
-
 namespace death
 {
 
@@ -11,7 +9,7 @@ namespace death
 	// Player
 	// =================================================
 
-	Player::Player(class GameInstance * in_game_instance) :
+	Player::Player(GameInstance * in_game_instance) :
 		game_instance(in_game_instance)
 	{
 		assert(in_game_instance != nullptr);
@@ -86,6 +84,11 @@ namespace death
 	bool Player::OnMouseMove(double x, double y)
 	{
 		return false;
+	}
+
+	bool Player::Initialize(death::GameInstance * in_game_instance)
+	{
+		return true;
 	}
 
 	bool Player::CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

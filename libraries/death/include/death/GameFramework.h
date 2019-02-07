@@ -1,11 +1,20 @@
 #pragma once
 
+// declare all friendship for main game classes
+#define DEATH_GAMEFRAMEWORK_ALLFRIENDS()\
+	friend class Player;\
+	friend class GameLevel;\
+	friend class GameLevelInstance;\
+	friend class Game;\
+	friend class GameInstance;
+
+// internal macros (do not use outside this file)
 #define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
 	friend class prefix##Player;\
 	friend class prefix##Level;\
 	friend class prefix##LevelInstance;\
 	friend class prefix##Game;\
-	friend class prefix##GameInstance;\
+	friend class prefix##GameInstance;
 
 #define DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, type)\
 	prefix##type * Get##prefix##type();\

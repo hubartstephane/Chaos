@@ -73,6 +73,8 @@ namespace death
 		main_uniform_provider.AddVariableValue("level_time", level_time);
 
 		chaos::box2 camera = GetCameraBox();
+		if (camera.IsEmpty())
+			camera = game->GetViewBox();
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 	}
 

@@ -322,11 +322,6 @@ death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 	return new LudumLevel();
 }
 
-int LudumGame::AddParticleLayers()
-{
-	return death::Game::AddParticleLayers();
-}
-
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	if (!death::Game::InitializeFromConfiguration(config, config_path))

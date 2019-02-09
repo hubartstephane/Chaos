@@ -113,7 +113,6 @@ namespace death
 
 		/** returns the root time */
 		double GetRootClockTime() const;
-
 		/** returns root clock */
 		chaos::Clock * GetRootClock() { return root_clock.get(); }
 		/** returns root clock */
@@ -167,19 +166,16 @@ namespace death
 		void SetCheatSkipLevelRequired(bool value);
 		/** test whether we want to skip level */
 		bool GetCheatSkipLevelRequired() const;
-
 		/** declare we want to enter cheat mode */
 		void SetCheatMode(bool value);
 		/** test whether we can to loose life */
 		bool GetCheatMode() const;
-
 #endif
 
 		/** get any level */
 		GameLevel * GetLevel(int level_index);
 		/** get any level */
 		GameLevel const * GetLevel(int level_index) const;
-
 
 		/** get glfw window */
 		GLFWwindow * GetGLFWWindow() { return glfw_window; }
@@ -259,12 +255,11 @@ namespace death
 		virtual chaos::SM::StateMachine * DoCreateGameStateMachine();
 		/** create the game state_machine instance */
 		virtual chaos::SM::StateMachineInstance * DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine);
+
 		/** handle keyboards input */
 		virtual void HandleKeyboardInputs();
-
 		/** special action on gamepad input reception */
 		virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
-
 		/** called whenever a gamepad input is comming */
 		virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
@@ -273,26 +268,23 @@ namespace death
 
 		/** create some clocks */
 		virtual bool InitializeClocks();
-
 		/** initialize the game data from configuration file */
 		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload);
-
 		/** initialize a mapping with button names / text generator joker */
 		virtual bool InitializeGamepadButtonInfo();
 		/** initialize the particle text generator */
 		virtual bool InitializeParticleTextGenerator();
 		/** initialize the particle manager */
 		virtual bool InitializeParticleManager();
-		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
-		virtual int AddParticleLayers();
 		/** initialize the GameParticleCreator */
 		virtual bool InitializeGameParticleCreator();
-		/** create the background image */
-		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
-
 		/** initialize the render layer */
 		virtual bool InitializeRootRenderLayer();
 
+		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
+		virtual int AddParticleLayers();
+		/** create the background image */
+		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
 		/** insert a rendering layering */
 		chaos::RenderableLayerSystem * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
 
@@ -400,7 +392,6 @@ namespace death
 
 		/** the rendering layer system */
 		chaos::shared_ptr<chaos::RenderableLayerSystem> root_render_layer;
-
 
 		/** the text generator */
 		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;

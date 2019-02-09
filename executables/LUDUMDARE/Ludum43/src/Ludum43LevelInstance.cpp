@@ -28,6 +28,20 @@ bool LudumLevelInstance::IsLevelCompleted() const
 		ParticlePlayer * player_particle = game->GetPlayerParticle(0);
 		if (player_particle != nullptr)
 		{
+			if (player_particle->level_end_reached)
+				return true;
+		}
+	}
+	return false;
+}
+
+bool LudumLevelInstance::CanCompleteLevel() const
+{
+	if (game != nullptr)
+	{
+		ParticlePlayer * player_particle = game->GetPlayerParticle(0);
+		if (player_particle != nullptr)
+		{
 			if (player_particle->level_end_reached && player_particle->level_end_timer <= 0.0f)
 				return true;
 		}

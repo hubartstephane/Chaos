@@ -48,7 +48,7 @@ namespace death
 	{
 		return cheat_mode;
 	}
-#endif
+#endif // _DEBUG
 
 	void Game::HandleKeyboardInputs()
 	{
@@ -456,9 +456,8 @@ namespace death
 	int Game::AddParticleLayers()
 	{
 		int render_order = 0;
-		particle_manager->AddLayer<death::ParticleBackgroundTrait>(++render_order, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
-
-		return true;
+		particle_manager->AddLayer<death::ParticleBackgroundTrait>(render_order++, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
+		return render_order;
 	}
 
 	bool Game::CreateBackgroundImage(char const * material_name, char const * texture_name)
@@ -927,6 +926,7 @@ namespace death
 
 
 
+		// shuxxx
 
 
 
@@ -970,7 +970,7 @@ namespace death
 		if (GetCheatSkipLevelRequired())
 			return true;
 #endif
-		// game finished
+		// level knows about that
 		death::GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (level_instance->IsLevelCompleted())
@@ -980,6 +980,12 @@ namespace death
 
 	bool Game::CanCompleteLevel()
 	{
+		// cheat code
+#if _DEBUG
+		if (GetCheatSkipLevelRequired())
+			return true;
+#endif
+		// level knows about that
 		death::GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (level_instance->CanCompleteLevel())
@@ -998,7 +1004,7 @@ namespace death
 		// level finished
 		if (CheckLevelCompleted())
 		{
-			if (CanCompleteLevel())
+			if (CanCompleteLevel()) // maybe there is a small delay for an animation or a sound
 			{
 				SetNextLevel(true);
 				return false; // do not call remaining code in TickGameLoop(...) specialization
@@ -1068,7 +1074,6 @@ namespace death
 			return true;
 		return false;
 	}
-
 
 	bool Game::RequireGameOver()
 	{
@@ -1297,13 +1302,6 @@ namespace death
 		// give the instance the responsability 
 		return game_instance->GetPlayer(player_index);
 	}
-
-
-
-
-
-
-
 
 	bool Game::ReloadConfigurationFile()
 	{

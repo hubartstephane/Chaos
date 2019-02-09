@@ -30,12 +30,15 @@ public:
 
 protected:
 
+	/** override */
 	virtual bool CheckGameOverCondition() override;
-
+	/** override */
 	virtual bool IsLevelCompleted() const override;
-
+	/** override */
+	virtual bool CanCompleteLevel() const override;
+	/** override */
 	virtual bool DoTick(double delta_time) override;
-	
+	/** override */
 	virtual void OnLevelStarted() override;
 
 protected:

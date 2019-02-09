@@ -88,6 +88,9 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
+		Game * game = GetGame();
+		if (game != nullptr)
+			life_count = game->initial_life;
 		return true;
 	}
 

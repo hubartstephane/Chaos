@@ -68,9 +68,10 @@ namespace death
 
 	void GameLevelInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
 	{
+		// the timers
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariableValue("level_time", level_time);
-
+		// the main camera
 		chaos::box2 camera = GetCameraBox();
 		if (camera.IsEmpty())
 			camera = game->GetViewBox();

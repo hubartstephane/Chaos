@@ -59,10 +59,10 @@ namespace death
 		/** get the index of the player */
 		int GetPlayerIndex() const { return player_index; }
 
-		/** get the life count */
-		int GetLifeCount() const { return life_count; }
 		/** get the current score */
 		int GetScore() const { return score; }
+		/** get the life count */
+		int GetLifeCount() const { return life_count; }
 		/** returns whether the player is dead or not */
 		bool IsDead() const { return life_count == 0; }
 
@@ -109,12 +109,11 @@ namespace death
 		virtual void HandleGamepadInputs(double delta_time);
 		/** handle the input for our own purpose (consuming any data) */
 		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd);
+		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
+		virtual void ResetCachedInputs();
 
 		/** called whenever player gamepad is disconnected */
 		virtual void OnGamepadDisconnected();
-
-		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
-		virtual void ResetCachedInputs();
 
 		/** tick the player displacement */
 		virtual void TickPlayerDisplacement(double delta_time);

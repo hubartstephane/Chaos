@@ -94,8 +94,6 @@ protected:
 	/** the game main loop */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance);
 
-	/** initialize the particle manager */
-	virtual int AddParticleLayers() override;
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
 	
@@ -128,7 +126,6 @@ protected:
 public:
 
 	/** game settings */
-	//int initial_life = 3;
 	float cooldown = 0.1f;
 
 	float dash_duration = 0.5f;

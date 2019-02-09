@@ -171,13 +171,14 @@ namespace death
 
 	void GameInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
 	{
+		// the clocks
 		double main_time = GetMainClockTime();
 		main_uniform_provider.AddVariableValue("main_time", main_time);
 		double game_time = GetGameClockTime();
 		main_uniform_provider.AddVariableValue("game_time", game_time);
 		double pause_time = GetPauseClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
-
+		// the main player box
 		Player const * player = GetPlayer(0);
 		if (player != nullptr)
 		{
@@ -193,20 +194,21 @@ namespace death
 		if (root_clock == nullptr)
 			return false;
 
+		// main  clock : reseted whenever a new game starts/ends. never paused
 		if (main_clock == nullptr)
 		{
 			main_clock = root_clock->CreateChildClock("main_clock");
 			if (main_clock == nullptr)
 				return false;
 		}
-
+		// game clock : reseted whenever a new game starts/ends. paused in MainMenu and Pause
 		if (game_clock == nullptr)
 		{
 			game_clock = root_clock->CreateChildClock("game_clock");
 			if (game_clock == nullptr)
 				return false;
 		}
-
+		// pause clock : reseted whenever we enter/leave pause. only running during pause
 		if (pause_clock == nullptr)
 		{
 			chaos::ClockCreateParams pause_clock_params;

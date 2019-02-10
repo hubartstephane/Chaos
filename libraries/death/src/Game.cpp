@@ -951,13 +951,17 @@ namespace death
 	{
 		if (game_instance != nullptr)
 		{
+			// check level game over only if game is started. It could be a background level in main menu
+			if (current_level_instance != nullptr)
+			{
+				if (current_level_instance->IsLevelCompleted()) // level completed => forbid GAME OVER, even if game instance says yes
+					return false;
+				if (current_level_instance->CheckGameOverCondition())
+					return true;
+			}
 			// check for game over in game instance
 			if (game_instance->CheckGameOverCondition())
 				return true;
-			// check level game over only if game is started. It could be a background level in main menu
-			if (current_level_instance != nullptr)
-				if (current_level_instance->CheckGameOverCondition()) 
-					return true;
 		}
 		return false; // no gameover
 	}

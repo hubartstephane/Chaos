@@ -26,5 +26,5 @@ bool LudumGameInstance::CheckGameOverCondition()
 		if (particle_player == nullptr)
 			return true;		
 	}
-	return false;
+	return death::GameInstance::CheckGameOverCondition();
 }

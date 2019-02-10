@@ -40,6 +40,8 @@ protected:
 	virtual bool DoTick(double delta_time) override;
 	/** override */
 	virtual void OnLevelStarted() override;
+	/** override */
+	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
 
 protected:
 

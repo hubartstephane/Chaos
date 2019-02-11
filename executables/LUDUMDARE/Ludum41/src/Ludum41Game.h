@@ -31,21 +31,9 @@ class LudumGame : public death::Game
 	friend class LudumChallenge;
 	friend class LudumWindow;
 
-	friend class LudumChallengeRewardPunishment_ExtraLife;
-	friend class LudumChallengeRewardPunishment_BarSize;
-	friend class LudumChallengeRewardPunishment_BrickLife;
-	friend class LudumChallengeRewardPunishment_SpeedDownBall;
-	friend class LudumChallengeRewardPunishment_SplitBall;
-	friend class LudumChallengeRewardPunishment_BallPower;
-	friend class LudumChallengeRewardPunishment_BrickOffset;
-
 	friend class ParticleMovableObjectTrait;
 	friend class ParticleLifeObjectTrait;
 	friend class ParticleBrickTrait;
-
-	friend class LudumLevel;
-	friend class LudumLevelInstance;
-	friend class LudumPlayer;
 
 protected:
 
@@ -60,11 +48,6 @@ public:
 	/** constructor */
 	LudumGame();
 
-	/** returns the current combo multiplier */
-	int GetCurrentComboMultiplier() const { return combo_multiplier; }
-
-	/** override */
-	virtual bool OnCharEvent(unsigned int c) override;
 	/** override */
 	virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	/** override */
@@ -95,29 +78,11 @@ protected:
 	virtual void OnEnterMainMenu(bool very_first) override;
 	/** override */
 	virtual void OnGameOver() override;
-	/** override */
-	virtual bool OnEnterPause() override;
-	/** override */
-	virtual bool OnLeavePause() override;
 
 	/** override */
 	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 	/** override */
 	virtual bool OnLeaveGame() override;
-
-	/** override */
-	virtual bool TickGameLoop(double delta_time) override;
-
-	
-	
-	
-	void TickBrickOffset(double delta_time);
-
-	void TickChallenge(double delta_time);
-
-	void TickBallSplit(double delta_time);
-
-	
 
 	virtual bool CheckGameOverCondition() override;
 
@@ -149,17 +114,6 @@ protected:
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
 
-	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data);
-	/** test whether a key is being pressed and whether it correspond to the current challenge */
-	void SendKeyboardButtonToChallenge(unsigned int C);
-
-	/** create a challenge for a given name */
-	LudumChallenge * CreateSequenceChallenge(size_t len);
-
-	/** called whenever a challenge is completed */
-	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
-
 	/** create a text for the challenge */
 	chaos::ParticleAllocation * CreateChallengeParticles(LudumChallenge * challenge);
 
@@ -173,9 +127,6 @@ protected:
 	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
 	/** create the bricks */
 	chaos::ParticleAllocation * CreateBricks(LudumLevel const * level);
-
-	/** update the score */
-	void IncrementScore(int delta);
 
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
@@ -204,28 +155,6 @@ protected:
 
 	/** generate a direction updward random for the ball */
 	glm::vec2 GenerateBallRandomDirection() const;
-
-	/** some challenges */
-	void OnBrickLifeChallenge(bool success);
-	bool IsBrickLifeChallengeValid(bool success);
-	/** some challenges */
-	void OnBallSpeedChallenge(bool success);
-	bool IsBallSpeedChallengeValid(bool success);
-	/** some challenges */
-	void OnBrickOffsetChallenge(bool success);
-	bool IsBrickOffsetChallengeValid(bool success);
-	/** some challenges */
-	void OnBallPowerChallenge(bool success);
-	bool IsBallPowerChallengeValid(bool success);
-	/** some challenges */
-	void OnSplitBallChallenge(bool success);
-	bool IsSplitBallChallengeValid(bool success);
-	/** some challenges */
-	void OnExtraBallChallenge(bool success);
-	bool IsExtraBallChallengeValid(bool success);
-	/** some challenges */
-	void OnLongBarChallenge(bool success);
-	bool IsLongBarChallengeValid(bool success);
 	
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
@@ -238,9 +167,6 @@ protected:
 	/** the min and max size */
 	int min_word_size = 0;
 	int max_word_size = 0;
-
-	/** the challenge */
-	chaos::shared_ptr<LudumChallenge> sequence_challenge;
 
 	/** all the existing button */
 	std::vector<int> gamepad_buttons;
@@ -297,9 +223,6 @@ protected:
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
 
-	
-	int combo_multiplier = 1;
-	
 	/** some sprites */	
 	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;
 	chaos::shared_ptr<chaos::ParticleAllocation> balls_allocations;

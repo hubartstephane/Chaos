@@ -188,6 +188,13 @@ namespace death
 		/** getter on gamepad sensitivity */
 		float GetGamepadSensitivity() const { return gamepad_sensitivity; }
 
+		/** get current state ID */
+		int GetCurrentStateTag() const;
+		/** returns whether were are in playing state */
+		bool IsPlaying() const;
+		/** returns whether were are in pause state */
+		bool IsPaused() const;
+
 	protected:
 
 		/** the tick method */
@@ -228,13 +235,6 @@ namespace death
 		void StartMainMenuMusic(bool restart_first);
 		void StartGameMusic(bool restart_first);
 		void StartPauseMusic(bool restart_first);
-
-		/** get current state ID */
-		int GetCurrentStateTag() const;
-		/** returns whether were are in playing state */
-		bool IsPlaying() const;
-		/** returns whether were are in pause state */
-		bool IsPaused() const;
 
 		/** test whether the current score is higher than best score and save it */
 		void ConditionnalSaveBestScore();

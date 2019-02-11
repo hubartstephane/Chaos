@@ -11,20 +11,20 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	PlayingHUD::DoTick(delta_time);
-	
-	LudumGame * ludum_game = GetLudumGame(); // Game::PlaySound() in TickHeartWarning(..) requires a non const pointer
-	if (ludum_game != nullptr)
-	{
-		UpdateComboParticles(ludum_game);
-		UpdateLifeParticles(ludum_game);		
-		TickHeartWarning(ludum_game, delta_time);
-	}
+	// update other objects
+	UpdateComboParticles();
+	UpdateLifeParticles();
+	TickHeartWarning(delta_time);
 	return true;
 }
 
-void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
+void LudumPlayingHUD::UpdateComboParticles()
 {
-	int current_combo = ludum_game->GetCurrentComboMultiplier();
+	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	if (ludum_game_instance == nullptr)
+		return;
+
+	int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
 	if (current_combo != cached_combo_value)
 	{
 		if (current_combo < 2)
@@ -36,9 +36,9 @@ void LudumPlayingHUD::UpdateComboParticles(LudumGame const * ludum_game)
 	}
 }
 
-void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
+void LudumPlayingHUD::UpdateLifeParticles()
 {
-	death::Player const * player = ludum_game->GetPlayer(0);
+	death::Player const * player = game->GetPlayer(0);
 	if (player == nullptr)
 		return;
 
@@ -68,7 +68,7 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 		// set the color
 		chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
 
-		glm::vec2 view_size = ludum_game->GetViewSize();
+		glm::vec2 view_size = game->GetViewSize();
 
 		glm::vec2 particle_size;
 		particle_size.x = 35.0f;
@@ -89,9 +89,9 @@ void LudumPlayingHUD::UpdateLifeParticles(LudumGame const * ludum_game)
 	cached_life_value = current_life;
 }
 
-void LudumPlayingHUD::TickHeartWarning(LudumGame * ludum_game, double delta_time)
+void LudumPlayingHUD::TickHeartWarning(double delta_time)
 {
-	death::Player const * player = ludum_game->GetPlayer(0);
+	death::Player const * player = game->GetPlayer(0);
 	if (player == nullptr)
 		return;
 
@@ -101,7 +101,7 @@ void LudumPlayingHUD::TickHeartWarning(LudumGame * ludum_game, double delta_time
 		heart_warning -= heart_beat_speed * (float)delta_time;
 		if (heart_warning <= 0.0f)
 		{
-			ludum_game->PlaySound("heartbeat", false, false);
+			game->PlaySound("heartbeat", false, false);
 
 			float fractionnal_part, integer_part;
 			fractionnal_part = modf(heart_warning, &integer_part);

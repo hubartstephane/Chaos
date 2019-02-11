@@ -6,6 +6,14 @@
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
 
+bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in_level)
+{
+	if (!death::GameLevelInstance::Initialize(in_game, in_level))
+		return false;
+
+	return true;
+}
+
 bool LudumLevelInstance::IsLevelCompleted() const
 {
 	LudumGame const * ludum_game = dynamic_cast<LudumGame const *>(GetGame());

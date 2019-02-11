@@ -23,5 +23,7 @@ public:
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
+	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
+	/** override */
 	virtual bool DoTick(double delta_time) override;
 };

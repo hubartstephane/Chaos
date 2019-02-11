@@ -40,15 +40,14 @@ protected:
 	/** override */
 	virtual bool CreateHUDLayers() override;
 
-	/** update the combo particles */
-	void UpdateComboParticles(class LudumGame const * ludum_game);
-	/** update the life particles */
-	void UpdateLifeParticles(class LudumGame const * ludum_game);
-
 protected:
 
+	/** update the combo particles */
+	void UpdateComboParticles();
+	/** update the life particles */
+	void UpdateLifeParticles();
 	/** update the Heart Beat values */
-	void TickHeartWarning(LudumGame * ludum_game, double delta_time);
+	void TickHeartWarning(double delta_time);
 
 protected:
 

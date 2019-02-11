@@ -8,13 +8,13 @@ class LudumChallengeRewardPunishment : public chaos::ReferencedObject
 public:
 
 	/** get the name of the reward/punishment */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const { return nullptr;}
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const { return nullptr;}
 	/** called to know whether the reward / punishment is valid */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const { return true; }
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const { return true; }
 	/** called to know whether the reward punishment must wait for an in game condition */
-	virtual bool CheckRewardPunishmentCondition(class LudumGame * game, bool reward) const { return true; }
+	virtual bool CheckRewardPunishmentCondition(class LudumGameInstance * game_instance, bool reward) const { return true; }
 	/** called whenever the challenge is completed */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) {}
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) {}
 };
 
 class LudumChallengeRewardPunishment_ExtraLife : public LudumChallengeRewardPunishment
@@ -22,11 +22,11 @@ class LudumChallengeRewardPunishment_ExtraLife : public LudumChallengeRewardPuni
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };
 
 
@@ -37,11 +37,11 @@ class LudumChallengeRewardPunishment_BarSize : public LudumChallengeRewardPunish
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };
 
 
@@ -53,11 +53,11 @@ class LudumChallengeRewardPunishment_BrickLife : public LudumChallengeRewardPuni
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };
 
 
@@ -69,11 +69,11 @@ class LudumChallengeRewardPunishment_SpeedDownBall : public LudumChallengeReward
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };
 
 
@@ -85,11 +85,11 @@ class LudumChallengeRewardPunishment_SplitBall : public LudumChallengeRewardPuni
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };
 
 
@@ -98,11 +98,11 @@ class LudumChallengeRewardPunishment_BallPower : public LudumChallengeRewardPuni
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };
 
 
@@ -111,9 +111,9 @@ class LudumChallengeRewardPunishment_BrickOffset : public LudumChallengeRewardPu
 public:
 
 	/** override */
-	virtual char const * GetTitleName(class LudumGame * game, bool reward) const override;
+	virtual char const * GetTitleName(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual bool IsRewardPunishmentValid(class LudumGame * game, bool reward) const override;
+	virtual bool IsRewardPunishmentValid(class LudumGameInstance * game_instance, bool reward) const override;
 	/** override */
-	virtual void OnRewardPunishment(class LudumGame * game, bool reward) override;
+	virtual void OnRewardPunishment(class LudumGameInstance * game_instance, bool reward) override;
 };

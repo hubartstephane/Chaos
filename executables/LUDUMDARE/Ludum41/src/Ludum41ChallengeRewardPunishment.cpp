@@ -2,10 +2,11 @@
 
 #include "Ludum41ChallengeRewardPunishment.h"
 #include "Ludum41Game.h"
+#include "Ludum41GameInstance.h"
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_ExtraLife::GetTitleName(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_ExtraLife::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Extra Life";
@@ -13,21 +14,21 @@ char const * LudumChallengeRewardPunishment_ExtraLife::GetTitleName(class LudumG
 		return "Life Lost";
 }
 
-bool LudumChallengeRewardPunishment_ExtraLife::IsRewardPunishmentValid(class LudumGame * game, bool reward) const
+bool LudumChallengeRewardPunishment_ExtraLife::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsExtraBallChallengeValid(reward);
+	assert(game_instance != nullptr);
+	return game_instance->IsExtraBallChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_ExtraLife::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_ExtraLife::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);
-	game->OnExtraBallChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnExtraBallChallenge(reward);
 }
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_BarSize::GetTitleName(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_BarSize::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Extend Bar";
@@ -35,21 +36,21 @@ char const * LudumChallengeRewardPunishment_BarSize::GetTitleName(class LudumGam
 		return "Reduce Bar";
 }
 
-bool LudumChallengeRewardPunishment_BarSize::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
+bool LudumChallengeRewardPunishment_BarSize::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsLongBarChallengeValid(reward);
+	assert(game_instance != nullptr);
+	return game_instance->IsLongBarChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_BarSize::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_BarSize::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);	
-	game->OnLongBarChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnLongBarChallenge(reward);
 }
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_BrickLife::GetTitleName(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_BrickLife::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Hurt Bricks";
@@ -57,21 +58,21 @@ char const * LudumChallengeRewardPunishment_BrickLife::GetTitleName(class LudumG
 		return "Heal Bricks";
 }
 
-bool LudumChallengeRewardPunishment_BrickLife::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
+bool LudumChallengeRewardPunishment_BrickLife::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsBrickLifeChallengeValid(reward);;
+	assert(game_instance != nullptr);
+	return game_instance->IsBrickLifeChallengeValid(reward);;
 }
 
-void LudumChallengeRewardPunishment_BrickLife::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_BrickLife::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);	
-	game->OnBrickLifeChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnBrickLifeChallenge(reward);
 }
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_SpeedDownBall::GetTitleName(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_SpeedDownBall::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Speed Down";
@@ -79,42 +80,42 @@ char const * LudumChallengeRewardPunishment_SpeedDownBall::GetTitleName(class Lu
 		return "Speed Up";
 }
 
-bool LudumChallengeRewardPunishment_SpeedDownBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
+bool LudumChallengeRewardPunishment_SpeedDownBall::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsBallSpeedChallengeValid(reward);
+	assert(game_instance != nullptr);
+	return game_instance->IsBallSpeedChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_SpeedDownBall::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_SpeedDownBall::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);	
-	game->OnBallSpeedChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnBallSpeedChallenge(reward);
 }
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_SplitBall::GetTitleName(class LudumGame * game, bool reward) const 
+char const * LudumChallengeRewardPunishment_SplitBall::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Multi Ball";
 	return nullptr;
 }
 
-bool LudumChallengeRewardPunishment_SplitBall::IsRewardPunishmentValid(class LudumGame * game, bool reward) const 
+bool LudumChallengeRewardPunishment_SplitBall::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsSplitBallChallengeValid(reward);;
+	assert(game_instance != nullptr);
+	return game_instance->IsSplitBallChallengeValid(reward);;
 }
 
-void LudumChallengeRewardPunishment_SplitBall::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_SplitBall::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);
-	game->OnSplitBallChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnSplitBallChallenge(reward);
 }
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_BallPower::GetTitleName(class LudumGame * game, bool reward) const
+char const * LudumChallengeRewardPunishment_BallPower::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Power Up"; 
@@ -122,21 +123,21 @@ char const * LudumChallengeRewardPunishment_BallPower::GetTitleName(class LudumG
 		return "Power Down";		
 }
 
-bool LudumChallengeRewardPunishment_BallPower::IsRewardPunishmentValid(class LudumGame * game, bool reward) const
+bool LudumChallengeRewardPunishment_BallPower::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsBallPowerChallengeValid(reward);
+	assert(game_instance != nullptr);
+	return game_instance->IsBallPowerChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_BallPower::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_BallPower::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);
-	game->OnBallPowerChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnBallPowerChallenge(reward);
 }
 
 // =========================================================
 
-char const * LudumChallengeRewardPunishment_BrickOffset::GetTitleName(class LudumGame * game, bool reward) const
+char const * LudumChallengeRewardPunishment_BrickOffset::GetTitleName(LudumGameInstance * game_instance, bool reward) const
 {
 	if (reward)
 		return "Bricks Go Up";
@@ -144,16 +145,16 @@ char const * LudumChallengeRewardPunishment_BrickOffset::GetTitleName(class Ludu
 		return "Bricks Go Down";
 }
 
-bool LudumChallengeRewardPunishment_BrickOffset::IsRewardPunishmentValid(class LudumGame * game, bool reward) const
+bool LudumChallengeRewardPunishment_BrickOffset::IsRewardPunishmentValid(LudumGameInstance * game_instance, bool reward) const
 {
-	assert(game != nullptr);
-	return game->IsBrickOffsetChallengeValid(reward);
+	assert(game_instance != nullptr);
+	return game_instance->IsBrickOffsetChallengeValid(reward);
 }
 
-void LudumChallengeRewardPunishment_BrickOffset::OnRewardPunishment(class LudumGame * game, bool reward)
+void LudumChallengeRewardPunishment_BrickOffset::OnRewardPunishment(LudumGameInstance * game_instance, bool reward)
 {
-	assert(game != nullptr);
-	game->OnBrickOffsetChallenge(reward);
+	assert(game_instance != nullptr);
+	game_instance->OnBrickOffsetChallenge(reward);
 }
 
 

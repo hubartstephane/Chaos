@@ -11,23 +11,23 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	death::PlayingHUD::DoTick(delta_time);
-
-	LudumGame const * ludum_game = GetLudumGame();
-	if (ludum_game != nullptr)
-	{
-		UpdateLevelTimer(ludum_game);
-		UpdateWakenUpParticleCount(ludum_game);
-		UpdateLifeBar(ludum_game);	
+	// other updates
+	UpdateLevelTimer();
+	UpdateWakenUpParticleCount();
+	UpdateLifeBar();
 #if _DEBUG
-		UpdateFrameRate(ludum_game);
+	UpdateFrameRate();
 #endif
-	}
 	return true;
 }
 
-void LudumPlayingHUD::UpdateWakenUpParticleCount(LudumGame const * ludum_game)
+void LudumPlayingHUD::UpdateWakenUpParticleCount()
 {
-	int waken_up_particle_count = ludum_game->GetWakenUpParticleCount();
+	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	if (ludum_game_instance == nullptr)
+		return;
+
+	int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
 	if (waken_up_particle_count != cached_waken_up_particle_count)
 	{
 		RegisterParticles(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Particles : %d", waken_up_particle_count, 70.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
@@ -35,7 +35,7 @@ void LudumPlayingHUD::UpdateWakenUpParticleCount(LudumGame const * ludum_game)
 	}
 }
 
-void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
+void LudumPlayingHUD::UpdateLevelTimer()
 {
 	LudumLevelInstance const * ludum_level_instance = GetLudumLevelInstance();
 	if (ludum_level_instance == nullptr)
@@ -49,7 +49,7 @@ void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
 	// update the timer 
 	else if (fabsf(level_timeout - cached_level_timeout) > 0.1f)
 	{
-		RegisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID, CreateLevelTimeAllocation(level_timeout, ludum_game->GetViewBox()));
+		RegisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID, CreateLevelTimeAllocation(level_timeout, game->GetViewBox()));
 		cached_level_timeout = level_timeout;
 	}
 }
@@ -77,8 +77,12 @@ chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float lev
 	return GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 }
 
-void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
+void LudumPlayingHUD::UpdateLifeBar()
 {
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
 	float life = ludum_game->GetPlayerLife(0);
 	if (life != cached_life_value)
 	{
@@ -108,7 +112,6 @@ void LudumPlayingHUD::UpdateLifeBar(LudumGame const * ludum_game)
 
 		glm::vec2 view_size = ludum_game->GetViewSize();
 
-
 		glm::vec2 position1, position2;
 		position1.x = -view_size.x * 0.5f + 40.0f;
 		position1.y = -view_size.y * 0.5f + 40.0f;
@@ -131,14 +134,14 @@ int LudumPlayingHUD::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProv
 	return death::PlayingHUD::DoDisplay(renderer, uniform_provider, render_params);
 }
 
-void LudumPlayingHUD::UpdateFrameRate(class LudumGame const * ludum_game)
+void LudumPlayingHUD::UpdateFrameRate()
 {
 	// test for cache
 	if (fabsf(framerate - cached_framerate) < 0.01f)
 		return;
 
 	// get box
-	chaos::box2 view_box = ludum_game->GetViewBox();
+	chaos::box2 view_box = game->GetViewBox();
 
 	std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
 

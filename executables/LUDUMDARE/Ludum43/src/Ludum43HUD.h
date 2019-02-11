@@ -34,13 +34,13 @@ protected:
 
 	virtual bool CreateHUDLayers() override;
 
-	void UpdateLevelTimer(class LudumGame const * ludum_game);
+	void UpdateLevelTimer();
 
-	void UpdateWakenUpParticleCount(class LudumGame const * ludum_game);
+	void UpdateWakenUpParticleCount();
 
-	void UpdateFrameRate(class LudumGame const * ludum_game);
+	void UpdateFrameRate();
 
-	void UpdateLifeBar(class LudumGame const * ludum_game);
+	void UpdateLifeBar();
 	
 	chaos::ParticleAllocation * CreateLevelTimeAllocation(float level_timeout, chaos::box2 const & view);
 

@@ -114,6 +114,9 @@ namespace death
 		/** pause/resume pause/game clocks */
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
+		/** called whenever the level is being changed */
+		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance);
+
 		/** check whether there is a game over */
 		virtual bool CheckGameOverCondition();
 

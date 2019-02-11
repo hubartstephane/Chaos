@@ -3,6 +3,7 @@
 
 #include "Ludum43Particles.h"
 #include "Ludum43Game.h"
+#include "Ludum43GameInstance.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
@@ -320,6 +321,8 @@ size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase 
 
 bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, ParticleAtomTrait::UpdateAtomData const & update_data) const
 {
+	LudumGameInstance * ludum_game_instance = game->GetLudumGameInstance();
+
 	glm::vec2 const & player_position   = update_data.player_particle.bounding_box.position;
 	glm::vec2 & particle_position = particle->bounding_box.position;
 
@@ -344,12 +347,14 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	
 	if (in_waken_up_zone && !particle->waken_up)
 	{
-		game->NotifyAtomCountChange(+1);
+		if (ludum_game_instance != nullptr)
+			ludum_game_instance->NotifyAtomCountChange(+1);
 		particle->waken_up = true;
 	}
 	else if (!affected && particle->waken_up)
 	{
-		game->NotifyAtomCountChange(-1);
+		if (ludum_game_instance != nullptr)
+			ludum_game_instance->NotifyAtomCountChange(-1);
 		particle->waken_up = false;	
 	}
 
@@ -370,7 +375,8 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_particle_life, false))
 	{
 		if (particle->waken_up)
-			game->NotifyAtomCountChange(-1);
+			if (ludum_game_instance != nullptr)
+				ludum_game_instance->NotifyAtomCountChange(-1);
 		return true;
 	}
 

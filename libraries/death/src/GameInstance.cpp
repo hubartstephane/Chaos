@@ -253,4 +253,9 @@ namespace death
 		return false;
 	}
 
+	void GameInstance::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance)
+	{
+
+	}
+
 }; // namespace death

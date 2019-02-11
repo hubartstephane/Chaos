@@ -209,46 +209,6 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 
 }
 
-void LudumGame::ResetGameVariables()
-{
-	death::Game::ResetGameVariables();
-	
-	previous_frame_life = 0.0;
-	waken_up_particle_count = 0;
-	heart_beat_time = 0.0f;
-}
-
-bool LudumGame::TickGameLoop(double delta_time)
-{
-	// super call
-	if (!death::Game::TickGameLoop(delta_time))
-		return false;
-	// tick sound for heart beat
-	TickHeartBeat(delta_time);
-	return true;
-}
-
-void LudumGame::TickHeartBeat(double delta_time) 
-{
-	ParticlePlayer const * particle_player = GetPlayerParticle(0);
-	if (particle_player == nullptr)
-		return;
-
-	float limit_value = 1.4f;
-
-	if (particle_player->life < previous_frame_life)
-		limit_value = 0.4f;
-	previous_frame_life = particle_player->life;
-	
-
-	heart_beat_time += (float)delta_time;
-	if (heart_beat_time >= limit_value)
-	{
-		heart_beat_time = 0.0f;
-		PlaySound("heartbeat", false, false);	
-	}
-}
-
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);
@@ -330,28 +290,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	return true;
 }
 
-void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
-{
-	// super method
-	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);
-
-	// internal
-	LudumPlayer * player = GetLudumPlayer(0);
-	if (player != nullptr)
-	{
-		player->SetScore(waken_up_particle_count, true);
-		player->OnLevelChanged();
-	}
-
-	previous_frame_life = 0.0f;
-	waken_up_particle_count = 0;
-
-	// play a sound
-	if (new_level != nullptr && old_level != nullptr)
-		PlaySound("next_level", false, false);	
-}
-
-
 void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all)
 {
 	// capture all Enemies in range
@@ -393,13 +331,14 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	}
 }
 
-void LudumGame::NotifyAtomCountChange(int delta)
+void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
-	if (delta > 0)
-		PlaySound("particle_add", false, false);
-	else if (delta < 0)
-		PlaySound("particle_removed", false, false);
-	waken_up_particle_count += delta;
+	// super method
+	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);
+
+	// play a sound
+	if (new_level != nullptr && old_level != nullptr)
+		PlaySound("next_level", false, false);
 }
 
 float LudumGame::GetPlayerLife(int player_index) const

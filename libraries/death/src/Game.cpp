@@ -1286,7 +1286,8 @@ namespace death
 
 	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance)
 	{
-
+		if (game_instance != nullptr)
+			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
 
 	Player * Game::GetPlayer(int player_index)

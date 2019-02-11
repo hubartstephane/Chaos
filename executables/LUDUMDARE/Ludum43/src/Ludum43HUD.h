@@ -2,10 +2,10 @@
 
 #include <death/Game.h>
 #include <death/GameHUD.h>
+#include <death/GameFramework.h>
 
 namespace death
 {
-
 	namespace GameHUDKeys
 	{
 		CHAOS_DECLARE_TAG(LEVEL_TIMEOUT_ID);
@@ -13,13 +13,13 @@ namespace death
 		CHAOS_DECLARE_TAG(LIFE_LAYER_ID);
 		CHAOS_DECLARE_TAG(FPS_ID);
 	};
-
 };
 
 class LudumPlayingHUD : public death::PlayingHUD
 {
-
 public:
+
+	DEATH_GAMEFRAMEWORK_DECLARE_HUD(Ludum);
 
 	/** constructor */
 	LudumPlayingHUD(death::Game * in_game) :

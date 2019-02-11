@@ -1,12 +1,18 @@
 #include "Ludum41HUD.h"
 #include "Ludum41Game.h"
+#include "Ludum41GameInstance.h"
+#include "Ludum41Level.h"
+#include "Ludum41LevelInstance.h"
+#include "Ludum41Player.h"
+
+DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	PlayingHUD::DoTick(delta_time);
 	
-	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game); // Game::PlaySound() in TickHeartWarning(..) requires a non const pointer
+	LudumGame * ludum_game = GetLudumGame(); // Game::PlaySound() in TickHeartWarning(..) requires a non const pointer
 	if (ludum_game != nullptr)
 	{
 		UpdateComboParticles(ludum_game);
@@ -113,7 +119,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;
 	// create a layer for the life bar
-	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game);
+	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game != nullptr)
 	{
 		int render_order = -1;

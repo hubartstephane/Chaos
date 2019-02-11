@@ -7,15 +7,11 @@
 #include <chaos/NamedObject.h>
 
 #include <death/GameHUDKeys.h>
+#include <death/GameFramework.h>
 #include <death/GameParticleCreator.h>
 
 namespace death
 {
-
-	class Game;
-	class GameInstance;
-	class GameLevel;
-	class GameLevelInstance;
 
 	// =============================================
 	// GameHUD
@@ -23,6 +19,8 @@ namespace death
 
 	class GameHUD : public chaos::Renderable
 	{
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+
 	public:
 
 		/** constructor */
@@ -47,6 +45,11 @@ namespace death
 		GameLevelInstance * GetLevelInstance();
 		/** get currently played level */
 		GameLevelInstance const * GetLevelInstance() const;
+
+		/** get the player */
+		Player * GetPlayer(int player_index);
+		/** get the player */
+		Player const * GetPlayer(int player_index) const;
 
 		/** initialization of the HUD from the game values */
 		virtual bool InitializeHUD();

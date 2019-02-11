@@ -42,7 +42,8 @@
 
 	=> Game::Initial_Life
 
-
+	=> In GameFramework.h, the HUD is expected to be called PlayingHUD. We should remove any class difference and use HUDComponent instead
+		 This would make more reusable code
 
 	====================================================================
 	== NOTES

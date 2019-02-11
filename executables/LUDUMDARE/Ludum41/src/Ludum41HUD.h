@@ -2,6 +2,7 @@
 
 #include <death/Game.h>
 #include <death/GameHUD.h>
+#include <death/GameFramework.h>
 
 namespace death
 {
@@ -22,6 +23,8 @@ class LudumPlayingHUD : public death::PlayingHUD
 {
 
 public:
+
+	DEATH_GAMEFRAMEWORK_DECLARE_HUD(Ludum);
 
 	/** constructor */
 	LudumPlayingHUD(death::Game * in_game) :

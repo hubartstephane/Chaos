@@ -1,15 +1,18 @@
 #include "Ludum43HUD.h"
 #include "Ludum43Game.h"
 #include "Ludum43Level.h"
+#include "Ludum43Player.h"
 #include "Ludum43LevelInstance.h"
 #include "Ludum43GameInstance.h"
+
+DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	death::PlayingHUD::DoTick(delta_time);
 
-	LudumGame const * ludum_game = dynamic_cast<LudumGame const*>(game);
+	LudumGame const * ludum_game = GetLudumGame();
 	if (ludum_game != nullptr)
 	{
 		UpdateLevelTimer(ludum_game);
@@ -34,7 +37,7 @@ void LudumPlayingHUD::UpdateWakenUpParticleCount(LudumGame const * ludum_game)
 
 void LudumPlayingHUD::UpdateLevelTimer(LudumGame const * ludum_game)
 {
-	LudumLevelInstance const * ludum_level_instance = dynamic_cast<LudumLevelInstance const *>(GetLevelInstance());
+	LudumLevelInstance const * ludum_level_instance = GetLudumLevelInstance();
 	if (ludum_level_instance == nullptr)
 		return;
 	float level_timeout = ludum_level_instance->GetLevelTimeout();
@@ -167,7 +170,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;
 	// create a layer for the life bar
-	LudumGame * ludum_game = dynamic_cast<LudumGame *>(game);
+	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game != nullptr)
 	{
 		int render_order = -1;

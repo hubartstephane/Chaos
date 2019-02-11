@@ -6,7 +6,8 @@
 	friend class GameLevel;\
 	friend class GameLevelInstance;\
 	friend class Game;\
-	friend class GameInstance;
+	friend class GameInstance;\
+	friend class GameHUD;
 
 // internal macros (do not use outside this file)
 #define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
@@ -87,3 +88,19 @@
 	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, Player, LevelInstance)\
 	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, Player, Game)\
 	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, Player, GameInstance)
+
+// macro to be inserted in Player subclasses declaration
+#define DEATH_GAMEFRAMEWORK_DECLARE_HUD(prefix)\
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
+	DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, Level)\
+	DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, LevelInstance)\
+	DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, Game)\
+	DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, GameInstance)\
+	DEATH_GAMEFRAMEWORK_DECLARE_PLAYERGETTER(prefix)
+
+#define DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(prefix)\
+	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, PlayingHUD, Level)\
+	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, PlayingHUD, LevelInstance)\
+	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, PlayingHUD, Game)\
+	DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, PlayingHUD, GameInstance)\
+	DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYERGETTER(prefix, PlayingHUD)

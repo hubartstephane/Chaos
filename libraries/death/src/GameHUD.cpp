@@ -44,6 +44,16 @@ namespace death
 		return game->GetLevelInstance();
 	}
 
+	Player * GameHUD::GetPlayer(int player_index)
+	{
+		return game->GetPlayer(player_index);
+	}
+
+	Player const * GameHUD::GetPlayer(int player_index) const
+	{
+		return game->GetPlayer(player_index);
+	}
+
 	bool GameHUD::InitializeHUD()
 	{
 		// create the particle manager from the game texture atlas

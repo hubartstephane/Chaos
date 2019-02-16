@@ -55,7 +55,7 @@ protected:
 	float timeout = -1.0f; 
 
 	/** the game */
-	class LudumGame * game = nullptr;
+	class LudumGameInstance * game_instance = nullptr;
 
 	/** the visible hud */
 	chaos::shared_ptr<chaos::ParticleAllocation> particle_range;

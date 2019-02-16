@@ -117,27 +117,6 @@ void LudumGame::OnGameOver()
 	death::Game::OnGameOver();
 	DestroyGameObjects();
 }
-size_t LudumGame::CanStartChallengeBallIndex(bool reverse) const
-{
-	size_t ball_count = GetBallCount();
-	if (ball_count > 0)
-	{			
-		ParticleMovableObject const * balls = GetBallParticles();
-		if (balls != nullptr)
-		{
-			glm::vec2 view_size = GetViewSize();
-
-			for (size_t i = 0; i < ball_count ; ++i)
-			{
-				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
-					continue;					
-				if (reverse ^ (balls->bounding_box.position.y > -view_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
-					return i;
-			}
-		}			
-	}
-	return std::numeric_limits<size_t>::max();
-}
 
 
 

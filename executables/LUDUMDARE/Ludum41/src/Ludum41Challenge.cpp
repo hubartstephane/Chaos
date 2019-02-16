@@ -2,6 +2,7 @@
 
 #include "Ludum41Challenge.h"
 #include "Ludum41Game.h"
+#include "Ludum41GameInstance.h"
 
 
 void LudumChallenge::OnKeyboardButtonReceived(char c)
@@ -20,6 +21,8 @@ void LudumChallenge::Show(bool visible)
 
 void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * in_gamepad_data)
 {
+	LudumGame * game = game_instance->GetLudumGame();
+
 	int expected_key = gamepad_challenge[challenge_position];
 
 	if (in_gamepad_data->GetButtonChanges(expected_key) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
@@ -45,23 +48,27 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * 
 
 void LudumChallenge::AdvanceChallenge()
 {
+	LudumGame * game = game_instance->GetLudumGame();
+
 	++challenge_position;
 	if (challenge_position == gamepad_challenge.size())
 	{			
 		game->PlaySound("challenge_success", false, false);
 
-		game->OnChallengeCompleted(this, true,  gamepad_challenge.size()); // remove the challenge from pending list
+		game_instance->OnChallengeCompleted(this, true,  gamepad_challenge.size()); // remove the challenge from pending list
 	}
 }
 
 void LudumChallenge::OnChallengeError(bool out_of_time)
 {
+	LudumGame * game = game_instance->GetLudumGame();
+
 	if (out_of_time)
 		game->PlaySound("challenge_timeout", false, false);
 	else
 		game->PlaySound("challenge_error", false, false);
 
-	game->OnChallengeCompleted(this, false, gamepad_challenge.size()); // remove the challenge from pending list
+	game_instance->OnChallengeCompleted(this, false, gamepad_challenge.size()); // remove the challenge from pending list
 }
 
 void LudumChallenge::SetTimeout(float in_timeout)
@@ -90,6 +97,8 @@ int LudumChallenge::GetTimeSoundIndex(float t) const
 
 void LudumChallenge::Tick(double delta_time)
 {
+	LudumGame * game = game_instance->GetLudumGame();
+
 	if (timeout > 0.0f)
 	{
 		int time_sound_index1 = GetTimeSoundIndex(timeout);
@@ -110,5 +119,5 @@ void LudumChallenge::Tick(double delta_time)
 
 LudumChallenge::~LudumChallenge()
 {
-	game->ball_time_dilation = 1.0;
+	game_instance->ball_time_dilation = 1.0;
 }

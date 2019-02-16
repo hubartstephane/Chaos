@@ -3,6 +3,7 @@
 
 #include "Ludum41Particles.h"
 #include "Ludum41Game.h"
+#include "Ludum41GameInstance.h"
 #include "Ludum41Challenge.h"
 
 #include <chaos/CollisionFramework.h>
@@ -149,6 +150,10 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2
 
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, chaos::ParticleAllocation * allocation) const
 {
+	LudumGameInstance * game_instance = game->GetLudumGameInstance();
+	if (game_instance == nullptr)
+		return false;
+
 	// do not update particles during pause
 	if (!game->IsPlaying())
 		return false;
@@ -167,7 +172,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	// moving the particle
 	particle->bounding_box.position += velocity *
 		(game->ball_collision_speed + game->ball_speed) * 
-		(delta_time * game->ball_time_dilation);
+		(delta_time * game_instance->ball_time_dilation);
 
 	// ball bouncing against world
 

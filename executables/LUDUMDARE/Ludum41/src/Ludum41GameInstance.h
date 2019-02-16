@@ -23,6 +23,8 @@ class LudumGameInstance : public death::GameInstance
 	friend class LudumChallengeRewardPunishment_BallPower;
 	friend class LudumChallengeRewardPunishment_BrickOffset;
 
+	friend class ParticleMovableObjectTrait;
+
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_GAMEINSTANCE(Ludum);
@@ -55,6 +57,9 @@ public:
 	/** update the score */
 	void IncrementScore(int delta);
 
+	/** returns true whether we can start a challenge (returns index of a valid ball) */
+	size_t CanStartChallengeBallIndex(bool reverse) const;
+
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }
 
@@ -82,9 +87,9 @@ protected:
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
-	virtual bool OnLeavePause() override;
+	virtual void OnLeavePause() override;
 
-	virtual bool OnEnterPause() override;
+	virtual void OnEnterPause() override;
 
 	virtual bool OnCharEvent(unsigned int c) override;
 
@@ -92,10 +97,13 @@ protected:
 
 protected:
 
+	/** current game values */
 	float brick_offset = 0.0f;
 	float target_brick_offset = 0.0f;
 	int   combo_multiplier = 1;
-
+	
+	float ball_time_dilation = 1.0f;
+	float challenge_timer = 0.0f;
 
 	/** current the challenge */
 	chaos::shared_ptr<LudumChallenge> sequence_challenge;

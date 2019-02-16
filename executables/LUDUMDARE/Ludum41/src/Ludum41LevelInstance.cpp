@@ -33,13 +33,11 @@ bool LudumLevelInstance::IsLevelCompleted() const
 
 bool LudumLevelInstance::CanCompleteLevel() const
 {
-	LudumGame const * ludum_game = dynamic_cast<LudumGame const *>(GetGame());
-	if (ludum_game == nullptr)
+	LudumGameInstance const * ludum_game_instance = GetLudumGameInstance();
+	if (ludum_game_instance == nullptr)
 		return true;
-
-	if (ludum_game->CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
+	if (ludum_game_instance->CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
 		return true;
-
 	return false;
 }
 

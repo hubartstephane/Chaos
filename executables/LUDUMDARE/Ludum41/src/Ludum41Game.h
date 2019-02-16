@@ -149,10 +149,6 @@ protected:
 	/** get the number of bricks */
 	size_t GetBrickCount() const;
 
-
-	/** returns true whether we can start a challenge (returns index of a valid ball) */
-	size_t CanStartChallengeBallIndex(bool reverse = false) const;
-
 	/** generate a direction updward random for the ball */
 	glm::vec2 GenerateBallRandomDirection() const;
 	
@@ -218,10 +214,6 @@ protected:
 
 	float split_angle = 0.1f;
 	float ball_angle_limit = 0.1f;
-
-	/** current game values */
-	float ball_time_dilation = 1.0f;
-	float challenge_timer = 0.0f;
 
 	/** some sprites */	
 	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;

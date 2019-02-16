@@ -11,6 +11,29 @@ LudumGameInstance::LudumGameInstance(death::Game * in_game) :
 {
 }
 
+size_t LudumGameInstance::CanStartChallengeBallIndex(bool reverse) const
+{
+	size_t ball_count = GetBallCount();
+	if (ball_count > 0)
+	{
+		ParticleMovableObject const * balls = GetBallParticles();
+		if (balls != nullptr)
+		{
+			glm::vec2 view_size = GetViewSize();
+
+			for (size_t i = 0; i < ball_count; ++i)
+			{
+				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
+					continue;
+				if (reverse ^ (balls->bounding_box.position.y > -view_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
+					return i;
+			}
+		}
+	}
+	return std::numeric_limits<size_t>::max();
+}
+
+
 void LudumGameInstance::TickChallenge(double delta_time)
 {
 	if (sequence_challenge != nullptr)
@@ -169,22 +192,18 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	}
 }
 
-bool LudumGameInstance::OnEnterPause()
+void LudumGameInstance::OnEnterPause()
 {
 	death::GameInstance::OnEnterPause();
 	if (sequence_challenge != nullptr)
 		sequence_challenge->Show(false);
-
-	return true;
 }
 
-bool LudumGameInstance::OnLeavePause()
+void LudumGameInstance::OnLeavePause()
 {
 	death::GameInstance::OnLeavePause();
 	if (sequence_challenge != nullptr)
 		sequence_challenge->Show(true);
-
-	return true;
 }
 
 void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)

@@ -73,51 +73,6 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }
 
-void LudumGame::ResetGameVariables()
-{
-	death::Game::ResetGameVariables();
-
-	brick_offset = 0.0f;
-
-	ball_power    = 1.0f;
-	ball_speed    = ball_initial_speed;
-	ball_time_dilation = 1.0f;
-	challenge_timer    = challenge_frequency;
-	pending_split_count = 0;
-	ball_collision_speed = 0.0f;
-
-	combo_multiplier = 1;
-}
-
-
-bool LudumGame::CheckGameOverCondition()
-{
-
-#if 0
-
-	size_t ball_count = GetBallCount();
-	if (ball_count == 0)
-	{
-		SetCurrentLife(GetCurrentLife() - 1);
-		if (current_life <= 0)
-			RequireGameOver();
-		else
-		{
-			PlaySound("balllost", false, false);
-			combo_multiplier = 1;
-			ball_collision_speed = 0.0f;
-			ball_power = 1.0f;
-			ball_speed = ball_initial_speed;
-			SetPlayerLength(player_initial_length);
-			balls_allocations = CreateBalls(1, true);	
-		}
-		return true;
-	}
-#endif
-	return false;
-}
-
-
 chaos::ParticleAllocation * LudumGame::CreatePlayer()
 {
 	// create the object

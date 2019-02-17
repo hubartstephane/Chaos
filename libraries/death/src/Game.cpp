@@ -928,9 +928,6 @@ namespace death
 
 		// shuxxx
 
-
-
-		ResetGameVariables();
 		CreatePlayingHUD();
 		SetNextLevel(true); // select the very first
 		StartGameMusic(true);
@@ -1019,12 +1016,7 @@ namespace death
 			current_level_instance->Tick(delta_time);
 		return true;
 	}
-
-	void Game::ResetGameVariables()
-	{
-		
-	}
-
+	
 	void Game::StartMainMenuMusic(bool restart_first)
 	{
 		chaos::Sound * musics[] = {

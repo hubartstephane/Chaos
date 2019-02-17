@@ -62,8 +62,6 @@ protected:
 	/** override */
 	virtual void OnEnterMainMenu(bool very_first) override;
 
-	virtual bool CheckGameOverCondition() override;
-
 	/** initialize the dictionnary */
 	bool InitializeDictionnary(nlohmann::json const & config, boost::filesystem::path const & config_path);
 	/** replace some special */
@@ -83,27 +81,12 @@ protected:
 	/** load one level */
 	virtual death::GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path) override;
 
-
-
-
 	/** override */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
-
-
-
 
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
-	/** reset the game variables */
-	virtual void ResetGameVariables() override;
-
-
-
-
-
-
-	
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
 	virtual death::GameInstance * CreateGameInstance() override;
@@ -123,7 +106,6 @@ protected:
 
 	int max_ball_count = 3;
 
-	float brick_offset = 0.0f;
 	float max_brick_offset = 0.0f;
 	float brick_offset_speed = 0.0f;
 	float brick_offset_increment = 0.0f;
@@ -136,13 +118,10 @@ protected:
 
 	float ball_size          = 25.0f;
 
-	float ball_power         = 1.0f;
-	float ball_speed         = 5.0f;
 	float ball_max_speed     = 5.0f;
 	float ball_initial_speed = 1.0f;
 	float ball_speed_increment = 0.5f;
 
-	float ball_collision_speed    = 0.5f;
 	float ball_collision_speed_increment = 0.5f;
 	float ball_collision_max_speed = 0.5f;
 

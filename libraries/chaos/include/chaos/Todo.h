@@ -30,14 +30,14 @@
 
 
 
+
+
 	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		ResetGameVariables(); <=== now there is a GameInstance for that, see if this can be removed
 
 
 	}
-
-
 	=> create an INSTRUCTION screen
 
 	=> Game::Initial_Life

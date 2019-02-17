@@ -317,8 +317,6 @@ namespace death
 		/** check whether we can go to next level */
 		virtual bool CanCompleteLevel();
 
-		virtual void ResetGameVariables();
-
 		/** called on the very first time the game is started */
 		virtual void OnEnterMainMenu(bool very_first);
 		/** called whenever the game is lost */

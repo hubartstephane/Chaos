@@ -419,3 +419,232 @@ void LudumGameInstance::OnLongBarChallenge(bool success)
 	else
 		player->SetPlayerLength(player_length_decrement, true);
 }
+
+glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
+{
+	float direction = (rand() % 2) ? 1.0f : -1.0f;
+
+	// direction upward
+	float angle = 
+		3.14f * 0.5f +									// up
+		direction * 3.14f * 0.125f +    // small base angle to the left or the right
+		direction * chaos::MathTools::RandFloat(0, 3.14f * 0.125f); // final adjustement
+
+	return glm::vec2(
+		chaos::MathTools::Cos(angle),
+		chaos::MathTools::Sin(angle));
+}
+
+
+
+chaos::ParticleAllocation * LudumGameInstance::CreateBalls(size_t count, bool full_init)
+{
+
+	// create the object
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
+	if (result == nullptr)
+		return nullptr;
+
+	// set the color
+	chaos::ParticleAccessor<ParticleMovableObject> particles = result->GetParticleAccessor<ParticleMovableObject>();
+	if (particles.GetCount() == 0)
+		return nullptr;
+
+	for (size_t i = 0 ; i < count ; ++i)
+	{	
+		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		particles[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
+		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
+		
+		if (full_init)
+		{
+			particles[i].delay_before_move = delay_before_ball_move;
+			particles[i].velocity = ball_speed * GenerateBallRandomDirection();
+		}
+	}
+	return result;
+}
+
+ParticleMovableObject * LudumGameInstance::GetBallParticles()
+{
+	if (balls_allocations == nullptr)
+		return nullptr;	
+	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	if (particles.GetCount() == 0)
+		return nullptr;
+	return &particles[0];
+}
+
+ParticleMovableObject const * LudumGameInstance::GetBallParticles() const
+{
+	if (balls_allocations == nullptr)
+		return nullptr;
+	chaos::ParticleConstAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	if (p.GetCount() == 0)
+		return nullptr;
+
+	return &p[0];
+}
+
+size_t LudumGameInstance::GetBallCount() const
+{
+	if (balls_allocations == nullptr)
+		return 0;	
+	return balls_allocations->GetParticleCount();
+}
+
+
+int LudumGameInstance::GetRandomButtonID() const
+{
+	size_t key_index = (size_t)(rand() % gamepad_buttons.size());
+	if (key_index >= gamepad_buttons.size())
+		key_index = gamepad_buttons.size() - 1;
+	return gamepad_buttons[key_index];
+}
+
+
+LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
+{
+	if (len == 0)
+		len = min_word_size + rand() % (max_word_size - min_word_size);
+
+	auto it = dictionnary.find(len);
+
+	// no word of this size (search a word with the lengh the more near the request) 
+	if (it == dictionnary.end())
+	{
+		auto better_it = dictionnary.begin();
+
+		int min_distance = std::numeric_limits<int>::max();
+		for (it = dictionnary.begin(); it != dictionnary.end(); ++it)
+		{
+			int distance = abs((int)len - (int)it->first);
+			if (distance < min_distance)
+			{
+				min_distance = distance;
+				better_it = it;
+			}
+		}
+		if (it == dictionnary.end()) // should never happen
+			return nullptr;
+	}
+
+	// get the list of words with given length
+	std::vector<std::string> const & words = it->second;
+	if (words.size() == 0)
+		return nullptr;
+
+	// search a word in the list
+	size_t index = (size_t)(rand() % words.size());
+	if (index >= words.size())
+		index = words.size() - 1; // should never happen
+
+	std::string keyboard_challenge = words[index];
+	len = keyboard_challenge.size();
+
+	// compose a gamepad combinaison of the same length
+	std::vector<int> gamepad_challenge;
+	for (size_t i = 0; i < len; ++i)
+		gamepad_challenge.push_back(GetRandomButtonID());
+
+	// create the challenge
+	LudumChallenge * result = new LudumChallenge;
+	if (result != nullptr)
+	{
+		result->gamepad_challenge = std::move(gamepad_challenge);
+		result->keyboard_challenge = std::move(keyboard_challenge);
+		result->game = this;
+		result->particle_range = CreateChallengeParticles(result);
+		result->Show(IsPlaying());
+
+		result->SetTimeout(challenge_duration);
+
+		ball_time_dilation = challenge_time_dilation;
+	}
+	return result;
+}
+
+
+std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
+{
+	std::string result;
+
+	for (size_t i = 0; i < gamepad_challenge.size(); ++i)
+	{
+		int button_index = gamepad_challenge[i];
+
+		auto const it = gamepad_button_map.find(button_index);
+		if (it == gamepad_button_map.end())
+			continue;
+		result = result + "[" + it->second.second + "]";
+	}
+	return result;
+}
+
+chaos::ParticleAllocation * LudumGameInstance::CreateChallengeParticles(LudumChallenge * challenge)
+{
+	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
+
+	chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
+	if (layer == nullptr)
+		return nullptr;
+
+	chaos::ParticleTextGenerator::GeneratorResult result;
+	chaos::ParticleTextGenerator::GeneratorParams params;
+
+	params.line_height = CHALLENGE_SIZE;
+	params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
+	params.position.x = 0.0f;
+	params.position.y = CHALLENGE_PLACEMENT_Y;
+
+	if (keyboard)
+	{
+		particle_text_generator->Generate(challenge->keyboard_challenge.c_str(), result, params);
+	}
+	else
+	{
+		std::string gamepad_string = GenerateGamepadChallengeString(challenge->gamepad_challenge);
+		particle_text_generator->Generate(gamepad_string.c_str(), result, params);
+	}
+
+	// create the text
+	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
+	// and initialize additionnal data
+	if (allocation != nullptr)
+	{
+		chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
+		for (size_t i = 0; i < particles.GetCount(); ++i)
+		{
+			ParticleChallenge & p = particles[i];
+			p.challenge = challenge;
+			p.index = i;
+		}
+	}
+
+	return allocation;
+}
+
+void LudumGameInstance::CreateAllGameObjects(int level)
+{
+	if (balls_allocations == nullptr)
+		balls_allocations = CreateBalls(1, true);	
+}
+
+void LudumGameInstance::OnBallCollide(bool collide_brick)
+{
+	game->PlaySound("ball", false, false);
+
+	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ball_collision_speed_increment);
+
+	if (collide_brick)
+		IncrementScore(points_per_brick);
+}
+
+void LudumGameInstance::DestroyGameObjects()
+{
+	balls_allocations = nullptr;
+	sequence_challenge = nullptr;
+}
+
+

@@ -9,7 +9,7 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
-	LudumGame const * ludum_game = dynamic_cast<LudumGame const *>(GetGame());
+	LudumGame const * ludum_game = GetLudumGame();
 	if (ludum_game != nullptr)
 		player_length = ludum_game->player_initial_length;
 }

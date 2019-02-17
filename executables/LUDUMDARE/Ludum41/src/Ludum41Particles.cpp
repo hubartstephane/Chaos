@@ -60,7 +60,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 
 	float heart_warning = 0.0f;
 
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(game->GetCurrentHUD());
+	LudumPlayingHUD const * playing_hud = game->GetPlayingHUD();
 	if (playing_hud != nullptr)
 		heart_warning = playing_hud->GetHeartWarningValue();
 

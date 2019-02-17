@@ -25,6 +25,14 @@ class LudumGameInstance : public death::GameInstance
 	
 	friend class LudumChallenge;
 	friend class ParticleMovableObjectTrait;
+	friend class ParticleLifeObjectTrait;
+	friend class ParticleBrickTrait;	
+
+protected:
+
+	/** some aspect constant */
+	float CHALLENGE_SIZE = 100.0f;
+	float CHALLENGE_PLACEMENT_Y = 0;
 
 public:
 
@@ -98,6 +106,36 @@ protected:
 
 	virtual void OnInputModeChanged(int new_mode, int old_mode);
 
+	/** generate a direction updward random for the ball */
+	glm::vec2 GenerateBallRandomDirection() const;
+	/** create the ball */
+	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
+
+
+	/** get the balls */
+	ParticleMovableObject * GetBallParticles();
+	/** get the balls */
+	ParticleMovableObject const * GetBallParticles() const;
+	/** get the number of balls */	
+	size_t GetBallCount() const;
+	
+	
+	/** get a random button in existing list */
+	int GetRandomButtonID() const;	
+	/** create a text for the challenge */
+	chaos::ParticleAllocation * CreateChallengeParticles(LudumChallenge * challenge);
+	/** create a string for a gamepad challenge */
+	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);	
+	
+
+	/** called whenever a ball collide */
+	void OnBallCollide(bool collide_brick);	
+	
+	/** creating all object in the game */
+	void CreateAllGameObjects(int level);
+	/** destroying game objects*/
+	void DestroyGameObjects();	
+
 protected:
 
 	/** current game values */
@@ -109,7 +147,9 @@ protected:
 	float challenge_timer = 0.0f;
 
 	int pending_split_count = 0;
-
+	
+	/** some sprites */
+	chaos::shared_ptr<chaos::ParticleAllocation> balls_allocations;
 	/** current the challenge */
 	chaos::shared_ptr<LudumChallenge> sequence_challenge;
 };

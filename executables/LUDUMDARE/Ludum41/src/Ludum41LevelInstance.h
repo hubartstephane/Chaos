@@ -26,4 +26,23 @@ public:
 	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
 	/** override */
 	virtual bool DoTick(double delta_time) override;
+
+protected:
+
+	chaos::ParticleAllocation * CreateBricks();
+	
+	/** get the bricks */
+	ParticleBrick * GetBricks();
+	/** get the bricks */
+	ParticleBrick const * GetBricks() const;
+
+	/** get the number of bricks */
+	size_t GetBrickCount() const;	
+	
+public:
+
+
+	
+	/** some sprites */	
+	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;	
 };

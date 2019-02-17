@@ -51,7 +51,7 @@ public:
 
 
 
-	death::Game * game = nullptr;
+	class LudumGame * game = nullptr;
 };
 
 

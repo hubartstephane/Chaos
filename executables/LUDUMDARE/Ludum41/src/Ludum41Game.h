@@ -35,12 +35,6 @@ class LudumGame : public death::Game
 	friend class ParticleLifeObjectTrait;
 	friend class ParticleBrickTrait;
 
-protected:
-
-	/** some aspect constant */
-	float CHALLENGE_SIZE = 100.0f;
-	float CHALLENGE_PLACEMENT_Y = 0;
-
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
@@ -58,11 +52,6 @@ protected:
 	/** override */
 	death::GameHUD * DoCreatePlayingHUD() override;
 
-	/** creating all object in the game */
-	void CreateAllGameObjects(int level);
-	/** destroying game objects*/
-	void DestroyGameObjects();
-
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
@@ -70,19 +59,8 @@ protected:
 	/** override */
 	virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 
-	
-
-
-
 	/** override */
 	virtual void OnEnterMainMenu(bool very_first) override;
-	/** override */
-	virtual void OnGameOver() override;
-
-	/** override */
-	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
-	/** override */
-	virtual bool OnLeaveGame() override;
 
 	virtual bool CheckGameOverCondition() override;
 
@@ -106,51 +84,25 @@ protected:
 	virtual death::GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path) override;
 
 
-	
-	/** get a random button in existing list */
-	int GetRandomButtonID() const;
+
 
 	/** override */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
 
-	/** create a text for the challenge */
-	chaos::ParticleAllocation * CreateChallengeParticles(LudumChallenge * challenge);
 
-	/** create a string for a gamepad challenge */
-	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);
 
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
 
-	/** create the ball */
-	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
-	/** create the bricks */
-	chaos::ParticleAllocation * CreateBricks(LudumLevel const * level);
-
 	/** reset the game variables */
 	virtual void ResetGameVariables() override;
 
-	/** called whenever a ball collide */
-	void OnBallCollide(bool collide_brick);
 
-	/** get the balls */
-	ParticleMovableObject * GetBallParticles();
-	/** get the balls */
-	ParticleMovableObject const * GetBallParticles() const;
-	/** get the number of balls */	
-	size_t GetBallCount() const;
 
-	/** get the bricks */
-	ParticleBrick * GetBricks();
-	/** get the bricks */
-	ParticleBrick const * GetBricks() const;
 
-	/** get the number of bricks */
-	size_t GetBrickCount() const;
 
-	/** generate a direction updward random for the ball */
-	glm::vec2 GenerateBallRandomDirection() const;
+
 	
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
@@ -172,7 +124,6 @@ protected:
 	int max_ball_count = 3;
 
 	float brick_offset = 0.0f;
-	float target_brick_offset = 0.0f;
 	float max_brick_offset = 0.0f;
 	float brick_offset_speed = 0.0f;
 	float brick_offset_increment = 0.0f;
@@ -212,10 +163,6 @@ protected:
 
 	float split_angle = 0.1f;
 	float ball_angle_limit = 0.1f;
-
-	/** some sprites */	
-	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;
-	chaos::shared_ptr<chaos::ParticleAllocation> balls_allocations;
 
 	/** the possible rewards */
 	std::vector<chaos::shared_ptr<LudumChallengeRewardPunishment>> rewards;

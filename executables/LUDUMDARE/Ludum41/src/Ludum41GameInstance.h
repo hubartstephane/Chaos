@@ -22,7 +22,8 @@ class LudumGameInstance : public death::GameInstance
 	friend class LudumChallengeRewardPunishment_SplitBall;
 	friend class LudumChallengeRewardPunishment_BallPower;
 	friend class LudumChallengeRewardPunishment_BrickOffset;
-
+	
+	friend class LudumChallenge;
 	friend class ParticleMovableObjectTrait;
 
 public:
@@ -95,6 +96,8 @@ protected:
 
 	virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
+	virtual void OnInputModeChanged(int new_mode, int old_mode);
+
 protected:
 
 	/** current game values */
@@ -104,6 +107,8 @@ protected:
 	
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
+
+	int pending_split_count = 0;
 
 	/** current the challenge */
 	chaos::shared_ptr<LudumChallenge> sequence_challenge;

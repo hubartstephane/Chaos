@@ -204,8 +204,6 @@ protected:
 	int min_brick_life = 1;
 	float max_brick_life = 5.0f;
 
-	int pending_split_count = 0;
-
 	int brick_per_line   = 5;
 	int brick_line_count = 5;
 

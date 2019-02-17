@@ -85,14 +85,9 @@ void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider 
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 {
-	if (sequence_challenge != nullptr)
-	{
-		if (chaos::InputMode::IsPlatformChanged(new_mode, old_mode))
-		{
-			sequence_challenge->particle_range = CreateChallengeParticles(sequence_challenge.get());
-			sequence_challenge->Show(IsPlaying());
-		}
-	}
+	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	if (ludum_game_instance != nullptr)
+		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }
 
 void LudumGame::ResetGameVariables()

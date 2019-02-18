@@ -4,6 +4,7 @@
 #include "Ludum41Particles.h"
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
+#include "Ludum41LevelInstance.h"
 #include "Ludum41Challenge.h"
 
 #include <chaos/CollisionFramework.h>
@@ -60,7 +61,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 
 	float heart_warning = 0.0f;
 
-	LudumPlayingHUD const * playing_hud = game->GetPlayingHUD();
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(game->GetCurrentHUD());
 	if (playing_hud != nullptr)
 		heart_warning = playing_hud->GetHeartWarningValue();
 
@@ -89,9 +90,11 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 
 size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
+	LudumGameInstance const * ludum_game_instance = game->GetLudumGameInstance();
+
 	// generate particle corners and texcoords
 	chaos::box2 bounding_box = particle->bounding_box;
-	bounding_box.position.y -= game->brick_offset;
+	bounding_box.position.y -= ludum_game_instance->brick_offset;
 
 	chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle->texcoords, vertices);
 
@@ -115,16 +118,18 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 
 size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
 {
+	LudumGameInstance const * ludum_game_instance = game->GetLudumGameInstance();
+
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 
 	glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	if (game->ball_power == 0.5f)
+	if (ludum_game_instance->ball_power == 0.5f)
 		power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
-	else if (game->ball_power == 2.0f)
+	else if (ludum_game_instance->ball_power == 2.0f)
 		power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
-	else if (game->ball_power == 3.0f)
+	else if (ludum_game_instance->ball_power == 3.0f)
 		power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	for (size_t i = 0 ; i < 6 ; ++i)
@@ -171,7 +176,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	
 	// moving the particle
 	particle->bounding_box.position += velocity *
-		(game->ball_collision_speed + game->ball_speed) * 
+		(game_instance->ball_collision_speed + game_instance->ball_speed) *
 		(delta_time * game_instance->ball_time_dilation);
 
 	// ball bouncing against world
@@ -210,32 +215,34 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		{
 			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
 			ball_box.position = new_ball_box.position;
-			game->OnBallCollide(false);			
+			game_instance->OnBallCollide(false);
 		}
 	}
 
+	LudumLevelInstance * level_instance = game->GetLudumLevelInstance();
+
 	// bounce against bricks
-	ParticleBrick * bricks = game->GetBricks();
-	size_t brick_count     = game->GetBrickCount();
+	ParticleBrick * bricks = level_instance->GetBricks();
+	size_t brick_count     = level_instance->GetBrickCount();
 
 	if (bricks != nullptr && brick_count > 0)
 	{
 		for (size_t i = 0 ; i < brick_count ; ++i)
 		{
 			chaos::box2 brick_box = bricks[i].bounding_box;
-			brick_box.position.y -= game->brick_offset;
+			brick_box.position.y -= game_instance->brick_offset;
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
-				if (bricks[i].indestructible || bricks[i].life >= game->ball_power)
+				if (bricks[i].indestructible || bricks[i].life >= game_instance->ball_power)
 				{
 					UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
 					ball_box.position = new_ball_box.position;					
 				}
 
 				if (!bricks[i].indestructible)
-					bricks[i].life -= game->ball_power;
-				game->OnBallCollide(true);
+					bricks[i].life -= game_instance->ball_power;
+				game_instance->OnBallCollide(true);
 			
 			}				
 		}	

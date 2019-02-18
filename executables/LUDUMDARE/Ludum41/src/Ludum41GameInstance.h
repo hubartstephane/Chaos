@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ludum41Challenge.h"
+#include "Ludum41Particles.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <death/Game.h>

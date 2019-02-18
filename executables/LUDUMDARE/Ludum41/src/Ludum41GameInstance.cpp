@@ -19,7 +19,7 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool reverse) const
 		ParticleMovableObject const * balls = GetBallParticles();
 		if (balls != nullptr)
 		{
-			glm::vec2 view_size = GetViewSize();
+			glm::vec2 view_size = game->GetViewSize();
 
 			for (size_t i = 0; i < ball_count; ++i)
 			{
@@ -42,10 +42,12 @@ void LudumGameInstance::TickChallenge(double delta_time)
 	}
 	else
 	{
+		bool random_reversed = false; // shuxxx at random
+
 		// start a challenge (only if one ball is going upward)
 		challenge_timer = max(0.0f, challenge_timer - (float)delta_time);
 		if (challenge_timer <= 0.0f)
-			if (CanStartChallengeBallIndex() != std::numeric_limits<size_t>::max())
+			if (CanStartChallengeBallIndex(random_reversed) != std::numeric_limits<size_t>::max())
 				sequence_challenge = CreateSequenceChallenge(0);
 	}
 }
@@ -58,7 +60,7 @@ void LudumGameInstance::OnInputModeChanged(int new_mode, int old_mode)
 		if (chaos::InputMode::IsPlatformChanged(new_mode, old_mode))
 		{
 			sequence_challenge->particle_range = CreateChallengeParticles(sequence_challenge.get());
-			sequence_challenge->Show(IsPlaying());
+			sequence_challenge->Show(game->IsPlaying());
 		}
 	}
 }
@@ -76,14 +78,18 @@ static void RotateVelocity(glm::vec2 & src, float angle)
 
 void LudumGameInstance::TickBallSplit(double delta_time)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	if (pending_split_count <= 0)
 		return;
 
 	size_t ball_count = GetBallCount();
-	if (ball_count > (size_t)max_ball_count || ball_count == 0)
+	if (ball_count > (size_t)ludum_game->max_ball_count || ball_count == 0)
 		return;
 
-	size_t ball_candidate = CanStartChallengeBallIndex();
+	bool random_reverse = false; // shuxx
+
+	size_t ball_candidate = CanStartChallengeBallIndex(random_reverse);
 	if (ball_candidate == std::numeric_limits<size_t>::max())
 		return;
 
@@ -95,8 +101,8 @@ void LudumGameInstance::TickBallSplit(double delta_time)
 	ParticleMovableObject * new_ball = &balls[ball_count];
 	*new_ball = *parent_ball;
 
-	RotateVelocity(parent_ball->velocity, split_angle);
-	RotateVelocity(new_ball->velocity, -split_angle);
+	RotateVelocity(parent_ball->velocity, ludum_game->split_angle);
+	RotateVelocity(new_ball->velocity, -ludum_game->split_angle);
 
 	pending_split_count = 0;
 }
@@ -157,7 +163,7 @@ void LudumGameInstance::SendKeyboardButtonToChallenge(unsigned int c)
 
 void LudumGameInstance::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data)
 {
-	if (!IsPlaying())
+	if (!game->IsPlaying())
 		return;
 	if (sequence_challenge != nullptr)
 		sequence_challenge->OnGamepadButtonReceived(in_gamepad_data);
@@ -165,8 +171,10 @@ void LudumGameInstance::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData 
 
 void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	// rewards/punishment
-	auto const & rewards_punishments = (success) ? rewards : punishments;
+	auto const & rewards_punishments = (success) ? ludum_game->rewards : ludum_game->punishments;
 
 	LudumChallengeRewardPunishment * selected_rp = nullptr;
 
@@ -191,12 +199,12 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	// reset some values
 	sequence_challenge = nullptr;
 	ball_time_dilation = 1.0f;
-	challenge_timer = challenge_frequency;
+	challenge_timer = ludum_game->challenge_frequency;
 
 	// update the score
 	if (success)
 	{
-		IncrementScore(points_per_challenge * challenge_size);
+		IncrementScore(ludum_game->points_per_challenge * challenge_size);
 		++combo_multiplier;
 	}
 	else
@@ -268,6 +276,9 @@ bool LudumGameInstance::IsBrickLifeChallengeValid(bool success)
 
 void LudumGameInstance::OnBrickLifeChallenge(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
+
 	size_t brick_count = GetBrickCount();
 	if (brick_count == 0)
 		return;
@@ -290,7 +301,7 @@ void LudumGameInstance::OnBrickLifeChallenge(bool success)
 				p.life -= 1.0f;
 			}
 		}
-		IncrementScore(destroyed_count * points_per_brick);
+		IncrementScore(destroyed_count * ludum_game->points_per_brick);
 	}
 	else
 	{
@@ -298,7 +309,7 @@ void LudumGameInstance::OnBrickLifeChallenge(bool success)
 		for (size_t i = 0; i < brick_count; ++i)
 		{
 			ParticleBrick & p = bricks[i];
-			if (!p.indestructible && p.life < max_brick_life && p.life > 0.0f)
+			if (!p.indestructible && p.life < ludum_game->max_brick_life && p.life > 0.0f)
 			{
 				p.life += 1.0f;
 				if (p.life > p.starting_life)
@@ -310,8 +321,10 @@ void LudumGameInstance::OnBrickLifeChallenge(bool success)
 
 bool LudumGameInstance::IsSplitBallChallengeValid(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	int ball_count = GetBallCount();
-	return (ball_count < max_ball_count);
+	return (ball_count < ludum_game->max_ball_count);
 }
 
 void LudumGameInstance::OnSplitBallChallenge(bool success)
@@ -323,38 +336,46 @@ void LudumGameInstance::OnSplitBallChallenge(bool success)
 
 bool LudumGameInstance::IsBallSpeedChallengeValid(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	if (success)
-		return (ball_speed > ball_initial_speed); // can still decrease speed ?
+		return (ball_speed > ludum_game->ball_initial_speed); // can still decrease speed ?
 	else
-		return (ball_speed < ball_max_speed); // can still increase speed ?
+		return (ball_speed < ludum_game->ball_max_speed); // can still increase speed ?
 }
 
 void LudumGameInstance::OnBallSpeedChallenge(bool success)
 {
-	if (success)
-		ball_speed = ball_speed - ball_speed_increment;
-	else
-		ball_speed = ball_speed + ball_speed_increment;
+	LudumGame const * ludum_game = GetLudumGame();
 
-	ball_speed = chaos::MathTools::Clamp(ball_speed, ball_initial_speed, ball_max_speed);
+	if (success)
+		ball_speed = ball_speed - ludum_game->ball_speed_increment;
+	else
+		ball_speed = ball_speed + ludum_game->ball_speed_increment;
+
+	ball_speed = chaos::MathTools::Clamp(ball_speed, ludum_game->ball_initial_speed, ludum_game->ball_max_speed);
 }
 
 void LudumGameInstance::OnBrickOffsetChallenge(bool success)
 {
-	if (success)
-		target_brick_offset -= brick_offset_increment;
-	else
-		target_brick_offset += brick_offset_increment;
+	LudumGame const * ludum_game = GetLudumGame();
 
-	target_brick_offset = chaos::MathTools::Clamp(target_brick_offset, 0.0f, max_brick_offset);
+	if (success)
+		target_brick_offset -= ludum_game->brick_offset_increment;
+	else
+		target_brick_offset += ludum_game->brick_offset_increment;
+
+	target_brick_offset = chaos::MathTools::Clamp(target_brick_offset, 0.0f, ludum_game->max_brick_offset);
 }
 
 bool LudumGameInstance::IsBrickOffsetChallengeValid(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	if (success)
 		return (target_brick_offset > 0.0f);
 	else
-		return (target_brick_offset < max_brick_offset);
+		return (target_brick_offset < ludum_game->max_brick_offset);
 }
 
 bool LudumGameInstance::IsBallPowerChallengeValid(bool success)
@@ -376,13 +397,15 @@ void LudumGameInstance::OnBallPowerChallenge(bool success)
 
 bool LudumGameInstance::IsExtraBallChallengeValid(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	death::Player * player = GetPlayer(0);
 	if (player == nullptr)
 		return false;
 
 	int current_life = player->GetLifeCount();
 	if (success)
-		return current_life < max_life; // do not add life is already max
+		return current_life < ludum_game->max_life; // do not add life is already max
 	else
 		return current_life > 1; // do not remove life if last
 }
@@ -397,27 +420,31 @@ void LudumGameInstance::OnExtraBallChallenge(bool success)
 
 bool LudumGameInstance::IsLongBarChallengeValid(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	LudumPlayer * player = GetLudumPlayer(0);
 	if (player == nullptr)
 		return false;
 
 	float player_length = player->GetPlayerLength();
 	if (success)
-		return (player_length < player_max_length); // can only increment if bar is not at max already
+		return (player_length < ludum_game->player_max_length); // can only increment if bar is not at max already
 	else
-		return (player_length > player_min_length); // can only decrement if bar is not at min already
+		return (player_length > ludum_game->player_min_length); // can only decrement if bar is not at min already
 }
 
 void LudumGameInstance::OnLongBarChallenge(bool success)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	LudumPlayer * player = GetLudumPlayer(0);
 	if (player == nullptr)
 		return;
 
 	if (success)
-		player->SetPlayerLength(player_length_increment, true);
+		player->SetPlayerLength(ludum_game->player_length_increment, true);
 	else
-		player->SetPlayerLength(player_length_decrement, true);
+		player->SetPlayerLength(ludum_game->player_length_decrement, true);
 }
 
 glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
@@ -439,9 +466,10 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 
 chaos::ParticleAllocation * LudumGameInstance::CreateBalls(size_t count, bool full_init)
 {
+	LudumGame const * ludum_game = GetLudumGame();
 
 	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
+	chaos::ParticleAllocation * result = game->GetGameParticleCreator().CreateParticles("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -454,11 +482,11 @@ chaos::ParticleAllocation * LudumGameInstance::CreateBalls(size_t count, bool fu
 	{	
 		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		particles[i].bounding_box.position  = glm::vec2(0.0f, 0.0f);
-		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ball_size, ball_size);
+		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
 		
 		if (full_init)
 		{
-			particles[i].delay_before_move = delay_before_ball_move;
+			particles[i].delay_before_move = ludum_game->delay_before_ball_move;
 			particles[i].velocity = ball_speed * GenerateBallRandomDirection();
 		}
 	}
@@ -496,27 +524,31 @@ size_t LudumGameInstance::GetBallCount() const
 
 int LudumGameInstance::GetRandomButtonID() const
 {
-	size_t key_index = (size_t)(rand() % gamepad_buttons.size());
-	if (key_index >= gamepad_buttons.size())
-		key_index = gamepad_buttons.size() - 1;
-	return gamepad_buttons[key_index];
+	LudumGame const * ludum_game = GetLudumGame();
+
+	size_t key_index = (size_t)(rand() % ludum_game->gamepad_buttons.size());
+	if (key_index >= ludum_game->gamepad_buttons.size())
+		key_index = ludum_game->gamepad_buttons.size() - 1;
+	return ludum_game->gamepad_buttons[key_index];
 }
 
 
 LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 {
-	if (len == 0)
-		len = min_word_size + rand() % (max_word_size - min_word_size);
+	LudumGame const * ludum_game = GetLudumGame();
 
-	auto it = dictionnary.find(len);
+	if (len == 0)
+		len = ludum_game->min_word_size + rand() % (ludum_game->max_word_size - ludum_game->min_word_size);
+
+	auto it = ludum_game->dictionnary.find(len);
 
 	// no word of this size (search a word with the lengh the more near the request) 
-	if (it == dictionnary.end())
+	if (it == ludum_game->dictionnary.end())
 	{
-		auto better_it = dictionnary.begin();
+		auto better_it = ludum_game->dictionnary.begin();
 
 		int min_distance = std::numeric_limits<int>::max();
-		for (it = dictionnary.begin(); it != dictionnary.end(); ++it)
+		for (it = ludum_game->dictionnary.begin(); it != ludum_game->dictionnary.end(); ++it)
 		{
 			int distance = abs((int)len - (int)it->first);
 			if (distance < min_distance)
@@ -525,7 +557,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 				better_it = it;
 			}
 		}
-		if (it == dictionnary.end()) // should never happen
+		if (it == ludum_game->dictionnary.end()) // should never happen
 			return nullptr;
 	}
 
@@ -553,13 +585,13 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 	{
 		result->gamepad_challenge = std::move(gamepad_challenge);
 		result->keyboard_challenge = std::move(keyboard_challenge);
-		result->game = this;
+		result->game_instance = this;
 		result->particle_range = CreateChallengeParticles(result);
-		result->Show(IsPlaying());
+		result->Show(game->IsPlaying());
 
-		result->SetTimeout(challenge_duration);
+		result->SetTimeout(ludum_game->challenge_duration);
 
-		ball_time_dilation = challenge_time_dilation;
+		ball_time_dilation = ludum_game->challenge_time_dilation;
 	}
 	return result;
 }
@@ -567,14 +599,16 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 
 std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	std::string result;
 
 	for (size_t i = 0; i < gamepad_challenge.size(); ++i)
 	{
 		int button_index = gamepad_challenge[i];
 
-		auto const it = gamepad_button_map.find(button_index);
-		if (it == gamepad_button_map.end())
+		auto const it = ludum_game->gamepad_button_map.find(button_index);
+		if (it == ludum_game->gamepad_button_map.end())
 			continue;
 		result = result + "[" + it->second.second + "]";
 	}
@@ -633,12 +667,15 @@ void LudumGameInstance::CreateAllGameObjects(int level)
 
 void LudumGameInstance::OnBallCollide(bool collide_brick)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
+
 	game->PlaySound("ball", false, false);
 
-	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ball_collision_speed_increment);
+	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
 
 	if (collide_brick)
-		IncrementScore(points_per_brick);
+		IncrementScore(ludum_game->points_per_brick);
 }
 
 void LudumGameInstance::DestroyGameObjects()

@@ -8,12 +8,17 @@
 #include <death/GameLevelInstance.h>
 #include <death/GameFramework.h>
 
+#include "Ludum41Particles.h"
+
 // =================================================
 // LevelInstance
 // =================================================
 
 class LudumLevelInstance : public death::GameLevelInstance
 {
+
+	friend class ParticleMovableObjectTrait;
+
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);

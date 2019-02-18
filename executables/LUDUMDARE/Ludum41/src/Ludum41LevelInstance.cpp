@@ -16,16 +16,12 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {
-	LudumGame const * ludum_game = dynamic_cast<LudumGame const *>(GetGame());
-	if (ludum_game == nullptr)
-		return false;
-
 	LudumLevel const * ludum_level = dynamic_cast<LudumLevel const *>(GetLevel());
 	if (ludum_level == nullptr)
 		return false;
 
 	// the only bricks remaining are the one that cannot be destroyed
-	if (ludum_game->GetBrickCount() == ludum_level->indestructible_brick_count)
+	if (GetBrickCount() == ludum_level->indestructible_brick_count)
 		return true;
 
 	return false;
@@ -64,9 +60,14 @@ bool LudumLevelInstance::DoTick(double delta_time)
 }
 #endif
 
-chaos::ParticleAllocation * LudumLevelInstance::CreateBricks(LudumLevel const * level)
+chaos::ParticleAllocation * LudumLevelInstance::CreateBricks()
 {
-	if (level == nullptr)
+	LudumLevel const * ludum_level = GetLudumLevel();
+	if (ludum_level == nullptr)
+		return nullptr;
+
+	LudumGame const * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
 		return nullptr;
 
 	glm::vec4 const indestructible_color = glm::vec4(1.0f, 0.4f, 0.0f, 1.0f);
@@ -80,8 +81,8 @@ chaos::ParticleAllocation * LudumLevelInstance::CreateBricks(LudumLevel const * 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);
 
 	// create the bricks resource
-	size_t brick_count = level->GetBrickCount();
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
+	size_t brick_count = ludum_level->GetBrickCount();
+	chaos::ParticleAllocation * result = game->GetGameParticleCreator().CreateParticles("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -92,17 +93,17 @@ chaos::ParticleAllocation * LudumLevelInstance::CreateBricks(LudumLevel const * 
 	// compute the brick size
 	float BRICK_ASPECT = 16.0f / 9.0f;
 
-	glm::vec2 view_size = GetViewSize();
+	glm::vec2 view_size = ludum_game->GetViewSize();
 
 	glm::vec2 particle_size;
-	particle_size.x = view_size.x / (float)brick_per_line;
+	particle_size.x = view_size.x / (float)ludum_game->brick_per_line;
 	particle_size.y = particle_size.x / BRICK_ASPECT;
 
 	// fill the brick
 	size_t k = 0;
-	for (size_t i = 0; i < level->bricks.size(); ++i)
+	for (size_t i = 0; i < ludum_level->bricks.size(); ++i)
 	{
-		std::vector<int> const & line = level->bricks[i];
+		std::vector<int> const & line = ludum_level->bricks[i];
 		for (size_t j = 0; j < line.size(); ++j)
 		{
 			int b = line[j];

@@ -7,7 +7,7 @@
 
 class LudumChallenge : public chaos::ReferencedObject
 {
-	friend class LudumGame;
+	friend class LudumGameInstance;
 
 public:
 

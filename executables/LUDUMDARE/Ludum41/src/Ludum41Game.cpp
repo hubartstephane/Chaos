@@ -357,17 +357,6 @@ int LudumGame::AddParticleLayers()
 	return render_order;
 }
 
-
-
-void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
-{
-	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);
-
-	bricks_allocations = nullptr;
-	if (new_level != nullptr)
-		bricks_allocations = CreateBricks(dynamic_cast<LudumLevel const*>(new_level));
-}
-
 death::GameInstance * LudumGame::CreateGameInstance()
 {
 	return new LudumGameInstance(this);

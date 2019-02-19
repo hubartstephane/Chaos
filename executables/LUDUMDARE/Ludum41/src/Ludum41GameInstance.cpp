@@ -107,37 +107,9 @@ void LudumGameInstance::TickBallSplit(double delta_time)
 	pending_split_count = 0;
 }
 
-bool LudumGameInstance::OnCharEvent(unsigned int c)
-{
-	// CHALLENGE
-	if (c >= 'a' && c <= 'z')
-	{
-		SendKeyboardButtonToChallenge((char)c);
-		return true;
-	}
-	else if (c >= 'A' && c <= 'Z')
-	{
-		SendKeyboardButtonToChallenge((char)(c - 'A' + 'a'));
-		return true;
-	}
-	return death::GameInstance::OnCharEvent(c);
-}
-bool LudumGameInstance::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
-{
-	// press start or go to pause
-	if (death::GameInstance::OnGamepadInput(in_physical_gamepad))
-		return true;
-	// maybe this correspond to current challenge
-	SendGamepadButtonToChallenge(in_physical_gamepad->GetGamepadData());
-
-	return false;
-}
-
 void LudumGameInstance::TickBrickOffset(double delta_time)
 {
 	LudumGame const * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
-		return;
 
 	if (target_brick_offset > brick_offset)
 	{
@@ -230,8 +202,6 @@ void LudumGameInstance::OnLeavePause()
 void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
-
-	bricks_allocations = nullptr;
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
 }
@@ -266,11 +236,11 @@ void LudumGameInstance::IncrementScore(int delta)
 
 bool LudumGameInstance::IsBrickLifeChallengeValid(bool success)
 {
-	LudumLevel const * level = dynamic_cast<LudumLevel const *>(GetLevel());
-	if (level == nullptr)
-		return false;
+	LudumLevel const * level = GetLudumLevel();
 
-	size_t brick_count = GetBrickCount();
+	LudumLevelInstance const * level_instance = GetLudumLevelInstance();
+
+	size_t brick_count = level_instance->GetBrickCount();
 	return (brick_count > level->indestructible_brick_count);
 }
 
@@ -278,12 +248,14 @@ void LudumGameInstance::OnBrickLifeChallenge(bool success)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 
+	LudumLevelInstance * level_instance = GetLudumLevelInstance();
 
-	size_t brick_count = GetBrickCount();
+
+	size_t brick_count = level_instance->GetBrickCount();
 	if (brick_count == 0)
 		return;
 
-	ParticleBrick * bricks = GetBricks();
+	ParticleBrick * bricks = level_instance->GetBricks();
 	if (bricks == nullptr)
 		return;
 
@@ -620,7 +592,7 @@ chaos::ParticleAllocation * LudumGameInstance::CreateChallengeParticles(LudumCha
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
 
-	chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
+	chaos::ParticleLayer * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
 	if (layer == nullptr)
 		return nullptr;
 
@@ -634,12 +606,12 @@ chaos::ParticleAllocation * LudumGameInstance::CreateChallengeParticles(LudumCha
 
 	if (keyboard)
 	{
-		particle_text_generator->Generate(challenge->keyboard_challenge.c_str(), result, params);
+		game->GetTextGenerator()->Generate(challenge->keyboard_challenge.c_str(), result, params);
 	}
 	else
 	{
 		std::string gamepad_string = GenerateGamepadChallengeString(challenge->gamepad_challenge);
-		particle_text_generator->Generate(gamepad_string.c_str(), result, params);
+		game->GetTextGenerator()->Generate(gamepad_string.c_str(), result, params);
 	}
 
 	// create the text
@@ -672,7 +644,7 @@ void LudumGameInstance::OnBallCollide(bool collide_brick)
 
 	game->PlaySound("ball", false, false);
 
-	ball_collision_speed = min(ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
+	ball_collision_speed = min(ludum_game->ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
 
 	if (collide_brick)
 		IncrementScore(ludum_game->points_per_brick);

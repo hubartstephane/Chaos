@@ -101,10 +101,6 @@ protected:
 
 	virtual void OnEnterPause() override;
 
-	virtual bool OnCharEvent(unsigned int c) override;
-
-	virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
-
 	virtual void OnInputModeChanged(int new_mode, int old_mode);
 
 	/** generate a direction updward random for the ball */

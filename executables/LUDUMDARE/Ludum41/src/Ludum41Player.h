@@ -36,6 +36,10 @@ protected:
 	virtual void TickPlayerDisplacement(double delta_time) override;
 	/** override */
 	virtual bool OnMouseMove(double x, double y) override;
+	/** override */
+	virtual bool OnCharEvent(unsigned int c) override;
+	/** override */
+	virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
 
 protected:
 

@@ -33,6 +33,34 @@ bool LudumPlayer::OnMouseMove(double x, double y)
 	return false;
 }
 
+bool LudumPlayer::OnCharEvent(unsigned int c)
+{
+	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+
+	// CHALLENGE
+	if (c >= 'a' && c <= 'z')
+	{
+		ludum_game_instance->SendKeyboardButtonToChallenge((char)c);
+		return true;
+	}
+	else if (c >= 'A' && c <= 'Z')
+	{
+		ludum_game_instance->SendKeyboardButtonToChallenge((char)(c - 'A' + 'a'));
+		return true;
+	}
+
+	return death::Player::OnCharEvent(c);
+}
+
+void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
+{
+	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
+
+	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	ludum_game_instance->SendGamepadButtonToChallenge(gpd);
+}
+
+
 void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 {
 	if (increment)
@@ -40,6 +68,8 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 	else
 		player_length = in_length;
 }
+
+
 
 #if 0
 

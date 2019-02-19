@@ -56,8 +56,6 @@ protected:
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
 	/** override */
 	virtual bool DeclareParticleClasses() override;
-	/** override */
-	virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** override */
 	virtual void OnEnterMainMenu(bool very_first) override;
@@ -86,8 +84,6 @@ protected:
 
 	/** create the player */
 	chaos::ParticleAllocation * CreatePlayer();
-
-	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
 	virtual death::GameInstance * CreateGameInstance() override;
 

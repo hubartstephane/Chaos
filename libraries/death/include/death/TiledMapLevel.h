@@ -386,8 +386,6 @@ namespace death
 			virtual bool FinalizeParticles();
 			/** try to search a name and a tag in the chaos::layer,  give them to the particle layer */
 			virtual bool InitializeParticleLayerNameAndTag(chaos::ParticleLayer * in_particle_layer);
-			/** test whether there is an infinite bounding box flag */
-			virtual void CheckInfiniteBoundingBox();
 
 		protected:
 
@@ -397,6 +395,8 @@ namespace death
 			bool wrap_x = false;
 			/** whether the layer is to be repeated infinitely in Y direction */
 			bool wrap_y = false;
+			/** whether we want to ignore the limit of the layer bounding box for camera clamping (usefull for dynamic content) */
+			bool infinite_bounding_box = false;
 			/** material name */
 			std::string material_name;
 

@@ -58,7 +58,7 @@ namespace death
 			particle_count = 0;
 		}
 
-		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, int gid, bool horizontal_flip, bool vertical_flip)
+		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, int gid, bool horizontal_flip, bool vertical_flip, bool keep_aspect_ratio)
 		{
 			// search bitmap information for the particle
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
@@ -73,7 +73,8 @@ namespace death
 			// maintain aspect ratio
 			else
 			{
-				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(bitmap_info->width, bitmap_info->height), true);
+				if (keep_aspect_ratio)
+					particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(bitmap_info->width, bitmap_info->height), true);
 			}
 
 			// add the particle

@@ -363,9 +363,15 @@ namespace death
 
 		chaos::box2 LayerInstance::GetBoundingBox(bool world_system) const
 		{
-			chaos::box2 result = bounding_box; // apply our own offset that can have changed during game lifetime
-			if (world_system)
-				result.position += offset;
+			chaos::box2 result;
+			if (!infinite_bounding_box)
+			{
+				result = bounding_box; // apply our own offset that can have changed during game lifetime
+				if (world_system)
+					result.position += offset;
+			}
+			else
+				result = result;
 			return result;
 		}
 
@@ -385,13 +391,6 @@ namespace death
 			}
 			// default material else where
 			return level_instance->GetDefaultRenderMaterial();
-		}
-
-		void LayerInstance::CheckInfiniteBoundingBox()
-		{
-			bool infinite_bounding_box = layer->FindPropertyBool("INFINITE_BOUNDING_BOX", false);
-			if (infinite_bounding_box)
-				bounding_box = chaos::box2();
 		}
 
 		bool LayerInstance::Initialize()
@@ -415,6 +414,8 @@ namespace death
 			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
 			tile_collisions_enabled  = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
 
+			infinite_bounding_box = layer->FindPropertyBool("INFINITE_BOUNDING_BOX", false);
+
 			// copy the offset / name
 			offset = layer->offset;
 			name = layer->name;
@@ -427,7 +428,6 @@ namespace death
 			{
 				if (!InitializeLayer(image_layer))
 					return false;
-				CheckInfiniteBoundingBox();
 				return FinalizeParticles();
 			}
 
@@ -436,7 +436,6 @@ namespace death
 			{
 				if (!InitializeLayer(object_layer))
 					return false;
-				CheckInfiniteBoundingBox();
 				return FinalizeParticles();
 			}
 
@@ -445,7 +444,6 @@ namespace death
 			{
 				if (!InitializeLayer(tile_layer))
 					return false;
-				CheckInfiniteBoundingBox();
 				return FinalizeParticles();
 			}
 

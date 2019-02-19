@@ -46,8 +46,6 @@ protected:
 	
 public:
 
-
-	
 	/** some sprites */	
 	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;	
 };

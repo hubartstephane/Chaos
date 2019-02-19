@@ -11,6 +11,8 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 	if (!death::GameLevelInstance::Initialize(in_game, in_level))
 		return false;
 
+	bricks_allocations = CreateBricks();
+
 	return true;
 }
 

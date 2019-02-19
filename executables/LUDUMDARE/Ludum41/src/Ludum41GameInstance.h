@@ -67,8 +67,8 @@ public:
 	/** update the score */
 	void IncrementScore(int delta);
 
-	/** returns true whether we can start a challenge (returns index of a valid ball) */
-	size_t CanStartChallengeBallIndex(bool reverse) const;
+	/** returns index of any ball matching some condition (ball higher than a limit and going up or ball lower than a limit a going down) */
+	size_t CanStartChallengeBallIndex(bool going_down) const;
 
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }
@@ -124,12 +124,11 @@ protected:
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);	
 	
+	virtual bool Initialize(death::Game * in_game) override;
 
 	/** called whenever a ball collide */
 	void OnBallCollide(bool collide_brick);	
 	
-	/** creating all object in the game */
-	void CreateAllGameObjects(int level);
 	/** destroying game objects*/
 	void DestroyGameObjects();	
 

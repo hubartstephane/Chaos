@@ -34,7 +34,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	LudumGameInstance const * ludum_game_instance = GetLudumGameInstance();
 	if (ludum_game_instance == nullptr)
 		return true;
-	if (ludum_game_instance->CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
+	if (ludum_game_instance->CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max()) // any ball is going down
 		return true;
 	return false;
 }
@@ -45,22 +45,6 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	RestrictPlayerToWorld(0);
 	return true;
 }
-
-
-#if 0
-
-
-	// no more destructible
-	size_t brick_count = GetBrickCount();
-	if (brick_count == level->indestructible_brick_count)
-	{
-		if (CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max())
-		{
-			SetNextLevel(true);
-		}
-	}
-}
-#endif
 
 chaos::ParticleAllocation * LudumLevelInstance::CreateBricks()
 {

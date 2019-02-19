@@ -11,7 +11,7 @@ LudumGameInstance::LudumGameInstance(death::Game * in_game) :
 {
 }
 
-size_t LudumGameInstance::CanStartChallengeBallIndex(bool reverse) const
+size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 {
 	size_t ball_count = GetBallCount();
 	if (ball_count > 0)
@@ -23,9 +23,9 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool reverse) const
 
 			for (size_t i = 0; i < ball_count; ++i)
 			{
-				if (reverse ^ (balls->velocity.y <= 0.0f)) // going up
+				if (going_down ^ (balls->velocity.y <= 0.0f)) // going up
 					continue;
-				if (reverse ^ (balls->bounding_box.position.y > -view_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
+				if (going_down ^ (balls->bounding_box.position.y > -view_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
 					return i;
 			}
 		}
@@ -42,12 +42,10 @@ void LudumGameInstance::TickChallenge(double delta_time)
 	}
 	else
 	{
-		bool random_reversed = false; // shuxxx at random
-
 		// start a challenge (only if one ball is going upward)
 		challenge_timer = max(0.0f, challenge_timer - (float)delta_time);
 		if (challenge_timer <= 0.0f)
-			if (CanStartChallengeBallIndex(random_reversed) != std::numeric_limits<size_t>::max())
+			if (CanStartChallengeBallIndex(false) != std::numeric_limits<size_t>::max()) // any ball going up
 				sequence_challenge = CreateSequenceChallenge(0);
 	}
 }
@@ -87,9 +85,7 @@ void LudumGameInstance::TickBallSplit(double delta_time)
 	if (ball_count > (size_t)ludum_game->max_ball_count || ball_count == 0)
 		return;
 
-	bool random_reverse = false; // shuxx
-
-	size_t ball_candidate = CanStartChallengeBallIndex(random_reverse);
+	size_t ball_candidate = CanStartChallengeBallIndex(false); // any ball going up (do not split a ball that could be lost)
 	if (ball_candidate == std::numeric_limits<size_t>::max())
 		return;
 
@@ -631,12 +627,6 @@ chaos::ParticleAllocation * LudumGameInstance::CreateChallengeParticles(LudumCha
 	return allocation;
 }
 
-void LudumGameInstance::CreateAllGameObjects(int level)
-{
-	if (balls_allocations == nullptr)
-		balls_allocations = CreateBalls(1, true);	
-}
-
 void LudumGameInstance::OnBallCollide(bool collide_brick)
 {
 	LudumGame const * ludum_game = GetLudumGame();
@@ -654,6 +644,21 @@ void LudumGameInstance::DestroyGameObjects()
 {
 	balls_allocations = nullptr;
 	sequence_challenge = nullptr;
+}
+
+bool LudumGameInstance::Initialize(death::Game * in_game)
+{
+	if (!death::GameInstance::Initialize(in_game))
+		return false;
+
+	if (balls_allocations == nullptr)
+		balls_allocations = CreateBalls(1, true);
+
+	LudumGame const * ludum_game = GetLudumGame();
+	challenge_timer = ludum_game->challenge_frequency;
+	ball_speed = ludum_game->ball_initial_speed;
+
+	return true;
 }
 
 #if 0

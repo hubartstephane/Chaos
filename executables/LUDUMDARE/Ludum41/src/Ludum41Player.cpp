@@ -69,8 +69,6 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 		player_length = in_length;
 }
 
-
-
 #if 0
 
 

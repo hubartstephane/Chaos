@@ -78,12 +78,12 @@ namespace death
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 	}
 
-	void GameLevelInstance::OnPlayerLevelStarted(Player * player)
+	void GameLevelInstance::OnPlayerEntered(Player * player)
 	{
 
 	}
 
-	void GameLevelInstance::OnPlayerLevelEnded(Player * player)
+	void GameLevelInstance::OnPlayerLeaved(Player * player)
 	{
 	
 	}
@@ -95,7 +95,7 @@ namespace death
 			return;
 		size_t count = game_instance->GetPlayerCount();
 		for (size_t i = 0; i < count; ++i)
-			OnPlayerLevelEnded(game_instance->GetPlayer(i));
+			OnPlayerLeaved(game_instance->GetPlayer(i));
 	}
 	
 	void GameLevelInstance::OnLevelStarted()
@@ -105,7 +105,7 @@ namespace death
 			return;
 		size_t count = game_instance->GetPlayerCount();
 		for (size_t i = 0; i < count; ++i)
-			OnPlayerLevelStarted(game_instance->GetPlayer(i));
+			OnPlayerEntered(game_instance->GetPlayer(i));
 	}
 
 	bool GameLevelInstance::Initialize(Game * in_game, GameLevel * in_level)

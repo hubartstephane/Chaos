@@ -120,6 +120,11 @@ namespace death
 		/** check whether there is a game over */
 		virtual bool CheckGameOverCondition();
 
+		/** called for each player whenever a level is started */
+		virtual void OnPlayerEntered(Player * player);
+		/** called for each player whenever a level is ended */
+		virtual void OnPlayerLeaved(Player * player);
+
 	protected:
 
 		/** the game */

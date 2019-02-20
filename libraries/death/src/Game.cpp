@@ -916,30 +916,33 @@ namespace death
 			return false;
 		if (!game_instance->Initialize(this))
 			return false;
-		// create a player
-		Player * first_player = game_instance->CreatePlayer(in_physical_gamepad);
-		if (first_player == nullptr)
-		{
-			game_instance = nullptr; // destroy the game instance
-			return false;
-		}
-
-
-
-		// shuxxx
-
+		// create other resources
 		CreatePlayingHUD();
-		SetNextLevel(true); // select the very first
 		StartGameMusic(true);
+		// create a first player and insert it
+		game_instance->CreatePlayer(in_physical_gamepad);
+		// notify all players start the game instance
+		for (size_t i = 0; i < game_instance->players.size(); ++i)
+			if (game_instance->players[i] != nullptr)
+				game_instance->OnPlayerEntered(game_instance->players[i].get());
+		// select the very first level
+		SetNextLevel(true); 
 
 		return true;
 	}
 
 	bool Game::OnLeaveGame()
 	{
+		// save the best score (and other values)
 		ConditionnalSaveBestScore();
+		// restore main menu condition (level, music ...)
 		SetCurrentLevel(nullptr);	
 		StartMainMenuMusic(true);
+		// notify all players start the game instance
+		for (size_t i = 0; i < game_instance->players.size(); ++i)
+			if (game_instance->players[i] != nullptr)
+				game_instance->OnPlayerLeaved(game_instance->players[i].get());
+		// destroy the game instance 
 		game_instance = nullptr;
 		return true;
 	}

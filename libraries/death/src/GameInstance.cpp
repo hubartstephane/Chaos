@@ -257,5 +257,15 @@ namespace death
 	{
 
 	}
+	
+	void GameInstance::OnPlayerEntered(Player * player)
+	{
+
+	}
+	
+	void GameInstance::OnPlayerLeaved(Player * player)
+	{
+
+	}
 
 }; // namespace death

@@ -86,9 +86,9 @@ namespace death
 		virtual bool Initialize(Game * in_game, GameLevel * in_level);
 
 		/** called for each player whenever a level is started */
-		virtual void OnPlayerLevelStarted(Player * player);
+		virtual void OnPlayerEntered(Player * player);
 		/** called for each player whenever a level is ended */
-		virtual void OnPlayerLevelEnded(Player * player);
+		virtual void OnPlayerLeaved(Player * player);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);

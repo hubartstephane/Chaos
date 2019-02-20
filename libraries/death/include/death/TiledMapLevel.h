@@ -500,9 +500,9 @@ namespace death
 			/** override */
 			virtual void OnLevelEnded() override;
 			/** override */
-			virtual void OnPlayerLevelStarted(Player * player) override;
+			virtual void OnPlayerEntered(Player * player) override;
 			/** override */
-			virtual void OnPlayerLevelEnded(Player * player) override;
+			virtual void OnPlayerLeaved(Player * player) override;
 
 			/** create the camera */
 			virtual void CreateCamera();

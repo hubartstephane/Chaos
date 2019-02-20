@@ -13,7 +13,7 @@
 	-GameLevelInstance::camera_box : very poor API. We could have more than one camera. Apply effects/post process ...
 		                               we could have a class Camera (like player) and swap from one to another
 
-	-Player::OnLevelStarted(...) : could be created OR NOT ... see GameLevelInstance::OnPlayerLevelStarted(...)
+	-Player::OnLevelStarted(...) : could be created OR NOT ... see GameLevelInstance::OnPlayerEntered(...)
 
 	-Add method to check whether the player loose one life
 

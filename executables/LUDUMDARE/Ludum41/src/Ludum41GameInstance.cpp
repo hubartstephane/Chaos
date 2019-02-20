@@ -661,6 +661,18 @@ bool LudumGameInstance::Initialize(death::Game * in_game)
 	return true;
 }
 
+void LudumGameInstance::OnPlayerEntered(death::Player * player)
+{
+	death::GameInstance::OnPlayerEntered(player);
+
+}
+
+void LudumGameInstance::OnPlayerLeaved(death::Player * player)
+{
+	death::GameInstance::OnPlayerLeaved(player);
+
+}
+
 #if 0
 void LudumGame::ResetGameVariables()
 {

@@ -1051,7 +1051,7 @@ namespace death
 			SetCameraBox(chaos::box2()); // reset the camera
 		}
 
-		void LevelInstance::OnPlayerLevelStarted(Player * player)
+		void LevelInstance::OnPlayerEntered(Player * player)
 		{
 			// early exit
 			if (player == nullptr)
@@ -1116,7 +1116,7 @@ namespace death
 			layer_instance->FinalizeParticles();
 		}
 
-		void LevelInstance::OnPlayerLevelEnded(Player * player)
+		void LevelInstance::OnPlayerLeaved(Player * player)
 		{
 			if (player == nullptr)
 				return;

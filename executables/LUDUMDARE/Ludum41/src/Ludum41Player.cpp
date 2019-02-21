@@ -22,6 +22,10 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 
 	glm::vec2 position = GetPlayerPosition();
 	SetPlayerPosition(glm::vec2(position.x + value, PLAYER_Y));	
+
+	LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+	if (ludum_level_instance != nullptr)
+		ludum_level_instance->RestrictPlayerToWorld(this);
 }
 
 bool LudumPlayer::OnMouseMove(double x, double y)

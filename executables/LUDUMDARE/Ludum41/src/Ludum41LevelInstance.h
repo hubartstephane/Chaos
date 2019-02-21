@@ -31,6 +31,8 @@ public:
 	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
 	/** override */
 	virtual bool DoTick(double delta_time) override;
+	/** override */
+	virtual chaos::box2 GetBoundingBox() const override;
 
 protected:
 

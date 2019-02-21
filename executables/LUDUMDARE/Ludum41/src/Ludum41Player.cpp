@@ -60,37 +60,22 @@ void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::
 	ludum_game_instance->SendGamepadButtonToChallenge(gpd);
 }
 
-
 void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 {
+	LudumGame const * ludum_game = GetLudumGame();
+
 	if (increment)
 		player_length += in_length;
 	else
 		player_length = in_length;
+
+	player_length = chaos::MathTools::Clamp(player_length, ludum_game->player_min_length, ludum_game->player_max_length);
+
+	chaos::box2 box = GetPlayerBox();
+	box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);
+	SetPlayerBox(box);
+
+	LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+	if (ludum_level_instance != nullptr)
+		ludum_level_instance->RestrictPlayerToWorld(this);
 }
-
-#if 0
-
-
-if (player_allocations == nullptr)
-{
-	player_allocations = CreatePlayer();
-	SetPlayerLength(player_length);
-	SetPlayerPosition(0, glm::vec2(0.0f, PLAYER_Y));
-	RestrictPlayerToWorld(0);
-}
-
-
-
-void LudumGame::SetPlayerLength(float length)
-{
-	length = chaos::MathTools::Clamp(length, player_min_length, player_max_length);
-
-	chaos::box2 box = GetPlayerBox(0);
-	box.half_size = glm::vec2(length * 0.5f, PLAYER_HEIGHT * 0.5f);
-	SetPlayerBox(0, box);
-
-	player_length = length;
-	RestrictPlayerToWorld(0);
-}
-#endif

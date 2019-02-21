@@ -39,6 +39,11 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
+chaos::box2 LudumLevelInstance::GetBoundingBox() const
+{
+	return game->GetViewBox();
+}
+
 bool LudumLevelInstance::DoTick(double delta_time)
 {
 	death::GameLevelInstance::DoTick(delta_time);

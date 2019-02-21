@@ -187,15 +187,21 @@ namespace death
 	{
 		if (allocation == nullptr)
 			return;
-		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);
 		chaos::box2 world = GetBoundingBox();
+		if (world.IsEmpty())
+			return;
+		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);		
 		chaos::RestrictToInside(world, box, false);
 		chaos::ParticleDefault::SetParticleBox(allocation, index, box);
 	}
 
 	void GameLevelInstance::RestrictPlayerToWorld(int player_index)
 	{
-		Player * player = GetPlayer(player_index);
+		RestrictPlayerToWorld(GetPlayer(player_index));
+	}
+
+	void GameLevelInstance::RestrictPlayerToWorld(Player * player)
+	{
 		if (player == nullptr)
 			return;
 		RestrictObjectToWorld(player->GetPlayerAllocation(), 0);

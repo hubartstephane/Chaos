@@ -209,9 +209,12 @@ bool LudumGameInstance::DoTick(double delta_time)
 		return false;
 
 	// some other calls
-	TickBrickOffset(delta_time);
-	TickChallenge(delta_time);
-	TickBallSplit(delta_time);
+	if (game->IsPlaying())
+	{
+		TickBrickOffset(delta_time);
+		TickChallenge(delta_time);
+		TickBallSplit(delta_time);
+	}
 	return true;
 }
 
@@ -412,7 +415,7 @@ void LudumGameInstance::OnLongBarChallenge(bool success)
 	if (success)
 		player->SetPlayerLength(ludum_game->player_length_increment, true);
 	else
-		player->SetPlayerLength(ludum_game->player_length_decrement, true);
+		player->SetPlayerLength(-ludum_game->player_length_decrement, true);
 }
 
 glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
@@ -665,6 +668,26 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 {
 	death::GameInstance::OnPlayerEntered(player);
 
+	// create the player pawn
+	chaos::ParticleAllocation * player_allocation = game->GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	if (player_allocation == nullptr)
+		return;
+	player->SetPlayerAllocation(player_allocation);
+	// initialize the player particle
+	chaos::ParticleAccessor<ParticleObject> particles = player_allocation->GetParticleAccessor<ParticleObject>();
+	if (particles.GetCount() == 0)
+		return;
+	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	particles->bounding_box.position = glm::vec2(0.0f, 0.0f);
+	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
+	// set the player length
+	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer *>(player);
+	if (ludum_player != nullptr)
+	{
+		LudumGame * ludum_game = GetLudumGame();
+		if (ludum_game != nullptr)
+			ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
+	}
 }
 
 void LudumGameInstance::OnPlayerLeaved(death::Player * player)
@@ -674,6 +697,29 @@ void LudumGameInstance::OnPlayerLeaved(death::Player * player)
 }
 
 #if 0
+
+
+chaos::ParticleAllocation * LudumGame::CreatePlayer()
+{
+	// create the object
+	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	if (result == nullptr)
+		return nullptr;
+
+	// set the color
+	chaos::ParticleAccessor<ParticleObject> particles = result->GetParticleAccessor<ParticleObject>();
+	if (particles.GetCount() == 0)
+		return nullptr;
+
+	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	particles->bounding_box.position = glm::vec2(0.0f, 0.0f);
+	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
+
+	return result;
+}
+
+
 void LudumGame::ResetGameVariables()
 {
 	death::Game::ResetGameVariables();

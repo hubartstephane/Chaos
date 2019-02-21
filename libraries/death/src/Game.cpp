@@ -96,7 +96,7 @@ namespace death
 			if (RequireStartGame(nullptr))
 				return true;
 			// PLAYING to PAUSE
-			if (key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER || key == GLFW_KEY_P)
+			if (key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER)
 				if (RequireTogglePause())
 					return true;
 			// QUIT GAME

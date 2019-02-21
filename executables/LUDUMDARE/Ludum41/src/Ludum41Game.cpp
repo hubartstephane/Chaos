@@ -73,25 +73,6 @@ void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }
 
-chaos::ParticleAllocation * LudumGame::CreatePlayer()
-{
-	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
-	if (result == nullptr)
-		return nullptr;
-
-	// set the color
-	chaos::ParticleAccessor<ParticleObject> particles = result->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-
-	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	particles->bounding_box.position  = glm::vec2(0.0f, 0.0f);
-	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
-	
-	return result;
-}
 
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()

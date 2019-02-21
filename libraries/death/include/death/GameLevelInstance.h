@@ -79,6 +79,8 @@ namespace death
 		void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
 		/** restrict an player to the world */
 		void RestrictPlayerToWorld(int player_index);
+		/** restrict an player to the world */
+		void RestrictPlayerToWorld(Player * player);
 
 	protected:
 

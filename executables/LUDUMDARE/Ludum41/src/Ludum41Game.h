@@ -82,9 +82,6 @@ protected:
 	/** override */
 	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
 
-	/** create the player */
-	chaos::ParticleAllocation * CreatePlayer();
-
 	virtual death::GameInstance * CreateGameInstance() override;
 
 protected:

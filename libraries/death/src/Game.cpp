@@ -956,11 +956,11 @@ namespace death
 			{
 				if (current_level_instance->IsLevelCompleted()) // level completed => forbid GAME OVER, even if game instance says yes
 					return false;
-				if (current_level_instance->CheckGameOverCondition())
+				if (current_level_instance->DoCheckGameOverCondition())
 					return true;
 			}
 			// check for game over in game instance
-			if (game_instance->CheckGameOverCondition())
+			if (game_instance->DoCheckGameOverCondition())
 				return true;
 		}
 		return false; // no gameover

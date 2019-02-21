@@ -696,74 +696,36 @@ void LudumGameInstance::OnPlayerLeaved(death::Player * player)
 
 }
 
-#if 0
-
-
-chaos::ParticleAllocation * LudumGame::CreatePlayer()
+bool LudumGameInstance::DoCheckGameOverCondition()
 {
-	// create the object
-	chaos::ParticleAllocation * result = GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
-	if (result == nullptr)
-		return nullptr;
-
-	// set the color
-	chaos::ParticleAccessor<ParticleObject> particles = result->GetParticleAccessor<ParticleObject>();
-	if (particles.GetCount() == 0)
-		return nullptr;
-
-	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	particles->bounding_box.position = glm::vec2(0.0f, 0.0f);
-	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
-
-	return result;
-}
-
-
-void LudumGame::ResetGameVariables()
-{
-	death::Game::ResetGameVariables();
-
-	brick_offset = 0.0f;
-
-	ball_power    = 1.0f;
-	ball_speed    = ball_initial_speed;
-	ball_time_dilation = 1.0f;
-	challenge_timer    = challenge_frequency;
-	pending_split_count = 0;
-	ball_collision_speed = 0.0f;
-
-	combo_multiplier = 1;
-}
-bool LudumGame::CheckGameOverCondition()
-{
-
-#if 0
-
-	size_t ball_count = GetBallCount();
-	if (ball_count == 0)
+	LudumPlayer * ludum_player = GetLudumPlayer(0);
+	if (ludum_player != nullptr)
 	{
-		SetCurrentLife(GetCurrentLife() - 1);
-		if (current_life <= 0)
-			RequireGameOver();
-		else
+		size_t ball_count = GetBallCount();
+		if (ball_count == 0)
 		{
-			PlaySound("balllost", false, false);
-			combo_multiplier = 1;
-			ball_collision_speed = 0.0f;
-			ball_power = 1.0f;
-			ball_speed = ball_initial_speed;
-			SetPlayerLength(player_initial_length);
-			balls_allocations = CreateBalls(1, true);	
+			ludum_player->SetLifeCount(-1, true);
+			if (ludum_player->GetLifeCount() <= 0)
+				return true;
+			else
+			{
+				LudumGame * ludum_game = GetLudumGame();
+
+				ludum_game->PlaySound("balllost", false, false);
+				combo_multiplier = 1;
+				ball_collision_speed = 0.0f;
+				ball_power = 1.0f;
+				ball_speed = ludum_game->ball_initial_speed;
+				pending_split_count = 0;
+		//		brick_offset = 0.0f;
+				target_brick_offset = 0.0f;
+				ball_time_dilation = 1.0f;
+				challenge_timer = ludum_game->challenge_frequency;
+				ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
+				balls_allocations = CreateBalls(1, true);
+				return false;
+			}			
 		}
-		return true;
 	}
-#endif
-	return false;
+	return death::GameInstance::DoCheckGameOverCondition();
 }
-
-
-
-
-
-#endif

@@ -17,7 +17,7 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 	return new LudumPlayer(this);
 }
 
-bool LudumGameInstance::CheckGameOverCondition()
+bool LudumGameInstance::DoCheckGameOverCondition()
 {
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game != nullptr)
@@ -26,7 +26,7 @@ bool LudumGameInstance::CheckGameOverCondition()
 		if (particle_player == nullptr)
 			return true;		
 	}
-	return death::GameInstance::CheckGameOverCondition();
+	return death::GameInstance::DoCheckGameOverCondition();
 }
 
 bool LudumGameInstance::DoTick(double delta_time)

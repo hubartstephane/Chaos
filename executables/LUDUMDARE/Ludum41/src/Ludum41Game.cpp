@@ -309,7 +309,6 @@ bool LudumGame::InitializeRewardsAndPunishments()
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickLife);
 	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
-
 	return true;
 }
 

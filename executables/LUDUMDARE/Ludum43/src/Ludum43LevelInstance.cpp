@@ -64,11 +64,11 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	return true;
 }
 
-bool LudumLevelInstance::CheckGameOverCondition()
+bool LudumLevelInstance::DoCheckGameOverCondition()
 {
 	if (level_timeout == 0.0f)
 		return true;
-	return death::TiledMap::LevelInstance::CheckGameOverCondition();
+	return death::TiledMap::LevelInstance::DoCheckGameOverCondition();
 }
 
 void LudumLevelInstance::OnLevelStarted()

@@ -118,7 +118,7 @@ namespace death
 		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance);
 
 		/** check whether there is a game over */
-		virtual bool CheckGameOverCondition();
+		virtual bool DoCheckGameOverCondition();
 
 		/** called for each player whenever a level is started */
 		virtual void OnPlayerEntered(Player * player);

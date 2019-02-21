@@ -28,7 +28,7 @@ protected:
 
 	virtual death::Player * DoCreatePlayer() override;
 
-	virtual bool CheckGameOverCondition() override;
+	virtual bool DoCheckGameOverCondition() override;
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 

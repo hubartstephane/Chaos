@@ -103,7 +103,7 @@ namespace death
 		virtual void OnGameOver();
 
 		/** check whether there is a game over */
-		virtual bool CheckGameOverCondition();
+		virtual bool DoCheckGameOverCondition();
 
 	protected:
 

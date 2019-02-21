@@ -103,6 +103,8 @@ protected:
 
 	virtual void OnInputModeChanged(int new_mode, int old_mode);
 
+	virtual bool DoCheckGameOverCondition() override;
+
 	/** override */
 	virtual void OnPlayerEntered(death::Player * player) override;
 	/** override */

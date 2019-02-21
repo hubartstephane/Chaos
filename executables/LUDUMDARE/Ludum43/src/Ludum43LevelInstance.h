@@ -31,7 +31,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool CheckGameOverCondition() override;
+	virtual bool DoCheckGameOverCondition() override;
 	/** override */
 	virtual bool IsLevelCompleted() const override;
 	/** override */

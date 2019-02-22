@@ -43,37 +43,12 @@ void LudumGame::OnEnterMainMenu(bool very_first)
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
-{
-	// clear the color buffers
-	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-	// clear the depth buffers
-	float far_plane = 1000.0f;
-	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-	// some states
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-
-	// draw particle system
-	if (particle_manager != nullptr)
-		particle_manager->Display(renderer, uniform_provider, render_params);
-
-	// super method
-	death::Game::DoDisplay(renderer, uniform_provider, render_params);
-}
-
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
 {
 	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
 	if (ludum_game_instance != nullptr)
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }
-
-
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {

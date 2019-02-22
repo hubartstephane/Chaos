@@ -215,8 +215,10 @@ namespace death
 		virtual void Display(chaos::Renderer * renderer, glm::ivec2 const & size);
 		/** the user defined rendering function */
 		virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
-		/** internal  method to display the level */
-		virtual void DoDisplayLevel(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		/** internal method to prepare rendering */
+		virtual void DoPreDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);		
+		/** internal  method to display the game content */
+		virtual void DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 		/** internal  method to display the HUD */
 		virtual void DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 

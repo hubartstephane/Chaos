@@ -43,165 +43,135 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-void LudumGame::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 {
+	death::TiledMap::LevelInstance * ludum_level_instance = GetLudumLevelInstance();
+
+	// I/ no level rendering like main menu (the background)
+	if (ludum_level_instance == nullptr)
+	{
+		if (particle_manager != nullptr)
+			particle_manager->Display(renderer, uniform_provider, render_params);
+		return;
+	}
+
+	// II/ offscreen rendering + composition
+
+	// create the render targets or reuse olds
+	if (!GenerateFramebuffer(render_params.screen_size, framebuffer_other) || !GenerateFramebuffer(render_params.screen_size, framebuffer_worldlimits))
+		return;
+
 	// clear the color buffers
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-	// clear the depth buffers
-	float far_plane = 1000.0f;
-	glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
-
-	// some states
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
 
 	// try to capture the "WorldBounds layer"
 	// XXX : in menu, there is no current_level_instance, so we can test the pointer to exaclty know what to do
 	//
-	death::TiledMap::LayerInstance * worldlimits = nullptr;
 
-	death::TiledMap::LevelInstance * ludum_level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(current_level_instance.get());
-	if (ludum_level_instance != nullptr)
+	// RENDER TARGET 1 : SPECIAL WorldLimits (on red channel), Enlarged enemies (on blue channel)
 	{
-		if (GenerateFramebuffer(render_params.screen_size, framebuffer_other) && GenerateFramebuffer(render_params.screen_size, framebuffer_worldlimits))
-		{
-			// RENDER TARGET 1 : SPECIAL WorldLimits (on red channel), Enlarged enemies (on blue channel)
-			{
-				framebuffer_worldlimits->BeginRendering();
+		framebuffer_worldlimits->BeginRendering();
 
-				glViewport(0, 0, render_params.screen_size.x, render_params.screen_size.y);
+		glViewport(0, 0, render_params.screen_size.x, render_params.screen_size.y);
 
-				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-				// World limits on RED
-				{
-					chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
-					filter.name_filter.enable_names.push_back("WorldLimits");
-
-					chaos::RenderParams other_render_params = render_params;
-					other_render_params.object_filter = &filter;
-
-					glColorMask(true, false, false, true);
-					ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
-				}
-
-				// (enlarged) Enemies on GREEN  (position_blend_ratio => enlarged for enemies)
-				//  BLACK => greatest deformation, white => smallest deformation
-				{
-					chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
-					filter.name_filter.enable_names.push_back("Enemies");
-
-					chaos::RenderParams other_render_params = render_params;
-					other_render_params.object_filter = &filter;
-
-					chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
-					enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
-
-					glColorMask(false, true, false, true);
-					ludum_level_instance->Display(renderer, &enlarged_provider, other_render_params);
-					glColorMask(true, true, true, true);
-				}
-
-				framebuffer_worldlimits->EndRendering();
-			}
-
-			// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
-			{
-				framebuffer_other->BeginRendering();
-				glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
-
-				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
-				filter.name_filter.forbidden_names.push_back("Enemies");
-				filter.name_filter.forbidden_names.push_back("Atoms");
-				filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
-				filter.name_filter.forbidden_names.push_back("WorldLimits");
-
-#if 0
-				filter.name_filter.forbidden_names.push_back("BackgroundObject1");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject2");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject3");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject4");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject5");
-#endif
-
-				chaos::RenderParams other_render_params = render_params;
-				other_render_params.object_filter = &filter;
-
-				// draw particle system (the background)
-				if (particle_manager != nullptr)
-					particle_manager->Display(renderer, uniform_provider, other_render_params);
-				current_level_instance->Display(renderer, uniform_provider, other_render_params);
-
-				framebuffer_other->EndRendering();
-			}
-
-			// COMBINE STEP 1 & STEP 2 (blend_backgrounds = 1 for default rendering, 0 for texture combining)
-			{
-				chaos::GLTools::SetViewport(render_params.viewport);
-
-				chaos::GPUProgramProviderChain main_provider(uniform_provider);
-
-				chaos::GPUFramebufferAttachmentInfo const * attachment_worldlimits = framebuffer_worldlimits->GetColorAttachment(0);
-				if (framebuffer_worldlimits != nullptr)
-				{
-					chaos::GPUTexture * texture = attachment_worldlimits->texture.get();
-					if (texture != nullptr)
-						main_provider.AddVariableValue("extra_background", texture);
-				}
-
-				chaos::GPUFramebufferAttachmentInfo const * attachment_other = framebuffer_other->GetColorAttachment(0);
-				if (attachment_other != nullptr)
-				{
-					chaos::GPUTexture * texture = attachment_other->texture.get();
-					if (texture != nullptr)
-						main_provider.AddVariableValue("background", texture);
-				}
-
-				main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-				if (particle_manager != nullptr)
-					particle_manager->Display(renderer, &main_provider, render_params);
-			}
-
-
-			// simply render player and ennemies
-			{
-				chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
-				filter.name_filter.enable_names.push_back("Enemies");
-				filter.name_filter.enable_names.push_back("Atoms");
-				filter.name_filter.enable_names.push_back("PlayerAndCamera");
-#if 0
-				filter.name_filter.forbidden_names.push_back("BackgroundObject1");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject2");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject3");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject4");
-				filter.name_filter.forbidden_names.push_back("BackgroundObject5");
-#endif
-
-				chaos::RenderParams other_rendering_params = render_params;
-				other_rendering_params.object_filter = &filter;
-
-				// draw particle system (the background)
-				current_level_instance->Display(renderer, uniform_provider, other_rendering_params);
-			}
-		}
-	}
-	else
-	{
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+		// World limits on RED
+		{
+			chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+			filter.name_filter.enable_names.push_back("WorldLimits");
+
+			chaos::RenderParams other_render_params = render_params;
+			other_render_params.object_filter = &filter;
+
+			glColorMask(true, false, false, true);
+			ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
+		}
+
+		// (enlarged) Enemies on GREEN  (position_blend_ratio => enlarged for enemies)
+		//  BLACK => greatest deformation, white => smallest deformation
+		{
+			chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+			filter.name_filter.enable_names.push_back("Enemies");
+
+			chaos::RenderParams other_render_params = render_params;
+			other_render_params.object_filter = &filter;
+
+			chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
+			enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
+
+			glColorMask(false, true, false, true);
+			ludum_level_instance->Display(renderer, &enlarged_provider, other_render_params);
+			glColorMask(true, true, true, true);
+		}
+
+		framebuffer_worldlimits->EndRendering();
+	}
+
+	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
+	{
+		framebuffer_other->BeginRendering();
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+		filter.name_filter.forbidden_names.push_back("Enemies");
+		filter.name_filter.forbidden_names.push_back("Atoms");
+		filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
+		filter.name_filter.forbidden_names.push_back("WorldLimits");
+
+		chaos::RenderParams other_render_params = render_params;
+		other_render_params.object_filter = &filter;
 
 		// draw particle system (the background)
 		if (particle_manager != nullptr)
-			particle_manager->Display(renderer, uniform_provider, render_params);
+			particle_manager->Display(renderer, uniform_provider, other_render_params);
+		current_level_instance->Display(renderer, uniform_provider, other_render_params);
 
+		framebuffer_other->EndRendering();
 	}
 
-	// finally draw the hud
-	if (hud != nullptr)
-		hud->Display(renderer, uniform_provider, render_params);
+	// COMBINE STEP 1 & STEP 2 (blend_backgrounds = 1 for default rendering, 0 for texture combining)
+	{
+		chaos::GLTools::SetViewport(render_params.viewport);
+
+		chaos::GPUProgramProviderChain main_provider(uniform_provider);
+
+		chaos::GPUFramebufferAttachmentInfo const * attachment_worldlimits = framebuffer_worldlimits->GetColorAttachment(0);
+		if (framebuffer_worldlimits != nullptr)
+		{
+			chaos::GPUTexture * texture = attachment_worldlimits->texture.get();
+			if (texture != nullptr)
+				main_provider.AddVariableValue("extra_background", texture);
+		}
+
+		chaos::GPUFramebufferAttachmentInfo const * attachment_other = framebuffer_other->GetColorAttachment(0);
+		if (attachment_other != nullptr)
+		{
+			chaos::GPUTexture * texture = attachment_other->texture.get();
+			if (texture != nullptr)
+				main_provider.AddVariableValue("background", texture);
+		}
+
+		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		if (particle_manager != nullptr)
+			particle_manager->Display(renderer, &main_provider, render_params);
+	}
+
+
+	// simply render player and ennemies
+	{
+		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+		filter.name_filter.enable_names.push_back("Enemies");
+		filter.name_filter.enable_names.push_back("Atoms");
+		filter.name_filter.enable_names.push_back("PlayerAndCamera");
+
+		chaos::RenderParams other_rendering_params = render_params;
+		other_rendering_params.object_filter = &filter;
+
+		// draw particle system (the background)
+		current_level_instance->Display(renderer, uniform_provider, other_rendering_params);
+	}
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
@@ -293,7 +263,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all)
 {
 	// capture all Enemies in range
-	LudumLevelInstance const * level_instance = dynamic_cast<LudumLevelInstance const *>(GetLevelInstance());
+	LudumLevelInstance const * level_instance = GetLudumLevelInstance();
 	if (level_instance != nullptr)
 	{
 		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);

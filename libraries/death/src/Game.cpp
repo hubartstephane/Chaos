@@ -194,14 +194,35 @@ namespace death
 
 	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
+		// clear the main render target
+		DoPreDisplay(renderer, uniform_provider, render_params);
 		// display the level instance
-		DoDisplayLevel(renderer, uniform_provider, render_params);
+		DoDisplayGame(renderer, uniform_provider, render_params);
 		// display the hud (AFTER the level)
 		DoDisplayHUD(renderer, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayLevel(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+
+	void Game::DoPreDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	{
+		// clear the color buffers
+		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
+
+		// clear the depth buffers
+		float far_plane = 1000.0f;
+		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
+
+		// some states
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+	}
+
+	void Game::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{		
+		if (particle_manager != nullptr)
+			particle_manager->Display(renderer, uniform_provider, render_params);
 		if (current_level_instance != nullptr)
 			current_level_instance->Display(renderer, uniform_provider, render_params);
 	}

@@ -1019,38 +1019,36 @@ namespace chaos
 	bool SoundManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		// initialize the categories
-		if (!InitializeCategoriesFromConfiguration(json, config_path))
+		if (!LoadCategoriesFromConfiguration(json, config_path))
 			return false;
 		// Initialize the sources
-		if (!InitializeSourcesFromConfiguration(json, config_path))
+		if (!LoadSourcesFromConfiguration(json, config_path))
 			return false;
 		return true;
 	}
 
-	bool SoundManager::InitializeCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return InitializeObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration(
 			"categories", 
 			json, 
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 		{
-			AddJSONCategory(name, obj_json, path);
-		}
-		);
+			return AddJSONCategory(name, obj_json, path);
+		});
 	}
 
-	bool SoundManager::InitializeSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return InitializeObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration(
 			"sources",
 			json,
 			config_path,
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 		{
-			AddJSONSource(name, obj_json, path);
-		}
-		);
+			return AddJSONSource(name, obj_json, path);
+		});
 	}
 
 }; // namespace chaos

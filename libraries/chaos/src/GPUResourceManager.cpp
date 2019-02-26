@@ -111,10 +111,6 @@ namespace chaos
 		GPUTexture * result = loader.GenTextureObject(path, GenTextureParameters());
 		if (result != nullptr)
 			textures.push_back(result);
-
-
-		// shuxxx
-
 		return result;
 	}
 
@@ -202,51 +198,44 @@ namespace chaos
 
 	bool GPUResourceManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		if (!InitializeTexturesFromConfiguration(json, config_path))
+		if (!LoadTexturesFromConfiguration(json, config_path))
 			return false;
-		if (!InitializeProgramsFromConfiguration(json, config_path))
+		if (!LoadProgramsFromConfiguration(json, config_path))
 			return false;
-		if (!InitializeMaterialsFromConfiguration(json, config_path))
+		if (!LoadMaterialsFromConfiguration(json, config_path))
 			return false;
-
-
-		return false; // shuxxx GPUResourceManager::InitializeFromConfiguration
-
 		return true;
 	}
 
-	bool GPUResourceManager::InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::LoadTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return InitializeObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration(
 			"textures", 
 			json, 
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 		{
-			LoadTexture(name, obj_json, path);
-		}
-		);
-		return true;
+			return LoadTexture(name, obj_json, path);
+		});
 	}
 
-	bool GPUResourceManager::InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::LoadProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return InitializeObjectsFromConfiguration(
+		return LoadObjectsFromConfiguration(
 			"programs", 
 			json, 
 			config_path, 
 			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
 		{
-			LoadProgram(name, obj_json, path);
-		}
-		);
+			return LoadProgram(name, obj_json, path);
+		});
 	}
 
-	bool GPUResourceManager::InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		std::map<GPURenderMaterial *, std::string> parenting_map;
 
-		bool result = InitializeObjectsFromConfiguration(
+		bool result = LoadObjectsFromConfiguration(
 			"rendermaterials",
 			json,
 			config_path,
@@ -257,8 +246,8 @@ namespace chaos
 			GPURenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
 			if (render_material != nullptr && !parent_name.empty())
 				parenting_map[render_material] = std::move(parent_name);
-		}
-		);
+			return render_material;
+		});
 		// resolve the parenting
 		if (result)
 		{
@@ -280,9 +269,7 @@ namespace chaos
 		// load the resource
 		GPUTexture * result = loader.GenTextureObject(json, config_path, GenTextureParameters());
 		if (result != nullptr)
-			textures.push_back(result); // shuxxx
-
-
+			textures.push_back(result);
 
 		return result;
 	}

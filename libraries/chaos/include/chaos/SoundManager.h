@@ -530,9 +530,9 @@ namespace chaos
 		SoundSource * AddJSONSource(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 		/** load the categories from configuration */
-		bool InitializeCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		bool LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** load the sources from configuration */
-		bool InitializeSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		bool LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 	protected:
 

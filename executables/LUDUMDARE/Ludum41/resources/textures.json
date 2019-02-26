@@ -1,4 +1,5 @@
 {
-  "@background1": { "path": "@textures/background1.png" },
+  "[recurse]": { "path": "@textures" },
+	"@background1": { "path": "@textures/background1.png" },
 	"@background2": { "path": "@textures/background2.png" }
 }

@@ -83,11 +83,11 @@ namespace chaos
 		virtual bool CanAddRenderMaterial(char const * name) const;
 
 		/** load the textures from configuration */
-		virtual bool InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool LoadTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** load the programs from configuration */
-		virtual bool InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool LoadProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** load the materials from configuration */
-		virtual bool InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 		/** add a texture from a JSON object */
 		virtual GPUTexture * LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);

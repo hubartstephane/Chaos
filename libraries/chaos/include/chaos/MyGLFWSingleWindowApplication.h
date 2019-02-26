@@ -85,6 +85,10 @@ namespace chaos
 			/** getting the renderer */
 			Renderer * GetRenderer() { return renderer.get(); }
 
+
+			/** reload all GPU resources */
+			virtual bool ReloadGPUResources();
+
 		protected:
 
 			/** Main method */

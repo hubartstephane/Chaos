@@ -174,7 +174,8 @@ namespace chaos
 			GLTools::DisplayGenericInformation();
 
 			// initialize the GPU resource Manager
-			InitializeGPUManager();
+			if (!InitializeGPUManager())
+				return false;
 
 			// bind the window
 			window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);
@@ -233,10 +234,27 @@ namespace chaos
 			if (gpu_manager == nullptr)
 				return false;
 			gpu_manager->StartManager();
-			nlohmann::json const * cpu_config = JSONTools::GetStructure(configuration, "gpu");
-			if (cpu_config != nullptr)
-				gpu_manager->InitializeFromConfiguration(*cpu_config, configuration_path);
+			nlohmann::json const * gpu_config = JSONTools::GetStructure(configuration, "gpu");
+			if (gpu_config != nullptr)
+				if (!gpu_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+					return false;
 			return true;
+		}
+
+		bool SingleWindowApplication::ReloadGPUResources()
+		{
+			nlohmann::json config;
+			if (!ReloadConfigurationFile(config))
+				return false;
+
+			nlohmann::json const * gpu_config = chaos::JSONTools::GetStructure(config, "gpu");
+			if (gpu_config == nullptr)
+				return false;
+
+
+
+		
+			return false;
 		}
 
 		bool SingleWindowApplication::FinalizeGPUManager()

@@ -208,6 +208,10 @@ namespace chaos
 			return false;
 		if (!InitializeMaterialsFromConfiguration(json, config_path))
 			return false;
+
+
+		return false; // shuxxx GPUResourceManager::InitializeFromConfiguration
+
 		return true;
 	}
 

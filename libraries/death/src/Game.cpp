@@ -117,7 +117,12 @@ namespace death
 			}
 			if (key == GLFW_KEY_F3)
 			{
-				ReloadConfigurationFile();
+				ReloadGameConfiguration();
+				return true;
+			}
+			if (key == GLFW_KEY_F4)
+			{
+				ReloadGPUResources();
 				return true;
 			}
 #endif
@@ -1324,7 +1329,7 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	bool Game::ReloadConfigurationFile()
+	bool Game::ReloadGameConfiguration()
 	{
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
@@ -1339,6 +1344,14 @@ namespace death
 			return false;
 
 		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
+	}
+
+	bool Game::ReloadGPUResources()
+	{
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		if (application == nullptr)
+			return false;
+		return application->ReloadGPUResources();
 	}
 
 	GameInstance * Game::CreateGameInstance()

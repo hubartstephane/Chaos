@@ -76,25 +76,25 @@ namespace chaos
 	protected:
 
 		/** returns whether a texture with given name can be inserted */
-		bool CanAddTexture(char const * name) const;
+		virtual bool CanAddTexture(char const * name) const;
 		/** returns whether a program with given name can be inserted */
-		bool CanAddProgram(char const * name) const;
+		virtual bool CanAddProgram(char const * name) const;
 		/** returns whether a render material with given name can be inserted */
-		bool CanAddRenderMaterial(char const * name) const;
+		virtual bool CanAddRenderMaterial(char const * name) const;
 
 		/** load the textures from configuration */
-		bool InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool InitializeTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** load the programs from configuration */
-		bool InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool InitializeProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** load the materials from configuration */
-		bool InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual bool InitializeMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 		/** add a texture from a JSON object */
-		GPUTexture * LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual GPUTexture * LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** add a program from a JSON object */
-		GPUProgram * LoadProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
+		virtual GPUProgram * LoadProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** add a material from a JSON object (return the name of the parent material if any) */
-		GPURenderMaterial * LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
+		virtual GPURenderMaterial * LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
 
 		/** search (if necessary the parent of the material) */
 		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);

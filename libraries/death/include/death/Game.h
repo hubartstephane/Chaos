@@ -181,7 +181,9 @@ namespace death
 		GLFWwindow * GetGLFWWindow() { return glfw_window; }
 
 		/** reloading the configuration file */
-		bool ReloadConfigurationFile();
+		bool ReloadGameConfiguration();
+		/** reloading the GPU resources */
+		bool ReloadGPUResources();
 
 		/** getter on mouse sensitivity */
 		float GetMouseSensitivity() const { return mouse_sensitivity;}

@@ -29,62 +29,62 @@ namespace chaos
 
 	GPUTexture * GPUResourceManager::FindTexture(char const * name)
 	{
-		return FindObjectByName<GPUTexture>(name, textures);
+		return FindObjectByName(name, textures);
 	}
 
 	GPUTexture const * GPUResourceManager::FindTexture(char const * name) const
 	{
-		return FindObjectByName<GPUTexture>(name, textures);
+		return FindObjectByName(name, textures);
 	}
 
 	GPUTexture * GPUResourceManager::FindTextureByPath(FilePathParam const & path)
 	{
-		return FindObjectByPath<GPUTexture>(path, textures);
+		return FindObjectByPath(path, textures);
 	}
 
 	GPUTexture const * GPUResourceManager::FindTextureByPath(FilePathParam const & path) const
 	{
-		return FindObjectByPath<GPUTexture>(path, textures);
+		return FindObjectByPath(path, textures);
 	}
 
 	GPUProgram * GPUResourceManager::FindProgram(char const * name)
 	{
-		return FindObjectByName<GPUProgram>(name, programs);
+		return FindObjectByName(name, programs);
 	}
 
 	GPUProgram const * GPUResourceManager::FindProgram(char const * name) const
 	{
-		return FindObjectByName<GPUProgram>(name, programs);
+		return FindObjectByName(name, programs);
 	}
 
 	GPUProgram * GPUResourceManager::FindProgramByPath(FilePathParam const & path)
 	{
-		return FindObjectByPath<GPUProgram>(path, programs);
+		return FindObjectByPath(path, programs);
 	}
 
 	GPUProgram const * GPUResourceManager::FindProgramByPath(FilePathParam const & path) const
 	{
-		return FindObjectByPath<GPUProgram>(path, programs);
+		return FindObjectByPath(path, programs);
 	}
 
 	GPURenderMaterial * GPUResourceManager::FindRenderMaterial(char const * name)
 	{
-		return FindObjectByName<GPURenderMaterial>(name, render_materials);
+		return FindObjectByName(name, render_materials);
 	}
 
 	GPURenderMaterial const * GPUResourceManager::FindRenderMaterial(char const * name) const
 	{
-		return FindObjectByName<GPURenderMaterial>(name, render_materials);
+		return FindObjectByName(name, render_materials);
 	}
 
 	GPURenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path)
 	{
-		return FindObjectByPath<GPURenderMaterial>(path, render_materials);
+		return FindObjectByPath(path, render_materials);
 	}
 
 	GPURenderMaterial const * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path) const
 	{
-		return FindObjectByPath<GPURenderMaterial>(path, render_materials);
+		return FindObjectByPath(path, render_materials);
 	}
 
 	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path)

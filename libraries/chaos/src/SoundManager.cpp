@@ -723,41 +723,41 @@ namespace chaos
 
 	SoundSource * SoundManager::FindSource(char const * name)
 	{
-		return FindObjectByName<SoundSource>(name, sources);
+		return FindObjectByName(name, sources);
 	}
 	SoundSource const * SoundManager::FindSource(char const * name) const
 	{
-		return FindObjectByName<SoundSource>(name, sources);
+		return FindObjectByName(name, sources);
 	}
 
 	Sound * SoundManager::FindSound(char const * name)
 	{
-		return FindObjectByName<Sound>(name, sounds);
+		return FindObjectByName(name, sounds);
 	}
 
 	Sound const * SoundManager::FindSound(char const * name) const
 	{
-		return FindObjectByName<Sound>(name, sounds);
+		return FindObjectByName(name, sounds);
 	}
 
 	SoundSource * SoundManager::FindSourceByPath(FilePathParam const & path)
 	{
-		return FindObjectByPath<SoundSource>(path, sources);
+		return FindObjectByPath(path, sources);
 	}
 
 	SoundSource const * SoundManager::FindSourceByPath(FilePathParam const & path) const
 	{
-		return FindObjectByPath<SoundSource>(path, sources);
+		return FindObjectByPath(path, sources);
 	}
 
 	SoundCategory * SoundManager::FindCategory(char const * name)
 	{
-		return FindObjectByName<SoundCategory>(name, categories);
+		return FindObjectByName(name, categories);
 	}
 
 	SoundCategory const * SoundManager::FindCategory(char const * name) const
 	{
-		return FindObjectByName<SoundCategory>(name, categories);
+		return FindObjectByName(name, categories);
 	}
 
 	bool SoundManager::CanAddCategory(char const * name) const

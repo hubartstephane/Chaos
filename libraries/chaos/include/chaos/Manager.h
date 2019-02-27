@@ -55,6 +55,7 @@ namespace chaos
 				boost::filesystem::directory_iterator end;
 				for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_name); it != end; ++it)
 				{
+
 					auto x = it->path().string();
 
 					x = x;
@@ -157,8 +158,8 @@ namespace chaos
 			return count;
 		}
 		/** a generic function to find an object in a list by its name */
-		template<typename T, typename U>
-		static T * FindObjectByName(char const * name, U & objects)
+		template<typename U>
+		static auto FindObjectByName(char const * name, U & objects) -> decltype(objects[0].get())
 		{
 			if (name == nullptr)
 				return nullptr;
@@ -166,7 +167,7 @@ namespace chaos
 			size_t count = objects.size();
 			for (size_t i = 0; i < count; ++i)
 			{
-				T * object = objects[i].get();
+				auto object = objects[i].get();
 				if (object == nullptr)
 					continue;
 				if (strcmp(object->GetName(), name) == 0)
@@ -176,15 +177,15 @@ namespace chaos
 		}
 
 		/** a generic function to find an object in a list by its path */
-		template<typename T, typename U>
-		static T * FindObjectByPath(FilePathParam const & in_path, U & objects)
+		template<typename U>
+		static auto FindObjectByPath(FilePathParam const & in_path, U & objects) -> decltype(objects[0].get())
 		{
 			boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
 
 			size_t count = objects.size();
 			for (size_t i = 0; i < count; ++i)
 			{
-				T * obj = objects[i].get();
+				auto obj = objects[i].get();
 				if (obj == nullptr)
 					continue;
 				if (obj->GetPath() == resolved_path)

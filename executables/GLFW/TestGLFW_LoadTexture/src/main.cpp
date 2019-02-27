@@ -123,7 +123,7 @@ protected:
 
 
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it(image_path); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(image_path); it != end; ++it)
 			texture_paths.push_back(it->path());
 
 		texture = GenerateTexture(texture_index);

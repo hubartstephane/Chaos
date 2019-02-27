@@ -19,6 +19,9 @@ namespace chaos
 		/** loading a whole file into memory */
 		static Buffer<char> LoadFile(FilePathParam const & path, bool ascii, bool * success_open = nullptr);
 
+		/** returns an iterator over a directory (can use resource direct access) */
+		static boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const & path);
+
 		/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);
 

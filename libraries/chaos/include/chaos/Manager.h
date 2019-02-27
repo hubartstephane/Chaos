@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/FilePath.h>
 #include <chaos/JSONTools.h>
+#include <chaos/FileTools.h>
 
 namespace chaos
 {
@@ -37,12 +38,44 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<typename FUNC>
+		void DoLoadObjectsRecurseDirectories(nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
+		{
+			if (json.is_array())
+			{
+				for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); ++it)
+				{
+					if (it->is_string())
+						DoLoadObjectsRecurseDirectories(*it, config_path, add_func);
+				}
+			}
+			else if (json.is_string())
+			{
+				std::string directory_name = json.get<std::string>();
+
+				boost::filesystem::directory_iterator end;
+				for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_name); it != end; ++it)
+				{
+					auto x = it->path().string();
+
+					x = x;
+
+					//std::string p = *it->;
+
+//					p = p;
+				}
+
+				directory_name = directory_name;
+			}
+		}
+
+		/** an utility method to initialize a single object in an JSON array/object */
+		template<typename FUNC>
 		auto DoLoadObjectsFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func) -> decltype(add_func(nullptr, json, config_path))
 		{
 			// 1 - recurse over some directories
 			if (keyname != nullptr && _strcmpi(keyname, "[recurse]") == 0)
 			{
-
+				DoLoadObjectsRecurseDirectories(json, config_path, add_func);
 				return nullptr;
 			}
 			// 2 - we receive a key and its is valid (starts with '@')

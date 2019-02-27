@@ -45,6 +45,22 @@ namespace chaos
 	}
 #endif // _DEBUG
 
+	boost::filesystem::directory_iterator FileTools::GetDirectoryIterator(FilePathParam const & path)
+	{
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+		// try the alternative
+#if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+		boost::filesystem::path redirected_path;
+		if (GetRedirectedPath(resolved_path, redirected_path))
+		{
+			boost::filesystem::directory_iterator result = boost::filesystem::directory_iterator(redirected_path);
+			if (result != boost::filesystem::directory_iterator())
+				return result;
+		}
+#endif // _DEBUG 
+		return boost::filesystem::directory_iterator(resolved_path);
+	}
 
 	bool FileTools::DoIsTypedFile(char const * filename, char const * expected_ext)
 	{

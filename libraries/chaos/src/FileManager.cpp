@@ -62,7 +62,7 @@ namespace chaos
 		if (recursive)
 		{
 			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it(p); it != end; ++it)
+			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(p); it != end; ++it)
 				AddDirectory(*it, recursive);
 		}
 	}

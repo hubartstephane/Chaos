@@ -395,7 +395,7 @@ namespace death
 
 		// iterate the files and load the levels
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it(levels_path); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(levels_path); it != end; ++it)
 		{
 			int level_index = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
 

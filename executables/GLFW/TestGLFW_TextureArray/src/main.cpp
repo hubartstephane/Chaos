@@ -224,7 +224,7 @@ protected:
 		ReleaseBitmaps();
 
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it(resources_path / "images"); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(resources_path / "images"); it != end; ++it)
 		{
 			FIBITMAP * bitmap = chaos::ImageTools::LoadImageFromFile(it->path());
 			if (bitmap == nullptr)

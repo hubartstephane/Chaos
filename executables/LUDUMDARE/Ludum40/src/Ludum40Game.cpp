@@ -512,7 +512,7 @@ bool Game::GenerateBackgroundResources(boost::filesystem::path const & path)
 {
   // get the different background paths
   boost::filesystem::directory_iterator end;
-  for (boost::filesystem::directory_iterator it(path / "backgrounds"); it != end; ++it)
+  for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(path / "backgrounds"); it != end; ++it)
     background_paths.push_back(*it);
 
 	// generate the background texture

@@ -175,7 +175,7 @@ namespace chaos
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 			// enumerate the source directory
 			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it(resolved_path); it != end; ++it)
+			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
 			{
 				if (recursive && boost::filesystem::is_directory(*it))
 				{

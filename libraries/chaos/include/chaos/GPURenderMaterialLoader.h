@@ -11,19 +11,25 @@
 namespace chaos
 {
 
-	class GPURenderMaterialLoader : public GPUResourceManagerLoader<GPUFileResourceFriend, GPUResourceManager>
+	class GPURenderMaterialLoader : public GPUResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
-		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager);
+		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
+			GPUResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
+
 		/** destructor */
 		virtual ~GPURenderMaterialLoader() = default;
 
+		/** load an object from JSON */
+		virtual GPURenderMaterial * LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+
+
 		/** Generate a render material from a json content */
-		virtual GPURenderMaterial * GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const;
+		virtual GPURenderMaterial * LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const;
 		/** Generate a render material from an file */
-		virtual GPURenderMaterial * GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const;
+		virtual GPURenderMaterial * LoadObject(FilePathParam const & path, std::string & parent_name) const;
 
 	protected:
 

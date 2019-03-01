@@ -37,15 +37,15 @@ namespace chaos
 		virtual bool DoStopManager();
 
 		/** an utility method to initialize a single object in an JSON array/object */
-		template<typename FUNC>
-		void DoLoadObjectsRecurseDirectories(nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
+		template<typename LOADER>
+		void DoLoadObjectsRecurseDirectories(nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader)
 		{
 			if (json.is_array())
 			{
 				for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); ++it)
 				{
 					if (it->is_string())
-						DoLoadObjectsRecurseDirectories(*it, config_path, add_func);
+						DoLoadObjectsRecurseDirectories(*it, config_path, loader);
 				}
 			}
 			else if (json.is_string())
@@ -70,19 +70,19 @@ namespace chaos
 		}
 
 		/** an utility method to initialize a single object in an JSON array/object */
-		template<typename FUNC>
-		auto DoLoadObjectsFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func) -> decltype(add_func(nullptr, json, config_path))
+		template<typename LOADER>
+		auto DoLoadObjectsFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader) -> typename LOADER::resource_type *
 		{
 			// 1 - recurse over some directories
 			if (keyname != nullptr && _strcmpi(keyname, "[recurse]") == 0)
 			{
-				DoLoadObjectsRecurseDirectories(json, config_path, add_func);
+				DoLoadObjectsRecurseDirectories(json, config_path, loader);
 				return nullptr;
 			}
 			// 2 - we receive a key and its is valid (starts with '@')
 			if (keyname != nullptr && keyname[0] == '@' && keyname[1] != 0)
 			{
-				return add_func(keyname + 1, json, config_path);
+				return loader.LoadObject(keyname + 1, json, config_path);
 			}
 			// 3 - try to find a member 'name'
 			nlohmann::json::const_iterator name_json_it = json.find("name");
@@ -90,15 +90,15 @@ namespace chaos
 			{
 				std::string name = name_json_it->get<std::string>();
 				if (!name.empty())
-					return add_func(name.c_str(), json, config_path);
+					return loader.LoadObject(name.c_str(), json, config_path);
 			}
 			// 4 - anonymous object
-			return add_func(nullptr, json, config_path);
+			return loader.LoadObject(nullptr, json, config_path);
 		}
 
 		/** an utility method to initialize a list of objects from a JSON object or array */
-		template<typename FUNC>
-		bool LoadObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, FUNC & add_func)
+		template<typename LOADER>
+		bool LoadObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader)
 		{
 			nlohmann::json const * objects_json = JSONTools::GetStructure(json, object_names);
 			if (objects_json != nullptr)
@@ -106,9 +106,9 @@ namespace chaos
 				for (nlohmann::json::const_iterator it = objects_json->begin(); it != objects_json->end(); ++it)
 				{
 					if (objects_json->is_array())
-						DoLoadObjectsFromConfiguration(nullptr, *it, config_path, add_func);
+						DoLoadObjectsFromConfiguration(nullptr, *it, config_path, loader);
 					else if (objects_json->is_object())
-						DoLoadObjectsFromConfiguration(it.key().c_str(), *it, config_path, add_func);
+						DoLoadObjectsFromConfiguration(it.key().c_str(), *it, config_path, loader);
 				}
 			}
 			return true;

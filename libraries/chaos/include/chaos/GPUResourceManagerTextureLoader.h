@@ -11,21 +11,21 @@
 namespace chaos
 {
 
-	class GPUResourceManagerTextureLoader : public GPUResourceManagerLoader<GPUTextureLoader, GPUResourceManager>
+	class GPUResourceManagerTextureLoader : public GPUResourceManagerLoader<GPUTexture, GPUTextureLoader, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUResourceManagerTextureLoader(GPUResourceManager * in_resource_manager) :
-			GPUResourceManagerLoader<GPUTextureLoader, GPUResourceManager>(in_resource_manager)
-		{
+			GPUResourceManagerLoader<GPUTexture, GPUTextureLoader, GPUResourceManager>(in_resource_manager){}
 
-		}
+		/** load an object from JSON */
+		virtual GPUTexture * LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 
 		/** texture loading from JSON */
-		virtual GPUTexture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const override;
+		virtual GPUTexture * LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const;
 		/** texture loading from path */
-		virtual GPUTexture * GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const override;
+		virtual GPUTexture * LoadObject(FilePathParam const & path, GenTextureParameters const & parameters = GenTextureParameters()) const;
 
 	protected:
 

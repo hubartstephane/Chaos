@@ -21,10 +21,12 @@ namespace chaos
 	* GPUResourceManagerLoader
 	**/
 
-	template<typename T, typename MANAGER_TYPE>
-	class GPUResourceManagerLoader : public T
+	template<typename RESOURCE_TYPE, typename PARENT_CLASS, typename MANAGER_TYPE>
+	class GPUResourceManagerLoader : public PARENT_CLASS
 	{
 	public:
+
+		using resource_type = RESOURCE_TYPE;
 
 		GPUResourceManagerLoader(MANAGER_TYPE * in_manager) :
 			manager(in_manager)

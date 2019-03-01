@@ -1,4 +1,6 @@
 ﻿#include <chaos/GPURenderMaterialLoader.h>
+#include <chaos/GPUResourceManagerProgramLoader.h>
+#include <chaos/GPUResourceManagerTextureLoader.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/FileTools.h>
@@ -6,12 +8,6 @@
 
 namespace chaos
 {
-	GPURenderMaterialLoader::GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
-		GPUResourceManagerLoader<GPUFileResourceFriend, GPUResourceManager>(in_resource_manager)
-	{
-
-	}
-
 	bool GPURenderMaterialLoader::InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const
 	{
 		GPUProgram * program = manager->FindProgram(program_name);
@@ -63,7 +59,10 @@ namespace chaos
 		}
 
 		// inplace declared program 
-		GPUProgram * program = manager->LoadProgram(nullptr, *json_program, program_name.c_str());
+		GPUResourceManagerProgramLoader program_loader(manager);
+		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program, program_name.c_str());
+
+		//GPUProgram * program = manager->LoadProgram(nullptr, *json_program, program_name.c_str());
 		if (program == nullptr)
 			return false;
 		render_material->SetProgram(program);
@@ -138,7 +137,9 @@ namespace chaos
 			}
 
 			// inplace declared texture 
-			GPUTexture * texture = manager->LoadTexture(nullptr, *it, texture_name.c_str());
+			GPUResourceManagerTextureLoader texture_loader(manager);
+			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, texture_name.c_str());
+			//GPUTexture * texture = manager->LoadTexture(nullptr, *it, texture_name.c_str());
 			if (texture == nullptr)
 				continue;
 			render_material->GetUniformProvider().AddVariableTexture(texture_uniform_name.c_str(), texture);
@@ -246,7 +247,7 @@ namespace chaos
 		return true;
 	}
 
-	GPURenderMaterial * GPURenderMaterialLoader::GenRenderMaterialObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
+	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
 	{
 		// get the name, ensure no name collision
 		if (!CheckResourceName(json))
@@ -255,7 +256,7 @@ namespace chaos
 		// indirect call
 		std::string path;
 		if (JSONTools::GetAttribute(json, "path", path))
-			return GenRenderMaterialObject(path, parent_name);
+			return LoadObject(path, parent_name);
 
 		// create a new material
 		GPURenderMaterial * result = new GPURenderMaterial;
@@ -278,14 +279,14 @@ namespace chaos
 		return result;
 	}
 
-	GPURenderMaterial * GPURenderMaterialLoader::GenRenderMaterialObject(FilePathParam const & path, std::string & parent_name) const
+	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(FilePathParam const & path, std::string & parent_name) const
 	{
 		if (!CheckResourcePath(path))
 			return nullptr;
 
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
-			return GenRenderMaterialObject(json, path.GetResolvedPath(), parent_name);
+			return LoadObject(json, path.GetResolvedPath(), parent_name);
 		return nullptr;
 	}
 
@@ -298,5 +299,63 @@ namespace chaos
 	{
 		return (manager->FindRenderMaterial(in_name.c_str()) != nullptr);
 	}
+
+	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	{
+
+
+
+
+		return nullptr;
+	}
+
+
+
+
+
+
+#if 0 // shuxxx MANAGER_LOADER
+
+	/** add a material from a JSON object (return the name of the parent material if any) */
+	virtual GPURenderMaterial * LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
+
+	std::map<GPURenderMaterial *, std::string> parenting_map;
+
+	[this, &parenting_map](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
+	{
+		std::string parent_name;
+
+		GPURenderMaterial * render_material = LoadRenderMaterial(name, obj_json, path, parent_name);
+		if (render_material != nullptr && !parent_name.empty())
+			parenting_map[render_material] = std::move(parent_name);
+		return render_material;
+	});
+	// resolve the parenting
+	if (result)
+	{
+		for (auto it : parenting_map)
+			SetRenderMaterialParent(it.first, it.second);
+	}
+	return result;
+
+
+
+	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name)
+	{
+		// ensure no name collision
+		if (!CanAddRenderMaterial(name))
+			return nullptr;
+		// initialize the loader, so te name will be given to result at the end
+		GPURenderMaterialLoader loader(this);
+		loader.SetResultName(name);
+
+		// load the resource
+		GPURenderMaterial * render_material = loader.LoadObject(json, config_path, parent_name);
+		if (render_material != nullptr)
+			render_materials.push_back(render_material);
+		return render_material;
+	}
+
+#endif
 
 }; // namespace chaos

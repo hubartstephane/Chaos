@@ -1029,6 +1029,10 @@ namespace chaos
 
 	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
+		return true; // SoundManager::LoadCategoriesFromConfiguration
+
+#if 0
+
 		return LoadObjectsFromConfiguration(
 			"categories", 
 			json, 
@@ -1037,10 +1041,16 @@ namespace chaos
 		{
 			return AddJSONCategory(name, obj_json, path);
 		});
+#endif
 	}
 
 	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
+		return true; // SoundManager::LoadSourcesFromConfiguration
+
+
+
+#if 0
 		return LoadObjectsFromConfiguration(
 			"sources",
 			json,
@@ -1049,6 +1059,7 @@ namespace chaos
 		{
 			return AddJSONSource(name, obj_json, path);
 		});
+#endif
 	}
 
 }; // namespace chaos

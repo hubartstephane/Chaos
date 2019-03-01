@@ -5,7 +5,7 @@
 namespace chaos
 {
 
-	GPUTexture * GPUResourceManagerTextureLoader::GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUResourceManagerTextureLoader::LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
 		if (!CheckResourceName(json))
 			return nullptr;
@@ -16,7 +16,7 @@ namespace chaos
 		return texture;
 	}
 
-	GPUTexture * GPUResourceManagerTextureLoader::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters) const
+	GPUTexture * GPUResourceManagerTextureLoader::LoadObject(FilePathParam const & path, GenTextureParameters const & parameters) const
 	{
 		if (!CheckResourcePath(path))
 			return nullptr;
@@ -36,5 +36,37 @@ namespace chaos
 	{ 
 		return (manager->FindTexture(in_name.c_str()) != nullptr);
 	}
+
+	GPUTexture * GPUResourceManagerTextureLoader::LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	{
+
+
+
+
+		return nullptr;
+	}
+
+
+#if 0 // shuxxx MANAGER_LOADER
+
+	GPUTexture * GPUResourceManager::LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
+	{
+		// ensure no name collision
+		if (!CanAddTexture(name))
+			return nullptr;
+		// initialize the loader, so te name will be given to result at the end
+		GPUResourceManagerTextureLoader loader(this);
+		loader.SetResultName(name);
+
+		// load the resource
+		GPUTexture * result = loader.LoadObject(json, config_path, GenTextureParameters());
+		if (result != nullptr)
+			textures.push_back(result);
+
+		return result;
+	}
+
+#endif
+
 
 }; // namespace chaos

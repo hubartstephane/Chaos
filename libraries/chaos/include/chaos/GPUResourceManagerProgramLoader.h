@@ -11,21 +11,22 @@
 namespace chaos
 {
 
-	class GPUResourceManagerProgramLoader : public GPUResourceManagerLoader<GPUProgramLoader, GPUResourceManager>
+	class GPUResourceManagerProgramLoader : public GPUResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUResourceManagerProgramLoader(GPUResourceManager * in_resource_manager) :
-			GPUResourceManagerLoader<GPUProgramLoader, GPUResourceManager>(in_resource_manager)
-		{
+			GPUResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>(in_resource_manager){}
 
-		}
+		/** load an object from JSON */
+		virtual GPUProgram * LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+
 
 		/** program loading from JSON */
-		virtual GPUProgram * GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const override;
+		virtual GPUProgram * LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
 		/** program loading from path */
-		virtual GPUProgram * GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const override;
+		virtual GPUProgram * LoadObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
 
 	protected:
 

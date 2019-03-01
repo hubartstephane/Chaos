@@ -19,7 +19,8 @@ namespace chaos
 	class GPUResourceManager : public Manager, protected GPUFileResourceFriend
 	{
 		friend class GPURenderMaterialLoader;
-		friend class RenderMaterialFromConfigLoader;
+		friend class GPUResourceManagerTextureLoader;
+		friend class GPUResourceManagerProgramLoader;
 
 	public:
 
@@ -88,13 +89,6 @@ namespace chaos
 		virtual bool LoadProgramsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 		/** load the materials from configuration */
 		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
-
-		/** add a texture from a JSON object */
-		virtual GPUTexture * LoadTexture(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
-		/** add a program from a JSON object */
-		virtual GPUProgram * LoadProgram(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
-		/** add a material from a JSON object (return the name of the parent material if any) */
-		virtual GPURenderMaterial * LoadRenderMaterial(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name);
 
 		/** search (if necessary the parent of the material) */
 		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);

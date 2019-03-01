@@ -43,10 +43,8 @@ namespace chaos
 			if (json.is_array())
 			{
 				for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); ++it)
-				{
 					if (it->is_string())
-						DoLoadObjectsRecurseDirectories(*it, config_path, loader);
-				}
+						DoLoadObjectsRecurseDirectories(*it, config_path, loader); // recursive call to this function
 			}
 			else if (json.is_string())
 			{
@@ -55,17 +53,9 @@ namespace chaos
 				boost::filesystem::directory_iterator end;
 				for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_name); it != end; ++it)
 				{
-
-					auto x = it->path().string();
-
-					x = x;
-
-					//std::string p = *it->;
-
-//					p = p;
+					LOADER other_loader(loader.GetManager());
+					other_loader.LoadObject(it->path().string());
 				}
-
-				directory_name = directory_name;
 			}
 		}
 

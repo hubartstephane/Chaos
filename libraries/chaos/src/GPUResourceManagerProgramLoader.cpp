@@ -10,10 +10,13 @@ namespace chaos
 		if (!CheckResourceName(json))
 			return nullptr;
 		// load the program
-		GPUProgram * program = GPUProgramLoader::GenProgramObject(json, config_path, cache_options);
-		if (program != nullptr)
-			FinalizeLoadedResource(program);
-		return program;
+		GPUProgram * result = GPUProgramLoader::GenProgramObject(json, config_path, cache_options);
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->programs.push_back(result);
+		}
+		return result;
 	}
 
 	GPUProgram * GPUResourceManagerProgramLoader::LoadObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options) const
@@ -21,10 +24,13 @@ namespace chaos
 		if (!CheckResourcePath(path))
 			return nullptr;
 		// load the program
-		GPUProgram * program = GPUProgramLoader::GenProgramObject(path, cache_options);
-		if (program != nullptr)
-			FinalizeLoadedResource(program);
-		return program;
+		GPUProgram * result = GPUProgramLoader::GenProgramObject(path, cache_options);
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->programs.push_back(result);
+		}
+		return result;
 	}
 
 	bool GPUResourceManagerProgramLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const

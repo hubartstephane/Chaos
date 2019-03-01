@@ -50,8 +50,7 @@ namespace chaos
 		/** enable build mipmaps */
 		bool build_mipmaps = true;
 		/** enable the texture to be used has rectangular instead of GL_TEXTURE_1D or GL_TEXTURE_2D */
-		bool rectangle_texture = false
-			;
+		bool rectangle_texture = false;
 	};
 
 

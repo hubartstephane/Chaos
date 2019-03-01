@@ -10,10 +10,13 @@ namespace chaos
 		if (!CheckResourceName(json))
 			return nullptr;
 		// load the texture
-		GPUTexture * texture = GPUTextureLoader::GenTextureObject(json, config_path, parameters);
-		if (texture != nullptr)
-			FinalizeLoadedResource(texture);
-		return texture;
+		GPUTexture * result = GPUTextureLoader::GenTextureObject(json, config_path, parameters);
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->textures.push_back(result);
+		}
+		return result;
 	}
 
 	GPUTexture * GPUResourceManagerTextureLoader::LoadObject(FilePathParam const & path, GenTextureParameters const & parameters) const
@@ -21,10 +24,13 @@ namespace chaos
 		if (!CheckResourcePath(path))
 			return nullptr;
 		// load the texture
-		GPUTexture * texture = GPUTextureLoader::GenTextureObject(path, parameters);
-		if (texture != nullptr)
-			FinalizeLoadedResource(texture);
-		return texture;
+		GPUTexture * result = GPUTextureLoader::GenTextureObject(path, parameters);
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->textures.push_back(result);
+		}
+		return result;
 	}
 
 	bool GPUResourceManagerTextureLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const

@@ -4,7 +4,9 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/Manager.h>
 #include <chaos/GPUTexture.h>
+#include <chaos/GLTextureTools.h>
 #include <chaos/GPUProgram.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
@@ -30,13 +32,13 @@ namespace chaos
 		virtual void Release();
 
 		/** load a texture (named deduced from path) */
-		GPUTexture * LoadTexture(FilePathParam const & path);
+		GPUTexture * LoadTexture(FilePathParam const & path, GenTextureParameters const & texture_parameters = GenTextureParameters());
 		/** load a texture */
-		GPUTexture * LoadTexture(FilePathParam const & path, char const * name);
+		GPUTexture * LoadTexture(FilePathParam const & path, char const * name, GenTextureParameters const & texture_parameters = GenTextureParameters());
 		/** load a program (named deduced from path) */
-		GPUProgram * LoadProgram(FilePathParam const & path);
+		GPUProgram * LoadProgram(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
 		/** load a program */
-		GPUProgram * LoadProgram(FilePathParam const & path, char const * name);
+		GPUProgram * LoadProgram(FilePathParam const & path, char const * name, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
 		/** load a material (named deduced from path) */
 		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path);
 		/** load a material */

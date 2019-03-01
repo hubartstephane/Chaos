@@ -27,12 +27,17 @@ namespace chaos
 	public:
 
 		using resource_type = RESOURCE_TYPE;
-
+		using manager_type = MANAGER_TYPE;
+		
+		/** constructor */
 		GPUResourceManagerLoader(MANAGER_TYPE * in_manager) :
 			manager(in_manager)
 		{
 			assert(in_manager != nullptr);
 		}
+
+		/** returns the manager */
+		manager_type * GetManager() const { return manager; }
 
 		/** set the resolved path (so that it can be given to the result at the end of loading) */
 		void SetResultPath(boost::filesystem::path const & path)

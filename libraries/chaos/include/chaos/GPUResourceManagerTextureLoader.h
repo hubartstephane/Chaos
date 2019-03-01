@@ -21,7 +21,6 @@ namespace chaos
 
 		/** load an object from JSON */
 		virtual GPUTexture * LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
-
 		/** texture loading from JSON */
 		virtual GPUTexture * LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const;
 		/** texture loading from path */

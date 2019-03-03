@@ -87,89 +87,19 @@ namespace chaos
 		return FindObjectByPath(path, render_materials);
 	}
 
-	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path, GenTextureParameters const & texture_parameters)
-	{
-		boost::filesystem::path const resolved_path = path.GetResolvedPath();
-		return LoadTexture(path, BoostTools::PathToName(resolved_path).c_str(), texture_parameters);
-	}
-
 	GPUTexture * GPUResourceManager::LoadTexture(FilePathParam const & path, char const * name, GenTextureParameters const & texture_parameters)
 	{
-		// object already existing ?
-		if (!CanAddTexture(name))
-			return nullptr;
-		if (FindTextureByPath(path) != nullptr)
-			return nullptr;
-		// prepare the loader : give it the name and the path, so that at the end it can update result members
-		GPUResourceManagerTextureLoader loader(this);
-		loader.SetResultPath(path.GetResolvedPath());
-		loader.SetResultName(name);
-		return loader.LoadObject(path, texture_parameters);
-	}
-
-	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options)
-	{
-		boost::filesystem::path const resolved_path = path.GetResolvedPath();
-		return LoadProgram(path, BoostTools::PathToName(resolved_path).c_str(), cache_options);
+		return GPUResourceManagerTextureLoader(this).LoadObject(path, name, texture_parameters);
 	}
 
 	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name, GPUProgramLoaderCacheOptions const & cache_options)
 	{
-		// object already existing ?
-		if (!CanAddProgram(name))
-			return nullptr;
-		if (FindProgramByPath(path) != nullptr)
-			return nullptr;
-		// prepare the loader: give it the name and the path, so that at the end it can update result members
-		GPUResourceManagerProgramLoader loader(this);
-		loader.SetResultPath(path.GetResolvedPath());
-		loader.SetResultName(name);
-		return loader.LoadObject(path, cache_options);
-	}
-
-	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path)
-	{
-		boost::filesystem::path const resolved_path = path.GetResolvedPath();
-		return LoadRenderMaterial(path, BoostTools::PathToName(resolved_path).c_str());
+		return GPUResourceManagerProgramLoader(this).LoadObject(path, name, cache_options);
 	}
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
-		// object already existing ?
-		if (!CanAddRenderMaterial(name))
-			return nullptr;
-		if (FindRenderMaterialByPath(path) != nullptr)
-			return nullptr;
-		// prepare the loader : give it the name and the path, so that at the end it can update result members
-		GPURenderMaterialLoader loader(this);
-		loader.SetResultPath(path.GetResolvedPath());
-		loader.SetResultName(name);
-
-		// load data
-		std::string parent_name;
-
-		GPURenderMaterial * result = loader.LoadObject(path, parent_name);
-		if (result != nullptr)
-		{
-			SetRenderMaterialParent(result, parent_name);
-			render_materials.push_back(result);
-		}			
-		return result;
-	}
-
-	bool GPUResourceManager::CanAddTexture(char const * name) const
-	{
-		return CanAddObject(name, [this](char const * n) {return FindTexture(n); } );
-	}
-
-	bool GPUResourceManager::CanAddProgram(char const * name) const
-	{
-		return CanAddObject(name, [this](char const * n) {return FindProgram(n); } );
-	}
-
-	bool GPUResourceManager::CanAddRenderMaterial(char const * name) const
-	{
-		return CanAddObject(name, [this](char const * n) {return FindRenderMaterial(n); } );
+		return GPURenderMaterialLoader(this).LoadObject(path, name);
 	}
 
 	bool GPUResourceManager::LoadManager(FilePathParam const & path)

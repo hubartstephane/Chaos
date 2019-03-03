@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/JSONTools.h>
+#include <chaos/BoostTools.h>
 #include <chaos/FilePath.h>
 #include <chaos/GPUFileResource.h>
 
@@ -57,7 +58,7 @@ namespace chaos
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const { return false; }
 		/** search whether the name is already in used in the manager */
-		virtual bool IsNameAlreadyUsedInManager(std::string const & name) const { return false; }
+		virtual bool IsNameAlreadyUsedInManager(char const * name) const { return false; }
 
 		/** set the path of currently loaded resource if not already set, and if no collision detected */
 		bool CheckResourcePath(FilePathParam const & path) const
@@ -73,30 +74,33 @@ namespace chaos
 			return true;
 		}
 		/** set the name of currently loaded resource if not already set, and if no collision detected */
-		bool CheckResourceName(std::string const & name) const
+		bool CheckResourceName(boost::filesystem::path const * in_path, char const * in_name, nlohmann::json const * json) const
 		{
 			// name already known, nothing to do
 			if (!resource_name.empty())
 				return true;
+			// compute the name we want from different entries (reuse in_name if null)
+			std::string tmp_name;
+			if (in_name == nullptr)
+			{
+				if (in_path != nullptr)
+					tmp_name = BoostTools::PathToName(resolved_path).c_str();
+				else if (json != nullptr)
+					JSONTools::GetAttribute(*json, "name", tmp_name);
+				if (tmp_name.empty()) // still no name, can not continue
+					return false;
+				in_name = tmp_name.c_str();
+			}
 			// name already exising in manager : failure
-			if (IsNameAlreadyUsedInManager(name))
+			if (IsNameAlreadyUsedInManager(in_name))
 				return false;
 			// the currently loaded resource has now a name
-			resource_name = name;
+			if (!tmp_name.empty())
+				resource_name = std::move(tmp_name); // can steal resource
+			else
+				resource_name = in_name; // have to make a copy
 			return true;
 		}
-		/** set the name of currently loaded resource if not already set, and if no collision detected */
-		bool CheckResourceName(nlohmann::json const & json) const
-		{
-			if (resource_name.empty()) // name still unknown
-			{
-				std::string name;
-				if (JSONTools::GetAttribute(json, "name", name))
-					return CheckResourceName(name);
-			}
-			return true;
-		}
-
 		/** apply the name to resource */
 		void ApplyNameToLoadedResource(GPUFileResource * resource) const
 		{

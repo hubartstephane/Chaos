@@ -19,17 +19,12 @@ namespace chaos
 		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
 			GPUResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
 
-		/** destructor */
-		virtual ~GPURenderMaterialLoader() = default;
-
 		/** load an object from JSON */
-		virtual GPURenderMaterial * LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
-
-
-		/** Generate a render material from a json content */
-		virtual GPURenderMaterial * LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const;
+		virtual GPURenderMaterial * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** Generate a render material from an file */
-		virtual GPURenderMaterial * LoadObject(FilePathParam const & path, std::string & parent_name) const;
+		virtual GPURenderMaterial * LoadObject(FilePathParam const & path, char const * name = nullptr) const;
+		/** returns true whether we can add an object with a given name */
+		virtual bool CanAddObject(char const * name) const;
 
 	protected:
 
@@ -37,7 +32,6 @@ namespace chaos
 		bool InitializeTextureFromName(GPURenderMaterial * render_material, char const * uniform_name, char const * texture_name) const;
 		/** initialize a texture from its path */
 		bool InitializeTextureFromPath(GPURenderMaterial * render_material, char const * uniform_name, FilePathParam const & path) const;
-
 
 		/** initialize the program from its name */
 		bool InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const;
@@ -57,7 +51,7 @@ namespace chaos
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
 		/** search whether the name is already in used in the manager */
-		virtual bool IsNameAlreadyUsedInManager(std::string const & in_name) const override;
+		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};
 
 }; // namespace chaos

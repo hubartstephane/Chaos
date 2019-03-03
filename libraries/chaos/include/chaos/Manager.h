@@ -61,18 +61,18 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<typename LOADER>
-		auto DoLoadObjectsFromConfiguration(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader) -> typename LOADER::resource_type *
+		auto DoLoadObjectsFromConfiguration(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader) -> typename LOADER::resource_type *
 		{
 			// 1 - recurse over some directories
-			if (keyname != nullptr && _strcmpi(keyname, "[recurse]") == 0)
+			if (name != nullptr && _strcmpi(name, "[recurse]") == 0)
 			{
 				DoLoadObjectsRecurseDirectories(json, config_path, loader);
 				return nullptr;
 			}
 			// 2 - we receive a key and its is valid (starts with '@')
-			if (keyname != nullptr && keyname[0] == '@' && keyname[1] != 0)
+			if (name != nullptr && name[0] == '@' && name[1] != 0)
 			{
-				return loader.LoadObject(keyname + 1, json, config_path);
+				return loader.LoadObject(name + 1, json, config_path);
 			}
 			// 3 - try to find a member 'name'
 			nlohmann::json::const_iterator name_json_it = json.find("name");

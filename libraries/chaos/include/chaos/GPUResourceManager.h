@@ -31,18 +31,12 @@ namespace chaos
 		/** release the resources */
 		virtual void Release();
 
-		/** load a texture (named deduced from path) */
-		GPUTexture * LoadTexture(FilePathParam const & path, GenTextureParameters const & texture_parameters = GenTextureParameters());
 		/** load a texture */
-		GPUTexture * LoadTexture(FilePathParam const & path, char const * name, GenTextureParameters const & texture_parameters = GenTextureParameters());
-		/** load a program (named deduced from path) */
-		GPUProgram * LoadProgram(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
+		GPUTexture * LoadTexture(FilePathParam const & path, char const * name = nullptr, GenTextureParameters const & texture_parameters = GenTextureParameters());
 		/** load a program */
-		GPUProgram * LoadProgram(FilePathParam const & path, char const * name, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
-		/** load a material (named deduced from path) */
-		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path);
+		GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
 		/** load a material */
-		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name);
+		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
 
 		/** find a texture by its name */
 		GPUTexture * FindTexture(char const * name);
@@ -77,13 +71,6 @@ namespace chaos
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 	protected:
-
-		/** returns whether a texture with given name can be inserted */
-		virtual bool CanAddTexture(char const * name) const;
-		/** returns whether a program with given name can be inserted */
-		virtual bool CanAddProgram(char const * name) const;
-		/** returns whether a render material with given name can be inserted */
-		virtual bool CanAddRenderMaterial(char const * name) const;
 
 		/** load the textures from configuration */
 		virtual bool LoadTexturesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);

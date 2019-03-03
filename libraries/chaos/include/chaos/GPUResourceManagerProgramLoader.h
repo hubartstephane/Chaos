@@ -20,20 +20,18 @@ namespace chaos
 			GPUResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
-		virtual GPUProgram * LoadObject(char const * keyname, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
-
-
-		/** program loading from JSON */
-		virtual GPUProgram * LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
 		/** program loading from path */
-		virtual GPUProgram * LoadObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual GPUProgram * LoadObject(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		/** returns true whether we can add an object with a given name */
+		virtual bool CanAddObject(char const * name) const;
 
 	protected:
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
 		/** search whether the name is already in used in the manager */
-		virtual bool IsNameAlreadyUsedInManager(std::string const & in_name) const override;
+		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};
 
 }; // namespace chaos

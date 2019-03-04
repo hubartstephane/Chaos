@@ -61,7 +61,7 @@ namespace chaos
 
 		/** an utility method to initialize a single object in an JSON array/object */
 		template<typename LOADER>
-		auto DoLoadObjectsFromConfiguration(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader) -> typename LOADER::resource_type *
+		auto DoLoadObjectsFromConfiguration(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER loader) -> typename LOADER::resource_type * // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 1 - recurse over some directories
 			if (name != nullptr && _strcmpi(name, "[recurse]") == 0)
@@ -88,7 +88,7 @@ namespace chaos
 
 		/** an utility method to initialize a list of objects from a JSON object or array */
 		template<typename LOADER>
-		bool LoadObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER const & loader)
+		bool LoadObjectsFromConfiguration(char const * object_names, nlohmann::json const & json, boost::filesystem::path const & config_path, LOADER loader) // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			nlohmann::json const * objects_json = JSONTools::GetStructure(json, object_names);
 			if (objects_json != nullptr)

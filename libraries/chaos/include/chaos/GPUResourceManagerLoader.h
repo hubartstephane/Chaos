@@ -84,7 +84,7 @@ namespace chaos
 			if (in_name == nullptr)
 			{
 				if (in_path != nullptr)
-					tmp_name = BoostTools::PathToName(resolved_path).c_str();
+					tmp_name = BoostTools::PathToName(*in_path).c_str();
 				else if (json != nullptr)
 					JSONTools::GetAttribute(*json, "name", tmp_name);
 				if (tmp_name.empty()) // still no name, can not continue

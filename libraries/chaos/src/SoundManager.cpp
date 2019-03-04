@@ -1010,7 +1010,7 @@ namespace chaos
 			source = AddSource(path, name);
 		else
 			source = AddSource(path); // name deduced from the filename
-									  // initialize the new object
+		// initialize the new object
 		if (source != nullptr)
 			source->InitializeFromJSON(json, config_path);
 		return source;

@@ -127,6 +127,7 @@ namespace chaos
 			"textures",
 			json,
 			config_path,
+			boost::mpl::true_(),
 			GPUResourceManagerTextureLoader(this));
 	}
 
@@ -136,6 +137,7 @@ namespace chaos
 			"programs", 
 			json, 
 			config_path, 
+			boost::mpl::true_(),
 			GPUResourceManagerProgramLoader(this));
 	}
 
@@ -145,6 +147,7 @@ namespace chaos
 			"rendermaterials",
 			json,
 			config_path,
+			boost::mpl::true_(),
 			GPURenderMaterialLoader(this));
 	}
 

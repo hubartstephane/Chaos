@@ -4,7 +4,6 @@
 #include <chaos/JSONTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/FilePath.h>
-#include <chaos/GPUFileResource.h>
 
 namespace chaos
 {

@@ -6,6 +6,8 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/FilePath.h>
 #include <chaos/Manager.h>
+#include <chaos/ResourceManagerLoader.h>
+#include <chaos/EmptyClass.h>
 
 namespace chaos
 {
@@ -14,7 +16,7 @@ namespace chaos
 	// ==============================================================
 
 	// all classes in this file
-#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory)
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory) (SoundManagerSourceLoader)
 
 	// forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
@@ -393,23 +395,21 @@ namespace chaos
 	};
 
 	// ==============================================================
-	// MANAGER
+	// SoundManagerSourceLoader
 	// ==============================================================
 
-#if 0
-
-	class SoundManagerSourceLoader : public ResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>
+	class SoundManagerSourceLoader : public ResourceManagerLoader<SoundSource, EmptyClass, SoundManager>
 	{
 	public:
 
 		/** constructor */
-		GPUResourceManagerProgramLoader(GPUResourceManager * in_resource_manager) :
-			ResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>(in_resource_manager) {}
+		SoundManagerSourceLoader(SoundManager * in_sound_manager) :
+			ResourceManagerLoader<SoundSource, EmptyClass, SoundManager>(in_sound_manager) {}
 
 		/** load an object from JSON */
 		virtual SoundSource * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** program loading from path */
-		virtual SoundSource * LoadObject(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual SoundSource * LoadObject(FilePathParam const & path, char const * name = nullptr) const;
 
 	protected:
 
@@ -419,8 +419,6 @@ namespace chaos
 		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};
 
-
-#endif
 
 
 
@@ -469,10 +467,8 @@ namespace chaos
 		/** add a category inside the manager */
 		SoundCategory * AddCategory(char const * name);
 
-		/** load and add a simple source inside the manager (name is a copy of filename) */
-		SoundSource * AddSource(FilePathParam const & path);
 		/** load and add a simple source inside the manager */
-		SoundSource * AddSource(FilePathParam const & path, char const * name);
+		SoundSource * AddSource(FilePathParam const & path, char const * name = nullptr);
 
 		/** update the listener position */
 		bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
@@ -551,7 +547,7 @@ namespace chaos
 		bool CanAddSound(char const * name) const;
 
 		/** simple method to initialize and insert a source */
-		SoundSource * DoAddSource(SoundSource * source, char const * name);
+		SoundSource * DoAddSource(FilePathParam const & path, char const * name);
 
 		/** update all sounds pause per category */
 		void UpdateAllSoundPausePerCategory(SoundCategory * category);

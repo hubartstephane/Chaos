@@ -860,38 +860,13 @@ namespace chaos
 		return result;
 	}
 
-	// name policy
-	//
-	// If, when creating a source, no name is specified, the manager will use the resource path to generate an automatic path
-	// This is the filename with extension removed
-	//
-	//   "mydir/myfile.ogg" => "myfile"
-
-	SoundSource * SoundManager::DoAddSource(SoundSource * source, char const * name)
+	SoundSource * SoundManager::AddSource(FilePathParam const & path, char const * name)
 	{
-		if (source == nullptr)
-			return nullptr;
-		if (name != nullptr)
-			source->name = name;
-		source->sound_manager = this;
-		sources.push_back(source);
-		return source;
+		return SoundManagerSourceLoader(this).LoadObject(path, name);
 	}
 
-	SoundSource * SoundManager::AddSource(FilePathParam const & path)
+	SoundSource * SoundManager::DoAddSource(FilePathParam const & path, char const * name) 
 	{
-		boost::filesystem::path const resolved_path = path.GetResolvedPath();
-		return AddSource(path, BoostTools::PathToName(resolved_path).c_str());
-	}
-
-	SoundSource * SoundManager::AddSource(FilePathParam const & path, char const * name) // It is valid to have an anonymous source
-	{
-		// test whether a source with the given name could be inserted
-		if (!CanAddSource(name))
-			return nullptr;
-		// find a simple source with the given path
-		if (FindSourceByPath(path) != nullptr)
-			return nullptr;
 		// get the irrklang engine
 		irrklang::ISoundEngine * engine = GetIrrklangEngine();
 		if (engine == nullptr)
@@ -908,12 +883,17 @@ namespace chaos
 		if (irrklang_source == nullptr)
 			return nullptr;
 		// insert the result
-		SoundSource * result = DoAddSource(new SoundSource(), name);
+		SoundSource * result = new SoundSource();
 		if (result == nullptr)
 			return nullptr;
+		sources.push_back(result);
+
 		// last initializations
+		result->sound_manager = this;
 		result->irrklang_source = irrklang_source;
 		result->path = resolved_path;
+		if (name != nullptr)
+			result->name = name;
 
 		return result;
 	}
@@ -1046,20 +1026,88 @@ namespace chaos
 
 	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return true; // SoundManager::LoadSourcesFromConfiguration
-
-
-
-#if 0
 		return LoadObjectsFromConfiguration(
 			"sources",
 			json,
 			config_path,
-			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
-		{
-			return AddJSONSource(name, obj_json, path);
-		});
-#endif
+			boost::mpl::true_(),
+			SoundManagerSourceLoader(this));
 	}
+
+
+
+
+
+
+
+
+	SoundSource * SoundManagerSourceLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	{
+
+#if 0
+		// check for name
+		if (!CheckResourceName(nullptr, name, &json))
+			return nullptr;
+		// load the texture
+		GPUTexture * result = GPUTextureLoader().GenTextureObject(json, config_path, parameters);
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->textures.push_back(result);
+		}
+		return result;
+#endif
+
+		return nullptr;
+	}
+
+	SoundSource * SoundManagerSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
+	{
+		// check for path
+		if (!CheckResourcePath(path))
+			return nullptr;
+		// check for name
+		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
+			return nullptr;
+		// create the source
+		SoundSource * result = nullptr;// manager->DoAddSource();
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->sources.push_back(result);
+
+		}
+
+
+
+#if 0
+		// load the texture
+		GPUTexture * result = GPUTextureLoader().GenTextureObject(path, parameters);
+		if (result != nullptr)
+		{
+			FinalizeLoadedResource(result);
+			manager->textures.push_back(result);
+		}
+		return result;
+#endif
+
+
+
+		return nullptr;
+	}
+
+	bool SoundManagerSourceLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
+	{
+		return (manager->FindSourceByPath(path) != nullptr);
+	}
+
+	bool SoundManagerSourceLoader::IsNameAlreadyUsedInManager(char const * in_name) const
+	{
+		return (manager->FindSource(in_name) != nullptr);
+	}
+
+
+
+
 
 }; // namespace chaos

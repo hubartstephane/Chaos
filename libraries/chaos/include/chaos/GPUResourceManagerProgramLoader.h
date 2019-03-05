@@ -23,8 +23,6 @@ namespace chaos
 		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
 		/** program loading from path */
 		virtual GPUProgram * LoadObject(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
-		/** returns true whether we can add an object with a given name */
-		virtual bool CanAddObject(char const * name) const;
 
 	protected:
 

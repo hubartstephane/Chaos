@@ -23,8 +23,6 @@ namespace chaos
 		virtual GPURenderMaterial * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** Generate a render material from an file */
 		virtual GPURenderMaterial * LoadObject(FilePathParam const & path, char const * name = nullptr) const;
-		/** returns true whether we can add an object with a given name */
-		virtual bool CanAddObject(char const * name) const;
 
 	protected:
 

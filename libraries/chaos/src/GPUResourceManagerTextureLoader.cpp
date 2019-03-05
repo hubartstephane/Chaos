@@ -5,11 +5,6 @@
 namespace chaos
 {
 
-	bool GPUResourceManagerTextureLoader::CanAddObject(char const * name) const
-	{
-		return manager->CanAddObject(name, [this](char const * n) {return manager->FindTexture(n); });
-	}
-
 	GPUTexture * GPUResourceManagerTextureLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters) const
 	{
 		// check for name

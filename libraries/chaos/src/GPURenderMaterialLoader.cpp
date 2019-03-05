@@ -8,12 +8,6 @@
 
 namespace chaos
 {
-
-	bool GPURenderMaterialLoader::CanAddObject(char const * name) const
-	{
-		return manager->CanAddObject(name, [this](char const * n) {return manager->FindRenderMaterial(n); });
-	}
-
 	bool GPURenderMaterialLoader::InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const
 	{
 		GPUProgram * program = manager->FindProgram(program_name);

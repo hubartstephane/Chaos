@@ -4,12 +4,6 @@
 
 namespace chaos
 {
-
-	bool GPUResourceManagerProgramLoader::CanAddObject(char const * name) const
-	{
-		return manager->CanAddObject(name, [this](char const * n) {return manager->FindProgram(n); });
-	}
-
 	GPUProgram * GPUResourceManagerProgramLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options) const
 	{
 		// check for name

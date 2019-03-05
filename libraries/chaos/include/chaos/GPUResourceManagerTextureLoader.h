@@ -23,8 +23,6 @@ namespace chaos
 		virtual GPUTexture * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;
 		/** texture loading from path */
 		virtual GPUTexture * LoadObject(FilePathParam const & path, char const * name = nullptr, GenTextureParameters const & parameters = GenTextureParameters()) const;
-		/** returns true whether we can add an object with a given name */
-		virtual bool CanAddObject(char const * name) const;
 
 	protected:
 

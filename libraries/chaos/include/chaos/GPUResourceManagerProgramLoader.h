@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GPUResourceManagerLoader.h>
+#include <chaos/ResourceManagerLoader.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramLoader.h>
@@ -11,13 +11,13 @@
 namespace chaos
 {
 
-	class GPUResourceManagerProgramLoader : public GPUResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>
+	class GPUResourceManagerProgramLoader : public ResourceManagerLoader<GPUProgram, GPUFileResourceFriend, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUResourceManagerProgramLoader(GPUResourceManager * in_resource_manager) :
-			GPUResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>(in_resource_manager){}
+			ResourceManagerLoader<GPUProgram, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
 		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;

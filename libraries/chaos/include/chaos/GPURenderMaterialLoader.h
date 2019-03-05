@@ -4,20 +4,20 @@
 #include <chaos/GPUResourceManager.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/FilePath.h>
-#include <chaos/GPUResourceManagerLoader.h>
+#include <chaos/ResourceManagerLoader.h>
 #include <chaos/EmptyClass.h>
 
 
 namespace chaos
 {
 
-	class GPURenderMaterialLoader : public GPUResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>
+	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
-			GPUResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
+			ResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
 		virtual GPURenderMaterial * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;

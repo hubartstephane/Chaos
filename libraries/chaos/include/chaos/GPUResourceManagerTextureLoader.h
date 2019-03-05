@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/GPUResourceManagerLoader.h>
+#include <chaos/ResourceManagerLoader.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/GPUTexture.h>
 #include <chaos/GPUTextureLoader.h>
@@ -11,13 +11,13 @@
 namespace chaos
 {
 
-	class GPUResourceManagerTextureLoader : public GPUResourceManagerLoader<GPUTexture, GPUTextureLoader, GPUResourceManager>
+	class GPUResourceManagerTextureLoader : public ResourceManagerLoader<GPUTexture, GPUFileResourceFriend, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUResourceManagerTextureLoader(GPUResourceManager * in_resource_manager) :
-			GPUResourceManagerLoader<GPUTexture, GPUTextureLoader, GPUResourceManager>(in_resource_manager){}
+			ResourceManagerLoader<GPUTexture, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
 		virtual GPUTexture * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;

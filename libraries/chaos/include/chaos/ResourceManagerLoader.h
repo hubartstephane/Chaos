@@ -19,11 +19,11 @@ namespace chaos
 	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even it is the final call)
 
 	/**
-	* GPUResourceManagerLoader
+	* ResourceManagerLoader
 	**/
 
 	template<typename RESOURCE_TYPE, typename PARENT_CLASS, typename MANAGER_TYPE>
-	class GPUResourceManagerLoader : public PARENT_CLASS
+	class ResourceManagerLoader : public PARENT_CLASS
 	{
 	public:
 
@@ -31,7 +31,7 @@ namespace chaos
 		using manager_type = MANAGER_TYPE;
 		
 		/** constructor */
-		GPUResourceManagerLoader(MANAGER_TYPE * in_manager) :
+		ResourceManagerLoader(MANAGER_TYPE * in_manager) :
 			manager(in_manager)
 		{
 			assert(in_manager != nullptr);
@@ -102,7 +102,7 @@ namespace chaos
 			return true;
 		}
 		/** apply the name to resource */
-		void ApplyNameToLoadedResource(GPUFileResource * resource) const
+		void ApplyNameToLoadedResource(RESOURCE_TYPE * resource) const
 		{
 			if (resource == nullptr)
 				return;			
@@ -115,7 +115,7 @@ namespace chaos
 				SetResourceName(resource, resource_name.c_str());
 		}
 		/** apply the path to resource */
-		void ApplyPathToLoadedResource(GPUFileResource * resource) const
+		void ApplyPathToLoadedResource(RESOURCE_TYPE * resource) const
 		{
 			if (resource == nullptr)
 				return;
@@ -127,7 +127,7 @@ namespace chaos
 				SetResourcePath(resource, resolved_path);
 		}
 		/** apply name/path to resource then clean loader */
-		void FinalizeLoadedResource(GPUFileResource * resource) const
+		void FinalizeLoadedResource(RESOURCE_TYPE * resource) const
 		{
 			ApplyNameToLoadedResource(resource);
 			ApplyPathToLoadedResource(resource);

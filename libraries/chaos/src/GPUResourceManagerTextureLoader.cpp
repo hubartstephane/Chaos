@@ -11,7 +11,7 @@ namespace chaos
 		if (!CheckResourceName(nullptr, name, &json))
 			return nullptr;
 		// load the texture
-		GPUTexture * result = GPUTextureLoader::GenTextureObject(json, config_path, parameters);
+		GPUTexture * result = GPUTextureLoader().GenTextureObject(json, config_path, parameters);
 		if (result != nullptr)
 		{
 			FinalizeLoadedResource(result);
@@ -29,7 +29,7 @@ namespace chaos
 		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
 			return nullptr;
 		// load the texture
-		GPUTexture * result = GPUTextureLoader::GenTextureObject(path, parameters);
+		GPUTexture * result = GPUTextureLoader().GenTextureObject(path, parameters);
 		if (result != nullptr)
 		{
 			FinalizeLoadedResource(result);

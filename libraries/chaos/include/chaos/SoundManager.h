@@ -396,6 +396,44 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
+#if 0
+
+	class SoundManagerSourceLoader : public ResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>
+	{
+	public:
+
+		/** constructor */
+		GPUResourceManagerProgramLoader(GPUResourceManager * in_resource_manager) :
+			ResourceManagerLoader<GPUProgram, GPUProgramLoader, GPUResourceManager>(in_resource_manager) {}
+
+		/** load an object from JSON */
+		virtual SoundSource * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		/** program loading from path */
+		virtual SoundSource * LoadObject(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+
+	protected:
+
+		/** search whether the path is already in used in the manager */
+		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
+		/** search whether the name is already in used in the manager */
+		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
+	};
+
+
+#endif
+
+
+
+
+
+
+
+
+
+	// ==============================================================
+	// MANAGER
+	// ==============================================================
+
 	class SoundManager : public Manager
 	{
 		CHAOS_SOUND_ALL_FRIENDS

@@ -7,6 +7,21 @@
 namespace chaos
 {
 
+	/**
+	* GPUProgramLoaderCacheOptions : this class is used to define how cache sytem can be used
+	*/
+
+	class GPUProgramLoaderCacheOptions
+	{
+	public:
+
+		/** whether we can use the cache as an input */
+		bool read_from_cache = true;
+		/** whether we can use the cache as an output */
+		bool write_into_cache = true;
+	};
+
+
 	class GPUProgram : public GPUFileResource
 	{
 	public:

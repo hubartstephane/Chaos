@@ -6,7 +6,6 @@
 #include <chaos/GPUTexture.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/GPUProgram.h>
-#include <chaos/GPUProgramLoader.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
@@ -23,7 +22,6 @@ namespace chaos
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;
 		friend class GPURenderMaterialLoader;
-		friend class GPUResourceManagerProgramLoader;
 
 	public:
 
@@ -35,7 +33,7 @@ namespace chaos
 		/** load a texture */
 		GPUTexture * LoadTexture(FilePathParam const & path, char const * name = nullptr, GenTextureParameters const & texture_parameters = GenTextureParameters());
 		/** load a program */
-		GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
+		GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr, class GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
 		/** load a material */
 		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
 

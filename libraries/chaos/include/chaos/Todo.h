@@ -1,3 +1,4 @@
+
 #pragma once
 
 #if 0
@@ -61,6 +62,10 @@
 	- repenser post process
 
 	- fix BIND TEXTURE dans les shaders
+
+	- A REAL CAMERA SYSTEM
+
+	- RENDERER CAMERA+SCENE + extra
 
 
 

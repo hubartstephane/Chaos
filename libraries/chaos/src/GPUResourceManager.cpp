@@ -5,7 +5,7 @@
 #include <chaos/GPUProgramLoader.h>
 #include <chaos/GPURenderMaterialLoader.h>
 #include <chaos/GPUProgramGenerator.h>
-#include <chaos/GPUResourceManagerProgramLoader.h>
+#include <chaos/GPUProgramLoader.h>
 
 namespace chaos
 {
@@ -93,7 +93,7 @@ namespace chaos
 
 	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name, GPUProgramLoaderCacheOptions const & cache_options)
 	{
-		return GPUResourceManagerProgramLoader(this).LoadObject(path, name, cache_options);
+		return GPUProgramLoader(this).LoadObject(path, name, cache_options);
 	}
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
@@ -137,7 +137,7 @@ namespace chaos
 			json, 
 			config_path, 
 			boost::mpl::true_(),
-			GPUResourceManagerProgramLoader(this));
+			GPUProgramLoader(this));
 	}
 
 	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)

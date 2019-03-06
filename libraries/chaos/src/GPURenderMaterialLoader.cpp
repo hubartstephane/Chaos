@@ -1,8 +1,8 @@
-﻿#include <chaos/GPURenderMaterialLoader.h>
-#include <chaos/GPUResourceManagerProgramLoader.h>
-#include <chaos/MathTools.h>
+﻿#include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/GPUTextureLoader.h>
+#include <chaos/GPURenderMaterialLoader.h>
+#include <chaos/GPUProgramLoader.h>
 #include <chaos/FileTools.h>
 #include <chaos/JSONTools.h>
 
@@ -59,7 +59,7 @@ namespace chaos
 		}
 
 		// inplace declared program 
-		GPUResourceManagerProgramLoader program_loader(manager);
+		GPUProgramLoader program_loader(manager);
 		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program, program_name.c_str());
 		if (program == nullptr)
 			return false;

@@ -51,6 +51,12 @@ T max(T a, T b)
 	return (a >= b)? a : b;
 }
 
+  // not sure whether the entry point on windows must be _main, main, _tmain ... : create a macro to change this once for all
+
+#ifndef CHAOS_MAIN
+#  define CHAOS_MAIN main
+#endif
+
 /**
 * This file only deserve to include most external common includes
 */

@@ -150,7 +150,7 @@ protected:
 	DWORD nMidiInPort{ 0 };
 };
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	int a = 83;
 	int b = 0;

@@ -120,7 +120,7 @@ private:
 	textbox textbox_;
 };
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   notepad_form npform;
   npform.show();

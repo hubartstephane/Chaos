@@ -354,7 +354,7 @@ std::pair<std::string, std::string> reg_foo(const std::string& s)
 }
 
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   boost::filesystem::path p1 = "c:/toto/titi.txt";
   boost::filesystem::path p2 = "c:/toto/../toto/titi.txt";

@@ -130,7 +130,7 @@ protected:
 
 float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

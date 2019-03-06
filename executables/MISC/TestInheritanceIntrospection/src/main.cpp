@@ -10,7 +10,7 @@ class C : public B {};
 
 class D {};
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 

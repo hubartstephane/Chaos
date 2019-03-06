@@ -39,7 +39,7 @@ void myfunc(int id)
 
 }
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   // XXX : PeekMessage get a message for a window that belongs to current thread
   //       That's why API::exit on one thread does not kill the other

@@ -68,7 +68,7 @@ protected:
 	}
 };
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::RunApplication<MyApplication>(argc, argv, env);
 

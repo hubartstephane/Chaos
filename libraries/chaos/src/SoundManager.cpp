@@ -1063,6 +1063,9 @@ namespace chaos
 
 	SoundSource * SoundManagerSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
+
+#if 0
+
 		// check for path
 		if (!CheckResourcePath(path))
 			return nullptr;
@@ -1076,7 +1079,10 @@ namespace chaos
 			FinalizeLoadedResource(result);
 			manager->sources.push_back(result);
 
+	
 		}
+
+#endif
 
 
 

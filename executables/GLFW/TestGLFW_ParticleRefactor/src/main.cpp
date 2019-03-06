@@ -308,7 +308,7 @@ class D
 
 BOOST_DECLARE_HAS_MEMBER(has_xxx, xxx);
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	auto a = chaos::ClassTools::GetClassID<A>();
 	auto b = chaos::ClassTools::GetClassID<A const>();

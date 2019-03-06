@@ -119,7 +119,7 @@ protected:
 	}
 };
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 
 	auto a0 = boost::mpl::aux::has_type<int>::value;

@@ -125,7 +125,7 @@ protected:
 	chaos::FPSViewInputController fps_view_controller;
 };
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

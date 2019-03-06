@@ -144,7 +144,7 @@ protected:
 	std::vector<chaos::shared_ptr<irrklang::ISound>> playing_sounds;
 };
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;

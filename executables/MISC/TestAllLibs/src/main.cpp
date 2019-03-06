@@ -106,7 +106,7 @@ static void *l_alloc (void *ud, void *ptr, size_t /* osize */, size_t nsize)
 
 
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 

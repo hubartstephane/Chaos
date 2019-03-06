@@ -439,7 +439,7 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 
 // ====================================================================
 
-int _tmain(int argc, char ** argv, char ** env)
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::MyGLFW::SingleWindowApplicationParams params;
   params.monitor = nullptr;

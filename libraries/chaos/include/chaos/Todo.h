@@ -6,6 +6,77 @@
 	== TODO
 	====================================================================
 
+	- HOT RELOAD RESOURCES
+
+	- REVOIR LOADERS
+
+	- PARTICLE ALLOCATION : extra data
+
+	- HUD component
+
+	- PLAYER component
+
+	- test platformer
+
+	- ATLAS DYNAMIC
+
+	- FENCE OPENGL a chaque frame
+
+	- CHANGE MUSIC in game
+
+	- BACKGROUND pour les particles de text
+
+	- ANIMATION pour sprites (shaders ?)
+
+	- OPENGL STATE CACHE
+
+	- MATERIAL AUTOMATIQUE :    PROGRAMS => MATERIAL
+
+	- LOAD LEVELS on demand only (and not at all at the beginning)
+
+	- TITRE LEVELS (voir game over / pause)
+
+	- MATERIAL COMPOSITE/RICH
+
+
+		name -----> MATERIAL CHILD
+
+
+	- FULLSCREEN TOGGLE
+
+	- TILEDMAP : revoir collision player (a la demande seulement ?)
+
+	- HUD debug menu => menu de base
+
+	- stack des inputs
+
+	- chargement resources par extension
+
+	- ajouter des program sources par defaut
+
+	- fix Doxygen
+
+	- compilation Linux
+
+	- repenser post process
+
+	- fix BIND TEXTURE dans les shaders
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	- Game::GetLevel(int level_index) => maybe some search to do to have not sequential levels
 
   -GameLevel => have level_index. We should add a NAME (NamedObject) so we can acces levels by name. Non sequencial level acces

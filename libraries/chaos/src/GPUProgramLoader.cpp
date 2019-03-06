@@ -17,7 +17,8 @@ namespace chaos
 		GPUProgram * result = GenProgramObject(json, config_path, cache_options);
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				manager->programs.push_back(result);
 		}
@@ -36,7 +37,8 @@ namespace chaos
 		GPUProgram * result = GenProgramObject(path, cache_options);
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				manager->programs.push_back(result);
 		}

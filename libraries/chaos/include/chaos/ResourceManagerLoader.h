@@ -40,19 +40,6 @@ namespace chaos
 		/** returns the manager */
 		manager_type * GetManager() const { return manager; }
 
-		/** set the resolved path (so that it can be given to the result at the end of loading) */
-		void SetResultPath(boost::filesystem::path const & path)
-		{
-			if (!path.empty())
-				resolved_path = path;
-		}
-		/** set the name (so that it can be given to the result at the end of loading) */
-		void SetResultName(char const * name)
-		{
-			if (name != nullptr)
-				resource_name = name;
-		}
-
 	protected:
 
 		/** search whether the path is already in used in the manager */
@@ -104,35 +91,29 @@ namespace chaos
 		/** apply the name to resource */
 		void ApplyNameToLoadedResource(RESOURCE_TYPE * resource) const
 		{
-			if (resource == nullptr)
-				return;			
-			// should we update the path of the object ?
-			if (resource_name.empty())
-				return;
-			// apply the name
-			char const * name = resource->GetName();
-			if (name == nullptr || name[0] == 0)
-				SetResourceName(resource, resource_name.c_str());
+			if (resource != nullptr)
+			{
+				if (!resource_name.empty())
+				{
+					char const * name = resource->GetName();
+					if (name == nullptr || name[0] == 0)
+						SetResourceName(resource, resource_name.c_str());
+				}
+			}
+			resource_name = std::string(); // reset
 		}
 		/** apply the path to resource */
 		void ApplyPathToLoadedResource(RESOURCE_TYPE * resource) const
 		{
-			if (resource == nullptr)
-				return;
-			// should we update the path of the object ?
-			if (resolved_path.empty())
-				return;
-			// should we update the path of the object ?
-			if (resource->GetPath().empty())
-				SetResourcePath(resource, resolved_path);
-		}
-		/** apply name/path to resource then clean loader */
-		void FinalizeLoadedResource(RESOURCE_TYPE * resource) const
-		{
-			ApplyNameToLoadedResource(resource);
-			ApplyPathToLoadedResource(resource);
-			resource_name = std::string();
-			resolved_path = boost::filesystem::path(); // ready for next call
+			if (resource != nullptr)
+			{
+				if (!resolved_path.empty())
+				{
+					if (resource->GetPath().empty())
+						SetResourcePath(resource, resolved_path);
+				}
+			}
+			resolved_path = boost::filesystem::path(); // reset
 		}
 
 	protected:

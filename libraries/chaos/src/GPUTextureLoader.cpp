@@ -17,7 +17,8 @@ namespace chaos
 		GPUTexture * result = GenTextureObject(json, config_path, parameters);
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				manager->textures.push_back(result);
 		}
@@ -36,7 +37,8 @@ namespace chaos
 		GPUTexture * result = GenTextureObject(path, parameters);
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
 				manager->textures.push_back(result);
 		}
@@ -52,28 +54,7 @@ namespace chaos
 	{ 
 		return (manager->FindTexture(in_name) != nullptr);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 	GPUTexture * GPUTextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const
 	{
 		GPUTexture * result = nullptr;
@@ -102,14 +83,7 @@ namespace chaos
 				nullptr:
 				GLTextureTools::PrepareGLTextureTransfert(image);
 
-
-
-
-
 			// shuxxx try to work with parameter.level and parameter.border
-
-
-
 
 			// create the texture
 			if (target == GL_TEXTURE_1D)

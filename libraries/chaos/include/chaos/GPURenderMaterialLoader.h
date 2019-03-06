@@ -17,7 +17,10 @@ namespace chaos
 
 		/** constructor */
 		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
-			ResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
+			ResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager)
+		{
+			assert(in_resource_manager != nullptr); // opposite to GPUTextureLoader and GPUProgramLoader, manager cannot be nullptr for RenderMaterial
+		}
 
 		/** load an object from JSON */
 		virtual GPURenderMaterial * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;

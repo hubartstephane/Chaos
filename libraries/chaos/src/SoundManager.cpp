@@ -1052,7 +1052,8 @@ namespace chaos
 		GPUTexture * result = GPUTextureLoader().GenTextureObject(json, config_path, parameters);
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
 			manager->textures.push_back(result);
 		}
 		return result;
@@ -1065,7 +1066,6 @@ namespace chaos
 	{
 
 #if 0
-
 		// check for path
 		if (!CheckResourcePath(path))
 			return nullptr;
@@ -1076,22 +1076,21 @@ namespace chaos
 		SoundSource * result = nullptr;// manager->DoAddSource();
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
-			manager->sources.push_back(result);
-
-	
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
+			if (manager != nullptr)
+				manager->sources.push_back(result);
 		}
 
-#endif
 
 
 
-#if 0
 		// load the texture
 		GPUTexture * result = GPUTextureLoader().GenTextureObject(path, parameters);
 		if (result != nullptr)
 		{
-			FinalizeLoadedResource(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
 			manager->textures.push_back(result);
 		}
 		return result;

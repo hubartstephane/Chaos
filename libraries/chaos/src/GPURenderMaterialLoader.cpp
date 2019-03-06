@@ -283,8 +283,10 @@ namespace chaos
 			InitializeUniformsFromJSON(result, json, config_path);
 
 			// finalize : give name / path to the new resource
-			FinalizeLoadedResource(result);
-			manager->render_materials.push_back(result);
+			ApplyNameToLoadedResource(result);
+			ApplyPathToLoadedResource(result);
+			if (manager != nullptr)
+				manager->render_materials.push_back(result);
 		}
 		return result;
 	}
@@ -345,8 +347,8 @@ namespace chaos
 		InitializeUniformsFromJSON(result, json, config_path);
 
 		// finalize : give name / path to the new resource
-		FinalizeLoadedResource(result);
-
+		ApplyNameToLoadedResource(result);
+		ApplyPathToLoadedResource(result);
 		return result;
 	}
 

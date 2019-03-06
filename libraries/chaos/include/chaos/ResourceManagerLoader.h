@@ -31,8 +31,8 @@ namespace chaos
 		using manager_type = MANAGER_TYPE;
 		
 		/** constructor */
-		ResourceManagerLoader(MANAGER_TYPE * in_manager) :
-			manager(in_manager = nullptr)
+		ResourceManagerLoader(MANAGER_TYPE * in_manager = nullptr) :
+			manager(in_manager)
 		{
 			
 		}

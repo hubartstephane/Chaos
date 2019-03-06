@@ -18,7 +18,8 @@ namespace chaos
 		if (result != nullptr)
 		{
 			FinalizeLoadedResource(result);
-			manager->programs.push_back(result);
+			if (manager != nullptr)
+				manager->programs.push_back(result);
 		}
 		return result;
 	}
@@ -36,7 +37,8 @@ namespace chaos
 		if (result != nullptr)
 		{
 			FinalizeLoadedResource(result);
-			manager->programs.push_back(result);
+			if (manager != nullptr)
+				manager->programs.push_back(result);
 		}
 		return result;
 	}
@@ -50,18 +52,6 @@ namespace chaos
 	{ 
 		return (manager->FindProgram(in_name) != nullptr);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options) const
 	{

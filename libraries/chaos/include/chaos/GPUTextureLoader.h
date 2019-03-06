@@ -18,14 +18,14 @@ namespace chaos
 	* GPUTextureLoader : used to have some loading texture functions for OpenGL
 	**/
 
-	class GPUTextureLoader : public ResourceManagerLoader<GPUTexture, GPUFileResourceFriend, GPUResourceManager>
+	class GPUTextureLoader : public ResourceManagerLoader<GPUTexture, FileResourceFriend, GPUResourceManager>
 	{
 	public:
 
 
 		/** constructor */
 		GPUTextureLoader(GPUResourceManager * in_resource_manager = nullptr) :
-			ResourceManagerLoader<GPUTexture, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
+			ResourceManagerLoader<GPUTexture, FileResourceFriend, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
 		virtual GPUTexture * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;

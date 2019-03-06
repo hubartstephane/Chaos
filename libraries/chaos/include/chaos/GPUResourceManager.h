@@ -7,7 +7,7 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPURenderMaterial.h>
-#include <chaos/GPUFileResource.h>
+#include <chaos/FileResource.h>
 #include <chaos/FilePath.h>
 
 namespace chaos
@@ -17,7 +17,7 @@ namespace chaos
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
-	class GPUResourceManager : public Manager, protected GPUFileResourceFriend
+	class GPUResourceManager : public Manager, protected FileResourceFriend
 	{
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;

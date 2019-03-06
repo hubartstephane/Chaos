@@ -5,19 +5,19 @@
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/FilePath.h>
 #include <chaos/ResourceManagerLoader.h>
-#include <chaos/EmptyClass.h>
+#include <chaos/FileResource.h>
 
 
 namespace chaos
 {
 
-	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>
+	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, FileResourceFriend, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
-			ResourceManagerLoader<GPURenderMaterial, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager)
+			ResourceManagerLoader<GPURenderMaterial, FileResourceFriend, GPUResourceManager>(in_resource_manager)
 		{
 			assert(in_resource_manager != nullptr); // opposite to GPUTextureLoader and GPUProgramLoader, manager cannot be nullptr for RenderMaterial
 		}

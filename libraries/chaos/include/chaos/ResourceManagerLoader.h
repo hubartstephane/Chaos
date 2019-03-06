@@ -17,6 +17,7 @@ namespace chaos
 	//
 	//       so, the PATH that is kept is "file1.json" (and not "file2.xxx" even it is the final call)
 
+
 	/**
 	* ResourceManagerLoader
 	**/
@@ -31,9 +32,9 @@ namespace chaos
 		
 		/** constructor */
 		ResourceManagerLoader(MANAGER_TYPE * in_manager) :
-			manager(in_manager)
+			manager(in_manager = nullptr)
 		{
-			assert(in_manager != nullptr);
+			
 		}
 
 		/** returns the manager */
@@ -66,7 +67,7 @@ namespace chaos
 			if (!resolved_path.empty())
 				return true;
 			// path already exising in manager : failure
-			if (IsPathAlreadyUsedInManager(path))
+			if (manager != nullptr && IsPathAlreadyUsedInManager(path))
 				return false;
 			// the currently loaded resource has now a path
 			resolved_path = path.GetResolvedPath();
@@ -91,7 +92,7 @@ namespace chaos
 				in_name = tmp_name.c_str();
 			}
 			// name already exising in manager : failure
-			if (IsNameAlreadyUsedInManager(in_name))
+			if (manager != nullptr && IsNameAlreadyUsedInManager(in_name))
 				return false;
 			// the currently loaded resource has now a name
 			if (!tmp_name.empty())

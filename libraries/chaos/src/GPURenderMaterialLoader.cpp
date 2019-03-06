@@ -1,8 +1,8 @@
 ﻿#include <chaos/GPURenderMaterialLoader.h>
 #include <chaos/GPUResourceManagerProgramLoader.h>
-#include <chaos/GPUResourceManagerTextureLoader.h>
 #include <chaos/MathTools.h>
 #include <chaos/BoostTools.h>
+#include <chaos/GPUTextureLoader.h>
 #include <chaos/FileTools.h>
 #include <chaos/JSONTools.h>
 
@@ -135,7 +135,7 @@ namespace chaos
 			}
 
 			// inplace declared texture 
-			GPUResourceManagerTextureLoader texture_loader(manager);
+			GPUTextureLoader texture_loader(manager);
 			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, texture_name.c_str());
 			if (texture == nullptr)
 				continue;

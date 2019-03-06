@@ -7,6 +7,10 @@
 #include <chaos/GPUFileResource.h>
 #include <chaos/FilePath.h>
 #include <chaos/GLTextureTools.h>
+#include <chaos/ResourceManagerLoader.h>
+#include <chaos/GPUResourceManager.h>
+#include <chaos/JSONTools.h>
+
 
 namespace chaos
 {
@@ -14,9 +18,19 @@ namespace chaos
 	* GPUTextureLoader : used to have some loading texture functions for OpenGL
 	**/
 
-	class GPUTextureLoader : protected GPUFileResourceFriend  // give the hability to change path and names to the resource
+	class GPUTextureLoader : public ResourceManagerLoader<GPUTexture, GPUFileResourceFriend, GPUResourceManager>
 	{
 	public:
+
+
+		/** constructor */
+		GPUTextureLoader(GPUResourceManager * in_resource_manager = nullptr) :
+			ResourceManagerLoader<GPUTexture, GPUFileResourceFriend, GPUResourceManager>(in_resource_manager){}
+
+		/** load an object from JSON */
+		virtual GPUTexture * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;
+		/** texture loading from path */
+		virtual GPUTexture * LoadObject(FilePathParam const & path, char const * name = nullptr, GenTextureParameters const & parameters = GenTextureParameters()) const;
 
 		/** Generate a texture from a json content */
 		virtual GPUTexture * GenTextureObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GenTextureParameters const & parameters = GenTextureParameters()) const;
@@ -54,6 +68,12 @@ namespace chaos
 
 		/** for cubemap texture, returns a layer index depending on the face considered */
 		static int GetCubeMapLayerValueFromSkyBoxFace(int face, int level = 0);
+
+
+		/** search whether the path is already in used in the manager */
+		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
+		/** search whether the name is already in used in the manager */
+		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};
 
 }; // namespace chaos

@@ -862,7 +862,7 @@ namespace chaos
 
 	SoundSource * SoundManager::AddSource(FilePathParam const & path, char const * name)
 	{
-		return SoundManagerSourceLoader(this).LoadObject(path, name);
+		return SoundSourceLoader(this).LoadObject(path, name);
 	}
 
 	void SoundManager::UpdateAllSoundPausePerCategory(SoundCategory * category)
@@ -953,19 +953,12 @@ namespace chaos
 
 	bool SoundManager::LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return true; // SoundManager::LoadCategoriesFromConfiguration
-
-#if 0
-
 		return LoadObjectsFromConfiguration(
-			"categories", 
-			json, 
-			config_path, 
-			[this](char const * name, nlohmann::json const & obj_json, boost::filesystem::path const & path)
-		{
-			return AddJSONCategory(name, obj_json, path);
-		});
-#endif
+			"categories",
+			json,
+			config_path,
+			boost::mpl::false_(), // no [recurse] reading
+			SoundCategoryLoader(this));
 	}
 
 	bool SoundManager::LoadSourcesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
@@ -975,10 +968,15 @@ namespace chaos
 			json,
 			config_path,
 			boost::mpl::true_(),
-			SoundManagerSourceLoader(this));
+			SoundSourceLoader(this));
 	}
 
-	SoundSource * SoundManagerSourceLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+
+	// ==============================================================
+	// SOUND SOURCE LOADER
+	// ==============================================================
+
+	SoundSource * SoundSourceLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		SoundSource * result = nullptr;
 		// the entry has a reference to another file => recursive call
@@ -994,7 +992,7 @@ namespace chaos
 		return result;
 	}
 
-	SoundSource * SoundManagerSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
+	SoundSource * SoundSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
 		// check for path
 		if (!CheckResourcePath(path))
@@ -1014,7 +1012,7 @@ namespace chaos
 		return result;
 	}
 
-	SoundSource * SoundManagerSourceLoader::GenSourceObject(FilePathParam const & path, char const * name) const
+	SoundSource * SoundSourceLoader::GenSourceObject(FilePathParam const & path, char const * name) const
 	{
 		// get the irrklang engine
 		irrklang::ISoundEngine * engine = manager->GetIrrklangEngine();
@@ -1042,14 +1040,36 @@ namespace chaos
 		return result;
 	}
 
-	bool SoundManagerSourceLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
+	bool SoundSourceLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
 		return (manager->FindSourceByPath(path) != nullptr);
 	}
 
-	bool SoundManagerSourceLoader::IsNameAlreadyUsedInManager(char const * in_name) const
+	bool SoundSourceLoader::IsNameAlreadyUsedInManager(char const * in_name) const
 	{
 		return (manager->FindSource(in_name) != nullptr);
+	}
+
+	// ==============================================================
+	// SOUND CATEGORY LOADER
+	// ==============================================================
+
+	SoundCategory * SoundCategoryLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	{
+		// no anonymous category
+		if (name == nullptr)
+			return nullptr;
+		// create the object
+		SoundCategory * result = manager->AddCategory(name);
+		// initialize the new object
+		if (result != nullptr)
+			result->InitializeFromJSON(json, config_path);
+		return result;
+	}
+
+	bool SoundCategoryLoader::IsNameAlreadyUsedInManager(char const * in_name) const
+	{
+		return (manager->FindCategory(in_name) != nullptr);
 	}
 
 }; // namespace chaos

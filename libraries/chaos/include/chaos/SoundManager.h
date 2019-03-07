@@ -16,7 +16,7 @@ namespace chaos
 	// ==============================================================
 
 	// all classes in this file
-#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory) (SoundManagerSourceLoader)
+#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory) (SoundSourceLoader) (SoundCategoryLoader)
 
 	// forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
@@ -389,15 +389,15 @@ namespace chaos
 	};
 
 	// ==============================================================
-	// SoundManagerSourceLoader
+	// SoundSourceLoader
 	// ==============================================================
 
-	class SoundManagerSourceLoader : public ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>
+	class SoundSourceLoader : public ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>
 	{
 	public:
 
 		/** constructor */
-		SoundManagerSourceLoader(SoundManager * in_sound_manager) :
+		SoundSourceLoader(SoundManager * in_sound_manager) :
 			ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>(in_sound_manager) 
 		{
 			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
@@ -417,6 +417,35 @@ namespace chaos
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
+		/** search whether the name is already in used in the manager */
+		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
+	};
+
+	// ==============================================================
+	// SoundCategoryLoader
+	// ==============================================================
+
+	class SoundCategoryLoader : public ResourceManagerLoader<SoundCategory, ResourceFriend, SoundManager>
+	{
+	public:
+
+		/** constructor */
+		SoundCategoryLoader(SoundManager * in_sound_manager) :
+			ResourceManagerLoader<SoundCategory, ResourceFriend, SoundManager>(in_sound_manager)
+		{
+			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
+		}
+
+		/** load an object from JSON */
+		virtual SoundCategory * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+
+	protected:
+
+		/** internal method to load a category */
+		//SoundCategory * GenCategoryObject(FilePathParam const & path, char const * name) const;
+
+	protected:
+
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};
@@ -459,7 +488,6 @@ namespace chaos
 
 		/** add a category inside the manager */
 		SoundCategory * AddCategory(char const * name);
-
 		/** load and add a simple source inside the manager */
 		SoundSource * AddSource(FilePathParam const & path, char const * name = nullptr);
 

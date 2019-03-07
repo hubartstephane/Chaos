@@ -4,19 +4,15 @@
 
 namespace chaos
 {
-
-	template<typename PARENT_CLASS>
-	class FileResource : public PARENT_CLASS
+	/** an object that have a name (the difference with NamedObject is the tag) */
+	class NamedResource
 	{
-
-		friend class FileResourceFriend;
+		friend class ResourceFriend;
 
 	public:
 
 		/** get the name of the object */
 		char const * GetName() const { return name.c_str(); }
-		/** get the path of the object */
-		boost::filesystem::path const & GetPath() const { return path; }
 
 	protected:
 
@@ -28,6 +24,27 @@ namespace chaos
 			else
 				name.clear();
 		}
+
+	protected:
+
+		/** the name of the object */
+		std::string name;
+	};
+
+	/** an object that have a path and a timestamp */
+	class FileResource
+	{
+		friend class ResourceFriend;
+
+	public:
+
+		/** get the path of the object */
+		boost::filesystem::path const & GetPath() const { return path; }
+		/** get the file last write time */
+		std::time_t GetFileTimestamp() const { return file_timestamp; }
+
+	protected:
+
 		/** Set the path method (for friends only) */
 		void SetPath(boost::filesystem::path const & in_path)
 		{
@@ -37,15 +54,14 @@ namespace chaos
 
 	protected:
 
-		/** the name of the object */
-		std::string name;
 		/** the path of the object */
 		boost::filesystem::path path;
 		/** the file timestamp */
 		std::time_t file_timestamp = 0;
 	};
 
-	class FileResourceFriend
+	/** an utility class just to access protected methods */
+	class ResourceFriend
 	{
 	protected:
 

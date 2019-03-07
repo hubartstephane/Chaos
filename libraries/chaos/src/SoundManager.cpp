@@ -268,6 +268,14 @@ namespace chaos
 		return true;
 	}
 
+	void SoundObject::SetName(char const * in_name)
+	{
+		if (in_name != nullptr)
+			name = in_name;
+		else
+			name.clear();
+	}
+
 	// ==============================================================
 	// SOURCE
 	// ==============================================================
@@ -390,6 +398,12 @@ namespace chaos
 				SetDefaultCategory(category);
 		}
 		return true;
+	}
+
+	void SoundSource::SetPath(boost::filesystem::path const & in_path)
+	{
+	//	file_timestamp = boost::filesystem::last_write_time(in_path);
+		path = in_path;
 	}
 
 	// ==============================================================
@@ -1065,7 +1079,6 @@ namespace chaos
 	SoundSource * SoundManagerSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
 
-#if 0
 		// check for path
 		if (!CheckResourcePath(path))
 			return nullptr;
@@ -1084,6 +1097,7 @@ namespace chaos
 
 
 
+#if 0
 
 		// load the texture
 		GPUTexture * result = GPUTextureLoader().GenTextureObject(path, parameters);

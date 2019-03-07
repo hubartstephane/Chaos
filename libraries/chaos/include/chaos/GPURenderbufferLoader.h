@@ -11,7 +11,7 @@ namespace chaos
 	* GPURenderbufferLoader : used to have some generic functions for OpenGL
 	**/
 
-	class GPURenderbufferLoader : protected FileResourceFriend  // give the hability to change path and names to the resource
+	class GPURenderbufferLoader : protected ResourceFriend  // give the hability to change path and names to the resource
 	{
 	public:
 

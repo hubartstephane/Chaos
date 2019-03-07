@@ -152,6 +152,8 @@ namespace chaos
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
+		friend class ResourceFriend;
+
 	public:
 
 		/** getter on the irrklang engine */
@@ -219,6 +221,9 @@ namespace chaos
 		/** called at blend terminaison */
 		void OnBlendFinished();
 
+		/** Set the name method (for friends only) */
+		void SetName(char const * in_name);
+
 		/** loading from a JSON object */
 		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
@@ -246,9 +251,14 @@ namespace chaos
 	// SOURCE
 	// ==============================================================
 
+
+
+
 	class SoundSource : public SoundObject
 	{
 		CHAOS_SOUND_ALL_FRIENDS
+
+		friend class ResourceFriend;
 
 	public:
 
@@ -281,6 +291,9 @@ namespace chaos
 
 		/** loading from a JSON object */
 		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+
+		/** Set the path method (for friends only) */
+		void SetPath(boost::filesystem::path const & in_path);
 
 	protected:
 
@@ -398,13 +411,13 @@ namespace chaos
 	// SoundManagerSourceLoader
 	// ==============================================================
 
-	class SoundManagerSourceLoader : public ResourceManagerLoader<SoundSource, FileResourceFriend, SoundManager>
+	class SoundManagerSourceLoader : public ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>
 	{
 	public:
 
 		/** constructor */
 		SoundManagerSourceLoader(SoundManager * in_sound_manager) :
-			ResourceManagerLoader<SoundSource, FileResourceFriend, SoundManager>(in_sound_manager) {}
+			ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>(in_sound_manager) {}
 
 		/** load an object from JSON */
 		virtual SoundSource * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;

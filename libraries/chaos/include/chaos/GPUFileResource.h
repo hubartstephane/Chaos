@@ -6,7 +6,7 @@
 
 namespace chaos
 {
-	class GPUFileResource : public FileResource<GPUResource>
+	class GPUFileResource : public GPUResource, public NamedResource, public FileResource
 	{
 	};
 

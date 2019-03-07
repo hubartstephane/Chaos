@@ -7,7 +7,7 @@
 #include <chaos/FilePath.h>
 #include <chaos/Manager.h>
 #include <chaos/ResourceManagerLoader.h>
-#include <chaos/EmptyClass.h>
+#include <chaos/FileResource.h>
 
 namespace chaos
 {
@@ -398,13 +398,13 @@ namespace chaos
 	// SoundManagerSourceLoader
 	// ==============================================================
 
-	class SoundManagerSourceLoader : public ResourceManagerLoader<SoundSource, EmptyClass, SoundManager>
+	class SoundManagerSourceLoader : public ResourceManagerLoader<SoundSource, FileResourceFriend, SoundManager>
 	{
 	public:
 
 		/** constructor */
 		SoundManagerSourceLoader(SoundManager * in_sound_manager) :
-			ResourceManagerLoader<SoundSource, EmptyClass, SoundManager>(in_sound_manager) {}
+			ResourceManagerLoader<SoundSource, FileResourceFriend, SoundManager>(in_sound_manager) {}
 
 		/** load an object from JSON */
 		virtual SoundSource * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;

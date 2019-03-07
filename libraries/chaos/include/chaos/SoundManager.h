@@ -148,11 +148,9 @@ namespace chaos
 	// SOUND OBJECT
 	// ==============================================================
 
-	class SoundObject : public ReferencedObject
+	class SoundObject : public ReferencedObject, public NamedResource
 	{
 		CHAOS_SOUND_ALL_FRIENDS
-
-		friend class ResourceFriend;
 
 	public:
 
@@ -177,8 +175,6 @@ namespace chaos
 
 		/** returns whether the object is attached to a manager */
 		bool IsAttachedToManager() const;
-		/** get the name of the object */
-		char const * GetName() const { return name.c_str(); }
 		/** change the callbacks associated to this object */
 		void SetCallbacks(SoundCallbacks * in_callbacks);
 		/** get whether the sound is finished */
@@ -221,9 +217,6 @@ namespace chaos
 		/** called at blend terminaison */
 		void OnBlendFinished();
 
-		/** Set the name method (for friends only) */
-		void SetName(char const * in_name);
-
 		/** loading from a JSON object */
 		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
@@ -251,21 +244,14 @@ namespace chaos
 	// SOURCE
 	// ==============================================================
 
-
-
-
-	class SoundSource : public SoundObject
+	class SoundSource : public SoundObject, public FileResource
 	{
 		CHAOS_SOUND_ALL_FRIENDS
-
-		friend class ResourceFriend;
 
 	public:
 
 		/** generating and playing a sound */
 		Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
-		/** get the path of the resource */
-		boost::filesystem::path const & GetPath() const { return path; }
 
 		/** pause the object */
 		virtual void Pause(bool in_pause = true) override;
@@ -292,13 +278,8 @@ namespace chaos
 		/** loading from a JSON object */
 		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 
-		/** Set the path method (for friends only) */
-		void SetPath(boost::filesystem::path const & in_path);
-
 	protected:
 
-		/** the resource path */
-		boost::filesystem::path path;
 		/** the irrklang source */
 		shared_ptr<irrklang::ISoundSource> irrklang_source;
 		/** the default category */
@@ -417,7 +398,10 @@ namespace chaos
 
 		/** constructor */
 		SoundManagerSourceLoader(SoundManager * in_sound_manager) :
-			ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>(in_sound_manager) {}
+			ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>(in_sound_manager) 
+		{
+			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
+		}
 
 		/** load an object from JSON */
 		virtual SoundSource * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
@@ -426,20 +410,16 @@ namespace chaos
 
 	protected:
 
+		/** internal method to load a source */
+		SoundSource * GenSourceObject(FilePathParam const & path, char const * name) const;
+
+	protected:
+
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};
-
-
-
-
-
-
-
-
-
 
 	// ==============================================================
 	// MANAGER
@@ -559,9 +539,6 @@ namespace chaos
 		/** test whether a sound with given name could be inserted in the manager */
 		bool CanAddSound(char const * name) const;
 
-		/** simple method to initialize and insert a source */
-		SoundSource * DoAddSource(FilePathParam const & path, char const * name);
-
 		/** update all sounds pause per category */
 		void UpdateAllSoundPausePerCategory(SoundCategory * category);
 		/** update all sounds volume per category */
@@ -573,8 +550,6 @@ namespace chaos
 
 		/** add a category from a JSON object */
 		SoundCategory * AddJSONCategory(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
-		/** add a source from a JSON object */
-		SoundSource * AddJSONSource(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 		/** load the categories from configuration */
 		bool LoadCategoriesFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);

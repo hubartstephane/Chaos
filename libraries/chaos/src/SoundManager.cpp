@@ -268,14 +268,6 @@ namespace chaos
 		return true;
 	}
 
-	void SoundObject::SetName(char const * in_name)
-	{
-		if (in_name != nullptr)
-			name = in_name;
-		else
-			name.clear();
-	}
-
 	// ==============================================================
 	// SOURCE
 	// ==============================================================
@@ -398,12 +390,6 @@ namespace chaos
 				SetDefaultCategory(category);
 		}
 		return true;
-	}
-
-	void SoundSource::SetPath(boost::filesystem::path const & in_path)
-	{
-	//	file_timestamp = boost::filesystem::last_write_time(in_path);
-		path = in_path;
 	}
 
 	// ==============================================================
@@ -879,39 +865,6 @@ namespace chaos
 		return SoundManagerSourceLoader(this).LoadObject(path, name);
 	}
 
-	SoundSource * SoundManager::DoAddSource(FilePathParam const & path, char const * name) 
-	{
-		// get the irrklang engine
-		irrklang::ISoundEngine * engine = GetIrrklangEngine();
-		if (engine == nullptr)
-			return nullptr;
-		// load the file
-		Buffer<char> buffer = FileTools::LoadFile(path, false);
-		if (buffer == nullptr)
-			return nullptr;
-		// create the source on irrklang side
-		// XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
-		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-		shared_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
-		if (irrklang_source == nullptr)
-			return nullptr;
-		// insert the result
-		SoundSource * result = new SoundSource();
-		if (result == nullptr)
-			return nullptr;
-		sources.push_back(result);
-
-		// last initializations
-		result->sound_manager = this;
-		result->irrklang_source = irrklang_source;
-		result->path = resolved_path;
-		if (name != nullptr)
-			result->name = name;
-
-		return result;
-	}
-
 	void SoundManager::UpdateAllSoundPausePerCategory(SoundCategory * category)
 	{
 		size_t count = sounds.size();
@@ -987,29 +940,6 @@ namespace chaos
 		return category;
 	}
 
-	// JSON name policy
-	//
-	// same as below except that a name can be generated automatically from the resource filename
-
-	SoundSource * SoundManager::AddJSONSource(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path)
-	{
-		// get the path of concern 
-		std::string source_path;
-		if (!JSONTools::GetAttribute(json, "path", source_path))
-			return nullptr;
-		// create the source
-		FilePathParam path(source_path, config_path);
-		SoundSource * source = nullptr;
-		if (name != nullptr) // name given by a member called "name"
-			source = AddSource(path, name);
-		else
-			source = AddSource(path); // name deduced from the filename
-		// initialize the new object
-		if (source != nullptr)
-			source->InitializeFromJSON(json, config_path);
-		return source;
-	}
-
 	bool SoundManager::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		// initialize the categories
@@ -1048,37 +978,24 @@ namespace chaos
 			SoundManagerSourceLoader(this));
 	}
 
-
-
-
-
-
-
-
 	SoundSource * SoundManagerSourceLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
-
-#if 0
-		// check for name
-		if (!CheckResourceName(nullptr, name, &json))
-			return nullptr;
-		// load the texture
-		GPUTexture * result = GPUTextureLoader().GenTextureObject(json, config_path, parameters);
-		if (result != nullptr)
+		SoundSource * result = nullptr;
+		// the entry has a reference to another file => recursive call
+		std::string p;
+		if (JSONTools::GetAttribute(json, "path", p))
 		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
-			manager->textures.push_back(result);
+			FilePathParam path(p, config_path);
+
+			result = LoadObject(path, name);
+			if (result != nullptr)
+				result->InitializeFromJSON(json, config_path);			
 		}
 		return result;
-#endif
-
-		return nullptr;
 	}
 
 	SoundSource * SoundManagerSourceLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
-
 		// check for path
 		if (!CheckResourcePath(path))
 			return nullptr;
@@ -1086,7 +1003,7 @@ namespace chaos
 		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
 			return nullptr;
 		// create the source
-		SoundSource * result = nullptr;// manager->DoAddSource();
+		SoundSource * result = GenSourceObject(path, name);
 		if (result != nullptr)
 		{
 			ApplyNameToLoadedResource(result);
@@ -1094,25 +1011,35 @@ namespace chaos
 			if (manager != nullptr)
 				manager->sources.push_back(result);
 		}
-
-
-
-#if 0
-
-		// load the texture
-		GPUTexture * result = GPUTextureLoader().GenTextureObject(path, parameters);
-		if (result != nullptr)
-		{
-			ApplyNameToLoadedResource(result);
-			ApplyPathToLoadedResource(result);
-			manager->textures.push_back(result);
-		}
 		return result;
-#endif
+	}
 
+	SoundSource * SoundManagerSourceLoader::GenSourceObject(FilePathParam const & path, char const * name) const
+	{
+		// get the irrklang engine
+		irrklang::ISoundEngine * engine = manager->GetIrrklangEngine();
+		if (engine == nullptr)
+			return nullptr;
+		// load the file
+		Buffer<char> buffer = FileTools::LoadFile(path, false);
+		if (buffer == nullptr)
+			return nullptr;
+		// create the source on irrklang side
+		// XXX : we give filename even if the file is already loaded because it helps irrklangs to find the data format
+		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
-
-		return nullptr;
+		shared_ptr<irrklang::ISoundSource> irrklang_source = engine->addSoundSourceFromMemory(buffer.data, (irrklang::ik_s32)buffer.bufsize, resolved_path.string().c_str(), true);
+		if (irrklang_source == nullptr)
+			return nullptr;
+		// insert the result
+		SoundSource * result = new SoundSource();
+		if (result == nullptr)
+			return nullptr;
+		// last initializations
+		result->sound_manager = manager;
+		result->irrklang_source = irrklang_source;
+		
+		return result;
 	}
 
 	bool SoundManagerSourceLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
@@ -1124,9 +1051,5 @@ namespace chaos
 	{
 		return (manager->FindSource(in_name) != nullptr);
 	}
-
-
-
-
 
 }; // namespace chaos

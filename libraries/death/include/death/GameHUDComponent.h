@@ -100,4 +100,19 @@ namespace death
 		virtual void OnInsertedInHUD(char const * instructions); // this is not an override !
 	};
 
+
+	class GameHUDScoreComponent : public GameHUDSingleAllocationComponent
+	{
+		friend class GameHUD;
+
+	protected:
+
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
+		/** caching the score */
+		int cached_score_value = -1;
+	};
+
 }; // namespace death

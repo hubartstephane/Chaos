@@ -216,15 +216,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
-
-		/** update the score particles */
-		void UpdateScoreParticles();
-
-	protected:
-
-		/** caching the score */
-		int cached_score_value = -1;
+		virtual bool FillHUDContent() override;
 	};
 
 }; // namespace death

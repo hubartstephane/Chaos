@@ -263,30 +263,13 @@ namespace death
 		// PlayingHUD
 		// =============================================
 
-	bool PlayingHUD::DoTick(double delta_time)
+	bool PlayingHUD::FillHUDContent()
 	{
 		// call super method
-		GameHUD::DoTick(delta_time);
-		// populate the HUD
-		UpdateScoreParticles();
+		if (!GameHUD::FillHUDContent())
+			return false;
+		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
 		return true;
 	}
-
-	void PlayingHUD::UpdateScoreParticles()
-	{
-		Player * player = game->GetPlayer(0);
-		if (player == nullptr)
-			return;
-
-		int current_score = player->GetScore();
-		if (current_score == cached_score_value)
-			return;
-
-		if (current_score < 0)
-			UnregisterParticles(GameHUDKeys::SCORE_ID);
-		else
-			RegisterParticles(GameHUDKeys::SCORE_ID, GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
-		cached_score_value = current_score;
-	}
-
+	
 }; // namespace death

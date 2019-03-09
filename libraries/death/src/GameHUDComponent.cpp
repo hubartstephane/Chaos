@@ -1,5 +1,6 @@
 #include <death/GameHUDComponent.h>
 #include <death/GameHUD.h>
+#include <death/Player.h>
 
 namespace death
 {
@@ -119,4 +120,22 @@ namespace death
 		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, death::GameHUDKeys::TEXT_LAYER_ID);
 	}
 
+	bool GameHUDScoreComponent::DoTick(double delta_time)
+	{
+		GameHUDSingleAllocationComponent::DoTick(delta_time);
+
+		Player * player = GetPlayer(0);
+		if (player != nullptr)
+		{
+			int current_score = player->GetScore();
+			if (current_score != cached_score_value)
+			{
+				if (current_score < 0)
+					allocations = nullptr;
+				else
+					allocations = hud->GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
+			}
+		}
+		return true;
+	}
 }; // namespace death

@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Renderable.h>
+#include <chaos/ParticleManager.h>
 
 #include <death/GameFramework.h>
 
@@ -57,20 +58,46 @@ namespace death
 
 
 
+	class GameHUDSingleAllocationComponent : public GameHUDComponent
+	{
+	protected:
+
+		/** override */
+		virtual void OnRemovedFromHUD() override;
+
+	protected:
+
+		/** allocations for the title */
+		chaos::shared_ptr<chaos::ParticleAllocation> allocations;
+	};
 
 
 
-
-	class GameHUDTitleComponent : public GameHUDComponent
+	class GameHUDTitleComponent : public GameHUDSingleAllocationComponent
 	{
 		friend class GameHUD;
 
 	protected:
 
-		/** override */
-		virtual void OnInsertedInHUD(int a, int b, float c);
-		/** override */
-		virtual void OnRemovedFromHUD() override;
+		virtual void OnInsertedInHUD(char const * game_name, bool normal, chaos::TagType layer_id); // this is not an override !
+	};
+
+	class GameHUDBestScoreComponent : public GameHUDSingleAllocationComponent
+	{
+		friend class GameHUD;
+
+	protected:
+
+		virtual void OnInsertedInHUD(int score); // this is not an override !
+	};
+
+	class GameHUDInstructionComponent : public GameHUDSingleAllocationComponent
+	{
+		friend class GameHUD;
+
+	protected:
+
+		virtual void OnInsertedInHUD(char const * instructions); // this is not an override !
 	};
 
 }; // namespace death

@@ -73,35 +73,50 @@ namespace death
 		return hud->GetPlayer(player_index);
 	}
 
-	void GameHUDComponent::OnInsertedInHUD()
-	{
-
+	void GameHUDComponent::OnInsertedInHUD() // XXX: this function is a "PLACEHOLDER". It does not deserve to be overriden. It is called in a template function 
+	{                                        // Arguments can be changed to anything
 	}
 
 	void GameHUDComponent::OnRemovedFromHUD()
 	{
-
 	}
 
 
 
 
-	
-
-	void GameHUDTitleComponent::OnInsertedInHUD(int a, int b, float c)
+	void GameHUDSingleAllocationComponent::OnRemovedFromHUD()
 	{
-		a = a;
-
+		allocations = nullptr;
 	}
 
-	void GameHUDTitleComponent::OnRemovedFromHUD()
+	void GameHUDTitleComponent::OnInsertedInHUD(char const * game_name, bool normal, chaos::TagType layer_id)
 	{
-
-
+		allocations = hud->GetGameParticleCreator().CreateTitle(game_name, normal, layer_id);
 	}
 
+	void GameHUDBestScoreComponent::OnInsertedInHUD(int score)
+	{
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 50;
+		params.hotpoint_type = chaos::Hotpoint::CENTER;
+		params.position.x = 0.0f;
+		params.position.y = -130.0f;
+		params.font_info_name = "normal";
 
+		std::string str = chaos::StringTools::Printf("Best score : %d", score);
+		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+	}
 
+	void GameHUDInstructionComponent::OnInsertedInHUD(char const * instructions)
+	{
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 40;
+		params.hotpoint_type = chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::TOP;
+		params.position.x = 0.0f;
+		params.position.y = -200.0f;
+		params.font_info_name = "normal";
 
+		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, death::GameHUDKeys::TEXT_LAYER_ID);
+	}
 
 }; // namespace death

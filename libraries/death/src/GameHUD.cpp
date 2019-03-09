@@ -106,6 +106,49 @@ namespace death
 		return true;
 	}
 
+	void GameHUD::UnregisterComponent(chaos::TagType key)
+	{
+		auto it = components.find(key);
+		if (it == components.end())
+			return;
+		GameHUDComponent * component = it->second.get();
+		if (component != nullptr)
+		{
+			component->OnRemovedFromHUD();
+			component->hud = nullptr;
+		}
+		components.erase(it);
+	}
+
+
+
+
+
+
+
+
+	GameHUDComponent * GameHUD::FindComponent(chaos::TagType key)
+	{
+		auto it = components.find(key);
+		if (it == components.end())
+			return nullptr;
+		return it->second.get();
+	}
+
+	GameHUDComponent const * GameHUD::FindComponent(chaos::TagType key) const
+	{
+		auto it = components.find(key);
+		if (it == components.end())
+			return nullptr;
+		return it->second.get();
+	}
+
+
+
+
+
+
+
 	void GameHUD::RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous)
 	{
 		if (remove_previous)
@@ -120,6 +163,7 @@ namespace death
 		
 	void GameHUD::Clear()
 	{
+		components.clear();
 		particle_allocations.clear();
 	}
 
@@ -140,8 +184,17 @@ namespace death
 
 	bool GameHUD::DoTick(double delta_time)
 	{
+		// tick the components
+		for (auto it : components)
+		{
+			GameHUDComponent * component = it.second.get();
+			if (component != nullptr)
+				component->Tick(delta_time);
+		}
+		// tick the particle manager if necessary
 		if (!external_manager && particle_manager != nullptr)
 			particle_manager->Tick(delta_time);
+
 		return true;
 	}
 
@@ -158,11 +211,27 @@ namespace death
 		// MainMenuHUD
 		// =============================================
 
+
+
+
 	bool MainMenuHUD::FillHUDContent()
 	{
 		// call super method
 		if (!GameHUD::FillHUDContent())
 			return false;
+
+
+//		char const * game_name = game->GetGameName();
+//		if (game_name != nullptr)
+//			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent())
+
+
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), 1, 2, 6.67f);
+
+	//	RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent, game_name, false, GameHUDKeys::TEXT_LAYER_ID);
+
+
+
 		// populate the HUD
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)

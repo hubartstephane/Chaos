@@ -7,6 +7,7 @@
 #include <chaos/NamedObject.h>
 
 #include <death/GameHUDKeys.h>
+#include <death/GameHUDComponent.h>
 #include <death/GameFramework.h>
 #include <death/GameParticleCreator.h>
 
@@ -54,6 +55,39 @@ namespace death
 		/** initialization of the HUD from the game values */
 		virtual bool InitializeHUD();
 
+		/** insert a component inside the HUD */
+		template<typename COMPONENT_TYPE, typename ...PARAMS>
+		void RegisterComponent(chaos::TagType key, COMPONENT_TYPE * component, PARAMS... params)
+		{
+			// XXX : why is this method a template ??
+			//       a COMPONENT initialization requires the HUD for some resources
+			//       so you cannot build the COMPONENT before the insertion
+			//       you need to do both at the same time, and you require various kind of parameters
+			//       COMPONENT initialization (OnInsertedInHUD(...)) cannot be virtual because we don't know the parameters for the construction
+			//       that's why we use a template function
+			assert(component != nullptr);
+			assert(component->hud == nullptr);
+			// remove previous component with the key
+			UnregisterComponent(key);
+			// register new component for that key
+			components.insert(std:: make_pair(key, component));
+			component->hud = this;
+			component->OnInsertedInHUD(params...);
+		}
+		/** remove a component from the HUD */
+		void UnregisterComponent(chaos::TagType key);
+
+		/** get the component from its ID */
+		GameHUDComponent * FindComponent(chaos::TagType key);
+		/** get the component from its ID */
+		GameHUDComponent const * FindComponent(chaos::TagType key) const;
+
+
+
+
+
+
+
 		/** insert some particles inside the HUD */
 		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
 		/** remove some particles from the HUD */
@@ -93,6 +127,9 @@ namespace death
 		virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
 	protected:
+
+		/** the allocations */
+		std::map<chaos::TagType, chaos::shared_ptr<GameHUDComponent>> components;
 
 		/** the allocations */
 		std::multimap<chaos::TagType, chaos::shared_ptr<chaos::ParticleAllocation>> particle_allocations;

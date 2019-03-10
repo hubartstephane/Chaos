@@ -128,14 +128,89 @@ namespace death
 		if (player != nullptr)
 		{
 			int current_score = player->GetScore();
-			if (current_score != cached_score_value)
+			if (current_score != cached_value)
 			{
 				if (current_score < 0)
 					allocations = nullptr;
 				else
 					allocations = hud->GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
+				current_score = cached_value;
 			}
 		}
 		return true;
 	}
+
+
+
+	//death::GameHUDKeys::FPS_ID
+
+	bool GameHUDFramerateComponent::DoTick(double delta_time)
+	{
+		GameHUDSingleAllocationComponent::DoTick(delta_time);
+
+		//float framerate = renderer->GetFrameRate();
+
+		// test for cache
+		if (fabsf(framerate - cached_value) < 0.01f)
+			return true;
+
+		// get box
+		chaos::box2 view_box = GetGame()->GetViewBox();
+
+		std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
+
+		// format text and create particles
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 60;
+
+		params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
+		params.position.x = corners.second.x - 20.0f;
+		params.position.y = corners.second.y - 20.0f;
+		params.font_info_name = "normal";
+
+		// generate the allocation
+		std::string str = chaos::StringTools::Printf("%02.01f FPS", framerate);
+		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+
+		cached_value = framerate;
+
+		return true;
+	}
+
+#if 0
+
+	void LudumPlayingHUD::UpdateFrameRate()
+	{
+		// test for cache
+		if (fabsf(framerate - cached_framerate) < 0.01f)
+			return;
+
+		// get box
+		chaos::box2 view_box = game->GetViewBox();
+
+		std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
+
+		// format text and create particles
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 60;
+
+		params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
+		params.position.x = corners.second.x - 20.0f;
+		params.position.y = corners.second.y - 20.0f;
+		params.font_info_name = "normal";
+
+		// generate the allocation
+		std::string str = chaos::StringTools::Printf("%02.01f FPS", framerate);
+
+		chaos::ParticleAllocation * fps_allocation = GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+		if (fps_allocation == nullptr)
+			return;
+
+		// register allocation an update cached value
+		RegisterParticles(death::GameHUDKeys::FPS_ID, fps_allocation);
+		cached_framerate = framerate;
+	}
+	
+#endif
+
 }; // namespace death

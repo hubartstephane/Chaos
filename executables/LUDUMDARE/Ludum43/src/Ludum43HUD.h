@@ -10,8 +10,6 @@ namespace death
 	{
 		CHAOS_DECLARE_TAG(LEVEL_TIMEOUT_ID);
 		CHAOS_DECLARE_TAG(WAKENUP_PARTICLE_COUNT_ID);
-		CHAOS_DECLARE_TAG(LIFE_LAYER_ID);
-		CHAOS_DECLARE_TAG(FPS_ID);
 	};
 };
 
@@ -31,6 +29,8 @@ protected:
 	virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 	/** override */
 	virtual bool DoTick(double delta_time) override;
+	/** override */
+	virtual bool FillHUDContent() override;
 
 	virtual bool CreateHUDLayers() override;
 
@@ -53,7 +53,7 @@ protected:
 	/** caching the level time */
 	float cached_level_timeout = -1.0f;
 	/** caching the life value */
-	float cached_life_value = -1.0f;
+	float cached_value = -1.0f;
 	/** caching the framerate value */
 	float cached_framerate = -1.0f;
 	/** get framerate from the renderer */

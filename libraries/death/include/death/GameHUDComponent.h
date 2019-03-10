@@ -107,12 +107,32 @@ namespace death
 
 	protected:
 
+		/** override */
 		virtual bool DoTick(double delta_time) override;
 
 	protected:
 
 		/** caching the score */
-		int cached_score_value = -1;
+		int cached_value = -1;
 	};
+
+	class GameHUDFramerateComponent : public GameHUDSingleAllocationComponent
+	{
+		friend class GameHUD;
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
+		/** the framerate registered at previous frame*/
+		float framerate = -1.0f;
+		/** caching the framerate */
+		float cached_value = -1.0f;
+	};
+
+
 
 }; // namespace death

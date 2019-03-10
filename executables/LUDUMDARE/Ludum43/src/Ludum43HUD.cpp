@@ -21,6 +21,23 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 	return true;
 }
 
+bool LudumPlayingHUD::FillHUDContent()
+{
+	if (!death::PlayingHUD::FillHUDContent())
+		return false;
+
+#if _DEBUG
+	RegisterComponent(GameHUDKeys::FPS_ID, new chaos::GameHUDFramerateComponent());
+#endif
+
+	return true;
+}
+
+
+
+
+
+
 void LudumPlayingHUD::UpdateWakenUpParticleCount()
 {
 	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
@@ -84,7 +101,7 @@ void LudumPlayingHUD::UpdateLifeBar()
 		return;
 
 	float life = ludum_game->GetPlayerLife(0);
-	if (life != cached_life_value)
+	if (life != cached_value)
 	{
 		// create the allocation
 		chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
@@ -124,9 +141,21 @@ void LudumPlayingHUD::UpdateLifeBar()
 		particles->texcoords.topright   = glm::vec2(ludum_game->initial_player_life, 1.0f);
 		particles->color                = glm::vec4(life, life, life, life);
 
-		cached_life_value = life;
+		cached_value = life;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
 int LudumPlayingHUD::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 {
 	framerate = renderer->GetFrameRate();

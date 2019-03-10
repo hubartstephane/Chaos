@@ -2,6 +2,7 @@
 
 #include <death/Game.h>
 #include <death/GameHUD.h>
+#include <death/GameHUDComponent.h>
 #include <death/GameFramework.h>
 
 namespace death
@@ -18,6 +19,40 @@ namespace death
 		CHAOS_DECLARE_TAG(CHALLENGE_LAYER_ID);
 	};
 };
+
+
+class GameHUDComboComponent : public death::GameHUDSingleAllocationComponent
+{
+	friend class GameHUD;
+
+protected:
+
+	/** override */
+	virtual bool DoTick(double delta_time) override;
+
+protected:
+
+	/** caching the combo */
+	int cached_value = -1;
+};
+
+class GameHUDLifeComponent : public death::GameHUDSingleAllocationComponent
+{
+	friend class GameHUD;
+
+protected:
+
+	/** override */
+	virtual bool DoTick(double delta_time) override;
+
+protected:
+
+	/** caching the combo */
+	int cached_value = -1;
+};
+
+
+
 
 class LudumPlayingHUD : public death::PlayingHUD
 {
@@ -36,14 +71,14 @@ public:
 protected:
 
 	/** override */
+	virtual bool FillHUDContent() override;
+	/** override */
 	virtual bool DoTick(double delta_time) override;
 	/** override */
 	virtual bool CreateHUDLayers() override;
 
 protected:
 
-	/** update the combo particles */
-	void UpdateComboParticles();
 	/** update the life particles */
 	void UpdateLifeParticles();
 	/** update the Heart Beat values */
@@ -51,10 +86,8 @@ protected:
 
 protected:
 
-	/** caching the combo value */
-	int cached_combo_value = -1;
 	/** caching the current life count */
-	int cached_life_value = -1;
+	int cached_value = -1;
 
 	/** the current heart warning timer value */
 	float heart_warning = 0.0f;

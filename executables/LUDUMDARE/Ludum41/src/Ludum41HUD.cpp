@@ -7,33 +7,85 @@
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
+
+bool GameHUDComboComponent::DoTick(double delta_time)
+{
+	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	if (playing_hud != nullptr)
+	{
+		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
+		if (ludum_game_instance != nullptr)
+		{
+			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
+			if (current_combo != cached_value)
+			{
+				if (current_combo < 2)
+					allocations = nullptr;
+				else
+					allocations = GetGame()->GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
+
+				cached_value = current_combo;
+			}
+		}
+	}
+	return true;
+}
+
+bool GameHUDLifeComponent::DoTick(double delta_time)
+{
+	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	if (playing_hud != nullptr)
+	{
+		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
+		if (ludum_game_instance != nullptr)
+		{
+			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
+			if (current_combo != cached_value)
+			{
+				if (current_combo < 2)
+					allocations = nullptr;
+				else
+					allocations = GetGame()->GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
+
+				cached_value = current_combo;
+			}
+		}
+	}
+	return true;
+}
+
+
+
+
+
+bool LudumPlayingHUD::FillHUDContent()
+{
+	if (!death::PlayingHUD::FillHUDContent())
+		return false;
+
+	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
+	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeComponent());
+
+	return true;
+}
+
+
+
+
+
+
 bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	PlayingHUD::DoTick(delta_time);
 	// update other objects
-	UpdateComboParticles();
 	UpdateLifeParticles();
 	TickHeartWarning(delta_time);
 	return true;
-}
-
-void LudumPlayingHUD::UpdateComboParticles()
-{
-	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
-	if (ludum_game_instance == nullptr)
-		return;
-
-	int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
-	if (current_combo != cached_combo_value)
-	{
-		if (current_combo < 2)
-			UnregisterParticles(death::GameHUDKeys::COMBO_ID);
-		else
-			RegisterParticles(death::GameHUDKeys::COMBO_ID, GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
-
-		cached_combo_value = current_combo;
-	}
 }
 
 void LudumPlayingHUD::UpdateLifeParticles()
@@ -43,7 +95,7 @@ void LudumPlayingHUD::UpdateLifeParticles()
 		return;
 
 	int current_life = player->GetLifeCount();
-	if (current_life == cached_life_value)
+	if (current_life == cached_value)
 		return;
 
 	if (current_life < 0)
@@ -61,8 +113,8 @@ void LudumPlayingHUD::UpdateLifeParticles()
 		else
 		{
 			allocation->Resize(current_life);
-			if (current_life > cached_life_value)
-				GetGameParticleCreator().InitializeParticles(allocation, "life", current_life - cached_life_value);
+			if (current_life > cached_value)
+				GetGameParticleCreator().InitializeParticles(allocation, "life", current_life - cached_value);
 		}
 
 		// set the color
@@ -86,7 +138,7 @@ void LudumPlayingHUD::UpdateLifeParticles()
 			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
-	cached_life_value = current_life;
+	cached_value = current_life;
 }
 
 void LudumPlayingHUD::TickHeartWarning(double delta_time)

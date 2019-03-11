@@ -26,8 +26,6 @@ public:
 protected:
 
 	/** override */
-	virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
-	/** override */
 	virtual bool DoTick(double delta_time) override;
 	/** override */
 	virtual bool FillHUDContent() override;
@@ -37,8 +35,6 @@ protected:
 	void UpdateLevelTimer();
 
 	void UpdateWakenUpParticleCount();
-
-	void UpdateFrameRate();
 
 	void UpdateLifeBar();
 	
@@ -54,8 +50,4 @@ protected:
 	float cached_level_timeout = -1.0f;
 	/** caching the life value */
 	float cached_value = -1.0f;
-	/** caching the framerate value */
-	float cached_framerate = -1.0f;
-	/** get framerate from the renderer */
-	mutable float framerate = 0.0f;
 };

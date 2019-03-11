@@ -201,6 +201,14 @@ namespace death
 	int GameHUD::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 	{
 		int result = 0; 
+		// display components (most of them should do nothing while they re using the particle_manager
+		for (auto it : components)
+		{
+			GameHUDComponent * component = it.second.get();
+			if (component != nullptr)
+				result += component->Display(renderer, uniform_provider, render_params);
+		}
+		// diplay the particle manager if internal
 		if (!external_manager && particle_manager != nullptr)
 			result += particle_manager->Display(renderer, uniform_provider, render_params);
 		return result;

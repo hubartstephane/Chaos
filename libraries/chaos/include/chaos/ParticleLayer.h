@@ -713,7 +713,7 @@ namespace chaos
 		virtual bool UpdateParticles(float delta_time);
 
 		/** override */
-		virtual bool DoUpdateGPUResources() const override;
+		virtual bool DoUpdateGPUResources(Renderer * renderer) const override;
 
 	protected:
 

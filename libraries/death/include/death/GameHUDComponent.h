@@ -101,6 +101,63 @@ namespace death
 	};
 
 
+
+
+
+
+
+
+	template<typename T, T initial_value>
+	class GameHUDCacheValueComponent : public GameHUDSingleAllocationComponent
+	{
+		using type = T;
+
+	protected:
+
+		GameHUDCacheValueComponent(char const * in_format) : format(in_format){}
+
+		/** override */
+		virtual bool DoTick(double delta_time) override 
+		{
+			// update the cache value if necessary
+			if (!UpdateCachedValue())
+				return true;
+			
+			// get box
+			chaos::box2 view_box = GetGame()->GetViewBox();
+			std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
+
+			// format text and create particles
+			chaos::ParticleTextGenerator::GeneratorParams params;
+			params.line_height = 60;
+
+			params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
+			params.position.x = corners.second.x - 20.0f;
+			params.position.y = corners.second.y - 20.0f;
+			params.font_info_name = "normal";
+
+			// generate the allocation
+			std::string str = chaos::StringTools::Printf(format.c_str(), cached_value);
+			allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+
+			return true; 
+		}
+		/** update the cached value and returns true whether the particle system has to be regenerated */
+		virtual bool UpdateCachedValue() { false; }
+
+	protected:
+
+		/** the cached value */
+		type cached_value = initial_value;
+		/** the format */
+		std::string format;
+	};
+
+
+
+
+
+
 	class GameHUDScoreComponent : public GameHUDSingleAllocationComponent
 	{
 		friend class GameHUD;
@@ -124,11 +181,13 @@ namespace death
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
 	protected:
 
 		/** the framerate registered at previous frame*/
-		float framerate = -1.0f;
+		mutable float framerate = -1.0f;
 		/** caching the framerate */
 		float cached_value = -1.0f;
 	};

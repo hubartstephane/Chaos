@@ -5,6 +5,8 @@
 #include "Ludum43LevelInstance.h"
 #include "Ludum43GameInstance.h"
 
+#include <death/GameHUDComponent.h>
+
 DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 bool LudumPlayingHUD::DoTick(double delta_time)
@@ -15,9 +17,6 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 	UpdateLevelTimer();
 	UpdateWakenUpParticleCount();
 	UpdateLifeBar();
-#if _DEBUG
-	UpdateFrameRate();
-#endif
 	return true;
 }
 
@@ -27,9 +26,8 @@ bool LudumPlayingHUD::FillHUDContent()
 		return false;
 
 #if _DEBUG
-	RegisterComponent(GameHUDKeys::FPS_ID, new chaos::GameHUDFramerateComponent());
+	RegisterComponent(death::GameHUDKeys::FPS_ID, new death::GameHUDFramerateComponent());
 #endif
-
 	return true;
 }
 
@@ -152,48 +150,6 @@ void LudumPlayingHUD::UpdateLifeBar()
 
 
 
-
-
-
-
-int LudumPlayingHUD::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
-{
-	framerate = renderer->GetFrameRate();
-
-	return death::PlayingHUD::DoDisplay(renderer, uniform_provider, render_params);
-}
-
-void LudumPlayingHUD::UpdateFrameRate()
-{
-	// test for cache
-	if (fabsf(framerate - cached_framerate) < 0.01f)
-		return;
-
-	// get box
-	chaos::box2 view_box = game->GetViewBox();
-
-	std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
-
-	// format text and create particles
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = 60;
-	
-	params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
-	params.position.x = corners.second.x - 20.0f;
-	params.position.y = corners.second.y - 20.0f;
-	params.font_info_name = "normal";
-
-	// generate the allocation
-	std::string str = chaos::StringTools::Printf("%02.01f FPS", framerate);
-
-	chaos::ParticleAllocation * fps_allocation = GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
-	if (fps_allocation == nullptr)
-		return;
-
-	// register allocation an update cached value
-	RegisterParticles(death::GameHUDKeys::FPS_ID, fps_allocation);
-	cached_framerate = framerate;
-}
 
 
 bool LudumPlayingHUD::CreateHUDLayers()

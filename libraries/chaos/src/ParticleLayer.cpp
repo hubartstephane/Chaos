@@ -341,7 +341,7 @@ namespace chaos
 		return result;
 	}
 
-	bool ParticleLayer::DoUpdateGPUResources() const
+	bool ParticleLayer::DoUpdateGPUResources(Renderer * renderer) const
 	{
 		// update the vertex declaration
 		UpdateVertexDeclaration();

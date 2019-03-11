@@ -82,12 +82,6 @@ namespace death
 		/** get the component from its ID */
 		GameHUDComponent const * FindComponent(chaos::TagType key) const;
 
-
-
-
-
-
-
 		/** insert some particles inside the HUD */
 		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
 		/** remove some particles from the HUD */

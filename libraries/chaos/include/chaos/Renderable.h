@@ -122,7 +122,7 @@ namespace chaos
 		/** the user defined method to display the object */
 		virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
 		/** called to update the graphic resource */
-		virtual bool DoUpdateGPUResources() const;
+		virtual bool DoUpdateGPUResources(Renderer * renderer) const;
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 

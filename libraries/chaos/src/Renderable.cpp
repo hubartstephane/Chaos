@@ -39,7 +39,7 @@ namespace chaos
 		uint64_t renderer_timestamp = renderer->GetTimestamp();
 		if (renderer_timestamp == 0 || update_timestamp != renderer_timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{
-			if (!DoUpdateGPUResources())
+			if (!DoUpdateGPUResources(renderer))
 				return 0;
 			update_timestamp = renderer_timestamp;
 		}
@@ -51,7 +51,7 @@ namespace chaos
 		return 0;
 	}	
 
-	bool Renderable::DoUpdateGPUResources() const
+	bool Renderable::DoUpdateGPUResources(Renderer * renderer) const
 	{
 		return true;
 	}

@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/Renderable.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/ParticleTextGenerator.h>
 
 #include <death/GameFramework.h>
 
@@ -121,27 +122,29 @@ namespace death
 		{
 			// update the cache value if necessary
 			if (!UpdateCachedValue())
-				return true;
-			
+				return true;			
 			// get box
 			chaos::box2 view_box = GetGame()->GetViewBox();
 			std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
-
 			// format text and create particles
 			chaos::ParticleTextGenerator::GeneratorParams params;
 			params.line_height = 60;
-
-			params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
-			params.position.x = corners.second.x - 20.0f;
-			params.position.y = corners.second.y - 20.0f;
-			params.font_info_name = "normal";
-
+			params.font_info_name = "normal";					
+			TweakTextGeneratorParams(params, view_box);
 			// generate the allocation
 			std::string str = chaos::StringTools::Printf(format.c_str(), cached_value);
 			allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
-
 			return true; 
 		}
+
+		/** get the position (and configuration) of the text on screen */
+		virtual void GetTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+		{			
+			params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
+			params.position.x = corners.second.x - 20.0f;
+			params.position.y = corners.second.y - 20.0f;
+		}
+
 		/** update the cached value and returns true whether the particle system has to be regenerated */
 		virtual bool UpdateCachedValue() { false; }
 

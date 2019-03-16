@@ -4,6 +4,10 @@
 
 namespace death
 {
+	// ====================================================================
+	// GameHUDComponent
+	// ====================================================================
+
 	Game * GameHUDComponent::GetGame()
 	{
 		if (hud == nullptr)
@@ -82,18 +86,50 @@ namespace death
 	{
 	}
 
+	glm::vec2 GameHUDComponent::GetViewBoxCorner(chaos::box2 const & view_box, int hotpoint)
+	{
+		std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
 
+		glm::vec2 result;
+		// search the X position
+		if (hotpoint & chaos::Hotpoint::LEFT)
+			result.x = corners.first.x;
+		else if (hotpoint & chaos::Hotpoint::RIGHT)
+			result.x = corners.second.x;
+		else
+			result.x = view_box.position.x;
+		// search the Y position
+		if (hotpoint & chaos::Hotpoint::BOTTOM)
+			result.y = corners.first.y;
+		else if (hotpoint & chaos::Hotpoint::TOP)
+			result.y = corners.second.y;
+		else
+			result.y = view_box.position.y;
 
+		return result;
+	}
+
+	// ====================================================================
+	// GameHUDSingleAllocationComponent
+	// ====================================================================
 
 	void GameHUDSingleAllocationComponent::OnRemovedFromHUD()
 	{
 		allocations = nullptr;
 	}
 
+	// ====================================================================
+	// GameHUDTitleComponent
+	// ====================================================================
+
 	void GameHUDTitleComponent::OnInsertedInHUD(char const * game_name, bool normal, chaos::TagType layer_id)
 	{
 		allocations = hud->GetGameParticleCreator().CreateTitle(game_name, normal, layer_id);
 	}
+
+	// ====================================================================
+	// GameHUDBestScoreComponent
+	// ====================================================================
 
 	void GameHUDBestScoreComponent::OnInsertedInHUD(int score)
 	{
@@ -108,6 +144,10 @@ namespace death
 		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 	}
 
+	// ====================================================================
+	// GameHUDInstructionComponent
+	// ====================================================================
+
 	void GameHUDInstructionComponent::OnInsertedInHUD(char const * instructions)
 	{
 		chaos::ParticleTextGenerator::GeneratorParams params;
@@ -120,62 +160,67 @@ namespace death
 		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, death::GameHUDKeys::TEXT_LAYER_ID);
 	}
 
-	bool GameHUDScoreComponent::DoTick(double delta_time)
-	{
-		GameHUDSingleAllocationComponent::DoTick(delta_time);
+	// ====================================================================
+	// GameHUDScoreComponent
+	// ====================================================================
 
+	bool GameHUDScoreComponent::UpdateCachedValue(bool & destroy_allocation)
+	{
 		Player * player = GetPlayer(0);
 		if (player != nullptr)
 		{
 			int current_score = player->GetScore();
+			if (current_score < 0)
+				destroy_allocation = true;
 			if (current_score != cached_value)
 			{
-				if (current_score < 0)
-					allocations = nullptr;
-				else
-					allocations = hud->GetGameParticleCreator().CreateScoringText("Score : %d", current_score, 20.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
-				current_score = cached_value;
+				cached_value = current_score;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
+	void GameHUDScoreComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+	{		
+		int hotpoint = chaos::Hotpoint::TOP_LEFT;
+
+		glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+		params.hotpoint_type = hotpoint;
+		params.position.x = corner.x + 20.0f;
+		params.position.y = corner.y - 20.0f;
+	}
+
+	// ====================================================================
+	// GameHUDFramerateComponent
+	// ====================================================================
 
 	int GameHUDFramerateComponent::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
 	{
 		framerate = renderer->GetFrameRate();
-		return 0;
+		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
 	}
 
-	bool GameHUDFramerateComponent::DoTick(double delta_time)
+	bool GameHUDFramerateComponent::UpdateCachedValue(bool & destroy_allocation)
 	{
-		GameHUDSingleAllocationComponent::DoTick(delta_time);
-
-		// test for cache
-		if (fabsf(framerate - cached_value) < 0.01f)
+		if (fabsf(framerate - cached_value) > 0.01f)
+		{
+			cached_value = framerate;
 			return true;
-
-		// get box
-		chaos::box2 view_box = GetGame()->GetViewBox();
-
-		std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
-
-		// format text and create particles
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 60;
-
-		params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
-		params.position.x = corners.second.x - 20.0f;
-		params.position.y = corners.second.y - 20.0f;
-		params.font_info_name = "normal";
-
-		// generate the allocation
-		std::string str = chaos::StringTools::Printf("%02.01f FPS", framerate);
-		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
-
-		cached_value = framerate;
-
-		return true;
+		}
+		return false;
 	}
+	
+	void GameHUDFramerateComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+	{
+		int hotpoint = chaos::Hotpoint::TOP_RIGHT;
+
+		glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+		params.line_height = 60;
+		params.hotpoint_type = hotpoint;
+		params.position.x = corner.x - 20.0f;
+		params.position.y = corner.y - 20.0f;
+	}
+
 
 }; // namespace death

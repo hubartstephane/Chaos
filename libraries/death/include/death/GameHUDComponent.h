@@ -9,6 +9,11 @@
 
 namespace death
 {
+
+	// ====================================================================
+	// GameHUDComponent
+	// ====================================================================
+
 	class GameHUDComponent : public chaos::Renderable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
@@ -44,6 +49,9 @@ namespace death
 
 	protected:
 
+		/** returns the coordinate of the view corner corresponding to the given hotpoint */
+		static glm::vec2 GetViewBoxCorner(chaos::box2 const & view_box, int hotpoint);
+
 		/** MAYBE (!!!) called whenever the hud is beeing inserted into the hud (the HUD::RegisterComponent is template function. the function below is not necessaraly been called) */
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
@@ -55,10 +63,11 @@ namespace death
 		GameHUD * hud = nullptr;
 	};
 
+	// ====================================================================
+	// GameHUDSingleAllocationComponent
+	// ====================================================================
 
-
-
-
+	/** a HUD component with a single allocation */
 	class GameHUDSingleAllocationComponent : public GameHUDComponent
 	{
 	protected:
@@ -72,7 +81,9 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleAllocation> allocations;
 	};
 
-
+	// ====================================================================
+	// GameHUDTitleComponent
+	// ====================================================================
 
 	class GameHUDTitleComponent : public GameHUDSingleAllocationComponent
 	{
@@ -83,6 +94,10 @@ namespace death
 		virtual void OnInsertedInHUD(char const * game_name, bool normal, chaos::TagType layer_id); // this is not an override !
 	};
 
+	// ====================================================================
+	// GameHUDBestScoreComponent
+	// ====================================================================
+
 	class GameHUDBestScoreComponent : public GameHUDSingleAllocationComponent
 	{
 		friend class GameHUD;
@@ -91,6 +106,10 @@ namespace death
 
 		virtual void OnInsertedInHUD(int score); // this is not an override !
 	};
+
+	// ====================================================================
+	// GameHUDInstructionComponent
+	// ====================================================================
 
 	class GameHUDInstructionComponent : public GameHUDSingleAllocationComponent
 	{
@@ -101,34 +120,40 @@ namespace death
 		virtual void OnInsertedInHUD(char const * instructions); // this is not an override !
 	};
 
+	// ====================================================================
+	// GameHUDCacheValueComponent
+	// ====================================================================
 
-
-
-
-
-
-
-	template<typename T, T initial_value>
+	template<typename T>
 	class GameHUDCacheValueComponent : public GameHUDSingleAllocationComponent
 	{
 		using type = T;
 
 	protected:
 
-		GameHUDCacheValueComponent(char const * in_format) : format(in_format){}
+		GameHUDCacheValueComponent(char const * in_format, type initial_value = type()) : 
+			format(in_format), cached_value(initial_value){}
 
 		/** override */
 		virtual bool DoTick(double delta_time) override 
 		{
 			// update the cache value if necessary
-			if (!UpdateCachedValue())
-				return true;			
+			bool destroy_allocation = false;
+			bool update_required = UpdateCachedValue(destroy_allocation);
+			// destroy allocation
+			if (destroy_allocation)
+			{
+				allocations = nullptr;
+				return true;
+			}
+			// update ?
+			if (!update_required)
+				return true;
 			// get box
-			chaos::box2 view_box = GetGame()->GetViewBox();
-			std::pair<glm::vec2, glm::vec2> corners = view_box.GetCorners();
+			chaos::box2 view_box = GetGame()->GetViewBox();		
 			// format text and create particles
 			chaos::ParticleTextGenerator::GeneratorParams params;
-			params.line_height = 60;
+			params.line_height = 30;
 			params.font_info_name = "normal";					
 			TweakTextGeneratorParams(params, view_box);
 			// generate the allocation
@@ -138,63 +163,60 @@ namespace death
 		}
 
 		/** get the position (and configuration) of the text on screen */
-		virtual void GetTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
-		{			
-			params.hotpoint_type = chaos::Hotpoint::RIGHT | chaos::Hotpoint::TOP;
-			params.position.x = corners.second.x - 20.0f;
-			params.position.y = corners.second.y - 20.0f;
-		}
+		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) {}
 
 		/** update the cached value and returns true whether the particle system has to be regenerated */
-		virtual bool UpdateCachedValue() { false; }
+		virtual bool UpdateCachedValue(bool & destroy_allocation) { return false; }
 
 	protected:
 
 		/** the cached value */
-		type cached_value = initial_value;
+		type cached_value;
 		/** the format */
 		std::string format;
 	};
 
+	// ====================================================================
+	// GameHUDScoreComponent
+	// ====================================================================
 
-
-
-
-
-	class GameHUDScoreComponent : public GameHUDSingleAllocationComponent
+	class GameHUDScoreComponent : public GameHUDCacheValueComponent<int>
 	{
-		friend class GameHUD;
+	public:
+
+		GameHUDScoreComponent() : GameHUDCacheValueComponent<int>("Score : %d", -1){}
 
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
-
-	protected:
-
-		/** caching the score */
-		int cached_value = -1;
+		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		/** override */
+		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
 	};
 
-	class GameHUDFramerateComponent : public GameHUDSingleAllocationComponent
+	// ====================================================================
+	// GameHUDFramerateComponent
+	// ====================================================================
+
+	class GameHUDFramerateComponent : public  GameHUDCacheValueComponent<float>
 	{
-		friend class GameHUD;
+	public:
+
+		GameHUDFramerateComponent() : GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f) {}
 
 	protected:
 
-		/** override */
-		virtual bool DoTick(double delta_time) override;
 		/** override */
 		virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+		/** override */
+		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		/** override */
+		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
 
 	protected:
 
-		/** the framerate registered at previous frame*/
-		mutable float framerate = -1.0f;
-		/** caching the framerate */
-		float cached_value = -1.0f;
+		/** the framerate of the last rendering */
+		mutable float framerate = 0.0f;
 	};
-
-
 
 }; // namespace death

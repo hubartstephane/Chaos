@@ -92,6 +92,11 @@ chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float lev
 	return GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 }
 
+
+
+
+
+
 void LudumPlayingHUD::UpdateLifeBar()
 {
 	LudumGame * ludum_game = GetLudumGame();

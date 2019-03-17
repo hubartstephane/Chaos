@@ -8,10 +8,12 @@
 DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 
-bool GameHUDComboComponent::DoTick(double delta_time)
-{
-	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+// ====================================================================
+// GameHUDComboComponent
+// ====================================================================
 
+bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
+{
 	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
 	if (playing_hud != nullptr)
 	{
@@ -19,48 +21,103 @@ bool GameHUDComboComponent::DoTick(double delta_time)
 		if (ludum_game_instance != nullptr)
 		{
 			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
+			if (current_combo < 2)
+				destroy_allocation = true;
 			if (current_combo != cached_value)
 			{
-				if (current_combo < 2)
-					allocations = nullptr;
-				else
-					allocations = GetGame()->GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
-
 				cached_value = current_combo;
+				return true;
 			}
 		}
 	}
-	return true;
+	return false;
 }
+
+void GameHUDComboComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+{
+	int hotpoint = chaos::Hotpoint::TOP_LEFT;
+
+	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+	params.hotpoint_type = hotpoint;
+	params.position.x = corner.x + 20.0f;
+	params.position.y = corner.y - 60.0f;
+}
+
+// ====================================================================
+// GameHUDLifeComponent
+// ====================================================================
 
 bool GameHUDLifeComponent::DoTick(double delta_time)
 {
+	// super call
 	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
-
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
-	if (playing_hud != nullptr)
+	// get the player
+	death::Player const * player = GetGame()->GetPlayer(0);
+	if (player == nullptr)
+		return true;
+	// get player life, destroy the allocation if no more life
+	int current_life = player->GetLifeCount();
+	if (current_life <= 0)
 	{
-		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
-		if (ludum_game_instance != nullptr)
-		{
-			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
-			if (current_combo != cached_value)
-			{
-				if (current_combo < 2)
-					allocations = nullptr;
-				else
-					allocations = GetGame()->GetGameParticleCreator().CreateScoringText("Combo : %d x", current_combo, 60.0f, GetGame()->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID);
-
-				cached_value = current_combo;
-			}
-		}
+		allocations = nullptr;
+		return true;
 	}
+	// create/ resize the allocation
+	if (allocations == nullptr)
+	{
+		allocations = hud->GetGameParticleCreator().CreateParticles("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
+	}
+	else
+	{
+		allocations->Resize(current_life);
+		if (current_life > cached_value)
+			hud->GetGameParticleCreator().InitializeParticles(allocations.get(), "life", current_life - cached_value);
+	}
+
+	// set the color
+	chaos::ParticleAccessor<ParticleObject> particles = allocations->GetParticleAccessor<ParticleObject>();
+
+	glm::vec2 corner = GetViewBoxCorner(GetGame()->GetViewBox(), chaos::Hotpoint::BOTTOM_LEFT);
+
+	glm::vec2 particle_size;
+	particle_size.x = 35.0f;
+	particle_size.y = 20.0f;
+
+	for (size_t i = 0; i < (size_t)current_life; ++i)
+	{
+		glm::vec2 position;
+		position.x = corner.x + 20.0f + (particle_size.x + 5.0f) * (float)i;
+		position.y = corner.y + 20.0f;
+
+		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+		particles[i].bounding_box.half_size = 0.5f * particle_size;
+
+		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	cached_value = current_life;
+	
+
+#if 0
+
+
+	// has something changed ?
+	if (current_life == cached_value)
+		return true;
+
+
+
+
+#endif
 	return true;
 }
 
 
 
 
+// ====================================================================
+// LudumPlayingHUD
+// ====================================================================
 
 bool LudumPlayingHUD::FillHUDContent()
 {
@@ -83,8 +140,8 @@ bool LudumPlayingHUD::DoTick(double delta_time)
 	// call super method
 	PlayingHUD::DoTick(delta_time);
 	// update other objects
-	UpdateLifeParticles();
-	TickHeartWarning(delta_time);
+//	UpdateLifeParticles();
+//	TickHeartWarning(delta_time);
 	return true;
 }
 

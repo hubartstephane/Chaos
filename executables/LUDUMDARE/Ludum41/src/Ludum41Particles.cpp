@@ -65,9 +65,12 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 	if (playing_hud != nullptr)
 		heart_warning = playing_hud->GetHeartWarningValue();
 
+
+
 	glm::vec4 color = particle->color;
 	if (heart_warning < 0.5f)
 		color.a = 0.4f + 0.6f * heart_warning / 0.5f;
+
 	
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)

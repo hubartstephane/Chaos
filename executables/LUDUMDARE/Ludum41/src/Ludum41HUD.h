@@ -19,26 +19,30 @@ namespace death
 	};
 };
 
+// ====================================================================
+// GameHUDComboComponent
+// ====================================================================
 
-class GameHUDComboComponent : public death::GameHUDSingleAllocationComponent
+class GameHUDComboComponent : public death::GameHUDCacheValueComponent<int>
 {
-	friend class GameHUD;
+public:
+
+	GameHUDComboComponent() : death::GameHUDCacheValueComponent<int>("Combo : %d x", -1) {}
 
 protected:
 
 	/** override */
-	virtual bool DoTick(double delta_time) override;
-
-protected:
-
-	/** caching the combo */
-	int cached_value = -1;
+	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	/** override */
+	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
 };
+
+// ====================================================================
+// GameHUDLifeComponent
+// ====================================================================
 
 class GameHUDLifeComponent : public death::GameHUDSingleAllocationComponent
 {
-	friend class GameHUD;
-
 protected:
 
 	/** override */
@@ -46,11 +50,13 @@ protected:
 
 protected:
 
-	/** caching the combo */
+	/** caching the current life count */
 	int cached_value = -1;
 };
 
-
+// ====================================================================
+// LudumPlayingHUD
+// ====================================================================
 
 
 class LudumPlayingHUD : public death::PlayingHUD

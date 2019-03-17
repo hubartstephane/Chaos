@@ -44,8 +44,6 @@ int ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * par
 	return count;
 }
 
-
-
 bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, int extra_param) const
 {
 	return false;
@@ -56,25 +54,9 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
-	
-	// create pulsating effect
-
-	float heart_warning = 0.0f;
-
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(game->GetCurrentHUD());
-	if (playing_hud != nullptr)
-		heart_warning = playing_hud->GetHeartWarningValue();
-
-
-
-	glm::vec4 color = particle->color;
-	if (heart_warning < 0.5f)
-		color.a = 0.4f + 0.6f * heart_warning / 0.5f;
-
-	
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = color;
+		vertices[i].color = particle->color;
 
 	return vertices_per_particle;
 }

@@ -48,19 +48,51 @@ void GameHUDComboComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerato
 // ====================================================================
 
 bool GameHUDLifeComponent::DoTick(double delta_time)
-{
-	// super call
+{	
 	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+	TickHeartBeat(delta_time);
+	UpdateLifeParticles(delta_time);
+	return true;
+}
+
+void GameHUDLifeComponent::TickHeartBeat(double delta_time)
+{
+	death::Game * game = GetGame();
+
+	death::Player const * player = game->GetPlayer(0);
+	if (player == nullptr)
+		return;
+
+	int current_life = player->GetLifeCount();
+	if (current_life == 1)
+	{
+		heart_warning -= heart_beat_speed * (float)delta_time;
+		if (heart_warning <= 0.0f)
+		{
+			game->PlaySound("heartbeat", false, false);
+
+			float fractionnal_part, integer_part;
+			fractionnal_part = modf(heart_warning, &integer_part);
+
+			heart_warning = (1.0f + fractionnal_part);
+		}
+	}
+	else
+		heart_warning = 1.0f;
+}
+
+void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
+{
 	// get the player
 	death::Player const * player = GetGame()->GetPlayer(0);
 	if (player == nullptr)
-		return true;
+		return;
 	// get player life, destroy the allocation if no more life
 	int current_life = player->GetLifeCount();
 	if (current_life <= 0)
 	{
 		allocations = nullptr;
-		return true;
+		return;
 	}
 	// create/ resize the allocation
 	if (allocations == nullptr)
@@ -92,28 +124,15 @@ bool GameHUDLifeComponent::DoTick(double delta_time)
 		particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 		particles[i].bounding_box.half_size = 0.5f * particle_size;
 
-		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		float blend_warning = 1.0f;
+		if (heart_warning < 0.5f)
+			blend_warning = 0.4f + 0.6f * heart_warning / 0.5f;
+
+		particles[i].color = blend_warning * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	cached_value = current_life;
-	
-
-#if 0
-
-
-	// has something changed ?
-	if (current_life == cached_value)
-		return true;
-
-
-
-
-#endif
-	return true;
 }
-
-
-
 
 // ====================================================================
 // LudumPlayingHUD
@@ -128,98 +147,6 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeComponent());
 
 	return true;
-}
-
-
-
-
-
-
-bool LudumPlayingHUD::DoTick(double delta_time)
-{
-	// call super method
-	PlayingHUD::DoTick(delta_time);
-	// update other objects
-//	UpdateLifeParticles();
-//	TickHeartWarning(delta_time);
-	return true;
-}
-
-void LudumPlayingHUD::UpdateLifeParticles()
-{
-	death::Player const * player = game->GetPlayer(0);
-	if (player == nullptr)
-		return;
-
-	int current_life = player->GetLifeCount();
-	if (current_life == cached_value)
-		return;
-
-	if (current_life < 0)
-		UnregisterParticles(death::GameHUDKeys::LIFE_ID);
-	else
-	{
-		chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
-		if (allocation == nullptr)
-		{
-			allocation = GetGameParticleCreator().CreateParticles("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
-			if (allocation == nullptr)
-				return;
-			RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);
-		}
-		else
-		{
-			allocation->Resize(current_life);
-			if (current_life > cached_value)
-				GetGameParticleCreator().InitializeParticles(allocation, "life", current_life - cached_value);
-		}
-
-		// set the color
-		chaos::ParticleAccessor<ParticleObject> particles = allocation->GetParticleAccessor<ParticleObject>();
-
-		glm::vec2 view_size = game->GetViewSize();
-
-		glm::vec2 particle_size;
-		particle_size.x = 35.0f;
-		particle_size.y = 20.0f;
-
-		for (size_t i = 0; i < (size_t)current_life; ++i)
-		{
-			glm::vec2 position;
-			position.x = -view_size.x * 0.5f + 20.0f + (particle_size.x + 5.0f) * (float)i;
-			position.y = -view_size.y * 0.5f + 15.0f;
-
-			particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-			particles[i].bounding_box.half_size = 0.5f * particle_size;
-
-			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		}
-	}
-	cached_value = current_life;
-}
-
-void LudumPlayingHUD::TickHeartWarning(double delta_time)
-{
-	death::Player const * player = game->GetPlayer(0);
-	if (player == nullptr)
-		return;
-
-	int current_life = player->GetLifeCount();
-	if (current_life == 1)
-	{
-		heart_warning -= heart_beat_speed * (float)delta_time;
-		if (heart_warning <= 0.0f)
-		{
-			game->PlaySound("heartbeat", false, false);
-
-			float fractionnal_part, integer_part;
-			fractionnal_part = modf(heart_warning, &integer_part);
-
-			heart_warning = (1.0f + fractionnal_part);
-		}
-	}
-	else
-		heart_warning = 1.0f;
 }
 
 bool LudumPlayingHUD::CreateHUDLayers()

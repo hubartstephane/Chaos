@@ -47,11 +47,19 @@ protected:
 
 	/** override */
 	virtual bool DoTick(double delta_time) override;
+	/** update all particles (count, alpha) */
+	void UpdateLifeParticles(double delta_time);
+	/** tick heart */
+	void TickHeartBeat(double delta_time);
 
 protected:
 
 	/** caching the current life count */
 	int cached_value = -1;
+	/** the current heart warning timer value */
+	float heart_warning = 0.0f;
+	/** the heart warning period */
+	float heart_beat_speed = 1.0f;
 };
 
 // ====================================================================
@@ -70,32 +78,15 @@ public:
 	LudumPlayingHUD(death::Game * in_game) :
 		death::PlayingHUD(in_game) {}
 
-	/** returns the current heart warning value */
-	float GetHeartWarningValue() const { return heart_warning; }
-
 protected:
 
 	/** override */
 	virtual bool FillHUDContent() override;
 	/** override */
-	virtual bool DoTick(double delta_time) override;
-	/** override */
 	virtual bool CreateHUDLayers() override;
-
-protected:
-
-	/** update the life particles */
-	void UpdateLifeParticles();
-	/** update the Heart Beat values */
-	void TickHeartWarning(double delta_time);
 
 protected:
 
 	/** caching the current life count */
 	int cached_value = -1;
-
-	/** the current heart warning timer value */
-	float heart_warning = 0.0f;
-	/** the heart warning period */
-	float heart_beat_speed = 1.0f;
 };

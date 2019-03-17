@@ -9,13 +9,60 @@
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
+
+
+// ====================================================================
+// GameHUDWakenParticleComponent
+// ====================================================================
+
+bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
+{
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	if (playing_hud != nullptr)
+	{
+		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
+		if (ludum_game_instance != nullptr)
+		{
+			int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
+			if (waken_up_particle_count != cached_value)
+			{
+				cached_value = waken_up_particle_count;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+{
+	int hotpoint = chaos::Hotpoint::TOP_LEFT;
+
+	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+	params.hotpoint_type = hotpoint;
+	params.position.x = corner.x + 20.0f;
+	params.position.y = corner.y - 60.0f;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	death::PlayingHUD::DoTick(delta_time);
 	// other updates
 	UpdateLevelTimer();
-	UpdateWakenUpParticleCount();
 	UpdateLifeBar();
 	return true;
 }
@@ -24,30 +71,9 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
+	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
 
-#if _DEBUG
-	RegisterComponent(death::GameHUDKeys::FPS_ID, new death::GameHUDFramerateComponent());
-#endif
 	return true;
-}
-
-
-
-
-
-
-void LudumPlayingHUD::UpdateWakenUpParticleCount()
-{
-	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
-	if (ludum_game_instance == nullptr)
-		return;
-
-	int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
-	if (waken_up_particle_count != cached_waken_up_particle_count)
-	{
-		RegisterParticles(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, GetGameParticleCreator().CreateScoringText("Particles : %d", waken_up_particle_count, 70.0f, game->GetViewBox(), death::GameHUDKeys::TEXT_LAYER_ID));
-		cached_waken_up_particle_count = waken_up_particle_count;
-	}
 }
 
 void LudumPlayingHUD::UpdateLevelTimer()

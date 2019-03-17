@@ -13,6 +13,27 @@ namespace death
 	};
 };
 
+
+// ====================================================================
+// GameHUDWakenParticleComponent
+// ====================================================================
+
+class GameHUDWakenParticleComponent : public death::GameHUDCacheValueComponent<int>
+{
+public:
+
+	GameHUDWakenParticleComponent() : death::GameHUDCacheValueComponent<int>("Particles : %d", -1) {}
+
+protected:
+
+	/** override */
+	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	/** override */
+	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
+};
+
+
+
 class LudumPlayingHUD : public death::PlayingHUD
 {
 public:
@@ -34,18 +55,12 @@ protected:
 
 	void UpdateLevelTimer();
 
-	void UpdateWakenUpParticleCount();
-
 	void UpdateLifeBar();
 	
 	chaos::ParticleAllocation * CreateLevelTimeAllocation(float level_timeout, chaos::box2 const & view);
 
 protected:
 
-	/** caching particles count  */
-	int cached_waken_up_particle_count = -1;
-	/** caching saved particles count  */
-	int cached_saved_particle_count = -1;
 	/** caching the level time */
 	float cached_level_timeout = -1.0f;
 	/** caching the life value */

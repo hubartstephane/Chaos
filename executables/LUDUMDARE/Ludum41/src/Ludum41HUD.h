@@ -38,31 +38,6 @@ protected:
 };
 
 // ====================================================================
-// GameHUDLifeComponent
-// ====================================================================
-
-class GameHUDLifeComponent : public death::GameHUDSingleAllocationComponent
-{
-protected:
-
-	/** override */
-	virtual bool DoTick(double delta_time) override;
-	/** update all particles (count, alpha) */
-	void UpdateLifeParticles(double delta_time);
-	/** tick heart */
-	void TickHeartBeat(double delta_time);
-
-protected:
-
-	/** caching the current life count */
-	int cached_value = -1;
-	/** the current heart warning timer value */
-	float heart_warning = 0.0f;
-	/** the heart warning period */
-	float heart_beat_speed = 1.0f;
-};
-
-// ====================================================================
 // LudumPlayingHUD
 // ====================================================================
 

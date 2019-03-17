@@ -222,5 +222,94 @@ namespace death
 		params.position.y = corner.y - 20.0f;
 	}
 
+	// ====================================================================
+	// GameHUDLifeComponent
+	// ====================================================================
+
+	bool GameHUDLifeComponent::DoTick(double delta_time)
+	{
+		death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+		TickHeartBeat(delta_time);
+		UpdateLifeParticles(delta_time);
+		return true;
+	}
+
+	void GameHUDLifeComponent::TickHeartBeat(double delta_time)
+	{
+		death::Game * game = GetGame();
+
+		death::Player const * player = game->GetPlayer(0);
+		if (player == nullptr)
+			return;
+
+		int current_life = player->GetLifeCount();
+		if (current_life == 1)
+		{
+			heart_warning -= heart_beat_speed * (float)delta_time;
+			if (heart_warning <= 0.0f)
+			{
+				game->PlaySound("heartbeat", false, false);
+
+				float fractionnal_part, integer_part;
+				fractionnal_part = modf(heart_warning, &integer_part);
+
+				heart_warning = (1.0f + fractionnal_part);
+			}
+		}
+		else
+			heart_warning = 1.0f;
+	}
+
+	void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
+	{
+		// get the player
+		death::Player const * player = GetGame()->GetPlayer(0);
+		if (player == nullptr)
+			return;
+		// get player life, destroy the allocation if no more life
+		int current_life = player->GetLifeCount();
+		if (current_life <= 0)
+		{
+			allocations = nullptr;
+			return;
+		}
+		// create/ resize the allocation
+		if (allocations == nullptr)
+		{
+			allocations = hud->GetGameParticleCreator().CreateParticles("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
+		}
+		else
+		{
+			allocations->Resize(current_life);
+			if (current_life > cached_value)
+				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), "life", current_life - cached_value);
+		}
+
+		// set the color
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+
+		glm::vec2 corner = GetViewBoxCorner(GetGame()->GetViewBox(), chaos::Hotpoint::BOTTOM_LEFT);
+
+		glm::vec2 particle_size;
+		particle_size.x = 35.0f;
+		particle_size.y = 20.0f;
+
+		for (size_t i = 0; i < (size_t)current_life; ++i)
+		{
+			glm::vec2 position;
+			position.x = corner.x + 20.0f + (particle_size.x + 5.0f) * (float)i;
+			position.y = corner.y + 20.0f;
+
+			particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+			particles[i].bounding_box.half_size = 0.5f * particle_size;
+
+			float blend_warning = 1.0f;
+			if (heart_warning < 0.5f)
+				blend_warning = 0.4f + 0.6f * heart_warning / 0.5f;
+
+			particles[i].color = blend_warning * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		cached_value = current_life;
+	}
 
 }; // namespace death

@@ -312,4 +312,40 @@ namespace death
 		cached_value = current_life;
 	}
 
+// ====================================================================
+// GameHUDTimeoutComponent
+// ====================================================================
+
+bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
+{
+	death::GameLevelInstance * level_instance = GetLevelInstance();
+	if (level_instance != nullptr)
+	{
+		float level_timeout = level_instance->GetLevelTimeout();
+		// level without timer, hide it
+		if (level_timeout < 0.0f)
+		{
+			destroy_allocation = true;
+		}
+		else if (fabsf(level_timeout - cached_value) > 0.1f)
+		{
+			cached_value = level_timeout;
+			return true;
+		}
+	}
+	return false;
+}
+
+void GameHUDTimeoutComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+{
+	int hotpoint = chaos::Hotpoint::TOP;
+
+	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+	params.hotpoint_type = hotpoint;
+	params.line_height = 60;
+	params.position.x = corner.x;
+	params.position.y = corner.y - 20.0f;
+	params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+}
+
 }; // namespace death

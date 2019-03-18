@@ -244,4 +244,23 @@ namespace death
 		float heart_beat_speed = 1.0f;
 	};
 
+	// ====================================================================
+	// GameHUDTimeoutComponent
+	// ====================================================================
+
+	class GameHUDTimeoutComponent : public death::GameHUDCacheValueComponent<float>
+	{
+	public:
+
+		GameHUDTimeoutComponent() : death::GameHUDCacheValueComponent<float>("%02.01f", -1.0f) {}
+
+	protected:
+
+		/** override */
+		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		/** override */
+		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
+	};
+
+
 }; // namespace death

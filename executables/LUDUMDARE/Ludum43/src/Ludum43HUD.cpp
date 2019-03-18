@@ -57,12 +57,14 @@ void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleText
 
 
 
+
+
+
 bool LudumPlayingHUD::DoTick(double delta_time)
 {
 	// call super method
 	death::PlayingHUD::DoTick(delta_time);
-	// other updates
-	UpdateLevelTimer();
+
 	UpdateLifeBar();
 	return true;
 }
@@ -72,51 +74,10 @@ bool LudumPlayingHUD::FillHUDContent()
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
 	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
-
+	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent());
 	return true;
 }
 
-void LudumPlayingHUD::UpdateLevelTimer()
-{
-	LudumLevelInstance const * ludum_level_instance = GetLudumLevelInstance();
-	if (ludum_level_instance == nullptr)
-		return;
-	float level_timeout = ludum_level_instance->GetLevelTimeout();
-	// level without timer, hide it
-	if (level_timeout < 0.0f)
-	{
-		UnregisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID);	
-	}
-	// update the timer 
-	else if (fabsf(level_timeout - cached_level_timeout) > 0.1f)
-	{
-		RegisterParticles(death::GameHUDKeys::LEVEL_TIMEOUT_ID, CreateLevelTimeAllocation(level_timeout, game->GetViewBox()));
-		cached_level_timeout = level_timeout;
-	}
-}
-
-chaos::ParticleAllocation * LudumPlayingHUD::CreateLevelTimeAllocation(float level_timeout, chaos::box2 const & view)
-{
-	std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
-
-	// set the values
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = 60;
-	//params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
-	//params.position.x = corners.second.x - 20.0f;
-
-	params.hotpoint_type = chaos::Hotpoint::CENTER | chaos::Hotpoint::TOP;
-	params.position.x = view.position.x;
-
-	params.position.y = corners.second.y - 20.0f;
-	params.font_info_name = "normal";
-
-	params.default_color = (level_timeout >= 10.0f)? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	// format text and create particles
-	std::string str = chaos::StringTools::Printf("%02.01f", level_timeout);
-	return GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
-}
 
 
 

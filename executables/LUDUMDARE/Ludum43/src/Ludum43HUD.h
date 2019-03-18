@@ -32,8 +32,6 @@ protected:
 	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
 };
 
-
-
 class LudumPlayingHUD : public death::PlayingHUD
 {
 public:
@@ -53,16 +51,11 @@ protected:
 
 	virtual bool CreateHUDLayers() override;
 
-	void UpdateLevelTimer();
 
 	void UpdateLifeBar();
-	
-	chaos::ParticleAllocation * CreateLevelTimeAllocation(float level_timeout, chaos::box2 const & view);
 
 protected:
 
-	/** caching the level time */
-	float cached_level_timeout = -1.0f;
 	/** caching the life value */
 	float cached_value = -1.0f;
 };

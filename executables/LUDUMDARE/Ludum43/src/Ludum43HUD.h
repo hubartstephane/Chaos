@@ -8,7 +8,6 @@ namespace death
 {
 	namespace GameHUDKeys
 	{
-		CHAOS_DECLARE_TAG(LEVEL_TIMEOUT_ID);
 		CHAOS_DECLARE_TAG(WAKENUP_PARTICLE_COUNT_ID);
 	};
 };

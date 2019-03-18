@@ -44,78 +44,41 @@ void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleText
 	params.position.y = corner.y - 60.0f;
 }
 
+// ====================================================================
+// GameHUDWakenParticleComponent
+// ====================================================================
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-bool LudumPlayingHUD::DoTick(double delta_time)
+bool GameHUDLifeBarComponent::DoTick(double delta_time)
 {
-	// call super method
-	death::PlayingHUD::DoTick(delta_time);
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	if (playing_hud == nullptr)
+		return true;
 
-	UpdateLifeBar();
-	return true;
-}
-
-bool LudumPlayingHUD::FillHUDContent()
-{
-	if (!death::PlayingHUD::FillHUDContent())
-		return false;
-	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
-	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent());
-	return true;
-}
-
-
-
-
-
-
-
-void LudumPlayingHUD::UpdateLifeBar()
-{
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = playing_hud->GetLudumGame();
 	if (ludum_game == nullptr)
-		return;
+		return true;
 
 	float life = ludum_game->GetPlayerLife(0);
 	if (life != cached_value)
 	{
 		// create the allocation
-		chaos::ParticleAllocation * allocation = FindParticleAllocation(death::GameHUDKeys::LIFE_ID);
-		if (allocation == nullptr)
+		if (allocations == nullptr)
 		{
-			chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
+			chaos::ParticleLayer * layer = hud->GetParticleManager()->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
 			if (layer == nullptr)
-				return;
-
-			allocation = layer->SpawnParticles(1);
-
-			if (allocation == nullptr)
-				return;
-			RegisterParticles(death::GameHUDKeys::LIFE_ID, allocation);
+				return true;
+			allocations = layer->SpawnParticles(1);
+			if (allocations == nullptr)
+				return true;
 		}
 		else
 		{
-			allocation->Resize(1);
+			allocations->Resize(1);
 		}
 		// fill the particle
-
-		chaos::ParticleAccessor<ParticleLife> particles = allocation->GetParticleAccessor<ParticleLife>();
+		chaos::ParticleAccessor<ParticleLife> particles = allocations->GetParticleAccessor<ParticleLife>();
 		if (particles.GetCount() == 0)
-			return;
+			return true;
 
 		glm::vec2 view_size = ludum_game->GetViewSize();
 
@@ -123,26 +86,32 @@ void LudumPlayingHUD::UpdateLifeBar()
 		position1.x = -view_size.x * 0.5f + 40.0f;
 		position1.y = -view_size.y * 0.5f + 40.0f;
 
-		position2.x =  view_size.x * 0.5f - 40.0f;
+		position2.x = view_size.x * 0.5f - 40.0f;
 		position2.y = -view_size.y * 0.5f + 70.0f;
 
-		particles->bounding_box         = chaos::box2(std::make_pair(position1, position2));		
+		particles->bounding_box = chaos::box2(std::make_pair(position1, position2));
 		particles->texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
-		particles->texcoords.topright   = glm::vec2(ludum_game->initial_player_life, 1.0f);
-		particles->color                = glm::vec4(life, life, life, life);
+		particles->texcoords.topright = glm::vec2(ludum_game->initial_player_life, 1.0f);
+		particles->color = glm::vec4(life, life, life, life);
 
 		cached_value = life;
 	}
+	return true;
 }
 
+// ====================================================================
+// LudumPlayingHUD
+// ====================================================================
 
-
-
-
-
-
-
-
+bool LudumPlayingHUD::FillHUDContent()
+{
+	if (!death::PlayingHUD::FillHUDContent())
+		return false;
+	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
+	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent());
+	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
+	return true;
+}
 
 bool LudumPlayingHUD::CreateHUDLayers()
 {

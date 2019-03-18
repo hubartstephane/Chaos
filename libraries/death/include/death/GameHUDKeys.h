@@ -9,7 +9,8 @@ namespace death
 	namespace GameHUDKeys
 	{
 		// some allocation ID's
-		CHAOS_DECLARE_TAG(LIFE_ID);
+		CHAOS_DECLARE_TAG(LIFE_ID);        // number of life
+		CHAOS_DECLARE_TAG(LIFE_VITAE_ID);  // a floating life bar
 		CHAOS_DECLARE_TAG(TITLE_ID);
 		CHAOS_DECLARE_TAG(INSTRUCTIONS_ID);
 		CHAOS_DECLARE_TAG(SCORE_ID);

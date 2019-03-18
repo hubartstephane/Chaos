@@ -158,7 +158,7 @@ namespace death
 			TweakTextGeneratorParams(params, view_box);
 			// generate the allocation
 			std::string str = chaos::StringTools::Printf(format.c_str(), cached_value);
-			allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+			allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, GameHUDKeys::TEXT_LAYER_ID);
 			return true; 
 		}
 
@@ -248,11 +248,11 @@ namespace death
 	// GameHUDTimeoutComponent
 	// ====================================================================
 
-	class GameHUDTimeoutComponent : public death::GameHUDCacheValueComponent<float>
+	class GameHUDTimeoutComponent : public GameHUDCacheValueComponent<float>
 	{
 	public:
 
-		GameHUDTimeoutComponent() : death::GameHUDCacheValueComponent<float>("%02.01f", -1.0f) {}
+		GameHUDTimeoutComponent() : GameHUDCacheValueComponent<float>("%02.01f", -1.0f) {}
 
 	protected:
 

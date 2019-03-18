@@ -141,7 +141,7 @@ namespace death
 		params.font_info_name = "normal";
 
 		std::string str = chaos::StringTools::Printf("Best score : %d", score);
-		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, GameHUDKeys::TEXT_LAYER_ID);
 	}
 
 	// ====================================================================
@@ -157,7 +157,7 @@ namespace death
 		params.position.y = -200.0f;
 		params.font_info_name = "normal";
 
-		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, death::GameHUDKeys::TEXT_LAYER_ID);
+		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, GameHUDKeys::TEXT_LAYER_ID);
 	}
 
 	// ====================================================================
@@ -228,7 +228,7 @@ namespace death
 
 	bool GameHUDLifeComponent::DoTick(double delta_time)
 	{
-		death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+		GameHUDSingleAllocationComponent::DoTick(delta_time);
 		TickHeartBeat(delta_time);
 		UpdateLifeParticles(delta_time);
 		return true;
@@ -236,9 +236,9 @@ namespace death
 
 	void GameHUDLifeComponent::TickHeartBeat(double delta_time)
 	{
-		death::Game * game = GetGame();
+		Game * game = GetGame();
 
-		death::Player const * player = game->GetPlayer(0);
+		Player const * player = game->GetPlayer(0);
 		if (player == nullptr)
 			return;
 
@@ -263,7 +263,7 @@ namespace death
 	void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
 	{
 		// get the player
-		death::Player const * player = GetGame()->GetPlayer(0);
+		Player const * player = GetGame()->GetPlayer(0);
 		if (player == nullptr)
 			return;
 		// get player life, destroy the allocation if no more life
@@ -276,7 +276,7 @@ namespace death
 		// create/ resize the allocation
 		if (allocations == nullptr)
 		{
-			allocations = hud->GetGameParticleCreator().CreateParticles("life", current_life, death::GameHUDKeys::LIFE_LAYER_ID);
+			allocations = hud->GetGameParticleCreator().CreateParticles("life", current_life, GameHUDKeys::LIFE_LAYER_ID);
 		}
 		else
 		{
@@ -318,7 +318,7 @@ namespace death
 
 bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
 {
-	death::GameLevelInstance * level_instance = GetLevelInstance();
+	GameLevelInstance * level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
 		float level_timeout = level_instance->GetLevelTimeout();

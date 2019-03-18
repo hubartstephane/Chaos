@@ -209,7 +209,21 @@ namespace death
 
 	bool GameLevelInstance::DoCheckGameOverCondition()
 	{
+		if (level_timeout == 0.0f)
+			return true;
 		return false;
+	}
+
+	bool GameLevelInstance::DoTick(double delta_time)
+	{
+		// update the timeout
+		if (level_timeout > 0.0f && !IsLevelCompleted() && !game->GetCheatMode())
+		{
+			level_timeout -= (float)delta_time;
+			if (level_timeout < 0.0f)
+				level_timeout = 0.0f;
+		}
+		return true;
 	}
 
 

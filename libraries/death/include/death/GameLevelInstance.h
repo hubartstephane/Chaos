@@ -82,7 +82,13 @@ namespace death
 		/** restrict an player to the world */
 		void RestrictPlayerToWorld(Player * player);
 
+		/** get the current time out */
+		float GetLevelTimeout() const { return level_timeout; }
+
 	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
 
 		/** additionnal initialization */
 		virtual bool Initialize(Game * in_game, GameLevel * in_level);
@@ -119,6 +125,9 @@ namespace death
 		chaos::box2 camera_box;
 		/** the initial camera bounding box (at level startup) */
 		chaos::box2 initial_camera_box;
+
+		/** the time to run the level (no time out by default) */
+		float level_timeout = -1.0f;
 
 		/** the level clock */
 		chaos::shared_ptr<chaos::Clock> level_clock;

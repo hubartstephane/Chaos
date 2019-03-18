@@ -25,13 +25,8 @@ public:
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);
 
-	/** get the current time out */
-	float GetLevelTimeout() const { return level_timeout; }
-
 protected:
 
-	/** override */
-	virtual bool DoCheckGameOverCondition() override;
 	/** override */
 	virtual bool IsLevelCompleted() const override;
 	/** override */
@@ -48,8 +43,6 @@ protected:
 	/** pointer on game */
 	class LudumGame * game = nullptr;
 
-	/** the time to run the level */
-	float level_timeout = 0.0f;
 	/** the default level requirement */
 	int level_particle_requirement = 0;
 };

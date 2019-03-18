@@ -875,6 +875,8 @@ namespace death
 
 		bool LevelInstance::DoTick(double delta_time)
 		{
+			death::GameLevelInstance::DoTick(delta_time);
+
 			// tick the particle manager
 			if (particle_manager != nullptr)
 				particle_manager->Tick(delta_time);

@@ -14,6 +14,7 @@
 #include <chaos/ParticleTools.h>
 #include <chaos/Renderable.h>
 #include <chaos/Tickable.h>
+#include <chaos/EmptyClass.h>
 
 namespace chaos
 {
@@ -279,6 +280,11 @@ namespace chaos
 		/** require the layer to update the GPU buffer */
 		void ConditionalRequireGPUUpdate(bool skip_if_invisible, bool skip_if_empty);
 
+		/** returns pointer on a memory for some extra allocation data */
+		virtual void * GetExtraData();
+		/** returns pointer on a memory for some extra allocation data */
+		virtual void const * GetExtraData() const;
+
 	protected:
 
 		/** the particle layer that contains the range */
@@ -295,22 +301,23 @@ namespace chaos
 	// TypedParticleAllocation
 	// ==============================================================
 
-	template<typename PARTICLE_TYPE>
+	template<typename PARTICLE_TYPE, typename EXTRA_DATA_TYPE>
 	class TypedParticleAllocation : public ParticleAllocation
 	{
 	public:
 
 		using particle_type = PARTICLE_TYPE;
+		using extra_data_type = EXTRA_DATA_TYPE;
 
 		/** constructor */
-		TypedParticleAllocation(ParticleLayer * in_layer) :
-			ParticleAllocation(in_layer)
+		TypedParticleAllocation(ParticleLayer * in_layer, extra_data_type const & in_data = extra_data_type()) :
+			ParticleAllocation(in_layer),
+			data(in_data)
 		{
 		}
 		/** destructor */
 		virtual ~TypedParticleAllocation()
 		{
-
 		}
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
@@ -359,8 +366,17 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual void * GetExtraData() override { return &data; }
+		/** override */
+		virtual void const * GetExtraData() const override { return &data; }
+
+	protected:
+
 		/** the particles buffer */
 		std::vector<particle_type> particles;
+		/** data per allocation */
+		extra_data_type data;
 	};
 
 	// ==============================================================
@@ -408,9 +424,9 @@ namespace chaos
 		/** create an allocation */
 		virtual ParticleAllocation * NewAllocation(ParticleLayer * in_layer);
 		/** transform the particles into vertices */
-		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const;
+		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation, void const * extra_allocation_data) const;
 		/** update all particles */
-		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation);
+		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, void const * extra_allocation_data);
 	};
 
 	// ==============================================================
@@ -463,6 +479,7 @@ namespace chaos
 		using trait_type = LAYER_TRAIT;
 		using particle_type = typename trait_type::particle_type;
 		using vertex_type = typename trait_type::vertex_type;
+		using per_allocation_data = typename trait_type::per_allocation_data;
 
 	public:
 
@@ -498,24 +515,26 @@ namespace chaos
 		/** override */
 		virtual ParticleAllocation * NewAllocation(ParticleLayer * in_layer) override
 		{
-			return new TypedParticleAllocation<particle_type>(in_layer);
+			return new TypedParticleAllocation<particle_type, per_allocation_data>(in_layer);
 		}
 
 		/** override */
-		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation) override
+		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, void const * extra_allocation_data) override
 		{
 			particle_type * p = (particle_type *)particles;
-			return DoUpdateParticles(delta_time, p, particle_count, allocation, HasFunction_BeginUpdateParticles<trait_type>::type());
+			per_allocation_data const * d = (per_allocation_data const *)extra_allocation_data;
+			return DoUpdateParticles(delta_time, p, particle_count, allocation, d, HasFunction_BeginUpdateParticles<trait_type>::type());
 		}
 
 		/** override */
-		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const override
+		virtual size_t ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation, void const * extra_allocation_data) const override
 		{
 			particle_type const * p = (particle_type const *)particles;
 			vertex_type * v = (vertex_type *)vertices;
+			per_allocation_data const * d = (per_allocation_data const *)extra_allocation_data;
 
 			size_t vertices_per_particle = GetVerticesCountPerParticles();
-			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, HasFunction_BeginParticlesToVertices<trait_type>::type());
+			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, d, HasFunction_BeginParticlesToVertices<trait_type>::type());
 		}
 
 		/** override */
@@ -526,7 +545,7 @@ namespace chaos
 
 	protected:
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::true_)
 		{
 			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
 
@@ -544,7 +563,7 @@ namespace chaos
 			return j; // final number of particles
 		}
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::false_)
 		{
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
@@ -560,7 +579,7 @@ namespace chaos
 			return j; // final number of particles
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::false_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::false_) const
 		{
 			size_t result = 0;
 			for (size_t i = 0; i < particles_count; ++i)
@@ -573,7 +592,7 @@ namespace chaos
 			return result;
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::true_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::true_) const
 		{
 			auto extra_param = trait.BeginParticlesToVertices(particles, particles_count, allocation);
 
@@ -746,7 +765,7 @@ namespace chaos
 	// ParticleLayerTrait
 	// ==============================================================
 
-	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
+	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, typename PER_ALLOCATION_DATA = chaos::EmptyClass, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
 	class ParticleLayerTrait
 	{
 	public:
@@ -755,6 +774,8 @@ namespace chaos
 		using particle_type = PARTICLE_TYPE;
 		/** the type for one vertex */
 		using vertex_type = VERTEX_TYPE;
+		/** the type for one allocation */
+		using per_allocation_data = PER_ALLOCATION_DATA;
 
 		/** by default, update do nothing */
 		bool UpdateParticle(float delta_time, particle_type * particle, ParticleAllocation * allocation) const

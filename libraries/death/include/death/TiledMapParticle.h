@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/EmptyClass.h>
 
 namespace death
 {
@@ -21,7 +22,7 @@ namespace death
 			int gid = 0;
 		};
 
-		class TileParticleTrait : public chaos::ParticleLayerTrait<TileParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1
+		class TileParticleTrait : public chaos::ParticleLayerTrait<TileParticle, chaos::ParticleDefault::Vertex, chaos::EmptyClass, false, false> // shuxxx set to false = optimization 1
 		{
 		public:
 

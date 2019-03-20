@@ -155,6 +155,16 @@ namespace chaos
 		}				
 	}
 
+	void * ParticleAllocation::GetExtraData()
+	{
+		return nullptr;
+	}
+	
+	void const * ParticleAllocation::GetExtraData() const
+	{
+		return nullptr;
+	}
+
 	// ==============================================================
 	// PARTICLE LAYER DESC
 	// ==============================================================
@@ -194,12 +204,12 @@ namespace chaos
 		return GPUVertexDeclaration();
 	}
 
-	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation)
+	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, void const * extra_allocation_data)
 	{
 		return particle_count; // no particles destroyed
 	}
 
-	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation) const
+	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation, void const * extra_allocation_data) const
 	{
 		assert(particles != nullptr);
 		assert(vertices != nullptr);
@@ -283,7 +293,7 @@ namespace chaos
 			if (particles == nullptr)
 				continue;
 			// update all particles
-			size_t remaining_particles = layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation);
+			size_t remaining_particles = layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation, allocation->GetExtraData());
 			// clean buffer of all particles that have bean destroyed
 			if (remaining_particles != particle_count)
 				allocation->Resize(remaining_particles);
@@ -453,7 +463,7 @@ namespace chaos
 			if (particles == nullptr)
 				continue;
 			// transform particles into vertices
-			size_t new_vertices = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation);
+			size_t new_vertices = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation, allocation->GetExtraData());
 			// shift buffer
 			buffer += new_vertices * vertex_size;
 			result += new_vertices;

@@ -1,23 +1,9 @@
 #include <chaos/StandardHeaders.h> 
-
-
-#include <chaos/WinTools.h>  // shuxxx
-
-
 #include <death/Death.h> 
-
-
-
-
 #include "Ludum43Game.h"
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
-{
-
-	bool azerty = chaos::WinTools::IsAzertyKeyboard();
-	azerty = azerty;
-
-
+{	
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

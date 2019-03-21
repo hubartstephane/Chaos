@@ -562,7 +562,24 @@ namespace chaos
 
 	protected:
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::true_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::false_)
+		{
+			// tick all particles. overide all particles that have been destroyed by next on the array
+			size_t j = 0;
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				if (!DoUpdateParticle_A(delta_time, &particles[i], allocation, *allocation_data)) // particle not destroyed ?
+				{
+					if (i != j)
+						particles[j] = particles[i];
+					++j;
+				}
+			}
+			return j; // final number of particles
+		}
+
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::true_)
 		{
 			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
 
@@ -570,7 +587,7 @@ namespace chaos
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!trait.UpdateParticle(delta_time, &particles[i], allocation, extra_param)) // particle not destroyed ?
+				if (!DoUpdateParticle_B(delta_time, &particles[i], allocation, *allocation_data, extra_param)) // particle not destroyed ?
 				{
 					if (i != j)
 						particles[j] = particles[i];
@@ -580,28 +597,60 @@ namespace chaos
 			return j; // final number of particles
 		}
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::false_)
+
+
+
+		// case A : no BeginUpdateParticles => NO EXTRA_DATA_TYPE 
+		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
 		{
-			// tick all particles. overide all particles that have been destroyed by next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i], allocation)) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
+			return trait.UpdateParticle(delta_time, particle, allocation);
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::false_) const
+		template<typename U>
+		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, U const & allocation_data) const
+		{
+			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data);
+		}
+
+		// case B : BeginParticlesToVertices defined => EXTRA_DATA_TYPE 
+		template<typename EXTRA_DATA_TYPE>
+		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		{
+			return trait.UpdateParticle(delta_time, particle, allocation, extra_param);
+		}
+
+		template<typename U, typename EXTRA_DATA_TYPE>
+		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, U const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		{
+			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data, extra_param);
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::false_) const
 		{
 			size_t result = 0;
 			for (size_t i = 0; i < particles_count; ++i)
 			{
-				size_t new_vertices = trait.ParticleToVertices(&particles[i], vertices, vertices_per_particle, allocation);
+				size_t new_vertices = DoParticleToVertice_A(&particles[i], vertices, vertices_per_particle, allocation, *allocation_data);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
 				vertices += new_vertices;
@@ -609,19 +658,44 @@ namespace chaos
 			return result;
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * d, boost::mpl::true_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::true_) const
 		{
 			auto extra_param = trait.BeginParticlesToVertices(particles, particles_count, allocation);
 
 			size_t result = 0;
 			for (size_t i = 0; i < particles_count; ++i)
 			{
-				size_t new_vertices = trait.ParticleToVertices(&particles[i], vertices, vertices_per_particle, allocation, extra_param);
+				size_t new_vertices = DoParticleToVertice_B(&particles[i], vertices, vertices_per_particle, allocation, *allocation_data, extra_param);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
 				vertices += new_vertices;
 			}
 			return result;
+		}
+
+		// case A : no BeginParticlesToVertices => NO EXTRA_DATA_TYPE 
+		size_t DoParticleToVertice_A(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
+		{
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation);
+		}
+
+		template<typename U>
+		size_t DoParticleToVertice_A(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, U const & allocation_data) const
+		{
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, allocation_data);
+		}
+
+		// case B : BeginParticlesToVertices defined => EXTRA_DATA_TYPE 
+		template<typename EXTRA_DATA_TYPE>
+		size_t DoParticleToVertice_B(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, EmptyClass const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		{
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, extra_param);
+		}
+
+		template<typename U, typename EXTRA_DATA_TYPE>
+		size_t DoParticleToVertice_B(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, U const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		{
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, allocation_data, extra_param);
 		}
 
 	protected:
@@ -782,7 +856,7 @@ namespace chaos
 	// ParticleLayerTrait
 	// ==============================================================
 
-	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, typename PER_ALLOCATION_DATA = chaos::EmptyClass, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
+	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, typename PER_ALLOCATION_DATA = EmptyClass, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
 	class ParticleLayerTrait
 	{
 	public:

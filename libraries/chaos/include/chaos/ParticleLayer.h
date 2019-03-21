@@ -297,26 +297,52 @@ namespace chaos
 		shared_ptr<ParticleAllocationEmptyCallback> empty_callback;
 	};
 
+		// ==============================================================
+		// ParticleAllocationWithData
+		// ==============================================================
+
+	template<typename EXTRA_DATA_TYPE>
+	class ParticleAllocationWithData : public ParticleAllocation
+	{
+	public:
+
+		using extra_data_type = EXTRA_DATA_TYPE;
+
+		/** constructor */
+		ParticleAllocationWithData(ParticleLayer * in_layer, extra_data_type const & in_data = extra_data_type()) :
+			ParticleAllocation(in_layer),
+			data(in_data)
+		{
+		}
+
+	protected:
+
+		/** override */
+		virtual void * GetExtraData() override { return &data; }
+		/** override */
+		virtual void const * GetExtraData() const override { return &data; }
+
+	protected:
+
+		/** data per allocation */
+		extra_data_type data;
+	};
+
+
 	// ==============================================================
 	// TypedParticleAllocation
 	// ==============================================================
 
 	template<typename PARTICLE_TYPE, typename EXTRA_DATA_TYPE>
-	class TypedParticleAllocation : public ParticleAllocation
+	class TypedParticleAllocation : public ParticleAllocationWithData<EXTRA_DATA_TYPE>
 	{
 	public:
 
 		using particle_type = PARTICLE_TYPE;
-		using extra_data_type = EXTRA_DATA_TYPE;
 
 		/** constructor */
 		TypedParticleAllocation(ParticleLayer * in_layer, extra_data_type const & in_data = extra_data_type()) :
-			ParticleAllocation(in_layer),
-			data(in_data)
-		{
-		}
-		/** destructor */
-		virtual ~TypedParticleAllocation()
+			ParticleAllocationWithData(in_layer, in_data)
 		{
 		}
 		/** override */
@@ -366,17 +392,8 @@ namespace chaos
 
 	protected:
 
-		/** override */
-		virtual void * GetExtraData() override { return &data; }
-		/** override */
-		virtual void const * GetExtraData() const override { return &data; }
-
-	protected:
-
 		/** the particles buffer */
 		std::vector<particle_type> particles;
-		/** data per allocation */
-		extra_data_type data;
 	};
 
 	// ==============================================================

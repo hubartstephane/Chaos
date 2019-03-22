@@ -485,7 +485,7 @@ namespace chaos
 
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
-	BOOST_MPL_HAS_XXX_TRAIT_DEF(per_allocation_data)
+	CHAOS_GENERATE_HAS_TRAIT(per_allocation_data)
 	
 	template<typename LAYER_TRAIT>
 	class TypedParticleLayerDesc : public ParticleLayerDesc
@@ -497,9 +497,8 @@ namespace chaos
 		using trait_type = LAYER_TRAIT;
 		using particle_type = typename trait_type::particle_type;
 		using vertex_type = typename trait_type::vertex_type;
-		//using per_allocation_data = boost::mpl::if_<
-		//	has_per_allocation_data<trait_type>::type
-			
+	//	using per_allocation_data = typename get_per_allocation_data<trait_type>::type;
+
 			using per_allocation_data = typename trait_type::per_allocation_data;
 
 	public:

@@ -15,7 +15,7 @@ namespace chaos
 
 #define CHAOS_GENERATE_HAS_TRAIT(name)\
 BOOST_MPL_HAS_XXX_TRAIT_DEF(name)\
-template<typename T, typename B = has_##name<T>::type>\
+template<typename T, typename B = typename has_##name<T>::type>\
 class get_##name;\
 template<typename T>\
 class get_##name<T, boost::mpl::true_> : public boost::mpl::identity<T>\

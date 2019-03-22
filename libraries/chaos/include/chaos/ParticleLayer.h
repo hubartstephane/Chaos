@@ -485,6 +485,7 @@ namespace chaos
 
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
+	BOOST_MPL_HAS_XXX_TRAIT_DEF(per_allocation_data)
 	
 	template<typename LAYER_TRAIT>
 	class TypedParticleLayerDesc : public ParticleLayerDesc
@@ -496,7 +497,10 @@ namespace chaos
 		using trait_type = LAYER_TRAIT;
 		using particle_type = typename trait_type::particle_type;
 		using vertex_type = typename trait_type::vertex_type;
-		using per_allocation_data = typename trait_type::per_allocation_data;
+		//using per_allocation_data = boost::mpl::if_<
+		//	has_per_allocation_data<trait_type>::type
+			
+			using per_allocation_data = typename trait_type::per_allocation_data;
 
 	public:
 
@@ -540,7 +544,7 @@ namespace chaos
 		{
 			particle_type * p = (particle_type *)particles;
 			per_allocation_data const * d = (per_allocation_data const *)extra_allocation_data;
-			return DoUpdateParticles(delta_time, p, particle_count, allocation, d, HasFunction_BeginUpdateParticles<trait_type>::type());
+			return DoUpdateParticles(delta_time, p, particle_count, allocation, d, has_function_BeginUpdateParticles<trait_type>::type());
 		}
 
 		/** override */
@@ -551,7 +555,7 @@ namespace chaos
 			per_allocation_data const * d = (per_allocation_data const *)extra_allocation_data;
 
 			size_t vertices_per_particle = GetVerticesCountPerParticles();
-			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, d, HasFunction_BeginParticlesToVertices<trait_type>::type());
+			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, d, has_function_BeginParticlesToVertices<trait_type>::type());
 		}
 
 		/** override */

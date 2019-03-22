@@ -2,22 +2,40 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/EmptyClass.h>
 
 namespace chaos
 {
 
-	// create some meta class : HasMyFunctionNameFunction<A> => boost::mpl::bool_
+	// create 2 metaclasses
+	//
+	//   - has_TRAITNAME<...> => boost::mpl::bool_
+	//   - get_TRAITNAME<...> => the TRAIT if it exists
+	//                           EmptyClass elsewhere
+
+#define CHAOS_GENERATE_HAS_TRAIT(name)\
+BOOST_MPL_HAS_XXX_TRAIT_DEF(name)\
+template<typename T, typename B = has_##name<T>::type>\
+class get_##name;\
+template<typename T>\
+class get_##name<T, boost::mpl::true_> : public boost::mpl::identity<T>\
+{};\
+template<typename T>\
+class get_##name<T, boost::mpl::false_> : public boost::mpl::identity<chaos::EmptyClass>\
+{};
+
+	// create some meta class : has_function_NAME<A> => boost::mpl::bool_
 	// XXX : it just test whether the T parameter has a member of given name, not (yet) if this is a function
 #define CHAOS_GENERATE_HAS_FUNCTION_METACLASS(function_name)\
 namespace details\
 {\
-char HasFunctionHelper_##function_name(...);\
+char has_function_helper_##function_name(...);\
 template<typename T>\
-auto HasFunctionHelper_##function_name(T const & t) -> decltype(&T::function_name);\
+auto has_function_helper_##function_name(T const & t) -> decltype(&T::function_name);\
 };\
 template<typename T>\
-using HasFunction_##function_name = boost::mpl::bool_<\
-	sizeof(details::HasFunctionHelper_##function_name(chaos::meta::GenerateFakeInstance<T>())) != 1\
+using has_function_##function_name = boost::mpl::bool_<\
+	sizeof(details::has_function_helper_##function_name(chaos::meta::GenerateFakeInstance<T>())) != 1\
 >;
 
 	// SFINAE
@@ -25,14 +43,14 @@ using HasFunction_##function_name = boost::mpl::bool_<\
 	// XXX : here is an example of what kind of code, the preceding macro can generate
 	//  
 	//
-	// char HasFunctionHelper_XXXXXXXXX(...);
+	// char has_function_helper_XXXXXXXXX(...);
 	//
 	// template<typename T>
-	// auto HasFunctionHelper_XXXXXXXXX(T const & t) -> decltype(&T::XXXXXXXXX);
+	// auto has_function_helper_XXXXXXXXX(T const & t) -> decltype(&T::XXXXXXXXX);
 	//
 	// template<typename T>
-	// using HasFunction_XXXXXXXXX = boost::mpl::bool_<
-	//	 sizeof(HasFunctionHelper_XXXXXXXXX(chaos::meta::GenerateFakeInstance<T>())) != 1
+	// using has_function_XXXXXXXXX = boost::mpl::bool_<
+	//	 sizeof(has_function_helper_XXXXXXXXX(chaos::meta::GenerateFakeInstance<T>())) != 1
 	// >;
 	//
 	// XXX : boost can generate some 'similar' code with : BOOST_TTI_HAS_MEMBER_FUNCTION(XXXXXXX);

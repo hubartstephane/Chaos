@@ -2,11 +2,15 @@
 
 #include <chaos/StandardHeaders.h>
 
-
-#include <boost/mpl/apply_wrap.hpp>
-
 namespace chaos
 {
+	/** Simply a base class */
+	using EmptyClass = boost::mpl::empty_base;
+
+#if 0
+
+
+
 	/** tag classes generation */
 #define CHAOS_GENERATE_TAG_CLASS(name)\
 	BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_##name##_tag, name##_tag, true)\
@@ -16,8 +20,7 @@ namespace chaos
 	CHAOS_GENERATE_TAG_CLASS(vdestroy);
 	CHAOS_GENERATE_TAG_CLASS(logger);
 
-	/** Simply a base class */
-	using EmptyClass = boost::mpl::empty_base;
+
 
 	/** an utility class that derives from BASE CLASS or from FUNC<BASE_CLASS>::type */
 	template<typename COND, typename FUNC, typename BASE_CLASS>
@@ -110,5 +113,5 @@ namespace chaos
 	template<typename ...TAGS>
 	using BaseClass = details::BaseClassImpl<boost::mpl::vector<TAGS...>>;
 
-
+#endif
 }; // namespace chaos

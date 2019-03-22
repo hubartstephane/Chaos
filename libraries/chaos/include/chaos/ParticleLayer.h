@@ -271,6 +271,11 @@ namespace chaos
 		/** get the layer for this allocation */
 		ParticleLayer const * GetLayer() const { return layer; }
 
+		/** returns pointer on a memory for some extra allocation data */
+		virtual void * GetExtraData();
+		/** returns pointer on a memory for some extra allocation data */
+		virtual void const * GetExtraData() const;
+
 	protected:
 
 		/** remove the allocation from its layer */
@@ -279,11 +284,6 @@ namespace chaos
 		void OnRemovedFromLayer();
 		/** require the layer to update the GPU buffer */
 		void ConditionalRequireGPUUpdate(bool skip_if_invisible, bool skip_if_empty);
-
-		/** returns pointer on a memory for some extra allocation data */
-		virtual void * GetExtraData();
-		/** returns pointer on a memory for some extra allocation data */
-		virtual void const * GetExtraData() const;
 
 	protected:
 
@@ -314,8 +314,6 @@ namespace chaos
 			data(in_data)
 		{
 		}
-
-	protected:
 
 		/** override */
 		virtual void * GetExtraData() override { return &data; }
@@ -497,9 +495,7 @@ namespace chaos
 		using trait_type = LAYER_TRAIT;
 		using particle_type = typename trait_type::particle_type;
 		using vertex_type = typename trait_type::vertex_type;
-	//	using per_allocation_data = typename get_per_allocation_data<trait_type>::type;
-
-			using per_allocation_data = typename trait_type::per_allocation_data;
+		using per_allocation_data = typename get_per_allocation_data<trait_type>::type;
 
 	public:
 
@@ -542,8 +538,7 @@ namespace chaos
 		virtual size_t UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, void const * extra_allocation_data) override
 		{
 			particle_type * p = (particle_type *)particles;
-			per_allocation_data const * d = (per_allocation_data const *)extra_allocation_data;
-			return DoUpdateParticles(delta_time, p, particle_count, allocation, d, has_function_BeginUpdateParticles<trait_type>::type());
+			return DoUpdateParticles(delta_time, p, particle_count, allocation, has_function_BeginUpdateParticles<trait_type>::type());
 		}
 
 		/** override */
@@ -551,10 +546,9 @@ namespace chaos
 		{
 			particle_type const * p = (particle_type const *)particles;
 			vertex_type * v = (vertex_type *)vertices;
-			per_allocation_data const * d = (per_allocation_data const *)extra_allocation_data;
-
+			
 			size_t vertices_per_particle = GetVerticesCountPerParticles();
-			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, d, has_function_BeginParticlesToVertices<trait_type>::type());
+			return DoParticlesToVertices(p, particles_count, v, vertices_per_particle, allocation, has_function_BeginParticlesToVertices<trait_type>::type());
 		}
 
 		/** override */
@@ -565,8 +559,10 @@ namespace chaos
 
 	protected:
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::false_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
 		{
+			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
@@ -582,8 +578,10 @@ namespace chaos
 		}
 
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::true_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
 		{
+			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+			
 			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
@@ -599,9 +597,6 @@ namespace chaos
 			}
 			return j; // final number of particles
 		}
-
-
-
 
 		// case A : no BeginUpdateParticles => NO EXTRA_DATA_TYPE 
 		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
@@ -628,28 +623,10 @@ namespace chaos
 			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data, extra_param);
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::false_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::false_) const
 		{
+			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+
 			size_t result = 0;
 			for (size_t i = 0; i < particles_count; ++i)
 			{
@@ -661,8 +638,10 @@ namespace chaos
 			return result;
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, per_allocation_data const * allocation_data, boost::mpl::true_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::true_) const
 		{
+			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+
 			auto extra_param = trait.BeginParticlesToVertices(particles, particles_count, allocation);
 
 			size_t result = 0;

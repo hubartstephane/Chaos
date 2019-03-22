@@ -18,7 +18,7 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(name)\
 template<typename T, typename B = typename has_##name<T>::type>\
 class get_##name;\
 template<typename T>\
-class get_##name<T, boost::mpl::true_> : public boost::mpl::identity<T>\
+class get_##name<T, boost::mpl::true_> : public boost::mpl::identity<typename T::name>\
 {};\
 template<typename T>\
 class get_##name<T, boost::mpl::false_> : public boost::mpl::identity<chaos::EmptyClass>\

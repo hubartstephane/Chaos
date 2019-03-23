@@ -34,23 +34,23 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Life particle system
 // ===========================================================================
 
-int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation) const
+int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const
 {
 	return count;
 }
 
-int ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation) const
+int ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const
 {
 	return count;
 }
 
-bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, int extra_param) const
+bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, int extra_param) const
 {
 	return false;
 }
 
 
-size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, int extra_param) const
+size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, int extra_param) const
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);

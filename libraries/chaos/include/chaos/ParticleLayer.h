@@ -458,7 +458,7 @@ namespace chaos
 	//
 	// requirement of LAYER_TRAIT:
 	//
-	// it must implement:
+	// 1 - it must implement:
 	//
 	//    bool UpdateParticle(...) const;    => returns true if the particle must be destroyed
 	//
@@ -466,7 +466,7 @@ namespace chaos
 	//
 	//    size_t ParticleToVertices(...) const;  => returns the number of vertices written (should be 6)
 	//
-	// If we have to make a computation on ALL particles before, we can implement the two following functions
+	// 2 - If we have to make a computation on ALL particles before, we can implement the two following functions
 	//
 	//	  TYPE_XXX BeginUpdateParticles(...)
 	//
@@ -480,6 +480,19 @@ namespace chaos
 	//
 	// Example : we can compute an transform for the whole allocation (single call) and apply it to each particle
 	//
+	// 3 - if we want each allocation to have embedded data, your trait just has to have an embedded data
+	//
+	//    class per_allocation_data { ... }
+	//
+	// in that case, the previous functions have an additionnal argument
+	//
+	//    UpdateParticle(... per_allocation_data, TYPE_XXX)
+	//
+	//    ParticleToVertices(... per_allocation_data, TYPE_YYY)
+	//
+	//	  TYPE_XXX BeginUpdateParticles(...per_allocation_data)
+	//
+	//	  TYPE_YYY BeginParticlesToVertices(...per_allocation_data)
 
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
@@ -582,7 +595,7 @@ namespace chaos
 		{
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
 			
-			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
+			auto extra_param = BeginUpdateParticles(delta_time, particles, particle_count, allocation, *allocation_data);
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
@@ -596,6 +609,17 @@ namespace chaos
 				}
 			}
 			return j; // final number of particles
+		}
+
+		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass const & allocation_data)
+		{
+			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
+		}
+
+		template<typename U>
+		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, U const & allocation_data)
+		{
+			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation, allocation_data);
 		}
 
 		// case A : no BeginUpdateParticles => NO EXTRA_DATA_TYPE 
@@ -642,7 +666,7 @@ namespace chaos
 		{
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
 
-			auto extra_param = trait.BeginParticlesToVertices(particles, particles_count, allocation);
+			auto extra_param = BeginParticlesToVertices(particles, particles_count, allocation, *allocation_data);
 
 			size_t result = 0;
 			for (size_t i = 0; i < particles_count; ++i)
@@ -653,6 +677,17 @@ namespace chaos
 				vertices += new_vertices;
 			}
 			return result;
+		}
+
+		auto BeginParticlesToVertices(particle_type const * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
+		{
+			return trait.BeginParticlesToVertices(particles, particle_count, allocation);
+		}
+
+		template<typename U>
+		auto BeginParticlesToVertices(particle_type const * particles, size_t particle_count, ParticleAllocation * allocation, U const & allocation_data) const
+		{
+			return trait.BeginParticlesToVertices(particles, particle_count, allocation, allocation_data);
 		}
 
 		// case A : no BeginParticlesToVertices => NO EXTRA_DATA_TYPE 

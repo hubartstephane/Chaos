@@ -38,18 +38,24 @@ class ParticleLifeObjectTrait : public ParticleObjectTrait
 {
 public:
 
+	class per_allocation_data
+	{
+	public:
+
+		int a = 7;
+		float b = 6.0f;
+
+	};
+
 	// called once for the whole allocation
-	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation) const;
+	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const;
 	// called once for the whole allocation
-	int BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation) const;
+	int BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const;
 
 	// called for every particles
-	bool UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, int extra_param) const;
+	bool UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, int extra_param) const;
 	// called for every particles
-	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, int extra_param) const;
-
-
-
+	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, int extra_param) const;
 
 	class LudumGame * game = nullptr;
 };

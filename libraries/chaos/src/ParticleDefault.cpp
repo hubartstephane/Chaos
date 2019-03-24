@@ -44,7 +44,9 @@ namespace chaos
 
 		void main()
 		{
-			vec4 color = texture(material, vs_texcoord);
+			vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
+				vec4(1.0, 1.0, 1.0, 1.0) : 
+				texture(material, vs_texcoord);
 			output_color = color * vs_color;
 		};
 		)SHADERCODE";

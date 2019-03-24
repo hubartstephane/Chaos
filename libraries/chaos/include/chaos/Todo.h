@@ -11,8 +11,6 @@
 
 	- REVOIR LOADERS
 
-	- PARTICLE ALLOCATION : extra data
-
 	- HUD component
 
 	- PLAYER component

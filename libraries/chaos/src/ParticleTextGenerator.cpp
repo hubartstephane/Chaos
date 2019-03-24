@@ -150,11 +150,25 @@ namespace chaos
 				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_layout, atlas.GetAtlasDimension());
 
 				// next bitmap/character data
+
+#if 0 // OLD and BROKEN */
 				bitmap_position.x    += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
 				character_position.x += token_size.x + params.character_spacing + params.bitmap_padding.x * 2.0f;
+#else
+				bitmap_position.x    = bottomleft_position.x + params.character_spacing + params.bitmap_padding.x + token_size.x;
+				character_position.x = bottomleft_position.x + params.character_spacing + params.bitmap_padding.x + token_size.x;
+#endif
+
 			}
 			else if (token.character_layout != nullptr)
 			{
+				if (token.character == ' ')
+				{
+					int i = 0;
+					++i;
+				}
+
+
 				// get the descender 
 				Style const & style = style_stack.back();
 				float descender = (style.font_info == nullptr) ? 0.0f : style.font_info->descender;
@@ -174,12 +188,12 @@ namespace chaos
 				glm::vec2 bottomleft_position;
 				bottomleft_position = character_position - glm::vec2(0.0f, descender * factor) + // character_position.y is BELOW the scanline (at the descender level)
 					factor * glm::vec2(
-					(float)(token.character_layout->bitmap_left),
+						(float)(token.character_layout->bitmap_left),
 						(float)(token.character_layout->bitmap_top - token.character_layout->height) // XXX : -token.character_layout->height => to have BOTTOM LEFT CORNER
 					);
 
 				glm::vec2 token_size;
-				token_size.x = factor * (float)token.character_layout->width;
+				token_size.x = factor * (float)token.character_layout->width;   // may be 0 for escape characters
 				token_size.y = factor * (float)token.character_layout->height;
 
 				// compute the particle data
@@ -191,9 +205,19 @@ namespace chaos
 				//       That's great for characters that are near one another
 				//       But with bitmap that causes real overide.
 				//       => that's why we are using two position : 'bitmap_position' & 'character_position'
-				bitmap_position.x = bottomleft_position.x + params.character_spacing + token_size.x;
-				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_layout->advance.x);
 
+#if 0 // OLD and BROKEN
+
+				bitmap_position.x    = bottomleft_position.x + params.character_spacing + token_size.x;
+				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_layout->advance.x);
+#else
+				float token_width = (token_size.x > 0.0) ? // SPACE has size = 0
+					token_size.x :
+					(float)token.character_layout->advance.x;
+
+				bitmap_position.x    = bottomleft_position.x + params.character_spacing + token_width;
+				character_position.x = bottomleft_position.x + params.character_spacing + factor * (float)(token.character_layout->advance.x);
+#endif
 			}
 			result.token_lines.back().push_back(token); // insert the token in the last line
 
@@ -556,6 +580,9 @@ namespace chaos
 			return true;
 		}
 
+		// XXX : JustifyLines(...) does not change the biggest line
+		//                         it does not modify any Y coordinate of any character/bitmap
+		//                         => the bounding_box of the whole text remains unchanged through this function
 		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data)
 		{
 			// left align : nothing to do

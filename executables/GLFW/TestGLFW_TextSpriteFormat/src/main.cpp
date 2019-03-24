@@ -181,7 +181,7 @@ protected:
 		generator_params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
 		generator_params.character_spacing = 0.0f;
 		generator_params.line_spacing = 0.0f;
-		generator_params.bitmap_padding.x = 10.0f;
+		generator_params.bitmap_padding.x = 1.0f * 30.0f;
 		generator_params.bitmap_padding.y = 5.0f;
 		generator_params.alignment = chaos::ParticleTextGenerator::GeneratorParams::ALIGN_LEFT;
 		generator_params.justify_space_factor = 8.0f;

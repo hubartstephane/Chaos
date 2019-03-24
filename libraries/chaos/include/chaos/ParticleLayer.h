@@ -486,7 +486,7 @@ namespace chaos
 	//
 	// in that case, the previous functions have an additionnal argument
 	//
-	//    UpdateParticle(... per_allocation_data, TYPE_XXX)
+	//    UpdateParticle(... per_allocation_data, TYPE_XXX) 
 	//
 	//    ParticleToVertices(... per_allocation_data, TYPE_YYY)
 	//
@@ -574,7 +574,7 @@ namespace chaos
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
 		{
-			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+			per_allocation_data * allocation_data = (per_allocation_data *)allocation->GetExtraData();
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
@@ -593,7 +593,7 @@ namespace chaos
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
 		{
-			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+			per_allocation_data * allocation_data = (per_allocation_data *)allocation->GetExtraData();
 			
 			auto extra_param = BeginUpdateParticles(delta_time, particles, particle_count, allocation, *allocation_data);
 
@@ -611,38 +611,38 @@ namespace chaos
 			return j; // final number of particles
 		}
 
-		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass const & allocation_data)
+		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass & allocation_data)
 		{
 			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
 		}
 
 		template<typename U>
-		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, U const & allocation_data)
+		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, U & allocation_data)
 		{
 			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation, allocation_data);
 		}
 
 		// case A : no BeginUpdateParticles => NO EXTRA_DATA_TYPE 
-		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
+		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass & allocation_data) const
 		{
 			return trait.UpdateParticle(delta_time, particle, allocation);
 		}
 
 		template<typename U>
-		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, U const & allocation_data) const
+		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, U & allocation_data) const
 		{
 			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data);
 		}
 
 		// case B : BeginParticlesToVertices defined => EXTRA_DATA_TYPE 
 		template<typename EXTRA_DATA_TYPE>
-		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass & allocation_data, EXTRA_DATA_TYPE & extra_param) const
 		{
 			return trait.UpdateParticle(delta_time, particle, allocation, extra_param);
 		}
 
 		template<typename U, typename EXTRA_DATA_TYPE>
-		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, U const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, U & allocation_data, EXTRA_DATA_TYPE & extra_param) const
 		{
 			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data, extra_param);
 		}

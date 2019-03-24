@@ -34,29 +34,48 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Life particle system
 // ===========================================================================
 
-int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const
+int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data & allocation_data) const
 {
+	allocation_data.rotation_time += delta_time;
+
+
 	return count;
 }
 
-int ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const
+glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const
 {
-	return count;
+	glm::vec2 result = glm::vec2(0.0f, 0.0f);
+
+
+#if 0
+	float S1 = 0.5f;
+	float S2 = 1.0f;
+	float BASE_R = 50.0f;
+
+	float R = (2.0f + chaos::MathTools::Cos(S1 * allocation_data.rotation_time));
+
+	result.x = BASE_R * R * chaos::MathTools::Cos(S2 * allocation_data.rotation_time);
+	result.y = BASE_R * R * chaos::MathTools::Sin(S2 * allocation_data.rotation_time);
+#endif
+	return result;
 }
 
-bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, int extra_param) const
+bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, per_allocation_data & allocation_data, int extra_param) const
 {
 	return false;
 }
 
 
-size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, int extra_param) const
+size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, glm::vec2 const & extra_param) const
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
+	{
+		vertices[i].position += extra_param;
 		vertices[i].color = particle->color;
+	}
 
 	return vertices_per_particle;
 }

@@ -162,13 +162,6 @@ namespace chaos
 			}
 			else if (token.character_layout != nullptr)
 			{
-				if (token.character == ' ')
-				{
-					int i = 0;
-					++i;
-				}
-
-
 				// get the descender 
 				Style const & style = style_stack.back();
 				float descender = (style.font_info == nullptr) ? 0.0f : style.font_info->descender;
@@ -574,8 +567,8 @@ namespace chaos
 			MoveParticles(generator_data.result, offset);
 
 			// keep trace of the bounding box
-			generator_data.result.bounding_box.bottomleft = min_position - offset;
-			generator_data.result.bounding_box.topright   = max_position - offset;
+			generator_data.result.bounding_box.bottomleft = min_position + offset;
+			generator_data.result.bounding_box.topright   = max_position + offset;
 
 			return true;
 		}
@@ -669,7 +662,62 @@ namespace chaos
 			return true;
 		}
 
+		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
+		{
+			assert(layer != nullptr);
+			assert(layer->IsParticleClassCompatible<ParticleDefault::Particle>(true));
 
+			int extra_background = (allocation_params.create_background) ? 1 : 0;
+
+			// create the allocation
+			ParticleAllocation * result = layer->SpawnParticles(generator_result.GetTokenCount() + extra_background);
+			if (result == nullptr)
+				return nullptr;
+
+			// spawn the particles
+			ParticleAccessor<ParticleDefault::Particle> particles = result->GetParticleAccessor<ParticleDefault::Particle>();
+			if (particles.GetCount() == 0)
+			{
+				result->SubReference(SharedPointerPolicy()); // error => destroy the allocation
+				return nullptr;
+			}
+
+			size_t token_index = 0;
+			// create the background
+			if (allocation_params.create_background)
+			{
+				ParticleDefault::Particle & p = particles[token_index];
+
+				glm::vec2 padding = glm::vec2(allocation_params.background_padding, allocation_params.background_padding);
+
+				p.bounding_box = chaos::box2(std::make_pair(
+					generator_result.bounding_box.bottomleft - padding,
+					generator_result.bounding_box.topright   + padding));
+				p.texcoords.bitmap_index = -1;
+				p.texcoords.bottomleft   = glm::vec2(-1.0f, -1.0f);
+				p.texcoords.topright     = glm::vec2(-1.0f, -1.0f);
+				p.color = allocation_params.background_color;
+				++token_index;
+			}
+
+			// convert the text			
+			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
+			{
+				ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
+				for (size_t j = 0; j < line.size(); ++j)
+				{
+					ParticleTextGenerator::Token const & token = line[j];
+
+					ParticleDefault::Particle & p = particles[token_index];
+
+					p.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+					p.texcoords = token.texcoords;
+					p.color = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+					++token_index;
+				}
+			}
+			return result;
+		}
 
 
 
@@ -788,43 +836,7 @@ namespace chaos
 
 #endif
 
-		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result)
-		{
-			assert(layer != nullptr);
-			assert(layer->IsParticleClassCompatible<ParticleDefault::Particle>(true));
 
-			// create the allocation
-			ParticleAllocation * result = layer->SpawnParticles(generator_result.GetTokenCount());
-			if (result == nullptr)
-				return nullptr;
-
-			// spawn the particles
-			ParticleAccessor<ParticleDefault::Particle> particles = result->GetParticleAccessor<ParticleDefault::Particle>();
-			if (particles.GetCount() == 0)
-			{
-				result->SubReference(SharedPointerPolicy()); // error => destroy the allocation
-				return nullptr;
-			}
-
-			// convert the text
-			size_t token_index = 0;
-			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
-			{
-				ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
-				for (size_t j = 0; j < line.size(); ++j)
-				{
-					ParticleTextGenerator::Token const & token = line[j];
-
-					ParticleDefault::Particle & p = particles[token_index];
-
-					p.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-					p.texcoords = token.texcoords;
-					p.color = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
-					++token_index;
-				}
-			}
-			return result;
-		}
 
 	}; // namespace ParticleTextGenerator
 }; // namespace chaos

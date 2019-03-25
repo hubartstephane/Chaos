@@ -57,6 +57,22 @@ namespace chaos
 		};
 
 		/**
+		* some parameters used during the final particle generation
+		*/
+
+		class CreateTextAllocationParams
+		{
+		public:
+
+			/** enable background */
+			bool create_background = false;
+			/** the background color */
+			glm::vec4 background_color = glm::vec4(0.4f, 0.4f, 0.4f, 0.4f);
+			/** the background padding */
+			float background_padding = 20.0f;
+		};
+
+		/**
 		* Particle : a base particle class
 		*/
 
@@ -297,7 +313,7 @@ namespace chaos
 
 
 		/** generate an allocation for a generated text */
-		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result);
+		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params = CreateTextAllocationParams());
 
 	}; // namespace ParticleTextGenerator
 

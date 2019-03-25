@@ -237,6 +237,8 @@ namespace death
 	void GameHUDLifeComponent::TickHeartBeat(double delta_time)
 	{
 		Game * game = GetGame();
+		if (!game->IsPlaying())
+			return;
 
 		Player const * player = game->GetPlayer(0);
 		if (player == nullptr)

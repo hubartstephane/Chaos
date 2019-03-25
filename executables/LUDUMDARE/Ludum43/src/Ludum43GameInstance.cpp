@@ -32,7 +32,8 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 bool LudumGameInstance::DoTick(double delta_time)
 {
 	death::GameInstance::DoTick(delta_time);
-	TickHeartBeat(delta_time);
+	if (game->IsPlaying())
+		TickHeartBeat(delta_time);
 	return true;
 }
 

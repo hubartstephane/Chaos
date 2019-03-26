@@ -24,6 +24,8 @@ namespace chaos
 
 	class GPUProgram : public GPUFileResource
 	{
+		friend class GPUResourceManager;
+
 	public:
 
 		/** constructor */

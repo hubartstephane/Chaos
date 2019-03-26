@@ -45,6 +45,7 @@ namespace chaos
 	{
 		friend class GPUProgramData;
 		friend class GPUProgramRenderMaterialProvider;
+		friend class GPUResourceManager;
 
 	public:
 

@@ -243,18 +243,25 @@ namespace chaos
 
 		bool SingleWindowApplication::ReloadGPUResources()
 		{
+			// reload the configuration file
 			nlohmann::json config;
 			if (!ReloadConfigurationFile(config))
 				return false;
-
+			// get the structure of interrest
 			nlohmann::json const * gpu_config = chaos::JSONTools::GetStructure(config, "gpu");
 			if (gpu_config == nullptr)
 				return false;
-
-
-
-		
-			return false;
+			// create a temporary manager
+			chaos::shared_ptr<GPUResourceManager> other_gpu_manager = new GPUResourceManager;
+			if (other_gpu_manager == nullptr)
+				return false;
+			if (!other_gpu_manager->StartManager())
+				return false;
+			// reload all resources ... (even unchanged)
+			if (other_gpu_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+				gpu_manager->RefreshGPUResources(other_gpu_manager.get());
+			other_gpu_manager->StopManager();		
+			return true;
 		}
 
 		bool SingleWindowApplication::FinalizeGPUManager()

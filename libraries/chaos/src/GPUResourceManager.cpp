@@ -161,4 +161,91 @@ namespace chaos
 			render_material->SetParentMaterial(parent); // some recursive verification here
 	}
 
+
+	bool GPUResourceManager::RefreshGPUResources(GPUResourceManager * other_gpu_manager)
+	{
+		assert(other_gpu_manager != nullptr);
+		if (!RefreshTextures(other_gpu_manager))
+			return false;
+		if (!RefreshPrograms(other_gpu_manager))
+			return false;
+		if (!RefreshMaterial(other_gpu_manager))
+			return false;
+		return true;
+	}
+
+	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager)
+	{
+		assert(other_gpu_manager != nullptr);
+		
+		// update all resources that are newer 
+		size_t ori_count = textures.size();
+		for (size_t i = 0; i < ori_count; ++i)
+		{
+			// original object
+			GPUTexture * ori_texture = textures[i].get();
+			if (ori_texture == nullptr)
+				continue;
+			// find corresponding resource in new manager
+			GPUTexture * other_texture = nullptr;
+			if (ori_texture->GetName() != nullptr)
+				other_texture = other_gpu_manager->FindTexture(ori_texture->GetName());
+			if (other_texture == nullptr)
+				other_texture = other_gpu_manager->FindTextureByPath(ori_texture->GetPath());			
+			if (other_texture == nullptr)
+				continue;
+			// test whether the other resource is effectively newer ?
+			if (ori_texture->GetFileTimestamp() >= other_texture->GetFileTimestamp())
+				continue;
+			// swap the resources
+			std::swap(ori_texture->texture_id, other_texture->texture_id);
+		}
+
+#if 0
+		// add new resources
+		size_t new_count = other_gpu_manager->textures.size();
+		for (size_t i = 0; i < new_count; ++i)
+		{
+			// original object
+			GPUTexture * new_texture = other_gpu_manager->textures[i].get();
+			if (ori_texture == nullptr)
+				continue;
+			// find corresponding resource in new manager
+			GPUTexture * other_texture = nullptr;
+			if (ori_texture->GetName() != nullptr)
+				other_texture = other_gpu_manager->FindTexture(ori_texture->GetName());
+			if (other_texture == nullptr)
+				other_texture = other_gpu_manager->FindTextureByPath(ori_texture->GetPath());
+			if (other_texture == nullptr)
+				continue;
+			// test whether the other resource is effectively newer ?
+			if (ori_texture->GetFileTimestamp() >= other_texture->GetFileTimestamp())
+				continue;
+			// swap the resources
+			std::swap(ori_texture->texture_id, other_texture->texture_id);
+		}
+#endif
+
+		// resources that have been destroyed are simply ignored (we have no real way to be sure they are not used)
+		return true;
+	}
+
+	bool GPUResourceManager::RefreshPrograms(GPUResourceManager * other_gpu_manager)
+	{
+		assert(other_gpu_manager != nullptr);
+
+
+
+		return true;
+	}
+
+	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager)
+	{
+		assert(other_gpu_manager != nullptr);
+
+
+		return true;
+	}
+
+
 }; // namespace chaos

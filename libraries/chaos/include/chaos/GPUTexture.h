@@ -10,6 +10,8 @@ namespace chaos
 
 	class GPUTexture : public GPUSurface
 	{
+		friend class GPUResourceManager;
+
 	public:
 
 		/** constructor */

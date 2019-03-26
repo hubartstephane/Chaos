@@ -68,6 +68,8 @@ namespace chaos
 		virtual bool LoadManager(FilePathParam const & path);
 		/** loading from a JSON object */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		/** merge all resources with incomming manager */
+		virtual bool RefreshGPUResources(GPUResourceManager * other_gpu_manager);
 
 	protected:
 
@@ -80,6 +82,13 @@ namespace chaos
 
 		/** search (if necessary the parent of the material) */
 		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);
+
+		/** merge all resources with incomming manager */
+		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager);
+		/** merge all resources with incomming manager */
+		virtual bool RefreshPrograms(GPUResourceManager * other_gpu_manager);
+		/** merge all resources with incomming manager */
+		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager);
 
 	protected:
 

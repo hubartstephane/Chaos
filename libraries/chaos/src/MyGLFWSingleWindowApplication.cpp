@@ -234,6 +234,7 @@ namespace chaos
 			if (gpu_manager == nullptr)
 				return false;
 			gpu_manager->StartManager();
+			// get the structure of interrest
 			nlohmann::json const * gpu_config = JSONTools::GetStructure(configuration, "gpu");
 			if (gpu_config != nullptr)
 				if (!gpu_manager->InitializeFromConfiguration(*gpu_config, configuration_path))

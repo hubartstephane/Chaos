@@ -199,33 +199,29 @@ namespace chaos
 				continue;
 			// swap the resources
 			std::swap(ori_texture->texture_id, other_texture->texture_id);
+			std::swap(ori_texture->file_timestamp, other_texture->file_timestamp);
+			std::swap(ori_texture->texture_description, other_texture->texture_description);
 		}
 
-#if 0
 		// add new resources
 		size_t new_count = other_gpu_manager->textures.size();
 		for (size_t i = 0; i < new_count; ++i)
 		{
 			// original object
 			GPUTexture * new_texture = other_gpu_manager->textures[i].get();
+			if (new_texture == nullptr)
+				continue;
+			// find whether this texture is new
+			GPUTexture * ori_texture = nullptr;
+			if (new_texture->GetName() != nullptr)
+				ori_texture = other_gpu_manager->FindTexture(new_texture->GetName());
 			if (ori_texture == nullptr)
+				ori_texture = other_gpu_manager->FindTextureByPath(new_texture->GetPath());
+			if (ori_texture != nullptr)
 				continue;
-			// find corresponding resource in new manager
-			GPUTexture * other_texture = nullptr;
-			if (ori_texture->GetName() != nullptr)
-				other_texture = other_gpu_manager->FindTexture(ori_texture->GetName());
-			if (other_texture == nullptr)
-				other_texture = other_gpu_manager->FindTextureByPath(ori_texture->GetPath());
-			if (other_texture == nullptr)
-				continue;
-			// test whether the other resource is effectively newer ?
-			if (ori_texture->GetFileTimestamp() >= other_texture->GetFileTimestamp())
-				continue;
-			// swap the resources
-			std::swap(ori_texture->texture_id, other_texture->texture_id);
+			// copy the texture in the original manager
+			textures.push_back(new_texture);
 		}
-#endif
-
 		// resources that have been destroyed are simply ignored (we have no real way to be sure they are not used)
 		return true;
 	}

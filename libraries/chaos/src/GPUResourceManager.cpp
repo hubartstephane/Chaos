@@ -214,9 +214,9 @@ namespace chaos
 			// find whether this texture is new
 			GPUTexture * ori_texture = nullptr;
 			if (new_texture->GetName() != nullptr)
-				ori_texture = other_gpu_manager->FindTexture(new_texture->GetName());
+				ori_texture = FindTexture(new_texture->GetName());
 			if (ori_texture == nullptr)
-				ori_texture = other_gpu_manager->FindTextureByPath(new_texture->GetPath());
+				ori_texture = FindTextureByPath(new_texture->GetPath());
 			if (ori_texture != nullptr)
 				continue;
 			// copy the texture in the original manager

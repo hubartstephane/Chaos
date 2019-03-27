@@ -174,55 +174,71 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager)
+	template<typename FIND_BY_NAME, typename FIND_BY_PATH, typename RESOURCE_VECTOR, typename SWAP_OBJECTS_FUNC> 
+	void RefreshObjects(FIND_BY_NAME find_by_name, FIND_BY_PATH find_by_path, RESOURCE_VECTOR resource_vector, GPUResourceManager * gpu_manager, GPUResourceManager * other_gpu_manager, SWAP_OBJECTS_FUNC swap_objects)
 	{
-		assert(other_gpu_manager != nullptr);
-		
+		auto & ori_objects = gpu_manager->*resource_vector;
+		auto & new_objects = other_gpu_manager->*resource_vector;
+
 		// update all resources that are newer 
-		size_t ori_count = textures.size();
+		size_t ori_count = ori_objects.size();
 		for (size_t i = 0; i < ori_count; ++i)
 		{
 			// original object
-			GPUTexture * ori_texture = textures[i].get();
-			if (ori_texture == nullptr)
+			auto * ori_object = ori_objects[i].get();
+			if (ori_object == nullptr)
 				continue;
 			// find corresponding resource in new manager
-			GPUTexture * other_texture = nullptr;
-			if (ori_texture->GetName() != nullptr)
-				other_texture = other_gpu_manager->FindTexture(ori_texture->GetName());
-			if (other_texture == nullptr)
-				other_texture = other_gpu_manager->FindTextureByPath(ori_texture->GetPath());			
-			if (other_texture == nullptr)
+			decltype(ori_object) other_object = nullptr;
+			if (ori_object->GetName() != nullptr)
+				other_object = (other_gpu_manager->*find_by_name)(ori_object->GetName());
+			if (other_object == nullptr)
+				other_object = (other_gpu_manager->*find_by_path)(ori_object->GetPath());
+			if (other_object == nullptr)
 				continue;
 			// test whether the other resource is effectively newer ?
-			if (ori_texture->GetFileTimestamp() >= other_texture->GetFileTimestamp())
+			if (ori_object->GetFileTimestamp() >= other_object->GetFileTimestamp())
 				continue;
 			// swap the resources
-			std::swap(ori_texture->texture_id, other_texture->texture_id);
-			std::swap(ori_texture->file_timestamp, other_texture->file_timestamp);
-			std::swap(ori_texture->texture_description, other_texture->texture_description);
+			swap_objects(ori_object, other_object);
 		}
-
 		// add new resources
-		size_t new_count = other_gpu_manager->textures.size();
+		size_t new_count = new_objects.size();
 		for (size_t i = 0; i < new_count; ++i)
 		{
 			// original object
-			GPUTexture * new_texture = other_gpu_manager->textures[i].get();
-			if (new_texture == nullptr)
+			auto * new_object = new_objects[i].get();
+			if (new_object == nullptr)
 				continue;
-			// find whether this texture is new
-			GPUTexture * ori_texture = nullptr;
-			if (new_texture->GetName() != nullptr)
-				ori_texture = FindTexture(new_texture->GetName());
-			if (ori_texture == nullptr)
-				ori_texture = FindTextureByPath(new_texture->GetPath());
-			if (ori_texture != nullptr)
+			// find whether this object is new
+			decltype(new_object) ori_object = nullptr;
+			if (new_object->GetName() != nullptr)
+				ori_object = (gpu_manager->*find_by_name)(new_object->GetName());
+			if (ori_object == nullptr)
+				ori_object = (gpu_manager->*find_by_path)(new_object->GetPath());
+			if (ori_object != nullptr)
 				continue;
-			// copy the texture in the original manager
-			textures.push_back(new_texture);
+			// copy the object in the original manager
+			ori_objects.push_back(new_object);
 		}
 		// resources that have been destroyed are simply ignored (we have no real way to be sure they are not used)
+	}
+		
+
+	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager)
+	{
+		assert(other_gpu_manager != nullptr);
+
+		GPUTexture * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindTexture;
+		GPUTexture * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindTextureByPath;
+		 
+		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
+
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [](GPUTexture * ori_texture, GPUTexture * other_texture){
+			std::swap(ori_texture->texture_id, other_texture->texture_id);
+			std::swap(ori_texture->file_timestamp, other_texture->file_timestamp);
+			std::swap(ori_texture->texture_description, other_texture->texture_description);		
+		});
 		return true;
 	}
 

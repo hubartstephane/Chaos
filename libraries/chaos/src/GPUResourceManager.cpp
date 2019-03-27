@@ -197,8 +197,10 @@ namespace chaos
 			if (other_object == nullptr)
 				continue;
 			// test whether the other resource is effectively newer ?
-			if (ori_object->GetFileTimestamp() >= other_object->GetFileTimestamp())
-				continue;
+			std::time_t t1 = ori_object->GetFileTimestamp();
+			std::time_t t2 = other_object->GetFileTimestamp();
+	//		if (t1 >= t2)
+	//			continue;
 			// swap the resources
 			swap_objects(ori_object, other_object);
 		}
@@ -234,10 +236,10 @@ namespace chaos
 		 
 		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [](GPUTexture * ori_texture, GPUTexture * other_texture){
-			std::swap(ori_texture->texture_id, other_texture->texture_id);
-			std::swap(ori_texture->file_timestamp, other_texture->file_timestamp);
-			std::swap(ori_texture->texture_description, other_texture->texture_description);		
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [](GPUTexture * ori_object, GPUTexture * other_object){
+			std::swap(ori_object->texture_id, other_object->texture_id);
+			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
+			std::swap(ori_object->texture_description, other_object->texture_description);
 		});
 		return true;
 	}
@@ -246,7 +248,16 @@ namespace chaos
 	{
 		assert(other_gpu_manager != nullptr);
 
+		GPUProgram * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindProgram;
+		GPUProgram * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindProgramByPath;
 
+		std::vector<shared_ptr<GPUProgram>> GPUResourceManager::*resource_vector = &GPUResourceManager::programs;
+
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [](GPUProgram * ori_object, GPUProgram * other_object) {
+			std::swap(ori_object->program_id, other_object->program_id);
+			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
+			std::swap(ori_object->program_data, other_object->program_data);
+		});
 
 		return true;
 	}

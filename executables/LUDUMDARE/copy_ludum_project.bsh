@@ -1,0 +1,17 @@
+#! /bin/bash -e
+echo $#
+if [ $# -lt 2 ]; then 
+
+  echo $(basename $0) src_number dst_number
+  exit -1
+
+fi
+dir=$(dirname $0)
+src_number=$1
+dst_number=$2
+echo cd $dir
+echo cp -fr Ludum${src_number} Ludum${dst_number}
+
+echo cd Ludum${dst_number}
+
+echo F=$(find . -name *.h -o -name *.cpp)

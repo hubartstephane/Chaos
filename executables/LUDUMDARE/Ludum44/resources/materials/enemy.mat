@@ -1,0 +1,9 @@
+{
+  "program":"enemy",
+
+	"uniforms":
+	{
+		"position_blend_ratio":[1.0]
+	
+	}
+}

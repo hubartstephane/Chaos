@@ -1,5 +1,4 @@
 #! /bin/bash -e
-echo $#
 if [ $# -lt 2 ]; then 
 
   echo $(basename $0) src_number dst_number
@@ -9,9 +8,23 @@ fi
 dir=$(dirname $0)
 src_number=$1
 dst_number=$2
-echo cd $dir
-echo cp -fr Ludum${src_number} Ludum${dst_number}
+cd $dir
+cp -fr Ludum${src_number} Ludum${dst_number}
 
-echo cd Ludum${dst_number}
+cd Ludum${dst_number}
 
-echo F=$(find . -name *.h -o -name *.cpp)
+FILES=$(find . -name *.h -o -name *.cpp)
+
+for FILE in $FILES; do
+
+
+  sed -ibackup s/${src_number}/${dst_number}/ $FILE
+  
+  DST_FILE=${FILE/$src_number/$dst_number}
+  if [ "$FILE" != "$DST_FILE" ] ; then
+    mv $FILE $DST_FILE
+  fi
+
+done
+
+find . -name *backup | xargs rm

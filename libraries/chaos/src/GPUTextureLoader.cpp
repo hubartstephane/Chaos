@@ -127,6 +127,10 @@ namespace chaos
 
 	GPUTexture * GPUTextureLoader::GenTextureObject(FilePathParam const & path, GenTextureParameters const & parameters) const
 	{
+		// check for path
+		if (!CheckResourcePath(path))
+			return nullptr;
+		// load the buffer
 		GPUTexture * result = nullptr;
 
 		Buffer<char> ascii_buffer = FileTools::LoadFile(path, true); // ascii mode for JSON 

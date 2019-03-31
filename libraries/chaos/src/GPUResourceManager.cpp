@@ -199,8 +199,13 @@ namespace chaos
 			// test whether the other resource is effectively newer ?
 			std::time_t t1 = ori_object->GetFileTimestamp();
 			std::time_t t2 = other_object->GetFileTimestamp();
-	//		if (t1 >= t2)
-	//			continue;
+
+			if (t1 == 0 || t2 == 0) // shuxxx
+				t1 = t1;
+
+
+			if (t1 >= t2)
+				continue;
 			// swap the resources
 			swap_objects(ori_object, other_object);
 		}

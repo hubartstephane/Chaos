@@ -43,8 +43,8 @@ namespace chaos
 			char const * sources[MAX_SOURCE_COUNT];
 			Buffer<char> buffers[MAX_SOURCE_COUNT]; // this is important !!!! the GenerateSource(...) function returns Buffer<> whose lifetime is assured because of that
 
-													// XXX : this must be the very first line of the program. 
-													//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
+			// XXX : this must be the very first line of the program. 
+			//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
 			sources[source_count++] = "#version 450\n";
 
 			// add the definitions

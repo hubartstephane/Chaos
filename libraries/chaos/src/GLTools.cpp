@@ -288,7 +288,7 @@ namespace chaos
 			//DebugTools::DisplayCallStack(std::cout);
 
 #if _WIN32 || _WIN64
-			if (Application::HasApplicationCommandLineFlag("-GLDebug"))
+			if (Application::HasApplicationCommandLineFlag("-GLDebugBreak"))
 				DebugBreak();
 #endif
 		}

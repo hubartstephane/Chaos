@@ -98,8 +98,9 @@ namespace death
 #endif
 		}
 
-#if 0
-		chaos::JSONTools::DumpConfigFile(config);
+#if _DEBUG
+		if (application->HasCommandLineFlag("-DumpConfigFile"))
+			chaos::JSONTools::DumpConfigFile(config);
 #endif
 
 		// create the game

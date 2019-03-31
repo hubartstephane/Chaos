@@ -228,8 +228,6 @@ namespace chaos
 		bool paused = false;
 		/** the volume */
 		float volume = 1.0f;
-		/* the name */
-		std::string name;
 		/** the manager */
 		SoundManager * sound_manager = nullptr;
 		/** the blending description */

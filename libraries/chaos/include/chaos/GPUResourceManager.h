@@ -14,6 +14,22 @@ namespace chaos
 {
 
 	/**
+	 * GPUResourceManagerReloadData : a structure used whenever we can to reload all data in manager
+	 */
+
+	class GPUResourceManagerReloadData
+	{
+	public:
+
+		/** texture that have captured data from new manager */
+		std::map<GPUTexture *, GPUTexture *> texture_map;
+		/** programs that have captured data from new manager */
+		std::map<GPUProgram *, GPUProgram *> program_map;
+		/** materials that have captured data from new manager */
+		std::map<GPURenderMaterial *, GPURenderMaterial *> render_material_map;
+	};
+
+	/**
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 
@@ -84,11 +100,11 @@ namespace chaos
 		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);
 
 		/** merge all resources with incomming manager */
-		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager, std::map<GPUTexture *, GPUTexture *> & texture_map);
+		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);
 		/** merge all resources with incomming manager */
-		virtual bool RefreshPrograms(GPUResourceManager * other_gpu_manager, std::map<GPUProgram *, GPUProgram *> & program_map);
+		virtual bool RefreshPrograms(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);
 		/** merge all resources with incomming manager */
-		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager, std::map<GPUTexture * , GPUTexture *> const & texture_map, std::map<GPUProgram *, GPUProgram *> const & program_map);
+		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);
 
 		/** ensure all render material have their parent correcly set */
 		void CheckForRenderMaterialInheritance();

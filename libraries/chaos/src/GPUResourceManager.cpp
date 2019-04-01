@@ -182,15 +182,14 @@ namespace chaos
 
 	bool GPUResourceManager::RefreshGPUResources(GPUResourceManager * other_gpu_manager)
 	{
-		std::map<GPUTexture *, GPUTexture *> texture_map;
-		std::map<GPUProgram *, GPUProgram *> program_map;
+		GPUResourceManagerReloadData reload_data;
 
 		assert(other_gpu_manager != nullptr);
-		if (!RefreshTextures(other_gpu_manager, texture_map))
+		if (!RefreshTextures(other_gpu_manager, reload_data))
 			return false;
-		if (!RefreshPrograms(other_gpu_manager, program_map))
+		if (!RefreshPrograms(other_gpu_manager, reload_data))
 			return false;
-		if (!RefreshMaterial(other_gpu_manager, texture_map, program_map))
+		if (!RefreshMaterial(other_gpu_manager, reload_data))
 			return false;
 		return true;
 	}
@@ -253,7 +252,7 @@ namespace chaos
 	}
 		
 
-	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager, std::map<GPUTexture *, GPUTexture *> & texture_map)
+	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
 		assert(other_gpu_manager != nullptr);
 
@@ -262,9 +261,9 @@ namespace chaos
 		 
 		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&texture_map](GPUTexture * ori_object, GPUTexture * other_object){
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUTexture * ori_object, GPUTexture * other_object){
 
-			texture_map[ori_object] = other_object;
+			reload_data.texture_map[ori_object] = other_object;
 
 			std::swap(ori_object->texture_id, other_object->texture_id);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
@@ -273,7 +272,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::RefreshPrograms(GPUResourceManager * other_gpu_manager, std::map<GPUProgram *, GPUProgram *> & program_map)
+	bool GPUResourceManager::RefreshPrograms(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
 		assert(other_gpu_manager != nullptr);
 
@@ -282,9 +281,9 @@ namespace chaos
 
 		std::vector<shared_ptr<GPUProgram>> GPUResourceManager::*resource_vector = &GPUResourceManager::programs;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&program_map](GPUProgram * ori_object, GPUProgram * other_object) {
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUProgram * ori_object, GPUProgram * other_object) {
 
-			program_map[ori_object] = other_object;
+			reload_data.program_map[ori_object] = other_object;
 
 			std::swap(ori_object->program_id, other_object->program_id);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
@@ -294,9 +293,27 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, std::map<GPUTexture *, GPUTexture *> const & texture_map, std::map<GPUProgram *, GPUProgram *> const & program_map)
+	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
 		assert(other_gpu_manager != nullptr);
+
+
+		GPURenderMaterial * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindRenderMaterial;
+		GPURenderMaterial * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindRenderMaterialByPath;
+
+		std::vector<shared_ptr<GPURenderMaterial>> GPUResourceManager::*resource_vector = &GPUResourceManager::render_materials;
+
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPURenderMaterial * ori_object, GPURenderMaterial * other_object) {
+
+			reload_data.render_material_map[ori_object] = other_object;
+
+			// shuxxx RefreshMaterial
+
+			std::swap(ori_object->program, other_object->program); // program_map
+			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
+			std::swap(ori_object->parent_name, other_object->parent_name);
+			// shuxxx std::swap(ori_object->uniform_provider, other_object->uniform_provider);
+		});
 
 
 		return true;

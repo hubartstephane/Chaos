@@ -259,10 +259,6 @@ namespace chaos
 		if (!CheckResourceName(nullptr, name, &json))
 			return nullptr;
 
-
-
-		std::string parent_name;
-
 		// indirect call
 		std::string path;
 		if (JSONTools::GetAttribute(json, "path", path))
@@ -273,8 +269,7 @@ namespace chaos
 		if (result != nullptr)
 		{
 			// search material parent
-			if (parent_name.empty())
-				JSONTools::GetAttribute(json, "parent_material", parent_name);
+			JSONTools::GetAttribute(json, "parent_material", result->parent_name);
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures
@@ -305,54 +300,5 @@ namespace chaos
 			return LoadObject(nullptr, json, path.GetResolvedPath());
 		return nullptr;
 	}
-
-
-
-
-	// =====================================================
-
-
-
-
-
-#if 0
-
-
-
-
-	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(nlohmann::json const & json, boost::filesystem::path const & config_path, std::string & parent_name) const
-	{
-		// get the name, ensure no name collision
-		if (!CheckResourceName(json))
-			return nullptr;
-
-		// indirect call
-		std::string path;
-		if (JSONTools::GetAttribute(json, "path", path))
-			return LoadObject(path, parent_name);
-
-		// create a new material
-		GPURenderMaterial * result = new GPURenderMaterial;
-		if (result == nullptr)
-			return nullptr;
-
-		// search material parent
-		if (parent_name.empty())
-			JSONTools::GetAttribute(json, "parent_material", parent_name);
-		// search program
-		InitializeProgramFromJSON(result, json, config_path);
-		// look at textures
-		InitializeTexturesFromJSON(result, json, config_path);
-		// look at uniforms
-		InitializeUniformsFromJSON(result, json, config_path);
-
-		// finalize : give name / path to the new resource
-		ApplyNameToLoadedResource(result);
-		ApplyPathToLoadedResource(result);
-		return result;
-	}
-
-
-#endif
 
 }; // namespace chaos

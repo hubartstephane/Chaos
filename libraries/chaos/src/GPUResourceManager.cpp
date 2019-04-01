@@ -98,7 +98,10 @@ namespace chaos
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
-		return GPURenderMaterialLoader(this).LoadObject(path, name);
+		GPURenderMaterial * result = GPURenderMaterialLoader(this).LoadObject(path, name);
+		if (result != nullptr)
+			CheckForRenderMaterialInheritance();
+		return result;
 	}
 
 	bool GPUResourceManager::LoadManager(FilePathParam const & path)
@@ -142,12 +145,15 @@ namespace chaos
 
 	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		return LoadObjectsFromConfiguration(
+		bool result = LoadObjectsFromConfiguration(
 			"rendermaterials",
 			json,
 			config_path,
 			boost::mpl::true_(),
 			GPURenderMaterialLoader(this));
+		if (result)
+			CheckForRenderMaterialInheritance();
+		return result;
 	}
 
 	void GPUResourceManager::SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name)
@@ -161,15 +167,30 @@ namespace chaos
 			render_material->SetParentMaterial(parent); // some recursive verification here
 	}
 
+	void GPUResourceManager::CheckForRenderMaterialInheritance()
+	{
+		size_t count = render_materials.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			GPURenderMaterial * render_material = render_materials[i].get();
+			if (render_material == nullptr)
+				continue;
+			if (render_material->parent_material == nullptr && !render_material->parent_name.empty())
+				SetRenderMaterialParent(render_material, render_material->parent_name);
+		}
+	}
 
 	bool GPUResourceManager::RefreshGPUResources(GPUResourceManager * other_gpu_manager)
 	{
+		std::map<GPUTexture *, GPUTexture *> texture_map;
+		std::map<GPUProgram *, GPUProgram *> program_map;
+
 		assert(other_gpu_manager != nullptr);
-		if (!RefreshTextures(other_gpu_manager))
+		if (!RefreshTextures(other_gpu_manager, texture_map))
 			return false;
-		if (!RefreshPrograms(other_gpu_manager))
+		if (!RefreshPrograms(other_gpu_manager, program_map))
 			return false;
-		if (!RefreshMaterial(other_gpu_manager))
+		if (!RefreshMaterial(other_gpu_manager, texture_map, program_map))
 			return false;
 		return true;
 	}
@@ -196,16 +217,16 @@ namespace chaos
 				other_object = (other_gpu_manager->*find_by_path)(ori_object->GetPath());
 			if (other_object == nullptr)
 				continue;
+
+			// XXX : we have to implement a real file depencie system to test for timestamp
+			//       => for example, we may modify a Shader file without the Program noticing it is out dated
+#if 0
 			// test whether the other resource is effectively newer ?
 			std::time_t t1 = ori_object->GetFileTimestamp();
 			std::time_t t2 = other_object->GetFileTimestamp();
-
-			if (t1 == 0 || t2 == 0) // shuxxx
-				t1 = t1;
-
-
 			if (t1 >= t2)
 				continue;
+#endif
 			// swap the resources
 			swap_objects(ori_object, other_object);
 		}
@@ -232,7 +253,7 @@ namespace chaos
 	}
 		
 
-	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager)
+	bool GPUResourceManager::RefreshTextures(GPUResourceManager * other_gpu_manager, std::map<GPUTexture *, GPUTexture *> & texture_map)
 	{
 		assert(other_gpu_manager != nullptr);
 
@@ -241,7 +262,10 @@ namespace chaos
 		 
 		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [](GPUTexture * ori_object, GPUTexture * other_object){
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&texture_map](GPUTexture * ori_object, GPUTexture * other_object){
+
+			texture_map[ori_object] = other_object;
+
 			std::swap(ori_object->texture_id, other_object->texture_id);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->texture_description, other_object->texture_description);
@@ -249,7 +273,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::RefreshPrograms(GPUResourceManager * other_gpu_manager)
+	bool GPUResourceManager::RefreshPrograms(GPUResourceManager * other_gpu_manager, std::map<GPUProgram *, GPUProgram *> & program_map)
 	{
 		assert(other_gpu_manager != nullptr);
 
@@ -258,7 +282,10 @@ namespace chaos
 
 		std::vector<shared_ptr<GPUProgram>> GPUResourceManager::*resource_vector = &GPUResourceManager::programs;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [](GPUProgram * ori_object, GPUProgram * other_object) {
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&program_map](GPUProgram * ori_object, GPUProgram * other_object) {
+
+			program_map[ori_object] = other_object;
+
 			std::swap(ori_object->program_id, other_object->program_id);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->program_data, other_object->program_data);
@@ -267,7 +294,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager)
+	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, std::map<GPUTexture *, GPUTexture *> const & texture_map, std::map<GPUProgram *, GPUProgram *> const & program_map)
 	{
 		assert(other_gpu_manager != nullptr);
 

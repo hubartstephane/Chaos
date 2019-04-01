@@ -84,11 +84,14 @@ namespace chaos
 		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);
 
 		/** merge all resources with incomming manager */
-		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager);
+		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager, std::map<GPUTexture *, GPUTexture *> & texture_map);
 		/** merge all resources with incomming manager */
-		virtual bool RefreshPrograms(GPUResourceManager * other_gpu_manager);
+		virtual bool RefreshPrograms(GPUResourceManager * other_gpu_manager, std::map<GPUProgram *, GPUProgram *> & program_map);
 		/** merge all resources with incomming manager */
-		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager);
+		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager, std::map<GPUTexture * , GPUTexture *> const & texture_map, std::map<GPUProgram *, GPUProgram *> const & program_map);
+
+		/** ensure all render material have their parent correcly set */
+		void CheckForRenderMaterialInheritance();
 
 	protected:
 

@@ -141,6 +141,10 @@ namespace chaos
 
 	GPUProgram * GPUProgramLoader::GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options) const
 	{
+		// check for path
+		if (!CheckResourcePath(path))
+			return nullptr;
+		// load the file
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
 			return GenProgramObject(json, path.GetResolvedPath(), cache_options);	

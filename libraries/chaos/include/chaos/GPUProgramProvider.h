@@ -116,6 +116,7 @@ namespace chaos
 
 	class GPUProgramProvider : public GPUProgramProviderBase
 	{
+		friend class GPUResourceManager;
 		friend class GPUProgramRenderMaterialProvider;
 
 	public:

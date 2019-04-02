@@ -261,10 +261,13 @@ namespace chaos
 		 
 		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUTexture * ori_object, GPUTexture * other_object){
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUTexture * ori_object, GPUTexture * other_object)
+		{
+			// each time there is a reference to other_object, replace it with ori_object 
+			// (while ori_object has capture other's data)
+			reload_data.texture_map[other_object] = ori_object;
 
-			reload_data.texture_map[ori_object] = other_object;
-
+			// XXX : we cannot simply copy texture_id => this would produce a double deletion of OpenGL resource
 			std::swap(ori_object->texture_id, other_object->texture_id);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->texture_description, other_object->texture_description);
@@ -281,10 +284,13 @@ namespace chaos
 
 		std::vector<shared_ptr<GPUProgram>> GPUResourceManager::*resource_vector = &GPUResourceManager::programs;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUProgram * ori_object, GPUProgram * other_object) {
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUProgram * ori_object, GPUProgram * other_object) 
+		{
+			// each time there is a reference to other_object, replace it with ori_object 
+			// (while ori_object has capture other's data)
+			reload_data.program_map[other_object] = ori_object; 
 
-			reload_data.program_map[ori_object] = other_object;
-
+			// XXX : we cannot simply copy program_id => this would produce a double deletion of OpenGL resource
 			std::swap(ori_object->program_id, other_object->program_id);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->program_data, other_object->program_data);
@@ -293,25 +299,59 @@ namespace chaos
 		return true;
 	}
 
+#if 0
+	class GPUProgramCCC : public GPUProgramAction
+	{
+	public:
+
+		virtual bool DoProcess(char const * name, GPUTexture const * value) override 
+		{ 
+			return false; 
+		}
+	};
+#endif
+
 	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
 		assert(other_gpu_manager != nullptr);
-
 
 		GPURenderMaterial * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindRenderMaterial;
 		GPURenderMaterial * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindRenderMaterialByPath;
 
 		std::vector<shared_ptr<GPURenderMaterial>> GPUResourceManager::*resource_vector = &GPUResourceManager::render_materials;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPURenderMaterial * ori_object, GPURenderMaterial * other_object) {
+		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPURenderMaterial * ori_object, GPURenderMaterial * other_object) 
+		{
+			// each time there is a reference to other_object, replace it with ori_object 
+			// (while ori_object has capture other's data)
+			reload_data.render_material_map[other_object] = ori_object;
 
-			reload_data.render_material_map[ori_object] = other_object;
-
-			// shuxxx RefreshMaterial
-
-			std::swap(ori_object->program, other_object->program); // program_map
+			// we can copy here, because these is not an OpenGL resource. We use shared pointer
+			auto it = reload_data.program_map.find(other_object->program.get());
+			if (it != reload_data.program_map.end())
+				ori_object->program = it->second;
+			else
+				ori_object->program = other_object->program; 
+			
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->parent_name, other_object->parent_name);
+			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
+
+		
+			
+			
+			
+#if 0		
+			size_t count = ori_object->uniform_provider.children_providers.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				GPUProgramProviderBase * provider = ori_object->uniform_provider.children_providers[i].get();
+				if (provider == nullptr)
+					continue;
+
+			}
+#endif
+
 			// shuxxx std::swap(ori_object->uniform_provider, other_object->uniform_provider);
 		});
 

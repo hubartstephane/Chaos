@@ -59,14 +59,14 @@ protected:
 
 			virtual bool DoProcessAction(char const * name, chaos::GPUProgramAction & action, chaos::GPUProgramProviderBase const * top_level) const override
 			{
-				if (strcmp("local_to_cam", name) == 0)
+				if (name != nullptr && strcmp("local_to_cam", name) == 0)
 				{
 					glm::mat4 translate_mat;
 					glm::mat4 scale_mat;
 
 					if (top_level->GetValue<glm::mat4>("translate_mat", translate_mat))
 						if (top_level->GetValue<glm::mat4>("scale_mat", scale_mat))
-							return action.Process("local_to_cam", translate_mat * scale_mat);
+							return action.Process("local_to_cam", translate_mat * scale_mat, this);
 				}         
 				return false;
 			}

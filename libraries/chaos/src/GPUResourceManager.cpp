@@ -299,17 +299,20 @@ namespace chaos
 		return true;
 	}
 
-#if 0
-	class GPUProgramCCC : public GPUProgramAction
-	{
-	public:
 
-		virtual bool DoProcess(char const * name, GPUTexture const * value) override 
-		{ 
-			return false; 
+
+	bool GPUProgramReplaceTextureAction::DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider)
+	{
+		// XXX : remove constness ! Maybe a better way to do so
+		GPUProgramProviderTexture * provider_texture = const_cast<GPUProgramProviderTexture *>(dynamic_cast<GPUProgramProviderTexture const *>(provider));
+		if (provider_texture != nullptr)
+		{
+			auto it = reload_data.texture_map.find(provider_texture->value.get());
+			if (it != reload_data.texture_map.end())
+				provider_texture->value = it->second;
 		}
-	};
-#endif
+		return false; // continue for all other textures
+	}
 
 	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
@@ -337,8 +340,8 @@ namespace chaos
 			std::swap(ori_object->parent_name, other_object->parent_name);
 			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
 
-		
-			
+			GPUProgramReplaceTextureAction action(reload_data);
+			ori_object->uniform_provider.ProcessAction(nullptr, action);
 			
 			
 #if 0		

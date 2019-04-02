@@ -6,9 +6,9 @@ namespace chaos
 
 	bool GPUProgramProviderTexture::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
 	{
-		if (handled_name != name)
+		if (name != nullptr && handled_name != name)
 			return false;
-		return action.Process(name, value.get());
+		return action.Process(name, value.get(), this);
 	}
 
 	void GPUProgramProvider::Clear()

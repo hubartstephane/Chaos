@@ -30,6 +30,29 @@ namespace chaos
 	};
 
 	/**
+	* GPUProgramReplaceTextureAction : an action used to replace any texture in TextureProvider by one in the replacement map
+	*/
+
+	class GPUProgramReplaceTextureAction : public GPUProgramAction
+	{
+	public:
+
+		/** constructor */
+		GPUProgramReplaceTextureAction(GPUResourceManagerReloadData & in_reload_data) :
+			reload_data(in_reload_data) {}
+
+	protected:
+
+		/** override */
+		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) override;
+
+	protected:
+
+		/** the reload data */
+		GPUResourceManagerReloadData & reload_data;
+	};
+
+	/**
 	* GPUResourceManager : a manager to store different kinds of (can be depend) resources
 	**/
 

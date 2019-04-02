@@ -21,65 +21,65 @@ namespace chaos
 		virtual ~GPUProgramAction() = default;
 
 		/** processing base scalar types */
-		bool Process(char const * name, GLfloat value) { return Process(name, glm::tvec1<GLfloat>(value)); }
-		bool Process(char const * name, GLdouble value) { return Process(name, glm::tvec1<GLdouble>(value)); }
-		bool Process(char const * name, GLint value) { return Process(name, glm::tvec1<GLint>(value)); }
-		bool Process(char const * name, GLuint value) { return Process(name, glm::tvec1<GLuint>(value)); }
+		bool Process(char const * name, GLfloat value, GPUProgramProviderBase const * provider) { return Process(name, glm::tvec1<GLfloat>(value), provider); }
+		bool Process(char const * name, GLdouble value, GPUProgramProviderBase const * provider) { return Process(name, glm::tvec1<GLdouble>(value), provider); }
+		bool Process(char const * name, GLint value, GPUProgramProviderBase const * provider) { return Process(name, glm::tvec1<GLint>(value), provider); }
+		bool Process(char const * name, GLuint value, GPUProgramProviderBase const * provider) { return Process(name, glm::tvec1<GLuint>(value), provider); }
 
 		/** processing vector types */
-		template<typename T> bool Process(char const * name, glm::tvec1<T> const & value)
+		template<typename T> bool Process(char const * name, glm::tvec1<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value));
+			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
 		}
-		template<typename T> bool Process(char const * name, glm::tvec2<T> const & value)
+		template<typename T> bool Process(char const * name, glm::tvec2<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value));
+			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
 		}
-		template<typename T> bool Process(char const * name, glm::tvec3<T> const & value)
+		template<typename T> bool Process(char const * name, glm::tvec3<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value));
+			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
 		}
-		template<typename T> bool Process(char const * name, glm::tvec4<T> const & value)
+		template<typename T> bool Process(char const * name, glm::tvec4<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value));
+			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
 		}
 
 		/** processing matrix types */
-		bool Process(char const * name, glm::mat2x3 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat2x4 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat3x2 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat3x4 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat4x2 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat4x3 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat2 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat3 const & value) { return DoProcess(name, glm::mat4(value)); }
-		bool Process(char const * name, glm::mat4 const & value) { return DoProcess(name, glm::mat4(value)); }
+		bool Process(char const * name, glm::mat2x3 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat2x4 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat3x2 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat3x4 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat4x2 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat4x3 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat2 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat3 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
+		bool Process(char const * name, glm::mat4 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::mat4(value), provider); }
 
-		bool Process(char const * name, glm::dmat2x3 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat2x4 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat3x2 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat3x4 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat4x2 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat4x3 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat2 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat3 const & value) { return DoProcess(name, glm::dmat4(value)); }
-		bool Process(char const * name, glm::dmat4 const & value) { return DoProcess(name, glm::dmat4(value)); }
+		bool Process(char const * name, glm::dmat2x3 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat2x4 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat3x2 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat3x4 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat4x2 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat4x3 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat2 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat3 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
+		bool Process(char const * name, glm::dmat4 const & value, GPUProgramProviderBase const * provider) { return DoProcess(name, glm::dmat4(value), provider); }
 
 		/** processing texture */
-		bool Process(char const * name, GPUTexture const * value) { return DoProcess(name, value); }
+		bool Process(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) { return DoProcess(name, value, provider); }
 
 	protected:
 
 		/** the virtual methods to override */
-		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) { return false; }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) { return false; }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) { return false; }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value, GPUProgramProviderBase const * provider) { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value, GPUProgramProviderBase const * provider) { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value, GPUProgramProviderBase const * provider) { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value, GPUProgramProviderBase const * provider) { return false; }
 
-		virtual bool DoProcess(char const * name, glm::mat4 const & value) { return false; }
-		virtual bool DoProcess(char const * name, glm::dmat4 const & value) { return false; }
+		virtual bool DoProcess(char const * name, glm::mat4 const & value, GPUProgramProviderBase const * provider) { return false; }
+		virtual bool DoProcess(char const * name, glm::dmat4 const & value, GPUProgramProviderBase const * provider) { return false; }
 
-		virtual bool DoProcess(char const * name, GPUTexture const * value) { return false; }
+		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) { return false; }
 	};
 
 	/**
@@ -97,13 +97,13 @@ namespace chaos
 	protected:
 
 		/** the GPUProgramAction interface */
-		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return uniform.SetUniform(value); }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return uniform.SetUniform(value); }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return uniform.SetUniform(value); }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return uniform.SetUniform(value); }
-		virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return uniform.SetUniform(value); }
-		virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return uniform.SetUniform(value); }
-		virtual bool DoProcess(char const * name, GPUTexture const * value) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, glm::mat4 const & value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, glm::dmat4 const & value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
+		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) override { return uniform.SetUniform(value); }
 
 	protected:
 
@@ -126,13 +126,13 @@ namespace chaos
 	protected:
 
 		/** the GPUProgramAction interface */
-		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return false; }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return false; }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return false; }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return false; }
-		virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return false; }
-		virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return false; }
-		virtual bool DoProcess(char const * name, GPUTexture const * value) override { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value, GPUProgramProviderBase const * provider) override { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value, GPUProgramProviderBase const * provider) override { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value, GPUProgramProviderBase const * provider) override { return false; }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value, GPUProgramProviderBase const * provider) override { return false; }
+		virtual bool DoProcess(char const * name, glm::mat4 const & value, GPUProgramProviderBase const * provider) override { return false; }
+		virtual bool DoProcess(char const * name, glm::dmat4 const & value, GPUProgramProviderBase const * provider) override { return false; }
+		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) override { return false; }
 
 	protected:
 
@@ -156,16 +156,16 @@ namespace chaos
 	protected:
 
 		/** main methods */
-		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value) override { return ConvertAndGet(value); }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value) override { return ConvertAndGet(value); }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value) override { return ConvertAndGet(value); }
-		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value) override { return ConvertAndGet(value); }
-		virtual bool DoProcess(char const * name, glm::mat4 const & value) override { return ConvertAndGet(value); }
-		virtual bool DoProcess(char const * name, glm::dmat4 const & value) override { return ConvertAndGet(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLfloat> const & value, GPUProgramProviderBase const * provider) override { return ConvertAndGet(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLdouble> const & value, GPUProgramProviderBase const * provider) override { return ConvertAndGet(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLint> const & value, GPUProgramProviderBase const * provider) override { return ConvertAndGet(value); }
+		virtual bool DoProcess(char const * name, glm::tvec4<GLuint> const & value, GPUProgramProviderBase const * provider) override { return ConvertAndGet(value); }
+		virtual bool DoProcess(char const * name, glm::mat4 const & value, GPUProgramProviderBase const * provider) override { return ConvertAndGet(value); }
+		virtual bool DoProcess(char const * name, glm::dmat4 const & value, GPUProgramProviderBase const * provider) override { return ConvertAndGet(value); }
 
-		virtual bool DoProcess(char const * name, GPUTexture const * value) override { return false; } // texture not implemented
+		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) override { return false; } // texture not implemented
 
-																									   /** the generic conversions methods */
+		/** the generic conversions methods */
 		template<typename U>
 		bool ConvertAndGet(U const & value)
 		{

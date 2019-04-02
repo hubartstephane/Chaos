@@ -72,9 +72,9 @@ namespace chaos
 		/** the main method */
 		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override
 		{
-			if (handled_name != name)
+			if (name != nullptr && handled_name != name)
 				return false;
-			return action.Process(name, value);
+			return action.Process(name, value, this);
 		}
 
 	protected:
@@ -91,6 +91,8 @@ namespace chaos
 
 	class GPUProgramProviderTexture : public GPUProgramProviderBase
 	{
+		friend class GPUProgramReplaceTextureAction;
+
 	public:
 
 		/** constructor */

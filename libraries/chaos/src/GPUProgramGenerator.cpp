@@ -196,7 +196,7 @@ namespace chaos
 					glLinkProgram(result);
 					success = (GLShaderTools::CheckProgramStatus(result, GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
 
-#if _DEBUG
+#if 0 && _DEBUG
 					if (success)
 						GLShaderTools::DisplayProgramDiagnostic(result);
 #endif

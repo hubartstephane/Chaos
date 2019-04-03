@@ -194,13 +194,22 @@ namespace chaos
 		return true;
 	}
 
+	// We are working with managers (the normal and a temporary)
+	// We iterate over all resources:
+	//   -If we find in TEMP a resource that is not in NORMAL, we simply add it to NORMAL too (the resource is in both managers until destruction of TEMP)
+	//   -If a TEMP resource has an equivalent (PATH or NAME) in NORMAL, we want to update NORMAL with data in TEMP resource
+	//    (a swap of all data will do the trick) => this is STEAL case
+	//
+	// We have now to patch all resources. All internal references to an object that has been stolen must be replaced
+	// (GPURenderMaterial is the only concerned while it can have reference to textures and programs)
+
 	template<typename FIND_BY_NAME, typename FIND_BY_PATH, typename RESOURCE_VECTOR, typename SWAP_OBJECTS_FUNC> 
 	void RefreshObjects(FIND_BY_NAME find_by_name, FIND_BY_PATH find_by_path, RESOURCE_VECTOR resource_vector, GPUResourceManager * gpu_manager, GPUResourceManager * other_gpu_manager, SWAP_OBJECTS_FUNC swap_objects)
 	{
 		auto & ori_objects = gpu_manager->*resource_vector;
 		auto & new_objects = other_gpu_manager->*resource_vector;
 
-		// update all resources that are newer 
+		// update all resources that are newer (same name or same path)
 		size_t ori_count = ori_objects.size();
 		for (size_t i = 0; i < ori_count; ++i)
 		{
@@ -329,28 +338,35 @@ namespace chaos
 			// (while ori_object has capture other's data)
 			reload_data.render_material_map[other_object] = ori_object;
 
-			// we can copy here, because these is not an OpenGL resource. We use shared pointer
-			auto it = reload_data.program_map.find(other_object->program.get());
-			if (it != reload_data.program_map.end())
-				ori_object->program = it->second;
-			else
-				ori_object->program = other_object->program; 
-			
-
-			if (ori_object->parent_name != other_object->parent_name) // shuxxx
-				ori_object = ori_object;
-
+			std::swap(ori_object->parent_material, other_object->parent_material);
+			std::swap(ori_object->program, other_object->program);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->parent_name, other_object->parent_name);
 			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
-
-			GPUProgramReplaceTextureAction action(reload_data);
-			ori_object->uniform_provider.ProcessAction(nullptr, action);
-			
 		});
 
-		CheckForRenderMaterialInheritance();
+		// patching references (texures, programs, parent_materials)
+		size_t count = render_materials.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			GPURenderMaterial * render_material = render_materials[i].get();
+			if (render_material == nullptr)
+				continue;
 
+			// patch textures (uniforms)
+			GPUProgramReplaceTextureAction action(reload_data);
+			render_material->uniform_provider.ProcessAction(nullptr, action);
+
+			// patch program
+			auto it_program = reload_data.program_map.find(render_material->program.get());
+			if (it_program != reload_data.program_map.end())
+				render_material->program = it_program->second;
+
+			// patch parent_material
+			auto it_parent = reload_data.render_material_map.find(render_material->parent_material.get());
+			if (it_parent != reload_data.render_material_map.end())
+				render_material->parent_material = it_parent->second;					
+		}
 		return true;
 	}
 

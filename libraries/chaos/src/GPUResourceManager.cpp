@@ -336,6 +336,10 @@ namespace chaos
 			else
 				ori_object->program = other_object->program; 
 			
+
+			if (ori_object->parent_name != other_object->parent_name) // shuxxx
+				ori_object = ori_object;
+
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->parent_name, other_object->parent_name);
 			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
@@ -343,21 +347,9 @@ namespace chaos
 			GPUProgramReplaceTextureAction action(reload_data);
 			ori_object->uniform_provider.ProcessAction(nullptr, action);
 			
-			
-#if 0		
-			size_t count = ori_object->uniform_provider.children_providers.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				GPUProgramProviderBase * provider = ori_object->uniform_provider.children_providers[i].get();
-				if (provider == nullptr)
-					continue;
-
-			}
-#endif
-
-			// shuxxx std::swap(ori_object->uniform_provider, other_object->uniform_provider);
 		});
 
+		CheckForRenderMaterialInheritance();
 
 		return true;
 	}

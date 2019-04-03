@@ -3,7 +3,6 @@
 
   "textures": 
 	{
-    "background": { "name": "background1" },
 		"noise":{"name":"noise"}
   },
   "uniforms":

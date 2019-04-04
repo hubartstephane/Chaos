@@ -17,13 +17,7 @@ namespace chaos
 	protected:
 
 		/** Set the name method (for friends only) */
-		void SetName(char const * in_name)
-		{
-			if (in_name != nullptr)
-				name = in_name;
-			else
-				name.clear();
-		}
+		void SetName(char const * in_name);
 
 	protected:
 
@@ -46,11 +40,7 @@ namespace chaos
 	protected:
 
 		/** Set the path method (for friends only) */
-		void SetPath(boost::filesystem::path const & in_path)
-		{
-			file_timestamp = boost::filesystem::last_write_time(in_path);
-			path = in_path;
-		}
+		void SetPath(boost::filesystem::path const & in_path);
 
 	protected:
 

@@ -1,10 +1,10 @@
 {
 	"pixel_sources":
 	[
-		"@worldlimit2.psh"
+		"@lifebar2.psh"
 	],
 	"vertex_sources":
 	[
-		"@worldlimit2.vsh"
+		"@lifebar2.vsh"
 	]
 }

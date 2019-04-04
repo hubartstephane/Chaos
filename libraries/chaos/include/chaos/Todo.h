@@ -7,7 +7,7 @@
 	== TODO
 	====================================================================
 
-	- HOT RELOAD RESOURCES
+	- REVOIR charger JSON pour faire une passe de commentaire
 
 	- REVOIR LOADERS
 
@@ -22,8 +22,6 @@
 	- FENCE OPENGL a chaque frame
 
 	- CHANGE MUSIC in game
-
-	- BACKGROUND pour les particles de text
 
 	- ANIMATION pour sprites (shaders ?)
 
@@ -97,12 +95,6 @@
 
 		- FindRenderableLayer, FindParticleLayer unsued
 		- Music management : CreateAllMusic ?? bad idea if we want to change music per level ...
-
-
-	HUD
-	  -create HUD components to maximize reusability
-
-
 
 
 

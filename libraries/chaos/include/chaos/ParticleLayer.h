@@ -498,6 +498,8 @@ namespace chaos
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 	CHAOS_GENERATE_HAS_TRAIT(per_allocation_data)
 	
+	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateVertice)
+
 	template<typename LAYER_TRAIT>
 	class TypedParticleLayerDesc : public ParticleLayerDesc
 	{
@@ -572,7 +574,7 @@ namespace chaos
 
 	protected:
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES)
 		{
 			per_allocation_data * allocation_data = (per_allocation_data *)allocation->GetExtraData();
 
@@ -591,7 +593,7 @@ namespace chaos
 		}
 
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_)
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES)
 		{
 			per_allocation_data * allocation_data = (per_allocation_data *)allocation->GetExtraData();
 			
@@ -647,35 +649,47 @@ namespace chaos
 			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data, extra_param);
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::false_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES) const
 		{
+			size_t result = 0;
+
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
 
-			size_t result = 0;
+			// transforms particles to vertices
+			vertex_type * v = vertices;			
 			for (size_t i = 0; i < particles_count; ++i)
 			{
-				size_t new_vertices = DoParticleToVertice_A(&particles[i], vertices, vertices_per_particle, allocation, *allocation_data);
+				size_t new_vertices = DoParticleToVertice_A(&particles[i], v, vertices_per_particle, allocation, *allocation_data);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
-				vertices += new_vertices;
+				v += new_vertices;
 			}
+			// allocation data may want to add special information to vertices
+			DoApplyAllocationDataToVertices_A(allocation_data, vertices, result, has_function_UpdateVertice<per_allocation_data>::type());
+
 			return result;
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::true_) const
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::true_ HAS_BEGIN_PARTICLES_TO_VERTICES) const
 		{
+			size_t result = 0;
+
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
 
 			auto extra_param = BeginParticlesToVertices(particles, particles_count, allocation, *allocation_data);
 
-			size_t result = 0;
+			// transforms particles to vertices
+			vertex_type * v = vertices;
 			for (size_t i = 0; i < particles_count; ++i)
 			{
-				size_t new_vertices = DoParticleToVertice_B(&particles[i], vertices, vertices_per_particle, allocation, *allocation_data, extra_param);
+				size_t new_vertices = DoParticleToVertice_B(&particles[i], v, vertices_per_particle, allocation, *allocation_data, extra_param);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
-				vertices += new_vertices;
+				v += new_vertices;
 			}
+			// allocation data may want to add special information to vertices
+			DoApplyAllocationDataToVertices_B(allocation_data, vertices, result, extra_param, has_function_UpdateVertice<per_allocation_data>::type());
+
 			return result;
 		}
 
@@ -715,6 +729,33 @@ namespace chaos
 			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, allocation_data, extra_param);
 		}
 
+		// Opportunity for ExtraAllocationData to update all generated vertices (add alpha, offset ...). 
+		// Do not care whether per_allocation_data is EmptyClass or not : if it has the function, this is good
+
+		// case A : no BeginParticlesToVertices => NO EXTRA_DATA_TYPE 
+		void DoApplyAllocationDataToVertices_A(per_allocation_data const * allocation_data, vertex_type * vertices, size_t vertices_count, boost::mpl::false_ HAS_UPDATE_VERTICE) const
+		{
+		}
+
+		void DoApplyAllocationDataToVertices_A(per_allocation_data const * allocation_data, vertex_type * vertices, size_t vertices_count, boost::mpl::true_ HAS_UPDATE_VERTICE) const
+		{
+			for (size_t i = 0; i < vertices_count; ++i)
+				allocation_data->UpdateVertice(&vertices[i]);
+		}
+
+		// case B : BeginParticlesToVertices defined => EXTRA_DATA_TYPE
+		template<typename EXTRA_DATA_TYPE>
+		void DoApplyAllocationDataToVertices_B(per_allocation_data const * allocation_data, vertex_type * vertices, size_t vertices_count, EXTRA_DATA_TYPE & extra_param, boost::mpl::false_ HAS_UPDATE_VERTICE) const
+		{
+		}
+
+		template<typename EXTRA_DATA_TYPE>
+		void DoApplyAllocationDataToVertices_B(per_allocation_data const * allocation_data, vertex_type * vertices, size_t vertices_count, EXTRA_DATA_TYPE & extra_param, boost::mpl::true_ HAS_UPDATE_VERTICE) const
+		{
+			for (size_t i = 0; i < vertices_count; ++i)
+				allocation_data->UpdateVertice(&vertices[i], extra_param);
+		}
+			
 	protected:
 
 		/** internal description */

@@ -47,7 +47,7 @@ glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const
 	glm::vec2 result = glm::vec2(0.0f, 0.0f);
 
 
-#if 0
+#if 1
 	float S1 = 0.5f;
 	float S2 = 1.0f;
 	float BASE_R = 50.0f;
@@ -72,10 +72,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
-	{
-		vertices[i].position += extra_param;
 		vertices[i].color = particle->color;
-	}
 
 	return vertices_per_particle;
 }

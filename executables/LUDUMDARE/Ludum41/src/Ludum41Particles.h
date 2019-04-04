@@ -42,6 +42,13 @@ public:
 	{
 	public:
 
+		void UpdateVertice(VertexBase * vertex, glm::vec2 extra_data) const
+		{
+			//vertex->position += extra_data;
+			//vertex->color.a *= 0.1f;
+
+		}
+
 		float rotation_time = 0.0f;
 	};
 

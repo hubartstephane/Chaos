@@ -493,11 +493,19 @@ namespace chaos
 	//	  TYPE_XXX BeginUpdateParticles(...per_allocation_data)
 	//
 	//	  TYPE_YYY BeginParticlesToVertices(...per_allocation_data)
+	//
+	// This per_allocation_data may have :
+	//
+	//   - a Tick(delta_time) method => returns true if the allocation must be destroyed
+	//
+	//   - UpdateVertice(vertex *) method
 
-	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
-	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
-	CHAOS_GENERATE_HAS_TRAIT(per_allocation_data)
 	
+	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
+	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)	
+
+	CHAOS_GENERATE_HAS_TRAIT(per_allocation_data)
+	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateVertice)
 
 	template<typename LAYER_TRAIT>
@@ -574,9 +582,20 @@ namespace chaos
 
 	protected:
 
+		// =========================================================
+		// UpdateParticles methods (Tick)
+		// =========================================================
+
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES)
 		{
 			per_allocation_data * allocation_data = (per_allocation_data *)allocation->GetExtraData();
+
+			// per allocation ticking => must be destroyed ?
+			if (TickAllocationData(delta_time, allocation_data, has_function_Tick<per_allocation_data>::type()))
+			{
+
+			}
+			// No BeginUpdateParticles(...) call
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
@@ -596,7 +615,14 @@ namespace chaos
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES)
 		{
 			per_allocation_data * allocation_data = (per_allocation_data *)allocation->GetExtraData();
+
+			// per allocation ticking => must be destroyed ?
+			if (TickAllocationData(delta_time, allocation_data, has_function_Tick<per_allocation_data>::type()))
+			{
+
+			}
 			
+			// => the extra call !!!
 			auto extra_param = BeginUpdateParticles(delta_time, particles, particle_count, allocation, *allocation_data);
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
@@ -611,6 +637,16 @@ namespace chaos
 				}
 			}
 			return j; // final number of particles
+		}
+
+		bool TickAllocationData(float delta_time, per_allocation_data * allocation_data, boost::mpl::false_ HAS_TICK)
+		{
+			return false; // should not destroyed the allocation
+		}
+
+		bool TickAllocationData(float delta_time, per_allocation_data * allocation_data, boost::mpl::true_ HAS_TICK)
+		{
+			return allocation_data->Tick(delta_time);
 		}
 
 		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass & allocation_data)
@@ -649,11 +685,17 @@ namespace chaos
 			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data, extra_param);
 		}
 
+		// =========================================================
+		// ParticlesToVertices methods
+		// =========================================================
+
 		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES) const
 		{
 			size_t result = 0;
 
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
+
+			// No BeginParticlesToVertices(...) call
 
 			// transforms particles to vertices
 			vertex_type * v = vertices;			
@@ -676,6 +718,7 @@ namespace chaos
 
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
 
+			// the extra call !
 			auto extra_param = BeginParticlesToVertices(particles, particles_count, allocation, *allocation_data);
 
 			// transforms particles to vertices

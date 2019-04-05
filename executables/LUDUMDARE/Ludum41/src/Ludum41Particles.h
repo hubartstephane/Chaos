@@ -42,6 +42,13 @@ public:
 	{
 	public:
 
+		bool Tick(float delta_time)
+		{
+		
+
+			return false; // do not destroy
+		}
+
 		void UpdateVertice(VertexBase * vertex, glm::vec2 extra_data) const
 		{
 			//vertex->position += extra_data;

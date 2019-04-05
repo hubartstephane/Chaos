@@ -14,7 +14,7 @@
 // Object particle system
 // ===========================================================================
 
-size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
@@ -25,7 +25,7 @@ size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, 
 	return vertices_per_particle;
 }
 
-bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation) const
+bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle) const
 { 
 	return false; 
 }
@@ -34,7 +34,7 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Life particle system
 // ===========================================================================
 
-int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data & allocation_data) const
+int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, per_allocation_data & allocation_data) const
 {
 	allocation_data.rotation_time += delta_time;
 
@@ -42,7 +42,7 @@ int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObje
 	return count;
 }
 
-glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const
+glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, per_allocation_data const & allocation_data) const
 {
 	glm::vec2 result = glm::vec2(0.0f, 0.0f);
 
@@ -60,13 +60,13 @@ glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const
 	return result;
 }
 
-bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, per_allocation_data & allocation_data, int extra_param) const
+bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, per_allocation_data & allocation_data, int extra_param) const
 {
 	return false;
 }
 
 
-size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, glm::vec2 const & extra_param) const
+size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, per_allocation_data const & allocation_data, glm::vec2 const & extra_param) const
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
@@ -81,7 +81,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 // Brick particle system
 // ===========================================================================
 
-bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle, chaos::ParticleAllocation * allocation) const
+bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle) const
 {
 	if (particle->life <= 0)
 		return true;
@@ -89,7 +89,7 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 	return false;
 }
 
-size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	LudumGameInstance const * ludum_game_instance = game->GetLudumGameInstance();
 
@@ -117,7 +117,7 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 // Object Movable particle system
 // ===========================================================================
 
-size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	LudumGameInstance const * ludum_game_instance = game->GetLudumGameInstance();
 
@@ -154,7 +154,7 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2
 
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, chaos::ParticleAllocation * allocation) const
+bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle) const
 {
 	LudumGameInstance * game_instance = game->GetLudumGameInstance();
 	if (game_instance == nullptr)
@@ -289,7 +289,7 @@ glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 
 // ===========================================================================
 
 
-size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard = chaos::InputMode::IsPCMode(input_mode);

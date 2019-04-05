@@ -84,11 +84,11 @@ public:
 	
 	};
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::ParticleAllocation * allocation, UpdateEnemyData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, UpdateEnemyData const & update_data) const;
 
-	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
-	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, chaos::ParticleAllocation * allocation) const;
+	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count) const;
 
 public:
 
@@ -125,11 +125,11 @@ public:
 	};
 
 
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, chaos::ParticleAllocation * allocation, UpdatePlayerData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data) const;
 
-	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
-	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, chaos::ParticleAllocation * allocation) const;
+	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count) const;
 
 public:
 
@@ -168,11 +168,11 @@ public:
 		std::vector<ParticleEnemy> enemy_particles;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleAtom * particle, chaos::ParticleAllocation * allocation, UpdateAtomData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, UpdateAtomData const & update_data) const;
 
-	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
-	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, chaos::ParticleAllocation * allocation) const;
+	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count) const;
 
 public:
 
@@ -197,9 +197,9 @@ class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexB
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleLife * particle, chaos::ParticleAllocation * allocation) const;
+	bool UpdateParticle(float delta_time, ParticleLife * particle) const;
 
-	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 public:
 

@@ -49,7 +49,7 @@ namespace chaos
 		public:
 
 			template<typename VERTEX_TYPE>
-			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation)
+			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle)
 			{
 				// generate particle corners and texcoords
 				chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);

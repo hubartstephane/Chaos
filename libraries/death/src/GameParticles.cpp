@@ -3,7 +3,7 @@
 namespace death
 {
 
-	size_t ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+	size_t ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle) const
 	{
 		vertices[0].position.x = -1.0;
 		vertices[0].position.y = -1.0;

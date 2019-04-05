@@ -24,9 +24,9 @@ class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, Ver
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation) const;
+	bool UpdateParticle(float delta_time, ParticleObject * particle) const;
 
-	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
 
 
@@ -66,14 +66,14 @@ public:
 	};
 
 	// called once for the whole allocation
-	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data & allocation_data) const;
+	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, per_allocation_data & allocation_data) const;
 	// called once for the whole allocation
-	glm::vec2 BeginParticlesToVertices(ParticleObject const * particles, size_t count, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data) const;
+	glm::vec2 BeginParticlesToVertices(ParticleObject const * particles, size_t count, per_allocation_data const & allocation_data) const;
 
 	// called for every particles
-	bool UpdateParticle(float delta_time, ParticleObject * particle, chaos::ParticleAllocation * allocation, per_allocation_data & allocation_data, int extra_param) const;
+	bool UpdateParticle(float delta_time, ParticleObject * particle, per_allocation_data & allocation_data, int extra_param) const;
 	// called for every particles
-	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation, per_allocation_data const & allocation_data, glm::vec2 const & extra_data) const;
+	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, per_allocation_data const & allocation_data, glm::vec2 const & extra_data) const;
 
 	class LudumGame * game = nullptr;
 };
@@ -100,9 +100,9 @@ class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, Verte
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleBrick * particle, chaos::ParticleAllocation * allocation) const;
+	bool UpdateParticle(float delta_time, ParticleBrick * particle) const;
 
-	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 	class LudumGame * game = nullptr;
 };
@@ -125,9 +125,9 @@ class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMova
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleMovableObject * particle, chaos::ParticleAllocation * allocation) const;
+	bool UpdateParticle(float delta_time, ParticleMovableObject * particle) const;
 
-	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 	void UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity) const;
 
@@ -160,7 +160,7 @@ class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChalleng
 {
 public:
 
-	size_t ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+	size_t ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 };
 
 

@@ -570,7 +570,7 @@ namespace chaos
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!DoUpdateParticle_A(delta_time, &particles[i], allocation, *allocation_data)) // particle not destroyed ?
+				if (!DoUpdateParticle_A(delta_time, &particles[i], *allocation_data)) // particle not destroyed ?
 				{
 					if (i != j)
 						particles[j] = particles[i];
@@ -590,13 +590,13 @@ namespace chaos
 				return std::numeric_limits<size_t>::max();
 			
 			// => the extra call !!!
-			auto extra_param = BeginUpdateParticles(delta_time, particles, particle_count, allocation, *allocation_data);
+			auto extra_param = BeginUpdateParticles(delta_time, particles, particle_count, *allocation_data);
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!DoUpdateParticle_B(delta_time, &particles[i], allocation, *allocation_data, extra_param)) // particle not destroyed ?
+				if (!DoUpdateParticle_B(delta_time, &particles[i], *allocation_data, extra_param)) // particle not destroyed ?
 				{
 					if (i != j)
 						particles[j] = particles[i];
@@ -616,40 +616,40 @@ namespace chaos
 			return allocation_data->Tick(delta_time);
 		}
 
-		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass & allocation_data)
+		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, EmptyClass & allocation_data)
 		{
-			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation);
+			return trait.BeginUpdateParticles(delta_time, particles, particle_count);
 		}
 
 		template<typename U>
-		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, U & allocation_data)
+		auto BeginUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, U & allocation_data)
 		{
-			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation, allocation_data);
+			return trait.BeginUpdateParticles(delta_time, particles, particle_count, allocation_data);
 		}
 
 		// case A : no BeginUpdateParticles => NO EXTRA_DATA_TYPE 
-		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass & allocation_data) const
+		bool DoUpdateParticle_A(float delta_time, particle_type * particle, EmptyClass & allocation_data) const
 		{
-			return trait.UpdateParticle(delta_time, particle, allocation);
+			return trait.UpdateParticle(delta_time, particle);
 		}
 
 		template<typename U>
-		bool DoUpdateParticle_A(float delta_time, particle_type * particle, ParticleAllocation * allocation, U & allocation_data) const
+		bool DoUpdateParticle_A(float delta_time, particle_type * particle, U & allocation_data) const
 		{
-			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data);
+			return trait.UpdateParticle(delta_time, particle, allocation_data);
 		}
 
 		// case B : BeginParticlesToVertices defined => EXTRA_DATA_TYPE 
 		template<typename EXTRA_DATA_TYPE>
-		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, EmptyClass & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		bool DoUpdateParticle_B(float delta_time, particle_type * particle, EmptyClass & allocation_data, EXTRA_DATA_TYPE & extra_param) const
 		{
-			return trait.UpdateParticle(delta_time, particle, allocation, extra_param);
+			return trait.UpdateParticle(delta_time, particle, extra_param);
 		}
 
 		template<typename U, typename EXTRA_DATA_TYPE>
-		bool DoUpdateParticle_B(float delta_time, particle_type * particle, ParticleAllocation * allocation, U & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		bool DoUpdateParticle_B(float delta_time, particle_type * particle, U & allocation_data, EXTRA_DATA_TYPE & extra_param) const
 		{
-			return trait.UpdateParticle(delta_time, particle, allocation, allocation_data, extra_param);
+			return trait.UpdateParticle(delta_time, particle, allocation_data, extra_param);
 		}
 
 		// =========================================================
@@ -668,7 +668,7 @@ namespace chaos
 			vertex_type * v = vertices;			
 			for (size_t i = 0; i < particles_count; ++i)
 			{
-				size_t new_vertices = DoParticleToVertice_A(&particles[i], v, vertices_per_particle, allocation, *allocation_data);
+				size_t new_vertices = DoParticleToVertice_A(&particles[i], v, vertices_per_particle, *allocation_data);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
 				v += new_vertices;
@@ -686,13 +686,13 @@ namespace chaos
 			per_allocation_data const * allocation_data = (per_allocation_data const *)allocation->GetExtraData();
 
 			// the extra call !
-			auto extra_param = BeginParticlesToVertices(particles, particles_count, allocation, *allocation_data);
+			auto extra_param = BeginParticlesToVertices(particles, particles_count, *allocation_data);
 
 			// transforms particles to vertices
 			vertex_type * v = vertices;
 			for (size_t i = 0; i < particles_count; ++i)
 			{
-				size_t new_vertices = DoParticleToVertice_B(&particles[i], v, vertices_per_particle, allocation, *allocation_data, extra_param);
+				size_t new_vertices = DoParticleToVertice_B(&particles[i], v, vertices_per_particle, *allocation_data, extra_param);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
 				v += new_vertices;
@@ -703,40 +703,40 @@ namespace chaos
 			return result;
 		}
 
-		auto BeginParticlesToVertices(particle_type const * particles, size_t particle_count, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
+		auto BeginParticlesToVertices(particle_type const * particles, size_t particle_count, EmptyClass const & allocation_data) const
 		{
-			return trait.BeginParticlesToVertices(particles, particle_count, allocation);
+			return trait.BeginParticlesToVertices(particles, particle_count);
 		}
 
 		template<typename U>
-		auto BeginParticlesToVertices(particle_type const * particles, size_t particle_count, ParticleAllocation * allocation, U const & allocation_data) const
+		auto BeginParticlesToVertices(particle_type const * particles, size_t particle_count, U const & allocation_data) const
 		{
-			return trait.BeginParticlesToVertices(particles, particle_count, allocation, allocation_data);
+			return trait.BeginParticlesToVertices(particles, particle_count, allocation_data);
 		}
 
 		// case A : no BeginParticlesToVertices => NO EXTRA_DATA_TYPE 
-		size_t DoParticleToVertice_A(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, EmptyClass const & allocation_data) const
+		size_t DoParticleToVertice_A(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, EmptyClass const & allocation_data) const
 		{
-			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation);
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle);
 		}
 
 		template<typename U>
-		size_t DoParticleToVertice_A(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, U const & allocation_data) const
+		size_t DoParticleToVertice_A(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, U const & allocation_data) const
 		{
-			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, allocation_data);
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation_data);
 		}
 
 		// case B : BeginParticlesToVertices defined => EXTRA_DATA_TYPE 
 		template<typename EXTRA_DATA_TYPE>
-		size_t DoParticleToVertice_B(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, EmptyClass const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		size_t DoParticleToVertice_B(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, EmptyClass const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
 		{
-			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, extra_param);
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, extra_param);
 		}
 
 		template<typename U, typename EXTRA_DATA_TYPE>
-		size_t DoParticleToVertice_B(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, ParticleAllocation * allocation, U const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
+		size_t DoParticleToVertice_B(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particle, U const & allocation_data, EXTRA_DATA_TYPE & extra_param) const
 		{
-			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation, allocation_data, extra_param);
+			return trait.ParticleToVertices(particle, vertices, vertices_per_particle, allocation_data, extra_param);
 		}
 
 		// Opportunity for ExtraAllocationData to update all generated vertices (add alpha, offset ...). 
@@ -937,12 +937,12 @@ namespace chaos
 		using per_allocation_data = PER_ALLOCATION_DATA;
 
 		/** by default, update do nothing */
-		bool UpdateParticle(float delta_time, particle_type * particle, ParticleAllocation * allocation) const
+		bool UpdateParticle(float delta_time, particle_type * particle) const
 		{ 
 			return false; 
 		}
 		/** by default, particle to vertex do nothing */
-		size_t ParticleToVertices(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particles, ParticleAllocation * allocation) const
+		size_t ParticleToVertices(particle_type const * particle, vertex_type * vertices, size_t vertices_per_particles) const
 		{ 
 			return 0; 
 		}

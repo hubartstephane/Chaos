@@ -63,14 +63,14 @@ class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, V
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleExample * particle, chaos::ParticleAllocation * allocation) const
+	bool UpdateParticle(float delta_time, ParticleExample * particle) const
 	{
 		particle->box.position += particle->velocity * delta_time;
 		particle->remaining_time -= delta_time;
 		return (particle->remaining_time <= 0.0f);
 	}
 
-	size_t ParticleToVertices(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const
+	size_t ParticleToVertices(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle) const
 	{
 		chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 

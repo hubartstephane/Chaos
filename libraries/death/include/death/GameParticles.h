@@ -24,7 +24,7 @@ namespace death
 	{
 	public:
 
-		size_t ParticleToVertices(ParticleBackground const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle, chaos::ParticleAllocation * allocation) const;
+		size_t ParticleToVertices(ParticleBackground const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle) const;
 	};
 
 

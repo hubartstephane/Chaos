@@ -44,6 +44,12 @@ public:
 
 		bool Tick(float delta_time)
 		{
+			static bool b = false;
+			if (b)
+			{
+				b = false;
+				return true;
+			}
 		
 
 			return false; // do not destroy

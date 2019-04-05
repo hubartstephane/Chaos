@@ -31,7 +31,7 @@ namespace chaos
 
 
 	// all classes in this file
-#define CHAOS_PARTICLE_CLASSES (ParticleAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc) (ParticleAllocationEmptyCallback) (ParticleAllocationAutoRemoveEmptyCallback)
+#define CHAOS_PARTICLE_CLASSES (ParticleAllocation) (ParticleLayer) (ParticleManager) (ParticleLayerDesc)
 
 	// forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;
@@ -139,35 +139,6 @@ namespace chaos
 	};
 
 	// ==============================================================
-	// ParticleAllocationEmptyCallback : a callback called whenever the allocation becomes empty for the very first time
-	// ==============================================================
-
-	class ParticleAllocationEmptyCallback : public ReferencedObject
-	{
-		CHAOS_PARTICLE_ALL_FRIENDS
-
-	public:
-
-		/** destructor */
-		virtual ~ParticleAllocationEmptyCallback() = default;
-
-		/** called whenever the allocation becomes empty */
-		virtual bool OnAllocationEmpty(ParticleAllocation * allocation);
-	};
-
-	// ==============================================================
-	// ParticleAllocationAutoRemoveEmptyCallback : remove the allocation from its layer
-	// ==============================================================
-
-	class ParticleAllocationAutoRemoveEmptyCallback : public ParticleAllocationEmptyCallback
-	{
-	public:
-
-		/** override */
-		virtual bool OnAllocationEmpty(ParticleAllocation * allocation) override;
-	};
-
-	// ==============================================================
 	// ParticleAllocation
 	// ==============================================================
 
@@ -216,10 +187,9 @@ namespace chaos
 		bool AddParticles(size_t extra_count);
 
 		/** set the empty callback */
-		void SetEmptyCallback(ParticleAllocationEmptyCallback * in_empty_callback) { empty_callback = in_empty_callback; }
-
-		/** set empty callback to auto remove */
-		void SetEmptyCallbackAutoRemove();
+		void SetDestroyWhenEmpty(bool in_destroy_when_empty) { destroy_when_empty = in_destroy_when_empty; }
+		/** returns whether the allocation is to be destroyed when empty */
+		bool GetDestroyWhenEmpty() const { return destroy_when_empty; }
 
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
@@ -294,7 +264,7 @@ namespace chaos
 		/** whether the allocation is visible */
 		bool visible = true;
 		/** a callback called whenever the allocation becomes empty */
-		shared_ptr<ParticleAllocationEmptyCallback> empty_callback;
+		bool destroy_when_empty = false;
 	};
 
 		// ==============================================================
@@ -592,9 +562,8 @@ namespace chaos
 
 			// per allocation ticking => must be destroyed ?
 			if (TickAllocationData(delta_time, allocation_data, has_function_Tick<per_allocation_data>::type()))
-			{
+				return std::numeric_limits<size_t>::max();
 
-			}
 			// No BeginUpdateParticles(...) call
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
@@ -618,9 +587,7 @@ namespace chaos
 
 			// per allocation ticking => must be destroyed ?
 			if (TickAllocationData(delta_time, allocation_data, has_function_Tick<per_allocation_data>::type()))
-			{
-
-			}
+				return std::numeric_limits<size_t>::max();
 			
 			// => the extra call !!!
 			auto extra_param = BeginUpdateParticles(delta_time, particles, particle_count, allocation, *allocation_data);

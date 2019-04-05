@@ -7,9 +7,31 @@
 	== TODO
 	====================================================================
 
+		PerAllocationData : renommer ?
+
+		=> Tick( ... )
+
+		=> le tick de PerAllocationData peut detruire delui meme l allocation : see SetEmptyCallbackAutoRemove()
+
+
+
+
 	- REVOIR charger JSON pour faire une passe de commentaire
 
 	- REVOIR LOADERS
+
+		[recuse] : vraie recursion + filtre de fichiers
+
+		[recurse] :"string"
+		[recurse] : ["p1","p2"...]
+		[recurse] : {"path:"..... + autre}
+
+
+	- SHADER : faire un shader placeholder en cas d erreur ?
+
+
+
+
 
 	- HUD component
 

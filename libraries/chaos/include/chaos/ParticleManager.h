@@ -28,19 +28,25 @@ namespace chaos
 		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
 
 		/** Search a layer by its name */
-		ParticleLayer * FindLayer(char const * name);
+		ParticleLayerBase * FindLayer(char const * name);
 		/** Search a layer by its name */
-		ParticleLayer const * FindLayer(char const * name) const;
+		ParticleLayerBase const * FindLayer(char const * name) const;
 		/** Search a layer by its id */
-		ParticleLayer * FindLayer(TagType id);
+		ParticleLayerBase * FindLayer(TagType id);
 		/** Search a layer by its id */
-		ParticleLayer const * FindLayer(TagType id) const;
+		ParticleLayerBase const * FindLayer(TagType id) const;
 
 		/** templated method to add a layer and set some values */
-		template<typename TRAIT_TYPE, typename ...PARAMS>
-		ParticleLayer * AddLayer(int render_order, TagType layer_id, char const * material_name, PARAMS... params)
+		template<typename ALLOCATION_TYPE, typename ...PARAMS>
+		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, char const * material_name, PARAMS... params)
 		{
-			ParticleLayer * result = ParticleLayer::CreateParticleLayer<TRAIT_TYPE>(material_name, params...);
+
+
+
+
+
+
+			ParticleLayerBase * result = ParticleLayer::CreateParticleLayer<ALLOCATION_TYPE>(material_name, params...);
 			if (result == nullptr)
 				return nullptr;
 			DoAddLayer(result, render_order, layer_id);
@@ -48,25 +54,18 @@ namespace chaos
 		}
 
 		/** templated method to add a layer and set some values */
-		template<typename TRAIT_TYPE, typename ...PARAMS>
+		template<typename ALLOCATION_TYPE, typename ...PARAMS>
 		ParticleLayer * AddLayer(int render_order, TagType layer_id, GPURenderMaterial * render_material, PARAMS... params)
 		{
-			ParticleLayer * result = ParticleLayer::CreateParticleLayer<TRAIT_TYPE>(render_material, params...);
+			ParticleLayerBase * result = ParticleLayer::CreateParticleLayer<ALLOCATION_TYPE>(render_material, params...);
 			if (result == nullptr)
 				return nullptr;
 			DoAddLayer(result, render_order, layer_id);
 			return result;
 		}
 
-		/** create a layer and add it to the manager */
-		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, TagType layer_id);
-		/** create a layer and set some values */
-		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, TagType layer_id, char const * material_name);
-		/** create a layer and set some values */
-		ParticleLayer * AddLayer(ParticleLayerDesc * layer_desc, int render_order, TagType layer_id, GPURenderMaterial * render_material);
-
 		/** remove a layer from the manager */
-		void RemoveLayer(ParticleLayer * layer);
+		void RemoveLayer(ParticleLayerBase * layer);
 
 	protected:
 		
@@ -76,7 +75,7 @@ namespace chaos
 		virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
 		/** insert layer with some initialization */
-		void DoAddLayer(ParticleLayer * layer, int render_order, TagType layer_id);
+		void DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id);
 
 	protected:
 

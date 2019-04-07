@@ -66,31 +66,6 @@ namespace chaos
 		return visible;
 	}
 
-	size_t ParticleAllocationBase::GetParticleSize() const
-	{
-		return 0;
-	}
-
-	size_t ParticleAllocationBase::GetParticleCount() const
-	{
-		return 0;
-	}
-
-	void * ParticleAllocationBase::GetParticleBuffer()
-	{
-		return nullptr;
-	}
-
-	void const * ParticleAllocationBase::GetParticleBuffer() const
-	{
-		return nullptr;
-	}
-
-	bool ParticleAllocationBase::Resize(size_t new_count)
-	{
-		return true;
-	}
-
 	bool ParticleAllocationBase::AddParticles(size_t extra_count)
 	{
 		return Resize(extra_count + GetParticleCount());
@@ -117,15 +92,6 @@ namespace chaos
 				RemoveFromLayer();		
 		}				
 	}
-
-
-
-
-
-
-
-
-
 
 	// ==============================================================
 	// ParticleLayerBase
@@ -164,63 +130,32 @@ namespace chaos
 		}
 	}
 
-	ClassTools::ClassRegistration const * ParticleLayerBase::GetParticleClass() const
-	{
-		return layer_desc->GetParticleClass();
-	}
-
 	bool ParticleLayerBase::DoTick(double delta_time)
 	{
 		// update the particles themselves
 		if (AreParticlesDynamic())
-			require_GPU_update |= UpdateParticles((float)delta_time);
+			require_GPU_update |= TickAllocations(delta_time);
 		return true;
 	}
 
-	bool ParticleLayerBase::UpdateParticles(float delta_time)
+	bool ParticleLayerBase::TickAllocations(double delta_time)
 	{
 		bool result = false;
 
 		// store allocations that want to be notified of their emptyness here,
 		// to be handled after the main loop
-		std::vector<ParticleAllocation *> to_destroy_allocations;
+		std::vector<ParticleAllocationBase *> to_destroy_allocations;
 
 		// main loop
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// get data
-			ParticleAllocation * allocation = particles_allocations[i].get();
+			bool destroy_allocation = false;
+			
+			ParticleAllocationBase * allocation = particles_allocations[i].get();
 			if (allocation == nullptr)
 				continue;
-			ParticleAllocationDataBase * allocation_data = allocation->GetAllocationData();
-			if (allocation_data == nullptr)
-				continue;
-			// early exit
-			if (allocation->IsPaused())
-				continue;
-			// get the number of particles
-			size_t particle_count = allocation->GetParticleCount();
-			if (particle_count == 0)
-				continue;
-			// get the particle (void) buffer
-			void * particles = allocation->GetParticleBuffer();
-			if (particles == nullptr)
-				continue;
-			// update all particles
-			size_t remaining_particles = layer_desc->UpdateParticles(delta_time, particles, particle_count, allocation, allocation->GetExtraData());
-
-			// compute whether the allocation is to be removed
-			bool destroy_allocation = false;
-			if (remaining_particles == std::numeric_limits<size_t>::max()) // per_allocation_data::Tick(...) want a destruction
-				destroy_allocation = true;
-			else
-			{
-				if (remaining_particles == 0 && allocation->GetDestroyWhenEmpty())
-					destroy_allocation = true;
-				else if (remaining_particles != particle_count) // clean buffer of all particles that have been destroyed
-					allocation->Resize(remaining_particles);
-			}
+			allocation->Tick(delta_time);
 
 			// register as an allocation to be destroyed
 			if (destroy_allocation)
@@ -240,10 +175,10 @@ namespace chaos
 		return result;
 	}
 
-	ParticleAllocation * ParticleLayerBase::SpawnParticles(size_t count)
+	ParticleAllocationBase * ParticleLayerBase::SpawnParticles(size_t count)
 	{
 		// create an allocation
-		ParticleAllocation * result = layer_desc->NewAllocation(this);
+		ParticleAllocationBase * result = DoSpawnParticles(count);
 		if (result == nullptr)
 			return nullptr;
 		// increase the particle count for that allocation
@@ -373,19 +308,11 @@ namespace chaos
 		for (size_t i = 0; i < count; ++i)
 		{
 			// get the allocation, ignore if invisible
-			ParticleAllocation * allocation = particles_allocations[i].get();
+			ParticleAllocationBase * allocation = particles_allocations[i].get();
 			if (!allocation->IsVisible())
 				continue;
-			// ignore empty allocations
-			size_t particle_count = allocation->GetParticleCount();
-			if (particle_count == 0)
-				continue;
-			// get the buffer
-			void * particles = allocation->GetParticleBuffer();
-			if (particles == nullptr)
-				continue;
 			// transform particles into vertices
-			size_t new_vertices = layer_desc->ParticlesToVertices(particles, particle_count, buffer, allocation, allocation->GetExtraData());
+			size_t new_vertices = allocation->ParticlesToVertices(buffer);
 			// shift buffer
 			buffer += new_vertices * vertex_size;
 			result += new_vertices;
@@ -432,6 +359,13 @@ namespace chaos
 		}
 	}
 
+
+
+
+
+
+
+
 	ParticleLayerBase * ParticleLayerBase::CreateParticleLayer(ParticleLayerDesc * layer_desc, GPURenderMaterial * render_material)
 	{
 		ParticleLayer * result = new ParticleLayer(layer_desc);
@@ -441,7 +375,7 @@ namespace chaos
 		return result;
 	}
 
-	ParticleLayer * ParticleLayerBase::CreateParticleLayer(ParticleLayerDesc * layer_desc, char const * material_name)
+	ParticleLayerBase * ParticleLayerBase::CreateParticleLayer(ParticleLayerDesc * layer_desc, char const * material_name)
 	{
 		// find the optional GPURenderMaterial
 		GPURenderMaterial * render_material = nullptr;
@@ -470,82 +404,6 @@ namespace chaos
 	{
 		return particles_allocations[index].get();
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-	// ==============================================================
-	// PARTICLE LAYER DESC
-	// ==============================================================
-
-	ParticleAllocation * ParticleLayerDesc::NewAllocation(ParticleLayer * in_layer)
-	{
-		return new ParticleAllocation(in_layer);
-	}
-
-	size_t ParticleLayerDesc::GetParticleSize() const
-	{
-		return 0;
-	}
-
-	size_t ParticleLayerDesc::GetVerticesPerParticles() const
-	{
-		return 2 * 3; // 2 triangles per particles to have a square
-	}
-
-	size_t ParticleLayerDesc::GetVertexSize() const
-	{
-		return 0;
-	}
-
-	bool ParticleLayerDesc::AreVerticesDynamic() const
-	{
-		return false;
-	}
-
-	bool ParticleLayerDesc::AreParticlesDynamic() const
-	{
-		return false;
-	}
-
-	GPUVertexDeclaration ParticleLayerDesc::GetVertexDeclaration() const
-	{
-		return GPUVertexDeclaration();
-	}
-
-	size_t ParticleLayerDesc::UpdateParticles(float delta_time, void * particles, size_t particle_count, ParticleAllocation * allocation, void const * extra_allocation_data)
-	{
-		return particle_count; // no particles destroyed
-	}
-
-	size_t ParticleLayerDesc::ParticlesToVertices(void const * particles, size_t particles_count, char * vertices, ParticleAllocation * allocation, void const * extra_allocation_data) const
-	{
-		assert(particles != nullptr);
-		assert(vertices != nullptr);
-		return 0; // no vertex inserted
-	}
-
-
-
-#endif
 
 }; // namespace chaos
 

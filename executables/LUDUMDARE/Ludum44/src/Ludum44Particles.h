@@ -73,7 +73,7 @@ public:
 
 
 
-class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
 {
 public:
 
@@ -112,7 +112,7 @@ public:
 	bool  dash = false;
 };
 
-class ParticlePlayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
 {
 public:
 
@@ -151,7 +151,7 @@ public:
 
 };
 
-class ParticleAtomTrait : public chaos::ParticleLayerTrait<ParticleAtom, VertexBase>
+class ParticleAtomTrait : public chaos::ParticleAllocationTrait<ParticleAtom, VertexBase>
 {
 public:
 
@@ -193,7 +193,7 @@ class ParticleLife : public chaos::ParticleDefault::Particle
 
 };
 
-class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
+class ParticleLifeTrait : public chaos::ParticleAllocationTrait<ParticleLife, VertexBase>
 {
 public:
 

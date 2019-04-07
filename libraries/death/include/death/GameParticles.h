@@ -20,7 +20,7 @@ namespace death
 		glm::vec4 color;
 	};
 
-	class ParticleBackgroundTrait : public chaos::ParticleLayerTrait<ParticleBackground, chaos::ParticleDefault::Vertex>
+	class ParticleBackgroundTrait : public chaos::ParticleAllocationTrait<ParticleBackground, chaos::ParticleDefault::Vertex>
 	{
 	public:
 

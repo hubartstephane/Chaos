@@ -59,7 +59,7 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	return result;
 }
 
-class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
+class ParticleExampleTrait : public chaos::ParticleAllocationTrait<ParticleExample, VertexExample>
 {
 public:
 

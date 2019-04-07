@@ -20,7 +20,7 @@ using ParticleObject = chaos::ParticleDefault::Particle;
 // ===========================================================================
 
 
-class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
+class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject, VertexBase>
 {
 public:
 
@@ -96,7 +96,7 @@ public:
 	int   special_type   = 0;
 };
 
-class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, VertexBase>
+class ParticleBrickTrait : public chaos::ParticleAllocationTrait<ParticleBrick, VertexBase>
 {
 public:
 
@@ -121,7 +121,7 @@ public:
 	glm::vec2 velocity;
 };
 
-class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMovableObject, VertexBase>
+class ParticleMovableObjectTrait : public chaos::ParticleAllocationTrait<ParticleMovableObject, VertexBase>
 {
 public:
 
@@ -156,7 +156,7 @@ public:
 	size_t index = 0;
 };
 
-class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexBase>
+class ParticleChallengeTrait : public chaos::ParticleAllocationTrait<ParticleChallenge, VertexBase>
 {
 public:
 

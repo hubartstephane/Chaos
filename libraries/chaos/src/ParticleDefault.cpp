@@ -63,7 +63,7 @@ namespace chaos
 		return GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 
-	chaos::ParticleDefault::Particle * ParticleDefault::GetParticle(chaos::ParticleAllocation * allocation, size_t index)
+	chaos::ParticleDefault::Particle * ParticleDefault::GetParticle(chaos::ParticleAllocationBase * allocation, size_t index)
 	{
 		if (allocation == nullptr)
 			return nullptr;

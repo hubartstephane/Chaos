@@ -32,7 +32,7 @@ namespace chaos
 
 
 	// all classes in this file
-#define CHAOS_PARTICLE_CLASSES (ParticleAllocationBase) (ParticleLayerBase) (ParticleManager) (ParticleLayerDesc)
+#define CHAOS_PARTICLE_CLASSES (ParticleAllocationBase) (ParticleLayerBase) (ParticleManager)
 
 	// forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;
@@ -183,11 +183,11 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 	public:
 
 		using allocation_trait = ALLOCATION_TRAIT;
-		using particle_type = allocation_trait::particle_type;
-		using vertex_type = allocation_trait::vertex_type;
+		using particle_type = typename allocation_trait::particle_type;
+		using vertex_type = typename allocation_trait::vertex_type;
 
 		/** constructor */
-		ParticleAllocation(ParticleLayer * in_layer){}
+		ParticleAllocation(ParticleLayerBase * in_layer) : ParticleAllocationBase(in_layer){}
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{
@@ -439,35 +439,6 @@ public:
 	/** creation of an allocation */
 	virtual ParticleAllocationBase * DoSpawnParticles(size_t count) { return nullptr; }
 
-
-
-
-
-	/** templated method to create a layer and set some values */
-	template<typename ALLOCATION_TRAIT, typename ...PARAMS>
-	static ParticleLayerBase * CreateParticleLayer(char const * material_name, PARAMS... params)
-	{
-		ParticleLayerDesc * layer_desc = new TypedParticleLayerDesc<TRAIT_TYPE>(params...);
-		if (layer_desc == nullptr)
-			return nullptr;
-		return CreateParticleLayer(layer_desc, material_name);
-	}
-
-	/** templated method to create a layer and set some values */
-	template<typename TRAIT_TYPE, typename ...PARAMS>
-	static ParticleLayerBase * CreateParticleLayer(GPURenderMaterial * render_material, PARAMS... params)
-	{
-		ParticleLayerDesc * layer_desc = new TypedParticleLayerDesc<TRAIT_TYPE>(params...);
-		if (layer_desc == nullptr)
-			return nullptr;
-		return CreateParticleLayer(layer_desc, render_material);
-	}
-
-	/** create particle layer with a given material */
-	static ParticleAllocationBase * CreateParticleLayer(ParticleLayerDesc * layer_desc, GPURenderMaterial * render_material);
-	/** create particle layer with a given material */
-	static ParticleAllocationBase * CreateParticleLayer(ParticleLayerDesc * layer_desc, char const * material_name);
-
 protected:
 
 	/** ticking the particle system */
@@ -522,7 +493,6 @@ protected:
 	mutable size_t vertices_count = 0;
 };
 
-
 	// ==============================================================
 	// ParticleLayer
 	// ==============================================================
@@ -535,8 +505,8 @@ class ParticleLayer : public ParticleLayerBase
 public:
 
 	using allocation_trait = ALLOCATION_TRAIT;
-	using particle_type = allocation_trait::particle_type;
-	using vertex_type = allocation_trait::vertex_type;
+	using particle_type = typename allocation_trait::particle_type;
+	using vertex_type = typename allocation_trait::vertex_type;
 
 	/** returns the size in memory of a particle */
 	virtual size_t GetParticleSize() const override { return sizeof(particle_type); }
@@ -590,9 +560,9 @@ protected:
 		using vertex_type = VERTEX_TYPE;
 
 		/** whether the particles are dynamic */
-		static bool dynamic_particles = DYNAMIC_PARTICLES;
+		static bool const dynamic_particles = DYNAMIC_PARTICLES;
 		/** whether the vertices are dynamic */
-		static bool dynamic_vertices = DYNAMIC_VERTICES;
+		static bool const dynamic_vertices = DYNAMIC_VERTICES;
 	};
 
 

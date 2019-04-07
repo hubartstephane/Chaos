@@ -295,7 +295,7 @@ namespace chaos
 		if (vertex_declaration.entries.size() > 0)
 			return;
 		// fill the vertex declaration
-		vertex_declaration = layer_desc->GetVertexDeclaration();
+		vertex_declaration = GetVertexDeclaration();
 	}
 
 	size_t ParticleLayerBase::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
@@ -366,31 +366,7 @@ namespace chaos
 
 
 
-	ParticleLayerBase * ParticleLayerBase::CreateParticleLayer(ParticleLayerDesc * layer_desc, GPURenderMaterial * render_material)
-	{
-		ParticleLayer * result = new ParticleLayer(layer_desc);
-		if (result == nullptr)
-			return nullptr;
-		result->SetRenderMaterial(render_material);
-		return result;
-	}
 
-	ParticleLayerBase * ParticleLayerBase::CreateParticleLayer(ParticleLayerDesc * layer_desc, char const * material_name)
-	{
-		// find the optional GPURenderMaterial
-		GPURenderMaterial * render_material = nullptr;
-		if (material_name != nullptr)
-		{
-			GPUResourceManager * resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
-			if (resource_manager == nullptr)
-				return nullptr;
-			render_material = resource_manager->FindRenderMaterial(material_name);
-			if (render_material == nullptr)
-				return nullptr;
-		}
-		// create the layer
-		return CreateParticleLayer(layer_desc, render_material);
-	}
 
 	size_t ParticleLayerBase::GetAllocationCount() const
 	{

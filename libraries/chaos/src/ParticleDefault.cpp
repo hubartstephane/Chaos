@@ -76,7 +76,7 @@ namespace chaos
 		return &particles[index];
 	}
 
-	chaos::ParticleDefault::Particle const * ParticleDefault::GetParticle(chaos::ParticleAllocation const * allocation, size_t index)
+	chaos::ParticleDefault::Particle const * ParticleDefault::GetParticle(chaos::ParticleAllocationBase const * allocation, size_t index)
 	{
 		if (allocation == nullptr)
 			return nullptr;
@@ -89,12 +89,12 @@ namespace chaos
 		return &particles[index];
 	}
 
-	glm::vec2 ParticleDefault::GetParticlePosition(chaos::ParticleAllocation const * allocation, size_t index)
+	glm::vec2 ParticleDefault::GetParticlePosition(chaos::ParticleAllocationBase const * allocation, size_t index)
 	{
 		return GetParticleBox(allocation, index).position;
 	}
 
-	chaos::box2 ParticleDefault::GetParticleBox(chaos::ParticleAllocation const * allocation, size_t index)
+	chaos::box2 ParticleDefault::GetParticleBox(chaos::ParticleAllocationBase const * allocation, size_t index)
 	{
 		chaos::ParticleDefault::Particle const * particle = GetParticle(allocation, index);
 		if (particle == nullptr)
@@ -102,7 +102,7 @@ namespace chaos
 		return particle->bounding_box;
 	}
 
-	bool ParticleDefault::SetParticlePosition(chaos::ParticleAllocation * allocation, size_t index, glm::vec2 const & position)
+	bool ParticleDefault::SetParticlePosition(chaos::ParticleAllocationBase * allocation, size_t index, glm::vec2 const & position)
 	{
 		chaos::ParticleDefault::Particle * particle = GetParticle(allocation, index);
 		if (particle == nullptr)
@@ -111,7 +111,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ParticleDefault::SetParticleBox(chaos::ParticleAllocation * allocation, size_t index, chaos::box2 const & box)
+	bool ParticleDefault::SetParticleBox(chaos::ParticleAllocationBase * allocation, size_t index, chaos::box2 const & box)
 	{
 		chaos::ParticleDefault::Particle * particle = GetParticle(allocation, index);
 		if (particle == nullptr)

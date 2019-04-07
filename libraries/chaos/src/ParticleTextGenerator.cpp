@@ -662,7 +662,7 @@ namespace chaos
 			return true;
 		}
 
-		ParticleAllocation * CreateTextAllocation(ParticleLayer * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
+		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
 		{
 			assert(layer != nullptr);
 			assert(layer->IsParticleClassCompatible<ParticleDefault::Particle>(true));
@@ -670,7 +670,7 @@ namespace chaos
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 
 			// create the allocation
-			ParticleAllocation * result = layer->SpawnParticles(generator_result.GetTokenCount() + extra_background);
+			ParticleAllocationBase * result = layer->SpawnParticles(generator_result.GetTokenCount() + extra_background);
 			if (result == nullptr)
 				return nullptr;
 

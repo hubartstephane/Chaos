@@ -53,7 +53,7 @@ namespace chaos
 		NamedObjectFilterList name_filter;	
 	};
 		
-	using ParticleLayerFilterList = TypedRenderableObjectFilter<class ParticleLayer>;
+	using ParticleLayerFilterList = TypedRenderableObjectFilter<class ParticleLayerBase>;
 
 	// ========================================================
 	// RenderParams : some data for the rendering

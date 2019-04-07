@@ -64,7 +64,7 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 		// create the allocation
 		if (allocations == nullptr)
 		{
-			chaos::ParticleLayer * layer = hud->GetParticleManager()->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
+			chaos::ParticleLayerBase * layer = hud->GetParticleManager()->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
 			if (layer == nullptr)
 				return true;
 			allocations = layer->SpawnParticles(1);

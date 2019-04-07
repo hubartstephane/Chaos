@@ -125,9 +125,9 @@ namespace death
 			return texture_atlas->GetFolderInfo("sprites");
 		}
 
-		chaos::ParticleLayer * Level::CreateParticleLayer(LayerInstance * layer_instance)
+		chaos::ParticleLayerBase * Level::CreateParticleLayer(LayerInstance * layer_instance)
 		{
-			return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
+			return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
 		}
 
 #define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
@@ -586,7 +586,7 @@ namespace death
 				
 			return true;
 		}
-		bool LayerInstance::InitializeParticleLayerNameAndTag(chaos::ParticleLayer * in_particle_layer)
+		bool LayerInstance::InitializeParticleLayerNameAndTag(chaos::ParticleLayerBase * in_particle_layer)
 		{
 			std::string const * renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
 			if (renderable_name != nullptr)
@@ -607,7 +607,7 @@ namespace death
 			return true;
 		}
 
-		chaos::ParticleAllocation * LayerInstance::CreateParticleAllocation()
+		chaos::ParticleAllocationBase * LayerInstance::CreateParticleAllocation()
 		{
 			if (particle_layer == nullptr)
 			{
@@ -725,7 +725,7 @@ namespace death
 			size_t allocation_count = particle_layer->GetAllocationCount();
 			for (size_t i = 0; i < allocation_count; ++i)
 			{
-				chaos::ParticleAllocation * particle_allocation = particle_layer->GetAllocation(i);
+				chaos::ParticleAllocationBase * particle_allocation = particle_layer->GetAllocation(i);
 				if (particle_allocation == nullptr)
 					continue;
 
@@ -1106,7 +1106,7 @@ namespace death
 			particle_populator.FlushParticles();
 
 			// allocation
-			chaos::ParticleAllocation * player_allocation = particle_populator.GetParticleAllocation();
+			chaos::ParticleAllocationBase * player_allocation = particle_populator.GetParticleAllocation();
 
 			// set the player allocation
 			player->SetPlayerAllocation(player_allocation);

@@ -250,10 +250,10 @@ namespace death
 			/** get the atlas to use for the rendering */
 			virtual chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas(LayerInstance * layer_instance) const;
 			/** create a particle layer */
-			virtual chaos::ParticleLayer * CreateParticleLayer(LayerInstance * layer_instance);
+			virtual chaos::ParticleLayerBase * CreateParticleLayer(LayerInstance * layer_instance);
 
 			/** called after all particles of a layers has been created, so we can plug additionnal data */
-			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocation * allocation){ return true; }
+			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation){ return true; }
 
 			/** called whenever a collision between player and tile happens */
 			virtual bool OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
@@ -328,7 +328,7 @@ namespace death
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
 			/** create a particle allocation for the layer */
-			chaos::ParticleAllocation * CreateParticleAllocation();
+			chaos::ParticleAllocationBase * CreateParticleAllocation();
 
 			/** get whether player collisions are enabled on that layer */
 			bool ArePlayerCollisionEnabled() const { return player_collision_enabled; }
@@ -352,9 +352,9 @@ namespace death
 
 
 			/** get the particle layer */
-			chaos::ParticleLayer * GetParticleLayer(){ return particle_layer.get();}
+			chaos::ParticleLayerBase * GetParticleLayer(){ return particle_layer.get();}
 			/** get the particle layer */
-			chaos::ParticleLayer const * GetParticleLayer() const { return particle_layer.get();}
+			chaos::ParticleLayerBase const * GetParticleLayer() const { return particle_layer.get();}
 
 		protected:
 
@@ -385,7 +385,7 @@ namespace death
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();
 			/** try to search a name and a tag in the chaos::layer,  give them to the particle layer */
-			virtual bool InitializeParticleLayerNameAndTag(chaos::ParticleLayer * in_particle_layer);
+			virtual bool InitializeParticleLayerNameAndTag(chaos::ParticleLayerBase * in_particle_layer);
 
 		protected:
 
@@ -406,7 +406,7 @@ namespace death
 			/** the tiled layer corresponding to this object */
 			chaos::shared_ptr<chaos::TiledMap::LayerBase> layer;
 			/** the particle layer */
-			chaos::shared_ptr<chaos::ParticleLayer> particle_layer;
+			chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
 
 			/** the player starts */
 			std::vector<chaos::shared_ptr<PlayerStartObject>> player_starts;

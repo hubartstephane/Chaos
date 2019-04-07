@@ -78,7 +78,7 @@ namespace death
 	protected:
 
 		/** allocations for the title */
-		chaos::shared_ptr<chaos::ParticleAllocation> allocations;
+		chaos::shared_ptr<chaos::ParticleAllocationBase> allocations;
 	};
 
 	// ====================================================================

@@ -450,7 +450,7 @@ namespace chaos
 			RemoveAllPendingEvents();	
 	}
 
-	// XXX : See ParticleAllocation::SubReference(...) implementation and comments
+	// XXX : See ParticleAllocationBase::SubReference(...) implementation and comments
 	void Clock::SubReference(SharedPointerPolicy policy)
 	{
 		if (parent_clock == nullptr)

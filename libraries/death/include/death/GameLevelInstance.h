@@ -76,7 +76,7 @@ namespace death
 		/** update the player and the camera position so that they remains inside the world */
 		void RestrictCameraToPlayerAndWorld(int player_index);
 		/** restrict an object to the world */
-		void RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index);
+		void RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index);
 		/** restrict an player to the world */
 		void RestrictPlayerToWorld(int player_index);
 		/** restrict an player to the world */

@@ -163,11 +163,11 @@ protected:
 			int layer_index    = rand() % LAYER_COUNT;
 			int material_index = rand() % MATERIAL_COUNT;
 
-			chaos::ParticleLayer * particle_layer = particle_manager->FindLayer(material_index + layer_index * MATERIAL_COUNT);
+			chaos::ParticleLayerBase * particle_layer = particle_manager->FindLayer(material_index + layer_index * MATERIAL_COUNT);
 			if (particle_layer != nullptr)
 			{
 				int particle_count = rand() % 50 + 5;
-				chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(particle_count);
+				chaos::ParticleAllocationBase * allocation = particle_layer->SpawnParticles(particle_count);
 				allocation->SetDestroyWhenEmpty(true);
 
 				//particle_allocations.push_back(allocation);
@@ -273,8 +273,8 @@ protected:
 
 	chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 
-	std::vector<chaos::shared_ptr<chaos::ParticleLayer>> particle_layers;
-	std::vector<chaos::shared_ptr<chaos::ParticleAllocation>> particle_allocations;
+	std::vector<chaos::shared_ptr<chaos::ParticleLayerBase>> particle_layers;
+	std::vector<chaos::shared_ptr<chaos::ParticleAllocationBase>> particle_allocations;
 };
 
 // ===============================================

@@ -12,7 +12,7 @@ namespace chaos
 	// ParticleAllocationBase
 	// ==============================================================
 
-	ParticleAllocationBase::ParticleAllocationBase(ParticleLayerBase * in_layer):
+	ParticleAllocationBase::ParticleAllocationBase(ParticleLayerBase * in_layer) :
 		layer(in_layer)
 	{
 		assert(in_layer != nullptr);
@@ -31,7 +31,7 @@ namespace chaos
 	}
 
 	void ParticleAllocationBase::OnRemovedFromLayer()
-	{		
+	{
 		ConditionalRequireGPUUpdate(true, true);
 		layer = nullptr;
 	}
@@ -43,7 +43,7 @@ namespace chaos
 		if (skip_if_invisible && !IsVisible())
 			return;
 		if (skip_if_empty && GetParticleCount() == 0)
-			return;			
+			return;
 		layer->require_GPU_update = true;
 	}
 
@@ -83,14 +83,14 @@ namespace chaos
 	void ParticleAllocationBase::SubReference(SharedPointerPolicy policy)
 	{
 		if (layer == nullptr)
-		{			
+		{
 			ReferencedObject::SubReference(policy); // the ParticleAllocation is handled as usual
 		}
 		else
 		{
 			if (--shared_count == 1) // the last reference is the one from the layer. Destroy it
-				RemoveFromLayer();		
-		}				
+				RemoveFromLayer();
+		}
 	}
 
 	// ==============================================================
@@ -151,7 +151,7 @@ namespace chaos
 		for (size_t i = 0; i < count; ++i)
 		{
 			bool destroy_allocation = false;
-			
+
 			ParticleAllocationBase * allocation = particles_allocations[i].get();
 			if (allocation == nullptr)
 				continue;

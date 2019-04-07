@@ -194,7 +194,7 @@ void LudumPlayer::OnLevelChanged()
 	current_dash_duration = 0.0f;
 }
 
-void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocation * in_allocation)
+void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)

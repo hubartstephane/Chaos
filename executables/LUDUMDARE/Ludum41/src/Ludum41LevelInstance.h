@@ -36,7 +36,7 @@ public:
 
 protected:
 
-	chaos::ParticleAllocation * CreateBricks();
+	chaos::ParticleAllocationBase * CreateBricks();
 	
 	/** get the bricks */
 	ParticleBrick * GetBricks();
@@ -49,5 +49,5 @@ protected:
 public:
 
 	/** some sprites */	
-	chaos::shared_ptr<chaos::ParticleAllocation> bricks_allocations;	
+	chaos::shared_ptr<chaos::ParticleAllocationBase> bricks_allocations;	
 };

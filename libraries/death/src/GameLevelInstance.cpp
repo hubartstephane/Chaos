@@ -183,7 +183,7 @@ namespace death
 		SetCameraBox(camera);
 	}
 
-	void GameLevelInstance::RestrictObjectToWorld(chaos::ParticleAllocation * allocation, size_t index)
+	void GameLevelInstance::RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index)
 	{
 		if (allocation == nullptr)
 			return;

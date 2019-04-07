@@ -51,7 +51,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	return true;
 }
 
-chaos::ParticleAllocation * LudumLevelInstance::CreateBricks()
+chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 {
 	LudumLevel const * ludum_level = GetLudumLevel();
 	if (ludum_level == nullptr)
@@ -73,7 +73,7 @@ chaos::ParticleAllocation * LudumLevelInstance::CreateBricks()
 
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
-	chaos::ParticleAllocation * result = game->GetGameParticleCreator().CreateParticles("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().CreateParticles("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 

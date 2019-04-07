@@ -269,7 +269,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
 		if (layer_instance)
 		{
-			chaos::ParticleLayer const * particle_layer = layer_instance->GetParticleLayer();
+			chaos::ParticleLayerBase const * particle_layer = layer_instance->GetParticleLayer();
 			if (particle_layer != nullptr)
 			{
 				float square_radius = radius * radius;
@@ -277,7 +277,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 				size_t count = particle_layer->GetAllocationCount();
 				for (size_t i = 0 ; i < count ; ++i)
 				{
-					chaos::ParticleAllocation const * allocation = particle_layer->GetAllocation(i);
+					chaos::ParticleAllocationBase const * allocation = particle_layer->GetAllocation(i);
 					if (allocation == nullptr)
 						continue;
 

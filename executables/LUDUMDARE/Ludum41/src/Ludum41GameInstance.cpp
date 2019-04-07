@@ -435,12 +435,12 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 
 
 
-chaos::ParticleAllocation * LudumGameInstance::CreateBalls(size_t count, bool full_init)
+chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, bool full_init)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 
 	// create the object
-	chaos::ParticleAllocation * result = game->GetGameParticleCreator().CreateParticles("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().CreateParticles("ball", 1, death::GameHUDKeys::BALL_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 
@@ -586,12 +586,12 @@ std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> c
 	return result;
 }
 
-chaos::ParticleAllocation * LudumGameInstance::CreateChallengeParticles(LudumChallenge * challenge)
+chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(LudumChallenge * challenge)
 {
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
 
-	chaos::ParticleLayer * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
+	chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
 	if (layer == nullptr)
 		return nullptr;
 
@@ -614,7 +614,7 @@ chaos::ParticleAllocation * LudumGameInstance::CreateChallengeParticles(LudumCha
 	}
 
 	// create the text
-	chaos::ParticleAllocation * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
+	chaos::ParticleAllocationBase * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
 	// and initialize additionnal data
 	if (allocation != nullptr)
 	{
@@ -669,7 +669,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	death::GameInstance::OnPlayerEntered(player);
 
 	// create the player pawn
-	chaos::ParticleAllocation * player_allocation = game->GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocationBase * player_allocation = game->GetGameParticleCreator().CreateParticles("player", 1, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
 	if (player_allocation == nullptr)
 		return;
 	player->SetPlayerAllocation(player_allocation);

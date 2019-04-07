@@ -125,7 +125,7 @@ namespace death
 		result * funcname(chaos::TagType tag, chaos::RenderableLayerSystem * root = nullptr);\
 		result const * funcname(chaos::TagType tag, chaos::RenderableLayerSystem const * root = nullptr) const;
 		DEATH_FIND_RENDERABLE_CHILD(chaos::RenderableLayerSystem, FindRenderableLayer);
-		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayer, FindParticleLayer);
+		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayerBase, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
 
 		/** utility function to get the application */
@@ -454,7 +454,7 @@ namespace death
 		chaos::shared_ptr<GameLevelInstance> current_level_instance;
 
 		/** some allocations */
-		chaos::shared_ptr<chaos::ParticleAllocation> background_allocations;
+		chaos::shared_ptr<chaos::ParticleAllocationBase> background_allocations;
 
 		/** the game instance */
 		chaos::shared_ptr<GameInstance> game_instance;

@@ -38,7 +38,7 @@ namespace death
 			/** get the final bounding box */
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
 			/** get the particle allocation */
-			chaos::ParticleAllocation * GetParticleAllocation() { return allocation; }
+			chaos::ParticleAllocationBase * GetParticleAllocation() { return allocation; }
 
 		protected:
 
@@ -50,7 +50,7 @@ namespace death
 			chaos::BitmapAtlas::FolderInfo const * folder_info = nullptr;
 
 			/** the allocation for all those particles */
-			chaos::ParticleAllocation * allocation = nullptr;
+			chaos::ParticleAllocationBase * allocation = nullptr;
 
 			/** a cache of particles */
 			TileParticle particles[PARTICLE_BUFFER_SIZE];

@@ -22,7 +22,7 @@ death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_ga
 	return new LudumLevelInstance(dynamic_cast<LudumGame *>(in_game));
 }
 
-chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
 
@@ -33,7 +33,7 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	{
 		ParticlePlayerTrait trait;
 		trait.game = ludum_game;
-		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
+		return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
 	}
 
 	bool is_enemy       = (layer_name == "Enemies");
@@ -44,7 +44,7 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 		trait.game = ludum_game;
 		trait.dynamic_particles = is_enemy; // shuxxx : optimization 
 		trait.dynamic_vertices  = is_enemy;
-		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
+		return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
 	}
 
 	bool is_atom = (layer_name == "Atoms");
@@ -52,7 +52,7 @@ chaos::ParticleLayer * LudumLevel::CreateParticleLayer(death::TiledMap::LayerIns
 	{
 		ParticleAtomTrait trait;
 		trait.game = ludum_game;
-		return new chaos::ParticleLayer(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
+		return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
 	}
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
@@ -62,7 +62,7 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 	return r * factor + offset;
 }
 
-bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocation * allocation)
+bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
 	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
 

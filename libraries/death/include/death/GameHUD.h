@@ -83,16 +83,16 @@ namespace death
 		GameHUDComponent const * FindComponent(chaos::TagType key) const;
 
 		/** insert some particles inside the HUD */
-		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous = true);
+		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocationBase * allocation, bool remove_previous = true);
 		/** remove some particles from the HUD */
 		void UnregisterParticles(chaos::TagType key);
 		/** clear all particles from the HUD */
 		void Clear();
 
 		/** get the particle allocation from its ID */
-		chaos::ParticleAllocation * FindParticleAllocation(chaos::TagType key);
+		chaos::ParticleAllocationBase * FindParticleAllocation(chaos::TagType key);
 		/** get the particle allocation from its ID */
-		chaos::ParticleAllocation const * FindParticleAllocation(chaos::TagType key) const;
+		chaos::ParticleAllocationBase const * FindParticleAllocation(chaos::TagType key) const;
 
 		/** get the particle manager */
 		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
@@ -126,7 +126,7 @@ namespace death
 		std::map<chaos::TagType, chaos::shared_ptr<GameHUDComponent>> components;
 
 		/** the allocations */
-		std::multimap<chaos::TagType, chaos::shared_ptr<chaos::ParticleAllocation>> particle_allocations;
+		std::multimap<chaos::TagType, chaos::shared_ptr<chaos::ParticleAllocationBase>> particle_allocations;
 
 		/** the particle tools */
 		GameParticleCreator particle_creator;

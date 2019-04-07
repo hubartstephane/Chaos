@@ -436,7 +436,7 @@ namespace death
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
 
 	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::RenderableLayerSystem, FindRenderableLayer);
-	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayer, FindParticleLayer);
+	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayerBase, FindParticleLayer);
 
 #undef DEATH_FIND_RENDERABLE_CHILD_ALL
 #undef DEATH_FIND_RENDERABLE_CHILD
@@ -529,7 +529,7 @@ namespace death
 					result = child_material;
 				}
 				// assign the material to the background
-				chaos::ParticleLayer * layer = particle_manager->FindLayer(death::GameHUDKeys::BACKGROUND_LAYER_ID);
+				chaos::ParticleLayerBase * layer = particle_manager->FindLayer(death::GameHUDKeys::BACKGROUND_LAYER_ID);
 				if (layer != nullptr)
 					layer->SetRenderMaterial(result);
 			}

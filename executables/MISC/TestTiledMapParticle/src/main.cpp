@@ -241,7 +241,7 @@ protected:
 
 
 
-			chaos::ParticleLayer * particle_layer = nullptr;
+			chaos::ParticleLayerBase * particle_layer = nullptr;
 
 			glm::ivec2 size = tile_layer->size;
 			for (size_t j = 0; j < tile_layer->tile_indices.size(); ++j)
@@ -262,7 +262,7 @@ protected:
 						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(rendering_order, layer_id, material);
 						if (particle_layer == nullptr)
 							return false;
-						chaos::ParticleAllocation * allocation = particle_layer->SpawnParticles(0);
+						chaos::ParticleAllocationBase * allocation = particle_layer->SpawnParticles(0);
 						if (allocation == nullptr)
 							return false;
 						allocation->Show(visible);

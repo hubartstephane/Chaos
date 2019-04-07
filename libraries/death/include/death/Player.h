@@ -50,11 +50,11 @@ namespace death
 		//       it can be set from a level instance's particle_manager
 
 		/** get the player allocation */
-		chaos::ParticleAllocation * GetPlayerAllocation() { return player_allocations.get(); }
+		chaos::ParticleAllocationBase * GetPlayerAllocation() { return player_allocations.get(); }
 		/** get the player allocation */
-		chaos::ParticleAllocation const * GetPlayerAllocation() const { return player_allocations.get(); }
+		chaos::ParticleAllocationBase const * GetPlayerAllocation() const { return player_allocations.get(); }
 		/** set the player allocation */
-		virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation);
+		virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation);
 
 		/** get the index of the player */
 		int GetPlayerIndex() const { return player_index; }
@@ -126,7 +126,7 @@ namespace death
 		chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad;
 
 		/** the allocation for the player */
-		chaos::shared_ptr<chaos::ParticleAllocation> player_allocations;
+		chaos::shared_ptr<chaos::ParticleAllocationBase> player_allocations;
 
 		/** the index of the player */
 		int player_index = 0;

@@ -113,7 +113,7 @@ protected:
 	/** generate a direction updward random for the ball */
 	glm::vec2 GenerateBallRandomDirection() const;
 	/** create the ball */
-	chaos::ParticleAllocation * CreateBalls(size_t count, bool full_init);
+	chaos::ParticleAllocationBase * CreateBalls(size_t count, bool full_init);
 
 
 	/** get the balls */
@@ -127,7 +127,7 @@ protected:
 	/** get a random button in existing list */
 	int GetRandomButtonID() const;	
 	/** create a text for the challenge */
-	chaos::ParticleAllocation * CreateChallengeParticles(LudumChallenge * challenge);
+	chaos::ParticleAllocationBase * CreateChallengeParticles(LudumChallenge * challenge);
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);	
 	
@@ -154,7 +154,7 @@ protected:
 	int pending_split_count = 0;
 	
 	/** some sprites */
-	chaos::shared_ptr<chaos::ParticleAllocation> balls_allocations;
+	chaos::shared_ptr<chaos::ParticleAllocationBase> balls_allocations;
 	/** current the challenge */
 	chaos::shared_ptr<LudumChallenge> sequence_challenge;
 };

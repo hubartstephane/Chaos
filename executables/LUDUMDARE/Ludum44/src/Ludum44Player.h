@@ -31,7 +31,7 @@ public:
 	void OnLevelChanged();
 
 	/** override */
-	virtual void SetPlayerAllocation(chaos::ParticleAllocation * in_allocation) override;
+	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
 protected:
 

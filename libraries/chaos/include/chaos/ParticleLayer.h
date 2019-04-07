@@ -44,20 +44,20 @@ namespace chaos
 
 
 
-BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
-BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
-BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)	
+		BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
+	BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
+	BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
+	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
+		CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
+		CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
+		CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 
 
-	// ==============================================================
-	// ParticleAllocationBase
-	// ==============================================================
+		// ==============================================================
+		// ParticleAllocationBase
+		// ==============================================================
 
-	class ParticleAllocationBase : public Tickable
+		class ParticleAllocationBase : public Tickable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -187,7 +187,7 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 		using vertex_type = typename allocation_trait::vertex_type;
 
 		/** constructor */
-		ParticleAllocation(ParticleLayerBase * in_layer) : ParticleAllocationBase(in_layer){}
+		ParticleAllocation(ParticleLayerBase * in_layer) : ParticleAllocationBase(in_layer) {}
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{
@@ -371,179 +371,179 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 	// ParticleLayerBase
 	// ==============================================================
 
-class ParticleLayerBase : public Renderable
-{
-	CHAOS_PARTICLE_ALL_FRIENDS
-
-public:
-
-	/** constructor */
-	ParticleLayerBase();
-	/** destructor */
-	virtual ~ParticleLayerBase();
-
-	/** returns true whether the class required is compatible with the one store in the buffer */
-	template<typename PARTICLE_TYPE>
-	bool IsParticleClassCompatible(bool accept_bigger_particle) const
+	class ParticleLayerBase : public Renderable
 	{
-		return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
-	}
+		CHAOS_PARTICLE_ALL_FRIENDS
 
-	/** returns the number of particle count */
-	size_t ComputeMaxParticleCount() const;
-	/** returns the size in memory of a particle */
-	virtual size_t GetParticleSize() const { return 0; }
-	/** returns the size in memory of a vertex */
-	virtual size_t GetVertexSize() const { return 0; }
-	/** returns the number of vertices required for each particles */
-	virtual size_t GetVerticesPerParticles() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
-	/** returns true whether vertices need to be updated */
-	virtual bool AreVerticesDynamic() const { return true; }
-	/** returns true whether particles need to be updated */
-	virtual bool AreParticlesDynamic() const { return true; }
-	/** get the particle ID for this system */
-	virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
+	public:
 
-	/** returns true whether the particle type is the one given as template parameter */
-	template<typename T>
-	bool IsParticleType() const
-	{
-		return (GetParticleClass() == ClassTools::GetClassRegistration<T>());
-	}
+		/** constructor */
+		ParticleLayerBase();
+		/** destructor */
+		virtual ~ParticleLayerBase();
 
-	/** change the atlas */
-	void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas) { atlas = in_atlas; }
-	/** change the material */
-	void SetRenderMaterial(GPURenderMaterial * in_render_material) { render_material = in_render_material; }
+		/** returns true whether the class required is compatible with the one store in the buffer */
+		template<typename PARTICLE_TYPE>
+		bool IsParticleClassCompatible(bool accept_bigger_particle) const
+		{
+			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+		}
 
-	/** get the atlas const method */
-	BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return atlas.get(); }
-	/** get the material const method */
-	GPURenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
+		/** returns the number of particle count */
+		size_t ComputeMaxParticleCount() const;
+		/** returns the size in memory of a particle */
+		virtual size_t GetParticleSize() const { return 0; }
+		/** returns the size in memory of a vertex */
+		virtual size_t GetVertexSize() const { return 0; }
+		/** returns the number of vertices required for each particles */
+		virtual size_t GetVerticesPerParticles() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
+																																		 /** returns true whether vertices need to be updated */
+		virtual bool AreVerticesDynamic() const { return true; }
+		/** returns true whether particles need to be updated */
+		virtual bool AreParticlesDynamic() const { return true; }
+		/** get the particle ID for this system */
+		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
 
-	/** spawn a given number of particles */
-	ParticleAllocationBase * SpawnParticles(size_t count);
+		/** returns true whether the particle type is the one given as template parameter */
+		template<typename T>
+		bool IsParticleType() const
+		{
+			return (GetParticleClass() == ClassTools::GetClassRegistration<T>());
+		}
 
-	/** get the number of allocations */
-	size_t GetAllocationCount() const;
-	/** get the allocation by index */
-	ParticleAllocationBase * GetAllocation(size_t index);
-	/** get the allocation by index */
-	ParticleAllocationBase const * GetAllocation(size_t index) const;
+		/** change the atlas */
+		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas) { atlas = in_atlas; }
+		/** change the material */
+		void SetRenderMaterial(GPURenderMaterial * in_render_material) { render_material = in_render_material; }
 
-	/** get the vertex declaration */
-	virtual GPUVertexDeclaration GetVertexDeclaration() const { return GPUVertexDeclaration(); }
+		/** get the atlas const method */
+		BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return atlas.get(); }
+		/** get the material const method */
+		GPURenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
 
-public:
+		/** spawn a given number of particles */
+		ParticleAllocationBase * SpawnParticles(size_t count);
 
-	/** creation of an allocation */
-	virtual ParticleAllocationBase * DoSpawnParticles(size_t count) { return nullptr; }
+		/** get the number of allocations */
+		size_t GetAllocationCount() const;
+		/** get the allocation by index */
+		ParticleAllocationBase * GetAllocation(size_t index);
+		/** get the allocation by index */
+		ParticleAllocationBase const * GetAllocation(size_t index) const;
 
-protected:
+		/** get the vertex declaration */
+		virtual GPUVertexDeclaration GetVertexDeclaration() const { return GPUVertexDeclaration(); }
 
-	/** ticking the particle system */
-	virtual bool DoTick(double delta_time) override;
-	/** draw the layer */
-	virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
+	public:
 
-	/** change the GL rendering state */
-	void UpdateRenderingStates(bool begin) const;
+		/** creation of an allocation */
+		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) { return nullptr; }
 
-	/** unlink all particles allocations */
-	void DetachAllParticleAllocations();
-	/** internal method to remove a range from the layer */
-	void RemoveParticleAllocation(ParticleAllocationBase * allocation);
+	protected:
 
-	/** internal method to update the GPU buffers */
-	size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const;
+		/** ticking the particle system */
+		virtual bool DoTick(double delta_time) override;
+		/** draw the layer */
+		virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
-	/** update the vertex declaration */
-	void UpdateVertexDeclaration() const;
-	/** the effective rendering */
-	int DoDisplayHelper(Renderer * renderer, size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		/** change the GL rendering state */
+		void UpdateRenderingStates(bool begin) const;
 
-	/** internal method to update particles (returns true whether there was real changes) */
-	virtual bool TickAllocations(double delta_time);
+		/** unlink all particles allocations */
+		void DetachAllParticleAllocations();
+		/** internal method to remove a range from the layer */
+		void RemoveParticleAllocation(ParticleAllocationBase * allocation);
 
-	/** override */
-	virtual bool DoUpdateGPUResources(Renderer * renderer) const override;
+		/** internal method to update the GPU buffers */
+		size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const;
 
-protected:
+		/** update the vertex declaration */
+		void UpdateVertexDeclaration() const;
+		/** the effective rendering */
+		int DoDisplayHelper(Renderer * renderer, size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
 
-	/** the texture atlas */
-	shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
+		/** internal method to update particles (returns true whether there was real changes) */
+		virtual bool TickAllocations(double delta_time);
 
-	/** whether there was changes in particles, and a vertex array need to be recomputed */
-	mutable bool require_GPU_update = false;
+		/** override */
+		virtual bool DoUpdateGPUResources(Renderer * renderer) const override;
 
-	/** the material used to render the layer */
-	shared_ptr<GPURenderMaterial> render_material;
+	protected:
 
-	/** particles allocations */
-	std::vector<shared_ptr<ParticleAllocationBase>> particles_allocations;
+		/** the texture atlas */
+		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
 
-	/** the vertex declaration */
-	mutable GPUVertexDeclaration vertex_declaration;
-	/** the vertex buffer for the rendering */
-	mutable shared_ptr<GPUVertexBuffer> vertex_buffer;
-	/** the cache for vertex array */
-	mutable GPUVertexArrayCache vertex_array_cache;
+		/** whether there was changes in particles, and a vertex array need to be recomputed */
+		mutable bool require_GPU_update = false;
 
-	/** number of used vertices in the vertex buffer */
-	mutable size_t vertices_count = 0;
-};
+		/** the material used to render the layer */
+		shared_ptr<GPURenderMaterial> render_material;
+
+		/** particles allocations */
+		std::vector<shared_ptr<ParticleAllocationBase>> particles_allocations;
+
+		/** the vertex declaration */
+		mutable GPUVertexDeclaration vertex_declaration;
+		/** the vertex buffer for the rendering */
+		mutable shared_ptr<GPUVertexBuffer> vertex_buffer;
+		/** the cache for vertex array */
+		mutable GPUVertexArrayCache vertex_array_cache;
+
+		/** number of used vertices in the vertex buffer */
+		mutable size_t vertices_count = 0;
+	};
 
 	// ==============================================================
 	// ParticleLayer
 	// ==============================================================
 
-template<typename ALLOCATION_TRAIT>
-class ParticleLayer : public ParticleLayerBase
-{
+	template<typename ALLOCATION_TRAIT>
+	class ParticleLayer : public ParticleLayerBase
+	{
 
 
-public:
+	public:
 
-	using allocation_trait = ALLOCATION_TRAIT;
-	using particle_type = typename allocation_trait::particle_type;
-	using vertex_type = typename allocation_trait::vertex_type;
+		using allocation_trait = ALLOCATION_TRAIT;
+		using particle_type = typename allocation_trait::particle_type;
+		using vertex_type = typename allocation_trait::vertex_type;
 
-	/** returns the size in memory of a particle */
-	virtual size_t GetParticleSize() const override { return sizeof(particle_type); }
-	/** override */
-	virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
-	/** override */
-	virtual size_t GetVerticesPerParticles() const override { return DoGetVerticesPerParticles(has_vertices_per_particle<allocation_trait>::type()); }
-	/** override */
-	virtual bool AreVerticesDynamic() const override { return DoAreVerticesDynamic(has_dynamic_vertices<allocation_trait>::type()); }
-	/** override */
-	virtual bool AreParticlesDynamic() const override { return DoAreParticlesDynamic(has_dynamic_particles<allocation_trait>::type()); }
-	/** override */
-	virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
-	/** override */
-	virtual GPUVertexDeclaration GetVertexDeclaration() const { return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>()); }
+		/** returns the size in memory of a particle */
+		virtual size_t GetParticleSize() const override { return sizeof(particle_type); }
+		/** override */
+		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
+		/** override */
+		virtual size_t GetVerticesPerParticles() const override { return DoGetVerticesPerParticles(has_vertices_per_particle<allocation_trait>::type()); }
+		/** override */
+		virtual bool AreVerticesDynamic() const override { return DoAreVerticesDynamic(has_dynamic_vertices<allocation_trait>::type()); }
+		/** override */
+		virtual bool AreParticlesDynamic() const override { return DoAreParticlesDynamic(has_dynamic_particles<allocation_trait>::type()); }
+		/** override */
+		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
+		/** override */
+		virtual GPUVertexDeclaration GetVertexDeclaration() const { return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>()); }
 
-protected:
+	protected:
 
-	/** override */
-	virtual ParticleAllocationBase * DoSpawnParticles(size_t count) override { return new ParticleAllocation<allocation_trait>(this); }
+		/** override */
+		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) override { return new ParticleAllocation<allocation_trait>(this); }
 
-protected:
+	protected:
 
-	bool DoAreVerticesDynamic(boost::mpl::false_ HAS_DYNAMIC_VERTICES) const { return true; } // default value
+		bool DoAreVerticesDynamic(boost::mpl::false_ HAS_DYNAMIC_VERTICES) const { return true; } // default value
 
-	bool DoAreVerticesDynamic(boost::mpl::true_ HAS_DYNAMIC_VERTICES) const { return allocation_trait.dynamic_vertices; }
+		bool DoAreVerticesDynamic(boost::mpl::true_ HAS_DYNAMIC_VERTICES) const { return allocation_trait.dynamic_vertices; }
 
-	bool DoAreParticlesDynamic(boost::mpl::false_ HAS_DYNAMIC_PARTICLES) const { return true; } // default value
+		bool DoAreParticlesDynamic(boost::mpl::false_ HAS_DYNAMIC_PARTICLES) const { return true; } // default value
 
-	bool DoAreParticlesDynamic(boost::mpl::true_ HAS_DYNAMIC_PARTICLES) const { return allocation_trait.dynamic_particles; }
+		bool DoAreParticlesDynamic(boost::mpl::true_ HAS_DYNAMIC_PARTICLES) const { return allocation_trait.dynamic_particles; }
 
-	bool DoGetVerticesPerParticles(boost::mpl::false_ HAS_VERTICES_PER_PARTICLE) const { return 2 * 3; } // default value
+		bool DoGetVerticesPerParticles(boost::mpl::false_ HAS_VERTICES_PER_PARTICLE) const { return 2 * 3; } // default value
 
-	bool DoGetVerticesPerParticles(boost::mpl::true_ HAS_VERTICES_PER_PARTICLE) const { return allocation_trait.vertices_per_particle; }
+		bool DoGetVerticesPerParticles(boost::mpl::true_ HAS_VERTICES_PER_PARTICLE) const { return allocation_trait.vertices_per_particle; }
 
 
-};
+	};
 
 	// ==============================================================
 	// ParticleAllocationTrait
@@ -573,21 +573,21 @@ protected:
 
 
 
-// ==============================================================
-// PARTICLE LAYER DESC
-// ==============================================================
+	// ==============================================================
+	// PARTICLE LAYER DESC
+	// ==============================================================
 
-// ParticleLayerDesc : this is class that deserves to implement how 
-//
-//  - Particles are allocated (create an ParticleAllocation subclass instance corresponding to the read structure for each particles)
-//  - Particles are updated
-//  - Particles are transformed into (6?) vertices fo rendering (a quad?)
-//
-// the main functions to override are:
-//
-//  - NewAllocation(...)
-//  - ParticlesToVertices(...)
-//  - UpdateParticles(...)
+	// ParticleLayerDesc : this is class that deserves to implement how 
+	//
+	//  - Particles are allocated (create an ParticleAllocation subclass instance corresponding to the read structure for each particles)
+	//  - Particles are updated
+	//  - Particles are transformed into (6?) vertices fo rendering (a quad?)
+	//
+	// the main functions to override are:
+	//
+	//  - NewAllocation(...)
+	//  - ParticlesToVertices(...)
+	//  - UpdateParticles(...)
 
 
 

@@ -149,7 +149,7 @@ namespace death
 
 
 
-	void GameHUD::RegisterParticles(chaos::TagType key, chaos::ParticleAllocation * allocation, bool remove_previous)
+	void GameHUD::RegisterParticles(chaos::TagType key, chaos::ParticleAllocationBase * allocation, bool remove_previous)
 	{
 		if (remove_previous)
 			UnregisterParticles(key);
@@ -167,14 +167,14 @@ namespace death
 		particle_allocations.clear();
 	}
 
-	chaos::ParticleAllocation * GameHUD::FindParticleAllocation(chaos::TagType key)
+	chaos::ParticleAllocationBase * GameHUD::FindParticleAllocation(chaos::TagType key)
 	{
 		auto it = particle_allocations.find(key);
 		if (it == particle_allocations.end())
 			return nullptr;
 		return it->second.get();
 	}
-	chaos::ParticleAllocation const * GameHUD::FindParticleAllocation(chaos::TagType key) const
+	chaos::ParticleAllocationBase const * GameHUD::FindParticleAllocation(chaos::TagType key) const
 	{
 		auto it = particle_allocations.find(key);
 		if (it == particle_allocations.end())

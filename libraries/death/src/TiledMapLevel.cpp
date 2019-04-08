@@ -127,7 +127,8 @@ namespace death
 
 		chaos::ParticleLayerBase * Level::CreateParticleLayer(LayerInstance * layer_instance)
 		{
-			return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
+			return new chaos::ParticleLayer<death::TiledMap::TileParticleTrait>();
+			// shuxxx return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<death::TiledMap::TileParticleTrait>);
 		}
 
 #define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\

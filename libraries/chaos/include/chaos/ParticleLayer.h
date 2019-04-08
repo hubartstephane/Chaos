@@ -44,13 +44,13 @@ namespace chaos
 
 
 
-		BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
-	BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
-	BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
-	CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
-		CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
-		CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
-		CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
+BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
+BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
+BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 
 
 		// ==============================================================

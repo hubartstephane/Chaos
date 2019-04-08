@@ -33,7 +33,8 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 	{
 		ParticlePlayerTrait trait;
 		trait.game = ludum_game;
-		return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
+		return new chaos::ParticleLayer<ParticlePlayerTrait>();	
+		// shuxxx return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticlePlayerTrait>(trait));	
 	}
 
 	bool is_enemy       = (layer_name == "Enemies");
@@ -44,7 +45,9 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		trait.game = ludum_game;
 		trait.dynamic_particles = is_enemy; // shuxxx : optimization 
 		trait.dynamic_vertices  = is_enemy;
-		return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
+
+		return new chaos::ParticleLayer<ParticleEnemyTrait>();	
+		// shuxxx return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticleEnemyTrait>(trait));	
 	}
 
 	bool is_atom = (layer_name == "Atoms");
@@ -52,7 +55,10 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 	{
 		ParticleAtomTrait trait;
 		trait.game = ludum_game;
-		return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
+
+		return new chaos::ParticleLayer<ParticleAtomTrait>();	
+
+		// shuxxx return new chaos::ParticleLayerBase(new chaos::TypedParticleLayerDesc<ParticleAtomTrait>(trait));	
 	}
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }

@@ -77,6 +77,13 @@ class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, 
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
 	class UpdateEnemyData
 	{
 	public:
@@ -89,10 +96,6 @@ public:
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count) const;
-
-public:
-
-	class LudumGame * game = nullptr;
 };
 
 // ===========================================================================
@@ -116,6 +119,13 @@ class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
 	class UpdatePlayerData
 	{
 	public:
@@ -130,10 +140,6 @@ public:
 	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count) const;
-
-public:
-
-	class LudumGame * game = nullptr;
 };
 
 
@@ -155,6 +161,13 @@ class ParticleAtomTrait : public chaos::ParticleAllocationTrait<ParticleAtom, Ve
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
 	class UpdateAtomData
 	{
 	public:
@@ -173,10 +186,6 @@ public:
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count) const;
-
-public:
-
-	class LudumGame * game = nullptr;
 };
 
 
@@ -197,13 +206,16 @@ class ParticleLifeTrait : public chaos::ParticleAllocationTrait<ParticleLife, Ve
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
 	bool UpdateParticle(float delta_time, ParticleLife * particle) const;
 
 	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
-
-public:
-
-	class LudumGame * game = nullptr;
 };
 
 

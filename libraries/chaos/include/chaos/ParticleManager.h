@@ -37,8 +37,8 @@ namespace chaos
 		ParticleLayerBase const * FindLayer(TagType id) const;
 
 		/** templated method to add a layer and set some values */
-		template<typename ALLOCATION_TRAIT>
-		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, char const * material_name)
+		template<typename ALLOCATION_TRAIT, typename T>
+		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, char const * material_name, T layer_trait)
 		{
 			// find the optional GPURenderMaterial
 			GPURenderMaterial * render_material = nullptr;
@@ -52,14 +52,14 @@ namespace chaos
 					return nullptr;
 			}
 			// create the layer
-			return AddLayer<ALLOCATION_TRAIT>(render_order, layer_id, render_material);
+			return AddLayer<ALLOCATION_TRAIT>(render_order, layer_id, render_material, layer_trait);
 		}
 
 		/** templated method to add a layer and set some values */
-		template<typename ALLOCATION_TRAIT>
-		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, GPURenderMaterial * render_material)
+		template<typename ALLOCATION_TRAIT, typename T>
+		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, GPURenderMaterial * render_material, T layer_trait)
 		{
-			ParticleLayerBase * result = new ParticleLayer<ALLOCATION_TRAIT>();
+			ParticleLayerBase * result = new ParticleLayer<ALLOCATION_TRAIT>(layer_trait);
 			if (result == nullptr)
 				return nullptr;
 			result->SetRenderMaterial(render_material);

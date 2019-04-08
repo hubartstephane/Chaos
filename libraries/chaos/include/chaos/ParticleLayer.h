@@ -51,13 +51,14 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
+CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 
 		// ==============================================================
 		// ParticleAllocationBase
 		// ==============================================================
 
-		class ParticleAllocationBase : public Tickable
+	class ParticleAllocationBase : public Tickable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -238,32 +239,36 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 		/** override */
 		virtual bool DoTick(double delta_time)
 		{
-			bool destroy_allocation = false;
-
-			if (TickTrait(delta_time, has_function_Tick<allocation_trait>::type()))
-			{
-				destroy_allocation = true;
-				return true;
-			}
-			destroy_allocation = UpdateParticles(delta_time, has_function_UpdateParticle<allocation_trait>::type());
+			bool destroy_allocation = TickTrait(delta_time, has_function_Tick<allocation_trait>::type(), has_LayerTrait<allocation_trait>::type());
+			if (!destroy_allocation)
+				destroy_allocation = UpdateParticles(delta_time, has_function_UpdateParticle<allocation_trait>::type());			
 			return true;
 		}
 
-		bool TickTrait(double delta_time, boost::mpl::false_ HAS_TICK)
+		template<typename T>
+		bool TickTrait(double delta_time, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
 		{
 			return false; // do not destroy the allocation
 		}
 
-		bool TickTrait(double delta_time, boost::mpl::true_ HAS_TICK)
+		bool TickTrait(double delta_time, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
 			return trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
 		}
+
+		bool TickTrait(double delta_time, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
+		{
+			return trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
+		}
+
+
 
 		bool UpdateParticles(double delta_time, boost::mpl::false_ HAS_UPDATE_PARTICLE)
 		{
 			return false; // do not destroy the allocation
 		}
 
+		
 		bool UpdateParticles(double delta_time, boost::mpl::true_ HAS_UPDATE_PARTICLE)
 		{
 			bool destroy_allocation = false;
@@ -507,17 +512,22 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 		using allocation_trait = ALLOCATION_TRAIT;
 		using particle_type = typename allocation_trait::particle_type;
 		using vertex_type = typename allocation_trait::vertex_type;
+		using layer_trait = typename get_LayerTrait<allocation_trait>::type;
+
+		/** constructor */
+		ParticleLayer(layer_trait in_trait = layer_trait()):
+			trait(in_trait){}
 
 		/** returns the size in memory of a particle */
 		virtual size_t GetParticleSize() const override { return sizeof(particle_type); }
 		/** override */
 		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
 		/** override */
-		virtual size_t GetVerticesPerParticles() const override { return DoGetVerticesPerParticles(has_vertices_per_particle<allocation_trait>::type()); }
+		virtual size_t GetVerticesPerParticles() const override { return DoGetVerticesPerParticles(has_vertices_per_particle<layer_trait>::type()); }
 		/** override */
-		virtual bool AreVerticesDynamic() const override { return DoAreVerticesDynamic(has_dynamic_vertices<allocation_trait>::type()); }
+		virtual bool AreVerticesDynamic() const override { return DoAreVerticesDynamic(has_dynamic_vertices<layer_trait>::type()); }
 		/** override */
-		virtual bool AreParticlesDynamic() const override { return DoAreParticlesDynamic(has_dynamic_particles<allocation_trait>::type()); }
+		virtual bool AreParticlesDynamic() const override { return DoAreParticlesDynamic(has_dynamic_particles<layer_trait>::type()); }
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
 		/** override */
@@ -542,7 +552,10 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 
 		bool DoGetVerticesPerParticles(boost::mpl::true_ HAS_VERTICES_PER_PARTICLE) const { return allocation_trait.vertices_per_particle; }
 
+	protected:
 
+		/** the trait of the layer */
+		layer_trait trait;
 	};
 
 	// ==============================================================

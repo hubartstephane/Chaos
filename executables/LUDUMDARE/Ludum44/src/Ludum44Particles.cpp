@@ -136,13 +136,13 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool a
 // ParticlePlayerTrait
 // ===========================================================================
 
-size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle) const
+size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 	return result;
 }
 
-ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count) const
+ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, LayerTrait const * layer_trait) const
 {
 	ParticlePlayerTrait::UpdatePlayerData result;
 
@@ -152,13 +152,13 @@ ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(
 }
 
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data) const
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const
 {
 	// search all nearby enemies
 	std::vector<ParticleEnemy> enemy_particles;
-	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, enemy_particles, "Enemies", false);
+	layer_trait->game->RegisterEnemiesInRange(particle->bounding_box.position, layer_trait->game->world_clamp_radius, enemy_particles, "Enemies", false);
 	std::vector<ParticleEnemy> worldlimits_particles;
-	game->RegisterEnemiesInRange(particle->bounding_box.position, game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
+	layer_trait->game->RegisterEnemiesInRange(particle->bounding_box.position, layer_trait->game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
 
 	// apply all effectors
 	bool affected_by_enemies = false;
@@ -208,9 +208,9 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	{
 	
 #if _DEBUG
-		if (!game->GetCheatMode())
+		if (!layer_trait->game->GetCheatMode())
 #endif
-		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_player_life, true))
+		if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_player_life, true))
 			return true;		
 	}
 
@@ -230,7 +230,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 	// update and clamp the velocity
 	bool apply_slowdown = (particle->acceleration == glm::vec2(0.0f, 0.0f));
-	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, max_velocity_factor * game->player_max_velocity);
+	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, layer_trait->game->player_slowing_factor, max_velocity_factor * layer_trait->game->player_max_velocity);
 	particle->acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
 }
@@ -254,7 +254,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ParticleEnemyTrait
 // ===========================================================================
 
-size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle) const
+size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 
@@ -270,7 +270,7 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 	return result;
 }
 
-ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count) const
+ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, LayerTrait const * layer_trait) const
 {
 	ParticleEnemyTrait::UpdateEnemyData result;
 	
@@ -278,7 +278,7 @@ ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(flo
 	return result;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyTrait::UpdateEnemyData const & update_data) const
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyTrait::UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const
 {
 	particle->rotation_alpha += 2.0f * delta_time;
 	if (particle->rotation_alpha > 2.0f * (float)M_PI)
@@ -304,13 +304,13 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 // ParticleAtomTrait
 // ===========================================================================
 
-size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase * vertices, size_t vertices_per_particle) const
+size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 }
-bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data) const
+bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
 {
-	LudumGameInstance * ludum_game_instance = game->GetLudumGameInstance();
+	LudumGameInstance * ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
 	glm::vec2 const & player_position   = update_data.player_particle.bounding_box.position;
 	glm::vec2 & particle_position = particle->bounding_box.position;
@@ -361,7 +361,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	particle->velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_particle_life, false))
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_life, false))
 	{
 		if (particle->waken_up)
 			if (ludum_game_instance != nullptr)
@@ -375,21 +375,21 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	return false;
 }
 
-ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count) const
+ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, LayerTrait const * layer_trait) const
 {
 	ParticleAtomTrait::UpdateAtomData result;
 
-	ParticlePlayer const * player_particle = (ParticlePlayer const*)game->GetPlayerParticle(0);
+	ParticlePlayer const * player_particle = (ParticlePlayer const*)layer_trait->game->GetPlayerParticle(0);
 	if (player_particle == nullptr)
 		return result;
 
 	result.player_particle = *player_particle;
 
-	result.slowing_factor     = game->particle_slowing_factor;	
-	result.max_velocity       = game->particle_max_velocity;
-	result.world_clamp_radius = game->world_clamp_radius;
+	result.slowing_factor     = layer_trait->game->particle_slowing_factor;
+	result.max_velocity       = layer_trait->game->particle_max_velocity;
+	result.world_clamp_radius = layer_trait->game->world_clamp_radius;
 
-	game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles, "Enemies", true);
+	layer_trait->game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles, "Enemies", true);
 
 	return result;
 }
@@ -399,13 +399,13 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 // ===========================================================================
 
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle) const
+bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const
 {
 
 	return false;
 }
 
-size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }

@@ -95,11 +95,11 @@ public:
 	
 	};
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, UpdateEnemyData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count) const;
+	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, LayerTrait const * layer_trait) const;
 };
 
 // ===========================================================================
@@ -139,11 +139,11 @@ public:
 	};
 
 
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count) const;
+	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, LayerTrait const * layer_trait) const;
 };
 
 
@@ -185,11 +185,11 @@ public:
 		std::vector<ParticleEnemy> enemy_particles;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleAtom * particle, UpdateAtomData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, UpdateAtomData const & update_data, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count) const;
+	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, LayerTrait const * layer_trait) const;
 };
 
 
@@ -217,9 +217,9 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleLife * particle) const;
+	bool UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 };
 
 

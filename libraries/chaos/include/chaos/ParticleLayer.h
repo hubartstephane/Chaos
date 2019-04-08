@@ -42,23 +42,90 @@ namespace chaos
 #define CHAOS_PARTICLE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_PARTICLE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FRIEND_DECL, _, CHAOS_PARTICLE_CLASSES)
 
-
-
+// detect whether class has a member named XXX (use has_XXX<T>::value => bool => convert into boost::mpl::bool_)
 BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
 BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
 BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
+// detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
+// detect whether class have a nested class
 CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
+// ==============================================================
+// ParticleTraitTools
+// ==============================================================
+
+class ParticleTraitTools
+{
+public:
+
+	/** returns the number of vertices require for one particle */
+	template<typename TRAIT_TYPE>
+	static size_t GetVerticesPerParticle(TRAIT_TYPE const & trait)
+	{ 
+		return DoGetVerticesPerParticle(trait, boost::mpl::bool_<has_vertices_per_particle<TRAIT_TYPE>::value>());
+	}
+	/** returns whether the vertices are dynamic */
+	template<typename TRAIT_TYPE>
+	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
+	{ 
+		return DoAreVerticesDynamic(trait, boost::mpl::bool_<has_dynamic_vertices<TRAIT_TYPE>::value>());
+	}
+	/** returns whether the particles are dynamic */
+	template<typename TRAIT_TYPE>
+	static bool AreParticlesDynamic(TRAIT_TYPE const & trait)
+	{ 
+		return DoAreParticlesDynamic(trait, boost::mpl::bool_<has_dynamic_particles<TRAIT_TYPE>::value>());
+	}
+
+protected:
+
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreVerticesDynamic(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_DYNAMIC_VERTICES) 
+	{ 
+		return true; // default value
+	} 
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreVerticesDynamic(TRAIT_TYPE const & trait, boost::mpl::true_ HAS_DYNAMIC_VERTICES) 
+	{ 
+		return trait.dynamic_vertices; 
+	}
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreParticlesDynamic(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_DYNAMIC_PARTICLES) 
+	{ 
+		return true; // default value																																																											 
+	} 
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreParticlesDynamic(TRAIT_TYPE const & trait, boost::mpl::true_ HAS_DYNAMIC_PARTICLES) 
+	{ 
+		return trait.dynamic_particles; 
+	}
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static size_t DoGetVerticesPerParticle(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_VERTICES_PER_PARTICLE)
+	{ 
+		return 2 * 3; // default value
+	} 
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static size_t DoGetVerticesPerParticle(TRAIT_TYPE const & trait, boost::mpl::true_ HAS_VERTICES_PER_PARTICLE)
+	{ 
+		return trait.vertices_per_particle; 
+	}
+};
 
 		// ==============================================================
 		// ParticleAllocationBase
 		// ==============================================================
 
-	class ParticleAllocationBase : public Tickable
+	class ParticleAllocationBase : public ReferencedObject
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -74,6 +141,11 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 		/** returns true whether the allocation is attached to a layer */
 		bool IsAttachedToLayer() const;
+
+		/** pause/resume the layer */
+		void Pause(bool in_paused = true);
+		/** returns whether the layer is paused */
+		bool IsPaused() const;
 
 		/** show/hide the layer */
 		void Show(bool in_visible = true);
@@ -154,8 +226,11 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 	protected:
 
+		/** tick the allocation (returns true whether the allocation is to be destroyed) */
+		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
 		/** transforms the particles into vertices in the buffer */
-		virtual size_t ParticlesToVertices(void * vertices) const { return 0; }
+		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const { return 0; }
+
 		/** remove the allocation from its layer */
 		void RemoveFromLayer();
 		/** called whenever the allocation is removed from the layer */
@@ -167,6 +242,8 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 		/** the particle layer that contains the range */
 		ParticleLayerBase * layer = nullptr;
+		/** whether the allocation is paused */
+		bool paused = false;
 		/** whether the allocation is visible */
 		bool visible = true;
 		/** a callback called whenever the allocation becomes empty */
@@ -177,15 +254,15 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 	// ParticleAllocation
 	// ==============================================================
 
-
 	template<typename ALLOCATION_TRAIT>
 	class ParticleAllocation : public ParticleAllocationBase
 	{
 	public:
 
-		using allocation_trait = ALLOCATION_TRAIT;
-		using particle_type = typename allocation_trait::particle_type;
-		using vertex_type = typename allocation_trait::vertex_type;
+		using allocation_trait_type = ALLOCATION_TRAIT;
+		using particle_type = typename allocation_trait_type::particle_type;
+		using vertex_type = typename allocation_trait_type::vertex_type;
+		using layer_trait_type = typename get_LayerTrait<allocation_trait_type>::type;
 
 		/** constructor */
 		ParticleAllocation(ParticleLayerBase * in_layer) : ParticleAllocationBase(in_layer) {}
@@ -237,43 +314,54 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time)
-		{
-			bool destroy_allocation = TickTrait(delta_time, has_function_Tick<allocation_trait>::type(), has_LayerTrait<allocation_trait>::type());
+		virtual bool TickAllocation(float delta_time, void const * layer_trait) 
+		{ 
+			layer_trait_type const * lt = (layer_trait_type const *)layer_trait;
+
+			bool destroy_allocation = TickTrait(delta_time, lt, has_function_Tick<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
 			if (!destroy_allocation)
-				destroy_allocation = UpdateParticles(delta_time, has_function_UpdateParticle<allocation_trait>::type());			
+				destroy_allocation = UpdateParticles(delta_time, lt, has_function_UpdateParticle<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
 			return true;
 		}
 
+		/** internal method to tick the AllocationTrait */
 		template<typename T>
-		bool TickTrait(double delta_time, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
+		bool TickTrait(double delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
 		{
 			return false; // do not destroy the allocation
 		}
 
-		bool TickTrait(double delta_time, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
+		bool TickTrait(double delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
 			return trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
 		}
 
-		bool TickTrait(double delta_time, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
+		bool TickTrait(double delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
 		{
-			return trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
+			return trait.Tick(delta_time, layer_trait); // let the trait decide whether the allocation is to be destroyed
+		}
+
+		bool UpdateParticles(...)
+		{
+			return false; // do not destroy the allocation
 		}
 
 
+#if 0
 
-		bool UpdateParticles(double delta_time, boost::mpl::false_ HAS_UPDATE_PARTICLE)
+		/** internal method to update the particles */
+		template<typename T>
+		bool UpdateParticles(double delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_UPDATE_PARTICLE, T HAS_LAYER_TRAIT)
 		{
 			return false; // do not destroy the allocation
 		}
 
 		
-		bool UpdateParticles(double delta_time, boost::mpl::true_ HAS_UPDATE_PARTICLE)
+		bool UpdateParticles(double delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_UPDATE_PARTICLE)
 		{
 			bool destroy_allocation = false;
 
-			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), GetParticleCount(), has_function_BeginUpdateParticle<allocation_trait>::type());
+			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), GetParticleCount(), has_function_BeginUpdateParticle<allocation_trait_type>::type());
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
 				destroy_allocation = true;
 			else if (remaining_particles != particle_count) // clean buffer of all particles that have been destroyed
@@ -323,7 +411,7 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 		/** override */
 		virtual size_t ParticlesToVertices(void * vertices) const override
 		{
-			return DoParticlesToVertices((particle_type*)GetParticleBuffer(), GetParticleCount(), (vertex_type*)vertices, GetVerticesPerParticle(), has_function_BeginParticlesToVertices<allocation_trait>::type());
+			return DoParticlesToVertices((particle_type*)GetParticleBuffer(), GetParticleCount(), (vertex_type*)vertices, GetVerticesPerParticle(), has_function_BeginParticlesToVertices<allocation_trait_type>::type());
 		}
 
 		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES) const
@@ -363,13 +451,14 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 			return result;
 		}
+#endif
 
 	protected:
 
 		/** the particles buffer */
 		std::vector<particle_type> particles;
 		/** the trait of the allocation (some extra data + some functions) */
-		allocation_trait trait;
+		allocation_trait_type allocation_trait;
 	};
 
 	// ==============================================================
@@ -396,16 +485,18 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 		/** returns the number of particle count */
 		size_t ComputeMaxParticleCount() const;
+
 		/** returns the size in memory of a particle */
 		virtual size_t GetParticleSize() const { return 0; }
 		/** returns the size in memory of a vertex */
 		virtual size_t GetVertexSize() const { return 0; }
 		/** returns the number of vertices required for each particles */
-		virtual size_t GetVerticesPerParticles() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
-																																		 /** returns true whether vertices need to be updated */
+		virtual size_t GetVerticesPerParticle() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
+		/** returns true whether vertices need to be updated */
 		virtual bool AreVerticesDynamic() const { return true; }
 		/** returns true whether particles need to be updated */
 		virtual bool AreParticlesDynamic() const { return true; }
+
 		/** get the particle ID for this system */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
 
@@ -443,6 +534,10 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 		/** creation of an allocation */
 		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) { return nullptr; }
+		/** returns the layer trait */
+		virtual void * GetLayerTrait() { return nullptr; }
+		/** returns the layer trait */
+		virtual void const * GetLayerTrait() const { return nullptr; }
 
 	protected:
 
@@ -506,28 +601,27 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 	class ParticleLayer : public ParticleLayerBase
 	{
 
-
 	public:
 
-		using allocation_trait = ALLOCATION_TRAIT;
-		using particle_type = typename allocation_trait::particle_type;
-		using vertex_type = typename allocation_trait::vertex_type;
-		using layer_trait = typename get_LayerTrait<allocation_trait>::type;
+		using allocation_trait_type = ALLOCATION_TRAIT;
+		using particle_type = typename allocation_trait_type::particle_type;
+		using vertex_type = typename allocation_trait_type::vertex_type;
+		using layer_trait_type = typename get_LayerTrait<allocation_trait_type>::type;
 
 		/** constructor */
-		ParticleLayer(layer_trait in_trait = layer_trait()):
-			trait(in_trait){}
+		ParticleLayer(layer_trait_type in_layer_trait = layer_trait_type()):
+			layer_trait(in_layer_trait){}
 
 		/** returns the size in memory of a particle */
 		virtual size_t GetParticleSize() const override { return sizeof(particle_type); }
 		/** override */
 		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
 		/** override */
-		virtual size_t GetVerticesPerParticles() const override { return DoGetVerticesPerParticles(has_vertices_per_particle<layer_trait>::type()); }
+		virtual size_t GetVerticesPerParticle() const override { return ParticleTraitTools::GetVerticesPerParticle(layer_trait); }
 		/** override */
-		virtual bool AreVerticesDynamic() const override { return DoAreVerticesDynamic(has_dynamic_vertices<layer_trait>::type()); }
+		virtual bool AreVerticesDynamic() const override { return ParticleTraitTools::AreVerticesDynamic(layer_trait); }
 		/** override */
-		virtual bool AreParticlesDynamic() const override { return DoAreParticlesDynamic(has_dynamic_particles<layer_trait>::type()); }
+		virtual bool AreParticlesDynamic() const override { return ParticleTraitTools::AreParticlesDynamic(layer_trait); }
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
 		/** override */
@@ -536,26 +630,16 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 	protected:
 
 		/** override */
-		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) override { return new ParticleAllocation<allocation_trait>(this); }
-
-	protected:
-
-		bool DoAreVerticesDynamic(boost::mpl::false_ HAS_DYNAMIC_VERTICES) const { return true; } // default value
-
-		bool DoAreVerticesDynamic(boost::mpl::true_ HAS_DYNAMIC_VERTICES) const { return allocation_trait.dynamic_vertices; }
-
-		bool DoAreParticlesDynamic(boost::mpl::false_ HAS_DYNAMIC_PARTICLES) const { return true; } // default value
-
-		bool DoAreParticlesDynamic(boost::mpl::true_ HAS_DYNAMIC_PARTICLES) const { return allocation_trait.dynamic_particles; }
-
-		bool DoGetVerticesPerParticles(boost::mpl::false_ HAS_VERTICES_PER_PARTICLE) const { return 2 * 3; } // default value
-
-		bool DoGetVerticesPerParticles(boost::mpl::true_ HAS_VERTICES_PER_PARTICLE) const { return allocation_trait.vertices_per_particle; }
+		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) override { return new ParticleAllocation<allocation_trait_type>(this); }
+		/** override */
+		virtual void * GetLayerTrait() { return &layer_trait; }
+		/** override */
+		virtual void const * GetLayerTrait() const { return &layer_trait; }
 
 	protected:
 
 		/** the trait of the layer */
-		layer_trait trait;
+		layer_trait_type layer_trait;
 	};
 
 	// ==============================================================

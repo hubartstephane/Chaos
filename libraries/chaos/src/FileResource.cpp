@@ -22,7 +22,7 @@ namespace chaos
 			{
 				file_timestamp = boost::filesystem::last_write_time(redirected_path);
 			}
-			catch (boost::filesystem::filesystem_error & e)
+			catch (boost::filesystem::filesystem_error &)
 			{
 				file_timestamp = boost::filesystem::last_write_time(in_path);
 			}

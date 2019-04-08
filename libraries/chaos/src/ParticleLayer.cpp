@@ -52,6 +52,16 @@ namespace chaos
 		return (layer != nullptr);
 	}
 
+	void ParticleAllocationBase::Pause(bool in_paused)
+	{
+		paused = in_paused;
+	}
+
+	bool ParticleAllocationBase::IsPaused() const
+	{
+		return paused;
+	}
+
 	void ParticleAllocationBase::Show(bool in_visible)
 	{
 		if (visible != in_visible)
@@ -150,17 +160,13 @@ namespace chaos
 		size_t count = particles_allocations.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			bool destroy_allocation = false;
-
 			ParticleAllocationBase * allocation = particles_allocations[i].get();
 			if (allocation == nullptr)
 				continue;
-			allocation->Tick(delta_time);
-
-			// register as an allocation to be destroyed
+			// tick and register as an allocation to be destroyed
+			bool destroy_allocation = allocation->TickAllocation((float)delta_time, GetLayerTrait());
 			if (destroy_allocation)
 				to_destroy_allocations.push_back(allocation);
-
 			// particles have changed ... so must it be for vertices
 			result = true;
 		}
@@ -232,7 +238,7 @@ namespace chaos
 		}
 
 		// release memory => maybe this is worth delay this action after a while and being sure the data inside is not necessary anymore
-		size_t vertex_buffer_size = GetVertexSize() * GetVerticesPerParticles() * ComputeMaxParticleCount();
+		size_t vertex_buffer_size = GetVertexSize() * GetVerticesPerParticle() * ComputeMaxParticleCount();
 		if (vertex_buffer_size == 0)
 		{
 			vertex_buffer->SetBufferData(nullptr, 0); // empty the buffer : for some reason, we cannot just kill the buffer
@@ -312,7 +318,7 @@ namespace chaos
 			if (!allocation->IsVisible())
 				continue;
 			// transform particles into vertices
-			size_t new_vertices = allocation->ParticlesToVertices(buffer);
+			size_t new_vertices = allocation->ParticlesToVertices(buffer, GetLayerTrait());
 			// shift buffer
 			buffer += new_vertices * vertex_size;
 			result += new_vertices;
@@ -358,15 +364,6 @@ namespace chaos
 			glEnable(GL_CULL_FACE);
 		}
 	}
-
-
-
-
-
-
-
-
-
 
 	size_t ParticleLayerBase::GetAllocationCount() const
 	{

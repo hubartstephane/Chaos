@@ -81,6 +81,10 @@ public:
 	{
 	public:
 
+		bool dynamic_particles = true;
+
+		bool dynamic_vertices = true;
+
 		class LudumGame * game = nullptr;
 	};
 

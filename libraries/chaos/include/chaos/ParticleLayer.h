@@ -320,48 +320,38 @@ protected:
 
 			bool destroy_allocation = TickTrait(delta_time, lt, has_function_Tick<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
 			if (!destroy_allocation)
-				destroy_allocation = UpdateParticles(delta_time, lt, has_function_UpdateParticle<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
+				destroy_allocation = UpdateParticles(delta_time, lt, has_function_UpdateParticle<allocation_trait_type>::type());
 			return true;
 		}
 
 		/** internal method to tick the AllocationTrait */
 		template<typename T>
-		bool TickTrait(double delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
+		bool TickTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
 		{
 			return false; // do not destroy the allocation
 		}
 
-		bool TickTrait(double delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
+		bool TickTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
-			return trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
+			return allocation_trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
 		}
 
-		bool TickTrait(double delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
+		bool TickTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
 		{
-			return trait.Tick(delta_time, layer_trait); // let the trait decide whether the allocation is to be destroyed
+			return allocation_trait.Tick(delta_time, layer_trait); // let the trait decide whether the allocation is to be destroyed
 		}
 
-		bool UpdateParticles(...)
-		{
-			return false; // do not destroy the allocation
-		}
-
-
-#if 0
-
-		/** internal method to update the particles */
-		template<typename T>
-		bool UpdateParticles(double delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_UPDATE_PARTICLE, T HAS_LAYER_TRAIT)
+		/** internal methods to update the particles */
+		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_UPDATE_PARTICLE)
 		{
 			return false; // do not destroy the allocation
 		}
 
-		
-		bool UpdateParticles(double delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_UPDATE_PARTICLE)
+		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_UPDATE_PARTICLE)
 		{
 			bool destroy_allocation = false;
 
-			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), GetParticleCount(), has_function_BeginUpdateParticle<allocation_trait_type>::type());
+			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), GetParticleCount(), layer_trait, has_function_BeginUpdateParticles<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
 				destroy_allocation = true;
 			else if (remaining_particles != particle_count) // clean buffer of all particles that have been destroyed
@@ -369,6 +359,146 @@ protected:
 
 			return destroy_allocation;
 		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
+		{
+			return DoUpdateParticlesLoop(delta_time, particles, particle_count);
+		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
+		{
+			return DoUpdateParticlesLoop(delta_time, particles, particle_count, layer_trait);
+		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
+		{
+			auto extra_param = allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count);
+
+			return DoUpdateParticlesLoop(delta_time, particles, extra_param, particle_count);
+		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
+		{
+			auto extra_param = allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait);
+
+			return DoUpdateParticlesLoop(delta_time, particles, particle_count, extra_param, layer_trait);
+		}
+
+		template<typename ...PARAMS>
+		size_t DoUpdateParticlesLoop(float delta_time, particle_type * particles, size_t particle_count, PARAMS... params)
+		{
+			// tick all particles. overide all particles that have been destroyed by next on the array
+			size_t j = 0;
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				if (!allocation_trait.UpdateParticle(delta_time, &particles[i], params...)) // particle not destroyed ?
+				{
+					if (i != j)
+						particles[j] = particles[i];
+					++j;
+				}
+			}
+			return j; // final number of particles
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+
+
+
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
+		{
+			// No BeginUpdateParticles(...) call
+
+			// tick all particles. overide all particles that have been destroyed by next on the array
+			size_t j = 0;
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				if (!trait.UpdateParticle(delta_time, &particles[i])) // particle not destroyed ?
+				{
+					if (i != j)
+						particles[j] = particles[i];
+					++j;
+				}
+			}
+			return j; // final number of particles
+		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
+		{
+			// No BeginUpdateParticles(...) call
+
+			// tick all particles. overide all particles that have been destroyed by next on the array
+			size_t j = 0;
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				if (!trait.UpdateParticle(delta_time, &particles[i], layer_trait)) // particle not destroyed ?
+				{
+					if (i != j)
+						particles[j] = particles[i];
+					++j;
+				}
+			}
+			return j; // final number of particles
+
+		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
+		{
+			// => the extra call !!!
+			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait);
+
+			// tick all particles. overide all particles that have been destroyed by the next on the array
+			size_t j = 0;
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				if (!trait.UpdateParticle(delta_time, &particles[i], extra_param)) // particle not destroyed ?
+				{
+					if (i != j)
+						particles[j] = particles[i];
+					++j;
+				}
+			}
+			return j; // final number of particles
+		}
+
+		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
+		{
+			// => the extra call !!!
+			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait);
+
+			// tick all particles. overide all particles that have been destroyed by the next on the array
+			size_t j = 0;
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				if (!trait.UpdateParticle(delta_time, &particles[i], extra_param, layer_trait)) // particle not destroyed ?
+				{
+					if (i != j)
+						particles[j] = particles[i];
+					++j;
+				}
+			}
+			return j; // final number of particles
+		}
+
+
+
+
+
+
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES)
 		{

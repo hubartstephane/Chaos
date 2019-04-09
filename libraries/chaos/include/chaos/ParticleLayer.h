@@ -49,6 +49,7 @@ BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 // detect whether class have a nested class
@@ -349,39 +350,50 @@ protected:
 
 		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_UPDATE_PARTICLE)
 		{
-			bool destroy_allocation = false;
+			size_t particle_count = GetParticleCount();
 
-			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), GetParticleCount(), layer_trait, has_function_BeginUpdateParticles<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
+			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), particle_count, layer_trait, has_function_BeginUpdateParticles<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
-				destroy_allocation = true;
+				return true; // destroy allocation
 			else if (remaining_particles != particle_count) // clean buffer of all particles that have been destroyed
-				allocation->Resize(remaining_particles);
-
-			return destroy_allocation;
+				Resize(remaining_particles);
+			return false; // do not destroy allocation
 		}
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
-			return DoUpdateParticlesLoop(delta_time, particles, particle_count);
+			return DoUpdateParticlesLoop(
+				delta_time, 
+				particles, 
+				particle_count);
 		}
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
 		{
-			return DoUpdateParticlesLoop(delta_time, particles, particle_count, layer_trait);
+			return DoUpdateParticlesLoop(
+				delta_time, 
+				particles, 
+				particle_count, 
+				layer_trait);
 		}
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
-			auto extra_param = allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count);
-
-			return DoUpdateParticlesLoop(delta_time, particles, extra_param, particle_count);
+			return DoUpdateParticlesLoop(
+				delta_time, 
+				particles, 
+				particle_count, 
+				allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count)); // do not use a temp variable, so it can be a left-value reference
 		}
 
 		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
 		{
-			auto extra_param = allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait);
-
-			return DoUpdateParticlesLoop(delta_time, particles, particle_count, extra_param, layer_trait);
+			return DoUpdateParticlesLoop(
+				delta_time, 
+				particles, 
+				particle_count, 
+				allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait), // do not use a temp variable, so it can be a left-value reference
+				layer_trait);
 		}
 
 		template<typename ...PARAMS>
@@ -402,186 +414,90 @@ protected:
 		}
 
 
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
-		{
-			// No BeginUpdateParticles(...) call
-
-			// tick all particles. overide all particles that have been destroyed by next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i])) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
-		{
-			// No BeginUpdateParticles(...) call
-
-			// tick all particles. overide all particles that have been destroyed by next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i], layer_trait)) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
-
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
-		{
-			// => the extra call !!!
-			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait);
-
-			// tick all particles. overide all particles that have been destroyed by the next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i], extra_param)) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
-		{
-			// => the extra call !!!
-			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait);
-
-			// tick all particles. overide all particles that have been destroyed by the next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i], extra_param, layer_trait)) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
-		}
-
-
-
-
-
-
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES)
-		{
-			// No BeginUpdateParticles(...) call
-
-			// tick all particles. overide all particles that have been destroyed by next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i])) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, ParticleAllocation * allocation, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES)
-		{
-			// => the extra call !!!
-			auto extra_param = trait.BeginUpdateParticles(delta_time, particles, particle_count);
-
-			// tick all particles. overide all particles that have been destroyed by the next on the array
-			size_t j = 0;
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!trait.UpdateParticle(delta_time, &particles[i], extra_param)) // particle not destroyed ?
-				{
-					if (i != j)
-						particles[j] = particles[i];
-					++j;
-				}
-			}
-			return j; // final number of particles
-		}
-
-
 		/** override */
-		virtual size_t ParticlesToVertices(void * vertices) const override
-		{
-			return DoParticlesToVertices((particle_type*)GetParticleBuffer(), GetParticleCount(), (vertex_type*)vertices, GetVerticesPerParticle(), has_function_BeginParticlesToVertices<allocation_trait_type>::type());
+		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const override
+		{ 
+			return ParticlesToVertices(
+				(particle_type*)GetParticleBuffer(), 
+				GetParticleCount(), 
+				(vertex_type*)vertices, 
+				6 /* GetVerticesPerParticle()*/, 
+				(layer_trait_type const *)layer_trait, 
+				has_function_ParticleToVertices<allocation_trait_type>::type());
 		}
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES) const
+		size_t ParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_PARTICLE_TO_VERTICES) const 
+		{
+			return 0;		
+		}
+
+		size_t ParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_PARTICLE_TO_VERTICES) const 
+		{ 
+			return DoParticlesToVertices(
+				particles, 
+				particle_count, 
+				vertices, 
+				vertices_per_particle, 
+				layer_trait, 
+				has_function_BeginParticlesToVertices<allocation_trait_type>::type(), 
+				has_LayerTrait<allocation_trait_type>::type());	
+		}
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::false_ HAS_LAYER_TRAIT) const 
+		{
+			return DoParticlesToVerticesLoop(
+				particles, 
+				particle_count, 
+				vertices, 
+				vertices_per_particle);
+		}
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::true_ HAS_LAYER_TRAIT) const 
+		{
+			return DoParticlesToVerticesLoop(
+				particles, 
+				particle_count, 
+				vertices, 
+				vertices_per_particle, 
+				layer_trait);
+		}
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::false_ HAS_LAYER_TRAIT) const 
+		{
+			return DoParticlesToVerticesLoop(
+				particles, 
+				particle_count, 
+				vertices, 
+				vertices_per_particle, 
+				allocation_trait.BeginParticlesToVertices(particles, particle_count)); // do not use a temp variable, so it can be a left-value reference
+		}
+
+		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::true_ HAS_LAYER_TRAIT) const 
+		{
+			return DoParticlesToVerticesLoop(
+				particles, 
+				particle_count, 
+				vertices, 
+				vertices_per_particle, 
+				allocation_trait.BeginParticlesToVertices(particles, particle_count, layer_trait), 
+				layer_trait); // do not use a temp variable, so it can be a left-value reference
+		}
+
+		template<typename ...PARAMS>
+		size_t DoParticlesToVerticesLoop(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, PARAMS... params) const
 		{
 			size_t result = 0;
-
-			// No BeginParticlesToVertices(...) call
-
 			// transforms particles to vertices
 			vertex_type * v = vertices;
-			for (size_t i = 0; i < particles_count; ++i)
+			for (size_t i = 0; i < particle_count; ++i)
 			{
-				size_t new_vertices = trait.ParticleToVertice(&particles[i], v, vertices_per_particle);
+				size_t new_vertices = allocation_trait.ParticleToVertices(&particles[i], v, vertices_per_particle, params...);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
 				v += new_vertices;
 			}
 			return result;
 		}
-
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particles_count, vertex_type * vertices, size_t vertices_per_particle, boost::mpl::true_ HAS_BEGIN_PARTICLES_TO_VERTICES) const
-		{
-			size_t result = 0;
-
-			// the extra call !
-			auto extra_param = trait.BeginParticlesToVertices(particles, particles_count);
-
-			// transforms particles to vertices
-			vertex_type * v = vertices;
-			for (size_t i = 0; i < particles_count; ++i)
-			{
-				size_t new_vertices = trait.ParticleToVertice(&particles[i], v, vertices_per_particle, extra_param);
-				assert(new_vertices <= vertices_per_particle);
-				result += new_vertices;
-				v += new_vertices;
-			}
-
-			return result;
-		}
-#endif
 
 	protected:
 

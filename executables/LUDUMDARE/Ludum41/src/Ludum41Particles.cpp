@@ -34,20 +34,19 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Life particle system
 // ===========================================================================
 
-int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, per_allocation_data & allocation_data) const
+int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, LayerTrait const * layer_trait) const
 {
-	allocation_data.rotation_time += delta_time;
 
 
 	return count;
 }
 
-glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, per_allocation_data const & allocation_data) const
+glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, LayerTrait const * layer_trait) const
 {
 	glm::vec2 result = glm::vec2(0.0f, 0.0f);
 
 
-#if 1
+#if 0
 	float S1 = 0.5f;
 	float S2 = 1.0f;
 	float BASE_R = 50.0f;
@@ -60,13 +59,13 @@ glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const
 	return result;
 }
 
-bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, per_allocation_data & allocation_data, int extra_param) const
+bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, int extra_param, LayerTrait const * layer_trait) const
 {
 	return false;
 }
 
 
-size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, per_allocation_data const & allocation_data, glm::vec2 const & extra_param) const
+size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, glm::vec2 const & extra_param, LayerTrait const * layer_trait) const
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
@@ -81,7 +80,7 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 // Brick particle system
 // ===========================================================================
 
-bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle) const
+bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle, LayerTrait const * layer_trait) const
 {
 	if (particle->life <= 0)
 		return true;
@@ -89,9 +88,9 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 	return false;
 }
 
-size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-	LudumGameInstance const * ludum_game_instance = game->GetLudumGameInstance();
+	LudumGameInstance const * ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
 	// generate particle corners and texcoords
 	chaos::box2 bounding_box = particle->bounding_box;
@@ -117,9 +116,9 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 // Object Movable particle system
 // ===========================================================================
 
-size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-	LudumGameInstance const * ludum_game_instance = game->GetLudumGameInstance();
+	LudumGameInstance const * ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
@@ -154,14 +153,14 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2
 
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle) const
+bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const
 {
-	LudumGameInstance * game_instance = game->GetLudumGameInstance();
+	LudumGameInstance * game_instance = layer_trait->game->GetLudumGameInstance();
 	if (game_instance == nullptr)
 		return false;
 
 	// do not update particles during pause
-	if (!game->IsPlaying())
+	if (!layer_trait->game->IsPlaying())
 		return false;
 
 	// delay before moving the particle
@@ -182,7 +181,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 	// ball bouncing against world
 
-	chaos::box2 view_box = game->GetViewBox();
+	chaos::box2 view_box = layer_trait->game->GetViewBox();
 	chaos::box2 ball_box = particle->bounding_box;
 		
 
@@ -203,7 +202,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// bounce against player
-	death::Player * player = game->GetPlayer(0);
+	death::Player * player = layer_trait->game->GetPlayer(0);
 	if (player == nullptr)
 		return false;
 
@@ -220,7 +219,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		}
 	}
 
-	LudumLevelInstance * level_instance = game->GetLudumLevelInstance();
+	LudumLevelInstance * level_instance = layer_trait->game->GetLudumLevelInstance();
 
 	// bounce against bricks
 	ParticleBrick * bricks = level_instance->GetBricks();
@@ -250,7 +249,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// recenter the particle
-	particle->velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity));
+	particle->velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity), layer_trait);
 	particle->bounding_box = ball_box;
 
 	return false; 
@@ -261,9 +260,9 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 	return glm::vec2(cosf(angle), sinf(angle));
 }
 
-glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v) const
+glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const
 {
-	float ball_angle_limit = game->ball_angle_limit;
+	float ball_angle_limit = layer_trait->game->ball_angle_limit;
 	if (ball_angle_limit <= 0.0f)
 		return v;
 

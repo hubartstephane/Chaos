@@ -38,44 +38,23 @@ class ParticleLifeObjectTrait : public ParticleObjectTrait
 {
 public:
 
-	class per_allocation_data
+	class LayerTrait
 	{
 	public:
 
-		bool Tick(float delta_time)
-		{
-			static bool b = false;
-			if (b)
-			{
-				b = false;
-				return true;
-			}
-		
-
-			return false; // do not destroy
-		}
-
-		void UpdateVertice(VertexBase * vertex, glm::vec2 extra_data) const
-		{
-			//vertex->position += extra_data;
-			//vertex->color.a *= 0.1f;
-
-		}
-
-		float rotation_time = 0.0f;
+		class LudumGame * game = nullptr;
 	};
 
+
 	// called once for the whole allocation
-	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, per_allocation_data & allocation_data) const;
+	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, LayerTrait const * layer_trait) const;
 	// called once for the whole allocation
-	glm::vec2 BeginParticlesToVertices(ParticleObject const * particles, size_t count, per_allocation_data const & allocation_data) const;
+	glm::vec2 BeginParticlesToVertices(ParticleObject const * particles, size_t count, LayerTrait const * layer_trait) const;
 
 	// called for every particles
-	bool UpdateParticle(float delta_time, ParticleObject * particle, per_allocation_data & allocation_data, int extra_param) const;
+	bool UpdateParticle(float delta_time, ParticleObject * particle, int extra_param, LayerTrait const * layer_trait) const;
 	// called for every particles
-	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, per_allocation_data const & allocation_data, glm::vec2 const & extra_data) const;
-
-	class LudumGame * game = nullptr;
+	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, glm::vec2 const & extra_data, LayerTrait const * layer_trait) const;
 };
 
 
@@ -100,11 +79,17 @@ class ParticleBrickTrait : public chaos::ParticleAllocationTrait<ParticleBrick, 
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleBrick * particle) const;
+	class LayerTrait
+	{
+	public:
 
-	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+		class LudumGame * game = nullptr;
+	};
 
-	class LudumGame * game = nullptr;
+
+	bool UpdateParticle(float delta_time, ParticleBrick * particle, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 };
 
 
@@ -125,15 +110,20 @@ class ParticleMovableObjectTrait : public chaos::ParticleAllocationTrait<Particl
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleMovableObject * particle) const;
+	class LayerTrait
+	{
+	public:
 
-	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+		class LudumGame * game = nullptr;
+	};
+
+	bool UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
 	void UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity) const;
 
-	glm::vec2 RestrictParticleVelocityToAngle(glm::vec2 const & v) const;
-
-	class LudumGame * game = nullptr;
+	glm::vec2 RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const;
 };
 
 

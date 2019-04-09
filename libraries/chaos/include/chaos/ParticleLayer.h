@@ -48,8 +48,8 @@ BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
 BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
+//CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
+//CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 // detect whether class have a nested class
@@ -319,10 +319,19 @@ protected:
 		{ 
 			layer_trait_type const * lt = (layer_trait_type const *)layer_trait;
 
-			bool destroy_allocation = TickTrait(delta_time, lt, has_function_Tick<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
+			bool destroy_allocation = TickTrait(
+				delta_time, 
+				lt, 
+				has_function_Tick<allocation_trait_type>::type(), 
+				has_LayerTrait<allocation_trait_type>::type());
 			if (!destroy_allocation)
-				destroy_allocation = UpdateParticles(delta_time, lt, has_function_UpdateParticle<allocation_trait_type>::type());
-			return true;
+			{
+				destroy_allocation = UpdateParticles(
+					delta_time,
+					lt,
+					boost::mpl::true_() /*has_function_UpdateParticle<allocation_trait_type>::type()*/); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
+			}
+			return destroy_allocation;
 		}
 
 		/** internal method to tick the AllocationTrait */
@@ -352,7 +361,13 @@ protected:
 		{
 			size_t particle_count = GetParticleCount();
 
-			size_t remaining_particles = DoUpdateParticles(delta_time, (particle_type *)GetParticleBuffer(), particle_count, layer_trait, has_function_BeginUpdateParticles<allocation_trait_type>::type(), has_LayerTrait<allocation_trait_type>::type());
+			size_t remaining_particles = DoUpdateParticles(
+				delta_time, 
+				(particle_type *)GetParticleBuffer(), 
+				particle_count, 
+				layer_trait, 
+				has_function_BeginUpdateParticles<allocation_trait_type>::type(), 
+				has_LayerTrait<allocation_trait_type>::type());
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
 				return true; // destroy allocation
 			else if (remaining_particles != particle_count) // clean buffer of all particles that have been destroyed
@@ -423,7 +438,7 @@ protected:
 				(vertex_type*)vertices, 
 				6 /* GetVerticesPerParticle()*/, 
 				(layer_trait_type const *)layer_trait, 
-				has_function_ParticleToVertices<allocation_trait_type>::type());
+				boost::mpl::true_() /*has_function_ParticleToVertices<allocation_trait_type>::type()*/); //  shuxxx FIXME : this template does not detect template function => see ParticleDefault
 		}
 
 		size_t ParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_PARTICLE_TO_VERTICES) const 
@@ -702,10 +717,20 @@ protected:
 		/** the type for one vertex */
 		using vertex_type = VERTEX_TYPE;
 
+		size_t ParticleToVertices(PARTICLE_TYPE const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle) const
+		{
+			return 0; // default implementation
+		}
+
+		bool UpdateParticle(float delta_time, PARTICLE_TYPE * particle) const
+		{
+			return false; // default implementation => do not destroy particle
+		}
+
 		/** whether the particles are dynamic */
-		static bool const dynamic_particles = DYNAMIC_PARTICLES;
+//		static bool const dynamic_particles = DYNAMIC_PARTICLES;
 		/** whether the vertices are dynamic */
-		static bool const dynamic_vertices = DYNAMIC_VERTICES;
+//		static bool const dynamic_vertices = DYNAMIC_VERTICES;
 	};
 
 

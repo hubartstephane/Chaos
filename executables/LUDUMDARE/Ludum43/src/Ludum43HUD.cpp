@@ -123,7 +123,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (ludum_game != nullptr)
 	{
 		int render_order = -1;
-		ParticleLifeTrait life_trait;
+		ParticleLifeTrait::LayerTrait life_trait;
 		life_trait.game = ludum_game;
 		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "lifebar", life_trait);
 	}

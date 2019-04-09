@@ -11,7 +11,7 @@
 
 
 static float const DANGER_RADIUS_RATIO = 0.3f;
-static float const WAKEN_RADIUS_RATIO  = 1.0f;
+static float const WAKEN_RADIUS_RATIO = 1.0f;
 
 // ===========================================================================
 // VertexBase and ParticleBase
@@ -44,9 +44,9 @@ public:
 
 	float attraction_minradius = 0.0f;
 	float attraction_maxradius = 0.0f;
-	float attraction_force     = 0.0f;
-	float repulsion_force      = 0.0f;
-	float tangent_force        = 0.0f;
+	float attraction_force = 0.0f;
+	float repulsion_force = 0.0f;
+	float tangent_force = 0.0f;
 
 	bool reversed = false;
 	bool world_limits = false;
@@ -64,10 +64,10 @@ public:
 	glm::vec2 rotation_center;
 
 	float rotation_radius = 0.0f;
-	float rotation_alpha  = 0.0f;
+	float rotation_alpha = 0.0f;
 
 
-	
+
 
 };
 
@@ -77,22 +77,29 @@ class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, 
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		bool dynamic_particles = true;
+
+		bool dynamic_vertices = true;
+
+		class LudumGame * game = nullptr;
+	};
+
 	class UpdateEnemyData
 	{
 	public:
 
-	
+
 	};
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, UpdateEnemyData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count) const;
-
-public:
-
-	class LudumGame * game = nullptr;
+	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, LayerTrait const * layer_trait) const;
 };
 
 // ===========================================================================
@@ -108,13 +115,20 @@ public:
 	float life = 0.0f;
 
 	bool  level_end_reached = false;
-	float level_end_timer   = 0.0f;
+	float level_end_timer = 0.0f;
 	bool  dash = false;
 };
 
 class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
 {
 public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
 
 	class UpdatePlayerData
 	{
@@ -125,15 +139,11 @@ public:
 	};
 
 
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count) const;
-
-public:
-
-	class LudumGame * game = nullptr;
+	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, LayerTrait const * layer_trait) const;
 };
 
 
@@ -155,6 +165,13 @@ class ParticleAtomTrait : public chaos::ParticleAllocationTrait<ParticleAtom, Ve
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
 	class UpdateAtomData
 	{
 	public:
@@ -168,15 +185,11 @@ public:
 		std::vector<ParticleEnemy> enemy_particles;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleAtom * particle, UpdateAtomData const & update_data) const;
+	bool UpdateParticle(float delta_time, ParticleAtom * particle, UpdateAtomData const & update_data, LayerTrait const * layer_trait) const;
 
-	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count) const;
-
-public:
-
-	class LudumGame * game = nullptr;
+	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, LayerTrait const * layer_trait) const;
 };
 
 
@@ -197,13 +210,16 @@ class ParticleLifeTrait : public chaos::ParticleAllocationTrait<ParticleLife, Ve
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleLife * particle) const;
+	class LayerTrait
+	{
+	public:
 
-	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+		class LudumGame * game = nullptr;
+	};
 
-public:
+	bool UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const;
 
-	class LudumGame * game = nullptr;
+	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 };
 
 

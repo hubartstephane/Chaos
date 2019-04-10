@@ -102,16 +102,12 @@ auto f(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(
 template<typename T>
 char f(...);
 
-template<typename T>\
-using has_f = boost::mpl::bool_<\
-	sizeof(f<T>(3, 6.6)) != 1\
->;
-
-
 template<typename T, typename ...PARAMS>
-boost::mpl::true_ has_function_f(PARAMS... params)
+auto has_function_f(PARAMS... params)
 {
-	return boost::mpl::true_();
+	return boost::mpl::bool_<sizeof(f<T>(params...)) != 1>();
+
+	//return has_f<T>(params...)();
 }
 
 
@@ -126,16 +122,12 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	C c;
 	D d;
 
-	auto xx_a = has_f<A>::value;
-	auto xx_b = has_f<B>::value;
-	auto xx_c = has_f<C>::value;
-	auto xx_d = has_f<D>::value;
-
+	/*
 	auto yy_a = has_function_f<A>();
 	auto yy_b = has_function_f<B>();
 	auto yy_c = has_function_f<C>();
 	auto yy_d = has_function_f<D>();
-
+	*/
 	auto zz_a = has_function_f<A>(1);
 	auto zz_b = has_function_f<B>(1);
 	auto zz_c = has_function_f<C>(1);

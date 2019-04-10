@@ -47,6 +47,15 @@ BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
 BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
 BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
 // detect whether classes have some functions
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(Tick);
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(UpdateParticle);
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(ParticleToVertices);
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginUpdateParticles);
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginParticlesToVertices);
+
+
+
+
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 //CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
 //CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
@@ -82,6 +91,19 @@ public:
 		return DoAreParticlesDynamic(trait, boost::mpl::bool_<has_dynamic_particles<TRAIT_TYPE>::value>());
 	}
 
+	/** returns whether the vertices are dynamic (without an instance to read) */
+	template<typename TRAIT_TYPE>
+	static bool AreVerticesDynamicStatic()
+	{
+		return DoAreVerticesDynamicStatic<TRAIT_TYPE>(boost::mpl::bool_<has_dynamic_vertices<TRAIT_TYPE>::value>());
+	}
+	/** returns whether the particles are dynamic (without an instance to read) */
+	template<typename TRAIT_TYPE>
+	static bool AreParticlesDynamicStatic()
+	{
+		return DoAreParticlesDynamicStatic<TRAIT_TYPE>(boost::mpl::bool_<has_dynamic_particles<TRAIT_TYPE>::value>());
+	}
+
 protected:
 
 	/** internal method */
@@ -108,6 +130,33 @@ protected:
 	{ 
 		return trait.dynamic_particles; 
 	}
+
+
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreVerticesDynamicStatic(boost::mpl::false_ HAS_DYNAMIC_VERTICES)
+	{
+		return true; // default value
+	}
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreVerticesDynamicStatic(boost::mpl::true_ HAS_DYNAMIC_VERTICES)
+	{
+		return TRAIT_TYPE::dynamic_vertices;
+	}
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreParticlesDynamicStatic(boost::mpl::false_ HAS_DYNAMIC_PARTICLES)
+	{
+		return true; // default value																																																											 
+	}
+	/** internal method */
+	template<typename TRAIT_TYPE>
+	static bool DoAreParticlesDynamicStatic(boost::mpl::true_ HAS_DYNAMIC_PARTICLES)
+	{
+		return TRAIT_TYPE::dynamic_particles;
+	}
+
 	/** internal method */
 	template<typename TRAIT_TYPE>
 	static size_t DoGetVerticesPerParticle(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_VERTICES_PER_PARTICLE)
@@ -682,9 +731,27 @@ protected:
 		/** override */
 		virtual size_t GetVerticesPerParticle() const override { return ParticleTraitTools::GetVerticesPerParticle(layer_trait); }
 		/** override */
-		virtual bool AreVerticesDynamic() const override { return ParticleTraitTools::AreVerticesDynamic(layer_trait); }
+		virtual bool AreVerticesDynamic() const override 
+		{ 
+			// read the layer property 'dynamic_vertices' if any
+			if (!ParticleTraitTools::AreVerticesDynamic(layer_trait))
+				return false;
+			// read a static allocation value
+			if (!ParticleTraitTools::AreVerticesDynamicStatic<allocation_trait_type>()) // AreVerticesDynamic() is used to manage all allocations of the whole layer => we cannot afford to read one instance value
+				return false;
+			return true;
+		}
 		/** override */
-		virtual bool AreParticlesDynamic() const override { return ParticleTraitTools::AreParticlesDynamic(layer_trait); }
+		virtual bool AreParticlesDynamic() const override 
+		{ 
+			// read the layer property 'dynamic_vertices' if any
+			if (!ParticleTraitTools::AreParticlesDynamic(layer_trait))
+				return false;
+			// read a static allocation value
+			if (!ParticleTraitTools::AreParticlesDynamicStatic<allocation_trait_type>())  // AreParticlesDynamic() is used to manage all allocations of the whole layer => we cannot afford to read one instance value
+				return false;
+			return true;
+		}
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
 		/** override */

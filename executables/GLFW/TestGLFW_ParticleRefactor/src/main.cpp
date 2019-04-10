@@ -65,9 +65,20 @@ class ParticleExampleTrait : public chaos::ParticleAllocationTrait<ParticleExamp
 {
 public:
 
+	class LayerTrait
+	{
+	public:
+
+		bool dynamic_vertices = true;
+
+		bool dynamic_particles = true;
+	};
+
+
+
 	float time = 0.0f;
 
-	bool Tick(float delta_time)
+	bool Tick(float delta_time, LayerTrait const * layer_trait)
 	{		
 		time += delta_time;
 
@@ -75,7 +86,7 @@ public:
 	
 	}
 
-	bool UpdateParticle(float delta_time, ParticleExample * particle) const
+	bool UpdateParticle(float delta_time, ParticleExample * particle, LayerTrait const * layer_trait) const
 	{
 		particle->box.position += particle->velocity * delta_time;
 		particle->remaining_time -= delta_time;
@@ -83,7 +94,7 @@ public:
 		return (particle->remaining_time <= 0.0f);
 	}
 
-	size_t ParticleToVertices(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle) const
+	size_t ParticleToVertices(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 	{
 		chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
 
@@ -166,14 +177,11 @@ protected:
 
 	virtual bool OnMouseButton(int button, int action, int modifier) override
 	{
-		if (action != GLFW_PRESS)
-			return false;
-
 		double mouse_x = 0.0;
 		double mouse_y = 0.0;
 		glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
 
-		if (button == 0)
+		if (button == 0 && action == GLFW_PRESS)
 		{
 			int layer_index    = rand() % LAYER_COUNT;
 			int material_index = rand() % MATERIAL_COUNT;
@@ -204,7 +212,7 @@ protected:
 			}
 			return true;
 		}
-		else if (button == 1)
+		else if (button == 1 && action == GLFW_PRESS)
 		{
 			size_t count = particle_allocations.size();
 			if (count > 0)
@@ -226,7 +234,10 @@ protected:
 		}
 		else if (button == 2)
 		{
-			destroy_all_particles = true;
+			if (action == GLFW_PRESS)
+				destroy_all_particles = true;
+			else if (action == GLFW_RELEASE)
+				destroy_all_particles = false;
 		}
 
 		return false;
@@ -269,7 +280,7 @@ protected:
 			float size  = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.04f;
 			float alpha = chaos::MathTools::RandFloat() * 6.28f;
 			float speed = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.1f;
-			float lifetime = 2.0f + chaos::MathTools::RandFloat() * 2.0f;
+			float lifetime = 4.0f + chaos::MathTools::RandFloat() * 2.0f;
 
 			particles[i].box.position = center;
 			particles[i].box.half_size = 0.5f * glm::vec2(size, size);

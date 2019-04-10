@@ -8,9 +8,9 @@
 #include <chaos/Metaprogramming.h>
 #include <chaos/EmptyClass.h>
 #include <chaos/NamedObject.h>
+#include <chaos/ClassTools.h>
 
-
-
+#if 0
 /*
 
 
@@ -144,6 +144,64 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 
 	chaos::RunApplication<MyApplication>(argc, argv, env);
+	return 0;
+}
+
+
+
+#endif
+
+
+
+class A
+{
+
+};
+
+class B : public A
+{
+	int xxx;
+
+};
+
+class C
+{
+	int xxx() 
+	{
+		return 0;
+	}
+
+};
+
+class D
+{
+	class xxx {};
+
+};
+
+BOOST_DECLARE_HAS_MEMBER(has_xxx, xxx);
+
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
+{
+	auto a = chaos::ClassTools::GetClassID<A>();
+	auto b = chaos::ClassTools::GetClassID<A const>();
+
+	type_info const & X = typeid(A);
+
+	auto ffA = has_xxx<A>::value;
+	auto ffB = has_xxx<B>::value;
+
+	using X1 = boost::mpl::bool_<has_xxx<A>::value>; // no data => false
+	using X2 = boost::mpl::bool_<has_xxx<B>::value>; // data    => true
+	using X3 = boost::mpl::bool_<has_xxx<C>::value>; // member function => true !!!
+	using X4 = boost::mpl::bool_<has_xxx<D>::value>; // nested class => true !!!
+
+
+	auto f1 = X1::value;
+	auto f2 = X2::value;
+	auto f3 = X3::value;
+	auto f4 = X4::value;
+
 	return 0;
 }
 

@@ -155,7 +155,7 @@ protected:
 		// create the layer
 		int render_order = 0;
 		int layer_id = 0;
-		chaos::ParticleLayerBase * layer = particle_manager->AddLayer(new chaos::TypedParticleLayerDesc<chaos::ParticleDefault::ParticleTrait>(), render_order, layer_id, material.get());
+		chaos::ParticleLayerBase * layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, layer_id, material.get());
 		if (layer == nullptr)
 			return false;
 

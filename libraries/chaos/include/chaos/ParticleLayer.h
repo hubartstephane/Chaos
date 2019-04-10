@@ -112,7 +112,7 @@ protected:
 	template<typename TRAIT_TYPE>
 	static size_t DoGetVerticesPerParticle(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_VERTICES_PER_PARTICLE)
 	{ 
-		return 2 * 3; // default value
+		return 2 * 3; // default value (2 triangles to render a quad)
 	} 
 	/** internal method */
 	template<typename TRAIT_TYPE>
@@ -436,7 +436,7 @@ protected:
 				(particle_type*)GetParticleBuffer(), 
 				GetParticleCount(), 
 				(vertex_type*)vertices, 
-				6 /* GetVerticesPerParticle()*/, 
+				ParticleTraitTools::GetVerticesPerParticle(*(layer_trait_type const *)layer_trait), 
 				(layer_trait_type const *)layer_trait, 
 				boost::mpl::true_() /*has_function_ParticleToVertices<allocation_trait_type>::type()*/); //  shuxxx FIXME : this template does not detect template function => see ParticleDefault
 		}

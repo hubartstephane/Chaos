@@ -125,8 +125,6 @@ bool LudumPlayingHUD::CreateHUDLayers()
 		int render_order = -1;
 		ParticleLifeTrait::LayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		// shuxxx particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "lifebar", life_trait);
-
 		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "lifebar", layer_trait);
 	}
 	return true;

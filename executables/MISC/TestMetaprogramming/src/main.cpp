@@ -22,7 +22,7 @@ class B
 {
 public:
 
-	int fff() { return 2; }
+	char fff() { return 2; }
 
 };
 
@@ -30,7 +30,7 @@ class C
 {
 public:
 
-	int fff(int) { return 3; }
+	char fff(int) { return 3; }
 
 };
 
@@ -39,7 +39,7 @@ class D
 {
 public:
 
-	int fff(int, float) { return 4; }
+	char fff(int, float) { return 4; }
 };
 
 class E
@@ -48,7 +48,7 @@ public:
 
 
 	template<typename ...PARAMS>
-	int fff(PARAMS... params) { return 0; }
+	char fff(PARAMS... params) { return 0; }
 
 	//template<typename T, typename V>
 	//int fff(T t, V v) { return 0; }
@@ -116,59 +116,81 @@ using has_f = boost::mpl::bool_<\
 namespace details
 {
 	template<typename T>
-	auto has_function_xxx_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().fff());
+	auto has_function_xxx_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().fff()) *;
 
 	template<typename T>
 	char has_function_xxx_helper_no_params(...);
 
 	template<typename T, typename ...PARAMS>
-	auto has_function_xxx_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(params...));
+	auto has_function_xxx_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(params...)) *;
 
 	template<typename T>
 	char has_function_xxx_helper(...);
 }
-
-
-
 template<typename T, typename ...PARAMS>
 auto has_function_xxx(PARAMS... params)
 {
 	return boost::mpl::bool_<sizeof(details::has_function_xxx_helper<T>(params...)) != 1>();
 }
-
 template<typename T>
 auto has_function_xxx()
 {
 	return boost::mpl::bool_<sizeof(details::has_function_xxx_helper_no_params<T>()) != 1>();
 }
 
+#define CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(funcname)\
+namespace details\
+{\
+	template<typename T>\
+	auto has_function_signature_##funcname##_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname()) *;\
+	template<typename T>\
+	char has_function_signature_##funcname##_helper_no_params(...);\
+	template<typename T, typename ...PARAMS>\
+	auto has_function_signature_##funcname##_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname(params...)) *;\
+	template<typename T>\
+	char has_function_signature_##funcname##_helper(...);\
+}\
+template<typename T, typename ...PARAMS>\
+auto has_function_signature_##funcname##(PARAMS... params)\
+{\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper<T>(params...)) != 1>();\
+}\
+template<typename T>\
+auto has_function_signature_##funcname##()\
+{\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params<T>()) != 1>();\
+}
+
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(fff)
 
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	decltype(chaos::meta::GenerateFakeInstance<B>().fff()) * xxx;
+
 	A a;
 	B b;
 	C c;
 	D d;
 	E e;
 
-	auto a0 = has_function_xxx<A>();
-	auto b0 = has_function_xxx<B>();
-	auto c0 = has_function_xxx<C>();
-	auto d0 = has_function_xxx<D>();
-	auto e0 = has_function_xxx<E>();
+	auto a0 = has_function_signature_fff<A>();
+	auto b0 = has_function_signature_fff<B>();
+	auto c0 = has_function_signature_fff<C>();
+	auto d0 = has_function_signature_fff<D>();
+	auto e0 = has_function_signature_fff<E>();
 
-	auto a1 = has_function_xxx<A>(1);
-	auto b1 = has_function_xxx<B>(1);
-	auto c1 = has_function_xxx<C>(1);
-	auto d1 = has_function_xxx<D>(1);
-	auto e1 = has_function_xxx<E>(1);
+	auto a1 = has_function_signature_fff<A>(1);
+	auto b1 = has_function_signature_fff<B>(1);
+	auto c1 = has_function_signature_fff<C>(1);
+	auto d1 = has_function_signature_fff<D>(1);
+	auto e1 = has_function_signature_fff<E>(1);
 
-	auto a2 = has_function_xxx<A>(1, 3.3f);
-	auto b2 = has_function_xxx<B>(1, 3.3f);
-	auto c2 = has_function_xxx<C>(1, 3.3f);
-	auto d2 = has_function_xxx<D>(1, 3.3f);
-	auto e2 = has_function_xxx<E>(1, 3.3f);
+	auto a2 = has_function_signature_fff<A>(1, 3.3f);
+	auto b2 = has_function_signature_fff<B>(1, 3.3f);
+	auto c2 = has_function_signature_fff<C>(1, 3.3f);
+	auto d2 = has_function_signature_fff<D>(1, 3.3f);
+	auto e2 = has_function_signature_fff<E>(1, 3.3f);
 
 	return 0;
 }

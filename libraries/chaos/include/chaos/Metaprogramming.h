@@ -57,6 +57,59 @@ using has_function_##function_name = boost::mpl::bool_<\
 	//       the difference is that at usage, we have to ask for a precise function signature
 	//
 	//  has_member_function_XXXXXXXX<T, int (T::*)(float)>;    <-- function signature required (even return type)
+	//
+	// XXX : limitation !!!
+	//
+	//  this is not working if the class has a XXXXXXXXX TEMPLATE function
+	//
+
+#define CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(funcname)\
+namespace details\
+{\
+	template<typename T>\
+	auto has_function_signature_##funcname##_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname()) *;\
+	template<typename T>\
+	char has_function_signature_##funcname##_helper_no_params(...);\
+	template<typename T, typename ...PARAMS>\
+	auto has_function_signature_##funcname##_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname(params...)) *;\
+	template<typename T>\
+	char has_function_signature_##funcname##_helper(...);\
+}\
+template<typename T, typename ...PARAMS>\
+auto has_function_signature_##funcname##(PARAMS... params)\
+{\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper<T>(params...)) != 1>();\
+}\
+template<typename T>\
+auto has_function_signature_##funcname##()\
+{\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params<T>()) != 1>();\
+}
+
+	// CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(XXXXXXX) generates a function that returns 
+	//
+	//   -boost::mpl::true_ or
+	//   -boost::mpl::false_
+	//
+	// if given class has a function called XXXXXXX that can be called with the given arguments
+	//
+	// A usage sample could be:
+	//
+	//   auto res1 = has_function_signature_XXXXXXX<A>();                => res is an instance of true_ or false_ depending of if A.XXXXXXX() can be called
+	// 
+	//   auto res2 = has_function_signature_XXXXXXX<A>(1, 2, "toto")     => A.XXXXXXX(1, 2, "toto")  can be called ???
+	//
+	// XXX: this works with template functions !!!
+	//
+	// class A
+	// {
+	//   public:
+	// 
+	//    template<typename ...PARAMS>           => has_function_signature_XXXXXXX<A>(anything and more) would return true_
+	//    int XXXXXXX(PARAMS... params);
+	// };
+  //
+  //
 
 	// Meta 
 	namespace meta

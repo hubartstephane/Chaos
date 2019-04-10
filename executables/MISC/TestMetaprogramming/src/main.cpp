@@ -138,29 +138,6 @@ auto has_function_xxx()
 	return boost::mpl::bool_<sizeof(details::has_function_xxx_helper_no_params<T>()) != 1>();
 }
 
-#define CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(funcname)\
-namespace details\
-{\
-	template<typename T>\
-	auto has_function_signature_##funcname##_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname()) *;\
-	template<typename T>\
-	char has_function_signature_##funcname##_helper_no_params(...);\
-	template<typename T, typename ...PARAMS>\
-	auto has_function_signature_##funcname##_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname(params...)) *;\
-	template<typename T>\
-	char has_function_signature_##funcname##_helper(...);\
-}\
-template<typename T, typename ...PARAMS>\
-auto has_function_signature_##funcname##(PARAMS... params)\
-{\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper<T>(params...)) != 1>();\
-}\
-template<typename T>\
-auto has_function_signature_##funcname##()\
-{\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params<T>()) != 1>();\
-}
-
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(fff)
 
 

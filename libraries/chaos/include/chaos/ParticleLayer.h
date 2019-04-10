@@ -797,9 +797,9 @@ protected:
 		}
 
 		/** whether the particles are dynamic */
-//		static bool const dynamic_particles = DYNAMIC_PARTICLES;
+		static bool const dynamic_particles = DYNAMIC_PARTICLES;
 		/** whether the vertices are dynamic */
-//		static bool const dynamic_vertices = DYNAMIC_VERTICES;
+		static bool const dynamic_vertices = DYNAMIC_VERTICES;
 	};
 
 

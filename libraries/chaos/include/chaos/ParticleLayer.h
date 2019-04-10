@@ -317,18 +317,18 @@ protected:
 		/** override */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) 
 		{ 
-			layer_trait_type const * lt = (layer_trait_type const *)layer_trait;
+			layer_trait_type const * typed_layer_trait = (layer_trait_type const *)layer_trait;
 
 			bool destroy_allocation = TickTrait(
 				delta_time, 
-				lt, 
+				typed_layer_trait, 
 				has_function_Tick<allocation_trait_type>::type(), 
 				has_LayerTrait<allocation_trait_type>::type());
 			if (!destroy_allocation)
 			{
 				destroy_allocation = UpdateParticles(
 					delta_time,
-					lt,
+					typed_layer_trait,
 					boost::mpl::true_() /*has_function_UpdateParticle<allocation_trait_type>::type()*/); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
 			}
 			return destroy_allocation;
@@ -432,12 +432,14 @@ protected:
 		/** override */
 		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const override
 		{ 
+			layer_trait_type const * typed_layer_trait = (layer_trait_type const *)layer_trait;
+
 			return ParticlesToVertices(
 				(particle_type*)GetParticleBuffer(), 
 				GetParticleCount(), 
 				(vertex_type*)vertices, 
-				ParticleTraitTools::GetVerticesPerParticle(*(layer_trait_type const *)layer_trait), 
-				(layer_trait_type const *)layer_trait, 
+				ParticleTraitTools::GetVerticesPerParticle(*typed_layer_trait), 
+				typed_layer_trait, 
 				boost::mpl::true_() /*has_function_ParticleToVertices<allocation_trait_type>::type()*/); //  shuxxx FIXME : this template does not detect template function => see ParticleDefault
 		}
 

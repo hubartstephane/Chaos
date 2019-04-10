@@ -26,6 +26,8 @@
 #include <chaos/ParticleManager.h>
 
 
+static bool destroy_all_particles = false;
+
 // ==============================================================
 // Particles 
 // ==============================================================
@@ -63,10 +65,21 @@ class ParticleExampleTrait : public chaos::ParticleAllocationTrait<ParticleExamp
 {
 public:
 
+	float time = 0.0f;
+
+	bool Tick(float delta_time)
+	{		
+		time += delta_time;
+
+		return destroy_all_particles;
+	
+	}
+
 	bool UpdateParticle(float delta_time, ParticleExample * particle) const
 	{
 		particle->box.position += particle->velocity * delta_time;
 		particle->remaining_time -= delta_time;
+
 		return (particle->remaining_time <= 0.0f);
 	}
 
@@ -76,7 +89,11 @@ public:
 
 		float alpha = particle->remaining_time / particle->lifetime;
 		for (size_t i = 0 ; i < 6 ; ++i)
+		{
 			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
+
+			vertices[i].position.y += 50 * chaos::MathTools::Cos(time);
+		}
 
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return 0;
@@ -187,7 +204,7 @@ protected:
 			}
 			return true;
 		}
-		else
+		else if (button == 1)
 		{
 			size_t count = particle_allocations.size();
 			if (count > 0)
@@ -207,6 +224,11 @@ protected:
 			}
 			return true;
 		}
+		else if (button == 2)
+		{
+			destroy_all_particles = true;
+		}
+
 		return false;
 	}
 

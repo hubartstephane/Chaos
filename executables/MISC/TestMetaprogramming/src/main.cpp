@@ -40,7 +40,18 @@ class D
 public:
 
 	int fff(int, float) { return 4; }
+};
 
+class E
+{
+public:
+
+
+	template<typename ...PARAMS>
+	int fff(PARAMS... params) { return 0; }
+
+	//template<typename T, typename V>
+	//int fff(T t, V v) { return 0; }
 };
 
 #if 0 // WORKING
@@ -96,22 +107,40 @@ using has_f = boost::mpl::bool_<\
 #endif
 
 
-template<typename T, typename ...PARAMS>
-auto f(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(params...));
 
-template<typename T>
-char f(...);
 
-template<typename T, typename ...PARAMS>
-auto has_function_f(PARAMS... params)
+
+
+
+
+namespace details
 {
-	return boost::mpl::bool_<sizeof(f<T>(params...)) != 1>();
+	template<typename T>
+	auto has_function_xxx_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().fff());
 
-	//return has_f<T>(params...)();
+	template<typename T>
+	char has_function_xxx_helper_no_params(...);
+
+	template<typename T, typename ...PARAMS>
+	auto has_function_xxx_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(params...));
+
+	template<typename T>
+	char has_function_xxx_helper(...);
 }
 
 
 
+template<typename T, typename ...PARAMS>
+auto has_function_xxx(PARAMS... params)
+{
+	return boost::mpl::bool_<sizeof(details::has_function_xxx_helper<T>(params...)) != 1>();
+}
+
+template<typename T>
+auto has_function_xxx()
+{
+	return boost::mpl::bool_<sizeof(details::has_function_xxx_helper_no_params<T>()) != 1>();
+}
 
 
 
@@ -121,22 +150,25 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	B b;
 	C c;
 	D d;
+	E e;
 
-	/*
-	auto yy_a = has_function_f<A>();
-	auto yy_b = has_function_f<B>();
-	auto yy_c = has_function_f<C>();
-	auto yy_d = has_function_f<D>();
-	*/
-	auto zz_a = has_function_f<A>(1);
-	auto zz_b = has_function_f<B>(1);
-	auto zz_c = has_function_f<C>(1);
-	auto zz_d = has_function_f<D>(1);
+	auto a0 = has_function_xxx<A>();
+	auto b0 = has_function_xxx<B>();
+	auto c0 = has_function_xxx<C>();
+	auto d0 = has_function_xxx<D>();
+	auto e0 = has_function_xxx<E>();
 
-	auto ww_a = has_function_f<A>(1, 3.3f);
-	auto ww_b = has_function_f<B>(1, 3.3f);
-	auto ww_c = has_function_f<C>(1, 3.3f);
-	auto ww_d = has_function_f<D>(1, 3.3f);
+	auto a1 = has_function_xxx<A>(1);
+	auto b1 = has_function_xxx<B>(1);
+	auto c1 = has_function_xxx<C>(1);
+	auto d1 = has_function_xxx<D>(1);
+	auto e1 = has_function_xxx<E>(1);
+
+	auto a2 = has_function_xxx<A>(1, 3.3f);
+	auto b2 = has_function_xxx<B>(1, 3.3f);
+	auto c2 = has_function_xxx<C>(1, 3.3f);
+	auto d2 = has_function_xxx<D>(1, 3.3f);
+	auto e2 = has_function_xxx<E>(1, 3.3f);
 
 	return 0;
 }

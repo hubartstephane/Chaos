@@ -148,7 +148,7 @@ using has_function_##function_name = boost::mpl::bool_<\
 
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
 		template<typename T>
-		T const & GenerateFakeInstance();
+		T & GenerateFakeInstance();
 	};
 
 }; // namespace chaos

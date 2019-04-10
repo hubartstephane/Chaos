@@ -10,10 +10,148 @@
 #include <chaos/NamedObject.h>
 #include <chaos/ClassTools.h>
 
+class A
+{
+public:
+
+	
+
+};
+
+class B
+{
+public:
+
+	int fff() { return 2; }
+
+};
+
+class C
+{
+public:
+
+	int fff(int) { return 3; }
+
+};
+
+
+class D
+{
+public:
+
+	int fff(int, float) { return 4; }
+
+};
+
+#if 0 // WORKING
+
+
+template<typename T>
+auto f(T & t, int a) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(a));
+
+char f(...);
+
+template<typename T>\
+using has_f = boost::mpl::bool_<\
+	sizeof(f(chaos::meta::GenerateFakeInstance<T>(), 3)) != 1\
+>;
+
+
+#endif
+
+
+// WORKING
+
+#if 0
+
+template<typename T>
+auto f(int a) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(a));
+
+template<typename T>
+char f(...);
+
+template<typename T>\
+using has_f = boost::mpl::bool_<\
+	sizeof(f<T>(3)) != 1\
+>;
+
+#endif 0
+
+
+// WORKING
+
+#if 0
+
+template<typename T, typename ...PARAMS>
+auto f(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(params...));
+
+template<typename T>
+char f(...);
+
+template<typename T>\
+using has_f = boost::mpl::bool_<\
+	sizeof(f<T>(3, 6.6)) != 1\
+>;
+
+#endif
+
+
+template<typename T, typename ...PARAMS>
+auto f(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().fff(params...));
+
+template<typename T>
+char f(...);
+
+template<typename T>\
+using has_f = boost::mpl::bool_<\
+	sizeof(f<T>(3, 6.6)) != 1\
+>;
+
+
+template<typename T, typename ...PARAMS>
+boost::mpl::true_ has_function_f(PARAMS... params)
+{
+	return boost::mpl::true_();
+}
 
 
 
 
+
+
+int CHAOS_MAIN(int argc, char ** argv, char ** env)
+{
+	A a;
+	B b;
+	C c;
+	D d;
+
+	auto xx_a = has_f<A>::value;
+	auto xx_b = has_f<B>::value;
+	auto xx_c = has_f<C>::value;
+	auto xx_d = has_f<D>::value;
+
+	auto yy_a = has_function_f<A>();
+	auto yy_b = has_function_f<B>();
+	auto yy_c = has_function_f<C>();
+	auto yy_d = has_function_f<D>();
+
+	auto zz_a = has_function_f<A>(1);
+	auto zz_b = has_function_f<B>(1);
+	auto zz_c = has_function_f<C>(1);
+	auto zz_d = has_function_f<D>(1);
+
+	auto ww_a = has_function_f<A>(1, 3.3f);
+	auto ww_b = has_function_f<B>(1, 3.3f);
+	auto ww_c = has_function_f<C>(1, 3.3f);
+	auto ww_d = has_function_f<D>(1, 3.3f);
+
+	return 0;
+}
+
+// =========================================
+
+#if 0
 
 #if 0
 
@@ -173,3 +311,4 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 }
 
 
+#endif

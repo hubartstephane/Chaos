@@ -181,8 +181,10 @@ protected:
     depth_pass = GL_KEEP;
     glStencilOp(stencil_fail, depth_fail, depth_pass); // do not modify the stencil anymore
 
-    query->BeginQuery();
-    mesh->Render(renderer, program.get(), &uniform_provider);
+		chaos::RenderParams render_params;
+
+    query->BeginQuery();		
+    mesh->Render(renderer, program.get(), &uniform_provider, render_params);
     query->EndQuery();
 
     return true;

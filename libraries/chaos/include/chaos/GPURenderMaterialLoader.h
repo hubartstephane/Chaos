@@ -48,6 +48,9 @@ namespace chaos
 		bool InitializeTexturesFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** get the uniforms from JSON */
 		bool InitializeUniformsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		/** get the sub materials from JSON */
+		bool InitializeSubMaterialsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;

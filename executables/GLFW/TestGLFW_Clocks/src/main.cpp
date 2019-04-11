@@ -115,7 +115,8 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
-		mesh->Render(ctx.renderer, program, &uniform_provider);
+		chaos::RenderParams render_params;
+		mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
 	}
 
 	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)

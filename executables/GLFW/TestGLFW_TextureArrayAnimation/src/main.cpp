@@ -91,7 +91,8 @@ protected:
 		uniform_provider.AddVariableValue("bottomleft", bottomleft);
 		uniform_provider.AddVariableValue("topright", topright);
 
-		mesh_box->Render(renderer, program_box.get(), &uniform_provider);
+		chaos::RenderParams render_params;
+		mesh_box->Render(renderer, program_box.get(), &uniform_provider, render_params);
 
 		return true;
 	}

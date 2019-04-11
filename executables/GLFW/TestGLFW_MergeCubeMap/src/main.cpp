@@ -110,7 +110,8 @@ protected:
 		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 		uniform_provider.AddVariableTexture("material", texture);
 
-		mesh->Render(renderer, program.get(), &uniform_provider);
+		chaos::RenderParams render_params;
+		mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 
 		debug_display.Display(size.x, size.y);    
 

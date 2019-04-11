@@ -64,7 +64,7 @@ namespace chaos
 		return true;
 	}
 
-	GPUProgram const * GPURenderMaterial::GetEffectiveProgram() const
+	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(RenderParams const & render_params) const
 	{
 		// go through the hierarchy until we get the program
 		GPURenderMaterial const * rm = this;
@@ -75,10 +75,10 @@ namespace chaos
 		return rm->program.get();
 	}
 
-	bool GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const
+	bool GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const
 	{
 		// go through the hierarchy until we get the program
-		GPUProgram const * effective_program = GetEffectiveProgram();
+		GPUProgram const * effective_program = GetEffectiveProgram(render_params);
 		if (effective_program == nullptr)
 			return false;
 

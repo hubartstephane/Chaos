@@ -659,7 +659,7 @@ protected:
 		virtual int DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
 
 		/** change the GL rendering state */
-		void UpdateRenderingStates(bool begin) const;
+		void UpdateRenderingStates(Renderer * renderer, bool begin) const;
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
@@ -672,7 +672,7 @@ protected:
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		int DoDisplayHelper(Renderer * renderer, size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const;
+		int DoDisplayHelper(Renderer * renderer, size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool TickAllocations(double delta_time);

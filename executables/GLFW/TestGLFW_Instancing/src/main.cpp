@@ -56,10 +56,10 @@ protected:
 		uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
 		uniform_provider.AddVariableValue("realtime", realtime);
 
-		chaos::InstancingInfo instancing;
-		instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-		instancing.base_instance = 0;
-		mesh->Render(renderer, program.get(), &uniform_provider, instancing);
+		chaos::RenderParams render_params;
+		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
+		render_params.instancing.base_instance = 0;
+		mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 
 		return true;
 	}

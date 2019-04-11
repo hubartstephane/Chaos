@@ -244,6 +244,26 @@ namespace chaos
 		return true;
 	}
 
+	bool GPURenderMaterialLoader::InitializeSubMaterialsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	{
+		// search the uniform object
+		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
+		if (json_submaterials == nullptr || !json_submaterials->is_object())
+			return false;
+		// enumerate all sub materials
+		for (nlohmann::json::const_iterator it = json_submaterials->begin(); it != json_submaterials->end(); ++it)
+		{
+			std::string submaterial_name = it.key();
+			if (!submaterial_name.empty())
+			{
+
+				render_material = render_material;
+
+			}		
+		}
+		return true;
+	}
+
 	bool GPURenderMaterialLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
 		return (manager->FindRenderMaterialByPath(path) != nullptr);
@@ -276,6 +296,8 @@ namespace chaos
 			InitializeTexturesFromJSON(result, json, config_path);
 			// look at uniforms
 			InitializeUniformsFromJSON(result, json, config_path);
+			// initialize sub materials
+			InitializeSubMaterialsFromJSON(result, json, config_path);
 
 			// finalize : give name / path to the new resource
 			ApplyNameToLoadedResource(result);

@@ -669,7 +669,8 @@ void Game::DisplayFullscreen(chaos::Renderer * renderer, glm::ivec2 viewport_siz
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
 	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
-	fullscreen_mesh->Render(renderer, program.get(), &uniform_provider);
+	chaos::RenderParams render_params;
+	fullscreen_mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 }
 
 void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)

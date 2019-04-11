@@ -204,7 +204,8 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
     PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
 
-    mesh->Render(ctx.renderer, program, &uniform_provider);
+		chaos::RenderParams render_params;
+    mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
 
     if (is_translucent)
       EndTranslucency();

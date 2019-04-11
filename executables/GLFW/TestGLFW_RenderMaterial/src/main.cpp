@@ -84,9 +84,9 @@ protected:
 		uniform_provider.AddVariableValue("realtime", realtime);
 
 
-		chaos::InstancingInfo instancing;
-		instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-		instancing.base_instance = 0;
+		chaos::RenderParams render_params;
+		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
+		render_params.instancing.base_instance = 0;
 
 		chaos::GPURenderMaterial * materials[] = { render_material1.get(), render_material2.get() };
 
@@ -95,7 +95,7 @@ protected:
 			rm = materials[1 - current_material];
 
 		if (rm != nullptr)
-			mesh->Render(renderer, rm, &uniform_provider, instancing);
+			mesh->Render(renderer, rm, &uniform_provider, render_params);
 
 
 		return true;

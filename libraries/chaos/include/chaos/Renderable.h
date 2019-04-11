@@ -6,7 +6,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/GPUProgramProvider.h>
-#include <chaos/GPURenderMaterial.h>
+//#include <chaos/GPURenderMaterial.h>
 #include <chaos/Renderer.h>
 
 namespace chaos
@@ -14,6 +14,7 @@ namespace chaos
 	class MaterialProvider;
 	class RenderParams;
 	class Renderable;
+	class GPURenderMaterial;
 
 
 	// ========================================================
@@ -25,7 +26,7 @@ namespace chaos
 	public:
 
 		/** check whether given object can be rendered */
-		virtual bool CanRender(class Renderable const * renderable) const { return true;}	
+		virtual bool CanRender(Renderable const * renderable) const { return true;}	
 	};
 
 	// ========================================================
@@ -77,6 +78,8 @@ namespace chaos
 		shared_ptr<MaterialProvider> material_provider;
 		/** some filters */
 		shared_ptr<RenderableObjectFilter> object_filter;
+		/** material specialization */
+		std::string submaterial_name;
 		/** the instancing information */
 		InstancingInfo instancing;		
 	};

@@ -6,6 +6,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUFileResource.h>
+#include <chaos/Renderable.h>
 
 namespace chaos
 {
@@ -57,14 +58,14 @@ namespace chaos
 		virtual ~GPURenderMaterial();
 
 		/** prepare the rendering */
-		bool UseMaterial(GPUProgramProviderBase const * in_uniform_provider) const;
+		bool UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const;
 
 		/** set the program */
 		bool SetProgram(GPUProgram * in_program);
 		/** set the parent material */
 		bool SetParentMaterial(GPURenderMaterial * in_parent);
 		/** go throw the hierary and search for the program */
-		GPUProgram const * GetEffectiveProgram() const;
+		GPUProgram const * GetEffectiveProgram(RenderParams const & render_params) const;
 
 		/** get the uniform provider */
 		GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
@@ -89,6 +90,9 @@ namespace chaos
 		shared_ptr<GPURenderMaterial> parent_material;
 		/** some rendering states */
 		GPUProgramProvider uniform_provider;
+
+		/** children materials */
+		std::vector<shared_ptr<GPURenderMaterial>> sub_materials;
 	};
 
 

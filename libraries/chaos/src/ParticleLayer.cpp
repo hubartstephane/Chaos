@@ -202,15 +202,15 @@ namespace chaos
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
 		// prepare rendering state
-		UpdateRenderingStates(true);
+		UpdateRenderingStates(renderer, true);
 		// update uniform provider with atlas, and do the rendering
 		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		if (atlas != nullptr)
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 
-		int result = DoDisplayHelper(renderer, vertices_count, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params.instancing);
+		int result = DoDisplayHelper(renderer, vertices_count, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params);
 		// restore rendering states
-		UpdateRenderingStates(false);
+		UpdateRenderingStates(renderer, false);
 		return result;
 	}
 
@@ -270,17 +270,17 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleLayerBase::DoDisplayHelper(Renderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, InstancingInfo const & instancing) const
+	int ParticleLayerBase::DoDisplayHelper(Renderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		// no vertices, no rendering
 		if (vertex_count == 0)
 			return 0;
 		// get the vertex array
-		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(), vertex_buffer.get(), nullptr, vertex_declaration, 0);
+		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(render_params), vertex_buffer.get(), nullptr, vertex_declaration, 0);
 		if (vertex_array == nullptr)
 			return 0;
 		// use the material
-		final_material->UseMaterial(uniform_provider);
+		final_material->UseMaterial(uniform_provider, render_params);
 		// bind the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 		// one draw call for the whole buffer
@@ -290,7 +290,7 @@ namespace chaos
 		primitive.count = (int)vertex_count;
 		primitive.start = 0;
 		primitive.base_vertex_index = 0;
-		renderer->Draw(primitive, instancing);
+		renderer->Draw(primitive, render_params.instancing);
 		glBindVertexArray(0);
 		return 1; // 1 DrawCall
 	}
@@ -348,7 +348,7 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayerBase::UpdateRenderingStates(bool begin) const
+	void ParticleLayerBase::UpdateRenderingStates(Renderer * renderer, bool begin) const
 	{
 		if (begin)
 		{

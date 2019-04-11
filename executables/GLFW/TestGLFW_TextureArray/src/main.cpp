@@ -54,7 +54,8 @@ protected:
 		uniform_provider.AddVariableValue("texture_slice",   (float)texture_slice);
 		uniform_provider.AddVariableTexture("material", texture);
 
-		mesh_box->Render(renderer, program_box.get(), &uniform_provider);
+		chaos::RenderParams render_params;
+		mesh_box->Render(renderer, program_box.get(), &uniform_provider, render_params);
 
 		debug_display.Display(size.x, size.y);
 

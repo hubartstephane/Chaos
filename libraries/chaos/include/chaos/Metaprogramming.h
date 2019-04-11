@@ -67,24 +67,23 @@ using has_function_##function_name = boost::mpl::bool_<\
 namespace details\
 {\
 	template<typename T>\
-	auto has_function_signature_##funcname##_helper_no_params() -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname()) *;\
-	template<typename T>\
+	auto has_function_signature_##funcname##_helper_no_params(T * t) -> decltype(t->funcname()) *;\
 	char has_function_signature_##funcname##_helper_no_params(...);\
 	template<typename T, typename ...PARAMS>\
-	auto has_function_signature_##funcname##_helper(PARAMS... params) -> decltype(chaos::meta::GenerateFakeInstance<T>().funcname(params...)) *;\
-	template<typename T>\
+	auto has_function_signature_##funcname##_helper(T * t, PARAMS... params) -> decltype(t->funcname(params...)) *;\
 	char has_function_signature_##funcname##_helper(...);\
 }\
 template<typename T, typename ...PARAMS>\
-auto has_function_signature_##funcname##(PARAMS... params)\
+auto has_function_signature_##funcname##(T * t, PARAMS... params)\
 {\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper<T>(params...)) != 1>();\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper(t, params...)) != 1>();\
 }\
 template<typename T>\
-auto has_function_signature_##funcname##()\
+auto has_function_signature_##funcname##(T * t)\
 {\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params<T>()) != 1>();\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params(t)) != 1>();\
 }
+
 
 	// CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(XXXXXXX) generates a function that returns 
 	//
@@ -95,9 +94,11 @@ auto has_function_signature_##funcname##()\
 	//
 	// A usage sample could be:
 	//
-	//   auto res1 = has_function_signature_XXXXXXX<A>();                => res is an instance of true_ or false_ depending of if A.XXXXXXX() can be called
+	//   A * a = nullptr
+	//
+	//   auto res1 = has_function_signature_XXXXXXX(a);                => res is an instance of true_ or false_ depending of if a->XXXXXXX() can be called
 	// 
-	//   auto res2 = has_function_signature_XXXXXXX<A>(1, 2, "toto")     => A.XXXXXXX(1, 2, "toto")  can be called ???
+	//   auto res2 = has_function_signature_XXXXXXX(a, 1, 2, "toto")   => a->XXXXXXX(1, 2, "toto")  can be called ???
 	//
 	// XXX: this works with template functions !!!
 	//
@@ -105,7 +106,7 @@ auto has_function_signature_##funcname##()\
 	// {
 	//   public:
 	// 
-	//    template<typename ...PARAMS>           => has_function_signature_XXXXXXX<A>(anything and more) would return true_
+	//    template<typename ...PARAMS>           => has_function_signature_XXXXXXX(this, anything and more) would return true_
 	//    int XXXXXXX(PARAMS... params);
 	// };
   //

@@ -145,31 +145,9 @@ auto has_function_xxx()
 
 
 
-#define GENERATE_HAS_FUNCTION_SIGNATURE(funcname)\
-namespace details\
-{\
-	template<typename T>\
-	auto has_function_signature_##funcname##_helper_no_params(T * t) -> decltype(t->funcname()) *;\
-	char has_function_signature_##funcname##_helper_no_params(...);\
-	template<typename T, typename ...PARAMS>\
-	auto has_function_signature_##funcname##_helper(T * t, PARAMS... params) -> decltype(t->funcname(params...)) *;\
-	char has_function_signature_##funcname##_helper(...);\
-}\
-template<typename T, typename ...PARAMS>\
-auto has_function_signature_##funcname##(T * t, PARAMS... params)\
-{\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper(t, params...)) != 1>();\
-}\
-template<typename T>\
-auto has_function_signature_##funcname##(T * t)\
-{\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params(t)) != 1>();\
-}
 
 
-
-
-GENERATE_HAS_FUNCTION_SIGNATURE(fff)
+CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(fff)
 
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

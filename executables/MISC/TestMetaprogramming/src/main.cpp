@@ -48,7 +48,7 @@ public:
 
 
 	template<typename ...PARAMS>
-	void fff() {  }
+	void fff(PARAMS ...) {  }
 
 	//template<typename T, typename V>
 	//int fff(T t, V v) { return 0; }
@@ -138,28 +138,65 @@ auto has_function_xxx()
 	return boost::mpl::bool_<sizeof(details::has_function_xxx_helper_no_params<T>()) != 1>();
 }
 
-CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(fff)
+
+
+
+
+
+
+
+#define GENERATE_HAS_FUNCTION_SIGNATURE(funcname)\
+namespace details\
+{\
+	template<typename T>\
+	auto has_function_signature_##funcname##_helper_no_params(T * t) -> decltype(t->funcname()) *;\
+	char has_function_signature_##funcname##_helper_no_params(...);\
+	template<typename T, typename ...PARAMS>\
+	auto has_function_signature_##funcname##_helper(T * t, PARAMS... params) -> decltype(t->funcname(params...)) *;\
+	char has_function_signature_##funcname##_helper(...);\
+}\
+template<typename T, typename ...PARAMS>\
+auto has_function_signature_##funcname##(T * t, PARAMS... params)\
+{\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper(t, params...)) != 1>();\
+}\
+template<typename T>\
+auto has_function_signature_##funcname##(T * t)\
+{\
+	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params(t)) != 1>();\
+}
+
+
+
+
+GENERATE_HAS_FUNCTION_SIGNATURE(fff)
 
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	auto a0 = has_function_signature_fff<A>();
-	auto b0 = has_function_signature_fff<B>();
-	auto c0 = has_function_signature_fff<C>();
-	auto d0 = has_function_signature_fff<D>();
-	auto e0 = has_function_signature_fff<E>();
+	A a;
+	B b;
+	C c;
+	D d;
+	E e;
 
-	auto a1 = has_function_signature_fff<A>(1);
-	auto b1 = has_function_signature_fff<B>(1);
-	auto c1 = has_function_signature_fff<C>(1);
-	auto d1 = has_function_signature_fff<D>(1);
-	auto e1 = has_function_signature_fff<E>(1);
+	auto a0 = has_function_signature_fff(&a);
+	auto b0 = has_function_signature_fff(&b);
+	auto c0 = has_function_signature_fff(&c);
+	auto d0 = has_function_signature_fff(&d);
+	auto e0 = has_function_signature_fff(&e);
 
-	auto a2 = has_function_signature_fff<A>(1, 3.3f);
-	auto b2 = has_function_signature_fff<B>(1, 3.3f);
-	auto c2 = has_function_signature_fff<C>(1, 3.3f);
-	auto d2 = has_function_signature_fff<D>(1, 3.3f);
-	auto e2 = has_function_signature_fff<E>(1, 3.3f);
+	auto a1 = has_function_signature_fff(&a, 1);
+	auto b1 = has_function_signature_fff(&b, 1);
+	auto c1 = has_function_signature_fff(&c, 1);
+	auto d1 = has_function_signature_fff(&d, 1);
+	auto e1 = has_function_signature_fff(&e, 1);
+
+	auto a2 = has_function_signature_fff(&a, 1, 3.3f);
+	auto b2 = has_function_signature_fff(&b, 1, 3.3f);
+	auto c2 = has_function_signature_fff(&c, 1, 3.3f);
+	auto d2 = has_function_signature_fff(&d, 1, 3.3f);
+	auto e2 = has_function_signature_fff(&e, 1, 3.3f);
 
 	return 0;
 }

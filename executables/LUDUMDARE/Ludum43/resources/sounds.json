@@ -2,25 +2,28 @@
 	"categories":{
 	
 		"@music":{
-			"volume":0.3
+			"volume":0.2
+		},
+		"@FX":{
+			"volume":0.2
 		}
 	},
 
   "sources": [
 
-    { "path": "sounds/menu_music.ogg" , "category" :  "music" },
-    { "path": "sounds/pause_music.ogg" , "category" :  "music" },
+    { "path": "sounds/menu_music.ogg" , "category" :  "music"},
+    { "path": "sounds/pause_music.ogg" , "category" :  "music"},
     { "path": "sounds/game_music.ogg" , "category" :  "music"},
-    { "path": "sounds/gameover.ogg" },
-    { "path": "sounds/bonus1.ogg" },
-    { "path": "sounds/bonus2.ogg" },
-    { "path": "sounds/start.ogg" },
-    { "path": "sounds/pause.ogg" },
-    { "path": "sounds/thrust.ogg" },
-    { "path": "sounds/particle_removed.ogg" },
-    { "path": "sounds/particle_add.ogg" },
-    { "path": "sounds/next_level.ogg" },
-    { "path": "sounds/collision.ogg" },
-    { "path": "sounds/heartbeat.ogg" }
+    { "path": "sounds/gameover.ogg" , "category" :  "FX"},
+    { "path": "sounds/bonus1.ogg" , "category" :  "FX"},
+    { "path": "sounds/bonus2.ogg" , "category" :  "FX"},
+    { "path": "sounds/start.ogg" , "category" :  "FX"},
+    { "path": "sounds/pause.ogg" , "category" :  "FX"},
+    { "path": "sounds/thrust.ogg" , "category" :  "FX"},
+    { "path": "sounds/particle_removed.ogg" , "category" :  "FX"},
+    { "path": "sounds/particle_add.ogg" , "category" :  "FX"},
+    { "path": "sounds/next_level.ogg" , "category" :  "FX"},
+    { "path": "sounds/collision.ogg" , "category" :  "FX"},
+    { "path": "sounds/heartbeat.ogg" , "category" :  "FX"}
   ]
 }

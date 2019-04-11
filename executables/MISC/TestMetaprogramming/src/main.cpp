@@ -139,24 +139,92 @@ auto has_function_xxx()
 }
 
 
-
-
-
-
-
-
-
-
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(fff)
+
+
+#if 0
+
+
+template<typename T>
+void XXX_Call_fff(T * t, boost::mpl::false_)
+{
+
+}
+
+template<typename T>
+auto XXX_Call_fff(T * t, boost::mpl::true_)
+{
+	return t->fff();
+}
+
+
+
+
+
+
+template<typename T, typename ...PARAMS, typename LAST>
+auto XXX_Call_fff(T * t, boost::mpl::false_, PARAMS... params, LAST last)
+{
+	auto can_call = has_function_signature_fff(t, params...); // remove last argument
+	return XXX_Call_fff(t, can_call, params...);
+}
+
+#if 1
+template<typename T, typename ...PARAMS>
+void XXX_Call_fff(T * t, boost::mpl::false_, PARAMS... params)
+{
+	
+}
+#endif
+
+template<typename T, typename ...PARAMS>
+auto XXX_Call_fff(T * t, boost::mpl::true_, PARAMS... params)
+{
+	return t->fff(params...);
+}
+
+
+
+
+
+template<typename T>
+auto Call_fff(T * t)
+{
+	auto can_call = has_function_signature_fff(t);
+	return XXX_Call_fff(t, can_call);
+}
+
+#endif 
+template<typename T, typename ...PARAMS>
+auto Call_fff(T * t, PARAMS... params)
+{
+	auto can_call = has_function_signature_fff(t, params...);
+
+
+	return can_call.value;
+	//return XXX_Call_fff(t, can_call, params...);
+}
+
 
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+
+	
+
 	A a;
 	B b;
 	C c;
 	D d;
 	E e;
+
+#define PARAMS ,1,3.0f
+
+	Call_fff(&a PARAMS);
+	Call_fff(&b PARAMS);
+	Call_fff(&c PARAMS);
+	Call_fff(&d PARAMS);
+	Call_fff(&e PARAMS);
 
 	auto a0 = has_function_signature_fff(&a);
 	auto b0 = has_function_signature_fff(&b);

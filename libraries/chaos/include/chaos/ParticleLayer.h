@@ -368,7 +368,7 @@ protected:
 		{ 
 			layer_trait_type const * typed_layer_trait = (layer_trait_type const *)layer_trait;
 
-			bool destroy_allocation = TickTrait(
+			bool destroy_allocation = TickAllocationTrait(
 				delta_time, 
 				typed_layer_trait, 
 				has_function_Tick<allocation_trait_type>::type(), 
@@ -385,17 +385,17 @@ protected:
 
 		/** internal method to tick the AllocationTrait */
 		template<typename T>
-		bool TickTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
+		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
 		{
 			return false; // do not destroy the allocation
 		}
 
-		bool TickTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
+		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
 			return allocation_trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
 		}
 
-		bool TickTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
+		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
 		{
 			return allocation_trait.Tick(delta_time, layer_trait); // let the trait decide whether the allocation is to be destroyed
 		}

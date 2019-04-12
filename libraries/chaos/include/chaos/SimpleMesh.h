@@ -46,7 +46,7 @@ namespace chaos
 		/** cleaning the object */
 		virtual bool DoRelease() override;
 		/** rendering internal method */
-		void DoRender(Renderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
+		void DoRender(Renderer * renderer, GPUProgram const * program, RenderParams const & render_params) const;
 
 	public:
 

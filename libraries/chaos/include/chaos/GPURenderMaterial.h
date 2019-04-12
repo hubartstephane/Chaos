@@ -57,8 +57,8 @@ namespace chaos
 		/** destructor */
 		virtual ~GPURenderMaterial();
 
-		/** prepare the rendering */
-		bool UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const;
+		/** prepare the rendering (find the program, use it, fills its uniforms and returns the program) */
+		GPUProgram const * UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const;
 
 		/** set the program */
 		bool SetProgram(GPUProgram * in_program);
@@ -71,6 +71,12 @@ namespace chaos
 		GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
 		/** get the uniform provider */
 		GPUProgramProvider const & GetUniformProvider() const { return uniform_provider; }
+
+
+		/** search the submaterial by its submaterial_name */
+		GPURenderMaterial * FindSubMaterial(char const * submaterial_name);
+		/** search the submaterial by its submaterial_name */
+		GPURenderMaterial const * FindSubMaterial(char const * submaterial_name) const;
 
 		/** create a RenderMaterial from a simple program */
 		static GPURenderMaterial * GenRenderMaterialObject(GPUProgram * program);
@@ -91,8 +97,8 @@ namespace chaos
 		/** some rendering states */
 		GPUProgramProvider uniform_provider;
 
-		/** children materials */
-		std::vector<shared_ptr<GPURenderMaterial>> sub_materials;
+		/** children materials (pair submaterial_name / material) */
+		std::vector<std::pair<std::string, shared_ptr<GPURenderMaterial>>> sub_materials;
 	};
 
 

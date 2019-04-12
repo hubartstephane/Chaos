@@ -29,6 +29,45 @@ namespace chaos
 		/** initialize the manager from a configuration file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
+	public:
+
+		/** a generic function to find an object in a list by its name */
+		template<typename U>
+		static auto FindObjectByName(char const * name, U & objects) -> decltype(objects[0].get())
+		{
+			if (name == nullptr)
+				return nullptr;
+
+			size_t count = objects.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				auto object = objects[i].get();
+				if (object == nullptr)
+					continue;
+				if (strcmp(object->GetName(), name) == 0)
+					return object;
+			}
+			return nullptr;
+		}
+
+		/** a generic function to find an object in a list by its path */
+		template<typename U>
+		static auto FindObjectByPath(FilePathParam const & in_path, U & objects) -> decltype(objects[0].get())
+		{
+			boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
+
+			size_t count = objects.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				auto obj = objects[i].get();
+				if (obj == nullptr)
+					continue;
+				if (obj->GetPath() == resolved_path)
+					return obj;
+			}
+			return nullptr;
+		}
+
 	protected:
 
 		/** internally starts the manager */
@@ -110,6 +149,7 @@ namespace chaos
 			return true;
 		}
 
+
 		/** utility function to remove an object from a list */
 		template<typename T, typename FUNC>
 		static void DoRemoveObject(size_t index, T & vector, FUNC remove_func)
@@ -152,42 +192,6 @@ namespace chaos
 				if (vector[i].get() == object)
 					return i;
 			return count;
-		}
-		/** a generic function to find an object in a list by its name */
-		template<typename U>
-		static auto FindObjectByName(char const * name, U & objects) -> decltype(objects[0].get())
-		{
-			if (name == nullptr)
-				return nullptr;
-
-			size_t count = objects.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto object = objects[i].get();
-				if (object == nullptr)
-					continue;
-				if (strcmp(object->GetName(), name) == 0)
-					return object;
-			}
-			return nullptr;
-		}
-
-		/** a generic function to find an object in a list by its path */
-		template<typename U>
-		static auto FindObjectByPath(FilePathParam const & in_path, U & objects) -> decltype(objects[0].get())
-		{
-			boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
-
-			size_t count = objects.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto obj = objects[i].get();
-				if (obj == nullptr)
-					continue;
-				if (obj->GetPath() == resolved_path)
-					return obj;
-			}
-			return nullptr;
 		}
 
 		/** utility function to test whether an object can be inserted */

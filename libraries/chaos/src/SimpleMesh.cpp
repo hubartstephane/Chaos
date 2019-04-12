@@ -35,7 +35,7 @@ namespace chaos
 		// use program
 		program->UseProgram(uniform_provider);
 		// do the rendering
-		DoRender(renderer, program, uniform_provider, render_params);
+		DoRender(renderer, program, render_params);
 	}
 
 	void SimpleMesh::Render(Renderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
@@ -43,17 +43,15 @@ namespace chaos
 		// early exit
 		if (material == nullptr)
 			return;
-		// get the program for the material
-		GPUProgram const * program = material->GetEffectiveProgram(render_params);
+		// get the program for the material, use it and bind its uniforms
+		GPUProgram const * program = material->UseMaterial(uniform_provider, render_params);
 		if (program == nullptr)
 			return;
-		// use material and bind uniforms
-		material->UseMaterial(uniform_provider, render_params);
 		// do the rendering
-		DoRender(renderer, program, uniform_provider, render_params);
+		DoRender(renderer, program, render_params);
 	}
 
-	void SimpleMesh::DoRender(Renderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	void SimpleMesh::DoRender(Renderer * renderer, GPUProgram const * program, RenderParams const & render_params) const
 	{
 		assert(program != nullptr);
 		// find the vertex array to use

@@ -555,7 +555,92 @@ namespace death
 						chaos::box2 particle_box = tile->GetBoundingBox(false);
 						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip);
 						continue;
-					}					
+					}	
+
+
+					// texts
+					chaos::TiledMap::GeometricObjectText * text = geometric_object->GetObjectText();
+					if (text != nullptr)
+					{
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+						chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
+						if (layer == nullptr)
+							return nullptr;
+
+						chaos::ParticleTextGenerator::GeneratorResult result;
+						chaos::ParticleTextGenerator::GeneratorParams params;
+
+						params.line_height = CHALLENGE_SIZE;
+						params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
+						params.position.x = 0.0f;
+						params.position.y = CHALLENGE_PLACEMENT_Y;
+
+						if (keyboard)
+						{
+							game->GetTextGenerator()->Generate(challenge->keyboard_challenge.c_str(), result, params);
+						}
+						else
+						{
+							std::string gamepad_string = GenerateGamepadChallengeString(challenge->gamepad_challenge);
+							game->GetTextGenerator()->Generate(gamepad_string.c_str(), result, params);
+						}
+
+						// create the text
+						chaos::ParticleAllocationBase * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
+						// and initialize additionnal data
+						if (allocation != nullptr)
+						{
+							chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
+							for (size_t i = 0; i < particles.GetCount(); ++i)
+							{
+								ParticleChallenge & p = particles[i];
+								p.challenge = challenge;
+								p.index = i;
+							}
+						}
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					}
 				}
 			}
 			// final flush

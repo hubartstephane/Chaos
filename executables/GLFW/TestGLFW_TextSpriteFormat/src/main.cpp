@@ -161,7 +161,7 @@ protected:
 
 		// parse the text
 		chaos::ParticleTextGenerator::Generator generator(*atlas);
-		generator.AddColor("red", glm::vec3(1.0f, 0.0f, 0.0f));
+		generator.AddColor("red", glm::vec4(1.0f, 0.0f, 0.0f, 0.5f));
 
 		chaos::BitmapAtlas::FolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
 		if (folder != nullptr)

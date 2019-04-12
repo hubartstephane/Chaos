@@ -625,7 +625,7 @@
    <properties>
     <property name="FONT_NAME" value="normal"/>
    </properties>
-   <text pixelsize="200" wrap="1" color="#40ffffff">LEVEL 2</text>
+   <text pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 2</text>
   </object>
  </objectgroup>
 </map>

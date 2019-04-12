@@ -577,6 +577,7 @@ namespace death
 						params.position = text->position;
 						params.default_color = text->color;
 
+
 						std::string const * font_name = text->FindPropertyString("FONT_NAME");
 						if (font_name != nullptr)
 							params.font_info_name = *font_name;

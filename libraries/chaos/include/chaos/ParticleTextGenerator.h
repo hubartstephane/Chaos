@@ -44,7 +44,7 @@ namespace chaos
 			/** the line alignment */
 			int alignment = ALIGN_LEFT;
 			/** the color to use by default */
-			glm::vec3 default_color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glm::vec4 default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			/** the font to use by default */
 			std::string font_info_name;
 			/** tab size */
@@ -85,7 +85,7 @@ namespace chaos
 			/** the coordinates in atlas */
 			ParticleTexcoords texcoords;	
 			/** the colour of the particle */
-			glm::vec3 color;
+			glm::vec4 color;
 		};
 
 		/**
@@ -152,7 +152,7 @@ namespace chaos
 		public:
 
 			/** the color to use */
-			glm::vec3 color;
+			glm::vec4 color;
 			/** the character set selected */
 			BitmapAtlas::FontInfo const * font_info = nullptr;
 		};
@@ -180,7 +180,7 @@ namespace chaos
 			/** add an element on generator stack : keep color, but change current font_info */
 			Style & PushFontInfo(BitmapAtlas::FontInfo const * font_info);
 			/** add an element on generator stack : keep font_info, but change current color */
-			Style & PushColor(glm::vec3 const & color);
+			Style & PushColor(glm::vec4 const & color);
 			/** get a character set from its name */
 			BitmapAtlas::FontInfo const * GetFontInfoFromName(char const * font_info_name) const;
 			/** recursively search a font inside the folder */
@@ -232,7 +232,7 @@ namespace chaos
 				atlas(in_atlas) {}
 
 			/** add a named color in the generator */
-			bool AddColor(char const * name, glm::vec3 const & color);
+			bool AddColor(char const * name, glm::vec4 const & color);
 			/** add a named bitmap in the generator */
 			bool AddBitmap(char const * name, char const * folder_name, char const * bitmap_name);
 			/** add a named bitmap in the generator */
@@ -254,7 +254,7 @@ namespace chaos
 			bool DoGenerateLines(char const * text, GeneratorData & generator_data);
 
 			/** get a color by its name */
-			glm::vec3 const * GetColor(char const * name) const;
+			glm::vec4 const * GetColor(char const * name) const;
 			/** get a bitmap by its name */
 			BitmapAtlas::BitmapInfo const * GetBitmapInfo(char const * name) const;
 			/** get a character set by its name */
@@ -301,7 +301,7 @@ namespace chaos
 		public:
 
 			/** the colors to use, indexed by a joker name */
-			std::map<std::string, glm::vec3, StringTools::ci_less> colors;
+			std::map<std::string, glm::vec4, StringTools::ci_less> colors;
 			/** the bitmaps to use, indexed by a joker name */
 			std::map<std::string, BitmapAtlas::BitmapInfo const *, StringTools::ci_less> bitmaps;
 			/** the font_info to use, indexed by a joker name */

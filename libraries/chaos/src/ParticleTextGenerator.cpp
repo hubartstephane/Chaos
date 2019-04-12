@@ -53,7 +53,7 @@ namespace chaos
 			return result;
 		}
 
-		Style & GeneratorData::PushColor(glm::vec3 const & color)
+		Style & GeneratorData::PushColor(glm::vec4 const & color)
 		{
 			// push a copy of previous style, except the color
 			Style & result = PushDuplicate();
@@ -122,7 +122,7 @@ namespace chaos
 		{
 			Token token;
 			token.bitmap_layout = layout;
-			token.color = glm::vec3(1.0f, 1.0f, 1.0f);
+			token.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			InsertTokenInLine(token);
 		}
 
@@ -288,7 +288,7 @@ namespace chaos
 		// Generator methods
 		// ============================================================
 
-		glm::vec3 const * Generator::GetColor(char const * name) const
+		glm::vec4 const * Generator::GetColor(char const * name) const
 		{
 			auto it = colors.find(name);
 			if (it == colors.end())
@@ -331,7 +331,7 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::AddColor(char const * name, glm::vec3 const & color)
+		bool Generator::AddColor(char const * name, glm::vec4 const & color)
 		{
 			if (!IsNameValid(name))
 				return false;
@@ -712,7 +712,7 @@ namespace chaos
 
 					p.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
 					p.texcoords = token.texcoords;
-					p.color = glm::vec4(token.color.r, token.color.g, token.color.b, 1.0f);
+					p.color = token.color;
 					++token_index;
 				}
 			}

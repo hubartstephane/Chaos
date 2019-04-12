@@ -500,7 +500,7 @@
    <properties>
     <property name="FONT_NAME" value="normal"/>
    </properties>
-   <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#40ffffff">LEVEL 1</text>
+   <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 1</text>
   </object>
  </objectgroup>
 </map>

@@ -611,7 +611,7 @@
  </objectgroup>
  <objectgroup name="Texts">
   <object id="1853" name="Level 3" x="-5476.5" y="-145.5" width="985" height="267">
-   <text pixelsize="200" wrap="1" color="#40ffffff">LEVEL 3</text>
+   <text pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 3</text>
   </object>
  </objectgroup>
 </map>

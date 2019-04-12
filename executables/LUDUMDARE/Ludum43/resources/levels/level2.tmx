@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1903">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1905">
  <properties>
   <property name="BACKGROUND_NAME" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -455,7 +455,7 @@
   <object id="1636" gid="14" x="-4243" y="1176" width="167" height="176"/>
   <object id="1637" gid="14" x="9901" y="3224" width="167" height="176"/>
  </objectgroup>
- <objectgroup name="Finishing" locked="1">
+ <objectgroup name="Finishing" visible="0" locked="1">
   <properties>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
@@ -476,7 +476,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Atoms" locked="1">
+ <objectgroup name="Atoms" visible="0" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="atom"/>
@@ -573,7 +573,7 @@
   <object id="1875" gid="6" x="-8984" y="7136" width="48" height="48"/>
   <object id="1876" gid="6" x="-9720" y="7584" width="48" height="48"/>
  </objectgroup>
- <objectgroup name="Enemies">
+ <objectgroup name="Enemies" visible="0" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="enemy"/>
@@ -619,5 +619,13 @@
    </properties>
   </object>
   <object id="75" name="world_bounding_box" x="-28752" y="-22784" width="65152" height="53760"/>
+ </objectgroup>
+ <objectgroup name="texts" offsetx="1756" offsety="412">
+  <object id="1903" name="Level2" x="-8216.5" y="-301.5" width="1009" height="275">
+   <properties>
+    <property name="FONT_NAME" value="normal"/>
+   </properties>
+   <text pixelsize="200" wrap="1" color="#40ffffff">LEVEL 2</text>
+  </object>
  </objectgroup>
 </map>

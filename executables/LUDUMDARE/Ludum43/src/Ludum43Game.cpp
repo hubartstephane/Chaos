@@ -118,6 +118,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 		filter.name_filter.forbidden_names.push_back("Atoms");
 		filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
 		filter.name_filter.forbidden_names.push_back("WorldLimits");
+		filter.name_filter.forbidden_names.push_back("Texts");
 
 		chaos::RenderParams other_render_params = render_params;
 		other_render_params.object_filter = &filter;
@@ -165,6 +166,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 		filter.name_filter.enable_names.push_back("Enemies");
 		filter.name_filter.enable_names.push_back("Atoms");
 		filter.name_filter.enable_names.push_back("PlayerAndCamera");
+		filter.name_filter.enable_names.push_back("Texts");
 
 		chaos::RenderParams other_rendering_params = render_params;
 		other_rendering_params.object_filter = &filter;

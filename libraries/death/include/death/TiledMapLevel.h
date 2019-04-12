@@ -329,6 +329,8 @@ namespace death
 
 			/** create a particle allocation for the layer */
 			chaos::ParticleAllocationBase * CreateParticleAllocation();
+			/** create the particle layer if required */
+			chaos::ParticleLayerBase * CreateParticleLayer();
 
 			/** get whether player collisions are enabled on that layer */
 			bool ArePlayerCollisionEnabled() const { return player_collision_enabled; }
@@ -360,8 +362,8 @@ namespace death
 
 			/** initialization */
 			virtual bool Initialize();
-			/** find render material according to its name */
-			chaos::GPURenderMaterial * FindRenderMaterial(char const * material_name);
+			/** find render material according to its name (or create the default) */
+			chaos::GPURenderMaterial * FindOrCreateRenderMaterial(char const * material_name);
 
 			/** override */
 			virtual bool DoTick(double delta_time) override;

@@ -377,9 +377,9 @@ namespace death
 			return result;
 		}
 
-		chaos::GPURenderMaterial * LayerInstance::FindRenderMaterial(char const * material_name)
+		chaos::GPURenderMaterial * LayerInstance::FindOrCreateRenderMaterial(char const * material_name)
 		{
-			if (material_name != nullptr && material_name[0] != 0) // unamed material
+			if (material_name != nullptr && material_name[0] != 0) // unamed material ?
 			{
 				// get the resource manager
 				chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
@@ -562,84 +562,30 @@ namespace death
 					chaos::TiledMap::GeometricObjectText * text = geometric_object->GetObjectText();
 					if (text != nullptr)
 					{
+						// create particle layer if necessary
+						if (particle_layer == nullptr)
+							if (CreateParticleLayer() == nullptr) // the generate layer is of  TileParticleTrait => this works fine for Text (except a useless GID per particle)
+								continue;
 
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-						chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
-						if (layer == nullptr)
-							return nullptr;
+						Game * game = GetGame();
 
 						chaos::ParticleTextGenerator::GeneratorResult result;
 						chaos::ParticleTextGenerator::GeneratorParams params;
 
-						params.line_height = CHALLENGE_SIZE;
+						params.line_height = (float)text->pixelsize;
 						params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
-						params.position.x = 0.0f;
-						params.position.y = CHALLENGE_PLACEMENT_Y;
+						params.position = text->position;
+						params.default_color = text->color;
 
-						if (keyboard)
-						{
-							game->GetTextGenerator()->Generate(challenge->keyboard_challenge.c_str(), result, params);
-						}
-						else
-						{
-							std::string gamepad_string = GenerateGamepadChallengeString(challenge->gamepad_challenge);
-							game->GetTextGenerator()->Generate(gamepad_string.c_str(), result, params);
-						}
+						std::string const * font_name = text->FindPropertyString("FONT_NAME");
+						if (font_name != nullptr)
+							params.font_info_name = *font_name;
+
+						game->GetTextGenerator()->Generate(text->text.c_str(), result, params);
 
 						// create the text
-						chaos::ParticleAllocationBase * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
-						// and initialize additionnal data
-						if (allocation != nullptr)
-						{
-							chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
-							for (size_t i = 0; i < particles.GetCount(); ++i)
-							{
-								ParticleChallenge & p = particles[i];
-								p.challenge = challenge;
-								p.index = i;
-							}
-						}
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+						chaos::ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
+						continue;
 					}
 				}
 			}
@@ -694,13 +640,22 @@ namespace death
 
 		chaos::ParticleAllocationBase * LayerInstance::CreateParticleAllocation()
 		{
+			// create particle layer if necessary
+			if (particle_layer == nullptr)
+				if (CreateParticleLayer() == nullptr)
+					return nullptr;
+			// create the allocation
+			return particle_layer->SpawnParticles(0);
+		}
+
+		chaos::ParticleLayerBase * LayerInstance::CreateParticleLayer()
+		{
 			if (particle_layer == nullptr)
 			{
 				// find render material
-				chaos::GPURenderMaterial * render_material = FindRenderMaterial(material_name.c_str());
+				chaos::GPURenderMaterial * render_material = FindOrCreateRenderMaterial(material_name.c_str());
 				if (render_material == nullptr)
 					return nullptr;
-
 				// create a particle layer
 				particle_layer = GetTiledLevel()->CreateParticleLayer(this);
 				if (particle_layer == nullptr)
@@ -710,9 +665,7 @@ namespace death
 				// set the material
 				particle_layer->SetRenderMaterial(render_material);
 			}
-
-			// create the allocation
-			return particle_layer->SpawnParticles(0);
+			return particle_layer.get();
 		}
 
 		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)

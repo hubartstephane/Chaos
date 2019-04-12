@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1705">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1711">
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -34,7 +34,7 @@
   <object id="1661" gid="8" x="-1448" y="-11048" width="2000" height="2000"/>
   <object id="1662" gid="8" x="-2056" y="-10024" width="5000" height="5000"/>
  </objectgroup>
- <objectgroup name="Background5" visible="0" locked="1">
+ <objectgroup name="Background5" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
@@ -75,7 +75,7 @@
   <object id="360" gid="6" x="2546" y="746" width="24" height="24"/>
   <object id="361" gid="6" x="2386" y="1466" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background4" visible="0" locked="1">
+ <objectgroup name="Background4" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
@@ -118,7 +118,7 @@
   <object id="328" gid="6" x="1602" y="1610" width="24" height="24"/>
   <object id="329" gid="6" x="3010" y="1002" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background3" visible="0" locked="1">
+ <objectgroup name="Background3" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -173,7 +173,7 @@
   <object id="294" gid="6" x="290" y="634" width="24" height="24"/>
   <object id="295" gid="6" x="818" y="666" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background2" visible="0">
+ <objectgroup name="Background2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
@@ -211,7 +211,7 @@
   <object id="219" gid="6" x="338" y="2266" width="24" height="24"/>
   <object id="220" gid="6" x="1362" y="2282" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="Background1" visible="0" locked="1">
+ <objectgroup name="Background1" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
@@ -274,7 +274,7 @@
   <object id="190" gid="6" x="1570" y="3418" width="24" height="24"/>
   <object id="191" gid="6" x="2178" y="3386" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="BackgroundObject5" visible="0" locked="1">
+ <objectgroup name="BackgroundObject5" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -307,7 +307,7 @@
   <object id="1615" gid="11" x="92" y="-11884" width="201" height="169"/>
   <object id="1616" gid="11" x="-3940" y="-9324" width="201" height="169"/>
  </objectgroup>
- <objectgroup name="BackgroundObject4" visible="0" locked="1">
+ <objectgroup name="BackgroundObject4" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
@@ -337,7 +337,7 @@
   <object id="1627" gid="14" x="6829" y="-360" width="167" height="176"/>
   <object id="1628" gid="14" x="12973" y="1112" width="167" height="176"/>
  </objectgroup>
- <objectgroup name="BackgroundObject3" visible="0" locked="1">
+ <objectgroup name="BackgroundObject3" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
@@ -356,7 +356,7 @@
   <object id="1640" gid="12" x="-1122" y="-1714" width="196" height="156"/>
   <object id="1641" gid="12" x="-5346" y="3150" width="196" height="156"/>
  </objectgroup>
- <objectgroup name="BackgroundObject2" visible="0" locked="1">
+ <objectgroup name="BackgroundObject2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
@@ -387,7 +387,7 @@
   <object id="1010" gid="12" x="4766" y="5262" width="196" height="156"/>
   <object id="1011" gid="15" x="1752" y="-1240" width="2000" height="2000"/>
  </objectgroup>
- <objectgroup name="BackgroundObject1" visible="0" locked="1">
+ <objectgroup name="BackgroundObject1" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
@@ -421,7 +421,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Atoms">
+ <objectgroup name="Atoms" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="atom"/>
@@ -467,7 +467,7 @@
   <object id="1701" gid="9" x="-1634" y="-11609.5" width="50" height="50"/>
   <object id="1702" gid="9" x="-1513" y="-10521" width="50" height="50"/>
  </objectgroup>
- <objectgroup name="Enemies">
+ <objectgroup name="Enemies" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="enemy"/>
@@ -494,5 +494,13 @@
    </properties>
   </object>
   <object id="75" name="world_bounding_box" x="-11024" y="-22784" width="47424" height="53760" visible="0"/>
+ </objectgroup>
+ <objectgroup name="Texts" offsetx="54.0606" offsety="-145.212">
+  <object id="1710" name="Level 1" x="-5405.11" y="-142.106" width="1065.85" height="228.212">
+   <properties>
+    <property name="FONT_NAME" value="normal"/>
+   </properties>
+   <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#40ffffff">LEVEL 1</text>
+  </object>
  </objectgroup>
 </map>

@@ -7,20 +7,33 @@ namespace chaos
 	{
 		// use extra provider
 		if (other_provider != nullptr)
-			if (other_provider->DoProcessAction(name, action, other_provider))
+			if (other_provider->DoProcessAction(name, action, top_provider))
 				return true;
 
-		// use variables inside this provider
+		// submaterials
+		if (render_params != nullptr && !render_params->submaterial_name.empty())
+		{
+			GPURenderMaterial const * submaterial = render_material->FindSubMaterial(render_params->submaterial_name.c_str());
+			if (submaterial != nullptr)
+			{
+				GPUProgramRenderMaterialProvider submaterial_provider(submaterial, nullptr, render_params); // no more other => it has already been called in this function
+				if (submaterial_provider.DoProcessAction(name, action, top_provider))
+					return true;
+			}
+		}
+		// search in the materials uniforms
+		if (render_material->uniform_provider.DoProcessAction(name, action, top_provider))
+			return true;
+		// use variables inside this provider (should be empty)
 		if (GPUProgramProvider::DoProcessAction(name, action, top_provider))
 			return true;
-
-		// use the provider of each materials
-		GPURenderMaterial const * rm = render_material;
-		while (rm != nullptr)
+		// try parent 
+		if (render_material->parent_material != nullptr)
 		{
-			if (rm->uniform_provider.DoProcessAction(name, action, top_provider))
+			GPUProgramRenderMaterialProvider parent_provider(render_material->parent_material.get(), nullptr, render_params); // no more other => it has already been called in this function
+			if (parent_provider.DoProcessAction(name, action, top_provider))
 				return true;
-			rm = rm->parent_material.get();
+
 		}
 		return false;
 	}
@@ -110,7 +123,7 @@ namespace chaos
 		if (effective_program == nullptr)
 			return nullptr;
 		// use the program
-		GPUProgramRenderMaterialProvider provider(this, in_uniform_provider);
+		GPUProgramRenderMaterialProvider provider(this, in_uniform_provider, &render_params);
 		effective_program->UseProgram(&provider);
 
 		return effective_program;

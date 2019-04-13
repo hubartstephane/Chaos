@@ -20,9 +20,10 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramRenderMaterialProvider(class GPURenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider) :
+		GPUProgramRenderMaterialProvider(class GPURenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider, RenderParams const * in_render_params) :
 			render_material(in_render_material),
-			other_provider(in_other_provider)
+			other_provider(in_other_provider),
+			render_params(in_render_params)
 		{}
 
 	protected:
@@ -36,6 +37,8 @@ namespace chaos
 		GPURenderMaterial const * render_material = nullptr;
 		/** another provider (use a non intrusive reference !!!) */
 		GPUProgramProviderBase const * other_provider = nullptr;
+		/** the render params used */
+		RenderParams const * render_params = nullptr;
 	};
 
 	/**

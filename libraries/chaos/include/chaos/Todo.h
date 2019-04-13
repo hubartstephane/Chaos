@@ -7,6 +7,18 @@
 	== TODO
 	====================================================================
 
+
+		- TiledMap : spawner + detection collision
+		-  fadout
+
+
+
+
+
+
+
+
+
 		- in game.json, better font management => "title_font_path", "font_path" ... on demand
 
 		PerAllocationData : renommer ?

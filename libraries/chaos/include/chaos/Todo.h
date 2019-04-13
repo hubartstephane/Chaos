@@ -25,7 +25,6 @@
 
 		=> Tick( ... )
 
-		=> le tick de PerAllocationData peut detruire delui meme l allocation : see SetEmptyCallbackAutoRemove()
 
 
 

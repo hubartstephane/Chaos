@@ -33,18 +33,17 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 	{
 		ParticlePlayerTrait::LayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);	
+		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
 	}
 
-	bool is_enemy       = (layer_name == "Enemies");
+	bool is_enemy = (layer_name == "Enemies");
 	bool is_world_limit = (layer_name == "WorldLimits");
 	if (is_enemy || is_world_limit)
 	{
 		ParticleEnemyTrait::LayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		layer_trait.dynamic_particles = is_enemy; // shuxxx : optimization 
-		layer_trait.dynamic_vertices  = is_enemy;
-
+		layer_trait.dynamic_vertices = is_enemy;
 		return new chaos::ParticleLayer<ParticleEnemyTrait>(layer_trait);
 	}
 
@@ -55,6 +54,12 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		layer_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleAtomTrait>(layer_trait);
 	}
+	bool is_texts = (layer_name == "Texts");
+	if (is_texts)
+	{
+		return new chaos::ParticleLayer<chaos::ParticleDefault::ParticleTrait>();
+	}
+
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
 
@@ -70,27 +75,27 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
-	bool is_enemy        = (layer_name == "Enemies");
+	bool is_enemy = (layer_name == "Enemies");
 	bool is_world_limits = (layer_name == "WorldLimits");
-	bool is_player       = (layer_name == "PlayerAndCamera");
+	bool is_player = (layer_name == "PlayerAndCamera");
 
 	if (is_player)
 	{
 		chaos::ParticleAccessor<ParticleAffector> particles = allocation->GetParticleAccessor<ParticleAffector>();
 
 		size_t count = particles.GetCount();
-		for (size_t i = 0 ; i < count ; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
-			ParticleAffector & p = particles[i]; 
+			ParticleAffector & p = particles[i];
 
 			float radius = chaos::GetInnerCircle(p.bounding_box).radius;
 
 			p.attraction_minradius = radius + ludum_game->player_attraction_minradius;
 			p.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
-			p.attraction_force     = ludum_game->player_attraction_force;
-			p.repulsion_force      = ludum_game->player_repulsion_force;
-			p.tangent_force        = ludum_game->player_tangent_force;	
-		}	
+			p.attraction_force = ludum_game->player_attraction_force;
+			p.repulsion_force = ludum_game->player_repulsion_force;
+			p.tangent_force = ludum_game->player_tangent_force;
+		}
 		return true;
 	}
 
@@ -100,9 +105,9 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor<ParticleEnemy>();
 
 		size_t count = particles.GetCount();
-		for (size_t i = 0 ; i < count ; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
-			ParticleEnemy & p = particles[i]; 
+			ParticleEnemy & p = particles[i];
 
 			chaos::sphere2 c = chaos::GetInnerCircle(p.bounding_box);
 
@@ -119,29 +124,29 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 			if (is_enemy)
 			{
 				p.attraction_minradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->enemy_attraction_minradius_factor, ludum_game->enemy_attraction_minradius_offset);
-				p.attraction_maxradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->enemy_attraction_maxradius_factor, ludum_game->enemy_attraction_maxradius_offset);					
+				p.attraction_maxradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->enemy_attraction_maxradius_factor, ludum_game->enemy_attraction_maxradius_offset);
 			}
 			else
 			{
 				p.attraction_minradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->worldlimits_attraction_minradius_factor, ludum_game->worldlimits_attraction_minradius_offset);
-				p.attraction_maxradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->worldlimits_attraction_maxradius_factor, ludum_game->worldlimits_attraction_maxradius_offset);			
+				p.attraction_maxradius = GetWorldAndEnemyEffectiveRadius(radius, ludum_game->worldlimits_attraction_maxradius_factor, ludum_game->worldlimits_attraction_maxradius_offset);
 			}
-			p.attraction_force     = ludum_game->enemy_attraction_force;
-			p.repulsion_force      = ludum_game->enemy_repulsion_force;
-			p.tangent_force        = ludum_game->enemy_tangent_force;			
-			p.reversed             = is_world_limits;
-			p.world_limits         = is_world_limits;
-			p.color                = (is_world_limits)?
-				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f):
+			p.attraction_force = ludum_game->enemy_attraction_force;
+			p.repulsion_force = ludum_game->enemy_repulsion_force;
+			p.tangent_force = ludum_game->enemy_tangent_force;
+			p.reversed = is_world_limits;
+			p.world_limits = is_world_limits;
+			p.color = (is_world_limits) ?
+				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) :
 				glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 			p.rotation_center = p.bounding_box.position;
 			if (is_enemy)
 			{
 				p.rotation_radius = radius * chaos::MathTools::RandFloat(0.0f, 2.0f);
-				p.rotation_alpha  = chaos::MathTools::RandFloat(0.0f, 6.28f);						
+				p.rotation_alpha = chaos::MathTools::RandFloat(0.0f, 6.28f);
 			}
-		}	
+		}
 		return true;
 	}
 
@@ -151,13 +156,13 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		chaos::ParticleAccessor<ParticleAtom> particles = allocation->GetParticleAccessor<ParticleAtom>();
 
 		size_t count = particles.GetCount();
-		for (size_t i = 0 ; i < count ; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
-			ParticleAtom & p = particles[i]; 
+			ParticleAtom & p = particles[i];
 			p.particle_radius_factor = chaos::MathTools::RandFloat(ludum_game->particle_min_radius_factor, ludum_game->particle_max_radius_factor);
 			p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 			p.life = ludum_game->initial_particle_life;
-		}	
+		}
 		return true;
 	}
 
@@ -176,7 +181,7 @@ death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death
 // FinishingTriggerSurfaceObject implementation
 // =============================================================
 
-FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object):
+FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
 	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_geometric_object)
 {
 
@@ -190,9 +195,9 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, death::
 		if (!pp->level_end_reached)
 		{
 			pp->level_end_reached = true;
-			pp->level_end_timer   = 2.0f;		
-		}		
+			pp->level_end_timer = 2.0f;
+		}
 	}
 
-	return true;
+	return true; // stop other collisions detection
 }

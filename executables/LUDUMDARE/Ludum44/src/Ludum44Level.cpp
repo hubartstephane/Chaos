@@ -54,6 +54,12 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		layer_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleAtomTrait>(layer_trait);
 	}
+	bool is_texts = (layer_name == "Texts");
+	if (is_texts)
+	{
+		return new chaos::ParticleLayer<chaos::ParticleDefault::ParticleTrait>();
+	}
+
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
 
@@ -193,5 +199,5 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, death::
 		}		
 	}
 
-	return true;
+	return true; // stop other collisions detection
 }

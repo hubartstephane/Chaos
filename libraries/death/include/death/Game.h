@@ -63,6 +63,8 @@ namespace death
 		Player * GetPlayer(int player_index);
 		/** get the player by its index */
 		Player const * GetPlayer(int player_index) const;
+		/** get the number of players */
+		size_t GetPlayerCount() const;
 
 		/** get currently played level */
 		GameLevel * GetLevel();

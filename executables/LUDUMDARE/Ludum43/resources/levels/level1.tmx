@@ -274,7 +274,7 @@
   <object id="190" gid="6" x="1570" y="3418" width="24" height="24"/>
   <object id="191" gid="6" x="2178" y="3386" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="BackgroundObject5" locked="1">
+ <objectgroup name="BackgroundObject5">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -495,7 +495,7 @@
   </object>
   <object id="75" name="world_bounding_box" x="-11024" y="-22784" width="47424" height="53760" visible="0"/>
  </objectgroup>
- <objectgroup name="Texts" offsetx="54.0606" offsety="-145.212">
+ <objectgroup name="Texts" locked="1" offsetx="54.0606" offsety="-145.212">
   <object id="1710" name="Level 1" x="-5405.11" y="-142.106" width="1065.85" height="228.212">
    <properties>
     <property name="FONT_NAME" value="normal"/>

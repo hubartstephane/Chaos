@@ -280,7 +280,7 @@ namespace death
 			return result;
 		}
 
-		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
+		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason)
 		{
 			return true; // continue other collisions
 		}
@@ -547,6 +547,10 @@ namespace death
 					if (tile != nullptr)
 					{
 						int gid = tile->gid;
+
+				//		if (!tile->visible)
+				//			continue;
+
 						// search the tile information 
 						chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 						if (tile_info.tiledata == nullptr)
@@ -718,48 +722,108 @@ namespace death
 			Game * game = GetGame();
 			if (game == nullptr)
 				return;
-			// get the player
-			Player * player = game->GetPlayer(0);
-			if (player == nullptr)
-				return;
-			// get the player particle
-			chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
-			if (player_particle == nullptr)
-				return;
-			// collision with surface triggers
-			if (AreTriggerSurfacesEnabled())
-				ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle);
-			// collision with tiles
-			if (AreTileCollisionsEnabled())
-				ComputePlayerTileCollisions(delta_time, player, player_particle);
+			// compute the collisions for all players
+			size_t player_count = game->GetPlayerCount();
+			for (size_t i = 0; i < player_count; ++i)
+			{
+				Player * player = game->GetPlayer(i);
+				if (player == nullptr)
+					continue;
+				// get the player particle
+				chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
+				if (player_particle == nullptr)
+					continue;
+				// collision with surface triggers
+				if (AreTriggerSurfacesEnabled())
+					if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle))
+						continue;
+				// collision with tiles
+				if (AreTileCollisionsEnabled())
+					if (!ComputePlayerTileCollisions(delta_time, player, player_particle))
+						continue;
+			}
 		}
 
-		void LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
+		PlayerAndTriggerCollisionRecord * LayerInstance::FindPlayerCollisionRecord(death::Player * player)
 		{
-			death::TiledMap::Level * level = GetTiledLevel();
+			size_t count = collision_records.size();
+			for (size_t i = count; i > 0; --i)
+			{
+				size_t index = i - 1;
+				if (collision_records[index].player == nullptr)
+					collision_records.erase(collision_records.begin() + index);
+				else if (collision_records[index].player == player)
+					return &collision_records[index];
+			}
+			return nullptr;
+		}
 
-			size_t count = trigger_surfaces.size();
-			for (size_t i = 0; i < count; ++i)
+
+		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
+		{
+			// the new colliding triggers
+			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
+			// the previous colliding triggers
+			PlayerAndTriggerCollisionRecord * previous_collisions = FindPlayerCollisionRecord(player);
+
+			// search all colliding triggers
+			size_t surfaces_count = trigger_surfaces.size();
+			for (size_t i = 0; i < surfaces_count; ++i)
 			{
 				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
 
 				chaos::box2 trigger_box = trigger->GetBoundingBox(true);
-
 				if (chaos::Collide(player_particle->bounding_box, trigger_box))
-					if (!trigger->OnPlayerCollision(delta_time, player, player_particle))
-						break;
-			}			
+					triggers.push_back(trigger);
+			}
+
+			// triggers collisions 
+			size_t triggers_count = triggers.size();
+			for (size_t i = 0; i < triggers_count; ++i)
+			{
+				bool already_colliding = false;
+				if (previous_collisions != nullptr)
+					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
+						already_colliding = true;
+				triggers.push_back(triggers[i]);
+				if (!triggers[i]->OnPlayerCollision(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+					return false;
+			}
+
+			// triggers end of collisions
+			if (previous_collisions != nullptr)
+			{
+				size_t previous_count = previous_collisions->triggers.size();
+				for (size_t i = 0; i < previous_count; ++i)
+				{
+					if (std::find(triggers.begin(), triggers.end(), previous_collisions->triggers[i]) == triggers.end()) // no more colliding
+						if (!previous_collisions->triggers[i]->OnPlayerCollision(delta_time, player, player_particle, TriggerSurfaceObject::COLLISION_FINISHED))
+							return false;
+				}
+			}
+
+			// store the record
+			if (previous_collisions != nullptr)
+				previous_collisions->triggers = std::move(triggers);
+			else
+			{
+				PlayerAndTriggerCollisionRecord new_record;
+				new_record.player = player;
+				new_record.triggers = std::move(triggers);
+				collision_records.push_back(std::move(new_record));
+			}
+			return true; // continue other collisions 
 		}
 
-		void LayerInstance::ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
+		bool LayerInstance::ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			death::TiledMap::Level * level = GetTiledLevel();
 
 			// no particle layer, no collisions
 			if (particle_layer == nullptr)
-				return;
+				return true;
 			// iterate over all allocations
 			size_t allocation_count = particle_layer->GetAllocationCount();
 			for (size_t i = 0; i < allocation_count; ++i)
@@ -778,10 +842,11 @@ namespace death
 					if (player_particle == &particle) // ignore self collision
 						continue;
 					if (chaos::Collide(player_particle->bounding_box, particle.bounding_box))
-						if (!level->OnPlayerTileCollision(delta_time, player, player_particle, &particle))
-							return;
+						if (!level->OnPlayerTileCollision(delta_time, player, player_particle, &particle)) // stop other collisions
+							return false;
 				}
 			}
+			return true; // continue other collisions
 		}
 
 		bool LayerInstance::DoTick(double delta_time)

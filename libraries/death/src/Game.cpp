@@ -1329,6 +1329,15 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
+	size_t Game::GetPlayerCount() const 
+	{ 
+		// game even not started : no player
+		if (game_instance == nullptr)
+			return 0;
+		// give the instance the responsability 
+		return game_instance->GetPlayerCount();
+	}
+
 	bool Game::ReloadGameConfiguration()
 	{
 		chaos::Application * application = chaos::Application::GetInstance();

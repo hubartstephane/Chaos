@@ -166,6 +166,10 @@ namespace death
 
 		public:
 
+			static int const COLLISION_FINISHED = 0;
+			static int const COLLISION_STARTED  = 1;
+			static int const COLLISION_AGAIN    = 2;
+
 			/** constructor */
 			TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
@@ -186,8 +190,8 @@ namespace death
 			virtual bool Initialize() override;
 
 			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-			virtual bool OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
-			
+			virtual bool OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason);
+
 		protected:
 
 			/** flag whether to object is enabled or not */
@@ -268,6 +272,19 @@ namespace death
 			/** the tiled map corresponding to this level */
 			chaos::shared_ptr<chaos::TiledMap::Map> tiled_map;
 		};
+
+		// =====================================
+		// LayerInstance : instance of a Layer
+		// =====================================
+
+		class PlayerAndTriggerCollisionRecord
+		{
+		public:
+
+			chaos::weak_ptr<death::Player> player;
+			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
+		};
+
 
 		// =====================================
 		// LayerInstance : instance of a Layer
@@ -372,10 +389,10 @@ namespace death
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerCollision(double delta_time);
-			/** compute trigger collisions with surface triggers */
-			virtual void ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
-			/** compute collisions between players and tiles */
-			virtual void ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
+			/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
+			virtual bool ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
+			/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
+			virtual bool ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
 
 			/** specialized layer */
 			bool InitializeLayer(chaos::TiledMap::ImageLayer * image_layer);
@@ -388,6 +405,9 @@ namespace death
 			virtual bool FinalizeParticles();
 			/** try to search a name and a tag in the chaos::layer,  give them to the particle layer */
 			virtual bool InitializeParticleLayerNameAndTag(chaos::ParticleLayerBase * in_particle_layer);
+
+			/** find the collision record for a player (clean all records for destroyed player) */
+			PlayerAndTriggerCollisionRecord * FindPlayerCollisionRecord(death::Player * player);
 
 		protected:
 
@@ -431,6 +451,9 @@ namespace death
 
 			/** the current offset */
 			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+
+			/** the previous frame collision */
+			std::vector<PlayerAndTriggerCollisionRecord> collision_records;
 		};
 
 		// =====================================

@@ -27,7 +27,7 @@ public:
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnPlayerCollision(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason) override;
+	virtual bool OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
 };
 
 // =================================================

@@ -25,7 +25,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -184,13 +184,16 @@ namespace death
 			/** get the object bounding box */
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
+			/** search whether there is a collision given box */
+			virtual bool IsCollisionWith(chaos::box2 const & other_box, PlayerAndTriggerCollisionRecord const * previous_collisions) const;
+
 		protected:
 
 			/** override */
 			virtual bool Initialize() override;
 
 			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-			virtual bool OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason);
+			virtual bool OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
 
 		protected:
 
@@ -198,6 +201,8 @@ namespace death
 			bool enabled = true;
 			/** an ID that helps make classification */
 			int trigger_id = 0;
+			/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
+			float outside_box_factor = 1.0f;
 		};
 
 		// =====================================

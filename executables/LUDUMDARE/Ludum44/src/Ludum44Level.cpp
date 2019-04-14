@@ -187,9 +187,9 @@ FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::La
 
 }
 
-bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason)
+bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	if (player_particle != nullptr)
+	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
 	{
 		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
 		if (!pp->level_end_reached)

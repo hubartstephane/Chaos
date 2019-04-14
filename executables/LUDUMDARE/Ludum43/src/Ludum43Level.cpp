@@ -187,15 +187,23 @@ FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::La
 
 }
 
-bool FinishingTriggerSurfaceObject::OnPlayerCollision(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason)
+bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	if (player_particle != nullptr && reason == TriggerSurfaceObject::COLLISION_STARTED)
+	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
+		event_type = event_type;
+	if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+		event_type = event_type;
+	if (event_type == TriggerSurfaceObject::COLLISION_AGAIN)
+		event_type = event_type;
+
+
+	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
 	{
 		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
 		if (!pp->level_end_reached)
 		{
-			pp->level_end_reached = true;
-			pp->level_end_timer = 2.0f;
+	//		pp->level_end_reached = true;
+	//		pp->level_end_timer = 2.0f;
 		}
 	}
 

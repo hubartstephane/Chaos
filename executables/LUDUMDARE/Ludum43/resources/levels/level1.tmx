@@ -274,7 +274,7 @@
   <object id="190" gid="6" x="1570" y="3418" width="24" height="24"/>
   <object id="191" gid="6" x="2178" y="3386" width="24" height="24"/>
  </objectgroup>
- <objectgroup name="BackgroundObject5">
+ <objectgroup name="BackgroundObject5" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -407,7 +407,7 @@
   <object id="1636" gid="14" x="-4243" y="1176" width="167" height="176"/>
   <object id="1637" gid="14" x="9901" y="3224" width="167" height="176"/>
  </objectgroup>
- <objectgroup name="Finishing" locked="1">
+ <objectgroup name="Finishing">
   <properties>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
@@ -416,6 +416,7 @@
   <object id="473" name="finish point" gid="10" x="-557" y="-10949" width="2000" height="2000"/>
   <object id="477" name="FinishSurface" x="-56" y="-12448" width="1120" height="1088">
    <properties>
+    <property name="OUTSIDE_BOX_FACTOR" type="float" value="5"/>
     <property name="TRIGGER_ID" type="int" value="3"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>

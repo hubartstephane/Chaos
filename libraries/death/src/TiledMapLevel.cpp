@@ -265,6 +265,7 @@ namespace death
 
 			enabled    = geometric_object->FindPropertyBool("ENABLED", true);
 			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
+			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", 1.0f);
 		
 			return true;
 		}
@@ -280,7 +281,21 @@ namespace death
 			return result;
 		}
 
-		bool TriggerSurfaceObject::OnPlayerCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int reason)
+		bool TriggerSurfaceObject::IsCollisionWith(chaos::box2 const & other_box, PlayerAndTriggerCollisionRecord const * previous_collisions) const
+		{
+			chaos::box2 box = GetBoundingBox(true);
+
+			if (outside_box_factor > 1.0f) // the box is bigger when we want to go outside !
+			{
+				// search whether player was already colliding with
+				if (previous_collisions != nullptr)
+					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), this) != previous_collisions->triggers.end()) // we where already colliding the object
+						box.half_size *= outside_box_factor;
+			}
+			return chaos::Collide(other_box, box);
+		}
+
+		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			return true; // continue other collisions
 		}
@@ -773,9 +788,8 @@ namespace death
 				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
-
-				chaos::box2 trigger_box = trigger->GetBoundingBox(true);
-				if (chaos::Collide(player_particle->bounding_box, trigger_box))
+				// detect collision
+				if (trigger->IsCollisionWith(player_particle->bounding_box, previous_collisions))
 					triggers.push_back(trigger);
 			}
 
@@ -788,7 +802,7 @@ namespace death
 					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
 						already_colliding = true;
 				triggers.push_back(triggers[i]);
-				if (!triggers[i]->OnPlayerCollision(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+				if (!triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
 					return false;
 			}
 
@@ -799,7 +813,7 @@ namespace death
 				for (size_t i = 0; i < previous_count; ++i)
 				{
 					if (std::find(triggers.begin(), triggers.end(), previous_collisions->triggers[i]) == triggers.end()) // no more colliding
-						if (!previous_collisions->triggers[i]->OnPlayerCollision(delta_time, player, player_particle, TriggerSurfaceObject::COLLISION_FINISHED))
+						if (!previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, TriggerSurfaceObject::COLLISION_FINISHED))
 							return false;
 				}
 			}

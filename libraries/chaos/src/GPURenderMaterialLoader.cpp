@@ -8,6 +8,39 @@
 
 namespace chaos
 {
+
+	// ===========================================================================
+	// GPURenderMaterialLoaderReferenceResolver
+	// ===========================================================================
+
+	void GPURenderMaterialLoaderReferenceResolver::AddInheritance(GPURenderMaterial * material, std::string parent_name)
+	{
+		assert(material != nullptr);
+		assert(!parent_name.empty());
+
+		GPURenderMaterialParentReference reference;
+		reference.material = material;
+		reference.parent_name = std::move(parent_name);
+		parent_references.push_back(std::move(reference));
+	}
+
+	bool GPURenderMaterialLoaderReferenceResolver::ResolveReferences(GPUResourceManager * resource_manager)
+	{
+		assert(resource_manager != nullptr);
+		// resolve parenting
+		for (GPURenderMaterialParentReference & ref : parent_references)
+			if (ref.material->parent_material == nullptr)
+				resource_manager->SetRenderMaterialParent(ref.material.get(), ref.parent_name);
+
+
+		return true;
+	}
+
+
+		// ===========================================================================
+		// GPURenderMaterialLoader
+		// ===========================================================================
+
 	bool GPURenderMaterialLoader::InitializeProgramFromName(GPURenderMaterial * render_material, char const * program_name) const
 	{
 		GPUProgram * program = manager->FindProgram(program_name);
@@ -256,6 +289,37 @@ namespace chaos
 			std::string submaterial_name = it.key();
 			if (!submaterial_name.empty())
 			{
+				nlohmann::json const & submat = it.value();
+				if (submat.is_object())
+				{
+					std::string sub_path;
+					if (JSONTools::GetAttribute(submat, "path", sub_path))
+					{
+						if (manager != nullptr)
+						{
+							GPURenderMaterial * m = manager->FindRenderMaterialByPath(sub_path);
+							if (m != nullptr)
+								render_material->sub_materials.push_back(std::make_pair(std::move(submaterial_name), m));
+						}
+						continue;
+					}
+					std::string sub_name;
+					if (JSONTools::GetAttribute(submat, "name", sub_name))
+					{
+						if (manager != nullptr)
+						{
+							GPURenderMaterial * m = manager->FindRenderMaterial(sub_name.c_str());
+							if (m != nullptr)
+								render_material->sub_materials.push_back(std::make_pair(std::move(submaterial_name), m));
+						}
+						continue;
+					}
+
+
+
+					render_material = render_material;
+				}
+
 
 				render_material = render_material;
 
@@ -289,7 +353,9 @@ namespace chaos
 		if (result != nullptr)
 		{
 			// search material parent
-			JSONTools::GetAttribute(json, "parent_material", result->parent_name);
+			std::string parent_name;
+			if (reference_resolver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
+				reference_resolver->AddInheritance(result, std::move(parent_name));
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures

@@ -98,9 +98,11 @@ namespace chaos
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
-		GPURenderMaterial * result = GPURenderMaterialLoader(this).LoadObject(path, name);
+		GPURenderMaterialLoaderReferenceResolver resolver;
+
+		GPURenderMaterial * result = GPURenderMaterialLoader(this, &resolver).LoadObject(path, name);
 		if (result != nullptr)
-			CheckForRenderMaterialInheritance();
+			resolver.ResolveReferences(this);
 		return result;
 	}
 
@@ -145,14 +147,16 @@ namespace chaos
 
 	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
+		GPURenderMaterialLoaderReferenceResolver resolver; // finalize the missing references
+
 		bool result = LoadObjectsFromConfiguration(
 			"rendermaterials",
 			json,
 			config_path,
 			boost::mpl::true_(),
-			GPURenderMaterialLoader(this));
+			GPURenderMaterialLoader(this, &resolver));
 		if (result)
-			CheckForRenderMaterialInheritance();
+			resolver.ResolveReferences(this);
 		return result;
 	}
 
@@ -165,19 +169,6 @@ namespace chaos
 		GPURenderMaterial * parent = FindRenderMaterial(parent_name.c_str());
 		if (parent != nullptr)
 			render_material->SetParentMaterial(parent); // some recursive verification here
-	}
-
-	void GPUResourceManager::CheckForRenderMaterialInheritance()
-	{
-		size_t count = render_materials.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			GPURenderMaterial * render_material = render_materials[i].get();
-			if (render_material == nullptr)
-				continue;
-			if (render_material->parent_material == nullptr && !render_material->parent_name.empty())
-				SetRenderMaterialParent(render_material, render_material->parent_name);
-		}
 	}
 
 	bool GPUResourceManager::RefreshGPUResources(GPUResourceManager * other_gpu_manager)
@@ -341,7 +332,6 @@ namespace chaos
 			std::swap(ori_object->parent_material, other_object->parent_material);
 			std::swap(ori_object->program, other_object->program);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
-			std::swap(ori_object->parent_name, other_object->parent_name);
 			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
 		});
 

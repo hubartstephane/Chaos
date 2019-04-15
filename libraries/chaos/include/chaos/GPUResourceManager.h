@@ -61,6 +61,7 @@ namespace chaos
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;
 		friend class GPURenderMaterialLoader;
+		friend class GPURenderMaterialLoaderReferenceResolver;
 
 	public:
 
@@ -128,9 +129,6 @@ namespace chaos
 		virtual bool RefreshPrograms(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);
 		/** merge all resources with incomming manager */
 		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);
-
-		/** ensure all render material have their parent correcly set */
-		void CheckForRenderMaterialInheritance();
 
 	protected:
 

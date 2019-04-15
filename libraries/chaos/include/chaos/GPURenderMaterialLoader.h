@@ -10,14 +10,47 @@
 
 namespace chaos
 {
+	// ===========================================================================
+	// GPURenderMaterialLoaderReferenceResolver : some references may not be resolved when loading (register them to resolve them when possible)
+	// ===========================================================================
+
+	class GPURenderMaterialParentReference
+	{
+	public:
+
+		/** the material we are searching for its parent */
+		chaos::shared_ptr<GPURenderMaterial> material;
+		/** the name of the parent */
+		std::string parent_name;
+	};
+
+	class GPURenderMaterialLoaderReferenceResolver
+	{
+	public:
+
+		/** register a parenting */
+		void AddInheritance(GPURenderMaterial * material, std::string parent_name);
+		/** resolve all pending references */
+		bool ResolveReferences(GPUResourceManager * resource_manager);
+
+	protected:
+
+		std::vector<GPURenderMaterialParentReference> parent_references;
+
+	};
+
+	// ===========================================================================
+	// GPURenderMaterialLoader
+	// ===========================================================================
 
 	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, ResourceFriend, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
-		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager) :
-			ResourceManagerLoader<GPURenderMaterial, ResourceFriend, GPUResourceManager>(in_resource_manager)
+		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager, GPURenderMaterialLoaderReferenceResolver * in_reference_resolver) :
+			ResourceManagerLoader<GPURenderMaterial, ResourceFriend, GPUResourceManager>(in_resource_manager),
+			reference_resolver(in_reference_resolver)
 		{
 			assert(in_resource_manager != nullptr); // opposite to GPUTextureLoader and GPUProgramLoader, manager cannot be nullptr for RenderMaterial
 		}
@@ -56,6 +89,11 @@ namespace chaos
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
+
+	protected:
+
+		/** the reference resolver */
+		GPURenderMaterialLoaderReferenceResolver * reference_resolver = nullptr;
 	};
 
 }; // namespace chaos

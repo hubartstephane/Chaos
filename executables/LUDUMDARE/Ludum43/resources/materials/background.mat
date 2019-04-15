@@ -19,9 +19,11 @@
 	{
 		"toto":
 		{
+			"worldlimit_color":[1.0, 0.0, 0.0]
 		},
 		"titi":
 		{
+			"name":"atom"
 		}
 	}
 }

@@ -92,7 +92,7 @@ namespace chaos
 				boost::filesystem::directory_iterator end;
 				for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_name); it != end; ++it)
 				{
-					LOADER other_loader(loader.GetManager());
+					LOADER other_loader = loader;
 					other_loader.LoadObject(it->path().string());
 				}
 			}

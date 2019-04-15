@@ -51,6 +51,7 @@ namespace chaos
 		friend class GPUProgramRenderMaterialProvider;
 		friend class GPUResourceManager;
 		friend class GPURenderMaterialLoader;
+		friend class GPURenderMaterialLoaderReferenceResolver;
 
 	public:
 
@@ -93,8 +94,6 @@ namespace chaos
 
 		/** the program */
 		shared_ptr<GPUProgram> program;
-		/** the name of the parent material */
-		std::string parent_name;
 		/** parent material */
 		shared_ptr<GPURenderMaterial> parent_material;
 		/** some rendering states */

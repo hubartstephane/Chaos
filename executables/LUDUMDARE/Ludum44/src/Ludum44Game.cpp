@@ -47,7 +47,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 {
 
 	chaos::RenderParams render_params = rrr;
-	render_params.submaterial_name = "titix";
+	render_params.submaterial_name = "titi";
 
 
 

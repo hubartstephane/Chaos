@@ -275,12 +275,14 @@ namespace chaos
 		// no vertices, no rendering
 		if (vertex_count == 0)
 			return 0;
+		// use the material : search the program to use
+		GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
+		if (program == nullptr)
+			return 0;
 		// get the vertex array
-		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(final_material->GetEffectiveProgram(render_params), vertex_buffer.get(), nullptr, vertex_declaration, 0);
+		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), nullptr, vertex_declaration, 0);
 		if (vertex_array == nullptr)
 			return 0;
-		// use the material
-		final_material->UseMaterial(uniform_provider, render_params);
 		// bind the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 		// one draw call for the whole buffer

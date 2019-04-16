@@ -135,6 +135,9 @@ namespace chaos
 		/** merge all resources with incomming manager */
 		virtual bool RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);
 
+		/** recursively patch all materials due to refreshing */
+		void PatchRenderMaterialRecursive(GPURenderMaterial * render_material, GPUResourceManagerReloadData & reload_data);
+
 	protected:
 
 		/** the textures */

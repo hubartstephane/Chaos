@@ -330,6 +330,33 @@ namespace chaos
 		return false; // continue for all other textures
 	}
 
+	void GPUResourceManager::PatchRenderMaterialRecursive(GPURenderMaterial * render_material, GPUResourceManagerReloadData & reload_data)
+	{
+		if (render_material == nullptr)
+			return;
+
+		// patch textures (uniforms)
+		GPUProgramReplaceTextureAction action(reload_data);
+		render_material->uniform_provider.ProcessAction(nullptr, action);
+
+		// patch program
+		auto it_program = reload_data.program_map.find(render_material->program.get());
+		if (it_program != reload_data.program_map.end())
+			render_material->program = it_program->second;
+
+		// patch parent_material
+		auto it_parent = reload_data.render_material_map.find(render_material->parent_material.get());
+		if (it_parent != reload_data.render_material_map.end())
+			render_material->parent_material = it_parent->second;
+
+		// patch parent
+		PatchRenderMaterialRecursive(render_material->parent_material.get(), reload_data);
+
+		// patch sub materials
+		for (auto it : render_material->sub_materials)
+			PatchRenderMaterialRecursive(it.second.get(), reload_data);
+	}
+
 	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
 		assert(other_gpu_manager != nullptr);
@@ -355,23 +382,7 @@ namespace chaos
 		size_t count = render_materials.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			GPURenderMaterial * render_material = render_materials[i].get();
-			if (render_material == nullptr)
-				continue;
-
-			// patch textures (uniforms)
-			GPUProgramReplaceTextureAction action(reload_data);
-			render_material->uniform_provider.ProcessAction(nullptr, action);
-
-			// patch program
-			auto it_program = reload_data.program_map.find(render_material->program.get());
-			if (it_program != reload_data.program_map.end())
-				render_material->program = it_program->second;
-
-			// patch parent_material
-			auto it_parent = reload_data.render_material_map.find(render_material->parent_material.get());
-			if (it_parent != reload_data.render_material_map.end())
-				render_material->parent_material = it_parent->second;					
+			PatchRenderMaterialRecursive(render_materials[i].get(), reload_data);
 		}
 		return true;
 	}

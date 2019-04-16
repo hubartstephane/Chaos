@@ -121,7 +121,7 @@ namespace chaos
 	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(RenderParams const & render_params) const
 	{
 		// sub-materials
-		if (render_params.submaterial_name.empty())
+		if (!render_params.submaterial_name.empty())
 		{
 			GPURenderMaterial const * submaterial = FindSubMaterial(render_params.submaterial_name.c_str());
 			if (submaterial != nullptr)

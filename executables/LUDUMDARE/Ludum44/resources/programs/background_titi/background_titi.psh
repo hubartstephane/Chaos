@@ -19,10 +19,14 @@ uniform vec4 blend_backgrounds;
 
 void main()
 {
+
+	output_color.xyzw = vec4(1.0, 1.0, 1.0, 1.0);
+
+	/*
 	if (blend_backgrounds.x == 1.0) // (normal rendering)
 	{
 		vec4 b1 = texture(background, vs_texcoord);
-		output_color = b1;	
+		output_color = b1 * 0.5;	
 		output_color.a = 1.0;
 	}
 	else // (combining rendering)
@@ -79,10 +83,11 @@ void main()
 		// add some red around enemies
 		//output_color.r = output_color.r + 2.0 * deformation_value;
 
-		output_color.xyz = output_color.xyz + enemy_color * deformation_value;
+		output_color.xyz = 0.5 * output_color.xyz + enemy_color * deformation_value;
 
 		//output_color.xyz = vec3(deformation_value, deformation_value, deformation_value);	
 		//output_color.xyz = vec3(shadow_value, shadow_value, shadow_value);	
 		output_color.a = 1.0;
 	}
+	*/
 }

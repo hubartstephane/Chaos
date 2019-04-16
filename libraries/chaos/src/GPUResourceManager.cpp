@@ -349,10 +349,16 @@ namespace chaos
 		if (it_parent != reload_data.render_material_map.end())
 			render_material->parent_material = it_parent->second;
 
-		// patch parent
-		PatchRenderMaterialRecursive(render_material->parent_material.get(), reload_data);
+		// patch submaterials
+		for (auto & it : render_material->sub_materials)
+		{
+			auto it_submaterial = reload_data.render_material_map.find(it.second.get());
+			if (it_submaterial != reload_data.render_material_map.end())
+				it.second = it_submaterial->second;
+		}
 
-		// patch sub materials
+		// recursive on parent and sub materials
+		PatchRenderMaterialRecursive(render_material->parent_material.get(), reload_data);
 		for (auto it : render_material->sub_materials)
 			PatchRenderMaterialRecursive(it.second.get(), reload_data);
 	}
@@ -376,6 +382,7 @@ namespace chaos
 			std::swap(ori_object->program, other_object->program);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
+			std::swap(ori_object->sub_materials, other_object->sub_materials);
 		});
 
 		// patching references (texures, programs, parent_materials)

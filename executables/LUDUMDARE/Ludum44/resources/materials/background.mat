@@ -18,10 +18,11 @@
 		{
 			"worldlimit_color":[1.0, 0.0, 0.0]
 		},
-		"titi":
+		"titiv":
 		{
-			"xname":"atom",
-			"uniforms":
+			"programc":"background_titi",
+			"parent_material": "background_parent2",
+			"uniformsc":
 			{
 				"worldlimit_color":[0.0, 0.0, 1.0]
 			} 

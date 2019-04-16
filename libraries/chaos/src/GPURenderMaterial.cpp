@@ -65,15 +65,40 @@ namespace chaos
 
 	bool GPURenderMaterial::SetParentMaterial(GPURenderMaterial * in_parent)
 	{
-		// ensure no cycle parenting
-		GPURenderMaterial * rm = in_parent;
-		while (rm != nullptr)
-		{
-			if (rm == this)
-				return false; // cycle detected
-			rm = rm->parent_material.get();
-		}
+
+		// can access 'this' with parent about to be set ?
+		if (in_parent != nullptr && in_parent->SearchRenderMaterialCycle(this))
+			return false;
+		// set the parent
 		parent_material = in_parent;
+
+		return true;
+	}
+
+	bool GPURenderMaterial::SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const
+	{
+		if (this == searched_material)
+			return true;
+		// recursion with parents
+		if (parent_material != nullptr)
+			if (parent_material->SearchRenderMaterialCycle(searched_material))
+				return true;
+		// recursion with sub materials
+		for (auto const & sub : sub_materials)
+			if (sub.second->SearchRenderMaterialCycle(searched_material))
+				return true;
+		return false;
+	}
+
+	bool GPURenderMaterial::SetSubMaterial(char const * submaterial_name, GPURenderMaterial * submaterial)
+	{
+		assert(submaterial != nullptr);
+		assert(submaterial_name != nullptr);
+		// can access 'this' with element about to be inserted ?
+		if (submaterial->SearchRenderMaterialCycle(this))
+			return false;
+		// insertion as a sub material
+		sub_materials.push_back(std::make_pair(submaterial_name, submaterial));
 		return true;
 	}
 

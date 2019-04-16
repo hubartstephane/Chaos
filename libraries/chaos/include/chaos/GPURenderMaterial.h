@@ -51,7 +51,7 @@ namespace chaos
 		friend class GPUProgramRenderMaterialProvider;
 		friend class GPUResourceManager;
 		friend class GPURenderMaterialLoader;
-		friend class GPURenderMaterialLoaderReferenceResolver;
+		friend class GPURenderMaterialLoaderReferenceSolver;
 
 	public:
 
@@ -68,6 +68,9 @@ namespace chaos
 		bool SetProgram(GPUProgram * in_program);
 		/** set the parent material */
 		bool SetParentMaterial(GPURenderMaterial * in_parent);
+		/** set a sub material */
+		bool SetSubMaterial(char const * submaterial_name, GPURenderMaterial * submaterial);
+
 		/** go throw the hierary and search for the program */
 		GPUProgram const * GetEffectiveProgram(RenderParams const & render_params) const;
 
@@ -89,6 +92,8 @@ namespace chaos
 
 		/** cleaning the resource */
 		virtual bool DoRelease() override;
+		/** search some cycles throught parent_material and sub materials (returning true is an error) */
+		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
 
 	protected:
 

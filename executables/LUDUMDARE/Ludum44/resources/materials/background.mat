@@ -11,5 +11,20 @@
 		"enemy_color":[2.0, 0.0, 0.0],		
 		"decal_speed":[0.2],
 		"decal_ratio":[0.5]
-  }
+  },
+	"sub_materials":
+	{
+		"toto":
+		{
+			"worldlimit_color":[1.0, 0.0, 0.0]
+		},
+		"titi":
+		{
+			"xname":"atom",
+			"uniforms":
+			{
+				"worldlimit_color":[0.0, 0.0, 1.0]
+			} 
+		}
+	}
 }

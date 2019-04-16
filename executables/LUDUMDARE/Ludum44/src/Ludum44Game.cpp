@@ -43,8 +43,16 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & rrr)
 {
+
+	chaos::RenderParams render_params = rrr;
+	render_params.submaterial_name = "titix";
+
+
+
+
+
 	death::TiledMap::LevelInstance * ludum_level_instance = GetLudumLevelInstance();
 
 	// I/ no level rendering like main menu (the background)

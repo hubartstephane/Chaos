@@ -11,7 +11,7 @@
 namespace chaos
 {
 	// ===========================================================================
-	// GPURenderMaterialLoaderReferenceResolver : some references may not be resolved when loading (register them to resolve them when possible)
+	// GPURenderMaterialLoaderReferenceSolver : some references may not be resolved when loading (register them to resolve them when possible)
 	// ===========================================================================
 
 	class GPURenderMaterialParentReference
@@ -19,23 +19,42 @@ namespace chaos
 	public:
 
 		/** the material we are searching for its parent */
-		chaos::shared_ptr<GPURenderMaterial> material;
+		chaos::shared_ptr<GPURenderMaterial> render_material;
 		/** the name of the parent */
 		std::string parent_name;
 	};
 
-	class GPURenderMaterialLoaderReferenceResolver
+	class GPURenderMaterialSubMaterialReference
+	{
+	public:
+
+		/** the material we are searching for its parent */
+		chaos::shared_ptr<GPURenderMaterial> render_material;
+		/** the name of the submaterial */
+		std::string submaterial_name;
+		/** the name of the reference (name or path) */
+		std::string reference_name;
+		/** whether the reference is a name (other is path) */
+		bool is_named_reference = true;
+	};
+
+	class GPURenderMaterialLoaderReferenceSolver
 	{
 	public:
 
 		/** register a parenting */
-		void AddInheritance(GPURenderMaterial * material, std::string parent_name);
+		void AddInheritance(GPURenderMaterial * render_material, std::string parent_name);
 		/** resolve all pending references */
 		bool ResolveReferences(GPUResourceManager * resource_manager);
+		/** add a sub material reference */
+		void AddSubMaterialReference(GPURenderMaterial * render_material, std::string submaterial_name, std::string reference_name, bool is_named_reference);
 
 	protected:
 
+		/** the references for parents */
 		std::vector<GPURenderMaterialParentReference> parent_references;
+		/** the references for submaterials */
+		std::vector<GPURenderMaterialSubMaterialReference> submaterials_references;
 
 	};
 
@@ -48,9 +67,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager, GPURenderMaterialLoaderReferenceResolver * in_reference_resolver) :
+		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager, GPURenderMaterialLoaderReferenceSolver * in_reference_solver) :
 			ResourceManagerLoader<GPURenderMaterial, ResourceFriend, GPUResourceManager>(in_resource_manager),
-			reference_resolver(in_reference_resolver)
+			reference_solver(in_reference_solver)
 		{
 			assert(in_resource_manager != nullptr); // opposite to GPUTextureLoader and GPUProgramLoader, manager cannot be nullptr for RenderMaterial
 		}
@@ -93,7 +112,9 @@ namespace chaos
 	protected:
 
 		/** the reference resolver */
-		GPURenderMaterialLoaderReferenceResolver * reference_resolver = nullptr;
+		GPURenderMaterialLoaderReferenceSolver * reference_solver = nullptr;
+		/** whether the render_material is to be inserted into the resource_manager (or is a submaterial) */
+		bool insert_in_manager = true;
 	};
 
 }; // namespace chaos

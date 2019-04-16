@@ -61,7 +61,7 @@ namespace chaos
 		friend class GPUTextureLoader;
 		friend class GPUProgramLoader;
 		friend class GPURenderMaterialLoader;
-		friend class GPURenderMaterialLoaderReferenceResolver;
+		friend class GPURenderMaterialLoaderReferenceSolver;
 
 	public:
 
@@ -122,6 +122,11 @@ namespace chaos
 
 		/** search (if necessary the parent of the material) */
 		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);
+		/** set a submaterial to a render material */
+		void SetRenderMaterialSubMaterial(GPURenderMaterial * render_material, char const * submaterial_name, char const * name);
+		/** set a submaterial to a render material */
+		void SetRenderMaterialSubMaterialByPath(GPURenderMaterial * render_material, char const * submaterial_name, FilePathParam const & path);
+
 
 		/** merge all resources with incomming manager */
 		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);

@@ -98,11 +98,11 @@ namespace chaos
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)
 	{
-		GPURenderMaterialLoaderReferenceResolver resolver;
+		GPURenderMaterialLoaderReferenceSolver solver;
 
-		GPURenderMaterial * result = GPURenderMaterialLoader(this, &resolver).LoadObject(path, name);
+		GPURenderMaterial * result = GPURenderMaterialLoader(this, &solver).LoadObject(path, name);
 		if (result != nullptr)
-			resolver.ResolveReferences(this);
+			solver.ResolveReferences(this);
 		return result;
 	}
 
@@ -147,16 +147,16 @@ namespace chaos
 
 	bool GPUResourceManager::LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		GPURenderMaterialLoaderReferenceResolver resolver; // finalize the missing references
+		GPURenderMaterialLoaderReferenceSolver solver; // finalize the missing references
 
 		bool result = LoadObjectsFromConfiguration(
 			"rendermaterials",
 			json,
 			config_path,
 			boost::mpl::true_(),
-			GPURenderMaterialLoader(this, &resolver));
+			GPURenderMaterialLoader(this, &solver));
 		if (result)
-			resolver.ResolveReferences(this);
+			solver.ResolveReferences(this);
 		return result;
 	}
 
@@ -169,6 +169,22 @@ namespace chaos
 		GPURenderMaterial * parent = FindRenderMaterial(parent_name.c_str());
 		if (parent != nullptr)
 			render_material->SetParentMaterial(parent); // some recursive verification here
+	}
+
+	void GPUResourceManager::SetRenderMaterialSubMaterial(GPURenderMaterial * render_material, char const * submaterial_name, char const * name)
+	{
+		assert(render_material != nullptr);
+		GPURenderMaterial * submaterial = FindRenderMaterial(name);
+		if (submaterial != nullptr)
+			render_material->SetSubMaterial(submaterial_name, submaterial); // some recursive verification here
+	}
+
+	void GPUResourceManager::SetRenderMaterialSubMaterialByPath(GPURenderMaterial * render_material, char const * submaterial_name, FilePathParam const & path)
+	{
+		assert(render_material != nullptr);
+		GPURenderMaterial * submaterial = FindRenderMaterialByPath(path);
+		if (submaterial != nullptr)
+			render_material->SetSubMaterial(submaterial_name, submaterial); // some recursive verification here
 	}
 
 	bool GPUResourceManager::RefreshGPUResources(GPUResourceManager * other_gpu_manager)

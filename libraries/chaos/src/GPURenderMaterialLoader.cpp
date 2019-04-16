@@ -373,6 +373,8 @@ namespace chaos
 			std::string parent_name;
 			if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
 				reference_solver->AddInheritance(result, std::move(parent_name));
+			// search whether the material is hiddel
+			JSONTools::GetAttribute(json, "hidden", result->hidden_material, false);
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures

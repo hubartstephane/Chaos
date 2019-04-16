@@ -126,12 +126,16 @@ namespace chaos
 			GPURenderMaterial const * submaterial = FindSubMaterial(render_params.submaterial_name.c_str());
 			if (submaterial != nullptr)
 			{
+				if (submaterial->hidden_material) // do not render with this material (do not test for this->program & parent_material->program)
+					return nullptr;
 				GPUProgram const * result = submaterial->GetEffectiveProgram(render_params);
 				if (result != nullptr)
 					return result;
 			}
 		}
 		// our own program ?
+		if (hidden_material) // do not render with this material (do not test for parent_material->program)
+			return nullptr;
 		if (program != nullptr)
 			return program.get();
 		// go through the hierarchy until we get the program

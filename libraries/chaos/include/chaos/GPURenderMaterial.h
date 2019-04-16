@@ -103,7 +103,8 @@ namespace chaos
 		shared_ptr<GPURenderMaterial> parent_material;
 		/** some rendering states */
 		GPUProgramProvider uniform_provider;
-
+		/** whether the material is null (force to use no program => no rendering) */
+		bool hidden_material = false;
 		/** children materials (pair submaterial_name / material) */
 		std::vector<std::pair<std::string, shared_ptr<GPURenderMaterial>>> sub_materials;
 	};

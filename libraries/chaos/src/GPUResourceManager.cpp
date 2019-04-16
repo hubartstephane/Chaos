@@ -383,6 +383,7 @@ namespace chaos
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
 			std::swap(ori_object->sub_materials, other_object->sub_materials);
+			std::swap(ori_object->hidden_material, other_object->hidden_material);			
 		});
 
 		// patching references (texures, programs, parent_materials)

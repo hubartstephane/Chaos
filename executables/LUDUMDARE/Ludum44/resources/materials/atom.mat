@@ -1,3 +1,5 @@
 {
-  "program":"atom"
+  "program":"atom",
+
+	"hidden":false
 }

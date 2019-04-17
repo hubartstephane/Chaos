@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@atom.psh"
+	],
+	"vertex_sources":
+	[
+		"@atom.vsh"
+	]
+}

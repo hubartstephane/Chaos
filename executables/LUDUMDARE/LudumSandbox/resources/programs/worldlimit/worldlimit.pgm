@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@worldlimit.psh"
+	],
+	"vertex_sources":
+	[
+		"@worldlimit.vsh"
+	]
+}

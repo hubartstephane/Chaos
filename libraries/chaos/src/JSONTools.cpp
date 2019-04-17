@@ -26,16 +26,27 @@ namespace chaos
 	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result, bool default_value) // specialization for bool
 	{			
 		assert(name != nullptr);
-		try
+
+		if (entry.is_object())
 		{
-			if (entry.is_object())
+			try
 			{
-				result = (entry.value(name, 0) > 0);
+				result = entry.value(name, default_value); // for bool type
 				return true;
+
 			}
-		}
-		catch (...)
-		{
+			catch (...)
+			{
+				try
+				{
+					result = (entry.value(name, 0) > 0); // for int type (+ conversion to bool)
+					return true;
+
+				}
+				catch (...)
+				{
+				}
+			}
 		}
 		result = default_value;
 		return false;

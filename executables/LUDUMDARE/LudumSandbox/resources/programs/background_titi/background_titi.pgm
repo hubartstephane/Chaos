@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@background_titi.psh"
+	],
+	"vertex_sources":
+	[
+		"@background_titi.vsh"
+	]
+}

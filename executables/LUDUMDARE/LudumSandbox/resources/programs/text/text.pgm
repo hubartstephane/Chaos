@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@text.psh"
+	],
+	"vertex_sources":
+	[
+		"@text.vsh"
+	]
+}

@@ -20,9 +20,6 @@ public:
 	/** constructor */
 	LudumGameInstance(death::Game * in_game);
 
-	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
-
-	void NotifyAtomCountChange(int delta);
 
 protected:
 
@@ -34,16 +31,4 @@ protected:
 
 	virtual bool DoTick(double delta_time) override;
 
-	void TickHeartBeat(double delta_time);
-
-
-
-protected:
-
-	/** the life first player add in previous frame */
-	float previous_frame_life = 0.0f;
-	/** number of waken up particle */
-	int waken_up_particle_count = 0;
-	/** the heart beat time */
-	float heart_beat_time = 0.0f;
 };

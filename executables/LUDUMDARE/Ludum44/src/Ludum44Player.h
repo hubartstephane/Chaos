@@ -44,19 +44,7 @@ protected:
 
 	/** update player displacement with the stick values that are stored */
 	virtual void UpdatePlayerAcceleration(double delta_time);
-	/** cooldown the weapon */
-	void TickCooldown(double delta_time);
-	void TickDashValues(double delta_time);
-
-	/** change dash mode */
-	void SetDashMode(bool dash);
-	/** change reverse mode */
-	void SetReverseMode(bool reversed_mode);
 	
 protected:
-
-	float current_cooldown = 0.1f;
-	float current_dash_duration = 0.0f;
-	float current_dash_cooldown = 0.0f;
 
 };

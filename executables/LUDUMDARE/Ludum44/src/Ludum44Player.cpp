@@ -41,10 +41,6 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
-	// dash values update
-	TickDashValues(delta_time);
-	// cooldown
-	TickCooldown(delta_time);
 }
 
 void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
@@ -70,85 +66,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	}
 }
 
-void LudumPlayer::TickCooldown(double delta_time)
-{
-	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
-}
-
-void LudumPlayer::TickDashValues(double delta_time)
-{
-	// cooldow in progress
-	if (current_dash_cooldown > 0.0f)
-		current_dash_cooldown = chaos::MathTools::Maximum(0.0f, current_dash_cooldown - (float)delta_time);
-	if (current_dash_duration > 0.0f)
-	{
-		current_dash_duration = chaos::MathTools::Maximum(0.0f, current_dash_duration - (float)delta_time);
-		if (current_dash_duration == 0.0f)
-			SetDashMode(false);
-	}
-}
-
-void LudumPlayer::SetReverseMode(bool reversed_mode)
-{
-	LudumGame * ludum_game = GetLudumGame();
-	assert(ludum_game != nullptr);
-	assert(game_instance != nullptr);
-	assert(game_instance != nullptr);
-
-	death::GameLevelInstance * level_instance = ludum_game->GetLevelInstance();
-	if (level_instance == nullptr)
-		return;
-
-	if (level_instance->GetLevelClockTime() < 2.0) // because the player start could cause a repulsion
-		return;
-
-	ParticlePlayer * player_particle = GetPlayerParticle();
-	if (player_particle != nullptr)
-	{
-		if (player_particle->reversed == reversed_mode) // no change, ignore
-			return;
-
-		if (reversed_mode) // only trigger a 'pulse' if no cooldown
-		{
-			if (current_cooldown > 0.0f)
-				return;
-			current_cooldown = ludum_game->cooldown;
-			ludum_game->PlaySound("collision", false, false);
-		}
-		player_particle->reversed = reversed_mode;
-	}
-}
-
-void LudumPlayer::SetDashMode(bool dash)
-{
-	LudumGame * ludum_game = GetLudumGame();
-	assert(ludum_game != nullptr);
-	assert(game_instance != nullptr);
-
-	death::GameLevelInstance * level_instance = ludum_game->GetLevelInstance();
-	if (level_instance == nullptr)
-		return;
-
-	if (level_instance->GetLevelClockTime() < 2.0)// because the player start dash
-		return;
-
-	ParticlePlayer * player_particle = GetPlayerParticle();
-	if (player_particle != nullptr)
-	{
-		if (player_particle->dash == dash) // no change, ignore
-			return;
-
-		if (dash) // only trigger a 'pulse' if no cooldown
-		{
-			if (current_dash_cooldown > 0.0f)
-				return;
-			current_dash_cooldown = ludum_game->dash_cooldown;
-			current_dash_duration = ludum_game->dash_duration;
-			ludum_game->PlaySound("thrust", false, false);
-		}
-		player_particle->dash = dash;
-	}
-}
 
 void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
@@ -156,10 +73,7 @@ void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
 	{
-		bool dash = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
-		SetDashMode(dash);
-		bool reversed_mode = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_B, false);
-		SetReverseMode(reversed_mode);
+
 	}
 }
 
@@ -178,20 +92,16 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 		if (glfw_window == nullptr)
 			return;
 
-		// get the mode
-		bool dash_mode = (glfwGetKey(glfw_window, GLFW_KEY_SPACE) != GLFW_RELEASE);
-		SetDashMode(dash_mode);
 
-		bool reversed_mode = (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_CONTROL) != GLFW_RELEASE);
-		SetReverseMode(reversed_mode);
+
+
 	}
 }
 
 void LudumPlayer::OnLevelChanged()
 {
-	current_cooldown = 0.0f;
-	current_dash_cooldown = 0.0f;
-	current_dash_duration = 0.0f;
+
+
 }
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)

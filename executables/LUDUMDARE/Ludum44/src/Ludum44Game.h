@@ -57,16 +57,10 @@ public:
 	LudumGame();
 
 	/** override */
-	virtual void DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
-	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-
-	/** called whenever a gamepad input is comming */
-	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all);
 
 	virtual chaos::box2 GetWorldBox() const override;
 
-	float GetPlayerLife(int player_index) const;
 
 	ParticlePlayer * GetPlayerParticle(int player_index);
 
@@ -97,64 +91,13 @@ protected:
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
-	bool GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
-
 	virtual death::GameInstance * CreateGameInstance() override;
 
 protected:
 
-	/** the render buffers */
-	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_worldlimits;
-	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_other;
+	float player_acceleration = 10.0f;
 
-	/** the tiled map manager */
-	chaos::shared_ptr<chaos::TiledMap::Manager> tiledmap_manager;
-
-public:
-
-	/** game settings */
-	float cooldown = 0.1f;
-
-	float dash_duration = 0.5f;
-	float dash_cooldown = 1.0f;
-	float dash_velocity = 200.0f;
-
-	float player_attraction_minradius = 50.0f;
-	float player_attraction_maxradius = 200.0f;
-	float player_tangent_force        = 500000.0f;
-	float player_attraction_force     = 20.0f;
-	float player_repulsion_force      = 20.0f;
-	
-	float player_slowing_factor       = 0.5f;
-	float player_max_velocity         = 20.0f;
-	float player_acceleration         = 2000.0f;
-
-	float worldlimits_attraction_maxradius_offset = 0.0f;
-	float worldlimits_attraction_minradius_offset = 0.0f;
-	float enemy_attraction_maxradius_offset = 200.0f;
-	float enemy_attraction_minradius_offset = 50.0f;
-
-	float worldlimits_attraction_maxradius_factor = 1.0f;
-	float worldlimits_attraction_minradius_factor = 0.5f;
-	float enemy_attraction_maxradius_factor = 1.0f;
-	float enemy_attraction_minradius_factor = 1.0f;
-
-	float enemy_tangent_force        = 500000.0f;
-	float enemy_attraction_force     = 20.0f;
-	float enemy_repulsion_force      = 20.0f;
-	
-
-
-	float particle_slowing_factor     = 0.5f;
-	float particle_min_radius_factor = 1.0f;
-	float particle_max_radius_factor = 3.0f;
-	
-	float particle_max_velocity = 20.0f;
-
-	float world_clamp_radius = 3000.0f;
-
-	/** current game values */
 	float initial_player_life = 4.0f;
-	float initial_particle_life = 1.0f;
+
 };
 

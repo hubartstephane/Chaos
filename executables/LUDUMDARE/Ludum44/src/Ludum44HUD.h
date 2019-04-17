@@ -14,41 +14,6 @@ namespace death
 
 
 // ====================================================================
-// GameHUDWakenParticleComponent
-// ====================================================================
-
-class GameHUDWakenParticleComponent : public death::GameHUDCacheValueComponent<int>
-{
-public:
-
-	GameHUDWakenParticleComponent() : death::GameHUDCacheValueComponent<int>("Particles : %d", -1) {}
-
-protected:
-
-	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
-	/** override */
-	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
-};
-
-// ====================================================================
-// GameHUDLifeBarComponent
-// ====================================================================
-
-class GameHUDLifeBarComponent : public death::GameHUDSingleAllocationComponent
-{
-protected:
-
-	/** override */
-	virtual bool DoTick(double delta_time) override;
-
-protected:
-
-	/** the last life value for the player */
-	float cached_value = -1.0f;
-};
-
-// ====================================================================
 // LudumPlayingHUD
 // ====================================================================
 

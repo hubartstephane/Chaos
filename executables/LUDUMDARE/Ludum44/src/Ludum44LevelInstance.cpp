@@ -18,34 +18,20 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
 	assert(in_game != nullptr); 
-	camera_safe_zone = glm::vec2(0.2f, 0.2f);
+	camera_safe_zone = glm::vec2(0.7f, 0.7f);
 }
 
 bool LudumLevelInstance::IsLevelCompleted() const
 {
-	if (game != nullptr)
-	{
-		ParticlePlayer * player_particle = game->GetPlayerParticle(0);
-		if (player_particle != nullptr)
-		{
-			if (player_particle->level_end_reached)
-				return true;
-		}
-	}
+
+
 	return false;
 }
 
 bool LudumLevelInstance::CanCompleteLevel() const
 {
-	if (game != nullptr)
-	{
-		ParticlePlayer * player_particle = game->GetPlayerParticle(0);
-		if (player_particle != nullptr)
-		{
-			if (player_particle->level_end_reached && player_particle->level_end_timer <= 0.0f)
-				return true;
-		}
-	}
+
+
 	return false;
 }
 
@@ -78,16 +64,13 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 
 	// change the level timeout
 	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
-	static int   DEFAULT_LEVEL_PARTICLE_REQUIREMENT = 10;
 
 	level_timeout = DEFAULT_LEVEL_TIMEOUT;
-	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;
 
 	death::TiledMap::Level const * level = GetTiledLevel();
 	if (level != nullptr)
 	{
 		level_timeout = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIMEOUT);
-		level_particle_requirement = level->GetTiledMap()->FindPropertyInt("LEVEL_PARTICLE_REQUIREMENT", DEFAULT_LEVEL_PARTICLE_REQUIREMENT);
 	}
 	return true;
 }

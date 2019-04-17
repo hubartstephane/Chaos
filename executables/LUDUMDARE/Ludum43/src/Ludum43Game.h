@@ -107,9 +107,6 @@ protected:
 	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_worldlimits;
 	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_other;
 
-	/** the tiled map manager */
-	chaos::shared_ptr<chaos::TiledMap::Manager> tiledmap_manager;
-
 public:
 
 	/** game settings */

@@ -1,13 +1,6 @@
 {
   "@background" : { "path": "@programs/background/background.pgm" },
-  "@background_titi" : { "path": "@programs/background_titi/background_titi.pgm" },
-  "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
-  "@lifebar2"  : { "path": "@programs/lifebar2/lifebar2.pgm" },  
   "@player"  : { "path": "@programs/player/player.pgm" },
-  "@atom"  : { "path": "@programs/atom/atom.pgm" },
-  "@enemy"  : { "path": "@programs/enemy/enemy.pgm" },
-  "@worldlimit"  : { "path": "@programs/worldlimit/worldlimit.pgm" },
-  "@background_particle"  : { "path": "@programs/background_particle/background_particle.pgm" },
   "@text"  : { "path": "@programs/text/text.pgm" }    
 
 }

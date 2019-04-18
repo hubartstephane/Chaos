@@ -31,3 +31,21 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 	return true;
 }
+
+
+chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
+{
+	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+
+	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
+
+	bool is_player_and_camera = (layer_name == "PlayerAndCamera");
+	if (is_player_and_camera)
+	{
+		ParticlePlayerTrait::LayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
+	}
+
+	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
+}

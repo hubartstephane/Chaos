@@ -7,42 +7,12 @@
 	"max_life":3,
 
   "initial_player_life": 4.0,
-  "initial_particle_life": 0.7,
-  "cooldown": 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
 
-  "dash_duration": 1.0,
-  "dash_cooldown": 3.0,
-  "dash_velocity": 500.0,
+  "player_acceleration": 100.0,
+	"max_player_speed":100,
+	"gravity":10,
+	"player_slowdown":10
 
-  "player_attraction_minradius": 50.0,
-  "player_attraction_maxradius": 650.0,
-  "player_attraction_force": 5000.0,
-  "player_repulsion_force": 100.0,
-  "player_tangent_force": 3000000.0,
-  "player_max_velocity": 5000.0,
-  "player_slowing_factor": 0.1,
-  "player_acceleration": 5000.0,
-
-  "worldlimits_attraction_minradius_offset": 0.0,
-  "worldlimits_attraction_maxradius_offset": 0.0,
-  "worldlimits_attraction_minradius_factor": 0.0,
-  "worldlimits_attraction_maxradius_factor": 0.8,
-
-  "enemy_attraction_minradius_offset": 50.0,
-  "enemy_attraction_maxradius_offset": 650.0,
-  "enemy_attraction_minradius_factor": 1.0,
-  "enemy_attraction_maxradius_factor": 1.0,
-
-
-  "enemy_attraction_force": 500.0,
-  "enemy_repulsion_force": 500.0,
-  "enemy_tangent_force": 500000.0,
-
-  "particle_max_velocity": 3000.0,
-  "particle_slowing_factor": 0.5,
-	"particle_min_radius_factor": 1.0,
-  "particle_max_radius_factor": 3.0,
-  "world_clamp_radius":4000
 }

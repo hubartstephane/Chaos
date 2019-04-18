@@ -95,9 +95,13 @@ protected:
 
 protected:
 
-	float player_acceleration = 10.0f;
+	
 
 	float initial_player_life = 4.0f;
 
+	float player_acceleration = 100.0f;
+	float max_player_speed = 100.0f;
+	float gravity = 10.0f;
+	float player_slowdown = 10.0f;
 };
 

@@ -67,9 +67,12 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(player_acceleration);
 	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
-
+	DEATHGAME_JSON_ATTRIBUTE(player_acceleration);
+	DEATHGAME_JSON_ATTRIBUTE(max_player_speed);
+	DEATHGAME_JSON_ATTRIBUTE(gravity);
+	DEATHGAME_JSON_ATTRIBUTE(player_slowdown);
+	
 
 	return true;
 }

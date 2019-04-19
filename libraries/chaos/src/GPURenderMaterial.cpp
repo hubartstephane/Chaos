@@ -118,7 +118,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(RenderParams const & render_params) const
+	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(RenderParams const & render_params, bool submaterial_encoutered) const
 	{
 		// sub-materials
 		if (!render_params.submaterial_name.empty())
@@ -128,7 +128,7 @@ namespace chaos
 			{
 				if (submaterial->hidden_material) // do not render with this material (do not test for this->program & parent_material->program)
 					return nullptr;
-				GPUProgram const * result = submaterial->DoGetEffectiveProgram(render_params);
+				GPUProgram const * result = submaterial->DoGetEffectiveProgram(render_params, true);
 				if (result != nullptr)
 					return result;
 			}
@@ -136,11 +136,12 @@ namespace chaos
 		// our own program ?
 		if (hidden_material) // do not render with this material (do not test for parent_material->program)
 			return nullptr;
-		if (program != nullptr)
-			return program.get();
+		if (submaterial_encoutered || !strict_submaterial || render_params.submaterial_name.empty())
+			if (program != nullptr)
+				return program.get();
 		// go through the hierarchy until we get the program
 		if (parent_material != nullptr)
-			return parent_material->DoGetEffectiveProgram(render_params);
+			return parent_material->DoGetEffectiveProgram(render_params, submaterial_encoutered);
 		// not found
 		return nullptr;	
 	}
@@ -149,12 +150,11 @@ namespace chaos
 	{
 		if (!IsMaterialEnabled(render_params))
 			return nullptr;
-		return DoGetEffectiveProgram(render_params);
+		return DoGetEffectiveProgram(render_params, false);
 	}
 
 	bool GPURenderMaterial::IsMaterialEnabled(RenderParams const & render_params) const
-	{
-	
+	{	
 		return true;
 	}
 

@@ -375,8 +375,8 @@ namespace chaos
 				reference_solver->AddInheritance(result, std::move(parent_name));
 			// search whether the material is hidden
 			JSONTools::GetAttribute(json, "hidden", result->hidden_material, false);
-			// get the enabled materials
-			JSONTools::GetAttributeArray(json, "enabled_submaterials", result->enabled_submaterials);
+			// search whether the material is strict
+			JSONTools::GetAttribute(json, "strict_submaterial", result->strict_submaterial, false);
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures

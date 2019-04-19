@@ -98,7 +98,7 @@ namespace chaos
 		/** search some cycles throught parent_material and sub materials (returning true is an error) */
 		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
 		/** returns the effective program for the material */
-		GPUProgram const * DoGetEffectiveProgram(RenderParams const & render_params) const;
+		GPUProgram const * DoGetEffectiveProgram(RenderParams const & render_params, bool submaterial_encoutered) const;
 
 	protected:
 
@@ -110,8 +110,8 @@ namespace chaos
 		GPUProgramProvider uniform_provider;
 		/** whether the material is null (force to use no program => no rendering) */
 		bool hidden_material = false;
-		/** if the array is not empty, only render of the following submaterial names */
-		std::vector<std::string> enabled_submaterials;
+		/** whether the flag is true, the material is ignored if render_params.submaterial_name is not empty */
+		bool strict_submaterial = false;
 		/** children materials (pair submaterial_name / material) */
 		std::vector<std::pair<std::string, shared_ptr<GPURenderMaterial>>> sub_materials;
 	};

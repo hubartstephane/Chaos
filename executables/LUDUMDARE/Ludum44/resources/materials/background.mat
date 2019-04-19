@@ -6,6 +6,20 @@
     "background": { "name": "background1" }		
   },
 
-	"cenabled_submaterials":["bi", "bu", "truc"],
-	"enabled_submaterials":"truc"
+	"strict_submaterial": true,
+
+
+
+	"sub_materials":
+	{
+		"titic":
+		{
+			"program": "background",
+
+			"textures": 
+			{
+				"background": { "name": "background1" }		
+			}
+		}
+	}
 }

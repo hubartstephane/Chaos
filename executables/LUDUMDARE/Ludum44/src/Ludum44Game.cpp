@@ -127,3 +127,11 @@ death::GameInstance * LudumGame::CreateGameInstance()
 {
 	return new LudumGameInstance(this);
 }
+
+void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+{
+
+	chaos::RenderParams other_render_params = render_params;
+	other_render_params.submaterial_name = "titi";
+	death::Game::DoDisplayGame(renderer, uniform_provider, other_render_params);
+}

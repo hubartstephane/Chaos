@@ -81,6 +81,8 @@ protected:
 
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
+
+	virtual void DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	
 	/** override level creation */
 	death::TiledMap::Level * CreateTiledMapLevel() override;

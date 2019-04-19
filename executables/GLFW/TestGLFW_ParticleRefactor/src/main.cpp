@@ -78,7 +78,7 @@ public:
 
 	float time = 0.0f;
 
-	bool Tick(float delta_time, LayerTrait const * layer_trait)
+	bool Tick(float delta_time, chaos::ParticleAllocationBase * allocation, LayerTrait const * layer_trait)
 	{		
 		time += delta_time;
 

@@ -17,7 +17,7 @@
  </objectgroup>
  <objectgroup name="planets">
   <object id="1711" gid="1" x="8832" y="4672" width="3168" height="3264"/>
-  <object id="1713" gid="1" x="-3632" y="352" width="3168" height="3264"/>
+  <object id="1713" gid="1" x="-4720" y="640" width="3168" height="3264"/>
   <object id="1714" gid="1" x="-7504" y="3424" width="3168" height="3264"/>
   <object id="1715" gid="1" x="-3216" y="3616" width="3168" height="3264"/>
   <object id="1716" gid="1" x="-7504" y="8032" width="3168" height="3264"/>

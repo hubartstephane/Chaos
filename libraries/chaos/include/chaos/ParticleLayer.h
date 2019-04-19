@@ -392,12 +392,12 @@ protected:
 
 		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
 		{
-			return allocation_trait.Tick(delta_time); // let the trait decide whether the allocation is to be destroyed
+			return allocation_trait.Tick(delta_time, this); // let the trait decide whether the allocation is to be destroyed
 		}
 
 		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
 		{
-			return allocation_trait.Tick(delta_time, layer_trait); // let the trait decide whether the allocation is to be destroyed
+			return allocation_trait.Tick(delta_time, this, layer_trait); // let the trait decide whether the allocation is to be destroyed
 		}
 
 		/** internal methods to update the particles */

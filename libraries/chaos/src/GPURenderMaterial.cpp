@@ -118,7 +118,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(RenderParams const & render_params) const
+	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(RenderParams const & render_params) const
 	{
 		// sub-materials
 		if (!render_params.submaterial_name.empty())
@@ -128,7 +128,7 @@ namespace chaos
 			{
 				if (submaterial->hidden_material) // do not render with this material (do not test for this->program & parent_material->program)
 					return nullptr;
-				GPUProgram const * result = submaterial->GetEffectiveProgram(render_params);
+				GPUProgram const * result = submaterial->DoGetEffectiveProgram(render_params);
 				if (result != nullptr)
 					return result;
 			}
@@ -140,9 +140,22 @@ namespace chaos
 			return program.get();
 		// go through the hierarchy until we get the program
 		if (parent_material != nullptr)
-			return parent_material->GetEffectiveProgram(render_params);
+			return parent_material->DoGetEffectiveProgram(render_params);
 		// not found
-		return nullptr;
+		return nullptr;	
+	}
+
+	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(RenderParams const & render_params) const
+	{
+		if (!IsMaterialEnabled(render_params))
+			return nullptr;
+		return DoGetEffectiveProgram(render_params);
+	}
+
+	bool GPURenderMaterial::IsMaterialEnabled(RenderParams const & render_params) const
+	{
+	
+		return true;
 	}
 
 	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const

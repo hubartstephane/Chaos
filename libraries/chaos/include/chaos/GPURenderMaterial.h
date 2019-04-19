@@ -74,6 +74,9 @@ namespace chaos
 		/** go throw the hierary and search for the program */
 		GPUProgram const * GetEffectiveProgram(RenderParams const & render_params) const;
 
+		/** returns whether the material is enabled for given submaterial_name */
+		bool IsMaterialEnabled(RenderParams const & render_params) const;
+
 		/** get the uniform provider */
 		GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
 		/** get the uniform provider */
@@ -94,6 +97,8 @@ namespace chaos
 		virtual bool DoRelease() override;
 		/** search some cycles throught parent_material and sub materials (returning true is an error) */
 		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
+		/** returns the effective program for the material */
+		GPUProgram const * DoGetEffectiveProgram(RenderParams const & render_params) const;
 
 	protected:
 

@@ -28,6 +28,35 @@ namespace chaos
 		/** specialization for bool */
 		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result, bool default_value);
 
+		/** reading an array of elements */
+		template<typename T>
+		static bool GetAttributeArray(nlohmann::json const & entry, char const * name, std::vector<T> & result)
+		{
+			nlohmann::json const * array_json = GetStructure(entry, name);
+			// read an array ?
+			if (array_json != nullptr && array_json->is_array())
+			{
+				for (size_t i = 0; i < array_json->size(); ++i)
+				{
+					T tmp;
+					if (JSONTools::GetAttributeByIndex(*array_json, i, tmp))
+						result.push_back(std::move(tmp));
+				}
+				return true;
+			}
+			// a single element ?
+			else
+			{
+				T tmp;
+				if (GetAttribute(entry, name, tmp))
+				{
+					result.push_back(std::move(tmp));
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/** reading an attribute (catch exceptions) */
 		template<typename T>
 		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result)

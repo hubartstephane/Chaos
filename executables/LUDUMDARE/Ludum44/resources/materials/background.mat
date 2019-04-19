@@ -4,5 +4,8 @@
   "textures": 
 	{
     "background": { "name": "background1" }		
-  }
+  },
+
+	"cenabled_submaterials":["bi", "bu", "truc"],
+	"enabled_submaterials":"truc"
 }

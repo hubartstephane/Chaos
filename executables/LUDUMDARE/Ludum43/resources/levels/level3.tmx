@@ -449,6 +449,11 @@
   <object id="1636" gid="14" x="-4243" y="1176" width="167" height="176"/>
   <object id="1637" gid="14" x="9901" y="3224" width="167" height="176"/>
  </objectgroup>
+ <objectgroup name="Texts">
+  <object id="1853" name="Level 3" x="-5476.5" y="-145.5" width="985" height="267">
+   <text pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 3</text>
+  </object>
+ </objectgroup>
  <objectgroup name="Finishing" locked="1">
   <properties>
    <property name="MATERIAL" value="player"/>
@@ -608,10 +613,5 @@
    </properties>
   </object>
   <object id="75" name="world_bounding_box" x="-11024" y="-24704" width="47424" height="55680"/>
- </objectgroup>
- <objectgroup name="Texts">
-  <object id="1853" name="Level 3" x="-5476.5" y="-145.5" width="985" height="267">
-   <text pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 3</text>
-  </object>
  </objectgroup>
 </map>

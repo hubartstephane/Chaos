@@ -47,10 +47,15 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" gid="2" x="-17536" y="3184" width="26376" height="1104"/>
-  <object id="1733" gid="2" x="-2140" y="14680" width="1544" height="10544">
+  <object id="1732" name="PowerUp" gid="2" x="-17536" y="3184" width="26376" height="1104">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1733" name="PowerUp" gid="2" x="-2140" y="14680" width="1544" height="10544">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

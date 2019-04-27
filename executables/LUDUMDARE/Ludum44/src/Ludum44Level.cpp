@@ -57,3 +57,86 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
+
+
+death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+{
+	if (in_geometric_object->name == "FinishSurface")
+		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+	if (in_geometric_object->name == "PowerUp")
+		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+
+	return death::TiledMap::Level::DoCreateTriggerSurface(in_layer_instance, in_geometric_object);
+}
+
+// =============================================================
+// FinishingTriggerSurfaceObject implementation
+// =============================================================
+
+
+FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_geometric_object)
+{
+
+}
+
+bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+{
+#if 0
+
+	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
+		event_type = event_type;
+	if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+		event_type = event_type;
+	if (event_type == TriggerSurfaceObject::COLLISION_AGAIN)
+		event_type = event_type;
+
+
+	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
+	{
+		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
+		if (!pp->level_end_reached)
+		{
+			//		pp->level_end_reached = true;
+			//		pp->level_end_timer = 2.0f;
+		}
+	}
+#endif
+	return true; // continue other collisions
+}
+
+
+// =============================================================
+// PowerUpTriggerSurfaceObject implementation
+// =============================================================
+
+PowerUpTriggerSurfaceObject::PowerUpTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_geometric_object)
+{
+
+}
+
+bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+{
+#if 0
+
+	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
+		event_type = event_type;
+	if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+		event_type = event_type;
+	if (event_type == TriggerSurfaceObject::COLLISION_AGAIN)
+		event_type = event_type;
+
+
+	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
+	{
+		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
+		if (!pp->level_end_reached)
+		{
+			//		pp->level_end_reached = true;
+			//		pp->level_end_timer = 2.0f;
+		}
+	}
+#endif
+	return true; // continue other collisions
+}

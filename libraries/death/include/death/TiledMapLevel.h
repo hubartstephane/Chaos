@@ -13,6 +13,7 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/CollisionFramework.h>
 
 namespace death
 {

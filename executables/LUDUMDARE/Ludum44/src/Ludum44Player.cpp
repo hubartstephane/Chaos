@@ -270,18 +270,22 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 		buy_timer += (float)delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
 		{
-			
-#if 0
+			// destroy all power up zone in the camera view : not the best but should work if a single zone in the same time
 			LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+			if (ludum_level_instance != nullptr)
+			{
+				death::TiledMap::LayerInstance * layer_instance = ludum_level_instance->FindLayerInstance("Zones");
+				if (layer_instance != nullptr)
+				{
+					layer_instance->FindTileCollisions(ludum_level_instance->GetCameraBox(), [](death::TiledMap::TileParticle & particle)
+					{
 
-			death::TiledMap::LayerInstance * layer_instance = ludum_level_instance->FindLayerInstance("fire");
-			layer_instance->AreTileCollisionsEnabled
-#endif
+						return true;
+					});			
+				}
+			}
 
-
-
-		
-
+			// reset the corresponding trigger surface
 			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);			
 			ludum_game_instance->current_power_up_surface->SetEnabled(false);
 			ludum_game_instance->current_power_up = nullptr;

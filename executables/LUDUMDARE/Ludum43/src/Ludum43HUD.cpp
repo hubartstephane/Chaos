@@ -45,7 +45,7 @@ void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleText
 }
 
 // ====================================================================
-// GameHUDWakenParticleComponent
+// GameHUDLifeBarComponent
 // ====================================================================
 
 bool GameHUDLifeBarComponent::DoTick(double delta_time)

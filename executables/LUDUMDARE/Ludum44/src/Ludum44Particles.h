@@ -35,6 +35,43 @@ public:
 };
 
 
+
+
+
+
+
+
+
+// ===========================================================================
+// Object particle system
+// ===========================================================================
+
+class ParticleLife : public chaos::ParticleDefault::Particle
+{
+
+};
+
+class ParticleLifeTrait : public chaos::ParticleAllocationTrait<ParticleLife, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+	bool UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+};
+
+
+
+
+
+
 // ===========================================================================
 // ParticlePlayer
 // ===========================================================================

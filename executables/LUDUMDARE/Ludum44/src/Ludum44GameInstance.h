@@ -31,4 +31,6 @@ protected:
 
 	virtual bool DoTick(double delta_time) override;
 
+	virtual void OnPlayerEntered(death::Player * player) override;
+
 };

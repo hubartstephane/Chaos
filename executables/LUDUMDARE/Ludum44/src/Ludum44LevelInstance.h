@@ -42,4 +42,7 @@ protected:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;
+
+	/** the horizontal camera speed */
+	float camera_speed = 100.0f;
 };

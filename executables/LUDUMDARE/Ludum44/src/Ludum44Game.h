@@ -97,13 +97,28 @@ protected:
 
 protected:
 
-	
+	/** the initial player life */
+	float initial_player_life = 1.0f;
+	/** the maximum player life */
+	float max_player_life = 5.0f;
 
-	float initial_player_life = 4.0f;
+	/** the initial player speed */
+	float initial_player_speed = 1.0f;
+	/** the maximum player speed */
+	float max_player_speed = 5.0f;
 
-	float player_acceleration = 100.0f;
-	float max_player_speed = 100.0f;
-	float gravity = 10.0f;
-	float player_slowdown = 10.0f;
+	/** the initial player damage */
+	float initial_player_damage = 1.0f;
+	/** the maximum player damage */
+	float max_player_damage = 5.0f;
+
+	/** a multiplier for speed */
+	float player_speed_factor = 500.0f;
+
+
+
+
+
+
 };
 

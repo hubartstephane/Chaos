@@ -58,14 +58,11 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	float right_length_2 = glm::length2(right_stick_position);
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 	{
-		glm::vec2 acceleration = (left_length_2 > right_length_2) ?
+		glm::vec2 speed = (left_length_2 > right_length_2) ?
 			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
 			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
 
-		//player_particle->acceleration = ludum_game->player_acceleration * glm::vec2(1.0f, -1.0f) * acceleration; // axis Y reversed
-
-
-		player_particle->velocity = ludum_game->player_acceleration * glm::vec2(1.0f, -1.0f) * acceleration; // axis Y reversed
+		player_particle->velocity = current_player_speed * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * speed; // axis Y reversed
 	}
 }
 

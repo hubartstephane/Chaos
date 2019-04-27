@@ -47,4 +47,7 @@ protected:
 	
 protected:
 
+	float current_player_life = 1.0f;
+	float current_player_speed = 1.0f;
+	float current_player_damage = 1.0f;
 };

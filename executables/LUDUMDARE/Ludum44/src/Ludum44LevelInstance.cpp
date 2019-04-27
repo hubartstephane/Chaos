@@ -62,15 +62,19 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))
 		return false;
 
-	// change the level timeout
+	// change the level timeout + camera speed
 	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
-
 	level_timeout = DEFAULT_LEVEL_TIMEOUT;
+
+	static float DEFAULT_CAMERA_SPEED = 100.0f;
+	camera_speed = DEFAULT_CAMERA_SPEED;
 
 	death::TiledMap::Level const * level = GetTiledLevel();
 	if (level != nullptr)
 	{
 		level_timeout = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIMEOUT);
+		camera_speed = level->GetTiledMap()->FindPropertyFloat("CAMERA_SPEED", DEFAULT_CAMERA_SPEED);
 	}
+
 	return true;
 }

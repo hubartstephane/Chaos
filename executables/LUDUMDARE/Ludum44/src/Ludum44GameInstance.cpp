@@ -45,3 +45,21 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 
 
 }
+
+void LudumGameInstance::OnPlayerEntered(death::Player * player)
+{
+	death::GameInstance::OnPlayerEntered(player);
+
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer *>(player);
+	if (ludum_player == nullptr)
+		return;
+
+	ludum_player->current_player_life = ludum_game->initial_player_life;
+	ludum_player->current_player_speed = ludum_game->initial_player_speed;
+	ludum_player->current_player_damage = ludum_game->initial_player_damage;
+}
+

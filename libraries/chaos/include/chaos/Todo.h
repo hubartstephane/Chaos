@@ -7,6 +7,31 @@
 	== TODO
 	====================================================================
 
+		- TiledMap :
+
+	    properties string multiline
+
+			<PROP value="mono ligne"/>
+
+			<PROP>
+			multi
+			ligne
+			</PROP>
+
+
+		AddFontInfo .. AddColor  => ParticleTextGenerator : faudrait avoir quelque chose qui change la taille + la couleur ...
+
+		
+
+		Printf(\\[])=> resultat bizarre
+
+
+		-particle_text_generator->AddColor("LEVELTITLE", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+
+		   => utiliser LEVELTITLE plutot que LEVEL_TITLE : a fixer
+
+
+
 
 		- TiledMap : spawner + detection collision
 		-  fadout

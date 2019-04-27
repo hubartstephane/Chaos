@@ -4,13 +4,28 @@ in vec2 vs_position;
 in vec3 vs_texcoord;
 in vec4 vs_color;
 
-uniform sampler2DArray material;
+uniform vec2 viewport_size;
+uniform vec2 window_size;
+uniform vec4 camera_box;
+uniform float game_time;
+uniform float scroll_speed;
+
+uniform vec4 color1;
+uniform vec4 color2;
+
+uniform sampler2D background;
 
 void main()
 {
-	vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0) ?
-		vec4(1.0, 1.0, 1.0, 1.0) :
-		texture(material, vs_texcoord);
-	output_color.xyz = color.xyz * vs_color.xyz;
-	output_color.a   = vs_color.a * color.a;			
+	vec2 texcoord = 10.0 * (gl_FragCoord.xy - ((window_size.xy - viewport_size.xy) * vec2(0.5, 0.5))) / viewport_size.xy;
+	texcoord.y *= viewport_size.y / viewport_size.x;
+
+	texcoord.y -= scroll_speed * game_time;
+	texcoord += vec2(1.0, 0.0) * camera_box.xy / viewport_size.xy;
+
+
+	//output_color.rgb = texture(background, ((vs_position.xy - camera_box.xy) + texcoord) * 10.0).rgb;
+	vec4 c = texture(background, texcoord);
+
+	output_color.rgba = mix(color1, color2, c.g);
 };

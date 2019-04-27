@@ -4,7 +4,7 @@
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="200"/>
-  <property name="LEVEL_TITLE" value="Level 1 - Tutorial"/>
+  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Tutorial]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
@@ -53,7 +53,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1733" name="PowerUp" gid="2" x="-2140" y="14680" width="1544" height="10544">
+  <object id="1733" name="PowerUp" gid="2" x="-2140" y="14680" width="35080" height="10544">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

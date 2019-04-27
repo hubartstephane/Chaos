@@ -269,8 +269,18 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	{
 		buy_timer += (float)delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
-		{		
-		//	ludum_game_instance->disabled_power_ups
+		{
+			
+#if 0
+			LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+
+			death::TiledMap::LayerInstance * layer_instance = ludum_level_instance->FindLayerInstance("fire");
+			layer_instance->AreTileCollisionsEnabled
+#endif
+
+
+
+		
 
 			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);			
 			ludum_game_instance->current_power_up_surface->SetEnabled(false);

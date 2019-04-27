@@ -856,32 +856,17 @@ namespace death
 		{
 			death::TiledMap::Level * level = GetTiledLevel();
 
-			// no particle layer, no collisions
-			if (particle_layer == nullptr)
-				return true;
-			// iterate over all allocations
-			size_t allocation_count = particle_layer->GetAllocationCount();
-			for (size_t i = 0; i < allocation_count; ++i)
+			return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TileParticle & tile_particle)
 			{
-				chaos::ParticleAllocationBase * particle_allocation = particle_layer->GetAllocation(i);
-				if (particle_allocation == nullptr)
-					continue;
-
-				chaos::ParticleAccessor<TileParticle> particles = particle_allocation->GetParticleAccessor<TileParticle>();
-
-				size_t particle_count = particles.GetCount();
-				for (size_t j = 0; j < particle_count; ++j)
-				{
-					TileParticle & particle = particles[j];
-
-					if (player_particle == &particle) // ignore self collision
-						continue;
-					if (chaos::Collide(player_particle->bounding_box, particle.bounding_box))
-						if (!level->OnPlayerTileCollision(delta_time, player, player_particle, &particle)) // stop other collisions
-							return false;
-				}
-			}
-			return true; // continue other collisions
+				// ignore self collision
+				if (player_particle == &tile_particle) 
+					return true;
+				// stop other collisions
+				if (!level->OnPlayerTileCollision(delta_time, player, player_particle, &tile_particle)) 
+					return false;
+				
+				return true;
+			});
 		}
 
 		bool LayerInstance::DoTick(double delta_time)

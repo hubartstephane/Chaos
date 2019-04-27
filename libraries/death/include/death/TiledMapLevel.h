@@ -380,6 +380,35 @@ namespace death
 			/** get the particle layer */
 			chaos::ParticleLayerBase const * GetParticleLayer() const { return particle_layer.get();}
 
+			/** processing collision on all tiles until FUNC returns false to stop */
+			template<typename FUNC>
+			bool FindTileCollisions(chaos::box2 const & bounding_box, FUNC func)
+			{			
+				// no particle layer, no collisions
+				if (particle_layer == nullptr)
+					return true;
+				// iterate over all allocations
+				size_t allocation_count = particle_layer->GetAllocationCount();
+				for (size_t i = 0; i < allocation_count; ++i)
+				{
+					chaos::ParticleAllocationBase * particle_allocation = particle_layer->GetAllocation(i);
+					if (particle_allocation == nullptr)
+						continue;
+
+					chaos::ParticleAccessor<TileParticle> particles = particle_allocation->GetParticleAccessor<TileParticle>();
+
+					size_t particle_count = particles.GetCount();
+					for (size_t j = 0; j < particle_count; ++j)
+					{
+						TileParticle & particle = particles[j];
+						if (chaos::Collide(bounding_box, particle.bounding_box))
+							if (!func(particle)) // stop other collisions
+								return false;
+					}
+				}
+				return true; // continue other collisions
+			}
+
 		protected:
 
 			/** initialization */

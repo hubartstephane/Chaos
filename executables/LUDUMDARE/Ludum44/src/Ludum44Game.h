@@ -136,6 +136,8 @@ protected:
 	GameValue player_charged_damage;
 	GameValue player_fire_rate;
 
+	float min_player_max_life = 0.1f;
+
 
 	/** a multiplier for speed */
 	float player_speed_factor = 500.0f;

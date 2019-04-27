@@ -87,7 +87,6 @@ bool LudumGame::InitializeParticleTextGenerator()
 }
 
 
-
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
@@ -98,8 +97,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	player_damage = InitializeGameValue("player_damage", config, config_path);
 	player_charged_damage = InitializeGameValue("player_charged_damage", config, config_path);
 	player_fire_rate = InitializeGameValue("player_fire_rate", config, config_path);
-
-
+	
+	DEATHGAME_JSON_ATTRIBUTE(min_player_max_life);
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
 	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
 	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);

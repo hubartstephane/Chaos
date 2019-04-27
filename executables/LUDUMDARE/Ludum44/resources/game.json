@@ -13,6 +13,8 @@
 	"initial_player_life":1.0,
   "max_player_life": 5.0,
 
+  "min_player_max_life": 0.1,
+
 
 
   "initial_player_speed": 1.0,

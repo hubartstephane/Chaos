@@ -47,5 +47,13 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
 	}
 
+	bool is_fire = (layer_name == "fire");
+	if (is_fire)
+	{
+		ParticleFireTrait::LayerTrait fire_trait;
+		fire_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
+	}
+
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }

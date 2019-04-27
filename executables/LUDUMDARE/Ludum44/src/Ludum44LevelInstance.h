@@ -8,6 +8,7 @@
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
+#include <death/Player.h>
 #include <death/GameFramework.h>
 
 #include "Ludum44Game.h"
@@ -37,6 +38,10 @@ protected:
 	virtual void OnLevelStarted() override;
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
+	/** override */
+	virtual void OnPlayerEntered(death::Player * player) override;
+	/** override */
+	virtual void OnPlayerLeaved(death::Player * player) override;
 
 protected:
 

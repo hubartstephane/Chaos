@@ -190,9 +190,5 @@ int LudumGame::AddParticleLayers()
 	if (render_order < 0)
 		return render_order;
 
-	ParticleFireTrait::LayerTrait fire_trait;
-	fire_trait.game = this;
-	particle_manager->AddLayer<ParticleFireTrait>(++render_order, death::GameHUDKeys::FIRE_LAYER_ID, "fire", fire_trait);
-
 	return render_order;
 }

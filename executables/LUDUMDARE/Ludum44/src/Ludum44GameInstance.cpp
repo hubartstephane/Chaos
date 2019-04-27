@@ -82,15 +82,6 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	
 	}
 
-	chaos::ParticleLayerBase * fire_layer = ludum_game->GetParticleManager()->FindLayer(death::GameHUDKeys::FIRE_LAYER_ID);
-	if (fire_layer != nullptr)
-		ludum_player->fire_allocation = fire_layer->SpawnParticles(0);
-
-
-
-
-
-
 	// shuxxx
 
 	if (!ludum_game->power_ups.empty())

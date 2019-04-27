@@ -50,10 +50,29 @@ protected:
 	/** update player displacement with the stick values that are stored */
 	virtual void UpdatePlayerAcceleration(double delta_time);
 	
+	/** test whether the player is firing */
+	void UpdatePlayerFire(double delta_time);
+	/** test whether the player wants to by an item */
+	void UpdatePlayerBuyingItem(double delta_time);
+
+	/** check whether some inputs are pressed */
+	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
+
+	/** fire a charged projectile */
+	void FireChargedProjectile();	
+	/** fire a normal projectile */
+	void FireNormalProjectile();		
+
 protected:
 
 	float current_life = 1.0f;
+	float current_max_life = 1.0f;
+
 	float current_speed = 1.0f;
 	float current_damage = 1.0f;
 	float current_fire_rate = 1.0f;
+
+	float buy_timer = 0.0f;
+	float fire_timer = 0.0f; // the fire_timer is a COOLDOWN !
+	float charged_fire_timer = 0.0f;
 };

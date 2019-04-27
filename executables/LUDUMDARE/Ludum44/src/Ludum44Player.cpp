@@ -41,6 +41,10 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
+	// fire 
+	UpdatePlayerFire(delta_time);
+	// buy items
+	UpdatePlayerBuyingItem(delta_time);
 }
 
 void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
@@ -118,4 +122,119 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 		for (size_t i = 0 ; i < count ; ++i)
 			player_particles[i].life = ludum_game->player_life.initial_value;
 	}
+}
+
+bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_button)
+{
+	// keyboard input
+	if (keyboard_buttons != nullptr)
+	{
+		death::Game * game = GetGame();
+		if (game != nullptr)
+		{
+			GLFWwindow * glfw_window = game->GetGLFWWindow();
+			if (glfw_window != nullptr)
+			{
+				int i = 0;
+				while (keyboard_buttons[i] >= 0)
+				{
+					if (glfwGetKey(glfw_window, keyboard_buttons[i]) != GLFW_RELEASE)
+						return true;					
+					++i;
+				}
+			}
+		}
+	}
+
+	// gamepad input
+	if (gamepad_button >= 0)
+		if (gamepad != nullptr && gamepad->IsButtonPressed(gamepad_button))
+			return true;	
+	return false;
+}
+
+void LudumPlayer::FireChargedProjectile()
+{
+	int i = 0;
+	++i;
+
+
+}
+
+void LudumPlayer::FireNormalProjectile()
+{
+	int i = 0;
+	++i;
+}
+
+void LudumPlayer::UpdatePlayerFire(double delta_time)
+{
+	// decrease normal fire cool down
+	fire_timer -= (float)delta_time;
+	if (fire_timer < 0.0f)
+		fire_timer = 0.0f;
+	
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	int const fire_key_buttons[] = {GLFW_KEY_SPACE, -1};
+	int const charged_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
+
+	bool charged_pressed = CheckButtonPressed(charged_key_buttons, chaos::MyGLFW::XBOX_BUTTON_B);
+	if (charged_pressed)
+	{
+		charged_fire_timer += (float)delta_time;
+		if (charged_fire_timer >= ludum_game->charged_fire_time)
+			charged_fire_timer = ludum_game->charged_fire_time;	
+	}
+	else
+	{
+		if (charged_fire_timer >= ludum_game->charged_fire_time) // charged fire is only fired when button is UP
+		{
+			FireChargedProjectile();		
+			charged_fire_timer = 0.0f;
+		}
+		else
+		{
+			charged_fire_timer = 0.0f;
+			if (fire_timer == 0.0f)
+			{
+				bool fire_pressed = CheckButtonPressed(fire_key_buttons, chaos::MyGLFW::XBOX_BUTTON_A);
+				if (fire_pressed)
+				{
+					FireNormalProjectile();					
+					fire_timer = (1.0f / current_fire_rate);
+				}								
+			}			
+		}
+	}
+}
+
+void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
+{
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr)
+		return;
+	if (!ludum_game_instance->current_power_up->CanPowerUp(GetLudumGame(), this))
+		return;
+
+	int const buy_key_buttons[] = {GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1};
+
+	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
+	if (buy_pressed)
+	{
+		buy_timer += (float)delta_time;
+		if (buy_timer >= ludum_game->buy_upgrade_time)
+		{		
+			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);
+			buy_timer = 0.0f;
+		}	
+	}
+	else
+		buy_timer = 0.0f;
 }

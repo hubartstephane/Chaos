@@ -122,7 +122,8 @@ protected:
 
 protected:
 
-	GameValue player_life;
+	GameValue player_life; // XXX : only use initial value for the moment
+
 	GameValue player_speed;
 	GameValue player_damage;
 	GameValue player_fire_rate;

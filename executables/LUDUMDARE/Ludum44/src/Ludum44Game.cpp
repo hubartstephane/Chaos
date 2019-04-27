@@ -170,9 +170,9 @@ bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_na
 
 bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	if (!PopulatePowerOneUp(new LudumDamageUp(), "damage_up", config, config_path))
-		return false;
 	if (!PopulatePowerOneUp(new LudumSpeedUp(), "speed_up", config, config_path))
+		return false;
+	if (!PopulatePowerOneUp(new LudumDamageUp(), "damage_up", config, config_path))
 		return false;
 	if (!PopulatePowerOneUp(new LudumFireRateUp(), "fire_rate_up", config, config_path))
 		return false;

@@ -4,6 +4,7 @@
 #include "Ludum44Particles.h"
 #include "Ludum44Game.h"
 #include "Ludum44GameInstance.h"
+#include "Ludum44LevelInstance.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
@@ -64,9 +65,21 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 // ParticleFireTrait
 // ===========================================================================
 
-
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, LayerTrait const * layer_trait) const
+ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const
 {
+	ParticleFireUpdateData result;
+	if (count > 0)
+	{
+		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
+	}
+	return result;
+}
+
+bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
+{
+	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+		return true;	
+
 	particle->bounding_box.position += delta_time * particle->velocity;
 
 	return false; // do not destroy the particle

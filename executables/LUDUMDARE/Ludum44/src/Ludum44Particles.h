@@ -54,6 +54,13 @@ public:
 
 };
 
+class ParticleFireUpdateData
+{
+public:
+
+	chaos::box2 camera_box;
+};
+
 class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
 {
 public:
@@ -65,7 +72,9 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleFire * particle, LayerTrait const * layer_trait) const;
+	ParticleFireUpdateData BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const;
+
+	bool UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
 
 	size_t ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 };

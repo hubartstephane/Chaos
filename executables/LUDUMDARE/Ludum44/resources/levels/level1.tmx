@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1722">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="1722">
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <objectgroup name="Texts" offsetx="54.0606" offsety="-145.212">
+ <objectgroup id="1" name="Texts" offsetx="54.0606" offsety="-145.212">
   <object id="1710" name="Level 1" x="-5405.11" y="-142.106" width="1065.85" height="228.212">
    <properties>
     <property name="FONT_NAME" value="normal"/>
@@ -15,9 +14,9 @@
    <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 1</text>
   </object>
  </objectgroup>
- <objectgroup name="planets">
+ <objectgroup id="2" name="planets">
   <object id="1711" gid="1" x="8832" y="4672" width="3168" height="3264"/>
-  <object id="1713" gid="1" x="-4720" y="640" width="3168" height="3264"/>
+  <object id="1713" gid="1" x="-3104" y="-880" width="3168" height="3264"/>
   <object id="1714" gid="1" x="-7504" y="3424" width="3168" height="3264"/>
   <object id="1715" gid="1" x="-3216" y="3616" width="3168" height="3264"/>
   <object id="1716" gid="1" x="-7504" y="8032" width="3168" height="3264"/>
@@ -27,12 +26,12 @@
   <object id="1720" gid="1" x="-11792" y="-928" width="3168" height="3264"/>
   <object id="1721" gid="1" x="-2320" y="-4640" width="3168" height="3264"/>
  </objectgroup>
- <layer name="Calque 1" width="100" height="100">
+ <layer id="3" name="Calque 1" width="100" height="100">
   <data encoding="base64" compression="zlib">
    eJztwTEBAAAAwqD1T+1lC6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAbnEAAAQ==
   </data>
  </layer>
- <objectgroup name="PlayerAndCamera" locked="1">
+ <objectgroup id="4" name="PlayerAndCamera" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>

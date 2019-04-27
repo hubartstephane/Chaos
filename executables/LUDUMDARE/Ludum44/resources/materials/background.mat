@@ -4,22 +4,5 @@
   "textures": 
 	{
     "background": { "name": "background1" }		
-  },
-
-	"strict_submaterial": true,
-
-
-
-	"sub_materials":
-	{
-		"titic":
-		{
-			"program": "background",
-
-			"textures": 
-			{
-				"background": { "name": "background1" }		
-			}
-		}
-	}
+  }
 }

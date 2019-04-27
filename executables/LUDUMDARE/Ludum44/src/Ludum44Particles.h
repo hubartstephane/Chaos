@@ -21,8 +21,8 @@ class VertexBase : public chaos::ParticleDefault::Vertex
 {
 public:
 
-	glm::vec2 attraction_position;
-	glm::vec2 particle_center;
+	//glm::vec2 attraction_position;
+	//glm::vec2 particle_center;
 };
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
@@ -31,7 +31,7 @@ class ParticleBase : public death::TiledMap::TileParticle
 {
 public:
 
-	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+
 };
 
 
@@ -39,10 +39,11 @@ public:
 // ParticlePlayer
 // ===========================================================================
 
-class ParticlePlayer : public chaos::ParticleDefault::Particle
+class ParticlePlayer : public ParticleBase
 {
 public:
 
+	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
 	float life = 0.0f;
 

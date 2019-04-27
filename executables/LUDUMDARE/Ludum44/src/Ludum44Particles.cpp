@@ -14,8 +14,8 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-	result.Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_POSITION, 2, chaos::TYPE_FLOAT2); // center of the particle
+	//result.Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
+	//result.Push(chaos::SEMANTIC_POSITION, 2, chaos::TYPE_FLOAT2); // center of the particle
 	return result;
 }
 
@@ -32,6 +32,9 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
+	particle->bounding_box.position += delta_time * particle->velocity;
+
+
 	return false;
 }
 

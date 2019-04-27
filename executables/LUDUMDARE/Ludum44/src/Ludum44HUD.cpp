@@ -61,7 +61,7 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 	position1.y = -view_size.y * 0.5f + 40.0f;
 
 	position2.x = view_size.x * 0.5f - 40.0f;
-	position2.y = -view_size.y * 0.5f + 70.0f;
+	position2.y = -view_size.y * 0.5f + 90.0f;
 
 	part->bounding_box = chaos::box2(std::make_pair(position1, position2));
 	part->texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
@@ -104,6 +104,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (ludum_game != nullptr)
 	{
 		int render_order = -1;
+
 		ParticleLifeTrait::LayerTrait life_trait;
 		life_trait.game = ludum_game;
 		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "lifebar", life_trait);

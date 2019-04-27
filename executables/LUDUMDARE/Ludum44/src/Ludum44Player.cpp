@@ -153,18 +153,47 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 	return false;
 }
 
-void LudumPlayer::FireChargedProjectile()
+ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout)
 {
-	int i = 0;
-	++i;
+	if (fire_allocation == nullptr)
+		return nullptr;
+	if (!fire_allocation->AddParticles(1))
+		return nullptr;
+	chaos::ParticleAccessor<ParticleFire> particles = fire_allocation->GetParticleAccessor<ParticleFire>();
+	if (particles.GetCount() == 0)
+		return nullptr;
 
+	chaos::box2 box = GetPlayerBox();
 
+	ParticleFire & p = particles[particles.GetCount() - 1];
+
+	p.bounding_box.position = box.position;
+	p.bounding_box.half_size = box.half_size;
+	p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	p.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, GetGame()->GetTextureAtlas()->GetAtlasDimension());
+
+	return &p;
 }
 
-void LudumPlayer::FireNormalProjectile()
+ParticleFire * LudumPlayer::FireChargedProjectile()
 {
-	int i = 0;
-	++i;
+	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout);
+	if (p == nullptr)
+	{
+	
+	}
+	return p;
+}
+
+ParticleFire * LudumPlayer::FireNormalProjectile()
+{
+	ParticleFire * p = FireProjectile(fire_bitmap_layout);
+	if (p == nullptr)
+	{
+
+	}
+	return p;
 }
 
 void LudumPlayer::UpdatePlayerFire(double delta_time)

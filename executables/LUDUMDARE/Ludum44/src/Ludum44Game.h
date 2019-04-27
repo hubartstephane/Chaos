@@ -47,6 +47,7 @@ namespace death
 	{
 		CHAOS_DECLARE_TAG(PLANETS_LAYER_ID);
 		CHAOS_DECLARE_TAG(GAMEOBJECT_LAYER_ID);
+		CHAOS_DECLARE_TAG(FIRE_LAYER_ID);
 	};
 };
 
@@ -117,6 +118,8 @@ protected:
 
 	virtual death::GameInstance * CreateGameInstance() override;
 
+	virtual int AddParticleLayers() override;
+
 
 	bool PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
@@ -139,6 +142,11 @@ protected:
 	/** the super fire time */
 	float charged_fire_time = 3.0f;
 
+	/** bullet velocity */
+	float bullet_velocity = 800.0f;
+
+	/** a scroll multiplier */
+	float scroll_factor = 1.0f;
 
 	/** the power ups */
 	std::vector<chaos::shared_ptr<LudumPowerUp>> power_ups;

@@ -39,7 +39,7 @@
  </layer>
  <objectgroup id="4" name="PlayerAndCamera">
   <properties>
-   <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
   <object id="56" name="ThePlayerStart1" x="-4058" y="-1138">
@@ -54,6 +54,6 @@
     <property name="CAMERA" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="75" name="world_bounding_box" x="-11024" y="-22784" width="47424" height="53760" visible="0"/>
+  <object id="75" name="world_bounding_box" x="-11024" y="-4992" width="47424" height="15232" visible="0"/>
  </objectgroup>
 </map>

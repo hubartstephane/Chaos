@@ -65,16 +65,34 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	ludum_player->current_damage = ludum_game->player_damage.initial_value;
 	ludum_player->current_fire_rate = ludum_game->player_fire_rate.initial_value;
 
+	// find bitmap set
+	chaos::BitmapAtlas::FolderInfo const * bitmap_set = ludum_game->GetTextureAtlas()->GetFolderInfo("sprites");
+	if (bitmap_set != nullptr)
+	{
+		chaos::BitmapAtlas::BitmapInfo const * fire_info = bitmap_set->GetBitmapInfo("fire");
+		if (fire_info == nullptr)
+			return;
+		chaos::BitmapAtlas::BitmapInfo const * charged_fire_info = bitmap_set->GetBitmapInfo("charged_fire");
+		if (charged_fire_info == nullptr)
+			return;
+
+		ludum_player->fire_bitmap_layout = *fire_info;
+		ludum_player->charged_fire_bitmap_layout = *charged_fire_info;
+	
+	}
+
+	chaos::ParticleLayerBase * fire_layer = ludum_game->GetParticleManager()->FindLayer(death::GameHUDKeys::FIRE_LAYER_ID);
+	if (fire_layer != nullptr)
+		ludum_player->fire_allocation = fire_layer->SpawnParticles(0);
 
 
 
 
 
 
+	// shuxxx
 
 	if (!ludum_game->power_ups.empty())
 		current_power_up = ludum_game->power_ups[0];
-
-
 }
 

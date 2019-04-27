@@ -92,7 +92,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
 	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
 	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
-	
+	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
+	DEATHGAME_JSON_ATTRIBUTE(bullet_velocity);
+		
 	return true;
 }
 
@@ -177,4 +179,17 @@ bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesyste
 	if (!PopulatePowerOneUp(new LudumFireRateUp(), "fire_rate_up", config, config_path))
 		return false;
 	return true;
+}
+
+int LudumGame::AddParticleLayers()
+{
+	int render_order = death::Game::AddParticleLayers();
+	if (render_order < 0)
+		return render_order;
+
+	ParticleFireTrait::LayerTrait fire_trait;
+	fire_trait.game = this;
+	particle_manager->AddLayer<ParticleFireTrait>(++render_order, death::GameHUDKeys::FIRE_LAYER_ID, "fire", fire_trait);
+
+	return render_order;
 }

@@ -45,7 +45,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 
 // ===========================================================================
-// Object particle system
+// ParticleLifeTrait
 // ===========================================================================
 
 
@@ -60,7 +60,19 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
+// ===========================================================================
+// ParticleFireTrait
+// ===========================================================================
 
 
+bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, LayerTrait const * layer_trait) const
+{
 
+	return false; // do not destroy the particle
+}
+
+size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+}
 

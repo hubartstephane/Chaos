@@ -1,11 +1,14 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
+#include <chaos/BitmapAtlas.h>
 
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/Player.h>
 #include <death/GameFramework.h>
+
+
 
 #include "Ludum44Particles.h"
 
@@ -65,9 +68,11 @@ protected:
 	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
 
 	/** fire a charged projectile */
-	void FireChargedProjectile();	
+	ParticleFire * FireChargedProjectile();	
 	/** fire a normal projectile */
-	void FireNormalProjectile();		
+	ParticleFire *FireNormalProjectile();		
+	/** fire generic projectile */
+	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout);
 
 protected:
 
@@ -81,4 +86,11 @@ protected:
 	float buy_timer = 0.0f;
 	float fire_timer = 0.0f; // the fire_timer is a COOLDOWN !
 	float charged_fire_timer = 0.0f;
+
+	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
+
+	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;
+
+	chaos::BitmapAtlas::BitmapLayout charged_fire_bitmap_layout;
+
 };

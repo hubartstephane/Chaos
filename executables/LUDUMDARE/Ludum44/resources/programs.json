@@ -2,5 +2,6 @@
   "@background" : { "path": "@programs/background/background.pgm" },
   "@player": { "path": "@programs/player/player.pgm" },
   "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
+  "@fire"  : { "path": "@programs/fire/fire.pgm" },
   "@text"  : { "path": "@programs/text/text.pgm" }    
 }

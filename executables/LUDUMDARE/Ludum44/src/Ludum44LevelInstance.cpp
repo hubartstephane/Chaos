@@ -39,10 +39,17 @@ bool LudumLevelInstance::DoTick(double delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 
+	// get the game
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return true;
 	// get the PLAYER 0
-	death::Player * player = GetPlayer(0);
+	LudumPlayer * player = GetLudumPlayer(0);
 	if (player == nullptr)
 		return true;
+	// restrict the player to the world
+	RestrictPlayerToWorld(0);
+
 	// get the camera BEFORE modification
 	chaos::box2 camera_before = GetCameraBox();
 	if (camera_before.IsEmpty())
@@ -65,7 +72,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	}
 
 	// correct camera and player position
-	float scroll_displacement = 0.0f * camera_speed * (float)delta_time;
+	float scroll_displacement = ludum_game->scroll_factor * camera_speed * (float)delta_time;
 
 	camera_after.position.x += scroll_displacement;
 	SetCameraBox(camera_after);

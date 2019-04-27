@@ -270,7 +270,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 		buy_timer += (float)delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
 		{
-			// destroy all power up zone in the camera view : not the best but should work if a single zone in the same time
+			// XXX : HACK : destroy all power up zone in the camera view : not the best but should work if a single zone in the same time
 			LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
 			if (ludum_level_instance != nullptr)
 			{
@@ -279,7 +279,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 				{
 					layer_instance->FindTileCollisions(ludum_level_instance->GetCameraBox(), [](death::TiledMap::TileParticle & particle)
 					{
-
+						particle.gid = 0;
 						return true;
 					});			
 				}

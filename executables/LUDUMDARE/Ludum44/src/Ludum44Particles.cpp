@@ -39,6 +39,22 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 
 
+// =====================================
+// TileParticleTraitExt
+// =====================================
+
+bool TileParticleTraitExt::UpdateParticle(float delta_time, death::TiledMap::TileParticle * particle)
+{
+	if (particle->gid == 0)
+	{
+		particle->color.a -= delta_time;
+		if (particle->color.a <= 0.0f) // fade out the particle
+			return true;	
+	}
+	return false;
+}
+
+
 
 
 

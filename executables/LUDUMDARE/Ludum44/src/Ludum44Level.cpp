@@ -55,6 +55,12 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
 	}
 
+	bool is_zone = (layer_name == "Zones");
+	if (is_zone)
+	{
+		return new chaos::ParticleLayer<TileParticleTraitExt>();
+	}
+
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
 

@@ -23,9 +23,7 @@ void main()
 	texcoord.y -= scroll_speed * game_time;
 	texcoord += vec2(1.0, 0.0) * camera_box.xy / viewport_size.xy;
 
-
-	//output_color.rgb = texture(background, ((vs_position.xy - camera_box.xy) + texcoord) * 10.0).rgb;
 	vec4 c = texture(background, texcoord);
-
-	output_color.rgba = mix(color1, color2, c.g);
+	output_color.rgba = mix(color1, color2, c.g); // the initial texture is white and red : GREEN channel is a good indicator to select what we want
+	output_color.a *= vs_color.a;
 };

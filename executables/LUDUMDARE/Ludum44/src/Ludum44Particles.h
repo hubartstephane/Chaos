@@ -40,6 +40,36 @@ public:
 
 
 
+
+
+
+
+
+
+// =====================================
+// TileParticleTraitExt
+// =====================================
+
+
+class TileParticleTraitExt : public chaos::ParticleAllocationTrait<death::TiledMap::TileParticle, chaos::ParticleDefault::Vertex, true, true> // shuxxx set to false = optimization 1
+{
+public:
+
+	static size_t ParticleToVertices(death::TiledMap::TileParticle const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle)
+	{
+		return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+	}
+
+	bool UpdateParticle(float delta_time, death::TiledMap::TileParticle * particle);
+};
+
+
+
+
+
+
+
+
 // ===========================================================================
 // ParticleFire
 // ===========================================================================

@@ -37,18 +37,9 @@ void main()
 				{
 					base_color = sold_life_color;
 
-				}
-			
-			}
-		
-		
-		}
-		
-	
-		output_color =base_color; 
-	
+				}			
+			}			
+		}			
+		output_color = base_color; 	
 	}
-
-
-
 }

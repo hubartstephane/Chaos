@@ -16,7 +16,7 @@
    <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 1</text>
   </object>
  </objectgroup>
- <objectgroup id="2" name="planets" locked="1">
+ <objectgroup id="2" name="planets">
   <properties>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
@@ -41,7 +41,7 @@
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
- <objectgroup id="6" name="Zones">
+ <objectgroup id="6" name="Zones" locked="1">
   <properties>
    <property name="MATERIAL" value="power_up"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>

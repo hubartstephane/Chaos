@@ -80,7 +80,8 @@ bool LudumGame::InitializeParticleTextGenerator()
 {
 	if (!death::Game::InitializeParticleTextGenerator())
 		return false;
-	particle_text_generator->AddColor("red", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	particle_text_generator->AddColor("POWERUP", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	particle_text_generator->AddColor("KEYBOARD", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
 	return true;
 }
 

@@ -64,7 +64,7 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 	params.character_spacing = 0.0f;
 	params.alignment = chaos::ParticleTextGenerator::GeneratorParams::ALIGN_CENTER;
 
-	std::string title = chaos::StringTools::Printf("Keep [ButtonY] Pressed to buy\n[RED %s]", cached_power_up->GetPowerUpTitle());
+	std::string title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
 	allocations = hud->GetGameParticleCreator().CreateTextParticles(title.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 
 

@@ -62,18 +62,36 @@ bool LudumGame::DeclareParticleClasses()
 	return true;
 }
 
+static GameValue InitializeGameValue(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
+	GameValue result;
+
+	std::string initial_json_name = std::string("initial_") + json_name;
+	chaos::JSONTools::GetAttribute(config, initial_json_name.c_str(), result.initial_value);
+	std::string max_json_name = std::string("max_") + json_name;
+	chaos::JSONTools::GetAttribute(config, max_json_name.c_str(), result.max_value);
+	std::string increment_json_name = std::string("increment_") + json_name;
+	chaos::JSONTools::GetAttribute(config, increment_json_name.c_str(), result.increment_value);
+
+	return result;
+}
+
+
+
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
-	DEATHGAME_JSON_ATTRIBUTE(max_player_life);
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_speed);
-	DEATHGAME_JSON_ATTRIBUTE(max_player_speed);
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_damage);
-	DEATHGAME_JSON_ATTRIBUTE(max_player_damage);
+	player_life = InitializeGameValue("player_life", config, config_path);
+	player_speed = InitializeGameValue("player_speed", config, config_path);
+	player_damage = InitializeGameValue("player_damage", config, config_path);
+	player_fire_rate = InitializeGameValue("player_fire_rate", config, config_path);
+
+
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
+	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
+	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
 	
 	return true;
 }
@@ -87,7 +105,8 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 {
 	if (!death::Game::InitializeFromConfiguration(config, config_path))
 		return false;
-
+	if (!PopulatePowerUps(config, config_path))
+		return false;
 	return true;
 }
 
@@ -136,4 +155,26 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 //	other_render_params.submaterial_name = "titi";
 //	death::Game::DoDisplayGame(renderer, uniform_provider, other_render_params);
 	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
+}
+
+bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
+	if (!power_up->InitializeFromConfiguration(json_name, config, config_path))
+	{
+		delete(power_up);
+		return false;
+	}
+	power_ups.push_back(power_up);
+	return true;
+}
+
+bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path)
+{
+	if (!PopulatePowerOneUp(new LudumDamageUp(), "damage_up", config, config_path))
+		return false;
+	if (!PopulatePowerOneUp(new LudumSpeedUp(), "speed_up", config, config_path))
+		return false;
+	if (!PopulatePowerOneUp(new LudumFireRateUp(), "fire_rate_up", config, config_path))
+		return false;
+	return true;
 }

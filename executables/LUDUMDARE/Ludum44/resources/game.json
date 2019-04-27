@@ -9,14 +9,29 @@
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
 
-	"initial_player_life":1.0,
-	"max_player_life":5.0,
 
-	"initial_player_speed":1.0,
+	"initial_player_life":1.0,
+  "max_player_life": 5.0,
+
+
+
+  "initial_player_speed": 1.0,
+  "increment_player_speed":0.5,
 	"max_player_speed":5.0,
 
-	"initial_player_damage":1.0,
-	"max_player_damage":5.0,
-	"player_speed_factor":1000.0
+  "initial_player_damage": 1.0,
+  "increment_player_damage":0.5,
+  "max_player_damage": 5.0,
 
+  "initial_player_fire_rate": 5.0,
+  "increment_player_fire_rate":0.5,
+  "max_player_fire_rate": 10.0,
+
+  "player_speed_factor": 1000.0,
+  "buy_upgrade_time":3.0,
+  "charged_fire_time": 3.0,
+
+  "cost_speed_up": 0.2,
+  "cost_damage_up": 0.2,
+  "cost_fire_rate_up": 0.2
 }

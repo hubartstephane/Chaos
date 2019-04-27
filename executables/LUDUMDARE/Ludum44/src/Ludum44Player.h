@@ -18,6 +18,11 @@ class LudumPlayer : public death::Player
 
 public:
 
+	friend class LudumPowerUp;
+	friend class LudumSpeedUp;
+	friend class LudumDamageUp;
+	friend class LudumFireRateUp;
+
 	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 
 	/** constructor */
@@ -47,7 +52,8 @@ protected:
 	
 protected:
 
-	float current_player_life = 1.0f;
-	float current_player_speed = 1.0f;
-	float current_player_damage = 1.0f;
+	float current_life = 1.0f;
+	float current_speed = 1.0f;
+	float current_damage = 1.0f;
+	float current_fire_rate = 1.0f;
 };

@@ -62,7 +62,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
 			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
 
-		player_particle->velocity = current_player_speed * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * speed; // axis Y reversed
+		player_particle->velocity = current_speed * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * speed; // axis Y reversed
 	}
 }
 
@@ -116,6 +116,6 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
 		size_t count = player_particles.GetCount();
 		for (size_t i = 0 ; i < count ; ++i)
-			player_particles[i].life = ludum_game->initial_player_life;
+			player_particles[i].life = ludum_game->player_life.initial_value;
 	}
 }

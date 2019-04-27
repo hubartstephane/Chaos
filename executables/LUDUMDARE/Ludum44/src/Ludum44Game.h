@@ -3,6 +3,7 @@
 #include "Ludum44StateMachine.h"
 #include "Ludum44Particles.h"
 #include "Ludum44Level.h"
+#include "Ludum44PowerUp.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -21,6 +22,20 @@
 
 #include <death/Game.h>
 #include <death/GameFramework.h>
+
+// =================================================
+// LudumGame
+// =================================================
+
+class GameValue
+{
+public:
+
+	float initial_value = 1.0f;
+	float max_value = 5.0f;
+	float increment_value = 0.5f;
+};
+
 
 // =================================================
 // LudumGame
@@ -48,6 +63,11 @@ class LudumGame : public death::Game
 	friend class PlayingToGameOverTransition;
 
 	friend class LudumLevelInstance;
+
+	friend class LudumPowerUp;
+	friend class LudumSpeedUp;
+	friend class LudumDamageUp;
+	friend class LudumFireRateUp;
 
 public:
 
@@ -95,27 +115,30 @@ protected:
 
 	virtual death::GameInstance * CreateGameInstance() override;
 
+
+	bool PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path);
+
+	bool PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path);
+
 protected:
 
-	/** the initial player life */
-	float initial_player_life = 1.0f;
-	/** the maximum player life */
-	float max_player_life = 5.0f;
+	GameValue player_life;
+	GameValue player_speed;
+	GameValue player_damage;
+	GameValue player_fire_rate;
 
-	/** the initial player speed */
-	float initial_player_speed = 1.0f;
-	/** the maximum player speed */
-	float max_player_speed = 5.0f;
-
-	/** the initial player damage */
-	float initial_player_damage = 1.0f;
-	/** the maximum player damage */
-	float max_player_damage = 5.0f;
 
 	/** a multiplier for speed */
 	float player_speed_factor = 500.0f;
 
+	/** the buy upgrade time */
+	float buy_upgrade_time = 3.0f;
+	/** the super fire time */
+	float charged_fire_time = 3.0f;
 
+
+	/** the power ups */
+	std::vector<chaos::shared_ptr<LudumPowerUp>> power_ups;
 
 
 

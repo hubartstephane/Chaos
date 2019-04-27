@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Ludum44PowerUp.h"
+
 #include <chaos/StandardHeaders.h> 
 
 #include <death/Game.h>
@@ -32,5 +34,9 @@ protected:
 	virtual bool DoTick(double delta_time) override;
 
 	virtual void OnPlayerEntered(death::Player * player) override;
+
+protected:
+
+	chaos::shared_ptr<LudumPowerUp> current_power_up;
 
 };

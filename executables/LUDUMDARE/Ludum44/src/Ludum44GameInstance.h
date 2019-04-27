@@ -17,6 +17,8 @@ class LudumGameInstance : public death::GameInstance
 
 public:
 
+	friend class GameHUDLifeBarComponent;
+
 	DEATH_GAMEFRAMEWORK_DECLARE_GAMEINSTANCE(Ludum);
 
 	/** constructor */

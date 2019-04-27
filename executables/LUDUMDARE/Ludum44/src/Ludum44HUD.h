@@ -24,11 +24,6 @@ protected:
 
 	/** override */
 	virtual bool DoTick(double delta_time) override;
-
-protected:
-
-	/** the last life value for the player */
-	float cached_value = -1.0f;
 };
 
 // ====================================================================

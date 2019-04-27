@@ -4,14 +4,51 @@ in vec2 vs_position;
 in vec3 vs_texcoord;
 in vec4 vs_color;
 
+
+uniform vec4 full_life_color;
+uniform vec4 lost_life_color;
+uniform vec4 sold_life_color;
+
+
 void main()
 {
-	vec4 color_1 = vec4(1.0, 0.0, 0.0, 0.9); 
-	vec4 color_2 = vec4(0.5, 0.5, 0.5, 0.3); 
-	
-	float life = vs_color.a;
-	if (vs_texcoord.x < life)
-		output_color = color_1;
+	float player_life = vs_color.x;
+	float player_max_life = vs_color.y;
+	float upgrade_cost = vs_color.z;
+	float buy_timer = vs_color.w;
+
+	if (vs_texcoord.x > player_max_life)
+		output_color = sold_life_color;
 	else
-		output_color = color_2;
+	{
+		vec4 base_color;
+		if (vs_texcoord.x < player_life)
+			base_color = full_life_color;
+		else
+			base_color = lost_life_color;
+
+		if (upgrade_cost > 0.0)
+		{
+			if (vs_texcoord.x > player_max_life - upgrade_cost)
+			{
+				base_color.a *= 0.7;
+
+				if (vs_texcoord.x > player_max_life - upgrade_cost * buy_timer)
+				{
+					base_color = sold_life_color;
+
+				}
+			
+			}
+		
+		
+		}
+		
+	
+		output_color =base_color; 
+	
+	}
+
+
+
 }

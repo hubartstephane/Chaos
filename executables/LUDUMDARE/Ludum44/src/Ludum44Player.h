@@ -38,6 +38,12 @@ public:
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
+
+
+	float GetCurrentLife() const { return current_life; }
+	float GetCurrentMaxLife() const { return current_max_life; }
+	float GetBuyTimer() const { return buy_timer; }
+
 protected:
 
 	/** override */

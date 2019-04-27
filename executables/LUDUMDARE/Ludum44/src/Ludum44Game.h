@@ -86,6 +86,8 @@ public:
 
 	ParticlePlayer const * GetPlayerParticle(int player_index) const;
 
+	float GetBuyUpgradeTime() const { return buy_upgrade_time; }
+
 protected:
 
 	/** override */

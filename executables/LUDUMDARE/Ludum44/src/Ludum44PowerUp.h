@@ -24,6 +24,9 @@ public:
 
 	virtual bool InitializeFromConfiguration(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
+
+	float GetLifeCost() const { return life_cost; }
+
 protected:
 
 	float life_cost = 1.0f;

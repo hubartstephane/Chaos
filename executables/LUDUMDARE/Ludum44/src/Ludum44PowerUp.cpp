@@ -19,7 +19,7 @@ bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!CanPowerUp(game, player)) // a final test
 		return false;
-	player->current_life -= life_cost;
+	player->current_max_life -= life_cost;
 	if (player->current_life > player->current_max_life)
 		player->current_life = player->current_max_life;
 	return true;

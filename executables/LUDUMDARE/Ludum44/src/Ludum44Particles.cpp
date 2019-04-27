@@ -14,8 +14,6 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-	//result.Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
-	//result.Push(chaos::SEMANTIC_POSITION, 2, chaos::TYPE_FLOAT2); // center of the particle
 	return result;
 }
 

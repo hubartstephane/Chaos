@@ -18,6 +18,7 @@ class LudumGameInstance : public death::GameInstance
 public:
 
 	friend class GameHUDLifeBarComponent;
+	friend class GameHUDPowerUpComponent;	
 	friend class PowerUpTriggerSurfaceObject;	
 
 	DEATH_GAMEFRAMEWORK_DECLARE_GAMEINSTANCE(Ludum);

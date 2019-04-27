@@ -25,18 +25,53 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 {
 	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
 
+	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(GetGameInstance());
+	if (ludum_game_instance == nullptr)
+	{
+		cached_power_up = nullptr;
+		allocations = nullptr;
+		return true;	
+	}
 
+	if (ludum_game_instance->current_power_up == nullptr)
+	{
+		cached_power_up = nullptr;
+		allocations = nullptr;
+		return true;		
+	}
+
+	if (cached_power_up.get() == ludum_game_instance->current_power_up.get())
+		return true;
+
+	// ensure we do not have already cached this power_up
+	cached_power_up = ludum_game_instance->current_power_up.get();
+
+	// get box
+	chaos::box2 view_box = GetGame()->GetViewBox();		
+
+	int hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
+	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+
+	// create the level title
+	chaos::ParticleTextGenerator::GeneratorParams params;
+	params.line_height = 40;
+	params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;
+	params.position.x = corner.x - 40.0f;
+	params.position.y = corner.y + 100.0f;
+	params.default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	params.font_info_name = "normal";
+	params.bitmap_padding = glm::vec2(-5.0f, -5.0f);
+	params.character_spacing = 0.0f;
+	params.alignment = chaos::ParticleTextGenerator::GeneratorParams::ALIGN_CENTER;
+
+	std::string title = chaos::StringTools::Printf("Keep [ButtonY] Pressed to buy\n[RED %s]", cached_power_up->GetPowerUpTitle());
+	allocations = hud->GetGameParticleCreator().CreateTextParticles(title.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 
 
 	return true;
 }
 
 
-void GameHUDPowerUpComponent::OnInsertedInHUD()
-{
-
-
-}
 
 // ====================================================================
 // GameHUDLevelTitleComponent
@@ -56,7 +91,7 @@ bool GameHUDLevelTitleComponent::DoTick(double delta_time)
 	}
 	// dont let the allocation more the 5 seconds visible
 	double clock_time = level_instance->GetLevelClockTime();
-	if (clock_time > 5.0)
+	if (clock_time > 4.0)
 	{
 		cached_level_title = std::string();
 		allocations = nullptr;

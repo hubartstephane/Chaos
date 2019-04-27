@@ -107,6 +107,8 @@ protected:
 
 	virtual void DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params) override;
 	
+	virtual bool InitializeParticleTextGenerator() override;
+
 	/** override level creation */
 	death::TiledMap::Level * CreateTiledMapLevel() override;
 

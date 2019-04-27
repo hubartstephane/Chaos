@@ -4,6 +4,8 @@
 #include <death/GameHUD.h>
 #include <death/GameFramework.h>
 
+#include "Ludum44PowerUp.h"
+
 namespace death
 {
 	namespace GameHUDKeys
@@ -39,7 +41,9 @@ protected:
 
 	virtual bool DoTick(double delta_time) override;
 
-	virtual void OnInsertedInHUD(); // this is not an override !
+protected:
+
+	chaos::weak_ptr<LudumPowerUp> cached_power_up;
 };
 
 // ====================================================================

@@ -18,7 +18,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
 	assert(in_game != nullptr); 
-	camera_safe_zone = glm::vec2(0.7f, 0.7f);
+	camera_safe_zone = glm::vec2(0.9f, 0.7f);
 }
 
 bool LudumLevelInstance::IsLevelCompleted() const
@@ -38,8 +38,41 @@ bool LudumLevelInstance::CanCompleteLevel() const
 bool LudumLevelInstance::DoTick(double delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);
-	// keep camera, player inside the world
+
+	// get the PLAYER 0
+	death::Player * player = GetPlayer(0);
+	if (player == nullptr)
+		return true;
+	// get the camera BEFORE modification
+	chaos::box2 camera_before = GetCameraBox();
+	if (camera_before.IsEmpty())
+		return true;
+	// keep the player in camera view
 	RestrictCameraToPlayerAndWorld(0);
+	// get the camera AFTER modification
+	chaos::box2 camera_after = GetCameraBox();
+	if (camera_after.IsEmpty())
+		return true;
+	// correct camera position
+	float delta_camera_x = camera_before.position.x - camera_after.position.x;
+
+	chaos::box2 player_box = player->GetPlayerBox();
+
+	if (delta_camera_x != 0.0f) // player forced a fast forward or a backward displacement : remove it
+	{
+		player_box.position.x += delta_camera_x;
+		camera_after.position.x += delta_camera_x;
+	}
+
+	// correct camera and player position
+	float scroll_displacement = camera_speed * (float)delta_time;
+
+	camera_after.position.x += scroll_displacement;
+	SetCameraBox(camera_after);
+
+	player_box.position.x += scroll_displacement;
+	player->SetPlayerBox(player_box);
+
 	return true;
 }
 

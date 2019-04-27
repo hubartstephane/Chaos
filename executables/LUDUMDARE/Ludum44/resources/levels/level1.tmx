@@ -3,7 +3,7 @@
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="100"/>
+  <property name="CAMERA_SPEED" type="float" value="200"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>

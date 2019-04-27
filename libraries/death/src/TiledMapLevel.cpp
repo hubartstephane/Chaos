@@ -538,9 +538,10 @@ namespace death
 				if (surface != nullptr)
 				{
 					// is a trigger surface
+					TriggerSurfaceObject * trigger_surface = nullptr;
 					if (chaos::TiledMapTools::IsTriggerSurface(geometric_object))
 					{
-						TriggerSurfaceObject * trigger_surface = level->CreateTriggerSurface(this, geometric_object);
+						trigger_surface = level->CreateTriggerSurface(this, geometric_object);
 						if (trigger_surface != nullptr)
 							trigger_surfaces.push_back(trigger_surface);
 					}
@@ -583,9 +584,15 @@ namespace death
 							if (prop != nullptr)
 								keep_aspect_ratio = *prop;						
 						}
-													
+
+							
 						// create a simple particle
 						chaos::box2 particle_box = tile->GetBoundingBox(false);
+						if (trigger_surface != nullptr)
+						{
+							keep_aspect_ratio = false;
+							particle_box = trigger_surface->GetBoundingBox(false);
+						}
 						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
 						continue;
 					}	

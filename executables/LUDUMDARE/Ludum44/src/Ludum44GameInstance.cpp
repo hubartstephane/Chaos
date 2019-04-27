@@ -43,7 +43,8 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 	// super method
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
 
-
+	current_power_up = nullptr;
+	current_power_up_surface = nullptr;
 }
 
 void LudumGameInstance::OnPlayerEntered(death::Player * player)
@@ -81,10 +82,39 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 		ludum_player->charged_fire_bitmap_layout = *charged_fire_info;
 	
 	}
-
-	// shuxxx
-
-	if (!ludum_game->power_ups.empty())
-		current_power_up = ludum_game->power_ups[0];
 }
 
+void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface)
+{
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer*>(player);
+	if (ludum_player == nullptr)
+		return;
+
+	int count = ludum_game->power_ups.size();
+	if (count == 0)
+		return;
+
+	if (!enter)
+	{
+		current_power_up = nullptr;
+		current_power_up_surface = nullptr;
+	}
+	else
+	{		
+		int value = rand() % count;
+		for (int i = 0 ; i < count ; ++i)
+		{
+			int index = (i + value) % count;
+			if (ludum_game->power_ups[index]->CanPowerUp(ludum_game, ludum_player))
+			{
+				current_power_up = ludum_game->power_ups[index].get();	
+				current_power_up_surface = surface;
+				return;
+			}
+		}
+	}
+}

@@ -69,6 +69,13 @@ death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death
 	return death::TiledMap::Level::DoCreateTriggerSurface(in_layer_instance, in_geometric_object);
 }
 
+
+bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle)
+{
+
+	return true; // continue with other
+}
+
 // =============================================================
 // FinishingTriggerSurfaceObject implementation
 // =============================================================
@@ -118,25 +125,14 @@ PowerUpTriggerSurfaceObject::PowerUpTriggerSurfaceObject(death::TiledMap::LayerI
 
 bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-#if 0
-
-	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
-		event_type = event_type;
-	if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
-		event_type = event_type;
-	if (event_type == TriggerSurfaceObject::COLLISION_AGAIN)
-		event_type = event_type;
-
-
-	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
+	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(player->GetGameInstance());
+	if (ludum_game_instance != nullptr)
 	{
-		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
-		if (!pp->level_end_reached)
-		{
-			//		pp->level_end_reached = true;
-			//		pp->level_end_timer = 2.0f;
-		}
+		if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
+			ludum_game_instance->OnPowerUpZone(player, true, this);
+		else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+			ludum_game_instance->OnPowerUpZone(player, false, this);
 	}
-#endif
+
 	return true; // continue other collisions
 }

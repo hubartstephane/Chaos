@@ -8,7 +8,8 @@ namespace death
 {
 	namespace GameHUDKeys
 	{
-		CHAOS_DECLARE_TAG(WAKENUP_PARTICLE_COUNT_ID);
+		CHAOS_DECLARE_TAG(POWER_UP_ID);
+		CHAOS_DECLARE_TAG(LEVEL_TITLE_ID);
 	};
 };
 
@@ -24,6 +25,39 @@ protected:
 
 	/** override */
 	virtual bool DoTick(double delta_time) override;
+};
+
+// ====================================================================
+// GameHUDPowerUpComponent
+// ====================================================================
+
+class GameHUDPowerUpComponent : public death::GameHUDSingleAllocationComponent
+{
+	friend class death::GameHUD;
+
+protected:
+
+	virtual bool DoTick(double delta_time) override;
+
+	virtual void OnInsertedInHUD(); // this is not an override !
+};
+
+// ====================================================================
+// GameHUDLevelTitleComponent
+// ====================================================================
+
+class GameHUDLevelTitleComponent : public death::GameHUDSingleAllocationComponent
+{
+	friend class death::GameHUD;
+
+protected:
+
+	/** override */
+	virtual bool DoTick(double delta_time) override;
+
+protected:
+
+	std::string cached_level_title;
 };
 
 // ====================================================================

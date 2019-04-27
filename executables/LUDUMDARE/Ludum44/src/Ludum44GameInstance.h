@@ -18,6 +18,7 @@ class LudumGameInstance : public death::GameInstance
 public:
 
 	friend class GameHUDLifeBarComponent;
+	friend class PowerUpTriggerSurfaceObject;	
 
 	DEATH_GAMEFRAMEWORK_DECLARE_GAMEINSTANCE(Ludum);
 
@@ -37,8 +38,15 @@ protected:
 
 	virtual void OnPlayerEntered(death::Player * player) override;
 
+	void OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface);
+
+	
+
 protected:
 
 	chaos::shared_ptr<LudumPowerUp> current_power_up;
 
+	chaos::shared_ptr<death::TiledMap::TriggerSurfaceObject> current_power_up_surface;
+
+	//std::vector<
 };

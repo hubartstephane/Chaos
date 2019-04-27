@@ -257,7 +257,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 		return;
 
 	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
-	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr)
+	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr || ludum_game_instance->current_power_up_surface == nullptr)
 		return;
 	if (!ludum_game_instance->current_power_up->CanPowerUp(GetLudumGame(), this))
 		return;
@@ -270,7 +270,12 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 		buy_timer += (float)delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
 		{		
-			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);
+		//	ludum_game_instance->disabled_power_ups
+
+			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);			
+			ludum_game_instance->current_power_up_surface->SetEnabled(false);
+			ludum_game_instance->current_power_up = nullptr;
+			ludum_game_instance->current_power_up_surface = nullptr;
 			buy_timer = 0.0f;
 		}	
 	}

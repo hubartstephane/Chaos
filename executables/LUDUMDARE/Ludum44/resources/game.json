@@ -23,17 +23,23 @@
   "increment_player_damage":0.5,
   "max_player_damage": 5.0,
 
+  "initial_player_charged_damage": 10.0,
+  "increment_player_charged_damage":10.0,
+  "max_player_charged_damage": 50.0,
+
   "initial_player_fire_rate": 5.0,
   "increment_player_fire_rate":0.5,
   "max_player_fire_rate": 10.0,
 
   "player_speed_factor": 5000.0,
-  "buy_upgrade_time":3.0,
+  "buy_upgrade_time":1.5,
   "charged_fire_time": 1.0,
 
   "cost_speed_up": 0.2,
   "cost_damage_up": 0.2,
+  "cost_charged_damage_up": 0.2,
   "cost_fire_rate_up": 0.2,
 
-  "scroll_factor" : 1.0
+  "scroll_factor": 1.0,
+  "fire_velocity": 30000.0
 }

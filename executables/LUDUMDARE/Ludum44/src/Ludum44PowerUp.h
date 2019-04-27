@@ -55,11 +55,17 @@ class LudumDamageUp : public LudumPowerUp
 {
 public:
 
+	LudumDamageUp(bool in_charged_fire) : charged_fire(in_charged_fire){}
+
 	virtual bool ApplyPowerUp(LudumGame * game, LudumPlayer * player) const override;
 
 	virtual bool CanPowerUp(LudumGame * game, LudumPlayer * player) const override;
 
 	virtual char const * GetPowerUpTitle() const override;
+
+protected:
+
+	bool charged_fire = false;
 };
 
 // =================================================

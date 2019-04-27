@@ -86,6 +86,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	player_life = InitializeGameValue("player_life", config, config_path);
 	player_speed = InitializeGameValue("player_speed", config, config_path);
 	player_damage = InitializeGameValue("player_damage", config, config_path);
+	player_charged_damage = InitializeGameValue("player_charged_damage", config, config_path);
 	player_fire_rate = InitializeGameValue("player_fire_rate", config, config_path);
 
 
@@ -93,7 +94,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
 	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
 	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
-	DEATHGAME_JSON_ATTRIBUTE(bullet_velocity);
+	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);
 		
 	return true;
 }
@@ -174,7 +175,9 @@ bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesyste
 {
 	if (!PopulatePowerOneUp(new LudumSpeedUp(), "speed_up", config, config_path))
 		return false;
-	if (!PopulatePowerOneUp(new LudumDamageUp(), "damage_up", config, config_path))
+	if (!PopulatePowerOneUp(new LudumDamageUp(false), "damage_up", config, config_path))
+		return false;
+	if (!PopulatePowerOneUp(new LudumDamageUp(true), "charged_damage_up", config, config_path))
 		return false;
 	if (!PopulatePowerOneUp(new LudumFireRateUp(), "fire_rate_up", config, config_path))
 		return false;

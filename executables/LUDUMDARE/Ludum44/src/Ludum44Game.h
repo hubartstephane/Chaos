@@ -131,6 +131,7 @@ protected:
 
 	GameValue player_speed;
 	GameValue player_damage;
+	GameValue player_charged_damage;
 	GameValue player_fire_rate;
 
 
@@ -143,7 +144,7 @@ protected:
 	float charged_fire_time = 3.0f;
 
 	/** bullet velocity */
-	float bullet_velocity = 800.0f;
+	float fire_velocity = 800.0f;
 
 	/** a scroll multiplier */
 	float scroll_factor = 1.0f;

@@ -115,6 +115,8 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 		return;
 
 	Player::SetPlayerAllocation(in_allocation);
+
+#if 0
 	if (in_allocation != nullptr)
 	{
 		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
@@ -122,6 +124,7 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 		for (size_t i = 0 ; i < count ; ++i)
 			player_particles[i].life = ludum_game->player_life.initial_value;
 	}
+#endif
 }
 
 bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_button)
@@ -171,7 +174,12 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 	p.bounding_box.half_size = box.half_size;
 	p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	p.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, GetGame()->GetTextureAtlas()->GetAtlasDimension());
+	LudumGame * ludum_game = GetLudumGame();
+
+	p.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, ludum_game->GetTextureAtlas()->GetAtlasDimension());
+
+	p.velocity = glm::vec2(ludum_game->fire_velocity, 0.0f);
+	p.player_owner_ship = true;
 
 	return &p;
 }
@@ -181,7 +189,8 @@ ParticleFire * LudumPlayer::FireChargedProjectile()
 	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout);
 	if (p == nullptr)
 	{
-	
+		p->damage = current_charged_damage;
+		p->trample = false;
 	}
 	return p;
 }
@@ -191,7 +200,8 @@ ParticleFire * LudumPlayer::FireNormalProjectile()
 	ParticleFire * p = FireProjectile(fire_bitmap_layout);
 	if (p == nullptr)
 	{
-
+		p->damage = current_damage;
+		p->trample = true;
 	}
 	return p;
 }

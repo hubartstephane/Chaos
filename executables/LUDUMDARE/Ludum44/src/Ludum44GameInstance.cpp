@@ -63,6 +63,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 
 	ludum_player->current_speed = ludum_game->player_speed.initial_value;
 	ludum_player->current_damage = ludum_game->player_damage.initial_value;
+	ludum_player->current_charged_damage = ludum_game->player_charged_damage.initial_value;
 	ludum_player->current_fire_rate = ludum_game->player_fire_rate.initial_value;
 
 	// find bitmap set

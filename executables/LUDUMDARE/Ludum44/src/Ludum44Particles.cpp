@@ -67,6 +67,7 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 
 bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, LayerTrait const * layer_trait) const
 {
+	particle->bounding_box.position += delta_time * particle->velocity;
 
 	return false; // do not destroy the particle
 }

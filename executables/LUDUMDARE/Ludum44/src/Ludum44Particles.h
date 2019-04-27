@@ -31,6 +31,7 @@ class ParticleBase : public death::TiledMap::TileParticle
 {
 public:
 
+	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
 
 };
 
@@ -40,11 +41,16 @@ public:
 
 
 // ===========================================================================
-//ParticleFire
+// ParticleFire
 // ===========================================================================
 
-class ParticleFire : public chaos::ParticleDefault::Particle
+class ParticleFire : public ParticleBase
 {
+public:
+
+	bool  player_owner_ship = true;
+	bool trample = false;
+	float damage = 1.0f;
 
 };
 
@@ -107,9 +113,7 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
-	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
-	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
-	float life = 0.0f;
+	
 
 };
 

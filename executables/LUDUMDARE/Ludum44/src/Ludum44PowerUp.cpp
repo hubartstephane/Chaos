@@ -69,10 +69,19 @@ bool LudumDamageUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!LudumPowerUp::ApplyPowerUp(game, player)) // test if still possible to power up (see super method)
 		return false;
-	player->current_damage += game->player_damage.increment_value;
-	if (player->current_damage > game->player_damage.max_value)
-		player->current_damage = game->player_damage.max_value;
 
+	if (!charged_fire)
+	{
+		player->current_damage += game->player_damage.increment_value;
+		if (player->current_damage > game->player_damage.max_value)
+			player->current_damage = game->player_damage.max_value;	
+	}
+	else
+	{
+		player->current_charged_damage += game->player_charged_damage.increment_value;
+		if (player->current_charged_damage > game->player_charged_damage.max_value)
+			player->current_charged_damage = game->player_charged_damage.max_value;	
+	}
 	return true;
 }
 
@@ -80,8 +89,17 @@ bool LudumDamageUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!LudumPowerUp::CanPowerUp(game, player))
 		return false;
-	if (player->current_damage >= game->player_damage.max_value)
-		return false;
+
+	if (!charged_fire)
+	{
+		if (player->current_damage >= game->player_damage.max_value)
+			return false;
+	}
+	else
+	{
+		if (player->current_charged_damage >= game->player_charged_damage.max_value)
+			return false;
+	}
 	return true;
 }
 

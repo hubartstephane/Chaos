@@ -81,6 +81,7 @@ protected:
 
 	float current_speed = 1.0f;
 	float current_damage = 1.0f;
+	float current_charged_damage = 1.0f;
 	float current_fire_rate = 1.0f;
 
 	float buy_timer = 0.0f;

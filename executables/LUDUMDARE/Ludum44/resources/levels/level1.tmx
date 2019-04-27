@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="6" nextobjectid="1732">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1734">
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -32,7 +32,7 @@
   <object id="1720" gid="1" x="-11792" y="-928" width="3168" height="3264"/>
   <object id="1721" gid="1" x="-2320" y="-4640" width="3168" height="3264"/>
  </objectgroup>
- <objectgroup id="5" name="fire">
+ <objectgroup id="5" name="fire" locked="1">
   <properties>
    <property name="MATERIAL" value="fire"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
@@ -40,7 +40,21 @@
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
- <objectgroup id="4" name="PlayerAndCamera">
+ <objectgroup id="6" name="Zones">
+  <properties>
+   <property name="MATERIAL" value="power_up"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
+  </properties>
+  <object id="1732" gid="2" x="-17536" y="3184" width="26376" height="1104"/>
+  <object id="1733" gid="2" x="-2140" y="14680" width="1544" height="10544">
+   <properties>
+    <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="PlayerAndCamera" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>

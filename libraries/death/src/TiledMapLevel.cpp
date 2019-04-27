@@ -570,9 +570,23 @@ namespace death
 						chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 						if (tile_info.tiledata == nullptr)
 							continue;
+
+						// aspect ratio is to be maintained ??
+						bool keep_aspect_ratio = true;
+
+						bool * prop = tile->FindPropertyBool("KEEP_ASPECT_RATIO");
+						if (prop != nullptr)
+							keep_aspect_ratio = *prop;
+						else 
+						{
+							prop = tile_info.tiledata->FindPropertyBool("KEEP_ASPECT_RATIO");
+							if (prop != nullptr)
+								keep_aspect_ratio = *prop;						
+						}
+													
 						// create a simple particle
 						chaos::box2 particle_box = tile->GetBoundingBox(false);
-						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip);
+						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
 						continue;
 					}	
 

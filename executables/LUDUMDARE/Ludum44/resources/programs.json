@@ -2,6 +2,7 @@
   "@background" : { "path": "@programs/background/background.pgm" },
   "@player": { "path": "@programs/player/player.pgm" },
   "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
-  "@fire"  : { "path": "@programs/fire/fire.pgm" },
+  "@fire": { "path": "@programs/fire/fire.pgm" },
+  "@power_up": { "path": "@programs/power_up/power_up.pgm" },  
   "@text"  : { "path": "@programs/text/text.pgm" }    
 }

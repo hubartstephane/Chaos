@@ -23,19 +23,6 @@
 #include <death/Game.h>
 #include <death/GameFramework.h>
 
-// =================================================
-// LudumGame
-// =================================================
-
-class GameValue
-{
-public:
-
-	float initial_value = 1.0f;
-	float max_value = 5.0f;
-	float increment_value = 0.5f;
-};
-
 
 // =================================================
 // LudumGame
@@ -129,14 +116,15 @@ protected:
 
 protected:
 
-	GameValue player_life; // XXX : only use initial value for the moment
-
-	GameValue player_speed;
-	GameValue player_damage;
-	GameValue player_charged_damage;
-	GameValue player_fire_rate;
-
+	float initial_player_life = 1.0f; 
 	float min_player_max_life = 0.1f;
+
+	std::vector<float> player_speeds;
+	std::vector<float> player_damages;
+	std::vector<float> player_charged_damages;
+	std::vector<int>   player_fire_rates;
+
+	
 
 
 	/** a multiplier for speed */
@@ -146,6 +134,8 @@ protected:
 	float buy_upgrade_time = 3.0f;
 	/** the super fire time */
 	float charged_fire_time = 3.0f;
+	/** the normal fire time */
+	float normal_fire_time = 0.1f;
 
 	/** bullet velocity */
 	float fire_velocity = 800.0f;

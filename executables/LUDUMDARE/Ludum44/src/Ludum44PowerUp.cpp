@@ -2,6 +2,7 @@
 #include "Ludum44Player.h"
 #include "Ludum44Game.h"
 
+
 // =================================================
 // LudumPowerUp
 // =================================================
@@ -43,9 +44,7 @@ bool LudumSpeedUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!LudumPowerUp::ApplyPowerUp(game, player)) // test if still possible to power up (see super method)
 		return false;
-	player->current_speed += game->player_speed.increment_value;
-	if (player->current_speed > game->player_speed.max_value)
-		player->current_speed = game->player_speed.max_value;
+	++player->current_speed_index;
 	return true;
 }
 
@@ -53,7 +52,7 @@ bool LudumSpeedUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!LudumPowerUp::CanPowerUp(game, player))
 		return false;
-	if (player->current_speed >= game->player_speed.max_value)
+	if (player->current_speed_index >= game->player_speeds.size())
 		return false;
 	return true;
 }
@@ -74,17 +73,9 @@ bool LudumDamageUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 		return false;
 
 	if (!charged_fire)
-	{
-		player->current_damage += game->player_damage.increment_value;
-		if (player->current_damage > game->player_damage.max_value)
-			player->current_damage = game->player_damage.max_value;	
-	}
+		++player->current_damage_index;
 	else
-	{
-		player->current_charged_damage += game->player_charged_damage.increment_value;
-		if (player->current_charged_damage > game->player_charged_damage.max_value)
-			player->current_charged_damage = game->player_charged_damage.max_value;	
-	}
+		++player->current_charged_damage_index;	
 	return true;
 }
 
@@ -95,12 +86,12 @@ bool LudumDamageUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
 
 	if (!charged_fire)
 	{
-		if (player->current_damage >= game->player_damage.max_value)
+		if (player->current_damage_index >= game->player_damages.size())
 			return false;
 	}
 	else
 	{
-		if (player->current_charged_damage >= game->player_charged_damage.max_value)
+		if (player->current_charged_damage_index >= game->player_damages.size())
 			return false;
 	}
 	return true;
@@ -119,9 +110,7 @@ bool LudumFireRateUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!LudumPowerUp::ApplyPowerUp(game, player)) // test if still possible to power up (see super method)
 		return false;
-	player->current_fire_rate += game->player_fire_rate.increment_value;
-	if (player->current_fire_rate > game->player_fire_rate.max_value)
-		player->current_fire_rate = game->player_fire_rate.max_value;
+	++player->current_fire_rate_index;
 	return true;
 }
 
@@ -129,13 +118,13 @@ bool LudumFireRateUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
 {
 	if (!LudumPowerUp::CanPowerUp(game, player))
 		return false;
-	if (player->current_fire_rate >= game->player_fire_rate.max_value)
+	if (player->current_fire_rate_index >= game->player_fire_rates.size())
 		return false;
 	return true;
 }
 
 char const * LudumFireRateUp::GetPowerUpTitle() const
 {
-	return "Fire Rate Up";
+	return "Augmented Fire";
 }
 

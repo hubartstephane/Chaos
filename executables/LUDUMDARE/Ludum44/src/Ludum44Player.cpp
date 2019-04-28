@@ -66,7 +66,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
 			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
 
-		player_particle->velocity = current_speed * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * speed; // axis Y reversed
+		player_particle->velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * speed; // axis Y reversed
 	}
 }
 
@@ -203,10 +203,14 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 
 ParticleFire * LudumPlayer::FireChargedProjectile()
 {
+	LudumGame const * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return nullptr;
+
 	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 0.8f, 1, "thrust");
 	if (p == nullptr)
 	{
-		p->damage = current_charged_damage;
+		p->damage = ludum_game->player_charged_damages[current_charged_damage_index];
 		p->trample = false;
 	}
 	return p;
@@ -214,16 +218,14 @@ ParticleFire * LudumPlayer::FireChargedProjectile()
 
 ParticleFire * LudumPlayer::FireNormalProjectile()
 {
-	int particle_count = 1;
-	if (current_damage > 2)
-		particle_count = 5;
-	else if (current_damage > 1)		
-		particle_count = 3;
+	LudumGame const * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return nullptr;
 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.4f, particle_count, "fire");
+	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.4f, ludum_game->player_fire_rates[current_fire_rate_index], "fire");
 	if (p == nullptr)
 	{
-		p->damage = current_damage;
+		p->damage = ludum_game->player_damages[current_damage_index];
 		p->trample = true;
 	}
 	return p;
@@ -266,7 +268,7 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 				if (fire_pressed)
 				{
 					FireNormalProjectile();					
-					fire_timer = (1.0f / current_fire_rate);
+					fire_timer = ludum_game->normal_fire_time;
 				}								
 			}			
 		}

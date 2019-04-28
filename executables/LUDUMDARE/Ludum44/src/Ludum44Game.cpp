@@ -65,18 +65,11 @@ bool LudumGame::DeclareParticleClasses()
 	return true;
 }
 
-static GameValue InitializeGameValue(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)
+template<typename T>
+static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path, std::vector<T> & result)
 {
-	GameValue result;
-
-	std::string initial_json_name = std::string("initial_") + json_name;
-	chaos::JSONTools::GetAttribute(config, initial_json_name.c_str(), result.initial_value);
-	std::string max_json_name = std::string("max_") + json_name;
-	chaos::JSONTools::GetAttribute(config, max_json_name.c_str(), result.max_value);
-	std::string increment_json_name = std::string("increment_") + json_name;
-	chaos::JSONTools::GetAttribute(config, increment_json_name.c_str(), result.increment_value);
-
-	return result;
+	chaos::JSONTools::GetAttributeArray(config, json_name, result);
+	return (result.size() > 0);
 }
 
 bool LudumGame::InitializeParticleTextGenerator()
@@ -94,17 +87,21 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
-
-	player_life = InitializeGameValue("player_life", config, config_path);
-	player_speed = InitializeGameValue("player_speed", config, config_path);
-	player_damage = InitializeGameValue("player_damage", config, config_path);
-	player_charged_damage = InitializeGameValue("player_charged_damage", config, config_path);
-	player_fire_rate = InitializeGameValue("player_fire_rate", config, config_path);
+	if (!InitializeGameValueVector("player_speeds", config, config_path, player_speeds))
+		return false;
+	if (!InitializeGameValueVector("player_damages", config, config_path, player_damages))
+		return false;
+	if (!InitializeGameValueVector("player_charged_damages", config, config_path, player_charged_damages))
+		return false;
+	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
+		return false;
 	
+	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
 	DEATHGAME_JSON_ATTRIBUTE(min_player_max_life);
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
 	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
 	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
+	DEATHGAME_JSON_ATTRIBUTE(normal_fire_time);	
 	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
 	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);
 		

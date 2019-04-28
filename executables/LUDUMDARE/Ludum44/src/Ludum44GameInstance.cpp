@@ -59,13 +59,13 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_player == nullptr)
 		return;
 
-	ludum_player->current_life = ludum_game->player_life.initial_value * 0.66f; // shuxxx
-	ludum_player->current_max_life = ludum_game->player_life.initial_value;
+	ludum_player->current_life = ludum_game->initial_player_life * 0.66f; // shuxxx
+	ludum_player->current_max_life = ludum_game->initial_player_life;
 
-	ludum_player->current_speed = ludum_game->player_speed.initial_value;
-	ludum_player->current_damage = ludum_game->player_damage.initial_value;
-	ludum_player->current_charged_damage = ludum_game->player_charged_damage.initial_value;
-	ludum_player->current_fire_rate = ludum_game->player_fire_rate.initial_value;
+	ludum_player->current_speed_index = 0;
+	ludum_player->current_damage_index = 0;
+	ludum_player->current_charged_damage_index = 0;
+	ludum_player->current_fire_rate_index = 0;
 
 	// find bitmap set
 	chaos::BitmapAtlas::FolderInfo const * bitmap_set = ludum_game->GetTextureAtlas()->GetFolderInfo("sprites");

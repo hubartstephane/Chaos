@@ -26,7 +26,6 @@ public:
 	/** constructor */
 	LudumGameInstance(death::Game * in_game);
 
-
 protected:
 
 	virtual death::Player * DoCreatePlayer() override;
@@ -48,6 +47,4 @@ protected:
 	chaos::shared_ptr<LudumPowerUp> current_power_up;
 
 	chaos::shared_ptr<death::TiledMap::TriggerSurfaceObject> current_power_up_surface;
-
-	//std::vector<
 };

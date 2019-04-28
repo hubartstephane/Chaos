@@ -60,7 +60,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1751" name="Finish" gid="2" x="-17700" y="-7224" width="10568" height="7664">
+  <object id="1751" name="Checkpoint" gid="2" x="-17700" y="-7224" width="10568" height="7664">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

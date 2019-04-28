@@ -268,4 +268,9 @@ namespace death
 
 	}
 
+	void GameInstance::SetCheckpointPosition(glm::vec2 const & in_checkpoint_position)
+	{
+		checkpoint_position = in_checkpoint_position;
+	}
+
 }; // namespace death

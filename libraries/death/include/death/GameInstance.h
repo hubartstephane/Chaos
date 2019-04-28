@@ -78,6 +78,10 @@ namespace death
 		/** returns the pause time */
 		double GetPauseClockTime() const;
 
+		/** store a checkpoint position */
+		void SetCheckpointPosition(glm::vec2 const & in_checkpoint_position);
+
+
 	protected:
 
 		/** initialize the game instance */
@@ -138,6 +142,8 @@ namespace death
 		chaos::shared_ptr<chaos::Clock> game_clock;
 		chaos::shared_ptr<chaos::Clock> pause_clock;
 
+		/** the current checkpoint */
+		glm::vec2 checkpoint_position = glm::vec2(0.0f, 0.0f);
 	};
 
 }; // namespace death

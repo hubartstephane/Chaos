@@ -1242,6 +1242,11 @@ namespace death
 			// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
 			//          call it twice as a fast fix
 			layer_instance->FinalizeParticles();
+
+			// store the cirrent player position as a checkpoint
+			death::GameInstance * game_instance = GetGameInstance();
+			if (game_instance != nullptr)
+				game_instance->SetCheckpointPosition(player_bounding_box.position);
 		}
 
 		void LevelInstance::OnPlayerLeaved(Player * player)

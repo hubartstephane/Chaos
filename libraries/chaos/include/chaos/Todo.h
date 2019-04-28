@@ -7,6 +7,30 @@
 	== TODO
 	====================================================================
 
+		-- Mieux a  faire que d un coté
+		
+			chaos::ParticleDefault::ParticleTrait::ParticleToVertices
+
+		  et 
+
+			chaos::ParticleTools::GenerateBoxParticle(...) + copy couleur 
+
+		 de l autre
+
+
+		chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = particle->color;
+	return 6;
+
+
+
+
+	//return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+
+
+
 		- TiledMap :
 
 	    properties string multiline
@@ -45,6 +69,8 @@
 
 
 		- in game.json, better font management => "title_font_path", "font_path" ... on demand
+
+			   verifier si ca supporte bien le DirectResourceFiles
 
 		PerAllocationData : renommer ?
 

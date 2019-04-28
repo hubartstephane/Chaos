@@ -43,5 +43,5 @@
   "cost_fire_rate_up": 0.2,
 
   "scroll_factor": 1.0,
-  "fire_velocity": 30000.0
+  "fire_velocity": 3000.0
 }

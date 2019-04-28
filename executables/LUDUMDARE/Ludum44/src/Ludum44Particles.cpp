@@ -8,6 +8,7 @@
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
+#include <chaos/ParticleTools.h>
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
@@ -103,6 +104,10 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 
 size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = particle->color;
+	return 6;
 }
 

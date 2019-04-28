@@ -67,10 +67,16 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 
 death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
-	if (in_geometric_object->name == "FinishSurface")
+	if (in_geometric_object->name == "Finish")
 		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "PowerUp")
 		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+	if (in_geometric_object->name == "Checkpoint")
+		return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+	if (in_geometric_object->name == "SpeedUp")
+		return new SpeedUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+	if (in_geometric_object->name == "Spawner")
+		return new SpawnerTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 
 	return death::TiledMap::Level::DoCreateTriggerSurface(in_layer_instance, in_geometric_object);
 }
@@ -118,6 +124,40 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 		else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
 			ludum_game_instance->OnPowerUpZone(player, false, this);
 	}
+
+	return true; // continue other collisions
+}
+
+// =============================================================
+// CheckPointTriggerSurfaceObject implementation
+// =============================================================
+
+bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+{
+
+
+	return true; // continue other collisions
+}
+
+// =============================================================
+// SpeedUpTriggerSurfaceObject implementation
+// =============================================================
+
+bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+{
+
+
+	return true; // continue other collisions
+}
+
+
+// =============================================================
+// SpawnerTriggerSurfaceObject implementation
+// =============================================================
+
+bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+{
+
 
 	return true; // continue other collisions
 }

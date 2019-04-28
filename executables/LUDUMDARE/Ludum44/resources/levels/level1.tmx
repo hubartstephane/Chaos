@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1734">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1740">
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -34,14 +34,14 @@
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
- <objectgroup id="6" name="Zones">
+ <objectgroup id="6" name="Zones" locked="1">
   <properties>
    <property name="MATERIAL" value="power_up"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="PowerUp" gid="2" x="-17536" y="3184" width="26376" height="8208">
+  <object id="1732" name="PowerUp" gid="2" x="-17928" y="2608" width="26376" height="8208">
    <properties>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
@@ -53,23 +53,22 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="4" name="PlayerAndCamera" locked="1">
+ <objectgroup id="4" name="PlayerAndCamera">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="56" name="ThePlayerStart1" x="-4058" y="-1138">
-   <properties>
-    <property name="BITMAP_NAME" value="player"/>
-    <property name="PLAYER_START" type="bool" value="true"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="57" name="TheCamera1" x="-9192" y="-4928" width="7184" height="5736">
+  <object id="57" name="TheCamera1" x="-9192" y="-4928" width="7184" height="5736" visible="0">
    <properties>
     <property name="CAMERA" type="bool" value="true"/>
    </properties>
   </object>
   <object id="75" name="world_bounding_box" x="-11024" y="-4992" width="47424" height="15232" visible="0"/>
+  <object id="1735" name="ThePlayerStart1" x="-5280" y="-3360" width="1008" height="1584">
+   <properties>
+    <property name="BITMAP_NAME" value="player"/>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

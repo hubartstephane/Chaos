@@ -232,13 +232,13 @@ ParticleFire * LudumPlayer::FireChargedProjectile()
 
 	int count = 1;
 
-	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 0.8f, count, "thrust");
-	if (p == nullptr)
+	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 1.0f, count, "thrust");
+	if (p != nullptr)
 	{
 		for (int i = 0 ; i < count ; ++i)
 		{
 			p[i].damage = ludum_game->player_charged_damages[current_charged_damage_index];
-			p[i].trample = false;
+			p[i].trample = true;
 		}
 	}
 	return p;
@@ -253,12 +253,12 @@ ParticleFire * LudumPlayer::FireNormalProjectile()
 	int count = ludum_game->player_fire_rates[current_fire_rate_index];
 
 	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire");
-	if (p == nullptr)
+	if (p != nullptr)
 	{
 		for (int i = 0 ; i < count ; ++i)
 		{
 			p[i].damage = ludum_game->player_damages[current_damage_index];
-			p[i].trample = true;
+			p[i].trample = false;
 		}
 	}
 	return p;

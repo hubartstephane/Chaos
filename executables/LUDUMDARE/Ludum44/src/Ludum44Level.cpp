@@ -227,7 +227,7 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 
 
-			particles[i].touched_count_down = 200;
+			particles[i].life = 5.0f;
 
 		}	
 	}

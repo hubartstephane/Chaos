@@ -124,7 +124,43 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	// outside the camera
 	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
-	// update throght velocity
+	// search for collision
+	if (particle->player_owner_ship)
+	{
+		size_t count = update_data.enemies.size();
+		for (size_t i = 0 ; i < count ; ++i)
+		{
+			ParticleEnemy * enemy = update_data.enemies[i];
+
+			float enemy_life = enemy->life;
+			if (enemy_life > 0.0f)
+			{
+				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
+				{
+					// update life from both size
+					enemy_life -= particle->damage;
+					particle->damage -= enemy->life;
+					enemy->life = enemy_life;
+					enemy->touched_count_down = 5;
+
+					// play sound
+					if (enemy->life > 0.0f)
+						layer_trait->game->PlaySound("metallic", false, false);
+					else
+						layer_trait->game->PlaySound("explosion", false, false);
+
+					// kill bullet ?
+					if (particle->damage <= 0.0f)
+						return true;
+					if (!particle->trample)
+						return true;
+
+					i = i;
+				}			
+			}
+		}	
+	}
+	// update position velocity
 	particle->bounding_box.position += delta_time * particle->velocity;
 
 	return false; // do not destroy the particle

@@ -126,7 +126,7 @@ namespace death
 		return true;
 	}
 
-	bool GameLevelInstance::IsLevelCompleted() const
+	bool GameLevelInstance::IsLevelCompleted(bool & loop_levels) const
 	{
 		return false;
 	}
@@ -216,9 +216,11 @@ namespace death
 
 	bool GameLevelInstance::DoTick(double delta_time)
 	{
+		bool loop_levels = false; // unused
+
 		// update the timeout
 		if (level_timeout > 0.0f 
-			&& !IsLevelCompleted() 
+			&& !IsLevelCompleted(loop_levels) 
 #if _DEBUG	
 			&& !game->GetCheatMode()
 #endif

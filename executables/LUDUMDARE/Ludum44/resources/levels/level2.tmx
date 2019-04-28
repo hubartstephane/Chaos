@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1752">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1753">
  <properties>
   <property name="BACKGROUND_NAME" value="background3"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="200"/>
+  <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="LEVEL_TITLE" value="Level 2 - [LEVELTITLE Reach the planet]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
@@ -43,27 +43,26 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="SpeedUp" gid="2" x="-3016" y="1776" width="16968" height="8208">
+  <object id="1732" name="SpeedUp" gid="2" x="3000" y="112" width="16968" height="8208">
    <properties>
-    <property name="SCROLL_SPEED" type="float" value="5"/>
+    <property name="SCROLL_SPEED" type="float" value="10"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
   <object id="1733" name="SpeedUp" gid="2" x="1892" y="-10152" width="17928" height="10544">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
-    <property name="SCROLL_SPEED" type="float" value="2"/>
+    <property name="SCROLL_SPEED" type="float" value="5"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1740" name="SpeedUp" gid="2" x="-20804" y="-12248" width="17864" height="7664">
+  <object id="1751" name="Finish" gid="2" x="-17636" y="-6840" width="10568" height="7664">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
-    <property name="SCROLL_SPEED" type="float" value="1"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1751" name="Finish" gid="2" x="-6052" y="-29560" width="17864" height="7664">
+  <object id="1752" name="Finish" gid="2" x="5852" y="-29688" width="10568" height="7664">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

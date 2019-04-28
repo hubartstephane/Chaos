@@ -30,11 +30,13 @@ public:
 	void SetScrollFactor(float in_scroll_factor){ scroll_factor = in_scroll_factor;}
 	/** Get current scroll factor */
 	float GetScrollFactor() const { return scroll_factor; }
+	/** set the change level status */
+	void SetLevelCompleted(bool in_value){ level_completed = in_value;}
 
 protected:
 
 	/** override */
-	virtual bool IsLevelCompleted() const override;
+	virtual bool IsLevelCompleted(bool & loop_levels) const override;
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
@@ -59,4 +61,6 @@ protected:
 	float camera_speed = 100.0f;
 	/** an additional factor that can be applyed on demand */
 	float scroll_factor = 1.0f;
+	/** whether the level is completed */
+	bool level_completed = false;
 };

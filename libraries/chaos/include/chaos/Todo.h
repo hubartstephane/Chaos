@@ -202,7 +202,7 @@
 	====================================================================
 
 		bool GameLevelInstance::CheckGameOverCondition();
-		bool GameLevelInstance::IsLevelCompleted() const;
+		bool GameLevelInstance::IsLevelCompleted(bool & loop_levels) const;
 		bool GameLevelInstance::CanCompleteLevel() const;
 
 #endif

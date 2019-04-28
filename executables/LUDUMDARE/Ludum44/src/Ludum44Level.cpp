@@ -94,18 +94,11 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 
 bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-#if 0
+	LudumLevelInstance * ludum_level_instance = dynamic_cast<LudumLevelInstance *>(GetLayerInstance()->GetTiledLevelInstance());
+	if (ludum_level_instance == nullptr)
+		return true;
+	ludum_level_instance->SetLevelCompleted(true);
 
-	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
-	{
-		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
-		if (!pp->level_end_reached)
-		{
-			//		pp->level_end_reached = true;
-			//		pp->level_end_timer = 2.0f;
-		}
-	}
-#endif
 	return true; // continue other collisions
 }
 
@@ -136,7 +129,9 @@ bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, d
 {
 
 
-	return true; // continue other collisions
+
+
+	return false; // no more collisions
 }
 
 // =============================================================

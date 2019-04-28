@@ -28,7 +28,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool IsLevelCompleted() const override;
+	virtual bool IsLevelCompleted(bool & loop_levels) const override;
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */

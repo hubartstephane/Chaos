@@ -986,7 +986,8 @@ namespace death
 			// check level game over only if game is started. It could be a background level in main menu
 			if (current_level_instance != nullptr)
 			{
-				if (current_level_instance->IsLevelCompleted()) // level completed => forbid GAME OVER, even if game instance says yes
+				bool loop_levels = false; // unused
+				if (current_level_instance->IsLevelCompleted(loop_levels)) // level completed => forbid GAME OVER, even if game instance says yes
 					return false;
 				if (current_level_instance->DoCheckGameOverCondition())
 					return true;
@@ -999,17 +1000,20 @@ namespace death
 	}
 
 
-	bool Game::CheckLevelCompleted()
+	bool Game::CheckLevelCompleted(bool & loop_levels)
 	{
 		// cheat code
 #if _DEBUG
 		if (GetCheatSkipLevelRequired())
+		{
+			loop_levels = true;
 			return true;
+		}
 #endif
 		// level knows about that
 		death::GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			if (level_instance->IsLevelCompleted())
+			if (level_instance->IsLevelCompleted(loop_levels))
 				return true;
 		return false;
 	}
@@ -1038,11 +1042,13 @@ namespace death
 			return false;
 		}
 		// level finished
-		if (CheckLevelCompleted())
+		bool loop_level = false;
+		if (CheckLevelCompleted(loop_level))
 		{
 			if (CanCompleteLevel()) // maybe there is a small delay for an animation or a sound
 			{
-				SetNextLevel(true);
+				if (!SetNextLevel(loop_level))
+					RequireExitGame();					
 				return false; // do not call remaining code in TickGameLoop(...) specialization
 			}
 		}

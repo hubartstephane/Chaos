@@ -34,18 +34,18 @@ glm::vec2 LudumLevelInstance::GetCameraSafeZone() const
 		return glm::vec2(0.9f, 0.9f);
 }
 
-bool LudumLevelInstance::IsLevelCompleted() const
+bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
 {
+	loop_levels = false;
 
-
-	return false;
+	return level_completed;
 }
 
 bool LudumLevelInstance::CanCompleteLevel() const
 {
 
 
-	return false;
+	return true;
 }
 
 bool LudumLevelInstance::DoTick(double delta_time)

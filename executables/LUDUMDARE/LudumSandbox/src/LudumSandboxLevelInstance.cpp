@@ -21,8 +21,10 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	camera_safe_zone = glm::vec2(0.2f, 0.2f);
 }
 
-bool LudumLevelInstance::IsLevelCompleted() const
+bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
 {
+	loop_levels = false;
+
 	if (game != nullptr)
 	{
 		ParticlePlayer * player_particle = game->GetPlayerParticle(0);

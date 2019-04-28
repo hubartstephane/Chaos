@@ -69,7 +69,7 @@ namespace death
 		virtual void OnLevelStarted();
 
 		/** returns whether the level is completed */
-		virtual bool IsLevelCompleted() const;
+		virtual bool IsLevelCompleted(bool & loop_levels) const;
 		/** returns whether we can go to next level */
 		virtual bool CanCompleteLevel() const;
 

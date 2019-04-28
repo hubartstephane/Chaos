@@ -16,8 +16,10 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 	return true;
 }
 
-bool LudumLevelInstance::IsLevelCompleted() const
+bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
 {
+	loop_levels = true;
+
 	LudumLevel const * ludum_level = dynamic_cast<LudumLevel const *>(GetLevel());
 	if (ludum_level == nullptr)
 		return false;

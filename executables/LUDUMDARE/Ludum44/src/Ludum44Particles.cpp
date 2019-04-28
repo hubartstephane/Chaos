@@ -111,3 +111,36 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 	return 6;
 }
 
+// ===========================================================================
+// ParticleEnemyTrait
+// ===========================================================================
+
+ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const
+{
+	ParticleEnemyUpdateData result;
+	if (count > 0)
+	{
+		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
+	}
+	return result;
+}
+
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
+{
+	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+		return true;	
+
+	particle->bounding_box.position += delta_time * particle->velocity;
+
+	return false; // do not destroy the particle
+}
+
+size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < 6; ++i)
+		vertices[i].color = particle->color;
+	return 6;
+}
+

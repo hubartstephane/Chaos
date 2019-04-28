@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1754">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="9" nextobjectid="1758">
  <properties>
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -36,6 +36,11 @@
   <object id="1749" gid="1" x="-9592" y="-25376" width="3168" height="3264"/>
   <object id="1750" gid="1" x="-120" y="-29088" width="3168" height="3264"/>
  </objectgroup>
+ <objectgroup id="8" name="Enemies">
+  <properties>
+   <property name="MATERIAL" value="Enemy"/>
+  </properties>
+ </objectgroup>
  <objectgroup id="6" name="Zones" offsetx="3744" offsety="-288">
   <properties>
    <property name="MATERIAL" value="power_up"/>
@@ -43,7 +48,7 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="Spawner" gid="2" x="-840" y="1424" width="26376" height="8208">
+  <object id="1732" name="Spawner" gid="2" x="-7432" y="848" width="26376" height="8208">
    <properties>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>

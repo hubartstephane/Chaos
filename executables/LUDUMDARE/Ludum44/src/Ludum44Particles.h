@@ -68,8 +68,6 @@ public:
 
 
 
-
-
 // ===========================================================================
 // ParticleFire
 // ===========================================================================
@@ -109,6 +107,67 @@ public:
 
 	size_t ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 };
+
+
+
+
+
+
+// ===========================================================================
+// ParticleEnemy
+// ===========================================================================
+
+class ParticleEnemy : public ParticleBase
+{
+public:
+
+	float life = 5.0f;
+	float rotation = 0.0f;
+	bool just_touched = false;
+
+};
+
+class ParticleEnemyUpdateData
+{
+public:
+
+	chaos::box2 camera_box;
+};
+
+class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+	ParticleEnemyUpdateData BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const;
+
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

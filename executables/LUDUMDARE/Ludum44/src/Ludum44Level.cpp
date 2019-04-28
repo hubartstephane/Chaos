@@ -61,6 +61,12 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<TileParticleTraitExt>();
 	}
 
+	bool is_enemies = (layer_name == "Enemies");
+	if (is_enemies)
+	{
+		return new chaos::ParticleLayer<ParticleEnemyTrait>();
+	}
+
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
 }
 
@@ -160,7 +166,33 @@ bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
+	// only the first time collision is detected
+	if (event_type != death::TiledMap::TriggerSurfaceObject::COLLISION_STARTED)
+		return true;
 
+	// search the layer for enemies
+	death::TiledMap::LayerInstance * enemy_layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Enemies");
+	if (enemy_layer_instance == nullptr)
+		return true;
+
+	// create the particle layer if necessary
+	if (enemy_layer_instance->CreateParticleLayer() == nullptr)
+		return true;
+
+	// create an allocation for all enemies we are about to create
+	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->CreateParticleAllocation();
+	if (allocation == nullptr)
+		return true;
+
+	// Fill the enemies
+
+
+
+	// auto delete allocation
+	allocation->SetDestroyWhenEmpty(true);
+
+	// disable the surface
+	SetEnabled(false);
 
 	return true; // continue other collisions
 }

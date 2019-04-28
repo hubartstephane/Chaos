@@ -163,8 +163,15 @@ namespace chaos
 			ParticleAllocationBase * allocation = particles_allocations[i].get();
 			if (allocation == nullptr)
 				continue;
-			// tick and register as an allocation to be destroyed
-			bool destroy_allocation = allocation->TickAllocation((float)delta_time, GetLayerTrait());
+
+			// tick or destroy the allocation
+			bool destroy_allocation = false;
+			if (allocation->GetParticleCount() == 0 && allocation->GetDestroyWhenEmpty()) // XXX: if the TRAIT is not particle_dynamic, this will never be called
+				destroy_allocation = true;
+			else
+				destroy_allocation = allocation->TickAllocation((float)delta_time, GetLayerTrait());
+
+			// register as an allocation to be destroyed
 			if (destroy_allocation)
 				to_destroy_allocations.push_back(allocation);
 			// particles have changed ... so must it be for vertices

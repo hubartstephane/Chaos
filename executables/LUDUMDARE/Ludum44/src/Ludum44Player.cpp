@@ -156,7 +156,7 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 	return false;
 }
 
-ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, char const * sound_name)
+ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name)
 {
 	if (fire_allocation == nullptr)
 		return nullptr;
@@ -171,7 +171,11 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 	ParticleFire & p = particles[particles.GetCount() - 1];
 
 	p.bounding_box.position = box.position;
-	p.bounding_box.half_size = box.half_size;
+	p.bounding_box.half_size = ratio_to_player * box.half_size;
+
+
+	p.bounding_box = chaos::AlterBoxToAspect(p.bounding_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
+
 	p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	LudumGame * ludum_game = GetLudumGame();
@@ -199,7 +203,7 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 
 ParticleFire * LudumPlayer::FireChargedProjectile()
 {
-	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, "thrust");
+	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 0.8f, 1, "thrust");
 	if (p == nullptr)
 	{
 		p->damage = current_charged_damage;
@@ -210,7 +214,13 @@ ParticleFire * LudumPlayer::FireChargedProjectile()
 
 ParticleFire * LudumPlayer::FireNormalProjectile()
 {
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, "fire");
+	int particle_count = 1;
+	if (current_damage > 2)
+		particle_count = 5;
+	else if (current_damage > 1)		
+		particle_count = 3;
+
+	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.4f, particle_count, "fire");
 	if (p == nullptr)
 	{
 		p->damage = current_damage;

@@ -72,7 +72,7 @@ protected:
 	/** fire a normal projectile */
 	ParticleFire *FireNormalProjectile();		
 	/** fire generic projectile */
-	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, char const * sound_name);
+	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name);
 
 protected:
 

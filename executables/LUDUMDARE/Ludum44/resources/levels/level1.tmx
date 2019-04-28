@@ -36,14 +36,6 @@
   <object id="1749" gid="1" x="-9592" y="-25376" width="3168" height="3264"/>
   <object id="1750" gid="1" x="-120" y="-29088" width="3168" height="3264"/>
  </objectgroup>
- <objectgroup id="5" name="fire" locked="1">
-  <properties>
-   <property name="MATERIAL" value="fire"/>
-   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
-   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
-   <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
-  </properties>
- </objectgroup>
  <objectgroup id="6" name="Zones" locked="1">
   <properties>
    <property name="MATERIAL" value="power_up"/>
@@ -68,6 +60,14 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="5" name="fire" locked="1">
+  <properties>
+   <property name="MATERIAL" value="fire"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
+  </properties>
  </objectgroup>
  <objectgroup id="4" name="PlayerAndCamera">
   <properties>

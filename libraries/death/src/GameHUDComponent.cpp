@@ -155,6 +155,9 @@ namespace death
 		params.hotpoint_type = chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::TOP;
 		params.position.x = 0.0f;
 		params.position.y = -200.0f;
+		params.bitmap_padding = glm::vec2(-3.0f, -3.0f);
+		params.character_spacing = 0.0f;
+		params.line_spacing = 5.0f;
 		params.font_info_name = "normal";
 
 		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, GameHUDKeys::TEXT_LAYER_ID);

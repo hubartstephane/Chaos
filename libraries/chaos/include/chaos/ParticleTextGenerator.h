@@ -32,9 +32,9 @@ namespace chaos
 			/** spacing between lines */
 			float line_spacing = 5.0f;
 			/** spacing between characters */
-			float character_spacing = 5.0f;
+			float character_spacing = 0.0f;
 			/** padding for bitmaps */
-			glm::vec2 bitmap_padding = glm::vec2(5.0f, 5.0f);
+			glm::vec2 bitmap_padding = glm::vec2(-5.0f, -5.0f);
 			/** the text limits */
 			float max_text_width = 0.0f;
 			/** word wrap enabled */

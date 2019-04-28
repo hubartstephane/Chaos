@@ -27,8 +27,11 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 LudumGame::LudumGame()
 {		
 	game_name = "Quantic Paouf V";
-	//game_instructions = R"INSTRUCTIONS(
-	//)INSTRUCTIONS";
+	game_instructions = R"INSTRUCTIONS(
+	[ButtonA] or [KEYBOARD SPACE] : Fire
+	[ButtonB] or [KEYBOARD CTRL]  : Charged fire
+	[ButtonY] or [KEYBOARD ALT]   : Buy power up with your life
+	)INSTRUCTIONS";
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

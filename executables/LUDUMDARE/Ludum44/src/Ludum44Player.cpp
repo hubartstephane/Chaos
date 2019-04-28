@@ -189,7 +189,7 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 
 ParticleFire * LudumPlayer::FireChargedProjectile()
 {
-	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, "charged_fire");
+	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, "thrust");
 	if (p == nullptr)
 	{
 		p->damage = current_charged_damage;

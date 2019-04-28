@@ -892,8 +892,12 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
+		// restore the background image
+		CreateBackgroundImage(nullptr, nullptr);
+		// start music
 		if (very_first)
 			StartMainMenuMusic(true);
+		// create the main menu HUD
 		CreateMainMenuHUD();
 	}
 

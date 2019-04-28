@@ -86,24 +86,9 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 // FinishingTriggerSurfaceObject implementation
 // =============================================================
 
-
-FinishingTriggerSurfaceObject::FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
-	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_geometric_object)
-{
-
-}
-
 bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
 #if 0
-
-	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
-		event_type = event_type;
-	if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
-		event_type = event_type;
-	if (event_type == TriggerSurfaceObject::COLLISION_AGAIN)
-		event_type = event_type;
-
 
 	if (player_particle != nullptr && event_type == TriggerSurfaceObject::COLLISION_STARTED)
 	{
@@ -122,12 +107,6 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, de
 // =============================================================
 // PowerUpTriggerSurfaceObject implementation
 // =============================================================
-
-PowerUpTriggerSurfaceObject::PowerUpTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
-	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_geometric_object)
-{
-
-}
 
 bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {

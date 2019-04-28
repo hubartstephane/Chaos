@@ -22,7 +22,7 @@ class PowerUpTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
 public:
 
 	/** constructor */
-	PowerUpTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
 protected:
 
@@ -40,7 +40,7 @@ class FinishingTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObje
 public:
 
 	/** constructor */
-	FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
 protected:
 

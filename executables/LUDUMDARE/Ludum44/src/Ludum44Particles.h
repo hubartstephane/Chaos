@@ -79,6 +79,7 @@ public:
 	float rotation_speed = 0.0f;
 	int   touched_count_down = 0;
 	int   score = 50;
+	float damage_for_player = 0.1f;
 
 };
 

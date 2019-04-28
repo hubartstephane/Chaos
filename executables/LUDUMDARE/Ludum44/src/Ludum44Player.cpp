@@ -354,3 +354,16 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	else
 		buy_timer = 0.0f;
 }
+
+void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
+{
+	if (in_increment)
+		current_life += in_value;
+	else
+		current_life = in_value;
+
+	if (current_life < 0.0f)
+		current_life = 0.0f;
+	else if (current_life > current_max_life)
+		current_life = current_max_life;
+}

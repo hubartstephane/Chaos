@@ -50,9 +50,9 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 	}
 }
 
-static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool increase_player_score) // returns the life damage produced by the enemy collision (its life)
+static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player) // returns the life damage produced by the enemy collision (its life)
 {
-	float result = enemy->life;
+	float result = collision_with_player? enemy->damage_for_player : enemy->life;
 
 	// update life from both size
 	enemy->life -= damage;
@@ -63,7 +63,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 		game->PlaySound("metallic", false, false);
 	else 
 	{
-		if (increase_player_score)
+		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(enemy->score, true);
 		game->PlaySound("explosion", false, false);
 	}
@@ -95,10 +95,10 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 		{
 			if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
 			{
-				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, false); // destroy the enemy always
-				
-
-				life_lost = life_lost;
+				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true); // destroy the enemy always
+			
+				LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
+				player->SetLifeBarValue(-life_lost, true);
 
 			}
 		}
@@ -199,15 +199,13 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			{
 				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
 				{
-					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, true);
+					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, false);
 
 					// kill bullet ?
 					if (particle->damage <= 0.0f)
 						return true;
 					if (!particle->trample)
 						return true;
-
-					i = i;
 				}			
 			}
 		}	

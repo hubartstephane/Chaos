@@ -226,7 +226,7 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 			particles[i].bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
 
 
-
+			particles[i].damage_for_player = 0.1f;
 			particles[i].life = 5.0f;
 
 		}	

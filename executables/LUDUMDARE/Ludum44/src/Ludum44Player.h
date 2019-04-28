@@ -41,6 +41,7 @@ public:
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
+	void SetLifeBarValue(float in_value, bool in_increment);
 
 
 	float GetCurrentLife() const { return current_life; }

@@ -92,7 +92,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	}
 
 	// correct camera and player position
-	float scroll_displacement = ludum_game->scroll_factor * camera_speed * (float)delta_time;
+	float scroll_displacement = scroll_factor * ludum_game->scroll_factor * camera_speed * (float)delta_time;
 
 	camera_after.position[scroll_direction] += scroll_displacement;
 	SetCameraBox(camera_after);

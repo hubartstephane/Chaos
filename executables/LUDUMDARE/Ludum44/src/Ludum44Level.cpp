@@ -145,9 +145,15 @@ bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, d
 
 bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	
-	
+	if (event_type != TriggerSurfaceObject::COLLISION_STARTED) // already handled
+		return true;
 
+	LudumLevelInstance * ludum_level_instance = dynamic_cast<LudumLevelInstance *>(GetLayerInstance()->GetTiledLevelInstance());
+	if (ludum_level_instance == nullptr)
+		return true;
+
+	float scroll_speed = geometric_object->FindPropertyFloat("SCROLL_SPEED", 1.0f);
+	ludum_level_instance->SetScrollFactor(scroll_speed);
 
 	return true; // continue other collisions
 }

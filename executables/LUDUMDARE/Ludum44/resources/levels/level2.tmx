@@ -45,7 +45,7 @@
   </properties>
   <object id="1732" name="SpeedUp" gid="2" x="-3016" y="1776" width="16968" height="8208">
    <properties>
-    <property name="SCROLL_SPEED" type="float" value="1.2"/>
+    <property name="SCROLL_SPEED" type="float" value="5"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>

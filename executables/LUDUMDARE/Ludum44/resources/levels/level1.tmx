@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1751">
  <properties>
-  <property name="BACKGROUND_NAME" value="background1"/>
+  <property name="BACKGROUND_NAME" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="200"/>
   <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Tutorial]"/>

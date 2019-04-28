@@ -217,8 +217,12 @@ namespace death
 	bool GameLevelInstance::DoTick(double delta_time)
 	{
 		// update the timeout
-		if (level_timeout > 0.0f && !IsLevelCompleted() && !game->GetCheatMode())
-		{
+		if (level_timeout > 0.0f 
+			&& !IsLevelCompleted() 
+#if _DEBUG	
+			&& !game->GetCheatMode()
+#endif
+		){
 			level_timeout -= (float)delta_time;
 			if (level_timeout < 0.0f)
 				level_timeout = 0.0f;

@@ -135,6 +135,8 @@ public:
 	chaos::box2 camera_box;
 	/** all the enemies */
 	std::vector<ParticleEnemy*> enemies;
+	/** the main player */
+	class LudumPlayer * player = nullptr;
 };
 
 class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>

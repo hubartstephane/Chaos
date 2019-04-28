@@ -19,19 +19,99 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	return result;
 }
 
+
+// ===========================================================================
+// FindEnemiesOnMap
+// ===========================================================================
+
+
+static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & result)
+{
+	// get the enemies
+	death::TiledMap::LayerInstance * enemies_layer_instance = game->GetLudumLevelInstance()->FindLayerInstance("Enemies");
+	if (enemies_layer_instance != nullptr)
+	{
+		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
+		if (layer != nullptr)
+		{
+			size_t allocation_count = layer->GetAllocationCount();
+			for (size_t i = 0 ; i < allocation_count ; ++i)
+			{
+				chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
+				if (allocation != nullptr)
+				{
+					chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
+					size_t count = enemies.GetCount();
+					for (size_t j = 0 ; j < count ; ++j)
+						result.push_back(&enemies[j]);
+				}				
+			}			
+		}
+	}
+}
+
+static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool increase_player_score) // returns the life damage produced by the enemy collision (its life)
+{
+	float result = enemy->life;
+
+	// update life from both size
+	enemy->life -= damage;
+	enemy->touched_count_down = 2;
+
+	// play sound
+	if (enemy->life > 0.0f)
+		game->PlaySound("metallic", false, false);
+	else 
+	{
+		if (increase_player_score)
+			game->GetPlayer(0)->SetScore(enemy->score, true);
+		game->PlaySound("explosion", false, false);
+	}
+	return result;
+}
+
 // ===========================================================================
 // ParticlePlayerTrait
 // ===========================================================================
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
-	return result;
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 }
 
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
+	// find all enemies
+	std::vector<ParticleEnemy*> enemies;
+	FindEnemiesOnMap(layer_trait->game, enemies);
+
+	// seach a collision for all enemies
+	size_t count = enemies.size();
+	for (size_t i = 0 ; i < count ; ++i)
+	{
+		ParticleEnemy * enemy = enemies[i];
+		if (enemy->life > 0.0f)
+		{
+			if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
+			{
+				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, false); // destroy the enemy always
+				
+
+				life_lost = life_lost;
+
+			}
+		}
+	}
+
+
+
+
+
+
+	//
+
+
 	particle->bounding_box.position += delta_time * particle->velocity;
 
 
@@ -78,9 +158,11 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
+
 // ===========================================================================
 // ParticleFireTrait
 // ===========================================================================
+
 
 ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const
 {
@@ -90,31 +172,13 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
 		// get the enemies
-		death::TiledMap::LayerInstance * enemies_layer_instance = layer_trait->game->GetLudumLevelInstance()->FindLayerInstance("Enemies");
-		if (enemies_layer_instance != nullptr)
-		{
-			chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
-			if (layer != nullptr)
-			{
-				size_t allocation_count = layer->GetAllocationCount();
-				for (size_t i = 0 ; i < allocation_count ; ++i)
-				{
-					chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
-					if (allocation != nullptr)
-					{
-						chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
-						size_t count = enemies.GetCount();
-						for (size_t j = 0 ; j < count ; ++j)
-							result.enemies.push_back(&enemies[j]);
-					}				
-				}			
-			}
-		}
+		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players
-
+		result.player = layer_trait->game->GetLudumPlayer(0);
 	}
 	return result;
 }
+
 
 bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
@@ -124,34 +188,19 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	// outside the camera
 	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
-	// search for collision
+	// search for collisions
 	if (particle->player_owner_ship)
 	{
 		size_t count = update_data.enemies.size();
 		for (size_t i = 0 ; i < count ; ++i)
 		{
 			ParticleEnemy * enemy = update_data.enemies[i];
-
-			float enemy_life = enemy->life;
-			if (enemy_life > 0.0f)
+			if (enemy->life > 0.0f)
 			{
 				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
 				{
-					// update life from both size
-					enemy_life -= particle->damage;
-					particle->damage -= enemy->life;
-					enemy->life = enemy_life;
-					enemy->touched_count_down = 5;
+					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, true);
 
-					// play sound
-					if (enemy->life > 0.0f)
-						layer_trait->game->PlaySound("metallic", false, false);
-					else
-					{
-						layer_trait->game->GetPlayer(0)->SetScore(enemy->score, true);
-						layer_trait->game->PlaySound("explosion", false, false);
-					}
-				
 					// kill bullet ?
 					if (particle->damage <= 0.0f)
 						return true;
@@ -163,6 +212,21 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			}
 		}	
 	}
+	// enemy bullet
+	if (!particle->player_owner_ship && update_data.player != nullptr)
+	{
+		if (chaos::Collide(particle->bounding_box, update_data.player->GetPlayerBox())) // destroy the particle outside the camera frustum (works for empty camera)
+		{
+		
+		
+
+
+
+
+
+		}	
+	}
+
 	// update position velocity
 	particle->bounding_box.position += delta_time * particle->velocity;
 

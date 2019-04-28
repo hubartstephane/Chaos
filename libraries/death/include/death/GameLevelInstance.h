@@ -85,6 +85,9 @@ namespace death
 		/** get the current time out */
 		float GetLevelTimeout() const { return level_timeout; }
 
+		/** get the camera safe zone */
+		virtual glm::vec2 GetCameraSafeZone() const { return camera_safe_zone; }
+
 	protected:
 
 		/** override */

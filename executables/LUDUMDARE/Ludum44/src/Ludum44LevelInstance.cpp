@@ -18,7 +18,20 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
 	assert(in_game != nullptr); 
-	camera_safe_zone = glm::vec2(0.9f, 0.7f);
+}
+
+glm::vec2 LudumLevelInstance::GetCameraSafeZone() const
+{
+#if SHUXXX_SCROLL_X
+	int direction = 0;
+#else
+	int direction = 1;
+#endif
+
+	if (direction == 0)
+		return glm::vec2(0.7f, 0.9f);
+	else
+		return glm::vec2(0.9f, 0.9f);
 }
 
 bool LudumLevelInstance::IsLevelCompleted() const
@@ -61,24 +74,33 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	if (camera_after.IsEmpty())
 		return true;
 	// correct camera position
-	float delta_camera_x = camera_before.position.x - camera_after.position.x;
+
+#if SHUXXX_SCROLL_X
+	int direction = 0;
+#else
+	int direction = 1;
+#endif
+
+	float delta_camera = camera_before.position[direction] - camera_after.position[direction];
 
 	chaos::box2 player_box = player->GetPlayerBox();
 
-	if (delta_camera_x != 0.0f) // player forced a fast forward or a backward displacement : remove it
+	if (delta_camera != 0.0f) // player forced a fast forward or a backward displacement : remove it
 	{
-		player_box.position.x += delta_camera_x;
-		camera_after.position.x += delta_camera_x;
+		player_box.position[direction] += delta_camera;
+		camera_after.position[direction] += delta_camera;
 	}
 
 	// correct camera and player position
 	float scroll_displacement = ludum_game->scroll_factor * camera_speed * (float)delta_time;
 
-	camera_after.position.x += scroll_displacement;
+	camera_after.position[direction] += scroll_displacement;
 	SetCameraBox(camera_after);
 
-	player_box.position.x += scroll_displacement;
+	player_box.position[direction] += scroll_displacement;
 	player->SetPlayerBox(player_box);
+
+
 
 	return true;
 }

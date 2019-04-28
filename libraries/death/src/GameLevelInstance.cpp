@@ -168,7 +168,7 @@ namespace death
 		if (!player_box.IsEmpty())
 		{
 			chaos::box2 safe_camera = camera;
-			safe_camera.half_size *= camera_safe_zone;
+			safe_camera.half_size *= GetCameraSafeZone();
 
 			if (chaos::RestrictToInside(safe_camera, player_box, true)) // apply the safe_zone displacement to the real camera
 				camera.position = safe_camera.position;

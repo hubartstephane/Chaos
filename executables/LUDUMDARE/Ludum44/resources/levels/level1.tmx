@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1740">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1751">
  <properties>
   <property name="BACKGROUND_NAME" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -25,6 +25,16 @@
   <object id="1719" gid="1" x="976" y="13792" width="3168" height="3264"/>
   <object id="1720" gid="1" x="-11792" y="-928" width="3168" height="3264"/>
   <object id="1721" gid="1" x="-2320" y="-4640" width="3168" height="3264"/>
+  <object id="1741" gid="1" x="11032" y="-19776" width="3168" height="3264"/>
+  <object id="1742" gid="1" x="-872" y="-25280" width="3168" height="3264"/>
+  <object id="1743" gid="1" x="-5304" y="-21024" width="3168" height="3264"/>
+  <object id="1744" gid="1" x="-1144" y="-21440" width="3168" height="3264"/>
+  <object id="1745" gid="1" x="-5304" y="-16416" width="3168" height="3264"/>
+  <object id="1746" gid="1" x="-536" y="-16288" width="3168" height="3264"/>
+  <object id="1747" gid="1" x="-5784" y="-11296" width="3168" height="3264"/>
+  <object id="1748" gid="1" x="3176" y="-10656" width="3168" height="3264"/>
+  <object id="1749" gid="1" x="-9592" y="-25376" width="3168" height="3264"/>
+  <object id="1750" gid="1" x="-120" y="-29088" width="3168" height="3264"/>
  </objectgroup>
  <objectgroup id="5" name="fire" locked="1">
   <properties>
@@ -46,7 +56,13 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1733" name="PowerUp" gid="2" x="-2140" y="14680" width="35080" height="10544">
+  <object id="1733" name="PowerUp" gid="2" x="-5724" y="-10280" width="35080" height="10544">
+   <properties>
+    <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1740" name="PowerUp" gid="2" x="-23940" y="-30424" width="35080" height="7664">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
@@ -58,13 +74,13 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" x="-9192" y="-4928" width="7184" height="5736" visible="0">
+  <object id="57" name="TheCamera1" x="-9192" y="-4928" width="7184" height="5736">
    <properties>
     <property name="CAMERA" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="75" name="world_bounding_box" x="-11024" y="-4992" width="47424" height="15232" visible="0"/>
-  <object id="1735" name="ThePlayerStart1" x="-5280" y="-3360" width="1008" height="1584">
+  <object id="75" name="world_bounding_box" x="-11216" y="-41856" width="29824" height="57792"/>
+  <object id="1735" name="ThePlayerStart1" x="-5280" y="-3360" width="496" height="816">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
     <property name="PLAYER_START" type="bool" value="true"/>

@@ -181,7 +181,17 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 
 	p.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, ludum_game->GetTextureAtlas()->GetAtlasDimension());
 
-	p.velocity = glm::vec2(ludum_game->fire_velocity, 0.0f);
+#if SHUXXX_SCROLL_X
+	int direction = 0;
+#else
+	int direction = 1;
+#endif
+
+	if (direction == 0)
+		p.velocity = glm::vec2(ludum_game->fire_velocity, 0.0f);
+	else
+		p.velocity = glm::vec2(0.0f, ludum_game->fire_velocity);
+
 	p.player_owner_ship = true;
 
 	return &p;

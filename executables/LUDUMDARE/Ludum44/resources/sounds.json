@@ -25,9 +25,10 @@
     { "path": "sounds/next_level.ogg" , "category" :  "FX"},
     { "path": "sounds/collision.ogg" , "category" :  "FX"},
     { "path": "sounds/fire.ogg" , "category" :  "FX"},
-    { "path": "sounds/SpeedUp.ogg" , "category" :  "FX"},
-    { "path": "sounds/PowerUp.ogg" , "category" :  "FX"},
-    { "path": "sounds/FireRateIncreased.ogg" , "category" :  "FX"},  
+    { "path": "sounds/speed_up.ogg" , "category" :  "FX"},
+    { "path": "sounds/power_up.ogg" , "category" :  "FX"},
+    { "path": "sounds/augmented_fire.ogg" , "category" :  "FX"},
+    { "path": "sounds/blast_improved.ogg" , "category" :  "FX"},  
     { "path": "sounds/heartbeat.ogg" , "category" :  "FX"}
   ]
 }

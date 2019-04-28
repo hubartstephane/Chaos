@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="9" nextobjectid="1758">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="7" nextobjectid="1752">
  <properties>
-  <property name="BACKGROUND_NAME" value="background4"/>
+  <property name="BACKGROUND_NAME" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="LEVEL_TITLE" value="Level 3 - [LEVELTITLE On the ground]"/>
@@ -36,36 +36,31 @@
   <object id="1749" gid="1" x="-9592" y="-25376" width="3168" height="3264"/>
   <object id="1750" gid="1" x="-120" y="-29088" width="3168" height="3264"/>
  </objectgroup>
- <objectgroup id="8" name="Enemies">
-  <properties>
-   <property name="MATERIAL" value="Enemy"/>
-  </properties>
- </objectgroup>
- <objectgroup id="6" name="Zones" offsetx="3744" offsety="-288">
+ <objectgroup id="6" name="Zones">
   <properties>
    <property name="MATERIAL" value="power_up"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="Spawner" gid="2" x="-7432" y="848" width="26376" height="8208">
+  <object id="1732" name="PowerUp" gid="2" x="-520" y="2608" width="8968" height="8208">
    <properties>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1733" name="Spawner" gid="2" x="-5724" y="-10280" width="35080" height="10544">
-   <properties>
-    <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1740" name="Spawner" gid="2" x="-5860" y="-32760" width="22056" height="7664">
+  <object id="1733" name="PowerUp" gid="2" x="1060" y="-9064" width="13576" height="10544">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1753" name="Finish" gid="2" x="-21028" y="-7160" width="10568" height="7664">
+  <object id="1740" name="PowerUp" gid="2" x="-2116" y="-30424" width="19144" height="7664">
+   <properties>
+    <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1751" name="Finish" gid="2" x="-17700" y="-7224" width="10568" height="7664">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

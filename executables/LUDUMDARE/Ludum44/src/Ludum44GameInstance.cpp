@@ -59,7 +59,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_player == nullptr)
 		return;
 
-	ludum_player->current_life = ludum_game->initial_player_life * 0.66f; // shuxxx
+	ludum_player->current_life = ludum_game->initial_player_life; 
 	ludum_player->current_max_life = ludum_game->initial_player_life;
 
 	ludum_player->current_speed_index = 0;

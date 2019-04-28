@@ -123,6 +123,7 @@ public:
 
 	float life = 5.0f;
 	float rotation = 0.0f;
+	float rotation_speed = 0.0f;
 	bool just_touched = false;
 
 };

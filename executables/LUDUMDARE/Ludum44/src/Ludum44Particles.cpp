@@ -121,16 +121,24 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	if (count > 0)
 	{
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
+		result.camera_box.half_size *= 3.0f;
 	}
 	return result;
 }
 
 bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
+	// destroy the particle if no life
+	if (particle->life <= 0.0f)
+		return true;
+	// destroy the particle if outside a BIG camera box
 	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
 
+	// apply velocity
 	particle->bounding_box.position += delta_time * particle->velocity;
+	// apply rotation
+	particle->rotation += delta_time * particle->rotation_speed;
 
 	return false; // do not destroy the particle
 }
@@ -138,9 +146,14 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
+	// select wanted color
+	glm::vec4 c = (particle->just_touched)?
+		glm::vec4(0.0f, 0.0f, 0.0f, 0.0f):
+		particle->color;
+	((ParticleEnemy *)particle)->just_touched = false; // HACK : just render for one frame
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = particle->color;
+		vertices[i].color = c;
 	return 6;
 }
 

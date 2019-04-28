@@ -64,7 +64,9 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 	bool is_enemies = (layer_name == "Enemies");
 	if (is_enemies)
 	{
-		return new chaos::ParticleLayer<ParticleEnemyTrait>();
+		ParticleEnemyTrait::LayerTrait enemy_trait;
+		enemy_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
 	}
 
 	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
@@ -175,6 +177,25 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	if (enemy_layer_instance == nullptr)
 		return true;
 
+	// search the atlas
+	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = enemy_layer_instance->GetGame()->GetTextureAtlas();
+	if (atlas == nullptr)
+		return true;
+
+	// cast in a surface
+	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
+	if (surface == nullptr)
+		return true;
+
+	// search BitmapLayout for Enemy
+	chaos::BitmapAtlas::FolderInfo const * bitmap_set = atlas->GetFolderInfo("sprites");
+	if (bitmap_set == nullptr)
+		return true;
+	
+	chaos::BitmapAtlas::BitmapInfo const * enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
+	if (enemy_info == nullptr)
+		return true;
+
 	// create the particle layer if necessary
 	if (enemy_layer_instance->CreateParticleLayer() == nullptr)
 		return true;
@@ -184,10 +205,32 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	if (allocation == nullptr)
 		return true;
 
+	chaos::box2 surface_box = surface->GetBoundingBox(true);
+	float scale_factor = surface->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
+	int   count        = surface->FindPropertyInt("ENEMY_COUNT", 10);
+
 	// Fill the enemies
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info, atlas->GetAtlasDimension());
+
+	if (allocation->AddParticles(count))
+	{
+		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor<ParticleEnemy>();
+		for (int i = 0 ; i < count ; ++i)
+		{
+			particles[i].bounding_box.half_size = 0.5f * scale_factor * glm::vec2((float)enemy_info->width, (float)enemy_info->height);	
+			particles[i].texcoords = texcoords;
+			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+			particles[i].rotation_speed = 1.0f;
+
+			particles[i].bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
 
 
 
+
+
+		}	
+	}
 	// auto delete allocation
 	allocation->SetDestroyWhenEmpty(true);
 

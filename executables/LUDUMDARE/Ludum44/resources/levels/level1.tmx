@@ -38,7 +38,7 @@
  </objectgroup>
  <objectgroup id="8" name="Enemies">
   <properties>
-   <property name="MATERIAL" value="Enemy"/>
+   <property name="MATERIAL" value="enemy"/>
   </properties>
  </objectgroup>
  <objectgroup id="6" name="Zones" offsetx="3744" offsety="-288">

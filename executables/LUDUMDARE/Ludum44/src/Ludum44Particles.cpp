@@ -139,6 +139,9 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	particle->bounding_box.position += delta_time * particle->velocity;
 	// apply rotation
 	particle->rotation += delta_time * particle->rotation_speed;
+	// update blinking effect
+	if (particle->touched_count_down > 0)
+		--particle->touched_count_down;
 
 	return false; // do not destroy the particle
 }
@@ -147,13 +150,16 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * particle, Ve
 {
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
 	// select wanted color
-	glm::vec4 c = (particle->just_touched)?
-		glm::vec4(0.0f, 0.0f, 0.0f, 0.0f):
-		particle->color;
-	((ParticleEnemy *)particle)->just_touched = false; // HACK : just render for one frame
+	glm::vec4 color = particle->color;
+
+	if (particle->touched_count_down > 0)
+		color.a = 0.0f;
+	else
+		color.a = 1.0f;
+	
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = c;
+		vertices[i].color = color;
 	return 6;
 }
 

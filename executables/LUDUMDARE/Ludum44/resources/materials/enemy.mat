@@ -1,4 +1,7 @@
 {
-  "program": "enemy"
+  "program": "enemy",
 
+  "uniforms": {
+    "touched_color": [1.0, 0.0, 0.0]
+  }
 }

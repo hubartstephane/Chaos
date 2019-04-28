@@ -8,14 +8,7 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <objectgroup id="1" name="Texts" locked="1" offsetx="54.0606" offsety="-145.212">
-  <object id="1710" name="Level 1" x="-5405.11" y="-142.106" width="1065.85" height="228.212">
-   <properties>
-    <property name="FONT_NAME" value="normal"/>
-   </properties>
-   <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 1</text>
-  </object>
- </objectgroup>
+ <objectgroup id="1" name="Texts" locked="1" offsetx="54.0606" offsety="-145.212"/>
  <objectgroup id="2" name="planets" locked="1">
   <properties>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>

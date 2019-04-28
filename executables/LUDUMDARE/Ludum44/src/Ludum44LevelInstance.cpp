@@ -109,7 +109,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 		return false;
 
 	// change the level timeout + camera speed
-	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
+	static float DEFAULT_LEVEL_TIMEOUT = -1.0f; // no time out
 	level_timeout = DEFAULT_LEVEL_TIMEOUT;
 
 	static float DEFAULT_CAMERA_SPEED = 100.0f;

@@ -410,6 +410,14 @@ namespace death
 				return true; // continue other collisions
 			}
 
+			/** returns the number of trigger surfaces */
+			size_t GetTriggerSurfaceCount() const;
+			/** returns a trigger surface by its index */
+			TriggerSurfaceObject * GetTriggerSurface(size_t index);
+			/** returns a trigger surface by its index */
+			TriggerSurfaceObject const * GetTriggerSurface(size_t index) const;
+
+
 		protected:
 
 			/** initialization */

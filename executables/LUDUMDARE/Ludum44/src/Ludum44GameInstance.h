@@ -38,7 +38,11 @@ protected:
 
 	virtual void OnPlayerEntered(death::Player * player) override;
 
+	virtual bool OnRestartedFromCheckpoint(death::Player * player) override;
+
 	void OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface);
+
+	
 
 	
 

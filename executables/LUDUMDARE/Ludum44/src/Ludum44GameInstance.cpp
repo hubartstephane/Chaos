@@ -19,14 +19,46 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 
 bool LudumGameInstance::DoCheckGameOverCondition()
 {
-	LudumGame * ludum_game = GetLudumGame();
-	if (ludum_game != nullptr)
+	LudumPlayer * ludum_player = GetLudumPlayer(0);
+	if (ludum_player != nullptr)
 	{
-		ParticlePlayer const * particle_player = ludum_game->GetPlayerParticle(0);
-		if (particle_player == nullptr)
-			return true;		
+		if (ludum_player->GetCurrentLife() <= 0.0f) // no more energy => go to checkpoint
+		{
+			// remove one life
+			ludum_player->SetLifeCount(-1, true);
+			// game over mandatory
+			if (ludum_player->GetLifeCount() <= 0) 
+				return true;
+			// try to go to checkpoint
+			if (!IsCheckpointValid() || !RestartFromCheckpoint(ludum_player))
+				return true; // cannot respawn !
+		}
 	}
-	return death::GameInstance::DoCheckGameOverCondition();
+	return false;
+}
+
+bool LudumGameInstance::OnRestartedFromCheckpoint(death::Player * player)
+{
+	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer*>(player);
+	if (ludum_player != nullptr)
+	{
+		ludum_player->current_life = ludum_player->current_max_life;
+	}
+
+	// enable all triggers
+	death::TiledMap::LayerInstance * layer_instance = GetLudumLevelInstance()->FindLayerInstance("Zones");
+	if (layer_instance != nullptr)
+	{
+		size_t count = layer_instance->GetTriggerSurfaceCount();
+		for (size_t i = 0 ; i < count ; ++i)
+		{
+			death::TiledMap::TriggerSurfaceObject * trigger = layer_instance->GetTriggerSurface(i);
+			if (trigger != nullptr)
+				trigger->SetEnabled(true);		
+		}	
+	}
+
+	return true;
 }
 
 bool LudumGameInstance::DoTick(double delta_time)

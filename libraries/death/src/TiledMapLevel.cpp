@@ -962,6 +962,26 @@ namespace death
 
 #undef DEATH_FIND_OBJECT
 
+		
+		size_t LayerInstance::GetTriggerSurfaceCount() const
+		{
+			return trigger_surfaces.size();
+		}
+		
+		TriggerSurfaceObject * LayerInstance::GetTriggerSurface(size_t index)
+		{
+			if (index >= trigger_surfaces.size())
+				return nullptr;
+			return trigger_surfaces[index].get();		
+		}
+		
+		TriggerSurfaceObject const * LayerInstance::GetTriggerSurface(size_t index) const
+		{
+			if (index >= trigger_surfaces.size())
+				return nullptr;
+			return trigger_surfaces[index].get();				
+		}
+
 		// =====================================
 		// LevelInstance implementation
 		// =====================================
@@ -1246,7 +1266,7 @@ namespace death
 			// store the cirrent player position as a checkpoint
 			death::GameInstance * game_instance = GetGameInstance();
 			if (game_instance != nullptr)
-				game_instance->SetCheckpointPosition(player_bounding_box.position);
+				game_instance->SetCheckpointPosition(player_bounding_box.position, this);
 		}
 
 		void LevelInstance::OnPlayerLeaved(Player * player)

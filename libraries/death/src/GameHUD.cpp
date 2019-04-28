@@ -249,7 +249,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Pause", true, GameHUDKeys::TEXT_LAYER_ID);
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Pause", false, GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
 		return true;
 	}
 
@@ -263,7 +263,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Game Over", true, GameHUDKeys::TEXT_LAYER_ID);
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Game Over", false, GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
 		return true;
 	}
 

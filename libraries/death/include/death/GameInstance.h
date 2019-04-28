@@ -79,7 +79,11 @@ namespace death
 		double GetPauseClockTime() const;
 
 		/** store a checkpoint position */
-		void SetCheckpointPosition(glm::vec2 const & in_checkpoint_position);
+		void SetCheckpointPosition(glm::vec2 const & in_checkpoint_position, GameLevelInstance * in_checkpoint_level_instance);
+		/** returns whether the checkpoint is valid */
+		bool IsCheckpointValid() const;
+		/** restart from given checkpoint */
+		bool RestartFromCheckpoint(Player * player);
 
 
 	protected:
@@ -129,6 +133,9 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
+		/** called whenver the player is restarted from checkpoint */
+		virtual bool OnRestartedFromCheckpoint(Player * player);
+
 	protected:
 
 		/** the game */
@@ -144,6 +151,10 @@ namespace death
 
 		/** the current checkpoint */
 		glm::vec2 checkpoint_position = glm::vec2(0.0f, 0.0f);
+		/** the current checkpoint camera */
+		chaos::box2 checkpoint_camera;
+		/** the current checkpoint level instance */
+		chaos::weak_ptr<GameLevelInstance> checkpoint_level_instance;
 	};
 
 }; // namespace death

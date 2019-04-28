@@ -250,6 +250,12 @@ namespace death
 
 	bool GameInstance::DoCheckGameOverCondition()
 	{
+		// player has no life any more
+		Player * player = GetPlayer(0);
+		if (player != nullptr)
+			if (player->GetLifeCount() <= 0)
+				return true;
+
 		return false;
 	}
 
@@ -268,9 +274,38 @@ namespace death
 
 	}
 
-	void GameInstance::SetCheckpointPosition(glm::vec2 const & in_checkpoint_position)
+	void GameInstance::SetCheckpointPosition(glm::vec2 const & in_checkpoint_position, GameLevelInstance * in_checkpoint_level_instance)
 	{
-		checkpoint_position = in_checkpoint_position;
+		if (in_checkpoint_level_instance != nullptr)
+		{
+			checkpoint_position = in_checkpoint_position;
+			checkpoint_level_instance = in_checkpoint_level_instance;
+
+			checkpoint_camera = in_checkpoint_level_instance->GetCameraBox();		
+		}
+	}
+
+	bool GameInstance::IsCheckpointValid() const
+	{
+		return checkpoint_level_instance.get() != nullptr; // checkpoint still valid ?	
+	}
+	
+	bool GameInstance::RestartFromCheckpoint(Player * player)
+	{
+		// update player particle
+		chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
+		if (player_particle != nullptr)
+			player_particle->bounding_box.position = checkpoint_position;
+		// update camera position
+		checkpoint_level_instance->SetCameraBox(checkpoint_camera);		
+
+		return OnRestartedFromCheckpoint(player);			
+	}
+
+	bool GameInstance::OnRestartedFromCheckpoint(Player * player)
+	{
+		
+		return true;
 	}
 
 }; // namespace death

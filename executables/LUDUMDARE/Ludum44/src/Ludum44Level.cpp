@@ -135,13 +135,18 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
+	if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+		return false;
+
 	chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
 	if (surface == nullptr)
 		return true;
 
+	SetEnabled(false);
+
 	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(player->GetGameInstance());
 	if (ludum_game_instance != nullptr)
-		ludum_game_instance->SetCheckpointPosition(surface->GetBoundingBox(true).position);
+		ludum_game_instance->SetCheckpointPosition(surface->GetBoundingBox(true).position, GetLayerInstance()->GetTiledLevelInstance());
 
 	return true; // no more collisions
 }
@@ -230,7 +235,7 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 			particles[i].bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
 
 
-			particles[i].damage_for_player = 0.1f;
+			particles[i].damage_for_player = 0.5f;
 			particles[i].life = 5.0f;
 
 		}	

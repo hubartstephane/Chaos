@@ -90,11 +90,10 @@ namespace death
 
 			// display the directories to help debugging
 #if _DEBUG
-			if (application->HasCommandLineFlag("-ShowDirectories"))
-			{
+			if (application->HasCommandLineFlag("-ShowDirectories") || application->HasCommandLineFlag("-ShowUserTempDirectory"))
 				chaos::WinTools::ShowFile(user_temp);
+			if (application->HasCommandLineFlag("-ShowDirectories") || application->HasCommandLineFlag("-ShowInstalledResourcesDirectory"))
 				chaos::WinTools::ShowFile(application->GetResourcesPath()); 			
-			}
 #endif
 		}
 

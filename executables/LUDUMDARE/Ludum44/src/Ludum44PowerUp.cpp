@@ -22,6 +22,9 @@ bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 	player->current_max_life -= life_cost;
 	if (player->current_life > player->current_max_life)
 		player->current_life = player->current_max_life;
+
+	if (!sound_name.empty())
+		game->PlaySound(sound_name.c_str(), false, false);
 	return true;
 }
 

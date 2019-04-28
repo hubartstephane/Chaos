@@ -25,6 +25,9 @@
     { "path": "sounds/next_level.ogg" , "category" :  "FX"},
     { "path": "sounds/collision.ogg" , "category" :  "FX"},
     { "path": "sounds/fire.ogg" , "category" :  "FX"},
+    { "path": "sounds/SpeedUp.ogg" , "category" :  "FX"},
+    { "path": "sounds/PowerUp.ogg" , "category" :  "FX"},
+    { "path": "sounds/FireRateIncreased.ogg" , "category" :  "FX"},  
     { "path": "sounds/heartbeat.ogg" , "category" :  "FX"}
   ]
 }

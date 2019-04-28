@@ -145,6 +145,8 @@ bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, d
 
 bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
+	
+	
 
 
 	return true; // continue other collisions

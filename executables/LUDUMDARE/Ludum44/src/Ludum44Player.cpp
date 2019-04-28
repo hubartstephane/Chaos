@@ -158,47 +158,70 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 
 ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name)
 {
+	if (count <= 0)
+		return nullptr;
 	if (fire_allocation == nullptr)
 		return nullptr;
-	if (!fire_allocation->AddParticles(1))
+
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return nullptr;
+
+	if (!fire_allocation->AddParticles(count))
 		return nullptr;
 	chaos::ParticleAccessor<ParticleFire> particles = fire_allocation->GetParticleAccessor<ParticleFire>();
 	if (particles.GetCount() == 0)
 		return nullptr;
 
-	chaos::box2 box = GetPlayerBox();
+	ParticleFire * result = &particles[particles.GetCount() - count];
 
-	ParticleFire & p = particles[particles.GetCount() - 1];
+	// compute the bounding box for all particles
+	chaos::box2 player_box   = GetPlayerBox();
+	chaos::box2 particle_box = player_box;
+	
+	particle_box.half_size = ratio_to_player * player_box.half_size;
+	particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);	
+	particle_box.position = player_box.position;
 
-	p.bounding_box.position = box.position;
-	p.bounding_box.half_size = ratio_to_player * box.half_size;
+	// compute texcoords for all particles
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, ludum_game->GetTextureAtlas()->GetAtlasDimension());
 
+	
+	float delta_rotation = 0.1f;
+	float rotation = 0.0f - delta_rotation * (float)(count / 2);
 
-	p.bounding_box = chaos::AlterBoxToAspect(p.bounding_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
+	for (int i = 0 ; i < count ; ++i)
+	{
+		result[i].bounding_box = particle_box;	
+		result[i].texcoords = texcoords;
+		result[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		
+		
+#if SHUXXX_SCROLL_X
+		int scroll_direction = 0;
+		float particle_orientation = rotation - (float)M_PI_2;
+		float particle_velocity_orientation = rotation;
+#else
+		int scroll_direction = 1;
+		float particle_orientation = rotation;
+		float particle_velocity_orientation = rotation + (float)M_PI_2;
+#endif
 
-	p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec2 direction = glm::vec2(cosf(particle_velocity_orientation), sinf(particle_velocity_orientation));
+		result[i].velocity = ludum_game->fire_velocity * direction;
+		result[i].rotation = particle_orientation;
+		
+		result[i].bounding_box.position += direction * player_box.half_size[scroll_direction];
 
-	LudumGame * ludum_game = GetLudumGame();
+		result[i].player_owner_ship = true;
+
+		rotation += delta_rotation;
+	}
 
 	if (sound_name != nullptr)	
 		ludum_game->PlaySound(sound_name, false, false);
 
-	p.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, ludum_game->GetTextureAtlas()->GetAtlasDimension());
-
-#if SHUXXX_SCROLL_X
-	int direction = 0;
-#else
-	int direction = 1;
-#endif
-
-	if (direction == 0)
-		p.velocity = glm::vec2(ludum_game->fire_velocity, 0.0f);
-	else
-		p.velocity = glm::vec2(0.0f, ludum_game->fire_velocity);
-
-	p.player_owner_ship = true;
-
-	return &p;
+	return result;
 }
 
 ParticleFire * LudumPlayer::FireChargedProjectile()
@@ -207,11 +230,16 @@ ParticleFire * LudumPlayer::FireChargedProjectile()
 	if (ludum_game == nullptr)
 		return nullptr;
 
-	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 0.8f, 1, "thrust");
+	int count = 1;
+
+	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 0.8f, count, "thrust");
 	if (p == nullptr)
 	{
-		p->damage = ludum_game->player_charged_damages[current_charged_damage_index];
-		p->trample = false;
+		for (int i = 0 ; i < count ; ++i)
+		{
+			p[i].damage = ludum_game->player_charged_damages[current_charged_damage_index];
+			p[i].trample = false;
+		}
 	}
 	return p;
 }
@@ -222,11 +250,16 @@ ParticleFire * LudumPlayer::FireNormalProjectile()
 	if (ludum_game == nullptr)
 		return nullptr;
 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.4f, ludum_game->player_fire_rates[current_fire_rate_index], "fire");
+	int count = ludum_game->player_fire_rates[current_fire_rate_index];
+
+	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire");
 	if (p == nullptr)
 	{
-		p->damage = ludum_game->player_damages[current_damage_index];
-		p->trample = true;
+		for (int i = 0 ; i < count ; ++i)
+		{
+			p[i].damage = ludum_game->player_damages[current_damage_index];
+			p[i].trample = true;
+		}
 	}
 	return p;
 }
@@ -304,7 +337,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 				{
 					layer_instance->FindTileCollisions(ludum_level_instance->GetCameraBox(), [](death::TiledMap::TileParticle & particle)
 					{
-						particle.gid = 0;
+						// shuxxx particle.gid = 0;
 						return true;
 					});			
 				}
@@ -312,7 +345,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 
 			// reset the corresponding trigger surface
 			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);			
-			ludum_game_instance->current_power_up_surface->SetEnabled(false);
+			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
 			ludum_game_instance->current_power_up = nullptr;
 			ludum_game_instance->current_power_up_surface = nullptr;
 			buy_timer = 0.0f;

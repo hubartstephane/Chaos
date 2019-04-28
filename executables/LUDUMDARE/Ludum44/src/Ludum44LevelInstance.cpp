@@ -23,12 +23,12 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 glm::vec2 LudumLevelInstance::GetCameraSafeZone() const
 {
 #if SHUXXX_SCROLL_X
-	int direction = 0;
+	int scroll_direction = 0;
 #else
-	int direction = 1;
+	int scroll_direction = 1;
 #endif
 
-	if (direction == 0)
+	if (scroll_direction == 0)
 		return glm::vec2(0.7f, 0.9f);
 	else
 		return glm::vec2(0.9f, 0.9f);
@@ -76,28 +76,28 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	// correct camera position
 
 #if SHUXXX_SCROLL_X
-	int direction = 0;
+	int scroll_direction = 0;
 #else
-	int direction = 1;
+	int scroll_direction = 1;
 #endif
 
-	float delta_camera = camera_before.position[direction] - camera_after.position[direction];
+	float delta_camera = camera_before.position[scroll_direction] - camera_after.position[scroll_direction];
 
 	chaos::box2 player_box = player->GetPlayerBox();
 
 	if (delta_camera != 0.0f) // player forced a fast forward or a backward displacement : remove it
 	{
-		player_box.position[direction] += delta_camera;
-		camera_after.position[direction] += delta_camera;
+		player_box.position[scroll_direction] += delta_camera;
+		camera_after.position[scroll_direction] += delta_camera;
 	}
 
 	// correct camera and player position
 	float scroll_displacement = ludum_game->scroll_factor * camera_speed * (float)delta_time;
 
-	camera_after.position[direction] += scroll_displacement;
+	camera_after.position[scroll_direction] += scroll_displacement;
 	SetCameraBox(camera_after);
 
-	player_box.position[direction] += scroll_displacement;
+	player_box.position[scroll_direction] += scroll_displacement;
 	player->SetPlayerBox(player_box);
 
 

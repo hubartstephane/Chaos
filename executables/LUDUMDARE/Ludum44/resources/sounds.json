@@ -24,6 +24,7 @@
     { "path": "sounds/particle_add.ogg" , "category" :  "FX"},
     { "path": "sounds/next_level.ogg" , "category" :  "FX"},
     { "path": "sounds/collision.ogg" , "category" :  "FX"},
+    { "path": "sounds/fire.ogg" , "category" :  "FX"},
     { "path": "sounds/heartbeat.ogg" , "category" :  "FX"}
   ]
 }

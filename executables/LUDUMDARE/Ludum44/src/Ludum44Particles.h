@@ -66,53 +66,6 @@ public:
 
 
 
-
-
-// ===========================================================================
-// ParticleFire
-// ===========================================================================
-
-class ParticleFire : public ParticleBase
-{
-public:
-
-	bool player_owner_ship = true;
-	bool trample = false;
-	float damage = 1.0f;
-	float rotation = 0.0f;
-
-};
-
-class ParticleFireUpdateData
-{
-public:
-
-	chaos::box2 camera_box;
-};
-
-class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
-{
-public:
-
-	class LayerTrait
-	{
-	public:
-
-		class LudumGame * game = nullptr;
-	};
-
-	ParticleFireUpdateData BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const;
-
-	bool UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
-
-	size_t ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
-};
-
-
-
-
-
-
 // ===========================================================================
 // ParticleEnemy
 // ===========================================================================
@@ -152,6 +105,56 @@ public:
 
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 };
+
+
+
+
+
+
+// ===========================================================================
+// ParticleFire
+// ===========================================================================
+
+class ParticleFire : public ParticleBase
+{
+public:
+
+	bool player_owner_ship = true;
+	bool trample = false;
+	float damage = 1.0f;
+	float rotation = 0.0f;
+
+};
+
+class ParticleFireUpdateData
+{
+public:
+
+	/** the camera box */
+	chaos::box2 camera_box;
+	/** all the enemies */
+	std::vector<ParticleEnemy*> enemies;
+};
+
+class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+	ParticleFireUpdateData BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const;
+
+	bool UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+};
+
+
 
 
 

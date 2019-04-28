@@ -87,16 +87,44 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	ParticleFireUpdateData result;
 	if (count > 0)
 	{
+		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
+		// get the enemies
+		death::TiledMap::LayerInstance * enemies_layer_instance = layer_trait->game->GetLudumLevelInstance()->FindLayerInstance("Enemies");
+		if (enemies_layer_instance != nullptr)
+		{
+			chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
+			if (layer != nullptr)
+			{
+				size_t allocation_count = layer->GetAllocationCount();
+				for (size_t i = 0 ; i < allocation_count ; ++i)
+				{
+					chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
+					if (allocation != nullptr)
+					{
+						chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
+						size_t count = enemies.GetCount();
+						for (size_t j = 0 ; j < count ; ++j)
+							result.enemies.push_back(&enemies[j]);
+					}				
+				}			
+			}
+		}
+		// get the players
+
 	}
 	return result;
 }
 
 bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
+	// all damage consummed
+	if (particle->damage <= 0.0f)
+		return true;
+	// outside the camera
 	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
-
+	// update throght velocity
 	particle->bounding_box.position += delta_time * particle->velocity;
 
 	return false; // do not destroy the particle

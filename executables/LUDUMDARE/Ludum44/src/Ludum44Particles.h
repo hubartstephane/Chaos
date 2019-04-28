@@ -78,6 +78,7 @@ public:
 	float rotation = 0.0f;
 	float rotation_speed = 0.0f;
 	int   touched_count_down = 0;
+	int   score = 50;
 
 };
 

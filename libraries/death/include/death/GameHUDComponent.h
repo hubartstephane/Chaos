@@ -184,7 +184,7 @@ namespace death
 	{
 	public:
 
-		GameHUDScoreComponent() : GameHUDCacheValueComponent<int>("Score : %d", -1){}
+		GameHUDScoreComponent() : GameHUDCacheValueComponent<int>("Score:%d", -1){}
 
 	protected:
 

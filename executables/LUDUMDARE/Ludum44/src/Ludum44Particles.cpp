@@ -147,8 +147,11 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 					if (enemy->life > 0.0f)
 						layer_trait->game->PlaySound("metallic", false, false);
 					else
+					{
+						layer_trait->game->GetPlayer(0)->SetScore(enemy->score, true);
 						layer_trait->game->PlaySound("explosion", false, false);
-
+					}
+				
 					// kill bullet ?
 					if (particle->damage <= 0.0f)
 						return true;

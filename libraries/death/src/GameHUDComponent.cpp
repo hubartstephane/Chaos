@@ -134,13 +134,13 @@ namespace death
 	void GameHUDBestScoreComponent::OnInsertedInHUD(int score)
 	{
 		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 50;
+		params.line_height = 80;
 		params.hotpoint_type = chaos::Hotpoint::CENTER;
 		params.position.x = 0.0f;
 		params.position.y = -130.0f;
 		params.font_info_name = "normal";
 
-		std::string str = chaos::StringTools::Printf("Best score : %d", score);
+		std::string str = chaos::StringTools::Printf("Best score:%d", score);
 		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, GameHUDKeys::TEXT_LAYER_ID);
 	}
 
@@ -154,7 +154,7 @@ namespace death
 		params.line_height = 40;
 		params.hotpoint_type = chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::TOP;
 		params.position.x = 0.0f;
-		params.position.y = -200.0f;
+		params.position.y = -230.0f;
 		params.bitmap_padding = glm::vec2(-3.0f, -3.0f);
 		params.character_spacing = 0.0f;
 		params.line_spacing = 5.0f;
@@ -192,6 +192,8 @@ namespace death
 		params.hotpoint_type = hotpoint;
 		params.position.x = corner.x + 20.0f;
 		params.position.y = corner.y - 20.0f;
+		params.font_info_name = "normal"; // shuxxx
+		params.line_height = 60.0f;
 	}
 
 	// ====================================================================

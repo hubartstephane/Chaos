@@ -169,10 +169,12 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(player->GetGameInstance());
 	if (ludum_game_instance != nullptr)
 	{
+		bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
+
 		if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
-			ludum_game_instance->OnPowerUpZone(player, true, this);
+			ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
 		else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
-			ludum_game_instance->OnPowerUpZone(player, false, this);
+			ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
 	}
 
 	return true; // continue other collisions

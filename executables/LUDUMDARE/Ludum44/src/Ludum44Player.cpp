@@ -254,7 +254,10 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
 	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr || ludum_game_instance->current_power_up_surface == nullptr)
 		return;
-	if (!ludum_game_instance->current_power_up->CanPowerUp(GetLudumGame(), this))
+
+	bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+
+	if (!ludum_game_instance->current_power_up->CanPowerUp(GetLudumGame(), this, decreasing_power_up))
 		return;
 
 	int const buy_key_buttons[] = {GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1};
@@ -281,7 +284,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 			}
 
 			// reset the corresponding trigger surface
-			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this);			
+			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);			
 			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
 			ludum_game_instance->current_power_up = nullptr;
 			ludum_game_instance->current_power_up_surface = nullptr;

@@ -75,6 +75,8 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 	if (cached_power_up.get() == ludum_game_instance->current_power_up.get())
 		return true;
 
+	bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+
 	// ensure we do not have already cached this power_up
 	cached_power_up = ludum_game_instance->current_power_up.get();
 
@@ -96,7 +98,14 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 	params.character_spacing = 0.0f;
 	params.alignment = chaos::ParticleTextGenerator::GeneratorParams::ALIGN_CENTER;
 
-	std::string title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
+	std::string title;
+	
+	if (decreasing_power_up)
+		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to sell\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());		
+	else
+		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
+		
+
 	allocations = hud->GetGameParticleCreator().CreateTextParticles(title.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
 
 

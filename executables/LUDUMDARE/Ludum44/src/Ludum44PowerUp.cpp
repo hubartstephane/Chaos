@@ -16,20 +16,26 @@ bool LudumPowerUp::InitializeFromConfiguration(char const * json_name, nlohmann:
 	return true;
 }
 
-bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!CanPowerUp(game, player)) // a final test
+	if (!CanPowerUp(game, player, decreasing_power_up)) // a final test
 		return false;
 	player->current_max_life -= life_cost;
 	if (player->current_life > player->current_max_life)
 		player->current_life = player->current_max_life;
 
-	if (!sound_name.empty())
-		game->PlaySound(sound_name.c_str(), false, false);
+	if (decreasing_power_up)
+		game->PlaySound("life_restored", false, false);	
+	else
+	{
+		if (!sound_name.empty())
+			game->PlaySound(sound_name.c_str(), false, false);	
+	}
+
 	return true;
 }
 
-bool LudumPowerUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumPowerUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
 	if (player->current_max_life - life_cost > game->min_player_max_life)
 		return true;
@@ -40,17 +46,17 @@ bool LudumPowerUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
 // LudumSpeedUp
 // =================================================
 
-bool LudumSpeedUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumSpeedUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!LudumPowerUp::ApplyPowerUp(game, player)) // test if still possible to power up (see super method)
+	if (!LudumPowerUp::ApplyPowerUp(game, player, decreasing_power_up)) // test if still possible to power up (see super method)
 		return false;
 	++player->current_speed_index;
 	return true;
 }
 
-bool LudumSpeedUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumSpeedUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!LudumPowerUp::CanPowerUp(game, player))
+	if (!LudumPowerUp::CanPowerUp(game, player, decreasing_power_up))
 		return false;
 	if (player->current_speed_index >= game->player_speeds.size())
 		return false;
@@ -67,9 +73,9 @@ char const * LudumSpeedUp::GetPowerUpTitle() const
 // LudumDamageUp
 // =================================================
 
-bool LudumDamageUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumDamageUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!LudumPowerUp::ApplyPowerUp(game, player)) // test if still possible to power up (see super method)
+	if (!LudumPowerUp::ApplyPowerUp(game, player, decreasing_power_up)) // test if still possible to power up (see super method)
 		return false;
 
 	if (!charged_fire)
@@ -79,9 +85,9 @@ bool LudumDamageUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
 	return true;
 }
 
-bool LudumDamageUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumDamageUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!LudumPowerUp::CanPowerUp(game, player))
+	if (!LudumPowerUp::CanPowerUp(game, player, decreasing_power_up))
 		return false;
 
 	if (!charged_fire)
@@ -106,17 +112,17 @@ char const * LudumDamageUp::GetPowerUpTitle() const
 // LudumFireRateUp
 // =================================================
 
-bool LudumFireRateUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumFireRateUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!LudumPowerUp::ApplyPowerUp(game, player)) // test if still possible to power up (see super method)
+	if (!LudumPowerUp::ApplyPowerUp(game, player, decreasing_power_up)) // test if still possible to power up (see super method)
 		return false;
 	++player->current_fire_rate_index;
 	return true;
 }
 
-bool LudumFireRateUp::CanPowerUp(LudumGame * game, LudumPlayer * player) const
+bool LudumFireRateUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decreasing_power_up) const
 {
-	if (!LudumPowerUp::CanPowerUp(game, player))
+	if (!LudumPowerUp::CanPowerUp(game, player, decreasing_power_up))
 		return false;
 	if (player->current_fire_rate_index >= game->player_fire_rates.size())
 		return false;

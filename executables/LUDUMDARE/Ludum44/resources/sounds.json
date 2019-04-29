@@ -38,6 +38,7 @@
     { "path": "sounds/speed_up.ogg" , "category" :  "Voices"},
     { "path": "sounds/power_up.ogg" , "category" :  "Voices"},
     { "path": "sounds/augmented_fire.ogg" , "category" :  "Voices"},
+    { "path": "sounds/life_restored.ogg" , "category" :  "Voices"},
     { "path": "sounds/blast_improved.ogg" , "category" :  "Voices"}      
   ]
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="18" nextobjectid="1849">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="18" nextobjectid="1860">
  <properties>
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="1800"/>
+  <property name="CAMERA_SPEED" type="float" value="800"/>
   <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Hello World]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
@@ -167,38 +167,80 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1815" name="PowerUp" gid="2" x="-2648" y="11208" width="20592" height="5000">
-   <properties>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
   <object id="1843" name="Finish" gid="2" x="-4504" y="-133560" width="20912" height="8752">
    <properties>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1844" name="PowerUp" gid="2" x="-3768" y="-10344" width="20592" height="5000">
+  <object id="1848" name="PowerUp" gid="2" x="-3640" y="-106984" width="9264" height="5000">
    <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1845" name="PowerUp" gid="2" x="-3640" y="-33704" width="20592" height="5000">
+  <object id="1849" name="PowerUp" gid="2" x="7976" y="-106948" width="9264" height="5000">
    <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1846" name="PowerUp" gid="2" x="-3768" y="-59432" width="20592" height="5000">
+  <object id="1850" name="PowerUp" gid="2" x="-4232" y="-83734" width="9264" height="5000">
    <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1847" name="PowerUp" gid="2" x="-4024" y="-83752" width="20592" height="5000">
+  <object id="1851" name="PowerUp" gid="2" x="7384" y="-83698" width="9264" height="5000">
    <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1848" name="PowerUp" gid="2" x="-3640" y="-106984" width="20592" height="5000">
+  <object id="1852" name="PowerUp" gid="2" x="-4104" y="-59734" width="9264" height="5000">
    <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1853" name="PowerUp" gid="2" x="7512" y="-59698" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1854" name="PowerUp" gid="2" x="-3784" y="-33622" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1855" name="PowerUp" gid="2" x="7832" y="-33586" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1856" name="PowerUp" gid="2" x="-3912" y="-10262" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1857" name="PowerUp" gid="2" x="7704" y="-10226" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1858" name="PowerUp" gid="2" x="-2888" y="11178" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1859" name="PowerUp" gid="2" x="8728" y="11214" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>

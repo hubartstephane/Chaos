@@ -134,7 +134,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	}
 }
 
-void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface)
+void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface, bool decreasing_power_up)
 {
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
@@ -159,7 +159,7 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 		for (int i = 0 ; i < count ; ++i)
 		{
 			int index = (i + value) % count;
-			if (ludum_game->power_ups[index]->CanPowerUp(ludum_game, ludum_player))
+			if (ludum_game->power_ups[index]->CanPowerUp(ludum_game, ludum_player, decreasing_power_up))
 			{
 				current_power_up = ludum_game->power_ups[index].get();	
 				current_power_up_surface = surface;

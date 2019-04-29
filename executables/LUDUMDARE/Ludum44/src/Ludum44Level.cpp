@@ -273,17 +273,24 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 				p.velocity = glm::vec2(chaos::MathTools::RandFloat(-200.0f, +200.0f), chaos::MathTools::RandFloat(0.0f, -1000.0f));
 			
 			}
-			else if (spawn_curve_type == SPAWN_CURVE_V)
+			else if (spawn_curve_type == SPAWN_CURVE_V || spawn_curve_type == SPAWN_CURVE_INVERTED_V)
 			{
-				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
-				
+				float x = 0.5f; // by default center of the surface
+				if (count > 1)
+					x = ((float)i) / (float)(count - 1);
 
-			}
-			else if (spawn_curve_type == SPAWN_CURVE_INVERTED_V)
-			{
-				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
-				p.velocity = glm::vec2(0.0f, 0.0f);
+				float sx = surface_box.half_size.x;
+				float sy = surface_box.half_size.y;
 
+				p.bounding_box.position.x = surface_box.position.x - sx + 2.0f * x * sx;
+
+				float renormalized_x = (x * 2.0f) - 1.0f;
+
+				float y = (spawn_curve_type == SPAWN_CURVE_V)? 
+					(renormalized_x * renormalized_x) : 
+					(1.0f - renormalized_x * renormalized_x);
+
+				p.bounding_box.position.y = surface_box.position.y + sy * y;
 			}
 			else if (spawn_curve_type == SPAWN_CURVE_ALIGNED)
 			{
